@@ -1,0 +1,14 @@
+<ion-header>
+  <ion-toolbar mode="ios">
+    <ion-buttons slot="start" padding class="header-btns" (click)="navigateBackPage()">
+      <ion-icon name="arrow-back" mode="ios"></ion-icon>
+    </ion-buttons>
+    <ion-title>Carrier News</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-card class="ion-text-left">
+    <ion-card-content>{{this.intro.description}}</ion-card-content>
+  </ion-card>
+</ion-content>

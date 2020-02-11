@@ -1,0 +1,65 @@
+import { Component } from '@angular/core';
+import { Platform } from '@ionic/angular';
+import { StatusBar } from '@ionic-native/status-bar/ngx';
+import { SplashScreen } from '@ionic-native/splash-screen/ngx';
+
+// import { TabsPage } from './pages/tabs/tabs';
+
+let appManager: any;
+
+@Component({
+  selector: 'my-app',
+  templateUrl: 'app.html',
+  styleUrls: [ 'app.scss' ]
+})
+
+export class MyApp {
+  // rootPage:any = TabsPage;
+
+  constructor(
+    private platform: Platform,
+    private statusBar: StatusBar,
+    private splashScreen: SplashScreen) {
+
+    this.initializeApp();
+  }
+
+  routerLinks = [
+    {
+      linkName: '/menu/myprofile',
+      iconName: 'person',
+      pageName: 'My Profile'
+    },
+    {
+      linkName: '/favorite',
+      iconName: 'apps',
+      pageName: 'Favorite Feeds'
+    },
+    {
+      linkName: '/menu/myfeeds',
+      iconName: 'apps',
+      pageName: 'My Feeds'
+    },
+    {
+      linkName: '/menu/servers',
+      iconName: 'contacts',
+      pageName: 'Backend Servers'
+    },
+    {
+      linkName: '/menu/about',
+      iconName: 'information-circle',
+      pageName: 'About'
+    }
+  ];
+
+  initializeApp() {
+    this.platform.ready().then(() => {
+      this.statusBar.styleDefault();
+      this.splashScreen.hide();
+    });
+  }
+
+  closeApp() {
+    appManager.close();
+  }
+}

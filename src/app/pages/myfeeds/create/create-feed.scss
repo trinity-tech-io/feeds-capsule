@@ -1,0 +1,30 @@
+* {
+    font-family: 'Raleway', sans-serif;
+  }
+
+  ion-header {
+
+    ion-toolbar {
+      margin-top: 25px;
+      margin-bottom: 25px;
+
+      .header-btns {
+        font-size: 25px;
+      }
+
+      ion-title {
+        font-size: 25px;
+        font-weight: bold;
+      }
+    }
+  }
+
+ion-content {
+    position: absolute;
+    top: 30%;
+    left: 0%;
+    right: 50%;
+    margin: 0 auto;
+    margin-top: 0;
+    margin-left: 0;
+  }

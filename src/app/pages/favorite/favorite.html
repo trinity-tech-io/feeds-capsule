@@ -1,0 +1,58 @@
+<ion-header>
+  <ion-toolbar mode="ios">
+    <ion-buttons slot="end">
+      <ion-button>
+        <ion-menu-button menu="m1"></ion-menu-button>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Feeds</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="ion-padding">
+    <ion-button
+      expand="block"
+      mode="ios"
+      color="tertiary"
+      [routerLink]="[
+        '/',
+        'favorite',
+        'search'
+      ]">
+      <ion-icon name="add-circle-outline" slot="start" ></ion-icon>
+      <ion-label> Explore feeds on your interests</ion-label>
+    </ion-button>
+  </div>
+
+  <ion-list>
+    <ion-item *ngFor="let feed of feeds" (click)="navigateToEventsPage(feed.name)">
+      <ion-grid class="ion-padding" >
+        <ion-row>
+          <ion-col
+            size="2.25"
+            size-lg="2.25"
+            class="icon-container"
+            >
+            <ion-icon name="paper"></ion-icon>
+          </ion-col>
+          <ion-col
+            size="6.25"
+            size-xs="6.25"
+            class="node-content">
+            <ion-label>
+              <h2>{{feed.name}}</h2>
+            </ion-label>
+          </ion-col>
+          <ion-col
+            size="3.5"
+            size-xs="3.5"
+            class="badge-container">
+            <ion-badge color="primary" *ngIf="feed.unread">{{feed.unread}}</ion-badge>
+            <ion-badge color="light"  *ngIf="feed.unread == 0">{{today | date:'MM dd'}}</ion-badge>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-item>
+  </ion-list>
+</ion-content>

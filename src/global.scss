@@ -1,0 +1,172 @@
+/*
+ * App Global CSS
+ * ----------------------------------------------------------------------------
+ * Put style rules here that you want to apply globally. These styles are for
+ * the entire app and not just one component. Additionally, this file can be
+ * used as an entry point to import other CSS/Sass files to be included in the
+ * output CSS.
+ * For more information on global stylesheets, visit the documentation:
+ * https://ionicframework.com/docs/layout/global-stylesheets
+ */
+
+/* Core CSS required for Ionic components to work properly */
+@import "~@ionic/angular/css/core.css";
+
+/* Basic CSS for apps built with Ionic */
+@import "~@ionic/angular/css/normalize.css";
+@import "~@ionic/angular/css/structure.css";
+@import "~@ionic/angular/css/typography.css";
+@import '~@ionic/angular/css/display.css';
+
+/* Optional CSS utils that can be commented out */
+@import "~@ionic/angular/css/padding.css";
+@import "~@ionic/angular/css/float-elements.css";
+@import "~@ionic/angular/css/text-alignment.css";
+@import "~@ionic/angular/css/text-transformation.css";
+@import "~@ionic/angular/css/flex-utils.css";
+
+:root {
+  ion-tab-button.tab-selected {
+    ion-icon, ion-label {
+      color: var(--ion-color-primary) !important;
+      --ion-color-base: var(--ion-color-primary) !important;
+    }
+  }
+}
+
+* {
+  font-family: 'Raleway', sans-serif;
+}
+
+ion-header {
+
+  ion-toolbar {
+    margin-top: 20px;
+
+    .header-btns {
+      font-size: 25px;
+    }
+
+    ion-title {
+      font-size: 23px;
+      font-weight: bold;
+    }
+  }
+
+  ion-segment {
+    margin-top: 10px;
+    color: #959595;
+    border: 0px;
+    border-radius: 0px;
+
+    .segment-button-checked{
+      background: #FFF;
+      color: #007AFF !important;
+      border-bottom: 1px solid #007AFF;
+    }
+
+    ion-segment-button {
+
+      ion-label {
+        margin: 0;
+        color: #959595;
+      }
+    }
+  }
+}
+
+ion-list {
+  background: #FAFAFA;
+  min-height: 100%;
+  padding: 0;
+
+  .search-container {
+    position: sticky;
+    top: 0px;
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    background: #FAFAFA;
+    padding: 12px 0 0;
+
+    ion-searchbar {
+      width: 80%;
+      padding: 0;
+      margin: 0;
+    }
+  }
+
+  .section {
+    display: flex;
+    justify-content: center;
+
+    p {
+      width: 85%;
+      margin: 12px 0;
+      font-weight: bold !important;
+      font-size: 18px !important;
+      color: black;
+    }
+  }
+
+  ion-virtual-scroll {
+    display: inline;
+
+    ion-item {
+      --inner-padding-end: 0px;
+      --padding-start: 0px;
+
+      ion-row {
+        padding: 5px 0;
+
+        .img-container {
+          display: flex;
+          justify-content: flex-end;
+
+          ion-thumbnail {
+            border-radius: 15px !important;
+            border: solid 1px black;
+
+            ion-img {
+              border-radius: 15px;
+            }
+          }
+        }
+
+        .node-content {
+          display: flex;
+          align-items: center;
+
+            h2 {
+              font-size: 16px;
+              font-family: 'Raleway:500', sans-serif;
+              font-weight: normal;
+              margin: 0;
+            }
+
+            p {
+              font-size: 10px !important;
+              color: #959595;
+              margin: 0;
+            }
+        }
+
+        .btn-container {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+
+          ion-button {
+            --border-radius: 30px;
+            --box-shadow: none;
+
+            ion-label {
+              font-size: 9px;
+              padding: 0 5px;
+            }
+          }
+        }
+      }
+    }
+  }
+}

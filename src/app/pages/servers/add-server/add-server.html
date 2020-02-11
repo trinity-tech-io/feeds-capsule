@@ -1,0 +1,22 @@
+<ion-header>
+  <ion-toolbar mode="ios">
+    <ion-buttons slot="start" padding class="header-btns" (click)="navToBack()">
+      <ion-icon name="arrow-back" mode="ios"></ion-icon>
+    </ion-buttons>
+    <ion-title>Add trusted server</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-toolbar>
+    <ion-buttons slot="end">
+        <ion-button  fill="clear" (click)="scanCode()">
+            <ion-icon name='qr-scanner'> </ion-icon>
+        </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+
+  <ion-input required type="text" placeholder="Enter Address" [(ngModel)]="address" value="address"> </ion-input>
+  <ion-button expand="block" (click)="addServer()">Add New Server</ion-button>
+
+</ion-content>

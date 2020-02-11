@@ -1,0 +1,29 @@
+<ion-header>
+  <ion-toolbar mode="ios">
+    <ion-buttons slot="start" padding class="header-btns" (click)="navigateBack()">
+      <ion-icon name="arrow-back" mode="ios"></ion-icon>
+    </ion-buttons>
+    <ion-buttons slot="end">
+      <ion-button>
+        <ion-menu-button menu="m1"></ion-menu-button>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>New Feed</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-item>
+    <ion-label position="stacked">Your new feed name
+      <ion-text color="danger">*</ion-text>
+    </ion-label>
+    <ion-input required type="text"></ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label position="stacked">Berief description
+      <ion-text color="danger">*</ion-text>
+    </ion-label>
+    <ion-input required type="text"></ion-input>
+  </ion-item>
+  <ion-button expand="block" (click)="navigateBack()">Submit</ion-button>
+</ion-content>

@@ -1,0 +1,18 @@
+<ion-header>
+  <ion-toolbar mode="ios">
+    <ion-buttons slot="start" padding class="header-btns" (click)="navigateBack()">
+      <ion-icon name="arrow-back" mode="ios"></ion-icon>
+    </ion-buttons>
+    <ion-title>Carrier News</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-list>
+    <ion-card *ngFor="let msg of feedEvents ">
+      <!-- <ion-card-header> {{msg.timestamp}} </ion-card-header> -->
+      <ion-card-header>{{today | date}}</ion-card-header>
+      <ion-card-content>{{msg.message}}</ion-card-content>
+    </ion-card>
+  </ion-list>
+</ion-content>

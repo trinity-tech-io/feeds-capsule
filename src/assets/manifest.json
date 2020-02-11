@@ -1,0 +1,41 @@
+{
+  "id": "org.elastos.dapp.feeds",
+  "version": "0.0.1",
+  "version_code": 1,
+  "name": "Feeds",
+  "short_name": "Feeds",
+  "short_description": "",
+  "description": "",
+  "start_url": "index.html",
+  "type": "app",
+  "category": "finance",
+  "icons": [
+    {
+      "src": "assets/images/logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/images/logo.png",
+      "sizes": "128x128",
+      "type": "image/png"
+    }
+  ],
+  "author": {
+    "name": "stiartsly",
+    "email": "stiartsly@gmail.com",
+    "website": ""
+  },
+  "default_locale": "en",
+  "plugins": [
+    "Device",
+    "SplashScreen",
+    "NetworkStatus"
+  ],
+  "urls": [
+    "http://www.yourappserver.com/*"
+  ],
+  "background_color": "#4e8ef7",
+  "theme_display": "show",
+  "theme_color": "#4e8ef7"
+}

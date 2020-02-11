@@ -1,0 +1,25 @@
+<ion-header>
+  <ion-toolbar mode="ios">
+    <ion-buttons slot="start" padding class="header-btns" (click)="navigateBackPage()">
+      <ion-icon name="arrow-back" mode="ios"></ion-icon>
+    </ion-buttons>
+    <ion-buttons slot="end">
+      <ion-button>
+        <ion-menu-button menu="m1"></ion-menu-button>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Carrier News</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+    <ion-searchbar></ion-searchbar>
+    <ion-list>
+      <ion-item class="feed-space" *ngFor="let desc of feedDescs">
+        <ion-icon name="paper" slot="start"></ion-icon>
+        <ion-button slot="end" color="light"   *ngIf="desc.followState == 'follow'">{{desc.followState}}</ion-button>
+        <ion-button slot="end" color="primary" *ngIf="desc.followState != 'follow'">{{desc.followState}}</ion-button>
+        <ion-label (click)="navigateToDetailPage()">{{desc.title}}</ion-label>
+      </ion-item>
+      </ion-list>
+</ion-content>
