@@ -22,6 +22,9 @@ import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { CarrierService } from './services/CarrierService';
 import { NativeService } from './services/NativeService';
 import { FeedService } from './services/FeedService';
+import { StorageService } from './services/StorageService';
+import { JsonRPCService } from './services/JsonRPCService';
+import { TransportService } from './services/TransportService';
 
 @NgModule({
   declarations: [
@@ -46,6 +49,9 @@ import { FeedService } from './services/FeedService';
     CarrierService,
     NativeService,
     FeedService,
+    JsonRPCService,
+    TransportService,
+    StorageService,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     {provide: ErrorHandler, useClass: ErrorHandler}
   ]

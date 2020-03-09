@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { Events } from '@ionic/angular';
+import { CarrierService } from 'src/app/services/CarrierService';
 
 @Component({
   selector: 'page-about',
@@ -7,9 +9,14 @@ import { Component, OnInit } from '@angular/core';
 })
 export class AboutPage implements OnInit {
 
-  constructor() { }
+  constructor(
+    private events:Events,
+    private carrierService:CarrierService) {
+  }
 
   ngOnInit() {
   }
-
+  // abouttest(){
+  //   alert("abouttest");
+  // }
 }

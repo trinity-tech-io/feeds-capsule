@@ -10,8 +10,12 @@
 </ion-header>
 
 <ion-content>
-  <div class="offline-content" *ngIf=" status != 0 ">
+  <!-- <div class="offline-content" *ngIf=" status != 0 ">
     <ion-label>disconnect</ion-label>
+  </div> -->
+
+  <div class="offline-content">
+    <ion-label >{{status}}</ion-label>
   </div>
   <div class="ion-padding">
     <ion-button
@@ -26,10 +30,12 @@
   </div>
 
   <ion-list>
-    <ion-item *ngFor='let server of fakeServers' (click)="navToServerInfo()">
-      <ion-label>{{server.name && server.name || server.userid}}</ion-label>
-      <ion-icon name="radio-button-on" color="primary" slot="end"  *ngIf="isFriendConnected(server)" ></ion-icon>
-      <ion-icon name="radio-button-on" slot="end" *ngIf="!isFriendConnected(server)" ></ion-icon>
+    <ion-item *ngFor='let server of serverList' (click)="navToServerInfo()">      <!-- <ion-label>{{server.name || server.userId}}</ion-label> -->
+      <ion-label>{{server.name || server.userId}}</ion-label>
+      
+      <ion-icon name="radio-button-on" color="primary" slot="start"  *ngIf="server.status == 0" ></ion-icon>
+      <ion-icon name="radio-button-on" slot="start" *ngIf="server.status == 1" ></ion-icon>
     </ion-item>
   </ion-list>
+
 </ion-content>

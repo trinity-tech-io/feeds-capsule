@@ -2,8 +2,8 @@ import { Component } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
-
-// import { TabsPage } from './pages/tabs/tabs';
+import { CarrierService } from './services/CarrierService';
+import { Router} from '@angular/router';
 
 let appManager: any;
 
@@ -19,7 +19,9 @@ export class MyApp {
   constructor(
     private platform: Platform,
     private statusBar: StatusBar,
-    private splashScreen: SplashScreen) {
+    private splashScreen: SplashScreen,
+    private router: Router,
+    private carrierService:CarrierService) {
 
     this.initializeApp();
   }
@@ -54,10 +56,14 @@ export class MyApp {
 
   initializeApp() {
     this.platform.ready().then(() => {
-      this.statusBar.styleDefault();
-      this.splashScreen.hide();
+        this.statusBar.styleDefault();
+        this.splashScreen.hide();
+        // this.carrierService.init();
+        // this.appService.init();
+
+        this.router.navigate(['/initialize']);
     });
-  }
+}
 
   closeApp() {
     appManager.close();

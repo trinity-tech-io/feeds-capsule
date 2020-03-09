@@ -22,6 +22,48 @@
 
 import { Injectable } from '@angular/core';
 import { Events, Platform } from '@ionic/angular';
+// import { StorageService } from '../services/StorageService';
+
+// type UserInfo = {
+//     userId: string;
+//     name: string;
+//     description: string;
+//     hasAvatar: Boolean;
+//     gender: string;
+//     phone: string;
+//     email: string;
+//     region: string;
+// }
+
+// class SelfInfo{
+//     nodeId: string;
+//     userId: string;
+//     address: string;
+//     constructor(nodeId: string, userId: string, address: string){
+//     }
+// }
+
+
+
+
+
+// let friendsMap = {};
+// class FriendInfo{
+//     userInfo: UserInfo;
+
+
+
+//         /** The user info. */
+//         userInfo: UserInfo;
+//         /** The presence status. */
+//         presence: PresenceStatus;
+//         /** The connection status. */
+//         connection: ConnectionStatus;
+//         /** The friend's label name. */
+//         label: string;
+//     }
+// }
+
 
 /*
 export class ChatMessage {
@@ -33,22 +75,50 @@ export class ChatMessage {
     message: string;
     status: string;
 } */
+// @Injectable()
+// class FeedMessage{
+//     nodeId: string;
+//     method: string;
+//     params: any;
+//     constructor(nodeId: string,
+//         method: string,
+//         params: any){
+
+//     }
+// }
 
 declare let carrierManager: CarrierPlugin.CarrierManager;
 
+let FriendInfo: CarrierPlugin.FriendInfo;
+let UserInfo: CarrierPlugin.UserInfo;
+
+
 let carrierInst: CarrierPlugin.Carrier;
+
+let eventBus = null;
+
+// var connectStatus ;
+
+// const bootstrapsOpts = [
+//     { ipv4: "13.58.208.50", port: "33445", publicKey: "89vny8MrKdDKs7Uta9RdVmspPjnRMdwMmaiEW27pZ7gh" },
+//     { ipv4: "18.216.102.47", port: "33445", publicKey: "G5z8MqiNDFTadFUPfMdYsYtkUDbX5mNCMVHMZtsCnFeb" },
+//     { ipv4: "18.216.6.197", port: "33445", publicKey: "H8sqhRrQuJZ6iLtP2wanxt4LzdNrN2NNFnpPdq1uJ9n2" },
+//     { ipv4: "52.83.171.135", port: "33445", publicKey: "5tuHgK1Q4CYf4K5PutsEPK5E3Z7cbtEBdx7LwmdzqXHL" },
+//     { ipv4: "52.83.191.228", port: "33445", publicKey: "3khtxZo89SBScAMaHhTvD68pPHiKxgZT6hTCSZZVgNEm" }
+// ];
 
 const createOption = {
     udpEnabled: true,
-    persistentLocation: '.data'
-}
+    persistentLocation: ".data"
+    // bootstraps: bootstrapsOpts
+};
 
 @Injectable()
 export class CarrierService {
-
-    private eventBus: Events;
     private mIsReady = false;
+    // private mIsReady = true; //for test
     private myInterval: any;
+    
 
     private callbacks = {
         onConnection: this.conectionCallback,
@@ -61,69 +131,72 @@ export class CarrierService {
         onFriendMessage: this.friendMessageCallback
     }
 
-    constructor(public event: Events, public platform: Platform) {
-        this.eventBus = event;
+    constructor(public events: Events, public platform: Platform) {
+        eventBus = events;
     }
 
     init() {
-        if (this.platform.is('desktop')) {
+        if (this.platform.is("desktop")) {
             this.myInterval = setInterval(() => {
                 this.readyCallback(null);
                 clearInterval(this.myInterval);
             }, 2000);
         } else {
             this.createObject(
-                this.createCarrierInstanceSuccess,
+                this.createCarrierInstanceSuccess, 
                 this.createCarrierInstanceError);
         }
     }
 
-    isReady() {
+    isReady():boolean{
         return this.mIsReady;
     }
 
+    readyCallback(ret) {
+        this.mIsReady = true;
+        alert("ready");
+        eventBus.publish('carrier:ready', ret, Date.now());
+    }
+
     createCarrierInstanceSuccess(ret: any) {
-        console.log('Carrier Service created:', ret);
         carrierInst = ret;
         carrierInst.start(50, null, null);
     }
 
     createCarrierInstanceError(err: string) {
+        alert("createCarrierInstanceError"+err);
         console.log('Carrier Service error: ', err);
     }
 
-    conectionCallback(ret) {
-        console.log('Connection state changed:', ret);
-        this.eventBus.publish('carrier:connectionChanged', ret, Date.now());
-    }
-
-    readyCallback(ret) {
-        console.log('Carrier Instance is ready');
-        this.eventBus.publish('carrier:ready', ret, Date.now());
+    conectionCallback(event) {
+        eventBus.publish('carrier:connectionChanged', event.status, Date.now());
     }
 
     friendConnectionCallback(ret) {
-        this.eventBus.publish('carrier:friendConnection', ret, Date.now());
+        console.log(ret.friendId);
+        console.log(ret.status);
+        eventBus.publish('carrier:friendConnection', ret, Date.now());
     }
 
     friendInfoCallback(ret) {
-        this.eventBus.publish('carrier:friendInfo', ret, Date.now());
+        eventBus.publish('carrier:friendInfo', ret, Date.now());
     }
 
-    friendListCallback(ret) {
-        this.eventBus.publish('carrier:friendList', ret, Date.now());
+    friendListCallback(event) {
+        eventBus.publish('carrier:friendList', event.friends.length, Date.now());
     }
 
     friendAddedCallback(ret) {
-        this.eventBus.publish('carrier:friendAdded', ret, Date.now());
+        alert("carrier:friendAdded");
+        eventBus.publish('carrier:friendAdded', ret, Date.now());
     }
 
     friendRemovedCallback(ret) {
-        this.eventBus.publish('carrier:friendRemoved', ret, Date.now());
+        eventBus.publish('carrier:friendRemoved', ret, Date.now());
     }
 
-    friendMessageCallback(ret)  {
-        this.eventBus.publish('carrier:friendMessage', ret, Date.now());
+    friendMessageCallback(event)  {
+        eventBus.publish('carrier:friendMessage', event, Date.now());
     }
 
     destroyCarrier() {
@@ -147,7 +220,7 @@ export class CarrierService {
         carrierManager.createObject(
             this.callbacks, createOption,
             (ret: any) => {success(ret); },
-            (err: string) => {this.errorFun(err, error); });
+            (err: string) => {error(err); });
     }
 
     isValidAddress(address, success, error) {
@@ -171,14 +244,20 @@ export class CarrierService {
         return carrierInst.address;
     }
 
-    getFriends(success, error: string) {
-        /*
-        carrierInst.getFriends(
-            (ret) => {success(ret);},
-            (err) => {this.errorFun(err, error);});
-        */
-    }
 
+
+    getFriends(success: any, error: string) {
+        if (this.platform.is('desktop')) {
+            success(null);
+            return ;
+        }
+       
+       carrierInst.getFriends(
+        (ret) => {
+            success(ret);
+        },
+        (err) => {this.errorFun(err, error)});
+    }
 
     addFriend(address, hello: string, success, error: (err: string) => void) {
         if (this.platform.is('desktop')) {
@@ -189,7 +268,7 @@ export class CarrierService {
             }, 1000);
             return;
         }
-
+        
         carrierInst.addFriend(
             address, hello,
             () => {success(); },
@@ -200,34 +279,33 @@ export class CarrierService {
         if (this.platform.is('desktop')) {
             return success('ok');
         }
+        
         carrierInst.removeFriend(
             userId,
             () => {success();},
             (err) => {this.errorFun(err, error);});
     }
 
-    sendMessage(feedMessage, success, error) {
-        /* messageList.push(chatMessage);
-
+    sendMessage(nodeId: string, message: string, success: any, error: any) {
         if (this.platform.is('desktop')) {
             success();
             return;
         }
 
-        let id = feedMessage.messageId;
+        console.log("nodeId =>"+nodeId);
+        console.log("message =>"+message);
         carrierInst.sendFriendMessage(
-            feedMessage.toUserId, feedMessage.message,
-            () => {
-                let index = this.getMsgIndexById(id);
-                if (index !== -1) {
-                    messageList[index].status = 'success';
-                }
-                success();},
+            nodeId, message,
+            () => {success();},
             (err) => {this.errorFun(err, error);});
-        */
     }
 
     errorFun(err, errorFun = null) {
+
+        alert("error"+err);
+        alert("errorFun"+JSON.stringify(errorFun));
+        console.log("err =>"+err);
+        console.log("errorFun =>"+errorFun);
         /*
         this.native.info('errorFun:' + err);
         if (errorFun != null) {

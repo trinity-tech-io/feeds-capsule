@@ -17,8 +17,8 @@
     <ion-list>
       <ion-item class="feed-space" *ngFor="let desc of feedDescs">
         <ion-icon name="paper" slot="start"></ion-icon>
-        <ion-button slot="end" color="light"   *ngIf="desc.followState == 'follow'">{{desc.followState}}</ion-button>
-        <ion-button slot="end" color="primary" *ngIf="desc.followState != 'follow'">{{desc.followState}}</ion-button>
+        <ion-button slot="end" color="light" (click)="subscribe(desc.nodeId)" *ngIf="desc.followState == 'follow'">{{desc.followState}}</ion-button>
+        <ion-button slot="end" color="primary" (click)="unsubscribe(desc.nodeId)" *ngIf="desc.followState != 'follow'">{{desc.followState}}</ion-button>
         <ion-label (click)="navigateToDetailPage()">{{desc.title}}</ion-label>
       </ion-item>
       </ion-list>

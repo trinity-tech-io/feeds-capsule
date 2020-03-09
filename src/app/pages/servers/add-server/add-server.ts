@@ -31,12 +31,13 @@ export class AddServerPage implements OnInit {
     this.native.pop();
   }
 
-  addFriend() {
+  addServer() {
     if (this.platform.is("desktop")) {
       this.carrier.addFriend(this.address, this.friendRequest,
         () => {
-            console.log("AddFriend success");
-            // this.native.setRootRouter("/tabs");
+            console.log("Add server success");
+            alert("Add server success");
+            this.native.setRootRouter("/menu/servers");
         }, null);
       return;
     }
@@ -44,14 +45,16 @@ export class AddServerPage implements OnInit {
     this.carrier.isValidAddress(this.address, (data) => {
       this.carrier.addFriend(this.address, this.friendRequest,
         () => {
-            console.log("AddFriend success");
-            // this.native.setRootRouter("/tabs");
+            console.log("Add server success");
+            alert("Add server success");
+            this.native.setRootRouter("/menu/servers");
         }, (err) => {
-            console.log("AddFriend error: " + err);
+            console.log("Add server error: " + err);
+            alert("Add server error: " + err);
         });
       },
       (error: string) => {
         this.native.toast("address error: " + error);
       });
-    }
+  }
 }

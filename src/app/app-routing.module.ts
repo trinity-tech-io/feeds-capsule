@@ -8,8 +8,10 @@ import { FeedAboutPageModule } from './pages/favorite/search/about/about.module'
 
 const routes: Routes = [
   { path: '', redirectTo: 'favorite', pathMatch: 'full' },
+  { path: 'initialize', loadChildren: './pages/initialize/initialize.module#InitializePageModule' },
+
   { path: 'favorite', loadChildren: () => FavorFeedsPageModule },
-  { path: 'favorite/content', loadChildren: () => FeedContentPageModule },
+  { path: 'favorite/content/:feedName', loadChildren: () => FeedContentPageModule },
   { path: 'favorite/search', loadChildren: () =>  ExplorePageModule },
   { path: 'favorite/search/about', loadChildren: () => FeedAboutPageModule },
 

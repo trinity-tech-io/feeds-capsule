@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { NavController } from '@ionic/angular';
 import { FeedService } from 'src/app/services/FeedService';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'page-favorite',
@@ -9,16 +10,17 @@ import { FeedService } from 'src/app/services/FeedService';
 })
 
 export class FavorFeedsPage {
-  feeds: any;
+  feedsList: any;
   today: number = Date.now();
 
   constructor(
-    service: FeedService,
-    private navCtrl: NavController) {
-      this.feeds = service.getFavorFeeds();
+    private service: FeedService,
+    private navCtrl: NavController,
+    private router: Router) {
+      this.feedsList = service.getFavorFeeds();
   }
 
   navigateToEventsPage(feedName: string) {
-    this.navCtrl.navigateForward('/favorite/content');
+    this.router.navigate(['/favorite/content/',feedName]);
   }
 }

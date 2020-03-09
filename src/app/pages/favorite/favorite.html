@@ -24,9 +24,8 @@
       <ion-label> Explore feeds on your interests</ion-label>
     </ion-button>
   </div>
-
   <ion-list>
-    <ion-item *ngFor="let feed of feeds" (click)="navigateToEventsPage(feed.name)">
+    <ion-item *ngFor="let feed of feedsList" (click)="navigateToEventsPage(feed.name)">
       <ion-grid class="ion-padding" >
         <ion-row>
           <ion-col

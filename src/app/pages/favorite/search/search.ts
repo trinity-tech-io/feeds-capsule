@@ -12,10 +12,11 @@ export class SearchFeedPage implements OnInit {
   feedDescs: any;
 
   constructor(
-    public serv: FeedService,
+    public feedService: FeedService,
     public navCtrl: NavController) {
 
-    this.feedDescs = serv.getAllFeeds();
+    feedService.doExploreTopics();
+    this.feedDescs = feedService.getAllFeeds();
   }
 
   ngOnInit() {
@@ -27,5 +28,14 @@ export class SearchFeedPage implements OnInit {
 
   navigateBackPage() {
     this.navCtrl.pop();
+  }
+
+  subscribe(nodeId: string){
+    alert("subscribe:"+nodeId);
+    // this.feedService.subscribe();
+  }
+
+  unsubscribe(nodeId: string){
+    alert("unsubscribe"+nodeId);
   }
 }
