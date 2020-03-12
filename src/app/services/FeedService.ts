@@ -45,7 +45,7 @@ enum PersistenceKey{
 let connectionStatus;
 let serverList: Friend[] = [];
 // let serverMap:{ nodeId: string , server: Friend}
-let faverFeedList: FavoriteFeed[];
+let faverFeedList: FavoriteFeed[] = [];
 // let faverMap:{ topic: string , faverFeed: FavoriteFeed }
 
 let exploreFeedList: FeedDescs[];
@@ -76,7 +76,7 @@ export class FeedDescs{
   constructor(
     public nodeId: string,
     public avatar: string,
-    public title: string,
+    public topic: string,
     public desc: string,
     public followState: string
     ){
@@ -85,6 +85,8 @@ export class FeedDescs{
 
 export class FeedEvents{
   constructor(
+    public nodeId: string,
+    public topic: string,
     public timestamp: string,
     public message: string){
   }
@@ -129,11 +131,11 @@ export class FeedService {
       firstInit = true;
     }
     serverList = this.storeService.get(PersistenceKey.serverList);
-    if (serverList = null) {
+    if (serverList == null) {
       serverList = [];
     }
     faverFeedList = this.storeService.get(PersistenceKey.faverFeedList);
-    if (faverFeedList = null) {
+    if (faverFeedList == null) {
       faverFeedList = [];
     }
     exploreFeedList = this.storeService.get(PersistenceKey.feedDescList);
@@ -226,6 +228,11 @@ export class FeedService {
   }
 
   sendMessage(nodeId: string, method: string, params: any, id: string){
+    if(!this.checkServerConnection(nodeId)){
+      alert("friend offline");
+      return;
+    }
+
     let message = this.jsonRPCService.assembleJson(method, params, id);
     this.transportService.transportMsg(
       nodeId, 
@@ -342,6 +349,20 @@ export class FeedService {
     }
   }
 
+  findServer(nodeId: string):Friend{
+    if(serverList == null || serverList == undefined){
+      return null;
+    }
+
+    for (let index = 0; index < serverList.length; index++) {
+      if (serverList[index].userId == nodeId){
+        return serverList[index];
+      }
+    }
+
+    return null;
+  }
+
   carrierReadyCallback(){
     this.events.subscribe('carrier:ready', () => {
       if (firstInit) {
@@ -385,26 +406,29 @@ export class FeedService {
 
   friendMessageCallback(){
     this.events.subscribe('carrier:friendMessage', event => {
+      
+
       let from = event.from;
       let response = this.jsonRPCService.parseJson(event.message);
       console.log("friendMessageCallback");
+      console.log("response=>"+event.message);
       console.log("from=>"+from);
       console.log("ret=>"+response);
       
       //TODO
       if (response.method == "new_event"){
-          this.handleNewEventResult(response.params);
+          this.handleNewEventResult(from, response.params);
           return;
       }
 
       switch (response.id) {
         case MethodType.subscribe:
           console.log("subscribe response");
-          this.handleSubscriptResult(response.result);
+          this.handleSubscriptResult(from, response.result);
           break;
         case MethodType.unsubscribe:
           console.log("unsubscribe response");
-          this.handleUnsubscribeResult(response.result);
+          this.handleUnsubscribeResult(from, response.result);
           break;
         case MethodType.exploreTopics:
           console.log("exploreTopics response");
@@ -480,10 +504,17 @@ export class FeedService {
     "id": "id(JSON-RPC conformed type)"
   }
   */
-  handleSubscriptResult(result: any){
+  handleSubscriptResult(nodeId: string, result: any){
     console.log("handleSubscriptResult=>");
     //local process or send listSubscribed request to server
-    this.doListSubscribedTopics(serverList);
+    // TODO
+    let server = this.findServer(nodeId);
+
+    if (server == null || server == undefined){
+      return ;
+    }
+
+    this.doListSubscribedTopic(server);
   }
 
   /*
@@ -493,8 +524,18 @@ export class FeedService {
     "id": "id(JSON-RPC conformed type)"
   } 
   */
-  handleUnsubscribeResult(result: any){
+  handleUnsubscribeResult(nodeId: string,result: any){
     console.log("handleUnsubscribeResult=>");
+
+    // TODO
+    // faverFeedList.splice()
+    let server = this.findServer(nodeId);
+
+    if (server == null || server == undefined){
+      return ;
+    }
+
+    this.doListSubscribedTopic(server);
   }
 
   /*
@@ -524,59 +565,12 @@ export class FeedService {
       let desc = result[index].desc;
       let feed = new FeedDescs(nodeId,"paper",topic,desc,"follow");
 
+
+      console.log("before=>"+JSON.stringify(feed));
       this.updateExploreFeedList(feed, exploreFeedList);
+
+      console.log(JSON.stringify(exploreFeedList));
     }
-  }
-
-  updateExploreFeedList(feed: FeedDescs , feedList: FeedDescs[]){
-    let isContain = false;
-    for (let index = 0; index < feedList.length; index++) {
-      if (feedList[index].title == feed.title) {
-        isContain = true;
-        return;
-      }
-    }
-
-    if (!isContain) {
-      if(this.checkFollowState(feed.title,faverFeedList)){
-        feed.followState = "following";
-      }else{
-        feed.followState = "follow";
-      }
-      feedList.push(feed);
-      this.storeService.set(PersistenceKey.exploreFeedList, feedList);
-    }
-  }
-
-  // checkFollowState(exploreList:FeedDescs[] , faverFeedList:FavoriteFeed[]){
-  //   for (let i = 0; i < exploreList.length; i++) {
-  //     for (let j = 0; j < faverFeedList.length; j++) {
-  //       const favor = faverFeedList[j];
-  //       if (exploreList[i].title = favor.name){
-  //         exploreList[i].followState = "following";
-  //       }
-  //     }
-  //   }
-  // }
-
-  checkFollowState(topic: string, faverFeedList:FavoriteFeed[]): boolean{
-    let isFollowing = false;
-    if (faverFeedList == null){
-      return isFollowing;
-    }
-
-    for (let index = 0; index < faverFeedList.length; index++) {
-      if (topic = faverFeedList[index].name){
-        isFollowing = true;
-        // feed.followState = "following";
-      }
-    }
-
-    // if(!isFollowing){
-    //   feed.followState = "follow";
-    // }
-
-    return isFollowing;
   }
 
   /*
@@ -596,9 +590,16 @@ export class FeedService {
       return ;
     }
 
-    let topic = result.name;
-    let desc = result.desc;
-    console.log("handleListSubscribedResult=>"+topic +";"+desc);
+    for (let index = 0; index < result.length; index++) {
+      let topic = result[index].name;
+      let desc = result[index].desc;
+      console.log("handleListSubscribedResult=>"+topic +";"+desc);
+
+      let faverFeed = new FavoriteFeed(topic, desc, 0, new Date().getTime().toString());
+      // faverFeedList.push(faverFeed);
+      this.updateFavoriteFeedList(faverFeed, faverFeedList);
+    }
+    
 
     // TODO
     // checkList
@@ -634,14 +635,14 @@ export class FeedService {
     }
   }
   */
-  handleNewEventResult(result: any){
+  handleNewEventResult(nodeId: string, result: any){
     console.log("handleNewEventResult=>");
     // let topic = result.topic;
     // let event = result.event;
     // let seqno = result.seqno;
     // let ts = result.ts;
 
-    let event = new FeedEvents(result.ts,result.event);
+    let event = new FeedEvents(nodeId, result.topic, result.ts, result.event);
     eventsMap.eventList[eventsMap.topic].push(event);
     
     this.storeService.set(PersistenceKey.eventsMap,eventsMap);
@@ -655,6 +656,84 @@ export class FeedService {
   //     }
   //   }
   // }
+
+  updateFavoriteFeedList(feed:FavoriteFeed , feedList:FavoriteFeed[]){
+    if (feedList == null){
+      console.log("faverFeedList = null");
+    }else{
+      console.log("faverFeedList = "+JSON.stringify(feedList));
+    }
+    let isContain = false;
+    for (let index = 0; index < feedList.length; index++) {
+      const element = feedList[index];
+      if (feedList[index].name == feed.name) {
+        isContain = true;
+        return;
+      }
+    }
+
+    if (!isContain) {
+      feedList.push(feed);
+      this.storeService.set(PersistenceKey.faverFeedList,feedList);
+    }
+  }
+
+  updateExploreFeedList(feed: FeedDescs , feedList: FeedDescs[]){
+    let isContain = false;
+    for (let index = 0; index < feedList.length; index++) {
+      console.log("feed =>"+JSON.stringify(feed));
+      console.log("faverFeedList =>"+JSON.stringify(faverFeedList));
+      if (feedList[index].topic == feed.topic) {
+        isContain = true;
+
+        if(this.checkFollowState(feed.topic,faverFeedList)){
+          feedList[index].followState = "following";
+        }else{
+          feedList[index].followState = "follow";
+        }
+        return;
+      }
+    }
+
+    if (!isContain) {
+      if(this.checkFollowState(feed.topic,faverFeedList)){
+        feed.followState = "following";
+      }else{
+        feed.followState = "follow";
+      }
+      feedList.push(feed);
+      this.storeService.set(PersistenceKey.exploreFeedList, feedList);
+    }
+  }
+
+  checkFollowState(topic: string, faverFeedList:FavoriteFeed[]): boolean{
+    let isFollowing = false;
+    if (faverFeedList == null){
+      return isFollowing;
+    }
+
+    for (let index = 0; index < faverFeedList.length; index++) {
+      if (topic == faverFeedList[index].name){
+        isFollowing = true;
+        // feed.followState = "following";
+      }
+    }
+
+    // if(!isFollowing){
+    //   feed.followState = "follow";
+    // }
+
+    return isFollowing;
+  }
+
+  checkServerConnection(nodeId: string): boolean{
+    for (let index = 0; index < serverList.length; index++) {
+      if (serverList[index].userId == nodeId && serverList[index].status == ConnState.connected){
+        return true;
+      }
+    }
+    return false;
+  }
 }
 
 //// Virtual data
@@ -695,22 +774,30 @@ let virtrulFeedDescs:FeedDescs[] = [
   new FeedDescs("virtualnodeid","page","Football News","","follow"),
 ];
 let virtrulFeedEvents = [
-  new FeedEvents('12:00, December 10, 2019',
+  new FeedEvents('virtualnodeid',
+    'Carrier News',
+    '12:00, December 10, 2019',
     `Elastos Trinity DApp Store is your one-stop shop for finding the latest dApps available inside the Elastos ecosystem.
     The key difference between the applications available here and what you will find in any other app store is
     Elastos' guarantee of 100% security and privacy. All Elastos applications are decentralized, thus giving you
     the freedom to use the web as you should without the worries of data theft and third parties monetizing your data`),
-  new FeedEvents('15:00, December 10, 2019',
+  new FeedEvents('virtualnodeid',
+    'Carrier News',
+    '15:00, December 10, 2019',
     `Elastos Trinity DApp Store is your one-stop shop for finding the latest dApps available inside the Elastos ecosystem.
     The key difference between the applications available here and what you will find in any other app store is
     Elastos' guarantee of 100% security and privacy. All Elastos applications are decentralized, thus giving you
     the freedom to use the web as you should without the worries of data theft and third parties monetizing your data`),
-  new FeedEvents('15:00, December 12, 2019',
+  new FeedEvents('virtualnodeid',
+    'Carrier News',
+    '15:00, December 12, 2019',
     `Elastos Trinity DApp Store is your one-stop shop for finding the latest dApps available inside the Elastos ecosystem.
     The key difference between the applications available here and what you will find in any other app store is
     Elastos' guarantee of 100% security and privacy. All Elastos applications are decentralized, thus giving you
     the freedom to use the web as you should without the worries of data theft and third parties monetizing your data`),
-  new FeedEvents('15:00, December 14, 2019',
+  new FeedEvents('virtualnodeid',
+    'Carrier News',
+    '15:00, December 14, 2019',
     `Elastos Trinity DApp Store is your one-stop shop for finding the latest dApps available inside the Elastos ecosystem.
     The key difference between the applications available here and what you will find in any other app store is
     Elastos' guarantee of 100% security and privacy. All Elastos applications are decentralized, thus giving you

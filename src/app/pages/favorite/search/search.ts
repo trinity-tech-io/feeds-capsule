@@ -30,12 +30,13 @@ export class SearchFeedPage implements OnInit {
     this.navCtrl.pop();
   }
 
-  subscribe(nodeId: string){
-    alert("subscribe:"+nodeId);
-    // this.feedService.subscribe();
+  subscribe(nodeId: string, topic: string){
+    alert("subscribe:"+nodeId+";"+topic);
+    this.feedService.subscribe(nodeId, topic);
   }
 
-  unsubscribe(nodeId: string){
-    alert("unsubscribe"+nodeId);
+  unsubscribe(nodeId: string, topic: string){
+    alert("unsubscribe"+nodeId+";"+topic);
+    this.feedService.unSubscribe(nodeId, topic);
   }
 }

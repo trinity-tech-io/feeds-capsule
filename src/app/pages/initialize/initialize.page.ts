@@ -60,6 +60,9 @@ export class InitializePage implements OnInit {
     testget(){
     }
 
+    testclean(){
+        this.store.remove("faverFeedList");
+    }
 
     destroy(){
         this.carrierService.destroyCarrier();
