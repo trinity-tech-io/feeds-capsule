@@ -19,8 +19,14 @@ export class FeedContentPage implements OnInit {
     private navCtrl: NavController) {
 
     acRoute.params.subscribe((data)=>{
-      alert(JSON.stringify(data));
-      this.feedEvents = serv.getFeedEvents('carrier');
+      console.log(JSON.stringify(data));
+      let nodeId = data.nodeId;
+      let topic = data.feedName;
+      let lastSeqno = Number(data.lastSeqno);
+
+      if (lastSeqno == NaN) lastSeqno=0;
+      console.log("fff =>"+"nodeId:"+nodeId+";"+"topic:"+topic+"seqno:"+lastSeqno);
+      this.feedEvents = serv.getFeedEvents(nodeId, topic, lastSeqno+1);
     })
     
   }

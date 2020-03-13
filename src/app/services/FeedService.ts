@@ -37,7 +37,7 @@ enum PersistenceKey{
   serverList = "serverList",
   faverFeedList = "faverFeedList",
   feedDescList = "feedDescList",
-  eventsMap = "eventsMap",
+  eventList = "eventList",
   exploreFeedList = "exploreFeedList"
 }
 
@@ -46,22 +46,27 @@ let connectionStatus;
 let serverList: Friend[] = [];
 // let serverMap:{ nodeId: string , server: Friend}
 let faverFeedList: FavoriteFeed[] = [];
-// let faverMap:{ topic: string , faverFeed: FavoriteFeed }
+let faverMap:{} = {};
 
-let exploreFeedList: FeedDescs[];
-let eventsMap:{topic: string, eventList: FeedEvents[]};
+let exploreFeedList: FeedDescs[] = [];
+
+let eventList:FeedEvents[] = [];
+
+// let eventsMap:{topic: string, eventList: FeedEvents[]};
 let firstInit: boolean;
 
 let eventBus = null;
-
+let fetchTopic:string ;
 
 @Injectable()
 export class FavoriteFeed {
   constructor(
-      public name: string,
-      public desc: string,
-      public unread: number,
-      public lastReceived: string = '') {}
+    public nodeId: string,
+    public name: string,
+    public desc: string,
+    public unread: number,
+    public lastSeqno: number,
+    public lastReceived: string = '') {}
 }
 
 export class MyFeed {
@@ -88,7 +93,8 @@ export class FeedEvents{
     public nodeId: string,
     public topic: string,
     public timestamp: string,
-    public message: string){
+    public message: string,
+    public seqno: number){
   }
 }
 
@@ -143,10 +149,10 @@ export class FeedService {
       exploreFeedList = [];
     }
 
-    eventsMap = this.storeService.get(PersistenceKey.eventsMap);
-    // if (eventsMap == null){
-    //   eventsMap = {};
-    // }
+    eventList = this.storeService.get(PersistenceKey.eventList);
+    if (eventList == null){
+      eventList = [];
+    }
   }
 
   initCallback(){
@@ -193,14 +199,14 @@ export class FeedService {
     return virtrulFeedIntro;
   }
 
-  public getFeedEvents(topic: string) {
-
+  public getFeedEvents(nodeId: string, topic: string , since: number) {
+    this.fetchUnreceived(nodeId, topic, since);
     // eventMap.topic
     if (this.platform.is("desktop")) {
       return virtrulFeedEvents;
     }
 
-    return eventsMap.topic;
+    return this.searchEventList(nodeId, topic);
     //TODO
     // return virtrulFeedEvents;
   }
@@ -308,11 +314,14 @@ export class FeedService {
   }
 
   //{"jsonrpc":"2.0","method":"fetch_unreceived","params":{"topic":"movie","since":1021438976},"id":null}
-  fetchUnreceived(nodeId: string, topic: string, since: Date){
+  fetchUnreceived(nodeId: string, topic: string, since: number){
+      console.log( JSON.stringify(faverFeedList) );
+
+      fetchTopic = topic;
       let params = {};
       params["topic"] = topic;
-      params["since"] = Math.round(since.valueOf()/1000);
-      this.sendMessage(nodeId, "fetch_unreceived", null, MethodType.fetchUnreceived);
+      params["since"] = since;
+      this.sendMessage(nodeId, "fetch_unreceived", params, MethodType.fetchUnreceived);
   }
 
   parseFriends(data:any): Friend[]{
@@ -436,11 +445,11 @@ export class FeedService {
           break;
         case MethodType.listSubscribed:
           console.log("listSubscribed response");
-          this.handleListSubscribedResult(response.result);
+          this.handleListSubscribedResult(from, response.result);
           break;
         case MethodType.fetchUnreceived:
           console.log("fetchUnreceived response");
-          this.handleFetchUnreceivedResult(response.result);
+          this.handleFetchUnreceivedResult(from, response.result);
           break;
         case MethodType.createTopic:
           console.log("createTopic response");
@@ -583,7 +592,7 @@ export class FeedService {
     "id": "id(JSON-RPC conformed type)"
   } 
   */
-  handleListSubscribedResult(result: any){
+  handleListSubscribedResult(nodeId: string, result: any){
     console.log("handleListSubscribedResult=>");
     if (result == "") {
       console.log("result null");
@@ -595,11 +604,19 @@ export class FeedService {
       let desc = result[index].desc;
       console.log("handleListSubscribedResult=>"+topic +";"+desc);
 
-      let faverFeed = new FavoriteFeed(topic, desc, 0, new Date().getTime().toString());
+      
+
+      let faverFeed = new FavoriteFeed(nodeId, topic, desc, 0, 0, new Date().getTime().toString());
+      faverMap[topic]=faverFeed;
+      console.log( Object.keys(faverMap) );
+      
       // faverFeedList.push(faverFeed);
       this.updateFavoriteFeedList(faverFeed, faverFeedList);
     }
     
+    for(let key  in faverMap){
+      console.log(key + '---' + faverMap[key])
+    }
 
     // TODO
     // checkList
@@ -618,9 +635,39 @@ export class FeedService {
     "id": "id(JSON-RPC conformed type)"
   } 
   */
-  handleFetchUnreceivedResult(result: any){
+  handleFetchUnreceivedResult(from: string, result: any){
 
+    
+    if (result == null || result == undefined){
+      return ;
+    }
+
+    // let faverFeed = 
+    for (let index = 0; index < result.length; index++) {
+      result[index].seqno;
+      result[index].event;
+      result[index].ts;
+
+// new FeedEvents(from, fetchTopic, result[index].ts, result[index].event, result[index].seqno);
+      this.updateEventList(new FeedEvents(from, fetchTopic, result[index].ts, result[index].event, result[index].seqno),eventList)
+    }
+
+    // this.updateFavoriteFeedList();
+      // params["since"] = Math.round(since.valueOf()/1000);
+      // params["since"] = Math.round(since.valueOf()/1000);
     console.log("handleFetchUnreceivedResult=>");
+  }
+
+  updateEventList(feedEvent: FeedEvents, list: FeedEvents[]){
+    for (let index = 0; index < list.length; index++) {
+      if (list[index].nodeId == feedEvent.nodeId && 
+          list[index].topic == feedEvent.topic &&
+          list[index].seqno == feedEvent.seqno) {
+            return ;
+          }
+    }
+    list.push(feedEvent);
+    this.storeService.set(PersistenceKey.eventList,list);
   }
 
   /*
@@ -642,10 +689,9 @@ export class FeedService {
     // let seqno = result.seqno;
     // let ts = result.ts;
 
-    let event = new FeedEvents(nodeId, result.topic, result.ts, result.event);
-    eventsMap.eventList[eventsMap.topic].push(event);
-    
-    this.storeService.set(PersistenceKey.eventsMap,eventsMap);
+    let event = new FeedEvents(nodeId, result.topic, result.ts, result.event, result.seqno);
+    eventList.push(event);
+    this.storeService.set(PersistenceKey.eventList,eventList);
   }
 
   // doListSubscribedTopics(serverList: Friend[]){
@@ -734,6 +780,19 @@ export class FeedService {
     }
     return false;
   }
+
+  searchEventList(nodeId: string, topic: string){
+    let events = [];
+
+    for (let index = 0; index < eventList.length; index++) {
+      if(eventList[index].nodeId == nodeId && eventList[index].topic == topic){
+        events.push(eventList[index]);
+      }
+    }
+
+    return events;
+  }
+
 }
 
 //// Virtual data
@@ -745,15 +804,15 @@ let virtrulServers:Friend[] = [
 
 
 let virtrulFavorFeeds:FavoriteFeed[] = [
-  new FavoriteFeed('Carrier News', '', 24),
-  new FavoriteFeed('Hive News',  '', 35),
-  new FavoriteFeed('Football',  '', 4),
-  new FavoriteFeed('Trinity News',  '', 0, '12:00 Dec.12'),
-  new FavoriteFeed('Hollywood Movies', '',  24),
-  new FavoriteFeed('Cofee',  '', 35),
-  new FavoriteFeed('MacBook',  '', 4),
-  new FavoriteFeed('Rust development', '',  0, '12:00 Desc.12'),
-  new FavoriteFeed('Golang',  '', 8)
+  new FavoriteFeed('virtualnodeid', 'Carrier News', '', 24, 0),
+  new FavoriteFeed('virtualnodeid', 'Hive News',  '', 35, 0),
+  new FavoriteFeed('virtualnodeid', 'Football',  '', 4, 0),
+  new FavoriteFeed('virtualnodeid', 'Trinity News',  '', 0, 0, '12:00 Dec.12'),
+  new FavoriteFeed('virtualnodeid', 'Hollywood Movies', '',  24, 0),
+  new FavoriteFeed('virtualnodeid', 'Cofee',  '', 35, 0),
+  new FavoriteFeed('virtualnodeid', 'MacBook',  '', 4, 0),
+  new FavoriteFeed('virtualnodeid', 'Rust development', '',  0, 0, '12:00 Desc.12'),
+  new FavoriteFeed('virtualnodeid', 'Golang',  '', 8, 0)
 ];
 
 let virtrulMyFeeds:MyFeed[] = [
@@ -780,28 +839,32 @@ let virtrulFeedEvents = [
     `Elastos Trinity DApp Store is your one-stop shop for finding the latest dApps available inside the Elastos ecosystem.
     The key difference between the applications available here and what you will find in any other app store is
     Elastos' guarantee of 100% security and privacy. All Elastos applications are decentralized, thus giving you
-    the freedom to use the web as you should without the worries of data theft and third parties monetizing your data`),
+    the freedom to use the web as you should without the worries of data theft and third parties monetizing your data`,
+    1),
   new FeedEvents('virtualnodeid',
     'Carrier News',
     '15:00, December 10, 2019',
     `Elastos Trinity DApp Store is your one-stop shop for finding the latest dApps available inside the Elastos ecosystem.
     The key difference between the applications available here and what you will find in any other app store is
     Elastos' guarantee of 100% security and privacy. All Elastos applications are decentralized, thus giving you
-    the freedom to use the web as you should without the worries of data theft and third parties monetizing your data`),
+    the freedom to use the web as you should without the worries of data theft and third parties monetizing your data`,
+    1),
   new FeedEvents('virtualnodeid',
     'Carrier News',
     '15:00, December 12, 2019',
     `Elastos Trinity DApp Store is your one-stop shop for finding the latest dApps available inside the Elastos ecosystem.
     The key difference between the applications available here and what you will find in any other app store is
     Elastos' guarantee of 100% security and privacy. All Elastos applications are decentralized, thus giving you
-    the freedom to use the web as you should without the worries of data theft and third parties monetizing your data`),
+    the freedom to use the web as you should without the worries of data theft and third parties monetizing your data`,
+    1),
   new FeedEvents('virtualnodeid',
     'Carrier News',
     '15:00, December 14, 2019',
     `Elastos Trinity DApp Store is your one-stop shop for finding the latest dApps available inside the Elastos ecosystem.
     The key difference between the applications available here and what you will find in any other app store is
     Elastos' guarantee of 100% security and privacy. All Elastos applications are decentralized, thus giving you
-    the freedom to use the web as you should without the worries of data theft and third parties monetizing your data`),
+    the freedom to use the web as you should without the worries of data theft and third parties monetizing your data`,
+    1),
 ];
 
 let virtrulFeedIntro = new FeedIntro(

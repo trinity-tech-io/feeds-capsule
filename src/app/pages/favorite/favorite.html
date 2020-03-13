@@ -25,7 +25,7 @@
     </ion-button>
   </div>
   <ion-list>
-    <ion-item *ngFor="let feed of feedsList" (click)="navigateToEventsPage(feed.name)">
+    <ion-item *ngFor="let feed of feedsList" (click)="navigateToEventsPage(feed.nodeId, feed.name, feed.lastSeqno)">
       <ion-grid class="ion-padding" >
         <ion-row>
           <ion-col

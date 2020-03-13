@@ -11,7 +11,7 @@ const routes: Routes = [
   { path: 'initialize', loadChildren: './pages/initialize/initialize.module#InitializePageModule' },
 
   { path: 'favorite', loadChildren: () => FavorFeedsPageModule },
-  { path: 'favorite/content/:feedName', loadChildren: () => FeedContentPageModule },
+  { path: 'favorite/content/:nodeId/:feedName/:lastSeqno', loadChildren: () => FeedContentPageModule },
   { path: 'favorite/search', loadChildren: () =>  ExplorePageModule },
   { path: 'favorite/search/about', loadChildren: () => FeedAboutPageModule },
 

@@ -20,7 +20,8 @@ export class FavorFeedsPage {
       this.feedsList = service.getFavorFeeds();
   }
 
-  navigateToEventsPage(feedName: string) {
-    this.router.navigate(['/favorite/content/',feedName]);
+  navigateToEventsPage(nodeId: string, feedName: string, lastSeqno: number) {
+    console.log(nodeId+";"+feedName+";"+lastSeqno);
+    this.router.navigate(['/favorite/content/',nodeId, feedName, lastSeqno]);
   }
 }
