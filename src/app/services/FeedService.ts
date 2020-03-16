@@ -11,6 +11,9 @@ import { StorageService } from 'src/app/services/StorageService';
 export class Friend{
   constructor(
       public userId: string,
+      // public address: string,
+      public email: string,
+      public region: string,
       public name: string,
       public status: ConnState) {}
 }
@@ -35,6 +38,7 @@ enum MethodType {
 enum PersistenceKey{
   firstInit = "firstInit",
   serverList = "serverList",
+  serverMap = "serverMap",
   faverFeedList = "faverFeedList",
   feedDescList = "feedDescList",
   eventList = "eventList",
@@ -42,9 +46,11 @@ enum PersistenceKey{
 }
 
 // let serverUserIdList:any = [];
-let connectionStatus;
-let serverList: Friend[] = [];
-// let serverMap:{ nodeId: string , server: Friend}
+let connectionStatus = ConnState.disconnected;
+// let serverList: Friend[] = [];
+let serverList: string[] = [];
+let serverMap: {} = {};
+
 let faverFeedList: FavoriteFeed[] = [];
 let faverMap:{} = {};
 
@@ -118,7 +124,10 @@ export class FeedService {
 
   init(){
     if (this.platform.is('desktop')) {
-      serverList = virtrulServers;
+      serverList = virturlServerList;
+      serverMap = virtrulServersMap;
+
+      // serverList = virtrulServers;
       faverFeedList = virtrulFavorFeeds;
       exploreFeedList = virtrulFeedDescs;
 
@@ -136,10 +145,13 @@ export class FeedService {
     if (firstInit == null) {
       firstInit = true;
     }
+
     serverList = this.storeService.get(PersistenceKey.serverList);
-    if (serverList == null) {
+    if (serverList == null || serverList == undefined) {
       serverList = [];
+      serverMap = {};
     }
+
     faverFeedList = this.storeService.get(PersistenceKey.faverFeedList);
     if (faverFeedList == null) {
       faverFeedList = [];
@@ -166,9 +178,12 @@ export class FeedService {
   prepare(){
     this.carrierService.getFriends(
         (ret) => {
-          serverList = this.parseFriends(ret);
-          this.doListSubscribedTopics(serverList);
+          this.parseFriends(ret, serverList, serverMap);
+          // serverList = this.parseFriends(ret);
+          
+          this.doListSubscribedTopics(serverList, serverMap);
           this.storeService.set(PersistenceKey.serverList,serverList);
+          this.storeService.set(PersistenceKey.serverMap,serverMap);
         },
         null);
 
@@ -180,7 +195,11 @@ export class FeedService {
   }
 
   getServerList(): Friend[]{
-    return serverList;
+    let list: Friend[] = [];
+    for (let index = 0; index < serverList.length; index++) {
+      list.push(serverMap[serverList[index]]);
+    }
+    return list;
   }
 
   getFavorFeeds() {
@@ -219,18 +238,30 @@ export class FeedService {
     return virtrulMyFeeds;
   }
 
-  updateServerList(userId: string, connectStatus: ConnState): Friend{
-    if(serverList == null){
+  updateServerList(serverList: string[], serverMap:any, server:Friend){
+    if(serverList == null || serverList == undefined){
+      return ;
+    }
+    
+    let index = serverList.indexOf(server.userId);
+
+    if (index == -1){
+      serverList.push(server.userId);
+      serverMap[server.userId] = server;
       return ;
     }
 
-    for (let i = 0; i < serverList.length; i++) {
-      const server = serverList[i];
-      if(server.userId == userId){
-        server.status = connectStatus;
-        return server;
-      }
-    }
+    serverMap[server.userId] = server;
+
+
+    // for (let i = 0; i < serverList.length; i++) {
+    //   let serverKey = serverList[]
+    //   const server = serverList[i];
+    //   if(server.userId == userId){
+    //     server.status = connectStatus;
+    //     return server;
+    //   }
+    // }
   }
 
   sendMessage(nodeId: string, method: string, params: any, id: string){
@@ -299,13 +330,16 @@ export class FeedService {
   }
 
   doExploreTopics(){
-    if (serverList == null){
+    if (serverList == null || serverList == undefined){
       return ;
     }
 
     for (let index = 0; index < serverList.length; index++) {
-      this.exploreTopics(serverList[index].userId);
+      this.exploreTopics(serverList[index]);
     }
+    // for (let index = 0; index < serverList.length; index++) {
+    //   this.exploreTopics(serverList[index].userId);
+    // }
   }
 
   //{"jsonrpc":"2.0","method":"list_subscribed_topics","id":null}
@@ -324,26 +358,77 @@ export class FeedService {
       this.sendMessage(nodeId, "fetch_unreceived", params, MethodType.fetchUnreceived);
   }
 
-  parseFriends(data:any): Friend[]{
-    let serverFriendList: Friend[] = [];
+  // parseFriends(data:any): Friend[]{
+  //   let serverFriendList: Friend[] = [];
+  //   let servers = data.friends;
+  //       if (typeof servers == "string") {
+  //         servers = JSON.parse(servers);
+  //       }
+  //       for (let id in servers) {
+  //           let friend = new Friend(servers[id].userInfo.userId,
+  //                                   servers[id].userInfo.name,
+  //                                   servers[id].connection);
+  //           serverFriendList.push(friend);
+  //       }
+  //   return serverFriendList;
+  // }
+
+  parseFriends(data:any , serverList: string[] , serverMap: any){
+    // let serverFriendList: Friend[] = [];
     let servers = data.friends;
-        if (typeof servers == "string") {
-          servers = JSON.parse(servers);
-        }
-        for (let id in servers) {
-            let friend = new Friend(servers[id].userInfo.userId,
-                                    servers[id].userInfo.name,
-                                    servers[id].connection);
-            serverFriendList.push(friend);
-        }
-    return serverFriendList;
+    console.log("000"+JSON.stringify(serverMap));
+    console.log("000"+JSON.stringify(serverList));
+    console.log("2222"+(typeof servers));
+    if (typeof servers == "string") {
+      servers = JSON.parse(servers);
+    }
+
+    console.log("2222");
+    console.log("servers="+JSON.stringify(servers));
+    for (let id in servers) {
+      let friend = new Friend(servers[id].userInfo.userId,
+                              // servers[id].userInfo.address,
+                              servers[id].userInfo.email,
+                              servers[id].userInfo.region,
+                              servers[id].userInfo.name,
+                              servers[id].connection);
+      // let friend = new Friend(servers[id].userInfo.userId,
+      //                         servers[id].userInfo.name,
+      //                         servers[id].connection);
+
+                              
+      serverMap[servers[id].userInfo.userId] = friend;
+
+      if (serverList.indexOf(servers[id].userInfo.userId) == -1){
+        serverList.push(servers[id].userInfo.userId);
+      }
+    }
+
+    this.storeService.set(PersistenceKey.serverList,serverList);
+    this.storeService.set(PersistenceKey.serverMap,serverMap);
+
+    console.log(JSON.stringify(serverMap));
+    console.log(JSON.stringify(serverList));
   }
 
-  doListSubscribedTopics(serverList: Friend[]){
+  // doListSubscribedTopics(serverList: Friend[]){
+  //   for (let index = 0; index < serverList.length; index++) {
+  //     const server = serverList[index];
+  //     if (server.status == ConnState.connected) {
+  //       this.listSubscribed(server.userId);
+  //     }
+  //   }
+  // }
+
+  doListSubscribedTopics(serverList: string[] , serverMap: any){
+    if (serverList == null || serverList == undefined){
+      return ;
+    }
+
     for (let index = 0; index < serverList.length; index++) {
-      const server = serverList[index];
-      if (server.status == ConnState.connected) {
-        this.listSubscribed(server.userId);
+      const serverKey = serverList[index];
+      if (serverMap[serverKey].status == ConnState.connected) {
+        this.listSubscribed(serverMap[serverKey].userId);
       }
     }
   }
@@ -359,17 +444,28 @@ export class FeedService {
   }
 
   findServer(nodeId: string):Friend{
-    if(serverList == null || serverList == undefined){
-      return null;
+    
+    // if(serverList == null || serverList == undefined){
+    //   return null;
+    // }
+
+    // let index = serverList.indexOf(nodeId);
+    // if (index == -1){
+    //   return null;
+    // }
+    
+    if (serverMap == null || serverMap == undefined) {
+      return undefined;
     }
 
-    for (let index = 0; index < serverList.length; index++) {
-      if (serverList[index].userId == nodeId){
-        return serverList[index];
-      }
-    }
+    return serverMap[nodeId];
+    // for (let index = 0; index < serverList.length; index++) {
+    //   if (serverList[index].userId == nodeId){
+    //     return serverList[index];
+    //   }
+    // }
 
-    return null;
+    // return null;
   }
 
   carrierReadyCallback(){
@@ -383,8 +479,16 @@ export class FeedService {
 
   friendConnectionCallback(){
     this.events.subscribe('carrier:friendConnection', ret => {
-      let server = this.updateServerList(ret.friendId,ret.status);
-      this.doListSubscribedTopic(server);
+      let friendId = ret.friendId;
+      let friendStatus = ret.status;
+      console.log("11111"+JSON.stringify(serverList));
+      console.log("222"+JSON.stringify(serverMap));
+      serverMap[friendId].status = friendStatus;
+      if (serverMap[friendId].status == ConnState.connected){
+        this.doListSubscribedTopic(serverMap[friendId]);
+      }
+
+      eventBus.publish('feeds:friendConnection',this.getServerList());
     });
   }
 
@@ -392,10 +496,18 @@ export class FeedService {
     this.events.subscribe('carrier:friendAdded', msg => {
       let server: any;
       if (this.platform.is("desktop")) {
-          server = new Friend('100', 'New Contact', ConnState.disconnected);
+          server = new Friend('100', 
+                              // 'New Address', 
+                              'NewEmail@email.com', 
+                              'beijing', 
+                              'New Contact', 
+                              ConnState.disconnected);
       } else {
           server = new Friend(
               msg.friendInfo.userInfo.userId,
+              // msg.friendInfo.userInfo.address,
+              msg.friendInfo.userInfo.email,
+              msg.friendInfo.userInfo.region,
               msg.friendInfo.userInfo.name,
               msg.friendInfo.status);
       }
@@ -773,12 +885,16 @@ export class FeedService {
   }
 
   checkServerConnection(nodeId: string): boolean{
-    for (let index = 0; index < serverList.length; index++) {
-      if (serverList[index].userId == nodeId && serverList[index].status == ConnState.connected){
-        return true;
-      }
+    if (serverMap[nodeId].status == ConnState.connected){
+      return true;
     }
     return false;
+    // for (let index = 0; index < serverList.length; index++) {
+    //   if (serverList[index].userId == nodeId && serverList[index].status == ConnState.connected){
+    //     return true;
+    //   }
+    // }
+    // return false;
   }
 
   searchEventList(nodeId: string, topic: string){
@@ -796,23 +912,45 @@ export class FeedService {
 }
 
 //// Virtual data
-let virtrulServers:Friend[] = [
-  new Friend('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', '',   ConnState.connected),
-  new Friend('3x4xVSJmtvty1tM8vzcz2pzW2WG7TmNavbnz9ka1EtZy', 'Tom', ConnState.disconnected),
-  new Friend('3x4xVSJmtvty1tM8vzcz2pzW2WG7TmNavbnz9ka1EtZy', 'Jerry', ConnState.connected)
+let virturlServerList: string[] = [
+  "J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo",
+  "3x4xVSJmtvty1tM8vzcz2pzW2WG7TmNavbnz9ka1EtZy",
+]
+let virtrulServersMap: any = {
+  "J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo":new Friend('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo',
+                                                            // 'edTfdBfDVXMvQfXMhEvKrbvxaDxGGURyRfxDVMhbdHZFgAcwmGtS',
+                                                            'jerry@email.com',
+                                                            'beijing', 
+                                                            '',
+                                                            ConnState.connected),
+  "3x4xVSJmtvty1tM8vzcz2pzW2WG7TmNavbnz9ka1EtZy":new Friend('3x4xVSJmtvty1tM8vzcz2pzW2WG7TmNavbnz9ka1EtZy', 
+                                                            // 'TvvfqqvetoPcrb6rkD5W3gNBxcWYQpqhqddqATVbbaMNcCCp4Hib',
+                                                            'tom@email.com',
+                                                            'shanghai',
+                                                            'Tom', 
+                                                            ConnState.disconnected)
+}
+// let virtrulServers:Friend[] = [
+//   new Friend('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', '',   ConnState.connected),
+//   new Friend('3x4xVSJmtvty1tM8vzcz2pzW2WG7TmNavbnz9ka1EtZy', 'Tom', ConnState.disconnected),
+//   new Friend('3x4xVSJmtvty1tM8vzcz2pzW2WG7TmNavbnz9ka1EtZy', 'Jerry', ConnState.connected)
+// ];
+
+let virturlFFList: string[] = [
+  'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo'+'Carrier News',
+  'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo'+'Hive News',
 ];
 
-
 let virtrulFavorFeeds:FavoriteFeed[] = [
-  new FavoriteFeed('virtualnodeid', 'Carrier News', '', 24, 0),
-  new FavoriteFeed('virtualnodeid', 'Hive News',  '', 35, 0),
-  new FavoriteFeed('virtualnodeid', 'Football',  '', 4, 0),
-  new FavoriteFeed('virtualnodeid', 'Trinity News',  '', 0, 0, '12:00 Dec.12'),
-  new FavoriteFeed('virtualnodeid', 'Hollywood Movies', '',  24, 0),
-  new FavoriteFeed('virtualnodeid', 'Cofee',  '', 35, 0),
-  new FavoriteFeed('virtualnodeid', 'MacBook',  '', 4, 0),
-  new FavoriteFeed('virtualnodeid', 'Rust development', '',  0, 0, '12:00 Desc.12'),
-  new FavoriteFeed('virtualnodeid', 'Golang',  '', 8, 0)
+  new FavoriteFeed('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'Carrier News', '', 24, 0),
+  new FavoriteFeed('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'Hive News',  '', 35, 0),
+  new FavoriteFeed('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'Football',  '', 4, 0),
+  new FavoriteFeed('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'Trinity News',  '', 0, 0, '12:00 Dec.12'),
+  new FavoriteFeed('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'Hollywood Movies', '',  24, 0),
+  new FavoriteFeed('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'Cofee',  '', 35, 0),
+  new FavoriteFeed('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'MacBook',  '', 4, 0),
+  new FavoriteFeed('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'Rust development', '',  0, 0, '12:00 Desc.12'),
+  new FavoriteFeed('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'Golang',  '', 8, 0)
 ];
 
 let virtrulMyFeeds:MyFeed[] = [
@@ -825,15 +963,15 @@ let virtrulMyFeeds:MyFeed[] = [
 ];
 
 let virtrulFeedDescs:FeedDescs[] = [
-  new FeedDescs("virtualnodeid","page","Carrier News","","following"),
-  new FeedDescs("virtualnodeid","page","Hive News","","following"),
-  new FeedDescs("virtualnodeid","page","Trinity News","","following"),
-  new FeedDescs("virtualnodeid","page","DID News","","follow"),
-  new FeedDescs("virtualnodeid","page","DMA News","","following"),
-  new FeedDescs("virtualnodeid","page","Football News","","follow"),
+  new FeedDescs("J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo","page","Carrier News","","following"),
+  new FeedDescs("J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo","page","Hive News","","following"),
+  new FeedDescs("J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo","page","Trinity News","","following"),
+  new FeedDescs("J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo","page","DID News","","follow"),
+  new FeedDescs("J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo","page","DMA News","","following"),
+  new FeedDescs("J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo","page","Football News","","follow"),
 ];
 let virtrulFeedEvents = [
-  new FeedEvents('virtualnodeid',
+  new FeedEvents('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo',
     'Carrier News',
     '12:00, December 10, 2019',
     `Elastos Trinity DApp Store is your one-stop shop for finding the latest dApps available inside the Elastos ecosystem.
@@ -841,7 +979,7 @@ let virtrulFeedEvents = [
     Elastos' guarantee of 100% security and privacy. All Elastos applications are decentralized, thus giving you
     the freedom to use the web as you should without the worries of data theft and third parties monetizing your data`,
     1),
-  new FeedEvents('virtualnodeid',
+  new FeedEvents('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo',
     'Carrier News',
     '15:00, December 10, 2019',
     `Elastos Trinity DApp Store is your one-stop shop for finding the latest dApps available inside the Elastos ecosystem.
@@ -849,7 +987,7 @@ let virtrulFeedEvents = [
     Elastos' guarantee of 100% security and privacy. All Elastos applications are decentralized, thus giving you
     the freedom to use the web as you should without the worries of data theft and third parties monetizing your data`,
     1),
-  new FeedEvents('virtualnodeid',
+  new FeedEvents('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo',
     'Carrier News',
     '15:00, December 12, 2019',
     `Elastos Trinity DApp Store is your one-stop shop for finding the latest dApps available inside the Elastos ecosystem.
@@ -857,7 +995,7 @@ let virtrulFeedEvents = [
     Elastos' guarantee of 100% security and privacy. All Elastos applications are decentralized, thus giving you
     the freedom to use the web as you should without the worries of data theft and third parties monetizing your data`,
     1),
-  new FeedEvents('virtualnodeid',
+  new FeedEvents('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo',
     'Carrier News',
     '15:00, December 14, 2019',
     `Elastos Trinity DApp Store is your one-stop shop for finding the latest dApps available inside the Elastos ecosystem.

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NativeService } from 'src/app/services/NativeService';
+import { FeedService } from 'src/app/services/FeedService';
 
 class Attribute {
   constructor(
@@ -17,31 +18,38 @@ class Attribute {
 
 export class ServerInfoPage implements OnInit {
   state: number = 0;
+  private connectStatus:any;
+  private attrs;
 
   constructor(
     private native: NativeService,
-    private route: ActivatedRoute) {}
+    private route: ActivatedRoute,
+    private feedService: FeedService) {}
 
-  attrs = [
-    new Attribute('radio-button-on', 'nodeid', 'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo'.slice(0, 31)),
-    new Attribute('home', 'address', 'edTfdBfDVXMvQfXMhEvKrbvxaDxGGURyRfxDVMhbdHZFgAcwmGtS'.slice(0, 31)),
-    new Attribute('person', 'name', 'coding'),
-    new Attribute('mail', 'email', 'abc@example.com'),
-    new Attribute('locate', 'region', 'shanbhai')
-  ];
+  // attrs = [
+  //   new Attribute('radio-button-on', 'nodeid', 'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo'.slice(0, 31)),
+  //   new Attribute('home', 'address', 'edTfdBfDVXMvQfXMhEvKrbvxaDxGGURyRfxDVMhbdHZFgAcwmGtS'.slice(0, 31)),
+  //   new Attribute('person', 'name', 'coding'),
+  //   new Attribute('mail', 'email', 'abc@example.com'),
+  //   new Attribute('locate', 'region', 'shanbhai')
+  // ];
 
   ngOnInit() {
-    this.route.paramMap.subscribe(paramMap => {
-      /*
-      if (!paramMap.has('dappId')) {
-        this.navCtrl.navigateBack('/store/tabs/dapps');
-        return;
-      }
-      this.dapp = this.dappsService.getDapp(paramMap.get('dappId'));
-      this.dappIcon = this.dappsService.getAppIcon(this.dapp);
-      this.dappBanner = this.dappsService.getAppBanner(this.dapp);
-      console.log('Dapp', this.dapp);
-      */
+    this.connectStatus = this.feedService.getConnectionStatus();
+    this.route.params.subscribe(data => {
+      console.log(data.userId);
+      
+      let server = this.feedService.findServer(data.userId);
+      console.log(JSON.stringify(server));
+
+      this.attrs = [
+        new Attribute('radio-button-on', 'nodeid', server.userId.slice(0, 31)),
+        // new Attribute('home', 'address', server.address.slice(0, 31)),
+        new Attribute('person', 'name', server.name),
+        new Attribute('mail', 'email', server.email),
+        new Attribute('locate', 'region', server.region)
+      ];
+      
     });
   }
 

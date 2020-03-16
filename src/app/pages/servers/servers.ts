@@ -3,18 +3,7 @@ import { Events, Platform } from '@ionic/angular';
 import { NativeService } from 'src/app/services/NativeService';
 import { CarrierService } from 'src/app/services/CarrierService';
 import { FeedService } from 'src/app/services/FeedService';
-
-// enum ConnState {
-//     connected = 1,
-//     disconnected = 0
-// };
-
-// class Friend {
-//     constructor(
-//         public userId: string,
-//         public name: string,
-//         public status: ConnState) {}
-// }
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'page-servers',
@@ -23,14 +12,7 @@ import { FeedService } from 'src/app/services/FeedService';
 })
 
 export class ServersPage implements OnInit {
-    // private status = ConnState.connected;
-    private status = "disconnect";
-
-    // fakeServers:FeedService.Friend[] = [
-    //     new Friend('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', '',   ConnState.connected),
-    //     new Friend('3x4xVSJmtvty1tM8vzcz2pzW2WG7TmNavbnz9ka1EtZy', 'Tom', ConnState.disconnected)
-    // ]
-
+    private connectStatus = 1;
     serverList:any;
 
     constructor(
@@ -39,15 +21,13 @@ export class ServersPage implements OnInit {
         private zone: NgZone,
         private native: NativeService,
         private feedService: FeedService,
-        private carrierService: CarrierService) {
-            // if (this.platform.is("desktop")) {
-            //     this.serverList = feedService.getServerList();
-            // }
+        private router: Router) {
+           
     }
 
     ngOnInit() {
         this.serverList = this.feedService.getServerList();
-        this.status = this.feedService.getConnectionStatus();
+        this.connectStatus = this.feedService.getConnectionStatus();
 
         this.event.subscribe('feeds:updateServerList', serverList => {
             this.zone.run(() => {
@@ -57,54 +37,27 @@ export class ServersPage implements OnInit {
 
         this.event.subscribe('feeds:connectionChanged', connectionStatus => {
             this.zone.run(() => {
-                this.status = connectionStatus;
+                this.connectStatus = connectionStatus;
             });
         });
+
+        this.event.subscribe('feeds:friendConnection',(list)=>{
+            this.zone.run(() => {
+                this.serverList = list;
+            });
+        })
     }
 
-    checkConnectionStatus(state){
-        // if(state == ConnState.disconnected){
-        //     this.status = "disconnect";
-        // }else{
-        //     this.status = "";
-        // }
-    }
+
 
     ngOnDestroy() {
     }
 
     ionViewDidEnter() {
-        // this.serverList= [];
-        // if (this.platform.is("desktop")) { //for test
-        //     for (let i = 0; i < this.fakeServers.length; i++) {
-        //         this.serverList.push(this.fakeServers[i]);
-        //     }
-        //     return;
-        // }
-
-        // this.carrierService.getFriends((data) => {
-        //     let servers = data.friends;
-        //     if (typeof servers == "string") {
-        //         servers = JSON.parse(servers);
-        //     }
-
-        //     for (var id in servers) {
-        //         let friend = new Friend(
-        //             servers[id].userInfo.userId,
-        //             servers[id].userInfo.name,
-        //             servers[id].status
-        //         );
-        //         this.serverList.push(friend);
-        //     }
-        // },
-        // null);
     }
 
-    navToServerInfo() {
-        this.native.go('/menu/servers/server-info');
+    navToServerInfo(userId: string) {
+        // this.native.go(['/menu/servers/server-info',userId]);
+        this.router.navigate(['/menu/servers/server-info', userId]);
     }
-
-    // isFriendConnected(friend) {
-    //     this.serverList = this.feedService.getServerList();
-    // }
 }

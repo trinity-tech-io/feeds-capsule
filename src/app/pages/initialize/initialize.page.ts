@@ -62,6 +62,8 @@ export class InitializePage implements OnInit {
 
     testclean(){
         this.store.remove("faverFeedList");
+        this.store.remove("serverMap");
+        this.store.remove("serverList");
     }
 
     destroy(){
