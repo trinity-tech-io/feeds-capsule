@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, NgZone} from '@angular/core';
 import { NavController } from '@ionic/angular';
 import { FeedService } from 'src/app/services/FeedService';
+import { Events } from '@ionic/angular';
 
 @Component({
   selector: 'page-search',
@@ -9,14 +10,24 @@ import { FeedService } from 'src/app/services/FeedService';
 })
 
 export class SearchFeedPage implements OnInit {
-  feedDescs: any;
+  feedList: any;
 
   constructor(
-    public feedService: FeedService,
-    public navCtrl: NavController) {
+    private feedService: FeedService,
+    private navCtrl: NavController,
+    private events: Events,
+    private zone: NgZone) {
 
     feedService.doExploreTopics();
-    this.feedDescs = feedService.getAllFeeds();
+    this.feedList = feedService.getAllFeeds();
+    console.log('getAllFeeds222222222'+JSON.stringify(this.feedList));
+    this.events.subscribe('feeds:allFeedsListChanged', (feedList) => {
+      this.zone.run(() => {
+        this.feedList = feedList;
+        console.log("feedsList =>>>>"+JSON.stringify(this.feedList));
+        console.log('getAllFeeds3333'+JSON.stringify(this.feedList));
+      });
+    });
   }
 
   ngOnInit() {

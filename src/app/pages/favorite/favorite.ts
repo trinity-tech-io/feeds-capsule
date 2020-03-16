@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, NgZone} from '@angular/core';
 import { NavController } from '@ionic/angular';
 import { FeedService } from 'src/app/services/FeedService';
+import { Events } from '@ionic/angular';
 import { Router } from '@angular/router';
 
 @Component({
@@ -16,8 +17,17 @@ export class FavorFeedsPage {
   constructor(
     private service: FeedService,
     private navCtrl: NavController,
-    private router: Router) {
-      this.feedsList = service.getFavorFeeds();
+    private router: Router,
+    private events: Events,
+    private zone: NgZone) {
+      this.feedsList = service.getFavoriteFeeds();
+
+      this.events.subscribe('feeds:favoriteFeedListChanged', (feedsList) => {
+        this.zone.run(() => {
+          this.feedsList = feedsList;
+          console.log("feedsList =>>>>"+JSON.stringify(this.feedsList));
+        });
+      });
   }
 
   navigateToEventsPage(nodeId: string, feedName: string, lastSeqno: number) {

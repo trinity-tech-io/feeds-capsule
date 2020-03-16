@@ -1,7 +1,6 @@
 import { Component, OnInit, NgZone } from '@angular/core';
 import { Events, Platform } from '@ionic/angular';
 import { NativeService } from 'src/app/services/NativeService';
-import { CarrierService } from 'src/app/services/CarrierService';
 import { FeedService } from 'src/app/services/FeedService';
 import { Router } from '@angular/router';
 

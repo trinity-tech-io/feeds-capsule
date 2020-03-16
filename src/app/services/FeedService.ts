@@ -37,9 +37,17 @@ enum MethodType {
 
 enum PersistenceKey{
   firstInit = "firstInit",
+
   serverList = "serverList",
   serverMap = "serverMap",
-  faverFeedList = "faverFeedList",
+
+  favoriteFeedList = "favoriteFeedList",
+  favoriteFeedMap = "favoriteFeedMap",
+
+  allFeedList = "allFeedList",
+  allFeedMap = "allFeedMap",
+
+  // faverFeedList = "faverFeedList",
   feedDescList = "feedDescList",
   eventList = "eventList",
   exploreFeedList = "exploreFeedList"
@@ -51,10 +59,14 @@ let connectionStatus = ConnState.disconnected;
 let serverList: string[] = [];
 let serverMap: {} = {};
 
-let faverFeedList: FavoriteFeed[] = [];
-let faverMap:{} = {};
+// let faverFeedList: FavoriteFeed[] = [];
+let favoriteFeedList: string[] = [];
+let favoriteFeedMap:{} = {};
 
-let exploreFeedList: FeedDescs[] = [];
+let allFeedList: string[] = [];
+let allFeedMap: {} = {};
+
+// let exploreFeedList: FeedDescs[] = [];
 
 let eventList:FeedEvents[] = [];
 
@@ -75,6 +87,16 @@ export class FavoriteFeed {
     public lastReceived: string = '') {}
 }
 
+export class AllFeed{
+  constructor(
+    public nodeId: string,
+    public avatar: string,
+    public topic: string,
+    public desc: string,
+    public followState: string){
+  }
+}
+
 export class MyFeed {
   constructor(
     public avatar: string,
@@ -83,16 +105,16 @@ export class MyFeed {
     public lastUpdated: string) {}
 }
 
-export class FeedDescs{
-  constructor(
-    public nodeId: string,
-    public avatar: string,
-    public topic: string,
-    public desc: string,
-    public followState: string
-    ){
-  }
-}
+// export class FeedDescs{
+//   constructor(
+//     public nodeId: string,
+//     public avatar: string,
+//     public topic: string,
+//     public desc: string,
+//     public followState: string
+//     ){
+//   }
+// }
 
 export class FeedEvents{
   constructor(
@@ -124,12 +146,16 @@ export class FeedService {
 
   init(){
     if (this.platform.is('desktop')) {
-      serverList = virturlServerList;
-      serverMap = virtrulServersMap;
+      serverList = virtualServerList;
+      serverMap = virtualServersMap;
 
-      // serverList = virtrulServers;
-      faverFeedList = virtrulFavorFeeds;
-      exploreFeedList = virtrulFeedDescs;
+      favoriteFeedList = virtualFFList;
+      favoriteFeedMap = virtualFFMap;
+
+      allFeedList = virtualAFList;
+      allFeedMap = virtualAFMap;
+
+      // exploreFeedList = virtrulFeedDescs;
 
       return;
     }
@@ -149,17 +175,31 @@ export class FeedService {
     serverList = this.storeService.get(PersistenceKey.serverList);
     if (serverList == null || serverList == undefined) {
       serverList = [];
+    }
+    serverMap = this.storeService.get(PersistenceKey.serverMap);
+    if (serverMap == null || serverMap == undefined){
       serverMap = {};
     }
 
-    faverFeedList = this.storeService.get(PersistenceKey.faverFeedList);
-    if (faverFeedList == null) {
-      faverFeedList = [];
+
+    favoriteFeedList = this.storeService.get(PersistenceKey.favoriteFeedList);
+    if (favoriteFeedList == null || favoriteFeedList == undefined) {
+      favoriteFeedList = [];
     }
-    exploreFeedList = this.storeService.get(PersistenceKey.feedDescList);
-    if (exploreFeedList == null) {
-      exploreFeedList = [];
+    favoriteFeedMap = this.storeService.get(PersistenceKey.favoriteFeedMap);
+    if (favoriteFeedMap == null || favoriteFeedMap == undefined) {
+      favoriteFeedMap = {};
     }
+
+    allFeedList = this.storeService.get(PersistenceKey.allFeedList);
+    if (allFeedList == null || allFeedList == undefined) {
+      allFeedList = [];
+    }
+    allFeedMap = this.storeService.get(PersistenceKey.allFeedMap);
+    if (allFeedMap == null || allFeedMap == undefined) {
+      allFeedMap = [];
+    }
+
 
     eventList = this.storeService.get(PersistenceKey.eventList);
     if (eventList == null){
@@ -202,12 +242,21 @@ export class FeedService {
     return list;
   }
 
-  getFavorFeeds() {
-    return faverFeedList;
+  getFavoriteFeeds() {
+    let list: FavoriteFeed[] = [];
+    for (let index = 0; index < favoriteFeedList.length; index++) {
+      list.push(favoriteFeedMap[favoriteFeedList[index]]);
+    }
+    return list;
   }
 
   public getAllFeeds() {
-    return exploreFeedList;
+    let list: AllFeed[] = [];
+    console.log('getAllFeeds'+JSON.stringify(allFeedMap));
+    for (let index = 0; index < allFeedList.length; index++) {
+      list.push(allFeedMap[allFeedList[index]]);
+    }
+    return list;
   }
 
   public getFeedDescr(_name: string) {
@@ -349,8 +398,6 @@ export class FeedService {
 
   //{"jsonrpc":"2.0","method":"fetch_unreceived","params":{"topic":"movie","since":1021438976},"id":null}
   fetchUnreceived(nodeId: string, topic: string, since: number){
-      console.log( JSON.stringify(faverFeedList) );
-
       fetchTopic = topic;
       let params = {};
       params["topic"] = topic;
@@ -670,6 +717,7 @@ export class FeedService {
   } 
   */
   handleExploreTopicResult(nodeId: string, result: any){
+    let changed = false ;
     console.log("handleExploreTopicResult=>");
 
     if (result == "") {
@@ -678,22 +726,37 @@ export class FeedService {
     }
 
     for (let index = 0; index < result.length; index++) {
-
-      
-      const element = result[index];
-
       let topic = result[index].name;
       let desc = result[index].desc;
-      let feed = new FeedDescs(nodeId,"paper",topic,desc,"follow");
+      let feedKey = nodeId+topic;
+      console.log(allFeedList.indexOf(feedKey));
+      if (allFeedList.indexOf(feedKey) == -1){
+        console.log("111111111111");
+        console.log(JSON.stringify(allFeedMap));
+        let feed = new AllFeed(nodeId,"paper",topic,desc,"follow");
+        this.updateAllFeed(feedKey, feed);
+        changed = true;
+      } else {
+        console.log(JSON.stringify(allFeedList));
+        console.log("2222222222222");
+        let followstate = this.checkFollowState(feedKey);
+        console.log(followstate);
+        console.log(JSON.stringify(allFeedMap));
+        if (followstate != allFeedMap[feedKey].followState){
+          let feed = allFeedMap[feedKey];
+          feed.followState = followstate;
+          this.updateAllFeedState(feedKey,feed);
+          changed = true;
+        }
+      }
+    }
 
-
-      console.log("before=>"+JSON.stringify(feed));
-      this.updateExploreFeedList(feed, exploreFeedList);
-
-      console.log(JSON.stringify(exploreFeedList));
+    if (changed){
+      eventBus.publish('feeds:allFeedsListChanged',this.getAllFeeds());
     }
   }
 
+  
   /*
   {
     "jsonrpc": "2.0",
@@ -705,6 +768,7 @@ export class FeedService {
   } 
   */
   handleListSubscribedResult(nodeId: string, result: any){
+    let changed = false ;
     console.log("handleListSubscribedResult=>");
     if (result == "") {
       console.log("result null");
@@ -714,27 +778,55 @@ export class FeedService {
     for (let index = 0; index < result.length; index++) {
       let topic = result[index].name;
       let desc = result[index].desc;
-      console.log("handleListSubscribedResult=>"+topic +";"+desc);
+
+      let favoriteFeedKey = nodeId+topic;
+      if (favoriteFeedList.indexOf(favoriteFeedKey) == -1){
+        this.updatefavoriteFeed(favoriteFeedKey ,new FavoriteFeed(nodeId, topic, desc, 0, 0, new Date().getTime().toString()));
+        changed = true ;
+      }
+    }
+    if (changed){
+      eventBus.publish('feeds:favoriteFeedListChanged',this.getFavoriteFeeds());
+    }
+  }
+
+  updatefavoriteFeed(favoriteFeedKey:string, feed:FavoriteFeed){
+    favoriteFeedList.push(favoriteFeedKey);
+    favoriteFeedMap[favoriteFeedKey] = feed;
+    this.storeService.set(PersistenceKey.favoriteFeedList,favoriteFeedList);
+    this.storeService.set(PersistenceKey.favoriteFeedMap,favoriteFeedMap);
+  }
+
+  updateAllFeed(feedKey: string, feed: AllFeed){
+    allFeedList.push(feedKey);
+    allFeedMap[feedKey] = feed;
+    this.storeService.set(PersistenceKey.allFeedList,allFeedList);
+    this.storeService.set(PersistenceKey.allFeedMap, allFeedMap);
+  }
+
+  updateAllFeedState(feedKey: string, feed: AllFeed){
+    allFeedMap[feedKey] = feed;
+    this.storeService.set(PersistenceKey.allFeedMap, allFeedMap);
+  }
+      // favoriteFeedMap[favoriteFeedKey].
 
       
-
-      let faverFeed = new FavoriteFeed(nodeId, topic, desc, 0, 0, new Date().getTime().toString());
-      faverMap[topic]=faverFeed;
-      console.log( Object.keys(faverMap) );
+      // faverMap[topic]=faverFeed;
+      // console.log( Object.keys(faverMap) );
       
       // faverFeedList.push(faverFeed);
-      this.updateFavoriteFeedList(faverFeed, faverFeedList);
-    }
+      // this.updateFavoriteFeedList(faverFeed, faverFeedList);
+    // }
     
-    for(let key  in faverMap){
-      console.log(key + '---' + faverMap[key])
-    }
+    // for(let key  in faverMap){
+    //   console.log(key + '---' + faverMap[key])
+    // }
 
     // TODO
     // checkList
     // let faverFeed = new FavoriteFeed(topic, desc, 0, new Date().getTime().toString());
     // faverFeedList.push(faverFeed);
-  }
+  // }
 
   /*
   {
@@ -815,73 +907,85 @@ export class FeedService {
   //   }
   // }
 
-  updateFavoriteFeedList(feed:FavoriteFeed , feedList:FavoriteFeed[]){
-    if (feedList == null){
-      console.log("faverFeedList = null");
-    }else{
-      console.log("faverFeedList = "+JSON.stringify(feedList));
+  // updateFavoriteFeedList(feed:FavoriteFeed , feedList:FavoriteFeed[]){
+  //   if (feedList == null){
+  //     console.log("faverFeedList = null");
+  //   }else{
+  //     console.log("faverFeedList = "+JSON.stringify(feedList));
+  //   }
+  //   let isContain = false;
+  //   for (let index = 0; index < feedList.length; index++) {
+  //     const element = feedList[index];
+  //     if (feedList[index].name == feed.name) {
+  //       isContain = true;
+  //       return;
+  //     }
+  //   }
+
+  //   if (!isContain) {
+  //     feedList.push(feed);
+  //     this.storeService.set(PersistenceKey.faverFeedList,feedList);
+  //   }
+  // }
+
+  // updateExploreFeedList(feed: FeedDescs , feedList: FeedDescs[]){
+  //   let isContain = false;
+  //   for (let index = 0; index < feedList.length; index++) {
+  //     console.log("feed =>"+JSON.stringify(feed));
+  //     console.log("faverFeedList =>"+JSON.stringify(faverFeedList));
+  //     if (feedList[index].topic == feed.topic) {
+  //       isContain = true;
+
+  //       if(this.checkFollowState(feed.topic,faverFeedList)){
+  //         feedList[index].followState = "following";
+  //       }else{
+  //         feedList[index].followState = "follow";
+  //       }
+  //       return;
+  //     }
+  //   }
+
+  //   if (!isContain) {
+  //     if(this.checkFollowState(feed.topic,faverFeedList)){
+  //       feed.followState = "following";
+  //     }else{
+  //       feed.followState = "follow";
+  //     }
+  //     feedList.push(feed);
+  //     this.storeService.set(PersistenceKey.exploreFeedList, feedList);
+  //   }
+  // }
+
+  // checkFollowState(topic: string, faverFeedList:FavoriteFeed[]): boolean{
+  //   let isFollowing = false;
+  //   if (faverFeedList == null){
+  //     return isFollowing;
+  //   }
+
+  //   for (let index = 0; index < faverFeedList.length; index++) {
+  //     if (topic == faverFeedList[index].name){
+  //       isFollowing = true;
+  //       // feed.followState = "following";
+  //     }
+  //   }
+
+  //   // if(!isFollowing){
+  //   //   feed.followState = "follow";
+  //   // }
+
+  //   return isFollowing;
+  // }
+
+  checkFollowState(feedKey: string): string{
+    if (favoriteFeedList == null){
+      return "follow";
     }
-    let isContain = false;
-    for (let index = 0; index < feedList.length; index++) {
-      const element = feedList[index];
-      if (feedList[index].name == feed.name) {
-        isContain = true;
-        return;
+    for (let index = 0; index < favoriteFeedList.length; index++) {
+      if (feedKey == favoriteFeedList[index]){
+        return "following"
       }
     }
-
-    if (!isContain) {
-      feedList.push(feed);
-      this.storeService.set(PersistenceKey.faverFeedList,feedList);
-    }
-  }
-
-  updateExploreFeedList(feed: FeedDescs , feedList: FeedDescs[]){
-    let isContain = false;
-    for (let index = 0; index < feedList.length; index++) {
-      console.log("feed =>"+JSON.stringify(feed));
-      console.log("faverFeedList =>"+JSON.stringify(faverFeedList));
-      if (feedList[index].topic == feed.topic) {
-        isContain = true;
-
-        if(this.checkFollowState(feed.topic,faverFeedList)){
-          feedList[index].followState = "following";
-        }else{
-          feedList[index].followState = "follow";
-        }
-        return;
-      }
-    }
-
-    if (!isContain) {
-      if(this.checkFollowState(feed.topic,faverFeedList)){
-        feed.followState = "following";
-      }else{
-        feed.followState = "follow";
-      }
-      feedList.push(feed);
-      this.storeService.set(PersistenceKey.exploreFeedList, feedList);
-    }
-  }
-
-  checkFollowState(topic: string, faverFeedList:FavoriteFeed[]): boolean{
-    let isFollowing = false;
-    if (faverFeedList == null){
-      return isFollowing;
-    }
-
-    for (let index = 0; index < faverFeedList.length; index++) {
-      if (topic == faverFeedList[index].name){
-        isFollowing = true;
-        // feed.followState = "following";
-      }
-    }
-
-    // if(!isFollowing){
-    //   feed.followState = "follow";
-    // }
-
-    return isFollowing;
+    return "follow";
   }
 
   checkServerConnection(nodeId: string): boolean{
@@ -912,11 +1016,11 @@ export class FeedService {
 }
 
 //// Virtual data
-let virturlServerList: string[] = [
+let virtualServerList: string[] = [
   "J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo",
   "3x4xVSJmtvty1tM8vzcz2pzW2WG7TmNavbnz9ka1EtZy",
 ]
-let virtrulServersMap: any = {
+let virtualServersMap: any = {
   "J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo":new Friend('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo',
                                                             // 'edTfdBfDVXMvQfXMhEvKrbvxaDxGGURyRfxDVMhbdHZFgAcwmGtS',
                                                             'jerry@email.com',
@@ -930,28 +1034,39 @@ let virtrulServersMap: any = {
                                                             'Tom', 
                                                             ConnState.disconnected)
 }
-// let virtrulServers:Friend[] = [
-//   new Friend('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', '',   ConnState.connected),
-//   new Friend('3x4xVSJmtvty1tM8vzcz2pzW2WG7TmNavbnz9ka1EtZy', 'Tom', ConnState.disconnected),
-//   new Friend('3x4xVSJmtvty1tM8vzcz2pzW2WG7TmNavbnz9ka1EtZy', 'Jerry', ConnState.connected)
-// ];
 
-let virturlFFList: string[] = [
+let virtualFFList: string[] = [
   'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo'+'Carrier News',
   'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo'+'Hive News',
+  'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo'+'Football',
+  'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo'+'Trinity News',
+  'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo'+'Hollywood Movies',
+  'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo'+'Cofee',
+  'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo'+'MacBook',
+  'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo'+'Rust development',
+  'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo'+'Golang'
 ];
 
-let virtrulFavorFeeds:FavoriteFeed[] = [
-  new FavoriteFeed('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'Carrier News', '', 24, 0),
-  new FavoriteFeed('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'Hive News',  '', 35, 0),
-  new FavoriteFeed('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'Football',  '', 4, 0),
-  new FavoriteFeed('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'Trinity News',  '', 0, 0, '12:00 Dec.12'),
-  new FavoriteFeed('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'Hollywood Movies', '',  24, 0),
-  new FavoriteFeed('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'Cofee',  '', 35, 0),
-  new FavoriteFeed('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'MacBook',  '', 4, 0),
-  new FavoriteFeed('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'Rust development', '',  0, 0, '12:00 Desc.12'),
+let virtualFFMap:any = {
+  'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoCarrier News':
+    new FavoriteFeed('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'Carrier News', '', 24, 0),
+  'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoHive News':
+    new FavoriteFeed('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'Hive News',  '', 35, 0),
+  'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoFootball':
+    new FavoriteFeed('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'Football',  '', 4, 0),
+  'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoTrinity News':
+    new FavoriteFeed('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'Trinity News',  '', 0, 0, '12:00 Dec.12'),
+  'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoHollywood Movies':
+    new FavoriteFeed('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'Hollywood Movies', '',  24, 0),
+  'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoCofee':
+    new FavoriteFeed('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'Cofee',  '', 35, 0),
+  'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoMacBook':
+    new FavoriteFeed('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'MacBook',  '', 4, 0),
+  'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoRust development':
+    new FavoriteFeed('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'Rust development', '',  0, 0, '12:00 Desc.12'),
+  'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoGolang':
   new FavoriteFeed('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'Golang',  '', 8, 0)
-];
+}
 
 let virtrulMyFeeds:MyFeed[] = [
   new MyFeed('paper', 'Carrier News', '', '12:10 Dec. 12, 2019'),
@@ -962,14 +1077,30 @@ let virtrulMyFeeds:MyFeed[] = [
   new MyFeed('paper', 'Football News', '', '12:10 Dec.12, 2019'),
 ];
 
-let virtrulFeedDescs:FeedDescs[] = [
-  new FeedDescs("J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo","page","Carrier News","","following"),
-  new FeedDescs("J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo","page","Hive News","","following"),
-  new FeedDescs("J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo","page","Trinity News","","following"),
-  new FeedDescs("J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo","page","DID News","","follow"),
-  new FeedDescs("J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo","page","DMA News","","following"),
-  new FeedDescs("J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo","page","Football News","","follow"),
-];
+let virtualAFList: string[] = [
+  "J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo"+"Carrier News",
+  "J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo"+"Hive News",
+  "J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo"+"Trinity News",
+  "J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo"+"DID News",
+  "J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo"+"DMA News",
+  "J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo"+"Football News"
+]
+
+let virtualAFMap: any = {
+  "J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoCarrier News":
+    new AllFeed("J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo","page","Carrier News","","following"),
+  "J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoHive News":
+    new AllFeed("J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo","page","Hive News","","following"),
+  "J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoTrinity News":
+    new AllFeed("J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo","page","Trinity News","","following"),
+  "J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoDID News":
+    new AllFeed("J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo","page","DID News","","follow"),
+  "J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoDMA News":
+    new AllFeed("J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo","page","DMA News","","following"),
+  "J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoFootball News":
+    new AllFeed("J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo","page","Football News","","follow")
+}
+
 let virtrulFeedEvents = [
   new FeedEvents('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo',
     'Carrier News',
