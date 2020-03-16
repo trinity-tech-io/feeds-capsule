@@ -75,6 +75,8 @@ let firstInit: boolean;
 
 let eventBus = null;
 let fetchTopic:string ;
+let unSubscribeTopic: string = "";
+let subscribeTopic: string = "";
 
 @Injectable()
 export class FavoriteFeed {
@@ -311,7 +313,7 @@ export class FeedService {
 
   sendMessage(nodeId: string, method: string, params: any, id: string){
     if(!this.checkServerConnection(nodeId)){
-      alert("friend offline");
+
       return;
     }
 
@@ -320,7 +322,7 @@ export class FeedService {
       nodeId, 
       JSON.stringify(message), 
       ()=>{
-        alert("success")
+        // alert("success")
       }, 
       (error)=>alert("error="+error));
   }
@@ -352,7 +354,7 @@ export class FeedService {
   subscribe(nodeId: string, topic: string){
     let params = {};
     params["topic"] = topic;
-
+    subscribeTopic = topic ;
     this.sendMessage(nodeId, "subscribe", params, MethodType.subscribe);
   }
 
@@ -365,7 +367,7 @@ export class FeedService {
   unSubscribe(nodeId: string, topic: string){
       let params = {};
       params["topic"] = topic;
-
+      unSubscribeTopic = topic;
       this.sendMessage(nodeId, "unsubscribe", params, MethodType.unsubscribe);
   }
 
@@ -679,6 +681,18 @@ export class FeedService {
     }
 
     this.doListSubscribedTopic(server);
+    allFeedMap[nodeId+subscribeTopic].followState = "following";
+    eventBus.publish('feeds:allFeedsListChanged',this.getAllFeeds());
+
+    // favoriteFeedList.push(nodeId+subscribeTopic);
+    // favoriteFeedMap[]
+    // subscribeTopic
+    // favoriteFeedList.splice(favoriteFeedList.indexOf(nodeId+unSubscribeTopic),1);
+    // favoriteFeedMap[nodeId+unSubscribeTopic] = undefined;
+    // this.storeService.set(PersistenceKey.favoriteFeedList,favoriteFeedList);
+    // this.storeService.set(PersistenceKey.favoriteFeedMap,favoriteFeedMap);
+    // eventBus.publish('feeds:favoriteFeedListChanged',this.getFavoriteFeeds());
+    // this.doListSubscribedTopic(server);
   }
 
   /*
@@ -693,13 +707,23 @@ export class FeedService {
 
     // TODO
     // faverFeedList.splice()
-    let server = this.findServer(nodeId);
+    favoriteFeedList.splice(favoriteFeedList.indexOf(nodeId+unSubscribeTopic),1);
+    favoriteFeedMap[nodeId+unSubscribeTopic] = undefined;
+    this.storeService.set(PersistenceKey.favoriteFeedList,favoriteFeedList);
+    this.storeService.set(PersistenceKey.favoriteFeedMap,favoriteFeedMap);
+    eventBus.publish('feeds:favoriteFeedListChanged',this.getFavoriteFeeds());
 
-    if (server == null || server == undefined){
-      return ;
-    }
+    allFeedMap[nodeId+unSubscribeTopic].followState = "follow";
+    eventBus.publish('feeds:allFeedsListChanged',this.getAllFeeds());
+    
+    // let server = this.findServer(nodeId);
 
-    this.doListSubscribedTopic(server);
+    // if (server == null || server == undefined){
+    //   return ;
+    // }
+
+
+    // this.doListSubscribedTopic(server);
   }
 
   /*

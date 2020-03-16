@@ -154,7 +154,6 @@ export class CarrierService {
 
     readyCallback(ret) {
         this.mIsReady = true;
-        alert("ready");
         eventBus.publish('carrier:ready', ret, Date.now());
     }
 
