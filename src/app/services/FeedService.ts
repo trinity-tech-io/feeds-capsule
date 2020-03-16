@@ -259,12 +259,8 @@ export class FeedService {
     return list;
   }
 
-  public getFeedDescr(_name: string) {
-    if (this.platform.is("desktop")) {
-      return virtrulFeedIntro;
-    }
-    //TODO
-    return virtrulFeedIntro;
+  public getFeedDescr(feedKey: string) {
+    return allFeedMap[feedKey].desc;
   }
 
   public getFeedEvents(nodeId: string, topic: string , since: number) {
