@@ -18,15 +18,17 @@ export class FeedContentPage implements OnInit {
     private navCtrl: NavController,
     private events: Events,
     private zone: NgZone) {
-    this.feedEvents = feedService.getFeedEvents();
 
     acRoute.params.subscribe((data)=>{
       console.log(JSON.stringify(data));
       let nodeId = data.nodeId;
       let topic = data.feedName;
       console.log("fff =>"+"nodeId:"+nodeId+";"+"topic:"+topic);
+      this.feedEvents = feedService.getFeedEvents(nodeId+topic);
+      feedService.updatefavoriteUnreadState(nodeId,topic,0);
+
       // this.feedEvents = serv.getFeedEvents(nodeId, topic, lastSeqno+1);
-      feedService.fetchFeedEvents(nodeId, topic);
+      // feedService.fetchFeedEvents(nodeId, topic);
     });
 
     
