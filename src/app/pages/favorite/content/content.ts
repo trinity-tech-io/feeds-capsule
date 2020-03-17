@@ -1,6 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { NavController } from '@ionic/angular';
-
+import { Component, OnInit, NgZone } from '@angular/core';
+import { NavController, Events } from '@ionic/angular';
 import { FeedService } from 'src/app/services/FeedService';
 import { ActivatedRoute } from '@angular/router';
 
@@ -14,21 +13,28 @@ export class FeedContentPage implements OnInit {
   feedEvents: any;
 
   constructor(
-    private serv: FeedService,
+    private feedService: FeedService,
     private acRoute: ActivatedRoute,
-    private navCtrl: NavController) {
+    private navCtrl: NavController,
+    private events: Events,
+    private zone: NgZone) {
+    this.feedEvents = feedService.getFeedEvents();
 
     acRoute.params.subscribe((data)=>{
       console.log(JSON.stringify(data));
       let nodeId = data.nodeId;
       let topic = data.feedName;
-      let lastSeqno = Number(data.lastSeqno);
+      console.log("fff =>"+"nodeId:"+nodeId+";"+"topic:"+topic);
+      // this.feedEvents = serv.getFeedEvents(nodeId, topic, lastSeqno+1);
+      feedService.fetchFeedEvents(nodeId, topic);
+    });
 
-      if (lastSeqno == NaN) lastSeqno=0;
-      console.log("fff =>"+"nodeId:"+nodeId+";"+"topic:"+topic+"seqno:"+lastSeqno);
-      this.feedEvents = serv.getFeedEvents(nodeId, topic, lastSeqno+1);
-    })
     
+    this.events.subscribe('feeds:eventListChanged', (eventList) => {
+      this.zone.run(() => {
+        this.feedEvents = eventList;
+      });
+    });
   }
 
   ngOnInit() {

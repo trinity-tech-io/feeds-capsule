@@ -1,4 +1,4 @@
-import { Component, NgZone} from '@angular/core';
+import { Component, NgZone } from '@angular/core';
 import { NavController } from '@ionic/angular';
 import { FeedService } from 'src/app/services/FeedService';
 import { Events } from '@ionic/angular';
