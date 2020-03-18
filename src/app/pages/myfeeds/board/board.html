@@ -8,6 +8,18 @@
 </ion-header>
 
 <ion-content>
+  <div class="ion-padding">
+    <ion-button
+      expand="block"
+      mode="ios"
+      color="tertiary"
+      (click)="newEvent()"
+    >
+      <ion-icon name="add-circle-outline" slot="start" ></ion-icon>
+      <ion-label> Create a new event</ion-label>
+    </ion-button>
+  </div>
+
   <ion-list>
     <ion-card *ngFor="let msg of messages">
       <ion-card-header>{{msg.timestamp}}</ion-card-header>

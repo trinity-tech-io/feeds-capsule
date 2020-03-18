@@ -53,6 +53,10 @@ enum PersistenceKey{
   eventList = "eventList",
   eventMap = "eventMap",
 
+  myFeedList = "virtrulMyFeeds",
+  myFeedMap = "myFeedMap",
+
+
   exploreFeedList = "exploreFeedList"
 }
 
@@ -74,9 +78,13 @@ let allFeedMap: {} = {};
 let eventList: string[] = [];
 let eventMap: {} = {};
 
+let myFeedList: string[] = [];
+let myFeedMap: {} = {};
+
 // let eventsMap:{topic: string, eventList: FeedEvents[]};
 let firstInit: boolean;
 let needFetch: boolean = true;
+let firstListMyFeed: boolean = true;
 
 let eventBus = null;
 let fetchTopic:string ;
@@ -108,6 +116,7 @@ export class AllFeed{
 export class MyFeed {
   constructor(
     public avatar: string,
+    public nodeId: string,
     public name: string,
     public desc: string,
     public lastUpdated: string) {}
@@ -163,7 +172,14 @@ export class FeedService {
       allFeedList = virtualAFList;
       allFeedMap = virtualAFMap;
 
+      eventList = virtualEventList;
+      for (let index = 0; index < eventList.length; index++) {
+        eventMap[eventList[index]] = virtrulFeedEvents;
+      }
       // exploreFeedList = virtrulFeedDescs;
+
+      myFeedList = virtualMyFeedList;
+      myFeedMap = virtrulMyFeeds;
 
       return;
     }
@@ -234,8 +250,16 @@ export class FeedService {
           // serverList = this.parseFriends(ret);
           
           this.doListSubscribedTopics(serverList, serverMap);
-          this.storeService.set(PersistenceKey.serverList,serverList);
-          this.storeService.set(PersistenceKey.serverMap,serverMap);
+          // this.storeService.set(PersistenceKey.serverList,serverList);
+          // this.storeService.set(PersistenceKey.serverMap,serverMap);
+
+
+          if (firstListMyFeed){
+            for (let index = 0; index < serverList.length; index++) {
+              this.listOwnedTopics(serverMap[serverList[index]].userId);
+            }
+            firstListMyFeed = false ;
+          }
         },
         null);
 
@@ -301,12 +325,20 @@ export class FeedService {
 
 
   public getMyFeeds() {
-    if (this.platform.is("desktop")) {
-      return virtrulMyFeeds;
+    let list: MyFeed[] = [];
+    for (let index = 0; index < myFeedList.length; index++) {
+      list.push(myFeedMap[myFeedList[index]]);
     }
-    //TODO
-    return virtrulMyFeeds;
+
+    return list;
   }
+
+  //TODO
+  public getMyFeedEvents(nodeId: string, topic: string) {
+    //TODO
+    return this.getFeedEvents(nodeId+topic);
+  }
+
 
   updateServerList(serverList: string[], serverMap:any, server:Friend){
     if(serverList == null || serverList == undefined){
@@ -641,7 +673,7 @@ export class FeedService {
           break;
         case MethodType.listOwnedTopics:
           console.log("listOwnedTopics response");
-          this.handleListOwnTopicResult(response.result);
+          this.handleListOwnTopicResult(from, response.result);
           break;
         default:
           console.log("response id is "+response.id);
@@ -682,8 +714,32 @@ export class FeedService {
     "id": "id(JSON-RPC conformed type)"
   } 
   */
-  handleListOwnTopicResult(result: any){
+  handleListOwnTopicResult(nodeId: string, result: any){
     console.log("handleListOwnTopicResult=>");
+
+    let changed = false ;
+    for (let index = 0; index < result.length; index++) {
+      let topic = result[index].name;
+      let desc = result[index].desc;
+      let feedKey = nodeId+topic;
+      
+      if(myFeedList.indexOf(feedKey) == -1){
+        myFeedList.push(feedKey);
+        myFeedMap[feedKey] = new MyFeed('paper',nodeId,topic,desc,new Date().getTime().toString());
+
+        changed = true;
+      }
+    }
+
+    if (changed){
+      this.storeService.set(PersistenceKey.myFeedList, myFeedList);
+      this.storeService.set(PersistenceKey.myFeedMap, myFeedMap);
+      eventBus.publish("feeds:ownFeedListChanged",this.getMyFeeds());
+    }
+    
+    
+
+    myFeedList.push
   }
 
   /*
@@ -1173,14 +1229,29 @@ let virtualFFMap:any = {
   new FavoriteFeed('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'Golang',  '', 8, 0)
 }
 
-let virtrulMyFeeds:MyFeed[] = [
-  new MyFeed('paper', 'Carrier News', '', '12:10 Dec. 12, 2019'),
-  new MyFeed('paper', 'Hive News', '', '12:10 Dec.12, 2019'),
-  new MyFeed('paper', 'Trinity News', '', '12:10 Dec.12, 2019'),
-  new MyFeed('paper', 'DID News', '', '12:10 Dec.12, 2019'),
-  new MyFeed('paper', 'DID SideChain News', '', '12:10 Dec.12, 2019'),
-  new MyFeed('paper', 'Football News', '', '12:10 Dec.12, 2019'),
-];
+let virtualMyFeedList: string[]=[
+  'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo'+'Carrier News',
+  'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo'+'Hive News',
+  'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo'+'Trinity News',
+  'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo'+'DID News',
+  'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo'+'DID SideChain News',
+  'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo'+'Football News'
+]
+
+let virtrulMyFeeds = {
+  'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoCarrier News':
+    new MyFeed('paper', 'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'Carrier News', '', '12:10 Dec. 12, 2019'),
+  'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoHive News':
+    new MyFeed('paper', 'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'Hive News', '', '12:10 Dec.12, 2019'),
+  'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoTrinity News':
+    new MyFeed('paper', 'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'Trinity News', '', '12:10 Dec.12, 2019'),
+  'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoDID News':
+    new MyFeed('paper', 'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'DID News', '', '12:10 Dec.12, 2019'),
+  'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoDID SideChain News':
+    new MyFeed('paper', 'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'DID SideChain News', '', '12:10 Dec.12, 2019'),
+  'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoFootball News':
+    new MyFeed('paper', 'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'Football News', '', '12:10 Dec.12, 2019')
+}
 
 let virtualAFList: string[] = [
   "J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo"+"Carrier News",
@@ -1206,9 +1277,7 @@ let virtualAFMap: any = {
     new AllFeed("J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo","page","Football News","","follow")
 }
 
-let virtualEventList: string[] = [
-
-]
+let virtualEventList: string[] = virtualFFList;
 
 let virtrulFeedEvents = [
   new FeedEvents('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo',

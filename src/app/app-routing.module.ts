@@ -18,8 +18,9 @@ const routes: Routes = [
   /* lazy loading: myfeeds */
   { path: 'menu', redirectTo: 'menu/myfeeds', pathMatch: 'full' },
   { path: 'menu/myfeeds', loadChildren: './pages/myfeeds/myfeeds.module#MyfeedsPageModule' },
-  { path: 'menu/myfeeds/board', loadChildren: './pages/myfeeds/board/board.module#FeedBoardPageModule' },
+  { path: 'menu/myfeeds/board/:nodeId/:topic', loadChildren: './pages/myfeeds/board/board.module#FeedBoardPageModule' },
   { path: 'menu/myfeeds/create', loadChildren: './pages/myfeeds/create/create-feed.module#CreateFeedPageModule' },
+  { path: 'menu/myfeeds/newevent/:nodeId/:topic', loadChildren: './pages/myfeeds/board/newevent/newevent.module#NeweventPageModule' },
 
   /* lazy loading: carrier servers */
   { path: 'menu/servers', loadChildren: './pages/servers/servers.module#ServersPageModule' },
@@ -32,7 +33,8 @@ const routes: Routes = [
 
   /* lazy loading: myprofile */
   { path: 'menu/myprofile', loadChildren: './pages/myprofile/myprofile.module#MyprofilePageModule' },
-  { path: 'scan', loadChildren: './pages/servers/add-server/scan/scan.module#ScanPageModule' }
+  { path: 'scan', loadChildren: './pages/servers/add-server/scan/scan.module#ScanPageModule' },
+  
 
 ];
 

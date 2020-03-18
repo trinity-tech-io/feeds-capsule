@@ -1,3 +1,35 @@
+<!-- <ion-header>
+  <ion-toolbar mode="ios">
+    <ion-buttons slot="end">
+      <ion-button>
+        <ion-menu-button menu="m1"></ion-menu-button>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>My Feeds</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-content>
+  <div class="ion-padding">
+    <ion-button
+      expand="block"
+      mode="ios"
+      color="tertiary""
+      [routerLink]="['/menu/myfeeds/create']"
+    >
+      <ion-icon name="add-circle-outline" slot="start" ></ion-icon>
+      <ion-label> Create a new topic</ion-label>
+    </ion-button>
+  </div>
+
+  <ion-list>
+    <ion-item *ngFor="let feed of myfeeds">
+      <ion-icon name="paper" slot="start"></ion-icon>
+      <ion-label (click)="navigateToBoardPage(feed.nodeId, feed.name)">{{feed.name}}</ion-label>
+    </ion-item>
+  </ion-list>
+</ion-content> -->
 <ion-header>
   <ion-toolbar mode="ios">
     <ion-buttons slot="end">
@@ -26,7 +58,7 @@
   <ion-list>
     <ion-item *ngFor="let feed of myfeeds">
       <ion-icon name="paper" slot="start"></ion-icon>
-      <ion-label (click)="navigateToBoardPage()">{{feed.name}}</ion-label>
+      <ion-label (click)="navigateToBoardPage(feed.nodeId, feed.name)">{{feed.name}}</ion-label>
     </ion-item>
   </ion-list>
 </ion-content>

@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { NavController } from '@ionic/angular';
+import { Router } from '@angular/router'
+import { ActivatedRoute } from '@angular/router';
+import { FeedService } from 'src/app/services/FeedService';
 
 @Component({
   selector: 'page-feed-board',
@@ -7,8 +10,25 @@ import { NavController } from '@ionic/angular';
   styleUrls: ['./board.scss'],
 })
 export class FeedBoardPage implements OnInit {
+  private myEvents: any ;
+  private nodeId: string;
+  private topic: string;
   constructor(
-    private navCtrl: NavController) { }
+    private feedService: FeedService,
+    private router: Router,
+    private acRoute: ActivatedRoute,
+    private navCtrl: NavController) {
+      
+      acRoute.params.subscribe((data)=>{
+        //TODO
+        // this.myEvents = this.feedService.getMyFeedEvents(data.nodeId,data.topic);
+        alert("BOARD =>"+JSON.stringify(data));
+        console.log(JSON.stringify(data));
+
+        this.nodeId = data.nodeId;
+        this.topic = data.topic;
+      });
+    }
 
   messages = [
     {
@@ -48,6 +68,9 @@ export class FeedBoardPage implements OnInit {
   ngOnInit() {
   }
 
+  newEvent(){
+    this.router.navigate(['/menu/myfeeds/newevent/',this.nodeId, this.topic]);
+  }
   navigateBack() {
     this.navCtrl.pop();
   }
