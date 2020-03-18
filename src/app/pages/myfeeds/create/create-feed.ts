@@ -21,6 +21,7 @@ export class CreateFeedPage implements OnInit {
   }
 
   createTopic(name: HTMLInputElement, desc: HTMLInputElement, select: HTMLInputElement){
+    this.feedService.createTopic(select.value, name.value, desc.value);
     alert("createTopic"+name.value+";"+desc.value+";"+select.value);
   }
   navigateBack() {

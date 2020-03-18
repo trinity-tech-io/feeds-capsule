@@ -18,7 +18,7 @@
       <ion-text color="danger">*</ion-text>
     </ion-label>
     <ion-select #select>
-      <ion-select-option *ngFor="let server of serverList" >{{server.name || server.userId}}</ion-select-option>
+      <ion-select-option *ngFor="let server of serverList" >{{server.userId}}</ion-select-option>
     </ion-select>
   </ion-item>
   <ion-item>

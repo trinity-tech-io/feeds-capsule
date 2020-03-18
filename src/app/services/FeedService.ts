@@ -690,6 +690,7 @@ export class FeedService {
   }
   */
   handleCreateTopicResult(result: any){
+    alert("create topic success");
     console.log("handleCreateTopicResult=>");
   }
 
@@ -701,6 +702,7 @@ export class FeedService {
   } 
   */
   handlePostEventResult(result: any){
+    alert("create event success");
     console.log("handlePostEventResult=>");
   }
 
