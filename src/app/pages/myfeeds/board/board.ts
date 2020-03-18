@@ -27,43 +27,50 @@ export class FeedBoardPage implements OnInit {
 
         this.nodeId = data.nodeId;
         this.topic = data.topic;
+
+        this.myEvents = this.feedService.getMyFeedEvents(this.nodeId,this.topic);
+
+        console.log(JSON.stringify(this.myEvents));
+        alert(JSON.stringify(this.myEvents));
       });
+
+      
     }
 
-  messages = [
-    {
-      timestamp: '12:00, December 10, 2019',
-      message:
-        `Elastos Trinity DApp Store is your one-stop shop for finding the latest dApps available inside the Elastos ecosystem.
-        The key difference between the applications available here and what you will find in any other app store is
-        Elastos' guarantee of 100% security and privacy. All Elastos applications are decentralized, thus giving you
-        the freedom to use the web as you should without the worries of data theft and third parties monetizing your data`
-    },
-    {
-      timestamp: '15:00, December 10, 2019',
-      message:
-        `Elastos Trinity DApp Store is your one-stop shop for finding the latest dApps available inside the Elastos ecosystem.
-        The key difference between the applications available here and what you will find in any other app store is
-        Elastos' guarantee of 100% security and privacy. All Elastos applications are decentralized, thus giving you
-        the freedom to use the web as you should without the worries of data theft and third parties monetizing your data`
-    },
-    {
-      timestamp: '15:00, December 12, 2019',
-      message:
-        `Elastos Trinity DApp Store is your one-stop shop for finding the latest dApps available inside the Elastos ecosystem.
-        The key difference between the applications available here and what you will find in any other app store is
-        Elastos' guarantee of 100% security and privacy. All Elastos applications are decentralized, thus giving you
-        the freedom to use the web as you should without the worries of data theft and third parties monetizing your data`
-    },
-    {
-      timestamp: '15:00, December 14, 2019',
-      message:
-        `Elastos Trinity DApp Store is your one-stop shop for finding the latest dApps available inside the Elastos ecosystem.
-        The key difference between the applications available here and what you will find in any other app store is
-        Elastos' guarantee of 100% security and privacy. All Elastos applications are decentralized, thus giving you
-        the freedom to use the web as you should without the worries of data theft and third parties monetizing your data`
-    }
-  ];
+  // messages = [
+  //   {
+  //     timestamp: '12:00, December 10, 2019',
+  //     message:
+  //       `Elastos Trinity DApp Store is your one-stop shop for finding the latest dApps available inside the Elastos ecosystem.
+  //       The key difference between the applications available here and what you will find in any other app store is
+  //       Elastos' guarantee of 100% security and privacy. All Elastos applications are decentralized, thus giving you
+  //       the freedom to use the web as you should without the worries of data theft and third parties monetizing your data`
+  //   },
+  //   {
+  //     timestamp: '15:00, December 10, 2019',
+  //     message:
+  //       `Elastos Trinity DApp Store is your one-stop shop for finding the latest dApps available inside the Elastos ecosystem.
+  //       The key difference between the applications available here and what you will find in any other app store is
+  //       Elastos' guarantee of 100% security and privacy. All Elastos applications are decentralized, thus giving you
+  //       the freedom to use the web as you should without the worries of data theft and third parties monetizing your data`
+  //   },
+  //   {
+  //     timestamp: '15:00, December 12, 2019',
+  //     message:
+  //       `Elastos Trinity DApp Store is your one-stop shop for finding the latest dApps available inside the Elastos ecosystem.
+  //       The key difference between the applications available here and what you will find in any other app store is
+  //       Elastos' guarantee of 100% security and privacy. All Elastos applications are decentralized, thus giving you
+  //       the freedom to use the web as you should without the worries of data theft and third parties monetizing your data`
+  //   },
+  //   {
+  //     timestamp: '15:00, December 14, 2019',
+  //     message:
+  //       `Elastos Trinity DApp Store is your one-stop shop for finding the latest dApps available inside the Elastos ecosystem.
+  //       The key difference between the applications available here and what you will find in any other app store is
+  //       Elastos' guarantee of 100% security and privacy. All Elastos applications are decentralized, thus giving you
+  //       the freedom to use the web as you should without the worries of data theft and third parties monetizing your data`
+  //   }
+  // ];
 
   ngOnInit() {
   }

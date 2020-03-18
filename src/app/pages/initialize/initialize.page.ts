@@ -55,6 +55,10 @@ export class InitializePage implements OnInit {
     }
 
     testset(){
+        let str = '{"jsonrpc":"2.0","error":{"code":-32602,"message":"Operation Not Authorized"},"id":"11"}';
+
+        console.log(str.indexOf("error") != -1 );  // true
+
     }
 
     testget(){

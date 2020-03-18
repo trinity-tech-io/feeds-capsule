@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { NavController } from '@ionic/angular';
+import { NavController, Events } from '@ionic/angular';
 import { FeedService } from 'src/app/services/FeedService';
 
 @Component({
@@ -11,10 +11,12 @@ export class CreateFeedPage implements OnInit {
   private serverList: any;
   constructor(
     private navCtrl: NavController,
-    private feedService: FeedService) {
-      
+    private feedService: FeedService,
+    private events: Events) {
       this.serverList = feedService.getServerList();
-      // alert(JSON.stringify(this.serverList));
+      this.events.subscribe('feeds:createTopicSuccess', () => {
+        this.navigateBack();
+      });
     }
 
   ngOnInit() {
@@ -22,7 +24,6 @@ export class CreateFeedPage implements OnInit {
 
   createTopic(name: HTMLInputElement, desc: HTMLInputElement, select: HTMLInputElement){
     this.feedService.createTopic(select.value, name.value, desc.value);
-    alert("createTopic"+name.value+";"+desc.value+";"+select.value);
   }
   navigateBack() {
     this.navCtrl.pop();

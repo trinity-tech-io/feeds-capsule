@@ -19,16 +19,38 @@ export class JsonRPCService {
 
     /*
     {
-    "jsonrpc": "2.0",
-    "result": [{
-    "seqno": "序列号（以升序返回）(number)", 
-    "event": "事件内容(string)",
-    "ts": "事件发布时的时间戳（UNIX Epoch格式）(number)"
-    }],
-    "id": "id(JSON-RPC conformed type)"
+        "jsonrpc": "2.0",
+        "result": [{
+            "seqno": "序列号（以升序返回）(number)", 
+            "event": "事件内容(string)",
+            "ts": "事件发布时的时间戳（UNIX Epoch格式）(number)"
+        }],
+        "id": "id(JSON-RPC conformed type)"
     }
     */
     //response
+    /*
+    {
+        "jsonrpc":"2.0",
+        "error":{
+            "code":-32602,
+            "message":"Operation Not Authorized"
+        },
+        "id":"11"}
+    */
+
+    checkError(response: string): boolean{
+        if (typeof response != "string") {
+            return;
+        }
+
+        if (response.indexOf("error") != -1){
+            console.log("error");
+            return true;
+        }
+        console.log("else");
+        return false ;
+    }
 
     parseJson(msg: string){
         if (typeof msg != "string") {
@@ -37,12 +59,6 @@ export class JsonRPCService {
 
         let substr = msg.substring(0,msg.length-1);
         let data = JSON.parse(substr);
-        
-
-        if (data.jsonrpc != "2.0") {
-            //send Error
-        }
-
 
 
         //TODO
@@ -52,7 +68,9 @@ export class JsonRPCService {
         if (data.method==null){
         }
 
-        return data ;
+
+        return data;
+        // return data ;
         // console.log(jsonrpc);
 
         // let result = data.result;

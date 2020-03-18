@@ -56,6 +56,8 @@ enum PersistenceKey{
   myFeedList = "virtrulMyFeeds",
   myFeedMap = "myFeedMap",
 
+  // {nodeId+topic:{event}}
+  myEventMap = "myEventMap",
 
   exploreFeedList = "exploreFeedList"
 }
@@ -81,6 +83,7 @@ let eventMap: {} = {};
 let myFeedList: string[] = [];
 let myFeedMap: {} = {};
 
+let myEventMap: {} = {};
 // let eventsMap:{topic: string, eventList: FeedEvents[]};
 let firstInit: boolean;
 let needFetch: boolean = true;
@@ -91,6 +94,9 @@ let fetchTopic:string ;
 let unSubscribeTopic: string = "";
 let subscribeTopic: string = "";
 let currentFeedEventKey: string = "";
+let currentCreateTopicNID = "";
+
+let postEventTmp: FeedEvents;
 
 @Injectable()
 export class FavoriteFeed {
@@ -180,6 +186,8 @@ export class FeedService {
 
       myFeedList = virtualMyFeedList;
       myFeedMap = virtrulMyFeeds;
+
+      myEventMap = virtualMyEventMap;
 
       return;
     }
@@ -333,10 +341,15 @@ export class FeedService {
     return list;
   }
 
-  //TODO
+  
   public getMyFeedEvents(nodeId: string, topic: string) {
-    //TODO
-    return this.getFeedEvents(nodeId+topic);
+    if (myEventMap == null || 
+        myEventMap == undefined || 
+        myEventMap[nodeId+topic] == null || 
+        myEventMap[nodeId+topic] == undefined){
+      return ;
+    }
+    return myEventMap[nodeId+topic];
   }
 
 
@@ -384,6 +397,7 @@ export class FeedService {
   
   //{"jsonrpc":"2.0","method":"create_topic","params":{"topic":"news","desc":"daily"},"id":null}
   createTopic(nodeId: string, topic: string, desc: string){
+      currentCreateTopicNID = nodeId;
       let params = {};
       params["topic"] = topic;
       params["desc"] = desc;
@@ -397,6 +411,18 @@ export class FeedService {
       params["topic"] = topic;
       params["event"] = event;
 
+      // public nodeId: string,
+      // public topic: string,
+      // public timestamp: string,
+      // public message: string,
+      // public seqno: number){
+
+      let lastSeqno = 0;
+      if (myEventMap[nodeId+topic] != null || myEventMap[nodeId+topic] != undefined){
+        lastSeqno = myEventMap[nodeId+topic].seqno;
+      }
+        
+      postEventTmp = new FeedEvents(nodeId,topic,this.getCurrentTime(),event,lastSeqno++);
       this.sendMessage(nodeId, "post_event", params, MethodType.postEvent);
   }
 
@@ -625,60 +651,68 @@ export class FeedService {
     });
   }
 
+  handleResult(nodeId: string ,message: string){
+    let from = nodeId;
+    let response = this.jsonRPCService.parseJson(message);
+
+    console.log("friendMessageCallback");
+    console.log("response=>"+message);
+    console.log("from=>"+from);
+    console.log("ret=>"+response);
+
+    if (this.jsonRPCService.checkError(message)) {
+      alert(response.error.code+";"+response.error.message);
+      return;
+    }
+    
+    //TODO
+    if (response.method == "new_event"){
+        this.handleNewEventResult(from, response.params);
+        return;
+    }
+
+    switch (response.id) {
+      case MethodType.subscribe:
+        console.log("subscribe response");
+        this.handleSubscriptResult(from, response.result);
+        break;
+      case MethodType.unsubscribe:
+        console.log("unsubscribe response");
+        this.handleUnsubscribeResult(from, response.result);
+        break;
+      case MethodType.exploreTopics:
+        console.log("exploreTopics response");
+        this.handleExploreTopicResult(from, response.result);
+        break;
+      case MethodType.listSubscribed:
+        console.log("listSubscribed response");
+        this.handleListSubscribedResult(from, response.result);
+        break;
+      case MethodType.fetchUnreceived:
+        console.log("fetchUnreceived response");
+        this.handleFetchUnreceivedResult(from, response.result);
+        break;
+      case MethodType.createTopic:
+        console.log("createTopic response");
+        this.handleCreateTopicResult(response.result);
+        break;
+      case MethodType.postEvent:
+        console.log("postEvent response");
+        this.handlePostEventResult(response.result);
+        break;
+      case MethodType.listOwnedTopics:
+        console.log("listOwnedTopics response");
+        this.handleListOwnTopicResult(from, response.result);
+        break;
+      default:
+        console.log("response id is "+response.id);
+        break;
+    }
+  }
+
   friendMessageCallback(){
     this.events.subscribe('carrier:friendMessage', event => {
-      
-
-      let from = event.from;
-      let response = this.jsonRPCService.parseJson(event.message);
-      console.log("friendMessageCallback");
-      console.log("response=>"+event.message);
-      console.log("from=>"+from);
-      console.log("ret=>"+response);
-      
-      //TODO
-      if (response.method == "new_event"){
-          this.handleNewEventResult(from, response.params);
-          return;
-      }
-
-      switch (response.id) {
-        case MethodType.subscribe:
-          console.log("subscribe response");
-          this.handleSubscriptResult(from, response.result);
-          break;
-        case MethodType.unsubscribe:
-          console.log("unsubscribe response");
-          this.handleUnsubscribeResult(from, response.result);
-          break;
-        case MethodType.exploreTopics:
-          console.log("exploreTopics response");
-          this.handleExploreTopicResult(from, response.result);
-          break;
-        case MethodType.listSubscribed:
-          console.log("listSubscribed response");
-          this.handleListSubscribedResult(from, response.result);
-          break;
-        case MethodType.fetchUnreceived:
-          console.log("fetchUnreceived response");
-          this.handleFetchUnreceivedResult(from, response.result);
-          break;
-        case MethodType.createTopic:
-          console.log("createTopic response");
-          this.handleCreateTopicResult(response.result);
-          break;
-        case MethodType.postEvent:
-          console.log("postEvent response");
-          this.handlePostEventResult(response.result);
-          break;
-        case MethodType.listOwnedTopics:
-          console.log("listOwnedTopics response");
-          this.handleListOwnTopicResult(from, response.result);
-          break;
-        default:
-          console.log("response id is "+response.id);
-          break;
-      }
+      this.handleResult(event.from, event.message);
     });
   }
 
@@ -688,10 +722,17 @@ export class FeedService {
     "result": NULL,
     "id": "id(JSON-RPC conformed type)"
   }
+
+  {"jsonrpc":"2.0",
+  "error":{"code":-32602,"message":"Operation Not Authorized"},"id":"11"}
   */
   handleCreateTopicResult(result: any){
     alert("create topic success");
     console.log("handleCreateTopicResult=>");
+
+    eventBus.publish("feeds:createTopicSuccess");
+    this.listOwnedTopics(currentCreateTopicNID);
+    // myFeedMap.
   }
 
   /*
@@ -704,6 +745,15 @@ export class FeedService {
   handlePostEventResult(result: any){
     alert("create event success");
     console.log("handlePostEventResult=>");
+
+    if (myEventMap[postEventTmp.nodeId+postEventTmp.topic] == null || myEventMap[postEventTmp.nodeId+postEventTmp.topic] == undefined){
+      myEventMap[postEventTmp.nodeId+postEventTmp.topic] = [];
+    }
+    
+    myEventMap[postEventTmp.nodeId+postEventTmp.topic].push(postEventTmp);
+    this.storeService.set(PersistenceKey.myEventMap,myFeedMap);
+
+    eventBus.publish("feeds:postEventSuccess");
   }
 
   /*
@@ -1074,6 +1124,10 @@ export class FeedService {
     }
   }
 
+  getCurrentTime(): string{
+    return new Date().getTime().toString();
+  }
+
   // doListSubscribedTopics(serverList: Friend[]){
   //   for (let index = 0; index < serverList.length; index++) {
   //     const server = serverList[index];
@@ -1319,3 +1373,48 @@ let virtrulFeedEvents = [
 let virtrulFeedIntro = new FeedIntro(
   `bb Keep close to Nature's heart... and break clear away, once in awhile,
   and climb a mountain or spend a week in the woods. Wash your spirit clean.`);
+
+let virtualMyEvents = 
+  [
+    {
+      timestamp: '12:00, December 10, 2019',
+      message:
+        `Elastos Trinity DApp Store is your one-stop shop for finding the latest dApps available inside the Elastos ecosystem.
+        The key difference between the applications available here and what you will find in any other app store is
+        Elastos' guarantee of 100% security and privacy. All Elastos applications are decentralized, thus giving you
+        the freedom to use the web as you should without the worries of data theft and third parties monetizing your data`
+    },
+    {
+      timestamp: '15:00, December 10, 2019',
+      message:
+        `Elastos Trinity DApp Store is your one-stop shop for finding the latest dApps available inside the Elastos ecosystem.
+        The key difference between the applications available here and what you will find in any other app store is
+        Elastos' guarantee of 100% security and privacy. All Elastos applications are decentralized, thus giving you
+        the freedom to use the web as you should without the worries of data theft and third parties monetizing your data`
+    },
+    {
+      timestamp: '15:00, December 12, 2019',
+      message:
+        `Elastos Trinity DApp Store is your one-stop shop for finding the latest dApps available inside the Elastos ecosystem.
+        The key difference between the applications available here and what you will find in any other app store is
+        Elastos' guarantee of 100% security and privacy. All Elastos applications are decentralized, thus giving you
+        the freedom to use the web as you should without the worries of data theft and third parties monetizing your data`
+    },
+    {
+      timestamp: '15:00, December 14, 2019',
+      message:
+        `Elastos Trinity DApp Store is your one-stop shop for finding the latest dApps available inside the Elastos ecosystem.
+        The key difference between the applications available here and what you will find in any other app store is
+        Elastos' guarantee of 100% security and privacy. All Elastos applications are decentralized, thus giving you
+        the freedom to use the web as you should without the worries of data theft and third parties monetizing your data`
+    }
+  ];
+
+let virtualMyEventMap = {
+  "J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoCarrier News":virtualMyEvents,
+  "J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoHive News":virtualMyEvents,
+  "J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoTrinity News":virtualMyEvents,
+  "J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoDID News":virtualMyEvents,
+  "J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoDID SideChain News":virtualMyEvents,
+  "J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoFootball News":virtualMyEvents
+}
