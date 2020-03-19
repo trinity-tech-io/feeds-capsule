@@ -1,6 +1,7 @@
 import { Component, OnInit, NgZone } from '@angular/core';
-import { CarrierService } from 'src/app/services/CarrierService';
 import { Events } from '@ionic/angular';
+import { CarrierService } from 'src/app/services/CarrierService';
+import { FeedService } from 'src/app/services/FeedService';
 
 class Attribute {
   constructor(
@@ -22,8 +23,14 @@ export class MyprofilePage implements OnInit {
    constructor(
     private event: Events,
     private zone: NgZone,
-    private carrierService: CarrierService) {
-
+    private carrierService: CarrierService,
+    private feedService: FeedService) {
+    this.connectStatus = this.feedService.getConnectionStatus();
+    this.attrs = [
+      new Attribute('radio-button-on', 'nodeId',carrierService.getNodeId()),
+      new Attribute('person', 'userId', carrierService.getNodeId()),
+      new Attribute('home', 'address', carrierService.getAddress())
+    ];
     this.event.subscribe('feeds:connectionChanged', connectionStatus => {
       this.zone.run(() => {
           this.connectStatus = connectionStatus;

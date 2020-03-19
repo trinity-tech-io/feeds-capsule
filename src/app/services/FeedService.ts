@@ -38,8 +38,7 @@ enum MethodType {
 enum PersistenceKey{
   firstInit = "firstInit",
 
-  serverList = "serverList",
-  serverMap = "serverMap",
+  serversMap = "serversMap",
 
   favoriteFeedList = "favoriteFeedList",
   favoriteFeedMap = "favoriteFeedMap",
@@ -65,8 +64,9 @@ enum PersistenceKey{
 // let serverUserIdList:any = [];
 let connectionStatus = ConnState.disconnected;
 // let serverList: Friend[] = [];
-let serverList: string[] = [];
-let serverMap: {} = {};
+// let serverList: string[] = [];
+//{"nodeId":{Friend}}
+let serversMap: object = {};
 
 // let faverFeedList: FavoriteFeed[] = [];
 let favoriteFeedList: string[] = [];
@@ -169,8 +169,8 @@ export class FeedService {
 
   init(){
     if (this.platform.is('desktop')) {
-      serverList = virtualServerList;
-      serverMap = virtualServersMap;
+      // serverList = virtualServerList;
+      serversMap = virtualServersMap;
 
       favoriteFeedList = virtualFFList;
       favoriteFeedMap = virtualFFMap;
@@ -204,14 +204,12 @@ export class FeedService {
       firstInit = true;
     }
 
-    serverList = this.storeService.get(PersistenceKey.serverList);
-    if (serverList == null || serverList == undefined) {
-      serverList = [];
+    serversMap = this.storeService.get(PersistenceKey.serversMap);
+    if (serversMap == null || serversMap == undefined){
+      serversMap = {};
     }
-    serverMap = this.storeService.get(PersistenceKey.serverMap);
-    if (serverMap == null || serverMap == undefined){
-      serverMap = {};
-    }
+
+    console.log("init==>"+JSON.stringify(serversMap));
 
 
     favoriteFeedList = this.storeService.get(PersistenceKey.favoriteFeedList);
@@ -254,24 +252,9 @@ export class FeedService {
   prepare(){
     this.carrierService.getFriends(
         (ret) => {
-          this.parseFriends(ret, serverList, serverMap);
-          // serverList = this.parseFriends(ret);
-          
-          this.doListSubscribedTopics(serverList, serverMap);
-          // this.storeService.set(PersistenceKey.serverList,serverList);
-          // this.storeService.set(PersistenceKey.serverMap,serverMap);
-
-
-          if (firstListMyFeed){
-            for (let index = 0; index < serverList.length; index++) {
-              this.listOwnedTopics(serverMap[serverList[index]].userId);
-            }
-            firstListMyFeed = false ;
-          }
+          this.parseFriends(ret);
         },
         null);
-
-    
   }
 
   getConnectionStatus() {
@@ -280,8 +263,13 @@ export class FeedService {
 
   getServerList(): Friend[]{
     let list: Friend[] = [];
-    for (let index = 0; index < serverList.length; index++) {
-      list.push(serverMap[serverList[index]]);
+    let keys: string[] = Object.keys(serversMap);
+    for (const index in keys) {
+      if (serversMap[keys[index]] == undefined) 
+        continue;
+      if (serversMap[keys[index]].status == undefined) 
+        serversMap[keys[index]].status = ConnState.disconnected;
+      list.push(serversMap[keys[index]]);
     }
     return list;
   }
@@ -356,31 +344,31 @@ export class FeedService {
   }
 
 
-  updateServerList(serverList: string[], serverMap:any, server:Friend){
-    if(serverList == null || serverList == undefined){
-      return ;
-    }
+  // updateServerList(serverList: string[], serverMap:any, server:Friend){
+  //   if(serverList == null || serverList == undefined){
+  //     return ;
+  //   }
     
-    let index = serverList.indexOf(server.userId);
+  //   let index = serverList.indexOf(server.userId);
 
-    if (index == -1){
-      serverList.push(server.userId);
-      serverMap[server.userId] = server;
-      return ;
-    }
+  //   if (index == -1){
+  //     serverList.push(server.userId);
+  //     serverMap[server.userId] = server;
+  //     return ;
+  //   }
 
-    serverMap[server.userId] = server;
+  //   serverMap[server.userId] = server;
 
 
-    // for (let i = 0; i < serverList.length; i++) {
-    //   let serverKey = serverList[]
-    //   const server = serverList[i];
-    //   if(server.userId == userId){
-    //     server.status = connectStatus;
-    //     return server;
-    //   }
-    // }
-  }
+  //   // for (let i = 0; i < serverList.length; i++) {
+  //   //   let serverKey = serverList[]
+  //   //   const server = serverList[i];
+  //   //   if(server.userId == userId){
+  //   //     server.status = connectStatus;
+  //   //     return server;
+  //   //   }
+  //   // }
+  // }
 
   sendMessage(nodeId: string, method: string, params: any, id: string){
     if(!this.checkServerConnection(nodeId)){
@@ -413,12 +401,6 @@ export class FeedService {
       let params = {};
       params["topic"] = topic;
       params["event"] = event;
-
-      // public nodeId: string,
-      // public topic: string,
-      // public timestamp: string,
-      // public message: string,
-      // public seqno: number){
 
       let lastSeqno = 0;
       if (myEventMap[nodeId+topic] != null || myEventMap[nodeId+topic] != undefined){
@@ -460,19 +442,6 @@ export class FeedService {
       this.sendMessage(nodeId, "explore_topics", null, MethodType.exploreTopics);
   }
 
-  doExploreTopics(){
-    if (serverList == null || serverList == undefined){
-      return ;
-    }
-
-    for (let index = 0; index < serverList.length; index++) {
-      this.exploreTopics(serverList[index]);
-    }
-    // for (let index = 0; index < serverList.length; index++) {
-    //   this.exploreTopics(serverList[index].userId);
-    // }
-  }
-
   //{"jsonrpc":"2.0","method":"list_subscribed_topics","id":null}
   listSubscribed(nodeId: string){
     this.sendMessage(nodeId, "list_subscribed_topics", null, MethodType.listSubscribed);
@@ -502,100 +471,7 @@ export class FeedService {
   //   return serverFriendList;
   // }
 
-  parseFriends(data:any , serverList: string[] , serverMap: any){
-    // let serverFriendList: Friend[] = [];
-    let servers = data.friends;
-    console.log("000"+JSON.stringify(serverMap));
-    console.log("000"+JSON.stringify(serverList));
-    console.log("2222"+(typeof servers));
-    if (typeof servers == "string") {
-      servers = JSON.parse(servers);
-    }
 
-    console.log("2222");
-    console.log("servers="+JSON.stringify(servers));
-    for (let id in servers) {
-      let friend = new Friend(servers[id].userInfo.userId,
-                              // servers[id].userInfo.address,
-                              servers[id].userInfo.email,
-                              servers[id].userInfo.region,
-                              servers[id].userInfo.name,
-                              servers[id].connection);
-      // let friend = new Friend(servers[id].userInfo.userId,
-      //                         servers[id].userInfo.name,
-      //                         servers[id].connection);
-
-                              
-      serverMap[servers[id].userInfo.userId] = friend;
-
-      if (serverList.indexOf(servers[id].userInfo.userId) == -1){
-        serverList.push(servers[id].userInfo.userId);
-      }
-    }
-
-    this.storeService.set(PersistenceKey.serverList,serverList);
-    this.storeService.set(PersistenceKey.serverMap,serverMap);
-
-    console.log(JSON.stringify(serverMap));
-    console.log(JSON.stringify(serverList));
-  }
-
-  // doListSubscribedTopics(serverList: Friend[]){
-  //   for (let index = 0; index < serverList.length; index++) {
-  //     const server = serverList[index];
-  //     if (server.status == ConnState.connected) {
-  //       this.listSubscribed(server.userId);
-  //     }
-  //   }
-  // }
-
-  doListSubscribedTopics(serverList: string[] , serverMap: any){
-    if (serverList == null || serverList == undefined){
-      return ;
-    }
-
-    for (let index = 0; index < serverList.length; index++) {
-      const serverKey = serverList[index];
-      if (serverMap[serverKey].status == ConnState.connected) {
-        this.listSubscribed(serverMap[serverKey].userId);
-      }
-    }
-  }
-
-  doListSubscribedTopic(server: Friend){
-    if (server.status == null || server.status == undefined){
-      return ;
-    }
-
-    if (server.status == ConnState.connected) {
-      this.listSubscribed(server.userId);
-    }
-  }
-
-  findServer(nodeId: string):Friend{
-    
-    // if(serverList == null || serverList == undefined){
-    //   return null;
-    // }
-
-    // let index = serverList.indexOf(nodeId);
-    // if (index == -1){
-    //   return null;
-    // }
-    
-    if (serverMap == null || serverMap == undefined) {
-      return undefined;
-    }
-
-    return serverMap[nodeId];
-    // for (let index = 0; index < serverList.length; index++) {
-    //   if (serverList[index].userId == nodeId){
-    //     return serverList[index];
-    //   }
-    // }
-
-    // return null;
-  }
 
   carrierReadyCallback(){
     this.events.subscribe('carrier:ready', () => {
@@ -610,14 +486,20 @@ export class FeedService {
     this.events.subscribe('carrier:friendConnection', ret => {
       let friendId = ret.friendId;
       let friendStatus = ret.status;
-      console.log("11111"+JSON.stringify(serverList));
-      console.log("222"+JSON.stringify(serverMap));
-      serverMap[friendId].status = friendStatus;
-      if (serverMap[friendId].status == ConnState.connected){
-        this.doListSubscribedTopic(serverMap[friendId]);
+
+      let server = this.findServer(friendId);
+      server.status = friendStatus;
+      this.pushServer(server);
+      this.updateServerMap();
+
+      if (friendStatus == ConnState.connected){
+        this.listSubscribed(friendId);
+        // TODO If the server supports checks own published server
+        this.listOwnedTopics(friendId);
       }
 
-      eventBus.publish('feeds:friendConnection',this.getServerList());
+      eventBus.publish('feeds:updateServerList',this.getServerList());
+      
     });
   }
 
@@ -641,9 +523,10 @@ export class FeedService {
               msg.friendInfo.status);
       }
 
-      serverList.push(server);
-      this.storeService.set(PersistenceKey.serverList,serverList);
-      eventBus.publish('feeds:updateServerList', serverList, Date.now());
+      this.pushServer(server);
+      this.updateServerMap();
+
+      eventBus.publish('feeds:updateServerList', this.getServerList(), Date.now());
     });
   }
   
@@ -779,7 +662,7 @@ export class FeedService {
       
       if(myFeedList.indexOf(feedKey) == -1){
         myFeedList.push(feedKey);
-        myFeedMap[feedKey] = new MyFeed('paper',nodeId,topic,desc,new Date().getTime().toString());
+        myFeedMap[feedKey] = new MyFeed('paper',nodeId,topic,desc,this.getCurrentTime());
 
         changed = true;
       }
@@ -809,7 +692,7 @@ export class FeedService {
     // TODO
     let server = this.findServer(nodeId);
 
-    if (server == null || server == undefined){
+    if (server == undefined){
       return ;
     }
 
@@ -887,6 +770,7 @@ export class FeedService {
       if (allFeedList.indexOf(feedKey) == -1){
         console.log("111111111111");
         console.log(JSON.stringify(allFeedMap));
+        console.log("111feedKey =>"+feedKey);
         let feed = new AllFeed(nodeId,"paper",topic,desc,this.checkFollowState(feedKey));
         this.updateAllFeed(feedKey, feed);
         changed = true;
@@ -896,6 +780,12 @@ export class FeedService {
         let followstate = this.checkFollowState(feedKey);
         console.log(followstate);
         console.log(JSON.stringify(allFeedMap));
+
+        // if (allFeedMap[feedKey] == undefined){
+
+        // }
+
+        console.log("222feedKey =>"+feedKey);
         if (followstate != allFeedMap[feedKey].followState){
           let feed = allFeedMap[feedKey];
           feed.followState = followstate;
@@ -1211,6 +1101,62 @@ export class FeedService {
 
   //   return isFollowing;
   // }
+  parseFriends(data:any){
+    let servers = data.friends;
+    if (typeof servers == "string") {
+      servers = JSON.parse(servers);
+    }
+
+    
+    for (let id in servers) {
+      console.log("servers[id].connection ==>"+servers[id].connection);
+      let server = new Friend(servers[id].userInfo.userId,
+                              servers[id].userInfo.email,
+                              servers[id].userInfo.region,
+                              servers[id].userInfo.name,
+                              servers[id].connection);
+      this.pushServer(server);
+    }
+    this.updateServerMap();
+  }
+
+  // doListSubscribedTopics(){
+  //   for (const key in Object.keys(serversMap))
+  //     this.doListSubscribedTopic(serversMap[key]);
+  // }
+
+  doListSubscribedTopic(server: Friend){
+    if (server == undefined)
+      return ;
+    if (server.status == ConnState.connected) 
+      this.listSubscribed(server.userId);
+  }
+
+  doListOwnedTopics(){
+    for (const server in this.checkOwnPublisherServer()) {
+      if (server == undefined) continue;
+      this.listOwnedTopics(server);
+    }
+  }
+
+  doExploreTopics(){
+    let keys: string[] = Object.keys(serversMap);
+    for (const index in keys) {
+      if (serversMap[keys[index]] == undefined) continue;
+      this.exploreTopics(serversMap[keys[index]].userId);
+    }
+  }
+
+  checkOwnPublisherServer(){
+    // TODO if feed server modify
+    let list: Friend[] = [];
+    let keys: string[] = Object.keys(serversMap);
+    for (const index in keys) {
+      list.push(serversMap[keys[index]])
+    }
+    return list;
+  }
+
 
   checkFollowState(feedKey: string): string{
     if (favoriteFeedList == null){
@@ -1225,16 +1171,25 @@ export class FeedService {
   }
 
   checkServerConnection(nodeId: string): boolean{
-    if (serverMap[nodeId].status == ConnState.connected){
+    if (serversMap[nodeId].status == ConnState.connected){
       return true;
     }
     return false;
-    // for (let index = 0; index < serverList.length; index++) {
-    //   if (serverList[index].userId == nodeId && serverList[index].status == ConnState.connected){
-    //     return true;
-    //   }
-    // }
-    // return false;
+  }
+
+  findServer(nodeId: string): Friend{
+    if (serversMap == undefined) {
+      return undefined;
+    }
+    return serversMap[nodeId];
+  }
+
+  pushServer(server: Friend){
+    serversMap[server.userId] = server ;
+  }
+
+  updateServerMap(){
+    this.storeService.set(PersistenceKey.serversMap, serversMap);
   }
 }
 
@@ -1375,10 +1330,6 @@ let virtrulFeedEvents = [
     the freedom to use the web as you should without the worries of data theft and third parties monetizing your data`,
     1),
 ];
-
-let virtrulFeedIntro = new FeedIntro(
-  `bb Keep close to Nature's heart... and break clear away, once in awhile,
-  and climb a mountain or spend a week in the woods. Wash your spirit clean.`);
 
 let virtualMyEvents = 
   [

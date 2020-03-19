@@ -26,14 +26,6 @@ export class ServerInfoPage implements OnInit {
     private route: ActivatedRoute,
     private feedService: FeedService) {}
 
-  // attrs = [
-  //   new Attribute('radio-button-on', 'nodeid', 'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo'.slice(0, 31)),
-  //   new Attribute('home', 'address', 'edTfdBfDVXMvQfXMhEvKrbvxaDxGGURyRfxDVMhbdHZFgAcwmGtS'.slice(0, 31)),
-  //   new Attribute('person', 'name', 'coding'),
-  //   new Attribute('mail', 'email', 'abc@example.com'),
-  //   new Attribute('locate', 'region', 'shanbhai')
-  // ];
-
   ngOnInit() {
     this.connectStatus = this.feedService.getConnectionStatus();
     this.route.params.subscribe(data => {
@@ -41,6 +33,9 @@ export class ServerInfoPage implements OnInit {
       
       let server = this.feedService.findServer(data.userId);
       console.log(JSON.stringify(server));
+      if (server == undefined){
+        return ;
+      }
 
       this.attrs = [
         new Attribute('radio-button-on', 'nodeid', server.userId.slice(0, 31)),
@@ -49,7 +44,6 @@ export class ServerInfoPage implements OnInit {
         new Attribute('mail', 'email', server.email),
         new Attribute('locate', 'region', server.region)
       ];
-      
     });
   }
 

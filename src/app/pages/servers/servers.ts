@@ -25,12 +25,15 @@ export class ServersPage implements OnInit {
     }
 
     ngOnInit() {
+        
         this.serverList = this.feedService.getServerList();
+        console.log("11111111=>"+JSON.stringify(this.serverList));
         this.connectStatus = this.feedService.getConnectionStatus();
 
         this.event.subscribe('feeds:updateServerList', serverList => {
             this.zone.run(() => {
                 this.serverList = serverList;
+                console.log("222222222=>"+JSON.stringify(this.serverList));
             });
         });
 
@@ -39,12 +42,6 @@ export class ServersPage implements OnInit {
                 this.connectStatus = connectionStatus;
             });
         });
-
-        this.event.subscribe('feeds:friendConnection',(list)=>{
-            this.zone.run(() => {
-                this.serverList = list;
-            });
-        })
     }
 
 
