@@ -40,11 +40,11 @@ enum PersistenceKey{
 
   serversMap = "serversMap",
 
-  favoriteFeedList = "favoriteFeedList",
-  favoriteFeedMap = "favoriteFeedMap",
+  favoriteFeedsMap = "favoriteFeedsMap",
 
-  allFeedList = "allFeedList",
-  allFeedMap = "allFeedMap",
+  // allFeedList = "allFeedList",
+  // allFeedMap = "allFeedMap",
+  allFeedsMap = "allFeedsMap",
 
   // faverFeedList = "faverFeedList",
   // feedDescList = "feedDescList",
@@ -67,13 +67,8 @@ let connectionStatus = ConnState.disconnected;
 // let serverList: string[] = [];
 //{"nodeId":{Friend}}
 let serversMap: object = {};
-
-// let faverFeedList: FavoriteFeed[] = [];
-let favoriteFeedList: string[] = [];
-let favoriteFeedMap:{} = {};
-
-let allFeedList: string[] = [];
-let allFeedMap: {} = {};
+let favoriteFeedsMap: object = {};
+let allFeedsMap: object = {} ;
 
 // let exploreFeedList: FeedDescs[] = [];
 
@@ -169,15 +164,10 @@ export class FeedService {
 
   init(){
     if (this.platform.is('desktop')) {
-      // serverList = virtualServerList;
       serversMap = virtualServersMap;
-
-      favoriteFeedList = virtualFFList;
-      favoriteFeedMap = virtualFFMap;
-
-      allFeedList = virtualAFList;
-      allFeedMap = virtualAFMap;
-
+      favoriteFeedsMap = virtualFFMap;
+      allFeedsMap = virtualAFMap ;
+      
       eventList = virtualEventList;
       for (let index = 0; index < eventList.length; index++) {
         eventMap[eventList[index]] = virtrulFeedEvents;
@@ -209,25 +199,14 @@ export class FeedService {
       serversMap = {};
     }
 
-    console.log("init==>"+JSON.stringify(serversMap));
-
-
-    favoriteFeedList = this.storeService.get(PersistenceKey.favoriteFeedList);
-    if (favoriteFeedList == null || favoriteFeedList == undefined) {
-      favoriteFeedList = [];
-    }
-    favoriteFeedMap = this.storeService.get(PersistenceKey.favoriteFeedMap);
-    if (favoriteFeedMap == null || favoriteFeedMap == undefined) {
-      favoriteFeedMap = {};
+    favoriteFeedsMap = this.storeService.get(PersistenceKey.favoriteFeedsMap);
+    if (favoriteFeedsMap == null || favoriteFeedsMap == undefined) {
+      favoriteFeedsMap = {};
     }
 
-    allFeedList = this.storeService.get(PersistenceKey.allFeedList);
-    if (allFeedList == null || allFeedList == undefined) {
-      allFeedList = [];
-    }
-    allFeedMap = this.storeService.get(PersistenceKey.allFeedMap);
-    if (allFeedMap == null || allFeedMap == undefined) {
-      allFeedMap = [];
+    allFeedsMap = this.storeService.get(PersistenceKey.allFeedsMap);
+    if (allFeedsMap == null || allFeedsMap == undefined) {
+      allFeedsMap = {};
     }
     
     eventList = this.storeService.get(PersistenceKey.eventList);
@@ -274,25 +253,30 @@ export class FeedService {
     return list;
   }
 
-  getFavoriteFeeds() {
+  getFavoriteFeeds(): FavoriteFeed[]{
     let list: FavoriteFeed[] = [];
-    for (let index = 0; index < favoriteFeedList.length; index++) {
-      list.push(favoriteFeedMap[favoriteFeedList[index]]);
+    let keys: string[] = Object.keys(favoriteFeedsMap);
+    for (const index in keys) {
+      if (favoriteFeedsMap[keys[index]] == undefined)
+        continue;
+      list.push(favoriteFeedsMap[keys[index]]);
     }
     return list;
   }
 
-  public getAllFeeds() {
+  public getAllFeeds(): AllFeed[] {
     let list: AllFeed[] = [];
-    console.log('getAllFeeds'+JSON.stringify(allFeedMap));
-    for (let index = 0; index < allFeedList.length; index++) {
-      list.push(allFeedMap[allFeedList[index]]);
+    let keys: string[] = Object.keys(allFeedsMap);
+    for (const index in keys) {
+      if (allFeedsMap[keys[index]] == undefined)
+        continue;
+      list.push(allFeedsMap[keys[index]]);
     }
     return list;
   }
 
-  public getFeedDescr(feedKey: string) {
-    return allFeedMap[feedKey].desc;
+  public getFeedDescr(feedKey: string): string {
+    return allFeedsMap[feedKey].desc;
   }
 
   fetchFeedEvents(nodeId: string, topic: string , seqno: number = -1){
@@ -301,11 +285,12 @@ export class FeedService {
       return;
     }
 
-    if (favoriteFeedList.indexOf(nodeId+topic) == -1){
+    let feedKey = nodeId+topic ;
+    if (favoriteFeedsMap[feedKey] == undefined){
       return ;
     }
-    
-    this.fetchUnreceived(nodeId,topic,favoriteFeedMap[nodeId+topic].lastSeqno+1);
+
+    this.fetchUnreceived(nodeId,topic,favoriteFeedsMap[feedKey].lastSeqno+1);
   }
 
   public getFeedEvents(feedEventKey: string) {
@@ -687,29 +672,15 @@ export class FeedService {
   }
   */
   handleSubscriptResult(nodeId: string, result: any){
-    console.log("handleSubscriptResult=>");
-    //local process or send listSubscribed request to server
-    // TODO
-    let server = this.findServer(nodeId);
-
-    if (server == undefined){
-      return ;
-    }
-
     this.fetchFeedEvents(nodeId, subscribeTopic, 0);
-    this.doListSubscribedTopic(server);
-    allFeedMap[nodeId+subscribeTopic].followState = "following";
-    eventBus.publish('feeds:allFeedsListChanged',this.getAllFeeds());
+    this.listSubscribed(nodeId);
 
-    // favoriteFeedList.push(nodeId+subscribeTopic);
-    // favoriteFeedMap[]
-    // subscribeTopic
-    // favoriteFeedList.splice(favoriteFeedList.indexOf(nodeId+unSubscribeTopic),1);
-    // favoriteFeedMap[nodeId+unSubscribeTopic] = undefined;
-    // this.storeService.set(PersistenceKey.favoriteFeedList,favoriteFeedList);
-    // this.storeService.set(PersistenceKey.favoriteFeedMap,favoriteFeedMap);
-    // eventBus.publish('feeds:favoriteFeedListChanged',this.getFavoriteFeeds());
-    // this.doListSubscribedTopic(server);
+    let feedKey = nodeId+subscribeTopic ;
+    let feed  = this.findFeedfromAF(nodeId+subscribeTopic);
+    feed.followState = "following";
+    this.pushAllFeeds(feedKey, feed);
+
+    eventBus.publish('feeds:allFeedsListChanged',this.getAllFeeds());
   }
 
   /*
@@ -721,16 +692,14 @@ export class FeedService {
   */
   handleUnsubscribeResult(nodeId: string,result: any){
     console.log("handleUnsubscribeResult=>");
-
+    let feedKey = nodeId+unSubscribeTopic;
     // TODO
-    // faverFeedList.splice()
-    favoriteFeedList.splice(favoriteFeedList.indexOf(nodeId+unSubscribeTopic),1);
-    favoriteFeedMap[nodeId+unSubscribeTopic] = undefined;
-    this.storeService.set(PersistenceKey.favoriteFeedList,favoriteFeedList);
-    this.storeService.set(PersistenceKey.favoriteFeedMap,favoriteFeedMap);
+    favoriteFeedsMap[feedKey] = undefined;
+    
     eventBus.publish('feeds:favoriteFeedListChanged',this.getFavoriteFeeds());
 
-    allFeedMap[nodeId+unSubscribeTopic].followState = "follow";
+    allFeedsMap[feedKey].followState = "follow";
+    this.updateServerMap();
     eventBus.publish('feeds:allFeedsListChanged',this.getAllFeeds());
     
     // let server = this.findServer(nodeId);
@@ -766,36 +735,24 @@ export class FeedService {
       let topic = result[index].name;
       let desc = result[index].desc;
       let feedKey = nodeId+topic;
-      console.log(allFeedList.indexOf(feedKey));
-      if (allFeedList.indexOf(feedKey) == -1){
-        console.log("111111111111");
-        console.log(JSON.stringify(allFeedMap));
-        console.log("111feedKey =>"+feedKey);
+
+      if (allFeedsMap[feedKey] == undefined){
         let feed = new AllFeed(nodeId,"paper",topic,desc,this.checkFollowState(feedKey));
-        this.updateAllFeed(feedKey, feed);
+        this.pushAllFeeds(feedKey, feed);
         changed = true;
       } else {
-        console.log(JSON.stringify(allFeedList));
-        console.log("2222222222222");
         let followstate = this.checkFollowState(feedKey);
-        console.log(followstate);
-        console.log(JSON.stringify(allFeedMap));
-
-        // if (allFeedMap[feedKey] == undefined){
-
-        // }
-
-        console.log("222feedKey =>"+feedKey);
-        if (followstate != allFeedMap[feedKey].followState){
-          let feed = allFeedMap[feedKey];
+        if (followstate != allFeedsMap[feedKey].followState){
+          let feed = this.findFeedfromAF(feedKey);
           feed.followState = followstate;
-          this.updateAllFeedState(feedKey,feed);
+          this.pushAllFeeds(feedKey,feed);
           changed = true;
         }
       }
     }
 
     if (changed){
+      this.updateAllFeeds();
       eventBus.publish('feeds:allFeedsListChanged',this.getAllFeeds());
     }
   }
@@ -824,8 +781,8 @@ export class FeedService {
       let desc = result[index].desc;
 
       let favoriteFeedKey = nodeId+topic;
-      if (favoriteFeedList.indexOf(favoriteFeedKey) == -1){
-        this.updatefavoriteFeed(favoriteFeedKey ,new FavoriteFeed(nodeId, topic, desc, 0, 0, new Date().getTime().toString()));
+      if (favoriteFeedsMap[favoriteFeedKey] == undefined){
+        favoriteFeedsMap[favoriteFeedKey] = new FavoriteFeed(nodeId, topic, desc, 0, 0, new Date().getTime().toString());
         changed = true ;
       }
 
@@ -835,51 +792,20 @@ export class FeedService {
     }
     needFetch = false ;
     if (changed){
+      this.updateFFMap();
       eventBus.publish('feeds:favoriteFeedListChanged',this.getFavoriteFeeds());
     }
   }
 
   updatefavoriteUnreadState(nodeId: string, topic: string , unread: number){
-    favoriteFeedMap[nodeId+topic].unread = unread;
-    this.storeService.set(PersistenceKey.favoriteFeedMap,favoriteFeedMap);
+    favoriteFeedsMap[nodeId+topic].unread = unread;
+    this.updateFFMap();
   }
+
   updatefavoriteFeed(favoriteFeedKey:string, feed:FavoriteFeed){
-    favoriteFeedList.push(favoriteFeedKey);
-    favoriteFeedMap[favoriteFeedKey] = feed;
-    this.storeService.set(PersistenceKey.favoriteFeedList,favoriteFeedList);
-    this.storeService.set(PersistenceKey.favoriteFeedMap,favoriteFeedMap);
+    favoriteFeedsMap[favoriteFeedKey] = feed;
+    this.updateFFMap();
   }
-
-  updateAllFeed(feedKey: string, feed: AllFeed){
-    allFeedList.push(feedKey);
-    allFeedMap[feedKey] = feed;
-    this.storeService.set(PersistenceKey.allFeedList,allFeedList);
-    this.storeService.set(PersistenceKey.allFeedMap, allFeedMap);
-  }
-
-  updateAllFeedState(feedKey: string, feed: AllFeed){
-    allFeedMap[feedKey] = feed;
-    this.storeService.set(PersistenceKey.allFeedMap, allFeedMap);
-  }
-      // favoriteFeedMap[favoriteFeedKey].
-
-      
-      // faverMap[topic]=faverFeed;
-      // console.log( Object.keys(faverMap) );
-      
-      // faverFeedList.push(faverFeed);
-      // this.updateFavoriteFeedList(faverFeed, faverFeedList);
-    // }
-    
-    // for(let key  in faverMap){
-    //   console.log(key + '---' + faverMap[key])
-    // }
-
-    // TODO
-    // checkList
-    // let faverFeed = new FavoriteFeed(topic, desc, 0, new Date().getTime().toString());
-    // faverFeedList.push(faverFeed);
-  // }
 
   /*
   {
@@ -907,15 +833,15 @@ export class FeedService {
       let eventKey = from+fetchTopic+event;
 
       if (eventList.indexOf(eventKey) == -1){
-        let favoriteFeedKey = from+fetchTopic ;
-        let unread = 0
-        if (favoriteFeedMap[favoriteFeedKey].unread != undefined){
-          unread = favoriteFeedMap[favoriteFeedKey].unread;
+        let favoriteFeedKey = from+fetchTopic;
+        let unread = 0;
+        if (favoriteFeedsMap[favoriteFeedKey].unread != undefined){
+          unread = favoriteFeedsMap[favoriteFeedKey].unread;
         }
         
-        favoriteFeedMap[favoriteFeedKey].lastSeqno = seqno;
-        favoriteFeedMap[favoriteFeedKey].unread  = unread+1;
-        favoriteFeedMap[favoriteFeedKey].lastReceived = ts;
+        favoriteFeedsMap[favoriteFeedKey].lastSeqno = seqno;
+        favoriteFeedsMap[favoriteFeedKey].unread  = unread+1;
+        favoriteFeedsMap[favoriteFeedKey].lastReceived = ts;
         
         if (eventMap[favoriteFeedKey] == undefined){
           eventMap[favoriteFeedKey] = [];
@@ -930,24 +856,16 @@ export class FeedService {
       }
     }
 
-    console.log("---------------------------"+JSON.stringify(eventMap));
-
     if (changed) {
       this.storeService.set(PersistenceKey.eventList, eventList);
       this.storeService.set(PersistenceKey.eventMap,eventMap);
       
-      this.storeService.set(PersistenceKey.favoriteFeedMap , favoriteFeedMap);
+      this.updateFFMap();
       eventBus.publish('feeds:favoriteFeedListChanged',this.getFavoriteFeeds());
     }
 
-    if (currentEventChanged){
+    if (currentEventChanged)
       eventBus.publish('feeds:eventListChanged',this.getFeedEvents(currentFeedEventKey));
-    }
-
-    // this.updateFavoriteFeedList();
-      // params["since"] = Math.round(since.valueOf()/1000);
-      // params["since"] = Math.round(since.valueOf()/1000);
-    
   }
 
   updateEventList(feedEvent: FeedEvents, list: FeedEvents[]){
@@ -990,10 +908,10 @@ export class FeedService {
     let eventKey = nodeId+topic+event;
     if (eventList.indexOf(eventKey) == -1){
       let favoriteFeedKey = nodeId+topic ;
-      let unread = favoriteFeedMap[favoriteFeedKey].unread;
-      favoriteFeedMap[favoriteFeedKey].lastSeqno = seqno;
-      favoriteFeedMap[favoriteFeedKey].unread  = unread+1;
-      favoriteFeedMap[favoriteFeedKey].lastReceived = ts;
+      let unread = favoriteFeedsMap[favoriteFeedKey].unread;
+      favoriteFeedsMap[favoriteFeedKey].lastSeqno = seqno;
+      favoriteFeedsMap[favoriteFeedKey].unread  = unread+1;
+      favoriteFeedsMap[favoriteFeedKey].lastReceived = ts;
 
       if (eventMap[favoriteFeedKey] == undefined){
         eventMap[favoriteFeedKey] = [];
@@ -1011,7 +929,7 @@ export class FeedService {
       this.storeService.set(PersistenceKey.eventList, eventList);
       this.storeService.set(PersistenceKey.eventMap,eventMap);
 
-      this.storeService.set(PersistenceKey.favoriteFeedMap , favoriteFeedMap);
+      this.updateFFMap();
       eventBus.publish('feeds:favoriteFeedListChanged',this.getFavoriteFeeds());
     }
 
@@ -1159,14 +1077,17 @@ export class FeedService {
 
 
   checkFollowState(feedKey: string): string{
-    if (favoriteFeedList == null){
+    if (favoriteFeedsMap == undefined){
       return "follow";
     }
-    for (let index = 0; index < favoriteFeedList.length; index++) {
-      if (feedKey == favoriteFeedList[index]){
+
+    let keys: string[] = Object.keys(favoriteFeedsMap);
+    for (const index in keys) {
+      if (favoriteFeedsMap[keys[index]] != undefined){
         return "following"
       }
     }
+
     return "follow";
   }
 
@@ -1187,9 +1108,27 @@ export class FeedService {
   pushServer(server: Friend){
     serversMap[server.userId] = server ;
   }
+  
 
+
+
+  findFeedfromAF(feedKey: string): AllFeed{
+    return allFeedsMap[feedKey];
+  }
+
+  pushAllFeeds(feedKey: string, feed: AllFeed){
+    allFeedsMap[feedKey] = feed;
+  }
   updateServerMap(){
     this.storeService.set(PersistenceKey.serversMap, serversMap);
+  }
+
+  updateFFMap(){
+    this.storeService.set(PersistenceKey.favoriteFeedsMap,favoriteFeedsMap);
+  }
+
+  updateAllFeeds(){
+    this.storeService.set(PersistenceKey.allFeedsMap, allFeedsMap);
   }
 }
 
