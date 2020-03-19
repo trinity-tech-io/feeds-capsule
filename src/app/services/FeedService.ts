@@ -323,6 +323,9 @@ export class FeedService {
   public getFeedEvents(feedEventKey: string) {
     currentFeedEventKey = feedEventKey;
     let list: FeedEvents[] = [];
+    if (eventMap[feedEventKey] == undefined){
+      eventMap[feedEventKey] = [];
+    }
     for (let index = 0; index < eventMap[feedEventKey].length; index++) {
       list.push(eventMap[feedEventKey][index]);
     }
@@ -653,13 +656,12 @@ export class FeedService {
 
   handleResult(nodeId: string ,message: string){
     let from = nodeId;
-    let response = this.jsonRPCService.parseJson(message);
-
     console.log("friendMessageCallback");
     console.log("response=>"+message);
     console.log("from=>"+from);
-    console.log("ret=>"+response);
-
+    
+    let response = this.jsonRPCService.parseJson(message);
+    
     if (this.jsonRPCService.checkError(message)) {
       alert(response.error.code+";"+response.error.message);
       return;
@@ -1016,7 +1018,11 @@ export class FeedService {
 
       if (eventList.indexOf(eventKey) == -1){
         let favoriteFeedKey = from+fetchTopic ;
-        let unread = favoriteFeedMap[favoriteFeedKey].unread;
+        let unread = 0
+        if (favoriteFeedMap[favoriteFeedKey].unread != undefined){
+          unread = favoriteFeedMap[favoriteFeedKey].unread;
+        }
+        
         favoriteFeedMap[favoriteFeedKey].lastSeqno = seqno;
         favoriteFeedMap[favoriteFeedKey].unread  = unread+1;
         favoriteFeedMap[favoriteFeedKey].lastReceived = ts;

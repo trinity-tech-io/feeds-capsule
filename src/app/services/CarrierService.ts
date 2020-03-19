@@ -229,11 +229,18 @@ export class CarrierService {
             (err: string) => {this.errorFun(err, error);});
     }
 
-    getUserId() {
+    getUserId(): string {
         if (this.platform.is('desktop')) {
             return 'deafultUserId';
         }
         return carrierInst.userId;
+    }
+
+    getNodeId(): string {
+        if (this.platform.is('desktop')) {
+            return 'deafultNodeId';
+        }
+        return carrierInst.nodeId;
     }
 
     getAddress(): string {

@@ -56,6 +56,9 @@ export class JsonRPCService {
         if (typeof msg != "string") {
             return;
         }
+        if (msg.indexOf("jsonrpc")==-1){
+            return;
+        }
 
         let substr = msg.substring(0,msg.length-1);
         let data = JSON.parse(substr);
