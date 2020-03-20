@@ -16,7 +16,7 @@
   </div>
 
   <ion-list>
-    <ion-item *ngFor="let attr of attrs">
+    <!-- <ion-item *ngFor="let attr of attrs">
       <ion-grid class="ion-padding" >
         <ion-row >
           <ion-col
@@ -29,13 +29,17 @@
           <ion-col
             size="9.25"
           >
-            <ion-label>
-              {{attr.attrValue}}
-            </ion-label>
+            <ion-input required type="text"  [(ngModel)]="attr.attrValue">
+            </ion-input>
           </ion-col
           >
         </ion-row>
       </ion-grid>
+    </ion-item> -->
+
+    <ion-item  *ngFor="let attr of attrs">
+      <ion-label color="primary" floating>{{attr.attrName}}:</ion-label>
+      <ion-input required type="text"  [(ngModel)]="attr.attrValue"></ion-input>
     </ion-item>
   </ion-list>
 </ion-content>
