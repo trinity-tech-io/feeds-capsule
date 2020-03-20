@@ -62,14 +62,16 @@ export class InitializePage implements OnInit {
     }
 
     testget(){
+
     }
 
     testclean(){
-        this.store.remove("faverFeedList");
-        this.store.remove("serverMap");
-        this.store.remove("serverList");
-        this.store.remove("allFeedList");
-        this.store.remove("allFeedMap");
+        this.store.remove("serversMap");
+        this.store.remove("favoriteFeedsMap");
+        this.store.remove("allFeedsMap");
+        this.store.remove("eventsMap");
+        this.store.remove("myFeedsMap");
+        this.store.remove("myEventMap");
     }
 
     destroy(){

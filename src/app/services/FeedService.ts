@@ -38,27 +38,22 @@ enum MethodType {
 enum PersistenceKey{
   firstInit = "firstInit",
 
+  // {nodeId:{Friend}}
   serversMap = "serversMap",
-
+  // {nodeId+topic: {FavoriteFeed}}
   favoriteFeedsMap = "favoriteFeedsMap",
-
-  // allFeedList = "allFeedList",
-  // allFeedMap = "allFeedMap",
+  // {nodeId+topic: {AllFeed}}
   allFeedsMap = "allFeedsMap",
 
-  // faverFeedList = "faverFeedList",
-  // feedDescList = "feedDescList",
+  // eventList = "eventList",
+  eventsMap = "eventsMap",
 
-  eventList = "eventList",
-  eventMap = "eventMap",
+  myFeedsMap = "myFeedsMap",
+  // myFeedList = "virtrulMyFeeds",
+  // myFeedMap = "myFeedMap",
 
-  myFeedList = "virtrulMyFeeds",
-  myFeedMap = "myFeedMap",
-
-  // {nodeId+topic:{event}}
+  // {nodeId+topic:[{event},{event}]}
   myEventMap = "myEventMap",
-
-  exploreFeedList = "exploreFeedList"
 }
 
 // let serverUserIdList:any = [];
@@ -72,11 +67,12 @@ let allFeedsMap: object = {} ;
 
 // let exploreFeedList: FeedDescs[] = [];
 
-let eventList: string[] = [];
-let eventMap: {} = {};
+// let eventList: string[] = [];
+let eventsMap: {} = {};
 
-let myFeedList: string[] = [];
-let myFeedMap: {} = {};
+// let myFeedList: string[] = [];
+// let myFeedMap: {} = {};
+let myFeedsMap: object = {};
 
 let myEventMap: {} = {};
 // let eventsMap:{topic: string, eventList: FeedEvents[]};
@@ -123,17 +119,6 @@ export class MyFeed {
     public lastUpdated: string) {}
 }
 
-// export class FeedDescs{
-//   constructor(
-//     public nodeId: string,
-//     public avatar: string,
-//     public topic: string,
-//     public desc: string,
-//     public followState: string
-//     ){
-//   }
-// }
-
 export class FeedEvents{
   constructor(
     public nodeId: string,
@@ -167,15 +152,9 @@ export class FeedService {
       serversMap = virtualServersMap;
       favoriteFeedsMap = virtualFFMap;
       allFeedsMap = virtualAFMap ;
-      
-      eventList = virtualEventList;
-      for (let index = 0; index < eventList.length; index++) {
-        eventMap[eventList[index]] = virtrulFeedEvents;
-      }
-      // exploreFeedList = virtrulFeedDescs;
+      eventsMap = virtualEvents
 
-      myFeedList = virtualMyFeedList;
-      myFeedMap = virtrulMyFeeds;
+      myFeedsMap = virtrulMyFeeds;
 
       myEventMap = virtualMyEventMap;
 
@@ -209,15 +188,20 @@ export class FeedService {
       allFeedsMap = {};
     }
     
-    eventList = this.storeService.get(PersistenceKey.eventList);
-    if (eventList == null || eventList == undefined){
-      eventList = [];
+    eventsMap = this.storeService.get(PersistenceKey.eventsMap);
+    if (eventsMap == null || eventsMap == undefined){
+      eventsMap = {};
     }
-    eventMap = this.storeService.get(PersistenceKey.eventMap);
-    if (eventMap == null || eventMap == undefined){
-      eventMap = {};
+
+    myFeedsMap = this.storeService.get(PersistenceKey.myFeedsMap);
+    if (myFeedsMap == null || myFeedsMap == undefined){
+      myFeedsMap = {};
     }
-    
+
+    myEventMap = this.storeService.get(PersistenceKey.myEventMap);
+    if (myEventMap == null || myEventMap == undefined){
+      myEventMap = {};
+    }
   }
 
   initCallback(){
@@ -293,25 +277,24 @@ export class FeedService {
     this.fetchUnreceived(nodeId,topic,favoriteFeedsMap[feedKey].lastSeqno+1);
   }
 
-  public getFeedEvents(feedEventKey: string) {
+  getFeedEvents(feedEventKey: string) {
     currentFeedEventKey = feedEventKey;
     let list: FeedEvents[] = [];
-    if (eventMap[feedEventKey] == undefined){
-      eventMap[feedEventKey] = [];
+    if (eventsMap[feedEventKey] == undefined){
+      eventsMap[feedEventKey] = [];
     }
-    for (let index = 0; index < eventMap[feedEventKey].length; index++) {
-      list.push(eventMap[feedEventKey][index]);
-    }
-
-    return list.reverse();
+    return eventsMap[feedEventKey].reverse();
   }
 
 
 
   public getMyFeeds() {
     let list: MyFeed[] = [];
-    for (let index = 0; index < myFeedList.length; index++) {
-      list.push(myFeedMap[myFeedList[index]]);
+    let keys: string[] = Object.keys(myFeedsMap);
+    for (const index in keys) {
+      if (myFeedsMap[keys[index]] == undefined) 
+        continue;
+      list.push(myFeedsMap[keys[index]]);
     }
 
     return list;
@@ -323,7 +306,7 @@ export class FeedService {
         myEventMap == undefined || 
         myEventMap[nodeId+topic] == null || 
         myEventMap[nodeId+topic] == undefined){
-      return ;
+      return [];
     }
     return myEventMap[nodeId+topic];
   }
@@ -357,7 +340,6 @@ export class FeedService {
 
   sendMessage(nodeId: string, method: string, params: any, id: string){
     if(!this.checkServerConnection(nodeId)){
-
       return;
     }
 
@@ -621,8 +603,7 @@ export class FeedService {
     }
     
     myEventMap[postEventTmp.nodeId+postEventTmp.topic].push(postEventTmp);
-    this.storeService.set(PersistenceKey.myEventMap,myFeedMap);
-
+    this.updateMyEventMap();
     eventBus.publish("feeds:postEventSuccess");
   }
 
@@ -639,29 +620,27 @@ export class FeedService {
   handleListOwnTopicResult(nodeId: string, result: any){
     console.log("handleListOwnTopicResult=>");
 
-    let changed = false ;
+    // let changed = false ;
     for (let index = 0; index < result.length; index++) {
       let topic = result[index].name;
       let desc = result[index].desc;
       let feedKey = nodeId+topic;
       
-      if(myFeedList.indexOf(feedKey) == -1){
-        myFeedList.push(feedKey);
-        myFeedMap[feedKey] = new MyFeed('paper',nodeId,topic,desc,this.getCurrentTime());
+      myFeedsMap[feedKey] = new MyFeed('paper',nodeId,topic,desc,this.getCurrentTime());
+      // if(myFeedList.indexOf(feedKey) == -1){
+      //   myFeedList.push(feedKey);
+      //   myFeedMap[feedKey] = new MyFeed('paper',nodeId,topic,desc,this.getCurrentTime());
 
-        changed = true;
-      }
+      //   changed = true;
+      // }
     }
 
-    if (changed){
-      this.storeService.set(PersistenceKey.myFeedList, myFeedList);
-      this.storeService.set(PersistenceKey.myFeedMap, myFeedMap);
+    // if (changed){
+      this.updateMyFeedsMap();
+
       eventBus.publish("feeds:ownFeedListChanged",this.getMyFeeds());
-    }
+    // }
     
-    
-
-    myFeedList.push
   }
 
   /*
@@ -676,10 +655,11 @@ export class FeedService {
     this.listSubscribed(nodeId);
 
     let feedKey = nodeId+subscribeTopic ;
-    let feed  = this.findFeedfromAF(nodeId+subscribeTopic);
-    feed.followState = "following";
-    this.pushAllFeeds(feedKey, feed);
+    favoriteFeedsMap[feedKey] = new FavoriteFeed(nodeId, subscribeTopic, "", 0, 0, this.getCurrentTime());
+    allFeedsMap[feedKey].followState = "following";
 
+    this.updateFFMap();
+    this.updateAllFeeds();
     eventBus.publish('feeds:allFeedsListChanged',this.getAllFeeds());
   }
 
@@ -695,6 +675,7 @@ export class FeedService {
     let feedKey = nodeId+unSubscribeTopic;
     // TODO
     favoriteFeedsMap[feedKey] = undefined;
+    eventsMap[feedKey] = undefined;
     
     eventBus.publish('feeds:favoriteFeedListChanged',this.getFavoriteFeeds());
 
@@ -731,21 +712,22 @@ export class FeedService {
       return ;
     }
 
+    console.log(JSON.stringify(allFeedsMap));
     for (let index = 0; index < result.length; index++) {
       let topic = result[index].name;
       let desc = result[index].desc;
       let feedKey = nodeId+topic;
 
       if (allFeedsMap[feedKey] == undefined){
-        let feed = new AllFeed(nodeId,"paper",topic,desc,this.checkFollowState(feedKey));
-        this.pushAllFeeds(feedKey, feed);
+        console.log("11111");
+        allFeedsMap[feedKey] = new AllFeed(nodeId,"paper",topic,desc,this.checkFollowState(feedKey));
         changed = true;
       } else {
-        let followstate = this.checkFollowState(feedKey);
-        if (followstate != allFeedsMap[feedKey].followState){
-          let feed = this.findFeedfromAF(feedKey);
-          feed.followState = followstate;
-          this.pushAllFeeds(feedKey,feed);
+        console.log("2222222222");
+        let state = this.checkFollowState(feedKey);
+        if (state != allFeedsMap[feedKey].followState){
+          console.log("33333333");
+          allFeedsMap[feedKey].followState = state;
           changed = true;
         }
       }
@@ -783,7 +765,9 @@ export class FeedService {
       let favoriteFeedKey = nodeId+topic;
       if (favoriteFeedsMap[favoriteFeedKey] == undefined){
         favoriteFeedsMap[favoriteFeedKey] = new FavoriteFeed(nodeId, topic, desc, 0, 0, new Date().getTime().toString());
-        changed = true ;
+      }else{
+        favoriteFeedsMap[favoriteFeedKey].name = topic;
+        favoriteFeedsMap[favoriteFeedKey].desc = desc  
       }
 
       if (needFetch){
@@ -819,47 +803,42 @@ export class FeedService {
   } 
   */
   handleFetchUnreceivedResult(from: string, result: any){
+    console.log("handleFetchUnreceivedResult=>");
     let changed: boolean = false ;
     let currentEventChanged: boolean = false;
-    console.log("handleFetchUnreceivedResult=>");
     if (result == null || result == undefined){
       return ;
     }
+    let feedKey = from+fetchTopic;
+    let unread = 0;
+    
+    if (eventsMap[feedKey] == undefined){
+      eventsMap[feedKey] = [];
+    }
+
+    let eventList = eventsMap[feedKey];
 
     for (let index = 0; index < result.length; index++) {
       let seqno = result[index].seqno;
       let event = result[index].event;
       let ts = result[index].ts;
-      let eventKey = from+fetchTopic+event;
-
-      if (eventList.indexOf(eventKey) == -1){
-        let favoriteFeedKey = from+fetchTopic;
-        let unread = 0;
-        if (favoriteFeedsMap[favoriteFeedKey].unread != undefined){
-          unread = favoriteFeedsMap[favoriteFeedKey].unread;
-        }
-        
-        favoriteFeedsMap[favoriteFeedKey].lastSeqno = seqno;
-        favoriteFeedsMap[favoriteFeedKey].unread  = unread+1;
-        favoriteFeedsMap[favoriteFeedKey].lastReceived = ts;
-        
-        if (eventMap[favoriteFeedKey] == undefined){
-          eventMap[favoriteFeedKey] = [];
-        }
-        eventList.push(eventKey);
-        eventMap[favoriteFeedKey].push(new FeedEvents(from, fetchTopic, ts, event, seqno));
-
-        if (currentFeedEventKey == favoriteFeedKey){
-          currentEventChanged = true;
-        }
-        changed = true ;
+      if (favoriteFeedsMap[feedKey].unread != undefined){
+        unread = favoriteFeedsMap[feedKey].unread;
       }
+      favoriteFeedsMap[feedKey].lastSeqno = seqno;
+      favoriteFeedsMap[feedKey].unread  = unread+1;
+      favoriteFeedsMap[feedKey].lastReceived = ts;
+      
+      eventsMap[feedKey].push((new FeedEvents(from, fetchTopic, ts, event, seqno)));
+      changed = true ;
+    }
+    
+    if (currentFeedEventKey == feedKey){
+      currentEventChanged = true;
     }
 
     if (changed) {
-      this.storeService.set(PersistenceKey.eventList, eventList);
-      this.storeService.set(PersistenceKey.eventMap,eventMap);
-      
+      this.updateEventMap();
       this.updateFFMap();
       eventBus.publish('feeds:favoriteFeedListChanged',this.getFavoriteFeeds());
     }
@@ -868,17 +847,17 @@ export class FeedService {
       eventBus.publish('feeds:eventListChanged',this.getFeedEvents(currentFeedEventKey));
   }
 
-  updateEventList(feedEvent: FeedEvents, list: FeedEvents[]){
-    for (let index = 0; index < list.length; index++) {
-      if (list[index].nodeId == feedEvent.nodeId && 
-          list[index].topic == feedEvent.topic &&
-          list[index].seqno == feedEvent.seqno) {
-            return ;
-          }
-    }
-    list.push(feedEvent);
-    this.storeService.set(PersistenceKey.eventList,list);
-  }
+  // updateEventList(feedEvent: FeedEvents, list: FeedEvents[]){
+  //   for (let index = 0; index < list.length; index++) {
+  //     if (list[index].nodeId == feedEvent.nodeId && 
+  //         list[index].topic == feedEvent.topic &&
+  //         list[index].seqno == feedEvent.seqno) {
+  //           return ;
+  //         }
+  //   }
+  //   list.push(feedEvent);
+  //   this.storeService.set(PersistenceKey.eventList,list);
+  // }
 
   /*
   {
@@ -902,36 +881,30 @@ export class FeedService {
     // // let event = new FeedEvents(nodeId, result.topic, result.ts, result.event, result.seqno);
     // eventList.push(event);
     // this.storeService.set(PersistenceKey.eventList,eventList);
-    let changed = false;
     let currentEventChanged = false;
 
-    let eventKey = nodeId+topic+event;
-    if (eventList.indexOf(eventKey) == -1){
-      let favoriteFeedKey = nodeId+topic ;
-      let unread = favoriteFeedsMap[favoriteFeedKey].unread;
-      favoriteFeedsMap[favoriteFeedKey].lastSeqno = seqno;
-      favoriteFeedsMap[favoriteFeedKey].unread  = unread+1;
-      favoriteFeedsMap[favoriteFeedKey].lastReceived = ts;
+    let feedKey = nodeId+topic;
 
-      if (eventMap[favoriteFeedKey] == undefined){
-        eventMap[favoriteFeedKey] = [];
-      }
-      eventList.push(eventKey);
-      eventMap[favoriteFeedKey].push(new FeedEvents(nodeId, fetchTopic, ts, event, seqno));
+    let unread = favoriteFeedsMap[feedKey].unread;
+    favoriteFeedsMap[feedKey].lastSeqno = seqno;
+    favoriteFeedsMap[feedKey].unread  = unread+1;
+    favoriteFeedsMap[feedKey].lastReceived = ts;
 
-      if (currentFeedEventKey == favoriteFeedKey){
-        currentEventChanged = true;
-      }
-      changed = true ;
+    if (eventsMap[feedKey] == undefined){
+      eventsMap[feedKey] = [];
     }
 
-    if (changed) {
-      this.storeService.set(PersistenceKey.eventList, eventList);
-      this.storeService.set(PersistenceKey.eventMap,eventMap);
+    eventsMap[feedKey].push(new FeedEvents(nodeId, fetchTopic, ts, event, seqno));
 
-      this.updateFFMap();
-      eventBus.publish('feeds:favoriteFeedListChanged',this.getFavoriteFeeds());
+    if (currentFeedEventKey == feedKey){
+      currentEventChanged = true;
     }
+
+    // this.storeService.set(PersistenceKey.eventsMap,eventsMap);
+    this.updateEventMap();
+
+    this.updateFFMap();
+    eventBus.publish('feeds:favoriteFeedListChanged',this.getFavoriteFeeds());
 
     if(currentEventChanged){
       eventBus.publish('feeds:eventListChanged',this.getFeedEvents(currentFeedEventKey));
@@ -1036,6 +1009,7 @@ export class FeedService {
       this.pushServer(server);
     }
     this.updateServerMap();
+    eventBus.publish('feeds:updateServerList',this.getServerList());
   }
 
   // doListSubscribedTopics(){
@@ -1077,18 +1051,11 @@ export class FeedService {
 
 
   checkFollowState(feedKey: string): string{
-    if (favoriteFeedsMap == undefined){
+    if (favoriteFeedsMap == undefined || favoriteFeedsMap[feedKey] == undefined){
       return "follow";
     }
 
-    let keys: string[] = Object.keys(favoriteFeedsMap);
-    for (const index in keys) {
-      if (favoriteFeedsMap[keys[index]] != undefined){
-        return "following"
-      }
-    }
-
-    return "follow";
+    return "following";
   }
 
   checkServerConnection(nodeId: string): boolean{
@@ -1109,9 +1076,6 @@ export class FeedService {
     serversMap[server.userId] = server ;
   }
   
-
-
-
   findFeedfromAF(feedKey: string): AllFeed{
     return allFeedsMap[feedKey];
   }
@@ -1130,13 +1094,20 @@ export class FeedService {
   updateAllFeeds(){
     this.storeService.set(PersistenceKey.allFeedsMap, allFeedsMap);
   }
+
+  updateEventMap(){
+    this.storeService.set(PersistenceKey.eventsMap, eventsMap);
+  }
+
+  updateMyFeedsMap(){
+    this.storeService.set(PersistenceKey.myFeedsMap, myFeedsMap);
+  }
+  updateMyEventMap(){
+    this.storeService.set(PersistenceKey.myEventMap,myEventMap);
+  }
 }
 
 //// Virtual data
-let virtualServerList: string[] = [
-  "J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo",
-  "3x4xVSJmtvty1tM8vzcz2pzW2WG7TmNavbnz9ka1EtZy",
-]
 let virtualServersMap: any = {
   "J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo":new Friend('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo',
                                                             // 'edTfdBfDVXMvQfXMhEvKrbvxaDxGGURyRfxDVMhbdHZFgAcwmGtS',
@@ -1151,18 +1122,6 @@ let virtualServersMap: any = {
                                                             'Tom', 
                                                             ConnState.disconnected)
 }
-
-let virtualFFList: string[] = [
-  'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo'+'Carrier News',
-  'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo'+'Hive News',
-  'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo'+'Football',
-  'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo'+'Trinity News',
-  'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo'+'Hollywood Movies',
-  'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo'+'Cofee',
-  'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo'+'MacBook',
-  'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo'+'Rust development',
-  'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo'+'Golang'
-];
 
 let virtualFFMap:any = {
   'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoCarrier News':
@@ -1185,15 +1144,6 @@ let virtualFFMap:any = {
   new FavoriteFeed('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'Golang',  '', 8, 0)
 }
 
-let virtualMyFeedList: string[]=[
-  'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo'+'Carrier News',
-  'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo'+'Hive News',
-  'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo'+'Trinity News',
-  'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo'+'DID News',
-  'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo'+'DID SideChain News',
-  'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo'+'Football News'
-]
-
 let virtrulMyFeeds = {
   'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoCarrier News':
     new MyFeed('paper', 'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'Carrier News', '', '12:10 Dec. 12, 2019'),
@@ -1209,15 +1159,6 @@ let virtrulMyFeeds = {
     new MyFeed('paper', 'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'Football News', '', '12:10 Dec.12, 2019')
 }
 
-let virtualAFList: string[] = [
-  "J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo"+"Carrier News",
-  "J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo"+"Hive News",
-  "J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo"+"Trinity News",
-  "J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo"+"DID News",
-  "J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo"+"DMA News",
-  "J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo"+"Football News"
-]
-
 let virtualAFMap: any = {
   "J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoCarrier News":
     new AllFeed("J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo","page","Carrier News","","following"),
@@ -1232,8 +1173,6 @@ let virtualAFMap: any = {
   "J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoFootball News":
     new AllFeed("J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo","page","Football News","","follow")
 }
-
-let virtualEventList: string[] = virtualFFList;
 
 let virtrulFeedEvents = [
   new FeedEvents('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo',
@@ -1269,6 +1208,18 @@ let virtrulFeedEvents = [
     the freedom to use the web as you should without the worries of data theft and third parties monetizing your data`,
     1),
 ];
+
+let virtualEvents = {
+  'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoCarrier News':virtrulFeedEvents,
+  'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoHive News':virtrulFeedEvents,
+  'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoFootball':virtrulFeedEvents,
+  'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoTrinity News':virtrulFeedEvents,
+  'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoHollywood Movies':virtrulFeedEvents,
+  'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoCofee':virtrulFeedEvents,
+  'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoMacBook':virtrulFeedEvents,
+  'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoRust development':virtrulFeedEvents,
+  'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoGolang':virtrulFeedEvents
+}
 
 let virtualMyEvents = 
   [
