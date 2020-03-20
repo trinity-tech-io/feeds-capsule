@@ -16,7 +16,4 @@ export class AboutPage implements OnInit {
 
   ngOnInit() {
   }
-  // abouttest(){
-  //   alert("abouttest");
-  // }
 }

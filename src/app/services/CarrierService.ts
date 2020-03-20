@@ -186,7 +186,6 @@ export class CarrierService {
     }
 
     friendAddedCallback(ret) {
-        alert("carrier:friendAdded");
         eventBus.publish('carrier:friendAdded', ret, Date.now());
     }
 

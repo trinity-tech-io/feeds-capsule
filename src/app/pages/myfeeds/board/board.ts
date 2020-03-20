@@ -20,18 +20,10 @@ export class FeedBoardPage implements OnInit {
     private navCtrl: NavController) {
       
       acRoute.params.subscribe((data)=>{
-        //TODO
-        // this.myEvents = this.feedService.getMyFeedEvents(data.nodeId,data.topic);
-        alert("BOARD =>"+JSON.stringify(data));
-        console.log(JSON.stringify(data));
-
         this.nodeId = data.nodeId;
         this.topic = data.topic;
 
         this.myEvents = this.feedService.getMyFeedEvents(this.nodeId,this.topic);
-
-        console.log(JSON.stringify(this.myEvents));
-        alert(JSON.stringify(this.myEvents));
       });
 
       
