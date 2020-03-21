@@ -12,10 +12,10 @@ import { Router } from '@angular/router';
 
 export class ServersPage implements OnInit {
     private connectStatus = 1;
-    serverList:any;
+    private serverList:any;
 
     constructor(
-        private event: Events,
+        private events: Events,
         private platform: Platform,
         private zone: NgZone,
         private native: NativeService,
@@ -25,19 +25,16 @@ export class ServersPage implements OnInit {
     }
 
     ngOnInit() {
-        
         this.serverList = this.feedService.getServerList();
-        console.log("11111111=>"+JSON.stringify(this.serverList));
         this.connectStatus = this.feedService.getConnectionStatus();
 
-        this.event.subscribe('feeds:updateServerList', serverList => {
+        this.events.subscribe('feeds:updateServerList', serverList => {
             this.zone.run(() => {
                 this.serverList = serverList;
-                console.log("222222222=>"+JSON.stringify(this.serverList));
             });
         });
 
-        this.event.subscribe('feeds:connectionChanged', connectionStatus => {
+        this.events.subscribe('feeds:connectionChanged', connectionStatus => {
             this.zone.run(() => {
                 this.connectStatus = connectionStatus;
             });

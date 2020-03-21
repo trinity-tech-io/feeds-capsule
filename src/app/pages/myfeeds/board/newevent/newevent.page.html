@@ -13,11 +13,16 @@
 </ion-header>
 
 <ion-content>
-  <ion-item>
-    <ion-label position="stacked">Event
-      <ion-text color="danger">*</ion-text>
-    </ion-label>
-    <ion-input required type="text" #event></ion-input>
-  </ion-item>
-  <ion-button expand="block" (click)="newevent(event)">Submit</ion-button>
+  <div class="offline-content" *ngIf=" connectStatus != 0 ">
+    <ion-label>disconnect</ion-label>
+  </div>
+  <div class="content">
+    <ion-item>
+      <ion-label position="stacked">Event
+        <ion-text color="danger">*</ion-text>
+      </ion-label>
+      <ion-input required type="text" #event></ion-input>
+    </ion-item>
+    <ion-button expand="block" (click)="newevent(event)">Submit</ion-button>
+  </div>
 </ion-content>

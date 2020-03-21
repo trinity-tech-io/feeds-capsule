@@ -8,6 +8,9 @@
 </ion-header>
 
 <ion-content>
+  <div class="offline-content" *ngIf=" connectStatus != 0 ">
+    <ion-label>disconnect</ion-label>
+  </div>
   <ion-toolbar>
     <ion-buttons slot="end" padding class="header-btns">
         <ion-button  fill="clear" (click)="scanCode()">

@@ -11,27 +11,33 @@ import { Router } from '@angular/router';
 })
 
 export class FavorFeedsPage {
-  feedsList: any;
-  today: number = Date.now();
+  private connectStatus = 1;
+  private feedsList: any;
+  private today: number = Date.now();
 
   constructor(
-    private service: FeedService,
+    private feedService: FeedService,
     private navCtrl: NavController,
     private router: Router,
     private events: Events,
     private zone: NgZone) {
-      this.feedsList = service.getFavoriteFeeds();
+      this.feedsList = feedService.getFavoriteFeeds();
+      this.connectStatus = this.feedService.getConnectionStatus();
 
       this.events.subscribe('feeds:favoriteFeedListChanged', (feedsList) => {
         this.zone.run(() => {
           this.feedsList = feedsList;
-          console.log("feedsList =>>>>"+JSON.stringify(this.feedsList));
         });
       });
+
+      this.events.subscribe('feeds:connectionChanged', connectionStatus => {
+        this.zone.run(() => {
+            this.connectStatus = connectionStatus;
+        });
+    });
   }
 
   navigateToEventsPage(nodeId: string, feedName: string, lastSeqno: number) {
-    console.log(nodeId+";"+feedName+";"+lastSeqno);
     this.router.navigate(['/favorite/content/',nodeId, feedName, lastSeqno]);
   }
 }

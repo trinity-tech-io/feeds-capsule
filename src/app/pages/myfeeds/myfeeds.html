@@ -11,6 +11,9 @@
 
 
 <ion-content>
+  <div class="offline-content" *ngIf=" connectStatus != 0 ">
+    <ion-label>disconnect</ion-label>
+  </div>
   <div class="ion-padding">
     <ion-button
       expand="block"

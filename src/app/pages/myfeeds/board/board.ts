@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { NavController } from '@ionic/angular';
+import { Component, OnInit, NgZone } from '@angular/core';
+import { NavController, Events } from '@ionic/angular';
 import { Router } from '@angular/router'
 import { ActivatedRoute } from '@angular/router';
 import { FeedService } from 'src/app/services/FeedService';
@@ -10,15 +10,19 @@ import { FeedService } from 'src/app/services/FeedService';
   styleUrls: ['./board.scss'],
 })
 export class FeedBoardPage implements OnInit {
+  private connectStatus = 1;
   private myEvents: any ;
   private nodeId: string;
   private topic: string;
   constructor(
+    private events: Events,
     private feedService: FeedService,
     private router: Router,
+    private zone: NgZone,
     private acRoute: ActivatedRoute,
     private navCtrl: NavController) {
-      
+      this.connectStatus = this.feedService.getConnectionStatus();
+
       acRoute.params.subscribe((data)=>{
         this.nodeId = data.nodeId;
         this.topic = data.topic;
@@ -26,6 +30,11 @@ export class FeedBoardPage implements OnInit {
         this.myEvents = this.feedService.getMyFeedEvents(this.nodeId,this.topic);
       });
 
+      this.events.subscribe('feeds:connectionChanged', connectionStatus => {
+        this.zone.run(() => {
+            this.connectStatus = connectionStatus;
+        });
+      });
       
     }
 

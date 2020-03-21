@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
-import { Platform } from '@ionic/angular';
+import { Component, OnInit, NgZone } from '@angular/core';
+import { Events, Platform } from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
 import { CarrierService } from 'src/app/services/CarrierService';
+import { FeedService } from 'src/app/services/FeedService';
 import { NativeService } from 'src/app/services/NativeService';
 
 @Component({
@@ -11,17 +12,29 @@ import { NativeService } from 'src/app/services/NativeService';
 })
 
 export class AddServerPage implements OnInit {
+  private connectStatus = 1;
   private address: string = '';
   private friendRequest = 'Feeds/0.1';
 
   constructor(
+    private events: Events,
+    private zone: NgZone,
     private route: ActivatedRoute,
     private platform: Platform,
     private native: NativeService,
+    private feedService: FeedService,
     private carrier: CarrierService) {
+
+    this.connectStatus = this.feedService.getConnectionStatus();
 
     this.route.queryParams.subscribe((data) => {
       this.address = data["address"];
+    });
+
+    this.events.subscribe('feeds:connectionChanged', connectionStatus => {
+      this.zone.run(() => {
+          this.connectStatus = connectionStatus;
+      });
     });
   }
 

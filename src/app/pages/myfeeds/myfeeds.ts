@@ -10,7 +10,8 @@ import { Router } from '@angular/router';
 })
 
 export class MyfeedsPage implements OnInit {
-  myfeeds: any;
+  private connectStatus = 1;
+  private myfeeds: any;
 
   constructor(
     public feedService: FeedService,
@@ -19,11 +20,18 @@ export class MyfeedsPage implements OnInit {
     private router: Router,
     private zone: NgZone) {
 
+    this.connectStatus = this.feedService.getConnectionStatus();
     this.myfeeds = feedService.getMyFeeds();
     
     this.events.subscribe('feeds:ownFeedListChanged', (feedList) => {
       this.zone.run(() => {
         this.myfeeds = feedList;
+      });
+    });
+
+    this.events.subscribe('feeds:connectionChanged', connectionStatus => {
+      this.zone.run(() => {
+          this.connectStatus = connectionStatus;
       });
     });
   }

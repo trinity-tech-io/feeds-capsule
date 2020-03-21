@@ -11,20 +11,26 @@ import { Router } from '@angular/router';
 })
 
 export class SearchFeedPage implements OnInit {
-  feedList: any;
-
+  private feedList: any;
+  private connectStatus = 1;
   constructor(
     private feedService: FeedService,
     private navCtrl: NavController,
     private events: Events,
     private zone: NgZone,
     private router: Router) {
+    this.connectStatus = this.feedService.getConnectionStatus();
 
     feedService.doExploreTopics();
     this.feedList = feedService.getAllFeeds();
     this.events.subscribe('feeds:allFeedsListChanged', (feedList) => {
       this.zone.run(() => {
         this.feedList = feedList;
+      });
+    });
+    this.events.subscribe('feeds:connectionChanged', connectionStatus => {
+      this.zone.run(() => {
+          this.connectStatus = connectionStatus;
       });
     });
   }

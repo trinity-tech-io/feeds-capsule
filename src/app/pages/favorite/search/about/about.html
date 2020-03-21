@@ -8,6 +8,9 @@
 </ion-header>
 
 <ion-content>
+  <div class="offline-content" *ngIf=" connectStatus != 0 ">
+    <ion-label>disconnect</ion-label>
+  </div>
   <ion-card class="ion-text-left">
     <ion-card-content>{{description}}</ion-card-content>
   </ion-card>

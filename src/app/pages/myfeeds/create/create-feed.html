@@ -13,28 +13,32 @@
 </ion-header>
 
 <ion-content>
-  <ion-item>
-    <ion-label position="stacked">Server
-      <ion-text color="danger">*</ion-text>
-    </ion-label>
-    <ion-select #select>
-      <ion-select-option *ngFor="let server of serverList" >{{server.userId}}</ion-select-option>
-    </ion-select>
-  </ion-item>
-  <ion-item>
-    <ion-label position="stacked">Your new feed name
-      <ion-text color="danger">*</ion-text>
-    </ion-label>
-    <ion-input required type="text" #name></ion-input>
-  </ion-item>
-  <ion-item>
-    <ion-label position="stacked">Berief description
-      <ion-text color="danger">*</ion-text>
-    </ion-label>
-    <ion-input required type="text" #desc></ion-input>
-  </ion-item>
-  <ion-button expand="block" (click)="createTopic(name,desc,select)">Submit</ion-button>
-  
+  <div class="offline-content" *ngIf=" connectStatus != 0 ">
+    <ion-label>disconnect</ion-label>
+  </div>
+  <div class="content">
+    <ion-item>
+      <ion-label position="stacked">Server
+        <ion-text color="danger">*</ion-text>
+      </ion-label>
+      <ion-select #select>
+        <ion-select-option *ngFor="let server of serverList" >{{server.userId}}</ion-select-option>
+      </ion-select>
+    </ion-item>
+    <ion-item>
+      <ion-label position="stacked">Your new feed name
+        <ion-text color="danger">*</ion-text>
+      </ion-label>
+      <ion-input required type="text" #name></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="stacked">Berief description
+        <ion-text color="danger">*</ion-text>
+      </ion-label>
+      <ion-input required type="text" #desc></ion-input>
+    </ion-item>
+    <ion-button expand="block" (click)="createTopic(name,desc,select)">Submit</ion-button>
+  </div>
 </ion-content>
 
 
