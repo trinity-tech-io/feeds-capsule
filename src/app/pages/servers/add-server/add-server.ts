@@ -45,7 +45,7 @@ export class AddServerPage implements OnInit {
   }
 
   addServer() {
-    if (this.platform.is("desktop")) {
+    if (this.platform.platforms().indexOf("cordova") < 0){
       this.carrier.addFriend(this.address, this.friendRequest,
         () => {
             console.log("Add server success");

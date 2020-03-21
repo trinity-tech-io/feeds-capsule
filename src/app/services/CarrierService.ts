@@ -136,7 +136,7 @@ export class CarrierService {
     }
 
     init() {
-        if (this.platform.is("desktop")) {
+        if (this.platform.platforms().indexOf("cordova") < 0){
             this.myInterval = setInterval(() => {
                 this.readyCallback(null);
                 clearInterval(this.myInterval);
@@ -229,21 +229,21 @@ export class CarrierService {
     }
 
     getUserId(): string {
-        if (this.platform.is('desktop')) {
+        if (this.platform.platforms().indexOf("cordova") < 0){
             return 'deafultUserId';
         }
         return carrierInst.userId;
     }
 
     getNodeId(): string {
-        if (this.platform.is('desktop')) {
+        if (this.platform.platforms().indexOf("cordova") < 0){
             return 'deafultNodeId';
         }
         return carrierInst.nodeId;
     }
 
     getAddress(): string {
-        if (this.platform.is('desktop')) {
+        if (this.platform.platforms().indexOf("cordova") < 0){
             return 'EXfdeeeeeeeeeeeeeeeeeee';
         }
         return carrierInst.address;
@@ -252,7 +252,7 @@ export class CarrierService {
 
 
     getFriends(success: any, error: string) {
-        if (this.platform.is('desktop')) {
+        if (this.platform.platforms().indexOf("cordova") < 0){
             success(null);
             return ;
         }
@@ -265,7 +265,7 @@ export class CarrierService {
     }
 
     addFriend(address, hello: string, success, error: (err: string) => void) {
-        if (this.platform.is('desktop')) {
+        if (this.platform.platforms().indexOf("cordova") < 0){
             success();
             this.myInterval = setInterval(() => {
                 this.friendAddedCallback(null);
@@ -281,7 +281,7 @@ export class CarrierService {
     }
 
     removeFriend(userId, success, error) {
-        if (this.platform.is('desktop')) {
+        if (this.platform.platforms().indexOf("cordova") < 0){
             return success('ok');
         }
         
@@ -292,13 +292,10 @@ export class CarrierService {
     }
 
     sendMessage(nodeId: string, message: string, success: any, error: any) {
-        if (this.platform.is('desktop')) {
+        if (this.platform.platforms().indexOf("cordova") < 0){
             success();
             return;
         }
-
-        console.log("nodeId =>"+nodeId);
-        console.log("message =>"+message);
         carrierInst.sendFriendMessage(
             nodeId, message,
             () => {success();},

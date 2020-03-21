@@ -148,7 +148,7 @@ export class FeedService {
   }
 
   init(){
-    if (this.platform.is('desktop')) {
+      if (this.platform.platforms().indexOf("cordova") < 0) {
       serversMap = virtualServersMap;
       favoriteFeedsMap = virtualFFMap;
       allFeedsMap = virtualAFMap ;
@@ -473,7 +473,7 @@ export class FeedService {
   friendAddCallback(){
     this.events.subscribe('carrier:friendAdded', msg => {
       let server: any;
-      if (this.platform.is("desktop")) {
+      if (this.platform.platforms().indexOf("cordova") < 0){
           server = new Friend('100', 
                               // 'New Address', 
                               'NewEmail@email.com', 
