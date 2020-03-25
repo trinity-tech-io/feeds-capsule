@@ -30,6 +30,7 @@
   "plugins": [
     "CarrierPlugin",
     "Device",
+    "Clipboard",
     "SplashScreen",
     "NetworkStatus"
   ],

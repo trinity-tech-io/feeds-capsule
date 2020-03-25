@@ -249,7 +249,35 @@ export class CarrierService {
         return carrierInst.address;
     }
 
+    getSelfInfo(success: any, error: any) {
+        if (this.platform.platforms().indexOf("cordova") < 0){
+            success(null);
+            return ;
+        }
 
+        carrierInst.getSelfInfo(
+            // (userInfo) =>{
+            //     userInfo.userId,
+            //     userInfo.name,
+            //     userInfo.description,
+            //     userInfo.hasAvatar,
+            //     userInfo.gender,
+            //     userInfo.phone,
+            //     userInfo.email,
+            //     userInfo.region
+            // },
+            (ret) => {success(ret);},
+            (err) => {this.errorFun(err, error);}
+        );
+        
+    }
+
+    setSelfInfo(key: string, value: string){
+        carrierInst.setSelfInfo(key, value,
+            () => { },
+            (err) => {this.errorFun(err, null);}
+        );
+    }
 
     getFriends(success: any, error: string) {
         if (this.platform.platforms().indexOf("cordova") < 0){
@@ -258,10 +286,9 @@ export class CarrierService {
         }
        
        carrierInst.getFriends(
-        (ret) => {
-            success(ret);
-        },
-        (err) => {this.errorFun(err, error)});
+            (ret) => {success(ret);},
+            (err) => {this.errorFun(err, error);}
+        );
     }
 
     addFriend(address, hello: string, success, error: (err: string) => void) {

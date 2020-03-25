@@ -7,7 +7,7 @@ import { ExplorePageModule } from './pages/favorite/search/search.module';
 import { FeedAboutPageModule } from './pages/favorite/search/about/about.module';
 
 const routes: Routes = [
-  { path: '', redirectTo: 'initialize', pathMatch: 'full' },
+  { path: '', redirectTo: 'favorite', pathMatch: 'full' },
   { path: 'initialize', loadChildren: './pages/initialize/initialize.module#InitializePageModule' },
 
   { path: 'favorite', loadChildren: () => FavorFeedsPageModule },

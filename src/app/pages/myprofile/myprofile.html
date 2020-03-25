@@ -9,37 +9,32 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content scroll="false">
 
   <div class="offline-content" *ngIf="connectStatus != 0 ">
     <ion-label>disconnect</ion-label>
   </div>
 
+  <div class="change-profile" *ngIf="changing">
+    <ion-label>changing data</ion-label>
+  </div>
+  <!-- <ion-button expand="block" (click)="copyText()" *ngIf="connectStatus == 0 ">copy-NodeId</ion-button> -->
+
   <ion-list>
-    <!-- <ion-item *ngFor="let attr of attrs">
-      <ion-grid class="ion-padding" >
-        <ion-row >
-          <ion-col
-            size="1.5"
-            size-lg="1.5"
-          >
-            <ion-icon name="{{attr.iconName}}" size="100%"></ion-icon>
-          </ion-col>
-
-          <ion-col
-            size="9.25"
-          >
-            <ion-input required type="text"  [(ngModel)]="attr.attrValue">
-            </ion-input>
-          </ion-col
-          >
-        </ion-row>
-      </ion-grid>
-    </ion-item> -->
-
     <ion-item  *ngFor="let attr of attrs">
-      <ion-label color="primary" floating>{{attr.attrName}}:</ion-label>
-      <ion-input required type="text"  [(ngModel)]="attr.attrValue"></ion-input>
+      <ion-label color="primary">{{attr.attrName}}:</ion-label>
+      <ion-label slot="end" *ngIf="!changing || attr.freeze" (click)="copyText(attr.attrName, attr.attrValue)">{{attr.attrValue}}</ion-label>
+      
+      <ion-input required type="text"  *ngIf="changing && !attr.freeze" [(ngModel)]="attr.attrValue" (ngModelChange)="onChangeText(attr.attrName,attr.attrValue)"></ion-input>
     </ion-item>
   </ion-list>
+
+  
+
+
 </ion-content>
+
+<ion-footer >
+  <ion-button expand="block" (click)="updateProfile()" *ngIf="connectStatus == 0 && !changing">update-Profile</ion-button>
+  <ion-button expand="block" (click)="saveProfile()" *ngIf="connectStatus == 0 && changing">save-Profile</ion-button>
+</ion-footer>

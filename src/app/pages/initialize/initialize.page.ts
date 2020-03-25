@@ -68,10 +68,9 @@ export class InitializePage implements OnInit {
         // this.popup.ionicAlert("title","sbtitle","okok");
         this.popup.ionicConfirm("title","msg","okok","ccc").then((data) => {
             if (data) {
-                alert("cccccccccc");
 
             }else{
-                alert("dddd");
+
             }
         });
         // this.popup.ionicPrompt("title","msg","opt","okok","ccc");
