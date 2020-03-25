@@ -115,8 +115,8 @@ const createOption = {
 
 @Injectable()
 export class CarrierService {
-    // private mIsReady = false;
-    private mIsReady = true; //for test
+    private mIsReady = false;
+    // private mIsReady = true; //for test
     private myInterval: any;
     
 

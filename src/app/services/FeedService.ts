@@ -76,12 +76,15 @@ let myFeedsMap: object = {};
 
 let myEventMap: {} = {};
 // let eventsMap:{topic: string, eventList: FeedEvents[]};
+let fetchList: FavoriteFeed[] = [];
 let firstInit: boolean;
-let needFetch: boolean = true;
+// let needFetch: boolean = true;
 let firstListMyFeed: boolean = true;
 
 let eventBus = null;
-let fetchTopic:string ;
+let currentFetchFeeds: FavoriteFeed;
+// let fetchTopic: string = "";
+// let lastFetchTopic: string = "";
 let unSubscribeTopic: string = "";
 let subscribeTopic: string = "";
 let currentFeedEventKey: string = "";
@@ -97,7 +100,8 @@ export class FavoriteFeed {
     public desc: string,
     public unread: number,
     public lastSeqno: number,
-    public lastReceived: string = '') {}
+    public lastReceived: string = '',
+    public fetched:boolean) {}
 }
 
 export class AllFeed{
@@ -416,7 +420,7 @@ export class FeedService {
 
   //{"jsonrpc":"2.0","method":"fetch_unreceived","params":{"topic":"movie","since":1021438976},"id":null}
   fetchUnreceived(nodeId: string, topic: string, since: number){
-      fetchTopic = topic;
+      // fetchTopic = topic;
       let params = {};
       params["topic"] = topic;
       params["since"] = since;
@@ -655,7 +659,7 @@ export class FeedService {
     this.listSubscribed(nodeId);
 
     let feedKey = nodeId+subscribeTopic ;
-    favoriteFeedsMap[feedKey] = new FavoriteFeed(nodeId, subscribeTopic, "", 0, 0, this.getCurrentTime());
+    favoriteFeedsMap[feedKey] = new FavoriteFeed(nodeId, subscribeTopic, "", 0, 0, this.getCurrentTime(),false);
     allFeedsMap[feedKey].followState = "following";
 
     this.updateFFMap();
@@ -764,22 +768,60 @@ export class FeedService {
 
       let favoriteFeedKey = nodeId+topic;
       if (favoriteFeedsMap[favoriteFeedKey] == undefined){
-        favoriteFeedsMap[favoriteFeedKey] = new FavoriteFeed(nodeId, topic, desc, 0, 0, new Date().getTime().toString());
+        favoriteFeedsMap[favoriteFeedKey] = new FavoriteFeed(nodeId, topic, desc, 0, 0, this.getCurrentTime(),false);
       }else{
         favoriteFeedsMap[favoriteFeedKey].name = topic;
         favoriteFeedsMap[favoriteFeedKey].desc = desc  
       }
 
-      if (needFetch){
-        this.fetchFeedEvents(nodeId, topic);
+      // if (needFetch){
+      //   this.fetchFeedEvents(nodeId, topic);
+      // }
+      if (!fetchList.indexOf(favoriteFeedsMap[favoriteFeedKey]) && 
+          !favoriteFeedsMap[favoriteFeedKey].fetched){
+        fetchList.push(favoriteFeedsMap[favoriteFeedKey]);
       }
     }
-    needFetch = false ;
+
+    // needFetch = false ;
     if (changed){
       this.updateFFMap();
       eventBus.publish('feeds:favoriteFeedListChanged',this.getFavoriteFeeds());
     }
+
+    this.fetchNext();
   }
+
+  fetchNext(){
+    if (fetchList.length>0){
+      currentFetchFeeds = fetchList[0];
+      // fetchTopic = fetchList[0].name;
+      this.fetchFeedEvents(fetchList[0].nodeId,fetchList[0].name);
+    }
+  }
+
+  // chooseFetchFF(){
+
+  //   let keys: string[] = Object.keys(serversMap);
+  //   for (const index in keys) {
+  //     if (serversMap[keys[index]] == undefined) 
+  //       continue;
+  //     if (serversMap[keys[index]].status == undefined) 
+  //       serversMap[keys[index]].status = ConnState.disconnected;
+  //     list.push(serversMap[keys[index]]);
+  //   }
+
+
+  //   let keys: string[] = Object.keys(favoriteFeedsMap);
+  //   for (const index in keys) {
+  //     if (favoriteFeedsMap[keys[index]] == undefined)
+  //       continue;
+  //     if (favoriteFeedsMap[keys[index].status) {
+        
+  //     }
+  //     list.push(favoriteFeedsMap[keys[index]]);
+  //   }
+  // }
 
   updatefavoriteUnreadState(nodeId: string, topic: string , unread: number){
     favoriteFeedsMap[nodeId+topic].unread = unread;
@@ -804,19 +846,20 @@ export class FeedService {
   */
   handleFetchUnreceivedResult(from: string, result: any){
     console.log("handleFetchUnreceivedResult=>");
+    fetchList.slice(fetchList.indexOf(currentFetchFeeds), 1);
+
     let changed: boolean = false ;
     let currentEventChanged: boolean = false;
     if (result == null || result == undefined){
       return ;
     }
-    let feedKey = from+fetchTopic;
+    // let feedKey = from+fetchTopic;
+    let feedKey = currentFetchFeeds.nodeId + currentFetchFeeds.name ;
     let unread = 0;
     
     if (eventsMap[feedKey] == undefined){
       eventsMap[feedKey] = [];
     }
-
-    let eventList = eventsMap[feedKey];
 
     for (let index = 0; index < result.length; index++) {
       let seqno = result[index].seqno;
@@ -829,9 +872,11 @@ export class FeedService {
       favoriteFeedsMap[feedKey].unread  = unread+1;
       favoriteFeedsMap[feedKey].lastReceived = ts;
       
-      eventsMap[feedKey].push((new FeedEvents(from, fetchTopic, ts, event, seqno)));
+      eventsMap[feedKey].push((new FeedEvents(from, currentFetchFeeds.name, ts, event, seqno)));
       changed = true ;
     }
+
+    favoriteFeedsMap[feedKey].fetched = true ;
     
     if (currentFeedEventKey == feedKey){
       currentEventChanged = true;
@@ -845,6 +890,8 @@ export class FeedService {
 
     if (currentEventChanged)
       eventBus.publish('feeds:eventListChanged',this.getFeedEvents(currentFeedEventKey));
+
+    this.fetchNext();
   }
 
   // updateEventList(feedEvent: FeedEvents, list: FeedEvents[]){
@@ -894,7 +941,7 @@ export class FeedService {
       eventsMap[feedKey] = [];
     }
 
-    eventsMap[feedKey].push(new FeedEvents(nodeId, fetchTopic, ts, event, seqno));
+    eventsMap[feedKey].push(new FeedEvents(nodeId, topic, ts, event, seqno));
 
     if (currentFeedEventKey == feedKey){
       currentEventChanged = true;
@@ -1125,23 +1172,23 @@ let virtualServersMap: any = {
 
 let virtualFFMap:any = {
   'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoCarrier News':
-    new FavoriteFeed('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'Carrier News', '', 24, 0),
+    new FavoriteFeed('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'Carrier News', '', 24, 0, '', true),
   'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoHive News':
-    new FavoriteFeed('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'Hive News',  '', 35, 0),
+    new FavoriteFeed('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'Hive News',  '', 35, 0 , '', true),
   'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoFootball':
-    new FavoriteFeed('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'Football',  '', 4, 0),
+    new FavoriteFeed('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'Football',  '', 4, 0, '', true),
   'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoTrinity News':
-    new FavoriteFeed('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'Trinity News',  '', 0, 0, '12:00 Dec.12'),
+    new FavoriteFeed('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'Trinity News',  '', 0, 0, '12:00 Dec.12', true),
   'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoHollywood Movies':
-    new FavoriteFeed('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'Hollywood Movies', '',  24, 0),
+    new FavoriteFeed('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'Hollywood Movies', '',  24, 0, '', true),
   'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoCofee':
-    new FavoriteFeed('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'Cofee',  '', 35, 0),
+    new FavoriteFeed('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'Cofee',  '', 35, 0, '', true),
   'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoMacBook':
-    new FavoriteFeed('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'MacBook',  '', 4, 0),
+    new FavoriteFeed('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'MacBook',  '', 4, 0, '', true),
   'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoRust development':
-    new FavoriteFeed('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'Rust development', '',  0, 0, '12:00 Desc.12'),
+    new FavoriteFeed('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'Rust development', '',  0, 0, '12:00 Desc.12', true),
   'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoGolang':
-  new FavoriteFeed('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'Golang',  '', 8, 0)
+  new FavoriteFeed('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'Golang',  '', 8, 0, '', true)
 }
 
 let virtrulMyFeeds = {

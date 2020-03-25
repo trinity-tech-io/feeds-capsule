@@ -3,6 +3,7 @@ import { Events } from '@ionic/angular';
 import { NativeService } from '../../services/NativeService';
 import { CarrierService } from '../../services/CarrierService';
 import { StorageService } from '../../services/StorageService';
+import { PopupProvider } from '../../services/popup';
 
 declare let appManager: AppManagerPlugin.AppManager;
 
@@ -18,7 +19,9 @@ export class InitializePage implements OnInit {
             private events: Events,
             private zone: NgZone,
             private store:StorageService,
-            private carrierService: CarrierService) {
+            private carrierService: CarrierService,
+            private popup: PopupProvider
+            ) {
     }
     
     inittest(){         //for test
@@ -62,7 +65,16 @@ export class InitializePage implements OnInit {
     }
 
     testget(){
+        // this.popup.ionicAlert("title","sbtitle","okok");
+        this.popup.ionicConfirm("title","msg","okok","ccc").then((data) => {
+            if (data) {
+                alert("cccccccccc");
 
+            }else{
+                alert("dddd");
+            }
+        });
+        // this.popup.ionicPrompt("title","msg","opt","okok","ccc");
     }
 
     testclean(){

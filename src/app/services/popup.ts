@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { AlertController } from '@ionic/angular';
 
-/*
+
 @Injectable()
 export class PopupProvider {
     constructor(
@@ -90,4 +90,4 @@ export class PopupProvider {
     }
 }
 
-*/
+
