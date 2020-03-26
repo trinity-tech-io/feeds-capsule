@@ -23,12 +23,12 @@ export class ServerInfoPage implements OnInit {
 
   constructor(
     private native: NativeService,
-    private route: ActivatedRoute,
+    private acRoute: ActivatedRoute,
     private feedService: FeedService) {}
 
   ngOnInit() {
     this.connectStatus = this.feedService.getConnectionStatus();
-    this.route.params.subscribe(data => {
+    this.acRoute.params.subscribe(data => {
       console.log(data.userId);
       
       let server = this.feedService.findServer(data.userId);

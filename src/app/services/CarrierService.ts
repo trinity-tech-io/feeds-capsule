@@ -224,8 +224,8 @@ export class CarrierService {
     isValidAddress(address, success, error) {
         carrierManager.isValidAddress(
             address,
-            (ret: any) => {success(ret);},
-            (err: string) => {this.errorFun(err, error);});
+            (isValid: boolean) => {success(isValid);},
+            (err: string) => {alert(err)});
     }
 
     getUserId(): string {

@@ -30,6 +30,8 @@ import { FeedService } from './services/FeedService';
 import { StorageService } from './services/StorageService';
 import { JsonRPCService } from './services/JsonRPCService';
 import { TransportService } from './services/TransportService';
+import { AppService } from './services/AppService';
+
 import { PopupProvider } from './services/popup';
 
 /** 通过类引用方式解析国家化文件 */
@@ -88,6 +90,7 @@ export function TranslateLoaderFactory() {
     TransportService,
     StorageService,
     PopupProvider,
+    AppService,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     {provide: ErrorHandler, useClass: ErrorHandler}
   ]
