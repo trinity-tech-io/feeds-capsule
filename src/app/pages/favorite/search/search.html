@@ -8,7 +8,7 @@
         <ion-menu-button menu="m1"></ion-menu-button>
       </ion-button>
     </ion-buttons>
-    <ion-title>Carrier News</ion-title>
+    <ion-title>Feeds to follow</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -17,7 +17,7 @@
     <ion-label>disconnect</ion-label>
   </div>
 
-  <ion-searchbar></ion-searchbar>
+  <ion-searchbar placeholder='Search Feeds' (ionInput)="getItems($event)"></ion-searchbar>
   <ion-list>
     <ion-item class="feed-space" *ngFor="let desc of feedList">
       <ion-icon name="paper" slot="start"></ion-icon>

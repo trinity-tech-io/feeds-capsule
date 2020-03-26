@@ -12,7 +12,7 @@ import { ActivatedRoute } from '@angular/router';
 export class FeedAboutPage implements OnInit {
   private description: string;
   private connectStatus = 1;
-
+  private title: string = "Topic";
 
   constructor(
     private events: Events,
@@ -21,10 +21,10 @@ export class FeedAboutPage implements OnInit {
     private feedService: FeedService,
     private acRoute: ActivatedRoute) {
     this.connectStatus = this.feedService.getConnectionStatus();
-
+    
     acRoute.params.subscribe((data)=>{
-      console.log(JSON.stringify(data));
-      this.description = feedService.getFeedDescr(data.feedKey);
+      this.title = data.topic;
+      this.description = feedService.getFeedDescr(data.nodeId+data.topic);
     })
 
     this.events.subscribe('feeds:connectionChanged', connectionStatus => {

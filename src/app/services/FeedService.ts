@@ -287,10 +287,10 @@ export class FeedService {
     if (eventsMap[feedEventKey] == undefined){
       eventsMap[feedEventKey] = [];
     }
-    return eventsMap[feedEventKey].reverse();
+    Object.assign(list, eventsMap[feedEventKey]);
+    
+    return list.reverse();
   }
-
-
 
   public getMyFeeds() {
     let list: MyFeed[] = [];
@@ -300,10 +300,8 @@ export class FeedService {
         continue;
       list.push(myFeedsMap[keys[index]]);
     }
-
     return list;
   }
-
   
   public getMyFeedEvents(nodeId: string, topic: string) {
     if (myEventMap == null || 
@@ -1208,24 +1206,24 @@ let virtrulMyFeeds = {
 
 let virtualAFMap: any = {
   "J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoCarrier News":
-    new AllFeed("J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo","page","Carrier News","","following"),
+    new AllFeed("J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo","page","Carrier News","Carrier News description","following"),
   "J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoHive News":
-    new AllFeed("J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo","page","Hive News","","following"),
+    new AllFeed("J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo","page","Hive News","Carrier News description","following"),
   "J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoTrinity News":
-    new AllFeed("J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo","page","Trinity News","","following"),
+    new AllFeed("J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo","page","Trinity News","Carrier News description","following"),
   "J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoDID News":
-    new AllFeed("J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo","page","DID News","","follow"),
+    new AllFeed("J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo","page","DID News","Carrier News description","follow"),
   "J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoDMA News":
-    new AllFeed("J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo","page","DMA News","","following"),
+    new AllFeed("J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo","page","DMA News","Carrier News description","following"),
   "J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoFootball News":
-    new AllFeed("J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo","page","Football News","","follow")
+    new AllFeed("J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo","page","Football News","Carrier News description","follow")
 }
 
 let virtrulFeedEvents = [
   new FeedEvents('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo',
     'Carrier News',
     '12:00, December 10, 2019',
-    `Elastos Trinity DApp Store is your one-stop shop for finding the latest dApps available inside the Elastos ecosystem.
+    `1.Elastos Trinity DApp Store is your one-stop shop for finding the latest dApps available inside the Elastos ecosystem.
     The key difference between the applications available here and what you will find in any other app store is
     Elastos' guarantee of 100% security and privacy. All Elastos applications are decentralized, thus giving you
     the freedom to use the web as you should without the worries of data theft and third parties monetizing your data`,
@@ -1233,7 +1231,7 @@ let virtrulFeedEvents = [
   new FeedEvents('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo',
     'Carrier News',
     '15:00, December 10, 2019',
-    `Elastos Trinity DApp Store is your one-stop shop for finding the latest dApps available inside the Elastos ecosystem.
+    `2.Elastos Trinity DApp Store is your one-stop shop for finding the latest dApps available inside the Elastos ecosystem.
     The key difference between the applications available here and what you will find in any other app store is
     Elastos' guarantee of 100% security and privacy. All Elastos applications are decentralized, thus giving you
     the freedom to use the web as you should without the worries of data theft and third parties monetizing your data`,
@@ -1241,7 +1239,7 @@ let virtrulFeedEvents = [
   new FeedEvents('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo',
     'Carrier News',
     '15:00, December 12, 2019',
-    `Elastos Trinity DApp Store is your one-stop shop for finding the latest dApps available inside the Elastos ecosystem.
+    `3.Elastos Trinity DApp Store is your one-stop shop for finding the latest dApps available inside the Elastos ecosystem.
     The key difference between the applications available here and what you will find in any other app store is
     Elastos' guarantee of 100% security and privacy. All Elastos applications are decentralized, thus giving you
     the freedom to use the web as you should without the worries of data theft and third parties monetizing your data`,
@@ -1249,7 +1247,7 @@ let virtrulFeedEvents = [
   new FeedEvents('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo',
     'Carrier News',
     '15:00, December 14, 2019',
-    `Elastos Trinity DApp Store is your one-stop shop for finding the latest dApps available inside the Elastos ecosystem.
+    `4.Elastos Trinity DApp Store is your one-stop shop for finding the latest dApps available inside the Elastos ecosystem.
     The key difference between the applications available here and what you will find in any other app store is
     Elastos' guarantee of 100% security and privacy. All Elastos applications are decentralized, thus giving you
     the freedom to use the web as you should without the worries of data theft and third parties monetizing your data`,

@@ -13,7 +13,7 @@ const routes: Routes = [
   { path: 'favorite', loadChildren: () => FavorFeedsPageModule },
   { path: 'favorite/content/:nodeId/:feedName/:lastSeqno', loadChildren: () => FeedContentPageModule },
   { path: 'favorite/search', loadChildren: () =>  ExplorePageModule },
-  { path: 'favorite/search/about/:feedKey', loadChildren: () => FeedAboutPageModule },
+  { path: 'favorite/search/about/:nodeId/:topic', loadChildren: () => FeedAboutPageModule },
 
   /* lazy loading: myfeeds */
   { path: 'menu', redirectTo: 'menu/myfeeds', pathMatch: 'full' },

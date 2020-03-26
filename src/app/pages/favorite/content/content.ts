@@ -11,7 +11,8 @@ import { ActivatedRoute } from '@angular/router';
 
 export class FeedContentPage implements OnInit {
   private connectStatus = 1;
-  feedEvents: any;
+  private feedEvents: any;
+  private title: string = "Topic";
 
   constructor(
     private feedService: FeedService,
@@ -24,6 +25,7 @@ export class FeedContentPage implements OnInit {
     acRoute.params.subscribe((data)=>{
       let nodeId = data.nodeId;
       let topic = data.feedName;
+      this.title = topic;
       this.feedEvents = feedService.getFeedEvents(nodeId+topic);
       feedService.updatefavoriteUnreadState(nodeId,topic,0);
     });
