@@ -3,6 +3,9 @@ import { NavController, Events } from '@ionic/angular';
 import { Router } from '@angular/router'
 import { ActivatedRoute } from '@angular/router';
 import { FeedService } from 'src/app/services/FeedService';
+import { PopupProvider } from 'src/app/services/popup';
+import { NativeService } from 'src/app/services/NativeService';
+
 
 @Component({
   selector: 'page-feed-board',
@@ -10,23 +13,42 @@ import { FeedService } from 'src/app/services/FeedService';
   styleUrls: ['./board.scss'],
 })
 export class FeedBoardPage implements OnInit {
+  private isArchive: boolean;
   private connectStatus = 1;
   private myEvents: any ;
   private nodeId: string;
   private topic: string;
+  private title: string;
+  private newEvent: string = "";
   constructor(
     private events: Events,
     private feedService: FeedService,
     private router: Router,
     private zone: NgZone,
     private acRoute: ActivatedRoute,
-    private navCtrl: NavController) {
+    private popup: PopupProvider,
+    private navCtrl: NavController,
+    private native: NativeService) {
       this.connectStatus = this.feedService.getConnectionStatus();
-
+      this.newEvent = "";
+      
       acRoute.params.subscribe((data)=>{
         this.nodeId = data.nodeId;
         this.topic = data.topic;
+        this.title = this.topic;
 
+        
+        this.isArchive = this.feedService.getArcstatus(this.nodeId, this.topic);
+
+        // if () {
+        //   document.getElementById("neweventblock").style.display = 'none';
+        // }else{
+        //   document.getElementById("neweventblock").style.display = 'block';
+        // }
+        // this.zone.run(() => {
+        //   this.isArchive = data.archive;
+        // });
+        // console.log(this.isArchive);
         this.myEvents = this.feedService.getMyFeedEvents(this.nodeId,this.topic);
       });
 
@@ -35,51 +57,34 @@ export class FeedBoardPage implements OnInit {
             this.connectStatus = connectionStatus;
         });
       });
+
+      this.events.subscribe('feeds:postEventSuccess', () => {
+        this.zone.run(() => {
+            this.native.toast("Post event success");
+            this.newEvent = "";
+            this.myEvents = this.feedService.getMyFeedEvents(this.nodeId,this.topic);
+        });
+      });
       
     }
-
-  // messages = [
-  //   {
-  //     timestamp: '12:00, December 10, 2019',
-  //     message:
-  //       `Elastos Trinity DApp Store is your one-stop shop for finding the latest dApps available inside the Elastos ecosystem.
-  //       The key difference between the applications available here and what you will find in any other app store is
-  //       Elastos' guarantee of 100% security and privacy. All Elastos applications are decentralized, thus giving you
-  //       the freedom to use the web as you should without the worries of data theft and third parties monetizing your data`
-  //   },
-  //   {
-  //     timestamp: '15:00, December 10, 2019',
-  //     message:
-  //       `Elastos Trinity DApp Store is your one-stop shop for finding the latest dApps available inside the Elastos ecosystem.
-  //       The key difference between the applications available here and what you will find in any other app store is
-  //       Elastos' guarantee of 100% security and privacy. All Elastos applications are decentralized, thus giving you
-  //       the freedom to use the web as you should without the worries of data theft and third parties monetizing your data`
-  //   },
-  //   {
-  //     timestamp: '15:00, December 12, 2019',
-  //     message:
-  //       `Elastos Trinity DApp Store is your one-stop shop for finding the latest dApps available inside the Elastos ecosystem.
-  //       The key difference between the applications available here and what you will find in any other app store is
-  //       Elastos' guarantee of 100% security and privacy. All Elastos applications are decentralized, thus giving you
-  //       the freedom to use the web as you should without the worries of data theft and third parties monetizing your data`
-  //   },
-  //   {
-  //     timestamp: '15:00, December 14, 2019',
-  //     message:
-  //       `Elastos Trinity DApp Store is your one-stop shop for finding the latest dApps available inside the Elastos ecosystem.
-  //       The key difference between the applications available here and what you will find in any other app store is
-  //       Elastos' guarantee of 100% security and privacy. All Elastos applications are decentralized, thus giving you
-  //       the freedom to use the web as you should without the worries of data theft and third parties monetizing your data`
-  //   }
-  // ];
 
   ngOnInit() {
   }
 
-  newEvent(){
-    this.router.navigate(['/menu/myfeeds/newevent/',this.nodeId, this.topic]);
-  }
   navigateBack() {
     this.navCtrl.pop();
+  }
+
+  createNewEvent(){
+    if (this.nodeId=="" || this.topic=="" || this.newEvent == ""){
+      alert("Invalid params");
+      return ;
+    }
+    this.popup.ionicConfirm("Prompt","The event '"+ this.newEvent+ "' will be created","ok","cancel").then((data)=>{
+      if (data){
+        
+        this.feedService.postEvent(this.nodeId, this.topic, this.newEvent);
+      }
+    })
   }
 }

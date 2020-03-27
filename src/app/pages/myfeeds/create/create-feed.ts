@@ -1,6 +1,7 @@
 import { Component, OnInit, NgZone } from '@angular/core';
 import { NavController, Events } from '@ionic/angular';
 import { FeedService } from 'src/app/services/FeedService';
+import { PopupProvider } from 'src/app/services/popup';
 
 @Component({
   selector: 'page-create-feed',
@@ -14,7 +15,8 @@ export class CreateFeedPage implements OnInit {
     private navCtrl: NavController,
     private feedService: FeedService,
     private zone: NgZone,
-    private events: Events) {
+    private events: Events,
+    private popup: PopupProvider) {
       this.connectStatus = this.feedService.getConnectionStatus();
       this.serverList = feedService.getServerList();
       this.events.subscribe('feeds:createTopicSuccess', () => {
@@ -31,8 +33,21 @@ export class CreateFeedPage implements OnInit {
   }
 
   createTopic(name: HTMLInputElement, desc: HTMLInputElement, select: HTMLInputElement){
-    this.feedService.createTopic(select.value, name.value, desc.value);
+    if (select.value=="" || name.value=="" || desc.value == ""){
+      alert("Invalid params");
+      return ;
+    }
+    
+    this.popup.ionicConfirm("Prompt","Confirm new topic?<br>"+"server:"+select.value+"<br>"+"topic:"+name.value+"<br>"+"description:"+desc.value,
+                            "ok","cancel").then((data)=>{
+                              if (data) {
+                                
+                                this.feedService.createTopic(select.value, name.value, desc.value);
+                              }
+                            });
+    
   }
+
   navigateBack() {
     this.navCtrl.pop();
   }

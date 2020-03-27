@@ -27,9 +27,42 @@
   </div>
 
   <ion-list>
-    <ion-item *ngFor="let feed of myfeeds">
+
+    <ion-item-sliding *ngFor="let feed of myfeeds" #slide>
+      <ion-item >
+        <ion-icon name="paper" slot="start"></ion-icon>
+        <ion-label (click)="navigateToBoardPage(feed.nodeId, feed.name)">{{feed.name}}</ion-label>
+  
+        <ion-col
+              size="3.5"
+              size-xs="3.5"
+              class="badge-container">
+              <ion-badge color="light" >{{feed.lastUpdated | date:'MM-dd HH:mm'}}</ion-badge>
+            </ion-col>
+      </ion-item>
+      <ion-item-options>
+        <ion-item-option *ngIf="!feed.archive" color="secondary" (click)="archive(feed.nodeId, feed.name, slide)">
+          <ion-icon slot="start" name="archive" ></ion-icon>
+          Archive
+        </ion-item-option>
+
+        <ion-item-option *ngIf="feed.archive" color="secondary" (click)="unarchive(feed.nodeId, feed.name, slide)">
+          <ion-icon slot="start" name="archive" ></ion-icon>
+          UnArchive
+        </ion-item-option>
+      </ion-item-options>
+    </ion-item-sliding>
+
+    <!-- <ion-item *ngFor="let feed of myfeeds">
       <ion-icon name="paper" slot="start"></ion-icon>
       <ion-label (click)="navigateToBoardPage(feed.nodeId, feed.name)">{{feed.name}}</ion-label>
-    </ion-item>
+
+      <ion-col
+            size="3.5"
+            size-xs="3.5"
+            class="badge-container">
+            <ion-badge color="light" >{{feed.lastUpdated | date:'MM-dd HH:mm'}}</ion-badge>
+          </ion-col>
+    </ion-item> -->
   </ion-list>
 </ion-content>

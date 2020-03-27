@@ -120,7 +120,8 @@ export class MyFeed {
     public nodeId: string,
     public name: string,
     public desc: string,
-    public lastUpdated: string) {}
+    public lastUpdated: string,
+    public archive: boolean) {}
 }
 
 export class FeedEvents{
@@ -302,6 +303,13 @@ export class FeedService {
     }
     return list;
   }
+
+  public updateMyFeedArchiveStatus(nodeId: string, topic: string, isArchive: boolean){
+    myFeedsMap[nodeId+topic].archive = isArchive;
+    this.updateMyFeedsMap();
+
+    eventBus.publish("feeds:ownFeedListChanged",this.getMyFeeds());
+  }
   
   public getMyFeedEvents(nodeId: string, topic: string) {
     if (myEventMap == null || 
@@ -311,6 +319,13 @@ export class FeedService {
       return [];
     }
     return myEventMap[nodeId+topic];
+  }
+
+  public getArcstatus(nodeId: string, topic: string){
+    if (myFeedsMap == undefined || myFeedsMap[nodeId+topic] == undefined){
+      return false ;
+    }
+    return myFeedsMap[nodeId+topic].archive;
   }
 
 
@@ -597,15 +612,17 @@ export class FeedService {
   } 
   */
   handlePostEventResult(result: any){
-    alert("create event success");
     console.log("handlePostEventResult=>");
-
     if (myEventMap[postEventTmp.nodeId+postEventTmp.topic] == null || myEventMap[postEventTmp.nodeId+postEventTmp.topic] == undefined){
       myEventMap[postEventTmp.nodeId+postEventTmp.topic] = [];
     }
     
     myEventMap[postEventTmp.nodeId+postEventTmp.topic].push(postEventTmp);
     this.updateMyEventMap();
+
+    myFeedsMap[postEventTmp.nodeId+postEventTmp.topic].lastUpdated = postEventTmp.timestamp;
+    this.updateMyFeedsMap();
+    
     eventBus.publish("feeds:postEventSuccess");
   }
 
@@ -621,28 +638,27 @@ export class FeedService {
   */
   handleListOwnTopicResult(nodeId: string, result: any){
     console.log("handleListOwnTopicResult=>");
-
-    // let changed = false ;
+    let changed = false ;
     for (let index = 0; index < result.length; index++) {
       let topic = result[index].name;
       let desc = result[index].desc;
       let feedKey = nodeId+topic;
+      if (myFeedsMap[feedKey] == undefined){
+        myFeedsMap[feedKey] = new MyFeed('paper',nodeId,topic,desc,this.getCurrentTime(),false);
+        changed = true;
+        continue;
+      } 
       
-      myFeedsMap[feedKey] = new MyFeed('paper',nodeId,topic,desc,this.getCurrentTime());
-      // if(myFeedList.indexOf(feedKey) == -1){
-      //   myFeedList.push(feedKey);
-      //   myFeedMap[feedKey] = new MyFeed('paper',nodeId,topic,desc,this.getCurrentTime());
-
-      //   changed = true;
-      // }
+      if (myFeedsMap[feedKey].desc != desc){
+        myFeedsMap[feedKey].desc = desc;
+        changed = true;
+      }
     }
 
-    // if (changed){
+    if (changed){
       this.updateMyFeedsMap();
-
       eventBus.publish("feeds:ownFeedListChanged",this.getMyFeeds());
-    // }
-    
+    }
   }
 
   /*
@@ -1191,17 +1207,17 @@ let virtualFFMap:any = {
 
 let virtrulMyFeeds = {
   'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoCarrier News':
-    new MyFeed('paper', 'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'Carrier News', '', '12:10 Dec. 12, 2019'),
+    new MyFeed('paper', 'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'Carrier News', '', '1584956175537', false),
   'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoHive News':
-    new MyFeed('paper', 'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'Hive News', '', '12:10 Dec.12, 2019'),
+    new MyFeed('paper', 'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'Hive News', '', '1584956175537',false),
   'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoTrinity News':
-    new MyFeed('paper', 'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'Trinity News', '', '12:10 Dec.12, 2019'),
+    new MyFeed('paper', 'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'Trinity News', '', '1584956175537',false),
   'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoDID News':
-    new MyFeed('paper', 'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'DID News', '', '12:10 Dec.12, 2019'),
+    new MyFeed('paper', 'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'DID News', '', '1584956175537',false),
   'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoDID SideChain News':
-    new MyFeed('paper', 'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'DID SideChain News', '', '12:10 Dec.12, 2019'),
+    new MyFeed('paper', 'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'DID SideChain News', '', '1584956175537',false),
   'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoFootball News':
-    new MyFeed('paper', 'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'Football News', '', '12:10 Dec.12, 2019')
+    new MyFeed('paper', 'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'Football News', '', '1584956175537',false)
 }
 
 let virtualAFMap: any = {
@@ -1222,7 +1238,7 @@ let virtualAFMap: any = {
 let virtrulFeedEvents = [
   new FeedEvents('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo',
     'Carrier News',
-    '12:00, December 10, 2019',
+    '1584956175537',
     `1.Elastos Trinity DApp Store is your one-stop shop for finding the latest dApps available inside the Elastos ecosystem.
     The key difference between the applications available here and what you will find in any other app store is
     Elastos' guarantee of 100% security and privacy. All Elastos applications are decentralized, thus giving you
@@ -1230,7 +1246,7 @@ let virtrulFeedEvents = [
     1),
   new FeedEvents('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo',
     'Carrier News',
-    '15:00, December 10, 2019',
+    '1584956175537',
     `2.Elastos Trinity DApp Store is your one-stop shop for finding the latest dApps available inside the Elastos ecosystem.
     The key difference between the applications available here and what you will find in any other app store is
     Elastos' guarantee of 100% security and privacy. All Elastos applications are decentralized, thus giving you
@@ -1238,7 +1254,7 @@ let virtrulFeedEvents = [
     1),
   new FeedEvents('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo',
     'Carrier News',
-    '15:00, December 12, 2019',
+    '1584956175537',
     `3.Elastos Trinity DApp Store is your one-stop shop for finding the latest dApps available inside the Elastos ecosystem.
     The key difference between the applications available here and what you will find in any other app store is
     Elastos' guarantee of 100% security and privacy. All Elastos applications are decentralized, thus giving you
@@ -1246,7 +1262,7 @@ let virtrulFeedEvents = [
     1),
   new FeedEvents('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo',
     'Carrier News',
-    '15:00, December 14, 2019',
+    '1584956175537',
     `4.Elastos Trinity DApp Store is your one-stop shop for finding the latest dApps available inside the Elastos ecosystem.
     The key difference between the applications available here and what you will find in any other app store is
     Elastos' guarantee of 100% security and privacy. All Elastos applications are decentralized, thus giving you
@@ -1269,33 +1285,33 @@ let virtualEvents = {
 let virtualMyEvents = 
   [
     {
-      timestamp: '12:00, December 10, 2019',
+      timestamp: '1584956175537',
       message:
-        `Elastos Trinity DApp Store is your one-stop shop for finding the latest dApps available inside the Elastos ecosystem.
+        `1.Elastos Trinity DApp Store is your one-stop shop for finding the latest dApps available inside the Elastos ecosystem.
         The key difference between the applications available here and what you will find in any other app store is
         Elastos' guarantee of 100% security and privacy. All Elastos applications are decentralized, thus giving you
         the freedom to use the web as you should without the worries of data theft and third parties monetizing your data`
     },
     {
-      timestamp: '15:00, December 10, 2019',
+      timestamp: '1584956175537',
       message:
-        `Elastos Trinity DApp Store is your one-stop shop for finding the latest dApps available inside the Elastos ecosystem.
+        `2.Elastos Trinity DApp Store is your one-stop shop for finding the latest dApps available inside the Elastos ecosystem.
         The key difference between the applications available here and what you will find in any other app store is
         Elastos' guarantee of 100% security and privacy. All Elastos applications are decentralized, thus giving you
         the freedom to use the web as you should without the worries of data theft and third parties monetizing your data`
     },
     {
-      timestamp: '15:00, December 12, 2019',
+      timestamp: '1584956175537',
       message:
-        `Elastos Trinity DApp Store is your one-stop shop for finding the latest dApps available inside the Elastos ecosystem.
+        `3.Elastos Trinity DApp Store is your one-stop shop for finding the latest dApps available inside the Elastos ecosystem.
         The key difference between the applications available here and what you will find in any other app store is
         Elastos' guarantee of 100% security and privacy. All Elastos applications are decentralized, thus giving you
         the freedom to use the web as you should without the worries of data theft and third parties monetizing your data`
     },
     {
-      timestamp: '15:00, December 14, 2019',
+      timestamp: '1584956175537',
       message:
-        `Elastos Trinity DApp Store is your one-stop shop for finding the latest dApps available inside the Elastos ecosystem.
+        `4.Elastos Trinity DApp Store is your one-stop shop for finding the latest dApps available inside the Elastos ecosystem.
         The key difference between the applications available here and what you will find in any other app store is
         Elastos' guarantee of 100% security and privacy. All Elastos applications are decentralized, thus giving you
         the freedom to use the web as you should without the worries of data theft and third parties monetizing your data`
