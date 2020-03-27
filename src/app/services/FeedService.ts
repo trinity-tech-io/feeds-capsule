@@ -78,7 +78,7 @@ let myEventMap: {} = {};
 // let eventsMap:{topic: string, eventList: FeedEvents[]};
 let fetchList: FavoriteFeed[] = [];
 let firstInit: boolean;
-// let needFetch: boolean = true;
+let needFetch: boolean = true;
 let firstListMyFeed: boolean = true;
 
 let eventBus = null;
@@ -186,6 +186,13 @@ export class FeedService {
     favoriteFeedsMap = this.storeService.get(PersistenceKey.favoriteFeedsMap);
     if (favoriteFeedsMap == null || favoriteFeedsMap == undefined) {
       favoriteFeedsMap = {};
+    } else {
+      let keys: string[] = Object.keys(favoriteFeedsMap);
+      for (const index in keys) {
+        if (favoriteFeedsMap[keys[index]] == undefined)
+          continue;
+        favoriteFeedsMap[keys[index]].fetched = false;
+      }
     }
 
     allFeedsMap = this.storeService.get(PersistenceKey.allFeedsMap);
@@ -523,10 +530,6 @@ export class FeedService {
 
   handleResult(nodeId: string ,message: string){
     let from = nodeId;
-    console.log("friendMessageCallback");
-    console.log("response=>"+message);
-    console.log("from=>"+from);
-    
     let response = this.jsonRPCService.parseJson(message);
     
     if (this.jsonRPCService.checkError(message)) {
@@ -596,7 +599,7 @@ export class FeedService {
   "error":{"code":-32602,"message":"Operation Not Authorized"},"id":"11"}
   */
   handleCreateTopicResult(result: any){
-    alert("create topic success");
+    // alert("create topic success");
     console.log("handleCreateTopicResult=>");
 
     eventBus.publish("feeds:createTopicSuccess");
@@ -669,15 +672,23 @@ export class FeedService {
   }
   */
   handleSubscriptResult(nodeId: string, result: any){
-    this.fetchFeedEvents(nodeId, subscribeTopic, 0);
-    this.listSubscribed(nodeId);
-
     let feedKey = nodeId+subscribeTopic ;
-    favoriteFeedsMap[feedKey] = new FavoriteFeed(nodeId, subscribeTopic, "", 0, 0, this.getCurrentTime(),false);
+    // favoriteFeedsMap[feedKey] = new FavoriteFeed(nodeId, subscribeTopic, "", 0, 0, this.getCurrentTime(),false);
+
+    // if(fetchList == undefined){
+    //   fetchList = [];
+    // }
+    // fetchList.push(favoriteFeedsMap[feedKey]);
+    
     allFeedsMap[feedKey].followState = "following";
 
-    this.updateFFMap();
-    this.updateAllFeeds();
+    // this.updateFFMap();
+    // this.updateAllFeeds();
+
+    // this.fetchFeedEvents(nodeId, subscribeTopic, 0);
+    needFetch = true;
+    this.listSubscribed(nodeId);
+    // eventBus.publish('feeds:favoriteFeedListChanged',this.getFavoriteFeeds());
     eventBus.publish('feeds:allFeedsListChanged',this.getAllFeeds());
   }
 
@@ -737,14 +748,11 @@ export class FeedService {
       let feedKey = nodeId+topic;
 
       if (allFeedsMap[feedKey] == undefined){
-        console.log("11111");
         allFeedsMap[feedKey] = new AllFeed(nodeId,"paper",topic,desc,this.checkFollowState(feedKey));
         changed = true;
       } else {
-        console.log("2222222222");
         let state = this.checkFollowState(feedKey);
         if (state != allFeedsMap[feedKey].followState){
-          console.log("33333333");
           allFeedsMap[feedKey].followState = state;
           changed = true;
         }
@@ -783,33 +791,42 @@ export class FeedService {
       let favoriteFeedKey = nodeId+topic;
       if (favoriteFeedsMap[favoriteFeedKey] == undefined){
         favoriteFeedsMap[favoriteFeedKey] = new FavoriteFeed(nodeId, topic, desc, 0, 0, this.getCurrentTime(),false);
-      }else{
+        changed = true;
+      }else if(favoriteFeedsMap[favoriteFeedKey].name != topic ||
+        favoriteFeedsMap[favoriteFeedKey].desc != desc){
         favoriteFeedsMap[favoriteFeedKey].name = topic;
         favoriteFeedsMap[favoriteFeedKey].desc = desc  
+        changed = true;
       }
 
       // if (needFetch){
       //   this.fetchFeedEvents(nodeId, topic);
       // }
-      if (!fetchList.indexOf(favoriteFeedsMap[favoriteFeedKey]) && 
+      if (fetchList.indexOf(favoriteFeedsMap[favoriteFeedKey]) == -1 && 
           !favoriteFeedsMap[favoriteFeedKey].fetched){
         fetchList.push(favoriteFeedsMap[favoriteFeedKey]);
       }
     }
 
-    // needFetch = false ;
     if (changed){
       this.updateFFMap();
       eventBus.publish('feeds:favoriteFeedListChanged',this.getFavoriteFeeds());
     }
 
-    this.fetchNext();
+    if (needFetch) {
+      this.fetchNext();
+      needFetch = false;
+    }
+    
   }
 
   fetchNext(){
+    console.log("fetchList==>"+JSON.stringify(fetchList));
     if (fetchList.length>0){
       currentFetchFeeds = fetchList[0];
       // fetchTopic = fetchList[0].name;
+
+      console.log("currentFetchFeeds ==>"+JSON.stringify(currentFetchFeeds));
       this.fetchFeedEvents(fetchList[0].nodeId,fetchList[0].name);
     }
   }
@@ -860,7 +877,6 @@ export class FeedService {
   */
   handleFetchUnreceivedResult(from: string, result: any){
     console.log("handleFetchUnreceivedResult=>");
-    fetchList.slice(fetchList.indexOf(currentFetchFeeds), 1);
 
     let changed: boolean = false ;
     let currentEventChanged: boolean = false;
@@ -878,20 +894,21 @@ export class FeedService {
     for (let index = 0; index < result.length; index++) {
       let seqno = result[index].seqno;
       let event = result[index].event;
-      let ts = result[index].ts;
+      let ts:number = result[index].ts;
       if (favoriteFeedsMap[feedKey].unread != undefined){
         unread = favoriteFeedsMap[feedKey].unread;
       }
       favoriteFeedsMap[feedKey].lastSeqno = seqno;
       favoriteFeedsMap[feedKey].unread  = unread+1;
-      favoriteFeedsMap[feedKey].lastReceived = ts;
+      favoriteFeedsMap[feedKey].lastReceived = ts*1000;
       
-      eventsMap[feedKey].push((new FeedEvents(from, currentFetchFeeds.name, ts, event, seqno)));
+      eventsMap[feedKey].push((new FeedEvents(from, currentFetchFeeds.name, String(ts*1000), event, seqno)));
       changed = true ;
     }
 
     favoriteFeedsMap[feedKey].fetched = true ;
-    
+
+    fetchList = fetchList.filter(item=>item != currentFetchFeeds);
     if (currentFeedEventKey == feedKey){
       currentEventChanged = true;
     }
@@ -949,7 +966,9 @@ export class FeedService {
     let unread = favoriteFeedsMap[feedKey].unread;
     favoriteFeedsMap[feedKey].lastSeqno = seqno;
     favoriteFeedsMap[feedKey].unread  = unread+1;
-    favoriteFeedsMap[feedKey].lastReceived = ts;
+    favoriteFeedsMap[feedKey].lastReceived = ts*1000;
+    
+    console.log("ts=>"+favoriteFeedsMap[feedKey].lastReceived);
 
     if (eventsMap[feedKey] == undefined){
       eventsMap[feedKey] = [];

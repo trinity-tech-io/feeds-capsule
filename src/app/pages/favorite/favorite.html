@@ -52,7 +52,7 @@
             size-xs="3.5"
             class="badge-container">
             <ion-badge color="primary" *ngIf="feed.unread">{{feed.unread}}</ion-badge>
-            <ion-badge color="light"  *ngIf="feed.unread == 0">{{today | date:'MM-dd HH:mm'}}</ion-badge>
+            <ion-badge color="light"  *ngIf="feed.unread == 0">{{feed.lastReceived | date:'MM-dd HH:mm'}}</ion-badge>
           </ion-col>
         </ion-row>
       </ion-grid>

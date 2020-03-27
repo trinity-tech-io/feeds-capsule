@@ -52,10 +52,10 @@ export class SearchFeedPage implements OnInit {
   subscribe(nodeId: string, topic: string){
     this.popup.ionicConfirm("Prompt","Are you sure to subscribe from "+topic+", and Receive new message push？","ok","cancel").then((data)=>{
       if (data){
-        this.feedService.unSubscribe(nodeId, topic);
+        this.feedService.subscribe(nodeId, topic);
       }
     });
-    this.feedService.subscribe(nodeId, topic);
+
   }
 
   unsubscribe(nodeId: string, topic: string){

@@ -67,22 +67,6 @@ export class MyprofilePage implements OnInit {
       this.native.toast("press lable copy text to clipboard");
       this.carrierService.getSelfInfo(
         (userInfo)=>{
-              console.log("userId="+userInfo.userId),
-              console.log("name="+userInfo.name),
-              console.log("description="+userInfo.description),
-              console.log("hasAvatar="+userInfo.hasAvatar),
-              console.log("gender="+userInfo.gender),
-              console.log("phone="+userInfo.phone),
-              console.log("email="+userInfo.email),
-              console.log("region="+userInfo.region)
-            //     userInfo.name,
-            //     userInfo.description,
-            //     userInfo.hasAvatar,
-            //     userInfo.gender,
-            //     userInfo.phone,
-            //     userInfo.email,
-            //     userInfo.region
-
             this.attrs = [
               new Attribute('radio-button-on', 'nodeId',this.carrierService.getNodeId(),true),
               new Attribute('home', 'address', this.carrierService.getAddress(),true),
