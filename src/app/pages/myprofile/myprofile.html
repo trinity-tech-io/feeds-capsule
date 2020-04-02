@@ -20,10 +20,18 @@
   </div>
   <!-- <ion-button expand="block" (click)="copyText()" *ngIf="connectStatus == 0 ">copy-NodeId</ion-button> -->
 
+  <ion-avatar style="margin: 10px;" *ngIf="connectStatus == 0">
+    <img src={{avatarUrl}} (click)="change()">
+  </ion-avatar>
+
   <ion-list>
     <ion-item  *ngFor="let attr of attrs">
-      <ion-label color="primary">{{attr.attrName}}:</ion-label>
-      <ion-label slot="end" *ngIf="!changing || attr.freeze" (click)="copyText(attr.attrName, attr.attrValue)">{{attr.attrValue}}</ion-label>
+      <ion-label color="primary"><b>{{attr.attrName}}:</b></ion-label>
+      <div slot="end" *ngIf="!changing || attr.freeze" (click)="copyText(attr.attrName, attr.attrValue)" class="div">
+        <div  class="s1">{{attr.attrValue}}</div
+        ><span *ngIf="attr.attrValue.length > 20" class="s2"><span>{{attr.attrValue}}</span></span>
+      </div>
+      <!-- <ion-label slot="end" class="flex2" *ngIf="!changing || attr.freeze" (click)="copyText(attr.attrName, attr.attrValue)">{{attr.attrValue}}</ion-label> -->
       
       <ion-input required type="text"  *ngIf="changing && !attr.freeze" [(ngModel)]="attr.attrValue" (ngModelChange)="onChangeText(attr.attrName,attr.attrValue)"></ion-input>
     </ion-item>
@@ -35,6 +43,6 @@
 </ion-content>
 
 <ion-footer >
-  <ion-button expand="block" (click)="updateProfile()" *ngIf="connectStatus == 0 && !changing">update-Profile</ion-button>
-  <ion-button expand="block" (click)="saveProfile()" *ngIf="connectStatus == 0 && changing">save-Profile</ion-button>
+  <ion-button style="text-transform: none;" expand="block" (click)="updateProfile()" *ngIf="connectStatus == 0 && !changing">Edit-Profile</ion-button>
+  <ion-button style="text-transform: none;" expand="block" (click)="saveProfile()" *ngIf="connectStatus == 0 && changing">Save-Profile</ion-button>
 </ion-footer>

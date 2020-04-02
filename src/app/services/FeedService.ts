@@ -54,6 +54,8 @@ enum PersistenceKey{
 
   // {nodeId+topic:[{event},{event}]}
   myEventMap = "myEventMap",
+
+  avatar = "avatar"
 }
 
 // let serverUserIdList:any = [];
@@ -1183,7 +1185,15 @@ export class FeedService {
     this.storeService.set(PersistenceKey.myFeedsMap, myFeedsMap);
   }
   updateMyEventMap(){
-    this.storeService.set(PersistenceKey.myEventMap,myEventMap);
+    this.storeService.set(PersistenceKey.myEventMap, myEventMap);
+  }
+
+  saveAvator(imaUrl: string){
+    this.storeService.set(PersistenceKey.avatar, imaUrl);
+  }
+
+  getAvator(): string{
+    return this.storeService.get(PersistenceKey.avatar);
   }
 }
 
@@ -1211,7 +1221,7 @@ let virtualFFMap:any = {
   'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoFootball':
     new FavoriteFeed('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'Football',  '', 4, 0, '', true),
   'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoTrinity News':
-    new FavoriteFeed('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'Trinity News',  '', 0, 0, '12:00 Dec.12', true),
+    new FavoriteFeed('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'Trinity News',  '', 0, 0, '1584956175537', true),
   'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoHollywood Movies':
     new FavoriteFeed('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'Hollywood Movies', '',  24, 0, '', true),
   'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoCofee':
@@ -1219,7 +1229,7 @@ let virtualFFMap:any = {
   'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoMacBook':
     new FavoriteFeed('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'MacBook',  '', 4, 0, '', true),
   'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoRust development':
-    new FavoriteFeed('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'Rust development', '',  0, 0, '12:00 Desc.12', true),
+    new FavoriteFeed('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'Rust development', '',  0, 0, '1584956175537', true),
   'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoGolang':
   new FavoriteFeed('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'Golang',  '', 8, 0, '', true)
 }

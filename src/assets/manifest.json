@@ -32,7 +32,8 @@
     "Device",
     "Clipboard",
     "SplashScreen",
-    "NetworkStatus"
+    "NetworkStatus",
+    "Camera"
   ],
   "urls": [
     "http://www.yourappserver.com/*"

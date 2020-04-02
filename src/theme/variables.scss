@@ -73,10 +73,16 @@
 }
 
 $segment-button-md-text-color: #007AFF !important;
+
 .offline-content {
   background-color:rgb(209, 81, 81);
   color: #fff;
   text-align: center;
   font-size: 15px;
   padding: px2rem(2px);
+}
+
+.my-custom-alert {
+  --ion-text-color: #000000;
+  text-align: center;
 }

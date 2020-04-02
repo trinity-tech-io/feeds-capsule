@@ -1,4 +1,4 @@
-<ion-header>
+<!-- <ion-header>
   <ion-toolbar mode="ios">
     <ion-buttons slot="end" padding class="header-btns">
       <ion-button>
@@ -9,5 +9,47 @@
   </ion-toolbar>
 </ion-header>
 <ion-content>
-  <!-- <ion-button expand="block" (click)="abouttest()">subtest</ion-button> -->
+</ion-content> -->
+<ion-header>
+ 
+</ion-header>
+ 
+ 
+<ion-content>
+ 
+<!-- 
+  <ion-button  expand="block" (click)="openCamera()">打开摄像头</ion-button>
+
+
+  <div>
+    <img src="{{imgUrl}}" />
+    
+  </div>
+  -->
+
+
+  <!-- fab placed in the center of the content with a list on each side -->
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button>
+      <ion-icon name="add" (click)="expression"></ion-icon>
+    </ion-fab-button>
+    <!-- <ion-fab-list side="top">
+      <ion-fab-button><ion-icon name="logo-vimeo"></ion-icon></ion-fab-button>
+    </ion-fab-list>
+    <ion-fab-list side="bottom">
+      <ion-fab-button><ion-icon name="logo-facebook"></ion-icon></ion-fab-button>
+    </ion-fab-list>
+    <ion-fab-list side="end">
+      <ion-fab-button><ion-icon name="logo-twitter"></ion-icon></ion-fab-button>
+    </ion-fab-list> -->
+    <ion-fab-list side="start">
+      <!-- <ion-fab-button> -->
+        <!-- <ion-icon name="logo-instagram">create new event </ion-icon> -->
+        <ion-button  (click)="openCamera()">create new event</ion-button>
+
+      <!-- </ion-fab-button> -->
+    </ion-fab-list>
+    
+  </ion-fab>
 </ion-content>
+

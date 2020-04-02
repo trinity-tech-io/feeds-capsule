@@ -28,3 +28,44 @@ ion-col > div {
   font-size: 15px;
   padding: px2rem(2px);
 }
+
+.flex2{
+  // flex:1.0;
+  // min-width:0;
+  // white-space: nowrap;
+  // overflow: hidden;
+  // text-overflow: ellipsis;
+  // font-weight: normal;
+
+  max-width:50%;
+  display:inline-block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: right;
+}
+
+.div {
+  width: 200px;
+}
+.s1 {
+  max-width:50%;
+  display:inline-block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: right;
+}
+.s2 {
+  display:inline-block;
+  max-width:50%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  direction: rtl;
+  text-align: left;
+}
+.s2 span {
+ direction: ltr;
+ unicode-bidi: embed;
+}

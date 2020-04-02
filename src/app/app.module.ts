@@ -33,6 +33,7 @@ import { TransportService } from './services/TransportService';
 import { AppService } from './services/AppService';
 
 import { PopupProvider } from './services/popup';
+import { CameraService } from './services/CameraService';
 
 /** 通过类引用方式解析国家化文件 */
 export class CustomTranslateLoader implements TranslateLoader {
@@ -91,6 +92,7 @@ export function TranslateLoaderFactory() {
     StorageService,
     PopupProvider,
     AppService,
+    CameraService,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     {provide: ErrorHandler, useClass: ErrorHandler}
   ]
