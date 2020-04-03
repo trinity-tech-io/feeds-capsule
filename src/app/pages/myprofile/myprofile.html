@@ -42,7 +42,19 @@
 
 </ion-content>
 
-<ion-footer >
-  <ion-button style="text-transform: none;" expand="block" (click)="updateProfile()" *ngIf="connectStatus == 0 && !changing">Edit-Profile</ion-button>
-  <ion-button style="text-transform: none;" expand="block" (click)="saveProfile()" *ngIf="connectStatus == 0 && changing">Save-Profile</ion-button>
+<ion-footer>
+  <!-- <div style="margin: 10px;">
+    <ion-button style="text-transform: none;" expand="block" (click)="updateProfile()" *ngIf="connectStatus == 0 && !changing">Edit-Profile</ion-button>
+    <ion-button style="text-transform: none;" expand="block" (click)="saveProfile()" *ngIf="connectStatus == 0 && changing">Save-Profile</ion-button>
+  </div>
+ -->
+  <div class="ion-padding" *ngIf="connectStatus == 0">
+    <ion-button expand="block" mode="ios" (click)="updateProfile()" *ngIf="!changing">
+      <ion-label>Edit-Profile</ion-label>
+    </ion-button>
+    <ion-button expand="block" mode="ios" (click)="saveProfile()" *ngIf="changing">
+      <ion-label>Save-Profile</ion-label>
+    </ion-button>
+    
+  </div>
 </ion-footer>

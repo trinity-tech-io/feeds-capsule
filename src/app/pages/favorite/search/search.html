@@ -8,7 +8,7 @@
         <ion-menu-button menu="m1"></ion-menu-button>
       </ion-button>
     </ion-buttons>
-    <ion-title>Feeds to follow</ion-title>
+    <ion-title>Channels to subscribe</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -21,8 +21,8 @@
   <ion-list>
     <ion-item class="feed-space" *ngFor="let desc of feedList">
       <ion-icon name="paper" slot="start"></ion-icon>
-      <ion-button slot="end" color="light" (click)="subscribe(desc.nodeId, desc.topic)" *ngIf="desc.followState == 'follow'">{{desc.followState}}</ion-button>
-      <ion-button slot="end" color="primary" (click)="unsubscribe(desc.nodeId, desc.topic)" *ngIf="desc.followState != 'follow'">{{desc.followState}}</ion-button>
+      <ion-button style="text-transform: none;" slot="end" color="primary" (click)="subscribe(desc.nodeId, desc.topic)" *ngIf="desc.subscribeState == 'Subscribe'">{{desc.subscribeState}}</ion-button>
+      <ion-button style="text-transform: none;" slot="end" color="danger" (click)="unsubscribe(desc.nodeId, desc.topic)" *ngIf="desc.subscribeState != 'Subscribe'">{{desc.subscribeState}}</ion-button>
       <ion-label (click)="navigateToDetailPage(desc.nodeId, desc.topic)">{{desc.topic}}</ion-label>
     </ion-item>
     </ion-list>

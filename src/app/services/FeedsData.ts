@@ -4,6 +4,6 @@ declare namespace FeedsData{
         avatar: string,
         topic: string,
         desc: string,
-        followState: string
+        subscribeState: string
     }
 }

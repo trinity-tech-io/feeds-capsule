@@ -84,5 +84,39 @@ $segment-button-md-text-color: #007AFF !important;
 
 .my-custom-alert {
   --ion-text-color: #000000;
-  text-align: center;
+  text-align: left;
+}
+
+
+.twoBtn{
+  .alert-wrapper {
+      border-radius: 10px;
+    }
+
+  .alert-title {
+    font-size: 1.8rem;
+    text-align: center;
+    margin-top: -10px;
+  }
+
+ .alert-button-group {
+    padding: 0;
+    border-top: 1px solid #e1dce6;
+    justify-content: center;
+  }
+
+ .alert-message {
+    max-height: 240px;
+    font-size: 1.4rem;
+    text-align:center;
+  }
+
+  .alert-button {
+    width: 50%;
+    border-left: 1px solid #e1dce6;
+    margin:0;
+    .button-inner {
+      justify-content: center;
+    }
+  } 
 }

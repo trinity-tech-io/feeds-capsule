@@ -59,7 +59,7 @@ export class AddServerPage implements OnInit {
       this.carrier.addFriend(this.address, this.friendRequest,
         () => {
             console.log("Add server success");
-            alert("Add server success");
+            this.alertError("Add server success");
             this.native.setRootRouter("/menu/servers");
         }, null);
       return;
@@ -72,18 +72,19 @@ export class AddServerPage implements OnInit {
               console.log("Add server success");
               // alert("Add server success");
               
-              this.popup.ionicAlert("Prompt","Add server success","ok").then(() => { 
+              // this.popup.ionicAlert("Prompt","Add server success","ok").then(() => { 
+                this.native.toast("Add server success");
                 this.native.setRootRouter("/menu/servers");
                 this.native.pop();
-              });
+              // });
               
   
           }, (err) => {
               console.log("Add server error: " + err);
-              alert("Add server error: " + err);
+              this.alertError("Add server error: " + err);
           });
       } else {
-        alert ("Address invalid");
+        this.alertError("Address invalid");
       }
       
       },
@@ -96,5 +97,9 @@ export class AddServerPage implements OnInit {
     // this.router.navigate(['/scan']);
     this.native.pop();
     this.appService.scanAddress();
+  }
+
+  alertError(error: string){
+    alert (error);
   }
 }

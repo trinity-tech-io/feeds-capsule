@@ -5,7 +5,7 @@
         <ion-menu-button menu="m1"></ion-menu-button>
       </ion-button>
     </ion-buttons>
-    <ion-title>Feeds</ion-title>
+    <ion-title>Channels</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -18,13 +18,12 @@
     <ion-button
       expand="block"
       mode="ios"
-      color="tertiary"
       [routerLink]="[
         '/',
         'favorite',
         'search'
       ]">
-      <ion-icon name="add-circle-outline" slot="start" ></ion-icon>
+      <!-- <ion-icon name="add-circle-outline" slot="start" ></ion-icon> -->
       <ion-label> Explore feeds on your interests</ion-label>
     </ion-button>
   </div>
@@ -44,8 +43,9 @@
             size-xs="6.25"
             class="node-content">
             <ion-label>
-              <h2>{{feed.name}}</h2>
+              <b><h2>{{feed.name}}</h2></b>
             </ion-label>
+            
           </ion-col>
           <ion-col
             size="3.5"
@@ -54,6 +54,13 @@
             <ion-badge color="primary" *ngIf="feed.unread">{{feed.unread}}</ion-badge>
             <ion-badge color="light"  *ngIf="feed.unread == 0">{{feed.lastReceived | date:'MM-dd HH:mm'}}</ion-badge>
           </ion-col>
+          <div style="margin-top: 10px;">
+          <ion-label>
+            <p>
+            {{feed.lastEvent}}
+            </p>
+          </ion-label>
+        </div>
         </ion-row>
       </ion-grid>
     </ion-item>

@@ -4,6 +4,8 @@ import { FeedService } from 'src/app/services/FeedService';
 import { Events } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { PopupProvider } from 'src/app/services/popup';
+import { NativeService } from 'src/app/services/NativeService';
+import { ActionSheetController } from '@ionic/angular';
 
 @Component({
   selector: 'page-search',
@@ -20,7 +22,10 @@ export class SearchFeedPage implements OnInit {
     private events: Events,
     private zone: NgZone,
     private router: Router,
-    private popup: PopupProvider) {
+    private popup: PopupProvider,
+    private native: NativeService,
+    private actionSheetController:ActionSheetController) {
+
     this.connectStatus = this.feedService.getConnectionStatus();
 
     feedService.doExploreTopics();
@@ -36,6 +41,20 @@ export class SearchFeedPage implements OnInit {
           this.connectStatus = connectionStatus;
       });
     });
+
+    this.events.subscribe('feeds:subscribeFinish', topic => {
+      this.native.toast(topic + " subscribed");
+      // this.zone.run(() => {
+      //   this.feedList = feedService.getAllFeeds();
+      // });
+    });
+
+    this.events.subscribe('feeds:unsubscribeFinish', topic => {
+      this.native.toast(topic + " unsubscribed");
+      // this.zone.run(() => {
+      //   this.feedList = feedService.getAllFeeds();
+      // });
+    });
   }
 
   ngOnInit() {
@@ -50,20 +69,38 @@ export class SearchFeedPage implements OnInit {
   }
 
   subscribe(nodeId: string, topic: string){
-    this.popup.ionicConfirm("Prompt","Are you sure to subscribe from "+topic+", and Receive new message push？","ok","cancel").then((data)=>{
-      if (data){
-        this.feedService.subscribe(nodeId, topic);
-      }
-    });
-
+    // this.popup.ionicConfirm("Prompt","Are you sure to subscribe from "+topic+", and Receive new message push？","ok","cancel").then((data)=>{
+    //   if (data){
+    //     this.feedService.subscribe(nodeId, topic);
+    //   }
+    // });
+    this.feedService.subscribe(nodeId, topic);
   }
 
-  unsubscribe(nodeId: string, topic: string){
-    this.popup.ionicConfirm("Prompt","Are you sure to unsubscribe from "+topic+"?","ok","cancel").then((data)=>{
-      if (data){
-        this.feedService.unSubscribe(nodeId, topic);
-      }
+  async unsubscribe(nodeId: string, topic: string){
+    // this.popup.ionicConfirm("Prompt","Are you sure to unsubscribe from "+topic+"?","ok","cancel").then((data)=>{
+    //   if (data){
+    //     this.feedService.unSubscribe(nodeId, topic);
+    //   }
+    // });
+    const actionSheet = await this.actionSheetController.create({
+      // header: 'Albums',
+      buttons: [{
+        text: 'Unsubscribe @'+topic+"?",
+        // role: 'destructive',
+        icon: 'trash',
+        handler: () => {
+          this.feedService.unSubscribe(nodeId, topic);
+        }
+      },{
+        text: 'Cancel',
+        icon: 'close',
+        // role: 'cancel',
+        handler: () => {
+        }
+      }]
     });
+    await actionSheet.present();
   }
 
   getItems(events){
