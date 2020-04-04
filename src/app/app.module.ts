@@ -34,6 +34,7 @@ import { AppService } from './services/AppService';
 
 import { PopupProvider } from './services/popup';
 import { CameraService } from './services/CameraService';
+import { PopovercomponentPageModule } from './components/popovercomponent/popovercomponent.module';  
 
 /** 通过类引用方式解析国家化文件 */
 export class CustomTranslateLoader implements TranslateLoader {
@@ -67,6 +68,7 @@ export function TranslateLoaderFactory() {
     BrowserModule,
     AppRoutingModule,
     ComponentsModule,
+    PopovercomponentPageModule,
     IonicModule.forRoot(),
     TranslateModule.forRoot({
       loader: {

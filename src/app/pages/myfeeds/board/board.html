@@ -11,34 +11,6 @@
   <div class="offline-content" *ngIf=" connectStatus != 0 ">
     <ion-label>disconnect</ion-label>
   </div>
-  <!-- <div class="ion-padding">
-    <ion-button
-      expand="block"
-      mode="ios"
-      color="tertiary"
-      (click)="newEvent()"
-    >
-      <ion-icon name="add-circle-outline" slot="start" ></ion-icon>
-      <ion-label> Create a new event</ion-label>
-    </ion-button>
-  </div> -->
-
-<!-- Textarea in an item with a floating label -->
-<div *ngIf="!isArchive">
-
-<ion-item >
-    <ion-label position="floating">New Events</ion-label>
-    <ion-textarea [(ngModel)]="newEvent" ></ion-textarea>
-</ion-item>
-<ion-button expand="block" color="primary" (click)="createNewEvent()">Post Event</ion-button>
-</div>
-
-<div class="event-list-content">
-  <!-- <ion-item-divider color="secondary">
-    <ion-label>
-      Event list
-    </ion-label>
-  </ion-item-divider> -->
 
   <ion-list>
     <ion-card *ngFor="let msg of myEvents">
@@ -46,5 +18,12 @@
       <ion-card-content>{{msg.message}}</ion-card-content>
     </ion-card>
   </ion-list>
-</div>
+
+
+<ion-fab *ngIf="!isArchive" vertical="bottom" horizontal="end" slot="fixed">
+  <ion-fab-button>
+    <ion-icon name="add" (click)="openPopOverComponent()"></ion-icon>
+  </ion-fab-button>
+</ion-fab>
+
 </ion-content>

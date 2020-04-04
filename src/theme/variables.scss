@@ -120,3 +120,13 @@ $segment-button-md-text-color: #007AFF !important;
     }
   } 
 }
+
+.bottom-sheet-popover .popover-content {
+  width: 100% !important;
+  left: 0 !important;
+  bottom: 0 !important;
+  right: 0 !important;
+  top: calc(100% - 280px) !important;
+  max-height: 280px;
+  min-height: 280px; 
+}

@@ -5,6 +5,8 @@ import { ActivatedRoute } from '@angular/router';
 import { FeedService } from 'src/app/services/FeedService';
 import { PopupProvider } from 'src/app/services/popup';
 import { NativeService } from 'src/app/services/NativeService';
+import { PopoverController } from '@ionic/angular';
+import { PopovercomponentPage } from '../../../components/popovercomponent/popovercomponent.page';
 
 
 @Component({
@@ -28,7 +30,8 @@ export class FeedBoardPage implements OnInit {
     private acRoute: ActivatedRoute,
     private popup: PopupProvider,
     private navCtrl: NavController,
-    private native: NativeService) {
+    private native: NativeService,
+    private popover: PopoverController) {
       this.connectStatus = this.feedService.getConnectionStatus();
       this.newEvent = "";
       
@@ -36,19 +39,7 @@ export class FeedBoardPage implements OnInit {
         this.nodeId = data.nodeId;
         this.topic = data.topic;
         this.title = this.topic;
-
-        
         this.isArchive = this.feedService.getArcstatus(this.nodeId, this.topic);
-
-        // if () {
-        //   document.getElementById("neweventblock").style.display = 'none';
-        // }else{
-        //   document.getElementById("neweventblock").style.display = 'block';
-        // }
-        // this.zone.run(() => {
-        //   this.isArchive = data.archive;
-        // });
-        // console.log(this.isArchive);
         this.myEvents = this.feedService.getMyFeedEvents(this.nodeId,this.topic);
       });
 
@@ -75,16 +66,14 @@ export class FeedBoardPage implements OnInit {
     this.navCtrl.pop();
   }
 
-  createNewEvent(){
-    if (this.nodeId=="" || this.topic=="" || this.newEvent == ""){
-      alert("Invalid params");
-      return ;
+  async openPopOverComponent() {
+    this.popover.create(
+      {
+        component:PopovercomponentPage,
+        componentProps: {nodeId:this.nodeId,topic:this.topic},
+        cssClass: 'bottom-sheet-popover'
+      }).then((popoverElement)=>{
+        popoverElement.present();
+      })
     }
-    this.popup.ionicConfirm("Prompt","The event '"+ this.newEvent+ "' will be created","ok","cancel").then((data)=>{
-      if (data){
-        
-        this.feedService.postEvent(this.nodeId, this.topic, this.newEvent);
-      }
-    })
-  }
 }
