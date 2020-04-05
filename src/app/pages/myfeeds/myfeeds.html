@@ -29,7 +29,7 @@
   <ion-list>
 
     <ion-item-sliding *ngFor="let feed of myfeeds" #slide>
-      <ion-item >
+      <!-- <ion-item >
         <ion-icon name="paper" slot="start"></ion-icon>
         <ion-label (click)="navigateToBoardPage(feed.nodeId, feed.name)">{{feed.name}}</ion-label>
   
@@ -39,6 +39,42 @@
               class="badge-container">
               <ion-badge color="light" >{{feed.lastUpdated | date:'MM-dd HH:mm'}}</ion-badge>
             </ion-col>
+      </ion-item> -->
+      <ion-item (click)="navigateToBoardPage(feed.nodeId, feed.name)">
+        <ion-grid class="ion-padding" >
+          <ion-row>
+            <ion-col
+              size="2.25"
+              size-lg="2.25"
+              class="icon-container"
+              >
+              <ion-icon name="paper"></ion-icon>
+            </ion-col>
+            <ion-col
+              size="6.25"
+              size-xs="6.25"
+              class="node-content">
+              <ion-label>
+                <b><h2>{{feed.name}}</h2></b>
+              </ion-label>
+              
+            </ion-col>
+            <ion-col
+              size="3.5"
+              size-xs="3.5"
+              class="badge-container">
+              <ion-badge color="light">{{feed.lastUpdated | date:'MM-dd HH:mm'}}</ion-badge>
+            </ion-col>
+            <div style="margin-top: 10px;">
+              <img *ngIf="feed.imageUrl!=''" src={{feed.imageUrl}} >
+            <ion-label>
+              <p>
+              {{feed.lastEvent}}
+              </p>
+            </ion-label>
+          </div>
+          </ion-row>
+        </ion-grid>
       </ion-item>
       <ion-item-options>
         <ion-item-option *ngIf="!feed.archive" color="secondary" (click)="archive(feed.nodeId, feed.name, slide)">
