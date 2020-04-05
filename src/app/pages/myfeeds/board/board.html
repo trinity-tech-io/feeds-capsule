@@ -3,7 +3,7 @@
     <ion-buttons slot="start" padding class="header-btns" (click)="navigateBack()">
       <ion-icon name="arrow-back" mode="ios"></ion-icon>
     </ion-buttons>
-    <ion-title>{{title}}</ion-title>
+    <ion-title>My tidings</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -12,14 +12,48 @@
     <ion-label>disconnect</ion-label>
   </div>
 
-  <ion-list>
+  <ion-item>
+    <ion-icon name="football"></ion-icon>
+   <!-- <ion-label><b>disconnect</b></ion-label> -->
+    <ion-label style="margin-left: 10px;"><h1>{{title}}</h1></ion-label>
+  </ion-item>
+
+  <!-- <ion-list>
     <ion-card *ngFor="let msg of myEvents">
       <ion-card-header>{{msg.timestamp|date:'MM-dd HH:mm'}}</ion-card-header>
       <ion-card-content>{{msg.message}}</ion-card-content>
     </ion-card>
-  </ion-list>
+  </ion-list> -->
+  <ion-list>
+  <ion-item *ngFor="let msg of myEvents ">
+    <ion-grid>
+      <!-- <ion-row> -->
+        <img *ngIf="msg.imageUrl!=''" src={{msg.imageUrl}} >
+        <ion-label >{{msg.message}}</ion-label>
+      <!-- </ion-row> -->
+      <ion-row>
+        <ion-col size="2.25"
+        size-lg="2.25">
+          <ion-button fill="clear" mode="ios" (click)="chat()">
+            <ion-icon name="chatbubbles" slot="icon-only" ></ion-icon>
+          </ion-button>
+        </ion-col>
 
+        <ion-col size="6.25"
+        size-xs="6.25">
+          <ion-button fill="clear" mode="ios" (click)="like()">
+            <ion-icon name="heart" slot="icon-only" ></ion-icon>
+          </ion-button>
+        </ion-col>
 
+        <ion-col size="3.5"
+        size-xs="3.5">
+          <ion-label style="margin-top: 10px;">{{msg.timestamp | date:'MM-dd HH:mm'}}</ion-label>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-item>
+</ion-list>
 <ion-fab *ngIf="!isArchive" vertical="bottom" horizontal="end" slot="fixed">
   <ion-fab-button>
     <ion-icon name="add" (click)="openPopOverComponent()"></ion-icon>
