@@ -42,6 +42,6 @@ export class NeweventPage implements OnInit {
   }
 
   newevent(event: HTMLInputElement){
-    this.feedService.postEvent(this.nodeId, this.topic, event.value);
+    // this.feedService.postEvent(this.nodeId, this.topic, event.value);
   }
 }

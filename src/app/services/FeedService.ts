@@ -133,7 +133,8 @@ export class FeedEvents{
     public topic: string,
     public timestamp: string,
     public message: string,
-    public seqno: number){
+    public seqno: number,
+    public imageUrl: string){
   }
 }
 
@@ -391,7 +392,7 @@ export class FeedService {
   }
 
   //{"jsonrpc":"2.0","method":"post_event","params":{"topic":"news","event":"newsevent"},"id":null}
-  postEvent(nodeId: string, topic: string, event: string){
+  postEvent(nodeId: string, topic: string, event: string, imageUrl: string){
       let params = {};
       params["topic"] = topic;
       params["event"] = event;
@@ -401,7 +402,7 @@ export class FeedService {
         lastSeqno = myEventMap[nodeId+topic].seqno;
       }
         
-      postEventTmp = new FeedEvents(nodeId,topic,this.getCurrentTime(),event,lastSeqno++);
+      postEventTmp = new FeedEvents(nodeId,topic,this.getCurrentTime(),event,lastSeqno++, imageUrl);
       this.sendMessage(nodeId, "post_event", params, MethodType.postEvent);
   }
 
@@ -909,7 +910,7 @@ export class FeedService {
       favoriteFeedsMap[feedKey].lastReceived = ts*1000;
       favoriteFeedsMap[feedKey].lastEvent = event;
       
-      eventsMap[feedKey].push((new FeedEvents(from, currentFetchFeeds.name, String(ts*1000), event, seqno)));
+      eventsMap[feedKey].push((new FeedEvents(from, currentFetchFeeds.name, String(ts*1000), event, seqno, "")));
       changed = true ;
     }
 
@@ -982,7 +983,7 @@ export class FeedService {
       eventsMap[feedKey] = [];
     }
 
-    eventsMap[feedKey].push(new FeedEvents(nodeId, topic, ts, event, seqno));
+    eventsMap[feedKey].push(new FeedEvents(nodeId, topic, ts, event, seqno, ""));
 
     if (currentFeedEventKey == feedKey){
       currentEventChanged = true;
@@ -1226,7 +1227,8 @@ let virtrulFeedEvents = [
     The key difference between the applications available here and what you will find in any other app store is
     Elastos' guarantee of 100% security and privacy. All Elastos applications are decentralized, thus giving you
     the freedom to use the web as you should without the worries of data theft and third parties monetizing your data`,
-    1),
+    1,
+    ""),
   new FeedEvents('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo',
     'Carrier News',
     '1584956175537',
@@ -1234,7 +1236,8 @@ let virtrulFeedEvents = [
     The key difference between the applications available here and what you will find in any other app store is
     Elastos' guarantee of 100% security and privacy. All Elastos applications are decentralized, thus giving you
     the freedom to use the web as you should without the worries of data theft and third parties monetizing your data`,
-    1),
+    1,
+    ""),
   new FeedEvents('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo',
     'Carrier News',
     '1584956175537',
@@ -1242,7 +1245,8 @@ let virtrulFeedEvents = [
     The key difference between the applications available here and what you will find in any other app store is
     Elastos' guarantee of 100% security and privacy. All Elastos applications are decentralized, thus giving you
     the freedom to use the web as you should without the worries of data theft and third parties monetizing your data`,
-    1),
+    1,
+    ""),
   new FeedEvents('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo',
     'Carrier News',
     '1584956175537',
@@ -1250,7 +1254,8 @@ let virtrulFeedEvents = [
     The key difference between the applications available here and what you will find in any other app store is
     Elastos' guarantee of 100% security and privacy. All Elastos applications are decentralized, thus giving you
     the freedom to use the web as you should without the worries of data theft and third parties monetizing your data`,
-    1),
+    1,
+    ""),
 ];
 
 let virtualFFMap:any = {
