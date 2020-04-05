@@ -263,6 +263,8 @@ export class FeedService {
         continue;
       list.push(favoriteFeedsMap[keys[index]]);
     }
+    list.sort((a, b) => Number(b.lastReceived) - Number(a.lastReceived));
+
     return list;
   }
 
@@ -301,9 +303,9 @@ export class FeedService {
     if (eventsMap[feedEventKey] == undefined){
       eventsMap[feedEventKey] = [];
     }
-    Object.assign(list, eventsMap[feedEventKey]);
-    
-    return list.reverse();
+    // Object.assign(list, eventsMap[feedEventKey]);
+    eventsMap[feedEventKey].sort((a, b) => Number(b.timestamp) - Number(a.timestamp));
+    return eventsMap[feedEventKey];
   }
 
   public getMyFeeds() {
@@ -314,6 +316,7 @@ export class FeedService {
         continue;
       list.push(myFeedsMap[keys[index]]);
     }
+    list.sort((a, b) => Number(b.lastUpdated) - Number(a.lastUpdated));
     return list;
   }
 
@@ -331,6 +334,11 @@ export class FeedService {
         myEventMap[nodeId+topic] == undefined){
       return [];
     }
+
+    let list: FeedEvents[] = [];
+    // Object.assign(list, myEventMap[nodeId+topic]);
+
+    myEventMap[nodeId+topic].sort((a, b) => Number(b.timestamp) - Number(a.timestamp));
     return myEventMap[nodeId+topic];
   }
 
@@ -966,7 +974,7 @@ export class FeedService {
     let topic = result.topic;
     let event = result.event;
     let seqno = result.seqno;
-    let ts = result.ts;
+    let ts = result.ts*1000;
 
     // // let event = new FeedEvents(nodeId, result.topic, result.ts, result.event, result.seqno);
     // eventList.push(event);
@@ -978,7 +986,7 @@ export class FeedService {
     let unread = favoriteFeedsMap[feedKey].unread;
     favoriteFeedsMap[feedKey].lastSeqno = seqno;
     favoriteFeedsMap[feedKey].unread  = unread+1;
-    favoriteFeedsMap[feedKey].lastReceived = ts*1000;
+    favoriteFeedsMap[feedKey].lastReceived = ts;
     favoriteFeedsMap[feedKey].lastEvent = event;
 
     console.log("ts=>"+favoriteFeedsMap[feedKey].lastReceived);
@@ -987,7 +995,7 @@ export class FeedService {
       eventsMap[feedKey] = [];
     }
 
-    eventsMap[feedKey].push(new FeedEvents(nodeId, topic, ts, event, seqno, ""));
+    eventsMap[feedKey].push(new FeedEvents(nodeId, topic, String(ts), event, seqno, ""));
 
     if (currentFeedEventKey == feedKey){
       currentEventChanged = true;
