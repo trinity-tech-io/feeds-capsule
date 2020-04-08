@@ -29,7 +29,7 @@ import { NativeService } from './services/NativeService';
 import { FeedService } from './services/FeedService';
 import { StorageService } from './services/StorageService';
 import { JsonRPCService } from './services/JsonRPCService';
-import { TransportService } from './services/TransportService';
+// import { TransportService } from './services/TransportService';
 import { AppService } from './services/AppService';
 
 import { PopupProvider } from './services/popup';
@@ -90,7 +90,7 @@ export function TranslateLoaderFactory() {
     NativeService,
     FeedService,
     JsonRPCService,
-    TransportService,
+    // TransportService,
     StorageService,
     PopupProvider,
     AppService,

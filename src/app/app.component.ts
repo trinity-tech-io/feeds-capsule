@@ -59,7 +59,6 @@ export class MyApp {
         this.statusBar.styleDefault();
         this.splashScreen.hide();
         this.carrierService.init();
-        // this.appService.init();
 
         this.router.navigate(['/favorite']);
         // this.router.navigate(['/initialize']);

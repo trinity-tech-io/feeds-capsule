@@ -3,7 +3,7 @@ import { Platform } from '@ionic/angular';
 import { CarrierService } from 'src/app/services/CarrierService';
 import { Events } from '@ionic/angular';
 import { JsonRPCService } from 'src/app/services/JsonRPCService';
-import { TransportService } from 'src/app/services/TransportService';
+// import { TransportService } from 'src/app/services/TransportService';
 import { StorageService } from 'src/app/services/StorageService';
 
 
@@ -24,15 +24,24 @@ enum ConnState {
 };
 
 enum MethodType {
-  subscribe = "0",
-  unsubscribe = "1",
-  exploreTopics = "2",
-  listSubscribed = "3",
-  fetchUnreceived = "4",
+  // subscribe = "0",
+  // unsubscribe = "1",
+  // exploreTopics = "2",
+  // listSubscribed = "3",
+  // fetchUnreceived = "4",
 
-  createTopic = "11",
-  postEvent = "12",
-  listOwnedTopics = "13",
+  // createTopic = "11",
+  // postEvent = "12",
+  // listOwnedTopics = "13",
+  subscribe = "subscribe",
+  unsubscribe = "unsubscribe",
+  exploreTopics = "explore_topics",
+  listSubscribed = "list_subscribed_topics",
+  fetchUnreceived = "fetch_unreceived",
+
+  createTopic = "create_topic",
+  postEvent = "post_event",
+  listOwnedTopics = "list_owned_topics"
 }
 
 enum PersistenceKey{
@@ -94,6 +103,8 @@ let currentCreateTopicNID = "";
 
 let postEventTmp: FeedEvents;
 
+// let requestId: number = 0;
+
 @Injectable()
 export class FavoriteFeed {
   constructor(
@@ -151,7 +162,7 @@ export class FeedService {
     private platform: Platform,
     private events: Events,
     private jsonRPCService: JsonRPCService,
-    private transportService: TransportService,
+    // private transportService: TransportService,
     private carrierService: CarrierService,
     private storeService: StorageService) {
       eventBus = events;
@@ -376,19 +387,24 @@ export class FeedService {
   //   // }
   // }
 
-  sendMessage(nodeId: string, method: string, params: any, id: string){
+  sendMessage(nodeId: string, method: string, params: any){
     if(!this.checkServerConnection(nodeId)){
       return;
     }
-
-    let message = this.jsonRPCService.assembleJson(method, params, id);
-    this.transportService.transportMsg(
+    // requestId++;
+    // let message = this.jsonRPCService.assembleJson(method, params, Number(id));
+    // let message = this.jsonRPCService.assembleJson(method, params, String(requestId));
+    // this.jsonRPCService.request(); //TODO
+    this.jsonRPCService.request(
+      method,
       nodeId, 
-      JSON.stringify(message), 
+      params, 
       ()=>{
         // alert("success")
       }, 
-      (error)=>alert("error="+error));
+      (error)=>{
+        // alert("error="+error)
+      });
   }
   
   //{"jsonrpc":"2.0","method":"create_topic","params":{"topic":"news","desc":"daily"},"id":null}
@@ -398,7 +414,7 @@ export class FeedService {
       params["topic"] = topic;
       params["desc"] = desc;
 
-      this.sendMessage(nodeId, "create_topic", params, MethodType.createTopic);
+      this.sendMessage(nodeId, MethodType.createTopic, params);
   }
 
   //{"jsonrpc":"2.0","method":"post_event","params":{"topic":"news","event":"newsevent"},"id":null}
@@ -413,12 +429,12 @@ export class FeedService {
       }
         
       postEventTmp = new FeedEvents(nodeId,topic,this.getCurrentTime(),event,lastSeqno++, imageUrl);
-      this.sendMessage(nodeId, "post_event", params, MethodType.postEvent);
+      this.sendMessage(nodeId, MethodType.postEvent, params);
   }
 
   //{"jsonrpc":"2.0","method":"list_owned_topics","id":null}
   listOwnedTopics(nodeId: string){
-    this.sendMessage(nodeId, "list_owned_topics", null, MethodType.listOwnedTopics);
+    this.sendMessage(nodeId, MethodType.listOwnedTopics, null);
   }
 
   //{"jsonrpc":"2.0","method":"subscribe","params":{"topic":"movie"},"id":null}
@@ -426,7 +442,7 @@ export class FeedService {
     let params = {};
     params["topic"] = topic;
     subscribeTopic = topic ;
-    this.sendMessage(nodeId, "subscribe", params, MethodType.subscribe);
+    this.sendMessage(nodeId, MethodType.subscribe, params);
   }
 
   doSubscribe(){
@@ -439,17 +455,17 @@ export class FeedService {
       let params = {};
       params["topic"] = topic;
       unSubscribeTopic = topic;
-      this.sendMessage(nodeId, "unsubscribe", params, MethodType.unsubscribe);
+      this.sendMessage(nodeId, MethodType.unsubscribe, params);
   }
 
   //{"jsonrpc":"2.0","method":"explore_topics","id":null}
   exploreTopics(nodeId: string){
-      this.sendMessage(nodeId, "explore_topics", null, MethodType.exploreTopics);
+      this.sendMessage(nodeId, MethodType.exploreTopics, null);
   }
 
   //{"jsonrpc":"2.0","method":"list_subscribed_topics","id":null}
   listSubscribed(nodeId: string){
-    this.sendMessage(nodeId, "list_subscribed_topics", null, MethodType.listSubscribed);
+    this.sendMessage(nodeId, MethodType.listSubscribed, null);
   }
 
   //{"jsonrpc":"2.0","method":"fetch_unreceived","params":{"topic":"movie","since":1021438976},"id":null}
@@ -458,7 +474,7 @@ export class FeedService {
       let params = {};
       params["topic"] = topic;
       params["since"] = since;
-      this.sendMessage(nodeId, "fetch_unreceived", params, MethodType.fetchUnreceived);
+      this.sendMessage(nodeId, MethodType.fetchUnreceived, params);
   }
 
   // parseFriends(data:any): Friend[]{
@@ -542,63 +558,87 @@ export class FeedService {
     });
   }
 
-  handleResult(nodeId: string ,message: string){
+  handleResult(method:string, nodeId: string ,result: any , request: any){
     let from = nodeId;
-    let response = this.jsonRPCService.parseJson(message);
+    // let response = this.jsonRPCService.parseJson(message);
     
-    if (this.jsonRPCService.checkError(message)) {
-      alert(response.error.code+";"+response.error.message);
-      return;
-    }
+    // if (this.jsonRPCService.checkError(message)) {
+    //   alert(response.error.code+";"+response.error.message);
+    //   return;
+    // }
     
     //TODO
-    if (response.method == "new_event"){
-        this.handleNewEventResult(from, response.params);
-        return;
-    }
+    // if (response.method == "new_event"){
+    //     this.handleNewEventResult(from, response.params);
+    //     return;
+    // }
 
-    switch (response.id) {
+    switch (method) {
       case MethodType.subscribe:
         console.log("subscribe response");
-        this.handleSubscriptResult(from, response.result);
+        this.handleSubscriptResult(from);
         break;
       case MethodType.unsubscribe:
         console.log("unsubscribe response");
-        this.handleUnsubscribeResult(from, response.result);
+        this.handleUnsubscribeResult(from);
         break;
       case MethodType.exploreTopics:
         console.log("exploreTopics response");
-        this.handleExploreTopicResult(from, response.result);
+        this.handleExploreTopicResult(from, result);
         break;
       case MethodType.listSubscribed:
         console.log("listSubscribed response");
-        this.handleListSubscribedResult(from, response.result);
+        this.handleListSubscribedResult(from, result);
         break;
       case MethodType.fetchUnreceived:
         console.log("fetchUnreceived response");
-        this.handleFetchUnreceivedResult(from, response.result);
+        this.handleFetchUnreceivedResult(from, result);
         break;
       case MethodType.createTopic:
         console.log("createTopic response");
-        this.handleCreateTopicResult(response.result);
+        this.handleCreateTopicResult(result);
         break;
       case MethodType.postEvent:
         console.log("postEvent response");
-        this.handlePostEventResult(response.result);
+        this.handlePostEventResult(result);
         break;
       case MethodType.listOwnedTopics:
         console.log("listOwnedTopics response");
-        this.handleListOwnTopicResult(from, response.result);
+        this.handleListOwnTopicResult(from, result);
         break;
       default:
-        console.log("response id is "+response.id);
+        alert("Maybe error");
         break;
     }
   }
 
+  // public type: number,
+  // public nodeId: string,
+  // public method: string,
+  // public request: object,
+  // public result: object,
+  // public error: object,
+  // public params: object,
+  
   friendMessageCallback(){
-    this.events.subscribe('carrier:friendMessage', event => {
-      this.handleResult(event.from, event.message);
+    this.events.subscribe('transport:receiveMessage', result => {
+      alert(result.method);
+      switch(result.type){
+        case -1:
+          // alert(result.error.code+":"+result.error.message);
+          break;
+        case 1:
+          // alert(JSON.stringify(result.params));
+          this.handleNewEventResult(result.nodeId, result.params);
+          break;
+        case 0:
+          this.handleResult(result.method, result.nodeId, result.result, result.request);
+          // alert(JSON.stringify(result.request));
+          // alert(JSON.stringify(result.result));
+          break;
+      }
+
+      
     });
   }
 
@@ -687,7 +727,7 @@ export class FeedService {
     "id": "id(JSON-RPC conformed type)"
   }
   */
-  handleSubscriptResult(nodeId: string, result: any){
+  handleSubscriptResult(nodeId: string){
     let feedKey = nodeId+subscribeTopic ;
     // favoriteFeedsMap[feedKey] = new FavoriteFeed(nodeId, subscribeTopic, "", 0, 0, this.getCurrentTime(),false);
 
@@ -716,7 +756,7 @@ export class FeedService {
     "id": "id(JSON-RPC conformed type)"
   } 
   */
-  handleUnsubscribeResult(nodeId: string,result: any){
+  handleUnsubscribeResult(nodeId: string){
     console.log("handleUnsubscribeResult=>");
     let feedKey = nodeId+unSubscribeTopic;
     // TODO
@@ -840,12 +880,10 @@ export class FeedService {
   }
 
   fetchNext(){
-    console.log("fetchList==>"+JSON.stringify(fetchList));
     if (fetchList.length>0){
       currentFetchFeeds = fetchList[0];
       // fetchTopic = fetchList[0].name;
 
-      console.log("currentFetchFeeds ==>"+JSON.stringify(currentFetchFeeds));
       this.fetchFeedEvents(fetchList[0].nodeId,fetchList[0].name);
     }
   }
@@ -1101,7 +1139,6 @@ export class FeedService {
 
     
     for (let id in servers) {
-      console.log("servers[id].connection ==>"+servers[id].connection);
       let server = new Friend(servers[id].userInfo.userId,
                               servers[id].userInfo.email,
                               servers[id].userInfo.region,

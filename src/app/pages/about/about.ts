@@ -1,7 +1,7 @@
 import { Component, OnInit, NgZone } from '@angular/core';
 import { Events } from '@ionic/angular';
 import { CarrierService } from 'src/app/services/CarrierService';
-import { CameraService } from 'src/app/services/CameraService';
+import { JsonRPCService } from 'src/app/services/JsonRPCService';
 import { ActionSheetController } from '@ionic/angular';
 
 @Component({
@@ -14,7 +14,7 @@ export class AboutPage implements OnInit {
   private imgUrl: string = "../../../assets/images/avatar.svg";
 
   constructor(
-    private camera: CameraService,
+    private jsonRPC: JsonRPCService,
     private zone: NgZone,
     private actionSheetController:ActionSheetController) {
   }
@@ -23,41 +23,19 @@ export class AboutPage implements OnInit {
   }
 
   async openCamera(){
-    // this.camera.openCamera(50,0,2,
-    //   (imageUrl)=>{
-    //     // alert(imageUrl);
-    //     console.log(imageUrl);
-    //     this.zone.run(() => {
-    //       // this.imgUrl = "../../../assets/images/logo.png";
-    //       // document.getElementById("imgShow").src = imageUrl;
-    //       this.imgUrl = imageUrl;
-    //     });
-    //   },
-    //   (err)=>{alert(err)});
-
-
-
-      const actionSheet = await this.actionSheetController.create({
-        // header: 'Albums',
-        buttons: [{
-          text: 'Delete',
-          role: 'destructive',
-          icon: 'trash',
-          handler: () => {
-            console.log('Delete clicked');
-          }
-        },{
-          text: 'Cancel',
-          icon: 'close',
-          role: 'cancel',
-          handler: () => {
-            console.log('Cancel clicked');
-          }
-        }]
-      });
-      await actionSheet.present();
 
   }
 
-
+  test(){
+    let params = {};
+      params["topic"] = "ttt";
+      params["desc"] = "ddd";
+    console.log( this.jsonRPC.request("meth","mynodeid",params,null,null));
+    // {"jsonrpc":"2.0","method":"create_topic","params":{"topic":"news","desc":"daily"},"id":null}
+    // let response = '{"jsonrpc": "2.0","result": null,"id": "0"}';//create topic //post event //subscribe //unsubscribe
+    // let response = '{"jsonrpc": "2.0","result": [{"name": "topic名称(string)", "desc": "topic描述(string)"}],"id": "id(JSON-RPC conformed type)"}'; //list owned topics //explore topics //list subscribed topics
+    // let response = '{"jsonrpc": "2.0","result": [{"seqno": "序列号（以升序返回）(number)", "event": "事件内容(string)","ts": "事件发布时的时间戳（UNIX Epoch格式）(number)"}],"id": "id(JSON-RPC conformed type)"}';//fetch unreceived events
+    // let response = '{"jsonrpc": "2.0","method": "new_event","params": {"topic": "topic名称(string)","event": "事件内容(string)","seqno": "序列号(number)","ts": "时间戳(number)"}}';
+    // console.log(this.jsonRPC.response("123",response));
+  }
 }
