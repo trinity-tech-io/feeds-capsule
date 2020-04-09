@@ -12,18 +12,16 @@
     <ion-label>disconnect</ion-label>
   </div>
 
+
   <ion-item>
-    <ion-icon name="football"></ion-icon>
-   <!-- <ion-label><b>disconnect</b></ion-label> -->
-    <ion-label style="margin-left: 10px;"><h1>{{title}}</h1></ion-label>
+    <ion-col size="2">
+    <ion-icon style="font-size: 44px;" name="football"></ion-icon>
+    </ion-col>
+    <ion-col size="10">
+    <ion-label style="font-size: 20px;"><b>{{title}}</b></ion-label>
+    </ion-col>
   </ion-item>
 
-  <!-- <ion-list>
-    <ion-card *ngFor="let msg of myEvents">
-      <ion-card-header>{{msg.timestamp|date:'MM-dd HH:mm'}}</ion-card-header>
-      <ion-card-content>{{msg.message}}</ion-card-content>
-    </ion-card>
-  </ion-list> -->
   <ion-list>
   <ion-item *ngFor="let msg of myEvents ">
     <ion-grid>
