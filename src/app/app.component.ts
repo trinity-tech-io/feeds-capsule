@@ -34,18 +34,18 @@ export class MyApp {
     },
     {
       linkName: '/favorite',
-      iconName: 'apps',
-      pageName: 'Favorite Feeds'
+      iconName: 'star',
+      pageName: 'Favorite channels'
     },
     {
       linkName: '/menu/myfeeds',
-      iconName: 'apps',
-      pageName: 'My Feeds'
+      iconName: 'create',
+      pageName: 'My channels'
     },
     {
       linkName: '/menu/servers',
       iconName: 'contacts',
-      pageName: 'Backend Servers'
+      pageName: 'Channel sources'
     },
     {
       linkName: '/menu/about',
