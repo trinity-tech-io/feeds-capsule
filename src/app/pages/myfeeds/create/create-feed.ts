@@ -4,6 +4,7 @@ import { FeedService } from 'src/app/services/FeedService';
 import { PopupProvider } from 'src/app/services/popup';
 import { NativeService } from 'src/app/services/NativeService';
 
+
 @Component({
   selector: 'page-create-feed',
   templateUrl: './create-feed.html',

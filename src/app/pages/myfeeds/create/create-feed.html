@@ -8,7 +8,7 @@
         <ion-menu-button menu="m1"></ion-menu-button>
       </ion-button>
     </ion-buttons>
-    <ion-title>New Feed</ion-title>
+    <ion-title>New channel</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -16,28 +16,46 @@
   <div class="offline-content" *ngIf=" connectStatus != 0 ">
     <ion-label>disconnect</ion-label>
   </div>
-  <div class="content">
-    <ion-item>
+  <div>
+    <!-- <ion-item>
       <ion-label position="stacked">Server
         <ion-text color="danger">*</ion-text>
       </ion-label>
-      <ion-select #select>
+      <ion-select #select >
         <ion-select-option *ngFor="let server of serverList" >{{server.userId}}</ion-select-option>
       </ion-select>
-    </ion-item>
-    <ion-item>
-      <ion-label position="stacked">Your new feed name
+    </ion-item> -->
+    <!-- <ion-item> -->
+      <ion-label style="margin: 3%;" position="stacked"><b>Create channel on source location</b>
         <ion-text color="danger">*</ion-text>
       </ion-label>
-      <ion-input required type="text" #name></ion-input>
-    </ion-item>
-    <ion-item>
-      <ion-label position="stacked">Berief description
+      <div>
+        <div class="roundedRectangle">
+          <ion-input required type="text" disabled>DID:</ion-input>
+          <ion-input required type="text" disabled>Auth</ion-input>
+          <ion-input required type="text" disabled>Name</ion-input>
+        </div>
+        <ion-button style="text-transform: none; margin: 3%;" expand="block" (click)="createTopic(name,desc,select)">Change channel source</ion-button>
+      </div>
+      <div>
+        <ion-button style="text-transform: none; margin: 3%;" expand="block" (click)="createTopic(name,desc,select)">Select channel source</ion-button>
+      </div>
+      <ion-label style="margin: 3%;" position="stacked"><b>Your new feed name</b>
         <ion-text color="danger">*</ion-text>
       </ion-label>
-      <ion-input required type="text" #desc></ion-input>
-    </ion-item>
-    <ion-button expand="block" (click)="createTopic(name,desc,select)">Submit</ion-button>
+      <div class="roundedRectangle">
+        <ion-input required type="text" #name></ion-input>
+      </div>
+    <!-- </ion-item> -->
+    <!-- <ion-item> -->
+      <ion-label style="margin: 3%;" position="stacked"><b>Berief description</b>
+        <ion-text color="danger">*</ion-text>
+      </ion-label>
+      <div class="roundedRectangle">
+        <ion-input required type="text" #desc></ion-input>
+      </div>
+    <!-- </ion-item> -->
+    <ion-button style="text-transform: none;margin: 3%;" expand="block" (click)="createTopic(name,desc,select)">Submit</ion-button>
   </div>
 </ion-content>
 
