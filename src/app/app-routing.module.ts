@@ -34,6 +34,7 @@ const routes: Routes = [
   /* lazy loading: myprofile */
   { path: 'menu/myprofile', loadChildren: './pages/myprofile/myprofile.module#MyprofilePageModule' },
   { path: 'scan', loadChildren: './pages/servers/add-server/scan/scan.module#ScanPageModule' },
+  { path: 'home', loadChildren: './pages/home/home.module#HomePageModule' },
   
 
 ];

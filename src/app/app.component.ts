@@ -3,7 +3,8 @@ import { Platform } from '@ionic/angular';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { CarrierService } from './services/CarrierService';
-import { Router} from '@angular/router';
+import { FeedService } from './services/FeedService';
+import { Router } from '@angular/router';
 
 let appManager: any;
 
@@ -20,6 +21,7 @@ export class MyApp {
     private platform: Platform,
     private statusBar: StatusBar,
     private splashScreen: SplashScreen,
+    private feedService: FeedService,
     private router: Router,
     private carrierService:CarrierService) {
 
@@ -58,10 +60,14 @@ export class MyApp {
     this.platform.ready().then(() => {
         this.statusBar.styleDefault();
         this.splashScreen.hide();
-        this.carrierService.init();
 
+        if (this.feedService.getSignInData() == null || this.feedService.getSignInData() == undefined){
+          this.router.navigate(['/home']);
+          return ;
+        }
+
+        this.carrierService.init();
         this.router.navigate(['/favorite']);
-        // this.router.navigate(['/initialize']);
     });
 }
 

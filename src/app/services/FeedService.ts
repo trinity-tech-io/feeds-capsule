@@ -6,6 +6,15 @@ import { JsonRPCService } from 'src/app/services/JsonRPCService';
 // import { TransportService } from 'src/app/services/TransportService';
 import { StorageService } from 'src/app/services/StorageService';
 
+export class SignInData{
+  constructor(
+      public did: string,
+      public name: string,
+      public email: string,
+      public telephone: string,
+      public location: string) {}
+}
+
 
 @Injectable()
 export class Friend{
@@ -64,7 +73,11 @@ enum PersistenceKey{
   // {nodeId+topic:[{event},{event}]}
   myEventMap = "myEventMap",
 
-  avatar = "avatar"
+  avatar = "avatar",
+
+  signInData = "signInData",
+  signInRawData = "signInRawData"
+  
 }
 
 // let serverUserIdList:any = [];
@@ -1250,6 +1263,18 @@ export class FeedService {
 
   getAvator(): string{
     return this.storeService.get(PersistenceKey.avatar);
+  }
+
+  saveSignInRAWData(jsonStr: string){
+    this.storeService.set(PersistenceKey.signInRawData, jsonStr);
+  }
+
+  saveSignInData(did: string, name: string, email: string, telephone: string, location: string){
+    this.storeService.set(PersistenceKey.signInData, new SignInData(did,name,email,telephone,location));
+  }
+
+  getSignInData(): SignInData{
+    return this.storeService.get(PersistenceKey.signInData);
   }
 }
 
