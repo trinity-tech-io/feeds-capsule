@@ -43,28 +43,3 @@
     border-color: rgb(0, 209, 236)  rgb(0, 209, 236)  rgb(0, 209, 236)  rgb(0, 209, 236);	//边框颜色，依次为上、右、下、左
   }
 
-  .div {
-    width: 95%;
-    margin: 2%;
-  }
-  .s1 {
-    max-width:50%;
-    display:inline-block;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    text-align: right;
-  }
-  .s2 {
-    display:inline-block;
-    max-width:50%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    direction: rtl;
-    text-align: left;
-  }
-  .s2 span {
-   direction: ltr;
-   unicode-bidi: embed;
-  }

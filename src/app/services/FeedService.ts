@@ -622,10 +622,10 @@ export class FeedService {
   
   friendMessageCallback(){
     this.events.subscribe('transport:receiveMessage', result => {
-      alert(result.method);
+      // alert(result.method);
       switch(result.type){
         case -1:
-          // alert(result.error.code+":"+result.error.message);
+          alert(result.error.code+":"+result.error.message);
           break;
         case 1:
           // alert(JSON.stringify(result.params));

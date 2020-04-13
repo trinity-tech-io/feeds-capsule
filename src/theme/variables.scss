@@ -130,3 +130,30 @@ $segment-button-md-text-color: #007AFF !important;
   max-height: 280px;
   min-height: 280px; 
 }
+
+
+.div {
+  width: 95%;
+  margin: 2%;
+}
+.s1 {
+  max-width:50%;
+  display:inline-block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: right;
+}
+.s2 {
+  display:inline-block;
+  max-width:50%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  direction: rtl;
+  text-align: left;
+}
+.s2 span {
+ direction: ltr;
+ unicode-bidi: embed;
+}

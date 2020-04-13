@@ -3,7 +3,7 @@
     <ion-buttons slot="start" padding class="header-btns" (click)="navigateBackPage()">
       <ion-icon name="arrow-back" mode="ios"></ion-icon>
     </ion-buttons>
-    <ion-title>Server Carrier Node</ion-title>
+    <ion-title>Source introduction</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -12,8 +12,8 @@
     <ion-label>disconnect</ion-label>
   </div>
 
-  <ion-list>
-    <ion-item *ngFor="let attr of attrs">
+  <!-- <ion-list> -->
+    <!-- <ion-item *ngFor="let attr of attrs">
       <ion-grid class="ion-padding" >
         <ion-row >
           <ion-col
@@ -33,6 +33,38 @@
           >
         </ion-row>
       </ion-grid>
+    </ion-item> -->
+
+    <ion-item style="margin: 2%;" (click)="navToServerInfo(server.userId)">
+      <ion-icon style="align-self: flex-start;" name="radio-button-on" color="primary" slot="start"  ></ion-icon>
+      <!-- <ion-icon name="radio-button-on" slot="start" *ngIf="server.status == 1" ></ion-icon> -->
+      <div style="display:flex; word-wrap: break-word; word-break: normal; width: 85%;">
+        <ion-label >
+          <b>Name: </b><br>
+          server.name<br>
+          <br>
+          <b>Owner:</b><br>
+          Elastos Foundation<br>
+          <br>
+          <b>Introduction:</b>
+          <div style="white-space:normal; word-break:break-all;overflow:hidden;">
+          Here is the introduction of this channel source Here is the introduction of this channel source Here is the introduction of this channel source Here is the introduction of this channel source Here is the introduction of this channel source<br>
+          </div>
+          <!-- <b>NodeId:</b>server.userId<br> -->
+        </ion-label>
+      </div>
+
+      <div style="align-self:flex-start;">
+      
+        <ion-icon color="primary" name="person"></ion-icon>
+
+      </div>
+      <div style="align-self:flex-start;">
+      
+        <ion-label >
+          <h2>22</h2>
+        </ion-label>
+      </div>
     </ion-item>
-  </ion-list>
+  <!-- </ion-list> -->
 </ion-content>

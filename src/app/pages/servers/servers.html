@@ -5,7 +5,7 @@
         <ion-menu-button menu="m1"></ion-menu-button>
       </ion-button>
     </ion-buttons>
-    <ion-title>Servers</ion-title>
+    <ion-title>Channel source</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -26,10 +26,29 @@
   </div>
 
   <ion-list>
-    <ion-item *ngFor='let server of serverList' (click)="navToServerInfo(server.userId)">
-      <ion-label>{{server.name || server.userId}}</ion-label>
+    <ion-item style="margin: 2%;" *ngFor='let server of serverList' (click)="navToServerInfo(server.userId)">
       <ion-icon name="radio-button-on" color="primary" slot="start"  *ngIf="server.status == 0" ></ion-icon>
       <ion-icon name="radio-button-on" slot="start" *ngIf="server.status == 1" ></ion-icon>
+      <div style="word-wrap: break-word; word-break: normal; width: 85%;">
+        <ion-label >
+          <b>did:</b>elastos:ib4d6bebe9478f55553289e1fabcd<br>
+          <b>Name: </b>{{server.name}}<br>
+          <b>Owner:</b>Elastos Foundation<br>
+          <b>NodeId:</b>{{server.userId}}<br>
+        </ion-label>
+      </div>
+
+      <div style="align-items:flex-end;">
+      
+        <ion-icon color="primary" name="person"></ion-icon>
+
+      </div>
+      <div style="align-items:flex-end;">
+      
+        <ion-label >
+          <h2>22</h2>
+        </ion-label>
+      </div>
     </ion-item>
   </ion-list>
 
