@@ -33,6 +33,7 @@
     "Clipboard",
     "SplashScreen",
     "NetworkStatus",
+    "InAppBrowser",
     "Camera"
   ],
   "urls": [

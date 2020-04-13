@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { RouteReuseStrategy } from '@angular/router';
 import { IonicModule, IonicRouteStrategy, Platform } from '@ionic/angular';
 import { AppRoutingModule } from './app-routing.module';
+import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 
 import { Clipboard } from '@ionic-native/clipboard/ngx';
 
@@ -93,6 +94,7 @@ export function TranslateLoaderFactory() {
     FeedService,
     JsonRPCService,
     // TransportService,
+    InAppBrowser,
     StorageService,
     PopupProvider,
     AppService,

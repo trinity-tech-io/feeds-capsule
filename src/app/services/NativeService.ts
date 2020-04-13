@@ -3,6 +3,8 @@ import { ToastController, LoadingController, NavController } from '@ionic/angula
 import { Clipboard } from '@ionic-native/clipboard/ngx';
 // import { TranslateService } from '@ngx-translate/core';
 import { Router } from '@angular/router';
+import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
+
 
 @Injectable()
 export class NativeService {
@@ -11,6 +13,7 @@ export class NativeService {
     constructor(
         private toastCtrl: ToastController,
         private clipboard: Clipboard,
+        private inappBrowser: InAppBrowser,
         private loadingCtrl: LoadingController,
         private navCtrl: NavController,
         private router: Router) {
@@ -96,5 +99,11 @@ export class NativeService {
 
     public getTimestamp() {
         return new Date().getTime().toString();
+    }
+
+    public openUrl(url: string) {
+        const target = "_system";
+        const options = "location=no";
+        this.inappBrowser.create(url, target, options);
     }
 }
