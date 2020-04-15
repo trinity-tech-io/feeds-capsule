@@ -6,6 +6,16 @@ import { JsonRPCService } from 'src/app/services/JsonRPCService';
 // import { TransportService } from 'src/app/services/TransportService';
 import { StorageService } from 'src/app/services/StorageService';
 
+declare let didManager: DIDPlugin.DIDManager;
+
+export class DidData{
+  constructor(
+    public did: string,
+    public carrierAddress: string,
+    public serviceId: string,
+  ){}
+}
+
 export class SignInData{
   constructor(
       public did: string,
@@ -1144,6 +1154,119 @@ export class FeedService {
 
   //   return isFollowing;
   // }
+
+  checkDIDValidity(){
+
+  }
+
+  parseDid(feedUrl: string): DidData{
+    let startIndex = feedUrl.indexOf("did:elastos:");
+    if (!feedUrl.startsWith("feeds://") || startIndex == -1){
+      console.log("error, not found feeds");
+      return null;
+    }
+
+    let hashPos = feedUrl.indexOf("#");
+    let backSlashPos = feedUrl.lastIndexOf("/");
+    
+    // feeds://did:elastos:ixxxxxxx/1234carrieraddress5678
+    if (hashPos == -1 && backSlashPos >7){
+      let carrierAddress = this.getCarrierAddress(feedUrl,backSlashPos+1,feedUrl.length);
+      console.log("carrierAddress ===>"+carrierAddress);
+      let did = this.getDid(feedUrl, startIndex, backSlashPos);
+      console.log("did ===>"+did);
+      return new DidData(did,carrierAddress,null);
+    }
+
+    // feeds://did:elastos:ixxxxxxx
+    if (hashPos == -1){
+      let did = this.getDid(feedUrl, startIndex, feedUrl.length);
+      console.log("did ===>"+did);
+      return new DidData(did,null,null);
+    }
+
+    //feeds://did:elastos:ixxxxxxx#serviceid/carrieraddress
+    if (backSlashPos>7){
+      let did = this.getDid(feedUrl, startIndex, hashPos);
+      console.log("did ===>"+did);
+      // let serviceId = this.getServiceId(feedUrl, hashPos+1, backSlashPos);
+      let serviceId = this.getServiceId(feedUrl, startIndex, backSlashPos);
+      console.log("serviceId ===>"+serviceId);
+      let carrierAddress = this.getCarrierAddress(feedUrl,backSlashPos+1,feedUrl.length);
+      console.log("carrierAddress ===>"+carrierAddress);
+      return new DidData(did,carrierAddress,serviceId);
+    }
+
+    // feeds://did:elastos:ixxxxxxx#serviceid
+    let did = this.getDid(feedUrl, startIndex, hashPos);
+    console.log("did ===>"+did);
+    // let serviceId = this.getServiceId(feedUrl, hashPos+1, feedUrl.length);
+    let serviceId = this.getServiceId(feedUrl, startIndex, feedUrl.length);
+    console.log("serviceId ===>"+serviceId);
+    return new DidData(did,null,serviceId);
+  }
+
+  getCarrierAddress(feedUrl: string, start: number, end: number): string{
+    return "carrier://"+feedUrl.substring(start,end);
+  }
+
+  getDid(feedUrl: string, start: number, end: number): string{
+    return feedUrl.substring(start,end);
+  }
+
+  getServiceId(feedUrl: string, start: number, end: number): string{
+    return feedUrl.substring(start, end);
+  }
+
+  resolveDidDocument(didUrl: string, onSuccess: (available: DIDPlugin.Service[])=>void, onError?: (err: any)=>void){
+    let didData = this.parseDid(didUrl);
+    
+    didManager.resolveDidDocument(didData.did, false,(didDocument)=>{
+      didDocument.getService
+      console.log(JSON.stringify(didDocument));
+
+      let services = didDocument.getServices();
+      console.log(JSON.stringify(services));
+
+      let available: DIDPlugin.Service[]=[];
+      for (let index = 0; index < services.length; index++) {
+        const element = services[index];
+        if(this.parseResult(didData, element))
+          available.push(element);
+      }
+      onSuccess(available);
+    },(err)=>{
+      onError(err);
+    });
+  }
+
+  parseResult(didData: DidData ,service: DIDPlugin.Service) {
+    if (didData == null){
+      console.log("error");
+      return ;
+    }
+    
+    if (didData.carrierAddress == null && didData.serviceId == null){
+      if (service.getType() == 'Feeds') return true;
+    }
+
+    if (didData.carrierAddress == null && didData.serviceId != null){
+      if(didData.serviceId == service.getId()) return true;
+    }
+
+    if (didData.carrierAddress != null && didData.serviceId != null){
+      if (didData.carrierAddress == service.getEndpoint()
+        && didData.serviceId == service.getId()
+      ) return true;
+    }
+
+    if (didData.carrierAddress != null && didData.serviceId == null){
+      if (didData.carrierAddress == service.getEndpoint()) return true;
+    }
+
+    return false;
+  }
+
   parseFriends(data:any){
     let servers = data.friends;
     if (typeof servers == "string") {

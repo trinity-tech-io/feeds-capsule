@@ -28,24 +28,21 @@ export class AddServerPage implements OnInit {
     private appService: AppService,
     private popup: PopupProvider,
     private carrier: CarrierService) {
-
-    this.connectStatus = this.feedService.getConnectionStatus();
-    this.acRoute.params.subscribe(data => {
-      // console.log(data.address);
-      // alert(data.address);
-
-      this.address = data.address;
-
-    });
-    // this.route.queryParams.subscribe((data) => {
-    //   this.address = data["address"];
-    // });
-
-    this.events.subscribe('feeds:connectionChanged', connectionStatus => {
-      this.zone.run(() => {
-          this.connectStatus = connectionStatus;
+      this.address = 'feeds://did:elastos:incNuym7VT7tRnpDPQbDvHJ12uHqiyrPSy';
+      this.connectStatus = this.feedService.getConnectionStatus();
+      this.acRoute.params.subscribe(data => {
+        if (this.address == null ||
+          this.address == undefined||
+          this.address == '')
+          return;
+        this.resolveDid();
       });
-    });
+
+      this.events.subscribe('feeds:connectionChanged', connectionStatus => {
+        this.zone.run(() => {
+            this.connectStatus = connectionStatus;
+        });
+      });
   }
 
   ngOnInit() {}
@@ -55,6 +52,7 @@ export class AddServerPage implements OnInit {
   }
 
   addServer() {
+    this.feedService.parseDid(this.address);
     if (this.platform.platforms().indexOf("cordova") < 0){
       this.carrier.addFriend(this.address, this.friendRequest,
         () => {
@@ -66,27 +64,19 @@ export class AddServerPage implements OnInit {
     }
 
     this.carrier.isValidAddress(this.address, (isValid) => {
-      if (isValid){
-        this.carrier.addFriend(this.address, this.friendRequest,
-          () => {
-              console.log("Add server success");
-              // alert("Add server success");
-              
-              // this.popup.ionicAlert("Prompt","Add server success","ok").then(() => { 
-                this.native.toast("Add server success");
-                this.native.setRootRouter("/menu/servers");
-                this.native.pop();
-              // });
-              
-  
-          }, (err) => {
-              console.log("Add server error: " + err);
-              this.alertError("Add server error: " + err);
-          });
-      } else {
+      if (!isValid){
         this.alertError("Address invalid");
+        return;
       }
       
+      this.carrier.addFriend(this.address, this.friendRequest,
+        () => {
+            this.native.toast("Add server success");
+            this.native.setRootRouter("/menu/servers");
+            this.native.pop();
+        }, (err) => {
+            this.alertError("Add server error: " + err);
+        });
       },
       (error: string) => {
         this.native.toast("address error: " + error);
@@ -94,12 +84,37 @@ export class AddServerPage implements OnInit {
   }
 
   scanCode(){
-    // this.router.navigate(['/scan']);
+    // this.router.navigate(['/scan']); 
     this.native.pop();
     this.appService.scanAddress();
   }
 
   alertError(error: string){
     alert (error);
+  }
+  
+  onChange(){
+    this.queryServer();
+  }
+
+  queryServer(){
+    if (this.address.length > 53&&
+      this.address.startsWith('feeds://') && 
+      this.address.indexOf("did:elastos:")
+    ){
+      this.resolveDid();
+    }
+  }
+
+  resolveDid(){
+    this.feedService.resolveDidDocument(this.address,
+      (avaliable)=>{
+        for (let index = 0; index < avaliable.length; index++) {
+          const element = avaliable[index];
+          console.log("finnal result ===>"+JSON.stringify(element));
+        }
+      },(err)=>{
+      }
+    );
   }
 }

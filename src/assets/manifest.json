@@ -34,6 +34,7 @@
     "SplashScreen",
     "NetworkStatus",
     "InAppBrowser",
+    "DIDPlugin",
     "Camera"
   ],
   "urls": [
