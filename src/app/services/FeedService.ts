@@ -181,6 +181,7 @@ export class FeedIntro{
 
 @Injectable()
 export class FeedService {
+  public testMode = true;
   public constructor(
     private platform: Platform,
     private events: Events,

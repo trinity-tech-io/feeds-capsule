@@ -11,15 +11,6 @@
   <div class="offline-content" *ngIf="connectStatus != 0 ">
     <ion-label>disconnect</ion-label>
   </div>
-  <!-- <ion-toolbar>
-    <ion-buttons *ngIf="connectStatus == 0" >
-        <ion-button  expand="block" (click)="scanCode()">
-            <ion-icon slot="start" name='qr-scanner'> </ion-icon>
-            <ion-label> Scan</ion-label>
-
-        </ion-button>
-    </ion-buttons>
-  </ion-toolbar> -->
 
   <div class="ion-padding" *ngIf="connectStatus == 0">
     <ion-button expand="block" mode="ios" (click)="scanCode()">
@@ -31,24 +22,8 @@
   </div>
   <ion-input *ngIf="connectStatus == 0" class="ion-padding"  required type="text" placeholder="Source Address" [(ngModel)]="address" (change)="onChange()"></ion-input>
   <div class="ion-padding" *ngIf="connectStatus == 0">
-    <ion-button expand="block" mode="ios" (click)="addServer()">
+    <ion-button expand="block" mode="ios" (click)="addServer()" [disabled]='buttonDisabled'>
       <ion-label>Add New Server</ion-label>
     </ion-button>
   </div>
 </ion-content>
-<!-- 
-  <div class="ion-padding" *ngIf="connectStatus == 0">
-    <ion-button expand="block" mode="ios" (click)="scanCode()">
-      <ion-icon name="qr-scanner" slot="start" ></ion-icon>
-      <ion-label>Scan</ion-label>
-    </ion-button>
-    <ion-label>or manual enter address</ion-label>
-
-  </div>
-  <ion-input class="ion-padding" *ngIf="connectStatus == 0" required type="text" placeholder="Source Address" [(ngModel)]="address" ></ion-input>
-  <div class="ion-padding" *ngIf="connectStatus == 0">
-    <ion-button expand="block" mode="ios" (click)="addServer()">
-      <ion-label>Add New Server</ion-label>
-    </ion-button>
-  </div>
-</ion-content> -->
