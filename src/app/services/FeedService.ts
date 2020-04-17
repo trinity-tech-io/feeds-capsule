@@ -22,7 +22,8 @@ export class SignInData{
       public name: string,
       public email: string,
       public telephone: string,
-      public location: string) {}
+      public location: string,
+      public expiresTS: number) {}
 }
 
 
@@ -90,6 +91,7 @@ enum PersistenceKey{
   
 }
 
+let expDay = 10;
 // let serverUserIdList:any = [];
 let connectionStatus = ConnState.disconnected;
 // let serverList: Friend[] = [];
@@ -1078,6 +1080,10 @@ export class FeedService {
     return new Date().getTime().toString();
   }
 
+  getCurrentTimeNum(): number{
+    return new Date().getTime();
+  }
+
   // doListSubscribedTopics(serverList: Friend[]){
   //   for (let index = 0; index < serverList.length; index++) {
   //     const server = serverList[index];
@@ -1394,11 +1400,28 @@ export class FeedService {
   }
 
   saveSignInData(did: string, name: string, email: string, telephone: string, location: string){
-    this.storeService.set(PersistenceKey.signInData, new SignInData(did,name,email,telephone,location));
+    this.storeService.set(PersistenceKey.signInData, new SignInData(did,name,email,telephone,location,this.getCurrentTimeNum()+this.getDaysTS(expDay)));
+  }
+
+  saveSignInData2(signInData: SignInData){
+    this.storeService.set(PersistenceKey.signInData, signInData);
   }
 
   getSignInData(): SignInData{
     return this.storeService.get(PersistenceKey.signInData);
+  }
+
+  // getSignInData(): SignInData{
+  //   return this.storeService.get(PersistenceKey.signInData);
+  // }
+
+  getDaysTS(days: number): number{
+    return days*24*60*60*1000;
+  }
+
+  updateSignInDataExpTime(signInData:SignInData){
+    signInData.expiresTS = this.getCurrentTimeNum()+this.getDaysTS(expDay);
+    this.saveSignInData2(signInData);
   }
 }
 

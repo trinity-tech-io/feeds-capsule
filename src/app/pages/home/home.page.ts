@@ -4,6 +4,7 @@ declare let didManager: DIDPlugin.DIDManager;
 import { FeedService } from 'src/app/services/FeedService';
 import { CarrierService } from 'src/app/services/CarrierService';
 import { Router} from '@angular/router';
+import { LoadingController } from '@ionic/angular';
 
 @Component({
   selector: 'app-home',
@@ -20,12 +21,16 @@ export class HomePage implements OnInit {
     private zone: NgZone,
     private feedService: FeedService,
     private router: Router,
+    public loadingController: LoadingController,
     private carrierService:CarrierService) { }
 
   ngOnInit() {
   }
 
   signIn(){
+    this.zone.run(()=>{
+      this.presentLoading();
+    });
     appManager.sendIntent("credaccess", {
       claims: {
         name: true, 
@@ -68,9 +73,20 @@ export class HomePage implements OnInit {
           });
         });
       }
-    })
+    });
+    
   }
 
+  async presentLoading() {
+    const loading = await this.loadingController.create({
+      message: 'Please wait...',
+      duration: 2000
+    });
+    await loading.present();
+
+    const { role, data } = await loading.onDidDismiss();
+    console.log('Loading dismissed!');
+  }
   findCredentialValueById(did: string, credentials: DIDPlugin.VerifiableCredential[], fragment: string, defaultValue: string) {
     let matchingCredential = credentials.find((c)=>{
       return c.getFragment() == fragment;

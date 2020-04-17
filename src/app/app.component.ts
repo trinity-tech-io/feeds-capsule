@@ -15,8 +15,6 @@ let appManager: any;
 })
 
 export class MyApp {
-  // rootPage:any = TabsPage;
-
   constructor(
     private platform: Platform,
     private statusBar: StatusBar,
@@ -61,13 +59,17 @@ export class MyApp {
         this.statusBar.styleDefault();
         this.splashScreen.hide();
 
-        if (this.feedService.getSignInData() == null || this.feedService.getSignInData() == undefined){
+        let signInData = this.feedService.getSignInData();
+        if ( signInData == null || 
+             signInData == undefined ||
+             this.feedService.getCurrentTimeNum() > signInData.expiresTS ){
           this.router.navigate(['/home']);
           return ;
         }
 
         this.carrierService.init();
         this.router.navigate(['/favorite']);
+        this.feedService.updateSignInDataExpTime(signInData);
     });
 }
 
