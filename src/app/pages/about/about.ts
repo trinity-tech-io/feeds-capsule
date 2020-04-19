@@ -8,7 +8,7 @@ import { NativeService } from 'src/app/services/NativeService';
 })
 
 export class AboutPage implements OnInit {
-  public version = "0.5 preview";
+  public version = "0.5";
 
   constructor(
     private zone: NgZone,
@@ -19,7 +19,6 @@ export class AboutPage implements OnInit {
   }
 
   goWebsite() {
-    alert("go");
     this.native.openUrl("http://www.elastos.org");
   }
 
