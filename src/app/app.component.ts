@@ -60,12 +60,12 @@ export class MyApp {
         this.splashScreen.hide();
 
         let signInData = this.feedService.getSignInData();
-        if ( signInData == null || 
-             signInData == undefined ||
-             this.feedService.getCurrentTimeNum() > signInData.expiresTS ){
-          this.router.navigate(['/home']);
-          return ;
-        }
+        // if ( signInData == null || 
+        //      signInData == undefined ||
+        //      this.feedService.getCurrentTimeNum() > signInData.expiresTS ){
+        //   this.router.navigate(['/home']);
+        //   return ;
+        // }
 
         this.carrierService.init();
         this.router.navigate(['/favorite']);

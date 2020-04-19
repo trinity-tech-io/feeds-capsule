@@ -11,6 +11,7 @@
   <div class="offline-content" *ngIf="connectStatus != 0 ">
     <ion-label>disconnect</ion-label>
   </div>
+  <qrcode [qrdata]="'123456789'" [size]="256" [level]="'M'"></qrcode>
 
   <!-- <ion-list> -->
     <!-- <ion-item *ngFor="let attr of attrs">

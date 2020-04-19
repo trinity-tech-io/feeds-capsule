@@ -37,6 +37,7 @@ import { PopupProvider } from './services/popup';
 import { CameraService } from './services/CameraService';
 import { PopovercomponentPageModule } from './components/popovercomponent/popovercomponent.module';  
 import { ServerlistComponentModule } from './components/serverlistcomponent/serverlistcomponent.module';  
+import { QRCodeModule } from 'angularx-qrcode';
 
 /** 通过类引用方式解析国家化文件 */
 export class CustomTranslateLoader implements TranslateLoader {
@@ -66,6 +67,7 @@ export function TranslateLoaderFactory() {
     MyApp
   ],
   imports: [
+    QRCodeModule,
     CommonModule,
     BrowserModule,
     AppRoutingModule,
