@@ -17,6 +17,7 @@ class Attribute {
 })
 
 export class ServerInfoPage implements OnInit {
+  private didString: string;
   state: number = 0;
   private connectStatus:any;
   private attrs;
@@ -27,6 +28,7 @@ export class ServerInfoPage implements OnInit {
     private feedService: FeedService) {}
 
   ngOnInit() {
+    this.didString="did:elastos:ixxxxxxxxxxxxxxxxxxx"
     this.connectStatus = this.feedService.getConnectionStatus();
     this.acRoute.params.subscribe(data => {
       console.log(data.userId);
