@@ -127,7 +127,7 @@ let currentFeedEventKey: string = "";
 let currentCreateTopicNID = "";
 
 let postEventTmp: FeedEvents;
-
+let localSignInData: SignInData ;
 // let requestId: number = 0;
 
 @Injectable()
@@ -1408,9 +1408,17 @@ export class FeedService {
   }
 
   getSignInData(): SignInData{
-    return this.storeService.get(PersistenceKey.signInData);
+    if (localSignInData == null ||
+      localSignInData == undefined){
+        localSignInData = this.storeService.get(PersistenceKey.signInData);
+      }
+    return localSignInData;
   }
 
+
+  cleanSignInData(){
+    this.storeService.remove(PersistenceKey.signInData);
+  }
   // getSignInData(): SignInData{
   //   return this.storeService.get(PersistenceKey.signInData);
   // }
@@ -1419,8 +1427,13 @@ export class FeedService {
     return days*24*60*60*1000;
   }
 
-  updateSignInDataExpTime(signInData:SignInData){
+  updateSignInDataExpTime(signInData: SignInData){
     signInData.expiresTS = this.getCurrentTimeNum()+this.getDaysTS(expDay);
+    this.saveSignInData2(signInData);
+  }
+
+  updateSignInDataExpTimeTo(signInData: SignInData, timestamp: number){
+    signInData.expiresTS = timestamp ;
     this.saveSignInData2(signInData);
   }
 }

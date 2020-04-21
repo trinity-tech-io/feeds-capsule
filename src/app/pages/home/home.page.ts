@@ -12,6 +12,7 @@ import { LoadingController } from '@ionic/angular';
   styleUrls: ['./home.page.scss'],
 })
 export class HomePage implements OnInit {
+  private fakedata:boolean = false;
   public signedIn: boolean = false;
   public did: string = "";
   public userName: string = "";
@@ -28,6 +29,17 @@ export class HomePage implements OnInit {
   }
 
   signIn(){
+    if (this.fakedata){
+      this.saveData("did:elastos:ifakedid",
+                    "fakename",
+                    "fakeemail",
+                    "faketelephone",
+                    "fakelocation");
+      this.feedService.updateSignInDataExpTimeTo(this.feedService.getSignInData(),0);
+      this.initApp();
+      return;
+    }
+
     this.zone.run(()=>{
       this.presentLoading();
     });
