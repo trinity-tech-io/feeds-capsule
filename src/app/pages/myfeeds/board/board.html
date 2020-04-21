@@ -12,6 +12,14 @@
     <ion-label>disconnect</ion-label>
   </div>
 
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content
+      pullingIcon="arrow-dropdown"
+      pullingText="Pull to refresh"
+      refreshingSpinner="circles"
+      refreshingText="Refreshing...">
+    </ion-refresher-content>
+  </ion-refresher>
 
   <ion-item>
     <ion-col size="2">
@@ -57,5 +65,10 @@
     <ion-icon name="add" (click)="openPopOverComponent()"></ion-icon>
   </ion-fab-button>
 </ion-fab>
-
+  <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event)">
+    <ion-infinite-scroll-content
+      loadingSpinner="bubbles"
+      loadingText="Loading more data...">
+    </ion-infinite-scroll-content>
+  </ion-infinite-scroll>
 </ion-content>

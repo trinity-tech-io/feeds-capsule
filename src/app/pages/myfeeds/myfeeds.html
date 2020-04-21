@@ -14,6 +14,15 @@
   <div class="offline-content" *ngIf=" connectStatus != 0 ">
     <ion-label>disconnect</ion-label>
   </div>
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content
+      pullingIcon="arrow-dropdown"
+      pullingText="Pull to refresh"
+      refreshingSpinner="circles"
+      refreshingText="Refreshing...">
+    </ion-refresher-content>
+  </ion-refresher>
+  
   <div class="ion-padding">
     <ion-button
       expand="block"
@@ -115,4 +124,11 @@
           </ion-col>
     </ion-item> -->
   </ion-list>
+
+  <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event)">
+    <ion-infinite-scroll-content
+      loadingSpinner="bubbles"
+      loadingText="Loading more data...">
+    </ion-infinite-scroll-content>
+  </ion-infinite-scroll>
 </ion-content>

@@ -18,6 +18,15 @@
   </div>
 
   <ion-searchbar placeholder='Search Feeds' (ionInput)="getItems($event)"></ion-searchbar>
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content
+      pullingIcon="arrow-dropdown"
+      pullingText="Pull to refresh"
+      refreshingSpinner="circles"
+      refreshingText="Refreshing...">
+    </ion-refresher-content>
+  </ion-refresher>
+
   <ion-list>
     <ion-item  *ngFor="let desc of feedList" >
       <ion-grid  >
@@ -64,5 +73,10 @@
       </ion-grid>
     </ion-item>
     </ion-list>
-
+    <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event)">
+      <ion-infinite-scroll-content
+        loadingSpinner="bubbles"
+        loadingText="Loading more data...">
+      </ion-infinite-scroll-content>
+    </ion-infinite-scroll>
 </ion-content>
