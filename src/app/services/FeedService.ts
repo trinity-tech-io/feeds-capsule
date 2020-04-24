@@ -8,6 +8,15 @@ import { StorageService } from 'src/app/services/StorageService';
 
 declare let didManager: DIDPlugin.DIDManager;
 
+type Server = {
+  name              : string
+  owner             : string
+  introduction      : string
+  did               : string
+  carrierAddress    : string
+}
+
+
 export class DidData{
   constructor(
     public did: string,
@@ -1225,23 +1234,40 @@ export class FeedService {
     return feedUrl.substring(start, end);
   }
 
-  resolveDidDocument(didUrl: string, onSuccess: (available: DIDPlugin.Service[])=>void, onError?: (err: any)=>void){
+  resolveDidDocument(didUrl: string, onSuccess: (server: Server)=>void, onError?: (err: any)=>void){
     let didData = this.parseDid(didUrl);
     
     didManager.resolveDidDocument(didData.did, false,(didDocument)=>{
-      didDocument.getService
-      console.log(JSON.stringify(didDocument));
-
       let services = didDocument.getServices();
-      console.log(JSON.stringify(services));
 
-      let available: DIDPlugin.Service[]=[];
       for (let index = 0; index < services.length; index++) {
         const element = services[index];
-        if(this.parseResult(didData, element))
-          available.push(element);
+        if(this.parseResult(didData, element)){
+
+          let endpoint = element.getEndpoint();
+          let carrierAddress = endpoint.substring(endpoint.lastIndexOf("//")+2,endpoint.length);
+
+          onSuccess({
+            name              : element.getId(),
+            owner             : "owner",
+            introduction      : "introduction",
+            did               : didDocument.getSubject().getDIDString(),
+            carrierAddress    : carrierAddress
+          });
+          // return;
+        }
       }
-      onSuccess(available);
+      if (didData.carrierAddress!=null || didData.carrierAddress != undefined){
+        onSuccess({
+            name              : "Not from DIDDocument",
+            owner             : "owner",
+            introduction      : "introduction",
+            did               : didDocument.getSubject().getDIDString(),
+            carrierAddress    : didData.carrierAddress
+        });
+      } else {
+        onError("The carrier node could not be found");
+      }
     },(err)=>{
       onError(err);
     });

@@ -19,6 +19,11 @@ export class AddServerPage implements OnInit {
   private friendRequest = 'Feeds/0.1';
   private buttonDisabled = true;
   private carrierAddress: string;
+  private name: string;
+  private owner: string;
+  private introduction: string;
+  private did: string;
+
   constructor(
     private events: Events,
     private zone: NgZone,
@@ -29,7 +34,6 @@ export class AddServerPage implements OnInit {
     private appService: AppService,
     private popup: PopupProvider,
     private carrier: CarrierService) {
-      // this.address = 'feeds://did:elastos:incNuym7VT7tRnpDPQbDvHJ12uHqiyrPSy';
       this.connectStatus = this.feedService.getConnectionStatus();
       this.acRoute.params.subscribe(data => {
         this.address = data.address;
@@ -37,12 +41,6 @@ export class AddServerPage implements OnInit {
           this.address == undefined||
           this.address == '')
           return;
-
-        if(this.feedService.testMode){
-          this.buttonDisabled = false;
-          this.carrierAddress = this.address;
-          return;
-        }
 
         this.queryServer();
       });
@@ -61,7 +59,6 @@ export class AddServerPage implements OnInit {
   }
 
   addServer() {
-    this.feedService.parseDid(this.carrierAddress);
     if (this.platform.platforms().indexOf("cordova") < 0){
       this.carrier.addFriend(this.carrierAddress, this.friendRequest,
         () => {
@@ -93,7 +90,6 @@ export class AddServerPage implements OnInit {
   }
 
   scanCode(){
-    // this.router.navigate(['/scan']); 
     this.native.pop();
     this.appService.scanAddress();
   }
@@ -118,14 +114,15 @@ export class AddServerPage implements OnInit {
 
   resolveDid(){
     this.feedService.resolveDidDocument(this.address,
-      (avaliable)=>{
-        for (let index = 0; index < avaliable.length; index++) {
-          this.buttonDisabled = false;
-
-          let endpoint = avaliable[index].getEndpoint();
-          this.carrierAddress = endpoint.substring(endpoint.lastIndexOf("//")+2,endpoint.length);
-        }
+      (server)=>{
+        this.buttonDisabled = false;
+        this.name = server.name;
+        this.owner = server.owner;
+        this.introduction = server.introduction;
+        this.did = server.did;
+        this.carrierAddress = server.carrierAddress;
       },(err)=>{
+        this.buttonDisabled = true;
       }
     );
   }

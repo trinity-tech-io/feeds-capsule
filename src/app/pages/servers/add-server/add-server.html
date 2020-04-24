@@ -20,7 +20,50 @@
     <ion-label>or manual enter address</ion-label>
 
   </div>
-  <ion-input *ngIf="connectStatus == 0" class="ion-padding"  required type="text" placeholder="Source Address" [(ngModel)]="address" (change)="onChange()"></ion-input>
+
+  <ion-item lines="none" *ngIf="connectStatus == 0">
+    <div class="roundedRectangle">
+      <ion-input  class="ion-padding"  required type="text" placeholder="Source Address" [(ngModel)]="address" (change)="onChange()"></ion-input>
+    </div>
+  </ion-item>
+  <ion-item lines="none" *ngIf="buttonDisabled == false">
+    <ion-label>
+
+    <b>Name: </b><br>
+    {{name}}
+    </ion-label>
+    
+  </ion-item>  
+  
+  <ion-item lines="none" *ngIf="buttonDisabled == false">
+    <ion-label>
+
+    <b>Owner: </b><br>
+    {{owner}}
+    </ion-label>
+    
+  </ion-item>  
+
+  <ion-item lines="none" *ngIf="buttonDisabled == false">
+    <ion-label>
+
+    <b>Introduction: </b><br>
+    {{introduction}}
+    </ion-label>
+    
+  </ion-item>  
+
+  <ion-item lines="none" *ngIf="buttonDisabled == false">
+    <ion-label>
+
+    <b>DID: </b><br>
+    {{did}}
+    </ion-label>
+    
+  </ion-item>  
+  
+
+  
   <div class="ion-padding" *ngIf="connectStatus == 0">
     <ion-button expand="block" mode="ios" (click)="addServer()" [disabled]='buttonDisabled'>
       <ion-label>Add New Server</ion-label>
