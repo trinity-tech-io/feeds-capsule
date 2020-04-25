@@ -1249,7 +1249,7 @@ export class FeedService {
 
           onSuccess({
             name              : element.getId(),
-            owner             : "owner",
+            owner             : didDocument.getSubject().getDIDString(),
             introduction      : "introduction",
             did               : didDocument.getSubject().getDIDString(),
             carrierAddress    : carrierAddress
@@ -1258,12 +1258,13 @@ export class FeedService {
         }
       }
       if (didData.carrierAddress!=null || didData.carrierAddress != undefined){
+        let carrierAddress = didData.carrierAddress.substring(didData.carrierAddress.lastIndexOf("//")+2,didData.carrierAddress.length);
         onSuccess({
             name              : "Not from DIDDocument",
-            owner             : "owner",
+            owner             : didDocument.getSubject().getDIDString(),
             introduction      : "introduction",
             did               : didDocument.getSubject().getDIDString(),
-            carrierAddress    : didData.carrierAddress
+            carrierAddress    : carrierAddress
         });
       } else {
         onError("The carrier node could not be found");
