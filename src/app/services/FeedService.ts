@@ -14,7 +14,11 @@ type Server = {
   introduction      : string
   did               : string
   carrierAddress    : string
+  userId            : string
+  status            : ConnState
 }
+
+let cacheServer: Server;
 
 
 export class DidData{
@@ -36,16 +40,16 @@ export class SignInData{
 }
 
 
-@Injectable()
-export class Friend{
-  constructor(
-      public userId: string,
-      // public address: string,
-      public email: string,
-      public region: string,
-      public name: string,
-      public status: ConnState) {}
-}
+// @Injectable()
+// export class Friend{
+//   constructor(
+//       public userId: string,
+//       // public address: string,
+//       public email: string,
+//       public region: string,
+//       public name: string,
+//       public status: ConnState) {}
+// }
 
 enum ConnState {
   connected = 0,
@@ -276,20 +280,20 @@ export class FeedService {
     this.connectionChangedCallback();
   }
 
-  prepare(){
-    this.carrierService.getFriends(
-        (ret) => {
-          this.parseFriends(ret);
-        },
-        null);
-  }
+  // prepare(){
+  //   this.carrierService.getFriends(
+  //       (ret) => {
+  //         this.parseFriends(ret);
+  //       },
+  //       null);
+  // }
 
   getConnectionStatus() {
     return connectionStatus;
   }
 
-  getServerList(): Friend[]{
-    let list: Friend[] = [];
+  getServerList(): Server[]{
+    let list: Server[] = [];
     let keys: string[] = Object.keys(serversMap);
     for (const index in keys) {
       if (serversMap[keys[index]] == undefined) 
@@ -531,10 +535,10 @@ export class FeedService {
 
   carrierReadyCallback(){
     this.events.subscribe('carrier:ready', () => {
-      if (firstInit) {
-        this.prepare();
+      // if (firstInit) {
+      //   this.prepare();
         // this.storeService.set(PersistenceKey.firstInit,false);
-      }
+      // }
     });
   }
 
@@ -561,22 +565,35 @@ export class FeedService {
 
   friendAddCallback(){
     this.events.subscribe('carrier:friendAdded', msg => {
-      let server: any;
+      let server: Server;
+
       if (this.platform.platforms().indexOf("cordova") < 0){
-          server = new Friend('100', 
-                              // 'New Address', 
-                              'NewEmail@email.com', 
-                              'beijing', 
-                              'New Contact', 
-                              ConnState.disconnected);
+          // server = new Friend('100', 
+          //                     // 'New Address', 
+          //                     'NewEmail@email.com', 
+          //                     'beijing', 
+          //                     'New Contact', 
+          //                     ConnState.disconnected);
+          server = {
+            name: "fakename",
+            owner: "fakeowner",
+            introduction: "fakeintroduction",
+            did: "fakedid",
+            carrierAddress: "fake carrierAddress",
+            userId: "fakeUserId",
+            status: ConnState.disconnected
+          }
       } else {
-          server = new Friend(
-              msg.friendInfo.userInfo.userId,
-              // msg.friendInfo.userInfo.address,
-              msg.friendInfo.userInfo.email,
-              msg.friendInfo.userInfo.region,
-              msg.friendInfo.userInfo.name,
-              msg.friendInfo.status);
+        
+          server = {
+            name              : cacheServer.name,
+            owner             : cacheServer.owner,
+            introduction      : cacheServer.introduction,
+            did               : cacheServer.did,
+            carrierAddress    : cacheServer.carrierAddress,
+            userId            : msg.friendInfo.userInfo.userId,
+            status            : msg.friendInfo.status
+          }
       }
 
       this.pushServer(server);
@@ -1252,7 +1269,9 @@ export class FeedService {
             owner             : didDocument.getSubject().getDIDString(),
             introduction      : "introduction",
             did               : didDocument.getSubject().getDIDString(),
-            carrierAddress    : carrierAddress
+            carrierAddress    : carrierAddress,
+            userId            : "",
+            status            : ConnState.disconnected
           });
           // return;
         }
@@ -1264,7 +1283,9 @@ export class FeedService {
             owner             : didDocument.getSubject().getDIDString(),
             introduction      : "introduction",
             did               : didDocument.getSubject().getDIDString(),
-            carrierAddress    : carrierAddress
+            carrierAddress    : carrierAddress,
+            userId            : "",
+            status            : ConnState.disconnected
         });
       } else {
         onError("The carrier node could not be found");
@@ -1301,31 +1322,35 @@ export class FeedService {
     return false;
   }
 
-  parseFriends(data:any){
-    let servers = data.friends;
-    if (typeof servers == "string") {
-      servers = JSON.parse(servers);
-    }
+  // parseFriends(data:any){
+  //   let servers = data.friends;
+  //   if (typeof servers == "string") {
+  //     servers = JSON.parse(servers);
+  //   }
 
     
-    for (let id in servers) {
-      let server = new Friend(servers[id].userInfo.userId,
-                              servers[id].userInfo.email,
-                              servers[id].userInfo.region,
-                              servers[id].userInfo.name,
-                              servers[id].connection);
-      this.pushServer(server);
-    }
-    this.updateServerMap();
-    eventBus.publish('feeds:updateServerList',this.getServerList());
-  }
+  //   for (let id in servers) {
+  //     let server = new Friend(servers[id].userInfo.userId,
+  //                             servers[id].userInfo.email,
+  //                             servers[id].userInfo.region,
+  //                             servers[id].userInfo.name,
+  //                             servers[id].connection);
+
+
+
+
+  //     this.pushServer(server);
+  //   }
+  //   this.updateServerMap();
+  //   eventBus.publish('feeds:updateServerList',this.getServerList());
+  // }
 
   // doListSubscribedTopics(){
   //   for (const key in Object.keys(serversMap))
   //     this.doListSubscribedTopic(serversMap[key]);
   // }
 
-  doListSubscribedTopic(server: Friend){
+  doListSubscribedTopic(server: Server){
     if (server == undefined)
       return ;
     if (server.status == ConnState.connected) 
@@ -1349,7 +1374,7 @@ export class FeedService {
 
   checkOwnPublisherServer(){
     // TODO if feed server modify
-    let list: Friend[] = [];
+    let list: Server[] = [];
     let keys: string[] = Object.keys(serversMap);
     for (const index in keys) {
       list.push(serversMap[keys[index]])
@@ -1373,15 +1398,15 @@ export class FeedService {
     return false;
   }
 
-  findServer(nodeId: string): Friend{
+  findServer(did: string): Server{
     if (serversMap == undefined) {
       return undefined;
     }
-    return serversMap[nodeId];
+    return serversMap[did];
   }
 
-  pushServer(server: Friend){
-    serversMap[server.userId] = server ;
+  pushServer(server: Server){
+    serversMap[server.did] = server ;
   }
   
   findFeedfromAF(feedKey: string): AllFeed{
@@ -1463,23 +1488,45 @@ export class FeedService {
     signInData.expiresTS = timestamp ;
     this.saveSignInData2(signInData);
   }
+
+  saveCacheServe(name: string, owner: string, introduction: string,
+                did: string, carrierAddress: string){
+    cacheServer = {
+      name              : name,
+      owner             : owner,
+      introduction      : introduction,
+      did               : did,
+      carrierAddress    : carrierAddress,
+      userId            : "",
+      status            : ConnState.disconnected
+    }
+  }
 }
 
 //// Virtual data
 let virtualServersMap: any = {
-  "J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo":new Friend('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo',
-                                                            // 'edTfdBfDVXMvQfXMhEvKrbvxaDxGGURyRfxDVMhbdHZFgAcwmGtS',
-                                                            'jerry@email.com',
-                                                            'beijing', 
-                                                            '',
-                                                            ConnState.connected),
-  "3x4xVSJmtvty1tM8vzcz2pzW2WG7TmNavbnz9ka1EtZy":new Friend('3x4xVSJmtvty1tM8vzcz2pzW2WG7TmNavbnz9ka1EtZy', 
-                                                            // 'TvvfqqvetoPcrb6rkD5W3gNBxcWYQpqhqddqATVbbaMNcCCp4Hib',
-                                                            'tom@email.com',
-                                                            'shanghai',
-                                                            'Tom', 
-                                                            ConnState.disconnected)
+  "did1":
+    {
+      name              : "name1",
+      owner             : "owner1",
+      introduction      : "introduction1",
+      did               : "did1",
+      carrierAddress    : "carrierAddress1",
+      userId            : "J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo",
+      status            : ConnState.connected
+    },
+  "did2":
+    {
+      name              : "name2",
+      owner             : "owner2",
+      introduction      : "introduction2",
+      did               : "did2",
+      carrierAddress    : "carrierAddress2",
+      userId            : "3x4xVSJmtvty1tM8vzcz2pzW2WG7TmNavbnz9ka1EtZy",
+      status            : ConnState.disconnected
+    },
 }
+
 let virtrulFeedEvents = [
   new FeedEvents('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo',
     'Carrier News',

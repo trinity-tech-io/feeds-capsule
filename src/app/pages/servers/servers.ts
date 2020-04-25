@@ -49,8 +49,8 @@ export class ServersPage implements OnInit {
     ionViewDidEnter() {
     }
 
-    navToServerInfo(userId: string) {
+    navToServerInfo(did: string) {
         // this.native.go(['/menu/servers/server-info',userId]);
-        this.router.navigate(['/menu/servers/server-info', userId]);
+        this.router.navigate(['/menu/servers/server-info', did]);
     }
 }

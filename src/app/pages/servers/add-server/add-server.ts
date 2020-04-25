@@ -80,6 +80,8 @@ export class AddServerPage implements OnInit {
             this.native.toast("Add server success");
             this.native.setRootRouter("/menu/servers");
             this.native.pop();
+            this.feedService.saveCacheServe(this.name, this.owner, this.introduction, 
+                                            this.did, this.carrierAddress);
         }, (err) => {
             this.alertError("Add server error: " + err);
         });
@@ -115,6 +117,8 @@ export class AddServerPage implements OnInit {
   resolveDid(){
     this.feedService.resolveDidDocument(this.address,
       (server)=>{
+
+        console.log("server ===>"+JSON.stringify(server));
         this.buttonDisabled = false;
         this.name = server.name;
         this.owner = server.owner;

@@ -17,10 +17,15 @@ class Attribute {
 })
 
 export class ServerInfoPage implements OnInit {
-  private didString: string;
+  
   state: number = 0;
   private connectStatus:any;
+  private didString: string;
   private attrs;
+  private name;
+  private owner;
+  private introduction;
+
 
   constructor(
     private native: NativeService,
@@ -28,23 +33,29 @@ export class ServerInfoPage implements OnInit {
     private feedService: FeedService) {}
 
   ngOnInit() {
-    this.didString="did:elastos:ixxxxxxxxxxxxxxxxxxx"
+    // this.didString="did:elastos:ixxxxxxxxxxxxxxxxxxx"
     this.connectStatus = this.feedService.getConnectionStatus();
     this.acRoute.params.subscribe(data => {
-      console.log(data.userId);
+      console.log(data.did);
       
-      let server = this.feedService.findServer(data.userId);
+      let server = this.feedService.findServer(data.did);
       console.log(JSON.stringify(server));
       if (server == undefined){
         return ;
       }
 
+      this.didString = server.did;
+      this.name = server.name;
+      this.owner = server.owner;
+      this.introduction = server.introduction;
+      
+
       this.attrs = [
         new Attribute('radio-button-on', 'nodeid', server.userId.slice(0, 31)),
         // new Attribute('home', 'address', server.address.slice(0, 31)),
         new Attribute('person', 'name', server.name),
-        new Attribute('mail', 'email', server.email),
-        new Attribute('locate', 'region', server.region)
+        // new Attribute('mail', 'email', server.email),
+        // new Attribute('locate', 'region', server.region)
       ];
     });
   }
