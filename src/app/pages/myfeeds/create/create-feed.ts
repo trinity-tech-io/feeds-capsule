@@ -14,7 +14,7 @@ import { ServerlistcomponentComponent } from '../../../components/serverlistcomp
 })
 export class CreateFeedPage implements OnInit {
   private connectStatus = 1;
-  private serverList: any;
+  // private serverList: any;
   private selectedServer: any = null;
   private buttonText: string = "Select channel source";
   constructor(
@@ -25,8 +25,9 @@ export class CreateFeedPage implements OnInit {
     private popup: PopupProvider,
     private popoverController: PopoverController,
     private native: NativeService) {
+      this.feedService.getCreationServerMap();
       this.connectStatus = this.feedService.getConnectionStatus();
-      this.serverList = feedService.getServerList();
+      
       this.events.subscribe('feeds:createTopicSuccess', () => {
         this.navigateBack();
         this.native.toast("Create topic success!");
@@ -41,17 +42,18 @@ export class CreateFeedPage implements OnInit {
   ngOnInit() {
   }
 
-  createTopic(name: HTMLInputElement, desc: HTMLInputElement, select: HTMLInputElement){
-    if (select.value=="" || name.value=="" || desc.value == ""){
+  createTopic(name: HTMLInputElement, desc: HTMLInputElement){
+    if (name.value=="" || desc.value == ""){
       alert("Invalid params");
       return ;
     }
 
-    this.popup.ionicConfirm("Prompt","Confirm new topic?<br>"+"server:"+select.value+"<br>"+"topic:"+name.value+"<br>"+"description:"+desc.value,
+    this.popup.ionicConfirm("Prompt","Confirm new topic?<br>"+"server:"+this.selectedServer.did+"<br>"
+                            +"channel:"+name.value+"<br>"+"description:"+desc.value,
                             "ok","cancel").then((data)=>{
                               if (data) {
                                 
-                                this.feedService.createTopic(select.value, name.value, desc.value);
+                                this.feedService.createTopic(this.selectedServer.nodeId, name.value, desc.value);
                               }
                             });
     
@@ -61,12 +63,13 @@ export class CreateFeedPage implements OnInit {
     this.navCtrl.pop();
   }
 
-  async selectChannelSource(){
+  async selectChannelSource(event){
     // alert("selectChannelSource");
-    
+
     const popover = await this.popoverController.create({
       component: ServerlistcomponentComponent,
-      componentProps: {serverList:this.serverList},
+      componentProps: {serverList:this.feedService.getCreationServerList()},
+      event:event,
       translucent: true
     });
 
@@ -80,17 +83,14 @@ export class CreateFeedPage implements OnInit {
         this.selectedServer = result.data;
       })
       
-      
     });
     return await popover.present();
   }
 
   getData(msg: String){
-    console.log("onevent--->"+msg);
   }
 
   changeChannelSource(){
-    alert("changeChannelSource");
   }
   
 }

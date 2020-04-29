@@ -15,14 +15,10 @@ export class ServerlistcomponentComponent implements OnInit {
 
   ngOnInit() {
     this.serverList = this.navParams.data.serverList;
-    // console.log(JSON.stringify(this.navParams.data.serverList));
   }
 
   select(server: any){
-    console.log("select--->"+JSON.stringify(server));
-    this.output.emit(server.nodeId);
     this.popover.dismiss(server);
-    
   }
 
 }

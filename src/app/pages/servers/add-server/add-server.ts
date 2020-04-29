@@ -1,5 +1,5 @@
 import { Component, OnInit, NgZone } from '@angular/core';
-import { Events, Platform } from '@ionic/angular';
+import { Events, Platform, LoadingController } from '@ionic/angular';
 import { Router, ActivatedRoute } from '@angular/router';
 import { CarrierService } from 'src/app/services/CarrierService';
 import { FeedService } from 'src/app/services/FeedService';
@@ -23,6 +23,7 @@ export class AddServerPage implements OnInit {
   private owner: string;
   private introduction: string;
   private did: string;
+  private feedsUrl: string;
 
   constructor(
     private events: Events,
@@ -33,6 +34,7 @@ export class AddServerPage implements OnInit {
     private feedService: FeedService,
     private appService: AppService,
     private popup: PopupProvider,
+    private loadingController: LoadingController,
     private carrier: CarrierService) {
       this.connectStatus = this.feedService.getConnectionStatus();
       this.acRoute.params.subscribe(data => {
@@ -41,7 +43,9 @@ export class AddServerPage implements OnInit {
           this.address == undefined||
           this.address == '')
           return;
-
+          this.zone.run(()=>{
+            this.presentLoading();
+          });
         this.queryServer();
       });
 
@@ -81,7 +85,7 @@ export class AddServerPage implements OnInit {
             this.native.setRootRouter("/menu/servers");
             this.native.pop();
             this.feedService.saveCacheServe(this.name, this.owner, this.introduction, 
-                                            this.did, this.carrierAddress);
+                                            this.did, this.carrierAddress, this.feedsUrl);
         }, (err) => {
             this.alertError("Add server error: " + err);
         });
@@ -117,17 +121,28 @@ export class AddServerPage implements OnInit {
   resolveDid(){
     this.feedService.resolveDidDocument(this.address,
       (server)=>{
-
-        console.log("server ===>"+JSON.stringify(server));
-        this.buttonDisabled = false;
-        this.name = server.name;
-        this.owner = server.owner;
-        this.introduction = server.introduction;
-        this.did = server.did;
-        this.carrierAddress = server.carrierAddress;
+        this.zone.run(()=>{
+          this.buttonDisabled = false;
+          this.name = server.name;
+          this.owner = server.owner;
+          this.introduction = server.introduction;
+          this.did = server.did;
+          this.carrierAddress = server.carrierAddress;
+          this.feedsUrl = server.feedsUrl;
+        });
       },(err)=>{
         this.buttonDisabled = true;
       }
     );
+  }
+
+  async presentLoading() {
+    const loading = await this.loadingController.create({
+      message: 'Please wait...',
+      duration: 2000
+    });
+    await loading.present();
+
+    const { role, data } = await loading.onDidDismiss();
   }
 }

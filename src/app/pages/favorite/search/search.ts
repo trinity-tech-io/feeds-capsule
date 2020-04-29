@@ -14,8 +14,10 @@ import { ActionSheetController } from '@ionic/angular';
 })
 
 export class SearchFeedPage implements OnInit {
-  private feedList: FeedsData.AllFeed[];
+  // private feedList: FeedsData.AllFeed[];
+  private channelList;
   private connectStatus = 1;
+  // private subscribeStatusMap: any;
   constructor(
     private feedService: FeedService,
     private navCtrl: NavController,
@@ -25,72 +27,62 @@ export class SearchFeedPage implements OnInit {
     private popup: PopupProvider,
     private native: NativeService,
     private actionSheetController:ActionSheetController) {
-
+    
+    // this.subscribeStatusMap = this.feedService.getSubscribeStatusMap();  
     this.connectStatus = this.feedService.getConnectionStatus();
-
+    this.channelList = this.feedService.refreshLocalChannels();
+    this.feedService.refreshChannels();
     feedService.doExploreTopics();
-    this.feedList = feedService.getAllFeeds();
 
-    this.events.subscribe('feeds:allFeedsListChanged', (feedList) => {
-      this.zone.run(() => {
-        this.feedList = feedList;
-      });
-    });
     this.events.subscribe('feeds:connectionChanged', connectionStatus => {
       this.zone.run(() => {
           this.connectStatus = connectionStatus;
       });
     });
 
-    this.events.subscribe('feeds:subscribeFinish', topic => {
-      this.native.toast(topic + " subscribed");
-      // this.zone.run(() => {
-      //   this.feedList = feedService.getAllFeeds();
-      // });
+    this.events.subscribe('feeds:subscribeFinish', (nodeId, channelId, name)=> {
+      this.native.toast(name + " subscribed");
+      this.zone.run(() => {
+        this.channelList = this.feedService.refreshLocalChannels();
+      });
     });
 
-    this.events.subscribe('feeds:unsubscribeFinish', topic => {
-      this.native.toast(topic + " unsubscribed");
-      // this.zone.run(() => {
-      //   this.feedList = feedService.getAllFeeds();
-      // });
+    this.events.subscribe('feeds:unsubscribeFinish', (nodeId, channelId, name) => {
+      this.native.toast(name + " unsubscribed");
+      this.zone.run(() => {
+        this.channelList = this.feedService.refreshLocalChannels();
+      });
     });
+
+    this.events.subscribe('feeds:refreshChannels', list =>{
+      this.channelList = list;
+    })
   }
 
   ngOnInit() {
   }
 
-  public navigateToDetailPage(nodeId: string, topic: string) {
-    this.router.navigate(['/favorite/search/about/', nodeId, topic]);
+  public navigateToDetailPage(nodeId: string, name: string, id: number) {
+    this.router.navigate(['/favorite/search/about/', nodeId, name, id]);
   }
 
   navigateBackPage() {
     this.navCtrl.pop();
   }
 
-  subscribe(nodeId: string, topic: string){
-    // this.popup.ionicConfirm("Prompt","Are you sure to subscribe from "+topic+", and Receive new message push？","ok","cancel").then((data)=>{
-    //   if (data){
-    //     this.feedService.subscribe(nodeId, topic);
-    //   }
-    // });
-    this.feedService.subscribe(nodeId, topic);
+  subscribe(nodeId: string, id: number){
+    this.feedService.subscribeChannel(nodeId, id);
   }
 
-  async unsubscribe(nodeId: string, topic: string){
-    // this.popup.ionicConfirm("Prompt","Are you sure to unsubscribe from "+topic+"?","ok","cancel").then((data)=>{
-    //   if (data){
-    //     this.feedService.unSubscribe(nodeId, topic);
-    //   }
-    // });
+  async unsubscribe(nodeId: string, name: string, id: number){
     const actionSheet = await this.actionSheetController.create({
       // header: 'Albums',
       buttons: [{
-        text: 'Unsubscribe @'+topic+"?",
+        text: 'Unsubscribe @'+name+"?",
         // role: 'destructive',
         icon: 'trash',
         handler: () => {
-          this.feedService.unSubscribe(nodeId, topic);
+          this.feedService.unsubscribeChannel(nodeId,id);
         }
       },{
         text: 'Cancel',
@@ -105,32 +97,23 @@ export class SearchFeedPage implements OnInit {
 
   getItems(events){
     if(events.target.value == ""){
-      this.feedList = this.feedService.getAllFeeds();
+      this.channelList = this.feedService.refreshLocalChannels();
     }
-    this.feedList = this.feedList.filter(
-      feed=>feed.topic.toLowerCase().indexOf(events.target.value.toLowerCase()) > -1
+    this.channelList = this.channelList.filter(
+      channel=>channel.name.toLowerCase().indexOf(events.target.value.toLowerCase()) > -1
       );
   }
 
   doRefresh(event) {
-    console.log('Begin async operation');
-
+    this.feedService.refreshChannels();
     setTimeout(() => {
-      console.log('Async operation has ended');
       event.target.complete();
     }, 2000);
   }
 
   loadData(event) {
     setTimeout(() => {
-      console.log('Done');
       event.target.complete();
-
-      // App logic to determine if all data is loaded
-      // and disable the infinite scroll
-      // if (data.length == 1000) {
-      //   event.target.disabled = true;
-      // }
     }, 500);
   }
 }

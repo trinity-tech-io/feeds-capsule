@@ -13,10 +13,7 @@ export class AppService {
 
     scanAddress() {
         appManager.sendIntent("scanqrcode", {}, {}, (res) => {
-            console.log("Got scan result:", res.result.scannedContent);
-            
             this.router.navigate(['/menu/servers/add-server',res.result.scannedContent]);
-            // this.native.go("/addfriend", {"address": res.result.scannedContent});
         }, (err: any) => {
             console.error(err);
         });

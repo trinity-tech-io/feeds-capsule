@@ -31,9 +31,6 @@ export class InitializePage implements OnInit {
     }
 
     ngOnInit() {
-        // this.native.showLoading("Connecting to carrier").then(() => {
-        //     this.initializeApp();
-        // });
     }
 
     ionViewDidEnter() {
@@ -55,34 +52,6 @@ export class InitializePage implements OnInit {
                 this.native.setRootRouter("/favorite");
             });
         });
-    }
-
-    testset(){
-        let str = '{"jsonrpc":"2.0","error":{"code":-32602,"message":"Operation Not Authorized"},"id":"11"}';
-
-        console.log(str.indexOf("error") != -1 );  // true
-
-    }
-
-    testget(){
-        // this.popup.ionicAlert("title","sbtitle","okok");
-        this.popup.ionicConfirm("title","msg","okok","ccc").then((data) => {
-            if (data) {
-
-            }else{
-
-            }
-        });
-        // this.popup.ionicPrompt("title","msg","opt","okok","ccc");
-    }
-
-    testclean(){
-        this.store.remove("serversMap");
-        this.store.remove("favoriteFeedsMap");
-        this.store.remove("allFeedsMap");
-        this.store.remove("eventsMap");
-        this.store.remove("myFeedsMap");
-        this.store.remove("myEventMap");
     }
 
     destroy(){

@@ -36,7 +36,9 @@
     </ion-item> -->
 
     <ion-item lines="none" style="margin: 2%;" (click)="navToServerInfo(server.userId)">
-      <ion-icon style="align-self: flex-start;" name="radio-button-on" color="primary" slot="start"  ></ion-icon>
+      <ion-icon style="align-self: flex-start;" name="radio-button-on" color="primary" slot="start" *ngIf="serverStatus == 0"></ion-icon>
+      <ion-icon style="align-self: flex-start;" name="radio-button-on" slot="start"  *ngIf="serverStatus == 1"></ion-icon>
+
       <!-- <ion-icon name="radio-button-on" slot="start" *ngIf="server.status == 1" ></ion-icon> -->
       <div style="display:flex; word-wrap: break-word; word-break: normal; width: 85%;">
         <ion-label >
@@ -69,14 +71,14 @@
       <div style="align-self:flex-start;">
       
         <ion-label >
-          <h2>22</h2>
+          <h2>{{clientNumber}}</h2>
         </ion-label>
       </div>
 
 
     </ion-item>
     <div style="text-align: center; width:200px; margin: 0 auto;">
-      <qrcode  [qrdata]="didString" [size]="256" [level]="'M'"></qrcode>
+      <qrcode  [qrdata]="feedsUrl" [size]="256" [level]="'M'"></qrcode>
     </div>
     
     

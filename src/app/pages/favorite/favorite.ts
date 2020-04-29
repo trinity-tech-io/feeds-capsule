@@ -21,8 +21,11 @@ export class FavorFeedsPage {
     private router: Router,
     private events: Events,
     private zone: NgZone) {
-      this.feedsList = feedService.getFavoriteFeeds();
+      // this.feedsList = feedService.getFavoriteFeeds();
       this.connectStatus = this.feedService.getConnectionStatus();
+
+      this.feedsList=feedService.refreshLocalSubscribedChannels();
+      this.feedService.refreshSubscribedChannels();
 
       this.events.subscribe('feeds:favoriteFeedListChanged', (feedsList) => {
         this.zone.run(() => {
@@ -34,32 +37,47 @@ export class FavorFeedsPage {
         this.zone.run(() => {
             this.connectStatus = connectionStatus;
         });
-    });
+      });
+
+      this.events.subscribe('feeds:loadMoreSubscribedChannels', list => {
+        this.zone.run(() => {
+            this.feedsList = list;
+        });
+      });
+    
+      this.events.subscribe('feeds:refreshSubscribedChannels', list => {
+        this.zone.run(() => {
+            this.feedsList = list;
+        });
+      });
+    
+      this.events.subscribe('feeds:unsubscribeFinish', (nodeId, channelId, name) => {
+        this.zone.run(() => {
+          this.feedsList=feedService.refreshLocalSubscribedChannels();
+        });
+      });
   }
 
-  navigateToEventsPage(nodeId: string, feedName: string, lastSeqno: number) {
-    this.router.navigate(['/favorite/content/',nodeId, feedName, lastSeqno]);
+  navigateToEventsPage(nodeId: string, name: string, id: number, ownerName: string) {
+    this.feedService.readChannel(nodeId, id);
+    this.router.navigate(['/favorite/content/',nodeId, name, id , ownerName]);
   }
 
   doRefresh(event) {
-    console.log('Begin async operation');
-
+    this.feedService.refreshSubscribedChannels();
     setTimeout(() => {
-      console.log('Async operation has ended');
       event.target.complete();
     }, 2000);
   }
 
   loadData(event) {
+    this.feedService.loadMoreSubscribedChannels();
     setTimeout(() => {
-      console.log('Done');
       event.target.complete();
-
-      // App logic to determine if all data is loaded
-      // and disable the infinite scroll
-      // if (data.length == 1000) {
-      //   event.target.disabled = true;
-      // }
     }, 500);
+  }
+
+  getUnreadNum(ChannelId: number): number{
+    return this.feedService.getUnreadNumber(ChannelId);
   }
 }

@@ -42,7 +42,7 @@
   </ion-refresher>
 
   <ion-list>
-    <ion-item *ngFor="let feed of feedsList" (click)="navigateToEventsPage(feed.nodeId, feed.name, feed.lastSeqno)">
+    <ion-item *ngFor="let channel of feedsList" (click)="navigateToEventsPage(channel.nodeId, channel.name, channel.id , channel.owner_name)">
       <ion-grid class="ion-padding" >
         <ion-row>
           <ion-col
@@ -58,10 +58,10 @@
             size-xs="6.25"
             class="node-content">
             <ion-label style="font-size: 20px;">
-              <b>{{feed.name}}</b>
+              <b>{{channel.name}}</b>
             </ion-label>
             <ion-label style="font-size: 13px;">
-              <b>@ publisher’s name</b>
+              <b>{{channel.owner_name}}</b>
             </ion-label>
             
           </ion-col>
@@ -69,13 +69,13 @@
             size="3.5"
             size-xs="3.5"
             class="badge-container">
-            <ion-badge color="primary" *ngIf="feed.unread">{{feed.unread}}</ion-badge>
-            <ion-badge color="light"  *ngIf="feed.unread == 0">{{feed.lastReceived | date:'MM-dd HH:mm'}}</ion-badge>
+            <ion-badge color="primary" *ngIf="getUnreadNum(channel.channel_id)>0">unread</ion-badge>
+            <ion-badge color="light"  *ngIf="getUnreadNum(channel.channel_id)==0">{{channel.last_update | date:'MM-dd HH:mm'}}</ion-badge>
           </ion-col>
           <div style="margin-top: 10px;">
           <ion-label>
             <p>
-            {{feed.lastEvent}}
+            {{channel.last_post}}
             </p>
           </ion-label>
         </div>

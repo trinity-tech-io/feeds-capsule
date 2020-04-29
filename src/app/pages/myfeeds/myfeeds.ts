@@ -13,6 +13,7 @@ import { Router } from '@angular/router';
 export class MyfeedsPage implements OnInit {
   private connectStatus = 1;
   private myfeeds: any;
+  private channels: any;
 
   constructor(
     public feedService: FeedService,
@@ -21,10 +22,10 @@ export class MyfeedsPage implements OnInit {
     private router: Router,
     private zone: NgZone,
     private popup: PopupProvider) {
-
+    
     this.connectStatus = this.feedService.getConnectionStatus();
     this.myfeeds = feedService.getMyFeeds();
-    
+    this.channels = this.feedService.refreshMyChannels();
     this.events.subscribe('feeds:ownFeedListChanged', (feedList) => {
       this.zone.run(() => {
         this.myfeeds = feedList;
@@ -36,14 +37,25 @@ export class MyfeedsPage implements OnInit {
           this.connectStatus = connectionStatus;
       });
     });
+    
+    this.events.subscribe('feeds:createTopicSuccess',()=>{
+      this.zone.run(() => {
+        this.channels = this.feedService.getMyChannelList();
+      });
+    });
+
+    this.events.subscribe('feeds:refreshMyChannel',(list) => {
+      this.zone.run(() => {
+        this.channels = list;
+      });
+    });
   }
 
   ngOnInit() {
   }
 
-  public navigateToBoardPage(nodeId: string, topic: string) {
-    // this.navCtrl.navigateForward('/menu/myfeeds/board');
-    this.router.navigate(['/menu/myfeeds/board/',nodeId, topic]);
+  public navigateToBoardPage(nodeId: string, id: number, name: string) {
+    this.router.navigate(['/menu/myfeeds/board/', nodeId, id, name]);
   }
 
   archive(nodeId: string, topic: string , slide: any) {
@@ -67,24 +79,21 @@ export class MyfeedsPage implements OnInit {
   }
 
   doRefresh(event) {
-    console.log('Begin async operation');
-
+    this.feedService.refreshMyChannels();
+    this.events.subscribe('feeds:refreshMyChannel',(list) => {
+      this.zone.run(() => {
+        this.channels = list;
+      });
+    });
     setTimeout(() => {
-      console.log('Async operation has ended');
       event.target.complete();
     }, 2000);
   }
 
   loadData(event) {
+    this.feedService.loadMoreMyChannels();
     setTimeout(() => {
-      console.log('Done');
       event.target.complete();
-
-      // App logic to determine if all data is loaded
-      // and disable the infinite scroll
-      // if (data.length == 1000) {
-      //   event.target.disabled = true;
-      // }
     }, 500);
   }
 }

@@ -29,13 +29,10 @@ export class PopovercomponentPage implements OnInit {
       alert("Please input message!");
       return;
     }
-    
-    this.feedService.postEvent(
+    this.feedService.publishPost(
       this.navParams.data.nodeId,
-      this.navParams.data.topic,
-      this.newEvent,
-      this.eventImgUrl);
-
+      this.navParams.data.id,
+      this.newEvent)
     this.popover.dismiss();
   }
 
@@ -46,8 +43,6 @@ export class PopovercomponentPage implements OnInit {
   openCamera(type: number){
     this.camera.openCamera(50,0,type,
       (imageUrl)=>{
-        // alert(imageUrl);
-        console.log(imageUrl);
         this.zone.run(() => {
           this.eventImgUrl = imageUrl;
         });

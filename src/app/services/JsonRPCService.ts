@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Events } from '@ionic/angular';
 import { CarrierService } from 'src/app/services/CarrierService';
+import { AgentService } from 'src/app/services/AgentService';
 
 let eventBus = null;
 let requestQueue: RequestBean[] = [];
@@ -31,54 +32,41 @@ export class Result{
 export class JsonRPCService {
     constructor(
         private carrierService: CarrierService,
-        private events: Events) {
+        private events: Events,
+        private agentService: AgentService) {
         eventBus = events;
         this.events.subscribe('carrier:friendMessage', event => {
             eventBus.publish('transport:receiveMessage',this.response(event.from, event.message));
-          });
+        });
     }
 
-    request(method: string, nodeId: string,params: any, success: any, error: any): any{
+    request(method: string, nodeId: string,params: any, success: any, error: any){
         let id = autoIncreaseId++;
         let requestBean = new RequestBean(String(id),method,params);
         requestQueue.push(requestBean);
         let request = this.assembleJson(String(id), method, params);
+
         this.carrierService.sendMessage(
             nodeId,
             JSON.stringify(request),
             success,
             error
         )
-        return JSON.stringify(request);
     }
 
     response(nodeId: string, msg: string): Result{
-        // if (requestQueue.indexOf())
         return this.parseJson(nodeId, msg);
     }
 
     assembleJson(id: string, method: string, params: any): any{
-        let json_data = {}
-        json_data["jsonrpc"] = "2.0";
-        json_data["method"] = method;
-        json_data["id"] = id;
-        if (params != null) {
-            json_data["params"] = params;    
+        let data = {
+            jsonrpc:"2.0",
+            method:method,
+            params:params,
+            id:id
         }
-        return json_data ;
+        return data;
     }
-
-    // checkError(response: string): boolean{
-    //     if (typeof response != "string") {
-    //         return ;
-    //     }
-
-    //     if (response.indexOf("error") != -1){
-    //         console.log("error");
-    //         return true;
-    //     }
-    //     return false ;
-    // }
 
     parseJson(nodeId: string, msg: string): Result{
         //TODO errorcode
@@ -98,13 +86,16 @@ export class JsonRPCService {
 
         if (msg.indexOf("result") != -1){
             let request = this.queryRequest(data.id);
-            console.log(JSON.stringify(request));
             return this.createResult(nodeId, request.method,request.requestParams , data.result);
         }
 
         if (msg.indexOf("params") != -1 && data.params!=null)
             return this.createParamsResult(nodeId, data.params);
         
+
+        if(msg.indexOf("error")!=-1)
+            return data.error;
+            
         return this.createError(nodeId, -69000, "Unknown error");
     }
 

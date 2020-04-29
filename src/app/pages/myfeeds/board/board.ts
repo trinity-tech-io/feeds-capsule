@@ -7,6 +7,7 @@ import { PopupProvider } from 'src/app/services/popup';
 import { NativeService } from 'src/app/services/NativeService';
 import { PopoverController } from '@ionic/angular';
 import { PopovercomponentPage } from '../../../components/popovercomponent/popovercomponent.page';
+import { CommentComponent } from '../../../components/comment/comment.component'
 
 
 @Component({
@@ -17,12 +18,15 @@ import { PopovercomponentPage } from '../../../components/popovercomponent/popov
 export class FeedBoardPage implements OnInit {
   private isArchive: boolean;
   private connectStatus = 1;
-  private myEvents: any ;
+  // private myEvents: any ;
   private nodeId: string;
-  private topic: string;
+  private id: number;
+  // private topic: string;
   private title: string;
   private newEvent: string = "";
+  private posts: any=[];
   constructor(
+    private popoverController: PopoverController,
     private events: Events,
     private feedService: FeedService,
     private router: Router,
@@ -30,17 +34,16 @@ export class FeedBoardPage implements OnInit {
     private acRoute: ActivatedRoute,
     private popup: PopupProvider,
     private navCtrl: NavController,
-    private native: NativeService,
-    private popover: PopoverController) {
+    private native: NativeService) {
       this.connectStatus = this.feedService.getConnectionStatus();
       this.newEvent = "";
       
       acRoute.params.subscribe((data)=>{
         this.nodeId = data.nodeId;
-        this.topic = data.topic;
-        this.title = this.topic;
-        this.isArchive = this.feedService.getArcstatus(this.nodeId, this.topic);
-        this.myEvents = this.feedService.getMyFeedEvents(this.nodeId,this.topic);
+        this.id = data.id;
+        this.title = data.name;
+        
+        this.posts = this.feedService.refreshLocalPost("",this.id);
       });
 
       this.events.subscribe('feeds:connectionChanged', connectionStatus => {
@@ -53,10 +56,39 @@ export class FeedBoardPage implements OnInit {
         this.zone.run(() => {
             this.native.toast("Post event success");
             this.newEvent = "";
-            this.myEvents = this.feedService.getMyFeedEvents(this.nodeId,this.topic);
+            // this.myEvents = this.feedService.getMyFeedEvents(this.nodeId,this.topic);
+            this.posts = this.feedService.refreshLocalPost("",this.id);
+
         });
       });
-      
+
+      this.events.subscribe('feeds:refreshPost',(list)=>{
+        this.zone.run(() => {
+          this.posts = list;
+        });
+      });
+
+      this.events.subscribe('feeds:updataPostLike',(nodeId, channelId, postId, likes)=>{
+        this.zone.run(() => {
+          for (let index = 0; index < this.posts.length; index++) {
+            if (this.posts[index].postId == postId){
+              this.posts[index].likes = likes;
+            }
+  
+              
+          }
+        });
+      });
+
+      this.events.subscribe('feeds:updataComment',(nodeId, channelId, postId,comment)=>{
+        this.zone.run(() => {
+          for (let index = 0; index < this.posts.length; index++) {
+            if (this.posts[index].postId == postId){
+              this.posts[index].comment = comment;
+            }
+          }
+        });
+      });
     }
 
   ngOnInit() {
@@ -67,10 +99,10 @@ export class FeedBoardPage implements OnInit {
   }
 
   async openPopOverComponent() {
-    this.popover.create(
+    this.popoverController.create(
       {
         component:PopovercomponentPage,
-        componentProps: {nodeId:this.nodeId,topic:this.topic},
+        componentProps: {nodeId:this.nodeId,id:this.id},
         cssClass: 'bottom-sheet-popover'
       }).then((popoverElement)=>{
         popoverElement.present();
@@ -78,24 +110,42 @@ export class FeedBoardPage implements OnInit {
     }
 
   doRefresh(event) {
-    console.log('Begin async operation');
-
+    this.feedService.refreshLocalPost("",this.id);
     setTimeout(() => {
-      console.log('Async operation has ended');
       event.target.complete();
     }, 2000);
   }
 
   loadData(event) {
+    this.feedService.loadMoreLocalPost("",this.id);
     setTimeout(() => {
-      console.log('Done');
       event.target.complete();
-
-      // App logic to determine if all data is loaded
-      // and disable the infinite scroll
-      // if (data.length == 1000) {
-      //   event.target.disabled = true;
-      // }
     }, 500);
+  }
+
+  like(channelId: number,postId: number){
+    this.feedService.postLike(this.nodeId,channelId,postId,null);
+  }
+
+  navTo(channelId: number, postId: number){
+    this.router.navigate(['/detail/',this.nodeId,channelId,postId]);
+  }
+
+  async showCommentPage(event, channelId: number, postId: number){
+
+    const popover = await this.popoverController.create({
+      component: CommentComponent,
+      componentProps: {nodeId:this.nodeId,channelId:channelId,postId:postId},
+      event:event,
+      translucent: true,
+      cssClass: 'bottom-sheet-popover'
+    });
+
+    popover.onDidDismiss().then((result)=>{
+      if(result.data == undefined){
+        return;
+      }
+    });
+    return await popover.present();
   }
 }

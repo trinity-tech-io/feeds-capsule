@@ -20,7 +20,6 @@ export class PopupProvider {
                 buttons: [{
                     text: okText ? okText : this.translate.instant('confirm'),
                     handler: () => {
-                        console.log('ionicAlert Ok clicked');
                         resolve();
                     }
                 }]
@@ -38,14 +37,12 @@ export class PopupProvider {
                 buttons: [{
                     text: cancelText ? cancelText : this.translate.instant('cancel'),
                     handler: () => {
-                        console.log('ionicConfirm Disagree clicked');
                         resolve(false);
                     }
                 },
                 {
                     text: okText ? okText : this.translate.instant('confirm'),
                     handler: () => {
-                        console.log('Agree clicked');
                         resolve(true);
                     }
                 }]
@@ -74,14 +71,12 @@ export class PopupProvider {
             buttons: [{
                 text: cancelText ? cancelText : this.translate.instant('Cancel'),
                 handler: data => {
-                    console.log('Cancel clicked');
                     resolve(null);
                 }
             },
             {
                 text: okText ? okText : this.translate.instant('Ok'),
                 handler: data => {
-                    console.log('Saved clicked');
                     resolve(data[0]);
                 }
             }]

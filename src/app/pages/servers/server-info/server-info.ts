@@ -18,14 +18,18 @@ class Attribute {
 
 export class ServerInfoPage implements OnInit {
   
-  state: number = 0;
+  // state: number = 0;
   private connectStatus:any;
-  private didString: string;
-  private attrs;
-  private name;
-  private owner;
-  private introduction;
+  
+  private serverStatus:number = 1;
+  private clientNumber:number = 0;
 
+  private didString: string;
+  // private attrs;
+  private name: string;
+  private owner: string;
+  private introduction: string;
+  private feedsUrl: string;
 
   constructor(
     private native: NativeService,
@@ -36,10 +40,10 @@ export class ServerInfoPage implements OnInit {
     // this.didString="did:elastos:ixxxxxxxxxxxxxxxxxxx"
     this.connectStatus = this.feedService.getConnectionStatus();
     this.acRoute.params.subscribe(data => {
-      console.log(data.did);
-      
       let server = this.feedService.findServer(data.did);
-      console.log(JSON.stringify(server));
+      this.serverStatus = this.feedService.getServersStatus()[server.nodeId].status;
+      this.clientNumber = this.feedService.getServerStatisticsMap()[server.nodeId].connecting_clients;
+
       if (server == undefined){
         return ;
       }
@@ -48,15 +52,7 @@ export class ServerInfoPage implements OnInit {
       this.name = server.name;
       this.owner = server.owner;
       this.introduction = server.introduction;
-      
-
-      this.attrs = [
-        new Attribute('radio-button-on', 'nodeid', server.userId.slice(0, 31)),
-        // new Attribute('home', 'address', server.address.slice(0, 31)),
-        new Attribute('person', 'name', server.name),
-        // new Attribute('mail', 'email', server.email),
-        // new Attribute('locate', 'region', server.region)
-      ];
+      this.feedsUrl = server.feedsUrl;
     });
   }
 

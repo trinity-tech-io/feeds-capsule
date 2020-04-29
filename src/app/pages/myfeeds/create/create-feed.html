@@ -35,27 +35,27 @@
           <ion-input required type="text" disabled>Auth:auth</ion-input>
           <ion-input required type="text" disabled>Name:name</ion-input> -->
           <div slot="end" class="div">
-            <div  class="s1">DID: {{selectedServer.userId}}</div>
-            <span *ngIf="selectedServer.userId.length > 20" class="s2"><span>{{selectedServer.userId}}</span></span>
+            <div  class="s1"><b>DID:</b> {{selectedServer.did}}</div>
+            <span *ngIf="selectedServer.did.length > 20" class="s2"><span>{{selectedServer.did}}</span></span>
           </div>
           <div slot="end" class="div">
-            <div  class="s1">Auth: {{selectedServer.userId}}</div
-              ><span *ngIf="selectedServer.userId.length > 20" class="s2"><span>{{selectedServer.userId}}</span></span>
+            <div  class="s1"><b>Auth:</b> {{selectedServer.owner}}</div
+              ><span *ngIf="selectedServer.owner.length > 20" class="s2"><span>{{selectedServer.owner}}</span></span>
           </div>
           <div slot="end" class="div">
-            <div  class="s1">Name: {{selectedServer.userId}}</div
-              ><span *ngIf="selectedServer.userId.length > 20" class="s2"><span>{{selectedServer.userId}}</span></span>
+            <div  class="s1"><b>Name:</b> {{selectedServer.name}}</div
+              ><span *ngIf="selectedServer.name.length > 20" class="s2"><span>{{selectedServer.name}}</span></span>
           </div>
           <!-- <ion-label required type="text" style="text-overflow:ellipsis;overflow:hidden;" disabled>NodeId:{{selectedServer.userId}}</ion-label> -->
           <div slot="end" class="div">
-          <div  class="s1">NodeId: {{selectedServer.userId}}</div
-            ><span *ngIf="selectedServer.userId.length > 20" class="s2"><span>{{selectedServer.userId}}</span></span>
+          <div  class="s1"><b>NodeId:</b> {{selectedServer.nodeId}}</div
+            ><span *ngIf="selectedServer.nodeId.length > 20" class="s2"><span>{{selectedServer.nodeId}}</span></span>
           </div>
 
 
         </div>
       </div>
-      <ion-button style="text-transform: none; margin: 3%;" expand="block" (click)="selectChannelSource()">{{buttonText}}</ion-button>
+      <ion-button style="text-transform: none; margin: 3%;" expand="block" (click)="selectChannelSource($event)">{{buttonText}}</ion-button>
 
       <!-- <div *ngIf="selectedServer == null">
         <ion-button style="text-transform: none; margin: 3%;" expand="block" (click)="selectChannelSource()" >{{}}</ion-button>
@@ -76,7 +76,7 @@
         <ion-input required type="text" #desc></ion-input>
       </div>
     <!-- </ion-item> -->
-    <ion-button style="text-transform: none;margin: 3%;" expand="block" (click)="createTopic(name,desc,select)">Submit</ion-button>
+    <ion-button style="text-transform: none;margin: 3%;" expand="block" (click)="createTopic(name,desc)">Submit</ion-button>
   </div>
 </ion-content>
 

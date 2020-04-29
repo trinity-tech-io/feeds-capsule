@@ -164,7 +164,6 @@ export class CarrierService {
 
     createCarrierInstanceError(err: string) {
         alert("createCarrierInstanceError"+err);
-        console.log('Carrier Service error: ', err);
     }
 
     conectionCallback(event) {
@@ -172,8 +171,6 @@ export class CarrierService {
     }
 
     friendConnectionCallback(ret) {
-        console.log(ret.friendId);
-        console.log(ret.status);
         eventBus.publish('carrier:friendConnection', ret, Date.now());
     }
 
@@ -323,6 +320,7 @@ export class CarrierService {
             success();
             return;
         }
+        
         carrierInst.sendFriendMessage(
             nodeId, message,
             () => {success();},
@@ -333,13 +331,5 @@ export class CarrierService {
 
         alert("error"+err);
         alert("errorFun"+JSON.stringify(errorFun));
-        console.log("err =>"+err);
-        console.log("errorFun =>"+errorFun);
-        /*
-        this.native.info('errorFun:' + err);
-        if (errorFun != null) {
-            return errorFun(err);
-        }
-        */
     }
 }

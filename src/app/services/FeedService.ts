@@ -3,10 +3,79 @@ import { Platform } from '@ionic/angular';
 import { CarrierService } from 'src/app/services/CarrierService';
 import { Events } from '@ionic/angular';
 import { JsonRPCService } from 'src/app/services/JsonRPCService';
-// import { TransportService } from 'src/app/services/TransportService';
 import { StorageService } from 'src/app/services/StorageService';
+import { NativeService } from 'src/app/services/NativeService';
 
 declare let didManager: DIDPlugin.DIDManager;
+
+let subscribedChannelsMap:{[channelId: number]: Channels};
+let channelsMap:{[channelId: number]: Channels} ;
+let myChannelsMap:{[channelId: number]: Channels};
+let unreadMap:{[channelId: number]: number};
+let postMap:{[channelId: number]: ChannelPost};
+let serverStatisticsMap:{[nodeId: string]: ServerStatistics};
+let commentsMap:{[channelId: number]: ChannelPostComment};
+let serversStatus:{[nodeId: string]: ServerStatus};
+let creationPermissionMap:{[nodeId: string]: boolean};
+
+let localSubscribedList:Channels[] = new Array<Channels>();
+let localMyChannelList:Channels[] = new Array<Channels>();
+let localChannelsList:Channels[] = new Array<Channels>();
+let localPostList:Post[] = new Array<Post>();
+
+type ServerStatus = {
+  nodeId: string,
+  did: string,
+  status: ConnState
+}
+
+type ChannelPostComment = {
+  [postId:number]: PostComment
+}
+type PostComment = {
+  [commentId: number]: Comment
+}
+type Channels = {
+    nodeId:string,
+    id: number,
+    name: string,
+    introduction: string,
+    owner_name: string,
+    owner_did: string,
+    subscribers : number,
+    last_update : number,
+    last_post: any,
+    isSubscribed: boolean
+}
+
+type Comment = {
+    channel_id : number,
+    post_id    : number,
+    id         : number,
+    comment_id : number | null,
+    user_name  : string,
+    content    : any,
+    likes      : number,
+    created_at : number
+}
+
+type ChannelPost = {
+  [postId: number]: Post
+}
+
+type Post = {
+    channel_id : number,
+    id         : number,
+    content    : any,
+    comments   : number,
+    likes      : number,
+    created_at : number
+}
+
+type ServerStatistics = {
+  did               : string,
+  connecting_clients: number
+}
 
 type Server = {
   name              : string
@@ -14,8 +83,8 @@ type Server = {
   introduction      : string
   did               : string
   carrierAddress    : string
-  userId            : string
-  status            : ConnState
+  nodeId            : string
+  feedsUrl          : string
 }
 
 let cacheServer: Server;
@@ -39,42 +108,50 @@ export class SignInData{
       public expiresTS: number) {}
 }
 
-
-// @Injectable()
-// export class Friend{
-//   constructor(
-//       public userId: string,
-//       // public address: string,
-//       public email: string,
-//       public region: string,
-//       public name: string,
-//       public status: ConnState) {}
-// }
-
 enum ConnState {
   connected = 0,
   disconnected = 1
 };
 
-enum MethodType {
-  // subscribe = "0",
-  // unsubscribe = "1",
-  // exploreTopics = "2",
-  // listSubscribed = "3",
-  // fetchUnreceived = "4",
+enum PublishType{
+  ownFeedListChanged = "feeds:ownFeedListChanged",
+  createTopicSuccess = "feeds:createTopicSuccess",
+  postEventSuccess = "feeds:postEventSuccess",
+  allFeedsListChanged= "feeds:allFeedsListChanged",
+  subscribeFinish = "feeds:subscribeFinish",
+  favoriteFeedListChanged = "feeds:favoriteFeedListChanged",
+  unsubscribeFinish = "feeds:unsubscribeFinish",
+  eventListChanged = "feeds:eventListChanged",
+  updateServerList = "feeds:updateServerList",
+  connectionChanged="feeds:connectionChanged",
 
-  // createTopic = "11",
-  // postEvent = "12",
-  // listOwnedTopics = "13",
-  subscribe = "subscribe",
-  unsubscribe = "unsubscribe",
-  exploreTopics = "explore_topics",
-  listSubscribed = "list_subscribed_topics",
-  fetchUnreceived = "fetch_unreceived",
+  postDataUpdate = "feeds:postDataUpdate",
+  commentDataUpdate = "feeds:commentDataUpdate",
+  myChannelsDataUpdate = "feeds:myChannelsDataUpdate",
+  subscribedDataUpdate = "feeds:subscribedChannelsDataUpdate",
+  channelsDataUpdate = "feeds:channelsDataUpdate",
 
-  createTopic = "create_topic",
-  postEvent = "post_event",
-  listOwnedTopics = "list_owned_topics"
+  refreshMyChannel = "feeds:refreshMyChannel",
+  loadMoreMyChannel = "feeds:loadMoreMyChannel",
+  serverConnectionChanged = "feeds:serverConnectionChanged",
+
+  serverStatisticsChanged = "feeds:serverStatisticsChanged",
+
+  refreshPost = "feeds:refreshPost",
+  loadMorePost = "feeds:loadMorePost",
+
+  refreshChannels = "feeds:refreshChannels",
+  loadMoreChannels = "feeds:loadMoreChannels",
+
+
+  refreshSubscribedChannels = "feeds:refreshSubscribedChannels",
+  loadMoreSubscribedChannels = "feeds:loadMoreSubscribedChannels",
+
+  updataPostLike = "feeds:updataPostLike",
+  updataComment = "feeds:updataComment",
+
+  updataCommentLike = "feeds:updataCommentLike"
+  
 }
 
 enum PersistenceKey{
@@ -99,32 +176,30 @@ enum PersistenceKey{
 
   avatar = "avatar",
 
+  ///////////////////////////////
   signInData = "signInData",
-  signInRawData = "signInRawData"
-  
+  signInRawData = "signInRawData",
+
+  subscribedChannelsMap = "subscribedChannelsMap",
+  channelsMap = "channelsMap",
+  myChannelsMap = "myChannelsMap",
+  unreadMap = "unreadMap",
+  postMap = "postMap",
+  commentsMap = "commentsMap",
+  serverStatisticsMap = "serverStatisticsMap",
+  serversStatus = "serversStatus",
+  subscribeStatusMap = "subscribeStatusMap"
 }
 
 let expDay = 10;
-// let serverUserIdList:any = [];
 let connectionStatus = ConnState.disconnected;
-// let serverList: Friend[] = [];
-// let serverList: string[] = [];
-//{"nodeId":{Friend}}
 let serversMap: object = {};
 let favoriteFeedsMap: object = {};
-let allFeedsMap: object = {} ;
-
-// let exploreFeedList: FeedDescs[] = [];
-
-// let eventList: string[] = [];
+// let allFeedsMap: object = {} ;
 let eventsMap: {} = {};
-
-// let myFeedList: string[] = [];
-// let myFeedMap: {} = {};
 let myFeedsMap: object = {};
-
 let myEventMap: {} = {};
-// let eventsMap:{topic: string, eventList: FeedEvents[]};
+
 let fetchList: FavoriteFeed[] = [];
 let firstInit: boolean;
 let needFetch: boolean = true;
@@ -134,13 +209,12 @@ let eventBus = null;
 let currentFetchFeeds: FavoriteFeed;
 // let fetchTopic: string = "";
 // let lastFetchTopic: string = "";
-let unSubscribeTopic: string = "";
-let subscribeTopic: string = "";
+
 let currentFeedEventKey: string = "";
 let currentCreateTopicNID = "";
 
 let postEventTmp: FeedEvents;
-let localSignInData: SignInData ;
+let localSignInData: SignInData;
 // let requestId: number = 0;
 
 @Injectable()
@@ -201,8 +275,8 @@ export class FeedService {
     private platform: Platform,
     private events: Events,
     private jsonRPCService: JsonRPCService,
-    // private transportService: TransportService,
     private carrierService: CarrierService,
+    private native: NativeService,
     private storeService: StorageService) {
       eventBus = events;
       this.init();
@@ -212,7 +286,8 @@ export class FeedService {
       if (this.platform.platforms().indexOf("cordova") < 0) {
       serversMap = virtualServersMap;
       favoriteFeedsMap = virtualFFMap;
-      allFeedsMap = virtualAFMap ;
+      
+      // allFeedsMap = virtualAFMap ;
       eventsMap = virtualEvents
 
       myFeedsMap = virtrulMyFeeds;
@@ -228,16 +303,51 @@ export class FeedService {
   }
 
   initData(){
+
     firstInit = this.storeService.get(PersistenceKey.firstInit);
     firstInit = true; // for test
     if (firstInit == null) {
       firstInit = true;
+    }
+    
+    postMap = this.storeService.get(PersistenceKey.postMap);
+    if(postMap == null || postMap == undefined){
+      postMap = {}
+    }
+
+    myChannelsMap = this.storeService.get(PersistenceKey.myChannelsMap);
+    if ( myChannelsMap == null || myChannelsMap ==undefined ){
+      myChannelsMap ={};
+    }
+
+    serversStatus = this.storeService.get(PersistenceKey.serversStatus);
+    if (serversStatus == null || serversStatus == undefined){
+      serversStatus = {};
+    }
+    let keys: string[] = Object.keys(serversStatus);
+    for (const index in keys) {
+      if (serversStatus[keys[index]] == undefined)
+        continue;
+        serversStatus[keys[index]].status = ConnState.disconnected;
+    }
+
+    serverStatisticsMap = this.storeService.get(PersistenceKey.serverStatisticsMap);
+    if (serverStatisticsMap == null || serverStatisticsMap == undefined){
+      serverStatisticsMap = {};
     }
 
     serversMap = this.storeService.get(PersistenceKey.serversMap);
     if (serversMap == null || serversMap == undefined){
       serversMap = {};
     }
+
+    subscribedChannelsMap = this.storeService.get(PersistenceKey.subscribedChannelsMap);
+    if (subscribedChannelsMap == null || subscribedChannelsMap == undefined)
+      subscribedChannelsMap = {};
+
+    commentsMap = this.storeService.get(PersistenceKey.commentsMap);
+    if(commentsMap == null || commentsMap == undefined)
+      commentsMap = {};
 
     favoriteFeedsMap = this.storeService.get(PersistenceKey.favoriteFeedsMap);
     if (favoriteFeedsMap == null || favoriteFeedsMap == undefined) {
@@ -251,9 +361,14 @@ export class FeedService {
       }
     }
 
-    allFeedsMap = this.storeService.get(PersistenceKey.allFeedsMap);
-    if (allFeedsMap == null || allFeedsMap == undefined) {
-      allFeedsMap = {};
+    unreadMap = this.storeService.get(PersistenceKey.unreadMap);
+    if(unreadMap == null || unreadMap == undefined){
+      unreadMap = {};
+    }
+
+    channelsMap = this.storeService.get(PersistenceKey.channelsMap);
+    if (channelsMap == null || channelsMap == undefined) {
+      channelsMap = {};
     }
     
     eventsMap = this.storeService.get(PersistenceKey.eventsMap);
@@ -280,14 +395,6 @@ export class FeedService {
     this.connectionChangedCallback();
   }
 
-  // prepare(){
-  //   this.carrierService.getFriends(
-  //       (ret) => {
-  //         this.parseFriends(ret);
-  //       },
-  //       null);
-  // }
-
   getConnectionStatus() {
     return connectionStatus;
   }
@@ -298,12 +405,60 @@ export class FeedService {
     for (const index in keys) {
       if (serversMap[keys[index]] == undefined) 
         continue;
-      if (serversMap[keys[index]].status == undefined) 
-        serversMap[keys[index]].status = ConnState.disconnected;
+
       list.push(serversMap[keys[index]]);
     }
     return list;
   }
+
+  getCreationServerMap(){
+    let keys: string[] = Object.keys(serversMap);
+    for (const index in keys) {
+      if (serversMap[keys[index]] == undefined) 
+        continue;
+
+      this.queryChannelCreationPermission(serversMap[keys[index]].nodeId);
+    }
+  }
+
+  getCreationServerList(): Server[]{
+    let list: Server[] = [];
+    let keys: string[] = Object.keys(serversMap);
+    for (const index in keys) {
+      if (serversMap[keys[index]] == undefined) 
+        continue;
+      if (creationPermissionMap == null || creationPermissionMap ==undefined)
+        continue;
+      if (creationPermissionMap[serversMap[keys[index]].nodeId] == undefined){
+        continue;
+      }
+      if (creationPermissionMap[serversMap[keys[index]].nodeId]){
+        list.push(serversMap[keys[index]]);
+      }
+    }
+    return list;
+  }
+
+  getServersStatus():  {[nodeId: string]: ServerStatus} {
+    if (serversStatus == null){
+      serversStatus = this.storeService.get(PersistenceKey.serversStatus);
+      if (serversStatus == undefined){
+        serversStatus = {};
+      }
+    }
+    return serversStatus;
+  }
+
+  getServerStatisticsMap():{[nodeId: string]: ServerStatistics}{
+    if (serverStatisticsMap == null){
+      serverStatisticsMap = this.storeService.get(PersistenceKey.serverStatisticsMap);
+      if (serverStatisticsMap == undefined){
+        serverStatisticsMap = {};
+      }
+    }
+    return serverStatisticsMap
+  }
+
 
   getFavoriteFeeds(): FavoriteFeed[]{
     let list: FavoriteFeed[] = [];
@@ -318,20 +473,58 @@ export class FeedService {
     return list;
   }
 
+  getMyChannelList(){
+    let list: Channels[] = [];
+    let keys: string[] = Object.keys(myChannelsMap);
+    for (const index in keys) {
+      if (myChannelsMap[keys[index]] == undefined)
+        continue;
+      list.push(myChannelsMap[keys[index]]);
+    }
+    list.sort((a, b) => Number(b.last_update) - Number(a.last_update));
+
+    return list;
+  }
+
+  getUnreadNumber(channelId: number){
+    if (unreadMap == null || unreadMap == undefined)
+      unreadMap = {};
+    if (unreadMap[channelId]==null || unreadMap[channelId] == undefined)
+      return 0;
+    return unreadMap[channelId];
+  }
+
+  readChannel(nodeId:string, channelId: number){
+    if (unreadMap == null || unreadMap == undefined)
+      unreadMap = {};
+    unreadMap[channelId] = 0;
+    this.storeService.set(PersistenceKey.unreadMap,unreadMap);
+  }
+
+  getChannelsList():Channels[]{
+    let list: Channels[] = [];
+    let keys: string[] = Object.keys(channelsMap);
+    for (const index in keys) {
+      if (channelsMap[keys[index]] == undefined)
+        continue;
+      list.push(channelsMap[keys[index]]);
+    }
+    list.sort((a, b) => Number(b.last_update) - Number(a.last_update));
+
+    return list;
+  }
+
   public getAllFeeds(): AllFeed[] {
     let list: AllFeed[] = [];
-    let keys: string[] = Object.keys(allFeedsMap);
+    let keys: string[] = Object.keys(channelsMap);
     for (const index in keys) {
-      if (allFeedsMap[keys[index]] == undefined)
+      if (channelsMap[keys[index]] == undefined)
         continue;
-      list.push(allFeedsMap[keys[index]]);
+      list.push(channelsMap[keys[index]]);
     }
     return list;
   }
 
-  public getFeedDescr(feedKey: string): string {
-    return allFeedsMap[feedKey].desc;
-  }
 
   fetchFeedEvents(nodeId: string, topic: string , seqno: number = -1){
     if (seqno!=-1){
@@ -374,7 +567,7 @@ export class FeedService {
     myFeedsMap[nodeId+topic].archive = isArchive;
     this.updateMyFeedsMap();
 
-    eventBus.publish("feeds:ownFeedListChanged",this.getMyFeeds());
+    eventBus.publish(PublishType.ownFeedListChanged,this.getMyFeeds());
   }
   
   public getMyFeedEvents(nodeId: string, topic: string) {
@@ -386,7 +579,6 @@ export class FeedService {
     }
 
     let list: FeedEvents[] = [];
-    // Object.assign(list, myEventMap[nodeId+topic]);
 
     myEventMap[nodeId+topic].sort((a, b) => Number(b.timestamp) - Number(a.timestamp));
     return myEventMap[nodeId+topic];
@@ -400,60 +592,34 @@ export class FeedService {
   }
 
 
-  // updateServerList(serverList: string[], serverMap:any, server:Friend){
-  //   if(serverList == null || serverList == undefined){
-  //     return ;
-  //   }
-    
-  //   let index = serverList.indexOf(server.userId);
-
-  //   if (index == -1){
-  //     serverList.push(server.userId);
-  //     serverMap[server.userId] = server;
-  //     return ;
-  //   }
-
-  //   serverMap[server.userId] = server;
-
-
-  //   // for (let i = 0; i < serverList.length; i++) {
-  //   //   let serverKey = serverList[]
-  //   //   const server = serverList[i];
-  //   //   if(server.userId == userId){
-  //   //     server.status = connectStatus;
-  //   //     return server;
-  //   //   }
-  //   // }
-  // }
 
   sendMessage(nodeId: string, method: string, params: any){
     if(!this.checkServerConnection(nodeId)){
+      this.native.toast("server node offline");
       return;
     }
-    // requestId++;
-    // let message = this.jsonRPCService.assembleJson(method, params, Number(id));
-    // let message = this.jsonRPCService.assembleJson(method, params, String(requestId));
-    // this.jsonRPCService.request(); //TODO
+
     this.jsonRPCService.request(
       method,
       nodeId, 
       params, 
       ()=>{
-        // alert("success")
       }, 
       (error)=>{
-        // alert("error="+error)
+        // this.native.toast(error);
       });
   }
   
   //{"jsonrpc":"2.0","method":"create_topic","params":{"topic":"news","desc":"daily"},"id":null}
-  createTopic(nodeId: string, topic: string, desc: string){
-      currentCreateTopicNID = nodeId;
-      let params = {};
-      params["topic"] = topic;
-      params["desc"] = desc;
+  createTopic(nodeId: string, channel: string, desc: string){
+      // currentCreateTopicNID = nodeId;
+      // let params = {};
+      // params["topic"] = topic;
+      // params["desc"] = desc;
 
-      this.sendMessage(nodeId, MethodType.createTopic, params);
+      // this.sendMessage(nodeId, FeedsData.MethodType.createTopic, params);
+
+      this.createChannel(nodeId, channel, desc);
   }
 
   //{"jsonrpc":"2.0","method":"post_event","params":{"topic":"news","event":"newsevent"},"id":null}
@@ -468,20 +634,19 @@ export class FeedService {
       }
         
       postEventTmp = new FeedEvents(nodeId,topic,this.getCurrentTime(),event,lastSeqno++, imageUrl);
-      this.sendMessage(nodeId, MethodType.postEvent, params);
+      this.sendMessage(nodeId, FeedsData.MethodType.postEvent, params);
   }
 
   //{"jsonrpc":"2.0","method":"list_owned_topics","id":null}
   listOwnedTopics(nodeId: string){
-    this.sendMessage(nodeId, MethodType.listOwnedTopics, null);
+    this.sendMessage(nodeId, FeedsData.MethodType.listOwnedTopics, null);
   }
 
   //{"jsonrpc":"2.0","method":"subscribe","params":{"topic":"movie"},"id":null}
   subscribe(nodeId: string, topic: string){
     let params = {};
     params["topic"] = topic;
-    subscribeTopic = topic ;
-    this.sendMessage(nodeId, MethodType.subscribe, params);
+    this.sendMessage(nodeId, FeedsData.MethodType.subscribe, params);
   }
 
   doSubscribe(){
@@ -493,18 +658,17 @@ export class FeedService {
   unSubscribe(nodeId: string, topic: string){
       let params = {};
       params["topic"] = topic;
-      unSubscribeTopic = topic;
-      this.sendMessage(nodeId, MethodType.unsubscribe, params);
+      this.sendMessage(nodeId, FeedsData.MethodType.unsubscribe, params);
   }
 
   //{"jsonrpc":"2.0","method":"explore_topics","id":null}
   exploreTopics(nodeId: string){
-      this.sendMessage(nodeId, MethodType.exploreTopics, null);
+      this.sendMessage(nodeId, FeedsData.MethodType.exploreTopics, null);
   }
 
   //{"jsonrpc":"2.0","method":"list_subscribed_topics","id":null}
   listSubscribed(nodeId: string){
-    this.sendMessage(nodeId, MethodType.listSubscribed, null);
+    this.sendMessage(nodeId, FeedsData.MethodType.listSubscribed, null);
   }
 
   //{"jsonrpc":"2.0","method":"fetch_unreceived","params":{"topic":"movie","since":1021438976},"id":null}
@@ -513,25 +677,8 @@ export class FeedService {
       let params = {};
       params["topic"] = topic;
       params["since"] = since;
-      this.sendMessage(nodeId, MethodType.fetchUnreceived, params);
+      this.sendMessage(nodeId, FeedsData.MethodType.fetchUnreceived, params);
   }
-
-  // parseFriends(data:any): Friend[]{
-  //   let serverFriendList: Friend[] = [];
-  //   let servers = data.friends;
-  //       if (typeof servers == "string") {
-  //         servers = JSON.parse(servers);
-  //       }
-  //       for (let id in servers) {
-  //           let friend = new Friend(servers[id].userInfo.userId,
-  //                                   servers[id].userInfo.name,
-  //                                   servers[id].connection);
-  //           serverFriendList.push(friend);
-  //       }
-  //   return serverFriendList;
-  // }
-
-
 
   carrierReadyCallback(){
     this.events.subscribe('carrier:ready', () => {
@@ -547,42 +694,40 @@ export class FeedService {
       let friendId = ret.friendId;
       let friendStatus = ret.status;
 
-      let server = this.findServer(friendId);
-      server.status = friendStatus;
-      this.pushServer(server);
-      this.updateServerMap();
+      if(serversStatus == null ||serversStatus == undefined)
+        serversStatus = {}
 
+      if(serversStatus[friendId]!=undefined)
+        serversStatus[friendId].status = friendStatus;
+      
       if (friendStatus == ConnState.connected){
-        this.listSubscribed(friendId);
-        // TODO If the server supports checks own published server
-        this.listOwnedTopics(friendId);
+        this.getStatistics(friendId);
+        this.enableNotification(friendId);
+        this.getCreationServerMap();
       }
 
-      eventBus.publish('feeds:updateServerList',this.getServerList());
-      
+      this.storeService.set(PersistenceKey.serversStatus,serversStatus);
+      eventBus.publish(PublishType.serverConnectionChanged,serversStatus);
     });
   }
 
   friendAddCallback(){
     this.events.subscribe('carrier:friendAdded', msg => {
       let server: Server;
-
+      let status: ConnState;
       if (this.platform.platforms().indexOf("cordova") < 0){
-          // server = new Friend('100', 
-          //                     // 'New Address', 
-          //                     'NewEmail@email.com', 
-          //                     'beijing', 
-          //                     'New Contact', 
-          //                     ConnState.disconnected);
           server = {
             name: "fakename",
             owner: "fakeowner",
             introduction: "fakeintroduction",
             did: "fakedid",
             carrierAddress: "fake carrierAddress",
-            userId: "fakeUserId",
-            status: ConnState.disconnected
+            nodeId: "fakeUserId",
+            feedsUrl: "fakefeedsURL"
+            // status: ConnState.disconnected
           }
+          status = ConnState.disconnected;
+          
       } else {
         
           server = {
@@ -591,73 +736,132 @@ export class FeedService {
             introduction      : cacheServer.introduction,
             did               : cacheServer.did,
             carrierAddress    : cacheServer.carrierAddress,
-            userId            : msg.friendInfo.userInfo.userId,
-            status            : msg.friendInfo.status
+            nodeId            : msg.friendInfo.userInfo.userId,
+            feedsUrl          : cacheServer.feedsUrl
+            // status            : msg.friendInfo.status
           }
+          status = msg.friendInfo.status;
       }
 
+      if (serversStatus == null || serversStatus == undefined)
+        serversStatus = {};
+      
+      serversStatus[server.nodeId] = {
+        nodeId: server.nodeId,
+        did: server.did,
+        status: status
+      }
+
+      if (serverStatisticsMap == null || serverStatisticsMap == undefined)
+      serverStatisticsMap = {};
+
+      if (serverStatisticsMap[server.nodeId] == undefined){
+        serverStatisticsMap[server.nodeId] = {
+          did               : server.did,
+          connecting_clients: 0
+        }
+      }
+
+
+      this.storeService.set(PersistenceKey.serversStatus,serversStatus);
       this.pushServer(server);
       this.updateServerMap();
 
-      eventBus.publish('feeds:updateServerList', this.getServerList(), Date.now());
+      eventBus.publish(PublishType.updateServerList, this.getServerList(), Date.now());
     });
   }
   
   connectionChangedCallback(){
     this.events.subscribe('carrier:connectionChanged', status => {
       connectionStatus = status;
-      eventBus.publish('feeds:connectionChanged', status, Date.now());
+      eventBus.publish(PublishType.connectionChanged, status, Date.now());
     });
   }
 
   handleResult(method:string, nodeId: string ,result: any , request: any){
     let from = nodeId;
-    // let response = this.jsonRPCService.parseJson(message);
-    
-    // if (this.jsonRPCService.checkError(message)) {
-    //   alert(response.error.code+";"+response.error.message);
-    //   return;
-    // }
-    
-    //TODO
-    // if (response.method == "new_event"){
-    //     this.handleNewEventResult(from, response.params);
-    //     return;
-    // }
 
     switch (method) {
-      case MethodType.subscribe:
-        console.log("subscribe response");
+      case FeedsData.MethodType.subscribe:
         this.handleSubscriptResult(from);
         break;
-      case MethodType.unsubscribe:
-        console.log("unsubscribe response");
+      case FeedsData.MethodType.unsubscribe:
         this.handleUnsubscribeResult(from);
         break;
-      case MethodType.exploreTopics:
-        console.log("exploreTopics response");
+      case FeedsData.MethodType.exploreTopics:
         this.handleExploreTopicResult(from, result);
         break;
-      case MethodType.listSubscribed:
-        console.log("listSubscribed response");
+      case FeedsData.MethodType.listSubscribed:
         this.handleListSubscribedResult(from, result);
         break;
-      case MethodType.fetchUnreceived:
-        console.log("fetchUnreceived response");
+      case FeedsData.MethodType.fetchUnreceived:
         this.handleFetchUnreceivedResult(from, result);
         break;
-      case MethodType.createTopic:
-        console.log("createTopic response");
+      case FeedsData.MethodType.createTopic:
         this.handleCreateTopicResult(result);
         break;
-      case MethodType.postEvent:
-        console.log("postEvent response");
+      case FeedsData.MethodType.postEvent:
         this.handlePostEventResult(result);
         break;
-      case MethodType.listOwnedTopics:
-        console.log("listOwnedTopics response");
+      case FeedsData.MethodType.listOwnedTopics:
         this.handleListOwnTopicResult(from, result);
         break;
+
+      case FeedsData.MethodType.create_channel:
+        this.handleCreateChannelResult(nodeId, result, request);
+        break;
+      case FeedsData.MethodType.publish_post:
+        this.handlePublishPostResult(result, request);
+        break;
+      case FeedsData.MethodType.post_comment:
+        this.handlePostCommentResult(nodeId, result, request);
+        break;
+      case FeedsData.MethodType.post_like:
+        this.handlePostLikeResult(nodeId, request);
+        break;
+      case FeedsData.MethodType.get_my_channels:
+        this.handleGetMyChannelsResult(nodeId, result);
+        break;
+      case FeedsData.MethodType.get_my_channels_metadata:
+        this.handleGetMyChannelsMetaDataResult(result);
+        break;
+      case FeedsData.MethodType.get_channels:
+        this.handleGetChannelsResult(nodeId, result, request);
+        break;
+      case FeedsData.MethodType.get_channel_detail:
+        this.handleGetChannelDetailResult(result);
+        break;
+      case FeedsData.MethodType.get_subscribed_channels:
+        this.handleGetSubscribedChannelsResult(nodeId, result, request);
+        break;
+      case FeedsData.MethodType.get_posts:
+        this.handleGetPostsResult(nodeId, result, request);
+        break;
+      case FeedsData.MethodType.get_comments:
+        this.handleGetCommentsResult(result);
+        break;
+      case FeedsData.MethodType.get_statistics:
+        this.handleGetStatisticsResult(nodeId, result);
+        break;
+      case FeedsData.MethodType.subscribe_channel:
+        this.handleSubscribeChannelResult(nodeId, request);
+        break;
+      case FeedsData.MethodType.unsubscribe_channel:
+        this.handleUnsubscribeChannelResult(nodeId, request);
+        break;
+      case FeedsData.MethodType.add_node_publisher:
+        this.handleAddNodePublisherResult();
+        break;
+      case FeedsData.MethodType.remove_node_publisher:
+        this.handleRemoveNodePublisherResult();
+        break;
+      case FeedsData.MethodType.query_channel_creation_permission:
+        this.handleQueryChannelCreationPermissionResult(nodeId, result);
+        break;
+      case FeedsData.MethodType.enable_notification:
+        this.handleEnableNotificationResult();
+        break;
+
       default:
         alert("Maybe error");
         break;
@@ -681,12 +885,11 @@ export class FeedService {
           break;
         case 1:
           // alert(JSON.stringify(result.params));
-          this.handleNewEventResult(result.nodeId, result.params);
+          // this.handleNewEventResult(result.nodeId, result.params);
+          this.handleNotification(result.nodeId, result.method, result.params);//TODO
           break;
         case 0:
           this.handleResult(result.method, result.nodeId, result.result, result.request);
-          // alert(JSON.stringify(result.request));
-          // alert(JSON.stringify(result.result));
           break;
       }
 
@@ -705,12 +908,8 @@ export class FeedService {
   "error":{"code":-32602,"message":"Operation Not Authorized"},"id":"11"}
   */
   handleCreateTopicResult(result: any){
-    // alert("create topic success");
-    console.log("handleCreateTopicResult=>");
-
-    eventBus.publish("feeds:createTopicSuccess");
+    eventBus.publish(PublishType.createTopicSuccess);
     this.listOwnedTopics(currentCreateTopicNID);
-    // myFeedMap.
   }
 
   /*
@@ -721,7 +920,6 @@ export class FeedService {
   } 
   */
   handlePostEventResult(result: any){
-    console.log("handlePostEventResult=>");
     if (myEventMap[postEventTmp.nodeId+postEventTmp.topic] == null || myEventMap[postEventTmp.nodeId+postEventTmp.topic] == undefined){
       myEventMap[postEventTmp.nodeId+postEventTmp.topic] = [];
     }
@@ -734,7 +932,7 @@ export class FeedService {
     myFeedsMap[postEventTmp.nodeId+postEventTmp.topic].lastEvent = postEventTmp.message;
     this.updateMyFeedsMap();
     
-    eventBus.publish("feeds:postEventSuccess");
+    eventBus.publish(PublishType.postEventSuccess);
   }
 
   /*
@@ -748,7 +946,6 @@ export class FeedService {
   } 
   */
   handleListOwnTopicResult(nodeId: string, result: any){
-    console.log("handleListOwnTopicResult=>");
     let changed = false ;
     for (let index = 0; index < result.length; index++) {
       let topic = result[index].name;
@@ -768,7 +965,7 @@ export class FeedService {
 
     if (changed){
       this.updateMyFeedsMap();
-      eventBus.publish("feeds:ownFeedListChanged",this.getMyFeeds());
+      eventBus.publish(PublishType.ownFeedListChanged,this.getMyFeeds());
     }
   }
 
@@ -780,25 +977,6 @@ export class FeedService {
   }
   */
   handleSubscriptResult(nodeId: string){
-    let feedKey = nodeId+subscribeTopic ;
-    // favoriteFeedsMap[feedKey] = new FavoriteFeed(nodeId, subscribeTopic, "", 0, 0, this.getCurrentTime(),false);
-
-    // if(fetchList == undefined){
-    //   fetchList = [];
-    // }
-    // fetchList.push(favoriteFeedsMap[feedKey]);
-    
-    allFeedsMap[feedKey].subscribeState = "Subscribed";
-
-    // this.updateFFMap();
-    // this.updateAllFeeds();
-
-    // this.fetchFeedEvents(nodeId, subscribeTopic, 0);
-    needFetch = true;
-    this.listSubscribed(nodeId);
-    // eventBus.publish('feeds:favoriteFeedListChanged',this.getFavoriteFeeds());
-    eventBus.publish('feeds:allFeedsListChanged',this.getAllFeeds());
-    eventBus.publish('feeds:subscribeFinish',subscribeTopic);
   }
 
   /*
@@ -809,28 +987,6 @@ export class FeedService {
   } 
   */
   handleUnsubscribeResult(nodeId: string){
-    console.log("handleUnsubscribeResult=>");
-    let feedKey = nodeId+unSubscribeTopic;
-    // TODO
-    favoriteFeedsMap[feedKey] = undefined;
-    eventsMap[feedKey] = undefined;
-    
-    eventBus.publish('feeds:favoriteFeedListChanged',this.getFavoriteFeeds());
-
-    allFeedsMap[feedKey].subscribeState = "Subscribe";
-    this.updateServerMap();
-    eventBus.publish('feeds:allFeedsListChanged',this.getAllFeeds());
-    
-    // let server = this.findServer(nodeId);
-
-    // if (server == null || server == undefined){
-    //   return ;
-    // }
-
-
-    // this.doListSubscribedTopic(server);
-
-    eventBus.publish('feeds:unsubscribeFinish', unSubscribeTopic);
   }
 
   /*
@@ -844,36 +1000,6 @@ export class FeedService {
   } 
   */
   handleExploreTopicResult(nodeId: string, result: any){
-    let changed = false ;
-    console.log("handleExploreTopicResult=>");
-
-    if (result == "") {
-      console.log("result null");
-      return ;
-    }
-
-    console.log(JSON.stringify(allFeedsMap));
-    for (let index = 0; index < result.length; index++) {
-      let topic = result[index].name;
-      let desc = result[index].desc;
-      let feedKey = nodeId+topic;
-
-      if (allFeedsMap[feedKey] == undefined){
-        allFeedsMap[feedKey] = new AllFeed(nodeId,"paper",topic,desc,this.checkSubscribeState(feedKey));
-        changed = true;
-      } else {
-        let state = this.checkSubscribeState(feedKey);
-        if (state != allFeedsMap[feedKey].subscribeState){
-          allFeedsMap[feedKey].subscribeState = state;
-          changed = true;
-        }
-      }
-    }
-
-    if (changed){
-      this.updateAllFeeds();
-      eventBus.publish('feeds:allFeedsListChanged',this.getAllFeeds());
-    }
   }
 
   
@@ -889,9 +1015,7 @@ export class FeedService {
   */
   handleListSubscribedResult(nodeId: string, result: any){
     let changed = false ;
-    console.log("handleListSubscribedResult=>");
     if (result == "") {
-      console.log("result null");
       return ;
     }
 
@@ -921,7 +1045,7 @@ export class FeedService {
 
     if (changed){
       this.updateFFMap();
-      eventBus.publish('feeds:favoriteFeedListChanged',this.getFavoriteFeeds());
+      eventBus.publish(PublishType.favoriteFeedListChanged,this.getFavoriteFeeds());
     }
 
     if (needFetch) {
@@ -939,29 +1063,6 @@ export class FeedService {
       this.fetchFeedEvents(fetchList[0].nodeId,fetchList[0].name);
     }
   }
-
-  // chooseFetchFF(){
-
-  //   let keys: string[] = Object.keys(serversMap);
-  //   for (const index in keys) {
-  //     if (serversMap[keys[index]] == undefined) 
-  //       continue;
-  //     if (serversMap[keys[index]].status == undefined) 
-  //       serversMap[keys[index]].status = ConnState.disconnected;
-  //     list.push(serversMap[keys[index]]);
-  //   }
-
-
-  //   let keys: string[] = Object.keys(favoriteFeedsMap);
-  //   for (const index in keys) {
-  //     if (favoriteFeedsMap[keys[index]] == undefined)
-  //       continue;
-  //     if (favoriteFeedsMap[keys[index].status) {
-        
-  //     }
-  //     list.push(favoriteFeedsMap[keys[index]]);
-  //   }
-  // }
 
   updatefavoriteUnreadState(nodeId: string, topic: string , unread: number){
     favoriteFeedsMap[nodeId+topic].unread = unread;
@@ -985,8 +1086,6 @@ export class FeedService {
   } 
   */
   handleFetchUnreceivedResult(from: string, result: any){
-    console.log("handleFetchUnreceivedResult=>");
-
     let changed: boolean = false ;
     let currentEventChanged: boolean = false;
     if (result == null || result == undefined){
@@ -1026,26 +1125,14 @@ export class FeedService {
     if (changed) {
       this.updateEventMap();
       this.updateFFMap();
-      eventBus.publish('feeds:favoriteFeedListChanged',this.getFavoriteFeeds());
+      eventBus.publish(PublishType.favoriteFeedListChanged,this.getFavoriteFeeds());
     }
 
     if (currentEventChanged)
-      eventBus.publish('feeds:eventListChanged',this.getFeedEvents(currentFeedEventKey));
+      eventBus.publish(PublishType.eventListChanged,this.getFeedEvents(currentFeedEventKey));
 
     this.fetchNext();
   }
-
-  // updateEventList(feedEvent: FeedEvents, list: FeedEvents[]){
-  //   for (let index = 0; index < list.length; index++) {
-  //     if (list[index].nodeId == feedEvent.nodeId && 
-  //         list[index].topic == feedEvent.topic &&
-  //         list[index].seqno == feedEvent.seqno) {
-  //           return ;
-  //         }
-  //   }
-  //   list.push(feedEvent);
-  //   this.storeService.set(PersistenceKey.eventList,list);
-  // }
 
   /*
   {
@@ -1060,7 +1147,6 @@ export class FeedService {
   }
   */
   handleNewEventResult(nodeId: string, result: any){
-    console.log("handleNewEventResult=>");
     let topic = result.topic;
     let event = result.event;
     let seqno = result.seqno;
@@ -1079,8 +1165,6 @@ export class FeedService {
     favoriteFeedsMap[feedKey].lastReceived = ts;
     favoriteFeedsMap[feedKey].lastEvent = event;
 
-    console.log("ts=>"+favoriteFeedsMap[feedKey].lastReceived);
-
     if (eventsMap[feedKey] == undefined){
       eventsMap[feedKey] = [];
     }
@@ -1095,10 +1179,10 @@ export class FeedService {
     this.updateEventMap();
 
     this.updateFFMap();
-    eventBus.publish('feeds:favoriteFeedListChanged',this.getFavoriteFeeds());
+    eventBus.publish(PublishType.favoriteFeedListChanged,this.getFavoriteFeeds());
 
     if(currentEventChanged){
-      eventBus.publish('feeds:eventListChanged',this.getFeedEvents(currentFeedEventKey));
+      eventBus.publish(PublishType.eventListChanged,this.getFeedEvents(currentFeedEventKey));
     }
   }
 
@@ -1110,84 +1194,6 @@ export class FeedService {
     return new Date().getTime();
   }
 
-  // doListSubscribedTopics(serverList: Friend[]){
-  //   for (let index = 0; index < serverList.length; index++) {
-  //     const server = serverList[index];
-  //     if (server.status == ConnState.connected) {
-  //       this.listSubscribed(server.userId);
-  //     }
-  //   }
-  // }
-
-  // updateFavoriteFeedList(feed:FavoriteFeed , feedList:FavoriteFeed[]){
-  //   if (feedList == null){
-  //     console.log("faverFeedList = null");
-  //   }else{
-  //     console.log("faverFeedList = "+JSON.stringify(feedList));
-  //   }
-  //   let isContain = false;
-  //   for (let index = 0; index < feedList.length; index++) {
-  //     const element = feedList[index];
-  //     if (feedList[index].name == feed.name) {
-  //       isContain = true;
-  //       return;
-  //     }
-  //   }
-
-  //   if (!isContain) {
-  //     feedList.push(feed);
-  //     this.storeService.set(PersistenceKey.faverFeedList,feedList);
-  //   }
-  // }
-
-  // updateExploreFeedList(feed: FeedDescs , feedList: FeedDescs[]){
-  //   let isContain = false;
-  //   for (let index = 0; index < feedList.length; index++) {
-  //     console.log("feed =>"+JSON.stringify(feed));
-  //     console.log("faverFeedList =>"+JSON.stringify(faverFeedList));
-  //     if (feedList[index].topic == feed.topic) {
-  //       isContain = true;
-
-  //       if(this.checkFollowState(feed.topic,faverFeedList)){
-  //         feedList[index].followState = "following";
-  //       }else{
-  //         feedList[index].followState = "follow";
-  //       }
-  //       return;
-  //     }
-  //   }
-
-  //   if (!isContain) {
-  //     if(this.checkFollowState(feed.topic,faverFeedList)){
-  //       feed.followState = "following";
-  //     }else{
-  //       feed.followState = "follow";
-  //     }
-  //     feedList.push(feed);
-  //     this.storeService.set(PersistenceKey.exploreFeedList, feedList);
-  //   }
-  // }
-
-  // checkFollowState(topic: string, faverFeedList:FavoriteFeed[]): boolean{
-  //   let isFollowing = false;
-  //   if (faverFeedList == null){
-  //     return isFollowing;
-  //   }
-
-  //   for (let index = 0; index < faverFeedList.length; index++) {
-  //     if (topic == faverFeedList[index].name){
-  //       isFollowing = true;
-  //       // feed.followState = "following";
-  //     }
-  //   }
-
-  //   // if(!isFollowing){
-  //   //   feed.followState = "follow";
-  //   // }
-
-  //   return isFollowing;
-  // }
-
   checkDIDValidity(){
 
   }
@@ -1195,7 +1201,6 @@ export class FeedService {
   parseDid(feedUrl: string): DidData{
     let startIndex = feedUrl.indexOf("did:elastos:");
     if (!feedUrl.startsWith("feeds://") || startIndex == -1){
-      console.log("error, not found feeds");
       return null;
     }
 
@@ -1205,37 +1210,29 @@ export class FeedService {
     // feeds://did:elastos:ixxxxxxx/1234carrieraddress5678
     if (hashPos == -1 && backSlashPos >7){
       let carrierAddress = this.getCarrierAddress(feedUrl,backSlashPos+1,feedUrl.length);
-      console.log("carrierAddress ===>"+carrierAddress);
       let did = this.getDid(feedUrl, startIndex, backSlashPos);
-      console.log("did ===>"+did);
       return new DidData(did,carrierAddress,null);
     }
 
     // feeds://did:elastos:ixxxxxxx
     if (hashPos == -1){
       let did = this.getDid(feedUrl, startIndex, feedUrl.length);
-      console.log("did ===>"+did);
       return new DidData(did,null,null);
     }
 
     //feeds://did:elastos:ixxxxxxx#serviceid/carrieraddress
     if (backSlashPos>7){
       let did = this.getDid(feedUrl, startIndex, hashPos);
-      console.log("did ===>"+did);
       // let serviceId = this.getServiceId(feedUrl, hashPos+1, backSlashPos);
       let serviceId = this.getServiceId(feedUrl, startIndex, backSlashPos);
-      console.log("serviceId ===>"+serviceId);
       let carrierAddress = this.getCarrierAddress(feedUrl,backSlashPos+1,feedUrl.length);
-      console.log("carrierAddress ===>"+carrierAddress);
       return new DidData(did,carrierAddress,serviceId);
     }
 
     // feeds://did:elastos:ixxxxxxx#serviceid
     let did = this.getDid(feedUrl, startIndex, hashPos);
-    console.log("did ===>"+did);
     // let serviceId = this.getServiceId(feedUrl, hashPos+1, feedUrl.length);
     let serviceId = this.getServiceId(feedUrl, startIndex, feedUrl.length);
-    console.log("serviceId ===>"+serviceId);
     return new DidData(did,null,serviceId);
   }
 
@@ -1251,8 +1248,8 @@ export class FeedService {
     return feedUrl.substring(start, end);
   }
 
-  resolveDidDocument(didUrl: string, onSuccess: (server: Server)=>void, onError?: (err: any)=>void){
-    let didData = this.parseDid(didUrl);
+  resolveDidDocument(feedsUrl: string, onSuccess: (server: Server)=>void, onError?: (err: any)=>void){
+    let didData = this.parseDid(feedsUrl);
     
     didManager.resolveDidDocument(didData.did, false,(didDocument)=>{
       let services = didDocument.getServices();
@@ -1270,22 +1267,27 @@ export class FeedService {
             introduction      : "introduction",
             did               : didDocument.getSubject().getDIDString(),
             carrierAddress    : carrierAddress,
-            userId            : "",
-            status            : ConnState.disconnected
+            nodeId            : "",
+            feedsUrl          : feedsUrl
+            // status            : ConnState.disconnected
           });
-          // return;
+          return;
+        }else{
+          // onError("The carrier node could not be found");
         }
       }
       if (didData.carrierAddress!=null || didData.carrierAddress != undefined){
         let carrierAddress = didData.carrierAddress.substring(didData.carrierAddress.lastIndexOf("//")+2,didData.carrierAddress.length);
+        
         onSuccess({
             name              : "Not from DIDDocument",
             owner             : didDocument.getSubject().getDIDString(),
             introduction      : "introduction",
             did               : didDocument.getSubject().getDIDString(),
             carrierAddress    : carrierAddress,
-            userId            : "",
-            status            : ConnState.disconnected
+            nodeId            : "",
+            feedsUrl          : feedsUrl
+            // status            : ConnState.disconnected
         });
       } else {
         onError("The carrier node could not be found");
@@ -1297,7 +1299,6 @@ export class FeedService {
 
   parseResult(didData: DidData ,service: DIDPlugin.Service) {
     if (didData == null){
-      console.log("error");
       return ;
     }
     
@@ -1322,39 +1323,11 @@ export class FeedService {
     return false;
   }
 
-  // parseFriends(data:any){
-  //   let servers = data.friends;
-  //   if (typeof servers == "string") {
-  //     servers = JSON.parse(servers);
-  //   }
-
-    
-  //   for (let id in servers) {
-  //     let server = new Friend(servers[id].userInfo.userId,
-  //                             servers[id].userInfo.email,
-  //                             servers[id].userInfo.region,
-  //                             servers[id].userInfo.name,
-  //                             servers[id].connection);
-
-
-
-
-  //     this.pushServer(server);
-  //   }
-  //   this.updateServerMap();
-  //   eventBus.publish('feeds:updateServerList',this.getServerList());
-  // }
-
-  // doListSubscribedTopics(){
-  //   for (const key in Object.keys(serversMap))
-  //     this.doListSubscribedTopic(serversMap[key]);
-  // }
-
   doListSubscribedTopic(server: Server){
     if (server == undefined)
       return ;
-    if (server.status == ConnState.connected) 
-      this.listSubscribed(server.userId);
+    if (serversStatus[server.nodeId].status == ConnState.connected) 
+      this.listSubscribed(server.nodeId);
   }
 
   doListOwnedTopics(){
@@ -1392,9 +1365,12 @@ export class FeedService {
   }
 
   checkServerConnection(nodeId: string): boolean{
-    if (serversMap[nodeId].status == ConnState.connected){
-      return true;
+    if (serversStatus != undefined && serversStatus[nodeId] != undefined){
+      if (serversStatus[nodeId].status == ConnState.connected){
+        return true;
+      }
     }
+
     return false;
   }
 
@@ -1409,23 +1385,12 @@ export class FeedService {
     serversMap[server.did] = server ;
   }
   
-  findFeedfromAF(feedKey: string): AllFeed{
-    return allFeedsMap[feedKey];
-  }
-
-  pushAllFeeds(feedKey: string, feed: AllFeed){
-    allFeedsMap[feedKey] = feed;
-  }
   updateServerMap(){
     this.storeService.set(PersistenceKey.serversMap, serversMap);
   }
 
   updateFFMap(){
     this.storeService.set(PersistenceKey.favoriteFeedsMap,favoriteFeedsMap);
-  }
-
-  updateAllFeeds(){
-    this.storeService.set(PersistenceKey.allFeedsMap, allFeedsMap);
   }
 
   updateEventMap(){
@@ -1452,11 +1417,17 @@ export class FeedService {
   }
 
   saveSignInData(did: string, name: string, email: string, telephone: string, location: string){
-    this.storeService.set(PersistenceKey.signInData, new SignInData(did,name,email,telephone,location,this.getCurrentTimeNum()+this.getDaysTS(expDay)));
+    localSignInData = new SignInData(did,name,email,telephone,location,this.getCurrentTimeNum()+this.getDaysTS(expDay));
+    this.storeService.set(PersistenceKey.signInData, localSignInData);
   }
 
   saveSignInData2(signInData: SignInData){
+    localSignInData = signInData;
     this.storeService.set(PersistenceKey.signInData, signInData);
+  }
+
+  cleanSignInData(){
+    this.storeService.remove(PersistenceKey.signInData);
   }
 
   getSignInData(): SignInData{
@@ -1466,14 +1437,6 @@ export class FeedService {
       }
     return localSignInData;
   }
-
-
-  cleanSignInData(){
-    this.storeService.remove(PersistenceKey.signInData);
-  }
-  // getSignInData(): SignInData{
-  //   return this.storeService.get(PersistenceKey.signInData);
-  // }
 
   getDaysTS(days: number): number{
     return days*24*60*60*1000;
@@ -1489,18 +1452,1133 @@ export class FeedService {
     this.saveSignInData2(signInData);
   }
 
+  //// get data from persistence
+  getLocalSubscribedChannels(){
+  }
+
+  getLocalChannelsMap(){
+  }
+
+  getLocalMyChannelsMap(){
+  } 
+
+  getLocalUnreadMap(){
+  } 
+
+  getPostMap(){
+  } 
+
+  //// do
+
+  refreshSubscribedChannels(){
+    let list = this.getServerList();
+    let isLocalRefresh = true;
+
+    for (let index = 0; index < list.length; index++) {
+      if (serversStatus[list[index].nodeId].status == ConnState.disconnected)
+        continue;
+      else {
+        isLocalRefresh = false;
+        this.getSubscribedChannels(list[index].nodeId, Communication.field.last_update, null, null,10);
+      }
+    }
+
+    if (isLocalRefresh)
+      this.refreshLocalSubscribedChannels();
+  }
+
+  refreshLocalSubscribedChannels():Channels[]{
+    localSubscribedList.slice(0,localSubscribedList.length);
+    localSubscribedList=[];
+    let channels = this.sortChannels(0, subscribedChannelsMap,localSubscribedList);
+    eventBus.publish(PublishType.refreshSubscribedChannels,localSubscribedList);
+    return channels;
+  }
+
+  loadMoreSubscribedChannels(){
+  }
+
+  loadMoreLocalSubscribedChannels(){
+    this.sortChannels(localSubscribedList.length, subscribedChannelsMap,localSubscribedList);
+    eventBus.publish(PublishType.loadMoreSubscribedChannels,localSubscribedList);
+  }
+
+  refreshChannels(){
+    let list = this.getServerList();
+    let isLocalRefresh = true;
+
+    for (let index = 0; index < list.length; index++) {
+      if (serversStatus[list[index].nodeId].status == ConnState.disconnected)
+        continue;
+      else {
+        isLocalRefresh = false;
+        this.getChannels(list[index].nodeId, Communication.field.last_update, null, null, 10);
+      }
+    }
+
+    if (isLocalRefresh)
+      this.refreshLocalChannels();
+  }
+
+  refreshLocalChannels():Channels[]{
+    localChannelsList.slice(0,localChannelsList.length);
+    localChannelsList=[];
+    let channels = this.sortChannels(0, channelsMap,localChannelsList);
+    eventBus.publish(PublishType.refreshChannels,localChannelsList);
+    return channels;
+  }
+
+  sortChannels(start: number, map: {}, localList: Channels[]): Channels[]{
+    let list: Channels[] = [];
+    if (map ==null || map == undefined)
+      map = {}
+
+    let keys: string[] = Object.keys(map);
+    for (const index in keys) {
+      if (map[keys[index]] == null || map[keys[index]] == undefined)
+        continue;
+        list.push(map[keys[index]]);
+    }
+    
+    list.sort((a, b) => Number(b.last_update) - Number(a.last_update));
+
+    let end: number;
+    if (list.length>start+10){
+      end = start+10;
+    }else{
+      end = list.length;
+    }
+    for (let index = start; index < end; index++)
+      localList.push(list[index]);
+
+    return localList;
+  }
+
+  loadMoreChannels(nodeId: string, upper_bound: number){
+    this.getChannels(nodeId, Communication.field.last_update, upper_bound, null, 10);
+  }
+
+  refreshMyChannels(): Channels[]{
+    if (myChannelsMap == null || myChannelsMap == undefined){
+      eventBus.publish(PublishType.refreshMyChannel,[]);
+      return [];
+    }
+
+    let list: Channels[] = [];
+    let keys: string[] = Object.keys(myChannelsMap);
+    localMyChannelList = [];
+    for (const index in keys) {
+      if (myChannelsMap[keys[index]] == null || myChannelsMap[keys[index]] == undefined)
+        continue;
+      list.push(myChannelsMap[keys[index]]);
+    }
+    
+    list.sort((a, b) => Number(b.last_update) - Number(a.last_update));
+
+    localMyChannelList.slice(0,localMyChannelList.length);
+    let end:number = 0;
+    if (list.length>10){
+      end = 10;
+    }else{
+      end = list.length;
+    }
+
+    for (let index = 0; index < end; index++)
+      localMyChannelList.push(list[index]);
+
+    eventBus.publish(PublishType.refreshMyChannel,localMyChannelList);
+    return localMyChannelList;
+  }
+
+  loadMoreMyChannels(){
+    let end: number;
+    let start: number = localMyChannelList.length;
+    if (myChannelsMap == null || myChannelsMap == undefined){
+      eventBus.publish(PublishType.loadMoreMyChannel,[]);
+      return;
+    }
+
+    let list: Channels[] = [];
+    let keys: string[] = Object.keys(myChannelsMap);
+    for (const index in keys) {
+      if (myChannelsMap[keys[index]] == null || myChannelsMap[keys[index]] == undefined)
+        continue;
+        list.push(myChannelsMap[keys[index]]);
+    }
+    
+    list.sort((a, b) => Number(b.last_update) - Number(a.last_update));
+
+    if (localMyChannelList.length+10>list.length){
+      end = list.length;
+    }else{
+      end = localMyChannelList.length+10;
+    }
+
+    for (let index = start ; index < end; index++)
+      localMyChannelList.push(list[index]);
+
+    eventBus.publish(PublishType.loadMoreMyChannel);
+  }
+
+  refreshPost(nodeId: string, channelId: number){
+    this.getPost(nodeId,channelId,Communication.field.last_update,null,null,10);
+
+    if (serversStatus[nodeId].status == ConnState.disconnected)
+      this.refreshLocalPost(nodeId, channelId);
+  }
+
+  refreshLocalPost(nodeId:string, channelId: number):Post[]{
+    if (postMap == null || postMap == undefined
+      || postMap[channelId] == null ||postMap[channelId] == undefined){
+      eventBus.publish(PublishType.refreshPost,[]);
+      return [];
+    }
+
+    let list: Post[] = [];
+    let keys: string[] = Object.keys(postMap[channelId]);
+    localPostList = [];
+    for (const index in keys) {
+      if (postMap[channelId][keys[index]] == null || postMap[channelId][keys[index]] == undefined)
+        continue;
+        list.push(postMap[channelId][keys[index]]);
+    }
+    
+    list.sort((a, b) => Number(b.created_at) - Number(a.created_at));
+
+    localPostList.slice(0,localPostList.length);
+    let end: number;
+    if (list.length>10){
+      end = 10;
+    }else{
+      end = list.length;
+    }
+    for (let index = 0; index < end; index++)
+      localPostList.push(list[index]);
+
+    if (myChannelsMap == null || myChannelsMap == undefined)
+      myChannelsMap = {};
+    if (myChannelsMap[channelId] != null && 
+        myChannelsMap[channelId] != undefined &&
+        myChannelsMap[channelId].last_post != localPostList[0].content){
+      myChannelsMap[channelId].last_post = localPostList[0].content;
+      this.storeService.set(PersistenceKey.myChannelsMap,myChannelsMap);
+    }
+    
+      
+
+    if (subscribedChannelsMap == null || subscribedChannelsMap == undefined)
+      subscribedChannelsMap = {};
+    if (subscribedChannelsMap[channelId]!= null && 
+        subscribedChannelsMap[channelId] != undefined &&
+        subscribedChannelsMap[channelId].last_post != localPostList[0].content){
+      subscribedChannelsMap[channelId].last_post = localPostList[0].content;
+      this.storeService.set(PersistenceKey.subscribedChannelsMap, subscribedChannelsMap);
+    }
+
+    eventBus.publish(PublishType.refreshPost,localPostList);
+    return localPostList;
+  }
+
+  loadMorePost(nodeId:string, channelId:number){
+    this.getPost(nodeId,channelId,Communication.field.last_update,localPostList[localPostList.length-1].created_at,null,10);
+
+    if (serversStatus[nodeId].status == ConnState.disconnected)
+      this.loadMoreLocalPost(nodeId, channelId);
+  }
+
+  loadMoreLocalPost(nodeId:string, channelId: number){
+    if (postMap == null || postMap == undefined){
+      eventBus.publish(PublishType.loadMorePost,[]);
+      return;
+    }
+
+    let list: Post[] = [];
+    let keys: string[] = Object.keys(postMap[channelId]);
+    for (const index in keys) {
+      if (postMap[channelId][keys[index]] == null || postMap[channelId][keys[index]] == undefined)
+        continue;
+        list.push(postMap[channelId][keys[index]]);
+    }
+    
+    list.sort((a, b) => Number(b.created_at) - Number(a.created_at));
+
+    let start = localPostList.length;
+    let end: number;
+    if (list.length>start+10){
+      end = start+10;
+    }else{
+      end = list.length;
+    }
+    for (let index = start; index < end; index++)
+      localPostList.push(list[index]);
+
+    eventBus.publish(PublishType.loadMorePost,localPostList);
+  }
+
+  //// new request
+  createChannel(nodeId: string, name: string, introduction: string){
+    let request: Communication.create_channel_request = {
+      jsonrpc: "2.0",
+      method : "create_channel",
+      params : {
+          name        : name,
+          introduction: introduction,
+          jwttoken    : this.getSignInData().did 
+      } ,
+      id     : -1
+    }
+    this.sendMessage(nodeId, request.method, request.params);
+  }
+
+  publishPost(nodeId: string, channel_id: number, content: any){
+    let request: Communication.publish_post_request = {
+      jsonrpc: "2.0",
+      method : "publish_post",
+      params : {
+          channel_id: Number(channel_id),
+          content: content,
+          jwttoken    : this.getSignInData().did
+      } ,
+      id     : -1
+    }
+    this.sendMessage(nodeId, request.method, request.params);
+  }
+
+  postComment(nodeId: string, channel_id: number, post_id: number, 
+              comment_id , content: any){
+    let request: Communication.post_comment_request = {
+      jsonrpc: "2.0",
+      method : "post_comment",
+      params : {
+          channel_id: channel_id,
+          post_id   : post_id,
+          comment_id: comment_id,
+          content   : content,
+          jwttoken    : this.getSignInData().did
+      } ,
+      id     : -1
+    }
+    this.sendMessage(nodeId, request.method, request.params);
+  }
+
+  postLike(nodeId: string, channel_id: number, post_id: number, comment_id: number){
+    let request: Communication.post_like_request = {
+      jsonrpc: "2.0",
+      method : "post_like",
+      params : {
+          channel_id: channel_id,
+          post_id   : post_id,
+          comment_id: comment_id,
+          jwttoken    : this.getSignInData().did
+      } ,
+      id     : -1
+    }
+    this.sendMessage(nodeId, request.method, request.params);
+  }
+
+  getMyChannels(nodeId: string, field: Communication.field, upper_bound: number,
+                lower_bound: number, max_counts: number){
+    let request: Communication.get_my_channels_request = {
+      jsonrpc: "2.0",
+      method : "get_my_channels",
+      params : {
+          by         : field,
+          upper_bound: upper_bound,
+          lower_bound: lower_bound,
+          max_count : max_counts,
+          jwttoken    : this.getSignInData().did
+      },
+      id     : -1
+    }
+    this.sendMessage(nodeId, request.method, request.params);
+  }
+
+  getMyChannelsMetaData(nodeId: string, field: Communication.field, upper_bound: number, 
+                        lower_bound: number, max_counts: number){
+    let request: Communication.get_my_channels_metadata_request = {
+      jsonrpc: "2.0",
+      method : "get_my_channels_metadata",
+      params : {
+          by         : field,
+          upper_bound: upper_bound,
+          lower_bound: lower_bound,
+          max_count : max_counts,
+          jwttoken    : this.getSignInData().did
+      },
+      id     : -1
+    }
+    this.sendMessage(nodeId, request.method, request.params);
+  }
+
+  getChannels(nodeId: string, field: Communication.field, upper_bound: number, 
+              lower_bound: number, max_counts: number){
+    let request: Communication.get_channels_request = {
+      jsonrpc: "2.0",
+      method : "get_channels",
+      params : {
+          by         : field,
+          upper_bound: upper_bound,
+          lower_bound: lower_bound,
+          max_count : max_counts,
+          jwttoken    : this.getSignInData().did
+      },
+      id     : -1
+    }
+    this.sendMessage(nodeId, request.method, request.params);
+  }
+
+  getChannelDetail(nodeId: string, id: number){
+    let request: Communication.get_channel_detail_request = {
+      jsonrpc: "2.0",
+      method : "get_channel_detail",
+      params : {
+          id: id,
+          jwttoken    : this.getSignInData().did
+      },
+      id     : -1
+    }
+    this.sendMessage(nodeId, request.method, request.params);
+  }
+
+  getSubscribedChannels(nodeId: string, field: Communication.field, upper_bound: number, 
+                        lower_bound: number, max_counts: number){
+    let request: Communication.get_subscribed_channels_request = {
+      jsonrpc: "2.0",
+      method : "get_subscribed_channels",
+      params : {
+          by         : field,
+          upper_bound: upper_bound,
+          lower_bound: lower_bound,
+          max_count : max_counts,
+          jwttoken   : this.getSignInData().did
+
+      },
+      id     : -1
+    }
+    this.sendMessage(nodeId, request.method, request.params);
+  }
+
+  getPost(nodeId: string, channel_id: number, by: Communication.field, 
+          upper_bound: number, lower_bound: number , max_counts: number){
+    let request: Communication.get_posts_request = {
+      jsonrpc: "2.0",
+      method : "get_posts",
+      params : {
+          channel_id : Number(channel_id),
+          by         : by,
+          upper_bound: upper_bound,
+          lower_bound: lower_bound,
+          max_count : max_counts,
+          jwttoken    : this.getSignInData().did
+      },
+      id     : -1
+    }
+    this.sendMessage(nodeId, request.method, request.params);
+  }
+
+  getComments(nodeId: string, channel_id: number, post_id: number,
+              by:Communication.field, upper_bound: number, lower_bound: number, max_counts:number){
+    let request:Communication.get_comments_request = {
+      jsonrpc: "2.0",
+      method : "get_comments",
+      params : {
+          channel_id : channel_id,
+          post_id    : post_id,
+          by         : by,
+          upper_bound: upper_bound, 
+          lower_bound: lower_bound ,
+          max_count : max_counts,
+          jwttoken    : this.getSignInData().did
+      },
+      id     : -1
+    }
+    this.sendMessage(nodeId, request.method, request.params);
+  }
+
+  getStatistics(nodeId: string){
+    let request:Communication.get_statistics_request = {
+      jsonrpc: "2.0",
+      method : "get_statistics",
+      params : {
+        jwttoken    : this.getSignInData().did
+      },
+      id     : -1
+    }
+    this.sendMessage(nodeId, request.method, request.params);
+  }
+
+  subscribeChannel(nodeId: string, id: number){
+    let request: Communication.subscribe_channel_request = {
+      jsonrpc: "2.0",
+      method : "subscribe_channel",
+      params : {
+          id: id,
+          jwttoken    : this.getSignInData().did
+      },
+      id     : -1
+    }
+    this.sendMessage(nodeId, request.method, request.params);
+  }
+
+  unsubscribeChannel(nodeId: string, id: number){
+    let request: Communication.unsubscribe_channel_request = {
+      jsonrpc: "2.0",
+      method : "unsubscribe_channel",
+      params : {
+          id: id,
+          jwttoken    : this.getSignInData().did
+      },
+      id     : -1
+    }
+    this.sendMessage(nodeId, request.method, request.params);
+  }
+  
+  addNodePublisher(nodeId: string, did: string){
+    let request: Communication.add_node_publisher_request = {
+      jsonrpc: "2.0",
+      method : "add_node_publisher",
+      params : {
+          did: did,
+          jwttoken    : this.getSignInData().did
+      },
+      id     : -1
+    }
+    this.sendMessage(nodeId, request.method, request.params);
+  }
+
+  removeNodePublisher(nodeId: string, did: string){
+    let request: Communication.remove_node_publisher_request = {
+      jsonrpc: "2.0",
+      method : "remove_node_publisher",
+      params : {
+          did: did,
+          jwttoken    : this.getSignInData().did
+      },
+      id     : -1
+    }
+    this.sendMessage(nodeId, request.method, request.params);
+  }
+
+  queryChannelCreationPermission(nodeId: string, ){
+    let request: Communication.query_channel_creation_permission_request = {
+      jsonrpc: "2.0",
+      method : "query_channel_creation_permission",
+      params : {
+        jwttoken   : this.getSignInData().did
+      },
+      id     : -1
+    }
+    this.sendMessage(nodeId, request.method, request.params);
+  }
+
+  enableNotification(nodeId: string){
+    let request: Communication.enable_notification_request = {
+      jsonrpc: "2.0",
+      method : "enable_notification",
+      params : {
+        jwttoken   : this.getSignInData().did
+      },
+      id     : -1
+    }
+    this.sendMessage(nodeId, request.method, request.params);
+  }
+
+  ////handle push
+  handleNewPostNotification(nodeId: string, params: any){
+    let channel_id: number = params.channel_id;
+    let id: number = params.id;
+    let content:any = params.content;
+    let created_at: number = params.created_at;
+
+    if (postMap == null || postMap == undefined)
+      postMap = {};
+    if (postMap[channel_id] == null || postMap[channel_id] == undefined)
+      postMap[channel_id] = {};
+
+    postMap[channel_id][id] = {
+      channel_id : channel_id,
+      id         : id,
+      content    : content,
+      comments   : 0,
+      likes      : 0,
+      created_at : created_at
+    }
+
+
+    
+    this.storeService.set(PersistenceKey.postMap, postMap);
+    
+    unreadMap[channel_id] = unreadMap[channel_id]+1;
+    this.storeService.set(PersistenceKey.unreadMap,unreadMap);
+    
+    
+    eventBus.publish(PublishType.postDataUpdate);
+  }
+
+  handleNewCommentNotification(nodeId: string, params: any){
+    let channel_id: number= params.channel_id;
+    let post_id: number = params.post_id;
+    let id: number = params.id;
+    let comment_id: number = params.comment_id;
+    let content: any = params.content;
+    let user_name: any = params.user_name;
+
+    if (commentsMap == null || commentsMap == undefined)
+      commentsMap = {};
+    if (commentsMap[channel_id] == null || commentsMap[channel_id] == undefined)
+      commentsMap[channel_id] = {};
+    if (commentsMap[channel_id][post_id] == null || commentsMap[channel_id][post_id]==undefined)
+      commentsMap[channel_id][post_id] = {};
+
+    commentsMap[channel_id][post_id][id] = {
+      channel_id : channel_id,
+      post_id    : post_id,
+      id         : id,
+      comment_id : comment_id,
+      user_name  : user_name,
+      content    : content,
+      likes      : 0,
+      created_at : this.getCurrentTimeNum()
+    }
+
+    postMap[channel_id][post_id].comments = postMap[channel_id][post_id].comments+1;
+
+    this.storeService.set(PersistenceKey.postMap,postMap);
+    eventBus.publish(PublishType.postDataUpdate);
+
+    this.storeService.set(PersistenceKey.commentsMap, commentsMap);
+    eventBus.publish(PublishType.commentDataUpdate);
+
+    eventBus.publish(PublishType.updataComment,nodeId,channel_id,post_id,postMap[channel_id][post_id].comments);
+  }
+
+  handleNewLikesNotification(nodeId: string, params: any){
+    let comment_id: number;
+    if (params.indexOf("comment_id") == -1)
+      comment_id = null;
+    if (params.indexOf("comment_id") != -1)
+      comment_id = params.comment_id;
+
+    let channel_id: number = params.channel_id;
+    let post_id: number = params.post_id;
+    let count: number = params.count;
+
+    if (comment_id == null){
+      postMap[channel_id][post_id].likes = postMap[channel_id][post_id].likes+ count;
+      this.storeService.set(PersistenceKey.postMap,postMap);
+      eventBus.publish(PublishType.postDataUpdate);
+    }else {
+      commentsMap[channel_id][post_id][comment_id].likes = commentsMap[channel_id][post_id][comment_id].likes + count;
+
+      this.storeService.set(PersistenceKey.commentsMap, commentsMap);
+      eventBus.publish(PublishType.commentDataUpdate);
+    }
+  }
+
+  handleNotification(nodeId: string, method: string, params: any){
+    switch(method){
+      case FeedsData.MethodType.newPost:
+        this.handleNewPostNotification(nodeId, params);
+        break;
+      case FeedsData.MethodType.newComment:
+        this.handleNewCommentNotification(nodeId,params);
+        break;
+      case FeedsData.MethodType.newLikes:
+        this.handleNewLikesNotification(nodeId,params);
+        break;
+    }
+  }
+
+  ////handle response
+  handleCreateChannelResult(nodeId:string, result: any , request: any){
+    let channelId = result.id;
+    let channelName = request.name;
+    let channelIntro = request.introduction;
+    let owner_name = this.getSignInData().name;
+    let owner_did = this.getSignInData().did;
+
+    let channel:Channels = {
+      nodeId: nodeId,
+      id: channelId,
+      name: channelName,
+      introduction: channelIntro,
+      owner_name: owner_name,
+      owner_did: owner_did,
+      subscribers : 0,
+      last_update : this.getCurrentTimeNum(),
+      last_post: "",
+      isSubscribed:false
+    }
+
+    if (myChannelsMap == null || myChannelsMap == undefined)
+      myChannelsMap = {};
+    myChannelsMap[channelId] = channel;
+    this.storeService.set(PersistenceKey.myChannelsMap,myChannelsMap);
+
+    if (channelsMap == null || channelsMap == undefined)
+      channelsMap = {};
+    channelsMap[channelId] = channel;
+    this.storeService.set(PersistenceKey.channelsMap, channelsMap);
+
+    eventBus.publish(PublishType.createTopicSuccess);
+  }
+
+  handlePublishPostResult(result: any, request: any){
+    let postId = result.id;
+    let channelId = request.channel_id;
+    let content = request.content;
+
+    let post:Post = {
+      channel_id: channelId,
+      id: postId,
+      content: content,
+      comments: 0,
+      likes: 0,
+      created_at: this.getCurrentTimeNum()
+    }
+
+    if(myChannelsMap != null && 
+      myChannelsMap != undefined &&
+      myChannelsMap[channelId] != null &&
+      myChannelsMap[channelId] != undefined)
+
+      myChannelsMap[channelId].last_post = content;
+
+    if (postMap == null || postMap == undefined)
+      postMap = {};
+    if (postMap[channelId] == null || postMap[channelId] == undefined)
+      postMap[channelId]={};
+    
+    postMap[channelId][postId]=post;
+
+    this.storeService.set(PersistenceKey.postMap, postMap);
+    eventBus.publish(PublishType.postEventSuccess)
+  }
+
+  handlePostCommentResult(nodeId:string, result: any, request: any){
+    let id = result.id;
+    let channel_id = request.channel_id;
+    let post_id = request.post_id;
+    let comment_id = request.comment_id;
+    let content = request.content;
+
+
+    let comment: Comment = {
+      channel_id : channel_id,
+      post_id    : post_id,
+      id         : id,
+      user_name  : "me",
+      comment_id : comment_id,
+      content    : content,
+      likes      : 0,
+      created_at : this.getCurrentTimeNum()
+    }
+
+    if (commentsMap == null || commentsMap == undefined)
+      commentsMap = {}
+    if (commentsMap[channel_id] == null || commentsMap[channel_id] == undefined)
+      commentsMap[channel_id] = {}
+    if (commentsMap[channel_id][post_id] == null || commentsMap[channel_id][post_id] == undefined)
+      commentsMap[channel_id][post_id] = {}
+
+    commentsMap[channel_id][post_id][id] = comment;
+    postMap[channel_id][post_id].comments = postMap[channel_id][post_id].comments+1;
+
+    this.storeService.set(PersistenceKey.postMap,postMap);
+    eventBus.publish(PublishType.postDataUpdate);
+
+    this.storeService.set(PersistenceKey.commentsMap, commentsMap);
+    eventBus.publish(PublishType.commentDataUpdate);
+
+    eventBus.publish(PublishType.updataComment,nodeId,channel_id,post_id,postMap[channel_id][post_id].comments);
+  }
+
+  handlePostLikeResult(nodeId:string, request: any){
+    let channel_id: number = request.channel_id;
+    let post_id: number = request.post_id;
+    let comment_id: number = request.comment_id;
+    if (comment_id == null){
+      postMap[channel_id][post_id].likes = postMap[channel_id][post_id].likes+1;
+      this.storeService.set(PersistenceKey.postMap,postMap);
+      eventBus.publish(PublishType.updataPostLike, nodeId, channel_id, post_id , postMap[channel_id][post_id].likes);
+    }else {
+      commentsMap[channel_id][post_id][comment_id].likes = commentsMap[channel_id][post_id][comment_id].likes + 1
+
+      this.storeService.set(PersistenceKey.commentsMap, commentsMap);
+      eventBus.publish(PublishType.commentDataUpdate)
+
+    }
+  }
+
+  handleGetMyChannelsResult(nodeId: string, result :any){
+    for (let index = 0; index < result.length; index++) {
+      let id: number = result[index].id;
+      let name: string = result[index].name;
+      let introduction: string = result[index].introduction;
+      let subscribers: number = result[index].subscribers;
+
+      if (myChannelsMap == null || myChannelsMap == undefined)
+        myChannelsMap = {}
+
+      if (myChannelsMap[id] == undefined){
+        myChannelsMap[id] = {
+          nodeId: nodeId,
+          id: id,
+          name: name,
+          introduction: introduction,
+          owner_name: this.getSignInData().name,
+          owner_did: this.getSignInData().did,
+          subscribers : subscribers,
+          last_update : this.getCurrentTimeNum(),
+          last_post:"",
+          isSubscribed:false
+        }
+      }
+    }
+
+    this.storeService.set(PersistenceKey.myChannelsMap, myChannelsMap);
+    eventBus.publish(PublishType.myChannelsDataUpdate);
+  }
+
+  handleGetMyChannelsMetaDataResult(result: any){
+    for (let index = 0; index < result.length; index++) {
+      let id: number = result[index].id;
+      let subscribers: number = result[index];
+      
+      myChannelsMap[id].subscribers = subscribers;
+    }
+    this.storeService.set(PersistenceKey.myChannelsMap, myChannelsMap);
+    eventBus.publish(PublishType.myChannelsDataUpdate);
+  }
+
+  handleGetChannelsResult(nodeId: string, result: any , request: any){
+    for (let index = 0; index < result.length; index++) {
+      let id = result[index].id;
+
+      if (channelsMap == null || channelsMap == undefined)
+        channelsMap = {};
+
+      if (channelsMap[id] == undefined){
+        channelsMap[id] = {
+          nodeId      : nodeId,
+          id          : id,
+          name        : result[index].name,
+          introduction: result[index].introduction,
+          owner_name  : result[index].owner_name,
+          owner_did   : result[index].owner_did,
+          subscribers : result[index].subscribers,
+          last_update : result[index].last_update,
+          last_post   : "",
+          isSubscribed:false
+        }
+      }else{
+        channelsMap[id].name = result[index].name;
+
+        channelsMap[id].introduction = result[index].introduction;
+        channelsMap[id].owner_name = result[index].owner_name;
+        channelsMap[id].owner_did = result[index].owner_did;
+        channelsMap[id].subscribers = result[index].subscribers;
+        channelsMap[id].last_update = result[index].last_update;
+      }
+    }
+    this.storeService.set(PersistenceKey.channelsMap, channelsMap);
+    this.refreshLocalChannels();
+  }
+
+  handleGetChannelDetailResult(result: any){
+  }
+
+  handleGetSubscribedChannelsResult(nodeId: string, result: any, request: any){
+    if (result == "") {
+      return ;
+    }
+
+    for (let index = 0; index < result.length; index++) {
+      let channelId = result[index].id;
+      let name = result[index].name;
+      let introduction = result[index].introduction;
+      let owner_name = result[index].owner_name;
+      let owner_did = result[index].owner_did;
+      let subscribers = result[index].subscribers;
+      let last_update = result[index].last_update;
+      
+      if (subscribedChannelsMap == null|| subscribedChannelsMap == undefined)
+        subscribedChannelsMap = {};
+
+      if (subscribedChannelsMap[channelId] == undefined){
+        subscribedChannelsMap[channelId] = {
+          nodeId: nodeId,
+          id: channelId,
+          name: name,
+          introduction: introduction,
+          owner_name: owner_name,
+          owner_did: owner_did,
+          subscribers : subscribers,
+          last_update : last_update*1000,
+          last_post:"",
+          isSubscribed:true
+        }
+      }else {
+        subscribedChannelsMap[channelId].nodeId = nodeId;
+        subscribedChannelsMap[channelId].id = channelId;
+        subscribedChannelsMap[channelId].name = name;
+        subscribedChannelsMap[channelId].introduction = introduction;
+        subscribedChannelsMap[channelId].owner_name = owner_name;
+        subscribedChannelsMap[channelId].owner_did = owner_did;
+        subscribedChannelsMap[channelId].subscribers = subscribers;
+        subscribedChannelsMap[channelId].last_update = last_update*1000;
+      }
+    }
+
+    this.storeService.set(PersistenceKey.subscribedChannelsMap,subscribedChannelsMap);
+
+    let list: Channels[] = [];
+    let keys: string[] = Object.keys(subscribedChannelsMap);
+    for (const index in keys) {
+      if (subscribedChannelsMap[keys[index]] == undefined)
+        continue;
+        list.push(subscribedChannelsMap[keys[index]]);
+    }
+    list.sort((a, b) => Number(b.last_update) - Number(a.last_update));
+
+
+
+    if (request.upper_bound == null){
+      this.refreshLocalSubscribedChannels();
+    }else{
+      this.loadMoreLocalSubscribedChannels();
+    }
+  }
+
+  handleGetPostsResult(nodeId: string, result: any, request:any){
+    for (let index = 0; index < result.length; index++) {
+      let channel_id = result[index].channel_id;
+      let id         = result[index].id;
+      let content    = result[index].content;
+      let comments   = result[index].comments;
+      let likes      = result[index].likes;
+      let created_at = result[index].created_at;
+
+      if (postMap == undefined) postMap = {}
+      if (postMap[channel_id] == undefined) postMap[channel_id] = {}
+
+      // if (postMap[channel_id][id] == undefined){
+        postMap[channel_id][id] = {
+          channel_id : channel_id,
+          id         : id,
+          content    : content,
+          comments   : comments,
+          likes      : likes,
+          created_at : created_at*1000
+        // }
+      }
+    }
+
+    this.storeService.set(PersistenceKey.postMap, postMap);
+
+    if (request.upper_bound == null){
+      this.refreshLocalPost(nodeId, request.channel_id);
+    } else{
+      this.loadMoreLocalPost(nodeId, request.channel_id);
+    }
+  }
+
+  handleGetCommentsResult(result: any){
+    for (let index = 0; index < result.length; index++) {
+      let channel_id = result[index].channel_id;
+      let post_id = result[index].post_id;
+      let id         = result[index].id;
+      let comment_id = result[index].comment_id;
+      let content    = result[index].content;
+      let likes = result[index].likes;
+      let created_at = result[index].created_at;
+      let user_name = result[index].user_name;
+
+      let comment:Comment = {
+        channel_id : channel_id,
+        post_id    : post_id,
+        id         : id,
+        comment_id : comment_id,
+        user_name  : user_name,
+        content    : content,
+        likes      : likes,
+        created_at : created_at
+      }
+
+      if (commentsMap == null || commentsMap == undefined)
+        commentsMap = {};
+      if (commentsMap[channel_id] == null || commentsMap[channel_id] == undefined)
+        commentsMap[channel_id] = {}
+      if (commentsMap[channel_id][post_id] == null || commentsMap[channel_id][post_id] == undefined)
+        commentsMap[channel_id][post_id] = {}
+  
+      commentsMap[channel_id][post_id][id] = comment;
+    }
+    this.storeService.set(PersistenceKey.commentsMap, commentsMap);
+  }
+
+  handleGetStatisticsResult(nodeId: string, result: any){
+    let serverStatistics: ServerStatistics = {
+      did               : result.did,
+      connecting_clients: result.connecting_clients
+    }
+
+    if (serverStatisticsMap == null || serverStatisticsMap == undefined)
+      serverStatisticsMap = {};
+    
+    serverStatisticsMap[nodeId] = serverStatistics;
+
+    this.storeService.set(PersistenceKey.serverStatisticsMap, serverStatisticsMap);
+    eventBus.publish(PublishType.serverStatisticsChanged,serverStatisticsMap);
+  }
+
+  handleSubscribeChannelResult(nodeId: string, request: any){
+    channelsMap[request.id].isSubscribed = true;
+    this.storeService.set(PersistenceKey.channelsMap,channelsMap);
+    eventBus.publish(PublishType.subscribeFinish, nodeId,request.id, channelsMap[request.id].name);
+
+    this.refreshSubscribedChannels();
+  }
+
+  handleUnsubscribeChannelResult(nodeId:string, request: any){
+    channelsMap[request.id].isSubscribed = false;
+    this.storeService.set(PersistenceKey.channelsMap,channelsMap);
+
+    subscribedChannelsMap[request.id] = undefined;
+    this.storeService.set(PersistenceKey.subscribedChannelsMap,subscribedChannelsMap);
+
+    eventBus.publish(PublishType.unsubscribeFinish, nodeId,request.id, channelsMap[request.id].name);
+  }
+
+  handleAddNodePublisherResult(){
+
+  }
+
+  handleRemoveNodePublisherResult(){
+
+  }
+
+  handleQueryChannelCreationPermissionResult(nodeId: string, result: any){
+    if (creationPermissionMap == null || creationPermissionMap == undefined)
+      creationPermissionMap = {};
+    creationPermissionMap[nodeId]=result.authorized;
+  }
+
+  handleEnableNotificationResult(){
+    //success
+  }
+
+
+  ////
+  refreshChannelsTest(){
+    return this.getFavoriteFeeds();
+  }
+  loadMoreChannelsTest(list: Channels[]){
+    let num = list.length;
+    for (let index = 0; index < 10; index++) {
+      if (num <108){
+        list.push({
+          nodeId:"",
+          id: num+index,
+          name: String(num+index),
+          introduction: "string",
+          owner_name: "string",
+          owner_did: "string",
+          subscribers : 0,
+          last_update : num+index,
+          last_post:"",
+          isSubscribed:false
+        })
+      }
+    }
+    // list.push()
+  }
   saveCacheServe(name: string, owner: string, introduction: string,
-                did: string, carrierAddress: string){
+    did: string, carrierAddress: string , feedsUrl: string){
     cacheServer = {
       name              : name,
       owner             : owner,
       introduction      : introduction,
       did               : did,
       carrierAddress    : carrierAddress,
-      userId            : "",
-      status            : ConnState.disconnected
+      nodeId            : "",
+      feedsUrl          : feedsUrl
+      // status            : ConnState.disconnected
     }
   }
+
+  insertFakeData(){
+
+    this.storeService.remove(PersistenceKey.myChannelsMap);
+  }
+
+  getChannelFromId(nodeId: string, id: number): Channels{
+    if (channelsMap == null || channelsMap == undefined)
+      return undefined;
+    return channelsMap[id]
+  }
+
+  getPostFromId(nodeId: string, channelId: number, postId: number):Post{
+    return postMap[channelId][postId];
+  }
+
+  queryServerDID(nodeId:string): string{
+    let keys: string[] = Object.keys(serversMap);
+    for (const index in keys) {
+      if (serversMap[keys[index]] == undefined) 
+        continue;
+
+      if(serversMap[keys[index]].nodeId == nodeId){
+        return serversMap[keys[index]].did
+      }
+    }
+
+    return "";
+  }
+
+  getCommentList(nodeId: string, channelId: number, postId: number): Comment[]{
+    if (commentsMap == null || commentsMap == undefined ||
+       commentsMap[channelId] == null || commentsMap[channelId] == undefined){
+         return [];
+    }
+
+    let list: Comment[] =[];
+    let keys: string[] = Object.keys(commentsMap[channelId][postId]);
+    for (const index in keys) {
+      if (commentsMap[channelId][postId][keys[index]] == undefined) 
+        continue;
+      list.push(commentsMap[channelId][postId][keys[index]]);
+    }
+
+    list.sort((a, b) => Number(b.created_at) - Number(a.created_at));
+
+    return list;
+  }
+
+  getSubscribedChannelNumber(): number{
+    let keys: string[] = Object.keys(subscribedChannelsMap);
+    let num: number = 0;
+    for (const index in keys) {
+      if (subscribedChannelsMap[keys[index]] == null || subscribedChannelsMap[keys[index]] == undefined)
+        continue;
+      num++;
+    }
+
+    return num;
+  }
+
+  getOwnChannelNumber(): number{
+    let keys: string[] = Object.keys(myChannelsMap);
+    let num: number = 0;
+    for (const index in keys) {
+      if (myChannelsMap[keys[index]] == null || myChannelsMap[keys[index]] == undefined)
+        continue;
+      num++;
+    }
+
+    return num;
+  }
+
 }
 
 //// Virtual data

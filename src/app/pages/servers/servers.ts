@@ -13,6 +13,8 @@ import { Router } from '@angular/router';
 export class ServersPage implements OnInit {
     private connectStatus = 1;
     private serverList:any;
+    private serversStatus: any;
+    private serverStatisticsMap: any;
 
     constructor(
         private events: Events,
@@ -26,6 +28,13 @@ export class ServersPage implements OnInit {
 
     ngOnInit() {
         this.serverList = this.feedService.getServerList();
+        this.serversStatus = this.feedService.getServersStatus();
+        this.serverStatisticsMap = this.feedService.getServerStatisticsMap();
+        for (let index = 0; index < this.serverList.length; index++) {
+            // const element = ;
+            this.feedService.getStatistics(this.serverList[index].userId);
+        }
+
         this.connectStatus = this.feedService.getConnectionStatus();
 
         this.events.subscribe('feeds:updateServerList', serverList => {
@@ -39,6 +48,18 @@ export class ServersPage implements OnInit {
                 this.connectStatus = connectionStatus;
             });
         });
+
+        this.events.subscribe('feeds:serverConnectionChanged', serversStatus => {
+            this.zone.run(() => {
+                this.serversStatus = serversStatus;
+            });
+        });
+
+        this.events.subscribe('feeds:serverStatisticsChanged', serverStatisticsMap =>{
+            this.zone.run(() => {
+                this.serverStatisticsMap = serverStatisticsMap;
+            });
+        })
     }
 
 

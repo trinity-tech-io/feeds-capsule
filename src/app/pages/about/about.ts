@@ -8,7 +8,7 @@ import { NativeService } from 'src/app/services/NativeService';
 })
 
 export class AboutPage implements OnInit {
-  public version = "0.5";
+  public version = "0.6";
 
   constructor(
     private zone: NgZone,

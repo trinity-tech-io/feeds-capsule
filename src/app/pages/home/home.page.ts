@@ -30,11 +30,12 @@ export class HomePage implements OnInit {
 
   signIn(){
     if (this.fakedata){
-      this.saveData("did:elastos:ifakedid",
-                    "fakename",
-                    "fakeemail",
-                    "faketelephone",
-                    "fakelocation");
+      this.saveData("did:elastos:iaP7GCmtcbf3Kiy7PX8zUVaWTzZQG3Kkka",
+              "fakename",
+              "fakeemail",
+              "faketelephone",
+              "fakelocation");
+      
       this.feedService.updateSignInDataExpTimeTo(this.feedService.getSignInData(),0);
       this.initApp();
       return;
@@ -64,10 +65,7 @@ export class HomePage implements OnInit {
         }
       }
     }, {}, (response: any) => {
-      console.log("Credential access response received", response)
-
       if (response && response.result && response.result.presentation) {
-        console.log("Received a presentation, so we are now signed in.");
         let data = response.result;
 
         // Create a real presentation object from json data
@@ -97,7 +95,6 @@ export class HomePage implements OnInit {
     await loading.present();
 
     const { role, data } = await loading.onDidDismiss();
-    console.log('Loading dismissed!');
   }
   findCredentialValueById(did: string, credentials: DIDPlugin.VerifiableCredential[], fragment: string, defaultValue: string) {
     let matchingCredential = credentials.find((c)=>{

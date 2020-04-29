@@ -28,43 +28,42 @@
   </ion-refresher>
 
   <ion-list>
-    <ion-item  *ngFor="let desc of feedList" >
+    <ion-item  *ngFor="let channel of channelList" >
       <ion-grid  >
         <ion-row>
-          <ion-col size="2" style="margin-top: 10px;" (click)="navigateToDetailPage(desc.nodeId, desc.topic)">
+          <ion-col size="2" style="margin-top: 10px;" (click)="navigateToDetailPage(channel.nodeId, channel.name, channel.id)">
             <ion-icon name="paper" ></ion-icon>
           </ion-col>
-          <ion-col size="6" (click)="navigateToDetailPage(desc.nodeId, desc.topic)">
-            <ion-label style="font-size: 20px;" ><b>{{desc.topic}}</b></ion-label>
+          <ion-col size="6" (click)="navigateToDetailPage(channel.nodeId, channel.name, channel.id)">
+            <ion-label style="font-size: 20px;" ><b>{{channel.name}}</b></ion-label>
 
           </ion-col >
 
           <ion-col size="4" >
-
-          <ion-button style="text-transform: none;" color="primary" (click)="subscribe(desc.nodeId, desc.topic)" *ngIf="desc.subscribeState == 'Subscribe'">{{desc.subscribeState}}</ion-button>
-          <ion-button style="text-transform: none;" color="danger" (click)="unsubscribe(desc.nodeId, desc.topic)" *ngIf="desc.subscribeState != 'Subscribe'">{{desc.subscribeState}}</ion-button>
+          <ion-button style="text-transform: none;" color="primary" (click)="subscribe(channel.nodeId, channel.id)" *ngIf="!channel.isSubscribed">Subscribe </ion-button>
+          <ion-button style="text-transform: none;" color="danger" (click)="unsubscribe(channel.nodeId, channel.name, channel.id)" *ngIf="channel.isSubscribed">Subscribed</ion-button>
           </ion-col>
         </ion-row>
-        <ion-row (click)="navigateToDetailPage(desc.nodeId, desc.topic)">
+        <ion-row (click)="navigateToDetailPage(channel.nodeId, channel.name, channel.id)">
           <ion-col size="2">
           </ion-col>
 
           <ion-col size="6">
-            <ion-label style="font-size: 13px;"><b>@ Publisher’s name</b></ion-label>
+            <ion-label style="font-size: 13px;"><b>{{channel.owner_name}}</b></ion-label>
           </ion-col> 
           <ion-col  size="1" ></ion-col>
           <ion-col  size="3" >
             <ion-row >
               <ion-icon name="person" ></ion-icon>
-              <ion-label >18</ion-label>
+              <ion-label >{{channel.subscribers}}</ion-label>
             </ion-row>
           </ion-col>
         </ion-row>
-          <ion-row (click)="navigateToDetailPage(desc.nodeId, desc.topic)">
+          <ion-row (click)="navigateToDetailPage(channel.nodeId, channel.name, channel.id)">
           <div style="margin-top: 10px;">
             <ion-label>
               <p>
-                {{desc.desc}}
+                {{channel.introduction}}
               </p>
             </ion-label>
           </div>

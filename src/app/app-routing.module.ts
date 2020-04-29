@@ -7,18 +7,18 @@ import { ExplorePageModule } from './pages/favorite/search/search.module';
 import { FeedAboutPageModule } from './pages/favorite/search/about/about.module';
 
 const routes: Routes = [
-  { path: '', redirectTo: 'favorite', pathMatch: 'full' },
+  { path: '', redirectTo: 'home', pathMatch: 'full' },
   { path: 'initialize', loadChildren: './pages/initialize/initialize.module#InitializePageModule' },
 
   { path: 'favorite', loadChildren: () => FavorFeedsPageModule },
-  { path: 'favorite/content/:nodeId/:feedName/:lastSeqno', loadChildren: () => FeedContentPageModule },
+  { path: 'favorite/content/:nodeId/:name/:id/:ownerName', loadChildren: () => FeedContentPageModule },
   { path: 'favorite/search', loadChildren: () =>  ExplorePageModule },
-  { path: 'favorite/search/about/:nodeId/:topic', loadChildren: () => FeedAboutPageModule },
+  { path: 'favorite/search/about/:nodeId/:name/:id', loadChildren: () => FeedAboutPageModule },
 
   /* lazy loading: myfeeds */
   { path: 'menu', redirectTo: 'menu/myfeeds', pathMatch: 'full' },
   { path: 'menu/myfeeds', loadChildren: './pages/myfeeds/myfeeds.module#MyfeedsPageModule' },
-  { path: 'menu/myfeeds/board/:nodeId/:topic', loadChildren: './pages/myfeeds/board/board.module#FeedBoardPageModule' },
+  { path: 'menu/myfeeds/board/:nodeId/:id/:name', loadChildren: './pages/myfeeds/board/board.module#FeedBoardPageModule' },
   { path: 'menu/myfeeds/create', loadChildren: './pages/myfeeds/create/create-feed.module#CreateFeedPageModule' },
   { path: 'menu/myfeeds/newevent/:nodeId/:topic', loadChildren: './pages/myfeeds/board/newevent/newevent.module#NeweventPageModule' },
 
@@ -35,6 +35,7 @@ const routes: Routes = [
   { path: 'menu/myprofile', loadChildren: './pages/myprofile/myprofile.module#MyprofilePageModule' },
   { path: 'scan', loadChildren: './pages/servers/add-server/scan/scan.module#ScanPageModule' },
   { path: 'home', loadChildren: './pages/home/home.module#HomePageModule' },
+  { path: 'detail/:nodeId/:channelId/:postId', loadChildren: './pages/detail/detail.module#DetailPageModule' },
   
 
 ];

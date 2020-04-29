@@ -1,0 +1,28 @@
+<ion-content >
+  <ion-grid>
+    <ion-row>
+      <ion-col size="12">
+        <ion-item>
+          <ion-label position="floating">New Comment</ion-label>
+          <!-- <img *ngIf="eventImaUrl != ''" src="{{eventImgUrl}}"> -->
+          <ion-textarea rows="6" cols="20" [(ngModel)]="newComment" ></ion-textarea>
+        </ion-item>
+      </ion-col>
+      <!-- <ion-col size="2">
+          <ion-button fill="clear" mode="ios" color="dark" (click)="addPic()">
+          <ion-icon name="images"></ion-icon>  
+          </ion-button>
+      </ion-col> -->
+    </ion-row>
+  </ion-grid>
+<div class="ion-padding" >
+  <ion-button
+    expand="block"
+    mode="ios"
+    color="primary"
+    (click)="publishComment()"
+  >
+    <ion-label>Publish comment</ion-label>
+  </ion-button>
+</div>
+ </ion-content> 
