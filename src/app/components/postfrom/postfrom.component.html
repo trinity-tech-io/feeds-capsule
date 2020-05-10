@@ -1,0 +1,33 @@
+<div class="post-from-text-div">
+  <div class="post-from-text">
+    What feed do you want to post from?
+  </div>
+
+  <div *ngFor="let channel of channels">
+    <div class="channel-img-small-div" (click)="selectChannel(channel.nodeId,channel.id)">
+      <img class="channel-img-small" src="../../../../assets/images/component-480-3.png">
+  
+      <div class="channel-detail-div">
+        <div class="channel-detail-text-div">
+          <div style="height: 100%; vertical-align: middle;"> 
+            <ion-label class="channel-title-small">{{channel.name}}</ion-label>
+            <!-- <ion-label class="channel-ts"></ion-label> -->
+            <!-- <ion-icon name="more" mode="ios" style="vertical-align: middle; float: right; "></ion-icon> -->
+          </div>
+          <!-- <div> 
+            <ion-label class="channel-desc-small">@TuumTech</ion-label>
+          </div> -->
+  
+          <div >
+            <img src="../../../../assets/images/bubble2.svg" class="bubble">
+            <ion-label class="channel-follower2">{{channel.subscribers}} Follower</ion-label>
+            
+          </div>
+  
+        </div>
+      </div>
+    </div>
+    <img src="../../../assets/images/rectangle-5389.svg"
+    class="detail-line">
+  <!-- <app-myfeeds></app-myfeeds> -->
+</div>

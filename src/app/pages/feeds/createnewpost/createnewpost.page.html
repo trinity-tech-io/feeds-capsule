@@ -1,0 +1,28 @@
+
+  <div class="channel-img-small-div">
+    <img class="channel-img-small" src="../../../../assets/images/component-480-3.png">
+
+    <div class="channel-detail-div">
+      <div class="channel-detail-text-div">
+        <div style="height: 100%; vertical-align: middle;">
+          <div > 
+            <ion-label class="channel-title-small">{{channelName}}</ion-label>
+            <ion-icon name="more" mode="ios" style="vertical-align: middle; float: right; "></ion-icon>
+          </div>
+          <div >
+            <img src="../../../../assets/images/bubble2.svg" class="bubble">
+            <ion-label class="channel-follower2">{{subscribers}} Follower</ion-label>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <div style="width: 100%; height: 100%;">
+    <ion-textarea rows="10" cols="20" placeholder="Enter any notes here..." [(ngModel)]="newPost"></ion-textarea>
+
+    
+    <ion-button style="float:right" (click)="post()"> post</ion-button>
+  </div>
+

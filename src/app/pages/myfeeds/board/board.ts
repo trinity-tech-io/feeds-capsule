@@ -43,7 +43,7 @@ export class FeedBoardPage implements OnInit {
         this.id = data.id;
         this.title = data.name;
         
-        this.posts = this.feedService.refreshLocalPost("",this.id);
+        // this.posts = this.feedService.refreshLocalPost("",this.id);
       });
 
       this.events.subscribe('feeds:connectionChanged', connectionStatus => {
@@ -57,7 +57,7 @@ export class FeedBoardPage implements OnInit {
             this.native.toast("Post event success");
             this.newEvent = "";
             // this.myEvents = this.feedService.getMyFeedEvents(this.nodeId,this.topic);
-            this.posts = this.feedService.refreshLocalPost("",this.id);
+            // this.posts = this.feedService.refreshLocalPost("",this.id);
 
         });
       });
@@ -110,14 +110,14 @@ export class FeedBoardPage implements OnInit {
     }
 
   doRefresh(event) {
-    this.feedService.refreshLocalPost("",this.id);
+    // this.feedService.refreshLocalPost("",this.id);
     setTimeout(() => {
       event.target.complete();
     }, 2000);
   }
 
   loadData(event) {
-    this.feedService.loadMoreLocalPost("",this.id);
+    // this.feedService.loadMoreLocalPost("",this.id);
     setTimeout(() => {
       event.target.complete();
     }, 500);

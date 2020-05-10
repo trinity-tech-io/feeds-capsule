@@ -1,0 +1,103 @@
+<ion-content>
+  <ion-searchbar placeholder='Search Feeds' (ionInput)="getItems($event)"></ion-searchbar>
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content
+      pullingIcon="arrow-dropdown"
+      pullingText="Pull to refresh"
+      refreshingSpinner="circles"
+      refreshingText="Refreshing...">
+    </ion-refresher-content>
+  </ion-refresher>
+
+  <div *ngFor="let channel of channelList" >
+    <div class="channel-img-small-div" >
+      <img class="channel-img-small" src="../../../../assets/images/component-480-3.png">
+    
+      <div class="channel-detail-div">
+        <div class="channel-detail-text-div">
+          <div style="height: 100%; vertical-align: middle;"> 
+            <ion-label class="channel-title-small">{{channel.name}}</ion-label>
+            <ion-label class="channel-ts"></ion-label>
+            <div class="follow-div" (click)="subscribe(channel.nodeId, channel.id)" *ngIf="!channel.isSubscribed">
+              <div>
+                <div class="follow-text-div"> Follow</div>
+              </div>
+            </div>
+
+            <div class="follow-following-div" (click)="unsubscribe(channel.nodeId, channel.name, channel.id)" *ngIf="channel.isSubscribed">
+              <div>
+                <div class="follow-following-text-div"> Following</div>
+              </div>
+            </div>
+            <!-- <ion-icon name="more" mode="ios" style="vertical-align: middle; float: right; "></ion-icon> -->
+          </div>
+          <!-- <div> 
+            <ion-label class="channel-desc-small">@TuumTech</ion-label>
+          </div> -->
+    
+          <div >
+            <img src="../../../../assets/images/bubble2.svg" class="bubble">
+            <ion-label class="channel-follower2">{{channel.subscribers}} follower</ion-label>
+            
+          </div>
+    
+        </div>
+      </div>
+    </div>
+    <img src="../../../assets/images/rectangle-5389.svg"
+    class="detail-line">
+  </div>
+
+  
+  <!-- <ion-list>
+    <ion-item  *ngFor="let channel of channelList" >
+      <ion-grid  >
+        <ion-row>
+          <ion-col size="2" style="margin-top: 10px;" (click)="navigateToDetailPage(channel.nodeId, channel.name, channel.id)">
+            <ion-icon name="paper" ></ion-icon>
+          </ion-col>
+          <ion-col size="6" (click)="navigateToDetailPage(channel.nodeId, channel.name, channel.id)">
+            <ion-label style="font-size: 20px;" ><b>{{channel.name}}</b></ion-label>
+
+          </ion-col >
+
+          <ion-col size="4" >
+          <ion-button style="text-transform: none;" color="primary" (click)="subscribe(channel.nodeId, channel.id)" *ngIf="!channel.isSubscribed">Subscribe </ion-button>
+          <ion-button style="text-transform: none;" color="danger" (click)="unsubscribe(channel.nodeId, channel.name, channel.id)" *ngIf="channel.isSubscribed">Subscribed</ion-button>
+          </ion-col>
+        </ion-row>
+        <ion-row (click)="navigateToDetailPage(channel.nodeId, channel.name, channel.id)">
+          <ion-col size="2">
+          </ion-col>
+
+          <ion-col size="6">
+            <ion-label style="font-size: 13px;"><b>{{channel.owner_name}}</b></ion-label>
+          </ion-col> 
+          <ion-col  size="1" ></ion-col>
+          <ion-col  size="3" >
+            <ion-row >
+              <ion-icon name="person" ></ion-icon>
+              <ion-label >{{channel.subscribers}}</ion-label>
+            </ion-row>
+          </ion-col>
+        </ion-row>
+          <ion-row (click)="navigateToDetailPage(channel.nodeId, channel.name, channel.id)">
+          <div style="margin-top: 10px;">
+            <ion-label>
+              <p>
+                {{channel.introduction}}
+              </p>
+            </ion-label>
+          </div>
+        </ion-row>
+        
+      </ion-grid>
+    </ion-item>
+    </ion-list>
+    <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event)">
+      <ion-infinite-scroll-content
+        loadingSpinner="bubbles"
+        loadingText="Loading more data...">
+      </ion-infinite-scroll-content>
+    </ion-infinite-scroll> -->
+</ion-content>

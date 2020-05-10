@@ -34,7 +34,7 @@ export class FeedContentPage implements OnInit {
       this.id = data.id;
       this.ownerName = data.ownerName;
 
-      this.feedEvents = this.feedService.refreshLocalPost(this.nodeId,this.id);
+      // this.feedEvents = this.feedService.refreshLocalPost(this.nodeId,this.id);
     });
 
     this.events.subscribe('feeds:eventListChanged', (eventList) => {
@@ -90,14 +90,14 @@ export class FeedContentPage implements OnInit {
   }
 
   doRefresh(event) {
-    this.feedService.refreshPost(this.nodeId,this.id);
+    // this.feedService.refreshPost(this.nodeId,this.id);
     setTimeout(() => {
       event.target.complete();
     }, 2000);
   }
 
   loadData(event) {
-    this.feedService.loadMorePost(this.nodeId,this.id);
+    // this.feedService.loadMorePost(this.nodeId,this.id);
     setTimeout(() => {
       event.target.complete();
     }, 500);

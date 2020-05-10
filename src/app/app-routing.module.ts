@@ -6,37 +6,58 @@ import { FeedContentPageModule } from './pages/favorite/content/content.module';
 import { ExplorePageModule } from './pages/favorite/search/search.module';
 import { FeedAboutPageModule } from './pages/favorite/search/about/about.module';
 
+// const routes: Routes = [
+//   { path: '', redirectTo: 'home', pathMatch: 'full' },
+//   { path: 'initialize', loadChildren: './pages/initialize/initialize.module#InitializePageModule' },
+
+//   { path: 'favorite', loadChildren: () => FavorFeedsPageModule },
+//   { path: 'favorite/content/:nodeId/:name/:id/:ownerName', loadChildren: () => FeedContentPageModule },
+//   { path: 'favorite/search', loadChildren: () =>  ExplorePageModule },
+//   { path: 'favorite/search/about/:nodeId/:name/:id', loadChildren: () => FeedAboutPageModule },
+
+//   /* lazy loading: myfeeds */
+//   { path: 'menu', redirectTo: 'menu/myfeeds', pathMatch: 'full' },
+//   { path: 'menu/myfeeds', loadChildren: './pages/myfeeds/myfeeds.module#MyfeedsPageModule' },
+//   { path: 'menu/myfeeds/board/:nodeId/:id/:name', loadChildren: './pages/myfeeds/board/board.module#FeedBoardPageModule' },
+//   { path: 'menu/myfeeds/create', loadChildren: './pages/myfeeds/create/create-feed.module#CreateFeedPageModule' },
+//   { path: 'menu/myfeeds/newevent/:nodeId/:topic', loadChildren: './pages/myfeeds/board/newevent/newevent.module#NeweventPageModule' },
+
+//   /* lazy loading: carrier servers */
+  // { path: 'menu/servers', loadChildren: './pages/servers/servers.module#ServersPageModule' },
+  // { path: 'menu/servers/server-info/:did', loadChildren: './pages/servers/server-info/server-info.module#ServerInfoPageModule'},
+  // { path: 'menu/servers/add-server/:address', loadChildren: './pages/servers/add-server/add-server.module#AddServerPageModule'},
+  // { path: 'menu/servers/add-server/scan', loadChildren: './pages/servers/add-server/scan/scan.module#ScanPageModule' },
+
+//   /* lazy loading: about this dApp */
+//   { path: 'menu/about', loadChildren: './pages/about/about.module#AboutPageModule' },
+
+//   /* lazy loading: myprofile */
+//   { path: 'menu/myprofile', loadChildren: './pages/myprofile/myprofile.module#MyprofilePageModule' },
+//   { path: 'scan', loadChildren: './pages/servers/add-server/scan/scan.module#ScanPageModule' },
+//   { path: 'home', loadChildren: './pages/home/home.module#HomePageModule' },
+//   { path: 'detail/:nodeId/:channelId/:postId', loadChildren: './pages/detail/detail.module#DetailPageModule' },
+  
+
+// ];
+
 const routes: Routes = [
-  { path: '', redirectTo: 'home', pathMatch: 'full' },
-  { path: 'initialize', loadChildren: './pages/initialize/initialize.module#InitializePageModule' },
+  { path: '', loadChildren: './pages/feeds/feeds.module#FeedsPageModule' },
+  { path: 'feeds', loadChildren: './pages/feeds/feeds.module#FeedsPageModule' },
+  { path: 'splashscreen', loadChildren: './pages/splashscreen/splashscreen.module#SplashscreenPageModule' },
 
-  { path: 'favorite', loadChildren: () => FavorFeedsPageModule },
-  { path: 'favorite/content/:nodeId/:name/:id/:ownerName', loadChildren: () => FeedContentPageModule },
-  { path: 'favorite/search', loadChildren: () =>  ExplorePageModule },
-  { path: 'favorite/search/about/:nodeId/:name/:id', loadChildren: () => FeedAboutPageModule },
-
-  /* lazy loading: myfeeds */
-  { path: 'menu', redirectTo: 'menu/myfeeds', pathMatch: 'full' },
-  { path: 'menu/myfeeds', loadChildren: './pages/myfeeds/myfeeds.module#MyfeedsPageModule' },
-  { path: 'menu/myfeeds/board/:nodeId/:id/:name', loadChildren: './pages/myfeeds/board/board.module#FeedBoardPageModule' },
-  { path: 'menu/myfeeds/create', loadChildren: './pages/myfeeds/create/create-feed.module#CreateFeedPageModule' },
-  { path: 'menu/myfeeds/newevent/:nodeId/:topic', loadChildren: './pages/myfeeds/board/newevent/newevent.module#NeweventPageModule' },
-
-  /* lazy loading: carrier servers */
   { path: 'menu/servers', loadChildren: './pages/servers/servers.module#ServersPageModule' },
   { path: 'menu/servers/server-info/:did', loadChildren: './pages/servers/server-info/server-info.module#ServerInfoPageModule'},
   { path: 'menu/servers/add-server/:address', loadChildren: './pages/servers/add-server/add-server.module#AddServerPageModule'},
   { path: 'menu/servers/add-server/scan', loadChildren: './pages/servers/add-server/scan/scan.module#ScanPageModule' },
 
-  /* lazy loading: about this dApp */
-  { path: 'menu/about', loadChildren: './pages/about/about.module#AboutPageModule' },
+  { path: 'signin', loadChildren: './pages/signin/signin.module#SigninPageModule' },
 
-  /* lazy loading: myprofile */
-  { path: 'menu/myprofile', loadChildren: './pages/myprofile/myprofile.module#MyprofilePageModule' },
-  { path: 'scan', loadChildren: './pages/servers/add-server/scan/scan.module#ScanPageModule' },
-  { path: 'home', loadChildren: './pages/home/home.module#HomePageModule' },
-  { path: 'detail/:nodeId/:channelId/:postId', loadChildren: './pages/detail/detail.module#DetailPageModule' },
-  
+  { path: 'menu/myfeeds/create', loadChildren: './pages/myfeeds/create/create-feed.module#CreateFeedPageModule' },
+  { path: 'createnewfeed', loadChildren: './pages/feeds/createnewfeed/createnewfeed.module#CreatenewfeedPageModule' },
+  { path: 'createnewpost/:nodeId/:channelId', loadChildren: './pages/feeds/createnewpost/createnewpost.module#CreatenewpostPageModule' },
+
+  // { path: 'feeds/tabs/channels', loadChildren: './home/channels/channels.module#ChannelsPageModule' },
+  // /feeds/tabs/channels
 
 ];
 

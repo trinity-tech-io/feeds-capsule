@@ -12,16 +12,26 @@ let subscribedChannelsMap:{[channelId: number]: Channels};
 let channelsMap:{[channelId: number]: Channels} ;
 let myChannelsMap:{[channelId: number]: Channels};
 let unreadMap:{[channelId: number]: number};
-let postMap:{[channelId: number]: ChannelPost};
+// let postMap:{[channelId: number]: ChannelPost};
+let postMap:{[postId: string]: Post}; //now postId = nodeId+channelId+postId
 let serverStatisticsMap:{[nodeId: string]: ServerStatistics};
 let commentsMap:{[channelId: number]: ChannelPostComment};
 let serversStatus:{[nodeId: string]: ServerStatus};
 let creationPermissionMap:{[nodeId: string]: boolean};
+let likeMap:{[nodechannelpostId:string]:Post};
+let lastPostUpdateMap:{[nodeChannelId:string]: PostUpdateTime};
 
 let localSubscribedList:Channels[] = new Array<Channels>();
 let localMyChannelList:Channels[] = new Array<Channels>();
 let localChannelsList:Channels[] = new Array<Channels>();
 let localPostList:Post[] = new Array<Post>();
+
+
+type PostUpdateTime = {
+  nodeId: string,
+  channelId: number,
+  time:number;
+}
 
 type ServerStatus = {
   nodeId: string,
@@ -64,6 +74,7 @@ type ChannelPost = {
 }
 
 type Post = {
+    nodeId     : string,
     channel_id : number,
     id         : number,
     content    : any,
@@ -150,8 +161,10 @@ enum PublishType{
   updataPostLike = "feeds:updataPostLike",
   updataComment = "feeds:updataComment",
 
-  updataCommentLike = "feeds:updataCommentLike"
-  
+  updataCommentLike = "feeds:updataCommentLike",
+  updatePost = "feeds:updatePost",
+
+  updateLikeList = "feeds:updateLikeList"
 }
 
 enum PersistenceKey{
@@ -185,10 +198,12 @@ enum PersistenceKey{
   myChannelsMap = "myChannelsMap",
   unreadMap = "unreadMap",
   postMap = "postMap",
+  lastPostUpdateMap = "lastPostUpdateMap",
   commentsMap = "commentsMap",
   serverStatisticsMap = "serverStatisticsMap",
   serversStatus = "serversStatus",
-  subscribeStatusMap = "subscribeStatusMap"
+  subscribeStatusMap = "subscribeStatusMap",
+  likeMap = "likeMap"
 }
 
 let expDay = 10;
@@ -294,9 +309,12 @@ export class FeedService {
 
       myEventMap = virtualMyEventMap;
 
+      postMap = {};
+      lastPostUpdateMap = {};
       return;
     }
 
+    
     this.initData();
 
     this.initCallback();
@@ -311,9 +329,12 @@ export class FeedService {
     }
     
     postMap = this.storeService.get(PersistenceKey.postMap);
-    if(postMap == null || postMap == undefined){
+    if(postMap == null || postMap == undefined)
       postMap = {}
-    }
+
+    lastPostUpdateMap = this.storeService.get(PersistenceKey.lastPostUpdateMap);
+    if(lastPostUpdateMap == null || lastPostUpdateMap == undefined)
+      lastPostUpdateMap = {}
 
     myChannelsMap = this.storeService.get(PersistenceKey.myChannelsMap);
     if ( myChannelsMap == null || myChannelsMap ==undefined ){
@@ -384,6 +405,11 @@ export class FeedService {
     myEventMap = this.storeService.get(PersistenceKey.myEventMap);
     if (myEventMap == null || myEventMap == undefined){
       myEventMap = {};
+    }
+
+    likeMap = this.storeService.get(PersistenceKey.likeMap);
+    if (likeMap == null || likeMap == undefined){
+      likeMap = {};
     }
   }
 
@@ -595,7 +621,7 @@ export class FeedService {
 
   sendMessage(nodeId: string, method: string, params: any){
     if(!this.checkServerConnection(nodeId)){
-      this.native.toast("server node offline");
+      // this.native.toast("server node offline");
       return;
     }
 
@@ -703,7 +729,20 @@ export class FeedService {
       if (friendStatus == ConnState.connected){
         this.getStatistics(friendId);
         this.enableNotification(friendId);
-        this.getCreationServerMap();
+        // this.getCreationServerMap();
+
+        this.queryChannelCreationPermission(friendId);
+
+        let list = this.getSubscribedChannelsFromNodeId(friendId);
+        for (let index = 0; index < list.length; index++) {
+          let channelId = list[index].id;
+          let nodeChannelId = friendId+channelId;
+          let lastPostTime = null;
+          if (lastPostUpdateMap[nodeChannelId] != null && lastPostUpdateMap[nodeChannelId] != undefined)
+            lastPostTime = lastPostUpdateMap[nodeChannelId].time;
+
+          this.updatePost(friendId,channelId,lastPostTime);
+        }
       }
 
       this.storeService.set(PersistenceKey.serversStatus,serversStatus);
@@ -811,7 +850,7 @@ export class FeedService {
         this.handleCreateChannelResult(nodeId, result, request);
         break;
       case FeedsData.MethodType.publish_post:
-        this.handlePublishPostResult(result, request);
+        this.handlePublishPostResult(nodeId, result, request);
         break;
       case FeedsData.MethodType.post_comment:
         this.handlePostCommentResult(nodeId, result, request);
@@ -1620,100 +1659,100 @@ export class FeedService {
     eventBus.publish(PublishType.loadMoreMyChannel);
   }
 
-  refreshPost(nodeId: string, channelId: number){
-    this.getPost(nodeId,channelId,Communication.field.last_update,null,null,10);
+  // refreshPost(nodeId: string, channelId: number){
+  //   this.getPost(nodeId,channelId,Communication.field.last_update,null,null,10);
 
-    if (serversStatus[nodeId].status == ConnState.disconnected)
-      this.refreshLocalPost(nodeId, channelId);
-  }
+  //   if (serversStatus[nodeId].status == ConnState.disconnected)
+  //     this.refreshLocalPost(nodeId, channelId);
+  // }
 
-  refreshLocalPost(nodeId:string, channelId: number):Post[]{
-    if (postMap == null || postMap == undefined
-      || postMap[channelId] == null ||postMap[channelId] == undefined){
-      eventBus.publish(PublishType.refreshPost,[]);
-      return [];
-    }
+  // refreshLocalPost(nodeId:string, channelId: number):Post[]{
+  //   if (postMap == null || postMap == undefined
+  //     || postMap[channelId] == null ||postMap[channelId] == undefined){
+  //     eventBus.publish(PublishType.refreshPost,[]);
+  //     return [];
+  //   }
 
-    let list: Post[] = [];
-    let keys: string[] = Object.keys(postMap[channelId]);
-    localPostList = [];
-    for (const index in keys) {
-      if (postMap[channelId][keys[index]] == null || postMap[channelId][keys[index]] == undefined)
-        continue;
-        list.push(postMap[channelId][keys[index]]);
-    }
+  //   let list: Post[] = [];
+  //   let keys: string[] = Object.keys(postMap[channelId]);
+  //   localPostList = [];
+  //   for (const index in keys) {
+  //     if (postMap[channelId][keys[index]] == null || postMap[channelId][keys[index]] == undefined)
+  //       continue;
+  //       list.push(postMap[channelId][keys[index]]);
+  //   }
     
-    list.sort((a, b) => Number(b.created_at) - Number(a.created_at));
+  //   list.sort((a, b) => Number(b.created_at) - Number(a.created_at));
 
-    localPostList.slice(0,localPostList.length);
-    let end: number;
-    if (list.length>10){
-      end = 10;
-    }else{
-      end = list.length;
-    }
-    for (let index = 0; index < end; index++)
-      localPostList.push(list[index]);
+  //   localPostList.slice(0,localPostList.length);
+  //   let end: number;
+  //   if (list.length>10){
+  //     end = 10;
+  //   }else{
+  //     end = list.length;
+  //   }
+  //   for (let index = 0; index < end; index++)
+  //     localPostList.push(list[index]);
 
-    if (myChannelsMap == null || myChannelsMap == undefined)
-      myChannelsMap = {};
-    if (myChannelsMap[channelId] != null && 
-        myChannelsMap[channelId] != undefined &&
-        myChannelsMap[channelId].last_post != localPostList[0].content){
-      myChannelsMap[channelId].last_post = localPostList[0].content;
-      this.storeService.set(PersistenceKey.myChannelsMap,myChannelsMap);
-    }
+  //   if (myChannelsMap == null || myChannelsMap == undefined)
+  //     myChannelsMap = {};
+  //   if (myChannelsMap[channelId] != null && 
+  //       myChannelsMap[channelId] != undefined &&
+  //       myChannelsMap[channelId].last_post != localPostList[0].content){
+  //     myChannelsMap[channelId].last_post = localPostList[0].content;
+  //     this.storeService.set(PersistenceKey.myChannelsMap,myChannelsMap);
+  //   }
     
       
 
-    if (subscribedChannelsMap == null || subscribedChannelsMap == undefined)
-      subscribedChannelsMap = {};
-    if (subscribedChannelsMap[channelId]!= null && 
-        subscribedChannelsMap[channelId] != undefined &&
-        subscribedChannelsMap[channelId].last_post != localPostList[0].content){
-      subscribedChannelsMap[channelId].last_post = localPostList[0].content;
-      this.storeService.set(PersistenceKey.subscribedChannelsMap, subscribedChannelsMap);
-    }
+  //   if (subscribedChannelsMap == null || subscribedChannelsMap == undefined)
+  //     subscribedChannelsMap = {};
+  //   if (subscribedChannelsMap[channelId]!= null && 
+  //       subscribedChannelsMap[channelId] != undefined &&
+  //       subscribedChannelsMap[channelId].last_post != localPostList[0].content){
+  //     subscribedChannelsMap[channelId].last_post = localPostList[0].content;
+  //     this.storeService.set(PersistenceKey.subscribedChannelsMap, subscribedChannelsMap);
+  //   }
 
-    eventBus.publish(PublishType.refreshPost,localPostList);
-    return localPostList;
-  }
+  //   eventBus.publish(PublishType.refreshPost,localPostList);
+  //   return localPostList;
+  // }
 
-  loadMorePost(nodeId:string, channelId:number){
-    this.getPost(nodeId,channelId,Communication.field.last_update,localPostList[localPostList.length-1].created_at,null,10);
+  // loadMorePost(nodeId:string, channelId:number){
+  //   this.getPost(nodeId,channelId,Communication.field.last_update,localPostList[localPostList.length-1].created_at,null,10);
 
-    if (serversStatus[nodeId].status == ConnState.disconnected)
-      this.loadMoreLocalPost(nodeId, channelId);
-  }
+  //   if (serversStatus[nodeId].status == ConnState.disconnected)
+  //     this.loadMoreLocalPost(nodeId, channelId);
+  // }
 
-  loadMoreLocalPost(nodeId:string, channelId: number){
-    if (postMap == null || postMap == undefined){
-      eventBus.publish(PublishType.loadMorePost,[]);
-      return;
-    }
+  // loadMoreLocalPost(nodeId:string, channelId: number){
+  //   if (postMap == null || postMap == undefined){
+  //     eventBus.publish(PublishType.loadMorePost,[]);
+  //     return;
+  //   }
 
-    let list: Post[] = [];
-    let keys: string[] = Object.keys(postMap[channelId]);
-    for (const index in keys) {
-      if (postMap[channelId][keys[index]] == null || postMap[channelId][keys[index]] == undefined)
-        continue;
-        list.push(postMap[channelId][keys[index]]);
-    }
+  //   let list: Post[] = [];
+  //   let keys: string[] = Object.keys(postMap[channelId]);
+  //   for (const index in keys) {
+  //     if (postMap[channelId][keys[index]] == null || postMap[channelId][keys[index]] == undefined)
+  //       continue;
+  //       list.push(postMap[channelId][keys[index]]);
+  //   }
     
-    list.sort((a, b) => Number(b.created_at) - Number(a.created_at));
+  //   list.sort((a, b) => Number(b.created_at) - Number(a.created_at));
 
-    let start = localPostList.length;
-    let end: number;
-    if (list.length>start+10){
-      end = start+10;
-    }else{
-      end = list.length;
-    }
-    for (let index = start; index < end; index++)
-      localPostList.push(list[index]);
+  //   let start = localPostList.length;
+  //   let end: number;
+  //   if (list.length>start+10){
+  //     end = start+10;
+  //   }else{
+  //     end = list.length;
+  //   }
+  //   for (let index = start; index < end; index++)
+  //     localPostList.push(list[index]);
 
-    eventBus.publish(PublishType.loadMorePost,localPostList);
-  }
+  //   eventBus.publish(PublishType.loadMorePost,localPostList);
+  // }
 
   //// new request
   createChannel(nodeId: string, name: string, introduction: string){
@@ -1959,7 +1998,7 @@ export class FeedService {
     this.sendMessage(nodeId, request.method, request.params);
   }
 
-  queryChannelCreationPermission(nodeId: string, ){
+  queryChannelCreationPermission(nodeId: string){
     let request: Communication.query_channel_creation_permission_request = {
       jsonrpc: "2.0",
       method : "query_channel_creation_permission",
@@ -1992,10 +2031,10 @@ export class FeedService {
 
     if (postMap == null || postMap == undefined)
       postMap = {};
-    if (postMap[channel_id] == null || postMap[channel_id] == undefined)
-      postMap[channel_id] = {};
 
-    postMap[channel_id][id] = {
+    let postId = this.getPostId(nodeId, channel_id, id);
+    postMap[postId] = {
+      nodeId     : nodeId,
       channel_id : channel_id,
       id         : id,
       content    : content,
@@ -2004,13 +2043,19 @@ export class FeedService {
       created_at : created_at
     }
 
-
+    let nodeChannelId = nodeId+channel_id;
+    lastPostUpdateMap[nodeChannelId] = {
+      nodeId:nodeId,
+      channelId:channel_id,
+      time:created_at
+    }
     
+    this.storeService.set(PersistenceKey.lastPostUpdateMap,lastPostUpdateMap);
+
     this.storeService.set(PersistenceKey.postMap, postMap);
     
     unreadMap[channel_id] = unreadMap[channel_id]+1;
     this.storeService.set(PersistenceKey.unreadMap,unreadMap);
-    
     
     eventBus.publish(PublishType.postDataUpdate);
   }
@@ -2041,7 +2086,8 @@ export class FeedService {
       created_at : this.getCurrentTimeNum()
     }
 
-    postMap[channel_id][post_id].comments = postMap[channel_id][post_id].comments+1;
+    let postId = this.getPostId(nodeId, channel_id, post_id);
+    postMap[postId].comments = postMap[postId].comments+1;
 
     this.storeService.set(PersistenceKey.postMap,postMap);
     eventBus.publish(PublishType.postDataUpdate);
@@ -2049,7 +2095,7 @@ export class FeedService {
     this.storeService.set(PersistenceKey.commentsMap, commentsMap);
     eventBus.publish(PublishType.commentDataUpdate);
 
-    eventBus.publish(PublishType.updataComment,nodeId,channel_id,post_id,postMap[channel_id][post_id].comments);
+    eventBus.publish(PublishType.updataComment,nodeId,channel_id,post_id,postMap[postId].comments);
   }
 
   handleNewLikesNotification(nodeId: string, params: any){
@@ -2064,7 +2110,8 @@ export class FeedService {
     let count: number = params.count;
 
     if (comment_id == null){
-      postMap[channel_id][post_id].likes = postMap[channel_id][post_id].likes+ count;
+      let postId = this.getPostId(nodeId,channel_id,post_id);
+      postMap[postId].likes = postMap[postId].likes+ count;
       this.storeService.set(PersistenceKey.postMap,postMap);
       eventBus.publish(PublishType.postDataUpdate);
     }else {
@@ -2123,12 +2170,13 @@ export class FeedService {
     eventBus.publish(PublishType.createTopicSuccess);
   }
 
-  handlePublishPostResult(result: any, request: any){
+  handlePublishPostResult(nodeId: string, result: any, request: any){
     let postId = result.id;
     let channelId = request.channel_id;
     let content = request.content;
 
     let post:Post = {
+      nodeId    : nodeId,
       channel_id: channelId,
       id: postId,
       content: content,
@@ -2141,15 +2189,13 @@ export class FeedService {
       myChannelsMap != undefined &&
       myChannelsMap[channelId] != null &&
       myChannelsMap[channelId] != undefined)
-
       myChannelsMap[channelId].last_post = content;
 
+    let mPostId = this.getPostId(nodeId, channelId, postId);
     if (postMap == null || postMap == undefined)
       postMap = {};
-    if (postMap[channelId] == null || postMap[channelId] == undefined)
-      postMap[channelId]={};
     
-    postMap[channelId][postId]=post;
+    postMap[mPostId]=post;
 
     this.storeService.set(PersistenceKey.postMap, postMap);
     eventBus.publish(PublishType.postEventSuccess)
@@ -2182,7 +2228,9 @@ export class FeedService {
       commentsMap[channel_id][post_id] = {}
 
     commentsMap[channel_id][post_id][id] = comment;
-    postMap[channel_id][post_id].comments = postMap[channel_id][post_id].comments+1;
+
+    let mPostId = this.getPostId(nodeId, channel_id, post_id);
+    postMap[mPostId].comments = postMap[mPostId].comments+1;
 
     this.storeService.set(PersistenceKey.postMap,postMap);
     eventBus.publish(PublishType.postDataUpdate);
@@ -2190,17 +2238,24 @@ export class FeedService {
     this.storeService.set(PersistenceKey.commentsMap, commentsMap);
     eventBus.publish(PublishType.commentDataUpdate);
 
-    eventBus.publish(PublishType.updataComment,nodeId,channel_id,post_id,postMap[channel_id][post_id].comments);
+    eventBus.publish(PublishType.updataComment,nodeId,channel_id,post_id,postMap[mPostId].comments);
   }
 
   handlePostLikeResult(nodeId:string, request: any){
     let channel_id: number = request.channel_id;
     let post_id: number = request.post_id;
     let comment_id: number = request.comment_id;
+
+    let mPostId = this.getPostId(nodeId, channel_id, post_id);
     if (comment_id == null){
-      postMap[channel_id][post_id].likes = postMap[channel_id][post_id].likes+1;
+      postMap[mPostId].likes = postMap[mPostId].likes+1;
       this.storeService.set(PersistenceKey.postMap,postMap);
-      eventBus.publish(PublishType.updataPostLike, nodeId, channel_id, post_id , postMap[channel_id][post_id].likes);
+
+      likeMap[mPostId] = postMap[mPostId];
+      this.storeService.set(PersistenceKey.likeMap, likeMap);
+
+      eventBus.publish(PublishType.updateLikeList, this.getLikeList());
+      eventBus.publish(PublishType.updataPostLike, nodeId, channel_id, post_id , postMap[mPostId].likes);
     }else {
       commentsMap[channel_id][post_id][comment_id].likes = commentsMap[channel_id][post_id][comment_id].likes + 1
 
@@ -2360,27 +2415,36 @@ export class FeedService {
       let created_at = result[index].created_at;
 
       if (postMap == undefined) postMap = {}
-      if (postMap[channel_id] == undefined) postMap[channel_id] = {}
 
-      // if (postMap[channel_id][id] == undefined){
-        postMap[channel_id][id] = {
-          channel_id : channel_id,
-          id         : id,
-          content    : content,
-          comments   : comments,
-          likes      : likes,
-          created_at : created_at*1000
-        // }
+      let mPostId = this.getPostId(nodeId, channel_id, id);
+      postMap[mPostId] = {
+        nodeId     : nodeId,
+        channel_id : channel_id,
+        id         : id,
+        content    : content,
+        comments   : comments,
+        likes      : likes,
+        created_at : created_at*1000
+      }
+
+      let nodeChannelId = nodeId+channel_id
+      lastPostUpdateMap[nodeChannelId] = {
+        nodeId: nodeId,
+        channelId: channel_id,
+        time:created_at
       }
     }
 
+    this.storeService.set(PersistenceKey.lastPostUpdateMap, lastPostUpdateMap);
     this.storeService.set(PersistenceKey.postMap, postMap);
 
-    if (request.upper_bound == null){
-      this.refreshLocalPost(nodeId, request.channel_id);
-    } else{
-      this.loadMoreLocalPost(nodeId, request.channel_id);
-    }
+    eventBus.publish(PublishType.updatePost,this.getPostList());
+
+    // if (request.upper_bound == null){
+    //   this.refreshLocalPost(nodeId, request.channel_id);
+    // } else{
+    //   this.loadMoreLocalPost(nodeId, request.channel_id);
+    // }
   }
 
   handleGetCommentsResult(result: any){
@@ -2438,6 +2502,9 @@ export class FeedService {
     eventBus.publish(PublishType.subscribeFinish, nodeId,request.id, channelsMap[request.id].name);
 
     this.refreshSubscribedChannels();
+
+    let nodeChannelId = nodeId+request.id;
+    this.updatePost(nodeId,request.id,lastPostUpdateMap[nodeChannelId].time);
   }
 
   handleUnsubscribeChannelResult(nodeId:string, request: any){
@@ -2447,6 +2514,8 @@ export class FeedService {
     subscribedChannelsMap[request.id] = undefined;
     this.storeService.set(PersistenceKey.subscribedChannelsMap,subscribedChannelsMap);
 
+
+    this.refreshLocalSubscribedChannels();
     eventBus.publish(PublishType.unsubscribeFinish, nodeId,request.id, channelsMap[request.id].name);
   }
 
@@ -2519,7 +2588,8 @@ export class FeedService {
   }
 
   getPostFromId(nodeId: string, channelId: number, postId: number):Post{
-    return postMap[channelId][postId];
+    let mPostId = this.getPostId(nodeId, channelId, postId);
+    return postMap[mPostId];
   }
 
   queryServerDID(nodeId:string): string{
@@ -2579,7 +2649,77 @@ export class FeedService {
     return num;
   }
 
+  getPostList(): Post[]{
+    let list: Post[] = [];
+    let keys: string[] = Object.keys(postMap);
+    localPostList = [];
+    for (const index in keys) {
+      if (postMap[keys[index]] == null || postMap[keys[index]] == undefined)
+        continue;
+        list.push(postMap[keys[index]]);
+    }
+    
+    list.sort((a, b) => Number(b.created_at) - Number(a.created_at));
+    return list;
+  }
+
+  getPostId(nodeId: string, channelId: number, postId: number): string{
+    return nodeId+channelId+postId;
+  }
+
+  getPostListFromChannel(nodeId: string, channelId: number){
+    let list: Post[] = [];
+    let keys: string[] = Object.keys(postMap);
+    localPostList = [];
+    for (const index in keys) {
+      if (postMap[keys[index]] == null || postMap[keys[index]] == undefined)
+        continue;
+
+      if (postMap[keys[index]].nodeId == nodeId && postMap[keys[index]].channel_id == channelId)
+        list.push(postMap[keys[index]]);
+    }
+    
+    list.sort((a, b) => Number(b.created_at) - Number(a.created_at));
+    return list;
+  }
+
+  getLikeList(): Post[]{
+    let list: Post[] = [];
+    
+    let keys: string[] = [];
+    if (likeMap != null && likeMap != undefined)
+      keys = Object.keys(likeMap);
+
+    for (const index in keys) {
+      if (likeMap[keys[index]] == null || likeMap[keys[index]] == undefined)
+        continue;
+        list.push(likeMap[keys[index]]);
+    }
+    
+    list.sort((a, b) => Number(b.created_at) - Number(a.created_at));
+    return list;
+  }
+
+  updatePost(nodeId: string, channelId:number, lastPostUpdateTime){
+    this.getPost(nodeId,channelId,Communication.field.last_update,null,lastPostUpdateTime,10);
+  }
+
+  getSubscribedChannelsFromNodeId(nodeId: string): Channels[]{
+    let keys: string[] = Object.keys(subscribedChannelsMap);
+    let list: Channels[] = [];
+    for (const index in keys) {
+      if (subscribedChannelsMap[keys[index]] == null || subscribedChannelsMap[keys[index]] == undefined)
+        continue;
+      if (subscribedChannelsMap[keys[index]].nodeId == nodeId)
+        list.push(subscribedChannelsMap[keys[index]])
+    }
+
+    return list;
+  }
+
+  
 }
+
 
 //// Virtual data
 let virtualServersMap: any = {

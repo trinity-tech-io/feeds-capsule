@@ -1,0 +1,136 @@
+<div *ngFor="let post of likeList">
+
+
+  <div class="channel-img-small-div">
+    <img class="channel-img-small" src="../../../../assets/images/component-480-3.png">
+
+    <div class="channel-info-div">
+      <div> 
+        <ion-label class="channel-title-small">{{getChannel(post.nodeId, post.channel_id).name}}</ion-label>
+        <ion-label class="channel-ts">- {{post.created_at|date:'MM-dd HH:mm'}}</ion-label>
+        <ion-icon name="more" mode="ios" style="vertical-align: middle; float: right; "></ion-icon>
+      </div>
+      <div> 
+        <ion-label class="channel-desc-small">@ {{getChannel(post.nodeId, post.channel_id).owner_name}}</ion-label>
+      </div>
+
+      <div class="channel-post-div"> 
+        <ion-label class="channel-post">{{post.content}}</ion-label>
+        <img src="../../../../assets/images/screenshot-2020-04-26-at-05-20-13.png"
+              srcset="../../../../assets/images/screenshot-2020-04-26-at-05-20-13@2x.png 2x,
+              ../../../../assets/images/screenshot-2020-04-26-at-05-20-13@3x.png 3x"
+              class="channel-post-img">
+      </div>
+
+      <div class="channel-post-heart-comment-div">
+        <img src="../../../../assets/images/heart.svg" class="heart">
+        <ion-label class="heart-text">{{post.likes}}</ion-label>
+
+        <img src="../../../../assets/images/bubble-line.svg" class="comment">
+        <ion-label class="comment-text">{{post.comments}} </ion-label>
+      </div>
+    </div>
+</div>
+<img src="../../../../assets/images/rectangle-281.svg" class="Rectangle-281">
+
+</div>
+<!-- 
+<div class="channel-img-small-div">
+  <img class="channel-img-small" src="../../../../assets/images/component-480-3.png">
+
+  <div class="channel-info-div">
+    <div> 
+      <ion-label class="channel-title-small">Tuum Technologies</ion-label>
+      <ion-label class="channel-ts">- April 20</ion-label>
+      <ion-icon name="more" mode="ios" style="vertical-align: middle; float: right; "></ion-icon>
+    </div>
+    <div> 
+      <ion-label class="channel-desc-small">@TuumTech</ion-label>
+    </div>
+
+    <div class="channel-post-div"> 
+      <ion-label class="channel-post">First ride of the year! Welcome to my adventures - only on elastOS Feeds!</ion-label>
+      <img src="../../../../assets/images/screenshot-2020-04-26-at-05-20-13.png"
+            srcset="../../../../assets/images/screenshot-2020-04-26-at-05-20-13@2x.png 2x,
+            ../../../../assets/images/screenshot-2020-04-26-at-05-20-13@3x.png 3x"
+            class="channel-post-img">
+    </div>
+
+    <div class="channel-post-heart-comment-div">
+      <img src="../../../../assets/images/heart.svg" class="heart">
+      <ion-label class="heart-text">11</ion-label>
+
+      <img src="../../../../assets/images/bubble-line.svg" class="comment">
+      <ion-label class="comment-text">11 </ion-label>
+    </div>
+  </div>
+</div>
+<img src="../../../../assets/images/rectangle-281.svg" class="Rectangle-281">
+
+
+
+<div class="channel-img-small-div">
+  <img class="channel-img-small" src="../../../../assets/images/component-480-3.png">
+
+  <div class="channel-info-div">
+    <div> 
+      <ion-label class="channel-title-small">Tuum Technologies</ion-label>
+      <ion-label class="channel-ts">- April 20</ion-label>
+      <ion-icon name="more" mode="ios" style="vertical-align: middle; float: right; "></ion-icon>
+    </div>
+    <div> 
+      <ion-label class="channel-desc-small">@TuumTech</ion-label>
+    </div>
+
+    <div class="channel-post-div"> 
+      <ion-label class="channel-post">First ride of the year! Welcome to my adventures - only on elastOS Feeds!</ion-label>
+      <img src="../../../../assets/images/screenshot-2020-04-26-at-05-20-13.png"
+            srcset="../../../../assets/images/screenshot-2020-04-26-at-05-20-13@2x.png 2x,
+            ../../../../assets/images/screenshot-2020-04-26-at-05-20-13@3x.png 3x"
+            class="channel-post-img">
+    </div>
+
+    <div class="channel-post-heart-comment-div">
+      <img src="../../../../assets/images/heart.svg" class="heart">
+      <ion-label class="heart-text">11</ion-label>
+
+      <img src="../../../../assets/images/bubble-line.svg" class="comment">
+      <ion-label class="comment-text">11 </ion-label>
+    </div>
+  </div>
+</div>
+<img src="../../../../assets/images/rectangle-281.svg" class="Rectangle-281">
+
+
+
+<div class="channel-img-small-div">
+  <img class="channel-img-small" src="../../../../assets/images/component-480-3.png">
+
+  <div class="channel-info-div">
+    <div> 
+      <ion-label class="channel-title-small">Tuum Technologies</ion-label>
+      <ion-label class="channel-ts">- April 20</ion-label>
+      <ion-icon name="more" mode="ios" style="vertical-align: middle; float: right; "></ion-icon>
+    </div>
+    <div> 
+      <ion-label class="channel-desc-small">@TuumTech</ion-label>
+    </div>
+
+    <div class="channel-post-div"> 
+      <ion-label class="channel-post">First ride of the year! Welcome to my adventures - only on elastOS Feeds!</ion-label>
+      <img src="../../../../assets/images/screenshot-2020-04-26-at-05-20-13.png"
+            srcset="../../../../assets/images/screenshot-2020-04-26-at-05-20-13@2x.png 2x,
+            ../../../../assets/images/screenshot-2020-04-26-at-05-20-13@3x.png 3x"
+            class="channel-post-img">
+    </div>
+
+    <div class="channel-post-heart-comment-div">
+      <img src="../../../../assets/images/heart.svg" class="heart">
+      <ion-label class="heart-text">11</ion-label>
+
+      <img src="../../../../assets/images/bubble-line.svg" class="comment">
+      <ion-label class="comment-text">11 </ion-label>
+    </div>
+  </div>
+</div>
+<img src="../../../../assets/images/rectangle-281.svg" class="Rectangle-281"> -->

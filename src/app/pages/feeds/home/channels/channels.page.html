@@ -1,0 +1,114 @@
+<ion-content>
+  <!-- <div class="offline-content" *ngIf=" connectStatus != 0 ">
+    <ion-label>disconnect</ion-label>
+  </div> -->
+
+  <div class="channel-img-div">
+    <img class="channel-img" src="../../../../assets/images/component-307-206.png">
+  </div>
+
+  <div class="channel-title-div">
+    <ion-label class="channel-title">{{channelName}}</ion-label>
+  </div>
+
+  <div class="channel-owner-div">
+    <ion-label class="channel-owner">@{{channelOwner}}</ion-label>
+  </div>
+
+  <div class="channel-desc-div">
+    <ion-label class="channel-desc">{{channelDesc}}</ion-label>
+  </div>
+
+  <div class="channel-follow-div">
+    <img src="../../../../assets/images/bubble.svg" class="bubble">
+    <ion-label class="channel-follower">{{channelSubscribes}} follower</ion-label>
+    
+    <img src="../../../../assets/images/bubble.svg" class="bubble_right">
+    <ion-label class="channel-following">0 following</ion-label>
+  </div>
+  
+  <div *ngFor="let post of postList">
+    <div class="channel-img-small-div">
+        <img class="channel-img-small" src="../../../../assets/images/component-480-3.png">
+
+        <div class="channel-info-div">
+          <div> 
+            <ion-label class="channel-title-small">{{channelName}}</ion-label>
+            <ion-label class="channel-ts">{{post.created_at | date:'MM-dd HH:mm'}}</ion-label>
+            <ion-icon name="more" mode="ios" style="vertical-align: middle; float: right; "></ion-icon>
+          </div>
+          <div> 
+            <ion-label class="channel-desc-small">@{{channelOwner}}</ion-label>
+          </div>
+
+          <div class="channel-post-div"> 
+            <ion-label class="channel-post">{{post.content}}</ion-label>
+            <img src="../../../../assets/images/screenshot-2020-04-26-at-05-20-13.png"
+                  srcset="../../../../assets/images/screenshot-2020-04-26-at-05-20-13@2x.png 2x,
+                  ../../../../assets/images/screenshot-2020-04-26-at-05-20-13@3x.png 3x"
+                  class="channel-post-img">
+          </div>
+
+          <div class="channel-post-heart-comment-div">
+            <img src="../../../../assets/images/heart.svg" class="heart" (click)="like(post.nodeId, post.channel_id, post.id)">
+            <ion-label class="heart-text" (click)="like(post.nodeId, post.channel_id, post.id)">{{post.likes}}</ion-label>
+
+            <img src="../../../../assets/images/bubble-line.svg" class="comment" (click)="comment()">
+            <ion-label class="comment-text" (click)="comment()">{{post.comments}} </ion-label>
+          </div>
+        </div>
+    </div>
+    <img src="../../../../assets/images/rectangle-281.svg" class="Rectangle-281">
+
+
+  </div>
+<!-- 
+  <div class="channel-img-small-div">
+    <img class="channel-img-small" src="../../../../assets/images/component-480-3.png">
+
+    <div class="channel-info-div">
+      <div> 
+        <ion-label class="channel-title-small">Tuum Technologies</ion-label>
+        <ion-label class="channel-ts">- April 20</ion-label>
+        <ion-icon name="more" mode="ios" style="vertical-align: middle; float: right; "></ion-icon>
+      </div>
+      <div> 
+        <ion-label class="channel-desc-small">@TuumTech</ion-label>
+      </div>
+
+      <div class="channel-post-div"> 
+        <ion-label class="channel-post">First ride of the year! Welcome to my adventures - only on elastOS Feeds!</ion-label>
+        <img src="../../../../assets/images/screenshot-2020-04-26-at-05-20-13.png"
+              srcset="../../../../assets/images/screenshot-2020-04-26-at-05-20-13@2x.png 2x,
+              ../../../../assets/images/screenshot-2020-04-26-at-05-20-13@3x.png 3x"
+              class="channel-post-img">
+      </div>
+
+      <div class="channel-post-heart-comment-div">
+        <img src="../../../../assets/images/heart.svg" class="heart">
+        <ion-label class="heart-text">11</ion-label>
+
+        <img src="../../../../assets/images/bubble-line.svg" class="comment">
+        <ion-label class="comment-text">11 </ion-label>
+      </div>
+    </div>
+</div>
+<img src="../../../../assets/images/rectangle-281.svg" class="Rectangle-281"> -->
+
+
+  <!-- <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content
+      pullingIcon="arrow-dropdown"
+      pullingText="Pull to refresh"
+      refreshingSpinner="circles"
+      refreshingText="Refreshing...">
+    </ion-refresher-content>
+  </ion-refresher>
+
+  <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event)">
+    <ion-infinite-scroll-content
+      loadingSpinner="bubbles"
+      loadingText="Loading more data...">
+    </ion-infinite-scroll-content>
+  </ion-infinite-scroll> -->
+</ion-content>

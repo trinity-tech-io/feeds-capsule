@@ -1,0 +1,44 @@
+// ion-tab-bar {
+//   height: 9%;
+
+//   ion-icon {
+//     color: #989aa2;
+//     font-size: 36px;
+//   }
+
+//   ion-label {
+//     font-size: 9px;
+//     font-weight: bold;
+//     color: #989aa2;
+//   }
+// }
+
+
+
+ion-tab-button.center-tab{
+  position: absolute;;
+  overflow: visible;
+  text-align: center;
+  height: 96px;
+  width: 96px;
+  left: 0;
+  right: 0;
+  margin: auto;
+  bottom: 0px;
+  z-index: 99999;
+  ion-icon{
+      padding: 6px;
+      width: 40px;
+      height: 40px;
+      line-height: 40px;
+      color: var(--ion-color-white, #fff);
+      background-color: var(--ion-color-primary, #9b7af3);
+      // background-color: #1b0a93;
+      border-radius:50%;
+      border:5px solid #fff;
+      // box-shadow:0 -2px 3px rgba(100,100,100,.4);
+  }.selected{
+    color: var(--ion-color-white, #fff);
+
+  }
+}

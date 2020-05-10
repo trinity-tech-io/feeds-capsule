@@ -40,6 +40,8 @@ import { PopovercomponentPageModule } from './components/popovercomponent/popove
 import { ServerlistComponentModule } from './components/serverlistcomponent/serverlistcomponent.module';  
 import { QRCodeModule } from 'angularx-qrcode';
 import { CommentComponentModule } from './components/comment/comment.module';  
+import { PostfromComponentPageModule } from './components/postfrom/postfrom.component.module'
+import { SplashscreenPageModule } from './pages/splashscreen/splashscreen.module';
 
 /** 通过类引用方式解析国家化文件 */
 export class CustomTranslateLoader implements TranslateLoader {
@@ -76,7 +78,9 @@ export function TranslateLoaderFactory() {
     ComponentsModule,
     PopovercomponentPageModule,
     CommentComponentModule,
+    PostfromComponentPageModule,
     ServerlistComponentModule,
+    SplashscreenPageModule,
     IonicModule.forRoot(),
     TranslateModule.forRoot({
       loader: {
@@ -105,6 +109,7 @@ export function TranslateLoaderFactory() {
     AppService,
     CameraService,
     AgentService,
+    PostfromComponentPageModule,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     {provide: ErrorHandler, useClass: ErrorHandler}
   ]

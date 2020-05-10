@@ -28,6 +28,7 @@ export class ServersPage implements OnInit {
 
     ngOnInit() {
         this.serverList = this.feedService.getServerList();
+
         this.serversStatus = this.feedService.getServersStatus();
         this.serverStatisticsMap = this.feedService.getServerStatisticsMap();
         for (let index = 0; index < this.serverList.length; index++) {

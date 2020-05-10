@@ -1,0 +1,76 @@
+<div class="create-feed-div">
+
+  <div style="width: 100%; display: flex;">
+    <div style="width: 100%;">
+      <div class="number">
+        Profile image
+      </div>
+      
+      <div class="title">
+        Choose profile image to be displayed
+      </div>
+    </div>
+    <div style="display: flex; float: right;">
+      <img src="../../../../assets/images/chevron-thin-right.svg"
+      class="chevron-thin-right">
+    </div>
+  </div>
+
+  <div style="width: 100%; display: flex; margin-top: 20px;" (click)="selectChannelSource($event)">
+    <div style="width: 100%;">
+      <div class="number">
+        Channel source
+      </div>
+      
+      <div class="title">
+        {{selectedChannelSource}}
+      </div>
+    </div>
+    <div style="display: flex; float: right;">
+      <img src="../../../../assets/images/chevron-thin-right.svg"
+      class="chevron-thin-right">
+    </div>
+  </div>
+
+
+  <div style="width: 100%; margin-top: 20px;">
+    <div style="width: 100%;">
+      <div class="number">
+        Name
+      </div>
+      
+      <ion-input required type="text" class="title" placeholder="Enter here" #name></ion-input>
+  </div>
+
+  <div style="width: 100%; margin-top: 20px;">
+    <div style="width: 100%;">
+      <div class="number">
+        Description
+      </div>
+      
+      <ion-input required type="text" placeholder="Enter here" #desc></ion-input>
+  </div>
+
+  <div style="width: 100%; display: flex; margin-top: 20px;">
+    <div style="width: 100%;">
+      <div class="number">
+        Wallet
+      </div>
+      
+      <div class="title">
+        Choose wallet to be linked
+      </div>
+    </div>
+    <div style="display: flex; float: right;">
+      <img src="../../../../assets/images/chevron-thin-right.svg"
+      class="chevron-thin-right">
+    </div>
+  </div>
+
+
+  <ion-button style="margin-top: 50px;" expand="block" (click)="createChannel(name,desc)">
+
+      Create Feed
+    
+  </ion-button>
+</div>
