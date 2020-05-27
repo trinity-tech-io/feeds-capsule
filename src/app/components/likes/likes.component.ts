@@ -15,9 +15,7 @@ export class LikesComponent implements OnInit {
     private zone: NgZone,
     private events: Events) {
     
-    this.likeList = this.feedService.getLikeList();
-    console.log("likelist==>"+JSON.stringify(this.likeList));
-    
+    this.likeList = this.feedService.getLikeList();    
     this.events.subscribe('feeds:updateLikeList', (list) => {
       this.zone.run(() => {
         this.likeList = list;

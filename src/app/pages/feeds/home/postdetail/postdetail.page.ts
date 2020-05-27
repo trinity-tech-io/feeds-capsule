@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { FeedService } from '../../../../services/FeedService';
+import { NativeService } from '../../../../services/NativeService';
+
+declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 @Component({
   selector: 'app-postdetail',
@@ -23,6 +26,7 @@ export class PostdetailPage implements OnInit {
 
   constructor(
     private acRoute: ActivatedRoute,
+    private native: NativeService,
     private feedService :FeedService) {
 
       acRoute.params.subscribe((data)=>{
@@ -46,6 +50,8 @@ export class PostdetailPage implements OnInit {
   }
 
   ngOnInit() {
+    titleBarManager.setTitle("Post");
+    this.native.setTitleBarBackKeyShown(true);
   }
 
 }

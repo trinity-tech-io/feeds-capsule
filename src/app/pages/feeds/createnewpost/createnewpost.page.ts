@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { NavController } from '@ionic/angular';
 import { FeedService } from 'src/app/services/FeedService';
 import { ActivatedRoute } from '@angular/router';
+import { NativeService } from '../../../services/NativeService';
+declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 @Component({
   selector: 'app-createnewpost',
@@ -17,6 +19,7 @@ export class CreatenewpostPage implements OnInit {
   private nodeId: string;
   private channelId: number;
   constructor(
+    private native: NativeService,
     private acRoute: ActivatedRoute,
     private navCtrl: NavController,
     private feedService: FeedService) {
@@ -33,6 +36,8 @@ export class CreatenewpostPage implements OnInit {
     }
 
   ngOnInit() {
+    titleBarManager.setTitle("Create New Feed");
+    this.native.setTitleBarBackKeyShown(true);
   }
 
 

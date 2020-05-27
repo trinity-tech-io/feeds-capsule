@@ -55,4 +55,8 @@ export class MyfeedsComponent implements OnInit {
     this.router.navigate(['/feeds/tabs/home/channels', nodeId, channelId]);
 
   }
+
+  bindServer(){
+    alert("bind")
+  }
 }

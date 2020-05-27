@@ -5,6 +5,8 @@ import { Clipboard } from '@ionic-native/clipboard/ngx';
 import { Router } from '@angular/router';
 import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 
+declare let titleBarManager: TitleBarPlugin.TitleBarManager;
+
 
 @Injectable()
 export class NativeService {
@@ -17,8 +19,16 @@ export class NativeService {
         private loadingCtrl: LoadingController,
         private navCtrl: NavController,
         private router: Router) {
+            this.init();
     }
 
+    init(){
+        titleBarManager.addOnItemClickedListener((menuIcon)=>{
+            if (menuIcon.key == "back") {
+                this.navCtrl.back();
+            }
+          });
+    }
     public info(message) {
         // Logger.info(message);
     }
@@ -106,4 +116,16 @@ export class NativeService {
         const options = "location=no";
         this.inappBrowser.create(url, target, options);
     }
+
+    setTitleBarBackKeyShown(show: boolean) {
+        if (show) {
+            titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_LEFT, {
+                key: "back",
+                iconPath: TitleBarPlugin.BuiltInIcon.BACK
+            });
+        }
+        else {
+            titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_LEFT, null);
+        }
+      }
 }

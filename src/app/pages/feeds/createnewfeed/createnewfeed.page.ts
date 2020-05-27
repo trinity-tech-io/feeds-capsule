@@ -4,7 +4,6 @@ import { ServerlistcomponentComponent } from '../../../components/serverlistcomp
 import { FeedService } from 'src/app/services/FeedService';
 import { PopupProvider } from 'src/app/services/popup';
 import { NativeService } from 'src/app/services/NativeService';
-
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 @Component({
@@ -30,13 +29,8 @@ export class CreatenewfeedPage implements OnInit {
     }
 
   ngOnInit() {
-    // titleBarManager.setTitle("Create New Feed");
-    // titleBarManager.setBackgroundColor("#FFFFFF");
-    // titleBarManager.setForegroundMode(TitleBarPlugin.TitleBarForegroundMode.DARK);
-    // titleBarManager.setNavigationMode(TitleBarPlugin.TitleBarNavigationMode.BACK);
-     
-    // titleBarManager.setupMenuItems([{key: 'registerApp', iconPath: '/assets/images/register.png', title: 'Register Capsule'}], null);
-
+    titleBarManager.setTitle("Create New Feed");
+    this.native.setTitleBarBackKeyShown(true);
   }
 
   navigateBack() {

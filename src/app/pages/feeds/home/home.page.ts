@@ -2,7 +2,6 @@ import { Component, OnInit, NgZone } from '@angular/core';
 import { NavController, Events } from '@ionic/angular';
 import { FeedService } from '../../../services/FeedService';
 import { Router } from '@angular/router'
-declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 @Component({
   selector: 'app-home',
@@ -27,6 +26,9 @@ export class HomePage implements OnInit {
     });
   }
 
+  ionViewWillEnter() {
+  }
+
   
   getChannel(nodeId, channelId):any{
     return this.feedService.getChannelFromId(nodeId,channelId);
@@ -37,12 +39,6 @@ export class HomePage implements OnInit {
   }
 
   ngOnInit() {
-    // titleBarManager.setTitle("My Timeline");
-    // titleBarManager.setBackgroundColor("#FFFFFF");
-    // titleBarManager.setForegroundMode(TitleBarPlugin.TitleBarForegroundMode.DARK);
-    // titleBarManager.setNavigationMode(TitleBarPlugin.TitleBarNavigationMode.HOME);
-    
-    // titleBarManager.setupMenuItems([{key: 'registerApp', iconPath: '/assets/images/register.png', title: 'Register Capsule'}], null);
   }
 
   like(nodeId, channelId, postId){

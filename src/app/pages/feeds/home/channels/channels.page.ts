@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { FeedService } from '../../../../services/FeedService';
+import { NativeService } from '../../../../services/NativeService';
+
+declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 @Component({
   selector: 'app-channels',
@@ -18,6 +21,7 @@ export class ChannelsPage implements OnInit {
   private channelId;
 
   constructor(
+    private native: NativeService,
     private acRoute: ActivatedRoute,
     private feedService: FeedService
   ) {
@@ -41,6 +45,8 @@ export class ChannelsPage implements OnInit {
   }
 
   ngOnInit() {
+    titleBarManager.setTitle("Feed");
+    this.native.setTitleBarBackKeyShown(true);
   }
 
   like(nodeId, channelId, postId){

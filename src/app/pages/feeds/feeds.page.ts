@@ -3,8 +3,8 @@ import { PostfromComponent } from '../../components/postfrom/postfrom.component'
 import { PopoverController } from '@ionic/angular';
 import { FeedService } from '../../services/FeedService';
 import { Router } from '@angular/router';
-
-declare let appManager: AppManagerPlugin.AppManager;
+import { NativeService } from '../../services/NativeService';
+declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 @Component({
   selector: 'app-feeds',
@@ -12,19 +12,23 @@ declare let appManager: AppManagerPlugin.AppManager;
   styleUrls: ['./feeds.page.scss'],
 })
 export class FeedsPage implements OnInit {
-
+  private title = "My Timeline";
   constructor(
+    private native: NativeService,
     private feedService: FeedService,
     private router: Router,
     private popoverController: PopoverController) {
-      
+
     }
 
   ngOnInit() {
+    titleBarManager.setBackgroundColor("#FFFFFF");
+    titleBarManager.setForegroundMode(TitleBarPlugin.TitleBarForegroundMode.DARK);
   }
 
   ionViewDidEnter() {
-    // appManager.setVisible("show", ()=>{}, (err)=>{});
+    titleBarManager.setTitle(this.title);
+    this.native.setTitleBarBackKeyShown(false);
   }
 
   create(){
@@ -45,5 +49,29 @@ export class FeedsPage implements OnInit {
       }).then((popoverElement)=>{
         popoverElement.present();
       })
+    }
+
+    home(){
+      this.title = "My Timeline";
+      titleBarManager.setTitle(this.title);
+      this.native.setTitleBarBackKeyShown(false);
+    }
+
+    profile(){
+      this.title = "My Profile"
+      titleBarManager.setTitle(this.title);
+      this.native.setTitleBarBackKeyShown(false);
+    }
+
+    notification(){
+      this.title = "Notification";
+      titleBarManager.setTitle(this.title);
+      this.native.setTitleBarBackKeyShown(false);
+    }
+
+    search(){
+      this.title = "Explore Feeds";
+      titleBarManager.setTitle("Explore Feeds");
+      this.native.setTitleBarBackKeyShown(false);
     }
 }
