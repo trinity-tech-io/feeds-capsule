@@ -62,6 +62,10 @@ export class SigninPage implements OnInit {
         nation: {
           required: false,
           reason: "Maybe Feeds dapp need"
+        },
+        description:{
+          required: false,
+          reason: "Maybe Feeds dapp need"
         }
       }
     }, {}, (response: any) => {
@@ -72,6 +76,8 @@ export class SigninPage implements OnInit {
         didManager.VerifiablePresentationBuilder.fromJson(JSON.stringify(response.result.presentation), (presentation)=>{
           this.zone.run(()=>{
             let credentials = presentation.getCredentials();
+
+            console.log("des="+ this.findCredentialValueById(this.did, credentials, "description", "Not provided"));
             this.saveData(
               data.did,
               this.findCredentialValueById(this.did, credentials, "name", "Not provided"),

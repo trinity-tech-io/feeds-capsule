@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Events } from '@ionic/angular';
 import { CarrierService } from 'src/app/services/CarrierService';
 import { AgentService } from 'src/app/services/AgentService';
-
+import { SerializeDataService } from 'src/app/services/SerializeDataService'
 let eventBus = null;
 let requestQueue: RequestBean[] = [];
 let autoIncreaseId: number = 0
@@ -28,16 +28,42 @@ export class Result{
     ){}
 }
 
+export class LoginResult{
+    constructor(
+        public nodeId: string,
+        public payload: object,
+        public signature: string,
+    ){}
+}
+
 @Injectable()
 export class JsonRPCService {
     constructor(
+        private serializeDataService: SerializeDataService,
         private carrierService: CarrierService,
         private events: Events,
         private agentService: AgentService) {
         eventBus = events;
-        this.events.subscribe('carrier:friendMessage', event => {
-            eventBus.publish('transport:receiveMessage',this.response(event.from, event.message));
+        this.events.subscribe('transport:receiveMessage', event => {
+            let data = serializeDataService.decodeData(event.message);
+            eventBus.publish('JRPC:receiveMessage',this.response(event.from, data));
         });
+    }
+
+    resolveResult(nodeId: string, msg: any): LoginResult{
+        let substr = msg.substring(0,msg.length-1);
+        let data = JSON.parse(substr);
+
+        return new LoginResult(nodeId,data.payload,data.signature);
+    }
+
+    sendRealMessage(nodeId: string, msg: any , onSuccess:()=>void, onError?:(err: string)=>void){
+        this.carrierService.sendMessage(
+            nodeId,
+            JSON.stringify(msg),
+            onSuccess,
+            onError
+        )
     }
 
     request(method: string, nodeId: string,params: any, success: any, error: any){
@@ -46,15 +72,17 @@ export class JsonRPCService {
         requestQueue.push(requestBean);
         let request = this.assembleJson(String(id), method, params);
 
+        let encodeData = this.serializeDataService.encodeData(request);
         this.carrierService.sendMessage(
             nodeId,
+            // encodeData,
             JSON.stringify(request),
             success,
             error
         )
     }
 
-    response(nodeId: string, msg: string): Result{
+    response(nodeId: string, msg: any): Result{
         return this.parseJson(nodeId, msg);
     }
 
@@ -68,18 +96,14 @@ export class JsonRPCService {
         return data;
     }
 
-    parseJson(nodeId: string, msg: string): Result{
-        //TODO errorcode
-        if (typeof msg != "string")
-            return this.createError(nodeId, -60001, "ResultType error");
-
-        if (msg.indexOf("jsonrpc")==-1)
-            return this.createError(nodeId, -60002, "Result formate error");
-        
-
-        let substr = msg.substring(0,msg.length-1);
-        let data = JSON.parse(substr);
-        // let data = JSON.parse(msg);
+    parseJson(nodeId: string, msg: any): Result{
+        let data: any ;
+        if (typeof msg == "string"){
+            let substr = msg.substring(0,msg.length-1);
+            data = JSON.parse(substr);
+        }else{
+            data = msg;
+        }
 
         if (data.jsonrpc!="2.0")
             return this.createError(nodeId, -60003, "JsonRPC version error");

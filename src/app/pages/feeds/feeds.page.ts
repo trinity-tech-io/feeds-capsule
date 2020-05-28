@@ -55,6 +55,7 @@ export class FeedsPage implements OnInit {
       this.title = "My Timeline";
       titleBarManager.setTitle(this.title);
       this.native.setTitleBarBackKeyShown(false);
+      console.log("uuid = "+this.feedService.generateNonce());
     }
 
     profile(){

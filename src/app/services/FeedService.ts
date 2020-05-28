@@ -5,8 +5,13 @@ import { Events } from '@ionic/angular';
 import { JsonRPCService } from 'src/app/services/JsonRPCService';
 import { StorageService } from 'src/app/services/StorageService';
 import { NativeService } from 'src/app/services/NativeService';
+import { JWTMessageService } from 'src/app/services/JWTMessageService';
 
 declare let didManager: DIDPlugin.DIDManager;
+declare let appManager: AppManagerPlugin.AppManager;
+declare let pluginDidDocument: DIDPlugin.DIDDocument;
+declare let pluginDid: DIDPlugin.DID;
+
 
 let subscribedChannelsMap:{[channelId: number]: Channels};
 let channelsMap:{[channelId: number]: Channels} ;
@@ -26,6 +31,18 @@ let localMyChannelList:Channels[] = new Array<Channels>();
 let localChannelsList:Channels[] = new Array<Channels>();
 let localPostList:Post[] = new Array<Post>();
 
+let accessTokenMap:{[nodeId:string]:string};
+let signInServerList = [];
+
+type SignResult = {
+  signingdid: string,
+  publickey: string,
+  signature: string
+}
+
+type SignIntentResponse = {
+  result: SignResult
+}
 
 type PostUpdateTime = {
   nodeId: string,
@@ -164,7 +181,9 @@ enum PublishType{
   updataCommentLike = "feeds:updataCommentLike",
   updatePost = "feeds:updatePost",
 
-  updateLikeList = "feeds:updateLikeList"
+  updateLikeList = "feeds:updateLikeList",
+
+  signInServerListChanged = "feeds:signInServerListChanged"
 }
 
 enum PersistenceKey{
@@ -203,7 +222,9 @@ enum PersistenceKey{
   serverStatisticsMap = "serverStatisticsMap",
   serversStatus = "serversStatus",
   subscribeStatusMap = "subscribeStatusMap",
-  likeMap = "likeMap"
+  likeMap = "likeMap",
+
+  accessTokenMap = "accessTokenMap"
 }
 
 let expDay = 10;
@@ -230,6 +251,7 @@ let currentCreateTopicNID = "";
 
 let postEventTmp: FeedEvents;
 let localSignInData: SignInData;
+
 // let requestId: number = 0;
 
 @Injectable()
@@ -286,7 +308,12 @@ export class FeedIntro{
 @Injectable()
 export class FeedService {
   public testMode = true;
+  private nonce = "";
+  private realm = "";
+  private serviceNonce = "";
+  private serviceRealm = "";
   public constructor(
+    private jwtMessageService: JWTMessageService,
     private platform: Platform,
     private events: Events,
     private jsonRPCService: JsonRPCService,
@@ -410,6 +437,11 @@ export class FeedService {
     likeMap = this.storeService.get(PersistenceKey.likeMap);
     if (likeMap == null || likeMap == undefined){
       likeMap = {};
+    }
+
+    accessTokenMap = this.storeService.get(PersistenceKey.accessTokenMap);
+    if (accessTokenMap == null || accessTokenMap == undefined){
+      accessTokenMap = {};
     }
   }
 
@@ -617,9 +649,11 @@ export class FeedService {
     return myFeedsMap[nodeId+topic].archive;
   }
 
+  sendJWTMessage(nodeId: string, properties: any){
+    this.jwtMessageService.request(nodeId,properties,()=>{},()=>{});
+  }
 
-
-  sendMessage(nodeId: string, method: string, params: any){
+  sendRPCMessage(nodeId: string, method: string, params: any){
     if(!this.checkServerConnection(nodeId)){
       // this.native.toast("server node offline");
       return;
@@ -660,19 +694,19 @@ export class FeedService {
       }
         
       postEventTmp = new FeedEvents(nodeId,topic,this.getCurrentTime(),event,lastSeqno++, imageUrl);
-      this.sendMessage(nodeId, FeedsData.MethodType.postEvent, params);
+      this.sendRPCMessage(nodeId, FeedsData.MethodType.postEvent, params);
   }
 
   //{"jsonrpc":"2.0","method":"list_owned_topics","id":null}
   listOwnedTopics(nodeId: string){
-    this.sendMessage(nodeId, FeedsData.MethodType.listOwnedTopics, null);
+    this.sendRPCMessage(nodeId, FeedsData.MethodType.listOwnedTopics, null);
   }
 
   //{"jsonrpc":"2.0","method":"subscribe","params":{"topic":"movie"},"id":null}
   subscribe(nodeId: string, topic: string){
     let params = {};
     params["topic"] = topic;
-    this.sendMessage(nodeId, FeedsData.MethodType.subscribe, params);
+    this.sendRPCMessage(nodeId, FeedsData.MethodType.subscribe, params);
   }
 
   doSubscribe(){
@@ -684,17 +718,17 @@ export class FeedService {
   unSubscribe(nodeId: string, topic: string){
       let params = {};
       params["topic"] = topic;
-      this.sendMessage(nodeId, FeedsData.MethodType.unsubscribe, params);
+      this.sendRPCMessage(nodeId, FeedsData.MethodType.unsubscribe, params);
   }
 
   //{"jsonrpc":"2.0","method":"explore_topics","id":null}
   exploreTopics(nodeId: string){
-      this.sendMessage(nodeId, FeedsData.MethodType.exploreTopics, null);
+      this.sendRPCMessage(nodeId, FeedsData.MethodType.exploreTopics, null);
   }
 
   //{"jsonrpc":"2.0","method":"list_subscribed_topics","id":null}
   listSubscribed(nodeId: string){
-    this.sendMessage(nodeId, FeedsData.MethodType.listSubscribed, null);
+    this.sendRPCMessage(nodeId, FeedsData.MethodType.listSubscribed, null);
   }
 
   //{"jsonrpc":"2.0","method":"fetch_unreceived","params":{"topic":"movie","since":1021438976},"id":null}
@@ -703,7 +737,7 @@ export class FeedService {
       let params = {};
       params["topic"] = topic;
       params["since"] = since;
-      this.sendMessage(nodeId, FeedsData.MethodType.fetchUnreceived, params);
+      this.sendRPCMessage(nodeId, FeedsData.MethodType.fetchUnreceived, params);
   }
 
   carrierReadyCallback(){
@@ -743,6 +777,8 @@ export class FeedService {
 
           this.updatePost(friendId,channelId,lastPostTime);
         }
+
+        this.checkSignInStatus(friendId);
       }
 
       this.storeService.set(PersistenceKey.serversStatus,serversStatus);
@@ -931,9 +967,22 @@ export class FeedService {
           this.handleResult(result.method, result.nodeId, result.result, result.request);
           break;
       }
-
-      
     });
+
+    this.events.subscribe('jwt:receiveJWTMessage', (result) => {
+      let method = result.payload.method;
+      switch(method){
+        case FeedsData.MethodType.negotiateLogin:
+          this.loginResponse(result.nodeId, result.payload);
+
+          break;
+        case FeedsData.MethodType.confirmLogin:
+          this.confirmLoginResponse(result.nodeId, result.payload);
+
+          break;
+      }
+    });
+    
   }
 
   /*
@@ -1336,6 +1385,134 @@ export class FeedService {
     });
   }
 
+
+//  signData(data: string, storePass: string): Promise<string> {
+//     return new Promise(async (resolve, reject)=>{
+//         this.pluginDidDocument.sign(storePass, data,
+//             (ret) => {
+//                 resolve(ret)
+//             }, (err) => {
+//                 // reject(DIDHelper.reworkedPluginException(err));
+//             },
+//         );
+//     });
+// }
+
+  createPresentation(nonce, realm, onSuccess: (presentation: any)=>void, onError?: (err:any)=>void){
+    appManager.sendIntent("credaccess", {}, {}, (response: any) => {
+      if (response && response.result && response.result.presentation)
+        onSuccess(response.result.presentation);
+    },
+    (err)=>{});
+  }
+
+  verifyPresentation(presentationstr: string, onSuccess?: (isValid: boolean)=>void, onError?: (err:any)=>void){
+    didManager.VerifiablePresentationBuilder.fromJson(presentationstr, (presentation)=>{
+      presentation.isValid((isValid)=>{
+        // if isValid && nonce == this.nonce && realm == this.realm onSuccess(true)
+        // else onSuccess(false)
+        onSuccess(isValid);
+      },
+      (err)=>{});
+    });
+  }
+
+  loginRequest(nodeId: string){
+    this.nonce = this.generateNonce();
+    this.realm = this.carrierService.getAddress();
+    let payload = {
+      application: "feeds",
+      version    : "0.1",
+      method: "negotiate_login",
+      nonce : this.nonce,
+      realm : this.realm
+    }
+
+    this.sendJWTMessage(nodeId,payload);
+  }
+
+  loginResponse(nodeId: string, payload: any){
+    let presentation = payload.presentation;
+    //1.verify presentation
+    this.verifyPresentation(payload.presentation,(isValid) =>{
+      
+      if (isValid){
+        //2.verify noce & realm
+        //TODO verify noce & realm
+
+        this.serviceNonce = payload.nonce;
+        this.serviceRealm = payload.realm;
+        
+        //3.send confirm msg
+        this.confirmLoginRequest(nodeId);
+
+      }
+    });
+  }
+
+  confirmLoginRequest(nodeId: string){
+    let presentation = this.createPresentation(
+      this.serviceNonce,
+      this.serviceRealm,
+      (presentation)=>{
+        let payload = {
+          application: "feeds",
+          version    : "0.1",
+          method      : "confirm_login",
+          presentation: presentation
+        }
+
+        this.jwtMessageService.request(nodeId, payload ,()=>{}, ()=>{});
+    });
+  }
+
+  confirmLoginResponse(nodeId: string, payload: any){
+    accessTokenMap[nodeId] = payload.access_token;
+    this.storeService.set(PersistenceKey.accessTokenMap, accessTokenMap);
+
+
+    var index = signInServerList.indexOf(nodeId);
+    if(index > -1) {
+      signInServerList.splice(index,1);
+    }
+    eventBus.publish(PublishType.signInServerListChanged,signInServerList);
+  }
+
+  generateNonce() {
+    var d = new Date().getTime();
+    var uuid = 'xxxxxxxxxxxxxxxx'.replace(/[x]/g, function(c) {
+      var r = (d + Math.random()*16)%16 | 0;
+      d = Math.floor(d/16);
+      return (c=='x'? r : (r&0x3|0x8)).toString(16);
+    });
+    return uuid;
+  };
+
+  checkSignInStatus(nodeId: string){
+    let keys: string[] = Object.keys(accessTokenMap);
+    if (keys.indexOf(nodeId) == -1){
+      this.checkSignInServerList(nodeId);
+    }
+      this.loginRequest(nodeId);
+  }
+
+  checkSignInServerList(nodeId: string){
+    if (signInServerList.indexOf(nodeId) == -1){
+      signInServerList.push(nodeId);
+      eventBus.publish(PublishType.signInServerListChanged,signInServerList);
+    }
+  }
+  
+  // generateUUID() {
+  //   var d = new Date().getTime();
+  //   var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+  //     var r = (d + Math.random()*16)%16 | 0;
+  //     d = Math.floor(d/16);
+  //     return (c=='x'? r : (r&0x3|0x8)).toString(16);
+  //   });
+  //   return uuid;
+  // };
+  
   parseResult(didData: DidData ,service: DIDPlugin.Service) {
     if (didData == null){
       return ;
@@ -1766,7 +1943,7 @@ export class FeedService {
       } ,
       id     : -1
     }
-    this.sendMessage(nodeId, request.method, request.params);
+    this.sendRPCMessage(nodeId, request.method, request.params);
   }
 
   publishPost(nodeId: string, channel_id: number, content: any){
@@ -1780,7 +1957,7 @@ export class FeedService {
       } ,
       id     : -1
     }
-    this.sendMessage(nodeId, request.method, request.params);
+    this.sendRPCMessage(nodeId, request.method, request.params);
   }
 
   postComment(nodeId: string, channel_id: number, post_id: number, 
@@ -1797,7 +1974,7 @@ export class FeedService {
       } ,
       id     : -1
     }
-    this.sendMessage(nodeId, request.method, request.params);
+    this.sendRPCMessage(nodeId, request.method, request.params);
   }
 
   postLike(nodeId: string, channel_id: number, post_id: number, comment_id: number){
@@ -1812,7 +1989,7 @@ export class FeedService {
       } ,
       id     : -1
     }
-    this.sendMessage(nodeId, request.method, request.params);
+    this.sendRPCMessage(nodeId, request.method, request.params);
   }
 
   getMyChannels(nodeId: string, field: Communication.field, upper_bound: number,
@@ -1829,7 +2006,7 @@ export class FeedService {
       },
       id     : -1
     }
-    this.sendMessage(nodeId, request.method, request.params);
+    this.sendRPCMessage(nodeId, request.method, request.params);
   }
 
   getMyChannelsMetaData(nodeId: string, field: Communication.field, upper_bound: number, 
@@ -1846,7 +2023,7 @@ export class FeedService {
       },
       id     : -1
     }
-    this.sendMessage(nodeId, request.method, request.params);
+    this.sendRPCMessage(nodeId, request.method, request.params);
   }
 
   getChannels(nodeId: string, field: Communication.field, upper_bound: number, 
@@ -1863,7 +2040,7 @@ export class FeedService {
       },
       id     : -1
     }
-    this.sendMessage(nodeId, request.method, request.params);
+    this.sendRPCMessage(nodeId, request.method, request.params);
   }
 
   getChannelDetail(nodeId: string, id: number){
@@ -1876,7 +2053,7 @@ export class FeedService {
       },
       id     : -1
     }
-    this.sendMessage(nodeId, request.method, request.params);
+    this.sendRPCMessage(nodeId, request.method, request.params);
   }
 
   getSubscribedChannels(nodeId: string, field: Communication.field, upper_bound: number, 
@@ -1894,7 +2071,7 @@ export class FeedService {
       },
       id     : -1
     }
-    this.sendMessage(nodeId, request.method, request.params);
+    this.sendRPCMessage(nodeId, request.method, request.params);
   }
 
   getPost(nodeId: string, channel_id: number, by: Communication.field, 
@@ -1912,7 +2089,7 @@ export class FeedService {
       },
       id     : -1
     }
-    this.sendMessage(nodeId, request.method, request.params);
+    this.sendRPCMessage(nodeId, request.method, request.params);
   }
 
   getComments(nodeId: string, channel_id: number, post_id: number,
@@ -1931,7 +2108,7 @@ export class FeedService {
       },
       id     : -1
     }
-    this.sendMessage(nodeId, request.method, request.params);
+    this.sendRPCMessage(nodeId, request.method, request.params);
   }
 
   getStatistics(nodeId: string){
@@ -1943,7 +2120,7 @@ export class FeedService {
       },
       id     : -1
     }
-    this.sendMessage(nodeId, request.method, request.params);
+    this.sendRPCMessage(nodeId, request.method, request.params);
   }
 
   subscribeChannel(nodeId: string, id: number){
@@ -1956,7 +2133,7 @@ export class FeedService {
       },
       id     : -1
     }
-    this.sendMessage(nodeId, request.method, request.params);
+    this.sendRPCMessage(nodeId, request.method, request.params);
   }
 
   unsubscribeChannel(nodeId: string, id: number){
@@ -1969,7 +2146,7 @@ export class FeedService {
       },
       id     : -1
     }
-    this.sendMessage(nodeId, request.method, request.params);
+    this.sendRPCMessage(nodeId, request.method, request.params);
   }
   
   addNodePublisher(nodeId: string, did: string){
@@ -1982,7 +2159,7 @@ export class FeedService {
       },
       id     : -1
     }
-    this.sendMessage(nodeId, request.method, request.params);
+    this.sendRPCMessage(nodeId, request.method, request.params);
   }
 
   removeNodePublisher(nodeId: string, did: string){
@@ -1995,7 +2172,7 @@ export class FeedService {
       },
       id     : -1
     }
-    this.sendMessage(nodeId, request.method, request.params);
+    this.sendRPCMessage(nodeId, request.method, request.params);
   }
 
   queryChannelCreationPermission(nodeId: string){
@@ -2007,7 +2184,7 @@ export class FeedService {
       },
       id     : -1
     }
-    this.sendMessage(nodeId, request.method, request.params);
+    this.sendRPCMessage(nodeId, request.method, request.params);
   }
 
   enableNotification(nodeId: string){
@@ -2019,7 +2196,7 @@ export class FeedService {
       },
       id     : -1
     }
-    this.sendMessage(nodeId, request.method, request.params);
+    this.sendRPCMessage(nodeId, request.method, request.params);
   }
 
   ////handle push
