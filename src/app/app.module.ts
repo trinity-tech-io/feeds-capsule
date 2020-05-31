@@ -42,6 +42,9 @@ import { QRCodeModule } from 'angularx-qrcode';
 import { CommentComponentModule } from './components/comment/comment.module';  
 import { PostfromComponentPageModule } from './components/postfrom/postfrom.component.module'
 import { SplashscreenPageModule } from './pages/splashscreen/splashscreen.module';
+import { JWTMessageService } from './services/JWTMessageService';
+import { TransportService } from './services/TransportService';
+import { SerializeDataService } from './services/SerializeDataService';
 
 /** 通过类引用方式解析国家化文件 */
 export class CustomTranslateLoader implements TranslateLoader {
@@ -109,6 +112,9 @@ export function TranslateLoaderFactory() {
     AppService,
     CameraService,
     AgentService,
+    JWTMessageService,
+    TransportService,
+    SerializeDataService,
     PostfromComponentPageModule,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     {provide: ErrorHandler, useClass: ErrorHandler}
