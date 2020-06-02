@@ -30,7 +30,7 @@ export class SearchPage implements OnInit {
     // this.subscribeStatusMap = this.feedService.getSubscribeStatusMap();  
     this.connectStatus = this.feedService.getConnectionStatus();
     this.channelList = this.feedService.refreshLocalChannels();
-    this.feedService.refreshChannels();
+    // this.feedService.refreshChannels();
     feedService.doExploreTopics();
 
     this.events.subscribe('feeds:connectionChanged', connectionStatus => {
@@ -54,6 +54,7 @@ export class SearchPage implements OnInit {
     });
 
     this.events.subscribe('feeds:refreshChannels', list =>{
+      console.log("list ="+JSON.stringify(list));
       this.channelList = list;
     })
   }

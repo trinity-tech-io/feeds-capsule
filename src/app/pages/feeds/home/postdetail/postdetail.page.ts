@@ -36,7 +36,8 @@ export class PostdetailPage implements OnInit {
   
         let channel = this.feedService.getChannelFromId(this.nodeId, this.channelId);
         this.channelName = channel.name;
-        this.channelOwner = channel.owner_name;
+        // this.channelOwner = channel.owner_name;
+        this.channelOwner = this.feedService.indexText(channel.owner_name,25,25);
 
         let post = this.feedService.getPostFromId(this.nodeId, this.channelId, this.postId);
         this.postContent = post.content;
@@ -54,4 +55,11 @@ export class PostdetailPage implements OnInit {
     this.native.setTitleBarBackKeyShown(true);
   }
 
+  getContentText(content: string): string{
+    return this.feedService.parsePostContentText(content);
+  }
+
+  getContentImg(content: any): string{
+    return this.feedService.parsePostContentImg(content);
+  }
 }

@@ -71,6 +71,7 @@ export class FeedsPage implements OnInit {
     }
 
     search(){
+      this.feedService.refreshChannels();
       this.title = "Explore Feeds";
       titleBarManager.setTitle("Explore Feeds");
       this.native.setTitleBarBackKeyShown(false);

@@ -17,15 +17,17 @@ export class TransportService {
         });
         
         this.events.subscribe('carrier:friendMessage', event => {
+            console.log("result msg===>"+event.from);
+            console.log("result msg===>"+event.message);
             if (this.check(event.from))
-                eventBus.publish('transport:receiveMessage',event.message);
+                eventBus.publish('transport:receiveMessage',event);
             else 
-                eventBus.publish('transport:receiveJWTMessage',event.message);            
+                eventBus.publish('transport:receiveJWTMessage',event);
         });
     }
 
     check(nodeId: string){
-        return this.signInServerList.indexOf(nodeId) == -1
+        return this.signInServerList.indexOf(nodeId) != -1
     }
 
     sendStrMessage(nodeId: string, msg: string , onSuccess:()=>void, onError?:(err: string)=>void){

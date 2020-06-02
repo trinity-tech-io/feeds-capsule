@@ -1,5 +1,5 @@
 import { Component, OnInit, NgZone } from '@angular/core';
-import { NavController, Events } from '@ionic/angular';
+import { NavController, Events} from '@ionic/angular';
 import { FeedService } from '../../../services/FeedService';
 import { Router } from '@angular/router'
 
@@ -12,6 +12,7 @@ import { Router } from '@angular/router'
 
 export class HomePage implements OnInit {
   private postList: any;
+
   constructor(
     private events: Events,
     private zone: NgZone,
@@ -19,9 +20,13 @@ export class HomePage implements OnInit {
     private router: Router) {
     this.postList = feedService.getPostList();
 
-    this.events.subscribe('feeds:updatePost',(list)=>{
+    this.events.subscribe('feeds:postDataUpdate',()=>{
       this.zone.run(() => {
-        this.postList = list;
+        this.postList = this.feedService.getPostList();;
+        console.log("-----"+JSON.stringify(this.postList));
+        // this.postList.push(post);
+        // this.postList = list;
+        // console.log("postList==>"+JSON.stringify(this.postList))
       });
     });
   }
@@ -34,12 +39,33 @@ export class HomePage implements OnInit {
     return this.feedService.getChannelFromId(nodeId,channelId);
   }
 
-  getChannelName(nodeId, channelId){
-    return this.getChannel(nodeId, channelId).name;
+  getContentText(content: string): string{
+    return this.feedService.parsePostContentText(content);
+  }
+
+  getContentImg(content: any): string{
+    return this.feedService.parsePostContentImg(content);
+  }
+
+  getChannelOwnerName(nodeId, channelId){
+    let ownerName:string = this.getChannel(nodeId, channelId).owner_name
+    
+    // if (ownerName.length >25){
+    //   console.log("1111111111")
+    //   return ownerName.slice(0,15)+"..."+ownerName.slice(ownerName.length-10,ownerName.length);
+    // }
+    //   console.log("222222222")
+    // return ownerName;
+
+    return this.feedService.indexText(ownerName,25,25);
+
   }
 
   ngOnInit() {
   }
+
+
+
 
   like(nodeId, channelId, postId){
     this.feedService.postLike(nodeId,Number(channelId),Number(postId),null);
@@ -57,5 +83,9 @@ export class HomePage implements OnInit {
     this.router.navigate(['/feeds/tabs/home/postdetail',nodeId, channelId,postId]);
   }
 
+  refresh(){
+    // location.replace('/feeds/tabs/home');
+    // location.replace('/feeds/tabs/home/channels');
+  }
 
 }

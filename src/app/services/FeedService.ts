@@ -179,7 +179,6 @@ enum PublishType{
   updataComment = "feeds:updataComment",
 
   updataCommentLike = "feeds:updataCommentLike",
-  updatePost = "feeds:updatePost",
 
   updateLikeList = "feeds:updateLikeList",
 
@@ -952,7 +951,8 @@ export class FeedService {
   // public params: object,
   
   friendMessageCallback(){
-    this.events.subscribe('transport:receiveMessage', result => {
+    this.events.subscribe('jrpc:receiveMessage', result => {
+      console.log("result===>"+JSON.stringify(result));
       // alert(result.method);
       switch(result.type){
         case -1:
@@ -1739,6 +1739,7 @@ export class FeedService {
   refreshLocalChannels():Channels[]{
     localChannelsList.slice(0,localChannelsList.length);
     localChannelsList=[];
+    console.log("1111 localChannelsList ==>"+JSON.stringify(localChannelsList))
     let channels = this.sortChannels(0, channelsMap,localChannelsList);
     eventBus.publish(PublishType.refreshChannels,localChannelsList);
     return channels;
@@ -1757,7 +1758,7 @@ export class FeedService {
     }
     
     list.sort((a, b) => Number(b.last_update) - Number(a.last_update));
-
+    console.log("1111 list ==>"+JSON.stringify(list));
     let end: number;
     if (list.length>start+10){
       end = start+10;
@@ -1766,7 +1767,7 @@ export class FeedService {
     }
     for (let index = start; index < end; index++)
       localList.push(list[index]);
-
+      console.log("1111 localList ==>"+JSON.stringify(localList));
     return localList;
   }
 
@@ -2217,14 +2218,14 @@ export class FeedService {
       content    : content,
       comments   : 0,
       likes      : 0,
-      created_at : created_at
+      created_at : created_at*1000
     }
 
     let nodeChannelId = nodeId+channel_id;
     lastPostUpdateMap[nodeChannelId] = {
       nodeId:nodeId,
       channelId:channel_id,
-      time:created_at
+      time:created_at*1000
     }
     
     this.storeService.set(PersistenceKey.lastPostUpdateMap,lastPostUpdateMap);
@@ -2234,7 +2235,11 @@ export class FeedService {
     unreadMap[channel_id] = unreadMap[channel_id]+1;
     this.storeService.set(PersistenceKey.unreadMap,unreadMap);
     
+
+    console.log("========================  handleNewPostNotification =======================");
     eventBus.publish(PublishType.postDataUpdate);
+    // eventBus.publish("PublishType.postDataUpdate",postMap[postId]);
+    // eventBus.publish("PublishType.postDataUpdate",this.getPostList());
   }
 
   handleNewCommentNotification(nodeId: string, params: any){
@@ -2484,6 +2489,8 @@ export class FeedService {
   }
 
   handleGetChannelsResult(nodeId: string, result: any , request: any){
+
+    console.log()
     for (let index = 0; index < result.length; index++) {
       let id = result[index].id;
 
@@ -2562,6 +2569,7 @@ export class FeedService {
       }
     }
 
+    
     this.storeService.set(PersistenceKey.subscribedChannelsMap,subscribedChannelsMap);
 
     let list: Channels[] = [];
@@ -2591,7 +2599,8 @@ export class FeedService {
       let likes      = result[index].likes;
       let created_at = result[index].created_at;
 
-      if (postMap == undefined) postMap = {}
+      if (postMap == null || postMap == undefined)
+        postMap = {}
 
       let mPostId = this.getPostId(nodeId, channel_id, id);
       postMap[mPostId] = {
@@ -2608,14 +2617,15 @@ export class FeedService {
       lastPostUpdateMap[nodeChannelId] = {
         nodeId: nodeId,
         channelId: channel_id,
-        time:created_at
+        time:created_at*1000
       }
     }
 
     this.storeService.set(PersistenceKey.lastPostUpdateMap, lastPostUpdateMap);
     this.storeService.set(PersistenceKey.postMap, postMap);
 
-    eventBus.publish(PublishType.updatePost,this.getPostList());
+    eventBus.publish(PublishType.postDataUpdate);
+    // eventBus.publish(PublishType.updatePost,this.getPostList());
 
     // if (request.upper_bound == null){
     //   this.refreshLocalPost(nodeId, request.channel_id);
@@ -2681,7 +2691,10 @@ export class FeedService {
     this.refreshSubscribedChannels();
 
     let nodeChannelId = nodeId+request.id;
-    this.updatePost(nodeId,request.id,lastPostUpdateMap[nodeChannelId].time);
+    let lastPostTime = null;
+    if (lastPostUpdateMap[nodeChannelId] != null && lastPostUpdateMap[nodeChannelId] != undefined)
+      lastPostTime = lastPostUpdateMap[nodeChannelId].time;
+    this.updatePost(nodeId,request.id,lastPostTime);
   }
 
   handleUnsubscribeChannelResult(nodeId:string, request: any){
@@ -2693,6 +2706,9 @@ export class FeedService {
 
 
     this.refreshLocalSubscribedChannels();
+
+    this.deletePostFromChannel(nodeId, request.id);
+    
     eventBus.publish(PublishType.unsubscribeFinish, nodeId,request.id, channelsMap[request.id].name);
   }
 
@@ -2878,7 +2894,7 @@ export class FeedService {
   }
 
   updatePost(nodeId: string, channelId:number, lastPostUpdateTime){
-    this.getPost(nodeId,channelId,Communication.field.last_update,null,lastPostUpdateTime,10);
+    this.getPost(nodeId,channelId,Communication.field.last_update,null,lastPostUpdateTime,null);
   }
 
   getSubscribedChannelsFromNodeId(nodeId: string): Channels[]{
@@ -2894,7 +2910,50 @@ export class FeedService {
     return list;
   }
 
-  
+  deletePostFromChannel(nodeId: string ,channelId: number){
+    let keys: string[] = Object.keys(postMap);
+    for (const index in keys) {
+      if (postMap[keys[index]] == null || postMap[keys[index]] == undefined)
+        continue;
+      if (postMap[keys[index]].nodeId == nodeId && postMap[keys[index]].channel_id == channelId)
+        postMap[keys[index]] = undefined;
+    }
+    this.storeService.set(PersistenceKey.postMap,postMap);
+    eventBus.publish(PublishType.postDataUpdate);
+
+    let nodeChannelId = nodeId+channelId;
+    if (lastPostUpdateMap[nodeChannelId] != null && lastPostUpdateMap[nodeChannelId] != undefined){
+      lastPostUpdateMap[nodeChannelId].time = null
+      this.storeService.set(PersistenceKey.lastPostUpdateMap,lastPostUpdateMap);
+    }
+  }
+
+  indexText(text: string, limit: number, indexLength: number): string{
+    if (text.length < limit)
+      return text;
+    
+    let half = indexLength/2 ;
+    return text.slice(0,half)+"..."+text.slice(text.length-half+1, text.length);
+  }
+
+  parsePostContentText(content: string): string{
+    // console.log("content ==>"+content);
+    if (content.indexOf("text") != -1){
+      let contentObj = JSON.parse(content);
+      return contentObj.text;
+    }
+    
+    return content;
+  }
+
+  parsePostContentImg(content: any): string{
+    if (content.indexOf("img") != -1){
+      let contentObj = JSON.parse(content);
+      return contentObj.img;
+    }
+
+    return "";
+  }
 }
 
 

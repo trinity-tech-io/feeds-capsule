@@ -45,8 +45,10 @@ export class JsonRPCService {
         private agentService: AgentService) {
         eventBus = events;
         this.events.subscribe('transport:receiveMessage', event => {
-            let data = serializeDataService.decodeData(event.message);
-            eventBus.publish('JRPC:receiveMessage',this.response(event.from, data));
+            // let data = serializeDataService.decodeData(event.message);
+            // eventBus.publish('JRPC:receiveMessage',this.response(event.from, data));
+
+            eventBus.publish('jrpc:receiveMessage',this.response(event.from, event.message));
         });
     }
 
@@ -73,6 +75,8 @@ export class JsonRPCService {
         let request = this.assembleJson(String(id), method, params);
 
         let encodeData = this.serializeDataService.encodeData(request);
+
+        console.log("request ==>"+JSON.stringify(request));
         this.carrierService.sendMessage(
             nodeId,
             // encodeData,
@@ -82,7 +86,7 @@ export class JsonRPCService {
         )
     }
 
-    response(nodeId: string, msg: any): Result{
+    response(nodeId: string, msg: string): Result{
         return this.parseJson(nodeId, msg);
     }
 
@@ -96,14 +100,21 @@ export class JsonRPCService {
         return data;
     }
 
-    parseJson(nodeId: string, msg: any): Result{
+    parseJson(nodeId: string, msg: string): Result{
         let data: any ;
-        if (typeof msg == "string"){
+        console.log("typeof msg"+(typeof msg));
+        // if (typeof msg == "string"){
+            console.log("111111")
             let substr = msg.substring(0,msg.length-1);
             data = JSON.parse(substr);
-        }else{
-            data = msg;
-        }
+        // }
+        // else{
+        //     console.log("22222222")
+        //     data = msg;
+        // }
+
+
+        console.log("data ="+JSON.stringify(data));
 
         if (data.jsonrpc!="2.0")
             return this.createError(nodeId, -60003, "JsonRPC version error");
@@ -114,7 +125,7 @@ export class JsonRPCService {
         }
 
         if (msg.indexOf("params") != -1 && data.params!=null)
-            return this.createParamsResult(nodeId, data.params);
+            return this.createParamsResult(nodeId, data.params, data.method);
         
 
         if(msg.indexOf("error")!=-1)
@@ -146,7 +157,7 @@ export class JsonRPCService {
         return new Result(0,nodeId,method,requestParams,result,{},{});
     }
 
-    createParamsResult(nodeId: string, params: any){
-        return new Result(1,nodeId,"",{},{},{},params);
+    createParamsResult(nodeId: string, params: any, method: string){
+        return new Result(1,nodeId,method,{},{},{},params);
     }
 }

@@ -1,7 +1,13 @@
+<ion-header>
+  <div style="display: float;" (click)="refresh()">
+    asdfsdfosdfsdf
+    </div>
+</ion-header>
 <ion-content>
+
   <div *ngFor="let post of postList">
     <div class="channel-img-small-div">
-      <img class="channel-img-small" src="../../../../assets/images/component-480-3.png"  (click)="navTo(post.nodeId, post.channel_id)">
+      <img class="channel-img-small" src="../../../../assets/images/component-480-47.png"  (click)="navTo(post.nodeId, post.channel_id)">
 
     
       <div class="channel-detail-div">
@@ -13,20 +19,22 @@
           </div>
 
           <div  (click)="navTo(post.nodeId, post.channel_id)"> 
-            <ion-label class="channel-desc-small">@{{getChannel(post.nodeId, post.channel_id).owner_name}}</ion-label>
+            <ion-label class="channel-desc-small">@{{getChannelOwnerName(post.nodeId, post.channel_id)}}</ion-label>
           </div>
           <!-- <div class="channel-desc-small">{{getChannel(post.nodeId, post.channel_id).owner_name}} 
 
           </div> -->
 
           <div class="channel-post-div"  (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)"> 
-            <ion-label class="channel-post">{{post.content}}</ion-label>
+            <ion-label class="channel-post">{{getContentText(post.content)}}</ion-label>
             
           </div>
-          <img src="../../../../assets/images/screenshot-2020-04-26-at-05-20-13.png"
+          <!-- <img src="../../../../assets/images/screenshot-2020-04-26-at-05-20-13.png"
                   srcset="../../../../assets/images/screenshot-2020-04-26-at-05-20-13@2x.png 2x,
                   ../../../../assets/images/screenshot-2020-04-26-at-05-20-13@3x.png 3x"
-                  class="channel-post-img"  (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)">
+                  class="channel-post-img"  (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)"> -->
+          <img *ngIf="getContentImg(post.content) != ''" src="{{getContentImg(post.content)}}"
+               class="channel-post-img"  (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)">
 
           <div class="channel-post-heart-comment-div">
             <img src="../../../../assets/images/heart.svg" class="heart" (click)="like(post.nodeId, post.channel_id, post.id)">

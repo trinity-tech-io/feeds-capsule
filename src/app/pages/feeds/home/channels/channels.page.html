@@ -28,8 +28,8 @@
   </div>
   
   <div *ngFor="let post of postList">
-    <div class="channel-img-small-div">
-        <img class="channel-img-small" src="../../../../assets/images/component-480-3.png">
+    <!-- <div class="channel-img-small-div">
+        <img class="channel-img-small" src="../../../../assets/images/component-480-47.png">
 
         <div class="channel-info-div">
           <div> 
@@ -42,11 +42,9 @@
           </div>
 
           <div class="channel-post-div"> 
-            <ion-label class="channel-post">{{post.content}}</ion-label>
-            <img src="../../../../assets/images/screenshot-2020-04-26-at-05-20-13.png"
-                  srcset="../../../../assets/images/screenshot-2020-04-26-at-05-20-13@2x.png 2x,
-                  ../../../../assets/images/screenshot-2020-04-26-at-05-20-13@3x.png 3x"
-                  class="channel-post-img">
+            <ion-label class="channel-post">{{getContentText(post.content)}}</ion-label>
+            <img *ngIf="getContentImg(post.content) != ''" src="{{getContentImg(post.content)}}"
+            class="channel-post-img"  (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)">
           </div>
 
           <div class="channel-post-heart-comment-div">
@@ -58,8 +56,49 @@
           </div>
         </div>
     </div>
-    <img src="../../../../assets/images/rectangle-281.svg" class="Rectangle-281">
+    <img src="../../../../assets/images/rectangle-281.svg" class="Rectangle-281"> -->
+    <div class="channel-img-small-div">
+      <img class="channel-img-small" src="../../../../assets/images/component-480-47.png"  (click)="navTo(post.nodeId, post.channel_id)">
 
+    
+      <div class="channel-detail-div">
+        <div class="channel-detail-text-div">
+          <div style="height: 100%; vertical-align: middle;" (click)="navTo(post.nodeId, post.channel_id)"> 
+            <ion-label class="channel-title-small">{{getChannel(post.nodeId, post.channel_id).name}}</ion-label>
+            <ion-label class="channel-ts">{{post.created_at|date:'MM-dd HH:mm'}}</ion-label>
+            <ion-icon name="more" mode="ios" style="vertical-align: middle; float: right; "></ion-icon>
+          </div>
+
+          <div  (click)="navTo(post.nodeId, post.channel_id)"> 
+            <ion-label class="channel-desc-small">@{{getChannelOwnerName(post.nodeId, post.channel_id)}}</ion-label>
+          </div>
+          <!-- <div class="channel-desc-small">{{getChannel(post.nodeId, post.channel_id).owner_name}} 
+
+          </div> -->
+
+          <div class="channel-post-div"  (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)"> 
+            <ion-label class="channel-post">{{getContentText(post.content)}}</ion-label>
+            
+          </div>
+          <!-- <img src="../../../../assets/images/screenshot-2020-04-26-at-05-20-13.png"
+                  srcset="../../../../assets/images/screenshot-2020-04-26-at-05-20-13@2x.png 2x,
+                  ../../../../assets/images/screenshot-2020-04-26-at-05-20-13@3x.png 3x"
+                  class="channel-post-img"  (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)"> -->
+          <img *ngIf="getContentImg(post.content) != ''" src="{{getContentImg(post.content)}}"
+               class="channel-post-img"  (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)">
+
+          <div class="channel-post-heart-comment-div">
+            <img src="../../../../assets/images/heart.svg" class="heart" (click)="like(post.nodeId, post.channel_id, post.id)">
+            <ion-label class="heart-text" (click)="like(post.nodeId, post.channel_id, post.id)">{{post.likes}}</ion-label>
+
+            <img src="../../../../assets/images/bubble-line.svg" class="comment" (click)="comment()">
+            <ion-label class="comment-text"  (click)="comment()">{{post.comments}}</ion-label>
+          </div>
+        </div>
+      </div>
+    </div>
+    <img src="../../../assets/images/rectangle-5389.svg"
+    class="detail-line">
 
   </div>
 <!-- 
