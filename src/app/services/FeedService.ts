@@ -13,7 +13,7 @@ declare let pluginDidDocument: DIDPlugin.DIDDocument;
 declare let pluginDid: DIDPlugin.DID;
 
 
-let subscribedChannelsMap:{[channelId: number]: Channels};
+let subscribedChannelsMap:{[nodeChannelId: string]: Channels};
 let channelsMap:{[channelId: number]: Channels} ;
 let myChannelsMap:{[channelId: number]: Channels};
 let unreadMap:{[channelId: number]: number};
@@ -133,6 +133,7 @@ export class SignInData{
       public email: string,
       public telephone: string,
       public location: string,
+      public description: string,
       public expiresTS: number) {}
 }
 
@@ -1632,8 +1633,8 @@ export class FeedService {
     this.storeService.set(PersistenceKey.signInRawData, jsonStr);
   }
 
-  saveSignInData(did: string, name: string, email: string, telephone: string, location: string){
-    localSignInData = new SignInData(did,name,email,telephone,location,this.getCurrentTimeNum()+this.getDaysTS(expDay));
+  saveSignInData(did: string, name: string, email: string, telephone: string, location: string, description: string){
+    localSignInData = new SignInData(did,name,email,telephone,location, description, this.getCurrentTimeNum()+this.getDaysTS(expDay));
     this.storeService.set(PersistenceKey.signInData, localSignInData);
   }
 
@@ -2554,8 +2555,9 @@ export class FeedService {
       if (subscribedChannelsMap == null|| subscribedChannelsMap == undefined)
         subscribedChannelsMap = {};
 
-      if (subscribedChannelsMap[channelId] == undefined){
-        subscribedChannelsMap[channelId] = {
+      let nodeChannelId = nodeId+channelId;
+      if (subscribedChannelsMap[nodeChannelId] == undefined){
+        subscribedChannelsMap[nodeChannelId] = {
           nodeId: nodeId,
           id: channelId,
           name: name,
@@ -2568,14 +2570,14 @@ export class FeedService {
           isSubscribed:true
         }
       }else {
-        subscribedChannelsMap[channelId].nodeId = nodeId;
-        subscribedChannelsMap[channelId].id = channelId;
-        subscribedChannelsMap[channelId].name = name;
-        subscribedChannelsMap[channelId].introduction = introduction;
-        subscribedChannelsMap[channelId].owner_name = owner_name;
-        subscribedChannelsMap[channelId].owner_did = owner_did;
-        subscribedChannelsMap[channelId].subscribers = subscribers;
-        subscribedChannelsMap[channelId].last_update = last_update*1000;
+        subscribedChannelsMap[nodeChannelId].nodeId = nodeId;
+        subscribedChannelsMap[nodeChannelId].id = channelId;
+        subscribedChannelsMap[nodeChannelId].name = name;
+        subscribedChannelsMap[nodeChannelId].introduction = introduction;
+        subscribedChannelsMap[nodeChannelId].owner_name = owner_name;
+        subscribedChannelsMap[nodeChannelId].owner_did = owner_did;
+        subscribedChannelsMap[nodeChannelId].subscribers = subscribers;
+        subscribedChannelsMap[nodeChannelId].last_update = last_update*1000;
       }
     }
 
@@ -2711,7 +2713,8 @@ export class FeedService {
     channelsMap[request.id].isSubscribed = false;
     this.storeService.set(PersistenceKey.channelsMap,channelsMap);
 
-    subscribedChannelsMap[request.id] = undefined;
+    let nodeChannelId = nodeId+request.id;
+    subscribedChannelsMap[nodeChannelId] = undefined;
     this.storeService.set(PersistenceKey.subscribedChannelsMap,subscribedChannelsMap);
 
 
@@ -2859,6 +2862,9 @@ export class FeedService {
     for (const index in keys) {
       if (postMap[keys[index]] == null || postMap[keys[index]] == undefined)
         continue;
+
+      let nodeChannelId = postMap[keys[index]].nodeId + postMap[keys[index]].channel_id;
+      if (subscribedChannelsMap[nodeChannelId] != null || subscribedChannelsMap[nodeChannelId] != undefined)
         list.push(postMap[keys[index]]);
     }
     
@@ -2921,21 +2927,23 @@ export class FeedService {
   }
 
   deletePostFromChannel(nodeId: string ,channelId: number){
-    let keys: string[] = Object.keys(postMap);
-    for (const index in keys) {
-      if (postMap[keys[index]] == null || postMap[keys[index]] == undefined)
-        continue;
-      if (postMap[keys[index]].nodeId == nodeId && postMap[keys[index]].channel_id == channelId)
-        postMap[keys[index]] = undefined;
-    }
-    this.storeService.set(PersistenceKey.postMap,postMap);
-    eventBus.publish(PublishType.postDataUpdate);
+    // let keys: string[] = Object.keys(postMap);
+    // for (const index in keys) {
+    //   if (postMap[keys[index]] == null || postMap[keys[index]] == undefined)
+    //     continue;
+    //   if (postMap[keys[index]].nodeId == nodeId && postMap[keys[index]].channel_id == channelId)
+    //     postMap[keys[index]] = undefined;
+    // }
+    // this.storeService.set(PersistenceKey.postMap,postMap);
+    // eventBus.publish(PublishType.postDataUpdate);
 
-    let nodeChannelId = nodeId+channelId;
-    if (lastPostUpdateMap[nodeChannelId] != null && lastPostUpdateMap[nodeChannelId] != undefined){
-      lastPostUpdateMap[nodeChannelId].time = null
-      this.storeService.set(PersistenceKey.lastPostUpdateMap,lastPostUpdateMap);
-    }
+    // let nodeChannelId = nodeId+channelId;
+    // if (lastPostUpdateMap[nodeChannelId] != null && lastPostUpdateMap[nodeChannelId] != undefined){
+    //   lastPostUpdateMap[nodeChannelId].time = null
+    //   this.storeService.set(PersistenceKey.lastPostUpdateMap,lastPostUpdateMap);
+    // }
+
+    eventBus.publish(PublishType.postDataUpdate);
   }
 
   indexText(text: string, limit: number, indexLength: number): string{

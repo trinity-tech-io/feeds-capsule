@@ -9,7 +9,7 @@ import { FeedService } from 'src/app/services/FeedService';
 export class ProfilePage implements OnInit {
   private types = ["Details","MyFeeds","Following","Likes"];
   private selectType: String = "Details"; 
-
+  private description: String = "";
   private name: string = "";
   slideOpts = {
     initialSlide: 1,
@@ -21,6 +21,9 @@ export class ProfilePage implements OnInit {
     private feedService: FeedService) {
     let signInData = this.feedService.getSignInData();
     this.name = signInData.name;
+
+    this.description = signInData.description;
+    console.log("des="+this.description);
   }
 
   ngOnInit() {

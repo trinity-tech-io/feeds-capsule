@@ -34,7 +34,8 @@ export class SigninPage implements OnInit {
               "fakename",
               "fakeemail",
               "faketelephone",
-              "fakelocation");
+              "fakelocation",
+              "fakedescription");
       
       this.feedService.updateSignInDataExpTimeTo(this.feedService.getSignInData(),0);
       this.initApp();
@@ -76,14 +77,13 @@ export class SigninPage implements OnInit {
         didManager.VerifiablePresentationBuilder.fromJson(JSON.stringify(response.result.presentation), (presentation)=>{
           this.zone.run(()=>{
             let credentials = presentation.getCredentials();
-
-            console.log("des="+ this.findCredentialValueById(this.did, credentials, "description", "Not provided"));
             this.saveData(
               data.did,
               this.findCredentialValueById(this.did, credentials, "name", "Not provided"),
               this.findCredentialValueById(this.did, credentials, "email", "Not provided"),
               this.findCredentialValueById(this.did, credentials, "telephone", "Not provided"),
-              this.findCredentialValueById(this.did, credentials, "nation", "Not provided")
+              this.findCredentialValueById(this.did, credentials, "nation", "Not provided"),
+              this.findCredentialValueById(this.did, credentials, "description", "Not provided")
               );
             this.initApp();
           });
@@ -119,7 +119,7 @@ export class SigninPage implements OnInit {
     this.router.navigate(['/tabs']);
   }
 
-  saveData(did: string, name: string, email: string, telephone: string, location: string){
-    this.feedService.saveSignInData(did,name,email,telephone,location);
+  saveData(did: string, name: string, email: string, telephone: string, location: string, description: string){
+    this.feedService.saveSignInData(did,name,email,telephone,location, description);
   }
 }
