@@ -21,14 +21,9 @@ export class HomePage implements OnInit {
     private feedService :FeedService,
     private router: Router) {
     this.postList = feedService.getPostList();
-    console.log("101010101010101"+JSON.stringify(this.postList));
     this.events.subscribe('feeds:postDataUpdate',()=>{
       this.zone.run(() => {
         this.postList = this.feedService.getPostList();
-        console.log("-----"+JSON.stringify(this.postList));
-        // this.postList.push(post);
-        // this.postList = list;
-        // console.log("postList==>"+JSON.stringify(this.postList))
       });
     });
   }
@@ -50,31 +45,15 @@ export class HomePage implements OnInit {
   }
 
   getChannelOwnerName(nodeId, channelId){
-    let ownerName:string = this.getChannel(nodeId, channelId).owner_name
-    
-    // if (ownerName.length >25){
-    //   console.log("1111111111")
-    //   return ownerName.slice(0,15)+"..."+ownerName.slice(ownerName.length-10,ownerName.length);
-    // }
-    //   console.log("222222222")
-    // return ownerName;
-
+    let ownerName:string = this.getChannel(nodeId, channelId).owner_name;
     return this.feedService.indexText(ownerName,25,25);
-
   }
 
   ngOnInit() {
   }
 
-
-
-
   like(nodeId, channelId, postId){
     this.feedService.postLike(nodeId,Number(channelId),Number(postId),null);
-  }
- 
-  comment(){
-    // alert("TODO")
   }
 
   navTo(nodeId, channelId){
@@ -86,8 +65,6 @@ export class HomePage implements OnInit {
   }
 
   refresh(){
-    // location.replace('/feeds/tabs/home');
-    // location.replace('/feeds/tabs/home/channels');
   }
 
   async showCommentPage(event, nodeId, channelId, postId){

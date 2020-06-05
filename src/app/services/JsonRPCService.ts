@@ -76,7 +76,6 @@ export class JsonRPCService {
 
         let encodeData = this.serializeDataService.encodeData(request);
 
-        console.log("request ==>"+JSON.stringify(request));
         this.carrierService.sendMessage(
             nodeId,
             // encodeData,
@@ -102,19 +101,8 @@ export class JsonRPCService {
 
     parseJson(nodeId: string, msg: string): Result{
         let data: any ;
-        console.log("typeof msg"+(typeof msg));
-        // if (typeof msg == "string"){
-            console.log("111111")
-            let substr = msg.substring(0,msg.length-1);
-            data = JSON.parse(substr);
-        // }
-        // else{
-        //     console.log("22222222")
-        //     data = msg;
-        // }
-
-
-        console.log("data ="+JSON.stringify(data));
+        let substr = msg.substring(0,msg.length-1);
+        data = JSON.parse(substr);
 
         if (data.jsonrpc!="2.0")
             return this.createError(nodeId, -60003, "JsonRPC version error");

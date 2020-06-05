@@ -54,9 +54,13 @@ export class SearchPage implements OnInit {
     });
 
     this.events.subscribe('feeds:refreshChannels', list =>{
-      console.log("list ="+JSON.stringify(list));
       this.channelList = list;
-    })
+    });
+
+    this.events.subscribe('feeds:channelsDataUpdate', () =>{
+      this.channelList = this.feedService.getChannelsList();
+    });
+    
   }
 
   ngOnInit() {

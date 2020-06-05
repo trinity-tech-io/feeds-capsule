@@ -85,16 +85,7 @@ export class ChannelsPage implements OnInit {
 
   getChannelOwnerName(nodeId, channelId){
     let ownerName:string = this.getChannel(nodeId, channelId).owner_name
-    
-    // if (ownerName.length >25){
-    //   console.log("1111111111")
-    //   return ownerName.slice(0,15)+"..."+ownerName.slice(ownerName.length-10,ownerName.length);
-    // }
-    //   console.log("222222222")
-    // return ownerName;
-
     return this.feedService.indexText(ownerName,25,25);
-
   }
 
   navTo(nodeId, channelId){

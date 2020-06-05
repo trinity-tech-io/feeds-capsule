@@ -29,6 +29,10 @@ export class MyfeedsComponent implements OnInit {
         this.channels = list;
       });
     });
+
+    this.events.subscribe('feeds:channelsDataUpdate', () =>{
+      this.channels = this.feedService.getMyChannelList();
+    });
   }
 
   ngOnInit() {}

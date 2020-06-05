@@ -953,15 +953,11 @@ export class FeedService {
   
   friendMessageCallback(){
     this.events.subscribe('jrpc:receiveMessage', result => {
-      console.log("result===>"+JSON.stringify(result));
-      // alert(result.method);
       switch(result.type){
         case -1:
           alert(result.error.code+":"+result.error.message);
           break;
         case 1:
-          // alert(JSON.stringify(result.params));
-          // this.handleNewEventResult(result.nodeId, result.params);
           this.handleNotification(result.nodeId, result.method, result.params);//TODO
           break;
         case 0:
@@ -1740,7 +1736,6 @@ export class FeedService {
   refreshLocalChannels():Channels[]{
     localChannelsList.slice(0,localChannelsList.length);
     localChannelsList=[];
-    console.log("1111 localChannelsList ==>"+JSON.stringify(localChannelsList))
     let channels = this.sortChannels(0, channelsMap,localChannelsList);
     eventBus.publish(PublishType.refreshChannels,localChannelsList);
     return channels;
@@ -1759,7 +1754,6 @@ export class FeedService {
     }
     
     list.sort((a, b) => Number(b.last_update) - Number(a.last_update));
-    console.log("1111 list ==>"+JSON.stringify(list));
     let end: number;
     if (list.length>start+10){
       end = start+10;
@@ -1768,7 +1762,6 @@ export class FeedService {
     }
     for (let index = start; index < end; index++)
       localList.push(list[index]);
-      console.log("1111 localList ==>"+JSON.stringify(localList));
     return localList;
   }
 
@@ -2236,11 +2229,7 @@ export class FeedService {
     unreadMap[channel_id] = unreadMap[channel_id]+1;
     this.storeService.set(PersistenceKey.unreadMap,unreadMap);
     
-
-    console.log("========================  handleNewPostNotification =======================");
     eventBus.publish(PublishType.postDataUpdate);
-    // eventBus.publish("PublishType.postDataUpdate",postMap[postId]);
-    // eventBus.publish("PublishType.postDataUpdate",this.getPostList());
   }
 
   handleNewCommentNotification(nodeId: string, params: any){
@@ -2361,6 +2350,8 @@ export class FeedService {
     this.storeService.set(PersistenceKey.channelsMap, channelsMap);
 
     eventBus.publish(PublishType.createTopicSuccess);
+    eventBus.publish(PublishType.channelsDataUpdate);
+
   }
 
   handlePublishPostResult(nodeId: string, result: any, request: any){
@@ -2391,7 +2382,9 @@ export class FeedService {
     postMap[mPostId]=post;
 
     this.storeService.set(PersistenceKey.postMap, postMap);
-    eventBus.publish(PublishType.postEventSuccess)
+    eventBus.publish(PublishType.postEventSuccess);
+
+    eventBus.publish(PublishType.postDataUpdate);
   }
 
   handlePostCommentResult(nodeId:string, result: any, request: any){
@@ -2500,8 +2493,6 @@ export class FeedService {
   }
 
   handleGetChannelsResult(nodeId: string, result: any , request: any){
-
-    console.log()
     for (let index = 0; index < result.length; index++) {
       let id = result[index].id;
 
@@ -2592,8 +2583,6 @@ export class FeedService {
         list.push(subscribedChannelsMap[keys[index]]);
     }
     list.sort((a, b) => Number(b.last_update) - Number(a.last_update));
-
-
 
     if (request.upper_bound == null){
       this.refreshLocalSubscribedChannels();

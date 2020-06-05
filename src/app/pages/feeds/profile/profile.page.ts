@@ -23,7 +23,6 @@ export class ProfilePage implements OnInit {
     this.name = signInData.name;
 
     this.description = signInData.description;
-    console.log("des="+this.description);
   }
 
   ngOnInit() {

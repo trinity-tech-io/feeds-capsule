@@ -17,8 +17,6 @@ export class TransportService {
         });
         
         this.events.subscribe('carrier:friendMessage', event => {
-            console.log("result msg===>"+event.from);
-            console.log("result msg===>"+event.message);
             if (this.check(event.from))
                 eventBus.publish('transport:receiveMessage',event);
             else 
