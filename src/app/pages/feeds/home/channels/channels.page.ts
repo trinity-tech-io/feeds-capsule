@@ -1,9 +1,11 @@
 import { Component, OnInit, NgZone } from '@angular/core';
-import { NavController, Events } from '@ionic/angular';
+import { NavController, Events, PopoverController } from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
 import { FeedService } from '../../../../services/FeedService';
 import { NativeService } from '../../../../services/NativeService';
 import { Router } from '@angular/router'
+import { CommentComponent } from '../../../../components/comment/comment.component'
+
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 @Component({
@@ -22,6 +24,7 @@ export class ChannelsPage implements OnInit {
   private channelId;
 
   constructor(
+    private popoverController: PopoverController,
     private router: Router,
     private zone: NgZone,
     private events: Events,
@@ -100,5 +103,22 @@ export class ChannelsPage implements OnInit {
 
   navToPostDetail(nodeId, channelId, postId){
     this.router.navigate(['/feeds/tabs/home/postdetail',nodeId, channelId,postId]);
+  }
+
+  async showCommentPage(event, nodeId, channelId, postId){
+    const popover = await this.popoverController.create({
+      component: CommentComponent,
+      componentProps: {nodeId: nodeId, channelId: channelId, postId: postId},
+      event:event,
+      translucent: true,
+      cssClass: 'bottom-sheet-popover'
+    });
+
+    popover.onDidDismiss().then((result)=>{
+      if(result.data == undefined){
+        return;
+      }
+    });
+    return await popover.present();
   }
 }

@@ -2270,6 +2270,11 @@ export class FeedService {
 
     let postId = this.getPostId(nodeId, channel_id, post_id);
     postMap[postId].comments = postMap[postId].comments+1;
+    if (likeMap[postId] != null && likeMap[postId] != undefined){
+      likeMap[postId] = postMap[postId];
+      this.storeService.set(PersistenceKey.likeMap, likeMap);
+      eventBus.publish(PublishType.updateLikeList, this.getLikeList());
+    }
 
     this.storeService.set(PersistenceKey.postMap,postMap);
     eventBus.publish(PublishType.postDataUpdate);
@@ -2295,6 +2300,11 @@ export class FeedService {
       let postId = this.getPostId(nodeId,channel_id,post_id);
       postMap[postId].likes = postMap[postId].likes+ count;
       this.storeService.set(PersistenceKey.postMap,postMap);
+      if (likeMap[postId] != null && likeMap[postId] != undefined){
+        likeMap[postId] = postMap[postId];
+        this.storeService.set(PersistenceKey.likeMap, likeMap);
+        eventBus.publish(PublishType.updateLikeList, this.getLikeList());
+      }
       eventBus.publish(PublishType.postDataUpdate);
     }else {
       commentsMap[channel_id][post_id][comment_id].likes = commentsMap[channel_id][post_id][comment_id].likes + count;
@@ -2384,43 +2394,43 @@ export class FeedService {
   }
 
   handlePostCommentResult(nodeId:string, result: any, request: any){
-    let id = result.id;
-    let channel_id = request.channel_id;
-    let post_id = request.post_id;
-    let comment_id = request.comment_id;
-    let content = request.content;
+    // let id = result.id;
+    // let channel_id = request.channel_id;
+    // let post_id = request.post_id;
+    // let comment_id = request.comment_id;
+    // let content = request.content;
 
 
-    let comment: Comment = {
-      channel_id : channel_id,
-      post_id    : post_id,
-      id         : id,
-      user_name  : "me",
-      comment_id : comment_id,
-      content    : content,
-      likes      : 0,
-      created_at : this.getCurrentTimeNum()
-    }
+    // let comment: Comment = {
+    //   channel_id : channel_id,
+    //   post_id    : post_id,
+    //   id         : id,
+    //   user_name  : "me",
+    //   comment_id : comment_id,
+    //   content    : content,
+    //   likes      : 0,
+    //   created_at : this.getCurrentTimeNum()
+    // }
 
-    if (commentsMap == null || commentsMap == undefined)
-      commentsMap = {}
-    if (commentsMap[channel_id] == null || commentsMap[channel_id] == undefined)
-      commentsMap[channel_id] = {}
-    if (commentsMap[channel_id][post_id] == null || commentsMap[channel_id][post_id] == undefined)
-      commentsMap[channel_id][post_id] = {}
+    // if (commentsMap == null || commentsMap == undefined)
+    //   commentsMap = {}
+    // if (commentsMap[channel_id] == null || commentsMap[channel_id] == undefined)
+    //   commentsMap[channel_id] = {}
+    // if (commentsMap[channel_id][post_id] == null || commentsMap[channel_id][post_id] == undefined)
+    //   commentsMap[channel_id][post_id] = {}
 
-    commentsMap[channel_id][post_id][id] = comment;
+    // commentsMap[channel_id][post_id][id] = comment;
 
-    let mPostId = this.getPostId(nodeId, channel_id, post_id);
-    postMap[mPostId].comments = postMap[mPostId].comments+1;
+    // let mPostId = this.getPostId(nodeId, channel_id, post_id);
+    // postMap[mPostId].comments = postMap[mPostId].comments+1;
 
-    this.storeService.set(PersistenceKey.postMap,postMap);
-    eventBus.publish(PublishType.postDataUpdate);
+    // this.storeService.set(PersistenceKey.postMap,postMap);
+    // eventBus.publish(PublishType.postDataUpdate);
 
-    this.storeService.set(PersistenceKey.commentsMap, commentsMap);
-    eventBus.publish(PublishType.commentDataUpdate);
+    // this.storeService.set(PersistenceKey.commentsMap, commentsMap);
+    // eventBus.publish(PublishType.commentDataUpdate);
 
-    eventBus.publish(PublishType.updataComment,nodeId,channel_id,post_id,postMap[mPostId].comments);
+    // eventBus.publish(PublishType.updataComment,nodeId,channel_id,post_id,postMap[mPostId].comments);
   }
 
   handlePostLikeResult(nodeId:string, request: any){
@@ -2937,7 +2947,10 @@ export class FeedService {
   }
 
   parsePostContentText(content: string): string{
-    // console.log("content ==>"+content);
+    if (content == undefined){
+      return "";
+    }
+    
     if (content.indexOf("text") != -1){
       let contentObj = JSON.parse(content);
       return contentObj.text;
@@ -2947,6 +2960,10 @@ export class FeedService {
   }
 
   parsePostContentImg(content: any): string{
+    if (content == undefined){
+      return "";
+    }
+
     if (content.indexOf("img") != -1){
       let contentObj = JSON.parse(content);
       return contentObj.img;

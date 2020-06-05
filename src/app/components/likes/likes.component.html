@@ -65,8 +65,8 @@
         <img src="../../../../assets/images/heart.svg" class="heart" (click)="like(post.nodeId, post.channel_id, post.id)">
         <ion-label class="heart-text" (click)="like(post.nodeId, post.channel_id, post.id)">{{post.likes}}</ion-label>
 
-        <img src="../../../../assets/images/bubble-line.svg" class="comment" (click)="comment()">
-        <ion-label class="comment-text"  (click)="comment()">{{post.comments}}</ion-label>
+        <img src="../../../../assets/images/bubble-line.svg" class="comment" (click)="showCommentPage($event, post.nodeId, post.channel_id, post.id)">
+        <ion-label class="comment-text"  (click)="showCommentPage($event, post.nodeId, post.channel_id, post.id)">{{post.comments}}</ion-label>
       </div>
     </div>
   </div>

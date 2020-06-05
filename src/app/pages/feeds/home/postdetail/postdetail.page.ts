@@ -1,7 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, NgZone } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { NavController, Events, PopoverController} from '@ionic/angular';
 import { FeedService } from '../../../../services/FeedService';
 import { NativeService } from '../../../../services/NativeService';
+import { CommentComponent } from '../../../../components/comment/comment.component'
 
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
@@ -25,7 +27,10 @@ export class PostdetailPage implements OnInit {
   private postId;
 
   constructor(
+    private popoverController: PopoverController,
     private acRoute: ActivatedRoute,
+    private events: Events,
+    private zone: NgZone,
     private native: NativeService,
     private feedService :FeedService) {
 
@@ -48,6 +53,23 @@ export class PostdetailPage implements OnInit {
         this.commentList = this.feedService.getCommentList(this.nodeId, this.channelId, this.postId);
         
       });
+
+
+      this.events.subscribe('feeds:commentDataUpdate',()=>{
+        this.zone.run(() => {
+          this.commentList = this.feedService.getCommentList(this.nodeId, this.channelId, this.postId);
+        });
+      });
+      
+      this.events.subscribe('feeds:updataComment',(nodeId, channelId, postId, commentsNum)=>{
+        this.zone.run(() => {
+          if (this.nodeId == nodeId &&
+            this.channelId == channelId &&
+            this.postId == postId)
+            this.commentsNum = commentsNum;
+        });
+      });
+      
   }
 
   ngOnInit() {
@@ -61,5 +83,26 @@ export class PostdetailPage implements OnInit {
 
   getContentImg(content: any): string{
     return this.feedService.parsePostContentImg(content);
+  }
+
+  indexText(text: string):string{
+    return this.feedService.indexText(text,20,20);
+  }
+
+  async showCommentPage(event){
+    const popover = await this.popoverController.create({
+      component: CommentComponent,
+      componentProps: {nodeId: this.nodeId, channelId: this.channelId, postId: this.postId},
+      event:event,
+      translucent: true,
+      cssClass: 'bottom-sheet-popover'
+    });
+
+    popover.onDidDismiss().then((result)=>{
+      if(result.data == undefined){
+        return;
+      }
+    });
+    return await popover.present();
   }
 }

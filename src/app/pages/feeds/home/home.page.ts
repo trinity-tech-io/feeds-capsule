@@ -1,7 +1,8 @@
 import { Component, OnInit, NgZone } from '@angular/core';
-import { NavController, Events} from '@ionic/angular';
+import { NavController, Events, PopoverController} from '@ionic/angular';
 import { FeedService } from '../../../services/FeedService';
 import { Router } from '@angular/router'
+import { CommentComponent } from '../../../components/comment/comment.component'
 
 @Component({
   selector: 'app-home',
@@ -14,15 +15,16 @@ export class HomePage implements OnInit {
   private postList: any;
 
   constructor(
+    private popoverController: PopoverController,
     private events: Events,
     private zone: NgZone,
     private feedService :FeedService,
     private router: Router) {
     this.postList = feedService.getPostList();
-
+    console.log("101010101010101"+JSON.stringify(this.postList));
     this.events.subscribe('feeds:postDataUpdate',()=>{
       this.zone.run(() => {
-        this.postList = this.feedService.getPostList();;
+        this.postList = this.feedService.getPostList();
         console.log("-----"+JSON.stringify(this.postList));
         // this.postList.push(post);
         // this.postList = list;
@@ -72,7 +74,7 @@ export class HomePage implements OnInit {
   }
  
   comment(){
-    alert("TODO")
+    // alert("TODO")
   }
 
   navTo(nodeId, channelId){
@@ -86,6 +88,23 @@ export class HomePage implements OnInit {
   refresh(){
     // location.replace('/feeds/tabs/home');
     // location.replace('/feeds/tabs/home/channels');
+  }
+
+  async showCommentPage(event, nodeId, channelId, postId){
+    const popover = await this.popoverController.create({
+      component: CommentComponent,
+      componentProps: {nodeId: nodeId, channelId: channelId, postId: postId},
+      event:event,
+      translucent: true,
+      cssClass: 'bottom-sheet-popover'
+    });
+
+    popover.onDidDismiss().then((result)=>{
+      if(result.data == undefined){
+        return;
+      }
+    });
+    return await popover.present();
   }
 
 }

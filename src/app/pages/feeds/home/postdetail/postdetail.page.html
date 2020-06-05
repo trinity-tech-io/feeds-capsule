@@ -77,8 +77,8 @@
           <img src="../../../../../assets/images/heart.svg" class="heart">
           <ion-label class="heart-text" >{{likesNum}}</ion-label>
 
-          <img src="../../../../../assets/images/bubble-line.svg" class="comment" >
-          <ion-label class="comment-text">{{commentsNum}}</ion-label>
+          <img src="../../../../../assets/images/bubble-line.svg" class="comment" (click)="showCommentPage($event)">
+          <ion-label class="comment-text" (click)="showCommentPage($event)">{{commentsNum}}</ion-label>
 
           <ion-label class="post-detail-ts">{{postTS|date:'MM-dd HH:mm'}}</ion-label>
 
@@ -90,8 +90,46 @@
     class="detail-line">
 
 
-
+    <div *ngFor="let comment of commentList">
       <div class="channel-img-small-div">
+        <img class="channel-img-small" src="../../../../assets/images/screenshot-2020-04-26-at-03-20-46.png" >
+
+        <div class="channel-detail-div">
+          <div class="channel-detail-text-div">
+            <div style="height: 100%; vertical-align: middle;" > 
+              <ion-label class="channel-title-small">@{{indexText(comment.user_name)}}</ion-label>
+              <ion-label class="channel-ts">{{comment.create_at}}</ion-label>
+              <ion-icon name="more" mode="ios" style="vertical-align: middle; float: right; "></ion-icon>
+            </div>
+  
+            <div  (click)="navTo(post.nodeId, post.channel_id)"> 
+              <ion-label class="channel-desc-small">@{{indexText(comment.user_name)}}</ion-label>
+            </div>
+
+            <div class="channel-post-div" > 
+              <ion-label class="channel-post">{{comment.content}}</ion-label>
+              
+            </div>
+            <!-- <img src="../../../../assets/images/screenshot-2020-04-26-at-05-20-13.png"
+                    srcset="../../../../assets/images/screenshot-2020-04-26-at-05-20-13@2x.png 2x,
+                    ../../../../assets/images/screenshot-2020-04-26-at-05-20-13@3x.png 3x"
+                    class="channel-post-img"  > -->
+  
+            <div class="channel-post-heart-comment-div">
+              <img src="../../../../assets/images/heart.svg" class="heart" >
+              <ion-label class="heart-text" >0</ion-label>
+  
+              <img src="../../../../assets/images/bubble-line.svg" class="comment" >
+              <ion-label class="comment-text"  >0</ion-label>
+            </div>
+          </div>
+        </div>
+      </div>
+      <img src="../../../assets/images/rectangle-5389.svg"
+      class="detail-line">
+    </div>
+
+      <!-- <div class="channel-img-small-div">
         <img class="channel-img-small" src="../../../../assets/images/component-480-3.png" >
   
       
@@ -106,9 +144,6 @@
             <div  (click)="navTo(post.nodeId, post.channel_id)"> 
               <ion-label class="channel-desc-small">@owner-name</ion-label>
             </div>
-            <!-- <div class="channel-desc-small">{{getChannel(post.nodeId, post.channel_id).owner_name}} 
-  
-            </div> -->
   
             <div class="channel-post-div" > 
               <ion-label class="channel-post">comment-content</ion-label>
@@ -130,49 +165,7 @@
         </div>
       </div>
       <img src="../../../assets/images/rectangle-5389.svg"
-      class="detail-line">
-
-
-      <div class="channel-img-small-div">
-        <img class="channel-img-small" src="../../../../assets/images/component-480-3.png" >
-  
-      
-        <div class="channel-detail-div">
-          <div class="channel-detail-text-div">
-            <div style="height: 100%; vertical-align: middle;" > 
-              <ion-label class="channel-title-small">comment-name</ion-label>
-              <ion-label class="channel-ts">comment-ts</ion-label>
-              <ion-icon name="more" mode="ios" style="vertical-align: middle; float: right; "></ion-icon>
-            </div>
-  
-            <div  (click)="navTo(post.nodeId, post.channel_id)"> 
-              <ion-label class="channel-desc-small">@owner-name</ion-label>
-            </div>
-            <!-- <div class="channel-desc-small">{{getChannel(post.nodeId, post.channel_id).owner_name}} 
-  
-            </div> -->
-  
-            <div class="channel-post-div" > 
-              <ion-label class="channel-post">comment-content</ion-label>
-              
-            </div>
-            <img src="../../../../assets/images/screenshot-2020-04-26-at-05-20-13.png"
-                    srcset="../../../../assets/images/screenshot-2020-04-26-at-05-20-13@2x.png 2x,
-                    ../../../../assets/images/screenshot-2020-04-26-at-05-20-13@3x.png 3x"
-                    class="channel-post-img"  >
-  
-            <div class="channel-post-heart-comment-div">
-              <img src="../../../../assets/images/heart.svg" class="heart" >
-              <ion-label class="heart-text" >0</ion-label>
-  
-              <img src="../../../../assets/images/bubble-line.svg" class="comment" >
-              <ion-label class="comment-text"  >0</ion-label>
-            </div>
-          </div>
-        </div>
-      </div>
-      <img src="../../../assets/images/rectangle-5389.svg"
-      class="detail-line">
+      class="detail-line"> -->
 
 
 </ion-content>

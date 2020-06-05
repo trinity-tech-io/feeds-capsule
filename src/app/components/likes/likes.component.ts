@@ -1,7 +1,8 @@
 import { Component, OnInit, NgZone } from '@angular/core';
+import { NavController, Events, PopoverController} from '@ionic/angular';
 import { FeedService } from '../../services/FeedService';
-import { Events } from '@ionic/angular';
 import { Router } from '@angular/router'
+import { CommentComponent } from '../../components/comment/comment.component'
 
 
 @Component({
@@ -12,6 +13,7 @@ import { Router } from '@angular/router'
 export class LikesComponent implements OnInit {
   private likeList;
   constructor(
+    private popoverController: PopoverController,
     private feedService :FeedService,
     private zone: NgZone,
     private router: Router,
@@ -23,7 +25,6 @@ export class LikesComponent implements OnInit {
         this.likeList = list;
       });
     });
-
     
   }
 
@@ -60,5 +61,22 @@ export class LikesComponent implements OnInit {
 
   navToPostDetail(nodeId, channelId, postId){
     this.router.navigate(['/feeds/tabs/home/postdetail',nodeId, channelId,postId]);
+  }
+
+  async showCommentPage(event, nodeId, channelId, postId){
+    const popover = await this.popoverController.create({
+      component: CommentComponent,
+      componentProps: {nodeId: nodeId, channelId: channelId, postId: postId},
+      event:event,
+      translucent: true,
+      cssClass: 'bottom-sheet-popover'
+    });
+
+    popover.onDidDismiss().then((result)=>{
+      if(result.data == undefined){
+        return;
+      }
+    });
+    return await popover.present();
   }
 }
