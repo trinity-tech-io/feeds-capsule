@@ -1,14 +1,15 @@
 import { Injectable } from '@angular/core';
 import { Events } from '@ionic/angular';
-import { CarrierService } from 'src/app/services/CarrierService';
 import { AgentService } from 'src/app/services/AgentService';
 import { SerializeDataService } from 'src/app/services/SerializeDataService'
+import { TransportService } from 'src/app/services/TransportService'
+
 let eventBus = null;
 let requestQueue: RequestBean[] = [];
 let autoIncreaseId: number = 0
 export class RequestBean{
     constructor(
-        public requestId: string,
+        public requestId: number,
         public method: string,
         public requestParams: any){}
 }
@@ -40,15 +41,16 @@ export class LoginResult{
 export class JsonRPCService {
     constructor(
         private serializeDataService: SerializeDataService,
-        private carrierService: CarrierService,
+        private transportService: TransportService,
         private events: Events,
         private agentService: AgentService) {
         eventBus = events;
         this.events.subscribe('transport:receiveMessage', event => {
-            // let data = serializeDataService.decodeData(event.message);
-            // eventBus.publish('JRPC:receiveMessage',this.response(event.from, data));
+            console.log("received before ===>"+event.message);
+            let data = serializeDataService.decodeData(event.message);
+            console.log("received after ===>"+JSON.stringify(data));
 
-            eventBus.publish('jrpc:receiveMessage',this.response(event.from, event.message));
+            eventBus.publish('jrpc:receiveMessage',this.response(event.from, data));
         });
     }
 
@@ -59,44 +61,74 @@ export class JsonRPCService {
         return new LoginResult(nodeId,data.payload,data.signature);
     }
 
-    sendRealMessage(nodeId: string, msg: any , onSuccess:()=>void, onError?:(err: string)=>void){
-        this.carrierService.sendMessage(
-            nodeId,
-            JSON.stringify(msg),
-            onSuccess,
-            onError
-        )
-    }
-
     request(method: string, nodeId: string,params: any, success: any, error: any){
+        console.log("3333333");
         let id = autoIncreaseId++;
-        let requestBean = new RequestBean(String(id),method,params);
+        let requestBean = new RequestBean(id,method,params);
         requestQueue.push(requestBean);
-        let request = this.assembleJson(String(id), method, params);
+        let request = this.assembleJson(id, method, params);
+
+        console.log("before---"+JSON.stringify(request));
 
         let encodeData = this.serializeDataService.encodeData(request);
 
-        this.carrierService.sendMessage(
+        console.log("after---"+encodeData);
+
+        // this.carrierService.sendMessage(
+        //     nodeId,
+        //     // encodeData,
+        //     JSON.stringify(request),
+        //     success,
+        //     error
+        // )
+
+        this.transportService.sendArrayMessage(
             nodeId,
-            // encodeData,
-            JSON.stringify(request),
+            encodeData,
             success,
             error
         )
     }
 
-    response(nodeId: string, msg: string): Result{
-        return this.parseJson(nodeId, msg);
+    response(nodeId: string, data: any): Result{
+        // return this.parseJson(nodeId, msg);
+        return this.parse(nodeId, data);
     }
 
-    assembleJson(id: string, method: string, params: any): any{
+    assembleJson(id: number, method: string, params: any): any{
         let data = {
             jsonrpc:"2.0",
             method:method,
-            params:params,
             id:id
         }
+
+        if (params != null)
+            data["params"] = params;
         return data;
+    }
+
+    parse(nodeId: string, data: any): Result{
+        console.log("data  == "+JSON.stringify(data));
+        if (data.jsonrpc != undefined && data.jsonrpc!="2.0")
+            return this.createError(nodeId, -60003, "JsonRPC version error");
+
+        console.log("111111111");
+        if (data.result != undefined){
+            console.log("2222222222");
+            let request = this.queryRequest(data.id);
+            return this.createResult(nodeId, request.method,request.requestParams , data.result);
+        }
+
+        console.log("3333333333");
+
+        if (data.params != undefined)
+            return this.createParamsResult(nodeId, data.params, data.method);
+        
+
+        if(data.error != undefined)
+            return data.error;
+            
+        return this.createError(nodeId, -69000, "Unknown error");
     }
 
     parseJson(nodeId: string, msg: string): Result{
@@ -122,7 +154,7 @@ export class JsonRPCService {
         return this.createError(nodeId, -69000, "Unknown error");
     }
 
-    queryRequest(responseId: string): any{
+    queryRequest(responseId: number): any{
         for (let index = 0; index < requestQueue.length; index++) {
             if (requestQueue[index].requestId == responseId){
                 let request = requestQueue.splice(index,1)[0];

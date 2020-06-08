@@ -404,5 +404,110 @@ declare module Communication{
             count     : number
         }
     }
+
+    type signin_request_challenge_request = { 
+        jsonrpc: "2.0"
+        method : "signin_request_challenge"
+        id     : jsonrpc_id
+        params : {
+            iss: string
+            credential_required: boolean
+        }
+    }
+
+    type signin_response_challenge_response = {  
+        jsonrpc: "2.0"
+        id     : jsonrpc_id
+        result : {
+            credential_required: boolean
+            jws: string
+            // [credential]: feeds_vc     
+        }
+    }
+    
+    type signin_confirm_challenge_request = {
+        jsonrpc: "2.0"
+        method : "signin_confirm_challenge"
+        id     : jsonrpc_id
+        params : {
+            jws: string
+        }
+    }
+
+
+    type signin_confirm_challenge_response = {
+        jsonrpc: "2.0"
+        id     : jsonrpc_id
+        result : {
+            access_token: string    //jws = { sub  : dapp_did name : string email: string exp  : number }
+            exp: number
+        }
+    }
+    
+    type declare_owner_request = {
+        jsonrpc: "2.0"
+        method : "declare_owner"
+        id     : jsonrpc_id
+        params : {
+            nonce: string
+            owner_did: string
+        }
+    }
+    // type declare_owner_response = {
+    //     jsonrpc: "2.0"
+    //     id     : jsonrpc_id
+    //     result : {
+    //         phase: "owner_declared" 
+    //     } | {
+    //         phase: "did_imported"
+    //         did: feeds_did
+    //         transaction_payload: string
+    //     } | {
+    //         phase: "credential_issued"
+    //     }
+    // }
+    
+    type import_did_request = {
+        jsonrpc : "2.0"
+        method  : "import_did"
+        id      : jsonrpc_id
+        params  : {
+            mnemonic: string
+            passphrase: string
+            index: number
+        }
+    }
+
+    type create_did_request = {
+        jsonrpc : "2.0"
+        method  : "import_did"
+        id      : jsonrpc_id
+    }
+
+    type import_did_response = {
+        jsonrpc: "2.0"
+        id     : jsonrpc_id
+        result : {
+            // did: feeds_did
+            did: string
+            transaction_payload: string
+        }
+    }
+    
+    type issue_credential_request = {
+        jsonrpc: "2.0"
+        method : "issue_credential"
+        id     : jsonrpc_id
+        params : {
+            credential: string
+        }
+    }
+
+    type issue_credential_response = {
+        jsonrpc: "2.0"
+        id     : jsonrpc_id
+        result : null
+    }
+    
 }
 

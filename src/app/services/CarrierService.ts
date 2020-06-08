@@ -109,8 +109,8 @@ let eventBus = null;
 
 const createOption = {
     udpEnabled: true,
-    persistentLocation: ".data"
-    // bootstraps: bootstrapsOpts
+    persistentLocation: ".data",
+    binaryUsed: true
 };
 
 @Injectable()
@@ -128,7 +128,8 @@ export class CarrierService {
         onFriendInfoChanged: this.friendInfoCallback,
         onFriendAdded: this.friendAddedCallback,
         onFriendRemoved: this.friendRemovedCallback,
-        onFriendMessage: this.friendMessageCallback
+        onFriendMessage: this.friendMessageCallback,
+        onFriendBinaryMessage: this.friendBinaryMessageCallback
     }
 
     constructor(public events: Events, public platform: Platform) {
@@ -192,6 +193,10 @@ export class CarrierService {
 
     friendMessageCallback(event)  {
         eventBus.publish('carrier:friendMessage', event, Date.now());
+    }
+
+    friendBinaryMessageCallback(event) {
+        eventBus.publish('carrier:friendBinaryMessage', event, Date.now());
     }
 
     destroyCarrier() {
@@ -276,16 +281,13 @@ export class CarrierService {
         );
     }
 
-    getFriends(success: any, error: string) {
+    getFriends(onSuccess:(friends: CarrierPlugin.FriendInfo[])=>void, onError?:(err: string)=>void) {
         if (this.platform.platforms().indexOf("cordova") < 0){
-            success(null);
+            onSuccess(null);
             return ;
         }
        
-       carrierInst.getFriends(
-            (ret) => {success(ret);},
-            (err) => {this.errorFun(err, error);}
-        );
+       carrierInst.getFriends(onSuccess,onError);
     }
 
     addFriend(address, hello: string, success, error: (err: string) => void) {
@@ -327,9 +329,26 @@ export class CarrierService {
             (err) => {this.errorFun(err, error);});
     }
 
+    sendBinaryMessage(nodeId: string, message: Uint8Array, success: any, error: any) {
+        if (this.platform.platforms().indexOf("cordova") < 0){
+            success();
+            return;
+        }
+        
+        console.log("sendBinaryMessage...");
+        carrierInst.sendFriendBinaryMessage(
+            nodeId, message,
+            () => {success();},
+            (err) => {this.errorFun(err, error);});
+    }
+
     errorFun(err, errorFun = null) {
 
-        alert("error"+err);
+        alert("error=>"+err);
         alert("errorFun"+JSON.stringify(errorFun));
+    }
+
+    getIdFromAddress(address: string, onSuccess:(userId: string)=>void, onError?:(err: string)=>void){
+        carrierManager.getIdFromAddress(address, onSuccess,onError);
     }
 }

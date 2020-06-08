@@ -22,6 +22,10 @@ export class TransportService {
             else 
                 eventBus.publish('transport:receiveJWTMessage',event);
         });
+
+        this.events.subscribe('carrier:friendBinaryMessage', event => {
+            eventBus.publish('transport:receiveMessage',event);
+        });
     }
 
     check(nodeId: string){
@@ -38,7 +42,7 @@ export class TransportService {
     }
 
     sendArrayMessage(nodeId: string, msg: any , onSuccess:()=>void, onError?:(err: string)=>void){
-        this.carrierService.sendMessage(
+        this.carrierService.sendBinaryMessage(
             nodeId,
             msg,
             onSuccess,

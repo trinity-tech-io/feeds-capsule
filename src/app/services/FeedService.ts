@@ -11,7 +11,7 @@ declare let didManager: DIDPlugin.DIDManager;
 declare let appManager: AppManagerPlugin.AppManager;
 declare let pluginDidDocument: DIDPlugin.DIDDocument;
 declare let pluginDid: DIDPlugin.DID;
-
+declare let didSessionManager: DIDSessionManagerPlugin.DIDSessionManager;
 
 let subscribedChannelsMap:{[nodeChannelId: string]: Channels};
 let channelsMap:{[channelId: number]: Channels} ;
@@ -25,6 +25,9 @@ let serversStatus:{[nodeId: string]: ServerStatus};
 let creationPermissionMap:{[nodeId: string]: boolean};
 let likeMap:{[nodechannelpostId:string]:Post};
 let lastPostUpdateMap:{[nodeChannelId:string]: PostUpdateTime};
+let bindServerList: string;
+let friendConnectionMap: {[nodeId:string]: ConnState};
+// let accessTokenMap: {[nodeId: string]: string};
 
 let localSubscribedList:Channels[] = new Array<Channels>();
 let localMyChannelList:Channels[] = new Array<Channels>();
@@ -143,7 +146,7 @@ enum ConnState {
 };
 
 enum PublishType{
-  ownFeedListChanged = "feeds:ownFeedListChanged",
+  ownFeedListChanged = "feeds:ownFeedListChanged  ",
   createTopicSuccess = "feeds:createTopicSuccess",
   postEventSuccess = "feeds:postEventSuccess",
   allFeedsListChanged= "feeds:allFeedsListChanged",
@@ -183,7 +186,10 @@ enum PublishType{
 
   updateLikeList = "feeds:updateLikeList",
 
-  signInServerListChanged = "feeds:signInServerListChanged"
+  signInServerListChanged = "feeds:signInServerListChanged",
+
+  friendConnectionChanged = "feeds:friendConnectionChanged"
+
 }
 
 enum PersistenceKey{
@@ -325,6 +331,8 @@ export class FeedService {
   }
 
   init(){
+      this.cleanSignInData();
+
       if (this.platform.platforms().indexOf("cordova") < 0) {
       serversMap = virtualServersMap;
       favoriteFeedsMap = virtualFFMap;
@@ -348,7 +356,7 @@ export class FeedService {
   }
 
   initData(){
-
+    // this.cleanSignInData();
     firstInit = this.storeService.get(PersistenceKey.firstInit);
     firstInit = true; // for test
     if (firstInit == null) {
@@ -655,10 +663,10 @@ export class FeedService {
 
   sendRPCMessage(nodeId: string, method: string, params: any){
     if(!this.checkServerConnection(nodeId)){
-      // this.native.toast("server node offline");
+      this.native.toast("server :\n"+nodeId +"\noffline!");
       return;
     }
-
+    console.log("22222222");
     this.jsonRPCService.request(
       method,
       nodeId, 
@@ -751,8 +759,15 @@ export class FeedService {
 
   friendConnectionCallback(){
     this.events.subscribe('carrier:friendConnection', ret => {
+      eventBus.publish("feeds:friendConnection",ret);
+
+      if (friendConnectionMap == null || friendConnectionMap == undefined)
+        friendConnectionMap = {};
+  
       let friendId = ret.friendId;
       let friendStatus = ret.status;
+
+      friendConnectionMap[friendId] = friendStatus;
 
       if(serversStatus == null ||serversStatus == undefined)
         serversStatus = {}
@@ -761,25 +776,41 @@ export class FeedService {
         serversStatus[friendId].status = friendStatus;
       
       if (friendStatus == ConnState.connected){
-        this.getStatistics(friendId);
-        this.enableNotification(friendId);
-        // this.getCreationServerMap();
+        let test = "eyJ0eXAiOiJKV1QiLCJjdHkiOiJqc29uIiwiYWxnIjoiRVMyNTYifQ.eyJpc3MiOiJkaWQ6ZWxhc3RvczppWEI4Mk1paTlMTUVQbjNVN2NMRUNzd0xtZXg5S2taTDhEIiwiaWF0IjoxNTk0MzYwNDg3LCJleHAiOjE1OTQzNjA3ODcsInByZXNlbnRhdGlvbiI6eyJ0eXBlIjoiVmVyaWZpYWJsZVByZXNlbnRhdGlvbiIsImNyZWF0ZWQiOiIyMDIwLTA3LTEwVDA1OjU0OjQ2WiIsInZlcmlmaWFibGVDcmVkZW50aWFsIjpbXSwicHJvb2YiOnsidHlwZSI6IkVDRFNBc2VjcDI1NnIxIiwidmVyaWZpY2F0aW9uTWV0aG9kIjoiZGlkOmVsYXN0b3M6aVhCODJNaWk5TE1FUG4zVTdjTEVDc3dMbWV4OUtrWkw4RCNwcmltYXJ5IiwicmVhbG0iOiI0NTYiLCJub25jZSI6IjEyMyIsInNpZ25hdHVyZSI6Ik5jX3hfUmdVN2pkSGNBQXM4UjhZOXU4YVc0amxGdmRmc0JKeEdqckJxS1hNY0M5M1dWS2xhVWtRcElVcmR0c3N3RmJZa3drOUNEVThGRFBzeGxwaUhnIn19fQ.Vd2hlH8H_Hd9xlKX074jtUjB7wgGYfUqjytzuKuDCjoSFIMjd_XD74pgrJVJXAxo_hHSyOy7B2b8zz0y97ZnmQ";
+        // this.parseJWS(false,test,
+        //   (result)=>{
+        //     console.log("result.signatureIsValid = "+result.signatureIsValid);
+        //     console.log("result.payload = "+JSON.stringify(result.payload));
 
-        this.queryChannelCreationPermission(friendId);
+        //   })
+        // this.authenticate("123","456");
+        // this.declareOwnerRequest(friendId);
+        // this.importDidRequest(friendId);
+        
 
-        let list = this.getSubscribedChannelsFromNodeId(friendId);
-        for (let index = 0; index < list.length; index++) {
-          let channelId = list[index].id;
-          let nodeChannelId = friendId+channelId;
-          let lastPostTime = null;
-          if (lastPostUpdateMap[nodeChannelId] != null && lastPostUpdateMap[nodeChannelId] != undefined)
-            lastPostTime = lastPostUpdateMap[nodeChannelId].time;
+        this.signinChallengeRequest(friendId,false);
 
-          this.updatePost(friendId,channelId,lastPostTime);
-        }
+        // this.getStatistics(friendId);
+        // this.enableNotification(friendId);
 
-        this.checkSignInStatus(friendId);
+
+        // this.queryChannelCreationPermission(friendId);
+
+        // let list = this.getSubscribedChannelsFromNodeId(friendId);
+        // for (let index = 0; index < list.length; index++) {
+        //   let channelId = list[index].id;
+        //   let nodeChannelId = friendId+channelId;
+        //   let lastPostTime = null;
+        //   if (lastPostUpdateMap[nodeChannelId] != null && lastPostUpdateMap[nodeChannelId] != undefined)
+        //     lastPostTime = lastPostUpdateMap[nodeChannelId].time;
+
+        //   this.updatePost(friendId,channelId,lastPostTime);
+        // }
+
+        // this.checkSignInStatus(friendId);
+
       }
+      eventBus.publish(PublishType.friendConnectionChanged, friendId, friendStatus);
 
       this.storeService.set(PersistenceKey.serversStatus,serversStatus);
       eventBus.publish(PublishType.serverConnectionChanged,serversStatus);
@@ -937,6 +968,24 @@ export class FeedService {
         this.handleEnableNotificationResult();
         break;
 
+      case "declare_owner":
+        this.handleDeclareOwnerResponse(nodeId,result);
+        break;
+      case "import_did":
+        this.handleImportDIDResponse(nodeId, result);
+        break;
+      case "issue_credential":
+        this.handleIssueCredentialResponse(nodeId, result);
+        break;
+
+
+      case "signin_request_challenge":
+        this.handleSigninChallenge(nodeId, result);
+        break;
+
+      case "signin_confirm_challenge":
+        this.handleSigninConfirm(nodeId, result);
+        break;
       default:
         alert("Maybe error");
         break;
@@ -1578,13 +1627,13 @@ export class FeedService {
   }
 
   checkServerConnection(nodeId: string): boolean{
-    if (serversStatus != undefined && serversStatus[nodeId] != undefined){
-      if (serversStatus[nodeId].status == ConnState.connected){
-        return true;
-      }
-    }
+    if(friendConnectionMap == null ||
+      friendConnectionMap == undefined ||
+      friendConnectionMap[nodeId] == undefined||
+      friendConnectionMap[nodeId] == ConnState.disconnected)
+      return false ;
 
-    return false;
+    return true ;
   }
 
   findServer(did: string): Server{
@@ -2967,6 +3016,362 @@ export class FeedService {
     }
 
     return "";
+  }
+
+  publishDid(payload: string, onSuccess?: (ret: any)=>void, onError?: (err:any)=>void) {
+    // let jsonPayload = JSON.parse(payload);
+    // console.log("Received id transaction callback with payload: ", jsonPayload);
+    let params = {
+        didrequest: payload
+    }
+
+    console.log("Sending didtransaction intent with params:", params);
+
+    appManager.sendIntent("didtransaction", params, {}, onSuccess, onError);
+    // appManager.sendIntent("didtransaction", params, {}, (response)=>{
+    //     console.log("Got didtransaction intent response.", response);
+
+    //     // If txid is set in the response this means a transaction has been sent on chain.
+    //     // If null, this means user has cancelled the operation (no ELA, etc).
+    //     if (response.result && response.result.txid) {
+    //         console.log('didtransaction response.result.txid ', response.result.txid);
+    //         // this.events.publish("diddocument:publishresult", {
+    //         //     didStore: this,
+    //         //     published: true
+    //         // });
+
+    //         // Inform the DID plugin of the created chain transaction ID
+    //         // this.pluginDidStore.setTransactionResult(response.result.txid);
+    //     }
+    //     else {
+    //         console.log('didtransaction response.result.txid is null');
+    //         // this.events.publish("diddocument:publishresult", {
+    //         //     didStore: this,
+    //         //     cancelled: true
+    //         // });
+
+    //         // Inform the DID plugin of the created chain transaction ID
+    //         // this.pluginDidStore.setTransactionResult(null);
+    //     }
+    // }, (err)=>{
+    //     console.error("Failed to send app manager didtransaction intent!", err);
+    //     // this.events.publish("diddocument:publishresult", {
+    //     //     didStore: this,
+    //     //     error: true
+    //     // });
+
+    //     // Inform the DID plugin of the created chain transaction ID
+    //     // this.pluginDidStore.setTransactionResult(null);
+    // });
+  }
+
+
+
+
+  signinChallengeRequest(nodeId: string , requiredCredential: boolean){
+    let request: Communication.signin_request_challenge_request = {
+      jsonrpc: "2.0",
+      method : "signin_request_challenge",
+      id     : -1,
+      params : {
+          iss: this.getSignInData().did,
+          credential_required: requiredCredential,
+      }
+    }
+
+    this.sendRPCMessage(nodeId, request.method, request.params);
+  }
+
+  signinConfirmRequest(nodeId: string, nonce: string, realm: string){
+    didSessionManager.authenticate(nonce, realm).then((presentation)=>{
+      let request: Communication.signin_confirm_challenge_request = {
+        jsonrpc: "2.0",
+        method : "signin_confirm_challenge",
+        id     : -1,
+        params : {
+            jws: presentation
+        }
+      }
+      this.sendRPCMessage(nodeId, request.method, request.params);
+      // console.log("presentation==>"+presentation);
+    }).catch((err)=>{
+      console.log("err = "+err);
+    });
+  }
+
+  handleSigninChallenge(nodeId:string, result: any){
+    console.log("result =>"+ JSON.stringify(result));
+
+    let requiredCredential = result.credential_required;
+    let jws = result.jws;
+    let credential = result.credential;
+
+    // {"signatureIsValid":true,"payload":{"iss":"did:elastos:ikZJ3Z7JqmZ8HHoThcqyVQfd2zHhseTWnt","sub":"didauth","realm":"GDY3wCVgegMrVAn7mLctQHyxPPwVAv7ShJ77yuanQZqM","nonce":"8pNVf8sPUYG1RPbrSV8dk1daMZBcRvq6S"}}
+    this.parseJWS(true,jws,
+      (res)=>{
+
+        let payloadStr = JSON.stringify(res.payload);
+        let payload = JSON.parse(payloadStr);
+        let nonce = payload.nonce;
+        let realm = payload.realm;
+
+
+        console.log("res.signatureIsValid =>"+ res.signatureIsValid);
+        console.log("res.payload =>"+JSON.stringify(res.payload));
+        console.log("nonce =>"+nonce);
+        console.log("realm =>"+realm);
+
+        this.signinConfirmRequest(nodeId, nonce, realm);
+      },
+      (err)=>{
+        console.log("err =>"+err);
+      }
+      );
+  }
+
+  handleSigninConfirm(nodeId:string, result: any){
+    console.log("result =>"+ JSON.stringify(result));
+
+    console.log("access_token = "+result.access_token);
+
+    
+    console.log("exp="+result.exp);
+
+    if (accessTokenMap == null || accessTokenMap == undefined)
+      accessTokenMap = {};
+
+    accessTokenMap[nodeId] = result.access_token;
+    this.storeService.set(PersistenceKey.accessTokenMap, accessTokenMap);
+  }
+
+  declareOwnerRequest(nodeId: string){
+
+    console.log("1111111");
+    let request: Communication.declare_owner_request = {
+      jsonrpc: "2.0",
+      method : "declare_owner",
+      id     : -1,
+      params : {
+          nonce: this.generateNonce(),
+          owner_did: this.getSignInData().did
+      }
+    }
+
+    this.sendRPCMessage(nodeId, request.method, request.params);
+  }
+
+
+  importDidRequest(nodeId: string, params){
+    let request: Communication.import_did_request = {
+      jsonrpc : "2.0",
+      method  : "import_did",
+      id      : -1,
+      params  : {
+        mnemonic: "string",
+        passphrase: "string",
+        index: 1
+      }
+    }
+
+    this.sendRPCMessage(nodeId, request.method, request.params);
+  }
+
+  createDidRequest(nodeId: string){
+    let request: Communication.create_did_request = {
+      jsonrpc : "2.0",
+      method  : "import_did",
+      id      : -1,
+    }
+
+    this.sendRPCMessage(nodeId, request.method, null);
+  }
+
+  issueCredentialRequest(nodeId: string, credential: any){
+    let request: Communication.issue_credential_request = {
+      jsonrpc: "2.0",
+      method : "issue_credential",
+      id     : -1,
+      params : {
+          credential: credential,
+      }
+    }
+    console.log("issueCredentialRequest ===>"+JSON.stringify(request));
+    this.sendRPCMessage(nodeId, request.method, request.params);
+  }
+  //eyJ0eXAiOiJKV1QiLCJjdHkiOiJqc29uIiwibGlicmFyeSI6IkVsYXN0b3MgRElEIiwidmVyc2lvbiI6IjEuMCIsImFsZyI6Im5vbmUifQ.eyJzdWIiOiJKd3RUZXN0IiwianRpIjoiMCIsImF1ZCI6IlRlc3QgY2FzZXMiLCJpYXQiOjE1OTA4NTEwMzQsImV4cCI6MTU5ODc5OTgzNCwibmJmIjoxNTg4MjU5MDM0LCJmb28iOiJiYXIiLCJpc3MiOiJkaWQ6ZWxhc3RvczppV0ZBVVloVGEzNWMxZlBlM2lDSnZpaFpIeDZxdXVtbnltIn0.
+  parseJWS(verifySignature: boolean, jwtToken: string , onSuccess: (result: DIDPlugin.ParseJWTResult)=>void, onError: (err: string)=>void){
+    didManager.parseJWT(verifySignature, jwtToken).then((result)=>{
+      if (result){
+        onSuccess(result);
+      }else{
+        console.log("error")
+      }
+      
+    }).catch((err)=>{
+      onError(err);
+      // console.log("err = "+err);
+    });
+  }
+
+  handleDeclareOwnerResponse(nodeId: string, result: any){
+    let phase = result.phase;
+    let did = "";
+    let payload = "";
+
+    if (phase == "did_imported"){
+      did = result.did;
+      payload = result.transaction_payload;
+    }
+
+    // console.log("phase==>"+phase);
+    // switch(phase){
+    //   case "owner_declared":
+    //     this.createDidRequest(nodeId);
+    //     break;
+    //   case "did_imported":
+    //     // {
+    //     //   "jsonrpc": "2.0",
+    //     //   "id": 0,
+    //     //   "result": {
+    //     //     "phase": "did_imported",
+    //     //     "did": "did:elastos:imWLKpc7re166G9oASY5tg2dXD4g9PkTV2",
+    //     //     "transaction_payload": "{\"header\":{\"specification\":\"elastos/did/1.0\",\"operation\":\"create\"},\"payload\":\"eyJpZCI6ImRpZDplbGFzdG9zOmltV0xLcGM3cmUxNjZHOW9BU1k1dGcyZFhENGc5UGtUVjIiLCJwdWJsaWNLZXkiOlt7ImlkIjoiI3ByaW1hcnkiLCJwdWJsaWNLZXlCYXNlNTgiOiJmbVR1WUg5M3FRdkFxMjdreHJpd2h4NERQQjdnelFWWm5SaVIxRHpyb0NaZCJ9XSwiYXV0aGVudGljYXRpb24iOlsiI3ByaW1hcnkiXSwiZXhwaXJlcyI6IjIwMjUtMDYtMDhUMDE6MDI6MDRaIiwicHJvb2YiOnsiY3JlYXRlZCI6IjIwMjAtMDYtMDhUMDk6MDI6MDRaIiwic2lnbmF0dXJlVmFsdWUiOiI2bnNWNW52VThjZGs2RmhjQTZzb09aQ1lLa0dSV0hWWDR2cjRIQkZQU1pJUkNteFQ2SDN6ekF5ZG56VkNIRW5WekZrNERhbEk2d2w5anNVWFlGSjFLdyJ9fQ\",\"proof\":{\"verificationMethod\":\"#primary\",\"signature\":\"MFogBVri42dj7nY8SCEZsP0CLlVDzUI5cHNFu4JYhZyWpxnCQFnJzhze8jWxErcp3vA-2IIqRwxoeIacg4bq4g\"}}"
+    //     //   }
+    //     // }
+    //     let did = result.did;
+    //     let transaction_payload = result.transaction_payload;
+    //     //调用wallet 上链did
+    //     console.log("handleImportDIDResponse");
+    //     this.createIdTransactionCallback(transaction_payload);
+    //     //上链后
+    //     this.issueCredential(nodeId, did);
+    //     break;
+    //   case "credential_issued":
+    //     break;
+    // }
+
+    eventBus.publish("feeds:owner_declared", nodeId, phase, did, payload);
+  }
+
+  // {
+  //   "jsonrpc": "2.0",
+  //   "id": 1,
+  //   "result": {
+  //     "did": "did:elastos:imWLKpc7re166G9oASY5tg2dXD4g9PkTV2",
+  //     "transaction_payload": "{\"header\":{\"specification\":\"elastos/did/1.0\",\"operation\":\"create\"},\"payload\":\"eyJpZCI6ImRpZDplbGFzdG9zOmltV0xLcGM3cmUxNjZHOW9BU1k1dGcyZFhENGc5UGtUVjIiLCJwdWJsaWNLZXkiOlt7ImlkIjoiI3ByaW1hcnkiLCJwdWJsaWNLZXlCYXNlNTgiOiJmbVR1WUg5M3FRdkFxMjdreHJpd2h4NERQQjdnelFWWm5SaVIxRHpyb0NaZCJ9XSwiYXV0aGVudGljYXRpb24iOlsiI3ByaW1hcnkiXSwiZXhwaXJlcyI6IjIwMjUtMDYtMDhUMDE6MDI6MDRaIiwicHJvb2YiOnsiY3JlYXRlZCI6IjIwMjAtMDYtMDhUMDk6MDI6MDRaIiwic2lnbmF0dXJlVmFsdWUiOiI2bnNWNW52VThjZGs2RmhjQTZzb09aQ1lLa0dSV0hWWDR2cjRIQkZQU1pJUkNteFQ2SDN6ekF5ZG56VkNIRW5WekZrNERhbEk2d2w5anNVWFlGSjFLdyJ9fQ\",\"proof\":{\"verificationMethod\":\"#primary\",\"signature\":\"cAW_4csdqbKjoavJ8lNeDm9gKVPceDFiUfZW-rXvvqkcIoBkuhkfPkVP-AR07OXJh6ow3_8fEyDfOQJ-2ssOmw\"}}"
+  //   }
+  // }
+  handleImportDIDResponse(nodeId: string, result: any){
+    let did = result.did;
+    let transaction_payload = result.transaction_payload;
+
+    //调用wallet 上链did
+    console.log("handleImportDIDResponse");
+    // this.createIdTransactionCallback(transaction_payload);
+
+    //上链后
+    // this.issueCredential(nodeId, did);
+
+
+    eventBus.publish("feeds:did_imported", nodeId, did, transaction_payload);
+
+  }
+
+  handleIssueCredentialResponse(nodeId: string, result: any){
+    eventBus.publish("feeds:issue_credential");
+
+  }
+
+  
+  issueCredential(nodeId: string, did: string) {
+    /**
+     * Ask the DID app to generate a VerifiableCredential with some data, and use current DID
+     * as the signing issuer for this credential, so that others can permanently verifiy who
+     * issued the credential. 
+     * This credential can then be delivered to a third party who can import it (credimport) to 
+     * his DID profile.
+     * 
+     * For this demo, the subject DID is ourself, so we will be able to import the credential we issued
+     * to our own DID profile (which is a useless use case, as usually DIDs are issued for others).
+     */
+    appManager.sendIntent("credissue", {
+      identifier: "credential", // unique identifier for this credential
+      types: ["BasicProfileCredential"], // Additional credential types (strings) such as BasicProfileCredential.
+      subjectdid: did, // DID targeted by the created credential. Only that did will be able to import the credential.
+      properties: {
+          // customData: "test data.",
+          name:this.getSignInData().name,
+          // moreComplexData: {
+          //   info: "A sub-info"
+          // }
+      },
+      
+      expirationdate: new Date(2024, 10, 10).toISOString() // Credential will expire on 2024-11-10 - Note the month's 0-index...
+    }, {}, (response) => {
+
+      console.log("response ==>"+JSON.stringify(response));
+
+      if (response.result.credential) {
+        console.log("response.result.credential ==>"+response.result.credential);
+        //TODO
+        // this.zone.run(() => {
+        //   this.navCtrl.navigateForward("credissued", {
+        //     queryParams: {
+        //       credential: response.result.credential
+        //     }
+        //   });
+        // })
+        this.issueCredentialRequest(nodeId, response.result.credential);
+      }
+      else {
+        console.log("Failed to issue a credential - empty credential returned");
+        // this.didDemoService.toast("Failed to issue a credential - empty credential returned");
+      }
+    }, (err)=>{
+      console.log("Failed to issue a credential: "+JSON.stringify(err));
+      // this.didDemoService.toast("Failed to issue a credential: "+JSON.stringify(err));
+    })
+  }
+
+  authenticate(nonce: string, realm: string){
+    didSessionManager.authenticate(nonce, realm).then((presentation)=>{
+      
+      console.log("presentation==>"+presentation);
+    }).catch((err)=>{
+      console.log("err = "+err);
+    });
+  }
+
+  getFriendConnection(nodeId: string){
+    if(friendConnectionMap == null || 
+      friendConnectionMap == undefined ||
+      friendConnectionMap[nodeId] == undefined)
+      return ConnState.disconnected;
+    return friendConnectionMap[nodeId];
+  }
+
+  test(did: string){
+    // didManager.resolveDidDocument(did, true,(didDocument)=>{
+    //   // let services = didDocument.getServices();
+    //   console.log("didDocument=>"+JSON.stringify(didDocument));
+    // });
+    let token = "eyJ0eXAiOiJKV1QiLCJjdHkiOiJqc29uIiwiYWxnIjoiRVMyNTYifQ.eyJpc3MiOiJkaWQ6ZWxhc3RvczppWEI4Mk1paTlMTUVQbjNVN2NMRUNzd0xtZXg5S2taTDhEIiwiaWF0IjoxNTkyMjA0MjYyLCJleHAiOjE1OTIyMDQ1NjIsInByZXNlbnRhdGlvbiI6eyJ0eXBlIjoiVmVyaWZpYWJsZVByZXNlbnRhdGlvbiIsImNyZWF0ZWQiOiIyMDIwLTA2LTE1VDA2OjU3OjQyWiIsInZlcmlmaWFibGVDcmVkZW50aWFsIjpbXSwicHJvb2YiOnsidHlwZSI6IkVDRFNBc2VjcDI1NnIxIiwidmVyaWZpY2F0aW9uTWV0aG9kIjoiZGlkOmVsYXN0b3M6aVhCODJNaWk5TE1FUG4zVTdjTEVDc3dMbWV4OUtrWkw4RCNwcmltYXJ5IiwicmVhbG0iOiJHRFkzd0NWZ2VnTXJWQW43bUxjdFFIeXhQUHdWQXY3U2hKNzd5dWFuUVpxTSIsIm5vbmNlIjoiRnBNazhrS3k1VUc0NHR4UEw5M3NWSE5zVjZKWUFEejF4Iiwic2lnbmF0dXJlIjoiTDZocC1RdUZISV8wc1JLNS00U3RaU0VURlA4ZXJpd2hlV2swSUJwa1hPQTVpejg0UXRkVU5Fb1N4N0FYZV9jU0diLWpFTTNldk02blRfRXRzZVUzLUEifX19.saUazSCiQtDWmVTbCNeHKrg31HXFaHpDyzOJrle2qfsuJr4NzRwuxhW67BpcxGwA6jMt8U66GsJPVqxZ9jzPqw"
+
+    this.parseJWS(false,token,(result)=>{
+      console.log("999==>"+JSON.stringify(result))
+    },(err)=>{
+      console.log("99000=>"+err);
+    });
+
+    // didSessionManager.authenticate("nonce", "realm").then((presentation)=>{
+    //   this.parseJWS(false,presentation,(result)=>{
+    //     console.log("999==>"+JSON.stringify(result))
+    //   },(err)=>{
+    //     console.log("99000=>"+err);
+    //   });
+    //   // console.log("presentation==>"+presentation);
+    // })
+    
   }
 }
 

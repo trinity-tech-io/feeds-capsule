@@ -61,6 +61,6 @@ export class MyfeedsComponent implements OnInit {
   }
 
   bindServer(){
-    alert("bind")
+    this.router.navigate(['/bindservice/scanqrcode']);
   }
 }

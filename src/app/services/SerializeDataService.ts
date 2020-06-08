@@ -5,7 +5,7 @@ export class SerializeDataService {
     constructor() {
     }
     
-    decodeData(data: any): unknown{
+    decodeData(data: any): string{
         return msgpack.deserialize(data);
 
     }

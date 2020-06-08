@@ -72,11 +72,21 @@ export class SigninPage implements OnInit {
     }, {}, (response: any) => {
       if (response && response.result && response.result.presentation) {
         let data = response.result;
+        console.log("result ==>"+JSON.stringify(response.result));
+
+        console.log("presentation ==>"+JSON.stringify(response.result.presentation));
 
         // Create a real presentation object from json data
         didManager.VerifiablePresentationBuilder.fromJson(JSON.stringify(response.result.presentation), (presentation)=>{
           this.zone.run(()=>{
             let credentials = presentation.getCredentials();
+
+            console.log("credentials ==>"+JSON.stringify(credentials));
+
+
+            console.log("credentials ==>"+credentials.toString);
+
+
             this.saveData(
               data.did,
               this.findCredentialValueById(this.did, credentials, "name", "Not provided"),

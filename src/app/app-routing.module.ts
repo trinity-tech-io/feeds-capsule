@@ -56,6 +56,12 @@ const routes: Routes = [
   { path: 'createnewfeed', loadChildren: './pages/feeds/createnewfeed/createnewfeed.module#CreatenewfeedPageModule' },
   { path: 'createnewpost/:nodeId/:channelId', loadChildren: './pages/feeds/createnewpost/createnewpost.module#CreatenewpostPageModule' },
 
+  { path: 'bindservice/scanqrcode', loadChildren: './pages/feeds/bindservice/scanqrcode/scanqrcode.module#ScanqrcodePageModule' },
+  { path: 'bindservice/importdid/:nodeId', loadChildren: './pages/feeds/bindservice/importdid/importdid.module#ImportdidPageModule' },
+  { path: 'bindservice/publishdid/:nodeId/:did/:payload', loadChildren: './pages/feeds/bindservice/publishdid/publishdid.module#PublishdidPageModule' },
+  { path: 'bindservice/issuecredential/:nodeId/:did', loadChildren: './pages/feeds/bindservice/issuecredential/issuecredential.module#IssuecredentialPageModule' },
+  { path: 'bindservice/finish', loadChildren: './pages/feeds/bindservice/finish/finish.module#FinishPageModule' },
+  { path: 'bindservice/startbinding/:nodeId/:nonce', loadChildren: './pages/feeds/bindservice/startbinding/startbinding.module#StartbindingPageModule' },
   // { path: 'feeds/tabs/channels', loadChildren: './home/channels/channels.module#ChannelsPageModule' },
   // /feeds/tabs/channels
 
