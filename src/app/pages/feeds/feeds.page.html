@@ -2,22 +2,25 @@
   <ion-tab-bar slot="bottom">
 
     <ion-tab-button tab="home" (click)="home()">
-      <ion-icon name="Home" mode="ios"></ion-icon>
+      <!-- <ion-icon name="Home" mode="ios"></ion-icon> -->
+      <!-- <img  class="home-tab" [ngClass]="{'home-tab-selected': currentTab === 'home'}"> -->
+      <div  class="home-tab" [ngClass]="{'home-tab-selected': currentTab === 'home'}"></div>
     </ion-tab-button>
 
     <ion-tab-button tab="profile" (click)="profile()">
-      <ion-icon name="person" mode="ios"></ion-icon>
+      <div  class="profile-tab" [ngClass]="{'profile-tab-selected': currentTab === 'profile'}"></div>
+      <!-- <ion-icon name="person" mode="ios"></ion-icon> -->
     </ion-tab-button>
 
     <ion-tab-button tab="">
     </ion-tab-button>
 
     <ion-tab-button tab="notification" (click)="notification()">
-      <ion-icon name="notifications" mode="ios"></ion-icon>
+      <div class="notification-tab" [ngClass]="{'notification-tab-selected': currentTab === 'notification'}"></div>
     </ion-tab-button>
 
     <ion-tab-button tab="search" (click)="search()">
-      <ion-icon name="search" mode="ios"></ion-icon>
+      <div class="search-tab" [ngClass]="{'search-tab-selected': currentTab === 'search'}"></div>
     </ion-tab-button>
 
     

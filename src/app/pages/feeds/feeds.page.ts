@@ -13,6 +13,7 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 })
 export class FeedsPage implements OnInit {
   private title = "My Timeline";
+  private currentTab = "home";
   constructor(
     private native: NativeService,
     private feedService: FeedService,
@@ -52,24 +53,28 @@ export class FeedsPage implements OnInit {
     }
 
     home(){
+      this.currentTab = "home";
       this.title = "My Timeline";
       titleBarManager.setTitle(this.title);
       this.native.setTitleBarBackKeyShown(false);
     }
 
     profile(){
+      this.currentTab = "profile";
       this.title = "My Profile"
       titleBarManager.setTitle(this.title);
       this.native.setTitleBarBackKeyShown(false);
     }
 
     notification(){
+      this.currentTab = "notification";
       this.title = "Notification";
       titleBarManager.setTitle(this.title);
       this.native.setTitleBarBackKeyShown(false);
     }
 
     search(){
+      this.currentTab = "search";
       this.feedService.refreshChannels();
       this.title = "Explore Feeds";
       titleBarManager.setTitle("Explore Feeds");
