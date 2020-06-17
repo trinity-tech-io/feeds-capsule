@@ -124,7 +124,7 @@ export class FeedBoardPage implements OnInit {
   }
 
   like(channelId: number,postId: number){
-    this.feedService.postLike(this.nodeId,channelId,postId,null);
+    this.feedService.postLike(this.nodeId,channelId,postId,0);
   }
 
   navTo(channelId: number, postId: number){

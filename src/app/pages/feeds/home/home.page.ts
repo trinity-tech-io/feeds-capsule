@@ -53,7 +53,7 @@ export class HomePage implements OnInit {
   }
 
   like(nodeId, channelId, postId){
-    this.feedService.postLike(nodeId,Number(channelId),Number(postId),null);
+    this.feedService.postLike(nodeId,Number(channelId),Number(postId),0);
   }
 
   navTo(nodeId, channelId){

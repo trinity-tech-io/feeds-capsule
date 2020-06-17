@@ -1,5 +1,5 @@
 import { Component, OnInit, NgZone } from '@angular/core';
-import { NavController } from '@ionic/angular';
+import { NavController, Events } from '@ionic/angular';
 import { FeedService } from 'src/app/services/FeedService';
 import { ActivatedRoute } from '@angular/router';
 import { NativeService } from '../../../services/NativeService';
@@ -24,12 +24,20 @@ export class CreatenewpostPage implements OnInit {
   private nodeId: string;
   private channelId: number;
   constructor(
+    private events: Events,
     private native: NativeService,
     private acRoute: ActivatedRoute,
     private navCtrl: NavController,
     private camera: CameraService,
     private zone: NgZone,
     private feedService: FeedService) {
+      this.events.subscribe('feeds:publishPostSuccess', () => {
+        this.native.toast("Publish post success!");
+        this.navCtrl.pop();
+      });
+
+
+
       acRoute.params.subscribe((data)=>{
         this.nodeId = data.nodeId;
         this.channelId = data.channelId;
@@ -63,7 +71,7 @@ export class CreatenewpostPage implements OnInit {
         this.channelId,
         JSON.stringify(myContent));
   
-      this.navCtrl.pop();
+      // this.navCtrl.pop();
     }
   }
 

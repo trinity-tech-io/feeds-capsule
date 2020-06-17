@@ -28,7 +28,7 @@ export class IssuecredentialPage implements OnInit {
 
       this.events.subscribe('feeds:issue_credential', () => {
         this.navCtrl.pop().then(()=>{
-          this.router.navigate(['/bindservice/finish/']);
+          this.router.navigate(['/bindservice/finish/',this.nodeId]);
         });    
       });
     }

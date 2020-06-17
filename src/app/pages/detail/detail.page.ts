@@ -83,7 +83,7 @@ export class DetailPage implements OnInit {
   }
 
   like(){
-    this.feedService.postLike(this.nodeId,Number(this.channelId),Number(this.postId),null);
+    this.feedService.postLike(this.nodeId,Number(this.channelId),Number(this.postId),0);
   }
 
   likeComment(commentId: number){

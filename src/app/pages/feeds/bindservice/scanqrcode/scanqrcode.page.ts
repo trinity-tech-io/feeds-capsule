@@ -16,6 +16,8 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 export class ScanqrcodePage implements OnInit {
   private title = "Binding server";
   private waitFriendsOnline = false;
+  private carrierAddress: string;
+
   constructor(
     private router: Router,
     private navCtrl: NavController,
@@ -54,12 +56,12 @@ export class ScanqrcodePage implements OnInit {
       let contentStr = String(content);
       let con = contentStr.split(".");
 
-      let address = con[0];
+      this.carrierAddress = con[0];
       let nonce = con[1];
 
-      this.carrier.getIdFromAddress(address, 
+      this.carrier.getIdFromAddress(this.carrierAddress, 
         (userId)=>{
-            this.addFriends(address, userId, nonce);
+            this.addFriends(this.carrierAddress, userId, nonce);
         },
         (err)=>{
 
@@ -82,7 +84,8 @@ export class ScanqrcodePage implements OnInit {
             console.log(nodeId);
             console.log(nonce);
             if (nonce == undefined) nonce = "";
-            this.router.navigate(['/bindservice/startbinding/',nodeId, nonce]);
+            this.router.navigate(['/bindservice/startbinding/',nodeId, nonce, address]);
+            
           });
         }, (err) => {
 
@@ -94,19 +97,10 @@ export class ScanqrcodePage implements OnInit {
   }
 
   declareOwner(nodeId: string){
-    this.feedService.declareOwnerRequest(nodeId);
+    this.feedService.declareOwnerRequest(nodeId, this.carrierAddress);
   }
 
   abort(){
     this.navCtrl.pop();
-  }
-
-  test(){
-    // this.feedService.test("did:elastos:iYPDHiR4V9fkqd8K8RcibDR3bTCSAkFB68");
-    // this.feedService.test("did:elastos:iXB82Mii9LMEPn3U7cLECswLmex9KkZL8D");
-    // this.feedService.test("did:elastos:iXB82Mii9LMEPn3U7cLECswLmex9KkZL8D");
-    this.feedService.test("did:elastos:iULesifRfjcNrVv7zjLFXXwKzbDQZHcPgd");
-
-
   }
 }

@@ -1,12 +1,3 @@
-<ion-header>
-  <ion-toolbar mode="ios">
-    <ion-buttons slot="start" padding class="header-btns" (click)="navToBack()">
-      <ion-icon name="arrow-back" mode="ios"></ion-icon>
-    </ion-buttons>
-    <ion-title>Add trusted server</ion-title>
-  </ion-toolbar>
-</ion-header>
-
 <ion-content>
   <div class="offline-content" *ngIf="connectStatus != 0 ">
     <ion-label>disconnect</ion-label>

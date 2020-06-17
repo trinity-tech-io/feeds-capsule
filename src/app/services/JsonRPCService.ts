@@ -112,7 +112,10 @@ export class JsonRPCService {
         if (data.jsonrpc != undefined && data.jsonrpc!="2.0")
             return this.createError(nodeId, -60003, "JsonRPC version error");
 
-        console.log("111111111");
+        console.log("data.params = "+data.params);
+        console.log("data.result = "+data.result);
+        console.log("data.error = "+JSON.stringify(data.error));
+
         if (data.result != undefined){
             console.log("2222222222");
             let request = this.queryRequest(data.id);
@@ -128,6 +131,10 @@ export class JsonRPCService {
         if(data.error != undefined)
             return data.error;
             
+        if(data.result == null){
+            let request = this.queryRequest(data.id);
+            return this.createResult(nodeId, request.method,request.requestParams , data.result);
+        }
         return this.createError(nodeId, -69000, "Unknown error");
     }
 

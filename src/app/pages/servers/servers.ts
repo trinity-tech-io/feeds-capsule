@@ -11,7 +11,7 @@ import { Router } from '@angular/router';
 })
 
 export class ServersPage implements OnInit {
-    private connectStatus = 1;
+    // private connectStatus = 1;
     private serverList:any;
     private serversStatus: any;
     private serverStatisticsMap: any;
@@ -36,7 +36,7 @@ export class ServersPage implements OnInit {
             this.feedService.getStatistics(this.serverList[index].userId);
         }
 
-        this.connectStatus = this.feedService.getConnectionStatus();
+        // this.connectStatus = this.feedService.getConnectionStatus();
 
         this.events.subscribe('feeds:updateServerList', serverList => {
             this.zone.run(() => {
@@ -44,11 +44,11 @@ export class ServersPage implements OnInit {
             });
         });
 
-        this.events.subscribe('feeds:connectionChanged', connectionStatus => {
-            this.zone.run(() => {
-                this.connectStatus = connectionStatus;
-            });
-        });
+        // this.events.subscribe('feeds:connectionChanged', connectionStatus => {
+        //     this.zone.run(() => {
+        //         this.connectStatus = connectionStatus;
+        //     });
+        // });
 
         this.events.subscribe('feeds:serverConnectionChanged', serversStatus => {
             this.zone.run(() => {
@@ -60,7 +60,13 @@ export class ServersPage implements OnInit {
             this.zone.run(() => {
                 this.serverStatisticsMap = serverStatisticsMap;
             });
-        })
+        });
+
+        this.events.subscribe('feeds:login_finish',(nodeId)=>{
+            this.zone.run(() => {
+                this.checkSignIn(nodeId);
+            });
+        });
     }
 
 
@@ -74,5 +80,22 @@ export class ServersPage implements OnInit {
     navToServerInfo(did: string) {
         // this.native.go(['/menu/servers/server-info',userId]);
         this.router.navigate(['/menu/servers/server-info', did]);
+    }
+
+    signin(nodeId: string){
+        this.feedService.signinChallengeRequest(nodeId,false);
+    }
+
+    checkSignIn(nodeId: string){
+        this.feedService.checkSignInServerStatus(nodeId);
+    }
+
+    checkConnectClient(nodeId: string){
+        if (this.serverStatisticsMap == null ||
+            this.serverStatisticsMap == undefined ||
+            this.serverStatisticsMap[nodeId] == undefined)
+            return 0;
+        
+        return this.serverStatisticsMap[nodeId].connecting_clients;
     }
 }

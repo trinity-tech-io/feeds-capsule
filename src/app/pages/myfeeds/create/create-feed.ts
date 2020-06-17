@@ -25,7 +25,7 @@ export class CreateFeedPage implements OnInit {
     private popup: PopupProvider,
     private popoverController: PopoverController,
     private native: NativeService) {
-      this.feedService.getCreationServerMap();
+      // this.feedService.getCreationServerMap();
       this.connectStatus = this.feedService.getConnectionStatus();
       
       this.events.subscribe('feeds:createTopicSuccess', () => {

@@ -26,7 +26,7 @@ export class CommentComponent implements OnInit {
   }
 
   publishComment(){
-    this.feedService.postComment(this.nodeId,Number(this.channelId),Number(this.postId),null,this.newComment)
+    this.feedService.postComment(this.nodeId,Number(this.channelId),Number(this.postId),0,this.newComment)
     this.popover.dismiss();
   }
 }

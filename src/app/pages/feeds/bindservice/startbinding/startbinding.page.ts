@@ -16,6 +16,7 @@ export class StartbindingPage implements OnInit {
   private title = "Binding server";
   private nonce = "12345";
   private nodeId: string;
+  private carrierAddress: string;
   constructor(
     private native: NativeService,
     private events: Events,
@@ -35,6 +36,7 @@ export class StartbindingPage implements OnInit {
       else this.nonce = this.feedService.generateNonce();  
       console.log(this.nonce);
 
+      this.carrierAddress = data.address;
       if(this.feedService.getFriendConnection(this.nodeId) == 1)
         this.native.showLoading("Connecting server");
     });
@@ -78,7 +80,7 @@ export class StartbindingPage implements OnInit {
   }
 
   confirm(){
-    this.feedService.declareOwnerRequest(this.nodeId);
+    this.feedService.declareOwnerRequest(this.nodeId, this.carrierAddress);
   }
 
   abort(){

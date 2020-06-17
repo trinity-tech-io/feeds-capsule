@@ -26,6 +26,7 @@ export class SigninPage implements OnInit {
     private carrierService:CarrierService) { }
 
   ngOnInit() {
+    // this.feedService.removeAllData();
   }
 
   signIn(){

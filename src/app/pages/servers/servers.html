@@ -1,18 +1,7 @@
-<ion-header>
-  <ion-toolbar mode="ios">
-    <ion-buttons slot="end" padding class="header-btns">
-      <ion-button>
-        <ion-menu-button menu="m1"></ion-menu-button>
-      </ion-button>
-    </ion-buttons>
-    <ion-title>Channel source</ion-title>
-  </ion-toolbar>
-</ion-header>
-
 <ion-content>
-  <div class="offline-content" *ngIf=" connectStatus != 0 ">
+  <!-- <div class="offline-content" *ngIf=" connectStatus != 0 ">
     <ion-label>disconnect</ion-label>
-  </div>
+  </div> -->
 
   <div class="ion-padding">
     <ion-button
@@ -26,27 +15,31 @@
   </div>
 
   <ion-list>
-    <ion-item style="margin: 2%;" *ngFor='let server of serverList' (click)="navToServerInfo(server.did)">
-      <ion-icon name="radio-button-on" color="primary" slot="start"  *ngIf="serversStatus[server.nodeId].status == 0" ></ion-icon>
-      <ion-icon name="radio-button-on" slot="start" *ngIf="serversStatus[server.nodeId].status == 1" ></ion-icon>
-      <div style="word-wrap: break-word; word-break: normal; width: 85%;">
-        <ion-label >
+    <ion-item style="margin: 2%;" *ngFor='let server of serverList' >
+      <ion-icon name="radio-button-on" color="primary" slot="start"  *ngIf="serversStatus[server.nodeId].status == 0" (click)="navToServerInfo(server.did)" ></ion-icon>
+      <ion-icon name="radio-button-on" slot="start" *ngIf="serversStatus[server.nodeId].status == 1" (click)="navToServerInfo(server.did)"></ion-icon>
+      <div style="word-wrap: break-word; word-break: normal; width: 85%;" >
+        <ion-label (click)="navToServerInfo(server.did)">
           <b>DID:</b>{{server.did}}<br>
           <b>Name: </b>{{server.name}}<br>
           <b>Owner:</b>{{server.owner}}<br>
           <!-- <b>NodeId:</b>{{server.nodeId}}<br> -->
+          
+
         </ion-label>
+        <ion-button expand="block" (click)="signin(server.nodeId)" *ngIf="checkSignIn(server.nodeId) == false">signin</ion-button>
+        <ion-button expand="block" (click)="signin(server.nodeId)" *ngIf="checkSignIn(server.nodeId) == true">reSignIn</ion-button>
+
       </div>
 
-      <div style="align-items:flex-end;">
-      
+      <div style="align-items:flex-end;" (click)="navToServerInfo(server.did)">
         <ion-icon color="primary" name="person"></ion-icon>
 
       </div>
       <div style="align-items:flex-end;">
       
         <ion-label >
-          <h2>{{serverStatisticsMap[server.nodeId].connecting_clients}}</h2>
+          <h2>{{checkConnectClient(server.nodeId)}}</h2>
         </ion-label>
       </div>
     </ion-item>

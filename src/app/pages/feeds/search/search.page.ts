@@ -31,7 +31,7 @@ export class SearchPage implements OnInit {
     this.connectStatus = this.feedService.getConnectionStatus();
     this.channelList = this.feedService.refreshLocalChannels();
     // this.feedService.refreshChannels();
-    feedService.doExploreTopics();
+    // feedService.doExploreTopics();
 
     this.events.subscribe('feeds:connectionChanged', connectionStatus => {
       this.zone.run(() => {
