@@ -84,17 +84,15 @@ export class SigninPage implements OnInit {
 
             console.log("credentials ==>"+JSON.stringify(credentials));
 
-
-            console.log("credentials ==>"+credentials.toString);
-
+            this.saveCredentialById(data.did,credentials, "name");
 
             this.saveData(
               data.did,
-              this.findCredentialValueById(this.did, credentials, "name", "Not provided"),
-              this.findCredentialValueById(this.did, credentials, "email", "Not provided"),
-              this.findCredentialValueById(this.did, credentials, "telephone", "Not provided"),
-              this.findCredentialValueById(this.did, credentials, "nation", "Not provided"),
-              this.findCredentialValueById(this.did, credentials, "description", "Not provided")
+              this.findCredentialValueById(data.did, credentials, "name", "Not provided"),
+              this.findCredentialValueById(data.did, credentials, "email", "Not provided"),
+              this.findCredentialValueById(data.did, credentials, "telephone", "Not provided"),
+              this.findCredentialValueById(data.did, credentials, "nation", "Not provided"),
+              this.findCredentialValueById(data.did, credentials, "description", "Not provided")
               );
             this.initApp();
           });
@@ -113,6 +111,7 @@ export class SigninPage implements OnInit {
 
     const { role, data } = await loading.onDidDismiss();
   }
+
   findCredentialValueById(did: string, credentials: DIDPlugin.VerifiableCredential[], fragment: string, defaultValue: string) {
     let matchingCredential = credentials.find((c)=>{
       return c.getFragment() == fragment;
@@ -124,6 +123,16 @@ export class SigninPage implements OnInit {
       return matchingCredential.getSubject()[fragment];
   }
 
+  saveCredentialById(did: string, credentials: DIDPlugin.VerifiableCredential[], fragment: string) {
+    let matchingCredential = credentials.find((c)=>{
+      return c.getFragment() == fragment;
+    });
+
+    if (matchingCredential){
+      this.feedService.saveCredential(JSON.stringify(matchingCredential));
+    }
+  }
+
   initApp(){
     this.carrierService.init();
     // this.router.navigate(['/favorite']);
@@ -131,6 +140,7 @@ export class SigninPage implements OnInit {
   }
 
   saveData(did: string, name: string, email: string, telephone: string, location: string, description: string){
+    console.log("name = "+name);
     this.feedService.saveSignInData(did,name,email,telephone,location, description);
   }
 }

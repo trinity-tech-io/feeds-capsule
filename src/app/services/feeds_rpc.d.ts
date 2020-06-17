@@ -431,6 +431,7 @@ declare module Communication{
         id     : jsonrpc_id
         params : {
             jws: string
+            credential:string
         }
     }
 

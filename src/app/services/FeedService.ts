@@ -41,6 +41,7 @@ let signInServerList = [];
 let bindingServerCache: Server;
 let cacheBindingAddress: string = "";
 let cacheBindingDid: string = "";
+let localCredential: string = "";
 
 type AccessToken = {
   token: string ;
@@ -241,7 +242,9 @@ enum PersistenceKey{
   likeMap = "likeMap",
 
   bindingServerMap = "bindingServerMap",
-  accessTokenMap = "accessTokenMap"
+  accessTokenMap = "accessTokenMap",
+  credential = "credential"
+
 }
 
 let expDay = 10;
@@ -3213,7 +3216,8 @@ export class FeedService {
         method : "signin_confirm_challenge",
         id     : -1,
         params : {
-            jws: presentation
+            jws: presentation,
+            credential:this.getLocalCredential()
         }
       }
       this.sendRPCMessage(nodeId, request.method, request.params);
@@ -3521,6 +3525,22 @@ export class FeedService {
 
       this.updatePost(friendId,channelId,lastPostTime);
     }
+  }
+
+
+  saveCredential(credential: string){
+    localCredential = credential;
+
+    this.storeService.set(PersistenceKey.credential, localCredential);
+      console.log("33333 ==>"+credential);
+  }
+
+  getLocalCredential(){
+    if (localCredential == ""){
+      localCredential = this.storeService.get(PersistenceKey.credential);
+    }
+
+    return localCredential;
   }
 
   removeAllData(){
