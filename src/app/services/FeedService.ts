@@ -673,12 +673,9 @@ export class FeedService {
 
   sendRPCMessage(nodeId: string, method: string, params: any){
     if(!this.checkServerConnection(nodeId)){
-      console.log("nodeId="+nodeId);
-      console.log("method="+method);
       this.native.toast("server :\n"+nodeId +"\noffline!");
       return;
     }
-    console.log("22222222");
     this.jsonRPCService.request(
       method,
       nodeId, 
@@ -1554,7 +1551,6 @@ export class FeedService {
       accessTokenMap[nodeId] == undefined)
       return false ;
     
-    console.log("accessTokenMap[nodeId] = "+JSON.stringify(accessTokenMap[nodeId]));
     return true;
   }
   
@@ -3155,50 +3151,11 @@ export class FeedService {
   }
 
   publishDid(payload: string, onSuccess?: (ret: any)=>void, onError?: (err:any)=>void) {
-    // let jsonPayload = JSON.parse(payload);
-    // console.log("Received id transaction callback with payload: ", jsonPayload);
     let params = {
         didrequest: payload
     }
 
-    console.log("Sending didtransaction intent with params:", params);
-
     appManager.sendIntent("didtransaction", params, {}, onSuccess, onError);
-    // appManager.sendIntent("didtransaction", params, {}, (response)=>{
-    //     console.log("Got didtransaction intent response.", response);
-
-    //     // If txid is set in the response this means a transaction has been sent on chain.
-    //     // If null, this means user has cancelled the operation (no ELA, etc).
-    //     if (response.result && response.result.txid) {
-    //         console.log('didtransaction response.result.txid ', response.result.txid);
-    //         // this.events.publish("diddocument:publishresult", {
-    //         //     didStore: this,
-    //         //     published: true
-    //         // });
-
-    //         // Inform the DID plugin of the created chain transaction ID
-    //         // this.pluginDidStore.setTransactionResult(response.result.txid);
-    //     }
-    //     else {
-    //         console.log('didtransaction response.result.txid is null');
-    //         // this.events.publish("diddocument:publishresult", {
-    //         //     didStore: this,
-    //         //     cancelled: true
-    //         // });
-
-    //         // Inform the DID plugin of the created chain transaction ID
-    //         // this.pluginDidStore.setTransactionResult(null);
-    //     }
-    // }, (err)=>{
-    //     console.error("Failed to send app manager didtransaction intent!", err);
-    //     // this.events.publish("diddocument:publishresult", {
-    //     //     didStore: this,
-    //     //     error: true
-    //     // });
-
-    //     // Inform the DID plugin of the created chain transaction ID
-    //     // this.pluginDidStore.setTransactionResult(null);
-    // });
   }
 
 
@@ -3245,15 +3202,12 @@ export class FeedService {
 
 
       this.sendRPCMessage(nodeId, request.method, request.params);
-      // console.log("presentation==>"+presentation);
     }).catch((err)=>{
-      console.log("err = "+err);
+      // console.log("err = "+err);
     });
   }
 
   handleSigninChallenge(nodeId:string, result: any){
-    console.log("result =>"+ JSON.stringify(result));
-
     let requiredCredential = result.credential_required;
     let jws = result.jws;
     let credential = result.credential;
@@ -3267,23 +3221,15 @@ export class FeedService {
         let nonce = payload.nonce;
         let realm = payload.realm;
 
-
-        console.log("res.signatureIsValid =>"+ res.signatureIsValid);
-        console.log("res.payload =>"+JSON.stringify(res.payload));
-        console.log("nonce =>"+nonce);
-        console.log("realm =>"+realm);
-
         this.signinConfirmRequest(nodeId, nonce, realm , requiredCredential);
       },
       (err)=>{
-        console.log("err =>"+err);
+        // console.log("err =>"+err);
       }
       );
   }
 
   handleSigninConfirm(nodeId:string, result: any){
-    console.log("result =>"+ JSON.stringify(result));
-
     if (accessTokenMap == null || accessTokenMap == undefined)
       accessTokenMap = {};
 
@@ -3301,8 +3247,6 @@ export class FeedService {
   }
 
   declareOwnerRequest(nodeId: string, carrierAddress: string){
-
-    console.log("1111111");
     let request: Communication.declare_owner_request = {
       ver: "1.0",
       method : "declare_owner",
@@ -3352,7 +3296,6 @@ export class FeedService {
           credential: credential,
       }
     }
-    console.log("issueCredentialRequest ===>"+JSON.stringify(request));
     this.sendRPCMessage(nodeId, request.method, request.params);
   }
   //eyJ0eXAiOiJKV1QiLCJjdHkiOiJqc29uIiwibGlicmFyeSI6IkVsYXN0b3MgRElEIiwidmVyc2lvbiI6IjEuMCIsImFsZyI6Im5vbmUifQ.eyJzdWIiOiJKd3RUZXN0IiwianRpIjoiMCIsImF1ZCI6IlRlc3QgY2FzZXMiLCJpYXQiOjE1OTA4NTEwMzQsImV4cCI6MTU5ODc5OTgzNCwibmJmIjoxNTg4MjU5MDM0LCJmb28iOiJiYXIiLCJpc3MiOiJkaWQ6ZWxhc3RvczppV0ZBVVloVGEzNWMxZlBlM2lDSnZpaFpIeDZxdXVtbnltIn0.
@@ -3361,7 +3304,7 @@ export class FeedService {
       if (result){
         onSuccess(result);
       }else{
-        console.log("error")
+        // console.log("error")
       }
       
     }).catch((err)=>{
@@ -3423,7 +3366,6 @@ export class FeedService {
     let transaction_payload = result.transaction_payload;
 
     //调用wallet 上链did
-    console.log("handleImportDIDResponse");
     // this.createIdTransactionCallback(transaction_payload);
 
     //上链后
@@ -3444,13 +3386,10 @@ export class FeedService {
   }
 
   handleIssueCredentialResponse(nodeId: string, result: any){
-
     if (bindingServerMap == null && bindingServerMap == undefined)
       bindingServerMap = {}
 
     bindingServerMap[nodeId] = bindingServerCache;
-    console.log("bindingServerMap[nodeId]="+JSON.stringify(bindingServerMap));
-    console.log("bindingServerCache ="+JSON.stringify(bindingServerMap));
 
     this.storeService.set(PersistenceKey.bindingServerMap,bindingServerMap);
     eventBus.publish("feeds:issue_credential");
@@ -3485,10 +3424,7 @@ export class FeedService {
       expirationdate: new Date(2024, 10, 10).toISOString() // Credential will expire on 2024-11-10 - Note the month's 0-index...
     }, {}, (response) => {
 
-      console.log("response ==>"+JSON.stringify(response));
-
       if (response.result.credential) {
-        console.log("response.result.credential ==>"+response.result.credential);
         //TODO
         // this.zone.run(() => {
         //   this.navCtrl.navigateForward("credissued", {
@@ -3507,15 +3443,6 @@ export class FeedService {
       console.log("Failed to issue a credential: "+JSON.stringify(err));
       // this.didDemoService.toast("Failed to issue a credential: "+JSON.stringify(err));
     })
-  }
-
-  authenticate(nonce: string, realm: string){
-    didSessionManager.authenticate(nonce, realm).then((presentation)=>{
-      
-      console.log("presentation==>"+presentation);
-    }).catch((err)=>{
-      console.log("err = "+err);
-    });
   }
 
   getFriendConnection(nodeId: string){
@@ -3557,7 +3484,6 @@ export class FeedService {
     localCredential = credential;
 
     this.storeService.set(PersistenceKey.credential, localCredential);
-      console.log("33333 ==>"+credential);
   }
 
   getLocalCredential(){

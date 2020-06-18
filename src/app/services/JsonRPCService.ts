@@ -46,7 +46,6 @@ export class JsonRPCService {
         private agentService: AgentService) {
         eventBus = events;
         this.events.subscribe('transport:receiveMessage', event => {
-            console.log("received before ===>"+event.message);
             let data = serializeDataService.decodeData(event.message);
             console.log("received after ===>"+JSON.stringify(data));
 
@@ -62,7 +61,6 @@ export class JsonRPCService {
     }
 
     request(method: string, nodeId: string,params: any, success: any, error: any){
-        console.log("3333333");
         let id = autoIncreaseId++;
         let requestBean = new RequestBean(id,method,params);
         requestQueue.push(requestBean);
@@ -71,8 +69,6 @@ export class JsonRPCService {
         console.log("before---"+JSON.stringify(request));
 
         let encodeData = this.serializeDataService.encodeData(request);
-
-        console.log("after---"+encodeData);
 
         // this.carrierService.sendMessage(
         //     nodeId,
@@ -108,21 +104,13 @@ export class JsonRPCService {
     }
 
     parse(nodeId: string, data: any): Result{
-        console.log("data  == "+JSON.stringify(data));
         if (data.jsonrpc != undefined && data.jsonrpc!="2.0")
             return this.createError(nodeId, -60003, "JsonRPC version error");
 
-        console.log("data.params = "+data.params);
-        console.log("data.result = "+data.result);
-        console.log("data.error = "+JSON.stringify(data.error));
-
         if (data.result != undefined){
-            console.log("2222222222");
             let request = this.queryRequest(data.id);
             return this.createResult(nodeId, request.method,request.requestParams , data.result);
         }
-
-        console.log("3333333333");
 
         if (data.params != undefined)
             return this.createParamsResult(nodeId, data.params, data.method);

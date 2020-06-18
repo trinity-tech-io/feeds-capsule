@@ -73,17 +73,11 @@ export class SigninPage implements OnInit {
     }, {}, (response: any) => {
       if (response && response.result && response.result.presentation) {
         let data = response.result;
-        console.log("result ==>"+JSON.stringify(response.result));
-
-        console.log("presentation ==>"+JSON.stringify(response.result.presentation));
 
         // Create a real presentation object from json data
         didManager.VerifiablePresentationBuilder.fromJson(JSON.stringify(response.result.presentation), (presentation)=>{
           this.zone.run(()=>{
             let credentials = presentation.getCredentials();
-
-            console.log("credentials ==>"+JSON.stringify(credentials));
-
             this.saveCredentialById(data.did,credentials, "name");
 
             this.saveData(
@@ -140,7 +134,6 @@ export class SigninPage implements OnInit {
   }
 
   saveData(did: string, name: string, email: string, telephone: string, location: string, description: string){
-    console.log("name = "+name);
     this.feedService.saveSignInData(did,name,email,telephone,location, description);
   }
 }

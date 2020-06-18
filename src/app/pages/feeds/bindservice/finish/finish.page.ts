@@ -19,7 +19,6 @@ export class FinishPage implements OnInit {
     ) {
       acRoute.params.subscribe((data)=>{
         this.nodeId = data.nodeId;
-        console.log(this.nodeId);
       });
     }
 

@@ -21,14 +21,9 @@ export class ImportdidPage implements OnInit {
     ) {
       acRoute.params.subscribe((data)=>{
         this.nodeId = data.nodeId;
-        console.log(this.nodeId);
       });
 
       this.events.subscribe('feeds:did_imported', (nodeId, did, payload) => {
-        console.log("nodeId ==>" + nodeId);
-        console.log("did ==>" + did);
-        console.log("payload ==>" + payload);
-
         this.navCtrl.pop().then(()=>{
           this.router.navigate(['/bindservice/publishdid/',nodeId, did, payload]);
         });

@@ -28,13 +28,11 @@ export class StartbindingPage implements OnInit {
 
     acRoute.params.subscribe((data)=>{
       titleBarManager.setTitle(this.title);
-      console.log("title="+this.title);
 
       this.nodeId = data.nodeId;
       if (data.nonce!="")
         this.nonce = data.nonce ;
       else this.nonce = this.feedService.generateNonce();  
-      console.log(this.nonce);
 
       this.carrierAddress = data.address;
       if(this.feedService.getFriendConnection(this.nodeId) == 1)
@@ -42,11 +40,6 @@ export class StartbindingPage implements OnInit {
     });
 
     this.events.subscribe('feeds:owner_declared', (nodeId, phase, did, payload) => {
-      console.log("nodeId ==>" + nodeId);
-      console.log("phase ==>" + phase);
-      console.log("did  ==>" + did);
-      console.log("payload  ==>"  + payload);
-
       switch(phase){
         case "owner_declared":
           this.navCtrl.pop().then(()=>{

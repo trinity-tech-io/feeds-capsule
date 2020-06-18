@@ -23,7 +23,6 @@ export class IssuecredentialPage implements OnInit {
       acRoute.params.subscribe((data)=>{
         this.nodeId = data.nodeId;
         this.did = data.did;
-        console.log(this.nodeId);
       });
 
       this.events.subscribe('feeds:issue_credential', () => {

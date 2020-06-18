@@ -94,7 +94,6 @@ export class ServersPage implements OnInit {
         if (this.serverStatisticsMap == null ||
             this.serverStatisticsMap == undefined ||
             this.serverStatisticsMap[nodeId] == undefined)
-            console.log("checkConnectClient = 0");
             return 0;
         
         return this.serverStatisticsMap[nodeId].connecting_clients;
