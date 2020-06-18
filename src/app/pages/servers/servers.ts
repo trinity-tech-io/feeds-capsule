@@ -83,17 +83,18 @@ export class ServersPage implements OnInit {
     }
 
     signin(nodeId: string){
-        this.feedService.signinChallengeRequest(nodeId,false);
+        this.feedService.signinChallengeRequest(nodeId,true);
     }
 
-    checkSignIn(nodeId: string){
-        this.feedService.checkSignInServerStatus(nodeId);
+    checkSignIn(nodeId: string):boolean{
+        return this.feedService.checkSignInServerStatus(nodeId);
     }
 
     checkConnectClient(nodeId: string){
         if (this.serverStatisticsMap == null ||
             this.serverStatisticsMap == undefined ||
             this.serverStatisticsMap[nodeId] == undefined)
+            console.log("checkConnectClient = 0");
             return 0;
         
         return this.serverStatisticsMap[nodeId].connecting_clients;

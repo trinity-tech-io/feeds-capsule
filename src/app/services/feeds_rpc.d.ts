@@ -431,6 +431,15 @@ declare module Communication{
         id     : jsonrpc_id
         params : {
             jws: string
+        }
+    }
+
+    type signin_confirm_challenge_credential_request = {
+        ver: "1.0"
+        method : "signin_confirm_challenge"
+        id     : jsonrpc_id
+        params : {
+            jws: string
             credential:string
         }
     }

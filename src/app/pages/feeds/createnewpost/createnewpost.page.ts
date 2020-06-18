@@ -51,7 +51,7 @@ export class CreatenewpostPage implements OnInit {
     }
 
   ngOnInit() {
-    titleBarManager.setTitle("Create New Feed");
+    titleBarManager.setTitle("Adding Post");
     this.native.setTitleBarBackKeyShown(true);
   }
 
