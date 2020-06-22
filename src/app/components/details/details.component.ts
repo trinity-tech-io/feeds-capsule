@@ -33,7 +33,7 @@ export class DetailsComponent implements OnInit {
       this.telephone = signInData.telephone;
       this.location = signInData.location;
 
-      let bindingServer = this.feedService.getOwnChannelSource();
+      let bindingServer = this.feedService.getBindingServer();
       if (bindingServer != null && bindingServer != undefined){
         this.ownChannelSourceDid = bindingServer.did;
         console.log("bindingServer ==>"+JSON.stringify(bindingServer));

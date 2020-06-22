@@ -377,21 +377,21 @@ export class FeedService {
   initTestData(){
       // this.removeAllData();
       //TODO resolve Document
-      bindingServer = {
-        name              : "name",
-        owner             : "owner",
-        introduction      : "intro",
-        did               : "did:elastos:ijwMzR44CjUjWEHcXSZSW3EPoBJGbKRThH",
-        carrierAddress    : "UY7n771KpmrfspLc5ZhfeYd8bgcjK3NvNS6MpL3xT7KPLigeja7U",
-        nodeId            : "DXeGgJbdYUnCZTsyL8HNqJjvuGMeD2p5hrKoRg7G7xYp",
-        feedsUrl          : "feeds://did:elastos:ijwMzR44CjUjWEHcXSZSW3EPoBJGbKRThH/UY7n771KpmrfspLc5ZhfeYd8bgcjK3NvNS6MpL3xT7KPLigeja7U"
-      }
-      // this.storeService.set(PersistenceKey.bindingServerMap,bindingServerMap);
-      this.storeService.set(PersistenceKey.bindingServer,bindingServer);
+      // bindingServer = {
+      //   name              : "name",
+      //   owner             : "owner",
+      //   introduction      : "intro",
+      //   did               : "did:elastos:ijwMzR44CjUjWEHcXSZSW3EPoBJGbKRThH",
+      //   carrierAddress    : "UY7n771KpmrfspLc5ZhfeYd8bgcjK3NvNS6MpL3xT7KPLigeja7U",
+      //   nodeId            : "DXeGgJbdYUnCZTsyL8HNqJjvuGMeD2p5hrKoRg7G7xYp",
+      //   feedsUrl          : "feeds://did:elastos:ijwMzR44CjUjWEHcXSZSW3EPoBJGbKRThH/UY7n771KpmrfspLc5ZhfeYd8bgcjK3NvNS6MpL3xT7KPLigeja7U"
+      // }
+      // // this.storeService.set(PersistenceKey.bindingServerMap,bindingServerMap);
+      // this.storeService.set(PersistenceKey.bindingServer,bindingServer);
   }
   initData(){
     
-    this.initTestData();
+    // this.initTestData();
 
     firstInit = this.storeService.get(PersistenceKey.firstInit);
     firstInit = true; // for test
@@ -3502,7 +3502,7 @@ export class FeedService {
     this.storeService.remove(PersistenceKey.serverMap);
   }
 
-  getOwnChannelSource(): Server{
+  getBindingServer(): Server{
     return bindingServer;
   }
 

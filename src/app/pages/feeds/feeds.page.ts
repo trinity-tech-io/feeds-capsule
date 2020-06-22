@@ -33,12 +33,18 @@ export class FeedsPage implements OnInit {
   }
 
   create(){
+    let bindingServer = this.feedService.getBindingServer();
+    if (bindingServer == null || bindingServer == undefined){
+      this.router.navigate(['/bindservice/scanqrcode']);
+      return ;
+    }
+      
     if(this.feedService.getMyChannelList().length>0){
       this.openPopOverComponent();
-    }else{
-      this.router.navigate(['/createnewfeed']);
+      return ;
     }
-    
+
+    this.router.navigate(['/createnewfeed']);
   }
 
   async openPopOverComponent() {
