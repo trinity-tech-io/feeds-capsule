@@ -639,7 +639,7 @@ vertical-align: middle;
 }
 
 
-.empty-timelime-div{
+.center-content-div{
   width: 100%;
   height: 100%;
   display: flex;
@@ -647,16 +647,14 @@ vertical-align: middle;
   text-align: center;
 }
 
-.empty-timelime{
+.center-content{
   width: 100%;
-  height: 230;
   display: inline-block;    
 }
 
 .all-empty {
   // width: 128px;
   // height: 29px;
-
   font-family: Montserrat;
   font-size: 24px;
   font-weight: 500;
@@ -666,11 +664,9 @@ vertical-align: middle;
   letter-spacing: 1.2px;
   text-align: center;
   color: #8888b0;
-
-  margin-top: 20px;
 }
 
-.not-following-any-feeds-yet {
+.all-empty-content-text {
   // width: 258px;
   // height: 19px;
   font-family: Montserrat;
@@ -682,14 +678,12 @@ vertical-align: middle;
   letter-spacing: 1.6px;
   text-align: center;
   color: #8888b0;
-
-  margin-top: 7px;
 }
 
 .explore-feeds {
   width: 347px;
   height: 41px;
-  
+
   margin-left: 34px;
   margin-right: 34px;
   

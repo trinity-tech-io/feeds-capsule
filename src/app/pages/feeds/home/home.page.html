@@ -4,12 +4,12 @@
     </div>
 </ion-header> -->
 <ion-content>
-  <div class="empty-timelime-div" *ngIf="postList.length == 0">
-    <div class="empty-timelime">
+  <div class="center-content-div" *ngIf="postList.length == 0">
+    <div class="center-content" style="height: 330px;">
       <!-- <div style="background-image: url('../../../../assets/images/empty-feeds-icon.png');"> </div> -->
       <img src="../../../../assets/images/empty-feeds-icon.svg">
-      <div class="all-empty">All Empty</div>
-      <div class="not-following-any-feeds-yet">Not following any feeds yet</div>
+      <div class="all-empty" style="margin-top: 20px;">All Empty</div>
+      <div class="all-empty-content-text" style="margin-top: 7px;">Not following any feeds yet</div>
 
         <ion-button  mode="ios" class="explore-feeds" (click)="exploreFeeds()" round>
           <div class="explore-feeds-text"> Explore Feeds</div>
