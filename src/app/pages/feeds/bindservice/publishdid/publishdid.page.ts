@@ -23,7 +23,6 @@ export class PublishdidPage implements OnInit {
         this.nodeId = data.nodeId;
         this.did = data.did;
         this.payload = data.payload;
-        console.log(this.payload);
       });
     }
 

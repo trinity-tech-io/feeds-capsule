@@ -40,7 +40,9 @@ export class ServerInfoPage implements OnInit {
     // this.didString="did:elastos:ixxxxxxxxxxxxxxxxxxx"
     this.connectStatus = this.feedService.getConnectionStatus();
     this.acRoute.params.subscribe(data => {
-      let server = this.feedService.findServer(data.did);
+      // TODO did => nodeId;
+      // let server = this.feedService.getServerbyNodeId(data.did);
+      let server = this.feedService.getServerbyNodeId(data.nodeId);
       this.serverStatus = this.feedService.getServersStatus()[server.nodeId].status;
       this.clientNumber = this.feedService.getServerStatisticsMap()[server.nodeId].connecting_clients;
 

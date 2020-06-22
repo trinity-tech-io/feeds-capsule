@@ -16,10 +16,10 @@
 
   <ion-list>
     <ion-item style="margin: 2%;" *ngFor='let server of serverList' >
-      <ion-icon name="radio-button-on" color="primary" slot="start"  *ngIf="serversStatus[server.nodeId].status == 0" (click)="navToServerInfo(server.did)" ></ion-icon>
-      <ion-icon name="radio-button-on" slot="start" *ngIf="serversStatus[server.nodeId].status == 1" (click)="navToServerInfo(server.did)"></ion-icon>
+      <ion-icon name="radio-button-on" color="primary" slot="start"  *ngIf="serversStatus[server.nodeId].status == 0" (click)="navToServerInfo(server.nodeId)" ></ion-icon>
+      <ion-icon name="radio-button-on" slot="start" *ngIf="serversStatus[server.nodeId].status == 1" (click)="navToServerInfo(server.nodeId)"></ion-icon>
       <div style="word-wrap: break-word; word-break: normal; width: 85%;" >
-        <ion-label (click)="navToServerInfo(server.did)">
+        <ion-label (click)="navToServerInfo(server.nodeId)">
           <b>DID:</b>{{server.did}}<br>
           <b>Name: </b>{{server.name}}<br>
           <b>Owner:</b>{{server.owner}}<br>
@@ -32,7 +32,7 @@
 
       </div>
 
-      <div style="align-items:flex-end;" (click)="navToServerInfo(server.did)">
+      <div style="align-items:flex-end;" (click)="navToServerInfo(server.nodeId)">
         <ion-icon color="primary" name="person"></ion-icon>
 
       </div>

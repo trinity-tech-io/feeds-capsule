@@ -8,6 +8,7 @@ import { DetailsComponent} from './details/details.component';
 import { MyfeedsComponent} from './myfeeds/myfeeds.component';
 import { FollowingComponent} from './following/following.component';
 import { LikesComponent} from './likes/likes.component';
+import { SourceComponent} from './source/source.component';
 
 @NgModule({
   imports: [
@@ -15,8 +16,8 @@ import { LikesComponent} from './likes/likes.component';
     FormsModule,
     IonicModule,
   ],
-  declarations: [HeaderBarComponent,DetailsComponent,MyfeedsComponent,FollowingComponent,LikesComponent],
-  exports: [HeaderBarComponent,DetailsComponent,MyfeedsComponent,FollowingComponent,LikesComponent],
+  declarations: [HeaderBarComponent,DetailsComponent,MyfeedsComponent,FollowingComponent,LikesComponent,SourceComponent],
+  exports: [HeaderBarComponent,DetailsComponent,MyfeedsComponent,FollowingComponent,LikesComponent,SourceComponent],
   providers: [
   ],
   entryComponents: [],

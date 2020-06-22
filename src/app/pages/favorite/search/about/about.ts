@@ -101,6 +101,6 @@ export class FeedAboutPage implements OnInit {
   }
 
   navigatePage(){
-    this.router.navigate(['/menu/servers/server-info', this.feedService.queryServerDID(this.nodeId)]);
+    this.router.navigate(['/menu/servers/server-info', this.nodeId]);
   }
 }

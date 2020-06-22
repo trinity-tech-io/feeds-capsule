@@ -81,8 +81,6 @@ export class ScanqrcodePage implements OnInit {
       this.carrier.addFriend(address, "hi",
         () => {
           this.navCtrl.pop().then(()=>{
-            console.log(nodeId);
-            console.log(nonce);
             if (nonce == undefined) nonce = "";
             this.router.navigate(['/bindservice/startbinding/',nodeId, nonce, address]);
             

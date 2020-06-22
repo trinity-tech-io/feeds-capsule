@@ -7,12 +7,12 @@ import { FeedService } from 'src/app/services/FeedService';
   styleUrls: ['./profile.page.scss'],
 })
 export class ProfilePage implements OnInit {
-  private types = ["Details","MyFeeds","Following","Likes"];
+  private types = ["Details","MyFeeds","Following","Likes","Sources"];
   private selectType: String = "Details"; 
   private description: String = "";
   private name: string = "";
   slideOpts = {
-    initialSlide: 1,
+    initialSlide: 0,
     speed: 100,
     slidesPerView: 4,
   };

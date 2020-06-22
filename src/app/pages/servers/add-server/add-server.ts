@@ -54,6 +54,12 @@ export class AddServerPage implements OnInit {
             this.connectStatus = connectionStatus;
         });
       });
+
+      this.events.subscribe('feeds:updateServerList', ()=>{
+        this.zone.run(() => {
+          this.native.pop();
+        });
+      });
   }
 
   ngOnInit() {}
@@ -63,35 +69,12 @@ export class AddServerPage implements OnInit {
   }
 
   addServer() {
-    if (this.platform.platforms().indexOf("cordova") < 0){
-      this.carrier.addFriend(this.carrierAddress, this.friendRequest,
-        () => {
-            console.log("Add server success");
-            this.alertError("Add server success");
-            this.native.setRootRouter("/menu/servers");
-        }, null);
-      return;
-    }
+    this.feedService.addServer(this.carrierAddress,this.friendRequest,
+      this.name, this.owner, this.introduction, 
+      this.did, this.feedsUrl, ()=>{
+        this.native.pop();
+      },(err)=>{
 
-    this.carrier.isValidAddress(this.carrierAddress, (isValid) => {
-      if (!isValid){
-        this.alertError("Address invalid");
-        return;
-      }
-      
-      this.carrier.addFriend(this.carrierAddress, this.friendRequest,
-        () => {
-            this.native.toast("Add server success");
-            this.native.setRootRouter("/menu/servers");
-            this.native.pop();
-            this.feedService.saveCacheServe(this.name, this.owner, this.introduction, 
-                                            this.did, this.carrierAddress, this.feedsUrl);
-        }, (err) => {
-            this.alertError("Add server error: " + err);
-        });
-      },
-      (error: string) => {
-        this.native.toast("address error: " + error);
       });
   }
 

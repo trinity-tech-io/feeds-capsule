@@ -26,7 +26,6 @@ let serversStatus:{[nodeId: string]: ServerStatus};
 let creationPermissionMap:{[nodeId: string]: boolean};
 let likeMap:{[nodechannelpostId:string]:Post};
 let lastPostUpdateMap:{[nodeChannelId:string]: PostUpdateTime};
-let bindServerList: string;
 let friendConnectionMap: {[nodeId:string]: ConnState};
 // let accessTokenMap: {[nodeId: string]: string};
 
@@ -34,11 +33,14 @@ let localSubscribedList:Channels[] = new Array<Channels>();
 let localMyChannelList:Channels[] = new Array<Channels>();
 let localChannelsList:Channels[] = new Array<Channels>();
 let localPostList:Post[] = new Array<Post>();
-let bindingServerMap:{[nodeId: string]:Server};
+// let bindingServerMap:{[nodeId: string]:Server};
+let bindingServer: Server;
+
+let serverMap: {[nodeId: string]: Server};
 
 let accessTokenMap:{[nodeId:string]:AccessToken};
 let signInServerList = [];
-let bindingServerCache: Server;
+// let bindingServerCache: Server;
 let cacheBindingAddress: string = "";
 let cacheBindingDid: string = "";
 let localCredential: string = "";
@@ -129,7 +131,7 @@ type Server = {
   feedsUrl          : string
 }
 
-let cacheServer: Server;
+// let cacheServer: Server;
 
 
 export class DidData{
@@ -200,14 +202,16 @@ enum PublishType{
   signInServerListChanged = "feeds:signInServerListChanged",
 
   friendConnectionChanged = "feeds:friendConnectionChanged",
-  publishPostSuccess = "feeds:publishPostSuccess"
+  publishPostSuccess = "feeds:publishPostSuccess",
+
+  bindServerFinish = "feeds:bindServerFinish"
 }
 
 enum PersistenceKey{
   firstInit = "firstInit",
 
   // {nodeId:{Friend}}
-  serversMap = "serversMap",
+  // serversMap = "serversMap",
   // {nodeId+topic: {FavoriteFeed}}
   favoriteFeedsMap = "favoriteFeedsMap",
   // {nodeId+topic: {AllFeed}}
@@ -241,15 +245,17 @@ enum PersistenceKey{
   subscribeStatusMap = "subscribeStatusMap",
   likeMap = "likeMap",
 
-  bindingServerMap = "bindingServerMap",
+  // bindingServerMap = "bindingServerMap",
   accessTokenMap = "accessTokenMap",
-  credential = "credential"
+  credential = "credential",
 
+  bindingServer = "bindingServer",
+
+  serverMap = "serverMap"
 }
 
 let expDay = 10;
 let connectionStatus = ConnState.disconnected;
-let serversMap: object = {};
 let favoriteFeedsMap: object = {};
 // let allFeedsMap: object = {} ;
 let eventsMap: {} = {};
@@ -347,7 +353,7 @@ export class FeedService {
 
   init(){
       if (this.platform.platforms().indexOf("cordova") < 0) {
-      serversMap = virtualServersMap;
+      serverMap = virtualServersMap;
       favoriteFeedsMap = virtualFFMap;
       
       // allFeedsMap = virtualAFMap ;
@@ -368,8 +374,25 @@ export class FeedService {
     this.initCallback();
   }
 
+  initTestData(){
+      // this.removeAllData();
+      //TODO resolve Document
+      bindingServer = {
+        name              : "name",
+        owner             : "owner",
+        introduction      : "intro",
+        did               : "did:elastos:ijwMzR44CjUjWEHcXSZSW3EPoBJGbKRThH",
+        carrierAddress    : "UY7n771KpmrfspLc5ZhfeYd8bgcjK3NvNS6MpL3xT7KPLigeja7U",
+        nodeId            : "DXeGgJbdYUnCZTsyL8HNqJjvuGMeD2p5hrKoRg7G7xYp",
+        feedsUrl          : "feeds://did:elastos:ijwMzR44CjUjWEHcXSZSW3EPoBJGbKRThH/UY7n771KpmrfspLc5ZhfeYd8bgcjK3NvNS6MpL3xT7KPLigeja7U"
+      }
+      // this.storeService.set(PersistenceKey.bindingServerMap,bindingServerMap);
+      this.storeService.set(PersistenceKey.bindingServer,bindingServer);
+  }
   initData(){
-    // this.removeAllData();
+    
+    this.initTestData();
+
     firstInit = this.storeService.get(PersistenceKey.firstInit);
     firstInit = true; // for test
     if (firstInit == null) {
@@ -379,6 +402,15 @@ export class FeedService {
     postMap = this.storeService.get(PersistenceKey.postMap);
     if(postMap == null || postMap == undefined)
       postMap = {}
+    postMap[1] = {
+      nodeId     : "string",
+      channel_id : 1,
+      id         : 1,
+      content    : {"text":"aaaa"},
+      comments   : 0,
+      likes      : 0,
+      created_at : this.getCurrentTimeNum()
+    }
 
     lastPostUpdateMap = this.storeService.get(PersistenceKey.lastPostUpdateMap);
     if(lastPostUpdateMap == null || lastPostUpdateMap == undefined)
@@ -405,10 +437,9 @@ export class FeedService {
       serverStatisticsMap = {};
     }
 
-    serversMap = this.storeService.get(PersistenceKey.serversMap);
-    if (serversMap == null || serversMap == undefined){
-      serversMap = {};
-    }
+    serverMap = this.storeService.get(PersistenceKey.serverMap);
+    if(serverMap == null || serverMap == undefined)
+      serverMap = {};
 
     subscribedChannelsMap = this.storeService.get(PersistenceKey.subscribedChannelsMap);
     if (subscribedChannelsMap == null || subscribedChannelsMap == undefined)
@@ -465,9 +496,11 @@ export class FeedService {
       accessTokenMap = {};
     }
 
-    bindingServerMap = this.storeService.get(PersistenceKey.bindingServerMap);
-    if (bindingServerMap == null || bindingServerMap == undefined)
-      bindingServerMap ={};
+    // bindingServerMap = this.storeService.get(PersistenceKey.bindingServerMap);
+    // if (bindingServerMap == null || bindingServerMap == undefined)
+    //   bindingServerMap ={};
+
+    bindingServer = this.storeService.get(PersistenceKey.bindingServer);
   }
 
   initCallback(){
@@ -484,12 +517,12 @@ export class FeedService {
 
   getServerList(): Server[]{
     let list: Server[] = [];
-    let keys: string[] = Object.keys(serversMap);
-    for (const index in keys) {
-      if (serversMap[keys[index]] == undefined) 
+    let nodeIdArray: string[] = Object.keys(serverMap);
+    for (const index in nodeIdArray) {
+      if (serverMap[nodeIdArray[index]] == undefined) 
         continue;
 
-      list.push(serversMap[keys[index]]);
+      list.push(serverMap[nodeIdArray[index]]);
     }
     return list;
   }
@@ -506,13 +539,16 @@ export class FeedService {
 
   getCreationServerList(): Server[]{
     let list: Server[] = [];
-    let keys: string[] = Object.keys(bindingServerMap);
-    for (const index in keys) {
-      if (bindingServerMap[keys[index]] == undefined) 
-        continue;
-      list.push(bindingServerMap[keys[index]]);
-    }
+    if(bindingServer != null && bindingServer != undefined)
+      list.push(bindingServer);
     return list;
+    // let keys: string[] = Object.keys(bindingServerMap);
+    // for (const index in keys) {
+    //   if (bindingServerMap[keys[index]] == undefined) 
+    //     continue;
+    //   list.push(bindingServerMap[keys[index]]);
+    // }
+    // return list;
   }
 
   getServersStatus():  {[nodeId: string]: ServerStatus} {
@@ -805,43 +841,13 @@ export class FeedService {
 
   friendAddCallback(){
     this.events.subscribe('carrier:friendAdded', msg => {
-      let server: Server;
-      let status: ConnState;
-      if (this.platform.platforms().indexOf("cordova") < 0){
-          server = {
-            name: "fakename",
-            owner: "fakeowner",
-            introduction: "fakeintroduction",
-            did: "fakedid",
-            carrierAddress: "fake carrierAddress",
-            nodeId: "fakeUserId",
-            feedsUrl: "fakefeedsURL"
-            // status: ConnState.disconnected
-          }
-          status = ConnState.disconnected;
-          
-      } else {
-        let nodeId = msg.friendInfo.userInfo.userId;
-        
-        if(bindingServerMap !=null && 
-          bindingServerMap != undefined &&
-          bindingServerMap[nodeId] != undefined)
+      let status: ConnState = msg.friendInfo.status;
+      let nodeId = msg.friendInfo.userInfo.userId;
+      if (bindingServer !=null && bindingServer == undefined)
+        if (bindingServer.nodeId == nodeId)
           return ;
 
-        server = {
-          name              : cacheServer.name,
-          owner             : cacheServer.owner,
-          introduction      : cacheServer.introduction,
-          did               : cacheServer.did,
-          carrierAddress    : cacheServer.carrierAddress,
-          nodeId            : nodeId,
-          feedsUrl          : cacheServer.feedsUrl
-          // status            : msg.friendInfo.status
-        }
-        status = msg.friendInfo.status;
-      }
-      this.resolveServer(server,status);
-      
+      this.resolveServer(this.getServerbyNodeId(nodeId),status);
     });
   }
 
@@ -867,8 +873,12 @@ export class FeedService {
 
 
     this.storeService.set(PersistenceKey.serversStatus,serversStatus);
-    this.pushServer(server);
-    this.updateServerMap();
+
+    serverMap[server.nodeId] = server ;
+
+    this.storeService.set(PersistenceKey.serverMap, serverMap);
+
+    // this.updateServerMap();
 
     eventBus.publish(PublishType.updateServerList, this.getServerList(), Date.now());
   }
@@ -1410,9 +1420,9 @@ export class FeedService {
         let carrierAddress = didData.carrierAddress.substring(didData.carrierAddress.lastIndexOf("//")+2,didData.carrierAddress.length);
         
         onSuccess({
-            name              : "Not from DIDDocument",
+            name              : "Not provided from DIDDocument",
             owner             : didDocument.getSubject().getDIDString(),
-            introduction      : "introduction",
+            introduction      : "Not provided from DIDDocument",
             did               : didDocument.getSubject().getDIDString(),
             carrierAddress    : carrierAddress,
             nodeId            : "",
@@ -1597,40 +1607,6 @@ export class FeedService {
       this.listSubscribed(server.nodeId);
   }
 
-  doListOwnedTopics(){
-    for (const server in this.checkOwnPublisherServer()) {
-      if (server == undefined) continue;
-      this.listOwnedTopics(server);
-    }
-  }
-
-  doExploreTopics(){
-    let keys: string[] = Object.keys(serversMap);
-    for (const index in keys) {
-      if (serversMap[keys[index]] == undefined) continue;
-      this.exploreTopics(serversMap[keys[index]].userId);
-    }
-  }
-
-  checkOwnPublisherServer(){
-    // TODO if feed server modify
-    let list: Server[] = [];
-    let keys: string[] = Object.keys(serversMap);
-    for (const index in keys) {
-      list.push(serversMap[keys[index]])
-    }
-    return list;
-  }
-
-
-  checkSubscribeState(feedKey: string): string{
-    if (favoriteFeedsMap == undefined || favoriteFeedsMap[feedKey] == undefined){
-      return "Subscribe";
-    }
-
-    return "Subscribed";
-  }
-
   checkServerConnection(nodeId: string): boolean{
     if(friendConnectionMap == null ||
       friendConnectionMap == undefined ||
@@ -1641,19 +1617,11 @@ export class FeedService {
     return true ;
   }
 
-  findServer(did: string): Server{
-    if (serversMap == undefined) {
+  getServerbyNodeId(nodeId: string): Server{
+    if (serverMap == undefined) {
       return undefined;
     }
-    return serversMap[did];
-  }
-
-  pushServer(server: Server){
-    serversMap[server.did] = server ;
-  }
-  
-  updateServerMap(){
-    this.storeService.set(PersistenceKey.serversMap, serversMap);
+    return serverMap[nodeId];
   }
 
   updateFFMap(){
@@ -1742,7 +1710,8 @@ export class FeedService {
     let isLocalRefresh = true;
 
     for (let index = 0; index < list.length; index++) {
-      if (serversStatus[list[index].nodeId].status == ConnState.disconnected)
+      if (serversStatus[list[index].nodeId] == undefined ||
+        serversStatus[list[index].nodeId].status == ConnState.disconnected)
         continue;
       else {
         isLocalRefresh = false;
@@ -2937,18 +2906,35 @@ export class FeedService {
     }
     // list.push()
   }
-  saveCacheServe(name: string, owner: string, introduction: string,
+  saveServer(name: string, owner: string, introduction: string,
     did: string, carrierAddress: string , feedsUrl: string){
-    cacheServer = {
-      name              : name,
-      owner             : owner,
-      introduction      : introduction,
-      did               : did,
-      carrierAddress    : carrierAddress,
-      nodeId            : "",
-      feedsUrl          : feedsUrl
-      // status            : ConnState.disconnected
-    }
+    this.carrierService.getIdFromAddress(carrierAddress, (nodeId)=>{
+      
+      let server = {
+        name              : name,
+        owner             : owner,
+        introduction      : introduction,
+        did               : did,
+        carrierAddress    : carrierAddress,
+        nodeId            : nodeId,
+        feedsUrl          : feedsUrl
+        // status            : ConnState.disconnected
+      }
+
+      if (serverMap !=null && serverMap !=undefined && serverMap[nodeId] != undefined){
+        this.native.toast("Server already added!");
+      }else{
+        this.native.toast("Add server success!");
+        this.resolveServer(server, ConnState.disconnected);
+      }
+      
+
+
+    });
+
+    
+
+    
   }
 
   insertFakeData(){
@@ -2969,17 +2955,12 @@ export class FeedService {
   }
 
   queryServerDID(nodeId:string): string{
-    let keys: string[] = Object.keys(serversMap);
-    for (const index in keys) {
-      if (serversMap[keys[index]] == undefined) 
-        continue;
+    if (serverMap == null || 
+      serverMap == undefined || 
+      serverMap[nodeId] == undefined)
+      return "";
 
-      if(serversMap[keys[index]].nodeId == nodeId){
-        return serversMap[keys[index]].did
-      }
-    }
-
-    return "";
+    return serverMap[nodeId].did;
   }
 
   getCommentList(nodeId: string, channelId: number, postId: number): Comment[]{
@@ -3365,13 +3346,8 @@ export class FeedService {
     let did = result.did;
     let transaction_payload = result.transaction_payload;
 
-    //调用wallet 上链did
-    // this.createIdTransactionCallback(transaction_payload);
-
-    //上链后
-    // this.issueCredential(nodeId, did);
-
-    bindingServerCache = {
+    //TODO resolve Document
+    bindingServer = {
       name              : "name",
       owner             : "owner",
       introduction      : "intro",
@@ -3380,21 +3356,24 @@ export class FeedService {
       nodeId            : nodeId,
       feedsUrl          : "feeds://"+did+"/"+cacheBindingAddress
     }
+    // this.storeService.set(PersistenceKey.bindingServerMap,bindingServerMap);
+    this.storeService.set(PersistenceKey.bindingServer,bindingServer);
 
     eventBus.publish("feeds:did_imported", nodeId, did, transaction_payload);
-
   }
 
   handleIssueCredentialResponse(nodeId: string, result: any){
-    if (bindingServerMap == null && bindingServerMap == undefined)
-      bindingServerMap = {}
+    // if (bindingServerMap == null && bindingServerMap == undefined)
+    //   bindingServerMap = {}
 
-    bindingServerMap[nodeId] = bindingServerCache;
+    // bindingServerMap[nodeId] = bindingServer;
 
-    this.storeService.set(PersistenceKey.bindingServerMap,bindingServerMap);
+    // this.storeService.set(PersistenceKey.bindingServerMap,bindingServerMap);
     eventBus.publish("feeds:issue_credential");
 
-    this.resolveServer(bindingServerCache,ConnState.connected);
+    eventBus.publish("feeds:bindServerFinish",bindingServer);
+
+    // this.resolveServer(bindingServer,ConnState.connected);
   }
 
   
@@ -3496,7 +3475,6 @@ export class FeedService {
 
   removeAllData(){
     this.storeService.remove(PersistenceKey.firstInit);
-    this.storeService.remove(PersistenceKey.serversMap);
     this.storeService.remove(PersistenceKey.favoriteFeedsMap);
     this.storeService.remove(PersistenceKey.allFeedsMap);
     this.storeService.remove(PersistenceKey.eventsMap);
@@ -3516,8 +3494,50 @@ export class FeedService {
     this.storeService.remove(PersistenceKey.serversStatus);
     this.storeService.remove(PersistenceKey.subscribeStatusMap);
     this.storeService.remove(PersistenceKey.likeMap);
-    this.storeService.remove(PersistenceKey.bindingServerMap);
+    // this.storeService.remove(PersistenceKey.bindingServerMap);
     this.storeService.remove(PersistenceKey.accessTokenMap);
+
+    this.storeService.remove(PersistenceKey.credential);
+    this.storeService.remove(PersistenceKey.bindingServer);
+    this.storeService.remove(PersistenceKey.serverMap);
+  }
+
+  getOwnChannelSource(): Server{
+    return bindingServer;
+  }
+
+  addServer(carrierAddress: string,friendRequest: string,
+    name: string, owner: string, introduction: string, 
+    did: string, feedsUrl: string,
+    onSuccess:()=>void, onError?:(err: string)=>void){
+
+    // if (this.platform.platforms().indexOf("cordova") < 0){
+    //   this.carrierService.addFriend(carrierAddress, friendRequest,
+    //     () => {
+    //         console.log("Add server success");
+    //         // this.alertError("Add server success");
+    //         this.native.setRootRouter("/menu/servers");
+    //     }, null);
+    //   return;
+    // }
+
+    this.carrierService.isValidAddress(carrierAddress, (isValid) => {
+      if (!isValid){
+        // this.alertError("Address invalid");
+        return;
+      }
+      
+      this.carrierService.addFriend(carrierAddress, friendRequest,
+        () => {            
+            this.saveServer(name, owner, introduction, 
+                                did, carrierAddress, feedsUrl);
+        }, (err) => {
+            // this.alertError("Add server error: " + err);
+        });
+      },
+      (error: string) => {
+        this.native.toast("address error: " + error);
+      });
   }
 }
 
