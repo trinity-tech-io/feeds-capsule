@@ -4,6 +4,22 @@
     </div>
 </ion-header> -->
 <ion-content>
+  <div class="empty-timelime-div" *ngIf="postList.length == 0">
+    <div class="empty-timelime">
+      <!-- <div style="background-image: url('../../../../assets/images/empty-feeds-icon.png');"> </div> -->
+      <img src="../../../../assets/images/empty-feeds-icon.svg">
+      <div class="all-empty">All Empty</div>
+      <div class="not-following-any-feeds-yet">Not following any feeds yet</div>
+
+        <ion-button  mode="ios" class="explore-feeds" (click)="exploreFeeds()" round>
+          <div class="explore-feeds-text"> Explore Feeds</div>
+        </ion-button>
+      <!-- <div class="explore-feeds">
+      </div> -->
+    </div> 
+
+  </div>
+
 
   <div *ngFor="let post of postList">
     <div class="channel-img-small-div">
@@ -37,7 +53,9 @@
                class="channel-post-img"  (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)">
 
           <div class="channel-post-heart-comment-div">
-            <img src="../../../../assets/images/heart.svg" class="heart" (click)="like(post.nodeId, post.channel_id, post.id)">
+            <!-- <img src="../../../../assets/images/heart.svg" class="heart" (click)="like(post.nodeId, post.channel_id, post.id)"> -->
+
+            <div class="like" [ngClass]="{'like-s': true}"></div>
             <ion-label class="heart-text" (click)="like(post.nodeId, post.channel_id, post.id)">{{post.likes}}</ion-label>
 
             <img src="../../../../assets/images/bubble-line.svg" class="comment" (click)="showCommentPage($event, post.nodeId, post.channel_id, post.id)">

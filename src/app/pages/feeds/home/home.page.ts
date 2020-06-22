@@ -84,4 +84,8 @@ export class HomePage implements OnInit {
     return await popover.present();
   }
 
+
+  exploreFeeds(){
+    alert("explore feeds");
+  }
 }

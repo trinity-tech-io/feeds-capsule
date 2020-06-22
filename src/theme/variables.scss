@@ -398,6 +398,29 @@ $segment-button-md-text-color: #007AFF !important;
   margin-top: 10px;
 }
 
+.like {
+  width: 16px;
+  height: 15.3px;
+  background-image: url("/src/assets/images/like.svg");
+}
+
+.like-s {
+  width: 15px;
+  height: 13.7px;
+  background-image: url("/src/assets/images/like-s.svg");
+}
+
+.comment{
+  width: 16px;
+  height: 14px;
+  background-image: url("/src/assets/images/comment.svg");
+}
+
+.comment-s {
+  width: 16px;
+  height: 14px;
+  background-image: url("/src/assets/images/comment-s.svg");
+}
 
 .heart {
   width: 14.7px;
@@ -406,6 +429,7 @@ $segment-button-md-text-color: #007AFF !important;
 
   vertical-align: middle;
 }
+
 
 .heart-text{
   width: 6px;
@@ -510,7 +534,7 @@ ion-header {
 
 }
 .new-feed{
-  width: 154px;
+  width: 100%;
   height: 22px;
   object-fit: contain;
   font-family: Montserrat;
@@ -524,6 +548,7 @@ ion-header {
   color: #368bff;
   text-transform: none;
 }
+
 
 .channel-follower2{
   width: 75px;
@@ -611,4 +636,79 @@ vertical-align: middle;
 
   vertical-align: middle;
   margin-left: 23.6px;
+}
+
+
+.empty-timelime-div{
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center; 
+  text-align: center;
+}
+
+.empty-timelime{
+  width: 100%;
+  height: 230;
+  display: inline-block;    
+}
+
+.all-empty {
+  // width: 128px;
+  // height: 29px;
+
+  font-family: Montserrat;
+  font-size: 24px;
+  font-weight: 500;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: 2.42;
+  letter-spacing: 1.2px;
+  text-align: center;
+  color: #8888b0;
+
+  margin-top: 20px;
+}
+
+.not-following-any-feeds-yet {
+  // width: 258px;
+  // height: 19px;
+  font-family: Montserrat;
+  font-size: 16px;
+  font-weight: normal;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: 1.38;
+  letter-spacing: 1.6px;
+  text-align: center;
+  color: #8888b0;
+
+  margin-top: 7px;
+}
+
+.explore-feeds {
+  width: 347px;
+  height: 41px;
+  
+  margin-left: 34px;
+  margin-right: 34px;
+  
+  margin-top: 10px;
+  margin-bottom: 10px;
+
+  box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.15);
+  background-color: #368bff;
+  margin-top: 55px;
+}
+
+.explore-feeds-text {
+  font-family: MontserratMedium;
+  font-size: 18px;
+  font-weight: normal;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: 1.22;
+  letter-spacing: -0.43px;
+  text-align: center;
+  color: #fdfeff;
 }
