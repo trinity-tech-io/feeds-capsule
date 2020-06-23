@@ -1,3 +1,91 @@
 * {
     font-family: 'Raleway', sans-serif;
 }
+
+.menu-user {
+    width: 27.7px;
+    height: 28.7px;
+}
+
+.menu-feeds{
+    width: 32px;
+    height: 21.3px;
+}
+
+.menu-setting{
+    width: 27.8px;
+    height: 27.9px;
+}
+
+.menu-profile{
+    // width: 114px;
+    // height: 19px;
+    font-family: MontserratMedium;
+    font-size: 16px;
+    font-weight: normal;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: 1.19;
+    letter-spacing: normal;
+    text-align: left;
+    color: #191a2f;
+
+    margin-left: 13.5px;;
+}
+
+.menu-profile-card{
+    --background:'../assets/images/menu-user.svg'
+}
+
+.menu-profile-bubble{
+    width: 12.2px;
+    height: 9.9px;
+
+}
+.menu-profile-follower{
+    width: 42px;
+    height: 11px;
+    font-family: MontserratSemiBold;
+    font-size: 7px;
+    font-weight: normal;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: 1.29;
+    letter-spacing: normal;
+    text-align: left;
+    color: #000000;
+}
+
+.no-padding {
+    padding: 0px !important;
+    margin: 0px !important;
+}
+
+.menu-profile-img{
+    width: 70px;
+    height: 70px;
+}
+
+.menu-profile-name{
+    // width: 122px;
+    // height: 20px;
+    font-family: MontserratSemiBold;
+    font-size: 17px;
+    font-weight: normal;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: 1.18;
+    letter-spacing: normal;
+    color: #000000;
+}
+
+.menu-profile-div{
+    width: 280px;
+    height: 154.3px; 
+    background-repeat: no-repeat;
+    background-size: 100%; 
+    background-image: url(../assets/images/menu-profile-bg.svg); 
+    padding: 12.5px; 
+    margin: 15px;
+    display: flex;
+}

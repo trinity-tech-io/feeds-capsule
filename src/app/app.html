@@ -27,6 +27,58 @@
     <ion-router-outlet main></ion-router-outlet>
 </ion-app> -->
 <ion-app>
+    <ion-menu side="end" menuId="menu">
+        <!-- <ion-header>
+            <ion-toolbar>
+                <ion-title>Tidings</ion-title>
+            </ion-toolbar>
+        </ion-header> -->
+        <ion-content>
+            <ion-list>
+                <div class="menu-profile-div">
+                    <div style="width: 200px;padding: 5px; padding-left: 20px;">
+                        <img src="../assets/images/screenshot-2020-04-26-at-03-20-46.png"
+                        srcset="../assets/images/screenshot-2020-04-26-at-03-20-46@2x.png 2x,
+                        ../assets/images/screenshot-2020-04-26-at-03-20-46@3x.png 3x"
+                        class="menu-profile-img">
+                        <div class="menu-profile-name">wangran</div>
+
+                        <div style="display: flex; margin-top: 6px;">
+                            <img class="menu-profile-bubble" src="../assets/images/bubble.svg" >
+                            <div class="menu-profile-follower">11 follower</div>
+
+                        </div>
+                    </div>
+                    <qrcode style="padding: 8px;"  [qrdata]="feedsUrl" [size]="100" [level]="'M'"></qrcode>
+                </div>
+
+                <ion-menu-toggle >
+                    <ion-item (click)="test1()" lines="none">
+                        <img src="../assets/images/menu-user.svg" class="menu-user">
+                        <div class="menu-profile">Profile Details</div>
+                    </ion-item>
+                </ion-menu-toggle>
+                <ion-menu-toggle >
+                    <ion-item (click)="test2()" lines="none">
+                        <img src="../assets/images/menu-feeds.svg" class="menu-feeds">
+                        <div class="menu-profile">Feed Sources</div>
+                    </ion-item>
+                </ion-menu-toggle>
+                <ion-menu-toggle >
+                    <ion-item (click)="test3()" lines="none">
+                        <img src="../assets/images/menu-setting.svg" class="menu-setting">
+                        <div class="menu-profile">Settings</div>
+                    </ion-item>
+                </ion-menu-toggle>
+                <!-- <ion-menu-toggle>
+                    <ion-item (click)="closeApp()">
+                        <ion-icon name="exit"></ion-icon>
+                        <ion-label padding>Exit</ion-label>
+                    </ion-item>
+                </ion-menu-toggle> -->
+            </ion-list>
+        </ion-content>
+    </ion-menu>
     <ion-router-outlet main></ion-router-outlet>
   </ion-app>
   

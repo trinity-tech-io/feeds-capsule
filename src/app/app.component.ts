@@ -6,6 +6,9 @@ import { CarrierService } from './services/CarrierService';
 import { FeedService } from './services/FeedService';
 import { Router } from '@angular/router';
 import { SplashscreenPage } from './pages/splashscreen/splashscreen.page';
+import { MenuController } from '@ionic/angular';
+declare let titleBarManager: TitleBarPlugin.TitleBarManager;
+
 
 let appManager: any;
 
@@ -16,7 +19,10 @@ let appManager: any;
 })
 
 export class MyApp {
+  private feedsUrl = "server.feedsUrl";
+
   constructor(
+    private menu: MenuController,
     private platform: Platform,
     private statusBar: StatusBar,
     // private splashScreen: SplashScreen,
@@ -27,35 +33,21 @@ export class MyApp {
       // this.splash();
       // this.router.navigate(['/tabs']);
     this.initializeApp();
-  }
 
-  // routerLinks = [
-  //   {
-  //     linkName: '/menu/myprofile',
-  //     iconName: 'person',
-  //     pageName: 'My Profile'
-  //   },
-  //   {
-  //     linkName: '/favorite',
-  //     iconName: 'star',
-  //     pageName: 'Favorite channels'
-  //   },
-  //   {
-  //     linkName: '/menu/myfeeds',
-  //     iconName: 'create',
-  //     pageName: 'My channels'
-  //   },
-  //   {
-  //     linkName: '/menu/servers',
-  //     iconName: 'contacts',
-  //     pageName: 'Channel sources'
-  //   },
-  //   {
-  //     linkName: '/menu/about',
-  //     iconName: 'information-circle',
-  //     pageName: 'About'
-  //   }
-  // ];
+    titleBarManager.setBackgroundColor("#FFFFFF");
+    titleBarManager.setForegroundMode(TitleBarPlugin.TitleBarForegroundMode.DARK);
+
+    titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.OUTER_RIGHT, {
+      key: "more",
+      iconPath: "assets/icon/favicon.ico"
+    });
+
+    titleBarManager.addOnItemClickedListener((menuIcon)=>{
+      if (menuIcon.key == "more") {
+          this.menu.open("menu");
+      }
+    });
+  }
 
   initializeApp() {
     this.splash();
@@ -82,6 +74,18 @@ export class MyApp {
     appManager.close();
   }
 
+
+  test1(){
+    alert("test1");
+  }
+
+  test2(){
+    alert("test2");
+  }
+
+  test3(){
+    alert("test3");
+  }
 
   async splash() {
     const splash = await this.modalCtrl.create({component: SplashscreenPage});
