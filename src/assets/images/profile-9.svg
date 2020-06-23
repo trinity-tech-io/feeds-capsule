@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" id="prefix__Component_871_1" width="74" height="74" data-name="Component 871 – 1" viewBox="0 0 74 74">
+    <g id="prefix__Component_307_356" data-name="Component 307 – 356">
+        <g id="prefix__Rectangle_406" fill="none" stroke="#9c50ff" data-name="Rectangle 406">
+            <rect width="74" height="74" stroke="none" rx="37"/>
+            <rect width="73" height="73" x=".5" y=".5" rx="36.5"/>
+        </g>
+    </g>
+    <g id="prefix__Component_860_1" data-name="Component 860 – 1" transform="translate(15.156 22.512)">
+        <path id="prefix__Path_21689" fill="#a067ff" d="M1692.807 8202.217c-1.772-.873-2.832-3.154-2.837-6.1v-1.4c.021-.239.031-.477.031-.708l-.012-7.967a7.9 7.9 0 0 0-7.891-7.879h-.012l-15.2.023a7.9 7.9 0 0 0-7.88 7.9l.012 7.967a7.9 7.9 0 0 0 7.891 7.878h.012l15.2-.022a7.808 7.808 0 0 0 4.473-1.4 11.944 11.944 0 0 0 6.178 1.868l.361.006z" data-name="Path 21689" transform="translate(-1659.005 -8172.197)"/>
+        <path id="prefix__Path_21690" fill="#7d2fff" d="M1791.4 8151.068c-1.791-.889-2.86-3.189-2.86-6.157v-1.41c.021-.229.031-.467.031-.7v-7.965a7.842 7.842 0 0 0-7.833-7.834h-15.2a7.842 7.842 0 0 0-7.833 7.834v7.965a7.842 7.842 0 0 0 7.833 7.834h15.2a7.792 7.792 0 0 0 4.473-1.407 11.863 11.863 0 0 0 6.177 1.886h.1z" data-name="Path 21690" transform="translate(-1746.201 -8127)"/>
+        <path id="prefix__Path_21691" fill="#591ac1" d="M1777.126 8186.481a7.843 7.843 0 0 0-7.845-7.822l-3.654.006-7.714.012a7.822 7.822 0 0 0-.21 1.8v7.965a7.841 7.841 0 0 0 7.833 7.833h11.573v-1.121c.02-.23.031-.465.031-.7z" data-name="Path 21691" transform="translate(-1746.201 -8172.639)"/>
+    </g>
+</svg>

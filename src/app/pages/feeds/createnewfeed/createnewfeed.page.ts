@@ -4,6 +4,7 @@ import { ServerlistcomponentComponent } from '../../../components/serverlistcomp
 import { FeedService } from 'src/app/services/FeedService';
 import { PopupProvider } from 'src/app/services/popup';
 import { NativeService } from 'src/app/services/NativeService';
+import { Router } from '@angular/router';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 @Component({
@@ -15,6 +16,7 @@ export class CreatenewfeedPage implements OnInit {
   private selectedServer: any = null;
   private selectedChannelSource:string = 'Select channel source';
   constructor(
+    private router: Router,
     private navCtrl: NavController,
     private feedService: FeedService,
     private popoverController: PopoverController,
@@ -76,5 +78,9 @@ export class CreatenewfeedPage implements OnInit {
                                 this.feedService.createTopic(this.selectedServer.nodeId, name.value, desc.value);
                               }
                             });
+  }
+
+  profileimage(){
+    this.router.navigate(['/profileimage']);
   }
 }

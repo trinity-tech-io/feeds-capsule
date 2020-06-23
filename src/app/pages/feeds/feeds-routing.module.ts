@@ -91,6 +91,7 @@ const routes: Routes = [
   // { path: 'channels', loadChildren: './home/channels/channels.module#ChannelsPageModule' },
   { path: 'createnewfeed', loadChildren: './createnewfeed/createnewfeed.module#CreatenewfeedPageModule' },
   { path: 'createnewpost', loadChildren: './createnewpost/createnewpost.module#CreatenewpostPageModule' },
+  { path: 'profileimage', loadChildren: './profileimage/profileimage.module#ProfileimagePageModule' },
   
   // { path: 'profile', loadChildren: './profile/profile.module#ProfilePageModule' },
   // { path: 'notification', loadChildren: './notification/notification.module#NotificationPageModule' },
