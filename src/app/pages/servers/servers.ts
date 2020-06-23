@@ -3,6 +3,7 @@ import { Events, Platform } from '@ionic/angular';
 import { NativeService } from 'src/app/services/NativeService';
 import { FeedService } from 'src/app/services/FeedService';
 import { Router } from '@angular/router';
+declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 @Component({
     selector: 'page-servers',
@@ -27,6 +28,9 @@ export class ServersPage implements OnInit {
     }
 
     ngOnInit() {
+        titleBarManager.setTitle("Feed source");
+        this.native.setTitleBarBackKeyShown(true);
+
         this.serverList = this.feedService.getServerList();
 
         this.serversStatus = this.feedService.getServersStatus();

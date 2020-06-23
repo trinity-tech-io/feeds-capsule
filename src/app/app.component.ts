@@ -79,8 +79,8 @@ export class MyApp {
     alert("test1");
   }
 
-  test2(){
-    alert("test2");
+  goToFeedSource(){
+    this.router.navigate(['/menu/servers']);
   }
 
   test3(){
