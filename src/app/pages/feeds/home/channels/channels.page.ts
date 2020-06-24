@@ -112,4 +112,8 @@ export class ChannelsPage implements OnInit {
     });
     return await popover.present();
   }
+
+  checkMyLike(nodeId: string, channelId: number, postId: number){
+    return this.feedService.checkMyLike(nodeId, channelId, postId);
+  }
 }

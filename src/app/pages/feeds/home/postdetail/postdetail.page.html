@@ -74,8 +74,8 @@
                 class="channel-post-img" > -->
 
         <div class="channel-post-heart-comment-div">
-          <img src="../../../../../assets/images/heart.svg" class="heart">
-          <ion-label class="heart-text" >{{likesNum}}</ion-label>
+          <img class="like" [ngClass]="{'like-s': checkMyLike()}" (click)="like(0)">
+          <ion-label class="like-text" [ngClass]="{'like-s-text': checkMyLike()}" (click)="like(0)">{{likesNum}}</ion-label>
 
           <img src="../../../../../assets/images/bubble-line.svg" class="comment" (click)="showCommentPage($event)">
           <ion-label class="comment-text" (click)="showCommentPage($event)">{{commentsNum}}</ion-label>

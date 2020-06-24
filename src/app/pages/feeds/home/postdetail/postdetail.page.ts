@@ -105,4 +105,12 @@ export class PostdetailPage implements OnInit {
     });
     return await popover.present();
   }
+
+  checkMyLike(){
+    return this.feedService.checkMyLike(this.nodeId, this.channelId, this.postId);
+  }
+
+  like(commentId: number){
+    this.feedService.postLike(this.nodeId,Number(this.channelId),Number(this.postId),commentId);
+  }
 }

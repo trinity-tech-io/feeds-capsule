@@ -2426,12 +2426,7 @@ export class FeedService {
   }
 
   handleNewLikesNotification(nodeId: string, params: any){
-    let comment_id: number;
-    if (params.indexOf("comment_id") == -1)
-      comment_id = 0;
-    if (params.indexOf("comment_id") != -1)
-      comment_id = params.comment_id;
-
+    let comment_id: number = params.comment_id;
     let channel_id: number = params.channel_id;
     let post_id: number = params.post_id;
     let count: number = params.count;
@@ -3536,6 +3531,19 @@ export class FeedService {
 
   alertError(error: string){
     alert(error);
+  }
+
+  getLikeFromId(nodechannelpostId: string): Post{
+    if (likeMap == null || likeMap == undefined)
+      likeMap = {};
+    
+    return likeMap[nodechannelpostId];
+  }
+
+  checkMyLike(nodeId: string, channelId: number, postId: number): boolean{
+    if(this.getLikeFromId(nodeId+channelId+postId) == undefined)
+      return false;
+    return true;
   }
 }
 

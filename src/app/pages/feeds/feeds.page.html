@@ -1,5 +1,6 @@
 <ion-tabs>
-  <ion-tab-bar slot="bottom">
+  <div style="width: 100%; height: 2px; background-image: url(../../../assets/images/line.svg); bottom: 0px;"> </div>
+  <ion-tab-bar style="height: 58.5px; width: 100%;" slot="bottom">
 
     <ion-tab-button tab="home" (click)="home()">
       <!-- <ion-icon name="Home" mode="ios"></ion-icon> -->
@@ -12,7 +13,8 @@
       <!-- <ion-icon name="person" mode="ios"></ion-icon> -->
     </ion-tab-button>
 
-    <ion-tab-button tab="">
+    <ion-tab-button tab="" (click)="create()">
+      <div class="add-tab"></div>
     </ion-tab-button>
 
     <ion-tab-button tab="notification" (click)="notification()">
@@ -26,7 +28,7 @@
     
   </ion-tab-bar>
 
-  <ion-tab-button class="center-tab" (click)="create()">
+  <!-- <ion-tab-button class="center-tab" (click)="create()">
     <ion-icon name="add" ></ion-icon>
-  </ion-tab-button>
+  </ion-tab-button> -->
 </ion-tabs>

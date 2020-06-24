@@ -84,6 +84,9 @@ export class HomePage implements OnInit {
     return await popover.present();
   }
 
+  checkMyLike(nodeId: string, channelId: number, postId: number){
+    return this.feedService.checkMyLike(nodeId, channelId, postId);
+  }
 
   exploreFeeds(){
     alert("explore feeds");
