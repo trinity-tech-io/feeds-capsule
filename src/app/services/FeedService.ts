@@ -569,7 +569,7 @@ export class FeedService {
         serverStatisticsMap = {};
       }
     }
-    return serverStatisticsMap
+    return serverStatisticsMap;
   }
 
 
@@ -856,14 +856,19 @@ export class FeedService {
     if (serversStatus == null || serversStatus == undefined)
         serversStatus = {};
       
-    serversStatus[server.nodeId] = {
-      nodeId: server.nodeId,
-      did: server.did,
-      status: status
+    if (serversStatus[server.nodeId] == undefined){
+      serversStatus[server.nodeId] = {
+        nodeId: server.nodeId,
+        did: server.did,
+        status: ConnState.disconnected
+      }
     }
+    
+    if (status != null)
+      return serversStatus[server.nodeId].status = status;
 
     if (serverStatisticsMap == null || serverStatisticsMap == undefined)
-    serverStatisticsMap = {};
+      serverStatisticsMap = {};
 
     if (serverStatisticsMap[server.nodeId] == undefined){
       serverStatisticsMap[server.nodeId] = {
@@ -872,14 +877,23 @@ export class FeedService {
       }
     }
 
-
-    this.storeService.set(PersistenceKey.serversStatus,serversStatus);
+    if (serverMap == null || serverMap == undefined)
+      serverMap = {}
+    
+    if (serverMap[server.nodeId] != undefined){
+      this.native.toast("Server already added!");
+    }else{
+      this.native.toast("Add server success!");
+    }
 
     serverMap[server.nodeId] = server ;
 
+
+    this.storeService.set(PersistenceKey.serversStatus,serversStatus);
+
     this.storeService.set(PersistenceKey.serverMap, serverMap);
 
-    // this.updateServerMap();
+    this.storeService.set(PersistenceKey.serverStatisticsMap,serverStatisticsMap);
 
     eventBus.publish(PublishType.updateServerList, this.getServerList(), Date.now());
   }
@@ -2907,10 +2921,10 @@ export class FeedService {
     }
     // list.push()
   }
+
   saveServer(name: string, owner: string, introduction: string,
     did: string, carrierAddress: string , feedsUrl: string){
     this.carrierService.getIdFromAddress(carrierAddress, (nodeId)=>{
-      
       let server = {
         name              : name,
         owner             : owner,
@@ -2922,20 +2936,8 @@ export class FeedService {
         // status            : ConnState.disconnected
       }
 
-      if (serverMap !=null && serverMap !=undefined && serverMap[nodeId] != undefined){
-        this.native.toast("Server already added!");
-      }else{
-        this.native.toast("Add server success!");
-        this.resolveServer(server, ConnState.disconnected);
-      }
-      
-
-
+      this.resolveServer(server, null);
     });
-
-    
-
-    
   }
 
   insertFakeData(){
@@ -3370,6 +3372,8 @@ export class FeedService {
     // bindingServerMap[nodeId] = bindingServer;
 
     // this.storeService.set(PersistenceKey.bindingServerMap,bindingServerMap);
+
+    this.resolveServer(this.getServerbyNodeId(nodeId),ConnState.connected);
     eventBus.publish("feeds:issue_credential");
 
     eventBus.publish("feeds:bindServerFinish",bindingServer);
@@ -3511,20 +3515,9 @@ export class FeedService {
     name: string, owner: string, introduction: string, 
     did: string, feedsUrl: string,
     onSuccess:()=>void, onError?:(err: string)=>void){
-
-    // if (this.platform.platforms().indexOf("cordova") < 0){
-    //   this.carrierService.addFriend(carrierAddress, friendRequest,
-    //     () => {
-    //         console.log("Add server success");
-    //         // this.alertError("Add server success");
-    //         this.native.setRootRouter("/menu/servers");
-    //     }, null);
-    //   return;
-    // }
-
     this.carrierService.isValidAddress(carrierAddress, (isValid) => {
       if (!isValid){
-        // this.alertError("Address invalid");
+        this.alertError("Address invalid");
         return;
       }
       
@@ -3533,12 +3526,16 @@ export class FeedService {
             this.saveServer(name, owner, introduction, 
                                 did, carrierAddress, feedsUrl);
         }, (err) => {
-            // this.alertError("Add server error: " + err);
+            this.alertError("Add server error: " + err);
         });
       },
       (error: string) => {
-        this.native.toast("address error: " + error);
+        this.alertError("Address error: " + error);
       });
+  }
+
+  alertError(error: string){
+    alert(error);
   }
 }
 
