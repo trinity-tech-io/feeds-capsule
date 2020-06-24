@@ -65,7 +65,8 @@ const routes: Routes = [
   { path: 'bindservice/startbinding/:nodeId/:nonce/:address', loadChildren: './pages/feeds/bindservice/startbinding/startbinding.module#StartbindingPageModule' },
   // { path: 'feeds/tabs/channels', loadChildren: './home/channels/channels.module#ChannelsPageModule' },
   // /feeds/tabs/channels
-
+  { path: 'channels/:nodeId/:channelId', loadChildren: './pages/feeds/home/channels/channels.module#ChannelsPageModule' },
+  { path: 'postdetail/:nodeId/:channelId/:postId', loadChildren: './pages/feeds/home/postdetail/postdetail.module#PostdetailPageModule' },
 ];
 
 @NgModule({

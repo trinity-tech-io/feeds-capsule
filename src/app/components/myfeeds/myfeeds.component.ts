@@ -56,7 +56,7 @@ export class MyfeedsComponent implements OnInit {
   }
 
   navTo(nodeId, channelId){
-    this.router.navigate(['/feeds/tabs/home/channels', nodeId, channelId]);
+    this.router.navigate(['/channels', nodeId, channelId]);
 
   }
 

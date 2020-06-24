@@ -56,11 +56,11 @@ export class LikesComponent implements OnInit {
   }
 
   navTo(nodeId, channelId){
-    this.router.navigate(['/feeds/tabs/home/channels', nodeId, channelId]);
+    this.router.navigate(['/channels', nodeId, channelId]);
   }
 
   navToPostDetail(nodeId, channelId, postId){
-    this.router.navigate(['/feeds/tabs/home/postdetail',nodeId, channelId,postId]);
+    this.router.navigate(['/postdetail',nodeId, channelId,postId]);
   }
 
   async showCommentPage(event, nodeId, channelId, postId){

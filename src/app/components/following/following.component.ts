@@ -28,7 +28,11 @@ export class FollowingComponent implements OnInit {
   ngOnInit() {}
 
   navTo(nodeId, channelId){
-    this.router.navigate(['/feeds/tabs/home/channels', nodeId, channelId]);
+    this.router.navigate(['/channels', nodeId, channelId]);
 
+  }
+
+  exploreFeeds(){
+    alert("exploreFeeds");
   }
 }

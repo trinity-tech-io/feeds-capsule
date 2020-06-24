@@ -16,14 +16,14 @@ const routes: Routes = [
             path: '',
             loadChildren: './home/home.module#HomePageModule'
           },
-          { 
-            path: 'channels/:nodeId/:channelId', 
-            loadChildren: './home/channels/channels.module#ChannelsPageModule' 
-          },
-          { 
-            path: 'postdetail/:nodeId/:channelId/:postId', 
-            loadChildren: './home/postdetail/postdetail.module#PostdetailPageModule' 
-          },
+          // { 
+          //   path: 'channels/:nodeId/:channelId', 
+          //   loadChildren: './home/channels/channels.module#ChannelsPageModule' 
+          // },
+          // { 
+          //   path: 'postdetail/:nodeId/:channelId/:postId', 
+          //   loadChildren: './home/postdetail/postdetail.module#PostdetailPageModule' 
+          // },
         ]
       },
       // 2nd Tab
