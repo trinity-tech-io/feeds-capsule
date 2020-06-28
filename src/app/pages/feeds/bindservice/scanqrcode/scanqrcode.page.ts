@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
 import { NavController } from '@ionic/angular';
 import { FeedService } from 'src/app/services/FeedService';
@@ -19,6 +19,7 @@ export class ScanqrcodePage implements OnInit {
   private carrierAddress: string;
 
   constructor(
+    private zone: NgZone,
     private router: Router,
     private navCtrl: NavController,
     private feedService:FeedService,
@@ -80,10 +81,11 @@ export class ScanqrcodePage implements OnInit {
       
       this.carrier.addFriend(address, "hi",
         () => {
-          this.navCtrl.pop().then(()=>{
-            if (nonce == undefined) nonce = "";
-            this.router.navigate(['/bindservice/startbinding/',nodeId, nonce, address]);
-            
+          this.zone.run(() => {
+            this.navCtrl.pop().then(()=>{
+              if (nonce == undefined) nonce = "";
+              this.router.navigate(['/bindservice/startbinding/',nodeId, nonce, address]);
+            });
           });
         }, (err) => {
 

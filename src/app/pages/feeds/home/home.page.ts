@@ -1,8 +1,9 @@
 import { Component, OnInit, NgZone } from '@angular/core';
-import { NavController, Events, PopoverController} from '@ionic/angular';
+import { NavController, Events, PopoverController, IonTabs} from '@ionic/angular';
 import { FeedService } from '../../../services/FeedService';
 import { Router } from '@angular/router'
 import { CommentComponent } from '../../../components/comment/comment.component'
+import { FeedsPage } from '../feeds.page'
 
 @Component({
   selector: 'app-home',
@@ -15,6 +16,8 @@ export class HomePage implements OnInit {
   private postList: any;
 
   constructor(
+    private feedspage: FeedsPage,
+    private tabs: IonTabs,
     private popoverController: PopoverController,
     private events: Events,
     private zone: NgZone,
@@ -98,6 +101,7 @@ export class HomePage implements OnInit {
   }
 
   exploreFeeds(){
-    alert("explore feeds");
+    this.tabs.select("search");
+    this.feedspage.currentTab = "search";
   }
 }

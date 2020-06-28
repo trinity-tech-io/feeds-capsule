@@ -120,4 +120,9 @@ export class SearchPage implements OnInit {
       event.target.complete();
     }, 500);
   }
+
+  navTo(nodeId, channelId){
+    this.router.navigate(['/channels', nodeId, channelId]);
+  }
+
 }

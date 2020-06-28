@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
 import { NavController } from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
@@ -14,6 +14,7 @@ export class PublishdidPage implements OnInit {
   private nodeId = "";
   private did = "";
   constructor(
+    private zone: NgZone,
     private acRoute: ActivatedRoute,
     private router: Router,
     private feedService:FeedService,
@@ -37,8 +38,10 @@ export class PublishdidPage implements OnInit {
     this.feedService.publishDid(this.payload, 
       (response)=>{
         if (response.result && response.result.txid) {
-          this.navCtrl.pop().then(()=>{
-            this.router.navigate(['/bindservice/issuecredential',this.nodeId, this.did]);
+          this.zone.run(() => {
+            this.navCtrl.pop().then(()=>{
+              this.router.navigate(['/bindservice/issuecredential',this.nodeId, this.did]);
+            });
           });
         }
       },
@@ -48,8 +51,10 @@ export class PublishdidPage implements OnInit {
   }
 
   issueCredential(){
-    this.navCtrl.pop().then(()=>{
-      this.router.navigate(['/bindservice/issuecredential',this.nodeId, this.did]);
+    this.zone.run(() => {
+      this.navCtrl.pop().then(()=>{
+        this.router.navigate(['/bindservice/issuecredential',this.nodeId, this.did]);
+      });
     });
   }
 

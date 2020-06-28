@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
 import { NavController } from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
@@ -18,6 +18,7 @@ export class StartbindingPage implements OnInit {
   private nodeId: string;
   private carrierAddress: string;
   constructor(
+    private zone: NgZone,
     private native: NativeService,
     private events: Events,
     private acRoute: ActivatedRoute,
@@ -42,18 +43,22 @@ export class StartbindingPage implements OnInit {
     this.events.subscribe('feeds:owner_declared', (nodeId, phase, did, payload) => {
       switch(phase){
         case "owner_declared":
-          this.navCtrl.pop().then(()=>{
-            this.router.navigate(['/bindservice/importdid/',nodeId]);
+          this.zone.run(() => {
+            this.navCtrl.pop().then(()=>{
+              this.router.navigate(['/bindservice/importdid/',nodeId]);
+            });
           });
           break;
-        case "did_imported":
-          this.navCtrl.pop().then(()=>{
-            this.router.navigate(['/bindservice/publishdid/',nodeId, did, payload]);
-          });
-          break;
+        // case "did_imported":
+        //   this.navCtrl.pop().then(()=>{
+        //     this.router.navigate(['/bindservice/publishdid/',nodeId, did, payload]);
+        //   });
+        //   break;
         case "credential_issued":
-          this.navCtrl.pop().then(()=>{
-            this.router.navigate(['/bindservice/issuecredential/',nodeId, did]);
+          this.zone.run(() => {
+            this.navCtrl.pop().then(()=>{
+              this.router.navigate(['/bindservice/issuecredential/',nodeId, did]);
+            });
           });
           break;
       }
@@ -67,6 +72,22 @@ export class StartbindingPage implements OnInit {
     // this.native.showLoading("Connecting server").then(() => {
     // });
 
+    this.events.subscribe('feeds:resolveDidError', (nodeId, did, payload) => {
+      this.zone.run(() => {
+        this.navCtrl.pop().then(()=>{
+          this.router.navigate(['/bindservice/publishdid/',nodeId, did, payload]);
+        });
+      });
+    });
+
+    this.events.subscribe('feeds:resolveDidSucess', (nodeId, did) => {
+      this.zone.run(() => {
+        this.navCtrl.pop().then(()=>{
+          this.router.navigate(['/bindservice/issuecredential', nodeId, did]);
+        });
+      });
+    });
+
   }
   
   ngOnInit() {
@@ -79,10 +100,4 @@ export class StartbindingPage implements OnInit {
   abort(){
     this.navCtrl.pop();
   }
-
-  // test(){
-  //   this.feedService.signinChallengeRequest(this.nodeId,false);
-  // }
-  
-
 }

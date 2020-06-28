@@ -102,7 +102,7 @@ export class AddServerPage implements OnInit {
   }
 
   resolveDid(){
-    this.feedService.resolveDidDocument(this.address,
+    this.feedService.resolveDidDocument(this.address,null,
       (server)=>{
         this.zone.run(()=>{
           this.buttonDisabled = false;

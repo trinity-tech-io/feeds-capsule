@@ -35,12 +35,13 @@ let localChannelsList:Channels[] = new Array<Channels>();
 let localPostList:Post[] = new Array<Post>();
 // let bindingServerMap:{[nodeId: string]:Server};
 let bindingServer: Server;
+let bindingServerCache: Server;
 
 let serverMap: {[nodeId: string]: Server};
 
 let accessTokenMap:{[nodeId:string]:AccessToken};
 let signInServerList = [];
-// let bindingServerCache: Server;
+
 let cacheBindingAddress: string = "";
 let cacheBindingDid: string = "";
 let localCredential: string = "";
@@ -333,6 +334,7 @@ export class FeedIntro{
 
 @Injectable()
 export class FeedService {
+  // public currentTab = "home";
   public testMode = true;
   private nonce = "";
   private realm = "";
@@ -377,15 +379,15 @@ export class FeedService {
   initTestData(){
       // this.removeAllData();
       //TODO resolve Document
-      bindingServer = {
-        name              : "name",
-        owner             : "owner",
-        introduction      : "intro",
-        did               : "did:elastos:ijwMzR44CjUjWEHcXSZSW3EPoBJGbKRThH",
-        carrierAddress    : "UY7n771KpmrfspLc5ZhfeYd8bgcjK3NvNS6MpL3xT7KPLigeja7U",
-        nodeId            : "DXeGgJbdYUnCZTsyL8HNqJjvuGMeD2p5hrKoRg7G7xYp",
-        feedsUrl          : "feeds://did:elastos:ijwMzR44CjUjWEHcXSZSW3EPoBJGbKRThH/UY7n771KpmrfspLc5ZhfeYd8bgcjK3NvNS6MpL3xT7KPLigeja7U"
-      }
+      // bindingServer = {
+      //   name              : "name",
+      //   owner             : "owner",
+      //   introduction      : "intro",
+      //   did               : "did:elastos:ijwMzR44CjUjWEHcXSZSW3EPoBJGbKRThH",
+      //   carrierAddress    : "UY7n771KpmrfspLc5ZhfeYd8bgcjK3NvNS6MpL3xT7KPLigeja7U",
+      //   nodeId            : "DXeGgJbdYUnCZTsyL8HNqJjvuGMeD2p5hrKoRg7G7xYp",
+      //   feedsUrl          : "feeds://did:elastos:ijwMzR44CjUjWEHcXSZSW3EPoBJGbKRThH/UY7n771KpmrfspLc5ZhfeYd8bgcjK3NvNS6MpL3xT7KPLigeja7U"
+      // }
       // this.storeService.set(PersistenceKey.bindingServer,bindingServer);
   }
   initData(){
@@ -550,6 +552,10 @@ export class FeedService {
     //   list.push(bindingServerMap[keys[index]]);
     // }
     // return list;
+  }
+
+  getBindingserver():Server {
+    return bindingServer;
   }
 
   getServersStatus():  {[nodeId: string]: ServerStatus} {
@@ -1406,11 +1412,24 @@ export class FeedService {
     return feedUrl.substring(start, end);
   }
 
-  resolveDidDocument(feedsUrl: string, onSuccess: (server: Server)=>void, onError?: (err: any)=>void){
+  resolveDidDocument(feedsUrl: string, defaultServer:Server, onSuccess: (server: Server)=>void, onError?: (err: any)=>void){
     let didData = this.parseDid(feedsUrl);
     
     didManager.resolveDidDocument(didData.did, false,(didDocument)=>{
+      if (didDocument == null){
+        onError("The carrier node could not be found");
+        return ;
+      }
+      console.log("1111111111111111111"+JSON.stringify(didDocument));
       let services = didDocument.getServices();
+      console.log("2222222222222"+JSON.stringify(services))
+      if ((services == null || services == undefined || services.length == 0) && 
+        defaultServer != null){
+        onSuccess(defaultServer);
+        return ;
+      }
+      console.log("3333333")
+
 
       for (let index = 0; index < services.length; index++) {
         const element = services[index];
@@ -1418,7 +1437,7 @@ export class FeedService {
 
           let endpoint = element.getEndpoint();
           let carrierAddress = endpoint.substring(endpoint.lastIndexOf("//")+2,endpoint.length);
-
+          console.log("444444444")
           onSuccess({
             name              : element.getId(),
             owner             : didDocument.getSubject().getDIDString(),
@@ -1436,7 +1455,7 @@ export class FeedService {
       }
       if (didData.carrierAddress!=null || didData.carrierAddress != undefined){
         let carrierAddress = didData.carrierAddress.substring(didData.carrierAddress.lastIndexOf("//")+2,didData.carrierAddress.length);
-        
+        console.log("55555555555")
         onSuccess({
             name              : "Not provided from DIDDocument",
             owner             : didDocument.getSubject().getDIDString(),
@@ -1448,9 +1467,11 @@ export class FeedService {
             // status            : ConnState.disconnected
         });
       } else {
+        console.log("66666666")
         onError("The carrier node could not be found");
       }
     },(err)=>{
+      console.log("777777777")
       onError(err);
     });
   }
@@ -3359,6 +3380,35 @@ export class FeedService {
     if (phase == "did_imported"){
       did = result.did;
       payload = result.transaction_payload;
+
+      let feedUrl = "feeds://"+did;
+      let defaultServer = {
+        name              : "No name provided",
+        owner             : this.getSignInData().name,
+        introduction      : "No intro provided",
+        did               : did,
+        carrierAddress    : cacheBindingAddress,
+        nodeId            : nodeId,
+        feedsUrl          : feedUrl
+      }
+      this.handleImportDID(feedUrl, defaultServer, (server)=>{
+          bindingServerCache = {
+            name              : server.name,
+            owner             : server.owner,
+            introduction      : server.introduction,
+            did               : server.did,
+            carrierAddress    : server.carrierAddress,
+            nodeId            : server.nodeId,
+            feedsUrl          : feedUrl
+          }
+
+          console.log("1aaaaaaaaaaaaaa")
+          eventBus.publish("feeds:resolveDidSucess", nodeId, did);
+      },(err)=>{
+        console.log("22222222bbbbbbbbbbbbb")
+        bindingServerCache = defaultServer;
+        eventBus.publish("feeds:resolveDidError", nodeId, did, payload);
+      });
     }
 
     // console.log("phase==>"+phase);
@@ -3404,20 +3454,63 @@ export class FeedService {
     let transaction_payload = result.transaction_payload;
 
     //TODO resolve Document
-    bindingServer = {
-      name              : "name",
-      owner             : "owner",
-      introduction      : "intro",
+    // bindingServer = {
+    //   name              : "name",
+    //   owner             : "owner",
+    //   introduction      : "intro",
+    //   did               : did,
+    //   carrierAddress    : cacheBindingAddress,
+    //   nodeId            : nodeId,
+    //   feedsUrl          : "feeds://"+did+"/"+cacheBindingAddress
+    // }
+
+    let feedUrl = "feeds://"+did;
+    let defaultServer = {
+      name              : "No name provided",
+      owner             : this.getSignInData().name,
+      introduction      : "No intro provided",
       did               : did,
       carrierAddress    : cacheBindingAddress,
       nodeId            : nodeId,
-      feedsUrl          : "feeds://"+did+"/"+cacheBindingAddress
+      feedsUrl          : feedUrl
     }
-    // this.storeService.set(PersistenceKey.bindingServerMap,bindingServerMap);
-    this.storeService.set(PersistenceKey.bindingServer,bindingServer);
+    this.handleImportDID(feedUrl, defaultServer, (server)=>{
+        bindingServerCache = {
+          name              : server.name,
+          owner             : server.owner,
+          introduction      : server.introduction,
+          did               : server.did,
+          carrierAddress    : server.carrierAddress,
+          nodeId            : server.nodeId,
+          feedsUrl          : feedUrl
+        }
+        eventBus.publish("feeds:resolveDidSucess", nodeId, did);
+    },(err)=>{
+      bindingServerCache = defaultServer;
+      eventBus.publish("feeds:resolveDidError", nodeId, did, transaction_payload);
+    });
 
     eventBus.publish("feeds:did_imported", nodeId, did, transaction_payload);
   }
+
+  handleImportDID(feedUrl: string, defaultServer: Server, onSuccess: (server: Server)=>void, onError: (err: any)=>void){
+    this.resolveDidDocument(feedUrl, defaultServer, onSuccess, onError);
+  }
+
+  // doResolveDidDocument(did: string, address: string, nodeId: string, onSuccess: (server: Server)=>void, onError?: (err: any)=>void){
+  //   let feedsUrl = "feeds://"+did+"/"+address;
+  //   let defaultServer = {
+  //     name              : "No name provided",
+  //     owner             : "No owner provided",
+  //     introduction      : "No intro provided",
+  //     did               : did,
+  //     carrierAddress    : address,
+  //     nodeId            : nodeId,
+  //     feedsUrl          : "feeds://"+did+"/"+address
+  //   }
+
+  //   this.resolveDidDocument("feeds://"+did, defaultServer, onSuccess, onError);
+  // }
 
   handleIssueCredentialResponse(nodeId: string, result: any){
     // if (bindingServerMap == null && bindingServerMap == undefined)
@@ -3427,10 +3520,39 @@ export class FeedService {
 
     // this.storeService.set(PersistenceKey.bindingServerMap,bindingServerMap);
 
-    this.resolveServer(this.getServerbyNodeId(nodeId),ConnState.connected);
-    eventBus.publish("feeds:issue_credential");
+    
+    let feedUrl = "feeds://"+bindingServerCache.did;
+    let defaultServer = {
+      name              : "No name provided",
+      owner             : this.getSignInData().name,
+      introduction      : "No intro provided",
+      did               : bindingServerCache.did,
+      carrierAddress    : cacheBindingAddress,
+      nodeId            : nodeId,
+      feedsUrl          : feedUrl
+    }
+    this.handleImportDID(feedUrl, defaultServer, (server)=>{
+        bindingServer = {
+          name              : server.name,
+          owner             : server.owner,
+          introduction      : server.introduction,
+          did               : server.did,
+          carrierAddress    : server.carrierAddress,
+          nodeId            : server.nodeId,
+          feedsUrl          : feedUrl
+        }
+        this.resolveServer(bindingServer, ConnState.connected);
+        eventBus.publish("feeds:issue_credential");
+        eventBus.publish("feeds:bindServerFinish",bindingServer);
+    },(errserver)=>{
+      bindingServer = defaultServer;
+      this.resolveServer(bindingServer, ConnState.connected);
+      eventBus.publish("feeds:issue_credential");
+      eventBus.publish("feeds:bindServerFinish",bindingServer);
+    });
 
-    eventBus.publish("feeds:bindServerFinish",bindingServer);
+
+
 
     // this.resolveServer(bindingServer,ConnState.connected);
   }

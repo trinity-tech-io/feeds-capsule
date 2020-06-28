@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
 import { NavController } from '@ionic/angular';
 import { FeedService } from 'src/app/services/FeedService';
@@ -14,6 +14,7 @@ export class IssuecredentialPage implements OnInit {
   private nodeId = "";
   private did = "";
   constructor(
+    private zone: NgZone,
     private events: Events,
     private acRoute: ActivatedRoute,
     private feedService:FeedService,
@@ -26,9 +27,11 @@ export class IssuecredentialPage implements OnInit {
       });
 
       this.events.subscribe('feeds:issue_credential', () => {
-        this.navCtrl.pop().then(()=>{
-          this.router.navigate(['/bindservice/finish/',this.nodeId]);
-        });    
+        this.zone.run(() => {
+          this.navCtrl.pop().then(()=>{
+            this.router.navigate(['/bindservice/finish/',this.nodeId]);
+          });
+        });
       });
     }
 

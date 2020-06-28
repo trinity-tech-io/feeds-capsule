@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
 import { NavController } from '@ionic/angular';
 import { FeedService } from 'src/app/services/FeedService';
@@ -13,6 +13,7 @@ import { Events } from '@ionic/angular';
 export class ImportdidPage implements OnInit {
   private nodeId = "";
   constructor(
+    private zone: NgZone,
     private events: Events,
     private acRoute: ActivatedRoute,
     private router: Router,
@@ -23,13 +24,30 @@ export class ImportdidPage implements OnInit {
         this.nodeId = data.nodeId;
       });
 
-      this.events.subscribe('feeds:did_imported', (nodeId, did, payload) => {
-        this.navCtrl.pop().then(()=>{
-          this.router.navigate(['/bindservice/publishdid/',nodeId, did, payload]);
+      // this.events.subscribe('feeds:did_imported', (nodeId, did, payload) => {
+      //   this.navCtrl.pop().then(()=>{
+      //     this.router.navigate(['/bindservice/publishdid/',nodeId, did, payload]);
+      //   });
+      // });
+
+      this.events.subscribe('feeds:resolveDidError', (nodeId, did, payload) => {
+        this.zone.run(() => {
+          this.navCtrl.pop().then(()=>{
+            this.router.navigate(['/bindservice/publishdid/',nodeId, did, payload]);
+          });
+        });
+      });
+
+      this.events.subscribe('feeds:resolveDidSucess', (nodeId, did) => {
+        this.zone.run(() => {
+          this.navCtrl.pop().then(()=>{
+            this.router.navigate(['/bindservice/issuecredential', nodeId, did]);
+          });
         });
       });
 
 
+      
     }
 
   ngOnInit() {

@@ -12,14 +12,13 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
   styleUrls: ['./feeds.page.scss'],
 })
 export class FeedsPage implements OnInit {
-  private title = "My Timeline";
-  private currentTab = "home";
+  public title = "My Timeline";
+  public currentTab = "home";
   constructor(
     private native: NativeService,
     private feedService: FeedService,
     private router: Router,
     private popoverController: PopoverController) {
-
     }
 
   ngOnInit() {
@@ -35,7 +34,8 @@ export class FeedsPage implements OnInit {
   create(){
     let bindingServer = this.feedService.getBindingServer();
     if (bindingServer == null || bindingServer == undefined){
-      this.router.navigate(['/bindservice/scanqrcode']);
+      // this.router.navigate(['/bindservice/scanqrcode']);
+      this.router.navigateByUrl('/bindservice/scanqrcode');
       return ;
     }
       
@@ -60,6 +60,7 @@ export class FeedsPage implements OnInit {
 
     home(){
       this.currentTab = "home";
+      // this.feedService.currentTab = "home";
       this.title = "My Timeline";
       titleBarManager.setTitle(this.title);
       this.native.setTitleBarBackKeyShown(false);
@@ -79,7 +80,7 @@ export class FeedsPage implements OnInit {
       this.native.setTitleBarBackKeyShown(false);
     }
 
-    search(){
+    public search(){
       this.currentTab = "search";
       this.feedService.refreshChannels();
       this.title = "Explore Feeds";
