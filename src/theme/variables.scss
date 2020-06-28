@@ -135,6 +135,23 @@ $segment-button-md-text-color: #007AFF !important;
   border-top-right-radius: 35px;
 }
 
+.bottom-menu-popover .popover-content {
+  position:absolute;
+  margin-left: 16px;
+  width: calc(100% - 32px) !important;
+  left: 0 !important;
+  bottom: 0 !important;
+  right: 0 !important;
+  top: calc(100% - 170px) !important;
+  z-index: -1;
+  max-height: 140px;
+  min-height: 140px; 
+  // border-top-left-radius: 35px;
+  // border-top-right-radius: 35px;
+  // border-bottom-left-radius: 35px;
+  border-radius: 35px;
+}
+
 
 .div {
   width: 95%;

@@ -11,7 +11,7 @@ ion-searchbar {
     vertical-align: middle; 
     float: right;
     width: 76.8px;
-    height: 25.6px;
+    height: 100%;
     border: solid 1px #368bff;
     // background-color: #368bff;
 
@@ -40,9 +40,10 @@ ion-searchbar {
   .follow-following-div{
     vertical-align: middle; 
     float: right;
+    // top: calc(100% - 280px);
 
     width: 76.8px;
-    height: 25.6px;
+    // height: 100%;
     border: solid 1px #368bff;
     background-color: #368bff;
 
@@ -64,4 +65,90 @@ ion-searchbar {
     line-height: 1.3;
     letter-spacing: normal;
     color: #fdfeff;
+  }
+
+
+  .node-content {
+    display: flex;
+    align-items: center;
+
+      h2 {
+        font-size: 16px;
+        font-weight: 600;
+        margin: 0;
+      }
+
+      p {
+        font-size: 9px !important;
+        font-weight: 500;
+        color: #959595;
+        margin: 0;
+      }
+  }
+
+
+  .img-container {
+    display: flex;
+    justify-content: flex-end;
+
+    img {
+      border-radius: 15px !important;
+      overflow: hidden;
+      height: 48px;
+      width: 48px;
+    }
+  }
+
+// .btn-container {
+//     display: flex;
+//     justify-content: center;
+//     align-items: center;
+
+//     ion-button {
+//       --border-radius: 30px ;
+//       --box-shadow: none;
+//       --border-width: 1px;
+//       --color:#8888b0;
+//       --border-color:#8888b0;
+//       width: 80px;
+
+//       ion-label {
+//         font-size: 9px;
+//         font-weight: 700;
+//         padding: 0;
+//       }
+//     }
+//   }
+
+.btn-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    ion-label {
+      font-size: 9px;
+      font-weight: 700;
+      padding: 0;
+    }
+  }
+
+  .follow-style{
+    --border-radius: 30px ;
+    --box-shadow: none;
+    --border-width: 1px;
+    --color:#8888b0;
+    --border-color:#8888b0;
+    width: 80px;
+    text-transform: none;
+  }
+
+  .following-style{
+    --border-radius: 30px ;
+    --box-shadow: none;
+    // --border-width: 1px;
+    // --color:#8888b0;
+    // --border-color:#8888b0;
+    
+    width: 80px;
+    text-transform: none;
   }

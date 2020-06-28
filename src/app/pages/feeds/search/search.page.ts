@@ -40,14 +40,14 @@ export class SearchPage implements OnInit {
     });
 
     this.events.subscribe('feeds:subscribeFinish', (nodeId, channelId, name)=> {
-      this.native.toast(name + " subscribed");
+      // this.native.toast(name + " subscribed");
       this.zone.run(() => {
         this.channelList = this.feedService.refreshLocalChannels();
       });
     });
 
     this.events.subscribe('feeds:unsubscribeFinish', (nodeId, channelId, name) => {
-      this.native.toast(name + " unsubscribed");
+      // this.native.toast(name + " unsubscribed");
       this.zone.run(() => {
         this.channelList = this.feedService.refreshLocalChannels();
       });

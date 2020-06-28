@@ -10,7 +10,7 @@
   </ion-refresher>
 
   <div *ngFor="let channel of channelList" >
-    <div class="channel-img-small-div" >
+    <!-- <div class="channel-img-small-div" >
       <img class="channel-img-small" src="../../../../assets/images/component-480-47.png">
     
       <div class="channel-detail-div">
@@ -29,12 +29,7 @@
                 <div class="follow-following-text-div"> Following</div>
               </div>
             </div>
-            <!-- <ion-icon name="more" mode="ios" style="vertical-align: middle; float: right; "></ion-icon> -->
           </div>
-          <!-- <div> 
-            <ion-label class="channel-desc-small">@TuumTech</ion-label>
-          </div> -->
-    
           <div >
             <img src="../../../../assets/images/bubble2.svg" class="bubble">
             <ion-label class="channel-follower2">{{channel.subscribers}} follower</ion-label>
@@ -43,7 +38,56 @@
     
         </div>
       </div>
-    </div>
+    </div> -->
+
+    <ion-item lines="none">
+      <ion-grid class="ion-no-padding">
+        <ion-row>
+          <ion-col
+            size="2.25"
+            size-lg="2.25"
+            class="img-container"
+          >
+            <!-- <img-loader [src]="getAppIcon(app)" useImg></img-loader> -->
+            <img src="../../../../assets/images/component-480-47.png">
+          </ion-col>
+          <ion-col
+            size="6"
+            size-xs="6"
+            class="node-content"
+          >
+            <ion-label>
+              <h2> {{channel.name}} </h2>
+              <!-- <ion-label style="display: flex;">  -->
+              <!-- <ion-item class="ion-no-margin ion-no-padding" lines="none">
+                <img src="../../../../assets/images/bubble2.svg" class="bubble">
+                <p> {{channel.subscribers}} follower </p>
+              </ion-item> -->
+
+              <!-- <div style="display: flex;" >
+                <img src="../../../../assets/images/bubble2.svg" class="bubble">
+                <div style="margin-bottom: 5px;"> {{channel.subscribers}} follower </div>
+              </div> -->
+              <div style="display: flex;">
+                <img src="../../../../assets/images/bubble2.svg" class="bubble">
+                <p>{{channel.subscribers}} follower</p>
+              </div>
+              
+            </ion-label>
+
+          </ion-col>
+          <ion-col size="3.75" size-xs="3.75" class="btn-container">
+            <ion-button class="follow-style" fill="outline"   (click)="subscribe(channel.nodeId, channel.id)" *ngIf="!channel.isSubscribed">
+              <ion-label>Follow</ion-label>
+            </ion-button>
+
+            <ion-button class="following-style" (click)="unsubscribe(channel.nodeId, channel.name, channel.id)" *ngIf="channel.isSubscribed">
+              <ion-label>Following</ion-label>
+            </ion-button>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-item>
     <img src="../../../assets/images/rectangle-5389.svg"
     class="detail-line">
   </div>
