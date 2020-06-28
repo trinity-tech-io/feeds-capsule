@@ -47,6 +47,8 @@ declare namespace FeedsData{
         newLikes = "new_likes",
 
         negotiateLogin = "negotiate_login",
-        confirmLogin = "confirm_login"
+        confirmLogin = "confirm_login",
+
+        post_unlike = "post_unlike"
     }
 }

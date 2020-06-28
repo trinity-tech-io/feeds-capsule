@@ -93,7 +93,7 @@ export class JsonRPCService {
 
     assembleJson(id: number, method: string, params: any): any{
         let data = {
-            jsonrpc:"2.0",
+            version:"1.0",
             method:method,
             id:id
         }

@@ -1,7 +1,7 @@
 declare module Communication{
     type jsonrpc_id = string | number | null
     type create_channel_request = {
-        ver: "1.0"
+        version: "1.0"
         method : "create_channel"
         params : {
             name        : string
@@ -11,7 +11,7 @@ declare module Communication{
         id     : jsonrpc_id
     }
     type create_channel_response = {
-        ver: "1.0"
+        version: "1.0"
         result : {
             id: number 
         }
@@ -19,7 +19,7 @@ declare module Communication{
     }
     
     type publish_post_request = {
-        ver: "1.0"
+        version: "1.0"
         method : "publish_post"
         params : {
             channel_id  : number
@@ -29,7 +29,7 @@ declare module Communication{
         id     : jsonrpc_id
     }
     type publish_post_response = {
-        ver: "1.0"
+        version: "1.0"
         result : {
             id: number
         }
@@ -37,7 +37,7 @@ declare module Communication{
     }
     
     type post_comment_request = {
-        ver: "1.0"
+        version: "1.0"
         method : "post_comment"
         params : {
             channel_id: number
@@ -49,7 +49,7 @@ declare module Communication{
         id     : jsonrpc_id
     }
     type post_comment_response = {
-        ver: "1.0"
+        version: "1.0"
         result : {
             id: number
         }
@@ -57,7 +57,7 @@ declare module Communication{
     }
     
     type post_like_request = {
-        ver: "1.0"
+        version: "1.0"
         method : "post_like"
         params : {
             channel_id: number
@@ -69,9 +69,27 @@ declare module Communication{
     }
     
     type post_like_response = {
-        ver: "1.0"
+        version: "1.0"
         result : null
         id     : jsonrpc_id
+    }
+
+    type post_unlike_request = {
+        version: "1.0"
+        method : "post_unlike"
+        id     : jsonrpc_id
+        params : {
+            access_token: string
+            channel_id  : number
+            post_id     : number
+            comment_id  : number | 0
+        } 
+    }
+
+    type post_unlike_response = {
+        version: "1.0"
+        id     : jsonrpc_id
+        result : null
     }
     
     const enum field {
@@ -81,7 +99,7 @@ declare module Communication{
     }
     
     type get_my_channels_request = {
-        ver: "1.0"
+        version: "1.0"
         method : "get_my_channels"
         params : {
             by         : field
@@ -93,7 +111,7 @@ declare module Communication{
         id     : jsonrpc_id
     }
     type get_my_channels_response = {
-        ver: "1.0"
+        version: "1.0"
         result : {
             id          : number
             name        : string
@@ -105,7 +123,7 @@ declare module Communication{
     }
     
     type get_my_channels_metadata_request = {
-        ver: "1.0"
+        version: "1.0"
         method : "get_my_channels_metadata"
         params : {
             by         : field
@@ -117,7 +135,7 @@ declare module Communication{
         id     : jsonrpc_id
     }
     type get_my_channels_metadata_response = {
-        ver: "1.0"
+        version: "1.0"
         result : {
             id          : number
             subscribers : number
@@ -126,7 +144,7 @@ declare module Communication{
     }
     
     type get_channels_request = {
-        ver: "1.0"
+        version: "1.0"
         method : "get_channels"
         params : {
             by         : field
@@ -138,7 +156,7 @@ declare module Communication{
         id     : jsonrpc_id
     }
     type get_channels_response = {
-        ver: "1.0"
+        version: "1.0"
         result : {
             id          : number
             name        : string
@@ -152,7 +170,7 @@ declare module Communication{
     }
     
     type get_channel_detail_request = {
-        ver: "1.0"
+        version: "1.0"
         method : "get_channel_detail"
         params : {
             id       : number 
@@ -161,7 +179,7 @@ declare module Communication{
         id     : jsonrpc_id
     }
     type get_channel_detail_response = {
-        ver: "1.0"
+        version: "1.0"
         result : {
             id          : number
             name        : string
@@ -175,7 +193,7 @@ declare module Communication{
     }
     
     type get_subscribed_channels_request = {
-        ver: "1.0"
+        version: "1.0"
         method : "get_subscribed_channels"
         params : {
             by         : field
@@ -187,7 +205,7 @@ declare module Communication{
         id     : jsonrpc_id
     }
     type get_subscribed_channels_response = {
-        ver: "1.0"
+        version: "1.0"
         result : {
             id          : number
             name        : string
@@ -201,7 +219,7 @@ declare module Communication{
     }
     
     type get_posts_request = {
-        ver: "1.0"
+        version: "1.0"
         method : "get_posts"
         params : {
             channel_id : number
@@ -214,7 +232,7 @@ declare module Communication{
         id     : jsonrpc_id
     }
     type get_posts_response = {
-        ver: "1.0"
+        version: "1.0"
         result : {
             channel_id : number
             id         : number
@@ -227,7 +245,7 @@ declare module Communication{
     }
     
     type get_comments_request = {
-        ver: "1.0"
+        version: "1.0"
         method : "get_comments"
         params : {
             channel_id : number
@@ -241,7 +259,7 @@ declare module Communication{
         id     : jsonrpc_id
     }
     type get_comments_response = {
-        ver: "1.0"
+        version: "1.0"
         result : {
             channel_id : number
             post_id    : number
@@ -255,7 +273,7 @@ declare module Communication{
     }
     
     type get_statistics_request = {
-        ver: "1.0"
+        version: "1.0"
         method : "get_statistics"
         params : {
             access_token   : string
@@ -263,7 +281,7 @@ declare module Communication{
         id     : jsonrpc_id
     }
     type get_statistics_response = {
-        ver: "1.0"
+        version: "1.0"
         result : {
             did               : string
             connecting_clients: number
@@ -273,7 +291,7 @@ declare module Communication{
     
     // access control write rpc
     type subscribe_channel_request = {
-        ver: "1.0"
+        version: "1.0"
         method : "subscribe_channel"
         params : {
             id: number
@@ -282,13 +300,13 @@ declare module Communication{
         id     : jsonrpc_id
     }
     type subscribe_channel_response = {
-        ver: "1.0"
+        version: "1.0"
         result : null
         id     : jsonrpc_id
     }
     
     type unsubscribe_channel_request = {
-        ver: "1.0"
+        version: "1.0"
         method : "unsubscribe_channel"
         params : {
             id: number
@@ -297,13 +315,13 @@ declare module Communication{
         id     : jsonrpc_id
     }
     type unsubscribe_channel_response = {
-        ver: "1.0"
+        version: "1.0"
         result : null
         id     : jsonrpc_id
     }
     
     type add_node_publisher_request = {
-        ver: "1.0"
+        version: "1.0"
         method : "add_node_publisher"
         params : {
             did: string
@@ -312,7 +330,7 @@ declare module Communication{
         id     : jsonrpc_id
     }
     type add_node_publisher_response = {
-        ver: "1.0"
+        version: "1.0"
         result : null
         params: {
             access_token   : string
@@ -321,7 +339,7 @@ declare module Communication{
     }
     
     type remove_node_publisher_request = {
-        ver: "1.0"
+        version: "1.0"
         method : "remove_node_publisher"
         params : {
             did: string,
@@ -330,7 +348,7 @@ declare module Communication{
         id     : jsonrpc_id
     }
     type remove_node_publisher_response = {
-        ver: "1.0"
+        version: "1.0"
         result : null
         params: {
             access_token   : string
@@ -340,7 +358,7 @@ declare module Communication{
     
     // access control read rpc
     type query_channel_creation_permission_request = {
-        ver: "1.0"
+        version: "1.0"
         method : "query_channel_creation_permission"
         params: {
             access_token   : string
@@ -348,7 +366,7 @@ declare module Communication{
         id     : jsonrpc_id
     }
     type query_channel_creation_permission_response = {
-        ver: "1.0"
+        version: "1.0"
         result : {
             authorized : boolean
         }
@@ -357,7 +375,7 @@ declare module Communication{
     
     // event notification
     type enable_notification_request = {
-        ver: "1.0"
+        version: "1.0"
         method : "enable_notification"
         params: {
             access_token   : string
@@ -365,13 +383,13 @@ declare module Communication{
         id     : jsonrpc_id
     }
     type enable_notification_response = {
-        ver: "1.0"
+        version: "1.0"
         result : null
         id     : jsonrpc_id
     }
     
     type new_post_notification = {
-        ver: "1.0"
+        version: "1.0"
         method : "new_post"
         params : {
             channel_id: number
@@ -382,7 +400,7 @@ declare module Communication{
     }
     
     type new_comment_notification = {
-        ver: "1.0"
+        version: "1.0"
         method : "new_comment"
         params : {
             channel_id: number
@@ -395,7 +413,7 @@ declare module Communication{
     }
     
     type new_likes_notification = {
-        ver: "1.0"
+        version: "1.0"
         method : "new_likes"
         params : {
             channel_id: number
@@ -406,7 +424,7 @@ declare module Communication{
     }
 
     type signin_request_challenge_request = { 
-        ver: "1.0"
+        version: "1.0"
         method : "signin_request_challenge"
         id     : jsonrpc_id
         params : {
@@ -416,7 +434,7 @@ declare module Communication{
     }
 
     type signin_response_challenge_response = {  
-        ver: "1.0"
+        version: "1.0"
         id     : jsonrpc_id
         result : {
             credential_required: boolean
@@ -426,7 +444,7 @@ declare module Communication{
     }
     
     type signin_confirm_challenge_request = {
-        ver: "1.0"
+        version: "1.0"
         method : "signin_confirm_challenge"
         id     : jsonrpc_id
         params : {
@@ -435,7 +453,7 @@ declare module Communication{
     }
 
     type signin_confirm_challenge_credential_request = {
-        ver: "1.0"
+        version: "1.0"
         method : "signin_confirm_challenge"
         id     : jsonrpc_id
         params : {
@@ -446,7 +464,7 @@ declare module Communication{
 
 
     type signin_confirm_challenge_response = {
-        ver: "1.0"
+        version: "1.0"
         id     : jsonrpc_id
         result : {
             access_token: string    //jws = { sub  : dapp_did name : string email: string exp  : number }
@@ -455,7 +473,7 @@ declare module Communication{
     }
     
     type declare_owner_request = {
-        ver: "1.0"
+        version: "1.0"
         method : "declare_owner"
         id     : jsonrpc_id
         params : {
@@ -478,7 +496,7 @@ declare module Communication{
     // }
     
     type import_did_request = {
-        ver: "1.0"
+        version: "1.0"
         method  : "import_did"
         id      : jsonrpc_id
         params  : {
@@ -489,13 +507,13 @@ declare module Communication{
     }
 
     type create_did_request = {
-        ver: "1.0"
+        version: "1.0"
         method  : "import_did"
         id      : jsonrpc_id
     }
 
     type import_did_response = {
-        ver: "1.0"
+        version: "1.0"
         id     : jsonrpc_id
         result : {
             // did: feeds_did
@@ -505,7 +523,7 @@ declare module Communication{
     }
     
     type issue_credential_request = {
-        ver: "1.0"
+        version: "1.0"
         method : "issue_credential"
         id     : jsonrpc_id
         params : {
@@ -514,7 +532,7 @@ declare module Communication{
     }
 
     type issue_credential_response = {
-        ver: "1.0"
+        version: "1.0"
         id     : jsonrpc_id
         result : null
     }

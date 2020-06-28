@@ -53,7 +53,16 @@ export class HomePage implements OnInit {
   }
 
   like(nodeId, channelId, postId){
+    if (this.checkMyLike(nodeId,channelId,postId)){
+      this.unLike(nodeId, channelId, postId);
+      return ;
+    }
+
     this.feedService.postLike(nodeId,Number(channelId),Number(postId),0);
+  }
+
+  unLike(nodeId, channelId, postId){
+    this.feedService.postUnlike(nodeId,Number(channelId),Number(postId),0);
   }
 
   navTo(nodeId, channelId){

@@ -946,6 +946,9 @@ export class FeedService {
       case FeedsData.MethodType.post_like:
         this.handlePostLikeResult(nodeId, request);
         break;
+      case FeedsData.MethodType.post_unlike:
+        this.handlePostUnLikeResult(nodeId, request);
+        break;
       case FeedsData.MethodType.get_my_channels:
         this.handleGetMyChannelsResult(nodeId, result);
         break;
@@ -1973,7 +1976,7 @@ export class FeedService {
       return;
 
     let request: Communication.create_channel_request = {
-      ver: "1.0",
+      version: "1.0",
       method : "create_channel",
       params : {
           access_token    : accessTokenMap[nodeId].token,
@@ -1996,7 +1999,7 @@ export class FeedService {
     let contentBin = this.serializeDataService.encodeData(content);
       
     let request: Communication.publish_post_request = {
-      ver: "1.0",
+      version: "1.0",
       method : "publish_post",
       params : {
           access_token    : accessTokenMap[nodeId].token,
@@ -2019,7 +2022,7 @@ export class FeedService {
     let contentBin = this.serializeDataService.encodeData(content);
 
     let request: Communication.post_comment_request = {
-      ver: "1.0",
+      version: "1.0",
       method : "post_comment",
       params : {
           access_token    : accessTokenMap[nodeId].token,
@@ -2041,8 +2044,39 @@ export class FeedService {
       return;
 
     let request: Communication.post_like_request = {
-      ver: "1.0",
+      version: "1.0",
       method : "post_like",
+      params : {
+          access_token    : accessTokenMap[nodeId].token,
+          channel_id: channel_id,
+          post_id   : post_id,
+          comment_id: comment_id,
+      } ,
+      id     : -1
+    }
+    this.sendRPCMessage(nodeId, request.method, request.params);
+  }
+
+  postUnlike(nodeId:string, channel_id: number, post_id: number, comment_id: number){
+    
+    // let mPostId = this.getPostId(nodeId,channel_id,post_id);
+    // postMap[mPostId].likes = postMap[mPostId].likes-1;
+    // this.storeService.set(PersistenceKey.postMap,postMap);
+
+    // likeMap[mPostId] = undefined;
+    // this.storeService.set(PersistenceKey.likeMap, likeMap);
+
+    // eventBus.publish(PublishType.updateLikeList, this.getLikeList());
+    // eventBus.publish(PublishType.updataPostLike, nodeId, channel_id, post_id , postMap[mPostId].likes);
+    if(accessTokenMap == null ||
+      accessTokenMap == undefined||
+      accessTokenMap[nodeId] == undefined)
+      //TODO error
+      return;
+    
+    let request: Communication.post_unlike_request = {
+      version: "1.0",
+      method : "post_unlike",
       params : {
           access_token    : accessTokenMap[nodeId].token,
           channel_id: channel_id,
@@ -2063,7 +2097,7 @@ export class FeedService {
       return;
 
     let request: Communication.get_my_channels_request = {
-      ver: "1.0",
+      version: "1.0",
       method : "get_my_channels",
       params : {
           access_token    : accessTokenMap[nodeId].token,
@@ -2086,7 +2120,7 @@ export class FeedService {
       return;
 
     let request: Communication.get_my_channels_metadata_request = {
-      ver: "1.0",
+      version: "1.0",
       method : "get_my_channels_metadata",
       params : {
           access_token    : accessTokenMap[nodeId].token,
@@ -2109,7 +2143,7 @@ export class FeedService {
       return;
 
     let request: Communication.get_channels_request = {
-      ver: "1.0",
+      version: "1.0",
       method : "get_channels",
       params : {
           access_token    : accessTokenMap[nodeId].token,
@@ -2131,7 +2165,7 @@ export class FeedService {
       return;
 
     let request: Communication.get_channel_detail_request = {
-      ver: "1.0",
+      version: "1.0",
       method : "get_channel_detail",
       params : {
           access_token    : accessTokenMap[nodeId].token,
@@ -2151,7 +2185,7 @@ export class FeedService {
       return;
 
     let request: Communication.get_subscribed_channels_request = {
-      ver: "1.0",
+      version: "1.0",
       method : "get_subscribed_channels",
       params : {
           access_token   : accessTokenMap[nodeId].token,
@@ -2175,7 +2209,7 @@ export class FeedService {
       return;
 
     let request: Communication.get_posts_request = {
-      ver: "1.0",
+      version: "1.0",
       method : "get_posts",
       params : {
           access_token    : accessTokenMap[nodeId].token,
@@ -2199,7 +2233,7 @@ export class FeedService {
       return;
 
     let request:Communication.get_comments_request = {
-      ver: "1.0",
+      version: "1.0",
       method : "get_comments",
       params : {
           access_token    : accessTokenMap[nodeId].token,
@@ -2223,7 +2257,7 @@ export class FeedService {
       return;
 
     let request:Communication.get_statistics_request = {
-      ver: "1.0",
+      version: "1.0",
       method : "get_statistics",
       params : {
         access_token    : accessTokenMap[nodeId].token
@@ -2241,7 +2275,7 @@ export class FeedService {
       return;
 
     let request: Communication.subscribe_channel_request = {
-      ver: "1.0",
+      version: "1.0",
       method : "subscribe_channel",
       params : {
           access_token    : accessTokenMap[nodeId].token,
@@ -2260,7 +2294,7 @@ export class FeedService {
       return;
 
     let request: Communication.unsubscribe_channel_request = {
-      ver: "1.0",
+      version: "1.0",
       method : "unsubscribe_channel",
       params : {
           access_token    : accessTokenMap[nodeId].token,
@@ -2279,7 +2313,7 @@ export class FeedService {
       return;
 
     let request: Communication.add_node_publisher_request = {
-      ver: "1.0",
+      version: "1.0",
       method : "add_node_publisher",
       params : {
           did: did,
@@ -2298,7 +2332,7 @@ export class FeedService {
       return;
 
     let request: Communication.remove_node_publisher_request = {
-      ver: "1.0",
+      version: "1.0",
       method : "remove_node_publisher",
       params : {
           did: did,
@@ -2329,7 +2363,7 @@ export class FeedService {
       return;
 
     let request: Communication.enable_notification_request = {
-      ver: "1.0",
+      version: "1.0",
       method : "enable_notification",
       params : {
         access_token   : accessTokenMap[nodeId].token
@@ -2586,6 +2620,31 @@ export class FeedService {
       this.storeService.set(PersistenceKey.postMap,postMap);
 
       likeMap[mPostId] = postMap[mPostId];
+      this.storeService.set(PersistenceKey.likeMap, likeMap);
+
+      eventBus.publish(PublishType.updateLikeList, this.getLikeList());
+      eventBus.publish(PublishType.updataPostLike, nodeId, channel_id, post_id , postMap[mPostId].likes);
+    }else {
+      commentsMap[channel_id][post_id][comment_id].likes = commentsMap[channel_id][post_id][comment_id].likes + 1
+
+      this.storeService.set(PersistenceKey.commentsMap, commentsMap);
+      eventBus.publish(PublishType.commentDataUpdate)
+
+    }
+  }
+
+  handlePostUnLikeResult(nodeId:string, request: any){
+    let channel_id: number = request.channel_id;
+    let post_id: number = request.post_id;
+    let comment_id: number = request.comment_id;
+
+    let mPostId = this.getPostId(nodeId, channel_id, post_id);
+
+    if (comment_id == 0){
+      postMap[mPostId].likes = postMap[mPostId].likes-1;
+      this.storeService.set(PersistenceKey.postMap,postMap);
+
+      likeMap[mPostId] = undefined;
       this.storeService.set(PersistenceKey.likeMap, likeMap);
 
       eventBus.publish(PublishType.updateLikeList, this.getLikeList());
@@ -3142,7 +3201,7 @@ export class FeedService {
 
   signinChallengeRequest(nodeId: string , requiredCredential: boolean){
     let request: Communication.signin_request_challenge_request = {
-      ver: "1.0",
+      version: "1.0",
       method : "signin_request_challenge",
       id     : -1,
       params : {
@@ -3227,7 +3286,7 @@ export class FeedService {
 
   declareOwnerRequest(nodeId: string, carrierAddress: string){
     let request: Communication.declare_owner_request = {
-      ver: "1.0",
+      version: "1.0",
       method : "declare_owner",
       id     : -1,
       params : {
@@ -3243,7 +3302,7 @@ export class FeedService {
 
   importDidRequest(nodeId: string, params){
     let request: Communication.import_did_request = {
-      ver: "1.0",
+      version: "1.0",
       method  : "import_did",
       id      : -1,
       params  : {
@@ -3258,7 +3317,7 @@ export class FeedService {
 
   createDidRequest(nodeId: string){
     let request: Communication.create_did_request = {
-      ver: "1.0",
+      version: "1.0",
       method  : "import_did",
       id      : -1,
     }
@@ -3268,7 +3327,7 @@ export class FeedService {
 
   issueCredentialRequest(nodeId: string, credential: any){
     let request: Communication.issue_credential_request = {
-      ver: "1.0",
+      version: "1.0",
       method : "issue_credential",
       id     : -1,
       params : {
