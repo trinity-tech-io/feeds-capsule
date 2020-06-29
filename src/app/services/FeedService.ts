@@ -3745,6 +3745,9 @@ export class FeedService {
   }
 
   parseChannelAvatar(avatar: string): string{
+    if (avatar == null || avatar == undefined)
+      return "";
+      
     if (avatar.startsWith("img://")){
       let newAvatar = avatar.replace("img://","");
       return newAvatar;

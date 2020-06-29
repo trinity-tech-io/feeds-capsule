@@ -39,7 +39,7 @@ export class MyApp {
 
     titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.OUTER_RIGHT, {
       key: "more",
-      iconPath: "assets/icon/favicon.ico"
+      iconPath: "assets/icon/more_menu.ico"
     });
 
     titleBarManager.addOnItemClickedListener((menuIcon)=>{
