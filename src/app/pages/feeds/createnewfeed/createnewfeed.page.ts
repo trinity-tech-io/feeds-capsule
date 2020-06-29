@@ -35,8 +35,6 @@ export class CreatenewfeedPage implements OnInit {
         this.channelAvatar = avatar;
 
         this.avatar = this.feedService.parseChannelAvatar(avatar);
-        console.log("channelAvatar=>"+this.channelAvatar);
-
       });
     }
 
@@ -75,8 +73,6 @@ export class CreatenewfeedPage implements OnInit {
   }
 
   createChannel(name: HTMLInputElement, desc: HTMLInputElement){
-    console.log("avatar ==>"+this.channelAvatar);
-
     if (this.channelAvatar == ""){
       alert("Please select an avatar.");
       return ;

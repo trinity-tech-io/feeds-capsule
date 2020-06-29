@@ -335,7 +335,6 @@ export class CarrierService {
             return;
         }
         
-        console.log("sendBinaryMessage...");
         carrierInst.sendFriendBinaryMessage(
             nodeId, message,
             () => {success();},

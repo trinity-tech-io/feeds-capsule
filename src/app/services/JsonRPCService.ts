@@ -47,7 +47,7 @@ export class JsonRPCService {
         eventBus = events;
         this.events.subscribe('transport:receiveMessage', event => {
             let data = serializeDataService.decodeData(event.message);
-            console.log("received after ===>"+JSON.stringify(data));
+            console.log("receive--->"+JSON.stringify(data));
 
             eventBus.publish('jrpc:receiveMessage',this.response(event.from, data));
         });
@@ -66,7 +66,7 @@ export class JsonRPCService {
         requestQueue.push(requestBean);
         let request = this.assembleJson(id, method, params);
 
-        console.log("before---"+JSON.stringify(request));
+        console.log("request--->"+JSON.stringify(request));
 
         let encodeData = this.serializeDataService.encodeData(request);
 
@@ -131,8 +131,8 @@ export class JsonRPCService {
         let substr = msg.substring(0,msg.length-1);
         data = JSON.parse(substr);
 
-        if (data.jsonrpc!="2.0")
-            return this.createError(nodeId, -60003, "JsonRPC version error");
+        // if (data.jsonrpc!="2.0")
+        //     return this.createError(nodeId, -60003, "JsonRPC version error");
 
         if (msg.indexOf("result") != -1){
             let request = this.queryRequest(data.id);

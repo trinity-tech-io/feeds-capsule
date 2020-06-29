@@ -717,10 +717,6 @@ export class FeedService {
   }
 
   sendRPCMessage(nodeId: string, method: string, params: any){
-    console.log("nodeId="+nodeId);
-    console.log("method="+method);
-    console.log("params="+JSON.stringify(params));
-
     if(!this.checkServerConnection(nodeId)){
       this.native.toast("server :\n"+nodeId +"\noffline!");
       return;
@@ -744,11 +740,6 @@ export class FeedService {
       // params["desc"] = desc;
 
       // this.sendMessage(nodeId, FeedsData.MethodType.createTopic, params);
-
-      console.log("nodeId="+nodeId);
-      console.log("channel="+channel);
-      console.log("desc="+desc);
-      console.log("avatar="+avatar);
       this.createChannel(nodeId, channel, desc, avatar);
   }
 
@@ -1992,9 +1983,6 @@ export class FeedService {
 
   //// new request
   createChannel(nodeId: string, name: string, introduction: string, avatar: any){
-
-    console.log("accessTokenMap==>"+JSON.stringify(accessTokenMap));
-    console.log("nodeId==>"+nodeId);
     if(accessTokenMap == null ||
       accessTokenMap == undefined||
       accessTokenMap[nodeId] == undefined){
@@ -3757,11 +3745,8 @@ export class FeedService {
   }
 
   parseChannelAvatar(avatar: string): string{
-    console.log("avatar=>"+avatar);
-
     if (avatar.startsWith("img://")){
       let newAvatar = avatar.replace("img://","");
-      console.log("new avatar=>"+newAvatar);
       return newAvatar;
     }
     return avatar;

@@ -34,12 +34,8 @@ export class DetailsComponent implements OnInit {
       this.location = signInData.location;
 
       let bindingServer = this.feedService.getBindingServer();
-      if (bindingServer != null && bindingServer != undefined){
+      if (bindingServer != null && bindingServer != undefined)
         this.ownChannelSourceDid = bindingServer.did;
-        console.log("bindingServer ==>"+JSON.stringify(bindingServer));
-      }
-        
-
     }
 
   ngOnInit() {}
