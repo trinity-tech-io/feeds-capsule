@@ -23,7 +23,13 @@
 
   <div *ngFor="let post of postList">
     <div class="channel-img-small-div">
-      <img class="channel-img-small" src="../../../../assets/images/component-480-47.png"  (click)="navTo(post.nodeId, post.channel_id)">
+
+      <div class="channel-img-small" (click)="navTo(post.nodeId, post.channel_id)">
+        <ion-avatar >
+          <img  src={{parseAvatar(post.nodeId,post.channel_id)}}>
+        </ion-avatar>
+      </div>
+      <!-- <img class="channel-img-small" src="../../../../assets/images/component-480-47.png"  (click)="navTo(post.nodeId, post.channel_id)"> -->
 
     
       <div class="channel-detail-div">

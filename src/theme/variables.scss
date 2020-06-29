@@ -193,6 +193,8 @@ $segment-button-md-text-color: #007AFF !important;
   margin-top: 14.5px;
 }
 .channel-img{
+  margin: auto;
+  text-align: center;
   width: 84px;
   height: 84px;
 }
@@ -312,8 +314,10 @@ $segment-button-md-text-color: #007AFF !important;
 
 .channel-img-small-div{
   margin-top: 6px;
-  padding-left: 37px;
-  padding-right: 37px;
+  margin-left: 37px;
+  margin-right: 37px;
+  // padding-left: 37px;
+  // padding-right: 37px;
   width: 100%;
 
   display: flex;
@@ -321,8 +325,7 @@ $segment-button-md-text-color: #007AFF !important;
 
 .channel-img-small{
   width: 56px;
-  height: 55px;
-  object-fit: contain;
+  height: 56px;
 }
 
 .channel-title-small-div{
@@ -580,6 +583,7 @@ ion-header {
   height: 100%;
   margin-left: 12px;
   vertical-align: middle;
+  margin-top: 3px;
 }
 
 .channel-detail-text-div{
@@ -767,4 +771,49 @@ vertical-align: middle;
   letter-spacing: -0.43px;
   text-align: center;
   color: #fdfeff;
+}
+
+
+
+.node-content {
+  display: flex;
+  align-items: center;
+
+    h2 {
+      font-size: 16px;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    p {
+      font-size: 9px !important;
+      font-weight: 500;
+      color: #959595;
+      margin: 0;
+    }
+}
+
+
+.img-container {
+  display: flex;
+  justify-content: flex-end;
+
+  img {
+    border-radius: 15px !important;
+    overflow: hidden;
+    height: 48px;
+    width: 48px;
+  }
+}
+
+.btn-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  ion-label {
+    font-size: 9px;
+    font-weight: 700;
+    padding: 0;
+  }
 }

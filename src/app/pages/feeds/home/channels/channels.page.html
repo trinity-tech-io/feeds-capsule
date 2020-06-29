@@ -4,7 +4,9 @@
   </div> -->
 
   <div class="channel-img-div">
-    <img class="channel-img" src="../../../../assets/images/component-307-206.png">
+    <ion-avatar class="channel-img">
+      <img  src={{channelAvatar}}>
+    </ion-avatar>
   </div>
 
   <div class="channel-title-div">
@@ -28,6 +30,150 @@
   </div>
   
   <div *ngFor="let post of postList">
+
+
+
+
+
+
+
+
+    <!-- <ion-item lines="none">
+      <ion-grid class="ion-no-padding">
+        <ion-row>
+          <ion-col
+            size="2.25"
+            size-lg="2.25"
+            class="img-container"
+          >
+          <div class="channel-img-small">
+            <ion-avatar >
+              <img  src={{channelAvatar}}>
+            </ion-avatar>
+          </div>
+          
+
+          </ion-col>
+          <ion-col
+            size="8.75"
+            size-xs="8.75"
+            class="node-content"
+          >
+
+            <div>
+              <div style="
+              height: 20px;
+              font-family: Montserrat;
+              font-size: 17px;
+              font-weight: bold;
+              font-stretch: normal;
+              font-style: normal;
+              line-height: 1.25;
+              letter-spacing: normal;
+              text-align: left;
+              color: #000000;">
+                {{getChannel(post.nodeId, post.channel_id).name}}
+              </div>
+              <div style="
+              vertical-align:middle;
+              width: 68px;
+              height: 18px;
+              font-family: MontserratSemiBold;
+              font-size: 12px;
+              font-weight: normal;
+              font-stretch: normal;
+              font-style: normal;
+              line-height: 1.25;
+              letter-spacing: normal;
+              text-align: left;
+              color: #8888b0;">
+                @{{getChannel(post.nodeId, post.channel_id).owner_name}}
+              </div>
+            </div>
+            <div>
+              <div style="
+              margin-top: 12px;
+              vertical-align:middle;
+              height: 20px;
+              font-family: MontserratSemiBold;
+              font-size: 11px;
+              font-weight: normal;
+              font-stretch: normal;
+              font-style: normal;
+              line-height: 1.25;
+              letter-spacing: normal;
+              text-align: left;
+              color: #8888b0;">
+                {{post.created_at|date:'MM-dd HH:mm'}}
+              </div>
+              <div style="visibility:hidden">
+                -
+              </div>
+            </div>
+
+          </ion-col>
+          <ion-col size="1" size-xs="1" class="btn-container">
+            <ion-icon name="more" mode="ios" style="vertical-align: middle; float: right; "></ion-icon>
+          </ion-col>
+        </ion-row>
+
+
+        <ion-row>
+          <ion-col
+            size="2.25"
+            size-lg="2.25"
+          >
+
+          </ion-col>
+          <ion-col
+            size="8.75"
+            size-xs="8.75"
+          >
+
+
+            <div class="channel-post-div"  (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)"> 
+              <ion-label class="channel-post">{{getContentText(post.content)}}</ion-label>
+            </div>
+
+          </ion-col>
+          <ion-col size="1" size-xs="1">
+          </ion-col>
+        </ion-row>
+
+
+        <ion-row>
+          <ion-col
+            size="2.25"
+            size-lg="2.25"
+          >
+
+          </ion-col>
+          <ion-col
+            size="8.75"
+            size-xs="8.75"
+          >
+          
+            <img *ngIf="getContentImg(post.content) != ''" src="{{getContentImg(post.content)}}"
+                class="channel-post-img"  (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)">
+
+          </ion-col>
+          <ion-col size="1" size-xs="1">
+          </ion-col>
+        </ion-row>
+
+      </ion-grid>
+    </ion-item> -->
+
+
+
+
+
+
+
+
+
+
+
     <!-- <div class="channel-img-small-div">
         <img class="channel-img-small" src="../../../../assets/images/component-480-47.png">
 
@@ -57,9 +203,12 @@
         </div>
     </div>
     <img src="../../../../assets/images/rectangle-281.svg" class="Rectangle-281"> -->
-    <div class="channel-img-small-div">
-      <img class="channel-img-small" src="../../../../assets/images/component-480-47.png"  (click)="navTo(post.nodeId, post.channel_id)">
-
+    <div class="channel-img-small-div" >
+      <div class="channel-img-small" (click)="navTo(post.nodeId, post.channel_id)">
+        <ion-avatar>
+          <img src={{channelAvatar}}>
+        </ion-avatar>
+      </div>
     
       <div class="channel-detail-div">
         <div class="channel-detail-text-div">
@@ -90,7 +239,6 @@
           <div class="channel-post-heart-comment-div">
             <!-- <img src="../../../../assets/images/heart.svg" class="heart" (click)="like(post.nodeId, post.channel_id, post.id)"> -->
             <img class="like" [ngClass]="{'like-s': checkMyLike(post.nodeId, post.channel_id, post.id)}" (click)="like(post.nodeId, post.channel_id, post.id)">
-
             <ion-label class="like-text" [ngClass]="{'like-s-text': checkMyLike(post.nodeId, post.channel_id, post.id)}" (click)="like(post.nodeId, post.channel_id, post.id)">{{post.likes}}</ion-label>
 
             <img src="../../../../assets/images/bubble-line.svg" class="comment" (click)="showCommentPage($event, post.nodeId, post.channel_id, post.id)">

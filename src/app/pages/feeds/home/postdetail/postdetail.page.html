@@ -42,7 +42,12 @@
 
 <ion-content>
     <div class="channel-img-small-div">
-      <img class="channel-img-small" src="../../../../../assets/images/component-480-47.png">
+      <div class="channel-img-small">
+        <ion-avatar >
+          <img  src={{channelAvatar}}>
+        </ion-avatar>
+      </div>
+      
 
     
       <div class="channel-detail-div">
@@ -60,7 +65,7 @@
       </div>
     </div>
 
-    <div class="channel-post-detail-div">
+    <div class="channel-post-detail-div" style="margin-top: 16px;">
         <div class="channel-post-div"> 
           <ion-label class="channel-post">{{getContentText(postContent)}}</ion-label>
           

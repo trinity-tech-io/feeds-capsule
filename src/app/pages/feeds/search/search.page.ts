@@ -125,4 +125,8 @@ export class SearchPage implements OnInit {
     this.router.navigate(['/channels', nodeId, channelId]);
   }
 
+  parseChannelAvatar(avatar: string): string{
+    return this.feedService.parseChannelAvatar(avatar);
+  }
+
 }

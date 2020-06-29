@@ -35,6 +35,11 @@ export class LikesComponent implements OnInit {
   }
 
   like(nodeId, channelId, postId){
+    if (this.checkMyLike(nodeId,channelId,postId)){
+      this.feedService.postUnlike(nodeId,Number(channelId),Number(postId),0);
+      return ;
+    }
+
     this.feedService.postLike(nodeId,Number(channelId),Number(postId),0);
   }
 
@@ -78,5 +83,13 @@ export class LikesComponent implements OnInit {
       }
     });
     return await popover.present();
+  }
+
+  checkMyLike(nodeId: string, channelId: number, postId: number){
+    return this.feedService.checkMyLike(nodeId, channelId, postId);
+  }
+
+  parseAvatar(nodeId: string, channelId: number): string{
+    return this.feedService.parseChannelAvatar(this.getChannel(nodeId, channelId).avatar);
   }
 }

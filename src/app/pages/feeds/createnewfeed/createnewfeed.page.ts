@@ -13,6 +13,8 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
   styleUrls: ['./createnewfeed.page.scss'],
 })
 export class CreatenewfeedPage implements OnInit {
+  public channelAvatar = "";
+  private avatar = "";
   private selectedServer: any = null;
   private selectedChannelSource:string = 'Select channel source';
   constructor(
@@ -27,6 +29,14 @@ export class CreatenewfeedPage implements OnInit {
       this.events.subscribe('feeds:createTopicSuccess', () => {
         this.navigateBack();
         this.native.toast("Create topic success!");
+      });
+
+      this.events.subscribe('feeds:selectavatar', (avatar)=>{
+        this.channelAvatar = avatar;
+
+        this.avatar = this.feedService.parseChannelAvatar(avatar);
+        console.log("channelAvatar=>"+this.channelAvatar);
+
       });
     }
 
@@ -65,7 +75,24 @@ export class CreatenewfeedPage implements OnInit {
   }
 
   createChannel(name: HTMLInputElement, desc: HTMLInputElement){
-    if (name.value=="" || desc.value == "" || this.selectedServer == null){
+    console.log("avatar ==>"+this.channelAvatar);
+
+    if (this.channelAvatar == ""){
+      alert("Please select an avatar.");
+      return ;
+    }
+
+    if (name.value==""){
+      alert("Please input name.");
+      return ;
+    }
+
+    if(desc.value == ""){
+      alert("Please input description.");
+      return ;
+    }
+    
+    if (this.selectedServer == null){
       alert("Invalid params");
       return ;
     }
@@ -74,13 +101,14 @@ export class CreatenewfeedPage implements OnInit {
                             +"channel:"+name.value+"<br>"+"description:"+desc.value,
                             "ok","cancel").then((data)=>{
                               if (data) {
-                                
-                                this.feedService.createTopic(this.selectedServer.nodeId, name.value, desc.value);
+                                this.feedService.createTopic(this.selectedServer.nodeId, name.value, desc.value, this.channelAvatar);
                               }
                             });
   }
 
   profileimage(){
-    this.router.navigate(['/profileimage']);
+    // this.router.navigate(['/profileimage']);
+    this.navCtrl.navigateForward(['/profileimage']);
   }
+
 }

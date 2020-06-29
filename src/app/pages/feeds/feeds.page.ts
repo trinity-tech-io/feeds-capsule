@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { PostfromComponent } from '../../components/postfrom/postfrom.component';
-import { PopoverController } from '@ionic/angular';
+import { NavController, PopoverController } from '@ionic/angular';
 import { FeedService } from '../../services/FeedService';
 import { Router } from '@angular/router';
 import { NativeService } from '../../services/NativeService';
@@ -15,6 +15,7 @@ export class FeedsPage implements OnInit {
   public title = "My Timeline";
   public currentTab = "home";
   constructor(
+    private navCtrl: NavController,
     private native: NativeService,
     private feedService: FeedService,
     private router: Router,
@@ -35,7 +36,8 @@ export class FeedsPage implements OnInit {
     let bindingServer = this.feedService.getBindingServer();
     if (bindingServer == null || bindingServer == undefined){
       // this.router.navigate(['/bindservice/scanqrcode']);
-      this.router.navigateByUrl('/bindservice/scanqrcode');
+      // this.router.navigateByUrl('/bindservice/scanqrcode');
+      this.navCtrl.navigateForward(['/bindservice/scanqrcode']);
       return ;
     }
       
@@ -44,7 +46,8 @@ export class FeedsPage implements OnInit {
       return ;
     }
 
-    this.router.navigate(['/createnewfeed']);
+    this.navCtrl.navigateForward(['/createnewfeed']);
+    // this.router.navigate(['/createnewfeed']);
   }
 
   async openPopOverComponent() {

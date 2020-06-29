@@ -5,8 +5,12 @@
 
   <div *ngFor="let channel of channels">
     <div class="channel-img-small-div" (click)="selectChannel(channel.nodeId,channel.id)">
-      <img class="channel-img-small" src="../../../../assets/images/component-480-47.png">
-  
+      <div class="channel-img-small">
+        <ion-avatar >
+          <img  src={{parseAvatar(channel.avatar)}}>
+        </ion-avatar>
+      </div>
+      
       <div class="channel-detail-div">
         <div class="channel-detail-text-div">
           <div style="height: 100%; vertical-align: middle;"> 

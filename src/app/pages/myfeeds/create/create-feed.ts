@@ -53,7 +53,7 @@ export class CreateFeedPage implements OnInit {
                             "ok","cancel").then((data)=>{
                               if (data) {
                                 
-                                this.feedService.createTopic(this.selectedServer.nodeId, name.value, desc.value);
+                                this.feedService.createTopic(this.selectedServer.nodeId, name.value, desc.value, null);
                               }
                             });
     

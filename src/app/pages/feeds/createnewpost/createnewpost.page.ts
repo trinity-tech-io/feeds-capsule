@@ -13,7 +13,7 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
   styleUrls: ['./createnewpost.page.scss'],
 })
 export class CreatenewpostPage implements OnInit {
-
+  private channelAvatar = "";
   private channelName;
   private subscribers;
   private newPost="";
@@ -46,7 +46,7 @@ export class CreatenewpostPage implements OnInit {
 
         this.channelName = channel.name;
         this.subscribers = channel.subscribers;
-
+        this.channelAvatar = this.feedService.parseChannelAvatar(channel.avatar);
       });
     }
 

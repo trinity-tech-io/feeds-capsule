@@ -1,27 +1,35 @@
 <ion-grid style="width: 100%; padding: 35px;">
   <ion-row>
     <ion-col>
-      <img src="../../../../assets/images/profile-1.svg" (click)="selectIndex(1)">
+      <ion-avatar>
+        <img src="assets/images/profile-1.svg" (click)="selectIndex(1,'assets/images/profile-1.svg')">
+      </ion-avatar>
       <div class="select-div" *ngIf="select == 1">
-        <img src="../../../../assets/images/profile-select.svg">
+        <img src="assets/images/profile-select.svg">
       </div>
     </ion-col>
     <ion-col>
-      <img src="../../../../assets/images/profile-2.svg" (click)="selectIndex(2)">
+      <ion-avatar>
+        <img src="assets/images/profile-2.svg" (click)="selectIndex(2,'assets/images/profile-2.svg')">
+      </ion-avatar>
       <div class="select-div" *ngIf="select == 2">
-        <img src="../../../../assets/images/profile-select.svg">
+        <img src="assets/images/profile-select.svg">
       </div>
     </ion-col>
     <ion-col>
-      <img src="../../../../assets/images/profile-3.svg" (click)="selectIndex(3)">
+      <ion-avatar>
+        <img src="assets/images/profile-3.svg" (click)="selectIndex(3,'assets/images/profile-3.svg')">
+      </ion-avatar>
       <div class="select-div" *ngIf="select == 3">
-        <img src="../../../../assets/images/profile-select.svg">
+        <img src="assets/images/profile-select.svg">
       </div>
     </ion-col>
     <ion-col>
-      <img src="../../../../assets/images/profile-4.svg" (click)="selectIndex(4)">
+      <ion-avatar>
+        <img src="assets/images/profile-4.svg" (click)="selectIndex(4,'assets/images/profile-4.svg')">
+      </ion-avatar>
       <div class="select-div" *ngIf="select == 4">
-        <img src="../../../../assets/images/profile-select.svg">
+        <img src="assets/images/profile-select.svg">
       </div>
     </ion-col>
   </ion-row>
@@ -29,43 +37,55 @@
 
   <ion-row>
     <ion-col>
-      <img src="../../../../assets/images/profile-5.svg" (click)="selectIndex(5)">
+      <ion-avatar>
+        <img src="assets/images/profile-5.svg" (click)="selectIndex(5,'assets/images/profile-5.svg')">
+      </ion-avatar>
       <div class="select-div" *ngIf="select == 5">
-        <img src="../../../../assets/images/profile-select.svg">
+        <img src="assets/images/profile-select.svg">
       </div>
     </ion-col>
 
     <ion-col>
-      <img src="../../../../assets/images/profile-6.svg" (click)="selectIndex(6)">
+      <ion-avatar>
+        <img src="assets/images/profile-6.svg" (click)="selectIndex(6,'assets/images/profile-6.svg')">
+      </ion-avatar>
       <div class="select-div" *ngIf="select == 6">
-        <img src="../../../../assets/images/profile-select.svg">
+        <img src="assets/images/profile-select.svg">
       </div>
     </ion-col>
     <ion-col>
-      <img src="../../../../assets/images/profile-7.svg" (click)="selectIndex(7)">
+      <ion-avatar>
+        <img src="assets/images/profile-7.svg" (click)="selectIndex(7,'assets/images/profile-7.svg')">
+      </ion-avatar>
       <div class="select-div" *ngIf="select == 7">
-        <img src="../../../../assets/images/profile-select.svg">
+        <img src="assets/images/profile-select.svg">
       </div>
     </ion-col>
     <ion-col>
-      <img src="../../../../assets/images/profile-8.svg" (click)="selectIndex(8)">
+      <ion-avatar>
+        <img src="assets/images/profile-8.svg" (click)="selectIndex(8,'assets/images/profile-8.svg')">
+      </ion-avatar>
       <div class="select-div" *ngIf="select == 8">
-        <img src="../../../../assets/images/profile-select.svg">
+        <img src="assets/images/profile-select.svg">
       </div>
     </ion-col>
   </ion-row>
 
   <ion-row>
     <ion-col>
-      <img src="../../../../assets/images/profile-9.svg" (click)="selectIndex(9)">
+      <ion-avatar>
+        <img src="assets/images/profile-9.svg" (click)="selectIndex(9,'assets/images/profile-9.svg')">
+      </ion-avatar>
       <div class="select-div" *ngIf="select == 9">
-        <img src="../../../../assets/images/profile-select.svg">
+        <img src="assets/images/profile-select.svg">
       </div>
     </ion-col>
     <ion-col>
-      <img src="../../../../assets/images/profile-add.svg" (click)="selectIndex(0)">
+      <ion-avatar>
+        <img src={{userAvatar}} (click)="selectIndex(0)">
+      </ion-avatar>
       <div class="select-div" *ngIf="select == 0">
-        <img src="../../../../assets/images/profile-select.svg">
+        <img src="assets/images/profile-select.svg">
       </div>
     </ion-col>
     <ion-col>

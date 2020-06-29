@@ -35,4 +35,8 @@ export class FollowingComponent implements OnInit {
   exploreFeeds(){
     alert("exploreFeeds");
   }
+
+  parseAvatar(avatar: string): string{
+    return this.feedService.parseChannelAvatar(avatar);
+  }
 }

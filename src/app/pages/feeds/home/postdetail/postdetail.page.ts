@@ -13,6 +13,7 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
   styleUrls: ['./postdetail.page.scss'],
 })
 export class PostdetailPage implements OnInit {
+  private channelAvatar = "";
   private channelName;
   private channelOwner;
   private postContent;
@@ -41,6 +42,7 @@ export class PostdetailPage implements OnInit {
   
         let channel = this.feedService.getChannelFromId(this.nodeId, this.channelId);
         this.channelName = channel.name;
+        this.channelAvatar = this.feedService.parseChannelAvatar(channel.avatar);
         // this.channelOwner = channel.owner_name;
         this.channelOwner = this.feedService.indexText(channel.owner_name,25,25);
 
@@ -111,6 +113,11 @@ export class PostdetailPage implements OnInit {
   }
 
   like(commentId: number){
+    if (this.checkMyLike()){
+      this.feedService.postUnlike(this.nodeId,Number(this.channelId),Number(this.postId),0);
+      return ;
+    }
     this.feedService.postLike(this.nodeId,Number(this.channelId),Number(this.postId),commentId);
   }
+
 }

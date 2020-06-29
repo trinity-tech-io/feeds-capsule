@@ -40,24 +40,41 @@
       </div>
     </div> -->
 
-    <ion-item lines="none" (click)="navTo(channel.nodeId, channel.id)">
-      <ion-grid class="ion-no-padding">
+    <ion-item lines="none">
+      <ion-grid >
         <ion-row>
-          <ion-col
+          <ion-col  
+            (click)="navTo(channel.nodeId, channel.id)"
             size="2.25"
             size-lg="2.25"
-            class="img-container"
+
           >
             <!-- <img-loader [src]="getAppIcon(app)" useImg></img-loader> -->
-            <img src="../../../../assets/images/component-480-47.png">
+            <div class="channel-img-small">
+              <ion-avatar >
+                <img  src={{parseChannelAvatar(channel.avatar)}}>
+              </ion-avatar>
+            </div>
+
           </ion-col>
           <ion-col
+            (click)="navTo(channel.nodeId, channel.id)"
             size="6"
             size-xs="6"
             class="node-content"
           >
             <ion-label>
-              <h2> {{channel.name}} </h2>
+              <div style="  width: 174px;
+              height: 20px;
+              font-family: Montserrat;
+              font-size: 17px;
+              font-weight: bold;
+              font-stretch: normal;
+              font-style: normal;
+              line-height: 1.18;
+              letter-spacing: normal;
+              text-align: left;
+              color: #000000;"> {{channel.name}} </div>
               <!-- <ion-label style="display: flex;">  -->
               <!-- <ion-item class="ion-no-margin ion-no-padding" lines="none">
                 <img src="../../../../assets/images/bubble2.svg" class="bubble">
@@ -68,9 +85,22 @@
                 <img src="../../../../assets/images/bubble2.svg" class="bubble">
                 <div style="margin-bottom: 5px;"> {{channel.subscribers}} follower </div>
               </div> -->
-              <div style="display: flex;">
-                <img src="../../../../assets/images/bubble2.svg" class="bubble">
-                <p>{{channel.subscribers}} follower</p>
+              <div style="display: flex; margin-top: 3px;">
+                <img style="  width: 18.1px;
+                height: 14.7px;" src="../../../../assets/images/bubble2.svg" >
+                <div style="  
+                margin-left: 3px;
+                width: 66px;
+                height: 18px;
+                font-family: MontserratSemiBold;
+                font-size: 11px;
+                font-weight: normal;
+                font-stretch: normal;
+                font-style: normal;
+                line-height: 1.27;
+                letter-spacing: normal;
+                text-align: left;
+                color: #a0a2c4;">{{channel.subscribers}} follower</div>
               </div>
               
             </ion-label>

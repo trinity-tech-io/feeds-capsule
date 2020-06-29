@@ -57,15 +57,11 @@ export class HomePage implements OnInit {
 
   like(nodeId, channelId, postId){
     if (this.checkMyLike(nodeId,channelId,postId)){
-      this.unLike(nodeId, channelId, postId);
+      this.feedService.postUnlike(nodeId,Number(channelId),Number(postId),0);
       return ;
     }
 
     this.feedService.postLike(nodeId,Number(channelId),Number(postId),0);
-  }
-
-  unLike(nodeId, channelId, postId){
-    this.feedService.postUnlike(nodeId,Number(channelId),Number(postId),0);
   }
 
   navTo(nodeId, channelId){
@@ -103,5 +99,9 @@ export class HomePage implements OnInit {
   exploreFeeds(){
     this.tabs.select("search");
     this.feedspage.currentTab = "search";
+  }
+
+  parseAvatar(nodeId: string, channelId: number): string{
+    return this.feedService.parseChannelAvatar(this.getChannel(nodeId, channelId).avatar);
   }
 }

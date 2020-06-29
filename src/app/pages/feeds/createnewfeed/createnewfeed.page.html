@@ -10,7 +10,13 @@
         Choose profile image to be displayed
       </div>
     </div>
+
     <div style="display: flex; float: right;">
+      <div style="margin-right: 15px; width: 50px; height: 50px;" *ngIf="avatar!=''">
+        <ion-avatar >
+          <img src={{avatar}}>
+        </ion-avatar>
+      </div>
       <img src="../../../../assets/images/chevron-thin-right.svg"
       class="chevron-thin-right">
     </div>

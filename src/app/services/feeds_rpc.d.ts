@@ -4,9 +4,10 @@ declare module Communication{
         version: "1.0"
         method : "create_channel"
         params : {
+            access_token    : string
             name        : string
             introduction: string  
-            access_token    : string
+            avatar      : any
         } 
         id     : jsonrpc_id
     }
@@ -117,7 +118,7 @@ declare module Communication{
             name        : string
             introduction: string
             subscribers : number
-            access_token    : string
+            avatar      : any
         }[]
         id     : jsonrpc_id
     }
@@ -165,6 +166,7 @@ declare module Communication{
             owner_did   : string 
             subscribers : number
             last_update : number
+            avatar      : any
         }[]
         id     : jsonrpc_id
     }
@@ -188,6 +190,7 @@ declare module Communication{
             owner_did   : string 
             subscribers : number
             last_update : number
+            avatar      : any
         }[]
         id     : jsonrpc_id
     }
@@ -214,6 +217,7 @@ declare module Communication{
             owner_did   : string 
             subscribers : number
             last_update : number
+            avatar      : any
         }[]
         id     : jsonrpc_id
     }

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { NavController, PopoverController } from '@ionic/angular';
 import { FeedService } from 'src/app/services/FeedService';
 import { Router } from '@angular/router';
-import { PopoverController } from '@ionic/angular';
 
 @Component({
   selector: 'app-postfrom',
@@ -12,21 +12,29 @@ import { PopoverController } from '@ionic/angular';
 
 export class PostfromComponent implements OnInit {
   private channels: any;
-  constructor(private feedService: FeedService,
+  private channelAvatar = "../../../../assets/images/component-480-47.png";
+  constructor(
+    private navCtrl: NavController,
+    private feedService: FeedService,
     private router: Router,
     private popover: PopoverController) {
     this.channels = this.feedService.refreshMyChannels();
-
+    console.log("channels=>"+JSON.stringify(this.channels));
   }
 
   ngOnInit() {}
 
 
   selectChannel(nodeId, channelId){
-    this.router.navigate(['createnewpost/',nodeId,channelId]);
+    this.navCtrl.navigateForward(['createnewpost/',nodeId,channelId]);
+    // this.router.navigate(['createnewpost/',nodeId,channelId]);
     // this.router.navigate(['createnewpost']);
 
     // this.router.navigate(['/createnewfeed']);
     this.popover.dismiss();
+  }
+
+  parseAvatar(avatar: string): string{
+    return this.feedService.parseChannelAvatar(avatar);
   }
 }

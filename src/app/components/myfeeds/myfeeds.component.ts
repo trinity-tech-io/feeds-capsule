@@ -63,4 +63,8 @@ export class MyfeedsComponent implements OnInit {
   bindServer(){
     // this.router.navigate(['/bindservice/scanqrcode']);
   }
+
+  parseAvatar(avatar: string): string{
+    return this.feedService.parseChannelAvatar(avatar);
+  }
 }

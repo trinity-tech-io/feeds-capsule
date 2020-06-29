@@ -14,6 +14,7 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
   styleUrls: ['./channels.page.scss'],
 })
 export class ChannelsPage implements OnInit {
+  private channelAvatar;
   private channelName;
   private channelOwner;
   private channelDesc;
@@ -44,6 +45,7 @@ export class ChannelsPage implements OnInit {
       this.channelOwner = this.feedService.indexText(channel.owner_name,25,25);
       this.channelDesc = channel.introduction;
       this.channelSubscribes = channel.subscribers;
+      this.channelAvatar = this.feedService.parseChannelAvatar(channel.avatar);
 
       this.postList = this.feedService.getPostListFromChannel(this.nodeId, this.channelId);
       // this.posts = this.feedService.refreshLocalPost("",this.id);
@@ -64,6 +66,11 @@ export class ChannelsPage implements OnInit {
   }
 
   like(nodeId, channelId, postId){
+    if (this.checkMyLike(nodeId,channelId,postId)){
+      this.feedService.postUnlike(nodeId,Number(channelId),Number(postId),0);
+      return ;
+    }
+
     this.feedService.postLike(nodeId,Number(channelId),Number(postId),0);
   }
  

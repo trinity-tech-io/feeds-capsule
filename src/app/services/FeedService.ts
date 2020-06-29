@@ -89,6 +89,7 @@ type Channels = {
     subscribers : number,
     last_update : number,
     last_post: any,
+    avatar: any,
     isSubscribed: boolean
 }
 
@@ -378,16 +379,17 @@ export class FeedService {
 
   initTestData(){
       // this.removeAllData();
+
       //TODO resolve Document
-      // bindingServer = {
-      //   name              : "name",
-      //   owner             : "owner",
-      //   introduction      : "intro",
-      //   did               : "did:elastos:ijwMzR44CjUjWEHcXSZSW3EPoBJGbKRThH",
-      //   carrierAddress    : "UY7n771KpmrfspLc5ZhfeYd8bgcjK3NvNS6MpL3xT7KPLigeja7U",
-      //   nodeId            : "DXeGgJbdYUnCZTsyL8HNqJjvuGMeD2p5hrKoRg7G7xYp",
-      //   feedsUrl          : "feeds://did:elastos:ijwMzR44CjUjWEHcXSZSW3EPoBJGbKRThH/UY7n771KpmrfspLc5ZhfeYd8bgcjK3NvNS6MpL3xT7KPLigeja7U"
-      // }
+      bindingServer = {
+        name              : "name",
+        owner             : "owner",
+        introduction      : "intro",
+        did               : "did:elastos:ijwMzR44CjUjWEHcXSZSW3EPoBJGbKRThH",
+        carrierAddress    : "FjT35Tj9zZK6nQGhE2BVNJja9oa5hqMtiSvQBpxj9u19qsMcd3Ww",
+        nodeId            : "7hkVY8sAzA8QFritz7eknjPKeQbcPRrLYRdeMzgt37BB",
+        feedsUrl          : "feeds://did:elastos:ijwMzR44CjUjWEHcXSZSW3EPoBJGbKRThH/FjT35Tj9zZK6nQGhE2BVNJja9oa5hqMtiSvQBpxj9u19qsMcd3Ww"
+      }
       // this.storeService.set(PersistenceKey.bindingServer,bindingServer);
   }
   initData(){
@@ -715,6 +717,10 @@ export class FeedService {
   }
 
   sendRPCMessage(nodeId: string, method: string, params: any){
+    console.log("nodeId="+nodeId);
+    console.log("method="+method);
+    console.log("params="+JSON.stringify(params));
+
     if(!this.checkServerConnection(nodeId)){
       this.native.toast("server :\n"+nodeId +"\noffline!");
       return;
@@ -731,7 +737,7 @@ export class FeedService {
   }
   
   //{"jsonrpc":"2.0","method":"create_topic","params":{"topic":"news","desc":"daily"},"id":null}
-  createTopic(nodeId: string, channel: string, desc: string){
+  createTopic(nodeId: string, channel: string, desc: string, avatar: any){
       // currentCreateTopicNID = nodeId;
       // let params = {};
       // params["topic"] = topic;
@@ -739,7 +745,11 @@ export class FeedService {
 
       // this.sendMessage(nodeId, FeedsData.MethodType.createTopic, params);
 
-      this.createChannel(nodeId, channel, desc);
+      console.log("nodeId="+nodeId);
+      console.log("channel="+channel);
+      console.log("desc="+desc);
+      console.log("avatar="+avatar);
+      this.createChannel(nodeId, channel, desc, avatar);
   }
 
   //{"jsonrpc":"2.0","method":"post_event","params":{"topic":"news","event":"newsevent"},"id":null}
@@ -1420,16 +1430,12 @@ export class FeedService {
         onError("The carrier node could not be found");
         return ;
       }
-      console.log("1111111111111111111"+JSON.stringify(didDocument));
       let services = didDocument.getServices();
-      console.log("2222222222222"+JSON.stringify(services))
       if ((services == null || services == undefined || services.length == 0) && 
         defaultServer != null){
         onSuccess(defaultServer);
         return ;
       }
-      console.log("3333333")
-
 
       for (let index = 0; index < services.length; index++) {
         const element = services[index];
@@ -1437,7 +1443,6 @@ export class FeedService {
 
           let endpoint = element.getEndpoint();
           let carrierAddress = endpoint.substring(endpoint.lastIndexOf("//")+2,endpoint.length);
-          console.log("444444444")
           onSuccess({
             name              : element.getId(),
             owner             : didDocument.getSubject().getDIDString(),
@@ -1455,7 +1460,6 @@ export class FeedService {
       }
       if (didData.carrierAddress!=null || didData.carrierAddress != undefined){
         let carrierAddress = didData.carrierAddress.substring(didData.carrierAddress.lastIndexOf("//")+2,didData.carrierAddress.length);
-        console.log("55555555555")
         onSuccess({
             name              : "Not provided from DIDDocument",
             owner             : didDocument.getSubject().getDIDString(),
@@ -1467,11 +1471,9 @@ export class FeedService {
             // status            : ConnState.disconnected
         });
       } else {
-        console.log("66666666")
         onError("The carrier node could not be found");
       }
     },(err)=>{
-      console.log("777777777")
       onError(err);
     });
   }
@@ -1989,12 +1991,19 @@ export class FeedService {
   // }
 
   //// new request
-  createChannel(nodeId: string, name: string, introduction: string){
+  createChannel(nodeId: string, name: string, introduction: string, avatar: any){
+
+    console.log("accessTokenMap==>"+JSON.stringify(accessTokenMap));
+    console.log("nodeId==>"+nodeId);
     if(accessTokenMap == null ||
       accessTokenMap == undefined||
-      accessTokenMap[nodeId] == undefined)
-      //TODO error
-      return;
+      accessTokenMap[nodeId] == undefined){
+        //TODO error
+        return;
+      }
+      
+
+    let avatarBin = this.serializeDataService.encodeData(avatar);
 
     let request: Communication.create_channel_request = {
       version: "1.0",
@@ -2003,6 +2012,7 @@ export class FeedService {
           access_token    : accessTokenMap[nodeId].token,
           name        : name,
           introduction: introduction,
+          avatar      : avatarBin
       } ,
       id     : -1
     }
@@ -2525,6 +2535,9 @@ export class FeedService {
     let channelIntro = request.introduction;
     let owner_name = this.getSignInData().name;
     let owner_did = this.getSignInData().did;
+    let avatarBin = request.avatar;
+
+    let avatar = this.serializeDataService.decodeData(avatarBin);
 
     let channel:Channels = {
       nodeId: nodeId,
@@ -2536,6 +2549,7 @@ export class FeedService {
       subscribers : 0,
       last_update : this.getCurrentTimeNum(),
       last_post: "",
+      avatar: avatar,
       isSubscribed:false
     }
 
@@ -2685,6 +2699,9 @@ export class FeedService {
       let name: string = result[index].name;
       let introduction: string = result[index].introduction;
       let subscribers: number = result[index].subscribers;
+      let avatarBin: any = result[index].avatar;
+
+      let avatar = this.serializeDataService.decodeData(avatarBin);
 
       let nodeChannelId = nodeId + id ;
 
@@ -2702,6 +2719,7 @@ export class FeedService {
           subscribers : subscribers,
           last_update : this.getCurrentTimeNum(),
           last_post:"",
+          avatar: avatar,
           isSubscribed:false
         }
       }
@@ -2732,6 +2750,10 @@ export class FeedService {
       if (channelsMap == null || channelsMap == undefined)
         channelsMap = {};
 
+
+      let avatarBin = result[index].avatar;
+      let avatar = this.serializeDataService.decodeData(avatarBin);
+
       if (channelsMap[nodeChannelId] == undefined){
         channelsMap[nodeChannelId] = {
           nodeId      : nodeId,
@@ -2743,6 +2765,7 @@ export class FeedService {
           subscribers : result[index].subscribers,
           last_update : result[index].last_update,
           last_post   : "",
+          avatar      : avatar,
           isSubscribed:false
         }
       }else{
@@ -2775,6 +2798,9 @@ export class FeedService {
       let owner_did = result[index].owner_did;
       let subscribers = result[index].subscribers;
       let last_update = result[index].last_update;
+      let avatarBin = result[index].avatar;
+
+      let avatar = this.serializeDataService.decodeData(avatarBin);
       
       if (subscribedChannelsMap == null|| subscribedChannelsMap == undefined)
         subscribedChannelsMap = {};
@@ -2791,6 +2817,7 @@ export class FeedService {
           subscribers : subscribers,
           last_update : last_update*1000,
           last_post:"",
+          avatar: avatar,
           isSubscribed:true
         }
       }else {
@@ -2802,6 +2829,7 @@ export class FeedService {
         subscribedChannelsMap[nodeChannelId].owner_did = owner_did;
         subscribedChannelsMap[nodeChannelId].subscribers = subscribers;
         subscribedChannelsMap[nodeChannelId].last_update = last_update*1000;
+        subscribedChannelsMap[nodeChannelId].avatar = avatar;
       }
     }
 
@@ -2990,6 +3018,7 @@ export class FeedService {
           subscribers : 0,
           last_update : num+index,
           last_post:"",
+          avatar:null,
           isSubscribed:false
         })
       }
@@ -3401,11 +3430,8 @@ export class FeedService {
             nodeId            : server.nodeId,
             feedsUrl          : feedUrl
           }
-
-          console.log("1aaaaaaaaaaaaaa")
           eventBus.publish("feeds:resolveDidSucess", nodeId, did);
       },(err)=>{
-        console.log("22222222bbbbbbbbbbbbb")
         bindingServerCache = defaultServer;
         eventBus.publish("feeds:resolveDidError", nodeId, did, payload);
       });
@@ -3541,11 +3567,13 @@ export class FeedService {
           nodeId            : server.nodeId,
           feedsUrl          : feedUrl
         }
+        this.storeService.set(PersistenceKey.bindingServer,bindingServer);
         this.resolveServer(bindingServer, ConnState.connected);
         eventBus.publish("feeds:issue_credential");
         eventBus.publish("feeds:bindServerFinish",bindingServer);
     },(errserver)=>{
       bindingServer = defaultServer;
+      this.storeService.set(PersistenceKey.bindingServer,bindingServer);
       this.resolveServer(bindingServer, ConnState.connected);
       eventBus.publish("feeds:issue_credential");
       eventBus.publish("feeds:bindServerFinish",bindingServer);
@@ -3655,32 +3683,33 @@ export class FeedService {
   }
 
   removeAllData(){
-    this.storeService.remove(PersistenceKey.firstInit);
-    this.storeService.remove(PersistenceKey.favoriteFeedsMap);
-    this.storeService.remove(PersistenceKey.allFeedsMap);
-    this.storeService.remove(PersistenceKey.eventsMap);
-    this.storeService.remove(PersistenceKey.myFeedsMap);
-    this.storeService.remove(PersistenceKey.myEventMap);
-    this.storeService.remove(PersistenceKey.avatar);
+
+    // this.storeService.remove(PersistenceKey.firstInit);
+    // this.storeService.remove(PersistenceKey.favoriteFeedsMap);
+    // this.storeService.remove(PersistenceKey.allFeedsMap);
+    // this.storeService.remove(PersistenceKey.eventsMap);
+    // this.storeService.remove(PersistenceKey.myFeedsMap);
+    // this.storeService.remove(PersistenceKey.myEventMap);
+    // this.storeService.remove(PersistenceKey.avatar);
     this.storeService.remove(PersistenceKey.signInData);
     this.storeService.remove(PersistenceKey.signInRawData);
-    this.storeService.remove(PersistenceKey.subscribedChannelsMap);
-    this.storeService.remove(PersistenceKey.channelsMap);
-    this.storeService.remove(PersistenceKey.myChannelsMap);
-    this.storeService.remove(PersistenceKey.unreadMap);
-    this.storeService.remove(PersistenceKey.postMap);
-    this.storeService.remove(PersistenceKey.lastPostUpdateMap);
-    this.storeService.remove(PersistenceKey.commentsMap);
-    this.storeService.remove(PersistenceKey.serverStatisticsMap);
-    this.storeService.remove(PersistenceKey.serversStatus);
-    this.storeService.remove(PersistenceKey.subscribeStatusMap);
-    this.storeService.remove(PersistenceKey.likeMap);
+    // this.storeService.remove(PersistenceKey.subscribedChannelsMap);
+    // this.storeService.remove(PersistenceKey.channelsMap);
+    // this.storeService.remove(PersistenceKey.myChannelsMap);
+    // this.storeService.remove(PersistenceKey.unreadMap);
+    // this.storeService.remove(PersistenceKey.postMap);
+    // this.storeService.remove(PersistenceKey.lastPostUpdateMap);
+    // this.storeService.remove(PersistenceKey.commentsMap);
+    // this.storeService.remove(PersistenceKey.serverStatisticsMap);
+    // this.storeService.remove(PersistenceKey.serversStatus);
+    // this.storeService.remove(PersistenceKey.subscribeStatusMap);
+    // this.storeService.remove(PersistenceKey.likeMap);
     // this.storeService.remove(PersistenceKey.bindingServerMap);
-    this.storeService.remove(PersistenceKey.accessTokenMap);
+    // this.storeService.remove(PersistenceKey.accessTokenMap);
 
     this.storeService.remove(PersistenceKey.credential);
-    this.storeService.remove(PersistenceKey.bindingServer);
-    this.storeService.remove(PersistenceKey.serverMap);
+    // this.storeService.remove(PersistenceKey.bindingServer);
+    // this.storeService.remove(PersistenceKey.serverMap);
   }
 
   getBindingServer(): Server{
@@ -3725,6 +3754,17 @@ export class FeedService {
     if(this.getLikeFromId(nodeId+channelId+postId) == undefined)
       return false;
     return true;
+  }
+
+  parseChannelAvatar(avatar: string): string{
+    console.log("avatar=>"+avatar);
+
+    if (avatar.startsWith("img://")){
+      let newAvatar = avatar.replace("img://","");
+      console.log("new avatar=>"+newAvatar);
+      return newAvatar;
+    }
+    return avatar;
   }
 }
 
