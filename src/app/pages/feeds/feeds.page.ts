@@ -83,11 +83,16 @@ export class FeedsPage implements OnInit {
       this.native.setTitleBarBackKeyShown(false);
     }
 
-    public search(){
+    search(){
       this.currentTab = "search";
       this.feedService.refreshChannels();
       this.title = "Explore Feeds";
       titleBarManager.setTitle("Explore Feeds");
       this.native.setTitleBarBackKeyShown(false);
+    }
+
+
+    tabChanged(event){
+      this.currentTab = event.tab;
     }
 }
