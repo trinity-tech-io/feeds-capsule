@@ -1,8 +1,9 @@
 import { Component, OnInit, NgZone } from '@angular/core';
-import { NavController, Events, PopoverController} from '@ionic/angular';
+import { NavController, Events, PopoverController, IonTabs} from '@ionic/angular';
 import { FeedService } from '../../services/FeedService';
 import { Router } from '@angular/router'
 import { CommentComponent } from '../../components/comment/comment.component'
+import { FeedsPage } from 'src/app/pages/feeds/feeds.page'
 
 
 @Component({
@@ -13,6 +14,8 @@ import { CommentComponent } from '../../components/comment/comment.component'
 export class LikesComponent implements OnInit {
   private likeList;
   constructor(
+    private feedspage: FeedsPage,
+    private tabs: IonTabs,
     private popoverController: PopoverController,
     private feedService :FeedService,
     private zone: NgZone,
@@ -91,5 +94,10 @@ export class LikesComponent implements OnInit {
 
   parseAvatar(nodeId: string, channelId: number): string{
     return this.feedService.parseChannelAvatar(this.getChannel(nodeId, channelId).avatar);
+  }
+
+  exploreFeeds(){
+    this.tabs.select("search");
+    this.feedspage.currentTab = "search";
   }
 }
