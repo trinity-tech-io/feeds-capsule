@@ -19,7 +19,6 @@ export class PostfromComponent implements OnInit {
     private router: Router,
     private popover: PopoverController) {
     this.channels = this.feedService.refreshMyChannels();
-    console.log("channels=>"+JSON.stringify(this.channels));
   }
 
   ngOnInit() {}

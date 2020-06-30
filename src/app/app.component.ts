@@ -83,8 +83,8 @@ export class MyApp {
     this.router.navigate(['/menu/servers']);
   }
 
-  test3(){
-    alert("test3");
+  setting(){
+    this.router.navigate(['/menu/setting']);
   }
 
   async splash() {

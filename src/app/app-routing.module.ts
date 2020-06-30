@@ -67,6 +67,7 @@ const routes: Routes = [
   // /feeds/tabs/channels
   { path: 'channels/:nodeId/:channelId', loadChildren: './pages/feeds/home/channels/channels.module#ChannelsPageModule' },
   { path: 'postdetail/:nodeId/:channelId/:postId', loadChildren: './pages/feeds/home/postdetail/postdetail.module#PostdetailPageModule' },
+  { path: 'menu/setting', loadChildren: './pages/feeds/setting/setting.module#SettingPageModule' },
 ];
 
 @NgModule({
