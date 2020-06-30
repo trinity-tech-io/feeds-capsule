@@ -5,19 +5,17 @@
 </ion-header> -->
 <ion-content>
   <div class="center-content-div" *ngIf="postList.length == 0">
-    <div class="center-content" style="height: 330px;">
-      <!-- <div style="background-image: url('../../../../assets/images/empty-feeds-icon.png');"> </div> -->
+    <div class="center-content" style=" height: 330px;">
       <img src="../../../../assets/images/empty-feeds-icon.svg">
       <div class="all-empty" style="margin-top: 20px;">All Empty</div>
       <div class="all-empty-content-text" style="margin-top: 7px;">Not following any feeds yet</div>
 
-        <ion-button  mode="ios" class="explore-feeds" (click)="exploreFeeds()" round>
-          <div class="explore-feeds-text"> Explore Feeds</div>
-        </ion-button>
-      <!-- <div class="explore-feeds">
-      </div> -->
+      <div class="explore-feeds">
+      <ion-button expand="block"  mode="ios" (click)="exploreFeeds()" >
+        <div class="explore-feeds-text"> Explore Feeds</div>
+      </ion-button>
+      </div>
     </div> 
-
   </div>
 
 

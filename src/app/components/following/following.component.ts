@@ -1,7 +1,8 @@
 import { Component, OnInit, NgZone } from '@angular/core';
 import { FeedService } from '../../services/FeedService'
-import { Events } from '@ionic/angular';
-import { Router } from '@angular/router'
+import { Events, IonTabs } from '@ionic/angular';
+import { Router } from '@angular/router';
+import { FeedsPage } from 'src/app/pages/feeds/feeds.page'
 
 @Component({
   selector: 'app-following',
@@ -11,6 +12,8 @@ import { Router } from '@angular/router'
 export class FollowingComponent implements OnInit {
   private channelList;
   constructor(
+    private feedspage: FeedsPage,
+    private tabs: IonTabs,
     private events: Events,
     private zone: NgZone,
     private router: Router,
@@ -33,7 +36,8 @@ export class FollowingComponent implements OnInit {
   }
 
   exploreFeeds(){
-    alert("exploreFeeds");
+    this.tabs.select("search");
+    this.feedspage.currentTab = "search";
   }
 
   parseAvatar(avatar: string): string{

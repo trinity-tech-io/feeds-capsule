@@ -715,8 +715,8 @@ vertical-align: middle;
 
 .center-content{
   width: 100%;
-  display: inline-block;    
 }
+
 
 .all-empty {
   // width: 128px;
@@ -747,18 +747,14 @@ vertical-align: middle;
 }
 
 .explore-feeds {
-  width: 347px;
   height: 41px;
 
   margin-left: 34px;
   margin-right: 34px;
   
-  margin-top: 10px;
+  margin-top: 60px;
   margin-bottom: 10px;
 
-  box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.15);
-  background-color: #368bff;
-  margin-top: 55px;
 }
 
 .explore-feeds-text {

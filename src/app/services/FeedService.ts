@@ -381,15 +381,15 @@ export class FeedService {
       // this.removeAllData();
 
       //TODO resolve Document
-      bindingServer = {
-        name              : "name",
-        owner             : "owner",
-        introduction      : "intro",
-        did               : "did:elastos:ijwMzR44CjUjWEHcXSZSW3EPoBJGbKRThH",
-        carrierAddress    : "FjT35Tj9zZK6nQGhE2BVNJja9oa5hqMtiSvQBpxj9u19qsMcd3Ww",
-        nodeId            : "7hkVY8sAzA8QFritz7eknjPKeQbcPRrLYRdeMzgt37BB",
-        feedsUrl          : "feeds://did:elastos:ijwMzR44CjUjWEHcXSZSW3EPoBJGbKRThH/FjT35Tj9zZK6nQGhE2BVNJja9oa5hqMtiSvQBpxj9u19qsMcd3Ww"
-      }
+      // bindingServer = {
+      //   name              : "name",
+      //   owner             : "owner",
+      //   introduction      : "intro",
+      //   did               : "did:elastos:ijwMzR44CjUjWEHcXSZSW3EPoBJGbKRThH",
+      //   carrierAddress    : "FjT35Tj9zZK6nQGhE2BVNJja9oa5hqMtiSvQBpxj9u19qsMcd3Ww",
+      //   nodeId            : "7hkVY8sAzA8QFritz7eknjPKeQbcPRrLYRdeMzgt37BB",
+      //   feedsUrl          : "feeds://did:elastos:ijwMzR44CjUjWEHcXSZSW3EPoBJGbKRThH/FjT35Tj9zZK6nQGhE2BVNJja9oa5hqMtiSvQBpxj9u19qsMcd3Ww"
+      // }
       // this.storeService.set(PersistenceKey.bindingServer,bindingServer);
   }
   initData(){
@@ -504,7 +504,7 @@ export class FeedService {
 
     bindingServer = this.storeService.get(PersistenceKey.bindingServer);
 
-    this.initTestData();
+    // this.initTestData();
 
   }
 
@@ -3672,32 +3672,31 @@ export class FeedService {
 
   removeAllData(){
 
-    // this.storeService.remove(PersistenceKey.firstInit);
-    // this.storeService.remove(PersistenceKey.favoriteFeedsMap);
-    // this.storeService.remove(PersistenceKey.allFeedsMap);
-    // this.storeService.remove(PersistenceKey.eventsMap);
-    // this.storeService.remove(PersistenceKey.myFeedsMap);
-    // this.storeService.remove(PersistenceKey.myEventMap);
-    // this.storeService.remove(PersistenceKey.avatar);
+    this.storeService.remove(PersistenceKey.firstInit);
+    this.storeService.remove(PersistenceKey.favoriteFeedsMap);
+    this.storeService.remove(PersistenceKey.allFeedsMap);
+    this.storeService.remove(PersistenceKey.eventsMap);
+    this.storeService.remove(PersistenceKey.myFeedsMap);
+    this.storeService.remove(PersistenceKey.myEventMap);
+    this.storeService.remove(PersistenceKey.avatar);
     this.storeService.remove(PersistenceKey.signInData);
     this.storeService.remove(PersistenceKey.signInRawData);
-    // this.storeService.remove(PersistenceKey.subscribedChannelsMap);
-    // this.storeService.remove(PersistenceKey.channelsMap);
-    // this.storeService.remove(PersistenceKey.myChannelsMap);
-    // this.storeService.remove(PersistenceKey.unreadMap);
-    // this.storeService.remove(PersistenceKey.postMap);
-    // this.storeService.remove(PersistenceKey.lastPostUpdateMap);
-    // this.storeService.remove(PersistenceKey.commentsMap);
-    // this.storeService.remove(PersistenceKey.serverStatisticsMap);
-    // this.storeService.remove(PersistenceKey.serversStatus);
-    // this.storeService.remove(PersistenceKey.subscribeStatusMap);
-    // this.storeService.remove(PersistenceKey.likeMap);
-    // this.storeService.remove(PersistenceKey.bindingServerMap);
-    // this.storeService.remove(PersistenceKey.accessTokenMap);
+    this.storeService.remove(PersistenceKey.subscribedChannelsMap);
+    this.storeService.remove(PersistenceKey.channelsMap);
+    this.storeService.remove(PersistenceKey.myChannelsMap);
+    this.storeService.remove(PersistenceKey.unreadMap);
+    this.storeService.remove(PersistenceKey.postMap);
+    this.storeService.remove(PersistenceKey.lastPostUpdateMap);
+    this.storeService.remove(PersistenceKey.commentsMap);
+    this.storeService.remove(PersistenceKey.serverStatisticsMap);
+    this.storeService.remove(PersistenceKey.serversStatus);
+    this.storeService.remove(PersistenceKey.subscribeStatusMap);
+    this.storeService.remove(PersistenceKey.likeMap);
+    this.storeService.remove(PersistenceKey.accessTokenMap);
 
     this.storeService.remove(PersistenceKey.credential);
-    // this.storeService.remove(PersistenceKey.bindingServer);
-    // this.storeService.remove(PersistenceKey.serverMap);
+    this.storeService.remove(PersistenceKey.bindingServer);
+    this.storeService.remove(PersistenceKey.serverMap);
   }
 
   getBindingServer(): Server{
