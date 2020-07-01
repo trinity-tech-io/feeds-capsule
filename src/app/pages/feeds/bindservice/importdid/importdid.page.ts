@@ -54,17 +54,11 @@ export class ImportdidPage implements OnInit {
   }
 
   createNewDid(){
-
-    // this.navCtrl.pop().then(()=>{
-    //   this.router.navigate(['/bindservice/publishdid/']);
-    // });
-
     this.feedService.createDidRequest(this.nodeId);
   }
 
   importDid(){
-    //TODO
-    alert("TODO");
+    this.router.navigate(['/bindservice/importmnemonic', this.nodeId]);
   }
 
   abort(){

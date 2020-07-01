@@ -3338,15 +3338,15 @@ export class FeedService {
   }
 
 
-  importDidRequest(nodeId: string, params){
+  importDidRequest(nodeId: string, mnemonic: string, passphrase: string, index: number){
     let request: Communication.import_did_request = {
       version: "1.0",
       method  : "import_did",
       id      : -1,
       params  : {
-        mnemonic: "string",
-        passphrase: "string",
-        index: 1
+        mnemonic: mnemonic,
+        passphrase: passphrase,
+        index: index
       }
     }
 

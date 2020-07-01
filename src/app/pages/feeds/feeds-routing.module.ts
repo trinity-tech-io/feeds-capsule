@@ -16,14 +16,6 @@ const routes: Routes = [
             path: '',
             loadChildren: './home/home.module#HomePageModule'
           },
-          // { 
-          //   path: 'channels/:nodeId/:channelId', 
-          //   loadChildren: './home/channels/channels.module#ChannelsPageModule' 
-          // },
-          // { 
-          //   path: 'postdetail/:nodeId/:channelId/:postId', 
-          //   loadChildren: './home/postdetail/postdetail.module#PostdetailPageModule' 
-          // },
         ]
       },
       // 2nd Tab
@@ -34,10 +26,6 @@ const routes: Routes = [
             path: '',
             loadChildren: './profile/profile.module#ProfilePageModule'
           },
-          // {
-          //   path: ':dappId',
-          //   loadChildren: './home/home.module#HomePageModule'
-          // }
         ]
       },
       // 3rd Tab
@@ -48,10 +36,6 @@ const routes: Routes = [
             path: '',
             loadChildren: './notification/notification.module#NotificationPageModule'
           },
-          // {
-          //   path: ':categoryType',
-          //   loadChildren: './home/home.module#HomePageModule'
-          // }
         ]
       },
       // 4th Tab
@@ -64,38 +48,13 @@ const routes: Routes = [
           },
         ]
       },
-
-      // add 
-      // {
-      //   path: 'add',
-      //   children: [
-      //     {
-      //       path: '',
-      //       loadChildren: './search/search.module#SearchPageModule'
-      //     },
-      //   ]
-      // },
-        // Default Tab
       {
         path: '',
-        redirectTo: '/feeds/tabs/home',
+        redirectTo: '/tabs/home',
         pathMatch: 'full'
       },
     ]
   },
-  {
-    path: '',
-    redirectTo: './home/home.module#HomePageModule',
-    pathMatch: 'full'
-  },
-  // { path: 'channels', loadChildren: './home/channels/channels.module#ChannelsPageModule' },
-  // { path: 'createnewfeed', loadChildren: './createnewfeed/createnewfeed.module#CreatenewfeedPageModule' },
-  // { path: 'createnewpost', loadChildren: './createnewpost/createnewpost.module#CreatenewpostPageModule' },
-  
-  // { path: 'profile', loadChildren: './profile/profile.module#ProfilePageModule' },
-  // { path: 'notification', loadChildren: './notification/notification.module#NotificationPageModule' },
-  // { path: 'home', loadChildren: './home/home.module#HomePageModule' },
-  // { path: 'search', loadChildren: './search/search.module#SearchPageModule' },
 ];
 
 @NgModule({

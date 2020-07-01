@@ -65,7 +65,7 @@ export class MyApp {
 
         this.carrierService.init();
         // this.router.navigate(['/favorite']);
-        this.router.navigate(['/tabs']);
+        this.router.navigate(['/tabs/home']);
         this.feedService.updateSignInDataExpTime(signInData);
     });
 }

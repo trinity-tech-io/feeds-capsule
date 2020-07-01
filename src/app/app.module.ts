@@ -84,13 +84,16 @@ export function TranslateLoaderFactory() {
     PostfromComponentPageModule,
     ServerlistComponentModule,
     SplashscreenPageModule,
-    IonicModule.forRoot(),
+    IonicModule.forRoot({
+      rippleEffect: false,
+      mode: 'ios'
+    }),
     TranslateModule.forRoot({
       loader: {
           provide: TranslateLoader,
           useFactory: (TranslateLoaderFactory)
       }
-  }),
+    }),
   ],
   bootstrap: [MyApp],
   entryComponents: [

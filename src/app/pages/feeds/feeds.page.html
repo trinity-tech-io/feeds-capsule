@@ -1,20 +1,17 @@
-<ion-tabs (ionTabsDidChange)="tabChanged($event)">
-  <div style="width: 100%; height: 2px; background-image: url(../../../assets/images/line.svg); bottom: 0px;"> </div>
-  <ion-tab-bar style="height: 58.5px; width: 100%;" slot="bottom">
-
+<ion-tabs  (ionTabsDidChange)="tabChanged($event)">
+  <div class="tabs-line"> </div>
+  
+  <ion-tab-bar class="tabs-div" >
     <ion-tab-button tab="home" (click)="home()">
-      <!-- <ion-icon name="Home" mode="ios"></ion-icon> -->
-      <!-- <img  class="home-tab" [ngClass]="{'home-tab-selected': currentTab === 'home'}"> -->
       <div  class="home-tab" [ngClass]="{'home-tab-selected': currentTab == 'home'}"></div>
     </ion-tab-button>
 
     <ion-tab-button tab="profile" (click)="profile()">
       <div  class="profile-tab" [ngClass]="{'profile-tab-selected': currentTab == 'profile'}"></div>
-      <!-- <ion-icon name="person" mode="ios"></ion-icon> -->
     </ion-tab-button>
 
-    <ion-tab-button tab="" (click)="create()">
-      <div class="add-tab"></div>
+    <ion-tab-button>
+      <div class="add-tab" (click)="create()"></div>
     </ion-tab-button>
 
     <ion-tab-button tab="notification" (click)="notification()">
@@ -24,11 +21,5 @@
     <ion-tab-button tab="search" (click)="search()">
       <div class="search-tab" [ngClass]="{'search-tab-selected': currentTab == 'search'}"></div>
     </ion-tab-button>
-
-    
   </ion-tab-bar>
-
-  <!-- <ion-tab-button class="center-tab" (click)="create()">
-    <ion-icon name="add" ></ion-icon>
-  </ion-tab-button> -->
 </ion-tabs>
