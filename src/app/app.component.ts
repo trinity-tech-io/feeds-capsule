@@ -75,8 +75,9 @@ export class MyApp {
   }
 
 
-  test1(){
-    alert("test1");
+  profiledetail(){
+    this.router.navigate(['/menu/profiledetail']);
+    
   }
 
   goToFeedSource(){

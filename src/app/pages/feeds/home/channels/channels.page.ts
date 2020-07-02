@@ -61,7 +61,7 @@ export class ChannelsPage implements OnInit {
   }
 
   ngOnInit() {
-    titleBarManager.setTitle("Feed");
+    titleBarManager.setTitle("Feeds");
     this.native.setTitleBarBackKeyShown(true);
   }
 

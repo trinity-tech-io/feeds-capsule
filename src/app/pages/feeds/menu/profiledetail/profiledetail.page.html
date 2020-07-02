@@ -1,0 +1,93 @@
+
+<ion-content>
+  <div class="channel-img-div">
+    <img *ngIf="avatar == ''" class="profile-img" src="assets/images/default-contact.svg">
+    <img *ngIf="avatar != ''" class="profile-img" [src]="avatar">
+  </div>
+
+  <div class="channel-title-div">
+    <ion-label class="channel-title">{{name}}</ion-label>
+  </div>
+
+  <div class="center-flex">
+      <img class="profile-sub-img" src="assets/images/bubble2.svg">
+      <ion-label class="profile-sub-text">{{subscribers}} </ion-label>
+      <ion-label  class="profile-subscribe">Subscribers</ion-label >
+  </div>
+
+  <div class="channel-desc-div">
+    <ion-label class="channel-desc" >{{description}} </ion-label>
+  </div>
+
+
+  <div class="detail-div">
+
+    <div class="detail-key-div">
+      <ion-label class="detail-key">Name</ion-label>
+    </div>
+    <div class="detail-value-div">
+      <ion-label class="detail-value">{{name}}</ion-label>
+    </div>
+    <div class="detail-line"></div>
+  
+    <div class="detail-key-div">
+      <ion-label class="detail-key">Did</ion-label>
+    </div>
+    <div class="detail-value-div">
+      <ion-label  class="detail-value">{{did}} </ion-label>
+    </div>
+    <div class="detail-line"></div>
+  
+    <div *ngIf="gender != ''">
+      <div class="detail-key-div">
+        <ion-label class="detail-key">Gender</ion-label>
+      </div>
+      <div class="detail-value-div">
+        <ion-label  class="detail-value">{{gender}} </ion-label>
+      </div>
+      <div class="detail-line"></div>
+    </div>
+  
+  
+    <div  *ngIf="telephone != ''">
+      <div class="detail-key-div">
+        <ion-label class="detail-key">Phone Number</ion-label>
+      </div>
+      <div class="detail-value-div">
+        <ion-label class="detail-value">{{telephone}}</ion-label>
+      </div>
+      <div class="detail-line"></div>
+    </div>
+  
+    <div *ngIf="email != ''">
+      <div class="detail-key-div">
+        <ion-label class="detail-key">Email</ion-label>
+      </div>
+      <div class="detail-value-div">
+        <ion-label class="detail-value">{{email}}</ion-label>
+      </div>
+      <div class="detail-line"></div>
+    </div>
+  
+    <div *ngIf="location != ''">
+      <div class="detail-key-div">
+        <ion-label class="detail-key">Location</ion-label>
+      </div>
+      <div class="detail-value-div">
+        <ion-label class="detail-value">{{location}}</ion-label>
+      </div> 
+      <div class="detail-line"></div>
+    </div>
+  
+    <div *ngIf="ownChannelSourceDid != ''">
+      <div class="detail-key-div">
+        <ion-label class="detail-key">Owned feeds service</ion-label>
+      </div>
+      <div class="detail-value-div">
+        <ion-label class="detail-value">{{ownChannelSourceDid}}</ion-label>
+      </div> 
+      <div class="detail-line"></div>
+    </div>
+
+  </div>  
+</ion-content>

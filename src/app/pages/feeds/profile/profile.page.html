@@ -1,32 +1,24 @@
 <ion-content>
   
+
   <div class="channel-img-div">
-    <!-- <img class="channel-img" src="../../../../assets/images/component-307-206.png"> -->
-    <img src="../../../../assets/images/screenshot-2020-04-26-at-03-20-46.png"
-     srcset="../../../../assets/images/screenshot-2020-04-26-at-03-20-46@2x.png 2x,
-     ../../../../assets/images/screenshot-2020-04-26-at-03-20-46@3x.png 3x"
-     class="channel-img">
+    <img *ngIf="avatar == ''" class="profile-img" src="assets/images/default-contact.svg">
+    <img *ngIf="avatar != ''" class="profile-img" [src]="avatar">
   </div>
 
   <div class="channel-title-div">
     <ion-label class="channel-title">{{name}}</ion-label>
   </div>
 
-  <div class="channel-owner-div">
-    <ion-label class="channel-owner">@{{name}}</ion-label>
+  <div class="center-flex">
+      <img class="profile-sub-img" src="assets/images/bubble2.svg">
+      <ion-label class="profile-sub-text">{{subscribers}} </ion-label>
+      <ion-label  class="profile-subscribe">Subscribers</ion-label>
   </div>
 
   <div class="channel-desc-div">
-    <ion-label class="channel-desc">{{description}}</ion-label>
+    <ion-label class="channel-desc" >{{description}} </ion-label>
   </div>
-
-  <!-- <div class="channel-follow-div">
-    <img src="../../../../assets/images/bubble.svg" class="bubble">
-    <ion-label class="channel-follower">11 follower</ion-label>
-    
-    <img src="../../../../assets/images/bubble.svg" class="bubble_right">
-    <ion-label class="channel-following">11 following</ion-label>
-  </div> -->
 
 
   <ion-slides [options]="slideOpts">

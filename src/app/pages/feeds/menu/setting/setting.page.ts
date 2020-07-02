@@ -1,6 +1,6 @@
 import { Component, OnInit, NgZone } from '@angular/core';
 import { NativeService } from 'src/app/services/NativeService';
-import { FeedService } from '../../../services/FeedService';
+import { FeedService } from 'src/app/services/FeedService';
 import { NavController, AlertController } from '@ionic/angular';
 import { Router } from '@angular/router';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;

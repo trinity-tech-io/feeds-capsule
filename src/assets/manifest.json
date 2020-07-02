@@ -8,7 +8,7 @@
   "description": "",
   "start_url": "index.html",
   "type": "app",
-  "category": "finance",
+  "category": "social",
   "icons": [
     {
       "src": "assets/images/logo.png",
@@ -22,8 +22,8 @@
     }
   ],
   "author": {
-    "name": "stiartsly",
-    "email": "stiartsly@gmail.com",
+    "name": "trinity-tech team",
+    "email": "support@trinity-tech.io",
     "website": ""
   },
   "default_locale": "en",

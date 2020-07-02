@@ -12,7 +12,7 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
   styleUrls: ['./feeds.page.scss'],
 })
 export class FeedsPage implements OnInit {
-  public title = "My Timeline";
+  public title = "My Feeds Timeline";
   public currentTab = "home";
   constructor(
     private navCtrl: NavController,
@@ -64,7 +64,7 @@ export class FeedsPage implements OnInit {
     home(){
       this.currentTab = "home";
       // this.feedService.currentTab = "home";
-      this.title = "My Timeline";
+      this.title = "My Feeds Timeline";
       titleBarManager.setTitle(this.title);
       this.native.setTitleBarBackKeyShown(false);
     }

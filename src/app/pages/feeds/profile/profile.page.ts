@@ -11,6 +11,8 @@ export class ProfilePage implements OnInit {
   private selectType: String = "Details"; 
   private description: String = "";
   private name: string = "";
+  private subscribers = 0;
+  private avatar = "";
   slideOpts = {
     initialSlide: 0,
     speed: 100,
