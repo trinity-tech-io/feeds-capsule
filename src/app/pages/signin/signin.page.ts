@@ -5,6 +5,8 @@ import { FeedService } from 'src/app/services/FeedService';
 import { CarrierService } from 'src/app/services/CarrierService';
 import { Router} from '@angular/router';
 import { LoadingController } from '@ionic/angular';
+import { NativeService } from 'src/app/services/NativeService';
+declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 @Component({
   selector: 'app-signin',
@@ -19,6 +21,7 @@ export class SigninPage implements OnInit {
   public emailAddress: string = "";
 
   constructor(
+    private native: NativeService,
     private zone: NgZone,
     private feedService: FeedService,
     private router: Router,
@@ -26,7 +29,12 @@ export class SigninPage implements OnInit {
     private carrierService:CarrierService) { }
 
   ngOnInit() {
-    // this.feedService.removeAllData();
+
+  }
+
+  ionViewDidEnter() {
+    titleBarManager.setTitle("SignIn");
+    this.native.setTitleBarBackKeyShown(false);
   }
 
   signIn(){

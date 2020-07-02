@@ -1,7 +1,7 @@
 import { Component, OnInit, NgZone } from '@angular/core';
 import { NativeService } from 'src/app/services/NativeService';
 import { FeedService } from '../../../services/FeedService';
-import { AlertController } from '@ionic/angular';
+import { NavController, AlertController } from '@ionic/angular';
 import { Router } from '@angular/router';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
@@ -13,6 +13,7 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 export class SettingPage implements OnInit {
   private buttonDisable:boolean = false;
   constructor(
+    private navCtrl: NavController,
     private router: Router,
     private zone: NgZone,
     private feedService :FeedService,
@@ -46,22 +47,13 @@ export class SettingPage implements OnInit {
           handler: () => {
 
             this.feedService.removeAllData();
+            this.navCtrl.navigateRoot(['/signin']);
           }
         }
       ]
     });
 
     await alert.present();
-  }
-
-  test(){
-    this.zone.run(()=>{
-      this.buttonDisable = true;
-    })
-
-    this.router.navigate(['/bindservice/importmnemonic']);
-
-
   }
    
 }
