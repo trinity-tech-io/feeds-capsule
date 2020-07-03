@@ -7,6 +7,7 @@ import { FeedService } from './services/FeedService';
 import { Router } from '@angular/router';
 import { SplashscreenPage } from './pages/splashscreen/splashscreen.page';
 import { MenuController } from '@ionic/angular';
+import { AppService } from './services/AppService';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 
@@ -29,13 +30,14 @@ export class MyApp {
     private feedService: FeedService,
     private router: Router,
     private modalCtrl: ModalController,
+    private appService: AppService,
     private carrierService:CarrierService) {
       // this.splash();
       // this.router.navigate(['/tabs']);
     this.initializeApp();
 
-    titleBarManager.setBackgroundColor("#FFFFFF");
-    titleBarManager.setForegroundMode(TitleBarPlugin.TitleBarForegroundMode.DARK);
+    //titleBarManager.setBackgroundColor("#FFFFFF");
+    //titleBarManager.setForegroundMode(TitleBarPlugin.TitleBarForegroundMode.DARK);
 
     titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.OUTER_RIGHT, {
       key: "more",
@@ -53,8 +55,8 @@ export class MyApp {
     this.splash();
     this.platform.ready().then(() => {
         this.statusBar.styleDefault();
-        // this.splashScreen.hide();
-        
+        // this.splashScreen.hide();     
+        this.appService.init();
         let signInData = this.feedService.getSignInData();
         if ( signInData == null || 
              signInData == undefined ||
