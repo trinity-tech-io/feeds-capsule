@@ -32,6 +32,7 @@ import { StorageService } from './services/StorageService';
 import { JsonRPCService } from './services/JsonRPCService';
 // import { TransportService } from './services/TransportService';
 import { AppService } from './services/AppService';
+import { ThemeService } from './services/theme.service';
 
 import { PopupProvider } from './services/popup';
 import { CameraService } from './services/CameraService';
@@ -107,6 +108,7 @@ export function TranslateLoaderFactory() {
     CarrierService,
     NativeService,
     FeedService,
+    ThemeService,
     JsonRPCService,
     // TransportService,
     InAppBrowser,

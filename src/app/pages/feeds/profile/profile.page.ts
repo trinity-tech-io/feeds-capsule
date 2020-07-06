@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FeedService } from 'src/app/services/FeedService';
-
+import { ThemeService } from 'src/app/services/theme.service';
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.page.html',
@@ -20,7 +20,8 @@ export class ProfilePage implements OnInit {
   };
 
   constructor(
-    private feedService: FeedService) {
+    private feedService: FeedService,
+    public theme:ThemeService) {
     let signInData = this.feedService.getSignInData();
     this.name = signInData.name;
 

@@ -23,8 +23,8 @@ export class FeedsPage implements OnInit {
     }
 
   ngOnInit() {
-    titleBarManager.setBackgroundColor("#FFFFFF");
-    titleBarManager.setForegroundMode(TitleBarPlugin.TitleBarForegroundMode.DARK);
+    //titleBarManager.setBackgroundColor("#FFFFFF");
+    //titleBarManager.setForegroundMode(TitleBarPlugin.TitleBarForegroundMode.DARK);
   }
 
   ionViewDidEnter() {

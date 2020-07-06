@@ -2,7 +2,7 @@ import { Component, OnInit, NgZone } from '@angular/core';
 import { Events } from '@ionic/angular';
 import { FeedService } from 'src/app/services/FeedService';
 import { NativeService } from '../../services/NativeService';
-
+import { ThemeService } from '../../services/theme.service';
 @Component({
   selector: 'app-details',
   templateUrl: './details.component.html',
@@ -21,7 +21,8 @@ export class DetailsComponent implements OnInit {
     private event: Events,
     private zone: NgZone,
     private native: NativeService,
-    private feedService: FeedService) {
+    private feedService: FeedService,
+    public theme:ThemeService) {
       this.event.subscribe('feeds:bindServerFinish', (bindingServer)=>{
         this.ownChannelSourceDid = bindingServer.did;
       })
