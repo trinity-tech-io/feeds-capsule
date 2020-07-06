@@ -878,13 +878,18 @@ export class FeedService {
   friendConnectionCallback(){
     this.events.subscribe('carrier:friendConnection', ret => {
       eventBus.publish("feeds:friendConnection",ret);
-
-      if (friendConnectionMap == null || friendConnectionMap == undefined)
-        friendConnectionMap = {};
-  
       let friendId = ret.friendId;
       let friendStatus = ret.status;
+      
+      this.doFriendConnection(friendId, friendStatus);
 
+    });
+  }
+
+  doFriendConnection(friendId: string, friendStatus:any){
+    if (friendConnectionMap == null || friendConnectionMap == undefined)
+        friendConnectionMap = {};
+  
       friendConnectionMap[friendId] = friendStatus;
 
       if(serversStatus == null ||serversStatus == undefined)
@@ -914,7 +919,6 @@ export class FeedService {
 
       this.storeService.set(PersistenceKey.serversStatus,serversStatus);
       eventBus.publish(PublishType.serverConnectionChanged,serversStatus);
-    });
   }
 
   friendAddCallback(){
@@ -3648,11 +3652,12 @@ export class FeedService {
         eventBus.publish("feeds:issue_credential");
         eventBus.publish("feeds:bindServerFinish",bindingServer);
 
-        this.signinChallengeRequest(nodeId,true);
+        this.doFriendConnection(nodeId, ConnState.connected);
+        // this.signinChallengeRequest(nodeId,true);
     },(errserver)=>{
       bindingServer = defaultServer;
       this.storeService.set(PersistenceKey.bindingServer,bindingServer);
-      this.resolveServer(bindingServer, ConnState.connected);
+      // this.resolveServer(bindingServer, ConnState.connected);
       eventBus.publish("feeds:issue_credential");
       eventBus.publish("feeds:bindServerFinish",bindingServer);
       this.addServer(bindingServer.carrierAddress,
@@ -3666,7 +3671,8 @@ export class FeedService {
         },(error)=>{
 
         });
-      this.signinChallengeRequest(nodeId,true);
+        this.doFriendConnection(nodeId, ConnState.connected);
+      // this.signinChallengeRequest(nodeId,true);
     });
 
 

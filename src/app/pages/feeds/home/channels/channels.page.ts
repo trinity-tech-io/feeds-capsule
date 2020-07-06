@@ -54,8 +54,8 @@ export class ChannelsPage implements OnInit {
     this.events.subscribe('feeds:postDataUpdate',()=>{
       this.zone.run(() => {
         
-        
-        this.postList = this.feedService.getPostList();;
+        this.postList = this.feedService.getPostListFromChannel(this.nodeId, this.channelId);
+
       });
     });
   }
