@@ -8,6 +8,7 @@ import { Router } from '@angular/router';
 import { SplashscreenPage } from './pages/splashscreen/splashscreen.page';
 import { MenuController } from '@ionic/angular';
 import { AppService } from './services/AppService';
+import { ThemeService } from 'src/app/services/theme.service';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 
@@ -31,7 +32,8 @@ export class MyApp {
     private router: Router,
     private modalCtrl: ModalController,
     private appService: AppService,
-    private carrierService:CarrierService) {
+    private carrierService:CarrierService,
+    public theme:ThemeService) {
       // this.splash();
       // this.router.navigate(['/tabs']);
     this.initializeApp();

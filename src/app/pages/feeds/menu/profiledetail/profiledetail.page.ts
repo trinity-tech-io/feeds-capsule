@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FeedService } from 'src/app/services/FeedService';
 import { NativeService } from 'src/app/services/NativeService';
+import { ThemeService } from 'src/app/services/theme.service';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 @Component({
@@ -22,7 +23,8 @@ export class ProfiledetailPage implements OnInit {
 
   constructor(
     private native: NativeService,
-    private feedService:FeedService) {
+    private feedService:FeedService,
+    public  theme:ThemeService) {
       let signInData = feedService.getSignInData();
       this.name = signInData.name;
       this.description = signInData.description;

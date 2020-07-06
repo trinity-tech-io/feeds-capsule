@@ -1,5 +1,5 @@
 <ion-app>
-    <ion-menu side="end" menuId="menu">
+    <ion-menu side="end" menuId="menu" [class.darkContainer]="theme.darkMode">
         <ion-content>
             <ion-list>
                 <div class="menu-profile-div">
@@ -21,20 +21,23 @@
 
                 <ion-menu-toggle >
                     <ion-item (click)="profiledetail()" lines="none">
-                        <img src="../assets/images/menu-user.svg" class="menu-user">
-                        <div class="menu-profile">Profile Details</div>
+                        <img src="../assets/images/menu-user.svg" class="menu-user" *ngIf="!theme.darkMode">
+                        <img src="../assets/images/menu-user-dark.svg" class="menu-user" *ngIf="theme.darkMode">
+                        <div class="menu-profile white">Profile Details</div>
                     </ion-item>
                 </ion-menu-toggle>
                 <ion-menu-toggle >
                     <ion-item (click)="goToFeedSource()" lines="none">
-                        <img src="../assets/images/menu-feeds.svg" class="menu-feeds">
-                        <div class="menu-profile">Feed Sources</div>
+                        <img src="../assets/images/menu-feeds.svg" class="menu-feeds" *ngIf="!theme.darkMode">
+                        <img src="../assets/images/menu-feeds-dark.svg" class="menu-feeds" *ngIf="theme.darkMode">
+                        <div class="menu-profile white">Feed Sources</div>
                     </ion-item>
                 </ion-menu-toggle>
                 <ion-menu-toggle >
                     <ion-item (click)="setting()" lines="none">
-                        <img src="../assets/images/menu-setting.svg" class="menu-setting">
-                        <div class="menu-profile">Settings</div>
+                        <img src="../assets/images/menu-setting.svg" class="menu-setting" *ngIf="!theme.darkMode">
+                        <img src="../assets/images/menu-setting-dark.svg" class="menu-setting" *ngIf="theme.darkMode">
+                        <div class="menu-profile white">Settings</div>
                     </ion-item>
                 </ion-menu-toggle>
                 <!-- <ion-menu-toggle>
