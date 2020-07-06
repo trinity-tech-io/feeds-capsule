@@ -7,8 +7,8 @@ const routes: Routes = [
   { path: 'splashscreen', loadChildren: './pages/splashscreen/splashscreen.module#SplashscreenPageModule' },
 
   { path: 'menu/servers', loadChildren: './pages/servers/servers.module#ServersPageModule' },
-  { path: 'menu/servers/server-info/:nodeId', loadChildren: './pages/servers/server-info/server-info.module#ServerInfoPageModule'},
-  { path: 'menu/servers/add-server/:address', loadChildren: './pages/servers/add-server/add-server.module#AddServerPageModule'},
+  { path: 'menu/servers/server-info/:address/:nodeId', loadChildren: './pages/servers/server-info/server-info.module#ServerInfoPageModule'},
+  { path: 'menu/servers/add-server', loadChildren: './pages/servers/add-server/add-server.module#AddServerPageModule'},
   { path: 'menu/servers/add-server/scan', loadChildren: './pages/servers/add-server/scan/scan.module#ScanPageModule' },
 
   { path: 'signin', loadChildren: './pages/signin/signin.module#SigninPageModule' },

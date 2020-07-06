@@ -42,7 +42,6 @@ export class ImportmnemonicPage implements OnInit {
       return ;
     }
 
-    console.log("index = "+this.index);
     this.feedService.importDidRequest(this.nodeId, this.mnemonic,this.passphrase,this.index);
   }
 

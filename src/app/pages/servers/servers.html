@@ -1,9 +1,148 @@
 <ion-content>
-  <!-- <div class="offline-content" *ngIf=" connectStatus != 0 ">
-    <ion-label>disconnect</ion-label>
-  </div> -->
+  <div>
+    <div *ngIf="serverList.length == 0 && myFeedSource == null" class="empty-server-div">
+      <div class="center-flex">
+        <img class="empty-img" src="assets/images/empty-feeds-icon.svg">
+      </div>
+      <div class="all-empty-text">All Empty</div>
+      <div class="no-feed-sources-text">No Feed Sources</div>
 
-  <div class="ion-padding">
+      <div class="explore-feeds" >
+        <ion-button expand="block"  mode="ios" (click)="exploreFeedSource()" >
+          <div class="explore-feeds-text"> Explore Feed Sources</div>
+        </ion-button>
+      </div>
+
+      <div class="bind-feed-source-button-div">
+        <ion-button expand="block"  mode="ios" (click)="bindFeedSource()" >
+          <div class="explore-feeds-text"> Bind Feed Source</div>
+        </ion-button>
+      </div>
+    </div>
+  </div>
+
+  <div class="feed-source">
+    <div class="feed-source-div" *ngIf="myFeedSource != null">
+      <img class="feed-source-img" src="assets/images/play.svg">
+      <ion-label class="feed-source-text">My Feed Sources</ion-label>
+
+      <ion-card class="ion-no-padding ion-no-margin feed-source-card" (click)="navToServerInfo(myFeedSource.nodeId)">
+        <ion-card-content class="ion-no-padding ion-no-margin">
+          <div class="feed-source-card-right-img-div"> 
+            <img class="feed-source-card-right-img" src="assets/images/chevron-thin-right.svg">
+          </div>
+
+          <div class="feed-source-card-content">
+            <div class="feed-source-card-img-div">
+              <img class="feed-source-card-img" src="assets/images/profile-2.svg" >
+              <div class="feed-source-card-status">
+                <div class="online-circle" *ngIf="serversStatus[myFeedSource.nodeId].status == 0"></div>
+                <div class="offline-circle" *ngIf="serversStatus[myFeedSource.nodeId].status == 1"></div>
+              </div>
+            </div>
+
+            <div class="feed-source-card-content-detail">
+              <div class="name">{{myFeedSource.name}}</div>
+              <div class="owner">{{myFeedSource.owner}}</div>
+              <div class="users-img-div" *ngIf="serversStatus[myFeedSource.nodeId].status == 0">
+                <img class="users-img" src="assets/images/users-online.svg">
+                <div class="users-num-online-text"> {{serverStatisticsMap[myFeedSource.nodeId].connecting_clients}}</div>
+                <div class="users-online-text">Users</div>
+              </div>
+
+              <div class="users-img-div" *ngIf="serversStatus[myFeedSource.nodeId].status == 1">
+                <img class="users-img" src="assets/images/users-offline.svg">
+                <div class="users-num-offline-text"> {{serverStatisticsMap[myFeedSource.nodeId].connecting_clients}}</div>
+                <div class="users-offline-text">Users</div>
+              </div>
+
+            </div>
+          </div>
+        </ion-card-content>
+      </ion-card>
+    </div>
+
+
+
+
+
+    <div class="feed-source-div" *ngIf="serverList.length >0">
+      <img class="feed-source-img" src="assets/images/play.svg">
+      <ion-label class="feed-source-text">Current Feed Sources</ion-label>
+
+      <ion-card class="ion-no-padding ion-no-margin"  class="feed-source-card" *ngFor="let server of serverList" (click)="navToServerInfo(server.nodeId)">
+        <ion-card-content class="ion-no-padding ion-no-margin">
+          <div class="feed-source-card-right-img-div"> 
+            <img class="feed-source-card-right-img" src="assets/images/chevron-thin-right.svg">
+          </div>
+
+          <div class="feed-source-card-content">
+            <div class="feed-source-card-img-div">
+              <img class="feed-source-card-img" src="assets/images/profile-2.svg" >
+              <div class="feed-source-card-status">
+                <div class="online-circle" *ngIf="serversStatus[server.nodeId].status == 0"></div>
+                <div class="offline-circle" *ngIf="serversStatus[server.nodeId].status == 1"></div>
+
+              </div>
+            </div>
+
+            <div class="feed-source-card-content-detail">
+              <div class="name">{{server.name}}</div>
+              <div class="owner">{{server.owner}}</div>
+              <div class="users-img-div" *ngIf="serversStatus[server.nodeId].status == 0">
+                <img class="users-img" src="assets/images/users-online.svg">
+                <div class="users-num-online-text"> {{serverStatisticsMap[server.nodeId].connecting_clients}}</div>
+                <div class="users-online-text">Users</div>
+              </div>
+
+
+              <div class="users-img-div" *ngIf="serversStatus[server.nodeId].status == 1">
+                <img class="users-img" src="assets/images/users-offline.svg">
+                <div class="users-num-offline-text">{{serverStatisticsMap[server.nodeId].connecting_clients}}</div>
+                <div class="users-offline-text">Users</div>
+              </div>
+            </div>
+          </div>
+        </ion-card-content>
+      </ion-card>
+      <div class="button-div" *ngIf="myFeedSource == null">
+        <div class="explore-feed-source-button" (click)="exploreFeedSource()">Explore Feed Sources</div>
+        <div class="bind-feed-source-button" (click)="bindFeedSource()">Bind Feed Source</div>
+      </div>
+    </div>
+    <div class="button-div" *ngIf="myFeedSource != null">
+      <div class="explore-feed-source-button" (click)="exploreFeedSource()">Explore Feed Sources</div>
+    </div>
+
+
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <!-- <div class="ion-padding">
     <ion-button
       expand="block"
       mode="ios"
@@ -23,8 +162,6 @@
           <b>DID:</b>{{server.did}}<br>
           <b>Name: </b>{{server.name}}<br>
           <b>Owner:</b>{{server.owner}}<br>
-          <!-- <b>NodeId:</b>{{server.nodeId}}<br> -->
-          
 
         </ion-label>
         <ion-button expand="block" (click)="signin(server.nodeId)" *ngIf="checkSignIn(server.nodeId) == false">signin</ion-button>
@@ -43,6 +180,6 @@
         </ion-label>
       </div>
     </ion-item>
-  </ion-list>
+  </ion-list> -->
 
 </ion-content>

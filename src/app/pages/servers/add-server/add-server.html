@@ -1,5 +1,53 @@
 <ion-content>
-  <div class="offline-content" *ngIf="connectStatus != 0 ">
+  <div>
+    <div style="margin-top: 33px;" class="center-flex">
+      <img style="  width: 82.5px;
+      height: 54.9px;" src="assets/images/empty-feeds-icon.svg">
+    </div>
+
+    <div style="  
+    margin-top: 24px;
+    font-family: Montserrat;
+    font-size: 24px;
+    font-weight: 500;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: 1.25;
+    letter-spacing: 1.2px;
+    text-align: center;
+    color: #8888b0;">Scan or Enter Manual</div>
+    <div style="  font-family: Montserrat;
+    font-size: 24px;
+    font-weight: 500;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: 1.25;
+    letter-spacing: 1.2px;
+    text-align: center;
+    color: #8888b0;">Source Address</div>
+
+    <ion-item style="margin-top: 37px;" lines="none">
+      <div class="roundedRectangle">
+        <ion-input  class="ion-padding"  required type="text" placeholder="Source address here" [(ngModel)]="address" (change)="onChange()"></ion-input>
+      </div>
+    </ion-item>
+    <div style="margin-left: 34px; margin-right: 34px; margin-top: 48px;">
+      <ion-button style="margin-top: 25px;" expand="block" mode="ios" (click)="scanCode()">
+        <ion-icon name="qr-scanner" slot="start" ></ion-icon>
+        <ion-label>Open QR Scanner</ion-label>
+      </ion-button>
+    </div>
+
+    <div style="margin-left: 34px; margin-right: 34px; margin-top: 25px;">
+      <ion-button style="margin-top: 25px;" expand="block" mode="ios" (click)="confirm()" [disabled]='buttonDisabled'>
+        <ion-label>Confirm</ion-label>
+      </ion-button>
+    </div>
+  </div>
+
+
+
+  <!-- <div class="offline-content" *ngIf="connectStatus != 0 ">
     <ion-label>disconnect</ion-label>
   </div>
 
@@ -59,5 +107,5 @@
     <ion-button expand="block" mode="ios" (click)="addServer()" [disabled]='buttonDisabled'>
       <ion-label>Add New Server</ion-label>
     </ion-button>
-  </div>
+  </div> -->
 </ion-content>

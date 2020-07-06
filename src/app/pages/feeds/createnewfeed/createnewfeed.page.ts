@@ -27,8 +27,11 @@ export class CreatenewfeedPage implements OnInit {
     private events: Events,
     private native: NativeService) {
       this.events.subscribe('feeds:createTopicSuccess', () => {
-        this.navigateBack();
-        this.native.toast("Create topic success!");
+        // this.navigateBack();
+        this.navCtrl.pop().then(()=>{
+          this.native.toast("Create topic success!");
+        })
+          
       });
 
       this.events.subscribe('feeds:selectavatar', (avatar)=>{

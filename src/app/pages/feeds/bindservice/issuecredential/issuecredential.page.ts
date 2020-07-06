@@ -4,6 +4,8 @@ import { NavController } from '@ionic/angular';
 import { FeedService } from 'src/app/services/FeedService';
 import { Events } from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
+import { NativeService } from 'src/app/services/NativeService';
+declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 @Component({
   selector: 'app-issuecredential',
@@ -11,9 +13,11 @@ import { ActivatedRoute } from '@angular/router';
   styleUrls: ['./issuecredential.page.scss'],
 })
 export class IssuecredentialPage implements OnInit {
+  private title = "Binding server";
   private nodeId = "";
   private did = "";
   constructor(
+    private native: NativeService,
     private zone: NgZone,
     private events: Events,
     private acRoute: ActivatedRoute,
@@ -35,6 +39,11 @@ export class IssuecredentialPage implements OnInit {
       });
     }
 
+  ionViewDidEnter() {
+    titleBarManager.setTitle(this.title);
+    this.native.setTitleBarBackKeyShown(false);
+  }
+  
   ngOnInit() {
   }
   issueCredential(){

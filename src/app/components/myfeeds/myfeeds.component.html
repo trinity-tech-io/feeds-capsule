@@ -58,6 +58,6 @@
   <div class="new-feed" (click)="bindServer()"> Bind Server</div>
 </div> -->
 
-<!-- <div class="new-feed-div">
+<div class="new-feed-div" *ngIf="channels.length > 0">
     <div class="new-feed" (click)="createNewFeed()"> Create new Feed</div>
-</div> -->
+</div>

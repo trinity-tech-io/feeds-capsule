@@ -3,6 +3,8 @@ import { Router } from '@angular/router';
 import { NavController } from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
 import { FeedService } from 'src/app/services/FeedService';
+import { NativeService } from 'src/app/services/NativeService';
+declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 @Component({
   selector: 'app-publishdid',
@@ -10,6 +12,7 @@ import { FeedService } from 'src/app/services/FeedService';
   styleUrls: ['./publishdid.page.scss'],
 })
 export class PublishdidPage implements OnInit {
+  private title = "Binding server";
   private payload: string;
   private nodeId = "";
   private did = "";
@@ -17,6 +20,7 @@ export class PublishdidPage implements OnInit {
     private zone: NgZone,
     private acRoute: ActivatedRoute,
     private router: Router,
+    private native: NativeService,
     private feedService:FeedService,
     private navCtrl: NavController
     ) {
@@ -26,6 +30,11 @@ export class PublishdidPage implements OnInit {
         this.payload = data.payload;
       });
     }
+
+  ionViewDidEnter() {
+    titleBarManager.setTitle(this.title);
+    this.native.setTitleBarBackKeyShown(false);
+  }
 
   ngOnInit() {
   }

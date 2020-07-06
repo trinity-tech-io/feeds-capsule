@@ -4,6 +4,8 @@ import { NavController } from '@ionic/angular';
 import { FeedService } from 'src/app/services/FeedService';
 import { ActivatedRoute } from '@angular/router';
 import { Events } from '@ionic/angular';
+import { NativeService } from 'src/app/services/NativeService';
+declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 @Component({
   selector: 'app-importdid',
@@ -11,8 +13,10 @@ import { Events } from '@ionic/angular';
   styleUrls: ['./importdid.page.scss'],
 })
 export class ImportdidPage implements OnInit {
+  private title = "Binding server";
   private nodeId = "";
   constructor(
+    private native: NativeService,
     private zone: NgZone,
     private events: Events,
     private acRoute: ActivatedRoute,
@@ -20,6 +24,7 @@ export class ImportdidPage implements OnInit {
     private navCtrl: NavController,
     private feedService:FeedService,
     ) {
+
       acRoute.params.subscribe((data)=>{
         this.nodeId = data.nodeId;
       });
@@ -44,12 +49,14 @@ export class ImportdidPage implements OnInit {
             this.router.navigate(['/bindservice/issuecredential', nodeId, did]);
           });
         });
-      });
-
-
-      
+      });   
     }
 
+  ionViewDidEnter() {
+    titleBarManager.setTitle(this.title);
+    this.native.setTitleBarBackKeyShown(false);
+  }
+  
   ngOnInit() {
   }
 

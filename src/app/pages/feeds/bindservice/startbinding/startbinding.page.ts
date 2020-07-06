@@ -26,10 +26,7 @@ export class StartbindingPage implements OnInit {
     private feedService:FeedService,
     private navCtrl: NavController
   ) {
-
     acRoute.params.subscribe((data)=>{
-      titleBarManager.setTitle(this.title);
-
       this.nodeId = data.nodeId;
       if (data.nonce!="")
         this.nonce = data.nonce ;
@@ -89,7 +86,12 @@ export class StartbindingPage implements OnInit {
     });
 
   }
-  
+
+  ionViewDidEnter() {
+    titleBarManager.setTitle(this.title);
+    this.native.setTitleBarBackKeyShown(false);
+  }
+
   ngOnInit() {
   }
 

@@ -25,7 +25,7 @@ export class NativeService {
     init(){
         titleBarManager.addOnItemClickedListener((menuIcon)=>{
             if (menuIcon.key == "back") {
-                this.navCtrl.back();
+                this.navCtrl.pop();
             }
           });
     }

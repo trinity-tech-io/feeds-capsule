@@ -16,9 +16,9 @@ import { PopupProvider } from 'src/app/services/popup';
 export class AddServerPage implements OnInit {
   private connectStatus = 1;
   private address: string = '';
-  private friendRequest = 'Feeds/0.1';
-  private buttonDisabled = true;
-  private carrierAddress: string;
+  
+  private buttonDisabled = false;
+  
   private name: string;
   private owner: string;
   private introduction: string;
@@ -26,6 +26,7 @@ export class AddServerPage implements OnInit {
   private feedsUrl: string;
 
   constructor(
+    private router: Router,
     private events: Events,
     private zone: NgZone,
     private acRoute: ActivatedRoute,
@@ -37,17 +38,17 @@ export class AddServerPage implements OnInit {
     private loadingController: LoadingController,
     private carrier: CarrierService) {
       this.connectStatus = this.feedService.getConnectionStatus();
-      this.acRoute.params.subscribe(data => {
-        this.address = data.address;
-        if (this.address == null ||
-          this.address == undefined||
-          this.address == '')
-          return;
-          this.zone.run(()=>{
-            this.presentLoading();
-          });
-        this.queryServer();
-      });
+      // this.acRoute.params.subscribe(data => {
+      //   this.address = data.address;
+      //   if (this.address == null ||
+      //     this.address == undefined||
+      //     this.address == '')
+      //     return;
+      //     this.zone.run(()=>{
+      //       this.presentLoading();
+      //     });
+      //   this.queryServer();
+      // });
 
       this.events.subscribe('feeds:connectionChanged', connectionStatus => {
         this.zone.run(() => {
@@ -68,15 +69,7 @@ export class AddServerPage implements OnInit {
     this.native.pop();
   }
 
-  addServer() {
-    this.feedService.addServer(this.carrierAddress,this.friendRequest,
-      this.name, this.owner, this.introduction, 
-      this.did, this.feedsUrl, ()=>{
-        this.native.pop();
-      },(err)=>{
 
-      });
-  }
 
   scanCode(){
     this.native.pop();
@@ -87,45 +80,21 @@ export class AddServerPage implements OnInit {
     alert (error);
   }
   
-  onChange(){
-    this.queryServer();
-  }
+  // onChange(){
+  //   this.queryServer();
+  // }
 
-  queryServer(){
+  confirm(){
     if (this.address.length > 53&&
       this.address.startsWith('feeds://') && 
       this.address.indexOf("did:elastos:")
     ){
-      
-      this.resolveDid();
+      this.router.navigate(['/menu/servers/server-info', this.address,""]);
+    }else{
+      alert("Feed url maybe error.")
     }
   }
 
-  resolveDid(){
-    this.feedService.resolveDidDocument(this.address,null,
-      (server)=>{
-        this.zone.run(()=>{
-          this.buttonDisabled = false;
-          this.name = server.name;
-          this.owner = server.owner;
-          this.introduction = server.introduction;
-          this.did = server.did;
-          this.carrierAddress = server.carrierAddress;
-          this.feedsUrl = server.feedsUrl;
-        });
-      },(err)=>{
-        this.buttonDisabled = true;
-      }
-    );
-  }
 
-  async presentLoading() {
-    const loading = await this.loadingController.create({
-      message: 'Please wait...',
-      duration: 2000
-    });
-    await loading.present();
 
-    const { role, data } = await loading.onDidDismiss();
-  }
 }

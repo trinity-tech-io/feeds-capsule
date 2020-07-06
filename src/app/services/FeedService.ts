@@ -532,6 +532,23 @@ export class FeedService {
     return list;
   }
 
+  getOtherServerList(): Server[]{
+    let list: Server[] = [];
+    let nodeIdArray: string[] = Object.keys(serverMap);
+    for (const index in nodeIdArray) {
+      if (serverMap[nodeIdArray[index]] == undefined) 
+        continue;
+      
+      if (bindingServer != null && 
+        bindingServer != undefined &&
+        serverMap[nodeIdArray[index]].nodeId == bindingServer.nodeId)
+        continue;
+
+      list.push(serverMap[nodeIdArray[index]]);
+    }
+    return list;
+  }
+
   // getCreationServerMap(){
   //   let keys: string[] = Object.keys(serversMap);
   //   for (const index in keys) {
@@ -567,7 +584,22 @@ export class FeedService {
         serversStatus = {};
       }
     }
+
     return serversStatus;
+  }
+
+  getServerStatusFromId(nodeId: string): number{
+    if (serversStatus == null){
+      serversStatus = this.storeService.get(PersistenceKey.serversStatus);
+      if (serversStatus == undefined){
+        serversStatus = {};
+      }
+    }
+
+    if (serversStatus[nodeId] == null || serversStatus[nodeId] == undefined)
+      return 1;
+
+    return serversStatus[nodeId].status;
   }
 
   getServerStatisticsMap():{[nodeId: string]: ServerStatistics}{
@@ -577,7 +609,40 @@ export class FeedService {
         serverStatisticsMap = {};
       }
     }
+
+    if (bindingServer != null && 
+      bindingServer!= undefined &&
+      serverStatisticsMap[bindingServer.nodeId] == undefined)
+      serverStatisticsMap[bindingServer.nodeId] = {
+        did               : "string",
+        connecting_clients: 0
+      }
+
+    let list = this.getServerList();
+    for (let index = 0; index < list.length; index++) {
+      if (serverStatisticsMap[list[index].nodeId] == null ||
+        serverStatisticsMap[list[index].nodeId] == undefined)
+        serverStatisticsMap[list[index].nodeId] ={
+          did               : "string",
+          connecting_clients: 0
+        }
+    }
+
     return serverStatisticsMap;
+  }
+
+  getServerStatisticsNumber(nodeId: string): number{
+    if (serverStatisticsMap == null){
+      serverStatisticsMap = this.storeService.get(PersistenceKey.serverStatisticsMap);
+      if (serverStatisticsMap == undefined){
+        serverStatisticsMap = {};
+      }
+    }
+
+    if (serverStatisticsMap[nodeId] == null || serverStatisticsMap[nodeId] == undefined)
+      return 0;
+
+    return serverStatisticsMap[nodeId].connecting_clients;
   }
 
 
@@ -825,16 +890,21 @@ export class FeedService {
       if(serversStatus == null ||serversStatus == undefined)
         serversStatus = {}
 
-      if(serversStatus[friendId]!=undefined)
-        serversStatus[friendId].status = friendStatus;
+      // if(serversStatus[friendId]!=undefined)
+      serversStatus[friendId] = {
+        nodeId: friendId,
+        did: "string",
+        status: friendStatus
+      }
       
       if (friendStatus == ConnState.connected){
-        // if (accessTokenMap == null || accessTokenMap == undefined)
-        //   accessTokenMap = {};
+        if (accessTokenMap == null || accessTokenMap == undefined)
+          accessTokenMap = {};
         // if(accessTokenMap[friendId] == undefined || !this.checkExp(accessTokenMap[friendId])){
-        //   this.signinChallengeRequest(friendId,false);
-        //   return;
-        // }
+        if(accessTokenMap[friendId] == undefined){
+          this.signinChallengeRequest(friendId,true);
+          return;
+        }
 
         this.prepare(friendId);
 
@@ -855,7 +925,9 @@ export class FeedService {
         if (bindingServer.nodeId == nodeId)
           return ;
 
-      this.resolveServer(this.getServerbyNodeId(nodeId),status);
+      let server = this.getServerbyNodeId(nodeId);
+      if (server != null && server != undefined)
+        this.resolveServer(server,status);
     });
   }
 
@@ -863,14 +935,12 @@ export class FeedService {
     if (serversStatus == null || serversStatus == undefined)
         serversStatus = {};
       
-    if (serversStatus[server.nodeId] == undefined){
-      serversStatus[server.nodeId] = {
-        nodeId: server.nodeId,
-        did: server.did,
-        status: ConnState.disconnected
-      }
+    serversStatus[server.nodeId] = {
+      nodeId: server.nodeId,
+      did: server.did,
+      status: ConnState.disconnected
     }
-    
+
     if (status != null)
       return serversStatus[server.nodeId].status = status;
 
@@ -893,8 +963,8 @@ export class FeedService {
       this.native.toast("Add server success!");
     }
 
+    // if (server != bindingServer)
     serverMap[server.nodeId] = server ;
-
 
     this.storeService.set(PersistenceKey.serversStatus,serversStatus);
 
@@ -2555,6 +2625,8 @@ export class FeedService {
 
     eventBus.publish(PublishType.createTopicSuccess);
     eventBus.publish(PublishType.channelsDataUpdate);
+
+    this.subscribeChannel(nodeId,channelId);
   }
 
   handlePublishPostResult(nodeId: string, result: any, request: any){
@@ -3489,6 +3561,8 @@ export class FeedService {
       feedsUrl          : feedUrl
     }
     this.handleImportDID(feedUrl, defaultServer, (server)=>{
+
+
         bindingServerCache = {
           name              : server.name,
           owner             : server.owner,
@@ -3498,9 +3572,11 @@ export class FeedService {
           nodeId            : server.nodeId,
           feedsUrl          : feedUrl
         }
+
         eventBus.publish("feeds:resolveDidSucess", nodeId, did);
     },(err)=>{
       bindingServerCache = defaultServer;
+
       eventBus.publish("feeds:resolveDidError", nodeId, did, transaction_payload);
     });
 
@@ -3555,16 +3631,42 @@ export class FeedService {
           nodeId            : server.nodeId,
           feedsUrl          : feedUrl
         }
+
         this.storeService.set(PersistenceKey.bindingServer,bindingServer);
-        this.resolveServer(bindingServer, ConnState.connected);
+        this.addServer(bindingServer.carrierAddress,
+                      'Feeds/0.1',
+                      bindingServer.name,
+                      bindingServer.owner,
+                      bindingServer.introduction,
+                      bindingServer.did,
+                      bindingServer.feedsUrl,()=>{
+
+                      },(error)=>{
+
+                      });
+        // this.resolveServer(bindingServer, ConnState.connected); // signin
         eventBus.publish("feeds:issue_credential");
         eventBus.publish("feeds:bindServerFinish",bindingServer);
+
+        this.signinChallengeRequest(nodeId,true);
     },(errserver)=>{
       bindingServer = defaultServer;
       this.storeService.set(PersistenceKey.bindingServer,bindingServer);
       this.resolveServer(bindingServer, ConnState.connected);
       eventBus.publish("feeds:issue_credential");
       eventBus.publish("feeds:bindServerFinish",bindingServer);
+      this.addServer(bindingServer.carrierAddress,
+        'Feeds/0.1',
+        bindingServer.name,
+        bindingServer.owner,
+        bindingServer.introduction,
+        bindingServer.did,
+        bindingServer.feedsUrl,()=>{
+
+        },(error)=>{
+
+        });
+      this.signinChallengeRequest(nodeId,true);
     });
 
 

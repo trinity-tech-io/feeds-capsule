@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { NavController } from '@ionic/angular';
 import { FeedService } from 'src/app/services/FeedService';
 import { CarrierService } from 'src/app/services/CarrierService';
+import { NativeService } from 'src/app/services/NativeService';
 import { Events } from '@ionic/angular';
 
 declare let appManager: AppManagerPlugin.AppManager;
@@ -19,14 +20,13 @@ export class ScanqrcodePage implements OnInit {
   private carrierAddress: string;
 
   constructor(
+    private native: NativeService,
     private zone: NgZone,
     private router: Router,
     private navCtrl: NavController,
     private feedService:FeedService,
     private carrier: CarrierService,
     ) {
-      titleBarManager.setTitle(this.title);
-
       // this.events.subscribe('feeds:friendConnection', ret => {
       //   if (!this.waitFriendsOnline)
       //     return;
@@ -38,7 +38,10 @@ export class ScanqrcodePage implements OnInit {
 
       
     }
-
+  ionViewDidEnter() {
+    titleBarManager.setTitle(this.title);
+    this.native.setTitleBarBackKeyShown(false);
+  }
   ngOnInit() {
   }
 
@@ -58,8 +61,7 @@ export class ScanqrcodePage implements OnInit {
       let con = contentStr.split(".");
 
       this.carrierAddress = con[0];
-      let nonce = con[1];
-
+      let nonce = con[1];   
       this.carrier.getIdFromAddress(this.carrierAddress, 
         (userId)=>{
             this.addFriends(this.carrierAddress, userId, nonce);

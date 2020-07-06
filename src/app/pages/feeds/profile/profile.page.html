@@ -10,10 +10,10 @@
     <ion-label class="channel-title">{{name}}</ion-label>
   </div>
 
-  <div class="center-flex">
+  <div class="center-flex" style="margin-top: 10px;">
       <img class="profile-sub-img" src="assets/images/bubble2.svg">
-      <ion-label class="profile-sub-text">{{subscribers}} </ion-label>
-      <ion-label  class="profile-subscribe">Subscribers</ion-label>
+      <ion-label class="profile-sub-text">{{followers}} </ion-label>
+      <ion-label  class="profile-subscribe">Followers</ion-label>
   </div>
 
   <div class="channel-desc-div">
@@ -35,10 +35,10 @@
     </ion-slide>
   </ion-slides>
 
-  <app-details *ngIf="selectType == 'Details'"></app-details>
+  <!-- <app-details *ngIf="selectType == 'Details'"></app-details> -->
   <app-myfeeds *ngIf="selectType == 'MyFeeds'"></app-myfeeds>
   <app-following *ngIf="selectType == 'Following'"></app-following>
   <app-likes  *ngIf="selectType == 'Likes'"></app-likes>
-  <app-source  *ngIf="selectType == 'Sources'"></app-source>
+  <!-- <app-source  *ngIf="selectType == 'Sources'"></app-source> -->
 
 </ion-content>

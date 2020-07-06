@@ -7,16 +7,16 @@ import { FeedService } from 'src/app/services/FeedService';
   styleUrls: ['./profile.page.scss'],
 })
 export class ProfilePage implements OnInit {
-  private types = ["Details","MyFeeds","Following","Likes","Sources"];
-  private selectType: String = "Details"; 
+  private types = ["MyFeeds","Following","Likes"];
+  private selectType: String = "MyFeeds"; 
   private description: String = "";
   private name: string = "";
-  private subscribers = 0;
+  private followers = 0;
   private avatar = "";
   slideOpts = {
     initialSlide: 0,
     speed: 100,
-    slidesPerView: 4,
+    slidesPerView: 3,
   };
 
   constructor(
@@ -33,4 +33,5 @@ export class ProfilePage implements OnInit {
   changeType(type){
     this.selectType = type;
   }
+
 }

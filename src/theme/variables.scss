@@ -802,6 +802,7 @@ ion-header {
   height: 100%;
 
   text-align: center;
+  margin-bottom: 150px;
 }
 
 .box{
@@ -1008,7 +1009,6 @@ vertical-align: middle;
 }
 
 .center-flex {
-  margin-top: 10px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -1040,4 +1040,260 @@ vertical-align: middle;
   text-align: left;
   color: #8888b0;
 }
+
+.circle {
+    width: 16px;
+    height: 16px;
+    background-color: #368bff;
+    border-radius: 8px;
+  }
+
+  .offline-circle{
+    width: 16px;
+    height: 16px;
+    background-color: #cdcde6;
+    border-radius: 8px;
+  }
+
+  .online-circle{
+    width: 16px;
+    height: 16px;
+    background-color: #368bff;
+    // -moz-border-radius: 50px;
+    // -webkit-border-radius: 50px;
+    border-radius: 8px;
+  }
+
+  .select-div{
+    position:absolute;
+    right:5px;
+    bottom:0px;
+}
+
+.empty-server-div{
+  margin-top: 48px;
+  .empty-img{
+    width: 82.5px;
+    height: 54.9px;
+  }
+  .all-empty-text{
+    font-family: Montserrat;
+    font-size: 24px;
+    font-weight: 500;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: 2.42;
+    letter-spacing: 1.2px;
+    text-align: center;
+    color: #8888b0;
+  }
+  .no-feed-sources-text{
+    font-family: Montserrat;
+    font-size: 16px;
+    font-weight: normal;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: 1.38;
+    letter-spacing: 1.6px;
+    text-align: center;
+    color: #8888b0;
+  }
+
+  .bind-feed-source-button-div{
+    height: 41px;
+    margin-top: 28px; 
+    margin-left: 32px; 
+    margin-right: 32px;
+  }
+}
+
+.feed-source{
+  width: 100%; 
+  margin: 20px;
+  .feed-source-div{
+    margin-bottom: 40px;
+    .feed-source-img{
+      width: 11.4px;
+      height: 8.5px;
+      margin-left: 15px;
+    }
+    .feed-source-text{
+      margin-left: 16.3px;
+      height: 22px;
+      font-family: Montserrat;
+      font-size: 18px;
+      font-weight: bold;
+      font-stretch: normal;
+      font-style: normal;
+      line-height: 1.22;
+      letter-spacing: normal;
+      text-align: left;
+      color: #000000;
+    }
+
+    .feed-source-card{
+      margin-top: 16px;
+      margin-left: 0px;
+      width: calc(100% - 40px);
+      height: 100px;
+
+      .feed-source-card-right-img-div{
+        margin-right: 16px ; 
+        float: right; 
+        margin-top: 40px; 
+
+        .feed-source-card-right-img{
+          width: 6.7px;
+          height: 12.2px;
+        }
+      }
+
+      .feed-source-card-content{
+        display: flex; 
+        margin-left: 17px; 
+        width: calc(100% - 40px -32px);
+
+        .feed-source-card-img-div{
+          margin-top: 22px; 
+          margin-bottom: 22px; 
+          width: 58px; 
+          height: 58px;
+
+          .feed-source-card-img{
+            width: 56px; 
+            height: 56px;
+          }
+
+          .feed-source-card-status{
+            position:absolute;
+            left:20px;
+            top:17px;
+          }
+        }
+
+        .feed-source-card-content-detail{
+          flex-wrap: nowrap;
+          width: calc(100% - 20px - 17px - 56px);
+          margin-top: 17px; 
+          margin-left: 12px;
+
+          .name{
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            
+            font-family: Montserrat;
+            font-size: 17px;
+            font-weight: bold;
+            font-stretch: normal;
+            font-style: normal;
+            line-height: 1.18;
+            letter-spacing: normal;
+            text-align: left;
+            color: #000000;
+          }
+
+          .owner{
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+
+            margin-top: 5px;
+            font-family: MontserratSemiBold;
+            font-size: 11px;
+            font-weight: normal;
+            font-stretch: normal;
+            font-style: normal;
+            line-height: 1.27;
+            letter-spacing: normal;
+            text-align: left;
+            color: #8888b0;
+          }
+
+          .users-img-div{
+            margin-top: 5px;
+            width: 100%; 
+            flex-wrap: nowrap;
+            display: flex;
+
+            align-items: center;
+            .users-img{
+              width: 18.1px;
+              height: 14.7px;
+            }
+
+            .users-num-online-text{
+              margin-left: 5px;
+              font-family: Montserrat;
+              font-size: 14px;
+              font-weight: bold;
+              color: #368bff;
+            }
+            .users-num-offline-text{
+              margin-left: 5px;
+              font-family: Montserrat;
+              font-size: 14px;
+              font-weight: bold;
+              color: #a0a2c4;
+            }
+            .users-online-text{
+              margin-left: 5px;
+              font-family: MontserratSemiBold;
+              font-size: 11px;
+              font-weight: normal;
+              font-stretch: normal;
+              font-style: normal;
+              line-height: 1.27;
+              letter-spacing: normal;
+              text-align: left;
+              color: #368bff;
+            }
+            .users-offline-text{
+              margin-left: 5px;
+              font-family: MontserratSemiBold;
+              font-size: 11px;
+              font-weight: normal;
+              font-stretch: normal;
+              font-style: normal;
+              line-height: 1.27;
+              letter-spacing: normal;
+              text-align: left;
+              color: #a0a2c4;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .button-div{
+    margin-top: 40px; 
+    margin-left: 20px;
+
+    .explore-feed-source-button{
+      font-family: MontserratMedium;
+      font-size: 18px;
+      font-weight: normal;
+      font-stretch: normal;
+      font-style: normal;
+      letter-spacing: normal;
+      text-align: left;
+      color: #368bff;
+    }
+  
+    .bind-feed-source-button{
+      margin-top: 23px;
+      font-family: MontserratMedium;
+      font-size: 18px;
+      font-weight: normal;
+      font-stretch: normal;
+      font-style: normal;
+      letter-spacing: normal;
+      text-align: left;
+      color: #368bff;
+    }
+  }
+  
+}
+
 

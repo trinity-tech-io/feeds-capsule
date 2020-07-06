@@ -1,36 +1,174 @@
 <ion-content>
+
+
+  <ion-card class="ion-no-padding ion-no-margin" style="margin-top: 12px; margin-left: 21px; margin-right: 21px;">
+    <ion-card-content class="ion-no-padding ion-no-margin">
+    <div class="center-flex" style="margin-top: 20px;">
+      <img style="  width: 56px;
+      height: 56px;" src="assets/images/profile-2.svg">
+    </div>
+
+    <div class="center-flex" style="margin-top: 15px;">
+      <ion-label style="  font-family: Montserrat;
+      font-size: 17px;
+      font-weight: bold;
+      font-stretch: normal;
+      font-style: normal;
+      line-height: 1.18;
+      letter-spacing: normal;
+      text-align: left;
+      color: #000000;">Public Feed</ion-label>
+    </div>
+
+    <div class="center-flex" style="margin-top: 15px;">
+      <ion-label style="  font-family: Montserrat;
+      font-size: 16px;
+      font-weight: normal;
+      font-stretch: normal;
+      font-style: normal;
+      line-height: 1.38;
+      letter-spacing: 0.8px;
+      text-align: left;
+      color: #000000;">{{introduction}} </ion-label>
+    </div>
+
+    <div class="center-flex">
+    <ion-item lines="none" class="ion-no-padding ion-no-margin" style="margin-top: 20px; margin-bottom: 20px;" *ngIf="serverStatus == 0">
+      <div class="online-circle"></div>
+      <div style="
+      font-family: MontserratSemiBold;
+      font-size: 11px;
+      font-weight: normal;
+      font-stretch: normal;
+      font-style: normal;
+      line-height: 1.27;
+      letter-spacing: normal;
+      text-align: left;
+      color: #368bff;
+      margin-left: 5px;">online</div>
+
+
+      <img  style="margin-left: 13px;   width: 18.1px;
+      height: 14.7px;" src="assets/images/users-online.svg">
+      <div style="  font-family: Montserrat;
+      font-size: 14px;
+      font-weight: bold;
+      color: #368bff;"> {{clientNumber}}</div>
+      <div style="  font-family: MontserratSemiBold;
+      font-size: 11px;
+      font-weight: normal;
+      font-stretch: normal;
+      font-style: normal;
+      line-height: 1.27;
+      letter-spacing: normal;
+      text-align: left;
+      color: #368bff;
+      margin-left: 5px;">Users</div>
+
+
+
+    </ion-item>
+    
+
+    <ion-item lines="none" class="ion-no-padding ion-no-margin" style="margin-top: 20px; margin-bottom: 20px;" *ngIf="serverStatus == 1">
+      <div class="offline-circle"></div>
+      <div style="
+      font-family: MontserratSemiBold;
+      font-size: 11px;
+      font-weight: normal;
+      font-stretch: normal;
+      font-style: normal;
+      line-height: 1.27;
+      letter-spacing: normal;
+      text-align: left;
+      color: #a0a2c4;
+      margin-left: 5px;">offline</div>
+
+
+      <img  style="margin-left: 13px;   width: 18.1px;
+      height: 14.7px;" src="assets/images/users-offline.svg">
+      <div style="  font-family: Montserrat;
+      font-size: 14px;
+      font-weight: bold;
+      color: #a0a2c4;"> {{clientNumber}}</div>
+      <div style="  font-family: MontserratSemiBold;
+      font-size: 11px;
+      font-weight: normal;
+      font-stretch: normal;
+      font-style: normal;
+      line-height: 1.27;
+      letter-spacing: normal;
+      text-align: left;
+      color: #a0a2c4;
+      margin-left: 5px;">Users</div>
+
+
+
+    </ion-item>
+      
+    
+    </div>
+
+    </ion-card-content>
+    
+  </ion-card>
+  
+
+
+
+  <div class="detail-div" style="margin-top: 55px;">
+
+    <div class="detail-key-div">
+      <ion-label class="detail-key">NAME</ion-label>
+    </div>
+    <div class="detail-value-div">
+      <ion-label class="detail-value">{{name}}</ion-label>
+    </div>
+    <div class="detail-line"></div>
+  
+    <div class="detail-key-div">
+      <ion-label class="detail-key">OWNER</ion-label>
+    </div>
+    <div class="detail-value-div">
+      <ion-label  class="detail-value">{{owner}} </ion-label>
+    </div>
+    <div class="detail-line"></div>
+  
+    <div class="detail-key-div">
+      <ion-label class="detail-key">Introduction</ion-label>
+    </div>
+    <div class="detail-value-div">
+      <ion-label  class="detail-value">{{introduction}} </ion-label>
+    </div>
+    <div class="detail-line"></div>
+
+    <div class="detail-key-div">
+      <ion-label class="detail-key">DID</ion-label>
+    </div>
+    <div class="detail-value-div">
+      <ion-label  class="detail-value">{{didString}} </ion-label>
+    </div>
+    <div class="detail-line"></div>
+  </div>  
+
+  <div style="margin-left: 34px; margin-right: 34px; margin-top: 25px;" *ngIf="address != ''">
+    <ion-button style="margin-top: 25px;" expand="block" mode="ios" (click)="addFeedSource()" [disabled]='buttonDisabled'>
+      <ion-label>Add Feed Source</ion-label>
+    </ion-button>
+  </div>
+
+
+
+
+<!-- 
   <div class="offline-content" *ngIf="connectStatus != 0 ">
     <ion-label>disconnect</ion-label>
   </div>
 
-  <!-- <ion-list> -->
-    <!-- <ion-item *ngFor="let attr of attrs">
-      <ion-grid class="ion-padding" >
-        <ion-row >
-          <ion-col
-            size="1.5"
-            size-lg="1.5"
-          >
-            <ion-icon name="{{attr.iconName}}" size="100%"></ion-icon>
-          </ion-col>
-
-          <ion-col
-            size="9.25"
-          >
-            <ion-label>
-              {{attr.attrValue}}
-            </ion-label>
-          </ion-col
-          >
-        </ion-row>
-      </ion-grid>
-    </ion-item> -->
 
     <ion-item lines="none" style="margin: 2%;" (click)="navToServerInfo(server.userId)">
       <ion-icon style="align-self: flex-start;" name="radio-button-on" color="primary" slot="start" *ngIf="serverStatus == 0"></ion-icon>
       <ion-icon style="align-self: flex-start;" name="radio-button-on" slot="start"  *ngIf="serverStatus == 1"></ion-icon>
-
-      <!-- <ion-icon name="radio-button-on" slot="start" *ngIf="server.status == 1" ></ion-icon> -->
       <div style="display:flex; word-wrap: break-word; word-break: normal; width: 85%;">
         <ion-label >
           <b>Name: </b><br>
@@ -48,7 +186,6 @@
           <div style="white-space:normal; word-break:break-all;overflow:hidden;">
             {{didString}}<br>
           </div>
-          <!-- <b>NodeId:</b>server.userId<br> -->
         </ion-label>
 
 
@@ -70,8 +207,6 @@
     </ion-item>
     <div style="text-align: center; width:200px; margin: 0 auto;">
       <qrcode  [qrdata]="feedsUrl" [size]="256" [level]="'M'"></qrcode>
-    </div>
-    
-    
-  <!-- </ion-list> -->
+    </div> -->
+  
 </ion-content>

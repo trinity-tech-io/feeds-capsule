@@ -48,7 +48,7 @@ export class MyprofilePage implements OnInit {
 
     this.subscribedNum = this.feedService.getSubscribedChannelNumber();
     this.ownedChannelsNum = this.feedService.getOwnChannelNumber();
-    this.connectedChannelSourceNum = this.feedService.getServerList().length;
+    // this.connectedChannelSourceNum = this.feedService.getServerList().length;
     this.ownedChannelSourceNum = this.feedService.getCreationServerList().length;
     this.connectStatus = this.feedService.getConnectionStatus();
     
