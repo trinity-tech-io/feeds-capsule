@@ -1,5 +1,6 @@
 import { Component, OnInit, NgZone } from '@angular/core';
 import { NativeService } from 'src/app/services/NativeService';
+declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 @Component({
   selector: 'page-about',
@@ -8,7 +9,7 @@ import { NativeService } from 'src/app/services/NativeService';
 })
 
 export class AboutPage implements OnInit {
-  public version = "0.6";
+  public version = "0.11.1";
 
   constructor(
     private zone: NgZone,
@@ -16,6 +17,8 @@ export class AboutPage implements OnInit {
     ) {}
 
   ngOnInit() {
+    titleBarManager.setTitle("About");
+    this.native.setTitleBarBackKeyShown(true);
   }
 
   goWebsite() {

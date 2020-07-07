@@ -51,6 +51,10 @@
   <img src="../../../assets/images/rectangle-5389.svg"
   class="detail-line">
 </div>
+
+<div class="new-feed-div" *ngIf="channelList.length > 0">
+  <div class="new-feed" (click)="exploreFeeds()"> Explore Feeds</div>
+</div>
 <!-- </div>
 
 <div class="channel-img-small-div">

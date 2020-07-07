@@ -4,7 +4,7 @@
   </div> -->
 
   <div class="channel-img-div">
-    <ion-avatar class="channel-img">
+    <ion-avatar class="channel-img" style="width:80px ; height: 80px;">
       <img  src={{channelAvatar}}>
     </ion-avatar>
   </div>
@@ -13,23 +13,120 @@
     <ion-label class="channel-title">{{channelName}}</ion-label>
   </div>
 
-  <div class="channel-owner-div">
+  <!-- <div class="channel-owner-div">
     <ion-label class="channel-owner">@{{channelOwner}}</ion-label>
+  </div> -->
+
+  <div class="center-flex" style="margin-top: 10px;">
+    <img class="profile-sub-img" src="assets/images/bubble2.svg">
+    <ion-label class="profile-sub-text">{{channelSubscribes}} </ion-label>
+    <ion-label  class="profile-subscribe">Followers</ion-label>
   </div>
 
   <div class="channel-desc-div">
     <ion-label class="channel-desc">{{channelDesc}}</ion-label>
   </div>
 
-  <div class="channel-follow-div">
+  <!-- <div class="channel-follow-div">
     <img src="../../../../assets/images/bubble.svg" class="bubble">
     <ion-label class="channel-follower">{{channelSubscribes}} follower</ion-label>
-    
     <img src="../../../../assets/images/bubble.svg" class="bubble_right">
     <ion-label class="channel-following">0 following</ion-label>
+  </div> -->
+
+  <div class="center-flex btn-container" style="margin-top: 10px;">
+
+    <!-- <ion-button class="follow-style" fill="outline"   (click)="subscribe(channel.nodeId, channel.id)">
+      <ion-label>Follow</ion-label>
+    </ion-button> -->
+
+    <ion-button *ngIf="followStatus" style="width: 76.8px;
+    height: 25.6px; --border-radius:25px; 
+    --background: #368bff;" (click)="unsubscribe(channel.nodeId, channel.name, channel.id)">
+      <ion-label style="  font-family: Montserrat;
+      font-size: 10px;
+      font-weight: bold;
+      font-stretch: normal;
+      font-style: normal;
+      line-height: 1.3;
+      letter-spacing: normal;
+      text-align: left;
+      color: #fdfeff;">Following</ion-label>
+    </ion-button>
+
+    <ion-button *ngIf="!followStatus" style="width: 76.8px;
+    height: 25.6px; --border-radius:25px; 
+    --border-color:#8888b0
+    " fill="outline" (click)="unsubscribe(channel.nodeId, channel.name, channel.id)">
+      <ion-label style="  font-family: Montserrat;
+      font-size: 10px;
+      font-weight: bold;
+      font-stretch: normal;
+      font-style: normal;
+      line-height: 1.3;
+      letter-spacing: normal;
+      text-align: left;
+      color: #8888b0;">Follow</ion-label>
+    </ion-button>
+
+
+    <ion-button style="  
+    margin-left: 25.5px;
+    width: 76.8px;
+    height: 25.6px;
+    --border-radius:25px; 
+    --background: #a067ff;
+    "   (click)="subscribe(channel.nodeId, channel.id)">
+      <ion-label style="  font-family: Montserrat;
+      font-size: 10px;
+      font-weight: bold;
+      font-stretch: normal;
+      font-style: normal;
+      line-height: 1.3;
+      letter-spacing: normal;
+      text-align: left;
+      color: #fdfeff;">Tip</ion-label>
+    </ion-button>
+
+    <!-- <ion-button class="following-style" (click)="unsubscribe(channel.nodeId, channel.name, channel.id)" *ngIf="channel.isSubscribed">
+      <ion-label>Following</ion-label>
+    </ion-button> -->
+
   </div>
+
+
+
+
+
+
+
+  <!-- <div class="channel-img-div">
+    <img *ngIf="avatar == ''" class="profile-img" src="assets/images/default-contact.svg">
+    <img *ngIf="avatar != ''" class="profile-img" [src]="avatar">
+  </div>
+
+  <div class="channel-title-div">
+    <ion-label class="channel-title">{{name}}</ion-label>
+  </div>
+
+  <div class="center-flex" style="margin-top: 10px;">
+      <img class="profile-sub-img" src="assets/images/bubble2.svg">
+      <ion-label class="profile-sub-text">{{followers}} </ion-label>
+      <ion-label  class="profile-subscribe">Followers</ion-label>
+  </div>
+
+  <div class="channel-desc-div">
+    <ion-label class="channel-desc" >{{description}} </ion-label>
+  </div> -->
+
+
+
+
+
+
+
   
-  <div *ngFor="let post of postList">
+  <div *ngFor="let post of postList" style="margin-top: 25px;">
 
 
 

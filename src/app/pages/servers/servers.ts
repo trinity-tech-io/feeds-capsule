@@ -103,7 +103,7 @@ export class ServersPage implements OnInit {
     }
 
     ionViewDidEnter() {
-        titleBarManager.setTitle("Feed source");
+        titleBarManager.setTitle("Feed sources");
         this.native.setTitleBarBackKeyShown(true);
     }
 

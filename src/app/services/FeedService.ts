@@ -3248,6 +3248,12 @@ export class FeedService {
     return list;
   }
 
+  getSubscribedMap(){
+    if (subscribedChannelsMap == null || subscribedChannelsMap == undefined)
+      subscribedChannelsMap = {};
+    return subscribedChannelsMap;
+  }
+
   deletePostFromChannel(nodeId: string ,channelId: number){
     // let keys: string[] = Object.keys(postMap);
     // for (const index in keys) {

@@ -1,52 +1,69 @@
 <ion-app>
-    <ion-menu side="end" menuId="menu" [class.darkContainer]="theme.darkMode">
+    <ion-menu side="end" type="overlay" menuId="menu" [class.darkContainer]="theme.darkMode">
         <ion-content>
-            <ion-list>
-                <div class="menu-profile-div">
-                    <div style="width: 200px;padding: 5px; padding-left: 20px;">
-                        <img src="../assets/images/screenshot-2020-04-26-at-03-20-46.png"
-                        srcset="../assets/images/screenshot-2020-04-26-at-03-20-46@2x.png 2x,
-                        ../assets/images/screenshot-2020-04-26-at-03-20-46@3x.png 3x"
-                        class="menu-profile-img">
-                        <div class="menu-profile-name">wangran</div>
+            <div class="menu-profile-div " style="margin-top: 22.5px;">
+                <div style=" width: 300px;padding: 5px; padding-left: 20px;">
+                    <img src="../assets/images/screenshot-2020-04-26-at-03-20-46.png"
+                    srcset="../assets/images/screenshot-2020-04-26-at-03-20-46@2x.png 2x,
+                    ../assets/images/screenshot-2020-04-26-at-03-20-46@3x.png 3x"
+                    class="menu-profile-img">
+                    <div class="menu-profile-name">wangran</div>
 
-                        <div style="display: flex; margin-top: 6px;">
-                            <img class="menu-profile-bubble" src="../assets/images/bubble.svg" >
-                            <div class="menu-profile-follower">11 follower</div>
+                    <div style="display: flex; margin-top: 6px;">
+                        <img class="menu-profile-bubble" src="../assets/images/bubble.svg" >
+                        <div class="menu-profile-follower">0 follower</div>
 
-                        </div>
                     </div>
-                    <qrcode style="padding: 8px;"  [qrdata]="feedsUrl" [size]="100" [level]="'M'"></qrcode>
                 </div>
+                <qrcode style="padding: 8px;"  [qrdata]="feedsUrl" [size]="100" [level]="'M'"></qrcode>
+            </div>
 
-                <ion-menu-toggle >
-                    <ion-item (click)="profiledetail()" lines="none">
+            <ion-menu-toggle >
+                <div style="margin-left: 30px;margin-top: 35px;width: 100%;" (click)="profiledetail()">
+                    <ion-item class="ion-no-padding ion-no-margin" lines="none">    
                         <img src="../assets/images/menu-user.svg" class="menu-user" *ngIf="!theme.darkMode">
                         <img src="../assets/images/menu-user-dark.svg" class="menu-user" *ngIf="theme.darkMode">
                         <div class="menu-profile white">Profile Details</div>
                     </ion-item>
-                </ion-menu-toggle>
-                <ion-menu-toggle >
-                    <ion-item (click)="goToFeedSource()" lines="none">
+                </div>
+            </ion-menu-toggle>
+            <ion-menu-toggle >
+                <div style="margin-left: 30px;margin-top: 30px;width: 100%;" (click)="goToFeedSource()">
+                    <ion-item class="ion-no-padding ion-no-margin" lines="none">
                         <img src="../assets/images/menu-feeds.svg" class="menu-feeds" *ngIf="!theme.darkMode">
                         <img src="../assets/images/menu-feeds-dark.svg" class="menu-feeds" *ngIf="theme.darkMode">
-                        <div class="menu-profile white">Feed Sources</div>
+                        <ion-label class="menu-profile white">Feed Sources</ion-label>
                     </ion-item>
-                </ion-menu-toggle>
-                <ion-menu-toggle >
-                    <ion-item (click)="setting()" lines="none">
+                </div>
+            </ion-menu-toggle>
+            <ion-menu-toggle >
+                <div style="margin-left: 30px;margin-top: 30px;width: 100%;" (click)="setting()">
+                    <ion-item class="ion-no-padding ion-no-margin" lines="none">
                         <img src="../assets/images/menu-setting.svg" class="menu-setting" *ngIf="!theme.darkMode">
                         <img src="../assets/images/menu-setting-dark.svg" class="menu-setting" *ngIf="theme.darkMode">
-                        <div class="menu-profile white">Settings</div>
+                        <ion-label class="menu-profile white">Settings</ion-label>
                     </ion-item>
-                </ion-menu-toggle>
-                <!-- <ion-menu-toggle>
-                    <ion-item (click)="closeApp()">
-                        <ion-icon name="exit"></ion-icon>
-                        <ion-label padding>Exit</ion-label>
+                </div>
+            </ion-menu-toggle>
+            <ion-menu-toggle >
+                <div style="margin-left: 30px;margin-top: 30px;width: 100%;" (click)="about()">
+                    <ion-item class="ion-no-padding ion-no-margin" lines="none">
+                        <img src="../assets/images/menu-about.svg" class="menu-setting" *ngIf="!theme.darkMode">
+                        <img src="../assets/images/menu-about.svg" class="menu-setting" *ngIf="theme.darkMode">
+                        <ion-label class="menu-profile white">About</ion-label>
                     </ion-item>
-                </ion-menu-toggle> -->
-            </ion-list>
+                </div>
+            </ion-menu-toggle>
+
+            <ion-menu-toggle >
+                <div style="margin-left: 30px;margin-top: 30px;width: 100%;" (click)="about()">
+                    <ion-item class="ion-no-padding ion-no-margin" lines="none">
+                        <img src="../assets/images/menu-dev.png" class="menu-setting" *ngIf="!theme.darkMode">
+                        <img src="../assets/images/menu-dev.png" class="menu-setting" *ngIf="theme.darkMode">
+                        <ion-label class="menu-profile white">Develop</ion-label>
+                    </ion-item>
+                </div>
+            </ion-menu-toggle>
         </ion-content>
     </ion-menu>
     <ion-router-outlet main></ion-router-outlet>

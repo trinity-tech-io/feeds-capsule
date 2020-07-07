@@ -7,8 +7,8 @@ import { ThemeService } from 'src/app/services/theme.service';
   styleUrls: ['./profile.page.scss'],
 })
 export class ProfilePage implements OnInit {
-  private types = ["MyFeeds","Following","Likes"];
-  private selectType: String = "MyFeeds"; 
+  private types = ["My Feeds","Following","My Likes"];
+  private selectType: String = "My Feeds"; 
   private description: String = "";
   private name: string = "";
   private followers = 0;

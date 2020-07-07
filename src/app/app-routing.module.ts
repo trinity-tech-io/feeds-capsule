@@ -32,6 +32,8 @@ const routes: Routes = [
   { path: 'menu/setting', loadChildren: './pages/feeds/menu/setting/setting.module#SettingPageModule' },
   { path: 'menu/profiledetail', loadChildren: './pages/feeds/menu/profiledetail/profiledetail.module#ProfiledetailPageModule' },
 
+  { path: 'menu/about', loadChildren: './pages/about/about.module#AboutPageModule' },
+
 ];
 
 @NgModule({

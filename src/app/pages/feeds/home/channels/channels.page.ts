@@ -24,6 +24,7 @@ export class ChannelsPage implements OnInit {
   private nodeId;
   private channelId;
 
+  private followStatus = false;
   constructor(
     private popoverController: PopoverController,
     private router: Router,
@@ -39,6 +40,17 @@ export class ChannelsPage implements OnInit {
       this.channelId = data.channelId;
 
       let channel = this.feedService.getChannelFromId(this.nodeId, this.channelId);
+      
+      let channels = this.feedService.getSubscribedChannelsFromNodeId(this.nodeId);
+      let nodeChannelId = this.nodeId+channel.id;
+
+      console.log("channels ==>"+JSON.stringify(channels));
+      console.log("channel ==>"+JSON.stringify(channel));
+      console.log("nodeChannelId ==>"+nodeChannelId);
+      console.log("channels[nodeChannelId] ==>"+channels[nodeChannelId]);
+      if (channels[nodeChannelId] != undefined){
+        this.followStatus = true;
+      }
 
       this.channelName = channel.name;
       // this.channelOwner = channel.owner_name;

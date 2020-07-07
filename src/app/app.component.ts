@@ -92,6 +92,10 @@ export class MyApp {
     this.router.navigate(['/menu/setting']);
   }
 
+  about(){
+    this.router.navigate(['/menu/about']);
+  }
+
   async splash() {
     const splash = await this.modalCtrl.create({component: SplashscreenPage});
     return await splash.present();
