@@ -1,8 +1,9 @@
 import { Component, OnInit, NgZone } from '@angular/core';
-import { Events, Platform, LoadingController } from '@ionic/angular';
+import { Events,LoadingController } from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
 import { NativeService } from 'src/app/services/NativeService';
 import { FeedService } from 'src/app/services/FeedService';
+import { ThemeService } from 'src/app/services/theme.service';
 
 class Attribute {
   constructor(
@@ -43,7 +44,8 @@ export class ServerInfoPage implements OnInit {
     private zone: NgZone,
     private native: NativeService,
     private acRoute: ActivatedRoute,
-    private feedService: FeedService) {}
+    private feedService: FeedService,
+    public theme:ThemeService) {}
 
   ngOnInit() {
     // this.didString="did:elastos:ixxxxxxxxxxxxxxxxxxx"

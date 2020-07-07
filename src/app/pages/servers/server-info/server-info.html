@@ -1,4 +1,4 @@
-<ion-content>
+<ion-content [class.darkContainer]="theme.darkMode" [class.lightContainer]="!theme.darkMode">
 
 
   <ion-card class="ion-no-padding ion-no-margin" style="margin-top: 12px; margin-left: 21px; margin-right: 21px;">
@@ -9,15 +9,14 @@
     </div>
 
     <div class="center-flex" style="margin-top: 15px;">
-      <ion-label style="  font-family: Montserrat;
+      <ion-label style="font-family: Montserrat;
       font-size: 17px;
       font-weight: bold;
       font-stretch: normal;
       font-style: normal;
       line-height: 1.18;
       letter-spacing: normal;
-      text-align: left;
-      color: #000000;">Public Feed</ion-label>
+      text-align: left;" class="balck white">Public Feed</ion-label>
     </div>
 
     <div class="center-flex" style="margin-top: 15px;">
@@ -28,8 +27,7 @@
       font-style: normal;
       line-height: 1.38;
       letter-spacing: 0.8px;
-      text-align: left;
-      color: #000000;">{{introduction}} </ion-label>
+      text-align: left;" class="balck white">{{introduction}} </ion-label>
     </div>
 
     <div class="center-flex">

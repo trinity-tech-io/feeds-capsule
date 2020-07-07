@@ -66,9 +66,10 @@
 
 
 
-    <div class="feed-source-div" *ngIf="serverList.length >0">
-      <img class="feed-source-img" src="assets/images/play.svg">
-      <ion-label class="feed-source-text">Current Feed Sources</ion-label>
+    <div class="feed-source-div" *ngIf="serverList.length >0" [class.darkContainer]="theme.darkMode">
+      <img class="feed-source-img" src="assets/images/play.svg" *ngIf="!theme.darkMode">
+      <img class="feed-source-img" src="assets/images/play-dark.svg" *ngIf="theme.darkMode">
+      <ion-label class="feed-source-text white">Current Feed Sources</ion-label>
 
       <ion-card class="ion-no-padding ion-no-margin"  class="feed-source-card" *ngFor="let server of serverList" (click)="navToServerInfo(server.nodeId)">
         <ion-card-content class="ion-no-padding ion-no-margin">
@@ -87,7 +88,7 @@
             </div>
 
             <div class="feed-source-card-content-detail">
-              <div class="name">{{server.name}}</div>
+              <div class="name white">{{server.name}}</div>
               <div class="owner">{{server.owner}}</div>
               <div class="users-img-div" *ngIf="serversStatus[server.nodeId].status == 0">
                 <img class="users-img" src="assets/images/users-online.svg">

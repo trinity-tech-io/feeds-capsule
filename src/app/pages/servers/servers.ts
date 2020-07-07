@@ -3,6 +3,7 @@ import { NavController, Events, Platform } from '@ionic/angular';
 import { NativeService } from 'src/app/services/NativeService';
 import { FeedService } from 'src/app/services/FeedService';
 import { Router } from '@angular/router';
+import { ThemeService } from 'src/app/services/theme.service';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 @Component({
@@ -24,7 +25,8 @@ export class ServersPage implements OnInit {
         private zone: NgZone,
         private native: NativeService,
         private feedService: FeedService,
-        private router: Router) {
+        private router: Router,
+        public theme:ThemeService) {
            
     }
 

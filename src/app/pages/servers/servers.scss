@@ -80,3 +80,13 @@ ion-header {
  direction: ltr;
  unicode-bidi: embed;
 }
+
+.darkContainer{
+  .white{
+    color: #ffffff;
+  }
+
+  .feed-source-card-content-detail .white{
+    color: #ffffff;
+  }
+}
