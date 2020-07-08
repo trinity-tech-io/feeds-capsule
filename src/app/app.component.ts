@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
-import { Platform, ModalController } from '@ionic/angular';
+import { Platform, ModalController, Events } from '@ionic/angular';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
-// import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { CarrierService } from './services/CarrierService';
 import { FeedService } from './services/FeedService';
 import { Router } from '@angular/router';
@@ -21,36 +20,36 @@ let appManager: any;
 })
 
 export class MyApp {
-  private feedsUrl = "server.feedsUrl";
-
+  private didString = "Undefine";
+  private name = "Undefine";
   constructor(
+    private events: Events,
     private menu: MenuController,
     private platform: Platform,
     private statusBar: StatusBar,
-    // private splashScreen: SplashScreen,
     private feedService: FeedService,
     private router: Router,
     private modalCtrl: ModalController,
     private appService: AppService,
     private carrierService:CarrierService,
     public theme:ThemeService) {
-      // this.splash();
-      // this.router.navigate(['/tabs']);
-    this.initializeApp();
+      this.initializeApp();
+      this.initProfileData();
 
-    //titleBarManager.setBackgroundColor("#FFFFFF");
-    //titleBarManager.setForegroundMode(TitleBarPlugin.TitleBarForegroundMode.DARK);
+      titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.OUTER_RIGHT, {
+        key: "more",
+        iconPath: "assets/icon/more_menu.ico"
+      });
 
-    titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.OUTER_RIGHT, {
-      key: "more",
-      iconPath: "assets/icon/more_menu.ico"
-    });
+      titleBarManager.addOnItemClickedListener((menuIcon)=>{
+        if (menuIcon.key == "more") {
+            this.menu.open("menu");
+        }
+      });
 
-    titleBarManager.addOnItemClickedListener((menuIcon)=>{
-      if (menuIcon.key == "more") {
-          this.menu.open("menu");
-      }
-    });
+      this.events.subscribe("feeds:signinSuccess",()=>{
+        this.initProfileData();
+      })
   }
 
   initializeApp() {
@@ -72,7 +71,7 @@ export class MyApp {
         this.router.navigate(['/tabs/home']);
         this.feedService.updateSignInDataExpTime(signInData);
     });
-}
+  }
 
   closeApp() {
     appManager.close();
@@ -103,5 +102,14 @@ export class MyApp {
   async splash() {
     const splash = await this.modalCtrl.create({component: SplashscreenPage});
     return await splash.present();
+  }
+
+  initProfileData(){
+    let signData = this.feedService.getSignInData();
+    if (signData == null || signData == undefined)
+      return ;
+
+    this.didString = signData.did;
+    this.name = signData.name;
   }
 }

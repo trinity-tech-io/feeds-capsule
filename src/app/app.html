@@ -7,7 +7,7 @@
                     srcset="../assets/images/screenshot-2020-04-26-at-03-20-46@2x.png 2x,
                     ../assets/images/screenshot-2020-04-26-at-03-20-46@3x.png 3x"
                     class="menu-profile-img">
-                    <div class="menu-profile-name">wangran</div>
+                    <div class="menu-profile-name">{{name}}</div>
 
                     <div style="display: flex; margin-top: 6px;">
                         <img class="menu-profile-bubble" src="../assets/images/bubble.svg" >
@@ -15,7 +15,7 @@
 
                     </div>
                 </div>
-                <qrcode style="padding: 8px;"  [qrdata]="feedsUrl" [size]="100" [level]="'M'"></qrcode>
+                <qrcode style="padding: 8px;"  [qrdata]="didString" [size]="100" [level]="'M'"></qrcode>
             </div>
 
             <ion-menu-toggle >

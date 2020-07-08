@@ -1,10 +1,11 @@
 import { Component, OnInit, NgZone } from '@angular/core';
-declare let appManager: AppManagerPlugin.AppManager;
-declare let didManager: DIDPlugin.DIDManager;
 import { FeedService } from 'src/app/services/FeedService';
 import { CarrierService } from 'src/app/services/CarrierService';
-import { NavController, LoadingController } from '@ionic/angular';
+import { NavController, Events, LoadingController } from '@ionic/angular';
 import { NativeService } from 'src/app/services/NativeService';
+
+declare let appManager: AppManagerPlugin.AppManager;
+declare let didManager: DIDPlugin.DIDManager;
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 @Component({
@@ -20,6 +21,7 @@ export class SigninPage implements OnInit {
   public emailAddress: string = "";
 
   constructor(
+    private events: Events,
     private navCtrl: NavController,
     private native: NativeService,
     private zone: NgZone,
@@ -95,6 +97,8 @@ export class SigninPage implements OnInit {
               this.findCredentialValueById(data.did, credentials, "nation", "Not provided"),
               this.findCredentialValueById(data.did, credentials, "description", "Not provided")
               );
+
+            this.events.publish("feeds:signinSuccess");
             this.initApp();
           });
         });

@@ -35,8 +35,6 @@ export class FeedsPage implements OnInit {
   create(){
     let bindingServer = this.feedService.getBindingServer();
     if (bindingServer == null || bindingServer == undefined){
-      // this.router.navigate(['/bindservice/scanqrcode']);
-      // this.router.navigateByUrl('/bindservice/scanqrcode');
       this.navCtrl.navigateForward(['/bindservice/scanqrcode']);
       return ;
     }
