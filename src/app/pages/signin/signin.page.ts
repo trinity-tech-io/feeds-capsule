@@ -3,8 +3,7 @@ declare let appManager: AppManagerPlugin.AppManager;
 declare let didManager: DIDPlugin.DIDManager;
 import { FeedService } from 'src/app/services/FeedService';
 import { CarrierService } from 'src/app/services/CarrierService';
-import { Router} from '@angular/router';
-import { LoadingController } from '@ionic/angular';
+import { NavController, LoadingController } from '@ionic/angular';
 import { NativeService } from 'src/app/services/NativeService';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
@@ -21,10 +20,10 @@ export class SigninPage implements OnInit {
   public emailAddress: string = "";
 
   constructor(
+    private navCtrl: NavController,
     private native: NativeService,
     private zone: NgZone,
     private feedService: FeedService,
-    private router: Router,
     public loadingController: LoadingController,
     private carrierService:CarrierService) { }
 
@@ -137,8 +136,7 @@ export class SigninPage implements OnInit {
 
   initApp(){
     this.carrierService.init();
-    // this.router.navigate(['/favorite']);
-    this.router.navigate(['/tabs']);
+    this.navCtrl.navigateRoot(['/tabs/home'])
   }
 
   saveData(did: string, name: string, email: string, telephone: string, location: string, description: string){
