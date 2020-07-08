@@ -33,6 +33,7 @@ const routes: Routes = [
   { path: 'menu/profiledetail', loadChildren: './pages/feeds/menu/profiledetail/profiledetail.module#ProfiledetailPageModule' },
 
   { path: 'menu/about', loadChildren: './pages/about/about.module#AboutPageModule' },
+  { path: 'menu/develop', loadChildren: './pages/feeds/menu/develop/develop.module#DevelopPageModule' },
 
 ];
 

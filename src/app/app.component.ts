@@ -92,6 +92,10 @@ export class MyApp {
     this.router.navigate(['/menu/setting']);
   }
 
+  goToDev(){
+    this.router.navigate(['menu/develop']);
+  }
+
   about(){
     this.router.navigate(['/menu/about']);
   }

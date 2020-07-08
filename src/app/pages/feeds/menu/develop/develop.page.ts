@@ -1,28 +1,28 @@
-import { Component, OnInit, NgZone } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { NativeService } from 'src/app/services/NativeService';
 import { FeedService } from 'src/app/services/FeedService';
 import { NavController, AlertController } from '@ionic/angular';
-import { Router } from '@angular/router';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
-
 @Component({
-  selector: 'app-setting',
-  templateUrl: './setting.page.html',
-  styleUrls: ['./setting.page.scss'],
+  selector: 'app-develop',
+  templateUrl: './develop.page.html',
+  styleUrls: ['./develop.page.scss'],
 })
-export class SettingPage implements OnInit {
-  private buttonDisable:boolean = false;
+export class DevelopPage implements OnInit {
+
   constructor(
     private navCtrl: NavController,
-    private router: Router,
-    private zone: NgZone,
     private feedService :FeedService,
     private native: NativeService,
-    public alertController: AlertController){ }
+    public alertController: AlertController) { }
 
   ngOnInit() {
-    titleBarManager.setTitle("Setting");
+    titleBarManager.setTitle("Develop");
     this.native.setTitleBarBackKeyShown(true);
+  }
+
+  clearAll(){
+    this.presentAlertConfirm();
   }
 
   async presentAlertConfirm() {
@@ -51,5 +51,5 @@ export class SettingPage implements OnInit {
 
     await alert.present();
   }
-   
+
 }
