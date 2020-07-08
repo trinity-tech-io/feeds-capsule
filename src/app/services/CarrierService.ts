@@ -116,7 +116,6 @@ const createOption = {
 @Injectable()
 export class CarrierService {
     private mIsReady = false;
-    // private mIsReady = true; //for test
     private myInterval: any;
     
 
@@ -143,9 +142,8 @@ export class CarrierService {
                 clearInterval(this.myInterval);
             }, 2000);
         } else {
-            this.createObject(
-                this.createCarrierInstanceSuccess, 
-                this.createCarrierInstanceError);
+            if (!this.mIsReady)
+                this.createObject(this.createCarrierInstanceSuccess, this.createCarrierInstanceError);
         }
     }
 
