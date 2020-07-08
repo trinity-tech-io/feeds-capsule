@@ -11,10 +11,11 @@ import { Clipboard } from '@ionic-native/clipboard/ngx';
 import { MyApp } from './app.component';
 import { ComponentsModule } from './components/components.module';
 
-import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
+import { TranslateLoader, TranslateModule,TranslateService} from '@ngx-translate/core';
 import { Observable } from 'rxjs';
-// import { zh } from './../assets/i18n/zh';
-// import { en } from './../assets/i18n/en';
+import {zh} from './../assets/i18n/zh';
+import {en} from './../assets/i18n/en';
+import {fr} from './../assets/i18n/fr';
 
 /*
 import { AboutPage } from './pages/about/about';
@@ -47,26 +48,30 @@ import { JWTMessageService } from './services/JWTMessageService';
 import { TransportService } from './services/TransportService';
 import { SerializeDataService } from './services/SerializeDataService';
 
-/** 通过类引用方式解析国家化文件 */
-export class CustomTranslateLoader implements TranslateLoader {
+export class WebpackTranslateLoader implements TranslateLoader {
   public getTranslation(lang: string): Observable<any> {
-      return Observable.create(observer => {
-          // switch (lang) {
-          //     case 'zh':
-          //     default:
-          //         observer.next(zh);
-          //         break;
-          //     case 'en':
-          //         observer.next(en);
-          // }
-
-          observer.complete();
-      });
+    return Observable.create(observer => {
+      observer.next(lang);
+      switch (lang) {
+        case 'zh':
+          observer.next(zh);
+          break;
+        case 'fr':
+          observer.next(fr);
+          break;
+        case 'en':
+          observer.next(en);
+          break;
+        default:
+          observer.next(en); 
+      }
+      observer.complete();
+    });
   }
 }
 
 export function TranslateLoaderFactory() {
-  return new CustomTranslateLoader();
+  return new WebpackTranslateLoader();
 }
 
 
@@ -91,8 +96,8 @@ export function TranslateLoaderFactory() {
     }),
     TranslateModule.forRoot({
       loader: {
-          provide: TranslateLoader,
-          useFactory: (TranslateLoaderFactory)
+        provide: TranslateLoader,
+        useFactory:(TranslateLoaderFactory)
       }
     }),
   ],
@@ -108,6 +113,7 @@ export function TranslateLoaderFactory() {
     CarrierService,
     NativeService,
     FeedService,
+    TranslateService,
     ThemeService,
     JsonRPCService,
     // TransportService,

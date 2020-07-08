@@ -2,9 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { PostfromComponent } from '../../components/postfrom/postfrom.component';
 import { NavController, PopoverController } from '@ionic/angular';
 import { FeedService } from '../../services/FeedService';
-import { Router } from '@angular/router';
 import { NativeService } from '../../services/NativeService';
+import { TranslateService } from "@ngx-translate/core";
+import { Events } from '@ionic/angular';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
+declare let appManager: AppManagerPlugin.AppManager;
 
 @Component({
   selector: 'app-feeds',
@@ -12,24 +14,31 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
   styleUrls: ['./feeds.page.scss'],
 })
 export class FeedsPage implements OnInit {
-  public title = "My Feeds Timeline";
+  public title = "FeedsPage.tabTitle1";
   public currentTab = "home";
   constructor(
     private navCtrl: NavController,
     private native: NativeService,
     private feedService: FeedService,
-    private router: Router,
-    private popoverController: PopoverController) {
+    private popoverController: PopoverController,
+    private translate:TranslateService,
+    private event:Events) {
     }
 
   ngOnInit() {
-    //titleBarManager.setBackgroundColor("#FFFFFF");
-    //titleBarManager.setForegroundMode(TitleBarPlugin.TitleBarForegroundMode.DARK);
+    this.event.subscribe("feeds:updateTitle",()=>{
+      this.initTile();
+    });
+  }
+
+  initTile(){
+   titleBarManager.setTitle(this.translate.instant(this.title));
   }
 
   ionViewDidEnter() {
-    titleBarManager.setTitle(this.title);
+    this.initTile();
     this.native.setTitleBarBackKeyShown(false);
+    appManager.setVisible("show");
   }
 
   create(){
@@ -62,30 +71,30 @@ export class FeedsPage implements OnInit {
     home(){
       this.currentTab = "home";
       // this.feedService.currentTab = "home";
-      this.title = "My Feeds Timeline";
-      titleBarManager.setTitle(this.title);
+      this.title = "FeedsPage.tabTitle1";
+      this.initTile();
       this.native.setTitleBarBackKeyShown(false);
     }
 
     profile(){
       this.currentTab = "profile";
-      this.title = "My Profile"
-      titleBarManager.setTitle(this.title);
+      this.title = "FeedsPage.tabTitle2"
+      this.initTile();
       this.native.setTitleBarBackKeyShown(false);
     }
 
     notification(){
       this.currentTab = "notification";
-      this.title = "Notification";
-      titleBarManager.setTitle(this.title);
+      this.title = "FeedsPage.tabTitle3";
+      this.initTile();
       this.native.setTitleBarBackKeyShown(false);
     }
 
     search(){
       this.currentTab = "search";
       this.feedService.refreshChannels();
-      this.title = "Explore Feeds";
-      titleBarManager.setTitle("Explore Feeds");
+      this.title = "FeedsPage.tabTitle4";
+      this.initTile();
       this.native.setTitleBarBackKeyShown(false);
     }
 

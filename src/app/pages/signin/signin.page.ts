@@ -3,6 +3,7 @@ import { FeedService } from 'src/app/services/FeedService';
 import { CarrierService } from 'src/app/services/CarrierService';
 import { NavController, Events, LoadingController } from '@ionic/angular';
 import { NativeService } from 'src/app/services/NativeService';
+import { TranslateService } from "@ngx-translate/core";
 
 declare let appManager: AppManagerPlugin.AppManager;
 declare let didManager: DIDPlugin.DIDManager;
@@ -27,15 +28,28 @@ export class SigninPage implements OnInit {
     private zone: NgZone,
     private feedService: FeedService,
     public loadingController: LoadingController,
-    private carrierService:CarrierService) { }
+    private carrierService:CarrierService,
+    private translate:TranslateService,
+    private event:Events) { }
 
   ngOnInit() {
+     this.event.subscribe("feeds:updateTitle",()=>{
+         this.initTile();
+     });
+  }
 
+  initTile(){
+    titleBarManager.setTitle(this.translate.instant("SigninPage.signIn"));
   }
 
   ionViewDidEnter() {
-    titleBarManager.setTitle("SignIn");
+    this.initTile();
     this.native.setTitleBarBackKeyShown(false);
+    appManager.setVisible("show");
+  }
+
+  ionViewWillUnload(){
+    this.event.unsubscribe("feeds:updateTitle");
   }
 
   signIn(){
@@ -146,4 +160,5 @@ export class SigninPage implements OnInit {
   saveData(did: string, name: string, email: string, telephone: string, location: string, description: string){
     this.feedService.saveSignInData(did,name,email,telephone,location, description);
   }
+  
 }

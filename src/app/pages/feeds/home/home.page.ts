@@ -1,10 +1,12 @@
 import { Component, OnInit, NgZone } from '@angular/core';
-import { NavController, Events, PopoverController, IonTabs} from '@ionic/angular';
+import { Events, PopoverController, IonTabs} from '@ionic/angular';
 import { FeedService } from '../../../services/FeedService';
 import { Router } from '@angular/router'
 import { CommentComponent } from '../../../components/comment/comment.component'
 import { FeedsPage } from '../feeds.page'
-
+import { ThemeService } from 'src/app/services/theme.service';
+import { UtilService } from 'src/app/services/utilService';
+import { TranslateService } from "@ngx-translate/core";
 @Component({
   selector: 'app-home',
   templateUrl: './home.page.html',
@@ -22,16 +24,19 @@ export class HomePage implements OnInit {
     private events: Events,
     private zone: NgZone,
     private feedService :FeedService,
-    private router: Router) {
+    private router: Router,
+    public theme:ThemeService,
+    private translate:TranslateService) {
     this.postList = feedService.getPostList();
     this.events.subscribe('feeds:postDataUpdate',()=>{
       this.zone.run(() => {
-        this.postList = this.feedService.getPostList();
+         this.postList = this.feedService.getPostList();
       });
     });
   }
 
   ionViewWillEnter() {
+  
   }
 
   
@@ -103,5 +108,17 @@ export class HomePage implements OnInit {
 
   parseAvatar(nodeId: string, channelId: number): string{
     return this.feedService.parseChannelAvatar(this.getChannel(nodeId, channelId).avatar);
+  }
+
+  handleDisplayTime(createTime:number){
+
+    let obj = UtilService.handleDisplayTime(createTime);
+    if(obj.type==='m'){
+      return obj.content+this.translate.instant('HomePage.minutesAgo');
+    }
+    if(obj.type==='h'){
+      return obj.content+this.translate.instant('HomePage.hoursAgo');
+    }
+    return  obj.content;
   }
 }

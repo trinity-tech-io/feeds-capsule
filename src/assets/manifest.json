@@ -8,6 +8,7 @@
   "description": "",
   "start_url": "index.html",
   "type": "app",
+  "start_visible": "hide",
   "category": "social",
   "icons": [
     {

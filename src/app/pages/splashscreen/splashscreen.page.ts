@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { CarrierService } from '../../services/CarrierService';
-
+declare let appManager: AppManagerPlugin.AppManager;
 @Component({
   selector: 'app-splashscreen',
   templateUrl: './splashscreen.page.html',
@@ -19,6 +19,10 @@ export class SplashscreenPage implements OnInit {
       this.modalCtrl.dismiss();
     }, 3000);
 
+  }
+
+  ionViewDidEnter() {
+    appManager.setVisible("show");
   }
 
 }

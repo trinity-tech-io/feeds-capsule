@@ -9,19 +9,19 @@
       <div style="text-align: center; ">
         <img src="../../../../assets/images/empty-feeds-icon.svg">
       </div>
-      <div class="all-empty" style="margin-top: 20px;">All Empty</div>
-      <div class="all-empty-content-text" style="margin-top: 7px;">Not following any feeds yet</div>
+      <div class="all-empty" style="margin-top: 20px;">{{ 'HomePage.allempty' | translate }}</div>
+      <div class="all-empty-content-text" style="margin-top: 7px;">{{"HomePage.emptyDes"| translate}}</div>
     
       <div class="explore-feeds">
       <ion-button expand="block"  mode="ios" (click)="exploreFeeds()" >
-        <div class="explore-feeds-text"> Explore Feeds</div>
+        <div class="explore-feeds-text">{{"HomePage.exploreFeeds"|translate}}</div>
       </ion-button>
       </div>
     </div> 
   </div>
 
 
-  <div *ngFor="let post of postList">
+  <div *ngFor="let post of postList" [class.darkContainer]="theme.darkMode">
     <div class="channel-img-small-div">
 
       <div class="channel-img-small" (click)="navTo(post.nodeId, post.channel_id)">
@@ -35,21 +35,20 @@
       <div class="channel-detail-div">
         <div class="channel-detail-text-div">
           <div style="height: 100%; vertical-align: middle;" (click)="navTo(post.nodeId, post.channel_id)"> 
-            <ion-label class="channel-title-small">{{getChannel(post.nodeId, post.channel_id).name}}</ion-label>
-            <ion-label class="channel-ts">{{post.created_at|date:'MM-dd HH:mm'}}</ion-label>
+            <ion-label class="channel-title-small white">{{getChannel(post.nodeId, post.channel_id).name}}</ion-label>
+            <ion-label class="channel-ts">{{handleDisplayTime(post.created_at)}}</ion-label> 
             <ion-icon name="more" mode="ios" style="vertical-align: middle; float: right; "></ion-icon>
           </div>
 
           <div  (click)="navTo(post.nodeId, post.channel_id)"> 
-            <ion-label class="channel-desc-small">@{{getChannelOwnerName(post.nodeId, post.channel_id)}}</ion-label>
+              <ion-label class="channel-desc-small">@{{getChannelOwnerName(post.nodeId, post.channel_id)}}</ion-label>
           </div>
           <!-- <div class="channel-desc-small">{{getChannel(post.nodeId, post.channel_id).owner_name}} 
 
           </div> -->
 
           <div class="channel-post-div"  (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)"> 
-            <ion-label class="channel-post">{{getContentText(post.content)}}</ion-label>
-            
+            <ion-label class="channel-post white">{{getContentText(post.content)}}</ion-label>
           </div>
           <!-- <img src="../../../../assets/images/screenshot-2020-04-26-at-05-20-13.png"
                   srcset="../../../../assets/images/screenshot-2020-04-26-at-05-20-13@2x.png 2x,

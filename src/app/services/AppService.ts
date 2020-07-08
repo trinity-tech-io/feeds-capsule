@@ -2,7 +2,9 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { ThemeService } from "./../services/theme.service";
-import { NgZone } from '@angular/core';
+import { NgZone} from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
+import { Events } from '@ionic/angular';
 declare let appManager: AppManagerPlugin.AppManager;
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 @Injectable({
@@ -11,7 +13,9 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 export class AppService {
     constructor(private router: Router,
                 public theme:ThemeService,
-                private zone: NgZone) {
+                private zone: NgZone,
+                private translate:TranslateService,
+                private event: Events) {
     }
 
     scanAddress() {
@@ -24,6 +28,7 @@ export class AppService {
     }
 
     init() {
+        this.initTranslateConfig();
         appManager.setListener((msg) => {
           this.onMessageReceived(msg);
         });
@@ -45,7 +50,7 @@ export class AppService {
           case AppManagerPlugin.MessageType.IN_REFRESH:
             if (params.action === "currentLocaleChanged") {
                 this.zone.run(()=>{
-                  //this.setCurLang(params.data);
+                   this.setCurLang(params.data);
                 });
             }
             if(params.action === 'preferenceChanged' && params.data.key === "ui.darkmode") {
@@ -55,6 +60,25 @@ export class AppService {
             }
             break;
         }
+      }
+
+      initTranslateConfig() {
+        // 参数类型为数组，数组元素为本地语言json配置文件名
+        this.translate.addLangs(["zh", "en", "fr"]);
+        // 设置默认语言
+        appManager.getLocale((defaultLang: string, currentLang: string, systemLang: string)=>{
+          this.setCurLang(currentLang);
+        });
+      }
+  
+      setCurLang(currentLang: string) {
+        if (currentLang != 'zh' && currentLang != 'fr') {
+          currentLang = "en";
+        }
+        console.log("Setting current lang to "+currentLang);
+        this.translate.setDefaultLang(currentLang);
+        this.translate.use(currentLang);
+        this.event.publish("feeds:updateTitle");
       }
   
 }
