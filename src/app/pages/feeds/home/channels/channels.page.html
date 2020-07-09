@@ -42,7 +42,7 @@
 
     <ion-button *ngIf="followStatus" style="width: 76.8px;
     height: 25.6px; --border-radius:25px; 
-    --background: #368bff;" (click)="unsubscribe(channel.nodeId, channel.name, channel.id)">
+    --background: #368bff;" (click)="unsubscribe()">
       <ion-label style="  font-family: Montserrat;
       font-size: 10px;
       font-weight: bold;
@@ -57,7 +57,7 @@
     <ion-button *ngIf="!followStatus" style="width: 76.8px;
     height: 25.6px; --border-radius:25px; 
     --border-color:#8888b0
-    " fill="outline" (click)="unsubscribe(channel.nodeId, channel.name, channel.id)">
+    " fill="outline" (click)="subscribe()">
       <ion-label style="  font-family: Montserrat;
       font-size: 10px;
       font-weight: bold;

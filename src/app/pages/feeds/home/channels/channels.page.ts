@@ -5,6 +5,7 @@ import { FeedService } from '../../../../services/FeedService';
 import { NativeService } from '../../../../services/NativeService';
 import { Router } from '@angular/router'
 import { CommentComponent } from '../../../../components/comment/comment.component'
+import { ActionSheetController } from '@ionic/angular';
 
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
@@ -26,13 +27,15 @@ export class ChannelsPage implements OnInit {
 
   private followStatus = false;
   constructor(
+    private navCtrl: NavController,
     private popoverController: PopoverController,
     private router: Router,
     private zone: NgZone,
     private events: Events,
     private native: NativeService,
     private acRoute: ActivatedRoute,
-    private feedService: FeedService
+    private feedService: FeedService,
+    private actionSheetController:ActionSheetController
   ) {
 
     acRoute.params.subscribe((data)=>{
@@ -41,16 +44,7 @@ export class ChannelsPage implements OnInit {
 
       let channel = this.feedService.getChannelFromId(this.nodeId, this.channelId);
       
-      let channels = this.feedService.getSubscribedChannelsFromNodeId(this.nodeId);
-      let nodeChannelId = this.nodeId+channel.id;
-
-      console.log("channels ==>"+JSON.stringify(channels));
-      console.log("channel ==>"+JSON.stringify(channel));
-      console.log("nodeChannelId ==>"+nodeChannelId);
-      console.log("channels[nodeChannelId] ==>"+channels[nodeChannelId]);
-      if (channels[nodeChannelId] != undefined){
-        this.followStatus = true;
-      }
+      this.checkFollowStatus(this.nodeId,this.channelId);
 
       this.channelName = channel.name;
       // this.channelOwner = channel.owner_name;
@@ -70,6 +64,40 @@ export class ChannelsPage implements OnInit {
 
       });
     });
+
+    this.events.subscribe('feeds:subscribeFinish', (nodeId, channelId, name)=> {
+      this.zone.run(() => {
+        this.checkFollowStatus(this.nodeId,this.channelId);
+      });
+    });
+
+    this.events.subscribe('feeds:unsubscribeFinish', (nodeId, channelId, name) => {
+      this.zone.run(() => {
+        this.checkFollowStatus(this.nodeId,this.channelId);
+      });
+    });
+  }
+
+  subscribe(){
+    this.feedService.subscribeChannel(this.nodeId, Number(this.channelId));
+  }
+
+  async unsubscribe(){
+    const actionSheet = await this.actionSheetController.create({
+      buttons: [{
+        text: 'Unsubscribe @'+this.channelName+"?",
+        icon: 'trash',
+        handler: () => {
+          this.feedService.unsubscribeChannel(this.nodeId,Number(this.channelId));
+        }
+      },{
+        text: 'Cancel',
+        icon: 'close',
+        handler: () => {
+        }
+      }]
+    });
+    await actionSheet.present();
   }
 
   ngOnInit() {
@@ -134,5 +162,16 @@ export class ChannelsPage implements OnInit {
 
   checkMyLike(nodeId: string, channelId: number, postId: number){
     return this.feedService.checkMyLike(nodeId, channelId, postId);
+  }
+
+  checkFollowStatus(nodeId: string, channelId: number){
+    let channelsMap = this.feedService.getChannelsMap();
+    let nodeChannelId = nodeId+channelId;
+    if (channelsMap[nodeChannelId] == undefined || !channelsMap[nodeChannelId].isSubscribed){
+      this.followStatus = false;
+    }
+    else{
+      this.followStatus = true;
+    }
   }
 }
