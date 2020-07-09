@@ -11,7 +11,7 @@
 
                     <div style="display: flex; margin-top: 6px;">
                         <img class="menu-profile-bubble" src="../assets/images/bubble.svg" >
-                        <div class="menu-profile-follower">0 follower</div>
+                        <div class="menu-profile-follower">0 {{"common.followers" | translate }}</div>
 
                     </div>
                 </div>
@@ -23,7 +23,7 @@
                     <ion-item class="ion-no-padding ion-no-margin" lines="none">    
                         <img src="../assets/images/menu-user.svg" class="menu-user" *ngIf="!theme.darkMode">
                         <img src="../assets/images/menu-user-dark.svg" class="menu-user" *ngIf="theme.darkMode">
-                        <div class="menu-profile white">Profile Details</div>
+                        <div class="menu-profile white">{{'app.profileDetails' | translate}}</div>
                     </ion-item>
                 </div>
             </ion-menu-toggle>
@@ -32,7 +32,7 @@
                     <ion-item class="ion-no-padding ion-no-margin" lines="none">
                         <img src="../assets/images/menu-feeds.svg" class="menu-feeds" *ngIf="!theme.darkMode">
                         <img src="../assets/images/menu-feeds-dark.svg" class="menu-feeds" *ngIf="theme.darkMode">
-                        <ion-label class="menu-profile white">Feed Sources</ion-label>
+                        <ion-label class="menu-profile white">{{'app.feedSources' | translate}}</ion-label>
                     </ion-item>
                 </div>
             </ion-menu-toggle>
@@ -41,7 +41,7 @@
                     <ion-item class="ion-no-padding ion-no-margin" lines="none">
                         <img src="../assets/images/menu-setting.svg" class="menu-setting" *ngIf="!theme.darkMode">
                         <img src="../assets/images/menu-setting-dark.svg" class="menu-setting" *ngIf="theme.darkMode">
-                        <ion-label class="menu-profile white">Settings</ion-label>
+                        <ion-label class="menu-profile white">{{"app.settings" | translate}}</ion-label>
                     </ion-item>
                 </div>
             </ion-menu-toggle>
@@ -49,8 +49,8 @@
                 <div style="margin-left: 30px;margin-top: 30px;width: 100%;" (click)="about()">
                     <ion-item class="ion-no-padding ion-no-margin" lines="none">
                         <img src="../assets/images/menu-about.svg" class="menu-setting" *ngIf="!theme.darkMode">
-                        <img src="../assets/images/menu-about.svg" class="menu-setting" *ngIf="theme.darkMode">
-                        <ion-label class="menu-profile white">About</ion-label>
+                        <img src="../assets/images/menu-about-dark.svg" class="menu-setting" *ngIf="theme.darkMode">
+                        <ion-label class="menu-profile white">{{'app.about'|translate}}</ion-label>
                     </ion-item>
                 </div>
             </ion-menu-toggle>
@@ -59,8 +59,8 @@
                 <div style="margin-left: 30px;margin-top: 30px;width: 100%;" (click)="goToDev()">
                     <ion-item class="ion-no-padding ion-no-margin" lines="none">
                         <img src="../assets/images/menu-dev.png" class="menu-setting" *ngIf="!theme.darkMode">
-                        <img src="../assets/images/menu-dev.png" class="menu-setting" *ngIf="theme.darkMode">
-                        <ion-label class="menu-profile white">Develop</ion-label>
+                        <img src="../assets/images/menu-dev-dark.svg" class="menu-setting" *ngIf="theme.darkMode">
+                        <ion-label class="menu-profile white">{{"app.develop"|translate}}</ion-label>
                     </ion-item>
                 </div>
             </ion-menu-toggle>

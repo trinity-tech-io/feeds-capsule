@@ -1,5 +1,7 @@
 import { Component, OnInit, NgZone } from '@angular/core';
+import {Events} from '@ionic/angular';
 import { NativeService } from 'src/app/services/NativeService';
+import { TranslateService } from "@ngx-translate/core";
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 @Component({
@@ -13,16 +15,30 @@ export class AboutPage implements OnInit {
 
   constructor(
     private zone: NgZone,
-    public native: NativeService
+    public native: NativeService,
+    private translate:TranslateService,
+    private events: Events
     ) {}
 
-  ngOnInit() {
-    titleBarManager.setTitle("About");
-    this.native.setTitleBarBackKeyShown(true);
-  }
+    ngOnInit() {
+      this.events.subscribe("feeds:updateTitle",()=>{
+        this.initTitle();
+      });
+      this.initTitle();
+      this.native.setTitleBarBackKeyShown(true);
+    }
+  
+    initTitle(){
+      titleBarManager.setTitle(this.translate.instant("AboutPage.about"));
+    }
+  
 
   goWebsite() {
     this.native.openUrl("http://www.elastos.org");
+  }
+
+  ionViewWillUnload(){
+    this.events.unsubscribe("feeds:updateTitle");
   }
 
 }

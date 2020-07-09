@@ -1,13 +1,14 @@
-<div class="create-feed-div">
+<div class="create-feed-div" [class.darkContainer]="theme.darkMode">
 
   <div style="width: 100%; display: flex;" (click)="profileimage()">
     <div style="width: 100%;">
-      <div class="number">
+      <div class="number white">
         Profile image
+        {{'CreatenewfeedPage.profileImage'|translate}}
       </div>
       
       <div class="title">
-        Choose profile image to be displayed
+        {{'CreatenewfeedPage.des'|translate}}
       </div>
     </div>
 
@@ -22,8 +23,8 @@
 
   <div style="width: 100%; display: flex; margin-top: 20px;" (click)="selectChannelSource($event)">
     <div style="width: 100%;">
-      <div class="number">
-        Channel source
+      <div class="number white">
+        {{'CreatenewfeedPage.channelSource'|translate}}
       </div>
       
       <div class="title">
@@ -39,8 +40,8 @@
 
   <div style="width: 100%; margin-top: 20px;">
     <div style="width: 100%;">
-      <div class="number">
-        Name
+      <div class="number white">
+        {{'CreatenewfeedPage.name'|translate}}
       </div>
       
       <ion-input required type="text" class="title" placeholder="Enter here" #name></ion-input>
@@ -48,8 +49,8 @@
 
   <div style="width: 100%; margin-top: 20px;">
     <div style="width: 100%;">
-      <div class="number">
-        Description
+      <div class="number white">
+      {{'CreatenewfeedPage.description'|translate}}
       </div>
       
       <ion-input required type="text" placeholder="Enter here" #desc></ion-input>
@@ -74,7 +75,7 @@
 
   <ion-button style="margin-top: 50px;" expand="block" (click)="createChannel(name,desc)">
 
-      Create Feed
+      {{'CreatenewfeedPage.createFeed'|translate}}
     
   </ion-button>
 </div>

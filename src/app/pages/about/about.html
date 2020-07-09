@@ -2,12 +2,12 @@
 <ion-content padding>
   <div id="logo">
       <img style="width: 80px; height: 80px;" src="assets/images/feeds-logo.svg" />
-      <div>version:{{version}}</div>
+      <div>{{'AboutPage.version' | translate}}: {{version}}</div>
   </div>
   <ion-list lines="none">
       <ion-item detail (click)="goWebsite()">
           <ion-label>
-              <h2>website:</h2>
+              <h2>{{'AboutPage.website'|translate}}:</h2>
               <p>www.elastos.org</p>
           </ion-label>
       </ion-item>

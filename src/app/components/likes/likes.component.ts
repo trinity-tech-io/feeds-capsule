@@ -1,6 +1,9 @@
 import { Component, OnInit, NgZone } from '@angular/core';
-import { NavController, Events, PopoverController, IonTabs} from '@ionic/angular';
+import { Events, PopoverController, IonTabs} from '@ionic/angular';
 import { FeedService } from '../../services/FeedService';
+import { ThemeService } from 'src/app/services/theme.service';
+import { UtilService } from 'src/app/services/utilService';
+import { TranslateService } from "@ngx-translate/core";
 import { Router } from '@angular/router'
 import { CommentComponent } from '../../components/comment/comment.component'
 import { FeedsPage } from 'src/app/pages/feeds/feeds.page'
@@ -20,7 +23,9 @@ export class LikesComponent implements OnInit {
     private feedService :FeedService,
     private zone: NgZone,
     private router: Router,
-    private events: Events) {
+    private events: Events,
+    public theme:ThemeService,
+    private translate:TranslateService) {
     
     this.likeList = this.feedService.getLikeList();    
     this.events.subscribe('feeds:updateLikeList', (list) => {
@@ -99,5 +104,16 @@ export class LikesComponent implements OnInit {
   exploreFeeds(){
     this.tabs.select("search");
     this.feedspage.currentTab = "search";
+  }
+
+  handleDisplayTime(createTime:number){
+    let obj = UtilService.handleDisplayTime(createTime);
+    if(obj.type==='m'){
+      return obj.content+this.translate.instant('HomePage.minutesAgo');
+    }
+    if(obj.type==='h'){
+      return obj.content+this.translate.instant('HomePage.hoursAgo');
+    }
+    return  obj.content;
   }
 }

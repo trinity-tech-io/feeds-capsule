@@ -31,6 +31,10 @@ export class FeedsPage implements OnInit {
     });
   }
 
+  ionViewWillUnload(){
+    this.event.unsubscribe("feeds:updateTitle");
+  }
+
   initTile(){
    titleBarManager.setTitle(this.translate.instant(this.title));
   }

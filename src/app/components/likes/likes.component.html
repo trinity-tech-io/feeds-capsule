@@ -3,18 +3,18 @@
     <div style="text-align: center; ">
       <img src="../../../../assets/images/empty-like-icon.svg">
     </div>
-    <div class="all-empty" style="margin-top: 20px;">All Empty</div>
-    <div class="all-empty-content-text" style="margin-top: 7px;">You have no Feeds</div>
+    <div class="all-empty" style="margin-top: 20px;">{{'common.allempty' | translate}}</div>
+    <div class="all-empty-content-text" style="margin-top: 7px;">{{'LikesComponent.emptyDes'|translate}}</div>
   
     <div class="explore-feeds">
       <ion-button expand="block"  mode="ios" (click)="exploreFeeds()" >
-        <div class="explore-feeds-text"> Explore Feeds</div>
+        <div class="explore-feeds-text">{{'FollowingComponent.exploreFeeds'|translate}}</div>
       </ion-button>
     </div>
   </div> 
 </div>
 
-<div *ngFor="let post of likeList">
+<div *ngFor="let post of likeList" [class.darkContainer]="theme.darkMode">
 
 
   <!-- <div class="channel-img-small-div">
@@ -59,8 +59,8 @@
   <div class="channel-detail-div">
     <div class="channel-detail-text-div">
       <div style="height: 100%; vertical-align: middle;" (click)="navTo(post.nodeId, post.channel_id)"> 
-        <ion-label class="channel-title-small">{{getChannel(post.nodeId, post.channel_id).name}}</ion-label>
-        <ion-label class="channel-ts"> - {{post.created_at|date:'MM-dd HH:mm'}}</ion-label>
+        <ion-label class="channel-title-small white">{{getChannel(post.nodeId, post.channel_id).name}}</ion-label>
+        <ion-label class="channel-ts"> - {{handleDisplayTime(post.created_at)}}</ion-label>
         <ion-icon name="more" mode="ios" style="vertical-align: middle; float: right; "></ion-icon>
       </div>
 
@@ -72,7 +72,7 @@
       </div> -->
 
       <div class="channel-post-div"  (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)"> 
-        <ion-label class="channel-post">{{getContentText(post.content)}}</ion-label>
+        <ion-label class="channel-post white">{{getContentText(post.content)}}</ion-label>
         
       </div>
       <!-- <img src="../../../../assets/images/screenshot-2020-04-26-at-05-20-13.png"

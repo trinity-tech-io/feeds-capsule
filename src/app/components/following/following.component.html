@@ -5,18 +5,18 @@
       <div style="text-align: center; ">
         <img src="../../../../assets/images/empty-feeds-icon.svg">
       </div>
-      <div class="all-empty" style="margin-top: 20px;">All Empty</div>
-      <div class="all-empty-content-text" style="margin-top: 7px;">Not following any feeds yet</div>
+      <div class="all-empty" style="margin-top: 20px;">{{'common.allempty' | translate}}</div>
+      <div class="all-empty-content-text" style="margin-top: 7px;">{{'FollowingComponent.emptyDes'|translate}}</div>
     
       <div class="explore-feeds">
       <ion-button expand="block"  mode="ios" (click)="exploreFeeds()" >
-        <div class="explore-feeds-text"> Explore Feeds</div>
+        <div class="explore-feeds-text">{{'FollowingComponent.exploreFeeds'|translate}}</div>
       </ion-button>
       </div>
     </div> 
   </div>
 
-<div *ngFor="let channel of channelList" >
+<div *ngFor="let channel of channelList" [class.darkContainer]="theme.darkMode">
 
   <div class="channel-img-small-div" (click)="navTo(channel.nodeId, channel.id)">
     <div class="channel-img-small">
@@ -28,7 +28,7 @@
     <div class="channel-detail-div">
       <div class="channel-detail-text-div">
         <div style="height: 100%; vertical-align: middle;"> 
-          <ion-label class="channel-title-small">{{channel.name}}</ion-label>
+          <ion-label class="channel-title-small white">{{channel.name}}</ion-label>
           <!-- <ion-label class="channel-ts"></ion-label> -->
           <ion-icon name="more" mode="ios" style="vertical-align: middle; float: right; "></ion-icon>
         </div>
@@ -38,7 +38,7 @@
 
         <div >
           <img src="../../../../assets/images/bubble2.svg" class="bubble">
-          <ion-label class="channel-follower2">{{channel.subscribers}} follower</ion-label>
+          <ion-label class="channel-follower2">{{channel.subscribers}} {{'common.followers'|translate}}</ion-label>
           
         </div>
 
@@ -53,7 +53,7 @@
 </div>
 
 <div class="new-feed-div" *ngIf="channelList.length > 0">
-  <div class="new-feed" (click)="exploreFeeds()"> Explore Feeds</div>
+  <div class="new-feed" (click)="exploreFeeds()">{{'FollowingComponent.exploreFeeds'|translate}}</div>
 </div>
 <!-- </div>
 

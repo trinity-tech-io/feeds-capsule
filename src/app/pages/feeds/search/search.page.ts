@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 import { PopupProvider } from 'src/app/services/popup';
 import { NativeService } from 'src/app/services/NativeService';
 import { ActionSheetController } from '@ionic/angular';
-
+import { ThemeService } from 'src/app/services/theme.service';
 
 @Component({
   selector: 'app-search',
@@ -25,7 +25,8 @@ export class SearchPage implements OnInit {
     private router: Router,
     private popup: PopupProvider,
     private native: NativeService,
-    private actionSheetController:ActionSheetController) {
+    private actionSheetController:ActionSheetController,
+    public theme:ThemeService) {
     
     // this.subscribeStatusMap = this.feedService.getSubscribeStatusMap();  
     this.connectStatus = this.feedService.getConnectionStatus();

@@ -4,6 +4,8 @@ import { ServerlistcomponentComponent } from '../../../components/serverlistcomp
 import { FeedService } from 'src/app/services/FeedService';
 import { PopupProvider } from 'src/app/services/popup';
 import { NativeService } from 'src/app/services/NativeService';
+import { ThemeService } from 'src/app/services/theme.service';
+import { TranslateService } from "@ngx-translate/core";
 import { Router } from '@angular/router';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
@@ -25,7 +27,9 @@ export class CreatenewfeedPage implements OnInit {
     private popup: PopupProvider,
     private zone: NgZone,
     private events: Events,
-    private native: NativeService) {
+    private native: NativeService,
+    public theme:ThemeService,
+    private translate:TranslateService) {
       this.events.subscribe('feeds:createTopicSuccess', () => {
         // this.navigateBack();
         this.navCtrl.pop().then(()=>{
@@ -42,8 +46,19 @@ export class CreatenewfeedPage implements OnInit {
     }
 
   ngOnInit() {
-    titleBarManager.setTitle("Create New Feed");
+    this.events.subscribe("feeds:updateTitle",()=>{
+      this.initTitle();
+    });
+    this.initTitle();
     this.native.setTitleBarBackKeyShown(true);
+  }
+
+  ionViewWillUnload(){
+    this.events.unsubscribe("feeds:updateTitle");
+  }
+
+  initTitle(){
+    titleBarManager.setTitle(this.translate.instant("CreatenewfeedPage.createNewFeed"));
   }
 
   navigateBack() {
@@ -77,22 +92,22 @@ export class CreatenewfeedPage implements OnInit {
 
   createChannel(name: HTMLInputElement, desc: HTMLInputElement){
     if (this.channelAvatar == ""){
-      alert("Please select an avatar.");
+      alert(this.translate.instant("CreatenewfeedPage.tipMsg"));
       return ;
     }
 
     if (name.value==""){
-      alert("Please input name.");
+      alert(this.translate.instant("CreatenewfeedPage.tipMsg1"));
       return ;
     }
 
     if(desc.value == ""){
-      alert("Please input description.");
+      alert(this.translate.instant("CreatenewfeedPage.tipMsg2"));
       return ;
     }
     
     if (this.selectedServer == null){
-      alert("Invalid params");
+      alert(this.translate.instant("CreatenewfeedPage.tipMsg3"));
       return ;
     }
 

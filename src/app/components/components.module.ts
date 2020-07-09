@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
+import { TranslateModule } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
 import { HeaderBarComponent } from './header-bar/header-bar.component';
 
@@ -14,6 +15,7 @@ import { SourceComponent} from './source/source.component';
   imports: [
     CommonModule,
     FormsModule,
+    TranslateModule,
     IonicModule,
   ],
   declarations: [HeaderBarComponent,DetailsComponent,MyfeedsComponent,FollowingComponent,LikesComponent,SourceComponent],

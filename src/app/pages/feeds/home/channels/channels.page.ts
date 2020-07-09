@@ -3,6 +3,9 @@ import { NavController, Events, PopoverController } from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
 import { FeedService } from '../../../../services/FeedService';
 import { NativeService } from '../../../../services/NativeService';
+import { ThemeService } from 'src/app/services/theme.service';
+import { UtilService } from 'src/app/services/utilService';
+import { TranslateService } from "@ngx-translate/core";
 import { Router } from '@angular/router'
 import { CommentComponent } from '../../../../components/comment/comment.component'
 import { ActionSheetController } from '@ionic/angular';
@@ -35,7 +38,9 @@ export class ChannelsPage implements OnInit {
     private native: NativeService,
     private acRoute: ActivatedRoute,
     private feedService: FeedService,
-    private actionSheetController:ActionSheetController
+    private actionSheetController:ActionSheetController,
+    public theme:ThemeService,
+    private translate:TranslateService
   ) {
 
     acRoute.params.subscribe((data)=>{
@@ -101,8 +106,19 @@ export class ChannelsPage implements OnInit {
   }
 
   ngOnInit() {
-    titleBarManager.setTitle("Feeds");
+    this.events.subscribe("feeds:updateTitle",()=>{
+      this.initTitle();
+    });
+    this.initTitle();
     this.native.setTitleBarBackKeyShown(true);
+  }
+
+  ionViewWillUnload(){
+    this.events.unsubscribe("feeds:updateTitle");
+  }
+
+  initTitle(){
+    titleBarManager.setTitle(this.translate.instant("ChannelsPage.feeds"));
   }
 
   like(nodeId, channelId, postId){
@@ -173,5 +189,15 @@ export class ChannelsPage implements OnInit {
     else{
       this.followStatus = true;
     }
+  }
+  handleDisplayTime(createTime:number){
+    let obj = UtilService.handleDisplayTime(createTime);
+    if(obj.type==='m'){
+      return obj.content+this.translate.instant('HomePage.minutesAgo');
+    }
+    if(obj.type==='h'){
+      return obj.content+this.translate.instant('HomePage.hoursAgo');
+    }
+    return  obj.content;
   }
 }

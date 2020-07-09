@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+import {Events} from '@ionic/angular';
 import { FeedService } from 'src/app/services/FeedService';
 import { NativeService } from 'src/app/services/NativeService';
 import { ThemeService } from 'src/app/services/theme.service';
+import { TranslateService } from "@ngx-translate/core";
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 @Component({
@@ -24,7 +26,9 @@ export class ProfiledetailPage implements OnInit {
   constructor(
     private native: NativeService,
     private feedService:FeedService,
-    public  theme:ThemeService) {
+    public  theme:ThemeService,
+    private translate:TranslateService,
+    private events: Events) {
       let signInData = feedService.getSignInData();
       this.name = signInData.name;
       this.description = signInData.description;
@@ -40,8 +44,18 @@ export class ProfiledetailPage implements OnInit {
     }
 
   ngOnInit() {
+    this.events.subscribe("feeds:updateTitle",()=>{
+      this.initTitle();
+    });
     titleBarManager.setTitle("Profile Details");
     this.native.setTitleBarBackKeyShown(true);
   }
 
+  initTitle(){
+    titleBarManager.setTitle(this.translate.instant('ProfiledetailPage.profileDetails'));
+  }
+
+  ionViewWillUnload(){
+    this.events.unsubscribe("feeds:updateTitle");
+  }
 }

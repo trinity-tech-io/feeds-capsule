@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import {Events} from '@ionic/angular';
 import { NativeService } from 'src/app/services/NativeService';
 import { FeedService } from 'src/app/services/FeedService';
+import { TranslateService } from "@ngx-translate/core";
 import { NavController, AlertController } from '@ionic/angular';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 @Component({
@@ -14,11 +16,20 @@ export class DevelopPage implements OnInit {
     private navCtrl: NavController,
     private feedService :FeedService,
     private native: NativeService,
-    public alertController: AlertController) { }
+    public alertController: AlertController,
+    private translate:TranslateService,
+    private events: Events) { }
 
   ngOnInit() {
-    titleBarManager.setTitle("Develop");
+    this.events.subscribe("feeds:updateTitle",()=>{
+      this.initTitle();
+    });
+    this.initTitle();
     this.native.setTitleBarBackKeyShown(true);
+  }
+
+  initTitle(){
+    titleBarManager.setTitle(this.translate.instant("DevelopPage.develop"));
   }
 
   clearAll(){
@@ -28,18 +39,18 @@ export class DevelopPage implements OnInit {
   async presentAlertConfirm() {
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',
-      header: 'Confirm!',
-      message: 'Clear <strong>all cached data</strong>!!!',
+      header:this.translate.instant('common.confirm'),
+      message: this.translate.instant('common.des'),
       buttons: [
         {
-          text: 'Cancel',
+          text: this.translate.instant('common.cancel'),
           role: 'cancel',
           cssClass: 'secondary',
           handler: (blah) => {
 
           }
         }, {
-          text: 'Ok',
+          text: this.translate.instant('common.ok'),
           handler: () => {
 
             this.feedService.removeAllData();
@@ -50,6 +61,10 @@ export class DevelopPage implements OnInit {
     });
 
     await alert.present();
+  }
+
+  ionViewWillUnload(){
+    this.events.unsubscribe("feeds:updateTitle");
   }
 
 }

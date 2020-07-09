@@ -1,4 +1,4 @@
-<ion-content>
+<ion-content [class.darkContainer]="theme.darkMode">
 
 
 
@@ -9,8 +9,8 @@
       <div style="text-align: center; ">
         <img src="../../../../assets/images/empty-feeds-icon.svg">
       </div>
-      <div class="all-empty" style="margin-top: 20px;">All Empty</div>
-      <div class="all-empty-content-text" style="margin-top: 7px;">Not any feeds yet</div>
+      <div class="all-empty" style="margin-top: 20px;">{{'common.allempty'|translate}}</div>
+      <div class="all-empty-content-text" style="margin-top: 7px;">{{'SearchPage.emptyDes'|translate}}</div>
     
     </div> 
   </div>
@@ -18,9 +18,9 @@
   <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
     <ion-refresher-content
       pullingIcon="arrow-dropdown"
-      pullingText="Pull to refresh"
+      pullingText="{{'common.pullToRefresh'|translate}}"
       refreshingSpinner="circles"
-      refreshingText="Refreshing...">
+      refreshingText="{{'common.Refreshing'|translate}}">
     </ion-refresher-content>
   </ion-refresher>
 
@@ -88,8 +88,7 @@
               font-style: normal;
               line-height: 1.18;
               letter-spacing: normal;
-              text-align: left;
-              color: #000000;"> {{channel.name}} </div>
+              text-align: left;" class="black white"> {{channel.name}} </div>
               <!-- <ion-label style="display: flex;">  -->
               <!-- <ion-item class="ion-no-margin ion-no-padding" lines="none">
                 <img src="../../../../assets/images/bubble2.svg" class="bubble">
@@ -115,7 +114,7 @@
                 line-height: 1.27;
                 letter-spacing: normal;
                 text-align: left;
-                color: #a0a2c4;">{{channel.subscribers}} follower</div>
+                color: #a0a2c4;">{{channel.subscribers}} {{'common.followers'|translate}}</div>
               </div>
               
             </ion-label>
@@ -123,11 +122,11 @@
           </ion-col>
           <ion-col size="3.75" size-xs="3.75" class="btn-container">
             <ion-button class="follow-style" fill="outline"   (click)="subscribe(channel.nodeId, channel.id)" *ngIf="!channel.isSubscribed">
-              <ion-label>Follow</ion-label>
+              <ion-label>{{'SearchPage.follow' | translate}}</ion-label>
             </ion-button>
 
             <ion-button class="following-style" (click)="unsubscribe(channel.nodeId, channel.name, channel.id)" *ngIf="channel.isSubscribed">
-              <ion-label>Following</ion-label>
+              <ion-label>{{'SearchPage.following'| translate}}</ion-label>
             </ion-button>
           </ion-col>
         </ion-row>

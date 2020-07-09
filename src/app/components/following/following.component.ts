@@ -3,7 +3,7 @@ import { FeedService } from '../../services/FeedService'
 import { Events, IonTabs } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { FeedsPage } from 'src/app/pages/feeds/feeds.page'
-
+import { ThemeService } from 'src/app/services/theme.service';
 @Component({
   selector: 'app-following',
   templateUrl: './following.component.html',
@@ -17,7 +17,8 @@ export class FollowingComponent implements OnInit {
     private events: Events,
     private zone: NgZone,
     private router: Router,
-    private feedService:FeedService) { 
+    private feedService:FeedService,
+    public theme:ThemeService) { 
     // this.channelList = this.feedService.refreshLocalChannels();
     this.channelList=this.feedService.refreshLocalSubscribedChannels();
     this.feedService.refreshSubscribedChannels();

@@ -13,11 +13,11 @@
   <div class="center-flex" style="margin-top: 10px;">
       <img class="profile-sub-img" src="assets/images/bubble2.svg">
       <ion-label class="profile-sub-text">{{followers}} </ion-label>
-      <ion-label  class="profile-subscribe">Followers</ion-label>
+      <ion-label  class="profile-subscribe">{{'common.followers' | translate}}</ion-label>
   </div>
 
   <div class="channel-desc-div">
-    <ion-label class="channel-desc" >{{description}} </ion-label>
+    <ion-label class="channel-desc white">{{description}} </ion-label>
   </div>
 
 
@@ -28,7 +28,7 @@
       >
       <div [class.highlight]="selectType === type">
         <ion-label class="tab-text">
-          {{type}}
+          {{type | translate}}
         </ion-label>
       </div>
 
@@ -36,9 +36,9 @@
   </ion-slides>
 
   <!-- <app-details *ngIf="selectType == 'Details'"></app-details> -->
-  <app-myfeeds *ngIf="selectType == 'My Feeds'"></app-myfeeds>
-  <app-following *ngIf="selectType == 'Following'"></app-following>
-  <app-likes  *ngIf="selectType == 'My Likes'"></app-likes>
+  <app-myfeeds *ngIf="selectType == 'ProfilePage.myFeeds'"></app-myfeeds>
+  <app-following *ngIf="selectType == 'ProfilePage.following'"></app-following>
+  <app-likes  *ngIf="selectType == 'ProfilePage.myLikes'"></app-likes>
   <!-- <app-source  *ngIf="selectType == 'Sources'"></app-source> -->
 
 </ion-content>

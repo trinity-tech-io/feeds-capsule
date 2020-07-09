@@ -12,7 +12,7 @@
   <div class="center-flex" style="margin-top: 10px;">
       <img class="profile-sub-img" src="assets/images/bubble2.svg">
       <ion-label class="profile-sub-text">{{subscribers}} </ion-label>
-      <ion-label  class="profile-subscribe">Subscribers</ion-label >
+      <ion-label  class="profile-subscribe">{{'ProfiledetailPage.subscribers' | translate}}</ion-label >
   </div>
 
   <div class="channel-desc-div">
@@ -23,7 +23,7 @@
   <div class="detail-div">
 
     <div class="detail-key-div">
-      <ion-label class="detail-key">NAME</ion-label>
+      <ion-label class="detail-key">{{'ProfiledetailPage.name'|translate}}</ion-label>
     </div>
     <div class="detail-value-div">
       <ion-label class="detail-value">{{name}}</ion-label>
@@ -31,7 +31,7 @@
     <div class="detail-line"></div>
   
     <div class="detail-key-div">
-      <ion-label class="detail-key">DID</ion-label>
+      <ion-label class="detail-key">{{'ProfiledetailPage.did'|translate}}</ion-label>
     </div>
     <div class="detail-value-div">
       <ion-label  class="detail-value">{{did}} </ion-label>
@@ -40,7 +40,7 @@
   
     <div *ngIf="gender != ''">
       <div class="detail-key-div">
-        <ion-label class="detail-key">GENDER</ion-label>
+        <ion-label class="detail-key">{{'ProfiledetailPage.gender'|translate}}</ion-label>
       </div>
       <div class="detail-value-div">
         <ion-label  class="detail-value">{{gender}} </ion-label>
@@ -51,7 +51,7 @@
   
     <div  *ngIf="telephone != ''">
       <div class="detail-key-div">
-        <ion-label class="detail-key">PHONE NUMBER</ion-label>
+        <ion-label class="detail-key">{{'ProfiledetailPage.telephone'|translate}}</ion-label>
       </div>
       <div class="detail-value-div">
         <ion-label class="detail-value">{{telephone}}</ion-label>
@@ -61,7 +61,7 @@
   
     <div *ngIf="email != ''">
       <div class="detail-key-div">
-        <ion-label class="detail-key">EMAIL</ion-label>
+        <ion-label class="detail-key">{{'ProfiledetailPage.email'|translate}}</ion-label>
       </div>
       <div class="detail-value-div">
         <ion-label class="detail-value">{{email}}</ion-label>
@@ -71,7 +71,7 @@
   
     <div *ngIf="location != ''">
       <div class="detail-key-div">
-        <ion-label class="detail-key">LOCATION</ion-label>
+        <ion-label class="detail-key">{{'ProfiledetailPage.location'|translate}}</ion-label>
       </div>
       <div class="detail-value-div">
         <ion-label class="detail-value">{{location}}</ion-label>
