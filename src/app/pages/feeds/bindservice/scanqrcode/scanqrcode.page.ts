@@ -46,7 +46,7 @@ export class ScanqrcodePage implements OnInit {
       this.initTitle();
     });
     this.initTitle();
-    this.native.setTitleBarBackKeyShown(false);
+    this.native.setTitleBarBackKeyShown(true);
   }
 
   ionViewWillUnload(){

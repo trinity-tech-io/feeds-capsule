@@ -40,7 +40,7 @@ export class PublishdidPage implements OnInit {
         this.initTitle();
       });
       this.initTitle();
-      this.native.setTitleBarBackKeyShown(false);
+      this.native.setTitleBarBackKeyShown(true);
     }
   
     ionViewWillUnload(){
