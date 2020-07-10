@@ -6,7 +6,7 @@ import { FeedService } from 'src/app/services/FeedService';
 import { NativeService } from 'src/app/services/NativeService';
 import { AppService } from 'src/app/services/AppService';
 import { PopupProvider } from 'src/app/services/popup';
-
+import { TranslateService } from "@ngx-translate/core";
 @Component({
   selector: 'page-add-server',
   templateUrl: 'add-server.html',
@@ -36,7 +36,8 @@ export class AddServerPage implements OnInit {
     private appService: AppService,
     private popup: PopupProvider,
     private loadingController: LoadingController,
-    private carrier: CarrierService) {
+    private carrier: CarrierService,
+    private translate:TranslateService) {
       this.connectStatus = this.feedService.getConnectionStatus();
       // this.acRoute.params.subscribe(data => {
       //   this.address = data.address;
@@ -91,7 +92,7 @@ export class AddServerPage implements OnInit {
     ){
       this.router.navigate(['/menu/servers/server-info', this.address,""]);
     }else{
-      alert("Feed url maybe error.")
+      alert(this.translate.instant('AddServerPage.tipMsg'));
     }
   }
 

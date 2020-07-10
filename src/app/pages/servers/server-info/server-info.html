@@ -9,6 +9,7 @@
     </div>
 
     <div class="center-flex" style="margin-top: 15px;">
+
       <ion-label style="
         padding-left: 10px;
         padding-right: 10px;
@@ -23,6 +24,7 @@
         line-height: 1.18;
         letter-spacing: normal;
         text-align: left;" class="balck white">{{name}}</ion-label>
+
     </div>
 
     <div class="center-flex" style="margin-top: 15px;">
@@ -49,7 +51,7 @@
       letter-spacing: normal;
       text-align: left;
       color: #368bff;
-      margin-left: 5px;">online</div>
+      margin-left: 5px;">{{'ServerInfoPage.online' | translate}}</div>
 
 
       <img  style="margin-left: 13px;   width: 18.1px;
@@ -67,7 +69,7 @@
       letter-spacing: normal;
       text-align: left;
       color: #368bff;
-      margin-left: 5px;">Users</div>
+      margin-left: 5px;">{{'ServerInfoPage.users' | translate}}</div>
 
 
 
@@ -86,7 +88,7 @@
       letter-spacing: normal;
       text-align: left;
       color: #a0a2c4;
-      margin-left: 5px;">offline</div>
+      margin-left: 5px;">{{'ServerInfoPage.offline' | translate}}</div>
 
 
       <img  style="margin-left: 13px;   width: 18.1px;
@@ -104,7 +106,7 @@
       letter-spacing: normal;
       text-align: left;
       color: #a0a2c4;
-      margin-left: 5px;">Users</div>
+      margin-left: 5px;">{{'ServerInfoPage.users' | translate}}</div>
 
 
 
@@ -123,7 +125,7 @@
   <div class="detail-div" style="margin-top: 55px;">
 
     <div class="detail-key-div">
-      <ion-label class="detail-key">NAME</ion-label>
+      <ion-label class="detail-key">{{'ServerInfoPage.name'|translate}}</ion-label>
     </div>
     <div class="detail-value-div">
       <ion-label class="detail-value">{{name}}</ion-label>
@@ -131,7 +133,7 @@
     <div class="detail-line"></div>
   
     <div class="detail-key-div">
-      <ion-label class="detail-key">OWNER</ion-label>
+      <ion-label class="detail-key">{{'ServerInfoPage.owner'|translate}}</ion-label>
     </div>
     <div class="detail-value-div">
       <ion-label  class="detail-value">{{owner}} </ion-label>
@@ -139,7 +141,7 @@
     <div class="detail-line"></div>
   
     <div class="detail-key-div">
-      <ion-label class="detail-key">DESCRIPTION</ion-label>
+      <ion-label class="detail-key">{{'ServerInfoPage.introduction'|translate}}</ion-label>
     </div>
     <div class="detail-value-div">
       <ion-label  class="detail-value">{{introduction}} </ion-label>
@@ -147,7 +149,7 @@
     <div class="detail-line"></div>
 
     <div class="detail-key-div">
-      <ion-label class="detail-key">DID</ion-label>
+      <ion-label class="detail-key">{{'ServerInfoPage.did'|translate}}</ion-label>
     </div>
     <div class="detail-value-div">
       <ion-label  class="detail-value">{{didString}} </ion-label>
@@ -156,7 +158,7 @@
 
   <div style="margin-left: 34px; margin-right: 34px; margin-top: 25px;" *ngIf="address != ''">
     <ion-button style="margin-top: 25px;" expand="block" mode="ios" (click)="addFeedSource()" [disabled]='buttonDisabled'>
-      <ion-label>Add Feed Source</ion-label>
+      <ion-label>{{'ServerInfoPage.addFeedSource' | translate}}</ion-label>
     </ion-button>
   </div>
 

@@ -102,5 +102,81 @@ export const zh = {
     "about":"关于",
     "version":"版本",
     "website":"website",
+},
+"PostdetailPage":{
+    "postdetail":"Post Detail"
+},
+"ServersPage":{
+    "feedSources":"Feed sources",
+    "emptyDes":"No Feed Sources",
+    "exploreFeedSources":"Explore Feed Sources",
+    "bindFeedSource":"Bind Feed Source",
+    "myFeedSources":"My Feed Sources",
+    "users":"Users",
+    "currentFeedSources":"Current Feed Sources",
+    "addNewFeedSources":"Add New Feed Sources",
+    "createNewFeedSource":"Create New Feed Source"
+  },
+  "AddServerPage":{
+    "scanorEnterManual":"Scan or Enter Manual",
+    "sourceAddress":"Source Address",
+    "openQRScanner":"Open QR Scanner",
+    "confirm":"Confirm",
+    "sourceaddresshere":"Source address here",
+    "tipMsg":"Feed url maybe error."
+  },
+  "ServerInfoPage":{
+    "publicFeed":"Public Feed",
+    "online":"online",
+    "users":"Users",
+    "offline":"offline",
+    "name":"NAME",
+    "owner":"OWNER",
+    "introduction":"DESCRIPTION",
+    "did":"DID",
+    "addFeedSource":"Add Feed Source"
+  },
+  "ScanqrcodePage":{
+    "bindingServer":"绑定服务器",
+    "des":"您必须首先配对（或绑定）一个feeds服务，然后您可以创建与您感兴趣的主题频道，因此您可以在该频道上发布消息",
+    "scanServiceQRcode":"扫描服务二维码",
+    "abort":"中止",
+  },
+  "PublishdidPage":{
+    "bindingServer":"Binding server",
+    "payload":"payload is",
+    "publishonDIDsidechain":"Publish on DID side chain",
+    "abort":"abort",
+  },
+  "FinishPage":{
+    "bindingServer":"Binding server",
+    "des":" Congratulation, the binding process come into the end with success. Now you need to sign in feeds service.",
+    "finish":"Finish"
+  },
+  "IssuecredentialPage":{
+    "bindingServer":"Binding server",
+    "des1":"Your DID document of feeds service has been published to DID sidechain",
+    "des2":"Next step is to issue credential to DID of feed service.",
+    "issueacredential":"Issue a credential",
+    "abort":"abort",
+  },
+  "ImportdidPage":{
+    "bindingServer":"Binding server",
+    "des":"You have to ask feeds service to create a new DID or import a DID with mnemonics.",
+    "createanewDID":"Create a new DID",
+    "importanexistDID":"Import an exist DID",
+    "abort":"Abort",
+  },
+  "ImportmnemonicPage":{
+    "des":"Enter mnemonic (space between mnemonic words)",
+    "des1":"Passphrase",
+    "des2":"Index",
+    "confirm":"Confirm",
+    "abort":"Abort",
+    "tipMsg":"Please input mnemonic!",
+    "tipMsg1":"Please input passphrase!",
+    "tipMsg2":"Please input index!",
+    "alert":"Alert",
+    "ok":"Ok"
   }
 };

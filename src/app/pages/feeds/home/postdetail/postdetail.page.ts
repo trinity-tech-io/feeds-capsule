@@ -1,8 +1,11 @@
 import { Component, OnInit, NgZone } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { NavController, Events, PopoverController} from '@ionic/angular';
+import { Events, PopoverController} from '@ionic/angular';
 import { FeedService } from '../../../../services/FeedService';
 import { NativeService } from '../../../../services/NativeService';
+import { ThemeService } from 'src/app/services/theme.service';
+import { TranslateService } from "@ngx-translate/core";
+import { UtilService } from 'src/app/services/utilService';
 import { CommentComponent } from '../../../../components/comment/comment.component'
 
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
@@ -33,7 +36,9 @@ export class PostdetailPage implements OnInit {
     private events: Events,
     private zone: NgZone,
     private native: NativeService,
-    private feedService :FeedService) {
+    private feedService :FeedService,
+    public theme:ThemeService,
+    private translate:TranslateService) {
 
       acRoute.params.subscribe((data)=>{
         this.nodeId = data.nodeId;
@@ -75,8 +80,19 @@ export class PostdetailPage implements OnInit {
   }
 
   ngOnInit() {
-    titleBarManager.setTitle("Post");
+    this.events.subscribe("feeds:updateTitle",()=>{
+      this.initTitle();
+    });
+    this.initTitle();
     this.native.setTitleBarBackKeyShown(true);
+  }
+
+  ionViewWillUnload(){
+    this.events.unsubscribe("feeds:updateTitle");
+  }
+
+  initTitle(){
+    titleBarManager.setTitle(this.translate.instant("PostdetailPage.postdetail"));
   }
 
   getContentText(content: string): string{
@@ -120,4 +136,14 @@ export class PostdetailPage implements OnInit {
     this.feedService.postLike(this.nodeId,Number(this.channelId),Number(this.postId),commentId);
   }
 
+  handleDisplayTime(createTime:number){
+    let obj = UtilService.handleDisplayTime(createTime);
+    if(obj.type==='m'){
+      return obj.content+this.translate.instant('HomePage.minutesAgo');
+    }
+    if(obj.type==='h'){
+      return obj.content+this.translate.instant('HomePage.hoursAgo');
+    }
+    return  obj.content;
+  }
 }

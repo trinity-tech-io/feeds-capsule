@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Routes, RouterModule } from '@angular/router';
 import { QRCodeModule } from 'angularx-qrcode';
 import { IonicModule } from '@ionic/angular';
-
+import { TranslateModule } from '@ngx-translate/core';
 import { ServerInfoPage } from './server-info';
 
 const routes: Routes = [
@@ -18,6 +18,7 @@ const routes: Routes = [
   imports: [
     CommonModule,
     FormsModule,
+    TranslateModule,
     IonicModule,
     QRCodeModule,
     RouterModule.forChild(routes)

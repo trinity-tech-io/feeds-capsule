@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { NavController } from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
 import { FeedService } from 'src/app/services/FeedService';
+import { TranslateService } from "@ngx-translate/core";
 import { Events } from '@ionic/angular';
 import { NativeService } from 'src/app/services/NativeService';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
@@ -13,7 +14,7 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
   styleUrls: ['./startbinding.page.scss'],
 })
 export class StartbindingPage implements OnInit {
-  private title = "Binding server";
+  private title = "StartbindingPage.BindingServer";
   private nonce = "12345";
   private nodeId: string;
   private carrierAddress: string;
@@ -24,6 +25,7 @@ export class StartbindingPage implements OnInit {
     private acRoute: ActivatedRoute,
     private router: Router,
     private feedService:FeedService,
+    private translate:TranslateService,
     private navCtrl: NavController
   ) {
     acRoute.params.subscribe((data)=>{
@@ -88,8 +90,20 @@ export class StartbindingPage implements OnInit {
   }
 
   ionViewDidEnter() {
-    titleBarManager.setTitle(this.title);
+    this.events.subscribe("feeds:updateTitle",()=>{
+      this.initTitle();
+    });
+    this.initTitle();
     this.native.setTitleBarBackKeyShown(false);
+  }
+
+  ionViewWillUnload(){
+    this.events.unsubscribe("feeds:updateTitle");
+  }
+
+
+  initTitle(){
+    titleBarManager.setTitle(this.translate.instant(this.title));
   }
 
   ngOnInit() {

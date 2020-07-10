@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NavController, AlertController } from '@ionic/angular';
 import { FeedService } from 'src/app/services/FeedService';
+import { TranslateService } from "@ngx-translate/core";
 import { ActivatedRoute } from '@angular/router';
 
 @Component({
@@ -17,7 +18,8 @@ export class ImportmnemonicPage implements OnInit {
     private acRoute: ActivatedRoute,
     private navCtrl: NavController,
     private feedService:FeedService,
-    public alertController: AlertController) {
+    public alertController: AlertController,
+    private translate:TranslateService,) {
       acRoute.params.subscribe((data)=>{
         this.nodeId = data.nodeId;
       });
@@ -28,17 +30,17 @@ export class ImportmnemonicPage implements OnInit {
 
   comfirm(){
     if (this.mnemonic == ""){
-      this.alertError("Please input mnemonic!");
+      this.alertError(this.translate.instant('ImportmnemonicPage.tipMsg'));
       return ;
     }
 
     if (this.passphrase == ""){
-      this.alertError("Please input passphrase!")
+      this.alertError(this.translate.instant('ImportmnemonicPage.tipMsg1'))
       return ;
     }
 
     if (this.index == null || this.index == 0){
-      this.alertError("Please input index!");
+      this.alertError(this.translate.instant('ImportmnemonicPage.tipMsg2'));
       return ;
     }
 
@@ -53,11 +55,11 @@ export class ImportmnemonicPage implements OnInit {
   async alertError(msg: string) {
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',
-      header: 'Alert',
+      header: this.translate.instant('mportmnemonicPage.alert'),
       message: msg,
       buttons: [
          {
-          text: 'Ok',
+          text: this.translate.instant('mportmnemonicPage.ok'),
           handler: () => {
           }
         }

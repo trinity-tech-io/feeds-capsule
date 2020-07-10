@@ -1,18 +1,18 @@
 <ion-content>
   <ion-item>
-      <ion-label position="floating">Enter mnemonic (space between mnemonic words)</ion-label>
+      <ion-label position="floating">{{'ImportmnemonicPage.des'| translate}}</ion-label>
       <ion-input clearInput [(ngModel)]="mnemonic"></ion-input>
   </ion-item>
   <ion-item>
-      <ion-label position="floating">Passphrase</ion-label>
+      <ion-label position="floating">{{'ImportmnemonicPage.des1'| translate}}</ion-label>
       <ion-input clearInput type="password" [(ngModel)]="passphrase"></ion-input>
   </ion-item>
   <ion-item>
-      <ion-label position="floating">Index</ion-label>
+      <ion-label position="floating">{{'ImportmnemonicPage.des2'| translate}}</ion-label>
       <ion-input clearInput type="number" [(ngModel)]="index"></ion-input>
   </ion-item>
 
-<ion-button shape="round" expand="full" (click)="comfirm()">Comfirm</ion-button>
+<ion-button shape="round" expand="full" (click)="comfirm()">{{'ImportmnemonicPage.comfirm'| translate}}</ion-button>
 
-<ion-button shape="round" expand="full" (click)="abort()">Abort</ion-button>
+<ion-button shape="round" expand="full" (click)="abort()">{{'ImportmnemonicPage.abort'| translate}}</ion-button>
 </ion-content>

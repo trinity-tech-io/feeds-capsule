@@ -4,6 +4,7 @@ import { NavController } from '@ionic/angular';
 import { FeedService } from 'src/app/services/FeedService';
 import { CarrierService } from 'src/app/services/CarrierService';
 import { NativeService } from 'src/app/services/NativeService';
+import { TranslateService } from "@ngx-translate/core";
 import { Events } from '@ionic/angular';
 
 declare let appManager: AppManagerPlugin.AppManager;
@@ -15,7 +16,7 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
   styleUrls: ['./scanqrcode.page.scss'],
 })
 export class ScanqrcodePage implements OnInit {
-  private title = "Binding server";
+  private title = "ScanqrcodePage.bindingServer";
   private waitFriendsOnline = false;
   private carrierAddress: string;
 
@@ -26,6 +27,8 @@ export class ScanqrcodePage implements OnInit {
     private navCtrl: NavController,
     private feedService:FeedService,
     private carrier: CarrierService,
+    private translate:TranslateService,
+    private events: Events,
     ) {
       // this.events.subscribe('feeds:friendConnection', ret => {
       //   if (!this.waitFriendsOnline)
@@ -39,8 +42,20 @@ export class ScanqrcodePage implements OnInit {
       
     }
   ionViewDidEnter() {
-    titleBarManager.setTitle(this.title);
+    this.events.subscribe("feeds:updateTitle",()=>{
+      this.initTitle();
+    });
+    this.initTitle();
     this.native.setTitleBarBackKeyShown(false);
+  }
+
+  ionViewWillUnload(){
+    this.events.unsubscribe("feeds:updateTitle");
+  }
+
+
+  initTitle(){
+    titleBarManager.setTitle(this.translate.instant(this.title));
   }
   ngOnInit() {
   }

@@ -40,7 +40,7 @@
     <img src="../../../assets/images/rectangle-5389.svg"
     class="detail-line"> -->
 
-<ion-content>
+<ion-content [class.darkContainer]="theme.darkMode">
     <div class="channel-img-small-div">
       <div class="channel-img-small">
         <ion-avatar >
@@ -53,7 +53,7 @@
       <div class="channel-detail-div">
         <div class="channel-detail-text-div">
           <div style="height: 100%; vertical-align: middle;"> 
-            <ion-label class="channel-title-small">{{channelName}}</ion-label>
+            <ion-label class="channel-title-small white">{{channelName}}</ion-label>
             <!-- <ion-label class="channel-ts">post.created_at|date:'MM-dd HH:mm'</ion-label> -->
             <ion-icon name="more" mode="ios" style="vertical-align: middle; float: right; "></ion-icon>
           </div>
@@ -67,7 +67,7 @@
 
     <div class="channel-post-detail-div" style="margin-top: 16px;">
         <div class="channel-post-div"> 
-          <ion-label class="channel-post">{{getContentText(postContent)}}</ion-label>
+          <ion-label class="channel-post white">{{getContentText(postContent)}}</ion-label>
           
         </div>
         <img *ngIf="getContentImg(postContent) != ''" src="{{getContentImg(postContent)}}"
@@ -85,7 +85,7 @@
           <img src="../../../../../assets/images/bubble-line.svg" class="comment" (click)="showCommentPage($event)">
           <ion-label class="comment-text" (click)="showCommentPage($event)">{{commentsNum}}</ion-label>
 
-          <ion-label class="post-detail-ts">{{postTS|date:'MM-dd HH:mm'}}</ion-label>
+          <ion-label class="post-detail-ts">{{handleDisplayTime(postTS)}}</ion-label>
 
         
       
@@ -102,7 +102,7 @@
         <div class="channel-detail-div">
           <div class="channel-detail-text-div">
             <div style="height: 100%; vertical-align: middle;" > 
-              <ion-label class="channel-title-small">@{{indexText(comment.user_name)}}</ion-label>
+              <ion-label class="channel-title-small white">@{{indexText(comment.user_name)}}</ion-label>
               <ion-label class="channel-ts">{{comment.create_at}}</ion-label>
               <ion-icon name="more" mode="ios" style="vertical-align: middle; float: right; "></ion-icon>
             </div>
@@ -112,7 +112,7 @@
             </div>
 
             <div class="channel-post-div" > 
-              <ion-label class="channel-post">{{comment.content}}</ion-label>
+              <ion-label class="channel-post .white">{{comment.content}}</ion-label>
               
             </div>
             <!-- <img src="../../../../assets/images/screenshot-2020-04-26-at-05-20-13.png"

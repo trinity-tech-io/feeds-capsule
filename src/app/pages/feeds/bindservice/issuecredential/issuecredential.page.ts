@@ -5,6 +5,7 @@ import { FeedService } from 'src/app/services/FeedService';
 import { Events } from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
 import { NativeService } from 'src/app/services/NativeService';
+import { TranslateService } from "@ngx-translate/core";
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 @Component({
@@ -13,7 +14,7 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
   styleUrls: ['./issuecredential.page.scss'],
 })
 export class IssuecredentialPage implements OnInit {
-  private title = "Binding server";
+  private title = "IssuecredentialPage.bindingServer";
   private nodeId = "";
   private did = "";
   constructor(
@@ -22,6 +23,7 @@ export class IssuecredentialPage implements OnInit {
     private events: Events,
     private acRoute: ActivatedRoute,
     private feedService:FeedService,
+    private translate:TranslateService,
     private router: Router,
     private navCtrl: NavController
     ) {
@@ -39,10 +41,22 @@ export class IssuecredentialPage implements OnInit {
       });
     }
 
-  ionViewDidEnter() {
-    titleBarManager.setTitle(this.title);
-    this.native.setTitleBarBackKeyShown(false);
-  }
+    ionViewDidEnter() {
+      this.events.subscribe("feeds:updateTitle",()=>{
+        this.initTitle();
+      });
+      this.initTitle();
+      this.native.setTitleBarBackKeyShown(false);
+    }
+  
+    ionViewWillUnload(){
+      this.events.unsubscribe("feeds:updateTitle");
+    }
+  
+  
+    initTitle(){
+      titleBarManager.setTitle(this.translate.instant(this.title));
+    }
   
   ngOnInit() {
   }

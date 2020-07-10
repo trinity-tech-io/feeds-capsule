@@ -4,6 +4,7 @@ import { NativeService } from 'src/app/services/NativeService';
 import { FeedService } from 'src/app/services/FeedService';
 import { Router } from '@angular/router';
 import { ThemeService } from 'src/app/services/theme.service';
+import { TranslateService } from "@ngx-translate/core";
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 @Component({
@@ -26,7 +27,8 @@ export class ServersPage implements OnInit {
         private native: NativeService,
         private feedService: FeedService,
         private router: Router,
-        public theme:ThemeService) {
+        public theme:ThemeService,
+        private translate:TranslateService ) {
            
     }
 
@@ -103,9 +105,21 @@ export class ServersPage implements OnInit {
     }
 
     ionViewDidEnter() {
-        titleBarManager.setTitle("Feed sources");
-        this.native.setTitleBarBackKeyShown(true);
-    }
+        this.events.subscribe("feeds:updateTitle",()=>{
+          this.initTitle();
+        });
+        this.initTitle();
+        this.native.setTitleBarBackKeyShown(false);
+      }
+    
+      ionViewWillUnload(){
+        this.events.unsubscribe("feeds:updateTitle");
+      }
+    
+    
+      initTitle(){
+        titleBarManager.setTitle(this.translate.instant('ServersPage.feedSources'));
+      }
 
     navToServerInfo(nodeId: string) {
         // this.native.go(['/menu/servers/server-info',userId]);

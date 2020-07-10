@@ -1,12 +1,12 @@
 <ion-content>
   <div>
-    Your are going to biding a feeds service, please check the verifying code whether it is same one on browser from feeds service.
+     {{'StartbindingPage.des'|translate}}
   </div>
   <div style="color: #ff0000; text-align: center; width: 100%; padding-top: 30px; padding-bottom: 30px;" >
     {{nonce}}
   </div>
-  <ion-button shape="round" expand="full" (click)="confirm()">Confirm</ion-button>
-  <ion-button shape="round" expand="full" (click)="abort()">abort</ion-button>
+  <ion-button shape="round" expand="full" (click)="confirm()">{{'StartbindingPage.confirm'|translate}}</ion-button>
+  <ion-button shape="round" expand="full" (click)="abort()">{'StartbindingPage.abort'|translate}}</ion-button>
   <!-- <ion-button shape="round" expand="full" (click)="test()">test</ion-button> -->
 
 </ion-content>

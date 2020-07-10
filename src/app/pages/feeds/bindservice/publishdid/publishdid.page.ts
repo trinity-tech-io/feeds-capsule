@@ -4,6 +4,8 @@ import { NavController } from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
 import { FeedService } from 'src/app/services/FeedService';
 import { NativeService } from 'src/app/services/NativeService';
+import { TranslateService } from "@ngx-translate/core";
+import { Events } from '@ionic/angular';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 @Component({
@@ -12,7 +14,7 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
   styleUrls: ['./publishdid.page.scss'],
 })
 export class PublishdidPage implements OnInit {
-  private title = "Binding server";
+  private title = "PublishdidPage.BindingServer";
   private payload: string;
   private nodeId = "";
   private did = "";
@@ -22,7 +24,9 @@ export class PublishdidPage implements OnInit {
     private router: Router,
     private native: NativeService,
     private feedService:FeedService,
-    private navCtrl: NavController
+    private navCtrl: NavController,
+    private translate:TranslateService,
+    private events: Events,
     ) {
       acRoute.params.subscribe((data)=>{
         this.nodeId = data.nodeId;
@@ -31,10 +35,22 @@ export class PublishdidPage implements OnInit {
       });
     }
 
-  ionViewDidEnter() {
-    titleBarManager.setTitle(this.title);
-    this.native.setTitleBarBackKeyShown(false);
-  }
+    ionViewDidEnter() {
+      this.events.subscribe("feeds:updateTitle",()=>{
+        this.initTitle();
+      });
+      this.initTitle();
+      this.native.setTitleBarBackKeyShown(false);
+    }
+  
+    ionViewWillUnload(){
+      this.events.unsubscribe("feeds:updateTitle");
+    }
+  
+  
+    initTitle(){
+      titleBarManager.setTitle(this.translate.instant(this.title));
+    }
 
   ngOnInit() {
   }
