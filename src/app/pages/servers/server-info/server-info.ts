@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { NativeService } from 'src/app/services/NativeService';
 import { FeedService } from 'src/app/services/FeedService';
 import { ThemeService } from 'src/app/services/theme.service';
+import { ActionSheetController } from '@ionic/angular';
 
 class Attribute {
   constructor(
@@ -31,6 +32,7 @@ export class ServerInfoPage implements OnInit {
   private clientNumber:number = 0;
   private nodeId:string = "";
 
+  private isBindServer: boolean = false ;
   private didString: string;
   // private attrs;
   private name: string;
@@ -39,6 +41,7 @@ export class ServerInfoPage implements OnInit {
   private feedsUrl: string;
 
   constructor(
+    private actionSheetController:ActionSheetController,
     private events: Events,
     private loadingController: LoadingController,
     private zone: NgZone,
@@ -76,8 +79,11 @@ export class ServerInfoPage implements OnInit {
             bindingServer !=undefined && 
             this.nodeId == bindingServer.nodeId){
             server = this.feedService.getBindingServer();
+
+            this.isBindServer = true;
           }else{
             server = this.feedService.getServerbyNodeId(this.nodeId);
+            this.isBindServer = false;
           }
 
           this.serverStatus = this.feedService.getServerStatusFromId(this.nodeId);
@@ -149,5 +155,43 @@ export class ServerInfoPage implements OnInit {
       },(err)=>{
 
       });
+  }
+
+  async deleteFeedSource(){
+    const actionSheet = await this.actionSheetController.create({
+      buttons: [{
+        text: 'Delete this Feed Source?',
+        icon: 'trash',
+        handler: () => {
+          this.feedService.deleteFeedSource(this.nodeId);
+        }
+      },{
+        text: 'Cancel',
+        icon: 'close',
+        handler: () => {
+        }
+      }]
+    });
+    await actionSheet.present();
+    
+  }
+
+  async removeFeedSource(){
+    const actionSheet = await this.actionSheetController.create({
+      buttons: [{
+        text: 'Remove this Feed Source?',
+        icon: 'trash',
+        handler: () => {
+          this.feedService.removeFeedSource(this.nodeId);
+          alert("remove server");
+        }
+      },{
+        text: 'Cancel',
+        icon: 'close',
+        handler: () => {
+        }
+      }]
+    });
+    await actionSheet.present(); 
   }
 }

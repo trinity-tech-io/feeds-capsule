@@ -9,14 +9,20 @@
     </div>
 
     <div class="center-flex" style="margin-top: 15px;">
-      <ion-label style="font-family: Montserrat;
-      font-size: 17px;
-      font-weight: bold;
-      font-stretch: normal;
-      font-style: normal;
-      line-height: 1.18;
-      letter-spacing: normal;
-      text-align: left;" class="balck white">Public Feed</ion-label>
+      <ion-label style="
+        padding-left: 10px;
+        padding-right: 10px;
+        display:inline-block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-family: Montserrat;
+        font-size: 17px;
+        font-weight: bold;
+        font-stretch: normal;
+        font-style: normal;
+        line-height: 1.18;
+        letter-spacing: normal;
+        text-align: left;" class="balck white">{{name}}</ion-label>
     </div>
 
     <div class="center-flex" style="margin-top: 15px;">
@@ -151,6 +157,18 @@
   <div style="margin-left: 34px; margin-right: 34px; margin-top: 25px;" *ngIf="address != ''">
     <ion-button style="margin-top: 25px;" expand="block" mode="ios" (click)="addFeedSource()" [disabled]='buttonDisabled'>
       <ion-label>Add Feed Source</ion-label>
+    </ion-button>
+  </div>
+
+  <div style="margin-left: 34px; margin-right: 34px; margin-top: 25px;" *ngIf="address == '' && !isBindServer">
+    <ion-button style="margin-top: 25px;" expand="block" mode="ios"  color="danger" (click)="removeFeedSource()">
+      <ion-label>Remove Feed Source</ion-label>
+    </ion-button>
+  </div>
+
+  <div style="margin-left: 34px; margin-right: 34px; margin-top: 25px;" *ngIf="address == '' && isBindServer">
+    <ion-button style="margin-top: 25px;" expand="block" mode="ios"  color="danger" (click)="deleteFeedSource()">
+      <ion-label>Delete Feed Source</ion-label>
     </ion-button>
   </div>
 

@@ -3875,6 +3875,14 @@ export class FeedService {
     }
     return avatar;
   }
+
+  deleteFeedSource(nodeID: string){
+    alert("Delete Feed Source!");
+  }
+
+  removeFeedSource(nodeID: string){
+    alert("Remove Feed Source!");
+  }
 }
 
 
