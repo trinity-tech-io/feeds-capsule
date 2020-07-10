@@ -17,7 +17,7 @@ declare let didSessionManager: DIDSessionManagerPlugin.DIDSessionManager;
 let subscribedChannelsMap:{[nodeChannelId: string]: Channels};
 let channelsMap:{[nodeChannelId: string]: Channels} ;
 let myChannelsMap:{[nodeChannelId: string]: Channels};
-let unreadMap:{[channelId: number]: number};
+let unreadMap:{[nodeChannelId: string]: number};
 // let postMap:{[channelId: number]: ChannelPost};
 let postMap:{[nodechannelpostId: string]: Post}; //now postId = nodeId+channelId+postId
 let serverStatisticsMap:{[nodeId: string]: ServerStatistics};
@@ -672,18 +672,20 @@ export class FeedService {
     return list;
   }
 
-  getUnreadNumber(channelId: number){
+  getUnreadNumber(nodeChannelId: string){
     if (unreadMap == null || unreadMap == undefined)
       unreadMap = {};
-    if (unreadMap[channelId]==null || unreadMap[channelId] == undefined)
+    if (unreadMap[nodeChannelId]==null || unreadMap[nodeChannelId] == undefined)
       return 0;
-    return unreadMap[channelId];
+    return unreadMap[nodeChannelId];
   }
 
-  readChannel(nodeId:string, channelId: number){
+
+
+  readChannel(nodeChannelId: string){
     if (unreadMap == null || unreadMap == undefined)
       unreadMap = {};
-    unreadMap[channelId] = 0;
+    unreadMap[nodeChannelId] = 0;
     this.storeService.set(PersistenceKey.unreadMap,unreadMap);
   }
 
@@ -2501,7 +2503,7 @@ export class FeedService {
 
     this.storeService.set(PersistenceKey.postMap, postMap);
     
-    unreadMap[channel_id] = unreadMap[channel_id]+1;
+    unreadMap[nodeChannelId] = unreadMap[nodeChannelId]+1;
     this.storeService.set(PersistenceKey.unreadMap,unreadMap);
     
     eventBus.publish(PublishType.postDataUpdate);

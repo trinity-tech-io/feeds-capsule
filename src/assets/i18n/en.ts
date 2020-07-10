@@ -1,6 +1,6 @@
 export const en = {
   "common":{
-    "followers":"followers",
+    "followers":"Followers",
     "allempty":"All Empty",
     "pullToRefresh":"Pull to refresh",
     "refreshing":"Refreshing...",

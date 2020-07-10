@@ -34,7 +34,7 @@ export class ServersPage implements OnInit {
         // titleBarManager.setTitle("Feed source");
         // this.native.setTitleBarBackKeyShown(true);
 
-        this.serverList = this.feedService.getOtherServerList();
+        this.serverList = this.feedService.getServerList();
 
         let bindingServer = this.feedService.getBindingServer();
         // let = bindingServer {"name":"No name provided","owner":"WangRan","introduction":"No intro provided","did":"did:elastos:iaD4tCkC5X3Jix34fsToEk1xqRWmy1y5Yv","carrierAddress":"dawpLfp7iKrzpKoTdFXeCrQ8omK7njNDK3zy3xx1TP11AgADgfeC","nodeId":"HeRcumsP5Cnp1nCgxjqR7TEMhDdNQbnwc5X2Db5nSTHM","feedsUrl":"feeds://did:elastos:iaD4tCkC5X3Jix34fsToEk1xqRWmy1y5Yv"}

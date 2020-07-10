@@ -59,7 +59,7 @@ export class FavorFeedsPage {
   }
 
   navigateToEventsPage(nodeId: string, name: string, id: number, ownerName: string) {
-    this.feedService.readChannel(nodeId, id);
+    // this.feedService.readChannel(nodeId, id);
     this.router.navigate(['/favorite/content/',nodeId, name, id , ownerName]);
   }
 
@@ -78,6 +78,7 @@ export class FavorFeedsPage {
   }
 
   getUnreadNum(ChannelId: number): number{
-    return this.feedService.getUnreadNumber(ChannelId);
+    return 0;
+    // return this.feedService.getUnreadNumber(ChannelId);
   }
 }

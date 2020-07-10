@@ -1,5 +1,4 @@
 
-
   <div *ngIf="channelList.length == 0">
     <div style="margin-top: 50px;" >
       <div style="text-align: center; ">
@@ -18,93 +17,39 @@
 
 <div *ngFor="let channel of channelList" [class.darkContainer]="theme.darkMode">
 
-  <div class="channel-img-small-div" (click)="navTo(channel.nodeId, channel.id)">
-    <div class="channel-img-small">
-      <ion-avatar >
-        <img  src={{parseAvatar(channel.avatar)}}>
-      </ion-avatar>
-    </div>
+  <div style="margin-left: 30px; margin-top: 6px; margin-bottom: 10px; margin-right: 31px;" >
+    <ion-card-content class="ion-no-padding ion-no-margin">
 
-    <div class="channel-detail-div">
-      <div class="channel-detail-text-div">
-        <div style="height: 100%; vertical-align: middle;"> 
-          <ion-label class="channel-title-small white">{{channel.name}}</ion-label>
-          <!-- <ion-label class="channel-ts"></ion-label> -->
-          <ion-icon name="more" mode="ios" style="vertical-align: middle; float: right; "></ion-icon>
-        </div>
-        <!-- <div> 
-          <ion-label class="channel-desc-small">@TuumTech</ion-label>
-        </div> -->
-
-        <div >
-          <img src="../../../../assets/images/bubble2.svg" class="bubble">
-          <ion-label class="channel-follower2">{{channel.subscribers}} {{'common.followers'|translate}}</ion-label>
-          
-        </div>
-
+      <div *ngIf="checkUnreadNumber(channel.nodeId, channel.id) > 0" style="position:absolute; left: 0px; top: 0px;"  (click)="navTo(channel.nodeId, channel.id)">
+        <ion-badge>{{checkUnreadNumber(channel.nodeId, channel.id)}}</ion-badge>
       </div>
-    </div>
-  </div>
 
+      <div style="float: right; margin-top: 10px;" (click)="menuMore()">
+          <img  src="assets/images/dots-three-vertical.svg">
+      </div>
 
+      <div style="display: flex; margin-top: 13px; margin-left: 13px; margin-right: 12px;" (click)="navTo(channel.nodeId, channel.id)">
+          <ion-avatar style="width: 56px; height: 56px;">
+            <img  src={{parseAvatar(channel.avatar)}}>
+          </ion-avatar>
 
-  <img src="../../../assets/images/rectangle-5389.svg"
-  class="detail-line">
+          <div style="margin-left: 12px;">
+            <div style="margin-top: 4px;"> 
+              <ion-label class="channel-title-small">{{channel.name}}</ion-label>
+            </div>
+            <div >
+              <img src="../../../../assets/images/bubble2.svg" class="bubble">
+              <ion-label class="channel-follower2">{{channel.subscribers}} {{'common.followers'|translate}}</ion-label>
+            </div>
+          </div>
+      </div>
+    </ion-card-content>
+  </div> 
+
+  <div class="line-div"></div>
 </div>
 
 <div class="new-feed-div" *ngIf="channelList.length > 0">
   <div class="new-feed" (click)="exploreFeeds()">{{'FollowingComponent.exploreFeeds'|translate}}</div>
 </div>
-<!-- </div>
-
-<div class="channel-img-small-div">
-  <img class="channel-img-small" src="../../../../assets/images/component-480-3.png">
-
-  <div class="channel-detail-div">
-    <div class="channel-detail-text-div">
-      <div style="height: 100%; vertical-align: middle;"> 
-        <ion-label class="channel-title-small">Tuum Technologies</ion-label>
-        <ion-label class="channel-ts"></ion-label>
-        <ion-icon name="more" mode="ios" style="vertical-align: middle; float: right; "></ion-icon>
-      </div>
-
-      <div >
-        <img src="../../../../assets/images/bubble2.svg" class="bubble">
-        <ion-label class="channel-follower2">11 follower</ion-label>
-        
-      </div>
-
-    </div>
-  </div>
-</div>
-
-
-
-<img class="Rectangle-281">
-
-
-<div class="channel-img-small-div">
-  <img class="channel-img-small" src="../../../../assets/images/component-480-3.png">
-
-  <div class="channel-detail-div">
-    <div class="channel-detail-text-div">
-      <div style="height: 100%; vertical-align: middle;"> 
-        <ion-label class="channel-title-small">Tuum Technologies</ion-label>
-        <ion-label class="channel-ts"></ion-label>
-        <ion-icon name="more" mode="ios" style="vertical-align: middle; float: right; "></ion-icon>
-      </div>
-
-      <div >
-        <img src="../../../../assets/images/bubble2.svg" class="bubble">
-        <ion-label class="channel-follower2">11 follower</ion-label>
-        
-      </div>
-
-    </div>
-  </div>
-</div>
-
-
-
-<img class="Rectangle-281"> -->
 

@@ -32,6 +32,7 @@ export class FollowingComponent implements OnInit {
   ngOnInit() {}
 
   navTo(nodeId, channelId){
+    this.read(nodeId, channelId);
     this.router.navigate(['/channels', nodeId, channelId]);
 
   }
@@ -43,5 +44,19 @@ export class FollowingComponent implements OnInit {
 
   parseAvatar(avatar: string): string{
     return this.feedService.parseChannelAvatar(avatar);
+  }
+
+  checkUnreadNumber(nodeId: string, channelId: number):number{
+    let nodeChannelId = nodeId + channelId ;
+    return this.feedService.getUnreadNumber(nodeChannelId);
+  }
+
+  read(nodeId: string, channelId: number){
+    let nodeChannelId = nodeId + channelId ;
+    this.feedService.readChannel(nodeChannelId);
+  }
+
+  menuMore(){
+    alert("more");
   }
 }
