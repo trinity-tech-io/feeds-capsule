@@ -48,6 +48,7 @@ export const fr = {
       },
       "LikesComponent":{
           "emptyDes":"You have no Feeds",
+          "emptyLikeDes":"You haven't Liked anything yet",
           "exploreFeeds":"Explore Feeds"
      },
      "SearchPage":{
@@ -134,7 +135,9 @@ export const fr = {
           "owner":"OWNER",
           "introduction":"DESCRIPTION",
           "did":"DID",
-          "addFeedSource":"Add Feed Source"
+          "addFeedSource":"Add Feed Source",
+          "removeFeedSource":"Remove Feed Source",
+          "deleteFeedSource":"Delete Feed Source"
      },
      "ScanqrcodePage":{
           "bindingServer":"Binding server",
