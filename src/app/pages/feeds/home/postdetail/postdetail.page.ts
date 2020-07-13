@@ -146,4 +146,8 @@ export class PostdetailPage implements OnInit {
     }
     return  obj.content;
   }
+
+  menuMore(){
+    alert("more");
+  }
 }

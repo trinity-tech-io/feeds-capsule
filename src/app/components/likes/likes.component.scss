@@ -1,17 +1,26 @@
 .darkContainer{
-.channel-title-div .white{
+    .channel-title-div .white{
+            color: #ffffff;
+    }
+
+    .channel-desc-div .white{
         color: #ffffff;
-}
+    }
 
-.channel-desc-div .white{
-    color: #ffffff;
-}
+    .channel-detail-div .channel-detail-text-div .white{
+        color: #ffffff;
+    }
 
-.channel-detail-div .channel-detail-text-div .white{
-    color: #ffffff;
-}
+    .channel-post-div .white{
+        color: #ffffff;
+    }
 
-.channel-post-div .white{
-    color: #ffffff;
-}
+
+    .white{
+        color: #ffffff;
+    }
+
+    .white-line{
+        background-color: rgba(45, 46, 77, 0.7);;
+    }
 }

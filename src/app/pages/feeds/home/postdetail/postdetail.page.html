@@ -1,47 +1,26 @@
-
-    <!-- <div class="channel-img-small-div">
-      <img class="channel-img-small" src="../../../../assets/images/component-480-3.png"  >
-
-    
-      <div class="channel-detail-div">
-        <div class="channel-detail-text-div">
-          <div style="vertical-align: middle;"> 
-            <ion-label class="channel-title-small">{{channelName}}</ion-label>
-            <ion-icon name="more" mode="ios" style="vertical-align: middle; float: right; "></ion-icon>
-          </div>
-
-          <div> 
-            <ion-label class="channel-desc-small">@{{channelOwner}}</ion-label>
-          </div>
-
-        </div>
-      </div>
-      
-          <div class="channel-post-div" style=""> 
-            <ion-label class="channel-post">{{postContent}}</ion-label>
-            
-          </div>
-          <img src="../../../../assets/images/screenshot-2020-04-26-at-05-20-13.png"
-                  srcset="../../../../assets/images/screenshot-2020-04-26-at-05-20-13@2x.png 2x,
-                  ../../../../assets/images/screenshot-2020-04-26-at-05-20-13@3x.png 3x"
-                  class="channel-post-img" >
-
-          <div class="channel-post-heart-comment-div">
-            <img src="../../../../assets/images/heart.svg" class="heart" >
-            <ion-label class="heart-text" >{{likesNum}}</ion-label>
-
-            <img src="../../../../assets/images/bubble-line.svg" class="comment" (click)="comment()">
-            <ion-label class="comment-text"  (click)="comment()">{{commentsNum}}</ion-label>
-
-            <ion-label class="channel-ts">{{postTS|date:'MM-dd HH:mm'}}</ion-label>
-
-          </div>
-    </div>
-    <img src="../../../assets/images/rectangle-5389.svg"
-    class="detail-line"> -->
-
 <ion-content [class.darkContainer]="theme.darkMode">
-    <div class="channel-img-small-div">
+  <div style="margin-left: 20px; margin-top: 6px; margin-bottom: 10px; margin-right: 31px;" >
+    <ion-card-content class="ion-no-padding ion-no-margin">
+        <div style="float: right; " (click)="menuMore()">
+            <img  src="assets/images/dots-three-vertical.svg">
+        </div>
+        <div style="display: flex; margin-top: 13px; margin-left: 13px; margin-right: 12px;" (click)="navTo(post.nodeId, post.channel_id)">
+            <ion-avatar style="width: 56px; height: 56px;">
+              <img  src={{channelAvatar}}>
+            </ion-avatar>
+
+            <div style="margin-left: 12px;">
+              <div style="margin-top: 4px;"> 
+                <ion-label class="channel-title-small white">{{channelName}}</ion-label>
+              </div>
+              <div  (click)="navTo(post.nodeId, post.channel_id)"> 
+                <ion-label class="channel-desc-small">@{{channelOwner}}</ion-label>
+              </div>
+            </div>
+        </div>
+    </ion-card-content>
+  </div>
+    <!-- <div class="channel-img-small-div">
       <div class="channel-img-small">
         <ion-avatar >
           <img  src={{channelAvatar}}>
@@ -54,7 +33,6 @@
         <div class="channel-detail-text-div">
           <div style="height: 100%; vertical-align: middle;"> 
             <ion-label class="channel-title-small white">{{channelName}}</ion-label>
-            <!-- <ion-label class="channel-ts">post.created_at|date:'MM-dd HH:mm'</ion-label> -->
             <ion-icon name="more" mode="ios" style="vertical-align: middle; float: right; "></ion-icon>
           </div>
 
@@ -63,7 +41,9 @@
           </div>
         </div>
       </div>
-    </div>
+
+
+    </div> -->
 
     <div class="channel-post-detail-div" style="margin-top: 16px;">
         <div class="channel-post-div"> 
@@ -73,11 +53,6 @@
         <img style="width: 100%; height: auto;" *ngIf="getContentImg(postContent) != ''" src="{{getContentImg(postContent)}}"
             class="channel-post-img"  (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)">
 
-        <!-- <img src="../../../../../assets/images/screenshot-2020-04-26-at-05-20-13.png"
-                srcset="../../../../../assets/images/screenshot-2020-04-26-at-05-20-13@2x.png 2x,
-                ../../../../../assets/images/screenshot-2020-04-26-at-05-20-13@3x.png 3x"
-                class="channel-post-img" > -->
-
         <div class="channel-post-heart-comment-div">
           <img class="like" [ngClass]="{'like-s': checkMyLike()}" (click)="like(0)">
           <ion-label class="like-text" [ngClass]="{'like-s-text': checkMyLike()}" (click)="like(0)">{{likesNum}}</ion-label>
@@ -86,13 +61,9 @@
           <ion-label class="comment-text" (click)="showCommentPage($event)">{{commentsNum}}</ion-label>
 
           <ion-label class="post-detail-ts">{{handleDisplayTime(postTS)}}</ion-label>
-
-        
-      
         </div>
     </div>
-    <img src="../../../assets/images/rectangle-5389.svg"
-    class="detail-line">
+    <div class="line-div"></div>
 
 
     <div *ngFor="let comment of commentList">
@@ -130,8 +101,7 @@
           </div>
         </div>
       </div>
-      <img src="../../../assets/images/rectangle-5389.svg"
-      class="detail-line">
+      <div class="line-div white-line"></div>
     </div>
 
       <!-- <div class="channel-img-small-div">
