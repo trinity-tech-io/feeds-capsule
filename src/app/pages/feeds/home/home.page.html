@@ -1,8 +1,3 @@
-<!-- <ion-header>
-  <div style="display: float;" (click)="refresh()">
-    asdfsdfosdfsdf
-    </div>
-</ion-header> -->
 <ion-content>
   <div *ngIf="postList.length == 0">
     <div class="center-content" >
@@ -22,222 +17,48 @@
 
 
   <div *ngFor="let post of postList" [class.darkContainer]="theme.darkMode">
-    <div class="channel-img-small-div">
 
-      <div class="channel-img-small" (click)="navTo(post.nodeId, post.channel_id)">
-        <ion-avatar >
-          <img  src={{parseAvatar(post.nodeId,post.channel_id)}}>
-        </ion-avatar>
-      </div>
-      <!-- <img class="channel-img-small" src="../../../../assets/images/component-480-47.png"  (click)="navTo(post.nodeId, post.channel_id)"> -->
-
-    
-      <div class="channel-detail-div">
-        <div class="channel-detail-text-div">
-          <div style="height: 100%; vertical-align: middle;" (click)="navTo(post.nodeId, post.channel_id)"> 
-            <ion-label class="channel-title-small white">{{getChannel(post.nodeId, post.channel_id).name}}</ion-label>
-            <ion-label class="channel-ts"> - {{handleDisplayTime(post.created_at)}}</ion-label> 
-            <ion-icon name="more" mode="ios" style="vertical-align: middle; float: right; "></ion-icon>
-          </div>
-
-          <div  (click)="navTo(post.nodeId, post.channel_id)"> 
-              <ion-label class="channel-desc-small">@{{getChannelOwnerName(post.nodeId, post.channel_id)}}</ion-label>
-          </div>
-          <!-- <div class="channel-desc-small">{{getChannel(post.nodeId, post.channel_id).owner_name}} 
-
-          </div> -->
-
+    <div style="margin-left: 30px; margin-top: 6px; margin-bottom: 10px; margin-right: 31px;" >
+      <ion-card-content class="ion-no-padding ion-no-margin">
+        <div style="float: right; " (click)="menuMore()">
+            <img  src="assets/images/dots-three-vertical.svg">
+        </div>
+        <div style="display: flex; margin-top: 13px; margin-left: 13px; margin-right: 12px;" (click)="navTo(post.nodeId, post.channel_id)">
+            <ion-avatar style="width: 56px; height: 56px;">
+              <img  src={{parseAvatar(post.nodeId,post.channel_id)}}>
+            </ion-avatar>
+  
+            <div style="margin-left: 12px;">
+              <div style="margin-top: 4px;"> 
+                <ion-label class="channel-title-small white">{{getChannel(post.nodeId, post.channel_id).name}}</ion-label>
+                <ion-label class="channel-ts"> - {{handleDisplayTime(post.created_at)}}</ion-label>
+              </div>
+              <div  (click)="navTo(post.nodeId, post.channel_id)"> 
+                <ion-label class="channel-desc-small">@{{getChannelOwnerName(post.nodeId, post.channel_id)}}</ion-label>
+              </div>
+            </div>
+        </div>
+  
+        <div style="margin-left: 81px;">
           <div class="channel-post-div"  (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)"> 
             <ion-label class="channel-post white">{{getContentText(post.content)}}</ion-label>
           </div>
-          <!-- <img src="../../../../assets/images/screenshot-2020-04-26-at-05-20-13.png"
-                  srcset="../../../../assets/images/screenshot-2020-04-26-at-05-20-13@2x.png 2x,
-                  ../../../../assets/images/screenshot-2020-04-26-at-05-20-13@3x.png 3x"
-                  class="channel-post-img"  (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)"> -->
-
-          <ion-avatar  *ngIf="getContentImg(post.content) != ''" class="content-img">
+          
+          <ion-avatar  *ngIf="getContentImg(post.content) != ''" class="content-img-without-margin">
             <img src="{{getContentImg(post.content)}}"
                  (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)">
           </ion-avatar>
-
+  
           <div class="channel-post-heart-comment-div">
-            <!-- <img src="../../../../assets/images/heart.svg" class="heart" (click)="like(post.nodeId, post.channel_id, post.id)"> -->
             <img class="like" [ngClass]="{'like-s': checkMyLike(post.nodeId, post.channel_id, post.id)}" (click)="like(post.nodeId, post.channel_id, post.id)">
             <ion-label class="like-text" [ngClass]="{'like-s-text': checkMyLike(post.nodeId, post.channel_id, post.id)}" (click)="like(post.nodeId, post.channel_id, post.id)">{{post.likes}}</ion-label>
-
-            <!-- <div class="like" [ngClass]="{'like-s': true}"></div> -->
-            <!-- <ion-label class="heart-text" (click)="like(post.nodeId, post.channel_id, post.id)">{{post.likes}}</ion-label> -->
-
+  
             <img src="../../../../assets/images/bubble-line.svg" class="comment" (click)="showCommentPage($event, post.nodeId, post.channel_id, post.id)">
             <ion-label class="comment-text"  (click)="showCommentPage($event, post.nodeId, post.channel_id, post.id)">{{post.comments}}</ion-label>
           </div>
         </div>
-      </div>
+      </ion-card-content>
     </div>
-    <img src="../../../assets/images/rectangle-5389.svg"
-    class="detail-line">
+    <div class="line-div"></div>
   </div>
-<!-- 
-  <div class="channel-img-small-div">
-    <img class="channel-img-small" src="../../../../assets/images/component-480-3.png">
-
-    <div class="channel-detail-div">
-      <div class="channel-detail-text-div">
-        <div style="height: 100%; vertical-align: middle;"> 
-          <ion-label class="channel-title-small">Tuum Technologies</ion-label>
-          <ion-label class="channel-ts"></ion-label>
-          <ion-icon name="more" mode="ios" style="vertical-align: middle; float: right; "></ion-icon>
-        </div>
-
-        <div> 
-          <ion-label class="channel-desc-small">@TuumTech</ion-label>
-        </div>
-
-        <div class="channel-post-div"> 
-          <ion-label class="channel-post">First ride of the year! Welcome to my adventures - only on elastOS Feeds!</ion-label>
-          <img src="../../../../assets/images/screenshot-2020-04-26-at-05-20-13.png"
-                srcset="../../../../assets/images/screenshot-2020-04-26-at-05-20-13@2x.png 2x,
-                ../../../../assets/images/screenshot-2020-04-26-at-05-20-13@3x.png 3x"
-                class="channel-post-img">
-        </div>
-
-        <div class="channel-post-heart-comment-div">
-          <img src="../../../../assets/images/heart.svg" class="heart">
-          <ion-label class="heart-text">11</ion-label>
-
-          <img src="../../../../assets/images/bubble-line.svg" class="comment">
-          <ion-label class="comment-text">11 </ion-label>
-        </div>
-      </div>
-    </div>
-  </div>
-  <img class="Rectangle-281">
-
-
-
-  <div class="channel-img-small-div">
-    <img class="channel-img-small" src="../../../../assets/images/component-480-3.png">
-
-    <div class="channel-detail-div">
-      <div class="channel-detail-text-div">
-        <div style="height: 100%; vertical-align: middle;"> 
-          <ion-label class="channel-title-small">Tuum Technologies</ion-label>
-          <ion-label class="channel-ts"></ion-label>
-          <ion-icon name="more" mode="ios" style="vertical-align: middle; float: right; "></ion-icon>
-        </div>
-
-        <div> 
-          <ion-label class="channel-desc-small">@TuumTech</ion-label>
-        </div>
-
-        <div class="channel-post-div"> 
-          <ion-label class="channel-post">First ride of the year! Welcome to my adventures - only on elastOS Feeds!</ion-label>
-          <img src="../../../../assets/images/screenshot-2020-04-26-at-05-20-13.png"
-                srcset="../../../../assets/images/screenshot-2020-04-26-at-05-20-13@2x.png 2x,
-                ../../../../assets/images/screenshot-2020-04-26-at-05-20-13@3x.png 3x"
-                class="channel-post-img">
-        </div>
-
-        <div class="channel-post-heart-comment-div">
-          <img src="../../../../assets/images/heart.svg" class="heart">
-          <ion-label class="heart-text">11</ion-label>
-
-          <img src="../../../../assets/images/bubble-line.svg" class="comment">
-          <ion-label class="comment-text">11 </ion-label>
-        </div>
-      </div>
-    </div>
-  </div>
-  <img class="Rectangle-281">
-
-
-
-  <div class="channel-img-small-div">
-    <img class="channel-img-small" src="../../../../assets/images/component-480-3.png">
-
-    <div class="channel-detail-div">
-      <div class="channel-detail-text-div">
-        <div style="height: 100%; vertical-align: middle;"> 
-          <ion-label class="channel-title-small">Tuum Technologies</ion-label>
-          <ion-label class="channel-ts"></ion-label>
-          <ion-icon name="more" mode="ios" style="vertical-align: middle; float: right; "></ion-icon>
-        </div>
-
-        <div> 
-          <ion-label class="channel-desc-small">@TuumTech</ion-label>
-        </div>
-
-        <div class="channel-post-div"> 
-          <ion-label class="channel-post">First ride of the year! Welcome to my adventures - only on elastOS Feeds!</ion-label>
-          <img src="../../../../assets/images/screenshot-2020-04-26-at-05-20-13.png"
-                srcset="../../../../assets/images/screenshot-2020-04-26-at-05-20-13@2x.png 2x,
-                ../../../../assets/images/screenshot-2020-04-26-at-05-20-13@3x.png 3x"
-                class="channel-post-img">
-        </div>
-
-        <div class="channel-post-heart-comment-div">
-          <img src="../../../../assets/images/heart.svg" class="heart">
-          <ion-label class="heart-text">11</ion-label>
-
-          <img src="../../../../assets/images/bubble-line.svg" class="comment">
-          <ion-label class="comment-text">11 </ion-label>
-        </div>
-      </div>
-    </div>
-  </div>
-  <img class="Rectangle-281">
-
-
-
-  <div class="channel-img-small-div">
-    <img class="channel-img-small" src="../../../../assets/images/component-480-3.png">
-
-    <div class="channel-detail-div">
-      <div class="channel-detail-text-div">
-        <div style="height: 100%; vertical-align: middle;"> 
-          <ion-label class="channel-title-small">Tuum Technologies</ion-label>
-          <ion-label class="channel-ts"></ion-label>
-          <ion-icon name="more" mode="ios" style="vertical-align: middle; float: right; "></ion-icon>
-        </div>
-
-        <div> 
-          <ion-label class="channel-desc-small">@TuumTech</ion-label>
-        </div>
-
-        <div class="channel-post-div"> 
-          <ion-label class="channel-post">First ride of the year! Welcome to my adventures - only on elastOS Feeds!</ion-label>
-          <img src="../../../../assets/images/screenshot-2020-04-26-at-05-20-13.png"
-                srcset="../../../../assets/images/screenshot-2020-04-26-at-05-20-13@2x.png 2x,
-                ../../../../assets/images/screenshot-2020-04-26-at-05-20-13@3x.png 3x"
-                class="channel-post-img">
-        </div>
-
-        <div class="channel-post-heart-comment-div">
-          <img src="../../../../assets/images/heart.svg" class="heart">
-          <ion-label class="heart-text">11</ion-label>
-
-          <img src="../../../../assets/images/bubble-line.svg" class="comment">
-          <ion-label class="comment-text">11 </ion-label>
-        </div>
-      </div>
-    </div>
-  </div>
-  <img class="Rectangle-281"> -->
-
-
-  <!-- <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
-    <ion-refresher-content
-      pullingIcon="arrow-dropdown"
-      pullingText="Pull to refresh"
-      refreshingSpinner="circles"
-      refreshingText="Refreshing...">
-    </ion-refresher-content>
-  </ion-refresher>
-
-  <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event)">
-    <ion-infinite-scroll-content
-      loadingSpinner="bubbles"
-      loadingText="Loading more data...">
-    </ion-infinite-scroll-content>
-  </ion-infinite-scroll> -->
 </ion-content>

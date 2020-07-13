@@ -121,4 +121,8 @@ export class HomePage implements OnInit {
     }
     return  obj.content;
   }
+
+  menuMore(){
+    alert("more");
+  }
 }
