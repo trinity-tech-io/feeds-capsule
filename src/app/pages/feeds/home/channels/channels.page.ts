@@ -200,4 +200,8 @@ export class ChannelsPage implements OnInit {
     }
     return  obj.content;
   }
+
+  menuMore(){
+    alert("more");
+  }
 }
