@@ -1,9 +1,9 @@
-<div class="post-from-text-div">
-  <div class="post-from-text">
-    What feed do you want to post from?
+<div class="post-from-text-div" [class.darkContainer]="theme.darkMode">
+  <div class="post-from-text white">
+    {{'PostfromComponent.des'|translate}}
   </div>
 
-  <div *ngFor="let channel of channels">
+  <div *ngFor="let channel of channels" [class.darkContainer]="theme.darkMode">
     <div class="channel-img-small-div" (click)="selectChannel(channel.nodeId,channel.id)">
       <div class="channel-img-small">
         <ion-avatar >
@@ -14,7 +14,7 @@
       <div class="channel-detail-div">
         <div class="channel-detail-text-div">
           <div style="height: 100%; vertical-align: middle;"> 
-            <ion-label class="channel-title-small">{{channel.name}}</ion-label>
+            <ion-label class="channel-title-small white">{{channel.name}}</ion-label>
             <!-- <ion-label class="channel-ts"></ion-label> -->
             <!-- <ion-icon name="more" mode="ios" style="vertical-align: middle; float: right; "></ion-icon> -->
           </div>
@@ -24,7 +24,7 @@
   
           <div >
             <img src="../../../../assets/images/bubble2.svg" class="bubble">
-            <ion-label class="channel-follower2">{{channel.subscribers}} Follower</ion-label>
+            <ion-label class="channel-follower2">{{channel.subscribers}} {{'common.followers'|translate}}</ion-label>
             
           </div>
   

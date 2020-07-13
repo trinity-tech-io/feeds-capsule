@@ -7,7 +7,11 @@ export const en = {
     "cancel":"Cancel",
     "ok":'Ok',
     "confirm":"Confirm!",
-    "des":"Clear <strong>all cached data</strong>!!!"
+    "des":"Clear <strong>all cached data</strong>!!!",
+    "prompt":"Prompt",
+    "des1":"Confirm new topic?<br>server:",
+    "channel:":"channel:",
+    "description":"description:"
   },
   "app":{
     "profileDetails":"Profile Details",
@@ -187,5 +191,13 @@ export const en = {
     "tipMsg2":"Please input index!",
     "alert":"Alert",
     "ok":"Ok"
+  },
+  "PostfromComponent":{
+    "des":"What feed do you want to post from?"
+  },
+  "CreatenewpostPage":{
+    "addimg":"add img",
+    "post":"post",
+    "des":"Enter any notes here...",
   }
 };

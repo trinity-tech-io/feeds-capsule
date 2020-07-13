@@ -2,7 +2,7 @@ import { Component, OnInit, NgZone } from '@angular/core';
 import { NavController, Events } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { FeedService } from 'src/app/services/FeedService';
-
+import { ThemeService } from '../../services/theme.service';
 @Component({
   selector: 'app-myfeeds',
   templateUrl: './myfeeds.component.html',
@@ -14,7 +14,8 @@ export class MyfeedsComponent implements OnInit {
     private events: Events,
     private zone: NgZone,
     private router: Router,
-    private feedService: FeedService) {
+    private feedService: FeedService,
+    public theme:ThemeService,) {
 
     this.channels = this.feedService.refreshMyChannels();
     

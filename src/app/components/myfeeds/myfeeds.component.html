@@ -14,7 +14,7 @@
   </div> 
 </div>
 
-<div *ngFor="let channel of channels">
+<div *ngFor="let channel of channels" [class.darkContainer]="theme.darkMode">
   <div class="channel-img-small-div"  (click)="navTo(channel.nodeId, channel.id)">
 
     <!-- <img class="channel-img-small" src="../../../../assets/images/component-480-47.png"> -->
@@ -27,7 +27,7 @@
     <div class="channel-detail-div">
       <div class="channel-detail-text-div">
         <div style="height: 100%; vertical-align: middle;"> 
-          <ion-label class="channel-title-small">{{channel.name}}</ion-label>
+          <ion-label class="channel-title-small white">{{channel.name}}</ion-label>
           <!-- <ion-label class="channel-ts"></ion-label> -->
           <ion-icon name="more" mode="ios" style="vertical-align: middle; float: right; "></ion-icon>
         </div>

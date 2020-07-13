@@ -111,9 +111,9 @@ export class CreatenewfeedPage implements OnInit {
       return ;
     }
 
-    this.popup.ionicConfirm("Prompt","Confirm new topic?<br>"+"server:"+this.selectedServer.did+"<br>"
-                            +"channel:"+name.value+"<br>"+"description:"+desc.value,
-                            "ok","cancel").then((data)=>{
+    this.popup.ionicConfirm(this.translate.instant("common.prompt"),this.translate.instant('common.des1')+this.selectedServer.did+"<br>"
+                            +this.translate.instant('common.channel')+name.value+"<br>"+this.translate.instant('common.description')+desc.value,
+                            this.translate.instant("common.ok"),this.translate.instant("common.cancel")).then((data)=>{
                               if (data) {
                                 this.feedService.createTopic(this.selectedServer.nodeId, name.value, desc.value, this.channelAvatar);
                               }

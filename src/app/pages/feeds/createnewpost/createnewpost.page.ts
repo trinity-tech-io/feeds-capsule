@@ -4,7 +4,7 @@ import { FeedService } from 'src/app/services/FeedService';
 import { ActivatedRoute } from '@angular/router';
 import { NativeService } from '../../../services/NativeService';
 import { CameraService } from 'src/app/services/CameraService';
-
+import { ThemeService } from '../../../services/theme.service';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 @Component({
@@ -30,7 +30,8 @@ export class CreatenewpostPage implements OnInit {
     private navCtrl: NavController,
     private camera: CameraService,
     private zone: NgZone,
-    private feedService: FeedService) {
+    private feedService: FeedService,
+    public theme:ThemeService) {
       this.events.subscribe('feeds:publishPostSuccess', () => {
         this.native.toast("Publish post success!");
         this.navCtrl.pop();

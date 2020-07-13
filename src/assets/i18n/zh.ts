@@ -7,7 +7,11 @@ export const zh = {
     "cancel":"取消",
     "ok":'确定',
     "confirm":"确认!",
-    "des":"清空 <strong>所有缓存数据</strong>!!!"
+    "des":"清空 <strong>所有缓存数据</strong>!!!",
+    "prompt":"提示",
+    "des1":"确认新主题？<br>服务器:",
+    "channel":"频道:",
+    "description":"描述:"
 },
 "app":{
     "profileDetails":"Profile Details",
@@ -187,5 +191,13 @@ export const zh = {
     "tipMsg2":"Please input index!",
     "alert":"Alert",
     "ok":"Ok"
+  },
+  "PostfromComponent":{
+    "des":"你想从哪个源发布？"
+  },
+  "CreatenewpostPage":{
+    "addimg":"add img",
+    "post":"post",
+    "des":"Enter any notes here...",
   }
 };

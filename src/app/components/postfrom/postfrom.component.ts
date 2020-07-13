@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NavController, PopoverController } from '@ionic/angular';
 import { FeedService } from 'src/app/services/FeedService';
+import { ThemeService } from '../../services/theme.service';
 import { Router } from '@angular/router';
 
 @Component({
@@ -17,7 +18,8 @@ export class PostfromComponent implements OnInit {
     private navCtrl: NavController,
     private feedService: FeedService,
     private router: Router,
-    private popover: PopoverController) {
+    private popover: PopoverController,
+    public theme:ThemeService) {
     this.channels = this.feedService.refreshMyChannels();
   }
 
