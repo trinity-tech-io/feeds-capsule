@@ -108,7 +108,7 @@ export class JsonRPCService {
             return this.createError(nodeId, -60003, "JsonRPC version error");
 
         if (data.result != undefined){
-            let request = this.queryRequest(data.id);
+            let request = this.queryRequest(data.id, data.result);
             return this.createResult(nodeId, request.method,request.requestParams , data.result);
         }
 
@@ -120,39 +120,22 @@ export class JsonRPCService {
             return data.error;
             
         if(data.result == null){
-            let request = this.queryRequest(data.id);
+            let request = this.queryRequest(data.id, data.result);
             return this.createResult(nodeId, request.method,request.requestParams , data.result);
         }
         return this.createError(nodeId, -69000, "Unknown error");
     }
 
-    parseJson(nodeId: string, msg: string): Result{
-        let data: any ;
-        let substr = msg.substring(0,msg.length-1);
-        data = JSON.parse(substr);
-
-        // if (data.jsonrpc!="2.0")
-        //     return this.createError(nodeId, -60003, "JsonRPC version error");
-
-        if (msg.indexOf("result") != -1){
-            let request = this.queryRequest(data.id);
-            return this.createResult(nodeId, request.method,request.requestParams , data.result);
-        }
-
-        if (msg.indexOf("params") != -1 && data.params!=null)
-            return this.createParamsResult(nodeId, data.params, data.method);
-        
-
-        if(msg.indexOf("error")!=-1)
-            return data.error;
-            
-        return this.createError(nodeId, -69000, "Unknown error");
-    }
-
-    queryRequest(responseId: number): any{
+    queryRequest(responseId: number, result: any): any{
         for (let index = 0; index < requestQueue.length; index++) {
             if (requestQueue[index].requestId == responseId){
-                let request = requestQueue.splice(index,1)[0];
+                let request = requestQueue[0];
+                if (result == null ||
+                    result.is_last == null ||
+                    result.is_last == undefined ||
+                    result.is_last)
+                    requestQueue.splice(index,1)[0];
+                
                 return request;
             }
         }

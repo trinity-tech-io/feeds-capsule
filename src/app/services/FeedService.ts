@@ -2072,13 +2072,13 @@ export class FeedService {
     let request: Communication.create_channel_request = {
       version: "1.0",
       method : "create_channel",
+      id     : -1,
       params : {
           access_token    : accessTokenMap[nodeId].token,
           name        : name,
           introduction: introduction,
           avatar      : avatarBin
-      } ,
-      id     : -1
+      }
     }
     this.sendRPCMessage(nodeId, request.method, request.params);
   }
@@ -2096,12 +2096,12 @@ export class FeedService {
     let request: Communication.publish_post_request = {
       version: "1.0",
       method : "publish_post",
+      id     : -1,
       params : {
           access_token    : accessTokenMap[nodeId].token,
           channel_id: Number(channel_id),
           content: contentBin,
-      } ,
-      id     : -1
+      }
     }
     this.sendRPCMessage(nodeId, request.method, request.params);
   }
@@ -2119,14 +2119,14 @@ export class FeedService {
     let request: Communication.post_comment_request = {
       version: "1.0",
       method : "post_comment",
+      id     : -1,
       params : {
           access_token    : accessTokenMap[nodeId].token,
           channel_id: channel_id,
           post_id   : post_id,
           comment_id: comment_id,
           content   : contentBin,
-      } ,
-      id     : -1
+      }
     }
     this.sendRPCMessage(nodeId, request.method, request.params);
   }
@@ -2141,13 +2141,14 @@ export class FeedService {
     let request: Communication.post_like_request = {
       version: "1.0",
       method : "post_like",
+      id     : -1,
       params : {
           access_token    : accessTokenMap[nodeId].token,
           channel_id: channel_id,
           post_id   : post_id,
           comment_id: comment_id,
       } ,
-      id     : -1
+      
     }
     this.sendRPCMessage(nodeId, request.method, request.params);
   }
@@ -2172,13 +2173,13 @@ export class FeedService {
     let request: Communication.post_unlike_request = {
       version: "1.0",
       method : "post_unlike",
+      id     : -1,
       params : {
           access_token    : accessTokenMap[nodeId].token,
           channel_id: channel_id,
           post_id   : post_id,
           comment_id: comment_id,
-      } ,
-      id     : -1
+      }
     }
     this.sendRPCMessage(nodeId, request.method, request.params);
   }
@@ -2194,14 +2195,14 @@ export class FeedService {
     let request: Communication.get_my_channels_request = {
       version: "1.0",
       method : "get_my_channels",
+      id     : -1,
       params : {
           access_token    : accessTokenMap[nodeId].token,
           by         : field,
           upper_bound: upper_bound,
           lower_bound: lower_bound,
           max_count : max_counts,
-      },
-      id     : -1
+      }
     }
     this.sendRPCMessage(nodeId, request.method, request.params);
   }
@@ -2217,14 +2218,14 @@ export class FeedService {
     let request: Communication.get_my_channels_metadata_request = {
       version: "1.0",
       method : "get_my_channels_metadata",
+      id     : -1,
       params : {
           access_token    : accessTokenMap[nodeId].token,
           by         : field,
           upper_bound: upper_bound,
           lower_bound: lower_bound,
           max_count : max_counts,
-      },
-      id     : -1
+      }
     }
     this.sendRPCMessage(nodeId, request.method, request.params);
   }
@@ -2240,14 +2241,14 @@ export class FeedService {
     let request: Communication.get_channels_request = {
       version: "1.0",
       method : "get_channels",
+      id     : -1,
       params : {
           access_token    : accessTokenMap[nodeId].token,
           by         : field,
           upper_bound: upper_bound,
           lower_bound: lower_bound,
           max_count : max_counts,
-      },
-      id     : -1
+      }
     }
     this.sendRPCMessage(nodeId, request.method, request.params);
   }
@@ -2262,11 +2263,11 @@ export class FeedService {
     let request: Communication.get_channel_detail_request = {
       version: "1.0",
       method : "get_channel_detail",
+      id     : -1,
       params : {
           access_token    : accessTokenMap[nodeId].token,
           id: id,
       },
-      id     : -1
     }
     this.sendRPCMessage(nodeId, request.method, request.params);
   }
@@ -2282,15 +2283,14 @@ export class FeedService {
     let request: Communication.get_subscribed_channels_request = {
       version: "1.0",
       method : "get_subscribed_channels",
+      id     : -1,
       params : {
           access_token   : accessTokenMap[nodeId].token,
           by         : field,
           upper_bound: upper_bound,
           lower_bound: lower_bound,
           max_count : max_counts,
-
       },
-      id     : -1
     }
     this.sendRPCMessage(nodeId, request.method, request.params);
   }
@@ -2306,6 +2306,7 @@ export class FeedService {
     let request: Communication.get_posts_request = {
       version: "1.0",
       method : "get_posts",
+      id     : -1,
       params : {
           access_token    : accessTokenMap[nodeId].token,
           channel_id : Number(channel_id),
@@ -2314,7 +2315,6 @@ export class FeedService {
           lower_bound: lower_bound,
           max_count : max_counts,
       },
-      id     : -1
     }
     this.sendRPCMessage(nodeId, request.method, request.params);
   }
@@ -2330,6 +2330,7 @@ export class FeedService {
     let request:Communication.get_comments_request = {
       version: "1.0",
       method : "get_comments",
+      id     : -1,
       params : {
           access_token    : accessTokenMap[nodeId].token,
           channel_id : channel_id,
@@ -2339,7 +2340,6 @@ export class FeedService {
           lower_bound: lower_bound ,
           max_count : max_counts,
       },
-      id     : -1
     }
     this.sendRPCMessage(nodeId, request.method, request.params);
   }
@@ -2354,10 +2354,10 @@ export class FeedService {
     let request:Communication.get_statistics_request = {
       version: "1.0",
       method : "get_statistics",
+      id     : -1,
       params : {
         access_token    : accessTokenMap[nodeId].token
       },
-      id     : -1
     }
     this.sendRPCMessage(nodeId, request.method, request.params);
   }
@@ -2372,11 +2372,11 @@ export class FeedService {
     let request: Communication.subscribe_channel_request = {
       version: "1.0",
       method : "subscribe_channel",
+      id     : -1,
       params : {
           access_token    : accessTokenMap[nodeId].token,
           id: id,
       },
-      id     : -1
     }
     this.sendRPCMessage(nodeId, request.method, request.params);
   }
@@ -2391,11 +2391,11 @@ export class FeedService {
     let request: Communication.unsubscribe_channel_request = {
       version: "1.0",
       method : "unsubscribe_channel",
+      id     : -1,
       params : {
           access_token    : accessTokenMap[nodeId].token,
           id: id
       },
-      id     : -1
     }
     this.sendRPCMessage(nodeId, request.method, request.params);
   }
@@ -2410,11 +2410,11 @@ export class FeedService {
     let request: Communication.add_node_publisher_request = {
       version: "1.0",
       method : "add_node_publisher",
+      id     : -1,
       params : {
-          did: did,
-          access_token    : accessTokenMap[nodeId].token
+          access_token    : accessTokenMap[nodeId].token,
+          did: did
       },
-      id     : -1
     }
     this.sendRPCMessage(nodeId, request.method, request.params);
   }
@@ -2429,11 +2429,11 @@ export class FeedService {
     let request: Communication.remove_node_publisher_request = {
       version: "1.0",
       method : "remove_node_publisher",
+      id     : -1,
       params : {
-          did: did,
-          access_token    : accessTokenMap[nodeId].token
-      },
-      id     : -1
+          access_token    : accessTokenMap[nodeId].token,
+          did: did
+      }
     }
     this.sendRPCMessage(nodeId, request.method, request.params);
   }
@@ -2460,10 +2460,10 @@ export class FeedService {
     let request: Communication.enable_notification_request = {
       version: "1.0",
       method : "enable_notification",
+      id     : -1,
       params : {
         access_token   : accessTokenMap[nodeId].token
       },
-      id     : -1
     }
     this.sendRPCMessage(nodeId, request.method, request.params);
   }
@@ -2759,7 +2759,9 @@ export class FeedService {
     }
   }
 
-  handleGetMyChannelsResult(nodeId: string, result :any){
+  handleGetMyChannelsResult(nodeId: string, responseResult :any){
+    let result = responseResult.channels;
+    console.log("handleGetMyChannelsResult==>"+JSON.stringify(result));
     for (let index = 0; index < result.length; index++) {
       let id: number = result[index].id;
       let name: string = result[index].name;
@@ -2807,7 +2809,10 @@ export class FeedService {
     eventBus.publish(PublishType.myChannelsDataUpdate);
   }
 
-  handleGetChannelsResult(nodeId: string, result: any , request: any){
+  handleGetChannelsResult(nodeId: string, responseResult: any , request: any){
+    let result = responseResult.channels;
+    console.log("handleGetChannelsResult==>"+JSON.stringify(result));
+
     for (let index = 0; index < result.length; index++) {
       let id = result[index].id;
 
@@ -2851,11 +2856,13 @@ export class FeedService {
   handleGetChannelDetailResult(result: any){
   }
 
-  handleGetSubscribedChannelsResult(nodeId: string, result: any, request: any){
-    if (result == "") {
+  handleGetSubscribedChannelsResult(nodeId: string, responseResult: any, request: any){
+    if (responseResult == "") {
       return ;
     }
 
+    let result = responseResult.channels;
+    console.log("handleGetSubscribedChannelsResult==>"+JSON.stringify(result));
     for (let index = 0; index < result.length; index++) {
       let channelId = result[index].id;
       let name = result[index].name;
@@ -2918,7 +2925,9 @@ export class FeedService {
     }
   }
 
-  handleGetPostsResult(nodeId: string, result: any, request:any){
+  handleGetPostsResult(nodeId: string, responseResult: any, request:any){
+    let result = responseResult.posts;
+    console.log("handleGetPostsResult==>"+JSON.stringify(result));
     for (let index = 0; index < result.length; index++) {
       let channel_id = result[index].channel_id;
       let id         = result[index].id;
@@ -2964,7 +2973,9 @@ export class FeedService {
     // }
   }
 
-  handleGetCommentsResult(result: any){
+  handleGetCommentsResult(responseResult: any){
+    let result = responseResult.comments;
+    console.log("handleGetCommentsResult==>"+JSON.stringify(result));
     for (let index = 0; index < result.length; index++) {
       let channel_id = result[index].channel_id;
       let post_id = result[index].post_id;
@@ -3882,6 +3893,38 @@ export class FeedService {
 
   removeFeedSource(nodeID: string){
     alert("Remove Feed Source!");
+  }
+
+  removeLike(node: string, channelId: number, postId: number, commentId: number){    
+  }
+  removeComment(node: string, channelId: number, postId: number, commentId: number){
+
+  }
+  removePost(node: string, channelId: number, postId: number){
+
+  }
+
+  removeChannel(node: string, channelId: number){
+
+  }
+  removeSubscribedChannel(){
+  }
+
+  removeUnreadStatue(){
+  }
+
+  removeServerStatistic(){
+
+  }
+  removeServerStatus(){
+
+  }
+  removeServerFriends(){
+
+  }
+
+  removeBindServer(){
+
   }
 }
 
