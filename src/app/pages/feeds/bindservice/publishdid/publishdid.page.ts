@@ -14,7 +14,7 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
   styleUrls: ['./publishdid.page.scss'],
 })
 export class PublishdidPage implements OnInit {
-  private title = "PublishdidPage.BindingServer";
+  private title = "PublishdidPage.bindingServer";
   private payload: string;
   private nodeId = "";
   private did = "";
