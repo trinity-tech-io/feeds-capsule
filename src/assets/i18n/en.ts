@@ -44,7 +44,7 @@ export const en = {
   "MyfeedsComponent":{
       "emptyDes":"You have no Feeds",
       "createFeed":"Create Feed",
-      "createNewFeed":"Create new Feed"
+      "createNewFeed":"Create New Feed"
   },
   "FollowingComponent":{
     "emptyDes":"Not following any feeds yet",

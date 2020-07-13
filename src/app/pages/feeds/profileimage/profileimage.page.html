@@ -1,7 +1,7 @@
-<ion-grid style="width: 100%; padding: 35px;">
+<div style="width: 100%; padding: 35px;">
   <ion-row>
     <ion-col>
-      <ion-avatar>
+      <ion-avatar class="profile-image">
         <img src="assets/images/profile-1.svg" (click)="selectIndex(1,'assets/images/profile-1.svg')">
       </ion-avatar>
       <div class="select-div" *ngIf="select == 1">
@@ -9,7 +9,7 @@
       </div>
     </ion-col>
     <ion-col>
-      <ion-avatar>
+      <ion-avatar class="profile-image">
         <img src="assets/images/profile-2.svg" (click)="selectIndex(2,'assets/images/profile-2.svg')">
       </ion-avatar>
       <div class="select-div" *ngIf="select == 2">
@@ -17,7 +17,7 @@
       </div>
     </ion-col>
     <ion-col>
-      <ion-avatar>
+      <ion-avatar class="profile-image">
         <img src="assets/images/profile-3.svg" (click)="selectIndex(3,'assets/images/profile-3.svg')">
       </ion-avatar>
       <div class="select-div" *ngIf="select == 3">
@@ -25,7 +25,7 @@
       </div>
     </ion-col>
     <ion-col>
-      <ion-avatar>
+      <ion-avatar class="profile-image">
         <img src="assets/images/profile-4.svg" (click)="selectIndex(4,'assets/images/profile-4.svg')">
       </ion-avatar>
       <div class="select-div" *ngIf="select == 4">
@@ -37,7 +37,7 @@
 
   <ion-row>
     <ion-col>
-      <ion-avatar>
+      <ion-avatar class="profile-image">
         <img src="assets/images/profile-5.svg" (click)="selectIndex(5,'assets/images/profile-5.svg')">
       </ion-avatar>
       <div class="select-div" *ngIf="select == 5">
@@ -46,7 +46,7 @@
     </ion-col>
 
     <ion-col>
-      <ion-avatar>
+      <ion-avatar class="profile-image">
         <img src="assets/images/profile-6.svg" (click)="selectIndex(6,'assets/images/profile-6.svg')">
       </ion-avatar>
       <div class="select-div" *ngIf="select == 6">
@@ -54,7 +54,7 @@
       </div>
     </ion-col>
     <ion-col>
-      <ion-avatar>
+      <ion-avatar class="profile-image">
         <img src="assets/images/profile-7.svg" (click)="selectIndex(7,'assets/images/profile-7.svg')">
       </ion-avatar>
       <div class="select-div" *ngIf="select == 7">
@@ -62,7 +62,7 @@
       </div>
     </ion-col>
     <ion-col>
-      <ion-avatar>
+      <ion-avatar class="profile-image">
         <img src="assets/images/profile-8.svg" (click)="selectIndex(8,'assets/images/profile-8.svg')">
       </ion-avatar>
       <div class="select-div" *ngIf="select == 8">
@@ -73,7 +73,7 @@
 
   <ion-row>
     <ion-col>
-      <ion-avatar>
+      <ion-avatar class="profile-image">
         <img src="assets/images/profile-9.svg" (click)="selectIndex(9,'assets/images/profile-9.svg')">
       </ion-avatar>
       <div class="select-div" *ngIf="select == 9">
@@ -81,7 +81,7 @@
       </div>
     </ion-col>
     <ion-col>
-      <ion-avatar>
+      <ion-avatar class="profile-image">
         <img src={{userAvatar}} (click)="selectIndex(0)">
       </ion-avatar>
       <div class="select-div" *ngIf="select == 0">
@@ -93,6 +93,6 @@
     <ion-col>
     </ion-col>
   </ion-row>
-</ion-grid>
+</div>
 
 <ion-button expand="block" color="primary" (click)="comfirm()">{{'ProfileimagePage.comfirm'|translate}}</ion-button>

@@ -68,4 +68,8 @@ export class MyfeedsComponent implements OnInit {
   parseAvatar(avatar: string): string{
     return this.feedService.parseChannelAvatar(avatar);
   }
+
+  menuMore(){
+    alert("more");
+  }
 }

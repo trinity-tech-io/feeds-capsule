@@ -1299,4 +1299,11 @@ vertical-align: middle;
   
 }
 
+.content-img {
+  width: calc(100% - 37px - 37px); 
+  height: 202px;
+
+  --border-radius: 8px;
+}
+
 

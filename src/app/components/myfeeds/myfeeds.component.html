@@ -15,38 +15,30 @@
 </div>
 
 <div *ngFor="let channel of channels" [class.darkContainer]="theme.darkMode">
-  <div class="channel-img-small-div"  (click)="navTo(channel.nodeId, channel.id)">
-
-    <!-- <img class="channel-img-small" src="../../../../assets/images/component-480-47.png"> -->
-    <div class="channel-img-small">
-      <ion-avatar >
-        <img  src={{parseAvatar(channel.avatar)}}>
-      </ion-avatar>
-    </div>
-
-    <div class="channel-detail-div">
-      <div class="channel-detail-text-div">
-        <div style="height: 100%; vertical-align: middle;"> 
-          <ion-label class="channel-title-small white">{{channel.name}}</ion-label>
-          <!-- <ion-label class="channel-ts"></ion-label> -->
-          <ion-icon name="more" mode="ios" style="vertical-align: middle; float: right; "></ion-icon>
-        </div>
-        <!-- <div> 
-          <ion-label class="channel-desc-small">@TuumTech</ion-label>
-        </div> -->
-
-        <div >
-          <img src="../../../../assets/images/bubble2.svg" class="bubble">
-          <ion-label class="channel-follower2">{{channel.subscribers}} {{'common.followers'|translate}}</ion-label>
-          
-        </div>
-
+  <div style="margin-left: 30px; margin-top: 6px; margin-bottom: 10px; margin-right: 31px;" >
+    <ion-card-content class="ion-no-padding ion-no-margin">
+      <div style="float: right; margin-top: 10px;" (click)="menuMore()">
+          <img  src="assets/images/dots-three-vertical.svg">
       </div>
-    </div>
-  </div>
 
-  <img src="../../../assets/images/rectangle-5389.svg"
-  class="detail-line">
+      <div style="display: flex; margin-top: 13px; margin-left: 13px; margin-right: 12px;" (click)="navTo(channel.nodeId, channel.id)">
+          <ion-avatar style="width: 56px; height: 56px;">
+            <img  src={{parseAvatar(channel.avatar)}}>
+          </ion-avatar>
+
+          <div style="margin-left: 12px;">
+            <div style="margin-top: 4px;"> 
+              <ion-label class="channel-title-small white">{{channel.name}}</ion-label>
+            </div>
+            <div >
+              <img src="../../../../assets/images/bubble2.svg" class="bubble">
+              <ion-label class="channel-follower2">{{channel.subscribers}} {{'common.followers'|translate}}</ion-label>
+            </div>
+          </div>
+      </div>
+    </ion-card-content>
+  </div> 
+  <div class="line-div"></div>
 
 </div>
   

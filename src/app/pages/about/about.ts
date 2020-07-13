@@ -11,7 +11,7 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 })
 
 export class AboutPage implements OnInit {
-  public version = "0.11.1";
+  public version = "0.12";
 
   constructor(
     private zone: NgZone,
@@ -34,7 +34,7 @@ export class AboutPage implements OnInit {
   
 
   goWebsite() {
-    this.native.openUrl("http://www.elastos.org");
+    this.native.openUrl("http://www.trinity-tech.io");
   }
 
   ionViewWillUnload(){

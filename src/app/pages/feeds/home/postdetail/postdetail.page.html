@@ -70,7 +70,7 @@
           <ion-label class="channel-post white">{{getContentText(postContent)}}</ion-label>
           
         </div>
-        <img *ngIf="getContentImg(postContent) != ''" src="{{getContentImg(postContent)}}"
+        <img style="width: 100%; height: auto;" *ngIf="getContentImg(postContent) != ''" src="{{getContentImg(postContent)}}"
             class="channel-post-img"  (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)">
 
         <!-- <img src="../../../../../assets/images/screenshot-2020-04-26-at-05-20-13.png"

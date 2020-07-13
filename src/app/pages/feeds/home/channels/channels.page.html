@@ -330,8 +330,10 @@
                   srcset="../../../../assets/images/screenshot-2020-04-26-at-05-20-13@2x.png 2x,
                   ../../../../assets/images/screenshot-2020-04-26-at-05-20-13@3x.png 3x"
                   class="channel-post-img"  (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)"> -->
-          <img *ngIf="getContentImg(post.content) != ''" src="{{getContentImg(post.content)}}"
-               class="channel-post-img"  (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)">
+          <ion-avatar  *ngIf="getContentImg(post.content) != ''" class="content-img">
+            <img src="{{getContentImg(post.content)}}"
+                  (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)">
+          </ion-avatar>
 
           <div class="channel-post-heart-comment-div">
             <!-- <img src="../../../../assets/images/heart.svg" class="heart" (click)="like(post.nodeId, post.channel_id, post.id)"> -->
