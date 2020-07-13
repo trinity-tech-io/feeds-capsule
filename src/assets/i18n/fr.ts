@@ -199,5 +199,7 @@ export const fr = {
     "addimg":"add img",
     "post":"post",
     "des":"Enter any notes here...",
+    "addingPost":"Adding Post",
+    "tipMsg":"Please input message!",
   }
 };

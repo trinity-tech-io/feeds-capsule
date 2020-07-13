@@ -5,6 +5,7 @@ import { ActivatedRoute } from '@angular/router';
 import { NativeService } from '../../../services/NativeService';
 import { CameraService } from 'src/app/services/CameraService';
 import { ThemeService } from '../../../services/theme.service';
+import { TranslateService } from "@ngx-translate/core";
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 @Component({
@@ -31,7 +32,8 @@ export class CreatenewpostPage implements OnInit {
     private camera: CameraService,
     private zone: NgZone,
     private feedService: FeedService,
-    public theme:ThemeService) {
+    public theme:ThemeService,
+    private translate:TranslateService) {
       this.events.subscribe('feeds:publishPostSuccess', () => {
         this.native.toast("Publish post success!");
         this.navCtrl.pop();
@@ -51,15 +53,30 @@ export class CreatenewpostPage implements OnInit {
       });
     }
 
-  ngOnInit() {
-    titleBarManager.setTitle("Adding Post");
+    ngOnInit() {
+    }
+
+  ionViewDidEnter() {
+    this.events.subscribe("feeds:updateTitle",()=>{
+      this.initTitle();
+    });
+    this.initTitle();
     this.native.setTitleBarBackKeyShown(true);
+  }
+
+  ionViewWillUnload(){
+    this.events.unsubscribe("feeds:updateTitle");
+  }
+
+
+  initTitle(){
+    titleBarManager.setTitle(this.translate.instant("CreatenewpostPage.addingPost"));
   }
 
 
   post(){
     if (this.newPost == ""){
-      alert("Please input message!");
+      alert(this.translate.instant("CreatenewpostPage.tipMsg"));
       return;
     }else{
 
