@@ -116,4 +116,8 @@ export class LikesComponent implements OnInit {
     }
     return  obj.content;
   }
+
+  menuMore(){
+    alert("more");
+  }
 }

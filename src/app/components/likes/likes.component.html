@@ -15,184 +15,46 @@
 </div>
 
 <div *ngFor="let post of likeList" [class.darkContainer]="theme.darkMode">
-
-
-  <!-- <div class="channel-img-small-div">
-    <img class="channel-img-small" src="../../../../assets/images/component-480-47.png">
-
-    <div class="channel-info-div">
-      <div (click)="navTo(post.nodeId, post.channel_id)"> 
-        <ion-label class="channel-title-small">{{getChannel(post.nodeId, post.channel_id).name}}</ion-label>
-        <ion-label class="channel-ts">- {{post.created_at|date:'MM-dd HH:mm'}}</ion-label>
-        <ion-icon name="more" mode="ios" style="vertical-align: middle; float: right; "></ion-icon>
+  <div style="margin-left: 30px; margin-top: 6px; margin-bottom: 10px; margin-right: 31px;" >
+    <ion-card-content class="ion-no-padding ion-no-margin">
+      <div style="float: right; " (click)="menuMore()">
+          <img  src="assets/images/dots-three-vertical.svg">
       </div>
-      <div (click)="navTo(post.nodeId, post.channel_id)"> 
-        <ion-label class="channel-desc-small">@ {{getChannelOwnerName(post.nodeId, post.channel_id)}}</ion-label>
-      </div>
+      <div style="display: flex; margin-top: 13px; margin-left: 13px; margin-right: 12px;" (click)="navTo(post.nodeId, post.channel_id)">
+          <ion-avatar style="width: 56px; height: 56px;">
+            <img  src={{parseAvatar(post.nodeId,post.channel_id)}}>
+          </ion-avatar>
 
-      <div class="channel-post-div" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)"> 
-        <ion-label class="channel-post">{{getContentText(post.content)}}</ion-label>
-        <img *ngIf="getContentImg(post.content) != ''" src="{{getContentImg(post.content)}}"
-        class="channel-post-img" >
-      </div>
-
-      <div class="channel-post-heart-comment-div">
-        <img src="../../../../assets/images/heart.svg" class="heart">
-        <ion-label class="heart-text">{{post.likes}}</ion-label>
-
-        <img src="../../../../assets/images/bubble-line.svg" class="comment">
-        <ion-label class="comment-text">{{post.comments}} </ion-label>
-      </div>
-    </div>
-</div>
-<img src="../../../../assets/images/rectangle-281.svg" class="Rectangle-281"> -->
-
-<div class="channel-img-small-div">
-  <!-- <img class="channel-img-small" src="../../../../assets/images/component-480-47.png"  (click)="navTo(post.nodeId, post.channel_id)"> -->
-  <div class="channel-img-small" (click)="navTo(post.nodeId, post.channel_id)">
-    <ion-avatar >
-      <img  src={{parseAvatar(post.nodeId,post.channel_id)}}>
-    </ion-avatar>
-  </div>
-  
-
-  <div class="channel-detail-div">
-    <div class="channel-detail-text-div">
-      <div style="height: 100%; vertical-align: middle;" (click)="navTo(post.nodeId, post.channel_id)"> 
-        <ion-label class="channel-title-small white">{{getChannel(post.nodeId, post.channel_id).name}}</ion-label>
-        <ion-label class="channel-ts"> - {{handleDisplayTime(post.created_at)}}</ion-label>
-        <ion-icon name="more" mode="ios" style="vertical-align: middle; float: right; "></ion-icon>
+          <div style="margin-left: 12px;">
+            <div style="margin-top: 4px;"> 
+              <ion-label class="channel-title-small white">{{getChannel(post.nodeId, post.channel_id).name}}</ion-label>
+              <ion-label class="channel-ts"> - {{handleDisplayTime(post.created_at)}}</ion-label>
+            </div>
+            <div  (click)="navTo(post.nodeId, post.channel_id)"> 
+              <ion-label class="channel-desc-small">@{{getChannelOwnerName(post.nodeId, post.channel_id)}}</ion-label>
+            </div>
+          </div>
       </div>
 
-      <div  (click)="navTo(post.nodeId, post.channel_id)"> 
-        <ion-label class="channel-desc-small">@{{getChannelOwnerName(post.nodeId, post.channel_id)}}</ion-label>
-      </div>
-      <!-- <div class="channel-desc-small">{{getChannel(post.nodeId, post.channel_id).owner_name}} 
-
-      </div> -->
-
-      <div class="channel-post-div"  (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)"> 
-        <ion-label class="channel-post white">{{getContentText(post.content)}}</ion-label>
+      <div style="margin-left: 81px;">
+        <div class="channel-post-div"  (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)"> 
+          <ion-label class="channel-post white">{{getContentText(post.content)}}</ion-label>
+        </div>
         
+        <ion-avatar  *ngIf="getContentImg(post.content) != ''" class="content-img-without-margin">
+          <img src="{{getContentImg(post.content)}}"
+               (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)">
+        </ion-avatar>
+
+        <div class="channel-post-heart-comment-div">
+          <img class="like" [ngClass]="{'like-s': checkMyLike(post.nodeId, post.channel_id, post.id)}" (click)="like(post.nodeId, post.channel_id, post.id)">
+          <ion-label class="like-text" [ngClass]="{'like-s-text': checkMyLike(post.nodeId, post.channel_id, post.id)}" (click)="like(post.nodeId, post.channel_id, post.id)">{{post.likes}}</ion-label>
+
+          <img src="../../../../assets/images/bubble-line.svg" class="comment" (click)="showCommentPage($event, post.nodeId, post.channel_id, post.id)">
+          <ion-label class="comment-text"  (click)="showCommentPage($event, post.nodeId, post.channel_id, post.id)">{{post.comments}}</ion-label>
+        </div>
       </div>
-      <!-- <img src="../../../../assets/images/screenshot-2020-04-26-at-05-20-13.png"
-              srcset="../../../../assets/images/screenshot-2020-04-26-at-05-20-13@2x.png 2x,
-              ../../../../assets/images/screenshot-2020-04-26-at-05-20-13@3x.png 3x"
-              class="channel-post-img"  (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)"> -->
-      <img *ngIf="getContentImg(post.content) != ''" src="{{getContentImg(post.content)}}"
-           class="channel-post-img"  (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)">
-
-      <div class="channel-post-heart-comment-div">
-        <img class="like" [ngClass]="{'like-s': checkMyLike(post.nodeId, post.channel_id, post.id)}" (click)="like(post.nodeId, post.channel_id, post.id)">
-        <ion-label class="like-text" [ngClass]="{'like-s-text': checkMyLike(post.nodeId, post.channel_id, post.id)}" (click)="like(post.nodeId, post.channel_id, post.id)">{{post.likes}}</ion-label>
-
-        <img src="../../../../assets/images/bubble-line.svg" class="comment" (click)="showCommentPage($event, post.nodeId, post.channel_id, post.id)">
-        <ion-label class="comment-text"  (click)="showCommentPage($event, post.nodeId, post.channel_id, post.id)">{{post.comments}}</ion-label>
-      </div>
-    </div>
+    </ion-card-content>
   </div>
+  <div class="line-div"></div>
 </div>
-<img src="../../../assets/images/rectangle-5389.svg"
-class="detail-line">
-
-</div>
-<!-- 
-<div class="channel-img-small-div">
-  <img class="channel-img-small" src="../../../../assets/images/component-480-3.png">
-
-  <div class="channel-info-div">
-    <div> 
-      <ion-label class="channel-title-small">Tuum Technologies</ion-label>
-      <ion-label class="channel-ts">- April 20</ion-label>
-      <ion-icon name="more" mode="ios" style="vertical-align: middle; float: right; "></ion-icon>
-    </div>
-    <div> 
-      <ion-label class="channel-desc-small">@TuumTech</ion-label>
-    </div>
-
-    <div class="channel-post-div"> 
-      <ion-label class="channel-post">First ride of the year! Welcome to my adventures - only on elastOS Feeds!</ion-label>
-      <img src="../../../../assets/images/screenshot-2020-04-26-at-05-20-13.png"
-            srcset="../../../../assets/images/screenshot-2020-04-26-at-05-20-13@2x.png 2x,
-            ../../../../assets/images/screenshot-2020-04-26-at-05-20-13@3x.png 3x"
-            class="channel-post-img">
-    </div>
-
-    <div class="channel-post-heart-comment-div">
-      <img src="../../../../assets/images/heart.svg" class="heart">
-      <ion-label class="heart-text">11</ion-label>
-
-      <img src="../../../../assets/images/bubble-line.svg" class="comment">
-      <ion-label class="comment-text">11 </ion-label>
-    </div>
-  </div>
-</div>
-<img src="../../../../assets/images/rectangle-281.svg" class="Rectangle-281">
-
-
-
-<div class="channel-img-small-div">
-  <img class="channel-img-small" src="../../../../assets/images/component-480-3.png">
-
-  <div class="channel-info-div">
-    <div> 
-      <ion-label class="channel-title-small">Tuum Technologies</ion-label>
-      <ion-label class="channel-ts">- April 20</ion-label>
-      <ion-icon name="more" mode="ios" style="vertical-align: middle; float: right; "></ion-icon>
-    </div>
-    <div> 
-      <ion-label class="channel-desc-small">@TuumTech</ion-label>
-    </div>
-
-    <div class="channel-post-div"> 
-      <ion-label class="channel-post">First ride of the year! Welcome to my adventures - only on elastOS Feeds!</ion-label>
-      <img src="../../../../assets/images/screenshot-2020-04-26-at-05-20-13.png"
-            srcset="../../../../assets/images/screenshot-2020-04-26-at-05-20-13@2x.png 2x,
-            ../../../../assets/images/screenshot-2020-04-26-at-05-20-13@3x.png 3x"
-            class="channel-post-img">
-    </div>
-
-    <div class="channel-post-heart-comment-div">
-      <img src="../../../../assets/images/heart.svg" class="heart">
-      <ion-label class="heart-text">11</ion-label>
-
-      <img src="../../../../assets/images/bubble-line.svg" class="comment">
-      <ion-label class="comment-text">11 </ion-label>
-    </div>
-  </div>
-</div>
-<img src="../../../../assets/images/rectangle-281.svg" class="Rectangle-281">
-
-
-
-<div class="channel-img-small-div">
-  <img class="channel-img-small" src="../../../../assets/images/component-480-3.png">
-
-  <div class="channel-info-div">
-    <div> 
-      <ion-label class="channel-title-small">Tuum Technologies</ion-label>
-      <ion-label class="channel-ts">- April 20</ion-label>
-      <ion-icon name="more" mode="ios" style="vertical-align: middle; float: right; "></ion-icon>
-    </div>
-    <div> 
-      <ion-label class="channel-desc-small">@TuumTech</ion-label>
-    </div>
-
-    <div class="channel-post-div"> 
-      <ion-label class="channel-post">First ride of the year! Welcome to my adventures - only on elastOS Feeds!</ion-label>
-      <img src="../../../../assets/images/screenshot-2020-04-26-at-05-20-13.png"
-            srcset="../../../../assets/images/screenshot-2020-04-26-at-05-20-13@2x.png 2x,
-            ../../../../assets/images/screenshot-2020-04-26-at-05-20-13@3x.png 3x"
-            class="channel-post-img">
-    </div>
-
-    <div class="channel-post-heart-comment-div">
-      <img src="../../../../assets/images/heart.svg" class="heart">
-      <ion-label class="heart-text">11</ion-label>
-
-      <img src="../../../../assets/images/bubble-line.svg" class="comment">
-      <ion-label class="comment-text">11 </ion-label>
-    </div>
-  </div>
-</div>
-<img src="../../../../assets/images/rectangle-281.svg" class="Rectangle-281"> -->

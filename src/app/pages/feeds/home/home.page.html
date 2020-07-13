@@ -36,7 +36,7 @@
         <div class="channel-detail-text-div">
           <div style="height: 100%; vertical-align: middle;" (click)="navTo(post.nodeId, post.channel_id)"> 
             <ion-label class="channel-title-small white">{{getChannel(post.nodeId, post.channel_id).name}}</ion-label>
-            <ion-label class="channel-ts">{{handleDisplayTime(post.created_at)}}</ion-label> 
+            <ion-label class="channel-ts"> - {{handleDisplayTime(post.created_at)}}</ion-label> 
             <ion-icon name="more" mode="ios" style="vertical-align: middle; float: right; "></ion-icon>
           </div>
 
@@ -59,7 +59,7 @@
             <img src="{{getContentImg(post.content)}}"
                  (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)">
           </ion-avatar>
-          
+
           <div class="channel-post-heart-comment-div">
             <!-- <img src="../../../../assets/images/heart.svg" class="heart" (click)="like(post.nodeId, post.channel_id, post.id)"> -->
             <img class="like" [ngClass]="{'like-s': checkMyLike(post.nodeId, post.channel_id, post.id)}" (click)="like(post.nodeId, post.channel_id, post.id)">

@@ -2761,7 +2761,7 @@ export class FeedService {
 
   handleGetMyChannelsResult(nodeId: string, responseResult :any){
     let result = responseResult.channels;
-    console.log("handleGetMyChannelsResult==>"+JSON.stringify(result));
+    // console.log("handleGetMyChannelsResult==>"+JSON.stringify(result));
     for (let index = 0; index < result.length; index++) {
       let id: number = result[index].id;
       let name: string = result[index].name;
@@ -2811,7 +2811,7 @@ export class FeedService {
 
   handleGetChannelsResult(nodeId: string, responseResult: any , request: any){
     let result = responseResult.channels;
-    console.log("handleGetChannelsResult==>"+JSON.stringify(result));
+    // console.log("handleGetChannelsResult==>"+JSON.stringify(result));
 
     for (let index = 0; index < result.length; index++) {
       let id = result[index].id;
@@ -2862,7 +2862,7 @@ export class FeedService {
     }
 
     let result = responseResult.channels;
-    console.log("handleGetSubscribedChannelsResult==>"+JSON.stringify(result));
+    // console.log("handleGetSubscribedChannelsResult==>"+JSON.stringify(result));
     for (let index = 0; index < result.length; index++) {
       let channelId = result[index].id;
       let name = result[index].name;
@@ -2927,7 +2927,7 @@ export class FeedService {
 
   handleGetPostsResult(nodeId: string, responseResult: any, request:any){
     let result = responseResult.posts;
-    console.log("handleGetPostsResult==>"+JSON.stringify(result));
+    // console.log("handleGetPostsResult==>"+JSON.stringify(result));
     for (let index = 0; index < result.length; index++) {
       let channel_id = result[index].channel_id;
       let id         = result[index].id;
@@ -2975,7 +2975,7 @@ export class FeedService {
 
   handleGetCommentsResult(responseResult: any){
     let result = responseResult.comments;
-    console.log("handleGetCommentsResult==>"+JSON.stringify(result));
+    // console.log("handleGetCommentsResult==>"+JSON.stringify(result));
     for (let index = 0; index < result.length; index++) {
       let channel_id = result[index].channel_id;
       let post_id = result[index].post_id;
