@@ -14,7 +14,7 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
   styleUrls: ['./startbinding.page.scss'],
 })
 export class StartbindingPage implements OnInit {
-  private title = "StartbindingPage.BindingServer";
+  private title = "StartbindingPage.bindingServer";
   private nonce = "12345";
   private nodeId: string;
   private carrierAddress: string;

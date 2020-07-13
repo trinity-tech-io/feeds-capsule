@@ -145,6 +145,12 @@ export const zh = {
     "scanServiceQRcode":"扫描服务二维码",
     "abort":"中止",
   },
+  "StartbindingPage":{
+    "bindingServer":"Binding server",
+     'des':'Your are going to biding a feeds service, please check the verifying code whether it is same one on browser from feeds service.',
+     "confirm":"Confirm",
+     "abort":"abort",
+  },
   "PublishdidPage":{
     "bindingServer":"Binding server",
     "payload":"payload is",

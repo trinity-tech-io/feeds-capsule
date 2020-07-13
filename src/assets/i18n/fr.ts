@@ -145,6 +145,12 @@ export const fr = {
           "scanServiceQRcode":"Scan service QRcode",
           "abort":"abort",
         },
+        "StartbindingPage":{
+          "bindingServer":"Binding server",
+           'des':'Your are going to biding a feeds service, please check the verifying code whether it is same one on browser from feeds service.',
+           "confirm":"Confirm",
+           "abort":"abort",
+        },
         "PublishdidPage":{
           "bindingServer":"Binding server",
           "payload":"payload is",
