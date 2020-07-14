@@ -33,8 +33,8 @@ export const zh = {
     "allempty":"All Empty",
     "emptyDes":"Not following any feeds yet",
     "exploreFeeds":"Explore Feeds",
-    "minutesAgo":" Minutes ago",
-    "hoursAgo":" Hours ago"
+    "minutesAgo":" 分钟之前",
+    "hoursAgo":" 小时之前"
 },
 "ProfilePage":{
     "myFeeds":"My Feeds",
@@ -58,7 +58,8 @@ export const zh = {
 "SearchPage":{
     "emptyDes":"Not any feeds yet",
     "follow":"Follow",
-    "following":"Following"
+    "following":"Following",
+    "searchFeeds":"Search Feeds"
 },
 "ChannelsPage":{
     "feeds":"Feeds",
@@ -196,10 +197,14 @@ export const zh = {
     "des":"你想从哪个源发布？"
   },
   "CreatenewpostPage":{
-    "addimg":"add img",
+    "addimg":"添加图片",
     "post":"post",
-    "des":"Enter any notes here...",
+    "des":"在此处输入记录...",
     "addingPost":"Adding Post",
-    "tipMsg":"Please input message!",
+    "tipMsg":"请输入信息！",
+  },
+  "CommentComponent":{
+    "newComment":"新建评论",
+    "publishComment":"发布评论"
   }
 };

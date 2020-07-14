@@ -58,7 +58,8 @@ export const fr = {
      "SearchPage":{
           "emptyDes":"Not any feeds yet",
           "follow":"Follow",
-          "following":"Following"
+          "following":"Following",
+          "searchFeeds":"Search Feeds"
      },
      "ChannelsPage":{
           "feeds":"Feeds",
@@ -201,5 +202,9 @@ export const fr = {
     "des":"Enter any notes here...",
     "addingPost":"Adding Post",
     "tipMsg":"Please input message!",
+  },
+  "CommentComponent":{
+    "newComment":"New Comment",
+    "publishComment":"Publish comment"
   }
 };

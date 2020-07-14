@@ -2,7 +2,7 @@
 
 
 
-  <ion-searchbar placeholder='Search Feeds' (ionInput)="getItems($event)"></ion-searchbar>
+  <ion-searchbar placeholder="{{'SearchPage.searchFeeds'|translate}}" (ionInput)="getItems($event)"></ion-searchbar>
 
   <div *ngIf="channelList.length == 0">
     <div class="center-content" >
