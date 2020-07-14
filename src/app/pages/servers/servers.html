@@ -21,10 +21,11 @@
     </div>
   </div>
 
-  <div class="feed-source">
+  <div class="feed-source" [class.darkContainer]="theme.darkMode">
     <div class="feed-source-div" *ngIf="myFeedSource != null">
-      <img class="feed-source-img" src="assets/images/play.svg">
-      <ion-label class="feed-source-text">{{'ServersPage.myFeedSources'| translate}}</ion-label>
+      <img class="feed-source-img" src="assets/images/play.svg" *ngIf="!theme.darkMode">
+      <img class="feed-source-img" src="assets/images/play-dark.svg" *ngIf="theme.darkMode">
+      <ion-label class="feed-source-text white">{{'ServersPage.myFeedSources'| translate}}</ion-label>
 
       <ion-card class="ion-no-padding ion-no-margin feed-source-card" (click)="navToServerInfo(myFeedSource.nodeId)">
         <ion-card-content class="ion-no-padding ion-no-margin">
@@ -42,12 +43,12 @@
             </div>
 
             <div class="feed-source-card-content-detail">
-              <div class="name">{{myFeedSource.name}}</div>
+              <div class="name white">{{myFeedSource.name}}</div>
               <div class="owner">{{myFeedSource.owner}}</div>
               <div class="users-img-div" *ngIf="serversStatus[myFeedSource.nodeId].status == 0">
                 <img class="users-img" src="assets/images/users-online.svg">
                 <div class="users-num-online-text"> {{serverStatisticsMap[myFeedSource.nodeId].connecting_clients}}</div>
-                <div class="users-online-text">Users</div>
+                <div class="users-online-text">{{'ServersPage.users'| translate}}</div>
               </div>
 
               <div class="users-img-div" *ngIf="serversStatus[myFeedSource.nodeId].status == 1">

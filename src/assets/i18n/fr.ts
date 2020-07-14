@@ -202,6 +202,7 @@ export const fr = {
     "des":"Enter any notes here...",
     "addingPost":"Adding Post",
     "tipMsg":"Please input message!",
+    "tipMsg1":"Publish post success!",
   },
   "CommentComponent":{
     "newComment":"New Comment",

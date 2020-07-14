@@ -4,7 +4,7 @@ import { Clipboard } from '@ionic-native/clipboard/ngx';
 // import { TranslateService } from '@ngx-translate/core';
 import { Router } from '@angular/router';
 import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
-
+import { TranslateService} from '@ngx-translate/core';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 
@@ -18,7 +18,8 @@ export class NativeService {
         private inappBrowser: InAppBrowser,
         private loadingCtrl: LoadingController,
         private navCtrl: NavController,
-        private router: Router) {
+        private router: Router,
+        private translate: TranslateService) {
             this.init();
     }
 
@@ -37,6 +38,15 @@ export class NativeService {
         this.toastCtrl.create({
             message,
             duration: 2000,
+            position: 'bottom'
+        }).then(toast => toast.present());
+    }
+
+    public toast_trans(_message: string = '', duration: number = 2000): void {
+        _message = this.translate.instant(_message);
+        this.toastCtrl.create({
+            message: _message,
+            duration: duration,
             position: 'bottom'
         }).then(toast => toast.present());
     }

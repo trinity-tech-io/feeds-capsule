@@ -1,9 +1,9 @@
 export const zh = {
 "common":{
-    "followers":"Followers",
-    "allempty":"All Empty",
-    "pullToRefresh":"Pull to refresh",
-    "Refreshing":"Refreshing...",
+    "followers":"追随者",
+    "allempty":"都是空的",
+    "pullToRefresh":"下拉刷新",
+    "Refreshing":"刷新中...",
     "cancel":"取消",
     "ok":'确定',
     "confirm":"确认!",
@@ -14,17 +14,17 @@ export const zh = {
     "description":"描述:"
 },
 "app":{
-    "profileDetails":"Profile Details",
-    "feedSources":"Feed Sources",
-    "settings":"Settings",
-    "about":"About",
-    "develop":"Develop"
+    "profileDetails":"配置详细信息",
+    "feedSources":"Feed来源",
+    "settings":"设置",
+    "about":"关于",
+    "develop":"开发"
 },
 "SigninPage":{
     "signIn":"登录"
 },
 "FeedsPage":{
-    "tabTitle1":'My Feeds Timeline',
+    "tabTitle1":'我的时间轴',
     "tabTitle2":'My Profile',
     "tabTitle3":"Notification",
     "tabTitle4":"Explore Feeds"
@@ -190,8 +190,8 @@ export const zh = {
     "tipMsg":"Please input mnemonic!",
     "tipMsg1":"Please input passphrase!",
     "tipMsg2":"Please input index!",
-    "alert":"Alert",
-    "ok":"Ok"
+    "alert":"提示",
+    "ok":"确定"
   },
   "PostfromComponent":{
     "des":"你想从哪个源发布？"
@@ -200,8 +200,9 @@ export const zh = {
     "addimg":"添加图片",
     "post":"post",
     "des":"在此处输入记录...",
-    "addingPost":"Adding Post",
+    "addingPost":"新增文章",
     "tipMsg":"请输入信息！",
+    "tipMsg1":"发布成功！",
   },
   "CommentComponent":{
     "newComment":"新建评论",

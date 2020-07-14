@@ -35,7 +35,7 @@ export class CreatenewpostPage implements OnInit {
     public theme:ThemeService,
     private translate:TranslateService) {
       this.events.subscribe('feeds:publishPostSuccess', () => {
-        this.native.toast("Publish post success!");
+        this.native.toast_trans("CreatenewpostPage.tipMsg1");
         this.navCtrl.pop();
       });
 
