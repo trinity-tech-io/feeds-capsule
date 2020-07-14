@@ -129,12 +129,12 @@ export class JsonRPCService {
     queryRequest(responseId: number, result: any): any{
         for (let index = 0; index < requestQueue.length; index++) {
             if (requestQueue[index].requestId == responseId){
-                let request = requestQueue[0];
+                let request = requestQueue[index];
                 if (result == null ||
                     result.is_last == null ||
                     result.is_last == undefined ||
                     result.is_last)
-                    requestQueue.splice(index,1)[0];
+                    return requestQueue.splice(index,1)[0];
                 
                 return request;
             }

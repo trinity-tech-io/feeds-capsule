@@ -52,7 +52,7 @@ export const zh = {
 },
 "LikesComponent":{
     "emptyDes":"You have no Feeds",
-    "emptyLikeDes":"You haven't Liked anything yet",
+    "emptyLikeDes":"You haven't liked anything yet",
     "exploreFeeds":"Explore Feeds"
 },
 "SearchPage":{
