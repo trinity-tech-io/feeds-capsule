@@ -154,6 +154,18 @@
     <div class="detail-value-div">
       <ion-label  class="detail-value">{{didString}} </ion-label>
     </div>
+
+
+    <div class="detail-key-div">
+      <ion-label class="detail-key">{{'ServerInfoPage.feedUrl'|translate}}</ion-label>
+    </div>
+    <div class="detail-value-div">
+      <ion-label  class="detail-value">{{feedsUrl}} </ion-label>
+    </div>
+
+    <div style="text-align: center;">
+      <qrcode style="padding: 8px;"  [qrdata]="feedsUrl" [size]="200" [level]="'M'"></qrcode>
+    </div>
   </div>  
 
   <div style="margin-left: 34px; margin-right: 34px; margin-top: 25px;" *ngIf="address != ''">
@@ -173,57 +185,5 @@
       <ion-label>{{'ServerInfoPage.deleteFeedSource' | translate}}</ion-label>
     </ion-button>
   </div>
-
-
-
-
-<!-- 
-  <div class="offline-content" *ngIf="connectStatus != 0 ">
-    <ion-label>disconnect</ion-label>
-  </div>
-
-
-    <ion-item lines="none" style="margin: 2%;" (click)="navToServerInfo(server.userId)">
-      <ion-icon style="align-self: flex-start;" name="radio-button-on" color="primary" slot="start" *ngIf="serverStatus == 0"></ion-icon>
-      <ion-icon style="align-self: flex-start;" name="radio-button-on" slot="start"  *ngIf="serverStatus == 1"></ion-icon>
-      <div style="display:flex; word-wrap: break-word; word-break: normal; width: 85%;">
-        <ion-label >
-          <b>Name: </b><br>
-          {{name}}<br>
-          <br>
-          <b>Owner:</b><br>
-          {{owner}}<br>
-          <br>
-          <b>Introduction:</b>
-          <div style="white-space:normal; word-break:break-all;overflow:hidden;">
-          {{introduction}}<br>
-          </div>
-          <br>
-          <b>DID:</b>
-          <div style="white-space:normal; word-break:break-all;overflow:hidden;">
-            {{didString}}<br>
-          </div>
-        </ion-label>
-
-
-      </div>
-
-      <div style="align-self:flex-start;">
-      
-        <ion-icon color="primary" name="person"></ion-icon>
-
-      </div>
-      <div style="align-self:flex-start;">
-      
-        <ion-label >
-          <h2>{{clientNumber}}</h2>
-        </ion-label>
-      </div>
-
-
-    </ion-item>
-    <div style="text-align: center; width:200px; margin: 0 auto;">
-      <qrcode  [qrdata]="feedsUrl" [size]="256" [level]="'M'"></qrcode>
-    </div> -->
   
 </ion-content>

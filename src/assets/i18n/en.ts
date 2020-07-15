@@ -143,7 +143,8 @@ export const en = {
     "did":"DID",
     "addFeedSource":"Add Feed Source",
     "removeFeedSource":"Remove Feed Source",
-    "deleteFeedSource":"Delete Feed Source"
+    "deleteFeedSource":"Delete Feed Source",
+    "feedUrl":"FEED-URL"
   },
   "ScanqrcodePage":{
     "bindingServer":"Binding server",

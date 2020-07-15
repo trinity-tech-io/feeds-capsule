@@ -143,7 +143,8 @@ export const zh = {
     "did":"DID",
     "addFeedSource":"Add Feed Source",
     "removeFeedSource":"Remove Feed Source",
-    "deleteFeedSource":"Delete Feed Source"
+    "deleteFeedSource":"Delete Feed Source",
+    "feedUrl":"FEED-URL"
   },
   "ScanqrcodePage":{
     "bindingServer":"绑定服务器",

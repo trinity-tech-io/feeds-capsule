@@ -22,6 +22,7 @@ let appManager: any;
 export class MyApp {
   private didString = "Undefine";
   private name = "Undefine";
+  private avatar = "";
   constructor(
     private events: Events,
     private menu: MenuController,
