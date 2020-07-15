@@ -11,7 +11,8 @@ export const zh = {
     "prompt":"提示",
     "des1":"确认新主题？<br>服务器:",
     "channel":"频道:",
-    "description":"描述:"
+    "description":"描述:",
+    "pleaseInput":"请输入"
 },
 "app":{
     "profileDetails":"配置详细信息",
@@ -74,7 +75,7 @@ export const zh = {
    "createNewFeed":"Create New Feed",
    "profileImage":"Profile image",
    "des":"Choose profile image to be displayed",
-   "channelSource":"Channel source",
+   "channelSource":"Feed source",
    "name":"Name",
    "description":"Description",
    "createFeed":"Create Feed",
@@ -173,6 +174,9 @@ export const zh = {
     "des2":"下一步是向feed服务的DID颁发凭证。",
     "issueacredential":"颁发凭证",
     "abort":"中止",
+    "serverInfo":"服务器信息",
+    "serverName":"服务器名称",
+    "serverDes":"服务器描述",
   },
   "ImportdidPage":{
     "bindingServer":"绑定服务器",

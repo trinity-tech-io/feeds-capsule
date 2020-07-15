@@ -3707,7 +3707,7 @@ export class FeedService {
   }
 
   
-  issueCredential(nodeId: string, did: string) {
+  issueCredential(nodeId: string, did: string, serverName: string, serverDesc: string) {
     /**
      * Ask the DID app to generate a VerifiableCredential with some data, and use current DID
      * as the signing issuer for this credential, so that others can permanently verifiy who
@@ -3724,7 +3724,8 @@ export class FeedService {
       subjectdid: did, // DID targeted by the created credential. Only that did will be able to import the credential.
       properties: {
           // customData: "test data.",
-          name:this.getSignInData().name,
+          name: serverName,
+          description: serverDesc
           // moreComplexData: {
           //   info: "A sub-info"
           // }

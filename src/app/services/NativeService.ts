@@ -38,7 +38,7 @@ export class NativeService {
         this.toastCtrl.create({
             message,
             duration: 2000,
-            position: 'bottom'
+            position: 'top'
         }).then(toast => toast.present());
     }
 

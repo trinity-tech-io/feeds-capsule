@@ -1,6 +1,6 @@
 import { Component, OnInit, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
-import { NavController } from '@ionic/angular';
+import { NavController, AlertController } from '@ionic/angular';
 import { FeedService } from 'src/app/services/FeedService';
 import { Events } from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
@@ -18,6 +18,7 @@ export class IssuecredentialPage implements OnInit {
   private nodeId = "";
   private did = "";
   constructor(
+    public alertController: AlertController,
     private native: NativeService,
     private zone: NgZone,
     private events: Events,
@@ -61,11 +62,84 @@ export class IssuecredentialPage implements OnInit {
   ngOnInit() {
   }
   issueCredential(){
-    this.feedService.issueCredential(this.nodeId,this.did);
+    this.presentPrompt();
   }
 
   abort(){
     this.navCtrl.pop();
   }
+
+  async presentPrompt() {//确认弹框
+    let promotAlert = await this.alertController.create({
+      header: this.translate.instant('IssuecredentialPage.serverInfo'),
+      inputs: [
+        {
+          name: 'serverName',
+          placeholder: this.translate.instant('IssuecredentialPage.serverName')
+        },
+        {
+          name: 'serverDes',
+          placeholder: this.translate.instant('IssuecredentialPage.serverDes'),
+        }
+      ],
+      buttons: [
+        {
+          text: this.translate.instant('common.cancel'),
+          role: 'cancel',
+          handler: data => {
+          }
+        },
+        {
+          text: this.translate.instant('common.ok'),
+          handler: data => {//回调为假时弹框将保持不消失
+            let serverName = data.serverName;
+            let serverDes = data.serverDes;
+
+            if (serverName == ""){
+              alert(this.translate.instant('common.pleaseInput')+this.translate.instant('IssuecredentialPage.serverName'));
+              return ;
+            }
+              
+
+            if (serverDes == ""){
+              alert(this.translate.instant('common.pleaseInput')+this.translate.instant('IssuecredentialPage.serverDes'))
+              return ;
+            }
+              
+            this.feedService.issueCredential(this.nodeId,this.did, serverName, serverDes);
+          }
+        }
+      ]
+    });
+    await promotAlert.present();//切记
+  }
+
+  async presentAlertConfirm() {
+    const alert = await this.alertController.create({
+      cssClass: 'my-custom-class',
+      header:this.translate.instant('common.confirm'),
+      message: this.translate.instant('common.des'),
+      buttons: [
+        {
+          text: this.translate.instant('common.cancel'),
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: (blah) => {
+
+          }
+        }, {
+          text: this.translate.instant('common.ok'),
+          handler: () => {
+
+            this.feedService.removeAllData();
+            this.navCtrl.navigateRoot(['/signin']);
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
 }
 

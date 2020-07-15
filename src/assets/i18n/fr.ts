@@ -11,7 +11,8 @@ export const fr = {
           "prompt":"Prompt",
           "des1":"Confirm new topic?<br>server:",
           "channel:":"channel:",
-          "description":"description:"
+          "description":"description:",
+          "pleaseInput":"Please input "
      },
      "app":{
           "profileDetails":"Profile Details",
@@ -74,7 +75,7 @@ export const fr = {
          "createNewFeed":"Create New Feed",
          "profileImage":"Profile image",
          "des":"Choose profile image to be displayed",
-         "channelSource":"Channel source",
+         "channelSource":"Feed source",
          "name":"Name",
          "description":"Description",
          "createFeed":"Create Feed",
@@ -173,6 +174,9 @@ export const fr = {
           "des2":"Next step is to issue credential to DID of feed service.",
           "issueacredential":"Issue a credential",
           "abort":"abort",
+          "serverInfo":"Server info",
+          "serverName":"Server name",
+          "serverDes":"Server description",
         },
         "ImportdidPage":{
           "bindingServer":"Binding server",
