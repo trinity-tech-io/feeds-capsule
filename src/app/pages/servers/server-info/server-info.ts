@@ -5,7 +5,8 @@ import { NativeService } from 'src/app/services/NativeService';
 import { FeedService } from 'src/app/services/FeedService';
 import { ThemeService } from 'src/app/services/theme.service';
 import { ActionSheetController } from '@ionic/angular';
-
+import { TranslateService } from "@ngx-translate/core";
+declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 class Attribute {
   constructor(
     public iconName: string,
@@ -48,7 +49,8 @@ export class ServerInfoPage implements OnInit {
     private native: NativeService,
     private acRoute: ActivatedRoute,
     private feedService: FeedService,
-    public theme:ThemeService) {}
+    public theme:ThemeService,
+    private translate:TranslateService) {}
 
   ngOnInit() {
     // this.didString="did:elastos:ixxxxxxxxxxxxxxxxxxx"
@@ -102,6 +104,24 @@ export class ServerInfoPage implements OnInit {
           
     });
   }
+
+  ionViewDidEnter() {
+    this.events.subscribe("feeds:updateTitle",()=>{
+      this.initTitle();
+    });
+    this.initTitle();
+    this.native.setTitleBarBackKeyShown(true);
+  }
+
+  ionViewWillUnload(){
+    this.events.unsubscribe("feeds:updateTitle");
+  }
+
+
+  initTitle(){
+    titleBarManager.setTitle(this.translate.instant('ServerInfoPage.serverInfo'));
+  }
+
 
   navigateBackPage() {
     this.native.pop();

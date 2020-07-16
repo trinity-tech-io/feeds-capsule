@@ -68,7 +68,7 @@ export class SearchPage implements OnInit {
   }
 
   public navigateToDetailPage(nodeId: string, name: string, id: number) {
-    this.router.navigate(['/favorite/search/about/', nodeId, name, id]);
+    this.native.getNavCtrl().navigateForward(['/favorite/search/about/', nodeId, name, id]);
   }
 
   navigateBackPage() {
@@ -123,7 +123,7 @@ export class SearchPage implements OnInit {
   }
 
   navTo(nodeId, channelId){
-    this.router.navigate(['/channels', nodeId, channelId]);
+    this.native.getNavCtrl().navigateForward(['/channels', nodeId, channelId]);
   }
 
   parseChannelAvatar(avatar: string): string{

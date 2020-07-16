@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Platform, ModalController, Events } from '@ionic/angular';
+import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { CarrierService } from './services/CarrierService';
 import { FeedService } from './services/FeedService';
@@ -8,9 +9,7 @@ import { SplashscreenPage } from './pages/splashscreen/splashscreen.page';
 import { MenuController } from '@ionic/angular';
 import { AppService } from './services/AppService';
 import { ThemeService } from 'src/app/services/theme.service';
-declare let titleBarManager: TitleBarPlugin.TitleBarManager;
-
-
+import { NativeService} from 'src/app/services/NativeService';
 let appManager: any;
 
 @Component({
@@ -28,49 +27,35 @@ export class MyApp {
     private menu: MenuController,
     private platform: Platform,
     private statusBar: StatusBar,
+    private splashScreen: SplashScreen,
     private feedService: FeedService,
     private router: Router,
     private modalCtrl: ModalController,
     private appService: AppService,
     private carrierService:CarrierService,
-    public theme:ThemeService) {
+    public theme:ThemeService,
+    public native:NativeService) {
       this.initializeApp();
       this.initProfileData();
-
-      titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.OUTER_RIGHT, {
-        key: "more",
-        iconPath: "assets/icon/more_menu.ico"
-      });
-
-      titleBarManager.addOnItemClickedListener((menuIcon)=>{
-        if (menuIcon.key == "more") {
-            this.menu.open("menu");
-        }
-      });
-
       this.events.subscribe("feeds:signinSuccess",()=>{
         this.initProfileData();
       })
   }
 
   initializeApp() {
-    this.splash();
     this.platform.ready().then(() => {
         this.statusBar.styleDefault();
-        // this.splashScreen.hide();     
-        this.appService.init();
-        let signInData = this.feedService.getSignInData();
-        if ( signInData == null || 
-             signInData == undefined ||
-             this.feedService.getCurrentTimeNum() > signInData.expiresTS ){
-             this.router.navigate(['/signin']);
-          return ;
-        }
-
-        this.carrierService.init();
-        // this.router.navigate(['/favorite']);
-        this.router.navigate(['/tabs/home']);
-        this.feedService.updateSignInDataExpTime(signInData);
+        this.splashScreen.hide();
+        this.appService.initTranslateConfig();
+        let isFirst = localStorage.getItem('org.elastos.dapp.feeds.first') || "";
+        if(isFirst!=""){
+          this.appService.init();
+          this.appService.addright();
+          this.appService.initializeApp();
+        }else{
+          localStorage.setItem('org.elastos.dapp.feeds.first',"11");
+          this.splash();
+        }    
     });
   }
 
@@ -80,24 +65,23 @@ export class MyApp {
 
 
   profiledetail(){
-    this.router.navigate(['/menu/profiledetail']);
-    
+    this.native.go('/menu/profiledetail');
   }
 
   goToFeedSource(){
-    this.router.navigate(['/menu/servers']);
+    this.native.go('/menu/servers');
   }
 
   setting(){
-    this.router.navigate(['/menu/setting']);
+    this.native.go('/menu/setting');
   }
 
   goToDev(){
-    this.router.navigate(['menu/develop']);
+    this.native.go('menu/develop');
   }
 
   about(){
-    this.router.navigate(['/menu/about']);
+    this.native.go('/menu/about');
   }
 
   async splash() {

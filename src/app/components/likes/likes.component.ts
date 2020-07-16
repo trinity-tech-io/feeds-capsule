@@ -3,6 +3,7 @@ import { Events, PopoverController, IonTabs} from '@ionic/angular';
 import { FeedService } from '../../services/FeedService';
 import { ThemeService } from 'src/app/services/theme.service';
 import { UtilService } from 'src/app/services/utilService';
+import { NativeService } from 'src/app/services/NativeService';
 import { TranslateService } from "@ngx-translate/core";
 import { Router } from '@angular/router'
 import { CommentComponent } from '../../components/comment/comment.component'
@@ -25,7 +26,8 @@ export class LikesComponent implements OnInit {
     private router: Router,
     private events: Events,
     public theme:ThemeService,
-    private translate:TranslateService) {
+    private translate:TranslateService,
+    private native:NativeService) {
     
     this.likeList = this.feedService.getLikeList();    
     this.events.subscribe('feeds:updateLikeList', (list) => {
@@ -69,11 +71,11 @@ export class LikesComponent implements OnInit {
   }
 
   navTo(nodeId, channelId){
-    this.router.navigate(['/channels', nodeId, channelId]);
+    this.native.getNavCtrl().navigateForward(['/channels', nodeId, channelId]);
   }
 
   navToPostDetail(nodeId, channelId, postId){
-    this.router.navigate(['/postdetail',nodeId, channelId,postId]);
+    this.native.getNavCtrl().navigateForward(['/postdetail',nodeId, channelId,postId]);
   }
 
   async showCommentPage(event, nodeId, channelId, postId){

@@ -152,11 +152,11 @@ export class ChannelsPage implements OnInit {
   }
 
   navTo(nodeId, channelId){
-    this.router.navigate(['/channels', nodeId, channelId]);
+    this.native.getNavCtrl().navigateForward(['/channels', nodeId, channelId]);
   }
 
   navToPostDetail(nodeId, channelId, postId){
-    this.router.navigate(['/postdetail',nodeId, channelId,postId]);
+    this.native.getNavCtrl().navigateForward(['/postdetail',nodeId, channelId,postId]);
   }
 
   async showCommentPage(event, nodeId, channelId, postId){

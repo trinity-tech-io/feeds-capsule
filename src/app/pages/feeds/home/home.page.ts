@@ -7,6 +7,7 @@ import { FeedsPage } from '../feeds.page'
 import { ThemeService } from 'src/app/services/theme.service';
 import { UtilService } from 'src/app/services/utilService';
 import { TranslateService } from "@ngx-translate/core";
+import { NativeService } from 'src/app/services/NativeService';
 @Component({
   selector: 'app-home',
   templateUrl: './home.page.html',
@@ -26,7 +27,8 @@ export class HomePage implements OnInit {
     private feedService :FeedService,
     private router: Router,
     public theme:ThemeService,
-    private translate:TranslateService) {
+    private translate:TranslateService,
+    private navtive:NativeService) {
     this.postList = feedService.getPostList();
     this.events.subscribe('feeds:postDataUpdate',()=>{
       this.zone.run(() => {
@@ -70,11 +72,11 @@ export class HomePage implements OnInit {
   }
 
   navTo(nodeId, channelId){
-    this.router.navigate(['/channels', nodeId, channelId]);
+    this.navtive.getNavCtrl().navigateForward(['/channels', nodeId, channelId]);
   }
 
   navToPostDetail(nodeId, channelId, postId){
-    this.router.navigate(['/postdetail',nodeId, channelId,postId]);
+    this.navtive.getNavCtrl().navigateForward(['/postdetail',nodeId, channelId,postId]);
   }
 
   refresh(){

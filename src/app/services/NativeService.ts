@@ -20,7 +20,7 @@ export class NativeService {
         private navCtrl: NavController,
         private router: Router,
         private translate: TranslateService) {
-            this.init();
+            //this.init();
     }
 
     init(){
@@ -67,7 +67,7 @@ export class NativeService {
     }
 
     public go(page: any, options: any = {}) {
-        this.router.navigate([page], { queryParams: options });
+        this.navCtrl.navigateForward(page,{ queryParams: options });
     }
 
     public pop() {
@@ -137,5 +137,9 @@ export class NativeService {
         else {
             titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_LEFT, null);
         }
+      }
+
+      getNavCtrl(){
+          return this.navCtrl;
       }
 }

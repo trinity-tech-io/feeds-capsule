@@ -2,6 +2,7 @@ import { Component, OnInit, NgZone } from '@angular/core';
 import { NavController, Events } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { FeedService } from 'src/app/services/FeedService';
+import { NativeService } from 'src/app/services/NativeService';
 import { ThemeService } from '../../services/theme.service';
 @Component({
   selector: 'app-myfeeds',
@@ -15,7 +16,8 @@ export class MyfeedsComponent implements OnInit {
     private zone: NgZone,
     private router: Router,
     private feedService: FeedService,
-    public theme:ThemeService,) {
+    public theme:ThemeService,
+    private native:NativeService) {
 
     this.channels = this.feedService.refreshMyChannels();
     
@@ -39,8 +41,7 @@ export class MyfeedsComponent implements OnInit {
   ngOnInit() {}
 
   createNewFeed(){
-
-    this.router.navigate(['/createnewfeed']);
+    this.native.getNavCtrl().navigateForward(['/createnewfeed']);
   }
 
 
@@ -57,8 +58,7 @@ export class MyfeedsComponent implements OnInit {
   }
 
   navTo(nodeId, channelId){
-    this.router.navigate(['/channels', nodeId, channelId]);
-
+    this.native.getNavCtrl().navigateForward(['/channels', nodeId, channelId]);
   }
 
   bindServer(){

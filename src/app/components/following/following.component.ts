@@ -4,6 +4,7 @@ import { Events, IonTabs } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { FeedsPage } from 'src/app/pages/feeds/feeds.page'
 import { ThemeService } from 'src/app/services/theme.service';
+import { NativeService } from 'src/app/services/NativeService';
 @Component({
   selector: 'app-following',
   templateUrl: './following.component.html',
@@ -18,7 +19,8 @@ export class FollowingComponent implements OnInit {
     private zone: NgZone,
     private router: Router,
     private feedService:FeedService,
-    public theme:ThemeService) { 
+    public theme:ThemeService,
+    private native:NativeService) { 
     // this.channelList = this.feedService.refreshLocalChannels();
     this.channelList=this.feedService.refreshLocalSubscribedChannels();
     this.feedService.refreshSubscribedChannels();
@@ -33,7 +35,7 @@ export class FollowingComponent implements OnInit {
 
   navTo(nodeId, channelId){
     this.read(nodeId, channelId);
-    this.router.navigate(['/channels', nodeId, channelId]);
+    this.native.getNavCtrl().navigateForward(['/channels', nodeId, channelId]);
 
   }
 

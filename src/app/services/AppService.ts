@@ -5,6 +5,10 @@ import { ThemeService } from "./../services/theme.service";
 import { NgZone} from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Events } from '@ionic/angular';
+import { NativeService } from '../services/NativeService';
+import { FeedService } from '../services/FeedService';
+import { CarrierService } from '../services/CarrierService';
+import { MenuController} from '@ionic/angular';
 declare let appManager: AppManagerPlugin.AppManager;
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 @Injectable({
@@ -15,7 +19,11 @@ export class AppService {
                 public theme:ThemeService,
                 private zone: NgZone,
                 private translate:TranslateService,
-                private event: Events) {
+                private event: Events,
+                private native:NativeService,
+                private feedService: FeedService,
+                private carrierService:CarrierService,
+                private menu: MenuController,) {
     }
 
     scanAddress() {
@@ -28,12 +36,25 @@ export class AppService {
     }
 
     init() {
-        this.initTranslateConfig();
         appManager.setListener((msg) => {
           this.onMessageReceived(msg);
         });
 
         titleBarManager.setForegroundMode(TitleBarPlugin.TitleBarForegroundMode.LIGHT);
+        titleBarManager.addOnItemClickedListener((menuIcon)=>{
+          if (menuIcon.key == "back") {
+               this.native.pop();
+          }else if(menuIcon.key == "more"){
+               this.menu.open("menu");
+          }
+        });
+    }
+
+    addright(){
+      titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.OUTER_RIGHT, {
+        key: "more",
+        iconPath: "assets/icon/more_menu.ico"
+      });
     }
 
 
@@ -79,6 +100,21 @@ export class AppService {
         this.translate.setDefaultLang(currentLang);
         this.translate.use(currentLang);
         this.event.publish("feeds:updateTitle");
+      }
+
+      initializeApp() {   
+        let signInData = this.feedService.getSignInData();
+        if ( signInData == null || 
+             signInData == undefined ||
+             this.feedService.getCurrentTimeNum() > signInData.expiresTS ){
+             this.native.setRootRouter('/signin');
+          return ;
+        }
+      
+        this.carrierService.init();
+        this.native.setRootRouter('/tabs/home');
+        this.feedService.updateSignInDataExpTime(signInData);
+      
       }
   
 }

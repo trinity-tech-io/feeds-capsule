@@ -12,7 +12,8 @@ export const zh = {
     "des1":"确认新主题？<br>服务器:",
     "channel":"频道:",
     "description":"描述:",
-    "pleaseInput":"请输入"
+    "pleaseInput":"请输入",
+    "feeds":"feeds",
 },
 "app":{
     "profileDetails":"配置详细信息",
@@ -130,7 +131,8 @@ export const zh = {
     "openQRScanner":"Open QR Scanner",
     "confirm":"Confirm",
     "sourceaddresshere":"Source address here",
-    "tipMsg":"Feed url maybe error."
+    "tipMsg":"Feed url maybe error.",
+    "exploreFeedSources":"Explore Feed Sources",
   },
   "ServerInfoPage":{
     "publicFeed":"Public Feed",
@@ -144,7 +146,8 @@ export const zh = {
     "addFeedSource":"Add Feed Source",
     "removeFeedSource":"Remove Feed Source",
     "deleteFeedSource":"Delete Feed Source",
-    "feedUrl":"FEED-URL"
+    "feedUrl":"FEED-URL",
+    "serverInfo":"Server Info",
   },
   "ScanqrcodePage":{
     "bindingServer":"绑定服务器",

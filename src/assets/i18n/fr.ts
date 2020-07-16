@@ -12,7 +12,8 @@ export const fr = {
           "des1":"Confirm new topic?<br>server:",
           "channel:":"channel:",
           "description":"description:",
-          "pleaseInput":"Please input "
+          "pleaseInput":"Please input ",
+          "feeds":"feeds",
      },
      "app":{
           "profileDetails":"Profile Details",
@@ -130,7 +131,8 @@ export const fr = {
        "openQRScanner":"Open QR Scanner",
        "confirm":"Confirm",
        "sourceaddresshere":"Source address here",
-       "tipMsg":"Feed url maybe error."
+       "tipMsg":"Feed url maybe error.",
+       "exploreFeedSources":"Explore Feed Sources",
      },
      "ServerInfoPage":{
           "publicFeed":"Public Feed",
@@ -144,7 +146,8 @@ export const fr = {
           "addFeedSource":"Add Feed Source",
           "removeFeedSource":"Remove Feed Source",
           "deleteFeedSource":"Delete Feed Source",
-          "feedUrl":"FEED-URL"
+          "feedUrl":"FEED-URL",
+          "serverInfo":"Server Info",
      },
      "ScanqrcodePage":{
           "bindingServer":"Binding server",

@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { ModalController } from '@ionic/angular';
-import { CarrierService } from '../../services/CarrierService';
+import { TranslateService } from "@ngx-translate/core";
+import { ThemeService } from 'src/app/services/theme.service';
+import { AppService } from '../../services/AppService';
 declare let appManager: AppManagerPlugin.AppManager;
+declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 @Component({
   selector: 'app-splashscreen',
   templateUrl: './splashscreen.page.html',
@@ -11,18 +14,28 @@ export class SplashscreenPage implements OnInit {
 
   constructor(
     private modalCtrl: ModalController,
-    private carrierService: CarrierService) { }
+    private translate:TranslateService,
+    private appService: AppService,
+    public theme:ThemeService) { }
 
   ngOnInit() {
-
-    setTimeout(() => {
-      this.modalCtrl.dismiss();
-    }, 3000);
 
   }
 
   ionViewDidEnter() {
-    appManager.setVisible("show");
+    titleBarManager.setTitle(this.translate.instant('common.feeds'));
+    appManager.setVisible('show');
+    this.hanldSplashEnd();
   }
+
+  hanldSplashEnd(){
+    let sid = setTimeout(() => {
+     clearTimeout(sid);
+     this.modalCtrl.dismiss();
+     this.appService.init();
+     this.appService.addright();
+     this.appService.initializeApp();
+   }, 1500);
+ }
 
 }

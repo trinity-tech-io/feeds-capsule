@@ -1,11 +1,9 @@
-<ion-content>
-    <div class="wrapper">
+<div class="wrapper" [class.darkContainer]="theme.darkMode">
         <div class="box">
             <img src="../../../assets/images/feeds-logo.svg"
             class="Component-599-5">
     
-            <ion-label class="text">feeds</ion-label> 
+            <ion-label class="text">{{'common.feeds'|translate}}</ion-label> 
         </div>
         <div class="help"></div>
-    </div>
-</ion-content>
+</div>

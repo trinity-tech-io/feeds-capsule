@@ -7,6 +7,7 @@ import { NativeService } from 'src/app/services/NativeService';
 import { AppService } from 'src/app/services/AppService';
 import { PopupProvider } from 'src/app/services/popup';
 import { TranslateService } from "@ngx-translate/core";
+declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 @Component({
   selector: 'page-add-server',
   templateUrl: 'add-server.html',
@@ -65,6 +66,23 @@ export class AddServerPage implements OnInit {
   }
 
   ngOnInit() {}
+
+  ionViewDidEnter() {
+    this.events.subscribe("feeds:updateTitle",()=>{
+      this.initTitle();
+    });
+    this.initTitle();
+    this.native.setTitleBarBackKeyShown(true);
+  }
+
+  ionViewWillUnload(){
+    this.events.unsubscribe("feeds:updateTitle");
+  }
+
+
+  initTitle(){
+    titleBarManager.setTitle(this.translate.instant('AddServerPage.exploreFeedSources'));
+  }
 
   navToBack() {
     this.native.pop();
