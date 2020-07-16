@@ -17,7 +17,8 @@ import { NativeService } from 'src/app/services/NativeService';
 
 export class HomePage implements OnInit {
   private postList: any;
-
+  private bigImageUrl: string;
+  private bigImage: boolean = false;
   constructor(
     private feedspage: FeedsPage,
     private tabs: IonTabs,
@@ -29,10 +30,11 @@ export class HomePage implements OnInit {
     public theme:ThemeService,
     private translate:TranslateService,
     private navtive:NativeService) {
-    this.postList = feedService.getPostList();
-    this.events.subscribe('feeds:postDataUpdate',()=>{
-      this.zone.run(() => {
-         this.postList = this.feedService.getPostList();
+      this.bigImage = false;
+      this.postList = feedService.getPostList();
+      this.events.subscribe('feeds:postDataUpdate',()=>{
+        this.zone.run(() => {
+          this.postList = this.feedService.getPostList();
       });
     });
   }
@@ -126,5 +128,14 @@ export class HomePage implements OnInit {
 
   menuMore(){
     alert("more");
+  }
+
+  showBigImage(content: any){
+    this.bigImage = true;
+    this.bigImageUrl =  this.getContentImg(content);
+  }
+
+  hideBigImage(){
+    this.bigImage = false;
   }
 }
