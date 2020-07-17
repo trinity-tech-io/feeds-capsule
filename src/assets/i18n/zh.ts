@@ -142,6 +142,7 @@ export const zh = {
     "exploreFeedSources":"Explore Feed Sources",
   },
   "ServerInfoPage":{
+    "title":"Feed Source Details",
     "publicFeed":"Public Feed",
     "online":"online",
     "users":"Users",

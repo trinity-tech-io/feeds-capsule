@@ -119,7 +119,7 @@ export class ServerInfoPage implements OnInit {
 
 
   initTitle(){
-    titleBarManager.setTitle(this.translate.instant('ServerInfoPage.serverInfo'));
+    titleBarManager.setTitle(this.translate.instant('ServerInfoPage.title'));
   }
 
 
