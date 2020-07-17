@@ -117,11 +117,18 @@ export class HomePage implements OnInit {
   handleDisplayTime(createTime:number){
 
     let obj = UtilService.handleDisplayTime(createTime);
+    if(obj.type === 's'){
+       return this.translate.instant('common.just');
+    }
     if(obj.type==='m'){
       return obj.content+this.translate.instant('HomePage.minutesAgo');
     }
     if(obj.type==='h'){
       return obj.content+this.translate.instant('HomePage.hoursAgo');
+    }
+
+    if(obj.type === 'yesterday'){
+      return this.translate.instant('common.yesterday');
     }
     return  obj.content;
   }

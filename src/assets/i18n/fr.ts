@@ -14,6 +14,8 @@ export const fr = {
           "description":"description:",
           "pleaseInput":"Please input ",
           "feeds":"feeds",
+          "just":"Just",
+          "yesterday":"yesterday"
      },
      "app":{
           "profileDetails":"Profile Details",

@@ -14,6 +14,8 @@ export const zh = {
     "description":"描述:",
     "pleaseInput":"请输入",
     "feeds":"feeds",
+    "just":"刚刚",
+    "yesterday":"昨天"
 },
 "app":{
     "profileDetails":"配置详细信息",

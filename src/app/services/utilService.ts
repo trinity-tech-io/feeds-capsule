@@ -12,8 +12,10 @@ export class UtilService {
    * @param sFormat 格式化后的日期字符串
    * @returns {String}
    */
+private static oneminute = 60*1000;
 private static oneHour = 60*60*1000; 
 public  static hour24 = 24*60*60*1000;
+public  static hour48 = 48*60*60*1000;
 public static dateFormat(date: Date, sFormat: String = 'yyyy-MM-dd'): string {
     let time = {
       Year: 0,
@@ -71,8 +73,10 @@ public static dateFormat(date: Date, sFormat: String = 'yyyy-MM-dd'): string {
       let disPlayStr:any;
       let curTime = new Date().getTime();
       let chazhi = curTime - createTime;
-
-      if(chazhi>0&&chazhi<this.oneHour){
+      if(chazhi>0&&chazhi<this.oneminute){
+        return {content:"",type:"s"};
+      }
+      if(chazhi>=this.oneminute&&chazhi<this.oneHour){
            disPlayStr = Math.floor(chazhi/(1000*60));
            return {content:disPlayStr,type:"m"};
       }
@@ -82,7 +86,12 @@ public static dateFormat(date: Date, sFormat: String = 'yyyy-MM-dd'): string {
            return {content:disPlayStr,type:"h"};
       }
 
-      if(chazhi>=this.hour24&&chazhi<365*24*60*60*1000){
+      if(chazhi>=this.hour24&&chazhi<this.hour48){
+        disPlayStr = Math.floor(chazhi/(1000*60*60));
+        return {content:disPlayStr,type:"yesterday"};
+      }
+
+      if(chazhi>=this.hour48&&chazhi<365*24*60*60*1000){
         disPlayStr = this.dateFormat(new Date(createTime),"MM-dd");
         return  {content:disPlayStr,type:"d"};
       }
