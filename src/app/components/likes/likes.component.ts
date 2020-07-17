@@ -16,6 +16,9 @@ import { FeedsPage } from 'src/app/pages/feeds/feeds.page'
   styleUrls: ['./likes.component.scss'],
 })
 export class LikesComponent implements OnInit {
+  private bigImageUrl: string;
+  private bigImage: boolean = false;
+
   private likeList;
   constructor(
     private feedspage: FeedsPage,
@@ -121,5 +124,15 @@ export class LikesComponent implements OnInit {
 
   menuMore(){
     alert("more");
+  }
+
+
+  showBigImage(content: any){
+    this.bigImage = true;
+    this.bigImageUrl =  this.getContentImg(content);
+  }
+
+  hideBigImage(){
+    this.bigImage = false;
   }
 }

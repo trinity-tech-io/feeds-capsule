@@ -1,58 +1,35 @@
 <ion-content [class.darkContainer]="theme.darkMode">
-  <div style="margin-left: 20px; margin-top: 6px; margin-bottom: 10px; margin-right: 31px;" >
-    <ion-card-content class="ion-no-padding ion-no-margin">
-        <div style="float: right; " (click)="menuMore()">
-            <img  src="assets/images/dots-three-vertical.svg">
-        </div>
-        <div style="display: flex; margin-top: 13px; margin-left: 13px; margin-right: 12px;" (click)="navTo(post.nodeId, post.channel_id)">
-            <ion-avatar style="width: 56px; height: 56px;">
-              <img  src={{channelAvatar}}>
-            </ion-avatar>
-
-            <div style="margin-left: 12px;">
-              <div style="margin-top: 4px;"> 
-                <ion-label class="channel-title-small white">{{channelName}}</ion-label>
-              </div>
-              <div  (click)="navTo(post.nodeId, post.channel_id)"> 
-                <ion-label class="channel-desc-small">@{{channelOwner}}</ion-label>
-              </div>
-            </div>
-        </div>
-    </ion-card-content>
-  </div>
-    <!-- <div class="channel-img-small-div">
-      <div class="channel-img-small">
-        <ion-avatar >
-          <img  src={{channelAvatar}}>
-        </ion-avatar>
-      </div>
-      
-
-    
-      <div class="channel-detail-div">
-        <div class="channel-detail-text-div">
-          <div style="height: 100%; vertical-align: middle;"> 
-            <ion-label class="channel-title-small white">{{channelName}}</ion-label>
-            <ion-icon name="more" mode="ios" style="vertical-align: middle; float: right; "></ion-icon>
+  <div [ngClass]="{'mask-div': bigImage}">
+    <div style="margin-left: 20px; margin-top: 6px; margin-bottom: 10px; margin-right: 31px;" >
+      <ion-card-content class="ion-no-padding ion-no-margin">
+          <div style="float: right; " (click)="menuMore()">
+              <img  src="assets/images/dots-three-vertical.svg">
           </div>
+          <div style="display: flex; margin-top: 13px; margin-left: 13px; margin-right: 12px;" (click)="navTo(post.nodeId, post.channel_id)">
+              <ion-avatar style="width: 56px; height: 56px;">
+                <img  src={{channelAvatar}}>
+              </ion-avatar>
 
-          <div> 
-            <ion-label class="channel-desc-small">@{{channelOwner}}</ion-label>
+              <div style="margin-left: 12px;">
+                <div style="margin-top: 4px;"> 
+                  <ion-label class="channel-title-small white">{{channelName}}</ion-label>
+                </div>
+                <div  (click)="navTo(post.nodeId, post.channel_id)"> 
+                  <ion-label class="channel-desc-small">@{{channelOwner}}</ion-label>
+                </div>
+              </div>
           </div>
-        </div>
-      </div>
-
-
-    </div> -->
+      </ion-card-content>
+    </div>
 
     <div class="channel-post-detail-div" style="margin-top: 16px;">
         <div class="channel-post-div"> 
           <ion-label class="channel-post white">{{getContentText(postContent)}}</ion-label>
-          
         </div>
-        <img style="width: 100%; height: auto;" *ngIf="getContentImg(postContent) != ''" src="{{getContentImg(postContent)}}"
-            class="channel-post-img"  (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)">
-
+        <ion-avatar  *ngIf="getContentImg(postContent) != ''" class="content-img-without-margin">
+          <img src="{{getContentImg(postContent)}}"
+              (click)="showBigImage(postContent)">
+        </ion-avatar>
         <div class="channel-post-heart-comment-div">
           <img class="like" [ngClass]="{'like-s': checkMyLike()}" (click)="like(0)">
           <ion-label class="like-text" [ngClass]="{'like-s-text': checkMyLike()}" (click)="like(0)">{{likesNum}}</ion-label>
@@ -64,7 +41,6 @@
         </div>
     </div>
     <div class="line-div"></div>
-
 
     <div *ngFor="let comment of commentList">
       <div class="channel-img-small-div">
@@ -86,10 +62,6 @@
               <ion-label class="channel-post .white">{{comment.content}}</ion-label>
               
             </div>
-            <!-- <img src="../../../../assets/images/screenshot-2020-04-26-at-05-20-13.png"
-                    srcset="../../../../assets/images/screenshot-2020-04-26-at-05-20-13@2x.png 2x,
-                    ../../../../assets/images/screenshot-2020-04-26-at-05-20-13@3x.png 3x"
-                    class="channel-post-img"  > -->
   
             <div class="channel-post-heart-comment-div">
               <img src="../../../../assets/images/heart.svg" class="heart" >
@@ -103,44 +75,11 @@
       </div>
       <div class="line-div white-line"></div>
     </div>
+  </div>
 
-      <!-- <div class="channel-img-small-div">
-        <img class="channel-img-small" src="../../../../assets/images/component-480-3.png" >
-  
-      
-        <div class="channel-detail-div">
-          <div class="channel-detail-text-div">
-            <div style="height: 100%; vertical-align: middle;" > 
-              <ion-label class="channel-title-small">comment-name</ion-label>
-              <ion-label class="channel-ts">comment-ts</ion-label>
-              <ion-icon name="more" mode="ios" style="vertical-align: middle; float: right; "></ion-icon>
-            </div>
-  
-            <div  (click)="navTo(post.nodeId, post.channel_id)"> 
-              <ion-label class="channel-desc-small">@owner-name</ion-label>
-            </div>
-  
-            <div class="channel-post-div" > 
-              <ion-label class="channel-post">comment-content</ion-label>
-              
-            </div>
-            <img src="../../../../assets/images/screenshot-2020-04-26-at-05-20-13.png"
-                    srcset="../../../../assets/images/screenshot-2020-04-26-at-05-20-13@2x.png 2x,
-                    ../../../../assets/images/screenshot-2020-04-26-at-05-20-13@3x.png 3x"
-                    class="channel-post-img"  >
-  
-            <div class="channel-post-heart-comment-div">
-              <img src="../../../../assets/images/heart.svg" class="heart" >
-              <ion-label class="heart-text" >0</ion-label>
-  
-              <img src="../../../../assets/images/bubble-line.svg" class="comment" >
-              <ion-label class="comment-text"  >0</ion-label>
-            </div>
-          </div>
-        </div>
-      </div>
-      <img src="../../../assets/images/rectangle-5389.svg"
-      class="detail-line"> -->
-
-
+  <div *ngIf="bigImage" class="trans-big-img-div" (click)="hideBigImage()" >
+    <div class="trans-big-img" >
+      <img src="{{bigImageUrl}}" class="image"/>
+    </div>
+  </div>
 </ion-content>

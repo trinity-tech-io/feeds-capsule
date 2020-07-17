@@ -1,118 +1,126 @@
 <ion-content [class.darkContainer]="theme.darkMode">
-  <div class="channel-img-div">
-    <ion-avatar class="channel-img" style="width:80px ; height: 80px;">
-      <img  src={{channelAvatar}}>
-    </ion-avatar>
-  </div>
 
-  <div class="channel-title-div">
-    <ion-label class="channel-title white">{{channelName}}</ion-label>
-  </div>
-
-  <div class="center-flex" style="margin-top: 10px;">
-    <img class="profile-sub-img" src="assets/images/bubble2.svg">
-    <ion-label class="profile-sub-text">{{channelSubscribes}} </ion-label>
-    <ion-label  class="profile-subscribe">{{'common.followers'|translate}}</ion-label>
-  </div>
-
-  <div class="channel-desc-div">
-    <ion-label class="channel-desc white">{{channelDesc}}</ion-label>
-  </div>
-
-  <div class="center-flex btn-container" style="margin-top: 10px;">
-
-    <ion-button *ngIf="followStatus" style="width: 76.8px;
-    height: 25.6px; --border-radius:25px; 
-    --background: #368bff;" (click)="unsubscribe()">
-      <ion-label style="  font-family: Montserrat;
-      font-size: 10px;
-      font-weight: bold;
-      font-stretch: normal;
-      font-style: normal;
-      line-height: 1.3;
-      letter-spacing: normal;
-      text-align: left;
-      color: #fdfeff;">{{'ChannelsPage.following'|translate}}</ion-label>
-    </ion-button>
-
-    <ion-button *ngIf="!followStatus" style="width: 76.8px;
-    height: 25.6px; --border-radius:25px; 
-    --border-color:#8888b0
-    " fill="outline" (click)="subscribe()">
-      <ion-label style="  font-family: Montserrat;
-      font-size: 10px;
-      font-weight: bold;
-      font-stretch: normal;
-      font-style: normal;
-      line-height: 1.3;
-      letter-spacing: normal;
-      text-align: left;
-      color: #8888b0;">{{'ChannelsPage.follow'|translate}}</ion-label>
-    </ion-button>
-
-
-    <ion-button style="  
-    margin-left: 25.5px;
-    width: 76.8px;
-    height: 25.6px;
-    --border-radius:25px; 
-    --background: #a067ff;
-    "   (click)="subscribe(channel.nodeId, channel.id)">
-      <ion-label style="  font-family: Montserrat;
-      font-size: 10px;
-      font-weight: bold;
-      font-stretch: normal;
-      font-style: normal;
-      line-height: 1.3;
-      letter-spacing: normal;
-      text-align: left;
-      color: #fdfeff;">{{'ChannelsPage.tip'|translate}}</ion-label>
-    </ion-button>
-  </div>
-  <div *ngFor="let post of postList" style="margin-top: 25px;">
-
-
-    <div style="margin-left: 30px; margin-top: 6px; margin-bottom: 10px; margin-right: 31px;" >
-      <ion-card-content class="ion-no-padding ion-no-margin">
-        <div style="float: right; " (click)="menuMore()">
-            <img  src="assets/images/dots-three-vertical.svg">
-        </div>
-        <div style="display: flex; margin-top: 13px; margin-left: 13px; margin-right: 12px;" (click)="navTo(post.nodeId, post.channel_id)">
-            <ion-avatar style="width: 56px; height: 56px;">
-              <img  src={{channelAvatar}}>
-            </ion-avatar>
-  
-            <div style="margin-left: 12px;">
-              <div style="margin-top: 4px;"> 
-                <ion-label class="channel-title-small white">{{getChannel(post.nodeId, post.channel_id).name}}</ion-label>
-                <ion-label class="channel-ts"> - {{handleDisplayTime(post.created_at)}}</ion-label>
-              </div>
-              <div  (click)="navTo(post.nodeId, post.channel_id)"> 
-                <ion-label class="channel-desc-small">@{{getChannelOwnerName(post.nodeId, post.channel_id)}}</ion-label>
-              </div>
-            </div>
-        </div>
-  
-        <div style="margin-left: 81px;">
-          <div class="channel-post-div"  (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)"> 
-            <ion-label class="channel-post white">{{getContentText(post.content)}}</ion-label>
-          </div>
-          
-          <ion-avatar  *ngIf="getContentImg(post.content) != ''" class="content-img-without-margin">
-            <img src="{{getContentImg(post.content)}}"
-                 (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)">
-          </ion-avatar>
-  
-          <div class="channel-post-heart-comment-div">
-            <img class="like" [ngClass]="{'like-s': checkMyLike(post.nodeId, post.channel_id, post.id)}" (click)="like(post.nodeId, post.channel_id, post.id)">
-            <ion-label class="like-text" [ngClass]="{'like-s-text': checkMyLike(post.nodeId, post.channel_id, post.id)}" (click)="like(post.nodeId, post.channel_id, post.id)">{{post.likes}}</ion-label>
-  
-            <img src="../../../../assets/images/bubble-line.svg" class="comment" (click)="showCommentPage($event, post.nodeId, post.channel_id, post.id)">
-            <ion-label class="comment-text"  (click)="showCommentPage($event, post.nodeId, post.channel_id, post.id)">{{post.comments}}</ion-label>
-          </div>
-        </div>
-      </ion-card-content>
+  <div [ngClass]="{'mask-div': bigImage}">
+    <div class="channel-img-div">
+      <ion-avatar class="channel-img" style="width:80px ; height: 80px;">
+        <img  src={{channelAvatar}}>
+      </ion-avatar>
     </div>
-    <div class="line-div white-line"></div>
+
+    <div class="channel-title-div">
+      <ion-label class="channel-title white">{{channelName}}</ion-label>
+    </div>
+
+    <div class="center-flex" style="margin-top: 10px;">
+      <img class="profile-sub-img" src="assets/images/bubble2.svg">
+      <ion-label class="profile-sub-text">{{channelSubscribes}} </ion-label>
+      <ion-label  class="profile-subscribe">{{'common.followers'|translate}}</ion-label>
+    </div>
+
+    <div class="channel-desc-div">
+      <ion-label class="channel-desc white">{{channelDesc}}</ion-label>
+    </div>
+
+    <div class="center-flex btn-container" style="margin-top: 10px;">
+
+      <ion-button *ngIf="followStatus" style="width: 76.8px;
+      height: 25.6px; --border-radius:25px; 
+      --background: #368bff;" (click)="unsubscribe()">
+        <ion-label style="  font-family: Montserrat;
+        font-size: 10px;
+        font-weight: bold;
+        font-stretch: normal;
+        font-style: normal;
+        line-height: 1.3;
+        letter-spacing: normal;
+        text-align: left;
+        color: #fdfeff;">{{'ChannelsPage.following'|translate}}</ion-label>
+      </ion-button>
+
+      <ion-button *ngIf="!followStatus" style="width: 76.8px;
+      height: 25.6px; --border-radius:25px; 
+      --border-color:#8888b0
+      " fill="outline" (click)="subscribe()">
+        <ion-label style="  font-family: Montserrat;
+        font-size: 10px;
+        font-weight: bold;
+        font-stretch: normal;
+        font-style: normal;
+        line-height: 1.3;
+        letter-spacing: normal;
+        text-align: left;
+        color: #8888b0;">{{'ChannelsPage.follow'|translate}}</ion-label>
+      </ion-button>
+
+
+      <ion-button style="  
+      margin-left: 25.5px;
+      width: 76.8px;
+      height: 25.6px;
+      --border-radius:25px; 
+      --background: #a067ff;
+      "   (click)="subscribe(channel.nodeId, channel.id)">
+        <ion-label style="  font-family: Montserrat;
+        font-size: 10px;
+        font-weight: bold;
+        font-stretch: normal;
+        font-style: normal;
+        line-height: 1.3;
+        letter-spacing: normal;
+        text-align: left;
+        color: #fdfeff;">{{'ChannelsPage.tip'|translate}}</ion-label>
+      </ion-button>
+    </div>
+
+    <div *ngFor="let post of postList" style="margin-top: 25px;">
+      <div style="margin-left: 30px; margin-top: 6px; margin-bottom: 10px; margin-right: 31px;" >
+        <ion-card-content class="ion-no-padding ion-no-margin">
+          <div style="float: right; " (click)="menuMore()">
+              <img  src="assets/images/dots-three-vertical.svg">
+          </div>
+          <div style="display: flex; margin-top: 13px; margin-left: 13px; margin-right: 12px;" (click)="navTo(post.nodeId, post.channel_id)">
+              <ion-avatar style="width: 56px; height: 56px;">
+                <img  src={{channelAvatar}}>
+              </ion-avatar>
+    
+              <div style="margin-left: 12px;">
+                <div style="margin-top: 4px;"> 
+                  <ion-label class="channel-title-small white">{{getChannel(post.nodeId, post.channel_id).name}}</ion-label>
+                  <ion-label class="channel-ts"> - {{handleDisplayTime(post.created_at)}}</ion-label>
+                </div>
+                <div  (click)="navTo(post.nodeId, post.channel_id)"> 
+                  <ion-label class="channel-desc-small">@{{getChannelOwnerName(post.nodeId, post.channel_id)}}</ion-label>
+                </div>
+              </div>
+          </div>
+    
+          <div style="margin-left: 81px;">
+            <div class="channel-post-div"  (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)"> 
+              <ion-label class="channel-post white">{{getContentText(post.content)}}</ion-label>
+            </div>
+            
+            <ion-avatar  *ngIf="getContentImg(post.content) != ''" class="content-img-without-margin">
+              <img src="{{getContentImg(post.content)}}"
+                  (click)="showBigImage(post.content)">
+            </ion-avatar>
+    
+            <div class="channel-post-heart-comment-div">
+              <img class="like" [ngClass]="{'like-s': checkMyLike(post.nodeId, post.channel_id, post.id)}" (click)="like(post.nodeId, post.channel_id, post.id)">
+              <ion-label class="like-text" [ngClass]="{'like-s-text': checkMyLike(post.nodeId, post.channel_id, post.id)}" (click)="like(post.nodeId, post.channel_id, post.id)">{{post.likes}}</ion-label>
+    
+              <img src="../../../../assets/images/bubble-line.svg" class="comment" (click)="showCommentPage($event, post.nodeId, post.channel_id, post.id)">
+              <ion-label class="comment-text"  (click)="showCommentPage($event, post.nodeId, post.channel_id, post.id)">{{post.comments}}</ion-label>
+            </div>
+          </div>
+        </ion-card-content>
+      </div>
+      <div class="line-div white-line"></div>
+    </div>
+  </div>
+
+  <div *ngIf="bigImage" class="trans-big-img-div" (click)="hideBigImage()" >
+    <div class="trans-big-img" >
+      <img src="{{bigImageUrl}}" class="image"/>
+    </div>
   </div>
 </ion-content>

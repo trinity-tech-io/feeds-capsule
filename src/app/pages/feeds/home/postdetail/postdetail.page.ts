@@ -16,6 +16,9 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
   styleUrls: ['./postdetail.page.scss'],
 })
 export class PostdetailPage implements OnInit {
+  private bigImageUrl: string;
+  private bigImage: boolean = false;
+
   private channelAvatar = "";
   private channelName;
   private channelOwner;
@@ -149,5 +152,14 @@ export class PostdetailPage implements OnInit {
 
   menuMore(){
     alert("more");
+  }
+
+  showBigImage(content: any){
+    this.bigImage = true;
+    this.bigImageUrl =  this.getContentImg(content);
+  }
+
+  hideBigImage(){
+    this.bigImage = false;
   }
 }
