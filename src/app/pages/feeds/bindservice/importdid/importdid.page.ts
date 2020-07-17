@@ -40,7 +40,7 @@ export class ImportdidPage implements OnInit {
       this.events.subscribe('feeds:resolveDidError', (nodeId, did, payload) => {
         this.zone.run(() => {
           this.navCtrl.pop().then(()=>{
-            this.router.navigate(['/bindservice/publishdid/',nodeId, did, payload]);
+            this.native.getNavCtrl().navigateForward(['/bindservice/publishdid/',nodeId, did, payload]);
           });
         });
       });
@@ -48,7 +48,7 @@ export class ImportdidPage implements OnInit {
       this.events.subscribe('feeds:resolveDidSucess', (nodeId, did) => {
         this.zone.run(() => {
           this.navCtrl.pop().then(()=>{
-            this.router.navigate(['/bindservice/issuecredential', nodeId, did]);
+            this.native.getNavCtrl().navigateForward(['/bindservice/issuecredential', nodeId, did]);
           });
         });
       });   
@@ -79,7 +79,7 @@ export class ImportdidPage implements OnInit {
   }
 
   importDid(){
-    this.router.navigate(['/bindservice/importmnemonic', this.nodeId]);
+    this.native.getNavCtrl().navigateForward(['/bindservice/importmnemonic', this.nodeId]);
   }
 
   abort(){

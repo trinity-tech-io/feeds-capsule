@@ -65,7 +65,7 @@ export class PublishdidPage implements OnInit {
         if (response.result && response.result.txid) {
           this.zone.run(() => {
             this.navCtrl.pop().then(()=>{
-              this.router.navigate(['/bindservice/issuecredential',this.nodeId, this.did]);
+              this.native.getNavCtrl().navigateForward(['/bindservice/issuecredential',this.nodeId, this.did]);
             });
           });
         }
@@ -78,7 +78,7 @@ export class PublishdidPage implements OnInit {
   issueCredential(){
     this.zone.run(() => {
       this.navCtrl.pop().then(()=>{
-        this.router.navigate(['/bindservice/issuecredential',this.nodeId, this.did]);
+        this.native.getNavCtrl().navigateForward(['/bindservice/issuecredential',this.nodeId, this.did]);
       });
     });
   }

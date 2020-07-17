@@ -46,6 +46,10 @@ export class CreatenewfeedPage implements OnInit {
     }
 
   ngOnInit() {
+ 
+  }
+
+  ionViewDidEnter() {
     this.events.subscribe("feeds:updateTitle",()=>{
       this.initTitle();
     });

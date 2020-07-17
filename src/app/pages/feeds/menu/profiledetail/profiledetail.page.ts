@@ -44,10 +44,14 @@ export class ProfiledetailPage implements OnInit {
     }
 
   ngOnInit() {
+  
+  }
+
+  ionViewWillEnter() {
     this.events.subscribe("feeds:updateTitle",()=>{
       this.initTitle();
     });
-    titleBarManager.setTitle("Profile Details");
+    this.initTitle();
     this.native.setTitleBarBackKeyShown(true);
   }
 

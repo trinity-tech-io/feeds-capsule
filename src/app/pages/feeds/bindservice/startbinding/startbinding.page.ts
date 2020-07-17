@@ -44,7 +44,7 @@ export class StartbindingPage implements OnInit {
         case "owner_declared":
           this.zone.run(() => {
             this.navCtrl.pop().then(()=>{
-              this.router.navigate(['/bindservice/importdid/',nodeId]);
+              this.native.getNavCtrl().navigateForward(['/bindservice/importdid/',nodeId]);
             });
           });
           break;
@@ -56,7 +56,7 @@ export class StartbindingPage implements OnInit {
         case "credential_issued":
           this.zone.run(() => {
             this.navCtrl.pop().then(()=>{
-              this.router.navigate(['/bindservice/issuecredential/',nodeId, did]);
+              this.native.getNavCtrl().navigateForward(['/bindservice/issuecredential/',nodeId, did]);
             });
           });
           break;
@@ -74,7 +74,7 @@ export class StartbindingPage implements OnInit {
     this.events.subscribe('feeds:resolveDidError', (nodeId, did, payload) => {
       this.zone.run(() => {
         this.navCtrl.pop().then(()=>{
-          this.router.navigate(['/bindservice/publishdid/',nodeId, did, payload]);
+          this.native.getNavCtrl().navigateForward(['/bindservice/publishdid/',nodeId, did, payload]);
         });
       });
     });
@@ -82,7 +82,7 @@ export class StartbindingPage implements OnInit {
     this.events.subscribe('feeds:resolveDidSucess', (nodeId, did) => {
       this.zone.run(() => {
         this.navCtrl.pop().then(()=>{
-          this.router.navigate(['/bindservice/issuecredential', nodeId, did]);
+          this.native.getNavCtrl().navigateForward(['/bindservice/issuecredential', nodeId, did]);
         });
       });
     });

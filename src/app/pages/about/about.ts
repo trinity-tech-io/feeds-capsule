@@ -21,6 +21,10 @@ export class AboutPage implements OnInit {
     ) {}
 
     ngOnInit() {
+     
+    }
+
+    ionViewWillEnter() {
       this.events.subscribe("feeds:updateTitle",()=>{
         this.initTitle();
       });

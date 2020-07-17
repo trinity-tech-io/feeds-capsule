@@ -104,7 +104,7 @@ export class ScanqrcodePage implements OnInit {
           this.zone.run(() => {
             this.navCtrl.pop().then(()=>{
               if (nonce == undefined) nonce = "";
-              this.router.navigate(['/bindservice/startbinding/',nodeId, nonce, address]);
+              this.native.getNavCtrl().navigateForward(['/bindservice/startbinding/',nodeId, nonce, address]);
             });
           });
         }, (err) => {

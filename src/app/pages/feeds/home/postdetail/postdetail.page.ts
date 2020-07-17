@@ -83,6 +83,10 @@ export class PostdetailPage implements OnInit {
   }
 
   ngOnInit() {
+   
+  }
+
+  ionViewWillEnter() {
     this.events.subscribe("feeds:updateTitle",()=>{
       this.initTitle();
     });

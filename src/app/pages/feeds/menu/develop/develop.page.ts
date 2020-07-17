@@ -21,6 +21,10 @@ export class DevelopPage implements OnInit {
     private events: Events) { }
 
   ngOnInit() {
+   
+  }
+
+  ionViewWillEnter() {
     this.events.subscribe("feeds:updateTitle",()=>{
       this.initTitle();
     });
