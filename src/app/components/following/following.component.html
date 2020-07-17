@@ -17,7 +17,7 @@
 
 <div *ngFor="let channel of channelList" [class.darkContainer]="theme.darkMode">
 
-  <div style="margin-left: 30px; margin-top: 6px; margin-bottom: 10px; margin-right: 31px;" >
+  <div style="margin-left: 10px; margin-top: 6px; margin-bottom: 10px; margin-right: 25px;" >
     <ion-card-content class="ion-no-padding ion-no-margin">
 
       <div *ngIf="checkUnreadNumber(channel.nodeId, channel.id) > 0" style="position:absolute; left: 0px; top: 0px;"  (click)="navTo(channel.nodeId, channel.id)">
