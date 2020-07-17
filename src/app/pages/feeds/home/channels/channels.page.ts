@@ -93,14 +93,16 @@ export class ChannelsPage implements OnInit {
   async unsubscribe(){
     const actionSheet = await this.actionSheetController.create({
       buttons: [{
-        text: 'Unsubscribe @'+this.channelName+"?",
+        text: this.translate.instant("common.unsubscribe")+' @'+this.channelName+"?",
+        role: 'destructive',
         icon: 'trash',
         handler: () => {
           this.feedService.unsubscribeChannel(this.nodeId,Number(this.channelId));
         }
       },{
-        text: 'Cancel',
+        text: this.translate.instant("common.cancel"),
         icon: 'close',
+        role: 'cancel',
         handler: () => {
         }
       }]

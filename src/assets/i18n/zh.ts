@@ -15,7 +15,8 @@ export const zh = {
     "pleaseInput":"请输入",
     "feeds":"feeds",
     "just":"刚刚",
-    "yesterday":"昨天"
+    "yesterday":"昨天",
+    "unsubscribe":"取消订阅"
 },
 "app":{
     "profileDetails":"配置详细信息",
@@ -61,14 +62,14 @@ export const zh = {
 },
 "SearchPage":{
     "emptyDes":"Not any feeds yet",
-    "follow":"Follow",
-    "following":"Following",
+    "follow":"关注",
+    "following":"已关注",
     "searchFeeds":"Search Feeds"
 },
 "ChannelsPage":{
     "feeds":"Feeds",
-    "follow":"Follow",
-    "following":"Following",
+    "follow":"关注",
+    "following":"已关注",
     "tip":"Tip"
 },
 "NotificationPage":{
