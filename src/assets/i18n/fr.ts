@@ -92,6 +92,7 @@ export const fr = {
          "channelSourceDes":"WHERE TO STORE YOUR FEED"
         },
       "ProfileimagePage":{
+          "title":"Profile Image",
           "comfirm":"Comfirm"
       },
       "ProfiledetailPage":{
