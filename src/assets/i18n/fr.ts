@@ -77,7 +77,7 @@ export const fr = {
       "CreatenewfeedPage":{
          "createNewFeed":"Create New Feed",
          "profileImage":"Profile image",
-         "des":"Choose profile image to be displayed",
+         "des":"PICK AN IMAGE FOR YOUR FEED",
          "channelSource":"Feed source",
          "name":"Name",
          "description":"Description",
@@ -85,8 +85,12 @@ export const fr = {
          "tipMsg":"Please select an avatar.",
          "tipMsg1":"Please input name.",
          "tipMsg2":"Please input description.",
-         "tipMsg3":"Invalid params"
-      },
+         "tipMsg3":"Invalid params",
+         "tipMsgLength":"The description field length needs to be greater than 32",
+         "inputField":"INPUT FIELD",
+         "inputFeedDesc":"INPUT FIELD(AT LEAST 32 CHAR)",
+         "channelSourceDes":"WHERE TO STORE YOUR FEED"
+        },
       "ProfileimagePage":{
           "comfirm":"Comfirm"
       },

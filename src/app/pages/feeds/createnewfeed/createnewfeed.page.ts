@@ -30,6 +30,10 @@ export class CreatenewfeedPage implements OnInit {
     private native: NativeService,
     public theme:ThemeService,
     private translate:TranslateService) {
+
+      this.selectedServer = this.feedService.getBindingServer();
+      this.selectedChannelSource = this.selectedServer.did;
+
       this.events.subscribe('feeds:createTopicSuccess', () => {
         // this.navigateBack();
         this.navCtrl.pop().then(()=>{
@@ -95,21 +99,26 @@ export class CreatenewfeedPage implements OnInit {
   }
 
   createChannel(name: HTMLInputElement, desc: HTMLInputElement){
-    if (this.channelAvatar == ""){
-      alert(this.translate.instant("CreatenewfeedPage.tipMsg"));
-      return ;
-    }
-
     if (name.value==""){
       alert(this.translate.instant("CreatenewfeedPage.tipMsg1"));
       return ;
     }
 
-    if(desc.value == ""){
+    if (desc.value == ""){
       alert(this.translate.instant("CreatenewfeedPage.tipMsg2"));
       return ;
     }
+
+    if (desc.value.length < 32){
+      alert(this.translate.instant("CreatenewfeedPage.tipMsgLength"));
+      return ;
+    }
     
+    if (this.channelAvatar == ""){
+      alert(this.translate.instant("CreatenewfeedPage.tipMsg"));
+      return ;
+    }
+
     if (this.selectedServer == null){
       alert(this.translate.instant("CreatenewfeedPage.tipMsg3"));
       return ;
