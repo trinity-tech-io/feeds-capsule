@@ -26,16 +26,13 @@ export class ServerInfoPage implements OnInit {
   private carrierAddress: string;
 
   private address: string = '';
-  // state: number = 0;
-  // private connectStatus:any;
-  // private serversStatus:any;
+  private isOwner: string = "false";
   private serverStatus:number = 1;
   private clientNumber:number = 0;
   private nodeId:string = "";
 
   private isBindServer: boolean = false ;
   private didString: string;
-  // private attrs;
   private name: string;
   private owner: string;
   private introduction: string;
@@ -53,9 +50,6 @@ export class ServerInfoPage implements OnInit {
     private translate:TranslateService) {}
 
   ngOnInit() {
-    // this.didString="did:elastos:ixxxxxxxxxxxxxxxxxxx"
-
-    // feeds:serverConnectionChanged
     this.events.subscribe('feeds:serverConnectionChanged', serversStatus => {
       this.zone.run(() => {
           if (this.address == ""){
@@ -65,6 +59,7 @@ export class ServerInfoPage implements OnInit {
   });
 
     this.acRoute.params.subscribe(data => {
+      this.isOwner = data.isOwner ;
       this.address = data.address;
       if (this.address != null &&
         this.address != undefined &&

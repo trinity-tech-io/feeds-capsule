@@ -121,9 +121,9 @@ export class ServersPage implements OnInit {
         titleBarManager.setTitle(this.translate.instant('ServersPage.feedSources'));
       }
 
-    navToServerInfo(nodeId: string) {
+    navToServerInfo(nodeId: string, isOwner: boolean) {
         // this.native.go(['/menu/servers/server-info',userId]);
-        this.router.navigate(['/menu/servers/server-info', "", nodeId]);
+        this.router.navigate(['/menu/servers/server-info', "", nodeId, isOwner]);
     }
 
     signin(nodeId: string){

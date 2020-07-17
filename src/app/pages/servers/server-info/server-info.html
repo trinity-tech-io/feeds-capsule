@@ -132,14 +132,16 @@
     </div>
     <div class="detail-line"></div>
   
-    <div class="detail-key-div">
-      <ion-label class="detail-key">{{'ServerInfoPage.owner'|translate}}</ion-label>
+    <div *ngIf="isOwner == 'true'">
+      <div class="detail-key-div">
+        <ion-label class="detail-key">{{'ServerInfoPage.owner'|translate}}</ion-label>
+      </div>
+      <div class="detail-value-div">
+        <ion-label  class="detail-value">{{owner}} </ion-label>
+      </div>
+      <div class="detail-line"></div>
     </div>
-    <div class="detail-value-div">
-      <ion-label  class="detail-value">{{owner}} </ion-label>
-    </div>
-    <div class="detail-line"></div>
-  
+
     <div class="detail-key-div">
       <ion-label class="detail-key">{{'ServerInfoPage.introduction'|translate}}</ion-label>
     </div>
@@ -154,6 +156,8 @@
     <div class="detail-value-div">
       <ion-label  class="detail-value">{{didString}} </ion-label>
     </div>
+    <div class="detail-line"></div>
+
 
 
     <div class="detail-key-div">

@@ -27,7 +27,7 @@
       <img class="feed-source-img" src="assets/images/play-dark.svg" *ngIf="theme.darkMode">
       <ion-label class="feed-source-text white">{{'ServersPage.myFeedSources'| translate}}</ion-label>
 
-      <ion-card class="ion-no-padding ion-no-margin feed-source-card" (click)="navToServerInfo(myFeedSource.nodeId)">
+      <ion-card class="ion-no-padding ion-no-margin feed-source-card" (click)="navToServerInfo(myFeedSource.nodeId, true)">
         <ion-card-content class="ion-no-padding ion-no-margin">
           <div class="feed-source-card-right-img-div"> 
             <img class="feed-source-card-right-img" src="assets/images/chevron-thin-right.svg">
@@ -72,7 +72,7 @@
       <img class="feed-source-img" src="assets/images/play-dark.svg" *ngIf="theme.darkMode">
       <ion-label class="feed-source-text white">{{'ServersPage.currentFeedSources'| translate}}</ion-label>
 
-      <ion-card class="ion-no-padding ion-no-margin"  class="feed-source-card" *ngFor="let server of serverList" (click)="navToServerInfo(server.nodeId)">
+      <ion-card class="ion-no-padding ion-no-margin"  class="feed-source-card" *ngFor="let server of serverList" (click)="navToServerInfo(server.nodeId, false)">
         <ion-card-content class="ion-no-padding ion-no-margin">
           <div class="feed-source-card-right-img-div"> 
             <img class="feed-source-card-right-img" src="assets/images/chevron-thin-right.svg">
