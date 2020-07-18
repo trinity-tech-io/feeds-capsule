@@ -1,8 +1,9 @@
 import { Component, OnInit, NgZone } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Events, PopoverController} from '@ionic/angular';
-import { FeedService } from '../../../../services/FeedService';
-import { NativeService } from '../../../../services/NativeService';
+import { FeedService } from 'src/app/services/FeedService';
+import { NativeService } from 'src/app/services/NativeService';
+import { MenuService } from 'src/app/services/MenuService';
 import { ThemeService } from 'src/app/services/theme.service';
 import { TranslateService } from "@ngx-translate/core";
 import { UtilService } from 'src/app/services/utilService';
@@ -41,7 +42,8 @@ export class PostdetailPage implements OnInit {
     private native: NativeService,
     private feedService :FeedService,
     public theme:ThemeService,
-    private translate:TranslateService) {
+    private translate:TranslateService,
+    private menuService: MenuService) {
 
       acRoute.params.subscribe((data)=>{
         this.nodeId = data.nodeId;
@@ -161,7 +163,7 @@ export class PostdetailPage implements OnInit {
   }
 
   menuMore(){
-    alert("more");
+    this.menuService.showChannelMenu(this.nodeId, this.channelId, this.channelName);
   }
 
   showBigImage(content: any){

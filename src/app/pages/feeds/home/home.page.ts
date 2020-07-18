@@ -1,6 +1,7 @@
 import { Component, OnInit, NgZone } from '@angular/core';
 import { Events, PopoverController, IonTabs} from '@ionic/angular';
-import { FeedService } from '../../../services/FeedService';
+import { FeedService } from 'src/app/services/FeedService';
+import { MenuService } from 'src/app/services/MenuService';
 import { Router } from '@angular/router'
 import { CommentComponent } from '../../../components/comment/comment.component'
 import { FeedsPage } from '../feeds.page'
@@ -29,7 +30,8 @@ export class HomePage implements OnInit {
     private router: Router,
     public theme:ThemeService,
     private translate:TranslateService,
-    private navtive:NativeService) {
+    private navtive:NativeService,
+    private menuService: MenuService) {
       this.bigImage = false;
       this.postList = feedService.getPostList();
       this.events.subscribe('feeds:postDataUpdate',()=>{
@@ -133,8 +135,9 @@ export class HomePage implements OnInit {
     return  obj.content;
   }
 
-  menuMore(){
-    alert("more");
+  menuMore(nodeId: string , channelId: number){
+    let channelName = this.getChannel(nodeId, channelId).name;
+    this.menuService.showChannelMenu(nodeId, channelId, channelName);
   }
 
   showBigImage(content: any){

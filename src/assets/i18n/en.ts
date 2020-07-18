@@ -16,7 +16,8 @@ export const en = {
     "feeds":"feeds",
     "just":"Just",
     "yesterday":"yesterday",
-    "unsubscribe":"Unsubscribe"
+    "unsubscribe":"Unsubscribe",
+    "share":"Share"
   },
   "app":{
     "profileDetails":"Profile Details",

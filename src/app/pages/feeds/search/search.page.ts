@@ -8,6 +8,7 @@ import { NativeService } from 'src/app/services/NativeService';
 import { ActionSheetController } from '@ionic/angular';
 import { ThemeService } from 'src/app/services/theme.service';
 import { TranslateService } from "@ngx-translate/core";
+import { MenuService } from 'src/app/services/MenuService';
 
 @Component({
   selector: 'app-search',
@@ -28,7 +29,8 @@ export class SearchPage implements OnInit {
     private native: NativeService,
     private actionSheetController:ActionSheetController,
     public theme:ThemeService,
-    private translate:TranslateService) {
+    private translate:TranslateService,
+    private menuService: MenuService) {
     
     // this.subscribeStatusMap = this.feedService.getSubscribeStatusMap();  
     this.connectStatus = this.feedService.getConnectionStatus();
@@ -82,23 +84,7 @@ export class SearchPage implements OnInit {
   }
 
   async unsubscribe(nodeId: string, name: string, id: number){
-    const actionSheet = await this.actionSheetController.create({
-      buttons: [{
-        text: this.translate.instant("common.unsubscribe")+' @'+name+"?",
-        role: 'destructive',
-        icon: 'trash',
-        handler: () => {
-          this.feedService.unsubscribeChannel(nodeId,id);
-        }
-      }, {
-        text: this.translate.instant("common.cancel"),
-        icon: 'close',
-        role: 'cancel',
-        handler: () => {
-        }
-      }]
-    });
-    await actionSheet.present();
+    this.menuService.showUnsubscribeMenu(nodeId, id, name);
   }
 
   getItems(events){

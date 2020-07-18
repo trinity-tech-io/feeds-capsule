@@ -1,14 +1,14 @@
 import { Component, OnInit, NgZone } from '@angular/core';
 import { NavController, Events, PopoverController } from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
-import { FeedService } from '../../../../services/FeedService';
-import { NativeService } from '../../../../services/NativeService';
+import { FeedService } from 'src/app/services/FeedService';
+import { NativeService } from 'src/app/services/NativeService';
 import { ThemeService } from 'src/app/services/theme.service';
 import { UtilService } from 'src/app/services/utilService';
+import { MenuService } from 'src/app/services/MenuService';
 import { TranslateService } from "@ngx-translate/core";
 import { Router } from '@angular/router'
 import { CommentComponent } from '../../../../components/comment/comment.component'
-import { ActionSheetController } from '@ionic/angular';
 
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
@@ -41,10 +41,9 @@ export class ChannelsPage implements OnInit {
     private native: NativeService,
     private acRoute: ActivatedRoute,
     private feedService: FeedService,
-    private actionSheetController:ActionSheetController,
     public theme:ThemeService,
-    private translate:TranslateService
-  ) {
+    private translate:TranslateService,
+    private menuService: MenuService) {
 
     acRoute.params.subscribe((data)=>{
       this.nodeId = data.nodeId;
@@ -91,23 +90,7 @@ export class ChannelsPage implements OnInit {
   }
 
   async unsubscribe(){
-    const actionSheet = await this.actionSheetController.create({
-      buttons: [{
-        text: this.translate.instant("common.unsubscribe")+' @'+this.channelName+"?",
-        role: 'destructive',
-        icon: 'trash',
-        handler: () => {
-          this.feedService.unsubscribeChannel(this.nodeId,Number(this.channelId));
-        }
-      },{
-        text: this.translate.instant("common.cancel"),
-        icon: 'close',
-        role: 'cancel',
-        handler: () => {
-        }
-      }]
-    });
-    await actionSheet.present();
+    this.menuService.showUnsubscribeMenu(this.nodeId, Number(this.channelId), this.channelName);
   }
 
   ngOnInit() {
@@ -217,7 +200,7 @@ export class ChannelsPage implements OnInit {
   }
 
   menuMore(){
-    alert("more");
+    this.menuService.showChannelMenu(this.nodeId, Number(this.channelId), this.channelName);
   }
 
   showBigImage(content: any){

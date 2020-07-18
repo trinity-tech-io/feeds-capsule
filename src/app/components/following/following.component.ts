@@ -5,6 +5,8 @@ import { Router } from '@angular/router';
 import { FeedsPage } from 'src/app/pages/feeds/feeds.page'
 import { ThemeService } from 'src/app/services/theme.service';
 import { NativeService } from 'src/app/services/NativeService';
+import { MenuService } from 'src/app/services/MenuService';
+
 @Component({
   selector: 'app-following',
   templateUrl: './following.component.html',
@@ -20,7 +22,8 @@ export class FollowingComponent implements OnInit {
     private router: Router,
     private feedService:FeedService,
     public theme:ThemeService,
-    private native:NativeService) { 
+    private native:NativeService,
+    private menuService: MenuService) { 
     // this.channelList = this.feedService.refreshLocalChannels();
     this.channelList=this.feedService.refreshLocalSubscribedChannels();
     this.feedService.refreshSubscribedChannels();
@@ -58,7 +61,7 @@ export class FollowingComponent implements OnInit {
     this.feedService.readChannel(nodeChannelId);
   }
 
-  menuMore(){
-    alert("more");
+  menuMore(nodeId: string , channelId: number, channelName: string){
+    this.menuService.showChannelMenu(nodeId, channelId, channelName);
   }
 }

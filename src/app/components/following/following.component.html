@@ -24,7 +24,7 @@
         <ion-badge>{{checkUnreadNumber(channel.nodeId, channel.id)}}</ion-badge>
       </div>
 
-      <div style="float: right; margin-top: 10px;" (click)="menuMore()">
+      <div style="float: right; margin-top: 10px;" (click)="menuMore(channel.nodeId, channel.id, channel.name)">
           <img  src="assets/images/dots-three-vertical.svg">
       </div>
 

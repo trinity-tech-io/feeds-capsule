@@ -3,7 +3,9 @@ import { NavController, Events } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { FeedService } from 'src/app/services/FeedService';
 import { NativeService } from 'src/app/services/NativeService';
-import { ThemeService } from '../../services/theme.service';
+import { ThemeService } from 'src/app/services/theme.service';
+import { MenuService } from 'src/app/services/MenuService';
+
 @Component({
   selector: 'app-myfeeds',
   templateUrl: './myfeeds.component.html',
@@ -17,7 +19,8 @@ export class MyfeedsComponent implements OnInit {
     private router: Router,
     private feedService: FeedService,
     public theme:ThemeService,
-    private native:NativeService) {
+    private native:NativeService,
+    private menuService: MenuService) {
 
     this.channels = this.feedService.refreshMyChannels();
     
@@ -69,7 +72,7 @@ export class MyfeedsComponent implements OnInit {
     return this.feedService.parseChannelAvatar(avatar);
   }
 
-  menuMore(){
-    alert("more");
+  menuMore(nodeId: string , channelId: number, channelName: string){
+    this.menuService.showShareMenu(nodeId, channelId, channelName);
   }
 }

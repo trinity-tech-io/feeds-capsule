@@ -16,7 +16,8 @@ export const zh = {
     "feeds":"feeds",
     "just":"刚刚",
     "yesterday":"昨天",
-    "unsubscribe":"取消订阅"
+    "unsubscribe":"取消订阅",
+    "share":"分享"
 },
 "app":{
     "profileDetails":"配置详细信息",

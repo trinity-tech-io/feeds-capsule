@@ -47,6 +47,7 @@ import { SplashscreenPageModule } from './pages/splashscreen/splashscreen.module
 import { JWTMessageService } from './services/JWTMessageService';
 import { TransportService } from './services/TransportService';
 import { SerializeDataService } from './services/SerializeDataService';
+import { MenuService } from './services/MenuService';
 
 export class WebpackTranslateLoader implements TranslateLoader {
   public getTranslation(lang: string): Observable<any> {
@@ -126,6 +127,7 @@ export function TranslateLoaderFactory() {
     JWTMessageService,
     TransportService,
     SerializeDataService,
+    MenuService,
     PostfromComponentPageModule,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     {provide: ErrorHandler, useClass: ErrorHandler}

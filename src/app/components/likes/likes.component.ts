@@ -1,9 +1,10 @@
 import { Component, OnInit, NgZone } from '@angular/core';
 import { Events, PopoverController, IonTabs} from '@ionic/angular';
-import { FeedService } from '../../services/FeedService';
+import { FeedService } from 'src/app/services/FeedService';
 import { ThemeService } from 'src/app/services/theme.service';
 import { UtilService } from 'src/app/services/utilService';
 import { NativeService } from 'src/app/services/NativeService';
+import { MenuService } from 'src/app/services/MenuService';
 import { TranslateService } from "@ngx-translate/core";
 import { Router } from '@angular/router'
 import { CommentComponent } from '../../components/comment/comment.component'
@@ -30,7 +31,8 @@ export class LikesComponent implements OnInit {
     private events: Events,
     public theme:ThemeService,
     private translate:TranslateService,
-    private native:NativeService) {
+    private native:NativeService,
+    private menuService: MenuService) {
     
     this.likeList = this.feedService.getLikeList();    
     this.events.subscribe('feeds:updateLikeList', (list) => {
@@ -128,8 +130,9 @@ export class LikesComponent implements OnInit {
     return  obj.content;
   }
 
-  menuMore(){
-    alert("more");
+  menuMore(nodeId: string , channelId: number){
+    let channelName = this.getChannel(nodeId, channelId).name;
+    this.menuService.showChannelMenu(nodeId, channelId, channelName);
   }
 
 
