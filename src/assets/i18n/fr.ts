@@ -142,6 +142,7 @@ export const fr = {
        "sourceaddresshere":"Source address here",
        "tipMsg":"Feed url maybe error.",
        "exploreFeedSources":"Explore Feed Sources",
+       "title":"Add Feed Source"
      },
      "ServerInfoPage":{
         "title":"Feed Source Details",

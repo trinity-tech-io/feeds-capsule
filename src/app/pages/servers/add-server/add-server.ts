@@ -81,7 +81,7 @@ export class AddServerPage implements OnInit {
 
 
   initTitle(){
-    titleBarManager.setTitle(this.translate.instant('AddServerPage.exploreFeedSources'));
+    titleBarManager.setTitle(this.translate.instant('AddServerPage.title'));
   }
 
   navToBack() {
