@@ -75,7 +75,7 @@ export class CreatenewpostPage implements OnInit {
 
 
   post(){
-    if (this.newPost == ""){
+    if (this.newPost == "" && this.imgUrl == ""){
       alert(this.translate.instant("CreatenewpostPage.tipMsg"));
       return;
     }else{

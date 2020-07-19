@@ -45,6 +45,7 @@ declare namespace FeedsData{
         newPost = "new_post",
         newComment = "new_comment",
         newLikes = "new_likes",
+        newSubscription = "new_subscription",
 
         negotiateLogin = "negotiate_login",
         confirmLogin = "confirm_login",

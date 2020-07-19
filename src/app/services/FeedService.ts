@@ -42,9 +42,27 @@ let serverMap: {[nodeId: string]: Server};
 let accessTokenMap:{[nodeId:string]:AccessToken};
 let signInServerList = [];
 
+let notificationList:Notification[] = new Array<Notification>();
+
 let cacheBindingAddress: string = "";
 let cacheBindingDid: string = "";
 let localCredential: string = "";
+
+type Notification = {
+  userName: string;
+  behavior: Behavior;
+  behaviorText: string;
+  details: Details;
+  time: number;
+}
+
+type Details = {
+  nodeId: string;
+  channelId: number;
+  postId: number;
+  commentId: number;
+  commentFromCommentId: number;
+}
 
 type AccessToken = {
   token: string ;
@@ -155,6 +173,13 @@ export class SignInData{
       public expiresTS: number) {}
 }
 
+enum Behavior {
+  post,
+  comment,
+  like,
+  subscription
+}
+
 enum ConnState {
   connected = 0,
   disconnected = 1
@@ -253,7 +278,9 @@ enum PersistenceKey{
 
   bindingServer = "bindingServer",
 
-  serverMap = "serverMap"
+  serverMap = "serverMap",
+
+  notificationList = "notificationList"
 }
 
 let expDay = 10;
@@ -504,8 +531,9 @@ export class FeedService {
 
     bindingServer = this.storeService.get(PersistenceKey.bindingServer);
 
-    // this.initTestData();
-
+    notificationList = this.storeService.get(PersistenceKey.notificationList);
+    if (notificationList == null || notificationList == undefined)
+      notificationList = [];
   }
 
   initCallback(){
@@ -2507,6 +2535,23 @@ export class FeedService {
     this.storeService.set(PersistenceKey.unreadMap,unreadMap);
     
     eventBus.publish(PublishType.postDataUpdate);
+
+
+    let notification:Notification = {
+      userName: "System",
+      behavior: Behavior.post,
+      behaviorText: "Recive new Post from Feed '"+this.getChannelFromId(nodeId, channel_id).name+"'",
+      details: {
+        nodeId: nodeId,
+        channelId: channel_id,
+        postId: id,
+        commentId: 0,
+        commentFromCommentId:0
+      },
+      time:this.getCurrentTimeNum()
+    }
+    notificationList.push(notification);
+    this.storeService.set(PersistenceKey.notificationList, notificationList);
   }
 
   handleNewCommentNotification(nodeId: string, params: any){
@@ -2552,6 +2597,23 @@ export class FeedService {
     eventBus.publish(PublishType.commentDataUpdate);
 
     eventBus.publish(PublishType.updataComment,nodeId,channel_id,post_id,postMap[postId].comments);
+
+    let notification:Notification = {
+      userName: user_name,
+      behavior: Behavior.comment,
+      behaviorText: "Comment your post",
+      details: {
+        nodeId: nodeId,
+        channelId:channel_id,
+        postId:post_id,
+        commentId: id,
+        commentFromCommentId:comment_id
+      },
+      time:this.getCurrentTimeNum()
+    }
+
+    notificationList.push(notification);
+    this.storeService.set(PersistenceKey.notificationList, notificationList);
   }
 
   handleNewLikesNotification(nodeId: string, params: any){
@@ -2559,6 +2621,7 @@ export class FeedService {
     let channel_id: number = params.channel_id;
     let post_id: number = params.post_id;
     let count: number = params.count;
+    let user_name: string = params.user_name;
 
     if (comment_id == 0){
       let postId = this.getPostId(nodeId,channel_id,post_id);
@@ -2576,6 +2639,45 @@ export class FeedService {
       this.storeService.set(PersistenceKey.commentsMap, commentsMap);
       eventBus.publish(PublishType.commentDataUpdate);
     }
+
+
+    let notification:Notification = {
+      userName: user_name,
+      behavior: Behavior.like,
+      behaviorText: "like your post",
+      details: {
+        nodeId: nodeId,
+        channelId:channel_id,
+        postId:post_id,
+        commentId: 0,
+        commentFromCommentId:comment_id
+      },
+      time:this.getCurrentTimeNum()
+    }
+    notificationList.push(notification);
+    this.storeService.set(PersistenceKey.notificationList, notificationList);
+  }
+
+  handleNewSubscriptionNotification(nodeId: string, params: any){
+    let channel_id = params.channel_id;
+    let user_name = params.user_name;
+    let user_did = params.user_did;
+
+    let notification:Notification = {
+      userName: user_name,
+      behavior: Behavior.subscription,
+      behaviorText: "Subscribe your feed",
+      details: {
+        nodeId: nodeId,
+        channelId:channel_id,
+        postId:0,
+        commentId: 0,
+        commentFromCommentId:0
+      },
+      time:this.getCurrentTimeNum()
+    }
+    notificationList.push(notification);
+    this.storeService.set(PersistenceKey.notificationList, notificationList);
   }
 
   handleNotification(nodeId: string, method: string, params: any){
@@ -2588,6 +2690,9 @@ export class FeedService {
         break;
       case FeedsData.MethodType.newLikes:
         this.handleNewLikesNotification(nodeId,params);
+        break;
+      case FeedsData.MethodType.newSubscription:
+        this.handleNewSubscriptionNotification(nodeId, params);
         break;
     }
   }
@@ -3926,6 +4031,10 @@ export class FeedService {
 
   removeBindServer(){
 
+  }
+
+  getNotificationList(){
+    return notificationList;
   }
 }
 

@@ -473,10 +473,22 @@ declare module Communication{
         version: "1.0"
         method : "new_likes"
         params : {
+            channel_id : number
+            post_id    : number
+            comment_id : number
+            user_name  : string
+            user_did   : string
+            total_count: number
+        }
+    }
+
+    type new_subscription_notification = {
+        version: "1.0"
+        method : "new_subscription"
+        params : {
             channel_id: number
-            post_id   : number
-            comment_id: number
-            count     : number
+            user_name : string
+            user_did  : string
         }
     }
 
