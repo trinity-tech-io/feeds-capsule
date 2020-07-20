@@ -213,7 +213,7 @@ export const fr = {
           "ok":"Ok"
         },
   "PostfromComponent":{
-    "des":"What feed do you want to post from?"
+    "des":"Choose one of your Feeds to post from"
   },
   "CreatenewpostPage":{
     "addimg":"add img",

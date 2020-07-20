@@ -280,6 +280,15 @@ $segment-button-md-text-color: #007AFF !important;
   border-top-right-radius: 35px;
 }
 
+
+.bottom-sheet-popover1 .popover-content {
+  position: absolute;
+  left: calc(100% - 290px)/2 !important;
+  width:290px !important;
+  top: calc(100% - 341px) !important;
+  --height:280px;
+}
+
 .bottom-menu-popover .popover-content {
   position:absolute;
   margin-left: 16px;

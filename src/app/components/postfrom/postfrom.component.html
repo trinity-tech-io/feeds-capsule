@@ -1,6 +1,11 @@
-<div class="post-from-text-div" [class.darkContainer]="theme.darkMode">
+<div [class.darkContainer]="theme.darkMode">
+<div class="post-from-text-div post-from-text-div-dark">
   <div class="post-from-text white">
     {{'PostfromComponent.des'|translate}}
+  </div>
+
+  <div class="line">
+
   </div>
 
   <div *ngFor="let channel of channels" [class.darkContainer]="theme.darkMode">
@@ -15,13 +20,7 @@
         <div class="channel-detail-text-div">
           <div style="height: 100%; vertical-align: middle;"> 
             <ion-label class="channel-title-small white">{{channel.name}}</ion-label>
-            <!-- <ion-label class="channel-ts"></ion-label> -->
-            <!-- <ion-icon name="more" mode="ios" style="vertical-align: middle; float: right; "></ion-icon> -->
           </div>
-          <!-- <div> 
-            <ion-label class="channel-desc-small">@TuumTech</ion-label>
-          </div> -->
-  
           <div >
             <img src="../../../../assets/images/bubble2.svg" class="bubble">
             <ion-label class="channel-follower2">{{channel.subscribers}} {{'common.followers'|translate}}</ion-label>
@@ -31,7 +30,6 @@
         </div>
       </div>
     </div>
-    <img src="../../../assets/images/rectangle-5389.svg"
-    class="detail-line">
-  <!-- <app-myfeeds></app-myfeeds> -->
+  <div class="arrow-down arrow-down-dark"></div>
+</div>
 </div>
