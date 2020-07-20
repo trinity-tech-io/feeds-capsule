@@ -11,7 +11,7 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 })
 
 export class AboutPage implements OnInit {
-  public version = "0.12";
+  public version = "0.13";
 
   constructor(
     private zone: NgZone,

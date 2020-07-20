@@ -180,7 +180,7 @@ export const en = {
   },
   "FinishPage":{
     "bindingServer":"Binding server",
-    "des":" Congratulation, the binding process come into the end with success. Now you need to sign in feeds service.",
+    "des":" Congratulation, the binding process come into the end with success.",
     "finish":"Finish"
   },
   "IssuecredentialPage":{

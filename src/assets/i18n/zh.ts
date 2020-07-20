@@ -180,7 +180,7 @@ export const zh = {
   },
   "FinishPage":{
     "bindingServer":"绑定服务器",
-    "des":"恭喜，绑定过程圆满结束。现在你需要登录feeds服务。",
+    "des":"恭喜，绑定过程圆满结束。",
     "finish":"完成"
   },
   "IssuecredentialPage":{

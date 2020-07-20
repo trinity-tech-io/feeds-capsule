@@ -689,8 +689,9 @@ export class FeedService {
       }
     }
 
-    if (serversStatus[nodeId] == null || serversStatus[nodeId] == undefined)
+    if (serversStatus[nodeId] == null || serversStatus[nodeId] == undefined){
       return 1;
+    }
 
     return serversStatus[nodeId].status;
   }
@@ -1000,15 +1001,11 @@ export class FeedService {
       if (friendStatus == ConnState.connected){
         if (accessTokenMap == null || accessTokenMap == undefined)
           accessTokenMap = {};
-        // if(accessTokenMap[friendId] == undefined || !this.checkExp(accessTokenMap[friendId])){
         if(accessTokenMap[friendId] == undefined){
           this.signinChallengeRequest(friendId,true);
-          return;
+        }else{
+          this.prepare(friendId);
         }
-
-        this.prepare(friendId);
-
-        // this.checkSignInStatus(friendId);
       }
       eventBus.publish(PublishType.friendConnectionChanged, friendId, friendStatus);
 
@@ -1034,12 +1031,14 @@ export class FeedService {
     if (serversStatus == null || serversStatus == undefined)
         serversStatus = {};
       
-    serversStatus[server.nodeId] = {
-      nodeId: server.nodeId,
-      did: server.did,
-      status: ConnState.disconnected
+    if (serversStatus[server.nodeId] == undefined){
+      serversStatus[server.nodeId] = {
+        nodeId: server.nodeId,
+        did: server.did,
+        status: ConnState.disconnected
+      }  
     }
-
+    
     if (status != null)
       return serversStatus[server.nodeId].status = status;
 
@@ -2931,7 +2930,6 @@ export class FeedService {
 
   handleGetMyChannelsResult(nodeId: string, responseResult :any){
     let result = responseResult.channels;
-    // console.log("handleGetMyChannelsResult==>"+JSON.stringify(result));
     for (let index = 0; index < result.length; index++) {
       let id: number = result[index].id;
       let name: string = result[index].name;
@@ -2981,7 +2979,6 @@ export class FeedService {
 
   handleGetChannelsResult(nodeId: string, responseResult: any , request: any){
     let result = responseResult.channels;
-    // console.log("handleGetChannelsResult==>"+JSON.stringify(result));
 
     for (let index = 0; index < result.length; index++) {
       let id = result[index].id;
@@ -3032,7 +3029,6 @@ export class FeedService {
     }
 
     let result = responseResult.channels;
-    // console.log("handleGetSubscribedChannelsResult==>"+JSON.stringify(result));
     for (let index = 0; index < result.length; index++) {
       let channelId = result[index].id;
       let name = result[index].name;
@@ -3097,7 +3093,6 @@ export class FeedService {
 
   handleGetPostsResult(nodeId: string, responseResult: any, request:any){
     let result = responseResult.posts;
-    // console.log("handleGetPostsResult==>"+JSON.stringify(result));
     for (let index = 0; index < result.length; index++) {
       let channel_id = result[index].channel_id;
       let id         = result[index].id;
@@ -3145,7 +3140,6 @@ export class FeedService {
 
   handleGetCommentsResult(responseResult: any){
     let result = responseResult.comments;
-    // console.log("handleGetCommentsResult==>"+JSON.stringify(result));
     for (let index = 0; index < result.length; index++) {
       let channel_id = result[index].channel_id;
       let post_id = result[index].post_id;
@@ -3505,9 +3499,6 @@ export class FeedService {
     appManager.sendIntent("didtransaction", params, {}, onSuccess, onError);
   }
 
-
-
-
   signinChallengeRequest(nodeId: string , requiredCredential: boolean){
     let request: Communication.signin_request_challenge_request = {
       version: "1.0",
@@ -3518,7 +3509,6 @@ export class FeedService {
           credential_required: requiredCredential,
       }
     }
-
     this.sendRPCMessage(nodeId, request.method, request.params);
   }
 
@@ -3562,7 +3552,6 @@ export class FeedService {
     // {"signatureIsValid":true,"payload":{"iss":"did:elastos:ikZJ3Z7JqmZ8HHoThcqyVQfd2zHhseTWnt","sub":"didauth","realm":"GDY3wCVgegMrVAn7mLctQHyxPPwVAv7ShJ77yuanQZqM","nonce":"8pNVf8sPUYG1RPbrSV8dk1daMZBcRvq6S"}}
     this.parseJWS(true,jws,
       (res)=>{
-
         let payloadStr = JSON.stringify(res.payload);
         let payload = JSON.parse(payloadStr);
         let nonce = payload.nonce;
@@ -3669,7 +3658,7 @@ export class FeedService {
       did = result.did;
       payload = result.transaction_payload;
 
-      let feedUrl = "feeds://"+did;
+      let feedUrl = "feeds://"+did+"/"+cacheBindingAddress;
       let defaultServer = {
         name              : "No name provided",
         owner             : this.getSignInData().name,
@@ -3696,33 +3685,6 @@ export class FeedService {
       });
     }
 
-    // console.log("phase==>"+phase);
-    // switch(phase){
-    //   case "owner_declared":
-    //     this.createDidRequest(nodeId);
-    //     break;
-    //   case "did_imported":
-    //     // {
-    //     //   "jsonrpc": "2.0",
-    //     //   "id": 0,
-    //     //   "result": {
-    //     //     "phase": "did_imported",
-    //     //     "did": "did:elastos:imWLKpc7re166G9oASY5tg2dXD4g9PkTV2",
-    //     //     "transaction_payload": "{\"header\":{\"specification\":\"elastos/did/1.0\",\"operation\":\"create\"},\"payload\":\"eyJpZCI6ImRpZDplbGFzdG9zOmltV0xLcGM3cmUxNjZHOW9BU1k1dGcyZFhENGc5UGtUVjIiLCJwdWJsaWNLZXkiOlt7ImlkIjoiI3ByaW1hcnkiLCJwdWJsaWNLZXlCYXNlNTgiOiJmbVR1WUg5M3FRdkFxMjdreHJpd2h4NERQQjdnelFWWm5SaVIxRHpyb0NaZCJ9XSwiYXV0aGVudGljYXRpb24iOlsiI3ByaW1hcnkiXSwiZXhwaXJlcyI6IjIwMjUtMDYtMDhUMDE6MDI6MDRaIiwicHJvb2YiOnsiY3JlYXRlZCI6IjIwMjAtMDYtMDhUMDk6MDI6MDRaIiwic2lnbmF0dXJlVmFsdWUiOiI2bnNWNW52VThjZGs2RmhjQTZzb09aQ1lLa0dSV0hWWDR2cjRIQkZQU1pJUkNteFQ2SDN6ekF5ZG56VkNIRW5WekZrNERhbEk2d2w5anNVWFlGSjFLdyJ9fQ\",\"proof\":{\"verificationMethod\":\"#primary\",\"signature\":\"MFogBVri42dj7nY8SCEZsP0CLlVDzUI5cHNFu4JYhZyWpxnCQFnJzhze8jWxErcp3vA-2IIqRwxoeIacg4bq4g\"}}"
-    //     //   }
-    //     // }
-    //     let did = result.did;
-    //     let transaction_payload = result.transaction_payload;
-    //     //调用wallet 上链did
-    //     console.log("handleImportDIDResponse");
-    //     this.createIdTransactionCallback(transaction_payload);
-    //     //上链后
-    //     this.issueCredential(nodeId, did);
-    //     break;
-    //   case "credential_issued":
-    //     break;
-    // }
-
     eventBus.publish("feeds:owner_declared", nodeId, phase, did, payload);
   }
 
@@ -3738,18 +3700,7 @@ export class FeedService {
     let did = result.did;
     let transaction_payload = result.transaction_payload;
 
-    //TODO resolve Document
-    // bindingServer = {
-    //   name              : "name",
-    //   owner             : "owner",
-    //   introduction      : "intro",
-    //   did               : did,
-    //   carrierAddress    : cacheBindingAddress,
-    //   nodeId            : nodeId,
-    //   feedsUrl          : "feeds://"+did+"/"+cacheBindingAddress
-    // }
-
-    let feedUrl = "feeds://"+did;
+    let feedUrl = "feeds://"+did+"/"+cacheBindingAddress;
     let defaultServer = {
       name              : "No name provided",
       owner             : this.getSignInData().name,
@@ -3760,8 +3711,6 @@ export class FeedService {
       feedsUrl          : feedUrl
     }
     this.handleImportDID(feedUrl, defaultServer, (server)=>{
-
-
         bindingServerCache = {
           name              : server.name,
           owner             : server.owner,
@@ -3786,41 +3735,9 @@ export class FeedService {
     this.resolveDidDocument(feedUrl, defaultServer, onSuccess, onError);
   }
 
-  // doResolveDidDocument(did: string, address: string, nodeId: string, onSuccess: (server: Server)=>void, onError?: (err: any)=>void){
-  //   let feedsUrl = "feeds://"+did+"/"+address;
-  //   let defaultServer = {
-  //     name              : "No name provided",
-  //     owner             : "No owner provided",
-  //     introduction      : "No intro provided",
-  //     did               : did,
-  //     carrierAddress    : address,
-  //     nodeId            : nodeId,
-  //     feedsUrl          : "feeds://"+did+"/"+address
-  //   }
-
-  //   this.resolveDidDocument("feeds://"+did, defaultServer, onSuccess, onError);
-  // }
-
   handleIssueCredentialResponse(nodeId: string, result: any){
-    // if (bindingServerMap == null && bindingServerMap == undefined)
-    //   bindingServerMap = {}
-
-    // bindingServerMap[nodeId] = bindingServer;
-
-    // this.storeService.set(PersistenceKey.bindingServerMap,bindingServerMap);
-
-    
     let feedUrl = "feeds://"+bindingServerCache.did;
-    let defaultServer = {
-      name              : "No name provided",
-      owner             : this.getSignInData().name,
-      introduction      : "No intro provided",
-      did               : bindingServerCache.did,
-      carrierAddress    : cacheBindingAddress,
-      nodeId            : nodeId,
-      feedsUrl          : feedUrl
-    }
-    this.handleImportDID(feedUrl, defaultServer, (server)=>{
+    this.handleImportDID(feedUrl, bindingServerCache, (server)=>{
         bindingServer = {
           name              : server.name,
           owner             : server.owner,
@@ -3850,11 +3767,10 @@ export class FeedService {
         this.doFriendConnection(nodeId, ConnState.connected);
         // this.signinChallengeRequest(nodeId,true);
     },(errserver)=>{
-      bindingServer = defaultServer;
+      bindingServer = bindingServerCache;
       this.storeService.set(PersistenceKey.bindingServer,bindingServer);
       // this.resolveServer(bindingServer, ConnState.connected);
-      eventBus.publish("feeds:issue_credential");
-      eventBus.publish("feeds:bindServerFinish",bindingServer);
+
       this.addServer(bindingServer.carrierAddress,
         'Feeds/0.1',
         bindingServer.name,
@@ -3866,14 +3782,11 @@ export class FeedService {
         },(error)=>{
 
         });
+
+        eventBus.publish("feeds:issue_credential");
+        eventBus.publish("feeds:bindServerFinish",bindingServer);
         this.doFriendConnection(nodeId, ConnState.connected);
-      // this.signinChallengeRequest(nodeId,true);
     });
-
-
-
-
-    // this.resolveServer(bindingServer,ConnState.connected);
   }
 
   
@@ -3905,14 +3818,8 @@ export class FeedService {
     }, {}, (response) => {
 
       if (response.result.credential) {
-        //TODO
-        // this.zone.run(() => {
-        //   this.navCtrl.navigateForward("credissued", {
-        //     queryParams: {
-        //       credential: response.result.credential
-        //     }
-        //   });
-        // })
+        bindingServerCache.name = serverName;
+        bindingServerCache.introduction = serverDesc;
         this.issueCredentialRequest(nodeId, response.result.credential);
       }
       else {

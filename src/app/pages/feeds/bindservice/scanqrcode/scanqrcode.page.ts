@@ -73,7 +73,6 @@ export class ScanqrcodePage implements OnInit {
     appManager.sendIntent("scanqrcode", {}, {}, (res) => {
       let content = res.result.scannedContent;
       let contentStr = String(content);
-      console.log("==msg=="+contentStr);
       let con = contentStr.split(".");
 
       this.carrierAddress = con[0];
@@ -92,7 +91,6 @@ export class ScanqrcodePage implements OnInit {
 
   addFriends(address: string, nodeId: string, nonce: string){
     this.carrier.isValidAddress(address, (isValid) => {
-      console.log("==msg=="+address);
       if (!isValid){
         // this.alertError("Address invalid");
         this.native.toast_trans('addressinvalid'+address);
