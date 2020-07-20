@@ -1,4 +1,18 @@
 
+.list{
+    height:120px;
+    overflow-x:hidden;
+    overflow-y:auto;;
+}
+
+.ellipsis{
+    width:150px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    display:inline-block
+}
+
 .post-from-text-div{
     position: relative;
     margin: 0 auto;
@@ -28,7 +42,6 @@
     height: 2px;
     object-fit: contain;
     opacity: 1;
-    //background-color: #1e1f34;
     background-color:#f8f8ff;
 }
 .post-from-text{
@@ -58,6 +71,10 @@
         border-top:25px solid #2e2f4e;
      }
     .white{ color: #cfd1f7}
+
+    .line{
+         background-color: #1e1f34;
+    }
 
 .channel-detail-div .channel-detail-text-div .white{
     color: #ffffff;

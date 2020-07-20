@@ -7,8 +7,9 @@
   <div class="line">
 
   </div>
-
-  <div *ngFor="let channel of channels" [class.darkContainer]="theme.darkMode">
+  
+  <div class="list">
+    <div *ngFor="let channel of channels let i=index" [class.darkContainer]="theme.darkMode">
     <div class="channel-img-small-div" (click)="selectChannel(channel.nodeId,channel.id)">
       <div class="channel-img-small">
         <ion-avatar >
@@ -19,17 +20,20 @@
       <div class="channel-detail-div">
         <div class="channel-detail-text-div">
           <div style="height: 100%; vertical-align: middle;"> 
-            <ion-label class="channel-title-small white">{{channel.name}}</ion-label>
+            <ion-label class="ellipsis channel-title-small white">{{channel.name}}</ion-label>
           </div>
           <div >
             <img src="../../../../assets/images/bubble2.svg" class="bubble">
             <ion-label class="channel-follower2">{{channel.subscribers}} {{'common.followers'|translate}}</ion-label>
             
           </div>
-  
         </div>
       </div>
+      </div>
+      <div class="line" *ngIf="i!=channels.length-1">
+      </div>
     </div>
-  <div class="arrow-down arrow-down-dark"></div>
+    <div class="arrow-down arrow-down-dark"></div>
 </div>
+
 </div>
