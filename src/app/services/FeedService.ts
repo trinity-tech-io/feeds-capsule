@@ -4006,6 +4006,7 @@ export class FeedService {
   }
 
   getNotificationList(){
+    notificationList.sort((a, b) => Number(b.time) - Number(a.time));
     return notificationList;
   }
 }
