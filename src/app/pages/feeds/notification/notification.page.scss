@@ -2,3 +2,41 @@
     width: 100%;
     margin-top: calc(50% + 64px);
 }
+
+.darkContainer{
+    .channel-title-div .white{
+            color: #ffffff;
+    }
+
+    .channel-desc-div .white{
+        color: #ffffff;
+    }
+
+    .channel-detail-div .channel-detail-text-div .white{
+        color: #ffffff;
+    }
+
+    .channel-post-div .white{
+        color: #ffffff;
+    }
+
+    .white{
+        color: #ffffff;
+    }
+
+    .white-line{
+        background-color: rgba(45, 46, 77, 0.7);;
+    }
+}
+
+.notification-contnent{
+    font-family: MontserratMedium;
+    font-size: 14px;
+    font-weight: normal;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: 2.43;
+    letter-spacing: 0.7px;
+    text-align: left;
+    color: #008cff;
+}

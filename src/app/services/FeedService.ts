@@ -418,6 +418,68 @@ export class FeedService {
       //   feedsUrl          : "feeds://did:elastos:ijwMzR44CjUjWEHcXSZSW3EPoBJGbKRThH/FjT35Tj9zZK6nQGhE2BVNJja9oa5hqMtiSvQBpxj9u19qsMcd3Ww"
       // }
       // this.storeService.set(PersistenceKey.bindingServer,bindingServer);
+
+
+      // let notification: Notification = {
+      //   userName: "Name111",
+      //   behavior: Behavior.comment,
+      //   behaviorText: "1111111111111111111111",
+      //   details: {
+      //     nodeId: "",
+      //     channelId: 0,
+      //     postId: 0,
+      //     commentId: 0,
+      //     commentFromCommentId: 0,
+      //   },
+      //   time: this.getCurrentTimeNum()
+      // }
+
+      // let notification2: Notification = {
+      //   userName: "Name111",
+      //   behavior: Behavior.like,
+      //   behaviorText: "2222222222222222",
+      //   details: {
+      //     nodeId: "",
+      //     channelId: 0,
+      //     postId: 0,
+      //     commentId: 0,
+      //     commentFromCommentId: 0,
+      //   },
+      //   time: this.getCurrentTimeNum()
+      // }
+
+      // let notification3: Notification = {
+      //   userName: "Name111",
+      //   behavior: Behavior.post,
+      //   behaviorText: "333333333333333",
+      //   details: {
+      //     nodeId: "",
+      //     channelId: 0,
+      //     postId: 0,
+      //     commentId: 0,
+      //     commentFromCommentId: 0,
+      //   },
+      //   time: this.getCurrentTimeNum()
+      // }
+
+      // let notification4: Notification = {
+      //   userName: "Name111",
+      //   behavior: Behavior.subscription,
+      //   behaviorText: "444444444444444444",
+      //   details: {
+      //     nodeId: "",
+      //     channelId: 0,
+      //     postId: 0,
+      //     commentId: 0,
+      //     commentFromCommentId: 0,
+      //   },
+      //   time: this.getCurrentTimeNum()
+      // }
+
+      // notificationList.push(notification);
+      // notificationList.push(notification2);
+      // notificationList.push(notification3);
+      // notificationList.push(notification4);
   }
   initData(){
     
@@ -534,6 +596,9 @@ export class FeedService {
     notificationList = this.storeService.get(PersistenceKey.notificationList);
     if (notificationList == null || notificationList == undefined)
       notificationList = [];
+
+
+    // this.initTestData();
   }
 
   initCallback(){
