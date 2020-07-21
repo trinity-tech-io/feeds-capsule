@@ -108,7 +108,7 @@ export class AddServerPage implements OnInit {
       this.address.startsWith('feeds://') && 
       this.address.indexOf("did:elastos:")
     ){
-      this.router.navigate(['/menu/servers/server-info', this.address,""]);
+      this.router.navigate(['/menu/servers/server-info', this.address, "", false]);
     }else{
       alert(this.translate.instant('AddServerPage.tipMsg'));
     }

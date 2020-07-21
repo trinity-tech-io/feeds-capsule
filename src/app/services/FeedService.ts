@@ -3668,6 +3668,7 @@ export class FeedService {
         nodeId            : nodeId,
         feedsUrl          : feedUrl
       }
+
       this.handleImportDID(feedUrl, defaultServer, (server)=>{
           bindingServerCache = {
             name              : server.name,
@@ -3676,7 +3677,7 @@ export class FeedService {
             did               : server.did,
             carrierAddress    : server.carrierAddress,
             nodeId            : server.nodeId,
-            feedsUrl          : feedUrl
+            feedsUrl          : server.feedsUrl
           }
           eventBus.publish("feeds:resolveDidSucess", nodeId, did);
       },(err)=>{
@@ -3718,7 +3719,7 @@ export class FeedService {
           did               : server.did,
           carrierAddress    : server.carrierAddress,
           nodeId            : server.nodeId,
-          feedsUrl          : feedUrl
+          feedsUrl          : server.feedsUrl
         }
 
         eventBus.publish("feeds:resolveDidSucess", nodeId, did);
@@ -3736,57 +3737,22 @@ export class FeedService {
   }
 
   handleIssueCredentialResponse(nodeId: string, result: any){
-    let feedUrl = "feeds://"+bindingServerCache.did;
-    this.handleImportDID(feedUrl, bindingServerCache, (server)=>{
-        bindingServer = {
-          name              : server.name,
-          owner             : server.owner,
-          introduction      : server.introduction,
-          did               : server.did,
-          carrierAddress    : server.carrierAddress,
-          nodeId            : server.nodeId,
-          feedsUrl          : feedUrl
-        }
+    this.storeService.set(PersistenceKey.bindingServer,bindingServer);
+    this.addServer(bindingServer.carrierAddress,
+                  'Feeds/0.1',
+                  bindingServer.name,
+                  bindingServer.owner,
+                  bindingServer.introduction,
+                  bindingServer.did,
+                  bindingServer.feedsUrl,()=>{
 
-        this.storeService.set(PersistenceKey.bindingServer,bindingServer);
-        this.addServer(bindingServer.carrierAddress,
-                      'Feeds/0.1',
-                      bindingServer.name,
-                      bindingServer.owner,
-                      bindingServer.introduction,
-                      bindingServer.did,
-                      bindingServer.feedsUrl,()=>{
+                  },(error)=>{
 
-                      },(error)=>{
+                  });
+    eventBus.publish("feeds:issue_credential");
+    eventBus.publish("feeds:bindServerFinish",bindingServer);
 
-                      });
-        // this.resolveServer(bindingServer, ConnState.connected); // signin
-        eventBus.publish("feeds:issue_credential");
-        eventBus.publish("feeds:bindServerFinish",bindingServer);
-
-        this.doFriendConnection(nodeId, ConnState.connected);
-        // this.signinChallengeRequest(nodeId,true);
-    },(errserver)=>{
-      bindingServer = bindingServerCache;
-      this.storeService.set(PersistenceKey.bindingServer,bindingServer);
-      // this.resolveServer(bindingServer, ConnState.connected);
-
-      this.addServer(bindingServer.carrierAddress,
-        'Feeds/0.1',
-        bindingServer.name,
-        bindingServer.owner,
-        bindingServer.introduction,
-        bindingServer.did,
-        bindingServer.feedsUrl,()=>{
-
-        },(error)=>{
-
-        });
-
-        eventBus.publish("feeds:issue_credential");
-        eventBus.publish("feeds:bindServerFinish",bindingServer);
-        this.doFriendConnection(nodeId, ConnState.connected);
-    });
+    this.doFriendConnection(nodeId, ConnState.connected);
   }
 
   

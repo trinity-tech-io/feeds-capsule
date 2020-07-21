@@ -28,7 +28,7 @@ export class AppService {
 
     scanAddress() {
         appManager.sendIntent("scanqrcode", {}, {}, (res) => {
-            this.router.navigate(['/menu/servers/server-info', res.result.scannedContent,""]);
+            this.router.navigate(['/menu/servers/server-info', res.result.scannedContent, "", false]);
             // this.router.navigate(['/menu/servers/add-server',res.result.scannedContent]);
         }, (err: any) => {
             console.error(err);
