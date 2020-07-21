@@ -219,7 +219,7 @@ export const zh = {
     "addimg":"添加图片",
     "post":"帖子",
     "des":"在此处输入记录...",
-    "addingPost":"新增文章",
+    "addingPost":"新建文章",
     "tipMsg":"请输入信息！",
     "tipMsg1":"发布成功！",
   },

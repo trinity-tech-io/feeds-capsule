@@ -21,7 +21,7 @@ export class ProfiledetailPage implements OnInit {
   private email = "";
   private location = "";
   private ownChannelSourceDid = "";
-  private subscribers = 0;
+
 
   constructor(
     private native: NativeService,

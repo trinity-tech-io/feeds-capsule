@@ -38,4 +38,8 @@ export class PostfromComponent implements OnInit {
   parseAvatar(avatar: string): string{
     return this.feedService.parseChannelAvatar(avatar);
   }
+
+  handleClientNumber(nodeId){
+    return this.feedService.getServerStatisticsNumber(nodeId);
+  }
 }

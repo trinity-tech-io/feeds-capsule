@@ -75,4 +75,9 @@ export class MyfeedsComponent implements OnInit {
   menuMore(nodeId: string , channelId: number, channelName: string){
     this.menuService.showShareMenu(nodeId, channelId, channelName);
   }
+
+  handleClientNumber(nodeId){
+    return this.feedService.getServerStatisticsNumber(nodeId);
+  }
 }
+

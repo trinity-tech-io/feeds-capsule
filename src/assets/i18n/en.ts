@@ -219,7 +219,7 @@ export const en = {
     "addimg":"Add img",
     "post":"Post",
     "des":"Enter any notes here...",
-    "addingPost":"Adding Post",
+    "addingPost":"New Post",
     "tipMsg":"Please input message!",
     "tipMsg1":"Publish post success!",
   },
