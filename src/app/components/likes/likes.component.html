@@ -15,19 +15,19 @@
     </div> 
   </div>
 
-  <div *ngFor="let post of likeList" [class.darkContainer]="theme.darkMode">
-    <div style="margin-left: 10px; margin-top: 6px; margin-bottom: 10px; margin-right: 25px;" >
+  <div *ngFor="let post of likeList let i=index" [class.darkContainer]="theme.darkMode">
+    <div class="image-text-layout-div" >
       <ion-card-content class="ion-no-padding ion-no-margin">
-        <div style="float: right; " (click)="menuMore(post.nodeId, post.channel_id)">
+        <div class="menu-div" (click)="menuMore(post.nodeId, post.channel_id)">
             <img  src="assets/images/dots-three-vertical.svg">
         </div>
-        <div style="display: flex; margin-top: 13px; margin-left: 13px; margin-right: 12px;" (click)="navTo(post.nodeId, post.channel_id)">
-            <ion-avatar style="width: 56px; height: 56px;">
+        <div class="image-text-div" (click)="navTo(post.nodeId, post.channel_id)">
+            <ion-avatar class="avatar-div">
               <img  src={{parseAvatar(post.nodeId,post.channel_id)}}>
             </ion-avatar>
 
-            <div style="margin-left: 12px;">
-              <div style="margin-top: 4px;"> 
+            <div class="text-div">
+              <div class="text1-div"> 
                 <ion-label class="channel-title-small white">{{getChannel(post.nodeId, post.channel_id).name}}</ion-label>
                 <ion-label class="channel-ts"> - {{handleDisplayTime(post.created_at)}}</ion-label>
               </div>
@@ -57,7 +57,7 @@
         </div>
       </ion-card-content>
     </div>
-    <div class="line-div white-line"></div>
+    <div class="line-div white-line" *ngIf="i!=likeList.length-1"></div>
   </div>
 </div>
 

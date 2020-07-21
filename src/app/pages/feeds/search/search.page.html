@@ -1,9 +1,5 @@
 <ion-content [class.darkContainer]="theme.darkMode">
-
-
-
   <ion-searchbar placeholder="{{'SearchPage.searchFeeds'|translate}}" (ionInput)="getItems($event)"></ion-searchbar>
-
   <div *ngIf="channelList.length == 0">
     <div class="center-content" >
       <div style="text-align: center; ">
@@ -24,44 +20,13 @@
     </ion-refresher-content>
   </ion-refresher>
 
-  <div *ngFor="let channel of channelList" >
-    <!-- <div class="channel-img-small-div" >
-      <img class="channel-img-small" src="../../../../assets/images/component-480-47.png">
-    
-      <div class="channel-detail-div">
-        <div class="channel-detail-text-div">
-          <div style="height: 100%; vertical-align: middle;"> 
-            <ion-label class="channel-title-small">{{channel.name}}</ion-label>
-            <ion-label class="channel-ts"></ion-label>
-            <div class="follow-div" (click)="subscribe(channel.nodeId, channel.id)" *ngIf="!channel.isSubscribed">
-              <div>
-                <div class="follow-text-div"> Follow</div>
-              </div>
-            </div>
-
-            <div class="follow-following-div" (click)="unsubscribe(channel.nodeId, channel.name, channel.id)" *ngIf="channel.isSubscribed">
-              <div>
-                <div class="follow-following-text-div"> Following</div>
-              </div>
-            </div>
-          </div>
-          <div >
-            <img src="../../../../assets/images/bubble2.svg" class="bubble">
-            <ion-label class="channel-follower2">{{channel.subscribers}} follower</ion-label>
-            
-          </div>
-    
-        </div>
-      </div>
-    </div> -->
-
+  <div *ngFor="let channel of channelList let i=index" >
       <ion-grid>
         <ion-row>
           <ion-col  
             (click)="navTo(channel.nodeId, channel.id)"
             size="2.25"
             size-lg="2.25"
-
           >
             <!-- <img-loader [src]="getAppIcon(app)" useImg></img-loader> -->
             <div class="channel-img-small">
@@ -77,8 +42,15 @@
             size-xs="6"
             class="node-content"
           >
-            <ion-label>
-              <div style="  width: 174px;
+            <div >
+
+              <div style="
+              width:150px;
+              overflow: hidden;
+              white-space: nowrap;
+              text-overflow: ellipsis;
+              display:inline-block;
+
               height: 20px;
               font-family: Montserrat;
               font-size: 17px;
@@ -88,6 +60,7 @@
               line-height: 1.18;
               letter-spacing: normal;
               text-align: left;" class="black white"> {{channel.name}} </div>
+
               <!-- <ion-label style="display: flex;">  -->
               <!-- <ion-item class="ion-no-margin ion-no-padding" lines="none">
                 <img src="../../../../assets/images/bubble2.svg" class="bubble">
@@ -116,7 +89,7 @@
                 color: #a0a2c4;">{{channel.subscribers}} {{'common.followers'|translate}}</div>
               </div>
               
-            </ion-label>
+            </div>
 
           </ion-col>
           <ion-col size="3.75" size-xs="3.75" class="btn-container">
@@ -131,60 +104,7 @@
         </ion-row>
       </ion-grid>
       
-    <div class="line-div white-line"></div>
+    <div class="line-div white-line"  *ngIf="i!=channelList.length-1"></div>
 
   </div>
-
-  
-  <!-- <ion-list>
-    <ion-item  *ngFor="let channel of channelList" >
-      <ion-grid  >
-        <ion-row>
-          <ion-col size="2" style="margin-top: 10px;" (click)="navigateToDetailPage(channel.nodeId, channel.name, channel.id)">
-            <ion-icon name="paper" ></ion-icon>
-          </ion-col>
-          <ion-col size="6" (click)="navigateToDetailPage(channel.nodeId, channel.name, channel.id)">
-            <ion-label style="font-size: 20px;" ><b>{{channel.name}}</b></ion-label>
-
-          </ion-col >
-
-          <ion-col size="4" >
-          <ion-button style="text-transform: none;" color="primary" (click)="subscribe(channel.nodeId, channel.id)" *ngIf="!channel.isSubscribed">Subscribe </ion-button>
-          <ion-button style="text-transform: none;" color="danger" (click)="unsubscribe(channel.nodeId, channel.name, channel.id)" *ngIf="channel.isSubscribed">Subscribed</ion-button>
-          </ion-col>
-        </ion-row>
-        <ion-row (click)="navigateToDetailPage(channel.nodeId, channel.name, channel.id)">
-          <ion-col size="2">
-          </ion-col>
-
-          <ion-col size="6">
-            <ion-label style="font-size: 13px;"><b>{{channel.owner_name}}</b></ion-label>
-          </ion-col> 
-          <ion-col  size="1" ></ion-col>
-          <ion-col  size="3" >
-            <ion-row >
-              <ion-icon name="person" ></ion-icon>
-              <ion-label >{{channel.subscribers}}</ion-label>
-            </ion-row>
-          </ion-col>
-        </ion-row>
-          <ion-row (click)="navigateToDetailPage(channel.nodeId, channel.name, channel.id)">
-          <div style="margin-top: 10px;">
-            <ion-label>
-              <p>
-                {{channel.introduction}}
-              </p>
-            </ion-label>
-          </div>
-        </ion-row>
-        
-      </ion-grid>
-    </ion-item>
-    </ion-list>
-    <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event)">
-      <ion-infinite-scroll-content
-        loadingSpinner="bubbles"
-        loadingText="Loading more data...">
-      </ion-infinite-scroll-content>
-    </ion-infinite-scroll> -->
 </ion-content>
