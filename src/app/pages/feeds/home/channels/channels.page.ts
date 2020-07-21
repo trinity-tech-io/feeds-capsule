@@ -57,7 +57,8 @@ export class ChannelsPage implements OnInit {
       // this.channelOwner = channel.owner_name;
       this.channelOwner = this.feedService.indexText(channel.owner_name,25,25);
       this.channelDesc = channel.introduction;
-      this.channelSubscribes = channel.subscribers;
+      //this.channelSubscribes = channel.subscribers;
+      this.channelSubscribes = this.feedService.getServerStatisticsNumber(channel.nodeId);
       this.channelAvatar = this.feedService.parseChannelAvatar(channel.avatar);
 
       this.postList = this.feedService.getPostListFromChannel(this.nodeId, this.channelId);
