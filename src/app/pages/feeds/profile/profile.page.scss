@@ -1,25 +1,63 @@
-ion-slides {
-    padding-top:10px;
 
-    ion-label {
-        margin: 16px 0 12px;
-        font-size: 13px;
-        font-weight: 500;
-        color: #959595;
+
+  /********** Tabs *********/
+  .tab-container {
+    margin: 25px 20px;
+    border-radius: 19px;
+    background: #f0f1ff;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+
+    .left-tab, .middle-tab, .right-tab {
+        padding: 12px 6px;
+        width: 47%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        span {
+            margin-left: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 1.05px;
+            text-align: center;
+            color: #8888b0;
+        }
+
+        img {
+            width: 19px;
+            height: 19px;
+        }
     }
 
-    .highlight {
-        padding-bottom: 10px;
-        border-bottom: 1px solid #007AFF;
+    .right-tab {
+        width: 53%;
+    }
 
-        ion-label {
-            color: #007AFF !important;
+    .tab-active {
+        background: #565bdb;
+        border-radius: 19px;
+        transform: scale(1.1);
+        span {
+            color: #ffffff;
         }
     }
 }
 
 
 .darkContainer{
+
+    .tab-container {
+        background-color: #2e2f4e;
+
+        .left-tab, .middle-tab, .right-tab {
+            span{
+               color:#cfd1f7;
+            }
+        }
+    }
+
     .channel-title-div .channel-title{
         font-size: 26px;
         font-weight: bold;

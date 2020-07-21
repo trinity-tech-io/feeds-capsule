@@ -7,7 +7,6 @@ import { ThemeService } from 'src/app/services/theme.service';
   styleUrls: ['./profile.page.scss'],
 })
 export class ProfilePage implements OnInit {
-  private types = ["ProfilePage.myFeeds","ProfilePage.following","ProfilePage.myLikes"];
   private selectType: String = "ProfilePage.myFeeds"; 
   private description: String = "";
   private name: string = "";
@@ -31,7 +30,7 @@ export class ProfilePage implements OnInit {
   ngOnInit() {
   }
 
-  changeType(type){
+  changeType(type:string){
     this.selectType = type;
   }
 

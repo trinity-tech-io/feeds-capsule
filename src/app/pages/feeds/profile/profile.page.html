@@ -20,20 +20,19 @@
     <ion-label class="channel-desc white">{{description}} </ion-label>
   </div>
 
+<div class="tab-container">
+    <div class="left-tab" [class.tab-active]="selectType === 'ProfilePage.myFeeds'" (click)="changeType('ProfilePage.myFeeds')">
+        <span>{{ 'ProfilePage.myFeeds' | translate }}</span>
+    </div>
+    <div class="middle-tab" [class.tab-active]="selectType === 'ProfilePage.following'" (click)="changeType('ProfilePage.following')">
+      <span>{{ 'ProfilePage.following' | translate }}</span>
+    </div>
+    <div class="right-tab" [class.tab-active]="selectType === 'ProfilePage.myLikes'" (click)="changeType('ProfilePage.myLikes')">
+        <span>{{'ProfilePage.myLikes' | translate }}</span>
+    </div>
+</div>
 
-  <ion-slides [options]="slideOpts">
-    <ion-slide
-      *ngFor="let type of types"
-      (click)="changeType(type)"
-      >
-      <div [class.highlight]="selectType === type">
-        <ion-label class="tab-text">
-          {{type | translate}}
-        </ion-label>
-      </div>
 
-    </ion-slide>
-  </ion-slides>
 
   <!-- <app-details *ngIf="selectType == 'Details'"></app-details> -->
   <app-myfeeds *ngIf="selectType == 'ProfilePage.myFeeds'"></app-myfeeds>
