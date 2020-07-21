@@ -5,12 +5,12 @@ export const en = {
     "pullToRefresh":"Pull to refresh",
     "refreshing":"Refreshing...",
     "cancel":"Cancel",
-    "ok":'Ok',
+    "ok":'OK',
     "confirm":"Confirm!",
     "des":"Clear <strong>all cached data</strong>!!!",
     "prompt":"Prompt",
     "des1":"Confirm new topic?<br>server:",
-    "channel:":"channel:",
+    "channel":"channel:",
     "description":"description:",
     "pleaseInput":"Please input ",
     "feeds":"feeds",
@@ -27,12 +27,12 @@ export const en = {
     "develop":"Develop",
   },
   "SigninPage":{
-    "signIn":"sign In"
+    "signIn":"Sign In"
   },
   "FeedsPage":{
     "tabTitle1":'My Feeds Timeline',
     "tabTitle2":'My Profile',
-    "tabTitle3":"Notification",
+    "tabTitle3":"Notifications",
     "tabTitle4":"Explore Feeds"
   },
   "HomePage":{
@@ -109,7 +109,7 @@ export const en = {
   },
   "DevelopPage":{
     "develop":"Develop",
-    "clearAllData":"Clear all data"
+    "clearAllData":"Clear All Data"
   },
   "SettingPage":{
     "setting":"Setting",
@@ -161,40 +161,40 @@ export const en = {
     "serverInfo":"Server Info",
   },
   "ScanqrcodePage":{
-    "bindingServer":"Binding server",
+    "bindingServer":"Binding Server",
     "des":"You have to pair (or binding) a feeds service first, then you can create channel with your interested topic, and therefore you can post a message on that channel",
     "scanServiceQRcode":"Scan service QRcode",
-    "abort":"abort",
+    "abort":"Abort",
   },
   "StartbindingPage":{
-    "bindingServer":"Binding server",
-     'des':'Your are going to biding a feeds service, please check the verifying code whether it is same one on browser from feeds service.',
+    "bindingServer":"Binding Server",
+     'des':'Your are going to binding a feeds service, please check the verifying code whether it is same one on browser from feeds service.',
      "confirm":"Confirm",
-     "abort":"abort",
+     "abort":"Abort",
   },
   "PublishdidPage":{
-    "bindingServer":"Binding server",
+    "bindingServer":"Binding Server",
     "payload":"payload is",
     "publishonDIDsidechain":"Publish on DID side chain",
-    "abort":"abort",
+    "abort":"Abort",
   },
   "FinishPage":{
-    "bindingServer":"Binding server",
+    "bindingServer":"Binding Server",
     "des":" Congratulation, the binding process come into the end with success.",
     "finish":"Finish"
   },
   "IssuecredentialPage":{
-    "bindingServer":"Binding server",
+    "bindingServer":"Binding Server",
     "des1":"Your DID document of feeds service has been published to DID sidechain",
     "des2":"Next step is to issue credential to DID of feed service.",
     "issueacredential":"Issue a credential",
-    "abort":"abort",
+    "abort":"Abort",
     "serverInfo":"Server info",
     "serverName":"Server name",
     "serverDes":"Server description",
   },
   "ImportdidPage":{
-    "bindingServer":"Binding server",
+    "bindingServer":"Binding Server",
     "des":"You have to ask feeds service to create a new DID or import a DID with mnemonics.",
     "createanewDID":"Create a new DID",
     "importanexistDID":"Import an exist DID",
@@ -210,14 +210,14 @@ export const en = {
     "tipMsg1":"Please input passphrase!",
     "tipMsg2":"Please input index!",
     "alert":"Alert",
-    "ok":"Ok"
+    "ok":"OK"
   },
   "PostfromComponent":{
     "des":"Choose one of your Feeds to post from"
   },
   "CreatenewpostPage":{
-    "addimg":"add img",
-    "post":"post",
+    "addimg":"Add img",
+    "post":"Post",
     "des":"Enter any notes here...",
     "addingPost":"Adding Post",
     "tipMsg":"Please input message!",
