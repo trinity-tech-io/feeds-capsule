@@ -2606,7 +2606,7 @@ export class FeedService {
     let notification:Notification = {
       userName: this.translate.instant("notification.system"),
       behavior: Behavior.post,
-      behaviorText: this.translate.instant("recivenewpostfromfeed")+"'"+this.getChannelFromId(nodeId, channel_id).name+"'",
+      behaviorText: this.translate.instant("notification.recivenewpostfromfeed")+"'"+this.getChannelFromId(nodeId, channel_id).name+"'",
       details: {
         nodeId: nodeId,
         channelId: channel_id,
@@ -2667,7 +2667,7 @@ export class FeedService {
     let notification:Notification = {
       userName: user_name,
       behavior: Behavior.comment,
-      behaviorText: this.translate.instant("commentyourpost"),
+      behaviorText: this.translate.instant("notification.commentyourpost"),
       details: {
         nodeId: nodeId,
         channelId:channel_id,
@@ -2710,7 +2710,7 @@ export class FeedService {
     let notification:Notification = {
       userName: user_name,
       behavior: Behavior.like,
-      behaviorText: this.translate.instant("likeyourpost"),
+      behaviorText: this.translate.instant("notification.likeyourpost"),
       details: {
         nodeId: nodeId,
         channelId:channel_id,
@@ -2732,7 +2732,7 @@ export class FeedService {
     let notification:Notification = {
       userName: user_name,
       behavior: Behavior.subscription,
-      behaviorText: this.translate.instant("subscribeyourfeed"),
+      behaviorText: this.translate.instant("notification.subscribeyourfeed"),
       details: {
         nodeId: nodeId,
         channelId:channel_id,
