@@ -27,7 +27,8 @@ export const fr = {
         "develop":"Develop"
     },
     "SigninPage":{
-        "signIn":"Sign In"
+        "signIn":"Sign In",
+        "Pleasewait": "Please wait..."
     },
     "FeedsPage":{
         "tabTitle1":"My Feeds Timeline",
@@ -91,7 +92,8 @@ export const fr = {
         "tipMsgLength":"The description field length needs to be greater than 32",
         "inputName":"INPUT NAME",
         "inputFeedDesc":"INPUT DESCRIPTION(AT LEAST 32 CHAR)",
-        "channelSourceDes":"WHERE TO STORE YOUR FEED"
+        "channelSourceDes":"WHERE TO STORE YOUR FEED",
+        "createfeedsuccess": "Create feed success!"
     },
     "ProfileimagePage":{
         "title":"Profile Image",
@@ -142,7 +144,12 @@ export const fr = {
         "sourceaddresshere":"Source address here",
         "tipMsg":"Feed url maybe error.",
         "exploreFeedSources":"Explore Feed Sources",
-        "title":"Add Feed Source"
+        "title":"Add Feed Source",
+        "serverMsg1": "server :\n",
+        "serverMsg2": "\noffline!",
+        "Serveralreadyadded": "Server already added!",
+        "Addserversuccess": "Add server success!",
+        "Signinsuccess": "Sign in success!"
     },
     "ServerInfoPage":{
         "title":"Feed Source Details",
@@ -159,6 +166,14 @@ export const fr = {
         "deleteFeedSource":"Delete Feed Source",
         "feedUrl":"FEED-URL",
         "serverInfo":"Server Info",
+        "Pleasewait": "Please wait...",
+        "Feedurlmaybeerror": "Feed url maybe error.",
+        "DeletethisFeedSource": "Delete this Feed Source?",
+        "cancel": "Cancel",
+        "DeleteFeedSource": "Delete Feed Source!",
+        "RemovethisFeedSource": "Remove this Feed Source?",
+        "RemoveFeedSource": "Remove Feed Source!",
+        "removeserver": "Service removed"
     },
     "ScanqrcodePage":{
         "bindingServer":"Binding Server",
@@ -171,6 +186,7 @@ export const fr = {
         "des":"Your are going to binding a feeds service, please check the verifying code whether it is same one on browser from feeds service.",
         "confirm":"Confirm",
         "abort":"Abort",
+        "Connectingserver": "Connecting server"
     },
     "PublishdidPage":{
         "bindingServer":"Binding Server",
@@ -231,7 +247,7 @@ export const fr = {
         "system": "System",
         "recivenewpostfromfeed": "Recive new Post from Feed ",
         "commentyourpost": "Comment your post",
-        "subscribeyourfeed": "Subscribe your feed",
+        "subscribeyourfeed": "Subscribe your feed ",
         "likeyourpost": "like your post",
     }
 };

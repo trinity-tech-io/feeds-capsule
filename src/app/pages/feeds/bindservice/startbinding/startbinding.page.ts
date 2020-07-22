@@ -32,11 +32,11 @@ export class StartbindingPage implements OnInit {
       this.nodeId = data.nodeId;
       if (data.nonce!="")
         this.nonce = data.nonce ;
-      else this.nonce = this.feedService.generateNonce();  
+      else this.nonce = this.feedService.generateNonce();
 
       this.carrierAddress = data.address;
       if(this.feedService.getFriendConnection(this.nodeId) == 1)
-        this.native.showLoading("Connecting server");
+        this.native.showLoading(this.translate.instant("StartbindingPage.Connectingserver"));
     });
 
     this.events.subscribe('feeds:owner_declared', (nodeId, phase, did, payload) => {

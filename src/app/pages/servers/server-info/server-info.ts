@@ -72,8 +72,8 @@ export class ServerInfoPage implements OnInit {
           let server:any ;
           let bindingServer = this.feedService.getBindingServer();
           this.nodeId = data.nodeId;
-          if (bindingServer != null && 
-            bindingServer !=undefined && 
+          if (bindingServer != null &&
+            bindingServer !=undefined &&
             this.nodeId == bindingServer.nodeId){
             server = this.feedService.getBindingServer();
 
@@ -85,18 +85,18 @@ export class ServerInfoPage implements OnInit {
 
           this.serverStatus = this.feedService.getServerStatusFromId(this.nodeId);
           this.clientNumber = this.feedService.getServerStatisticsNumber(this.nodeId);
-    
+
           if (server == undefined){
             return ;
           }
-    
+
           this.didString = server.did;
           this.name = server.name;
           this.owner = server.owner;
           this.introduction = server.introduction;
           this.feedsUrl = server.feedsUrl;
         }
-          
+
     });
   }
 
@@ -124,7 +124,7 @@ export class ServerInfoPage implements OnInit {
 
   async presentLoading() {
     const loading = await this.loadingController.create({
-      message: 'Please wait...',
+      message: this.translate.instant("ServerInfoPage.Pleasewait"),
       duration: 2000
     });
     await loading.present();
@@ -134,11 +134,11 @@ export class ServerInfoPage implements OnInit {
 
   queryServer(){
     if (this.address.length > 53&&
-      this.address.startsWith('feeds://') && 
+      this.address.startsWith('feeds://') &&
       this.address.indexOf("did:elastos:")
     ) this.resolveDid();
     else{
-      alert("Feed url maybe error.")
+      alert(this.translate.instant("ServerInfoPage.Feedurlmaybeerror"));
     }
 
   }
@@ -164,7 +164,7 @@ export class ServerInfoPage implements OnInit {
 
   addFeedSource() {
     this.feedService.addServer(this.carrierAddress,this.friendRequest,
-      this.name, this.owner, this.introduction, 
+      this.name, this.owner, this.introduction,
       this.didString, this.feedsUrl, ()=>{
         this.native.pop();
       },(err)=>{
@@ -175,38 +175,38 @@ export class ServerInfoPage implements OnInit {
   async deleteFeedSource(){
     const actionSheet = await this.actionSheetController.create({
       buttons: [{
-        text: 'Delete this Feed Source?',
+        text: this.translate.instant("ServerInfoPage.DeletethisFeedSource"),
         icon: 'trash',
         handler: () => {
           this.feedService.deleteFeedSource(this.nodeId);
         }
       },{
-        text: 'Cancel',
+        text: this.translate.instant("ServerInfoPage.cancel"),
         icon: 'close',
         handler: () => {
         }
       }]
     });
     await actionSheet.present();
-    
+
   }
 
   async removeFeedSource(){
     const actionSheet = await this.actionSheetController.create({
       buttons: [{
-        text: 'Remove this Feed Source?',
+        text: this.translate.instant("ServerInfoPage.RemovethisFeedSource"),
         icon: 'trash',
         handler: () => {
           this.feedService.removeFeedSource(this.nodeId);
-          alert("remove server");
+          alert(this.translate.instant("ServerInfoPage.removeserver"));
         }
       },{
-        text: 'Cancel',
+        text: this.translate.instant("ServerInfoPage.cancel"),
         icon: 'close',
         handler: () => {
         }
       }]
     });
-    await actionSheet.present(); 
+    await actionSheet.present();
   }
 }

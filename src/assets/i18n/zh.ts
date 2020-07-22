@@ -27,7 +27,8 @@ export const zh = {
         "develop":"开发"
     },
     "SigninPage":{
-        "signIn":"登录"
+        "signIn":"登录",
+        "Pleasewait": "请等待..."
     },
     "FeedsPage":{
         "tabTitle1":"我的时间轴",
@@ -91,7 +92,8 @@ export const zh = {
         "tipMsgLength":"描述信息长度要大于32",
         "inputName":"输入名称",
         "inputFeedDesc":"输入描述(至少32个字符)",
-        "channelSourceDes":"在哪里保存您的Feed"
+        "channelSourceDes":"在哪里保存您的Feed",
+        "createfeedsuccess": "创建Feed成功!"
     },
     "ProfileimagePage":{
         "title":"Feed头像",
@@ -142,7 +144,12 @@ export const zh = {
         "sourceaddresshere":"服务地址在这里",
         "tipMsg":"Feed网址可能错误",
         "exploreFeedSources":"探索Feed服务",
-        "title":"添加Feed服务"
+        "title":"添加Feed服务",
+        "serverMsg1": "服务 :\n",
+        "serverMsg2": "\n掉线!",
+        "Serveralreadyadded": "该服务已经添加过了!",
+        "Addserversuccess": "添加服务成功!",
+        "Signinsuccess": "登录成功!"
       },
     "ServerInfoPage":{
         "title":"Feed服务详情",
@@ -159,6 +166,14 @@ export const zh = {
         "deleteFeedSource":"删除Feed服务",
         "feedUrl":"Feed服务网址",
         "serverInfo":"服务信息",
+        "Pleasewait": "请稍等...",
+        "Feedurlmaybeerror": "Feed网址可能错误",
+        "DeletethisFeedSource": "删除这个Feed服务?",
+        "cancel": "取消",
+        "DeleteFeedSource": "删除Feed服务!",
+        "RemovethisFeedSource": "移除这个Feed服务?",
+        "RemoveFeedSource": "移除Feed服务!",
+        "removeserver": "已移除服务"
     },
     "ScanqrcodePage":{
         "bindingServer":"绑定服务",
@@ -171,6 +186,7 @@ export const zh = {
         "des":"您要绑定一个feeds服务，请检查验证码与feeds服务浏览器上的验证码是否相同。",
         "confirm":"确认",
         "abort":"中止",
+        "Connectingserver": "正在连接服务"
     },
     "PublishdidPage":{
         "bindingServer":"绑定服务",
@@ -231,7 +247,7 @@ export const zh = {
         "system": "系统",
         "recivenewpostfromfeed": "收到新帖子，来自Feed ",
         "commentyourpost": "给您的帖子发布评论",
-        "subscribeyourfeed": "订阅您的Feed",
+        "subscribeyourfeed": "订阅您的Feed ",
         "likeyourpost": "收藏了您的帖子",
     }
 };

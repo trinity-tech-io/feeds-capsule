@@ -3,6 +3,7 @@ import { NavController, Events, PopoverController } from '@ionic/angular';
 import { FeedService } from 'src/app/services/FeedService';
 import { PopupProvider } from 'src/app/services/popup';
 import { NativeService } from 'src/app/services/NativeService';
+import { TranslateService } from "@ngx-translate/core";
 import { ServerlistcomponentComponent } from '../../../components/serverlistcomponent/serverlistcomponent.component';
 
 
@@ -24,13 +25,14 @@ export class CreateFeedPage implements OnInit {
     private events: Events,
     private popup: PopupProvider,
     private popoverController: PopoverController,
-    private native: NativeService) {
+    private native: NativeService,
+    private translate: TranslateService) {
       // this.feedService.getCreationServerMap();
       this.connectStatus = this.feedService.getConnectionStatus();
-      
+
       this.events.subscribe('feeds:createTopicSuccess', () => {
         this.navigateBack();
-        this.native.toast("Create topic success!");
+        this.native.toast(this.translate.instant("CreatenewfeedPage.createfeedsuccess"));
       });
       this.events.subscribe('feeds:connectionChanged', connectionStatus => {
         this.zone.run(() => {
@@ -52,11 +54,11 @@ export class CreateFeedPage implements OnInit {
                             +"channel:"+name.value+"<br>"+"description:"+desc.value,
                             "ok","cancel").then((data)=>{
                               if (data) {
-                                
+
                                 this.feedService.createTopic(this.selectedServer.nodeId, name.value, desc.value, null);
                               }
                             });
-    
+
   }
 
   navigateBack() {
@@ -82,7 +84,7 @@ export class CreateFeedPage implements OnInit {
         this.buttonText = "Change channel source";
         this.selectedServer = result.data;
       })
-      
+
     });
     return await popover.present();
   }
@@ -92,5 +94,5 @@ export class CreateFeedPage implements OnInit {
 
   changeChannelSource(){
   }
-  
+
 }

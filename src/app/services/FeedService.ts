@@ -881,7 +881,7 @@ export class FeedService {
 
   sendRPCMessage(nodeId: string, method: string, params: any){
     if(!this.checkServerConnection(nodeId)){
-      this.native.toast("server :\n"+nodeId +"\noffline!");
+      this.native.toast(this.translate.instant("AddServerPage.serverMsg1") + nodeId + this.translate.instant("AddServerPage.serverMsg2"));
       return;
     }
     this.jsonRPCService.request(
@@ -1058,9 +1058,9 @@ export class FeedService {
       serverMap = {}
 
     if (serverMap[server.nodeId] != undefined){
-      this.native.toast("Server already added!");
+      this.native.toast(this.translate.instant("AddServerPage.Serveralreadyadded"));
     }else{
-      this.native.toast("Add server success!");
+      this.native.toast(this.translate.instant("AddServerPage.Addserversuccess"));
     }
 
     // if (server != bindingServer)
@@ -2732,7 +2732,7 @@ export class FeedService {
     let notification:Notification = {
       userName: user_name,
       behavior: Behavior.subscription,
-      behaviorText: this.translate.instant("notification.subscribeyourfeed"),
+      behaviorText: this.translate.instant("notification.subscribeyourfeed") + "'" + this.getChannelFromId(nodeId, channel_id).name + "'",
       details: {
         nodeId: nodeId,
         channelId:channel_id,
@@ -3581,7 +3581,7 @@ export class FeedService {
     this.prepare(nodeId);
 
     eventBus.publish("feeds:login_finish", nodeId);
-    this.native.toast("Sign in success!");
+    this.native.toast(this.translate.instant("AddServerPage.Signinsuccess"));
   }
 
   declareOwnerRequest(nodeId: string, carrierAddress: string){
@@ -3934,11 +3934,11 @@ export class FeedService {
   }
 
   deleteFeedSource(nodeID: string){
-    alert("Delete Feed Source!");
+    alert(this.translate.instant("ServerInfoPage.DeleteFeedSource"));
   }
 
   removeFeedSource(nodeID: string){
-    alert("Remove Feed Source!");
+    alert(this.translate.instant("ServerInfoPage.RemoveFeedSource"));
   }
 
   removeLike(node: string, channelId: number, postId: number, commentId: number){

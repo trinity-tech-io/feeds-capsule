@@ -37,9 +37,9 @@ export class CreatenewfeedPage implements OnInit {
       this.events.subscribe('feeds:createTopicSuccess', () => {
         // this.navigateBack();
         this.navCtrl.pop().then(()=>{
-          this.native.toast("Create topic success!");
+          this.native.toast(this.translate.instant("CreatenewfeedPage.createfeedsuccess"));
         })
-          
+
       });
 
       this.events.subscribe('feeds:selectavatar', (avatar)=>{
@@ -50,7 +50,7 @@ export class CreatenewfeedPage implements OnInit {
     }
 
   ngOnInit() {
- 
+
   }
 
   ionViewDidEnter() {
@@ -93,7 +93,7 @@ export class CreatenewfeedPage implements OnInit {
 
         this.selectedChannelSource = this.selectedServer.did;
       })
-      
+
     });
     return await popover.present();
   }
@@ -113,7 +113,7 @@ export class CreatenewfeedPage implements OnInit {
       alert(this.translate.instant("CreatenewfeedPage.tipMsgLength"));
       return ;
     }
-    
+
     if (this.channelAvatar == ""){
       alert(this.translate.instant("CreatenewfeedPage.tipMsg"));
       return ;

@@ -60,7 +60,7 @@ export class SigninPage implements OnInit {
               "faketelephone",
               "fakelocation",
               "fakedescription");
-      
+
       this.feedService.updateSignInDataExpTimeTo(this.feedService.getSignInData(),0);
       this.initApp();
       return;
@@ -71,7 +71,7 @@ export class SigninPage implements OnInit {
     });
     appManager.sendIntent("credaccess", {
       claims: {
-        name: true, 
+        name: true,
         email: {
           required: false,
           reason: "Maybe Feeds dapp need"
@@ -118,12 +118,12 @@ export class SigninPage implements OnInit {
         });
       }
     });
-    
+
   }
 
   async presentLoading() {
     const loading = await this.loadingController.create({
-      message: 'Please wait...',
+      message: this.translate.instant("SigninPage.Pleasewait"),
       duration: 2000
     });
     await loading.present();
@@ -160,5 +160,5 @@ export class SigninPage implements OnInit {
   saveData(did: string, name: string, email: string, telephone: string, location: string, description: string){
     this.feedService.saveSignInData(did,name,email,telephone,location, description);
   }
-  
+
 }
