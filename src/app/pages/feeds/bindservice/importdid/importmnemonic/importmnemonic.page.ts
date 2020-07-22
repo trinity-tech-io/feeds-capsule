@@ -55,11 +55,11 @@ export class ImportmnemonicPage implements OnInit {
   async alertError(msg: string) {
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',
-      header: this.translate.instant('mportmnemonicPage.alert'),
+      header: this.translate.instant('ImportmnemonicPage.alert'),
       message: msg,
       buttons: [
          {
-          text: this.translate.instant('mportmnemonicPage.ok'),
+          text: this.translate.instant('ImportmnemonicPage.ok'),
           handler: () => {
           }
         }

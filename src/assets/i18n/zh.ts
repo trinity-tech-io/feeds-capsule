@@ -217,7 +217,7 @@ export const zh = {
     },
     "CreatenewpostPage":{
         "addimg":"添加图片",
-        "post":"帖子",
+        "post":"发布",
         "des":"在此处输入...",
         "addingPost":"新建帖子",
         "tipMsg":"请输入内容！",
