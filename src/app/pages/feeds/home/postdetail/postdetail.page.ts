@@ -63,7 +63,6 @@ export class PostdetailPage implements OnInit {
         this.commentsNum = post.comments;
 
         this.commentList = this.feedService.getCommentList(this.nodeId, this.channelId, this.postId);
-        
       });
 
 

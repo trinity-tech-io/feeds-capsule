@@ -35,7 +35,7 @@
           <ion-label class="like-text" [ngClass]="{'like-s-text': checkMyLike()}" (click)="like(0)">{{likesNum}}</ion-label>
 
           <img src="../../../../../assets/images/bubble-line.svg" class="comment" (click)="showCommentPage($event)">
-          <ion-label class="comment-text" (click)="showCommentPage($event)">{{commentsNum}}</ion-label>
+          <ion-label class="comment-text white" (click)="showCommentPage($event)">{{commentsNum}}</ion-label>
 
           <ion-label class="post-detail-ts">{{handleDisplayTime(postTS)}}</ion-label>
         </div>
@@ -50,7 +50,7 @@
           <div class="channel-detail-text-div">
             <div style="height: 100%; vertical-align: middle;" > 
               <ion-label class="channel-title-small white">@{{indexText(comment.user_name)}}</ion-label>
-              <ion-label class="channel-ts">{{comment.create_at}}</ion-label>
+              <ion-label class="channel-ts">{{handleDisplayTime(comment.created_at)}}</ion-label>
               <ion-icon name="more" mode="ios" style="vertical-align: middle; float: right; "></ion-icon>
             </div>
   
@@ -59,7 +59,7 @@
             </div>
 
             <div class="channel-post-div" > 
-              <ion-label class="channel-post .white">{{comment.content}}</ion-label>
+              <ion-label class="channel-post white">{{comment.content}}</ion-label>
               
             </div>
   
