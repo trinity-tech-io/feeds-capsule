@@ -126,7 +126,7 @@ export const zh = {
     "ServersPage":{
         "feedSources":"Feed服务",
         "emptyDes":"没有Feed服务",
-        "exploreFeedSources":"探索Feed服务",
+        "addFeedSources":"添加Feed服务",
         "bindFeedSource":"绑定Feed服务",
         "myFeedSources":"我的Feed服务",
         "users":"用户",
@@ -162,7 +162,7 @@ export const zh = {
     },
     "ScanqrcodePage":{
         "bindingServer":"绑定服务",
-        "des":"您必须首先配对/绑定一个feeds服务，之后可以创建您所感兴趣的主题/频道，然后可以通过该频道发布消息",
+        "des":"您必须首先配对/绑定一个feeds服务，之后可以创建您所感兴趣的主题/频道，然后可以通过该频道来发帖",
         "scanServiceQRcode":"扫描服务二维码",
         "abort":"中止",
     },
@@ -228,8 +228,8 @@ export const zh = {
         "publishComment":"发布评论"
     },
     "notification": {
-        "system": "System",
-        "recivenewpostfromfeed": "收到了新帖子，来自Feed ",
+        "system": "系统",
+        "recivenewpostfromfeed": "收到新帖子，来自Feed ",
         "commentyourpost": "给您的帖子发布评论",
         "subscribeyourfeed": "订阅您的Feed",
         "likeyourpost": "收藏了您的帖子",

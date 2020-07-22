@@ -126,7 +126,7 @@ export const fr = {
     "ServersPage":{
         "feedSources":"Feed sources",
         "emptyDes":"No Feed Sources",
-        "exploreFeedSources":"Explore Feed Sources",
+        "addFeedSources":"Add Feed Sources",
         "bindFeedSource":"Bind Feed Source",
         "myFeedSources":"My Feed Sources",
         "users":"Users",
