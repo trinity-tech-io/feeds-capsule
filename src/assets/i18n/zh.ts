@@ -20,8 +20,8 @@ export const zh = {
         "share":"分享"
     },
     "app":{
-        "profileDetails":"资料详情",
-        "feedSources":"Feed来源",
+        "profileDetails":"个人档案",
+        "feedSources":"Feed服务",
         "settings":"设置",
         "about":"关于",
         "develop":"开发"
@@ -31,7 +31,7 @@ export const zh = {
     },
     "FeedsPage":{
         "tabTitle1":"我的时间轴",
-        "tabTitle2":"我的资料",
+        "tabTitle2":"我的档案",
         "tabTitle3":"通知",
         "tabTitle4":"探索Feeds"
     },
@@ -78,9 +78,9 @@ export const zh = {
     },
     "CreatenewfeedPage":{
         "createNewFeed":"创建新的Feed",
-        "profileImage":"个人资料图片",
+        "profileImage":"Feed头像",
         "des":"为Feed选择一张图片",
-        "channelSource":"Feed源",
+        "channelSource":"Feed服务",
         "name":"名称",
         "description":"描述",
         "createFeed":"创建Feed",
@@ -89,16 +89,16 @@ export const zh = {
         "tipMsg2":"请输入描述信息",
         "tipMsg3":"无效的参数",
         "tipMsgLength":"描述信息长度要大于32",
-        "inputField":"输入FIELD",
-        "inputFeedDesc":"输入FIELD描述(至少32个字符)",
+        "inputName":"输入名称",
+        "inputFeedDesc":"输入描述(至少32个字符)",
         "channelSourceDes":"在哪里保存您的Feed"
     },
     "ProfileimagePage":{
-        "title":"个人资料图片",
+        "title":"Feed头像",
         "comfirm":"确认"
     },
     "ProfiledetailPage":{
-        "profileDetails":"资料详情",
+        "profileDetails":"档案详情",
         "subscribers":"订阅者",
         "name":"名称",
         "did":"DID",
@@ -124,28 +124,28 @@ export const zh = {
         "postdetail":"帖子详情"
     },
     "ServersPage":{
-        "feedSources":"Feed源",
-        "emptyDes":"没有Feed源",
-        "exploreFeedSources":"探索Feed源",
-        "bindFeedSource":"绑定Feed源",
-        "myFeedSources":"我的Feed源",
+        "feedSources":"Feed服务",
+        "emptyDes":"没有Feed服务",
+        "exploreFeedSources":"探索Feed服务",
+        "bindFeedSource":"绑定Feed服务",
+        "myFeedSources":"我的Feed服务",
         "users":"用户",
-        "currentFeedSources":"目前的Feed源",
-        "addNewFeedSources":"添加新的Feed源",
-        "createNewFeedSource":"创建新的Feed源"
+        "currentFeedSources":"目前的Feed服务",
+        "addNewFeedSources":"添加新的Feed服务",
+        "createNewFeedSource":"创建新的Feed服务"
       },
     "AddServerPage":{
         "scanorEnterManual":"扫描或者输入",
-        "sourceAddress":"源地址",
+        "sourceAddress":"服务地址",
         "openQRScanner":"打开QR扫描仪",
         "confirm":"确认",
-        "sourceaddresshere":"源地址在这里",
+        "sourceaddresshere":"服务地址在这里",
         "tipMsg":"Feed网址可能错误",
-        "exploreFeedSources":"探索Feed源",
-        "title":"添加Feed源"
+        "exploreFeedSources":"探索Feed服务",
+        "title":"添加Feed服务"
       },
     "ServerInfoPage":{
-        "title":"Feed源详情",
+        "title":"Feed服务详情",
         "publicFeed":"公共的Feed",
         "online":"上线",
         "users":"用户",
@@ -154,9 +154,9 @@ export const zh = {
         "owner":"拥有者",
         "introduction":"描述",
         "did":"DID",
-        "addFeedSource":"添加Feed源",
-        "removeFeedSource":"移除Feed源",
-        "deleteFeedSource":"删除Feed源",
+        "addFeedSource":"添加Feed服务",
+        "removeFeedSource":"移除Feed服务",
+        "deleteFeedSource":"删除Feed服务",
         "feedUrl":"Feed服务网址",
         "serverInfo":"服务信息",
     },
@@ -185,7 +185,7 @@ export const zh = {
     },
     "IssuecredentialPage":{
         "bindingServer":"绑定服务",
-        "des1":"您的feeds源服务的DID文档已发布到DID侧链",
+        "des1":"您的feeds服务的DID文档已发布到DID侧链",
         "des2":"下一步是向feed服务的DID颁发凭证。",
         "issueacredential":"颁发凭证",
         "abort":"中止",
@@ -226,5 +226,12 @@ export const zh = {
     "CommentComponent":{
         "newComment":"新建评论",
         "publishComment":"发布评论"
+    },
+    "notification": {
+        "system": "System",
+        "recivenewpostfromfeed": "收到了新帖子，来自Feed ",
+        "commentyourpost": "给您的帖子发布评论",
+        "subscribeyourfeed": "订阅您的Feed",
+        "likeyourpost": "收藏了您的帖子",
     }
 };

@@ -89,8 +89,8 @@ export const fr = {
         "tipMsg2":"Please input description.",
         "tipMsg3":"Invalid params",
         "tipMsgLength":"The description field length needs to be greater than 32",
-        "inputField":"INPUT FIELD",
-        "inputFeedDesc":"INPUT FIELD(AT LEAST 32 CHAR)",
+        "inputName":"INPUT NAME",
+        "inputFeedDesc":"INPUT DESCRIPTION(AT LEAST 32 CHAR)",
         "channelSourceDes":"WHERE TO STORE YOUR FEED"
     },
     "ProfileimagePage":{
@@ -226,5 +226,12 @@ export const fr = {
     "CommentComponent":{
         "newComment":"New Comment",
         "publishComment":"Publish comment"
+    },
+    "notification": {
+        "system": "System",
+        "recivenewpostfromfeed": "Recive new Post from Feed ",
+        "commentyourpost": "Comment your post",
+        "subscribeyourfeed": "Subscribe your feed",
+        "likeyourpost": "like your post",
     }
 };

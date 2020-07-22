@@ -3,10 +3,10 @@
         <ion-label  class="content-key white">{{'CreatenewfeedPage.name'|translate}}</ion-label>
       </div>
       <div class="detail-value-div">
-        <ion-input required type="text" class="content-value " placeholder="{{'CreatenewfeedPage.inputField'|translate}}" #name></ion-input>
+        <ion-input required type="text" class="content-value " placeholder="{{'CreatenewfeedPage.inputName'|translate}}" #name></ion-input>
       </div>
       <div class="detail-line"></div>
-    
+
       <div class="detail-key-div">
         <ion-label  class="content-key white">{{'CreatenewfeedPage.description'|translate}}</ion-label>
       </div>
@@ -14,7 +14,7 @@
         <ion-input required type="text" class="content-value " placeholder="{{'CreatenewfeedPage.inputFeedDesc'|translate}}" #desc></ion-input>
       </div>
       <div class="detail-line"></div>
-      
+
       <div style="width: 100%; display: flex;" (click)="profileimage()">
         <div style="width: 100%;" >
           <div class="detail-key-div">
@@ -44,10 +44,10 @@
         </div>
       </div>
 
-    
+
     <ion-button style="margin-top: 50px;" expand="block" (click)="createChannel(name,desc)">
 
         {{'CreatenewfeedPage.createFeed'|translate}}
-      
+
     </ion-button>
   </div>

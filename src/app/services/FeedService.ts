@@ -4,6 +4,7 @@ import { CarrierService } from 'src/app/services/CarrierService';
 import { Events } from '@ionic/angular';
 import { JsonRPCService } from 'src/app/services/JsonRPCService';
 import { StorageService } from 'src/app/services/StorageService';
+import { TranslateService } from '@ngx-translate/core';
 import { NativeService } from 'src/app/services/NativeService';
 import { SerializeDataService } from 'src/app/services/SerializeDataService';
 import { JWTMessageService } from 'src/app/services/JWTMessageService';
@@ -376,6 +377,7 @@ export class FeedService {
     private jsonRPCService: JsonRPCService,
     private carrierService: CarrierService,
     private native: NativeService,
+    private translate: TranslateService,
     private storeService: StorageService) {
       eventBus = events;
       this.init();
@@ -385,7 +387,7 @@ export class FeedService {
       if (this.platform.platforms().indexOf("cordova") < 0) {
       serverMap = virtualServersMap;
       favoriteFeedsMap = virtualFFMap;
-      
+
       // allFeedsMap = virtualAFMap ;
       eventsMap = virtualEvents
 
@@ -398,7 +400,7 @@ export class FeedService {
       return;
     }
 
-    
+
     this.initData();
 
     this.initCallback();
@@ -482,14 +484,14 @@ export class FeedService {
       // notificationList.push(notification4);
   }
   initData(){
-    
+
 
     firstInit = this.storeService.get(PersistenceKey.firstInit);
     firstInit = true; // for test
     if (firstInit == null) {
       firstInit = true;
     }
-    
+
     postMap = this.storeService.get(PersistenceKey.postMap);
     if(postMap == null || postMap == undefined)
       postMap = {}
@@ -561,7 +563,7 @@ export class FeedService {
     if (channelsMap == null || channelsMap == undefined) {
       channelsMap = {};
     }
-    
+
     eventsMap = this.storeService.get(PersistenceKey.eventsMap);
     if (eventsMap == null || eventsMap == undefined){
       eventsMap = {};
@@ -617,7 +619,7 @@ export class FeedService {
     let list: Server[] = [];
     let nodeIdArray: string[] = Object.keys(serverMap);
     for (const index in nodeIdArray) {
-      if (serverMap[nodeIdArray[index]] == undefined) 
+      if (serverMap[nodeIdArray[index]] == undefined)
         continue;
 
       list.push(serverMap[nodeIdArray[index]]);
@@ -629,10 +631,10 @@ export class FeedService {
     let list: Server[] = [];
     let nodeIdArray: string[] = Object.keys(serverMap);
     for (const index in nodeIdArray) {
-      if (serverMap[nodeIdArray[index]] == undefined) 
+      if (serverMap[nodeIdArray[index]] == undefined)
         continue;
-      
-      if (bindingServer != null && 
+
+      if (bindingServer != null &&
         bindingServer != undefined &&
         serverMap[nodeIdArray[index]].nodeId == bindingServer.nodeId)
         continue;
@@ -645,7 +647,7 @@ export class FeedService {
   // getCreationServerMap(){
   //   let keys: string[] = Object.keys(serversMap);
   //   for (const index in keys) {
-  //     if (serversMap[keys[index]] == undefined) 
+  //     if (serversMap[keys[index]] == undefined)
   //       continue;
 
   //     this.queryChannelCreationPermission(serversMap[keys[index]].nodeId);
@@ -659,7 +661,7 @@ export class FeedService {
     return list;
     // let keys: string[] = Object.keys(bindingServerMap);
     // for (const index in keys) {
-    //   if (bindingServerMap[keys[index]] == undefined) 
+    //   if (bindingServerMap[keys[index]] == undefined)
     //     continue;
     //   list.push(bindingServerMap[keys[index]]);
     // }
@@ -704,7 +706,7 @@ export class FeedService {
       }
     }
 
-    if (bindingServer != null && 
+    if (bindingServer != null &&
       bindingServer!= undefined &&
       serverStatisticsMap[bindingServer.nodeId] == undefined)
       serverStatisticsMap[bindingServer.nodeId] = {
@@ -837,7 +839,7 @@ export class FeedService {
     let list: MyFeed[] = [];
     let keys: string[] = Object.keys(myFeedsMap);
     for (const index in keys) {
-      if (myFeedsMap[keys[index]] == undefined) 
+      if (myFeedsMap[keys[index]] == undefined)
         continue;
       list.push(myFeedsMap[keys[index]]);
     }
@@ -851,11 +853,11 @@ export class FeedService {
 
     eventBus.publish(PublishType.ownFeedListChanged,this.getMyFeeds());
   }
-  
+
   public getMyFeedEvents(nodeId: string, topic: string) {
-    if (myEventMap == null || 
-        myEventMap == undefined || 
-        myEventMap[nodeId+topic] == null || 
+    if (myEventMap == null ||
+        myEventMap == undefined ||
+        myEventMap[nodeId+topic] == null ||
         myEventMap[nodeId+topic] == undefined){
       return [];
     }
@@ -884,15 +886,15 @@ export class FeedService {
     }
     this.jsonRPCService.request(
       method,
-      nodeId, 
-      params, 
+      nodeId,
+      params,
       ()=>{
-      }, 
+      },
       (error)=>{
         // this.native.toast(error);
       });
   }
-  
+
   //{"jsonrpc":"2.0","method":"create_topic","params":{"topic":"news","desc":"daily"},"id":null}
   createTopic(nodeId: string, channel: string, desc: string, avatar: any){
       // currentCreateTopicNID = nodeId;
@@ -914,7 +916,7 @@ export class FeedService {
       if (myEventMap[nodeId+topic] != null || myEventMap[nodeId+topic] != undefined){
         lastSeqno = myEventMap[nodeId+topic].seqno;
       }
-        
+
       postEventTmp = new FeedEvents(nodeId,topic,this.getCurrentTime(),event,lastSeqno++, imageUrl);
       this.sendRPCMessage(nodeId, FeedsData.MethodType.postEvent, params);
   }
@@ -932,7 +934,7 @@ export class FeedService {
   }
 
   doSubscribe(){
-    
+
     // this.subscribe();
   }
 
@@ -976,7 +978,7 @@ export class FeedService {
       eventBus.publish("feeds:friendConnection",ret);
       let friendId = ret.friendId;
       let friendStatus = ret.status;
-      
+
       this.doFriendConnection(friendId, friendStatus);
 
     });
@@ -985,7 +987,7 @@ export class FeedService {
   doFriendConnection(friendId: string, friendStatus:any){
     if (friendConnectionMap == null || friendConnectionMap == undefined)
         friendConnectionMap = {};
-  
+
       friendConnectionMap[friendId] = friendStatus;
 
       if(serversStatus == null ||serversStatus == undefined)
@@ -997,7 +999,7 @@ export class FeedService {
         did: "string",
         status: friendStatus
       }
-      
+
       if (friendStatus == ConnState.connected){
         if (accessTokenMap == null || accessTokenMap == undefined)
           accessTokenMap = {};
@@ -1030,15 +1032,15 @@ export class FeedService {
   resolveServer(server: Server, status: ConnState){
     if (serversStatus == null || serversStatus == undefined)
         serversStatus = {};
-      
+
     if (serversStatus[server.nodeId] == undefined){
       serversStatus[server.nodeId] = {
         nodeId: server.nodeId,
         did: server.did,
         status: ConnState.disconnected
-      }  
+      }
     }
-    
+
     if (status != null)
       return serversStatus[server.nodeId].status = status;
 
@@ -1054,7 +1056,7 @@ export class FeedService {
 
     if (serverMap == null || serverMap == undefined)
       serverMap = {}
-    
+
     if (serverMap[server.nodeId] != undefined){
       this.native.toast("Server already added!");
     }else{
@@ -1072,7 +1074,7 @@ export class FeedService {
 
     eventBus.publish(PublishType.updateServerList, this.getServerList(), Date.now());
   }
-  
+
   connectionChangedCallback(){
     this.events.subscribe('carrier:connectionChanged', status => {
       connectionStatus = status;
@@ -1198,7 +1200,7 @@ export class FeedService {
   // public result: object,
   // public error: object,
   // public params: object,
-  
+
   friendMessageCallback(){
     this.events.subscribe('jrpc:receiveMessage', result => {
       switch(result.type){
@@ -1227,7 +1229,7 @@ export class FeedService {
     //       break;
     //   }
     // });
-    
+
   }
 
   /*
@@ -1250,13 +1252,13 @@ export class FeedService {
     "jsonrpc": "2.0",
     "result": NULL,
     "id": "id(JSON-RPC conformed type)"
-  } 
+  }
   */
   handlePostEventResult(result: any){
     if (myEventMap[postEventTmp.nodeId+postEventTmp.topic] == null || myEventMap[postEventTmp.nodeId+postEventTmp.topic] == undefined){
       myEventMap[postEventTmp.nodeId+postEventTmp.topic] = [];
     }
-    
+
     myEventMap[postEventTmp.nodeId+postEventTmp.topic].push(postEventTmp);
     this.updateMyEventMap();
 
@@ -1264,7 +1266,7 @@ export class FeedService {
     myFeedsMap[postEventTmp.nodeId+postEventTmp.topic].imageUrl = postEventTmp.imageUrl;
     myFeedsMap[postEventTmp.nodeId+postEventTmp.topic].lastEvent = postEventTmp.message;
     this.updateMyFeedsMap();
-    
+
     eventBus.publish(PublishType.postEventSuccess);
   }
 
@@ -1272,11 +1274,11 @@ export class FeedService {
   {
     "jsonrpc": "2.0",
     "result": [{
-      "name": "topic名称(string)", 
+      "name": "topic名称(string)",
       "desc": "topic描述(string)"
     }],
     "id": "id(JSON-RPC conformed type)"
-  } 
+  }
   */
   handleListOwnTopicResult(nodeId: string, result: any){
     let changed = false ;
@@ -1288,8 +1290,8 @@ export class FeedService {
         myFeedsMap[feedKey] = new MyFeed('paper',nodeId,topic,desc,this.getCurrentTime(),"","",false);
         changed = true;
         continue;
-      } 
-      
+      }
+
       if (myFeedsMap[feedKey].desc != desc){
         myFeedsMap[feedKey].desc = desc;
         changed = true;
@@ -1317,7 +1319,7 @@ export class FeedService {
     "jsonrpc": "2.0",
     "result": NULL,
     "id": "id(JSON-RPC conformed type)"
-  } 
+  }
   */
   handleUnsubscribeResult(nodeId: string){
   }
@@ -1326,25 +1328,25 @@ export class FeedService {
   {
     "jsonrpc": "2.0",
     "result": [{
-      "name": "topic名称(string)", 
+      "name": "topic名称(string)",
       "desc": "topic描述(string)"
     }],
     "id": "id(JSON-RPC conformed type)"
-  } 
+  }
   */
   handleExploreTopicResult(nodeId: string, result: any){
   }
 
-  
+
   /*
   {
     "jsonrpc": "2.0",
     "result": [{
-      "name": "topic名称(string)", 
+      "name": "topic名称(string)",
       "desc": "topic描述(string)"
     }],
     "id": "id(JSON-RPC conformed type)"
-  } 
+  }
   */
   handleListSubscribedResult(nodeId: string, result: any){
     let changed = false ;
@@ -1363,14 +1365,14 @@ export class FeedService {
       }else if(favoriteFeedsMap[favoriteFeedKey].name != topic ||
         favoriteFeedsMap[favoriteFeedKey].desc != desc){
         favoriteFeedsMap[favoriteFeedKey].name = topic;
-        favoriteFeedsMap[favoriteFeedKey].desc = desc  
+        favoriteFeedsMap[favoriteFeedKey].desc = desc
         changed = true;
       }
 
       // if (needFetch){
       //   this.fetchFeedEvents(nodeId, topic);
       // }
-      if (fetchList.indexOf(favoriteFeedsMap[favoriteFeedKey]) == -1 && 
+      if (fetchList.indexOf(favoriteFeedsMap[favoriteFeedKey]) == -1 &&
           !favoriteFeedsMap[favoriteFeedKey].fetched){
         fetchList.push(favoriteFeedsMap[favoriteFeedKey]);
       }
@@ -1385,7 +1387,7 @@ export class FeedService {
       this.fetchNext();
       needFetch = false;
     }
-    
+
   }
 
   fetchNext(){
@@ -1411,12 +1413,12 @@ export class FeedService {
   {
     "jsonrpc": "2.0",
     "result": [{
-      "seqno": "序列号（以升序返回）(number)", 
+      "seqno": "序列号（以升序返回）(number)",
       "event": "事件内容(string)",
       "ts": "事件发布时的时间戳（UNIX Epoch格式）(number)"
     }],
     "id": "id(JSON-RPC conformed type)"
-  } 
+  }
   */
   handleFetchUnreceivedResult(from: string, result: any){
     let changed: boolean = false ;
@@ -1427,7 +1429,7 @@ export class FeedService {
     // let feedKey = from+fetchTopic;
     let feedKey = currentFetchFeeds.nodeId + currentFetchFeeds.name ;
     let unread = 0;
-    
+
     if (eventsMap[feedKey] == undefined){
       eventsMap[feedKey] = [];
     }
@@ -1443,7 +1445,7 @@ export class FeedService {
       favoriteFeedsMap[feedKey].unread  = unread+1;
       favoriteFeedsMap[feedKey].lastReceived = ts*1000;
       favoriteFeedsMap[feedKey].lastEvent = event;
-      
+
       eventsMap[feedKey].push((new FeedEvents(from, currentFetchFeeds.name, String(ts*1000), event, seqno, "")));
       changed = true ;
     }
@@ -1539,7 +1541,7 @@ export class FeedService {
 
     let hashPos = feedUrl.indexOf("#");
     let backSlashPos = feedUrl.lastIndexOf("/");
-    
+
     // feeds://did:elastos:ixxxxxxx/1234carrieraddress5678
     if (hashPos == -1 && backSlashPos >7){
       let carrierAddress = this.getCarrierAddress(feedUrl,backSlashPos+1,feedUrl.length);
@@ -1583,14 +1585,14 @@ export class FeedService {
 
   resolveDidDocument(feedsUrl: string, defaultServer:Server, onSuccess: (server: Server)=>void, onError?: (err: any)=>void){
     let didData = this.parseDid(feedsUrl);
-    
+
     didManager.resolveDidDocument(didData.did, false,(didDocument)=>{
       if (didDocument == null){
         onError("The carrier node could not be found");
         return ;
       }
       let services = didDocument.getServices();
-      if ((services == null || services == undefined || services.length == 0) && 
+      if ((services == null || services == undefined || services.length == 0) &&
         defaultServer != null){
         onSuccess(defaultServer);
         return ;
@@ -1687,14 +1689,14 @@ export class FeedService {
     let presentation = payload.presentation;
     //1.verify presentation
     this.verifyPresentation(payload.presentation,(isValid) =>{
-      
+
       if (isValid){
         //2.verify noce & realm
         //TODO verify noce & realm
 
         this.serviceNonce = payload.nonce;
         this.serviceRealm = payload.realm;
-        
+
         //3.send confirm msg
         this.confirmLoginRequest(nodeId);
 
@@ -1756,14 +1758,14 @@ export class FeedService {
   }
 
   checkSignInServerStatus(nodeId: string): boolean{
-    if (accessTokenMap == null || 
+    if (accessTokenMap == null ||
       accessTokenMap == undefined ||
       accessTokenMap[nodeId] == undefined)
       return false ;
-    
+
     return true;
   }
-  
+
   // generateUUID() {
   //   var d = new Date().getTime();
   //   var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
@@ -1773,12 +1775,12 @@ export class FeedService {
   //   });
   //   return uuid;
   // };
-  
+
   parseResult(didData: DidData ,service: DIDPlugin.Service) {
     if (didData == null){
       return ;
     }
-    
+
     if (didData.carrierAddress == null && didData.serviceId == null){
       if (service.getType() == 'Feeds') return true;
     }
@@ -1803,7 +1805,7 @@ export class FeedService {
   doListSubscribedTopic(server: Server){
     if (server == undefined)
       return ;
-    if (serversStatus[server.nodeId].status == ConnState.connected) 
+    if (serversStatus[server.nodeId].status == ConnState.connected)
       this.listSubscribed(server.nodeId);
   }
 
@@ -1895,13 +1897,13 @@ export class FeedService {
   }
 
   getLocalMyChannelsMap(){
-  } 
+  }
 
   getLocalUnreadMap(){
-  } 
+  }
 
   getPostMap(){
-  } 
+  }
 
   //// do
 
@@ -1975,7 +1977,7 @@ export class FeedService {
         continue;
         list.push(map[keys[index]]);
     }
-    
+
     list.sort((a, b) => Number(b.last_update) - Number(a.last_update));
     let end: number;
     if (list.length>start+10){
@@ -2006,7 +2008,7 @@ export class FeedService {
         continue;
       list.push(myChannelsMap[keys[index]]);
     }
-    
+
     list.sort((a, b) => Number(b.last_update) - Number(a.last_update));
 
     localMyChannelList.slice(0,localMyChannelList.length);
@@ -2039,7 +2041,7 @@ export class FeedService {
         continue;
         list.push(myChannelsMap[keys[index]]);
     }
-    
+
     list.sort((a, b) => Number(b.last_update) - Number(a.last_update));
 
     if (localMyChannelList.length+10>list.length){
@@ -2076,7 +2078,7 @@ export class FeedService {
   //       continue;
   //       list.push(postMap[channelId][keys[index]]);
   //   }
-    
+
   //   list.sort((a, b) => Number(b.created_at) - Number(a.created_at));
 
   //   localPostList.slice(0,localPostList.length);
@@ -2091,18 +2093,18 @@ export class FeedService {
 
   //   if (myChannelsMap == null || myChannelsMap == undefined)
   //     myChannelsMap = {};
-  //   if (myChannelsMap[channelId] != null && 
+  //   if (myChannelsMap[channelId] != null &&
   //       myChannelsMap[channelId] != undefined &&
   //       myChannelsMap[channelId].last_post != localPostList[0].content){
   //     myChannelsMap[channelId].last_post = localPostList[0].content;
   //     this.storeService.set(PersistenceKey.myChannelsMap,myChannelsMap);
   //   }
-    
-      
+
+
 
   //   if (subscribedChannelsMap == null || subscribedChannelsMap == undefined)
   //     subscribedChannelsMap = {};
-  //   if (subscribedChannelsMap[channelId]!= null && 
+  //   if (subscribedChannelsMap[channelId]!= null &&
   //       subscribedChannelsMap[channelId] != undefined &&
   //       subscribedChannelsMap[channelId].last_post != localPostList[0].content){
   //     subscribedChannelsMap[channelId].last_post = localPostList[0].content;
@@ -2133,7 +2135,7 @@ export class FeedService {
   //       continue;
   //       list.push(postMap[channelId][keys[index]]);
   //   }
-    
+
   //   list.sort((a, b) => Number(b.created_at) - Number(a.created_at));
 
   //   let start = localPostList.length;
@@ -2157,7 +2159,7 @@ export class FeedService {
         //TODO error
         return;
       }
-      
+
 
     let avatarBin = this.serializeDataService.encodeData(avatar);
 
@@ -2182,9 +2184,9 @@ export class FeedService {
       //TODO error
       return;
 
-    
+
     let contentBin = this.serializeDataService.encodeData(content);
-      
+
     let request: Communication.publish_post_request = {
       version: "1.0",
       method : "publish_post",
@@ -2198,7 +2200,7 @@ export class FeedService {
     this.sendRPCMessage(nodeId, request.method, request.params);
   }
 
-  postComment(nodeId: string, channel_id: number, post_id: number, 
+  postComment(nodeId: string, channel_id: number, post_id: number,
               comment_id , content: any){
     if(accessTokenMap == null ||
       accessTokenMap == undefined||
@@ -2240,13 +2242,13 @@ export class FeedService {
           post_id   : post_id,
           comment_id: comment_id,
       } ,
-      
+
     }
     this.sendRPCMessage(nodeId, request.method, request.params);
   }
 
   postUnlike(nodeId:string, channel_id: number, post_id: number, comment_id: number){
-    
+
     // let mPostId = this.getPostId(nodeId,channel_id,post_id);
     // postMap[mPostId].likes = postMap[mPostId].likes-1;
     // this.storeService.set(PersistenceKey.postMap,postMap);
@@ -2261,7 +2263,7 @@ export class FeedService {
       accessTokenMap[nodeId] == undefined)
       //TODO error
       return;
-    
+
     let request: Communication.post_unlike_request = {
       version: "1.0",
       method : "post_unlike",
@@ -2299,7 +2301,7 @@ export class FeedService {
     this.sendRPCMessage(nodeId, request.method, request.params);
   }
 
-  getMyChannelsMetaData(nodeId: string, field: Communication.field, upper_bound: number, 
+  getMyChannelsMetaData(nodeId: string, field: Communication.field, upper_bound: number,
                         lower_bound: number, max_counts: number){
     if(accessTokenMap == null ||
       accessTokenMap == undefined||
@@ -2322,7 +2324,7 @@ export class FeedService {
     this.sendRPCMessage(nodeId, request.method, request.params);
   }
 
-  getChannels(nodeId: string, field: Communication.field, upper_bound: number, 
+  getChannels(nodeId: string, field: Communication.field, upper_bound: number,
               lower_bound: number, max_counts: number){
     if(accessTokenMap == null ||
       accessTokenMap == undefined||
@@ -2364,7 +2366,7 @@ export class FeedService {
     this.sendRPCMessage(nodeId, request.method, request.params);
   }
 
-  getSubscribedChannels(nodeId: string, field: Communication.field, upper_bound: number, 
+  getSubscribedChannels(nodeId: string, field: Communication.field, upper_bound: number,
                         lower_bound: number, max_counts: number){
     if(accessTokenMap == null ||
       accessTokenMap == undefined||
@@ -2387,7 +2389,7 @@ export class FeedService {
     this.sendRPCMessage(nodeId, request.method, request.params);
   }
 
-  getPost(nodeId: string, channel_id: number, by: Communication.field, 
+  getPost(nodeId: string, channel_id: number, by: Communication.field,
           upper_bound: number, lower_bound: number , max_counts: number){
     if(accessTokenMap == null ||
       accessTokenMap == undefined||
@@ -2428,7 +2430,7 @@ export class FeedService {
           channel_id : channel_id,
           post_id    : post_id,
           by         : by,
-          upper_bound: upper_bound, 
+          upper_bound: upper_bound,
           lower_bound: lower_bound ,
           max_count : max_counts,
       },
@@ -2491,7 +2493,7 @@ export class FeedService {
     }
     this.sendRPCMessage(nodeId, request.method, request.params);
   }
-  
+
   addNodePublisher(nodeId: string, did: string){
     if(accessTokenMap == null ||
       accessTokenMap == undefined||
@@ -2590,21 +2592,21 @@ export class FeedService {
       channelId:channel_id,
       time:created_at*1000
     }
-    
+
     this.storeService.set(PersistenceKey.lastPostUpdateMap,lastPostUpdateMap);
 
     this.storeService.set(PersistenceKey.postMap, postMap);
-    
+
     unreadMap[nodeChannelId] = unreadMap[nodeChannelId]+1;
     this.storeService.set(PersistenceKey.unreadMap,unreadMap);
-    
+
     eventBus.publish(PublishType.postDataUpdate);
 
 
     let notification:Notification = {
-      userName: "System",
+      userName: this.translate.instant("notification.system"),
       behavior: Behavior.post,
-      behaviorText: "Recive new Post from Feed '"+this.getChannelFromId(nodeId, channel_id).name+"'",
+      behaviorText: this.translate.instant("recivenewpostfromfeed")+"'"+this.getChannelFromId(nodeId, channel_id).name+"'",
       details: {
         nodeId: nodeId,
         channelId: channel_id,
@@ -2665,7 +2667,7 @@ export class FeedService {
     let notification:Notification = {
       userName: user_name,
       behavior: Behavior.comment,
-      behaviorText: "Comment your post",
+      behaviorText: this.translate.instant("commentyourpost"),
       details: {
         nodeId: nodeId,
         channelId:channel_id,
@@ -2708,7 +2710,7 @@ export class FeedService {
     let notification:Notification = {
       userName: user_name,
       behavior: Behavior.like,
-      behaviorText: "like your post",
+      behaviorText: this.translate.instant("likeyourpost"),
       details: {
         nodeId: nodeId,
         channelId:channel_id,
@@ -2730,7 +2732,7 @@ export class FeedService {
     let notification:Notification = {
       userName: user_name,
       behavior: Behavior.subscription,
-      behaviorText: "Subscribe your feed",
+      behaviorText: this.translate.instant("subscribeyourfeed"),
       details: {
         nodeId: nodeId,
         channelId:channel_id,
@@ -2821,7 +2823,7 @@ export class FeedService {
       created_at: this.getCurrentTimeNum()
     }
     let nodeChannelId = nodeId + channelId ;
-    if(myChannelsMap != null && 
+    if(myChannelsMap != null &&
       myChannelsMap != undefined &&
       myChannelsMap[nodeChannelId] != null &&
       myChannelsMap[nodeChannelId] != undefined)
@@ -2830,7 +2832,7 @@ export class FeedService {
     let mPostId = this.getPostId(nodeId, channelId, postId);
     if (postMap == null || postMap == undefined)
       postMap = {};
-    
+
     postMap[mPostId]=post;
 
     this.storeService.set(PersistenceKey.postMap, postMap);
@@ -3040,7 +3042,7 @@ export class FeedService {
       let avatarBin = result[index].avatar;
 
       let avatar = this.serializeDataService.decodeData(avatarBin);
-      
+
       if (subscribedChannelsMap == null|| subscribedChannelsMap == undefined)
         subscribedChannelsMap = {};
 
@@ -3072,7 +3074,7 @@ export class FeedService {
       }
     }
 
-    
+
     this.storeService.set(PersistenceKey.subscribedChannelsMap,subscribedChannelsMap);
 
     let list: Channels[] = [];
@@ -3169,7 +3171,7 @@ export class FeedService {
         commentsMap[channel_id] = {}
       if (commentsMap[channel_id][post_id] == null || commentsMap[channel_id][post_id] == undefined)
         commentsMap[channel_id][post_id] = {}
-  
+
       commentsMap[channel_id][post_id][id] = comment;
     }
     this.storeService.set(PersistenceKey.commentsMap, commentsMap);
@@ -3183,7 +3185,7 @@ export class FeedService {
 
     if (serverStatisticsMap == null || serverStatisticsMap == undefined)
       serverStatisticsMap = {};
-    
+
     serverStatisticsMap[nodeId] = serverStatistics;
 
     this.storeService.set(PersistenceKey.serverStatisticsMap, serverStatisticsMap);
@@ -3218,7 +3220,7 @@ export class FeedService {
     this.refreshLocalSubscribedChannels();
 
     this.deletePostFromChannel(nodeId, request.id);
-    
+
     eventBus.publish(PublishType.unsubscribeFinish, nodeId,request.id, channelsMap[nodeChannelId].name);
   }
 
@@ -3303,8 +3305,8 @@ export class FeedService {
   }
 
   queryServerDID(nodeId:string): string{
-    if (serverMap == null || 
-      serverMap == undefined || 
+    if (serverMap == null ||
+      serverMap == undefined ||
       serverMap[nodeId] == undefined)
       return "";
 
@@ -3320,7 +3322,7 @@ export class FeedService {
     let list: Comment[] =[];
     let keys: string[] = Object.keys(commentsMap[channelId][postId]);
     for (const index in keys) {
-      if (commentsMap[channelId][postId][keys[index]] == undefined) 
+      if (commentsMap[channelId][postId][keys[index]] == undefined)
         continue;
       list.push(commentsMap[channelId][postId][keys[index]]);
     }
@@ -3366,7 +3368,7 @@ export class FeedService {
       if (subscribedChannelsMap[nodeChannelId] != null || subscribedChannelsMap[nodeChannelId] != undefined)
         list.push(postMap[keys[index]]);
     }
-    
+
     list.sort((a, b) => Number(b.created_at) - Number(a.created_at));
     return list;
   }
@@ -3386,14 +3388,14 @@ export class FeedService {
       if (postMap[keys[index]].nodeId == nodeId && postMap[keys[index]].channel_id == channelId)
         list.push(postMap[keys[index]]);
     }
-    
+
     list.sort((a, b) => Number(b.created_at) - Number(a.created_at));
     return list;
   }
 
   getLikeList(): Post[]{
     let list: Post[] = [];
-    
+
     let keys: string[] = [];
     if (likeMap != null && likeMap != undefined)
       keys = Object.keys(likeMap);
@@ -3403,7 +3405,7 @@ export class FeedService {
         continue;
         list.push(likeMap[keys[index]]);
     }
-    
+
     list.sort((a, b) => Number(b.created_at) - Number(a.created_at));
     return list;
   }
@@ -3460,7 +3462,7 @@ export class FeedService {
   indexText(text: string, limit: number, indexLength: number): string{
     if (text.length < limit)
       return text;
-    
+
     let half = indexLength/2 ;
     return text.slice(0,half)+"..."+text.slice(text.length-half+1, text.length);
   }
@@ -3469,12 +3471,12 @@ export class FeedService {
     if (content == undefined){
       return "";
     }
-    
+
     if (content.indexOf("text") != -1){
       let contentObj = JSON.parse(content);
       return contentObj.text;
     }
-    
+
     return content;
   }
 
@@ -3535,7 +3537,7 @@ export class FeedService {
           }
         }
       }
-      
+
 
 
       this.sendRPCMessage(nodeId, request.method, request.params);
@@ -3642,7 +3644,7 @@ export class FeedService {
       }else{
         // console.log("error")
       }
-      
+
     }).catch((err)=>{
       onError(err);
       // console.log("err = "+err);
@@ -3755,15 +3757,15 @@ export class FeedService {
     this.doFriendConnection(nodeId, ConnState.connected);
   }
 
-  
+
   issueCredential(nodeId: string, did: string, serverName: string, serverDesc: string) {
     /**
      * Ask the DID app to generate a VerifiableCredential with some data, and use current DID
      * as the signing issuer for this credential, so that others can permanently verifiy who
-     * issued the credential. 
-     * This credential can then be delivered to a third party who can import it (credimport) to 
+     * issued the credential.
+     * This credential can then be delivered to a third party who can import it (credimport) to
      * his DID profile.
-     * 
+     *
      * For this demo, the subject DID is ourself, so we will be able to import the credential we issued
      * to our own DID profile (which is a useless use case, as usually DIDs are issued for others).
      */
@@ -3779,7 +3781,7 @@ export class FeedService {
           //   info: "A sub-info"
           // }
       },
-      
+
       expirationdate: new Date(2024, 10, 10).toISOString() // Credential will expire on 2024-11-10 - Note the month's 0-index...
     }, {}, (response) => {
 
@@ -3799,7 +3801,7 @@ export class FeedService {
   }
 
   getFriendConnection(nodeId: string){
-    if(friendConnectionMap == null || 
+    if(friendConnectionMap == null ||
       friendConnectionMap == undefined ||
       friendConnectionMap[nodeId] == undefined)
       return ConnState.disconnected;
@@ -3881,7 +3883,7 @@ export class FeedService {
   }
 
   addServer(carrierAddress: string,friendRequest: string,
-    name: string, owner: string, introduction: string, 
+    name: string, owner: string, introduction: string,
     did: string, feedsUrl: string,
     onSuccess:()=>void, onError?:(err: string)=>void){
     this.carrierService.isValidAddress(carrierAddress, (isValid) => {
@@ -3889,10 +3891,10 @@ export class FeedService {
         this.alertError("Address invalid");
         return;
       }
-      
+
       this.carrierService.addFriend(carrierAddress, friendRequest,
-        () => {            
-            this.saveServer(name, owner, introduction, 
+        () => {
+            this.saveServer(name, owner, introduction,
                                 did, carrierAddress, feedsUrl);
         }, (err) => {
             this.alertError("Add server error: " + err);
@@ -3910,7 +3912,7 @@ export class FeedService {
   getLikeFromId(nodechannelpostId: string): Post{
     if (likeMap == null || likeMap == undefined)
       likeMap = {};
-    
+
     return likeMap[nodechannelpostId];
   }
 
@@ -3923,7 +3925,7 @@ export class FeedService {
   parseChannelAvatar(avatar: string): string{
     if (avatar == null || avatar == undefined)
       return "";
-      
+
     if (avatar.startsWith("img://")){
       let newAvatar = avatar.replace("img://","");
       return newAvatar;
@@ -3939,7 +3941,7 @@ export class FeedService {
     alert("Remove Feed Source!");
   }
 
-  removeLike(node: string, channelId: number, postId: number, commentId: number){    
+  removeLike(node: string, channelId: number, postId: number, commentId: number){
   }
   removeComment(node: string, channelId: number, postId: number, commentId: number){
 
@@ -4062,7 +4064,7 @@ let virtualFFMap:any = {
   new FavoriteFeed('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'Golang',  '', 8, 0, '', virtrulFeedEvents[0].message, true)
 }
 
-let virtualMyEvents = 
+let virtualMyEvents =
   [
     {
       timestamp: '1584956175537',
