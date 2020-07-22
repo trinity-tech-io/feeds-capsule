@@ -195,7 +195,7 @@ export const zh = {
     },
     "ImportdidPage":{
         "bindingServer":"绑定服务",
-        "des":"您必须要求feeds服务创建一个新的DID或通过助记词导入一个DID。",
+        "des":"您必须为feeds服务创建一个新的DID或通过助记词导入一个DID。",
         "createanewDID":"创建一个新的DID",
         "importanexistDID":"导入已存在的DID",
         "abort":"中止",
@@ -218,9 +218,9 @@ export const zh = {
     "CreatenewpostPage":{
         "addimg":"添加图片",
         "post":"帖子",
-        "des":"在此处输入记录...",
+        "des":"在此处输入...",
         "addingPost":"新建帖子",
-        "tipMsg":"请输入信息！",
+        "tipMsg":"请输入内容！",
         "tipMsg1":"发布成功！",
     },
     "CommentComponent":{
