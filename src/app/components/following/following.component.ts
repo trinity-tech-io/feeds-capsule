@@ -44,7 +44,7 @@ export class FollowingComponent implements OnInit {
 
   exploreFeeds(){
     this.tabs.select("search");
-    this.feedspage.currentTab = "search";
+    this.feedspage.search();
   }
 
   parseAvatar(avatar: string): string{
