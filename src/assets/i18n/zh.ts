@@ -1,230 +1,230 @@
 export const zh = {
-"common":{
-    "followers":"订阅者",
-    "allempty":"全部为空",
-    "pullToRefresh":"下拉刷新",
-    "Refreshing":"刷新中...",
-    "cancel":"取消",
-    "ok":'确定',
-    "confirm":"确认!",
-    "des":"清空 <strong>所有缓存数据</strong>!!!",
-    "prompt":"提示",
-    "des1":"确认新主题？<br>服务器:",
-    "channel":"频道:",
-    "description":"描述:",
-    "pleaseInput":"请输入",
-    "feeds":"feeds",
-    "just":"刚刚",
-    "yesterday":"昨天",
-    "unsubscribe":"取消订阅",
-    "share":"分享"
-},
-"app":{
-    "profileDetails":"资料详情",
-    "feedSources":"Feed来源",
-    "settings":"设置",
-    "about":"关于",
-    "develop":"开发"
-},
-"SigninPage":{
-    "signIn":"登录"
-},
-"FeedsPage":{
-    "tabTitle1":'我的时间轴',
-    "tabTitle2":'我的资料',
-    "tabTitle3":"通知",
-    "tabTitle4":"探索Feeds"
-},
-"HomePage":{
-    "allempty":"全部为空",
-    "emptyDes":"尚未订阅任何feeds",
-    "exploreFeeds":"探索Feeds",
-    "minutesAgo":" 分钟之前",
-    "hoursAgo":" 小时之前"
-},
-"ProfilePage":{
-    "myFeeds":"我的Feeds",
-    "following":"订阅",
-    "myLikes":"我的收藏"
-},
-"MyfeedsComponent":{
-    "emptyDes":"您还没有Feeds",
-    "createFeed":"创建Feed",
-    "createNewFeed":"创建新的Feed"
-},
-"FollowingComponent":{
-  "emptyDes":"尚未订阅任何feeds",
-  "exploreFeeds":"探索Feeds"
-},
-"LikesComponent":{
-    "emptyDes":"您还没有Feeds",
-    "emptyLikeDes":"您还没有任何收藏",
-    "exploreFeeds":"探索Feeds"
-},
-"SearchPage":{
-    "emptyDes":"还没有任何Feeds",
-    "follow":"订阅",
-    "following":"已订阅",
-    "searchFeeds":"探索Feeds"
-},
-"ChannelsPage":{
-    "feeds":"Feeds",
-    "follow":"订阅",
-    "following":"已订阅",
-    "tip":"小费"
-},
-"NotificationPage":{
-    "emptyDes":"您没有通知",
-},
-"CreatenewfeedPage":{
-    "createNewFeed":"创建新的Feed",
-    "profileImage":"个人资料图片",
-    "des":"为Feed选择一张图片",
-    "channelSource":"Feed源",
-    "name":"名称",
-    "description":"描述",
-    "createFeed":"创建Feed",
-    "tipMsg":"请选择一个头像",
-    "tipMsg1":"请输入名称",
-    "tipMsg2":"请输入描述信息",
-    "tipMsg3":"无效的参数",
-    "tipMsgLength":"描述信息长度要大于32",
-    "inputField":"输入FIELD",
-    "inputFeedDesc":"输入FIELD描述(至少32个字符)",
-    "channelSourceDes":"在哪里保存您的Feed"
-},
-"ProfileimagePage":{
-    "title":"个人资料图片",
-    "comfirm":"确认"
-},
-"ProfiledetailPage":{
-    "profileDetails":"资料详情",
-    "subscribers":"订阅者",
-    "name":"名称",
-    "did":"DID",
-    "gender":"性别",
-    "telephone":"手机号码",
-    "email":"邮箱",
-    "location":"位置"
-},
-"DevelopPage":{
-    "develop":"开发",
-    "clearAllData":"清除所有数据"
-},
-"SettingPage":{
-  "setting":"设置",
-  "emptyDes":"目前没有设置项"
-},
-"AboutPage":{
-    "about":"关于",
-    "version":"版本",
-    "website":"网站",
-},
-"PostdetailPage":{
-    "postdetail":"帖子详情"
-},
-"ServersPage":{
-    "feedSources":"Feed源",
-    "emptyDes":"没有Feed源",
-    "exploreFeedSources":"探索Feed源",
-    "bindFeedSource":"绑定Feed源",
-    "myFeedSources":"我的Feed源",
-    "users":"用户",
-    "currentFeedSources":"目前的Feed源",
-    "addNewFeedSources":"添加新的Feed源",
-  "createNewFeedSource":"创建新的Feed源"
-  },
-  "AddServerPage":{
-    "scanorEnterManual":"扫描或者输入",
-    "sourceAddress":"源地址",
-    "openQRScanner":"打开QR扫描仪",
-    "confirm":"确认",
-    "sourceaddresshere":"源地址在这里",
-    "tipMsg":"Feed网址可能错误",
-    "exploreFeedSources":"探索Feed源",
-    "title":"添加Feed源"
-  },
-  "ServerInfoPage":{
-    "title":"Feed源详情",
-    "publicFeed":"公共的Feed",
-    "online":"上线",
-    "users":"用户",
-    "offline":"下线",
-    "name":"名称",
-    "owner":"拥有者",
-    "introduction":"描述",
-    "did":"DID",
-    "addFeedSource":"添加Feed源",
-    "removeFeedSource":"移除Feed源",
-    "deleteFeedSource":"删除Feed源",
-    "feedUrl":"Feed服务网址",
-    "serverInfo":"服务信息",
-  },
-  "ScanqrcodePage":{
-    "bindingServer":"绑定服务",
-    "des":"您必须首先配对/绑定一个feeds服务，之后可以创建您所感兴趣的主题/频道，然后可以通过该频道发布消息",
-    "scanServiceQRcode":"扫描服务二维码",
-    "abort":"中止",
-  },
-  "StartbindingPage":{
-    "bindingServer":"绑定服务",
-     'des':'您要绑定一个feeds服务，请检查验证码是否与feeds服务浏览器上的验证码相同。',
-     "confirm":"确认",
-     "abort":"中止",
-  },
-  "PublishdidPage":{
-    "bindingServer":"绑定服务",
-    "payload":"payload是",
-    "publishonDIDsidechain":"在DID侧链上发布",
-    "abort":"中止",
-  },
-  "FinishPage":{
-    "bindingServer":"绑定服务",
-    "des":"恭喜！绑定过程已结束！",
-    "finish":"完成"
-  },
-  "IssuecredentialPage":{
-    "bindingServer":"绑定服务",
-    "des1":"您的feeds源服务的DID文档已发布到DID侧链",
-    "des2":"下一步是向feed服务的DID颁发凭证。",
-    "issueacredential":"颁发凭证",
-    "abort":"中止",
-    "serverInfo":"服务信息",
-    "serverName":"服务名称",
-    "serverDes":"服务描述",
-  },
-  "ImportdidPage":{
-    "bindingServer":"绑定服务",
-    "des":"您必须要求feeds服务创建一个新的DID或通过助记词导入一个DID。",
-    "createanewDID":"创建一个新的DID",
-    "importanexistDID":"导入已存在的DID",
-    "abort":"中止",
-  },
-  "ImportmnemonicPage":{
-    "des":"输入助记词(助记词之间要空格)",
-    "des1":"密钥",
-    "des2":"Index",
-    "confirm":"确认",
-    "abort":"中止",
-    "tipMsg":"请输入助记词!",
-    "tipMsg1":"请输入密钥!",
-    "tipMsg2":"请输入Index!",
-    "alert":"提示",
-    "ok":"确定"
-  },
-  "PostfromComponent":{
-    "des":"选择一个Feed来发布"
-  },
-  "CreatenewpostPage":{
-    "addimg":"添加图片",
-    "post":"帖子",
-    "des":"在此处输入记录...",
-    "addingPost":"新建文章",
-    "tipMsg":"请输入信息！",
-    "tipMsg1":"发布成功！",
-  },
-  "CommentComponent":{
-    "newComment":"新建评论",
-    "publishComment":"发布评论"
-  }
+    "common":{
+        "followers":"订阅者",
+        "allempty":"全部为空",
+        "pullToRefresh":"下拉刷新",
+        "Refreshing":"刷新中...",
+        "cancel":"取消",
+        "ok":"确定",
+        "confirm":"确认!",
+        "des":"清空 <strong>所有缓存数据</strong>!!!",
+        "prompt":"提示",
+        "des1":"确认新主题？<br>服务器:",
+        "channel":"频道:",
+        "description":"描述:",
+        "pleaseInput":"请输入",
+        "feeds":"feeds",
+        "just":"刚刚",
+        "yesterday":"昨天",
+        "unsubscribe":"取消订阅",
+        "share":"分享"
+    },
+    "app":{
+        "profileDetails":"资料详情",
+        "feedSources":"Feed来源",
+        "settings":"设置",
+        "about":"关于",
+        "develop":"开发"
+    },
+    "SigninPage":{
+        "signIn":"登录"
+    },
+    "FeedsPage":{
+        "tabTitle1":"我的时间轴",
+        "tabTitle2":"我的资料",
+        "tabTitle3":"通知",
+        "tabTitle4":"探索Feeds"
+    },
+    "HomePage":{
+        "allempty":"全部为空",
+        "emptyDes":"尚未订阅任何feeds",
+        "exploreFeeds":"探索Feeds",
+        "minutesAgo":" 分钟之前",
+        "hoursAgo":" 小时之前"
+    },
+    "ProfilePage":{
+        "myFeeds":"我的Feeds",
+        "following":"订阅",
+        "myLikes":"我的收藏"
+    },
+    "MyfeedsComponent":{
+        "emptyDes":"您还没有Feeds",
+        "createFeed":"创建Feed",
+        "createNewFeed":"创建新的Feed"
+    },
+    "FollowingComponent":{
+        "emptyDes":"尚未订阅任何feeds",
+        "exploreFeeds":"探索Feeds"
+    },
+    "LikesComponent":{
+        "emptyDes":"您还没有Feeds",
+        "emptyLikeDes":"您还没有任何收藏",
+        "exploreFeeds":"探索Feeds"
+    },
+    "SearchPage":{
+        "emptyDes":"还没有任何Feeds",
+        "follow":"订阅",
+        "following":"已订阅",
+        "searchFeeds":"搜索Feeds"
+    },
+    "ChannelsPage":{
+        "feeds":"Feeds",
+        "follow":"订阅",
+        "following":"已订阅",
+        "tip":"小费"
+    },
+    "NotificationPage":{
+        "emptyDes":"您没有通知",
+    },
+    "CreatenewfeedPage":{
+        "createNewFeed":"创建新的Feed",
+        "profileImage":"个人资料图片",
+        "des":"为Feed选择一张图片",
+        "channelSource":"Feed源",
+        "name":"名称",
+        "description":"描述",
+        "createFeed":"创建Feed",
+        "tipMsg":"请选择一个头像",
+        "tipMsg1":"请输入名称",
+        "tipMsg2":"请输入描述信息",
+        "tipMsg3":"无效的参数",
+        "tipMsgLength":"描述信息长度要大于32",
+        "inputField":"输入FIELD",
+        "inputFeedDesc":"输入FIELD描述(至少32个字符)",
+        "channelSourceDes":"在哪里保存您的Feed"
+    },
+    "ProfileimagePage":{
+        "title":"个人资料图片",
+        "comfirm":"确认"
+    },
+    "ProfiledetailPage":{
+        "profileDetails":"资料详情",
+        "subscribers":"订阅者",
+        "name":"名称",
+        "did":"DID",
+        "gender":"性别",
+        "telephone":"手机号码",
+        "email":"邮箱",
+        "location":"位置"
+    },
+    "DevelopPage":{
+        "develop":"开发",
+        "clearAllData":"清除所有数据"
+    },
+    "SettingPage":{
+        "setting":"设置",
+        "emptyDes":"目前没有设置项"
+    },
+    "AboutPage":{
+        "about":"关于",
+        "version":"版本",
+        "website":"网站",
+    },
+    "PostdetailPage":{
+        "postdetail":"帖子详情"
+    },
+    "ServersPage":{
+        "feedSources":"Feed源",
+        "emptyDes":"没有Feed源",
+        "exploreFeedSources":"探索Feed源",
+        "bindFeedSource":"绑定Feed源",
+        "myFeedSources":"我的Feed源",
+        "users":"用户",
+        "currentFeedSources":"目前的Feed源",
+        "addNewFeedSources":"添加新的Feed源",
+        "createNewFeedSource":"创建新的Feed源"
+      },
+    "AddServerPage":{
+        "scanorEnterManual":"扫描或者输入",
+        "sourceAddress":"源地址",
+        "openQRScanner":"打开QR扫描仪",
+        "confirm":"确认",
+        "sourceaddresshere":"源地址在这里",
+        "tipMsg":"Feed网址可能错误",
+        "exploreFeedSources":"探索Feed源",
+        "title":"添加Feed源"
+      },
+    "ServerInfoPage":{
+        "title":"Feed源详情",
+        "publicFeed":"公共的Feed",
+        "online":"上线",
+        "users":"用户",
+        "offline":"下线",
+        "name":"名称",
+        "owner":"拥有者",
+        "introduction":"描述",
+        "did":"DID",
+        "addFeedSource":"添加Feed源",
+        "removeFeedSource":"移除Feed源",
+        "deleteFeedSource":"删除Feed源",
+        "feedUrl":"Feed服务网址",
+        "serverInfo":"服务信息",
+    },
+    "ScanqrcodePage":{
+        "bindingServer":"绑定服务",
+        "des":"您必须首先配对/绑定一个feeds服务，之后可以创建您所感兴趣的主题/频道，然后可以通过该频道发布消息",
+        "scanServiceQRcode":"扫描服务二维码",
+        "abort":"中止",
+    },
+    "StartbindingPage":{
+        "bindingServer":"绑定服务",
+        "des":"您要绑定一个feeds服务，请检查验证码与feeds服务浏览器上的验证码是否相同。",
+        "confirm":"确认",
+        "abort":"中止",
+    },
+    "PublishdidPage":{
+        "bindingServer":"绑定服务",
+        "payload":"payload是",
+        "publishonDIDsidechain":"在DID侧链上发布",
+        "abort":"中止",
+    },
+    "FinishPage":{
+        "bindingServer":"绑定服务",
+        "des":"恭喜！绑定过程已结束！",
+        "finish":"完成"
+    },
+    "IssuecredentialPage":{
+        "bindingServer":"绑定服务",
+        "des1":"您的feeds源服务的DID文档已发布到DID侧链",
+        "des2":"下一步是向feed服务的DID颁发凭证。",
+        "issueacredential":"颁发凭证",
+        "abort":"中止",
+        "serverInfo":"服务信息",
+        "serverName":"服务名称",
+        "serverDes":"服务描述",
+    },
+    "ImportdidPage":{
+        "bindingServer":"绑定服务",
+        "des":"您必须要求feeds服务创建一个新的DID或通过助记词导入一个DID。",
+        "createanewDID":"创建一个新的DID",
+        "importanexistDID":"导入已存在的DID",
+        "abort":"中止",
+    },
+    "ImportmnemonicPage":{
+        "des":"输入助记词(助记词之间要空格)",
+        "des1":"密钥",
+        "des2":"Index",
+        "confirm":"确认",
+        "abort":"中止",
+        "tipMsg":"请输入助记词!",
+        "tipMsg1":"请输入密钥!",
+        "tipMsg2":"请输入Index!",
+        "alert":"提示",
+        "ok":"确定"
+    },
+    "PostfromComponent":{
+        "des":"选择一个Feed来发布"
+    },
+    "CreatenewpostPage":{
+        "addimg":"添加图片",
+        "post":"帖子",
+        "des":"在此处输入记录...",
+        "addingPost":"新建帖子",
+        "tipMsg":"请输入信息！",
+        "tipMsg1":"发布成功！",
+    },
+    "CommentComponent":{
+        "newComment":"新建评论",
+        "publishComment":"发布评论"
+    }
 };
