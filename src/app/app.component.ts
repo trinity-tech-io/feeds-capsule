@@ -46,6 +46,7 @@ export class MyApp {
     this.platform.ready().then(() => {
         this.statusBar.styleDefault();
         this.splashScreen.hide();
+        //localStorage.setItem('org.elastos.dapp.feeds.first',"");
         this.appService.initTranslateConfig();
         let isFirst = localStorage.getItem('org.elastos.dapp.feeds.first') || "";
         if(isFirst!=""){

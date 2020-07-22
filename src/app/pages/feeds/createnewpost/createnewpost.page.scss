@@ -1,10 +1,24 @@
+.rightContent{
+    position:absolute;
+    left:100px;
+    top:13px;
+}
+
+.ellipsis{
+    width:150px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    display:inline-block;
+}
+
 .darkContainer{
-.channel-detail-div .channel-detail-text-div .white{
+ .rightContent .white{
     color: #ffffff;
 }
 
 .white{
-    --placeholder-color:#ffffff;
-    --color:#ffffff;
+    --placeholder-color:#cfd1f7;
+    --color:#cfd1f7;
 }
 }

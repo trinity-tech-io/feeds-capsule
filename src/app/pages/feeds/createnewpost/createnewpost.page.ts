@@ -19,6 +19,8 @@ export class CreatenewpostPage implements OnInit {
   private subscribers;
   private newPost="";
   private imgUrl: string = "";
+  public bigImageUrl:string ="";
+  public bigImage:boolean = false;
   // private content ;
 
 
@@ -105,6 +107,17 @@ export class CreatenewpostPage implements OnInit {
         });
       },
       (err)=>{alert(err)});
+  }
+
+  
+
+  showBigImage(content: any){
+    this.bigImage = true;
+    this.bigImageUrl = content;  
+  }
+
+  hideBigImage(){
+    this.bigImage = false;
   }
 }
  

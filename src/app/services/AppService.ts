@@ -39,8 +39,6 @@ export class AppService {
         appManager.setListener((msg) => {
           this.onMessageReceived(msg);
         });
-
-        titleBarManager.setForegroundMode(TitleBarPlugin.TitleBarForegroundMode.LIGHT);
         titleBarManager.addOnItemClickedListener((menuIcon)=>{
           if (menuIcon.key == "back") {
                this.native.pop();
