@@ -3779,6 +3779,7 @@ export class FeedService {
   }
 
   handleIssueCredentialResponse(nodeId: string, result: any){
+    bindingServer = bindingServerCache;
     this.storeService.set(PersistenceKey.bindingServer,bindingServer);
     this.addServer(bindingServer.carrierAddress,
                   'Feeds/0.1',

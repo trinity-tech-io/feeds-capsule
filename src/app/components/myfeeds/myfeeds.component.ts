@@ -55,7 +55,12 @@ export class MyfeedsComponent implements OnInit {
   ngOnInit() {}
 
   createNewFeed(){
-    this.native.getNavCtrl().navigateForward(['/createnewfeed']);
+    let bindServer = this.feedService.getBindingServer();
+    if (bindServer != null && bindServer != undefined)
+      this.native.getNavCtrl().navigateForward(['/createnewfeed']);
+    else 
+      this.native.getNavCtrl().navigateForward(['/bindservice/scanqrcode']);
+      
   }
 
 

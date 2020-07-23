@@ -48,11 +48,7 @@ export class StartbindingPage implements OnInit {
             });
           });
           break;
-        // case "did_imported":
-        //   this.navCtrl.pop().then(()=>{
-        //     this.router.navigate(['/bindservice/publishdid/',nodeId, did, payload]);
-        //   });
-        //   break;
+
         case "credential_issued":
           this.zone.run(() => {
             this.navCtrl.pop().then(()=>{
