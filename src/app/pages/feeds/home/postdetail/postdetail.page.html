@@ -22,13 +22,12 @@
       </ion-card-content>
     </div>
 
-    <div class="channel-post-detail-div" style="margin-top: 16px;">
+    <div class="channel-post-detail-div" style="margin-top: 16px;" (click)="showBigImage(postContent)">
         <div class="channel-post-div"> 
           <ion-label class="channel-post white">{{getContentText(postContent)}}</ion-label>
         </div>
         <ion-avatar  *ngIf="getContentImg(postContent) != ''" class="content-img-without-margin">
-          <img src="{{getContentImg(postContent)}}"
-              (click)="showBigImage(postContent)">
+          <img src="{{getContentImg(postContent)}}">
         </ion-avatar>
         <div class="channel-post-heart-comment-div">
           <img class="like" [ngClass]="{'like-s': checkMyLike()}" (click)="like(0)">

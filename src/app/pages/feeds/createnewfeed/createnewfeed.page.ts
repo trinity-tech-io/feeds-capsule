@@ -99,28 +99,31 @@ export class CreatenewfeedPage implements OnInit {
   }
 
   createChannel(name: HTMLInputElement, desc: HTMLInputElement){
-    if (name.value==""){
-      alert(this.translate.instant("CreatenewfeedPage.tipMsg1"));
+    let nameValue = name.value || "";
+        nameValue = this.native.iGetInnerText(nameValue);
+    if (nameValue==""){
+      this.native.toast_trans("CreatenewfeedPage.tipMsg1");
       return ;
     }
-
-    if (desc.value == ""){
-      alert(this.translate.instant("CreatenewfeedPage.tipMsg2"));
+    let descValue = desc.value || "";
+        descValue = this.native.iGetInnerText(descValue);
+    if (descValue == ""){
+      this.native.toast_trans("CreatenewfeedPage.tipMsg2");
       return ;
     }
 
     if (desc.value.length < 32){
-      alert(this.translate.instant("CreatenewfeedPage.tipMsgLength"));
+      this.native.toast_trans("CreatenewfeedPage.tipMsgLength");
       return ;
     }
 
     if (this.channelAvatar == ""){
-      alert(this.translate.instant("CreatenewfeedPage.tipMsg"));
+      this.native.toast_trans("CreatenewfeedPage.tipMsg");
       return ;
     }
 
     if (this.selectedServer == null){
-      alert(this.translate.instant("CreatenewfeedPage.tipMsg3"));
+      this.native.toast_trans("CreatenewfeedPage.tipMsg3");
       return ;
     }
 

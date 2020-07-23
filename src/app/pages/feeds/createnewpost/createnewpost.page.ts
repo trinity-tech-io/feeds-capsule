@@ -67,6 +67,7 @@ export class CreatenewpostPage implements OnInit {
   }
 
   ionViewWillUnload(){
+    this.hideBigImage();
     this.events.unsubscribe("feeds:updateTitle");
   }
 

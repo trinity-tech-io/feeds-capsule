@@ -241,7 +241,8 @@ export const en = {
     },
     "CommentComponent":{
         "newComment":"New Comment",
-        "publishComment":"Publish comment"
+        "publishComment":"Publish comment",
+        "enterComments":"Enter Comments"
     },
     "notification":{
         "system":"System",

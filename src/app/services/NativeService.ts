@@ -36,6 +36,8 @@ export class NativeService {
 
     public toast(message: string = 'Operation completed', duration: number = 2000): void {
         this.toastCtrl.create({
+            mode: 'ios',
+            color: 'success',
             message,
             duration: 2000,
             position: 'top'
@@ -45,6 +47,8 @@ export class NativeService {
     public toast_trans(_message: string = '', duration: number = 2000): void {
         _message = this.translate.instant(_message);
         this.toastCtrl.create({
+            mode: 'ios',
+            color: 'success',
             message: _message,
             duration: duration,
             position: 'bottom'
@@ -142,4 +146,11 @@ export class NativeService {
       getNavCtrl(){
           return this.navCtrl;
       }
+
+      iGetInnerText(testStr:string) {
+        var resultStr = testStr.replace(/\ +/g, ""); //去掉空格
+        resultStr = testStr.replace(/[ ]/g, "");    //去掉空格
+        resultStr = testStr.replace(/[\r\n]/g, ""); //去掉回车换行
+        return resultStr;
+    }
 }

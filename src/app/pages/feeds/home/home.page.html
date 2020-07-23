@@ -39,14 +39,15 @@
               </div>
           </div>
     
-          <div style="margin-left: 81px;">
-            <div class="channel-post-div"  (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)"> 
+          <div style="margin-left: 81px;" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)">
+            <div class="channel-post-div"> 
               <ion-label class="channel-post white">{{getContentText(post.content)}}</ion-label>
             </div>
             
             <ion-avatar  *ngIf="getContentImg(post.content) != ''" class="content-img-without-margin">
-              <img src="{{getContentImg(post.content)}}"
-                  (click)="showBigImage(post.content)">
+              <!-- <img src="{{getContentImg(post.content)}}"
+              (click)="showBigImage(post.content)"> -->
+              <img src="{{getContentImg(post.content)}}"> 
             </ion-avatar>
     
             <div class="channel-post-heart-comment-div">

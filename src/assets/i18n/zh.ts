@@ -241,7 +241,8 @@ export const zh = {
     },
     "CommentComponent":{
         "newComment":"新建评论",
-        "publishComment":"发布评论"
+        "publishComment":"发布评论",
+        "enterComments":"输入评论"
     },
     "notification": {
         "system": "系统",
