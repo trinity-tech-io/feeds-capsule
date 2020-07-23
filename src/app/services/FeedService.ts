@@ -1622,9 +1622,9 @@ export class FeedService {
       if (didData.carrierAddress!=null || didData.carrierAddress != undefined){
         let carrierAddress = didData.carrierAddress.substring(didData.carrierAddress.lastIndexOf("//")+2,didData.carrierAddress.length);
         onSuccess({
-            name              : "Not provided from DIDDocument",
+            name              : this.translate.instant("DIDdata.NotprovidedfromDIDDocument"),
             owner             : didDocument.getSubject().getDIDString(),
-            introduction      : "Not provided from DIDDocument",
+            introduction      : this.translate.instant("DIDdata.NotprovidedfromDIDDocument"),
             did               : didDocument.getSubject().getDIDString(),
             carrierAddress    : carrierAddress,
             nodeId            : "",

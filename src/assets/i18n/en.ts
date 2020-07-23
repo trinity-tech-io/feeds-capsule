@@ -249,5 +249,9 @@ export const en = {
         "commentyourpost":"Comment your post",
         "subscribeyourfeed":"Subscribe your feed ",
         "likeyourpost": "like your post",
+    },
+    "DIDdata":{
+        "Notprovided": "Not provided",
+        "NotprovidedfromDIDDocument":"Not provided from DID Document"
     }
 };

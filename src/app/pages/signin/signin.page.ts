@@ -105,11 +105,11 @@ export class SigninPage implements OnInit {
 
             this.saveData(
               data.did,
-              this.findCredentialValueById(data.did, credentials, "name", "Not provided"),
-              this.findCredentialValueById(data.did, credentials, "email", "Not provided"),
-              this.findCredentialValueById(data.did, credentials, "telephone", "Not provided"),
-              this.findCredentialValueById(data.did, credentials, "nation", "Not provided"),
-              this.findCredentialValueById(data.did, credentials, "description", "Not provided")
+              this.findCredentialValueById(data.did, credentials, "name", this.translate.instant("DIDdata.Notprovided")),
+              this.findCredentialValueById(data.did, credentials, "email", this.translate.instant("DIDdata.Notprovided")),
+              this.findCredentialValueById(data.did, credentials, "telephone", this.translate.instant("DIDdata.Notprovided")),
+              this.findCredentialValueById(data.did, credentials, "nation", this.translate.instant("DIDdata.Notprovided")),
+              this.findCredentialValueById(data.did, credentials, "description", this.translate.instant("DIDdata.Notprovided"))
               );
 
             this.events.publish("feeds:signinSuccess");

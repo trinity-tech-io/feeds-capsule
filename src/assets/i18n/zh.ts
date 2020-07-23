@@ -246,8 +246,12 @@ export const zh = {
     "notification": {
         "system": "系统",
         "recivenewpostfromfeed": "收到新帖子，来自Feed ",
-        "commentyourpost": "给您的帖子发布评论",
+        "commentyourpost": "给您的帖子发评论",
         "subscribeyourfeed": "订阅您的Feed ",
         "likeyourpost": "收藏了您的帖子",
+    },
+    "DIDdata": {
+        "Notprovided": "未提供",
+        "NotprovidedfromDIDDocument": "DID文档未提供"
     }
 };
