@@ -50,7 +50,23 @@ export class PostdetailPage implements OnInit {
         this.channelId = data.channelId;
         this.postId = data.postId;
   
+<<<<<<< HEAD
         this.initData();
+=======
+        let channel = this.feedService.getChannelFromId(this.nodeId, this.channelId);
+        this.channelName = channel.name;
+        this.channelAvatar = this.feedService.parseChannelAvatar(channel.avatar);
+        // this.channelOwner = channel.owner_name;
+        this.channelOwner = this.feedService.indexText(channel.owner_name,25,25);
+
+        let post = this.feedService.getPostFromId(this.nodeId, this.channelId, this.postId);
+        this.postContent = post.content;
+        this.postTS = post.created_at;
+        this.likesNum = post.likes;
+        this.commentsNum = post.comments;
+
+        this.commentList = this.feedService.getCommentList(this.nodeId, this.channelId, this.postId);
+>>>>>>> 1f9a061fc5cbd4ef55e0c6789b22d4a87e5b0736
       });
 
       this.events.subscribe('feeds:refreshPage',()=>{
