@@ -34,11 +34,19 @@ export class HomePage implements OnInit {
     private menuService: MenuService) {
       this.bigImage = false;
       this.postList = feedService.getPostList();
+
+      this.events.subscribe('feeds:refreshPage',()=>{
+        this.zone.run(() => {
+          this.postList = this.feedService.getPostList();
+        });
+      });
+        
+
       this.events.subscribe('feeds:postDataUpdate',()=>{
         this.zone.run(() => {
           this.postList = this.feedService.getPostList();
+        });
       });
-    });
   }
 
   ionViewWillEnter() {

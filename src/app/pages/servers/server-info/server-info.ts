@@ -56,7 +56,15 @@ export class ServerInfoPage implements OnInit {
             this.serverStatus = this.feedService.getServerStatusFromId(this.nodeId);
           }
       });
-  });
+    });
+
+    this.events.subscribe('feeds:removeFeedSourceFinish',  () => {
+      this.zone.run(() => {
+        this.navigateBackPage();
+      });
+    });
+
+    
 
     this.acRoute.params.subscribe(data => {
       this.isOwner = data.isOwner ;

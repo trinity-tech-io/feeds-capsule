@@ -50,21 +50,14 @@ export class PostdetailPage implements OnInit {
         this.channelId = data.channelId;
         this.postId = data.postId;
   
-        let channel = this.feedService.getChannelFromId(this.nodeId, this.channelId);
-        this.channelName = channel.name;
-        this.channelAvatar = this.feedService.parseChannelAvatar(channel.avatar);
-        // this.channelOwner = channel.owner_name;
-        this.channelOwner = this.feedService.indexText(channel.owner_name,25,25);
-
-        let post = this.feedService.getPostFromId(this.nodeId, this.channelId, this.postId);
-        this.postContent = post.content;
-        this.postTS = post.created_at;
-        this.likesNum = post.likes;
-        this.commentsNum = post.comments;
-
-        this.commentList = this.feedService.getCommentList(this.nodeId, this.channelId, this.postId);
+        this.initData();
       });
 
+      this.events.subscribe('feeds:refreshPage',()=>{
+        this.zone.run(() => {
+          this.initData();
+        });
+      });
 
       this.events.subscribe('feeds:commentDataUpdate',()=>{
         this.zone.run(() => {
@@ -83,6 +76,22 @@ export class PostdetailPage implements OnInit {
       
   }
 
+  initData(){
+    let channel = this.feedService.getChannelFromId(this.nodeId, this.channelId);
+    this.channelName = channel.name;
+    this.channelAvatar = this.feedService.parseChannelAvatar(channel.avatar);
+
+    this.channelOwner = this.feedService.indexText(channel.owner_name,25,25);
+
+    let post = this.feedService.getPostFromId(this.nodeId, this.channelId, this.postId);
+    this.postContent = post.content;
+    this.postTS = post.created_at;
+    this.likesNum = post.likes;
+    this.commentsNum = post.comments;
+
+    this.commentList = this.feedService.getCommentList(this.nodeId, this.channelId, this.postId);
+  }
+  
   ngOnInit() {
    
   }

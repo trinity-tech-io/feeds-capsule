@@ -22,7 +22,18 @@ export class MyfeedsComponent implements OnInit {
     private native:NativeService,
     private menuService: MenuService) {
 
-    this.channels = this.feedService.refreshMyChannels();
+    this.channels = this.feedService.getMyChannelList();
+    this.events.subscribe('feeds:refreshPage',()=>{
+      this.zone.run(() => {
+        this.channels = this.feedService.getMyChannelList();
+      });
+    });
+    this.events.subscribe('feeds:myChannelsDataUpdate',()=>{
+      this.zone.run(() => {
+        this.channels = this.feedService.getMyChannelList();
+      });
+    });
+
     
     this.events.subscribe('feeds:createTopicSuccess',()=>{
       this.zone.run(() => {

@@ -34,13 +34,18 @@ export class LikesComponent implements OnInit {
     private native:NativeService,
     private menuService: MenuService) {
     
-    this.likeList = this.feedService.getLikeList();    
+    this.likeList = this.feedService.getLikeList();
     this.events.subscribe('feeds:updateLikeList', (list) => {
       this.zone.run(() => {
         this.likeList = list;
       });
     });
     
+    this.events.subscribe('feeds:refreshPage',()=>{
+      this.zone.run(() => {
+        this.likeList = this.feedService.getLikeList();
+      });
+    });
   }
 
   ngOnInit() {}

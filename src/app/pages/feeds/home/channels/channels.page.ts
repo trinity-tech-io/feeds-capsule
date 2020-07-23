@@ -65,6 +65,12 @@ export class ChannelsPage implements OnInit {
       // this.posts = this.feedService.refreshLocalPost("",this.id);
     });
 
+    this.events.subscribe('feeds:refreshPage',()=>{
+      this.zone.run(() => {
+        this.postList = this.feedService.getPostList();
+      });
+    });
+
     this.events.subscribe('feeds:postDataUpdate',()=>{
       this.zone.run(() => {
         

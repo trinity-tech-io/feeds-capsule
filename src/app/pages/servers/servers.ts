@@ -35,7 +35,11 @@ export class ServersPage implements OnInit {
     ngOnInit() {
         // titleBarManager.setTitle("Feed source");
         // this.native.setTitleBarBackKeyShown(true);
-
+        this.events.subscribe('feeds:removeFeedSourceFinish',  () => {
+            this.zone.run(() => {
+                this.serverList = this.feedService.getServerList();
+            });
+        });
         this.serverList = this.feedService.getServerList();
 
         let bindingServer = this.feedService.getBindingServer();

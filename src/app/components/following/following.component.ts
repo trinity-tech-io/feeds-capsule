@@ -32,6 +32,13 @@ export class FollowingComponent implements OnInit {
           this.channelList = list;
       });
     });
+
+    this.events.subscribe('feeds:refreshPage',()=>{
+      this.zone.run(() => {
+        this.channelList=this.feedService.refreshLocalSubscribedChannels();
+        this.feedService.refreshSubscribedChannels();
+      });
+    });
   }
 
   ngOnInit() {}
