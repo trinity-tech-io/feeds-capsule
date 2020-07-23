@@ -29,46 +29,22 @@ export class ServersPage implements OnInit {
         private router: Router,
         public theme:ThemeService,
         private translate:TranslateService ) {
-           
     }
 
     ngOnInit() {
-        // titleBarManager.setTitle("Feed source");
-        // this.native.setTitleBarBackKeyShown(true);
+        this.initData();
+
         this.events.subscribe('feeds:removeFeedSourceFinish',  () => {
             this.zone.run(() => {
-                this.serverList = this.feedService.getServerList();
+                this.initData();
             });
         });
-        this.serverList = this.feedService.getServerList();
-
-        let bindingServer = this.feedService.getBindingServer();
-        // let = bindingServer {"name":"No name provided","owner":"WangRan","introduction":"No intro provided","did":"did:elastos:iaD4tCkC5X3Jix34fsToEk1xqRWmy1y5Yv","carrierAddress":"dawpLfp7iKrzpKoTdFXeCrQ8omK7njNDK3zy3xx1TP11AgADgfeC","nodeId":"HeRcumsP5Cnp1nCgxjqR7TEMhDdNQbnwc5X2Db5nSTHM","feedsUrl":"feeds://did:elastos:iaD4tCkC5X3Jix34fsToEk1xqRWmy1y5Yv"}
-        if (bindingServer != null && bindingServer != undefined)
-            this.myFeedSource = bindingServer;
-
-        this.serversStatus = this.feedService.getServersStatus();
-
-        this.serverStatisticsMap = this.feedService.getServerStatisticsMap();
-        
-        for (let index = 0; index < this.serverList.length; index++) {
-            // const element = ;
-            this.feedService.getStatistics(this.serverList[index].userId);
-        }
-
-        // this.connectStatus = this.feedService.getConnectionStatus();
 
         this.events.subscribe('feeds:updateServerList', serverList => {
             this.zone.run(() => {
                 this.serverList = serverList;
             });
         });
-
-        // this.events.subscribe('feeds:connectionChanged', connectionStatus => {
-        //     this.zone.run(() => {
-        //         this.connectStatus = connectionStatus;
-        //     });
-        // });
 
         this.events.subscribe('feeds:serverConnectionChanged', serversStatus => {
             this.zone.run(() => {
@@ -103,7 +79,21 @@ export class ServersPage implements OnInit {
         });
     }
 
+    initData(){
+        this.serverList = this.feedService.getServerList();
 
+        let bindingServer = this.feedService.getBindingServer();
+        if (bindingServer != null && bindingServer != undefined){
+            this.myFeedSource = this.feedService.getServerbyNodeId(bindingServer.nodeId);
+        }else{
+            this.myFeedSource = null;
+        }
+        this.serversStatus = this.feedService.getServersStatus();
+        this.serverStatisticsMap = this.feedService.getServerStatisticsMap();
+        for (let index = 0; index < this.serverList.length; index++) {
+            this.feedService.getStatistics(this.serverList[index].userId);
+        }
+    }
 
     ngOnDestroy() {
     }

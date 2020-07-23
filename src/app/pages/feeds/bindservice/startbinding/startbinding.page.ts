@@ -18,6 +18,7 @@ export class StartbindingPage implements OnInit {
   private nonce = "12345";
   private nodeId: string;
   private carrierAddress: string;
+  private did:string = "";
   constructor(
     private zone: NgZone,
     private native: NativeService,
@@ -29,10 +30,17 @@ export class StartbindingPage implements OnInit {
     private navCtrl: NavController
   ) {
     acRoute.params.subscribe((data)=>{
+      console.log("rrr==>"+JSON.stringify(data));
       this.nodeId = data.nodeId;
-      if (data.nonce!="")
-        this.nonce = data.nonce ;
+      let nonce = data.nonce;
+      let did = data.did;
+
+      if (nonce!="")
+        this.nonce = nonce ;
       else this.nonce = this.feedService.generateNonce();
+      
+      if(did!="")
+        this.did = did;
 
       this.carrierAddress = data.address;
       if(this.feedService.getFriendConnection(this.nodeId) == 1)
@@ -52,11 +60,25 @@ export class StartbindingPage implements OnInit {
         case "credential_issued":
           this.zone.run(() => {
             this.navCtrl.pop().then(()=>{
-              this.native.getNavCtrl().navigateForward(['/bindservice/issuecredential/',nodeId, did]);
+              this.feedService.restoreBindingServerCache(this.did, nodeId, ()=>{
+                this.feedService.finishBinding(nodeId);
+              },()=>{
+                this.feedService.finishBinding(nodeId);
+              });
+              
+              // this.native.getNavCtrl().navigateForward(['/bindservice/issuecredential/',nodeId, this.did]);
             });
           });
           break;
       }
+    });
+
+    this.events.subscribe('feeds:issue_credential', () => {
+      this.zone.run(() => {
+        this.navCtrl.pop().then(()=>{
+          this.native.getNavCtrl().navigateForward(['/bindservice/finish/',this.nodeId]);
+        });
+      });
     });
 
     this.events.subscribe("feeds:friendConnectionChanged", (nodeId, status)=>{

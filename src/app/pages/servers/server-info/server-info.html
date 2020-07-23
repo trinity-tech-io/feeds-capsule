@@ -178,13 +178,13 @@
     </ion-button>
   </div>
 
-  <div style="margin-left: 34px; margin-right: 34px; margin-top: 25px;" *ngIf="address == '' && isOwner != 'true'">
+  <div style="margin-left: 34px; margin-right: 34px; margin-top: 25px;" *ngIf="address == '' && !isBindServer">
     <ion-button style="margin-top: 25px;" expand="block" mode="ios"  color="danger" (click)="removeFeedSource()">
       <ion-label>{{'ServerInfoPage.removeFeedSource' | translate}}</ion-label>
     </ion-button>
   </div>
 
-  <div style="margin-left: 34px; margin-right: 34px; margin-top: 25px;" *ngIf="address == '' && isOwner == 'true'">
+  <div style="margin-left: 34px; margin-right: 34px; margin-top: 25px;" *ngIf="address == '' && isBindServer">
     <ion-button style="margin-top: 25px;" expand="block" mode="ios"  color="danger" (click)="deleteFeedSource()">
       <ion-label>{{'ServerInfoPage.deleteFeedSource' | translate}}</ion-label>
     </ion-button>

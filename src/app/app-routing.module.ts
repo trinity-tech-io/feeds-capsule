@@ -23,7 +23,7 @@ const routes: Routes = [
   { path: 'bindservice/publishdid/:nodeId/:did/:payload', loadChildren: './pages/feeds/bindservice/publishdid/publishdid.module#PublishdidPageModule' },
   { path: 'bindservice/issuecredential/:nodeId/:did', loadChildren: './pages/feeds/bindservice/issuecredential/issuecredential.module#IssuecredentialPageModule' },
   { path: 'bindservice/finish/:nodeId', loadChildren: './pages/feeds/bindservice/finish/finish.module#FinishPageModule' },
-  { path: 'bindservice/startbinding/:nodeId/:nonce/:address', loadChildren: './pages/feeds/bindservice/startbinding/startbinding.module#StartbindingPageModule' },
+  { path: 'bindservice/startbinding/:nodeId/:nonce/:address/:did', loadChildren: './pages/feeds/bindservice/startbinding/startbinding.module#StartbindingPageModule' },
   { path: 'bindservice/importmnemonic/:nodeId', loadChildren: './pages/feeds/bindservice/importdid/importmnemonic/importmnemonic.module#ImportmnemonicPageModule' },
 
   { path: 'channels/:nodeId/:channelId', loadChildren: './pages/feeds/home/channels/channels.module#ChannelsPageModule' },

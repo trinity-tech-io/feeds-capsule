@@ -83,7 +83,7 @@ export class ServerInfoPage implements OnInit {
           if (bindingServer != null &&
             bindingServer !=undefined &&
             this.nodeId == bindingServer.nodeId){
-            server = this.feedService.getBindingServer();
+            server = this.feedService.getServerbyNodeId(this.nodeId);
 
             this.isBindServer = true;
           }else{
@@ -184,6 +184,7 @@ export class ServerInfoPage implements OnInit {
     const actionSheet = await this.actionSheetController.create({
       buttons: [{
         text: this.translate.instant("ServerInfoPage.DeletethisFeedSource"),
+        role: 'destructive',
         icon: 'trash',
         handler: () => {
           this.feedService.deleteFeedSource(this.nodeId);
@@ -203,6 +204,7 @@ export class ServerInfoPage implements OnInit {
     const actionSheet = await this.actionSheetController.create({
       buttons: [{
         text: this.translate.instant("ServerInfoPage.RemovethisFeedSource"),
+        role: 'destructive',
         icon: 'trash',
         handler: () => {
           this.feedService.removeFeedSource(this.nodeId);

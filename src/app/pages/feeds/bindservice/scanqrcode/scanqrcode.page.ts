@@ -73,13 +73,14 @@ export class ScanqrcodePage implements OnInit {
     appManager.sendIntent("scanqrcode", {}, {}, (res) => {
       let content = res.result.scannedContent;
       let contentStr = String(content);
-      let con = contentStr.split(".");
 
-      this.carrierAddress = con[0];
-      let nonce = con[1];   
+      let result = this.feedService.parseBindServerUrl(contentStr);
+      this.carrierAddress = result.carrierAddress;
+      let nonce = result.nonce;
+      let did = result.did;
       this.carrier.getIdFromAddress(this.carrierAddress, 
         (userId)=>{
-            this.addFriends(this.carrierAddress, userId, nonce);
+            this.addFriends(this.carrierAddress, userId, nonce, did);
         },
         (err)=>{
 
@@ -89,7 +90,7 @@ export class ScanqrcodePage implements OnInit {
       });
   }
 
-  addFriends(address: string, nodeId: string, nonce: string){
+  addFriends(address: string, nodeId: string, nonce: string, did: string){
     this.carrier.isValidAddress(address, (isValid) => {
       if (!isValid){
         // this.alertError("Address invalid");
@@ -102,7 +103,7 @@ export class ScanqrcodePage implements OnInit {
           this.zone.run(() => {
             this.navCtrl.pop().then(()=>{
               if (nonce == undefined) nonce = "";
-              this.native.getNavCtrl().navigateForward(['/bindservice/startbinding/',nodeId, nonce, address]);
+              this.native.getNavCtrl().navigateForward(['/bindservice/startbinding/',nodeId, nonce, address, did]);
             });
           });
         }, (err) => {

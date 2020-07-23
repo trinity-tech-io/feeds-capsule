@@ -49,6 +49,12 @@ let cacheBindingAddress: string = "";
 let cacheBindingDid: string = "";
 let localCredential: string = "";
 
+type BindURLData = {
+  did: string;
+  carrierAddress: string;
+  nonce: string;
+}
+
 type Notification = {
   userName: string;
   behavior: Behavior;
@@ -487,8 +493,7 @@ export class FeedService {
       // notificationList.push(notification4);
   }
   initData(){
-
-
+    // this.removeAllData();
     firstInit = this.storeService.get(PersistenceKey.firstInit);
     firstInit = true; // for test
     if (firstInit == null) {
@@ -3440,12 +3445,10 @@ export class FeedService {
   }
 
   updatePostWithTime(nodeId: string, channelId:number, lastPostTime: number){
-    console.log("updatePostWithTime==>"+nodeId+";"+channelId);
     this.getPost(nodeId,channelId,Communication.field.last_update,0,lastPostTime,0);
   }
 
   updatePost(nodeId: string, channelId:number){
-    console.log("updatePost==>"+nodeId+";"+channelId);
     let nodeChannelId = nodeId + channelId;
     let lastPostTime = 0;
     if (lastPostUpdateMap[nodeChannelId] != null && lastPostUpdateMap[nodeChannelId] != undefined)
@@ -3588,11 +3591,17 @@ export class FeedService {
   handleSigninChallenge(nodeId:string, result: any){
     let requiredCredential = result.credential_required;
     let jws = result.jws;
-    let credential = result.credential;
+
+    // let credentialStr = JSON.stringify(result.credential);
+    let credential = JSON.parse(result.credential);
 
     // {"signatureIsValid":true,"payload":{"iss":"did:elastos:ikZJ3Z7JqmZ8HHoThcqyVQfd2zHhseTWnt","sub":"didauth","realm":"GDY3wCVgegMrVAn7mLctQHyxPPwVAv7ShJ77yuanQZqM","nonce":"8pNVf8sPUYG1RPbrSV8dk1daMZBcRvq6S"}}
     this.parseJWS(true,jws,
       (res)=>{
+        serverMap[nodeId].name = credential.credentialSubject.name;
+        serverMap[nodeId].introduction = credential.credentialSubject.description;
+        this.storeService.set(PersistenceKey.serverMap, serverMap);
+
         let payloadStr = JSON.stringify(res.payload);
         let payload = JSON.parse(payloadStr);
         let nonce = payload.nonce;
@@ -3700,32 +3709,7 @@ export class FeedService {
       did = result.did;
       payload = result.transaction_payload;
 
-      let feedUrl = "feeds://"+did+"/"+cacheBindingAddress;
-      let defaultServer = {
-        name              : "No name provided",
-        owner             : this.getSignInData().name,
-        introduction      : "No intro provided",
-        did               : did,
-        carrierAddress    : cacheBindingAddress,
-        nodeId            : nodeId,
-        feedsUrl          : feedUrl
-      }
-
-      this.handleImportDID(feedUrl, defaultServer, (server)=>{
-          bindingServerCache = {
-            name              : server.name,
-            owner             : server.owner,
-            introduction      : server.introduction,
-            did               : server.did,
-            carrierAddress    : server.carrierAddress,
-            nodeId            : server.nodeId,
-            feedsUrl          : server.feedsUrl
-          }
-          eventBus.publish("feeds:resolveDidSucess", nodeId, did);
-      },(err)=>{
-        bindingServerCache = defaultServer;
-        eventBus.publish("feeds:resolveDidError", nodeId, did, payload);
-      });
+      this.resolveServerDid(did, nodeId, payload,()=>{},()=>{});
     }
 
     eventBus.publish("feeds:owner_declared", nodeId, phase, did, payload);
@@ -3743,33 +3727,7 @@ export class FeedService {
     let did = result.did;
     let transaction_payload = result.transaction_payload;
 
-    let feedUrl = "feeds://"+did+"/"+cacheBindingAddress;
-    let defaultServer = {
-      name              : "No name provided",
-      owner             : this.getSignInData().name,
-      introduction      : "No intro provided",
-      did               : did,
-      carrierAddress    : cacheBindingAddress,
-      nodeId            : nodeId,
-      feedsUrl          : feedUrl
-    }
-    this.handleImportDID(feedUrl, defaultServer, (server)=>{
-        bindingServerCache = {
-          name              : server.name,
-          owner             : server.owner,
-          introduction      : server.introduction,
-          did               : server.did,
-          carrierAddress    : server.carrierAddress,
-          nodeId            : server.nodeId,
-          feedsUrl          : server.feedsUrl
-        }
-
-        eventBus.publish("feeds:resolveDidSucess", nodeId, did);
-    },(err)=>{
-      bindingServerCache = defaultServer;
-
-      eventBus.publish("feeds:resolveDidError", nodeId, did, transaction_payload);
-    });
+    this.resolveServerDid(did, nodeId, transaction_payload,()=>{},()=>{});
 
     eventBus.publish("feeds:did_imported", nodeId, did, transaction_payload);
   }
@@ -3779,27 +3737,13 @@ export class FeedService {
   }
 
   handleIssueCredentialResponse(nodeId: string, result: any){
-    bindingServer = bindingServerCache;
-    this.storeService.set(PersistenceKey.bindingServer,bindingServer);
-    this.addServer(bindingServer.carrierAddress,
-                  'Feeds/0.1',
-                  bindingServer.name,
-                  bindingServer.owner,
-                  bindingServer.introduction,
-                  bindingServer.did,
-                  bindingServer.feedsUrl,()=>{
-
-                  },(error)=>{
-
-                  });
-    eventBus.publish("feeds:issue_credential");
-    eventBus.publish("feeds:bindServerFinish",bindingServer);
-
-    this.doFriendConnection(nodeId, ConnState.connected);
+    this.finishBinding(nodeId);
   }
 
 
   issueCredential(nodeId: string, did: string, serverName: string, serverDesc: string) {
+    if (bindingServerCache == null || bindingServerCache == undefined)
+      this.resolveServerDid(did, nodeId, "",()=>{},()=>{});
     /**
      * Ask the DID app to generate a VerifiableCredential with some data, and use current DID
      * as the signing issuer for this credential, so that others can permanently verifiy who
@@ -3825,7 +3769,6 @@ export class FeedService {
 
       expirationdate: new Date(2024, 10, 10).toISOString() // Credential will expire on 2024-11-10 - Note the month's 0-index...
     }, {}, (response) => {
-
       if (response.result.credential) {
         bindingServerCache.name = serverName;
         bindingServerCache.introduction = serverDesc;
@@ -3839,6 +3782,85 @@ export class FeedService {
       console.log("Failed to issue a credential: "+JSON.stringify(err));
       // this.didDemoService.toast("Failed to issue a credential: "+JSON.stringify(err));
     })
+  }
+
+  restoreBindingServerCache(did: string, nodeId: string, onSuccess: ()=>void, onError: ()=>void){
+    let feedUrl = "feeds://"+did+"/"+cacheBindingAddress;
+    let defaultServer = {
+      name              : "No name provided",
+      owner             : this.getSignInData().name,
+      introduction      : "No intro provided",
+      did               : did,
+      carrierAddress    : cacheBindingAddress,
+      nodeId            : nodeId,
+      feedsUrl          : feedUrl
+    }
+    this.handleImportDID(feedUrl, defaultServer, (server)=>{
+        bindingServerCache = {
+          name              : server.name,
+          owner             : server.owner,
+          introduction      : server.introduction,
+          did               : server.did,
+          carrierAddress    : server.carrierAddress,
+          nodeId            : server.nodeId,
+          feedsUrl          : server.feedsUrl
+        }
+        onSuccess();
+    },(err)=>{
+      bindingServerCache = defaultServer;
+      onError();
+    });
+  }
+
+  resolveServerDid(did: string, nodeId: string, payload: string, onSuccess: ()=>void, onError: ()=>void){
+    let feedUrl = "feeds://"+did+"/"+cacheBindingAddress;
+    let defaultServer = {
+      name              : "No name provided",
+      owner             : this.getSignInData().name,
+      introduction      : "No intro provided",
+      did               : did,
+      carrierAddress    : cacheBindingAddress,
+      nodeId            : nodeId,
+      feedsUrl          : feedUrl
+    }
+    this.handleImportDID(feedUrl, defaultServer, (server)=>{
+        bindingServerCache = {
+          name              : server.name,
+          owner             : server.owner,
+          introduction      : server.introduction,
+          did               : server.did,
+          carrierAddress    : server.carrierAddress,
+          nodeId            : server.nodeId,
+          feedsUrl          : server.feedsUrl
+        }
+        onSuccess();
+        eventBus.publish("feeds:resolveDidSucess", nodeId, did);
+    },(err)=>{
+      bindingServerCache = defaultServer;
+      onError();
+      eventBus.publish("feeds:resolveDidError", nodeId, did, payload);
+    });
+  }
+
+  finishBinding(nodeId: string){
+    
+    bindingServer = bindingServerCache;
+    this.storeService.set(PersistenceKey.bindingServer,bindingServer);
+    this.addServer(bindingServer.carrierAddress,
+                  'Feeds/0.1',
+                  bindingServer.name,
+                  bindingServer.owner,
+                  bindingServer.introduction,
+                  bindingServer.did,
+                  bindingServer.feedsUrl,()=>{
+
+                  },(error)=>{
+
+                  });
+    eventBus.publish("feeds:issue_credential");
+    eventBus.publish("feeds:bindServerFinish",bindingServer);
+
+    this.doFriendConnection(nodeId, ConnState.connected);
   }
 
   getFriendConnection(nodeId: string){
@@ -3969,7 +3991,10 @@ export class FeedService {
   }
 
   deleteFeedSource(nodeId: string){
+    bindingServer = undefined;
+    this.storeService.remove(PersistenceKey.bindingServer);
     this.removeFeedSource(nodeId);
+    
   }
 
   removeFeedSource(nodeId: string){
@@ -4080,6 +4105,36 @@ export class FeedService {
     this.getSubscribedChannels(nodeId, Communication.field.last_update, 0, 0, 0);
     this.getMyChannels(nodeId,Communication.field.last_update,0,0,0);
 
+  }
+
+  
+  parseBindServerUrl(content: string): BindURLData{
+    if (content.startsWith("feeds_raw://")){
+      let tmpString = content.replace("feeds_raw://","");
+      let tmp: string[] = tmpString.split("/")
+
+      if (tmp.length == 3){
+        return {
+          did: tmp[0],
+          carrierAddress: tmp[1],
+          nonce: tmp[2]
+        }
+      }else if (tmp.length == 2){
+        return {
+          did: "",
+          carrierAddress: tmp[0],
+          nonce: tmp[1]
+        }
+      }
+    }else if(content.startsWith("feeds://")){
+      let tmpString = content.replace("feeds://","");
+      let tmp: string[] = tmpString.split("/")
+      return {
+        did: tmp[0],
+        carrierAddress: tmp[1],
+        nonce: "0"
+      }
+    }
   }
 }
 
