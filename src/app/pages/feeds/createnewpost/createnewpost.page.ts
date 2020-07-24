@@ -26,6 +26,7 @@ export class CreatenewpostPage implements OnInit {
 
   private nodeId: string;
   private channelId: number;
+  public  isNewPost:boolean = false;
   constructor(
     private events: Events,
     private native: NativeService,
@@ -37,8 +38,13 @@ export class CreatenewpostPage implements OnInit {
     public theme:ThemeService,
     private translate:TranslateService) {
       this.events.subscribe('feeds:publishPostSuccess', () => {
+        this.isNewPost = false;
         this.native.toast_trans("CreatenewpostPage.tipMsg1");
         this.navCtrl.pop();
+      });
+
+      this.events.subscribe('rpcRequest:error', () => {
+         this.isNewPost = false;
       });
 
 
@@ -78,25 +84,31 @@ export class CreatenewpostPage implements OnInit {
 
 
   post(){
-    if (this.newPost == "" && this.imgUrl == ""){
-      alert(this.translate.instant("CreatenewpostPage.tipMsg"));
+    if(this.isNewPost){
+      this.native.toast_trans("common.sending");
       return;
-    }else{
-
-      let myContent = {};
-      myContent["text"] = this.newPost;
-      myContent["img"] = this.imgUrl;
+    }
+    let  newPost = this.native.iGetInnerText(this.newPost);
+    if (newPost == "" && this.imgUrl == ""){
+      this.native.toast_trans("CreatenewpostPage.tipMsg");
+      return;
+    }
+    this.isNewPost = true;
+    let myContent = {};
+    myContent["text"] = this.newPost;
+    myContent["img"] = this.imgUrl;
       
-      this.feedService.publishPost(
+    this.feedService.publishPost(
         this.nodeId,
         this.channelId,
         JSON.stringify(myContent));
-  
-      // this.navCtrl.pop();
     }
-  }
 
   addImg(){
+    if(this.isNewPost){
+      this.native.toast_trans("common.sending");
+      return;
+    }
     this.openCamera(0);
   }
 

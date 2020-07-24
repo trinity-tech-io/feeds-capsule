@@ -902,6 +902,7 @@ export class FeedService {
 
   sendRPCMessage(nodeId: string, method: string, params: any){
     if(!this.checkServerConnection(nodeId)){
+      this.events.publish("rpcRequest:error");
       this.native.toast(this.translate.instant("AddServerPage.serverMsg1") + nodeId + this.translate.instant("AddServerPage.serverMsg2"));
       return;
     }
@@ -910,9 +911,11 @@ export class FeedService {
       nodeId,
       params,
       ()=>{
+       
       },
-      (error)=>{
-        // this.native.toast(error);
+      (error:any)=>{
+         this.events.publish("rpcRequest:error");
+         this.native.toast(JSON.stringify(error));
       });
   }
 

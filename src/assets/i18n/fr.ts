@@ -17,7 +17,8 @@ export const fr = {
         "just":"Just",
         "yesterday":"yesterday",
         "unsubscribe":"Unsubscribe",
-        "share":"Share"
+        "share":"Share",
+        "sending":"Sending..."
     },
     "app":{
         "profileDetails":"Profile Details",

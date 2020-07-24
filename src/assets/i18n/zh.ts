@@ -17,7 +17,8 @@ export const zh = {
         "just":"刚刚",
         "yesterday":"昨天",
         "unsubscribe":"取消订阅",
-        "share":"分享"
+        "share":"分享",
+        "sending":"正在发送..."
     },
     "app":{
         "profileDetails":"个人档案",
