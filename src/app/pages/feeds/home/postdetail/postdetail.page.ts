@@ -124,10 +124,10 @@ export class PostdetailPage implements OnInit {
     return this.feedService.indexText(text,20,20);
   }
 
-  async showCommentPage(event){
+  async showCommentPage(nodeId,channelId,postId,event){
     const popover = await this.popoverController.create({
       component: CommentComponent,
-      componentProps: {nodeId: this.nodeId, channelId: this.channelId, postId: this.postId},
+      componentProps: {nodeId:nodeId, channelId:channelId, postId:postId},
       event:event,
       translucent: true,
       cssClass: 'bottom-sheet-popover'
@@ -141,12 +141,12 @@ export class PostdetailPage implements OnInit {
     return await popover.present();
   }
 
-  checkMyLike(){
-    return this.feedService.checkMyLike(this.nodeId, this.channelId, this.postId);
+  checkMyLike(nodeId,channelId,postId){
+    return this.feedService.checkMyLike(nodeId,channelId,postId);
   }
 
-  like(commentId: number){
-    if (this.checkMyLike()){
+  like(nodeId,channelId,postId,commentId: number){
+    if (this.checkMyLike(nodeId,channelId,postId)){
       this.feedService.postUnlike(this.nodeId,Number(this.channelId),Number(this.postId),0);
       return ;
     }
@@ -181,5 +181,9 @@ export class PostdetailPage implements OnInit {
 
   hideBigImage(){
     this.bigImage = false;
+  }
+
+  getlikeNum(){
+
   }
 }

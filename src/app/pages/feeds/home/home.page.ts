@@ -34,7 +34,7 @@ export class HomePage implements OnInit {
     private menuService: MenuService) {
       this.bigImage = false;
       this.postList = feedService.getPostList();
-
+      console.log("==msg=="+JSON.stringify(this.postList));
       this.events.subscribe('feeds:refreshPage',()=>{
         this.zone.run(() => {
           this.postList = this.feedService.getPostList();
@@ -51,6 +51,10 @@ export class HomePage implements OnInit {
 
   ionViewWillEnter() {
   
+  }
+
+  ionViewWillUnload(){
+    this.popoverController.dismiss();
   }
 
   
