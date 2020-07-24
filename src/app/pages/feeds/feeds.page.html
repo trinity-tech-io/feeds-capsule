@@ -3,11 +3,11 @@
   
   <ion-tab-bar class="tabs-div" >
     <ion-tab-button tab="home" (click)="home()">
-      <div  class="home-tab" [ngClass]="{'home-tab-selected': currentTab == 'home'}"></div>
+        <img class="home-tab" [ngClass]="{'home-tab-selected': currentTab == 'home'}">
     </ion-tab-button>
 
     <ion-tab-button tab="profile" (click)="profile()">
-      <div  class="profile-tab" [ngClass]="{'profile-tab-selected': currentTab == 'profile'}"></div>
+      <img  class="profile-tab" [ngClass]="{'profile-tab-selected': currentTab == 'profile'}">
     </ion-tab-button>
 
     <ion-tab-button>
@@ -15,11 +15,11 @@
     </ion-tab-button>
 
     <ion-tab-button tab="notification" (click)="notification()">
-      <div class="notification-tab" [ngClass]="{'notification-tab-selected': currentTab == 'notification'}"></div>
+      <img class="notification-tab" [ngClass]="{'notification-tab-selected': currentTab == 'notification'}">
     </ion-tab-button>
 
     <ion-tab-button tab="search" (click)="search()">
-      <div class="search-tab" [ngClass]="{'search-tab-selected': currentTab == 'search'}"></div>
+      <img class="search-tab" [ngClass]="{'search-tab-selected': currentTab == 'search'}">
     </ion-tab-button>
   </ion-tab-bar>
 </ion-tabs>

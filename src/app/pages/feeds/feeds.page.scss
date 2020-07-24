@@ -44,44 +44,27 @@ ion-tab-button.center-tab{
 }
 
 .home-tab{
-  // src: url();
-  // src: url('../../../assets/images/profile.svg');
-  // src="../../../assets/images/home.svg"
-  // color: #368bff;
-  // src: url('../../../assets/images/home.svg');
-  width: 25px;
-  height: 21.7px;
-  border: 0px;
-  // src: url('../../../assets/images/home.svg');
-  background-image:  url('../../../assets/images/home.svg');;
+  width: 23px;
+  height: 19.8px;
+  content: url("../../../assets/images/home.svg");
 }
 
 .home-tab-selected{
-  // src: url();
-  // src: url('../../../assets/images/profile.svg');
-  // src="../../../assets/images/home.svg"
-  // color: #368bff;
-  border: none;
   width: 23px;
-  height: 20px;
-  border: 0px;
-
-  // src: url('../../../assets/images/home-s.svg');
-  background-image: url('../../../assets/images/home-s.svg');
-  // src: url('../../../assets/images/user-2.svg');
-
+  height: 19.8px;
+  content: url('../../../assets/images/home-s.svg');
 }
 
 .profile-tab{
-  width: 24.7px;
-  height: 23px;
-  background-image: url('../../../assets/images/user.svg');
+  width: 24.4px;
+  height: 22.7px;
+  content: url('../../../assets/images/user.svg');
 }
 
 .profile-tab-selected{
-  width: 22px;
-  height: 23px;
-  background-image: url('../../../assets/images/user-s.svg');
+  width: 24.4px;
+  height: 22.7px;
+  content: url('../../../assets/images/user-s.svg');
 }
 
 .add-tab{
@@ -91,27 +74,27 @@ ion-tab-button.center-tab{
 }
 
 .notification-tab{
-  width: 22.3px;
-  height: 24.3px;
-  background-image: url('../../../assets/images/notification.svg');
+  width: 20.2px;
+  height: 22.4px;
+  content: url('../../../assets/images/notification.svg');
 }
 
 .notification-tab-selected{
-  width: 20.3px;
-  height: 22.7px;
-  background-image: url('../../../assets/images/notification-s.svg');
+  width: 20.2px;
+  height: 22.4px;
+  content: url('../../../assets/images/notification-s.svg');
 }
 
 .search-tab{
-  width: 21px;
-  height: 21px;
-  background-image: url('../../../assets/images/search.svg');
+  width: 20.7px;
+  height: 20.7px;
+  content: url('../../../assets/images/search.svg');
 }
 
 .search-tab-selected{
-  width: 22px;
-  width: 22px;
-  background-image: url('../../../assets/images/search-s.svg');
+  width: 20.7px;
+  width: 20.7px;
+  content: url('../../../assets/images/search-s.svg');
 }
 
 .tabs-line{
