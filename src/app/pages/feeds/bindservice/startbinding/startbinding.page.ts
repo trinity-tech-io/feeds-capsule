@@ -19,6 +19,7 @@ export class StartbindingPage implements OnInit {
   private nodeId: string;
   private carrierAddress: string;
   private did:string = "";
+  private feedsUrl: string;
   constructor(
     private zone: NgZone,
     private native: NativeService,
@@ -30,10 +31,10 @@ export class StartbindingPage implements OnInit {
     private navCtrl: NavController
   ) {
     acRoute.params.subscribe((data)=>{
-      console.log("rrr==>"+JSON.stringify(data));
       this.nodeId = data.nodeId;
       let nonce = data.nonce;
       let did = data.did;
+      this.feedsUrl = data.feedsUrl;
 
       if (nonce!="")
         this.nonce = nonce ;

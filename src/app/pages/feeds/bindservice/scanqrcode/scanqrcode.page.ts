@@ -19,6 +19,7 @@ export class ScanqrcodePage implements OnInit {
   private title = "ScanqrcodePage.bindingServer";
   private waitFriendsOnline = false;
   private carrierAddress: string;
+  private scanContent: string;
 
   constructor(
     private native: NativeService,
@@ -30,17 +31,8 @@ export class ScanqrcodePage implements OnInit {
     private translate:TranslateService,
     private events: Events,
     ) {
-      // this.events.subscribe('feeds:friendConnection', ret => {
-      //   if (!this.waitFriendsOnline)
-      //     return;
+  }
 
-      //   let friendId = ret.friendId;
-
-      //   this.declareOwner(friendId);
-      // });
-
-      
-    }
   ionViewDidEnter() {
     this.events.subscribe("feeds:updateTitle",()=>{
       this.initTitle();
@@ -61,9 +53,6 @@ export class ScanqrcodePage implements OnInit {
   }
 
   scanService(){
-    // this.feedService.getFriends();
-    
-
     this.scanAddress();
   }
 
@@ -73,6 +62,7 @@ export class ScanqrcodePage implements OnInit {
     appManager.sendIntent("scanqrcode", {}, {}, (res) => {
       let content = res.result.scannedContent;
       let contentStr = String(content);
+      this.scanContent = contentStr;
 
       let result = this.feedService.parseBindServerUrl(contentStr);
       this.carrierAddress = result.carrierAddress;
@@ -83,7 +73,6 @@ export class ScanqrcodePage implements OnInit {
             this.addFriends(this.carrierAddress, userId, nonce, did);
         },
         (err)=>{
-
         });
       }, (err: any) => {
           console.error(err);
@@ -102,8 +91,11 @@ export class ScanqrcodePage implements OnInit {
         () => {
           this.zone.run(() => {
             this.navCtrl.pop().then(()=>{
+              let feedUrl = "-1";
               if (nonce == undefined) nonce = "";
-              this.native.getNavCtrl().navigateForward(['/bindservice/startbinding/',nodeId, nonce, address, did]);
+              if (nonce == "0") feedUrl = this.scanContent;
+              
+              this.native.getNavCtrl().navigateForward(['/bindservice/startbinding/',nodeId, nonce, address, did, feedUrl]);
             });
           });
         }, (err) => {

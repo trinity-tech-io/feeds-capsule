@@ -187,7 +187,8 @@ export const zh = {
         "des":"您要绑定一个feeds服务，请检查验证码与feeds服务浏览器上的验证码是否相同。",
         "confirm":"确认",
         "abort":"中止",
-        "Connectingserver": "正在连接服务"
+        "Connectingserver": "正在连接服务",
+        "linkServer":"您正在关联一个Feed服务，请确认服务地址与之前绑定的Feed服务是否一致。"
     },
     "PublishdidPage":{
         "bindingServer":"绑定服务",

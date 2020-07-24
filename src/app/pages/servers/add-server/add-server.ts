@@ -91,7 +91,7 @@ export class AddServerPage implements OnInit {
 
 
   scanCode(){
-    this.native.pop();
+    // this.native.pop();
     this.appService.scanAddress();
   }
 

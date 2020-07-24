@@ -187,7 +187,8 @@ export const fr = {
         "des":"Your are going to binding a feeds service, please check the verifying code whether it is same one on browser from feeds service.",
         "confirm":"Confirm",
         "abort":"Abort",
-        "Connectingserver": "Connecting server"
+        "Connectingserver": "Connecting server",
+        "linkServer":"You are linking a feed service. Please confirm whether the feed url is consistent with the previously bound feed service."
     },
     "PublishdidPage":{
         "bindingServer":"Binding Server",
