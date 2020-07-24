@@ -115,7 +115,7 @@ export class LikesComponent implements OnInit {
 
   exploreFeeds(){
     this.tabs.select("search");
-    this.feedspage.currentTab = "search";
+    this.feedspage.search();
   }
 
   handleDisplayTime(createTime:number){

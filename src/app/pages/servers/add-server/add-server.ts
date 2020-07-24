@@ -60,7 +60,8 @@ export class AddServerPage implements OnInit {
 
       this.events.subscribe('feeds:updateServerList', ()=>{
         this.zone.run(() => {
-          this.native.pop();
+            //this.native.pop();
+            this.native.go('/menu/servers');
         });
       });
   }
@@ -108,7 +109,8 @@ export class AddServerPage implements OnInit {
       this.address.startsWith('feeds://') && 
       this.address.indexOf("did:elastos:")
     ){
-      this.router.navigate(['/menu/servers/server-info', this.address, "", false]);
+      //this.router.navigate(['/menu/servers/server-info', this.address, "", false]);
+      this.native.getNavCtrl().navigateForward(['/menu/servers/server-info', this.address, "", false]);
     }else{
       alert(this.translate.instant('AddServerPage.tipMsg'));
     }

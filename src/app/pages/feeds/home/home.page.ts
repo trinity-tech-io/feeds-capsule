@@ -124,7 +124,7 @@ export class HomePage implements OnInit {
 
   exploreFeeds(){
     this.tabs.select("search");
-    this.feedspage.currentTab = "search";
+    this.feedspage.search();
   }
 
   parseAvatar(nodeId: string, channelId: number): string{
