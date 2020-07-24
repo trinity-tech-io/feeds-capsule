@@ -70,9 +70,12 @@ export class HomePage implements OnInit {
     return this.feedService.parsePostContentImg(content);
   }
 
-  getChannelOwnerName(nodeId, channelId){
-    let ownerName:string = this.getChannel(nodeId, channelId).owner_name;
-    return this.feedService.indexText(ownerName,25,25);
+  getChannelOwnerName(nodeId, channelId): string{
+    let channel = this.getChannel(nodeId, channelId);
+    if (channel == null || channel == undefined)
+      return "";
+
+    return this.feedService.indexText(channel.ownner_name,25,25);
   }
 
   ngOnInit() {
@@ -125,7 +128,10 @@ export class HomePage implements OnInit {
   }
 
   parseAvatar(nodeId: string, channelId: number): string{
-    return this.feedService.parseChannelAvatar(this.getChannel(nodeId, channelId).avatar);
+    let channel = this.getChannel(nodeId, channelId);
+    if (channel == null || channel == undefined)
+      return "";
+    return this.feedService.parseChannelAvatar(channel.avatar);
   }
 
   handleDisplayTime(createTime:number){
@@ -148,7 +154,10 @@ export class HomePage implements OnInit {
   }
 
   menuMore(nodeId: string , channelId: number){
-    let channelName = this.getChannel(nodeId, channelId).name;
+    let channel = this.getChannel(nodeId, channelId);
+    if (channel == null || channel == undefined)
+      return ;
+    let channelName = channel.name;
     this.menuService.showChannelMenu(nodeId, channelId, channelName);
   }
 
@@ -159,5 +168,12 @@ export class HomePage implements OnInit {
 
   hideBigImage(){
     this.bigImage = false;
+  }
+
+  getChannelName(nodeId: string, channelId: number): string{
+    let channel = this.getChannel(nodeId, channelId);
+    if (channel == null || channel == undefined)
+      return "";
+    return channel.name;
   }
 }

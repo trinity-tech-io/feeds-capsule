@@ -30,7 +30,7 @@
     
               <div class="text-div">
                 <div class="text1-div"> 
-                  <ion-label class="channel-title-small white">{{getChannel(post.nodeId, post.channel_id).name}}</ion-label>
+                  <ion-label class="channel-title-small white">{{getChannelName(post.nodeId, post.channel_id)}}</ion-label>
                   <ion-label class="channel-ts"> - {{handleDisplayTime(post.created_at)}}</ion-label>
                 </div>
                 <div  (click)="navTo(post.nodeId, post.channel_id)"> 
