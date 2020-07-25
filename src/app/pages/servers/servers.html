@@ -37,23 +37,23 @@
             <div class="feed-source-card-img-div">
               <img class="feed-source-card-img" src="assets/images/profile-2.svg" >
               <div class="feed-source-card-status">
-                <div class="online-circle" *ngIf="serversStatus[myFeedSource.nodeId].status == 0"></div>
-                <div class="offline-circle" *ngIf="serversStatus[myFeedSource.nodeId].status == 1"></div>
+                <div class="online-circle" *ngIf="checkServerStatus(myFeedSource.nodeId) == 0"></div>
+                <div class="offline-circle" *ngIf="checkServerStatus(myFeedSource.nodeId) == 1"></div>
               </div>
             </div>
 
             <div class="feed-source-card-content-detail">
               <div class="name white">{{myFeedSource.name}}</div>
               <div class="owner">{{myFeedSource.owner}}</div>
-              <div class="users-img-div" *ngIf="serversStatus[myFeedSource.nodeId].status == 0">
+              <div class="users-img-div" *ngIf="checkServerStatus(myFeedSource.nodeId) == 0">
                 <img class="users-img" src="assets/images/users-online.svg">
-                <div class="users-num-online-text"> {{serverStatisticsMap[myFeedSource.nodeId].connecting_clients}}</div>
+                <div class="users-num-online-text"> {{checkConnectClient(myFeedSource.nodeId)}}</div>
                 <div class="users-online-text">{{'ServersPage.users'| translate}}</div>
               </div>
 
-              <div class="users-img-div" *ngIf="serversStatus[myFeedSource.nodeId].status == 1">
+              <div class="users-img-div" *ngIf="checkServerStatus(myFeedSource.nodeId) == 1">
                 <img class="users-img" src="assets/images/users-offline.svg">
-                <div class="users-num-offline-text"> {{serverStatisticsMap[myFeedSource.nodeId].connecting_clients}}</div>
+                <div class="users-num-offline-text"> {{checkConnectClient(myFeedSource.nodeId)}}</div>
                 <div class="users-offline-text">{{'ServersPage.users'| translate}}</div>
               </div>
 
@@ -82,8 +82,8 @@
             <div class="feed-source-card-img-div">
               <img class="feed-source-card-img" src="assets/images/profile-2.svg" >
               <div class="feed-source-card-status">
-                <div class="online-circle" *ngIf="serversStatus[server.nodeId].status == 0"></div>
-                <div class="offline-circle" *ngIf="serversStatus[server.nodeId].status == 1"></div>
+                <div class="online-circle" *ngIf="checkServerStatus(server.nodeId) == 0"></div>
+                <div class="offline-circle" *ngIf="checkServerStatus(server.nodeId) == 1"></div>
 
               </div>
             </div>
@@ -91,16 +91,16 @@
             <div class="feed-source-card-content-detail">
               <div class="name white">{{server.name}}</div>
               <div class="owner">{{server.owner}}</div>
-              <div class="users-img-div" *ngIf="serversStatus[server.nodeId].status == 0">
+              <div class="users-img-div" *ngIf="checkServerStatus(server.nodeId) == 0">
                 <img class="users-img" src="assets/images/users-online.svg">
-                <div class="users-num-online-text"> {{serverStatisticsMap[server.nodeId].connecting_clients}}</div>
+                <div class="users-num-online-text"> {{checkConnectClient(server.nodeId)}}</div>
                 <div class="users-online-text">{{'ServersPage.users'| translate}}</div>
               </div>
 
 
-              <div class="users-img-div" *ngIf="serversStatus[server.nodeId].status == 1">
+              <div class="users-img-div" *ngIf="checkServerStatus(server.nodeId) == 1">
                 <img class="users-img" src="assets/images/users-offline.svg">
-                <div class="users-num-offline-text">{{serverStatisticsMap[server.nodeId].connecting_clients}}</div>
+                <div class="users-num-offline-text">{{checkConnectClient(server.nodeId)}}</div>
                 <div class="users-offline-text">{{'ServersPage.users'| translate}}</div>
               </div>
             </div>
@@ -115,73 +115,6 @@
     <div class="button-div" *ngIf="myFeedSource != null">
       <div class="explore-feed-source-button" (click)="exploreFeedSource()">{{'ServersPage.addNewFeedSources'| translate}}</div>
     </div>
-
-
   </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  <!-- <div class="ion-padding">
-    <ion-button
-      expand="block"
-      mode="ios"
-      color="primary"
-      [routerLink]="['/menu/servers/add-server','']"
-    >
-      <ion-label> Add new channel source</ion-label>
-    </ion-button>
-  </div>
-
-  <ion-list>
-    <ion-item style="margin: 2%;" *ngFor='let server of serverList' >
-      <ion-icon name="radio-button-on" color="primary" slot="start"  *ngIf="serversStatus[server.nodeId].status == 0" (click)="navToServerInfo(server.nodeId)" ></ion-icon>
-      <ion-icon name="radio-button-on" slot="start" *ngIf="serversStatus[server.nodeId].status == 1" (click)="navToServerInfo(server.nodeId)"></ion-icon>
-      <div style="word-wrap: break-word; word-break: normal; width: 85%;" >
-        <ion-label (click)="navToServerInfo(server.nodeId)">
-          <b>DID:</b>{{server.did}}<br>
-          <b>Name: </b>{{server.name}}<br>
-          <b>Owner:</b>{{server.owner}}<br>
-
-        </ion-label>
-        <ion-button expand="block" (click)="signin(server.nodeId)" *ngIf="checkSignIn(server.nodeId) == false">signin</ion-button>
-        <ion-button expand="block" (click)="signin(server.nodeId)" *ngIf="checkSignIn(server.nodeId) == true">reSignIn</ion-button>
-
-      </div>
-
-      <div style="align-items:flex-end;" (click)="navToServerInfo(server.nodeId)">
-        <ion-icon color="primary" name="person"></ion-icon>
-
-      </div>
-      <div style="align-items:flex-end;">
-
-        <ion-label >
-          <h2>{{checkConnectClient(server.nodeId)}}</h2>
-        </ion-label>
-      </div>
-    </ion-item>
-  </ion-list> -->
 
 </ion-content>

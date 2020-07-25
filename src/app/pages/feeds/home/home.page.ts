@@ -72,10 +72,17 @@ export class HomePage implements OnInit {
 
   getChannelOwnerName(nodeId, channelId): string{
     let channel = this.getChannel(nodeId, channelId);
-    if (channel == null || channel == undefined)
+    if (channel == null || channel == undefined){
       return "";
+    }
 
-    return this.feedService.indexText(channel.ownner_name,25,25);
+    let owner: string = channel.owner_name;
+    if (owner.length>25){
+      return this.feedService.indexText(owner,25,25);
+    }
+    else{
+      return owner;
+    }
   }
 
   ngOnInit() {
