@@ -28,7 +28,8 @@ export class PostdetailPage implements OnInit {
   private likesNum;
   private commentsNum;
   
-  private commentList;
+  private commentList = null;
+  private refreshCommFinish = false ;
 
   private nodeId;
   private channelId;
@@ -44,7 +45,6 @@ export class PostdetailPage implements OnInit {
     public theme:ThemeService,
     private translate:TranslateService,
     private menuService: MenuService) {
-
       acRoute.params.subscribe((data)=>{
         this.nodeId = data.nodeId;
         this.channelId = data.channelId;
@@ -60,7 +60,10 @@ export class PostdetailPage implements OnInit {
 
       this.events.subscribe('feeds:commentDataUpdate',()=>{
         this.zone.run(() => {
+          
+          this.refreshCommFinish = true;
           this.commentList = this.feedService.getCommentList(this.nodeId, this.channelId, this.postId);
+          console.log("commentDataUpdate ==>"+this.refreshCommFinish);
         });
       });
       
@@ -96,6 +99,8 @@ export class PostdetailPage implements OnInit {
   }
 
   ionViewWillEnter() {
+    this.feedService.getComments(this.nodeId,Number(this.channelId) ,Number(this.postId),Communication.field.last_update, 0, 0, 0);
+
     this.events.subscribe("feeds:updateTitle",()=>{
       this.initTitle();
     });

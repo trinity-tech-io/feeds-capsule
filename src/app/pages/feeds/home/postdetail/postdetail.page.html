@@ -41,37 +41,58 @@
     </div>
     <div class="line-div"></div>
 
-    <div *ngFor="let comment of commentList">
-      <div class="channel-img-small-div">
-        <img class="channel-img-small" src="../../../../assets/images/screenshot-2020-04-26-at-03-20-46.png" >
+    <div *ngIf="refreshCommFinish">
+      <div *ngFor="let comment of commentList">
+        <div class="channel-img-small-div">
+          <img class="channel-img-small" src="../../../../assets/images/screenshot-2020-04-26-at-03-20-46.png" >
 
-        <div class="channel-detail-div">
-          <div class="channel-detail-text-div">
-            <div style="height: 100%; vertical-align: middle;" > 
-              <ion-label class="channel-title-small white">@{{indexText(comment.user_name)}}</ion-label>
-              <ion-label class="channel-ts">{{handleDisplayTime(comment.created_at)}}</ion-label>
-              <ion-icon name="more" mode="ios" style="vertical-align: middle; float: right; "></ion-icon>
-            </div>
-  
-            <div  (click)="navTo(post.nodeId, post.channel_id)"> 
-              <ion-label class="channel-desc-small">@{{indexText(comment.user_name)}}</ion-label>
-            </div>
+          <div class="channel-detail-div">
+            <div class="channel-detail-text-div">
+              <div style="height: 100%; vertical-align: middle;" > 
+                <ion-label class="channel-title-small white">@{{indexText(comment.user_name)}}</ion-label>
+                <ion-label class="channel-ts">{{handleDisplayTime(comment.created_at)}}</ion-label>
+                <ion-icon name="more" mode="ios" style="vertical-align: middle; float: right; "></ion-icon>
+              </div>
+    
+              <div  (click)="navTo(post.nodeId, post.channel_id)"> 
+                <ion-label class="channel-desc-small">@{{indexText(comment.user_name)}}</ion-label>
+              </div>
 
-            <div class="channel-post-div" > 
-              <ion-label class="channel-post white">{{comment.content}}</ion-label>
-            </div>
-  
-            <div class="channel-post-heart-comment-div">
-              <img class="like" [ngClass]="{'like-s': checkMyLike(comment.id,comment.channel_id,comment.post_id)}" (click)="like(comment.id,comment.channel_id,comment.post_id,comment.comment_id)">
-              <ion-label class="like-text" [ngClass]="{'like-s-text': checkMyLike(comment.id,comment.channel_id,comment.post_id)}" (click)="like(comment.id,comment.channel_id,comment.post_id,comment.comment_id)">{{likesNum}}</ion-label>
-  
-              <img src="../../../../assets/images/bubble-line.svg" class="comment" >
-              <ion-label class="comment-text">0</ion-label>
+              <div class="channel-post-div" > 
+                <ion-label class="channel-post white">{{comment.content}}</ion-label>
+              </div>
+    
+              <div class="channel-post-heart-comment-div">
+                <img class="like" [ngClass]="{'like-s': checkMyLike(comment.id,comment.channel_id,comment.post_id)}" (click)="like(comment.id,comment.channel_id,comment.post_id,comment.comment_id)">
+                <ion-label class="like-text" [ngClass]="{'like-s-text': checkMyLike(comment.id,comment.channel_id,comment.post_id)}" (click)="like(comment.id,comment.channel_id,comment.post_id,comment.comment_id)">{{likesNum}}</ion-label>
+    
+                <img src="../../../../assets/images/bubble-line.svg" class="comment" >
+                <ion-label class="comment-text">0</ion-label>
+              </div>
             </div>
           </div>
         </div>
+        <div class="line-div white-line"></div>
       </div>
-      <div class="line-div white-line"></div>
+    </div>
+
+    <div *ngIf="!refreshCommFinish">
+      <ion-item>
+        <ion-avatar slot="start">
+          <ion-skeleton-text animated></ion-skeleton-text>
+        </ion-avatar>
+        <ion-label>
+          <h3>
+            <ion-skeleton-text animated style="width: 50%"></ion-skeleton-text>
+          </h3>
+          <p>
+            <ion-skeleton-text animated style="width: 80%"></ion-skeleton-text>
+          </p>
+          <p>
+            <ion-skeleton-text animated style="width: 60%"></ion-skeleton-text>
+          </p>
+        </ion-label>
+      </ion-item>
     </div>
   </div>
 

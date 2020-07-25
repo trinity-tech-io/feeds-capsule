@@ -22,7 +22,7 @@ let unreadMap:{[nodeChannelId: string]: number};
 // let postMap:{[channelId: number]: ChannelPost};
 let postMap:{[nodechannelpostId: string]: Post}; //now postId = nodeId+channelId+postId
 let serverStatisticsMap:{[nodeId: string]: ServerStatistics};
-let commentsMap:{[channelId: number]: ChannelPostComment};
+let commentsMap:{[nodeId: string]: NodeChannelPostComment};
 let serversStatus:{[nodeId: string]: ServerStatus};
 let creationPermissionMap:{[nodeId: string]: boolean};
 let likeMap:{[nodechannelpostId:string]:Post};
@@ -97,7 +97,9 @@ type ServerStatus = {
   did: string,
   status: ConnState
 }
-
+type NodeChannelPostComment ={
+  [channelId: number]: ChannelPostComment;
+}
 type ChannelPostComment = {
   [postId:number]: PostComment
 }
@@ -119,6 +121,7 @@ type Channels = {
 }
 
 type Comment = {
+    nodeId     : string,
     channel_id : number,
     post_id    : number,
     id         : number,
@@ -1169,7 +1172,7 @@ export class FeedService {
         this.handleGetPostsResult(nodeId, result, request);
         break;
       case FeedsData.MethodType.get_comments:
-        this.handleGetCommentsResult(result);
+        this.handleGetCommentsResult(nodeId, result);
         break;
       case FeedsData.MethodType.get_statistics:
         this.handleGetStatisticsResult(nodeId, result);
@@ -2656,12 +2659,15 @@ export class FeedService {
 
     if (commentsMap == null || commentsMap == undefined)
       commentsMap = {};
-    if (commentsMap[channel_id] == null || commentsMap[channel_id] == undefined)
-      commentsMap[channel_id] = {};
-    if (commentsMap[channel_id][post_id] == null || commentsMap[channel_id][post_id]==undefined)
-      commentsMap[channel_id][post_id] = {};
+    if (commentsMap[nodeId] == null || commentsMap[nodeId] == undefined)
+      commentsMap[nodeId] = {};  
+    if (commentsMap[nodeId][channel_id] == null || commentsMap[nodeId][channel_id] == undefined)
+      commentsMap[nodeId][channel_id] = {};
+    if (commentsMap[nodeId][channel_id][post_id] == null || commentsMap[nodeId][channel_id][post_id]==undefined)
+      commentsMap[nodeId][channel_id][post_id] = {};
 
-    commentsMap[channel_id][post_id][id] = {
+    commentsMap[nodeId][channel_id][post_id][id] = {
+      nodeId     : nodeId,
       channel_id : channel_id,
       post_id    : post_id,
       id         : id,
@@ -2724,7 +2730,7 @@ export class FeedService {
       }
       eventBus.publish(PublishType.postDataUpdate);
     }else {
-      commentsMap[channel_id][post_id][comment_id].likes = commentsMap[channel_id][post_id][comment_id].likes + count;
+      commentsMap[nodeId][channel_id][post_id][comment_id].likes = commentsMap[nodeId][channel_id][post_id][comment_id].likes + count;
 
       this.storeService.set(PersistenceKey.commentsMap, commentsMap);
       eventBus.publish(PublishType.commentDataUpdate);
@@ -2921,7 +2927,8 @@ export class FeedService {
       eventBus.publish(PublishType.updateLikeList, this.getLikeList());
       eventBus.publish(PublishType.updataPostLike, nodeId, channel_id, post_id , postMap[mPostId].likes);
     }else {
-      commentsMap[channel_id][post_id][comment_id].likes = commentsMap[channel_id][post_id][comment_id].likes + 1
+      // this.getcommentById(nodeId, channel_id, post_id, comment_id)
+      commentsMap[nodeId][channel_id][post_id][comment_id].likes = commentsMap[nodeId][channel_id][post_id][comment_id].likes + 1
 
       this.storeService.set(PersistenceKey.commentsMap, commentsMap);
       eventBus.publish(PublishType.commentDataUpdate)
@@ -2946,7 +2953,7 @@ export class FeedService {
       eventBus.publish(PublishType.updateLikeList, this.getLikeList());
       eventBus.publish(PublishType.updataPostLike, nodeId, channel_id, post_id , postMap[mPostId].likes);
     }else {
-      commentsMap[channel_id][post_id][comment_id].likes = commentsMap[channel_id][post_id][comment_id].likes + 1
+      commentsMap[nodeId][channel_id][post_id][comment_id].likes = commentsMap[nodeId][channel_id][post_id][comment_id].likes + 1
 
       this.storeService.set(PersistenceKey.commentsMap, commentsMap);
       eventBus.publish(PublishType.commentDataUpdate)
@@ -3180,7 +3187,7 @@ export class FeedService {
     eventBus.publish(PublishType.postDataUpdate);
   }
 
-  handleGetCommentsResult(responseResult: any){
+  handleGetCommentsResult(nodeId: string, responseResult: any){
     let result = responseResult.comments;
     for (let index = 0; index < result.length; index++) {
       let channel_id = result[index].channel_id;
@@ -3195,6 +3202,7 @@ export class FeedService {
       let content = this.serializeDataService.decodeData(contentBin);
 
       let comment:Comment = {
+        nodeId     : nodeId,
         channel_id : channel_id,
         post_id    : post_id,
         id         : id,
@@ -3207,14 +3215,18 @@ export class FeedService {
 
       if (commentsMap == null || commentsMap == undefined)
         commentsMap = {};
-      if (commentsMap[channel_id] == null || commentsMap[channel_id] == undefined)
-        commentsMap[channel_id] = {}
-      if (commentsMap[channel_id][post_id] == null || commentsMap[channel_id][post_id] == undefined)
-        commentsMap[channel_id][post_id] = {}
+      if (commentsMap[nodeId] == null || commentsMap[nodeId] == undefined)
+        commentsMap[nodeId] = {};
+      if (commentsMap[nodeId][channel_id] == null || commentsMap[nodeId][channel_id] == undefined)
+        commentsMap[nodeId][channel_id] = {}
+      if (commentsMap[nodeId][channel_id][post_id] == null || commentsMap[nodeId][channel_id][post_id] == undefined)
+        commentsMap[nodeId][channel_id][post_id] = {}
 
-      commentsMap[channel_id][post_id][id] = comment;
+      commentsMap[nodeId][channel_id][post_id][id] = comment;
     }
     this.storeService.set(PersistenceKey.commentsMap, commentsMap);
+
+    eventBus.publish(PublishType.commentDataUpdate);
   }
 
   handleGetStatisticsResult(nodeId: string, result: any){
@@ -3352,21 +3364,32 @@ export class FeedService {
 
   getCommentList(nodeId: string, channelId: number, postId: number): Comment[]{
     if (commentsMap == null || commentsMap == undefined ||
-       commentsMap[channelId] == null || commentsMap[channelId] == undefined){
+       commentsMap[nodeId] == null || commentsMap == undefined ||
+       commentsMap[nodeId][channelId] == null || commentsMap[nodeId][channelId] == undefined){
          return [];
     }
 
     let list: Comment[] =[];
-    let keys: string[] = Object.keys(commentsMap[channelId][postId]);
+    let keys: string[] = Object.keys(commentsMap[nodeId][channelId][postId]);
     for (const index in keys) {
-      if (commentsMap[channelId][postId][keys[index]] == undefined)
+      let comment: Comment = commentsMap[nodeId][channelId][postId][keys[index]];
+      if (comment == undefined)
         continue;
-      list.push(commentsMap[channelId][postId][keys[index]]);
+
+      list.push(comment);
+      // if (commentById == 0)
+      //   list.push(comment); //post comment list
+      // else if (comment.comment_id == commentById)
+      //   list.push(comment); //comment comment list
     }
 
     list.sort((a, b) => Number(b.created_at) - Number(a.created_at));
 
     return list;
+  }
+
+  getCommentListFrom(nodeId: string, channelId: number, postId: number){
+
   }
 
   getSubscribedChannelNumber(): number{
@@ -3505,6 +3528,8 @@ export class FeedService {
   }
 
   indexText(text: string, limit: number, indexLength: number): string{
+    if (text == undefined)
+      return "";
     if (text.length < limit)
       return text;
 
@@ -4012,12 +4037,13 @@ export class FeedService {
         let postId = post.id;
         this.removeLikeById(nodeId, channelId, postId);
         this.removePostById(nodeId, channelId, postId);
+        this.removeCommentById(nodeId, channelId, postId);
       }
 
       this.removeChannelById(nodeId, channelId);
       this.removeSubscribedChannelById(nodeId, channelId);
       this.removeUnreadStatueById(nodeId, channelId);
-      
+      this.removeMyChannelById(nodeId, channelId);
     }
     this.removeServerStatisticById(nodeId);
     this.removeServerStatusById(nodeId);
@@ -4043,8 +4069,20 @@ export class FeedService {
     this.storeService.set(PersistenceKey.likeMap, likeMap);
   }
 
-  removeCommentById(node: string, channelId: number, postId: number, commentId: number){
-    // commentsMap
+  removeCommentById(nodeId: string, channelId: number, postId: number){
+    if (commentsMap == null ||  commentsMap == undefined)
+      commentsMap = {}
+    
+    if (commentsMap[nodeId] == null || commentsMap[nodeId] == undefined)
+      commentsMap[nodeId] = {}
+
+    if (commentsMap[nodeId][channelId] == null || commentsMap[nodeId][channelId] == undefined)
+      commentsMap[nodeId][channelId] = {}
+
+    commentsMap[nodeId][channelId][postId] = undefined;
+
+    this.storeService.set(PersistenceKey.commentsMap, commentsMap);
+
   }
   removePostById(nodeId: string, channelId: number, postId: number){
     let nodechannelpostId = nodeId + channelId + postId;
@@ -4057,6 +4095,12 @@ export class FeedService {
     let nodeChannelId = nodeId + channelId;
     channelsMap[nodeChannelId] = undefined;
     this.storeService.set(PersistenceKey.channelsMap,channelsMap);
+  }
+
+  removeMyChannelById(nodeId: string, channelId: number){
+    let nodeChannelId = nodeId + channelId;
+    myChannelsMap[nodeChannelId] = undefined;
+    this.storeService.set(PersistenceKey.myChannelsMap, myChannelsMap);
   }
 
   removeSubscribedChannelById(nodeId: string, channelId: number){
