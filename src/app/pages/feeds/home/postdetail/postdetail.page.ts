@@ -75,6 +75,16 @@ export class PostdetailPage implements OnInit {
         });
       });
       
+      this.events.subscribe('feeds:postDataUpdate',()=>{
+        this.zone.run(() => {
+          
+          let post = this.feedService.getPostFromId(this.nodeId, this.channelId, this.postId);
+          this.postContent = post.content;
+          this.postTS = post.created_at;
+          this.likesNum = post.likes;
+          this.commentsNum = post.comments;  
+        });
+      });
   }
 
   initData(){

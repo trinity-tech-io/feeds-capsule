@@ -21,12 +21,12 @@ export class ChannelsPage implements OnInit {
   private bigImageUrl: string;
   private bigImage: boolean = false;
   
-  private channelAvatar;
-  private channelName;
-  private channelOwner;
-  private channelDesc;
-  private channelSubscribes;
-  private postList;
+  private channelAvatar = "";
+  private channelName = "";
+  private channelOwner = "";
+  private channelDesc = "";
+  private channelSubscribes = 0;
+  private postList = [];
 
   private nodeId;
   private channelId;
@@ -67,7 +67,7 @@ export class ChannelsPage implements OnInit {
 
     this.events.subscribe('feeds:refreshPage',()=>{
       this.zone.run(() => {
-        this.postList = this.feedService.getPostList();
+        this.postList = this.feedService.getPostListFromChannel(this.nodeId, this.channelId);
       });
     });
 
