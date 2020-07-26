@@ -26,6 +26,7 @@ let commentsMap:{[nodeId: string]: NodeChannelPostComment};
 let serversStatus:{[nodeId: string]: ServerStatus};
 let creationPermissionMap:{[nodeId: string]: boolean};
 let likeMap:{[nodechannelpostId:string]:Post};
+let likeCommentMap:{[nodechannelpostCommentId: string]: LikedComment};
 let lastPostUpdateMap:{[nodeChannelId:string]: PostUpdateTime};
 let friendConnectionMap: {[nodeId:string]: ConnState};
 // let accessTokenMap: {[nodeId: string]: string};
@@ -130,6 +131,13 @@ type Comment = {
     content    : any,
     likes      : number,
     created_at : number
+}
+
+type LikedComment = {
+  nodeId     : string,
+  channel_id : number,
+  post_id    : number,
+  id         : number,
 }
 
 type ChannelPost = {
@@ -293,7 +301,9 @@ enum PersistenceKey{
 
   serverMap = "serverMap",
 
-  notificationList = "notificationList"
+  notificationList = "notificationList",
+
+  likeCommentMap = "likeCommentMap"
 }
 
 let expDay = 10;
@@ -2274,16 +2284,6 @@ export class FeedService {
   }
 
   postUnlike(nodeId:string, channel_id: number, post_id: number, comment_id: number){
-
-    // let mPostId = this.getPostId(nodeId,channel_id,post_id);
-    // postMap[mPostId].likes = postMap[mPostId].likes-1;
-    // this.storeService.set(PersistenceKey.postMap,postMap);
-
-    // likeMap[mPostId] = undefined;
-    // this.storeService.set(PersistenceKey.likeMap, likeMap);
-
-    // eventBus.publish(PublishType.updateLikeList, this.getLikeList());
-    // eventBus.publish(PublishType.updataPostLike, nodeId, channel_id, post_id , postMap[mPostId].likes);
     if(accessTokenMap == null ||
       accessTokenMap == undefined||
       accessTokenMap[nodeId] == undefined)
@@ -2918,9 +2918,23 @@ export class FeedService {
     let mPostId = this.getPostId(nodeId, channel_id, post_id);
 
     if (error != null && error != undefined && error.code == -4){
-      likeMap[mPostId] = postMap[mPostId];
-      this.storeService.set(PersistenceKey.likeMap, likeMap);
-      eventBus.publish(PublishType.postDataUpdate);
+      if (comment_id == 0){
+        likeMap[mPostId] = postMap[mPostId];
+        this.storeService.set(PersistenceKey.likeMap, likeMap);
+        eventBus.publish(PublishType.postDataUpdate);
+
+      }else{
+        let commentKey = this.getLikeCommentId(nodeId, channel_id, post_id, comment_id);
+        likeCommentMap[commentKey] = {
+          nodeId     : nodeId,
+          channel_id : channel_id,
+          post_id    : post_id,
+          id         : comment_id,
+        }
+        this.storeService.set(PersistenceKey.likeCommentMap, likeCommentMap);
+        eventBus.publish(PublishType.commentDataUpdate)
+
+      }
       return ;
     }
       
@@ -2933,14 +2947,24 @@ export class FeedService {
 
       eventBus.publish(PublishType.updateLikeList, this.getLikeList());
       eventBus.publish(PublishType.updataPostLike, nodeId, channel_id, post_id , postMap[mPostId].likes);
+
+      eventBus.publish(PublishType.postDataUpdate);
     }else {
       commentsMap[nodeId][channel_id][post_id][comment_id].likes = commentsMap[nodeId][channel_id][post_id][comment_id].likes + 1
-
       this.storeService.set(PersistenceKey.commentsMap, commentsMap);
-      eventBus.publish(PublishType.commentDataUpdate)
 
+      let commentKey = this.getLikeCommentId(nodeId, channel_id, post_id, comment_id);
+      likeCommentMap[commentKey] = {
+        nodeId     : nodeId,
+        channel_id : channel_id,
+        post_id    : post_id,
+        id         : comment_id,
+      }
+
+      this.storeService.set(PersistenceKey.likeCommentMap, likeCommentMap);
+      eventBus.publish(PublishType.commentDataUpdate)
     }
-    eventBus.publish(PublishType.postDataUpdate);
+    
   }
 
   handlePostUnLikeResult(nodeId:string, request: any, error: any){
@@ -2950,10 +2974,16 @@ export class FeedService {
 
     let mPostId = this.getPostId(nodeId, channel_id, post_id);
     if (error != null && error != undefined && error.code == -4){
-      likeMap[mPostId] = undefined;
-      this.storeService.set(PersistenceKey.likeMap, likeMap);
+      if(comment_id == 0){
+        likeMap[mPostId] = undefined;
+        this.storeService.set(PersistenceKey.likeMap, likeMap);
+  
+        eventBus.publish(PublishType.postDataUpdate);
+      }else{
+        let commentKey = this.getLikeCommentId(nodeId, channel_id, post_id, comment_id);
 
-      eventBus.publish(PublishType.postDataUpdate);
+      }
+      
       return ;
     }
 
@@ -2967,9 +2997,13 @@ export class FeedService {
       eventBus.publish(PublishType.updateLikeList, this.getLikeList());
       eventBus.publish(PublishType.updataPostLike, nodeId, channel_id, post_id , postMap[mPostId].likes);
     }else {
-      commentsMap[nodeId][channel_id][post_id][comment_id].likes = commentsMap[nodeId][channel_id][post_id][comment_id].likes + 1
-
+      commentsMap[nodeId][channel_id][post_id][comment_id].likes = commentsMap[nodeId][channel_id][post_id][comment_id].likes - 1;
       this.storeService.set(PersistenceKey.commentsMap, commentsMap);
+
+      let commentKey = this.getLikeCommentId(nodeId, channel_id, post_id, comment_id);
+      likeCommentMap[commentKey] = undefined;
+      this.storeService.set(PersistenceKey.likeCommentMap,likeCommentMap);
+      
       eventBus.publish(PublishType.commentDataUpdate)
 
     }
@@ -3450,6 +3484,10 @@ export class FeedService {
 
   getPostId(nodeId: string, channelId: number, postId: number): string{
     return nodeId+channelId+postId;
+  }
+
+  getLikeCommentId(nodeId: string, channelId: number, postId: number, commentId: number): string{
+    return nodeId + channelId + postId + commentId;
   }
 
   getPostListFromChannel(nodeId: string, channelId: number){
@@ -4017,8 +4055,20 @@ export class FeedService {
     return likeMap[nodechannelpostId];
   }
 
+  getLikedCommentFromId(nodeChannelPostCommentId: string): LikedComment{
+    if (likeCommentMap == null || likeCommentMap == undefined)
+      likeCommentMap = {};
+    return likeCommentMap[nodeChannelPostCommentId];
+  }
+
   checkMyLike(nodeId: string, channelId: number, postId: number): boolean{
     if(this.getLikeFromId(nodeId+channelId+postId) == undefined)
+      return false;
+    return true;
+  }
+
+  checkLikedComment(nodeId: string, channelId: number, postId: number, commentId: number): boolean{
+    if(this.getLikedCommentFromId(nodeId+channelId+postId+commentId) == undefined)
       return false;
     return true;
   }

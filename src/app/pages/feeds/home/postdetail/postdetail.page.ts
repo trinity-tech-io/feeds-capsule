@@ -157,13 +157,25 @@ export class PostdetailPage implements OnInit {
     return await popover.present();
   }
 
-  checkMyLike(nodeId,channelId,postId){
-    return this.feedService.checkMyLike(nodeId,channelId,postId);
+  checkMyLike(){
+    return this.feedService.checkMyLike(this.nodeId, Number(this.channelId), Number(this.postId));
   }
 
-  like(nodeId,channelId,postId,commentId: number){
-    if (this.checkMyLike(nodeId,channelId,postId)){
+  checkLikedComment(commentId: number){
+    return this.feedService.checkLikedComment(this.nodeId, Number(this.channelId), Number(this.postId), commentId);
+  }
+
+  like(){
+    if (this.checkMyLike()){
       this.feedService.postUnlike(this.nodeId,Number(this.channelId),Number(this.postId),0);
+      return ;
+    }
+    this.feedService.postLike(this.nodeId,Number(this.channelId),Number(this.postId),0);
+  }
+
+  likeComment(commentId: number){
+    if (this.checkLikedComment(commentId)){
+      this.feedService.postUnlike(this.nodeId,Number(this.channelId),Number(this.postId),commentId);
       return ;
     }
     this.feedService.postLike(this.nodeId,Number(this.channelId),Number(this.postId),commentId);
@@ -199,7 +211,7 @@ export class PostdetailPage implements OnInit {
     this.bigImage = false;
   }
 
-  getlikeNum(){
-
+  commentComment(){
+    alert("TODO");
   }
 }
