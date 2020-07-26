@@ -1005,9 +1005,8 @@ export class FeedService {
       eventBus.publish("feeds:friendConnection",ret);
       let friendId = ret.friendId;
       let friendStatus = ret.status;
-
+      console.log("friendId =>"+friendId +"; friendStatus =>"+friendStatus);
       this.doFriendConnection(friendId, friendStatus);
-
     });
   }
 
@@ -1109,7 +1108,7 @@ export class FeedService {
     });
   }
 
-  handleResult(method:string, nodeId: string ,result: any , request: any){
+  handleResult(method:string, nodeId: string ,result: any , request: any, error: any){
     let from = nodeId;
 
     switch (method) {
@@ -1148,10 +1147,10 @@ export class FeedService {
         this.handlePostCommentResult(nodeId, result, request);
         break;
       case FeedsData.MethodType.post_like:
-        this.handlePostLikeResult(nodeId, request);
+        this.handlePostLikeResult(nodeId, request, error);
         break;
       case FeedsData.MethodType.post_unlike:
-        this.handlePostUnLikeResult(nodeId, request);
+        this.handlePostUnLikeResult(nodeId, request, error);
         break;
       case FeedsData.MethodType.get_my_channels:
         this.handleGetMyChannelsResult(nodeId, result);
@@ -1229,7 +1228,7 @@ export class FeedService {
   // public params: object,
 
   friendMessageCallback(){
-    this.events.subscribe('jrpc:receiveMessage', result => {
+    this.events.subscribe('jrpc:receiveMessage', result => {      
       switch(result.type){
         case -1:
           alert(result.error.code+":"+result.error.message);
@@ -1238,7 +1237,7 @@ export class FeedService {
           this.handleNotification(result.nodeId, result.method, result.params);//TODO
           break;
         case 0:
-          this.handleResult(result.method, result.nodeId, result.result, result.request);
+          this.handleResult(result.method, result.nodeId, result.result, result.request, result.error);
           break;
       }
     });
@@ -2911,12 +2910,20 @@ export class FeedService {
     // eventBus.publish(PublishType.updataComment,nodeId,channel_id,post_id,postMap[mPostId].comments);
   }
 
-  handlePostLikeResult(nodeId:string, request: any){
+  handlePostLikeResult(nodeId:string, request: any, error: any){
     let channel_id: number = request.channel_id;
     let post_id: number = request.post_id;
     let comment_id: number = request.comment_id;
 
     let mPostId = this.getPostId(nodeId, channel_id, post_id);
+
+    if (error != null && error != undefined && error.code == -4){
+      likeMap[mPostId] = postMap[mPostId];
+      this.storeService.set(PersistenceKey.likeMap, likeMap);
+      eventBus.publish(PublishType.postDataUpdate);
+      return ;
+    }
+      
     if (comment_id == 0){
       postMap[mPostId].likes = postMap[mPostId].likes+1;
       this.storeService.set(PersistenceKey.postMap,postMap);
@@ -2927,21 +2934,28 @@ export class FeedService {
       eventBus.publish(PublishType.updateLikeList, this.getLikeList());
       eventBus.publish(PublishType.updataPostLike, nodeId, channel_id, post_id , postMap[mPostId].likes);
     }else {
-      // this.getcommentById(nodeId, channel_id, post_id, comment_id)
       commentsMap[nodeId][channel_id][post_id][comment_id].likes = commentsMap[nodeId][channel_id][post_id][comment_id].likes + 1
 
       this.storeService.set(PersistenceKey.commentsMap, commentsMap);
       eventBus.publish(PublishType.commentDataUpdate)
 
     }
+    eventBus.publish(PublishType.postDataUpdate);
   }
 
-  handlePostUnLikeResult(nodeId:string, request: any){
+  handlePostUnLikeResult(nodeId:string, request: any, error: any){
     let channel_id: number = request.channel_id;
     let post_id: number = request.post_id;
     let comment_id: number = request.comment_id;
 
     let mPostId = this.getPostId(nodeId, channel_id, post_id);
+    if (error != null && error != undefined && error.code == -4){
+      likeMap[mPostId] = undefined;
+      this.storeService.set(PersistenceKey.likeMap, likeMap);
+
+      eventBus.publish(PublishType.postDataUpdate);
+      return ;
+    }
 
     if (comment_id == 0){
       postMap[mPostId].likes = postMap[mPostId].likes-1;
@@ -2959,6 +2973,7 @@ export class FeedService {
       eventBus.publish(PublishType.commentDataUpdate)
 
     }
+    eventBus.publish(PublishType.postDataUpdate);
   }
 
   handleGetMyChannelsResult(nodeId: string, responseResult :any){
@@ -3210,7 +3225,7 @@ export class FeedService {
         user_name  : user_name,
         content    : content,
         likes      : likes,
-        created_at : created_at
+        created_at : created_at*1000
       }
 
       if (commentsMap == null || commentsMap == undefined)

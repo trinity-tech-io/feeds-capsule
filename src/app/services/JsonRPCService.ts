@@ -88,7 +88,8 @@ export class JsonRPCService {
 
     response(nodeId: string, data: any): Result{
         // return this.parseJson(nodeId, msg);
-        return this.parse(nodeId, data);
+        let res = this.parse(nodeId, data);
+        return res;
     }
 
     assembleJson(id: number, method: string, params: any): any{
@@ -116,13 +117,17 @@ export class JsonRPCService {
             return this.createParamsResult(nodeId, data.params, data.method);
         
 
-        if(data.error != undefined)
-            return data.error;
+        if(data.error != undefined){
+            let request = this.queryRequest(data.id, data.result);
+            return this.createError2(nodeId, request.method, request.requestParams, data.error);
+        }
+            
             
         if(data.result == null){
             let request = this.queryRequest(data.id, data.result);
             return this.createResult(nodeId, request.method,request.requestParams , data.result);
         }
+
         return this.createError(nodeId, -69000, "Unknown error");
     }
 
@@ -147,6 +152,10 @@ export class JsonRPCService {
         error["code"] = errorCode;
         error["message"] = errorMsg;
         return new Result(-1,nodeId,"",{},{},error,{});
+    }
+
+    createError2(nodeId: string , method: string, requestParams: object, error: any): Result{
+        return new Result(0,nodeId,method,requestParams,{},error,{});
     }
 
     createResult(nodeId: string, method: string, requestParams: object , result: any): Result{

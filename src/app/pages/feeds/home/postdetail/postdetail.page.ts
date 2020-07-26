@@ -21,12 +21,12 @@ export class PostdetailPage implements OnInit {
   private bigImage: boolean = false;
 
   private channelAvatar = "";
-  private channelName;
-  private channelOwner;
-  private postContent;
-  private postTS;
-  private likesNum;
-  private commentsNum;
+  private channelName = "";
+  private channelOwner = "";
+  private postContent = "";
+  private postTS = 0;
+  private likesNum = 0;
+  private commentsNum = 0;
   
   private commentList = null;
   private refreshCommFinish = false ;
@@ -63,7 +63,6 @@ export class PostdetailPage implements OnInit {
           
           this.refreshCommFinish = true;
           this.commentList = this.feedService.getCommentList(this.nodeId, this.channelId, this.postId);
-          console.log("commentDataUpdate ==>"+this.refreshCommFinish);
         });
       });
       
@@ -80,6 +79,8 @@ export class PostdetailPage implements OnInit {
 
   initData(){
     let channel = this.feedService.getChannelFromId(this.nodeId, this.channelId);
+    if (channel == null || channel == undefined)
+      return ;
     this.channelName = channel.name;
     this.channelAvatar = this.feedService.parseChannelAvatar(channel.avatar);
 
