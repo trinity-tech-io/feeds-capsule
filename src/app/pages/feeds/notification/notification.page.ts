@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
+import { Events } from '@ionic/angular';
 import { FeedService } from 'src/app/services/FeedService';
 import { ThemeService } from 'src/app/services/theme.service';
 import { UtilService } from 'src/app/services/utilService';
@@ -19,11 +20,24 @@ export class NotificationPage {
     slidesPerView: 3,
   };
   constructor(
+    private zone: NgZone,
+    private events: Events,
     public theme:ThemeService,
     private translate:TranslateService,
     private feedService :FeedService,
     private router: Router) {
     this.notificationList = this.feedService.getNotificationList();
+  }
+
+  ionViewWillEnter() {
+    this.events.subscribe('feeds:UpdateNotification',()=>{
+      this.zone.run(() => {
+        this.notificationList = this.feedService.getNotificationList();
+      });
+    });
+  }
+
+  ionViewWillUnload(){
   }
 
   goToServer(){

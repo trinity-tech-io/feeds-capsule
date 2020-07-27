@@ -252,7 +252,8 @@ enum PublishType{
   bindServerFinish = "feeds:bindServerFinish",
   removeFeedSourceFinish = "feeds:removeFeedSourceFinish",
 
-  refreshPage = "feeds:refreshPage"
+  refreshPage = "feeds:refreshPage",
+  UpdateNotification = "feeds:UpdateNotification"
 }
 
 enum PersistenceKey{
@@ -620,6 +621,10 @@ export class FeedService {
     if (notificationList == null || notificationList == undefined)
       notificationList = [];
 
+
+    likeCommentMap = this.storeService.get(PersistenceKey.likeCommentMap)
+    if (likeCommentMap == null || likeCommentMap == undefined)
+      likeCommentMap = {};
 
     // this.initTestData();
   }
@@ -2644,6 +2649,7 @@ export class FeedService {
     }
     notificationList.push(notification);
     this.storeService.set(PersistenceKey.notificationList, notificationList);
+    eventBus.publish(PublishType.UpdateNotification);
   }
 
   handleNewCommentNotification(nodeId: string, params: any){
@@ -2709,6 +2715,7 @@ export class FeedService {
 
     notificationList.push(notification);
     this.storeService.set(PersistenceKey.notificationList, notificationList);
+    eventBus.publish(PublishType.UpdateNotification);
   }
 
   handleNewLikesNotification(nodeId: string, params: any){
@@ -2751,6 +2758,7 @@ export class FeedService {
     }
     notificationList.push(notification);
     this.storeService.set(PersistenceKey.notificationList, notificationList);
+    eventBus.publish(PublishType.UpdateNotification);
   }
 
   handleNewSubscriptionNotification(nodeId: string, params: any){
@@ -2773,6 +2781,7 @@ export class FeedService {
     }
     notificationList.push(notification);
     this.storeService.set(PersistenceKey.notificationList, notificationList);
+    eventBus.publish(PublishType.UpdateNotification);
   }
 
   handleNotification(nodeId: string, method: string, params: any){
@@ -4039,6 +4048,9 @@ export class FeedService {
     this.storeService.remove(PersistenceKey.credential);
     this.storeService.remove(PersistenceKey.bindingServer);
     this.storeService.remove(PersistenceKey.serverMap);
+
+    this.storeService.remove(PersistenceKey.notificationList);
+    this.storeService.remove(PersistenceKey.likeCommentMap);
   }
 
   getBindingServer(): Server{

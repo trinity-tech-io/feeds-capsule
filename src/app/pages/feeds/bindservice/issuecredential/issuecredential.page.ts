@@ -114,32 +114,5 @@ export class IssuecredentialPage implements OnInit {
     await promotAlert.present();//切记
   }
 
-  async presentAlertConfirm() {
-    const alert = await this.alertController.create({
-      cssClass: 'my-custom-class',
-      header:this.translate.instant('common.confirm'),
-      message: this.translate.instant('common.des'),
-      buttons: [
-        {
-          text: this.translate.instant('common.cancel'),
-          role: 'cancel',
-          cssClass: 'secondary',
-          handler: (blah) => {
-
-          }
-        }, {
-          text: this.translate.instant('common.ok'),
-          handler: () => {
-
-            this.feedService.removeAllData();
-            this.navCtrl.navigateRoot(['/signin']);
-          }
-        }
-      ]
-    });
-
-    await alert.present();
-  }
-
 }
 
