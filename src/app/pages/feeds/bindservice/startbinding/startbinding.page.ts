@@ -32,13 +32,9 @@ export class StartbindingPage implements OnInit {
   ) {
     acRoute.params.subscribe((data)=>{
       this.nodeId = data.nodeId;
-      let nonce = data.nonce;
+      this.nonce = data.nonce;
       let did = data.did;
       this.feedsUrl = data.feedsUrl;
-
-      if (nonce!="")
-        this.nonce = nonce ;
-      else this.nonce = this.feedService.generateNonce();
       
       if(did!="")
         this.did = did;
@@ -129,7 +125,7 @@ export class StartbindingPage implements OnInit {
   }
 
   confirm(){
-    this.feedService.declareOwnerRequest(this.nodeId, this.carrierAddress);
+    this.feedService.declareOwnerRequest(this.nodeId, this.carrierAddress, this.nonce);
   }
 
   abort(){

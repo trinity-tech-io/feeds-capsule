@@ -20,6 +20,7 @@ export class ScanqrcodePage implements OnInit {
   private waitFriendsOnline = false;
   private carrierAddress: string;
   private scanContent: string;
+  private nonce: string = "0";
 
   constructor(
     private native: NativeService,
@@ -66,11 +67,11 @@ export class ScanqrcodePage implements OnInit {
 
       let result = this.feedService.parseBindServerUrl(contentStr);
       this.carrierAddress = result.carrierAddress;
-      let nonce = result.nonce;
+      this.nonce = result.nonce;
       let did = result.did;
       this.carrier.getIdFromAddress(this.carrierAddress, 
         (userId)=>{
-            this.addFriends(this.carrierAddress, userId, nonce, did);
+            this.addFriends(this.carrierAddress, userId, this.nonce, did);
         },
         (err)=>{
         });
@@ -94,7 +95,7 @@ export class ScanqrcodePage implements OnInit {
               let feedUrl = "-1";
               if (nonce == undefined) nonce = "";
               if (nonce == "0") feedUrl = this.scanContent;
-              
+
               this.native.getNavCtrl().navigateForward(['/bindservice/startbinding/',nodeId, nonce, address, did, feedUrl]);
             });
           });
@@ -108,7 +109,7 @@ export class ScanqrcodePage implements OnInit {
   }
 
   declareOwner(nodeId: string){
-    this.feedService.declareOwnerRequest(nodeId, this.carrierAddress);
+    this.feedService.declareOwnerRequest(nodeId, this.carrierAddress, this.nonce);
   }
 
   abort(){

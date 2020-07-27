@@ -188,7 +188,8 @@ export const en = {
         "confirm":"Confirm",
         "abort":"Abort",
         "Connectingserver":"Connecting server",
-        "linkServer":"You are linking a feed service. Please confirm whether the feed url is consistent with the previously bound feed service."
+        "linkServer":"You are linking a feed service. Please confirm whether the feed url is consistent with the previously bound feed service.",
+        "bindingError":"An exception occurred during the binding process"
     },
     "PublishdidPage":{
         "bindingServer":"Binding Server",

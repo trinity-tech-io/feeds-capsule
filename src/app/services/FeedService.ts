@@ -1187,10 +1187,10 @@ export class FeedService {
         this.handleGetStatisticsResult(nodeId, result);
         break;
       case FeedsData.MethodType.subscribe_channel:
-        this.handleSubscribeChannelResult(nodeId, request);
+        this.handleSubscribeChannelResult(nodeId, request, error);
         break;
       case FeedsData.MethodType.unsubscribe_channel:
-        this.handleUnsubscribeChannelResult(nodeId, request);
+        this.handleUnsubscribeChannelResult(nodeId, request, error);
         break;
       case FeedsData.MethodType.add_node_publisher:
         this.handleAddNodePublisherResult();
@@ -1206,7 +1206,7 @@ export class FeedService {
         break;
 
       case "declare_owner":
-        this.handleDeclareOwnerResponse(nodeId,result);
+        this.handleDeclareOwnerResponse(nodeId, result, error);
         break;
       case "import_did":
         this.handleImportDIDResponse(nodeId, result);
@@ -3293,8 +3293,17 @@ export class FeedService {
     eventBus.publish(PublishType.serverStatisticsChanged,serverStatisticsMap);
   }
 
-  handleSubscribeChannelResult(nodeId: string, request: any){
+  handleSubscribeChannelResult(nodeId: string, request: any, error: any){
     let nodeChannelId = nodeId+request.id;
+    if (error != null && error != undefined && error.code == -4){
+
+      channelsMap[nodeChannelId].isSubscribed = true;
+      this.storeService.set(PersistenceKey.channelsMap,channelsMap);
+      eventBus.publish(PublishType.subscribeFinish, nodeId,request.id, channelsMap[nodeChannelId].name);
+      
+      return;
+    }
+    
 
     channelsMap[nodeChannelId].isSubscribed = true;
     this.storeService.set(PersistenceKey.channelsMap,channelsMap);
@@ -3305,8 +3314,19 @@ export class FeedService {
     this.updatePostWithTime(nodeId,request.id, 0);
   }
 
-  handleUnsubscribeChannelResult(nodeId:string, request: any){
+  handleUnsubscribeChannelResult(nodeId:string, request: any, error: any){
     let nodeChannelId = nodeId+request.id;
+    if (error != null && error != undefined && error.code == -4){
+      
+      channelsMap[nodeChannelId].isSubscribed = false;
+      this.storeService.set(PersistenceKey.channelsMap,channelsMap);
+  
+      subscribedChannelsMap[nodeChannelId] = undefined;
+      this.storeService.set(PersistenceKey.subscribedChannelsMap,subscribedChannelsMap);
+
+      eventBus.publish(PublishType.unsubscribeFinish, nodeId,request.id, channelsMap[nodeChannelId].name);
+      return;
+    }
 
     channelsMap[nodeChannelId].isSubscribed = false;
     this.storeService.set(PersistenceKey.channelsMap,channelsMap);
@@ -3714,13 +3734,13 @@ export class FeedService {
     this.native.toast(this.translate.instant("AddServerPage.Signinsuccess"));
   }
 
-  declareOwnerRequest(nodeId: string, carrierAddress: string){
+  declareOwnerRequest(nodeId: string, carrierAddress: string, nonce: string){
     let request: Communication.declare_owner_request = {
       version: "1.0",
       method : "declare_owner",
       id     : -1,
       params : {
-          nonce: this.generateNonce(),
+          nonce: nonce,
           owner_did: this.getSignInData().did
       }
     }
@@ -3781,7 +3801,11 @@ export class FeedService {
     });
   }
 
-  handleDeclareOwnerResponse(nodeId: string, result: any){
+  handleDeclareOwnerResponse(nodeId: string, result: any, error: any){
+    if (error != null && error != undefined && error.code != undefined){
+      this.native.toast(this.translate.instant("StartbindingPage.bindingError"));
+      return ;
+    }
     let phase = result.phase;
     let did = "";
     let payload = "";
