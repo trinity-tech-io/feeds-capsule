@@ -66,8 +66,8 @@
                 <img class="like" [ngClass]="{'like-s': checkLikedComment(comment.id)}" (click)="likeComment(comment.id)">
                 <ion-label class="like-text" [ngClass]="{'like-s-text': checkLikedComment(comment.id)}" (click)="likeComment(comment.id)">{{comment.likes}}</ion-label>
     
-                <img src="../../../../assets/images/bubble-line.svg" class="comment" (click)="commentComment()">
-                <ion-label class="comment-text">0</ion-label>
+                <!-- <img src="../../../../assets/images/bubble-line.svg" class="comment" (click)="commentComment()">
+                <ion-label class="comment-text">0</ion-label> -->
               </div>
             </div>
           </div>

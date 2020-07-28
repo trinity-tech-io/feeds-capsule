@@ -174,7 +174,8 @@ export const zh = {
         "DeleteFeedSource": "删除Feed服务!",
         "RemovethisFeedSource": "移除这个Feed服务?",
         "RemoveFeedSource": "移除Feed服务!",
-        "removeserver": "已移除服务"
+        "removeserver": "已移除服务",
+        "feedsSourceQRCode":"微频源二维码",
     },
     "ScanqrcodePage":{
         "bindingServer":"绑定服务",

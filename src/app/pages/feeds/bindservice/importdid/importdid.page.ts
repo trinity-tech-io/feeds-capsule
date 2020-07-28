@@ -78,9 +78,9 @@ export class ImportdidPage implements OnInit {
     this.feedService.createDidRequest(this.nodeId);
   }
 
-  importDid(){
-    this.native.getNavCtrl().navigateForward(['/bindservice/importmnemonic', this.nodeId]);
-  }
+  // importDid(){
+  //   this.native.getNavCtrl().navigateForward(['/bindservice/importmnemonic', this.nodeId]);
+  // }
 
   abort(){
     this.navCtrl.pop();

@@ -174,7 +174,8 @@ export const en = {
         "DeleteFeedSource":"Delete Feed Source!",
         "RemovethisFeedSource":"Remove this Feed Source?",
         "RemoveFeedSource":"Remove Feed Source!",
-        "removeserver": "Service removed"
+        "removeserver": "Service removed",
+        "feedsSourceQRCode":"Feeds Source QRCode",
     },
     "ScanqrcodePage":{
         "bindingServer":"Binding Server",
