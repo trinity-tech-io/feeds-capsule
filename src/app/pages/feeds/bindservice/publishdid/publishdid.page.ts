@@ -5,6 +5,7 @@ import { ActivatedRoute } from '@angular/router';
 import { FeedService } from 'src/app/services/FeedService';
 import { NativeService } from 'src/app/services/NativeService';
 import { TranslateService } from "@ngx-translate/core";
+import { ThemeService } from 'src/app/services/theme.service';
 import { Events } from '@ionic/angular';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
@@ -14,7 +15,7 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
   styleUrls: ['./publishdid.page.scss'],
 })
 export class PublishdidPage implements OnInit {
-  private title = "PublishdidPage.bindingServer";
+  private title = "04/06";
   private payload: string;
   private nodeId = "";
   private did = "";
@@ -36,15 +37,12 @@ export class PublishdidPage implements OnInit {
     }
 
     ionViewDidEnter() {
-      this.events.subscribe("feeds:updateTitle",()=>{
-        this.initTitle();
-      });
       this.initTitle();
       this.native.setTitleBarBackKeyShown(true);
     }
   
     ionViewWillUnload(){
-      this.events.unsubscribe("feeds:updateTitle");
+     
     }
   
   

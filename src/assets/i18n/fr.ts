@@ -18,7 +18,8 @@ export const fr = {
         "yesterday":"yesterday",
         "unsubscribe":"Unsubscribe",
         "share":"Share",
-        "sending":"Sending..."
+        "sending":"Sending...",
+        "addressinvalid":"Address invalid"
     },
     "app":{
         "profileDetails":"Profile Details",
@@ -178,35 +179,37 @@ export const fr = {
         "feedsSourceQRCode":"Feeds Source QRCode",
     },
     "ScanqrcodePage":{
-        "bindingServer":"Binding Server",
-        "des":"You have to pair (or binding) a feeds service first, then you can create channel with your interested topic, and therefore you can post a message on that channel",
-        "scanServiceQRcode":"Scan service QRcode",
-        "abort":"Abort",
+        "introduce":"Create a new channel",
+        "introduce1":"Bind your",
+        "introduce2":"feed service / channel source",
+        "introduce3":"to proceed",
+        "introduce4":"Scan your binding address"
     },
     "StartbindingPage":{
-        "bindingServer":"Binding Server",
-        "des":"Your are going to binding a feeds service, please check the verifying code whether it is same one on browser from feeds service.",
+        "introduce":"Create a new channel",
+        "introduce1":"Verify the binding code to be similar in the browser",
+        "introduce2":"Verified Binding Code",
+        "introduce3":"Feed url",
+        "linkServer":"You are linking a feed service. Please confirm whether the feed url is consistent with the previously bound feed service.",
         "confirm":"Confirm",
         "abort":"Abort",
         "Connectingserver": "Connecting server",
-        "linkServer":"You are linking a feed service. Please confirm whether the feed url is consistent with the previously bound feed service.",
         "bindingError":"An exception occurred during the binding process"
     },
     "PublishdidPage":{
-        "bindingServer":"Binding Server",
+        "introduce":"Create a new channel",
         "payload":"payload is",
         "publishonDIDsidechain":"Publish on DID side chain",
         "abort":"Abort",
     },
     "FinishPage":{
-        "bindingServer":"Binding Server",
-        "des":" Congratulation, the binding process come into the end with success. ",
-        "finish":"Finish"
+        "introduce":"DID binding process completed",
+        "introduce1":"Create channel",
+        "introduce2":"return to main screen",
     },
     "IssuecredentialPage":{
-        "bindingServer":"Binding Server",
-        "des1":"Your DID document of feeds service has been published to DID sidechain",
-        "des2":"Next step is to issue credential to DID of feed service.",
+        "introduce":"DID document published",
+        "introduce1":"to sidechain successfully",
         "issueacredential":"Issue a credential",
         "abort":"Abort",
         "serverInfo":"Server info",
@@ -214,8 +217,9 @@ export const fr = {
         "serverDes":"Server description",
     },
     "ImportdidPage":{
-        "bindingServer":"Binding Server",
-        "des":"You have to ask feeds service to create a new DID or import a DID with mnemonics.",
+        "introduce":"Create a new channel",
+        "introduce1":"Bind a DID to your selected",
+        "introduce2":"feed service / channel source",
         "createanewDID":"Create a new DID",
         "importanexistDID":"Import an exist DID",
         "abort":"Abort",

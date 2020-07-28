@@ -6,6 +6,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Events } from '@ionic/angular';
 import { NativeService } from 'src/app/services/NativeService';
 import { TranslateService } from "@ngx-translate/core";
+import { ThemeService } from 'src/app/services/theme.service';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 @Component({
@@ -14,7 +15,7 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
   styleUrls: ['./importdid.page.scss'],
 })
 export class ImportdidPage implements OnInit {
-  private title = "ImportdidPage.bindingServer";
+  private title = "03/06";
   private nodeId = "";
   constructor(
     private native: NativeService,
@@ -25,6 +26,7 @@ export class ImportdidPage implements OnInit {
     private navCtrl: NavController,
     private feedService:FeedService,
     private translate:TranslateService,
+    public  theme:ThemeService
     ) {
 
       acRoute.params.subscribe((data)=>{
@@ -54,21 +56,18 @@ export class ImportdidPage implements OnInit {
       });   
     }
 
-    ionViewDidEnter() {
-      this.events.subscribe("feeds:updateTitle",()=>{
-        this.initTitle();
-      });
+    ionViewWillEnter() {
       this.initTitle();
       this.native.setTitleBarBackKeyShown(true);
     }
   
     ionViewWillUnload(){
-      this.events.unsubscribe("feeds:updateTitle");
+  
     }
   
   
     initTitle(){
-      titleBarManager.setTitle(this.translate.instant(this.title));
+      titleBarManager.setTitle(this.title);
     }
   
   ngOnInit() {

@@ -1,14 +1,23 @@
-<ion-content>
-  <div>
-    {{'ImportdidPage.des'| translate}}
+<ion-content padding  [class.darkContainer]="theme.darkMode">
+   <div class="first">
+       {{'ImportdidPage.introduce'|translate}}
+   </div>
+
+   <div class="second">
+       <div class="introduce">{{'ImportdidPage.introduce1'|translate}}</div>
+       <div class="introduce">{{'ImportdidPage.introduce2'|translate}}</div>
+  </div>
+
+  <div class="createchannel" (click)="createNewDid()">
+    {{'ImportdidPage.createanewDID'| translate}}
   </div>
   
-  <ion-button shape="round" expand="full" (click)="createNewDid()"> {{'ImportdidPage.createanewDID'| translate}}</ion-button>
-  <!-- <ion-button shape="round" expand="full" (click)="importDid()"> {{'ImportdidPage.importanexistDID'| translate}}</ion-button> -->
-  <ion-button shape="round" expand="full" (click)="abort()"> {{'ImportdidPage.abort'| translate}}</ion-button>
+  <div class="backmainscreen" >
+    {{'ImportdidPage.importanexistDID'| translate}}
+  </div>
+ 
+  <!-- <ion-button shape="round" expand="full" (click)="createNewDid()"> {{'ImportdidPage.createanewDID'| translate}}</ion-button>
+  <ion-button shape="round" expand="full" (click)="importDid()"> {{'ImportdidPage.importanexistDID'| translate}}</ion-button>
+  <ion-button shape="round" expand="full" (click)="abort()"> {{'ImportdidPage.abort'| translate}}</ion-button> -->
 
-  
-
-  
-  
 </ion-content>

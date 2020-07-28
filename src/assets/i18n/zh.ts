@@ -18,7 +18,8 @@ export const zh = {
         "yesterday":"昨天",
         "unsubscribe":"取消订阅",
         "share":"分享",
-        "sending":"正在发送..."
+        "sending":"正在发送...",
+        "addressinvalid":"地址无效"
     },
     "app":{
         "profileDetails":"个人档案",
@@ -178,35 +179,37 @@ export const zh = {
         "feedsSourceQRCode":"微频源二维码",
     },
     "ScanqrcodePage":{
-        "bindingServer":"绑定服务",
-        "des":"您必须首先配对/绑定一个feeds服务，之后可以创建您所感兴趣的主题/频道，然后可以通过该频道来发帖",
-        "scanServiceQRcode":"扫描服务二维码",
-        "abort":"中止",
+        "introduce":"创建一个新频道",
+        "introduce1":"绑定你的",
+        "introduce2":"feed服务 / 频道源",
+        "introduce3":"继续",
+        "introduce4":"扫描绑定地址"
     },
     "StartbindingPage":{
-        "bindingServer":"绑定服务",
-        "des":"您要绑定一个feeds服务，请检查验证码与feeds服务浏览器上的验证码是否相同。",
+        "introduce":"创建一个新频道",
+        "introduce1":"在浏览器中验证绑定代码是否相似",
+        "introduce2":"已验证绑定代码",
+        "introduce3":"Feed服务地址",
+        "linkServer":"您正在关联一个Feed服务，请确认服务地址与之前绑定的Feed服务是否一致。",
         "confirm":"确认",
         "abort":"中止",
         "Connectingserver": "正在连接服务",
-        "linkServer":"您正在关联一个Feed服务，请确认服务地址与之前绑定的Feed服务是否一致。",
         "bindingError":"绑定过程出现异常"
     },
     "PublishdidPage":{
-        "bindingServer":"绑定服务",
+        "introduce":"创建一个新频道",
         "payload":"payload是",
         "publishonDIDsidechain":"在DID侧链上发布",
         "abort":"中止",
     },
     "FinishPage":{
-        "bindingServer":"绑定服务",
-        "des":"恭喜！绑定过程已结束！",
-        "finish":"完成"
+        "introduce":"绑定过程完成",
+        "introduce1":"创建频道",
+        "introduce2":"返回主屏幕",
     },
     "IssuecredentialPage":{
-        "bindingServer":"绑定服务",
-        "des1":"您的feeds服务的DID文档已发布到DID侧链",
-        "des2":"下一步是向feed服务的DID颁发凭证。",
+        "introduce":"文档已成功",
+        "introduce1":"发布到侧链",
         "issueacredential":"颁发凭证",
         "abort":"中止",
         "serverInfo":"服务信息",
@@ -214,8 +217,9 @@ export const zh = {
         "serverDes":"服务描述",
     },
     "ImportdidPage":{
-        "bindingServer":"绑定服务",
-        "des":"您必须为feeds服务创建一个新的DID或通过助记词导入一个DID。",
+        "introduce":"创建一个新频道",
+        "introduce1":"将DID绑定到选定的",
+        "introduce2":"feed服务 / 频道源",
         "createanewDID":"创建一个新的DID",
         "importanexistDID":"导入已存在的DID",
         "abort":"中止",

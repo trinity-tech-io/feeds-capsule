@@ -1,0 +1,85 @@
+.first{
+    margin-top: 60px;  
+    font-size: 23px;
+    font-weight: bold;
+    font-stretch: normal;
+    font-style: normal;
+    letter-spacing: normal;
+    text-align: center;
+    color: #000000;
+  }
+  
+  .second{
+      margin-top: 60px;
+  }
+  
+  .second .introduce{
+      font-size: 18px;
+      font-weight: normal;
+      font-stretch: normal;
+      font-style: normal;
+      letter-spacing: normal;
+      text-align: center;
+      color: #8888b0;
+      margin-bottom: 5px;
+      word-wrap:break-word;  
+      word-break:break-all; 
+  }
+  
+  .three{
+      position: relative;
+      margin-top: 12px;
+      width:100%;
+      height: 53px;
+      line-height: 53px;
+      border-radius: 9px;
+      background-color: #f0f1ff;
+      font-size: 14px;
+      font-weight: normal;
+      font-stretch: normal;
+      font-style: normal;
+      letter-spacing: normal;
+      text-align:center;
+      color: #afb1cb;
+  }
+
+  .confirm{
+    width: 236px;
+    height: 41px;
+    line-height: 41px;
+    border-radius: 9px;
+    box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.15);
+    background-color: #368bff;
+    margin: 0 auto;
+    text-align: center;
+    margin-top: 50px;
+    font-size: 18px;
+    font-weight: normal;
+    font-stretch: normal;
+    font-style: normal;
+    text-align: center;
+    color: #ffffff;
+  }
+
+  .abort{
+    width: 110px;
+    height: 41px;
+    line-height: 41px;
+    border-radius: 9px;
+    border: solid 1px #368bff;
+    background-color: #f0f1ff;
+    margin: 0 auto;
+    margin-top:32px;
+    font-size: 18px;
+    font-weight: normal;
+    font-stretch: normal;
+    font-style: normal;
+    text-align: center;
+    color: #368bff;
+  }
+  
+  .darkContainer{
+      .white{
+          color:#ffffff;
+      }
+  }

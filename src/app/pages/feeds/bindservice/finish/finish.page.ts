@@ -1,11 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { NavController } from '@ionic/angular';
-import { Router } from '@angular/router';
-import { FeedService } from 'src/app/services/FeedService';
 import { ActivatedRoute } from '@angular/router';
 import { NativeService } from 'src/app/services/NativeService';
-import { TranslateService } from "@ngx-translate/core";
-import { Events } from '@ionic/angular';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 @Component({
@@ -14,58 +9,41 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
   styleUrls: ['./finish.page.scss'],
 })
 export class FinishPage implements OnInit {
-  private title = "FinishPage.bindingServer";
+  private title = "06/06";
   private nodeId = "";
   constructor(
     private native: NativeService,
-    private router: Router,
-    private navCtrl: NavController,
-    private feedService:FeedService,
     private acRoute: ActivatedRoute,
-    private translate:TranslateService,
-    private events: Events,
     ) {
 
       acRoute.params.subscribe((data)=>{
         this.nodeId = data.nodeId;
       });
     }
-    ionViewDidEnter() {
-      this.events.subscribe("feeds:updateTitle",()=>{
-        this.initTitle();
-      });
+    ionViewWillEnter(){
       this.initTitle();
       this.native.setTitleBarBackKeyShown(true);
     }
   
     ionViewWillUnload(){
-      this.events.unsubscribe("feeds:updateTitle");
+    
     }
   
   
     initTitle(){
-      titleBarManager.setTitle(this.translate.instant(this.title));
+      titleBarManager.setTitle(this.title);
     }
 
   ngOnInit() {
   }
 
   createChannel(){
-    this.navCtrl.pop().then(()=>{
-      this.router.navigate(['/createnewfeed']);
+    this.native.getNavCtrl().pop().then(()=>{
+      this.native.getRouter().navigate(['/createnewfeed']);
     });
   }
 
   returnMain(){
-    this.navCtrl.pop();
-  }
-
-  signIn(){
-    this.router.navigate(['/menu/servers']);
-    // this.feedService.signinChallengeRequest(this.nodeId,false);
-  }
-
-  finish(){
-    this.navCtrl.pop();
+    this.native.getRouter().navigate(['/tabs/home']);
   }
 }

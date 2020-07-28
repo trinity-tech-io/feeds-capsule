@@ -14,7 +14,7 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
   styleUrls: ['./issuecredential.page.scss'],
 })
 export class IssuecredentialPage implements OnInit {
-  private title = "IssuecredentialPage.bindingServer";
+  private title = "05/06";
   private nodeId = "";
   private did = "";
   constructor(
@@ -42,16 +42,13 @@ export class IssuecredentialPage implements OnInit {
       });
     }
 
-    ionViewDidEnter() {
-      this.events.subscribe("feeds:updateTitle",()=>{
-        this.initTitle();
-      });
+    ionViewWillEnter(){
       this.initTitle();
       this.native.setTitleBarBackKeyShown(true);
     }
   
     ionViewWillUnload(){
-      this.events.unsubscribe("feeds:updateTitle");
+     
     }
   
   

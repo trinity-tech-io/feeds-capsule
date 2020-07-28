@@ -1,23 +1,43 @@
-<ion-content>
-  <div *ngIf="feedsUrl != '-1'"> 
-    <div>
-      {{'StartbindingPage.linkServer'|translate}}
+ <ion-content padding [class.darkContainer]="theme.darkMode">
+    <div class="first white">
+         {{'StartbindingPage.introduce'|translate}}
     </div>
-    <div style="color: #ff0000; text-align: center; width: 100%; padding-top: 30px; padding-bottom: 30px;" >
-      {{feedsUrl}}
-    </div>
-  </div>
 
-  <div *ngIf="feedsUrl == '-1'">
-    <div>
-      {{'StartbindingPage.des'|translate}}
-    </div>
-    <div style="color: #ff0000; text-align: center; width: 100%; padding-top: 30px; padding-bottom: 30px;" >
+    <!--首次绑定-->
+    <div *ngIf="feedsUrl === '-1'">
+      <div class="second" >
+        <div class="introduce"> {{'StartbindingPage.introduce1'|translate}}</div>
+     </div>
+
+     <div class="second" style="margin-top: 94px;" *ngIf="feedsUrl === '-1'">
+      <div class="introduce"> {{'StartbindingPage.introduce2'|translate}}</div>
+     </div>
+
+     <div class="three" (click)="scanService()" *ngIf="feedsUrl === '-1'">
       {{nonce}}
+     </div>
     </div>
-  </div>
-  <ion-button shape="round" expand="full" (click)="confirm()">{{'StartbindingPage.confirm'|translate}}</ion-button>
-  <ion-button shape="round" expand="full" (click)="abort()">{{'StartbindingPage.abort'|translate}}</ion-button>
-  <!-- <ion-button shape="round" expand="full" (click)="test()">test</ion-button> -->
+
+     <!--再次绑定-->
+     <div *ngIf="feedsUrl != '-1'">
+      <div class="second">
+        <div class="introduce"> {{'StartbindingPage.linkServer'|translate}}</div>
+      </div>
+
+      <div class="second" style="margin-top: 94px;">
+        <div class="introduce"> {{'StartbindingPage.introduce2'|translate}}</div>
+       </div>
+
+      <div class="three" (click)="scanService()">
+        {{feedsUrl}}
+      </div>
+    </div>
+  
+    <div class="confirm" (click)="confirm()">{{'StartbindingPage.confirm'|translate}}</div>
+
+    <div class="abort" (click)="abort()">{{'StartbindingPage.abort'|translate}}</div>
 
 </ion-content>
+
+
+

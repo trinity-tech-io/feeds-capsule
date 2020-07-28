@@ -1,11 +1,11 @@
 import { Component, OnInit, NgZone } from '@angular/core';
-import { Router } from '@angular/router';
 import { NavController } from '@ionic/angular';
 import { FeedService } from 'src/app/services/FeedService';
 import { CarrierService } from 'src/app/services/CarrierService';
 import { NativeService } from 'src/app/services/NativeService';
+import { ThemeService } from 'src/app/services/theme.service';
 import { TranslateService } from "@ngx-translate/core";
-import { Events } from '@ionic/angular';
+
 
 declare let appManager: AppManagerPlugin.AppManager;
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
@@ -16,7 +16,7 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
   styleUrls: ['./scanqrcode.page.scss'],
 })
 export class ScanqrcodePage implements OnInit {
-  private title = "ScanqrcodePage.bindingServer";
+  private title = "01/06";
   private waitFriendsOnline = false;
   private carrierAddress: string;
   private scanContent: string;
@@ -25,34 +25,31 @@ export class ScanqrcodePage implements OnInit {
   constructor(
     private native: NativeService,
     private zone: NgZone,
-    private router: Router,
     private navCtrl: NavController,
     private feedService:FeedService,
     private carrier: CarrierService,
     private translate:TranslateService,
-    private events: Events,
+    public  theme:ThemeService
     ) {
   }
 
-  ionViewDidEnter() {
-    this.events.subscribe("feeds:updateTitle",()=>{
-      this.initTitle();
-    });
+  ngOnInit() {
+
+  }
+
+  ionViewWillEnter() {
     this.initTitle();
     this.native.setTitleBarBackKeyShown(true);
   }
 
-  ionViewWillUnload(){
-    this.events.unsubscribe("feeds:updateTitle");
-  }
-
-
   initTitle(){
-    titleBarManager.setTitle(this.translate.instant(this.title));
-  }
-  ngOnInit() {
+    titleBarManager.setTitle(this.title);
   }
 
+  ionViewWillUnload(){
+     
+  }
+ 
   scanService(){
     this.scanAddress();
   }
@@ -81,10 +78,10 @@ export class ScanqrcodePage implements OnInit {
   }
 
   addFriends(address: string, nodeId: string, nonce: string, did: string){
-    this.carrier.isValidAddress(address, (isValid) => {
+    this.carrier.isValidAddress(address, (isValid:boolean) => {
       if (!isValid){
-        // this.alertError("Address invalid");
-        this.native.toast_trans('addressinvalid'+address);
+        let errMsg= this.translate.instant('common.addressinvalid')+": "+address;
+        this.native.toast(errMsg);
         return;
       }
       
@@ -110,9 +107,5 @@ export class ScanqrcodePage implements OnInit {
 
   declareOwner(nodeId: string){
     this.feedService.declareOwnerRequest(nodeId, this.carrierAddress, this.nonce);
-  }
-
-  abort(){
-    this.navCtrl.pop();
   }
 }

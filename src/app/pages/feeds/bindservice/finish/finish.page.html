@@ -1,12 +1,19 @@
 
-<ion-content>
-  <div>
-    {{'FinishPage.des'| translate}}
+<ion-content padding>
+  <div class="first">
+      <ion-img src="./assets/images/finsh.svg"></ion-img>
   </div>
-  
-  <!-- <ion-button shape="round" expand="full" (click)="signIn()">SignIn</ion-button> -->
-  <!-- <ion-button shape="round" expand="full" (click)="createChannel()">Create Channel</ion-button> -->
-  <!-- <ion-button shape="round" expand="full" (click)="returnMain()">Return to main screen</ion-button> -->
-  <ion-button shape="round" expand="full" (click)="finish()"> {{'FinishPage.finish'| translate}}</ion-button>
 
+  <div class="second">
+    {{'FinishPage.introduce'|translate}}
+  </div>
+
+  <div class="createchannel" (click)="createChannel()">
+    
+    {{'FinishPage.introduce1'|translate}}
+ </div>
+
+  <div class="backmainscreen" (click)="returnMain()">
+    {{'FinishPage.introduce2'|translate}}
+  </div>
 </ion-content>

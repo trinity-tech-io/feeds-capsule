@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="78" height="78" viewBox="0 0 78 78">
+    <defs>
+        <style>
+            .cls-2{fill:#17c700}
+        </style>
+    </defs>
+    <g id="icon-Publish" transform="translate(-33.978 -164.978)">
+        <g id="Ellipse_2" fill="none" stroke="#8888b0" data-name="Ellipse 2" transform="translate(33.978 164.978)">
+            <circle cx="39" cy="39" r="39" stroke="none"/>
+            <circle cx="39" cy="39" r="38.5"/>
+        </g>
+        <g id="DID_Icon" data-name="DID Icon" transform="translate(52.561 183.556)">
+            <path id="Path_1357" d="M42.61 20.742A20.009 20.009 0 0 0 26.69 2.731a20.247 20.247 0 0 0-4.064-.411 19.993 19.993 0 0 0-20 19.937v5.533a3.285 3.285 0 0 0 3.321 3.317 3.285 3.285 0 0 0 3.321-3.317v-5.533a13.376 13.376 0 0 1 26.751 0v5.533a3.321 3.321 0 0 0 6.642 0v-5.533c.007-.508-.014-1.016-.051-1.515z" class="cls-2" data-name="Path 1357" transform="translate(-2.63 -2.32)"/>
+            <path id="Path_1358" d="M39.413 50.888a7.769 7.769 0 0 1-7.569-6.066 7.893 7.893 0 0 1-.189-1.709V37.58a8.888 8.888 0 0 0-17.775 0v5.533a7.756 7.756 0 0 1-7.746 7.771 3.317 3.317 0 0 0 0 6.633 14.409 14.409 0 0 0 14.392-14.4V37.58a2.246 2.246 0 0 1 4.492 0v5.533a14.443 14.443 0 0 0 14.421 14.408 3.317 3.317 0 1 0-.025-6.633z" class="cls-2" data-name="Path 1358" transform="translate(-2.746 -17.642)"/>
+        </g>
+    </g>
+</svg>

@@ -1,11 +1,10 @@
 import { Component, OnInit, NgZone } from '@angular/core';
-import { Router } from '@angular/router';
 import { NavController } from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
 import { FeedService } from 'src/app/services/FeedService';
-import { TranslateService } from "@ngx-translate/core";
 import { Events } from '@ionic/angular';
 import { NativeService } from 'src/app/services/NativeService';
+import { ThemeService } from 'src/app/services/theme.service';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 @Component({
@@ -14,34 +13,42 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
   styleUrls: ['./startbinding.page.scss'],
 })
 export class StartbindingPage implements OnInit {
-  private title = "StartbindingPage.bindingServer";
-  private nonce = "12345";
+  private title = "02/06";
+  public nonce = "";
   private nodeId: string;
   private carrierAddress: string;
   private did:string = "";
-  private feedsUrl: string;
+  public feedsUrl: string ="";
   constructor(
     private zone: NgZone,
     private native: NativeService,
     private events: Events,
     private acRoute: ActivatedRoute,
-    private router: Router,
     private feedService:FeedService,
-    private translate:TranslateService,
-    private navCtrl: NavController
+    private navCtrl: NavController,
+    public  theme:ThemeService
   ) {
     acRoute.params.subscribe((data)=>{
       this.nodeId = data.nodeId;
-      this.nonce = data.nonce;
-      let did = data.did;
-      this.feedsUrl = data.feedsUrl;
+
+      let nonce = data.nonce || "";
+      let did = data.did || "";
+      this.feedsUrl = data.feedsUrl || "";
+
+      if (nonce!=""){
+        this.nonce = nonce ;
+      }else{
+        this.nonce = this.feedService.generateNonce();
+      }
       
-      if(did!="")
+      if(did!=""){
         this.did = did;
+      }
 
       this.carrierAddress = data.address;
-      if(this.feedService.getFriendConnection(this.nodeId) == 1)
-        this.native.showLoading(this.translate.instant("StartbindingPage.Connectingserver"));
+      // if(this.feedService.getFriendConnection(this.nodeId) == 1){
+      //   this.native.showLoading(this.translate.instant("StartbindingPage.Connectingserver"));
+      // }
     });
 
     this.events.subscribe('feeds:owner_declared', (nodeId, phase, did, payload) => {
@@ -104,24 +111,21 @@ export class StartbindingPage implements OnInit {
 
   }
 
-  ionViewDidEnter() {
-    this.events.subscribe("feeds:updateTitle",()=>{
-      this.initTitle();
-    });
+  ngOnInit() {
+
+  }
+
+  ionViewWillEnter() {
     this.initTitle();
     this.native.setTitleBarBackKeyShown(true);
   }
 
-  ionViewWillUnload(){
-    this.events.unsubscribe("feeds:updateTitle");
-  }
-
-
   initTitle(){
-    titleBarManager.setTitle(this.translate.instant(this.title));
+    titleBarManager.setTitle(this.title);
   }
 
-  ngOnInit() {
+  ionViewWillUnload(){
+     
   }
 
   confirm(){

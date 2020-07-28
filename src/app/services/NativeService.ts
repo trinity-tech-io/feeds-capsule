@@ -147,6 +147,10 @@ export class NativeService {
           return this.navCtrl;
       }
 
+      getRouter(){
+          return this.router;
+      }
+
       iGetInnerText(testStr:string) {
         var resultStr = testStr.replace(/\ +/g, ""); //去掉空格
         resultStr = testStr.replace(/[ ]/g, "");    //去掉空格
