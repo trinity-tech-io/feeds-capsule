@@ -68,7 +68,8 @@ export const fr = {
         "emptyDes":"Not any feeds yet",
         "follow":"Follow",
         "following":"Following",
-        "searchFeeds":"Search Feeds"
+        "searchFeeds":"Search Feeds",
+        'addfeedssource':'Add Feeds Source'
     },
     "ChannelsPage":{
         "feeds":"Feeds",

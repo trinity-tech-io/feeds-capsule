@@ -1,3 +1,21 @@
+.addfeedssource{
+  width: 236px;
+  height: 41px;
+  border-radius: 9px;
+  box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.15);
+  background-color: #368bff;
+  line-height: 41px;
+  font-size: 18px;
+  font-weight: normal;
+  font-stretch: normal;
+  font-style: normal;
+  text-align: center;
+  color: #ffffff;
+  margin: 0 auto;
+  margin-top: 20px;
+}
+
+
 ion-searchbar {
     margin-top: 0;
   }
@@ -90,35 +108,8 @@ ion-searchbar {
   .img-container {
     display: flex;
     justify-content: flex-end;
-
-    // img {
-    //   // border-radius: 15px !important;
-    //   overflow: hidden;
-    //   height: 48px;
-    //   width: 48px;
-    // }
   }
 
-// .btn-container {
-//     display: flex;
-//     justify-content: center;
-//     align-items: center;
-
-//     ion-button {
-//       --border-radius: 30px ;
-//       --box-shadow: none;
-//       --border-width: 1px;
-//       --color:#8888b0;
-//       --border-color:#8888b0;
-//       width: 80px;
-
-//       ion-label {
-//         font-size: 9px;
-//         font-weight: 700;
-//         padding: 0;
-//       }
-//     }
-//   }
 
 .btn-container {
     display: flex;

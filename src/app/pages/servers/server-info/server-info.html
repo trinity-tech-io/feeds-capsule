@@ -1,125 +1,32 @@
-<ion-content [class.darkContainer]="theme.darkMode" [class.lightContainer]="!theme.darkMode">
+<ion-content [class.darkContainer]="theme.darkMode" [class.lightContainer]="!theme.darkMode" padding>
+   
+   <div class="first">
+         <ion-img class="headerImg" src="./assets/images/profile-2.svg"></ion-img>
+   </div>
 
+   <div class="second white">
+        {{name}}
+   </div>
 
-  <ion-card class="ion-no-padding ion-no-margin" style="margin-top: 12px; margin-left: 21px; margin-right: 21px;">
-    <ion-card-content class="ion-no-padding ion-no-margin">
-    <div class="center-flex" style="margin-top: 20px;">
-      <img style="  width: 56px;
-      height: 56px;" src="assets/images/profile-2.svg">
-    </div>
-
-    <div class="center-flex" style="margin-top: 15px;">
-
-      <ion-label style="
-        padding-left: 10px;
-        padding-right: 10px;
-        display:inline-block;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        font-family: Montserrat;
-        font-size: 17px;
-        font-weight: bold;
-        font-stretch: normal;
-        font-style: normal;
-        line-height: 1.18;
-        letter-spacing: normal;
-        text-align: left;" class="balck white">{{name}}</ion-label>
-
-    </div>
-
-    <div class="center-flex" style="margin-top: 15px;">
-      <ion-label style="  font-family: Montserrat;
-      font-size: 16px;
-      font-weight: normal;
-      font-stretch: normal;
-      font-style: normal;
-      line-height: 1.38;
-      letter-spacing: 0.8px;
-      text-align: left;" class="balck white">{{introduction}} </ion-label>
-    </div>
-
-    <div class="center-flex">
-    <ion-item lines="none" class="ion-no-padding ion-no-margin" style="margin-top: 20px; margin-bottom: 20px;" *ngIf="serverStatus == 0">
-      <div class="online-circle"></div>
-      <div style="
-      font-family: MontserratSemiBold;
-      font-size: 11px;
-      font-weight: normal;
-      font-stretch: normal;
-      font-style: normal;
-      line-height: 1.27;
-      letter-spacing: normal;
-      text-align: left;
-      color: #368bff;
-      margin-left: 5px;">{{'ServerInfoPage.online' | translate}}</div>
-
-
-      <img  style="margin-left: 13px;   width: 18.1px;
-      height: 14.7px;" src="assets/images/users-online.svg">
-      <div style="  font-family: Montserrat;
-      font-size: 14px;
-      font-weight: bold;
-      color: #368bff;"> {{clientNumber}}</div>
-      <div style="  font-family: MontserratSemiBold;
-      font-size: 11px;
-      font-weight: normal;
-      font-stretch: normal;
-      font-style: normal;
-      line-height: 1.27;
-      letter-spacing: normal;
-      text-align: left;
-      color: #368bff;
-      margin-left: 5px;">{{'ServerInfoPage.users' | translate}}</div>
-
-
-
-    </ion-item>
-    
-
-    <ion-item lines="none" class="ion-no-padding ion-no-margin" style="margin-top: 20px; margin-bottom: 20px;" *ngIf="serverStatus == 1">
-      <div class="offline-circle"></div>
-      <div style="
-      font-family: MontserratSemiBold;
-      font-size: 11px;
-      font-weight: normal;
-      font-stretch: normal;
-      font-style: normal;
-      line-height: 1.27;
-      letter-spacing: normal;
-      text-align: left;
-      color: #a0a2c4;
-      margin-left: 5px;">{{'ServerInfoPage.offline' | translate}}</div>
-
-
-      <img  style="margin-left: 13px;   width: 18.1px;
-      height: 14.7px;" src="assets/images/users-offline.svg">
-      <div style="  font-family: Montserrat;
-      font-size: 14px;
-      font-weight: bold;
-      color: #a0a2c4;"> {{clientNumber}}</div>
-      <div style="  font-family: MontserratSemiBold;
-      font-size: 11px;
-      font-weight: normal;
-      font-stretch: normal;
-      font-style: normal;
-      line-height: 1.27;
-      letter-spacing: normal;
-      text-align: left;
-      color: #a0a2c4;
-      margin-left: 5px;">{{'ServerInfoPage.users' | translate}}</div>
-
-
-
-    </ion-item>
-      
-    
-    </div>
-
-    </ion-card-content>
-    
-  </ion-card>
-  
-
+   <div class="three white">
+       {{introduction}}
+   </div>
+   <!--online-->
+   <div class="four" *ngIf="serverStatus == 0">
+       <span class="online-circle"></span>
+       <span class="online">{{'ServerInfoPage.online' | translate}}</span>
+       <ion-img  src="assets/images/users-online.svg" class="usersonline"></ion-img>
+       <span class="clientNumber">{{clientNumber}}</span>
+       <span class="users">{{'ServerInfoPage.users' | translate}}</span>
+   </div>
+   <!-- offline-->
+   <div class="four" *ngIf="serverStatus == 1">
+    <span class="offline-circle"></span>
+    <span class="online offlinecolor">{{'ServerInfoPage.offline' | translate}}</span>
+    <ion-img  src="assets/images/users-offline.svg" class="usersonline"></ion-img>
+    <span class="clientNumber offlinecolor">{{clientNumber}}</span>
+    <span class="users offlinecolor">{{'ServerInfoPage.users' | translate}}</span>
+  </div>
 
 
   <div class="detail-div" style="margin-top: 55px;">
@@ -130,7 +37,7 @@
     <div class="detail-value-div">
       <ion-label class="detail-value">{{name}}</ion-label>
     </div>
-    <div class="detail-line"></div>
+    <div class="detail-line bgColor2e2f4e"></div>
   
     <div *ngIf="isOwner == 'true'">
       <div class="detail-key-div">
@@ -139,7 +46,7 @@
       <div class="detail-value-div">
         <ion-label  class="detail-value">{{owner}} </ion-label>
       </div>
-      <div class="detail-line"></div>
+      <div class="detail-line bgColor2e2f4e"></div>
     </div>
 
     <div class="detail-key-div">
@@ -148,7 +55,7 @@
     <div class="detail-value-div">
       <ion-label  class="detail-value">{{introduction}} </ion-label>
     </div>
-    <div class="detail-line"></div>
+    <div class="detail-line bgColor2e2f4e"></div>
 
     <div class="detail-key-div">
       <ion-label class="detail-key">{{'ServerInfoPage.did'|translate}}</ion-label>
@@ -156,7 +63,7 @@
     <div class="detail-value-div">
       <ion-label  class="detail-value">{{didString}} </ion-label>
     </div>
-    <div class="detail-line"></div>
+    <div class="detail-line bgColor2e2f4e"></div>
 
 
 

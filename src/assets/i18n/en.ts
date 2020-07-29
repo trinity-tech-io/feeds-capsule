@@ -69,6 +69,7 @@ export const en = {
         "follow":"Follow",
         "following":"Following",
         "searchFeeds":"Search Feeds",
+        'addfeedssource':'Add Feeds Source'
     },
     "ChannelsPage":{
         "feeds":"Feeds",

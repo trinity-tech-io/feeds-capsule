@@ -73,10 +73,6 @@ export class MyApp {
     this.native.go('/menu/servers');
   }
 
-  setting(){
-    this.native.go('/menu/setting');
-  }
-
   goToDev(){
     this.native.go('menu/develop');
   }

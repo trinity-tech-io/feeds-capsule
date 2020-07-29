@@ -12,6 +12,7 @@ import { TranslateService } from "@ngx-translate/core";
   styleUrls: ['./notification.page.scss'],
 })
 export class NotificationPage {
+  public avatar:string = ""; 
   private notificationList: any;
   // Optional parameters to pass to the swiper instance. See http://idangero.us/swiper/api/ for valid options.
   slideOpts = {

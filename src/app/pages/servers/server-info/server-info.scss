@@ -1,33 +1,120 @@
-* {
-    font-family: 'Raleway', sans-serif;
-  }
-
-ion-header {
-
-  ion-toolbar {
-    margin-top: 25px;
-    margin-bottom: 25px;
-
-    ion-title {
-    font-size: 25px;
-    font-weight: bold;
-    }
-  }
+.first{
+     position: relative;
+     text-align: center;
+     margin-top: 46px;
 }
 
-ion-col > div {
-    background-color: #f7f7f7;
-    border: solid 1px #ddd;
-    padding: 10px;
+.first .headerImg{
+     display:inline-block;
+     width: 56px;
+     height:56px;
+}
+
+.second{
+  margin-top: 15px;
+  font-size: 17px;
+  font-weight: bold;
+  font-stretch: normal;
+  font-style: normal;
+  text-align: center;
+  color: #000000;
+}
+
+.three{
+    margin-top: 12px;
+    font-size: 16px;
+    font-weight: normal;
+    font-stretch: normal;
+    font-style: normal;
+    text-align:center;
+    color: #000000;
+}
+
+.four{
+  margin-top: 24px;
+  text-align: center;
+ 
+}
+
+.four .online-circle{
+    display:inline-block;
+    vertical-align: middle;
+    width: 16px;
+    height: 16px;
+    background-color: #368bff;
+    -moz-border-radius: 8px;
+    -webkit-border-radius: 8px;
+    border-radius: 8px;
+}
+
+.four .online{
+  display:inline-block;
+  margin-right: 12.3px;
+  margin-left:4.1px;
+  font-size: 11px;
+  font-weight: normal;
+  font-stretch: normal;
+  font-style: normal;
+  color: #368bff;
+}
+
+.four .usersonline{
+  display:inline-block;
+  vertical-align: middle;
+  width: 18.1px;
+  height: 14.7px;
+}
+
+.four .clientNumber{
+  display:inline-block;
+  margin-left: 3.6px;
+  margin-right:3px;
+  font-size: 14px;
+  font-weight: bold;
+  font-stretch: normal;
+  font-style: normal;
+  color: #368bff;
+
+}
+
+.four .users{
+  display:inline-block;
+  font-size: 11px;
+  font-weight: normal;
+  font-stretch: normal;
+  font-style: normal;
+  color: #368bff;
+}
+
+.four .offline-circle{
+  display:inline-block;
+  vertical-align: middle;
+  width: 16px;
+  height: 16px;
+  -moz-border-radius: 8px;
+  -webkit-border-radius: 8px;
+  border-radius: 8px;
+  background-color: #cdcde6;
+}
+
+.four .offlinecolor{
+  color: #a0a2c4;
 }
 
 .darkContainer{
+  .white{
+    color: #ffffff;
+  }
   .center-flex .white{
     color: #ffffff;
   }
 
   .detail-value-div .detail-value{
     color: #ffffff;
+  }
+
+  .detail-div .bgColor2e2f4e{
+    background-color: #2e2f4e;
   }
 }
 

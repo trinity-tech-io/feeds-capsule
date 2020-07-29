@@ -29,15 +29,6 @@
                 </div>
             </ion-menu-toggle>
             <ion-menu-toggle >
-                <div style="margin-left: 30px;margin-top: 30px;width: 100%;" (click)="setting()">
-                    <ion-item class="ion-no-padding ion-no-margin" lines="none">
-                        <img src="../assets/images/menu-setting.svg" class="menu-setting" *ngIf="!theme.darkMode">
-                        <img src="../assets/images/menu-setting-dark.svg" class="menu-setting" *ngIf="theme.darkMode">
-                        <ion-label class="menu-profile white">{{"app.settings" | translate}}</ion-label>
-                    </ion-item>
-                </div>
-            </ion-menu-toggle>
-            <ion-menu-toggle >
                 <div style="margin-left: 30px;margin-top: 30px;width: 100%;" (click)="about()">
                     <ion-item class="ion-no-padding ion-no-margin" lines="none">
                         <img src="../assets/images/menu-about.svg" class="menu-setting" *ngIf="!theme.darkMode">

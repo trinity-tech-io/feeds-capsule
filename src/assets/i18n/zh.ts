@@ -68,7 +68,8 @@ export const zh = {
         "emptyDes":"还没有任何Feeds",
         "follow":"订阅",
         "following":"已订阅",
-        "searchFeeds":"搜索Feeds"
+        "searchFeeds":"搜索Feeds",
+        'addfeedssource':'添加微频源'
     },
     "ChannelsPage":{
         "feeds":"Feeds",

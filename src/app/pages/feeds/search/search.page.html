@@ -3,11 +3,11 @@
   <div *ngIf="channelList.length == 0">
     <div class="center-content" >
       <div style="text-align: center; ">
-        <img src="../../../../assets/images/empty-feeds-icon.svg">
+        <img src="./assets/images/empty-feeds-icon.svg">
       </div>
       <div class="all-empty" style="margin-top: 20px;">{{'common.allempty'|translate}}</div>
       <div class="all-empty-content-text" style="margin-top: 7px;">{{'SearchPage.emptyDes'|translate}}</div>
-    
+      <div class="addfeedssource" (click)="addfeedssource()">{{"SearchPage.addfeedssource"|translate}}</div>
     </div> 
   </div>
 
@@ -107,4 +107,6 @@
     <div class="line-div white-line"  *ngIf="i!=channelList.length-1"></div>
 
   </div>
+
+  <div class="addfeedssource" (click)="addfeedssource()" *ngIf="channelList.length > 0">{{"SearchPage.addfeedssource"|translate}}</div>
 </ion-content>

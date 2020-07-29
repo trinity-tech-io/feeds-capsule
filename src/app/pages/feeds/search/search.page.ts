@@ -117,4 +117,8 @@ export class SearchPage implements OnInit {
     return this.feedService.parseChannelAvatar(avatar);
   }
 
+  addfeedssource(){
+    this.native.go('/menu/servers');
+  }
+
 }
