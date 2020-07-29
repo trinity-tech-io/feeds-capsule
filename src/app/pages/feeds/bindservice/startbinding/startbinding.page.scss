@@ -23,7 +23,7 @@
       color: #8888b0;
       margin-bottom: 5px;
       word-wrap:break-word;  
-      word-break:break-all; 
+    //   word-break:break-all; 
   }
   
   .three{
@@ -42,6 +42,23 @@
       text-align:center;
       color: #afb1cb;
   }
+
+ .four{
+    position: relative;
+    margin-top: 12px;
+    width:100%;
+    height: 63px;
+    border-radius: 9px;
+    background-color: #f0f1ff;
+    font-size: 14px;
+    font-weight: normal;
+    font-stretch: normal;
+    font-style: normal;
+    letter-spacing: normal;
+    text-align:left;
+    color: #afb1cb;
+    overflow: auto;
+}
 
   .confirm{
     width: 236px;
