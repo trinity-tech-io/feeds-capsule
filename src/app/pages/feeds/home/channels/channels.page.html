@@ -100,8 +100,6 @@
             </div>
             
             <ion-avatar  *ngIf="getContentImg(post.content) != ''" class="content-img-without-margin" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)">
-              <!-- <img src="{{getContentImg(post.content)}}"
-                  (click)="showBigImage(post.content)"> -->
                   <img src="{{getContentImg(post.content)}}">
             </ion-avatar>
     

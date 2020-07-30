@@ -3,6 +3,7 @@ import { CameraService } from 'src/app/services/CameraService';
 import { NavController, Events } from '@ionic/angular';
 import { NativeService } from 'src/app/services/NativeService';
 import { TranslateService } from "@ngx-translate/core";
+import { ThemeService } from '../../../services/theme.service';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 @Component({
@@ -11,7 +12,7 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
   styleUrls: ['./profileimage.page.scss'],
 })
 export class ProfileimagePage implements OnInit {
-  private userAvatar = "assets/images/profile-add.svg";
+  private userAvatar = "";
   private select: number = 1;
   private avatar = "assets/images/profile-1.svg";
   constructor(
@@ -20,12 +21,18 @@ export class ProfileimagePage implements OnInit {
     private events: Events,
     private zone: NgZone,
     private translate:TranslateService,
+    public theme:ThemeService, 
     private camera: CameraService) { }
 
   ngOnInit() {
   }
 
-  ionViewDidEnter() {
+  ionViewWillEnter() {
+    if(this.theme.darkMode){
+      this.userAvatar = './assets/images/profile-add-dark.svg';
+    }else{
+      this.userAvatar = './assets/images/profile-add.svg';
+    }
     this.events.subscribe("feeds:updateTitle",()=>{
       this.initTitle();
     });

@@ -51,7 +51,7 @@ export class NativeService {
             color: 'success',
             message: _message,
             duration: duration,
-            position: 'bottom'
+            position: 'top'
         }).then(toast => toast.present());
     }
 

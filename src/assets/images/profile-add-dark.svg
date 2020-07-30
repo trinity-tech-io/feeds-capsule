@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" id="prefix__Component_872_2" width="74" height="74" data-name="Component 872 – 2" viewBox="0 0 74 74">
+    <defs>
+        <style>
+            .prefix__cls-2{fill:none;stroke:#fff;stroke-linecap:round;stroke-width:2px}
+        </style>
+    </defs>
+    <g id="prefix__Component_307_357" data-name="Component 307 – 357">
+        <g id="prefix__Rectangle_406" fill="none" stroke="#fff" stroke-dasharray="7" data-name="Rectangle 406">
+            <rect width="74" height="74" stroke="none" rx="37"/>
+            <rect width="73" height="73" x=".5" y=".5" rx="36.5"/>
+        </g>
+    </g>
+    <g id="prefix__Component_344_292" data-name="Component 344 – 292" transform="translate(29.5 29.5)">
+        <path id="prefix__Line_5" d="M0 0L0 16" class="prefix__cls-2" data-name="Line 5" transform="translate(8)"/>
+        <path id="prefix__Line_6" d="M0 0L0 16" class="prefix__cls-2" data-name="Line 6" transform="rotate(90 4 12)"/>
+    </g>
+</svg>

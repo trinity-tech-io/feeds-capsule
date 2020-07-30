@@ -108,7 +108,7 @@ export class ServerInfoPage implements OnInit {
     });
   }
 
-  ionViewDidEnter() {
+  ionViewWillEnter() {
     this.events.subscribe("feeds:updateTitle",()=>{
       this.initTitle();
     });

@@ -18,9 +18,7 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
   styleUrls: ['./channels.page.scss'],
 })
 export class ChannelsPage implements OnInit {
-  private bigImageUrl: string;
-  private bigImage: boolean = false;
-  
+
   private channelAvatar = "";
   private channelName = "";
   private channelOwner = "";
@@ -209,13 +207,5 @@ export class ChannelsPage implements OnInit {
   menuMore(){
     this.menuService.showChannelMenu(this.nodeId, Number(this.channelId), this.channelName);
   }
-
-  showBigImage(content: any){
-    this.bigImage = true;
-    this.bigImageUrl =  this.getContentImg(content);
-  }
-
-  hideBigImage(){
-    this.bigImage = false;
-  }
+  
 }

@@ -4,6 +4,7 @@ import { NavController, PopoverController } from '@ionic/angular';
 import { FeedService } from '../../services/FeedService';
 import { NativeService } from '../../services/NativeService';
 import { TranslateService } from "@ngx-translate/core";
+import { ThemeService } from 'src/app/services/theme.service';
 import { Events } from '@ionic/angular';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 declare let appManager: AppManagerPlugin.AppManager;
@@ -22,6 +23,7 @@ export class FeedsPage implements OnInit {
     private feedService: FeedService,
     private popoverController: PopoverController,
     private translate:TranslateService,
+    public theme:ThemeService,
     private event:Events) {
     }
 

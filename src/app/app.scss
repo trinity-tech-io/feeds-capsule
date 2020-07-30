@@ -1,7 +1,3 @@
-* {
-    font-family: 'Raleway', sans-serif;
-}
-
 .menu-user {
     width: 32px;
     height: 32px;
@@ -67,9 +63,8 @@
 }
 
 .menu-profile-name{
-    // width: 122px;
-    // height: 20px;
-    font-family: MontserratSemiBold;
+    width:100px;
+    height: 30px;
     font-size: 17px;
     font-weight: normal;
     font-stretch: normal;
@@ -77,6 +72,7 @@
     line-height: 1.18;
     letter-spacing: normal;
     color: #000000;
+    overflow:auto;
 }
 
 .menu-profile-div{

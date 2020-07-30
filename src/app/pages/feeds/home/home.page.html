@@ -1,4 +1,4 @@
-<ion-content >
+<ion-content padding>
   <div *ngIf="postList.length == 0">
     <div class="center-content" >
       <div style="text-align: center; ">
@@ -15,13 +15,13 @@
     </div> 
   </div>
 
-  <div [ngClass]="{'mask-div': bigImage}">
     <div *ngFor="let post of postList let i=index" [class.darkContainer]="theme.darkMode">
 
       <div class="image-text-layout-div" >
         <ion-card-content class="ion-no-padding ion-no-margin">
           <div class="menu-div" (click)="menuMore(post.nodeId, post.channel_id)">
-              <img  src="assets/images/dots-three-vertical.svg">
+              <img  src="./assets/images/dots-three-vertical.svg" *ngIf="!theme.darkMode" style="width:12.4;height:3px">
+              <img  src="./assets/images/dots-three-vertical-dark.svg" *ngIf="theme.darkMode" style="width:12.4;height:3px">
           </div>
           <div class="image-text-div" (click)="navTo(post.nodeId, post.channel_id)">
               <ion-avatar class="avatar-div">
@@ -45,8 +45,6 @@
             </div>
             
             <ion-avatar  *ngIf="getContentImg(post.content) != ''" class="content-img-without-margin" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)">
-              <!-- <img src="{{getContentImg(post.content)}}"
-              (click)="showBigImage(post.content)"> -->
               <img src="{{getContentImg(post.content)}}"> 
             </ion-avatar>
     
@@ -62,11 +60,4 @@
       </div>
       <div class="line-div white-line" *ngIf="i!=postList.length-1"></div>
     </div>
-  </div>
-
-<div *ngIf="bigImage" class="trans-big-img-div" (click)="hideBigImage()" >
-  <div class="trans-big-img" >
-    <img src="{{bigImageUrl}}" class="image"/>
-  </div>
-</div>
 </ion-content>

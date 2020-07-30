@@ -25,7 +25,8 @@
       </div>
 
       <div class="menu-div" style="margin-top: 10px;" (click)="menuMore(channel.nodeId, channel.id, channel.name)">
-          <img  src="assets/images/dots-three-vertical.svg">
+        <img  src="./assets/images/dots-three-vertical.svg" *ngIf="!theme.darkMode" style="width:12.4;height:3px">
+        <img  src="./assets/images/dots-three-vertical-dark.svg" *ngIf="theme.darkMode" style="width:12.4;height:3px">
       </div>
 
       <div class="image-text-div" (click)="navTo(channel.nodeId, channel.id)">

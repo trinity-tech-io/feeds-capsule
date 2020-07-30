@@ -18,8 +18,6 @@ import { NativeService } from 'src/app/services/NativeService';
 
 export class HomePage implements OnInit {
   private postList: any;
-  private bigImageUrl: string;
-  private bigImage: boolean = false;
   constructor(
     private feedspage: FeedsPage,
     private tabs: IonTabs,
@@ -32,7 +30,6 @@ export class HomePage implements OnInit {
     private translate:TranslateService,
     private navtive:NativeService,
     private menuService: MenuService) {
-      this.bigImage = false;
       this.postList = feedService.getPostList();
       this.events.subscribe('feeds:refreshPage',()=>{
         this.zone.run(() => {
@@ -165,15 +162,6 @@ export class HomePage implements OnInit {
       return ;
     let channelName = channel.name;
     this.menuService.showChannelMenu(nodeId, channelId, channelName);
-  }
-
-  showBigImage(content: any){
-    this.bigImage = true;
-    this.bigImageUrl =  this.getContentImg(content);
-  }
-
-  hideBigImage(){
-    this.bigImage = false;
   }
 
   getChannelName(nodeId: string, channelId: number): string{

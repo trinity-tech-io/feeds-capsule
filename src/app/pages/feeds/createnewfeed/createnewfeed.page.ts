@@ -35,7 +35,6 @@ export class CreatenewfeedPage implements OnInit {
       this.selectedChannelSource = this.selectedServer.did;
 
       this.events.subscribe('feeds:createTopicSuccess', () => {
-        // this.navigateBack();
         this.navCtrl.pop().then(()=>{
           this.native.toast(this.translate.instant("CreatenewfeedPage.createfeedsuccess"));
         })
@@ -53,7 +52,7 @@ export class CreatenewfeedPage implements OnInit {
 
   }
 
-  ionViewDidEnter() {
+  ionViewWillEnter() {
     this.events.subscribe("feeds:updateTitle",()=>{
       this.initTitle();
     });
@@ -67,10 +66,6 @@ export class CreatenewfeedPage implements OnInit {
 
   initTitle(){
     titleBarManager.setTitle(this.translate.instant("CreatenewfeedPage.createNewFeed"));
-  }
-
-  navigateBack() {
-    this.navCtrl.pop();
   }
 
   async selectChannelSource(event){

@@ -1,11 +1,11 @@
-  <div class="create-feed-div" [class.darkContainer]="theme.darkMode">
+<ion-content padding [class.darkContainer]="theme.darkMode">
       <div>
         <ion-label  class="content-key white">{{'CreatenewfeedPage.name'|translate}}</ion-label>
       </div>
       <div class="detail-value-div">
         <ion-input required type="text" class="content-value " placeholder="{{'CreatenewfeedPage.inputName'|translate}}" #name></ion-input>
       </div>
-      <div class="detail-line"></div>
+      <div class="detail-line line-dark"></div>
 
       <div class="detail-key-div">
         <ion-label  class="content-key white">{{'CreatenewfeedPage.description'|translate}}</ion-label>
@@ -13,7 +13,7 @@
       <div class="detail-value-div">
         <ion-input required type="text" class="content-value " placeholder="{{'CreatenewfeedPage.inputFeedDesc'|translate}}" #desc></ion-input>
       </div>
-      <div class="detail-line"></div>
+      <div class="detail-line line-dark"></div>
 
       <div style="width: 100%; display: flex;" (click)="profileimage()">
         <div style="width: 100%;" >
@@ -31,7 +31,7 @@
       <ion-avatar *ngIf="avatar != ''">
         <img src={{avatar}}>
       </ion-avatar>
-      <div class="detail-line"></div>
+      <div class="detail-line line-dark"></div>
 
       <div style="width: 100%; display: flex;">
         <div style="width: 100%;" >
@@ -45,9 +45,9 @@
       </div>
 
 
-    <ion-button style="margin-top: 50px;" expand="block" (click)="createChannel(name,desc)">
+    <div (click)="createChannel(name,desc)" class="createChannel">
 
         {{'CreatenewfeedPage.createFeed'|translate}}
 
-    </ion-button>
-  </div>
+    </div>
+</ion-content>

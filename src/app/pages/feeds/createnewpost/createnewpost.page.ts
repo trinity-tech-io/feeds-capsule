@@ -26,7 +26,7 @@ export class CreatenewpostPage implements OnInit {
 
   private nodeId: string;
   private channelId: number;
-  public  isNewPost:boolean = false;
+  public  isNewPost:boolean = true;
   constructor(
     private events: Events,
     private native: NativeService,
@@ -37,18 +37,7 @@ export class CreatenewpostPage implements OnInit {
     private feedService: FeedService,
     public theme:ThemeService,
     private translate:TranslateService) {
-      this.events.subscribe('feeds:publishPostSuccess', () => {
-        this.isNewPost = false;
-        this.native.toast_trans("CreatenewpostPage.tipMsg1");
-        this.navCtrl.pop();
-      });
-
-      this.events.subscribe('rpcRequest:error', () => {
-         this.isNewPost = false;
-      });
-
-
-
+     
       acRoute.params.subscribe((data)=>{
         this.nodeId = data.nodeId;
         this.channelId = data.channelId;
@@ -64,7 +53,19 @@ export class CreatenewpostPage implements OnInit {
     ngOnInit() {
     }
 
-  ionViewDidEnter() {
+    ionViewWillEnter() {
+
+    this.events.subscribe('feeds:publishPostSuccess', () => {
+      this.navCtrl.pop().then(()=>{
+        this.native.toast_trans("CreatenewpostPage.tipMsg1");
+        this.isNewPost = true;
+      });
+    });
+
+    this.events.subscribe('rpcRequest:error', () => {
+       this.isNewPost = true;
+    });
+
     this.events.subscribe("feeds:updateTitle",()=>{
       this.initTitle();
     });
@@ -75,6 +76,8 @@ export class CreatenewpostPage implements OnInit {
   ionViewWillUnload(){
     this.hideBigImage();
     this.events.unsubscribe("feeds:updateTitle");
+    this.events.unsubscribe("feeds:publishPostSuccess");
+    this.events.unsubscribe("rpcRequest:error");
   }
 
 
@@ -84,28 +87,30 @@ export class CreatenewpostPage implements OnInit {
 
 
   post(){
-    if(this.isNewPost){
+    if(!this.isNewPost){
       this.native.toast_trans("common.sending");
-      return;
+    }else{
+      this.isNewPost = false;
+      let  newPost = this.native.iGetInnerText(this.newPost);
+      if (newPost == "" && this.imgUrl == ""){
+        this.isNewPost = true;
+        this.native.toast_trans("CreatenewpostPage.tipMsg");
+      }else{
+        let myContent = {};
+        myContent["text"] = this.newPost;
+        myContent["img"] = this.imgUrl;
+          
+        this.feedService.publishPost(
+            this.nodeId,
+            this.channelId,
+            JSON.stringify(myContent));
+        }
+      }
     }
-    let  newPost = this.native.iGetInnerText(this.newPost);
-    if (newPost == "" && this.imgUrl == ""){
-      this.native.toast_trans("CreatenewpostPage.tipMsg");
-      return;
-    }
-    this.isNewPost = true;
-    let myContent = {};
-    myContent["text"] = this.newPost;
-    myContent["img"] = this.imgUrl;
-      
-    this.feedService.publishPost(
-        this.nodeId,
-        this.channelId,
-        JSON.stringify(myContent));
-    }
+ 
 
   addImg(){
-    if(this.isNewPost){
+    if(!this.isNewPost){
       this.native.toast_trans("common.sending");
       return;
     }
