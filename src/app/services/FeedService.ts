@@ -918,10 +918,12 @@ export class FeedService {
     this.jwtMessageService.request(nodeId,properties,()=>{},()=>{});
   }
 
-  sendRPCMessage(nodeId: string, method: string, params: any){
+  sendRPCMessage(nodeId: string, method: string, params: any, isShowOfflineToast: boolean = true){
+    console.log("sendRPCMessage ==>"+isShowOfflineToast);
     if(!this.checkServerConnection(nodeId)){
       this.events.publish("rpcRequest:error");
-      this.native.toast(this.translate.instant("AddServerPage.serverMsg1") + nodeId + this.translate.instant("AddServerPage.serverMsg2"));
+      if (isShowOfflineToast)
+        this.native.toast(this.translate.instant("AddServerPage.serverMsg1") + nodeId + this.translate.instant("AddServerPage.serverMsg2"));
       return;
     }
     this.jsonRPCService.request(
@@ -2445,7 +2447,7 @@ export class FeedService {
   }
 
   getComments(nodeId: string, channel_id: number, post_id: number,
-              by:Communication.field, upper_bound: number, lower_bound: number, max_counts:number){
+              by:Communication.field, upper_bound: number, lower_bound: number, max_counts:number, isShowOfflineToast: boolean){
     if(accessTokenMap == null ||
       accessTokenMap == undefined||
       accessTokenMap[nodeId] == undefined)
@@ -2466,7 +2468,7 @@ export class FeedService {
           max_count : max_counts,
       },
     }
-    this.sendRPCMessage(nodeId, request.method, request.params);
+    this.sendRPCMessage(nodeId, request.method, request.params, isShowOfflineToast);
   }
 
   getStatistics(nodeId: string){
@@ -3306,13 +3308,16 @@ export class FeedService {
     let nodeChannelId = nodeId+request.id;
     if (error != null && error != undefined && error.code == -4){
 
+      if (channelsMap == null || channelsMap == undefined ||
+          channelsMap[nodeChannelId] == null || channelsMap[nodeChannelId] == undefined)
+          return ;
+
       channelsMap[nodeChannelId].isSubscribed = true;
       this.storeService.set(PersistenceKey.channelsMap,channelsMap);
       eventBus.publish(PublishType.subscribeFinish, nodeId,request.id, channelsMap[nodeChannelId].name);
       
       return;
     }
-    
 
     channelsMap[nodeChannelId].isSubscribed = true;
     this.storeService.set(PersistenceKey.channelsMap,channelsMap);
@@ -3443,9 +3448,11 @@ export class FeedService {
   getCommentList(nodeId: string, channelId: number, postId: number): Comment[]{
     if (commentsMap == null || commentsMap == undefined ||
        commentsMap[nodeId] == null || commentsMap == undefined ||
-       commentsMap[nodeId][channelId] == null || commentsMap[nodeId][channelId] == undefined){
+       commentsMap[nodeId][channelId] == null || commentsMap[nodeId][channelId] == undefined ||
+       commentsMap[nodeId][channelId][postId] == null || commentsMap[nodeId][channelId][postId] == undefined){
          return [];
     }
+    
 
     let list: Comment[] =[];
     let keys: string[] = Object.keys(commentsMap[nodeId][channelId][postId]);

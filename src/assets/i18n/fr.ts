@@ -19,7 +19,8 @@ export const fr = {
         "unsubscribe":"Unsubscribe",
         "share":"Share",
         "sending":"Sending...",
-        "addressinvalid":"Address invalid"
+        "addressinvalid":"Address invalid",
+        "commingSoon":"Comming soon ..."
     },
     "app":{
         "profileDetails":"Profile Details",

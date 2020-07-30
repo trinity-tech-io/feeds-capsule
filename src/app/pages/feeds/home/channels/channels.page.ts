@@ -51,6 +51,9 @@ export class ChannelsPage implements OnInit {
       
       this.checkFollowStatus(this.nodeId,this.channelId);
 
+      if (channel == null || channel == undefined)
+        return ;
+        
       this.channelName = channel.name;
       // this.channelOwner = channel.owner_name;
       this.channelOwner = this.feedService.indexText(channel.owner_name,25,25);

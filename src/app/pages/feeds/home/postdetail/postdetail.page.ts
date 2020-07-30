@@ -35,6 +35,8 @@ export class PostdetailPage implements OnInit {
   private channelId;
   private postId;
 
+  private myInterval;
+
   constructor(
     private popoverController: PopoverController,
     private acRoute: ActivatedRoute,
@@ -65,6 +67,16 @@ export class PostdetailPage implements OnInit {
           this.commentList = this.feedService.getCommentList(this.nodeId, this.channelId, this.postId);
         });
       });
+
+      this.myInterval = setInterval(() => {
+        let status: number = this.feedService.getServerStatusFromId(this.nodeId);
+        if (status == 1)
+          this.refreshCommFinish = true;
+
+        if (this.refreshCommFinish){
+          clearInterval(this.myInterval);
+        }        
+      }, 1000);
       
       this.events.subscribe('feeds:updataComment',(nodeId, channelId, postId, commentsNum)=>{
         this.zone.run(() => {
@@ -110,7 +122,7 @@ export class PostdetailPage implements OnInit {
   }
 
   ionViewWillEnter() {
-    this.feedService.getComments(this.nodeId,Number(this.channelId) ,Number(this.postId),Communication.field.last_update, 0, 0, 0);
+    this.feedService.getComments(this.nodeId,Number(this.channelId) ,Number(this.postId),Communication.field.last_update, 0, 0, 0, false);
 
     this.events.subscribe("feeds:updateTitle",()=>{
       this.initTitle();

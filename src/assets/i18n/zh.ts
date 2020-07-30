@@ -19,7 +19,8 @@ export const zh = {
         "unsubscribe":"取消订阅",
         "share":"分享",
         "sending":"正在发送...",
-        "addressinvalid":"地址无效"
+        "addressinvalid":"地址无效",
+        "commingSoon":"敬请期待 ..."
     },
     "app":{
         "profileDetails":"个人档案",

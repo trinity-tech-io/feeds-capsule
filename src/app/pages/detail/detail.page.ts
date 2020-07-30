@@ -46,7 +46,7 @@ export class DetailPage implements OnInit {
 
       this.commentList = this.feedService.getCommentList(this.nodeId, this.channelId, this.postId);
 
-      this.feedService.getComments(this.nodeId,this.channelId,this.postId,Communication.field.last_update, 0, 0, 10);
+      // this.feedService.getComments(this.nodeId,this.channelId,this.postId,Communication.field.last_update, 0, 0, 10);
 
     });
     this.events.subscribe('feeds:connectionChanged', connectionStatus => {

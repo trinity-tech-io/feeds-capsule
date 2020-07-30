@@ -21,10 +21,10 @@ export class MenuService {
                 text: this.translate.instant("common.share"),
                 icon: 'share',
                 handler: () => {
-                    this.native.toast("TODO");
+                    this.native.toast(this.translate.instant("common.commingSoon"));
                 }
             }, {
-                text: this.translate.instant("common.unsubscribe")+' @'+channelName+"?",
+                text: this.translate.instant("common.unsubscribe"),
                 role: 'destructive',
                 icon: 'trash',
                 handler: () => {
@@ -48,7 +48,7 @@ export class MenuService {
                 text: this.translate.instant("common.share"),
                 icon: 'share',
                 handler: () => {
-                    this.native.toast("TODO");
+                    this.native.toast(this.translate.instant("common.commingSoon"));
                 }
             },{
                 text: this.translate.instant("common.cancel"),
