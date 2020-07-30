@@ -68,7 +68,8 @@ export class FeedsPage implements OnInit {
       {
         component:PostfromComponent,
         // componentProps: {nodeId:this.nodeId,id:this.id},
-        cssClass: 'bottom-sheet-popover1'
+        cssClass: 'bottom-sheet-popover1',
+        showBackdrop:true,
       }).then((popoverElement)=>{
         popoverElement.present();
       })

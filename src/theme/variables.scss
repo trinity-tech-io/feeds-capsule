@@ -141,6 +141,8 @@
   --ion-color-light-contrast-rgb: 255,255,255;
   --ion-color-light-shade: #161729;
   --ion-color-light-tint: #303144;
+
+  --ion-backdrop-color:#ffffff;
 }
 
 /*
@@ -177,6 +179,8 @@
 
   --ion-item-background: #191a2f;
   --ion-item-background-activated: #262641;
+
+  --ion-backdrop-color:#ffffff;
 }
 
 
@@ -188,6 +192,7 @@
 .md body.dark {
   --ion-background-color: #191a2f;
   --ion-background-color-rgb: 0,0,0;
+  
 
   --ion-text-color: #fdfeff;
   --ion-text-color-rgb: 255,255,255;
@@ -215,7 +220,10 @@
   --ion-color-step-950: #f3f3f3;
 
   --ion-item-background: #272d41;
+
+  --ion-backdrop-color:#ffffff;
 }
+
 
 html, body { height: 100%; }
 
@@ -286,8 +294,10 @@ $segment-button-md-text-color: #007AFF !important;
   position: absolute;
   left: calc(100% - 290px)/2 !important;
   width:290px !important;
-  top: calc(100% - 341px) !important;
-  --height:280px;
+  top: calc(100% - 376px) !important;
+  --height:315px;
+  border-top-left-radius: 25px;
+  border-top-right-radius: 25px;
 }
 
 .bottom-menu-popover .popover-content {

@@ -1,6 +1,5 @@
 <ion-content>
-  <div>
-    <div *ngIf="serverList.length == 0 && myFeedSource == null" class="empty-server-div">
+   <div *ngIf="serverList.length == 0 && myFeedSource == null" class="empty-server-div">
       <div class="center-flex">
         <img class="empty-img" src="assets/images/empty-feeds-icon.svg">
       </div>
@@ -19,10 +18,10 @@
         </ion-button>
       </div>
     </div>
-  </div>
+  
 
-  <div class="feed-source" [class.darkContainer]="theme.darkMode">
-    <div class="feed-source-div" *ngIf="myFeedSource != null">
+<div class="feed-source" [class.darkContainer]="theme.darkMode">
+    <div class="feed-source-div" *ngIf="myFeedSource != null"> 
       <img class="feed-source-img" src="assets/images/play.svg" *ngIf="!theme.darkMode">
       <img class="feed-source-img" src="assets/images/play-dark.svg" *ngIf="theme.darkMode">
       <ion-label class="feed-source-text white">{{'ServersPage.myFeedSources'| translate}}</ion-label>
@@ -114,7 +113,7 @@
     </div>
     <div class="button-div" *ngIf="myFeedSource != null">
       <div class="explore-feed-source-button" (click)="exploreFeedSource()">{{'ServersPage.addNewFeedSources'| translate}}</div>
-    </div>
+    </div> 
   </div>
 
 </ion-content>
