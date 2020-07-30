@@ -19,6 +19,7 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 export class PostdetailPage implements OnInit {
   private bigImageUrl: string;
   private bigImage: boolean = false;
+  private avatar: string = "";
 
   private channelAvatar = "";
   private channelName = "";
