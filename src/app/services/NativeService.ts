@@ -152,9 +152,10 @@ export class NativeService {
       }
 
       iGetInnerText(testStr:string) {
-        var resultStr = testStr.replace(/\ +/g, ""); //去掉空格
-        resultStr = testStr.replace(/[ ]/g, "");    //去掉空格
-        resultStr = testStr.replace(/[\r\n]/g, ""); //去掉回车换行
+        var resultStr = testStr.replace(/\s+/g,""); //去掉空格
+        if(resultStr!=''){
+            resultStr = testStr.replace(/[\r\n]/g, ""); //去掉回车换行
+        }
         return resultStr;
     }
 }
