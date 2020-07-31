@@ -41,17 +41,17 @@ export class ImportdidPage implements OnInit {
 
       this.events.subscribe('feeds:resolveDidError', (nodeId, did, payload) => {
         this.zone.run(() => {
-          this.navCtrl.pop().then(()=>{
-            this.native.getNavCtrl().navigateForward(['/bindservice/publishdid/',nodeId, did, payload]);
-          });
+            this.native.navigateForward(['/bindservice/publishdid/',nodeId, did, payload],{
+              replaceUrl: true
+            });
         });
       });
 
       this.events.subscribe('feeds:resolveDidSucess', (nodeId, did) => {
         this.zone.run(() => {
-          this.navCtrl.pop().then(()=>{
-            this.native.getNavCtrl().navigateForward(['/bindservice/issuecredential', nodeId, did]);
-          });
+            this.native.getNavCtrl().navigateForward(['/bindservice/issuecredential', nodeId, did],{
+              replaceUrl: true
+            });
         });
       });   
     }

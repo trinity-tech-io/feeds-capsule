@@ -22,8 +22,11 @@ export class SplashscreenPage implements OnInit {
 
   }
 
-  ionViewDidEnter() {
+  ionViewWillEnter() {
     titleBarManager.setTitle(this.translate.instant('common.feeds'));
+  }
+
+  ionViewDidEnter() {
     appManager.setVisible('show');
     this.hanldSplashEnd();
   }

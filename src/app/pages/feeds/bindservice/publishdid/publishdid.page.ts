@@ -27,6 +27,7 @@ export class PublishdidPage implements OnInit {
     private feedService:FeedService,
     private navCtrl: NavController,
     private translate:TranslateService,
+    public theme:ThemeService, 
     private events: Events,
     ) {
       acRoute.params.subscribe((data)=>{
@@ -62,8 +63,8 @@ export class PublishdidPage implements OnInit {
       (response)=>{
         if (response.result && response.result.txid) {
           this.zone.run(() => {
-            this.navCtrl.pop().then(()=>{
-              this.native.getNavCtrl().navigateForward(['/bindservice/issuecredential',this.nodeId, this.did]);
+              this.native.navigateForward(['/bindservice/issuecredential',this.nodeId, this.did],{
+                replaceUrl: true
             });
           });
         }
@@ -76,7 +77,9 @@ export class PublishdidPage implements OnInit {
   issueCredential(){
     this.zone.run(() => {
       this.navCtrl.pop().then(()=>{
-        this.native.getNavCtrl().navigateForward(['/bindservice/issuecredential',this.nodeId, this.did]);
+        this.native.navigateForward(['/bindservice/issuecredential',this.nodeId, this.did],{
+          replaceUrl: true
+        });
       });
     });
   }

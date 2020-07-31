@@ -66,19 +66,19 @@ export class MyApp {
 
 
   profiledetail(){
-    this.native.go('/menu/profiledetail');
+    this.native.navigateForward('/menu/profiledetail',"");
   }
 
   goToFeedSource(){
-    this.native.go('/menu/servers');
+    this.native.navigateForward('/menu/servers',"");
   }
 
   goToDev(){
-    this.native.go('menu/develop');
+    this.native.navigateForward('menu/develop',"");
   }
 
   about(){
-    this.native.go('/menu/about');
+    this.native.navigateForward('/menu/about',"");
   }
 
   async splash() {

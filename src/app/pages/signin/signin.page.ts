@@ -1,7 +1,7 @@
 import { Component, OnInit, NgZone } from '@angular/core';
 import { FeedService } from 'src/app/services/FeedService';
 import { CarrierService } from 'src/app/services/CarrierService';
-import { NavController, Events, LoadingController } from '@ionic/angular';
+import { Events, LoadingController } from '@ionic/angular';
 import { NativeService } from 'src/app/services/NativeService';
 import { TranslateService } from "@ngx-translate/core";
 
@@ -23,7 +23,6 @@ export class SigninPage implements OnInit {
 
   constructor(
     private events: Events,
-    private navCtrl: NavController,
     private native: NativeService,
     private zone: NgZone,
     private feedService: FeedService,
@@ -33,16 +32,18 @@ export class SigninPage implements OnInit {
     private event:Events) { }
 
   ngOnInit() {
-     this.event.subscribe("feeds:updateTitle",()=>{
-         this.initTile();
-     });
+    
   }
 
   initTile(){
     titleBarManager.setTitle(this.translate.instant("SigninPage.signIn"));
   }
 
-  ionViewDidEnter() {
+  ionViewWillEnter() {
+    this.event.subscribe("feeds:updateTitle",()=>{
+      this.initTile();
+    });
+
     this.initTile();
     this.native.setTitleBarBackKeyShown(false);
     appManager.setVisible("show");
@@ -154,7 +155,7 @@ export class SigninPage implements OnInit {
 
   initApp(){
     this.carrierService.init();
-    this.navCtrl.navigateRoot(['/tabs/home'])
+    this.native.setRootRouter('/tabs/home');
   }
 
   saveData(did: string, name: string, email: string, telephone: string, location: string, description: string){

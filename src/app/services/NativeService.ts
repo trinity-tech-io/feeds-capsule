@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
-import { ToastController, LoadingController, NavController } from '@ionic/angular';
+import { ToastController, LoadingController, NavController} from '@ionic/angular';
 import { Clipboard } from '@ionic-native/clipboard/ngx';
-// import { TranslateService } from '@ngx-translate/core';
 import { Router } from '@angular/router';
 import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 import { TranslateService} from '@ngx-translate/core';
@@ -20,18 +19,6 @@ export class NativeService {
         private navCtrl: NavController,
         private router: Router,
         private translate: TranslateService) {
-            //this.init();
-    }
-
-    init(){
-        titleBarManager.addOnItemClickedListener((menuIcon)=>{
-            if (menuIcon.key == "back") {
-                this.navCtrl.pop();
-            }
-          });
-    }
-    public info(message) {
-        // Logger.info(message);
     }
 
     public toast(message: string = 'Operation completed', duration: number = 2000): void {
@@ -55,17 +42,7 @@ export class NativeService {
         }).then(toast => toast.present());
     }
 
-    /*
-    public toast_trans(message: string = '', duration: number = 2000): void {
-        message = this.translate.instant(message);
-        this.toastCtrl.create({
-            message,
-            duration: 2000,
-            position: 'middle'
-        }).then(toast => toast.present());
-    }
-    */
-
+  
     public copyClipboard(text) {
         return this.clipboard.copy(text);
     }
@@ -77,6 +54,7 @@ export class NativeService {
     public pop() {
         this.navCtrl.pop();
     }
+
 
     public setRootRouter(router) {
         this.navCtrl.navigateRoot(router);
@@ -145,6 +123,16 @@ export class NativeService {
 
       getNavCtrl(){
           return this.navCtrl;
+      }
+
+      navigateForward(router:any, options:any):Promise<boolean>{ 
+          let option =options || ""; 
+          if(option!=""){
+           return this.navCtrl.navigateForward(router,options);
+          }else{
+            return this.navCtrl.navigateForward(router);
+          }
+          
       }
 
       getRouter(){

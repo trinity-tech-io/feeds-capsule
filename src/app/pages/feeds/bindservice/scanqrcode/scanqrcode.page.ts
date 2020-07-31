@@ -88,13 +88,13 @@ export class ScanqrcodePage implements OnInit {
       this.carrier.addFriend(address, "hi",
         () => {
           this.zone.run(() => {
-            this.navCtrl.pop().then(()=>{
               let feedUrl = "-1";
               if (nonce == undefined) nonce = "";
               if (nonce == "0") feedUrl = this.scanContent;
 
-              this.native.getNavCtrl().navigateForward(['/bindservice/startbinding/',nodeId, nonce, address, did, feedUrl]);
-            });
+              this.native.navigateForward(['/bindservice/startbinding/',nodeId, nonce, address, did, feedUrl],{
+                replaceUrl: true
+              });
           });
         }, (err) => {
 

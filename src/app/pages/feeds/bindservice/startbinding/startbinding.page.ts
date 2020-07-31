@@ -55,23 +55,19 @@ export class StartbindingPage implements OnInit {
       switch(phase){
         case "owner_declared":
           this.zone.run(() => {
-            this.navCtrl.pop().then(()=>{
-              this.native.getNavCtrl().navigateForward(['/bindservice/importdid/',nodeId]);
-            });
+              this.native.navigateForward(['/bindservice/importdid/',nodeId],{
+                replaceUrl: true
+              });
           });
           break;
 
         case "credential_issued":
           this.zone.run(() => {
-            this.navCtrl.pop().then(()=>{
               this.feedService.restoreBindingServerCache(this.did, nodeId, ()=>{
                 this.feedService.finishBinding(nodeId);
               },()=>{
                 this.feedService.finishBinding(nodeId);
               });
-              
-              // this.native.getNavCtrl().navigateForward(['/bindservice/issuecredential/',nodeId, this.did]);
-            });
           });
           break;
       }
@@ -79,9 +75,9 @@ export class StartbindingPage implements OnInit {
 
     this.events.subscribe('feeds:issue_credential', () => {
       this.zone.run(() => {
-        this.navCtrl.pop().then(()=>{
-          this.native.getNavCtrl().navigateForward(['/bindservice/finish/',this.nodeId]);
-        });
+          this.native.getNavCtrl().navigateForward(['/bindservice/finish/',this.nodeId],{
+            replaceUrl: true
+          });
       });
     });
 
@@ -95,17 +91,17 @@ export class StartbindingPage implements OnInit {
 
     this.events.subscribe('feeds:resolveDidError', (nodeId, did, payload) => {
       this.zone.run(() => {
-        this.navCtrl.pop().then(()=>{
-          this.native.getNavCtrl().navigateForward(['/bindservice/publishdid/',nodeId, did, payload]);
-        });
+          this.native.navigateForward(['/bindservice/publishdid/',nodeId, did, payload],{
+            replaceUrl: true
+          });
       });
     });
 
     this.events.subscribe('feeds:resolveDidSucess', (nodeId, did) => {
       this.zone.run(() => {
-        this.navCtrl.pop().then(()=>{
-          this.native.getNavCtrl().navigateForward(['/bindservice/issuecredential', nodeId, did]);
-        });
+          this.native.navigateForward(['/bindservice/issuecredential', nodeId, did],{
+            replaceUrl: true
+          });
       });
     });
 

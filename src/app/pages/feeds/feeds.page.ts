@@ -28,9 +28,15 @@ export class FeedsPage implements OnInit {
     }
 
   ngOnInit() {
+  
+  }
+
+  ionViewWillEnter() {
     this.event.subscribe("feeds:updateTitle",()=>{
       this.initTile();
     });
+    this.initTile();
+    this.native.setTitleBarBackKeyShown(false);
   }
 
   ionViewWillUnload(){
@@ -42,8 +48,6 @@ export class FeedsPage implements OnInit {
   }
 
   ionViewDidEnter() {
-    this.initTile();
-    this.native.setTitleBarBackKeyShown(false);
     appManager.setVisible("show");
   }
 
@@ -59,8 +63,7 @@ export class FeedsPage implements OnInit {
       return ;
     }
 
-    this.navCtrl.navigateForward(['/createnewfeed']);
-    // this.router.navigate(['/createnewfeed']);
+    this.native.navigateForward(['/createnewfeed'],"");
   }
 
   async openPopOverComponent() {

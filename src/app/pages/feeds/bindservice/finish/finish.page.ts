@@ -38,12 +38,12 @@ export class FinishPage implements OnInit {
   }
 
   createChannel(){
-    this.native.getNavCtrl().pop().then(()=>{
-      this.native.getRouter().navigate(['/createnewfeed']);
-    });
+      this.native.navigateForward(['/createnewfeed'],{
+        replaceUrl: true
+      });
   }
 
   returnMain(){
-    this.native.getRouter().navigate(['/tabs/home']);
+    this.native.pop();
   }
 }
