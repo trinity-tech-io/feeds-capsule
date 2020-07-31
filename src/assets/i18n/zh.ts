@@ -79,7 +79,11 @@ export const zh = {
         "tip":"小费"
     },
     "NotificationPage":{
-        "emptyDes":"您没有通知",
+        "emptyDes":"空空如也",
+        "followedFeed":"关注了你的微频",
+        "likedPost":"赞了微贴",
+        "commentPost":"在微贴留了言",
+        "likedComment":"赞了评论"
     },
     "CreatenewfeedPage":{
         "createNewFeed":"创建新的Feed",

@@ -29,14 +29,37 @@
     }
 }
 
-.notification-contnent{
+.notification-behavior{
     font-family: MontserratMedium;
     font-size: 14px;
     font-weight: normal;
     font-stretch: normal;
     font-style: normal;
-    line-height: 2.43;
+    // line-height: 2.43;
     letter-spacing: 0.7px;
     text-align: left;
     color: #008cff;
 }
+
+.notification-content{
+    font-family: MontserratMedium;
+    font-size: 13px;
+    font-weight: normal;
+    font-stretch: normal;
+    font-style: normal;
+    // line-height: 1.23;
+    letter-spacing: normal;
+    text-align: left;
+    color: #161740;
+}
+
+.notification-div{
+    min-width: 100px;
+    max-width: 200px;
+    // max-width: calc(100% - 260px);
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    // display:inline-block;
+}
+

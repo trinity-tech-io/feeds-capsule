@@ -471,7 +471,7 @@ declare module Communication{
     
     type new_likes_notification = {
         version: "1.0"
-        method : "new_likes"
+        method : "new_like"
         params : {
             channel_id : number
             post_id    : number

@@ -5,6 +5,7 @@ import { FeedService } from 'src/app/services/FeedService';
 import { ThemeService } from 'src/app/services/theme.service';
 import { UtilService } from 'src/app/services/utilService';
 import { TranslateService } from "@ngx-translate/core";
+import { NativeService } from 'src/app/services/NativeService';
 
 @Component({
   selector: 'slides-example',
@@ -21,6 +22,7 @@ export class NotificationPage {
     slidesPerView: 3,
   };
   constructor(
+    private navtive:NativeService,
     private zone: NgZone,
     private events: Events,
     public theme:ThemeService,
@@ -64,4 +66,63 @@ export class NotificationPage {
     return  obj.content;
   }
 
+  getNotificationContent(notification: any): string{
+    /*
+    comment,
+    likedPost,
+    likedComment,
+    follow
+    */
+    let nodeId = notification.details.nodeId;
+    let channelId = notification.details.channelId;
+    let postId = notification.details.postId;
+    let commentId = notification.details.commentId;
+
+    let post = this.feedService.getPostFromId(nodeId, channelId, postId);
+    let comment = this.feedService.getCommentFromId(nodeId, channelId, postId, commentId);
+    let channel = this.feedService.getChannelFromId(nodeId, channelId);
+
+    switch(notification.behavior){
+      case 0: 
+      case 2:
+        if (comment == undefined) return "";
+        return this.getContentText(comment.content);
+      case 1:
+        if (post == undefined) return "";
+        return this.getContentText(post.content);
+      case 3:
+        if (channel == undefined) return "";
+        return channel.name;
+
+      default:
+        return "";
+    }
+  }
+
+  navTo(notification: any){
+    let nodeId = notification.details.nodeId;
+    let channelId = notification.details.channelId;
+    let postId = notification.details.postId;
+    switch(notification.behavior){
+      case 0: 
+      case 1:
+      case 2:
+        this.navToPostDetail(nodeId, channelId, postId);
+        break;
+      case 3:
+        this.navToChannel(nodeId, channelId);
+    }
+
+  }
+  navToChannel(nodeId, channelId){
+    this.navtive.getNavCtrl().navigateForward(['/channels', nodeId, channelId]);
+  }
+
+  navToPostDetail(nodeId, channelId, postId){
+    this.navtive.getNavCtrl().navigateForward(['/postdetail',nodeId, channelId,postId]);
+  }
+
+  getContentText(content: string): string{
+    return this.feedService.parsePostContentText(content);
+  }
 }

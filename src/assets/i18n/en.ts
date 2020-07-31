@@ -80,6 +80,10 @@ export const en = {
     },
     "NotificationPage":{
         "emptyDes":"You have no notifications",
+        "followedFeed":"Followed your feed",
+        "likedPost":"Liked your post",
+        "commentPost":"Left a comment on your post",
+        "likedComment":"Liked your comment"
     },
     "CreatenewfeedPage":{
         "createNewFeed":"Create New Feed",

@@ -44,7 +44,7 @@ declare namespace FeedsData{
         //PUSH Notification
         newPost = "new_post",
         newComment = "new_comment",
-        newLikes = "new_likes",
+        newLikes = "new_like",
         newSubscription = "new_subscription",
 
         negotiateLogin = "negotiate_login",

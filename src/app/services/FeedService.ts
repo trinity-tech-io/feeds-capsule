@@ -69,7 +69,6 @@ type Details = {
   channelId: number;
   postId: number;
   commentId: number;
-  commentFromCommentId: number;
 }
 
 type AccessToken = {
@@ -192,10 +191,10 @@ export class SignInData{
 }
 
 enum Behavior {
-  post,
   comment,
-  like,
-  subscription
+  likedPost,
+  likedComment,
+  follow
 }
 
 enum ConnState {
@@ -919,7 +918,6 @@ export class FeedService {
   }
 
   sendRPCMessage(nodeId: string, method: string, params: any, isShowOfflineToast: boolean = true){
-    console.log("sendRPCMessage ==>"+isShowOfflineToast);
     if(!this.checkServerConnection(nodeId)){
       this.events.publish("rpcRequest:error");
       if (isShowOfflineToast)
@@ -2636,22 +2634,22 @@ export class FeedService {
     eventBus.publish(PublishType.postDataUpdate);
 
 
-    let notification:Notification = {
-      userName: this.translate.instant("notification.system"),
-      behavior: Behavior.post,
-      behaviorText: this.translate.instant("notification.recivenewpostfromfeed")+"'"+this.getChannelFromId(nodeId, channel_id).name+"'",
-      details: {
-        nodeId: nodeId,
-        channelId: channel_id,
-        postId: id,
-        commentId: 0,
-        commentFromCommentId:0
-      },
-      time:this.getCurrentTimeNum()
-    }
-    notificationList.push(notification);
-    this.storeService.set(PersistenceKey.notificationList, notificationList);
-    eventBus.publish(PublishType.UpdateNotification);
+    // let notification:Notification = {
+    //   userName: this.translate.instant("notification.system"),
+    //   behavior: Behavior.post,
+    //   behaviorText: this.translate.instant("notification.recivenewpostfromfeed")+"'"+this.getChannelFromId(nodeId, channel_id).name+"'",
+    //   details: {
+    //     nodeId: nodeId,
+    //     channelId: channel_id,
+    //     postId: id,
+    //     commentId: 0,
+    //     commentFromCommentId:0
+    //   },
+    //   time:this.getCurrentTimeNum()
+    // }
+    // notificationList.push(notification);
+    // this.storeService.set(PersistenceKey.notificationList, notificationList);
+    // eventBus.publish(PublishType.UpdateNotification);
   }
 
   handleNewCommentNotification(nodeId: string, params: any){
@@ -2701,16 +2699,19 @@ export class FeedService {
 
     eventBus.publish(PublishType.updataComment,nodeId,channel_id,post_id,postMap[postId].comments);
 
+
+    if (!this.checkChannelIsMine(nodeId, channel_id))
+      return ;
+    
     let notification:Notification = {
       userName: user_name,
       behavior: Behavior.comment,
-      behaviorText: this.translate.instant("notification.commentyourpost"),
+      behaviorText: this.translate.instant("NotificationPage.commentPost"),
       details: {
         nodeId: nodeId,
         channelId:channel_id,
         postId:post_id,
-        commentId: id,
-        commentFromCommentId:comment_id
+        commentId: id
       },
       time:this.getCurrentTimeNum()
     }
@@ -2724,12 +2725,12 @@ export class FeedService {
     let comment_id: number = params.comment_id;
     let channel_id: number = params.channel_id;
     let post_id: number = params.post_id;
-    let count: number = params.count;
+    let totalCount: number = params.total_count;
     let user_name: string = params.user_name;
 
     if (comment_id == 0){
       let postId = this.getPostId(nodeId,channel_id,post_id);
-      postMap[postId].likes = postMap[postId].likes+ count;
+      postMap[postId].likes = totalCount;
       this.storeService.set(PersistenceKey.postMap,postMap);
       if (likeMap[postId] != null && likeMap[postId] != undefined){
         likeMap[postId] = postMap[postId];
@@ -2738,23 +2739,36 @@ export class FeedService {
       }
       eventBus.publish(PublishType.postDataUpdate);
     }else {
-      commentsMap[nodeId][channel_id][post_id][comment_id].likes = commentsMap[nodeId][channel_id][post_id][comment_id].likes + count;
+      commentsMap[nodeId][channel_id][post_id][comment_id].likes = totalCount;
 
       this.storeService.set(PersistenceKey.commentsMap, commentsMap);
       eventBus.publish(PublishType.commentDataUpdate);
     }
 
+    if (!this.checkChannelIsMine(nodeId, channel_id)){
+      return ;
+
+    }
+
+    let behaviorText: string = "";
+    let behavior: Behavior;
+    if (comment_id == 0){
+      behavior = Behavior.likedPost;
+      behaviorText = this.translate.instant("NotificationPage.likedPost");
+    }else{
+      behavior = Behavior.likedComment;
+      behaviorText = this.translate.instant("NotificationPage.likedComment");
+    }
 
     let notification:Notification = {
       userName: user_name,
-      behavior: Behavior.like,
-      behaviorText: this.translate.instant("notification.likeyourpost"),
+      behavior: behavior,
+      behaviorText: behaviorText,
       details: {
         nodeId: nodeId,
         channelId:channel_id,
         postId:post_id,
-        commentId: 0,
-        commentFromCommentId:comment_id
+        commentId: comment_id
       },
       time:this.getCurrentTimeNum()
     }
@@ -2770,14 +2784,13 @@ export class FeedService {
 
     let notification:Notification = {
       userName: user_name,
-      behavior: Behavior.subscription,
-      behaviorText: this.translate.instant("notification.subscribeyourfeed") + "'" + this.getChannelFromId(nodeId, channel_id).name + "'",
+      behavior: Behavior.follow,
+      behaviorText: this.translate.instant("NotificationPage.followedFeed"),
       details: {
         nodeId: nodeId,
         channelId:channel_id,
         postId:0,
         commentId: 0,
-        commentFromCommentId:0
       },
       time:this.getCurrentTimeNum()
     }
@@ -2922,6 +2935,7 @@ export class FeedService {
   }
 
   handlePostLikeResult(nodeId:string, request: any, error: any){
+
     let channel_id: number = request.channel_id;
     let post_id: number = request.post_id;
     let comment_id: number = request.comment_id;
@@ -2948,9 +2962,9 @@ export class FeedService {
       }
       return ;
     }
-      
+    
     if (comment_id == 0){
-      postMap[mPostId].likes = postMap[mPostId].likes+1;
+      // postMap[mPostId].likes = postMap[mPostId].likes+1;
       this.storeService.set(PersistenceKey.postMap,postMap);
 
       likeMap[mPostId] = postMap[mPostId];
@@ -2961,7 +2975,7 @@ export class FeedService {
 
       eventBus.publish(PublishType.postDataUpdate);
     }else {
-      commentsMap[nodeId][channel_id][post_id][comment_id].likes = commentsMap[nodeId][channel_id][post_id][comment_id].likes + 1
+      // commentsMap[nodeId][channel_id][post_id][comment_id].likes = commentsMap[nodeId][channel_id][post_id][comment_id].likes + 1
       this.storeService.set(PersistenceKey.commentsMap, commentsMap);
 
       let commentKey = this.getLikeCommentId(nodeId, channel_id, post_id, comment_id);
@@ -3425,15 +3439,30 @@ export class FeedService {
   }
 
   getChannelFromId(nodeId: string, id: number): Channels{
-    let nodeChannelId = nodeId+id;
     if (channelsMap == null || channelsMap == undefined)
       return undefined;
+
+    let nodeChannelId = nodeId+id;
     return channelsMap[nodeChannelId];
   }
 
   getPostFromId(nodeId: string, channelId: number, postId: number):Post{
+    if (postMap == null || postMap == undefined)
+      return undefined;
+
     let mPostId = this.getPostId(nodeId, channelId, postId);
     return postMap[mPostId];
+  }
+
+  getCommentFromId(nodeId: string, channelId: number, postId: number, commentId: number):Comment{
+    if (commentsMap == null || commentsMap == undefined ||
+        commentsMap[nodeId] == null || commentsMap[nodeId] == undefined ||
+        commentsMap[nodeId][channelId] == null || commentsMap[nodeId][channelId] == undefined ||
+        commentsMap[nodeId][channelId][postId] == null || commentsMap[nodeId][channelId][postId] == undefined ||
+        commentsMap[nodeId][channelId][postId][commentId] == null || commentsMap[nodeId][channelId][postId][commentId] == undefined)
+        return undefined;
+
+    return commentsMap[nodeId][channelId][postId][commentId];
   }
 
   queryServerDID(nodeId:string): string{
@@ -4290,6 +4319,14 @@ export class FeedService {
         nonce: "0"
       }
     }
+  }
+
+  checkChannelIsMine(nodeId: string ,channelId: number): boolean{
+    let channel = this.getChannelFromId(nodeId, channelId);
+    if (channel.owner_did == this.getSignInData().did)
+      return true;
+
+    return false;
   }
 }
 
