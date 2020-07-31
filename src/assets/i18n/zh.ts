@@ -200,7 +200,8 @@ export const zh = {
         "confirm":"确认",
         "abort":"中止",
         "Connectingserver": "正在连接服务",
-        "bindingError":"绑定过程出现异常"
+        "bindingError":"绑定过程出现异常",
+        "linkServerError":"您正在关联一个Feed服务，请确认服务地址与之前绑定的Feed服务是否一致。"
     },
     "PublishdidPage":{
         "introduce":"创建一个新频道",

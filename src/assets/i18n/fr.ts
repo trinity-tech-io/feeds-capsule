@@ -200,7 +200,8 @@ export const fr = {
         "confirm":"Confirm",
         "abort":"Abort",
         "Connectingserver": "Connecting server",
-        "bindingError":"An exception occurred during the binding process"
+        "bindingError":"An exception occurred during the binding process",
+        "linkServerError":"You are linking a feed service. Please confirm whether the feed url is consistent with the previously bound feed service."
     },
     "PublishdidPage":{
         "introduce":"Create a new channel",

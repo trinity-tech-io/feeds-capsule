@@ -3847,10 +3847,16 @@ export class FeedService {
   }
 
   handleDeclareOwnerResponse(nodeId: string, result: any, error: any){
+    if (error != null && error != undefined && error.code == -3){
+      this.native.toast(this.translate.instant("StartbindingPage.linkServerError"));
+      return ;
+    }
+
     if (error != null && error != undefined && error.code != undefined){
       this.native.toast(this.translate.instant("StartbindingPage.bindingError"));
       return ;
     }
+    
     let phase = result.phase;
     let did = "";
     let payload = "";
