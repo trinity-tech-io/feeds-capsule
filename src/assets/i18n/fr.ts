@@ -79,6 +79,10 @@ export const fr = {
     },
     "NotificationPage": {
         "emptyDes": "You have no notifications",
+        "followedFeed": "Followed your Feed",
+        "likedPost": "Liked your post",
+        "commentPost": "Left a comment on your post",
+        "likedComment": "Liked your comment"
     },
     "CreatenewfeedPage": {
         "createNewFeed": "Create New Feeds",
@@ -148,7 +152,7 @@ export const fr = {
         "tipMsg": "Feeds url maybe error.",
         "exploreFeedSources": "Explore Feeds Sources",
         "title": "Add Feeds Source",
-        "serverMsg1": "server :\n",
+        "serverMsg1": "Server :\n",
         "serverMsg2": "\noffline!",
         "Serveralreadyadded": "Server already added!",
         "Addserversuccess": "Server added successfully!",
@@ -214,8 +218,8 @@ export const fr = {
         "issueacredential": "Issue a credential",
         "abort": "Abort",
         "serverInfo": "Feeds Source Info",
-        "serverName": "Feeds Source name",
-        "serverDes": "Feeds Source description",
+        "serverName": "Feeds Source Name",
+        "serverDes": "Feeds Source Description",
     },
     "ImportdidPage": {
         "introduce": "Create a new channel",
