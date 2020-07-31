@@ -25,6 +25,10 @@
           </div>
           <div class="image-text-div" (click)="navTo(post.nodeId, post.channel_id)">
               <ion-avatar class="avatar-div">
+                <div class="feed-source-card-status" style="position: absolute;top:0px;left:0px">
+                  <div class="online-circle"  *ngIf="nodeStatus[post.nodeId] == 0"></div>
+                  <div class="offline-circle" *ngIf="nodeStatus[post.nodeId] == 1"></div>
+                </div>
                 <img  src={{parseAvatar(post.nodeId,post.channel_id)}}>
               </ion-avatar>
     

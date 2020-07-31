@@ -17,6 +17,7 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
   styleUrls: ['./postdetail.page.scss'],
 })
 export class PostdetailPage implements OnInit {
+  public nodeStatus:any ={};
   private bigImageUrl: string;
   private bigImage: boolean = false;
   private avatar: string = "";
@@ -55,20 +56,6 @@ export class PostdetailPage implements OnInit {
         this.initData();
       });
 
-      this.events.subscribe('feeds:refreshPage',()=>{
-        this.zone.run(() => {
-          this.initData();
-        });
-      });
-
-      this.events.subscribe('feeds:commentDataUpdate',()=>{
-        this.zone.run(() => {
-          
-          this.refreshCommFinish = true;
-          this.commentList = this.feedService.getCommentList(this.nodeId, this.channelId, this.postId);
-        });
-      });
-
       this.myInterval = setInterval(() => {
         let status: number = this.feedService.getServerStatusFromId(this.nodeId);
         if (status == 1)
@@ -78,29 +65,10 @@ export class PostdetailPage implements OnInit {
           clearInterval(this.myInterval);
         }        
       }, 1000);
-      
-      this.events.subscribe('feeds:updataComment',(nodeId, channelId, postId, commentsNum)=>{
-        this.zone.run(() => {
-          if (this.nodeId == nodeId &&
-            this.channelId == channelId &&
-            this.postId == postId)
-            this.commentsNum = commentsNum;
-        });
-      });
-      
-      this.events.subscribe('feeds:postDataUpdate',()=>{
-        this.zone.run(() => {
-          
-          let post = this.feedService.getPostFromId(this.nodeId, this.channelId, this.postId);
-          this.postContent = post.content;
-          this.postTS = post.created_at;
-          this.likesNum = post.likes;
-          this.commentsNum = post.comments;  
-        });
-      });
   }
 
   initData(){
+    this.initnodeStatus();
     let channel = this.feedService.getChannelFromId(this.nodeId, this.channelId);
     if (channel == null || channel == undefined)
       return ;
@@ -123,8 +91,49 @@ export class PostdetailPage implements OnInit {
   }
 
   ionViewWillEnter() {
+
     this.feedService.getComments(this.nodeId,Number(this.channelId) ,Number(this.postId),Communication.field.last_update, 0, 0, 0, false);
 
+    this.events.subscribe('feeds:refreshPage',()=>{
+      this.zone.run(() => {
+        this.initData();
+      });
+    });
+
+    this.events.subscribe('feeds:commentDataUpdate',()=>{
+      this.zone.run(() => {
+        
+        this.refreshCommFinish = true;
+        this.commentList = this.feedService.getCommentList(this.nodeId, this.channelId, this.postId);
+      });
+    });
+
+     
+    this.events.subscribe('feeds:updataComment',(nodeId, channelId, postId, commentsNum)=>{
+      this.zone.run(() => {
+        if (this.nodeId == nodeId &&
+          this.channelId == channelId &&
+          this.postId == postId)
+          this.commentsNum = commentsNum;
+      });
+    });
+    
+    this.events.subscribe('feeds:postDataUpdate',()=>{
+      this.zone.run(() => {
+        
+        let post = this.feedService.getPostFromId(this.nodeId, this.channelId, this.postId);
+        this.postContent = post.content;
+        this.postTS = post.created_at;
+        this.likesNum = post.likes;
+        this.commentsNum = post.comments;  
+      });
+    });
+
+    this.events.subscribe("feeds:friendConnectionChanged", (nodeId, status)=>{
+      this.zone.run(()=>{
+        this.nodeStatus[nodeId] = status;
+      });
+    });
     this.events.subscribe("feeds:updateTitle",()=>{
       this.initTitle();
     });
@@ -132,11 +141,18 @@ export class PostdetailPage implements OnInit {
     this.native.setTitleBarBackKeyShown(true);
   }
 
-  ionViewWillUnload(){
+
+  ionViewWillLeave(){//清楚订阅事件代码
     this.hideBigImage();
+    this.events.unsubscribe("feeds:refreshPage");
+    this.events.unsubscribe("feeds:commentDataUpdate");
+    this.events.unsubscribe("feeds:updataComment");
+    this.events.unsubscribe("feeds:postDataUpdate");
+    this.events.unsubscribe("feeds:friendConnectionChanged");
     this.events.unsubscribe("feeds:updateTitle");
   }
 
+ 
   initTitle(){
     titleBarManager.setTitle(this.translate.instant("PostdetailPage.postdetail"));
   }
@@ -229,5 +245,14 @@ export class PostdetailPage implements OnInit {
 
   commentComment(){
     alert("TODO");
+  }
+
+  checkServerStatus(nodeId: string){
+    return this.feedService.getServerStatusFromId(nodeId);
+  }
+
+  initnodeStatus(){
+     let status = this.checkServerStatus(this.nodeId);
+     this.nodeStatus[this.nodeId] = status;
   }
 }

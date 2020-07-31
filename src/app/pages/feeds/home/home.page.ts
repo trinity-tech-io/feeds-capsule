@@ -18,6 +18,7 @@ import { NativeService } from 'src/app/services/NativeService';
 
 export class HomePage implements OnInit {
   private postList: any;
+  public nodeStatus:any={};
   constructor(
     private feedspage: FeedsPage,
     private tabs: IonTabs,
@@ -30,30 +31,44 @@ export class HomePage implements OnInit {
     private translate:TranslateService,
     private navtive:NativeService,
     private menuService: MenuService) {
-      this.postList = feedService.getPostList();
-      this.events.subscribe('feeds:refreshPage',()=>{
-        this.zone.run(() => {
-          this.postList = this.feedService.getPostList();
-        });
-      });
-        
 
-      this.events.subscribe('feeds:postDataUpdate',()=>{
-        this.zone.run(() => {
-          this.postList = this.feedService.getPostList();
-        });
-      });
+      this.postList = this.feedService.getPostList();
+      this.initnodeStatus();
+     
   }
 
   ionViewWillEnter() {
-  
+
+    this.events.subscribe('feeds:refreshPage',()=>{
+      this.zone.run(() => {
+        this.postList = this.feedService.getPostList();
+        this.initnodeStatus();
+      });
+    });
+      
+
+    this.events.subscribe('feeds:postDataUpdate',()=>{
+      this.zone.run(() => {
+        this.postList = this.feedService.getPostList();
+        this.initnodeStatus();
+      });
+    });
+
+    this.events.subscribe("feeds:friendConnectionChanged", (nodeId, status)=>{
+              this.zone.run(()=>{
+                this.nodeStatus[nodeId] = status;
+              });
+    });
   }
 
-  ionViewWillUnload(){
+
+ ionViewWillLeave(){
+    this.events.unsubscribe("feeds:postDataUpdate");
+    this.events.unsubscribe("feeds:refreshPage");
+    this.events.unsubscribe("feeds:friendConnectionChanged");
     this.popoverController.dismiss();
   }
 
-  
   getChannel(nodeId, channelId):any{
     return this.feedService.getChannelFromId(nodeId,channelId);
   }
@@ -169,5 +184,17 @@ export class HomePage implements OnInit {
     if (channel == null || channel == undefined)
       return "";
     return channel.name;
+  }
+
+  checkServerStatus(nodeId: string){
+    return this.feedService.getServerStatusFromId(nodeId);
+  }
+
+  initnodeStatus(){
+     for(let index =0 ;index<this.postList.length;index++){
+            let nodeId = this.postList[index]['nodeId'];
+            let status = this.checkServerStatus(nodeId);
+            this.nodeStatus[nodeId] = status;
+     }
   }
 }

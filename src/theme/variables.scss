@@ -1370,6 +1370,7 @@ vertical-align: middle;
   .image-text-div{
     display: flex; margin-top: 13px; margin-left: 13px; margin-right: 12px;
     .avatar-div{
+      position: relative;
       min-width: 56px; min-height: 56px; width: 56px; height: 56px;
     }
 
