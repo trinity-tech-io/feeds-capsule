@@ -199,7 +199,8 @@ export const en = {
         "confirm":"Confirm",
         "abort":"Abort",
         "Connectingserver":"Connecting server",
-        "bindingError":"An exception occurred during the binding process"
+        "bindingError":"An exception occurred during the binding process",
+        "linkServerError": "You are not the owner of this service, please change and try again.",
     },
     "PublishdidPage":{
         "introduce":"Create a new channel",
@@ -256,13 +257,6 @@ export const en = {
         "newComment":"New Comment",
         "publishComment":"Publish comment",
         "enterComments":"Enter Comments"
-    },
-    "notification":{
-        "system":"System",
-        "recivenewpostfromfeed":"Receive new Post from Feeds ",
-        "commentyourpost":"Comment your post",
-        "subscribeyourfeed":"Follow your Feeds ",
-        "likeyourpost": "Like your post",
     },
     "DIDdata":{
         "Notprovided": "Not provided",

@@ -78,11 +78,11 @@ export const zh = {
         "tip":"打赏"
     },
     "NotificationPage":{
-        "emptyDes":"空空如也",
+        "emptyDes":"还未收到通知",
         "followedFeed":"关注了您的微频",
-        "likedPost":"赞了微贴",
-        "commentPost":"在微贴留了言",
-        "likedComment":"赞了评论"
+        "likedPost":"赞了微说",
+        "commentPost":"在微说留了言",
+        "likedComment":"赞了微评"
     },
     "CreatenewfeedPage":{
         "createNewFeed":"创建新的微频",
@@ -199,7 +199,8 @@ export const zh = {
         "confirm":"确认",
         "abort":"中止",
         "Connectingserver": "正在连接微频源",
-        "bindingError":"绑定过程出现异常"
+        "bindingError":"绑定过程出现异常",
+        "linkServerError": "您不是该服务的持有者，请更换后重试。",
     },
     "PublishdidPage":{
         "introduce":"创建一个新频道",
@@ -256,13 +257,6 @@ export const zh = {
         "newComment":"新建微评",
         "publishComment":"发布微评",
         "enterComments":"输入微评"
-    },
-    "notification": {
-        "system": "系统",
-        "recivenewpostfromfeed": "收到新微说，来自微频 ",
-        "commentyourpost": "给您的微说发微评",
-        "subscribeyourfeed": "关注您的微频 ",
-        "likeyourpost": "收藏了您的微说",
     },
     "DIDdata": {
         "Notprovided": "未提供",

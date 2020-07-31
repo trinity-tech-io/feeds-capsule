@@ -3848,7 +3848,7 @@ export class FeedService {
 
   handleDeclareOwnerResponse(nodeId: string, result: any, error: any){
     if (error != null && error != undefined && error.code == -3){
-      this.native.toast(this.translate.instant("StartbindingPage.linkServer"));
+      this.native.toast(this.translate.instant("StartbindingPage.linkServerError"));
       return ;
     }
 
