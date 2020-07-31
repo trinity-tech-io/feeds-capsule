@@ -1,7 +1,7 @@
 export const zh = {
     "common":{
-        "followers":"订阅者",
-        "allempty":"全部为空",
+        "followers":"微粉",
+        "allempty":"空空如也",
         "pullToRefresh":"下拉刷新",
         "Refreshing":"刷新中...",
         "cancel":"取消",
@@ -13,20 +13,20 @@ export const zh = {
         "channel":"频道:",
         "description":"描述:",
         "pleaseInput":"请输入",
-        "feeds":"feeds",
+        "feeds":"微频",
         "just":"刚刚",
         "yesterday":"昨天",
-        "unsubscribe":"取消订阅",
+        "unsubscribe":"取消关注",
         "share":"分享",
         "sending":"正在发送...",
         "addressinvalid":"地址无效",
         "commingSoon":"敬请期待 ..."
     },
     "app":{
-        "profileDetails":"个人档案",
-        "feedSources":"Feed服务",
+        "profileDetails":"档案详情",
+        "feedSources":"微频源",
         "settings":"设置",
-        "about":"关于",
+        "about":"关于微频",
         "develop":"开发"
     },
     "SigninPage":{
@@ -34,49 +34,48 @@ export const zh = {
         "Pleasewait": "请等待..."
     },
     "FeedsPage":{
-        "tabTitle1":"我的时间轴",
+        "tabTitle1":"我的时间线",
         "tabTitle2":"我的档案",
-        "tabTitle3":"通知",
-        "tabTitle4":"探索Feeds"
+        "tabTitle3":"消息通知",
+        "tabTitle4":"探索微频"
     },
     "HomePage":{
-        "allempty":"全部为空",
-        "emptyDes":"尚未订阅任何feeds",
-        "exploreFeeds":"探索Feeds",
-        "minutesAgo":" 分钟之前",
-        "hoursAgo":" 小时之前"
+        "allempty":"空空如也",
+        "emptyDes":"尚未关注过任何微频",
+        "exploreFeeds":"探索微频",
+        "minutesAgo":" 分钟前",
+        "hoursAgo":" 小时前"
     },
     "ProfilePage":{
-        "myFeeds":"我的Feeds",
-        "following":"订阅",
-        "myLikes":"我的收藏"
+        "myFeeds":"我的微频",
+        "following":"关注",
+        "myLikes":"赞/收藏"
     },
     "MyfeedsComponent":{
-        "emptyDes":"您还没有Feeds",
-        "createFeed":"创建Feed",
-        "createNewFeed":"创建新的Feed"
+        "emptyDes":"您还没有微频",
+        "createFeed":"创建微频",
+        "createNewFeed":"创建新的微频"
     },
     "FollowingComponent":{
-        "emptyDes":"尚未订阅任何feeds",
-        "exploreFeeds":"探索Feeds"
+        "emptyDes":"尚未关注过任何微频",
+        "exploreFeeds":"探索微频"
     },
     "LikesComponent":{
-        "emptyDes":"您还没有Feeds",
         "emptyLikeDes":"您还没有任何收藏",
-        "exploreFeeds":"探索Feeds"
+        "exploreFeeds":"探索微频"
     },
     "SearchPage":{
-        "emptyDes":"还没有任何Feeds",
-        "follow":"订阅",
-        "following":"已订阅",
-        "searchFeeds":"搜索Feeds",
-        'addfeedssource':'添加微频源'
+        "emptyDes":"没有可关注的微频",
+        "follow":"关注",
+        "following":"已关注",
+        "searchFeeds":"搜索",
+        "addfeedssource":"添加微频源"
     },
     "ChannelsPage":{
-        "feeds":"Feeds",
-        "follow":"订阅",
-        "following":"已订阅",
-        "tip":"小费"
+        "feeds":"微频",
+        "follow":"关注",
+        "following":"已关注",
+        "tip":"打赏"
     },
     "NotificationPage":{
         "emptyDes":"空空如也",
@@ -86,13 +85,13 @@ export const zh = {
         "likedComment":"赞了评论"
     },
     "CreatenewfeedPage":{
-        "createNewFeed":"创建新的Feed",
-        "profileImage":"Feed头像",
-        "des":"为Feed选择一张图片",
-        "channelSource":"Feed服务",
-        "name":"名称",
-        "description":"描述",
-        "createFeed":"创建Feed",
+        "createNewFeed":"创建新的微频",
+        "profileImage":"微频头像",
+        "des":"为微频选择一张头像",
+        "channelSource":"微频源",
+        "name":"微频名称",
+        "description":"微频描述",
+        "createFeed":"创建微频",
         "tipMsg":"请选择一个头像",
         "tipMsg1":"请输入名称",
         "tipMsg2":"请输入描述信息",
@@ -100,22 +99,22 @@ export const zh = {
         "tipMsgLength":"描述信息长度要大于32",
         "inputName":"输入名称",
         "inputFeedDesc":"输入描述(至少32个字符)",
-        "channelSourceDes":"在哪里保存您的Feed",
-        "createfeedsuccess": "创建Feed成功!"
+        "channelSourceDes":"在哪里保存您的微频",
+        "createfeedsuccess": "创建微频成功!"
     },
     "ProfileimagePage":{
-        "title":"Feed头像",
-        "comfirm":"确认"
+        "title":"微频头像",
+        "confirm":"确认"
     },
     "ProfiledetailPage":{
         "profileDetails":"档案详情",
-        "subscribers":"订阅者",
+        "subscribers":"微粉",
         "name":"名称",
-        "did":"DID",
+        "did":"DID身份码",
         "gender":"性别",
-        "telephone":"手机号码",
+        "telephone":"号码",
         "email":"邮箱",
-        "location":"位置"
+        "location":"国家/地区"
     },
     "DevelopPage":{
         "develop":"开发",
@@ -126,68 +125,68 @@ export const zh = {
         "emptyDes":"目前没有设置项"
     },
     "AboutPage":{
-        "about":"关于",
+        "about":"关于微频",
         "version":"版本",
-        "website":"网站",
+        "website":"团队网址",
     },
     "PostdetailPage":{
-        "postdetail":"帖子详情"
+        "postdetail":"微说详情"
     },
     "ServersPage":{
-        "feedSources":"Feed服务",
-        "emptyDes":"没有Feed服务",
-        "addFeedSources":"添加Feed服务",
-        "bindFeedSource":"绑定Feed服务",
-        "myFeedSources":"我的Feed服务",
+        "feedSources":"微频源",
+        "emptyDes":"尚未关联过任何微频源",
+        "addFeedSources":"添加微频源",
+        "bindFeedSource":"绑定微频源",
+        "myFeedSources":"我的微频源",
         "users":"用户",
-        "currentFeedSources":"目前的Feed服务",
-        "addNewFeedSources":"添加新的Feed服务",
-        "createNewFeedSource":"创建新的Feed服务"
+        "currentFeedSources":"关联的微频源",
+        "addNewFeedSources":"添加新的微频源",
+        "createNewFeedSource":"创建新的微频源"
       },
     "AddServerPage":{
         "scanorEnterManual":"扫描或者输入",
-        "sourceAddress":"服务地址",
-        "openQRScanner":"打开QR扫描仪",
+        "sourceAddress":"微频源地址",
+        "openQRScanner":"扫描微频源二维码",
         "confirm":"确认",
-        "sourceaddresshere":"服务地址在这里",
-        "tipMsg":"Feed网址可能错误",
-        "exploreFeedSources":"探索Feed服务",
-        "title":"添加Feed服务",
-        "serverMsg1": "服务 :\n",
+        "sourceaddresshere":"输入微频源地址",
+        "tipMsg":"微频网址可能错误",
+        "exploreFeedSources":"探索微频源",
+        "title":"添加微频源",
+        "serverMsg1": "微频源 :\n",
         "serverMsg2": "\n掉线!",
-        "Serveralreadyadded": "该服务已经添加过了!",
-        "Addserversuccess": "添加服务成功!",
+        "Serveralreadyadded": "该微频源已经添加过了!",
+        "Addserversuccess": "添加微频源成功!",
         "Signinsuccess": "登录成功!"
       },
     "ServerInfoPage":{
-        "title":"Feed服务详情",
-        "publicFeed":"公共的Feed",
-        "online":"上线",
+        "title":"微频源详情",
+        "publicFeed":"公共的微频",
+        "online":"在线",
         "users":"用户",
-        "offline":"下线",
-        "name":"名称",
+        "offline":"离线",
+        "name":"源名称",
         "owner":"拥有者",
-        "introduction":"描述",
-        "did":"DID",
-        "addFeedSource":"添加Feed服务",
-        "removeFeedSource":"移除Feed服务",
-        "deleteFeedSource":"删除Feed服务",
-        "feedUrl":"Feed服务网址",
-        "serverInfo":"服务信息",
+        "introduction":"简要介绍",
+        "did":"DID身份码",
+        "addFeedSource":"添加微频源",
+        "removeFeedSource":"移除微频源",
+        "deleteFeedSource":"删除微频源",
+        "feedUrl":"微频源URL网址",
+        "serverInfo":"源信息",
         "Pleasewait": "请稍等...",
-        "Feedurlmaybeerror": "Feed网址可能错误",
-        "DeletethisFeedSource": "删除这个Feed服务?",
+        "Feedurlmaybeerror": "微频网址可能错误",
+        "DeletethisFeedSource": "删除这个微频源?",
         "cancel": "取消",
-        "DeleteFeedSource": "删除Feed服务!",
-        "RemovethisFeedSource": "移除这个Feed服务?",
-        "RemoveFeedSource": "移除Feed服务!",
-        "removeserver": "已移除服务",
+        "DeleteFeedSource": "删除微频源!",
+        "RemovethisFeedSource": "移除这个微频源?",
+        "RemoveFeedSource": "移除微频源!",
+        "removeserver": "已移除源",
         "feedsSourceQRCode":"微频源二维码",
     },
     "ScanqrcodePage":{
         "introduce":"创建一个新频道",
-        "introduce1":"绑定你的",
-        "introduce2":"feed服务 / 频道源",
+        "introduce1":"绑定您的",
+        "introduce2":"微频服务 / 频道源",
         "introduce3":"继续",
         "introduce4":"扫描绑定地址"
     },
@@ -195,13 +194,12 @@ export const zh = {
         "introduce":"创建一个新频道",
         "introduce1":"在浏览器中验证绑定代码是否相似",
         "introduce2":"已验证绑定代码",
-        "introduce3":"Feed服务地址",
-        "linkServer":"您正在关联一个Feed服务，请确认服务地址与之前绑定的Feed服务是否一致。",
+        "introduce3":"微频源地址",
+        "linkServer":"您正在关联一个微频源，请确认微频源地址与之前绑定的微频源是否一致。",
         "confirm":"确认",
         "abort":"中止",
-        "Connectingserver": "正在连接服务",
-        "bindingError":"绑定过程出现异常",
-        "linkServerError":"您正在关联一个Feed服务，请确认服务地址与之前绑定的Feed服务是否一致。"
+        "Connectingserver": "正在连接微频源",
+        "bindingError":"绑定过程出现异常"
     },
     "PublishdidPage":{
         "introduce":"创建一个新频道",
@@ -219,16 +217,16 @@ export const zh = {
         "introduce1":"发布到侧链",
         "issueacredential":"颁发凭证",
         "abort":"中止",
-        "serverInfo":"服务信息",
-        "serverName":"服务名称",
-        "serverDes":"服务描述",
+        "serverInfo":"微频源信息",
+        "serverName":"微频源名称",
+        "serverDes":"微频源描述",
     },
     "ImportdidPage":{
         "introduce":"创建一个新频道",
         "introduce1":"将DID绑定到选定的",
-        "introduce2":"feed服务 / 频道源",
-        "createanewDID":"创建一个新的DID",
-        "importanexistDID":"导入已存在的DID",
+        "introduce2":"微频源 / 频道源",
+        "createanewDID":"创建一个新的DID身份码",
+        "importanexistDID":"导入已存在的DID身份码",
         "abort":"中止",
     },
     "ImportmnemonicPage":{
@@ -244,27 +242,27 @@ export const zh = {
         "ok":"确定"
     },
     "PostfromComponent":{
-        "des":"选择一个Feed来发布"
+        "des":"选择一个微频来发布"
     },
     "CreatenewpostPage":{
         "addimg":"添加图片",
         "post":"发布",
         "des":"在此处输入...",
-        "addingPost":"新建帖子",
+        "addingPost":"新建微说",
         "tipMsg":"请输入内容！",
         "tipMsg1":"发布成功！",
     },
     "CommentComponent":{
-        "newComment":"新建评论",
-        "publishComment":"发布评论",
-        "enterComments":"输入评论"
+        "newComment":"新建微评",
+        "publishComment":"发布微评",
+        "enterComments":"输入微评"
     },
     "notification": {
         "system": "系统",
-        "recivenewpostfromfeed": "收到新帖子，来自Feed ",
-        "commentyourpost": "给您的帖子发评论",
-        "subscribeyourfeed": "订阅您的Feed ",
-        "likeyourpost": "收藏了您的帖子",
+        "recivenewpostfromfeed": "收到新微说，来自微频 ",
+        "commentyourpost": "给您的微说发微评",
+        "subscribeyourfeed": "关注您的微频 ",
+        "likeyourpost": "收藏了您的微说",
     },
     "DIDdata": {
         "Notprovided": "未提供",

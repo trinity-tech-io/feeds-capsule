@@ -58,7 +58,7 @@ export class ProfileimagePage implements OnInit {
     }
   }
 
-  comfirm(){
+  confirm(){
     this.events.publish("feeds:selectavatar",this.avatar);
     this.navCtrl.pop();
   }
@@ -76,5 +76,5 @@ export class ProfileimagePage implements OnInit {
       },
       (err)=>{alert(err)});
   }
-  
+
 }

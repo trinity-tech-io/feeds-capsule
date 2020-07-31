@@ -28,7 +28,7 @@ export class ImportmnemonicPage implements OnInit {
   ngOnInit() {
   }
 
-  comfirm(){
+  confirm(){
     if (this.mnemonic == ""){
       this.alertError(this.translate.instant('ImportmnemonicPage.tipMsg'));
       return ;

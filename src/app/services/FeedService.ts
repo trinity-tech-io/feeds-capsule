@@ -929,7 +929,7 @@ export class FeedService {
       nodeId,
       params,
       ()=>{
-       
+
       },
       (error:any)=>{
          this.events.publish("rpcRequest:error");
@@ -1243,7 +1243,7 @@ export class FeedService {
   // public params: object,
 
   friendMessageCallback(){
-    this.events.subscribe('jrpc:receiveMessage', result => {      
+    this.events.subscribe('jrpc:receiveMessage', result => {
       switch(result.type){
         case -1:
           alert(result.error.code+":"+result.error.message);
@@ -2665,7 +2665,7 @@ export class FeedService {
     if (commentsMap == null || commentsMap == undefined)
       commentsMap = {};
     if (commentsMap[nodeId] == null || commentsMap[nodeId] == undefined)
-      commentsMap[nodeId] = {};  
+      commentsMap[nodeId] = {};
     if (commentsMap[nodeId][channel_id] == null || commentsMap[nodeId][channel_id] == undefined)
       commentsMap[nodeId][channel_id] = {};
     if (commentsMap[nodeId][channel_id][post_id] == null || commentsMap[nodeId][channel_id][post_id]==undefined)
@@ -2702,7 +2702,7 @@ export class FeedService {
 
     if (!this.checkChannelIsMine(nodeId, channel_id))
       return ;
-    
+
     let notification:Notification = {
       userName: user_name,
       behavior: Behavior.comment,
@@ -2962,7 +2962,7 @@ export class FeedService {
       }
       return ;
     }
-    
+
     if (comment_id == 0){
       // postMap[mPostId].likes = postMap[mPostId].likes+1;
       this.storeService.set(PersistenceKey.postMap,postMap);
@@ -2989,7 +2989,7 @@ export class FeedService {
       this.storeService.set(PersistenceKey.likeCommentMap, likeCommentMap);
       eventBus.publish(PublishType.commentDataUpdate)
     }
-    
+
   }
 
   handlePostUnLikeResult(nodeId:string, request: any, error: any){
@@ -3002,13 +3002,13 @@ export class FeedService {
       if(comment_id == 0){
         likeMap[mPostId] = undefined;
         this.storeService.set(PersistenceKey.likeMap, likeMap);
-  
+
         eventBus.publish(PublishType.postDataUpdate);
       }else{
         let commentKey = this.getLikeCommentId(nodeId, channel_id, post_id, comment_id);
 
       }
-      
+
       return ;
     }
 
@@ -3028,7 +3028,7 @@ export class FeedService {
       let commentKey = this.getLikeCommentId(nodeId, channel_id, post_id, comment_id);
       likeCommentMap[commentKey] = undefined;
       this.storeService.set(PersistenceKey.likeCommentMap,likeCommentMap);
-      
+
       eventBus.publish(PublishType.commentDataUpdate)
 
     }
@@ -3329,7 +3329,7 @@ export class FeedService {
       channelsMap[nodeChannelId].isSubscribed = true;
       this.storeService.set(PersistenceKey.channelsMap,channelsMap);
       eventBus.publish(PublishType.subscribeFinish, nodeId,request.id, channelsMap[nodeChannelId].name);
-      
+
       return;
     }
 
@@ -3345,10 +3345,10 @@ export class FeedService {
   handleUnsubscribeChannelResult(nodeId:string, request: any, error: any){
     let nodeChannelId = nodeId+request.id;
     if (error != null && error != undefined && error.code == -4){
-      
+
       channelsMap[nodeChannelId].isSubscribed = false;
       this.storeService.set(PersistenceKey.channelsMap,channelsMap);
-  
+
       subscribedChannelsMap[nodeChannelId] = undefined;
       this.storeService.set(PersistenceKey.subscribedChannelsMap,subscribedChannelsMap);
 
@@ -3481,7 +3481,7 @@ export class FeedService {
        commentsMap[nodeId][channelId][postId] == null || commentsMap[nodeId][channelId][postId] == undefined){
          return [];
     }
-    
+
 
     let list: Comment[] =[];
     let keys: string[] = Object.keys(commentsMap[nodeId][channelId][postId]);
@@ -3848,7 +3848,7 @@ export class FeedService {
 
   handleDeclareOwnerResponse(nodeId: string, result: any, error: any){
     if (error != null && error != undefined && error.code == -3){
-      this.native.toast(this.translate.instant("StartbindingPage.linkServerError"));
+      this.native.toast(this.translate.instant("StartbindingPage.linkServer"));
       return ;
     }
 
@@ -3856,7 +3856,7 @@ export class FeedService {
       this.native.toast(this.translate.instant("StartbindingPage.bindingError"));
       return ;
     }
-    
+
     let phase = result.phase;
     let did = "";
     let payload = "";
@@ -3999,7 +3999,7 @@ export class FeedService {
   }
 
   finishBinding(nodeId: string){
-    
+
     bindingServer = bindingServerCache;
     this.storeService.set(PersistenceKey.bindingServer,bindingServer);
     this.addServer(bindingServer.carrierAddress,
@@ -4165,7 +4165,7 @@ export class FeedService {
     bindingServer = undefined;
     this.storeService.remove(PersistenceKey.bindingServer);
     this.removeFeedSource(nodeId);
-    
+
   }
 
   removeFeedSource(nodeId: string){
@@ -4215,7 +4215,7 @@ export class FeedService {
   removeCommentById(nodeId: string, channelId: number, postId: number){
     if (commentsMap == null ||  commentsMap == undefined)
       commentsMap = {}
-    
+
     if (commentsMap[nodeId] == null || commentsMap[nodeId] == undefined)
       commentsMap[nodeId] = {}
 
@@ -4297,7 +4297,7 @@ export class FeedService {
 
   }
 
-  
+
   parseBindServerUrl(content: string): BindURLData{
     if (content.startsWith("feeds_raw://")){
       let tmpString = content.replace("feeds_raw://","");
