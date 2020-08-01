@@ -8,16 +8,6 @@ declare namespace FeedsData{
     }
 
     const enum MethodType {
-        subscribe = "subscribe",
-        unsubscribe = "unsubscribe",
-        exploreTopics = "explore_topics",
-        listSubscribed = "list_subscribed_topics",
-        fetchUnreceived = "fetch_unreceived",
-      
-        createTopic = "create_topic",
-        postEvent = "post_event",
-        listOwnedTopics = "list_owned_topics",
-      
         create_channel = "create_channel",
         publish_post = "publish_post",
         post_comment = "post_comment",

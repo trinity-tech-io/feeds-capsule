@@ -100,19 +100,21 @@ export class AppService {
         this.event.publish("feeds:updateTitle");
       }
 
-      initializeApp() {   
-        let signInData = this.feedService.getSignInData();
-        if ( signInData == null || 
-             signInData == undefined ||
-             this.feedService.getCurrentTimeNum() > signInData.expiresTS ){
-             this.native.setRootRouter('/signin');
-          return ;
-        }
-      
-        this.carrierService.init();
-        this.native.setRootRouter('/tabs/home');
+      initializeApp() {
+        this.feedService.initSignInDataAsync((signInData)=>{
+          if ( signInData == null || 
+            signInData == undefined ||
+            this.feedService.getCurrentTimeNum() > signInData.expiresTS ){
+            this.native.setRootRouter('/signin');
+            return ;
+          }
         
-        this.feedService.updateSignInDataExpTime(signInData);
+          this.carrierService.init();
+          this.native.setRootRouter('/tabs/home');
+          
+          this.feedService.updateSignInDataExpTime(signInData);
+        });
+
       
       }
   

@@ -24,7 +24,7 @@ export class MyfeedsPage implements OnInit {
     private popup: PopupProvider) {
     
     this.connectStatus = this.feedService.getConnectionStatus();
-    this.myfeeds = feedService.getMyFeeds();
+    // this.myfeeds = feedService.getMyFeeds();
     this.channels = this.feedService.refreshMyChannels();
     this.events.subscribe('feeds:ownFeedListChanged', (feedList) => {
       this.zone.run(() => {
@@ -63,7 +63,7 @@ export class MyfeedsPage implements OnInit {
 
     this.popup.ionicConfirm("Prompt","Whether to archive "+topic,"ok","cancel").then((data)=>{
       if (data){
-        this.feedService.updateMyFeedArchiveStatus(nodeId,topic,true);
+        // this.feedService.updateMyFeedArchiveStatus(nodeId,topic,true);
       }
     });
   }
@@ -72,7 +72,7 @@ export class MyfeedsPage implements OnInit {
     slide.close();
     this.popup.ionicConfirm("Prompt","Whether to unarchive "+topic,"ok","cancel").then((data)=>{
       if (data){
-        this.feedService.updateMyFeedArchiveStatus(nodeId,topic,false);
+        // this.feedService.updateMyFeedArchiveStatus(nodeId,topic,false);
       }
     });
 

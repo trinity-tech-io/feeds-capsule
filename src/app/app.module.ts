@@ -48,6 +48,7 @@ import { JWTMessageService } from './services/JWTMessageService';
 import { TransportService } from './services/TransportService';
 import { SerializeDataService } from './services/SerializeDataService';
 import { MenuService } from './services/MenuService';
+import { IonicStorageModule } from '@ionic/storage';
 
 export class WebpackTranslateLoader implements TranslateLoader {
   public getTranslation(lang: string): Observable<any> {
@@ -101,6 +102,7 @@ export function TranslateLoaderFactory() {
         useFactory:(TranslateLoaderFactory)
       }
     }),
+    IonicStorageModule.forRoot()
   ],
   bootstrap: [MyApp],
   entryComponents: [

@@ -10,6 +10,7 @@ import { MenuController } from '@ionic/angular';
 import { AppService } from './services/AppService';
 import { ThemeService } from 'src/app/services/theme.service';
 import { NativeService} from 'src/app/services/NativeService';
+
 let appManager: any;
 
 @Component({
@@ -56,7 +57,7 @@ export class MyApp {
         }else{
           localStorage.setItem('org.elastos.dapp.feeds.first',"11");
           this.splash();
-        }    
+        }
     });
   }
 
@@ -87,11 +88,17 @@ export class MyApp {
   }
 
   initProfileData(){
-    let signData = this.feedService.getSignInData();
-    if (signData == null || signData == undefined)
-      return ;
+    this.feedService.initSignInDataAsync((signInData)=>{
+      console.log("signInData ==>"+JSON.stringify(signInData));
+      if (signInData == null || signInData == undefined)
+        return ;
 
-    this.didString = signData.did;
-    this.name = signData.name;
+      this.didString = signInData.did;
+      this.name = signInData.name;
+    },(error)=>{
+    });
+  }
+
+  initData(){
   }
 }

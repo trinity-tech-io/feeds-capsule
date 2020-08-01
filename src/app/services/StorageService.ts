@@ -1,25 +1,28 @@
 import { Injectable } from '@angular/core';
-// import { Events, Platform } from '@ionic/angular';
+import { Storage } from '@ionic/storage';
 
 @Injectable()
 export class StorageService {
-    constructor() {
+    constructor(private storage: Storage) {
     }
 
-    set(key: string, value: any){
-        localStorage.setItem(key,JSON.stringify(value));
+    ready(): Promise<LocalForage>{
+        return this.storage.ready();
     }
 
-    get(key: string):any{
-        return JSON.parse(localStorage.getItem(key));
+    set(key: string, value: any):Promise<any>{
+        return this.storage.set(key, value);
     }
 
-    remove(key: string){
-        localStorage.removeItem(key);
+    get(key: string):Promise<any>{
+        return this.storage.get(key);
+    }
+
+    remove(key: string): Promise<any>{
+        return this.storage.remove(key);
     }
 
 
     setInfo(){
-
     }
 }
