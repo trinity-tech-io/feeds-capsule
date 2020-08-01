@@ -288,6 +288,15 @@ export class CarrierService {
        carrierInst.getFriends(onSuccess,onError);
     }
 
+    isFriends(userId: string, onSuccess:(isFriend: Boolean)=>void, onError?:(err: string)=>void){
+        if (this.platform.platforms().indexOf("cordova") < 0){
+            onSuccess(null);
+            return ;
+        }
+       
+       carrierInst.isFriend(userId, onSuccess, onError);
+    }
+
     addFriend(address, hello: string, success, error: (err: string) => void) {
         if (this.platform.platforms().indexOf("cordova") < 0){
             success();
@@ -304,18 +313,19 @@ export class CarrierService {
             (err) => {this.errorFun(err, error); });
     }
 
-    removeFriend(userId, success, error) {
+    removeFriend(userId: string, onSuccess:()=>void, onError?:(err: string)=>void) {
         if (this.platform.platforms().indexOf("cordova") < 0){
-            return success('ok');
+            return onSuccess();
         }
         
         carrierInst.removeFriend(
             userId,
-            () => {success();},
-            (err) => {this.errorFun(err, error);});
+            () => {onSuccess();},
+            (err) => {onError(err)});
     }
 
     sendMessage(nodeId: string, message: string, success: any, error: any) {
+
         if (this.platform.platforms().indexOf("cordova") < 0){
             success();
             return;

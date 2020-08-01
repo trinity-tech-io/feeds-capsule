@@ -3321,10 +3321,14 @@ export class FeedService {
     this.removeServerStatusById(nodeId);
     this.removeServerById(nodeId);
     this.removeAccessTokenById(nodeId);
-    this.removeServerFriendsById(nodeId);
+    this.removeServerFriendsById(nodeId, ()=>{
+      eventBus.publish(PublishType.removeFeedSourceFinish);
+      eventBus.publish(PublishType.refreshPage);
+    },(error)=>{
 
-    eventBus.publish(PublishType.removeFeedSourceFinish);
-    eventBus.publish(PublishType.refreshPage);
+    });
+
+    
   }
 
   removeLastUpdate(nodeId:string, channelId: number){
@@ -3401,8 +3405,18 @@ export class FeedService {
     serverMap[nodeId] = undefined;
     this.storeService.set(PersistenceKey.serverMap, serverMap);
   }
-  removeServerFriendsById(nodeId: string){
-    this.carrierService.removeFriend(nodeId, ()=>{}, ()=>{});
+  removeServerFriendsById(nodeId: string, onSuccess: ()=>void, onError:(error)=>void){
+    this.carrierService.isFriends(nodeId,(isFriend)=>{
+      if (isFriend){
+        this.carrierService.removeFriend(nodeId, ()=>{
+          onSuccess();
+        }, (error)=>{
+          onError(error);
+        });
+      }else{
+        onSuccess();
+      }
+    });
   }
 
   removeBindServer(){
@@ -3419,13 +3433,10 @@ export class FeedService {
     return list;
   }
 
-
   restoreData(nodeId: string){
     this.getSubscribedChannels(nodeId, Communication.field.last_update, 0, 0, 0);
     this.getMyChannels(nodeId,Communication.field.last_update,0,0,0);
-
   }
-
 
   parseBindServerUrl(content: string): BindURLData{
     if (content.startsWith("feeds_raw://")){

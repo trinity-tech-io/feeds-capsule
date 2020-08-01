@@ -89,7 +89,6 @@ export class MyApp {
 
   initProfileData(){
     this.feedService.initSignInDataAsync((signInData)=>{
-      console.log("signInData ==>"+JSON.stringify(signInData));
       if (signInData == null || signInData == undefined)
         return ;
 
