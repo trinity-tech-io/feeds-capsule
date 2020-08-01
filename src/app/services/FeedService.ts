@@ -585,6 +585,7 @@ export class FeedService {
 
   getMyChannelList(){
     let list: Channels[] = [];
+    myChannelsMap = myChannelsMap || {};
     let keys: string[] = Object.keys(myChannelsMap);
     for (const index in keys) {
       if (myChannelsMap[keys[index]] == undefined)
@@ -2666,7 +2667,8 @@ export class FeedService {
 
   getPostList(): Post[]{
     let list: Post[] = [];
-    let keys: string[] = Object.keys(postMap);
+    postMap = postMap || {};
+    let keys: string[] = Object.keys(postMap) || [];
     localPostList = [];
     for (const index in keys) {
       if (postMap[keys[index]] == null || postMap[keys[index]] == undefined)

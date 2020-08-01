@@ -57,7 +57,7 @@ export class NativeService {
 
 
     public setRootRouter(router) {
-        this.navCtrl.navigateRoot(router);
+        this.router.navigate(router);
     }
 
     public clone(myObj) {

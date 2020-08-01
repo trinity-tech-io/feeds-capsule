@@ -105,13 +105,12 @@ export class AppService {
           if ( signInData == null || 
             signInData == undefined ||
             this.feedService.getCurrentTimeNum() > signInData.expiresTS ){
-            this.native.setRootRouter('/signin');
+            this.native.setRootRouter(['/signin']);
             return ;
           }
         
           this.carrierService.init();
-          this.native.setRootRouter('/tabs/home');
-          
+          this.native.setRootRouter(['/tabs/home']);
           this.feedService.updateSignInDataExpTime(signInData);
         });
 

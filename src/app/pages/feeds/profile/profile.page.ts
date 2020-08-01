@@ -21,13 +21,17 @@ export class ProfilePage implements OnInit {
   constructor(
     private feedService: FeedService,
     public theme:ThemeService) {
-    let signInData = this.feedService.getSignInData();
-    this.name = signInData.name;
-
-    this.description = signInData.description;
+  
   }
 
   ngOnInit() {
+  }
+
+  ionViewWillEnter() {
+    let signInData = this.feedService.getSignInData() || {};
+    this.name = signInData["name"] || "";
+
+    this.description = signInData["description"] || "";
   }
 
   changeType(type:string){

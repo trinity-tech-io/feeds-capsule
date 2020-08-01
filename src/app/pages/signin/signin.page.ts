@@ -155,7 +155,7 @@ export class SigninPage implements OnInit {
 
   initApp(){
     this.carrierService.init();
-    this.native.setRootRouter('/tabs/home');
+    this.native.setRootRouter(['/tabs/home']);
   }
 
   saveData(did: string, name: string, email: string, telephone: string, location: string, description: string){

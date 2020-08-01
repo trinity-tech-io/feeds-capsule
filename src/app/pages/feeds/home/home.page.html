@@ -2,7 +2,7 @@
   <div *ngIf="postList.length == 0">
     <div class="center-content" >
       <div style="text-align: center; ">
-        <img src="../../../../assets/images/empty-feeds-icon.svg">
+        <img src="./assets/images/empty-feeds-icon.svg">
       </div>
       <div class="all-empty" style="margin-top: 20px;">{{ 'HomePage.allempty' | translate }}</div>
       <div class="all-empty-content-text" style="margin-top: 7px;">{{"HomePage.emptyDes"| translate}}</div>
@@ -56,7 +56,7 @@
               <img class="like" [ngClass]="{'like-s': checkMyLike(post.nodeId, post.channel_id, post.id)}" (click)="like(post.nodeId, post.channel_id, post.id)">
               <ion-label class="like-text" [ngClass]="{'like-s-text': checkMyLike(post.nodeId, post.channel_id, post.id)}" (click)="like(post.nodeId, post.channel_id, post.id)">{{post.likes}}</ion-label>
     
-              <img src="../../../../assets/images/bubble-line.svg" class="comment" (click)="showCommentPage($event, post.nodeId, post.channel_id, post.id)">
+              <img src="./assets/images/bubble-line.svg" class="comment" (click)="showCommentPage($event, post.nodeId, post.channel_id, post.id)">
               <ion-label class="comment-text"  (click)="showCommentPage($event, post.nodeId, post.channel_id, post.id)">{{post.comments}}</ion-label>
             </div>
           </div>

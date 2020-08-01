@@ -2,7 +2,6 @@ import { Component, OnInit, NgZone } from '@angular/core';
 import { Events, PopoverController, IonTabs} from '@ionic/angular';
 import { FeedService } from 'src/app/services/FeedService';
 import { MenuService } from 'src/app/services/MenuService';
-import { Router } from '@angular/router'
 import { CommentComponent } from '../../../components/comment/comment.component'
 import { FeedsPage } from '../feeds.page'
 import { ThemeService } from 'src/app/services/theme.service';
@@ -27,18 +26,16 @@ export class HomePage implements OnInit {
     private events: Events,
     private zone: NgZone,
     private feedService :FeedService,
-    private router: Router,
     public theme:ThemeService,
     private translate:TranslateService,
     private navtive:NativeService,
     private menuService: MenuService) {
 
-    
+     
      
   }
 
   ionViewWillEnter() {
-
     this.postList = this.feedService.getPostList();
     this.initnodeStatus();
 
@@ -102,6 +99,7 @@ export class HomePage implements OnInit {
   }
 
   ngOnInit() {
+   
   }
 
   like(nodeId, channelId, postId){
