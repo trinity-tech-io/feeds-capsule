@@ -168,11 +168,13 @@ export class ChannelsPage implements OnInit {
       cssClass: 'bottom-sheet-popover'
     });
 
-    popover.onDidDismiss().then((result)=>{
+    if (popover !== undefined) {
+      popover.onDidDismiss().then((result)=>{
       if(result.data == undefined){
         return;
       }
-    });
+      });
+    }
     return await popover.present();
   }
 

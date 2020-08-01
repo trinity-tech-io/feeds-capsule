@@ -1,5 +1,5 @@
 <ion-app>
-    <ion-menu side="end" type="overlay" menuId="menu" [class.darkContainer]="theme.darkMode">
+    <ion-menu side="end" type="overlay" menuId="menu" [class.darkContainer]="theme.darkMode" contentId="my-content">
         <ion-content>
             <div class="menu-profile-div " style="margin-top: 22.5px;">
                 <div style=" width: 300px;padding: 5px; padding-left: 20px;">
@@ -49,7 +49,7 @@
             </ion-menu-toggle>
         </ion-content>
     </ion-menu>
-    <ion-router-outlet main></ion-router-outlet>
+    <ion-router-outlet  id="my-content"></ion-router-outlet>
   </ion-app>
   
   

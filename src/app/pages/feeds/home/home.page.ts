@@ -17,7 +17,8 @@ import { NativeService } from 'src/app/services/NativeService';
 
 
 export class HomePage implements OnInit {
-  private postList: any;
+  public popover:any;
+  private postList: any = [];
   public nodeStatus:any={};
   constructor(
     private feedspage: FeedsPage,
@@ -32,12 +33,14 @@ export class HomePage implements OnInit {
     private navtive:NativeService,
     private menuService: MenuService) {
 
-      this.postList = this.feedService.getPostList();
-      this.initnodeStatus();
+    
      
   }
 
   ionViewWillEnter() {
+
+    this.postList = this.feedService.getPostList();
+    this.initnodeStatus();
 
     this.events.subscribe('feeds:refreshPage',()=>{
       this.zone.run(() => {
@@ -66,7 +69,9 @@ export class HomePage implements OnInit {
     this.events.unsubscribe("feeds:postDataUpdate");
     this.events.unsubscribe("feeds:refreshPage");
     this.events.unsubscribe("feeds:friendConnectionChanged");
-    this.popoverController.dismiss();
+    if (this.popover !== undefined) {
+      this.popover.dismiss();
+    }
   }
 
   getChannel(nodeId, channelId):any{
@@ -120,7 +125,7 @@ export class HomePage implements OnInit {
   }
 
   async showCommentPage(event, nodeId, channelId, postId){
-    const popover = await this.popoverController.create({
+    this.popover = await this.popoverController.create({
       component: CommentComponent,
       componentProps: {nodeId: nodeId, channelId: channelId, postId: postId},
       event:event,
@@ -128,12 +133,16 @@ export class HomePage implements OnInit {
       cssClass: 'bottom-sheet-popover'
     });
 
-    popover.onDidDismiss().then((result)=>{
-      if(result.data == undefined){
-        return;
-      }
-    });
-    return await popover.present();
+    if (this.popover !== undefined) {
+        this.popover.onDidDismiss().then((result)=>{
+        if(result.data == undefined){
+          return;
+        }
+        });
+    }
+
+   
+    return await this.popover.present();
   }
 
   checkMyLike(nodeId: string, channelId: number, postId: number){

@@ -18,7 +18,8 @@
   <div class="image-text-layout-div" >
     <ion-card-content class="ion-no-padding ion-no-margin">
       <div class="menu-div" style="margin-top: 10px;" (click)="menuMore(channel.nodeId, channel.id, channel.name)">
-          <img  src="assets/images/dots-three-vertical.svg">
+        <img  src="./assets/images/dots-three-vertical.svg" *ngIf="!theme.darkMode" style="width:12.4;height:3px">
+        <img  src="./assets/images/dots-three-vertical-dark.svg" *ngIf="theme.darkMode" style="width:12.4;height:3px">
       </div>
 
       <div class="image-text-div" (click)="navTo(channel.nodeId, channel.id)">
@@ -41,14 +42,6 @@
   <div class="line-div white-line"></div>
 
 </div>
-  
-
-
-
-
-<!-- <div class="new-feed-div">
-  <div class="new-feed" (click)="bindServer()"> Bind Server</div>
-</div> -->
 
 <div class="new-feed-div" *ngIf="channels.length > 0">
     <div class="new-feed" (click)="createNewFeed()">{{'MyfeedsComponent.createNewFeed'|translate}}</div>
