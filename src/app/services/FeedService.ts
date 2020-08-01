@@ -3225,23 +3225,30 @@ export class FeedService {
     name: string, owner: string, introduction: string,
     did: string, feedsUrl: string,
     onSuccess:()=>void, onError?:(err: string)=>void){
-    this.carrierService.isValidAddress(carrierAddress, (isValid) => {
-      if (!isValid){
-        this.alertError("Address invalid");
-        return;
+    this.checkIsAlreadyFriends(carrierAddress,(isFriend)=>{
+      if (isFriend){
+        this.native.toast(this.translate.instant("AddServerPage.Serveralreadyadded"));
+      }else{
+        this.carrierService.isValidAddress(carrierAddress, (isValid) => {
+          if (!isValid){
+            this.alertError("Address invalid");
+            return;
+          }
+    
+          this.carrierService.addFriend(carrierAddress, friendRequest,
+            () => {
+                this.saveServer(name, owner, introduction,
+                                    did, carrierAddress, feedsUrl);
+            }, (err) => {
+                this.alertError("Add server error: " + err);
+            });
+          },
+          (error: string) => {
+            this.alertError("Address error: " + error);
+          });
       }
-
-      this.carrierService.addFriend(carrierAddress, friendRequest,
-        () => {
-            this.saveServer(name, owner, introduction,
-                                did, carrierAddress, feedsUrl);
-        }, (err) => {
-            this.alertError("Add server error: " + err);
-        });
-      },
-      (error: string) => {
-        this.alertError("Address error: " + error);
-      });
+    })
+    
   }
 
   alertError(error: string){
@@ -3455,6 +3462,22 @@ export class FeedService {
       return true;
 
     return false;
+  }
+
+  checkIsAlreadyFriends(carrierAddress: string, onSuccess: (isFriends: boolean) =>void){
+    this.carrierService.getIdFromAddress(carrierAddress,
+      (userId)=>{
+        if (serverMap == null || serverMap == undefined)
+          serverMap = {};
+
+        if(serverMap[userId] != undefined){
+          onSuccess(true);
+          return ;
+        }
+          
+        onSuccess(false);
+        return ;
+      });
   }
 }
 
