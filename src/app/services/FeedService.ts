@@ -21,6 +21,7 @@ let myChannelsMap:{[nodeChannelId: string]: MyChannel};
 let unreadMap:{[nodeChannelId: string]: number};
 // let postMap:{[channelId: number]: ChannelPost};
 let postMap:{[nodechannelpostId: string]: Post} = undefined; //now postId = nodeId+channelId+postId
+let postKeyMap: {[nodeChannelPostId: string]: PostKey};
 let serverStatisticsMap:{[nodeId: string]: ServerStatistics};
 let commentsMap:{[nodeId: string]: NodeChannelPostComment};
 let serversStatus:{[nodeId: string]: ServerStatus};
@@ -156,6 +157,10 @@ type Post = {
     comments   : number,
     likes      : number,
     created_at : number
+}
+
+type PostKey = {
+  created_at: number;
 }
 
 type ServerStatistics = {
@@ -658,6 +663,15 @@ export class FeedService {
     return list;
   }
 
+  getAllChannelDetails(nodeId: string){
+    let list = this.getChannelsList();
+    for (let index = 0; index < list.length; index++) {
+      let channel = list[index];
+      if (nodeId == channel.nodeId)
+        this.getChannelDetail(channel.nodeId, channel.id);
+    }
+  }
+
   sendJWTMessage(nodeId: string, properties: any){
     this.jwtMessageService.request(nodeId,properties,()=>{},()=>{});
   }
@@ -831,7 +845,7 @@ export class FeedService {
         this.handleGetChannelsResult(nodeId, result, request, error);
         break;
       case FeedsData.MethodType.get_channel_detail:
-        this.handleGetChannelDetailResult(result, error);
+        this.handleGetChannelDetailResult(nodeId, result, error);
         break;
       case FeedsData.MethodType.get_subscribed_channels:
         this.handleGetSubscribedChannelsResult(nodeId, result, request, error);
@@ -2339,11 +2353,35 @@ export class FeedService {
     this.refreshLocalChannels();
   }
 
-  handleGetChannelDetailResult(result: any, error: any){
+  handleGetChannelDetailResult(nodeId: string, result: any, error: any){
     if (error != null && error != undefined && error.code != undefined){
       this.handleError(error);
       return;
     }
+
+    let id = result.id;
+    let name = result.name ;
+    let introduction = result.introduction;
+    let owner_name = result.owner_name;
+    let owner_did = result.owner_did;
+    let subscribers = result.subscribers;
+    let last_update = result.last_update;
+
+    let avatarBin = result.avatar;
+    let avatar = this.serializeDataService.decodeData(avatarBin);
+
+    let nodeChannelId = nodeId + id ;
+    if(channelsMap == null || channelsMap == undefined)
+      channelsMap = {}
+    channelsMap[nodeChannelId].avatar = avatar;
+    channelsMap[nodeChannelId].introduction = introduction;
+    channelsMap[nodeChannelId].last_update = last_update;
+    channelsMap[nodeChannelId].name = name;
+    channelsMap[nodeChannelId].owner_name = owner_name;
+    channelsMap[nodeChannelId].owner_did = owner_did;
+    channelsMap[nodeChannelId].subscribers = subscribers;
+
+    this.storeService.set(PersistenceKey.channelsMap, channelsMap);
   }
 
   handleGetSubscribedChannelsResult(nodeId: string, responseResult: any, request: any, error: any){
@@ -3297,7 +3335,6 @@ export class FeedService {
   }
 
   prepare(friendId: string){
-
     this.getStatistics(friendId);
     this.enableNotification(friendId);
     // this.queryChannelCreationPermission(friendId);
@@ -3307,6 +3344,8 @@ export class FeedService {
       let channelId = list[index].id;
       this.updatePost(friendId,channelId);
     }
+
+    this.getAllChannelDetails(friendId);
   }
 
 
