@@ -8,7 +8,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { NativeService } from 'src/app/services/NativeService';
 import { SerializeDataService } from 'src/app/services/SerializeDataService';
 import { JWTMessageService } from 'src/app/services/JWTMessageService';
-import { resolve } from "url";
 
 declare let didManager: DIDPlugin.DIDManager;
 declare let appManager: AppManagerPlugin.AppManager;
@@ -21,7 +20,7 @@ let channelsMap:{[nodeChannelId: string]: Channels} ;
 let myChannelsMap:{[nodeChannelId: string]: Channels};
 let unreadMap:{[nodeChannelId: string]: number};
 // let postMap:{[channelId: number]: ChannelPost};
-let postMap:{[nodechannelpostId: string]: Post}; //now postId = nodeId+channelId+postId
+let postMap:{[nodechannelpostId: string]: Post} = undefined; //now postId = nodeId+channelId+postId
 let serverStatisticsMap:{[nodeId: string]: ServerStatistics};
 let commentsMap:{[nodeId: string]: NodeChannelPostComment};
 let serversStatus:{[nodeId: string]: ServerStatus};
@@ -48,8 +47,7 @@ let signInServerList = [];
 let notificationList:Notification[] = new Array<Notification>();
 
 let cacheBindingAddress: string = "";
-let cacheBindingDid: string = "";
-let localCredential: string = "";
+let localCredential: string = undefined;
 
 type BindURLData = {
   did: string;
@@ -376,7 +374,7 @@ export class FeedService {
         postMap = {};
         lastPostUpdateMap = {};
         return;
-    }
+  }
 
 
     this.initData();
@@ -384,16 +382,27 @@ export class FeedService {
     this.initCallback();
   }
 
+  loadPostData(onFinish?:()=>void){
+    if(postMap == null || postMap == undefined){
+      this.storeService.get(PersistenceKey.postMap).then((mPostMap)=>{
+        postMap = mPostMap;
+        if(postMap == null || postMap == undefined)
+          postMap = {}
+        onFinish();
+      });
+    }else{
+      onFinish();
+    }
+  }
+
   initData(){
-    this.storeService.get(PersistenceKey.credential).then((credential)=>{
-      localCredential = credential;
-    });
-    
-    this.storeService.get(PersistenceKey.postMap).then((mPostMap)=>{
-      postMap = mPostMap;
-      if(postMap == null || postMap == undefined)
-        postMap = {}
-    });
+    if(localCredential == null || localCredential == undefined){
+      this.storeService.get(PersistenceKey.credential).then((credential)=>{
+        localCredential = credential;
+      });
+    }
+
+    this.loadPostData();
 
     this.storeService.get(PersistenceKey.lastPostUpdateMap).then((mLastPostUpdateMap)=>{
       lastPostUpdateMap = mLastPostUpdateMap;

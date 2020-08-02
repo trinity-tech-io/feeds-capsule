@@ -102,16 +102,18 @@ export class AppService {
 
       initializeApp() {
         this.feedService.initSignInDataAsync((signInData)=>{
-          if ( signInData == null || 
-            signInData == undefined ||
-            this.feedService.getCurrentTimeNum() > signInData.expiresTS ){
-            this.native.setRootRouter(['/signin']);
-            return ;
-          }
-        
-          this.carrierService.init();
-          this.native.setRootRouter(['/tabs/home']);
-          this.feedService.updateSignInDataExpTime(signInData);
+          this.feedService.loadPostData(()=>{
+            if (signInData == null || 
+              signInData == undefined ||
+              this.feedService.getCurrentTimeNum() > signInData.expiresTS ){
+              this.native.setRootRouter(['/signin']);
+              return ;
+            }
+          
+            this.carrierService.init();
+            this.native.setRootRouter(['/tabs/home']);
+            this.feedService.updateSignInDataExpTime(signInData);
+          });
         });
 
       
