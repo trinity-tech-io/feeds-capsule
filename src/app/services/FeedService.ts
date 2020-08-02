@@ -17,7 +17,7 @@ declare let didSessionManager: DIDSessionManagerPlugin.DIDSessionManager;
 
 let subscribedChannelsMap:{[nodeChannelId: string]: Channels};
 let channelsMap:{[nodeChannelId: string]: Channels} ;
-let myChannelsMap:{[nodeChannelId: string]: Channels};
+let myChannelsMap:{[nodeChannelId: string]: MyChannel};
 let unreadMap:{[nodeChannelId: string]: number};
 // let postMap:{[channelId: number]: ChannelPost};
 let postMap:{[nodechannelpostId: string]: Post} = undefined; //now postId = nodeId+channelId+postId
@@ -105,6 +105,12 @@ type ChannelPostComment = {
 type PostComment = {
   [commentId: number]: Comment
 }
+
+type MyChannel = {
+  nodeId: string,
+  channelId: number
+}
+
 type Channels = {
     nodeId:string,
     id: number,
@@ -599,7 +605,12 @@ export class FeedService {
     for (const index in keys) {
       if (myChannelsMap[keys[index]] == undefined)
         continue;
-      list.push(myChannelsMap[keys[index]]);
+        
+      if (channelsMap != null && channelsMap != undefined &&
+          channelsMap[keys[index]] != undefined){
+            let channel = channelsMap[keys[index]];
+            list.push(channel);
+          }
     }
     list.sort((a, b) => Number(b.last_update) - Number(a.last_update));
 
@@ -1315,7 +1326,12 @@ export class FeedService {
     for (const index in keys) {
       if (myChannelsMap[keys[index]] == null || myChannelsMap[keys[index]] == undefined)
         continue;
-      list.push(myChannelsMap[keys[index]]);
+
+      if (channelsMap != null && channelsMap != undefined &&
+        channelsMap[keys[index]] != undefined){
+          let channel = channelsMap[keys[index]];
+          list.push(channel);
+        }
     }
 
     list.sort((a, b) => Number(b.last_update) - Number(a.last_update));
@@ -1348,7 +1364,12 @@ export class FeedService {
     for (const index in keys) {
       if (myChannelsMap[keys[index]] == null || myChannelsMap[keys[index]] == undefined)
         continue;
-        list.push(myChannelsMap[keys[index]]);
+
+      if (channelsMap != null && channelsMap != undefined &&
+        channelsMap[keys[index]] != undefined){
+          let channel = channelsMap[keys[index]];
+          list.push(channel);
+        }
     }
 
     list.sort((a, b) => Number(b.last_update) - Number(a.last_update));
@@ -1993,7 +2014,11 @@ export class FeedService {
 
     if (myChannelsMap == null || myChannelsMap == undefined)
       myChannelsMap = {};
-    myChannelsMap[nodeChannelId] = channel;
+
+    myChannelsMap[nodeChannelId] = {
+      nodeId: nodeId,
+      channelId: channelId
+    };
     this.storeService.set(PersistenceKey.myChannelsMap,myChannelsMap);
 
     if (channelsMap == null || channelsMap == undefined)
@@ -2027,12 +2052,6 @@ export class FeedService {
       likes: 0,
       created_at: this.getCurrentTimeNum()
     }
-    let nodeChannelId = nodeId + channelId ;
-    if(myChannelsMap != null &&
-      myChannelsMap != undefined &&
-      myChannelsMap[nodeChannelId] != null &&
-      myChannelsMap[nodeChannelId] != undefined)
-      myChannelsMap[nodeChannelId].last_post = content;
 
     let mPostId = this.getPostId(nodeId, channelId, postId);
     if (postMap == null || postMap == undefined)
@@ -2222,10 +2241,18 @@ export class FeedService {
       let nodeChannelId = nodeId + id ;
 
       if (myChannelsMap == null || myChannelsMap == undefined)
-        myChannelsMap = {}
+        myChannelsMap = {};
 
-      if (myChannelsMap[nodeChannelId] == undefined){
-        myChannelsMap[nodeChannelId] = {
+      myChannelsMap[nodeChannelId] = {
+        nodeId: nodeId,
+        channelId: id
+      }
+
+      if (channelsMap == null || channelsMap == undefined)
+        channelsMap = {};
+
+      if (channelsMap[nodeChannelId] == undefined){
+        channelsMap[nodeChannelId] = {
           nodeId: nodeId,
           id: id,
           name: name,
@@ -2252,11 +2279,13 @@ export class FeedService {
     }
 
     for (let index = 0; index < result.length; index++) {
+
       let id: number = result[index].id;
       let subscribers: number = result[index];
 
       let nodeChannelId = nodeId+id;
-      myChannelsMap[nodeChannelId].subscribers = subscribers;
+
+      channelsMap[nodeChannelId].subscribers = subscribers;
     }
     this.storeService.set(PersistenceKey.myChannelsMap, myChannelsMap);
     eventBus.publish(PublishType.myChannelsDataUpdate);
