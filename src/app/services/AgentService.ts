@@ -53,10 +53,6 @@ export class AgentService {
                 break;
             case FeedsData.MethodType.unsubscribe_channel:
                 break;
-            case FeedsData.MethodType.add_node_publisher:
-                break;
-            case FeedsData.MethodType.remove_node_publisher:
-                break;
             case FeedsData.MethodType.query_channel_creation_permission:
                 break;                                                                                                                                                        
             case FeedsData.MethodType.enable_notification:

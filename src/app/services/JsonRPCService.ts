@@ -60,7 +60,7 @@ export class JsonRPCService {
         return new LoginResult(nodeId,data.payload,data.signature);
     }
 
-    request(method: string, nodeId: string,params: any, success: any, error: any){
+    request(method: string, nodeId: string,params: any, onSuccess:()=>void, onError?:(err: string)=>void){
         let id = autoIncreaseId++;
         let requestBean = new RequestBean(id,method,params);
         requestQueue.push(requestBean);
@@ -69,20 +69,12 @@ export class JsonRPCService {
         console.log("request--->"+JSON.stringify(request));
 
         let encodeData = this.serializeDataService.encodeData(request);
-
-        // this.carrierService.sendMessage(
-        //     nodeId,
-        //     // encodeData,
-        //     JSON.stringify(request),
-        //     success,
-        //     error
-        // )
-
+        
         this.transportService.sendArrayMessage(
             nodeId,
             encodeData,
-            success,
-            error
+            onSuccess,
+            onError
         )
     }
 

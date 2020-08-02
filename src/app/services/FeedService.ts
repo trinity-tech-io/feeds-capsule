@@ -665,7 +665,7 @@ export class FeedService {
       ()=>{
 
       },
-      (error:any)=>{
+      (error)=>{
          this.events.publish("rpcRequest:error");
          this.native.toast(JSON.stringify(error));
       });
@@ -789,18 +789,20 @@ export class FeedService {
     });
   }
 
-  handleResult(method:string, nodeId: string ,result: any , request: any, error: any){
-    let from = nodeId;
+  handleError(error: any){
+    this.native.toast(JSON.stringify(error));
+  }
 
+  handleResult(method:string, nodeId: string ,result: any , request: any, error: any){
     switch (method) {
       case FeedsData.MethodType.create_channel:
-        this.handleCreateChannelResult(nodeId, result, request);
+        this.handleCreateChannelResult(nodeId, result, request, error);
         break;
       case FeedsData.MethodType.publish_post:
-        this.handlePublishPostResult(nodeId, result, request);
+        this.handlePublishPostResult(nodeId, result, request, error);
         break;
       case FeedsData.MethodType.post_comment:
-        this.handlePostCommentResult(nodeId, result, request);
+        this.handlePostCommentResult(nodeId, result, request, error);
         break;
       case FeedsData.MethodType.post_like:
         this.handlePostLikeResult(nodeId, request, error);
@@ -809,28 +811,28 @@ export class FeedService {
         this.handlePostUnLikeResult(nodeId, request, error);
         break;
       case FeedsData.MethodType.get_my_channels:
-        this.handleGetMyChannelsResult(nodeId, result);
+        this.handleGetMyChannelsResult(nodeId, result, error);
         break;
       case FeedsData.MethodType.get_my_channels_metadata:
-        this.handleGetMyChannelsMetaDataResult(nodeId, result);
+        this.handleGetMyChannelsMetaDataResult(nodeId, result, error);
         break;
       case FeedsData.MethodType.get_channels:
-        this.handleGetChannelsResult(nodeId, result, request);
+        this.handleGetChannelsResult(nodeId, result, request, error);
         break;
       case FeedsData.MethodType.get_channel_detail:
-        this.handleGetChannelDetailResult(result);
+        this.handleGetChannelDetailResult(result, error);
         break;
       case FeedsData.MethodType.get_subscribed_channels:
-        this.handleGetSubscribedChannelsResult(nodeId, result, request);
+        this.handleGetSubscribedChannelsResult(nodeId, result, request, error);
         break;
       case FeedsData.MethodType.get_posts:
-        this.handleGetPostsResult(nodeId, result, request);
+        this.handleGetPostsResult(nodeId, result, request, error);
         break;
       case FeedsData.MethodType.get_comments:
-        this.handleGetCommentsResult(nodeId, result);
+        this.handleGetCommentsResult(nodeId, result, error);
         break;
       case FeedsData.MethodType.get_statistics:
-        this.handleGetStatisticsResult(nodeId, result);
+        this.handleGetStatisticsResult(nodeId, result, error);
         break;
       case FeedsData.MethodType.subscribe_channel:
         this.handleSubscribeChannelResult(nodeId, request, error);
@@ -838,33 +840,26 @@ export class FeedService {
       case FeedsData.MethodType.unsubscribe_channel:
         this.handleUnsubscribeChannelResult(nodeId, request, error);
         break;
-      case FeedsData.MethodType.add_node_publisher:
-        this.handleAddNodePublisherResult();
-        break;
-      case FeedsData.MethodType.remove_node_publisher:
-        this.handleRemoveNodePublisherResult();
-        break;
       case FeedsData.MethodType.enable_notification:
-        this.handleEnableNotificationResult();
+        this.handleEnableNotificationResult(error);
         break;
 
       case "declare_owner":
         this.handleDeclareOwnerResponse(nodeId, result, error);
         break;
       case "import_did":
-        this.handleImportDIDResponse(nodeId, result);
+        this.handleImportDIDResponse(nodeId, result, error);
         break;
       case "issue_credential":
-        this.handleIssueCredentialResponse(nodeId, result);
+        this.handleIssueCredentialResponse(nodeId, result, error);
         break;
       case "signin_request_challenge":
-        this.handleSigninChallenge(nodeId, result);
+        this.handleSigninChallenge(nodeId, result, error);
         break;
       case "signin_confirm_challenge":
-        this.handleSigninConfirm(nodeId, result);
+        this.handleSigninConfirm(nodeId, result, error);
         break;
       default:
-        // alert("Maybe error");
         break;
     }
   }
@@ -1965,13 +1960,18 @@ export class FeedService {
   }
 
   ////handle response
-  handleCreateChannelResult(nodeId:string, result: any , request: any){
+  handleCreateChannelResult(nodeId:string, result: any , request: any, error: any){
     let channelId = result.id;
     let channelName = request.name;
     let channelIntro = request.introduction;
     let owner_name = this.getSignInData().name;
     let owner_did = this.getSignInData().did;
     let avatarBin = request.avatar;
+
+    if (error != null && error != undefined && error.code != undefined){
+      this.handleError(error);
+      return;
+    }
 
     let avatar = this.serializeDataService.decodeData(avatarBin);
 
@@ -2006,12 +2006,17 @@ export class FeedService {
     this.subscribeChannel(nodeId,channelId);
   }
 
-  handlePublishPostResult(nodeId: string, result: any, request: any){
+  handlePublishPostResult(nodeId: string, result: any, request: any, error: any){
     let postId = result.id;
     let channelId = request.channel_id;
     let contentBin = request.content;
 
     let content = this.serializeDataService.decodeData(contentBin);
+
+    if (error != null && error != undefined && error.code != undefined){
+      this.handleError(error);
+      return;
+    }
 
     let post:Post = {
       nodeId    : nodeId,
@@ -2041,7 +2046,12 @@ export class FeedService {
     eventBus.publish(PublishType.publishPostSuccess);
   }
 
-  handlePostCommentResult(nodeId:string, result: any, request: any){
+  handlePostCommentResult(nodeId:string, result: any, request: any, error: any){
+
+    if (error != null && error != undefined && error.code != undefined){
+      this.handleError(error);
+      return;
+    }
     // let id = result.id;
     // let channel_id = request.channel_id;
     // let post_id = request.post_id;
@@ -2082,7 +2092,6 @@ export class FeedService {
   }
 
   handlePostLikeResult(nodeId:string, request: any, error: any){
-
     let channel_id: number = request.channel_id;
     let post_id: number = request.post_id;
     let comment_id: number = request.comment_id;
@@ -2108,6 +2117,11 @@ export class FeedService {
 
       }
       return ;
+    }
+
+    if (error != null && error != undefined && error.code != undefined){
+      this.handleError(error);
+      return;
     }
 
     if (comment_id == 0){
@@ -2153,10 +2167,17 @@ export class FeedService {
         eventBus.publish(PublishType.postDataUpdate);
       }else{
         let commentKey = this.getLikeCommentId(nodeId, channel_id, post_id, comment_id);
-
+        likeCommentMap[commentKey] = undefined;
+        this.storeService.set(PersistenceKey.likeCommentMap,likeCommentMap);
+        eventBus.publish(PublishType.commentDataUpdate);
       }
 
       return ;
+    }
+
+    if (error != null && error != undefined && error.code != undefined){
+      this.handleError(error);
+      return;
     }
 
     if (comment_id == 0){
@@ -2182,7 +2203,12 @@ export class FeedService {
     eventBus.publish(PublishType.postDataUpdate);
   }
 
-  handleGetMyChannelsResult(nodeId: string, responseResult :any){
+  handleGetMyChannelsResult(nodeId: string, responseResult: any, error: any){
+    if (error != null && error != undefined && error.code != undefined){
+      this.handleError(error);
+      return;
+    }
+
     let result = responseResult.channels;
     for (let index = 0; index < result.length; index++) {
       let id: number = result[index].id;
@@ -2219,7 +2245,12 @@ export class FeedService {
     eventBus.publish(PublishType.myChannelsDataUpdate);
   }
 
-  handleGetMyChannelsMetaDataResult(nodeId, result: any){
+  handleGetMyChannelsMetaDataResult(nodeId: string, result: any, error: any){
+    if (error != null && error != undefined && error.code != undefined){
+      this.handleError(error);
+      return;
+    }
+
     for (let index = 0; index < result.length; index++) {
       let id: number = result[index].id;
       let subscribers: number = result[index];
@@ -2231,8 +2262,13 @@ export class FeedService {
     eventBus.publish(PublishType.myChannelsDataUpdate);
   }
 
-  handleGetChannelsResult(nodeId: string, responseResult: any , request: any){
+  handleGetChannelsResult(nodeId: string, responseResult: any , request: any, error: any){
     let result = responseResult.channels;
+
+    if (error != null && error != undefined && error.code != undefined){
+      this.handleError(error);
+      return;
+    }
 
     for (let index = 0; index < result.length; index++) {
       let id = result[index].id;
@@ -2274,10 +2310,19 @@ export class FeedService {
     this.refreshLocalChannels();
   }
 
-  handleGetChannelDetailResult(result: any){
+  handleGetChannelDetailResult(result: any, error: any){
+    if (error != null && error != undefined && error.code != undefined){
+      this.handleError(error);
+      return;
+    }
   }
 
-  handleGetSubscribedChannelsResult(nodeId: string, responseResult: any, request: any){
+  handleGetSubscribedChannelsResult(nodeId: string, responseResult: any, request: any, error: any){
+    if (error != null && error != undefined && error.code != undefined){
+      this.handleError(error);
+      return;
+    }
+
     if (responseResult == "") {
       return ;
     }
@@ -2368,7 +2413,12 @@ export class FeedService {
     }
   }
 
-  handleGetPostsResult(nodeId: string, responseResult: any, request:any){
+  handleGetPostsResult(nodeId: string, responseResult: any, request: any, error: any){
+    if (error != null && error != undefined && error.code != undefined){
+      this.handleError(error);
+      return;
+    }
+
     let result = responseResult.posts;
     for (let index = 0; index < result.length; index++) {
       let channel_id = result[index].channel_id;
@@ -2408,7 +2458,12 @@ export class FeedService {
     eventBus.publish(PublishType.postDataUpdate);
   }
 
-  handleGetCommentsResult(nodeId: string, responseResult: any){
+  handleGetCommentsResult(nodeId: string, responseResult: any, error: any){
+    if (error != null && error != undefined && error.code != undefined){
+      this.handleError(error);
+      return;
+    }
+
     let result = responseResult.comments;
     for (let index = 0; index < result.length; index++) {
       let channel_id = result[index].channel_id;
@@ -2450,7 +2505,12 @@ export class FeedService {
     eventBus.publish(PublishType.commentDataUpdate);
   }
 
-  handleGetStatisticsResult(nodeId: string, result: any){
+  handleGetStatisticsResult(nodeId: string, result: any, error: any){
+    if (error != null && error != undefined && error.code != undefined){
+      this.handleError(error);
+      return;
+    }
+
     let serverStatistics: ServerStatistics = {
       did               : result.did,
       connecting_clients: result.connecting_clients
@@ -2480,6 +2540,11 @@ export class FeedService {
       return;
     }
 
+    if (error != null && error != undefined && error.code != undefined){
+      this.handleError(error);
+      return;
+    }
+
     channelsMap[nodeChannelId].isSubscribed = true;
     this.storeService.set(PersistenceKey.channelsMap,channelsMap);
     eventBus.publish(PublishType.subscribeFinish, nodeId,request.id, channelsMap[nodeChannelId].name);
@@ -2503,6 +2568,11 @@ export class FeedService {
       return;
     }
 
+    if (error != null && error != undefined && error.code != undefined){
+      this.handleError(error);
+      return;
+    }
+
     channelsMap[nodeChannelId].isSubscribed = false;
     this.storeService.set(PersistenceKey.channelsMap,channelsMap);
 
@@ -2517,22 +2587,17 @@ export class FeedService {
     eventBus.publish(PublishType.unsubscribeFinish, nodeId,request.id, channelsMap[nodeChannelId].name);
   }
 
-  handleAddNodePublisherResult(){
-
-  }
-
-  handleRemoveNodePublisherResult(){
-
-  }
-
   handleQueryChannelCreationPermissionResult(nodeId: string, result: any){
     if (creationPermissionMap == null || creationPermissionMap == undefined)
       creationPermissionMap = {};
     creationPermissionMap[nodeId]=result.authorized;
   }
 
-  handleEnableNotificationResult(){
-    //success
+  handleEnableNotificationResult(error: any){
+    if (error != null && error != undefined && error.code != undefined){
+      this.handleError(error);
+      return;
+    }
   }
 
 
@@ -2879,7 +2944,12 @@ export class FeedService {
     });
   }
 
-  handleSigninChallenge(nodeId:string, result: any){
+  handleSigninChallenge(nodeId:string, result: any, error: any){
+    if (error != null && error != undefined && error.code != undefined){
+      this.handleError(error);
+      return;
+    }
+    
     let requiredCredential = result.credential_required;
     let jws = result.jws;
 
@@ -2906,7 +2976,12 @@ export class FeedService {
       );
   }
 
-  handleSigninConfirm(nodeId:string, result: any){
+  handleSigninConfirm(nodeId:string, result: any, error: any){
+    if (error != null && error != undefined && error.code != undefined){
+      this.handleError(error);
+      return;
+    }
+
     if (accessTokenMap == null || accessTokenMap == undefined)
       accessTokenMap = {};
 
@@ -2998,8 +3073,8 @@ export class FeedService {
     }
 
     if (error != null && error != undefined && error.code != undefined){
-      this.native.toast(this.translate.instant("StartbindingPage.bindingError"));
-      return ;
+      this.handleError(error);
+      return;
     }
 
     let phase = result.phase;
@@ -3024,20 +3099,32 @@ export class FeedService {
   //     "transaction_payload": "{\"header\":{\"specification\":\"elastos/did/1.0\",\"operation\":\"create\"},\"payload\":\"eyJpZCI6ImRpZDplbGFzdG9zOmltV0xLcGM3cmUxNjZHOW9BU1k1dGcyZFhENGc5UGtUVjIiLCJwdWJsaWNLZXkiOlt7ImlkIjoiI3ByaW1hcnkiLCJwdWJsaWNLZXlCYXNlNTgiOiJmbVR1WUg5M3FRdkFxMjdreHJpd2h4NERQQjdnelFWWm5SaVIxRHpyb0NaZCJ9XSwiYXV0aGVudGljYXRpb24iOlsiI3ByaW1hcnkiXSwiZXhwaXJlcyI6IjIwMjUtMDYtMDhUMDE6MDI6MDRaIiwicHJvb2YiOnsiY3JlYXRlZCI6IjIwMjAtMDYtMDhUMDk6MDI6MDRaIiwic2lnbmF0dXJlVmFsdWUiOiI2bnNWNW52VThjZGs2RmhjQTZzb09aQ1lLa0dSV0hWWDR2cjRIQkZQU1pJUkNteFQ2SDN6ekF5ZG56VkNIRW5WekZrNERhbEk2d2w5anNVWFlGSjFLdyJ9fQ\",\"proof\":{\"verificationMethod\":\"#primary\",\"signature\":\"cAW_4csdqbKjoavJ8lNeDm9gKVPceDFiUfZW-rXvvqkcIoBkuhkfPkVP-AR07OXJh6ow3_8fEyDfOQJ-2ssOmw\"}}"
   //   }
   // }
-  handleImportDIDResponse(nodeId: string, result: any){
+  handleImportDIDResponse(nodeId: string, result: any, error: any){
+    if (error != null && error != undefined && error.code != undefined){
+      this.handleError(error);
+      return;
+    }
+
     let did = result.did;
     let transaction_payload = result.transaction_payload;
 
-    this.resolveServerDid(did, nodeId, transaction_payload,()=>{},()=>{});
+    this.resolveServerDid(did, nodeId, transaction_payload,()=>{
+      eventBus.publish("feeds:did_imported", nodeId, did, transaction_payload);
+    },()=>{
 
-    eventBus.publish("feeds:did_imported", nodeId, did, transaction_payload);
+    });
+
   }
 
   handleImportDID(feedUrl: string, defaultServer: Server, onSuccess: (server: Server)=>void, onError: (err: any)=>void){
     this.resolveDidDocument(feedUrl, defaultServer, onSuccess, onError);
   }
 
-  handleIssueCredentialResponse(nodeId: string, result: any){
+  handleIssueCredentialResponse(nodeId: string, result: any, error: any){
+    if (error != null && error != undefined && error.code != undefined){
+      this.handleError(error);
+      return;
+    }
     this.finishBinding(nodeId);
   }
 
@@ -3113,7 +3200,7 @@ export class FeedService {
     });
   }
 
-  resolveServerDid(did: string, nodeId: string, payload: string, onSuccess: ()=>void, onError: ()=>void){
+  resolveServerDid(did: string, nodeId: string, payload: string, onSuccess: ()=>void, onError: (error: string)=>void){
     let feedUrl = "feeds://"+did+"/"+cacheBindingAddress;
     let defaultServer = {
       name              : "No name provided",
@@ -3138,7 +3225,7 @@ export class FeedService {
         eventBus.publish("feeds:resolveDidSucess", nodeId, did);
     },(err)=>{
       bindingServerCache = defaultServer;
-      onError();
+      onError(err);
       eventBus.publish("feeds:resolveDidError", nodeId, did, payload);
     });
   }

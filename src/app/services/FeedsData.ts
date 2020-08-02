@@ -23,8 +23,8 @@ declare namespace FeedsData{
         subscribe_channel = "subscribe_channel",
         unsubscribe_channel = "unsubscribe_channel",
       
-        add_node_publisher = "add_node_publisher",
-        remove_node_publisher = "remove_node_publisher",
+        // add_node_publisher = "add_node_publisher",
+        // remove_node_publisher = "remove_node_publisher",
       
         query_channel_creation_permission = "query_channel_creation_permission",
       

@@ -337,16 +337,20 @@ export class CarrierService {
             (err) => {this.errorFun(err, error);});
     }
 
-    sendBinaryMessage(nodeId: string, message: Uint8Array, success: any, error: any) {
+    sendBinaryMessage(nodeId: string, message: Uint8Array, onSuccess:()=>void, onError?:(err: string)=>void) {
         if (this.platform.platforms().indexOf("cordova") < 0){
-            success();
+            onSuccess();
             return;
         }
         
         carrierInst.sendFriendBinaryMessage(
             nodeId, message,
-            () => {success();},
-            (err) => {this.errorFun(err, error);});
+            () => {
+                onSuccess();
+            },
+            (err) => {
+                onError(err);
+            });
     }
 
     errorFun(err, errorFun = null) {
