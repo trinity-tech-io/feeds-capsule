@@ -54,11 +54,10 @@ export class CreatenewpostPage implements OnInit {
     }
 
     ionViewWillEnter() {
-
+    this.isNewPost = true;
     this.events.subscribe('feeds:publishPostSuccess', () => {
       this.navCtrl.pop().then(()=>{
         this.native.toast_trans("CreatenewpostPage.tipMsg1");
-        this.isNewPost = true;
       });
     });
 
