@@ -1,5 +1,6 @@
-<ion-content [class.darkContainer]="theme.darkMode">
+<ion-content>
   <ion-searchbar placeholder="{{'SearchPage.searchFeeds'|translate}}" (ionInput)="getItems($event)"></ion-searchbar>
+  <div [class.darkContainer]="theme.darkMode">
   <div *ngIf="channelList.length == 0">
     <div class="center-content" >
       <div style="text-align: center; ">
@@ -30,7 +31,11 @@
           >
             <!-- <img-loader [src]="getAppIcon(app)" useImg></img-loader> -->
             <div class="channel-img-small">
-              <ion-avatar >
+              <ion-avatar class="avatar-div">
+                <div class="feed-source-card-status" style="position: absolute;top:0px;left:9px">
+                  <div class="online-circle"  *ngIf="nodeStatus[channel.nodeId] == 0"></div>
+                  <div class="offline-circle" *ngIf="nodeStatus[channel.nodeId] == 1"></div>
+                </div>
                 <img  src={{parseChannelAvatar(channel.avatar)}}>
               </ion-avatar>
             </div>
@@ -109,4 +114,5 @@
   </div>
 
   <div class="addfeedssource1" (click)="addfeedssource()" *ngIf="channelList.length > 0">{{"SearchPage.addfeedssource"|translate}}</div>
+</div>
 </ion-content>

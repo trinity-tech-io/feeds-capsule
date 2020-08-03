@@ -393,17 +393,21 @@ export class FeedService {
     this.initCallback();
   }
 
-  loadPostData(onFinish?:()=>void){
-    if(postMap == null || postMap == undefined){
-      this.storeService.get(PersistenceKey.postMap).then((mPostMap)=>{
-        postMap = mPostMap;
-        if(postMap == null || postMap == undefined)
-          postMap = {}
-        onFinish();
-      });
-    }else{
-      onFinish();
-    }
+  loadPostData(){
+    return new Promise((resolve, reject) =>{
+      if(postMap == null || postMap == undefined){
+        this.storeService.get(PersistenceKey.postMap).then((mPostMap)=>{
+          postMap = mPostMap;
+          if(postMap == null || postMap == undefined){
+              postMap = {};
+          }
+            resolve();
+        });
+      }else{
+           resolve();
+      }
+    })
+  
   }
 
   initData(){

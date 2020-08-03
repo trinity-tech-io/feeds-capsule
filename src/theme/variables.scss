@@ -225,7 +225,7 @@
 }
 
 
-html, body { height: 100%; }
+html, body { height: 100%; scroll-behavior:smooth;}
 
 $segment-button-md-text-color: #007AFF !important;
 
@@ -581,17 +581,6 @@ $segment-button-md-text-color: #007AFF !important;
   margin-top: 10px;
 }
 
-.like {
-  width: 16px;
-  height: 15.3px;
-  background-image: url("../assets/images/like.svg");
-}
-
-.like-s {
-  width: 15px;
-  height: 13.7px;
-  background-image: url("../assets/images/like-s.svg");
-}
 
 .comment{
   width: 16px;
@@ -1382,4 +1371,5 @@ vertical-align: middle;
     }
   }
 }
+
 

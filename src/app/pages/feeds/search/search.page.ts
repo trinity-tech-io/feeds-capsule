@@ -2,12 +2,8 @@ import { Component, OnInit, NgZone} from '@angular/core';
 import { NavController } from '@ionic/angular';
 import { FeedService } from 'src/app/services/FeedService';
 import { Events } from '@ionic/angular';
-import { Router } from '@angular/router';
-import { PopupProvider } from 'src/app/services/popup';
 import { NativeService } from 'src/app/services/NativeService';
-import { ActionSheetController } from '@ionic/angular';
 import { ThemeService } from 'src/app/services/theme.service';
-import { TranslateService } from "@ngx-translate/core";
 import { MenuService } from 'src/app/services/MenuService';
 
 @Component({
@@ -16,31 +12,31 @@ import { MenuService } from 'src/app/services/MenuService';
   styleUrls: ['./search.page.scss'],
 })
 export class SearchPage implements OnInit {
-  private channelList;
-  private connectStatus = 1;
-  // private subscribeStatusMap: any;
+  public nodeStatus:any={};
+  private channelList= [];
   constructor(
     private feedService: FeedService,
     private navCtrl: NavController,
     private events: Events,
     private zone: NgZone,
-    private router: Router,
-    private popup: PopupProvider,
     private native: NativeService,
-    private actionSheetController:ActionSheetController,
     public theme:ThemeService,
-    private translate:TranslateService,
     private menuService: MenuService) {
-    
-    // this.subscribeStatusMap = this.feedService.getSubscribeStatusMap();  
-    this.connectStatus = this.feedService.getConnectionStatus();
-    this.channelList = this.feedService.refreshLocalChannels();
-    // this.feedService.refreshChannels();
-    // feedService.doExploreTopics();
+     
+    }
 
-    this.events.subscribe('feeds:connectionChanged', connectionStatus => {
-      this.zone.run(() => {
-          this.connectStatus = connectionStatus;
+  ngOnInit() {
+  }
+
+  initData(){
+
+    this.channelList = this.feedService.refreshLocalChannels();
+    this.initnodeStatus();
+  
+
+    this.events.subscribe("feeds:friendConnectionChanged", (nodeId, status)=>{
+      this.zone.run(()=>{
+        this.nodeStatus[nodeId] = status;
       });
     });
 
@@ -48,6 +44,7 @@ export class SearchPage implements OnInit {
       // this.native.toast(name + " subscribed");
       this.zone.run(() => {
         this.channelList = this.feedService.refreshLocalChannels();
+        this.initnodeStatus();
       });
     });
 
@@ -55,28 +52,35 @@ export class SearchPage implements OnInit {
       // this.native.toast(name + " unsubscribed");
       this.zone.run(() => {
         this.channelList = this.feedService.refreshLocalChannels();
+        this.initnodeStatus();
       });
     });
 
     this.events.subscribe('feeds:refreshChannels', list =>{
       this.channelList = list;
+      this.initnodeStatus();
     });
 
     this.events.subscribe('feeds:channelsDataUpdate', () =>{
       this.channelList = this.feedService.getChannelsList();
+      this.initnodeStatus();
     });
-    
   }
 
-  ngOnInit() {
+  removeSubscribe(){
+    this.events.unsubscribe('feeds:friendConnectionChanged');
+    this.events.unsubscribe('feeds:subscribeFinish');
+    this.events.unsubscribe('feeds:unsubscribeFinish');
+    this.events.unsubscribe('feeds:refreshChannels');
+    this.events.unsubscribe('feeds:channelsDataUpdate');
   }
 
-  public navigateToDetailPage(nodeId: string, name: string, id: number) {
-    this.native.getNavCtrl().navigateForward(['/favorite/search/about/', nodeId, name, id]);
+  ionViewWillEnter() {
+       this.initData();
   }
 
-  navigateBackPage() {
-    this.navCtrl.pop();
+  ionViewWillLeave(){
+       this.removeSubscribe();
   }
 
   subscribe(nodeId: string, id: number){
@@ -110,7 +114,7 @@ export class SearchPage implements OnInit {
   }
 
   navTo(nodeId, channelId){
-    this.native.getNavCtrl().navigateForward(['/channels', nodeId, channelId]);
+    this.native.navigateForward(['/channels', nodeId, channelId],"");
   }
 
   parseChannelAvatar(avatar: string): string{
@@ -118,7 +122,19 @@ export class SearchPage implements OnInit {
   }
 
   addfeedssource(){
-    this.native.go('/menu/servers');
+    this.native.navigateForward(['/menu/servers'],"");
   }
+
+  checkServerStatus(nodeId: string){
+    return this.feedService.getServerStatusFromId(nodeId);
+  }
+
+  initnodeStatus(){
+    for(let index =0 ;index<this.channelList.length;index++){
+           let nodeId = this.channelList[index]['nodeId'];
+           let status = this.checkServerStatus(nodeId);
+           this.nodeStatus[nodeId] = status;
+    }
+ }
 
 }

@@ -102,7 +102,7 @@ export class AppService {
 
       initializeApp() {
         this.feedService.initSignInDataAsync((signInData)=>{
-          this.feedService.loadPostData(()=>{
+          this.feedService.loadPostData().then(()=>{
             if (signInData == null || 
               signInData == undefined ||
               this.feedService.getCurrentTimeNum() > signInData.expiresTS ){

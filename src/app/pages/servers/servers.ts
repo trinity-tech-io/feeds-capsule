@@ -98,7 +98,7 @@ export class ServersPage implements OnInit {
     ngOnDestroy() {
     }
 
-    ionViewDidEnter() {
+    ionViewWillEnter(){
         this.events.subscribe("feeds:updateTitle",()=>{
           this.initTitle();
         });
