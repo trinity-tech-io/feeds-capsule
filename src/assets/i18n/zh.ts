@@ -1,6 +1,6 @@
 export const zh = {
     "common":{
-        "followers":"微粉",
+        "followers":"关注",
         "allempty":"空空如也",
         "pullToRefresh":"下拉刷新",
         "Refreshing":"刷新中...",
@@ -108,7 +108,7 @@ export const zh = {
     },
     "ProfiledetailPage":{
         "profileDetails":"档案详情",
-        "subscribers":"微粉",
+        "subscribers":"关注",
         "name":"名称",
         "did":"DID身份码",
         "gender":"性别",
@@ -186,7 +186,7 @@ export const zh = {
     "ScanqrcodePage":{
         "introduce":"创建一个新频道",
         "introduce1":"绑定您的",
-        "introduce2":"微频服务 / 频道源",
+        "introduce2":"微频源 / 频道源",
         "introduce3":"继续",
         "introduce4":"扫描绑定地址"
     },
@@ -200,7 +200,7 @@ export const zh = {
         "abort":"中止",
         "Connectingserver": "正在连接微频源",
         "bindingError":"绑定过程出现异常",
-        "linkServerError": "您不是该服务的持有者，请更换后重试。",
+        "linkServerError": "您不是该微频源的持有者，请更换后重试。",
     },
     "PublishdidPage":{
         "introduce":"创建一个新频道",
