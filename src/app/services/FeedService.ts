@@ -214,7 +214,7 @@ enum ConnState {
 
 enum PublishType{
   ownFeedListChanged = "feeds:ownFeedListChanged  ",
-  // createTopicSuccess = "feeds:createTopicSuccess",
+  createTopicSuccess = "feeds:createTopicSuccess",
   postEventSuccess = "feeds:postEventSuccess",
   allFeedsListChanged= "feeds:allFeedsListChanged",
   subscribeFinish = "feeds:subscribeFinish",
@@ -2044,6 +2044,7 @@ export class FeedService {
     channelsMap[nodeChannelId] = channel;
     this.storeService.set(PersistenceKey.channelsMap, channelsMap);
 
+    eventBus.publish(PublishType.createTopicSuccess);
     eventBus.publish(PublishType.channelsDataUpdate);
 
     this.subscribeChannel(nodeId,channelId);
@@ -3495,10 +3496,10 @@ export class FeedService {
       eventBus.publish(PublishType.removeFeedSourceFinish);
       eventBus.publish(PublishType.refreshPage);
     },(error)=>{
-
+      eventBus.publish(PublishType.removeFeedSourceFinish);
+      eventBus.publish(PublishType.refreshPage);
     });
 
-    
   }
 
   removeLastUpdate(nodeId:string, channelId: number){
@@ -3605,7 +3606,9 @@ export class FeedService {
 
   restoreData(nodeId: string){
     this.getSubscribedChannels(nodeId, Communication.field.last_update, 0, 0, 0);
-    this.getMyChannels(nodeId,Communication.field.last_update,0,0,0);
+
+    if(bindingServer !=null && bindingServer != undefined && nodeId == bindingServer.nodeId)
+      this.getMyChannels(nodeId,Communication.field.last_update,0,0,0);
   }
 
   parseBindServerUrl(content: string): BindURLData{
