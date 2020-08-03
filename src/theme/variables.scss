@@ -586,12 +586,18 @@ $segment-button-md-text-color: #007AFF !important;
   width: 16px;
   height: 14px;
   background-image: url("../assets/images/comment.svg");
+  object-fit: contain;
+  vertical-align: middle;
+  margin-left: 33px;
 }
 
 .comment-s {
   width: 16px;
   height: 14px;
   background-image: url("../assets/images/comment-s.svg");
+  object-fit: contain;
+  vertical-align: middle;
+  margin-left: 33px;
 }
 
 .heart {
@@ -671,15 +677,6 @@ $segment-button-md-text-color: #007AFF !important;
   margin-bottom: 17px;
   width: 100%;
   // display: flex;
-}
-
-.comment{
-  width: 16px;
-  height: 14px;
-  object-fit: contain;
-
-  vertical-align: middle;
-  margin-left: 33px;
 }
 
 .comment-text{
