@@ -1,8 +1,7 @@
 import { Component, OnInit, NgZone } from '@angular/core';
-import { Events, PopoverController, IonTabs} from '@ionic/angular';
+import { Events,IonTabs} from '@ionic/angular';
 import { FeedService } from 'src/app/services/FeedService';
 import { MenuService } from 'src/app/services/MenuService';
-import { CommentComponent } from '../../../components/comment/comment.component'
 import { FeedsPage } from '../feeds.page'
 import { ThemeService } from 'src/app/services/theme.service';
 import { UtilService } from 'src/app/services/utilService';
@@ -16,13 +15,11 @@ import { NativeService } from 'src/app/services/NativeService';
 
 
 export class HomePage implements OnInit {
-  public popover:any;
   private postList: any = [];
   public nodeStatus:any={};
   constructor(
     private feedspage: FeedsPage,
     private tabs: IonTabs,
-    private popoverController: PopoverController,
     private events: Events,
     private zone: NgZone,
     private feedService :FeedService,
@@ -66,9 +63,6 @@ export class HomePage implements OnInit {
     this.events.unsubscribe("feeds:postDataUpdate");
     this.events.unsubscribe("feeds:refreshPage");
     this.events.unsubscribe("feeds:friendConnectionChanged");
-    if (this.popover !== undefined) {
-      this.popover.dismiss();
-    }
   }
 
   getChannel(nodeId, channelId):any{
@@ -122,25 +116,8 @@ export class HomePage implements OnInit {
   refresh(){
   }
 
-  async showCommentPage(event, nodeId, channelId, postId){
-    this.popover = await this.popoverController.create({
-      component: CommentComponent,
-      componentProps: {nodeId: nodeId, channelId: channelId, postId: postId},
-      event:event,
-      translucent: true,
-      cssClass: 'bottom-sheet-popover'
-    });
-
-    if (this.popover !== undefined) {
-        this.popover.onDidDismiss().then((result)=>{
-        if(result.data == undefined){
-          return;
-        }
-        });
-    }
-
-   
-    return await this.popover.present();
+  showCommentPage(nodeId, channelId, postId){
+    this.navtive.navigateForward(["comment",nodeId,channelId,postId],"");
   }
 
   checkMyLike(nodeId: string, channelId: number, postId: number){

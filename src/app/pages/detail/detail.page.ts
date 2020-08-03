@@ -1,8 +1,9 @@
 import { Component, OnInit, NgZone } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { NavController, Events, PopoverController } from '@ionic/angular';
+import { NavController, Events} from '@ionic/angular';
+import { NativeService } from 'src/app/services/NativeService';
 import { FeedService } from 'src/app/services/FeedService';
-import { CommentComponent } from '../../components/comment/comment.component'
+
 @Component({
   selector: 'app-detail',
   templateUrl: './detail.page.html',
@@ -21,12 +22,12 @@ export class DetailPage implements OnInit {
   private channelId: number;
   private postId: number;
   constructor(
-    private popoverController: PopoverController,
     private events: Events,
     private zone: NgZone,
     private navCtrl: NavController,
     private acRoute: ActivatedRoute,
-    private feedService: FeedService) {
+    private feedService: FeedService,
+    private native:NativeService,) {
     this.connectStatus = this.feedService.getConnectionStatus();
 
     acRoute.params.subscribe((data)=>{
@@ -92,21 +93,8 @@ export class DetailPage implements OnInit {
   comment(){
   }
 
-  async showCommentPage(event){
-    const popover = await this.popoverController.create({
-      component: CommentComponent,
-      componentProps: {nodeId:this.nodeId,channelId:this.channelId,postId:this.postId},
-      event:event,
-      translucent: true,
-      cssClass: 'bottom-sheet-popover'
-    });
-
-    popover.onDidDismiss().then((result)=>{
-      if(result.data == undefined){
-        return;
-      }
-    });
-    return await popover.present();
+  showCommentPage(){
+    this.native.navigateForward(["/comment",this.nodeId,this.channelId,this.postId],"");
   }
 
 

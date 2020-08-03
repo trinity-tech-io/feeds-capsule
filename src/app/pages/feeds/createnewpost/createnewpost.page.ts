@@ -14,8 +14,9 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
   styleUrls: ['./createnewpost.page.scss'],
 })
 export class CreatenewpostPage implements OnInit {
+  public nodeStatus = {};
   private channelAvatar = "";
-  private channelName;
+  private channelName = "";
   private subscribers;
   private newPost="";
   private imgUrl: string = "";
@@ -42,11 +43,11 @@ export class CreatenewpostPage implements OnInit {
         this.nodeId = data.nodeId;
         this.channelId = data.channelId;
 
-        let channel = this.feedService.getChannelFromId(this.nodeId,this.channelId);
+        let channel = this.feedService.getChannelFromId(this.nodeId,this.channelId) || {};
 
-        this.channelName = channel.name;
-        this.subscribers = channel.subscribers;
-        this.channelAvatar = this.feedService.parseChannelAvatar(channel.avatar);
+        this.channelName = channel["name"] || "";
+        this.subscribers = channel["subscribers"] || "";
+        this.channelAvatar = this.feedService.parseChannelAvatar(channel["avatar"]);
       });
     }
 
@@ -55,6 +56,13 @@ export class CreatenewpostPage implements OnInit {
 
     ionViewWillEnter() {
     this.isNewPost = true;
+
+    this.events.subscribe("feeds:friendConnectionChanged", (nodeId, status)=>{
+      this.zone.run(()=>{
+        this.nodeStatus[nodeId] = status;
+      });
+     });
+
     this.events.subscribe('feeds:publishPostSuccess', () => {
       this.navCtrl.pop().then(()=>{
         this.native.toast_trans("CreatenewpostPage.tipMsg1");
@@ -69,11 +77,13 @@ export class CreatenewpostPage implements OnInit {
       this.initTitle();
     });
     this.initTitle();
+    this.initnodeStatus();
     this.native.setTitleBarBackKeyShown(true);
   }
 
-  ionViewWillUnload(){
+  ionViewWillLeave(){
     this.hideBigImage();
+    this.events.unsubscribe("feeds:friendConnectionChanged");
     this.events.unsubscribe("feeds:updateTitle");
     this.events.unsubscribe("feeds:publishPostSuccess");
     this.events.unsubscribe("rpcRequest:error");
@@ -136,5 +146,14 @@ export class CreatenewpostPage implements OnInit {
   hideBigImage(){
     this.bigImage = false;
   }
+
+  checkServerStatus(nodeId: string){
+    return this.feedService.getServerStatusFromId(nodeId);
+  }
+
+  initnodeStatus(){
+    let status = this.checkServerStatus(this.nodeId);
+   this.nodeStatus[this.nodeId] = status;
+ }
 }
  

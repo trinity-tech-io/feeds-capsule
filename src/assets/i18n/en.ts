@@ -261,5 +261,10 @@ export const en = {
     "DIDdata":{
         "Notprovided": "Not provided",
         "NotprovidedfromDIDDocument":"Not provided from DID Document"
+    },
+    "CommentPage":{
+        "newComment":"New Comment",
+        "publishComment":"Publish comment",
+        "enterComments":"Enter Comments"
     }
 };

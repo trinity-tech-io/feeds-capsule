@@ -1,7 +1,11 @@
 <ion-content [class.darkContainer]="theme.darkMode">
      <div class="channel-img-small-div">
       <div class="channel-img-small">
-        <ion-avatar >
+        <ion-avatar>
+          <div class="feed-source-card-status" style="position: absolute;top:0px;left:0px">
+            <div class="online-circle"  *ngIf="nodeStatus[nodeId] == 0"></div>
+            <div class="offline-circle" *ngIf="nodeStatus[nodeId] == 1"></div>
+          </div>
           <img  src={{channelAvatar}}>
         </ion-avatar>
       </div> 

@@ -3,7 +3,7 @@ import { NavController, Events, PopoverController } from '@ionic/angular';
 import { FeedService } from 'src/app/services/FeedService';
 import { ActivatedRoute } from '@angular/router';
 import { Router } from '@angular/router';
-import { CommentComponent } from '../../../components/comment/comment.component'
+
 
 @Component({
   selector: 'page-content',
@@ -111,20 +111,7 @@ export class FeedContentPage implements OnInit {
     this.router.navigate(['/detail/',this.nodeId,channelId,postId]);
   }
 
-  async showCommentPage(event, channelId: number, postId: number){
-    const popover = await this.popoverController.create({
-      component: CommentComponent,
-      componentProps: {nodeId:this.nodeId,channelId:channelId,postId:postId},
-      event:event,
-      translucent: true,
-      cssClass: 'bottom-sheet-popover'
-    });
-
-    popover.onDidDismiss().then((result)=>{
-      if(result.data == undefined){
-        return;
-      }
-    });
-    return await popover.present();
+  showCommentPage(event, channelId: number, postId: number){
+  
   }
 }

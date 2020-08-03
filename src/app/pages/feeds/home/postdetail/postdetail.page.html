@@ -38,8 +38,8 @@
           <img class="like" [ngClass]="{'like-s': checkMyLike()}" (click)="like()">
           <ion-label class="like-text" [ngClass]="{'like-s-text': checkMyLike()}" (click)="like()">{{likesNum}}</ion-label>
 
-          <img src="../../../../../assets/images/bubble-line.svg" class="comment" (click)="showCommentPage($event)">
-          <ion-label class="comment-text white" (click)="showCommentPage(nodeId,channelId,postId,$event)">{{commentsNum}}</ion-label>
+          <img src="./assets/images/bubble-line.svg" class="comment" (click)="showCommentPage(nodeId,channelId,postId)">
+          <ion-label class="comment-text white" (click)="showCommentPage(nodeId,channelId,postId)">{{commentsNum}}</ion-label>
 
           <ion-label class="post-detail-ts">{{handleDisplayTime(postTS)}}</ion-label>
         </div>

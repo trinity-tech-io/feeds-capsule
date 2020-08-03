@@ -1,5 +1,5 @@
 import { Component, OnInit, NgZone } from '@angular/core';
-import { NavController, Events, PopoverController } from '@ionic/angular';
+import { NavController, Events} from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
 import { FeedService } from 'src/app/services/FeedService';
 import { NativeService } from 'src/app/services/NativeService';
@@ -8,7 +8,7 @@ import { UtilService } from 'src/app/services/utilService';
 import { MenuService } from 'src/app/services/MenuService';
 import { TranslateService } from "@ngx-translate/core";
 import { Router } from '@angular/router'
-import { CommentComponent } from '../../../../components/comment/comment.component'
+
 
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
@@ -32,7 +32,6 @@ export class ChannelsPage implements OnInit {
   private followStatus = false;
   constructor(
     private navCtrl: NavController,
-    private popoverController: PopoverController,
     private router: Router,
     private zone: NgZone,
     private events: Events,
@@ -159,23 +158,8 @@ export class ChannelsPage implements OnInit {
     this.native.getNavCtrl().navigateForward(['/postdetail',nodeId, channelId,postId]);
   }
 
-  async showCommentPage(event, nodeId, channelId, postId){
-    const popover = await this.popoverController.create({
-      component: CommentComponent,
-      componentProps: {nodeId: nodeId, channelId: channelId, postId: postId},
-      event:event,
-      translucent: true,
-      cssClass: 'bottom-sheet-popover'
-    });
-
-    if (popover !== undefined) {
-      popover.onDidDismiss().then((result)=>{
-      if(result.data == undefined){
-        return;
-      }
-      });
-    }
-    return await popover.present();
+  showCommentPage(nodeId, channelId, postId){
+    this.native.navigateForward(["comment",nodeId,channelId,postId],"");
   }
 
   checkMyLike(nodeId: string, channelId: number, postId: number){

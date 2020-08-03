@@ -56,8 +56,8 @@
               <img class="like" [ngClass]="{'like-s': checkMyLike(post.nodeId, post.channel_id, post.id)}" (click)="like(post.nodeId, post.channel_id, post.id)">
               <ion-label class="like-text" [ngClass]="{'like-s-text': checkMyLike(post.nodeId, post.channel_id, post.id)}" (click)="like(post.nodeId, post.channel_id, post.id)">{{post.likes}}</ion-label>
     
-              <img src="./assets/images/bubble-line.svg" class="comment" (click)="showCommentPage($event, post.nodeId, post.channel_id, post.id)">
-              <ion-label class="comment-text"  (click)="showCommentPage($event, post.nodeId, post.channel_id, post.id)">{{post.comments}}</ion-label>
+              <img src="./assets/images/bubble-line.svg" class="comment" (click)="showCommentPage(post.nodeId, post.channel_id, post.id)">
+              <ion-label class="comment-text"  (click)="showCommentPage(post.nodeId, post.channel_id, post.id)">{{post.comments}}</ion-label>
             </div>
           </div>
         </ion-card-content>

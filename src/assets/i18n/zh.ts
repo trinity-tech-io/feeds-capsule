@@ -261,5 +261,10 @@ export const zh = {
     "DIDdata": {
         "Notprovided": "未提供",
         "NotprovidedfromDIDDocument": "DID文档未提供"
+    },
+    "CommentPage":{
+        "newComment":"新建微评",
+        "publishComment":"发布微评",
+        "enterComments":"输入微评"
     }
 };
