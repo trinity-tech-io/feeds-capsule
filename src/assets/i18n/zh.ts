@@ -43,8 +43,8 @@ export const zh = {
         "allempty":"空空如也",
         "emptyDes":"尚未关注过任何微频",
         "exploreFeeds":"探索微频",
-        "minutesAgo":" 分钟前",
-        "hoursAgo":" 小时前"
+        "minutesAgo":"分钟前",
+        "hoursAgo":"小时前"
     },
     "ProfilePage":{
         "myFeeds":"我的微频",
@@ -149,7 +149,7 @@ export const zh = {
         "openQRScanner":"扫描微频源二维码",
         "confirm":"确认",
         "sourceaddresshere":"输入微频源地址",
-        "tipMsg":"微频网址可能错误",
+        "tipMsg":"微频源地址可能错误",
         "exploreFeedSources":"探索微频源",
         "title":"添加微频源",
         "serverMsg1": "微频源 :\n",
@@ -173,14 +173,14 @@ export const zh = {
         "deleteFeedSource":"删除微频源",
         "feedUrl":"微频源URL网址",
         "serverInfo":"源信息",
-        "Pleasewait": "请稍等...",
-        "Feedurlmaybeerror": "微频网址可能错误",
+        "Pleasewait": "请稍候...",
+        "Feedurlmaybeerror": "微频源URL网址可能错误",
         "DeletethisFeedSource": "删除这个微频源?",
         "cancel": "取消",
         "DeleteFeedSource": "删除微频源!",
         "RemovethisFeedSource": "移除这个微频源?",
         "RemoveFeedSource": "移除微频源!",
-        "removeserver": "已移除源",
+        "removeserver": "已移除微频源",
         "feedsSourceQRCode":"微频源二维码",
     },
     "ScanqrcodePage":{
@@ -194,8 +194,8 @@ export const zh = {
         "introduce":"创建一个新频道",
         "introduce1":"在浏览器中验证绑定代码是否相似",
         "introduce2":"已验证绑定代码",
-        "introduce3":"微频源地址",
-        "linkServer":"您正在关联一个微频源，请确认微频源地址与之前绑定的微频源是否一致。",
+        "introduce3":"微频源URL网址",
+        "linkServer":"您正在关联一个微频源，请确认微频源URL网址与之前绑定的微频源是否一致。",
         "confirm":"确认",
         "abort":"中止",
         "Connectingserver": "正在连接微频源",
@@ -252,11 +252,6 @@ export const zh = {
         "addingPost":"新建微说",
         "tipMsg":"请输入内容！",
         "tipMsg1":"发布成功！",
-    },
-    "CommentComponent":{
-        "newComment":"新建微评",
-        "publishComment":"发布微评",
-        "enterComments":"输入微评"
     },
     "DIDdata": {
         "Notprovided": "未提供",

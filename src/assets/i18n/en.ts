@@ -253,11 +253,6 @@ export const en = {
         "tipMsg":"Please input message!",
         "tipMsg1":"Post Sent successfully!",
     },
-    "CommentComponent":{
-        "newComment":"New Comment",
-        "publishComment":"Publish comment",
-        "enterComments":"Enter Comments"
-    },
     "DIDdata":{
         "Notprovided": "Not provided",
         "NotprovidedfromDIDDocument":"Not provided from DID Document"
