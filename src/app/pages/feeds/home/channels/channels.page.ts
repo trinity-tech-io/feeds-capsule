@@ -64,32 +64,6 @@ export class ChannelsPage implements OnInit {
       this.postList = this.feedService.getPostListFromChannel(this.nodeId, this.channelId);
       // this.posts = this.feedService.refreshLocalPost("",this.id);
     });
-
-    this.events.subscribe('feeds:refreshPage',()=>{
-      this.zone.run(() => {
-        this.postList = this.feedService.getPostListFromChannel(this.nodeId, this.channelId);
-      });
-    });
-
-    this.events.subscribe('feeds:postDataUpdate',()=>{
-      this.zone.run(() => {
-        
-        this.postList = this.feedService.getPostListFromChannel(this.nodeId, this.channelId);
-
-      });
-    });
-
-    this.events.subscribe('feeds:subscribeFinish', (nodeId, channelId, name)=> {
-      this.zone.run(() => {
-        this.checkFollowStatus(this.nodeId,this.channelId);
-      });
-    });
-
-    this.events.subscribe('feeds:unsubscribeFinish', (nodeId, channelId, name) => {
-      this.zone.run(() => {
-        this.checkFollowStatus(this.nodeId,this.channelId);
-      });
-    });
   }
 
   subscribe(){
@@ -110,10 +84,43 @@ export class ChannelsPage implements OnInit {
     });
     this.initTitle();
     this.native.setTitleBarBackKeyShown(true);
+
+    this.events.subscribe('feeds:refreshPage',()=>{
+      this.zone.run(() => {
+        this.postList = this.feedService.getPostListFromChannel(this.nodeId, this.channelId);
+      });
+    });
+
+    this.events.subscribe('feeds:postDataUpdate',()=>{
+      this.zone.run(() => {
+        
+        this.postList = this.feedService.getPostListFromChannel(this.nodeId, this.channelId);
+
+      });
+    });
+
+    this.events.subscribe('feeds:subscribeFinish', (nodeId, channelId, name)=> {
+      this.zone.run(() => {
+        this.checkFollowStatus(this.nodeId,this.channelId);
+      });
+    });
+    
+    this.events.subscribe('feeds:unsubscribeFinish', (nodeId, channelId, name) => {
+      this.zone.run(() => {
+        this.checkFollowStatus(this.nodeId,this.channelId);
+        this.native.navigateForward(['/tabs/home'],{
+          replaceUrl: true
+        });
+      });
+    });
   }
 
   ionViewWillUnload(){
     this.events.unsubscribe("feeds:updateTitle");
+    this.events.unsubscribe("feeds:refreshPage");
+    this.events.unsubscribe("feeds:postDataUpdate");
+    this.events.unsubscribe("feeds:subscribeFinish");
+    this.events.unsubscribe("feeds:unsubscribeFinish");
   }
 
   initTitle(){

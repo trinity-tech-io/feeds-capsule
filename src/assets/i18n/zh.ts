@@ -20,7 +20,9 @@ export const zh = {
         "share":"分享",
         "sending":"正在发送...",
         "addressinvalid":"地址无效",
-        "commingSoon":"敬请期待 ..."
+        "commingSoon":"敬请期待 ...",
+        "followSuccess":"关注成功",
+        "unFollowSuccess":"取消关注成功"
     },
     "app":{
         "profileDetails":"档案详情",

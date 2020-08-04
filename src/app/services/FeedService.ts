@@ -2638,6 +2638,8 @@ export class FeedService {
     this.refreshSubscribedChannels();
 
     this.updatePostWithTime(nodeId,request.id, 0);
+
+    this.native.toast(this.translate.instant("common.followSuccess"));
   }
 
   handleUnsubscribeChannelResult(nodeId:string, request: any, error: any){
@@ -2671,6 +2673,8 @@ export class FeedService {
     this.deletePostFromChannel(nodeId, request.id);
 
     eventBus.publish(PublishType.unsubscribeFinish, nodeId,request.id, channelsMap[nodeChannelId].name);
+
+    this.native.toast(this.translate.instant("common.unFollowSuccess"));
   }
 
   handleQueryChannelCreationPermissionResult(nodeId: string, result: any){
@@ -2986,7 +2990,6 @@ export class FeedService {
   }
 
   signinChallengeRequest(nodeId: string , requiredCredential: boolean){
-    console.log("signinChallengeRequest==="+nodeId);
     let request: Communication.signin_request_challenge_request = {
       version: "1.0",
       method : "signin_request_challenge",

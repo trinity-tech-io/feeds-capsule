@@ -136,6 +136,12 @@ export class PostdetailPage implements OnInit {
     });
     this.initTitle();
     this.native.setTitleBarBackKeyShown(true);
+
+    this.events.subscribe("feeds:unsubscribeFinish",()=>{
+      this.native.navigateForward(['/tabs/home'],{
+        replaceUrl: true
+      });
+    });
   }
 
 
@@ -147,6 +153,7 @@ export class PostdetailPage implements OnInit {
     this.events.unsubscribe("feeds:postDataUpdate");
     this.events.unsubscribe("feeds:friendConnectionChanged");
     this.events.unsubscribe("feeds:updateTitle");
+    this.events.unsubscribe("feeds:unsubscribeFinish");
   }
 
  
@@ -212,7 +219,7 @@ export class PostdetailPage implements OnInit {
   }
 
   menuMore(){
-    this.menuService.showChannelMenu(this.nodeId, this.channelId, this.channelName);
+    this.menuService.showChannelMenu(this.nodeId, Number(this.channelId), this.channelName);
   }
 
   showBigImage(content: any){

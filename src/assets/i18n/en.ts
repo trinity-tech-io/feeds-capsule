@@ -20,7 +20,9 @@ export const en = {
         "share":"Share",
         "sending":"Sending...",
         "addressinvalid":"Address invalid",
-        "commingSoon":"Comming soon ..."
+        "commingSoon":"Comming soon ...",
+        "followSuccess":"Follow success",
+        "unFollowSuccess":"UnFollow success"
     },
     "app":{
         "profileDetails":"Profile Details",
