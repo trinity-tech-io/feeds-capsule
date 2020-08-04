@@ -52,6 +52,18 @@ export class StartbindingPage implements OnInit {
       // }
     });
 
+    
+
+  }
+
+  ngOnInit() {
+
+  }
+
+  ionViewWillEnter() {
+    this.initTitle();
+    this.native.setTitleBarBackKeyShown(true);
+
     this.events.subscribe('feeds:owner_declared', (nodeId, phase, did, payload) => {
       if (!this.isProcess){
         this.isProcess = true;
@@ -78,7 +90,7 @@ export class StartbindingPage implements OnInit {
       }
       
     });
-
+    
     this.events.subscribe('feeds:issue_credential', () => {
       this.zone.run(() => {
           this.native.getNavCtrl().navigateForward(['/bindservice/finish/',this.nodeId],{
@@ -86,7 +98,7 @@ export class StartbindingPage implements OnInit {
           });
       });
     });
-
+    
     this.events.subscribe("feeds:friendConnectionChanged", (nodeId, status)=>{
       if(this.nodeId == nodeId && status == 0)
       this.native.hideLoading();
@@ -103,6 +115,7 @@ export class StartbindingPage implements OnInit {
       });
     });
 
+    
     this.events.subscribe('feeds:resolveDidSucess', (nodeId, did) => {
       this.zone.run(() => {
           this.native.navigateForward(['/bindservice/issuecredential', nodeId, did],{
@@ -110,16 +123,6 @@ export class StartbindingPage implements OnInit {
           });
       });
     });
-
-  }
-
-  ngOnInit() {
-
-  }
-
-  ionViewWillEnter() {
-    this.initTitle();
-    this.native.setTitleBarBackKeyShown(true);
   }
 
   initTitle(){
@@ -127,7 +130,11 @@ export class StartbindingPage implements OnInit {
   }
 
   ionViewWillUnload(){
-     
+    this.events.unsubscribe("feeds:owner_declared");
+    this.events.unsubscribe("feeds:issue_credential");
+    this.events.unsubscribe("feeds:friendConnectionChanged");
+    this.events.unsubscribe("feeds:resolveDidError");
+    this.events.unsubscribe("feeds:resolveDidSucess");
   }
 
   confirm(){

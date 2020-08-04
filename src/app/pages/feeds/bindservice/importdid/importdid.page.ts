@@ -39,6 +39,13 @@ export class ImportdidPage implements OnInit {
       //   });
       // });
 
+      
+    }
+
+    ionViewWillEnter() {
+      this.initTitle();
+      this.native.setTitleBarBackKeyShown(true);
+
       this.events.subscribe('feeds:resolveDidError', (nodeId, did, payload) => {
         this.zone.run(() => {
             this.native.navigateForward(['/bindservice/publishdid/',nodeId, did, payload],{
@@ -53,16 +60,12 @@ export class ImportdidPage implements OnInit {
               replaceUrl: true
             });
         });
-      });   
-    }
-
-    ionViewWillEnter() {
-      this.initTitle();
-      this.native.setTitleBarBackKeyShown(true);
+      });
     }
   
     ionViewWillUnload(){
-  
+      this.events.unsubscribe('feeds:resolveDidError');
+      this.events.unsubscribe('feeds:resolveDidSucess');
     }
   
   

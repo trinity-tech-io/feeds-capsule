@@ -725,24 +725,21 @@ export class FeedService {
         friendConnectionMap = {};
 
       friendConnectionMap[friendId] = friendStatus;
+      if(serversStatus == null ||serversStatus == undefined)
+        serversStatus = {}
 
-      
+      serversStatus[friendId] = {
+        nodeId: friendId,
+        did: "string",
+        status: friendStatus
+      }
+        
       if(lastConnectStatus != friendStatus && friendStatus == ConnState.connected){
         if (cacheBindingAddress != "" && isBindServer){
           this.carrierService.getIdFromAddress(cacheBindingAddress,(nodeId)=>{
             if (friendId != nodeId){
               this.doFriendConnection(friendId, friendStatus);
             }
-
-            if(serversStatus == null ||serversStatus == undefined)
-                serversStatus = {}
-
-              serversStatus[friendId] = {
-                nodeId: friendId,
-                did: "string",
-                status: friendStatus
-              }
-            
           });
         }else{
           if (serverMap[friendId] != undefined)
@@ -753,28 +750,19 @@ export class FeedService {
   }
 
   doFriendConnection(friendId: string, friendStatus:any){
-      if(serversStatus == null ||serversStatus == undefined)
-        serversStatus = {}
-
-      serversStatus[friendId] = {
-        nodeId: friendId,
-        did: "string",
-        status: friendStatus
+    if (friendStatus == ConnState.connected){
+      if (accessTokenMap == null || accessTokenMap == undefined)
+        accessTokenMap = {};
+      if(accessTokenMap[friendId] == undefined){
+        this.signinChallengeRequest(friendId,true);
+      }else{
+        this.prepare(friendId);
       }
+    }
+    eventBus.publish(PublishType.friendConnectionChanged, friendId, friendStatus);
 
-      if (friendStatus == ConnState.connected){
-        if (accessTokenMap == null || accessTokenMap == undefined)
-          accessTokenMap = {};
-        if(accessTokenMap[friendId] == undefined){
-          this.signinChallengeRequest(friendId,true);
-        }else{
-          this.prepare(friendId);
-        }
-      }
-      eventBus.publish(PublishType.friendConnectionChanged, friendId, friendStatus);
-
-      this.storeService.set(PersistenceKey.serversStatus,serversStatus);
-      eventBus.publish(PublishType.serverConnectionChanged,serversStatus);
+    this.storeService.set(PersistenceKey.serversStatus,serversStatus);
+    eventBus.publish(PublishType.serverConnectionChanged,serversStatus);
   }
 
   friendAddCallback(){

@@ -33,6 +33,13 @@ export class IssuecredentialPage implements OnInit {
         this.did = data.did;
       });
 
+
+    }
+
+    ionViewWillEnter(){
+      this.initTitle();
+      this.native.setTitleBarBackKeyShown(true);
+
       this.events.subscribe('feeds:issue_credential', () => {
         this.zone.run(() => {
             this.native.navigateForward(['/bindservice/finish/',this.nodeId],{
@@ -41,14 +48,9 @@ export class IssuecredentialPage implements OnInit {
         });
       });
     }
-
-    ionViewWillEnter(){
-      this.initTitle();
-      this.native.setTitleBarBackKeyShown(true);
-    }
   
     ionViewWillUnload(){
-     
+      this.events.unsubscribe('feeds:issue_credential');
     }
   
   
