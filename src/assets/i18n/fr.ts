@@ -23,7 +23,8 @@ export const fr = {
         "commingSoon": "Comming soon ...",
         "followSuccess":"Follow success",
         "unFollowSuccess":"UnFollow success",
-        "noImageSelected":"No Image Selected"
+        "noImageSelected":"No Image Selected",
+        "loggingIn":"Logging in"
     },
     "app": {
         "profileDetails": "Profile Details",

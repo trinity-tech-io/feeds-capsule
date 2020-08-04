@@ -1149,6 +1149,17 @@ export class FeedService {
     return true;
   }
 
+  hasAccessToken(nodeId: string): boolean{
+    if (accessTokenMap == null || accessTokenMap == undefined)
+        accessTokenMap = {};
+    if(accessTokenMap[nodeId] == undefined){
+      this.signinChallengeRequest(nodeId,true);
+      return false;
+    }else{
+      return true;
+    }
+  }
+
   parseResult(didData: DidData ,service: DIDPlugin.Service) {
     if (didData == null){
       return ;
@@ -1421,13 +1432,8 @@ export class FeedService {
 
   //// new request
   createChannel(nodeId: string, name: string, introduction: string, avatar: any){
-    if(accessTokenMap == null ||
-      accessTokenMap == undefined||
-      accessTokenMap[nodeId] == undefined){
-        //TODO error
-        return;
-      }
-
+    if(!this.hasAccessToken(nodeId))
+      return;
 
     let avatarBin = this.serializeDataService.encodeData(avatar);
 
@@ -1446,12 +1452,8 @@ export class FeedService {
   }
 
   publishPost(nodeId: string, channel_id: number, content: any){
-    if(accessTokenMap == null ||
-      accessTokenMap == undefined||
-      accessTokenMap[nodeId] == undefined)
-      //TODO error
+    if(!this.hasAccessToken(nodeId))
       return;
-
 
     let contentBin = this.serializeDataService.encodeData(content);
 
@@ -1470,10 +1472,7 @@ export class FeedService {
 
   postComment(nodeId: string, channel_id: number, post_id: number,
               comment_id , content: any){
-    if(accessTokenMap == null ||
-      accessTokenMap == undefined||
-      accessTokenMap[nodeId] == undefined)
-      //TODO error
+    if(!this.hasAccessToken(nodeId))
       return;
 
     let contentBin = this.serializeDataService.encodeData(content);
@@ -1494,10 +1493,7 @@ export class FeedService {
   }
 
   postLike(nodeId: string, channel_id: number, post_id: number, comment_id: number){
-    if(accessTokenMap == null ||
-      accessTokenMap == undefined||
-      accessTokenMap[nodeId] == undefined)
-      //TODO error
+    if(!this.hasAccessToken(nodeId))
       return;
 
     let request: Communication.post_like_request = {
@@ -1516,10 +1512,7 @@ export class FeedService {
   }
 
   postUnlike(nodeId:string, channel_id: number, post_id: number, comment_id: number){
-    if(accessTokenMap == null ||
-      accessTokenMap == undefined||
-      accessTokenMap[nodeId] == undefined)
-      //TODO error
+    if(!this.hasAccessToken(nodeId))
       return;
 
     let request: Communication.post_unlike_request = {
@@ -1538,10 +1531,7 @@ export class FeedService {
 
   getMyChannels(nodeId: string, field: Communication.field, upper_bound: number,
                 lower_bound: number, max_counts: number){
-    if(accessTokenMap == null ||
-      accessTokenMap == undefined||
-      accessTokenMap[nodeId] == undefined)
-      //TODO error
+    if(!this.hasAccessToken(nodeId))
       return;
 
     let request: Communication.get_my_channels_request = {
@@ -1561,10 +1551,7 @@ export class FeedService {
 
   getMyChannelsMetaData(nodeId: string, field: Communication.field, upper_bound: number,
                         lower_bound: number, max_counts: number){
-    if(accessTokenMap == null ||
-      accessTokenMap == undefined||
-      accessTokenMap[nodeId] == undefined)
-      //TODO error
+    if(!this.hasAccessToken(nodeId))
       return;
 
     let request: Communication.get_my_channels_metadata_request = {
@@ -1584,10 +1571,7 @@ export class FeedService {
 
   getChannels(nodeId: string, field: Communication.field, upper_bound: number,
               lower_bound: number, max_counts: number){
-    if(accessTokenMap == null ||
-      accessTokenMap == undefined||
-      accessTokenMap[nodeId] == undefined)
-      //TODO error
+    if(!this.hasAccessToken(nodeId))
       return;
 
     let request: Communication.get_channels_request = {
@@ -1606,10 +1590,7 @@ export class FeedService {
   }
 
   getChannelDetail(nodeId: string, id: number){
-    if(accessTokenMap == null ||
-      accessTokenMap == undefined||
-      accessTokenMap[nodeId] == undefined)
-      //TODO error
+    if(!this.hasAccessToken(nodeId))
       return;
 
     let request: Communication.get_channel_detail_request = {
@@ -1626,10 +1607,7 @@ export class FeedService {
 
   getSubscribedChannels(nodeId: string, field: Communication.field, upper_bound: number,
                         lower_bound: number, max_counts: number){
-    if(accessTokenMap == null ||
-      accessTokenMap == undefined||
-      accessTokenMap[nodeId] == undefined)
-      //TODO error
+    if(!this.hasAccessToken(nodeId))
       return;
 
     let request: Communication.get_subscribed_channels_request = {
@@ -1649,10 +1627,7 @@ export class FeedService {
 
   getPost(nodeId: string, channel_id: number, by: Communication.field,
           upper_bound: number, lower_bound: number , max_counts: number){
-    if(accessTokenMap == null ||
-      accessTokenMap == undefined||
-      accessTokenMap[nodeId] == undefined)
-      //TODO error
+    if(!this.hasAccessToken(nodeId))
       return;
 
     let request: Communication.get_posts_request = {
@@ -1673,10 +1648,7 @@ export class FeedService {
 
   getComments(nodeId: string, channel_id: number, post_id: number,
               by:Communication.field, upper_bound: number, lower_bound: number, max_counts:number, isShowOfflineToast: boolean){
-    if(accessTokenMap == null ||
-      accessTokenMap == undefined||
-      accessTokenMap[nodeId] == undefined)
-      //TODO error
+    if(!this.hasAccessToken(nodeId))
       return;
 
     let request:Communication.get_comments_request = {
@@ -1697,10 +1669,7 @@ export class FeedService {
   }
 
   getStatistics(nodeId: string){
-    if(accessTokenMap == null ||
-      accessTokenMap == undefined||
-      accessTokenMap[nodeId] == undefined)
-      //TODO error
+    if(!this.hasAccessToken(nodeId))
       return;
 
     let request:Communication.get_statistics_request = {
@@ -1711,14 +1680,11 @@ export class FeedService {
         access_token    : accessTokenMap[nodeId].token
       },
     }
-    this.sendRPCMessage(nodeId, request.method, request.params);
+    this.sendRPCMessage(nodeId, request.method, request.params, false);
   }
 
   subscribeChannel(nodeId: string, id: number){
-    if(accessTokenMap == null ||
-      accessTokenMap == undefined||
-      accessTokenMap[nodeId] == undefined)
-      //TODO error
+    if(!this.hasAccessToken(nodeId))
       return;
 
     let request: Communication.subscribe_channel_request = {
@@ -1734,10 +1700,7 @@ export class FeedService {
   }
 
   unsubscribeChannel(nodeId: string, id: number){
-    if(accessTokenMap == null ||
-      accessTokenMap == undefined||
-      accessTokenMap[nodeId] == undefined)
-      //TODO error
+    if(!this.hasAccessToken(nodeId))
       return;
 
     let request: Communication.unsubscribe_channel_request = {
@@ -1752,49 +1715,8 @@ export class FeedService {
     this.sendRPCMessage(nodeId, request.method, request.params);
   }
 
-  addNodePublisher(nodeId: string, did: string){
-    if(accessTokenMap == null ||
-      accessTokenMap == undefined||
-      accessTokenMap[nodeId] == undefined)
-      //TODO error
-      return;
-
-    let request: Communication.add_node_publisher_request = {
-      version: "1.0",
-      method : "add_node_publisher",
-      id     : -1,
-      params : {
-          access_token    : accessTokenMap[nodeId].token,
-          did: did
-      },
-    }
-    this.sendRPCMessage(nodeId, request.method, request.params);
-  }
-
-  removeNodePublisher(nodeId: string, did: string){
-    if(accessTokenMap == null ||
-      accessTokenMap == undefined||
-      accessTokenMap[nodeId] == undefined)
-      //TODO error
-      return;
-
-    let request: Communication.remove_node_publisher_request = {
-      version: "1.0",
-      method : "remove_node_publisher",
-      id     : -1,
-      params : {
-          access_token    : accessTokenMap[nodeId].token,
-          did: did
-      }
-    }
-    this.sendRPCMessage(nodeId, request.method, request.params);
-  }
-
   enableNotification(nodeId: string){
-    if(accessTokenMap == null ||
-      accessTokenMap == undefined||
-      accessTokenMap[nodeId] == undefined)
-      //TODO error
+    if(!this.hasAccessToken(nodeId))
       return;
 
     let request: Communication.enable_notification_request = {
@@ -2992,6 +2914,7 @@ export class FeedService {
   }
 
   signinChallengeRequest(nodeId: string , requiredCredential: boolean){
+    this.native.toast(this.translate.instant("common.loggingIn"));
     let request: Communication.signin_request_challenge_request = {
       version: "1.0",
       method : "signin_request_challenge",

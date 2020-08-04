@@ -23,7 +23,8 @@ export const zh = {
         "commingSoon":"敬请期待 ...",
         "followSuccess":"关注成功",
         "unFollowSuccess":"取消关注成功",
-        "noImageSelected":"未选择图像"
+        "noImageSelected":"未选择图像",
+        "loggingIn":"正在登录"
     },
     "app":{
         "profileDetails":"档案详情",
