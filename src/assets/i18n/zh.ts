@@ -22,7 +22,8 @@ export const zh = {
         "addressinvalid":"地址无效",
         "commingSoon":"敬请期待 ...",
         "followSuccess":"关注成功",
-        "unFollowSuccess":"取消关注成功"
+        "unFollowSuccess":"取消关注成功",
+        "noImageSelected":"未选择图像"
     },
     "app":{
         "profileDetails":"档案详情",
@@ -262,6 +263,7 @@ export const zh = {
     "CommentPage":{
         "newComment":"新建微评",
         "publishComment":"发布微评",
-        "enterComments":"输入微评"
+        "enterComments":"输入微评",
+        "tipMsg1":"发布成功！"
     }
 };

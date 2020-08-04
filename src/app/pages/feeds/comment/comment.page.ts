@@ -56,6 +56,13 @@ export class CommentPage implements OnInit {
       this.isNewPost = true;
    });
 
+   this.events.subscribe('rpcRequest:success', () => {
+    this.native.toast_trans("CreatenewpostPage.tipMsg1");
+    this.navCtrl.pop().then(()=>{
+       
+    });
+   });
+
    this.events.subscribe("feeds:friendConnectionChanged", (nodeId, status)=>{
     this.zone.run(()=>{
       this.nodeStatus[nodeId] = status;
@@ -70,6 +77,8 @@ export class CommentPage implements OnInit {
   ionViewWillLeave(){
       this.events.unsubscribe("feeds:updateTitle");
       this.events.unsubscribe("rpcRequest:error");
+      this.events.unsubscribe("rpcRequest:success");
+      this.isNewPost = true;
   }
 
   initTitle(){
@@ -88,7 +97,6 @@ export class CommentPage implements OnInit {
         return false;
       }
       this.feedService.postComment(this.nodeId,Number(this.channelId),Number(this.postId),0,this.newComment);
-      this.native.pop();
     }
  
   }

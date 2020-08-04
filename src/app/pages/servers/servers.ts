@@ -33,7 +33,9 @@ export class ServersPage implements OnInit {
 
     ngOnInit() {
         this.initData();
+    }
 
+    addSubscribe(){
         this.events.subscribe('feeds:removeFeedSourceFinish',  () => {
             this.zone.run(() => {
                 this.initData();
@@ -79,6 +81,15 @@ export class ServersPage implements OnInit {
         });
     }
 
+    removeSubscribe(){
+      this.events.unsubscribe("feeds:removeFeedSourceFinish");
+      this.events.unsubscribe("feeds:updateServerList");
+      this.events.unsubscribe("feeds:serverConnectionChanged");
+      this.events.unsubscribe("feeds:serverStatisticsChanged");
+      this.events.unsubscribe("feeds:login_finish");
+      this.events.unsubscribe("feeds:bindServerFinish");
+    }
+
     initData(){
         this.serverList = this.feedService.getServerList();
 
@@ -102,11 +113,13 @@ export class ServersPage implements OnInit {
         this.events.subscribe("feeds:updateTitle",()=>{
           this.initTitle();
         });
+        this.addSubscribe();
         this.initTitle();
         this.native.setTitleBarBackKeyShown(true);
       }
     
-      ionViewWillUnload(){
+      ionViewWillLeave(){
+        this.removeSubscribe();
         this.events.unsubscribe("feeds:updateTitle");
       }
     
@@ -116,8 +129,7 @@ export class ServersPage implements OnInit {
       }
 
     navToServerInfo(nodeId: string, isOwner: boolean) {
-        // this.native.go(['/menu/servers/server-info',userId]);
-        this.router.navigate(['/menu/servers/server-info', "", nodeId, isOwner]);
+        this.native.navigateForward(['/menu/servers/server-info',nodeId, isOwner],"");
     }
 
     signin(nodeId: string){

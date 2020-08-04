@@ -79,7 +79,7 @@ export class MyApp {
   }
 
   about(){
-    this.native.navigateForward('/menu/about',"");
+     this.native.navigateForward('/menu/about',"");
   }
 
   async splash() {

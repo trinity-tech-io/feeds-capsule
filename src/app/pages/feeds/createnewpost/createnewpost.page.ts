@@ -65,7 +65,7 @@ export class CreatenewpostPage implements OnInit {
 
     this.events.subscribe('feeds:publishPostSuccess', () => {
       this.navCtrl.pop().then(()=>{
-        this.native.toast_trans("CreatenewpostPage.tipMsg1");
+        this.native.toast_trans("CommentPage.tipMsg1");
       });
     });
 
@@ -87,6 +87,7 @@ export class CreatenewpostPage implements OnInit {
     this.events.unsubscribe("feeds:updateTitle");
     this.events.unsubscribe("feeds:publishPostSuccess");
     this.events.unsubscribe("rpcRequest:error");
+    this.isNewPost =true;
   }
 
 

@@ -833,6 +833,7 @@ export class FeedService {
   }
 
   handleError(error: any){
+    eventBus.publish("rpcRequest:error");
     this.native.toast(JSON.stringify(error));
   }
 
@@ -2099,11 +2100,12 @@ export class FeedService {
   }
 
   handlePostCommentResult(nodeId:string, result: any, request: any, error: any){
-
     if (error != null && error != undefined && error.code != undefined){
       this.handleError(error);
       return;
     }
+    
+    eventBus.publish("rpcRequest:success");
     // let id = result.id;
     // let channel_id = request.channel_id;
     // let post_id = request.post_id;

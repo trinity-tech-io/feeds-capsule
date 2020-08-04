@@ -50,21 +50,6 @@ export class ServerInfoPage implements OnInit {
     private translate:TranslateService) {}
 
   ngOnInit() {
-    this.events.subscribe('feeds:serverConnectionChanged', serversStatus => {
-      this.zone.run(() => {
-          if (this.address == ""){
-            this.serverStatus = this.feedService.getServerStatusFromId(this.nodeId);
-          }
-      });
-    });
-
-    this.events.subscribe('feeds:removeFeedSourceFinish',  () => {
-      this.zone.run(() => {
-        this.navigateBackPage();
-      });
-    });
-
-    
 
     this.acRoute.params.subscribe(data => {
       this.isOwner = data.isOwner ;
@@ -109,6 +94,21 @@ export class ServerInfoPage implements OnInit {
   }
 
   ionViewWillEnter() {
+
+    this.events.subscribe('feeds:serverConnectionChanged', serversStatus => {
+      this.zone.run(() => {
+          if (this.address == ""){
+            this.serverStatus = this.feedService.getServerStatusFromId(this.nodeId);
+          }
+      });
+    });
+
+    this.events.subscribe('feeds:removeFeedSourceFinish',  () => {
+      this.zone.run(() => {
+        this.navigateBackPage();
+      });
+    });
+
     this.events.subscribe("feeds:updateTitle",()=>{
       this.initTitle();
     });
@@ -116,7 +116,9 @@ export class ServerInfoPage implements OnInit {
     this.native.setTitleBarBackKeyShown(true);
   }
 
-  ionViewWillUnload(){
+  ionViewWillLeave(){
+    this.events.unsubscribe("feeds:serverConnectionChanged");
+    this.events.unsubscribe("feeds:removeFeedSourceFinish");
     this.events.unsubscribe("feeds:updateTitle");
   }
 

@@ -22,7 +22,8 @@ export const fr = {
         "addressinvalid": "Address invalid",
         "commingSoon": "Comming soon ...",
         "followSuccess":"Follow success",
-        "unFollowSuccess":"UnFollow success"
+        "unFollowSuccess":"UnFollow success",
+        "noImageSelected":"No Image Selected"
     },
     "app": {
         "profileDetails": "Profile Details",
@@ -262,6 +263,7 @@ export const fr = {
     "CommentPage":{
         "newComment":"New Comment",
         "publishComment":"Publish comment",
-        "enterComments":"Enter Comments"
+        "enterComments":"Enter Comments",
+        "tipMsg1":"Post Sent successfully!"
     }
 };

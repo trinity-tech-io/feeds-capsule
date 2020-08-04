@@ -40,8 +40,9 @@ export class ProfileimagePage implements OnInit {
     this.native.setTitleBarBackKeyShown(true);
   }
 
-  ionViewWillUnload(){
-    this.events.unsubscribe("feeds:updateTitle");
+  ionViewWillLeave(){
+    this.camera = null;
+    this.events.unsubscribe("feeds:updateTitle"); 
   }
 
   initTitle(){
@@ -59,6 +60,10 @@ export class ProfileimagePage implements OnInit {
   }
 
   confirm(){
+    if(this.avatar === ""){
+      this.native.toast_trans('common.noImageSelected');
+      return false;
+    }
     this.events.publish("feeds:selectavatar",this.avatar);
     this.navCtrl.pop();
   }
@@ -74,7 +79,12 @@ export class ProfileimagePage implements OnInit {
           this.userAvatar = this.avatar = imageUrl;
         });
       },
-      (err)=>{alert(err)});
+      (err)=>{
+        //this.camera = null;
+        this.avatar = "";
+        this.native.toast_trans('common.noImageSelected');
+        }
+        );
   }
 
 }

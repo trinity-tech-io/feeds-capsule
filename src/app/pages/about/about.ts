@@ -41,7 +41,7 @@ export class AboutPage implements OnInit {
     this.native.openUrl("http://www.trinity-tech.io");
   }
 
-  ionViewWillUnload(){
+  ionViewWillLeave(){
     this.events.unsubscribe("feeds:updateTitle");
   }
 
