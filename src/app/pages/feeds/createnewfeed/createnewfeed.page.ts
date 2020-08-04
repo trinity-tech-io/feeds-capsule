@@ -107,7 +107,7 @@ export class CreatenewfeedPage implements OnInit {
       return ;
     }
 
-    if (desc.value.length < 32){
+    if (desc.value.length > 128){
       this.native.toast_trans("CreatenewfeedPage.tipMsgLength");
       return ;
     }

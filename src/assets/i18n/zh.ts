@@ -100,9 +100,9 @@ export const zh = {
         "tipMsg1":"请输入名称",
         "tipMsg2":"请输入描述信息",
         "tipMsg3":"无效的参数",
-        "tipMsgLength":"描述信息长度要大于32",
+        "tipMsgLength":"描述信息长度要最大为128",
         "inputName":"输入名称",
-        "inputFeedDesc":"输入描述(至少32个字符)",
+        "inputFeedDesc":"输入描述",
         "channelSourceDes":"在哪里保存您的微频",
         "createfeedsuccess": "创建微频成功!"
     },

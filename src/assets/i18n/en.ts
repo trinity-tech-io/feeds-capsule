@@ -100,9 +100,9 @@ export const en = {
         "tipMsg1":"Please input name.",
         "tipMsg2":"Please input description.",
         "tipMsg3":"Invalid params",
-        "tipMsgLength":"The description field length needs to be greater than 32",
+        "tipMsgLength":"The maximum length of the description message should be 128",
         "inputName":"INPUT NAME",
-        "inputFeedDesc":"INPUT DESCRIPTION(AT LEAST 32 CHAR)",
+        "inputFeedDesc":"INPUT DESCRIPTION",
         "channelSourceDes":"WHERE TO STORE YOUR FEEDS",
         "createfeedsuccess":"Feeds created successfully!"
     },
