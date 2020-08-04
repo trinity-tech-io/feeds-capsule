@@ -19,6 +19,7 @@ export class StartbindingPage implements OnInit {
   private carrierAddress: string;
   private did:string = "";
   public feedsUrl: string ="";
+  private isProcess = false;
   constructor(
     private zone: NgZone,
     private native: NativeService,
@@ -52,25 +53,30 @@ export class StartbindingPage implements OnInit {
     });
 
     this.events.subscribe('feeds:owner_declared', (nodeId, phase, did, payload) => {
-      switch(phase){
-        case "owner_declared":
-          this.zone.run(() => {
-              this.native.navigateForward(['/bindservice/importdid/',nodeId],{
-                replaceUrl: true
-              });
-          });
-          break;
-
-        case "credential_issued":
-          this.zone.run(() => {
-              this.feedService.restoreBindingServerCache(this.did, nodeId, ()=>{
-                this.feedService.finishBinding(nodeId);
-              },()=>{
-                this.feedService.finishBinding(nodeId);
-              });
-          });
-          break;
+      if (!this.isProcess){
+        this.isProcess = true;
+        switch(phase){
+          case "owner_declared":
+            this.zone.run(() => {
+                this.native.navigateForward(['/bindservice/importdid/',nodeId],{
+                  replaceUrl: true
+                });
+            });
+            break;
+  
+          case "credential_issued":
+            this.zone.run(() => {
+                this.feedService.restoreBindingServerCache(this.did, nodeId, ()=>{
+                  this.feedService.finishBinding(nodeId);
+                },()=>{  
+                  this.feedService.finishBinding(nodeId);
+                });
+            });
+            break;
+        }
+        this.isProcess = true;
       }
+      
     });
 
     this.events.subscribe('feeds:issue_credential', () => {

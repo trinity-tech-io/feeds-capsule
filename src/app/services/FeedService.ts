@@ -49,6 +49,7 @@ let notificationList:Notification[] = new Array<Notification>();
 
 let cacheBindingAddress: string = "";
 let localCredential: string = undefined;
+let isBindServer: boolean = false ;
 
 type BindURLData = {
   did: string;
@@ -527,6 +528,8 @@ export class FeedService {
   }
 
   getServerList(): Server[]{
+    if (serverMap == null || serverMap == undefined)
+      serverMap = {};
     let list: Server[] = [];
     let nodeIdArray: string[] = Object.keys(serverMap);
     for (const index in nodeIdArray) {
@@ -715,21 +718,44 @@ export class FeedService {
       eventBus.publish("feeds:friendConnection",ret);
       let friendId = ret.friendId;
       let friendStatus = ret.status;
-      console.log("friendId =>"+friendId +"; friendStatus =>"+friendStatus);
-      this.doFriendConnection(friendId, friendStatus);
-    });
-  }
-
-  doFriendConnection(friendId: string, friendStatus:any){
-    if (friendConnectionMap == null || friendConnectionMap == undefined)
+      console.log("connectionChanged===> friendId =>"+friendId +"; friendStatus =>"+friendStatus);
+      let lastConnectStatus = this.getFriendConnection(friendId);
+      
+      if (friendConnectionMap == null || friendConnectionMap == undefined)
         friendConnectionMap = {};
 
       friendConnectionMap[friendId] = friendStatus;
 
+      
+      if(lastConnectStatus != friendStatus && friendStatus == ConnState.connected){
+        if (cacheBindingAddress != "" && isBindServer){
+          this.carrierService.getIdFromAddress(cacheBindingAddress,(nodeId)=>{
+            if (friendId != nodeId){
+              this.doFriendConnection(friendId, friendStatus);
+            }
+
+            if(serversStatus == null ||serversStatus == undefined)
+                serversStatus = {}
+
+              serversStatus[friendId] = {
+                nodeId: friendId,
+                did: "string",
+                status: friendStatus
+              }
+            
+          });
+        }else{
+          if (serverMap[friendId] != undefined)
+            this.doFriendConnection(friendId, friendStatus);  
+        }
+      } 
+    });
+  }
+
+  doFriendConnection(friendId: string, friendStatus:any){
       if(serversStatus == null ||serversStatus == undefined)
         serversStatus = {}
 
-      // if(serversStatus[friendId]!=undefined)
       serversStatus[friendId] = {
         nodeId: friendId,
         did: "string",
@@ -2972,6 +2998,7 @@ export class FeedService {
   }
 
   signinChallengeRequest(nodeId: string , requiredCredential: boolean){
+    console.log("signinChallengeRequest==="+nodeId);
     let request: Communication.signin_request_challenge_request = {
       version: "1.0",
       method : "signin_request_challenge",
@@ -2985,6 +3012,7 @@ export class FeedService {
   }
 
   signinConfirmRequest(nodeId: string, nonce: string, realm: string, requiredCredential: boolean){
+    
     didSessionManager.authenticate(nonce, realm).then((presentation)=>{
       let request;
       if (requiredCredential){
@@ -3072,6 +3100,7 @@ export class FeedService {
   }
 
   declareOwnerRequest(nodeId: string, carrierAddress: string, nonce: string){
+    isBindServer = true;
     let request: Communication.declare_owner_request = {
       version: "1.0",
       method : "declare_owner",
@@ -3313,14 +3342,14 @@ export class FeedService {
                   bindingServer.introduction,
                   bindingServer.did,
                   bindingServer.feedsUrl,()=>{
-
                   },(error)=>{
 
                   });
     eventBus.publish("feeds:issue_credential");
     eventBus.publish("feeds:bindServerFinish",bindingServer);
 
-    this.doFriendConnection(nodeId, ConnState.connected);
+    this.signinChallengeRequest(nodeId,true);
+    // this.doFriendConnection(nodeId, ConnState.connected);
   }
 
   getFriendConnection(nodeId: string){
@@ -3396,6 +3425,7 @@ export class FeedService {
     name: string, owner: string, introduction: string,
     did: string, feedsUrl: string,
     onSuccess:()=>void, onError?:(err: string)=>void){
+    isBindServer = false;
     this.checkIsAlreadyFriends(carrierAddress,(isFriend)=>{
       if (isFriend){
         this.native.toast(this.translate.instant("AddServerPage.Serveralreadyadded"));
@@ -3465,7 +3495,6 @@ export class FeedService {
     bindingServer = undefined;
     this.storeService.remove(PersistenceKey.bindingServer);
     this.removeFeedSource(nodeId);
-
   }
 
   removeFeedSource(nodeId: string){
