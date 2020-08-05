@@ -1,6 +1,6 @@
 import { Component, OnInit, NgZone } from '@angular/core';
 import { Events, Platform, LoadingController } from '@ionic/angular';
-import { Router, ActivatedRoute } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { CarrierService } from 'src/app/services/CarrierService';
 import { FeedService } from 'src/app/services/FeedService';
 import { NativeService } from 'src/app/services/NativeService';
@@ -8,6 +8,7 @@ import { AppService } from 'src/app/services/AppService';
 import { PopupProvider } from 'src/app/services/popup';
 import { TranslateService } from "@ngx-translate/core";
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
+declare let appManager: AppManagerPlugin.AppManager;
 @Component({
   selector: 'page-add-server',
   templateUrl: 'add-server.html',
@@ -27,7 +28,6 @@ export class AddServerPage implements OnInit {
   private feedsUrl: string;
 
   constructor(
-    private router: Router,
     private events: Events,
     private zone: NgZone,
     private acRoute: ActivatedRoute,
@@ -92,8 +92,12 @@ export class AddServerPage implements OnInit {
 
 
   scanCode(){
-    // this.native.pop();
-    this.appService.scanAddress();
+    appManager.sendIntent("scanqrcode", {}, {}, (res) => {
+      let result: string = res.result.scannedContent;
+      this.checkValid(result);
+  }, (err: any) => {
+      console.error(err);
+  });
   }
 
   alertError(error: string){
@@ -105,15 +109,17 @@ export class AddServerPage implements OnInit {
   // }
 
   confirm(){
-    if (this.address.length > 53&&
-      this.address.startsWith('feeds://') && 
-      this.address.indexOf("did:elastos:")
-    ){
-      //this.router.navigate(['/menu/servers/server-info', this.address, "", false]);
-      this.native.getNavCtrl().navigateForward(['/menu/servers/server-info', this.address, "", false]);
-    }else{
-      alert(this.translate.instant('AddServerPage.tipMsg'));
+    this.checkValid(this.address);
+  }
+
+  checkValid(result: string){
+    if (result.length < 54 ||
+      !result.startsWith('feeds://')||
+      !result.indexOf("did:elastos:")){
+        alert(this.translate.instant("AddServerPage.tipMsg"));
+        return ;
     }
+    this.native.getNavCtrl().navigateForward(['/menu/servers/server-info', result, "", false]);
   }
 
 

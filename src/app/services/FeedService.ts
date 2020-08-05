@@ -3349,6 +3349,7 @@ export class FeedService {
         this.carrierService.isValidAddress(carrierAddress, (isValid) => {
           if (!isValid){
             this.alertError("Address invalid");
+            onError("Address invalid");
             return;
           }
     

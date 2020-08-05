@@ -54,13 +54,14 @@ export class ServerInfoPage implements OnInit {
     this.acRoute.params.subscribe(data => {
       this.isOwner = data.isOwner ;
       this.address = data.address;
-      if (this.address != null &&
-        this.address != undefined &&
-        this.address != ''){
+      if (this.address == null && this.address == undefined)
+        this.address = ""
+
+      if (this.address != ''){
           this.zone.run(()=>{
             this.presentLoading();
           });
-        this.queryServer();
+          this.queryServer();
         }else{
           let server:any ;
           let bindingServer = this.feedService.getBindingServer();
@@ -149,6 +150,7 @@ export class ServerInfoPage implements OnInit {
     ) this.resolveDid();
     else{
       alert(this.translate.instant("ServerInfoPage.Feedurlmaybeerror"));
+      this.navigateBackPage();
     }
 
   }
@@ -167,7 +169,9 @@ export class ServerInfoPage implements OnInit {
           this.feedsUrl = server.feedsUrl;
         });
       },(err)=>{
+        alert("resolve diddocument error");
         this.buttonDisabled = true;
+        this.navigateBackPage();
       }
     );
   }
@@ -178,7 +182,7 @@ export class ServerInfoPage implements OnInit {
       this.didString, this.feedsUrl, ()=>{
         this.native.pop();
       },(err)=>{
-
+        this.native.pop();
       });
   }
 

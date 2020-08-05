@@ -62,6 +62,12 @@ export class ScanqrcodePage implements OnInit {
       let contentStr = String(content);
       this.scanContent = contentStr;
 
+      if (!this.scanContent.startsWith('feeds://') &&
+        !this.scanContent.startsWith('feeds_raw://')){
+          alert(this.translate.instant("AddServerPage.tipMsg"));
+          return ;
+      }
+      
       let result = this.feedService.parseBindServerUrl(contentStr);
       this.carrierAddress = result.carrierAddress;
       this.nonce = result.nonce;

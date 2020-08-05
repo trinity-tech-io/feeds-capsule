@@ -26,15 +26,6 @@ export class AppService {
                 private menu: MenuController,) {
     }
 
-    scanAddress() {
-        appManager.sendIntent("scanqrcode", {}, {}, (res) => {
-            this.router.navigate(['/menu/servers/server-info', res.result.scannedContent, "", false]);
-            // this.router.navigate(['/menu/servers/add-server',res.result.scannedContent]);
-        }, (err: any) => {
-            console.error(err);
-        });
-    }
-
     init() {
         appManager.setListener((msg) => {
           this.onMessageReceived(msg);
