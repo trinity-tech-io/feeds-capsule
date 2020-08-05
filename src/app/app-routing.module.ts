@@ -14,7 +14,6 @@ const routes: Routes = [
 
   { path: 'signin', loadChildren: './pages/signin/signin.module#SigninPageModule' },
 
-  { path: 'menu/myfeeds/create', loadChildren: './pages/myfeeds/create/create-feed.module#CreateFeedPageModule' },
   { path: 'createnewfeed', loadChildren: './pages/feeds/createnewfeed/createnewfeed.module#CreatenewfeedPageModule' },
   { path: 'createnewpost/:nodeId/:channelId', loadChildren: './pages/feeds/createnewpost/createnewpost.module#CreatenewpostPageModule' },
   { path: 'profileimage', loadChildren: './pages/feeds/profileimage/profileimage.module#ProfileimagePageModule' },
