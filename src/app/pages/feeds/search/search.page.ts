@@ -1,5 +1,4 @@
 import { Component, OnInit, NgZone} from '@angular/core';
-import { NavController } from '@ionic/angular';
 import { FeedService } from 'src/app/services/FeedService';
 import { Events } from '@ionic/angular';
 import { NativeService } from 'src/app/services/NativeService';
@@ -16,7 +15,6 @@ export class SearchPage implements OnInit {
   private channelList= [];
   constructor(
     private feedService: FeedService,
-    private navCtrl: NavController,
     private events: Events,
     private zone: NgZone,
     private native: NativeService,
@@ -26,14 +24,12 @@ export class SearchPage implements OnInit {
     }
 
   ngOnInit() {
+    this.channelList = this.feedService.refreshLocalChannels();
+    this.initnodeStatus();
   }
 
   initData(){
-
-    this.channelList = this.feedService.refreshLocalChannels();
-    this.initnodeStatus();
-  
-
+    
     this.events.subscribe("feeds:friendConnectionChanged", (nodeId, status)=>{
       this.zone.run(()=>{
         this.nodeStatus[nodeId] = status;

@@ -1,7 +1,6 @@
 <ion-content>
   <ion-searchbar placeholder="{{'SearchPage.searchFeeds'|translate}}" (ionInput)="getItems($event)"></ion-searchbar>
-  <div [class.darkContainer]="theme.darkMode">
-  <div *ngIf="channelList.length == 0">
+  <div *ngIf="channelList.length == 0" [class.darkContainer]="theme.darkMode">
     <div class="center-content" >
       <div style="text-align: center; ">
         <img src="./assets/images/empty-feeds-icon.svg">
@@ -12,16 +11,16 @@
     </div> 
   </div>
 
-  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" pullFactor="0.5">
     <ion-refresher-content
       pullingIcon="arrow-dropdown"
       pullingText="{{'common.pullToRefresh'|translate}}"
       refreshingSpinner="circles"
-      refreshingText="{{'common.Refreshing'|translate}}">
+      refreshingText="">
     </ion-refresher-content>
   </ion-refresher>
 
-  <div *ngFor="let channel of channelList let i=index" >
+  <div *ngFor="let channel of channelList let i=index" [class.darkContainer]="theme.darkMode">
       <ion-grid>
         <ion-row>
           <ion-col  
@@ -114,5 +113,5 @@
   </div>
 
   <div class="addfeedssource1" (click)="addfeedssource()" *ngIf="channelList.length > 0">{{"SearchPage.addfeedssource"|translate}}</div>
-</div>
+
 </ion-content>

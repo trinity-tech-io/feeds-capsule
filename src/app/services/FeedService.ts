@@ -366,6 +366,7 @@ export class FeedService {
   private realm = "";
   private serviceNonce = "";
   private serviceRealm = "";
+  private profileIamge = "";
   public constructor(
     private serializeDataService: SerializeDataService,
     private jwtMessageService: JWTMessageService,
@@ -392,6 +393,14 @@ export class FeedService {
     this.initData();
 
     this.initCallback();
+  }
+
+  public setProfileIamge(url:string){
+    this.profileIamge = url;     
+  }
+
+  public getProfileIamge(){
+      return this.profileIamge;     
   }
 
   loadPostData(){

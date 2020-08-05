@@ -2,11 +2,8 @@ import { Component } from '@angular/core';
 import { Platform, ModalController, Events } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
-import { CarrierService } from './services/CarrierService';
 import { FeedService } from './services/FeedService';
-import { Router } from '@angular/router';
 import { SplashscreenPage } from './pages/splashscreen/splashscreen.page';
-import { MenuController } from '@ionic/angular';
 import { AppService } from './services/AppService';
 import { ThemeService } from 'src/app/services/theme.service';
 import { NativeService} from 'src/app/services/NativeService';
@@ -25,15 +22,12 @@ export class MyApp {
   private avatar = "";
   constructor(
     private events: Events,
-    private menu: MenuController,
     private platform: Platform,
     private statusBar: StatusBar,
     private splashScreen: SplashScreen,
     private feedService: FeedService,
-    private router: Router,
     private modalCtrl: ModalController,
     private appService: AppService,
-    private carrierService:CarrierService,
     public theme:ThemeService,
     public native:NativeService) {
       this.initializeApp();
@@ -96,8 +90,5 @@ export class MyApp {
       this.name = signInData.name;
     },(error)=>{
     });
-  }
-
-  initData(){
   }
 }

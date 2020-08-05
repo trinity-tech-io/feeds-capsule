@@ -4,6 +4,7 @@ import { NavController, Events } from '@ionic/angular';
 import { NativeService } from 'src/app/services/NativeService';
 import { TranslateService } from "@ngx-translate/core";
 import { ThemeService } from '../../../services/theme.service';
+import { FeedService } from 'src/app/services/FeedService';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 @Component({
@@ -22,6 +23,7 @@ export class ProfileimagePage implements OnInit {
     private zone: NgZone,
     private translate:TranslateService,
     public theme:ThemeService, 
+    public feedService:FeedService,
     private camera: CameraService) { }
 
   ngOnInit() {
@@ -36,13 +38,16 @@ export class ProfileimagePage implements OnInit {
     this.events.subscribe("feeds:updateTitle",()=>{
       this.initTitle();
     });
-    this.initTitle();
-    this.native.setTitleBarBackKeyShown(true);
   }
 
   ionViewWillLeave(){
     this.camera = null;
     this.events.unsubscribe("feeds:updateTitle"); 
+  }
+
+  ionViewDidEnter() {
+    this.initTitle();
+    this.native.setTitleBarBackKeyShown(true);
   }
 
   initTitle(){
@@ -64,7 +69,7 @@ export class ProfileimagePage implements OnInit {
       this.native.toast_trans('common.noImageSelected');
       return false;
     }
-    this.events.publish("feeds:selectavatar",this.avatar);
+    this.feedService.setProfileIamge(this.avatar);
     this.navCtrl.pop();
   }
 
@@ -77,11 +82,13 @@ export class ProfileimagePage implements OnInit {
       (imageUrl)=>{
         this.zone.run(() => {
           this.userAvatar = this.avatar = imageUrl;
+          this.feedService.setProfileIamge(this.userAvatar);
         });
       },
       (err)=>{
         //this.camera = null;
         this.avatar = "";
+        this.feedService.setProfileIamge(this.avatar);
         this.native.toast_trans('common.noImageSelected');
         }
         );

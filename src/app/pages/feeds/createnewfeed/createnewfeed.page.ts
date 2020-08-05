@@ -31,36 +31,37 @@ export class CreatenewfeedPage implements OnInit {
     public theme:ThemeService,
     private translate:TranslateService) {
 
-      this.selectedServer = this.feedService.getBindingServer();
-      this.selectedChannelSource = this.selectedServer.did;
+    
 
-      this.events.subscribe('feeds:createTopicSuccess', () => {
-        this.navCtrl.pop().then(()=>{
-          this.native.toast(this.translate.instant("CreatenewfeedPage.createfeedsuccess"));
-        })
-
-      });
-
-      this.events.subscribe('feeds:selectavatar', (avatar)=>{
-        this.channelAvatar = avatar;
-
-        this.avatar = this.feedService.parseChannelAvatar(avatar);
-      });
     }
 
   ngOnInit() {
-
+    this.selectedServer = this.feedService.getBindingServer();
+    this.selectedChannelSource = this.selectedServer.did;
   }
 
   ionViewWillEnter() {
+    this.channelAvatar = this.feedService.getProfileIamge();
+    this.avatar = this.feedService.parseChannelAvatar(this.channelAvatar);
+    this.events.subscribe('feeds:createTopicSuccess', () => {
+      this.navCtrl.pop().then(()=>{
+        this.native.toast(this.translate.instant("CreatenewfeedPage.createfeedsuccess"));
+      })
+    });
+
     this.events.subscribe("feeds:updateTitle",()=>{
       this.initTitle();
     });
+  
+  }
+
+  ionViewDidEnter() {
     this.initTitle();
     this.native.setTitleBarBackKeyShown(true);
   }
 
-  ionViewWillUnload(){
+  ionViewWillLeave(){
+    this.events.unsubscribe("feeds:createTopicSuccess");
     this.events.unsubscribe("feeds:updateTitle");
   }
 
@@ -112,10 +113,14 @@ export class CreatenewfeedPage implements OnInit {
       return ;
     }
 
+    this.channelAvatar = this.feedService.getProfileIamge() || "";
+
     if (this.channelAvatar == ""){
       this.native.toast_trans("CreatenewfeedPage.tipMsg");
       return ;
     }
+
+    this.avatar = this.feedService.parseChannelAvatar(this.channelAvatar);
 
     if (this.selectedServer == null){
       this.native.toast_trans("CreatenewfeedPage.tipMsg3");
@@ -132,8 +137,7 @@ export class CreatenewfeedPage implements OnInit {
   }
 
   profileimage(){
-    // this.router.navigate(['/profileimage']);
-    this.navCtrl.navigateForward(['/profileimage']);
+    this.native.navigateForward(['/profileimage'],"");
   }
 
 }

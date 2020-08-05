@@ -35,11 +35,9 @@ export class FeedsPage implements OnInit {
     this.event.subscribe("feeds:updateTitle",()=>{
       this.initTile();
     });
-    this.initTile();
-    this.native.setTitleBarBackKeyShown(false);
   }
 
-  ionViewWillUnload(){
+  ionViewWillLeave(){
     this.event.unsubscribe("feeds:updateTitle");
   }
 
@@ -48,6 +46,8 @@ export class FeedsPage implements OnInit {
   }
 
   ionViewDidEnter() {
+    this.initTile();
+    this.native.setTitleBarBackKeyShown(false);
     appManager.setVisible("show");
   }
 

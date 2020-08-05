@@ -33,9 +33,6 @@ export class HomePage implements OnInit {
   }
 
   ionViewWillEnter() {
-    this.postList = this.feedService.getPostList();
-    this.initnodeStatus();
-
     this.events.subscribe('feeds:refreshPage',()=>{
       this.zone.run(() => {
         this.postList = this.feedService.getPostList();
@@ -93,7 +90,8 @@ export class HomePage implements OnInit {
   }
 
   ngOnInit() {
-   
+    this.postList = this.feedService.getPostList();
+    this.initnodeStatus();
   }
 
   like(nodeId, channelId, postId){
