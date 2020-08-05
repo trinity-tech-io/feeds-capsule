@@ -12,6 +12,7 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
   styleUrls: ['./startbinding.page.scss'],
 })
 export class StartbindingPage implements OnInit {
+  private connectionStatus = 1;
   private title = "02/06";
   public nonce = "";
   private nodeId: string="";
@@ -32,6 +33,7 @@ export class StartbindingPage implements OnInit {
   }
 
   ngOnInit() {
+    this.connectionStatus = this.feedService.getConnectionStatus();
     this.acRoute.params.subscribe((data)=>{
       this.nodeId = data.nodeId;
 
@@ -55,7 +57,12 @@ export class StartbindingPage implements OnInit {
   }
 
   ionViewWillEnter() {
-
+    this.events.subscribe('feeds:connectionChanged',(status)=>{
+      this.zone.run(() => {
+        this.connectionStatus = status;
+      });
+    });
+    
     this.events.subscribe('feeds:owner_declared', (nodeId, phase, did, payload) => {
       if (!this.isProcess){
         this.isProcess = true;
@@ -127,6 +134,7 @@ export class StartbindingPage implements OnInit {
   }
 
   ionViewWillLeave(){
+    this.events.unsubscribe("feeds:connectionChanged");
     this.events.unsubscribe("feeds:owner_declared");
     this.events.unsubscribe("feeds:issue_credential");
     this.events.unsubscribe("feeds:friendConnectionChanged");

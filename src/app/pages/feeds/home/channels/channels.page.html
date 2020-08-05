@@ -1,3 +1,7 @@
+<ion-header *ngIf="connectionStatus == 1">
+  <div class="offline-header"></div>
+</ion-header>
+
 <ion-content [class.darkContainer]="theme.darkMode">
 
   <div [ngClass]="{'mask-div': bigImage}">

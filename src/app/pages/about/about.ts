@@ -1,7 +1,8 @@
 import { Component, OnInit, NgZone } from '@angular/core';
-import {Events} from '@ionic/angular';
+import { Events } from '@ionic/angular';
 import { NativeService } from 'src/app/services/NativeService';
 import { TranslateService } from "@ngx-translate/core";
+import { FeedService } from 'src/app/services/FeedService';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 @Component({
@@ -11,20 +12,28 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 })
 
 export class AboutPage implements OnInit {
-  public version = "0.15.0";
+  private connectionStatus = 1;
+  private version = "0.15.0";
 
   constructor(
     private zone: NgZone,
-    public native: NativeService,
+    private native: NativeService,
     private translate:TranslateService,
-    private events: Events
+    private events: Events,
+    private feedService:FeedService
     ) {}
 
     ngOnInit() {
-     
+      this.connectionStatus = this.feedService.getConnectionStatus();
     }
 
     ionViewWillEnter() {
+      this.events.subscribe('feeds:connectionChanged',(status)=>{
+        this.zone.run(() => {
+          this.connectionStatus = status;
+        });
+      });
+
       this.events.subscribe("feeds:updateTitle",()=>{
         this.initTitle();
       });
@@ -46,6 +55,7 @@ export class AboutPage implements OnInit {
   }
 
   ionViewWillLeave(){
+    this.events.unsubscribe("feeds:connectionChanged");
     this.events.unsubscribe("feeds:updateTitle");
   }
 

@@ -15,6 +15,7 @@ import { NativeService } from 'src/app/services/NativeService';
 
 
 export class HomePage implements OnInit {
+  private connectionStatus = 1;
   private postList: any = [];
   public nodeStatus:any={};
   constructor(
@@ -27,12 +28,15 @@ export class HomePage implements OnInit {
     private translate:TranslateService,
     private navtive:NativeService,
     private menuService: MenuService) {
-
-     
-     
   }
 
   ionViewWillEnter() {
+    this.events.subscribe('feeds:connectionChanged',(status)=>{
+      this.zone.run(() => {
+        this.connectionStatus = status;
+      });
+    });
+
     this.events.subscribe('feeds:refreshPage',()=>{
       this.zone.run(() => {
         this.postList = this.feedService.getPostList();
@@ -57,6 +61,7 @@ export class HomePage implements OnInit {
 
 
  ionViewWillLeave(){
+    this.events.unsubscribe("feeds:connectionChanged");
     this.events.unsubscribe("feeds:postDataUpdate");
     this.events.unsubscribe("feeds:refreshPage");
     this.events.unsubscribe("feeds:friendConnectionChanged");
@@ -90,6 +95,7 @@ export class HomePage implements OnInit {
   }
 
   ngOnInit() {
+    this.connectionStatus = this.feedService.getConnectionStatus();
     this.postList = this.feedService.getPostList();
     this.initnodeStatus();
   }

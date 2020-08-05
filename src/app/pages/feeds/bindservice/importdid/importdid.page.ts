@@ -15,6 +15,7 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
   styleUrls: ['./importdid.page.scss'],
 })
 export class ImportdidPage implements OnInit {
+  private connectionStatus = 1;
   private title = "03/06";
   private nodeId = "";
   constructor(
@@ -28,26 +29,22 @@ export class ImportdidPage implements OnInit {
     private translate:TranslateService,
     public  theme:ThemeService
     ) {
-
-    
-
-      // this.events.subscribe('feeds:did_imported', (nodeId, did, payload) => {
-      //   this.navCtrl.pop().then(()=>{
-      //     this.router.navigate(['/bindservice/publishdid/',nodeId, did, payload]);
-      //   });
-      // });
-
-      
     }
 
     ngOnInit() {
+      this.connectionStatus = this.feedService.getConnectionStatus();
       this.acRoute.params.subscribe((data)=>{
         this.nodeId = data.nodeId;
       });
     }
 
     ionViewWillEnter() {
-      
+      this.events.subscribe('feeds:connectionChanged',(status)=>{
+        this.zone.run(() => {
+          this.connectionStatus = status;
+        });
+      });
+
       this.events.subscribe('feeds:resolveDidError', (nodeId, did, payload) => {
         this.zone.run(() => {
             this.native.navigateForward(['/bindservice/publishdid/',nodeId, did, payload],{
@@ -71,6 +68,7 @@ export class ImportdidPage implements OnInit {
     }
 
     ionViewWillLeave(){
+      this.events.unsubscribe("feeds:connectionChanged");
       this.events.unsubscribe('feeds:resolveDidError');
       this.events.unsubscribe('feeds:resolveDidSucess');
     }

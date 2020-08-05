@@ -1,3 +1,6 @@
+<ion-header *ngIf="connectionStatus == 1">
+  <div class="offline-header"></div>
+</ion-header>
 <ion-content ion-padding>
   <div *ngIf="postList.length == 0">
     <div class="center-content" >

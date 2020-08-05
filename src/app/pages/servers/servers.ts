@@ -14,6 +14,7 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 })
 
 export class ServersPage implements OnInit {
+    private connectionStatus = 1;
     private myFeedSource = null;
     private serverList:any = [];
     private serversStatus: any;
@@ -32,11 +33,16 @@ export class ServersPage implements OnInit {
     }
 
     ngOnInit() {
-       
+        this.connectionStatus = this.feedService.getConnectionStatus();
     }
 
     addSubscribe(){
-      
+        this.events.subscribe('feeds:connectionChanged',(status)=>{
+            this.zone.run(() => {
+                this.connectionStatus = status;
+            });
+        });
+
         this.events.subscribe('feeds:serverConnectionChanged', serversStatus => {
             this.zone.run(() => {
                 this.serversStatus = serversStatus;
@@ -71,10 +77,11 @@ export class ServersPage implements OnInit {
     }
 
     removeSubscribe(){
-      this.events.unsubscribe("feeds:serverConnectionChanged");
-      this.events.unsubscribe("feeds:serverStatisticsChanged");
-      this.events.unsubscribe("feeds:login_finish");
-      this.events.unsubscribe("feeds:bindServerFinish");
+        this.events.unsubscribe("feeds:connectionChanged");
+        this.events.unsubscribe("feeds:serverConnectionChanged");
+        this.events.unsubscribe("feeds:serverStatisticsChanged");
+        this.events.unsubscribe("feeds:login_finish");
+        this.events.unsubscribe("feeds:bindServerFinish");
     }
 
     initData(){

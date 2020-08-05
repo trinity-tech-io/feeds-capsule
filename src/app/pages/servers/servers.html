@@ -1,3 +1,6 @@
+<ion-header *ngIf="connectionStatus == 1">
+  <div class="offline-header"></div>
+</ion-header>
 <ion-content>
    <div *ngIf="serverList.length == 0 && myFeedSource == null" class="empty-server-div">
       <div class="center-flex">

@@ -14,6 +14,7 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
   styleUrls: ['./createnewpost.page.scss'],
 })
 export class CreatenewpostPage implements OnInit {
+  private connectionStatus = 1;
   public nodeStatus = {};
   private channelAvatar = "";
   private channelName = "";
@@ -52,10 +53,17 @@ export class CreatenewpostPage implements OnInit {
     }
 
     ngOnInit() {
+      this.connectionStatus = this.feedService.getConnectionStatus();
     }
 
     ionViewWillEnter() {
     this.isNewPost = true;
+
+    this.events.subscribe('feeds:connectionChanged',(status)=>{
+      this.zone.run(() => {
+        this.connectionStatus = status;
+      });
+    });
 
     this.events.subscribe("feeds:friendConnectionChanged", (nodeId, status)=>{
       this.zone.run(()=>{
@@ -81,6 +89,7 @@ export class CreatenewpostPage implements OnInit {
 
   ionViewWillLeave(){
     this.hideBigImage();
+    this.events.unsubscribe("feeds:connectionChanged");
     this.events.unsubscribe("feeds:friendConnectionChanged");
     this.events.unsubscribe("feeds:updateTitle");
     this.events.unsubscribe("feeds:publishPostSuccess");

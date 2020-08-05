@@ -13,6 +13,7 @@ import { NativeService } from 'src/app/services/NativeService';
   styleUrls: ['./notification.page.scss'],
 })
 export class NotificationPage {
+  private connectionStatus = 1;
   public avatar:string = ""; 
   private notificationList: any;
   // Optional parameters to pass to the swiper instance. See http://idangero.us/swiper/api/ for valid options.
@@ -29,17 +30,29 @@ export class NotificationPage {
     private translate:TranslateService,
     private feedService :FeedService,
     private router: Router) {
-    this.notificationList = this.feedService.getNotificationList();
   }
 
+  ngOnInit(): void {
+    this.connectionStatus = this.feedService.getConnectionStatus();
+    this.notificationList = this.feedService.getNotificationList();
+  }
   ionViewWillEnter() {
+    this.events.subscribe('feeds:connectionChanged',(status)=>{
+      this.zone.run(() => {
+        this.connectionStatus = status;
+      });
+    });
+
     this.events.subscribe('feeds:UpdateNotification',()=>{
       this.zone.run(() => {
         this.notificationList = this.feedService.getNotificationList();
       });
     });
   }
-
+  ionViewWillLeave(){
+    this.events.unsubscribe("feeds:connectionChanged");
+  }
+  
   ionViewWillUnload(){
   }
 

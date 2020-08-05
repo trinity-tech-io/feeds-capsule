@@ -1,3 +1,6 @@
+<ion-header *ngIf="connectionStatus == 1">
+  <div class="offline-header"></div>
+</ion-header>
  <ion-content ion-padding [class.darkContainer]="theme.darkMode">
     <div class="first white">
          {{'StartbindingPage.introduce'|translate}}

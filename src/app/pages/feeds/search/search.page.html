@@ -1,3 +1,6 @@
+<ion-header *ngIf="connectionStatus == 1">
+  <div class="offline-header"></div>
+</ion-header>
 <ion-content>
   <ion-searchbar placeholder="{{'SearchPage.searchFeeds'|translate}}" (ionInput)="getItems($event)"></ion-searchbar>
   <div *ngIf="channelList.length == 0" [class.darkContainer]="theme.darkMode">

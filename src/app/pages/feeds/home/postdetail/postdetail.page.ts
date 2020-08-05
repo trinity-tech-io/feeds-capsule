@@ -15,6 +15,7 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
   styleUrls: ['./postdetail.page.scss'],
 })
 export class PostdetailPage implements OnInit {
+  private connectionStatus = 1;
   public nodeStatus:any ={};
   private bigImageUrl: string;
   private bigImage: boolean = false;
@@ -69,6 +70,7 @@ export class PostdetailPage implements OnInit {
   }
   
   ngOnInit() {
+    this.connectionStatus = this.feedService.getConnectionStatus();
     this.acRoute.params.subscribe((data)=>{
       this.nodeId = data.nodeId;
       this.channelId = data.channelId;
@@ -88,9 +90,12 @@ export class PostdetailPage implements OnInit {
   }
 
   ionViewWillEnter() {
-
     this.feedService.getComments(this.nodeId,Number(this.channelId) ,Number(this.postId),Communication.field.last_update, 0, 0, 0, false);
-
+    this.events.subscribe('feeds:connectionChanged',(status)=>{
+      this.zone.run(() => {
+        this.connectionStatus = status;
+      });
+    });
     this.events.subscribe('feeds:refreshPage',()=>{
       this.zone.run(() => {
         this.initData();
@@ -145,6 +150,7 @@ export class PostdetailPage implements OnInit {
 
   ionViewWillLeave(){//清楚订阅事件代码
     this.hideBigImage();
+    this.events.unsubscribe("feeds:connectionChanged");
     this.events.unsubscribe("feeds:refreshPage");
     this.events.unsubscribe("feeds:commentDataUpdate");
     this.events.unsubscribe("feeds:updataComment");

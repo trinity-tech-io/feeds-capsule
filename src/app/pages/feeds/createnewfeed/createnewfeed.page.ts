@@ -15,6 +15,7 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
   styleUrls: ['./createnewfeed.page.scss'],
 })
 export class CreatenewfeedPage implements OnInit {
+  private connectionStatus = 1;
   public channelAvatar = "";
   private avatar = "";
   private selectedServer: any = null;
@@ -36,6 +37,7 @@ export class CreatenewfeedPage implements OnInit {
     }
 
   ngOnInit() {
+    this.connectionStatus = this.feedService.getConnectionStatus();
     this.selectedServer = this.feedService.getBindingServer();
     this.selectedChannelSource = this.selectedServer.did;
   }
@@ -43,6 +45,11 @@ export class CreatenewfeedPage implements OnInit {
   ionViewWillEnter() {
     this.channelAvatar = this.feedService.getProfileIamge();
     this.avatar = this.feedService.parseChannelAvatar(this.channelAvatar);
+    this.events.subscribe('feeds:connectionChanged',(status)=>{
+      this.zone.run(() => {
+        this.connectionStatus = status;
+      });
+    });
     this.events.subscribe('feeds:createTopicSuccess', () => {
       this.navCtrl.pop().then(()=>{
         this.native.toast(this.translate.instant("CreatenewfeedPage.createfeedsuccess"));
@@ -61,6 +68,7 @@ export class CreatenewfeedPage implements OnInit {
   }
 
   ionViewWillLeave(){
+    this.events.unsubscribe("feeds:connectionChanged");
     this.events.unsubscribe("feeds:createTopicSuccess");
     this.events.unsubscribe("feeds:updateTitle");
   }

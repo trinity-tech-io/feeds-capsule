@@ -1,3 +1,6 @@
+<ion-header *ngIf="connectionStatus == 1">
+  <div class="offline-header"></div>
+</ion-header>
 <ion-content class="ion-padding" [class.darkContainer]="theme.darkMode">
       <div>
         <ion-label  class="content-key white">{{'CreatenewfeedPage.name'|translate}}</ion-label>

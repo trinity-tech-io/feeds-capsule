@@ -4,6 +4,7 @@ import { CarrierService } from 'src/app/services/CarrierService';
 import { NativeService } from 'src/app/services/NativeService';
 import { ThemeService } from 'src/app/services/theme.service';
 import { TranslateService } from "@ngx-translate/core";
+import { Events } from '@ionic/angular';
 
 
 declare let appManager: AppManagerPlugin.AppManager;
@@ -15,6 +16,7 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
   styleUrls: ['./scanqrcode.page.scss'],
 })
 export class ScanqrcodePage implements OnInit {
+  private connectionStatus = 1;
   private title = "01/06";
   private waitFriendsOnline = false;
   private carrierAddress: string;
@@ -22,6 +24,7 @@ export class ScanqrcodePage implements OnInit {
   private nonce: string = "0";
 
   constructor(
+    private events: Events,
     private native: NativeService,
     private zone: NgZone,
     private feedService:FeedService,
@@ -32,11 +35,15 @@ export class ScanqrcodePage implements OnInit {
   }
 
   ngOnInit() {
-
+    this.connectionStatus = this.feedService.getConnectionStatus();
   }
 
   ionViewWillEnter() {
-   
+    this.events.subscribe('feeds:connectionChanged',(status)=>{
+      this.zone.run(() => {
+        this.connectionStatus = status;
+      });
+    });
   }
 
   initTitle(){
@@ -49,7 +56,7 @@ export class ScanqrcodePage implements OnInit {
   }
 
   ionViewWillLeave(){
-     
+    this.events.unsubscribe("feeds:connectionChanged");
   }
  
   scanService(){

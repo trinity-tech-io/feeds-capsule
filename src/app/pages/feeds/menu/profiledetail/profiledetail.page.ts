@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import {Events} from '@ionic/angular';
+import { Component, OnInit, NgZone } from '@angular/core';
+import { Events } from '@ionic/angular';
 import { FeedService } from 'src/app/services/FeedService';
 import { NativeService } from 'src/app/services/NativeService';
 import { ThemeService } from 'src/app/services/theme.service';
@@ -12,6 +12,7 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
   styleUrls: ['./profiledetail.page.scss'],
 })
 export class ProfiledetailPage implements OnInit {
+  private connectionStatus = 1;
   private avatar = "";
   private name = "";
   private description = "";
@@ -24,6 +25,7 @@ export class ProfiledetailPage implements OnInit {
 
 
   constructor(
+    private zone: NgZone,
     private native: NativeService,
     private feedService:FeedService,
     public  theme:ThemeService,
@@ -44,10 +46,16 @@ export class ProfiledetailPage implements OnInit {
     }
 
   ngOnInit() {
-  
+    this.connectionStatus = this.feedService.getConnectionStatus();
   }
 
   ionViewWillEnter() {
+    this.events.subscribe('feeds:connectionChanged',(status)=>{
+      this.zone.run(() => {
+        this.connectionStatus = status;
+      });
+    });
+
     this.events.subscribe("feeds:updateTitle",()=>{
       this.initTitle();
     });
@@ -60,6 +68,12 @@ export class ProfiledetailPage implements OnInit {
   }
 
   ionViewWillUnload(){
+  }
+
+  ionViewWillLeave(){
+    this.events.unsubscribe("feeds:connectionChanged");
     this.events.unsubscribe("feeds:updateTitle");
   }
+  
+
 }

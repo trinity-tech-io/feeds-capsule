@@ -21,6 +21,7 @@ class Attribute {
 })
 
 export class ServerInfoPage implements OnInit {
+  private connectionStatus = 1;
   private buttonDisabled: boolean = true;
   private friendRequest = 'Feeds/0.1';
   private carrierAddress: string;
@@ -50,7 +51,7 @@ export class ServerInfoPage implements OnInit {
     private translate:TranslateService) {}
 
   ngOnInit() {
-
+    this.connectionStatus = this.feedService.getConnectionStatus();
     this.acRoute.params.subscribe(data => {
       this.isOwner = data.isOwner ;
       this.address = data.address;
@@ -95,6 +96,11 @@ export class ServerInfoPage implements OnInit {
   }
 
   ionViewWillEnter() {
+    this.events.subscribe('feeds:connectionChanged',(status)=>{
+      this.zone.run(() => {
+        this.connectionStatus = status;
+      });
+    });
 
     this.events.subscribe("feeds:updateServerList",()=>{
       this.zone.run(() => {
@@ -128,6 +134,7 @@ export class ServerInfoPage implements OnInit {
   }
 
   ionViewWillLeave(){
+    this.events.unsubscribe("feeds:connectionChanged");
     this.events.unsubscribe("feeds:updateServerList");
     this.events.unsubscribe("feeds:serverConnectionChanged");
     this.events.unsubscribe("feeds:removeFeedSourceFinish");

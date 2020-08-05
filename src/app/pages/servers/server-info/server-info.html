@@ -1,3 +1,6 @@
+<ion-header *ngIf="connectionStatus == 1">
+  <div class="offline-header"></div>
+</ion-header>
 <ion-content [class.darkContainer]="theme.darkMode" [class.lightContainer]="!theme.darkMode" ion-padding>
    
    <div class="first">

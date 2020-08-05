@@ -18,7 +18,7 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
   styleUrls: ['./channels.page.scss'],
 })
 export class ChannelsPage implements OnInit {
-
+  private connectionStatus = 1;
   private channelAvatar = "";
   private channelName = "";
   private channelOwner = "";
@@ -52,6 +52,8 @@ export class ChannelsPage implements OnInit {
   }
 
   ngOnInit() {
+    this.connectionStatus = this.feedService.getConnectionStatus();
+
     this.acRoute.params.subscribe((data)=>{
       this.nodeId = data.nodeId;
       this.channelId = data.channelId;
@@ -77,6 +79,12 @@ export class ChannelsPage implements OnInit {
   }
 
   ionViewWillEnter() {
+    this.events.subscribe('feeds:connectionChanged',(status)=>{
+      this.zone.run(() => {
+        this.connectionStatus = status;
+      });
+    });
+
     this.events.subscribe("feeds:updateTitle",()=>{
       this.initTitle();
     });
@@ -112,6 +120,7 @@ export class ChannelsPage implements OnInit {
   }
 
   ionViewWillLeave(){
+    this.events.unsubscribe("feeds:connectionChanged");
     this.events.unsubscribe("feeds:updateTitle");
     this.events.unsubscribe("feeds:refreshPage");
     this.events.unsubscribe("feeds:postDataUpdate");

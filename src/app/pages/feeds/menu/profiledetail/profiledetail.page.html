@@ -1,4 +1,6 @@
-
+<ion-header *ngIf="connectionStatus == 1">
+  <div class="offline-header"></div>
+</ion-header>
 <ion-content [class.darkContainer]="theme.darkMode">
   <div class="channel-img-div">
     <img *ngIf="avatar == ''" class="profile-img" src="assets/images/default-contact.svg">

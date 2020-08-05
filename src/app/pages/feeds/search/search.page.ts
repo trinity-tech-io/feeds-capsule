@@ -11,6 +11,7 @@ import { MenuService } from 'src/app/services/MenuService';
   styleUrls: ['./search.page.scss'],
 })
 export class SearchPage implements OnInit {
+  private connectionStatus = 1;
   public nodeStatus:any={};
   private channelList= [];
   constructor(
@@ -24,12 +25,18 @@ export class SearchPage implements OnInit {
     }
 
   ngOnInit() {
+    this.connectionStatus = this.feedService.getConnectionStatus();
     this.channelList = this.feedService.refreshLocalChannels();
     this.initnodeStatus();
   }
 
-  initData(){
-    
+  initSubscribe(){
+    this.events.subscribe('feeds:connectionChanged',(status)=>{
+      this.zone.run(() => {
+        this.connectionStatus = status;
+      });
+    });
+
     this.events.subscribe("feeds:friendConnectionChanged", (nodeId, status)=>{
       this.zone.run(()=>{
         this.nodeStatus[nodeId] = status;
@@ -64,6 +71,7 @@ export class SearchPage implements OnInit {
   }
 
   removeSubscribe(){
+    this.events.unsubscribe("feeds:connectionChanged");
     this.events.unsubscribe('feeds:friendConnectionChanged');
     this.events.unsubscribe('feeds:subscribeFinish');
     this.events.unsubscribe('feeds:unsubscribeFinish');
@@ -72,11 +80,11 @@ export class SearchPage implements OnInit {
   }
 
   ionViewWillEnter() {
-       this.initData();
+    this.initSubscribe();
   }
 
   ionViewWillLeave(){
-       this.removeSubscribe();
+    this.removeSubscribe();
   }
 
   subscribe(nodeId: string, id: number){

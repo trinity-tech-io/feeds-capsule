@@ -13,6 +13,7 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
   styleUrls: ['./comment.page.scss'],
 })
 export class CommentPage implements OnInit {
+  private connectionStatus = 1;
   public nodeStatus:any={};
   public channelAvatar = "";
   public channelName = "";
@@ -34,7 +35,7 @@ export class CommentPage implements OnInit {
     private translate:TranslateService) { }
 
   ngOnInit() {
-
+    this.connectionStatus = this.feedService.getConnectionStatus();
     this.acRoute.params.subscribe((data)=>{
       this.nodeId = data.nodeId;
       this.channelId = data.channelId;
@@ -48,6 +49,13 @@ export class CommentPage implements OnInit {
     this.subscribers = channel["subscribers"] || "";
     this.channelAvatar = this.feedService.parseChannelAvatar(channel["avatar"]) || "";
     this.isNewPost = true;
+
+    this.events.subscribe('feeds:connectionChanged',(status)=>{
+      this.zone.run(() => {
+        this.connectionStatus = status;
+      });
+    });
+
     this.events.subscribe("feeds:updateTitle",()=>{
       this.initTitle();
     });
@@ -75,10 +83,11 @@ export class CommentPage implements OnInit {
   }
 
   ionViewWillLeave(){
-      this.events.unsubscribe("feeds:updateTitle");
-      this.events.unsubscribe("rpcRequest:error");
-      this.events.unsubscribe("rpcRequest:success");
-      this.isNewPost = true;
+    this.events.unsubscribe("feeds:connectionChanged");
+    this.events.unsubscribe("feeds:updateTitle");
+    this.events.unsubscribe("rpcRequest:error");
+    this.events.unsubscribe("rpcRequest:success");
+    this.isNewPost = true;
   }
 
   initTitle(){

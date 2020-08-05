@@ -13,6 +13,7 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
   styleUrls: ['./profileimage.page.scss'],
 })
 export class ProfileimagePage implements OnInit {
+  private connectionStatus = 1;
   private userAvatar = "";
   private select: number = 1;
   private avatar = "assets/images/profile-1.svg";
@@ -22,11 +23,12 @@ export class ProfileimagePage implements OnInit {
     private events: Events,
     private zone: NgZone,
     private translate:TranslateService,
-    public theme:ThemeService, 
-    public feedService:FeedService,
+    private theme:ThemeService, 
+    private feedService:FeedService,
     private camera: CameraService) { }
 
   ngOnInit() {
+    this.connectionStatus = this.feedService.getConnectionStatus();
   }
 
   ionViewWillEnter() {
@@ -35,6 +37,13 @@ export class ProfileimagePage implements OnInit {
     }else{
       this.userAvatar = './assets/images/profile-add.svg';
     }
+
+    this.events.subscribe('feeds:connectionChanged',(status)=>{
+      this.zone.run(() => {
+        this.connectionStatus = status;
+      });
+    });
+
     this.events.subscribe("feeds:updateTitle",()=>{
       this.initTitle();
     });
@@ -42,6 +51,7 @@ export class ProfileimagePage implements OnInit {
 
   ionViewWillLeave(){
     this.camera = null;
+    this.events.unsubscribe("feeds:connectionChanged");
     this.events.unsubscribe("feeds:updateTitle"); 
   }
 

@@ -15,7 +15,7 @@ declare let appManager: AppManagerPlugin.AppManager;
 })
 
 export class AddServerPage implements OnInit {
-  private connectStatus = 1;
+  private connectionStatus = 1;
   private address: string = '';
   
   private buttonDisabled = false;
@@ -52,7 +52,7 @@ export class AddServerPage implements OnInit {
   
 
   ngOnInit() {
-    this.connectStatus = this.feedService.getConnectionStatus();
+    this.connectionStatus = this.feedService.getConnectionStatus();
   }
 
   ionViewWillEnter() {
@@ -61,9 +61,9 @@ export class AddServerPage implements OnInit {
       this.initTitle();
     });
 
-    this.events.subscribe('feeds:connectionChanged', connectionStatus => {
+    this.events.subscribe('feeds:connectionChanged',(status)=>{
       this.zone.run(() => {
-          this.connectStatus = connectionStatus;
+        this.connectionStatus = status;
       });
     });
 
@@ -82,6 +82,7 @@ export class AddServerPage implements OnInit {
   }
 
   ionViewWillLeave(){
+    this.events.unsubscribe("feeds:connectionChanged");
     this.events.unsubscribe("feeds:updateTitle");
     this.events.unsubscribe("feeds:connectionChanged");
     this.events.unsubscribe("feeds:updateServerList");

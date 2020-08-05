@@ -14,6 +14,7 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
   styleUrls: ['./issuecredential.page.scss'],
 })
 export class IssuecredentialPage implements OnInit {
+  private connectionStatus = 1;
   private title = "05/06";
   private nodeId = "";
   private did = "";
@@ -32,6 +33,7 @@ export class IssuecredentialPage implements OnInit {
     }
 
     ngOnInit() {
+      this.connectionStatus = this.feedService.getConnectionStatus();
       this.acRoute.params.subscribe((data)=>{
         this.nodeId = data.nodeId;
         this.did = data.did;
@@ -39,7 +41,12 @@ export class IssuecredentialPage implements OnInit {
     }
 
     ionViewWillEnter(){
-      
+      this.events.subscribe('feeds:connectionChanged',(status)=>{
+        this.zone.run(() => {
+          this.connectionStatus = status;
+        });
+      });
+
       this.events.subscribe('feeds:issue_credential', () => {
         this.zone.run(() => {
             this.native.navigateForward(['/bindservice/finish/',this.nodeId],{
@@ -55,6 +62,7 @@ export class IssuecredentialPage implements OnInit {
     }
 
     ionViewWillLeave(){
+      this.events.unsubscribe("feeds:connectionChanged");
       this.events.unsubscribe('feeds:issue_credential');
     }
   
