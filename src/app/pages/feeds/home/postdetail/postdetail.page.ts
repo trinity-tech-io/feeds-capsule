@@ -46,22 +46,7 @@ export class PostdetailPage implements OnInit {
     public theme:ThemeService,
     private translate:TranslateService,
     private menuService: MenuService) {
-      acRoute.params.subscribe((data)=>{
-        this.nodeId = data.nodeId;
-        this.channelId = data.channelId;
-        this.postId = data.postId;
-        this.initData();
-      });
-
-      this.myInterval = setInterval(() => {
-        let status: number = this.feedService.getServerStatusFromId(this.nodeId);
-        if (status == 1)
-          this.refreshCommFinish = true;
-
-        if (this.refreshCommFinish){
-          clearInterval(this.myInterval);
-        }        
-      }, 1000);
+   
   }
 
   initData(){
@@ -84,7 +69,22 @@ export class PostdetailPage implements OnInit {
   }
   
   ngOnInit() {
-   
+    this.acRoute.params.subscribe((data)=>{
+      this.nodeId = data.nodeId;
+      this.channelId = data.channelId;
+      this.postId = data.postId;
+      this.initData();
+    });
+
+    this.myInterval = setInterval(() => {
+      let status: number = this.feedService.getServerStatusFromId(this.nodeId);
+      if (status == 1)
+        this.refreshCommFinish = true;
+
+      if (this.refreshCommFinish){
+        clearInterval(this.myInterval);
+      }        
+    }, 1000);
   }
 
   ionViewWillEnter() {
@@ -134,9 +134,7 @@ export class PostdetailPage implements OnInit {
     this.events.subscribe("feeds:updateTitle",()=>{
       this.initTitle();
     });
-    this.initTitle();
-    this.native.setTitleBarBackKeyShown(true);
-
+  
     this.events.subscribe("feeds:unsubscribeFinish",()=>{
       this.native.navigateForward(['/tabs/home'],{
         replaceUrl: true
@@ -154,6 +152,11 @@ export class PostdetailPage implements OnInit {
     this.events.unsubscribe("feeds:friendConnectionChanged");
     this.events.unsubscribe("feeds:updateTitle");
     this.events.unsubscribe("feeds:unsubscribeFinish");
+  }
+
+  ionViewDidEnter() {
+    this.initTitle();
+    this.native.setTitleBarBackKeyShown(true);
   }
 
  

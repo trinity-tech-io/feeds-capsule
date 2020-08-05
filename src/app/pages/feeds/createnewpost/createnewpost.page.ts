@@ -76,9 +76,7 @@ export class CreatenewpostPage implements OnInit {
     this.events.subscribe("feeds:updateTitle",()=>{
       this.initTitle();
     });
-    this.initTitle();
     this.initnodeStatus();
-    this.native.setTitleBarBackKeyShown(true);
   }
 
   ionViewWillLeave(){
@@ -88,6 +86,11 @@ export class CreatenewpostPage implements OnInit {
     this.events.unsubscribe("feeds:publishPostSuccess");
     this.events.unsubscribe("rpcRequest:error");
     this.isNewPost =true;
+  }
+
+  ionViewDidEnter() {
+    this.initTitle();
+    this.native.setTitleBarBackKeyShown(true);
   }
 
 

@@ -1,5 +1,5 @@
 import { Component, OnInit, NgZone } from '@angular/core';
-import { NavController, Events} from '@ionic/angular';
+import { Events} from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
 import { FeedService } from 'src/app/services/FeedService';
 import { NativeService } from 'src/app/services/NativeService';
@@ -7,7 +7,7 @@ import { ThemeService } from 'src/app/services/theme.service';
 import { UtilService } from 'src/app/services/utilService';
 import { MenuService } from 'src/app/services/MenuService';
 import { TranslateService } from "@ngx-translate/core";
-import { Router } from '@angular/router'
+
 
 
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
@@ -31,8 +31,6 @@ export class ChannelsPage implements OnInit {
 
   private followStatus = false;
   constructor(
-    private navCtrl: NavController,
-    private router: Router,
     private zone: NgZone,
     private events: Events,
     private native: NativeService,
@@ -42,7 +40,19 @@ export class ChannelsPage implements OnInit {
     private translate:TranslateService,
     private menuService: MenuService) {
 
-    acRoute.params.subscribe((data)=>{
+   
+  }
+
+  subscribe(){
+    this.feedService.subscribeChannel(this.nodeId, Number(this.channelId));
+  }
+
+  async unsubscribe(){
+    this.menuService.showUnsubscribeMenu(this.nodeId, Number(this.channelId), this.channelName);
+  }
+
+  ngOnInit() {
+    this.acRoute.params.subscribe((data)=>{
       this.nodeId = data.nodeId;
       this.channelId = data.channelId;
 
@@ -66,24 +76,10 @@ export class ChannelsPage implements OnInit {
     });
   }
 
-  subscribe(){
-    this.feedService.subscribeChannel(this.nodeId, Number(this.channelId));
-  }
-
-  async unsubscribe(){
-    this.menuService.showUnsubscribeMenu(this.nodeId, Number(this.channelId), this.channelName);
-  }
-
-  ngOnInit() {
-    
-  }
-
   ionViewWillEnter() {
     this.events.subscribe("feeds:updateTitle",()=>{
       this.initTitle();
     });
-    this.initTitle();
-    this.native.setTitleBarBackKeyShown(true);
 
     this.events.subscribe('feeds:refreshPage',()=>{
       this.zone.run(() => {
@@ -115,12 +111,17 @@ export class ChannelsPage implements OnInit {
     });
   }
 
-  ionViewWillUnload(){
+  ionViewWillLeave(){
     this.events.unsubscribe("feeds:updateTitle");
     this.events.unsubscribe("feeds:refreshPage");
     this.events.unsubscribe("feeds:postDataUpdate");
     this.events.unsubscribe("feeds:subscribeFinish");
     this.events.unsubscribe("feeds:unsubscribeFinish");
+  }
+
+  ionViewDidEnter() {
+    this.initTitle();
+    this.native.setTitleBarBackKeyShown(true);
   }
 
   initTitle(){

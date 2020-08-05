@@ -96,6 +96,12 @@ export class ServerInfoPage implements OnInit {
 
   ionViewWillEnter() {
 
+    this.events.subscribe("feeds:updateServerList",()=>{
+      this.zone.run(() => {
+      this.native.navigateForward('/menu/servers',""); 
+      });
+    });
+  
     this.events.subscribe('feeds:serverConnectionChanged', serversStatus => {
       this.zone.run(() => {
           if (this.address == ""){
@@ -105,23 +111,32 @@ export class ServerInfoPage implements OnInit {
     });
 
     this.events.subscribe('feeds:removeFeedSourceFinish',  () => {
-      this.zone.run(() => {
-        this.navigateBackPage();
+      this.zone.run(() => { 
+        this.native.navigateForward('/menu/servers',""); 
       });
     });
 
     this.events.subscribe("feeds:updateTitle",()=>{
       this.initTitle();
     });
+    
+  }
+
+  ionViewDidEnter(){
     this.initTitle();
     this.native.setTitleBarBackKeyShown(true);
   }
 
   ionViewWillLeave(){
+    this.events.unsubscribe("feeds:updateServerList");
     this.events.unsubscribe("feeds:serverConnectionChanged");
     this.events.unsubscribe("feeds:removeFeedSourceFinish");
     this.events.unsubscribe("feeds:updateTitle");
   }
+
+
+
+
 
 
   initTitle(){
@@ -180,7 +195,7 @@ export class ServerInfoPage implements OnInit {
     this.feedService.addServer(this.carrierAddress,this.friendRequest,
       this.name, this.owner, this.introduction,
       this.didString, this.feedsUrl, ()=>{
-        this.native.pop();
+        this.native.navigateForward('/menu/servers',""); 
       },(err)=>{
         this.native.pop();
       });
@@ -214,7 +229,7 @@ export class ServerInfoPage implements OnInit {
         icon: 'trash',
         handler: () => {
           this.feedService.removeFeedSource(this.nodeId);
-          alert(this.translate.instant("ServerInfoPage.removeserver"));
+          this.native.toast_trans("ServerInfoPage.removeserver"); 
         }
       },{
         text: this.translate.instant("ServerInfoPage.cancel"),

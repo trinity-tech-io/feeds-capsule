@@ -571,7 +571,7 @@ $segment-button-md-text-color: #007AFF !important;
   // margin-right: 41px;
   // padding-left: 37px;
   // padding-right: 37px;
-  // width: 100%;
+  width: 83%;
 }
 
 .channel-post-img{
@@ -610,7 +610,7 @@ $segment-button-md-text-color: #007AFF !important;
 }
 
 .like{
-  content: url(../assets/images/like.svg);
+  content: url("../assets/images/like.svg");
   width: 14.7px;
   height: 13.6px;
   object-fit: contain;
@@ -619,7 +619,7 @@ $segment-button-md-text-color: #007AFF !important;
 }
 
 .like-s{
-  content: url(../assets/images/like-s.svg);
+  content: url("../assets/images/like-s.svg");
   width: 14.7px;
   height: 13.6px;
 }
@@ -1314,6 +1314,7 @@ vertical-align: middle;
 }
 
 .content-img-without-margin {
+  margin-top: 2px;
   width: 100%; 
   height: 202px;
 

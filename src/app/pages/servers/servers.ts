@@ -15,7 +15,7 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 export class ServersPage implements OnInit {
     private myFeedSource = null;
-    private serverList:any;
+    private serverList:any = [];
     private serversStatus: any;
     private serverStatisticsMap: any;
 
@@ -32,22 +32,11 @@ export class ServersPage implements OnInit {
     }
 
     ngOnInit() {
-        this.initData();
+       
     }
 
     addSubscribe(){
-        this.events.subscribe('feeds:removeFeedSourceFinish',  () => {
-            this.zone.run(() => {
-                this.initData();
-            });
-        });
-
-        this.events.subscribe('feeds:updateServerList', serverList => {
-            this.zone.run(() => {
-                this.serverList = serverList;
-            });
-        });
-
+      
         this.events.subscribe('feeds:serverConnectionChanged', serversStatus => {
             this.zone.run(() => {
                 this.serversStatus = serversStatus;
@@ -82,8 +71,6 @@ export class ServersPage implements OnInit {
     }
 
     removeSubscribe(){
-      this.events.unsubscribe("feeds:removeFeedSourceFinish");
-      this.events.unsubscribe("feeds:updateServerList");
       this.events.unsubscribe("feeds:serverConnectionChanged");
       this.events.unsubscribe("feeds:serverStatisticsChanged");
       this.events.unsubscribe("feeds:login_finish");
@@ -92,7 +79,6 @@ export class ServersPage implements OnInit {
 
     initData(){
         this.serverList = this.feedService.getServerList();
-
         let bindingServer = this.feedService.getBindingServer();
         if (bindingServer != null && bindingServer != undefined){
             this.myFeedSource = this.feedService.getServerbyNodeId(bindingServer.nodeId);
@@ -111,10 +97,14 @@ export class ServersPage implements OnInit {
     }
 
     ionViewWillEnter(){
+        this.initData();
         this.events.subscribe("feeds:updateTitle",()=>{
           this.initTitle();
         });
         this.addSubscribe();
+      }
+
+      ionViewDidEnter() {
         this.initTitle();
         this.native.setTitleBarBackKeyShown(true);
       }
@@ -155,11 +145,11 @@ export class ServersPage implements OnInit {
     }
 
     bindFeedSource(){
-        this.router.navigate(['/bindservice/scanqrcode']);
+        this.native.navigateForward(['/bindservice/scanqrcode'],"");
     }
 
     exploreFeedSource(){
-        this.navCtrl.navigateForward(['/menu/servers/add-server']);
+        this.native.navigateForward(['/menu/servers/add-server'],"");
     }
 
 }

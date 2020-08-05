@@ -1,7 +1,6 @@
 import { Component, OnInit, NgZone } from '@angular/core';
 import { Events, Platform, LoadingController } from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
-import { CarrierService } from 'src/app/services/CarrierService';
 import { FeedService } from 'src/app/services/FeedService';
 import { NativeService } from 'src/app/services/NativeService';
 import { AppService } from 'src/app/services/AppService';
@@ -37,9 +36,7 @@ export class AddServerPage implements OnInit {
     private appService: AppService,
     private popup: PopupProvider,
     private loadingController: LoadingController,
-    private carrier: CarrierService,
     private translate:TranslateService) {
-      this.connectStatus = this.feedService.getConnectionStatus();
       // this.acRoute.params.subscribe(data => {
       //   this.address = data.address;
       //   if (this.address == null ||
@@ -51,35 +48,44 @@ export class AddServerPage implements OnInit {
       //     });
       //   this.queryServer();
       // });
+    }
+  
 
-      this.events.subscribe('feeds:connectionChanged', connectionStatus => {
-        this.zone.run(() => {
-            this.connectStatus = connectionStatus;
-        });
-      });
-
-      this.events.subscribe('feeds:updateServerList', ()=>{
-        this.zone.run(() => {
-            //this.native.pop();
-            this.native.go('/menu/servers');
-        });
-      });
+  ngOnInit() {
+    this.connectStatus = this.feedService.getConnectionStatus();
   }
 
-  ngOnInit() {}
+  ionViewWillEnter() {
 
-  ionViewDidEnter() {
     this.events.subscribe("feeds:updateTitle",()=>{
       this.initTitle();
     });
+
+    this.events.subscribe('feeds:connectionChanged', connectionStatus => {
+      this.zone.run(() => {
+          this.connectStatus = connectionStatus;
+      });
+    });
+
+    this.events.subscribe('feeds:updateServerList', ()=>{
+      this.zone.run(() => {
+          //this.native.pop();
+          this.native.go('/menu/servers');
+      });
+    });
+   }
+
+
+  ionViewDidEnter() {
     this.initTitle();
     this.native.setTitleBarBackKeyShown(true);
   }
 
-  ionViewWillUnload(){
+  ionViewWillLeave(){
     this.events.unsubscribe("feeds:updateTitle");
+    this.events.unsubscribe("feeds:connectionChanged");
+    this.events.unsubscribe("feeds:updateServerList");
   }
-
 
   initTitle(){
     titleBarManager.setTitle(this.translate.instant('AddServerPage.title'));

@@ -3353,11 +3353,12 @@ export class FeedService {
     isBindServer = false;
     this.checkIsAlreadyFriends(carrierAddress,(isFriend)=>{
       if (isFriend){
-        this.native.toast(this.translate.instant("AddServerPage.Serveralreadyadded"));
+        this.native.toast_trans("AddServerPage.Serveralreadyadded");
+        onSuccess();
       }else{
         this.carrierService.isValidAddress(carrierAddress, (isValid) => {
           if (!isValid){
-            this.alertError("Address invalid");
+            this.native.toast_trans("common.addressinvalid");
             onError("Address invalid");
             return;
           }
