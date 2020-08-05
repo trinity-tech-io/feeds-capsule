@@ -92,6 +92,10 @@ export class SigninPage implements OnInit {
         description:{
           required: false,
           reason: "Maybe Feeds dapp need"
+        },
+        interests:{
+          required: false,
+          reason: "Maybe Feeds dapp need"
         }
       }
     }, {}, (response: any) => {
@@ -104,22 +108,30 @@ export class SigninPage implements OnInit {
             let credentials = presentation.getCredentials();
             this.saveCredentialById(data.did,credentials, "name");
 
+            let interests = this.findCredentialValueById(data.did, credentials, "interests", "");
+            let desc = this.findCredentialValueById(data.did, credentials, "description", "");
+
+            let description = this.translate.instant("DIDdata.NoDescription");
+            if (desc != ""){
+              description = desc;
+            }else if (interests != ""){
+              description = interests;
+            }
+
             this.saveData(
               data.did,
               this.findCredentialValueById(data.did, credentials, "name", this.translate.instant("DIDdata.Notprovided")),
               this.findCredentialValueById(data.did, credentials, "email", this.translate.instant("DIDdata.Notprovided")),
               this.findCredentialValueById(data.did, credentials, "telephone", this.translate.instant("DIDdata.Notprovided")),
               this.findCredentialValueById(data.did, credentials, "nation", this.translate.instant("DIDdata.Notprovided")),
-              this.findCredentialValueById(data.did, credentials, "description", this.translate.instant("DIDdata.Notprovided"))
+              description
               );
-
             this.events.publish("feeds:signinSuccess");
             this.initApp();
           });
         });
       }
     });
-
   }
 
   async presentLoading() {
@@ -155,7 +167,7 @@ export class SigninPage implements OnInit {
 
   initApp(){
     this.carrierService.init();
-    this.native.setRootRouter(['/tabs/home']);
+    this.native.setRootRouter('/tabs/home');
   }
 
   saveData(did: string, name: string, email: string, telephone: string, location: string, description: string){

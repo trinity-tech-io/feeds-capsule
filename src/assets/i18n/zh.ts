@@ -259,7 +259,8 @@ export const zh = {
     },
     "DIDdata": {
         "Notprovided": "未提供",
-        "NotprovidedfromDIDDocument": "DID文档未提供"
+        "NotprovidedfromDIDDocument": "DID文档未提供",
+        "NoDescription":"暂无个人简介和兴趣爱好信息"
     },
     "CommentPage":{
         "newComment":"新建微评",

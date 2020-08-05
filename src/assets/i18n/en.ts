@@ -259,7 +259,8 @@ export const en = {
     },
     "DIDdata":{
         "Notprovided": "Not provided",
-        "NotprovidedfromDIDDocument":"Not provided from DID Document"
+        "NotprovidedfromDIDDocument":"Not provided from DID Document",
+        "NoDescription":"No descriptions or interests yet"
     },
     "CommentPage":{
         "newComment":"New Comment",
