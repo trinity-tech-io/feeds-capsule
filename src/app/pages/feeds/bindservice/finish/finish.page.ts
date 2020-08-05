@@ -16,26 +16,27 @@ export class FinishPage implements OnInit {
     private acRoute: ActivatedRoute,
     ) {
 
-      acRoute.params.subscribe((data)=>{
+    }
+
+    ngOnInit(){
+      this.acRoute.params.subscribe((data)=>{
         this.nodeId = data.nodeId;
       });
     }
-    ionViewWillEnter(){
+
+    ionViewDidEnter() {
       this.initTitle();
       this.native.setTitleBarBackKeyShown(true);
     }
   
-    ionViewWillUnload(){
-    
+    ionViewWillLeave(){
+     
     }
   
   
     initTitle(){
       titleBarManager.setTitle(this.title);
     }
-
-  ngOnInit() {
-  }
 
   createChannel(){
       this.native.navigateForward(['/createnewfeed'],{

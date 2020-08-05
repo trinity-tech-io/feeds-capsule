@@ -29,9 +29,7 @@ export class ImportdidPage implements OnInit {
     public  theme:ThemeService
     ) {
 
-      acRoute.params.subscribe((data)=>{
-        this.nodeId = data.nodeId;
-      });
+    
 
       // this.events.subscribe('feeds:did_imported', (nodeId, did, payload) => {
       //   this.navCtrl.pop().then(()=>{
@@ -42,10 +40,14 @@ export class ImportdidPage implements OnInit {
       
     }
 
-    ionViewWillEnter() {
-      this.initTitle();
-      this.native.setTitleBarBackKeyShown(true);
+    ngOnInit() {
+      this.acRoute.params.subscribe((data)=>{
+        this.nodeId = data.nodeId;
+      });
+    }
 
+    ionViewWillEnter() {
+      
       this.events.subscribe('feeds:resolveDidError', (nodeId, did, payload) => {
         this.zone.run(() => {
             this.native.navigateForward(['/bindservice/publishdid/',nodeId, did, payload],{
@@ -63,7 +65,12 @@ export class ImportdidPage implements OnInit {
       });
     }
   
-    ionViewWillUnload(){
+    ionViewDidEnter() {
+      this.initTitle();
+      this.native.setTitleBarBackKeyShown(true);
+    }
+
+    ionViewWillLeave(){
       this.events.unsubscribe('feeds:resolveDidError');
       this.events.unsubscribe('feeds:resolveDidSucess');
     }
@@ -73,8 +80,7 @@ export class ImportdidPage implements OnInit {
       titleBarManager.setTitle(this.title);
     }
   
-  ngOnInit() {
-  }
+ 
 
   createNewDid(){
     this.feedService.createDidRequest(this.nodeId);
@@ -83,9 +89,4 @@ export class ImportdidPage implements OnInit {
   // importDid(){
   //   this.native.getNavCtrl().navigateForward(['/bindservice/importmnemonic', this.nodeId]);
   // }
-
-  abort(){
-    this.navCtrl.pop();
-  }
-
 }

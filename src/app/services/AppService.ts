@@ -1,6 +1,7 @@
 
-import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
+import { Injectable, ViewChild } from '@angular/core';
+import { Router} from '@angular/router';
+//import { IonRouterOutlet } from '@ionic/angular';
 import { ThemeService } from "./../services/theme.service";
 import { NgZone} from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
@@ -9,6 +10,7 @@ import { NativeService } from '../services/NativeService';
 import { FeedService } from '../services/FeedService';
 import { CarrierService } from '../services/CarrierService';
 import { MenuController} from '@ionic/angular';
+import { PopupProvider } from '../services/popup';
 declare let appManager: AppManagerPlugin.AppManager;
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 @Injectable({
@@ -23,7 +25,8 @@ export class AppService {
                 private native:NativeService,
                 private feedService: FeedService,
                 private carrierService:CarrierService,
-                private menu: MenuController,) {
+                private menu: MenuController,
+                private popupProvider:PopupProvider) {
     }
 
     init() {
@@ -32,11 +35,24 @@ export class AppService {
         });
         titleBarManager.addOnItemClickedListener((menuIcon)=>{
           if (menuIcon.key == "back") {
-               this.native.pop();
+              this.handleBack();
           }else if(menuIcon.key == "more"){
                this.menu.open("menu");
           }
         });
+    }
+
+    handleBack(){
+      if(this.router.url.indexOf('/bindservice/importdid/')>-1 ||
+         this.router.url.indexOf('/bindservice/publishdid/')>-1 ||
+         this.router.url.indexOf('/bindservice/issuecredential/')>-1 ||
+         this.router.url.indexOf('/bindservice/importdid/')>-1){
+        this.popupProvider.ionicConfirm("common.prompt","common.des2").then(()=>{
+          this.native.setRootRouter(['/tabs/home']);
+        });
+    }else{
+      this.native.pop();
+    }
     }
 
     addright(){

@@ -1,4 +1,4 @@
-<ion-content class="ion-padding" [class.darkContainer]="theme.darkMode">
+<ion-content ion-padding [class.darkContainer]="theme.darkMode">
   <div class="first white">
      {{'PublishdidPage.introduce'|translate}}
   </div>
@@ -13,10 +13,6 @@
 
   <div class="confirm" (click)="publishDid()">
     {{'PublishdidPage.publishonDIDsidechain'|translate}}
-  </div>
-
-  <div class="abort" (click)="abort()">
-    {{'PublishdidPage.abort'|translate}}
   </div>
 
 </ion-content>

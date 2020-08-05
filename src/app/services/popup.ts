@@ -35,13 +35,13 @@ export class PopupProvider {
                 message  : this.translate.instant(message),
                 cssClass: 'my-custom-alert',
                 buttons: [{
-                    text: cancelText ? cancelText : this.translate.instant('cancel'),
+                    text: cancelText ? cancelText : this.translate.instant('common.cancel'),
                     handler: () => {
-                        resolve(false);
+                        reject(false);
                     }
                 },
                 {
-                    text: okText ? okText : this.translate.instant('confirm'),
+                    text: okText ? okText : this.translate.instant('common.confirm'),
                     handler: () => {
                         resolve(true);
                     }

@@ -24,7 +24,8 @@ export const fr = {
         "followSuccess":"Follow success",
         "unFollowSuccess":"UnFollow success",
         "noImageSelected":"No Image Selected",
-        "loggingIn":"Logging in"
+        "loggingIn":"Logging in",
+        "des2":'Are you sure you want to return to the main page？',
     },
     "app": {
         "profileDetails": "Profile Details",

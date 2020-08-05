@@ -28,18 +28,18 @@ export class IssuecredentialPage implements OnInit {
     private router: Router,
     private navCtrl: NavController
     ) {
-      acRoute.params.subscribe((data)=>{
+     
+    }
+
+    ngOnInit() {
+      this.acRoute.params.subscribe((data)=>{
         this.nodeId = data.nodeId;
         this.did = data.did;
       });
-
-
     }
 
     ionViewWillEnter(){
-      this.initTitle();
-      this.native.setTitleBarBackKeyShown(true);
-
+      
       this.events.subscribe('feeds:issue_credential', () => {
         this.zone.run(() => {
             this.native.navigateForward(['/bindservice/finish/',this.nodeId],{
@@ -48,8 +48,13 @@ export class IssuecredentialPage implements OnInit {
         });
       });
     }
-  
-    ionViewWillUnload(){
+
+    ionViewDidEnter() {
+      this.initTitle();
+      this.native.setTitleBarBackKeyShown(true);
+    }
+
+    ionViewWillLeave(){
       this.events.unsubscribe('feeds:issue_credential');
     }
   
@@ -58,14 +63,8 @@ export class IssuecredentialPage implements OnInit {
       titleBarManager.setTitle(this.translate.instant(this.title));
     }
   
-  ngOnInit() {
-  }
   issueCredential(){
     this.presentPrompt();
-  }
-
-  abort(){
-    this.navCtrl.pop();
   }
 
   async presentPrompt() {//确认弹框

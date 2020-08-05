@@ -1,5 +1,4 @@
 import { Component, OnInit, NgZone } from '@angular/core';
-import { NavController } from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
 import { FeedService } from 'src/app/services/FeedService';
 import { Events } from '@ionic/angular';
@@ -15,8 +14,8 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 export class StartbindingPage implements OnInit {
   private title = "02/06";
   public nonce = "";
-  private nodeId: string;
-  private carrierAddress: string;
+  private nodeId: string="";
+  private carrierAddress: string="";
   private did:string = "";
   public feedsUrl: string ="";
   private isProcess = false;
@@ -26,10 +25,14 @@ export class StartbindingPage implements OnInit {
     private events: Events,
     private acRoute: ActivatedRoute,
     private feedService:FeedService,
-    private navCtrl: NavController,
     public  theme:ThemeService
   ) {
-    acRoute.params.subscribe((data)=>{
+  
+  
+  }
+
+  ngOnInit() {
+    this.acRoute.params.subscribe((data)=>{
       this.nodeId = data.nodeId;
 
       let nonce = data.nonce || "";
@@ -47,22 +50,11 @@ export class StartbindingPage implements OnInit {
       }
 
       this.carrierAddress = data.address;
-      // if(this.feedService.getFriendConnection(this.nodeId) == 1){
-      //   this.native.showLoading(this.translate.instant("StartbindingPage.Connectingserver"));
-      // }
     });
-
-    
-
-  }
-
-  ngOnInit() {
 
   }
 
   ionViewWillEnter() {
-    this.initTitle();
-    this.native.setTitleBarBackKeyShown(true);
 
     this.events.subscribe('feeds:owner_declared', (nodeId, phase, did, payload) => {
       if (!this.isProcess){
@@ -129,7 +121,12 @@ export class StartbindingPage implements OnInit {
     titleBarManager.setTitle(this.title);
   }
 
-  ionViewWillUnload(){
+  ionViewDidEnter() {
+    this.initTitle();
+    this.native.setTitleBarBackKeyShown(true);
+  }
+
+  ionViewWillLeave(){
     this.events.unsubscribe("feeds:owner_declared");
     this.events.unsubscribe("feeds:issue_credential");
     this.events.unsubscribe("feeds:friendConnectionChanged");
@@ -142,6 +139,8 @@ export class StartbindingPage implements OnInit {
   }
 
   abort(){
-    this.navCtrl.pop();
+    this.native.pop();
   }
+
+
 }

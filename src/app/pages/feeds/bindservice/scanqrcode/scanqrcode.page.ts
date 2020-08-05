@@ -1,5 +1,4 @@
 import { Component, OnInit, NgZone } from '@angular/core';
-import { NavController } from '@ionic/angular';
 import { FeedService } from 'src/app/services/FeedService';
 import { CarrierService } from 'src/app/services/CarrierService';
 import { NativeService } from 'src/app/services/NativeService';
@@ -25,7 +24,6 @@ export class ScanqrcodePage implements OnInit {
   constructor(
     private native: NativeService,
     private zone: NgZone,
-    private navCtrl: NavController,
     private feedService:FeedService,
     private carrier: CarrierService,
     private translate:TranslateService,
@@ -38,15 +36,19 @@ export class ScanqrcodePage implements OnInit {
   }
 
   ionViewWillEnter() {
-    this.initTitle();
-    this.native.setTitleBarBackKeyShown(true);
+   
   }
 
   initTitle(){
     titleBarManager.setTitle(this.title);
   }
 
-  ionViewWillUnload(){
+  ionViewDidEnter() {
+    this.initTitle();
+    this.native.setTitleBarBackKeyShown(true);
+  }
+
+  ionViewWillLeave(){
      
   }
  

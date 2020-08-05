@@ -16,7 +16,7 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 })
 export class PublishdidPage implements OnInit {
   private title = "04/06";
-  private payload: string;
+  private payload: string="";
   private nodeId = "";
   private did = "";
   constructor(
@@ -25,12 +25,14 @@ export class PublishdidPage implements OnInit {
     private router: Router,
     private native: NativeService,
     private feedService:FeedService,
-    private navCtrl: NavController,
     private translate:TranslateService,
     public theme:ThemeService, 
-    private events: Events,
     ) {
-      acRoute.params.subscribe((data)=>{
+    
+    }
+
+    ngOnInit() {
+      this.acRoute.params.subscribe((data)=>{
         this.nodeId = data.nodeId;
         this.did = data.did;
         this.payload = data.payload;
@@ -42,7 +44,7 @@ export class PublishdidPage implements OnInit {
       this.native.setTitleBarBackKeyShown(true);
     }
   
-    ionViewWillUnload(){
+    ionViewWillLeave(){
      
     }
   
@@ -51,13 +53,7 @@ export class PublishdidPage implements OnInit {
       titleBarManager.setTitle(this.translate.instant(this.title));
     }
 
-  ngOnInit() {
-  }
-
-  publishDid(){
-    // this.navCtrl.pop().then(()=>{
-    //   this.router.navigate(['/bindservice/issuecredential']);
-    // });
+    publishDid(){
 
     this.feedService.publishDid(this.payload, 
       (response)=>{
@@ -76,16 +72,9 @@ export class PublishdidPage implements OnInit {
 
   issueCredential(){
     this.zone.run(() => {
-      this.navCtrl.pop().then(()=>{
         this.native.navigateForward(['/bindservice/issuecredential',this.nodeId, this.did],{
           replaceUrl: true
         });
-      });
     });
   }
-
-  abort(){
-    this.navCtrl.pop();
-  }
-
 }
