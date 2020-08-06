@@ -297,7 +297,6 @@ enum PersistenceKey{
 }
 
 let expDay = 10;
-let connectionStatus = ConnState.disconnected;
 
 let eventBus = null;
 let currentFetchFeeds: FavoriteFeed;
@@ -367,6 +366,10 @@ export class FeedService {
   private serviceNonce = "";
   private serviceRealm = "";
   private profileIamge = "";
+  private carrierStatus:ConnState = ConnState.disconnected;
+  private networkStatus:ConnState = ConnState.disconnected;
+  private connectionStatus = ConnState.disconnected ;
+  private lastConnectionStatus = ConnState.connected ;
   public constructor(
     private serializeDataService: SerializeDataService,
     private jwtMessageService: JWTMessageService,
@@ -382,17 +385,24 @@ export class FeedService {
   }
 
   init(){
-      if (this.platform.platforms().indexOf("cordova") < 0) {
-        serverMap = virtualServersMap;
-        postMap = {};
-        lastPostUpdateMap = {};
-        return;
-  }
-
+    if (this.platform.platforms().indexOf("cordova") < 0) {
+      serverMap = virtualServersMap;
+      postMap = {};
+      lastPostUpdateMap = {};
+      return;
+    }
 
     this.initData();
 
     this.initCallback();
+  }
+
+  getNetworkStatus(): ConnState{
+    return this.networkStatus;
+  }
+
+  getCarrierStatus(): ConnState{
+    return this.carrierStatus;
   }
 
   public setProfileIamge(url:string){
@@ -525,6 +535,7 @@ export class FeedService {
   }
 
   initCallback(){
+    this.networkstatusChangedCallback();
     this.carrierReadyCallback();
     this.friendAddCallback();
     this.friendConnectionCallback();
@@ -533,7 +544,7 @@ export class FeedService {
   }
 
   getConnectionStatus() {
-    return connectionStatus;
+    return this.connectionStatus;
   }
 
   getServerList(): Server[]{
@@ -836,9 +847,31 @@ export class FeedService {
 
   connectionChangedCallback(){
     this.events.subscribe('carrier:connectionChanged', status => {
-      connectionStatus = status;
-      eventBus.publish(PublishType.connectionChanged, status, Date.now());
+      this.carrierStatus = status;
+      this.processConnetionStatus();
     });
+  }
+
+  networkstatusChangedCallback(){
+    this.events.subscribe('feeds:networkStatusChanged', status => {
+      this.networkStatus = status;
+      this.processConnetionStatus();
+    });
+  }
+
+  processConnetionStatus(){
+    let networkStatus: number = this.getNetworkStatus();
+    let carrierStatus: number = this.getCarrierStatus();
+    if (networkStatus == ConnState.connected && carrierStatus == ConnState.connected){
+      this.connectionStatus = ConnState.connected;
+    }else if(networkStatus == ConnState.disconnected || carrierStatus == ConnState.disconnected){
+      this.connectionStatus = ConnState.disconnected;
+    }
+
+    if (this.lastConnectionStatus != this.connectionStatus){
+      this.lastConnectionStatus = this.connectionStatus;
+      eventBus.publish(PublishType.connectionChanged, this.connectionStatus, Date.now());
+    }
   }
 
   handleError(error: any){

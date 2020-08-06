@@ -39,6 +39,12 @@ export class MyApp {
 
   initializeApp() {
     this.platform.ready().then(() => {
+        this.native.networkInfoInit()
+        this.native.addNetworkListener(()=>{
+          this.events.publish('feeds:networkStatusChanged', 1);
+        },()=>{
+          this.events.publish('feeds:networkStatusChanged', 0);
+        });
         this.statusBar.styleDefault();
         this.splashScreen.hide();
         //localStorage.setItem('org.elastos.dapp.feeds.first',"");

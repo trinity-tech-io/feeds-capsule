@@ -6,7 +6,6 @@ import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 import { TranslateService} from '@ngx-translate/core';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
-
 @Injectable()
 export class NativeService {
     private loadingIsOpen = false;
@@ -131,7 +130,6 @@ export class NativeService {
           }else{
             return this.navCtrl.navigateForward(router);
           }
-          
       }
 
       getRouter(){
@@ -144,5 +142,18 @@ export class NativeService {
             resultStr = testStr.replace(/[\r\n]/g, ""); //去掉回车换行
         }
         return resultStr;
+    }
+
+    networkInfoInit() {
+        navigator.connection.Initialize();
+    }
+
+    addNetworkListener(offline:()=>void, online:()=>void){
+        document.addEventListener("offline", ()=>{
+            offline();
+        }, false);
+        document.addEventListener("online", ()=>{
+            online();
+        }, false);
     }
 }
