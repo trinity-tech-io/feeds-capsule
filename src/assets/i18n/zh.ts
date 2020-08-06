@@ -26,6 +26,7 @@ export const zh = {
         "noImageSelected":"未选择图像",
         "loggingIn":"正在登录",
         "des2":'确认要返回主页面吗？',
+        "connectionError":'当前无网络，请稍后再试',
     },
     "app":{
         "profileDetails":"档案详情",

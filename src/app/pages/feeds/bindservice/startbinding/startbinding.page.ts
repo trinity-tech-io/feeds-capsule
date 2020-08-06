@@ -4,6 +4,7 @@ import { FeedService } from 'src/app/services/FeedService';
 import { Events } from '@ionic/angular';
 import { NativeService } from 'src/app/services/NativeService';
 import { ThemeService } from 'src/app/services/theme.service';
+import { TranslateService } from "@ngx-translate/core";
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 @Component({
@@ -26,8 +27,8 @@ export class StartbindingPage implements OnInit {
     private events: Events,
     private acRoute: ActivatedRoute,
     private feedService:FeedService,
-    public  theme:ThemeService
-  ) {
+    public  theme:ThemeService,
+    private translate:TranslateService) {
   
   
   }
@@ -143,6 +144,11 @@ export class StartbindingPage implements OnInit {
   }
 
   confirm(){
+    if(this.feedService.getConnectionStatus() != 0){
+      this.native.toastWarn(this.translate.instant('common.connectionError'));
+      return;
+    }
+    
     this.feedService.declareOwnerRequest(this.nodeId, this.carrierAddress, this.nonce);
   }
 

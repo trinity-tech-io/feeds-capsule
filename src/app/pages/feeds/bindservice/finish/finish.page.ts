@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Events } from '@ionic/angular';
 import { NativeService } from 'src/app/services/NativeService';
 import { FeedService } from 'src/app/services/FeedService';
+import { TranslateService } from "@ngx-translate/core";
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 @Component({
@@ -19,7 +20,8 @@ export class FinishPage implements OnInit {
     private acRoute: ActivatedRoute,
     private events: Events,
     private zone: NgZone,
-    private feedService:FeedService) {
+    private feedService:FeedService,
+    private translate:TranslateService) {
     }
 
     ngOnInit(){
@@ -50,9 +52,14 @@ export class FinishPage implements OnInit {
     }
 
   createChannel(){
-      this.native.navigateForward(['/createnewfeed'],{
-        replaceUrl: true
-      });
+    if(this.connectionStatus != 0){
+      this.native.toastWarn(this.translate.instant('common.connectionError'));
+      return;
+    }
+
+    this.native.navigateForward(['/createnewfeed'],{
+      replaceUrl: true
+    });
   }
 
   returnMain(){

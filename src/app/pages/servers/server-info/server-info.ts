@@ -21,7 +21,7 @@ class Attribute {
 })
 
 export class ServerInfoPage implements OnInit {
-  private connectionStatus = 1;
+  private   connectionStatus = 1;
   private buttonDisabled: boolean = true;
   private friendRequest = 'Feeds/0.1';
   private carrierAddress: string;
@@ -199,6 +199,11 @@ export class ServerInfoPage implements OnInit {
   }
 
   addFeedSource() {
+    if(this.connectionStatus != 0){
+      this.native.toastWarn(this.translate.instant('common.connectionError'));
+      return;
+    }
+
     this.feedService.addServer(this.carrierAddress,this.friendRequest,
       this.name, this.owner, this.introduction,
       this.didString, this.feedsUrl, ()=>{
@@ -209,6 +214,11 @@ export class ServerInfoPage implements OnInit {
   }
 
   async deleteFeedSource(){
+    if(this.connectionStatus != 0){
+      this.native.toastWarn(this.translate.instant('common.connectionError'));
+      return;
+    }
+
     const actionSheet = await this.actionSheetController.create({
       buttons: [{
         text: this.translate.instant("ServerInfoPage.DeletethisFeedSource"),
@@ -229,6 +239,11 @@ export class ServerInfoPage implements OnInit {
   }
 
   async removeFeedSource(){
+    if(this.connectionStatus != 0){
+      this.native.toastWarn(this.translate.instant('common.connectionError'));
+      return;
+    }
+    
     const actionSheet = await this.actionSheetController.create({
       buttons: [{
         text: this.translate.instant("ServerInfoPage.RemovethisFeedSource"),

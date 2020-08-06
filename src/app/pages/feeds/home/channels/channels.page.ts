@@ -45,6 +45,11 @@ export class ChannelsPage implements OnInit {
   }
 
   subscribe(){
+    if(this.feedService.getConnectionStatus() != 0){
+      this.native.toastWarn(this.translate.instant('common.connectionError'));
+      return;
+    }
+    
     this.feedService.subscribeChannel(this.nodeId, Number(this.channelId));
   }
 
@@ -146,6 +151,11 @@ export class ChannelsPage implements OnInit {
   }
 
   like(nodeId, channelId, postId){
+    if(this.feedService.getConnectionStatus() != 0){
+      this.native.toastWarn(this.translate.instant('common.connectionError'));
+      return;
+    }
+
     if (this.checkMyLike(nodeId,channelId,postId)){
       this.feedService.postUnlike(nodeId,Number(channelId),Number(postId),0);
       return ;
@@ -184,6 +194,11 @@ export class ChannelsPage implements OnInit {
   }
 
   showCommentPage(nodeId, channelId, postId){
+    if(this.feedService.getConnectionStatus() != 0){
+      this.native.toastWarn(this.translate.instant('common.connectionError'));
+      return;
+    }
+
     this.native.navigateForward(["comment",nodeId,channelId,postId],"");
   }
 

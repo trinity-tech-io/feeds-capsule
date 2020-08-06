@@ -3,6 +3,8 @@ import { NavController, PopoverController } from '@ionic/angular';
 import { FeedService } from 'src/app/services/FeedService';
 import { ThemeService } from '../../services/theme.service';
 import { Router } from '@angular/router';
+import { NativeService } from 'src/app/services/NativeService';
+import { TranslateService } from "@ngx-translate/core";
 
 @Component({
   selector: 'app-postfrom',
@@ -16,11 +18,13 @@ export class PostfromComponent implements OnInit {
   private channels: any = [];
   private channelAvatar = "./assets/images/component-480-47.png";
   constructor(
+    private native: NativeService,
     private navCtrl: NavController,
     private feedService: FeedService,
     private router: Router,
     private popover: PopoverController,
-    public theme:ThemeService) {
+    public theme:ThemeService,
+    private translate:TranslateService) {
     this.channels = this.feedService.refreshMyChannels();
     this.initnodeStatus();
   }
@@ -29,6 +33,10 @@ export class PostfromComponent implements OnInit {
 
 
   selectChannel(nodeId, channelId){
+    if(this.feedService.getConnectionStatus() != 0){
+      this.native.toastWarn(this.translate.instant('common.connectionError'));
+      return;
+    }
     this.navCtrl.navigateForward(['createnewpost/',nodeId,channelId]);
     // this.router.navigate(['createnewpost/',nodeId,channelId]);
     // this.router.navigate(['createnewpost']);

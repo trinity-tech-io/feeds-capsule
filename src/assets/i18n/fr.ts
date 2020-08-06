@@ -26,6 +26,7 @@ export const fr = {
         "noImageSelected": "No Image Selected",
         "loggingIn": "Logging in",
         "des2": 'Are you sure you want to return to the main page？',
+        "connectionError":'No network is currently available, please try again later',
     },
     "app": {
         "profileDetails": "Profile Details",

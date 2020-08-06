@@ -28,6 +28,11 @@ export class MenuService {
                 role: 'destructive',
                 icon: 'trash',
                 handler: () => {
+                    if(this.feedService.getConnectionStatus() != 0){
+                        this.native.toastWarn(this.translate.instant('common.connectionError'));
+                        return;
+                    }
+                    
                     this.feedService.unsubscribeChannel(nodeId,channelId);
                 }
             },{

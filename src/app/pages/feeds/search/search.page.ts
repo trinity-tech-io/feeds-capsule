@@ -4,6 +4,7 @@ import { Events } from '@ionic/angular';
 import { NativeService } from 'src/app/services/NativeService';
 import { ThemeService } from 'src/app/services/theme.service';
 import { MenuService } from 'src/app/services/MenuService';
+import { TranslateService } from "@ngx-translate/core";
 
 @Component({
   selector: 'app-search',
@@ -20,7 +21,8 @@ export class SearchPage implements OnInit {
     private zone: NgZone,
     private native: NativeService,
     public theme:ThemeService,
-    private menuService: MenuService) {
+    private menuService: MenuService,
+    private translate:TranslateService) {
      
     }
 
@@ -89,6 +91,11 @@ export class SearchPage implements OnInit {
   }
 
   subscribe(nodeId: string, id: number){
+    if(this.feedService.getConnectionStatus() != 0){
+      this.native.toastWarn(this.translate.instant('common.connectionError'));
+      return;
+    }
+
     this.feedService.subscribeChannel(nodeId, id);
   }
 

@@ -26,7 +26,7 @@ export class HomePage implements OnInit {
     private feedService :FeedService,
     public theme:ThemeService,
     private translate:TranslateService,
-    private navtive:NativeService,
+    private native:NativeService,
     private menuService: MenuService) {
   }
 
@@ -97,6 +97,11 @@ export class HomePage implements OnInit {
   }
 
   like(nodeId, channelId, postId){
+    if(this.feedService.getConnectionStatus() != 0){
+      this.native.toastWarn(this.translate.instant('common.connectionError'));
+      return;
+    }
+    
     if (this.checkMyLike(nodeId,channelId,postId)){
       this.feedService.postUnlike(nodeId,Number(channelId),Number(postId),0);
       return ;
@@ -106,18 +111,23 @@ export class HomePage implements OnInit {
   }
 
   navTo(nodeId, channelId){
-    this.navtive.getNavCtrl().navigateForward(['/channels', nodeId, channelId]);
+    this.native.getNavCtrl().navigateForward(['/channels', nodeId, channelId]);
   }
 
   navToPostDetail(nodeId, channelId, postId){
-    this.navtive.getNavCtrl().navigateForward(['/postdetail',nodeId, channelId,postId]);
+    this.native.getNavCtrl().navigateForward(['/postdetail',nodeId, channelId,postId]);
   }
 
   refresh(){
   }
 
   showCommentPage(nodeId, channelId, postId){
-    this.navtive.navigateForward(["comment",nodeId,channelId,postId],"");
+    if(this.feedService.getConnectionStatus() != 0){
+      this.native.toastWarn(this.translate.instant('common.connectionError'));
+      return;
+    }
+    
+    this.native.navigateForward(["comment",nodeId,channelId,postId],"");
   }
 
   checkMyLike(nodeId: string, channelId: number, postId: number){

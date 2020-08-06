@@ -4,6 +4,7 @@ import { FeedService } from 'src/app/services/FeedService';
 import { NativeService } from 'src/app/services/NativeService';
 import { ThemeService } from 'src/app/services/theme.service';
 import { MenuService } from 'src/app/services/MenuService';
+import { TranslateService } from "@ngx-translate/core";
 
 @Component({
   selector: 'app-myfeeds',
@@ -19,12 +20,12 @@ export class MyfeedsComponent implements OnInit {
     private feedService: FeedService,
     public theme:ThemeService,
     private native:NativeService,
-    private menuService: MenuService) {
-      this.events.subscribe('feeds:channelsDataUpdate', () =>{
-        this.channels = this.feedService.getMyChannelList();
-        this.initnodeStatus();
-      });
-  
+    private menuService: MenuService,
+    private translate:TranslateService) {
+        this.events.subscribe('feeds:channelsDataUpdate', () =>{
+          this.channels = this.feedService.getMyChannelList();
+          this.initnodeStatus();
+        });
       this.events.subscribe('feeds:refreshPage',()=>{
         this.zone.run(() => {
           this.channels = this.feedService.getMyChannelList();
@@ -34,15 +35,20 @@ export class MyfeedsComponent implements OnInit {
   }
 
   ngOnInit() {
-    console.log("============");
     this.channels = this.feedService.getMyChannelList();
     this.initnodeStatus();
   }
 
   createNewFeed(){
     let bindServer = this.feedService.getBindingServer();
-    if (bindServer != null && bindServer != undefined)
+    
+    if (bindServer != null && bindServer != undefined){
+      if(this.feedService.getConnectionStatus() != 0){
+        this.native.toastWarn(this.translate.instant('common.connectionError'));
+        return;
+      }
       this.native.navigateForward(['/createnewfeed'],"");
+    }
     else 
       this.native.getNavCtrl().navigateForward(['/bindservice/scanqrcode']);
   }

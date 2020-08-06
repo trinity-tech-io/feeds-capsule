@@ -46,6 +46,11 @@ export class LikesComponent implements OnInit {
   }
 
   like(nodeId, channelId, postId){
+    if(this.feedService.getConnectionStatus() != 0){
+      this.native.toastWarn(this.translate.instant('common.connectionError'));
+      return;
+    }
+    
     if (this.checkMyLike(nodeId,channelId,postId)){
       this.feedService.postUnlike(nodeId,Number(channelId),Number(postId),0);
       return ;
