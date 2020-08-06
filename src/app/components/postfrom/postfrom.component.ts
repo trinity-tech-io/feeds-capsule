@@ -12,8 +12,9 @@ import { Router } from '@angular/router';
 
 
 export class PostfromComponent implements OnInit {
-  private channels: any;
-  private channelAvatar = "../../../../assets/images/component-480-47.png";
+  public nodeStatus = {};
+  private channels: any = [];
+  private channelAvatar = "./assets/images/component-480-47.png";
   constructor(
     private navCtrl: NavController,
     private feedService: FeedService,
@@ -21,6 +22,7 @@ export class PostfromComponent implements OnInit {
     private popover: PopoverController,
     public theme:ThemeService) {
     this.channels = this.feedService.refreshMyChannels();
+    this.initnodeStatus();
   }
 
   ngOnInit() {}
@@ -42,4 +44,16 @@ export class PostfromComponent implements OnInit {
   handleClientNumber(nodeId){
     return this.feedService.getServerStatisticsNumber(nodeId);
   }
+
+  checkServerStatus(nodeId: string){
+    return this.feedService.getServerStatusFromId(nodeId);
+  }
+
+  initnodeStatus(){
+    for(let index =0 ;index<this.channels.length;index++){
+           let nodeId = this.channels[index]['nodeId'];
+           let status = this.checkServerStatus(nodeId);
+           this.nodeStatus[nodeId] = status;
+    }
+ }
 }

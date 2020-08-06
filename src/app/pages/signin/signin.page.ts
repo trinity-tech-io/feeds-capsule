@@ -44,12 +44,16 @@ export class SigninPage implements OnInit {
       this.initTile();
     });
 
+ 
+  }
+
+  ionViewDidEnter(){
     this.initTile();
     this.native.setTitleBarBackKeyShown(false);
     appManager.setVisible("show");
   }
 
-  ionViewWillUnload(){
+  ionViewWillLeave(){
     this.event.unsubscribe("feeds:updateTitle");
   }
 

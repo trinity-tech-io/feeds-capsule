@@ -25,9 +25,7 @@ export class SearchPage implements OnInit {
     }
 
   ngOnInit() {
-    this.connectionStatus = this.feedService.getConnectionStatus();
-    this.channelList = this.feedService.refreshLocalChannels();
-    this.initnodeStatus();
+ 
   }
 
   initSubscribe(){
@@ -80,6 +78,9 @@ export class SearchPage implements OnInit {
   }
 
   ionViewWillEnter() {
+    this.connectionStatus = this.feedService.getConnectionStatus();
+    this.channelList = this.feedService.refreshLocalChannels();
+    this.initnodeStatus();
     this.initSubscribe();
   }
 

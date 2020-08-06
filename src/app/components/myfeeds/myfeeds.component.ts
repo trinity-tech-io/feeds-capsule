@@ -1,6 +1,5 @@
 import { Component, OnInit, NgZone } from '@angular/core';
-import { NavController, Events } from '@ionic/angular';
-import { Router } from '@angular/router';
+import { Events } from '@ionic/angular';
 import { FeedService } from 'src/app/services/FeedService';
 import { NativeService } from 'src/app/services/NativeService';
 import { ThemeService } from 'src/app/services/theme.service';
@@ -12,55 +11,35 @@ import { MenuService } from 'src/app/services/MenuService';
   styleUrls: ['./myfeeds.component.scss'],
 })
 export class MyfeedsComponent implements OnInit {
-  private channels: any;
+  public nodeStatus = {};
+  private channels: any = [];
   constructor(
     private events: Events,
     private zone: NgZone,
-    private router: Router,
     private feedService: FeedService,
     public theme:ThemeService,
     private native:NativeService,
     private menuService: MenuService) {
 
-    this.channels = this.feedService.getMyChannelList();
-    this.events.subscribe('feeds:refreshPage',()=>{
-      this.zone.run(() => {
-        this.channels = this.feedService.getMyChannelList();
-      });
-    });
-    this.events.subscribe('feeds:myChannelsDataUpdate',()=>{
-      this.zone.run(() => {
-        this.channels = this.feedService.getMyChannelList();
-      });
-    });
-
-    
-    this.events.subscribe('feeds:createTopicSuccess',()=>{
-      this.zone.run(() => {
-        this.channels = this.feedService.getMyChannelList();
-      });
-    });
-
-    this.events.subscribe('feeds:refreshMyChannel',(list) => {
-      this.zone.run(() => {
-        this.channels = list;
-      });
-    });
-
-    this.events.subscribe('feeds:channelsDataUpdate', () =>{
-      this.channels = this.feedService.getMyChannelList();
-    });
+  
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.channels = this.feedService.getMyChannelList();
+    this.initnodeStatus();
+       
+    this.events.subscribe('feeds:channelsDataUpdate', () =>{
+      this.channels = this.feedService.getMyChannelList();
+      this.initnodeStatus();
+    });
+  }
 
   createNewFeed(){
     let bindServer = this.feedService.getBindingServer();
     if (bindServer != null && bindServer != undefined)
-      this.native.getNavCtrl().navigateForward(['/createnewfeed']);
+      this.native.navigateForward(['/createnewfeed'],"");
     else 
       this.native.getNavCtrl().navigateForward(['/bindservice/scanqrcode']);
-      
   }
 
 
@@ -94,6 +73,18 @@ export class MyfeedsComponent implements OnInit {
 
   handleClientNumber(nodeId){
     return this.feedService.getServerStatisticsNumber(nodeId);
+  }
+
+  checkServerStatus(nodeId: string){
+    return this.feedService.getServerStatusFromId(nodeId);
+  }
+
+  initnodeStatus(){
+     for(let index =0 ;index<this.channels.length;index++){
+            let nodeId = this.channels[index]['nodeId'];
+            let status = this.checkServerStatus(nodeId);
+            this.nodeStatus[nodeId] = status;
+     }
   }
 }
 

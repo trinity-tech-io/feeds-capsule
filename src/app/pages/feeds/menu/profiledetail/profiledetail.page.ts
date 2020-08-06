@@ -59,6 +59,10 @@ export class ProfiledetailPage implements OnInit {
     this.events.subscribe("feeds:updateTitle",()=>{
       this.initTitle();
     });
+  
+  }
+
+  ionViewDidEnter(){
     this.initTitle();
     this.native.setTitleBarBackKeyShown(true);
   }

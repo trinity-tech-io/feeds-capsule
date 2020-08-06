@@ -1,5 +1,4 @@
 import { Component, NgZone } from '@angular/core';
-import { Router } from '@angular/router';
 import { Events } from '@ionic/angular';
 import { FeedService } from 'src/app/services/FeedService';
 import { ThemeService } from 'src/app/services/theme.service';
@@ -28,8 +27,8 @@ export class NotificationPage {
     private events: Events,
     public theme:ThemeService,
     private translate:TranslateService,
-    private feedService :FeedService,
-    private router: Router) {
+    private feedService :FeedService) {
+    //this.notificationList = this.feedService.getNotificationList();
   }
 
   ngOnInit(): void {
@@ -37,27 +36,25 @@ export class NotificationPage {
     this.notificationList = this.feedService.getNotificationList();
   }
   ionViewWillEnter() {
+    
     this.events.subscribe('feeds:connectionChanged',(status)=>{
       this.zone.run(() => {
         this.connectionStatus = status;
       });
     });
 
-    this.events.subscribe('feeds:UpdateNotification',()=>{
-      this.zone.run(() => {
-        this.notificationList = this.feedService.getNotificationList();
-      });
-    });
+    this.notificationList = this.feedService.getNotificationList();
+
   }
+
   ionViewWillLeave(){
     this.events.unsubscribe("feeds:connectionChanged");
   }
   
-  ionViewWillUnload(){
-  }
+
 
   goToServer(){
-    this.router.navigate(['/menu/servers']);
+    this.navtive.navigateForward(['/menu/servers'],"");
   }
 
   handleDisplayTime(createTime:number){
@@ -128,11 +125,11 @@ export class NotificationPage {
 
   }
   navToChannel(nodeId, channelId){
-    this.navtive.getNavCtrl().navigateForward(['/channels', nodeId, channelId]);
+    this.navtive.navigateForward(['/channels', nodeId, channelId],"");
   }
 
   navToPostDetail(nodeId, channelId, postId){
-    this.navtive.getNavCtrl().navigateForward(['/postdetail',nodeId, channelId,postId]);
+    this.navtive.navigateForward(['/postdetail',nodeId, channelId,postId],"");
   }
 
   getContentText(content: string): string{

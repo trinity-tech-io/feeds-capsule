@@ -6,7 +6,6 @@ import { UtilService } from 'src/app/services/utilService';
 import { NativeService } from 'src/app/services/NativeService';
 import { MenuService } from 'src/app/services/MenuService';
 import { TranslateService } from "@ngx-translate/core";
-import { Router } from '@angular/router'
 import { FeedsPage } from 'src/app/pages/feeds/feeds.page'
 
 
@@ -16,34 +15,32 @@ import { FeedsPage } from 'src/app/pages/feeds/feeds.page'
   styleUrls: ['./likes.component.scss'],
 })
 export class LikesComponent implements OnInit {
-  private likeList;
+  public nodeStatus = {};
+  private likeList = [];
   constructor(
     private feedspage: FeedsPage,
     private tabs: IonTabs,
     private feedService :FeedService,
     private zone: NgZone,
-    private router: Router,
     private events: Events,
     public theme:ThemeService,
     private translate:TranslateService,
     private native:NativeService,
     private menuService: MenuService) {
+  
     
+  }
+
+  ngOnInit() {
     this.likeList = this.feedService.getLikeList();
+    this.initnodeStatus();
     this.events.subscribe('feeds:updateLikeList', (list) => {
       this.zone.run(() => {
         this.likeList = list;
+        this.initnodeStatus();
       });
-    });
-    
-    this.events.subscribe('feeds:refreshPage',()=>{
-      this.zone.run(() => {
-        this.likeList = this.feedService.getLikeList();
-      });
-    });
+     });
   }
-
-  ngOnInit() {}
 
   getChannel(nodeId, channelId):any{
     return this.feedService.getChannelFromId(nodeId,channelId);
@@ -121,5 +118,17 @@ export class LikesComponent implements OnInit {
     let channelName = this.getChannel(nodeId, channelId).name;
     this.menuService.showChannelMenu(nodeId, channelId, channelName);
   }
+
+  checkServerStatus(nodeId: string){
+    return this.feedService.getServerStatusFromId(nodeId);
+  }
+
+  initnodeStatus(){
+    for(let index =0 ;index<this.likeList.length;index++){
+           let nodeId = this.likeList[index]['nodeId'];
+           let status = this.checkServerStatus(nodeId);
+           this.nodeStatus[nodeId] = status;
+    }
+ }
 
 }

@@ -18,6 +18,7 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
   styleUrls: ['./channels.page.scss'],
 })
 export class ChannelsPage implements OnInit {
+  public nodeStatus = {};
   private connectionStatus = 1;
   private channelAvatar = "";
   private channelName = "";
@@ -52,33 +53,34 @@ export class ChannelsPage implements OnInit {
   }
 
   ngOnInit() {
-    this.connectionStatus = this.feedService.getConnectionStatus();
-
     this.acRoute.params.subscribe((data)=>{
       this.nodeId = data.nodeId;
       this.channelId = data.channelId;
-
-      let channel = this.feedService.getChannelFromId(this.nodeId, this.channelId);
-      
-      this.checkFollowStatus(this.nodeId,this.channelId);
-
-      if (channel == null || channel == undefined)
-        return ;
-        
-      this.channelName = channel.name;
-      // this.channelOwner = channel.owner_name;
-      this.channelOwner = this.feedService.indexText(channel.owner_name,25,25);
-      this.channelDesc = channel.introduction;
-      this.channelSubscribes = channel.subscribers;
-      //this.channelSubscribes = this.feedService.getServerStatisticsNumber(channel.nodeId);
-      this.channelAvatar = this.feedService.parseChannelAvatar(channel.avatar);
-
-      this.postList = this.feedService.getPostListFromChannel(this.nodeId, this.channelId);
-      // this.posts = this.feedService.refreshLocalPost("",this.id);
     });
   }
 
+  init(){
+    this.connectionStatus = this.feedService.getConnectionStatus();
+    let channel = this.feedService.getChannelFromId(this.nodeId, this.channelId);
+    this.checkFollowStatus(this.nodeId,this.channelId);
+    if (channel == null || channel == undefined)
+      return ;
+      
+    this.channelName = channel.name;
+    this.channelOwner = this.feedService.indexText(channel.owner_name,25,25);
+    this.channelDesc = channel.introduction;
+    this.channelSubscribes = channel.subscribers;
+    this.channelAvatar = this.feedService.parseChannelAvatar(channel.avatar);
+
+    this.postList = this.feedService.getPostListFromChannel(this.nodeId, this.channelId);
+    for(let index = 0;index<this.postList.length;index++){
+           let nodeId = this.postList[index]['nodeId'];
+           this.initnodeStatus(nodeId);
+    }
+  }
+
   ionViewWillEnter() {
+    this.init();
     this.events.subscribe('feeds:connectionChanged',(status)=>{
       this.zone.run(() => {
         this.connectionStatus = status;
@@ -92,6 +94,10 @@ export class ChannelsPage implements OnInit {
     this.events.subscribe('feeds:refreshPage',()=>{
       this.zone.run(() => {
         this.postList = this.feedService.getPostListFromChannel(this.nodeId, this.channelId);
+        for(let index = 0;index<this.postList.length;index++){
+          let nodeId = this.postList[index]['nodeId'];
+          this.initnodeStatus(nodeId);
+   }
       });
     });
 
@@ -99,6 +105,10 @@ export class ChannelsPage implements OnInit {
       this.zone.run(() => {
         
         this.postList = this.feedService.getPostListFromChannel(this.nodeId, this.channelId);
+        for(let index = 0;index<this.postList.length;index++){
+          let nodeId = this.postList[index]['nodeId'];
+          this.initnodeStatus(nodeId);
+        }
 
       });
     });
@@ -112,9 +122,7 @@ export class ChannelsPage implements OnInit {
     this.events.subscribe('feeds:unsubscribeFinish', (nodeId, channelId, name) => {
       this.zone.run(() => {
         this.checkFollowStatus(this.nodeId,this.channelId);
-        this.native.navigateForward(['/tabs/home'],{
-          replaceUrl: true
-        });
+        this.native.setRootRouter(['/tabs/home']);
       });
     });
   }
@@ -212,6 +220,15 @@ export class ChannelsPage implements OnInit {
 
   menuMore(){
     this.menuService.showChannelMenu(this.nodeId, Number(this.channelId), this.channelName);
+  }
+
+  checkServerStatus(nodeId: string){
+    return this.feedService.getServerStatusFromId(nodeId);
+  }
+
+  initnodeStatus(nodeId:string){
+            let status = this.checkServerStatus(nodeId);
+            this.nodeStatus[nodeId] = status;
   }
   
 }

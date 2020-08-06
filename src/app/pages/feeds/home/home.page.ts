@@ -31,19 +31,16 @@ export class HomePage implements OnInit {
   }
 
   ionViewWillEnter() {
+
+    this.connectionStatus = this.feedService.getConnectionStatus();
+    this.postList = this.feedService.getPostList();
+    this.initnodeStatus();
+   
     this.events.subscribe('feeds:connectionChanged',(status)=>{
       this.zone.run(() => {
         this.connectionStatus = status;
       });
     });
-
-    this.events.subscribe('feeds:refreshPage',()=>{
-      this.zone.run(() => {
-        this.postList = this.feedService.getPostList();
-        this.initnodeStatus();
-      });
-    });
-      
 
     this.events.subscribe('feeds:postDataUpdate',()=>{
       this.zone.run(() => {
@@ -63,7 +60,6 @@ export class HomePage implements OnInit {
  ionViewWillLeave(){
     this.events.unsubscribe("feeds:connectionChanged");
     this.events.unsubscribe("feeds:postDataUpdate");
-    this.events.unsubscribe("feeds:refreshPage");
     this.events.unsubscribe("feeds:friendConnectionChanged");
   }
 
@@ -95,9 +91,9 @@ export class HomePage implements OnInit {
   }
 
   ngOnInit() {
-    this.connectionStatus = this.feedService.getConnectionStatus();
-    this.postList = this.feedService.getPostList();
-    this.initnodeStatus();
+    //this.connectionStatus = this.feedService.getConnectionStatus();
+    //this.postList = this.feedService.getPostList();
+    //this.initnodeStatus();
   }
 
   like(nodeId, channelId, postId){

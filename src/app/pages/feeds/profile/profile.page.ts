@@ -45,6 +45,7 @@ export class ProfilePage implements OnInit {
   }
 
   ionViewWillLeave(){
+    this.events.unsubscribe("feeds:updateLikeList");
     this.events.unsubscribe("feeds:connectionChanged");
   }
 

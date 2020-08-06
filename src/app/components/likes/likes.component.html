@@ -1,8 +1,7 @@
-<div [ngClass]="{'mask-div': bigImage}">
-  <div *ngIf="likeList.length == 0">
+ <div *ngIf="likeList.length == 0">
     <div style="margin-top: 50px;" >
       <div style="text-align: center; ">
-        <img src="../../../../assets/images/empty-like-icon.svg">
+        <img src="./assets/images/empty-like-icon.svg">
       </div>
       <div class="all-empty" style="margin-top: 20px;">{{'common.allempty' | translate}}</div>
       <div class="all-empty-content-text" style="margin-top: 7px;">{{'LikesComponent.emptyLikeDes'|translate}}</div>
@@ -23,7 +22,11 @@
           <img  src="./assets/images/dots-three-vertical-dark.svg" *ngIf="theme.darkMode" style="width:12.4;height:3px">
         </div>
         <div class="image-text-div" (click)="navTo(post.nodeId, post.channel_id)">
-            <ion-avatar class="avatar-div">
+            <ion-avatar class="avatar-div" style="position: relative;">
+              <div class="feed-source-card-status" style="position: absolute;top:0px;left:0px">
+                <div class="online-circle"  *ngIf="nodeStatus[post.nodeId] == 0"></div>
+                <div class="offline-circle" *ngIf="nodeStatus[post.nodeId] == 1"></div>
+              </div>
               <img  src={{parseAvatar(post.nodeId,post.channel_id)}}>
             </ion-avatar>
 
@@ -38,7 +41,7 @@
             </div>
         </div>
 
-        <div style="margin-left: 81px;">
+        <div style="margin-left: 81px;margin-top:-12px">
           <div class="channel-post-div"  (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)"> 
             <ion-label class="channel-post white">{{getContentText(post.content)}}</ion-label>
           </div>
@@ -59,10 +62,3 @@
     </div>
     <div class="line-div white-line" *ngIf="i!=likeList.length-1"></div>
   </div>
-</div>
-
-<div *ngIf="bigImage" class="trans-big-img-div" (click)="hideBigImage()" >
-  <div class="trans-big-img" >
-    <img src="{{bigImageUrl}}" class="image"/>
-  </div>
-</div>

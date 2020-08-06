@@ -3,10 +3,12 @@
 </ion-header>
 
 <ion-content [class.darkContainer]="theme.darkMode">
-
-  <div [ngClass]="{'mask-div': bigImage}">
     <div class="channel-img-div">
-      <ion-avatar class="channel-img" style="width:80px ; height: 80px;">
+      <ion-avatar class="channel-img" style="width:80px ; height: 80px;position: relative;">
+        <div class="feed-source-card-status" style="position: absolute;top:0px;left:8px">
+          <div class="online-circle"  *ngIf="nodeStatus[nodeId] == 0"></div>
+          <div class="offline-circle" *ngIf="nodeStatus[nodeId] == 1"></div>
+        </div>
         <img  src={{channelAvatar}}>
       </ion-avatar>
     </div>
@@ -85,6 +87,10 @@
           </div>
           <div class="image-text-div" (click)="navTo(post.nodeId, post.channel_id)">
               <ion-avatar class="avatar-div">
+                <div class="feed-source-card-status" style="position: absolute;top:0px;left:0px">
+                  <div class="online-circle"  *ngIf="nodeStatus[post.nodeId] == 0"></div>
+                  <div class="offline-circle" *ngIf="nodeStatus[post.nodeId] == 1"></div>
+                </div>
                 <img  src={{channelAvatar}}>
               </ion-avatar>
     
@@ -99,7 +105,7 @@
               </div>
           </div>
     
-          <div style="margin-left: 81px;">
+          <div style="margin-left: 81px;margin-top: -12px;">
             <div class="channel-post-div" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)"> 
               <ion-label class="channel-post white">{{getContentText(post.content)}}</ion-label>
             </div>
@@ -120,11 +126,4 @@
       </div>
       <div class="line-div white-line" *ngIf="i!=postList.length-1"></div>
     </div>
-  </div>
-
-  <div *ngIf="bigImage" class="trans-big-img-div" (click)="hideBigImage()" >
-    <div class="trans-big-img" >
-      <img src="{{bigImageUrl}}" class="image"/>
-    </div>
-  </div>
 </ion-content>

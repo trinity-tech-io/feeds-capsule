@@ -353,6 +353,7 @@ $segment-button-md-text-color: #007AFF !important;
 }
 
 .channel-img-div{
+  position: relative;
   text-align: center; 
   width: 100%; 
   margin-top: 14.5px;
@@ -746,7 +747,8 @@ ion-header {
 
 .new-feed-div{
   padding-left: 37px;
-  padding-top: 11px;
+  margin-top: 20px;
+  margin-bottom: 20px;
 
 }
 .new-feed{
@@ -1113,7 +1115,7 @@ vertical-align: middle;
     height: 41px;
     margin-top: 28px; 
     margin-left: 32px; 
-    margin-right: 32px;
+    margin-right: 32px; 
   }
 }
 
@@ -1279,6 +1281,7 @@ vertical-align: middle;
   .button-div{
     margin-top: 40px; 
     margin-left: 20px;
+    margin-bottom: 40px;
 
     .explore-feed-source-button{
       font-family: MontserratMedium;

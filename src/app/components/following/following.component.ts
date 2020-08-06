@@ -13,7 +13,8 @@ import { MenuService } from 'src/app/services/MenuService';
   styleUrls: ['./following.component.scss'],
 })
 export class FollowingComponent implements OnInit {
-  private channelList;
+  public nodeStatus = {};
+  private channelList = [];
   constructor(
     private feedspage: FeedsPage,
     private tabs: IonTabs,
@@ -26,10 +27,12 @@ export class FollowingComponent implements OnInit {
     private menuService: MenuService) { 
     // this.channelList = this.feedService.refreshLocalChannels();
     this.channelList=this.feedService.refreshLocalSubscribedChannels();
+    this.initnodeStatus()
     this.feedService.refreshSubscribedChannels();
     this.events.subscribe('feeds:refreshSubscribedChannels', list => {
       this.zone.run(() => {
           this.channelList = list;
+          this.initnodeStatus();
       });
     });
 
@@ -71,4 +74,17 @@ export class FollowingComponent implements OnInit {
   menuMore(nodeId: string , channelId: number, channelName: string){
     this.menuService.showChannelMenu(nodeId, channelId, channelName);
   }
+
+
+  checkServerStatus(nodeId: string){
+    return this.feedService.getServerStatusFromId(nodeId);
+  }
+
+  initnodeStatus(){
+    for(let index =0 ;index<this.channelList.length;index++){
+           let nodeId = this.channelList[index]['nodeId'];
+           let status = this.checkServerStatus(nodeId);
+           this.nodeStatus[nodeId] = status;
+    }
+ }
 }

@@ -77,8 +77,11 @@ export class CommentPage implements OnInit {
     });
    });
 
-    this.initTitle();
     this.initnodeStatus();
+  }
+
+  ionViewDidEnter(){
+    this.initTitle();
     this.native.setTitleBarBackKeyShown(true);
   }
 

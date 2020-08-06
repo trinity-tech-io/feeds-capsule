@@ -13,6 +13,10 @@
     <div class="channel-img-small-div" (click)="selectChannel(channel.nodeId,channel.id)">
       <div class="channel-img-small">
         <ion-avatar >
+          <div class="feed-source-card-status" style="position: absolute;top:0px;left:0px">
+            <div class="online-circle"  *ngIf="nodeStatus[channel.nodeId] == 0"></div>
+            <div class="offline-circle" *ngIf="nodeStatus[channel.nodeId] == 1"></div>
+          </div>
           <img  src={{parseAvatar(channel.avatar)}}>
         </ion-avatar>
       </div>
@@ -23,7 +27,7 @@
             <ion-label class="ellipsis channel-title-small white">{{channel.name}}</ion-label>
           </div>
           <div >
-            <img src="../../../../assets/images/bubble2.svg" class="bubble">
+            <img src="./assets/images/bubble2.svg" class="bubble">
             <ion-label class="channel-follower2">{{channel.subscribers}} {{'common.followers'|translate}}</ion-label>
             
           </div>

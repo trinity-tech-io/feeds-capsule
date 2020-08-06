@@ -32,6 +32,10 @@ export class SettingPage implements OnInit {
     this.events.subscribe("feeds:updateTitle",()=>{
       this.initTitle();
     });
+ 
+  }
+
+  ionViewDidEnter(){
     this.initTitle();
     this.native.setTitleBarBackKeyShown(true);
   }
@@ -40,7 +44,7 @@ export class SettingPage implements OnInit {
     titleBarManager.setTitle(this.translate.instant("SettingPage.setting"));
   }
 
-  ionViewWillUnload(){
+  ionViewWillLeave(){
     this.events.unsubscribe("feeds:updateTitle");
   }
    
