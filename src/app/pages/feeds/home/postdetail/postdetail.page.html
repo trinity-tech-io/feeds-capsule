@@ -49,6 +49,13 @@
     </div>
     <div class="line-div"></div>
 
+    <div *ngIf="refreshCommFinish&&commentList.length===0" style="margin-top: 80px;">
+      <div style="text-align: center;">
+        <img src="./assets/images/empty-feeds-icon.svg">
+      </div>
+      <div class="all-empty" style="margin-top: 10px;">{{ 'HomePage.allempty' | translate }}</div>
+    </div>
+
     <div *ngIf="refreshCommFinish">
       <div *ngFor="let comment of commentList">
         <div class="channel-img-small-div">

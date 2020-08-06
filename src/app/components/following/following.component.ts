@@ -26,9 +26,7 @@ export class FollowingComponent implements OnInit {
     private native:NativeService,
     private menuService: MenuService) { 
     // this.channelList = this.feedService.refreshLocalChannels();
-    this.channelList=this.feedService.refreshLocalSubscribedChannels();
-    this.initnodeStatus()
-    this.feedService.refreshSubscribedChannels();
+   
     this.events.subscribe('feeds:refreshSubscribedChannels', list => {
       this.zone.run(() => {
           this.channelList = list;
@@ -40,11 +38,16 @@ export class FollowingComponent implements OnInit {
       this.zone.run(() => {
         this.channelList=this.feedService.refreshLocalSubscribedChannels();
         this.feedService.refreshSubscribedChannels();
+        this.initnodeStatus();
       });
     });
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.channelList=this.feedService.refreshLocalSubscribedChannels();
+    this.initnodeStatus()
+    this.feedService.refreshSubscribedChannels();
+  }
 
   navTo(nodeId, channelId){
     this.read(nodeId, channelId);

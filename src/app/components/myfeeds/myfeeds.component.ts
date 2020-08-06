@@ -20,18 +20,23 @@ export class MyfeedsComponent implements OnInit {
     public theme:ThemeService,
     private native:NativeService,
     private menuService: MenuService) {
-
+      this.events.subscribe('feeds:channelsDataUpdate', () =>{
+        this.channels = this.feedService.getMyChannelList();
+        this.initnodeStatus();
+      });
   
+      this.events.subscribe('feeds:refreshPage',()=>{
+        this.zone.run(() => {
+          this.channels = this.feedService.getMyChannelList();
+          this.initnodeStatus();
+        });
+      });
   }
 
   ngOnInit() {
+    console.log("============");
     this.channels = this.feedService.getMyChannelList();
     this.initnodeStatus();
-       
-    this.events.subscribe('feeds:channelsDataUpdate', () =>{
-      this.channels = this.feedService.getMyChannelList();
-      this.initnodeStatus();
-    });
   }
 
   createNewFeed(){
@@ -48,6 +53,7 @@ export class MyfeedsComponent implements OnInit {
     this.events.subscribe('feeds:refreshMyChannel',(list) => {
       this.zone.run(() => {
         this.channels = list;
+        this.initnodeStatus();
       });
     });
     setTimeout(() => {

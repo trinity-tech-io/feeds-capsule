@@ -27,19 +27,18 @@ export class LikesComponent implements OnInit {
     private translate:TranslateService,
     private native:NativeService,
     private menuService: MenuService) {
-  
-    
+      this.events.subscribe('feeds:updateLikeList', (list) => {
+        this.zone.run(() => {
+          this.likeList = list;
+          this.initnodeStatus();
+        });
+       });
   }
 
   ngOnInit() {
     this.likeList = this.feedService.getLikeList();
     this.initnodeStatus();
-    this.events.subscribe('feeds:updateLikeList', (list) => {
-      this.zone.run(() => {
-        this.likeList = list;
-        this.initnodeStatus();
-      });
-     });
+  
   }
 
   getChannel(nodeId, channelId):any{

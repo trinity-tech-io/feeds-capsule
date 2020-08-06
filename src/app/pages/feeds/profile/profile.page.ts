@@ -33,6 +33,7 @@ export class ProfilePage implements OnInit {
   }
 
   ionViewWillEnter() {
+    this.events.publish("feeds:refreshPage");
     this.events.subscribe('feeds:connectionChanged',(status)=>{
       this.zone.run(() => {
         this.connectionStatus = status;
