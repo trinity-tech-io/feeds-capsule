@@ -10,7 +10,7 @@ const routes: Routes = [
   { path: 'menu/servers/server-info/:address/:nodeId/:isOwner', loadChildren: './pages/servers/server-info/server-info.module#ServerInfoPageModule'},
   { path: 'menu/servers/server-info/:nodeId/:isOwner', loadChildren: './pages/servers/server-info/server-info.module#ServerInfoPageModule'},
   { path: 'menu/servers/add-server', loadChildren: './pages/servers/add-server/add-server.module#AddServerPageModule'},
-  { path: 'menu/servers/add-server/scan', loadChildren: './pages/servers/add-server/scan/scan.module#ScanPageModule' },
+  // { path: 'menu/servers/add-server/scan', loadChildren: './pages/servers/add-server/scan/scan.module#ScanPageModule' },
 
   { path: 'signin', loadChildren: './pages/signin/signin.module#SigninPageModule' },
 
@@ -28,7 +28,7 @@ const routes: Routes = [
 
   { path: 'channels/:nodeId/:channelId', loadChildren: './pages/feeds/home/channels/channels.module#ChannelsPageModule' },
   { path: 'postdetail/:nodeId/:channelId/:postId', loadChildren: './pages/feeds/home/postdetail/postdetail.module#PostdetailPageModule' },
-  
+
   { path: 'menu/setting', loadChildren: './pages/feeds/menu/setting/setting.module#SettingPageModule' },
   { path: 'menu/profiledetail', loadChildren: './pages/feeds/menu/profiledetail/profiledetail.module#ProfiledetailPageModule' },
 

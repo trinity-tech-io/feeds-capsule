@@ -21,11 +21,11 @@ export const fr = {
         "sending": "Sending...",
         "addressinvalid": "Address invalid",
         "commingSoon": "Comming soon ...",
-        "followSuccess":"Follow success",
-        "unFollowSuccess":"UnFollow success",
-        "noImageSelected":"No Image Selected",
-        "loggingIn":"Logging in",
-        "des2":'Are you sure you want to return to the main page？',
+        "followSuccess": "Follow successfully",
+        "unFollowSuccess": "UnFollow successfully",
+        "noImageSelected": "No Image Selected",
+        "loggingIn": "Logging in",
+        "des2": 'Are you sure you want to return to the main page？',
     },
     "app": {
         "profileDetails": "Profile Details",
@@ -84,7 +84,7 @@ export const fr = {
     },
     "NotificationPage": {
         "emptyDes": "You have no notifications",
-        "followedFeed": "Followed your Feed",
+        "followedFeed": "Followed your Feeds",
         "likedPost": "Liked your post",
         "commentPost": "Left a comment on your post",
         "likedComment": "Liked your comment"
@@ -189,51 +189,31 @@ export const fr = {
         "feedsSourceQRCode": "Feeds Source QRCode",
     },
     "ScanqrcodePage": {
-        "introduce": "Create a new channel",
-        "introduce1": "Bind your",
-        "introduce2": "Feeds service / channel source",
-        "introduce3": "to proceed",
-        "introduce4": "Scan your binding address"
+        "introduce": "Create a new Feeds Source",
+        "introduce1": "Be sure you have a new feeds source/service setup on your device and a QRcode address displayed in the browser.",
+        "introduce2": "Scan the QRcode to bind your current DID with the feeds source/service.",
+        // "introduce3":"to proceed",
+        "introduce4": "Scan your QRcode address"
     },
     "StartbindingPage": {
-        "introduce": "Create a new channel",
-        "introduce1": "Verify the binding code to be similar in the browser",
-        "introduce2": "Verified Binding Code",
+        "introduce": "Create a new Feeds Source",
+        "introduce1": "Verify the binding code from Qrcode to be same in the browser",
+        "introduce2": "Verified binding code",
         "introduce3": "Feeds url",
         "linkServer": "You are linking a feeds service. Please confirm whether the feeds url is consistent with the previously bound feeds service.",
         "confirm": "Confirm",
-        "abort": "Abort",
+        "abort": "Abort due to not same code",
         "Connectingserver": "Connecting server",
         "bindingError": "An exception occurred during the binding process",
         "linkServerError": "You are not the owner of this service, please change and try again.",
     },
-    "PublishdidPage": {
-        "introduce": "Create a new channel",
-        "payload": "payload is",
-        "publishonDIDsidechain": "Publish on DID side chain",
-        "abort": "Abort",
-    },
-    "FinishPage": {
-        "introduce": "DID binding process completed",
-        "introduce1": "Create channel",
-        "introduce2": "Return to main screen",
-    },
-    "IssuecredentialPage": {
-        "introduce": "DID document published",
-        "introduce1": "to sidechain successfully",
-        "issueacredential": "Issue a credential",
-        "abort": "Abort",
-        "serverInfo": "Feeds Source Info",
-        "serverName": "Feeds Source Name",
-        "serverDes": "Feeds Source Description",
-    },
     "ImportdidPage": {
-        "introduce": "Create a new channel",
-        "introduce1": "Bind a DID to your selected",
-        "introduce2": "Feeds service / channel source",
-        "createanewDID": "Create a new DID",
+        "introduce": "Create your Feeds Source",
+        "introduce1": "Request selected feeds source/service to generated a new DID as an identifer of itself.",
+        // "introduce2": "Feeds service / channel source",
+        "createanewDID": "Proceed to create a new DID",
         "importanexistDID": "Import an exist DID",
-        "abort": "Abort",
+        // "abort": "Abort",
     },
     "ImportmnemonicPage": {
         "des": "Enter mnemonic (space between mnemonic words)",
@@ -246,6 +226,28 @@ export const fr = {
         "tipMsg2": "Please input index!",
         "alert": "Alert",
         "ok": "OK"
+    },
+    "PublishdidPage": {
+        "introduce": "Create your Feeds Source",
+        "introduce1": "Publish the payload of a new DID Document sent from selected feeds source",
+        "payload": "Payload",
+        "publishonDIDsidechain": "Publish on DID Sidechain",
+        // "abort":"Abort",
+    },
+    "IssuecredentialPage": {
+        "introduce": "Create your Feeds Source",
+        "introduce1": "DID Document of selected feeds source published to sidechain successfully.",
+        "introduce2": "To claim the ownership, a new credentials would be issued to the selected feeds source.",
+        "issueacredential": "Issue credentials",
+        // "abort":"Abort",
+        "serverInfo": "Feeds Source Info",
+        "serverName": "Feeds Source Name",
+        "serverDes": "Feeds Source Description",
+    },
+    "FinishPage": {
+        "introduce": "Binding feeds source process completed. Congradulations, you have your own feeds source now and  can new a feed on this feeds source with your desire.",
+        "introduce1": "Create a new Feed",
+        "introduce2": "Return to main screen",
     },
     "PostfromComponent": {
         "des": "Choose one of your Feeds to post from"
@@ -261,12 +263,12 @@ export const fr = {
     "DIDdata": {
         "Notprovided": "Not provided",
         "NotprovidedfromDIDDocument": "Not provided from DID Document",
-        "NoDescription":"No descriptions or interests yet"
+        "NoDescription": "No descriptions or interests yet"
     },
-    "CommentPage":{
-        "newComment":"New Comment",
-        "publishComment":"Publish comment",
-        "enterComments":"Enter Comments",
-        "tipMsg1":"Post Sent successfully!"
+    "CommentPage": {
+        "newComment": "New Comment",
+        "publishComment": "Publish comment",
+        "enterComments": "Enter Comments",
+        "tipMsg1": "Post Sent successfully!"
     }
 };
