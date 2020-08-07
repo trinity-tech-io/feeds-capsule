@@ -506,17 +506,18 @@ $segment-button-md-text-color: #007AFF !important;
 }
 
 .channel-title-small{
-  width: 171px;
+  display:inline-block;
+  width: 80px;
   height: 20px;
   font-family: Montserrat;
   font-size: 17px;
   font-weight: bold;
   font-stretch: normal;
   font-style: normal;
-  line-height: 1.18;
-  letter-spacing: normal;
   text-align: left;
   color: #161740;
+  overflow:auto;
+  vertical-align: middle;
 }
 
 .channel-desc-small{
@@ -534,7 +535,8 @@ $segment-button-md-text-color: #007AFF !important;
 }
 
 .channel-ts{
-  width: 50px;
+  display: inline-block;
+  width: 80px;
   height: 14px;
   font-family: Montserrat;
   font-size: 11px;
@@ -542,7 +544,7 @@ $segment-button-md-text-color: #007AFF !important;
   font-stretch: normal;
   font-style: normal;
   line-height: 1.27;
-  letter-spacing: normal;
+  letter-spacing: normal; 
   color: #a0a2c4;
 
   margin-left: 5px;
@@ -1356,6 +1358,7 @@ vertical-align: middle;
   margin-left: 10px; margin-top: 6px; margin-bottom: 10px; margin-right: 25px;
 
   .menu-div{
+    width:80px;
     float: right;
   }
   .image-text-div{
