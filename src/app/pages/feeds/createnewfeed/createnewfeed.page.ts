@@ -15,6 +15,8 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
   styleUrls: ['./createnewfeed.page.scss'],
 })
 export class CreatenewfeedPage implements OnInit {
+  public namelen = 0;
+  public len = 0;
   private connectionStatus = 1;
   public channelAvatar = "";
   private avatar = "";
@@ -109,6 +111,12 @@ export class CreatenewfeedPage implements OnInit {
       this.native.toast_trans("CreatenewfeedPage.tipMsg1");
       return ;
     }
+
+    if (name.value.length > 32){
+      this.native.toast_trans("CreatenewfeedPage.tipMsgLength1");
+      return ;
+    }
+
     let descValue = desc.value || "";
         descValue = this.native.iGetInnerText(descValue);
     if (descValue == ""){
@@ -146,6 +154,14 @@ export class CreatenewfeedPage implements OnInit {
 
   profileimage(){
     this.native.navigateForward(['/profileimage'],"");
+  }
+
+  onChangeText(des){
+    this.len = des.value.length;
+  }
+
+  onChangeName(name){
+    this.namelen = name.value.length;
   }
 
 }

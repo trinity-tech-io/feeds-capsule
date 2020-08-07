@@ -27,6 +27,7 @@ export const zh = {
         "loggingIn":"正在登录",
         "des2":'确认要返回主页面吗？',
         "connectionError":'当前无网络，请稍后再试',
+        "nopostyet":"还未发布微说"
     },
     "app":{
         "profileDetails":"档案详情",
@@ -94,6 +95,7 @@ export const zh = {
         "createNewFeed":"创建新的微频",
         "profileImage":"微频头像",
         "des":"为微频选择一张头像",
+        "des1":"头像已选择",
         "channelSource":"微频源",
         "name":"微频名称",
         "description":"微频描述",
@@ -106,7 +108,8 @@ export const zh = {
         "inputName":"输入名称",
         "inputFeedDesc":"输入描述",
         "channelSourceDes":"在哪里保存您的微频",
-        "createfeedsuccess": "创建微频成功!"
+        "createfeedsuccess": "创建微频成功!",
+        "tipMsgLength1":"描述信息长度要最大为32"
     },
     "ProfileimagePage":{
         "title":"微频头像",
@@ -134,6 +137,9 @@ export const zh = {
         "about":"关于微频",
         "version":"版本",
         "website":"团队网址",
+        "releaseddate":"发布日期",
+        "developers":"开发人员",
+        'designers':'设计人员',
     },
     "PostdetailPage":{
         "postdetail":"微说详情"

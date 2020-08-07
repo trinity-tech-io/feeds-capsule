@@ -65,7 +65,7 @@
       height: 25.6px;
       --border-radius:25px; 
       --background: #a067ff;
-      "   (click)="subscribe(channel.nodeId, channel.id)">
+      "   (click)="tip()">
         <ion-label style="  font-family: Montserrat;
         font-size: 10px;
         font-weight: bold;
@@ -76,6 +76,13 @@
         text-align: left;
         color: #fdfeff;">{{'ChannelsPage.tip'|translate}}</ion-label>
       </ion-button>
+    </div>
+
+    <div *ngIf="postList.length===0" style="margin-top: 80px;">
+      <div style="text-align: center;">
+        <img src="./assets/images/empty-feeds-icon.svg">
+      </div>
+      <div class="all-empty" style="margin-top: 10px;">{{ 'common.nopostyet' | translate }}</div>
     </div>
 
     <div *ngFor="let post of postList let i=index" style="margin-top: 25px;">

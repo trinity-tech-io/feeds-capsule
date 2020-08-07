@@ -2,6 +2,7 @@
   <div class="offline-header"></div>
 </ion-header>
 <ion-content [class.darkContainer]="theme.darkMode">
+  <div [ngClass]="{'mask-div': bigImage}">
      <div class="channel-img-small-div">
       <div class="channel-img-small">
         <ion-avatar>
@@ -19,7 +20,7 @@
             <ion-label class="channel-title-small ellipsis white">{{channelName}}</ion-label>
           </div>
           <div>
-            <img src="../../../../assets/images/bubble2.svg" class="bubble">
+            <img src="./assets/images/bubble2.svg" class="bubble">
             <ion-label class="channel-follower2">{{subscribers}} {{'common.followers'|translate}}</ion-label>
           </div>
     </div>
@@ -40,11 +41,15 @@
       </ion-col>
     </ion-row>
 
-    <div *ngIf="bigImage" (click)="hideBigImage()" style="width: 100%;height:100%;position:fixed;left:0px;top:0px">
+
+
+    <div *ngIf="bigImage" (click)="hideBigImage()" style="width: 90%;height:100%;position:fixed;left:5%;top:0px;z-index:11">
       <div class="trans-big-img" >
         <img src="{{bigImageUrl}}" class="image"/>
       </div>
     </div>
+
+  </div>
 
   </ion-content>
 

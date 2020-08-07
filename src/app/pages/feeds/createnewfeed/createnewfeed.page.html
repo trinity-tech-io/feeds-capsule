@@ -3,18 +3,18 @@
 </ion-header>
 <ion-content class="ion-padding" [class.darkContainer]="theme.darkMode">
       <div>
-        <ion-label  class="content-key white">{{'CreatenewfeedPage.name'|translate}}</ion-label>
+        <ion-label  class="content-key white">{{'CreatenewfeedPage.name'|translate}}<span *ngIf="namelen>0">({{namelen}})</span></ion-label>
       </div>
       <div class="detail-value-div">
-        <ion-input required type="text" class="content-value " placeholder="{{'CreatenewfeedPage.inputName'|translate}}" #name></ion-input>
+        <ion-input required type="text" class="content-value " placeholder="{{'CreatenewfeedPage.inputName'|translate}}" #name (ionChange)="onChangeName(name)"></ion-input>
       </div>
       <div class="detail-line line-dark"></div>
 
       <div class="detail-key-div">
-        <ion-label  class="content-key white">{{'CreatenewfeedPage.description'|translate}}</ion-label>
+        <ion-label  class="content-key white">{{'CreatenewfeedPage.description'|translate}}<span *ngIf="len>0">({{len}})</span></ion-label>
       </div>
       <div class="detail-value-div">
-        <ion-input required type="text" class="content-value " placeholder="{{'CreatenewfeedPage.inputFeedDesc'|translate}}" #desc></ion-input>
+        <ion-input required type="text" class="content-value " placeholder="{{'CreatenewfeedPage.inputFeedDesc'|translate}}" #desc (ionChange)="onChangeText(desc)"></ion-input>
       </div>
       <div class="detail-line line-dark"></div>
 
@@ -23,8 +23,11 @@
           <div class="detail-key-div">
             <ion-label  class="content-key white">{{'CreatenewfeedPage.profileImage'|translate}}</ion-label>
           </div>
-          <div class="detail-value-div">
+          <div class="detail-value-div"  *ngIf="avatar === ''">
             <ion-label class="content-value " >{{'CreatenewfeedPage.des'|translate}}</ion-label>
+          </div>
+          <div class="detail-value-div" *ngIf="avatar != ''">
+            <ion-label class="content-value " >{{'CreatenewfeedPage.des1'|translate}}</ion-label>
           </div>
         </div>
         <div style="display: flex; float: right;height: 0px auto; margin-top: 27px;">

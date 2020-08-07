@@ -53,6 +53,10 @@ export class ChannelsPage implements OnInit {
     this.feedService.subscribeChannel(this.nodeId, Number(this.channelId));
   }
 
+  tip(){
+    this.native.toast_trans('common.commingSoon');
+  }
+
   async unsubscribe(){
     this.menuService.showUnsubscribeMenu(this.nodeId, Number(this.channelId), this.channelName);
   }

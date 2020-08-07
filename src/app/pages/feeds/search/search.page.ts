@@ -134,7 +134,7 @@ export class SearchPage implements OnInit {
   }
 
   addfeedssource(){
-    this.native.navigateForward(['/menu/servers'],"");
+    this.native.navigateForward(['/menu/servers/add-server'],"");
   }
 
   checkServerStatus(nodeId: string){

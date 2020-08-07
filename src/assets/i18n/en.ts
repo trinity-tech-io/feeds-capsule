@@ -27,6 +27,7 @@ export const en = {
         "loggingIn":"Logging in",
         "des2":'Are you sure you want to return to the main page？',
         "connectionError":'No network is currently available, please try again later',
+        "nopostyet":"No post yet"
     },
     "app":{
         "profileDetails":"Profile Details",
@@ -94,6 +95,7 @@ export const en = {
         "createNewFeed":"Create New Feeds",
         "profileImage":"Profile image",
         "des":"PICK AN IMAGE FOR YOUR FEEDS",
+        "des1":"Avatar selected",
         "channelSource":"Feeds source",
         "name":"Name",
         "description":"Description",
@@ -106,7 +108,8 @@ export const en = {
         "inputName":"INPUT NAME",
         "inputFeedDesc":"INPUT DESCRIPTION",
         "channelSourceDes":"WHERE TO STORE YOUR FEEDS",
-        "createfeedsuccess":"Feeds created successfully!"
+        "createfeedsuccess":"Feeds created successfully!",
+        "tipMsgLength1":"The maximum length of the name message should be 32"
     },
     "ProfileimagePage":{
         "title":"Profile Image",
@@ -134,6 +137,9 @@ export const en = {
         "about":"About",
         "version":"version",
         "website":"website",
+        "releaseddate":"Released date",
+        "developers":"Developers",
+        'designers':'Designers',
     },
     "PostdetailPage":{
         "postdetail":"Post Detail"

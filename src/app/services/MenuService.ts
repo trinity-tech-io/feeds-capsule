@@ -69,7 +69,7 @@ export class MenuService {
     async showUnsubscribeMenu(nodeId: string, channelId: number, channelName: string){
         const actionSheet = await this.actionSheetController.create({
             buttons: [{
-              text: this.translate.instant("common.unsubscribe")+' @'+channelName+"?",
+              text: this.translate.instant("common.unsubscribe")+' @'+channelName,
               role: 'destructive',
               icon: 'trash',
               handler: () => {
