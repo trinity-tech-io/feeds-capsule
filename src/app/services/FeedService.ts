@@ -594,8 +594,10 @@ export class FeedService {
   }
 
   getServerStatusFromId(nodeId: string): number{
-    if (serversStatus[nodeId] == null || serversStatus[nodeId] == undefined){
-      return 1;
+    if (this.getConnectionStatus() == ConnState.disconnected ||
+      serversStatus[nodeId] == null || 
+      serversStatus[nodeId] == undefined){
+        return 1;
     }
 
     return serversStatus[nodeId].status;

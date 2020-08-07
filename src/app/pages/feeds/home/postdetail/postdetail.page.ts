@@ -70,7 +70,6 @@ export class PostdetailPage implements OnInit {
   }
   
   ngOnInit() {
-    this.connectionStatus = this.feedService.getConnectionStatus();
     this.acRoute.params.subscribe((data)=>{
       this.nodeId = data.nodeId;
       this.channelId = data.channelId;
@@ -90,6 +89,7 @@ export class PostdetailPage implements OnInit {
   }
 
   ionViewWillEnter() {
+    this.connectionStatus = this.feedService.getConnectionStatus();
     this.feedService.getComments(this.nodeId,Number(this.channelId) ,Number(this.postId),Communication.field.last_update, 0, 0, 0, false);
     this.events.subscribe('feeds:connectionChanged',(status)=>{
       this.zone.run(() => {
@@ -223,7 +223,7 @@ export class PostdetailPage implements OnInit {
       this.feedService.postUnlike(this.nodeId,Number(this.channelId),Number(this.postId),commentId);
       return ;
     }
-    
+
     this.feedService.postLike(this.nodeId,Number(this.channelId),Number(this.postId),commentId);
   }
 

@@ -32,11 +32,11 @@ export class NotificationPage {
   }
 
   ngOnInit(): void {
-    this.connectionStatus = this.feedService.getConnectionStatus();
-    this.notificationList = this.feedService.getNotificationList();
+    
   }
   ionViewWillEnter() {
-    
+    this.connectionStatus = this.feedService.getConnectionStatus();
+    this.notificationList = this.feedService.getNotificationList();
     this.events.subscribe('feeds:connectionChanged',(status)=>{
       this.zone.run(() => {
         this.connectionStatus = status;

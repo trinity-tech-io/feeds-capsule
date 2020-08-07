@@ -37,12 +37,12 @@ export class CreatenewfeedPage implements OnInit {
     }
 
   ngOnInit() {
-    this.connectionStatus = this.feedService.getConnectionStatus();
-    this.selectedServer = this.feedService.getBindingServer();
-    this.selectedChannelSource = this.selectedServer.did;
   }
 
   ionViewWillEnter() {
+    this.selectedServer = this.feedService.getBindingServer();
+    this.selectedChannelSource = this.selectedServer.did;
+    this.connectionStatus = this.feedService.getConnectionStatus();
     this.channelAvatar = this.feedService.getProfileIamge();
     this.avatar = this.feedService.parseChannelAvatar(this.channelAvatar);
     this.events.subscribe('feeds:connectionChanged',(status)=>{

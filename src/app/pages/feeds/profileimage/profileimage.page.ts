@@ -28,10 +28,11 @@ export class ProfileimagePage implements OnInit {
     private camera: CameraService) { }
 
   ngOnInit() {
-    this.connectionStatus = this.feedService.getConnectionStatus();
   }
 
   ionViewWillEnter() {
+    this.connectionStatus = this.feedService.getConnectionStatus();
+
     if(this.theme.darkMode){
       this.userAvatar = './assets/images/profile-add-dark.svg';
     }else{

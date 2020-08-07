@@ -53,10 +53,10 @@ export class CreatenewpostPage implements OnInit {
     }
 
     ngOnInit() {
-      this.connectionStatus = this.feedService.getConnectionStatus();
     }
 
     ionViewWillEnter() {
+    this.connectionStatus = this.feedService.getConnectionStatus();
     this.isNewPost = true;
 
     this.events.subscribe('feeds:connectionChanged',(status)=>{

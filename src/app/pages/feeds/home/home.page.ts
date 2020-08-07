@@ -31,7 +31,6 @@ export class HomePage implements OnInit {
   }
 
   ionViewWillEnter() {
-
     this.connectionStatus = this.feedService.getConnectionStatus();
     this.postList = this.feedService.getPostList();
     this.initnodeStatus();
@@ -101,7 +100,7 @@ export class HomePage implements OnInit {
       this.native.toastWarn(this.translate.instant('common.connectionError'));
       return;
     }
-    
+
     if (this.checkMyLike(nodeId,channelId,postId)){
       this.feedService.postUnlike(nodeId,Number(channelId),Number(postId),0);
       return ;

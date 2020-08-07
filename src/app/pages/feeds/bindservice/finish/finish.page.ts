@@ -25,13 +25,13 @@ export class FinishPage implements OnInit {
     }
 
     ngOnInit(){
-      this.connectionStatus = this.feedService.getConnectionStatus();
       this.acRoute.params.subscribe((data)=>{
         this.nodeId = data.nodeId;
       });
     }
 
     ionViewDidEnter() {
+      this.connectionStatus = this.feedService.getConnectionStatus();
       this.initTitle();
       this.native.setTitleBarBackKeyShown(true);
 

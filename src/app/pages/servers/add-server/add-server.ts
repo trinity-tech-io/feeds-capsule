@@ -52,11 +52,10 @@ export class AddServerPage implements OnInit {
   
 
   ngOnInit() {
-    this.connectionStatus = this.feedService.getConnectionStatus();
   }
 
   ionViewWillEnter() {
-
+    this.connectionStatus = this.feedService.getConnectionStatus();
     this.events.subscribe("feeds:updateTitle",()=>{
       this.initTitle();
     });

@@ -29,11 +29,12 @@ export class ProfilePage implements OnInit {
   }
 
   ngOnInit() {
-    this.connectionStatus = this.feedService.getConnectionStatus();
   }
 
   ionViewWillEnter() {
     this.events.publish("feeds:refreshPage");
+    this.connectionStatus = this.feedService.getConnectionStatus();
+
     this.events.subscribe('feeds:connectionChanged',(status)=>{
       this.zone.run(() => {
         this.connectionStatus = status;

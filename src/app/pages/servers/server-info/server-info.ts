@@ -51,7 +51,6 @@ export class ServerInfoPage implements OnInit {
     private translate:TranslateService) {}
 
   ngOnInit() {
-    this.connectionStatus = this.feedService.getConnectionStatus();
     this.acRoute.params.subscribe(data => {
       this.isOwner = data.isOwner ;
       this.address = data.address;
@@ -96,6 +95,7 @@ export class ServerInfoPage implements OnInit {
   }
 
   ionViewWillEnter() {
+    this.connectionStatus = this.feedService.getConnectionStatus();
     this.events.subscribe('feeds:connectionChanged',(status)=>{
       this.zone.run(() => {
         this.connectionStatus = status;
@@ -243,7 +243,7 @@ export class ServerInfoPage implements OnInit {
       this.native.toastWarn(this.translate.instant('common.connectionError'));
       return;
     }
-    
+
     const actionSheet = await this.actionSheetController.create({
       buttons: [{
         text: this.translate.instant("ServerInfoPage.RemovethisFeedSource"),

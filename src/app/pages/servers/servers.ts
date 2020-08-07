@@ -33,7 +33,6 @@ export class ServersPage implements OnInit {
     }
 
     ngOnInit() {
-        this.connectionStatus = this.feedService.getConnectionStatus();
     }
 
     addSubscribe(){
@@ -104,6 +103,7 @@ export class ServersPage implements OnInit {
     }
 
     ionViewWillEnter(){
+        this.connectionStatus = this.feedService.getConnectionStatus();
         this.initData();
         this.events.subscribe("feeds:updateTitle",()=>{
           this.initTitle();

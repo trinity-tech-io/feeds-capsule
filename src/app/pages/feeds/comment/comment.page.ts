@@ -35,7 +35,6 @@ export class CommentPage implements OnInit {
     private translate:TranslateService) { }
 
   ngOnInit() {
-    this.connectionStatus = this.feedService.getConnectionStatus();
     this.acRoute.params.subscribe((data)=>{
       this.nodeId = data.nodeId;
       this.channelId = data.channelId;
@@ -44,6 +43,7 @@ export class CommentPage implements OnInit {
   }
 
   ionViewWillEnter() {
+    this.connectionStatus = this.feedService.getConnectionStatus();
     let channel = this.feedService.getChannelFromId(this.nodeId,this.channelId) || {};
     this.channelName = channel["name"] || "";
     this.subscribers = channel["subscribers"] || "";

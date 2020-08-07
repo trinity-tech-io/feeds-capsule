@@ -33,7 +33,6 @@ export class PublishdidPage implements OnInit {
     }
 
     ngOnInit() {
-      this.connectionStatus = this.feedService.getConnectionStatus();
       this.acRoute.params.subscribe((data)=>{
         this.nodeId = data.nodeId;
         this.did = data.did;
@@ -42,6 +41,7 @@ export class PublishdidPage implements OnInit {
     }
 
     ionViewWillEnter() {
+      this.connectionStatus = this.feedService.getConnectionStatus();
       this.events.subscribe('feeds:connectionChanged',(status)=>{
         this.zone.run(() => {
           this.connectionStatus = status;

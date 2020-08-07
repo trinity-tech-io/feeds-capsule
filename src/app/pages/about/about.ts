@@ -24,10 +24,10 @@ export class AboutPage implements OnInit {
     ) {}
 
     ngOnInit() {
-      this.connectionStatus = this.feedService.getConnectionStatus();
     }
 
     ionViewWillEnter() {
+      this.connectionStatus = this.feedService.getConnectionStatus();
       this.events.subscribe('feeds:connectionChanged',(status)=>{
         this.zone.run(() => {
           this.connectionStatus = status;

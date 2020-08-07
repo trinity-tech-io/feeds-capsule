@@ -34,7 +34,6 @@ export class StartbindingPage implements OnInit {
   }
 
   ngOnInit() {
-    this.connectionStatus = this.feedService.getConnectionStatus();
     this.acRoute.params.subscribe((data)=>{
       this.nodeId = data.nodeId;
 
@@ -58,6 +57,7 @@ export class StartbindingPage implements OnInit {
   }
 
   ionViewWillEnter() {
+    this.connectionStatus = this.feedService.getConnectionStatus();
     this.events.subscribe('feeds:connectionChanged',(status)=>{
       this.zone.run(() => {
         this.connectionStatus = status;
