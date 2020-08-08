@@ -52,7 +52,7 @@
             </div>
             
             <ion-avatar  *ngIf="getContentImg(post.content) != ''" class="content-img-without-margin" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)">
-              <img src="{{getContentImg(post.content)}}"> 
+              <img src="{{getContentImg(post.content)}}" style="margin-top: 2px;"> 
             </ion-avatar>
     
             <div class="channel-post-heart-comment-div">

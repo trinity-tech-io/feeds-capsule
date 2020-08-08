@@ -195,6 +195,7 @@ export const en = {
         "RemoveFeedSource":"Remove Feeds Source!",
         "removeserver": "Service removed",
         "feedsSourceQRCode":"Feeds Source QRCode",
+        "error":"resolve diddocument error",
     },
     "ScanqrcodePage":{
         "introduce":"Create a new Feeds Source",

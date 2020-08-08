@@ -506,8 +506,7 @@ $segment-button-md-text-color: #007AFF !important;
 }
 
 .channel-title-small{
-  display:inline-block;
-  width: 150px;
+  max-width: 150px;
   height: 20px;
   font-family: Montserrat;
   font-size: 17px;
@@ -516,7 +515,6 @@ $segment-button-md-text-color: #007AFF !important;
   font-style: normal;
   text-align: left;
   color: #161740;
-  overflow:auto;
   vertical-align: middle;
 }
 
