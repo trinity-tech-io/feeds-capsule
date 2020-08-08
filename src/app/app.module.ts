@@ -100,7 +100,12 @@ export function TranslateLoaderFactory() {
         useFactory:(TranslateLoaderFactory)
       }
     }),
-    IonicStorageModule.forRoot()
+    IonicStorageModule.forRoot(
+      {
+        name: 'feedsdb',
+        driverOrder: ['indexeddb', 'sqlite', 'websql']
+      }
+    )
   ],
   bootstrap: [MyApp],
   entryComponents: [

@@ -2981,7 +2981,6 @@ export class FeedService {
   }
 
   signinConfirmRequest(nodeId: string, nonce: string, realm: string, requiredCredential: boolean){
-    
     didSessionManager.authenticate(nonce, realm).then((presentation)=>{
       let request;
       if (requiredCredential){
@@ -3004,9 +3003,6 @@ export class FeedService {
           }
         }
       }
-
-
-
       this.sendRPCMessage(nodeId, request.method, request.params);
     }).catch((err)=>{
       // console.log("err = "+err);
@@ -3019,31 +3015,12 @@ export class FeedService {
       this.handleError(error);
       return;
     }
-    
+
     let requiredCredential = result.credential_required;
     let jws = result.jws;
 
-    // let credentialStr = JSON.stringify(result.credential);
     let credential = JSON.parse(result.credential);
-
-    // {"signatureIsValid":true,"payload":{"iss":"did:elastos:ikZJ3Z7JqmZ8HHoThcqyVQfd2zHhseTWnt","sub":"didauth","realm":"GDY3wCVgegMrVAn7mLctQHyxPPwVAv7ShJ77yuanQZqM","nonce":"8pNVf8sPUYG1RPbrSV8dk1daMZBcRvq6S"}}
-    this.parseJWS(true,jws,
-      (res)=>{
-        serverMap[nodeId].name = credential.credentialSubject.name;
-        serverMap[nodeId].introduction = credential.credentialSubject.description;
-        this.storeService.set(PersistenceKey.serverMap, serverMap);
-
-        let payloadStr = JSON.stringify(res.payload);
-        let payload = JSON.parse(payloadStr);
-        let nonce = payload.nonce;
-        let realm = payload.realm;
-
-        this.signinConfirmRequest(nodeId, nonce, realm , requiredCredential);
-      },
-      (err)=>{
-        // console.log("err =>"+err);
-      }
-      );
+    this.doParseJWS(nodeId, jws, credential, requiredCredential,()=>{},()=>{});
   }
 
   handleSigninConfirm(nodeId:string, result: any, error: any){
@@ -3123,6 +3100,29 @@ export class FeedService {
       }
     }
     this.sendRPCMessage(nodeId, request.method, request.params);
+  }
+
+  doParseJWS(nodeId: string, jws: string, credential: any, requiredCredential: boolean, onSuccess:()=>void, onError: () => void){
+    this.parseJWS(false,jws,
+      (res)=>{
+        serverMap[nodeId].name = credential.credentialSubject.name;
+        serverMap[nodeId].introduction = credential.credentialSubject.description;
+        this.storeService.set(PersistenceKey.serverMap, serverMap);
+
+        let payloadStr = JSON.stringify(res.payload);
+        let payload = JSON.parse(payloadStr);
+        let nonce = payload.nonce;
+        let realm = payload.realm;
+        this.signinConfirmRequest(nodeId, nonce, realm , requiredCredential);
+        onSuccess();
+      },
+      (err)=>{
+        // console.log("err =>"+err);
+        console.log("error=>"+err);
+
+        onError();
+      }
+      );
   }
   //eyJ0eXAiOiJKV1QiLCJjdHkiOiJqc29uIiwibGlicmFyeSI6IkVsYXN0b3MgRElEIiwidmVyc2lvbiI6IjEuMCIsImFsZyI6Im5vbmUifQ.eyJzdWIiOiJKd3RUZXN0IiwianRpIjoiMCIsImF1ZCI6IlRlc3QgY2FzZXMiLCJpYXQiOjE1OTA4NTEwMzQsImV4cCI6MTU5ODc5OTgzNCwibmJmIjoxNTg4MjU5MDM0LCJmb28iOiJiYXIiLCJpc3MiOiJkaWQ6ZWxhc3RvczppV0ZBVVloVGEzNWMxZlBlM2lDSnZpaFpIeDZxdXVtbnltIn0.
   parseJWS(verifySignature: boolean, jwtToken: string , onSuccess: (result: DIDPlugin.ParseJWTResult)=>void, onError: (err: string)=>void){
@@ -3319,22 +3319,7 @@ export class FeedService {
                   });
     eventBus.publish("feeds:issue_credential");
     eventBus.publish("feeds:bindServerFinish",bindingServer);
-
-    let retryNum = 0;
-    this.autoSigninInterval = setInterval(()=>{
-      if (retryNum>3){
-        clearInterval(this.autoSigninInterval);
-        return;
-      }
-
-      if (accessTokenMap[nodeId] != null && accessTokenMap[nodeId] != undefined){
-        clearInterval(this.autoSigninInterval);
-        return;
-      }
-
-      this.signinChallengeRequest(nodeId,true);
-      retryNum ++
-    },5000);
+    this.signinChallengeRequest(nodeId, true);
     // this.doFriendConnection(nodeId, ConnState.connected);
   }
 
