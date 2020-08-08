@@ -122,7 +122,7 @@ export class AddServerPage implements OnInit {
     if (result.length < 54 ||
       !result.startsWith('feeds://')||
       !result.indexOf("did:elastos:")){
-        alert(this.translate.instant("AddServerPage.tipMsg"));
+        this.native.toastWarn("AddServerPage.tipMsg");
         return ;
     }
     this.native.getNavCtrl().navigateForward(['/menu/servers/server-info', result, "", false]);

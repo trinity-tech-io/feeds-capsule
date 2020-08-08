@@ -87,7 +87,7 @@ export class ServerInfoPage implements OnInit {
           this.didString = server.did;
           this.name = server.name;
           this.owner = server.owner;
-          this.introduction = server.introduction;
+          this.introduction = server.introduction ||  this.translate.instant('common.nodescriptionyet');
           this.feedsUrl = server.feedsUrl;
         }
 
@@ -171,7 +171,7 @@ export class ServerInfoPage implements OnInit {
       this.address.indexOf("did:elastos:")
     ) this.resolveDid();
     else{
-      alert(this.translate.instant("ServerInfoPage.Feedurlmaybeerror"));
+      this.native.toastdanger("ServerInfoPage.Feedurlmaybeerror");
       this.navigateBackPage();
     }
 
@@ -185,13 +185,13 @@ export class ServerInfoPage implements OnInit {
           this.buttonDisabled = false;
           this.name = server.name;
           this.owner = server.owner;
-          this.introduction = server.introduction;
+          this.introduction = server.introduction || this.translate.instant('common.nodescriptionyet');
           this.didString = server.did;
           this.carrierAddress = server.carrierAddress;
           this.feedsUrl = server.feedsUrl;
         });
       },(err)=>{
-        alert("resolve diddocument error");
+        this.native.toastdanger("ServerInfoPage.error");
         this.buttonDisabled = true;
         this.navigateBackPage();
       }

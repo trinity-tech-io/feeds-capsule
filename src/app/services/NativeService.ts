@@ -40,6 +40,16 @@ export class NativeService {
         }).then(toast => toast.present());
     }
 
+    public toastdanger(message: string = 'Operation completed', duration: number = 2000): void {
+        this.toastCtrl.create({
+            mode: 'ios',
+            color: 'danger',
+            message,
+            duration: 2000,
+            position: 'top'
+        }).then(toast => toast.present());
+    }
+
     public toast_trans(_message: string = '', duration: number = 2000): void {
         _message = this.translate.instant(_message);
         this.toastCtrl.create({

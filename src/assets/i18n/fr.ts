@@ -27,7 +27,8 @@ export const fr = {
         "loggingIn": "Logging in",
         "des2": 'Are you sure you want to return to the main page？',
         "connectionError":'No network is currently available, please try again later',
-        "nopostyet":"No post yet"
+        "nopostyet":"No post yet",
+        "nodescriptionyet":'No description yet'
     },
     "app": {
         "profileDetails": "Profile Details",
@@ -194,6 +195,7 @@ export const fr = {
         "RemoveFeedSource": "Remove Feeds Source!",
         "removeserver": "Service removed",
         "feedsSourceQRCode": "Feeds Source QRCode",
+        "error":"resolve diddocument error",
     },
     "ScanqrcodePage": {
         "introduce": "Create a new Feeds Source",

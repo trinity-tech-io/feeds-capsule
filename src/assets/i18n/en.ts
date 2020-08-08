@@ -27,7 +27,8 @@ export const en = {
         "loggingIn":"Logging in",
         "des2":'Are you sure you want to return to the main page？',
         "connectionError":'No network is currently available, please try again later',
-        "nopostyet":"No post yet"
+        "nopostyet":"No post yet",
+        "nodescriptionyet":'No description yet'
     },
     "app":{
         "profileDetails":"Profile Details",
