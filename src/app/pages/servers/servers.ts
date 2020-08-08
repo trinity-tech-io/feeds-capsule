@@ -148,10 +148,20 @@ export class ServersPage implements OnInit {
     }
 
     bindFeedSource(){
+        if(this.feedService.getConnectionStatus() != 0){
+            this.native.toastWarn(this.translate.instant('common.connectionError'));
+            return;
+        }
+      
         this.native.navigateForward(['/bindservice/scanqrcode'],"");
     }
 
     exploreFeedSource(){
+        if(this.feedService.getConnectionStatus() != 0){
+            this.native.toastWarn(this.translate.instant('common.connectionError'));
+            return;
+        }
+        
         this.native.navigateForward(['/menu/servers/add-server'],"");
     }
 

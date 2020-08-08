@@ -52,6 +52,11 @@ export class FeedsPage implements OnInit {
   }
 
   create(){
+    if(this.feedService.getConnectionStatus() != 0){
+      this.native.toastWarn(this.translate.instant('common.connectionError'));
+      return;
+    }
+
     let bindingServer = this.feedService.getBindingServer();
     if (bindingServer == null || bindingServer == undefined){
       this.navCtrl.navigateForward(['/bindservice/scanqrcode']);

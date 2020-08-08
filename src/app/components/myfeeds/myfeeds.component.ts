@@ -40,6 +40,11 @@ export class MyfeedsComponent implements OnInit {
   }
 
   createNewFeed(){
+    if(this.feedService.getConnectionStatus() != 0){
+      this.native.toastWarn(this.translate.instant('common.connectionError'));
+      return;
+    }
+
     let bindServer = this.feedService.getBindingServer();
     
     if (bindServer != null && bindServer != undefined){

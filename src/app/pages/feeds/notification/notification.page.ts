@@ -22,7 +22,7 @@ export class NotificationPage {
     slidesPerView: 3,
   };
   constructor(
-    private navtive:NativeService,
+    private native:NativeService,
     private zone: NgZone,
     private events: Events,
     public theme:ThemeService,
@@ -50,15 +50,12 @@ export class NotificationPage {
   ionViewWillLeave(){
     this.events.unsubscribe("feeds:connectionChanged");
   }
-  
-
 
   goToServer(){
-    this.navtive.navigateForward(['/menu/servers'],"");
+    this.native.navigateForward(['/menu/servers'],"");
   }
 
   handleDisplayTime(createTime:number){
-
     let obj = UtilService.handleDisplayTime(createTime);
     if(obj.type === 's'){
        return this.translate.instant('common.just');
@@ -110,6 +107,11 @@ export class NotificationPage {
   }
 
   navTo(notification: any){
+    if(this.feedService.getConnectionStatus() != 0){
+      this.native.toastWarn(this.translate.instant('common.connectionError'));
+      return;
+    }
+    
     let nodeId = notification.details.nodeId;
     let channelId = notification.details.channelId;
     let postId = notification.details.postId;
@@ -125,11 +127,11 @@ export class NotificationPage {
 
   }
   navToChannel(nodeId, channelId){
-    this.navtive.navigateForward(['/channels', nodeId, channelId],"");
+    this.native.navigateForward(['/channels', nodeId, channelId],"");
   }
 
   navToPostDetail(nodeId, channelId, postId){
-    this.navtive.navigateForward(['/postdetail',nodeId, channelId,postId],"");
+    this.native.navigateForward(['/postdetail',nodeId, channelId,postId],"");
   }
 
   getContentText(content: string): string{
