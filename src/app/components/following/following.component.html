@@ -2,7 +2,7 @@
   <div *ngIf="followingList.length == 0">
     <div style="margin-top: 50px;" >
       <div style="text-align: center; ">
-        <img src="../../../../assets/images/empty-feeds-icon.svg">
+        <img src="./assets/images/empty-feeds-icon.svg">
       </div>
       <div class="all-empty" style="margin-top: 20px;">{{'common.allempty' | translate}}</div>
       <div class="all-empty-content-text" style="margin-top: 7px;">{{'FollowingComponent.emptyDes'|translate}}</div>
@@ -20,7 +20,7 @@
   <div class="image-text-layout-div">
     <ion-card-content class="ion-no-padding ion-no-margin">
 
-      <div *ngIf="checkUnreadNumber(channel.nodeId, channel.id) > 0" style="position:absolute; left: 0px; top: 0px;"  (click)="navTo(channel.nodeId, channel.id)">
+      <div *ngIf="checkUnreadNumber(channel.nodeId, channel.id) > 0" style="position:absolute; left: 5px; top: 38px;"  (click)="navTo(channel.nodeId, channel.id)">
         <ion-badge>{{checkUnreadNumber(channel.nodeId, channel.id)}}</ion-badge>
       </div>
 
@@ -43,7 +43,7 @@
               <ion-label class="channel-title-small white">{{channel.name}}</ion-label>
             </div>
             <div >
-              <img src="../../../../assets/images/bubble2.svg" class="bubble">
+              <img src="./assets/images/bubble2.svg" class="bubble">
               <ion-label class="channel-follower2">{{channel.subscribers}} {{'common.followers'|translate}}</ion-label>
             </div>
           </div>
