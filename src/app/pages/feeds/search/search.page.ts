@@ -92,7 +92,7 @@ export class SearchPage implements OnInit {
 
   subscribe(nodeId: string, id: number){
     if(this.feedService.getConnectionStatus() != 0){
-      this.native.toastWarn(this.translate.instant('common.connectionError'));
+      this.native.toastWarn('common.connectionError');
       return;
     }
 
@@ -135,7 +135,7 @@ export class SearchPage implements OnInit {
 
   addfeedssource(){
     if(this.feedService.getConnectionStatus() != 0){
-      this.native.toastWarn(this.translate.instant('common.connectionError'));
+      this.native.toastWarn('common.connectionError');
       return;
     }
 

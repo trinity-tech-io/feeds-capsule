@@ -21,7 +21,7 @@ export class MenuService {
                 text: this.translate.instant("common.share"),
                 icon: 'share',
                 handler: () => {
-                    this.native.toast(this.translate.instant("common.commingSoon"));
+                    this.native.toast("common.commingSoon");
                 }
             }, {
                 text: this.translate.instant("common.unsubscribe"),
@@ -29,7 +29,7 @@ export class MenuService {
                 icon: 'trash',
                 handler: () => {
                     if(this.feedService.getConnectionStatus() != 0){
-                        this.native.toastWarn(this.translate.instant('common.connectionError'));
+                        this.native.toastWarn('common.connectionError');
                         return;
                     }
                     
@@ -53,7 +53,7 @@ export class MenuService {
                 text: this.translate.instant("common.share"),
                 icon: 'share',
                 handler: () => {
-                    this.native.toast(this.translate.instant("common.commingSoon"));
+                    this.native.toast("common.commingSoon");
                 }
             },{
                 text: this.translate.instant("common.cancel"),

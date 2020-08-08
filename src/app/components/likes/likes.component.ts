@@ -1,5 +1,5 @@
-import { Component, OnInit, NgZone } from '@angular/core';
-import { Events,IonTabs} from '@ionic/angular';
+import { Component, OnInit,Input} from '@angular/core';
+import { IonTabs} from '@ionic/angular';
 import { FeedService } from 'src/app/services/FeedService';
 import { ThemeService } from 'src/app/services/theme.service';
 import { UtilService } from 'src/app/services/utilService';
@@ -15,29 +15,21 @@ import { FeedsPage } from 'src/app/pages/feeds/feeds.page'
   styleUrls: ['./likes.component.scss'],
 })
 export class LikesComponent implements OnInit {
-  public nodeStatus = {};
-  private likeList = [];
+  @Input() likeList:any =[];
+  @Input() nodeStatus:any = {};
   constructor(
     private feedspage: FeedsPage,
     private tabs: IonTabs,
     private feedService :FeedService,
-    private zone: NgZone,
-    private events: Events,
     public theme:ThemeService,
     private translate:TranslateService,
     private native:NativeService,
     private menuService: MenuService) {
-      this.events.subscribe('feeds:updateLikeList', (list) => {
-        this.zone.run(() => {
-          this.likeList = list;
-          this.initnodeStatus();
-        });
-       });
+     
   }
 
   ngOnInit() {
-    this.likeList = this.feedService.getLikeList();
-    this.initnodeStatus();
+  
   
   }
 
@@ -47,7 +39,7 @@ export class LikesComponent implements OnInit {
 
   like(nodeId, channelId, postId){
     if(this.feedService.getConnectionStatus() != 0){
-      this.native.toastWarn(this.translate.instant('common.connectionError'));
+      this.native.toastWarn('common.connectionError');
       return;
     }
     
@@ -122,17 +114,5 @@ export class LikesComponent implements OnInit {
     let channelName = this.getChannel(nodeId, channelId).name;
     this.menuService.showChannelMenu(nodeId, channelId, channelName);
   }
-
-  checkServerStatus(nodeId: string){
-    return this.feedService.getServerStatusFromId(nodeId);
-  }
-
-  initnodeStatus(){
-    for(let index =0 ;index<this.likeList.length;index++){
-           let nodeId = this.likeList[index]['nodeId'];
-           let status = this.checkServerStatus(nodeId);
-           this.nodeStatus[nodeId] = status;
-    }
- }
 
 }

@@ -53,7 +53,7 @@ export class FinishPage implements OnInit {
 
   createChannel(){
     if(this.connectionStatus != 0){
-      this.native.toastWarn(this.translate.instant('common.connectionError'));
+      this.native.toastWarn('common.connectionError');
       return;
     }
 

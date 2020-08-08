@@ -156,7 +156,7 @@ export class ServersPage implements OnInit {
 
     bindFeedSource(){
         if(this.feedService.getConnectionStatus() != 0){
-            this.native.toastWarn(this.translate.instant('common.connectionError'));
+            this.native.toastWarn('common.connectionError');
             return;
         }
       
@@ -165,7 +165,7 @@ export class ServersPage implements OnInit {
 
     exploreFeedSource(){
         if(this.feedService.getConnectionStatus() != 0){
-            this.native.toastWarn(this.translate.instant('common.connectionError'));
+            this.native.toastWarn('common.connectionError');
             return;
         }
         

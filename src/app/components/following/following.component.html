@@ -1,5 +1,5 @@
 
-  <div *ngIf="channelList.length == 0">
+  <div *ngIf="followingList.length == 0">
     <div style="margin-top: 50px;" >
       <div style="text-align: center; ">
         <img src="../../../../assets/images/empty-feeds-icon.svg">
@@ -15,7 +15,7 @@
     </div> 
   </div>
 
-<div *ngFor="let channel of channelList" [class.darkContainer]="theme.darkMode">
+<div *ngFor="let channel of followingList" [class.darkContainer]="theme.darkMode">
 
   <div class="image-text-layout-div">
     <ion-card-content class="ion-no-padding ion-no-margin">
@@ -54,7 +54,7 @@
   <div class="line-div white-line"></div>
 </div>
 
-<div class="new-feed-div" *ngIf="channelList.length > 0">
+<div class="new-feed-div" *ngIf="followingList.length > 0">
   <div class="new-feed" (click)="exploreFeeds()">{{'FollowingComponent.exploreFeeds'|translate}}</div>
 </div>
 

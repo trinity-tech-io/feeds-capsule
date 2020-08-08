@@ -53,7 +53,7 @@ export class FeedsPage implements OnInit {
 
   create(){
     if(this.feedService.getConnectionStatus() != 0){
-      this.native.toastWarn(this.translate.instant('common.connectionError'));
+      this.native.toastWarn('common.connectionError');
       return;
     }
 
@@ -69,7 +69,7 @@ export class FeedsPage implements OnInit {
     }
 
     if(this.feedService.getConnectionStatus() != 0){
-      this.native.toastWarn(this.translate.instant('common.connectionError'));
+      this.native.toastWarn('common.connectionError');
       return;
     }
     this.native.navigateForward(['/createnewfeed'],"");

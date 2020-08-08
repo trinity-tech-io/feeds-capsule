@@ -1,7 +1,6 @@
-import { Component, OnInit, NgZone } from '@angular/core';
+import { Component, OnInit,Input} from '@angular/core';
 import { FeedService } from '../../services/FeedService'
-import { Events, IonTabs } from '@ionic/angular';
-import { Router } from '@angular/router';
+import { IonTabs } from '@ionic/angular';
 import { FeedsPage } from 'src/app/pages/feeds/feeds.page'
 import { ThemeService } from 'src/app/services/theme.service';
 import { NativeService } from 'src/app/services/NativeService';
@@ -13,40 +12,20 @@ import { MenuService } from 'src/app/services/MenuService';
   styleUrls: ['./following.component.scss'],
 })
 export class FollowingComponent implements OnInit {
-  public nodeStatus = {};
-  private channelList = [];
+  @Input() followingList:any =[];
+  @Input() nodeStatus:any = {};
   constructor(
     private feedspage: FeedsPage,
     private tabs: IonTabs,
-    private events: Events,
-    private zone: NgZone,
-    private router: Router,
     private feedService:FeedService,
     public theme:ThemeService,
     private native:NativeService,
     private menuService: MenuService) { 
-    // this.channelList = this.feedService.refreshLocalChannels();
-   
-    this.events.subscribe('feeds:refreshSubscribedChannels', list => {
-      this.zone.run(() => {
-          this.channelList = list;
-          this.initnodeStatus();
-      });
-    });
 
-    this.events.subscribe('feeds:refreshPage',()=>{
-      this.zone.run(() => {
-        this.channelList=this.feedService.refreshLocalSubscribedChannels();
-        this.feedService.refreshSubscribedChannels();
-        this.initnodeStatus();
-      });
-    });
   }
 
   ngOnInit() {
-    this.channelList=this.feedService.refreshLocalSubscribedChannels();
-    this.initnodeStatus()
-    this.feedService.refreshSubscribedChannels();
+  
   }
 
   navTo(nodeId, channelId){
@@ -77,17 +56,4 @@ export class FollowingComponent implements OnInit {
   menuMore(nodeId: string , channelId: number, channelName: string){
     this.menuService.showChannelMenu(nodeId, channelId, channelName);
   }
-
-
-  checkServerStatus(nodeId: string){
-    return this.feedService.getServerStatusFromId(nodeId);
-  }
-
-  initnodeStatus(){
-    for(let index =0 ;index<this.channelList.length;index++){
-           let nodeId = this.channelList[index]['nodeId'];
-           let status = this.checkServerStatus(nodeId);
-           this.nodeStatus[nodeId] = status;
-    }
- }
 }

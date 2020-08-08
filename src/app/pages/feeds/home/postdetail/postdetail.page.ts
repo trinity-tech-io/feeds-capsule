@@ -186,7 +186,7 @@ export class PostdetailPage implements OnInit {
 
   showCommentPage(nodeId,channelId,postId){
     if(this.feedService.getConnectionStatus() != 0){
-      this.native.toastWarn(this.translate.instant('common.connectionError'));
+      this.native.toastWarn('common.connectionError');
       return;
     }
 
@@ -203,7 +203,7 @@ export class PostdetailPage implements OnInit {
 
   like(){
     if(this.feedService.getConnectionStatus() != 0){
-      this.native.toastWarn(this.translate.instant('common.connectionError'));
+      this.native.toastWarn('common.connectionError');
       return;
     }
 
@@ -217,7 +217,7 @@ export class PostdetailPage implements OnInit {
 
   likeComment(commentId: number){
     if(this.feedService.getConnectionStatus() != 0){
-      this.native.toastWarn(this.translate.instant('common.connectionError'));
+      this.native.toastWarn('common.connectionError');
       return;
     }
 

@@ -832,9 +832,9 @@ export class FeedService {
       serverMap = {}
 
     if (serverMap[server.nodeId] != undefined){
-      this.native.toast(this.translate.instant("AddServerPage.Serveralreadyadded"));
+      this.native.toast("AddServerPage.Serveralreadyadded");
     }else{
-      this.native.toast(this.translate.instant("AddServerPage.Addserversuccess"));
+      this.native.toast("AddServerPage.Addserversuccess");
     }
 
     // if (server != bindingServer)
@@ -2609,7 +2609,7 @@ export class FeedService {
 
     this.updatePostWithTime(nodeId,request.id, 0);
 
-    this.native.toast(this.translate.instant("common.followSuccess"));
+    this.native.toast("common.followSuccess");
   }
 
   handleUnsubscribeChannelResult(nodeId:string, request: any, error: any){
@@ -2644,7 +2644,7 @@ export class FeedService {
 
     eventBus.publish(PublishType.unsubscribeFinish, nodeId,request.id, channelsMap[nodeChannelId].name);
 
-    this.native.toast(this.translate.instant("common.unFollowSuccess"));
+    this.native.toast("common.unFollowSuccess");
   }
 
   handleQueryChannelCreationPermissionResult(nodeId: string, result: any){
@@ -2967,7 +2967,7 @@ export class FeedService {
       return ;
 
     this.isLogging[nodeId] = true;
-    this.native.toast(this.translate.instant("common.loggingIn"));
+    this.native.toast("common.loggingIn");
     let request: Communication.signin_request_challenge_request = {
       version: "1.0",
       method : "signin_request_challenge",
@@ -3067,7 +3067,7 @@ export class FeedService {
     this.restoreData(nodeId);
 
     eventBus.publish("feeds:login_finish", nodeId);
-    this.native.toast(this.translate.instant("AddServerPage.Signinsuccess"));
+    this.native.toast("AddServerPage.Signinsuccess");
     this.isLogging[nodeId] = false;
   }
 
@@ -3141,7 +3141,7 @@ export class FeedService {
 
   handleDeclareOwnerResponse(nodeId: string, result: any, error: any){
     if (error != null && error != undefined && error.code == -3){
-      this.native.toast(this.translate.instant("StartbindingPage.linkServerError"));
+      this.native.toast("StartbindingPage.linkServerError");
       return ;
     }
 

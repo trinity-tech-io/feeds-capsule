@@ -21,6 +21,7 @@ export class NativeService {
     }
 
     public toast(message: string = 'Operation completed', duration: number = 2000): void {
+        message = this.translate.instant(message);
         this.toastCtrl.create({
             mode: 'ios',
             color: 'success',
@@ -31,6 +32,7 @@ export class NativeService {
     }
 
     public toastWarn(message: string = 'Operation completed', duration: number = 2000): void {
+        message = this.translate.instant(message);
         this.toastCtrl.create({
             mode: 'ios',
             color: 'warning',
@@ -41,6 +43,7 @@ export class NativeService {
     }
 
     public toastdanger(message: string = 'Operation completed', duration: number = 2000): void {
+        message = this.translate.instant(message);
         this.toastCtrl.create({
             mode: 'ios',
             color: 'danger',

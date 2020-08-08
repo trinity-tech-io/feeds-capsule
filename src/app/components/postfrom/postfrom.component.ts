@@ -34,7 +34,7 @@ export class PostfromComponent implements OnInit {
 
   selectChannel(nodeId, channelId){
     if(this.feedService.getConnectionStatus() != 0){
-      this.native.toastWarn(this.translate.instant('common.connectionError'));
+      this.native.toastWarn('common.connectionError');
       return;
     }
     this.navCtrl.navigateForward(['createnewpost/',nodeId,channelId]);

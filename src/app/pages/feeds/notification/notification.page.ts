@@ -107,7 +107,7 @@ export class NotificationPage {
 
   navTo(notification: any){
     if(this.feedService.getConnectionStatus() != 0){
-      this.native.toastWarn(this.translate.instant('common.connectionError'));
+      this.native.toastWarn('common.connectionError');
       return;
     }
     
