@@ -156,7 +156,7 @@ export class ChannelsPage implements OnInit {
 
   like(nodeId, channelId, postId){
     if(this.feedService.getConnectionStatus() != 0){
-      this.native.toastWarn(this.translate.instant('common.connectionError'));
+      this.native.toastWarn('common.connectionError');
       return;
     }
 
@@ -199,7 +199,7 @@ export class ChannelsPage implements OnInit {
 
   showCommentPage(nodeId, channelId, postId){
     if(this.feedService.getConnectionStatus() != 0){
-      this.native.toastWarn(this.translate.instant('common.connectionError'));
+      this.native.toastWarn('common.connectionError');
       return;
     }
 
