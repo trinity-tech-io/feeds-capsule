@@ -370,6 +370,8 @@ export class FeedService {
   private networkStatus:ConnState = ConnState.disconnected;
   private connectionStatus = ConnState.disconnected ;
   private lastConnectionStatus = ConnState.connected ;
+  private isLogging: {[nodeId: string]: boolean} = {}; 
+  private autoSigninInterval;
   public constructor(
     private serializeDataService: SerializeDataService,
     private jwtMessageService: JWTMessageService,
@@ -2953,11 +2955,18 @@ export class FeedService {
     let params = {
         didrequest: payload
     }
-
+    console.log("publish did =>"+JSON.stringify(params));
     appManager.sendIntent("didtransaction", params, {}, onSuccess, onError);
   }
 
   signinChallengeRequest(nodeId: string , requiredCredential: boolean){
+    if(this.isLogging[nodeId] == undefined)
+      this.isLogging[nodeId] = false;
+
+    if (this.isLogging[nodeId])
+      return ;
+
+    this.isLogging[nodeId] = true;
     this.native.toast(this.translate.instant("common.loggingIn"));
     let request: Communication.signin_request_challenge_request = {
       version: "1.0",
@@ -3006,6 +3015,7 @@ export class FeedService {
 
   handleSigninChallenge(nodeId:string, result: any, error: any){
     if (error != null && error != undefined && error.code != undefined){
+      this.isLogging[nodeId] = false;
       this.handleError(error);
       return;
     }
@@ -3038,6 +3048,7 @@ export class FeedService {
 
   handleSigninConfirm(nodeId:string, result: any, error: any){
     if (error != null && error != undefined && error.code != undefined){
+      this.isLogging[nodeId] = false;
       this.handleError(error);
       return;
     }
@@ -3057,6 +3068,7 @@ export class FeedService {
 
     eventBus.publish("feeds:login_finish", nodeId);
     this.native.toast(this.translate.instant("AddServerPage.Signinsuccess"));
+    this.isLogging[nodeId] = false;
   }
 
   declareOwnerRequest(nodeId: string, carrierAddress: string, nonce: string){
@@ -3308,7 +3320,21 @@ export class FeedService {
     eventBus.publish("feeds:issue_credential");
     eventBus.publish("feeds:bindServerFinish",bindingServer);
 
-    this.signinChallengeRequest(nodeId,true);
+    let retryNum = 0;
+    this.autoSigninInterval = setInterval(()=>{
+      if (retryNum>3){
+        clearInterval(this.autoSigninInterval);
+        return;
+      }
+
+      if (accessTokenMap[nodeId] != null && accessTokenMap[nodeId] != undefined){
+        clearInterval(this.autoSigninInterval);
+        return;
+      }
+
+      this.signinChallengeRequest(nodeId,true);
+      retryNum ++
+    },5000);
     // this.doFriendConnection(nodeId, ConnState.connected);
   }
 

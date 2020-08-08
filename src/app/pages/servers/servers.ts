@@ -130,10 +130,6 @@ export class ServersPage implements OnInit {
         this.native.navigateForward(['/menu/servers/server-info',nodeId, isOwner],"");
     }
 
-    signin(nodeId: string){
-        this.feedService.signinChallengeRequest(nodeId,true);
-    }
-
     checkSignIn(nodeId: string):boolean{
         return this.feedService.checkSignInServerStatus(nodeId);
     }
