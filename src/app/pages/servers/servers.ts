@@ -93,10 +93,17 @@ export class ServersPage implements OnInit {
         }
         this.serversStatus = this.feedService.getServersStatus();
         this.serverStatisticsMap = this.feedService.getServerStatisticsMap();
+        
+    }
+
+    doRefresh(event) {
         for (let index = 0; index < this.serverList.length; index++) {
             if (this.serverList[index] != undefined)
                 this.feedService.getStatistics(this.serverList[index].nodeId);
         }
+        setTimeout(() => {
+            event.target.complete();
+        }, 2000);
     }
 
     ngOnDestroy() {

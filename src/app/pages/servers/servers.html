@@ -2,6 +2,16 @@
   <div class="offline-header"></div>
 </ion-header>
 <ion-content>
+
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" pullFactor="0.5">
+    <ion-refresher-content
+      pullingIcon="arrow-dropdown"
+      pullingText="{{'common.pullToRefresh'|translate}}"
+      refreshingSpinner="circles"
+      refreshingText="">
+    </ion-refresher-content>
+  </ion-refresher>
+  
    <div *ngIf="serverList.length == 0 && myFeedSource == null" class="empty-server-div">
       <div class="center-flex">
         <img class="empty-img" src="assets/images/empty-feeds-icon.svg">

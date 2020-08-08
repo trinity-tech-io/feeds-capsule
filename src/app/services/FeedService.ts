@@ -45,7 +45,7 @@ let serverMap: {[nodeId: string]: Server};
 let accessTokenMap:{[nodeId:string]:AccessToken};
 let signInServerList = [];
 
-let notificationList:Notification[] = new Array<Notification>();
+let notificationList:Notification[] = [];
 
 let cacheBindingAddress: string = "";
 let localCredential: string = undefined;
@@ -3617,6 +3617,8 @@ export class FeedService {
   }
 
   getNotificationList(): Notification[]{
+    if(notificationList == null || notificationList == undefined || notificationList.length == 0)
+      return [];
     let list:Notification[] = notificationList.sort((a, b) => Number(b.time) - Number(a.time));
     return list;
   }

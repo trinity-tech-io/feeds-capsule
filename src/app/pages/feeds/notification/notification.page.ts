@@ -14,7 +14,7 @@ import { NativeService } from 'src/app/services/NativeService';
 export class NotificationPage {
   private connectionStatus = 1;
   public avatar:string = ""; 
-  private notificationList: any;
+  private notificationList = [];
   // Optional parameters to pass to the swiper instance. See http://idangero.us/swiper/api/ for valid options.
   slideOpts = {
     initialSlide: 2,
@@ -35,8 +35,8 @@ export class NotificationPage {
     
   }
   ionViewWillEnter() {
+    
     this.connectionStatus = this.feedService.getConnectionStatus();
-    this.notificationList = this.feedService.getNotificationList();
     this.events.subscribe('feeds:connectionChanged',(status)=>{
       this.zone.run(() => {
         this.connectionStatus = status;
@@ -44,7 +44,6 @@ export class NotificationPage {
     });
 
     this.notificationList = this.feedService.getNotificationList();
-
   }
 
   ionViewWillLeave(){
