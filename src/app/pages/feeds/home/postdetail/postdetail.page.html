@@ -86,7 +86,7 @@
       </div>
     </div>
 
-    <div *ngIf="!refreshCommFinish">
+    <div *ngIf="!refreshCommFinish && connectionStatus == 0">
       <ion-item>
         <ion-avatar slot="start">
           <ion-skeleton-text animated></ion-skeleton-text>

@@ -1592,7 +1592,7 @@ export class FeedService {
           max_count : max_counts,
       }
     }
-    this.sendRPCMessage(nodeId, request.method, request.params);
+    this.sendRPCMessage(nodeId, request.method, request.params, false);
   }
 
   getMyChannelsMetaData(nodeId: string, field: Communication.field, upper_bound: number,
@@ -1612,7 +1612,7 @@ export class FeedService {
           max_count : max_counts,
       }
     }
-    this.sendRPCMessage(nodeId, request.method, request.params);
+    this.sendRPCMessage(nodeId, request.method, request.params, false);
   }
 
   getChannels(nodeId: string, field: Communication.field, upper_bound: number,
@@ -1632,7 +1632,7 @@ export class FeedService {
           max_count : max_counts,
       }
     }
-    this.sendRPCMessage(nodeId, request.method, request.params);
+    this.sendRPCMessage(nodeId, request.method, request.params, false);
   }
 
   getChannelDetail(nodeId: string, id: number){
@@ -1648,7 +1648,7 @@ export class FeedService {
           id: id,
       },
     }
-    this.sendRPCMessage(nodeId, request.method, request.params);
+    this.sendRPCMessage(nodeId, request.method, request.params, false);
   }
 
   getSubscribedChannels(nodeId: string, field: Communication.field, upper_bound: number,
@@ -1668,7 +1668,7 @@ export class FeedService {
           max_count : max_counts,
       },
     }
-    this.sendRPCMessage(nodeId, request.method, request.params);
+    this.sendRPCMessage(nodeId, request.method, request.params, false);
   }
 
   getPost(nodeId: string, channel_id: number, by: Communication.field,
@@ -1689,7 +1689,7 @@ export class FeedService {
           max_count : max_counts,
       },
     }
-    this.sendRPCMessage(nodeId, request.method, request.params);
+    this.sendRPCMessage(nodeId, request.method, request.params, false);
   }
 
   getComments(nodeId: string, channel_id: number, post_id: number,

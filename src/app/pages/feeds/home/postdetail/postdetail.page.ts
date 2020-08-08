@@ -37,7 +37,6 @@ export class PostdetailPage implements OnInit {
   private postId;
 
   private myInterval;
-
   constructor(
     private acRoute: ActivatedRoute,
     private events: Events,
@@ -90,7 +89,10 @@ export class PostdetailPage implements OnInit {
 
   ionViewWillEnter() {
     this.connectionStatus = this.feedService.getConnectionStatus();
-    this.feedService.getComments(this.nodeId,Number(this.channelId) ,Number(this.postId),Communication.field.last_update, 0, 0, 0, false);
+    
+    if (this.connectionStatus == 0)
+      this.feedService.getComments(this.nodeId,Number(this.channelId) ,Number(this.postId),Communication.field.last_update, 0, 0, 0, false);
+
     this.events.subscribe('feeds:connectionChanged',(status)=>{
       this.zone.run(() => {
         this.connectionStatus = status;
