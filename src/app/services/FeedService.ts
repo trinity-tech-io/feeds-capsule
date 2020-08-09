@@ -2000,7 +2000,7 @@ export class FeedService {
     let owner_did = this.getSignInData().did;
     let avatarBin = request.avatar;
 
-    if (error != null && error != undefined && error.code != -1){
+    if (error != null && error != undefined && error.code == -1){
       this.handleError(this.translate.instant("CreatenewfeedPage.alreadyExist"));
       return;
     }
