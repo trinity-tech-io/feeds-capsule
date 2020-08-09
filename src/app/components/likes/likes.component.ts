@@ -9,6 +9,7 @@ import { TranslateService } from "@ngx-translate/core";
 import { FeedsPage } from 'src/app/pages/feeds/feeds.page'
 
 
+
 @Component({
   selector: 'app-likes',
   templateUrl: './likes.component.html',
@@ -33,6 +34,24 @@ export class LikesComponent implements OnInit {
   
   }
 
+  channelName(nodeId, channelId){
+     let channel = this.getChannel(nodeId,channelId) || "";
+     if(channel === ""){
+         return "";
+     }else{
+       return UtilService.moreNanme(channel["name"]);
+     }
+  }
+
+  channelOwnerName(nodeId, channelId){
+    let channel = this.getChannel(nodeId,channelId) || "";
+    if(channel === ""){
+        return "";
+    }else{
+      return UtilService.moreNanme(channel["owner_name"]);
+    }
+  }
+
   getChannel(nodeId, channelId):any{
     return this.feedService.getChannelFromId(nodeId,channelId);
   }
@@ -53,11 +72,6 @@ export class LikesComponent implements OnInit {
 
   comment(){
     alert("TODO")
-  }
-
-  getChannelOwnerName(nodeId, channelId){
-    let ownerName:string = this.getChannel(nodeId, channelId).owner_name
-    return this.feedService.indexText(ownerName,25,25);
   }
 
   getContentText(content: string): string{

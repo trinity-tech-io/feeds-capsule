@@ -4,6 +4,7 @@ import { NativeService } from 'src/app/services/NativeService';
 import { ThemeService } from 'src/app/services/theme.service';
 import { MenuService } from 'src/app/services/MenuService';
 import { TranslateService } from "@ngx-translate/core";
+import { UtilService } from 'src/app/services/utilService';
 
 @Component({
   selector: 'app-myfeeds',
@@ -26,7 +27,13 @@ export class MyfeedsComponent implements OnInit {
    
   }
 
+  moreName(name:string){
+   return UtilService.moreNanme(name);
+  }
+
   createNewFeed(){
+    this.feedService.setProfileIamge("");
+    this.feedService.setSelsectIndex(1);
     if(this.feedService.getConnectionStatus() != 0){
       this.native.toastWarn('common.connectionError');
       return;

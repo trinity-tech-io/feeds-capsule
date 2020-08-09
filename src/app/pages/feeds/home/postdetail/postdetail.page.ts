@@ -51,13 +51,13 @@ export class PostdetailPage implements OnInit {
 
   initData(){
     this.initnodeStatus();
-    let channel = this.feedService.getChannelFromId(this.nodeId, this.channelId);
-    if (channel == null || channel == undefined)
+    let channel = this.feedService.getChannelFromId(this.nodeId, this.channelId) || "";
+    if (channel == "")
       return ;
-    this.channelName = channel.name;
-    this.channelAvatar = this.feedService.parseChannelAvatar(channel.avatar);
+    this.channelName = UtilService.moreNanme(channel["name"]);
+    this.channelAvatar = this.feedService.parseChannelAvatar(channel["avatar"]);
 
-    this.channelOwner = this.feedService.indexText(channel.owner_name,25,25);
+    this.channelOwner = UtilService.moreNanme(channel["owner_name"]);
 
     let post = this.feedService.getPostFromId(this.nodeId, this.channelId, this.postId);
     this.postContent = post.content;

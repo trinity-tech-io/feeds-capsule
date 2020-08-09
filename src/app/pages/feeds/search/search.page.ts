@@ -5,6 +5,7 @@ import { NativeService } from 'src/app/services/NativeService';
 import { ThemeService } from 'src/app/services/theme.service';
 import { MenuService } from 'src/app/services/MenuService';
 import { TranslateService } from "@ngx-translate/core";
+import { UtilService } from 'src/app/services/utilService';
 
 @Component({
   selector: 'app-search',
@@ -152,6 +153,10 @@ export class SearchPage implements OnInit {
            let status = this.checkServerStatus(nodeId);
            this.nodeStatus[nodeId] = status;
     }
+ }
+
+ moreName(name:string){
+    return UtilService.moreNanme(name);
  }
 
 }

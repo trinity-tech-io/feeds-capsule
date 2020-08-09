@@ -75,17 +75,11 @@ export class HomePage implements OnInit {
   }
 
   getChannelOwnerName(nodeId, channelId): string{
-    let channel = this.getChannel(nodeId, channelId);
-    if (channel == null || channel == undefined){
+    let channel = this.getChannel(nodeId, channelId) || "";
+    if (channel === ""){
       return "";
-    }
-
-    let owner: string = channel.owner_name;
-    if (owner.length>25){
-      return this.feedService.indexText(owner,25,25);
-    }
-    else{
-      return owner;
+    }else{
+      return UtilService.moreNanme(channel["name"]);
     }
   }
 
@@ -173,10 +167,10 @@ export class HomePage implements OnInit {
   }
 
   getChannelName(nodeId: string, channelId: number): string{
-    let channel = this.getChannel(nodeId, channelId);
-    if (channel == null || channel == undefined)
-      return "";
-    return channel.name;
+    let channel = this.getChannel(nodeId, channelId) || "";
+    if (channel == "")
+       return "";
+    return UtilService.moreNanme(channel.name);
   }
 
   checkServerStatus(nodeId: string){
@@ -189,5 +183,9 @@ export class HomePage implements OnInit {
             let status = this.checkServerStatus(nodeId);
             this.nodeStatus[nodeId] = status;
      }
+  }
+
+  moreName(name:string){
+    return UtilService.moreNanme(name);
   }
 }

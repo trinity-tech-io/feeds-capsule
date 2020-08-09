@@ -98,5 +98,14 @@ public static dateFormat(date: Date, sFormat: String = 'yyyy-MM-dd'): string {
       disPlayStr = this.dateFormat(new Date(createTime),"yyyy-MM");
       return  {content:disPlayStr,type:"y"};
   }
+
+  public static moreNanme(name:string){
+     let feedsName = name || "";
+     if(feedsName != "" && feedsName.length>15){
+          return feedsName.substring(0,12)+'...'
+     }else{
+          return feedsName;
+     }
+  }
 }
 

@@ -174,7 +174,13 @@ export class ChannelsPage implements OnInit {
   }
 
   getChannel(nodeId, channelId):any{
-    return this.feedService.getChannelFromId(nodeId,channelId);
+    let channel = this.feedService.getChannelFromId(nodeId,channelId) || "";
+    if(channel === ""){
+         return ""
+    }else{
+      return UtilService.moreNanme(channel["name"]);
+    }
+    
   }
 
   getContentText(content: string): string{
@@ -186,8 +192,12 @@ export class ChannelsPage implements OnInit {
   }
 
   getChannelOwnerName(nodeId, channelId){
-    let ownerName:string = this.getChannel(nodeId, channelId).owner_name
-    return this.feedService.indexText(ownerName,25,25);
+   let channel = this.feedService.getChannelFromId(nodeId,channelId) || "";
+    if(channel === ""){
+      return "";
+    }else{
+      return UtilService.moreNanme(channel["owner_name"]);
+    }
   }
 
   navTo(nodeId, channelId){

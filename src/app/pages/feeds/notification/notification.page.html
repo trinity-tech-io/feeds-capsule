@@ -16,7 +16,7 @@
                     <div class="image-text-div" >
                        <ion-avatar class="avatar-div">
                         <!-- <img  src="assets/images/component-480-33@3x.png"> -->
-                        <img *ngIf="avatar == ''" class="profile-img" src="assets/images/default-contact.svg">
+                        <img *ngIf="avatar == ''" class="profile-img" src="./assets/images/default-contact.svg">
                         <img *ngIf="avatar != ''" class="profile-img" [src]="avatar">
                         </ion-avatar> 
 
@@ -24,7 +24,7 @@
                 
                         <div class="text-div" >
                             <div class="text1-div"> 
-                                <ion-label class="channel-title-small white">{{notification.userName}}</ion-label>
+                                <ion-label class="channel-title-small white">{{moreMenu(notification.userName)}}</ion-label>
                                 <ion-label class="channel-ts"> {{handleDisplayTime(notification.time)}}</ion-label>
                             </div>
                             <div class="text1-div"> 

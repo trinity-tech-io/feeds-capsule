@@ -4,6 +4,7 @@ import { IonTabs } from '@ionic/angular';
 import { FeedsPage } from 'src/app/pages/feeds/feeds.page'
 import { ThemeService } from 'src/app/services/theme.service';
 import { NativeService } from 'src/app/services/NativeService';
+import { UtilService } from 'src/app/services/utilService';
 import { MenuService } from 'src/app/services/MenuService';
 
 @Component({
@@ -27,6 +28,10 @@ export class FollowingComponent implements OnInit {
   ngOnInit() {
   
   }
+
+  moreName(name:string){
+    return UtilService.moreNanme(name);
+   }
 
   navTo(nodeId, channelId){
     this.read(nodeId, channelId);

@@ -28,9 +28,14 @@ export class ProfileimagePage implements OnInit {
     private camera: CameraService) { }
 
   ngOnInit() {
+    
   }
 
   ionViewWillEnter() {
+    this.select =this.feedService.getSelsectIndex();
+    this.userAvatar = this.feedService.getProfileIamge() || "";
+    console.log("====="+this.userAvatar);
+    this.avatar = this.feedService.getProfileIamge() || "assets/images/profile-1.svg";
     this.connectionStatus = this.feedService.getConnectionStatus();
 
     if(this.theme.darkMode){
@@ -81,6 +86,7 @@ export class ProfileimagePage implements OnInit {
       return false;
     }
     this.feedService.setProfileIamge(this.avatar);
+    this.feedService.setSelsectIndex(this.select);
     this.navCtrl.pop();
   }
 
@@ -93,12 +99,14 @@ export class ProfileimagePage implements OnInit {
       (imageUrl)=>{
         this.zone.run(() => {
           this.userAvatar = this.avatar = imageUrl;
-          this.feedService.setProfileIamge(this.userAvatar);
+          this.feedService.setSelsectIndex(0);
+          this.feedService.setProfileIamge(this.avatar);
         });
       },
       (err)=>{
         //this.camera = null;
         this.avatar = "";
+        this.feedService.setSelsectIndex(1);
         this.feedService.setProfileIamge(this.avatar);
         this.native.toast_trans('common.noImageSelected');
         }

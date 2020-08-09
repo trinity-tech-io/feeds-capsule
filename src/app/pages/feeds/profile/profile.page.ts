@@ -53,14 +53,6 @@ export class ProfilePage implements OnInit {
     this.initnodeStatus(this.likeList);
   }
 
-  addMyFeedsSubscribe(){
-  
- 
-
-   
-  }
-
-
   ionViewWillEnter() {
     this.changeType(this.selectType);
     this.connectionStatus = this.feedService.getConnectionStatus();

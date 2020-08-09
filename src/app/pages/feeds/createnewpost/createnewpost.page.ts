@@ -146,7 +146,9 @@ export class CreatenewpostPage implements OnInit {
           this.imgUrl = imageUrl;
         });
       },
-      (err)=>{alert(err)});
+      (err)=>{
+        this.native.toast_trans('common.noImageSelected');
+      });
   }
 
   

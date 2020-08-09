@@ -366,6 +366,7 @@ export class FeedService {
   private serviceNonce = "";
   private serviceRealm = "";
   private profileIamge = "";
+  private selsectIndex = 1;
   private carrierStatus:ConnState = ConnState.disconnected;
   private networkStatus:ConnState = ConnState.disconnected;
   private connectionStatus = ConnState.disconnected ;
@@ -406,6 +407,14 @@ export class FeedService {
   getCarrierStatus(): ConnState{
     return this.carrierStatus;
   }
+
+  public setSelsectIndex(index:any){
+     this.selsectIndex = index;
+  }
+
+  public getSelsectIndex(){
+    return this.selsectIndex;
+ }
 
   public setProfileIamge(url:string){
     this.profileIamge = url;     

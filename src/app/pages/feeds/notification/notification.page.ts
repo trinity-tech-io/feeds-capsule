@@ -136,4 +136,8 @@ export class NotificationPage {
   getContentText(content: string): string{
     return this.feedService.parsePostContentText(content);
   }
+
+  moreMenu(name:string){
+     return UtilService.moreNanme(name);
+  }
 }
