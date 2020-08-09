@@ -110,7 +110,8 @@ export const fr = {
         "inputFeedDesc": "INPUT DESCRIPTION",
         "channelSourceDes": "WHERE TO STORE YOUR FEEDS",
         "createfeedsuccess": "Feeds created successfully!",
-        "tipMsgLength1":"The maximum length of the name message should be 32"
+        "tipMsgLength1":"The maximum length of the name message should be 32",
+        "alreadyExist":"Feed already exists, please change the name and try again"
     },
     "ProfileimagePage": {
         "title": "Profile Image",

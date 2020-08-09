@@ -878,7 +878,10 @@ export class FeedService {
 
   handleError(error: any){
     eventBus.publish("rpcRequest:error");
-    this.native.toast(JSON.stringify(error));
+    if(typeof error == "string")
+      this.native.toast(error);  
+    else
+      this.native.toast(JSON.stringify(error));
   }
 
   handleResult(method:string, nodeId: string ,result: any , request: any, error: any){
@@ -1987,6 +1990,11 @@ export class FeedService {
     let owner_name = this.getSignInData().name;
     let owner_did = this.getSignInData().did;
     let avatarBin = request.avatar;
+
+    if (error != null && error != undefined && error.code != -1){
+      this.handleError(this.translate.instant("CreatenewfeedPage.alreadyExist"));
+      return;
+    }
 
     if (error != null && error != undefined && error.code != undefined){
       this.handleError(error);

@@ -110,7 +110,8 @@ export const zh = {
         "inputFeedDesc":"输入描述",
         "channelSourceDes":"在哪里保存您的微频",
         "createfeedsuccess": "创建微频成功!",
-        "tipMsgLength1":"描述信息长度要最大为32"
+        "tipMsgLength1":"描述信息长度要最大为32",
+        "alreadyExist":"微频已经存在，请更换名称后重试"
     },
     "ProfileimagePage":{
         "title":"微频头像",
