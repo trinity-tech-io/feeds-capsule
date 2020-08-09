@@ -195,7 +195,7 @@ export const zh = {
         "RemoveFeedSource": "移除微频源!",
         "removeserver": "已移除微频源",
         "feedsSourceQRCode":"微频源二维码",
-        "error":"解决diddocument错误",
+        "error":"解析diddocument错误",
     },
     "ScanqrcodePage":{
         "introduce":"创建新的微频源",
