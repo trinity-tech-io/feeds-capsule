@@ -20,7 +20,7 @@ export class StartbindingPage implements OnInit {
   private carrierAddress: string="";
   private did:string = "";
   public feedsUrl: string ="";
-  private isProcess = false;
+  // private isProcess = false;
   constructor(
     private zone: NgZone,
     private native: NativeService,
@@ -65,8 +65,6 @@ export class StartbindingPage implements OnInit {
     });
     
     this.events.subscribe('feeds:owner_declared', (nodeId, phase, did, payload) => {
-      if (!this.isProcess){
-        this.isProcess = true;
         switch(phase){
           case "owner_declared":
             this.zone.run(() => {
@@ -86,9 +84,6 @@ export class StartbindingPage implements OnInit {
             });
             break;
         }
-        this.isProcess = true;
-      }
-      
     });
     
     this.events.subscribe('feeds:issue_credential', () => {
