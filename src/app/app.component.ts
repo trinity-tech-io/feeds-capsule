@@ -74,9 +74,9 @@ export class MyApp {
     this.native.navigateForward('/menu/servers',"");
   }
 
-  goToDev(){
-    this.native.navigateForward('menu/develop',"");
-  }
+  // goToDev(){
+  //   this.native.navigateForward('menu/develop',"");
+  // }
 
   about(){
      this.native.navigateForward('/menu/about',"");

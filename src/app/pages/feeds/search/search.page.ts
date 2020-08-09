@@ -61,13 +61,17 @@ export class SearchPage implements OnInit {
     });
 
     this.events.subscribe('feeds:refreshChannels', list =>{
-      this.channelList = list;
-      this.initnodeStatus();
+      this.zone.run(() => {
+        this.channelList = list;
+        this.initnodeStatus();
+      });
     });
 
     this.events.subscribe('feeds:channelsDataUpdate', () =>{
-      this.channelList = this.feedService.getChannelsList();
-      this.initnodeStatus();
+      this.zone.run(() => {
+        this.channelList = this.feedService.getChannelsList();
+        this.initnodeStatus();
+      });
     });
   }
 

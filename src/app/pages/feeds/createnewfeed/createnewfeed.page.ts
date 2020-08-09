@@ -53,9 +53,11 @@ export class CreatenewfeedPage implements OnInit {
       });
     });
     this.events.subscribe('feeds:createTopicSuccess', () => {
-      this.navCtrl.pop().then(()=>{
-        this.native.toast(this.translate.instant("CreatenewfeedPage.createfeedsuccess"));
-      })
+      this.zone.run(() => {
+        this.navCtrl.pop().then(()=>{
+          this.native.toast(this.translate.instant("CreatenewfeedPage.createfeedsuccess"));
+        });
+      });
     });
 
     this.events.subscribe("feeds:updateTitle",()=>{

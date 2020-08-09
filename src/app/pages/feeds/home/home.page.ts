@@ -49,9 +49,9 @@ export class HomePage implements OnInit {
     });
 
     this.events.subscribe("feeds:friendConnectionChanged", (nodeId, status)=>{
-              this.zone.run(()=>{
-                this.nodeStatus[nodeId] = status;
-              });
+      this.zone.run(()=>{
+        this.nodeStatus[nodeId] = status;
+      });
     });
   }
 

@@ -34,7 +34,6 @@ export class ProfileimagePage implements OnInit {
   ionViewWillEnter() {
     this.select =this.feedService.getSelsectIndex();
     this.userAvatar = this.feedService.getProfileIamge() || "";
-    console.log("====="+this.userAvatar);
     this.avatar = this.feedService.getProfileIamge() || "assets/images/profile-1.svg";
     this.connectionStatus = this.feedService.getConnectionStatus();
 

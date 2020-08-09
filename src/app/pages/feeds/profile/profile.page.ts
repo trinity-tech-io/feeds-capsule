@@ -69,8 +69,8 @@ export class ProfilePage implements OnInit {
 
     this.events.subscribe('feeds:refreshSubscribedChannels', list => {
       this.zone.run(() => {
-          this.followingList = list;
-          this.initnodeStatus(this.followingList);
+        this.followingList = list;
+        this.initnodeStatus(this.followingList);
       });
     });
 
@@ -89,8 +89,10 @@ export class ProfilePage implements OnInit {
      });
 
      this.events.subscribe('feeds:channelsDataUpdate', () =>{
-      this.channels = this.feedService.getMyChannelList();
-      this.initnodeStatus(this.channels);
+      this.zone.run(()=>{
+        this.channels = this.feedService.getMyChannelList();
+        this.initnodeStatus(this.channels);
+      });
     });
 
     this.events.subscribe('feeds:refreshPage',()=>{
@@ -99,7 +101,7 @@ export class ProfilePage implements OnInit {
           this.initFolling();
           this.initLike();
       });
-      });
+    });
   }
 
   ionViewWillLeave(){

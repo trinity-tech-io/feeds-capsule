@@ -143,8 +143,10 @@ export class PostdetailPage implements OnInit {
     });
   
     this.events.subscribe("feeds:unsubscribeFinish",()=>{
-      this.native.navigateForward(['/tabs/home'],{
-        replaceUrl: true
+      this.zone.run(()=>{
+        this.native.navigateForward(['/tabs/home'],{
+          replaceUrl: true
+        });
       });
     });
   }

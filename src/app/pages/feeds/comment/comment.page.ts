@@ -61,13 +61,16 @@ export class CommentPage implements OnInit {
     });
 
     this.events.subscribe('rpcRequest:error', () => {
-      this.isNewPost = true;
+      this.zone.run(() => {
+        this.isNewPost = true;
+      });
    });
 
    this.events.subscribe('rpcRequest:success', () => {
-    this.native.toast_trans("CreatenewpostPage.tipMsg1");
-    this.navCtrl.pop().then(()=>{
-       
+    this.zone.run(() => {
+      this.native.toast_trans("CreatenewpostPage.tipMsg1");
+      this.navCtrl.pop().then(()=>{ 
+      });
     });
    });
 

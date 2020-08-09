@@ -13,7 +13,7 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 export class AboutPage implements OnInit {
   private connectionStatus = 1;
-  private version = "0.15.0";
+  private version = "0.16.0";
 
   constructor(
     private zone: NgZone,

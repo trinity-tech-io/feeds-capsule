@@ -72,8 +72,10 @@ export class CreatenewpostPage implements OnInit {
      });
 
     this.events.subscribe('feeds:publishPostSuccess', () => {
-      this.navCtrl.pop().then(()=>{
-        this.native.toast_trans("CommentPage.tipMsg1");
+      this.zone.run(()=>{
+        this.navCtrl.pop().then(()=>{
+          this.native.toast_trans("CommentPage.tipMsg1");
+        });
       });
     });
 
