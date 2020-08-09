@@ -247,7 +247,6 @@ enum PublishType{
   refreshSubscribedChannels = "feeds:refreshSubscribedChannels",
   loadMoreSubscribedChannels = "feeds:loadMoreSubscribedChannels",
 
-  updataPostLike = "feeds:updataPostLike",
   updataComment = "feeds:updataComment",
 
   updataCommentLike = "feeds:updataCommentLike",
@@ -1565,6 +1564,7 @@ export class FeedService {
 
     }
     this.sendRPCMessage(nodeId, request.method, request.params);
+    this.doPostLikeFinish(nodeId, channel_id, post_id, comment_id);
   }
 
   postUnlike(nodeId:string, channel_id: number, post_id: number, comment_id: number){
@@ -1583,6 +1583,7 @@ export class FeedService {
       }
     }
     this.sendRPCMessage(nodeId, request.method, request.params);
+    this.doPostUnLikeFinish(nodeId, channel_id, post_id, comment_id);
   }
 
   getMyChannels(nodeId: string, field: Communication.field, upper_bound: number,
@@ -1753,6 +1754,7 @@ export class FeedService {
       },
     }
     this.sendRPCMessage(nodeId, request.method, request.params);
+    this.doSubscribeChannelFinish(nodeId, id);
   }
 
   unsubscribeChannel(nodeId: string, id: number){
@@ -1769,6 +1771,7 @@ export class FeedService {
       },
     }
     this.sendRPCMessage(nodeId, request.method, request.params);
+    this.doUnsubscribeChannelFinish(nodeId, id);
   }
 
   enableNotification(nodeId: string){
@@ -2157,35 +2160,17 @@ export class FeedService {
     }
 
     if (error != null && error != undefined && error.code != undefined){
+      this.doPostLikeError(nodeId, channel_id, post_id, comment_id);
       this.handleError(error);
       return;
     }
 
     if (comment_id == 0){
-      // postMap[mPostId].likes = postMap[mPostId].likes+1;
       this.storeService.set(PersistenceKey.postMap,postMap);
-
-      likeMap[mPostId] = postMap[mPostId];
       this.storeService.set(PersistenceKey.likeMap, likeMap);
-
-      eventBus.publish(PublishType.updateLikeList, this.getLikeList());
-      eventBus.publish(PublishType.updataPostLike, nodeId, channel_id, post_id , postMap[mPostId].likes);
-
-      eventBus.publish(PublishType.postDataUpdate);
     }else {
-      // commentsMap[nodeId][channel_id][post_id][comment_id].likes = commentsMap[nodeId][channel_id][post_id][comment_id].likes + 1
       this.storeService.set(PersistenceKey.commentsMap, commentsMap);
-
-      let commentKey = this.getLikeCommentId(nodeId, channel_id, post_id, comment_id);
-      likeCommentMap[commentKey] = {
-        nodeId     : nodeId,
-        channel_id : channel_id,
-        post_id    : post_id,
-        id         : comment_id,
-      }
-
       this.storeService.set(PersistenceKey.likeCommentMap, likeCommentMap);
-      eventBus.publish(PublishType.commentDataUpdate)
     }
 
   }
@@ -2213,31 +2198,18 @@ export class FeedService {
     }
 
     if (error != null && error != undefined && error.code != undefined){
+      this.doPostUnLikeError(nodeId,channel_id, post_id, comment_id);
       this.handleError(error);
       return;
     }
 
     if (comment_id == 0){
-      postMap[mPostId].likes = postMap[mPostId].likes-1;
       this.storeService.set(PersistenceKey.postMap,postMap);
-
-      likeMap[mPostId] = undefined;
       this.storeService.set(PersistenceKey.likeMap, likeMap);
-
-      eventBus.publish(PublishType.updateLikeList, this.getLikeList());
-      eventBus.publish(PublishType.updataPostLike, nodeId, channel_id, post_id , postMap[mPostId].likes);
     }else {
-      commentsMap[nodeId][channel_id][post_id][comment_id].likes = commentsMap[nodeId][channel_id][post_id][comment_id].likes - 1;
       this.storeService.set(PersistenceKey.commentsMap, commentsMap);
-
-      let commentKey = this.getLikeCommentId(nodeId, channel_id, post_id, comment_id);
-      likeCommentMap[commentKey] = undefined;
       this.storeService.set(PersistenceKey.likeCommentMap,likeCommentMap);
-
-      eventBus.publish(PublishType.commentDataUpdate)
-
     }
-    eventBus.publish(PublishType.postDataUpdate);
   }
 
   handleGetMyChannelsResult(nodeId: string, responseResult: any, error: any){
@@ -2612,13 +2584,14 @@ export class FeedService {
     }
 
     if (error != null && error != undefined && error.code != undefined){
+      this.doSubscribeChannelError(nodeId, request.id);
       this.handleError(error);
       return;
     }
 
-    channelsMap[nodeChannelId].isSubscribed = true;
+    // channelsMap[nodeChannelId].isSubscribed = true;
     this.storeService.set(PersistenceKey.channelsMap,channelsMap);
-    eventBus.publish(PublishType.subscribeFinish, nodeId,request.id, channelsMap[nodeChannelId].name);
+    // eventBus.publish(PublishType.subscribeFinish, nodeId,request.id, channelsMap[nodeChannelId].name);
 
     this.refreshSubscribedChannels();
 
@@ -2642,22 +2615,20 @@ export class FeedService {
     }
 
     if (error != null && error != undefined && error.code != undefined){
+      this.doUnsubscribeChannelError(nodeId, request.id);
       this.handleError(error);
       return;
     }
 
-    channelsMap[nodeChannelId].isSubscribed = false;
-    this.storeService.set(PersistenceKey.channelsMap,channelsMap);
-
     subscribedChannelsMap[nodeChannelId] = undefined;
-    this.storeService.set(PersistenceKey.subscribedChannelsMap,subscribedChannelsMap);
 
+    this.storeService.set(PersistenceKey.channelsMap,channelsMap);
+    this.storeService.set(PersistenceKey.subscribedChannelsMap,subscribedChannelsMap);
 
     this.refreshLocalSubscribedChannels();
 
     this.deletePostFromChannel(nodeId, request.id);
 
-    eventBus.publish(PublishType.unsubscribeFinish, nodeId,request.id, channelsMap[nodeChannelId].name);
 
     this.native.toast("common.unFollowSuccess");
   }
@@ -2675,6 +2646,118 @@ export class FeedService {
     }
   }
 
+  doSubscribeChannelFinish(nodeId: string, channelId: number){
+    let nodeChannelId = nodeId+channelId;
+
+    channelsMap[nodeChannelId].isSubscribed = true;
+    eventBus.publish(PublishType.subscribeFinish, nodeId, channelId, channelsMap[nodeChannelId].name);
+  }
+
+  doSubscribeChannelError(nodeId: string, channelId: number){
+    let nodeChannelId = nodeId+channelId;
+    channelsMap[nodeChannelId].isSubscribed = false;
+    eventBus.publish(PublishType.subscribeFinish, nodeId,channelId, channelsMap[nodeChannelId].name);
+  }
+
+  doUnsubscribeChannelFinish(nodeId: string, channelId: number){
+    let nodeChannelId = nodeId+channelId;
+    channelsMap[nodeChannelId].isSubscribed = false;
+    eventBus.publish(PublishType.unsubscribeFinish, nodeId, channelId, channelsMap[nodeChannelId].name);
+
+  }
+
+  doUnsubscribeChannelError(nodeId: string, channelId: number){
+    let nodeChannelId = nodeId+channelId;
+    channelsMap[nodeChannelId].isSubscribed = true;
+    eventBus.publish(PublishType.unsubscribeFinish, nodeId, channelId, channelsMap[nodeChannelId].name);
+  }
+
+  doPostLikeFinish(nodeId: string, channel_id: number, post_id: number, comment_id: number){
+    let mPostId = this.getPostId(nodeId, channel_id, post_id);
+    if (comment_id == 0){
+      likeMap[mPostId] = postMap[mPostId];
+
+      eventBus.publish(PublishType.updateLikeList, this.getLikeList());
+      eventBus.publish(PublishType.postDataUpdate);
+    }else {
+      let commentKey = this.getLikeCommentId(nodeId, channel_id, post_id, comment_id);
+      likeCommentMap[commentKey] = {
+        nodeId     : nodeId,
+        channel_id : channel_id,
+        post_id    : post_id,
+        id         : comment_id,
+      }
+
+      eventBus.publish(PublishType.commentDataUpdate)
+    }
+  }
+
+  doPostLikeError(nodeId: string, channel_id: number, post_id: number, comment_id: number){
+    let mPostId = this.getPostId(nodeId, channel_id, post_id);
+    if (comment_id == 0){
+      likeMap[mPostId] = undefined;
+
+      eventBus.publish(PublishType.updateLikeList, this.getLikeList());
+      eventBus.publish(PublishType.postDataUpdate);
+    }else {
+      let commentKey = this.getLikeCommentId(nodeId, channel_id, post_id, comment_id);
+      likeCommentMap[commentKey] = undefined;
+
+      eventBus.publish(PublishType.commentDataUpdate)
+    }
+  }
+
+  doPostUnLikeFinish(nodeId: string, channel_id: number, post_id: number, comment_id: number){
+    let mPostId = this.getPostId(nodeId, channel_id, post_id);
+
+    if (comment_id == 0){
+      let likeNum = postMap[mPostId].likes;
+      if (likeNum > 0)
+        postMap[mPostId].likes = likeNum - 1;
+
+      likeMap[mPostId] = undefined;
+
+      eventBus.publish(PublishType.updateLikeList, this.getLikeList());
+      eventBus.publish(PublishType.postDataUpdate);
+
+    }else {
+      let likeNum = commentsMap[nodeId][channel_id][post_id][comment_id].likes;
+      if (likeNum>0)
+        commentsMap[nodeId][channel_id][post_id][comment_id].likes = likeNum - 1;
+
+      let commentKey = this.getLikeCommentId(nodeId, channel_id, post_id, comment_id);
+      likeCommentMap[commentKey] = undefined;
+
+      eventBus.publish(PublishType.commentDataUpdate)
+
+    }
+  }
+
+  doPostUnLikeError(nodeId: string, channel_id: number, post_id: number, comment_id: number){
+    let mPostId = this.getPostId(nodeId, channel_id, post_id);
+
+    if (comment_id == 0){
+      postMap[mPostId].likes = postMap[mPostId].likes+1;
+      likeMap[mPostId] = postMap[mPostId];
+
+      eventBus.publish(PublishType.updateLikeList, this.getLikeList());
+      eventBus.publish(PublishType.postDataUpdate);
+
+    }else {
+      commentsMap[nodeId][channel_id][post_id][comment_id].likes = commentsMap[nodeId][channel_id][post_id][comment_id].likes + 1;
+
+      let commentKey = this.getLikeCommentId(nodeId, channel_id, post_id, comment_id);
+      likeCommentMap[commentKey] = {
+        nodeId     : nodeId,
+        channel_id : channel_id,
+        post_id    : post_id,
+        id         : comment_id,
+      }
+
+      eventBus.publish(PublishType.commentDataUpdate)
+
+    }
+  }
 
   ////
   loadMoreChannelsTest(list: Channels[]){
