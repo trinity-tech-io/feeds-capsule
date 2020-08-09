@@ -58,7 +58,8 @@ export class ChannelsPage implements OnInit {
   }
 
   async unsubscribe(){
-    this.menuService.showUnsubscribeMenu(this.nodeId, Number(this.channelId), this.channelName);
+    this.menuService.showUnsubscribeMenuWithoutName(this.nodeId, Number(this.channelId));
+    
   }
 
   ngOnInit() {

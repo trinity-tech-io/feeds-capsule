@@ -85,4 +85,24 @@ export class MenuService {
           });
         await actionSheet.present();
     }
+
+    async showUnsubscribeMenuWithoutName(nodeId: string, channelId: number){
+        const actionSheet = await this.actionSheetController.create({
+            buttons: [{
+              text: this.translate.instant("common.unsubscribe"),
+              role: 'destructive',
+              icon: 'trash',
+              handler: () => {
+                this.feedService.unsubscribeChannel(nodeId, channelId);
+              }
+            },{
+              text: this.translate.instant("common.cancel"),
+              icon: 'close',
+              role: 'cancel',
+              handler: () => {
+              }
+            }]
+          });
+        await actionSheet.present();
+    }
 }
