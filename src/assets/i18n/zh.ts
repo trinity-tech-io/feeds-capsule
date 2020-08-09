@@ -28,7 +28,7 @@ export const zh = {
         "des2":'确认要返回主页面吗？',
         "connectionError":'当前无网络，请稍后再试',
         "nopostyet":"还未发布微说",
-        "nodescriptionyet":'暂时没有没描述'
+        "nodescriptionyet":'暂时没有描述'
     },
     "app":{
         "profileDetails":"档案详情",
@@ -105,12 +105,12 @@ export const zh = {
         "tipMsg1":"请输入名称",
         "tipMsg2":"请输入描述信息",
         "tipMsg3":"无效的参数",
-        "tipMsgLength":"描述信息长度要最大为128",
+        "tipMsgLength":"描述信息长度最大为128",
         "inputName":"输入名称",
         "inputFeedDesc":"输入描述",
         "channelSourceDes":"在哪里保存您的微频",
         "createfeedsuccess": "创建微频成功!",
-        "tipMsgLength1":"描述信息长度要最大为32",
+        "tipMsgLength1":"描述信息长度最大为32",
         "alreadyExist":"微频已经存在，请更换名称后重试"
     },
     "ProfileimagePage":{
@@ -196,11 +196,11 @@ export const zh = {
         "RemoveFeedSource": "移除微频源!",
         "removeserver": "已移除微频源",
         "feedsSourceQRCode":"微频源二维码",
-        "error":"解析diddocument错误",
+        "error":"解析DID文档错误",
     },
     "ScanqrcodePage":{
         "introduce":"创建新的微频源",
-        "introduce1":"请确保您已启动微频源节点新服务，并通过浏览器已显示微频源二维码。",
+        "introduce1":"请确保您已启动微频源节点新服务，且通过浏览器已显示微频源二维码。",
         "introduce2":"请直接扫描此微频源二维码开始微频源绑定进程。",
         // "introduce3":"继续",
         "introduce4":"扫描微频源二维码"
