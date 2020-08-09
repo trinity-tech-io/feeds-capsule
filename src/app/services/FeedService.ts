@@ -739,9 +739,9 @@ export class FeedService {
 
   friendConnectionCallback(){
     this.events.subscribe('carrier:friendConnection', ret => {
-      eventBus.publish("feeds:friendConnection",ret);
       let friendId = ret.friendId;
       let friendStatus = ret.status;
+      eventBus.publish(PublishType.friendConnectionChanged, friendId, friendStatus);
       console.log("connectionChanged===> friendId =>"+friendId +"; friendStatus =>"+friendStatus);
       let lastConnectStatus = this.getFriendConnection(friendId);
       
@@ -783,8 +783,6 @@ export class FeedService {
         this.prepare(friendId);
       }
     }
-    eventBus.publish(PublishType.friendConnectionChanged, friendId, friendStatus);
-
     this.storeService.set(PersistenceKey.serversStatus,serversStatus);
     eventBus.publish(PublishType.serverConnectionChanged,serversStatus);
   }
