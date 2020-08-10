@@ -1,6 +1,6 @@
 {
   "id": "org.elastos.dapp.feeds",
-  "version": "0.0.1",
+  "version": "v1.0.0",
   "version_code": 1,
   "name": "Feeds",
   "short_name": "Feeds",
@@ -23,9 +23,9 @@
     }
   ],
   "author": {
-    "name": "trinity-tech team",
-    "email": "support@trinity-tech.io",
-    "website": ""
+    "name": "Trinity Tech Co., Ltd.",
+    "email": "contact@trinity-tech.io",
+    "website": "https://www.trinity-tech.io"
   },
   "default_locale": "en",
   "plugins": [
