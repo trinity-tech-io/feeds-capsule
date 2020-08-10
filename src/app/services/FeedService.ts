@@ -3076,6 +3076,7 @@ export class FeedService {
       }
     }
     this.sendRPCMessage(nodeId, request.method, request.params);
+    this.isLogging[nodeId] = false;
   }
 
   signinConfirmRequest(nodeId: string, nonce: string, realm: string, requiredCredential: boolean){
