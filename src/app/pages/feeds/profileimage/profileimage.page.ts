@@ -33,15 +33,17 @@ export class ProfileimagePage implements OnInit {
 
   ionViewWillEnter() {
     this.select =this.feedService.getSelsectIndex();
-    this.userAvatar = this.feedService.getProfileIamge() || "";
-    this.avatar = this.feedService.getProfileIamge() || "assets/images/profile-1.svg";
+      this.userAvatar = this.feedService.getProfileIamge() || "";
+      this.avatar = this.feedService.getProfileIamge() || "assets/images/profile-1.svg";
+      if(this.userAvatar === ""){
+        if(this.theme.darkMode){
+          this.userAvatar = './assets/images/profile-add-dark.svg';
+        }else{
+          this.userAvatar = './assets/images/profile-add.svg';
+        }
+      }
+   
     this.connectionStatus = this.feedService.getConnectionStatus();
-
-    if(this.theme.darkMode){
-      this.userAvatar = './assets/images/profile-add-dark.svg';
-    }else{
-      this.userAvatar = './assets/images/profile-add.svg';
-    }
 
     this.events.subscribe('feeds:connectionChanged',(status)=>{
       this.zone.run(() => {
@@ -71,11 +73,13 @@ export class ProfileimagePage implements OnInit {
 
   selectIndex(index: number, avatar: string){
     this.select = index;
+    this.feedService.setSelsectIndex(this.select);
     if (index == 0){
       this.openCamera(0);
       return ;
     }else{
       this.avatar = "img://"+avatar;
+      this.feedService.setProfileIamge(this.avatar);
     }
   }
 
@@ -84,8 +88,6 @@ export class ProfileimagePage implements OnInit {
       this.native.toast_trans('common.noImageSelected');
       return false;
     }
-    this.feedService.setProfileIamge(this.avatar);
-    this.feedService.setSelsectIndex(this.select);
     this.navCtrl.pop();
   }
 
@@ -103,11 +105,11 @@ export class ProfileimagePage implements OnInit {
         });
       },
       (err)=>{
-        //this.camera = null;
-        this.avatar = "";
-        this.feedService.setSelsectIndex(1);
-        this.feedService.setProfileIamge(this.avatar);
-        this.native.toast_trans('common.noImageSelected');
+        if(this.userAvatar === "./assets/images/profile-add-dark.svg" || this.userAvatar === "./assets/images/profile-add.svg" ){
+          this.avatar = "";
+          this.feedService.setProfileIamge("");
+          this.native.toast_trans('common.noImageSelected');
+        }
         }
         );
   }

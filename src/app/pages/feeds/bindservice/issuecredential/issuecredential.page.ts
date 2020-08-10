@@ -6,6 +6,7 @@ import { Events } from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
 import { NativeService } from 'src/app/services/NativeService';
 import { TranslateService } from "@ngx-translate/core";
+import { ThemeService } from 'src/app/services/theme.service';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 @Component({
@@ -26,6 +27,7 @@ export class IssuecredentialPage implements OnInit {
     private acRoute: ActivatedRoute,
     private feedService:FeedService,
     private translate:TranslateService,
+    public  theme:ThemeService,
     private router: Router,
     private navCtrl: NavController
     ) {
