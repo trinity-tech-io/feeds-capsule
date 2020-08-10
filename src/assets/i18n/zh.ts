@@ -28,7 +28,8 @@ export const zh = {
         "des2":'确认要返回主页面吗？',
         "connectionError":'当前无网络，请稍后再试',
         "nopostyet":"还未发布微说",
-        "nodescriptionyet":'暂时没有描述'
+        "nodescriptionyet":'暂时没有描述',
+        "pleasesigninfirst":"请先登录",
     },
     "app":{
         "profileDetails":"档案详情",

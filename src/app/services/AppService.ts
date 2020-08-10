@@ -37,7 +37,11 @@ export class AppService {
           if (menuIcon.key == "back") {
               this.handleBack();
           }else if(menuIcon.key == "more"){
-               this.menu.open("menu");
+               if(this.router.url.indexOf("/signin")>-1){
+                  this.native.toast_trans("common.pleasesigninfirst");
+               }else{
+                this.menu.open("menu");
+               }
           }
         });
     }

@@ -79,7 +79,7 @@ export class HomePage implements OnInit {
     if (channel === ""){
       return "";
     }else{
-      return UtilService.moreNanme(channel["name"]);
+      return UtilService.moreNanme(channel["owner_name"]);
     }
   }
 
