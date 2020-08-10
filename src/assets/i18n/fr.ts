@@ -22,9 +22,9 @@ export const fr = {
         "addressinvalid": "Address invalid",
         "commingSoon": "Comming soon ...",
         "followSuccess": "Follow successfully",
-        "unFollowSuccess": "UnFollow successfully",
+        "unFollowSuccess": "Unfollow successfully",
         "noImageSelected": "No Image Selected",
-        "loggingIn": "Logging in",
+        "loggingIn": "Logging in ...",
         "des2": 'Are you sure you want to return to the main page？',
         "connectionError":'No network is currently available, please try again later',
         "nopostyet":"No post yet",
@@ -213,7 +213,7 @@ export const fr = {
         "linkServer": "You are linking a feeds service. Please confirm whether the feeds url is consistent with the previously bound feeds service.",
         "confirm": "Confirm",
         "abort": "Abort due to not same code",
-        "Connectingserver": "Connecting server",
+        "Connectingserver": "Connecting server ...",
         "bindingError": "An exception occurred during the binding process",
         "linkServerError": "You are not the owner of this service, please change and try again.",
     },
@@ -263,12 +263,12 @@ export const fr = {
         "des": "Choose one of your Feeds to post from"
     },
     "CreatenewpostPage": {
-        "addimg": "Add img",
+        "addimg": "Add image",
         "post": "Post",
         "des": "Enter any notes here...",
         "addingPost": "New Post",
         "tipMsg": "Please input message!",
-        "tipMsg1": "Post Sent successfully!",
+        "tipMsg1": "Post sent successfully!",
     },
     "DIDdata": {
         "Notprovided": "Not provided",
@@ -279,6 +279,6 @@ export const fr = {
         "newComment": "New Comment",
         "publishComment": "Publish comment",
         "enterComments": "Enter Comments",
-        "tipMsg1": "Post Sent successfully!"
+        "tipMsg1": "Post sent successfully!"
     }
 };
