@@ -3099,8 +3099,11 @@ export class FeedService {
     let params = {
         didrequest: payload
     }
-    console.log("publish did =>"+JSON.stringify(params));
-    appManager.sendIntent("didtransaction", params, {}, onSuccess, onError);
+    let requestStr = JSON.stringify(params);
+    let request =  JSON.parse(requestStr);
+
+    console.log("publish did =>"+requestStr);
+    appManager.sendIntent("didtransaction", request, {}, onSuccess, onError);
   }
 
   signinChallengeRequest(nodeId: string , requiredCredential: boolean){
