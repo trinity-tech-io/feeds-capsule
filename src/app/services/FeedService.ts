@@ -3350,9 +3350,9 @@ export class FeedService {
   }
 
 
-  issueCredential(nodeId: string, did: string, serverName: string, serverDesc: string) {
+  issueCredential(nodeId: string, did: string, serverName: string, serverDesc: string,elaAddress:string) {
     if (bindingServerCache == null || bindingServerCache == undefined)
-      this.resolveServerDid(did, nodeId, "",()=>{},()=>{});
+      this.resolveServerDid(did, nodeId,elaAddress,()=>{},()=>{});
     /**
      * Ask the DID app to generate a VerifiableCredential with some data, and use current DID
      * as the signing issuer for this credential, so that others can permanently verifiy who

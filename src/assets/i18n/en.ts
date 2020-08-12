@@ -254,6 +254,7 @@ export const en = {
         "serverInfo":"Feeds Source Info",
         "serverName":"Feeds Source Name",
         "serverDes":"Feeds Source Description",
+        "elaaddress":"ELA Address",
     },
     "FinishPage": {
         "introduce": "Binding feeds source process completed. Congradulations, you have your own feeds source now and can new a feed on this feeds source with your desire.",

@@ -1,12 +1,12 @@
 import { Component, OnInit, NgZone } from '@angular/core';
-import { Router } from '@angular/router';
-import { NavController, AlertController } from '@ionic/angular';
+import { PopoverController } from '@ionic/angular';
 import { FeedService } from 'src/app/services/FeedService';
 import { Events } from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
 import { NativeService } from 'src/app/services/NativeService';
 import { TranslateService } from "@ngx-translate/core";
 import { ThemeService } from 'src/app/services/theme.service';
+import { ServerpromptComponent} from './../../../../components/serverprompt/serverprompt.component';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 @Component({
@@ -19,8 +19,9 @@ export class IssuecredentialPage implements OnInit {
   private title = "05/06";
   private nodeId = "";
   private did = "";
+  private popover:any;
   constructor(
-    public alertController: AlertController,
+    public popoverController:PopoverController,
     private native: NativeService,
     private zone: NgZone,
     private events: Events,
@@ -28,8 +29,6 @@ export class IssuecredentialPage implements OnInit {
     private feedService:FeedService,
     private translate:TranslateService,
     public  theme:ThemeService,
-    private router: Router,
-    private navCtrl: NavController
     ) {
      
     }
@@ -66,6 +65,9 @@ export class IssuecredentialPage implements OnInit {
     ionViewWillLeave(){
       this.events.unsubscribe("feeds:connectionChanged");
       this.events.unsubscribe('feeds:issue_credential');
+      if(this.popover!=null){
+         this.popover.dismiss();
+      }
     }
   
   
@@ -74,52 +76,24 @@ export class IssuecredentialPage implements OnInit {
     }
   
   issueCredential(){
-    this.presentPrompt();
+    this.showServerPrompt(this.did,this.nodeId);
   }
 
-  async presentPrompt() {//确认弹框
-    let promotAlert = await this.alertController.create({
-      header: this.translate.instant('IssuecredentialPage.serverInfo'),
-      inputs: [
-        {
-          name: 'serverName',
-          placeholder: this.translate.instant('IssuecredentialPage.serverName')
-        },
-        {
-          name: 'serverDes',
-          placeholder: this.translate.instant('IssuecredentialPage.serverDes'),
-        }
-      ],
-      buttons: [
-        {
-          text: this.translate.instant('common.cancel'),
-          role: 'cancel',
-          handler: data => {
-          }
-        },
-        {
-          text: this.translate.instant('common.ok'),
-          handler: data => {//回调为假时弹框将保持不消失
-            let serverName = data.serverName;
-            let serverDes = data.serverDes;
+  async showServerPrompt(did:string,nodeId:string) {
 
-            if (serverName == ""){
-              alert(this.translate.instant('common.pleaseInput')+this.translate.instant('IssuecredentialPage.serverName'));
-              return ;
-            }
-              
-
-            if (serverDes == ""){
-              alert(this.translate.instant('common.pleaseInput')+this.translate.instant('IssuecredentialPage.serverDes'))
-              return ;
-            }
-              
-            this.feedService.issueCredential(this.nodeId,this.did, serverName, serverDes);
-          }
-        }
-      ]
+    this.popover = await this.popoverController.create({
+      mode: 'ios',
+      cssClass: 'genericPopup',
+      component: ServerpromptComponent,
+      componentProps: {
+        "did":did,
+        "nodeId":nodeId,
+      }
     });
-    await promotAlert.present();//切记
+    this.popover.onWillDismiss().then(() => {
+      this.popover = null;
+    });
+    return await this.popover.present();
   }
 
 }

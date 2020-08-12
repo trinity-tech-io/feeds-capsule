@@ -5,7 +5,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
 import { HeaderBarComponent } from './header-bar/header-bar.component';
 
-import { DetailsComponent} from './details/details.component';
+import { ServerpromptComponent} from './serverprompt/serverprompt.component';
 import { MyfeedsComponent} from './myfeeds/myfeeds.component';
 import { FollowingComponent} from './following/following.component';
 import { LikesComponent} from './likes/likes.component';
@@ -18,8 +18,8 @@ import { SourceComponent} from './source/source.component';
     TranslateModule,
     IonicModule,
   ],
-  declarations: [HeaderBarComponent,DetailsComponent,MyfeedsComponent,FollowingComponent,LikesComponent,SourceComponent],
-  exports: [HeaderBarComponent,DetailsComponent,MyfeedsComponent,FollowingComponent,LikesComponent,SourceComponent],
+  declarations: [HeaderBarComponent,ServerpromptComponent,MyfeedsComponent,FollowingComponent,LikesComponent,SourceComponent],
+  exports: [HeaderBarComponent,ServerpromptComponent,MyfeedsComponent,FollowingComponent,LikesComponent,SourceComponent],
   providers: [
   ],
   entryComponents: [],

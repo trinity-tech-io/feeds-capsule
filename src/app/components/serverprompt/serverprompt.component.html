@@ -1,0 +1,44 @@
+<ion-grid [class.darkContainer]="theme.darkMode">
+  <ion-row style="margin:20px 0px">
+    <ion-col size="12" class="dTitle white">
+      {{'IssuecredentialPage.serverInfo' | translate}}
+  </ion-col>
+
+  <ion-col size="12">
+    <ion-item lines="none">
+     <ion-label position="stacked" class="serverNameLabel white">{{ 'IssuecredentialPage.serverName' | translate }}</ion-label>
+     <ion-input clearInput autofocus [placeholder]="'IssuecredentialPage.serverName' | translate" [(ngModel)]="serverName" class="serverNameValue"></ion-input>
+    </ion-item>
+   </ion-col>
+
+   <ion-col size="12">
+     <ion-item lines="none">
+       <ion-label position="stacked" class="serverNameLabel white">{{'IssuecredentialPage.serverDes' | translate }}</ion-label>
+       <ion-input clearInput autofocus [placeholder]="'IssuecredentialPage.serverDes' | translate" [(ngModel)]="serverDes" class="serverNameValue"></ion-input>
+   </ion-item>
+   </ion-col>
+
+   <ion-col size="12">
+    <ion-item lines="none">
+     <ion-label position="stacked" class="serverNameLabel white" (click)="clickScan()">{{ 'IssuecredentialPage.elaaddress' | translate }}</ion-label>
+     <ion-input clearInput autofocus [placeholder]="'IssuecredentialPage.elaaddress' | translate" [(ngModel)]="elaAddress" class="serverNameValue"></ion-input>
+     <ion-avatar slot="end" style="width: 28px;height: 28px;position: absolute;right:10px" (click)="clickScan()">
+      <img src="./assets/images/scan.svg" *ngIf="!theme.darkMode" >
+      <img src="./assets/images/scan-dark.svg" *ngIf="theme.darkMode">
+    </ion-avatar>
+    </ion-item>
+   </ion-col>
+  </ion-row>
+
+
+
+ <ion-row style="margin:20px 0px">
+    <ion-col size="6" style="text-align: center;" (click)="cancel()">
+      <span class="cancel">{{ 'common.cancel' | translate }}</span>
+    </ion-col>
+
+    <ion-col size="6" style="text-align: center;" (click)="confirm()">
+      <span class="confirm">{{ 'common.confirm' | translate }}</span>
+    </ion-col>
+  </ion-row>
+</ion-grid>

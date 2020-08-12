@@ -203,3 +203,16 @@ ion-list {
     }
   }
 }
+
+
+.genericPopup {
+  .popover-wrapper{
+    .popover-content {
+      position: relative !important;
+      margin: 0 auto !important;
+      left: auto !important;
+      top: auto !important;
+      width:85vw  !important;
+    }
+  }
+}

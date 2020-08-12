@@ -7,6 +7,7 @@ import { SplashscreenPage } from './pages/splashscreen/splashscreen.page';
 import { AppService } from './services/AppService';
 import { ThemeService } from 'src/app/services/theme.service';
 import { NativeService} from 'src/app/services/NativeService';
+import { UtilService } from 'src/app/services/utilService';
 
 let appManager: any;
 
@@ -93,7 +94,7 @@ export class MyApp {
         return ;
 
       this.didString = signInData.did;
-      this.name = signInData.name;
+      this.name = UtilService.moreNanme(signInData.name);
     },(error)=>{
     });
   }
