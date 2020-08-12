@@ -272,7 +272,7 @@ export const zh = {
         "tipMsg1":"发布成功！",
     },
     "DIDdata": {
-        "Notprovided": "未提供",
+        "Notprovided": "暂无",
         "NotprovidedfromDIDDocument": "信息获取中",
         "NoDescription":"暂无个人简介和兴趣爱好信息"
     },
