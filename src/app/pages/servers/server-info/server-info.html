@@ -73,6 +73,10 @@
     <div class="detail-key-div">
       <ion-label class="detail-key">{{'ServerInfoPage.feedsSourceQRCode'|translate}}</ion-label>
     </div>
+    
+    <div class="detail-value-div" *ngIf="feedsUrl===''">
+      <ion-label class="detail-value">{{'DIDdata.NotprovidedfromDIDDocument'|translate}}</ion-label>
+    </div>
 
     <div style="width: 200px;margin: 0 auto;">
         <qrcode style="padding: 8px;"  [qrdata]="feedsUrl" [size]="200" [level]="'M'"></qrcode>

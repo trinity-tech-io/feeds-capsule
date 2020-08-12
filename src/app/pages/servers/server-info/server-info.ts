@@ -37,7 +37,7 @@ export class ServerInfoPage implements OnInit {
   private name: string;
   private owner: string;
   private introduction: string;
-  private feedsUrl: string;
+  private feedsUrl: string = null;
 
   constructor(
     private actionSheetController:ActionSheetController,
@@ -53,10 +53,7 @@ export class ServerInfoPage implements OnInit {
   ngOnInit() {
     this.acRoute.params.subscribe(data => {
       this.isOwner = data.isOwner ;
-      this.address = data.address;
-      if (this.address == null && this.address == undefined)
-        this.address = ""
-
+      this.address = data.address || "";
       if (this.address != ''){
           this.zone.run(()=>{
             this.presentLoading();
@@ -85,10 +82,10 @@ export class ServerInfoPage implements OnInit {
           }
 
           this.didString = server.did;
-          this.name = server.name;
+          this.name = server.name ||  this.translate.instant('DIDdata.NotprovidedfromDIDDocument');
           this.owner = server.owner;
-          this.introduction = server.introduction ||  this.translate.instant('common.nodescriptionyet');
-          this.feedsUrl = server.feedsUrl;
+          this.introduction = server.introduction ||  this.translate.instant('DIDdata.NotprovidedfromDIDDocument');
+          this.feedsUrl = server.feedsUrl || "";
         }
 
     });
@@ -183,12 +180,12 @@ export class ServerInfoPage implements OnInit {
       (server)=>{
         this.zone.run(()=>{
           this.buttonDisabled = false;
-          this.name = server.name;
+          this.name = server.name || this.translate.instant('DIDdata.NotprovidedfromDIDDocument');
           this.owner = server.owner;
-          this.introduction = server.introduction || this.translate.instant('common.nodescriptionyet');
+          this.introduction = server.introduction || this.translate.instant('DIDdata.NotprovidedfromDIDDocument');
           this.didString = server.did;
           this.carrierAddress = server.carrierAddress;
-          this.feedsUrl = server.feedsUrl;
+          this.feedsUrl = server.feedsUrl || "";
         });
       },(err)=>{
         this.native.toastdanger("ServerInfoPage.error");
