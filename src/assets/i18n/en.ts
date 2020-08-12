@@ -151,7 +151,7 @@ export const en = {
         "feedSources":"Feeds Sources",
         "emptyDes":"All Empty",
         "addFeedSources":"Add Feeds Sources",
-        "bindFeedSource":"Bind Feeds Source",
+        "bindFeedSource":"Create New Feeds Source",
         "myFeedSources":"My Feeds Sources",
         "users":"Users",
         "currentFeedSources":"Current Feeds Sources",
@@ -273,7 +273,7 @@ export const en = {
     },
     "DIDdata":{
         "Notprovided": "Not provided",
-        "NotprovidedfromDIDDocument":"Not provided from DID Document",
+        "NotprovidedfromDIDDocument":"Information is being obtained",
         "NoDescription":"No descriptions or interests yet"
     },
     "CommentPage":{

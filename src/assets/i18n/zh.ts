@@ -151,7 +151,7 @@ export const zh = {
         "feedSources":"微频源",
         "emptyDes":"尚未关联过任何微频源",
         "addFeedSources":"添加微频源",
-        "bindFeedSource":"绑定微频源",
+        "bindFeedSource":"创建新的微频源",
         "myFeedSources":"我的微频源",
         "users":"用户",
         "currentFeedSources":"关联的微频源",
@@ -273,7 +273,7 @@ export const zh = {
     },
     "DIDdata": {
         "Notprovided": "未提供",
-        "NotprovidedfromDIDDocument": "DID文档未提供",
+        "NotprovidedfromDIDDocument": "信息获取中",
         "NoDescription":"暂无个人简介和兴趣爱好信息"
     },
     "CommentPage":{
