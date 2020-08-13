@@ -291,9 +291,9 @@ export const zh = {
     "DisclaimerPage":{
         "disclaimer":"免责声明",
         "introduce":"Text for the disclaimer:",
-        "introduce1":"By clicking yes you hereby accept and agree to our Terms below.",
-        "introduce2":"Feeds is owned and operated by Trinity Tech Co., Ltd. and its affiliates (“Trinity”, “we”, or “us”), and you agree to abide by the specific terms for the Feeds application below (collectively our “Terms”).",
-        "introduce3":"By using our Feeds application, its content, and services (the “App”), you agree to be solely responsible for your use of the App and any content you post and provide, including compliance with applicable laws, rules, and regulations. You should only post and provide content that you are comfortable sharing with others. You must be at least 13 years old to use the App or no longer considered to be a minor in your jurisdiction (ie. state, providence or country).  We do not endorse, support, represent or guarantee the completeness, truthfulness, accuracy, or reliability of any content on the App. You hereby acknowledge that you may be exposed to harmful, inaccurate or inappropriate content while using the App."
+        "introduce1":"点击\"是\"，即表示您接受并同意我们以下条款。",
+        "introduce2":"微频由Trinity Tech Co.，Ltd.及其关联团队（“Trinity” 或 “我们”）拥有并运营，并且您同意遵守以下Feeds应用程序的特定条款（统称为“条款”）。",
+        "introduce3":"通过使用我们的微频应用程序、其内容和服务（以下简称“应用程序”），您同意对您使用该应用程序以及您发布和提供的任何内容承担全部责任，包括遵守法律、法规和规定。 您应该只发布和提供可以与他人共享的内容。 您必须年满13周岁才能使用该应用程序，或者在您所在的辖区（即市、省或国家）不再被视为未成年人。 我们不认可、支持、陈述或保证应用程序上任何内容的完整性、真实性、准确性或可靠性。 您在此确认，在使用该应用程序时，您可能会接触到有害的、不准确的或不适当的内容。"
     },
     "DonationPage":{
         "donation": "捐赠",
