@@ -34,6 +34,8 @@ export const zh = {
         "naccepted":"不同意",
         "moreThen0":"请输入大于0的数额",
         "success":"成功",
+        "loadingText":"加载更多数据...",
+        "des3":"没有更多内容啦!"
     },
     "app":{
         "profileDetails":"档案详情",

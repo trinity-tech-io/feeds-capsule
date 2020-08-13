@@ -34,6 +34,8 @@ export const fr = {
         "naccepted":"Not Agree",
         "moreThen0":"Please enter a number greater than 0",
         "success":"Success",
+        "loadingText":"Loading more data…",
+        "des3":"There's no more!"
     },
     "app": {
         "profileDetails": "Profile Details",

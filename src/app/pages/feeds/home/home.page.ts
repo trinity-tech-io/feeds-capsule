@@ -1,4 +1,4 @@
-import { Component, OnInit, NgZone } from '@angular/core';
+import { Component, OnInit, NgZone, ViewChild} from '@angular/core';
 import { Events,IonTabs} from '@ionic/angular';
 import { FeedService } from 'src/app/services/FeedService';
 import { MenuService } from 'src/app/services/MenuService';
@@ -7,6 +7,7 @@ import { ThemeService } from 'src/app/services/theme.service';
 import { UtilService } from 'src/app/services/utilService';
 import { TranslateService } from "@ngx-translate/core";
 import { NativeService } from 'src/app/services/NativeService';
+import { IonInfiniteScroll } from '@ionic/angular';
 @Component({
   selector: 'app-home',
   templateUrl: './home.page.html',
@@ -15,9 +16,14 @@ import { NativeService } from 'src/app/services/NativeService';
 
 
 export class HomePage implements OnInit {
+  @ViewChild(IonInfiniteScroll,{static:true}) infiniteScroll: IonInfiniteScroll;
   private connectionStatus = 1;
   private postList: any = [];
   public nodeStatus:any={};
+  public startIndex = 0;
+  public pageNumber = 10;
+  public totalData = [];
+  public isBottom:boolean = false;
   constructor(
     private feedspage: FeedsPage,
     private tabs: IonTabs,
@@ -31,9 +37,20 @@ export class HomePage implements OnInit {
   }
 
   ionViewWillEnter() {
+    this.startIndex = 0;
+    this.totalData = this.feedService.getPostList() || [];
     this.connectionStatus = this.feedService.getConnectionStatus();
-    this.postList = this.feedService.getPostList();
-    this.initnodeStatus();
+    if(this.totalData.length - this.pageNumber > this.pageNumber){
+      this.postList = this.totalData.slice(this.startIndex,this.pageNumber);
+      this.startIndex++;
+      this.isBottom = false;
+      this.infiniteScroll.disabled =false;
+     }else{
+      this.postList = this.totalData;
+      this.isBottom =true;
+      this.infiniteScroll.disabled =true;
+    }
+    this.initnodeStatus(this.postList);
    
     this.events.subscribe('feeds:connectionChanged',(status)=>{
       this.zone.run(() => {
@@ -43,8 +60,21 @@ export class HomePage implements OnInit {
 
     this.events.subscribe('feeds:postDataUpdate',()=>{
       this.zone.run(() => {
-        this.postList = this.feedService.getPostList();
-        this.initnodeStatus();
+        this.isBottom = false;
+        this.infiniteScroll.disabled =false;
+        this.startIndex = 0;
+        this.totalData = this.feedService.getPostList() || [];
+        if(this.totalData.length - this.pageNumber > this.pageNumber){
+          this.postList = this.totalData.slice(this.startIndex,this.pageNumber);
+          this.startIndex++;
+          this.isBottom = false;
+          this.infiniteScroll.disabled =false;
+         }else{
+          this.postList = this.totalData;
+          this.isBottom =true;
+          this.infiniteScroll.disabled =true;
+        }
+        this.initnodeStatus(this.postList);
       });
     });
 
@@ -177,9 +207,9 @@ export class HomePage implements OnInit {
     return this.feedService.getServerStatusFromId(nodeId);
   }
 
-  initnodeStatus(){
-     for(let index =0 ;index<this.postList.length;index++){
-            let nodeId = this.postList[index]['nodeId'];
+  initnodeStatus(arr){
+     for(let index =0 ;index<arr.length;index++){
+            let nodeId = arr[index]['nodeId'];
             let status = this.checkServerStatus(nodeId);
             this.nodeStatus[nodeId] = status;
      }
@@ -187,5 +217,44 @@ export class HomePage implements OnInit {
 
   moreName(name:string){
     return UtilService.moreNanme(name);
+  }
+
+  loadData(event){
+   let sId = setTimeout(() => {
+      let arr = [];        
+       if(this.totalData.length - this.pageNumber*this.startIndex>this.pageNumber){
+        arr = this.totalData.slice(this.startIndex*this.pageNumber,(this.startIndex+1)*this.pageNumber);
+        this.startIndex++;
+        this.zone.run(()=>{
+        this.postList = this.postList.concat(arr);
+        });
+        this.initnodeStatus(arr);
+        event.target.complete();
+       }else{
+        arr = this.totalData.slice(this.startIndex*this.pageNumber,this.totalData.length);
+        this.zone.run(()=>{
+            this.postList = this.postList.concat(arr);
+        });
+        this.isBottom = true;
+        this.infiniteScroll.disabled =true;
+        this.initnodeStatus(arr);
+        event.target.complete();
+       }
+      clearTimeout(sId);
+    }, 500);
+  }
+
+  doRefresh(event){
+    let sId =  setTimeout(() => {
+      this.isBottom = false;
+      this.infiniteScroll.disabled =false;
+      this.startIndex = 0;
+      this.totalData = this.feedService.getPostList() || [];
+      this.connectionStatus = this.feedService.getConnectionStatus();
+      this.postList = this.totalData.slice(this.startIndex,this.pageNumber);
+      this.startIndex++;
+      this.initnodeStatus(this.postList);
+      event.target.complete();
+    },500);
   }
 }

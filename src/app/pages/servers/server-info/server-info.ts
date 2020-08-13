@@ -168,7 +168,7 @@ export class ServerInfoPage implements OnInit {
       this.address.indexOf("did:elastos:")
     ) this.resolveDid();
     else{
-      this.native.toastdanger("ServerInfoPage.Feedurlmaybeerror");
+      this.native.toastWarn("ServerInfoPage.Feedurlmaybeerror");
       this.navigateBackPage();
     }
 
@@ -188,7 +188,7 @@ export class ServerInfoPage implements OnInit {
           this.feedsUrl = server.feedsUrl || "";
         });
       },(err)=>{
-        this.native.toastdanger("ServerInfoPage.error");
+        this.native.toastWarn("ServerInfoPage.error");
         this.buttonDisabled = true;
         this.navigateBackPage();
       }
