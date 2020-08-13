@@ -20,7 +20,7 @@ export const en = {
         "share":"Share",
         "sending":"Sending...",
         "addressinvalid":"Address invalid",
-        "commingSoon":"Comming soon...",
+        "comingSoon":"Coming soon...",
         "followSuccess":"Follow successfully",
         "unFollowSuccess":"Unfollow successfully",
         "noImageSelected":"No Image Selected",
@@ -35,7 +35,8 @@ export const en = {
         "moreThen0":"Please enter a number greater than 0",
         "success":"Success",
         "loadingText":"Loading more data…",
-        "des3":"There's no more!"
+        "des3":"There's no more!",
+        "noElaAddress":"The owner of the server did not set the Ela address",
     },
     "app":{
         "profileDetails":"Profile Details",

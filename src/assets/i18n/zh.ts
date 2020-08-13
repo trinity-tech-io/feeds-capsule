@@ -20,7 +20,7 @@ export const zh = {
         "share":"分享",
         "sending":"正在发送...",
         "addressinvalid":"地址无效",
-        "commingSoon":"敬请期待...",
+        "comingSoon":"敬请期待...",
         "followSuccess":"关注成功",
         "unFollowSuccess":"取消关注成功",
         "noImageSelected":"未选择图像",
@@ -35,7 +35,8 @@ export const zh = {
         "moreThen0":"请输入大于0的数额",
         "success":"成功",
         "loadingText":"加载更多数据...",
-        "des3":"没有更多内容啦!"
+        "des3":"没有更多内容啦!",
+        "noElaAddress":"服务器的所有者未设置Ela地址",
     },
     "app":{
         "profileDetails":"档案详情",

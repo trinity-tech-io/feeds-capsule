@@ -4,7 +4,6 @@ import { Events } from '@ionic/angular';
 import { NativeService } from 'src/app/services/NativeService';
 import { TranslateService } from "@ngx-translate/core";
 import { FeedService } from 'src/app/services/FeedService';
-import { PopupProvider } from 'src/app/services/popup';
 import { PaypromptComponent } from 'src/app/components/payprompt/payprompt.component'
 
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
@@ -26,7 +25,6 @@ export class DonationPage implements OnInit {
     private translate:TranslateService,
     private events: Events,
     private feedService:FeedService,
-    private popup: PopupProvider
     ) {}
 
   ngOnInit() {

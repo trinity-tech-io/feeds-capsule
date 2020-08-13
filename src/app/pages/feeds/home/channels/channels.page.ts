@@ -7,8 +7,8 @@ import { ThemeService } from 'src/app/services/theme.service';
 import { UtilService } from 'src/app/services/utilService';
 import { MenuService } from 'src/app/services/MenuService';
 import { TranslateService } from "@ngx-translate/core";
-
-
+import { PaypromptComponent } from 'src/app/components/payprompt/payprompt.component'
+import { PopoverController } from '@ionic/angular';
 
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
@@ -18,6 +18,7 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
   styleUrls: ['./channels.page.scss'],
 })
 export class ChannelsPage implements OnInit {
+  private popover:any;
   public nodeStatus = {};
   private connectionStatus = 1;
   private channelAvatar = "";
@@ -32,6 +33,7 @@ export class ChannelsPage implements OnInit {
 
   private followStatus = false;
   constructor(
+    private popoverController:PopoverController,
     private zone: NgZone,
     private events: Events,
     private native: NativeService,
@@ -54,12 +56,18 @@ export class ChannelsPage implements OnInit {
   }
 
   tip(){
-    this.native.toast_trans('common.commingSoon');
+    let server = this.feedService.getServerbyNodeId(this.nodeId)||undefined;
+    
+    if (server == undefined ||server.elaAddress == undefined || server.elaAddress == ""){
+      this.native.toast('common.noElaAddress');
+      return;
+    }
+
+    this.showPayPrompt(server.elaAddress);
   }
 
   async unsubscribe(){
     this.menuService.showUnsubscribeMenuWithoutName(this.nodeId, Number(this.channelId));
-    
   }
 
   ngOnInit() {
@@ -261,4 +269,19 @@ export class ChannelsPage implements OnInit {
             this.nodeStatus[nodeId] = status;
   }
   
+  async showPayPrompt(elaAddress:string) {
+
+    this.popover = await this.popoverController.create({
+      mode: 'ios',
+      cssClass: 'genericPopup',
+      component: PaypromptComponent,
+      componentProps: {
+        "elaAddress":elaAddress,
+      }
+    });
+    this.popover.onWillDismiss().then(() => {
+      this.popover = null;
+    });
+    return await this.popover.present();
+  }
 }

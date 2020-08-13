@@ -21,7 +21,7 @@ export class MenuService {
                 text: this.translate.instant("common.share"),
                 icon: 'share',
                 handler: () => {
-                    this.native.toast("common.commingSoon");
+                    this.native.toast("common.comingSoon");
                 }
             }, {
                 text: this.translate.instant("common.unsubscribe"),
@@ -53,7 +53,7 @@ export class MenuService {
                 text: this.translate.instant("common.share"),
                 icon: 'share',
                 handler: () => {
-                    this.native.toast("common.commingSoon");
+                    this.native.toast("common.comingSoon");
                 }
             },{
                 text: this.translate.instant("common.cancel"),

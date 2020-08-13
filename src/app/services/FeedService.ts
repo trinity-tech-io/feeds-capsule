@@ -177,6 +177,7 @@ type Server = {
   carrierAddress    : string
   nodeId            : string
   feedsUrl          : string
+  elaAddress        : string
 }
 
 // let cacheServer: Server;
@@ -1068,7 +1069,8 @@ export class FeedService {
             did               : didDocument.getSubject().getDIDString(),
             carrierAddress    : carrierAddress,
             nodeId            : "",
-            feedsUrl          : feedsUrl
+            feedsUrl          : feedsUrl,
+            elaAddress        : ""
             // status            : ConnState.disconnected
           });
           return;
@@ -1085,7 +1087,8 @@ export class FeedService {
             did               : didDocument.getSubject().getDIDString(),
             carrierAddress    : carrierAddress,
             nodeId            : "",
-            feedsUrl          : feedsUrl
+            feedsUrl          : feedsUrl,
+            elaAddress        : "",
             // status            : ConnState.disconnected
         });
       } else {
@@ -2833,7 +2836,8 @@ export class FeedService {
         did               : did,
         carrierAddress    : carrierAddress,
         nodeId            : nodeId,
-        feedsUrl          : feedsUrl
+        feedsUrl          : feedsUrl,
+        elaAddress        : ""
         // status            : ConnState.disconnected
       }
 
@@ -3250,6 +3254,7 @@ export class FeedService {
       (res)=>{
         serverMap[nodeId].name = credential.credentialSubject.name;
         serverMap[nodeId].introduction = credential.credentialSubject.description;
+        serverMap[nodeId].elaAddress = credential.credentialSubject.elaAddress;
         this.storeService.set(PersistenceKey.serverMap, serverMap);
 
         let payloadStr = JSON.stringify(res.payload);
@@ -3347,7 +3352,7 @@ export class FeedService {
 
   issueCredential(nodeId: string, did: string, serverName: string, serverDesc: string,elaAddress:string) {
     if (bindingServerCache == null || bindingServerCache == undefined)
-      this.resolveServerDid(did, nodeId,elaAddress,()=>{},()=>{});
+      this.resolveServerDid(did, nodeId,"",()=>{},()=>{});
     /**
      * Ask the DID app to generate a VerifiableCredential with some data, and use current DID
      * as the signing issuer for this credential, so that others can permanently verifiy who
@@ -3365,7 +3370,8 @@ export class FeedService {
       properties: {
           // customData: "test data.",
           name: serverName,
-          description: serverDesc
+          description: serverDesc,
+          elaAddress: elaAddress
           // moreComplexData: {
           //   info: "A sub-info"
           // }
@@ -3397,7 +3403,8 @@ export class FeedService {
       did               : did,
       carrierAddress    : cacheBindingAddress,
       nodeId            : nodeId,
-      feedsUrl          : feedUrl
+      feedsUrl          : feedUrl,
+      elaAddress        : ""
     }
     this.handleImportDID(feedUrl, defaultServer, (server)=>{
         bindingServerCache = {
@@ -3407,7 +3414,8 @@ export class FeedService {
           did               : server.did,
           carrierAddress    : server.carrierAddress,
           nodeId            : server.nodeId,
-          feedsUrl          : server.feedsUrl
+          feedsUrl          : server.feedsUrl,
+          elaAddress        : ""
         }
         onSuccess();
     },(err)=>{
@@ -3425,7 +3433,8 @@ export class FeedService {
       did               : did,
       carrierAddress    : cacheBindingAddress,
       nodeId            : nodeId,
-      feedsUrl          : feedUrl
+      feedsUrl          : feedUrl,
+      elaAddress        : ""
     }
     this.handleImportDID(feedUrl, defaultServer, (server)=>{
         bindingServerCache = {
@@ -3435,7 +3444,8 @@ export class FeedService {
           did               : server.did,
           carrierAddress    : server.carrierAddress,
           nodeId            : server.nodeId,
-          feedsUrl          : server.feedsUrl
+          feedsUrl          : server.feedsUrl,
+          elaAddress        : ""
         }
         onSuccess();
         eventBus.publish("feeds:resolveDidSucess", nodeId, did);
