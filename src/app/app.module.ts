@@ -39,7 +39,6 @@ import { ThemeService } from './services/theme.service';
 import { PopupProvider } from './services/popup';
 import { CameraService } from './services/CameraService';
 import { AgentService } from './services/AgentService';
-import { PopovercomponentPageModule } from './components/popovercomponent/popovercomponent.module';  
 import { ServerlistComponentModule } from './components/serverlistcomponent/serverlistcomponent.module'; 
 import { ServerpromptComponent} from './components/serverprompt/serverprompt.component';
 import { QRCodeModule } from 'angularx-qrcode'; 
@@ -89,7 +88,6 @@ export function TranslateLoaderFactory() {
     BrowserModule,
     AppRoutingModule,
     ComponentsModule,
-    PopovercomponentPageModule,
     PostfromComponentPageModule,
     ServerlistComponentModule,
     SplashscreenPageModule,

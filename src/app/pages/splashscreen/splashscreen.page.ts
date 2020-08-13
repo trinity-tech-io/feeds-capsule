@@ -35,7 +35,6 @@ export class SplashscreenPage implements OnInit {
     let sid = setTimeout(() => {
      clearTimeout(sid);
      this.modalCtrl.dismiss();
-     this.appService.init();
      this.appService.addright();
      this.appService.initializeApp();
    }, 1500);
