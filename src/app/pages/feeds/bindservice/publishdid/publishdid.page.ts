@@ -66,14 +66,13 @@ export class PublishdidPage implements OnInit {
     publishDid(){
 
     this.feedService.publishDid(this.payload, 
-      (response)=>{
-        if (response.result && response.result.txid) {
-          this.zone.run(() => {
-              this.native.navigateForward(['/bindservice/issuecredential',this.nodeId, this.did],{
-                replaceUrl: true
-            });
+      (res)=>{
+        console.log("publishDID ==>"+JSON.stringify(res));
+        this.zone.run(() => {
+            this.native.navigateForward(['/bindservice/issuecredential',this.nodeId, this.did],{
+              replaceUrl: true
           });
-        }
+        });
       },
       (err)=>{
         alert("error");

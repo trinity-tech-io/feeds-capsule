@@ -14,6 +14,7 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
   styleUrls: ['./donation.page.scss'],
 })
 export class DonationPage implements OnInit {
+  private isShowPrompt: boolean = false;
   private connectionStatus = 1;
   private version = "v1.0.0";
   private elaAddress = "EYWDcCyp6czaqAKGiq4b7exhWJfVpbG2D9";
@@ -75,7 +76,7 @@ export class DonationPage implements OnInit {
 
 
   async showPayPrompt(elaAddress:string) {
-
+    this.isShowPrompt = true;
     this.popover = await this.popoverController.create({
       mode: 'ios',
       cssClass: 'genericPopup',
@@ -85,6 +86,7 @@ export class DonationPage implements OnInit {
       }
     });
     this.popover.onWillDismiss().then(() => {
+      this.isShowPrompt = false;
       this.popover = null;
     });
     return await this.popover.present();

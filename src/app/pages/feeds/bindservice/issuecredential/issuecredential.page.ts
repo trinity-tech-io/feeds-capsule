@@ -15,6 +15,7 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
   styleUrls: ['./issuecredential.page.scss'],
 })
 export class IssuecredentialPage implements OnInit {
+  private isShowPrompt:boolean = false;
   private connectionStatus = 1;
   private title = "05/06";
   private nodeId = "";
@@ -80,7 +81,7 @@ export class IssuecredentialPage implements OnInit {
   }
 
   async showServerPrompt(did:string,nodeId:string) {
-
+    this.isShowPrompt = true;
     this.popover = await this.popoverController.create({
       mode: 'ios',
       cssClass: 'genericPopup',
@@ -91,6 +92,7 @@ export class IssuecredentialPage implements OnInit {
       }
     });
     this.popover.onWillDismiss().then(() => {
+      this.isShowPrompt = false;
       this.popover = null;
     });
     return await this.popover.present();
