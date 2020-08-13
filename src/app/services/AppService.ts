@@ -13,6 +13,7 @@ import { MenuController} from '@ionic/angular';
 import { PopupProvider } from '../services/popup';
 declare let appManager: AppManagerPlugin.AppManager;
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
+
 @Injectable({
     providedIn: 'root'
 })
@@ -37,11 +38,11 @@ export class AppService {
           if (menuIcon.key == "back") {
               this.handleBack();
           }else if(menuIcon.key == "more"){
-               if(this.router.url.indexOf("/signin")>-1){
-                  this.native.toast_trans("common.pleasesigninfirst");
-               }else{
-                this.menu.open("menu");
-               }
+            if(this.router.url.indexOf("/signin")>-1){
+              this.native.toast_trans("common.pleasesigninfirst");
+            }else{
+            this.menu.open("menu");
+            }
           }
         });
     }

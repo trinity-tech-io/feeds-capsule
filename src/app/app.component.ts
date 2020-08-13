@@ -75,11 +75,6 @@ export class MyApp {
 
     this.appService.addright();
     this.appService.initializeApp();
-
-
-
-
-   
   }
 
   async splash() {
@@ -103,6 +98,9 @@ export class MyApp {
      this.native.navigateForward('/menu/about',"");
   }
 
+  donation(){
+    this.native.navigateForward('/menu/donation',"");
+  }
 
   initProfileData(){
     this.feedService.initSignInDataAsync((signInData)=>{

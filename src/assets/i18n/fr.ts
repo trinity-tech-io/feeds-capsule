@@ -31,7 +31,9 @@ export const fr = {
         "nodescriptionyet":'No description yet',
         "pleasesigninfirst":'Please sign in first',
         "accept":"Agree",
-        "naccepted":"Not Agree"
+        "naccepted":"Not Agree",
+        "moreThen0":"Please enter a number greater than 0",
+        "success":"Success",
     },
     "app": {
         "profileDetails": "Profile Details",
@@ -39,6 +41,7 @@ export const fr = {
         "settings": "Settings",
         "about": "About Feeds",
         "develop": "Develop",
+        "donation": "Donation"
     },
     "SigninPage": {
         "signIn": "Sign In",
@@ -291,5 +294,13 @@ export const fr = {
         "introduce1":"By clicking yes you hereby accept and agree to our Terms below.",
         "introduce2":"Feeds is owned and operated by Trinity Tech Co., Ltd. and its affiliates (“Trinity”, “we”, or “us”), and you agree to abide by the specific terms for the Feeds application below (collectively our “Terms”).",
         "introduce3":"By using our Feeds application, its content, and services (the “App”), you agree to be solely responsible for your use of the App and any content you post and provide, including compliance with applicable laws, rules, and regulations. You should only post and provide content that you are comfortable sharing with others. You must be at least 13 years old to use the App or no longer considered to be a minor in your jurisdiction (ie. state, providence or country).  We do not endorse, support, represent or guarantee the completeness, truthfulness, accuracy, or reliability of any content on the App. You hereby acknowledge that you may be exposed to harmful, inaccurate or inappropriate content while using the App."
+    },
+    "DonationPage":{
+        "donation": "Donation",
+        "donationELAAddress":"Donation ELA Address",
+        "description":"Feeds project is a non-profit project, dedicate to improvement for better experience and integration with more added-value features. Your donation to this project will keep encouraging us to constantly deliver new release versions with our best efforts and remind us of the responsiblity of that as well.",
+        "receiver":"Receiver",
+        "amount":"Amount",
+        "memo":"memo",
     }
 };

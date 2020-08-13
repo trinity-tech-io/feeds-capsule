@@ -31,14 +31,17 @@ export const zh = {
         "nodescriptionyet":'暂时没有描述',
         "pleasesigninfirst":"请先登录",
         "accept":"同意",
-        "naccepted":"不同意"
+        "naccepted":"不同意",
+        "moreThen0":"请输入大于0的数额",
+        "success":"成功",
     },
     "app":{
         "profileDetails":"档案详情",
         "feedSources":"微频源",
         "settings":"设置",
         "about":"关于微频",
-        "develop":"开发"
+        "develop":"开发",
+        "donation": "捐赠"
     },
     "SigninPage":{
         "signIn":"登录",
@@ -291,5 +294,13 @@ export const zh = {
         "introduce1":"By clicking yes you hereby accept and agree to our Terms below.",
         "introduce2":"Feeds is owned and operated by Trinity Tech Co., Ltd. and its affiliates (“Trinity”, “we”, or “us”), and you agree to abide by the specific terms for the Feeds application below (collectively our “Terms”).",
         "introduce3":"By using our Feeds application, its content, and services (the “App”), you agree to be solely responsible for your use of the App and any content you post and provide, including compliance with applicable laws, rules, and regulations. You should only post and provide content that you are comfortable sharing with others. You must be at least 13 years old to use the App or no longer considered to be a minor in your jurisdiction (ie. state, providence or country).  We do not endorse, support, represent or guarantee the completeness, truthfulness, accuracy, or reliability of any content on the App. You hereby acknowledge that you may be exposed to harmful, inaccurate or inappropriate content while using the App."
+    },
+    "DonationPage":{
+        "donation": "捐赠",
+        "donationELAAddress":"捐赠 ELA 地址",
+        "description":"微频是一款非盈利社交应用项目，致力于持续改进应用体验和集成更多价值特性。您的捐献是对我们持续发布新版本的一种鼓励，同时也是一份责任提醒。",
+        "receiver":"接收者",
+        "amount":"数量",
+        "memo":"备注",
     }
 };

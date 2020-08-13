@@ -1,0 +1,23 @@
+<ion-content>
+
+  <ion-label>
+    {{'DonationPage.donationELAAddress' | translate}}
+  </ion-label>
+  <ion-label>
+    {{elaAddress}}
+  </ion-label>
+  
+  <div style="margin-top: 20px;">
+    <ion-label>
+      {{'DonationPage.description' | translate}}
+    </ion-label>
+  </div>
+  
+
+  <div style="margin-top: 20px;" (click)="donation()">
+    <ion-button expand="block">
+      {{'DonationPage.donation' | translate}}
+    </ion-button>
+  </div>
+  
+</ion-content>

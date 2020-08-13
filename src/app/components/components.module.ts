@@ -6,6 +6,8 @@ import { FormsModule } from '@angular/forms';
 
 
 import { ServerpromptComponent} from './serverprompt/serverprompt.component';
+import { PaypromptComponent } from './payprompt/payprompt.component';
+
 import { MyfeedsComponent} from './myfeeds/myfeeds.component';
 import { FollowingComponent} from './following/following.component';
 import { LikesComponent} from './likes/likes.component';
@@ -17,8 +19,10 @@ import { LikesComponent} from './likes/likes.component';
     TranslateModule,
     IonicModule,
   ],
-  declarations: [ServerpromptComponent,MyfeedsComponent,FollowingComponent,LikesComponent],
-  exports: [ServerpromptComponent,MyfeedsComponent,FollowingComponent,LikesComponent],
+
+  declarations: [PaypromptComponent,ServerpromptComponent,MyfeedsComponent,FollowingComponent,LikesComponent],
+  exports: [PaypromptComponent,ServerpromptComponent,MyfeedsComponent,FollowingComponent,LikesComponent],
+
   providers: [
   ],
   entryComponents: [],

@@ -3815,6 +3815,23 @@ export class FeedService {
         return ;
       });
   }
+
+  pay(receiver: string, amount: number, memo: string, onSuccess: (res:any)=>void, onError: (err: any)=>void){
+    let param = {
+      receiver: receiver, 
+      amount: amount, 
+      memo: memo
+    }
+
+    appManager.sendIntent("pay", param, {}, 
+      (response: any) => {
+        onSuccess(response);
+      },
+      (err)=>{
+        onError(err);
+      }
+    );
+  }
 }
 
 

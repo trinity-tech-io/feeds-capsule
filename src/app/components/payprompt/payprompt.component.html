@@ -1,0 +1,40 @@
+<ion-grid [class.darkContainer]="theme.darkMode">
+  <ion-row style="margin:20px 0px">
+    <ion-col size="12" class="dTitle white">
+      {{'DonationPage.donation' | translate}}
+  </ion-col>
+
+  <ion-col size="12">
+    <ion-item lines="none">
+     <ion-label position="stacked" class="nameLabel white">{{ 'DonationPage.receiver' | translate }}</ion-label>
+     <ion-input class="nameValue" disabled="true">{{elaAddress}}</ion-input>
+    </ion-item>
+   </ion-col>
+
+   <ion-col size="12">
+     <ion-item lines="none">
+       <ion-label position="stacked" class="nameLabel white">{{'DonationPage.amount' | translate }}</ion-label>
+       <ion-input clearInput autofocus [placeholder]="'DonationPage.amount' | translate" [(ngModel)]="amount" class="nameValue"></ion-input>
+   </ion-item>
+   </ion-col>
+
+   <ion-col size="12">
+    <ion-item lines="none">
+     <ion-label position="stacked" class="nameLabel white" >{{ 'DonationPage.memo' | translate }}</ion-label>
+     <ion-input clearInput autofocus [placeholder]="'DonationPage.memo' | translate" [(ngModel)]="memo" class="nameValue"></ion-input>
+    </ion-item>
+   </ion-col>
+  </ion-row>
+
+
+
+ <ion-row style="margin:20px 0px">
+    <ion-col size="6" style="text-align: center;" (click)="cancel()">
+      <span class="cancel">{{ 'common.cancel' | translate }}</span>
+    </ion-col>
+
+    <ion-col size="6" style="text-align: center;" (click)="confirm()">
+      <span class="confirm">{{ 'common.confirm' | translate }}</span>
+    </ion-col>
+  </ion-row>
+</ion-grid>
