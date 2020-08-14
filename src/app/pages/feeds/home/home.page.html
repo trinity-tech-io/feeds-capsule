@@ -27,7 +27,7 @@
     </ion-refresher-content>
   </ion-refresher>
 
-    <div *ngFor="let post of postList let i=index" [class.darkContainer]="theme.darkMode">
+    <div *ngFor="let post of postList let i=index" [class.darkContainer]="theme.darkMode" class="scroll-container" id="my-scroll-container">
 
       <div class="image-text-layout-div" >
         <ion-card-content class="ion-no-padding ion-no-margin">
@@ -61,7 +61,9 @@
             </div>
             
             <ion-avatar  *ngIf="getContentImg(post.content) != ''" class="content-img-without-margin" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)">
-              <img src="{{getContentImg(post.content)}}" style="margin-top: 2px;"> 
+              <!-- <img src="{{getContentImg(post.content)}}" style="margin-top: 2px;">  -->
+              <img [scrollTarget]="scrollableDiv" [lazyLoad]="getContentImg(post.content)" style="margin-top: 2px;"/>
+              
             </ion-avatar>
     
             <div class="channel-post-heart-comment-div">

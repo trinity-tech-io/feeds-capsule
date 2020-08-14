@@ -1,4 +1,4 @@
-import { Component, OnInit, NgZone, ViewChild} from '@angular/core';
+import { Component, OnInit, NgZone, ViewChild,ChangeDetectionStrategy, ElementRef } from '@angular/core';
 import { Events,IonTabs} from '@ionic/angular';
 import { FeedService } from 'src/app/services/FeedService';
 import { MenuService } from 'src/app/services/MenuService';
@@ -17,6 +17,7 @@ import { IonInfiniteScroll } from '@ionic/angular';
 
 export class HomePage implements OnInit {
   @ViewChild(IonInfiniteScroll,{static:true}) infiniteScroll: IonInfiniteScroll;
+  myScrollContainer!: HTMLElement;
   private connectionStatus = 1;
   private postList: any = [];
   public nodeStatus:any={};
@@ -25,6 +26,7 @@ export class HomePage implements OnInit {
   public totalData = [];
   public isBottom:boolean = false;
   constructor(
+    private elmRef: ElementRef,
     private feedspage: FeedsPage,
     private tabs: IonTabs,
     private events: Events,
@@ -114,6 +116,7 @@ export class HomePage implements OnInit {
   }
 
   ngOnInit() {
+    this.myScrollContainer = this.elmRef.nativeElement.querySelector('#my-scroll-container');
     //this.connectionStatus = this.feedService.getConnectionStatus();
     //this.postList = this.feedService.getPostList();
     //this.initnodeStatus();

@@ -52,6 +52,8 @@ import { MenuService } from './services/MenuService';
 import { IonicStorageModule } from '@ionic/storage';
 import { PaypromptComponent } from './components/payprompt/payprompt.component';
 
+import { LazyLoadImageModule } from 'ng-lazyload-image';
+
 export class WebpackTranslateLoader implements TranslateLoader {
   public getTranslation(lang: string): Observable<any> {
     return Observable.create(observer => {
@@ -84,6 +86,7 @@ export function TranslateLoaderFactory() {
     MyApp
   ],
   imports: [
+    LazyLoadImageModule,
     NgxIonicImageViewerModule,
     QRCodeModule,
     CommonModule,
