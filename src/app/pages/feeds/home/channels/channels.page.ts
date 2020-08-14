@@ -18,6 +18,7 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
   styleUrls: ['./channels.page.scss'],
 })
 export class ChannelsPage implements OnInit {
+  private isShowPrompt: boolean = false;
   private popover:any;
   public nodeStatus = {};
   private connectionStatus = 1;
@@ -270,7 +271,7 @@ export class ChannelsPage implements OnInit {
   }
   
   async showPayPrompt(elaAddress:string) {
-
+    this.isShowPrompt = true;
     this.popover = await this.popoverController.create({
       mode: 'ios',
       cssClass: 'genericPopup',
@@ -280,6 +281,7 @@ export class ChannelsPage implements OnInit {
       }
     });
     this.popover.onWillDismiss().then(() => {
+      this.isShowPrompt = false;
       this.popover = null;
     });
     return await this.popover.present();

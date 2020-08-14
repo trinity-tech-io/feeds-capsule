@@ -2,7 +2,7 @@
   <div class="offline-header"></div>
 </ion-header>
 
-<ion-content [class.darkContainer]="theme.darkMode">
+<ion-content [class.darkContainer]="theme.darkMode" [ngClass]="{'translucent-mask': isShowPrompt}">
     <div class="channel-img-div">
       <ion-avatar class="channel-img" style="width:80px ; height: 80px;position: relative;">
         <div class="feed-source-card-status" style="position: absolute;top:0px;left:8px">
