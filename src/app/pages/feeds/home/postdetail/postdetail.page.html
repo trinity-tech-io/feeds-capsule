@@ -2,7 +2,7 @@
   <div class="offline-header"></div>
 </ion-header>
 <ion-content [class.darkContainer]="theme.darkMode">
-  <div [ngClass]="{'mask-div': bigImage}">
+  <!-- <div [ngClass]="{'mask-div': bigImage}"> -->
     <div class="image-text-layout-div" >
       <ion-card-content class="ion-no-padding ion-no-margin">
           <div class="menu-div"  (click)="menuMore()">
@@ -34,9 +34,15 @@
         <div class="channel-post-div" (click)="showBigImage(postContent)"> 
           <ion-label class="channel-post white">{{getContentText(postContent)}}</ion-label>
         </div>
-        <ion-avatar  *ngIf="getContentImg(postContent) != ''" class="content-img-without-margin" (click)="showBigImage(postContent)">
-          <img src="{{getContentImg(postContent)}}">
+        <ion-avatar  *ngIf="getContentImg(postContent) != ''" class="content-img-without-margin">
+          <ion-img-viewer
+          title="{{'common.pictureviewer'|translate}}" 
+          [src]="getContentImg(postContent)"
+          scheme="light"
+          [slideOptions]="{ zoom: { maxRatio: 7}}"
+        ></ion-img-viewer>
         </ion-avatar>
+
         <div class="channel-post-heart-comment-div">
           <img class="like" [ngClass]="{'like-s': checkMyLike()}" (click)="like()">
           <ion-label class="like-text" [ngClass]="{'like-s-text': checkMyLike()}" (click)="like()">{{likesNum}}</ion-label>
@@ -85,11 +91,11 @@
         <div class="line-div white-line"></div>
       </div>
     </div>
-  </div>
+  <!-- </div> -->
 
-  <div *ngIf="bigImage" class="trans-big-img-div" (click)="hideBigImage()" >
+  <!-- <div *ngIf="bigImage" class="trans-big-img-div" (click)="hideBigImage()" >
     <div class="trans-big-img" >
       <img src="{{bigImageUrl}}" class="image"/>
     </div>
-  </div>
+  </div> -->
 </ion-content>

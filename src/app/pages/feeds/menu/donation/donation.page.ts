@@ -4,6 +4,7 @@ import { Events } from '@ionic/angular';
 import { NativeService } from 'src/app/services/NativeService';
 import { TranslateService } from "@ngx-translate/core";
 import { FeedService } from 'src/app/services/FeedService';
+import { ThemeService } from 'src/app/services/theme.service';
 import { PaypromptComponent } from 'src/app/components/payprompt/payprompt.component'
 
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
@@ -20,6 +21,7 @@ export class DonationPage implements OnInit {
   private elaAddress = "EYWDcCyp6czaqAKGiq4b7exhWJfVpbG2D9";
   private popover:any;
   constructor(
+    public theme:ThemeService,
     private popoverController:PopoverController,
     private zone: NgZone,
     private native: NativeService,
@@ -90,5 +92,13 @@ export class DonationPage implements OnInit {
       this.popover = null;
     });
     return await this.popover.present();
+  }
+
+  clickAddress(){
+    this.native.copyClipboard(this.elaAddress).then(()=>{
+        this.native.toast_trans("common.copysucceeded");
+    }).catch(()=>{
+
+    });
   }
 }

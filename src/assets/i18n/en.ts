@@ -37,6 +37,9 @@ export const en = {
         "loadingText":"Loading more data…",
         "des3":"There's no more!",
         "noElaAddress":"The owner of the server did not set the Ela address",
+        "copysucceeded":"Copy succeeded",
+        "des4":"your donation will be sent to the ELA address:",
+        "pictureviewer":"picture viewer"
     },
     "app":{
         "profileDetails":"Profile Details",

@@ -24,7 +24,7 @@ import { ContactPage } from './pages/contact/contact';
 import { HomePage } from './pages/home/home';
 import { TabsPage } from './pages/tabs/tabs';
 */
-
+import { NgxIonicImageViewerModule } from 'ngx-ionic-image-viewer';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { CarrierService } from './services/CarrierService';
@@ -84,6 +84,7 @@ export function TranslateLoaderFactory() {
     MyApp
   ],
   imports: [
+    NgxIonicImageViewerModule,
     QRCodeModule,
     CommonModule,
     BrowserModule,

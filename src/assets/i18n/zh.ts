@@ -37,6 +37,9 @@ export const zh = {
         "loadingText":"加载更多数据...",
         "des3":"没有更多内容啦!",
         "noElaAddress":"服务器的所有者未设置Ela地址",
+        "copysucceeded":"复制成功",
+        "des4":"您的捐款将寄至ELA地址：",
+        "pictureviewer":"图片查看器"
     },
     "app":{
         "profileDetails":"档案详情",
