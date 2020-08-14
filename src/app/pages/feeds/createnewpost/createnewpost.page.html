@@ -2,7 +2,7 @@
   <div class="offline-header"></div>
 </ion-header>
 <ion-content [class.darkContainer]="theme.darkMode">
-<div [ngClass]="{'mask-div': bigImage}">
+<!-- <div [ngClass]="{'mask-div': bigImage}"> -->
      <div class="channel-img-small-div">
       <div class="channel-img-small">
         <ion-avatar>
@@ -42,14 +42,14 @@
     <ion-button expand="block" mode="ios" color="primary" (click)="addImg()" style="width: 120px;float: left;">{{'CreatenewpostPage.addimg'|translate}}</ion-button>
     <ion-button expand="block" mode="ios" color="primary"  (click)="post()" style="width: 120px;float:right;">{{'CreatenewpostPage.post'|translate}}</ion-button>
   </div>
-</div> 
+<!-- </div>  -->
 
 
-    <div *ngIf="bigImage" (click)="hideBigImage()" style="width: 90%;height:100%;position:fixed;left:5%;top:0px;z-index:99999">
+    <!-- <div *ngIf="bigImage" (click)="hideBigImage()" style="width: 90%;height:100%;position:fixed;left:5%;top:0px;z-index:99999">
       <div class="trans-big-img" >
         <img src="{{bigImageUrl}}" class="image"/>
       </div>
-    </div>
+    </div> -->
 
 
 

@@ -90,7 +90,6 @@ export class CreatenewpostPage implements OnInit {
   }
 
   ionViewWillLeave(){
-    this.hideBigImage();
     this.events.unsubscribe("feeds:connectionChanged");
     this.events.unsubscribe("feeds:friendConnectionChanged");
     this.events.unsubscribe("feeds:updateTitle");
@@ -156,12 +155,7 @@ export class CreatenewpostPage implements OnInit {
   
 
   showBigImage(content: any){
-    this.bigImage = true;
-    this.bigImageUrl = content;  
-  }
-
-  hideBigImage(){
-    this.bigImage = false;
+    this.native.openViewer(content);
   }
 
   checkServerStatus(nodeId: string){

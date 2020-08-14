@@ -4,6 +4,8 @@ import { Clipboard } from '@ionic-native/clipboard/ngx';
 import { Router } from '@angular/router';
 import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 import { TranslateService} from '@ngx-translate/core';
+import { ModalController } from '@ionic/angular';
+import { ViewerModalComponent } from 'ngx-ionic-image-viewer';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 @Injectable()
@@ -11,6 +13,7 @@ export class NativeService {
     private loadingIsOpen = false;
 
     constructor(
+        public modalController: ModalController,
         private toastCtrl: ToastController,
         private clipboard: Clipboard,
         private inappBrowser: InAppBrowser,
@@ -179,4 +182,26 @@ export class NativeService {
             online();
         }, false);
     }
+
+    async openViewer(imgPath:string) {
+        this.setTitleBarBackKeyShown(false);
+        const modal = await this.modalController.create({
+          component: ViewerModalComponent,
+          componentProps: {
+            src: imgPath,
+            title: this.translate.instant("common.pictureviewer"), // optional
+            scheme:"light"
+          },
+          cssClass: 'ion-img-viewer',
+          keyboardClose:true,
+          showBackdrop:true,
+          
+        });
+
+        modal.onWillDismiss().then(()=>{
+            this.setTitleBarBackKeyShown(true);
+        })
+    
+        return await modal.present();
+      }
 }

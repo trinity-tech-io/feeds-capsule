@@ -253,11 +253,7 @@ export class PostdetailPage implements OnInit {
   }
 
   showBigImage(content: any){
-    let contentObj = JSON.parse(content);
-    if(contentObj.img!=""){
-    this.bigImage = true;
-    this.bigImageUrl =  this.getContentImg(content);
-    }
+    this.native.openViewer(this.getContentImg(this.postContent));
   }
 
   hideBigImage(){
