@@ -1817,21 +1817,21 @@ export class FeedService {
     let created_at: number = params.created_at;
 
     let content = this.serializeDataService.decodeData(contentBin);
+    let contentText = this.parsePostContentText(content);
+    let contentImage = this.parsePostContentImg(content);
 
-    // if (postMap == null || postMap == undefined)
-    //   postMap = {};
-
-    // let content
     let postId = this.getPostId(nodeId, channel_id, id);
     this.postMap[postId] = {
       nodeId     : nodeId,
       channel_id : channel_id,
       id         : id,
-      content    : content,
+      content    : contentText,
       comments   : 0,
       likes      : 0,
       created_at : created_at*1000
     }
+
+    this.storeService.savePostContentImg(postId, contentImage);
 
     let nodeChannelId = nodeId+channel_id;
     lastPostUpdateMap[nodeChannelId] = {
@@ -2072,22 +2072,24 @@ export class FeedService {
   }
 
   handlePublishPostResult(nodeId: string, result: any, request: any, error: any){
+    if (error != null && error != undefined && error.code != undefined){
+      this.handleError(error);
+      return;
+    }
+    
     let postId = result.id;
     let channelId = request.channel_id;
     let contentBin = request.content;
 
     let content = this.serializeDataService.decodeData(contentBin);
-
-    if (error != null && error != undefined && error.code != undefined){
-      this.handleError(error);
-      return;
-    }
+    let contentText = this.parsePostContentText(content);
+    let contentImage = this.parsePostContentImg(content);
 
     let post:Post = {
       nodeId    : nodeId,
       channel_id: channelId,
       id: postId,
-      content: content,
+      content: contentText,
       comments: 0,
       likes: 0,
       created_at: this.getCurrentTimeNum()
@@ -2095,6 +2097,7 @@ export class FeedService {
 
     let mPostId = this.getPostId(nodeId, channelId, postId);
    
+    this.storeService.savePostContentImg(mPostId, contentImage);
 
     this.postMap[mPostId]=post;
 
@@ -2491,17 +2494,21 @@ export class FeedService {
       let created_at = result[index].created_at;
 
       let content = this.serializeDataService.decodeData(contentBin);
+      let contentText = this.parsePostContentText(content);
+      let contentImage = this.parsePostContentImg(content);
 
       let mPostId = this.getPostId(nodeId, channel_id, id);
       this.postMap[mPostId] = {
         nodeId     : nodeId,
         channel_id : channel_id,
         id         : id,
-        content    : content,
+        content    : contentText,
         comments   : comments,
         likes      : likes,
         created_at : created_at*1000
       }
+
+      this.storeService.savePostContentImg(mPostId,contentImage);
 
       let nodeChannelId = nodeId+channel_id
       lastPostUpdateMap[nodeChannelId] = {
@@ -3821,6 +3828,10 @@ export class FeedService {
       });
   }
 
+  loadPostContentImg(nodeChannelPostId: string):Promise<any>{
+    return this.storeService.loadPostContentImg(nodeChannelPostId);
+  }
+
   pay(receiver: string, amount: number, memo: string, onSuccess: (res:any)=>void, onError: (err: any)=>void){
     let param = {
       receiver: receiver, 
@@ -3837,6 +3848,8 @@ export class FeedService {
       }
     );
   }
+
+  
 }
 
 

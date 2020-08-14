@@ -16,6 +16,7 @@ import { FeedsPage } from 'src/app/pages/feeds/feeds.page'
   styleUrls: ['./likes.component.scss'],
 })
 export class LikesComponent implements OnInit {
+  private images = {};
   @Input() likeList:any =[];
   @Input() nodeStatus:any = {};
   constructor(
@@ -127,6 +128,25 @@ export class LikesComponent implements OnInit {
   menuMore(nodeId: string , channelId: number){
     let channelName = this.getChannel(nodeId, channelId).name;
     this.menuService.showChannelMenu(nodeId, channelId, channelName);
+  }
+
+  getImage(nodeId: string, channelId: number, postId: number){
+    
+    let nodeChannelPostId = nodeId + channelId + postId;
+    console.log("getImage=>"+nodeChannelPostId);
+    let img = this.images[nodeChannelPostId] || "";
+    if (img == ""){
+      // this.images[nodeChannelPostId] = "./assets/images/image-default.svg";
+      this.images[nodeChannelPostId] = "undefine";
+      this.feedService.loadPostContentImg(nodeChannelPostId).then((image)=>{
+        console.log("success===>"+image);
+        this.images[nodeChannelPostId] = image||"none";
+        console.log("this.images[nodeChannelPostId]===>"+this.images[nodeChannelPostId]);
+      }).catch(()=>{
+        console.log("error");
+      })
+    }
+    return this.images[nodeChannelPostId];
   }
 
 }

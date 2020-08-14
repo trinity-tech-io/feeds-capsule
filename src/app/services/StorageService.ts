@@ -22,7 +22,13 @@ export class StorageService {
         return this.storage.remove(key);
     }
 
+    savePostContentImg(nodeChannelPostId:string, content: any): Promise<any>{
+        return this.storage.set("postContentImg"+nodeChannelPostId, content);
+    }
 
+    loadPostContentImg(nodeChannelPostId:string): Promise<any>{
+        return this.storage.get("postContentImg"+nodeChannelPostId);
+    }
     setInfo(){
     }
 }

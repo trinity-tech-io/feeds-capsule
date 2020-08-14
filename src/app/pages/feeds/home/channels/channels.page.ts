@@ -18,6 +18,7 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
   styleUrls: ['./channels.page.scss'],
 })
 export class ChannelsPage implements OnInit {
+  private images = {};
   private isShowPrompt: boolean = false;
   private popover:any;
   public nodeStatus = {};
@@ -285,5 +286,23 @@ export class ChannelsPage implements OnInit {
       this.popover = null;
     });
     return await this.popover.present();
+  }
+
+  getImage(nodeId: string, channelId: number, postId: number){
+    let nodeChannelPostId = nodeId + channelId + postId;
+    console.log("getImage=>"+nodeChannelPostId);
+    let img = this.images[nodeChannelPostId] || "";
+    if (img == ""){
+      // this.images[nodeChannelPostId] = "./assets/images/image-default.svg";
+      this.images[nodeChannelPostId] = "undefine";
+      this.feedService.loadPostContentImg(nodeChannelPostId).then((image)=>{
+        console.log("success===>"+image);
+        this.images[nodeChannelPostId] = image||"none";
+        console.log("this.images[nodeChannelPostId]===>"+this.images[nodeChannelPostId]);
+      }).catch(()=>{
+        console.log("error");
+      })
+    }
+    return this.images[nodeChannelPostId];
   }
 }

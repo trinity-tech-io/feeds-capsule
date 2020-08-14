@@ -15,6 +15,7 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
   styleUrls: ['./postdetail.page.scss'],
 })
 export class PostdetailPage implements OnInit {
+  private images = {};
   private connectionStatus = 1;
   public nodeStatus:any ={};
   private bigImageUrl: string;
@@ -253,7 +254,7 @@ export class PostdetailPage implements OnInit {
   }
 
   showBigImage(content: any){
-    this.native.openViewer(this.getContentImg(this.postContent));
+    this.native.openViewer(this.getImage());
   }
 
   hideBigImage(){
@@ -271,5 +272,23 @@ export class PostdetailPage implements OnInit {
   initnodeStatus(){
      let status = this.checkServerStatus(this.nodeId);
      this.nodeStatus[this.nodeId] = status;
+  }
+
+  getImage(){
+    let nodeChannelPostId = this.nodeId+this.channelId+this.postId;
+    console.log("getImage=>"+nodeChannelPostId);
+    let img = this.images[nodeChannelPostId] || "";
+    if (img == ""){
+      // this.images[nodeChannelPostId] = "./assets/images/image-default.svg";
+      this.images[nodeChannelPostId] = "undefine";
+      this.feedService.loadPostContentImg(nodeChannelPostId).then((image)=>{
+        console.log("success===>"+image);
+        this.images[nodeChannelPostId] = image||"none";
+        console.log("this.images[nodeChannelPostId]===>"+this.images[nodeChannelPostId]);
+      }).catch(()=>{
+        console.log("error");
+      })
+    }
+    return this.images[nodeChannelPostId];
   }
 }

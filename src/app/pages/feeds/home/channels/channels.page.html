@@ -117,8 +117,8 @@
               <ion-label class="channel-post white"> <pre>{{getContentText(post.content)}}</pre></ion-label>
             </div>
             
-            <ion-avatar  *ngIf="getContentImg(post.content) != ''" class="content-img-without-margin" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)">
-                  <img src="{{getContentImg(post.content)}}">
+            <ion-avatar  *ngIf="getImage(post.nodeId, post.channel_id, post.id) != 'none'" class="content-img-without-margin" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)">
+                  <img src="{{getImage(post.nodeId, post.channel_id, post.id)}}">
             </ion-avatar>
     
             <div class="channel-post-heart-comment-div">

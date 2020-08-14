@@ -34,9 +34,9 @@
         <div class="channel-post-div" (click)="showBigImage(postContent)" style="margin-bottom:5px"> 
           <ion-label class="channel-post white"><pre>{{getContentText(postContent)}}</pre></ion-label>
         </div>
-        <ion-avatar  *ngIf="getContentImg(postContent) != ''" class="content-img-without-margin" (click)="showBigImage()">
+        <ion-avatar  *ngIf="getImage() != 'none'" class="content-img-without-margin" (click)="showBigImage()">
           <img 
-          [src]="getContentImg(postContent)"
+          [src]="getImage()"
         />
         </ion-avatar>
 

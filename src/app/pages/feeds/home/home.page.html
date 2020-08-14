@@ -60,12 +60,12 @@
               <ion-label class="channel-post white"><pre>{{getContentText(post.content)}}</pre></ion-label>
             </div>
             
-            <ion-avatar  *ngIf="getContentImg(post.content) != ''" class="content-img-without-margin" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)">
-              <!-- <img src="{{getContentImg(post.content)}}" style="margin-top: 2px;">  -->
-              <img [scrollTarget]="scrollableDiv" [lazyLoad]="getContentImg(post.content)" style="margin-top: 2px;"/>
-              
+            <ion-avatar  *ngIf="getImage(post.nodeId, post.channel_id, post.id) != 'none'" class="content-img-without-margin" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)">
+              <img src="{{getImage(post.nodeId, post.channel_id, post.id)}}" style="margin-top: 2px;"> 
+              <!-- <img [scrollTarget]="scrollableDiv" [lazyLoad]="getImage(post.nodeId, post.channel_id, post.id) | async" style="margin-top: 2px;"/> -->
             </ion-avatar>
     
+            
             <div class="channel-post-heart-comment-div">
               <img class="like" [ngClass]="{'like-s': checkMyLike(post.nodeId, post.channel_id, post.id)}" (click)="like(post.nodeId, post.channel_id, post.id)">
               <ion-label class="like-text" [ngClass]="{'like-s-text': checkMyLike(post.nodeId, post.channel_id, post.id)}" (click)="like(post.nodeId, post.channel_id, post.id)">{{post.likes}}</ion-label>

@@ -22,9 +22,10 @@ export class HomePage implements OnInit {
   private postList: any = [];
   public nodeStatus:any={};
   public startIndex = 0;
-  public pageNumber = 10;
+  public pageNumber = 8;
   public totalData = [];
   public isBottom:boolean = false;
+  private images = {};
   constructor(
     private elmRef: ElementRef,
     private feedspage: FeedsPage,
@@ -98,6 +99,9 @@ export class HomePage implements OnInit {
     return this.feedService.getChannelFromId(nodeId,channelId);
   }
 
+  getContent(nodeChannelPostId: string){
+
+  }
   getContentText(content: string): string{
     return this.feedService.parsePostContentText(content);
   }
@@ -120,6 +124,12 @@ export class HomePage implements OnInit {
     //this.connectionStatus = this.feedService.getConnectionStatus();
     //this.postList = this.feedService.getPostList();
     //this.initnodeStatus();
+    
+  }
+
+  ngOnDestroy(): void {
+    //Called once, before the instance is destroyed.
+    //Add 'implements OnDestroy' to the class.
   }
 
   like(nodeId, channelId, postId){
@@ -249,6 +259,7 @@ export class HomePage implements OnInit {
 
   doRefresh(event){
     let sId =  setTimeout(() => {
+      this.images = {};
       this.isBottom = false;
       this.infiniteScroll.disabled =false;
       this.startIndex = 0;
@@ -259,5 +270,28 @@ export class HomePage implements OnInit {
       this.initnodeStatus(this.postList);
       event.target.complete();
     },500);
+  }
+
+  getImage(nodeId: string, channelId: number, postId: number){
+    
+    let nodeChannelPostId = nodeId + channelId + postId;
+    console.log("getImage=>"+nodeChannelPostId);
+    let img = this.images[nodeChannelPostId] || "";
+    if (img == ""){
+      // this.images[nodeChannelPostId] = "./assets/images/image-default.svg";
+      this.images[nodeChannelPostId] = "undefine";
+      this.feedService.loadPostContentImg(nodeChannelPostId).then((image)=>{
+        console.log("success===>"+image);
+        this.images[nodeChannelPostId] = image||"none";
+        console.log("this.images[nodeChannelPostId]===>"+this.images[nodeChannelPostId]);
+      }).catch(()=>{
+        console.log("error");
+      })
+    }
+    return this.images[nodeChannelPostId];
+  }
+
+  getTestImg(){
+
   }
 }
