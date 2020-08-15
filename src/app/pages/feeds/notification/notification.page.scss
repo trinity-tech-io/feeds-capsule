@@ -30,6 +30,8 @@
 }
 
 .notification-behavior{
+    display:inline-block;
+    margin-top: 3px;
     font-family: MontserratMedium;
     font-size: 14px;
     font-weight: normal;
@@ -42,6 +44,7 @@
 }
 
 .notification-content{
+    margin-top: 0px;
     font-family: MontserratMedium;
     font-size: 13px;
     font-weight: normal;
@@ -62,4 +65,25 @@
     text-overflow: ellipsis;
     // display:inline-block;
 }
+
+
+.avatar-div{
+    position: absolute;
+    left:0px;
+    top:10px;
+    width: 56px; height: 56px;
+  
+}
+
+.channel-title-small{
+    max-width: 150px;
+    height: 20px;
+    font-family: Montserrat;
+    font-size: 17px;
+    font-weight: bold;
+    font-stretch: normal;
+    font-style: normal;
+    text-align: left;
+    color: #161740;
+  }
 

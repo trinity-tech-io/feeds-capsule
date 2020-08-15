@@ -219,6 +219,7 @@ export class HomePage implements OnInit {
 
       let post = arr[index];
       this.getImage(post.nodeId, post.channel_id, post.id);
+      this.feedService.readChannel(post.nodeId+post.channel_id);
     }
   }
 

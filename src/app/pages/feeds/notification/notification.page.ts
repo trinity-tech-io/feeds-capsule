@@ -148,4 +148,11 @@ export class NotificationPage {
   moreName(name:string){
      return UtilService.moreNanme(name);
   }
+
+  delete(notification:any){
+    this.feedService.deleteNotification(notification);
+    //let index = this.notificationList.indexOf(notification);
+    //this.notificationList.splice(index,1);
+    
+  }
 }

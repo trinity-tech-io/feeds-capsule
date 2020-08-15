@@ -39,7 +39,8 @@ export const en = {
         "noElaAddress":"The owner of the server did not set an ELA address",
         "copysucceeded":"Copy succeeded",
         "des4":"your donation will be sent to the ELA address:",
-        "pictureviewer":"picture viewer"
+        "pictureviewer":"picture viewer",
+        "delete":"Delete",
     },
     "app":{
         "profileDetails":"Profile Details",

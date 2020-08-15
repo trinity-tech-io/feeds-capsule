@@ -9,13 +9,37 @@
                 <div class="all-empty-content-text" style="margin-top: 16px;">{{'NotificationPage.emptyDes'|translate}}</div>
             </div>
         </div>
+        <!-- <ion-list> -->
+           <ion-item-sliding *ngFor="let notification of notificationList let i=index" (click)="navTo(notification)">
+            <ion-item lines="none">
+                    <!-- <img  src="assets/images/component-480-33@3x.png"> -->
+                    <img *ngIf="avatar == ''" class="profile-img avatar-div" src="./assets/images/default-contact.svg">
+                    <img *ngIf="avatar != ''" class="profile-img avatar-div" [src]="avatar">
+                <ion-label class="ion-text-wrap" style="margin-left: 66px;">
+                    <ion-label class="channel-title-small white">{{moreName(notification.userName)}} <span class="channel-ts">{{handleDisplayTime(notification.time)}}</span></ion-label>
+                    <ion-label class="notification-behavior">{{notification.behaviorText}}</ion-label>
+                    <pre class="notification-content notification-div  white">{{getNotificationContent(notification)}}</pre>
+                </ion-label>
 
-        <div *ngFor="let notification of notificationList let i=index">
+                <ion-thumbnail slot="end" *ngIf="notification['readStatus']===1">
+                    <div class="online-circle"></div>
+                </ion-thumbnail>
+            </ion-item>
+            
+            <div class="line-div white-line" *ngIf="i!=notificationList.length-1"></div>
+            <ion-item-options side="end">
+              <ion-item-option color="danger" (click)="delete(notification)">  <ion-icon slot="icon-only" name="trash"></ion-icon> {{'common.delete' | translate}}</ion-item-option>
+            </ion-item-options>
+          </ion-item-sliding>
+
+         
+        <!-- </ion-list> -->
+
+        <!-- <div *ngFor="let notification of notificationList let i=index">
             <div class="image-text-layout-div"  (click)="navTo(notification)">
                 <ion-card-content class="ion-no-padding ion-no-margin">
                     <div class="image-text-div" >
                        <ion-avatar class="avatar-div">
-                        <!-- <img  src="assets/images/component-480-33@3x.png"> -->
                         <img *ngIf="avatar == ''" class="profile-img" src="./assets/images/default-contact.svg">
                         <img *ngIf="avatar != ''" class="profile-img" [src]="avatar">
                         </ion-avatar> 
@@ -39,7 +63,7 @@
                 </ion-card-content>
             </div>
             <div class="line-div white-line" *ngIf="i!=notificationList.length-1"></div>
-        </div>
+        </div> -->
 
     </div>
 </ion-content>

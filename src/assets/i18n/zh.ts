@@ -39,7 +39,8 @@ export const zh = {
         "noElaAddress":"服务器的所有者未设置ELA地址",
         "copysucceeded":"复制成功",
         "des4":"您的捐款将寄至ELA地址：",
-        "pictureviewer":"图片查看器"
+        "pictureviewer":"图片查看器",
+        "delete":"删除",
     },
     "app":{
         "profileDetails":"档案详情",
