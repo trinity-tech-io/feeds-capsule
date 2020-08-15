@@ -115,6 +115,12 @@ export class AppService {
       initializeApp() {
         this.feedService.initSignInDataAsync((signInData)=>{
           this.feedService.loadPostData().then(()=>{
+            let isNeedResave = localStorage.getItem('org.elastos.dapp.feeds.resavepost') || "";
+            if(isNeedResave === ""){
+              localStorage.setItem('org.elastos.dapp.feeds.resavepost',"11");
+              this.feedService.reSavePostMap();
+            }
+
             if (signInData == null || 
               signInData == undefined ||
               this.feedService.getCurrentTimeNum() > signInData.expiresTS ){

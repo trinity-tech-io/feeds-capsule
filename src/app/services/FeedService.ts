@@ -360,7 +360,7 @@ export class FeedIntro{
 
 @Injectable()
 export class FeedService {
-  public postMap:any;
+  public postMap: any;
   public testMode = true;
   private nonce = "";
   private realm = "";
@@ -3109,6 +3109,8 @@ export class FeedService {
     let request =  JSON.parse(requestStr);
 
     console.log("publish did =>"+requestStr);
+    console.log("publish did request=>"+request);
+    console.log("publish did request.payload=>"+request.payload);
     appManager.sendIntent("didtransaction", request, {}, onSuccess, onError);
   }
 
@@ -3849,7 +3851,24 @@ export class FeedService {
     );
   }
 
-  
+  reSavePostMap(){
+    let keys: string[] = Object.keys(this.postMap) || [];
+    for (let index = 0; index < keys.length; index++) {
+      let key = keys[index];
+      console.log("key ==>"+key);
+      console.log("key ==>"+key);
+      let content = this.postMap[key].content;
+      console.log("content ==>"+content);
+      let img = this.parsePostContentImg(content);
+      if (img != ""){
+        this.storeService.savePostContentImg(key, img);
+      }
+
+      this.postMap[key].content = this.parsePostContentText(content);
+    }
+
+    this.storeService.set(PersistenceKey.postMap, this.postMap);
+  }
 }
 
 
