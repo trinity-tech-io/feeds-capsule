@@ -266,6 +266,9 @@ export const zh = {
         "serverName":"微频源名称",
         "serverDes":"微频源描述",
         "elaaddress":"ELA钱包地址",
+        "inputName":"请输入微频源名称",
+        "inputServerDes":"请输入微频源描述",
+        "inputElaAddress":"请输入ELA钱包地址",
     },
     "FinishPage": {
         "introduce": "微频源绑定成功。恭喜您有了属于自己的微频源服务，现在您可以开始创建微频。",

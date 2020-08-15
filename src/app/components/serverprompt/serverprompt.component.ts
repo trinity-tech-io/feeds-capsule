@@ -49,14 +49,20 @@ export class ServerpromptComponent implements OnInit {
   confirm(){
 
     if (this.serverName == ""){
-      this.native.toast_trans('IssuecredentialPage.serverName');
+      this.native.toast_trans('IssuecredentialPage.inputName');
       return;
     }
       
     if (this.serverDes == ""){
-      this.native.toast_trans('IssuecredentialPage.serverDes');
+      this.native.toast_trans('IssuecredentialPage.inputServerDes');
       return;
     }
+
+    if (this.elaAddress == ""){
+      this.native.toast_trans('IssuecredentialPage.inputElaAddress');
+      return;
+    }
+
     this.popover.dismiss();
     this.feedService.issueCredential(this.nodeId,this.did, this.serverName, this.serverDes,this.elaAddress);
   }

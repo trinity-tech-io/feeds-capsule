@@ -266,6 +266,9 @@ export const fr = {
         "serverName": "Feeds Source Name",
         "serverDes": "Feeds Source Description",
         "elaaddress":"ELA Address",
+        "inputName":"Please input Feeds Source Name",
+        "inputServerDes":"Please input Feeds Source Description",
+        "inputElaAddress":"Please input ELA Address",
     },
     "FinishPage": {
         "introduce": "Binding feeds source process completed. Congradulations, you have your own feeds source now and can new a feed on this feeds source with your desire.",
