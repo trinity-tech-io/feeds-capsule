@@ -378,6 +378,7 @@ export class FeedService {
   private lastConnectionStatus = ConnState.connected ;
   private isLogging: {[nodeId: string]: boolean} = {}; 
   private autoSigninInterval;
+  private isSavingChannel:boolean = false;
   public constructor(
     private serializeDataService: SerializeDataService,
     private jwtMessageService: JWTMessageService,
@@ -523,12 +524,6 @@ export class FeedService {
       unreadMap = mUnreadMap;
       if(unreadMap == null || unreadMap == undefined)
         unreadMap = {};
-    });
-    
-    this.storeService.get(PersistenceKey.channelsMap).then((mChannelsMap)=>{
-      channelsMap = mChannelsMap;
-      if (channelsMap == null || channelsMap == undefined)
-        channelsMap = {};
     });
 
     this.storeService.get(PersistenceKey.likeMap).then((mLikeMap)=>{
@@ -2090,7 +2085,8 @@ export class FeedService {
     if (channelsMap == null || channelsMap == undefined)
       channelsMap = {};
     channelsMap[nodeChannelId] = channel;
-    this.storeService.set(PersistenceKey.channelsMap, channelsMap);
+    // this.storeService.set(PersistenceKey.channelsMap, channelsMap);
+    this.saveChannelMap();
 
     eventBus.publish(PublishType.createTopicSuccess);
     eventBus.publish(PublishType.channelsDataUpdate);
@@ -2376,7 +2372,8 @@ export class FeedService {
         channelsMap[nodeChannelId].last_update = result[index].last_update;
       }
     }
-    this.storeService.set(PersistenceKey.channelsMap, channelsMap);
+    // this.storeService.set(PersistenceKey.channelsMap, channelsMap);
+    this.saveChannelMap();
     this.refreshLocalChannels();
   }
 
@@ -2408,7 +2405,8 @@ export class FeedService {
     channelsMap[nodeChannelId].owner_did = owner_did;
     channelsMap[nodeChannelId].subscribers = subscribers;
 
-    this.storeService.set(PersistenceKey.channelsMap, channelsMap);
+    this.saveChannelMap();
+    // this.storeService.set(PersistenceKey.channelsMap, channelsMap);
   }
 
   handleGetSubscribedChannelsResult(nodeId: string, responseResult: any, request: any, error: any){
@@ -2629,7 +2627,8 @@ export class FeedService {
           return ;
 
       channelsMap[nodeChannelId].isSubscribed = true;
-      this.storeService.set(PersistenceKey.channelsMap,channelsMap);
+      // this.storeService.set(PersistenceKey.channelsMap,channelsMap);
+      this.saveChannelMap();
       eventBus.publish(PublishType.subscribeFinish, nodeId,request.id, channelsMap[nodeChannelId].name);
 
       return;
@@ -2642,7 +2641,9 @@ export class FeedService {
     }
 
     // channelsMap[nodeChannelId].isSubscribed = true;
-    this.storeService.set(PersistenceKey.channelsMap,channelsMap);
+    
+    this.saveChannelMap();
+    // this.storeService.set(PersistenceKey.channelsMap,channelsMap);
     // eventBus.publish(PublishType.subscribeFinish, nodeId,request.id, channelsMap[nodeChannelId].name);
 
     this.refreshSubscribedChannels();
@@ -2657,7 +2658,8 @@ export class FeedService {
     if (error != null && error != undefined && error.code == -4){
 
       channelsMap[nodeChannelId].isSubscribed = false;
-      this.storeService.set(PersistenceKey.channelsMap,channelsMap);
+      // this.storeService.set(PersistenceKey.channelsMap,channelsMap);
+      this.saveChannelMap();
 
       subscribedChannelsMap[nodeChannelId] = undefined;
       this.storeService.set(PersistenceKey.subscribedChannelsMap,subscribedChannelsMap);
@@ -2674,7 +2676,8 @@ export class FeedService {
 
     subscribedChannelsMap[nodeChannelId] = undefined;
 
-    this.storeService.set(PersistenceKey.channelsMap,channelsMap);
+    // this.storeService.set(PersistenceKey.channelsMap,channelsMap);
+    this.saveChannelMap();
     this.storeService.set(PersistenceKey.subscribedChannelsMap,subscribedChannelsMap);
 
     this.refreshLocalSubscribedChannels();
@@ -3906,6 +3909,16 @@ export class FeedService {
       this.postMap[key].content = this.parsePostContentText(content);
     }
     this.storeService.set(PersistenceKey.postMap, this.postMap);
+  }
+
+
+  saveChannelMap(){
+    if (!this.isSavingChannel){
+      this.isSavingChannel = true;
+      this.storeService.set(PersistenceKey.channelsMap, channelsMap).then(()=>{
+        this.isSavingChannel = false;;
+      });
+    }
   }
 }
 
