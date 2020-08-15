@@ -14,7 +14,6 @@ import { IonInfiniteScroll } from '@ionic/angular';
   styleUrls: ['./home.page.scss'],
 })
 
-
 export class HomePage implements OnInit {
   @ViewChild(IonInfiniteScroll,{static:true}) infiniteScroll: IonInfiniteScroll;
   myScrollContainer!: HTMLElement;
@@ -61,7 +60,7 @@ export class HomePage implements OnInit {
       });
     });
 
-    this.events.subscribe('feeds:postDataUpdate',()=>{
+    this.events.subscribe('feeds:publishPostFinish',()=>{
       this.zone.run(() => {
         this.isBottom = false;
         this.infiniteScroll.disabled =false;
@@ -93,6 +92,7 @@ export class HomePage implements OnInit {
     this.events.unsubscribe("feeds:connectionChanged");
     this.events.unsubscribe("feeds:postDataUpdate");
     this.events.unsubscribe("feeds:friendConnectionChanged");
+    this.events.unsubscribe("feeds:publishPostFinish");
   }
 
   getChannel(nodeId, channelId):any{
@@ -102,6 +102,7 @@ export class HomePage implements OnInit {
   getContent(nodeChannelPostId: string){
 
   }
+
   getContentText(content: string): string{
     return this.feedService.parsePostContentText(content);
   }
@@ -121,15 +122,6 @@ export class HomePage implements OnInit {
 
   ngOnInit() {
     this.myScrollContainer = this.elmRef.nativeElement.querySelector('#my-scroll-container');
-    //this.connectionStatus = this.feedService.getConnectionStatus();
-    //this.postList = this.feedService.getPostList();
-    //this.initnodeStatus();
-    
-  }
-
-  ngOnDestroy(): void {
-    //Called once, before the instance is destroyed.
-    //Add 'implements OnDestroy' to the class.
   }
 
   like(nodeId, channelId, postId){
@@ -183,7 +175,6 @@ export class HomePage implements OnInit {
   }
 
   handleDisplayTime(createTime:number){
-
     let obj = UtilService.handleDisplayTime(createTime);
     if(obj.type === 's'){
        return this.translate.instant('common.just');
@@ -221,11 +212,14 @@ export class HomePage implements OnInit {
   }
 
   initnodeStatus(arr){
-     for(let index =0 ;index<arr.length;index++){
-            let nodeId = arr[index]['nodeId'];
-            let status = this.checkServerStatus(nodeId);
-            this.nodeStatus[nodeId] = status;
-     }
+    for(let index =0 ;index<arr.length;index++){
+      let nodeId = arr[index]['nodeId'];
+      let status = this.checkServerStatus(nodeId);
+      this.nodeStatus[nodeId] = status;
+
+      let post = arr[index];
+      this.getImage(post.nodeId, post.channel_id, post.id);
+    }
   }
 
   moreName(name:string){
@@ -273,25 +267,16 @@ export class HomePage implements OnInit {
   }
 
   getImage(nodeId: string, channelId: number, postId: number){
-    
     let nodeChannelPostId = nodeId + channelId + postId;
-    console.log("getImage=>"+nodeChannelPostId);
     let img = this.images[nodeChannelPostId] || "";
     if (img == ""){
-      // this.images[nodeChannelPostId] = "./assets/images/image-default.svg";
       this.images[nodeChannelPostId] = "undefine";
       this.feedService.loadPostContentImg(nodeChannelPostId).then((image)=>{
-        console.log("success===>"+image);
         this.images[nodeChannelPostId] = image||"none";
-        console.log("this.images[nodeChannelPostId]===>"+this.images[nodeChannelPostId]);
       }).catch(()=>{
-        console.log("error");
+        console.log("getImageError");
       })
     }
     return this.images[nodeChannelPostId];
-  }
-
-  getTestImg(){
-
   }
 }

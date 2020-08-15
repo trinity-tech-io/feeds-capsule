@@ -67,7 +67,6 @@ export class PublishdidPage implements OnInit {
 
     this.feedService.publishDid(this.payload, 
       (res)=>{
-        console.log("publishDID ==>"+JSON.stringify(res));
         this.zone.run(() => {
             this.native.navigateForward(['/bindservice/issuecredential',this.nodeId, this.did],{
               replaceUrl: true

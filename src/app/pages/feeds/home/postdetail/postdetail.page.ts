@@ -276,17 +276,13 @@ export class PostdetailPage implements OnInit {
 
   getImage(){
     let nodeChannelPostId = this.nodeId+this.channelId+this.postId;
-    console.log("getImage=>"+nodeChannelPostId);
     let img = this.images[nodeChannelPostId] || "";
     if (img == ""){
-      // this.images[nodeChannelPostId] = "./assets/images/image-default.svg";
       this.images[nodeChannelPostId] = "undefine";
       this.feedService.loadPostContentImg(nodeChannelPostId).then((image)=>{
-        console.log("success===>"+image);
         this.images[nodeChannelPostId] = image||"none";
-        console.log("this.images[nodeChannelPostId]===>"+this.images[nodeChannelPostId]);
       }).catch(()=>{
-        console.log("error");
+        console.log("getImageError");
       })
     }
     return this.images[nodeChannelPostId];

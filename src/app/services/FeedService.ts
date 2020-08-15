@@ -263,7 +263,9 @@ enum PublishType{
   removeFeedSourceFinish = "feeds:removeFeedSourceFinish",
 
   refreshPage = "feeds:refreshPage",
-  UpdateNotification = "feeds:UpdateNotification"
+  UpdateNotification = "feeds:UpdateNotification",
+  publishPostFinish = "feeds:publishPostFinish",
+
 }
 
 enum PersistenceKey{
@@ -436,8 +438,21 @@ export class FeedService {
       }else{
            resolve();
       }
-    })
-  
+    });
+  }
+
+  loadChannelData(){
+    return new Promise((resolve, reject) =>{
+      let channels = channelsMap || "";
+      if( channels == ""){
+        this.storeService.get(PersistenceKey.channelsMap).then((mChannelMap)=>{
+          channelsMap = mChannelMap || {};
+            resolve();
+        });
+      }else{
+           resolve();
+      }
+    });
   }
 
   initData(){
@@ -447,7 +462,7 @@ export class FeedService {
       });
     }
 
-    this.loadPostData();
+    // this.loadPostData();
 
     this.storeService.get(PersistenceKey.lastPostUpdateMap).then((mLastPostUpdateMap)=>{
       lastPostUpdateMap = mLastPostUpdateMap;
@@ -2102,9 +2117,11 @@ export class FeedService {
     this.postMap[mPostId]=post;
 
     this.storeService.set(PersistenceKey.postMap, this.postMap);
+    
     eventBus.publish(PublishType.postEventSuccess);
     eventBus.publish(PublishType.postDataUpdate);
     eventBus.publish(PublishType.publishPostSuccess);
+    eventBus.publish(PublishType.publishPostFinish);
   }
 
   handlePostCommentResult(nodeId:string, result: any, request: any, error: any){
@@ -2717,8 +2734,10 @@ export class FeedService {
       let likeNum = this.postMap[mPostId].likes;
       this.postMap[mPostId].likes = likeNum + 1;
 
+
       eventBus.publish(PublishType.updateLikeList, this.getLikeList());
       eventBus.publish(PublishType.postDataUpdate);
+
     }else {
       let commentKey = this.getLikeCommentId(nodeId, channel_id, post_id, comment_id);
       likeCommentMap[commentKey] = {
@@ -2744,6 +2763,7 @@ export class FeedService {
       if (likeNum > 0)
         this.postMap[mPostId].likes = likeNum - 1;
 
+      
       eventBus.publish(PublishType.updateLikeList, this.getLikeList());
       eventBus.publish(PublishType.postDataUpdate);
     }else {
@@ -3107,10 +3127,6 @@ export class FeedService {
     }
     let requestStr = JSON.stringify(params);
     let request =  JSON.parse(requestStr);
-
-    console.log("publish did =>"+requestStr);
-    console.log("publish did request=>"+request);
-    console.log("publish did request.payload=>"+request.payload);
     appManager.sendIntent("didtransaction", request, {}, onSuccess, onError);
   }
 
@@ -3855,18 +3871,14 @@ export class FeedService {
     let keys: string[] = Object.keys(this.postMap) || [];
     for (let index = 0; index < keys.length; index++) {
       let key = keys[index];
-      console.log("key ==>"+key);
-      console.log("key ==>"+key);
+      if(this.postMap[key] == undefined)
+        continue;
       let content = this.postMap[key].content;
-      console.log("content ==>"+content);
       let img = this.parsePostContentImg(content);
-      if (img != ""){
+      if (img != "")
         this.storeService.savePostContentImg(key, img);
-      }
-
       this.postMap[key].content = this.parsePostContentText(content);
     }
-
     this.storeService.set(PersistenceKey.postMap, this.postMap);
   }
 }

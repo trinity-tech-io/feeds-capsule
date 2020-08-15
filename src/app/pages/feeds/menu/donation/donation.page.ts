@@ -63,16 +63,6 @@ export class DonationPage implements OnInit {
   }
 
   donation(){
-    // alert("donation");
-
-    // this.popup.ionicConfirm(this.translate.instant("common.prompt"),this.translate.instant('common.des1')+"0000000000"+"<br>"
-    // +this.translate.instant('common.channel')+"11111111"+"<br>"+this.translate.instant('common.description')+"22222222",
-    // this.translate.instant("common.ok"),this.translate.instant("common.cancel")).then((data)=>{
-    //   if (data) {
-    //     // this.feedService.createTopic(this.selectedServer.nodeId, name.value, desc.value, this.channelAvatar);
-    //   }
-    // });
-
     this.showPayPrompt(this.elaAddress);
   }
 

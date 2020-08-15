@@ -7,7 +7,7 @@ import { NgZone} from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Events } from '@ionic/angular';
 import { NativeService } from '../services/NativeService';
-import { FeedService } from '../services/FeedService';
+import { FeedService, SignInData } from '../services/FeedService';
 import { CarrierService } from '../services/CarrierService';
 import { MenuController} from '@ionic/angular';
 import { PopupProvider } from '../services/popup';
@@ -113,28 +113,46 @@ export class AppService {
       }
 
       initializeApp() {
+        let isLoadPost = false;
+        let isLoadChannel = false;
+
+        localStorage.setItem('org.elastos.dapp.feeds.resavepost',"");
+        let isNeedResave = localStorage.getItem('org.elastos.dapp.feeds.resavepost') || "";
+        
+
         this.feedService.initSignInDataAsync((signInData)=>{
           this.feedService.loadPostData().then(()=>{
-            let isNeedResave = localStorage.getItem('org.elastos.dapp.feeds.resavepost') || "";
             if(isNeedResave === ""){
               localStorage.setItem('org.elastos.dapp.feeds.resavepost',"11");
               this.feedService.reSavePostMap();
             }
+            isLoadPost = true;
+            if(isLoadPost && isLoadChannel)
+              this.initData(signInData);
+          });
 
-            if (signInData == null || 
-              signInData == undefined ||
-              this.feedService.getCurrentTimeNum() > signInData.expiresTS ){
-              this.native.setRootRouter(['/signin']);
-              return ;
-            }
-          
-            this.carrierService.init();
-            this.native.setRootRouter(['/tabs/home']);
-            this.feedService.updateSignInDataExpTime(signInData);
+          this.feedService.loadChannelData().then(()=>{
+            isLoadChannel = true;
+            if(isLoadPost && isLoadChannel)
+              this.initData(signInData);
           });
         });
+      }
+
 
       
+      initData(signInData: SignInData){
+
+
+        if (signInData == null || 
+          signInData == undefined ||
+          this.feedService.getCurrentTimeNum() > signInData.expiresTS ){
+          this.native.setRootRouter(['/signin']);
+          return ;
+        }
+      
+        this.carrierService.init();
+        this.native.setRootRouter(['/tabs/home']);
+        this.feedService.updateSignInDataExpTime(signInData);
       }
-  
 }
