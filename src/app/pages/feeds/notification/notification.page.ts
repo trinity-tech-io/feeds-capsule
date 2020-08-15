@@ -105,6 +105,12 @@ export class NotificationPage {
     }
   }
 
+  deleteNotification(notification: any){
+    this.feedService.deleteNotification(notification);
+
+    let index = this.notificationList.indexOf(notification);
+    this.notificationList.splice(index,1);
+  }
   navTo(notification: any){
     if(this.feedService.getConnectionStatus() != 0){
       this.native.toastWarn('common.connectionError');
@@ -114,6 +120,8 @@ export class NotificationPage {
     let nodeId = notification.details.nodeId;
     let channelId = notification.details.channelId;
     let postId = notification.details.postId;
+    this.feedService.setNotificationReadStatus(notification, 0);
+    notification.readStatus = 0;
     switch(notification.behavior){
       case 0: 
       case 1:
@@ -137,7 +145,7 @@ export class NotificationPage {
     return this.feedService.parsePostContentText(content);
   }
 
-  moreMenu(name:string){
+  moreName(name:string){
      return UtilService.moreNanme(name);
   }
 }

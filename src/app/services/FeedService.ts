@@ -58,11 +58,13 @@ type BindURLData = {
 }
 
 type Notification = {
+  id: string;
   userName: string;
   behavior: Behavior;
   behaviorText: string;
   details: Details;
   time: number;
+  readStatus: number;
 }
 
 type Details = {
@@ -1195,7 +1197,11 @@ export class FeedService {
     });
   }
 
-  generateNonce() {
+  generateNonce(): string{
+    return this.generateUUID();
+  };
+
+  generateUUID(): string{
     var d = new Date().getTime();
     var uuid = 'xxxxxxxxxxxxxxxx'.replace(/[x]/g, function(c) {
       var r = (d + Math.random()*16)%16 | 0;
@@ -1203,7 +1209,7 @@ export class FeedService {
       return (c=='x'? r : (r&0x3|0x8)).toString(16);
     });
     return uuid;
-  };
+  }
 
   checkSignInServerList(nodeId: string){
     if (signInServerList.indexOf(nodeId) == -1){
@@ -1917,6 +1923,7 @@ export class FeedService {
       return ;
 
     let notification:Notification = {
+      id: this.generateUUID(),
       userName: user_name,
       behavior: Behavior.comment,
       behaviorText: this.translate.instant("NotificationPage.commentPost"),
@@ -1926,7 +1933,8 @@ export class FeedService {
         postId:post_id,
         commentId: id
       },
-      time:this.getCurrentTimeNum()
+      time:this.getCurrentTimeNum(),
+      readStatus:1
     }
 
     notificationList.push(notification);
@@ -1974,6 +1982,7 @@ export class FeedService {
     }
 
     let notification:Notification = {
+      id: this.generateUUID(),
       userName: user_name,
       behavior: behavior,
       behaviorText: behaviorText,
@@ -1983,7 +1992,8 @@ export class FeedService {
         postId:post_id,
         commentId: comment_id
       },
-      time:this.getCurrentTimeNum()
+      time:this.getCurrentTimeNum(),
+      readStatus:1
     }
     notificationList.push(notification);
     this.storeService.set(PersistenceKey.notificationList, notificationList);
@@ -1996,6 +2006,7 @@ export class FeedService {
     let user_did = params.user_did;
 
     let notification:Notification = {
+      id: this.generateUUID(),
       userName: user_name,
       behavior: Behavior.follow,
       behaviorText: this.translate.instant("NotificationPage.followedFeed"),
@@ -2005,7 +2016,8 @@ export class FeedService {
         postId:0,
         commentId: 0,
       },
-      time:this.getCurrentTimeNum()
+      time:this.getCurrentTimeNum(),
+      readStatus:1
     }
     notificationList.push(notification);
     this.storeService.set(PersistenceKey.notificationList, notificationList);
@@ -3784,6 +3796,20 @@ export class FeedService {
       return [];
     let list:Notification[] = notificationList.sort((a, b) => Number(b.time) - Number(a.time));
     return list;
+  }
+
+  setNotificationReadStatus(notification: Notification, readStatus: number){
+    let index = notificationList.indexOf(notification);
+    console.log("index == "+index);
+    console.log("notificationList == "+JSON.stringify(notificationList));
+    notificationList[index].readStatus = readStatus;
+    this.storeService.set(PersistenceKey.notificationList, notificationList);
+  }
+
+  deleteNotification(notification: Notification){
+    let index = notificationList.indexOf(notification);
+    notificationList.splice(index, 1);
+    this.storeService.set(PersistenceKey.notificationList, notificationList);
   }
 
   restoreData(nodeId: string){
