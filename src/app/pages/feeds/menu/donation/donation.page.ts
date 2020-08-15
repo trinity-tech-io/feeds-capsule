@@ -74,6 +74,7 @@ export class DonationPage implements OnInit {
       component: PaypromptComponent,
       componentProps: {
         "elaAddress":elaAddress,
+        "defalutMemo":"donation to feeds"
       }
     });
     this.popover.onWillDismiss().then(() => {

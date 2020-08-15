@@ -13,6 +13,7 @@ export class PaypromptComponent implements OnInit {
   public elaAddress:string ="";
   private amount : number = 0;
   private memo: string = "";
+  private defalutMemo: string = "";
   constructor( 
     private native:NativeService, 
     private feedService:FeedService,
@@ -25,6 +26,7 @@ export class PaypromptComponent implements OnInit {
 
   ngOnInit() {
     this.elaAddress = this.navParams.get('elaAddress');
+    this.defalutMemo = this.navParams.get('defalutMemo');
   }
 
   cancel(){
@@ -38,7 +40,8 @@ export class PaypromptComponent implements OnInit {
       this.native.toast_trans('IssuecredentialPage.serverName');
       return 
     }
-      
+    if (this.memo == "")
+      this.memo = this.defalutMemo;
     this.feedService.pay(this.elaAddress, this.amount, this.memo, ()=>{
       this.native.toast('common.success');
       this.popover.dismiss();

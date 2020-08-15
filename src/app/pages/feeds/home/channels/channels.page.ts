@@ -279,6 +279,7 @@ export class ChannelsPage implements OnInit {
       component: PaypromptComponent,
       componentProps: {
         "elaAddress":elaAddress,
+        "defalutMemo":""
       }
     });
     this.popover.onWillDismiss().then(() => {
