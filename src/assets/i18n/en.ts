@@ -38,7 +38,7 @@ export const en = {
         "des3":"No more data",
         "noElaAddress":"The owner of the server did not set an ELA address",
         "copysucceeded":"Copy succeeded",
-        "des4":"your donation will be sent to the ELA address:",
+        "des4":"Your donation will be sent to the ELA address:",
         "pictureviewer":"picture viewer",
         "delete":"Delete",
     },
@@ -308,7 +308,7 @@ export const en = {
     "DonationPage":{
         "donation": "Donation",
         "donationELAAddress":"Donation ELA Address",
-        "description":"Feeds project is a non-profit project, dedicate to improvement for better experience and integration with more added-value features. Your donation to this project will keep encouraging us to constantly deliver new release versions with our best efforts and remind us of the responsiblity of that as well.",
+        "description":"Feeds dApp is a non-profit project,  dedicating to improvement on better experience and integration with more added-value features. Your donation to this project will keep encouraging us to constantly deliver new exciting release versions with our best efforts and remind us of the responsibility of that as well.",
         "receiver":"Receiver",
         "amount":"Amount",
         "memo":"memo",
