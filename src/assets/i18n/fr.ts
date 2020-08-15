@@ -1,240 +1,240 @@
 export const fr = {
-    "common": {
-        "followers": "Followers",
-        "allempty": "All Empty",
-        "pullToRefresh": "Pull to refresh",
-        "Refreshing": "Refreshing...",
-        "cancel": "Cancel",
-        "ok": "OK",
-        "confirm": "Confirm!",
-        "des": "Clear <strong>all cached data</strong>!!!",
-        "prompt": "Prompt",
-        "des1": "Confirm new topic?<br>server:",
-        "channel": "channel:",
-        "description": "description:",
-        "pleaseInput": "Please input ",
-        "feeds": "Feeds",
-        "just": "Just",
-        "yesterday": "yesterday",
-        "unsubscribe": "Unfollow",
-        "share": "Share",
-        "sending": "Sending...",
-        "addressinvalid": "Address invalid",
-        "comingSoon": "Coming soon...",
-        "followSuccess": "Follow successfully",
-        "unFollowSuccess": "Unfollow successfully",
-        "noImageSelected": "No Image Selected",
-        "loggingIn": "Logging in...",
-        "des2": 'Are you sure you want to return to the main page？',
+    "common":{
+        "followers":"Followers",
+        "allempty":"All Empty",
+        "pullToRefresh":"Pull to refresh",
+        "Refreshing":"Refreshing...",
+        "cancel":"Cancel",
+        "ok":"OK",
+        "confirm":"Confirm!",
+        "des":"Clear <strong>all cached data</strong>!!!",
+        "prompt":"Prompt",
+        "des1":"Confirm new topic?<br>server:",
+        "channel":"channel:",
+        "description":"description:",
+        "pleaseInput":"Please input ",
+        "feeds":"Feeds",
+        "just":"Just now",
+        "yesterday":"yesterday",
+        "unsubscribe":"Unfollow",
+        "share":"Share",
+        "sending":"Sending...",
+        "addressinvalid":"Address invalid",
+        "comingSoon":"Coming soon...",
+        "followSuccess":"Followed successfully",
+        "unFollowSuccess":"Unfollowed successfully",
+        "noImageSelected":"No Image Selected",
+        "loggingIn":"Logging in...",
+        "des2":'Are you sure you want to return to the main page？',
         "connectionError":'No network is currently available, please try again later',
-        "nopostyet":"No post yet",
+        "nopostyet":"No posts yet",
         "nodescriptionyet":'No description yet',
-        "pleasesigninfirst":'Please sign in first',
+        "pleasesigninfirst":"Please sign in first",
         "accept":"Agree",
         "naccepted":"Not Agree",
         "moreThen0":"Please enter a number greater than 0",
         "success":"Success",
-        "loadingText":"Loading more data…",
-        "des3":"There's no more!",
-        "noElaAddress":"The owner of the server did not set the Ela address",
+        "loadingText":"Loading additional data…",
+        "des3":"No Feeds yet",
+        "noElaAddress":"The owner of the server did not set an ELA address",
         "copysucceeded":"Copy succeeded",
         "des4":"your donation will be sent to the ELA address:",
         "pictureviewer":"picture viewer"
     },
-    "app": {
-        "profileDetails": "Profile Details",
-        "feedSources": "Feeds Sources",
-        "settings": "Settings",
-        "about": "About Feeds",
-        "develop": "Develop",
+    "app":{
+        "profileDetails":"Profile Details",
+        "feedSources":"Feeds Sources",
+        "settings":"Settings",
+        "about":"About Feeds",
+        "develop":"Develop",
         "donation": "Donation"
     },
-    "SigninPage": {
-        "signIn": "Sign In",
-        "Pleasewait": "Please wait..."
+    "SigninPage":{
+        "signIn":"Sign In",
+        "Pleasewait":"Please wait..."
     },
-    "FeedsPage": {
-        "tabTitle1": "My Feeds Timeline",
-        "tabTitle2": "My Profile",
-        "tabTitle3": "Notifications",
-        "tabTitle4": "Explore Feeds"
+    "FeedsPage":{
+        "tabTitle1":"My Feeds Timeline",
+        "tabTitle2":"My Profile",
+        "tabTitle3":"Notifications",
+        "tabTitle4":"Explore Feeds"
     },
-    "HomePage": {
-        "allempty": "All Empty",
-        "emptyDes": "Not following any feeds yet",
-        "exploreFeeds": "Explore Feeds",
-        "minutesAgo": " Minutes ago",
-        "hoursAgo": " Hours ago"
+    "HomePage":{
+        "allempty":"All Empty",
+        "emptyDes":"Not following any feeds yet",
+        "exploreFeeds":"Explore Feeds",
+        "minutesAgo":" Minutes ago",
+        "hoursAgo":" Hours ago"
     },
-    "ProfilePage": {
-        "myFeeds": "My Feeds",
-        "following": "Following",
-        "myLikes": "My Likes"
+    "ProfilePage":{
+        "myFeeds":"My Feeds",
+        "following":"Following",
+        "myLikes":"My Likes"
     },
-    "MyfeedsComponent": {
-        "emptyDes": "You have no Feeds",
-        "createFeed": "Create Feeds",
-        "createNewFeed": "Create New Feeds"
+    "MyfeedsComponent":{
+        "emptyDes":"You have no Feeds",
+        "createFeed":"Create a Feed",
+        "createNewFeed":"Create a New Feed"
     },
-    "FollowingComponent": {
-        "emptyDes": "Not following any feeds yet",
-        "exploreFeeds": "Explore Feeds"
+    "FollowingComponent":{
+        "emptyDes":"Not following any Feeds yet",
+        "exploreFeeds":"Explore Feeds"
     },
-    "LikesComponent": {
-        "emptyLikeDes": "You haven't liked anything yet",
-        "exploreFeeds": "Explore Feeds"
+    "LikesComponent":{
+        "emptyLikeDes":"You haven't liked anything yet",
+        "exploreFeeds":"Explore Feeds"
     },
-    "SearchPage": {
-        "emptyDes": "Not any feeds yet",
-        "follow": "Follow",
-        "following": "Following",
-        "searchFeeds": "Search Feeds",
-        'addfeedssource': 'Add Feeds Source'
+    "SearchPage":{
+        "emptyDes":"No Feeds yet",
+        "follow":"Follow",
+        "following":"Following",
+        "searchFeeds":"Search Feeds",
+        'addfeedssource':'Add a Feed Source'
     },
-    "ChannelsPage": {
-        "feeds": "Feeds",
-        "follow": "Follow",
-        "following": "Following",
-        "tip": "Tip"
+    "ChannelsPage":{
+        "feeds":"Feeds",
+        "follow":"Follow",
+        "following":"Following",
+        "tip":"Tip"
     },
-    "NotificationPage": {
-        "emptyDes": "You have no notifications",
-        "followedFeed": "Followed your Feeds",
-        "likedPost": "Liked your post",
-        "commentPost": "Left a comment on your post",
-        "likedComment": "Liked your comment"
+    "NotificationPage":{
+        "emptyDes":"You have no notifications",
+        "followedFeed":"Followed your Feeds",
+        "likedPost":"Liked your post",
+        "commentPost":"Left a comment on your post",
+        "likedComment":"Liked your comment"
     },
-    "CreatenewfeedPage": {
-        "createNewFeed": "Create New Feeds",
-        "profileImage": "Profile image",
-        "des": "PICK AN IMAGE FOR YOUR FEEDS",
+    "CreatenewfeedPage":{
+        "createNewFeed":"Create a New Feed",
+        "profileImage":"Profile image",
+        "des":"PICK AN IMAGE FOR YOUR FEED",
         "des1":"Avatar selected",
-        "channelSource": "Feeds source",
-        "name": "Name",
-        "description": "Description",
-        "createFeed": "Create Feeds",
-        "tipMsg": "Please select an avatar",
-        "tipMsg1": "Please input name",
-        "tipMsg2": "Please input description",
-        "tipMsg3": "Invalid params",
-        "tipMsgLength": "The maximum length of the description message should be 128",
-        "inputName": "INPUT NAME",
-        "inputFeedDesc": "INPUT DESCRIPTION",
-        "channelSourceDes": "WHERE TO STORE YOUR FEEDS",
-        "createfeedsuccess": "Feeds created successfully!",
+        "channelSource":"Feed source",
+        "name":"Name",
+        "description":"Description",
+        "createFeed":"Create a Feed",
+        "tipMsg":"Please select an avatar",
+        "tipMsg1":"Please input name",
+        "tipMsg2":"Please input description",
+        "tipMsg3":"Invalid params",
+        "tipMsgLength":"The maximum length of the description message should be 128",
+        "inputName":"INPUT NAME",
+        "inputFeedDesc":"INPUT DESCRIPTION",
+        "channelSourceDes":"WHERE TO STORE YOUR FEEDS",
+        "createfeedsuccess":"Feed created successfully!",
         "tipMsgLength1":"The maximum length of the name message should be 32",
         "alreadyExist":"Feed already exists, please change the name and try again"
     },
-    "ProfileimagePage": {
-        "title": "Profile Image",
-        "confirm": "Confirm"
+    "ProfileimagePage":{
+        "title":"Profile Image",
+        "confirm":"Confirm"
     },
-    "ProfiledetailPage": {
-        "profileDetails": "Profile Details",
-        "subscribers": "Followers",
-        "name": "Name",
-        "did": "DID",
-        "gender": "Gender",
-        "telephone": "PHONE NUMBER",
-        "email": "Email",
-        "location": "Location"
+    "ProfiledetailPage":{
+        "profileDetails":"Profile Details",
+        "subscribers":"Followers",
+        "name":"Name",
+        "did":"DID",
+        "gender":"Gender",
+        "telephone":"PHONE NUMBER",
+        "email":"Email",
+        "location":"Location"
     },
-    "DevelopPage": {
-        "develop": "Develop",
-        "clearAllData": "Clear All Data"
+    "DevelopPage":{
+        "develop":"Develop",
+        "clearAllData":"Clear All Data"
     },
-    "SettingPage": {
-        "setting": "Settings",
-        "emptyDes": "No setting items for now"
+    "SettingPage":{
+        "setting":"Settings",
+        "emptyDes":"No setting items for now"
     },
-    "AboutPage": {
-        "about": "About",
-        "version": "version",
-        "website": "website",
+    "AboutPage":{
+        "about":"About",
+        "version":"version",
+        "website":"website",
         "releaseddate":"Released date",
         "developers":"Developers",
         'designers':'Designers',
     },
-    "PostdetailPage": {
-        "postdetail": "Post Detail"
+    "PostdetailPage":{
+        "postdetail":"Post Detail"
     },
-    "ServersPage": {
-        "feedSources": "Feeds Sources",
-        "emptyDes": "All Empty",
-        "addFeedSources": "Add Feeds Source",
-        "bindFeedSource": "Create New Feeds Source",
-        "myFeedSources": "My Feeds Sources",
-        "users": "Users",
-        "currentFeedSources": "Current Feeds Sources",
-        "addNewFeedSources": "Add New Feeds Source",
-        "createNewFeedSource": "Create New Feeds Source"
+    "ServersPage":{
+        "feedSources":"Feeds Sources",
+        "emptyDes":"All Empty",
+        "addFeedSources":"Add an existing Feed Source",
+        "bindFeedSource":"Register a Feed Source",
+        "myFeedSources":"My Feeds Sources",
+        "users":"Users",
+        "currentFeedSources":"Current Feeds Sources",
+        "addNewFeedSources":"Add a New Feed Source",
+        "createNewFeedSource":"Register a New Feed Source"
     },
-    "AddServerPage": {
-        "scanorEnterManual": "Scan or Enter Manual",
-        "sourceAddress": "Feeds Source Address",
-        "openQRScanner": "Open QR Scanner",
-        "confirm": "Confirm",
-        "sourceaddresshere": "Enter source address here",
-        "tipMsg": "Feeds url maybe error.",
-        "exploreFeedSources": "Explore Feeds Sources",
-        "title": "Add Feeds Source",
+    "AddServerPage":{
+        "scanorEnterManual":"Scan or Enter Manually",
+        "sourceAddress":"Feed Source Address",
+        "openQRScanner":"Open QR Scanner",
+        "confirm":"Confirm",
+        "sourceaddresshere":"Enter source address here",
+        "tipMsg":"Possible Feeds url error",
+        "exploreFeedSources":"Explore Feeds Sources",
+        "title":"Add a Feed Source",
         "serverMsg1": "Server :\n",
         "serverMsg2": "\noffline!",
-        "Serveralreadyadded": "Server already added!",
-        "Addserversuccess": "Server added successfully!",
-        "Signinsuccess": "Sign in successfully!"
+        "Serveralreadyadded":"Server already added!",
+        "Addserversuccess":"Server added successfully!",
+        "Signinsuccess":"Signed in successfully!"
     },
-    "ServerInfoPage": {
-        "title": "Feeds Source Details",
-        "publicFeed": "Public Feeds",
-        "online": "Online",
-        "users": "Users",
-        "offline": "Offline",
-        "name": "NAME",
-        "owner": "OWNER",
-        "introduction": "DESCRIPTION",
-        "did": "DID",
-        "addFeedSource": "Add Feeds Source",
-        "removeFeedSource": "Remove Feeds Source",
-        "deleteFeedSource": "Delete Feeds Source",
-        "feedUrl": "FEEDS URL",
-        "serverInfo": "Server Info",
-        "Pleasewait": "Please wait...",
-        "Feedurlmaybeerror": "Feeds url maybe error.",
-        "DeletethisFeedSource": "Delete this Feeds Source?",
-        "cancel": "Cancel",
-        "DeleteFeedSource": "Delete Feeds Source!",
-        "RemovethisFeedSource": "Remove this Feeds Source?",
-        "RemoveFeedSource": "Remove Feeds Source!",
+    "ServerInfoPage":{
+        "title":"Feeds Source Details",
+        "publicFeed":"Public Feeds",
+        "online":"Online",
+        "users":"Users",
+        "offline":"Offline",
+        "name":"NAME",
+        "owner":"OWNER",
+        "introduction":"DESCRIPTION",
+        "did":"DID",
+        "addFeedSource":"Add a Feed Source",
+        "removeFeedSource":"Remove a Feed Source",
+        "deleteFeedSource":"Delete a Feed Source",
+        "feedUrl":"FEED URL",
+        "serverInfo":"Server Info",
+        "Pleasewait":"Please wait...",
+        "Feedurlmaybeerror":"Possible Feed url error.",
+        "DeletethisFeedSource":"Delete this Feed Source?",
+        "cancel":"Cancel",
+        "DeleteFeedSource":"Delete Feed Source!",
+        "RemovethisFeedSource":"Remove this Feed Source?",
+        "RemoveFeedSource":"Remove Feed Source!",
         "removeserver": "Service removed",
-        "feedsSourceQRCode": "Feeds Source QRCode",
+        "feedsSourceQRCode":"Feed Source QRCode",
         "error":"resolve diddocument error",
     },
-    "ScanqrcodePage": {
-        "introduce": "Create a new Feeds Source",
-        "introduce1": "Be sure you have a new feeds source/service setup on your device and a QRcode address displayed in the browser.",
-        "introduce2": "Scan the QRcode to bind your current DID with the feeds source/service.",
+    "ScanqrcodePage":{
+        "introduce":"Create a new Feed Source",
+        "introduce1":"Be sure you have a new Feed source/service setup on your device and a QRcode address displayed on the browser.",
+        "introduce2":"Scan the QRcode to bind your current DID with the Feed source/service.",
         // "introduce3":"to proceed",
-        "introduce4": "Scan your QRcode address"
+        "introduce4":"Scan your QRcode address"
     },
-    "StartbindingPage": {
-        "introduce": "Create a new Feeds Source",
-        "introduce1": "Verify the binding code from Qrcode to be same in the browser",
-        "introduce2": "Verified binding code",
-        "introduce3": "Feeds url",
-        "linkServer": "You are linking a feeds service. Please confirm whether the feeds url is consistent with the previously bound feeds service.",
-        "confirm": "Confirm",
-        "abort": "Abort due to not same code",
-        "Connectingserver": "Connecting server...",
-        "bindingError": "An exception occurred during the binding process",
+    "StartbindingPage":{
+        "introduce":"Create a new Feed Source",
+        "introduce1":"Verify the binding code from Qrcode to be same on the browser",
+        "introduce2":"Verified the binding code",
+        "introduce3":"Feed url",
+        "linkServer":"You are linking a Feed service. Please confirm whether the Feed url is consistent with the previously bound Feed service.",
+        "confirm":"Confirm",
+        "abort":"Abort",
+        "Connectingserver":"Connecting server...",
+        "bindingError":"An exception occurred during the binding process",
         "linkServerError": "You are not the owner of this service, please change and try again.",
     },
     "ImportdidPage": {
-        "introduce": "Create your Feeds Source",
-        "introduce1": "Request selected feeds source/service to generated a new DID as an identifer of itself.",
+        "introduce": "Create your Feed Source",
+        "introduce1": "Request selected Feed source/service to generate a new DID as an identifer of itself.",
         // "introduce2": "Feeds service / channel source",
         "createanewDID": "Proceed to create a new DID",
-        "importanexistDID": "Import an exist DID",
+        "importanexistDID": "Import an existing DID",
         // "abort": "Abort",
     },
     "ImportmnemonicPage": {
@@ -243,59 +243,59 @@ export const fr = {
         "des2": "Index",
         "confirm": "Confirm",
         "abort": "Abort",
-        "tipMsg": "Please input mnemonic!",
+        "tipMsg": "Please input mnemonics!",
         "tipMsg1": "Please input passphrase!",
         "tipMsg2": "Please input index!",
         "alert": "Alert",
         "ok": "OK"
     },
-    "PublishdidPage": {
-        "introduce": "Create your Feeds Source",
-        "introduce1": "Publish the payload of a new DID Document sent from selected feeds source",
-        "payload": "Payload",
-        "publishonDIDsidechain": "Publish on DID Sidechain",
+    "PublishdidPage":{
+        "introduce": "Create your Feed Source",
+        "introduce1":"Publish the payload of a new DID Document sent from selected Feed source",
+        "payload":"Payload",
+        "publishonDIDsidechain":"Publish on DID Sidechain",
         // "abort":"Abort",
     },
-    "IssuecredentialPage": {
-        "introduce": "Create your Feeds Source",
-        "introduce1": "DID Document of selected feeds source published to sidechain successfully.",
-        "introduce2": "To claim the ownership, a new credentials would be issued to the selected feeds source.",
-        "issueacredential": "Issue credentials",
+    "IssuecredentialPage":{
+        "introduce":"Create your Feed Source",
+        "introduce1":"DID Document of selected feed source published to sidechain successfully.",
+        "introduce2":"To claim the ownership, a new credential would be issued to the selected feed source.",
+        "issueacredential":"Issue credentials",
         // "abort":"Abort",
-        "serverInfo": "Feeds Source Info",
-        "serverName": "Feeds Source Name",
-        "serverDes": "Feeds Source Description",
+        "serverInfo":"Feed Source Info",
+        "serverName":"Feed Source Name",
+        "serverDes":"Feed Source Description",
         "elaaddress":"ELA Address",
         "inputName":"Please input Feeds Source Name",
         "inputServerDes":"Please input Feeds Source Description",
         "inputElaAddress":"Please input ELA Address",
     },
     "FinishPage": {
-        "introduce": "Binding feeds source process completed. Congradulations, you have your own feeds source now and can new a feed on this feeds source with your desire.",
+        "introduce": "Completed the binding for the feed source. Congratulations, you have your own feed source now and can new a feed on this feed source with your desire.",
         "introduce1": "Create a new Feed",
         "introduce2": "Return to main screen",
     },
-    "PostfromComponent": {
-        "des": "Choose one of your Feeds to post from"
+    "PostfromComponent":{
+        "des":"Choose one of your Feeds to post from"
     },
-    "CreatenewpostPage": {
-        "addimg": "Add image",
-        "post": "Post",
-        "des": "Enter any notes here...",
-        "addingPost": "New Post",
-        "tipMsg": "Please input message!",
-        "tipMsg1": "Post sent successfully!",
+    "CreatenewpostPage":{
+        "addimg":"Add an image",
+        "post":"Post",
+        "des":"Enter any notes here...",
+        "addingPost":"New Post",
+        "tipMsg":"Please enter a message!",
+        "tipMsg1":"Post sent successfully!",
     },
-    "DIDdata": {
+    "DIDdata":{
         "Notprovided": "Not yet",
-        "NotprovidedfromDIDDocument": "Information is being obtained",
-        "NoDescription": "No descriptions or interests yet"
+        "NotprovidedfromDIDDocument":"Information is being obtained",
+        "NoDescription":"No description or interest yet"
     },
-    "CommentPage": {
-        "newComment": "New Comment",
-        "publishComment": "Publish comment",
-        "enterComments": "Enter Comments",
-        "tipMsg1": "Post sent successfully!"
+    "CommentPage":{
+        "newComment":"New Comment",
+        "publishComment":"Publish comment",
+        "enterComments":"Add Comment",
+        "tipMsg1":"Post sent successfully!"
     },
     "DisclaimerPage":{
         "disclaimer":"Disclaimer",
@@ -312,4 +312,6 @@ export const fr = {
         "amount":"Amount",
         "memo":"memo",
     }
+
+
 };

@@ -3103,7 +3103,7 @@ export class FeedService {
 
   publishDid(payload: string, onSuccess?: (ret: any)=>void, onError?: (err:any)=>void) {
     let params = {
-        didrequest: payload
+        didrequest: JSON.parse(payload)
     }
     let requestStr = JSON.stringify(params);
     let request =  JSON.parse(requestStr);
