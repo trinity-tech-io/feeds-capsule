@@ -35,7 +35,7 @@ export const en = {
         "moreThen0":"Please enter a number greater than 0",
         "success":"Success",
         "loadingText":"Loading additional data…",
-        "des3":"No Feeds yet",
+        "des3":"No more data",
         "noElaAddress":"The owner of the server did not set an ELA address",
         "copysucceeded":"Copy succeeded",
         "des4":"your donation will be sent to the ELA address:",

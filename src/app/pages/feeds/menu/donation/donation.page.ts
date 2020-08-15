@@ -17,7 +17,6 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 export class DonationPage implements OnInit {
   private isShowPrompt: boolean = false;
   private connectionStatus = 1;
-  private version = "v1.0.0";
   private elaAddress = "EYWDcCyp6czaqAKGiq4b7exhWJfVpbG2D9";
   private popover:any;
   constructor(

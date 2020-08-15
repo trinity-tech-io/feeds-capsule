@@ -38,7 +38,7 @@ export class ServerInfoPage implements OnInit {
   private owner: string;
   private introduction: string;
   private feedsUrl: string = null;
-
+  private elaAddress: string = "";
   constructor(
     private actionSheetController:ActionSheetController,
     private events: Events,
@@ -86,6 +86,7 @@ export class ServerInfoPage implements OnInit {
           this.owner = server.owner;
           this.introduction = server.introduction ||  this.translate.instant('DIDdata.NotprovidedfromDIDDocument');
           this.feedsUrl = server.feedsUrl || "";
+          this.elaAddress = server.elaAddress || this.translate.instant('DIDdata.Notprovided');
         }
 
     });
