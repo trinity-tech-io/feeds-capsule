@@ -63,7 +63,7 @@ export const en = {
     },
     "HomePage":{
         "allempty":"All Empty",
-        "emptyDes":"Not following any feeds yet",
+        "emptyDes":"Not following any Feeds yet",
         "exploreFeeds":"Explore Feeds",
         "minutesAgo":" Minutes ago",
         "hoursAgo":" Hours ago"
@@ -199,7 +199,7 @@ export const en = {
         "addFeedSource":"Add a Feed Source",
         "removeFeedSource":"Remove a Feed Source",
         "deleteFeedSource":"Delete a Feed Source",
-        "feedUrl":"FEED URL",
+        "feedUrl":"Feed URL",
         "serverInfo":"Server Info",
         "Pleasewait":"Please wait...",
         "Feedurlmaybeerror":"Possible Feed url error.",
@@ -260,8 +260,8 @@ export const en = {
     },
     "IssuecredentialPage":{
         "introduce":"Create your Feed Source",
-        "introduce1":"DID Document of selected feed source published to sidechain successfully.",
-        "introduce2":"To claim the ownership, a new credential would be issued to the selected feed source.",
+        "introduce1":"DID Document of selected Feed source published to sidechain successfully.",
+        "introduce2":"To claim the ownership, a new credential would be issued to the selected Feed source.",
         "issueacredential":"Issue credentials",
         // "abort":"Abort",
         "serverInfo":"Feed Source Info",
@@ -273,7 +273,7 @@ export const en = {
         "inputElaAddress":"Please input ELA Address",
     },
     "FinishPage": {
-        "introduce": "Completed the binding for the feed source. Congratulations, you have your own feed source now and can new a feed on this feed source with your desire.",
+        "introduce": "Completed the binding for the Feed source. Congratulations, you have your own Feed source now and can new a Feed on this Feed source with your desire.",
         "introduce1": "Create a new Feed",
         "introduce2": "Return to main screen",
     },

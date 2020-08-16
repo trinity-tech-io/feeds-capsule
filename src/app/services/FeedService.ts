@@ -762,7 +762,7 @@ export class FeedService {
       let friendId = ret.friendId;
       let friendStatus = ret.status;
       eventBus.publish(PublishType.friendConnectionChanged, friendId, friendStatus);
-      console.log("connectionChanged===> friendId =>"+friendId +"; friendStatus =>"+friendStatus);
+      //console.log("connectionChanged===> friendId =>"+friendId +"; friendStatus =>"+friendStatus);
       let lastConnectStatus = this.getFriendConnection(friendId);
       
       if (friendConnectionMap == null || friendConnectionMap == undefined)

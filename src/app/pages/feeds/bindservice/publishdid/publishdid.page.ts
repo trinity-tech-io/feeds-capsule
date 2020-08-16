@@ -68,6 +68,12 @@ export class PublishdidPage implements OnInit {
     this.feedService.publishDid(this.payload, 
       (res)=>{
         this.zone.run(() => {
+             //{"action":"didtransaction","result":{"txid":null},"from":"org.elastos.trinity.dapp.wallet"}
+            let result = res["result"];
+            let txId = result["txid"] || "";
+            if(txId===''){
+              return;
+            } 
             this.native.navigateForward(['/bindservice/issuecredential',this.nodeId, this.did],{
               replaceUrl: true
           });
