@@ -163,12 +163,12 @@ export const fr = {
         "feedSources":"Feeds Sources",
         "emptyDes":"All Empty",
         "addFeedSources":"Add an existing Feed Source",
-        "bindFeedSource":"Register a Feed Source",
+        "bindFeedSource":"Create a New Feed Source",
         "myFeedSources":"My Feeds Sources",
         "users":"Users",
         "currentFeedSources":"Current Feeds Sources",
         "addNewFeedSources":"Add a New Feed Source",
-        "createNewFeedSource":"Register a New Feed Source"
+        "createNewFeedSource":"Create a New Feed Source"
     },
     "AddServerPage":{
         "scanorEnterManual":"Scan or Enter Manually",
