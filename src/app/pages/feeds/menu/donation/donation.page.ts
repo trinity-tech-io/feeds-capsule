@@ -75,7 +75,7 @@ export class DonationPage implements OnInit {
       componentProps: {
         "title": this.translate.instant("DonationPage.donation"),
         "elaAddress":elaAddress,
-        "defalutMemo":"donation to feeds"
+        "defalutMemo":this.translate.instant("DonationPage.defaultMemo")
       }
     });
     this.popover.onWillDismiss().then(() => {

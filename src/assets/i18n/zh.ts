@@ -313,5 +313,6 @@ export const zh = {
         "receiver":"接收者",
         "amount":"数量",
         "memo":"备注",
+        "defaultMemo":"捐赠feeds项目"
     }
 };

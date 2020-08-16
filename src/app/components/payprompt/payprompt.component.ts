@@ -16,6 +16,7 @@ export class PaypromptComponent implements OnInit {
   private memo: string = "";
   private defalutMemo: string = "";
   private title: string = "";
+  private disableMemo:boolean = false;
   constructor( 
     private native:NativeService, 
     private feedService:FeedService,
@@ -28,8 +29,12 @@ export class PaypromptComponent implements OnInit {
 
   ngOnInit() {
     this.elaAddress = this.navParams.get('elaAddress');
-    this.defalutMemo = this.navParams.get('defalutMemo');
+    this.memo = this.defalutMemo = this.navParams.get('defalutMemo');
     this.title = this.navParams.get('title');
+
+    if (this.defalutMemo != ""){
+      this.disableMemo = true;
+    }
   }
 
   cancel(){

@@ -14,14 +14,14 @@
    <ion-col size="12">
      <ion-item lines="none">
        <ion-label position="stacked" class="nameLabel white">{{'DonationPage.amount' | translate }}</ion-label>
-       <ion-input clearInput autofocus [placeholder]="'DonationPage.amount' | translate" [(ngModel)]="amount" class="nameValue"></ion-input>
+       <ion-input type="number" clearInput autofocus [placeholder]="'DonationPage.amount' | translate" [(ngModel)]="amount" class="nameValue"></ion-input>
    </ion-item>
    </ion-col>
 
    <ion-col size="12">
     <ion-item lines="none">
      <ion-label position="stacked" class="nameLabel white" >{{ 'DonationPage.memo' | translate }}</ion-label>
-     <ion-input clearInput autofocus [placeholder]="'DonationPage.memo' | translate" [(ngModel)]="memo" class="nameValue"></ion-input>
+     <ion-input clearInput autofocus [placeholder]="'DonationPage.memo' | translate" [(ngModel)]="memo" class="nameValue" [disabled]='disableMemo'></ion-input>
     </ion-item>
    </ion-col>
   </ion-row>
