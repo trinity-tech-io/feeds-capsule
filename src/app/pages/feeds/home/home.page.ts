@@ -1,4 +1,5 @@
 import { Component, OnInit, NgZone, ViewChild,ChangeDetectionStrategy, ElementRef } from '@angular/core';
+import { IonContent } from '@ionic/angular';
 import { Events,IonTabs} from '@ionic/angular';
 import { FeedService } from 'src/app/services/FeedService';
 import { MenuService } from 'src/app/services/MenuService';
@@ -8,6 +9,7 @@ import { UtilService } from 'src/app/services/utilService';
 import { TranslateService } from "@ngx-translate/core";
 import { NativeService } from 'src/app/services/NativeService';
 import { IonInfiniteScroll } from '@ionic/angular';
+import { clear } from 'console';
 @Component({
   selector: 'app-home',
   templateUrl: './home.page.html',
@@ -15,6 +17,7 @@ import { IonInfiniteScroll } from '@ionic/angular';
 })
 
 export class HomePage implements OnInit {
+  @ViewChild(IonContent,{static:true}) content: IonContent;
   @ViewChild(IonInfiniteScroll,{static:true}) infiniteScroll: IonInfiniteScroll;
   myScrollContainer!: HTMLElement;
   private connectionStatus = 1;
@@ -48,10 +51,11 @@ export class HomePage implements OnInit {
       this.isBottom = false;
       this.infiniteScroll.disabled =false;
      }else{
-      this.postList = this.totalData;
+      this.postList = this.totalData.slice(0,this.totalData.length);
       this.isBottom =true;
       this.infiniteScroll.disabled =true;
     }
+    this.scrollToTop(1);
     this.initnodeStatus(this.postList);
    
     this.events.subscribe('feeds:connectionChanged',(status)=>{
@@ -72,10 +76,11 @@ export class HomePage implements OnInit {
           this.isBottom = false;
           this.infiniteScroll.disabled =false;
          }else{
-          this.postList = this.totalData;
+          this.postList =  this.totalData.slice(0,this.totalData.length);
           this.isBottom =true;
           this.infiniteScroll.disabled =true;
         }
+        this.scrollToTop(1);
         this.initnodeStatus(this.postList);
       });
     });
@@ -279,5 +284,12 @@ export class HomePage implements OnInit {
       })
     }
     return this.images[nodeChannelPostId];
+  }
+
+  scrollToTop(int) {
+   let sid = setTimeout(() => {
+      this.content.scrollToTop(1);
+      clearTimeout(sid)
+    }, int);
   }
 }

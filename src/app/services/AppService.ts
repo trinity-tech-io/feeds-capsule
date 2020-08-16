@@ -18,6 +18,7 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
     providedIn: 'root'
 })
 export class AppService {
+   //@ViewChild(IonRouterOutlet,{static:true}) ionRouterOutlet: IonRouterOutlet;
     constructor(private router: Router,
                 public theme:ThemeService,
                 private zone: NgZone,
@@ -55,8 +56,10 @@ export class AppService {
         this.popupProvider.ionicConfirm("common.prompt","common.des2").then(()=>{
           this.native.setRootRouter(['/tabs/home']);
         });
+    }else if(this.router.url==='/menu/servers'){
+        this.native.setRootRouter(['/tabs/home']);
     }else{
-      this.native.pop();
+        this.native.pop();
     }
     }
 
