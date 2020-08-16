@@ -313,7 +313,7 @@ export const fr = {
         "receiver":"Receiver",
         "amount":"Amount",
         "memo":"memo",
-        "defaultMemo":"Donation to feeds project"
+        "defaultMemo":"Donation to Feeds project"
     }
 
 
