@@ -3116,8 +3116,13 @@ export class FeedService {
     }
 
     if (content.indexOf("text") != -1){
-      let contentObj = JSON.parse(content);
-      return contentObj.text;
+      try{
+        let contentObj = JSON.parse(content);
+        return contentObj.text;
+      } catch(e){
+        console.log("error ==> "+e);
+        return "";
+      }
     }
 
     return content;
@@ -3129,8 +3134,14 @@ export class FeedService {
     }
 
     if (content.indexOf("img") != -1){
-      let contentObj = JSON.parse(content);
-      return contentObj.img;
+      try {
+        let contentObj = JSON.parse(content);
+        return contentObj.img;
+      } catch(e) {
+        console.log("error ==> "+e);
+        return "";
+      }
+
     }
 
     return "";

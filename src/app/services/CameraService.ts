@@ -24,6 +24,7 @@ export class CameraService {
  */
     openCamera(imgQuality, destType, type, success , error){
         navigator.camera.getPicture(onSuccess, onFail, {
+            correctOrientation: true,
             quality: imgQuality,
             destinationType: destType,
             sourceType: type

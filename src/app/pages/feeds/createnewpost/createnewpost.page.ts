@@ -141,7 +141,7 @@ export class CreatenewpostPage implements OnInit {
   }
 
   openCamera(type: number){
-    this.camera.openCamera(10,0,type,
+    this.camera.openCamera(30,0,type,
       (imageUrl)=>{
         this.zone.run(() => {
           this.imgUrl = imageUrl;

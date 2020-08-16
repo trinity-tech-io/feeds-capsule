@@ -96,7 +96,7 @@ export class ProfileimagePage implements OnInit {
   }
 
   openCamera(type: number){
-    this.camera.openCamera(10,0,type,
+    this.camera.openCamera(30,0,type,
       (imageUrl)=>{
         this.zone.run(() => {
           this.userAvatar = this.avatar = imageUrl;
