@@ -3814,8 +3814,6 @@ export class FeedService {
 
   setNotificationReadStatus(notification: Notification, readStatus: number){
     let index = notificationList.indexOf(notification);
-    console.log("index == "+index);
-    console.log("notificationList == "+JSON.stringify(notificationList));
     notificationList[index].readStatus = readStatus;
     this.storeService.set(PersistenceKey.notificationList, notificationList);
   }

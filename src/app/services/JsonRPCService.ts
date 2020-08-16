@@ -47,7 +47,7 @@ export class JsonRPCService {
         eventBus = events;
         this.events.subscribe('transport:receiveMessage', event => {
             let data = serializeDataService.decodeData(event.message);
-            console.log("receive--->"+JSON.stringify(data));
+            // console.log("receive--->"+JSON.stringify(data));
 
             eventBus.publish('jrpc:receiveMessage',this.response(event.from, data));
         });
@@ -66,7 +66,7 @@ export class JsonRPCService {
         requestQueue.push(requestBean);
         let request = this.assembleJson(id, method, params);
 
-        console.log("request--->nodeId:"+nodeId+"param:"+JSON.stringify(request));
+        // console.log("request--->nodeId:"+nodeId+"param:"+JSON.stringify(request));
 
         let encodeData = this.serializeDataService.encodeData(request);
         
