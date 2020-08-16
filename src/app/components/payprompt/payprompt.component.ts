@@ -57,11 +57,19 @@ export class PaypromptComponent implements OnInit {
 
     if (this.memo == "")
       this.memo = this.defalutMemo;
-    this.feedService.pay(this.elaAddress, count, this.memo, ()=>{
+
+    this.feedService.pay(this.elaAddress, count, this.memo, (res)=>{
+      let result = res["result"];
+      let txId = result["txid"] || "";
+      if(txId===''){
+        this.native.toastWarn('common.fail');
+        return;
+      } 
+
       this.native.toast('common.success');
       this.popover.dismiss();
     },(err)=>{
-      this.native.toastWarn(err);
+      this.native.toastWarn("common.unknownError");
       this.popover.dismiss();
     });
   }
