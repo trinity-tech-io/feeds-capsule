@@ -148,7 +148,10 @@ export class CreatenewpostPage implements OnInit {
         });
       },
       (err)=>{
-        this.native.toast_trans('common.noImageSelected');
+        let imgUrl = this.imgUrl || "";
+        if(imgUrl === ""){
+          this.native.toast_trans('common.noImageSelected');
+        }
       });
   }
 
