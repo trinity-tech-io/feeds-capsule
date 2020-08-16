@@ -278,6 +278,7 @@ export class ChannelsPage implements OnInit {
       cssClass: 'genericPopup',
       component: PaypromptComponent,
       componentProps: {
+        "title": this.translate.instant("ChannelsPage.tip"),
         "elaAddress":elaAddress,
         "defalutMemo":""
       }

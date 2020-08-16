@@ -118,10 +118,7 @@ export class AppService {
       initializeApp() {
         let isLoadPost = false;
         let isLoadChannel = false;
-
-        localStorage.setItem('org.elastos.dapp.feeds.resavepost',"");
         let isNeedResave = localStorage.getItem('org.elastos.dapp.feeds.resavepost') || "";
-        
 
         this.feedService.initSignInDataAsync((signInData)=>{
           this.feedService.loadPostData().then(()=>{

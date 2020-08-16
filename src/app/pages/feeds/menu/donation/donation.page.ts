@@ -73,6 +73,7 @@ export class DonationPage implements OnInit {
       cssClass: 'genericPopup',
       component: PaypromptComponent,
       componentProps: {
+        "title": this.translate.instant("DonationPage.donation"),
         "elaAddress":elaAddress,
         "defalutMemo":"donation to feeds"
       }

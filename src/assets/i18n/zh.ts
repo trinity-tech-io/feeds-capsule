@@ -41,6 +41,7 @@ export const zh = {
         "des4":"您的捐款将寄至ELA地址：",
         "pictureviewer":"图片查看器",
         "delete":"删除",
+        "amountError":"请输入正确的数额"
     },
     "app":{
         "profileDetails":"档案详情",

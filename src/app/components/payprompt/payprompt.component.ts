@@ -3,6 +3,7 @@ import { PopoverController,NavParams} from '@ionic/angular';
 import { ThemeService } from 'src/app/services/theme.service';
 import { FeedService } from 'src/app/services/FeedService';
 import { NativeService } from 'src/app/services/NativeService';
+
 declare let appManager: AppManagerPlugin.AppManager;
 @Component({
   selector: 'app-payprompt',
@@ -14,6 +15,7 @@ export class PaypromptComponent implements OnInit {
   private amount : number = 0;
   private memo: string = "";
   private defalutMemo: string = "";
+  private title: string = "";
   constructor( 
     private native:NativeService, 
     private feedService:FeedService,
@@ -27,6 +29,7 @@ export class PaypromptComponent implements OnInit {
   ngOnInit() {
     this.elaAddress = this.navParams.get('elaAddress');
     this.defalutMemo = this.navParams.get('defalutMemo');
+    this.title = this.navParams.get('title');
   }
 
   cancel(){
@@ -36,13 +39,20 @@ export class PaypromptComponent implements OnInit {
   }
 
   confirm(){
-    if (this.amount <= 0){
-      this.native.toast_trans('IssuecredentialPage.serverName');
-      return 
+    let count = this.amount;
+    if (!this.number(count)) {
+        this.native.toastWarn('common.amountError');
+        return;
     }
+
+    if (count <= 0) {
+        this.native.toast_trans('common.amountError');
+        return;
+    }
+
     if (this.memo == "")
       this.memo = this.defalutMemo;
-    this.feedService.pay(this.elaAddress, this.amount, this.memo, ()=>{
+    this.feedService.pay(this.elaAddress, count, this.memo, ()=>{
       this.native.toast('common.success');
       this.popover.dismiss();
     },(err)=>{
@@ -51,4 +61,8 @@ export class PaypromptComponent implements OnInit {
     });
   }
 
+  number(text) {
+    var numPattern = /^(([1-9]\d*)|\d)(.\d{1,9})?$/;
+    return numPattern.test(text);
+  }
 }
