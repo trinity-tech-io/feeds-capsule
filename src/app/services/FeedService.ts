@@ -573,7 +573,7 @@ export class FeedService {
     if (serverMap == null || serverMap == undefined)
       serverMap = {};
     let list: Server[] = [];
-    let nodeIdArray: string[] = Object.keys(serverMap);
+    let nodeIdArray: string[] = Object.keys(serverMap)||[];
     for (const index in nodeIdArray) {
       if (serverMap[nodeIdArray[index]] == undefined)
         continue;
@@ -753,7 +753,27 @@ export class FeedService {
 
   carrierReadyCallback(){
     this.events.subscribe('carrier:ready', () => {
+      this.restoreRelation();
+    });
+  }
 
+  restoreRelation(){
+    this.storeService.get("SelfAddress").then((address)=>{
+
+      
+      let realAddress = address;
+      let newAddress = this.carrierService.getAddress();
+
+      if(realAddress!=newAddress){
+        // accessTokenMap = {};
+        // this.storeService.set(PersistenceKey.accessTokenMap,accessTokenMap);
+        this.storeService.set("SelfAddress",newAddress);
+        let serverList = this.getServerList();
+        for (let index = 0; index < serverList.length; index++) {
+          let carrierAddress = serverList[index].carrierAddress || "";
+          this.carrierService.addFriend(carrierAddress,"hi",()=>{},(err)=>{});
+        }
+      }
     });
   }
 
@@ -777,7 +797,7 @@ export class FeedService {
         did: "string",
         status: friendStatus
       }
-        
+
       if(lastConnectStatus != friendStatus && friendStatus == ConnState.connected){
         if (cacheBindingAddress != "" && isBindServer){
           this.carrierService.getIdFromAddress(cacheBindingAddress,(nodeId)=>{
@@ -1387,7 +1407,7 @@ export class FeedService {
         continue;
       else {
         isLocalRefresh = false;
-        this.getChannels(list[index].nodeId, Communication.field.last_update, 0, 0, 10);
+        this.getChannels(list[index].nodeId, Communication.field.last_update, 0, 0, 0);
       }
     }
 
@@ -3554,7 +3574,8 @@ export class FeedService {
       this.updatePost(friendId,channelId);
     }
 
-    this.getAllChannelDetails(friendId);
+    // this.getAllChannelDetails(friendId);
+    this.getChannels(friendId, Communication.field.last_update, 0, 0, 0);
   }
 
 
