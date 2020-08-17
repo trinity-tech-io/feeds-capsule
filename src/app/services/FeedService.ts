@@ -303,26 +303,12 @@ enum PersistenceKey{
 let expDay = 10;
 
 let eventBus = null;
-let currentFetchFeeds: FavoriteFeed;
 
 let currentFeedEventKey: string = "";
 // let currentCreateTopicNID = "";
 
 let postEventTmp: FeedEvents;
 let localSignInData: SignInData = undefined;
-
-@Injectable()
-export class FavoriteFeed {
-  constructor(
-    public nodeId: string,
-    public name: string,
-    public desc: string,
-    public unread: number,
-    public lastSeqno: number,
-    public lastReceived: string = '',
-    public lastEvent: string = '',
-    public fetched:boolean) {}
-}
 
 export class AllFeed{
   constructor(
@@ -4015,27 +4001,6 @@ let virtrulFeedEvents = [
     1,
     ""),
 ];
-
-let virtualFFMap:any = {
-  'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoCarrier News':
-    new FavoriteFeed('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'Carrier News', '', 24, 0, '', virtrulFeedEvents[0].message,true),
-  'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoHive News':
-    new FavoriteFeed('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'Hive News',  '', 35, 0 , '',virtrulFeedEvents[0].message, true),
-  'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoFootball':
-    new FavoriteFeed('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'Football',  '', 4, 0, '',virtrulFeedEvents[0].message, true),
-  'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoTrinity News':
-    new FavoriteFeed('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'Trinity News',  '', 0, 0, '1584956175537',virtrulFeedEvents[0].message, true),
-  'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoHollywood Movies':
-    new FavoriteFeed('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'Hollywood Movies', '',  24, 0, '',virtrulFeedEvents[0].message, true),
-  'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoCofee':
-    new FavoriteFeed('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'Cofee',  '', 35, 0, '', virtrulFeedEvents[0].message,true),
-  'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoMacBook':
-    new FavoriteFeed('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'MacBook',  '', 4, 0, '', virtrulFeedEvents[0].message,true),
-  'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoRust development':
-    new FavoriteFeed('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'Rust development', '',  0, 0, '1584956175537', virtrulFeedEvents[0].message,true),
-  'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoGolang':
-  new FavoriteFeed('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'Golang',  '', 8, 0, '', virtrulFeedEvents[0].message, true)
-}
 
 let virtualMyEvents =
   [
