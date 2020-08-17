@@ -15,9 +15,9 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
   styleUrls: ['./importdid.page.scss'],
 })
 export class ImportdidPage implements OnInit {
-  private connectionStatus = 1;
-  private title = "03/06";
-  private nodeId = "";
+  public connectionStatus = 1;
+  public title = "03/06";
+  public nodeId = "";
   constructor(
     private native: NativeService,
     private zone: NgZone,

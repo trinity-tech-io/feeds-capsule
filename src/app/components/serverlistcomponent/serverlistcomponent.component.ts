@@ -7,7 +7,7 @@ import { PopoverController } from '@ionic/angular';
   styleUrls: ['./serverlistcomponent.component.scss'],
 })
 export class ServerlistcomponentComponent implements OnInit {
-  private serverList: any;
+  public serverList: any;
   @Output() output = new EventEmitter();
   constructor(
     private navParams: NavParams,

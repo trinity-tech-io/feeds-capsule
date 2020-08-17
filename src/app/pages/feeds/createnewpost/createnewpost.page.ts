@@ -14,20 +14,20 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
   styleUrls: ['./createnewpost.page.scss'],
 })
 export class CreatenewpostPage implements OnInit {
-  private connectionStatus = 1;
+  public connectionStatus = 1;
   public nodeStatus = {};
-  private channelAvatar = "";
-  private channelName = "";
-  private subscribers;
-  private newPost="";
-  private imgUrl: string = "";
+  public channelAvatar = "";
+  public channelName = "";
+  public subscribers;
+  public newPost="";
+  public imgUrl: string = "";
   public bigImageUrl:string ="";
   public bigImage:boolean = false;
   // private content ;
 
 
-  private nodeId: string;
-  private channelId: number;
+  public  nodeId: string;
+  public  channelId: number;
   public  isNewPost:boolean = true;
   constructor(
     private events: Events,

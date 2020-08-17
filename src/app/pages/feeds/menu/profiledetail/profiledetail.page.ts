@@ -12,16 +12,16 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
   styleUrls: ['./profiledetail.page.scss'],
 })
 export class ProfiledetailPage implements OnInit {
-  private connectionStatus = 1;
-  private avatar = "";
-  private name = "";
-  private description = "";
-  private did = "";
-  private gender = "";
-  private telephone = "";
-  private email = "";
-  private location = "";
-  private ownChannelSourceDid = "";
+  public connectionStatus = 1;
+  public avatar = "";
+  public name = "";
+  public description = "";
+  public did = "";
+  public gender = "";
+  public telephone = "";
+  public email = "";
+  public location = "";
+  public ownChannelSourceDid = "";
 
 
   constructor(

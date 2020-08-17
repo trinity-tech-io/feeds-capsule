@@ -15,10 +15,10 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
   styleUrls: ['./donation.page.scss'],
 })
 export class DonationPage implements OnInit {
-  private isShowPrompt: boolean = false;
-  private connectionStatus = 1;
-  private elaAddress = "EYWDcCyp6czaqAKGiq4b7exhWJfVpbG2D9";
-  private popover:any;
+  public isShowPrompt: boolean = false;
+  public connectionStatus = 1;
+  public elaAddress = "EYWDcCyp6czaqAKGiq4b7exhWJfVpbG2D9";
+  public popover:any;
   constructor(
     public theme:ThemeService,
     private popoverController:PopoverController,

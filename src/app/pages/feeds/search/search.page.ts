@@ -13,9 +13,9 @@ import { UtilService } from 'src/app/services/utilService';
   styleUrls: ['./search.page.scss'],
 })
 export class SearchPage implements OnInit {
-  private connectionStatus = 1;
+  public connectionStatus = 1;
   public nodeStatus:any={};
-  private channelList= [];
+  public channelList= [];
   constructor(
     private feedService: FeedService,
     private events: Events,

@@ -13,10 +13,10 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
   styleUrls: ['./profileimage.page.scss'],
 })
 export class ProfileimagePage implements OnInit {
-  private connectionStatus = 1;
-  private userAvatar = "";
-  private select: number = 1;
-  private avatar = "assets/images/profile-1.svg";
+  public connectionStatus = 1;
+  public userAvatar = "";
+  public select: number = 1;
+  public avatar = "assets/images/profile-1.svg";
   constructor(
     private native: NativeService,
     private navCtrl: NavController,

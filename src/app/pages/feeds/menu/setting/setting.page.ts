@@ -13,7 +13,7 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
   styleUrls: ['./setting.page.scss'],
 })
 export class SettingPage implements OnInit {
-  private buttonDisable:boolean = false;
+  public buttonDisable:boolean = false;
   constructor(
     private navCtrl: NavController,
     private router: Router,

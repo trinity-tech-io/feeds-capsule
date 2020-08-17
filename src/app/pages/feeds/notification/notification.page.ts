@@ -12,9 +12,9 @@ import { NativeService } from 'src/app/services/NativeService';
   styleUrls: ['./notification.page.scss'],
 })
 export class NotificationPage {
-  private connectionStatus = 1;
+  public connectionStatus = 1;
   public avatar:string = ""; 
-  private notificationList = [];
+  public notificationList = [];
   // Optional parameters to pass to the swiper instance. See http://idangero.us/swiper/api/ for valid options.
   slideOpts = {
     initialSlide: 2,

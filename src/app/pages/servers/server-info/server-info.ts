@@ -21,24 +21,24 @@ class Attribute {
 })
 
 export class ServerInfoPage implements OnInit {
-  private   connectionStatus = 1;
-  private buttonDisabled: boolean = true;
-  private friendRequest = 'Feeds/0.1';
-  private carrierAddress: string;
+  public  connectionStatus = 1;
+  public  buttonDisabled: boolean = true;
+  public  friendRequest = 'Feeds/0.1';
+  public  carrierAddress: string;
 
-  private address: string = '';
-  private isOwner: string = "false";
-  private serverStatus:number = 1;
-  private clientNumber:number = 0;
-  private nodeId:string = "";
+  public address: string = '';
+  public  isOwner: string = "false";
+  public  serverStatus:number = 1;
+  public clientNumber:number = 0;
+  public  nodeId:string = "";
 
-  private isBindServer: boolean = false ;
-  private didString: string;
-  private name: string;
-  private owner: string;
-  private introduction: string;
-  private feedsUrl: string = null;
-  private elaAddress: string = "";
+  public isBindServer: boolean = false ;
+  public didString: string;
+  public name: string;
+  public owner: string;
+  public introduction: string;
+  public feedsUrl: string = null;
+  public  elaAddress: string = "";
   constructor(
     private actionSheetController:ActionSheetController,
     private events: Events,

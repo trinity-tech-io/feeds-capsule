@@ -18,22 +18,22 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
   styleUrls: ['./channels.page.scss'],
 })
 export class ChannelsPage implements OnInit {
-  private images = {};
-  private isShowPrompt: boolean = false;
-  private popover:any;
+  public images = {};
+  public isShowPrompt: boolean = false;
+  public popover:any;
   public nodeStatus = {};
-  private connectionStatus = 1;
-  private channelAvatar = "";
-  private channelName = "";
-  private channelOwner = "";
-  private channelDesc = "";
-  private channelSubscribes = 0;
-  private postList = [];
+  public connectionStatus = 1;
+  public channelAvatar = "";
+  public channelName = "";
+  public channelOwner = "";
+  public channelDesc = "";
+  public channelSubscribes = 0;
+  public postList = [];
 
-  private nodeId;
-  private channelId;
+  public nodeId;
+  public channelId;
 
-  private followStatus = false;
+  public followStatus = false;
   constructor(
     private popoverController:PopoverController,
     private zone: NgZone,

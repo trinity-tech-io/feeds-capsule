@@ -17,11 +17,11 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 export class CreatenewfeedPage implements OnInit {
   public namelen = 0;
   public len = 0;
-  private connectionStatus = 1;
+  public connectionStatus = 1;
   public channelAvatar = "";
-  private avatar = "";
-  private selectedServer: any = null;
-  private selectedChannelSource:string = 'Select channel source';
+  public avatar = "";
+  public selectedServer: any = null;
+  public selectedChannelSource:string = 'Select channel source';
   constructor(
     private router: Router,
     private navCtrl: NavController,

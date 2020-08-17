@@ -13,11 +13,11 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 export class DevelopPage implements OnInit {
   public alert = null;
   constructor(
-    private feedService :FeedService,
-    private native: NativeService,
+    public feedService :FeedService,
+    public native: NativeService,
     public alertController: AlertController,
-    private translate:TranslateService,
-    private events: Events) { }
+    public translate:TranslateService,
+    public events: Events) { }
 
   ngOnInit() {
    

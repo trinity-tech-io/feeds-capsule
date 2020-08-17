@@ -20,14 +20,14 @@ export class HomePage implements OnInit {
   @ViewChild(IonContent,{static:true}) content: IonContent;
   @ViewChild(IonInfiniteScroll,{static:true}) infiniteScroll: IonInfiniteScroll;
   myScrollContainer!: HTMLElement;
-  private connectionStatus = 1;
-  private postList: any = [];
+  public connectionStatus = 1;
+  public postList: any = [];
   public nodeStatus:any={};
   public startIndex = 0;
   public pageNumber = 8;
   public totalData = [];
   public isBottom:boolean = false;
-  private images = {};
+  public images = {};
   constructor(
     private elmRef: ElementRef,
     private feedspage: FeedsPage,

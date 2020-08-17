@@ -13,15 +13,15 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
   styleUrls: ['./comment.page.scss'],
 })
 export class CommentPage implements OnInit {
-  private connectionStatus = 1;
+  public connectionStatus = 1;
   public nodeStatus:any={};
   public channelAvatar = "";
   public channelName = "";
   public subscribers;
-  private newComment: string="";
-  private nodeId: string;
-  private channelId: number;
-  private postId: number;
+  public newComment: string="";
+  public nodeId: string;
+  public channelId: number;
+  public postId: number;
   public  isNewPost:boolean = true;
   constructor(
     private events: Events,

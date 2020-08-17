@@ -13,12 +13,12 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
   styleUrls: ['./startbinding.page.scss'],
 })
 export class StartbindingPage implements OnInit {
-  private connectionStatus = 1;
-  private title = "02/06";
+  public connectionStatus = 1;
+  public title = "02/06";
   public nonce = "";
-  private nodeId: string="";
-  private carrierAddress: string="";
-  private did:string = "";
+  public nodeId: string="";
+  public carrierAddress: string="";
+  public did:string = "";
   public feedsUrl: string ="";
   // private isProcess = false;
   constructor(

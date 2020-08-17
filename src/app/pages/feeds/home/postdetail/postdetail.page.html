@@ -9,7 +9,7 @@
             <img  src="./assets/images/dots-three-vertical.svg" *ngIf="!theme.darkMode" style="width:12.4;height:3px">
             <img  src="./assets/images/dots-three-vertical-dark.svg" *ngIf="theme.darkMode" style="width:12.4;height:3px">
           </div>
-          <div class="image-text-div" (click)="navTo(post.nodeId, post.channel_id)">
+          <div class="image-text-div">
               <ion-avatar class="avatar-div">
                 <div class="feed-source-card-status" style="position: absolute;top:0px;left:0px">
                   <div class="online-circle"  *ngIf="nodeStatus[nodeId] == 0"></div>
@@ -22,7 +22,7 @@
                 <div class="text1-div"> 
                   <ion-label class="channel-title-small white">{{channelName}}</ion-label>
                 </div>
-                <div  (click)="navTo(post.nodeId, post.channel_id)"> 
+                <div> 
                   <ion-label class="channel-desc-small">@{{channelOwner}}</ion-label>
                 </div>
               </div>
@@ -72,7 +72,7 @@
               </div>
 
               <div class="channel-post-div" > 
-                <ion-label class="channel-post white">{{comment.content}}</ion-label>
+                <ion-label class="channel-post white"><pre>{{comment.content}}</pre></ion-label>
               </div>
     
               <div class="channel-post-heart-comment-div">

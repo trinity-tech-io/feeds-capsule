@@ -15,29 +15,29 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
   styleUrls: ['./postdetail.page.scss'],
 })
 export class PostdetailPage implements OnInit {
-  private images = {};
-  private connectionStatus = 1;
+  public images = {};
+  public connectionStatus = 1;
   public nodeStatus:any ={};
-  private bigImageUrl: string;
-  private bigImage: boolean = false;
-  private avatar: string = "";
+  public bigImageUrl: string;
+  public bigImage: boolean = false;
+  public avatar: string = "";
 
-  private channelAvatar = "";
-  private channelName = "";
-  private channelOwner = "";
-  private postContent = "";
-  private postTS = 0;
-  private likesNum = 0;
-  private commentsNum = 0;
+  public channelAvatar = "";
+  public channelName = "";
+  public channelOwner = "";
+  public postContent = "";
+  public postTS = 0;
+  public likesNum = 0;
+  public commentsNum = 0;
   
-  private commentList = null;
-  private refreshCommFinish = false ;
+  public commentList = null;
+  public refreshCommFinish = false ;
 
-  private nodeId;
-  private channelId;
-  private postId;
+  public nodeId;
+  public channelId;
+  public postId;
 
-  private myInterval;
+  public myInterval;
   constructor(
     private acRoute: ActivatedRoute,
     private events: Events,

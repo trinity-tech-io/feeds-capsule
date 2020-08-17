@@ -14,12 +14,12 @@ export class ProfilePage implements OnInit {
   public  channels = []; //myFeeds page
   public  followingList = []; // following page
   public  likeList = []; //like page
-  private connectionStatus = 1;
-  private selectType: string = "ProfilePage.myFeeds"; 
-  private description: string = "";
-  private name: string = "";
-  private followers = 0;
-  private avatar = "";
+  public connectionStatus = 1;
+  public selectType: string = "ProfilePage.myFeeds"; 
+  public description: string = "";
+  public name: string = "";
+  public followers = 0;
+  public avatar = "";
   slideOpts = {
     initialSlide: 0,
     speed: 100,
