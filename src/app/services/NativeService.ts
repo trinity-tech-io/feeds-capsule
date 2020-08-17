@@ -184,24 +184,33 @@ export class NativeService {
     }
 
     async openViewer(imgPath:string) {
+
         this.setTitleBarBackKeyShown(false);
         const modal = await this.modalController.create({
           component: ViewerModalComponent,
           componentProps: {
             src: imgPath,
-            title: this.translate.instant("common.pictureviewer"), // optional
-            scheme:"light"
+            slideOptions:{ centeredSlides: true, passiveListeners:true, zoom: { enabled: true } }
           },
           cssClass: 'ion-img-viewer',
           keyboardClose:true,
           showBackdrop:true,
-          
         });
 
+
         modal.onWillDismiss().then(()=>{
+             document.removeEventListener('click',(event)=> this.hide(modal),false);
             this.setTitleBarBackKeyShown(true);
         })
     
-        return await modal.present();
+        return await modal.present().then(()=>{
+                const el = document.querySelector('ion-modal');
+                el.addEventListener('click', (event) => this.hide(modal), true);
+          
+        });
+      }
+
+      hide(modal:any){
+        modal.dismiss();
       }
 }
