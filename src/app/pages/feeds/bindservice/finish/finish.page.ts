@@ -12,9 +12,9 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
   styleUrls: ['./finish.page.scss'],
 })
 export class FinishPage implements OnInit {
-  private connectionStatus = 1;
-  private title = "06/06";
-  private nodeId = "";
+  public connectionStatus = 1;
+  public title = "06/06";
+  public nodeId = "";
   constructor(
     private native: NativeService,
     private acRoute: ActivatedRoute,

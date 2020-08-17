@@ -12,8 +12,8 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 })
 
 export class AboutPage implements OnInit {
-  private connectionStatus = 1;
-  private version = "v1.0.1";
+  public connectionStatus = 1;
+  public version = "v1.0.1";
 
   constructor(
     private zone: NgZone,

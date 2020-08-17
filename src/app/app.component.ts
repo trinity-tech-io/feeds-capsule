@@ -18,9 +18,9 @@ let appManager: any;
 })
 
 export class MyApp {
-  private didString = "Undefine";
-  private name = "Undefine";
-  private avatar = "";
+  public didString = "Undefine";
+  public name = "Undefine";
+  public avatar = "";
   constructor(
     private modalCtrl: ModalController,
     private events: Events,

@@ -43,7 +43,7 @@
 
         <div style="margin-left: 81px;margin-top:-12px">
           <div class="channel-post-div"  (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)"> 
-            <ion-label class="channel-post white">{{getContentText(post.content)}}</ion-label>
+            <ion-label class="channel-post white"><pre>{{getContentText(post.content)}}</pre></ion-label>
           </div>
 
           <ion-avatar  *ngIf="getImage(post.nodeId, post.channel_id, post.id) != 'none'" class="content-img-without-margin" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)" style="margin-top: 5px;">

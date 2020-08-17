@@ -15,12 +15,12 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
   styleUrls: ['./issuecredential.page.scss'],
 })
 export class IssuecredentialPage implements OnInit {
-  private isShowPrompt:boolean = false;
-  private connectionStatus = 1;
-  private title = "05/06";
-  private nodeId = "";
-  private did = "";
-  private popover:any;
+  public isShowPrompt:boolean = false;
+  public connectionStatus = 1;
+  public title = "05/06";
+  public nodeId = "";
+  public did = "";
+  public popover:any;
   constructor(
     public popoverController:PopoverController,
     private native: NativeService,

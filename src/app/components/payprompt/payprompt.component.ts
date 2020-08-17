@@ -12,11 +12,11 @@ declare let appManager: AppManagerPlugin.AppManager;
 })
 export class PaypromptComponent implements OnInit {
   public elaAddress:string ="";
-  private amount : number = 0;
-  private memo: string = "";
-  private defalutMemo: string = "";
-  private title: string = "";
-  private disableMemo:boolean = false;
+  public amount : number = 0;
+  public memo: string = "";
+  public defalutMemo: string = "";
+  public title: string = "";
+  public disableMemo:boolean = false;
   constructor( 
     private native:NativeService, 
     private feedService:FeedService,

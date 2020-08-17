@@ -15,8 +15,8 @@ import { TranslateService } from "@ngx-translate/core";
 
 export class PostfromComponent implements OnInit {
   public nodeStatus = {};
-  private channels: any = [];
-  private channelAvatar = "./assets/images/component-480-47.png";
+  public channels: any = [];
+  public channelAvatar = "./assets/images/component-480-47.png";
   constructor(
     private native: NativeService,
     private navCtrl: NavController,

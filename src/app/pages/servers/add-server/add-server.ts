@@ -15,16 +15,16 @@ declare let appManager: AppManagerPlugin.AppManager;
 })
 
 export class AddServerPage implements OnInit {
-  private connectionStatus = 1;
-  private address: string = '';
+  public  connectionStatus = 1;
+  public  address: string = '';
   
-  private buttonDisabled = false;
+  public  buttonDisabled = false;
   
-  private name: string;
-  private owner: string;
-  private introduction: string;
-  private did: string;
-  private feedsUrl: string;
+  public  name: string;
+  public  owner: string;
+  public  introduction: string;
+  public  did: string;
+  public  feedsUrl: string;
 
   constructor(
     private events: Events,

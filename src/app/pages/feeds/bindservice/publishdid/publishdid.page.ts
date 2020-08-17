@@ -14,11 +14,11 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
   styleUrls: ['./publishdid.page.scss'],
 })
 export class PublishdidPage implements OnInit {
-  private connectionStatus = 1;
-  private title = "04/06";
-  private payload: string="";
-  private nodeId = "";
-  private did = "";
+  public connectionStatus = 1;
+  public title = "04/06";
+  public payload: string="";
+  public nodeId = "";
+  public did = "";
   constructor(
     private events: Events,
     private zone: NgZone,
