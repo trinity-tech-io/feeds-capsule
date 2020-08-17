@@ -1,10 +1,10 @@
 {
-  "id": "org.elastos.dapp.feeds",
+  "id": "io.trinity-tech.dapp.feeds",
   "version": "v1.0.1",
   "version_code": 1,
   "name": "Feeds",
   "short_name": "Feeds",
-  "short_description": "",
+  "short_description": "New social dApp with DID access, multiple choices to service, and ownership of all your social data",
   "description": "",
   "start_url": "index.html",
   "type": "app",
@@ -39,7 +39,6 @@
     "Camera"
   ],
   "urls": [
-    "http://www.yourappserver.com/*"
   ],
   "background_color": "#4e8ef7",
   "theme_display": "show",
