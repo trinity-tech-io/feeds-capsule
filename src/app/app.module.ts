@@ -80,6 +80,33 @@ export function TranslateLoaderFactory() {
   return new WebpackTranslateLoader();
 }
 
+export function anim(AnimationC: Animation, baseEl: any, position?: any): Promise<Animation> {
+  const baseAnimation = new AnimationC();
+  const hostEl = (baseEl.host || baseEl) as HTMLElement;
+  const wrapperAnimation = new AnimationC();
+  const wrapperAnimation2 = new AnimationC();
+  if (position.direction == "forward") {
+  wrapperAnimation.addElement(position.enteringEl);
+  wrapperAnimation.fromTo('transform', `translateX(100%)`, 'translateX(0px)');
+  wrapperAnimation.fromTo('opacity', 1, 1);
+  }
+
+  if (position.direction == "back") {
+  wrapperAnimation.addElement(position.leavingEl);
+  wrapperAnimation.fromTo('transform', `translateX(0)`, 'translateX(100%)');
+  wrapperAnimation.fromTo('opacity', 1, 0.3);
+
+  wrapperAnimation2.addElement(position.enteringEl);
+  wrapperAnimation2.fromTo('transform', `translateX(0)`, 'translateX(0)');
+  wrapperAnimation2.fromTo('opacity', 1, 1);
+  }
+  return Promise.resolve(baseAnimation
+  .addElement(hostEl)
+  .easing('cubic-bezier(.36,.66,.04,1)')
+  .duration(800)
+  .add(wrapperAnimation)
+  .add(wrapperAnimation2));
+}
 
 @NgModule({
   declarations: [
@@ -99,34 +126,7 @@ export function TranslateLoaderFactory() {
     IonicModule.forRoot({
       rippleEffect: false,
       mode: 'ios',
-      navAnimation: (AnimationC: Animation, baseEl: any, position?: any): Promise<Animation> => {
-        const baseAnimation = new AnimationC();
-        const hostEl = (baseEl.host || baseEl) as HTMLElement;
-
-        const wrapperAnimation = new AnimationC();
-        const wrapperAnimation2 = new AnimationC();
-        if (position.direction == "forward") {
-          wrapperAnimation.addElement(position.enteringEl);
-          wrapperAnimation.fromTo('transform', `translateX(100%)`, 'translateX(0px)');
-          wrapperAnimation.fromTo('opacity', 1, 1);
-        }
-
-        if (position.direction == "back") {
-          wrapperAnimation.addElement(position.leavingEl);
-          wrapperAnimation.fromTo('transform', `translateX(0)`, 'translateX(100%)');
-          wrapperAnimation.fromTo('opacity', 1, 0.3);
-
-          wrapperAnimation2.addElement(position.enteringEl);
-          wrapperAnimation2.fromTo('transform', `translateX(0)`, 'translateX(0)');
-          wrapperAnimation2.fromTo('opacity', 1, 1);
-        }
-        return Promise.resolve(baseAnimation
-          .addElement(hostEl)
-          .easing('cubic-bezier(.36,.66,.04,1)')
-          .duration(800)
-          .add(wrapperAnimation)
-          .add(wrapperAnimation2));
-      }
+      navAnimation: anim,
     }),
     TranslateModule.forRoot({
       loader: {
