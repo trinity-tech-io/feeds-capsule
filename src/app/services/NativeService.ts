@@ -214,19 +214,20 @@ export class NativeService {
         modal.dismiss();
       }
 
-      isJSON(str:string){
+      parseJSON(str:string): any{
         if (typeof(str)== 'string') {
             try {
                 var obj = JSON.parse(str);
-                if (typeof obj == 'object' && obj) {
-                    return true;
+                if (typeof obj == 'object') {
+                    return obj;
                 } else {
-                    return false;
+                    return str;
                 }
-    
             } catch (e) {
-                return false;
+                return str;
             }
+        }else{
+            return str;
         }
     }
 }
