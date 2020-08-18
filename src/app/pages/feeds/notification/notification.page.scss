@@ -30,6 +30,7 @@
 }
 
 .notification-behavior{
+    position: relative;
     display:inline-block;
     margin-top: 3px;
     font-family: MontserratMedium;
@@ -44,6 +45,7 @@
 }
 
 .notification-content{
+    padding-top: 0px;
     margin-top: 0px;
     font-family: MontserratMedium;
     font-size: 13px;
@@ -76,14 +78,26 @@
 }
 
 .channel-title-small{
-    max-width: 150px;
     height: 20px;
-    font-family: Montserrat;
     font-size: 17px;
     font-weight: bold;
     font-stretch: normal;
     font-style: normal;
     text-align: left;
     color: #161740;
+}
+
+.channel-ts1{
+    width: 10px;
+    height: 14px;
+    font-family: Montserrat;
+    font-size: 11px;
+    font-weight: 600;
+    font-stretch: normal;
+    font-style: normal;
+    letter-spacing: normal; 
+    color: #a0a2c4;
+    margin-left: 5px;
+    vertical-align: middle;
   }
 
