@@ -3113,14 +3113,9 @@ export class FeedService {
       return "";
     }
 
-    if (content.indexOf("text") != -1){
-      try{
+    if (this.native.isJSON(content)){
         let contentObj = JSON.parse(content);
         return contentObj.text;
-      } catch(e){
-        console.log("error ==> "+e);
-        return "";
-      }
     }
 
     return content;
