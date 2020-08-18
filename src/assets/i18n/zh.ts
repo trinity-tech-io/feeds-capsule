@@ -316,5 +316,16 @@ export const zh = {
         "amount":"数量",
         "memo":"备注",
         "defaultMemo":"捐赠feeds项目"
+    },
+    "ErrorInfo":{
+        "alreadyExists":"内容已经存在",
+        "notExists":"内容不存在",
+        "notAuthorized":"操作异常",
+        "wrongState":"状态异常",
+        "tokenExpired":"令牌过期",
+        "internalError":"服务器内部异常",
+        "invalidParam":"参数无效",
+        "invalidChallengeResponse":"登录鉴权失败",
+        "invalidVerifiableCredential":"服务器无法验证凭证信息"
     }
 };
