@@ -515,7 +515,6 @@ export class FeedService {
       if (accessTokenMap == null || accessTokenMap == undefined)
         accessTokenMap = {};
     });
-    
 
     this.storeService.get(PersistenceKey.bindingServer).then((mBindingServer)=>{
       bindingServer = mBindingServer ;
@@ -3109,16 +3108,15 @@ export class FeedService {
   }
 
   parsePostContentText(content: string): string{
-    if (content == undefined){
-      return "";
-    }
+    let contentObj = this.native.parseJSON(content) || "";
+    
+    if (contentObj.text != undefined)
+      return contentObj.text 
 
-    if (this.native.isJSON(content)){
-        let contentObj = JSON.parse(content);
-        return contentObj.text;
-    }
+    if (typeof contentObj != 'string')
+      return ""
 
-    return content;
+    return contentObj;
   }
 
   parsePostContentImg(content: any): string{
