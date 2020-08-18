@@ -316,7 +316,16 @@ export const en = {
         "amount":"Amount",
         "memo":"memo",
         "defaultMemo":"Donation to Feeds project"
+    },
+    "ErrorInfo":{
+        "alreadyExists":"Entity Already Exists",
+        "notExists":"Entity Not Exists",
+        "notAuthorized":"Operation Not Authorized",
+        "wrongState":"Operation In Wrong State",
+        "tokenExpired":"Access Token Expired",
+        "internalError":"Server Internal Error",
+        "invalidParam":"Invalid Parameters",
+        "invalidChallengeResponse":"Invalid Challenge Response",
+        "invalidVerifiableCredential":"Invalid Verifiable Credential"
     }
-
-
 };

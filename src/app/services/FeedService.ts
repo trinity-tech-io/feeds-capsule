@@ -380,15 +380,7 @@ export class FeedService {
   }
 
   init(){
-    if (this.platform.platforms().indexOf("cordova") < 0) {
-      serverMap = virtualServersMap;
-      this.postMap = {};
-      lastPostUpdateMap = {};
-      return;
-    }
-
     this.initData();
-
     this.initCallback();
   }
 
@@ -905,9 +897,9 @@ export class FeedService {
   handleError(error: any){
     eventBus.publish("rpcRequest:error");
     if(typeof error == "string")
-      this.native.toast(error);  
+      this.native.toastWarn(error);  
     else
-      this.native.toast(JSON.stringify(error));
+      this.processGeneralError(error.code);
   }
 
   handleResult(method:string, nodeId: string ,result: any , request: any, error: any){
@@ -3936,159 +3928,38 @@ export class FeedService {
       });
     }
   }
-}
 
-
-//// Virtual data
-let virtualServersMap: any = {
-  "did1":
-    {
-      name              : "name1",
-      owner             : "owner1",
-      introduction      : "introduction1",
-      did               : "did1",
-      carrierAddress    : "carrierAddress1",
-      userId            : "J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo",
-      status            : ConnState.connected
-    },
-  "did2":
-    {
-      name              : "name2",
-      owner             : "owner2",
-      introduction      : "introduction2",
-      did               : "did2",
-      carrierAddress    : "carrierAddress2",
-      userId            : "3x4xVSJmtvty1tM8vzcz2pzW2WG7TmNavbnz9ka1EtZy",
-      status            : ConnState.disconnected
-    },
-}
-
-let virtrulFeedEvents = [
-  new FeedEvents('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo',
-    'Carrier News',
-    '1584956175537',
-    `1.Elastos Trinity DApp Store is your one-stop shop for finding the latest dApps available inside the Elastos ecosystem.
-    The key difference between the applications available here and what you will find in any other app store is
-    Elastos' guarantee of 100% security and privacy. All Elastos applications are decentralized, thus giving you
-    the freedom to use the web as you should without the worries of data theft and third parties monetizing your data`,
-    1,
-    ""),
-  new FeedEvents('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo',
-    'Carrier News',
-    '1584956175537',
-    `2.Elastos Trinity DApp Store is your one-stop shop for finding the latest dApps available inside the Elastos ecosystem.
-    The key difference between the applications available here and what you will find in any other app store is
-    Elastos' guarantee of 100% security and privacy. All Elastos applications are decentralized, thus giving you
-    the freedom to use the web as you should without the worries of data theft and third parties monetizing your data`,
-    1,
-    ""),
-  new FeedEvents('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo',
-    'Carrier News',
-    '1584956175537',
-    `3.Elastos Trinity DApp Store is your one-stop shop for finding the latest dApps available inside the Elastos ecosystem.
-    The key difference between the applications available here and what you will find in any other app store is
-    Elastos' guarantee of 100% security and privacy. All Elastos applications are decentralized, thus giving you
-    the freedom to use the web as you should without the worries of data theft and third parties monetizing your data`,
-    1,
-    ""),
-  new FeedEvents('J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo',
-    'Carrier News',
-    '1584956175537',
-    `4.Elastos Trinity DApp Store is your one-stop shop for finding the latest dApps available inside the Elastos ecosystem.
-    The key difference between the applications available here and what you will find in any other app store is
-    Elastos' guarantee of 100% security and privacy. All Elastos applications are decentralized, thus giving you
-    the freedom to use the web as you should without the worries of data theft and third parties monetizing your data`,
-    1,
-    ""),
-];
-
-let virtualMyEvents =
-  [
-    {
-      timestamp: '1584956175537',
-      message:
-        `1.Elastos Trinity DApp Store is your one-stop shop for finding the latest dApps available inside the Elastos ecosystem.
-        The key difference between the applications available here and what you will find in any other app store is
-        Elastos' guarantee of 100% security and privacy. All Elastos applications are decentralized, thus giving you
-        the freedom to use the web as you should without the worries of data theft and third parties monetizing your data`
-    },
-    {
-      timestamp: '1584956175537',
-      message:
-        `2.Elastos Trinity DApp Store is your one-stop shop for finding the latest dApps available inside the Elastos ecosystem.
-        The key difference between the applications available here and what you will find in any other app store is
-        Elastos' guarantee of 100% security and privacy. All Elastos applications are decentralized, thus giving you
-        the freedom to use the web as you should without the worries of data theft and third parties monetizing your data`
-    },
-    {
-      timestamp: '1584956175537',
-      message:
-        `3.Elastos Trinity DApp Store is your one-stop shop for finding the latest dApps available inside the Elastos ecosystem.
-        The key difference between the applications available here and what you will find in any other app store is
-        Elastos' guarantee of 100% security and privacy. All Elastos applications are decentralized, thus giving you
-        the freedom to use the web as you should without the worries of data theft and third parties monetizing your data`
-    },
-    {
-      timestamp: '1584956175537',
-      message:
-        `4.Elastos Trinity DApp Store is your one-stop shop for finding the latest dApps available inside the Elastos ecosystem.
-        The key difference between the applications available here and what you will find in any other app store is
-        Elastos' guarantee of 100% security and privacy. All Elastos applications are decentralized, thus giving you
-        the freedom to use the web as you should without the worries of data theft and third parties monetizing your data`
+  processGeneralError(errorCode: number){
+    let errorMessage = this.translate.instant("Common.unknownError");
+    switch(errorCode){
+      case -1:
+        errorMessage = this.translate.instant("ErrorInfo.alreadyExists");
+        break;
+      case -2:
+        errorMessage = this.translate.instant("ErrorInfo.notExists");
+        break;
+      case -3:
+        errorMessage = this.translate.instant("ErrorInfo.notAuthorized");
+        break;
+      case -4:
+        errorMessage = this.translate.instant("ErrorInfo.wrongState");
+        break;
+      case -5:
+        errorMessage = this.translate.instant("ErrorInfo.tokenExpired");
+        break;
+      case -6:
+        errorMessage = this.translate.instant("ErrorInfo.internalError");
+        break;
+      case -7:
+        errorMessage = this.translate.instant("ErrorInfo.invalidParam");
+        break;
+      case -8:
+        errorMessage = this.translate.instant("ErrorInfo.invalidChallengeResponse");
+        break;
+      case -9:
+        errorMessage = this.translate.instant("ErrorInfo.invalidVerifiableCredential");
+        break;
     }
-  ];
-
-let virtrulMyFeeds = {
-  'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoCarrier News':
-    new MyFeed('paper', 'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'Carrier News', '', '1584956175537',"",virtualMyEvents[0].message, false),
-  'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoHive News':
-    new MyFeed('paper', 'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'Hive News', '', '1584956175537',"",virtualMyEvents[0].message,false),
-  'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoTrinity News':
-    new MyFeed('paper', 'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'Trinity News', '', '1584956175537',"",virtualMyEvents[0].message,false),
-  'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoDID News':
-    new MyFeed('paper', 'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'DID News', '', '1584956175537',"",virtualMyEvents[0].message,false),
-  'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoDID SideChain News':
-    new MyFeed('paper', 'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'DID SideChain News', '', '1584956175537',"",virtualMyEvents[0].message,false),
-  'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoFootball News':
-    new MyFeed('paper', 'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo', 'Football News', '', '1584956175537',"",virtualMyEvents[0].message,false)
-}
-
-let virtualAFMap: any = {
-  "J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoCarrier News":
-    new AllFeed("J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo","page","Carrier News","Carrier News description","Subscribed"),
-  "J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoHive News":
-    new AllFeed("J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo","page","Hive News","Carrier News description","Subscribed"),
-  "J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoTrinity News":
-    new AllFeed("J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo","page","Trinity News","Carrier News description","Subscribed"),
-  "J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoDID News":
-    new AllFeed("J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo","page","DID News","Carrier News description","Subscribe"),
-  "J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoDMA News":
-    new AllFeed("J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo","page","DMA News","Carrier News description","Subscribed"),
-  "J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoFootball News":
-    new AllFeed("J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2Mo","page","Football News","Carrier News description","Subscribe")
-}
-
-
-
-let virtualEvents = {
-  'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoCarrier News':virtrulFeedEvents,
-  'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoHive News':virtrulFeedEvents,
-  'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoFootball':virtrulFeedEvents,
-  'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoTrinity News':virtrulFeedEvents,
-  'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoHollywood Movies':virtrulFeedEvents,
-  'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoCofee':virtrulFeedEvents,
-  'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoMacBook':virtrulFeedEvents,
-  'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoRust development':virtrulFeedEvents,
-  'J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoGolang':virtrulFeedEvents
-}
-
-
-
-let virtualMyEventMap = {
-  "J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoCarrier News":virtualMyEvents,
-  "J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoHive News":virtualMyEvents,
-  "J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoTrinity News":virtualMyEvents,
-  "J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoDID News":virtualMyEvents,
-  "J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoDID SideChain News":virtualMyEvents,
-  "J7xW32cH52WBfdYZ9Wgtghzc7DbbHSuvvxgmy2Nqa2MoFootball News":virtualMyEvents
+    this.native.toastWarn(errorMessage);
+  }
 }
