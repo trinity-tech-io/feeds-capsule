@@ -54,7 +54,7 @@ export class LikesComponent implements OnInit {
   }
 
   getChannel(nodeId, channelId):any{
-    return this.feedService.getChannelFromId(nodeId,channelId);
+    return this.feedService.getChannelFromId(nodeId,channelId)||"";
   }
 
   like(nodeId, channelId, postId){
@@ -100,7 +100,7 @@ export class LikesComponent implements OnInit {
   }
 
   parseAvatar(nodeId: string, channelId: number): string{
-    return this.feedService.parseChannelAvatar(this.getChannel(nodeId, channelId).avatar);
+    return this.feedService.parseChannelAvatar(this.getChannel(nodeId, channelId).avatar || "");
   }
 
   exploreFeeds(){

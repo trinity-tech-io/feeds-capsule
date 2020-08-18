@@ -3031,9 +3031,14 @@ export class FeedService {
       keys = Object.keys(likeMap);
 
     for (const index in keys) {
-      if (likeMap[keys[index]] == null || likeMap[keys[index]] == undefined)
+      let post = likeMap[keys[index]];
+      
+      if (post == null || post == undefined)
         continue;
-        list.push(likeMap[keys[index]]);
+      if (this.getChannelFromId(post.nodeId, post.channel_id) == undefined)
+        continue;
+
+      list.push(post);
     }
 
     list.sort((a, b) => Number(b.created_at) - Number(a.created_at));
