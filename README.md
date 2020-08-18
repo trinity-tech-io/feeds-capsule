@@ -1,4 +1,4 @@
-Elastos.Trinity.DApps.Feeds
+feeds-dapp
 ========================
 
 ## 1. Introduction
@@ -6,10 +6,10 @@ Elastos.Trinity.DApps.Feeds
 If you are looking for an update-to-date social style dApp with the following characteristics:
 
 - Sign-in with decentralised DID
-- You own all your social datum from your feeds
+- You own all your social data from your feeds
 - Multiple connections to service/node providers
 
-***congratulations*** !!!  This is the one and I hope you love it.
+***Congratulations*** !!!  This is the one and I hope you love it.
 
 ## 2. Features
 
@@ -37,7 +37,7 @@ An initial **technical preview version v1.0.0** has been released with the follo
 
 - [x] Tip for feeds
 
-- [x] Post content with images 
+- [x] Post content with images
 
 - [ ] Post short video less than 30seconds [ **UPCOMING**]
 
@@ -47,13 +47,13 @@ An initial **technical preview version v1.0.0** has been released with the follo
 
 - [ ] Pay to see valuable posts [ **IN PLAN** ]
 
-Based on that,  we will keep improving not only for experience of UI/UX, but the new added-value features described as **IN PLAN**. 
+Based on that,  we will keep improving not only for experience of UI/UX, but the new added-value features described as **IN PLAN**.
 
 Any advices about new features or improvements would be appreciated to put forward as **Issues** to this repository.
 
 ## 3. Run dApp in developer mode
 
-### trinity-cli 
+### trinity-cli
 
 Developers should have **trinity-cli** command tool installed on developing device at first.  Otherwise, you have to install **trinity-cli** with command below:
 
@@ -65,15 +65,15 @@ sudo npm install -g @elastosfoundation/trinity-cli --unsafe-perm
 
 ### elastOS
 
-Developers should have latest version of **elastOS** application installed on mobile device of **Android** or **iOS** platform. Please check the details in the repository of [**Elastos.Trinity**](https://github.com/elastos/Elastos.Trinity) 
+Developers should have latest version of **elastOS** application installed on mobile device of **Android** or **iOS** platform. Please check the details in the repository of [**Elastos.Trinity**](https://github.com/elastos/Elastos.Trinity)
 
 ### Run dApp
 
 Then **clone** the repository with the commands:
 
 ```
-git clone https://gitlab.com/elastos/Elastos.Trinity.DApps.Feeds.git
-cd Elastos.Trinity.DApps.Feeds
+git clone https://github.com/elastos-trinity/feeds-dapp
+cd feeds-dapp
 ```
 
 With **trinity-cli**, input the command to launch **feeds** dApp on your **Android** device with the help of **elastOS** application when you have **Android** connected.
@@ -98,8 +98,3 @@ A sincere thank to the all team and projects we are relying on, especially for t
 ## 5. License
 
 This project is licensed under the term of **GPLv3**
-
-
-
-
-
