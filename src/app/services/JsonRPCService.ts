@@ -11,7 +11,8 @@ export class RequestBean{
     constructor(
         public requestId: number,
         public method: string,
-        public requestParams: any){}
+        public requestParams: any,
+        public memo: any){}
 }
 
 // 1:Result,
@@ -60,11 +61,11 @@ export class JsonRPCService {
         return new LoginResult(nodeId,data.payload,data.signature);
     }
 
-    request(method: string, nodeId: string,params: any, onSuccess:()=>void, onError?:(err: string)=>void){
+    request(method: string, nodeId: string,params: any, memo: any, onSuccess:()=>void, onError?:(err: string)=>void){
         let id = autoIncreaseId++;
-        let requestBean = new RequestBean(id,method,params);
+        let requestBean = new RequestBean(id,method,params,memo);
         requestQueue.push(requestBean);
-        let request = this.assembleJson(id, method, params);
+        let request = this.assembleJson(id, method, params, memo);
 
         // console.log("request--->nodeId:"+nodeId+"param:"+JSON.stringify(request));
 
@@ -84,7 +85,7 @@ export class JsonRPCService {
         return res;
     }
 
-    assembleJson(id: number, method: string, params: any): any{
+    assembleJson(id: number, method: string, params: any, memo: any): any{
         let data = {
             version:"1.0",
             method:method,
@@ -102,7 +103,7 @@ export class JsonRPCService {
 
         if (data.result != undefined){
             let request = this.queryRequest(data.id, data.result);
-            return this.createResult(nodeId, request.method,request.requestParams , data.result);
+            return this.createResult(nodeId, request.method,request , data.result);
         }
 
         if (data.params != undefined)
@@ -111,13 +112,13 @@ export class JsonRPCService {
 
         if(data.error != undefined){
             let request = this.queryRequest(data.id, data.result);
-            return this.createError2(nodeId, request.method, request.requestParams, data.error);
+            return this.createError2(nodeId, request.method, request, data.error);
         }
             
             
         if(data.result == null){
             let request = this.queryRequest(data.id, data.result);
-            return this.createResult(nodeId, request.method,request.requestParams , data.result);
+            return this.createResult(nodeId, request.method,request , data.result);
         }
 
         return this.createError(nodeId, -69000, "Unknown error");
@@ -146,14 +147,14 @@ export class JsonRPCService {
         return new Result(-1,nodeId,"",{},{},error,{});
     }
 
-    createError2(nodeId: string , method: string, requestParams: object, error: any): Result{
-        return new Result(0,nodeId,method,requestParams,{},error,{});
+    createError2(nodeId: string , method: string, request: object, error: any): Result{
+        return new Result(0,nodeId,method,request,{},error,{});
     }
 
-    createResult(nodeId: string, method: string, requestParams: object , result: any): Result{
-        if (requestParams == null)
-            requestParams = {};
-        return new Result(0,nodeId,method,requestParams,result,{},{});
+    createResult(nodeId: string, method: string, request: object , result: any): Result{
+        if (request == null)
+            request = {};
+        return new Result(0,nodeId,method,request,result,{},{});
     }
 
     createParamsResult(nodeId: string, params: any, method: string){

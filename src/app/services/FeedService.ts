@@ -203,7 +203,10 @@ export class SignInData{
       public description: string,
       public expiresTS: number) {}
 }
-
+enum RequestAction{
+  defaultAction,
+  refreshPostDetail
+}
 enum Behavior {
   comment,
   likedPost,
@@ -268,6 +271,7 @@ enum PublishType{
   UpdateNotification = "feeds:UpdateNotification",
   publishPostFinish = "feeds:publishPostFinish",
 
+  refreshPostDetail = "feeds:refreshPostDetail",
 }
 
 enum PersistenceKey{
@@ -704,7 +708,7 @@ export class FeedService {
     this.jwtMessageService.request(nodeId,properties,()=>{},()=>{});
   }
 
-  sendRPCMessage(nodeId: string, method: string, params: any, isShowOfflineToast: boolean = true){
+  sendRPCMessage(nodeId: string, method: string, params: any, memo: any, isShowOfflineToast: boolean = true){
     if(!this.checkServerConnection(nodeId)){
       this.events.publish("rpcRequest:error");
       if (isShowOfflineToast)
@@ -715,6 +719,7 @@ export class FeedService {
       method,
       nodeId,
       params,
+      memo,
       ()=>{
 
       },
@@ -902,15 +907,16 @@ export class FeedService {
   }
 
   handleResult(method:string, nodeId: string ,result: any , request: any, error: any){
+    let requestParams = request.requestParams;
     switch (method) {
       case FeedsData.MethodType.create_channel:
-        this.handleCreateChannelResult(nodeId, result, request, error);
+        this.handleCreateChannelResult(nodeId, result, requestParams, error);
         break;
       case FeedsData.MethodType.publish_post:
-        this.handlePublishPostResult(nodeId, result, request, error);
+        this.handlePublishPostResult(nodeId, result, requestParams, error);
         break;
       case FeedsData.MethodType.post_comment:
-        this.handlePostCommentResult(nodeId, result, request, error);
+        this.handlePostCommentResult(nodeId, result, requestParams, error);
         break;
       case FeedsData.MethodType.post_like:
         this.handlePostLikeResult(nodeId, request, error);
@@ -925,13 +931,13 @@ export class FeedService {
         this.handleGetMyChannelsMetaDataResult(nodeId, result, error);
         break;
       case FeedsData.MethodType.get_channels:
-        this.handleGetChannelsResult(nodeId, result, request, error);
+        this.handleGetChannelsResult(nodeId, result, requestParams, error);
         break;
       case FeedsData.MethodType.get_channel_detail:
         this.handleGetChannelDetailResult(nodeId, result, error);
         break;
       case FeedsData.MethodType.get_subscribed_channels:
-        this.handleGetSubscribedChannelsResult(nodeId, result, request, error);
+        this.handleGetSubscribedChannelsResult(nodeId, result, requestParams, error);
         break;
       case FeedsData.MethodType.get_posts:
         this.handleGetPostsResult(nodeId, result, request, error);
@@ -943,10 +949,10 @@ export class FeedService {
         this.handleGetStatisticsResult(nodeId, result, error);
         break;
       case FeedsData.MethodType.subscribe_channel:
-        this.handleSubscribeChannelResult(nodeId, request, error);
+        this.handleSubscribeChannelResult(nodeId, requestParams, error);
         break;
       case FeedsData.MethodType.unsubscribe_channel:
-        this.handleUnsubscribeChannelResult(nodeId, request, error);
+        this.handleUnsubscribeChannelResult(nodeId, requestParams, error);
         break;
       case FeedsData.MethodType.enable_notification:
         this.handleEnableNotificationResult(error);
@@ -1518,7 +1524,7 @@ export class FeedService {
           avatar      : avatarBin
       }
     }
-    this.sendRPCMessage(nodeId, request.method, request.params);
+    this.sendRPCMessage(nodeId, request.method, request.params, "");
   }
 
   publishPost(nodeId: string, channel_id: number, content: any){
@@ -1537,7 +1543,7 @@ export class FeedService {
           content: contentBin,
       }
     }
-    this.sendRPCMessage(nodeId, request.method, request.params);
+    this.sendRPCMessage(nodeId, request.method, request.params, "");
   }
 
   postComment(nodeId: string, channel_id: number, post_id: number,
@@ -1559,7 +1565,7 @@ export class FeedService {
           content   : contentBin,
       }
     }
-    this.sendRPCMessage(nodeId, request.method, request.params);
+    this.sendRPCMessage(nodeId, request.method, request.params, "");
   }
 
   postLike(nodeId: string, channel_id: number, post_id: number, comment_id: number){
@@ -1578,7 +1584,7 @@ export class FeedService {
       } ,
 
     }
-    this.sendRPCMessage(nodeId, request.method, request.params);
+    this.sendRPCMessage(nodeId, request.method, request.params, "");
 
     if(!this.checkServerConnection(nodeId)){
       return;
@@ -1601,7 +1607,7 @@ export class FeedService {
           comment_id: comment_id,
       }
     }
-    this.sendRPCMessage(nodeId, request.method, request.params);
+    this.sendRPCMessage(nodeId, request.method, request.params, "");
 
     if(!this.checkServerConnection(nodeId)){
       return;
@@ -1626,7 +1632,7 @@ export class FeedService {
           max_count : max_counts,
       }
     }
-    this.sendRPCMessage(nodeId, request.method, request.params, false);
+    this.sendRPCMessage(nodeId, request.method, request.params,"", false);
   }
 
   getMyChannelsMetaData(nodeId: string, field: Communication.field, upper_bound: number,
@@ -1646,7 +1652,7 @@ export class FeedService {
           max_count : max_counts,
       }
     }
-    this.sendRPCMessage(nodeId, request.method, request.params, false);
+    this.sendRPCMessage(nodeId, request.method, request.params,"" ,false);
   }
 
   getChannels(nodeId: string, field: Communication.field, upper_bound: number,
@@ -1666,7 +1672,7 @@ export class FeedService {
           max_count : max_counts,
       }
     }
-    this.sendRPCMessage(nodeId, request.method, request.params, false);
+    this.sendRPCMessage(nodeId, request.method, request.params, "",false);
   }
 
   getChannelDetail(nodeId: string, id: number){
@@ -1682,7 +1688,7 @@ export class FeedService {
           id: id,
       },
     }
-    this.sendRPCMessage(nodeId, request.method, request.params, false);
+    this.sendRPCMessage(nodeId, request.method, request.params, "", false);
   }
 
   getSubscribedChannels(nodeId: string, field: Communication.field, upper_bound: number,
@@ -1702,11 +1708,11 @@ export class FeedService {
           max_count : max_counts,
       },
     }
-    this.sendRPCMessage(nodeId, request.method, request.params, false);
+    this.sendRPCMessage(nodeId, request.method, request.params, "", false);
   }
 
   getPost(nodeId: string, channel_id: number, by: Communication.field,
-          upper_bound: number, lower_bound: number , max_counts: number){
+          upper_bound: number, lower_bound: number , max_counts: number, memo: any){
     if(!this.hasAccessToken(nodeId))
       return;
 
@@ -1723,7 +1729,7 @@ export class FeedService {
           max_count : max_counts,
       },
     }
-    this.sendRPCMessage(nodeId, request.method, request.params, false);
+    this.sendRPCMessage(nodeId, request.method, request.params, memo, false);
   }
 
   getComments(nodeId: string, channel_id: number, post_id: number,
@@ -1745,7 +1751,7 @@ export class FeedService {
           max_count : max_counts,
       },
     }
-    this.sendRPCMessage(nodeId, request.method, request.params, isShowOfflineToast);
+    this.sendRPCMessage(nodeId, request.method, request.params, "", isShowOfflineToast);
   }
 
   getStatistics(nodeId: string){
@@ -1760,7 +1766,7 @@ export class FeedService {
         access_token    : accessTokenMap[nodeId].token
       },
     }
-    this.sendRPCMessage(nodeId, request.method, request.params, false);
+    this.sendRPCMessage(nodeId, request.method, request.params, "", false);
   }
 
   subscribeChannel(nodeId: string, id: number){
@@ -1776,7 +1782,7 @@ export class FeedService {
           id: id,
       },
     }
-    this.sendRPCMessage(nodeId, request.method, request.params);
+    this.sendRPCMessage(nodeId, request.method, request.params,"");
 
     if(!this.checkServerConnection(nodeId)){
       return;
@@ -1798,7 +1804,7 @@ export class FeedService {
           id: id
       },
     }
-    this.sendRPCMessage(nodeId, request.method, request.params);
+    this.sendRPCMessage(nodeId, request.method, request.params,"");
 
     if(!this.checkServerConnection(nodeId)){
       return;
@@ -1819,7 +1825,7 @@ export class FeedService {
         access_token   : accessTokenMap[nodeId].token
       },
     }
-    this.sendRPCMessage(nodeId, request.method, request.params);
+    this.sendRPCMessage(nodeId, request.method, request.params,"");
   }
 
   ////handle push
@@ -2509,14 +2515,16 @@ export class FeedService {
     }
 
     let result = responseResult.posts;
+    let requestAction: number = request.memo.action || RequestAction.defaultAction;
+
     for (let index = 0; index < result.length; index++) {
+      
       let channel_id = result[index].channel_id;
       let id         = result[index].id;
       let contentBin    = result[index].content;
       let comments   = result[index].comments;
       let likes      = result[index].likes;
       let created_at = result[index].created_at;
-
       let content = this.serializeDataService.decodeData(contentBin);
       let contentText = this.parsePostContentText(content);
       let contentImage = this.parsePostContentImg(content);
@@ -2534,18 +2542,31 @@ export class FeedService {
 
       this.storeService.savePostContentImg(mPostId,contentImage);
 
-      let nodeChannelId = nodeId+channel_id
-      lastPostUpdateMap[nodeChannelId] = {
-        nodeId: nodeId,
-        channelId: channel_id,
-        time:created_at*1000
+      if (requestAction == RequestAction.defaultAction){
+        let nodeChannelId = nodeId+channel_id
+        lastPostUpdateMap[nodeChannelId] = {
+          nodeId: nodeId,
+          channelId: channel_id,
+          time:created_at*1000
+        }
       }
     }
 
-    this.storeService.set(PersistenceKey.lastPostUpdateMap, lastPostUpdateMap);
-    this.storeService.set(PersistenceKey.postMap, this.postMap);
 
-    eventBus.publish(PublishType.postDataUpdate);
+    if (requestAction == RequestAction.refreshPostDetail){
+      this.storeService.set(PersistenceKey.postMap, this.postMap);
+      eventBus.publish(PublishType.refreshPostDetail);
+      return ;
+    }
+
+    if (requestAction == RequestAction.defaultAction){
+      this.storeService.set(PersistenceKey.lastPostUpdateMap, lastPostUpdateMap);
+      this.storeService.set(PersistenceKey.postMap, this.postMap);
+      eventBus.publish(PublishType.postDataUpdate);
+      return ;
+    }
+
+
   }
 
   handleGetCommentsResult(nodeId: string, responseResult: any, error: any){
@@ -3046,7 +3067,7 @@ export class FeedService {
   }
 
   updatePostWithTime(nodeId: string, channelId:number, lastPostTime: number){
-    this.getPost(nodeId,channelId,Communication.field.last_update,0,lastPostTime,0);
+    this.getPost(nodeId,channelId,Communication.field.last_update,0,lastPostTime,0,"");
   }
 
   updatePost(nodeId: string, channelId:number){
@@ -3170,7 +3191,7 @@ export class FeedService {
           credential_required: requiredCredential,
       }
     }
-    this.sendRPCMessage(nodeId, request.method, request.params);
+    this.sendRPCMessage(nodeId, request.method, request.params,"");
     this.isLogging[nodeId] = false;
   }
 
@@ -3197,7 +3218,7 @@ export class FeedService {
           }
         }
       }
-      this.sendRPCMessage(nodeId, request.method, request.params);
+      this.sendRPCMessage(nodeId, request.method, request.params,"");
     }).catch((err)=>{
       // console.log("err = "+err);
     });
@@ -3255,7 +3276,7 @@ export class FeedService {
     }
 
     cacheBindingAddress = carrierAddress;
-    this.sendRPCMessage(nodeId, request.method, request.params);
+    this.sendRPCMessage(nodeId, request.method, request.params,"");
   }
 
 
@@ -3271,7 +3292,7 @@ export class FeedService {
       }
     }
 
-    this.sendRPCMessage(nodeId, request.method, request.params);
+    this.sendRPCMessage(nodeId, request.method, request.params,"");
   }
 
   createDidRequest(nodeId: string){
@@ -3281,7 +3302,7 @@ export class FeedService {
       id      : -1,
     }
 
-    this.sendRPCMessage(nodeId, request.method, null);
+    this.sendRPCMessage(nodeId, request.method, null, "");
   }
 
   issueCredentialRequest(nodeId: string, credential: any){
@@ -3293,7 +3314,7 @@ export class FeedService {
           credential: credential,
       }
     }
-    this.sendRPCMessage(nodeId, request.method, request.params);
+    this.sendRPCMessage(nodeId, request.method, request.params,"");
   }
 
   doParseJWS(nodeId: string, jws: string, credential: any, requiredCredential: boolean, onSuccess:()=>void, onError: () => void){
@@ -3959,5 +3980,12 @@ export class FeedService {
         break;
     }
     this.native.toastWarn(errorMessage);
+  }
+
+  refreshPostById(nodeId: string, channelId: number, postId: number){
+    let memo = {
+      action: RequestAction.refreshPostDetail
+    }
+    this.getPost(nodeId, channelId,Communication.field.id,Number(postId),Number(postId),0 ,memo);
   }
 }
