@@ -1,4 +1,4 @@
-import { Component, OnInit, NgZone } from '@angular/core';
+import { Component, OnInit, NgZone,ViewChild} from '@angular/core';
 import { Events} from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
 import { FeedService } from 'src/app/services/FeedService';
@@ -8,7 +8,8 @@ import { UtilService } from 'src/app/services/utilService';
 import { MenuService } from 'src/app/services/MenuService';
 import { TranslateService } from "@ngx-translate/core";
 import { PaypromptComponent } from 'src/app/components/payprompt/payprompt.component'
-import { PopoverController } from '@ionic/angular';
+import { PopoverController,IonInfiniteScroll} from '@ionic/angular';
+
 
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
@@ -18,22 +19,28 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
   styleUrls: ['./channels.page.scss'],
 })
 export class ChannelsPage implements OnInit {
+  @ViewChild(IonInfiniteScroll,{static:true}) infiniteScroll: IonInfiniteScroll;
   public images = {};
   public isShowPrompt: boolean = false;
   public popover:any;
-  public nodeStatus = {};
-  public connectionStatus = 1;
-  public channelAvatar = "";
-  public channelName = "";
-  public channelOwner = "";
-  public channelDesc = "";
-  public channelSubscribes = 0;
-  public postList = [];
+  public nodeStatus:any = {};
+  public connectionStatus:number = 1;
+  public channelAvatar:string = "";
+  public channelName:string = "";
+  public channelOwner:string = "";
+  public channelDesc:string = "";
+  public channelSubscribes:number = 0;
+  public postList:any = [];
 
-  public nodeId;
-  public channelId;
+  public nodeId:string ="";
+  public channelId:number = 0;
 
-  public followStatus = false;
+  public followStatus:boolean = false;
+
+  public isBottom:boolean = false;
+  public startIndex:number = 0;
+  public pageNumber:number = 5;
+  public totalData:any = [];
   constructor(
     private popoverController:PopoverController,
     private zone: NgZone,
@@ -92,10 +99,29 @@ export class ChannelsPage implements OnInit {
     this.channelSubscribes = channel.subscribers;
     this.channelAvatar = this.feedService.parseChannelAvatar(channel.avatar);
 
-    this.postList = this.feedService.getPostListFromChannel(this.nodeId, this.channelId);
-    for(let index = 0;index<this.postList.length;index++){
-           let nodeId = this.postList[index]['nodeId'];
-           this.initnodeStatus(nodeId);
+    this.initRefresh();
+    this.initStatus(this.postList);
+  
+  }
+
+  initStatus(arr:any){
+    for(let index = 0;index<arr.length;index++){
+      let nodeId = arr[index]['nodeId'];
+      this.initnodeStatus(nodeId);
+     }
+  }
+
+  initRefresh(){
+    this.totalData = this.feedService.getPostListFromChannel(this.nodeId, this.channelId) || [];
+    if(this.totalData.length-this.pageNumber > this.pageNumber){
+      this.postList = this.totalData.slice(this.startIndex,this.pageNumber);
+      this.startIndex++;
+      this.isBottom = false;
+      this.infiniteScroll.disabled =false;
+    }else{
+      this.postList = this.totalData.slice(0,this.totalData.length);
+      this.isBottom =true;
+      this.infiniteScroll.disabled =true;
     }
   }
 
@@ -109,28 +135,6 @@ export class ChannelsPage implements OnInit {
 
     this.events.subscribe("feeds:updateTitle",()=>{
       this.initTitle();
-    });
-
-    this.events.subscribe('feeds:refreshPage',()=>{
-      this.zone.run(() => {
-        this.postList = this.feedService.getPostListFromChannel(this.nodeId, this.channelId);
-        for(let index = 0;index<this.postList.length;index++){
-          let nodeId = this.postList[index]['nodeId'];
-          this.initnodeStatus(nodeId);
-   }
-      });
-    });
-
-    this.events.subscribe('feeds:postDataUpdate',()=>{
-      this.zone.run(() => {
-        
-        this.postList = this.feedService.getPostListFromChannel(this.nodeId, this.channelId);
-        for(let index = 0;index<this.postList.length;index++){
-          let nodeId = this.postList[index]['nodeId'];
-          this.initnodeStatus(nodeId);
-        }
-
-      });
     });
 
     this.events.subscribe('feeds:subscribeFinish', (nodeId, channelId, name)=> {
@@ -150,8 +154,6 @@ export class ChannelsPage implements OnInit {
   ionViewWillLeave(){
     this.events.unsubscribe("feeds:connectionChanged");
     this.events.unsubscribe("feeds:updateTitle");
-    this.events.unsubscribe("feeds:refreshPage");
-    this.events.unsubscribe("feeds:postDataUpdate");
     this.events.unsubscribe("feeds:subscribeFinish");
     this.events.unsubscribe("feeds:unsubscribeFinish");
   }
@@ -165,7 +167,7 @@ export class ChannelsPage implements OnInit {
     titleBarManager.setTitle(this.translate.instant("ChannelsPage.feeds"));
   }
 
-  like(nodeId, channelId, postId){
+  like(nodeId:string, channelId:number, postId:number){
     if(this.feedService.getConnectionStatus() != 0){
       this.native.toastWarn('common.connectionError');
       return;
@@ -302,5 +304,42 @@ export class ChannelsPage implements OnInit {
       })
     }
     return this.images[nodeChannelPostId];
+  }
+
+
+  doRefresh(event:any){
+    let sId =  setTimeout(() => {
+      this.images = {};
+      this.startIndex = 0;
+      this.init();
+      this.initStatus(this.postList);
+      event.target.complete();
+      clearTimeout(sId);
+    },500);
+  }
+
+  loadData(event:any){
+    let sId = setTimeout(() => {
+      let arr = [];        
+      if(this.totalData.length - this.pageNumber*this.startIndex>this.pageNumber){
+       arr = this.totalData.slice(this.startIndex*this.pageNumber,(this.startIndex+1)*this.pageNumber);
+       this.startIndex++;
+       this.zone.run(()=>{
+        this.initStatus(arr);
+        this.postList = this.postList.concat(arr);
+       });
+       event.target.complete();
+      }else{
+       arr = this.totalData.slice(this.startIndex*this.pageNumber,this.totalData.length);
+       this.zone.run(()=>{
+          this.initStatus(arr);
+          this.postList =  this.postList.concat(arr);
+       });
+       this.isBottom = true;
+       this.infiniteScroll.disabled =true;
+       event.target.complete();
+       clearTimeout(sId);
+      }
+    },500);
   }
 }

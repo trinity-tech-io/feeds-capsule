@@ -3,6 +3,17 @@
 </ion-header>
 
 <ion-content [class.darkContainer]="theme.darkMode" [ngClass]="{'translucent-mask': isShowPrompt}">
+    
+  <!--on-refresher-->
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" pullFactor="0.5">
+    <ion-refresher-content
+      pullingIcon="arrow-dropdown"
+      pullingText="{{'common.pullToRefresh'|translate}}"
+      refreshingSpinner="circles"
+      refreshingText="">
+    </ion-refresher-content>
+  </ion-refresher>
+
     <div class="channel-img-div">
       <ion-avatar class="channel-img" style="width:80px ; height: 80px;position: relative;">
         <div class="feed-source-card-status" style="position: absolute;top:0px;left:8px">
@@ -133,4 +144,18 @@
       </div>
       <div class="line-div white-line" *ngIf="i!=postList.length-1"></div>
     </div>
+
+    <div *ngIf="postList.length>1">
+      <div style="text-align: center;margin-top: 20px;margin-bottom: 20px;" *ngIf="isBottom">
+          {{ "common.des3" | translate }}
+      </div>
+    </div>
+
+    <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event)">
+      <ion-infinite-scroll-content
+        loadingSpinner="bubbles"
+        loadingText="{{'common.loadingText'|translate}}">
+      </ion-infinite-scroll-content>
+    </ion-infinite-scroll>
+
 </ion-content>
