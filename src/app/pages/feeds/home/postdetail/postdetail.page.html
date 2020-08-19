@@ -52,7 +52,7 @@
     </div>
     <div class="line-div"></div>
 
-    <div *ngIf="refreshCommFinish">
+    <!-- <div *ngIf="refreshCommFinish"> -->
       <div *ngFor="let comment of commentList">
         <div class="channel-img-small-div">
           <ion-avatar class="avatar-div" style="margin-top: 5px;">
@@ -72,7 +72,7 @@
               </div>
 
               <div class="channel-post-div" > 
-                <ion-label class="channel-post white"><pre>{{comment.content}}</pre></ion-label>
+                <ion-label class="channel-post white"><pre [ngStyle]="objStyle">{{comment.content}}</pre></ion-label>
               </div>
     
               <div class="channel-post-heart-comment-div">
@@ -87,7 +87,7 @@
         </div>
         <div class="line-div white-line"></div>
       </div>
-    </div>
+    <!-- </div> -->
   <!-- </div> -->
 
   <!-- <div *ngIf="bigImage" class="trans-big-img-div" (click)="hideBigImage()" >
