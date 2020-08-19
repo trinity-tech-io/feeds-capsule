@@ -293,7 +293,7 @@ export class PostdetailPage implements OnInit {
       }else{
        arr = this.totalData.slice(this.startIndex*this.pageNumber,this.totalData.length);
        this.zone.run(()=>{
-           this.commentList = this.commentList.concat(this.commentList);
+           this.commentList = this.commentList.concat(arr);
        });
        this.isBottom = true;
        this.infiniteScroll.disabled =true;
