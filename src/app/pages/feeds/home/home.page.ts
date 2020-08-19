@@ -1,4 +1,4 @@
-import { Component, OnInit, NgZone, ViewChild,ChangeDetectionStrategy, ElementRef } from '@angular/core';
+import { Component, OnInit, NgZone, ViewChild,ElementRef } from '@angular/core';
 import { IonContent } from '@ionic/angular';
 import { Events,IonTabs} from '@ionic/angular';
 import { FeedService } from 'src/app/services/FeedService';
@@ -9,7 +9,6 @@ import { UtilService } from 'src/app/services/utilService';
 import { TranslateService } from "@ngx-translate/core";
 import { NativeService } from 'src/app/services/NativeService';
 import { IonInfiniteScroll } from '@ionic/angular';
-import { clear } from 'console';
 @Component({
   selector: 'app-home',
   templateUrl: './home.page.html',
@@ -269,6 +268,7 @@ export class HomePage implements OnInit {
       this.startIndex++;
       this.initnodeStatus(this.postList);
       event.target.complete();
+      clearTimeout(sId);
     },500);
   }
 

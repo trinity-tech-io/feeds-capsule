@@ -2,7 +2,16 @@
   <div class="offline-header"></div>
 </ion-header>
 <ion-content [class.darkContainer]="theme.darkMode">
-  <!-- <div [ngClass]="{'mask-div': bigImage}"> -->
+  <!--on-refresher-->
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" pullFactor="0.5">
+    <ion-refresher-content
+      pullingIcon="arrow-dropdown"
+      pullingText="{{'common.pullToRefresh'|translate}}"
+      refreshingSpinner="circles"
+      refreshingText="">
+    </ion-refresher-content>
+  </ion-refresher>
+
     <div class="image-text-layout-div" >
       <ion-card-content class="ion-no-padding ion-no-margin">
           <div class="menu-div"  (click)="menuMore()">
@@ -53,7 +62,7 @@
     <div class="line-div"></div>
 
     <!-- <div *ngIf="refreshCommFinish"> -->
-      <div *ngFor="let comment of commentList">
+      <div *ngFor="let comment of commentList let i=index">
         <div class="channel-img-small-div">
           <ion-avatar class="avatar-div" style="margin-top: 5px;">
             <img *ngIf="avatar == ''" class="profile-img" src="./assets/images/default-contact.svg">
@@ -78,21 +87,23 @@
               <div class="channel-post-heart-comment-div">
                 <img class="like" [ngClass]="{'like-s': checkLikedComment(comment.id)}" (click)="likeComment(comment.id)">
                 <ion-label class="like-text" [ngClass]="{'like-s-text': checkLikedComment(comment.id)}" (click)="likeComment(comment.id)">{{comment.likes}}</ion-label>
-    
-                <!-- <img src="../../../../assets/images/bubble-line.svg" class="comment" (click)="commentComment()">
-                <ion-label class="comment-text">0</ion-label> -->
               </div>
             </div>
           </div>
         </div>
-        <div class="line-div white-line"></div>
+        <div class="line-div white-line" *ngIf="i!=commentList.length-1"></div>
       </div>
-    <!-- </div> -->
-  <!-- </div> -->
 
-  <!-- <div *ngIf="bigImage" class="trans-big-img-div" (click)="hideBigImage()" >
-    <div class="trans-big-img" >
-      <img src="{{bigImageUrl}}" class="image"/>
-    </div>
-  </div> -->
+      <div *ngIf="commentList.length>1">
+        <div style="text-align: center;margin-top: 20px;margin-bottom: 20px;" *ngIf="isBottom">
+            {{ "common.des3" | translate }}
+        </div>
+      </div>
+      
+      <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event)">
+        <ion-infinite-scroll-content
+          loadingSpinner="bubbles"
+          loadingText="{{'common.loadingText'|translate}}">
+        </ion-infinite-scroll-content>
+      </ion-infinite-scroll>
 </ion-content>

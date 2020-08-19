@@ -1,4 +1,4 @@
-import { Component, OnInit, NgZone } from '@angular/core';
+import { Component, OnInit, NgZone,ViewChild} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Events} from '@ionic/angular';
 import { FeedService } from 'src/app/services/FeedService';
@@ -7,6 +7,7 @@ import { MenuService } from 'src/app/services/MenuService';
 import { ThemeService } from 'src/app/services/theme.service';
 import { TranslateService } from "@ngx-translate/core";
 import { UtilService } from 'src/app/services/utilService';
+import { IonInfiniteScroll} from '@ionic/angular';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 @Component({
@@ -15,27 +16,31 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
   styleUrls: ['./postdetail.page.scss'],
 })
 export class PostdetailPage implements OnInit {
-  public images = {};
-  public connectionStatus = 1;
+  @ViewChild(IonInfiniteScroll,{static:true}) infiniteScroll: IonInfiniteScroll;
+  public images:any = {};
+  public connectionStatus:number = 1;
   public nodeStatus:any ={};
-  public bigImageUrl: string;
-  public bigImage: boolean = false;
   public avatar: string = "";
 
-  public channelAvatar = "";
-  public channelName = "";
-  public channelOwner = "";
-  public postContent = "";
-  public postTS = 0;
-  public likesNum = 0;
-  public commentsNum = 0;
+  public channelAvatar:string = "";
+  public channelName:string = "";
+  public channelOwner:string = "";
+  public postContent:string = "";
+  public postTS:number = 0;
+  public likesNum:number = 0;
+  public commentsNum:number = 0;
   
-  public commentList = null;
+  public commentList:any = [];
 
-  public nodeId;
-  public channelId;
-  public postId;
-  public objStyle={"width":""};
+  public nodeId:string = "";
+  public channelId:number = 0;
+  public postId:number = 0;
+  public objStyle:any={"width":""};
+  public isBottom:boolean = false;
+  public startIndex:number = 0;
+  public pageNumber:number = 5;
+  public totalData:any = [];
+
   constructor(
     private acRoute: ActivatedRoute,
     private events: Events,
@@ -48,7 +53,7 @@ export class PostdetailPage implements OnInit {
    
   }
 
-  initData(){    
+  initData(){   
     this.initnodeStatus();
     let channel = this.feedService.getChannelFromId(this.nodeId, this.channelId) || "";
     if (channel == "")
@@ -63,21 +68,36 @@ export class PostdetailPage implements OnInit {
     this.postTS = post.created_at;
     this.likesNum = post.likes;
     this.commentsNum = post.comments;
+    this.initRefresh();
+    //this.scrollToTop(1);
+  }
 
-    this.commentList = this.feedService.getCommentList(this.nodeId, this.channelId, this.postId);
+  initRefresh(){
+    this.totalData = this.feedService.getCommentList(this.nodeId, this.channelId, this.postId) || [];
+    if(this.totalData.length-this.pageNumber > this.pageNumber){
+      this.commentList = this.totalData.slice(this.startIndex,this.pageNumber);
+      this.startIndex++;
+      this.isBottom = false;
+      this.infiniteScroll.disabled =false;
+    }else{
+      this.commentList = this.totalData.slice(0,this.totalData.length);
+      this.isBottom =true;
+      this.infiniteScroll.disabled =true;
+    }
   }
   
   ngOnInit() {
+    this.objStyle["width"] = (screen.width - 157)+"px"; 
     this.acRoute.params.subscribe((data)=>{
       this.nodeId = data.nodeId;
       this.channelId = data.channelId;
       this.postId = data.postId;
-      this.initData();
+     
     });
   }
 
   ionViewWillEnter() {
-    this.objStyle["width"] = (screen.width - 157)+"px";
+    this.initData();
     this.connectionStatus = this.feedService.getConnectionStatus();
     this.feedService.refreshPostById(this.nodeId,this.channelId,this.postId);
 
@@ -93,7 +113,8 @@ export class PostdetailPage implements OnInit {
 
     this.events.subscribe('feeds:commentDataUpdate',()=>{
       this.zone.run(() => {
-        this.commentList = this.feedService.getCommentList(this.nodeId, this.channelId, this.postId);
+        this.startIndex = 0;
+        this.initData();
       });
     });
     
@@ -120,7 +141,6 @@ export class PostdetailPage implements OnInit {
 
 
   ionViewWillLeave(){//清楚订阅事件代码
-    this.hideBigImage();
     this.events.unsubscribe("feeds:connectionChanged");
     this.events.unsubscribe("feeds:commentDataUpdate");
     this.events.unsubscribe("feeds:friendConnectionChanged");
@@ -220,9 +240,7 @@ export class PostdetailPage implements OnInit {
     this.native.openViewer(this.getImage());
   }
 
-  hideBigImage(){
-    this.bigImage = false;
-  }
+ 
 
   commentComment(){
     alert("TODO");
@@ -249,5 +267,42 @@ export class PostdetailPage implements OnInit {
       })
     }
     return this.images[nodeChannelPostId];
+  }
+
+  doRefresh(event:any){
+    let sId =  setTimeout(() => {
+      this.images = {};
+      this.startIndex = 0;
+      this.initData();
+      event.target.complete();
+      clearTimeout(sId);
+    },500);
+  }
+
+  loadData(event:any){
+    let sId = setTimeout(() => {
+      let arr = [];        
+      if(this.totalData.length - this.pageNumber*this.startIndex>this.pageNumber){
+       arr = this.totalData.slice(this.startIndex*this.pageNumber,(this.startIndex+1)*this.pageNumber);
+       this.startIndex++;
+       this.zone.run(()=>{
+       this.commentList = this.commentList.concat(arr);
+       });
+       this.initnodeStatus();
+       event.target.complete();
+      }else{
+       arr = this.totalData.slice(this.startIndex*this.pageNumber,this.totalData.length);
+       this.zone.run(()=>{
+           this.commentList = this.commentList.concat(this.commentList);
+       });
+       this.isBottom = true;
+       this.infiniteScroll.disabled =true;
+       this.initnodeStatus();
+       event.target.complete();
+       clearTimeout(sId);
+      }
+    },500);
+
+  
   }
 }
