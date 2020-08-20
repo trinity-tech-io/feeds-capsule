@@ -64,7 +64,12 @@ export class CommentPage implements OnInit {
       this.zone.run(() => {
         this.isNewPost = true;
       });
-   });
+    });
+    this.events.subscribe('rpcResponse:error', () => {
+      this.zone.run(() => {
+        this.isNewPost = true;
+      });
+    });
 
    this.events.subscribe('rpcRequest:success', () => {
     this.zone.run(() => {
@@ -92,6 +97,7 @@ export class CommentPage implements OnInit {
     this.events.unsubscribe("feeds:connectionChanged");
     this.events.unsubscribe("feeds:updateTitle");
     this.events.unsubscribe("rpcRequest:error");
+    this.events.unsubscribe("rpcResponse:error");
     this.events.unsubscribe("rpcRequest:success");
     this.isNewPost = true;
   }

@@ -105,12 +105,12 @@ export class NativeService {
         return myNewObj;
     }
 
-    public async showLoading(content: string = '') {
+    public async showLoading(content: string = '', durationTime: number = 30000) {
         if (!this.loadingIsOpen) {
             this.loadingIsOpen = true;
             const loading = await this.loadingCtrl.create({
                 message: content,
-                duration: 10000//30s
+                duration: durationTime
             });
             return await loading.present();
         }

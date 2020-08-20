@@ -83,6 +83,10 @@ export class CreatenewpostPage implements OnInit {
        this.isNewPost = true;
     });
 
+    this.events.subscribe('rpcResponse:error', () => {
+      this.isNewPost = true;
+   });
+
     this.events.subscribe("feeds:updateTitle",()=>{
       this.initTitle();
     });
@@ -95,6 +99,7 @@ export class CreatenewpostPage implements OnInit {
     this.events.unsubscribe("feeds:updateTitle");
     this.events.unsubscribe("feeds:publishPostSuccess");
     this.events.unsubscribe("rpcRequest:error");
+    this.events.unsubscribe("rpcResponse:error");
     this.isNewPost =true;
   }
 

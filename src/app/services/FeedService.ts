@@ -369,6 +369,9 @@ export class FeedService {
   private isLogging: {[nodeId: string]: boolean} = {}; 
   private autoSigninInterval;
   private isSavingChannel:boolean = false;
+
+  private declareOwnerInterval: NodeJS.Timer;
+  private isDeclareFinish: boolean = false;
   public constructor(
     private serializeDataService: SerializeDataService,
     private jwtMessageService: JWTMessageService,
@@ -899,7 +902,7 @@ export class FeedService {
   }
 
   handleError(error: any){
-    eventBus.publish("rpcRequest:error");
+    eventBus.publish("rpcResponse:error");
     if(typeof error == "string")
       this.native.toastWarn(error);  
     else
@@ -3263,6 +3266,21 @@ export class FeedService {
     this.isLogging[nodeId] = false;
   }
 
+  startDeclareOwner(nodeId: string, carrierAddress: string, nonce: string){
+    this.isDeclareFinish = false;
+    this.declareOwnerInterval = setInterval(() => {
+      if (this.isDeclareFinish){
+        clearInterval(this.declareOwnerInterval);
+      }
+      this.declareOwnerRequest(nodeId, carrierAddress, nonce);
+    }, 5000);
+  }
+
+  cleanDeclareOwner(){
+    this.isDeclareFinish = true;
+    clearInterval(this.declareOwnerInterval);
+  }
+
   declareOwnerRequest(nodeId: string, carrierAddress: string, nonce: string){
     isBindServer = true;
     let request: Communication.declare_owner_request = {
@@ -3276,7 +3294,7 @@ export class FeedService {
     }
 
     cacheBindingAddress = carrierAddress;
-    this.sendRPCMessage(nodeId, request.method, request.params,"");
+    this.sendRPCMessage(nodeId, request.method, request.params,"", false);
   }
 
 
@@ -3356,12 +3374,8 @@ export class FeedService {
   }
 
   handleDeclareOwnerResponse(nodeId: string, result: any, error: any){
-    if (error != null && error != undefined && error.code == -3){
-      this.native.toast("StartbindingPage.linkServerError");
-      return ;
-    }
-
     if (error != null && error != undefined && error.code != undefined){
+      this.isDeclareFinish = true;
       this.handleError(error);
       return;
     }
@@ -3376,7 +3390,7 @@ export class FeedService {
 
       this.resolveServerDid(did, nodeId, payload,()=>{},()=>{});
     }
-
+    this.isDeclareFinish = true;
     eventBus.publish("feeds:owner_declared", nodeId, phase, did, payload);
   }
 
@@ -3958,7 +3972,7 @@ export class FeedService {
         errorMessage = this.translate.instant("ErrorInfo.notExists");
         break;
       case -3:
-        errorMessage = this.translate.instant("ErrorInfo.notAuthorized");
+        errorMessage = this.translate.instant("StartbindingPage.linkServerError");
         break;
       case -4:
         errorMessage = this.translate.instant("ErrorInfo.wrongState");

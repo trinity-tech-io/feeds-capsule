@@ -61,29 +61,34 @@ export class StartbindingPage implements OnInit {
     this.events.subscribe('feeds:connectionChanged',(status)=>{
       this.zone.run(() => {
         this.connectionStatus = status;
+        if (this.connectionStatus == 1){
+          this.native.hideLoading();
+        }
       });
     });
     
     this.events.subscribe('feeds:owner_declared', (nodeId, phase, did, payload) => {
-        switch(phase){
-          case "owner_declared":
-            this.zone.run(() => {
-                this.native.navigateForward(['/bindservice/importdid/',nodeId],{
-                  replaceUrl: true
-                });
-            });
-            break;
-  
-          case "credential_issued":
-            this.zone.run(() => {
-                this.feedService.restoreBindingServerCache(this.did, nodeId, ()=>{
-                  this.feedService.finishBinding(nodeId);
-                },()=>{  
-                  this.feedService.finishBinding(nodeId);
-                });
-            });
-            break;
-        }
+      switch(phase){
+        case "owner_declared":
+          this.zone.run(() => {
+              this.native.navigateForward(['/bindservice/importdid/',nodeId],{
+                replaceUrl: true
+              });
+          });
+          break;
+
+        case "credential_issued":
+          this.zone.run(() => {
+              this.feedService.restoreBindingServerCache(this.did, nodeId, ()=>{
+                this.feedService.finishBinding(nodeId);
+              },()=>{  
+                this.feedService.finishBinding(nodeId);
+              });
+          });
+          break;
+      }
+
+      this.native.hideLoading();
     });
     
     this.events.subscribe('feeds:issue_credential', () => {
@@ -118,6 +123,12 @@ export class StartbindingPage implements OnInit {
           });
       });
     });
+
+    this.events.subscribe('rpcResponse:error',()=>{
+      this.zone.run(() => {
+        this.native.hideLoading();
+      });
+    });
   }
 
   initTitle(){
@@ -130,12 +141,15 @@ export class StartbindingPage implements OnInit {
   }
 
   ionViewWillLeave(){
+    this.native.hideLoading();
+    this.feedService.cleanDeclareOwner();
     this.events.unsubscribe("feeds:connectionChanged");
     this.events.unsubscribe("feeds:owner_declared");
     this.events.unsubscribe("feeds:issue_credential");
     this.events.unsubscribe("feeds:friendConnectionChanged");
     this.events.unsubscribe("feeds:resolveDidError");
     this.events.unsubscribe("feeds:resolveDidSucess");
+    this.events.unsubscribe("rpcResponse:error");
   }
 
   confirm(){
@@ -144,7 +158,9 @@ export class StartbindingPage implements OnInit {
       return;
     }
     
-    this.feedService.declareOwnerRequest(this.nodeId, this.carrierAddress, this.nonce);
+    this.native.showLoading("loading",5*60*1000).then(()=>{
+      this.feedService.startDeclareOwner(this.nodeId, this.carrierAddress, this.nonce);
+    });
   }
 
   abort(){
