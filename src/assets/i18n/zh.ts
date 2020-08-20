@@ -68,7 +68,10 @@ export const zh = {
         "emptyDes":"尚未关注过任何微频",
         "exploreFeeds":"探索微频",
         "minutesAgo":"分钟前",
-        "hoursAgo":"小时前"
+        "hoursAgo":"小时前",
+        "daysAgo":" 天前",
+        "onedayAgo":" 天前",
+        "onehourAgo":" 小时前",
     },
     "ProfilePage":{
         "myFeeds":"我的微频",

@@ -68,7 +68,10 @@ export const fr = {
         "emptyDes":"Not following any Feeds yet",
         "exploreFeeds":"Explore Feeds",
         "minutesAgo":" Minutes ago",
-        "hoursAgo":" Hours ago"
+        "hoursAgo":" Hours ago",
+        "daysAgo":" Days ago",
+        "onedayAgo":" Day ago",
+        "onehourAgo":" Hour ago",
     },
     "ProfilePage":{
         "myFeeds":"My Feeds",

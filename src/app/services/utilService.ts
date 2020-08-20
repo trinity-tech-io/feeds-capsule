@@ -86,16 +86,16 @@ public static dateFormat(date: Date, sFormat: String = 'yyyy-MM-dd'): string {
            return {content:disPlayStr,type:"h"};
       }
 
-      if(chazhi>=this.hour24&&chazhi<this.hour48){
-        disPlayStr = Math.floor(chazhi/(1000*60*60));
-        return {content:disPlayStr,type:"yesterday"};
+      if(chazhi>=this.hour24&&chazhi<(31*this.hour24)){
+        disPlayStr = Math.floor(chazhi/(24*1000*60*60));
+        return {content:disPlayStr,type:"day"};
       }
 
-      if(chazhi>=this.hour48&&chazhi<365*24*60*60*1000){
+      if(chazhi>=(31*this.hour24)&&chazhi<365*24*60*60*1000){
         disPlayStr = this.dateFormat(new Date(createTime),"MM-dd");
         return  {content:disPlayStr,type:"d"};
       }
-      disPlayStr = this.dateFormat(new Date(createTime),"yyyy-MM");
+      disPlayStr = this.dateFormat(new Date(createTime),"MM-dd-yyyy");
       return  {content:disPlayStr,type:"y"};
   }
 

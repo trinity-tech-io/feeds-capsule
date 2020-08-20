@@ -66,8 +66,14 @@ export class NotificationPage {
       return obj.content+this.translate.instant('HomePage.hoursAgo');
     }
 
-    if(obj.type === 'yesterday'){
-      return this.translate.instant('common.yesterday');
+    if(obj.type === 'day'){
+      if(obj.content === 1){
+        return obj.content +this.translate.instant('HomePage.onedayAgo');
+      }
+      if(obj.content === 2){
+        return this.translate.instant('common.yesterday');
+      }
+      return obj.content +this.translate.instant('HomePage.daysAgo');
     }
     return  obj.content;
   }
