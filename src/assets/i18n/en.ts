@@ -337,5 +337,8 @@ export const en = {
     },
     "EditserverinfoPage":{
         "title":"Edit Feeds Source Details",
-    }
+    },
+    "EidtchannelPage":{
+        "title":"Edit Feed Info",
+     }
 };

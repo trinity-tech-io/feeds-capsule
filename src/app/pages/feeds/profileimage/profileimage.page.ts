@@ -38,6 +38,10 @@ export class ProfileimagePage implements OnInit {
       this.feedService.setSelsectIndex(selectIndex);
       this.feedService.setProfileIamge(this.avatar);
       this.avatar = this.feedService.getProfileIamge() || "assets/images/profile-1.svg";
+      let selectIndex = this.feedService.getSelsectIndex();
+      this.feedService.setSelsectIndex(selectIndex);
+      this.feedService.setProfileIamge(this.avatar);
+      
       if(this.userAvatar === ""){
         if(this.theme.darkMode){
           this.userAvatar = './assets/images/profile-add-dark.svg';

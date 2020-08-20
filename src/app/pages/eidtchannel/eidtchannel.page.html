@@ -1,0 +1,50 @@
+
+<ion-header *ngIf="connectionStatus == 1">
+  <div class="offline-header"></div>
+</ion-header>
+<ion-content  [class.darkContainer]="theme.darkMode">
+  <ion-grid>
+    <ion-row>
+        <ion-col size="12" class="top-15">
+          <ion-item lines="none">
+               <ion-label position="stacked" class="content-key white">{{'CreatenewfeedPage.name'|translate}}</ion-label>
+               <ion-input readonly class="content-value" [placeholder]="'CreatenewfeedPage.inputName'|translate" [(ngModel)] ="name"></ion-input>
+               <div class="line dark-line"></div>
+           </ion-item>
+         </ion-col>
+
+         <ion-col size="12" class="top-15">
+          <ion-item lines="none">
+               <ion-label position="stacked" class="content-key white">{{'CreatenewfeedPage.description'|translate}}</ion-label>
+               <ion-input  class="content-value" [placeholder]="'CreatenewfeedPage.inputFeedDesc'|translate" [(ngModel)] ="des"></ion-input>
+               <div class="line dark-line"></div>
+           </ion-item>
+         </ion-col>
+
+         <ion-col size="12" (click)="profileimage()">
+          <ion-item lines="none">
+            <ion-label position="stacked" class="content-key white">{{'CreatenewfeedPage.profileImage'|translate}}</ion-label>
+            <ion-label  position="stacked" class="content-value white"  *ngIf="avatar === ''">{{'CreatenewfeedPage.des'|translate}}</ion-label>
+            <ion-label position="stacked" class="content-value white"  *ngIf="avatar != ''">{{'CreatenewfeedPage.des1'|translate}}</ion-label>
+            <ion-avatar slot="end" style="width: 14px;height: 14px;position: absolute;right:10px;top:15px">
+               <img src="./assets/images/chevron-thin-right.svg">
+            </ion-avatar>
+            <ion-avatar *ngIf="avatar != ''" style="width: 56px;height:56px;margin:5px 0px;">
+              <ion-img [src]="avatar"></ion-img>
+            </ion-avatar>
+           </ion-item>
+         </ion-col>
+
+         <ion-col size="6" style="text-align: center;" (click)="cancel()" class="top-30">
+          <span class="cancel">{{ 'common.cancel' | translate }}</span>
+        </ion-col>
+    
+        <ion-col size="6" style="text-align: center;" (click)="confirm()" class="top-30">
+          <span class="confirm">{{ 'common.save' | translate }}</span>
+        </ion-col>
+        <div style="height:15px">&nbsp;</div>
+
+    </ion-row>
+  </ion-grid>
+</ion-content>
+

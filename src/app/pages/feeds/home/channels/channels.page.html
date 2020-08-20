@@ -13,7 +13,10 @@
       refreshingText="">
     </ion-refresher-content>
   </ion-refresher>
-
+  <div class="edit" (click)="clickEdit()">
+    <ion-img src="./assets/images/edit.svg" *ngIf="!theme.darkMode"></ion-img>
+    <ion-img src="./assets/images/edit-dark.svg" *ngIf="theme.darkMode"></ion-img>
+  </div> 
     <div class="channel-img-div">
       <ion-avatar class="channel-img" style="width:80px ; height: 80px;position: relative;">
         <div class="feed-source-card-status chancecirclePosition">

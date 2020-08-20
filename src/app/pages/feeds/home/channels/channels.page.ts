@@ -348,4 +348,24 @@ export class ChannelsPage implements OnInit {
       }
     },500);
   }
+
+  clickEdit(){
+    if(this.channelAvatar.indexOf("data:image")>-1){
+      this.feedService.setSelsectIndex(0);
+      this.feedService.setProfileIamge(this.channelAvatar);
+    }else if(this.channelAvatar.indexOf("assets/images")>-1){
+      let index = this.channelAvatar.substring(this.channelAvatar.length-5,this.channelAvatar.length-4);
+      console.log(index);
+      this.feedService.setSelsectIndex(index);
+      this.feedService.setProfileIamge(this.channelAvatar);
+    }
+   
+    this.native.go("/eidtchannel",
+    {
+      "nodeId":this.nodeId,
+      "channelId":this.channelId,
+      "name":this.channelName,
+      "des":this.channelDesc,
+    });
+  }
 }

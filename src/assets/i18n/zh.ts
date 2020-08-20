@@ -337,5 +337,8 @@ export const zh = {
     },
     "EditserverinfoPage":{
         "title":"编辑微频源详情",
+    },
+    "EidtchannelPage":{
+       "title":"编辑微频信息",
     }
 };
