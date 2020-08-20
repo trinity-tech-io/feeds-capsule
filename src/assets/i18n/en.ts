@@ -46,7 +46,8 @@ export const en = {
         "delete":"Delete",
         "amountError":"Please input correct amount",
         "waitMoment": "Please wait a moment...",
-        "issuecredentialError": "There was an error issuing the certificate. Please check the QR code or try again"
+        "issuecredentialError": "There was an error issuing the certificate. Please check the QR code or try again",
+        "save":"Save"
     },
     "app":{
         "profileDetails":"Profile Details",
@@ -333,5 +334,8 @@ export const en = {
         "invalidParam":"Invalid Parameters",
         "invalidChallengeResponse":"Invalid Challenge Response",
         "invalidVerifiableCredential":"Invalid Verifiable Credential"
+    },
+    "EditserverinfoPage":{
+        "title":"Edit Feeds Source Details",
     }
 };

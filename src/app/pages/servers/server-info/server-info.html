@@ -1,8 +1,11 @@
 <ion-header *ngIf="connectionStatus == 1">
   <div class="offline-header"></div>
 </ion-header>
-<ion-content [class.darkContainer]="theme.darkMode" [class.lightContainer]="!theme.darkMode" ion-padding>
-   
+<ion-content [class.darkContainer]="theme.darkMode" [class.lightContainer]="!theme.darkMode" class="ion-padding">
+   <div class="edit" (click)="clickEdit()" *ngIf="address ===''">
+       <ion-img src="./assets/images/edit.svg" *ngIf="!theme.darkMode"></ion-img>
+       <ion-img src="./assets/images/edit-dark.svg" *ngIf="theme.darkMode"></ion-img>
+   </div>
    <div class="first">
          <ion-img class="headerImg" src="./assets/images/profile-2.svg"></ion-img>
    </div>

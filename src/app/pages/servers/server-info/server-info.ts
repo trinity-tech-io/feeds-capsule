@@ -33,10 +33,10 @@ export class ServerInfoPage implements OnInit {
   public  nodeId:string = "";
 
   public isBindServer: boolean = false ;
-  public didString: string;
-  public name: string;
-  public owner: string;
-  public introduction: string;
+  public didString: string ="";
+  public name: string ="";
+  public owner: string ="";
+  public introduction: string ="";
   public feedsUrl: string = null;
   public  elaAddress: string = "";
   constructor(
@@ -270,5 +270,17 @@ export class ServerInfoPage implements OnInit {
       }]
     });
     await actionSheet.present();
+  }
+
+  clickEdit(){
+    this.native.go(
+      "/editserverinfo", 
+      { 
+        "address":this.address,
+        "name":this.name,
+        "introduction":this.introduction,
+        "elaAddress":this.elaAddress,
+      }
+    )
   }
 }

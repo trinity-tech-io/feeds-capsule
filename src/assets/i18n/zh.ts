@@ -46,7 +46,8 @@ export const zh = {
         "delete":"删除",
         "amountError":"请输入正确的数额",
         "waitMoment": "请稍等...",
-        "issuecredentialError": "颁发凭证出错，请检查二维码或重试"
+        "issuecredentialError": "颁发凭证出错，请检查二维码或重试",
+        "save":"保存"
     },
     "app":{
         "profileDetails":"档案详情",
@@ -333,5 +334,8 @@ export const zh = {
         "invalidParam":"参数无效",
         "invalidChallengeResponse":"登录鉴权失败",
         "invalidVerifiableCredential":"服务器无法验证凭证信息"
+    },
+    "EditserverinfoPage":{
+        "title":"编辑微频源详情",
     }
 };
