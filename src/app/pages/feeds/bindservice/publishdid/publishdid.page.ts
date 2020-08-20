@@ -64,11 +64,19 @@ export class PublishdidPage implements OnInit {
     }
 
     publishDid(){
+      if(this.feedService.getConnectionStatus() != 0){
+        this.native.toastWarn('common.connectionError');
+        return;
+      }
 
+      this.doPublishDid();
+  }
+
+  doPublishDid(){
     this.feedService.publishDid(this.payload, 
       (res)=>{
         this.zone.run(() => {
-             //{"action":"didtransaction","result":{"txid":null},"from":"org.elastos.trinity.dapp.wallet"}
+            //{"action":"didtransaction","result":{"txid":null},"from":"org.elastos.trinity.dapp.wallet"}
             let result = res["result"];
             let txId = result["txid"] || "";
             if(txId===''){

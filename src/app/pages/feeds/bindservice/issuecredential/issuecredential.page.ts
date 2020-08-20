@@ -6,7 +6,7 @@ import { ActivatedRoute } from '@angular/router';
 import { NativeService } from 'src/app/services/NativeService';
 import { TranslateService } from "@ngx-translate/core";
 import { ThemeService } from 'src/app/services/theme.service';
-import { ServerpromptComponent} from './../../../../components/serverprompt/serverprompt.component';
+import { ServerpromptComponent } from 'src/app/components/serverprompt/serverprompt.component';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 @Component({
@@ -46,14 +46,24 @@ export class IssuecredentialPage implements OnInit {
       this.events.subscribe('feeds:connectionChanged',(status)=>{
         this.zone.run(() => {
           this.connectionStatus = status;
+          if (this.connectionStatus == 1){
+            this.native.hideLoading();
+          }
         });
       });
 
       this.events.subscribe('feeds:issue_credential', () => {
         this.zone.run(() => {
-            this.native.navigateForward(['/bindservice/finish/',this.nodeId],{
-              replaceUrl: true
+          this.native.navigateForward(['/bindservice/finish/',this.nodeId],{
+            replaceUrl: true
           });
+          this.native.hideLoading();
+        });
+      });
+
+      this.events.subscribe('rpcResponse:error',()=>{
+        this.zone.run(() => {
+          this.native.hideLoading();
         });
       });
     }
@@ -64,8 +74,10 @@ export class IssuecredentialPage implements OnInit {
     }
 
     ionViewWillLeave(){
+      this.native.hideLoading();
       this.events.unsubscribe("feeds:connectionChanged");
       this.events.unsubscribe('feeds:issue_credential');
+      this.events.unsubscribe("rpcResponse:error");
       if(this.popover!=null){
          this.popover.dismiss();
       }
@@ -77,6 +89,11 @@ export class IssuecredentialPage implements OnInit {
     }
   
   issueCredential(){
+    if(this.feedService.getConnectionStatus() != 0){
+      this.native.toastWarn('common.connectionError');
+      return;
+    }
+
     this.showServerPrompt(this.did,this.nodeId);
   }
 
@@ -95,6 +112,7 @@ export class IssuecredentialPage implements OnInit {
       this.isShowPrompt = false;
       this.popover = null;
     });
+    
     return await this.popover.present();
   }
 

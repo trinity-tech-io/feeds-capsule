@@ -47,7 +47,11 @@ export class ServerpromptComponent implements OnInit {
   }
 
   confirm(){
-
+    if(this.feedService.getConnectionStatus() != 0){
+      this.native.toastWarn('common.connectionError');
+      return;
+    }
+    
     if (this.serverName == ""){
       this.native.toast_trans('IssuecredentialPage.inputName');
       return;
@@ -64,7 +68,10 @@ export class ServerpromptComponent implements OnInit {
     }
 
     this.popover.dismiss();
-    this.feedService.issueCredential(this.nodeId,this.did, this.serverName, this.serverDes,this.elaAddress);
+    this.native.showLoading("loading",5*60*1000).then(()=>{
+      this.feedService.issueCredential(this.nodeId,this.did, this.serverName, this.serverDes,this.elaAddress);
+    });
+    
   }
 
 }

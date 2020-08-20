@@ -112,6 +112,7 @@ export class StartbindingPage implements OnInit {
           this.native.navigateForward(['/bindservice/publishdid/',nodeId, did, payload],{
             replaceUrl: true
           });
+          this.native.hideLoading();
       });
     });
 
@@ -121,6 +122,7 @@ export class StartbindingPage implements OnInit {
           this.native.navigateForward(['/bindservice/issuecredential', nodeId, did],{
             replaceUrl: true
           });
+          this.native.hideLoading();
       });
     });
 
@@ -165,6 +167,7 @@ export class StartbindingPage implements OnInit {
 
   abort(){
     this.native.pop();
+    this.native.hideLoading();
   }
 
 

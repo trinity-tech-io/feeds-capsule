@@ -42,6 +42,9 @@ export class ImportdidPage implements OnInit {
       this.events.subscribe('feeds:connectionChanged',(status)=>{
         this.zone.run(() => {
           this.connectionStatus = status;
+          if (this.connectionStatus == 1){
+            this.native.hideLoading();
+          }
         });
       });
 
@@ -50,6 +53,7 @@ export class ImportdidPage implements OnInit {
             this.native.navigateForward(['/bindservice/publishdid/',nodeId, did, payload],{
               replaceUrl: true
             });
+            this.native.hideLoading();
         });
       });
 
@@ -58,6 +62,13 @@ export class ImportdidPage implements OnInit {
             this.native.getNavCtrl().navigateForward(['/bindservice/issuecredential', nodeId, did],{
               replaceUrl: true
             });
+            this.native.hideLoading();
+        });
+      });
+
+      this.events.subscribe('rpcResponse:error',()=>{
+        this.zone.run(() => {
+          this.native.hideLoading();
         });
       });
     }
@@ -68,9 +79,11 @@ export class ImportdidPage implements OnInit {
     }
 
     ionViewWillLeave(){
+      this.native.hideLoading();
       this.events.unsubscribe("feeds:connectionChanged");
       this.events.unsubscribe('feeds:resolveDidError');
       this.events.unsubscribe('feeds:resolveDidSucess');
+      this.events.unsubscribe("rpcResponse:error");
     }
   
   
@@ -78,10 +91,16 @@ export class ImportdidPage implements OnInit {
       titleBarManager.setTitle(this.title);
     }
   
- 
-
   createNewDid(){
-    this.feedService.createDidRequest(this.nodeId);
+    if(this.feedService.getConnectionStatus() != 0){
+      this.native.toastWarn('common.connectionError');
+      return;
+    }
+
+    this.native.showLoading("loading",5*60*1000).then(()=>{
+      this.feedService.createDidRequest(this.nodeId);
+    });
+    
   }
 
   // importDid(){
