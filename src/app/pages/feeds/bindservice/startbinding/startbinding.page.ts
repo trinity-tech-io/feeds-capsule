@@ -160,7 +160,7 @@ export class StartbindingPage implements OnInit {
       return;
     }
     
-    this.native.showLoading("loading",5*60*1000).then(()=>{
+    this.native.showLoading("common.waitMoment",5*60*1000).then(()=>{
       this.feedService.startDeclareOwner(this.nodeId, this.carrierAddress, this.nonce);
     });
   }

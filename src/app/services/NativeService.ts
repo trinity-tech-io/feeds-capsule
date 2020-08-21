@@ -106,6 +106,7 @@ export class NativeService {
     }
 
     public async showLoading(content: string = '', durationTime: number = 30000) {
+        content = this.translate.instant(content);
         if (!this.loadingIsOpen) {
             this.loadingIsOpen = true;
             const loading = await this.loadingCtrl.create({

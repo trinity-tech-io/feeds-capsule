@@ -43,7 +43,8 @@ export const fr = {
         "des4":"Your donation will be sent to the ELA address:",
         "pictureviewer":"picture viewer",
         "delete":"Delete",
-        "amountError":"Please input correct amount"
+        "amountError":"Please input correct amount",
+        "waitMoment": "Please wait a moment..."
     },
     "app":{
         "profileDetails":"Profile Details",

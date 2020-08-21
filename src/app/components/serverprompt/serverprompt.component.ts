@@ -68,7 +68,7 @@ export class ServerpromptComponent implements OnInit {
     }
 
     this.popover.dismiss();
-    this.native.showLoading("loading",5*60*1000).then(()=>{
+    this.native.showLoading("common.waitMoment",5*60*1000).then(()=>{
       this.feedService.issueCredential(this.nodeId,this.did, this.serverName, this.serverDes,this.elaAddress);
     });
     
