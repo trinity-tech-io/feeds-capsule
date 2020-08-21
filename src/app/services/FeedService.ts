@@ -3432,7 +3432,7 @@ export class FeedService {
   }
 
 
-  issueCredential(nodeId: string, did: string, serverName: string, serverDesc: string,elaAddress:string) {
+  issueCredential(nodeId: string, did: string, serverName: string, serverDesc: string,elaAddress:string, onSuccess:()=> void, onError:()=>void) {
     if (bindingServerCache == null || bindingServerCache == undefined)
       this.resolveServerDid(did, nodeId,"",()=>{},()=>{});
     /**
@@ -3461,17 +3461,26 @@ export class FeedService {
 
       expirationdate: new Date(2024, 10, 10).toISOString() // Credential will expire on 2024-11-10 - Note the month's 0-index...
     }, {}, (response) => {
+      if (response.result == null){
+        onError();
+        return;
+      }
       if (response.result.credential) {
         bindingServerCache.name = serverName;
         bindingServerCache.introduction = serverDesc;
         this.issueCredentialRequest(nodeId, response.result.credential);
+        onSuccess();
       }
       else {
+        onError();
         console.log("Failed to issue a credential - empty credential returned");
+        return;
         // this.didDemoService.toast("Failed to issue a credential - empty credential returned");
       }
     }, (err)=>{
+      onError();
       console.log("Failed to issue a credential: "+JSON.stringify(err));
+      return ;
       // this.didDemoService.toast("Failed to issue a credential: "+JSON.stringify(err));
     })
   }
