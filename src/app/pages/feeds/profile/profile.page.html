@@ -23,6 +23,7 @@
     <ion-label class="channel-desc white">{{description}} </ion-label>
   </div>
 
+
 <div class="tab-container">
     <div class="left-tab" [class.tab-active]="selectType === 'ProfilePage.myFeeds'" (click)="changeType('ProfilePage.myFeeds')">
         <span>{{ 'ProfilePage.myFeeds' | translate }}</span>
@@ -34,13 +35,32 @@
         <span>{{'ProfilePage.myLikes' | translate }}</span>
     </div>
 </div>
+     <!--on-refresher-->
+     <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" pullFactor="0.5">
+      <ion-refresher-content
+        pullingIcon="arrow-dropdown"
+        pullingText="{{'common.pullToRefresh'|translate}}"
+        refreshingSpinner="circles"
+        refreshingText="">
+      </ion-refresher-content>
+     </ion-refresher>
 
-
-
-  <!-- <app-details *ngIf="selectType == 'Details'"></app-details> -->
   <app-myfeeds *ngIf="selectType == 'ProfilePage.myFeeds'"  [channels] = "channels" [nodeStatus]="nodeStatus"></app-myfeeds>
   <app-following *ngIf="selectType == 'ProfilePage.following'"  [followingList] = "followingList" [nodeStatus]="nodeStatus"></app-following>
-  <app-likes  *ngIf="selectType == 'ProfilePage.myLikes'" [likeList] = "likeList" [nodeStatus]="nodeStatus"></app-likes>
-  <!-- <app-source  *ngIf="selectType == 'Sources'"></app-source> -->
+  <app-likes  *ngIf="selectType == 'ProfilePage.myLikes'" [likeList] = "likeList" [nodeStatus]="nodeStatus">
+  </app-likes>
 
+
+  <div *ngIf="likeList.length>1&&selectType == 'ProfilePage.myLikes'">
+    <div style="text-align: center;margin-top: 20px;margin-bottom: 20px;" *ngIf="isBottom">
+        {{ "common.des3" | translate }}
+    </div>
+  </div>
+
+  <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event)">
+    <ion-infinite-scroll-content
+      loadingSpinner="bubbles"
+      loadingText="{{'common.loadingText'|translate}}">
+    </ion-infinite-scroll-content>
+  </ion-infinite-scroll>
 </ion-content>

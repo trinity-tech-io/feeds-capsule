@@ -315,7 +315,7 @@ export const en = {
     "DonationPage":{
         "donation": "Donation",
         "donationELAAddress":"Donation ELA Address",
-        "description":"Feeds dApp is a non-profit project,  dedicating to improvement on better experience and integration with more added-value features. Your donation to this project will keep encouraging us to constantly deliver new exciting release versions with our best efforts and remind us of the responsibility of that as well.",
+        "description":"The Feeds Capsule is a non-profit project dedicated to improving user experience and integrating essential features into elastOS. All donations contributed to the Feeds project will be greatly appreciated, and will better enable us to deliver on our mission as we develop new functions and features for our upcoming releases.",
         "receiver":"Receiver",
         "amount":"Amount",
         "memo":"memo",

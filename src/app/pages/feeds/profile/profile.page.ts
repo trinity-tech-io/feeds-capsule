@@ -2,17 +2,21 @@ import { Component, OnInit, NgZone ,ViewChild} from '@angular/core';
 import { Events } from '@ionic/angular';
 import { FeedService } from 'src/app/services/FeedService';
 import { ThemeService } from 'src/app/services/theme.service';
+import { IonInfiniteScroll} from '@ionic/angular';
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.page.html',
   styleUrls: ['./profile.page.scss'],
 })
 export class ProfilePage implements OnInit {
-
-  //@ViewChild('footer',{static:true}) footerChild:any; // 在父组件的控制器中引用子组件
+  @ViewChild(IonInfiniteScroll,{static:true}) infiniteScroll: IonInfiniteScroll;
   public  nodeStatus = {}; //friends status; 
   public  channels = []; //myFeeds page
   public  followingList = []; // following page
+  public  totalLikeList = [];
+  public isBottom:boolean = false;
+  public startIndex:number = 0;
+  public pageNumber:number = 5;
   public  likeList = []; //like page
   public connectionStatus = 1;
   public selectType: string = "ProfilePage.myFeeds"; 
@@ -49,8 +53,26 @@ export class ProfilePage implements OnInit {
   }
 
   initLike(){
-    this.likeList = this.feedService.getLikeList();
+    this.startIndex = 0;
+    this.initRefresh();
     this.initnodeStatus(this.likeList);
+  }
+
+  initRefresh(){
+    this.totalLikeList = this.feedService.getLikeList() || [];
+    if(this.totalLikeList.length-this.pageNumber > this.pageNumber){
+      
+      this.likeList  = this.totalLikeList.slice(this.startIndex,this.pageNumber);
+     
+      this.startIndex++;
+      this.isBottom = false;
+      this.infiniteScroll.disabled =false;
+    }else{
+      
+      this.likeList = this.totalLikeList.slice(0,this.totalLikeList.length);
+      this.isBottom =true;
+      this.infiniteScroll.disabled =true;
+    }
   }
 
   ionViewWillEnter() {
@@ -77,8 +99,9 @@ export class ProfilePage implements OnInit {
 
     this.events.subscribe('feeds:updateLikeList', (list) => {
       this.zone.run(() => {
-        this.likeList = list;
-        this.initnodeStatus(this.likeList);
+        this.totalLikeList = list;
+        this.initLike();
+        //this.initnodeStatus(this.likeList);
       });
      });
 
@@ -123,6 +146,7 @@ export class ProfilePage implements OnInit {
         this.initFolling();
         break;
       case 'ProfilePage.myLikes':
+         this.startIndex = 0;
          this.initLike();
           break;
     }
@@ -138,6 +162,70 @@ export class ProfilePage implements OnInit {
             let status = this.checkServerStatus(nodeId);
             this.nodeStatus[nodeId] = status;
      }
+  }
+
+  doRefresh(event:any){
+    switch(this.selectType){
+      case 'ProfilePage.myFeeds':
+        let sId1 =  setTimeout(() => {
+          this.initMyFeeds();
+          event.target.complete();
+          clearTimeout(sId1);
+        },500);
+        break;
+      case 'ProfilePage.following':
+        let sId2 =  setTimeout(() => {
+          this.initFolling();
+          event.target.complete();
+          clearTimeout(sId2);
+        },500);
+        break;
+      case 'ProfilePage.myLikes':
+      let sId =  setTimeout(() => {
+        this.startIndex = 0;
+        this.initLike();
+        event.target.complete();
+        clearTimeout(sId);
+      },500);
+      break;
+    }
+  
+  }
+
+  loadData(event:any){
+    switch(this.selectType){
+    case 'ProfilePage.myFeeds':
+        //
+      break;
+    case 'ProfilePage.following':
+       //
+      break;
+      case 'ProfilePage.myLikes':
+      let sId = setTimeout(() => {
+        let arr = [];        
+        if(this.totalLikeList.length - this.pageNumber*this.startIndex>this.pageNumber){
+         arr = this.totalLikeList.slice(this.startIndex*this.pageNumber,(this.startIndex+1)*this.pageNumber);
+         this.startIndex++;
+         this.zone.run(()=>{
+         this.likeList = this.likeList.concat(arr);
+         });
+         this.initnodeStatus(arr);
+         event.target.complete();
+        }else{
+         arr = this.totalLikeList.slice(this.startIndex*this.pageNumber,this.totalLikeList.length);
+         this.zone.run(()=>{
+             this.likeList = this.likeList.concat(arr);
+         });
+         this.isBottom = true;
+         this.infiniteScroll.disabled =true;
+         this.initnodeStatus(arr);
+         event.target.complete();
+         clearTimeout(sId);
+        }
+      },500);
+      break;
+
+    }
   }
 
 }
