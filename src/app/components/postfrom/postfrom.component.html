@@ -12,8 +12,8 @@
     <div *ngFor="let channel of channels let i=index" [class.darkContainer]="theme.darkMode">
     <div class="channel-img-small-div" (click)="selectChannel(channel.nodeId,channel.id)">
       <div class="channel-img-small">
-        <ion-avatar >
-          <div class="feed-source-card-status" style="position: absolute;top:0px;left:0px">
+        <ion-avatar style="position: relative;">
+          <div class="feed-source-card-status circlePosition">
             <div class="online-circle"  *ngIf="nodeStatus[channel.nodeId] == 0"></div>
             <div class="offline-circle" *ngIf="nodeStatus[channel.nodeId] == 1"></div>
           </div>

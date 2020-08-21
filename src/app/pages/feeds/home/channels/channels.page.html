@@ -16,7 +16,7 @@
 
     <div class="channel-img-div">
       <ion-avatar class="channel-img" style="width:80px ; height: 80px;position: relative;">
-        <div class="feed-source-card-status" style="position: absolute;top:0px;left:8px">
+        <div class="feed-source-card-status chancecirclePosition">
           <div class="online-circle"  *ngIf="nodeStatus[nodeId] == 0"></div>
           <div class="offline-circle" *ngIf="nodeStatus[nodeId] == 1"></div>
         </div>
@@ -29,7 +29,7 @@
     </div>
 
     <div class="center-flex" style="margin-top: 10px;">
-      <img class="profile-sub-img" src="assets/images/bubble2.svg">
+      <img class="profile-sub-img" src="./assets/images/bubble2.svg">
       <ion-label class="profile-sub-text">{{channelSubscribes}} </ion-label>
       <ion-label  class="profile-subscribe">{{'common.followers'|translate}}</ion-label>
     </div>
@@ -105,7 +105,7 @@
           </div>
           <div class="image-text-div" (click)="navTo(post.nodeId, post.channel_id)">
               <ion-avatar class="avatar-div">
-                <div class="feed-source-card-status" style="position: absolute;top:0px;left:0px">
+                <div class="feed-source-card-status circlePosition">
                   <div class="online-circle"  *ngIf="nodeStatus[post.nodeId] == 0"></div>
                   <div class="offline-circle" *ngIf="nodeStatus[post.nodeId] == 1"></div>
                 </div>
@@ -136,7 +136,7 @@
               <img class="like" [ngClass]="{'like-s': checkMyLike(post.nodeId, post.channel_id, post.id)}" (click)="like(post.nodeId, post.channel_id, post.id)">
               <ion-label class="like-text" [ngClass]="{'like-s-text': checkMyLike(post.nodeId, post.channel_id, post.id)}" (click)="like(post.nodeId, post.channel_id, post.id)">{{post.likes}}</ion-label>
     
-              <img src="../../../../assets/images/bubble-line.svg" class="comment" (click)="showCommentPage(post.nodeId, post.channel_id, post.id)">
+              <img src="./assets/images/bubble-line.svg" class="comment" (click)="showCommentPage(post.nodeId, post.channel_id, post.id)">
               <ion-label class="comment-text"  (click)="showCommentPage(post.nodeId, post.channel_id, post.id)">{{post.comments}}</ion-label>
             </div>
           </div>

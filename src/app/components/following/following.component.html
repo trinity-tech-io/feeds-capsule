@@ -31,7 +31,7 @@
 
       <div class="image-text-div" (click)="navTo(channel.nodeId, channel.id)">
           <ion-avatar class="avatar-div">
-            <div class="feed-source-card-status" style="position: absolute;top:0px;left:0px">
+            <div class="feed-source-card-status circlePosition">
               <div class="online-circle"  *ngIf="nodeStatus[channel.nodeId] == 0"></div>
               <div class="offline-circle" *ngIf="nodeStatus[channel.nodeId] == 1"></div>
             </div>

@@ -46,7 +46,7 @@
           </div>
 
           <div class="feed-source-card-content">
-            <div class="feed-source-card-img-div">
+            <div class="feed-source-card-img-div" style="position:relative">
               <img class="feed-source-card-img" src="assets/images/profile-2.svg" >
               <div class="feed-source-card-status">
                 <div class="online-circle" *ngIf="checkServerStatus(myFeedSource.nodeId) == 0"></div>
@@ -91,8 +91,8 @@
           </div>
 
           <div class="feed-source-card-content">
-            <div class="feed-source-card-img-div">
-              <img class="feed-source-card-img" src="assets/images/profile-2.svg" >
+            <div class="feed-source-card-img-div" style="position:relative">
+              <img class="feed-source-card-img" src="assets/images/profile-2.svg">
               <div class="feed-source-card-status">
                 <div class="online-circle" *ngIf="checkServerStatus(server.nodeId) == 0"></div>
                 <div class="offline-circle" *ngIf="checkServerStatus(server.nodeId) == 1"></div>

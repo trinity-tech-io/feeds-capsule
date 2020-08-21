@@ -1062,20 +1062,24 @@ vertical-align: middle;
   }
 
   .offline-circle{
-    width: 16px;
-    height: 16px;
+    width: 12px;
+    height: 12px;
     background-color: #cdcde6;
-    border-radius: 8px;
+    border-radius: 6px;
   }
 
   .online-circle{
-    width: 16px;
-    height: 16px;
-    //background-color: #368bff;
+    width: 12px;
+    height: 12px;
     background-color:#0ec254;
-    // -moz-border-radius: 50px;
-    // -webkit-border-radius: 50px;
-    border-radius: 8px;
+    border-radius: 6px;
+  }
+
+  .online-circle-bule{
+    width: 12px;
+    height: 12px;
+    background-color: #368bff;
+    border-radius: 6px;
   }
 
   .select-div{
@@ -1180,8 +1184,8 @@ vertical-align: middle;
 
           .feed-source-card-status{
             position:absolute;
-            left:20px;
-            top:17px;
+            bottom:5px;
+            right:5px;
           }
         }
 
