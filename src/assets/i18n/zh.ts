@@ -9,7 +9,7 @@ export const zh = {
         "confirm":"确认",
         "des":"清空 <strong>所有缓存数据</strong>!!!",
         "prompt":"提示",
-        "des1":"Confirm new topic",
+        "des1":"确认新主题",
         "server":"服务器:",
         "channel":"频道:",
         "description":"描述:",
