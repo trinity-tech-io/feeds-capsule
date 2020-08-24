@@ -272,6 +272,8 @@ enum PublishType{
   publishPostFinish = "feeds:publishPostFinish",
 
   refreshPostDetail = "feeds:refreshPostDetail",
+
+  editFeedInfoFinish = "feeds:editFeedInfoFinish"
 }
 
 enum PersistenceKey{
@@ -956,6 +958,10 @@ export class FeedService {
         break;
       case FeedsData.MethodType.unsubscribe_channel:
         this.handleUnsubscribeChannelResult(nodeId, requestParams, error);
+        break;
+
+      case "update_feedinfo":
+        this.handleEditFeedInfo(nodeId,requestParams,error);
         break;
       case FeedsData.MethodType.enable_notification:
         this.handleEnableNotificationResult(error);
@@ -1816,6 +1822,28 @@ export class FeedService {
     this.doUnsubscribeChannelFinish(nodeId, id);
   }
 
+  editFeedInfo(nodeId: string, channelId: number, name: string , desc: string, avatar: any){
+    if(!this.hasAccessToken(nodeId))
+    return;
+
+    let avatarBin = this.serializeDataService.encodeData(avatar);
+
+    let request: Communication.update_feedinfo_request = {
+      version: "1.0",
+      method : "update_feedinfo",
+      id     : -1,
+      params : {
+          access_token: accessTokenMap[nodeId].token,
+          id          : channelId, //channelId
+          name        : name,
+          introduction: desc,
+          avatar      : avatarBin
+      } 
+    }
+    this.sendRPCMessage(nodeId, request.method, request.params,"");
+  }
+  
+
   enableNotification(nodeId: string){
     if(!this.hasAccessToken(nodeId))
       return;
@@ -1993,6 +2021,30 @@ export class FeedService {
     let user_did = params.user_did;
     
     this.generateNotification(nodeId, channel_id, 0,0, user_name,Behavior.follow, this.translate.instant("NotificationPage.followedFeed"))
+  }
+
+  handleNewFeedInfoUpdateNotification(nodeId: string, params: any){
+    let channelId = params.id||0;
+    let name = params.name||"";
+    let desc = params.introduction||"";
+    let avatarBin = params.avatar||""
+    let last_update = params.last_update||"";
+
+    let avatar = this.serializeDataService.decodeData(avatarBin)||"";
+
+    let nodeChannelId = nodeId + channelId || "";
+
+    if (name != "")
+      channelsMap[nodeChannelId].name = name;
+    if (desc != "")
+      channelsMap[nodeChannelId].introduction = desc;
+    if (avatarBin != "")
+      channelsMap[nodeChannelId].avatar = avatar;
+    if (last_update != "")
+      channelsMap[nodeChannelId].last_update = last_update;
+
+    this.storeService.set(PersistenceKey.channelsMap,channelsMap);
+    eventBus.publish(PublishType.editFeedInfoFinish, nodeChannelId); 
   }
 
   handleNotification(nodeId: string, method: string, params: any){
@@ -2677,6 +2729,33 @@ export class FeedService {
 
 
     this.native.toast("common.unFollowSuccess");
+  }
+
+  handleEditFeedInfo(nodeId: string, request: any, error: any){
+    if (error != null && error != undefined && error.code != undefined){
+      this.doUnsubscribeChannelError(nodeId, request.id);
+      this.handleError(error);
+      return;
+    }
+
+    let channelId = request.id||0;
+    let name = request.name||"";
+    let desc = request.introduction||"";
+    let avatarBin = request.avatar||""
+
+    let avatar = this.serializeDataService.decodeData(avatarBin)||"";
+
+    let nodeChannelId = nodeId + channelId || "";
+
+    if (name != "")
+      channelsMap[nodeChannelId].name = name;
+    if (desc != "")
+      channelsMap[nodeChannelId].introduction = desc;
+    if (avatarBin != "")
+      channelsMap[nodeChannelId].avatar = avatar;
+
+    this.storeService.set(PersistenceKey.channelsMap,channelsMap);
+    eventBus.publish(PublishType.editFeedInfoFinish, nodeChannelId); 
   }
 
   handleQueryChannelCreationPermissionResult(nodeId: string, result: any){

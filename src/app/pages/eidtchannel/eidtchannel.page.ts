@@ -54,6 +54,13 @@ ionViewWillEnter() {
   this.events.subscribe("feeds:updateTitle",()=>{
     this.initTitle();
   });
+
+  this.events.subscribe("feeds:editFeedInfoFinish",()=>{
+    this.zone.run(() => {
+      this.native.hideLoading();
+      this.native.pop();
+    });
+  });
 }
 
 initTitle(){
@@ -78,9 +85,14 @@ cancel(){
 }
 
 confirm(){
- if(this.checkparms()){
-   alert("sucess");
- }
+  if(this.feedService.getConnectionStatus() != 0){
+    this.native.toastWarn('common.connectionError');
+    return;
+  }
+
+  if(this.checkparms()){
+    this.feedService.editFeedInfo(this.nodeId,this.channelId,this.name, this.des,this.avatar);
+  }
 }
 
 checkparms(){

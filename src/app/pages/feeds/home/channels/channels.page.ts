@@ -88,17 +88,8 @@ export class ChannelsPage implements OnInit {
 
   init(){
     this.connectionStatus = this.feedService.getConnectionStatus();
-    let channel = this.feedService.getChannelFromId(this.nodeId, this.channelId);
-    this.checkFollowStatus(this.nodeId,this.channelId);
-    if (channel == null || channel == undefined)
-      return ;
-      
-    this.channelName = channel.name;
-    this.channelOwner = this.feedService.indexText(channel.owner_name,25,25);
-    this.channelDesc = channel.introduction;
-    this.channelSubscribes = channel.subscribers;
-    this.channelAvatar = this.feedService.parseChannelAvatar(channel.avatar);
 
+    this.initChannelData();
     this.initRefresh();
     this.initStatus(this.postList);
   
@@ -125,6 +116,19 @@ export class ChannelsPage implements OnInit {
     }
   }
 
+  initChannelData(){
+    let channel = this.feedService.getChannelFromId(this.nodeId, this.channelId);
+    this.checkFollowStatus(this.nodeId,this.channelId);
+    if (channel == null || channel == undefined)
+      return ;
+      
+    this.channelName = channel.name;
+    this.channelOwner = this.feedService.indexText(channel.owner_name,25,25);
+    this.channelDesc = channel.introduction;
+    this.channelSubscribes = channel.subscribers;
+    this.channelAvatar = this.feedService.parseChannelAvatar(channel.avatar);
+
+  }
   ionViewWillEnter() {
     this.init();
     this.events.subscribe('feeds:connectionChanged',(status)=>{
@@ -147,6 +151,15 @@ export class ChannelsPage implements OnInit {
       this.zone.run(() => {
         this.checkFollowStatus(this.nodeId,this.channelId);
         this.native.setRootRouter(['/tabs/home']);
+      });
+    });
+
+    this.events.subscribe("feeds:editFeedInfoFinish",(nodeChannelId)=>{
+      this.zone.run(() => {
+        let nci = this.nodeId+ this.channelId;
+        if (nodeChannelId == nci){
+          this.initChannelData();
+        }
       });
     });
   }
@@ -350,6 +363,11 @@ export class ChannelsPage implements OnInit {
   }
 
   clickEdit(){
+    if(this.feedService.getConnectionStatus() != 0){
+      this.native.toastWarn('common.connectionError');
+      return;
+    }
+  
     if(this.channelAvatar.indexOf("data:image")>-1){
       this.feedService.setSelsectIndex(0);
       this.feedService.setProfileIamge(this.channelAvatar);

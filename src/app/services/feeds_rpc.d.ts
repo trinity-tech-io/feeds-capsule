@@ -428,7 +428,26 @@ declare module Communication{
             authorized : boolean
         }
     }
+    type update_feedinfo_request = {
+        version: "1.0"
+        method : "update_feedinfo"
+        id     : jsonrpc_id
+        params : {
+            access_token: string
+            id          : number //channelId
+            name        : string
+            introduction: string  
+            avatar      : any
+        } 
+    }
+
+    type update_feedinfo_response = {
+        version: "1.0"
+        id     : jsonrpc_id
+        result : null
+    }
     
+        
     // event notification
     type enable_notification_request = {
         version: "1.0"
@@ -443,7 +462,19 @@ declare module Communication{
         id     : jsonrpc_id
         result : null
     }
-    
+
+    type feedinfo_update_notification = {
+        version: "1.0"
+        method : "feedinfo_update"
+        params : {
+            id          : number //channelId
+            name        : string
+            introduction: string  
+            avatar      : any
+            last_update : number
+        }
+    }
+
     type new_post_notification = {
         version: "1.0"
         method : "new_post"
