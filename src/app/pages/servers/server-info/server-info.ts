@@ -52,44 +52,48 @@ export class ServerInfoPage implements OnInit {
 
   ngOnInit() {
     this.acRoute.params.subscribe(data => {
-      this.isOwner = data.isOwner ;
+      this.isOwner = data.isOwner || "";
       this.address = data.address || "";
-      if (this.address != ''){
-          this.zone.run(()=>{
-            this.presentLoading();
-          });
-          this.queryServer();
-        }else{
-          let server:any ;
-          let bindingServer = this.feedService.getBindingServer();
-          this.nodeId = data.nodeId;
-          if (bindingServer != null &&
-            bindingServer !=undefined &&
-            this.nodeId == bindingServer.nodeId){
-            server = this.feedService.getServerbyNodeId(this.nodeId);
-
-            this.isBindServer = true;
-          }else{
-            server = this.feedService.getServerbyNodeId(this.nodeId);
-            this.isBindServer = false;
-          }
-
-          this.serverStatus = this.feedService.getServerStatusFromId(this.nodeId);
-          this.clientNumber = this.feedService.getServerStatisticsNumber(this.nodeId);
-
-          if (server == undefined){
-            return ;
-          }
-
-          this.didString = server.did;
-          this.name = server.name ||  this.translate.instant('DIDdata.NotprovidedfromDIDDocument');
-          this.owner = server.owner;
-          this.introduction = server.introduction ||  this.translate.instant('DIDdata.NotprovidedfromDIDDocument');
-          this.feedsUrl = server.feedsUrl || "";
-          this.elaAddress = server.elaAddress || this.translate.instant('DIDdata.Notprovided');
-        }
-
+      this.nodeId = data.nodeId||"";
+      this.initData();
     });
+  }
+
+  initData(){
+    if (this.address != ''){
+      this.zone.run(()=>{
+        this.presentLoading();
+      });
+      this.queryServer();
+    }else{
+      let server:any ;
+      let bindingServer = this.feedService.getBindingServer();
+      
+      if (bindingServer != null &&
+        bindingServer !=undefined &&
+        this.nodeId == bindingServer.nodeId){
+        server = this.feedService.getServerbyNodeId(this.nodeId);
+
+        this.isBindServer = true;
+      }else{
+        server = this.feedService.getServerbyNodeId(this.nodeId);
+        this.isBindServer = false;
+      }
+
+      this.serverStatus = this.feedService.getServerStatusFromId(this.nodeId);
+      this.clientNumber = this.feedService.getServerStatisticsNumber(this.nodeId);
+
+      if (server == undefined){
+        return ;
+      }
+
+      this.didString = server.did;
+      this.name = server.name ||  this.translate.instant('DIDdata.NotprovidedfromDIDDocument');
+      this.owner = server.owner;
+      this.introduction = server.introduction ||  this.translate.instant('DIDdata.NotprovidedfromDIDDocument');
+      this.feedsUrl = server.feedsUrl || "";
+      this.elaAddress = server.elaAddress || this.translate.instant('DIDdata.Notprovided');
+    }
   }
 
   ionViewWillEnter() {
@@ -114,9 +118,18 @@ export class ServerInfoPage implements OnInit {
       });
     });
 
-    this.events.subscribe('feeds:removeFeedSourceFinish',  () => {
+    this.events.subscribe('feeds:serverConnectionChanged', serversStatus => {
+      this.zone.run(() => {
+          if (this.address == ""){
+            this.serverStatus = this.feedService.getServerStatusFromId(this.nodeId);
+          }
+      });
+    });
+
+    this.events.subscribe('feeds:login_finish',  () => {
       this.zone.run(() => { 
-        this.native.navigateForward('/menu/servers',""); 
+        this.initData();
+        this.native.hideLoading();
       });
     });
 
@@ -273,6 +286,11 @@ export class ServerInfoPage implements OnInit {
   }
 
   clickEdit(){
+    if(this.feedService.getConnectionStatus() != 0){
+      this.native.toastWarn('common.connectionError');
+      return;
+    }
+
     this.native.go(
       "/editserverinfo", 
       { 
@@ -280,6 +298,8 @@ export class ServerInfoPage implements OnInit {
         "name":this.name,
         "introduction":this.introduction,
         "elaAddress":this.elaAddress,
+        "nodeId":this.nodeId,
+        "did":this.didString,
       }
     )
   }

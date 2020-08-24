@@ -3302,6 +3302,7 @@ export class FeedService {
           credential: credential,
       }
     }
+
     this.sendRPCMessage(nodeId, request.method, request.params,"");
   }
 
@@ -3523,7 +3524,6 @@ export class FeedService {
   }
 
   finishBinding(nodeId: string){
-
     bindingServer = bindingServerCache;
     this.storeService.set(PersistenceKey.bindingServer,bindingServer);
     this.addServer(bindingServer.carrierAddress,
@@ -3539,7 +3539,6 @@ export class FeedService {
     eventBus.publish("feeds:issue_credential");
     eventBus.publish("feeds:bindServerFinish",bindingServer);
     this.signinChallengeRequest(nodeId, true);
-    // this.doFriendConnection(nodeId, ConnState.connected);
   }
 
   getFriendConnection(nodeId: string){

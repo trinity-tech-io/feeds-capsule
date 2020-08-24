@@ -19,6 +19,8 @@ export class EditserverinfoPage implements OnInit {
   public name:string = "";
   public introduction:string = "";
   public elaAddress: string = "";
+  public nodeId: string = "";
+  public did: string = "";
   constructor(
     private feedService: FeedService,
     public activatedRoute:ActivatedRoute,
@@ -38,6 +40,8 @@ export class EditserverinfoPage implements OnInit {
       this.name = item["name"] || "";
       this.introduction = item["introduction"] || "";
       this.elaAddress =  item["elaAddress"] || "";
+      this.nodeId = item["nodeId"] || "";
+      this.did = item["did"] || "";
     });
   }
 
@@ -51,6 +55,13 @@ export class EditserverinfoPage implements OnInit {
     this.events.subscribe("feeds:updateTitle",()=>{
       this.initTitle();
     });
+
+    this.events.subscribe('feeds:bindServerFinish',()=>{
+      this.zone.run(() => {
+        this.native.hideLoading();
+        this.native.pop();
+      });
+  });
   }
 
   ionViewDidEnter(){
@@ -59,8 +70,10 @@ export class EditserverinfoPage implements OnInit {
   }
 
   ionViewWillLeave(){
-     this.events.unsubscribe("feeds:updateTitle");
-     this.events.unsubscribe("feeds:connectionChanged");
+    this.native.hideLoading();
+    this.events.unsubscribe("feeds:updateTitle");
+    this.events.unsubscribe("feeds:connectionChanged");
+    this.events.unsubscribe("feeds:bindServerFinish");
   }
 
   initTitle(){
@@ -82,15 +95,21 @@ export class EditserverinfoPage implements OnInit {
   }
 
   confirm(){
-
-    if(this.checkParms()){
-        this.native.toast_trans("sucess");
+    if(this.feedService.getConnectionStatus() != 0){
+      this.native.toastWarn('common.connectionError');
+      return;
     }
-
+    
+    if(this.checkParms()){
+        this.native.showLoading('common.waitMoment');
+        this.feedService.issueCredential(this.nodeId,this.did, this.name, this.introduction,this.elaAddress,()=>{
+        },()=>{
+          this.native.hideLoading();
+        });
+    }
   }
 
   checkParms(){
-
     if(this.name === ""){
        this.native.toast_trans('IssuecredentialPage.serverName');
        return false;
@@ -107,7 +126,4 @@ export class EditserverinfoPage implements OnInit {
    }
     return true;
   }
-
-
-
 }
