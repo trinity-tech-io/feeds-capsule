@@ -1919,28 +1919,36 @@ export class FeedService {
 
     eventBus.publish(PublishType.updataComment,nodeId,channel_id,post_id,this.postMap[postId].comments);
 
+    this.generateNotification(nodeId, channel_id, post_id,id,user_name,Behavior.comment,this.translate.instant("NotificationPage.commentPost"))  
+  }
 
-    if (!this.checkChannelIsMine(nodeId, channel_id))
+  generateNotification(nodeId: string, channelId: number, postId: number, commentId:number, 
+                    userName: string, behavior:Behavior, behaviorText: string){
+    if (!this.checkChannelIsMine(nodeId, channelId))
       return ;
 
-    let notification:Notification = {
-      id: this.generateUUID(),
-      userName: user_name,
-      behavior: Behavior.comment,
-      behaviorText: this.translate.instant("NotificationPage.commentPost"),
-      details: {
-        nodeId: nodeId,
-        channelId:channel_id,
-        postId:post_id,
-        commentId: id
-      },
-      time:this.getCurrentTimeNum(),
-      readStatus:1
+    if (userName == this.getSignInData().name)
+      return ;
+                
+    if (nodeId == bindingServer.nodeId){
+      let notification:Notification = {
+        id: this.generateUUID(),
+        userName: userName,
+        behavior: behavior,
+        behaviorText: behaviorText,
+        details: {
+          nodeId: nodeId,
+          channelId:channelId,
+          postId:postId,
+          commentId: commentId
+        },
+        time:this.getCurrentTimeNum(),
+        readStatus:1
+      }
+      notificationList.push(notification);
+      this.storeService.set(PersistenceKey.notificationList, notificationList);
+      eventBus.publish(PublishType.UpdateNotification);
     }
-
-    notificationList.push(notification);
-    this.storeService.set(PersistenceKey.notificationList, notificationList);
-    eventBus.publish(PublishType.UpdateNotification);
   }
 
   handleNewLikesNotification(nodeId: string, params: any){
@@ -1967,11 +1975,6 @@ export class FeedService {
       eventBus.publish(PublishType.commentDataUpdate);
     }
 
-    if (!this.checkChannelIsMine(nodeId, channel_id)){
-      return ;
-
-    }
-
     let behaviorText: string = "";
     let behavior: Behavior;
     if (comment_id == 0){
@@ -1982,47 +1985,15 @@ export class FeedService {
       behaviorText = this.translate.instant("NotificationPage.likedComment");
     }
 
-    let notification:Notification = {
-      id: this.generateUUID(),
-      userName: user_name,
-      behavior: behavior,
-      behaviorText: behaviorText,
-      details: {
-        nodeId: nodeId,
-        channelId:channel_id,
-        postId:post_id,
-        commentId: comment_id
-      },
-      time:this.getCurrentTimeNum(),
-      readStatus:1
-    }
-    notificationList.push(notification);
-    this.storeService.set(PersistenceKey.notificationList, notificationList);
-    eventBus.publish(PublishType.UpdateNotification);
+    this.generateNotification(nodeId,channel_id,post_id,comment_id,user_name,behavior,behaviorText);
   }
 
   handleNewSubscriptionNotification(nodeId: string, params: any){
     let channel_id = params.channel_id;
     let user_name = params.user_name;
     let user_did = params.user_did;
-
-    let notification:Notification = {
-      id: this.generateUUID(),
-      userName: user_name,
-      behavior: Behavior.follow,
-      behaviorText: this.translate.instant("NotificationPage.followedFeed"),
-      details: {
-        nodeId: nodeId,
-        channelId:channel_id,
-        postId:0,
-        commentId: 0,
-      },
-      time:this.getCurrentTimeNum(),
-      readStatus:1
-    }
-    notificationList.push(notification);
-    this.storeService.set(PersistenceKey.notificationList, notificationList);
-    eventBus.publish(PublishType.UpdateNotification);
+    
+    this.generateNotification(nodeId, channel_id, 0,0, user_name,Behavior.follow, this.translate.instant("NotificationPage.followedFeed"))
   }
 
   handleNotification(nodeId: string, method: string, params: any){
