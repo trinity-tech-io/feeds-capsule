@@ -6,7 +6,7 @@ import { PopupProvider } from 'src/app/services/popup';
 import { NativeService } from 'src/app/services/NativeService';
 import { ThemeService } from 'src/app/services/theme.service';
 import { TranslateService } from "@ngx-translate/core";
-import { Router } from '@angular/router';
+import { TipdialogComponent} from '../../../components/tipdialog/tipdialog.component';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 @Component({
@@ -15,6 +15,7 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
   styleUrls: ['./createnewfeed.page.scss'],
 })
 export class CreatenewfeedPage implements OnInit {
+
   public namelen = 0;
   public len = 0;
   public connectionStatus = 1;
@@ -23,7 +24,7 @@ export class CreatenewfeedPage implements OnInit {
   public selectedServer: any = null;
   public selectedChannelSource:string = 'Select channel source';
   constructor(
-    private router: Router,
+    private popover: PopoverController ,
     private navCtrl: NavController,
     private feedService: FeedService,
     private popoverController: PopoverController,
@@ -47,6 +48,14 @@ export class CreatenewfeedPage implements OnInit {
     this.connectionStatus = this.feedService.getConnectionStatus();
     this.channelAvatar = this.feedService.getProfileIamge();
     this.avatar = this.feedService.parseChannelAvatar(this.channelAvatar);
+    this.events.subscribe("tipdialog-cancel",()=>{
+       this.popover.dismiss();
+    });
+    this.events.subscribe("tipdialog-confirm",(name,des)=>{
+       this.popover.dismiss();
+       this.feedService.createTopic(this.selectedServer.nodeId, name, des, this.channelAvatar);
+
+    });
     this.events.subscribe('feeds:connectionChanged',(status)=>{
       this.zone.run(() => {
         this.connectionStatus = status;
@@ -72,6 +81,8 @@ export class CreatenewfeedPage implements OnInit {
   }
 
   ionViewWillLeave(){
+    this.events.unsubscribe("tipdialog-cancel");
+    this.events.unsubscribe("tipdialog-confirm");
     this.events.unsubscribe("feeds:connectionChanged");
     this.events.unsubscribe("feeds:createTopicSuccess");
     this.events.unsubscribe("feeds:updateTitle");
@@ -145,13 +156,15 @@ export class CreatenewfeedPage implements OnInit {
       return ;
     }
 
-    this.popup.ionicConfirm(this.translate.instant("common.prompt"),this.translate.instant('common.des1')+this.selectedServer.did+"<br>"
-                            +this.translate.instant('common.channel')+name.value+"<br>"+this.translate.instant('common.description')+desc.value,
-                            this.translate.instant("common.ok"),this.translate.instant("common.cancel")).then((data)=>{
-                              if (data) {
-                                this.feedService.createTopic(this.selectedServer.nodeId, name.value, desc.value, this.channelAvatar);
-                              }
-                            });
+    this.createDialog(name.value,desc.value);
+
+    // this.popup.ionicConfirm(this.translate.instant("common.prompt"),this.translate.instant('common.des1')+this.selectedServer.did+"<br>"
+    //                         +this.translate.instant('common.channel')+name.value+"<br>"+this.translate.instant('common.description')+desc.value,
+    //                         this.translate.instant("common.ok"),this.translate.instant("common.cancel")).then((data)=>{
+    //                           if (data) {
+    //                             this.feedService.createTopic(this.selectedServer.nodeId, name.value, desc.value, this.channelAvatar);
+    //                           }
+    //                         });
   }
 
   profileimage(){
@@ -164,6 +177,24 @@ export class CreatenewfeedPage implements OnInit {
 
   onChangeName(name){
     this.namelen = name.value.length;
+  }
+
+  async createDialog(name:string,des:string){
+    let popover = await this.popoverController.create({
+      mode: 'ios',
+      cssClass: 'genericPopup',
+      component: TipdialogComponent,
+      componentProps: {
+        "did":this.selectedServer.did,
+        "name":name,
+        "des":des
+      }
+    });
+    popover.onWillDismiss().then(() => {
+        popover = null;
+    });
+    
+    return await popover.present();
   }
 
 }

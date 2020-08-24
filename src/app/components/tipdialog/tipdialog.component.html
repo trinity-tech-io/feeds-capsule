@@ -1,0 +1,43 @@
+<ion-grid [class.darkContainer]="theme.darkMode">
+  <ion-row style="margin:20px 0px">
+    <ion-col size="12" class="dTitle white">
+      {{'common.des1' | translate}}
+    </ion-col>
+
+   <ion-col size="3.5" class="left  key">
+    {{'common.server' | translate}}
+   </ion-col>
+
+   <ion-col size="8.5"  class="left value">
+    {{did}}
+   </ion-col>
+
+   <ion-col size="3.5" class="left key">
+    {{'common.channel' | translate}}
+   </ion-col>
+
+   <ion-col size="8.5"  class="left value">
+    {{feedName}}
+   </ion-col>
+
+   <ion-col size="3.5" class="left key">
+    {{'common.description' | translate}}
+   </ion-col>
+
+   <ion-col size="8.5"  class="left value">
+    {{feedDesc}}
+   </ion-col>
+
+  </ion-row>
+
+
+  <ion-row style="margin:20px 0px">
+    <ion-col size="6" style="text-align: center;" (click)="cancel()">
+      <span class="cancel">{{ 'common.cancel' | translate }}</span>
+    </ion-col>
+
+    <ion-col size="6" style="text-align: center;" (click)="confirm()">
+      <span class="confirm">{{ 'common.confirm' | translate }}</span>
+    </ion-col>
+  </ion-row>
+</ion-grid>  
