@@ -7,6 +7,8 @@ import { FormsModule } from '@angular/forms';
 
 import { ServerpromptComponent} from './serverprompt/serverprompt.component';
 import { PaypromptComponent } from './payprompt/payprompt.component';
+import { TipdialogComponent} from './tipdialog/tipdialog.component';
+import { BackhomeComponent} from './backhome/backhome.component';
 
 import { MyfeedsComponent} from './myfeeds/myfeeds.component';
 import { FollowingComponent} from './following/following.component';
@@ -20,11 +22,12 @@ import { LikesComponent} from './likes/likes.component';
     IonicModule,
   ],
 
-  declarations: [PaypromptComponent,ServerpromptComponent,MyfeedsComponent,FollowingComponent,LikesComponent],
-  exports: [PaypromptComponent,ServerpromptComponent,MyfeedsComponent,FollowingComponent,LikesComponent],
+  declarations: [BackhomeComponent,TipdialogComponent,PaypromptComponent,ServerpromptComponent,MyfeedsComponent,FollowingComponent,LikesComponent],
+  exports: [BackhomeComponent,TipdialogComponent,PaypromptComponent,ServerpromptComponent,MyfeedsComponent,FollowingComponent,LikesComponent],
 
   providers: [
   ],
-  entryComponents: [],
+  entryComponents: [BackhomeComponent,TipdialogComponent,ServerpromptComponent,
+    PaypromptComponent,],
 })
 export class ComponentsModule { }

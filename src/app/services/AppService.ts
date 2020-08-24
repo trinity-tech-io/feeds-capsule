@@ -1,5 +1,5 @@
 
-import { Injectable, ViewChild } from '@angular/core';
+import { Injectable} from '@angular/core';
 import { Router} from '@angular/router';
 //import { IonRouterOutlet } from '@ionic/angular';
 import { ThemeService } from "./../services/theme.service";
@@ -9,10 +9,11 @@ import { Events } from '@ionic/angular';
 import { NativeService } from '../services/NativeService';
 import { FeedService, SignInData } from '../services/FeedService';
 import { CarrierService } from '../services/CarrierService';
-import { MenuController} from '@ionic/angular';
-import { PopupProvider } from '../services/popup';
+import { BackhomeComponent} from '../components/backhome/backhome.component';
+import { MenuController,PopoverController} from '@ionic/angular';
 declare let appManager: AppManagerPlugin.AppManager;
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
+
 
 @Injectable({
     providedIn: 'root'
@@ -28,7 +29,7 @@ export class AppService {
                 private feedService: FeedService,
                 private carrierService:CarrierService,
                 private menu: MenuController,
-                private popupProvider:PopupProvider) {
+                private popoverController:PopoverController) {
     }
 
     init() {
@@ -49,13 +50,15 @@ export class AppService {
     }
 
     handleBack(){
-      if(this.router.url.indexOf('/bindservice/importdid/')>-1 ||
+      if(this.router.url.indexOf('/bindservice/startbinding/')>-1 ||
+         this.router.url.indexOf('/bindservice/importdid/')>-1 ||
          this.router.url.indexOf('/bindservice/publishdid/')>-1 ||
          this.router.url.indexOf('/bindservice/issuecredential/')>-1 ||
          this.router.url.indexOf('/bindservice/importdid/')>-1){
-        this.popupProvider.ionicConfirm("common.prompt","common.des2").then(()=>{
-          this.native.setRootRouter(['/tabs/home']);
-        });
+        // this.popupProvider.ionicConfirm("common.prompt","common.des2").then(()=>{
+        //   this.native.setRootRouter(['/tabs/home']);
+        // });
+        this.createDialog();
     }else if(this.router.url==='/menu/servers'){
         this.native.setRootRouter(['/tabs/home']);
     }else{
@@ -154,5 +157,18 @@ export class AppService {
         this.carrierService.init();
         this.native.setRootRouter(['/tabs/home']);
         this.feedService.updateSignInDataExpTime(signInData);
+      }
+
+      async createDialog(){
+        let popover = await this.popoverController.create({
+          mode: 'ios',
+          cssClass: 'genericPopup',
+          component: BackhomeComponent,
+        });
+        popover.onWillDismiss().then(() => {
+            popover = null;
+        });
+        
+        return await popover.present();
       }
 }

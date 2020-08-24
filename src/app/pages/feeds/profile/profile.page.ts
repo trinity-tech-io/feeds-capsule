@@ -195,10 +195,10 @@ export class ProfilePage implements OnInit {
   loadData(event:any){
     switch(this.selectType){
     case 'ProfilePage.myFeeds':
-        //
+        event.target.complete();
       break;
     case 'ProfilePage.following':
-       //
+      event.target.complete();
       break;
       case 'ProfilePage.myLikes':
       let sId = setTimeout(() => {

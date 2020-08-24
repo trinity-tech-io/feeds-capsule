@@ -40,7 +40,6 @@ import { PopupProvider } from './services/popup';
 import { CameraService } from './services/CameraService';
 import { AgentService } from './services/AgentService';
 import { ServerlistComponentModule } from './components/serverlistcomponent/serverlistcomponent.module'; 
-import { ServerpromptComponent} from './components/serverprompt/serverprompt.component';
 import { QRCodeModule } from 'angularx-qrcode'; 
 import { PostfromComponentPageModule } from './components/postfrom/postfrom.component.module'
 import { SplashscreenPageModule } from './pages/splashscreen/splashscreen.module';
@@ -50,7 +49,6 @@ import { SerializeDataService } from './services/SerializeDataService';
 import { MenuService } from './services/MenuService';
 
 import { IonicStorageModule } from '@ionic/storage';
-import { PaypromptComponent } from './components/payprompt/payprompt.component';
 
 import { LazyLoadImageModule } from 'ng-lazyload-image';
 
@@ -143,9 +141,7 @@ export function anim(AnimationC: Animation, baseEl: any, position?: any): Promis
   ],
   bootstrap: [MyApp],
   entryComponents: [
-    MyApp,
-    ServerpromptComponent,
-    PaypromptComponent
+    MyApp
   ],
   providers: [
     StatusBar,
