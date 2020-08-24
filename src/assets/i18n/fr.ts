@@ -45,7 +45,8 @@ export const fr = {
         "pictureviewer":"picture viewer",
         "delete":"Delete",
         "amountError":"Please input correct amount",
-        "waitMoment": "Please wait a moment..."
+        "waitMoment": "Please wait a moment...",
+        "issuecredentialError": "There was an error issuing the certificate. Please check the QR code or try again"
     },
     "app":{
         "profileDetails":"Profile Details",

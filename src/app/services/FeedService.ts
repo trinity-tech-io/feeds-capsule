@@ -3433,6 +3433,11 @@ export class FeedService {
 
 
   issueCredential(nodeId: string, did: string, serverName: string, serverDesc: string,elaAddress:string, onSuccess:()=> void, onError:()=>void) {
+    if (did == "" || nodeId == ""){
+      onError();
+      return;
+    }
+    
     if (bindingServerCache == null || bindingServerCache == undefined)
       this.resolveServerDid(did, nodeId,"",()=>{},()=>{});
     /**

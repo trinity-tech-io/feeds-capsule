@@ -45,7 +45,8 @@ export const zh = {
         "pictureviewer":"图片查看器",
         "delete":"删除",
         "amountError":"请输入正确的数额",
-        "waitMoment": "请稍等..."
+        "waitMoment": "请稍等...",
+        "issuecredentialError": "颁发凭证出错，请检查二维码或重试"
     },
     "app":{
         "profileDetails":"档案详情",
