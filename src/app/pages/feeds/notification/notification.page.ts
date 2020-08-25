@@ -1,10 +1,11 @@
-import { Component, NgZone } from '@angular/core';
+import { Component, NgZone,ViewChild} from '@angular/core';
 import { Events } from '@ionic/angular';
 import { FeedService } from 'src/app/services/FeedService';
 import { ThemeService } from 'src/app/services/theme.service';
 import { UtilService } from 'src/app/services/utilService';
 import { TranslateService } from "@ngx-translate/core";
 import { NativeService } from 'src/app/services/NativeService';
+import { IonInfiniteScroll,IonContent} from '@ionic/angular';
 
 @Component({
   selector: 'slides-example',
@@ -12,6 +13,8 @@ import { NativeService } from 'src/app/services/NativeService';
   styleUrls: ['./notification.page.scss'],
 })
 export class NotificationPage {
+  @ViewChild(IonContent,{static:true}) content: IonContent;
+  @ViewChild(IonInfiniteScroll,{static:true}) infiniteScroll: IonInfiniteScroll;
   public connectionStatus = 1;
   public avatar:string = ""; 
   public notificationList = [];
@@ -21,6 +24,12 @@ export class NotificationPage {
     speed: 400,
     slidesPerView: 3,
   };
+
+  public startIndex = 0;
+  public pageNumber = 8;
+  public totalData:any = [];
+  public isBottom:boolean = false;
+
   constructor(
     private native:NativeService,
     private zone: NgZone,
@@ -42,8 +51,24 @@ export class NotificationPage {
         this.connectionStatus = status;
       });
     });
+  
+    this.initRefresh();
+    this.scrollToTop(1);
+  }
 
-    this.notificationList = this.feedService.getNotificationList();
+  initRefresh(){
+    this.startIndex = 0;
+    this.totalData = this.feedService.getNotificationList() || [];
+    if(this.totalData.length - this.pageNumber > this.pageNumber){
+      this.notificationList = this.totalData.slice(this.startIndex,this.pageNumber);
+      this.startIndex++;
+      this.isBottom = false;
+      this.infiniteScroll.disabled =false;
+     }else{
+      this.notificationList = this.totalData.slice(0,this.totalData.length);
+      this.isBottom =true;
+      this.infiniteScroll.disabled =true;
+    }
   }
 
   ionViewWillLeave(){
@@ -161,4 +186,42 @@ export class NotificationPage {
     //this.notificationList.splice(index,1);
     
   }
+
+  doRefresh(event:any){
+    let sId =  setTimeout(() => {
+      this.initRefresh();
+      event.target.complete();
+      clearTimeout(sId);
+    },500);
+  }
+
+  loadData(event:any){
+    let sId = setTimeout(() => {
+      let arr = [];        
+       if(this.totalData.length - this.pageNumber*this.startIndex>this.pageNumber){
+        arr = this.totalData.slice(this.startIndex*this.pageNumber,(this.startIndex+1)*this.pageNumber);
+        this.startIndex++;
+        this.zone.run(()=>{
+        this.notificationList =  this.notificationList.concat(arr);
+        });
+        event.target.complete();
+       }else{
+        arr = this.totalData.slice(this.startIndex*this.pageNumber,this.totalData.length);
+        this.zone.run(()=>{
+          this.notificationList =  this.notificationList.concat(arr);
+        });
+        this.isBottom = true;
+        this.infiniteScroll.disabled =true;
+        event.target.complete();
+       }
+      clearTimeout(sId);
+    }, 500);
+  }
+
+  scrollToTop(int) {
+    let sid = setTimeout(() => {
+       this.content.scrollToTop(1);
+       clearTimeout(sid)
+     }, int);
+   }
 }

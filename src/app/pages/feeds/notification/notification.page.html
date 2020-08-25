@@ -2,13 +2,25 @@
     <div class="offline-header"></div>
 </ion-header>
 <ion-content>
+
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" pullFactor="0.5">
+    <ion-refresher-content
+      pullingIcon="arrow-dropdown"
+      pullingText="{{'common.pullToRefresh'|translate}}"
+      refreshingSpinner="circles"
+      refreshingText="">
+    </ion-refresher-content>
+  </ion-refresher>
+  
     <div [class.darkContainer]="theme.darkMode">
+
         <div class="center-content-notification" *ngIf="notificationList.length == 0">
             <div>
                 <div class="all-empty">{{'common.allempty'|translate}}</div>
                 <div class="all-empty-content-text" style="margin-top: 16px;">{{'NotificationPage.emptyDes'|translate}}</div>
             </div>
         </div>
+
         <!-- <ion-list> -->
            <ion-item-sliding *ngFor="let notification of notificationList let i=index" (click)="navTo(notification)">
             <ion-item lines="none">
@@ -36,4 +48,18 @@
             </ion-item-options>
           </ion-item-sliding>
     </div>
+
+    <div *ngIf="notificationList.length>1">
+      <div style="text-align: center;margin-top: 20px;margin-bottom: 20px;" *ngIf="isBottom">
+          {{ "common.des3" | translate }}
+      </div>
+    </div>
+
+    
+    <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event)">
+      <ion-infinite-scroll-content
+        loadingSpinner="bubbles"
+        loadingText="{{'common.loadingText'|translate}}">
+      </ion-infinite-scroll-content>
+    </ion-infinite-scroll>
 </ion-content>
