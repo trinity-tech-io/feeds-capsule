@@ -32,11 +32,11 @@
 
             <div class="text-div">
               <div class="text1-div"> 
-                <ion-label class="channel-title-small white">{{channelName(post.nodeId, post.channel_id)}}</ion-label>
+                <ion-label class="channel-title-small white" (press)="pressName(post.nodeId, post.channel_id)">{{channelName(post.nodeId, post.channel_id)}}</ion-label>
                 <ion-label class="channel-ts"> {{handleDisplayTime(post.created_at)}}</ion-label>
               </div>
               <div  (click)="navTo(post.nodeId, post.channel_id)"> 
-                <ion-label class="channel-desc-small">@{{channelOwnerName(post.nodeId, post.channel_id)}}</ion-label>
+                <ion-label class="channel-desc-small" (press)="pressOwerName(post.nodeId, post.channel_id)">@{{channelOwnerName(post.nodeId, post.channel_id)}}</ion-label>
               </div>
             </div>
         </div>

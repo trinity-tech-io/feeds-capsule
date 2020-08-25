@@ -9,6 +9,7 @@ import { ServerpromptComponent} from './serverprompt/serverprompt.component';
 import { PaypromptComponent } from './payprompt/payprompt.component';
 import { TipdialogComponent} from './tipdialog/tipdialog.component';
 import { BackhomeComponent} from './backhome/backhome.component';
+import { MorenameComponent} from './morename/morename.component';
 
 import { MyfeedsComponent} from './myfeeds/myfeeds.component';
 import { FollowingComponent} from './following/following.component';
@@ -22,12 +23,12 @@ import { LikesComponent} from './likes/likes.component';
     IonicModule,
   ],
 
-  declarations: [BackhomeComponent,TipdialogComponent,PaypromptComponent,ServerpromptComponent,MyfeedsComponent,FollowingComponent,LikesComponent],
-  exports: [BackhomeComponent,TipdialogComponent,PaypromptComponent,ServerpromptComponent,MyfeedsComponent,FollowingComponent,LikesComponent],
+  declarations: [MorenameComponent,BackhomeComponent,TipdialogComponent,PaypromptComponent,ServerpromptComponent,MyfeedsComponent,FollowingComponent,LikesComponent],
+  exports: [MorenameComponent,BackhomeComponent,TipdialogComponent,PaypromptComponent,ServerpromptComponent,MyfeedsComponent,FollowingComponent,LikesComponent],
 
   providers: [
   ],
-  entryComponents: [BackhomeComponent,TipdialogComponent,ServerpromptComponent,
+  entryComponents: [MorenameComponent,BackhomeComponent,TipdialogComponent,ServerpromptComponent,
     PaypromptComponent,],
 })
 export class ComponentsModule { }

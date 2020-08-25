@@ -223,5 +223,12 @@ export class NotificationPage {
        this.content.scrollToTop(1);
        clearTimeout(sid)
      }, int);
+  }
+
+  pressName(channelName:string){
+    let name =channelName || "";
+    if(name != "" && name.length>15){
+      this.native.createTip(name);
+    }
    }
 }

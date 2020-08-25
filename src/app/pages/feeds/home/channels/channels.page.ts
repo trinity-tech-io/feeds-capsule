@@ -393,4 +393,26 @@ export class ChannelsPage implements OnInit {
     
     return 1;
   }
+
+  pressName(nodeId:string,channelId: number){
+    let name ="";
+    let channel = this.feedService.getChannelFromId(nodeId,channelId) || "";
+    if (channel != ""){
+      name = channel["name"] || "";
+    }
+    if(name != "" && name.length>15){
+      this.native.createTip(name);
+    }
+  }
+
+  pressOwnName(nodeId:string,channelId: number){
+    let name ="";
+    let channel = this.feedService.getChannelFromId(nodeId,channelId) || "";
+    if (channel != ""){
+      name = channel["owner_name"] || "";
+    }
+    if(name != "" && name.length>15){
+      this.native.createTip(name);
+    }
+  }
 }

@@ -64,4 +64,11 @@ export class PostfromComponent implements OnInit {
            this.nodeStatus[nodeId] = status;
     }
  }
+
+ pressName(channelName:string){
+  let name =channelName || "";
+  if(name != "" && name.length>15){
+    this.native.createTip(name);
+  }
+ }
 }

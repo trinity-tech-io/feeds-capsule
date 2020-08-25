@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
-import { ToastController, LoadingController, NavController} from '@ionic/angular';
+import { ToastController, LoadingController, NavController,PopoverController} from '@ionic/angular';
 import { Clipboard } from '@ionic-native/clipboard/ngx';
 import { Router } from '@angular/router';
 import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 import { TranslateService} from '@ngx-translate/core';
 import { ModalController } from '@ionic/angular';
 import { ViewerModalComponent } from 'ngx-ionic-image-viewer';
+import { MorenameComponent} from './../components/morename/morename.component';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 @Injectable()
@@ -13,6 +14,7 @@ export class NativeService {
     private loadingIsOpen = false;
 
     constructor(
+        private popoverController:PopoverController,
         public modalController: ModalController,
         private toastCtrl: ToastController,
         private clipboard: Clipboard,
@@ -231,4 +233,19 @@ export class NativeService {
             return str;
         }
     }
+
+    async createTip(name:string){
+        let popover = await this.popoverController.create({
+          mode:'ios',
+          component:MorenameComponent,
+          cssClass: 'genericPopup',
+          componentProps: {
+            "name":name
+          }
+        });
+        popover.onWillDismiss().then(() => {
+            popover = null;
+        });
+        return await popover.present();
+      }
 }

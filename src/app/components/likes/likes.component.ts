@@ -150,4 +150,26 @@ export class LikesComponent implements OnInit {
     return this.images[nodeChannelPostId];
   }
 
+  pressName(nodeId:string,channelId:string){
+
+    let channel = this.getChannel(nodeId,channelId) || "";
+    if(channel != ""){
+      let name =channel["name"] || "";
+      if(name != "" && name.length>15){
+        this.native.createTip(name);
+      }
+    }
+  }
+
+  pressOwerName(nodeId:string,channelId:string){
+    
+    let channel = this.getChannel(nodeId,channelId) || "";
+    if(channel != ""){
+      let name =channel["owner_name"] || "";
+      if(name != "" && name.length>15){
+        this.native.createTip(name);
+      }
+    }
+  }
+
 }

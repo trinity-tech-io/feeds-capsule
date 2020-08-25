@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Platform, ModalController, Events } from '@ionic/angular';
+import { Platform, ModalController, Events} from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { FeedService } from './services/FeedService';
@@ -9,7 +9,6 @@ import { NativeService} from 'src/app/services/NativeService';
 import { SplashscreenPage } from './pages/splashscreen/splashscreen.page';
 import { UtilService } from 'src/app/services/utilService';
 
-let appManager: any;
 
 @Component({
   selector: 'my-app',
@@ -18,9 +17,10 @@ let appManager: any;
 })
 
 export class MyApp {
-  public didString = "Undefine";
-  public name = "Undefine";
-  public avatar = "";
+  public didString = null;
+  public name:string = "";
+  public avatar:string = "";
+  public wName:string = "";
   constructor(
     private modalCtrl: ModalController,
     private events: Events,
@@ -107,9 +107,16 @@ export class MyApp {
       if (signInData == null || signInData == undefined)
         return ;
 
-      this.didString = signInData.did;
+      this.didString = signInData.did || "";
+      this.wName = signInData.name || "";
       this.name = UtilService.moreNanme(signInData.name);
     },(error)=>{
     });
+  }
+
+  pressName(name:string){
+    if(name != "" && name.length>15){
+      this.native.createTip(name);
+    }
   }
 }

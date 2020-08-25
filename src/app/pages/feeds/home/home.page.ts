@@ -298,4 +298,15 @@ export class HomePage implements OnInit {
       clearTimeout(sid)
     }, int);
   }
+
+  pressName(nodeId:string,channelId: number){
+    let name ="";
+    let channel = this.getChannel(nodeId, channelId) || "";
+    if (channel != ""){
+      name = channel.name || "";
+    }
+    if(name != "" && name.length>15){
+      this.native.createTip(name);
+    }
+  }
 }

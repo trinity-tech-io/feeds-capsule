@@ -24,7 +24,7 @@
       <div class="channel-detail-div">
         <div class="channel-detail-text-div">
           <div style="height: 100%; vertical-align: middle;"> 
-            <ion-label class="ellipsis channel-title-small white">{{channel.name}}</ion-label>
+            <ion-label class="ellipsis channel-title-small white" (press)="pressName(channel.name)">{{channel.name}}</ion-label>
           </div>
           <div >
             <img src="./assets/images/bubble2.svg" class="bubble">

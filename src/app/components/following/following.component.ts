@@ -61,4 +61,11 @@ export class FollowingComponent implements OnInit {
   menuMore(nodeId: string , channelId: number, channelName: string){
     this.menuService.showChannelMenu(nodeId, channelId, channelName);
   }
+
+  pressName(channelName:string){
+    let name =channelName || "";
+    if(name != "" && name.length>15){
+      this.native.createTip(name);
+    }
+  }
 }

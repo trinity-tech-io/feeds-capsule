@@ -29,7 +29,7 @@
                     <img *ngIf="avatar != ''" class="profile-img avatar-div" [src]="avatar">
                   <ion-row style="margin-left: 60px;margin-top:6px;">
                       <ion-col size="12" class ="channel-title-small white">
-                        <span>{{moreName(notification.userName)}}</span> <span class="channel-ts1">{{handleDisplayTime(notification.time)}}</span>
+                        <span (press)="pressName(notification.userName)">{{moreName(notification.userName)}}</span> <span class="channel-ts1">{{handleDisplayTime(notification.time)}}</span>
                       </ion-col>
                       <ion-col size="12" class="notification-behavior">
                         {{notification.behaviorText}}   <span *ngIf="notification['readStatus']===1" class="online-circle-blue" style="position: absolute;top:0px;right:10px"></span>

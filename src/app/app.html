@@ -5,7 +5,7 @@
                 <div style=" width: 300px;padding: 5px; padding-left: 20px;">
                     <img *ngIf="avatar == ''" class="profile-img menu-profile-img" style="margin-top: 9px;" src="./assets/images/default-contact.svg">
                     <img *ngIf="avatar != ''" class="profile-img menu-profile-img" style="margin-top: 9px;" [src]="avatar">
-                    <div class="menu-profile-name">{{name}}</div>
+                    <div class="menu-profile-name" (press) = "pressName()" >{{name}}</div>
                 </div>
                 <qrcode style="padding: 8px;"  [qrdata]="didString" [size]="100" [level]="'M'"></qrcode>
             </div>

@@ -24,6 +24,7 @@ export class PostdetailPage implements OnInit {
 
   public channelAvatar:string = "";
   public channelName:string = "";
+  public channelWName:string ="";
   public channelOwner:string = "";
   public postContent:string = "";
   public postTS:number = 0;
@@ -58,6 +59,7 @@ export class PostdetailPage implements OnInit {
     let channel = this.feedService.getChannelFromId(this.nodeId, this.channelId) || "";
     if (channel == "")
       return ;
+    this.channelWName = channel["name"] || "";
     this.channelName = UtilService.moreNanme(channel["name"]);
     this.channelAvatar = this.feedService.parseChannelAvatar(channel["avatar"]);
 
@@ -310,5 +312,11 @@ export class PostdetailPage implements OnInit {
     },500);
 
   
+  }
+
+  pressName(){
+    if(this.channelWName!= "" && this.channelWName.length>15){
+      this.native.createTip(this.channelWName);
+    }
   }
 }

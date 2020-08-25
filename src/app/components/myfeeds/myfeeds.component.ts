@@ -69,5 +69,12 @@ export class MyfeedsComponent implements OnInit {
   handleClientNumber(nodeId){
     return this.feedService.getServerStatisticsNumber(nodeId);
   }
+
+  pressName(channelName:string){
+    let name =channelName || "";
+    if(name != "" && name.length>15){
+      this.native.createTip(name);
+    }
+  }
 }
 

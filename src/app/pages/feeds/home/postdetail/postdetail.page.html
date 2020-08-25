@@ -29,7 +29,7 @@
 
               <div class="text-div">
                 <div class="text1-div"> 
-                  <ion-label class="channel-title-small white">{{channelName}}</ion-label>
+                  <ion-label class="channel-title-small white" (press)="pressName()">{{channelName}}</ion-label>
                 </div>
                 <div> 
                   <ion-label class="channel-desc-small">@{{channelOwner}}</ion-label>
