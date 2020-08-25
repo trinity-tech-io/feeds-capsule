@@ -1929,26 +1929,25 @@ export class FeedService {
 
     if (userName == this.getSignInData().name)
       return ;
-                
-    if (nodeId == bindingServer.nodeId){
-      let notification:Notification = {
-        id: this.generateUUID(),
-        userName: userName,
-        behavior: behavior,
-        behaviorText: behaviorText,
-        details: {
-          nodeId: nodeId,
-          channelId:channelId,
-          postId:postId,
-          commentId: commentId
-        },
-        time:this.getCurrentTimeNum(),
-        readStatus:1
-      }
-      notificationList.push(notification);
-      this.storeService.set(PersistenceKey.notificationList, notificationList);
-      eventBus.publish(PublishType.UpdateNotification);
+
+    let notification:Notification = {
+      id: this.generateUUID(),
+      userName: userName,
+      behavior: behavior,
+      behaviorText: behaviorText,
+      details: {
+        nodeId: nodeId,
+        channelId:channelId,
+        postId:postId,
+        commentId: commentId
+      },
+      time:this.getCurrentTimeNum(),
+      readStatus:1
     }
+    notificationList.push(notification);
+    this.storeService.set(PersistenceKey.notificationList, notificationList);
+    eventBus.publish(PublishType.UpdateNotification);
+
   }
 
   handleNewLikesNotification(nodeId: string, params: any){
@@ -3685,44 +3684,50 @@ export class FeedService {
     return avatar;
   }
 
-  deleteFeedSource(nodeId: string){
-    bindingServer = undefined;
-    this.storeService.remove(PersistenceKey.bindingServer);
-    this.removeFeedSource(nodeId);
+  async deleteFeedSource(nodeId: string): Promise<any>{
+    return this.removeFeedSource(nodeId).then(()=>{
+      this.removeNotification();
+      this.removeBindingServer();
+    });
   }
-
-  removeFeedSource(nodeId: string){
-    let channelList = this.getChannelsListFromNodeId(nodeId);
+  
+  async removeFeedSource(nodeId: string): Promise<any>{
+    let channelList = this.getChannelsListFromNodeId(nodeId)||[];
     for (let channelIndex = 0; channelIndex < channelList.length; channelIndex++) {
       const channel = channelList[channelIndex];
       let channelId = channel.id;
       let postList = this.getPostListFromChannel(nodeId, channelId);
-
       for (let postIndex = 0; postIndex < postList.length; postIndex++) {
         const post = postList[postIndex];
         let postId = post.id;
-        this.removeLikeById(nodeId, channelId, postId);
-        this.removePostById(nodeId, channelId, postId);
-        this.removeCommentById(nodeId, channelId, postId);
+        await this.removeLikeById(nodeId, channelId, postId)
+        await this.removePostById(nodeId, channelId, postId);
+        await this.removeCommentById(nodeId, channelId, postId);
       }
-
-      this.removeChannelById(nodeId, channelId);
-      this.removeSubscribedChannelById(nodeId, channelId);
-      this.removeUnreadStatueById(nodeId, channelId);
-      this.removeMyChannelById(nodeId, channelId);
+      await this.removeChannelById(nodeId, channelId);
+      await this.removeSubscribedChannelById(nodeId, channelId);
+      await this.removeUnreadStatueById(nodeId, channelId);
+      await this.removeMyChannelById(nodeId, channelId);
     }
-    this.removeServerStatisticById(nodeId);
-    this.removeServerStatusById(nodeId);
-    this.removeServerById(nodeId);
-    this.removeAccessTokenById(nodeId);
-    this.removeServerFriendsById(nodeId, ()=>{
-      eventBus.publish(PublishType.removeFeedSourceFinish);
-      eventBus.publish(PublishType.refreshPage);
-    },(error)=>{
-      eventBus.publish(PublishType.removeFeedSourceFinish);
-      eventBus.publish(PublishType.refreshPage);
-    });
 
+    await this.removeServerStatisticById(nodeId);
+    await this.removeServerStatusById(nodeId);
+    await this.removeServerById(nodeId);
+    await this.removeAccessTokenById(nodeId).then(
+      ()=>{
+        this.removeServerFriendsById(nodeId, ()=>{
+          eventBus.publish(PublishType.removeFeedSourceFinish);
+          eventBus.publish(PublishType.refreshPage);
+        },(error)=>{
+          eventBus.publish(PublishType.removeFeedSourceFinish);
+          eventBus.publish(PublishType.refreshPage);
+        });
+      }
+    );
+
+    return new Promise((resolve, reject) =>{
+      resolve();
+    });
   }
 
   removeLastUpdate(nodeId:string, channelId: number){
@@ -3732,14 +3737,14 @@ export class FeedService {
     this.storeService.set(PersistenceKey.lastPostUpdateMap, lastPostUpdateMap);
   }
 
-  removeLikeById(nodeId: string, channelId: number, postId: number){
+  removeLikeById(nodeId: string, channelId: number, postId: number):Promise<any>{
     let nodechannelpostId = nodeId + channelId + postId;
     likeMap[nodechannelpostId] = undefined;
 
-    this.storeService.set(PersistenceKey.likeMap, likeMap);
+    return this.storeService.set(PersistenceKey.likeMap, likeMap);
   }
 
-  removeCommentById(nodeId: string, channelId: number, postId: number){
+  removeCommentById(nodeId: string, channelId: number, postId: number):Promise<any>{
     if (commentsMap == null ||  commentsMap == undefined)
       commentsMap = {}
 
@@ -3751,53 +3756,52 @@ export class FeedService {
 
     commentsMap[nodeId][channelId][postId] = undefined;
 
-    this.storeService.set(PersistenceKey.commentsMap, commentsMap);
-
+    return this.storeService.set(PersistenceKey.commentsMap, commentsMap);
   }
-  removePostById(nodeId: string, channelId: number, postId: number){
+  removePostById(nodeId: string, channelId: number, postId: number):Promise<any>{
     let nodechannelpostId = nodeId + channelId + postId;
     this.postMap[nodechannelpostId] = undefined;
 
-    this.storeService.set(PersistenceKey.postMap, this.postMap);
+    return this.storeService.set(PersistenceKey.postMap, this.postMap);
   }
 
-  removeChannelById(nodeId: string, channelId: number){
+  removeChannelById(nodeId: string, channelId: number):Promise<any>{
     let nodeChannelId = nodeId + channelId;
     channelsMap[nodeChannelId] = undefined;
-    this.storeService.set(PersistenceKey.channelsMap,channelsMap);
+    return this.storeService.set(PersistenceKey.channelsMap,channelsMap);
   }
 
-  removeMyChannelById(nodeId: string, channelId: number){
+  removeMyChannelById(nodeId: string, channelId: number):Promise<any>{
     let nodeChannelId = nodeId + channelId;
     myChannelsMap[nodeChannelId] = undefined;
-    this.storeService.set(PersistenceKey.myChannelsMap, myChannelsMap);
+    return this.storeService.set(PersistenceKey.myChannelsMap, myChannelsMap);
   }
 
-  removeSubscribedChannelById(nodeId: string, channelId: number){
+  removeSubscribedChannelById(nodeId: string, channelId: number):Promise<any>{
     let nodeChannelId = nodeId + channelId;
     subscribedChannelsMap[nodeChannelId] = undefined;
-    this.storeService.set(PersistenceKey.subscribedChannelsMap, subscribedChannelsMap);
+    return this.storeService.set(PersistenceKey.subscribedChannelsMap, subscribedChannelsMap);
   }
 
-  removeUnreadStatueById(nodeId: string, channelId: number){
+  removeUnreadStatueById(nodeId: string, channelId: number):Promise<any>{
     let nodeChannelId = nodeId + channelId ;
     unreadMap[nodeChannelId] = 0;
-    this.storeService.set(PersistenceKey.unreadMap, unreadMap);
+    return this.storeService.set(PersistenceKey.unreadMap, unreadMap);
   }
 
-  removeServerStatisticById(nodeId: string){
+  removeServerStatisticById(nodeId: string):Promise<any>{
     serverStatisticsMap[nodeId] = undefined;
-    this.storeService.set(PersistenceKey.serverStatisticsMap, serverStatisticsMap);
+    return this.storeService.set(PersistenceKey.serverStatisticsMap, serverStatisticsMap);
   }
 
-  removeServerStatusById(nodeId: string){
+  removeServerStatusById(nodeId: string):Promise<any>{
     serversStatus[nodeId] = undefined;
-    this.storeService.set(PersistenceKey.serversStatus, serversStatus);
+    return this.storeService.set(PersistenceKey.serversStatus, serversStatus);
   }
 
-  removeServerById(nodeId: string){
+  removeServerById(nodeId: string):Promise<any>{
     serverMap[nodeId] = undefined;
-    this.storeService.set(PersistenceKey.serverMap, serverMap);
+    return this.storeService.set(PersistenceKey.serverMap, serverMap);
   }
   removeServerFriendsById(nodeId: string, onSuccess: ()=>void, onError:(error)=>void){
     this.carrierService.isFriends(nodeId,(isFriend)=>{
@@ -3817,9 +3821,19 @@ export class FeedService {
 
   }
 
-  removeAccessTokenById(nodeId: string){
+  removeAccessTokenById(nodeId: string):Promise<any>{
     accessTokenMap[nodeId] = undefined;
-    this.storeService.set(PersistenceKey.accessTokenMap, accessTokenMap);
+    return this.storeService.set(PersistenceKey.accessTokenMap, accessTokenMap);
+  }
+
+  removeNotification():Promise<any>{
+    notificationList.splice(0, notificationList.length);
+    return this.storeService.set(PersistenceKey.notificationList, notificationList);
+  }
+
+  removeBindingServer(){
+    bindingServer = undefined;
+    this.storeService.remove(PersistenceKey.bindingServer);
   }
 
   getNotificationList(): Notification[]{

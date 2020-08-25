@@ -123,6 +123,12 @@ export class ServerInfoPage implements OnInit {
     this.events.subscribe("feeds:updateTitle",()=>{
       this.initTitle();
     });
+
+    this.events.subscribe("feeds:removeFeedSourceFinish",()=>{
+      // this.initTitle();
+      this.native.hideLoading();
+    });
+    
     
   }
 
@@ -132,6 +138,7 @@ export class ServerInfoPage implements OnInit {
   }
 
   ionViewWillLeave(){
+    this.native.hideLoading();
     this.events.unsubscribe("feeds:connectionChanged");
     this.events.unsubscribe("feeds:updateServerList");
     this.events.unsubscribe("feeds:serverConnectionChanged");
@@ -223,7 +230,8 @@ export class ServerInfoPage implements OnInit {
         role: 'destructive',
         icon: 'trash',
         handler: () => {
-          this.feedService.deleteFeedSource(this.nodeId);
+          this.native.showLoading('common.waitMoment');
+          this.feedService.deleteFeedSource(this.nodeId).then;
         }
       },{
         text: this.translate.instant("ServerInfoPage.cancel"),
@@ -248,8 +256,11 @@ export class ServerInfoPage implements OnInit {
         role: 'destructive',
         icon: 'trash',
         handler: () => {
-          this.feedService.removeFeedSource(this.nodeId);
-          this.native.toast_trans("ServerInfoPage.removeserver"); 
+          this.native.showLoading('common.waitMoment');
+          this.feedService.removeFeedSource(this.nodeId).then(()=>{
+            this.native.toast_trans("ServerInfoPage.removeserver"); 
+            this.native.hideLoading();
+          });
         }
       },{
         text: this.translate.instant("ServerInfoPage.cancel"),
