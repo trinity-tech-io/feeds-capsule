@@ -386,4 +386,11 @@ export class ChannelsPage implements OnInit {
       "des":this.channelDesc,
     });
   }
+
+  checkChannelIsMine(){
+    if (this.feedService.checkChannelIsMine(this.nodeId, this.channelId))
+      return 0;
+    
+    return 1;
+  }
 }

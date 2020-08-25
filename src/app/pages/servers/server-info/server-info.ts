@@ -303,4 +303,12 @@ export class ServerInfoPage implements OnInit {
       }
     )
   }
+
+  checkIsMine(){
+    let bindServerDid = this.feedService.getBindingServer().did||'';
+    if (this.didString == bindServerDid)
+      return 0;
+
+    return 1;
+  }
 }

@@ -13,7 +13,7 @@
       refreshingText="">
     </ion-refresher-content>
   </ion-refresher>
-  <div class="edit" (click)="clickEdit()">
+  <div *ngIf="checkChannelIsMine() == 0" class="edit" (click)="clickEdit()">
     <ion-img src="./assets/images/edit.svg" *ngIf="!theme.darkMode"></ion-img>
     <ion-img src="./assets/images/edit-dark.svg" *ngIf="theme.darkMode"></ion-img>
   </div> 

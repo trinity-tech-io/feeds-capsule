@@ -91,7 +91,7 @@ confirm(){
   }
 
   if(this.checkparms()){
-    this.feedService.editFeedInfo(this.nodeId,this.channelId,this.name, this.des,this.avatar);
+    this.feedService.editFeedInfo(this.nodeId,Number(this.channelId),this.name, this.des,this.avatar);
   }
 }
 
