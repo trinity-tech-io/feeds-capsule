@@ -32,6 +32,8 @@ export class FeedsPage implements OnInit {
   }
 
   ionViewWillEnter() {
+    this.title = "FeedsPage.tabTitle1";
+    this.currentTab = "home";
     this.event.subscribe("feeds:updateTitle",()=>{
       this.initTile();
     });

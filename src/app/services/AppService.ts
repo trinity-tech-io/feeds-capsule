@@ -10,7 +10,6 @@ import { NativeService } from '../services/NativeService';
 import { FeedService, SignInData } from '../services/FeedService';
 import { CarrierService } from '../services/CarrierService';
 import { BackhomeComponent} from '../components/backhome/backhome.component';
-import { FeedsPage } from 'src/app/pages/feeds/feeds.page'
 import { MenuController,PopoverController} from '@ionic/angular';
 declare let appManager: AppManagerPlugin.AppManager;
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
@@ -22,7 +21,6 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 export class AppService {
    //@ViewChild(IonRouterOutlet,{static:true}) ionRouterOutlet: IonRouterOutlet;
     constructor(
-                public feedsPage:FeedsPage, 
                 private router: Router,
                 public theme:ThemeService,
                 private zone: NgZone,
@@ -57,13 +55,9 @@ export class AppService {
          this.router.url.indexOf('/bindservice/publishdid/')>-1 ||
          this.router.url.indexOf('/bindservice/issuecredential/')>-1 ||
          this.router.url.indexOf('/bindservice/importdid/')>-1){
-        // this.popupProvider.ionicConfirm("common.prompt","common.des2").then(()=>{
-        //   this.native.setRootRouter(['/tabs/home']);
-        // });
         this.createDialog();
     }else if(this.router.url==='/menu/servers'){
         this.native.setRootRouter(['/tabs/home']);
-        this.feedsPage.home();
     }else{
         this.native.pop();
     }
