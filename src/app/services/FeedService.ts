@@ -785,7 +785,8 @@ export class FeedService {
         status: friendStatus
       }
 
-      if(lastConnectStatus != friendStatus && friendStatus == ConnState.connected){
+
+      // if(lastConnectStatus != friendStatus && friendStatus == ConnState.connected){
         if (cacheBindingAddress != "" && isBindServer){
           this.carrierService.getIdFromAddress(cacheBindingAddress,(nodeId)=>{
             if (friendId != nodeId){
@@ -796,20 +797,21 @@ export class FeedService {
           if (serverMap[friendId] != undefined)
             this.doFriendConnection(friendId, friendStatus);  
         }
-      } 
+      // } 
     });
   }
 
   doFriendConnection(friendId: string, friendStatus:any){
     if (friendStatus == ConnState.connected){
       let accessToken = accessTokenMap[friendId]||undefined;
-      if (this.checkExp(accessToken))  
+      if (this.checkExp(accessToken)){
         this.signinChallengeRequest(friendId,true);
       }else{
         this.prepare(friendId);
       }
     this.storeService.set(PersistenceKey.serversStatus,serversStatus);
     eventBus.publish(PublishType.serverConnectionChanged,serversStatus);
+    }
   }
 
   friendAddCallback(){
@@ -2038,6 +2040,7 @@ export class FeedService {
 
     this.storeService.set(PersistenceKey.channelsMap,channelsMap);
     eventBus.publish(PublishType.editFeedInfoFinish, nodeChannelId); 
+
   }
 
   handleNotification(nodeId: string, method: string, params: any){
@@ -2053,6 +2056,10 @@ export class FeedService {
         break;
       case FeedsData.MethodType.newSubscription:
         this.handleNewSubscriptionNotification(nodeId, params);
+        break;
+
+      case FeedsData.MethodType.updateFeedInfo:
+        this.handleNewFeedInfoUpdateNotification(nodeId,params);
         break;
     }
   }
@@ -2385,6 +2392,7 @@ export class FeedService {
         }
       }else{
         channelsMap[nodeChannelId].name = result[index].name;
+        channelsMap[nodeChannelId].avatar = avatar;
 
         channelsMap[nodeChannelId].introduction = result[index].introduction;
         channelsMap[nodeChannelId].owner_name = result[index].owner_name;
