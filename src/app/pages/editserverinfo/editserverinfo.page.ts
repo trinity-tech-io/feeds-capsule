@@ -100,6 +100,11 @@ export class EditserverinfoPage implements OnInit {
       return;
     }
     
+    if(this.feedService.getServerStatusFromId(this.nodeId) != 0){
+      this.native.toastWarn('common.connectionError');
+      return;
+    }
+
     if(this.checkParms()){
         this.native.showLoading('common.waitMoment');
         this.feedService.issueCredential(this.nodeId,this.did, this.name, this.introduction,this.elaAddress,()=>{

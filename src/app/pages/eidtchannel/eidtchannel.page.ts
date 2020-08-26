@@ -105,6 +105,11 @@ confirm(){
     return;
   }
 
+  if(this.feedService.getServerStatusFromId(this.nodeId) != 0){
+    this.native.toastWarn('common.connectionError');
+    return;
+  }
+  
   if(this.checkparms()){
     this.feedService.editFeedInfo(this.nodeId,Number(this.channelId),this.name, this.des,this.avatar);
   }

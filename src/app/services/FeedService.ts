@@ -77,6 +77,7 @@ type Details = {
 type AccessToken = {
   token: string ;
   exp: number ;
+  isExpire: boolean;
 }
 
 type SignResult = {
@@ -521,9 +522,7 @@ export class FeedService {
     });
 
     this.storeService.get(PersistenceKey.accessTokenMap).then((mAccessTokenMap)=>{
-      accessTokenMap = mAccessTokenMap;
-      if (accessTokenMap == null || accessTokenMap == undefined)
-        accessTokenMap = {};
+      accessTokenMap = mAccessTokenMap|| {};
     });
 
     this.storeService.get(PersistenceKey.bindingServer).then((mBindingServer)=>{
@@ -753,8 +752,6 @@ export class FeedService {
       let newAddress = this.carrierService.getAddress();
 
       if(realAddress!=newAddress){
-        // accessTokenMap = {};
-        // this.storeService.set(PersistenceKey.accessTokenMap,accessTokenMap);
         this.storeService.set("SelfAddress",newAddress);
         let serverList = this.getServerList();
         for (let index = 0; index < serverList.length; index++) {
@@ -803,14 +800,12 @@ export class FeedService {
 
   doFriendConnection(friendId: string, friendStatus:any){
     if (friendStatus == ConnState.connected){
-      if (accessTokenMap == null || accessTokenMap == undefined)
-        accessTokenMap = {};
-      if(accessTokenMap[friendId] == undefined){
+      let accessToken = accessTokenMap[friendId]||undefined;
+      if (this.checkExp(accessToken))  
         this.signinChallengeRequest(friendId,true);
       }else{
         this.prepare(friendId);
       }
-    }
     this.storeService.set(PersistenceKey.serversStatus,serversStatus);
     eventBus.publish(PublishType.serverConnectionChanged,serversStatus);
   }
@@ -904,12 +899,12 @@ export class FeedService {
     }
   }
 
-  handleError(error: any){
+  handleError(nodeId: string,error: any){
     eventBus.publish("rpcResponse:error");
     if(typeof error == "string")
       this.native.toastWarn(error);  
     else
-      this.processGeneralError(error.code);
+      this.processGeneralError(nodeId,error.code);
   }
 
   handleResult(method:string, nodeId: string ,result: any , request: any, error: any){
@@ -965,7 +960,7 @@ export class FeedService {
         this.handleEditFeedInfo(nodeId,requestParams,error);
         break;
       case FeedsData.MethodType.enable_notification:
-        this.handleEnableNotificationResult(error);
+        this.handleEnableNotificationResult(nodeId, error);
         break;
 
       case "declare_owner":
@@ -1227,18 +1222,13 @@ export class FeedService {
   }
 
   checkSignInServerStatus(nodeId: string): boolean{
-    if (accessTokenMap == null ||
-      accessTokenMap == undefined ||
-      accessTokenMap[nodeId] == undefined)
-      return false ;
-
-    return true;
+    let accessToken = accessTokenMap[nodeId] || undefined;
+    return this.checkExp(accessToken);
   }
 
   hasAccessToken(nodeId: string): boolean{
-    if (accessTokenMap == null || accessTokenMap == undefined)
-        accessTokenMap = {};
-    if(accessTokenMap[nodeId] == undefined){
+    let accessToken = accessTokenMap[nodeId] || undefined
+    if (this.checkExp(accessToken)){
       this.signinChallengeRequest(nodeId,true);
       return false;
     }else{
@@ -2075,12 +2065,12 @@ export class FeedService {
     let avatarBin = request.avatar;
 
     if (error != null && error != undefined && error.code == -1){
-      this.handleError(this.translate.instant("CreatenewfeedPage.alreadyExist"));
+      this.handleError(nodeId, this.translate.instant("CreatenewfeedPage.alreadyExist"));
       return;
     }
 
     if (error != null && error != undefined && error.code != undefined){
-      this.handleError(error);
+      this.handleError(nodeId, error);
       return;
     }
 
@@ -2125,7 +2115,7 @@ export class FeedService {
 
   handlePublishPostResult(nodeId: string, result: any, request: any, error: any){
     if (error != null && error != undefined && error.code != undefined){
-      this.handleError(error);
+      this.handleError(nodeId, error);
       return;
     }
     
@@ -2163,7 +2153,7 @@ export class FeedService {
 
   handlePostCommentResult(nodeId:string, result: any, request: any, error: any){
     if (error != null && error != undefined && error.code != undefined){
-      this.handleError(error);
+      this.handleError(nodeId, error);
       return;
     }
     
@@ -2237,7 +2227,7 @@ export class FeedService {
 
     if (error != null && error != undefined && error.code != undefined){
       this.doPostLikeError(nodeId, channel_id, post_id, comment_id);
-      this.handleError(error);
+      this.handleError(nodeId, error);
       return;
     }
 
@@ -2275,7 +2265,7 @@ export class FeedService {
 
     if (error != null && error != undefined && error.code != undefined){
       this.doPostUnLikeError(nodeId,channel_id, post_id, comment_id);
-      this.handleError(error);
+      this.handleError(nodeId, error);
       return;
     }
 
@@ -2290,7 +2280,7 @@ export class FeedService {
 
   handleGetMyChannelsResult(nodeId: string, responseResult: any, error: any){
     if (error != null && error != undefined && error.code != undefined){
-      this.handleError(error);
+      this.handleError(nodeId, error);
       return;
     }
 
@@ -2340,7 +2330,7 @@ export class FeedService {
 
   handleGetMyChannelsMetaDataResult(nodeId: string, result: any, error: any){
     if (error != null && error != undefined && error.code != undefined){
-      this.handleError(error);
+      this.handleError(nodeId, error);
       return;
     }
 
@@ -2361,7 +2351,7 @@ export class FeedService {
     let result = responseResult.channels;
 
     if (error != null && error != undefined && error.code != undefined){
-      this.handleError(error);
+      this.handleError(nodeId, error);
       return;
     }
 
@@ -2408,7 +2398,7 @@ export class FeedService {
 
   handleGetChannelDetailResult(nodeId: string, result: any, error: any){
     if (error != null && error != undefined && error.code != undefined){
-      this.handleError(error);
+      this.handleError(nodeId, error);
       return;
     }
 
@@ -2440,7 +2430,7 @@ export class FeedService {
 
   handleGetSubscribedChannelsResult(nodeId: string, responseResult: any, request: any, error: any){
     if (error != null && error != undefined && error.code != undefined){
-      this.handleError(error);
+      this.handleError(nodeId, error);
       return;
     }
 
@@ -2536,7 +2526,7 @@ export class FeedService {
 
   handleGetPostsResult(nodeId: string, responseResult: any, request: any, error: any){
     if (error != null && error != undefined && error.code != undefined){
-      this.handleError(error);
+      this.handleError(nodeId, error);
       return;
     }
 
@@ -2597,7 +2587,7 @@ export class FeedService {
 
   handleGetCommentsResult(nodeId: string, responseResult: any, error: any){
     if (error != null && error != undefined && error.code != undefined){
-      this.handleError(error);
+      this.handleError(nodeId, error);
       return;
     }
 
@@ -2644,7 +2634,7 @@ export class FeedService {
 
   handleGetStatisticsResult(nodeId: string, result: any, error: any){
     if (error != null && error != undefined && error.code != undefined){
-      this.handleError(error);
+      this.handleError(nodeId, error);
       return;
     }
 
@@ -2680,7 +2670,7 @@ export class FeedService {
 
     if (error != null && error != undefined && error.code != undefined){
       this.doSubscribeChannelError(nodeId, request.id);
-      this.handleError(error);
+      this.handleError(nodeId, error);
       return;
     }
 
@@ -2714,7 +2704,7 @@ export class FeedService {
 
     if (error != null && error != undefined && error.code != undefined){
       this.doUnsubscribeChannelError(nodeId, request.id);
-      this.handleError(error);
+      this.handleError(nodeId, error);
       return;
     }
 
@@ -2735,7 +2725,7 @@ export class FeedService {
   handleEditFeedInfo(nodeId: string, request: any, error: any){
     if (error != null && error != undefined && error.code != undefined){
       this.doUnsubscribeChannelError(nodeId, request.id);
-      this.handleError(error);
+      this.handleError(nodeId, error);
       return;
     }
 
@@ -2765,9 +2755,9 @@ export class FeedService {
     creationPermissionMap[nodeId]=result.authorized;
   }
 
-  handleEnableNotificationResult(error: any){
+  handleEnableNotificationResult(nodeId: string, error: any){
     if (error != null && error != undefined && error.code != undefined){
-      this.handleError(error);
+      this.handleError(nodeId, error);
       return;
     }
   }
@@ -3280,7 +3270,7 @@ export class FeedService {
   handleSigninChallenge(nodeId:string, result: any, error: any){
     if (error != null && error != undefined && error.code != undefined){
       this.isLogging[nodeId] = false;
-      this.handleError(error);
+      this.handleError(nodeId, error);
       return;
     }
 
@@ -3294,7 +3284,7 @@ export class FeedService {
   handleSigninConfirm(nodeId:string, result: any, error: any){
     if (error != null && error != undefined && error.code != undefined){
       this.isLogging[nodeId] = false;
-      this.handleError(error);
+      this.handleError(nodeId, error);
       return;
     }
 
@@ -3303,7 +3293,8 @@ export class FeedService {
 
     accessTokenMap[nodeId] = {
       token: result.access_token ,
-      exp: result.exp
+      exp: result.exp,
+      isExpire: false
     };
 
     this.storeService.set(PersistenceKey.accessTokenMap, accessTokenMap);
@@ -3322,6 +3313,10 @@ export class FeedService {
       if (this.isDeclareFinish){
         clearInterval(this.declareOwnerInterval);
       }
+
+      if(!this.checkServerConnection(nodeId))
+       return;
+
       this.declareOwnerRequest(nodeId, carrierAddress, nonce);
     }, 5000);
   }
@@ -3426,8 +3421,9 @@ export class FeedService {
 
   handleDeclareOwnerResponse(nodeId: string, result: any, error: any){
     if (error != null && error != undefined && error.code != undefined){
-      this.isDeclareFinish = true;
-      this.handleError(error);
+      // this.isDeclareFinish = true;
+      this.cleanDeclareOwner();
+      this.handleError(nodeId, error);
       return;
     }
 
@@ -3441,7 +3437,8 @@ export class FeedService {
 
       this.resolveServerDid(did, nodeId, payload,()=>{},()=>{});
     }
-    this.isDeclareFinish = true;
+    // this.isDeclareFinish = true;
+    this.cleanDeclareOwner();
     eventBus.publish("feeds:owner_declared", nodeId, phase, did, payload);
   }
 
@@ -3455,7 +3452,7 @@ export class FeedService {
   // }
   handleImportDIDResponse(nodeId: string, result: any, error: any){
     if (error != null && error != undefined && error.code != undefined){
-      this.handleError(error);
+      this.handleError(nodeId, error);
       return;
     }
 
@@ -3476,7 +3473,7 @@ export class FeedService {
 
   handleIssueCredentialResponse(nodeId: string, result: any, error: any){
     if (error != null && error != undefined && error.code != undefined){
-      this.handleError(error);
+      this.handleError(nodeId, error);
       return;
     }
     this.finishBinding(nodeId);
@@ -3630,9 +3627,12 @@ export class FeedService {
   }
 
   checkExp(accessToken: AccessToken): boolean{
-    if(accessTokenMap == null || accessTokenMap ==undefined)
+    if(accessTokenMap == undefined)
       return false;
     if (accessToken.exp < this.getCurrentTimeNum())
+      return false;
+    let isExpire = accessToken.isExpire || true;
+    if (isExpire)
       return false;
     return true;
   }
@@ -4040,7 +4040,7 @@ export class FeedService {
     }
   }
 
-  processGeneralError(errorCode: number){
+  processGeneralError(nodeId: string, errorCode: number){
     let errorMessage = this.translate.instant("Common.unknownError");
     switch(errorCode){
       case -1:
@@ -4056,8 +4056,10 @@ export class FeedService {
         errorMessage = this.translate.instant("ErrorInfo.wrongState");
         break;
       case -5:
-        errorMessage = this.translate.instant("ErrorInfo.tokenExpired");
-        break;
+        // errorMessage = this.translate.instant("ErrorInfo.tokenExpired");
+        accessTokenMap[nodeId].isExpire = true;
+        this.storeService.set(PersistenceKey.accessTokenMap,accessTokenMap);
+        return ;
       case -6:
         errorMessage = this.translate.instant("ErrorInfo.internalError");
         break;

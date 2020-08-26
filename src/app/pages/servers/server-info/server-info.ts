@@ -297,6 +297,11 @@ export class ServerInfoPage implements OnInit {
       return;
     }
 
+    if(this.feedService.getServerStatusFromId(this.nodeId) != 0){
+      this.native.toastWarn('common.connectionError');
+      return;
+    }
+
     this.native.go(
       "/editserverinfo", 
       { 

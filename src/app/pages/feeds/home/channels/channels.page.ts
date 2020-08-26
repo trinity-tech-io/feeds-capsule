@@ -373,6 +373,11 @@ export class ChannelsPage implements OnInit {
       this.native.toastWarn('common.connectionError');
       return;
     }
+
+    if(this.feedService.getServerStatusFromId(this.nodeId) != 0){
+      this.native.toastWarn('common.connectionError');
+      return;
+    }
   
     if(this.channelAvatar.indexOf("data:image")>-1){
       this.feedService.setSelsectIndex(0);
