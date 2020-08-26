@@ -47,7 +47,8 @@ export const fr = {
         "amountError":"Please input correct amount",
         "waitMoment": "Please wait a moment...",
         "issuecredentialError": "There was an error issuing the certificate. Please check the QR code or try again",
-        "save":"Save"
+        "save":"Save",
+        "feed":"Feed"
     },
     "app":{
         "profileDetails":"Profile Details",
@@ -71,11 +72,12 @@ export const fr = {
         "allempty":"All Empty",
         "emptyDes":"Not following any Feeds yet",
         "exploreFeeds":"Explore Feeds",
-        "minutesAgo":" Minutes ago",
-        "hoursAgo":" Hours ago",
-        "daysAgo":" Days ago",
-        "onedayAgo":" Day ago",
-        "onehourAgo":" Hour ago",
+        "minutesAgo":" minutes ago",
+        "hoursAgo":" hours ago",
+        "daysAgo":" days ago",
+        "onedayAgo":" day ago",
+        "onehourAgo":" hour ago",
+        "oneminuteAgo":" minute ago"
     },
     "ProfilePage":{
         "myFeeds":"My Feeds",
@@ -167,7 +169,7 @@ export const fr = {
         'designers':'Designers',
     },
     "PostdetailPage":{
-        "postdetail":"Post Detail"
+        "postview":"Post View"
     },
     "ServersPage":{
         "feedSources":"Feeds Sources",
@@ -212,10 +214,10 @@ export const fr = {
         "serverInfo":"Server Info",
         "Pleasewait":"Please wait...",
         "Feedurlmaybeerror":"Possible Feed url error.",
-        "DeletethisFeedSource":"Delete this Feed Source?",
+        "DeletethisFeedSource":"Delete this Feed Source",
         "cancel":"Cancel",
         "DeleteFeedSource":"Delete Feed Source!",
-        "RemovethisFeedSource":"Remove this Feed Source?",
+        "RemovethisFeedSource":"Remove this Feed Source",
         "RemoveFeedSource":"Remove Feed Source!",
         "removeserver": "Service removed",
         "feedsSourceQRCode":"Feed Source QRCode",
@@ -333,7 +335,8 @@ export const fr = {
         "internalError":"Server Internal Error",
         "invalidParam":"Invalid Parameters",
         "invalidChallengeResponse":"Invalid Challenge Response",
-        "invalidVerifiableCredential":"Invalid Verifiable Credential"
+        "invalidVerifiableCredential":"Invalid Verifiable Credential",
+        "unsupportedRequests":"Unsupported requests"
     },
     "EditserverinfoPage":{
         "title":"Edit Feeds Source Details",

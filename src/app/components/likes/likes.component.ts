@@ -114,9 +114,15 @@ export class LikesComponent implements OnInit {
       return this.translate.instant('common.just');
     }
     if(obj.type==='m'){
+      if(obj.content === 1){
+        return obj.content+this.translate.instant('HomePage.oneminuteAgo');
+      }
       return obj.content+this.translate.instant('HomePage.minutesAgo');
     }
     if(obj.type==='h'){
+      if(obj.content === 1){
+        return obj.content+this.translate.instant('HomePage.onehourAgo');
+      }
       return obj.content+this.translate.instant('HomePage.hoursAgo');
     }
     if(obj.type === 'day'){

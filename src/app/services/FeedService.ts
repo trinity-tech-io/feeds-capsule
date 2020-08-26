@@ -4070,6 +4070,9 @@ export class FeedService {
       case -9:
         errorMessage = this.translate.instant("ErrorInfo.invalidVerifiableCredential");
         break;
+      case -10:
+        errorMessage = this.translate.instant("ErrorInfo.unsupportedRequests");
+        break;  
     }
     this.native.toastWarn(errorMessage);
   }

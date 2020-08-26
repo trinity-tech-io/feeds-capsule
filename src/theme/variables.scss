@@ -1053,13 +1053,6 @@ vertical-align: middle;
   color: #8888b0;
 }
 
-.circle {
-    width: 16px;
-    height: 16px;
-    //background-color: #368bff;
-    background-color:#0ec254;
-    border-radius: 8px;
-  }
 
   .offline-circle{
     width: 12px;
@@ -1069,10 +1062,10 @@ vertical-align: middle;
   }
 
   .online-circle-blue{
-    width: 16px;
-    height: 16px;
+    width: 12px;
+    height: 12px;
     background-color: #368bff;
-    border-radius: 8px;
+    border-radius: 6px;
   }
 
   .online-circle{

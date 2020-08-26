@@ -157,7 +157,7 @@ export class PostdetailPage implements OnInit {
 
  
   initTitle(){
-    titleBarManager.setTitle(this.translate.instant("PostdetailPage.postdetail"));
+    titleBarManager.setTitle(this.translate.instant("PostdetailPage.postview"));
   }
 
   getContentText(content: string): string{
@@ -223,9 +223,15 @@ export class PostdetailPage implements OnInit {
       return this.translate.instant('common.just');
     }
     if(obj.type==='m'){
+      if(obj.content === 1){
+        return obj.content+this.translate.instant('HomePage.oneminuteAgo');
+      }
       return obj.content+this.translate.instant('HomePage.minutesAgo');
     }
     if(obj.type==='h'){
+      if(obj.content === 1){
+        return obj.content+this.translate.instant('HomePage.onehourAgo');
+      }
       return obj.content+this.translate.instant('HomePage.hoursAgo');
     }
     if(obj.type === 'day'){
@@ -241,7 +247,7 @@ export class PostdetailPage implements OnInit {
   }
 
   menuMore(){
-    this.menuService.showChannelMenu(this.nodeId, Number(this.channelId), this.channelName);
+    this.menuService.showShareMenu(this.nodeId, Number(this.channelId), this.channelName);
   }
 
   showBigImage(content: any){

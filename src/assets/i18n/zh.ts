@@ -47,7 +47,8 @@ export const zh = {
         "amountError":"请输入正确的数额",
         "waitMoment": "请稍等...",
         "issuecredentialError": "颁发凭证出错，请检查二维码或重试",
-        "save":"保存"
+        "save":"保存",
+        "feed":"微频"
     },
     "app":{
         "profileDetails":"档案详情",
@@ -76,6 +77,7 @@ export const zh = {
         "daysAgo":" 天前",
         "onedayAgo":" 天前",
         "onehourAgo":" 小时前",
+        "oneminuteAgo":"分钟前"
     },
     "ProfilePage":{
         "myFeeds":"我的微频",
@@ -167,7 +169,7 @@ export const zh = {
         'designers':'设计人员',
     },
     "PostdetailPage":{
-        "postdetail":"微说详情"
+        "postview":"微说详情"
     },
     "ServersPage":{
         "feedSources":"微频源",
@@ -212,10 +214,10 @@ export const zh = {
         "serverInfo":"源信息",
         "Pleasewait": "请稍候...",
         "Feedurlmaybeerror": "微频源URL网址可能错误",
-        "DeletethisFeedSource": "删除这个微频源?",
+        "DeletethisFeedSource": "删除这个微频源",
         "cancel": "取消",
         "DeleteFeedSource": "删除微频源!",
-        "RemovethisFeedSource": "移除这个微频源?",
+        "RemovethisFeedSource": "移除这个微频源",
         "RemoveFeedSource": "移除微频源!",
         "removeserver": "已移除微频源",
         "feedsSourceQRCode":"微频源二维码",
@@ -333,7 +335,8 @@ export const zh = {
         "internalError":"服务器内部异常",
         "invalidParam":"参数无效",
         "invalidChallengeResponse":"登录鉴权失败",
-        "invalidVerifiableCredential":"服务器无法验证凭证信息"
+        "invalidVerifiableCredential":"服务器无法验证凭证信息",
+        "unsupportedRequests":"不支持的请求"
     },
     "EditserverinfoPage":{
         "title":"编辑微频源详情",
