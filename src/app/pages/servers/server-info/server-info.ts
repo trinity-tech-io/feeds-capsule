@@ -140,6 +140,7 @@ export class ServerInfoPage implements OnInit {
     this.events.subscribe("feeds:removeFeedSourceFinish",()=>{
       // this.initTitle();
       this.native.hideLoading();
+
     });
     
     
@@ -244,7 +245,11 @@ export class ServerInfoPage implements OnInit {
         icon: 'trash',
         handler: () => {
           this.native.showLoading('common.waitMoment');
-          this.feedService.deleteFeedSource(this.nodeId).then;
+          this.feedService.deleteFeedSource(this.nodeId).then(()=>{
+            this.native.toast("ServerInfoPage.removeserver"); 
+            this.native.hideLoading();
+            this.navigateBackPage();
+          });
         }
       },{
         text: this.translate.instant("ServerInfoPage.cancel"),
@@ -271,8 +276,9 @@ export class ServerInfoPage implements OnInit {
         handler: () => {
           this.native.showLoading('common.waitMoment');
           this.feedService.removeFeedSource(this.nodeId).then(()=>{
-            this.native.toast_trans("ServerInfoPage.removeserver"); 
+            this.native.toast("ServerInfoPage.removeserver"); 
             this.native.hideLoading();
+            this.navigateBackPage();
           });
         }
       },{
