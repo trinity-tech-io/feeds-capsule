@@ -40,7 +40,7 @@ export class ProfileimagePage implements OnInit {
       this.feedService.setSelsectIndex(selectIndex);
       this.feedService.setProfileIamge(this.avatar);
       
-      if(this.userAvatar === ""){
+      if(this.userAvatar.indexOf("data:image") === -1){
         if(this.theme.darkMode){
           this.userAvatar = './assets/images/profile-add-dark.svg';
         }else{

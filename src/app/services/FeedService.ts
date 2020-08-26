@@ -356,6 +356,7 @@ export class FeedIntro{
 
 @Injectable()
 export class FeedService {
+  public channelInfo:any ={};
   public postMap: any;
   public testMode = true;
   private nonce = "";
@@ -4078,5 +4079,13 @@ export class FeedService {
       action: RequestAction.refreshPostDetail
     }
     this.getPost(nodeId, channelId,Communication.field.id,Number(postId),Number(postId),0 ,memo);
+  }
+
+  setChannelInfo(obj:any){
+     this.channelInfo = obj;
+  }
+
+  getChannelInfo(){
+    return this.channelInfo || {};
   }
 }

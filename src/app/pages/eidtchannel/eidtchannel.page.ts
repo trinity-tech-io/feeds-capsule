@@ -33,13 +33,21 @@ constructor(
   }
 
 ngOnInit() {
-  this.activatedRoute.queryParams.subscribe((data) => {
-    let item = _.cloneDeep(data);
-    this.nodeId = item ["nodeId"] || "";
-    this.channelId = item ["channelId"] || "";
-    this.name = item["name"] || "";
-    this.des = item["des"] || "";
-  });
+  // this.activatedRoute.queryParams.subscribe((data) => {
+  //   let item = _.cloneDeep(data);
+  //   this.nodeId = item ["nodeId"] || "";
+  //   this.channelId = item ["channelId"] || "";
+  //   this.name = item["name"] || "";
+  //   this.des = item["des"] || "";
+  // });
+
+    let item = this.feedService.getChannelInfo();
+    let channelInfo  = _.cloneDeep(item);
+    this.nodeId = channelInfo["nodeId"] || "";
+    this.channelId = channelInfo["channelId"] || "";
+    this.name = channelInfo["name"] || "";
+    this.des = channelInfo["des"] || "";
+
 }
 
 ionViewWillEnter() {
@@ -77,6 +85,13 @@ ionViewWillLeave(){
 }
 
 profileimage(){
+  this.feedService.setChannelInfo(
+    {
+      "nodeId":this.nodeId,
+      "channelId":this.channelId,
+      "name":this.name,
+      "des":this.des,
+    });
 this.native.navigateForward(['/profileimage'],"");
 }
 
@@ -96,14 +111,29 @@ confirm(){
 }
 
 checkparms(){
- if(this.name === ""){
+  let nameValue = this.name || "";
+  nameValue = this.native.iGetInnerText(nameValue);
+ if(nameValue === ""){
    this.native.toast_trans('CreatenewfeedPage.inputName');
    return false;
  }
 
- if(this.des === ""){
+ if (this.name.length > 32){
+  this.native.toast_trans("CreatenewfeedPage.tipMsgLength1");
+  return ;
+}
+
+let descValue = this.des || "";
+descValue = this.native.iGetInnerText(descValue);
+
+ if(descValue === ""){
   this.native.toast_trans('CreatenewfeedPage.inputFeedDesc');
   return false;
+}
+
+if (this.des.length > 128){
+  this.native.toast_trans("CreatenewfeedPage.tipMsgLength");
+  return ;
 }
 
 if(this.channelAvatar === ""){

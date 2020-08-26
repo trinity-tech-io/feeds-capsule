@@ -377,14 +377,16 @@ export class ChannelsPage implements OnInit {
       this.feedService.setSelsectIndex(index);
       this.feedService.setProfileIamge(this.channelAvatar);
     }
+
+    this.feedService.setChannelInfo(
+      {
+        "nodeId":this.nodeId,
+        "channelId":this.channelId,
+        "name":this.channelName,
+        "des":this.channelDesc,
+      });
    
-    this.native.go("/eidtchannel",
-    {
-      "nodeId":this.nodeId,
-      "channelId":this.channelId,
-      "name":this.channelName,
-      "des":this.channelDesc,
-    });
+    this.native.go("/eidtchannel");
   }
 
   checkChannelIsMine(){
@@ -415,4 +417,6 @@ export class ChannelsPage implements OnInit {
       this.native.createTip(name);
     }
   }
+
+
 }
