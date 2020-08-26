@@ -25,7 +25,7 @@ export const fr = {
         "followSuccess":"Followed successfully",
         "unFollowSuccess":"Unfollowed successfully",
         "noImageSelected":"No Image Selected",
-        "loggingIn":"Logging in...",
+        "loggingIn":"Attempting to sign in",
         "des2":'Are you sure you want to return to the main page？',
         "connectionError":'No network is currently available, please try again later',
         "nopostyet":"No posts yet",
@@ -48,7 +48,7 @@ export const fr = {
         "waitMoment": "Please wait a moment...",
         "issuecredentialError": "There was an error issuing the certificate. Please check the QR code or try again",
         "save":"Save",
-        "feed":"Feed"
+        "feed":"Feed:"
     },
     "app":{
         "profileDetails":"Profile Details",

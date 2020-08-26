@@ -48,7 +48,7 @@ export const zh = {
         "waitMoment": "请稍等...",
         "issuecredentialError": "颁发凭证出错，请检查二维码或重试",
         "save":"保存",
-        "feed":"微频"
+        "feed":"微频:"
     },
     "app":{
         "profileDetails":"档案详情",
