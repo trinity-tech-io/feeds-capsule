@@ -140,10 +140,7 @@ export class ServerInfoPage implements OnInit {
     this.events.subscribe("feeds:removeFeedSourceFinish",()=>{
       // this.initTitle();
       this.native.hideLoading();
-
     });
-    
-    
   }
 
   ionViewDidEnter(){
@@ -160,15 +157,9 @@ export class ServerInfoPage implements OnInit {
     this.events.unsubscribe("feeds:updateTitle");
   }
 
-
-
-
-
-
   initTitle(){
     titleBarManager.setTitle(this.translate.instant('ServerInfoPage.title'));
   }
-
 
   navigateBackPage() {
     this.native.pop();
@@ -193,7 +184,6 @@ export class ServerInfoPage implements OnInit {
       this.native.toastWarn("ServerInfoPage.Feedurlmaybeerror");
       this.navigateBackPage();
     }
-
   }
 
 
@@ -316,7 +306,12 @@ export class ServerInfoPage implements OnInit {
   }
 
   checkIsMine(){
-    let bindServerDid = this.feedService.getBindingServer().did||'';
+    let bindingServer = this.feedService.getBindingServer();
+    if (bindingServer == null || bindingServer == undefined){
+      return 1;
+    }
+    
+    let bindServerDid = bindingServer.did||'';
     if (this.didString == bindServerDid)
       return 0;
 

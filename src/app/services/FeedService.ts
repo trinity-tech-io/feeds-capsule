@@ -371,9 +371,11 @@ export class FeedService {
   private connectionStatus = ConnState.disconnected ;
   private lastConnectionStatus = ConnState.connected ;
   private isLogging: {[nodeId: string]: boolean} = {}; 
+  private signinChallengeTimeout: NodeJS.Timer;
   private autoSigninInterval;
   private isSavingChannel:boolean = false;
-
+  private isDeclearing = false;
+  private declareOwnerTimeout: NodeJS.Timer;
   private declareOwnerInterval: NodeJS.Timer;
   private isDeclareFinish: boolean = false;
   public constructor(
@@ -3216,6 +3218,35 @@ export class FeedService {
     appManager.sendIntent("didtransaction", request, {}, onSuccess, onError);
   }
 
+  setSigninTimeout(nodeId: string){
+    this.isLogging[nodeId] = true;
+    clearTimeout(this.signinChallengeTimeout);
+
+    this.signinChallengeTimeout = setTimeout(()=>{
+      this.clearSigninTimeout(nodeId);
+    },30000);
+  }
+
+  clearSigninTimeout(nodeId: string){
+    this.isLogging[nodeId] = false;
+    clearTimeout(this.signinChallengeTimeout);
+  }
+
+  setDeclareOwnerTimeout(){
+    this.isDeclearing = true;
+    clearTimeout(this.declareOwnerTimeout);
+
+    this.declareOwnerTimeout = setTimeout(()=>{
+      this.clearDeclareOwnerTimeout();
+    },30000);
+  }
+
+  clearDeclareOwnerTimeout(){
+    this.isDeclearing = false;
+    clearTimeout(this.declareOwnerTimeout);
+    this.cleanDeclareOwner();
+  }
+
   signinChallengeRequest(nodeId: string , requiredCredential: boolean){
     if(this.isLogging[nodeId] == undefined)
       this.isLogging[nodeId] = false;
@@ -3223,7 +3254,8 @@ export class FeedService {
     if (this.isLogging[nodeId])
       return ;
 
-    this.isLogging[nodeId] = true;
+    this.setSigninTimeout(nodeId);
+
     this.native.toast("common.loggingIn");
     let request: Communication.signin_request_challenge_request = {
       version: "1.0",
@@ -3235,7 +3267,7 @@ export class FeedService {
       }
     }
     this.sendRPCMessage(nodeId, request.method, request.params,"");
-    this.isLogging[nodeId] = false;
+    // this.isLogging[nodeId] = false;
   }
 
   signinConfirmRequest(nodeId: string, nonce: string, realm: string, requiredCredential: boolean){
@@ -3269,7 +3301,7 @@ export class FeedService {
 
   handleSigninChallenge(nodeId:string, result: any, error: any){
     if (error != null && error != undefined && error.code != undefined){
-      this.isLogging[nodeId] = false;
+      this.clearSigninTimeout(nodeId);
       this.handleError(nodeId, error);
       return;
     }
@@ -3283,7 +3315,7 @@ export class FeedService {
 
   handleSigninConfirm(nodeId:string, result: any, error: any){
     if (error != null && error != undefined && error.code != undefined){
-      this.isLogging[nodeId] = false;
+      this.clearSigninTimeout(nodeId);
       this.handleError(nodeId, error);
       return;
     }
@@ -3293,7 +3325,7 @@ export class FeedService {
 
     accessTokenMap[nodeId] = {
       token: result.access_token ,
-      exp: result.exp,
+      exp: result.exp*1000,
       isExpire: false
     };
 
@@ -3304,7 +3336,7 @@ export class FeedService {
 
     eventBus.publish("feeds:login_finish", nodeId);
     this.native.toast("AddServerPage.Signinsuccess");
-    this.isLogging[nodeId] = false;
+    this.clearSigninTimeout(nodeId);
   }
 
   startDeclareOwner(nodeId: string, carrierAddress: string, nonce: string){
@@ -3327,6 +3359,11 @@ export class FeedService {
   }
 
   declareOwnerRequest(nodeId: string, carrierAddress: string, nonce: string){
+    if (this.isDeclearing)
+      return;
+
+    this.setDeclareOwnerTimeout();
+    
     isBindServer = true;
     let request: Communication.declare_owner_request = {
       version: "1.0",
@@ -3422,7 +3459,7 @@ export class FeedService {
   handleDeclareOwnerResponse(nodeId: string, result: any, error: any){
     if (error != null && error != undefined && error.code != undefined){
       // this.isDeclareFinish = true;
-      this.cleanDeclareOwner();
+      this.clearDeclareOwnerTimeout();
       this.handleError(nodeId, error);
       return;
     }
@@ -3438,7 +3475,7 @@ export class FeedService {
       this.resolveServerDid(did, nodeId, payload,()=>{},()=>{});
     }
     // this.isDeclareFinish = true;
-    this.cleanDeclareOwner();
+    this.clearDeclareOwnerTimeout();
     eventBus.publish("feeds:owner_declared", nodeId, phase, did, payload);
   }
 
@@ -3626,15 +3663,23 @@ export class FeedService {
     return friendConnectionMap[nodeId];
   }
 
-  checkExp(accessToken: AccessToken): boolean{
-    if(accessTokenMap == undefined)
-      return false;
-    if (accessToken.exp < this.getCurrentTimeNum())
-      return false;
-    let isExpire = accessToken.isExpire || true;
-    if (isExpire)
-      return false;
-    return true;
+  checkExp(mAccessToken: AccessToken): boolean{
+    let accessToken = mAccessToken || undefined;
+    if(accessToken == undefined){
+      return true;
+    }
+
+    let exp = accessToken.exp || 0;
+    if (exp < this.getCurrentTimeNum()){
+      return true;
+    }
+
+    let isExpire = accessToken.isExpire;
+    if (isExpire){
+      return true;
+    }
+
+    return false;
   }
 
   prepare(friendId: string){
