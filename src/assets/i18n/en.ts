@@ -16,7 +16,7 @@ export const en = {
         "pleaseInput":"Please input ",
         "feeds":"Feeds",
         "just":"Just now",
-        "yesterday":"yesterday",
+        "yesterday":"Yesterday",
         "unsubscribe":"Unfollow",
         "share":"Share",
         "sending":"Sending...",

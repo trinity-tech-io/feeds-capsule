@@ -74,9 +74,9 @@ export const zh = {
         "exploreFeeds":"探索微频",
         "minutesAgo":"分钟前",
         "hoursAgo":"小时前",
-        "daysAgo":" 天前",
-        "onedayAgo":" 天前",
-        "onehourAgo":" 小时前",
+        "daysAgo":"天前",
+        "onedayAgo":"天前",
+        "onehourAgo":"小时前",
         "oneminuteAgo":"分钟前"
     },
     "ProfilePage":{
