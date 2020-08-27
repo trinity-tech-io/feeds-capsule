@@ -785,20 +785,10 @@ export class FeedService {
         did: "string",
         status: friendStatus
       }
-
-
-      // if(lastConnectStatus != friendStatus && friendStatus == ConnState.connected){
-        if (cacheBindingAddress != "" && isBindServer){
-          this.carrierService.getIdFromAddress(cacheBindingAddress,(nodeId)=>{
-            if (friendId != nodeId){
-              this.doFriendConnection(friendId, friendStatus);
-            }
-          });
-        }else{
-          if (serverMap[friendId] != undefined)
-            this.doFriendConnection(friendId, friendStatus);  
-        }
-      // } 
+      let mServerMap = serverMap || {};
+      let server = mServerMap[friendId]||"";
+      if (server != "" )
+        this.doFriendConnection(friendId, friendStatus);  
     });
   }
 
@@ -4113,6 +4103,7 @@ export class FeedService {
         // errorMessage = this.translate.instant("ErrorInfo.tokenExpired");
         accessTokenMap[nodeId].isExpire = true;
         this.storeService.set(PersistenceKey.accessTokenMap,accessTokenMap);
+        this.signinChallengeRequest(nodeId,true);
         return ;
       case -6:
         errorMessage = this.translate.instant("ErrorInfo.internalError");
