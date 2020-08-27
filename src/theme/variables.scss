@@ -204,6 +204,77 @@ html, body { height: 100%; scroll-behavior:smooth;}
 
 $segment-button-md-text-color: #007AFF !important;
 
+.search-container {
+  display: flex;
+  justify-content: center;
+  padding: 12px 0;
+
+  ion-searchbar {
+    width: 85%;
+    padding: 0;
+    margin: 0;
+
+    .searchbar-input-container{
+      height: 40px;
+
+      .searchbar-input {
+        border-radius: 9px;
+        background-color: #f0f1ff;
+        font-size: 16px;
+        font-weight: 400;
+      }
+    }
+  }
+}
+
+.dark-search-container {
+  ion-searchbar {
+    .searchbar-input-container{
+      .searchbar-input {
+        color: #cfd1f7;
+        background-color: #2d2e4d;
+      }
+    }
+  }
+}
+
+.empty-container {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  ion-img {
+      width: 82.5px;
+      height: 54.9px;
+  }
+
+  h1, p {
+      margin: 0;
+      color: #8888b0;
+  }
+
+  h1 {
+      margin-top: 20px;
+      font-size: 22px;
+      font-weight: 500;
+      letter-spacing: 1.2px;
+  }
+
+  p {
+      margin-top: 5px;
+      font-size: 15px;
+      font-weight: 500;
+      letter-spacing: 1.6px;
+  }
+
+  .btn-row {
+      margin-top: 55px;
+      width: 85%;
+  }
+}
+
 .offline-content {
   background-color:rgb(209, 81, 81);
   color: #fff;
@@ -318,10 +389,6 @@ $segment-button-md-text-color: #007AFF !important;
  direction: ltr;
  unicode-bidi: embed;
 }
-
-
-
-
 
 .channel-icon{
   margin-left: 37px;

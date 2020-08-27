@@ -1,4 +1,4 @@
-<div *ngIf="channels.length == 0">
+<!-- <div *ngIf="channels.length == 0">
   <div style="margin-top: 50px;" >
     <div style="text-align: center; ">
       <img src="./assets/images/empty-feeds-icon.svg">
@@ -12,6 +12,19 @@
     </ion-button>
     </div>
   </div> 
+</div> -->
+
+<div *ngIf="channels.length === 0" class="empty-container">
+  <img src="./assets/images/empty-feeds-icon.svg">
+  <h1>{{ 'common.allempty' | translate }}</h1>
+  <p>{{'MyfeedsComponent.emptyDes' | translate }}</p>
+  <ion-row class="btn-row">
+    <ion-button (click)="createNewFeed()">
+      <ion-label>
+        {{ 'MyfeedsComponent.createFeed' | translate }}
+      </ion-label>
+    </ion-button>
+  </ion-row>
 </div>
 
 <div *ngFor="let channel of channels" [class.darkContainer]="theme.darkMode">

@@ -15,8 +15,10 @@ declare let appManager: AppManagerPlugin.AppManager;
   styleUrls: ['./feeds.page.scss'],
 })
 export class FeedsPage implements OnInit {
+
   public title = "";
   public currentTab = "";
+
   constructor(
     private navCtrl: NavController,
     private native: NativeService,
@@ -24,8 +26,9 @@ export class FeedsPage implements OnInit {
     private popoverController: PopoverController,
     private translate:TranslateService,
     public theme:ThemeService,
-    private event:Events) {
-    }
+    private event:Events
+  ) {
+  }
 
   ngOnInit() {
 

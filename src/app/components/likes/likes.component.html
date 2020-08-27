@@ -1,18 +1,15 @@
- <div *ngIf="likeList.length == 0">
-    <div style="margin-top: 50px;" >
-      <div style="text-align: center; ">
-        <img src="./assets/images/empty-like-icon.svg">
-      </div>
-      <div class="all-empty" style="margin-top: 20px;">{{'common.allempty' | translate}}</div>
-      <div class="all-empty-content-text" style="margin-top: 7px;">{{'LikesComponent.emptyLikeDes'|translate}}</div>
-    
-      <div class="explore-feeds">
-        <ion-button expand="block"  mode="ios" (click)="exploreFeeds()" >
-          <div class="explore-feeds-text">{{'FollowingComponent.exploreFeeds'|translate}}</div>
-        </ion-button>
-      </div>
-    </div> 
-  </div>
+<div *ngIf="likeList.length === 0" class="empty-container">
+  <img src="./assets/images/empty-like-icon.svg">
+  <h1>{{ 'common.allempty' | translate }}</h1>
+  <p>{{ 'LikesComponent.emptyLikeDes' | translate }}</p>
+  <ion-row class="btn-row">
+    <ion-button (click)="exploreFeeds()">
+      <ion-label>
+        {{ 'FollowingComponent.exploreFeeds' | translate }}
+      </ion-label>
+    </ion-button>
+  </ion-row>
+</div>
 
   <div *ngFor="let post of likeList let i=index" [class.darkContainer]="theme.darkMode">
     <div class="image-text-layout-div" >

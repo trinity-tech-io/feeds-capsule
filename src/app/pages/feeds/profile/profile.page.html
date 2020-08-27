@@ -1,66 +1,61 @@
 <ion-header *ngIf="connectionStatus == 1">
   <div class="offline-header"></div>
 </ion-header>
-<ion-content [class.darkContainer]="theme.darkMode">
+
+<ion-content>
+
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" pullFactor="0.5">
+    <ion-refresher-content
+      pullingIcon="arrow-dropdown"
+      pullingText="{{'common.pullToRefresh'|translate}}"
+      refreshingSpinner="circles"
+      refreshingText="">
+    </ion-refresher-content>
+  </ion-refresher>
+
+  <ion-grid class="container" [class.darkContainer]="theme.darkMode">
+
+    <div class="header">
+      <ion-img *ngIf="avatar" [src]="'data:'+avatar.contentType+';base64,'+avatar.data"></ion-img>
+      <ion-img *ngIf="!avatar" src="/assets/images/default-contact.svg"></ion-img>
+      <h1>{{ name }}</h1>
+      <p>{{ description }}</p>
+    </div>
+      
+    <!-- <div class="center-flex" style="margin-top: 10px;">
+        <img class="profile-sub-img" src="assets/images/bubble2.svg">
+        <ion-label class="profile-sub-text">{{followers}} </ion-label>
+        <ion-label  class="profile-subscribe">{{'common.followers' | translate}}</ion-label>
+    </div> -->
   
-
-  <div class="channel-img-div">
-    <img *ngIf="avatar == ''" class="profile-img" src="assets/images/default-contact.svg">
-    <img *ngIf="avatar != ''" class="profile-img" [src]="avatar">
-  </div>
-
-  <div class="channel-title-div">
-    <ion-label class="channel-title">{{name}}</ion-label>
-  </div>
-
-  <!-- <div class="center-flex" style="margin-top: 10px;">
-      <img class="profile-sub-img" src="assets/images/bubble2.svg">
-      <ion-label class="profile-sub-text">{{followers}} </ion-label>
-      <ion-label  class="profile-subscribe">{{'common.followers' | translate}}</ion-label>
-  </div> -->
-
-  <div class="channel-desc-div">
-    <ion-label class="channel-desc white">{{description}} </ion-label>
-  </div>
-
-
-<div class="tab-container">
-    <div class="left-tab" [class.tab-active]="selectType === 'ProfilePage.myFeeds'" (click)="changeType('ProfilePage.myFeeds')">
-        <span>{{ 'ProfilePage.myFeeds' | translate }}</span>
+    <div class="tab-container">
+        <div class="left-tab" [class.tab-active]="selectType === 'ProfilePage.myFeeds'" (click)="changeType('ProfilePage.myFeeds')">
+            <span>{{ 'ProfilePage.myFeeds' | translate }}</span>
+        </div>
+        <div class="middle-tab" [class.tab-active]="selectType === 'ProfilePage.following'" (click)="changeType('ProfilePage.following')">
+          <span>{{ 'ProfilePage.following' | translate }}</span>
+        </div>
+        <div class="right-tab" [class.tab-active]="selectType === 'ProfilePage.myLikes'" (click)="changeType('ProfilePage.myLikes')">
+            <span>{{'ProfilePage.myLikes' | translate }}</span>
+        </div>
     </div>
-    <div class="middle-tab" [class.tab-active]="selectType === 'ProfilePage.following'" (click)="changeType('ProfilePage.following')">
-      <span>{{ 'ProfilePage.following' | translate }}</span>
+  
+    <app-myfeeds *ngIf="selectType == 'ProfilePage.myFeeds'"  [channels] = "channels" [nodeStatus]="nodeStatus"></app-myfeeds>
+    <app-following *ngIf="selectType == 'ProfilePage.following'"  [followingList] = "followingList" [nodeStatus]="nodeStatus"></app-following>
+    <app-likes  *ngIf="selectType == 'ProfilePage.myLikes'" [likeList] = "likeList" [nodeStatus]="nodeStatus"></app-likes>
+  
+    <div *ngIf="likeList.length>1&&selectType == 'ProfilePage.myLikes'">
+      <div style="text-align: center;margin-top: 20px;margin-bottom: 20px;" *ngIf="isBottom">
+          {{ "common.des3" | translate }}
+      </div>
     </div>
-    <div class="right-tab" [class.tab-active]="selectType === 'ProfilePage.myLikes'" (click)="changeType('ProfilePage.myLikes')">
-        <span>{{'ProfilePage.myLikes' | translate }}</span>
-    </div>
-</div>
-     <!--on-refresher-->
-     <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" pullFactor="0.5">
-      <ion-refresher-content
-        pullingIcon="arrow-dropdown"
-        pullingText="{{'common.pullToRefresh'|translate}}"
-        refreshingSpinner="circles"
-        refreshingText="">
-      </ion-refresher-content>
-     </ion-refresher>
+  
+    <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event)">
+      <ion-infinite-scroll-content
+        loadingSpinner="bubbles"
+        loadingText="{{'common.loadingText'|translate}}">
+      </ion-infinite-scroll-content>
+    </ion-infinite-scroll>
 
-  <app-myfeeds *ngIf="selectType == 'ProfilePage.myFeeds'"  [channels] = "channels" [nodeStatus]="nodeStatus"></app-myfeeds>
-  <app-following *ngIf="selectType == 'ProfilePage.following'"  [followingList] = "followingList" [nodeStatus]="nodeStatus"></app-following>
-  <app-likes  *ngIf="selectType == 'ProfilePage.myLikes'" [likeList] = "likeList" [nodeStatus]="nodeStatus">
-  </app-likes>
-
-
-  <div *ngIf="likeList.length>1&&selectType == 'ProfilePage.myLikes'">
-    <div style="text-align: center;margin-top: 20px;margin-bottom: 20px;" *ngIf="isBottom">
-        {{ "common.des3" | translate }}
-    </div>
-  </div>
-
-  <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event)">
-    <ion-infinite-scroll-content
-      loadingSpinner="bubbles"
-      loadingText="{{'common.loadingText'|translate}}">
-    </ion-infinite-scroll-content>
-  </ion-infinite-scroll>
+  </ion-grid>
 </ion-content>

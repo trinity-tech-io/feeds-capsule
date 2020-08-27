@@ -1,5 +1,5 @@
 import { Component, OnInit, NgZone } from '@angular/core';
-import { FeedService } from 'src/app/services/FeedService';
+import { FeedService, Avatar } from 'src/app/services/FeedService';
 import { CarrierService } from 'src/app/services/CarrierService';
 import { Events, LoadingController } from '@ionic/angular';
 import { NativeService } from 'src/app/services/NativeService';
@@ -59,12 +59,15 @@ export class SigninPage implements OnInit {
 
   signIn(){
     if (this.fakedata){
-      this.saveData("did:elastos:iaP7GCmtcbf3Kiy7PX8zUVaWTzZQG3Kkka",
-              "fakename",
-              "fakeemail",
-              "faketelephone",
-              "fakelocation",
-              "fakedescription");
+      this.saveData(
+        "did:elastos:iaP7GCmtcbf3Kiy7PX8zUVaWTzZQG3Kkka",
+        "fakename",
+        null,
+        "fakeemail",
+        "faketelephone",
+        "fakelocation",
+        "fakedescription"
+      );
 
       this.feedService.updateSignInDataExpTimeTo(this.feedService.getSignInData(),0);
       this.initApp();
@@ -77,6 +80,10 @@ export class SigninPage implements OnInit {
     appManager.sendIntent("credaccess", {
       claims: {
         name: true,
+        avatar: {
+          required: false,
+          reason: "For profile picture"
+        },
         email: {
           required: false,
           reason: "Maybe Feeds dapp need"
@@ -107,7 +114,7 @@ export class SigninPage implements OnInit {
         let data = response.result;
 
         // Create a real presentation object from json data
-        didManager.VerifiablePresentationBuilder.fromJson(JSON.stringify(response.result.presentation), (presentation)=>{
+        didManager.VerifiablePresentationBuilder.fromJson(JSON.stringify(response.result.presentation), (presentation) => {
           this.zone.run(()=>{
             let credentials = presentation.getCredentials();
             this.saveCredentialById(data.did,credentials, "name");
@@ -116,20 +123,22 @@ export class SigninPage implements OnInit {
             let desc = this.findCredentialValueById(data.did, credentials, "description", "");
 
             let description = this.translate.instant("DIDdata.NoDescription");
-            if (desc != ""){
+
+            if (desc !== "") {
               description = desc;
-            }else if (interests != ""){
+            } else if (interests != "") {
               description = interests;
             }
 
             this.saveData(
               data.did,
               this.findCredentialValueById(data.did, credentials, "name", this.translate.instant("DIDdata.Notprovided")),
+              this.findCredentialValueById(data.did, credentials, "avatar", this.translate.instant("DIDdata.Notprovided")),
               this.findCredentialValueById(data.did, credentials, "email", this.translate.instant("DIDdata.Notprovided")),
               this.findCredentialValueById(data.did, credentials, "telephone", this.translate.instant("DIDdata.Notprovided")),
               this.findCredentialValueById(data.did, credentials, "nation", this.translate.instant("DIDdata.Notprovided")),
               description
-              );
+            );
             this.events.publish("feeds:signinSuccess");
             this.initApp();
           });
@@ -174,8 +183,16 @@ export class SigninPage implements OnInit {
     this.native.setRootRouter('/tabs/home');
   }
 
-  saveData(did: string, name: string, email: string, telephone: string, location: string, description: string){
-    this.feedService.saveSignInData(did,name,email,telephone,location, description);
+  saveData(
+    did: string,
+    name: string,
+    avatar: Avatar,
+    email: string,
+    telephone: string,
+    location: string,
+    description: string
+  ) {
+    this.feedService.saveSignInData(did, name, avatar, email, telephone, location, description);
   }
 
 }

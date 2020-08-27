@@ -1,6 +1,6 @@
 import { Component, OnInit, NgZone ,ViewChild} from '@angular/core';
 import { Events } from '@ionic/angular';
-import { FeedService } from 'src/app/services/FeedService';
+import { FeedService, Avatar } from 'src/app/services/FeedService';
 import { ThemeService } from 'src/app/services/theme.service';
 import { IonInfiniteScroll} from '@ionic/angular';
 @Component({
@@ -9,21 +9,26 @@ import { IonInfiniteScroll} from '@ionic/angular';
   styleUrls: ['./profile.page.scss'],
 })
 export class ProfilePage implements OnInit {
+
   @ViewChild(IonInfiniteScroll,{static:true}) infiniteScroll: IonInfiniteScroll;
-  public  nodeStatus = {}; //friends status; 
-  public  channels = []; //myFeeds page
-  public  followingList = []; // following page
-  public  totalLikeList = [];
+
+  public nodeStatus = {}; //friends status; 
+  public channels = []; //myFeeds page
+  public followingList = []; // following page
+  public totalLikeList = [];
   public isBottom:boolean = false;
   public startIndex:number = 0;
   public pageNumber:number = 5;
-  public  likeList = []; //like page
+  public likeList = []; //like page
   public connectionStatus = 1;
   public selectType: string = "ProfilePage.myFeeds"; 
-  public description: string = "";
-  public name: string = "";
   public followers = 0;
-  public avatar = "";
+
+  // Sign in data
+  public name: string = "";
+  public avatar: Avatar = null;
+  public description: string = "";
+
   slideOpts = {
     initialSlide: 0,
     speed: 100,
@@ -34,8 +39,8 @@ export class ProfilePage implements OnInit {
     private feedService: FeedService,
     public theme:ThemeService,
     private events: Events,
-    private zone: NgZone) {
-  
+    private zone: NgZone
+  ) {
   }
 
   ngOnInit() {
@@ -83,9 +88,11 @@ export class ProfilePage implements OnInit {
         this.connectionStatus = status;
       });
     });
+  
     let signInData = this.feedService.getSignInData() || {};
-    this.name = signInData["name"] || "";
 
+    this.name = signInData["name"] || "";
+    this.avatar = signInData["avatar"] || null;
     this.description = signInData["description"] || "";
 
 

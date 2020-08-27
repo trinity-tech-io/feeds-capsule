@@ -1,50 +1,89 @@
+.container {
+    padding: 40px 0;
 
-
-  /********** Tabs *********/
-  .tab-container {
-    margin: 25px 20px;
-    border-radius: 19px;
-    background: #f0f1ff;
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-
-    .left-tab, .middle-tab, .right-tab {
-        padding: 12px 6px;
-        width: 47%;
+    .header {
         display: flex;
         justify-content: center;
         align-items: center;
-
-        span {
-            margin-left: 6px;
-            font-size: 14px;
-            font-weight: 600;
-            letter-spacing: 1.05px;
-            text-align: center;
-            color: #8888b0;
+        flex-direction: column;
+    
+        ion-img {
+          width: 100px;
+          height: 100px;
+          object-fit: cover;
+          overflow: hidden;
+          border-radius: 50%;
+          border: 2px solid #6d74ef;
         }
 
-        img {
-            width: 19px;
-            height: 19px;
+        h1 {
+          margin: 0;
+          padding: 15px 30px 7.5px;
+          font-size: 24px;
+          font-weight: 700;
+          line-height: 1.21;
+          text-align: center;
+        }
+    
+        p {
+          margin: 0;
+          padding: 0px 60px 15px;
+          font-size: 12px;
+          font-weight: 500;
+          text-align: center;
+          overflow: hidden;
         }
     }
 
-    .right-tab {
-        width: 53%;
-    }
-
-    .tab-active {
-        background:#368bff;
+    /********** Tabs *********/
+    .tab-container {
+        height: 41.3px;
+        margin: 25px 20px 75px;
         border-radius: 19px;
-        transform: scale(1.1);
-        span {
-            color: #ffffff;
+        background: #f0f1ff;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+
+        .left-tab, .middle-tab, .right-tab {
+            padding: 12px 6px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            span {
+                font-size: 13px;
+                font-weight: 600;
+                letter-spacing: 1.05px;
+                text-align: center;
+                color: #8888b0;
+            }
+        }
+
+        .left-tab {
+            width: 30%;
+        }
+
+        .middle-tab {
+            width: 30%;
+        }
+
+        .right-tab {
+            width: 30%;
+        }
+
+        .tab-active {
+            background:#368bff;
+            border-radius: 19px;
+            transform: scale(1.1);
+
+            span {
+                transform: scale(0.9);
+                color: #ffffff;
+            }
         }
     }
 }
-
 
 .darkContainer{
 

@@ -1,3 +1,29 @@
+.empty-notifs {
+    margin-top: 66%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    h1 {
+        font-size: 22px;
+        font-weight: 500;
+        line-height: 2.42;
+        letter-spacing: 1.2px;
+        color: #8888b0;
+        margin: 0;
+    }
+
+    p {
+        font-size: 15px;
+        font-weight: normal;
+        line-height: 1.38;
+        letter-spacing: 1.6px;
+        color: #8888b0;
+        margin: 0;
+    }
+}
+
 .center-content-notification{
     width: 100%;
     margin-top: calc(50% + 64px);

@@ -19,18 +19,20 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
     providedIn: 'root'
 })
 export class AppService {
+
    //@ViewChild(IonRouterOutlet,{static:true}) ionRouterOutlet: IonRouterOutlet;
     constructor(
-                private router: Router,
-                public theme:ThemeService,
-                private zone: NgZone,
-                private translate:TranslateService,
-                private event: Events,
-                private native:NativeService,
-                private feedService: FeedService,
-                private carrierService:CarrierService,
-                private menu: MenuController,
-                private popoverController:PopoverController) {
+      private router: Router,
+      public theme:ThemeService,
+      private zone: NgZone,
+      private translate:TranslateService,
+      private event: Events,
+      private native:NativeService,
+      private feedService: FeedService,
+      private carrierService:CarrierService,
+      private menu: MenuController,
+      private popoverController:PopoverController
+    ) {
     }
 
     init() {
@@ -51,16 +53,18 @@ export class AppService {
     }
 
     handleBack(){
-      if(this.router.url.indexOf('/bindservice/importdid/')>-1 ||
-         this.router.url.indexOf('/bindservice/publishdid/')>-1 ||
-         this.router.url.indexOf('/bindservice/issuecredential/')>-1 ||
-         this.router.url.indexOf('/bindservice/importdid/')>-1){
+      if(
+        this.router.url.indexOf('/bindservice/importdid/') >-1 ||
+        this.router.url.indexOf('/bindservice/publishdid/') >-1 ||
+        this.router.url.indexOf('/bindservice/issuecredential/') >-1 ||
+        this.router.url.indexOf('/bindservice/importdid/') >-1
+      ) {
         this.createDialog();
-    }else if(this.router.url==='/menu/servers'){
+      } else if (this.router.url === '/menu/servers') {
          this.initTab();
-    }else{
+      } else {
         this.native.pop();
-    }
+      }
     }
 
     addright(){
@@ -69,7 +73,6 @@ export class AppService {
         iconPath: "assets/icon/more_menu.ico"
       });
     }
-
 
     onMessageReceived(msg: AppManagerPlugin.ReceivedMessage) {
         var params: any = msg.message;
@@ -120,8 +123,8 @@ export class AppService {
         let isLoadChannel = false;
         let isNeedResave = localStorage.getItem('org.elastos.dapp.feeds.resavepost') || "";
 
-        this.feedService.initSignInDataAsync((signInData)=>{
-          this.feedService.loadPostData().then(()=>{
+        this.feedService.initSignInDataAsync((signInData) => {
+          this.feedService.loadPostData().then(() => {
             if(isNeedResave === ""){
               localStorage.setItem('org.elastos.dapp.feeds.resavepost',"11");
               this.feedService.reSavePostMap();

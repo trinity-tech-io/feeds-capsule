@@ -194,16 +194,25 @@ export class DidData{
   ){}
 }
 
-export class SignInData{
+export class SignInData {
   constructor(
-      public did: string,
-      public name: string,
-      public email: string,
-      public telephone: string,
-      public location: string,
-      public description: string,
-      public expiresTS: number) {}
+    public did: string,
+    public name: string,
+    public avatar: Avatar,
+    public email: string,
+    public telephone: string,
+    public location: string,
+    public description: string,
+    public expiresTS: number
+  ) {}
 }
+
+export class Avatar {
+  contentType: string; 
+  data: string;
+  type?: string;    
+}
+
 enum RequestAction{
   defaultAction,
   refreshPostDetail
@@ -379,6 +388,7 @@ export class FeedService {
   private declareOwnerTimeout: NodeJS.Timer;
   private declareOwnerInterval: NodeJS.Timer;
   private isDeclareFinish: boolean = false;
+
   public constructor(
     private serializeDataService: SerializeDataService,
     private jwtMessageService: JWTMessageService,
@@ -388,9 +398,10 @@ export class FeedService {
     private carrierService: CarrierService,
     private native: NativeService,
     private translate: TranslateService,
-    private storeService: StorageService) {
-      eventBus = events;
-      this.init();
+    private storeService: StorageService
+  ) {
+    eventBus = events;
+    this.init();
   }
 
   init(){
@@ -1003,7 +1014,6 @@ export class FeedService {
   }
 
   checkDIDValidity(){
-
   }
 
   parseDid(feedUrl: string): DidData{
@@ -1278,12 +1288,29 @@ export class FeedService {
     this.storeService.set(PersistenceKey.signInRawData, jsonStr);
   }
 
-  saveSignInData(did: string, name: string, email: string, telephone: string, location: string, description: string){
-    localSignInData = new SignInData(did,name,email,telephone,location, description, this.getCurrentTimeNum()+this.getDaysTS(expDay));
+  saveSignInData(
+    did: string,
+    name: string,
+    avatar: Avatar,
+    email: string,
+    telephone: string,
+    location: string,
+    description: string
+  ){
+    localSignInData = new SignInData(
+      did,
+      name,
+      avatar,
+      email,
+      telephone,
+      location,
+      description,
+      this.getCurrentTimeNum()+this.getDaysTS(expDay)
+    );
     this.storeService.set(PersistenceKey.signInData, localSignInData);
   }
 
-  saveSignInData2(signInData: SignInData){
+  saveSignInData2(signInData: SignInData) {
     localSignInData = signInData;
     this.storeService.set(PersistenceKey.signInData, signInData);
   }
@@ -1292,7 +1319,7 @@ export class FeedService {
     this.storeService.remove(PersistenceKey.signInData);
   }
 
-  getSignInData(): SignInData{
+  getSignInData(): SignInData {
     return localSignInData;
   }
 
