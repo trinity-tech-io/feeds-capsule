@@ -114,9 +114,10 @@ export class MyApp {
     });
   }
 
-  pressName(name:string){
-    if(name != "" && name.length>15){
-      this.native.createTip(name);
+  pressName(){
+    let mName = this.name||"";
+    if(mName != "" && mName.length>15){
+      this.native.createTip(mName);
     }
   }
 }
