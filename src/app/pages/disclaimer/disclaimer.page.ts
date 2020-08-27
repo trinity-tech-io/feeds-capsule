@@ -4,6 +4,7 @@ import { TranslateService } from "@ngx-translate/core";
 import { NativeService } from 'src/app/services/NativeService';
 import { AppService } from './../../services/AppService';
 import { SplashscreenPage } from './../../pages/splashscreen/splashscreen.page';
+import { ThemeService } from 'src/app/services/theme.service';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 declare let appManager: AppManagerPlugin.AppManager;
 @Component({
@@ -18,9 +19,11 @@ export class DisclaimerPage implements OnInit {
     private appService: AppService,
     private events: Events,
     private native: NativeService,
-    private translate:TranslateService,){
+    private translate: TranslateService,
+    public theme: ThemeService
+  ){
 
-     }
+  }
 
   ngOnInit() {
   }

@@ -1,5 +1,5 @@
 <ion-content>
-    <ion-grid>
+    <ion-grid [class.darkContainer]="theme.darkMode">
       <ion-row>
         <ion-col size="12">
           <!-- <h4>{{ 'DisclaimerPage.introduce' | translate }}</h4> -->
@@ -7,15 +7,16 @@
           <p class="des">{{ 'DisclaimerPage.introduce2' | translate }}</p>
           <p class="des">{{ 'DisclaimerPage.introduce3' | translate }}</p>
         </ion-col>
-
-        <ion-col size="6" style="text-align: center;" (click)="cancel()">
-          <span class="cancel">{{ 'common.naccepted' | translate }}</span>
+      </ion-row>
+      <ion-row class="btn-row">
+        <ion-col class="btn cancel ion-activatable ripple" size="5.6" (click)="cancel()">
+            <ion-label>{{ 'common.naccepted' | translate }}</ion-label>
+            <ion-ripple-effect></ion-ripple-effect>
         </ion-col>
-    
-        <ion-col size="6" style="text-align: center;" (click)="confirm()">
-          <span class="confirm">{{ 'common.accept' | translate }}</span>
+        <ion-col class="btn confirm ion-activatable ripple" size="5.6" (click)="confirm()">
+            <ion-label>{{ 'common.accept' | translate }}</ion-label>
+            <ion-ripple-effect></ion-ripple-effect>
         </ion-col>
-        <div style="height:30px">&nbsp;</div>
       </ion-row>
     </ion-grid>
 </ion-content>
