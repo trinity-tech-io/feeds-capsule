@@ -357,6 +357,7 @@ export class FeedIntro{
 
 @Injectable()
 export class FeedService {
+  public curtab:string ="home";
   public channelInfo:any ={};
   public postMap: any;
   public testMode = true;
@@ -4146,4 +4147,12 @@ export class FeedService {
   getChannelInfo(){
     return this.channelInfo || {};
   }
+
+  setCurTab(curtab:string){
+    this.curtab = curtab;
+ }
+
+ getCurTab(){
+   return this.curtab;
+ }
 }

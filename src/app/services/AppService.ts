@@ -57,7 +57,7 @@ export class AppService {
          this.router.url.indexOf('/bindservice/importdid/')>-1){
         this.createDialog();
     }else if(this.router.url==='/menu/servers'){
-        this.native.setRootRouter(['/tabs/home']);
+         this.initTab();
     }else{
         this.native.pop();
     }
@@ -167,5 +167,23 @@ export class AppService {
         });
         
         return await popover.present();
+      }
+
+      initTab(){
+        let currentTab = this.feedService.getCurTab();
+          switch(currentTab){
+            case "home":
+              this.native.setRootRouter(['/tabs/home']);
+              break;
+          case "profile":
+            this.native.setRootRouter(['/tabs/profile']);
+              break;
+          case "notification":
+            this.native.setRootRouter(['/tabs/notification']);
+              break;
+          case "search":
+            this.native.setRootRouter(['/tabs/search']);
+              break;             
+          }
       }
 }

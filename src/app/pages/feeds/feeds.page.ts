@@ -15,8 +15,8 @@ declare let appManager: AppManagerPlugin.AppManager;
   styleUrls: ['./feeds.page.scss'],
 })
 export class FeedsPage implements OnInit {
-  public title = "FeedsPage.tabTitle1";
-  public currentTab = "home";
+  public title = "";
+  public currentTab = "";
   constructor(
     private navCtrl: NavController,
     private native: NativeService,
@@ -28,12 +28,29 @@ export class FeedsPage implements OnInit {
     }
 
   ngOnInit() {
-  
+
+  }
+
+  initTab(){
+    let currentTab = this.feedService.getCurTab();
+      switch(currentTab){
+        case "home":
+          this.home();
+          break;
+      case "profile":
+          this.profile();
+          break;
+      case "notification":
+          this.notification();
+          break;
+      case "search":
+          this.search()
+          break;             
+      }
   }
 
   ionViewWillEnter() {
-    this.title = "FeedsPage.tabTitle1";
-    this.currentTab = "home";
+    this.initTab();
     this.event.subscribe("feeds:updateTitle",()=>{
       this.initTile();
     });
@@ -95,6 +112,7 @@ export class FeedsPage implements OnInit {
       this.title = "FeedsPage.tabTitle1";
       this.initTile();
       this.native.setTitleBarBackKeyShown(false);
+      this.feedService.setCurTab(this.currentTab);
     }
 
     profile(){
@@ -102,6 +120,7 @@ export class FeedsPage implements OnInit {
       this.title = "FeedsPage.tabTitle2"
       this.initTile();
       this.native.setTitleBarBackKeyShown(false);
+      this.feedService.setCurTab(this.currentTab);
     }
 
     notification(){
@@ -109,6 +128,7 @@ export class FeedsPage implements OnInit {
       this.title = "FeedsPage.tabTitle3";
       this.initTile();
       this.native.setTitleBarBackKeyShown(false);
+      this.feedService.setCurTab(this.currentTab);
     }
 
     search(){
@@ -117,6 +137,7 @@ export class FeedsPage implements OnInit {
       this.title = "FeedsPage.tabTitle4";
       this.initTile();
       this.native.setTitleBarBackKeyShown(false);
+      this.feedService.setCurTab(this.currentTab);
     }
 
 
