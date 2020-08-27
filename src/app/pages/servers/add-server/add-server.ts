@@ -125,7 +125,7 @@ export class AddServerPage implements OnInit {
         this.native.toastWarn("AddServerPage.tipMsg");
         return ;
     }
-    this.native.getNavCtrl().navigateForward(['/menu/servers/server-info', result, "", false]);
+    this.native.getNavCtrl().navigateForward(['/menu/servers/server-info', result,"0", false]);
   }
 
 

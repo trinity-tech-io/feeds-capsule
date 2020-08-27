@@ -54,7 +54,8 @@ export class ServerInfoPage implements OnInit {
     this.acRoute.params.subscribe(data => {
       this.isOwner = data.isOwner || "";
       this.address = data.address || "";
-      this.nodeId = data.nodeId||"";
+      if(data.nodeId != "0")
+        this.nodeId = data.nodeId||"";
       this.initData();
     });
   }
