@@ -27,17 +27,17 @@
         <ion-label class="profile-sub-text">{{followers}} </ion-label>
         <ion-label  class="profile-subscribe">{{'common.followers' | translate}}</ion-label>
     </div> -->
-  
+
     <div class="tab-container">
-        <div class="left-tab" [class.tab-active]="selectType === 'ProfilePage.myFeeds'" (click)="changeType('ProfilePage.myFeeds')">
-            <span>{{ 'ProfilePage.myFeeds' | translate }}</span>
-        </div>
-        <div class="middle-tab" [class.tab-active]="selectType === 'ProfilePage.following'" (click)="changeType('ProfilePage.following')">
-          <span>{{ 'ProfilePage.following' | translate }}</span>
-        </div>
-        <div class="right-tab" [class.tab-active]="selectType === 'ProfilePage.myLikes'" (click)="changeType('ProfilePage.myLikes')">
-            <span>{{'ProfilePage.myLikes' | translate }}</span>
-        </div>
+      <div class="left-tab" [class.tab-active]="selectType === 'ProfilePage.myFeeds'" (click)="changeType('ProfilePage.myFeeds')">
+        <span>{{ 'ProfilePage.myFeeds' | translate }}</span>
+      </div>
+      <div class="middle-tab" [class.tab-active]="selectType === 'ProfilePage.following'" (click)="changeType('ProfilePage.following')">
+        <span>{{ 'ProfilePage.following' | translate }}</span>
+      </div>
+      <div class="right-tab" [class.tab-active]="selectType === 'ProfilePage.myLikes'" (click)="changeType('ProfilePage.myLikes')">
+        <span>{{'ProfilePage.myLikes' | translate }}</span>
+      </div>
     </div>
   
     <app-myfeeds *ngIf="selectType == 'ProfilePage.myFeeds'"  [channels] = "channels" [nodeStatus]="nodeStatus"></app-myfeeds>

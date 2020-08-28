@@ -16,6 +16,7 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
   styleUrls: ['./scanqrcode.page.scss'],
 })
 export class ScanqrcodePage implements OnInit {
+
   public connectionStatus = 1;
   public title = "01/06";
   public waitFriendsOnline = false;
