@@ -2,7 +2,7 @@ export const fr = {
     "common":{
         "followers":"Followers",
         "allempty":"All Empty",
-        "pullToRefresh":"Pull to refresh",
+        "pullToRefresh":"release to refresh",
         "Refreshing":"Refreshing...",
         "cancel":"Cancel",
         "ok":"OK",

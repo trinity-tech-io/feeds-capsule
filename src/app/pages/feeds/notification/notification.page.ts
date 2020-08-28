@@ -28,7 +28,7 @@ export class NotificationPage {
   public startIndex = 0;
   public pageNumber = 8;
   public totalData:any = [];
-  public isBottom:boolean = false;
+
 
   constructor(
     private native:NativeService,
@@ -62,11 +62,9 @@ export class NotificationPage {
     if(this.totalData.length - this.pageNumber > this.pageNumber){
       this.notificationList = this.totalData.slice(this.startIndex,this.pageNumber);
       this.startIndex++;
-      this.isBottom = false;
       this.infiniteScroll.disabled =false;
      }else{
       this.notificationList = this.totalData.slice(0,this.totalData.length);
-      this.isBottom =true;
       this.infiniteScroll.disabled =true;
     }
   }
@@ -216,7 +214,6 @@ export class NotificationPage {
         this.zone.run(()=>{
           this.notificationList =  this.notificationList.concat(arr);
         });
-        this.isBottom = true;
         this.infiniteScroll.disabled =true;
         event.target.complete();
        }

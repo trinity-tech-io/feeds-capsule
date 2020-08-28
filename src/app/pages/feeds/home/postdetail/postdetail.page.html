@@ -30,6 +30,7 @@
               <div class="text-div">
                 <div class="text1-div"> 
                   <ion-label class="channel-title-small white" (press)="pressName()">{{channelName}}</ion-label>
+                  <ion-label class="post-detail-ts">{{handleDisplayTime(postTS)}}</ion-label>
                 </div>
                 <div> 
                   <ion-label class="channel-desc-small">@{{channelOwner}}</ion-label>
@@ -55,8 +56,6 @@
 
           <img src="./assets/images/bubble-line.svg" class="comment" (click)="showCommentPage(nodeId,channelId,postId)">
           <ion-label class="comment-text white" (click)="showCommentPage(nodeId,channelId,postId)">{{commentsNum}}</ion-label>
-
-          <ion-label class="post-detail-ts">{{handleDisplayTime(postTS)}}</ion-label>
         </div>
     </div>
     <div class="line-div"></div>
@@ -94,11 +93,6 @@
         <div class="line-div white-line" *ngIf="i!=commentList.length-1"></div>
       </div>
 
-      <div *ngIf="commentList.length>1">
-        <div style="text-align: center;margin-top: 20px;margin-bottom: 20px;" *ngIf="isBottom">
-            {{ "common.des3" | translate }}
-        </div>
-      </div>
       
       <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event)">
         <ion-infinite-scroll-content

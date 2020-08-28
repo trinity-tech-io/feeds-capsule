@@ -43,13 +43,7 @@
     <app-myfeeds *ngIf="selectType == 'ProfilePage.myFeeds'"  [channels] = "channels" [nodeStatus]="nodeStatus"></app-myfeeds>
     <app-following *ngIf="selectType == 'ProfilePage.following'"  [followingList] = "followingList" [nodeStatus]="nodeStatus"></app-following>
     <app-likes  *ngIf="selectType == 'ProfilePage.myLikes'" [likeList] = "likeList" [nodeStatus]="nodeStatus"></app-likes>
-  
-    <div *ngIf="likeList.length>1&&selectType == 'ProfilePage.myLikes'">
-      <div style="text-align: center;margin-top: 20px;margin-bottom: 20px;" *ngIf="isBottom">
-          {{ "common.des3" | translate }}
-      </div>
-    </div>
-  
+   
     <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event)">
       <ion-infinite-scroll-content
         loadingSpinner="bubbles"

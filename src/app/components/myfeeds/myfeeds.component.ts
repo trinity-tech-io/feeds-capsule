@@ -32,7 +32,7 @@ export class MyfeedsComponent implements OnInit {
   }
 
   createNewFeed(){
-    this.feedService.setProfileIamge("");
+    this.feedService.setProfileIamge("assets/images/profile-1.svg");
     this.feedService.setSelsectIndex(1);
     if(this.feedService.getConnectionStatus() != 0){
       this.native.toastWarn('common.connectionError');

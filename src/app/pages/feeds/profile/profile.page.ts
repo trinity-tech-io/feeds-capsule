@@ -16,7 +16,6 @@ export class ProfilePage implements OnInit {
   public channels = []; //myFeeds page
   public followingList = []; // following page
   public totalLikeList = [];
-  public isBottom:boolean = false;
   public startIndex:number = 0;
   public pageNumber:number = 5;
   public likeList = []; //like page
@@ -70,12 +69,10 @@ export class ProfilePage implements OnInit {
       this.likeList  = this.totalLikeList.slice(this.startIndex,this.pageNumber);
      
       this.startIndex++;
-      this.isBottom = false;
       this.infiniteScroll.disabled =false;
     }else{
       
       this.likeList = this.totalLikeList.slice(0,this.totalLikeList.length);
-      this.isBottom =true;
       this.infiniteScroll.disabled =true;
     }
   }
@@ -223,7 +220,6 @@ export class ProfilePage implements OnInit {
          this.zone.run(()=>{
              this.likeList = this.likeList.concat(arr);
          });
-         this.isBottom = true;
          this.infiniteScroll.disabled =true;
          this.initnodeStatus(arr);
          event.target.complete();

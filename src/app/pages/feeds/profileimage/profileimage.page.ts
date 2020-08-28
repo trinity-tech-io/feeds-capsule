@@ -112,7 +112,7 @@ export class ProfileimagePage implements OnInit {
       (err)=>{
         if(this.userAvatar === "./assets/images/profile-add-dark.svg" || this.userAvatar === "./assets/images/profile-add.svg" ){
           this.avatar = "";
-          this.feedService.setProfileIamge("");
+          this.feedService.setProfileIamge("assets/images/profile-1.svg");
           this.native.toast_trans('common.noImageSelected');
         }
         }

@@ -27,7 +27,6 @@ export class HomePage implements OnInit {
   public startIndex = 0;
   public pageNumber = 8;
   public totalData = [];
-  public isBottom:boolean = false;
   public images = {};
 
   constructor(
@@ -50,11 +49,9 @@ export class HomePage implements OnInit {
     if(this.totalData.length - this.pageNumber > this.pageNumber) {
       this.postList = this.totalData.slice(this.startIndex,this.pageNumber);
       this.startIndex++;
-      this.isBottom = false;
       this.infiniteScroll.disabled =false;
     } else {
       this.postList = this.totalData.slice(0,this.totalData.length);
-      this.isBottom =true;
       this.infiniteScroll.disabled =true;
     }
     this.scrollToTop(1);
@@ -68,18 +65,15 @@ export class HomePage implements OnInit {
 
     this.events.subscribe('feeds:publishPostFinish',()=>{
       this.zone.run(() => {
-        this.isBottom = false;
         this.infiniteScroll.disabled =false;
         this.startIndex = 0;
         this.totalData = this.feedService.getPostList() || [];
         if (this.totalData.length - this.pageNumber > this.pageNumber){
           this.postList = this.totalData.slice(this.startIndex,this.pageNumber);
           this.startIndex++;
-          this.isBottom = false;
           this.infiniteScroll.disabled =false;
          } else {
           this.postList =  this.totalData.slice(0,this.totalData.length);
-          this.isBottom =true;
           this.infiniteScroll.disabled =true;
         }
         this.scrollToTop(1);
@@ -260,7 +254,6 @@ export class HomePage implements OnInit {
         this.zone.run(()=>{
             this.postList = this.postList.concat(arr);
         });
-        this.isBottom = true;
         this.infiniteScroll.disabled =true;
         this.initnodeStatus(arr);
         event.target.complete();
@@ -272,13 +265,17 @@ export class HomePage implements OnInit {
   doRefresh(event){
     let sId =  setTimeout(() => {
       this.images = {};
-      this.isBottom = false;
       this.infiniteScroll.disabled =false;
       this.startIndex = 0;
       this.totalData = this.feedService.getPostList() || [];
-      this.connectionStatus = this.feedService.getConnectionStatus();
-      this.postList = this.totalData.slice(this.startIndex,this.pageNumber);
-      this.startIndex++;
+      if(this.totalData.length - this.pageNumber > this.pageNumber){
+        this.postList = this.totalData.slice(this.startIndex,this.pageNumber);
+        this.startIndex++;
+        this.infiniteScroll.disabled =false;
+       }else{
+        this.postList = this.totalData.slice(0,this.totalData.length);
+        this.infiniteScroll.disabled =true;
+      }
       this.initnodeStatus(this.postList);
       event.target.complete();
       clearTimeout(sId);
