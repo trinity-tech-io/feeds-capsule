@@ -101,8 +101,9 @@ export class ServersPage implements OnInit {
             if (this.serverList[index] != undefined)
                 this.feedService.getStatistics(this.serverList[index].nodeId);
         }
-        setTimeout(() => {
+      let sid= setTimeout(() => {
             event.target.complete();
+            clearTimeout(sid);
         }, 2000);
     }
 

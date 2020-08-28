@@ -119,7 +119,7 @@ export class MyApp {
   }
 
   pressName(){
-    let mName = this.name||"";
+    let mName = this.wName||"";
     if(mName != "" && mName.length>15){
       this.native.createTip(mName);
     }

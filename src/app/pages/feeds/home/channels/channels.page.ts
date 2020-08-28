@@ -37,7 +37,6 @@ export class ChannelsPage implements OnInit {
 
   public followStatus:boolean = false;
 
-  public isBottom:boolean = false;
   public startIndex:number = 0;
   public pageNumber:number = 5;
   public totalData:any = [];
@@ -107,11 +106,9 @@ export class ChannelsPage implements OnInit {
     if(this.totalData.length-this.pageNumber > this.pageNumber){
       this.postList = this.totalData.slice(this.startIndex,this.pageNumber);
       this.startIndex++;
-      this.isBottom = false;
       this.infiniteScroll.disabled =false;
     }else{
       this.postList = this.totalData.slice(0,this.totalData.length);
-      this.isBottom =true;
       this.infiniteScroll.disabled =true;
     }
   }
@@ -286,7 +283,7 @@ export class ChannelsPage implements OnInit {
   }
 
   menuMore(){
-    this.menuService.showChannelMenu(this.nodeId, Number(this.channelId), this.channelName);
+    this.menuService.showShareMenu(this.nodeId, Number(this.channelId), this.channelName);
   }
 
   checkServerStatus(nodeId: string){
@@ -360,7 +357,6 @@ export class ChannelsPage implements OnInit {
           this.initStatus(arr);
           this.postList =  this.postList.concat(arr);
        });
-       this.isBottom = true;
        this.infiniteScroll.disabled =true;
        event.target.complete();
        clearTimeout(sId);

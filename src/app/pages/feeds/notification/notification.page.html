@@ -42,11 +42,6 @@
     </ion-item-sliding>
   </div>
 
-  <div *ngIf="notificationList.length>1">
-    <div style="text-align: center;margin-top: 20px;margin-bottom: 20px;" *ngIf="isBottom">
-      {{ "common.des3" | translate }}
-    </div>
-  </div>
 
   <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event)">
     <ion-infinite-scroll-content

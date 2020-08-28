@@ -374,7 +374,7 @@ export class FeedService {
   private realm = "";
   private serviceNonce = "";
   private serviceRealm = "";
-  private profileIamge = "";
+  private profileIamge = "assets/images/profile-1.svg";
   private selsectIndex = 1;
   private carrierStatus:ConnState = ConnState.disconnected;
   private networkStatus:ConnState = ConnState.disconnected;

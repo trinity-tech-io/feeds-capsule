@@ -37,7 +37,6 @@ export class PostdetailPage implements OnInit {
   public channelId:number = 0;
   public postId:number = 0;
   public objStyle:any={"width":""};
-  public isBottom:boolean = false;
   public startIndex:number = 0;
   public pageNumber:number = 5;
   public totalData:any = [];
@@ -79,11 +78,9 @@ export class PostdetailPage implements OnInit {
     if(this.totalData.length-this.pageNumber > this.pageNumber){
       this.commentList = this.totalData.slice(this.startIndex,this.pageNumber);
       this.startIndex++;
-      this.isBottom = false;
       this.infiniteScroll.disabled =false;
     }else{
       this.commentList = this.totalData.slice(0,this.totalData.length);
-      this.isBottom =true;
       this.infiniteScroll.disabled =true;
     }
   }
@@ -309,7 +306,6 @@ export class PostdetailPage implements OnInit {
        this.zone.run(()=>{
            this.commentList = this.commentList.concat(arr);
        });
-       this.isBottom = true;
        this.infiniteScroll.disabled =true;
        this.initnodeStatus();
        event.target.complete();
