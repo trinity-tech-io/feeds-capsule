@@ -6,6 +6,7 @@ import { NativeService } from 'src/app/services/NativeService';
 import { AppService } from 'src/app/services/AppService';
 import { PopupProvider } from 'src/app/services/popup';
 import { TranslateService } from "@ngx-translate/core";
+import { ThemeService } from 'src/app/services/theme.service';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 declare let appManager: AppManagerPlugin.AppManager;
 @Component({
@@ -36,7 +37,9 @@ export class AddServerPage implements OnInit {
     private appService: AppService,
     private popup: PopupProvider,
     private loadingController: LoadingController,
-    private translate:TranslateService) {
+    private translate:TranslateService,
+    public theme: ThemeService
+  ) {
       // this.acRoute.params.subscribe(data => {
       //   this.address = data.address;
       //   if (this.address == null ||

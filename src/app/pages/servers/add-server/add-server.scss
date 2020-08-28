@@ -1,6 +1,58 @@
-* {
-  font-family: 'Raleway', sans-serif;
+.container {
+  padding: 45px 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+
+  h1, .input-row, .btn-row {
+    width: 100%;
+  }
+
+  h1 {
+    margin: 20px 0 30px;
+    font-size: 22px;
+    font-weight: 500;
+    letter-spacing: 1.2px;
+    text-align: center;
+    color: #8888b0;
+  }
+
+  .input-row {
+    margin: 7.5px 0 37.5px;
+
+    ion-input {
+      background-color: #f0f1ff;
+      color: #afb1cb;
+      --padding-start: 12px;
+    }
+  }
+
+  .btn-row {
+    margin: 7.5px 0;
+
+    ion-button {
+      height: 41px;
+      font-size: 15px;
+    }
+  }
 }
+
+.darkContainer {
+  .input-row {
+    ion-input {
+      background-color: #2d2e4d;
+      color: #cfd1f7;
+    }
+  }
+
+  .btn-row {
+    ion-button {
+      box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.15);
+    }
+  }
+}
+
 
 ion-header {
 

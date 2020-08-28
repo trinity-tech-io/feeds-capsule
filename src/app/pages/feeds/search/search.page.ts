@@ -13,9 +13,11 @@ import { UtilService } from 'src/app/services/utilService';
   styleUrls: ['./search.page.scss'],
 })
 export class SearchPage implements OnInit {
+
   public connectionStatus = 1;
-  public nodeStatus:any={};
+  public nodeStatus: any = {};
   public channelList= [];
+
   constructor(
     private feedService: FeedService,
     private events: Events,
@@ -23,9 +25,9 @@ export class SearchPage implements OnInit {
     private native: NativeService,
     public theme:ThemeService,
     private menuService: MenuService,
-    private translate:TranslateService) {
-     
-    }
+    private translate:TranslateService
+  ) {
+  }
 
   ngOnInit() {
  
@@ -139,7 +141,7 @@ export class SearchPage implements OnInit {
   }
 
   addfeedssource(){
-    if(this.feedService.getConnectionStatus() != 0){
+    if(this.feedService.getConnectionStatus() !== 0){
       this.native.toastWarn('common.connectionError');
       return;
     }

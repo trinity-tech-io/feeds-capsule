@@ -2,7 +2,7 @@
   <div class="offline-header"></div>
 </ion-header>
 <ion-content>
-  <div>
+  <!-- <div>
     <div style="margin-top: 33px;" class="center-flex">
       <img style="  width: 82.5px;
       height: 54.9px;" src="assets/images/empty-feeds-icon.svg">
@@ -46,7 +46,38 @@
         <ion-label>{{'AddServerPage.confirm'|translate}}</ion-label>
       </ion-button>
     </div>
-  </div>
+  </div> -->
+
+  <ion-grid class="container" [class.darkContainer]="theme.darkMode">
+    <img src="assets/images/empty-feeds-icon.svg">
+    <h1>
+        {{ 'AddServerPage.scanorEnterManual' | translate }}
+        {{ 'AddServerPage.sourceAddress' | translate }}
+    </h1>
+    <ion-row class="input-row">
+        <ion-input 
+          required
+          type="text"
+          placeholder="{{'AddServerPage.sourceaddresshere'|translate}}"
+          [(ngModel)]="address"
+        >
+        </ion-input>
+    </ion-row>
+    <ion-row class="btn-row">
+      <ion-button (click)="scanCode()">
+        <ion-label>
+          {{ 'AddServerPage.openQRScanner' | translate }}
+        </ion-label>
+      </ion-button>
+    </ion-row>
+    <ion-row class="btn-row">
+      <ion-button (click)="confirm()" [disabled]='buttonDisabled'>
+        <ion-label>
+          {{ 'AddServerPage.confirm' | translate }}
+        </ion-label>
+      </ion-button>
+    </ion-row>
+  </ion-grid>
 
 
 

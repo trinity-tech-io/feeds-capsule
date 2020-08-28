@@ -4,7 +4,7 @@
 <ion-content>
 
   <div class="search-container" [class.dark-search-container]="theme.darkMode">
-    <ion-searchbar placeholder="{{ 'SearchPage.searchFeeds' | translate }}" (ionInput)="getItems($event)"></ion-searchbar>
+    <ion-searchbar placeholder="{{ 'SearchPage.searchFeeds' | translate }}" (ionInput)="getItems($event)" mode="ios"></ion-searchbar>
   </div>
 
   <div *ngIf="channelList.length == 0" class="empty-container">
@@ -21,10 +21,11 @@
   </div>
 
   <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" pullFactor="0.5">
+
     <ion-refresher-content
-      pullingIcon="arrow-dropdown"
+      class="refresh"
       pullingText="{{'common.pullToRefresh'|translate}}"
-      refreshingSpinner="circles"
+      pullingIcon="arrow-dropdown"
       refreshingText="">
     </ion-refresher-content>
   </ion-refresher>

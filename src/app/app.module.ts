@@ -123,7 +123,7 @@ export function anim(AnimationC: Animation, baseEl: any, position?: any): Promis
     SplashscreenPageModule,
     IonicModule.forRoot({
       rippleEffect: false,
-      mode: 'ios',
+      // mode: 'ios',
       navAnimation: anim,
     }),
     TranslateModule.forRoot({

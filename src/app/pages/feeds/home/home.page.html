@@ -19,9 +19,9 @@
 
   <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" pullFactor="0.5">
     <ion-refresher-content
-      pullingIcon="arrow-dropdown"
+      class="refresh"
       pullingText="{{'common.pullToRefresh'|translate}}"
-      refreshingSpinner="circles"
+      pullingIcon="arrow-dropdown"
       refreshingText="">
     </ion-refresher-content>
   </ion-refresher>

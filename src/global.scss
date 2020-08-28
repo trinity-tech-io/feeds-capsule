@@ -84,6 +84,22 @@ ion-button {
   }
 }
 
+ion-input {
+  height: 45px;
+  border-radius: 8px;
+  font-size: 15px;
+}
+
+/** ion-refresher **/
+.refresh {
+  .refresher-pulling-text,
+  .refresher-refreshing-text,
+  .refresher-refreshing-icon,
+  .refresher-pulling-icon {
+    font-weight: 500;
+  }
+}
+
 ion-header {
 
   ion-toolbar {
