@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
+
   { path: '', loadChildren: './pages/feeds/feeds.module#FeedsPageModule' },
   { path: 'tabs', loadChildren: './pages/feeds/feeds.module#FeedsPageModule' },
   { path: 'splashscreen', loadChildren: './pages/splashscreen/splashscreen.module#SplashscreenPageModule' },

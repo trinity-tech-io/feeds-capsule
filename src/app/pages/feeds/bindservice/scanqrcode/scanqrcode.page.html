@@ -1,14 +1,39 @@
 <ion-header *ngIf="connectionStatus == 1">
    <div class="offline-header"></div>
  </ion-header>
-<ion-content ion-padding [class.darkContainer]="theme.darkMode">
+ <ion-content>
+    <ion-grid class="container" [class.darkContainer]="theme.darkMode">
+       <h1>
+         {{ 'ScanqrcodePage.introtitle' | translate }} <br>
+         {{ 'ScanqrcodePage.introtitle2' | translate }}
+      </h1>
+       <p>
+         {{'ScanqrcodePage.introduce1'|translate}} <br><br>
+         {{'ScanqrcodePage.introduce2'|translate}}
+      </p>
+      <ion-row class="input-row">
+         <ion-col size="10" class="left-col">
+            <ion-input
+               type="text"
+               placeholder="{{'ScanqrcodePage.introduce4'|translate}}"
+               [(ngModel)]="scanContent"
+            >
+            </ion-input>
+         </ion-col>
+         <ion-col size="2" class="right-col">
+            <img (click)="scanService()" [src]="!theme.darkMode ? 'assets/icons/scan.svg' : 'assets/icons/darkmode/scan.svg'"/>
+         </ion-col>
+      </ion-row>
+    </ion-grid>
+ </ion-content>
+
+<!-- <ion-content ion-padding [class.darkContainer]="theme.darkMode">
 <div class="first white">
      {{'ScanqrcodePage.introduce'|translate}}
 </div>
 <div class="second">
    <div class="introduce"> {{'ScanqrcodePage.introduce1'|translate}}</div>
    <div class="introduce"> {{'ScanqrcodePage.introduce2'|translate}}</div>
-   <!-- <div class="introduce">{{'ScanqrcodePage.introduce3'|translate}}</div> -->
 </div>
 
 <div class="three" (click)="scanService()">
@@ -19,4 +44,4 @@
        <ion-img src="./assets/images/scan.svg"></ion-img>
    </div>
 </div>
-</ion-content>
+</ion-content> -->

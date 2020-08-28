@@ -224,7 +224,8 @@ export const fr = {
         "error":"resolve diddocument error",
     },
     "ScanqrcodePage":{
-        "introduce":"Create a new Feed Source",
+        "introtitle": "Create a new",
+        "introtitle2": "Feed Source",
         "introduce1":"Be sure you have a new Feed source/service setup on your device and a QRcode address displayed on the browser.",
         "introduce2":"Scan the QRcode to bind your current DID with the Feed source/service.",
         // "introduce3":"to proceed",

@@ -224,6 +224,8 @@ export const zh = {
         "error":"解析DID文档错误",
     },
     "ScanqrcodePage":{
+        "introtitle": "创建新的微",
+        "introtitle2": "频源",
         "introduce":"创建新的微频源",
         "introduce1":"请确保您已启动微频源节点新服务，且通过浏览器已显示微频源二维码。",
         "introduce2":"请直接扫描此微频源二维码开始微频源绑定进程。",
