@@ -9,9 +9,10 @@ import { NativeService } from './NativeService';
 export class MenuService {
     constructor(
         private feedService: FeedService,
-        private actionSheetController:ActionSheetController,
+        private actionSheetController: ActionSheetController,
         private translate: TranslateService,
-        private native: NativeService) {
+        private native: NativeService
+    ) {
     }
 
     async showChannelMenu(nodeId: string, channelId: number, channelName: string){

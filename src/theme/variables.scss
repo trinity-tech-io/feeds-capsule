@@ -204,6 +204,40 @@ html, body { height: 100%; scroll-behavior:smooth;}
 
 $segment-button-md-text-color: #007AFF !important;
 
+.profile-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+
+  ion-img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    overflow: hidden;
+    border-radius: 50%;
+    border: 2px solid #368bff;
+  }
+
+  h1 {
+    margin: 0;
+    padding: 15px 30px 7.5px;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1.21;
+    text-align: center;
+  }
+
+  p {
+    margin: 0;
+    padding: 0px 60px 15px;
+    font-size: 12px;
+    font-weight: 500;
+    text-align: center;
+    overflow: hidden;
+  }
+}
+
 .search-container {
   display: flex;
   justify-content: center;

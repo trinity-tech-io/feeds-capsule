@@ -31,12 +31,12 @@ const routes: Routes = [
 
   { path: 'menu/setting', loadChildren: './pages/feeds/menu/setting/setting.module#SettingPageModule' },
   { path: 'menu/profiledetail', loadChildren: './pages/feeds/menu/profiledetail/profiledetail.module#ProfiledetailPageModule' },
-
   { path: 'menu/about', loadChildren: './pages/about/about.module#AboutPageModule' },
   { path: 'menu/develop', loadChildren: './pages/feeds/menu/develop/develop.module#DevelopPageModule' },
+  { path: 'menu/donation', loadChildren: './pages/feeds/menu/donation/donation.module#DonationPageModule' },
 
   { path: 'disclaimer', loadChildren: './pages/disclaimer/disclaimer.module#DisclaimerPageModule' },
-  { path: 'menu/donation', loadChildren: './pages/feeds/menu/donation/donation.module#DonationPageModule' },
+
   { path: 'editserverinfo', loadChildren: './pages/editserverinfo/editserverinfo.module#EditserverinfoPageModule' },
   { path: 'eidtchannel', loadChildren: './pages/eidtchannel/eidtchannel.module#EidtchannelPageModule' },
 
