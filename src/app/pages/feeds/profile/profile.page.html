@@ -15,7 +15,7 @@
 
   <ion-grid class="container" [class.darkContainer]="theme.darkMode">
 
-    <div class="header">
+    <div class="profile-header">
       <ion-img *ngIf="avatar" [src]="'data:'+avatar.contentType+';base64,'+avatar.data"></ion-img>
       <ion-img *ngIf="!avatar" src="/assets/images/default-contact.svg"></ion-img>
       <h1>{{ name }}</h1>

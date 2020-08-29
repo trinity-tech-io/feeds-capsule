@@ -16,8 +16,10 @@ import { IonInfiniteScroll } from '@ionic/angular';
 })
 
 export class HomePage implements OnInit {
+
   @ViewChild(IonContent,{static:true}) content: IonContent;
   @ViewChild(IonInfiniteScroll,{static:true}) infiniteScroll: IonInfiniteScroll;
+
   myScrollContainer!: HTMLElement;
   public connectionStatus = 1;
   public postList: any = [];
@@ -27,6 +29,7 @@ export class HomePage implements OnInit {
   public totalData = [];
   public isBottom:boolean = false;
   public images = {};
+
   constructor(
     private elmRef: ElementRef,
     private feedspage: FeedsPage,
@@ -37,19 +40,19 @@ export class HomePage implements OnInit {
     public theme:ThemeService,
     private translate:TranslateService,
     private native:NativeService,
-    private menuService: MenuService) {
-  }
+    private menuService: MenuService
+  ) {}
 
   ionViewWillEnter() {
     this.startIndex = 0;
     this.totalData = this.feedService.getPostList() || [];
     this.connectionStatus = this.feedService.getConnectionStatus();
-    if(this.totalData.length - this.pageNumber > this.pageNumber){
+    if(this.totalData.length - this.pageNumber > this.pageNumber) {
       this.postList = this.totalData.slice(this.startIndex,this.pageNumber);
       this.startIndex++;
       this.isBottom = false;
       this.infiniteScroll.disabled =false;
-     }else{
+    } else {
       this.postList = this.totalData.slice(0,this.totalData.length);
       this.isBottom =true;
       this.infiniteScroll.disabled =true;
@@ -69,12 +72,12 @@ export class HomePage implements OnInit {
         this.infiniteScroll.disabled =false;
         this.startIndex = 0;
         this.totalData = this.feedService.getPostList() || [];
-        if(this.totalData.length - this.pageNumber > this.pageNumber){
+        if (this.totalData.length - this.pageNumber > this.pageNumber){
           this.postList = this.totalData.slice(this.startIndex,this.pageNumber);
           this.startIndex++;
           this.isBottom = false;
           this.infiniteScroll.disabled =false;
-         }else{
+         } else {
           this.postList =  this.totalData.slice(0,this.totalData.length);
           this.isBottom =true;
           this.infiniteScroll.disabled =true;
@@ -91,7 +94,6 @@ export class HomePage implements OnInit {
     });
   }
 
-
  ionViewWillLeave(){
     this.events.unsubscribe("feeds:connectionChanged");
     this.events.unsubscribe("feeds:postDataUpdate");
@@ -104,7 +106,6 @@ export class HomePage implements OnInit {
   }
 
   getContent(nodeChannelPostId: string){
-
   }
 
   getContentText(content: string): string{
@@ -117,9 +118,9 @@ export class HomePage implements OnInit {
 
   getChannelOwnerName(nodeId, channelId): string{
     let channel = this.getChannel(nodeId, channelId) || "";
-    if (channel === ""){
+    if (channel === "") {
       return "";
-    }else{
+    } else {
       return UtilService.moreNanme(channel["owner_name"]);
     }
   }

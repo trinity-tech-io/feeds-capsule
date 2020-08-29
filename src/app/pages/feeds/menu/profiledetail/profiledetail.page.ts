@@ -1,10 +1,16 @@
 import { Component, OnInit, NgZone } from '@angular/core';
 import { Events } from '@ionic/angular';
-import { FeedService } from 'src/app/services/FeedService';
+import { FeedService, Avatar } from 'src/app/services/FeedService';
 import { NativeService } from 'src/app/services/NativeService';
 import { ThemeService } from 'src/app/services/theme.service';
 import { TranslateService } from "@ngx-translate/core";
+import { ThrowStmt } from '@angular/compiler';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
+
+type ProfileDetail = {
+  type: string,
+  details: string
+}
 
 @Component({
   selector: 'app-profiledetail',
@@ -12,8 +18,9 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
   styleUrls: ['./profiledetail.page.scss'],
 })
 export class ProfiledetailPage implements OnInit {
+
   public connectionStatus = 1;
-  public avatar = "";
+  public avatar: Avatar = null;
   public name = "";
   public description = "";
   public did = "";
@@ -23,6 +30,7 @@ export class ProfiledetailPage implements OnInit {
   public location = "";
   public ownChannelSourceDid = "";
 
+  public profileDetails: ProfileDetail[] = [];
 
   constructor(
     private zone: NgZone,
@@ -30,15 +38,19 @@ export class ProfiledetailPage implements OnInit {
     private feedService:FeedService,
     public  theme:ThemeService,
     private translate:TranslateService,
-    private events: Events) {
+    private events: Events
+  ) {
       let signInData = feedService.getSignInData();
+      console.log('SIGNIN DATA', signInData);
       this.name = signInData.name;
+      this.avatar = signInData.avatar;
       this.description = signInData.description;
-      // this.description = "Designer for Tuum Technologies and helps with the elastOS project and all Tuum Technology projects.Loves Mountain Biking. "
       this.did = signInData.did;
       this.telephone = signInData.telephone;
       this.email = signInData.email;
       this.location = signInData.location;
+
+      this.collectData(feedService.getSignInData());
 
       let bindingServer = this.feedService.getBindingServer();
       if (bindingServer != null && bindingServer != undefined)
@@ -47,6 +59,34 @@ export class ProfiledetailPage implements OnInit {
 
   ngOnInit() {
     this.connectionStatus = this.feedService.getConnectionStatus();
+  }
+
+  collectData(data) {
+    this.profileDetails = [];
+    this.profileDetails.push({
+      type: this.translate.instant('ProfiledetailPage.name'),
+      details: data.name
+    })
+    this.profileDetails.push({
+      type: this.translate.instant('ProfiledetailPage.did'),
+      details: data.did
+    })
+    this.profileDetails.push({
+      type: this.translate.instant('ProfiledetailPage.gender'),
+      details: data.gender
+    })
+    this.profileDetails.push({
+      type: this.translate.instant('ProfiledetailPage.telephone'),
+      details: data.telephone
+    })
+    this.profileDetails.push({
+      type: this.translate.instant('ProfiledetailPage.email'),
+      details: data.email
+    })
+    this.profileDetails.push({
+      type: this.translate.instant('ProfiledetailPage.location'),
+      details: data.location
+    })
   }
 
   ionViewWillEnter() {
