@@ -10,6 +10,20 @@ ion-header {
     }
   }
 }
+
+.empty-container {
+  .btn-row {
+    ion-button {
+      height: 41px;
+      font-size: 15px;
+    }
+  }
+
+  .btn-row2 {
+    margin: 7.5px 0;
+  }
+}
+
 // .div {
 //   width: 200px;
 // }

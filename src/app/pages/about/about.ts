@@ -3,6 +3,7 @@ import { Events } from '@ionic/angular';
 import { NativeService } from 'src/app/services/NativeService';
 import { TranslateService } from "@ngx-translate/core";
 import { FeedService } from 'src/app/services/FeedService';
+import { ThemeService } from 'src/app/services/theme.service';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 @Component({
@@ -12,15 +13,17 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 })
 
 export class AboutPage implements OnInit {
+
   public connectionStatus = 1;
   public version = "v1.1.0";
 
   constructor(
     private zone: NgZone,
     private native: NativeService,
-    private translate:TranslateService,
+    private translate: TranslateService,
     private events: Events,
-    private feedService:FeedService
+    private feedService: FeedService,
+    public theme: ThemeService
     ) {}
 
     ngOnInit() {

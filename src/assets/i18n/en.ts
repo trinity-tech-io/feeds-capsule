@@ -162,8 +162,8 @@ export const en = {
     },
     "AboutPage":{
         "about":"About",
-        "version":"version",
-        "website":"website",
+        "version":"Version",
+        "website":"Website",
         "releaseddate":"Released date",
         "developers":"Developers",
         'designers':'Designers',

@@ -1,7 +1,23 @@
 <ion-header *ngIf="connectionStatus == 1">
     <div class="offline-header"></div>
 </ion-header>
-<ion-content ion-padding>
+<ion-content>
+    <ion-grid [class.dark-container]="theme.darkMode">
+        <ion-card>
+            <img src="assets/images/feeds-logo.svg">
+            <ion-card-title>{{'AboutPage.version' | translate}} {{version}}</ion-card-title>
+        </ion-card>
+    
+        <ion-list>
+            <ion-row class="details" (click)="goWebsite()">
+                <h4>{{'AboutPage.website'|translate}}</h4>
+                <p>www.trinity-tech.io</p>
+            </ion-row>
+        </ion-list>
+    </ion-grid>    
+</ion-content>
+
+<!-- <ion-content ion-padding>
   <div id="logo">
       <img style="width: 80px; height: 80px;" src="assets/images/feeds-logo.svg" />
       <div>{{'AboutPage.version' | translate}}: {{version}}</div>
@@ -14,6 +30,6 @@
           </ion-label>
       </ion-item>
   </ion-list>
-</ion-content>
+</ion-content> -->
  
 
