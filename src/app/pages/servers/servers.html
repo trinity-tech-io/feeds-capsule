@@ -1,8 +1,8 @@
 <ion-header *ngIf="connectionStatus == 1">
   <div class="offline-header"></div>
 </ion-header>
-<ion-content>
 
+<ion-content>
   <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" pullFactor="0.5">
     <ion-refresher-content
       pullingIcon="arrow-dropdown"
@@ -11,29 +11,28 @@
       refreshingText="">
     </ion-refresher-content>
   </ion-refresher>
+
+  <div *ngIf="serverList.length === 0 && myFeedSource === null" class="empty-container">
+    <img src="./assets/images/empty-feeds-icon.svg">
+    <h1>{{ 'common.allempty'| translate }}</h1>
+    <p>{{ 'SearchPage.emptyDes' | translate }}</p>
+    <ion-row class="btn-row">
+      <ion-button (click)="exploreFeedSource()">
+        <ion-label>
+          {{ "HomePage.exploreFeeds" | translate }}
+        </ion-label>
+      </ion-button>
+    </ion-row>
+    <ion-row class="btn-row btn-row2">
+      <ion-button (click)="bindFeedSource()">
+        <ion-label>
+          {{ 'ServersPage.bindFeedSource' | translate }}
+        </ion-label>
+      </ion-button>
+    </ion-row>
+  </div>
   
-   <div *ngIf="serverList.length == 0 && myFeedSource == null" class="empty-server-div">
-      <div class="center-flex">
-        <img class="empty-img" src="assets/images/empty-feeds-icon.svg">
-      </div>
-      <div class="all-empty-text">{{'common.allempty'| translate}}</div>
-      <div class="no-feed-sources-text">{{'ServersPage.emptyDes'| translate}}</div>
-
-      <div class="explore-feeds" >
-        <ion-button expand="block"  mode="ios" (click)="exploreFeedSource()" >
-          <div class="explore-feeds-text">{{'ServersPage.addFeedSources'| translate}}</div>
-        </ion-button>
-      </div>
-
-      <div class="bind-feed-source-button-div">
-        <ion-button expand="block"  mode="ios" (click)="bindFeedSource()" >
-          <div class="explore-feeds-text">{{'ServersPage.bindFeedSource'| translate}}</div>
-        </ion-button>
-      </div>
-    </div>
-  
-
-<div class="feed-source" [class.darkContainer]="theme.darkMode">
+  <div class="feed-source" [class.darkContainer]="theme.darkMode">
     <div class="feed-source-div" *ngIf="myFeedSource != null"> 
       <img class="feed-source-img" src="assets/images/play.svg" *ngIf="!theme.darkMode">
       <img class="feed-source-img" src="assets/images/play-dark.svg" *ngIf="theme.darkMode">
@@ -74,10 +73,6 @@
         </ion-card-content>
       </ion-card>
     </div>
-
-
-
-
 
     <div class="feed-source-div" *ngIf="serverList.length >0" [class.darkContainer]="theme.darkMode">
       <img class="feed-source-img" src="assets/images/play.svg" *ngIf="!theme.darkMode">

@@ -1,4 +1,20 @@
-<ion-content class="ion-padding" [class.darkContainer]="theme.darkMode">
+<ion-content>
+    <ion-grid class="container" [class.darkContainer]="theme.darkMode">
+      <h1>Support Feeds</h1>
+      <p>{{'DonationPage.description' | translate}}</p>
+      <h2>{{ 'common.des4'|translate }}</h2>
+      <h3 (click)="clickAddress()">{{ elaAddress }}</h3>
+      <ion-row class="btn-row">
+        <ion-button (click)="donation()">
+          <ion-label>
+            {{ "HomePage.exploreFeeds" | translate }}
+          </ion-label>
+        </ion-button>
+      </ion-row>
+    </ion-grid>
+</ion-content>
+
+<!-- <ion-content class="ion-padding" [class.darkContainer]="theme.darkMode">
 
   <ion-grid class="bg darkbg">
       <ion-row>
@@ -20,3 +36,6 @@
   </div>
   
 </ion-content>
+ -->
+
+
