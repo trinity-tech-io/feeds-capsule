@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { Platform, ModalController, Events} from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
-import { FeedService } from './services/FeedService';
+import { FeedService, Avatar } from './services/FeedService';
 import { AppService } from './services/AppService';
 import { ThemeService } from 'src/app/services/theme.service';
 import { NativeService} from 'src/app/services/NativeService';
@@ -17,10 +17,12 @@ import { UtilService } from 'src/app/services/utilService';
 })
 
 export class MyApp {
+
   public didString = null;
-  public name:string = "";
-  public avatar:string = "";
-  public wName:string = "";
+  public name: string = "";
+  public avatar: Avatar = null;
+  public wName: string = "";
+
   constructor(
     private modalCtrl: ModalController,
     private events: Events,
@@ -30,7 +32,8 @@ export class MyApp {
     private feedService: FeedService,
     private appService: AppService,
     public theme:ThemeService,
-    public native:NativeService) {
+    public native:NativeService
+  ) {
       this.initializeApp();
       this.initProfileData();
       this.events.subscribe("feeds:signinSuccess",()=>{
@@ -109,6 +112,7 @@ export class MyApp {
 
       this.didString = signInData.did || "";
       this.wName = signInData.name || "";
+      this.avatar = signInData.avatar;
       this.name = UtilService.moreNanme(signInData.name);
     },(error)=>{
     });

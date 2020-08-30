@@ -29,10 +29,10 @@ export class NativeService {
         message = this.translate.instant(message);
         this.toastCtrl.create({
             mode: 'ios',
-            color: 'success',
-            message,
-            duration: 2000,
-            position: 'top'
+            color: 'primary',
+            header: message,
+            duration: duration,
+            position: 'bottom'
         }).then(toast => toast.present());
     }
 
@@ -40,10 +40,10 @@ export class NativeService {
         message = this.translate.instant(message);
         this.toastCtrl.create({
             mode: 'ios',
-            color: 'warning',
-            message,
-            duration: 2000,
-            position: 'top'
+            color: 'primary',
+            header: message,
+            duration: duration,
+            position: 'bottom'
         }).then(toast => toast.present());
     }
 
@@ -51,21 +51,21 @@ export class NativeService {
         message = this.translate.instant(message);
         this.toastCtrl.create({
             mode: 'ios',
-            color: 'danger',
-            message,
-            duration: 2000,
-            position: 'top'
+            color: 'primary',
+            header: message,
+            duration: duration,
+            position: 'bottom'
         }).then(toast => toast.present());
     }
 
-    public toast_trans(_message: string = '', duration: number = 2000): void {
-        _message = this.translate.instant(_message);
+    public toast_trans(message: string = '', duration: number = 2000): void {
+        message = this.translate.instant(message);
         this.toastCtrl.create({
             mode: 'ios',
-            color: 'success',
-            message: _message,
+            color: 'primary',
+            header: message,
             duration: duration,
-            position: 'top'
+            position: 'bottom'
         }).then(toast => toast.present());
     }
 
