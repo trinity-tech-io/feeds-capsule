@@ -1,96 +1,70 @@
-.menu-user {
-    width: 32px;
-    height: 32px;
+ion-menu {
+    ion-content {
+        .profile-card {
+            margin: 10px;
+            padding: 20px;
+            border-radius: 20px;
+            background-image: url('/assets/images/profile-card.svg');
+            // box-shadow: 0 3px 15px 0 #ededf0;
+            background-repeat: no-repeat;
+            background-size: cover;
+        
+            .left-col, .right-col {
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-start;
+                align-items: flex-start;
+        
+                ion-img {
+                    width: 70px;
+                    height: 70px;
+                    object-fit: cover;
+                    overflow: hidden;
+                    border-radius: 50%;
+                    border: 2px solid #368bff;
+                }
+        
+                h1 {
+                    margin: 5px 0 0;
+                    font-size: 15px;
+                    font-weight: 600;
+                }
+            }
+        
+            .right-col {
+                justify-content: center;
+                align-items: flex-end;
+            }
+        }
+        
+        ion-menu-toggle {
+            div {
+                display: flex;
+                align-items: center;
+                margin: 35px 0 0 25px;
+                width: 100%;
+        
+                img {
+                    height: 30px;
+                    width: 30px;
+                }
+        
+                h1 {
+                    margin: 0;
+                    margin-left: 12px;
+                    font-size: 14px;
+                    font-weight: 600;
+                }
+            }
+        }
+    }
 }
 
-.menu-feeds{
-    width: 32px;
-    height: 21.3px;
-}
-
-.menu-setting{
-    width: 32px;
-    height: 26.39px;
-}
-
-.menu-donation{
-    width: 32px;
-    height: 26.3px;
-}
-
-.menu-profile{
-    // width: 114px;
-    // height: 19px;
-    font-family: MontserratMedium;
-    font-size: 16px;
-    font-weight: normal;
-    font-stretch: normal;
-    font-style: normal;
-    line-height: 1.19;
-    letter-spacing: normal;
-    text-align: left;
-    color: #191a2f;
-
-    margin-left: 13.5px;;
-}
-
-.menu-profile-card{
-    --background:'../assets/images/menu-user.svg'
-}
-
-.menu-profile-bubble{
-    width: 12.2px;
-    height: 9.9px;
-
-}
-.menu-profile-follower{
-    width: 42px;
-    height: 11px;
-    font-family: MontserratSemiBold;
-    font-size: 7px;
-    font-weight: normal;
-    font-stretch: normal;
-    font-style: normal;
-    line-height: 1.29;
-    letter-spacing: normal;
-    text-align: left;
-    color: #000000;
-}
-
-.no-padding {
-    padding: 0px !important;
-    margin: 0px !important;
-}
-
-.menu-profile-img{
-    width: 70px;
-    height: 70px;
-}
-
-.menu-profile-name{
-    height: 30px;
-    font-size: 17px;
-    font-weight: normal;
-    font-stretch: normal;
-    font-style: normal;
-    line-height: 1.18;
-    letter-spacing: normal;
-    color: #000000;
-}
-
-.menu-profile-div{
-    width: 280px;
-    height: 154.3px; 
-    background-repeat: no-repeat;
-    background-size: 100%; 
-    background-image: url(../assets/images/menu-profile-bg.svg); 
-    padding: 12.5px; 
-    margin-left: 15px;
-    display: flex;
-}
-
-.darkContainer{
-    .white{
-        color: #ffffff;
+.darkMenu {
+    ion-content {
+        .profile-card {
+            background-image: url('/assets/images/darkmode/profile-card.svg');
+            // box-shadow: 0 3px 15px 0 #151626;
+        }
     }
 }

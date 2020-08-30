@@ -319,7 +319,7 @@ export const en = {
         "introduce3":"By using our Feeds application, its content, and services (the “App”), you agree to be solely responsible for your use of the App and any content you post and provide, including compliance with applicable laws, rules, and regulations. You should only post and provide content that you are comfortable sharing with others. You must be at least 13 years old to use the App or no longer considered to be a minor in your jurisdiction (ie. state, providence or country).  We do not endorse, support, represent or guarantee the completeness, truthfulness, accuracy, or reliability of any content on the App. You hereby acknowledge that you may be exposed to harmful, inaccurate or inappropriate content while using the App."
     },
     "DonationPage":{
-        "donation": "Donation",
+        "donation": "Donate",
         "donationELAAddress":"Donation ELA Address",
         "description":"The Feeds Capsule is a non-profit project dedicated to improving user experience and integrating essential features into elastOS. All donations contributed to the Feeds project will be greatly appreciated, and will better enable us to deliver on our mission as we develop new functions and features for our upcoming releases.",
         "receiver":"Receiver",
