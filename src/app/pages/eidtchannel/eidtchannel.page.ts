@@ -21,6 +21,8 @@ public name:string ="";
 public des:string="";
 public channelAvatar = "";
 public avatar = "";
+public oldChannelInfo:any = {};
+public oldChannelAvatar:string ="";
 constructor(
   private feedService: FeedService,
   public activatedRoute:ActivatedRoute,
@@ -33,21 +35,15 @@ constructor(
   }
 
 ngOnInit() {
-  // this.activatedRoute.queryParams.subscribe((data) => {
-  //   let item = _.cloneDeep(data);
-  //   this.nodeId = item ["nodeId"] || "";
-  //   this.channelId = item ["channelId"] || "";
-  //   this.name = item["name"] || "";
-  //   this.des = item["des"] || "";
-  // });
 
     let item = this.feedService.getChannelInfo();
+    this.oldChannelInfo = item;
     let channelInfo  = _.cloneDeep(item);
     this.nodeId = channelInfo["nodeId"] || "";
     this.channelId = channelInfo["channelId"] || "";
     this.name = channelInfo["name"] || "";
     this.des = channelInfo["des"] || "";
-
+    this.oldChannelAvatar = this.feedService.getProfileIamge();
 }
 
 ionViewWillEnter() {
@@ -144,7 +140,14 @@ if (this.des.length > 128){
 if(this.channelAvatar === ""){
   this.native.toast_trans('CreatenewfeedPage.des');
   return false;
-} 
+}
+
+if(this.oldChannelInfo["name"] === this.name && 
+this.oldChannelInfo["des"] === this.des &&
+this.oldChannelAvatar === this.channelAvatar ){
+ this.native.toast_trans('common.nochanges');
+ return false;
+}
 
 return true;
 }

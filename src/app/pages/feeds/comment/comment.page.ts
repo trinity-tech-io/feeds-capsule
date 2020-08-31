@@ -17,18 +17,16 @@ export class CommentPage implements OnInit {
   public nodeStatus:any={};
   public channelAvatar = "";
   public channelName = "";
-  public subscribers;
+  public subscribers:string = "";
   public newComment: string="";
-  public nodeId: string;
-  public channelId: number;
-  public postId: number;
-  public  isNewPost:boolean = true;
+  public nodeId: string ="";
+  public channelId: number= 0;
+  public postId: number = 0;
   constructor(
     private events: Events,
     private native: NativeService,
     private acRoute: ActivatedRoute,
     private navCtrl: NavController,
-    private camera: CameraService,
     private zone: NgZone,
     private feedService: FeedService,
     public theme:ThemeService,
@@ -48,7 +46,7 @@ export class CommentPage implements OnInit {
     this.channelName = channel["name"] || "";
     this.subscribers = channel["subscribers"] || "";
     this.channelAvatar = this.feedService.parseChannelAvatar(channel["avatar"]) || "";
-    this.isNewPost = true;
+ 
 
     this.events.subscribe('feeds:connectionChanged',(status)=>{
       this.zone.run(() => {
@@ -62,19 +60,21 @@ export class CommentPage implements OnInit {
 
     this.events.subscribe('rpcRequest:error', () => {
       this.zone.run(() => {
-        this.isNewPost = true;
+         this.native.hideLoading();
       });
     });
+
     this.events.subscribe('rpcResponse:error', () => {
       this.zone.run(() => {
-        this.isNewPost = true;
+        this.native.hideLoading();
       });
     });
 
    this.events.subscribe('rpcRequest:success', () => {
     this.zone.run(() => {
-      this.native.toast_trans("CreatenewpostPage.tipMsg1");
-      this.navCtrl.pop().then(()=>{ 
+      this.navCtrl.pop().then(()=>{
+        this.native.hideLoading();
+        this.native.toast_trans("CreatenewpostPage.tipMsg1");
       });
     });
    });
@@ -99,27 +99,30 @@ export class CommentPage implements OnInit {
     this.events.unsubscribe("rpcRequest:error");
     this.events.unsubscribe("rpcResponse:error");
     this.events.unsubscribe("rpcRequest:success");
-    this.isNewPost = true;
   }
 
   initTitle(){
     titleBarManager.setTitle(this.translate.instant("CommentPage.newComment"));
   }
 
-  publishComment(){ 
-    if(!this.isNewPost){
-      this.native.toast_trans("common.sending");
-    }else{
-      this.isNewPost = false;
-      let newComment = this.native.iGetInnerText(this.newComment) || "";
-      if(newComment===""){
-        this.native.toast_trans('CommentPage.enterComments');
-        this.isNewPost = true;
-        return false;
-      }
-      this.feedService.postComment(this.nodeId,Number(this.channelId),Number(this.postId),0,this.newComment);
+  publishComment(){
+    let newComment = this.native.iGetInnerText(this.newComment) || "";
+    if(newComment===""){
+      this.native.toast_trans('CommentPage.enterComments');
+      return false;
     }
- 
+
+    this.native.showLoading().then(()=>{
+           this.sendComment();
+    }).catch(()=>{
+         this.native.hideLoading();
+    });
+
+  }
+
+  sendComment(){
+  
+    this.feedService.postComment(this.nodeId,Number(this.channelId),Number(this.postId),0,this.newComment);
   }
 
   checkServerStatus(nodeId: string){

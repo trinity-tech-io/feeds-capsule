@@ -18,17 +18,11 @@ export class CreatenewpostPage implements OnInit {
   public nodeStatus = {};
   public channelAvatar = "";
   public channelName = "";
-  public subscribers;
-  public newPost="";
+  public subscribers:string = "";
+  public newPost:string="";
   public imgUrl: string = "";
-  public bigImageUrl:string ="";
-  public bigImage:boolean = false;
-  // private content ;
-
-
-  public  nodeId: string;
-  public  channelId: number;
-  public  isNewPost:boolean = true;
+  public  nodeId: string = "";
+  public  channelId: number = 0;
   constructor(
     private events: Events,
     private native: NativeService,
@@ -40,7 +34,11 @@ export class CreatenewpostPage implements OnInit {
     public theme:ThemeService,
     private translate:TranslateService) {
      
-      acRoute.params.subscribe((data)=>{
+     
+    }
+
+    ngOnInit() {
+      this.acRoute.params.subscribe((data)=>{
         this.nodeId = data.nodeId;
         this.channelId = data.channelId;
 
@@ -52,12 +50,8 @@ export class CreatenewpostPage implements OnInit {
       });
     }
 
-    ngOnInit() {
-    }
-
     ionViewWillEnter() {
     this.connectionStatus = this.feedService.getConnectionStatus();
-    this.isNewPost = true;
 
     this.events.subscribe('feeds:connectionChanged',(status)=>{
       this.zone.run(() => {
@@ -74,18 +68,22 @@ export class CreatenewpostPage implements OnInit {
     this.events.subscribe('feeds:publishPostSuccess', () => {
       this.zone.run(()=>{
         this.navCtrl.pop().then(()=>{
+          this.native.hideLoading();
           this.native.toast_trans("CommentPage.tipMsg1");
         });
       });
+      
     });
 
     this.events.subscribe('rpcRequest:error', () => {
-       this.isNewPost = true;
+          this.native.hideLoading();
     });
 
     this.events.subscribe('rpcResponse:error', () => {
-      this.isNewPost = true;
-   });
+      this.zone.run(() => {
+        this.native.hideLoading();
+      });
+    });
 
     this.events.subscribe("feeds:updateTitle",()=>{
       this.initTitle();
@@ -100,7 +98,6 @@ export class CreatenewpostPage implements OnInit {
     this.events.unsubscribe("feeds:publishPostSuccess");
     this.events.unsubscribe("rpcRequest:error");
     this.events.unsubscribe("rpcResponse:error");
-    this.isNewPost =true;
   }
 
   ionViewDidEnter() {
@@ -115,44 +112,42 @@ export class CreatenewpostPage implements OnInit {
 
 
   post(){
-    if(!this.isNewPost){
-      this.native.toast_trans("common.sending");
-    }else{
-      this.isNewPost = false;
-      let  newPost = this.native.iGetInnerText(this.newPost);
-      if (newPost == "" && this.imgUrl == ""){
-        this.isNewPost = true;
-        this.native.toast_trans("CreatenewpostPage.tipMsg");
-      }else{
-        let myContent = {};
-        myContent["text"] = this.newPost;
-        myContent["img"] = this.imgUrl;
-          
-        this.feedService.publishPost(
-            this.nodeId,
-            this.channelId,
-            JSON.stringify(myContent));
-        }
-      }
+    let  newPost = this.native.iGetInnerText(this.newPost);
+    if (newPost == "" && this.imgUrl == ""){
+      this.native.toast_trans("CreatenewpostPage.tipMsg");
+      return false;
     }
+    this.native.showLoading("common.waitMoment",2000).then(()=>{
+          this.sendPost();
+    }).catch(()=>{
+          this.native.hideLoading();
+    });
+    }
+
+    sendPost(){
+      let myContent = {};
+      myContent["text"] = this.newPost;
+      myContent["img"] = this.imgUrl;
+        
+      this.feedService.publishPost(
+          this.nodeId,
+          this.channelId,
+          JSON.stringify(myContent));
+      }  
  
 
   addImg(){
-    if(!this.isNewPost){
-      this.native.toast_trans("common.sending");
-      return;
-    }
     this.openCamera(0);
   }
 
   openCamera(type: number){
     this.camera.openCamera(30,0,type,
-      (imageUrl)=>{
+      (imageUrl:any)=>{
         this.zone.run(() => {
           this.imgUrl = imageUrl;
         });
       },
-      (err)=>{
+      (err:any)=>{
         let imgUrl = this.imgUrl || "";
         if(imgUrl === ""){
           this.native.toast_trans('common.noImageSelected');
@@ -163,7 +158,7 @@ export class CreatenewpostPage implements OnInit {
   
 
   showBigImage(content: any){
-    this.native.openViewer(content);
+    this.native.openViewer(content,"common.image","CreatenewpostPage.addingPost");
   }
 
   checkServerStatus(nodeId: string){

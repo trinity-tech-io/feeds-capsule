@@ -9,10 +9,10 @@ export const en = {
         "confirm":"Confirm",
         "des":"Clear <strong>all cached data</strong>!!!",
         "prompt":"Prompt",
-        "des1":"Confirm new topic",
-        "server":"server:",
-        "channel":"channel:",
-        "description":"description:",
+        "des1":"Confirm New Feed",
+        "server":"Feed Source:",
+        "channel":"Feed:",
+        "description":"Description:",
         "pleaseInput":"Please input ",
         "feeds":"Feeds",
         "just":"Just now",
@@ -48,7 +48,9 @@ export const en = {
         "waitMoment": "Please wait a moment...",
         "issuecredentialError": "There was an error issuing the certificate. Please check the QR code or try again",
         "save":"Save",
-        "feed":"Feed:"
+        "feed":"Feed:",
+        "image":"Image",
+        "nochanges":"No changes"
     },
     "app":{
         "profileDetails":"Profile Details",
@@ -173,7 +175,7 @@ export const en = {
     },
     "ServersPage":{
         "feedSources":"Feeds Sources",
-        "emptyDes":"All Empty",
+        "emptyDes":"You haven't added or bound any Feeds Sources",
         "addFeedSources":"Add an existing Feed Source",
         "bindFeedSource":"Create a New Feed Source",
         "myFeedSources":"My Feeds Sources",
