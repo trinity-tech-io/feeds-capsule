@@ -112,6 +112,7 @@ export class NativeService {
         if (!this.loadingIsOpen) {
             this.loadingIsOpen = true;
             const loading = await this.loadingCtrl.create({
+                cssClass: 'loading-class',
                 message: content,
                 duration: durationTime
             });
@@ -186,8 +187,8 @@ export class NativeService {
         }, false);
     }
 
-    async openViewer(imgPath:string) {
-
+    async openViewer(imgPath:string,newNameKey:string,oldNameKey:string) {
+        titleBarManager.setTitle(this.translate.instant(newNameKey));
         this.setTitleBarBackKeyShown(false);
         const modal = await this.modalController.create({
           component: ViewerModalComponent,
@@ -203,6 +204,7 @@ export class NativeService {
 
         modal.onWillDismiss().then(()=>{
              document.removeEventListener('click',(event)=> this.hide(modal),false);
+            titleBarManager.setTitle(this.translate.instant(oldNameKey));
             this.setTitleBarBackKeyShown(true);
         })
     

@@ -21,6 +21,7 @@ export class EditserverinfoPage implements OnInit {
   public elaAddress: string = "";
   public nodeId: string = "";
   public did: string = "";
+  public oldServerInfo:any = {};
   constructor(
     private feedService: FeedService,
     public activatedRoute:ActivatedRoute,
@@ -35,6 +36,7 @@ export class EditserverinfoPage implements OnInit {
 
   ngOnInit() {
     this.activatedRoute.queryParams.subscribe((data) => {
+      this.oldServerInfo = data;
       let item = _.cloneDeep(data);
       this.address = item ["address"] || "";
       this.name = item["name"] || "";
@@ -128,7 +130,14 @@ export class EditserverinfoPage implements OnInit {
     if(this.elaAddress === ""){
       this.native.toast_trans('IssuecredentialPage.elaaddress');
       return false;
-   }
+    }
+
+    if(this.oldServerInfo["elaAddress"] === this.elaAddress && 
+       this.oldServerInfo["name"] === this.name &&
+       this.oldServerInfo["introduction"] === this.introduction){
+        this.native.toast_trans('common.nochanges');
+        return false;
+    }
     return true;
   }
 }

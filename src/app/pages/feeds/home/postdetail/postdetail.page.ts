@@ -248,7 +248,7 @@ export class PostdetailPage implements OnInit {
   }
 
   showBigImage(content: any){
-    this.native.openViewer(this.getImage());
+    this.native.openViewer(this.getImage(),"common.image","PostdetailPage.postview");
   }
 
  

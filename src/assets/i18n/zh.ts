@@ -9,9 +9,9 @@ export const zh = {
         "confirm":"确认",
         "des":"清空 <strong>所有缓存数据</strong>!!!",
         "prompt":"提示",
-        "des1":"确认新主题",
-        "server":"服务器:",
-        "channel":"频道:",
+        "des1":"确认微频",
+        "server":"微频源:",
+        "channel":"微频:",
         "description":"描述:",
         "pleaseInput":"请输入",
         "feeds":"微频",
@@ -48,7 +48,9 @@ export const zh = {
         "waitMoment": "请稍等...",
         "issuecredentialError": "颁发凭证出错，请检查二维码或重试",
         "save":"保存",
-        "feed":"微频:"
+        "feed":"微频:",
+        "image":"图片",
+        "nochanges":"没有修改内容"
     },
     "app":{
         "profileDetails":"档案详情",
