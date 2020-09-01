@@ -23,7 +23,7 @@ export class SplashscreenPage implements OnInit {
   }
 
   ionViewWillEnter() {
-    this.styleObj["margin-top"]= (screen.height - 260)/2 +"px";   
+    this.styleObj["margin-top"]= (screen.height - 300)/2 +"px";   
     titleBarManager.setTitle(this.translate.instant('common.feeds'));
   }
 
