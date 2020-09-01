@@ -112,7 +112,7 @@ export class CommentPage implements OnInit {
       return false;
     }
 
-    this.native.showLoading().then(()=>{
+    this.native.showLoading("common.waitMoment").then(()=>{
            this.sendComment();
     }).catch(()=>{
          this.native.hideLoading();
@@ -121,7 +121,6 @@ export class CommentPage implements OnInit {
   }
 
   sendComment(){
-  
     this.feedService.postComment(this.nodeId,Number(this.channelId),Number(this.postId),0,this.newComment);
   }
 
