@@ -134,4 +134,8 @@ export class CommentPage implements OnInit {
     this.nodeStatus[this.nodeId] = status;
   }
 
+  pressName(channelName:string){
+    this.native.createTip(channelName);
+  }
+
 }

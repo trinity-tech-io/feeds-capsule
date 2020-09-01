@@ -61,8 +61,10 @@ export const zh = {
         "donation": "捐赠"
     },
     "SigninPage":{
-        "signIn":"登录",
-        "Pleasewait": "请等待..."
+        "signIn":"登录微频",
+        "Pleasewait": "请等待...",
+        "des":"进行",
+        "des1":"有意义的对话",
     },
     "FeedsPage":{
         "tabTitle1":"我的时间线",

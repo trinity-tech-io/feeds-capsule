@@ -1,9 +1,8 @@
-<div class="wrapper" [class.darkContainer]="theme.darkMode">
-        <div class="box">
-            <img src="../../../assets/images/feeds-logo.svg"
-            class="Component-599-5">
-    
-            <ion-label class="text white">{{'common.feeds'|translate}}</ion-label> 
-        </div>
-        <div class="help"></div>
-</div>
+<ion-grid [class.darkContainer]="theme.darkMode" [ngStyle]="styleObj">
+    <ion-row>
+        <ion-col size="12">
+          <ion-img src="assets/images/feeds-logo.svg" class="feedslogo"></ion-img>  
+          <p class="feeds white">{{'common.feeds'|translate}}</p>
+        </ion-col>
+      </ion-row>
+</ion-grid>    

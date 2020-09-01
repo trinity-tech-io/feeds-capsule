@@ -11,7 +11,7 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
   styleUrls: ['./splashscreen.page.scss'],
 })
 export class SplashscreenPage implements OnInit {
-
+  public styleObj:any={"margin-top":""};
   constructor(
     private modalCtrl: ModalController,
     private translate:TranslateService,
@@ -19,10 +19,11 @@ export class SplashscreenPage implements OnInit {
     public theme:ThemeService) { }
 
   ngOnInit() {
-
+        
   }
 
   ionViewWillEnter() {
+    this.styleObj["margin-top"]= (screen.height - 260)/2 +"px";   
     titleBarManager.setTitle(this.translate.instant('common.feeds'));
   }
 

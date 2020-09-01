@@ -61,8 +61,10 @@ export const en = {
         "donation": "Donation"
     },
     "SigninPage":{
-        "signIn":"Sign In",
-        "Pleasewait":"Please wait..."
+        "signIn":"Sign In to Feeds",
+        "Pleasewait":"Please wait...",
+        "des":"Where meaningful",
+        "des1":"conversations happens",
     },
     "FeedsPage":{
         "tabTitle1":"My Feeds Timeline",

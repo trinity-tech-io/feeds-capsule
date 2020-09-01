@@ -1,7 +1,25 @@
- <ion-content>
-     <div class="first">
-        <ion-button expand="block" color="primary" (click)="signIn()" class="signbtn">
-          {{ "SigninPage.signIn"| translate }}
-        </ion-button>
-     </div>
+ <ion-content [class.darkContainer]="theme.darkMode">
+    <ion-grid>
+      <ion-row>
+        <ion-col size="12">
+          <ion-img src="assets/images/feeds-logo.svg" class="feedslogo"></ion-img>  
+          <p class="feeds white">{{'common.feeds'|translate}}</p>
+        </ion-col>
+      </ion-row>
+
+      <ion-row class="top-110">
+          <ion-col size="12">
+              <p class="desktop white">{{ "SigninPage.des"| translate }}</p>
+              <p class="desktop white">{{ "SigninPage.des1"| translate }}</p>
+          </ion-col>
+      </ion-row>
+
+      <ion-row class="top-25">
+        <ion-col size="12">
+          <ion-button expand="block" color="primary" (click)="signIn()" class="signbtn">
+            {{ "SigninPage.signIn"| translate }}
+          </ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid> 
 </ion-content>
