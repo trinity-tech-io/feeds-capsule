@@ -87,12 +87,19 @@ type SignIntentResponse = {
 type PostUpdateTime = {
   nodeId: string,
   channelId: number,
-  time:number;
+  time:number
 }
 
 type FeedUpdateTime = {
   nodeId: string,
-  time:number;
+  time:number
+}
+
+type CommentUpdateTime = {
+  nodeId: string,
+  channelId: number,
+  postId: number,
+  time: number
 }
 
 type ServerStatus = {
@@ -311,7 +318,8 @@ enum PersistenceKey{
   notificationList = "notificationList",
 
   likeCommentMap = "likeCommentMap",
-  lastFeedUpdateMap = "lastFeedUpdateMap"
+  lastFeedUpdateMap = "lastFeedUpdateMap",
+  lastCommentUpdateMap = "lastCommentUpdateMap",
 }
 
 let expDay = 10;
@@ -387,6 +395,7 @@ export class FeedService {
   private declareOwnerInterval: NodeJS.Timer;
   private isDeclareFinish: boolean = false;
   private lastFeedUpdateMap:{[nodeId:string]: FeedUpdateTime};
+  private lastCommentUpdateMap:{[nodeChannelPostId: string]: CommentUpdateTime};
   public constructor(
     private serializeDataService: SerializeDataService,
     private jwtMessageService: JWTMessageService,
@@ -555,6 +564,10 @@ export class FeedService {
 
     this.storeService.get(PersistenceKey.lastFeedUpdateMap).then((mLastFeedUpdateMap)=>{
       this.lastFeedUpdateMap = mLastFeedUpdateMap || "";
+    });
+
+    this.storeService.get(PersistenceKey.lastCommentUpdateMap).then((mLastCommentUpdateMap) => {
+      this.lastCommentUpdateMap = mLastCommentUpdateMap || ""
     });
   }
 
@@ -1925,6 +1938,7 @@ export class FeedService {
     let comment_id: number = params.comment_id;
     let contentBin: any = params.content;
     let user_name: any = params.user_name;
+    let create_at: number = params.created_at;
 
     let content = this.serializeDataService.decodeData(contentBin);
 
@@ -1946,8 +1960,12 @@ export class FeedService {
       user_name  : user_name,
       content    : content,
       likes      : 0,
-      created_at : this.getCurrentTimeNum()
+      created_at : create_at*1000
     }
+
+    let ncpId = nodeId + channel_id +"-"+post_id;
+    this.lastCommentUpdateMap[ncpId].time = create_at*1000;
+    this.storeService.set(PersistenceKey.lastCommentUpdateMap, this.lastCommentUpdateMap);
 
     let postId = this.getPostId(nodeId, channel_id, post_id);
     this.postMap[postId].comments = this.postMap[postId].comments+1;
@@ -2662,7 +2680,13 @@ export class FeedService {
         commentsMap[nodeId][channel_id][post_id] = {}
 
       commentsMap[nodeId][channel_id][post_id][id] = comment;
+
+
+      let ncpId = nodeId + channel_id +"-"+post_id;
+      this.lastCommentUpdateMap[ncpId].time = created_at*1000;
     }
+
+    this.storeService.set(PersistenceKey.lastCommentUpdateMap, this.lastCommentUpdateMap);
     this.storeService.set(PersistenceKey.commentsMap, commentsMap);
 
     eventBus.publish(PublishType.commentDataUpdate);
@@ -3153,6 +3177,10 @@ export class FeedService {
     this.getChannels(nodeId,Communication.field.last_update, 0, lastUpdateTime,0);
   }
 
+  updateCommentsWithTime(nodeId: string, channelId: number, postId: number, lastUpdateTime: number){
+    this.getComments(nodeId, channelId, postId , Communication.field.last_update, 0, lastUpdateTime, 0, false);
+  }
+
   updatePost(nodeId: string, channelId:number){
     let nodeChannelId = nodeId + channelId;
     let mlastPostUpdateMap = lastPostUpdateMap || "";
@@ -3166,6 +3194,14 @@ export class FeedService {
     let update = mLastFeedUpdateMap[nodeId] || "";
     let lastFeedTime = update["time"] || 0;
     this.updateFeedsWithTime(nodeId,lastFeedTime);
+  }
+
+  updateComment(nodeId: string, channelId: number, postId: number){
+    let ncpId = nodeId + channelId + "-" + postId;
+    let mLastCommentUpdateMap = this.lastCommentUpdateMap || "";
+    let commentUpdateTime = mLastCommentUpdateMap[ncpId] || "";
+    let lastCommentTime = commentUpdateTime["time"] || 0;
+    this.updateCommentsWithTime(nodeId, channelId, postId, lastCommentTime);
   }
 
   getSubscribedChannelsFromNodeId(nodeId: string): Channels[]{
@@ -3732,13 +3768,22 @@ export class FeedService {
     this.enableNotification(friendId);
     // this.queryChannelCreationPermission(friendId);
 
+    this.updateFeed(friendId);
     let list = this.getSubscribedChannelsFromNodeId(friendId);
     for (let index = 0; index < list.length; index++) {
       let channelId = list[index].id;
       this.updatePost(friendId,channelId);
+
+      let postList = this.getPostListFromChannel(friendId,channelId);
+      for (let postIndex = 0; postIndex < postList.length; postIndex++) {
+        // const element = array[postIndex];
+        let post: Post = postList[postIndex];
+        let postId: number = post.id;
+        this.updateComment(friendId, channelId, postId);
+      }
     }
 
-    this.updateFeed(friendId);
+    
     // this.getAllChannelDetails(friendId);
     // this.getChannels(friendId, Communication.field.last_update, 0, 0, 0);
   }

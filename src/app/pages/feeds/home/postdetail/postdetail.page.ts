@@ -101,7 +101,7 @@ export class PostdetailPage implements OnInit {
     this.feedService.refreshPostById(this.nodeId,this.channelId,this.postId);
 
     if (this.connectionStatus == 0)
-      this.feedService.getComments(this.nodeId,Number(this.channelId) ,Number(this.postId),Communication.field.last_update, 0, 0, 0, false);
+      this.feedService.updateComment(this.nodeId, Number(this.channelId) ,Number(this.postId));
 
     this.events.subscribe('feeds:connectionChanged',(status)=>{
       this.zone.run(() => {
