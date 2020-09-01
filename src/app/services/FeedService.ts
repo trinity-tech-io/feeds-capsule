@@ -11,16 +11,12 @@ import { JWTMessageService } from 'src/app/services/JWTMessageService';
 
 declare let didManager: DIDPlugin.DIDManager;
 declare let appManager: AppManagerPlugin.AppManager;
-declare let pluginDidDocument: DIDPlugin.DIDDocument;
-declare let pluginDid: DIDPlugin.DID;
 declare let didSessionManager: DIDSessionManagerPlugin.DIDSessionManager;
 
 let subscribedChannelsMap:{[nodeChannelId: string]: Channels};
 let channelsMap:{[nodeChannelId: string]: Channels} ;
 let myChannelsMap:{[nodeChannelId: string]: MyChannel};
 let unreadMap:{[nodeChannelId: string]: number};
-// let postMap:{[channelId: number]: ChannelPost};
-//let postMap:{[nodechannelpostId: string]: Post} = undefined; //now postId = nodeId+channelId+postId
 let postKeyMap: {[nodeChannelPostId: string]: PostKey};
 let serverStatisticsMap:{[nodeId: string]: ServerStatistics};
 let commentsMap:{[nodeId: string]: NodeChannelPostComment};
@@ -30,13 +26,11 @@ let likeMap:{[nodechannelpostId:string]:Post};
 let likeCommentMap:{[nodechannelpostCommentId: string]: LikedComment};
 let lastPostUpdateMap:{[nodeChannelId:string]: PostUpdateTime};
 let friendConnectionMap: {[nodeId:string]: ConnState};
-// let accessTokenMap: {[nodeId: string]: string};
 
 let localSubscribedList:Channels[] = new Array<Channels>();
 let localMyChannelList:Channels[] = new Array<Channels>();
 let localChannelsList:Channels[] = new Array<Channels>();
 let localPostList:Post[] = new Array<Post>();
-// let bindingServerMap:{[nodeId: string]:Server};
 let bindingServer: Server;
 let bindingServerCache: Server;
 
@@ -93,6 +87,11 @@ type SignIntentResponse = {
 type PostUpdateTime = {
   nodeId: string,
   channelId: number,
+  time:number;
+}
+
+type FeedUpdateTime = {
+  nodeId: string,
   time:number;
 }
 
@@ -235,9 +234,7 @@ enum PublishType{
   postEventSuccess = "feeds:postEventSuccess",
   allFeedsListChanged= "feeds:allFeedsListChanged",
   subscribeFinish = "feeds:subscribeFinish",
-  // favoriteFeedListChanged = "feeds:favoriteFeedListChanged",
   unsubscribeFinish = "feeds:unsubscribeFinish",
-  // eventListChanged = "feeds:eventListChanged",
   updateServerList = "feeds:updateServerList",
   connectionChanged="feeds:connectionChanged",
 
@@ -313,7 +310,8 @@ enum PersistenceKey{
 
   notificationList = "notificationList",
 
-  likeCommentMap = "likeCommentMap"
+  likeCommentMap = "likeCommentMap",
+  lastFeedUpdateMap = "lastFeedUpdateMap"
 }
 
 let expDay = 10;
@@ -388,7 +386,7 @@ export class FeedService {
   private declareOwnerTimeout: NodeJS.Timer;
   private declareOwnerInterval: NodeJS.Timer;
   private isDeclareFinish: boolean = false;
-
+  private lastFeedUpdateMap:{[nodeId:string]: FeedUpdateTime};
   public constructor(
     private serializeDataService: SerializeDataService,
     private jwtMessageService: JWTMessageService,
@@ -553,6 +551,10 @@ export class FeedService {
       likeCommentMap = mLikeCommentMap;
       if (likeCommentMap == null || likeCommentMap == undefined)
         likeCommentMap = {};
+    });
+
+    this.storeService.get(PersistenceKey.lastFeedUpdateMap).then((mLastFeedUpdateMap)=>{
+      this.lastFeedUpdateMap = mLastFeedUpdateMap || "";
     });
   }
 
@@ -1408,11 +1410,14 @@ export class FeedService {
     let isLocalRefresh = true;
 
     for (let index = 0; index < list.length; index++) {
-      if (serversStatus[list[index].nodeId].status == ConnState.disconnected)
+      let nodeId = list[index].nodeId;
+      if (serversStatus[nodeId].status == ConnState.disconnected)
         continue;
       else {
         isLocalRefresh = false;
-        this.getChannels(list[index].nodeId, Communication.field.last_update, 0, 0, 0);
+        // let lastFeedUpdate = this.lastFeedUpdateMap[nodeId].time || 0;
+        // this.getChannels(nodeId, Communication.field.last_update, 0, lastFeedUpdate, 0);
+        this.updateFeed(nodeId);
       }
     }
 
@@ -2418,7 +2423,10 @@ export class FeedService {
         channelsMap[nodeChannelId].subscribers = result[index].subscribers;
         channelsMap[nodeChannelId].last_update = result[index].last_update;
       }
+
+      this.lastFeedUpdateMap[nodeId].time = channelsMap[nodeChannelId].last_update;
     }
+    this.storeService.set(PersistenceKey.lastFeedUpdateMap, this.lastFeedUpdateMap);
     // this.storeService.set(PersistenceKey.channelsMap, channelsMap);
     this.saveChannelMap();
     this.refreshLocalChannels();
@@ -3141,12 +3149,23 @@ export class FeedService {
     this.getPost(nodeId,channelId,Communication.field.last_update,0,lastPostTime,0,"");
   }
 
+  updateFeedsWithTime(nodeId: string, lastUpdateTime: number){
+    this.getChannels(nodeId,Communication.field.last_update, 0, lastUpdateTime,0);
+  }
+
   updatePost(nodeId: string, channelId:number){
     let nodeChannelId = nodeId + channelId;
-    let lastPostTime = 0;
-    if (lastPostUpdateMap[nodeChannelId] != null && lastPostUpdateMap[nodeChannelId] != undefined)
-      lastPostTime = lastPostUpdateMap[nodeChannelId].time;
+    let mlastPostUpdateMap = lastPostUpdateMap || "";
+    let postUpdate = mlastPostUpdateMap[nodeChannelId]||"";
+    let lastPostTime = postUpdate["time"] || 0;
     this.updatePostWithTime(nodeId, channelId, lastPostTime);
+  }
+
+  updateFeed(nodeId: string){
+    let mLastFeedUpdateMap = this.lastFeedUpdateMap || "";
+    let update = mLastFeedUpdateMap[nodeId] || "";
+    let lastFeedTime = update["time"] || 0;
+    this.updateFeedsWithTime(nodeId,lastFeedTime);
   }
 
   getSubscribedChannelsFromNodeId(nodeId: string): Channels[]{
@@ -3719,8 +3738,9 @@ export class FeedService {
       this.updatePost(friendId,channelId);
     }
 
+    this.updateFeed(friendId);
     // this.getAllChannelDetails(friendId);
-    this.getChannels(friendId, Communication.field.last_update, 0, 0, 0);
+    // this.getChannels(friendId, Communication.field.last_update, 0, 0, 0);
   }
 
 
@@ -4169,8 +4189,8 @@ export class FeedService {
   setCurTab(curtab:string){
     this.curtab = curtab;
  }
-
- getCurTab(){
-   return this.curtab;
- }
+ 
+  getCurTab(){
+    return this.curtab;
+  }
 }
