@@ -150,15 +150,6 @@ export class ChannelsPage implements OnInit {
         this.native.setRootRouter(['/tabs/home']);
       });
     });
-
-    this.events.subscribe("feeds:editFeedInfoFinish",(nodeChannelId)=>{
-      this.zone.run(() => {
-        let nci = this.nodeId+ this.channelId;
-        if (nodeChannelId == nci){
-          this.initChannelData();
-        }
-      });
-    });
   }
 
   ionViewWillLeave(){

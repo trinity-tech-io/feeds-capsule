@@ -15,7 +15,7 @@ declare let appManager: AppManagerPlugin.AppManager;
   styleUrls: ['./disclaimer.page.scss'],
 })
 export class DisclaimerPage implements OnInit {
-
+  public styleObj:any={"height":""};
   constructor(
     private modalCtrl: ModalController,
     private appService: AppService,
@@ -30,6 +30,7 @@ export class DisclaimerPage implements OnInit {
   }
 
   ionViewWillEnter() {
+    this.styleObj["height"] = (screen.height - 215) +"px"
     this.events.subscribe("feeds:updateTitle",()=>{
       this.initTitle();
     });

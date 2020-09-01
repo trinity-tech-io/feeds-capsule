@@ -17,7 +17,7 @@
 
    <div class="rightContent">
     <div> 
-      <ion-label class="channel-title-small ellipsis white">{{channelName}}</ion-label>
+      <ion-label class="channel-title-small ellipsis white" (press)="pressName(channelName)">{{channelName}}</ion-label>
     </div>
     <div>
       <img src="./assets/images/bubble2.svg" class="bubble">

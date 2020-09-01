@@ -169,5 +169,9 @@ export class CreatenewpostPage implements OnInit {
     let status = this.checkServerStatus(this.nodeId);
    this.nodeStatus[this.nodeId] = status;
  }
+
+ pressName(channelName:string){
+     this.native.createTip(channelName);
+ }
 }
  

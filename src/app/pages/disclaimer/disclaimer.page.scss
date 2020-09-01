@@ -1,11 +1,21 @@
 ion-grid {
-    padding: 15px 30px 15px 15px;
+
+    .bg{
+      background:#ffffff;
+      border-radius: 17px;
+      overflow:auto;
+      padding:0px 10px;
+    }
+    
+    padding:15px;
 
     .des {
-        margin: 0 0 15px 0;
-        font-size: 13px;
+        padding:0px;
+        font-size: 16px;
         font-weight: 500;
         line-height: 1.7;
+        font-size: 16px;
+        color: #161740;
     }
 
     .btn-row {
@@ -29,11 +39,9 @@ ion-grid {
         }
       
         .cancel {
-            box-shadow: 0 3px 15px 0 #ededf0;
-            background-color: #ffffff;
-    
+            border: solid 1px #368bff;
             ion-label {
-                color: #000000;
+                color: #368bff;
             }
         }
         
@@ -51,11 +59,9 @@ ion-grid {
 .darkContainer {
     .btn-row {
         .cancel {
-            box-shadow: 0 3px 6px 0 #151626;
-            background-color: #202039;
-
+            border: solid 1px #368bff;
             ion-label {
-                color: #ffffff;
+                color: #368bff;
             }
         }
 

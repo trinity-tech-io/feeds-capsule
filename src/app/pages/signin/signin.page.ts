@@ -4,7 +4,7 @@ import { CarrierService } from 'src/app/services/CarrierService';
 import { Events, LoadingController } from '@ionic/angular';
 import { NativeService } from 'src/app/services/NativeService';
 import { TranslateService } from "@ngx-translate/core";
-
+import { ThemeService } from 'src/app/services/theme.service';
 declare let appManager: AppManagerPlugin.AppManager;
 declare let didManager: DIDPlugin.DIDManager;
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
@@ -29,7 +29,8 @@ export class SigninPage implements OnInit {
     public loadingController: LoadingController,
     private carrierService:CarrierService,
     private translate:TranslateService,
-    private event:Events) { }
+    private event:Events,
+    public theme:ThemeService) { }
 
   ngOnInit() {
     
