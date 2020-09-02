@@ -4,8 +4,7 @@
 
             <ion-row class="profile-card">
                 <ion-col size="7" class="left-col">
-                    <ion-img *ngIf="!avatar" src="./assets/images/default-contact.svg"></ion-img>
-                    <ion-img *ngIf="avatar" [src]="'data:'+avatar.contentType+';base64,'+avatar.data"></ion-img>
+                    <ion-img [src]="handleImages()"></ion-img>
                     <h1 (press) = "pressName()">{{ name }}</h1>
                 </ion-col>
                 <ion-col size="5" class="right-col">
