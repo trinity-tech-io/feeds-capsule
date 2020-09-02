@@ -45,12 +45,13 @@ export const zh = {
         "pictureviewer":"图片查看器",
         "delete":"删除",
         "amountError":"请输入正确的数额",
-        "waitMoment": "请稍等...",
+        "waitMoment": "请稍候...",
         "issuecredentialError": "颁发凭证出错，请检查二维码或重试",
         "save":"保存",
         "feed":"微频:",
         "image":"图片",
-        "nochanges":"没有修改内容"
+        "nochanges":"没有修改内容",
+        "cantSave":"无法存储数据，请检查存储状态"
     },
     "app":{
         "profileDetails":"档案详情",
@@ -341,7 +342,7 @@ export const zh = {
         "internalError":"服务器内部异常",
         "invalidParam":"参数无效",
         "invalidChallengeResponse":"登录鉴权失败",
-        "invalidVerifiableCredential":"服务器无法验证凭证信息",
+        "invalidVerifiableCredential":"服务器无法验证凭证信息,请检查你的DID是否已发布到侧链",
         "unsupportedRequests":"不支持的请求"
     },
     "EditserverinfoPage":{

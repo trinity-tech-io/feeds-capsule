@@ -1,9 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Storage } from '@ionic/storage';
+import { NativeService } from 'src/app/services/NativeService';
 
 @Injectable()
 export class StorageService {
-    constructor(private storage: Storage) {
+    constructor(
+        private native: NativeService,
+        private storage: Storage) {
     }
 
     ready(): Promise<LocalForage>{
@@ -11,7 +14,9 @@ export class StorageService {
     }
 
     set(key: string, value: any):Promise<any>{
-        return this.storage.set(key, value);
+        return this.storage.set(key, value).catch((reason)=>{
+            this.native.toastdanger("common.cantSave");
+        });
     }
 
     get(key: string):Promise<any>{

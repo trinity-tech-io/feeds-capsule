@@ -50,7 +50,8 @@ export const en = {
         "save":"Save",
         "feed":"Feed:",
         "image":"Image",
-        "nochanges":"No changes"
+        "nochanges":"No changes",
+        "cantSave":"Don’t save data, Please check the storage status."
     },
     "app":{
         "profileDetails":"Profile Details",
@@ -340,7 +341,7 @@ export const en = {
         "internalError":"Server Internal Error",
         "invalidParam":"Invalid Parameters",
         "invalidChallengeResponse":"Invalid Challenge Response",
-        "invalidVerifiableCredential":"Invalid Verifiable Credential",
+        "invalidVerifiableCredential":"Invalid Verifiable Credential, please check your did on side chain.",
         "unsupportedRequests":"Unsupported requests"
     },
     "EditserverinfoPage":{
