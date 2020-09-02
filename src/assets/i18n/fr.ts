@@ -2,7 +2,7 @@ export const fr = {
     "common":{
         "followers":"Followers",
         "allempty":"All Empty",
-        "pullToRefresh":"release to refresh",
+        "pullToRefresh":"Release to refresh",
         "Refreshing":"Refreshing...",
         "cancel":"Cancel",
         "ok":"OK",
@@ -45,7 +45,7 @@ export const fr = {
         "pictureviewer":"picture viewer",
         "delete":"Delete",
         "amountError":"Please input correct amount",
-        "waitMoment": "Please wait a moment...",
+        "waitMoment": "Please wait...",
         "issuecredentialError": "There was an error issuing the certificate. Please check the QR code or try again",
         "save":"Save",
         "feed":"Feed:",
