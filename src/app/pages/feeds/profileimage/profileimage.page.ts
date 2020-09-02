@@ -78,13 +78,12 @@ export class ProfileimagePage implements OnInit {
 
   selectIndex(index: number, avatar: string){
     this.select = index;
-    this.feedService.setSelsectIndex(this.select);
     if (index == 0){
       this.openCamera(0);
       return ;
     }else{
       this.avatar = "img://"+avatar;
-      this.feedService.setProfileIamge(this.avatar);
+    
     }
   }
 
@@ -93,6 +92,8 @@ export class ProfileimagePage implements OnInit {
       this.native.toast_trans('common.noImageSelected');
       return false;
     }
+    this.feedService.setProfileIamge(this.avatar);
+    this.feedService.setSelsectIndex(this.select);
     this.navCtrl.pop();
   }
 
@@ -105,14 +106,12 @@ export class ProfileimagePage implements OnInit {
       (imageUrl)=>{
         this.zone.run(() => {
           this.userAvatar = this.avatar = imageUrl;
-          this.feedService.setSelsectIndex(0);
-          this.feedService.setProfileIamge(this.avatar);
+          this.select = 0;
         });
       },
       (err)=>{
         if(this.userAvatar === "./assets/images/profile-add-dark.svg" || this.userAvatar === "./assets/images/profile-add.svg" ){
           this.avatar = "";
-          this.feedService.setProfileIamge("assets/images/profile-1.svg");
           this.native.toast_trans('common.noImageSelected');
         }
         }
