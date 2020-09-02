@@ -112,8 +112,8 @@ export class MyApp {
 
       this.didString = signInData.did || "";
       this.wName = signInData.name || "";
-      this.avatar = signInData.avatar;
-      this.name = UtilService.moreNanme(signInData.name);
+      this.avatar = signInData.avatar || null;
+      this.name = UtilService.moreNanme(signInData.name,6);
     },(error)=>{
     });
   }
@@ -123,5 +123,18 @@ export class MyApp {
     if(mName != "" && mName.length>15){
       this.native.createTip(mName);
     }
+  }
+
+  handleImages(){
+    if(this.avatar === null){
+       return 'assets/images/default-contact.svg';
+    }
+    let contentType = this.avatar['contentType'] || "";
+    let cdata = this.avatar['data'] || "";
+    if(contentType === "" || cdata === ""){
+      return 'assets/images/default-contact.svg';
+    }
+    
+    return 'data:'+this.avatar.contentType+';base64,'+this.avatar.data
   }
 }
