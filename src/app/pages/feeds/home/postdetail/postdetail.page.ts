@@ -26,6 +26,7 @@ export class PostdetailPage implements OnInit {
   public channelName:string = "";
   public channelWName:string ="";
   public channelOwner:string = "";
+  public channelWOwner:string = "";
   public postContent:string = "";
   public postTS:number = 0;
   public likesNum:number = 0;
@@ -61,8 +62,8 @@ export class PostdetailPage implements OnInit {
     this.channelWName = channel["name"] || "";
     this.channelName = UtilService.moreNanme(channel["name"]);
     this.channelAvatar = this.feedService.parseChannelAvatar(channel["avatar"]);
-
-    this.channelOwner = UtilService.moreNanme(channel["owner_name"]);
+    this.channelWOwner = channel["owner_name"] || "";
+    this.channelOwner = UtilService.moreNanme(channel["owner_name"],40);
 
     let post = this.feedService.getPostFromId(this.nodeId, this.channelId, this.postId);
     this.postContent = post.content;
@@ -320,5 +321,21 @@ export class PostdetailPage implements OnInit {
     if(this.channelWName!= "" && this.channelWName.length>15){
       this.native.createTip(this.channelWName);
     }
+  }
+
+  pressOwnerName(){
+    if(this.channelWOwner!= "" && this.channelWOwner.length>40){
+      this.native.createTip(this.channelWOwner);
+    }
+  }
+
+  userName(userName:string){
+
+    let name = userName || "";
+
+    if(name!=""){
+      this.native.createTip(name);
+    }
+
   }
 }

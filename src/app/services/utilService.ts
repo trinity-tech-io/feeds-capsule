@@ -99,10 +99,10 @@ public static dateFormat(date: Date, sFormat: String = 'yyyy-MM-dd'): string {
       return  {content:disPlayStr,type:"y"};
   }
 
-  public static moreNanme(name:string){
+  public static moreNanme(name:string,num:number = 15){
      let feedsName = name || "";
-     if(feedsName != "" && feedsName.length>15){
-          return feedsName.substring(0,12)+'...'
+     if(feedsName != "" && feedsName.length>num){
+          return feedsName.substring(0,num)+'...'
      }else{
           return feedsName;
      }
