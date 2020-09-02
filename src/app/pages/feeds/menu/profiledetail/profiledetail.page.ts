@@ -41,14 +41,13 @@ export class ProfiledetailPage implements OnInit {
     private events: Events
   ) {
       let signInData = feedService.getSignInData();
-      console.log('SIGNIN DATA', signInData);
-      this.name = signInData.name;
-      this.avatar = signInData.avatar;
-      this.description = signInData.description;
-      this.did = signInData.did;
-      this.telephone = signInData.telephone;
-      this.email = signInData.email;
-      this.location = signInData.location;
+      this.name = signInData.name || "";
+      this.avatar = signInData.avatar || null;
+      this.description = signInData.description || "";
+      this.did = signInData.did || "";
+      this.telephone = signInData.telephone || "";
+      this.email = signInData.email || "";
+      this.location = signInData.location || "";
 
       this.collectData(feedService.getSignInData());
 
@@ -117,6 +116,19 @@ export class ProfiledetailPage implements OnInit {
   ionViewWillLeave(){
     this.events.unsubscribe("feeds:connectionChanged");
     this.events.unsubscribe("feeds:updateTitle");
+  }
+
+  handleImages(){
+    if(this.avatar === null){
+       return 'assets/images/default-contact.svg';
+    }
+    let contentType = this.avatar['contentType'] || "";
+    let cdata = this.avatar['data'] || "";
+    if(contentType === "" || cdata === ""){
+      return 'assets/images/default-contact.svg';
+    }
+    
+    return 'data:'+this.avatar.contentType+';base64,'+this.avatar.data
   }
   
 
