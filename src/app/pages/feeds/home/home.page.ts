@@ -115,7 +115,7 @@ export class HomePage implements OnInit {
     if (channel === "") {
       return "";
     } else {
-      return UtilService.moreNanme(channel["owner_name"]);
+      return UtilService.moreNanme(channel["owner_name"],40);
     }
   }
 
@@ -312,5 +312,19 @@ export class HomePage implements OnInit {
     if(name != "" && name.length>15){
       this.native.createTip(name);
     }
+  }
+
+  pressOwnName(nodeId:string,channelId: number){
+
+    let name ="";
+    let channel = this.getChannel(nodeId, channelId) || "";
+    if (channel != "") {
+         name  =  channel["owner_name"] || "";
+    }
+
+    if(name != "" && name.length>40){
+      this.native.createTip(name);
+    }
+
   }
 }

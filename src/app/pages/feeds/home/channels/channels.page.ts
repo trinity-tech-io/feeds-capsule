@@ -209,7 +209,7 @@ export class ChannelsPage implements OnInit {
     if(channel === ""){
       return "";
     }else{
-      return UtilService.moreNanme(channel["owner_name"]);
+      return UtilService.moreNanme(channel["owner_name"],40);
     }
   }
 
@@ -411,7 +411,7 @@ export class ChannelsPage implements OnInit {
     if (channel != ""){
       name = channel["owner_name"] || "";
     }
-    if(name != "" && name.length>15){
+    if(name != "" && name.length>40){
       this.native.createTip(name);
     }
   }
