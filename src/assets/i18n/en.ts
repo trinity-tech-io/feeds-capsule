@@ -31,8 +31,8 @@ export const en = {
         "nopostyet":"No posts yet",
         "nodescriptionyet":'No description yet',
         "pleasesigninfirst":"Please sign in first",
-        "accept":"Agree",
-        "naccepted":"Not Agree",
+        "accept":"I agree",
+        "naccepted":"I don’t agree",
         "moreThen0":"Please enter a number greater than 0",
         "success":"Success",
         "fail":"Fail",
@@ -231,8 +231,8 @@ export const en = {
     "ScanqrcodePage":{
         "introtitle": "Create a new",
         "introtitle2": "Feed Source",
-        "introduce1":"Be sure you have a new Feed source/service setup on your device and a QRcode address displayed on the browser.",
-        "introduce2":"Scan the QRcode to bind your current DID with the Feed source/service.",
+        "introduce1":"Be sure you have a new Feed source setup on your device and a QRcode address displayed on the browser.",
+        "introduce2":"Scan the QRcode to bind your current DID with the Feed source.",
         // "introduce3":"to proceed",
         "introduce4":"Scan your QRcode address"
     },
