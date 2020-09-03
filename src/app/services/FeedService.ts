@@ -1922,7 +1922,7 @@ export class FeedService {
         time:created_at*1000
       }
     }else{
-      lastPostUpdateMap[nodeChannelId].time = created_at*1000;
+      lastPostUpdateMap[nodeChannelId].time = created_at;
     }
     
     this.storeService.set(PersistenceKey.lastPostUpdateMap,lastPostUpdateMap);
@@ -1976,7 +1976,7 @@ export class FeedService {
         time: create_at*1000
       }
     }else{
-      this.lastCommentUpdateMap[ncpId].time = create_at*1000;
+      this.lastCommentUpdateMap[ncpId].time = create_at;
     }
     this.storeService.set(PersistenceKey.lastCommentUpdateMap, this.lastCommentUpdateMap);
     
@@ -2462,7 +2462,7 @@ export class FeedService {
           time: channelsMap[nodeChannelId].last_update
         }
       } else{
-        this.lastFeedUpdateMap[nodeId].time = channelsMap[nodeChannelId].last_update;
+        this.lastFeedUpdateMap[nodeId].time = result[index].last_update;
       }
     }
     this.storeService.set(PersistenceKey.lastFeedUpdateMap, this.lastFeedUpdateMap);
@@ -2643,7 +2643,7 @@ export class FeedService {
             time:created_at*1000
           }
         }else{
-          lastPostUpdateMap[nodeChannelId].time = created_at*1000;
+          lastPostUpdateMap[nodeChannelId].time = created_at;
         }
         
       }
@@ -2719,7 +2719,7 @@ export class FeedService {
           time: created_at*1000
         }
       }else{
-        this.lastCommentUpdateMap[ncpId].time = created_at*1000;
+        this.lastCommentUpdateMap[ncpId].time = created_at;
       }
     }
 
