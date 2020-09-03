@@ -42,6 +42,7 @@ declare namespace FeedsData{
 
         post_unlike = "post_unlike",
 
-        updateFeedInfo = "update_feedinfo"
+        updateFeedInfo = "update_feedinfo",
+        feedInfoUpdate = "feedinfo_update"
     }
 }

@@ -467,11 +467,12 @@ declare module Communication{
         version: "1.0"
         method : "feedinfo_update"
         params : {
-            id          : number //channelId
+            id          : number    //channel_id
             name        : string
-            introduction: string  
-            avatar      : any
+            introduction: string
+            subscribers : number
             last_update : number
+            avatar      : any       //bin
         }
     }
 

@@ -2079,11 +2079,27 @@ export class FeedService {
     let desc = params.introduction||"";
     let avatarBin = params.avatar||""
     let last_update = params.last_update||"";
-
+    let subscribers = params.subscribers||0 ;
     let avatar = this.serializeDataService.decodeData(avatarBin)||"";
 
     let nodeChannelId = nodeId + channelId || "";
 
+    if (channelsMap[nodeChannelId] == undefined){
+      channelsMap[nodeChannelId] = {
+        nodeId:nodeId,
+        id: channelId,
+        name: name,
+        introduction: desc,
+        owner_name: "",
+        owner_did: "",
+        subscribers : 0,
+        last_update : last_update,
+        last_post: "",
+        avatar: "",
+        isSubscribed: true
+      }
+    }
+    
     if (name != "")
       channelsMap[nodeChannelId].name = name;
     if (desc != "")
@@ -2092,10 +2108,11 @@ export class FeedService {
       channelsMap[nodeChannelId].avatar = avatar;
     if (last_update != "")
       channelsMap[nodeChannelId].last_update = last_update;
-
+    if (subscribers != 0)
+      channelsMap[nodeChannelId].subscribers = subscribers;
+      
     this.storeService.set(PersistenceKey.channelsMap,channelsMap);
     eventBus.publish(PublishType.editFeedInfoFinish, nodeChannelId); 
-
   }
 
   handleNotification(nodeId: string, method: string, params: any){
@@ -2112,8 +2129,7 @@ export class FeedService {
       case FeedsData.MethodType.newSubscription:
         this.handleNewSubscriptionNotification(nodeId, params);
         break;
-
-      case FeedsData.MethodType.updateFeedInfo:
+      case FeedsData.MethodType.feedInfoUpdate:
         this.handleNewFeedInfoUpdateNotification(nodeId,params);
         break;
     }
@@ -4288,5 +4304,15 @@ export class FeedService {
  
   getCurTab(){
     return this.curtab;
+  }
+
+  updateVersionData(){
+    let updateCode = localStorage.getItem('org.elastos.dapp.feeds.update') || "0";
+    if (Number(updateCode) < 4){
+      this.storeService.remove(PersistenceKey.lastCommentUpdateMap);
+      this.storeService.remove(PersistenceKey.lastPostUpdateMap);
+      this.storeService.remove(PersistenceKey.lastFeedUpdateMap);
+      localStorage.setItem("org.elastos.dapp.feeds.update","4");
+    }
   }
 }
