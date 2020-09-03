@@ -63,7 +63,7 @@ export class ServerInfoPage implements OnInit {
   initData(){
     if (this.address != ''){
       this.zone.run(()=>{
-        this.presentLoading();
+        this.native.showLoading('common.waitMoment',2000);
       });
       this.queryServer();
     }else{
@@ -164,16 +164,6 @@ export class ServerInfoPage implements OnInit {
 
   navigateBackPage() {
     this.native.pop();
-  }
-
-  async presentLoading() {
-    const loading = await this.loadingController.create({
-      message: this.translate.instant("ServerInfoPage.Pleasewait"),
-      duration: 2000
-    });
-    await loading.present();
-
-    const { role, data } = await loading.onDidDismiss();
   }
 
   queryServer(){

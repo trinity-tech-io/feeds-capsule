@@ -76,7 +76,7 @@ export class SigninPage implements OnInit {
     }
 
     this.zone.run(()=>{
-      this.presentLoading();
+      this.native.showLoading('common.waitMoment',2000);
     });
     appManager.sendIntent("credaccess", {
       claims: {
@@ -146,16 +146,6 @@ export class SigninPage implements OnInit {
         });
       }
     });
-  }
-
-  async presentLoading() {
-    const loading = await this.loadingController.create({
-      message: this.translate.instant("SigninPage.Pleasewait"),
-      duration: 2000
-    });
-    await loading.present();
-
-    const { role, data } = await loading.onDidDismiss();
   }
 
   findCredentialValueById(did: string, credentials: DIDPlugin.VerifiableCredential[], fragment: string, defaultValue: string) {
