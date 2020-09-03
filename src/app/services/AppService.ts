@@ -123,7 +123,7 @@ export class AppService {
       let isLoadPost = false;
       let isLoadChannel = false;
       let isNeedResave = localStorage.getItem('org.elastos.dapp.feeds.resavepost') || "";
-
+      this.feedService.updateVersionData();
       this.feedService.initSignInDataAsync((signInData) => {
         this.feedService.loadPostData().then(() => {
           if(isNeedResave === ""){
