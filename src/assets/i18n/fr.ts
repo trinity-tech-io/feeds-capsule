@@ -325,12 +325,14 @@ export const fr = {
     },
     "DonationPage":{
         "donation": "Donation",
+        "donate": "Donate",
         "donationELAAddress":"Donation ELA Address",
         "description":"The Feeds Capsule is a non-profit project dedicated to improving user experience and integrating essential features into elastOS. All donations contributed to the Feeds project will be greatly appreciated, and will better enable us to deliver on our mission as we develop new functions and features for our upcoming releases.",
         "receiver":"Receiver",
         "amount":"Amount",
         "memo":"memo",
-        "defaultMemo":"Donation to Feeds project"
+        "defaultMemo":"Donate to Feeds project",
+        "supportFeeds":"Support Feeds",
     },
     "ErrorInfo":{
         "alreadyExists":"Entity Already Exists",
