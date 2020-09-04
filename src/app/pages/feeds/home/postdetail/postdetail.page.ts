@@ -54,7 +54,8 @@ export class PostdetailPage implements OnInit {
    
   }
 
-  initData(){   
+  initData(){
+    this.getImage();
     this.initnodeStatus();
     let channel = this.feedService.getChannelFromId(this.nodeId, this.channelId) || "";
     if (channel == "")
@@ -146,6 +147,8 @@ export class PostdetailPage implements OnInit {
     this.events.unsubscribe("feeds:friendConnectionChanged");
     this.events.unsubscribe("feeds:updateTitle");
     this.events.unsubscribe("feeds:refreshPostDetail");
+    this.images = null;
+    this.menuService.hideActionSheet();
   }
 
   ionViewDidEnter() {
@@ -243,11 +246,11 @@ export class PostdetailPage implements OnInit {
   }
 
   menuMore(){
-    this.menuService.showShareMenu(this.nodeId, Number(this.channelId), this.channelName);
+    this.menuService.showPostDetailMenu(this.nodeId, Number(this.channelId), this.channelName,this.postId);
   }
 
   showBigImage(content: any){
-    this.native.openViewer(this.getImage(),"common.image","PostdetailPage.postview");
+    this.native.openViewer(content,"common.image","PostdetailPage.postview");
   }
 
  
@@ -276,7 +279,6 @@ export class PostdetailPage implements OnInit {
         console.log("getImageError");
       })
     }
-    return this.images[nodeChannelPostId];
   }
 
   doRefresh(event:any){

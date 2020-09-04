@@ -278,3 +278,20 @@ pre {
 .loading-class{
   color:#000000;
 }
+
+.editPost .action-sheet-group {
+
+  .action-sheet-button-inner{
+    justify-content: left;
+    font-size: 14px;
+    font-weight: 600;
+    color: #000000;
+    vertical-align: middle;
+
+    .action-sheet-icon{
+      margin-top:-4px;
+      margin-left:14px;
+      margin-right:10px;
+    }
+  }
+}

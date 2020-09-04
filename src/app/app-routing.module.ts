@@ -39,6 +39,7 @@ const routes: Routes = [
 
   { path: 'editserverinfo', loadChildren: './pages/editserverinfo/editserverinfo.module#EditserverinfoPageModule' },
   { path: 'eidtchannel', loadChildren: './pages/eidtchannel/eidtchannel.module#EidtchannelPageModule' },
+  { path: 'editpost', loadChildren: './pages/editpost/editpost.module#EditpostPageModule' },
 
 
 ];

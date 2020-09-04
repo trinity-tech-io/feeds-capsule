@@ -24,7 +24,7 @@
                   <div class="online-circle"  *ngIf="nodeStatus[nodeId] == 0"></div>
                   <div class="offline-circle" *ngIf="nodeStatus[nodeId] == 1"></div>
                 </div>
-                <img  src={{channelAvatar}}>
+               <ion-img  [src]="channelAvatar"></ion-img>
               </ion-avatar>
 
               <div class="text-div">
@@ -44,10 +44,8 @@
         <div class="channel-post-div" style="margin-bottom:5px"> 
          <pre class="channel-post white">{{getContentText(postContent)}}</pre>
         </div>
-        <ion-avatar  *ngIf="getImage() != 'none'" class="content-img-without-margin" (click)="showBigImage()">
-          <img 
-          [src]="getImage()"
-        />
+        <ion-avatar  *ngIf="images[nodeId+channelId+postId] != 'none' && images[nodeId+channelId+postId] != 'undefine' && images[nodeId+channelId+postId] != null" class="content-img-without-margin" (click)="showBigImage(images[nodeId+channelId+postId])">
+          <ion-img [src]="images[nodeId+channelId+postId]"></ion-img>
         </ion-avatar>
 
         <div class="channel-post-heart-comment-div">
