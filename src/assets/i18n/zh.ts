@@ -51,7 +51,10 @@ export const zh = {
         "feed":"微频:",
         "image":"图片",
         "nochanges":"没有修改内容",
-        "cantSave":"无法存储数据，请检查存储状态"
+        "cantSave":"无法存储数据，请检查存储状态",
+        "editpost":"编辑微说",
+        "removepost":"移除微说"
+
     },
     "app":{
         "profileDetails":"档案详情",
@@ -352,5 +355,8 @@ export const zh = {
     },
     "EidtchannelPage":{
        "title":"编辑微频信息",
+    },
+    "EditpostPage":{
+        "title":"编辑微说",
     }
 };

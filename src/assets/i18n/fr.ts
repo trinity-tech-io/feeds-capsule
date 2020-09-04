@@ -51,7 +51,9 @@ export const fr = {
         "feed":"Feed:",
         "image":"Image",
         "nochanges":"No changes",
-        "cantSave":"Don’t save data, Please check the storage status."
+        "cantSave":"Don’t save data, Please check the storage status.",
+        "editpost":"Edit Post",
+        "removepost":"Remove Post"
     },
     "app":{
         "profileDetails":"Profile Details",
@@ -352,5 +354,8 @@ export const fr = {
     },
     "EidtchannelPage":{
         "title":"Edit Feed Info",
-     }
+    },
+    "EditpostPage":{
+        "title":"Edit Post",
+    }
 };

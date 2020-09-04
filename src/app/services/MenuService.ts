@@ -48,7 +48,7 @@ export class MenuService {
     }
 
     async showShareMenu(nodeId: string, channelId: number, channelName: string){
-        const actionSheet = await this.actionSheetController.create({
+        let actionSheet = await this.actionSheetController.create({
             buttons: [
             {
                 text: this.translate.instant("common.share"),
@@ -56,14 +56,23 @@ export class MenuService {
                 handler: () => {
                     this.native.toast("common.comingSoon");
                 }
-            },{
+            },
+            {
                 text: this.translate.instant("common.cancel"),
                 icon: 'close',
                 role: 'cancel',
                 handler: () => {
                 }
-            }]
+            }
+        ]
         });
+
+        actionSheet.onWillDismiss().then(()=>{
+            if(actionSheet!=null){
+                actionSheet = null;
+            }
+           
+        })
         await actionSheet.present();
     }
 
@@ -105,5 +114,68 @@ export class MenuService {
             }]
           });
         await actionSheet.present();
+    }
+
+    hideActionSheet(){
+        this.actionSheetController.dismiss();
+    }
+
+    async showPostDetailMenu(nodeId: string, channelId: number, channelName: string,postId:number){
+        let actionSheet = await this.actionSheetController.create({
+            cssClass: 'editPost',
+            buttons: [
+            {
+                    text: this.translate.instant("common.editpost"),
+                    icon: 'create',
+                    handler: () => {
+                       this.handlePostDetailMenun(nodeId,channelId,channelName,postId,"editPost");
+                    }
+            },
+            {
+                text: this.translate.instant("common.share"),
+                icon: 'share',
+                handler: () => {
+                this.handlePostDetailMenun(nodeId,channelId,channelName,postId,"share");
+                }
+            },
+            {
+                text: this.translate.instant("common.removepost"),
+                icon: 'trash',
+                handler: () => {
+                    this.handlePostDetailMenun(nodeId,channelId,channelName,postId,"removePost");
+                }
+            }
+        ]
+        });
+
+        actionSheet.onWillDismiss().then(()=>{
+            if(actionSheet!=null){
+                actionSheet = null;
+            }
+           
+        })
+        await actionSheet.present();
+    }
+
+    handlePostDetailMenun(nodeId: string, channelId: number, channelName: string,postId:number,clickName:string){
+            switch(clickName){
+                case "editPost":
+                    this.native.go(
+                        "/editpost", 
+                        { 
+                          "nodeId":nodeId,
+                          "channelId":channelId,
+                          "postId":postId,
+                          "channelName":channelName
+                        }
+                      );
+                    break;
+                case "share":
+                    this.native.toast("common.comingSoon");
+                    break;
+                case "removePost":
+                    this.native.toast("common.comingSoon");
+                    break;    
+            }
     }
 }
