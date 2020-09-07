@@ -58,38 +58,44 @@
     </div>
     <div class="line-div"></div>
 
-    <!-- <div *ngIf="refreshCommFinish"> -->
-      <div *ngFor="let comment of commentList let i=index">
-        <div class="channel-img-small-div">
-          <ion-avatar class="avatar-div" style="margin-top: 5px;">
-            <img *ngIf="avatar == ''" class="profile-img" src="./assets/images/default-contact.svg">
-            <img *ngIf="avatar != ''" class="profile-img" [src]="avatar">
-          </ion-avatar> 
-          <div class="channel-detail-div">
-            <div class="channel-detail-text-div">
-              <div style="height: 100%; vertical-align: middle;" > 
-                <ion-label class="channel-title-small white" (press)="userName(comment.user_name)">@{{indexText(comment.user_name)}}</ion-label>
-                <ion-label class="channel-ts">{{handleDisplayTime(comment.created_at)}}</ion-label>
-                <ion-icon name="more" mode="ios" style="vertical-align: middle; float: right; "></ion-icon>
-              </div>
+    <div *ngFor="let comment of commentList let i=index" style="margin-top: 25px;">
+      <div class="image-text-layout-div" >
+        <ion-card-content class="ion-no-padding ion-no-margin">
+          <div class="menu-div"  (click)="openPopOverComponent($event)">
+            <img  src="./assets/images/dots-three-vertical.svg" *ngIf="!theme.darkMode" style="width:12.4;height:3px">
+            <img  src="./assets/images/dots-three-vertical-dark.svg" *ngIf="theme.darkMode" style="width:12.4;height:3px">
+          </div>
+          <div class="image-text-div">
+              <ion-avatar class="avatar-div">
+                <img *ngIf="avatar == ''" class="profile-img" src="./assets/images/default-contact.svg">
+                <img *ngIf="avatar != ''" class="profile-img" [src]="avatar">
+              </ion-avatar>
     
-              <div  (click)="navTo(post.nodeId, post.channel_id)"> 
-                <ion-label class="channel-desc-small" (press)="userName(comment.user_name)">@{{indexText(comment.user_name)}}</ion-label>
+              <div class="text-div">
+                <div class="text1-div"> 
+                  <ion-label class="channel-title-small white" (press)="userName(comment.user_name)">@{{indexText(comment.user_name)}}</ion-label>
+                  <ion-label class="channel-ts">{{handleDisplayTime(comment.created_at)}}</ion-label>
+                </div>
+                <div  (click)="navTo(post.nodeId, post.channel_id)"> 
+                  <ion-label class="channel-desc-small" (press)="userName(comment.user_name)">@{{indexText(comment.user_name)}}</ion-label>
+                </div>
               </div>
-
-              <div class="channel-post-div" > 
-                <ion-label class="channel-post white"><pre [ngStyle]="objStyle">{{comment.content}}</pre></ion-label>
-              </div>
+          </div>
     
-              <div class="channel-post-heart-comment-div">
-                <img class="like" [ngClass]="{'like-s': checkLikedComment(comment.id)}" (click)="likeComment(comment.id)">
-                <ion-label class="like-text" [ngClass]="{'like-s-text': checkLikedComment(comment.id)}" (click)="likeComment(comment.id)">{{comment.likes}}</ion-label>
-              </div>
+          <div style="margin-left: 81px;margin-top: -12px;">
+            <div class="channel-post-div"> 
+              <ion-label class="channel-post white"> <pre>{{comment.content}}</pre></ion-label>
+            </div>
+            
+            <div class="channel-post-heart-comment-div">
+              <img class="like" [ngClass]="{'like-s': checkLikedComment(comment.id)}" (click)="likeComment(comment.id)">
+              <ion-label class="like-text" [ngClass]="{'like-s-text': checkLikedComment(comment.id)}" (click)="likeComment(comment.id)">{{comment.likes}}</ion-label>
             </div>
           </div>
-        </div>
-        <div class="line-div white-line" *ngIf="i!=commentList.length-1"></div>
+        </ion-card-content>
       </div>
+      <div class="line-div white-line" *ngIf="i!=commentList.length-1"></div>
+    </div>
 
       
       <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event)">
