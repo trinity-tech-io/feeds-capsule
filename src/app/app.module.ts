@@ -35,6 +35,7 @@ import { JsonRPCService } from './services/JsonRPCService';
 // import { TransportService } from './services/TransportService';
 import { AppService } from './services/AppService';
 import { ThemeService } from './services/theme.service';
+import { ConnectionService } from './services/ConnectionService';
 
 import { PopupProvider } from './services/popup';
 import { CameraService } from './services/CameraService';
@@ -166,6 +167,7 @@ export function anim(AnimationC: Animation, baseEl: any, position?: any): Promis
     SerializeDataService,
     MenuService,
     PostfromComponentPageModule,
+    ConnectionService,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     {provide: ErrorHandler, useClass: ErrorHandler}
   ]

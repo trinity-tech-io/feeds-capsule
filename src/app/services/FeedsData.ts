@@ -1,4 +1,9 @@
 declare namespace FeedsData{
+    const enum ConnState {
+        connected = 0,
+        disconnected = 1
+    }
+
     type AllFeed = {
         nodeId: string,
         avatar: string,
@@ -7,6 +12,11 @@ declare namespace FeedsData{
         subscribeState: string
     }
 
+    type AccessToken = {
+        token: string ;
+        exp: number ;
+        isExpire: boolean;
+    }
     const enum MethodType {
         create_channel = "create_channel",
         publish_post = "publish_post",
