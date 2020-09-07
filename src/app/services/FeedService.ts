@@ -372,6 +372,7 @@ export class FeedIntro{
 
 @Injectable()
 export class FeedService {
+  public currentLang:string ="";
   public curtab:string ="home";
   public channelInfo:any ={};
   public postMap: any;
@@ -4315,4 +4316,12 @@ export class FeedService {
       localStorage.setItem("org.elastos.dapp.feeds.update","4");
     }
   }
+
+  setCurrentLang(currentLang:string){
+      this.currentLang = currentLang;
+  }
+
+  getCurrentLang(){
+   return this.currentLang;
+}
 }

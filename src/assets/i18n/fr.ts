@@ -59,7 +59,8 @@ export const fr = {
         "settings":"Settings",
         "about":"About Feeds",
         "develop":"Develop",
-        "donation": "Donation"
+        'email':'Email',
+        'telegram':'Telegram',
     },
     "SigninPage":{
         "signIn":"Sign In to Feeds",
@@ -168,10 +169,11 @@ export const fr = {
     "AboutPage":{
         "about":"About",
         "version":"version",
-        "website":"website",
-        "releaseddate":"Released date",
-        "developers":"Developers",
-        'designers':'Designers',
+        "website":"Website",
+        "disclaimer":"Disclaimer",
+        "help":"Feeds dApp manual",
+        'email':'Email',
+        'telegram':'Telegram',
     },
     "PostdetailPage":{
         "postview":"Post View"

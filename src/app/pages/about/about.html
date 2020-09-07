@@ -14,23 +14,31 @@
                 <h4>{{'AboutPage.website'|translate}}</h4>
                 <p>www.trinity-tech.io</p>
             </ion-row>
+
+            <ion-row class="details" (click)="copyemail()">
+                <h4>{{'AboutPage.email'|translate}}</h4>
+                <p>feeds@trinity-tech.io</p>
+            </ion-row>
+
+
+            <ion-row class="details" (click)="telegram()">
+                <h4>{{'AboutPage.telegram'|translate}}</h4>
+                <p>https://t.me/feedscapsule</p>
+            </ion-row>
+
+            <ion-row class="details" (click)="disclaimer()">
+                <h4>{{'AboutPage.disclaimer'|translate}}</h4>
+                <p>https://www.trinity-tech.io/disclaimer.html</p>
+            </ion-row>
+
+            <!-- <ion-row class="details" (click)="help()">
+                <h4>{{'AboutPage.help'|translate}}</h4>
+                <p *ngIf="curlangule==='zh'">https://github.com/elastos-trinity/feeds-manual-docs/blob/master/Feeds_Manual_zh.md</p>
+                <p *ngIf="curlangule!='zh'">https://github.com/elastos-trinity/feeds-manual-docs/blob/master/Feeds_Manual_en.md</p>
+            </ion-row> -->
+
         </ion-list>
     </ion-grid>    
 </ion-content>
-
-<!-- <ion-content ion-padding>
-  <div id="logo">
-      <img style="width: 80px; height: 80px;" src="assets/images/feeds-logo.svg" />
-      <div>{{'AboutPage.version' | translate}}: {{version}}</div>
-  </div>
-  <ion-list lines="none">
-      <ion-item detail (click)="goWebsite()">
-          <ion-label>
-              <h2>{{'AboutPage.website'|translate}}:</h2>
-              <p>www.trinity-tech.io</p>
-          </ion-label>
-      </ion-item>
-  </ion-list>
-</ion-content> -->
  
 

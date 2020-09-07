@@ -39,7 +39,12 @@ export class ServerpromptComponent implements OnInit {
   clickScan(){
     appManager.sendIntent('scanqrcode', {}, {}, (res) => {
       this.zone.run(()=>{
-        this.elaAddress = res.result.scannedContent;
+        let scannedContent = res.result.scannedContent || "";
+        if(scannedContent != ""&& scannedContent.indexOf("elastos:")>-1){
+          this.elaAddress = scannedContent.replace("elastos:","");
+        }else{
+          this.elaAddress = scannedContent;
+        }
       });
     }, (err: any) => {
       console.error(err);
