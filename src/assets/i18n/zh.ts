@@ -53,7 +53,9 @@ export const zh = {
         "nochanges":"没有修改内容",
         "cantSave":"无法存储数据，请检查存储状态",
         "editpost":"编辑微说",
-        "removepost":"移除微说"
+        "removepost":"移除微说",
+        "editcomment":"编辑微评",
+        "removecomment":"移除微评",
 
     },
     "app":{
