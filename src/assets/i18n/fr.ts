@@ -53,7 +53,9 @@ export const fr = {
         "nochanges":"No changes",
         "cantSave":"Don’t save data, Please check the storage status.",
         "editpost":"Edit Post",
-        "removepost":"Remove Post"
+        "removepost":"Remove Post",
+        "editcomment":"Edit Comment",
+        "removecomment":"Remove Comment",
     },
     "app":{
         "profileDetails":"Profile Details",

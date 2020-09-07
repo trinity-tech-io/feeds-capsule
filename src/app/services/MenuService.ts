@@ -7,6 +7,7 @@ import { NativeService } from './NativeService';
 
 @Injectable()
 export class MenuService {
+    public postDetail:any;
     constructor(
         private feedService: FeedService,
         private actionSheetController: ActionSheetController,
@@ -117,11 +118,12 @@ export class MenuService {
     }
 
     hideActionSheet(){
-        this.actionSheetController.dismiss();
+        if(this.postDetail !=null)
+        this.postDetail.dismiss();
     }
 
     async showPostDetailMenu(nodeId: string, channelId: number, channelName: string,postId:number){
-        let actionSheet = await this.actionSheetController.create({
+         this.postDetail = await this.actionSheetController.create({
             cssClass: 'editPost',
             buttons: [
             {
@@ -148,13 +150,13 @@ export class MenuService {
         ]
         });
 
-        actionSheet.onWillDismiss().then(()=>{
-            if(actionSheet!=null){
-                actionSheet = null;
+        this.postDetail.onWillDismiss().then(()=>{
+            if(this.postDetail !=null){
+                this.postDetail  = null;
             }
            
         })
-        await actionSheet.present();
+        await this.postDetail.present();
     }
 
     handlePostDetailMenun(nodeId: string, channelId: number, channelName: string,postId:number,clickName:string){

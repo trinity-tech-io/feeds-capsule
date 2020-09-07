@@ -43,6 +43,8 @@ export class PostdetailPage implements OnInit {
   public pageNumber:number = 5;
   public totalData:any = [];
 
+  public popover: any; 
+
   constructor(
     private popoverController:PopoverController,
     private acRoute: ActivatedRoute,
@@ -151,6 +153,9 @@ export class PostdetailPage implements OnInit {
     this.events.unsubscribe("feeds:refreshPostDetail");
     this.images = null;
     this.menuService.hideActionSheet();
+    if(this.popover!=null){
+      this.popover.dismiss();
+    }
   }
 
   ionViewDidEnter() {
@@ -341,12 +346,20 @@ export class PostdetailPage implements OnInit {
 
   }
 
-  async openPopOverComponent(ev:any) {
-    const popover = await this.popoverController.create({
+  async openEditTool(ev:any,postId:number) {
+    this.popover = await this.popoverController.create({
       component: EdittoolComponent,
+      componentProps: {nodeId:this.nodeId,channelId:Number(this.channelId),postId:Number(postId)},
       event: ev,
       translucent: true
     });
-    return await popover.present();
+
+    this.popover.onWillDismiss().then(()=>{
+         if(this.popover!=null){
+           this.popover = null;
+         }
+          
+    })
+    return await this.popover.present();
   }
 }
