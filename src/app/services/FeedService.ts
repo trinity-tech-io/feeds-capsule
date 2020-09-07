@@ -1930,7 +1930,9 @@ export class FeedService {
 
     this.storeService.set(PersistenceKey.postMap, this.postMap);
 
-    unreadMap[nodeChannelId] = unreadMap[nodeChannelId]+1;
+    if (!this.checkChannelIsMine(nodeId, channel_id))
+      unreadMap[nodeChannelId] = unreadMap[nodeChannelId]+1;
+
     this.storeService.set(PersistenceKey.unreadMap,unreadMap);
 
     eventBus.publish(PublishType.postDataUpdate);
@@ -2638,6 +2640,13 @@ export class FeedService {
       let contentImage = this.parsePostContentImg(content);
 
       let mPostId = this.getPostId(nodeId, channel_id, id);
+
+      if(this.postMap[mPostId] == undefined){
+        let nodeChannelId = nodeId + channel_id;
+        if (!this.checkChannelIsMine(nodeId, channel_id))
+          unreadMap[nodeChannelId] = unreadMap[nodeChannelId]+1;
+      }
+
       this.postMap[mPostId] = {
         nodeId     : nodeId,
         channel_id : channel_id,
