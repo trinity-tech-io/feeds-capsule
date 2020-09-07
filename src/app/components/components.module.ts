@@ -10,6 +10,7 @@ import { PaypromptComponent } from './payprompt/payprompt.component';
 import { TipdialogComponent} from './tipdialog/tipdialog.component';
 import { BackhomeComponent} from './backhome/backhome.component';
 import { MorenameComponent} from './morename/morename.component';
+import { EdittoolComponent} from './edittool/edittool.component';
 
 import { MyfeedsComponent} from './myfeeds/myfeeds.component';
 import { FollowingComponent} from './following/following.component';
@@ -23,12 +24,12 @@ import { LikesComponent} from './likes/likes.component';
     IonicModule,
   ],
 
-  declarations: [MorenameComponent,BackhomeComponent,TipdialogComponent,PaypromptComponent,ServerpromptComponent,MyfeedsComponent,FollowingComponent,LikesComponent],
-  exports: [MorenameComponent,BackhomeComponent,TipdialogComponent,PaypromptComponent,ServerpromptComponent,MyfeedsComponent,FollowingComponent,LikesComponent],
+  declarations: [EdittoolComponent,MorenameComponent,BackhomeComponent,TipdialogComponent,PaypromptComponent,ServerpromptComponent,MyfeedsComponent,FollowingComponent,LikesComponent],
+  exports: [EdittoolComponent,MorenameComponent,BackhomeComponent,TipdialogComponent,PaypromptComponent,ServerpromptComponent,MyfeedsComponent,FollowingComponent,LikesComponent],
 
   providers: [
   ],
-  entryComponents: [MorenameComponent,BackhomeComponent,TipdialogComponent,ServerpromptComponent,
+  entryComponents: [EdittoolComponent,MorenameComponent,BackhomeComponent,TipdialogComponent,ServerpromptComponent,
     PaypromptComponent,],
 })
 export class ComponentsModule { }

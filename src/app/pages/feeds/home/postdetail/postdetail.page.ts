@@ -7,7 +7,8 @@ import { MenuService } from 'src/app/services/MenuService';
 import { ThemeService } from 'src/app/services/theme.service';
 import { TranslateService } from "@ngx-translate/core";
 import { UtilService } from 'src/app/services/utilService';
-import { IonInfiniteScroll} from '@ionic/angular';
+import { IonInfiniteScroll,PopoverController} from '@ionic/angular';
+import { EdittoolComponent } from '../../../../components/edittool/edittool.component';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 @Component({
@@ -43,6 +44,7 @@ export class PostdetailPage implements OnInit {
   public totalData:any = [];
 
   constructor(
+    private popoverController:PopoverController,
     private acRoute: ActivatedRoute,
     private events: Events,
     private zone: NgZone,
@@ -337,5 +339,14 @@ export class PostdetailPage implements OnInit {
       this.native.createTip(name);
     }
 
+  }
+
+  async openPopOverComponent(ev:any) {
+    const popover = await this.popoverController.create({
+      component: EdittoolComponent,
+      event: ev,
+      translucent: true
+    });
+    return await popover.present();
   }
 }
