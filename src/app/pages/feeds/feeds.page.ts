@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { PostfromComponent } from '../../components/postfrom/postfrom.component';
-import { NavController, PopoverController } from '@ionic/angular';
+import { PopoverController } from '@ionic/angular';
 import { FeedService } from '../../services/FeedService';
 import { NativeService } from '../../services/NativeService';
 import { TranslateService } from "@ngx-translate/core";
@@ -20,7 +20,6 @@ export class FeedsPage implements OnInit {
   public currentTab = "";
 
   constructor(
-    private navCtrl: NavController,
     private native: NativeService,
     private feedService: FeedService,
     private popoverController: PopoverController,
@@ -74,6 +73,7 @@ export class FeedsPage implements OnInit {
   }
 
   create(){
+
     if(this.feedService.getConnectionStatus() != 0){
       this.native.toastWarn('common.connectionError');
       return;
@@ -81,27 +81,33 @@ export class FeedsPage implements OnInit {
 
     let bindingServer = this.feedService.getBindingServer();
     if (bindingServer == null || bindingServer == undefined){
-      this.navCtrl.navigateForward(['/bindservice/scanqrcode']);
-      return ;
-    }
-      
-    if(this.feedService.getMyChannelList().length>0){
-      this.openPopOverComponent();
+      this.native.navigateForward(['/bindservice/scanqrcode'],"");
       return ;
     }
 
-    if(this.feedService.getConnectionStatus() != 0){
-      this.native.toastWarn('common.connectionError');
+
+
+    if(this.feedService.getMyChannelList().length === 0){
+      this.native.navigateForward(['/createnewfeed'],"");
       return;
     }
-    this.native.navigateForward(['/createnewfeed'],"");
+
+    if(this.feedService.getMyChannelList().length === 1){
+      let myChannel = this.feedService.getMyChannelList()[0];
+      this.native.navigateForward(['createnewpost/',myChannel.nodeId,myChannel.id],"");
+      return;
+    }
+      
+    if(this.feedService.getMyChannelList().length>1){
+      this.openPopOverComponent();
+      return ;
+    }
   }
 
   async openPopOverComponent() {
     this.popoverController.create(
       {
         component:PostfromComponent,
-        // componentProps: {nodeId:this.nodeId,id:this.id},
         cssClass: 'bottom-sheet-popover1',
         showBackdrop:true,
       }).then((popoverElement)=>{

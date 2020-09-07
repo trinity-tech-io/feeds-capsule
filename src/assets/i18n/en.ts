@@ -169,9 +169,10 @@ export const en = {
         "about":"About",
         "version":"Version",
         "website":"Website",
-        "releaseddate":"Released date",
-        "developers":"Developers",
-        'designers':'Designers',
+        "disclaimer":"Disclaimer",
+        "help":"Feeds dApp manual",
+        'email':'Email',
+        'telegram':'Telegram',
     },
     "PostdetailPage":{
         "postview":"Post View"

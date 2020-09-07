@@ -169,9 +169,10 @@ export const zh = {
         "about":"关于微频",
         "version":"版本",
         "website":"团队网址",
-        "releaseddate":"发布日期",
-        "developers":"开发人员",
-        'designers':'设计人员',
+        "disclaimer":"免责声明",
+        "help":"微频使用手册",
+        'email':'邮箱',
+        'telegram':'电报',
     },
     "PostdetailPage":{
         "postview":"微说详情"

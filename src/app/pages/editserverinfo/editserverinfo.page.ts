@@ -85,7 +85,12 @@ export class EditserverinfoPage implements OnInit {
   clickScan(){
     appManager.sendIntent('scanqrcode', {}, {}, (res) => {
       this.zone.run(()=>{
-        this.elaAddress = res.result.scannedContent;
+        let scannedContent = res.result.scannedContent || "";
+        if(scannedContent != ""&& scannedContent.indexOf("elastos:")>-1){
+          this.elaAddress = scannedContent.replace("elastos:","");
+        }else{
+          this.elaAddress = scannedContent;
+        }
       });
     }, (err: any) => {
       console.error(err);
@@ -108,10 +113,12 @@ export class EditserverinfoPage implements OnInit {
     }
 
     if(this.checkParms()){
-        this.native.showLoading('common.waitMoment');
-        this.feedService.issueCredential(this.nodeId,this.did, this.name, this.introduction,this.elaAddress,()=>{
-        },()=>{
-          this.native.hideLoading();
+        this.native.showLoading('common.waitMoment').then(()=>{
+          this.feedService.issueCredential(this.nodeId,this.did, this.name, this.introduction,this.elaAddress,()=>{
+            this.native.hideLoading();
+          },()=>{
+            this.native.hideLoading();
+          });
         });
     }
   }

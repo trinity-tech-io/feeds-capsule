@@ -114,6 +114,7 @@ export class AppService {
         currentLang = "en";
       }
       console.log("Setting current lang to "+currentLang);
+      this.feedService.setCurrentLang(currentLang);
       this.translate.setDefaultLang(currentLang);
       this.translate.use(currentLang);
       this.event.publish("feeds:updateTitle");
