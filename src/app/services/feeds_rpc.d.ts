@@ -467,12 +467,11 @@ declare module Communication{
         version: "1.0"
         method : "feedinfo_update"
         params : {
-            id          : number    //channel_id
+            id          : number //channelId
             name        : string
-            introduction: string
-            subscribers : number
+            introduction: string  
+            avatar      : any
             last_update : number
-            avatar      : any       //bin
         }
     }
 
@@ -638,5 +637,85 @@ declare module Communication{
         result : null
     }
     
+    // new api
+    type edit_post_request = {
+        version: "1.0"
+        method : "edit_post"
+        id     : jsonrpc_id
+        params : {
+            access_token: string
+            channel_id  : number    //channel_id
+            id          : number    //post_id
+            content     : Uint8Array//bin
+        } 
+    }
+    type edit_post_response = {
+        version: "1.0"
+        id     : jsonrpc_id
+        result : null
+    }
+    
+    type delete_post_request = {
+        version: "1.0"
+        method : "delete_post"
+        id     : jsonrpc_id
+        params : {
+            access_token: string
+            channel_id  : number    //channel_id
+            id          : number    //post_id
+        } 
+    }
+    type delete_post_response = {
+        version: "1.0"
+        id     : jsonrpc_id
+        result : null
+    }
+    
+    enum post_status {
+        available,
+        deleted
+    }
+    
+    type post_update_notification = {
+        version: "1.0"
+        method : "post_update"
+        params : {
+            channel_id: number      //channel_id
+            id        : number      //post_id
+            status    : post_status
+            content   : any         //bin | null
+            comments  : number
+            likes     : number
+            created_at: number
+            updated_at: number
+        }
+    }
+    
+    type get_posts_likes_and_comments_request = {
+        version: "1.0"
+        method : "get_posts_likes_and_comments"
+        id     : jsonrpc_id
+        params : {
+            access_token: string
+            channel_id  : number    //channel_id
+            by          : field
+            upper_bound : number
+            lower_bound : number
+            max_count   : number
+        }
+    }
+    
+    type get_posts_likes_and_comments_response = {
+        version: "1.0"
+        id     : jsonrpc_id
+        result : {
+            posts  : {
+                channel_id: number  //channel_id
+                post_id   : number  //post_id
+                comments  : number
+                likes     : number
+            }[]
+        }
+    }
 }
 
