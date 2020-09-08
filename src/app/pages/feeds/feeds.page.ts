@@ -6,6 +6,7 @@ import { NativeService } from '../../services/NativeService';
 import { TranslateService } from "@ngx-translate/core";
 import { ThemeService } from 'src/app/services/theme.service';
 import { Events } from '@ionic/angular';
+import * as _ from 'lodash';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 declare let appManager: AppManagerPlugin.AppManager;
 
@@ -15,7 +16,7 @@ declare let appManager: AppManagerPlugin.AppManager;
   styleUrls: ['./feeds.page.scss'],
 })
 export class FeedsPage implements OnInit {
-
+  public totalunread:number = 0;
   public title = "";
   public currentTab = "";
 
@@ -52,6 +53,7 @@ export class FeedsPage implements OnInit {
   }
 
   ionViewWillEnter() {
+    this.getUnReadNum();
     this.event.subscribe("feeds:updateTitle",()=>{
       this.initTile();
     });
@@ -152,5 +154,19 @@ export class FeedsPage implements OnInit {
 
     tabChanged(event){
       this.currentTab = event.tab;
+    }
+
+    getUnReadNum(){
+
+     let  nList = this.feedService.getNotificationList() || [];
+     console.log("===nlist[0]=="+JSON.stringify(nList[0]));
+     if(nList.length === 0){
+        this.totalunread = 0;
+        return;
+     }
+
+    let uList =  _.filter(nList,(item:any)=>{ return item.readStatus === 1; });
+    this.totalunread = uList.length;
+
     }
 }
