@@ -17,8 +17,8 @@
   <div class="image-text-layout-div">
     <ion-card-content class="ion-no-padding ion-no-margin">
 
-      <div *ngIf="checkUnreadNumber(channel.nodeId, channel.id) > 0" style="position:absolute; left: 5px; top: 38px;"  (click)="navTo(channel.nodeId, channel.id)">
-        <ion-badge>{{checkUnreadNumber(channel.nodeId, channel.id)}}</ion-badge>
+      <div *ngIf="checkUnreadNumber(channel.nodeId, channel.id) > 0" style="position:absolute; left:52px; top:-13px;"  (click)="navTo(channel.nodeId, channel.id)">
+        <ion-badge color="danger">{{checkUnreadNumber(channel.nodeId, channel.id)}}</ion-badge>
       </div>
 
       <div class="menu-div" style="margin-top: 10px;" (click)="menuMore(channel.nodeId, channel.id, channel.name)">

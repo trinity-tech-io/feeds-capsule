@@ -15,6 +15,7 @@
     </ion-tab-button>
 
     <ion-tab-button tab="notification" (click)="notification()">
+      <ion-badge color="danger" style="position: absolute;left:33px;top:3px" *ngIf="totalunread>0">{{totalunread}}</ion-badge>
       <img class="notification-tab" [ngClass]="{'notification-tab-selected': currentTab == 'notification'}">
     </ion-tab-button>
 
