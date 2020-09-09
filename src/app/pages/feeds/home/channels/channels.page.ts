@@ -263,9 +263,6 @@ export class ChannelsPage implements OnInit {
     }
     if(obj.type === 'day'){
       if(obj.content === 1){
-        return obj.content +this.translate.instant('HomePage.onedayAgo');
-      }
-      if(obj.content === 2){
         return this.translate.instant('common.yesterday');
       }
       return obj.content +this.translate.instant('HomePage.daysAgo');
