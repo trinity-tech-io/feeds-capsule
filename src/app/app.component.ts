@@ -8,8 +8,8 @@ import { ThemeService } from 'src/app/services/theme.service';
 import { NativeService} from 'src/app/services/NativeService';
 import { SplashscreenPage } from './pages/splashscreen/splashscreen.page';
 import { UtilService } from 'src/app/services/utilService';
-
-
+import { StorageService } from './services/StorageService';
+declare let appManager: AppManagerPlugin.AppManager;
 @Component({
   selector: 'my-app',
   templateUrl: 'app.html',
@@ -32,7 +32,8 @@ export class MyApp {
     private feedService: FeedService,
     private appService: AppService,
     public theme:ThemeService,
-    public native:NativeService
+    public native:NativeService,
+    public storageService:StorageService
   ) {
       this.initializeApp();
       this.initProfileData();
@@ -105,11 +106,19 @@ export class MyApp {
     this.native.navigateForward('/menu/donation',"");
   }
 
+  signout(){
+    this.storageService.remove("signInData").then(()=>{
+      this.native.toast("app.des"); 
+      this.native.setRootRouter('signin');
+    }).catch((err)=>{
+       
+    })
+  }
+
   initProfileData(){
     this.feedService.initSignInDataAsync((signInData)=>{
       if (signInData == null || signInData == undefined)
         return ;
-
       this.didString = signInData.did || "";
       this.wName = signInData.nickname || signInData.name || "";
       this.avatar = signInData.avatar || null;

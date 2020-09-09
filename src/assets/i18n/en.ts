@@ -56,10 +56,10 @@ export const en = {
     "app":{
         "profileDetails":"Profile Details",
         "feedSources":"Feeds Sources",
-        "settings":"Settings",
         "about":"About Feeds",
-        "develop":"Develop",
-        "donation": "Donation"
+        "donation":"Donation",
+        "signout":"Sign out",
+        "des":"Sign out succeeded",
     },
     "SigninPage":{
         "signIn":"Sign In to Feeds",
