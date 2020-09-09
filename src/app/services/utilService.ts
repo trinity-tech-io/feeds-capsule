@@ -73,6 +73,7 @@ public static dateFormat(date: Date, sFormat: String = 'yyyy-MM-dd'): string {
       let disPlayStr:any;
       let curTime = new Date().getTime();
       let chazhi = curTime - createTime;
+    
       if(chazhi>0&&chazhi<this.oneminute){
         return {content:"",type:"s"};
       }
