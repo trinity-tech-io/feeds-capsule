@@ -67,6 +67,7 @@ export class SigninPage implements OnInit {
         "fakeemail",
         "faketelephone",
         "fakelocation",
+        "fakenickname",
         "fakedescription"
       );
 
@@ -138,6 +139,7 @@ export class SigninPage implements OnInit {
               this.findCredentialValueById(data.did, credentials, "email", this.translate.instant("DIDdata.Notprovided")),
               this.findCredentialValueById(data.did, credentials, "telephone", this.translate.instant("DIDdata.Notprovided")),
               this.findCredentialValueById(data.did, credentials, "nation", this.translate.instant("DIDdata.Notprovided")),
+              this.findCredentialValueById(data.did, credentials, "nickname",""),
               description
             );
             this.events.publish("feeds:signinSuccess");
@@ -181,9 +183,10 @@ export class SigninPage implements OnInit {
     email: string,
     telephone: string,
     location: string,
+    nickname:string,
     description: string
   ) {
-    this.feedService.saveSignInData(did, name, avatar, email, telephone, location, description);
+    this.feedService.saveSignInData(did, name, avatar, email, telephone, location,nickname,description);
   }
 
 }

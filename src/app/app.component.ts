@@ -111,9 +111,9 @@ export class MyApp {
         return ;
 
       this.didString = signInData.did || "";
-      this.wName = signInData.name || "";
+      this.wName = signInData.nickname || signInData.name || "";
       this.avatar = signInData.avatar || null;
-      this.name = UtilService.moreNanme(signInData.name,6);
+      this.name = UtilService.moreNanme(this.wName,15);
     },(error)=>{
     });
   }

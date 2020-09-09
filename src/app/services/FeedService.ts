@@ -209,6 +209,7 @@ export class SignInData {
     public telephone: string,
     public location: string,
     public description: string,
+    public nickname:string,
     public expiresTS: number
   ) {}
 }
@@ -1311,6 +1312,7 @@ export class FeedService {
     email: string,
     telephone: string,
     location: string,
+    nickname:string,
     description: string
   ){
     localSignInData = new SignInData(
@@ -1320,6 +1322,7 @@ export class FeedService {
       email,
       telephone,
       location,
+      nickname,
       description,
       this.getCurrentTimeNum()+this.getDaysTS(expDay)
     );

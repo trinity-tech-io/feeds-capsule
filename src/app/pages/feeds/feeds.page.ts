@@ -159,7 +159,6 @@ export class FeedsPage implements OnInit {
     getUnReadNum(){
 
      let  nList = this.feedService.getNotificationList() || [];
-     console.log("===nlist[0]=="+JSON.stringify(nList[0]));
      if(nList.length === 0){
         this.totalunread = 0;
         return;
