@@ -88,7 +88,7 @@ export class ProfilePage implements OnInit {
   
     let signInData = this.feedService.getSignInData() || {};
 
-    this.name = signInData["name"] || "";
+    this.name =  signInData["nickname"] || signInData["name"] || "";
     this.avatar = signInData["avatar"] || null;
     this.description = signInData["description"] || "";
 

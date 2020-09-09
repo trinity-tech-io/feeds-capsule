@@ -4,7 +4,6 @@ import { FeedService, Avatar } from 'src/app/services/FeedService';
 import { NativeService } from 'src/app/services/NativeService';
 import { ThemeService } from 'src/app/services/theme.service';
 import { TranslateService } from "@ngx-translate/core";
-import { ThrowStmt } from '@angular/compiler';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 type ProfileDetail = {
@@ -28,7 +27,7 @@ export class ProfiledetailPage implements OnInit {
   public telephone = "";
   public email = "";
   public location = "";
-  public ownChannelSourceDid = "";
+
 
   public profileDetails: ProfileDetail[] = [];
 
@@ -40,55 +39,50 @@ export class ProfiledetailPage implements OnInit {
     private translate:TranslateService,
     private events: Events
   ) {
-      let signInData = feedService.getSignInData();
-      this.name = signInData.name || "";
-      this.avatar = signInData.avatar || null;
-      this.description = signInData.description || "";
-      this.did = signInData.did || "";
-      this.telephone = signInData.telephone || "";
-      this.email = signInData.email || "";
-      this.location = signInData.location || "";
-
-      this.collectData(feedService.getSignInData());
-
-      let bindingServer = this.feedService.getBindingServer();
-      if (bindingServer != null && bindingServer != undefined)
-        this.ownChannelSourceDid = bindingServer.did;
+     
     }
 
   ngOnInit() {
     this.connectionStatus = this.feedService.getConnectionStatus();
   }
 
-  collectData(data) {
+  collectData() {
     this.profileDetails = [];
     this.profileDetails.push({
       type: this.translate.instant('ProfiledetailPage.name'),
-      details: data.name
+      details:this.name
     })
     this.profileDetails.push({
       type: this.translate.instant('ProfiledetailPage.did'),
-      details: data.did
+      details:this.did
     })
-    this.profileDetails.push({
-      type: this.translate.instant('ProfiledetailPage.gender'),
-      details: data.gender
-    })
+ 
     this.profileDetails.push({
       type: this.translate.instant('ProfiledetailPage.telephone'),
-      details: data.telephone
+      details:this.telephone
     })
     this.profileDetails.push({
       type: this.translate.instant('ProfiledetailPage.email'),
-      details: data.email
+      details: this.email
     })
     this.profileDetails.push({
       type: this.translate.instant('ProfiledetailPage.location'),
-      details: data.location
+      details: this.location
     })
   }
 
   ionViewWillEnter() {
+
+    let signInData = this.feedService.getSignInData() || {};
+    this.name = signInData["nickname"] || signInData["name"] || "";
+    this.avatar = signInData["avatar"] || null;
+    this.description = signInData["description"] || "";
+    this.did = signInData["did"] || "";
+    this.telephone = signInData["telephone"] || "";
+    this.email = signInData["email"] || "";
+    this.location = signInData["location"] || "";
+
+    this.collectData();
     this.events.subscribe('feeds:connectionChanged',(status)=>{
       this.zone.run(() => {
         this.connectionStatus = status;
