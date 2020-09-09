@@ -167,7 +167,7 @@ export const fr = {
         "emptyDes":"No setting items for now"
     },
     "AboutPage":{
-        "about":"About",
+        "about":"About Feeds",
         "version":"version",
         "website":"Website",
         "disclaimer":"Disclaimer",
