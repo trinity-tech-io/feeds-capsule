@@ -11,8 +11,8 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 @Injectable()
 export class NativeService {
-    private loadingIsOpen = false;
-
+    public loadingIsOpen:boolean = false;
+    public loading:any = null;
     constructor(
         private popoverController:PopoverController,
         public modalController: ModalController,
@@ -86,43 +86,30 @@ export class NativeService {
         this.navCtrl.navigateRoot(router);
     }
 
-    public clone(myObj) {
-        if (typeof (myObj) !== 'object' || myObj == null) {
-            return myObj;
-        }
-
-        let myNewObj;
-
-        if (myObj instanceof (Array)) {
-            myNewObj = new Array();
-        } else {
-            myNewObj = new Object();
-        }
-
-        // tslint:disable-next-line: forin
-        for (const i in myObj) {
-            myNewObj[i] = this.clone(myObj[i]);
-        }
-
-        return myNewObj;
-    }
-
+   
     public async showLoading(content: string = '', durationTime: number = 30000) {
         content = this.translate.instant(content);
         if (!this.loadingIsOpen) {
             this.loadingIsOpen = true;
-            const loading = await this.loadingCtrl.create({
+            this.loading = await this.loadingCtrl.create({
                 cssClass: 'loading-class',
                 message: content,
                 duration: durationTime
             });
-            return await loading.present();
+
+            this.loading.onWillDismiss().then(()=>{
+                this.loading = null;
+            })
+
+            return await this.loading.present();
         }
     };
 
     public hideLoading(): void {
         if (this.loadingIsOpen) {
-            this.loadingCtrl.dismiss();
+            if(this.loading !=null){
+                this.loading.dismiss();
+            }
             this.loadingIsOpen = false;
         }
     };
