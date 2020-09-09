@@ -56,10 +56,10 @@ export const zh = {
     "app":{
         "profileDetails":"档案详情",
         "feedSources":"微频源",
-        "settings":"设置",
         "about":"关于微频",
-        "develop":"开发",
-        "donation": "捐赠"
+        "donation":"捐赠",
+        "signout":"登出",
+        "des":"登出成功",
     },
     "SigninPage":{
         "signIn":"登录微频",

@@ -36,4 +36,8 @@ export class StorageService {
     }
     setInfo(){
     }
+
+    clearAll():Promise<any>{
+        return this.storage.clear();
+    }
 }

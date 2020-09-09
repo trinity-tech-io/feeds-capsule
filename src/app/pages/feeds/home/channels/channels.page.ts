@@ -368,7 +368,6 @@ export class ChannelsPage implements OnInit {
       this.feedService.setProfileIamge(this.channelAvatar);
     }else if(this.channelAvatar.indexOf("assets/images")>-1){
       let index = this.channelAvatar.substring(this.channelAvatar.length-5,this.channelAvatar.length-4);
-      console.log(index);
       this.feedService.setSelsectIndex(index);
       this.feedService.setProfileIamge(this.channelAvatar);
     }

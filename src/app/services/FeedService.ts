@@ -208,8 +208,8 @@ export class SignInData {
     public email: string,
     public telephone: string,
     public location: string,
-    public description: string,
     public nickname:string,
+    public description: string,
     public expiresTS: number
   ) {}
 }
@@ -331,7 +331,7 @@ let currentFeedEventKey: string = "";
 // let currentCreateTopicNID = "";
 
 let postEventTmp: FeedEvents;
-let localSignInData: SignInData = undefined;
+
 
 export class AllFeed{
   constructor(
@@ -373,6 +373,7 @@ export class FeedIntro{
 
 @Injectable()
 export class FeedService {
+  public localSignInData: SignInData = undefined;
   public currentLang:string ="";
   public curtab:string ="home";
   public channelInfo:any ={};
@@ -1315,7 +1316,7 @@ export class FeedService {
     nickname:string,
     description: string
   ){
-    localSignInData = new SignInData(
+    this.localSignInData = new SignInData(
       did,
       name,
       avatar,
@@ -1326,11 +1327,11 @@ export class FeedService {
       description,
       this.getCurrentTimeNum()+this.getDaysTS(expDay)
     );
-    this.storeService.set(PersistenceKey.signInData, localSignInData);
+    this.storeService.set(PersistenceKey.signInData, this.localSignInData);
   }
 
   saveSignInData2(signInData: SignInData) {
-    localSignInData = signInData;
+    this.localSignInData = signInData;
     this.storeService.set(PersistenceKey.signInData, signInData);
   }
 
@@ -1339,18 +1340,18 @@ export class FeedService {
   }
 
   getSignInData(): SignInData {
-    return localSignInData;
+    return this.localSignInData;
   }
 
   initSignInDataAsync(onSuccess:(signInData: SignInData) => void,onError?:(errorData: any) => void){
-    if (localSignInData!= null || localSignInData != undefined){
-      onSuccess(localSignInData);
+    if (this.localSignInData!= null || this.localSignInData != undefined){
+      onSuccess(this.localSignInData);
       return ;
     }
 
     this.storeService.get(PersistenceKey.signInData).then((signinData)=>{
-      localSignInData = signinData;
-      onSuccess(localSignInData);
+      this.localSignInData = signinData;
+      onSuccess(this.localSignInData);
     }).catch((error)=>{
       onError(error);
     });

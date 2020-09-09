@@ -102,6 +102,10 @@ export class SigninPage implements OnInit {
           required: false,
           reason: "Maybe Feeds dapp need"
         },
+        nickname:{
+          required: false,
+          reason: "Maybe Feeds dapp need"
+        },
         description:{
           required: false,
           reason: "Maybe Feeds dapp need"
@@ -119,6 +123,7 @@ export class SigninPage implements OnInit {
         didManager.VerifiablePresentationBuilder.fromJson(JSON.stringify(response.result.presentation), (presentation) => {
           this.zone.run(()=>{
             let credentials = presentation.getCredentials();
+
             this.saveCredentialById(data.did,credentials, "name");
 
             let interests = this.findCredentialValueById(data.did, credentials, "interests", "");
