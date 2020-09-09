@@ -59,7 +59,7 @@ export const fr = {
         "about":"About Feeds",
         "donation":"Donation",
         "signout":"Sign out",
-        "des":"Sign out succeeded",
+        "des":"Sign out successfully",
     },
     "SigninPage":{
         "signIn":"Sign In to Feeds",

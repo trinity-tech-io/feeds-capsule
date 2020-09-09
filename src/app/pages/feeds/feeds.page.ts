@@ -57,10 +57,15 @@ export class FeedsPage implements OnInit {
     this.event.subscribe("feeds:updateTitle",()=>{
       this.initTile();
     });
+
+    this.event.subscribe("feeds:UpdateNotification",()=>{
+       this.getUnReadNum();
+    });
   }
 
   ionViewWillLeave(){
     this.event.unsubscribe("feeds:updateTitle");
+    this.event.unsubscribe("feeds:UpdateNotification");
   }
 
   initTile(){
