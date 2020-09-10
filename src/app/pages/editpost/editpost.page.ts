@@ -65,15 +65,6 @@ export class EditpostPage implements OnInit {
       });
      });
 
-    this.events.subscribe('feeds:publishPostSuccess', () => {
-      this.zone.run(()=>{
-        this.navCtrl.pop().then(()=>{
-
-          this.native.hideLoading();
-          this.native.toast_trans("CommentPage.tipMsg1");
-        });
-      });
-    });
 
     this.events.subscribe('rpcRequest:error', () => {
           this.native.hideLoading();
@@ -90,11 +81,11 @@ export class EditpostPage implements OnInit {
     });
 
     this.events.subscribe('feeds:editPostFinish', () => {
-      let post = this.feedService.getPostFromId(this.nodeId, this.channelId, this.postId);
-      console.log("editPostFinish = "+JSON.stringify(post));
-
-      // this.native.pop();
-      // this.native.hideLoading();
+      //let post = this.feedService.getPostFromId(this.nodeId, this.channelId, this.postId);
+      //console.log("editPostFinish = "+JSON.stringify(post));
+      this.native.hideLoading();
+      this.native.pop();
+     
     });
 
     this.initnodeStatus();
@@ -104,7 +95,6 @@ export class EditpostPage implements OnInit {
     this.events.unsubscribe("feeds:connectionChanged");
     this.events.unsubscribe("feeds:friendConnectionChanged");
     this.events.unsubscribe("feeds:updateTitle");
-    this.events.unsubscribe("feeds:publishPostSuccess");
     this.events.unsubscribe("rpcRequest:error");
     this.events.unsubscribe("rpcResponse:error");
     this.events.unsubscribe("feeds:editPostFinish");

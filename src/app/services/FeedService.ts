@@ -1771,7 +1771,7 @@ export class FeedService {
       lastPostUpdateMap[nodeChannelId] = {
         nodeId:nodeId,
         channelId:channel_id,
-        time:created_at*1000
+        time:created_at
       }
     }else{
       lastPostUpdateMap[nodeChannelId].time = created_at;
@@ -2568,19 +2568,24 @@ export class FeedService {
     let requestAction: number = request.memo.action || RequestAction.defaultAction;
 
     for (let index = 0; index < result.length; index++) {
-      
+
+
       let channel_id = result[index].channel_id;
       let id         = result[index].id;
       let contentBin    = result[index].content;
       let comments   = result[index].comments;
       let likes      = result[index].likes;
-      let created_at = result[index].created_at||0;
+      let createAt = result[index].created_at||0;
       let content = this.serializeDataService.decodeData(contentBin);
       let contentText = this.parsePostContentText(content);
       let contentImage = this.parsePostContentImg(content);
 
-      let updatedAt = result[index].updated_at||created_at;
+      let updatedAt = result[index].updated_at||createAt;
       let status = result[index].status||FeedsData.PostCommentStatus.available;
+
+      if (updatedAt > createAt && status == FeedsData.PostCommentStatus.available)
+        status = FeedsData.PostCommentStatus.edited
+
 
       let mPostId = this.getPostId(nodeId, channel_id, id);
       this.storeService.savePostContentImg(mPostId,contentImage);
@@ -2598,7 +2603,7 @@ export class FeedService {
         content    : contentText,
         comments   : comments,
         likes      : likes,
-        created_at : created_at*1000,
+        created_at : createAt*1000,
         updated_at  : updatedAt,
         post_status : status
       }
@@ -2611,12 +2616,11 @@ export class FeedService {
           lastPostUpdateMap[nodeChannelId] = {
             nodeId: nodeId,
             channelId: channel_id,
-            time:created_at*1000
+            time:createAt
           }
         }else{
-          lastPostUpdateMap[nodeChannelId].time = created_at;
+          lastPostUpdateMap[nodeChannelId].time = createAt;
         }
-        
       }
     }
 
