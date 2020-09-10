@@ -323,7 +323,7 @@ export const fr = {
         "newComment":"New Comment",
         "publishComment":"Publish comment",
         "enterComments":"Add Comment",
-        "tipMsg1":"Post sent successfully!"
+        "tipMsg1":"Comment sent successfully!"
     },
     "DisclaimerPage":{
         "disclaimer":"Disclaimer",
