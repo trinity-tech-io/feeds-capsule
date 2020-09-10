@@ -150,6 +150,14 @@ export class ChannelsPage implements OnInit {
         this.native.setRootRouter(['/tabs/home']);
       });
     });
+
+    this.events.subscribe('feeds:editPostFinish',()=>{
+        this.initRefresh();
+    });
+
+    this.events.subscribe('feeds:deletePostFinish',()=>{
+       this.initRefresh();
+    });
   }
 
   ionViewWillLeave(){
@@ -157,6 +165,9 @@ export class ChannelsPage implements OnInit {
     this.events.unsubscribe("feeds:updateTitle");
     this.events.unsubscribe("feeds:subscribeFinish");
     this.events.unsubscribe("feeds:unsubscribeFinish");
+
+    this.events.unsubscribe("feeds:editPostFinish");
+    this.events.unsubscribe("feeds:deletePostFinish");
   }
 
   ionViewDidEnter() {
@@ -271,7 +282,7 @@ export class ChannelsPage implements OnInit {
   }
 
   menuMore(){
-    this.menuService.showShareMenu(this.nodeId, Number(this.channelId), this.channelName);
+    this.menuService.showShareMenu(this.nodeId, Number(this.channelId), this.channelName,0);
   }
 
   checkServerStatus(nodeId: string){

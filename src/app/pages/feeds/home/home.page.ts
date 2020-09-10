@@ -86,6 +86,37 @@ export class HomePage implements OnInit {
         this.nodeStatus[nodeId] = status;
       });
     });
+
+   this.events.subscribe("feeds:editPostFinish",()=>{
+    this.zone.run(()=>{
+      this.totalData = this.feedService.getPostList() || [];
+      if (this.totalData.length - this.pageNumber > this.pageNumber){
+        this.postList = this.totalData.slice(this.startIndex,this.pageNumber);
+        this.startIndex++;
+        this.infiniteScroll.disabled =false;
+       } else {
+        this.postList =  this.totalData.slice(0,this.totalData.length);
+        this.infiniteScroll.disabled =true;
+      }
+      this.initnodeStatus(this.postList);
+    });
+   });
+
+   this.events.subscribe("feeds:deletePostFinish",()=>{
+    this.zone.run(()=>{
+      this.totalData = this.feedService.getPostList() || [];
+      if (this.totalData.length - this.pageNumber > this.pageNumber){
+        this.postList = this.totalData.slice(this.startIndex,this.pageNumber);
+        this.startIndex++;
+        this.infiniteScroll.disabled =false;
+       } else {
+        this.postList =  this.totalData.slice(0,this.totalData.length);
+        this.infiniteScroll.disabled =true;
+      }
+      this.initnodeStatus(this.postList);
+    });
+   });
+   
   }
 
  ionViewWillLeave(){
@@ -93,6 +124,9 @@ export class HomePage implements OnInit {
     this.events.unsubscribe("feeds:postDataUpdate");
     this.events.unsubscribe("feeds:friendConnectionChanged");
     this.events.unsubscribe("feeds:publishPostFinish");
+
+    this.events.unsubscribe("feeds:editPostFinish");
+    this.events.unsubscribe("feeds:deletePostFinish");
   }
 
   getChannel(nodeId, channelId):any{

@@ -129,6 +129,14 @@ export class ProfilePage implements OnInit {
           this.initLike();
       });
     });
+
+    this.events.subscribe('feeds:editPostFinish',()=>{
+      this.initLike();
+    });
+
+  this.events.subscribe('feeds:deletePostFinish',()=>{
+      this.initLike();
+  });
   }
 
   ionViewWillLeave(){
@@ -138,6 +146,9 @@ export class ProfilePage implements OnInit {
     this.events.unsubscribe("feeds:friendConnectionChanged");
     this.events.unsubscribe("feeds:channelsDataUpdate");
     this.events.unsubscribe('feeds:refreshPage');
+
+    this.events.unsubscribe("feeds:editPostFinish");
+    this.events.unsubscribe("feeds:deletePostFinish");
   }
 
   changeType(type:string){

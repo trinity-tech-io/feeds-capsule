@@ -63,7 +63,7 @@ export class MyfeedsComponent implements OnInit {
   }
 
   menuMore(nodeId: string , channelId: number, channelName: string){
-    this.menuService.showShareMenu(nodeId, channelId, channelName);
+    this.menuService.showShareMenu(nodeId, channelId, channelName,0);
   }
 
   handleClientNumber(nodeId){

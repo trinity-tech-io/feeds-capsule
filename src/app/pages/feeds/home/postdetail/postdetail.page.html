@@ -41,10 +41,13 @@
     </div>
 
     <div class="channel-post-detail-div" style="margin-top:8px;">
-        <div class="channel-post-div" style="margin-bottom:5px"> 
+      <div class="channel-post-div" style="margin-bottom:5px" *ngIf="postStatus === 1"> 
+        <pre class="channel-post white">{{'common.deleted' | translate}}</pre>
+       </div>
+        <div class="channel-post-div" style="margin-bottom:5px" *ngIf="postStatus != 1"> 
          <pre class="channel-post white">{{getContentText(postContent)}}</pre>
         </div>
-        <ion-avatar  *ngIf="images[nodeId+channelId+postId] != 'none' && images[nodeId+channelId+postId] != 'undefine' && images[nodeId+channelId+postId] != null && images[nodeId+channelId+postId] != undefine" class="content-img-without-margin" (click)="showBigImage(images[nodeId+channelId+postId])">
+        <ion-avatar  *ngIf="postStatus != 1 && images[nodeId+channelId+postId] != 'none' && images[nodeId+channelId+postId] != 'undefine' && images[nodeId+channelId+postId] != null && images[nodeId+channelId+postId] != undefine" class="content-img-without-margin" (click)="showBigImage(images[nodeId+channelId+postId])">
           <ion-img [src]="images[nodeId+channelId+postId]"></ion-img>
         </ion-avatar>
 
@@ -55,7 +58,7 @@
           <img src="./assets/images/bubble-line.svg" class="comment" (click)="showCommentPage(nodeId,channelId,postId)">
           <ion-label class="comment-text white" (click)="showCommentPage(nodeId,channelId,postId)">{{commentsNum}}</ion-label>
 
-          <ion-label class="status" *ngIf="postStatus === 2">{{handlePostStatus()}}</ion-label>
+          <ion-label class="status" *ngIf="postStatus === 2">{{ 'common.edit' | translate}} </ion-label>
         </div>
     </div>
     <div class="line-div"></div>

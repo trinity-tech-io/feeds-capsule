@@ -56,7 +56,8 @@ export const zh = {
         "removepost":"移除微说",
         "editcomment":"编辑微评",
         "removecomment":"移除微评",
-        "edit":"( 已编辑 )"
+        "edit":"(已编辑)",
+        "deleted":"(微说已删除)"
     },
     "app":{
         "profileDetails":"档案详情",

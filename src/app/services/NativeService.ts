@@ -11,7 +11,6 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 @Injectable()
 export class NativeService {
-    public loadingIsOpen:boolean = false;
     public loading:any = null;
     constructor(
         private popoverController:PopoverController,
@@ -89,8 +88,7 @@ export class NativeService {
    
     public async showLoading(content: string = '', durationTime: number = 30000) {
         content = this.translate.instant(content);
-        if (!this.loadingIsOpen) {
-            this.loadingIsOpen = true;
+
             this.loading = await this.loadingCtrl.create({
                 cssClass: 'loading-class',
                 message: content,
@@ -102,16 +100,12 @@ export class NativeService {
             })
 
             return await this.loading.present();
-        }
     };
 
     public hideLoading(): void {
-        if (this.loadingIsOpen) {
             if(this.loading !=null){
                 this.loading.dismiss();
             }
-            this.loadingIsOpen = false;
-        }
     };
 
     public getTimestamp() {
