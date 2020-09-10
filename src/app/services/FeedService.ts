@@ -136,15 +136,17 @@ type Channels = {
 }
 
 type Comment = {
-    nodeId     : string,
-    channel_id : number,
-    post_id    : number,
-    id         : number,
-    comment_id : number | null,
-    user_name  : string,
-    content    : any,
-    likes      : number,
-    created_at : number
+    nodeId      : string,
+    channel_id  : number,
+    post_id     : number,
+    id          : number,
+    comment_id  : number | 0,
+    user_name   : string,
+    content     : any,
+    likes       : number,
+    created_at  : number
+    updated_at  : number
+    status      : FeedsData.PostCommentStatus
 }
 
 type LikedComment = {
@@ -159,13 +161,15 @@ type ChannelPost = {
 }
 
 type Post = {
-    nodeId     : string,
-    channel_id : number,
-    id         : number,
-    content    : any,
-    comments   : number,
-    likes      : number,
-    created_at : number
+    nodeId      : string,
+    channel_id  : number,
+    id          : number,
+    content     : any,
+    comments    : number,
+    likes       : number,
+    created_at  : number,
+    updated_at  : number,
+    post_status : FeedsData.PostCommentStatus
 }
 
 type PostKey = {
@@ -279,7 +283,12 @@ enum PublishType{
 
   refreshPostDetail = "feeds:refreshPostDetail",
 
-  editFeedInfoFinish = "feeds:editFeedInfoFinish"
+  editFeedInfoFinish = "feeds:editFeedInfoFinish",
+
+  editPostFinish = "feeds:editPostFinish",
+  editCommentFinish = "feeds:editCommentFinish",
+  deletePostFinish = "feeds:deletePostFinish",
+  deleteCommentFinish = "feeds:deleteCommentFinish",
 }
 
 enum PersistenceKey{
@@ -367,7 +376,7 @@ export class FeedService {
   public currentLang:string ="";
   public curtab:string ="home";
   public channelInfo:any ={};
-  public postMap: any;
+  public postMap: {[ncpId: string]: Post};
   public testMode = true;
   private nonce = "";
   private realm = "";
@@ -969,6 +978,20 @@ export class FeedService {
         break;
       case "signin_confirm_challenge":
         this.handleSigninConfirm(nodeId, result, error);
+        break;
+
+      case FeedsData.MethodType.editPost:
+        this.handleEditPost(nodeId, requestParams);
+        break;
+      case FeedsData.MethodType.deletePost:
+        this.handleDeletePost(nodeId, requestParams);
+        break;
+
+      case FeedsData.MethodType.editComment:
+        this.handleEditComment(nodeId, requestParams);
+        break;
+      case FeedsData.MethodType.deleteComment:
+        this.handleDeleteComment(nodeId, requestParams);
         break;
       default:
         break;
@@ -1641,7 +1664,67 @@ export class FeedService {
     let accessToken: FeedsData.AccessToken = accessTokenMap[nodeId]||undefined;
     this.connectionService.editFeedInfo(nodeId, channelId, name, desc, avatarBin, accessToken);
   }
+
+  editPost(nodeId: string, channelId: number, postId: number, content: any){
+    if(!this.hasAccessToken(nodeId))
+      return;
+
+    let accessToken: FeedsData.AccessToken = accessTokenMap[nodeId]||undefined;
+    this.connectionService.editPost(nodeId, channelId, postId, content, accessToken);
+  }
+
+  deletePost(nodeId: string, channelId: number, postId: number){
+    if(!this.hasAccessToken(nodeId))
+      return;
+
+    let accessToken: FeedsData.AccessToken = accessTokenMap[nodeId]||undefined;
+    this.connectionService.deletePost(nodeId, channelId, postId, accessToken);
+  }
+
+  editComment(nodeId: string, channelId: number, postId: number, commentId: number, 
+              commentById: number, content: any){
+    if(!this.hasAccessToken(nodeId))
+      return;
+    let accessToken: FeedsData.AccessToken = accessTokenMap[nodeId]||undefined;
+    this.connectionService.editComment(nodeId, channelId, postId, commentId, commentById, content, accessToken);
+  }
+
+  deleteComment(nodeId: string, channelId: number, postId: number, commentId: number){
+    if(!this.hasAccessToken(nodeId))
+      return;
+    let accessToken: FeedsData.AccessToken = accessTokenMap[nodeId]||undefined;
+    this.connectionService.deleteComment(nodeId, channelId, postId, commentId, accessToken);
+  }
   
+  handleEditPost(nodeId: string, request: any){
+    console.log("edit post finish"+JSON.stringify(request));
+    // eventBus.publish(PublishType.postUpdateFinish);
+  }
+
+  handleDeletePost(nodeId: string, request: any){
+    let channelId = request.channel_id;
+    let postId = request.id;
+
+    let mPostId = this.getPostId(nodeId, channelId, postId);
+    this.postMap[mPostId].post_status = FeedsData.PostCommentStatus.deleted;
+    this.storeService.set(PersistenceKey.postMap, this.postMap);
+    eventBus.publish(PublishType.deletePostFinish);
+  }
+
+  handleEditComment(nodeId: string, request: any){
+    console.log("edit comment finish"+JSON.stringify(request));
+    // eventBus.publish(PublishType.commentUpdateFinish);
+  }
+
+  handleDeleteComment(nodeId: string, request: any){
+    let channelId = request.channel_id;
+    let postId = request.post_id;
+    let commentId = request.id
+
+    commentsMap[nodeId][channelId][postId][commentId].status = FeedsData.PostCommentStatus.deleted;
+    this.storeService.set(PersistenceKey.commentsMap, commentsMap);
+    eventBus.publish(PublishType.deleteCommentFinish);
+  }
 
   enableNotification(nodeId: string){
     if(!this.hasAccessToken(nodeId))
@@ -1657,6 +1740,7 @@ export class FeedService {
     let id: number = params.id;
     let contentBin:any = params.content;
     let created_at: number = params.created_at;
+    let updateAt: number = params.updated_at||created_at;
 
     let content = this.serializeDataService.decodeData(contentBin);
     let contentText = this.parsePostContentText(content);
@@ -1670,7 +1754,9 @@ export class FeedService {
       content    : contentText,
       comments   : 0,
       likes      : 0,
-      created_at : created_at*1000
+      created_at : created_at*1000,
+      updated_at  : updateAt,
+      post_status : FeedsData.PostCommentStatus.available
     }
 
     this.storeService.savePostContentImg(postId, contentImage);
@@ -1705,7 +1791,9 @@ export class FeedService {
     let comment_id: number = params.comment_id;
     let contentBin: any = params.content;
     let user_name: any = params.user_name;
-    let create_at: number = params.created_at;
+    let create_at: number = params.created_at || 0;
+    let updateAt: number = params.updated_at || create_at;
+    let status: FeedsData.PostCommentStatus = params.status || FeedsData.PostCommentStatus.available;
 
     let content = this.serializeDataService.decodeData(contentBin);
 
@@ -1727,7 +1815,9 @@ export class FeedService {
       user_name  : user_name,
       content    : content,
       likes      : 0,
-      created_at : create_at*1000
+      created_at : create_at*1000,
+      updated_at : updateAt,
+      status     : status
     }
 
     let ncpId = nodeId + channel_id +"-"+post_id;
@@ -1878,22 +1968,104 @@ export class FeedService {
     eventBus.publish(PublishType.editFeedInfoFinish, nodeChannelId); 
   }
 
+  handleNewPostUpdate(nodeId: string, params: any){
+    let channelId: number = params.channel_id;
+    let postId: number = params.id;
+    let status: FeedsData.PostCommentStatus = params.post_status||FeedsData.PostCommentStatus.available;
+    let contentBin: any =  params.content;
+    let comments: number = params.comments||0;
+    let likes: number = params.likes||0;
+    let createdAt: number = params.created_at||0;
+    let updatedAt: number = params.updated_at||createdAt;
+
+    let content = this.serializeDataService.decodeData(contentBin);
+
+    let contentText = this.parsePostContentText(content);
+    let contentImage = this.parsePostContentImg(content);
+
+    let mPostId = this.getPostId(nodeId, channelId, postId);
+    this.storeService.savePostContentImg(mPostId, contentImage);
+
+    this.postMap[mPostId] = {
+      nodeId     : nodeId,
+      channel_id : channelId,
+      id         : postId,
+      content    : contentText,
+      comments   : comments,
+      likes      : likes,
+      created_at : createdAt,
+      updated_at  : updatedAt,
+      post_status : status
+    }
+
+    this.storeService.set(PersistenceKey.postMap, this.postMap);
+    eventBus.publish(PublishType.editPostFinish);
+
+    console.log("NewPostUpdate params = "+JSON.stringify(params));
+  }
+
+  handleNewCommentUpdate(nodeId: string, params: any){
+    let channelId = params.channel_id;
+    let postId = params.post_id;
+    let commentId = params.id;
+    let status = params.status || FeedsData.PostCommentStatus.available;
+    let commentById = params.comment_id || 0;
+    let userName = params.user_name;
+    let contentBin = params.content;
+    let likes = params.likes;
+    let createdAt = params.created_at;
+    let updateAt = params.updated_at||createdAt;
+
+    let content = this.serializeDataService.decodeData(contentBin);
+
+    // let contentText = this.parsePostContentText(content);
+    // let contentImage = this.parsePostContentImg(content);
+    // let mPostId = this.getPostId(nodeId, channelId, postId);
+    // this.storeService.savePostContentImg(mPostId, contentImage);
+
+
+    commentsMap[nodeId][channelId][postId][commentId] = {
+      nodeId      : nodeId,
+      channel_id  : channelId,
+      post_id     : postId,
+      id          : commentId,
+      comment_id  : commentById | 0,
+      user_name   : userName,
+      content     : content,
+      likes       : likes,
+      created_at  : createdAt,
+      updated_at  : updateAt,
+      status      : status
+    }
+
+    this.storeService.set(PersistenceKey.commentsMap, commentsMap);
+
+    eventBus.publish(PublishType.editCommentFinish);
+    console.log("NewCommentUpdate params = "+JSON.stringify(params));
+  }
+
   handleNotification(nodeId: string, method: string, params: any){
     switch(method){
-      case FeedsData.MethodType.newPost:
+      case FeedsData.MethodType.newPostNotification:
         this.handleNewPostNotification(nodeId, params);
         break;
-      case FeedsData.MethodType.newComment:
+      case FeedsData.MethodType.newCommentNotification:
         this.handleNewCommentNotification(nodeId,params);
         break;
-      case FeedsData.MethodType.newLikes:
+      case FeedsData.MethodType.newLikesNotification:
         this.handleNewLikesNotification(nodeId,params);
         break;
-      case FeedsData.MethodType.newSubscription:
+      case FeedsData.MethodType.newSubscriptionNotification:
         this.handleNewSubscriptionNotification(nodeId, params);
         break;
-      case FeedsData.MethodType.feedInfoUpdate:
+      case FeedsData.MethodType.feedInfoUpdateNotification:
         this.handleNewFeedInfoUpdateNotification(nodeId,params);
+        break;
+      case FeedsData.MethodType.postUpdateNotification:
+        this.handleNewPostUpdate(nodeId,params);
+        break;
+      case FeedsData.MethodType.commentUpdateNotification:
+        this.handleNewCommentUpdate(nodeId,params);
         break;
     }
   }
@@ -1971,13 +2143,15 @@ export class FeedService {
     let contentImage = this.parsePostContentImg(content);
 
     let post:Post = {
-      nodeId    : nodeId,
-      channel_id: channelId,
-      id: postId,
-      content: contentText,
-      comments: 0,
-      likes: 0,
-      created_at: this.getCurrentTimeNum()
+      nodeId      : nodeId,
+      channel_id  : channelId,
+      id          : postId,
+      content     : contentText,
+      comments    : 0,
+      likes       : 0,
+      created_at  : this.getCurrentTimeNum(),
+      updated_at  : this.getCurrentTimeNum(),
+      post_status : FeedsData.PostCommentStatus.available
     }
 
     let mPostId = this.getPostId(nodeId, channelId, postId);
@@ -2394,12 +2568,16 @@ export class FeedService {
       let contentBin    = result[index].content;
       let comments   = result[index].comments;
       let likes      = result[index].likes;
-      let created_at = result[index].created_at;
+      let created_at = result[index].created_at||0;
       let content = this.serializeDataService.decodeData(contentBin);
       let contentText = this.parsePostContentText(content);
       let contentImage = this.parsePostContentImg(content);
 
+      let updatedAt = result[index].updated_at||created_at;
+      let status = result[index].status||FeedsData.PostCommentStatus.available;
+
       let mPostId = this.getPostId(nodeId, channel_id, id);
+      this.storeService.savePostContentImg(mPostId,contentImage);
 
       if(this.postMap[mPostId] == undefined){
         let nodeChannelId = nodeId + channel_id;
@@ -2414,10 +2592,11 @@ export class FeedService {
         content    : contentText,
         comments   : comments,
         likes      : likes,
-        created_at : created_at*1000
+        created_at : created_at*1000,
+        updated_at  : updatedAt,
+        post_status : status
       }
 
-      this.storeService.savePostContentImg(mPostId,contentImage);
 
       if (requestAction == RequestAction.defaultAction){
         let nodeChannelId = nodeId+channel_id
@@ -2468,6 +2647,8 @@ export class FeedService {
       let likes = result[index].likes;
       let created_at = result[index].created_at;
       let user_name = result[index].user_name;
+      let updateAt = result[index].updated_at;
+      let status = result[index].status;
 
       let content = this.serializeDataService.decodeData(contentBin);
 
@@ -2480,7 +2661,9 @@ export class FeedService {
         user_name  : user_name,
         content    : content,
         likes      : likes,
-        created_at : created_at*1000
+        created_at : created_at*1000,
+        updated_at : updateAt,
+        status     : status
       }
 
       if (commentsMap == null || commentsMap == undefined)
@@ -2845,7 +3028,7 @@ export class FeedService {
   }
 
   getPostFromId(nodeId: string, channelId: number, postId: number):Post{
-    if (this.postMap == null || this.postMap == undefined || this.postMap == JSON.stringify({}))
+    if (this.postMap == null || this.postMap == undefined || this.postMap == {})
       return undefined;
 
     let mPostId = this.getPostId(nodeId, channelId, postId);
@@ -4012,5 +4195,9 @@ export class FeedService {
   
   getCurrentLang(){
     return this.currentLang;
+  }
+
+  close(){
+    appManager.close();
   }
 }
