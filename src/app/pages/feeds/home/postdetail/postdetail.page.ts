@@ -142,6 +142,20 @@ export class PostdetailPage implements OnInit {
         this.commentsNum = post.comments;  
       });
     });
+
+    // this.events.subscribe('feeds:editPostFinish', () => {
+    //   console.log("editPostFinish  ===>");
+
+    //   this.initData();
+    //   this.native.pop();
+    //   this.native.hideLoading();
+    // });
+
+    // this.events.subscribe('feeds:deletePostFinish', () => {
+    //   console.log("deletePostFinish");
+    //   this.native.pop();
+    //   this.native.hideLoading();
+    // });
   }
 
 
@@ -151,6 +165,8 @@ export class PostdetailPage implements OnInit {
     this.events.unsubscribe("feeds:friendConnectionChanged");
     this.events.unsubscribe("feeds:updateTitle");
     this.events.unsubscribe("feeds:refreshPostDetail");
+    // this.events.unsubscribe("feeds:editPostFinish");
+    // this.events.unsubscribe("feeds:deletePostFinish");
     this.images = null;
     this.menuService.hideActionSheet();
     if(this.popover!=null){

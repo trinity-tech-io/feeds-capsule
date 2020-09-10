@@ -176,7 +176,7 @@ export class MenuService {
                     this.native.toast("common.comingSoon");
                     break;
                 case "removePost":
-                    this.native.toast("common.comingSoon");
+                    this.feedService.deletePost(nodeId, Number(channelId), Number(postId));
                     break;    
             }
     }

@@ -34,6 +34,11 @@ export class StorageService {
     loadPostContentImg(nodeChannelPostId:string): Promise<any>{
         return this.storage.get("postContentImg"+nodeChannelPostId);
     }
+
+    removePostContentImg(nodeChannelPostId:string): Promise<any>{
+        return this.storage.remove("postContentImg"+nodeChannelPostId);
+    }
+
     setInfo(){
     }
 

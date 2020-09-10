@@ -1,7 +1,8 @@
 declare namespace FeedsData{
-    enum PostCommentStatus {
-        available,
-        deleted,
+    const enum PostCommentStatus {
+        available = 0,
+        deleted = 1,
+        edited = 2,
     }
 
     const enum ConnState {
