@@ -108,8 +108,12 @@ export class MyApp {
 
   signout(){
     this.storageService.remove("signInData").then(()=>{
-      this.native.toast("app.des"); 
-      this.native.setRootRouter('signin');
+      this.storageService.remove("accessTokenMap").then(()=>{
+        this.native.toast("app.des"); 
+        this.native.setRootRouter('signin');
+      }).catch((err)=>{
+
+      });
     }).catch((err)=>{
        
     })
