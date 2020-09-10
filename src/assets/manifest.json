@@ -1,7 +1,7 @@
 {
   "id": "io.trinity-tech.dapp.feeds",
-  "version": "v1.1.1",
-  "version_code": 4,
+  "version": "v1.2.0",
+  "version_code": 5,
   "name": "Feeds",
   "short_name": "Feeds",
   "short_description": "New social dApp with DID access, multiple choices to service, and ownership of all your social data",
