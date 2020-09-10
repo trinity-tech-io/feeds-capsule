@@ -54,6 +54,8 @@
 
           <img src="./assets/images/bubble-line.svg" class="comment" (click)="showCommentPage(nodeId,channelId,postId)">
           <ion-label class="comment-text white" (click)="showCommentPage(nodeId,channelId,postId)">{{commentsNum}}</ion-label>
+
+          <ion-label class="status">{{handlePostStatus()}}</ion-label>
         </div>
     </div>
     <div class="line-div"></div>
@@ -90,7 +92,10 @@
             <div class="channel-post-heart-comment-div">
               <img class="like" [ngClass]="{'like-s': checkLikedComment(comment.id)}" (click)="likeComment(comment.id)">
               <ion-label class="like-text" [ngClass]="{'like-s-text': checkLikedComment(comment.id)}" (click)="likeComment(comment.id)">{{comment.likes}}</ion-label>
+              <ion-label class="status" style="right:-7px;">{{handleCommentStatus()}}</ion-label>
             </div>
+
+           
           </div>
         </ion-card-content>
       </div>

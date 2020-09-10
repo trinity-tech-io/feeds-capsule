@@ -362,4 +362,14 @@ export class PostdetailPage implements OnInit {
     })
     return await this.popover.present();
   }
+
+  handlePostStatus(){
+    let status = "(edit)"
+    return status;
+  }
+
+  handleCommentStatus(){
+    let status = "(edit)"
+    return status;
+  }
 }
