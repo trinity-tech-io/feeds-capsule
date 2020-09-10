@@ -116,7 +116,7 @@ export class ProfiledetailPage implements OnInit {
     if(this.avatar === null){
        return 'assets/images/default-contact.svg';
     }
-    let contentType = this.avatar['contentType'] || "";
+    let contentType = this.avatar['contentType'] || this.avatar['content-type'] || "";
     let cdata = this.avatar['data'] || "";
     if(contentType === "" || cdata === ""){
       return 'assets/images/default-contact.svg';
