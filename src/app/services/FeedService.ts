@@ -4073,9 +4073,21 @@ export class FeedService {
     }
   }
 
-  checkChannelIsMine(nodeId: string ,channelId: number): boolean{
+  checkChannelIsMine(nodeId: string, channelId: number): boolean{
     let channel = this.getChannelFromId(nodeId, channelId);
     if (channel.owner_did == this.getSignInData().did)
+      return true;
+
+    return false;
+  }
+
+  checkCommentIsMine(nodeId: string, channelId: number, postId: number, commentId: number):boolean{
+    let comment = commentsMap[nodeId][channelId][postId][commentId];
+    if(comment == undefined)
+      return false;
+
+    if (comment.user_name == this.getSignInData().name || 
+      comment.user_name == this.getSignInData().nickname)
       return true;
 
     return false;
