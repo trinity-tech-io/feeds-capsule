@@ -128,7 +128,7 @@ export class MenuService {
             buttons: [
             {
                     text: this.translate.instant("common.editpost"),
-                    icon: 'create',
+                    icon: 'edit',
                     handler: () => {
                        this.handlePostDetailMenun(nodeId,channelId,channelName,postId,"editPost");
                     }
@@ -142,7 +142,7 @@ export class MenuService {
             },
             {
                 text: this.translate.instant("common.removepost"),
-                icon: 'trash',
+                icon: 'detle',
                 handler: () => {
                     this.handlePostDetailMenun(nodeId,channelId,channelName,postId,"removePost");
                 }
