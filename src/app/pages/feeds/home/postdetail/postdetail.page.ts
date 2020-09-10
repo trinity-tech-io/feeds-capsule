@@ -43,7 +43,9 @@ export class PostdetailPage implements OnInit {
   public pageNumber:number = 5;
   public totalData:any = [];
 
-  public popover: any; 
+  public popover: any;
+  
+  public postStatus = 0;
 
   constructor(
     private popoverController:PopoverController,
@@ -55,7 +57,7 @@ export class PostdetailPage implements OnInit {
     public theme:ThemeService,
     private translate:TranslateService,
     private menuService: MenuService) {
-   
+     
   }
 
   initData(){
@@ -71,6 +73,12 @@ export class PostdetailPage implements OnInit {
     this.channelOwner = UtilService.moreNanme(channel["owner_name"],40);
 
     let post = this.feedService.getPostFromId(this.nodeId, this.channelId, this.postId);
+  
+    console.log("===this.pos===="+JSON.stringify(post));
+
+    this.postStatus = post.post_status || 0;
+
+    console.log("===this.pos===="+this.postStatus);
     this.postContent = post.content;
     this.postTS = post.created_at;
     this.likesNum = post.likes;
@@ -97,7 +105,6 @@ export class PostdetailPage implements OnInit {
       this.nodeId = data.nodeId;
       this.channelId = data.channelId;
       this.postId = data.postId;
-     
     });
   }
 
@@ -167,7 +174,7 @@ export class PostdetailPage implements OnInit {
     this.events.unsubscribe("feeds:refreshPostDetail");
     // this.events.unsubscribe("feeds:editPostFinish");
     // this.events.unsubscribe("feeds:deletePostFinish");
-    this.images = null;
+    this.images = {};
     this.menuService.hideActionSheet();
     if(this.popover!=null){
       this.popover.dismiss();
@@ -380,8 +387,8 @@ export class PostdetailPage implements OnInit {
   }
 
   handlePostStatus(){
-    let status = "(edit)"
-    return status;
+    let text = this.translate.instant("common.edit")
+    return text;
   }
 
   handleCommentStatus(){
