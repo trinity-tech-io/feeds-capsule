@@ -1,4 +1,9 @@
 declare namespace FeedsData{
+    enum PostCommentStatus {
+        available,
+        deleted,
+    }
+
     const enum ConnState {
         connected = 0,
         disconnected = 1
@@ -17,6 +22,7 @@ declare namespace FeedsData{
         exp: number ;
         isExpire: boolean;
     }
+
     const enum MethodType {
         create_channel = "create_channel",
         publish_post = "publish_post",
@@ -39,20 +45,28 @@ declare namespace FeedsData{
         query_channel_creation_permission = "query_channel_creation_permission",
       
       
-      
-        enable_notification = "enable_notification",
-        //PUSH Notification
-        newPost = "new_post",
-        newComment = "new_comment",
-        newLikes = "new_like",
-        newSubscription = "new_subscription",
-
         negotiateLogin = "negotiate_login",
         confirmLogin = "confirm_login",
 
         post_unlike = "post_unlike",
 
         updateFeedInfo = "update_feedinfo",
-        feedInfoUpdate = "feedinfo_update"
+      
+        editPost = "edit_post",
+        deletePost = "delete_post",
+
+        editComment = "edit_comment",
+        deleteComment = "delete_comment",
+
+        enable_notification = "enable_notification",
+
+        //PUSH Notification
+        newPostNotification = "new_post",
+        newCommentNotification = "new_comment",
+        newLikesNotification = "new_like",
+        newSubscriptionNotification = "new_subscription",
+        feedInfoUpdateNotification = "feedinfo_update",
+        postUpdateNotification="post_update",
+        commentUpdateNotification="comment_update",
     }
 }
