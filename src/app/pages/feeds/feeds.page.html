@@ -1,6 +1,6 @@
 <ion-tabs (ionTabsDidChange)="tabChanged($event)" [class.darkContainer]="theme.darkMode">
   <div class="tabs-line drak-line"> </div>
-  
+
   <ion-tab-bar class="tabs-div" >
     <ion-tab-button tab="home" (click)="home()">
         <img class="home-tab" [ngClass]="{'home-tab-selected': currentTab == 'home'}">
@@ -13,12 +13,12 @@
     <ion-tab-button>
       <div class="add-tab" (click)="create()"></div>
     </ion-tab-button>
-
+   
     <ion-tab-button tab="notification" (click)="notification()">
-      <ion-badge color="danger" style="position: absolute;left:33px;top:3px" *ngIf="totalunread>0">{{totalunread}}</ion-badge>
       <img class="notification-tab" [ngClass]="{'notification-tab-selected': currentTab == 'notification'}">
+      <ion-badge color="danger" style="margin-left:-5px;height: 20px;line-height: 20px;" *ngIf="totalunread>0">{{totalunread}}</ion-badge>
     </ion-tab-button>
-
+     
     <ion-tab-button tab="search" (click)="search()">
       <img class="search-tab" [ngClass]="{'search-tab-selected': currentTab == 'search'}">
     </ion-tab-button>

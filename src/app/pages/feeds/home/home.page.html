@@ -59,7 +59,7 @@
               <ion-label class="channel-post white"><pre>{{getContentText(post.content)}}</pre></ion-label>
             </div>
             
-            <ion-avatar  *ngIf="images[post.nodeId+post.channel_id+post.id] != 'none'  && images[post.nodeId+post.channel_id+post.id] != 'undefine' && images[post.nodeId+post.channel_id+post.id] != null" class="content-img-without-margin" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)">
+            <ion-avatar  *ngIf="images[post.nodeId+post.channel_id+post.id] != 'none'  && images[post.nodeId+post.channel_id+post.id] != undefine && images[post.nodeId+post.channel_id+post.id] != null && images[post.nodeId+post.channel_id+post.id] != 'undefine'" class="content-img-without-margin" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)">
               <img [src]="images[post.nodeId+post.channel_id+post.id]" style="margin-top: 2px;"> 
               <!-- <img [scrollTarget]="scrollableDiv" [lazyLoad]="{{images[post.nodeId+post.channel_id+post.id]}}" style="margin-top: 2px;"/> -->
             </ion-avatar>
