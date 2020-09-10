@@ -1771,10 +1771,10 @@ export class FeedService {
       lastPostUpdateMap[nodeChannelId] = {
         nodeId:nodeId,
         channelId:channel_id,
-        time:created_at
+        time:updateAt
       }
     }else{
-      lastPostUpdateMap[nodeChannelId].time = created_at;
+      lastPostUpdateMap[nodeChannelId].time = updateAt;
     }
     
     this.storeService.set(PersistenceKey.lastPostUpdateMap,lastPostUpdateMap);
@@ -2392,7 +2392,7 @@ export class FeedService {
 
       let avatarBin = result[index].avatar;
       let avatar = this.serializeDataService.decodeData(avatarBin);
-
+      let update = result[index].last_update;
       if (channelsMap[nodeChannelId] == undefined){
         channelsMap[nodeChannelId] = {
           nodeId      : nodeId,
@@ -2402,7 +2402,7 @@ export class FeedService {
           owner_name  : result[index].owner_name,
           owner_did   : result[index].owner_did,
           subscribers : result[index].subscribers,
-          last_update : result[index].last_update*1000,
+          last_update : update*1000,
           last_post   : "",
           avatar      : avatar,
           isSubscribed:false
@@ -2421,10 +2421,10 @@ export class FeedService {
       if (this.lastFeedUpdateMap[nodeId] == undefined ){
         this.lastFeedUpdateMap[nodeId] = {
           nodeId: nodeId,
-          time: channelsMap[nodeChannelId].last_update
+          time: update
         }
       } else{
-        this.lastFeedUpdateMap[nodeId].time = result[index].last_update;
+        this.lastFeedUpdateMap[nodeId].time = update;
       }
     }
     this.storeService.set(PersistenceKey.lastFeedUpdateMap, this.lastFeedUpdateMap);
@@ -2619,10 +2619,10 @@ export class FeedService {
           lastPostUpdateMap[nodeChannelId] = {
             nodeId: nodeId,
             channelId: channel_id,
-            time:createAt
+            time:updatedAt
           }
         }else{
-          lastPostUpdateMap[nodeChannelId].time = createAt;
+          lastPostUpdateMap[nodeChannelId].time = updatedAt;
         }
       }
     }
@@ -4220,11 +4220,11 @@ export class FeedService {
 
   updateVersionData(){
     let updateCode = localStorage.getItem('org.elastos.dapp.feeds.update') || "0";
-    if (Number(updateCode) < 4){
+    if (Number(updateCode) < 5){
       this.storeService.remove(PersistenceKey.lastCommentUpdateMap);
       this.storeService.remove(PersistenceKey.lastPostUpdateMap);
       this.storeService.remove(PersistenceKey.lastFeedUpdateMap);
-      localStorage.setItem("org.elastos.dapp.feeds.update","4");
+      localStorage.setItem("org.elastos.dapp.feeds.update","5");
     }
   }
 
