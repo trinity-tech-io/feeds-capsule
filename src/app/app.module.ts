@@ -39,7 +39,6 @@ import { ConnectionService } from './services/ConnectionService';
 
 import { PopupProvider } from './services/popup';
 import { CameraService } from './services/CameraService';
-import { AgentService } from './services/AgentService';
 import { ServerlistComponentModule } from './components/serverlistcomponent/serverlistcomponent.module'; 
 import { QRCodeModule } from 'angularx-qrcode'; 
 import { PostfromComponentPageModule } from './components/postfrom/postfrom.component.module'
@@ -161,7 +160,6 @@ export function anim(AnimationC: Animation, baseEl: any, position?: any): Promis
     PopupProvider,
     AppService,
     CameraService,
-    AgentService,
     JWTMessageService,
     TransportService,
     SerializeDataService,

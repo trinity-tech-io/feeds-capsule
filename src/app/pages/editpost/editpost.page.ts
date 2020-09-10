@@ -41,7 +41,6 @@ export class EditpostPage implements OnInit {
     }
 
     ngOnInit() {
-
       this.acRoute.queryParams.subscribe((data) => {
         let item = _.cloneDeep(data);
         this.nodeId = item["nodeId"] || "";
@@ -52,16 +51,7 @@ export class EditpostPage implements OnInit {
 
     ionViewWillEnter() {
 
-      let channel = this.feedService.getChannelFromId(this.nodeId,this.channelId) || {};
-
-      this.channelName = channel["name"] || "";
-      this.subscribers = channel["subscribers"] || "";
-      this.channelAvatar = this.feedService.parseChannelAvatar(channel["avatar"]);
-
-      this.getImage();
-      this.getContent();
-
-     this.connectionStatus = this.feedService.getConnectionStatus();
+    this.initData();
 
     this.events.subscribe('feeds:connectionChanged',(status)=>{
       this.zone.run(() => {
@@ -78,11 +68,11 @@ export class EditpostPage implements OnInit {
     this.events.subscribe('feeds:publishPostSuccess', () => {
       this.zone.run(()=>{
         this.navCtrl.pop().then(()=>{
+
           this.native.hideLoading();
           this.native.toast_trans("CommentPage.tipMsg1");
         });
       });
-      
     });
 
     this.events.subscribe('rpcRequest:error', () => {
@@ -98,6 +88,15 @@ export class EditpostPage implements OnInit {
     this.events.subscribe("feeds:updateTitle",()=>{
       this.initTitle();
     });
+
+    this.events.subscribe('feeds:editPostFinish', () => {
+      let post = this.feedService.getPostFromId(this.nodeId, this.channelId, this.postId);
+      console.log("editPostFinish = "+JSON.stringify(post));
+
+      // this.native.pop();
+      // this.native.hideLoading();
+    });
+
     this.initnodeStatus();
   }
 
@@ -108,6 +107,7 @@ export class EditpostPage implements OnInit {
     this.events.unsubscribe("feeds:publishPostSuccess");
     this.events.unsubscribe("rpcRequest:error");
     this.events.unsubscribe("rpcResponse:error");
+    this.events.unsubscribe("feeds:editPostFinish");
   }
 
   ionViewDidEnter() {
@@ -144,10 +144,8 @@ export class EditpostPage implements OnInit {
       myContent["text"] = this.newPost;
       myContent["img"] = this.imgUrl;
 
-      //add edit post 
-      this.native.hideLoading();
-      this.native.toast("common.comingSoon");
-    
+      this.feedService.editPost(this.nodeId,Number(this.channelId),Number(this.postId),myContent);
+      //add edit post     
     }  
  
 
@@ -204,5 +202,18 @@ export class EditpostPage implements OnInit {
     let postContent = post.content;
     this.oldNewPost = this.feedService.parsePostContentText(postContent) || "";
     this.newPost = this.feedService.parsePostContentText(postContent) || "";
+  }
+
+  initData(){
+    let channel = this.feedService.getChannelFromId(this.nodeId,this.channelId) || {};
+
+    this.channelName = channel["name"] || "";
+    this.subscribers = channel["subscribers"] || "";
+    this.channelAvatar = this.feedService.parseChannelAvatar(channel["avatar"]);
+
+    this.getImage();
+    this.getContent();
+
+    this.connectionStatus = this.feedService.getConnectionStatus();
   }
 }

@@ -6,8 +6,9 @@ export class SerializeDataService {
     }
     
     decodeData(data: any): string{
+        if (data == null)
+            return "";
         return msgpack.deserialize(data);
-
     }
 
     encodeData(object: any):Uint8Array{

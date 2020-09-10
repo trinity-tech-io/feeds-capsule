@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { Events } from '@ionic/angular';
-import { AgentService } from 'src/app/services/AgentService';
 import { SerializeDataService } from 'src/app/services/SerializeDataService'
 import { TransportService } from 'src/app/services/TransportService'
 
@@ -43,8 +42,7 @@ export class JsonRPCService {
     constructor(
         private serializeDataService: SerializeDataService,
         private transportService: TransportService,
-        private events: Events,
-        private agentService: AgentService) {
+        private events: Events) {
         eventBus = events;
         this.events.subscribe('transport:receiveMessage', event => {
             let data = serializeDataService.decodeData(event.message);

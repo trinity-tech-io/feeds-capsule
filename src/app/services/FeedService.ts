@@ -983,6 +983,7 @@ export class FeedService {
       case FeedsData.MethodType.editPost:
         this.handleEditPost(nodeId, requestParams);
         break;
+
       case FeedsData.MethodType.deletePost:
         this.handleDeletePost(nodeId, requestParams);
         break;
@@ -993,6 +994,7 @@ export class FeedService {
       case FeedsData.MethodType.deleteComment:
         this.handleDeleteComment(nodeId, requestParams);
         break;
+
       default:
         break;
     }
@@ -1685,6 +1687,7 @@ export class FeedService {
               commentById: number, content: any){
     if(!this.hasAccessToken(nodeId))
       return;
+
     let accessToken: FeedsData.AccessToken = accessTokenMap[nodeId]||undefined;
     this.connectionService.editComment(nodeId, channelId, postId, commentId, commentById, content, accessToken);
   }
@@ -1692,13 +1695,12 @@ export class FeedService {
   deleteComment(nodeId: string, channelId: number, postId: number, commentId: number){
     if(!this.hasAccessToken(nodeId))
       return;
+
     let accessToken: FeedsData.AccessToken = accessTokenMap[nodeId]||undefined;
     this.connectionService.deleteComment(nodeId, channelId, postId, commentId, accessToken);
   }
   
   handleEditPost(nodeId: string, request: any){
-    console.log("edit post finish"+JSON.stringify(request));
-    // eventBus.publish(PublishType.postUpdateFinish);
   }
 
   handleDeletePost(nodeId: string, request: any){
@@ -1708,11 +1710,14 @@ export class FeedService {
     let mPostId = this.getPostId(nodeId, channelId, postId);
     this.postMap[mPostId].post_status = FeedsData.PostCommentStatus.deleted;
     this.storeService.set(PersistenceKey.postMap, this.postMap);
+
+    this.storeService.removePostContentImg(mPostId);
+
     eventBus.publish(PublishType.deletePostFinish);
   }
 
   handleEditComment(nodeId: string, request: any){
-    console.log("edit comment finish"+JSON.stringify(request));
+    // console.log("edit comment finish"+JSON.stringify(request));
     // eventBus.publish(PublishType.commentUpdateFinish);
   }
 
@@ -1746,8 +1751,8 @@ export class FeedService {
     let contentText = this.parsePostContentText(content);
     let contentImage = this.parsePostContentImg(content);
 
-    let postId = this.getPostId(nodeId, channel_id, id);
-    this.postMap[postId] = {
+    let mPostId = this.getPostId(nodeId, channel_id, id);
+    this.postMap[mPostId] = {
       nodeId     : nodeId,
       channel_id : channel_id,
       id         : id,
@@ -1759,7 +1764,7 @@ export class FeedService {
       post_status : FeedsData.PostCommentStatus.available
     }
 
-    this.storeService.savePostContentImg(postId, contentImage);
+    this.storeService.savePostContentImg(mPostId, contentImage);
 
     let nodeChannelId = nodeId+channel_id;
     if (lastPostUpdateMap[nodeChannelId] == undefined){
@@ -1978,6 +1983,9 @@ export class FeedService {
     let createdAt: number = params.created_at||0;
     let updatedAt: number = params.updated_at||createdAt;
 
+    if (updatedAt > createdAt && status == FeedsData.PostCommentStatus.available)
+      status = FeedsData.PostCommentStatus.edited
+
     let content = this.serializeDataService.decodeData(contentBin);
 
     let contentText = this.parsePostContentText(content);
@@ -1993,15 +2001,13 @@ export class FeedService {
       content    : contentText,
       comments   : comments,
       likes      : likes,
-      created_at : createdAt,
+      created_at : createdAt*1000,
       updated_at  : updatedAt,
       post_status : status
     }
 
     this.storeService.set(PersistenceKey.postMap, this.postMap);
     eventBus.publish(PublishType.editPostFinish);
-
-    console.log("NewPostUpdate params = "+JSON.stringify(params));
   }
 
   handleNewCommentUpdate(nodeId: string, params: any){
@@ -2014,7 +2020,10 @@ export class FeedService {
     let contentBin = params.content;
     let likes = params.likes;
     let createdAt = params.created_at;
-    let updateAt = params.updated_at||createdAt;
+    let updatedAt = params.updated_at||createdAt;
+
+    if (updatedAt > createdAt && status == FeedsData.PostCommentStatus.available)
+      status = FeedsData.PostCommentStatus.edited
 
     let content = this.serializeDataService.decodeData(contentBin);
 
@@ -2022,7 +2031,6 @@ export class FeedService {
     // let contentImage = this.parsePostContentImg(content);
     // let mPostId = this.getPostId(nodeId, channelId, postId);
     // this.storeService.savePostContentImg(mPostId, contentImage);
-
 
     commentsMap[nodeId][channelId][postId][commentId] = {
       nodeId      : nodeId,
@@ -2033,15 +2041,13 @@ export class FeedService {
       user_name   : userName,
       content     : content,
       likes       : likes,
-      created_at  : createdAt,
-      updated_at  : updateAt,
+      created_at  : createdAt*1000,
+      updated_at  : updatedAt,
       status      : status
     }
 
     this.storeService.set(PersistenceKey.commentsMap, commentsMap);
-
     eventBus.publish(PublishType.editCommentFinish);
-    console.log("NewCommentUpdate params = "+JSON.stringify(params));
   }
 
   handleNotification(nodeId: string, method: string, params: any){
@@ -3278,22 +3284,32 @@ export class FeedService {
   }
 
   parsePostContentImg(content: any): string{
-    if (content == undefined){
-      return "";
-    }
+    // if (content == undefined){
+    //   return "";
+    // }
 
-    if (content.indexOf("img") != -1){
-      try {
-        let contentObj = JSON.parse(content);
-        return contentObj.img;
-      } catch(e) {
-        console.log("error ==> "+e);
-        return "";
-      }
+    // if (content.indexOf("img") != -1){
+    //   try {
+    //     let contentObj = JSON.parse(content);
+    //     return contentObj.img;
+    //   } catch(e) {
+    //     console.log("error ==> "+e);
+    //     return "";
+    //   }
 
-    }
+    // }
 
-    return "";
+    // return "";
+
+    let contentObj = this.native.parseJSON(content) || "";
+    
+    if (contentObj.img != undefined)
+      return contentObj.img
+
+    if (typeof contentObj != 'string')
+      return ""
+
+    return contentObj;
   }
 
   publishDid(payload: string, onSuccess?: (ret: any)=>void, onError?: (err:any)=>void) {
