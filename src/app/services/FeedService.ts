@@ -4239,4 +4239,22 @@ export class FeedService {
   close(){
     appManager.close();
   }
+
+  promptpublishdid(){
+    appManager.sendIntent("promptpublishdid", {}, {}, (response: any) => {
+    },
+    (err)=>{
+      this.native.toastdanger('common.promptPublishDidError');
+    });
+  }
+
+  checkDIDDocument(did: string){
+    didManager.resolveDidDocument(did, false,(didDocument)=>{
+      if (didDocument == null){
+        this.promptpublishdid();
+      }
+    },(err)=>{
+      this.native.toastdanger('common.resolveDidDocumentError');
+    });
+  }
 }

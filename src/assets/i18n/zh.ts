@@ -57,7 +57,9 @@ export const zh = {
         "editcomment":"编辑微评",
         "removecomment":"移除微评",
         "edit":"(已编辑)",
-        "deleted":"(微说已删除)"
+        "deleted":"(微说已删除)",
+        "promptPublishDidError":"发布DID出错",
+        "resolveDidDocumentError":"解析DID文档出错"
     },
     "app":{
         "profileDetails":"档案详情",

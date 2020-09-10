@@ -57,7 +57,9 @@ export const fr = {
         "editcomment":"Edit Comment",
         "removecomment":"Remove Comment",
         "edit":"(edited)",
-        "deleted":"(post deleted)"
+        "deleted":"(post deleted)",
+        "promptPublishDidError":"Prompt publish did error",
+        "resolveDidDocumentError":"Resolve Did Document error",
     },
     "app":{
         "profileDetails":"Profile Details",
