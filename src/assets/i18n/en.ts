@@ -56,7 +56,8 @@ export const en = {
         "removepost":"Remove Post",
         "editcomment":"Edit Comment",
         "removecomment":"Remove Comment",
-        "edit":"( edit )"
+        "edit":"( edited )",
+        "deleted":"(post deleted)"
     },
     "app":{
         "profileDetails":"Profile Details",

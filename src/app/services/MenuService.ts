@@ -48,8 +48,9 @@ export class MenuService {
         await actionSheet.present();
     }
 
-    async showShareMenu(nodeId: string, channelId: number, channelName: string){
-        let actionSheet = await this.actionSheetController.create({
+    async showShareMenu(nodeId: string, channelId: number, channelName: string,postId:number){
+        this.postDetail = await this.actionSheetController.create({
+            cssClass: 'editPost',
             buttons: [
             {
                 text: this.translate.instant("common.share"),
@@ -57,28 +58,22 @@ export class MenuService {
                 handler: () => {
                     this.native.toast("common.comingSoon");
                 }
-            },
-            {
-                text: this.translate.instant("common.cancel"),
-                icon: 'close',
-                role: 'cancel',
-                handler: () => {
-                }
             }
         ]
         });
 
-        actionSheet.onWillDismiss().then(()=>{
-            if(actionSheet!=null){
-                actionSheet = null;
+       
+        this.postDetail.onWillDismiss().then(()=>{
+            if(this.postDetail !=null){
+                this.postDetail  = null;
             }
            
         })
-        await actionSheet.present();
+        await this.postDetail.present();
     }
 
     async showUnsubscribeMenu(nodeId: string, channelId: number, channelName: string){
-        const actionSheet = await this.actionSheetController.create({
+        this.postDetail  = await this.actionSheetController.create({
             buttons: [{
               text: this.translate.instant("common.unsubscribe")+' @'+channelName,
               role: 'destructive',
@@ -94,7 +89,7 @@ export class MenuService {
               }
             }]
           });
-        await actionSheet.present();
+        await this.postDetail.present();
     }
 
     async showUnsubscribeMenuWithoutName(nodeId: string, channelId: number){
@@ -176,7 +171,11 @@ export class MenuService {
                     this.native.toast("common.comingSoon");
                     break;
                 case "removePost":
-                    this.feedService.deletePost(nodeId, Number(channelId), Number(postId));
+                    this.native.showLoading("common.waitMoment",50000).then(()=>{
+                        this.feedService.deletePost(nodeId, Number(channelId), Number(postId));
+                    }).catch(()=>{
+                        this.native.hideLoading();
+                   });
                     break;    
             }
     }

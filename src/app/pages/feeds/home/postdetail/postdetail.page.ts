@@ -74,11 +74,9 @@ export class PostdetailPage implements OnInit {
 
     let post = this.feedService.getPostFromId(this.nodeId, this.channelId, this.postId);
   
-    console.log("===this.pos===="+JSON.stringify(post));
-
+ 
     this.postStatus = post.post_status || 0;
 
-    console.log("===this.pos===="+this.postStatus);
     this.postContent = post.content;
     this.postTS = post.created_at;
     this.likesNum = post.likes;
@@ -150,19 +148,14 @@ export class PostdetailPage implements OnInit {
       });
     });
 
-    // this.events.subscribe('feeds:editPostFinish', () => {
-    //   console.log("editPostFinish  ===>");
+    this.events.subscribe('feeds:editPostFinish', () => {
+      this.initData();
+    });
 
-    //   this.initData();
-    //   this.native.pop();
-    //   this.native.hideLoading();
-    // });
-
-    // this.events.subscribe('feeds:deletePostFinish', () => {
-    //   console.log("deletePostFinish");
-    //   this.native.pop();
-    //   this.native.hideLoading();
-    // });
+    this.events.subscribe('feeds:deletePostFinish', () => {
+      this.native.hideLoading();
+      this.initData();
+    });
   }
 
 
@@ -172,8 +165,8 @@ export class PostdetailPage implements OnInit {
     this.events.unsubscribe("feeds:friendConnectionChanged");
     this.events.unsubscribe("feeds:updateTitle");
     this.events.unsubscribe("feeds:refreshPostDetail");
-    // this.events.unsubscribe("feeds:editPostFinish");
-    // this.events.unsubscribe("feeds:deletePostFinish");
+    this.events.unsubscribe("feeds:editPostFinish");
+    this.events.unsubscribe("feeds:deletePostFinish");
     this.images = {};
     this.menuService.hideActionSheet();
     if(this.popover!=null){
@@ -276,7 +269,11 @@ export class PostdetailPage implements OnInit {
   }
 
   menuMore(){
-    this.menuService.showPostDetailMenu(this.nodeId, Number(this.channelId), this.channelName,this.postId);
+    if(this.checkChannelIsMine() === 0){
+      this.menuService.showPostDetailMenu(this.nodeId, Number(this.channelId), this.channelName,this.postId);
+    }else{
+      this.menuService.showShareMenu(this.nodeId, Number(this.channelId), this.channelName,this.postId);
+    }
   }
 
   showBigImage(content: any){
@@ -386,13 +383,16 @@ export class PostdetailPage implements OnInit {
     return await this.popover.present();
   }
 
-  handlePostStatus(){
-    let text = this.translate.instant("common.edit")
-    return text;
-  }
 
   handleCommentStatus(){
     let status = "(edit)"
     return status;
+  }
+
+  checkChannelIsMine(){
+    if (this.feedService.checkChannelIsMine(this.nodeId, this.channelId))
+      return 0;
+    
+    return 1;
   }
 }

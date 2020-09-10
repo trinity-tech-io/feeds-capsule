@@ -55,11 +55,18 @@
           </div>
     
           <div style="margin-left: 81px;margin-top:-12px">
-            <div class="channel-post-div" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)"> 
+
+           
+
+            <div class="channel-post-div" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)"  *ngIf="post.post_status === 1"> 
+              <ion-label class="channel-post white"><pre>{{'common.deleted' | translate}}</pre></ion-label>
+            </div>
+
+            <div class="channel-post-div" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)" *ngIf="post.post_status != 1"> 
               <ion-label class="channel-post white"><pre>{{getContentText(post.content)}}</pre></ion-label>
             </div>
             
-            <ion-avatar  *ngIf="images[post.nodeId+post.channel_id+post.id] != 'none'  && images[post.nodeId+post.channel_id+post.id] != undefine && images[post.nodeId+post.channel_id+post.id] != null && images[post.nodeId+post.channel_id+post.id] != 'undefine'" class="content-img-without-margin" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)">
+            <ion-avatar  *ngIf="post.post_status != 1 && images[post.nodeId+post.channel_id+post.id] != 'none'  && images[post.nodeId+post.channel_id+post.id] != undefine && images[post.nodeId+post.channel_id+post.id] != null && images[post.nodeId+post.channel_id+post.id] != 'undefine'" class="content-img-without-margin" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)">
               <img [src]="images[post.nodeId+post.channel_id+post.id]" style="margin-top: 2px;"> 
               <!-- <img [scrollTarget]="scrollableDiv" [lazyLoad]="{{images[post.nodeId+post.channel_id+post.id]}}" style="margin-top: 2px;"/> -->
             </ion-avatar>
@@ -71,6 +78,8 @@
     
               <img src="./assets/images/bubble-line.svg" class="comment" (click)="showCommentPage(post.nodeId, post.channel_id, post.id)">
               <ion-label class="comment-text"  (click)="showCommentPage(post.nodeId, post.channel_id, post.id)">{{post.comments}}</ion-label>
+
+              <ion-label class="status" *ngIf="post.post_status === 2" style="right: -5px;">{{ 'common.edit' | translate}} </ion-label>
             </div>
           </div>
         </ion-card-content>

@@ -3171,7 +3171,7 @@ export class FeedService {
       keys = Object.keys(likeMap);
 
     for (const index in keys) {
-      let post = likeMap[keys[index]];
+      let post = this.postMap[keys[index]];
       
       if (post == null || post == undefined)
         continue;
