@@ -1796,9 +1796,12 @@ export class FeedService {
     let comment_id: number = params.comment_id;
     let contentBin: any = params.content;
     let user_name: any = params.user_name;
-    let create_at: number = params.created_at || 0;
-    let updateAt: number = params.updated_at || create_at;
+    let createdAt: number = params.created_at || 0;
+    let updatedAt: number = params.updated_at || createdAt;
     let status: FeedsData.PostCommentStatus = params.status || FeedsData.PostCommentStatus.available;
+
+    if (updatedAt > createdAt && status == FeedsData.PostCommentStatus.available)
+      status = FeedsData.PostCommentStatus.edited
 
     let content = this.serializeDataService.decodeData(contentBin);
 
@@ -1820,8 +1823,8 @@ export class FeedService {
       user_name  : user_name,
       content    : content,
       likes      : 0,
-      created_at : create_at*1000,
-      updated_at : updateAt,
+      created_at : createdAt*1000,
+      updated_at : updatedAt,
       status     : status
     }
 
@@ -1831,10 +1834,10 @@ export class FeedService {
         nodeId: nodeId,
         channelId: channel_id,
         postId: post_id,
-        time: create_at*1000
+        time: updatedAt
       }
     }else{
-      this.lastCommentUpdateMap[ncpId].time = create_at;
+      this.lastCommentUpdateMap[ncpId].time = updatedAt;
     }
     this.storeService.set(PersistenceKey.lastCommentUpdateMap, this.lastCommentUpdateMap);
     
@@ -2655,12 +2658,16 @@ export class FeedService {
       let comment_id = result[index].comment_id;
       let contentBin    = result[index].content;
       let likes = result[index].likes;
-      let created_at = result[index].created_at;
+      let createdAt = result[index].created_at;
       let user_name = result[index].user_name;
-      let updateAt = result[index].updated_at;
+      let updatedAt = result[index].updated_at;
       let status = result[index].status;
 
       let content = this.serializeDataService.decodeData(contentBin);
+
+      if (updatedAt > createdAt && status == FeedsData.PostCommentStatus.available)
+        status = FeedsData.PostCommentStatus.edited
+
 
       let comment:Comment = {
         nodeId     : nodeId,
@@ -2671,8 +2678,8 @@ export class FeedService {
         user_name  : user_name,
         content    : content,
         likes      : likes,
-        created_at : created_at*1000,
-        updated_at : updateAt,
+        created_at : createdAt*1000,
+        updated_at : updatedAt,
         status     : status
       }
 
@@ -2695,10 +2702,10 @@ export class FeedService {
           nodeId: nodeId,
           channelId: channel_id,
           postId: post_id,
-          time: created_at*1000
+          time: updatedAt
         }
       }else{
-        this.lastCommentUpdateMap[ncpId].time = created_at;
+        this.lastCommentUpdateMap[ncpId].time = updatedAt;
       }
     }
 
