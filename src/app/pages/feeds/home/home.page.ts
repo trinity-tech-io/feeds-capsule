@@ -89,45 +89,70 @@ export class HomePage implements OnInit {
 
    this.events.subscribe("feeds:editPostFinish",()=>{
     this.zone.run(()=>{
+
       this.totalData = this.feedService.getPostList() || [];
       if (this.totalData.length - this.pageNumber > this.pageNumber){
-        this.postList = this.totalData.slice(this.startIndex,this.pageNumber);
-        this.startIndex++;
+        this.postList = this.totalData.slice(0,(this.startIndex)*this.pageNumber);
         this.infiniteScroll.disabled =false;
        } else {
-        this.postList =  this.totalData.slice(0,this.totalData.length);
+        this.postList =  this.totalData;
         this.infiniteScroll.disabled =true;
       }
       this.initnodeStatus(this.postList);
+
     });
    });
 
    this.events.subscribe("feeds:deletePostFinish",()=>{
     this.zone.run(()=>{
+
       this.totalData = this.feedService.getPostList() || [];
       if (this.totalData.length - this.pageNumber > this.pageNumber){
-        this.postList = this.totalData.slice(this.startIndex,this.pageNumber);
-        this.startIndex++;
+        this.postList = this.totalData.slice(0,(this.startIndex)*this.pageNumber);
         this.infiniteScroll.disabled =false;
        } else {
-        this.postList =  this.totalData.slice(0,this.totalData.length);
+        this.postList =  this.totalData;
         this.infiniteScroll.disabled =true;
       }
       this.initnodeStatus(this.postList);
+
     });
+   });
+
+   this.events.subscribe("update:tab",()=>{
+ 
+    this.totalData = this.feedService.getPostList() || [];
+    if (this.totalData.length - this.pageNumber > this.pageNumber){
+      this.postList = this.totalData.slice(0,(this.startIndex)*this.pageNumber);
+      this.infiniteScroll.disabled =false;
+     } else {
+      this.postList =  this.totalData;
+      this.infiniteScroll.disabled =true;
+    }
+    this.initnodeStatus(this.postList);
+
    });
    
   }
 
  ionViewWillLeave(){
+
     this.events.unsubscribe("feeds:connectionChanged");
     this.events.unsubscribe("feeds:postDataUpdate");
     this.events.unsubscribe("feeds:friendConnectionChanged");
     this.events.unsubscribe("feeds:publishPostFinish");
-
     this.events.unsubscribe("feeds:editPostFinish");
     this.events.unsubscribe("feeds:deletePostFinish");
+   
+}
+
+  ionViewDidLeave() {
+    this.events.unsubscribe("update:tab");
   }
+
+  ionViewWillUnload() {
+    console.log('即将卸载销毁');
+}
 
   getChannel(nodeId, channelId):any{
     return this.feedService.getChannelFromId(nodeId,channelId);

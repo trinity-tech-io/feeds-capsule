@@ -133,7 +133,6 @@ publishComment(){
 }
 
 editComment(){
-  console.log(this.nodeId+"==="+this.channelId+"====="+this.postId+"======"+this.commentById+"====="+this.commentId);
    this.feedService.editComment(this.nodeId,Number(this.channelId),Number(this.postId),Number(this.commentId),Number(this.commentById),this.newComment);
 }
 

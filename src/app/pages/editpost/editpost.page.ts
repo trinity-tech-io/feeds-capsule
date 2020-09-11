@@ -83,6 +83,7 @@ export class EditpostPage implements OnInit {
     this.events.subscribe('feeds:editPostFinish', () => {
       //let post = this.feedService.getPostFromId(this.nodeId, this.channelId, this.postId);
       //console.log("editPostFinish = "+JSON.stringify(post));
+      this.events.publish("update:tab");
       this.native.hideLoading();
       this.native.pop();
      

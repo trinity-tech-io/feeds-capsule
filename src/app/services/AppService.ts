@@ -113,7 +113,6 @@ export class AppService {
       if (currentLang != 'zh' && currentLang != 'fr') {
         currentLang = "en";
       }
-      console.log("Setting current lang to "+currentLang);
       this.feedService.setCurrentLang(currentLang);
       this.translate.setDefaultLang(currentLang);
       this.translate.use(currentLang);
