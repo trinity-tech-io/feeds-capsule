@@ -110,6 +110,8 @@ export class MyApp {
     this.storageService.remove("signInData").then(()=>{
       this.storageService.remove("accessTokenMap").then(()=>{
         this.native.toast("app.des"); 
+        this.feedService.resetConnectionStatus();
+        this.feedService.destroyCarrier();
         this.native.setRootRouter('signin');
       }).catch((err)=>{
 

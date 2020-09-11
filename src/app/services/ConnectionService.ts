@@ -547,4 +547,13 @@ export class ConnectionService {
     
         return true ;
     }
+
+
+    resetConnectionStatus(){
+        let connectionMap = this.friendConnectionMap||{};
+        let keys: string[] = Object.keys(connectionMap) || [];
+        for (let index = 0; index < keys.length; index++) {
+            this.friendConnectionMap[keys[index]] = FeedsData.ConnState.disconnected;
+        }
+    }
 }
