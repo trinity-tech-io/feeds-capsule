@@ -144,9 +144,10 @@ type Comment = {
     user_name   : string,
     content     : any,
     likes       : number,
-    created_at  : number
-    updated_at  : number
-    status      : FeedsData.PostCommentStatus
+    created_at  : number,
+    updated_at  : number,
+    status      : FeedsData.PostCommentStatus,
+    user_did    : string
 }
 
 type LikedComment = {
@@ -1799,6 +1800,7 @@ export class FeedService {
     let createdAt: number = params.created_at || 0;
     let updatedAt: number = params.updated_at || createdAt;
     let status: FeedsData.PostCommentStatus = params.status || FeedsData.PostCommentStatus.available;
+    let userDid: string = params.user_did || "";
 
     if (updatedAt > createdAt && status == FeedsData.PostCommentStatus.available)
       status = FeedsData.PostCommentStatus.edited
@@ -1825,7 +1827,8 @@ export class FeedService {
       likes      : 0,
       created_at : createdAt*1000,
       updated_at : updatedAt,
-      status     : status
+      status     : status,
+      user_did   : userDid
     }
 
     let ncpId = nodeId + channel_id +"-"+post_id;
@@ -2024,6 +2027,7 @@ export class FeedService {
     let likes = params.likes;
     let createdAt = params.created_at;
     let updatedAt = params.updated_at||createdAt;
+    let userDid = params.user_did||"";
 
     if (updatedAt > createdAt && status == FeedsData.PostCommentStatus.available)
       status = FeedsData.PostCommentStatus.edited
@@ -2046,7 +2050,8 @@ export class FeedService {
       likes       : likes,
       created_at  : createdAt*1000,
       updated_at  : updatedAt,
-      status      : status
+      status      : status,
+      user_did    : userDid
     }
 
     this.storeService.set(PersistenceKey.commentsMap, commentsMap);
@@ -2662,6 +2667,7 @@ export class FeedService {
       let user_name = result[index].user_name;
       let updatedAt = result[index].updated_at;
       let status = result[index].status;
+      let userDid = result[index].user_did;
 
       let content = this.serializeDataService.decodeData(contentBin);
 
@@ -2680,7 +2686,8 @@ export class FeedService {
         likes      : likes,
         created_at : createdAt*1000,
         updated_at : updatedAt,
-        status     : status
+        status     : status,
+        user_did   : userDid
       }
 
       if (commentsMap == null || commentsMap == undefined)
@@ -4083,12 +4090,13 @@ export class FeedService {
 
   checkCommentIsMine(nodeId: string, channelId: number, postId: number, commentId: number):boolean{
     let comment = commentsMap[nodeId][channelId][postId][commentId];
-    if(comment == undefined)
-      return false;
-
-    if (comment.user_name == this.getSignInData().name || 
-      comment.user_name == this.getSignInData().nickname)
+    let did = comment.user_did || "";
+    if (did == this.getSignInData().did)
       return true;
+
+    // if (comment.user_name == this.getSignInData().name || 
+    //   comment.user_name == this.getSignInData().nickname)
+    //   return true;
 
     return false;
   }
