@@ -2012,6 +2012,12 @@ export class FeedService {
       post_status : status
     }
 
+    if (likeMap[mPostId] != undefined){
+      likeMap[mPostId] = this.postMap[mPostId];
+      this.storeService.set(PersistenceKey.likeMap,likeMap);
+    }
+      
+
     this.storeService.set(PersistenceKey.postMap, this.postMap);
     eventBus.publish(PublishType.editPostFinish);
   }
@@ -2280,7 +2286,8 @@ export class FeedService {
     let mPostId = this.getPostId(nodeId, channel_id, post_id);
     if (error != null && error != undefined && error.code == -4){
       if(comment_id == 0){
-        likeMap[mPostId] = undefined;
+        // likeMap[mPostId] = undefined;
+        delete likeMap[mPostId];
         this.storeService.set(PersistenceKey.likeMap, likeMap);
 
         eventBus.publish(PublishType.postDataUpdate);
@@ -2616,6 +2623,11 @@ export class FeedService {
         post_status : status
       }
 
+      if (likeMap[mPostId] != undefined){
+        likeMap[mPostId] = this.postMap[mPostId];
+        this.storeService.set(PersistenceKey.likeMap,likeMap);
+      }
+        
 
       if (requestAction == RequestAction.defaultAction){
         let nodeChannelId = nodeId+channel_id
@@ -3185,7 +3197,7 @@ export class FeedService {
       keys = Object.keys(likeMap);
 
     for (const index in keys) {
-      let post = this.postMap[keys[index]];
+      let post = likeMap[keys[index]];
       
       if (post == null || post == undefined)
         continue;
@@ -3928,8 +3940,7 @@ export class FeedService {
 
   removeLikeById(nodeId: string, channelId: number, postId: number):Promise<any>{
     let nodechannelpostId = nodeId + channelId + postId;
-    likeMap[nodechannelpostId] = undefined;
-
+    delete likeMap[nodechannelpostId];
     return this.storeService.set(PersistenceKey.likeMap, likeMap);
   }
 
