@@ -4082,6 +4082,8 @@ export class FeedService {
 
   checkChannelIsMine(nodeId: string, channelId: number): boolean{
     let channel = this.getChannelFromId(nodeId, channelId);
+    // console.log("channel ==>"+JSON.stringify(channel));
+    // console.log("this.getSignInData().did ==>"+this.getSignInData().did);
     if (channel.owner_did == this.getSignInData().did)
       return true;
 
@@ -4090,6 +4092,8 @@ export class FeedService {
 
   checkCommentIsMine(nodeId: string, channelId: number, postId: number, commentId: number):boolean{
     let comment = commentsMap[nodeId][channelId][postId][commentId];
+    // console.log("comment ==>"+JSON.stringify(comment));
+    // console.log("this.getSignInData().did ==>"+this.getSignInData().did);
     let did = comment.user_did || "";
     if (did == this.getSignInData().did)
       return true;
@@ -4264,5 +4268,23 @@ export class FeedService {
     },(err)=>{
       this.native.toastdanger('common.resolveDidDocumentError');
     });
+  }
+
+  destroyCarrier(){
+    this.carrierService.destroyCarrier();
+  }
+
+  resetConnectionStatus(){
+    this.connectionService.resetConnectionStatus();
+    this.resetServerConnectionStatus();
+    this.connectionStatus = FeedsData.ConnState.disconnected;
+  }
+
+  resetServerConnectionStatus(){
+    let serverConnectionMap = serversStatus||{};
+    let keys: string[] = Object.keys(serverConnectionMap) || [];
+    for (let index = 0; index < keys.length; index++) {
+      serversStatus[keys[index]].status = ConnState.disconnected;
+    }
   }
 }

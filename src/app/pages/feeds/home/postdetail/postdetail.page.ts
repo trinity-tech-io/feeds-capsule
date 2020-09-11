@@ -87,7 +87,7 @@ export class PostdetailPage implements OnInit {
 
   initRefresh(){
     this.totalData = this.feedService.getCommentList(this.nodeId, this.channelId, this.postId) || [];
-    console.log("======"+JSON.stringify(this.totalData));
+    // console.log("======"+JSON.stringify(this.totalData));
     if(this.totalData.length-this.pageNumber > this.pageNumber){
       this.commentList = this.totalData.slice(this.startIndex,this.pageNumber);
       this.startIndex++;
@@ -288,7 +288,9 @@ export class PostdetailPage implements OnInit {
   }
 
   menuMore(){
-    if(this.checkChannelIsMine() === 0){
+    let isMine = this.checkChannelIsMine();
+    // console.log("isMine==>"+isMine);
+    if(isMine === 0){
       this.menuService.showPostDetailMenu(this.nodeId, Number(this.channelId), this.channelName,this.postId);
     }else{
       this.menuService.showShareMenu(this.nodeId, Number(this.channelId), this.channelName,this.postId);
