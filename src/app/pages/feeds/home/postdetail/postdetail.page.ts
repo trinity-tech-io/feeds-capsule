@@ -87,6 +87,7 @@ export class PostdetailPage implements OnInit {
 
   initRefresh(){
     this.totalData = this.feedService.getCommentList(this.nodeId, this.channelId, this.postId) || [];
+    console.log("======"+JSON.stringify(this.totalData));
     if(this.totalData.length-this.pageNumber > this.pageNumber){
       this.commentList = this.totalData.slice(this.startIndex,this.pageNumber);
       this.startIndex++;
@@ -165,6 +166,12 @@ export class PostdetailPage implements OnInit {
       this.native.hideLoading();
       this.initData();
     });
+
+    this.events.subscribe('rpcRequest:error', () => {
+      this.zone.run(() => {
+         this.native.hideLoading();
+      });
+    });
   }
 
 
@@ -178,6 +185,7 @@ export class PostdetailPage implements OnInit {
     this.events.unsubscribe("feeds:deletePostFinish");
     this.events.unsubscribe("feeds:editCommentFinish");
     this.events.unsubscribe("feeds:deleteCommentFinish");
+    this.events.subscribe("rpcRequest:error");
     this.images = {};
     this.menuService.hideActionSheet();
     if(this.popover!=null){
@@ -384,7 +392,8 @@ export class PostdetailPage implements OnInit {
                         channelId:Number(comment.channel_id),
                         postId:Number(comment.post_id),
                         commentById:Number(comment.comment_id),
-                        commentId:Number(comment.id)
+                        commentId:Number(comment.id),
+                        content:comment.content
                       },
       event: ev,
       translucent: true
