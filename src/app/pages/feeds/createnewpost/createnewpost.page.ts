@@ -69,7 +69,7 @@ export class CreatenewpostPage implements OnInit {
       this.zone.run(()=>{
         this.navCtrl.pop().then(()=>{
           this.native.hideLoading();
-          this.native.toast_trans("CommentPage.tipMsg1");
+          this.native.toast_trans("CreatenewpostPage.tipMsg1");
         });
       });
       

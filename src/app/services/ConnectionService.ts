@@ -20,7 +20,6 @@ export class ConnectionService {
     }
 
     request(){
-        console.log("------>request<---------");
     }
 
     createChannel(nodeId: string, name: string, introduction: string,
