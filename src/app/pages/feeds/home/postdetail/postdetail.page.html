@@ -86,16 +86,21 @@
                 </div>
               </div>
           </div>
-    
+
           <div style="margin-left: 81px;margin-top: -12px;">
-            <div class="channel-post-div"> 
+
+            <div class="channel-post-div" *ngIf="comment.status === 1"> 
+              <ion-label class="channel-post white"> <pre>{{'common.cdeleted' | translate}}</pre></ion-label>
+            </div>
+
+            <div class="channel-post-div" *ngIf="comment.status != 1"> 
               <ion-label class="channel-post white"> <pre>{{comment.content}}</pre></ion-label>
             </div>
             
             <div class="channel-post-heart-comment-div">
               <img class="like" [ngClass]="{'like-s': checkLikedComment(comment.id)}" (click)="likeComment(comment.id)">
               <ion-label class="like-text" [ngClass]="{'like-s-text': checkLikedComment(comment.id)}" (click)="likeComment(comment.id)">{{comment.likes}}</ion-label>
-              <ion-label class="status" style="right:-7px;">{{handleCommentStatus()}}</ion-label>
+              <ion-label class="status" style="right:-7px;" *ngIf="comment.status === 2">{{ 'common.edit' | translate}}</ion-label>
             </div>
 
            

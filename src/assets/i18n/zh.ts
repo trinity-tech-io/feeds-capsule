@@ -60,7 +60,7 @@ export const zh = {
         "deleted":"(微说已删除)",
         "promptPublishDidError":"发布DID出错",
         "resolveDidDocumentError":"解析DID文档出错",
-        "cdeleted":"(微频已删除)",
+        "cdeleted":"(回复已删除)",
     },
     "app":{
         "profileDetails":"档案详情",
@@ -364,5 +364,8 @@ export const zh = {
     },
     "EditpostPage":{
         "title":"编辑微说",
+    },
+    "EditcommentPage":{
+        "title":"编辑微评",
     }
 };

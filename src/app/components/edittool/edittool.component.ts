@@ -15,6 +15,7 @@ export class EdittoolComponent implements OnInit {
   public postId:number = 0;
   public commentById:Number = 0;
   public commentId:number = 0;
+  public  content:string = "";
   constructor(
     public theme:ThemeService,
     private navParams: NavParams,
@@ -29,6 +30,7 @@ export class EdittoolComponent implements OnInit {
     this.postId = this.navParams.get('postId')|| 0;
     this.commentById = this.navParams.get('commentById')|| 0;
     this.commentId = this.navParams.get('commentId')|| 0;
+    this.content = this.navParams.get('content')|| "";
   }
 
   edit(){
@@ -38,13 +40,14 @@ export class EdittoolComponent implements OnInit {
       channelId:this.channelId,
       postId:this.postId,
       commentById:this.commentById,
-      commentId:this.commentId
+      commentId:this.commentId,
+      content:this.content
     });
   }
 
   remove(){
     this.popover.dismiss();
-    this.native.showLoading("common.waitMoment").then(()=>{
+    this.native.showLoading("common.waitMoment",50000).then(()=>{
       this.feedService.deleteComment(this.nodeId,Number(this.channelId),Number(this.postId),Number(this.commentId));
     }).catch(()=>{
 

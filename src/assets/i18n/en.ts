@@ -364,5 +364,8 @@ export const en = {
      },
     "EditpostPage":{
         "title":"Edit Post",
+    },
+    "EditcommentPage":{
+        "title":"Edit Comment",
     }
 };

@@ -43,6 +43,8 @@ ngOnInit() {
     this.postId = item.postId;
     this.commentById = item.commentById;
     this.commentId = item.commentId;
+    let content = item.content || "";
+    this.getContent(content);
   });
 }
 
@@ -53,9 +55,7 @@ ionViewWillEnter() {
   this.subscribers = channel["subscribers"] || "";
   this.channelAvatar = this.feedService.parseChannelAvatar(channel["avatar"]) || "";
 
-  this.getContent();
-
-
+ 
   this.events.subscribe('feeds:connectionChanged',(status)=>{
     this.zone.run(() => {
       this.connectionStatus = status;
@@ -78,7 +78,7 @@ ionViewWillEnter() {
     });
   });
 
- this.events.subscribe('editCommentFinish', () => {
+ this.events.subscribe('feeds:editCommentFinish', () => {
   this.zone.run(() => {
     this.navCtrl.pop().then(()=>{
       this.native.hideLoading();
@@ -105,11 +105,11 @@ ionViewWillLeave(){
   this.events.unsubscribe("feeds:updateTitle");
   this.events.unsubscribe("rpcRequest:error");
   this.events.unsubscribe("rpcResponse:error");
-  this.events.unsubscribe("editCommentFinish");
+  this.events.unsubscribe("feeds:editCommentFinish");
 }
 
 initTitle(){
-  titleBarManager.setTitle(this.translate.instant("CommentPage.newComment"));
+  titleBarManager.setTitle(this.translate.instant("EditcommentPage.title"));
 }
 
 publishComment(){
@@ -133,6 +133,7 @@ publishComment(){
 }
 
 editComment(){
+  console.log(this.nodeId+"==="+this.channelId+"====="+this.postId+"======"+this.commentById+"====="+this.commentId);
    this.feedService.editComment(this.nodeId,Number(this.channelId),Number(this.postId),Number(this.commentId),Number(this.commentById),this.newComment);
 }
 
@@ -149,11 +150,9 @@ pressName(channelName:string){
   this.native.createTip(channelName);
 }
 
-getContent(){
-  let post = this.feedService.getPostFromId(this.nodeId, this.channelId, this.postId);
-  let postContent = post.content;
-  this.newComment = this.feedService.parsePostContentText(postContent) || "";
-  this.oldNewComment = this.feedService.parsePostContentText(postContent) || "";
+getContent(content:string){
+  this.newComment = content;
+  this.oldNewComment = content;
 }
 
 }
