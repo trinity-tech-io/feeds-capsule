@@ -23,6 +23,8 @@ public oldNewComment: string="";
 public nodeId: string ="";
 public channelId: number= 0;
 public postId: number = 0;
+public commentById:Number = 0;
+public commentId:Number = 0;
 constructor(
   private events: Events,
   private native: NativeService,
@@ -39,6 +41,8 @@ ngOnInit() {
     this.nodeId = item.nodeId;
     this.channelId = item.channelId;
     this.postId = item.postId;
+    this.commentById = item.commentById;
+    this.commentId = item.commentId;
   });
 }
 
@@ -74,11 +78,10 @@ ionViewWillEnter() {
     });
   });
 
- this.events.subscribe('rpcRequest:success', () => {
+ this.events.subscribe('editCommentFinish', () => {
   this.zone.run(() => {
     this.navCtrl.pop().then(()=>{
       this.native.hideLoading();
-      this.native.toast_trans("CreatenewpostPage.tipMsg1");
     });
   });
  });
@@ -102,7 +105,7 @@ ionViewWillLeave(){
   this.events.unsubscribe("feeds:updateTitle");
   this.events.unsubscribe("rpcRequest:error");
   this.events.unsubscribe("rpcResponse:error");
-  this.events.unsubscribe("rpcRequest:success");
+  this.events.unsubscribe("editCommentFinish");
 }
 
 initTitle(){
@@ -130,9 +133,7 @@ publishComment(){
 }
 
 editComment(){
-  this.native.hideLoading();
-  this.native.toast("common.comingSoon");
-  //this.feedService.postComment(this.nodeId,Number(this.channelId),Number(this.postId),0,this.newComment);
+   this.feedService.editComment(this.nodeId,Number(this.channelId),Number(this.postId),Number(this.commentId),Number(this.commentById),this.newComment);
 }
 
 checkServerStatus(nodeId: string){

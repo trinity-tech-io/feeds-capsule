@@ -59,7 +59,8 @@ export const zh = {
         "edit":"(已编辑)",
         "deleted":"(微说已删除)",
         "promptPublishDidError":"发布DID出错",
-        "resolveDidDocumentError":"解析DID文档出错"
+        "resolveDidDocumentError":"解析DID文档出错",
+        "cdeleted":"(微频已删除)",
     },
     "app":{
         "profileDetails":"档案详情",

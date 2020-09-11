@@ -60,6 +60,7 @@ export const fr = {
         "deleted":"(post deleted)",
         "promptPublishDidError":"Prompt publish did error",
         "resolveDidDocumentError":"Resolve Did Document error",
+        "cdeleted":"(comment deleted)",
     },
     "app":{
         "profileDetails":"Profile Details",
