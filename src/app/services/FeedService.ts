@@ -1982,7 +1982,7 @@ export class FeedService {
   handleNewPostUpdate(nodeId: string, params: any){
     let channelId: number = params.channel_id;
     let postId: number = params.id;
-    let status: FeedsData.PostCommentStatus = params.post_status||FeedsData.PostCommentStatus.available;
+    let status: FeedsData.PostCommentStatus = params.status||FeedsData.PostCommentStatus.available;
     let contentBin: any =  params.content;
     let comments: number = params.comments||0;
     let likes: number = params.likes||0;
