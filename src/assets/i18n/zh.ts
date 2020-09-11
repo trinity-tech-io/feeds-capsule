@@ -364,8 +364,10 @@ export const zh = {
     },
     "EditpostPage":{
         "title":"编辑微说",
+        "savechanges":"保存修改"
     },
     "EditcommentPage":{
         "title":"编辑微评",
+        "savechanges":"保存修改"
     }
 };
