@@ -156,6 +156,15 @@ export class PostdetailPage implements OnInit {
       this.native.hideLoading();
       this.initData();
     });
+
+    this.events.subscribe('feeds:editCommentFinish', () => {
+      this.initData();
+    });
+     
+    this.events.subscribe('feeds:deleteCommentFinish', () => {
+      this.native.hideLoading();
+      this.initData();
+    });
   }
 
 
@@ -167,6 +176,8 @@ export class PostdetailPage implements OnInit {
     this.events.unsubscribe("feeds:refreshPostDetail");
     this.events.unsubscribe("feeds:editPostFinish");
     this.events.unsubscribe("feeds:deletePostFinish");
+    this.events.unsubscribe("feeds:editCommentFinish");
+    this.events.unsubscribe("feeds:deleteCommentFinish");
     this.images = {};
     this.menuService.hideActionSheet();
     if(this.popover!=null){
@@ -366,10 +377,15 @@ export class PostdetailPage implements OnInit {
 
   }
 
-  async openEditTool(ev:any,postId:number) {
+  async openEditTool(ev:any,comment:any) {
     this.popover = await this.popoverController.create({
       component: EdittoolComponent,
-      componentProps: {nodeId:this.nodeId,channelId:Number(this.channelId),postId:Number(postId)},
+      componentProps: { nodeId:comment.nodeId,
+                        channelId:Number(comment.channel_id),
+                        postId:Number(comment.post_id),
+                        commentById:Number(comment.comment_id),
+                        commentId:Number(comment.id)
+                      },
       event: ev,
       translucent: true
     });
