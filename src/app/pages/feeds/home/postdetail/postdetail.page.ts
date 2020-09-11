@@ -290,7 +290,7 @@ export class PostdetailPage implements OnInit {
   menuMore(){
     let isMine = this.checkChannelIsMine();
     // console.log("isMine==>"+isMine);
-    if(isMine === 0){
+    if(isMine === 0 && this.postStatus != 1){
       this.menuService.showPostDetailMenu(this.nodeId, Number(this.channelId), this.channelName,this.postId);
     }else{
       this.menuService.showShareMenu(this.nodeId, Number(this.channelId), this.channelName,this.postId);

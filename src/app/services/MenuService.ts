@@ -17,7 +17,8 @@ export class MenuService {
     }
 
     async showChannelMenu(nodeId: string, channelId: number, channelName: string){
-        const actionSheet = await this.actionSheetController.create({
+        this.postDetail = await this.actionSheetController.create({
+            cssClass: 'editPost',
             buttons: [
             {
                 text: this.translate.instant("common.share"),
@@ -37,15 +38,15 @@ export class MenuService {
                     
                     this.feedService.unsubscribeChannel(nodeId,channelId);
                 }
-            },{
-                text: this.translate.instant("common.cancel"),
-                icon: 'close',
-                role: 'cancel',
-                handler: () => {
-                }
             }]
         });
-        await actionSheet.present();
+
+        this.postDetail.onWillDismiss().then(()=>{
+            if(this.postDetail !=null){
+                this.postDetail  = null;
+            }
+        });
+        await this.postDetail.present();
     }
 
     async showShareMenu(nodeId: string, channelId: number, channelName: string,postId:number){
@@ -81,19 +82,21 @@ export class MenuService {
               handler: () => {
                 this.feedService.unsubscribeChannel(nodeId, channelId);
               }
-            },{
-              text: this.translate.instant("common.cancel"),
-              icon: 'close',
-              role: 'cancel',
-              handler: () => {
-              }
             }]
           });
+          
+          this.postDetail.onWillDismiss().then(()=>{
+            if(this.postDetail !=null){
+                this.postDetail  = null;
+            }
+          });
+
         await this.postDetail.present();
     }
 
     async showUnsubscribeMenuWithoutName(nodeId: string, channelId: number){
-        const actionSheet = await this.actionSheetController.create({
+        this.postDetail = await this.actionSheetController.create({
+            cssClass: 'editPost',
             buttons: [{
               text: this.translate.instant("common.unsubscribe"),
               role: 'destructive',
@@ -101,15 +104,16 @@ export class MenuService {
               handler: () => {
                 this.feedService.unsubscribeChannel(nodeId, channelId);
               }
-            },{
-              text: this.translate.instant("common.cancel"),
-              icon: 'close',
-              role: 'cancel',
-              handler: () => {
-              }
             }]
           });
-        await actionSheet.present();
+
+          this.postDetail.onWillDismiss().then(()=>{
+            if(this.postDetail !=null){
+                this.postDetail  = null;
+            }
+          });
+
+        await this.postDetail.present();
     }
 
     hideActionSheet(){
