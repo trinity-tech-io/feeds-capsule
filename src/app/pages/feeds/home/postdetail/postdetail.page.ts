@@ -420,4 +420,8 @@ export class PostdetailPage implements OnInit {
     
     return 1;
   }
+
+  checkCommentIsMine(comment:any){
+    return this.feedService.checkCommentIsMine(comment.nodeId,Number(comment.channel_id),Number(comment.post_id),Number(comment.id));
+  }
 }

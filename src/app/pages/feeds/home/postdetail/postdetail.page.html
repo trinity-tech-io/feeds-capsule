@@ -66,7 +66,7 @@
     <div *ngFor="let comment of commentList let i=index" style="margin-top: 25px;">
       <div class="image-text-layout-div" >
         <ion-card-content class="ion-no-padding ion-no-margin">
-          <div class="menu-div"  (click)="openEditTool($event,comment)">
+          <div class="menu-div"  (click)="openEditTool($event,comment)" *ngIf="checkCommentIsMine(comment)">
             <img  src="./assets/images/dots-three-vertical.svg" *ngIf="!theme.darkMode" style="width:12.4;height:3px">
             <img  src="./assets/images/dots-three-vertical-dark.svg" *ngIf="theme.darkMode" style="width:12.4;height:3px">
           </div>
