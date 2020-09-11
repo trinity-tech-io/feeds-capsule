@@ -364,8 +364,10 @@ export const fr = {
     },
     "EditpostPage":{
         "title":"Edit Post",
+        "savechanges":"Save changes"
     },
     "EditcommentPage":{
         "title":"Edit Comment",
+        "savechanges":"Save changes"
     }
 };
