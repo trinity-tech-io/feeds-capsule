@@ -4,7 +4,6 @@ import { Events } from '@ionic/angular';
 import { NativeService } from 'src/app/services/NativeService';
 import { ThemeService } from 'src/app/services/theme.service';
 import { MenuService } from 'src/app/services/MenuService';
-import { TranslateService } from "@ngx-translate/core";
 import { UtilService } from 'src/app/services/utilService';
 
 @Component({
@@ -24,8 +23,7 @@ export class SearchPage implements OnInit {
     private zone: NgZone,
     private native: NativeService,
     public theme:ThemeService,
-    private menuService: MenuService,
-    private translate:TranslateService
+    private menuService: MenuService
   ) {
   }
 
@@ -49,7 +47,7 @@ export class SearchPage implements OnInit {
     this.events.subscribe('feeds:subscribeFinish', (nodeId, channelId, name)=> {
       // this.native.toast(name + " subscribed");
       this.zone.run(() => {
-        this.channelList = this.feedService.refreshLocalChannels();
+        this.channelList  = this.feedService.getChannelsList();
         this.initnodeStatus();
       });
     });
@@ -57,7 +55,7 @@ export class SearchPage implements OnInit {
     this.events.subscribe('feeds:unsubscribeFinish', (nodeId, channelId, name) => {
       // this.native.toast(name + " unsubscribed");
       this.zone.run(() => {
-        this.channelList = this.feedService.refreshLocalChannels();
+        this.channelList  = this.feedService.getChannelsList();
         this.initnodeStatus();
       });
     });
@@ -71,7 +69,7 @@ export class SearchPage implements OnInit {
 
     this.events.subscribe('feeds:channelsDataUpdate', () =>{
       this.zone.run(() => {
-        this.channelList = this.feedService.getChannelsList();
+        this.channelList  = this.feedService.getChannelsList();
         this.initnodeStatus();
       });
     });
@@ -88,7 +86,7 @@ export class SearchPage implements OnInit {
 
   ionViewWillEnter() {
     this.connectionStatus = this.feedService.getConnectionStatus();
-    this.channelList = this.feedService.refreshLocalChannels();
+    this.channelList  = this.feedService.getChannelsList();
     this.initnodeStatus();
     this.initSubscribe();
   }
@@ -112,7 +110,7 @@ export class SearchPage implements OnInit {
 
   getItems(events){
     if(events.target.value == ""){
-      this.channelList = this.feedService.refreshLocalChannels();
+      this.channelList  = this.feedService.getChannelsList();
     }
     this.channelList = this.channelList.filter(
       channel=>channel.name.toLowerCase().indexOf(events.target.value.toLowerCase()) > -1
@@ -120,16 +118,11 @@ export class SearchPage implements OnInit {
   }
 
   doRefresh(event) {
-    this.feedService.refreshChannels();
-    setTimeout(() => {
+    let sid = setTimeout(() => {
+      this.channelList = this.feedService.getChannelsList();
       event.target.complete();
+      clearTimeout(sid);
     }, 2000);
-  }
-
-  loadData(event) {
-    setTimeout(() => {
-      event.target.complete();
-    }, 500);
   }
 
   navTo(nodeId, channelId){
