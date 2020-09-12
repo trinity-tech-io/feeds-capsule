@@ -1,6 +1,8 @@
-<p class="bottom-border" [class.darkContainer]="theme.darkMode" (click)="edit()">
-  <ion-img src="./assets/images/darkmode/ios-edit.svg" class="icon" *ngIf="theme.darkMode"></ion-img><ion-img src="./assets/images/ios-edit.svg" class="icon" *ngIf="!theme.darkMode"></ion-img><span class="label white">{{ 'common.editcomment' | translate }}</span>
+
+<p class="bottom-border" [ngClass]="{'dark-bottom-border':theme.darkMode}" (click)="edit()">
+  <ion-img src="./assets/images/darkmode/ios-edit.svg" class="icon" *ngIf="theme.darkMode"></ion-img><ion-img src="./assets/images/ios-edit.svg" class="icon" *ngIf="!theme.darkMode"></ion-img><span class="label" [ngClass]="{'white':theme.darkMode}">{{ 'common.editcomment' | translate }}</span>
 </p>
-<p class="bottom-border" [class.darkContainer]="theme.darkMode" (click)="remove()">
-  <ion-img src="./assets/images/darkmode/ios-detle.svg" class="icon" *ngIf="theme.darkMode"></ion-img><ion-img src="./assets/images/ios-detle.svg" class="icon" *ngIf="!theme.darkMode"></ion-img><span  class="label white">{{'common.removecomment'|translate}}</span>
+<p class="bottom-border" [ngClass]="{'dark-bottom-border':theme.darkMode}" (click)="remove()">
+  <ion-img src="./assets/images/darkmode/ios-detle.svg" class="icon" *ngIf="theme.darkMode"></ion-img><ion-img src="./assets/images/ios-detle.svg" class="icon" *ngIf="!theme.darkMode"></ion-img><span  class="label" [ngClass]="{'white':theme.darkMode}">{{'common.removecomment'|translate}}</span>
 </p>
+

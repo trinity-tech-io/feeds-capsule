@@ -124,20 +124,21 @@ export class MenuService {
     async showPostDetailMenu(nodeId: string, channelId: number, channelName: string,postId:number){
          this.postDetail = await this.actionSheetController.create({
             cssClass: 'editPost',
+            
             buttons: [
+            {
+                    text: this.translate.instant("common.sharepost"), 
+                    icon: 'share',
+                    handler: () => {
+                    this.handlePostDetailMenun(nodeId,channelId,channelName,postId,"sharepost");
+                    }
+            },
             {
                     text: this.translate.instant("common.editpost"),
                     icon: 'edit',
                     handler: () => {
                        this.handlePostDetailMenun(nodeId,channelId,channelName,postId,"editPost");
                     }
-            },
-            {
-                text: this.translate.instant("common.share"),
-                icon: 'share',
-                handler: () => {
-                this.handlePostDetailMenun(nodeId,channelId,channelName,postId,"share");
-                }
             },
             {
                 text: this.translate.instant("common.removepost"),

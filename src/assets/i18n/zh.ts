@@ -61,6 +61,7 @@ export const zh = {
         "promptPublishDidError":"发布DID出错",
         "resolveDidDocumentError":"解析DID文档出错",
         "cdeleted":"(回复已删除)",
+        "sharepost":"分享微说",
     },
     "app":{
         "profileDetails":"档案详情",
