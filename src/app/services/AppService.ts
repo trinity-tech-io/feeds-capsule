@@ -11,7 +11,7 @@ import { FeedService, SignInData } from '../services/FeedService';
 import { CarrierService } from '../services/CarrierService';
 import { BackhomeComponent} from '../components/backhome/backhome.component';
 import { MenuController,PopoverController } from '@ionic/angular';
-
+import { MenuService } from 'src/app/services/MenuService';
 declare let appManager: AppManagerPlugin.AppManager;
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
@@ -32,7 +32,8 @@ export class AppService {
       private feedService: FeedService,
       private carrierService: CarrierService,
       private menu: MenuController,
-      private popoverController: PopoverController
+      private popoverController: PopoverController,
+      private menuService:MenuService
     ) {
     }
 
@@ -47,6 +48,11 @@ export class AppService {
             if (this.router.url.indexOf("/signin") >-1){
               this.native.toast_trans("common.pleasesigninfirst");
             } else {
+              this.menuService.hideActionSheet();
+             let value =  this.popoverController.getTop()["__zone_symbol__value"] || "";
+             if(value!=""){
+               this.popoverController.dismiss();
+             }
               this.menu.open("menu");
             }
           }
