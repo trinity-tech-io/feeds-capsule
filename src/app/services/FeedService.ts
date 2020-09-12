@@ -9,7 +9,7 @@ import { NativeService } from 'src/app/services/NativeService';
 import { SerializeDataService } from 'src/app/services/SerializeDataService';
 import { JWTMessageService } from 'src/app/services/JWTMessageService';
 import { ConnectionService } from 'src/app/services/ConnectionService';
-
+import * as _ from 'lodash';
 declare let didManager: DIDPlugin.DIDManager;
 declare let appManager: AppManagerPlugin.AppManager;
 declare let didSessionManager: DIDSessionManagerPlugin.DIDSessionManager;
@@ -708,17 +708,25 @@ export class FeedService {
   }
 
   getChannelsList():Channels[]{
-    let list: Channels[] = [];
-    let keys: string[] = Object.keys(channelsMap);
 
-    for (const index in keys) {
-      if (channelsMap[keys[index]] == undefined)
+    let list: Channels[] = [];
+    let map = channelsMap || {};
+    let keys: string[] = Object.keys(map);
+
+    for (let index in keys) {
+      let item = channelsMap[keys[index]] || "";
+      if (item == "")
         continue;
       list.push(channelsMap[keys[index]]);
     }
-    list.sort((a, b) => Number(b.last_update) - Number(a.last_update));
 
-    return list;
+    let sortArr = [];
+
+    sortArr = _.sortBy(list,(item:any)=> {
+      return - Number(item.last_update);
+    });
+
+    return sortArr;
   }
 
   getChannelsListFromNodeId(nodeId: string): Channels[]{
