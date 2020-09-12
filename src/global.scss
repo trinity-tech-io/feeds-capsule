@@ -307,3 +307,39 @@ pre {
   font-weight: 500;
   color: #8888b0;
 }
+
+.editToolPopup {
+  .popover-wrapper{
+    .popover-content {
+       background: #FFF !important;
+    }
+
+    .popover-arrow.sc-ion-popover-ios:after{
+      background: #FFF !important;
+    }
+
+    .popover-translucent.sc-ion-popover-ios-h .popover-arrow.sc-ion-popover-ios:after, .popover-translucent.sc-ion-popover-ios-h .popover-content.sc-ion-popover-ios {
+      background:#fff !important;
+      -webkit-backdrop-filter: saturate(180%) blur(20px);
+      backdrop-filter: saturate(180%) blur(20px);
+    }
+  }
+
+  .popover-translucent.sc-ion-popover-ios-h .popover-arrow.sc-ion-popover-ios:after, .popover-translucent.sc-ion-popover-ios-h .popover-content.sc-ion-popover-ios {
+    background:#fff !important;
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    backdrop-filter: saturate(180%) blur(20px);
+  }
+}
+
+.dark .editToolPopup {
+  .popover-wrapper{
+    .popover-content {
+       background: #191a2f !important;
+    }
+
+    .popover-arrow.sc-ion-popover-ios:after{
+       background: #191a2f !important;
+    }
+  }
+}
