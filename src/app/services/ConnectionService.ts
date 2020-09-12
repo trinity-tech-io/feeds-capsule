@@ -552,6 +552,8 @@ export class ConnectionService {
         let connectionMap = this.friendConnectionMap||{};
         let keys: string[] = Object.keys(connectionMap) || [];
         for (let index = 0; index < keys.length; index++) {
+            if (this.friendConnectionMap[keys[index]] == undefined)
+                continue;
             this.friendConnectionMap[keys[index]] = FeedsData.ConnState.disconnected;
         }
     }
