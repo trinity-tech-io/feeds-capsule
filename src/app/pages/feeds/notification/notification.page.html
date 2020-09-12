@@ -18,8 +18,8 @@
   </div>
   
   <div [class.darkContainer]="theme.darkMode">
-    <ion-item-sliding *ngFor="let notification of notificationList let i=index" (click)="navTo(notification)">
-      <ion-item lines="none">
+    <ion-item-sliding *ngFor="let notification of notificationList let i=index">
+      <ion-item lines="none"  (click)="navTo(notification)">
         <!-- <img  src="assets/images/component-480-33@3x.png"> -->
         <img *ngIf="avatar == ''" class="profile-img avatar-div" src="./assets/images/default-contact.svg">
         <img *ngIf="avatar != ''" class="profile-img avatar-div" [src]="avatar">

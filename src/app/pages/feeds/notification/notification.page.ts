@@ -137,12 +137,6 @@ export class NotificationPage {
     }
   }
 
-  deleteNotification(notification: any){
-    this.feedService.deleteNotification(notification);
-
-    let index = this.notificationList.indexOf(notification);
-    this.notificationList.splice(index,1);
-  }
   navTo(notification: any){
     if(this.feedService.getConnectionStatus() != 0){
       this.native.toastWarn('common.connectionError');
@@ -182,10 +176,9 @@ export class NotificationPage {
   }
 
   delete(notification:any){
-    this.feedService.deleteNotification(notification);
-    //let index = this.notificationList.indexOf(notification);
-    //this.notificationList.splice(index,1);
-    
+    this.feedService.deleteNotification(notification).then(()=>{
+      this.initRefresh();
+    });
   }
 
   doRefresh(event:any){

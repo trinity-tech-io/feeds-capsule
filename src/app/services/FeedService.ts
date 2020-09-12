@@ -1240,6 +1240,8 @@ export class FeedService {
   }
 
   hasAccessToken(nodeId: string): boolean{
+    if (accessTokenMap == undefined)
+      accessTokenMap = {};
     let accessToken = accessTokenMap[nodeId] || undefined
     if (this.checkExp(accessToken)){
       this.signinChallengeRequest(nodeId,true);
@@ -4053,15 +4055,21 @@ export class FeedService {
   }
 
   setNotificationReadStatus(notification: Notification, readStatus: number){
-    let index = notificationList.indexOf(notification);
-    notificationList[index].readStatus = readStatus;
+    if (notification == undefined)
+      return ;
+    
+    notification.readStatus = readStatus;
     this.storeService.set(PersistenceKey.notificationList, notificationList);
   }
 
-  deleteNotification(notification: Notification){
-    let index = notificationList.indexOf(notification);
-    notificationList.splice(index, 1);
-    this.storeService.set(PersistenceKey.notificationList, notificationList);
+  deleteNotification(notification: Notification):Promise<any>{
+    return new Promise((resolve, reject) =>{
+      let index = notificationList.indexOf(notification);
+      notificationList.splice(index, 1);
+      this.storeService.set(PersistenceKey.notificationList, notificationList);
+      eventBus.publish(PublishType.UpdateNotification);
+      resolve();
+    });
   }
 
   restoreData(nodeId: string){
