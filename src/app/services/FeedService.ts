@@ -710,6 +710,7 @@ export class FeedService {
   getChannelsList():Channels[]{
     let list: Channels[] = [];
     let keys: string[] = Object.keys(channelsMap);
+
     for (const index in keys) {
       if (channelsMap[keys[index]] == undefined)
         continue;
@@ -4295,6 +4296,8 @@ export class FeedService {
     let serverConnectionMap = serversStatus||{};
     let keys: string[] = Object.keys(serverConnectionMap) || [];
     for (let index = 0; index < keys.length; index++) {
+      if (serversStatus[keys[index]] == undefined)
+        continue;
       serversStatus[keys[index]].status = ConnState.disconnected;
     }
   }
