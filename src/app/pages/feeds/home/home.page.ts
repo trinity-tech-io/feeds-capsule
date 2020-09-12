@@ -259,12 +259,21 @@ export class HomePage implements OnInit {
     return  obj.content;
   }
 
-  menuMore(nodeId: string , channelId: number){
-    let channel = this.getChannel(nodeId, channelId);
+  menuMore(post:any){
+    console.log("======"+JSON.stringify(post))
+    //post.nodeId, post.channel_id, post.id
+    let channel = this.getChannel(post.nodeId, post.channel_id);
     if (channel == null || channel == undefined)
       return ;
     let channelName = channel.name;
-    this.menuService.showChannelMenu(nodeId, channelId, channelName);
+   
+
+    let isMine = this.checkChannelIsMine(post.nodeId, post.channel_id);
+      if(isMine === 0 && post.post_status != 1){
+        this.menuService.showHomeMenu(post.nodeId, Number(post.channel_id),channelName,Number(post.id));
+      }else{
+        this.menuService.showChannelMenu(post.nodeId, Number(post.channelId), channelName);
+      }
   }
 
   getChannelName(nodeId: string, channelId: number): string{
@@ -382,5 +391,12 @@ export class HomePage implements OnInit {
       this.native.createTip(name);
     }
 
+  }
+
+  checkChannelIsMine(nodeId:string,channelId:number){
+    if (this.feedService.checkChannelIsMine(nodeId,channelId))
+      return 0;
+    
+    return 1;
   }
 }

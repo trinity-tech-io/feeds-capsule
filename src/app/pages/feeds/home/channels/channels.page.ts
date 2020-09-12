@@ -76,6 +76,7 @@ export class ChannelsPage implements OnInit {
 
   async unsubscribe(){
     this.menuService.showUnsubscribeMenuWithoutName(this.nodeId, Number(this.channelId));
+
   }
 
   ngOnInit() {
@@ -281,9 +282,16 @@ export class ChannelsPage implements OnInit {
     return  obj.content;
   }
 
-  menuMore(){
-    this.menuService.showShareMenu(this.nodeId, Number(this.channelId), this.channelName,0);
-  }
+    menuMore(post:any){
+      
+      let isMine = this.checkChannelIsMine();
+      if(isMine === 0 && post.post_status != 1){
+        this.menuService.showPostDetailMenu(post.nodeId, Number(post.channel_id), this.channelName,post.id);
+      }else{
+        this.menuService.showShareMenu(post.nodeId, Number(post.channel_id), this.channelName,post.id);
+      }
+    }
+  
 
   checkServerStatus(nodeId: string){
     return this.feedService.getServerStatusFromId(nodeId);
@@ -422,6 +430,5 @@ export class ChannelsPage implements OnInit {
       this.native.createTip(name);
     }
   }
-
 
 }

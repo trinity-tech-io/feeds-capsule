@@ -159,6 +159,58 @@ export class MenuService {
         await this.postDetail.present();
     }
 
+
+    async showHomeMenu(nodeId: string, channelId: number, channelName: string,postId:number){
+        this.postDetail = await this.actionSheetController.create({
+           cssClass: 'editPost',
+           
+           buttons: [
+           {
+                   text: this.translate.instant("common.sharepost"), 
+                   icon: 'share',
+                   handler: () => {
+                   this.handlePostDetailMenun(nodeId,channelId,channelName,postId,"sharepost");
+                   }
+           },
+           {
+                   text: this.translate.instant("common.editpost"),
+                   icon: 'edit',
+                   handler: () => {
+                      this.handlePostDetailMenun(nodeId,channelId,channelName,postId,"editPost");
+                   }
+           },
+           {
+               text: this.translate.instant("common.removepost"),
+               icon: 'detle',
+               handler: () => {
+                   this.handlePostDetailMenun(nodeId,channelId,channelName,postId,"removePost");
+               }
+           },
+           {
+            text: this.translate.instant("common.unsubscribe"),
+            role: 'destructive',
+            icon: 'trash',
+            handler: () => {
+                if(this.feedService.getConnectionStatus() != 0){
+                    this.native.toastWarn('common.connectionError');
+                    return;
+                }
+                
+                this.feedService.unsubscribeChannel(nodeId,channelId);
+            }
+        }
+       ]
+       });
+
+       this.postDetail.onWillDismiss().then(()=>{
+           if(this.postDetail !=null){
+               this.postDetail  = null;
+           }
+          
+       })
+       await this.postDetail.present();
+   }
+
     handlePostDetailMenun(nodeId: string, channelId: number, channelName: string,postId:number,clickName:string){
             switch(clickName){
                 case "editPost":
