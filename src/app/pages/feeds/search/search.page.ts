@@ -62,7 +62,7 @@ export class SearchPage implements OnInit {
 
     this.events.subscribe('feeds:refreshChannels', list =>{
       this.zone.run(() => {
-        this.channelList = list;
+        this.channelList = this.feedService.getChannelsList();
         this.initnodeStatus();
       });
     });
@@ -119,6 +119,7 @@ export class SearchPage implements OnInit {
 
   doRefresh(event) {
     let sid = setTimeout(() => {
+      this.feedService.refreshChannels();
       this.channelList = this.feedService.getChannelsList();
       event.target.complete();
       clearTimeout(sid);

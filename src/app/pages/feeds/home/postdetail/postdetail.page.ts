@@ -389,6 +389,8 @@ export class PostdetailPage implements OnInit {
 
   async openEditTool(ev:any,comment:any) {
     this.popover = await this.popoverController.create({
+      mode: 'ios',
+      cssClass:'editToolPopup',
       component: EdittoolComponent,
       componentProps: { nodeId:comment.nodeId,
                         channelId:Number(comment.channel_id),

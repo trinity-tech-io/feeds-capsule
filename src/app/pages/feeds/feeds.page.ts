@@ -149,7 +149,6 @@ export class FeedsPage implements OnInit {
 
     search(){
       this.currentTab = "search";
-      this.feedService.refreshChannels();
       this.title = "FeedsPage.tabTitle4";
       this.initTile();
       this.native.setTitleBarBackKeyShown(false);
