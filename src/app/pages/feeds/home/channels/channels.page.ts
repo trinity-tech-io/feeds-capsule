@@ -157,6 +157,7 @@ export class ChannelsPage implements OnInit {
     });
 
     this.events.subscribe('feeds:deletePostFinish',()=>{
+       this.native.hideLoading();
        this.initRefresh();
     });
   }
