@@ -224,7 +224,7 @@ export class MenuService {
                         }
                       );
                     break;
-                case "share":
+                case "sharepost":
                     this.native.toast("common.comingSoon");
                     break;
                 case "removePost":

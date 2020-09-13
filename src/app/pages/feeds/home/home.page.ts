@@ -105,7 +105,7 @@ export class HomePage implements OnInit {
 
    this.events.subscribe("feeds:deletePostFinish",()=>{
     this.zone.run(()=>{
-
+      this.native.hideLoading();
       this.totalData = this.feedService.getPostList() || [];
       if (this.totalData.length - this.pageNumber > this.pageNumber){
         this.postList = this.totalData.slice(0,(this.startIndex)*this.pageNumber);
