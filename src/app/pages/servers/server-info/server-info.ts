@@ -323,10 +323,16 @@ export class ServerInfoPage implements OnInit {
 
     console.log("======="+JSON.stringify(obj));
     
-    this.httpService.ajaxPost(ApiUrl.register,obj).then((result)=>{
-      console.log("========"+JSON.stringify(result));
+    // this.httpService.ajaxPost(ApiUrl.register,obj).then((result)=>{
+    //   console.log("========"+JSON.stringify(result));
+    // }).catch((err)=>{
+    //   console.log("========"+JSON.stringify(err));
+    // });
+
+    this.httpService.ajaxGet(ApiUrl.listAll).then((result)=>{
+        console.log("==11111=="+JSON.stringify(result));
     }).catch((err)=>{
-      console.log("========"+JSON.stringify(err));
+      console.log("==22222=="+JSON.stringify(err));
     });
   }
 }
