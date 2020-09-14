@@ -4,8 +4,10 @@ import { ActivatedRoute } from '@angular/router';
 import { NativeService } from 'src/app/services/NativeService';
 import { FeedService } from 'src/app/services/FeedService';
 import { ThemeService } from 'src/app/services/theme.service';
+import { HttpService } from 'src/app/services/HttpService';
 import { ActionSheetController } from '@ionic/angular';
 import { TranslateService } from "@ngx-translate/core";
+import { ApiUrl } from 'src/app/services/ApiUrl';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 class Attribute {
   constructor(
@@ -48,7 +50,8 @@ export class ServerInfoPage implements OnInit {
     private acRoute: ActivatedRoute,
     private feedService: FeedService,
     public theme:ThemeService,
-    private translate:TranslateService) {}
+    private translate:TranslateService,
+    public httpService:HttpService) {}
 
   ngOnInit() {
     this.acRoute.params.subscribe(data => {
@@ -307,5 +310,23 @@ export class ServerInfoPage implements OnInit {
       return 0;
 
     return 1;
+  }
+
+  test(){
+    console.log("====test==="+ApiUrl.register);
+    let obj = {
+      "did":this.didString,
+      "name":this.name,
+      "description":this.introduction,
+      "url":this.feedsUrl
+    };
+
+    console.log("======="+JSON.stringify(obj));
+    
+    this.httpService.ajaxPost(ApiUrl.register,obj).then((result)=>{
+      console.log("========"+JSON.stringify(result));
+    }).catch((err)=>{
+      console.log("========"+JSON.stringify(err));
+    });
   }
 }

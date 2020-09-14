@@ -1,5 +1,6 @@
 import { NgModule, ErrorHandler } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { HttpClientModule } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { RouteReuseStrategy } from '@angular/router';
 import { IonicModule, IonicRouteStrategy, Platform } from '@ionic/angular';
@@ -36,6 +37,7 @@ import { JsonRPCService } from './services/JsonRPCService';
 import { AppService } from './services/AppService';
 import { ThemeService } from './services/theme.service';
 import { ConnectionService } from './services/ConnectionService';
+import { HttpService } from './services/HttpService';
 
 import { PopupProvider } from './services/popup';
 import { CameraService } from './services/CameraService';
@@ -116,6 +118,7 @@ export function anim(AnimationC: Animation, baseEl: any, position?: any): Promis
     QRCodeModule,
     CommonModule,
     BrowserModule,
+    HttpClientModule,
     AppRoutingModule,
     ComponentsModule,
     PostfromComponentPageModule,
@@ -166,6 +169,7 @@ export function anim(AnimationC: Animation, baseEl: any, position?: any): Promis
     MenuService,
     PostfromComponentPageModule,
     ConnectionService,
+    HttpService,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     {provide: ErrorHandler, useClass: ErrorHandler}
   ]
