@@ -61,7 +61,6 @@ export class PostdetailPage implements OnInit {
   }
 
   initData(){
-    this.getImage();
     this.initnodeStatus();
     let channel = this.feedService.getChannelFromId(this.nodeId, this.channelId) || "";
     if (channel == "")
@@ -316,7 +315,7 @@ export class PostdetailPage implements OnInit {
      this.nodeStatus[this.nodeId] = status;
   }
 
-  getImage(){
+  getImage(nodeId,channelId,postId){
     let nodeChannelPostId = this.nodeId+this.channelId+this.postId;
     let img = this.images[nodeChannelPostId] || "";
     if (img == ""){
@@ -327,6 +326,8 @@ export class PostdetailPage implements OnInit {
         console.log("getImageError");
       })
     }
+
+    return  this.images[nodeChannelPostId];
   }
 
   doRefresh(event:any){

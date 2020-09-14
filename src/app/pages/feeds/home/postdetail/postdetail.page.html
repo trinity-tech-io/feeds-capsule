@@ -47,7 +47,7 @@
         <div class="channel-post-div" style="margin-bottom:5px" *ngIf="postStatus != 1"> 
          <pre class="channel-post white">{{getContentText(postContent)}}</pre>
         </div>
-        <ion-avatar  *ngIf="postStatus != 1 && images[nodeId+channelId+postId] != 'none' && images[nodeId+channelId+postId] != 'undefine' && images[nodeId+channelId+postId] != null && images[nodeId+channelId+postId] != undefine" class="content-img-without-margin" (click)="showBigImage(images[nodeId+channelId+postId])">
+        <ion-avatar  *ngIf="postStatus != 1 && getImage(nodeId,channelId,postId) != 'none' && getImage(nodeId,channelId,postId) != 'undefine' && getImage(nodeId,channelId,postId) != null" class="content-img-without-margin" (click)="showBigImage(images[nodeId+channelId+postId])">
           <ion-img [src]="images[nodeId+channelId+postId]"></ion-img>
         </ion-avatar>
 
