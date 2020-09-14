@@ -39,7 +39,8 @@
     "Camera"
   ],
   "urls": [
-    "https://www.trinity-tech.io/*"
+    "https://www.trinity-tech.io/*",
+    "https://feeds.yoopig.com/*"
   ],
   "background_color": "#4e8ef7",
   "theme_display": "show",
