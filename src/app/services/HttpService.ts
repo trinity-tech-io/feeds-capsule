@@ -5,18 +5,17 @@ import { map } from 'rxjs/operators';
 export class HttpService{
   public httpOptions = {
     headers: new HttpHeaders({
-      "Content-Type": "application/x-www-form-urlencoded; charset=utf-8" , 
-      "Access-Control-Allow-Origin": "*", 
-      "Access-Control-Allow-Headers": "Origin, Content-Type, X-Auth-Token, Accept, Authorization, X-Request-With",
-      "Access-Control-Allow-Credentials" : "true",
-      "Access-Control-Allow-Methods" : "GET, POST, DELETE, PUT, OPTIONS, TRACE, PATCH, CONNECT"  
-     }) 
+        "Content-Type": "application/json"
+      })
   };
+
+
   constructor(public httpClient:HttpClient){
 
   }
 
   ajaxGet(url:string) {
+ 
     return new Promise((resove, reject) => {
       this.httpClient.get(url).subscribe((response) => {
         resove(response);
@@ -27,7 +26,6 @@ export class HttpService{
   }
 
   ajaxPost(url:string, json:Object) {
-    
     return new Promise((resove, reject) => {
       this.httpClient.post(url,JSON.stringify(json),this.httpOptions).subscribe((response) => {
         resove(response);
