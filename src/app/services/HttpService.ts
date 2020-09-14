@@ -3,7 +3,15 @@ import { HttpClient, HttpParams,HttpHeaders} from '@angular/common/http';
 import { map } from 'rxjs/operators';
 @Injectable()
 export class HttpService{
-
+  public httpOptions = {
+    headers: new HttpHeaders({
+      "Content-Type": "application/x-www-form-urlencoded; charset=utf-8" , 
+      "Access-Control-Allow-Origin": "*", 
+      "Access-Control-Allow-Headers": "Origin, Content-Type, X-Auth-Token, Accept, Authorization, X-Request-With",
+      "Access-Control-Allow-Credentials" : "true",
+      "Access-Control-Allow-Methods" : "GET, POST, DELETE, PUT, OPTIONS, TRACE, PATCH, CONNECT"  
+     }) 
+  };
   constructor(public httpClient:HttpClient){
 
   }
@@ -19,22 +27,9 @@ export class HttpService{
   }
 
   ajaxPost(url:string, json:Object) {
-    let httpHeaders = new HttpHeaders();
-    httpHeaders = httpHeaders.set('Content-Type','application/json')
-    //httpHeaders = httpHeaders.set('Cache-Control', 'no-cache');
-
-    let _params = new HttpParams();
-    for(let key in json){
-      console.log("====key=="+key);
-      console.log("====json=="+json[key]);
-      _params = _params.set(key,json[key]);    
-    }
-    console.log("======"+_params.toString());
-
-    const body = _params.toString();
-
+    
     return new Promise((resove, reject) => {
-      this.httpClient.post(url,body, {headers:httpHeaders,params: _params,responseType:'text'}).subscribe((response) => {
+      this.httpClient.post(url,JSON.stringify(json),this.httpOptions).subscribe((response) => {
         resove(response);
       }, (error) => {
         reject(error);
