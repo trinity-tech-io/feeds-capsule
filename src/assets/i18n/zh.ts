@@ -62,6 +62,8 @@ export const zh = {
         "resolveDidDocumentError":"解析DID文档出错",
         "cdeleted":"(回复已删除)",
         "sharepost":"分享微说",
+        "error400":"参数错误",
+        "error500":"服务器错误"
     },
     "app":{
         "profileDetails":"档案详情",
@@ -197,7 +199,8 @@ export const zh = {
         "users":"用户",
         "currentFeedSources":"关联的微频源",
         "addNewFeedSources":"添加新的微频源",
-        "createNewFeedSource":"创建新的微频源"
+        "createNewFeedSource":"创建新的微频源",
+        "discover":"发现"
       },
     "AddServerPage":{
         "scanorEnterManual":"扫描或者输入",
@@ -239,6 +242,10 @@ export const zh = {
         "removeserver": "已移除微频源",
         "feedsSourceQRCode":"微频源二维码",
         "error":"解析DID文档错误",
+        "public":"公开",
+        "publicTip":"公开成功",
+        "unpublic":"取消公开",
+        "unpublicTip":"取消公开成功",
     },
     "ScanqrcodePage":{
         "introtitle": "创建新的",
@@ -371,5 +378,10 @@ export const zh = {
     "EditcommentPage":{
         "title":"编辑微评",
         "savechanges":"保存修改"
+    },
+    "DiscoverfeedsPage":{
+        "title":"发现微频源",
+        "added":"已添加",
+        "notadded":"未添加"
     }
 };

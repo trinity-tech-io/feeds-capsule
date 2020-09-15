@@ -173,4 +173,8 @@ export class ServersPage implements OnInit {
         this.native.navigateForward(['/menu/servers/add-server'],"");
     }
 
+    discover(){
+       this.native.go("discoverfeeds"); 
+    }
+
 }
