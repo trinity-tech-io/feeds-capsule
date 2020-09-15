@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
-import { HttpClient, HttpParams,HttpHeaders} from '@angular/common/http';
-import { map } from 'rxjs/operators';
+import { HttpClient,HttpHeaders} from '@angular/common/http';
+import { NativeService } from 'src/app/services/NativeService';
 @Injectable()
 export class HttpService{
   public httpOptions = {
@@ -10,29 +10,51 @@ export class HttpService{
   };
 
 
-  constructor(public httpClient:HttpClient){
+  constructor(
+           public httpClient:HttpClient,
+           public native:NativeService
+           ){
 
   }
 
   ajaxGet(url:string) {
- 
+    this.native.showLoading("common.waitMoment");
     return new Promise((resove, reject) => {
       this.httpClient.get(url).subscribe((response) => {
+        console.log("====="+JSON.stringify(response));
+        this.native.hideLoading();
+        if(response["code"] === 400){
+          this.native.toast('common.error400');
+        }else if(response["code"] === 500){
+          this.native.toast('common.error500');
+        }
         resove(response);
       }, (error) => {
+        this.native.hideLoading();
+        this.native.toast(JSON.stringify(error));
         reject(error);
       })
     })
   }
 
   ajaxPost(url:string, json:Object) {
+    this.native.showLoading("common.waitMoment");
     return new Promise((resove, reject) => {
       this.httpClient.post(url,JSON.stringify(json),this.httpOptions).subscribe((response) => {
+        this.native.hideLoading();
+        if(response["code"] === 400){
+          this.native.toast('common.error400');
+        }else if(response["code"] === 500){
+          this.native.toast('common.error500');
+        }
         resove(response);
       }, (error) => {
+        this.native.hideLoading();
+        this.native.toast(JSON.stringify(error));
         reject(error);
       })
     })
   }
+
 
 }

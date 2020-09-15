@@ -1,0 +1,41 @@
+
+<ion-header *ngIf="connectionStatus == 1">
+  <div class="offline-header"></div>
+</ion-header>
+<ion-content>
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" pullFactor="0.5">
+    <ion-refresher-content
+      pullingIcon="arrow-dropdown"
+      pullingText="{{'common.pullToRefresh'|translate}}"
+      refreshingSpinner="circles"
+      refreshingText="">
+    </ion-refresher-content>
+  </ion-refresher>
+  <div class="feed-source" [class.darkContainer]="theme.darkMode">
+  <div class="feed-source-div" *ngIf="feedList.length >0" [class.darkContainer]="theme.darkMode">
+
+    <ion-card class="ion-no-padding ion-no-margin"  class="feed-source-card" *ngFor="let item of feedList">
+      <ion-card-content class="ion-no-padding ion-no-margin">
+
+        <div class="feed-source-card-right-img-div">
+          <img class="feed-source-card-right-img" src="assets/images/chevron-thin-right.svg">
+        </div>
+
+        <div class="feed-source-card-content">
+          <div class="feed-source-card-img-div" style="position:relative">
+            <img class="feed-source-card-img" src="assets/images/profile-2.svg">
+          </div>
+
+          <div class="feed-source-card-content-detail">
+            <div class="name white">{{item.name}}</div>
+            <div class="owner">{{item.description}}</div>
+            <div class="users-img-div">
+              <div class="users-online-text" style="margin-left: 0px">{{handleStatus(item.did) | translate}}</div>
+            </div>
+          </div>
+        </div>
+      </ion-card-content>
+    </ion-card>
+    </div>
+  </div>
+</ion-content>

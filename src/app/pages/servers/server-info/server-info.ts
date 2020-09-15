@@ -8,6 +8,7 @@ import { HttpService } from 'src/app/services/HttpService';
 import { ActionSheetController } from '@ionic/angular';
 import { TranslateService } from "@ngx-translate/core";
 import { ApiUrl } from 'src/app/services/ApiUrl';
+import { Result } from 'src/app/services/JsonRPCService';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 class Attribute {
   constructor(
@@ -40,7 +41,8 @@ export class ServerInfoPage implements OnInit {
   public owner: string ="";
   public introduction: string ="";
   public feedsUrl: string = null;
-  public  elaAddress: string = "";
+  public elaAddress: string = "";
+  public isPublic:string ="";
   constructor(
     private actionSheetController:ActionSheetController,
     private events: Events,
@@ -101,6 +103,11 @@ export class ServerInfoPage implements OnInit {
   }
 
   ionViewWillEnter() {
+    this.httpService.ajaxGet(ApiUrl.get+"?did="+this.didString).then((result)=>{
+                 if(result["code"] === 200){
+                    this.isPublic = result["data"] || "";
+                 }
+    });
     this.connectionStatus = this.feedService.getConnectionStatus();
     this.events.subscribe('feeds:connectionChanged',(status)=>{
       this.zone.run(() => {
@@ -312,27 +319,50 @@ export class ServerInfoPage implements OnInit {
     return 1;
   }
 
-  test(){
-    console.log("====test==="+ApiUrl.register);
+  clickPublic(){
+    if(this.isPublic === ""){
+       this.publicFeeds();
+    }else{
+       this.unPublicFeeds();
+    }
+  }
+
+  publicFeeds(){
     let obj = {
       "did":this.didString,
       "name":this.name,
       "description":this.introduction,
       "url":this.feedsUrl
     };
-
-    console.log("======="+JSON.stringify(obj));
-    
+   
     this.httpService.ajaxPost(ApiUrl.register,obj).then((result)=>{
-      console.log("========"+JSON.stringify(result));
-    }).catch((err)=>{
-      console.log("========"+JSON.stringify(err));
+      if(result["code"] === 200){
+          this.isPublic = "111";
+          this.native.toast_trans("ServerInfoPage.publicTip");
+      }
     });
+  }
 
-    // this.httpService.ajaxGet(ApiUrl.listAll).then((result)=>{
-    //     console.log("==11111=="+JSON.stringify(result));
-    // }).catch((err)=>{
-    //   console.log("==22222=="+JSON.stringify(err));
-    // });
+  unPublicFeeds(){ 
+    this.httpService.ajaxGet(ApiUrl.remove+"?did="+this.didString).then((result)=>{
+      if(result["code"] === 200){
+          this.isPublic = "";
+          this.native.toast_trans("ServerInfoPage.unpublicTip");
+      }
+    });
+  }
+
+  updatePublic(){
+    let obj = {
+      "did":this.didString,
+      "name":this.name,
+      "description":this.introduction,
+      "url":this.feedsUrl
+    };
+    this.httpService.ajaxPost(ApiUrl.update,obj).then((result)=>{
+      if(result["code"]=== 200){
+        this.native.toast("test update");
+      }
+});
   }
 }

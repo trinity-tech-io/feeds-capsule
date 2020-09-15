@@ -30,6 +30,14 @@
         </ion-label>
       </ion-button>
     </ion-row>
+
+    <ion-row class="btn-row btn-row2">
+      <ion-button (click)="discover()">
+        <ion-label>
+          {{ 'ServersPage.discover' | translate }}
+        </ion-label>
+      </ion-button>
+    </ion-row>
   </div>
   
   <div class="feed-source" [class.darkContainer]="theme.darkMode">
@@ -117,10 +125,12 @@
       <div class="button-div" *ngIf="myFeedSource == null">
         <div class="explore-feed-source-button" (click)="exploreFeedSource()">{{'ServersPage.addNewFeedSources'| translate}}</div>
         <div class="bind-feed-source-button" (click)="bindFeedSource()">{{'ServersPage.createNewFeedSource'| translate}}</div>
+        <div class="bind-feed-source-button" (click)="discover()">{{'ServersPage.discover'| translate}}</div>
       </div>
     </div>
     <div class="button-div" *ngIf="myFeedSource != null">
       <div class="explore-feed-source-button" (click)="exploreFeedSource()">{{'ServersPage.addNewFeedSources'| translate}}</div>
+      <div class="bind-feed-source-button" (click)="discover()">{{'ServersPage.discover'| translate}}</div>
     </div> 
   </div>
 

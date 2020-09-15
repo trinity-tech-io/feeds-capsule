@@ -4,12 +4,21 @@ export  class ApiUrl {
 
   public static SERVER1:string = 'https://feeds.yoopig.com/api/v1';
 
-
- 
-
   /**register*/
   public static register:string = ApiUrl.SERVER1 +'/register';
 
-   /**register*/
-   public static listAll:string = ApiUrl.SERVER1 +'/listAll';
+   /**listAll*/
+  public static listAll:string = ApiUrl.SERVER1 +'/listAll';
+
+  /**get*/
+  public static get:string = ApiUrl.SERVER1 +'/get';
+
+   /**remove*/
+  public static remove:string = ApiUrl.SERVER1 +'/remove';
+
+  /**listPage*/
+  public static listPage:string = ApiUrl.SERVER1 +'/listPage';
+
+   /**update*/
+   public static update:string = ApiUrl.SERVER1 +'/update';
 }
