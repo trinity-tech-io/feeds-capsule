@@ -991,18 +991,18 @@ export class FeedService {
         break;
 
       case FeedsData.MethodType.editPost:
-        this.handleEditPost(nodeId, requestParams);
+        this.handleEditPost(nodeId, requestParams, error);
         break;
 
       case FeedsData.MethodType.deletePost:
-        this.handleDeletePost(nodeId, requestParams);
+        this.handleDeletePost(nodeId, requestParams, error);
         break;
 
       case FeedsData.MethodType.editComment:
-        this.handleEditComment(nodeId, requestParams);
+        this.handleEditComment(nodeId, requestParams, error);
         break;
       case FeedsData.MethodType.deleteComment:
-        this.handleDeleteComment(nodeId, requestParams);
+        this.handleDeleteComment(nodeId, requestParams, error);
         break;
 
       default:
@@ -1712,10 +1712,19 @@ export class FeedService {
     this.connectionService.deleteComment(nodeId, channelId, postId, commentId, accessToken);
   }
   
-  handleEditPost(nodeId: string, request: any){
+  handleEditPost(nodeId: string, request: any, error: any){
+    if (error != null && error != undefined && error.code != undefined){
+      this.handleError(nodeId, error);
+      return;
+    }
   }
 
-  handleDeletePost(nodeId: string, request: any){
+  handleDeletePost(nodeId: string, request: any, error: any){
+    if (error != null && error != undefined && error.code != undefined){
+      this.handleError(nodeId, error);
+      return;
+    }
+
     let channelId = request.channel_id;
     let postId = request.id;
 
@@ -1728,12 +1737,19 @@ export class FeedService {
     eventBus.publish(PublishType.deletePostFinish);
   }
 
-  handleEditComment(nodeId: string, request: any){
-    // console.log("edit comment finish"+JSON.stringify(request));
-    // eventBus.publish(PublishType.commentUpdateFinish);
+  handleEditComment(nodeId: string, request: any, error: any){
+    if (error != null && error != undefined && error.code != undefined){
+      this.handleError(nodeId, error);
+      return;
+    }
   }
 
-  handleDeleteComment(nodeId: string, request: any){
+  handleDeleteComment(nodeId: string, request: any, error: any){
+    if (error != null && error != undefined && error.code != undefined){
+      this.handleError(nodeId, error);
+      return;
+    }
+    
     let channelId = request.channel_id;
     let postId = request.post_id;
     let commentId = request.id
@@ -2837,7 +2853,6 @@ export class FeedService {
 
   handleEditFeedInfo(nodeId: string, request: any, error: any){
     if (error != null && error != undefined && error.code != undefined){
-      this.doUnsubscribeChannelError(nodeId, request.id);
       this.handleError(nodeId, error);
       return;
     }
