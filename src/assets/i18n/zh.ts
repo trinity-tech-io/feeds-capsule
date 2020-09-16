@@ -382,6 +382,7 @@ export const zh = {
     "DiscoverfeedsPage":{
         "title":"发现微频源",
         "added":"已添加",
-        "notadded":"未添加"
+        "notadded":"未添加",
+        "exploreFeeds":"探索微频",
     }
 };
