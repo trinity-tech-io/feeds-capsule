@@ -8,7 +8,7 @@ import { UtilService } from 'src/app/services/utilService';
 import { MenuService } from 'src/app/services/MenuService';
 import { TranslateService } from "@ngx-translate/core";
 import { PaypromptComponent } from 'src/app/components/payprompt/payprompt.component'
-import { PopoverController,IonInfiniteScroll} from '@ionic/angular';
+import { PopoverController,IonInfiniteScroll,IonContent} from '@ionic/angular';
 
 
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
@@ -19,6 +19,7 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
   styleUrls: ['./channels.page.scss'],
 })
 export class ChannelsPage implements OnInit {
+  @ViewChild(IonContent,{static:true}) content: IonContent;
   @ViewChild(IonInfiniteScroll,{static:true}) infiniteScroll: IonInfiniteScroll;
   public images = {};
   public isShowPrompt: boolean = false;
@@ -128,7 +129,9 @@ export class ChannelsPage implements OnInit {
 
   }
   ionViewWillEnter() {
+    this.startIndex = 0;
     this.init();
+    this.scrollToTop(1);
     this.events.subscribe('feeds:connectionChanged',(status)=>{
       this.zone.run(() => {
         this.connectionStatus = status;
@@ -431,5 +434,13 @@ export class ChannelsPage implements OnInit {
       this.native.createTip(name);
     }
   }
+
+
+  scrollToTop(int) {
+    let sid = setTimeout(() => {
+       this.content.scrollToTop(1);
+       clearTimeout(sid)
+     }, int);
+   }
 
 }
