@@ -17,11 +17,12 @@ export class HttpService{
 
   }
 
-  ajaxGet(url:string) {
-    this.native.showLoading("common.waitMoment");
+  ajaxGet(url:string,isLoading:boolean=true) {
+    if(isLoading){
+      this.native.showLoading("common.waitMoment");
+    }
     return new Promise((resove, reject) => {
       this.httpClient.get(url).subscribe((response) => {
-        console.log("====="+JSON.stringify(response));
         this.native.hideLoading();
         if(response["code"] === 400){
           this.native.toast('common.error400');
@@ -30,15 +31,19 @@ export class HttpService{
         }
         resove(response);
       }, (error) => {
-        this.native.hideLoading();
+        if(isLoading){
+          this.native.hideLoading();
+        }
         this.native.toast(JSON.stringify(error));
         reject(error);
       })
     })
   }
 
-  ajaxPost(url:string, json:Object) {
-    this.native.showLoading("common.waitMoment");
+  ajaxPost(url:string, json:Object,isLoading:boolean=true) {
+    if(isLoading){
+      this.native.showLoading("common.waitMoment");
+    }
     return new Promise((resove, reject) => {
       this.httpClient.post(url,JSON.stringify(json),this.httpOptions).subscribe((response) => {
         this.native.hideLoading();
@@ -49,7 +54,9 @@ export class HttpService{
         }
         resove(response);
       }, (error) => {
-        this.native.hideLoading();
+        if(isLoading){
+          this.native.hideLoading();
+        }
         this.native.toast(JSON.stringify(error));
         reject(error);
       })

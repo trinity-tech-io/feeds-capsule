@@ -1,0 +1,66 @@
+<ion-header *ngIf="connectionStatus == 1">
+  <div class="offline-header"></div>
+</ion-header>
+<ion-content [class.darkContainer]="theme.darkMode" [class.lightContainer]="!theme.darkMode" class="ion-padding">
+  
+   <div class="first">
+         <ion-img class="headerImg" src="./assets/images/profile-2.svg"></ion-img>
+   </div>
+
+   <div class="second white">
+        {{serverInfo['name']}}
+   </div>
+
+   <div class="three white">
+       {{serverInfo['description']}}
+   </div>
+ 
+  
+  <div class="detail-div" style="margin-top: 55px;">
+
+    <div class="detail-key-div">
+      <ion-label class="detail-key">{{'ServerInfoPage.name'|translate}}</ion-label>
+    </div>
+    <div class="detail-value-div">
+      <ion-label class="detail-value">{{serverInfo['name']}}</ion-label>
+    </div>
+    <div class="detail-line bgColor2e2f4e"></div>
+  
+    <div class="detail-key-div">
+      <ion-label class="detail-key">{{'ServerInfoPage.introduction'|translate}}</ion-label>
+    </div>
+    <div class="detail-value-div">
+      <ion-label  class="detail-value">{{serverInfo['description']}}</ion-label>
+    </div>
+    <div class="detail-line bgColor2e2f4e"></div>
+
+    <div class="detail-key-div">
+      <ion-label class="detail-key">{{'ServerInfoPage.did'|translate}}</ion-label>
+    </div>
+    <div class="detail-value-div">
+      <ion-label  class="detail-value">{{serverInfo['did']}} </ion-label>
+    </div>
+    <div class="detail-line bgColor2e2f4e"></div>
+
+  
+    <div class="detail-key-div">
+      <ion-label class="detail-key">{{'ServerInfoPage.feedsSourceQRCode'|translate}}</ion-label>
+    </div>
+    
+    <div class="detail-value-div" *ngIf="feedsUrl===''">
+      <ion-label class="detail-value">{{'DIDdata.NotprovidedfromDIDDocument'|translate}}</ion-label>
+    </div>
+
+    <div style="width: 220px;margin: 0 auto;margin-top:10px;padding: 10px; background: white;">
+        <qrcode [qrdata]="feedsUrl" [size]="200" [level]="'M'"></qrcode>
+    </div>
+  </div>  
+
+  <div style="margin-left: 34px; margin-right: 34px; margin-top: 25px;">
+    <ion-button style="margin-top: 25px;" expand="block" mode="ios" (click)="addFeedSource()">
+      <ion-label>{{'ServerInfoPage.addFeedSource' | translate}}</ion-label>
+    </ion-button>
+  </div>
+
+</ion-content>
+

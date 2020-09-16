@@ -8,7 +8,6 @@ import { HttpService } from 'src/app/services/HttpService';
 import { ActionSheetController } from '@ionic/angular';
 import { TranslateService } from "@ngx-translate/core";
 import { ApiUrl } from 'src/app/services/ApiUrl';
-import { Result } from 'src/app/services/JsonRPCService';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 class Attribute {
   constructor(
@@ -103,7 +102,7 @@ export class ServerInfoPage implements OnInit {
   }
 
   ionViewWillEnter() {
-    this.httpService.ajaxGet(ApiUrl.get+"?did="+this.didString).then((result)=>{
+    this.httpService.ajaxGet(ApiUrl.get+"?did="+this.didString,false).then((result)=>{
                  if(result["code"] === 200){
                     this.isPublic = result["data"] || "";
                  }

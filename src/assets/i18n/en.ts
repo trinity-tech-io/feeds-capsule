@@ -382,6 +382,7 @@ export const en = {
     "DiscoverfeedsPage":{
         "title":"Discover Feeds Sources",
         "added":"Added",
-        "notadded":"Not added"
+        "notadded":"Not added",
+        "exploreFeeds":"Explore Feeds",
     }
 };
