@@ -72,6 +72,8 @@ export class ProfiledetailPage implements OnInit {
   }
 
   ionViewWillEnter() {
+    this.initTitle();
+    this.native.setTitleBarBackKeyShown(true);
 
     let signInData = this.feedService.getSignInData() || {};
     this.name = signInData["nickname"] || signInData["name"] || "";
@@ -83,12 +85,12 @@ export class ProfiledetailPage implements OnInit {
     this.location = signInData["location"] || "";
 
     this.collectData();
+
     this.events.subscribe('feeds:connectionChanged',(status)=>{
       this.zone.run(() => {
         this.connectionStatus = status;
       });
     });
-
     this.events.subscribe("feeds:updateTitle",()=>{
       this.initTitle();
     });
@@ -96,8 +98,6 @@ export class ProfiledetailPage implements OnInit {
   }
 
   ionViewDidEnter(){
-    this.initTitle();
-    this.native.setTitleBarBackKeyShown(true);
   }
 
   initTitle(){

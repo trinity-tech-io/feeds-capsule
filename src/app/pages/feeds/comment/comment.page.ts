@@ -13,6 +13,7 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
   styleUrls: ['./comment.page.scss'],
 })
 export class CommentPage implements OnInit {
+
   public connectionStatus = 1;
   public nodeStatus:any={};
   public channelAvatar = "";
@@ -22,6 +23,8 @@ export class CommentPage implements OnInit {
   public nodeId: string ="";
   public channelId: number= 0;
   public postId: number = 0;
+  public imgUrl: string = "";
+
   constructor(
     private events: Events,
     private native: NativeService,
@@ -41,6 +44,9 @@ export class CommentPage implements OnInit {
   }
 
   ionViewWillEnter() {
+    this.initTitle();
+    this.native.setTitleBarBackKeyShown(true);
+    
     this.connectionStatus = this.feedService.getConnectionStatus();
     let channel = this.feedService.getChannelFromId(this.nodeId,this.channelId) || {};
     this.channelName = channel["name"] || "";
@@ -89,8 +95,6 @@ export class CommentPage implements OnInit {
   }
 
   ionViewDidEnter(){
-    this.initTitle();
-    this.native.setTitleBarBackKeyShown(true);
   }
 
   ionViewWillLeave(){
@@ -135,6 +139,14 @@ export class CommentPage implements OnInit {
 
   pressName(channelName:string){
     this.native.createTip(channelName);
+  }
+
+  addImg() {
+    this.native.toast("common.comingSoon");
+  }
+  
+  showBigImage(content: any){
+    this.native.openViewer(content,"common.image","CreatenewpostPage.addingPost");
   }
 
 }

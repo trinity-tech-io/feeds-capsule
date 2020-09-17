@@ -204,6 +204,11 @@ html, body { height: 100%; scroll-behavior:smooth;}
 
 $segment-button-md-text-color: #007AFF !important;
 
+pre {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
 /********************** GLOBAL EMPTY FEEDS **********************/
 .empty-container {
   height: 100%;

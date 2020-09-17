@@ -313,9 +313,9 @@ export class ChannelsPage implements OnInit {
   menuMore(post:any){
     this.curPost = post;
     let isMine = this.checkChannelIsMine();
-    if(isMine === 0 && post.post_status != 1){
+    if (isMine === 0 && post.post_status != 1) {
       this.menuService.showPostDetailMenu(post.nodeId, Number(post.channel_id), this.channelName,post.id);
-    }else{
+    } else {
       this.menuService.showShareMenu(post.nodeId, Number(post.channel_id), this.channelName,post.id);
     }
   }
@@ -324,9 +324,9 @@ export class ChannelsPage implements OnInit {
     return this.feedService.getServerStatusFromId(nodeId);
   }
 
-  initnodeStatus(nodeId:string){
-            let status = this.checkServerStatus(nodeId);
-            this.nodeStatus[nodeId] = status;
+  initnodeStatus(nodeId:string) {
+    let status = this.checkServerStatus(nodeId);
+    this.nodeStatus[nodeId] = status;
   }
   
   async showPayPrompt(elaAddress:string) {

@@ -12,7 +12,8 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
   templateUrl: './editcomment.page.html',
   styleUrls: ['./editcomment.page.scss'],
 })
-export class EditcommentPage implements OnInit{ 
+export class EditcommentPage implements OnInit { 
+
 public connectionStatus = 1;
 public nodeStatus:any={};
 public channelAvatar = "";
@@ -25,6 +26,8 @@ public channelId: number= 0;
 public postId: number = 0;
 public commentById:Number = 0;
 public commentId:Number = 0;
+public imgUrl: string = "";
+
 constructor(
   private events: Events,
   private native: NativeService,
@@ -152,6 +155,14 @@ pressName(channelName:string){
 getContent(content:string){
   this.newComment = content;
   this.oldNewComment = content;
+}
+
+addImg() {
+  this.native.toast("common.comingSoon");
+}
+
+showBigImage(content: any){
+  this.native.openViewer(content,"common.image","CreatenewpostPage.addingPost");
 }
 
 }
