@@ -125,7 +125,7 @@ export function anim(AnimationC: Animation, baseEl: any, position?: any): Promis
     ServerlistComponentModule,
     SplashscreenPageModule,
     IonicModule.forRoot({
-      rippleEffect: false,
+      rippleEffect: true,
       mode: 'ios',
       navAnimation: anim,
     }),

@@ -14,18 +14,20 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
   styleUrls: ['./editpost.page.scss'],
 })
 export class EditpostPage implements OnInit {
+
   public connectionStatus = 1;
   public nodeStatus = {};
   public channelAvatar = "";
   public channelName = "";
   public subscribers:string = "";
-  public newPost:string="";
-  public oldNewPost:string = "";
+  public newPost: string="";
+  public oldNewPost: string = "";
   public imgUrl: string = "";
-  public oldImgUrl:string = "";
-  public  nodeId: string = "";
-  public  channelId: number = 0;
-  public  postId:number = 0;
+  public oldImgUrl: string = "";
+  public nodeId: string = "";
+  public channelId: number = 0;
+  public postId: number = 0;
+
   constructor(
     private events: Events,
     private native: NativeService,
@@ -35,22 +37,20 @@ export class EditpostPage implements OnInit {
     private zone: NgZone,
     private feedService: FeedService,
     public theme:ThemeService,
-    private translate:TranslateService) {
-     
-     
-    }
+    private translate:TranslateService
+  ) {
+  }
 
-    ngOnInit() {
-      this.acRoute.queryParams.subscribe((data) => {
-        let item = _.cloneDeep(data);
-        this.nodeId = item["nodeId"] || "";
-        this.channelId = item["channelId"] || "";  
-        this.postId = item["postId"] || "";    
-      });
-    }
+  ngOnInit() {
+    this.acRoute.queryParams.subscribe((data) => {
+      let item = _.cloneDeep(data);
+      this.nodeId = item["nodeId"] || "";
+      this.channelId = item["channelId"] || "";  
+      this.postId = item["postId"] || "";    
+    });
+  }
 
-    ionViewWillEnter() {
-
+  ionViewWillEnter() {
     this.initData();
 
     this.events.subscribe('feeds:connectionChanged',(status)=>{
@@ -64,7 +64,6 @@ export class EditpostPage implements OnInit {
         this.nodeStatus[nodeId] = status;
       });
      });
-
 
     this.events.subscribe('rpcRequest:error', () => {
           this.native.hideLoading();
@@ -86,7 +85,6 @@ export class EditpostPage implements OnInit {
       this.events.publish("update:tab");
       this.native.hideLoading();
       this.native.pop();
-     
     });
 
     this.initnodeStatus();
@@ -106,15 +104,13 @@ export class EditpostPage implements OnInit {
     this.native.setTitleBarBackKeyShown(true);
   }
 
-
   initTitle(){
     titleBarManager.setTitle(this.translate.instant("EditpostPage.title"));
   }
 
-
   post(){
-    let  newPost = this.native.iGetInnerText(this.newPost);
-    if (newPost == "" && this.imgUrl == ""){
+    let newPost = this.native.iGetInnerText(this.newPost);
+    if (newPost === "" && this.imgUrl === ""){
       this.native.toast_trans("CreatenewpostPage.tipMsg");
       return false;
     }
@@ -128,38 +124,34 @@ export class EditpostPage implements OnInit {
     }).catch(()=>{
           this.native.hideLoading();
     });
-    }
-
-    editPost(){
-      let myContent = {};
-      myContent["text"] = this.newPost;
-      myContent["img"] = this.imgUrl;
-
-      this.feedService.editPost(this.nodeId,Number(this.channelId),Number(this.postId),myContent);
-      //add edit post     
-    }  
- 
-
-  addImg(){
-    this.openCamera(0);
   }
 
-  openCamera(type: number){
-    this.camera.openCamera(30,0,type,
-      (imageUrl:any)=>{
+  editPost(){
+    let myContent = {};
+    myContent["text"] = this.newPost;
+    myContent["img"] = this.imgUrl;
+
+    this.feedService.editPost(this.nodeId,Number(this.channelId),Number(this.postId),myContent);
+    //add edit post     
+  }  
+ 
+  addImg(type: number) {
+    this.camera.openCamera(
+      30, 0, type,
+      (imageUrl: any) => {
         this.zone.run(() => {
           this.imgUrl = imageUrl;
         });
       },
-      (err:any)=>{
+      (err: any) => {
+        console.error('Add img err', err);
         let imgUrl = this.imgUrl || "";
-        if(imgUrl === ""){
+        if (imgUrl === "") {
           this.native.toast_trans('common.noImageSelected');
         }
-      });
+      }
+    );
   }
-
-  
 
   showBigImage(content: any){
     this.native.openViewer(content,"common.image","CreatenewpostPage.addingPost");
@@ -172,14 +164,14 @@ export class EditpostPage implements OnInit {
   initnodeStatus(){
     let status = this.checkServerStatus(this.nodeId);
    this.nodeStatus[this.nodeId] = status;
- }
+  }
 
- pressName(channelName:string){
-     this.native.createTip(channelName);
- }
+  pressName(channelName:string){
+    this.native.createTip(channelName);
+  }
 
- getImage(){
-  let nodeChannelPostId = this.nodeId+this.channelId+this.postId;
+  getImage(){
+    let nodeChannelPostId = this.nodeId+this.channelId+this.postId;
     this.feedService.loadPostContentImg(nodeChannelPostId).then((image)=>{
       this.oldImgUrl = image || "";
       this.imgUrl = image || "";

@@ -320,7 +320,7 @@ export const fr = {
     "CreatenewpostPage":{
         "addimg":"Add an image",
         "post":"Post",
-        "des":"Enter any notes here...",
+        "des":"What's happening?",
         "addingPost":"New Post",
         "tipMsg":"Please enter a message!",
         "tipMsg1":"Post sent successfully!",
