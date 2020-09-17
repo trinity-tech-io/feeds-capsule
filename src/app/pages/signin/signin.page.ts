@@ -5,6 +5,7 @@ import { Events, LoadingController } from '@ionic/angular';
 import { NativeService } from 'src/app/services/NativeService';
 import { TranslateService } from "@ngx-translate/core";
 import { ThemeService } from 'src/app/services/theme.service';
+
 declare let appManager: AppManagerPlugin.AppManager;
 declare let didManager: DIDPlugin.DIDManager;
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
@@ -15,6 +16,7 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
   styleUrls: ['./signin.page.scss'],
 })
 export class SigninPage implements OnInit {
+  
   private fakedata:boolean = false;
   public signedIn: boolean = false;
   public did: string = "";
@@ -56,6 +58,10 @@ export class SigninPage implements OnInit {
 
   ionViewWillLeave(){
     this.event.unsubscribe("feeds:updateTitle");
+  }
+
+  learnMore(slide) {
+    slide.slideNext();
   }
 
   signIn(){

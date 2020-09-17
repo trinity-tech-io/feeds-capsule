@@ -1,6 +1,70 @@
 <ion-header *ngIf="connectionStatus == 1">
   <div class="offline-header"></div>
 </ion-header>
+
+<ion-content>
+  <ion-grid>
+    <ion-row>
+      <!-- DEFAULT AVATARS -->
+      <ion-col 
+        *ngFor="let avatar of avatars"
+        [ngStyle]="{ 'background-image': 'url(' + avatar.image + ')' }"
+        size="2.5"
+        (click)="selectIndex(avatar.index, avatar.image)"
+      >
+        <div 
+          *ngIf="select === avatar.index"
+          class="check" 
+          [ngStyle]="{ 'border': theme.darkMode ? '4px solid #191a2f' : '4px solid #f8f8ff' }"
+          >
+          <ion-icon 
+            name="checkmark"
+            [ngStyle]="{ 'color': theme.darkMode ? '#191a2f' : '#f8f8ff' }"
+          >
+          </ion-icon>
+        </div>
+      </ion-col>
+      <!-- HAS UPLOADED AVATAR -->
+      <ion-col 
+        *ngIf="uploadedAvatar"
+        [ngStyle]="{ 'background-image': 'url(' + uploadedAvatar + ')' }"
+        class="uploadedAvatar"
+        size="2.5"
+        (click)="selectIndex(0, uploadedAvatar)"
+      >
+        <div 
+          *ngIf="select === 0"
+          class="check" 
+          [ngStyle]="{ 'border': theme.darkMode ? '4px solid #191a2f' : '4px solid #f8f8ff' }"
+          >
+          <ion-icon 
+            name="checkmark"
+            [ngStyle]="{ 'color': theme.darkMode ? '#191a2f' : '#f8f8ff' }"
+          >
+          </ion-icon>
+        </div>
+      </ion-col>
+      <!-- UPLOAD AVATAR -->
+      <ion-col 
+        [ngStyle]="{ 'background-image': theme.darkMode ? 'url(/assets/images/profile-add-dark.svg)' : 'url(/assets/images/profile-add.svg)' }"
+        size="2.5"
+        (click)="selectIndex(0)"
+      >
+      </ion-col>
+    </ion-row>
+  
+    <ion-row class="btn-row">
+      <ion-button color="primary" (click)="confirm()">
+        <ion-label>{{ 'ProfileimagePage.confirm' | translate }}</ion-label>
+      </ion-button>
+    </ion-row>
+  </ion-grid>
+</ion-content>
+
+
+<!-- <ion-header *ngIf="connectionStatus == 1">
+  <div class="offline-header"></div>
+</ion-header>
 <ion-content ion-padding>
   <ion-row class="margintop">
     <ion-col size="3">
@@ -97,3 +161,4 @@
 
   <div class="confirm" (click)="confirm()">{{'ProfileimagePage.confirm'|translate}}</div>
 </ion-content>
+ -->

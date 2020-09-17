@@ -1,6 +1,44 @@
 <ion-header *ngIf="connectionStatus == 1">
   <div class="offline-header"></div>
 </ion-header>
+
+<ion-content>
+  <ion-grid class="container" [class.darkContainer]="theme.darkMode">
+    <ion-list>
+        <ion-item lines="none">
+            <ion-label position="stacked">{{ 'CreatenewfeedPage.name' | translate }}</ion-label>
+            <ion-input required type="text" placeholder="{{'CreatenewfeedPage.inputName'|translate}}" #name (ionChange)="onChangeName(name)"></ion-input>
+        </ion-item>
+        <ion-item lines="none">
+            <ion-label position="stacked">{{ 'CreatenewfeedPage.description' | translate }}</ion-label>
+            <ion-input required type="text" placeholder="{{'CreatenewfeedPage.inputFeedDesc'|translate}}" #desc (ionChange)="onChangeText(desc)"></ion-input>
+        </ion-item>
+        <ion-item lines="none" (click)="profileimage()">
+          <ion-row>
+            <ion-col>
+              <ion-label position="stacked">{{ 'CreatenewfeedPage.profileImage'|translate }}</ion-label>
+              <h2>PICK AN IMAGE FOR YOUR FEED</h2>
+            </ion-col>
+            <ion-img src="assets/icons/right-arrow.svg"></ion-img>
+          </ion-row>
+        </ion-item>
+        <ion-item lines="none" class="removeBorder">
+          <ion-label position="stacked">{{ 'CreatenewfeedPage.channelSource'|translate }}</ion-label>
+          <h2>{{ selectedChannelSource }}</h2>
+        </ion-item>
+    </ion-list>
+  
+    <ion-row class="btn-row">
+        <ion-button (click)="createChannel(name,desc)" >
+            <ion-label> {{'CreatenewfeedPage.createFeed'|translate}}</ion-label>
+        </ion-button>
+    </ion-row>
+  </ion-grid>
+</ion-content>
+
+<!-- <ion-header *ngIf="connectionStatus == 1">
+  <div class="offline-header"></div>
+</ion-header>
 <ion-content class="ion-padding" [class.darkContainer]="theme.darkMode">
       <div>
         <ion-label  class="content-key white">{{'CreatenewfeedPage.name'|translate}}<span *ngIf="namelen>0">({{namelen}})</span></ion-label>
@@ -50,4 +88,4 @@
         {{'CreatenewfeedPage.createFeed'|translate}}
 
     </div>
-</ion-content>
+</ion-content> -->

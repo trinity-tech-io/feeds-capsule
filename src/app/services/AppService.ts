@@ -55,6 +55,8 @@ export class AppService {
              }
               this.menu.open("menu");
             }
+          } else if (menuIcon.key === 'editChannel') {
+            this.event.publish("feeds:editChannel");
           }
         });
     }
@@ -158,6 +160,7 @@ export class AppService {
       }
     
       this.carrierService.init();
+      // this.native.setRootRouter(['/disclaimer']);
       this.native.setRootRouter(['/tabs/home']);
       this.feedService.updateSignInDataExpTime(signInData);
     }

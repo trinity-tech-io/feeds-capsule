@@ -14,11 +14,15 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 })
 
 export class ServersPage implements OnInit {
+
     public connectionStatus = 1;
     public myFeedSource = null;
     public serverList:any = [];
     public serversStatus: any;
     public serverStatisticsMap: any;
+
+    public showServers = true;
+    public showMyFeeds = true;
 
     constructor(
         private navCtrl: NavController,

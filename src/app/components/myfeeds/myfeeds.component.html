@@ -1,20 +1,58 @@
-<!-- <div *ngIf="channels.length == 0">
-  <div style="margin-top: 50px;" >
-    <div style="text-align: center; ">
-      <img src="./assets/images/empty-feeds-icon.svg">
-    </div>
-    <div class="all-empty" style="margin-top: 20px;">{{'common.allempty' | translate}}</div>
-    <div class="all-empty-content-text" style="margin-top: 7px;">{{'MyfeedsComponent.emptyDes' | translate}}</div>
-  
-    <div class="explore-feeds">
-    <ion-button expand="block"  mode="ios" (click)="createNewFeed()" >
-      <div class="explore-feeds-text">{{'MyfeedsComponent.createFeed' | translate}}</div>
-    </ion-button>
-    </div>
-  </div> 
-</div> -->
-
 <div *ngIf="channels.length === 0" class="empty-container">
+  <img src="./assets/images/empty-feeds-icon.svg">
+  <h1>{{ 'common.allempty' | translate }}</h1>
+  <p>{{'MyfeedsComponent.emptyDes' | translate }}</p>
+  <ion-row class="btn-row">
+    <ion-button (click)="createNewFeed()">
+      <ion-label>
+        {{ 'MyfeedsComponent.createFeed' | translate }}
+      </ion-label>
+    </ion-button>
+  </ion-row>
+</div>
+
+<ion-list *ngIf="channels.length > 0" class="channel-list" [class.darkChannelList]="theme.darkMode">
+  <ion-item
+    *ngFor="let channel of channels"
+    [class.removeBorder]="channel === channels[channels.length - 1]"
+    lines="none"
+  >
+    <ion-row class="channel-row ion-activatable ripple">
+      <ion-col
+        size="2.5"
+        class="left-col"
+        (click)="navTo(channel.nodeId, channel.id)"
+      >
+        <div class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode">
+          <img src={{parseAvatar(channel.avatar)}}>
+          <div class="offline" [class.online]="nodeStatus[channel.nodeId] === 0"></div>
+        </div>
+      </ion-col>
+      <ion-col
+        size="8"
+        class="middle-col"
+        (click)="navTo(channel.nodeId, channel.id)"
+        (press)="pressName(channel.name)"
+      >
+        <ion-label>{{ moreName(channel.name) }}</ion-label>
+        <ion-row>
+          <img src="./assets/images/bubble2.svg"> <br>
+          <p><span>{{ channel.subscribers }}</span> {{ 'common.followers' | translate }}</p>
+        </ion-row>
+      </ion-col>
+      <ion-col size="1.5" class="right-col" (click)="menuMore(channel.nodeId, channel.id, channel.name)">
+        <img [src]="!theme.darkMode ? './assets/images/dots-three-vertical.svg' : './assets/images/dots-three-vertical-dark.svg'">
+      </ion-col>
+      <ion-ripple-effect></ion-ripple-effect>
+    </ion-row>
+  </ion-item>
+
+  <div class="new-feed-div">
+    <div class="new-feed" (click)="createNewFeed()">{{ 'MyfeedsComponent.createNewFeed'|translate }}</div>
+  </div>
+</ion-list>
+
+<!-- <div *ngIf="channels.length === 0" class="empty-container">
   <img src="./assets/images/empty-feeds-icon.svg">
   <h1>{{ 'common.allempty' | translate }}</h1>
   <p>{{'MyfeedsComponent.emptyDes' | translate }}</p>
@@ -63,3 +101,4 @@
 <div class="new-feed-div" *ngIf="channels.length > 0">
     <div class="new-feed" (click)="createNewFeed()">{{'MyfeedsComponent.createNewFeed'|translate}}</div>
 </div>
+ -->

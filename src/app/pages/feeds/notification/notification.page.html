@@ -8,6 +8,55 @@
       class="refresh"
       pullingText="{{'common.pullToRefresh'|translate}}"
       pullingIcon="arrow-dropdown"
+      refreshingSpinner="crescent"
+      refreshingText="{{'common.Refreshing'|translate}}"
+    >
+    </ion-refresher-content>
+  </ion-refresher>
+
+  <div *ngIf="notificationList.length == 0" class="empty-container">
+    <h1>{{ 'common.allempty' | translate }}</h1>
+    <p>{{ 'NotificationPage.emptyDes' | translate }}</p>
+  </div>
+
+  <div class="notificationContainer" [class.darkContainer]="theme.darkMode">
+    <ion-item-sliding *ngFor="let notification of notificationList let i=index">
+      <ion-item lines="none" (click)="navTo(notification)">
+        <ion-row>
+          <ion-col size="2.25" class="left-col">
+            <img [src]="avatar ? 'data:'+avatar.contentType+';base64,'+avatar.data : './assets/images/default-contact.svg'">
+          </ion-col>
+          <ion-col size="9.75" class="right-col">
+            <h1 (press)="pressName(notification.userName)">{{ moreName(notification.userName) }} <span>- {{ handleDisplayTime(notification.time) }}</span></h1>
+            <p>{{ notification.behaviorText }} <span *ngIf="notification['readStatus']===1">-</span></p>
+            <h2>{{ getNotificationContent(notification) }}</h2>
+          </ion-col>
+        </ion-row>
+      </ion-item>
+      <ion-item-options side="end" (ionSwipe)="delete(notification)">
+        <ion-item-option class="notification-swipe" expandable>&nbsp;</ion-item-option>
+      </ion-item-options>
+    </ion-item-sliding>
+  </div>
+
+  <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event)">
+    <ion-infinite-scroll-content
+      loadingSpinner="bubbles"
+      loadingText="{{'common.loadingText'|translate}}">
+    </ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+</ion-content>
+
+<!-- <ion-header *ngIf="connectionStatus == 1">
+  <div class="offline-header"></div>
+</ion-header>
+
+<ion-content>
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" pullFactor="0.5">
+    <ion-refresher-content
+      class="refresh"
+      pullingText="{{'common.pullToRefresh'|translate}}"
+      pullingIcon="arrow-dropdown"
       refreshingText="">
     </ion-refresher-content>
   </ion-refresher>
@@ -20,7 +69,7 @@
   <div [class.darkContainer]="theme.darkMode">
     <ion-item-sliding *ngFor="let notification of notificationList let i=index">
       <ion-item lines="none"  (click)="navTo(notification)">
-        <!-- <img  src="assets/images/component-480-33@3x.png"> -->
+        <img  src="assets/images/component-480-33@3x.png">
         <img *ngIf="avatar == ''" class="profile-img avatar-div" src="./assets/images/default-contact.svg">
         <img *ngIf="avatar != ''" class="profile-img avatar-div" [src]="avatar">
         <ion-row style="margin-left: 60px;margin-top:6px;">
@@ -49,4 +98,4 @@
       loadingText="{{'common.loadingText'|translate}}">
     </ion-infinite-scroll-content>
   </ion-infinite-scroll>
-</ion-content>
+</ion-content> -->

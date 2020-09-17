@@ -1,10 +1,11 @@
 .container {
     padding: 40px 0;
+    min-height: 100%;
 
     /********** Tabs *********/
     .tab-container {
         height: 41.3px;
-        margin: 25px 20px 18px;
+        margin: 25px 20px 20px;
         border-radius: 19px;
         background: #f0f1ff;
         display: flex;
@@ -49,10 +50,13 @@
             }
         }
     }
+
+    .removeMargin {
+        margin-bottom: 0;
+    }
 }
 
 .darkContainer{
-
     .tab-container {
         background-color: #2e2f4e;
 

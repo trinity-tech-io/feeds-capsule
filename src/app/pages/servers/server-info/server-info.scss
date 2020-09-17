@@ -1,4 +1,140 @@
-.first{
+.container {
+  padding: 20px;
+
+  .server-header {
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    border-radius: 17px;
+    box-shadow: 0 3px 15px 0 #ededf0;
+    background-color: #ffffff;
+    margin-bottom: 25px;
+  
+    ion-img {
+      width: 56px;
+      height: 56px;
+      object-fit: cover;
+    }
+  
+    h1 {
+      margin: 0;
+      padding: 15px 0px 7.5px;
+      font-size: 16px;
+      font-weight: 600;
+      text-align: center;
+    }
+  
+    p {
+      margin: 0;
+      padding-bottom: 15px; 
+      font-size: 15px;
+      font-weight: 500;
+      letter-spacing: 0.8px;
+      text-align: center;
+      overflow: hidden;
+    }
+
+    .offline {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      ion-img {
+        width: 18.1px;
+        height: 14.7px;
+      }
+
+      .circle {
+        background-color: #cdcde6;
+        display:inline-block;
+        vertical-align: middle;
+        width: 16px;
+        height: 16px;
+        -moz-border-radius: 8px;
+        -webkit-border-radius: 8px;
+        border-radius: 8px;
+      }
+
+      .users, .clientNumber {
+        color: #a0a2c4;
+      }
+
+      .status {
+        display:inline-block;
+        margin-right: 12.3px;
+        margin-left: 4.1px;
+        font-size: 11px;
+        font-weight: 500;
+        color: #cdcde6;
+      }
+
+      .users {
+        display: inline-block;
+        font-size: 11px;
+        font-weight: 500;
+      }
+
+      .clientNumber {
+        display:inline-block;
+        margin-left: 3.6px;
+        margin-right: 3px;
+        font-size: 14px;
+        font-weight: 600;
+      }
+    }
+
+    .online {
+      .circle {
+        background-color: #368bff;
+      }
+
+      .status, .users, .clientNumber {
+        color: #368bff;
+      }
+    }
+  }
+
+  .detail-row {
+    margin-left: 5px;
+    margin-right: 5px;
+
+    .qr-container {
+      margin-top: 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+  
+      .qrcode {
+        padding: 15px;
+        background: #ffffff;
+        border-radius: 17px;
+      }
+    }
+  }
+
+  .removeBorder {
+    border-bottom: none;
+  }
+}
+
+.darkContainer {
+  .server-header {
+    box-shadow: 0 3px 15px 0 #151626;
+    background-color: #2e2f4e;
+  }
+
+  .detail-row {
+    border-bottom: 2px solid #2e2f4e;
+  }
+
+  .removeBorder {
+    border-bottom: none;
+  }
+}
+
+/* .first{
      position: relative;
      text-align: center;
      margin-top: 46px;
@@ -130,5 +266,5 @@
   .balck{
     color: #000000;
   }
-}
+} */
 

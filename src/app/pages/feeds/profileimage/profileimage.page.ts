@@ -13,40 +13,81 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
   styleUrls: ['./profileimage.page.scss'],
 })
 export class ProfileimagePage implements OnInit {
+
   public connectionStatus = 1;
-  public userAvatar = "";
-  public select: number = 1;
-  public avatar = "assets/images/profile-1.svg";
+
+  public uploadedAvatar: string = null;
+
+  public select = 1;
+  public selectedAvatar: string = null;
+
+  public avatars = [
+    {
+      index: 1,
+      image: 'assets/images/profile-1.svg',
+    },
+    {
+      index: 2,
+      image: 'assets/images/profile-2.svg',
+    },
+    {
+      index: 3,
+      image: 'assets/images/profile-3.svg',
+    },
+    {
+      index: 4,
+      image: 'assets/images/profile-4.svg',
+    },
+    {
+      index: 5,
+      image: 'assets/images/profile-5.svg',
+    },
+    {
+      index: 6,
+      image: 'assets/images/profile-6.svg',
+    },
+    {
+      index: 7,
+      image: 'assets/images/profile-7.svg',
+    },
+    {
+      index: 8,
+      image: 'assets/images/profile-8.svg',
+    },
+    {
+      index: 9,
+      image: 'assets/images/profile-9.svg',
+    },
+  ];
+
   constructor(
     private native: NativeService,
     private navCtrl: NavController,
     private events: Events,
     private zone: NgZone,
-    private translate:TranslateService,
-    private theme:ThemeService, 
+    private translate: TranslateService,
+    private theme: ThemeService, 
     private feedService:FeedService,
-    private camera: CameraService) { }
+    private camera: CameraService
+  ) { }
 
   ngOnInit() {
     
   }
 
   ionViewWillEnter() {
-    this.select =this.feedService.getSelsectIndex();
-      this.userAvatar = this.feedService.getProfileIamge() || "";
-
-      this.avatar = this.feedService.getProfileIamge() || "assets/images/profile-1.svg";
-      let selectIndex = this.feedService.getSelsectIndex();
-      this.feedService.setSelsectIndex(selectIndex);
-      this.feedService.setProfileIamge(this.avatar);
+    this.initTitle();
+    this.native.setTitleBarBackKeyShown(true);
+    
+    this.select = this.feedService.getSelsectIndex();
+    this.selectedAvatar = this.feedService.getProfileIamge() || 'assets/images/profile-1.svg';
       
-      if(this.userAvatar.indexOf("data:image") === -1){
-        if(this.theme.darkMode){
-          this.userAvatar = './assets/images/profile-add-dark.svg';
-        }else{
-          this.userAvatar = './assets/images/profile-add.svg';
-        }
-      }
+    // Check if an uploaded avatar exists. If so, select it and have it displayed
+    if(this.selectedAvatar.indexOf("data:image") === -1) {;
+      this.uploadedAvatar = null;
+    } else {
+      this.uploadedAvatar = this.selectedAvatar;
+    }
    
     this.connectionStatus = this.feedService.getConnectionStatus();
 
@@ -68,33 +109,33 @@ export class ProfileimagePage implements OnInit {
   }
 
   ionViewDidEnter() {
-    this.initTitle();
-    this.native.setTitleBarBackKeyShown(true);
   }
 
   initTitle(){
     titleBarManager.setTitle(this.translate.instant("ProfileimagePage.title"));
   }
 
-  selectIndex(index: number, avatar: string){
+  selectIndex(index: number, avatar?: string){
     this.select = index;
-    if (index == 0){
-      this.openCamera(0);
-      return ;
-    }else{
-      this.avatar = "img://"+avatar;
-    
+    if (index === 0) {
+      // If uploaded avatar exists and is selected, use it. Otherwise open camera
+      avatar ? this.selectedAvatar = avatar : this.openCamera(0);
+    } else {
+      this.selectedAvatar = "img://"+avatar;
     }
   }
 
   confirm(){
-    if(this.avatar === ""){
+    if(!this.selectedAvatar) {
+      // Usually this is avoided by using a default avatar if one isn't selected
       this.native.toast_trans('common.noImageSelected');
       return false;
+    } else {
+      // Set selected index and selected avatar
+      this.feedService.setSelsectIndex(this.select);
+      this.feedService.setProfileIamge(this.selectedAvatar);
+      this.navCtrl.pop();
     }
-    this.feedService.setProfileIamge(this.avatar);
-    this.feedService.setSelsectIndex(this.select);
-    this.navCtrl.pop();
   }
 
   addPic(){
@@ -103,19 +144,20 @@ export class ProfileimagePage implements OnInit {
 
   openCamera(type: number){
     this.camera.openCamera(30,0,type,
-      (imageUrl)=>{
+      (imageUrl) => {
         this.zone.run(() => {
-          this.userAvatar = this.avatar = imageUrl;
-          this.select = 0;
+          this.uploadedAvatar = imageUrl;
+          this.selectedAvatar = imageUrl;
         });
-      },
-      (err)=>{
-        if(this.userAvatar === "./assets/images/profile-add-dark.svg" || this.userAvatar === "./assets/images/profile-add.svg" ){
-          this.avatar = "";
-          this.native.toast_trans('common.noImageSelected');
-        }
-        }
-        );
+      }, (err) => {
+        this.native.toast_trans('common.noImageSelected');
+
+        // If err, use default avatar 
+        this.select = 1;
+        this.selectedAvatar = "img://"+"assets/images/profile-1.svg";
+      }
+    );
   }
 
 }
+
