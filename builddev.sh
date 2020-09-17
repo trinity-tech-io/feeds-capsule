@@ -4,10 +4,14 @@ function package(){
   rm -rf ./www
   ionic build --prod
   cd www/
-  zip -rv dev.epk *
-  mv dev.epk ../
-  echo "Package finish"
-  echo "Output file is ./dev.epk"
+  if [ $? -eq 0 ]; then
+    zip -rv dev.epk *
+    mv dev.epk ../
+    echo "Package finish"
+    echo "Output file is ./dev.epk"
+  else
+    echo "Error"
+  fi
 }
 
 function appendCommitId(){
