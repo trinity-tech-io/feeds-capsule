@@ -70,6 +70,7 @@ export const en = {
         "donation":"Donation",
         "signout":"Sign out",
         "des":"Sign out successfully",
+        "des1":"Are you sure to sign out?"
     },
     "SigninPage":{
         "signIn":"Sign In to Feeds",

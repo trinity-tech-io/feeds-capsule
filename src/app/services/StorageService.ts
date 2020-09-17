@@ -23,7 +23,7 @@ export class StorageService {
         return this.storage.get(key);
     }
 
-    remove(key: string): Promise<any>{
+   public remove(key: string): Promise<any>{
         return this.storage.remove(key);
     }
 
