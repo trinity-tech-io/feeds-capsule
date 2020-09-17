@@ -28,7 +28,7 @@ export class HomePage implements OnInit {
   public pageNumber = 8;
   public totalData = [];
   public images = {};
-
+  public curPost:any = {};
   constructor(
     private elmRef: ElementRef,
     private feedspage: FeedsPage,
@@ -56,6 +56,13 @@ export class HomePage implements OnInit {
     }
     this.scrollToTop(1);
     this.initnodeStatus(this.postList);
+
+    this.events.subscribe("feeds:updateTitle",()=>{
+      if(this.menuService.postDetail!=null){
+        this.menuService.hideActionSheet();
+        this.menuMore(this.curPost);
+      }
+    });
    
     this.events.subscribe('feeds:connectionChanged',(status)=>{
       this.zone.run(() => {
@@ -136,14 +143,14 @@ export class HomePage implements OnInit {
   }
 
  ionViewWillLeave(){
-
+    this.events.unsubscribe("feeds:updateTitle");
     this.events.unsubscribe("feeds:connectionChanged");
     this.events.unsubscribe("feeds:postDataUpdate");
     this.events.unsubscribe("feeds:friendConnectionChanged");
     this.events.unsubscribe("feeds:publishPostFinish");
     this.events.unsubscribe("feeds:editPostFinish");
     this.events.unsubscribe("feeds:deletePostFinish");
-   
+    this.curPost={};
 }
 
   ionViewDidLeave() {
@@ -260,8 +267,7 @@ export class HomePage implements OnInit {
   }
 
   menuMore(post:any){
-    console.log("======"+JSON.stringify(post))
-    //post.nodeId, post.channel_id, post.id
+    this.curPost = post;
     let channel = this.getChannel(post.nodeId, post.channel_id);
     if (channel == null || channel == undefined)
       return ;
@@ -272,7 +278,7 @@ export class HomePage implements OnInit {
       if(isMine === 0 && post.post_status != 1){
         this.menuService.showHomeMenu(post.nodeId, Number(post.channel_id),channelName,Number(post.id));
       }else{
-        this.menuService.showChannelMenu(post.nodeId, Number(post.channelId), channelName);
+        this.menuService.showChannelMenu(post.nodeId, Number(post.channelId),channelName);
       }
   }
 

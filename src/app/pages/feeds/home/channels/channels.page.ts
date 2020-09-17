@@ -41,6 +41,8 @@ export class ChannelsPage implements OnInit {
   public startIndex:number = 0;
   public pageNumber:number = 5;
   public totalData:any = [];
+
+  public curPost:any = {}
   constructor(
     private popoverController:PopoverController,
     private zone: NgZone,
@@ -139,6 +141,11 @@ export class ChannelsPage implements OnInit {
     });
 
     this.events.subscribe("feeds:updateTitle",()=>{
+      if(this.menuService.postDetail!=null){
+        this.menuService.hideActionSheet();
+        this.menuMore(this.curPost);
+      }
+     
       this.initTitle();
     });
 
@@ -173,6 +180,7 @@ export class ChannelsPage implements OnInit {
 
     this.events.unsubscribe("feeds:editPostFinish");
     this.events.unsubscribe("feeds:deletePostFinish");
+    this.curPost={};
   }
 
   ionViewDidEnter() {
@@ -287,7 +295,7 @@ export class ChannelsPage implements OnInit {
   }
 
     menuMore(post:any){
-      
+      this.curPost = post;
       let isMine = this.checkChannelIsMine();
       if(isMine === 0 && post.post_status != 1){
         this.menuService.showPostDetailMenu(post.nodeId, Number(post.channel_id), this.channelName,post.id);

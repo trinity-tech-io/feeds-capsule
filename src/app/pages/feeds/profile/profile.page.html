@@ -39,9 +39,9 @@
       </div>
     </div>
   
-    <app-myfeeds *ngIf="selectType == 'ProfilePage.myFeeds'"  [channels] = "channels" [nodeStatus]="nodeStatus"></app-myfeeds>
-    <app-following *ngIf="selectType == 'ProfilePage.following'"  [followingList] = "followingList" [nodeStatus]="nodeStatus"></app-following>
-    <app-likes  *ngIf="selectType == 'ProfilePage.myLikes'" [likeList] = "likeList" [nodeStatus]="nodeStatus"></app-likes>
+    <app-myfeeds *ngIf="selectType == 'ProfilePage.myFeeds'"  [channels] = "channels" [nodeStatus]="nodeStatus" (fromChild)="showMenuMore($event)"></app-myfeeds>
+    <app-following *ngIf="selectType == 'ProfilePage.following'"  [followingList] = "followingList" [nodeStatus]="nodeStatus" (fromChild)="showMenuMore($event)"></app-following>
+    <app-likes  *ngIf="selectType == 'ProfilePage.myLikes'" [likeList] = "likeList" [nodeStatus]="nodeStatus"  (fromChild)="showMenuMore($event)"></app-likes>
    
     <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event)">
       <ion-infinite-scroll-content

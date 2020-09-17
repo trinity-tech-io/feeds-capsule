@@ -1,15 +1,15 @@
-import { Component, OnInit, NgZone ,ViewChild} from '@angular/core';
+import { Component, OnInit, NgZone ,ViewChild,Output,EventEmitter} from '@angular/core';
 import { Events } from '@ionic/angular';
 import { FeedService, Avatar } from 'src/app/services/FeedService';
 import { ThemeService } from 'src/app/services/theme.service';
 import { IonInfiniteScroll} from '@ionic/angular';
+import { MenuService } from 'src/app/services/MenuService';
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.page.html',
   styleUrls: ['./profile.page.scss'],
 })
 export class ProfilePage implements OnInit {
-
   @ViewChild(IonInfiniteScroll,{static:true}) infiniteScroll: IonInfiniteScroll;
 
   public nodeStatus = {}; //friends status; 
@@ -33,12 +33,13 @@ export class ProfilePage implements OnInit {
     speed: 100,
     slidesPerView: 3,
   };
-
+  public curItem:any = {};
   constructor(
     private feedService: FeedService,
     public theme:ThemeService,
     private events: Events,
-    private zone: NgZone
+    private zone: NgZone,
+    public menuService:MenuService
   ) {
   }
 
@@ -78,6 +79,7 @@ export class ProfilePage implements OnInit {
   }
 
   ionViewWillEnter() {
+    this.curItem = {};
     this.changeType(this.selectType);
     this.connectionStatus = this.feedService.getConnectionStatus();
     this.events.subscribe('feeds:connectionChanged',(status)=>{
@@ -137,6 +139,13 @@ export class ProfilePage implements OnInit {
   this.events.subscribe('feeds:deletePostFinish',()=>{
       this.initLike();
   });
+
+  this.events.subscribe("feeds:updateTitle",()=>{
+    if(this.menuService.postDetail!=null){
+      this.menuService.hideActionSheet();
+      this.showMenuMore(this.curItem);
+    }
+  });
   }
 
   ionViewWillLeave(){
@@ -149,6 +158,9 @@ export class ProfilePage implements OnInit {
 
     this.events.unsubscribe("feeds:editPostFinish");
     this.events.unsubscribe("feeds:deletePostFinish");
+
+    this.events.unsubscribe("feeds:updateTitles");
+    this.curItem = {};
   }
 
   changeType(type:string){
@@ -253,6 +265,22 @@ export class ProfilePage implements OnInit {
     }
     
     return 'data:'+this.avatar.contentType+';base64,'+this.avatar.data
+  }
+
+  showMenuMore(item:any){
+    this.curItem = item;
+    switch(item['tabType']){
+      case 'myfeeds':
+        this.menuService.showShareMenu(item.nodeId,item.channelId,item.channelName,item.postId);
+        break;
+      case 'myfollow':
+        this.menuService.showChannelMenu(item.nodeId, item.channelId,item.channelName);
+        break;
+      case 'mylike':
+          this.menuService.showChannelMenu(item.nodeId, item.channelId,item.channelName);
+          break;  
+    }
+   
   }
 
 }
