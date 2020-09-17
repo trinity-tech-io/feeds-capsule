@@ -7,22 +7,13 @@
 
     <ion-item class="removeBorder" lines="none">
       <ion-row class="channel-row ion-activatable ripple">
-        <ion-col size="2.25" class="left-col">
+        <ion-col size="1.5" class="left-col">
           <div class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode">
             <img src={{channelAvatar}}>
-            <div class="offline" [class.online]="nodeStatus[nodeId] == 0"></div>
           </div>
         </ion-col>
-        <ion-col
-          size="9.5"
-          class="middle-col"
-          (press)="pressName(channelName)"
-        >
+        <ion-col size="10.5" class="middle-col">
           <ion-label>{{ channelName }}</ion-label>
-          <ion-row>
-            <img src="./assets/images/bubble2.svg"> <br>
-            <p><span>{{ subscribers }}</span> {{ 'common.followers' | translate }}</p>
-          </ion-row>
         </ion-col>
       </ion-row>
     </ion-item>
@@ -30,15 +21,17 @@
     <ion-textarea  autoGrow="true" clearOnEdit="true" autofocus="true" placeholder="{{'CreatenewpostPage.des'|translate}}" [(ngModel)]="newPost">
     </ion-textarea>
 
-    <img *ngIf="imgUrl != ''" class="post-img" src="{{imgUrl}}" (click)="showBigImage(imgUrl)" />
-
+    <div *ngIf="imgUrl !== ''" class="img-container">
+      <img src="{{imgUrl}}" (click)="showBigImage(imgUrl)" />
+      <img class="remove" src="/assets/icons/remove.svg" (click)="imgUrl = ''"/>
+    </div>
+  
     <ion-row class="submit-row">
-      <ion-col offset="3" size="4.5">
-        <ion-button (click)="addImg()">
-          <ion-icon mode="ios" name="image"></ion-icon>
-        </ion-button>
+      <ion-col class="left-col">
+        <ion-icon id="image" mode="ios" name="image" (click)="addImg(0)"></ion-icon>
+        <ion-icon id="camera" mode="ios" name="camera" (click)="addImg(1)"></ion-icon>
       </ion-col>
-      <ion-col size="4.5">
+      <ion-col class="right-col" size="4.5">
         <ion-button (click)="post()">
           <ion-label>{{ 'CreatenewpostPage.post' | translate }}</ion-label>
         </ion-button>

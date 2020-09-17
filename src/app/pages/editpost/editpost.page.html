@@ -1,4 +1,47 @@
 <ion-header *ngIf="connectionStatus == 1">
+  <div class="offline-header"></div>
+</ion-header>
+  
+<ion-content>
+  <ion-list class="channel-list" [class.darkChannelList]="theme.darkMode">
+
+    <ion-item class="removeBorder" lines="none">
+      <ion-row class="channel-row ion-activatable ripple">
+        <ion-col size="1.5" class="left-col">
+          <div class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode">
+            <img src={{channelAvatar}}>
+          </div>
+        </ion-col>
+        <ion-col size="10.5" class="middle-col">
+          <ion-label>{{ channelName }}</ion-label>
+        </ion-col>
+      </ion-row>
+    </ion-item>
+
+    <ion-textarea  autoGrow="true" clearOnEdit="true" autofocus="true" placeholder="{{'CreatenewpostPage.des'|translate}}" [(ngModel)]="newPost">
+    </ion-textarea>
+
+    <div *ngIf="imgUrl !== ''" class="img-container">
+      <img src="{{imgUrl}}" (click)="showBigImage(imgUrl)" />
+      <img class="remove" src="/assets/icons/remove.svg" (click)="imgUrl = ''"/>
+    </div>
+  
+    <ion-row class="submit-row">
+      <ion-col class="left-col">
+        <ion-icon id="image" mode="ios" name="image" (click)="addImg(0)"></ion-icon>
+        <ion-icon id="camera" mode="ios" name="camera" (click)="addImg(1)"></ion-icon>
+      </ion-col>
+      <ion-col class="right-col" size="4.5">
+        <ion-button (click)="post()">
+          <ion-label>{{ 'CreatenewpostPage.post' | translate }}</ion-label>
+        </ion-button>
+      </ion-col>
+    </ion-row>
+  
+  </ion-list>
+</ion-content>
+
+<!-- <ion-header *ngIf="connectionStatus == 1">
     <div class="offline-header"></div>
 </ion-header>
 <ion-content [class.darkContainer]="theme.darkMode">
@@ -42,3 +85,4 @@
    <ion-button expand="block" mode="ios" color="primary"  (click)="post()" style="width: 120px;float:right;">{{'EditpostPage.savechanges'|translate}}</ion-button>
  </div>
  </ion-content>
+ -->
