@@ -70,6 +70,7 @@ export const zh = {
         "donation":"捐赠",
         "signout":"登出",
         "des":"登出成功",
+        "des1":"确认要登出吗？"
     },
     "SigninPage":{
         "signIn":"登录微频",

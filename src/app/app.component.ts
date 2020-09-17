@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component} from '@angular/core';
 import { Platform, ModalController, Events} from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
@@ -9,6 +9,7 @@ import { NativeService} from 'src/app/services/NativeService';
 import { SplashscreenPage } from './pages/splashscreen/splashscreen.page';
 import { UtilService } from 'src/app/services/utilService';
 import { StorageService } from './services/StorageService';
+import { PopupProvider } from 'src/app/services/popup';
 declare let appManager: AppManagerPlugin.AppManager;
 @Component({
   selector: 'my-app',
@@ -17,12 +18,12 @@ declare let appManager: AppManagerPlugin.AppManager;
 })
 
 export class MyApp {
-
   public didString = null;
   public name: string = "";
   public avatar: Avatar = null;
   public wName: string = "";
-
+  public popover:any = null;
+  public sService:any =null;
   constructor(
     private modalCtrl: ModalController,
     private events: Events,
@@ -33,8 +34,10 @@ export class MyApp {
     private appService: AppService,
     public theme:ThemeService,
     public native:NativeService,
-    public storageService:StorageService
+    public storageService:StorageService,
+    public popupProvider:PopupProvider
   ) {
+      this.sService =storageService;
       this.initializeApp();
       this.initProfileData();
       this.events.subscribe("feeds:signinSuccess",()=>{
@@ -106,7 +109,22 @@ export class MyApp {
     this.native.navigateForward('/menu/donation',"");
   }
 
-  signout(){
+  cancel(that:any){
+    if(this.popover!=null){
+       this.popover.dismiss();
+    }
+  }
+
+  confirm(that:any){
+    if(this.popover!=null){
+       this.popover.dismiss();
+    }
+    
+    that.clearData();
+  
+  }
+
+  clearData(){
     this.storageService.remove("signInData").then(()=>{
       this.storageService.remove("accessTokenMap").then(()=>{
         this.feedService.resetConnectionStatus();
@@ -119,6 +137,10 @@ export class MyApp {
     }).catch((err)=>{
        
     })
+  }
+
+  signout(){
+    this.popover = this.popupProvider.ionicConfirm(this,"","app.des1",this.cancel,this.confirm,'tskth.svg');
   }
 
   initProfileData(){
