@@ -115,28 +115,29 @@ export class ServersPage implements OnInit {
     }
 
     ionViewWillEnter(){
+        this.initTitle();
+        this.native.setTitleBarBackKeyShown(true);
+    
         this.connectionStatus = this.feedService.getConnectionStatus();
         this.initData();
         this.events.subscribe("feeds:updateTitle",()=>{
-          this.initTitle();
+            this.initTitle();
         });
-        this.addSubscribe();
-      }
 
-      ionViewDidEnter() {
-        this.initTitle();
-        this.native.setTitleBarBackKeyShown(true);
-      }
+    this.addSubscribe();
+    }
+
+    ionViewDidEnter() {
+    }
     
-      ionViewWillLeave(){
+    ionViewWillLeave(){
         this.removeSubscribe();
         this.events.unsubscribe("feeds:updateTitle");
-      }
-    
-    
-      initTitle(){
-        titleBarManager.setTitle(this.translate.instant('ServersPage.feedSources'));
-      }
+    }
+
+    initTitle(){
+    titleBarManager.setTitle(this.translate.instant('ServersPage.feedSources'));
+    }
 
     navToServerInfo(nodeId: string, isOwner: boolean) {
         this.native.navigateForward(['/menu/servers/server-info',nodeId, isOwner],"");

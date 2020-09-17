@@ -24,12 +24,15 @@ export class AboutPage implements OnInit {
     private events: Events,
     private feedService: FeedService,
     public theme: ThemeService
-    ) {}
+  ) {}
 
     ngOnInit() {
     }
 
     ionViewWillEnter() {
+      this.initTitle();
+      this.native.setTitleBarBackKeyShown(true);
+
       this.connectionStatus = this.feedService.getConnectionStatus();
       this.events.subscribe('feeds:connectionChanged',(status)=>{
         this.zone.run(() => {
@@ -40,12 +43,9 @@ export class AboutPage implements OnInit {
       this.events.subscribe("feeds:updateTitle",()=>{
         this.initTitle();
       });
-    
     }
 
     ionViewDidEnter(){
-      this.initTitle();
-      this.native.setTitleBarBackKeyShown(true);
     }
   
     initTitle(){

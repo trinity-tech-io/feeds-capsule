@@ -158,7 +158,7 @@
     }
 }
 
-.comment-grid {
+.post-grid {
     padding: 10px 20px 10px 0;
     
     .post-row {
@@ -169,6 +169,14 @@
                 border-radius: 50%;
                 border: 1.25px solid #368bff;
                 object-fit: cover;
+            }
+        }
+
+        .content-col {
+            .bottom-row {
+                ion-col {
+                    padding-left: 0;
+                }
             }
         }
     }

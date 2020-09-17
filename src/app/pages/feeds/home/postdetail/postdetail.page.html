@@ -15,6 +15,7 @@
     </ion-refresher-content>
   </ion-refresher>
 
+  <!----------------- POST ----------------->
   <div class="container">
     <ion-grid class="postDetail-grid" [class.dark-postDetail-grid]="theme.darkMode">
       <ion-row class="top-row">
@@ -47,7 +48,7 @@
             *ngIf="getImage() !== 'none'"
             [src]="getImage()"
             class="post-img"
-            (click)="showBigImage()"
+            (click)="showBigImage(images[nodeId+channelId+postId])"
           > 
         </ion-col>
       </ion-row>
@@ -65,7 +66,8 @@
       </ion-row>
     </ion-grid>
 
-    <ion-grid *ngFor="let comment of commentList let i=index" class="post-grid comment-grid" [class.darkPostGrid]="theme.darkMode">
+    <!----------------- COMMENTS ----------------->
+    <ion-grid *ngFor="let comment of commentList let i=index" class="post-grid" [class.darkPostGrid]="theme.darkMode">
       <ion-row class="post-row">
         <ion-col class="img-col" size="2.5">
           <img class="comment-avatar" [src]="avatar ? avatar : './assets/images/default-contact.svg'">
@@ -78,10 +80,13 @@
                 <span>- {{ handleDisplayTime(comment.created_at) }}</span>
               </ion-label>
             </ion-col>
+            <img 
+              *ngIf="comment.status != 1 && checkCommentIsMine(comment)" 
+              [src]="!theme.darkMode ? './assets/images/dots-three-vertical.svg' : './assets/images/dots-three-vertical-dark.svg'"
+              (click)="openEditTool($event,comment)"
+            >
           </ion-row>
-          <h2>
-            <pre>{{ comment.content }}</pre>
-          </h2>
+          <h2><pre>{{ comment.content }}</pre></h2>
           <ion-row class="bottom-row">
             <ion-col size="2.25" (click)="likeComment(comment.id)">
               <img [src]="checkLikedComment(comment.id) ? '/assets/images/like-s.svg' : '/assets/images/like.svg'">
