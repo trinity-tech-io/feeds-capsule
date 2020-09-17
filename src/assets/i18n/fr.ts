@@ -64,7 +64,8 @@ export const fr = {
         "sharepost":"Share Post",
         "error400":"required parameter absence",
         "error500":"Server error",
-        "confirmdeletion":"Confirm deletion?"
+        "confirmdeletion":"Confirm deletion?",
+        "waitOnChain": "Not resolve DIDDocument on side Chain, If DID has publish, please wait for 5-10 minutes"
     },
     "app":{
         "profileDetails":"Profile Details",

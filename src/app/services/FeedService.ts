@@ -4304,12 +4304,23 @@ export class FeedService {
   }
 
   checkDIDDocument(did: string){
-    didManager.resolveDidDocument(did, false,(didDocument)=>{
-      if (didDocument == null){
+    this.checkDIDOnSideChain(did, (isOnSideChain)=>{
+      if (!isOnSideChain)
         this.promptpublishdid();
-      }
     },(err)=>{
       this.native.toastdanger('common.resolveDidDocumentError');
+    })
+  }
+
+  checkDIDOnSideChain(did: string, onSuccess: (isOnSideChain: boolean)=>void, onError?: (err: any)=>void){
+    didManager.resolveDidDocument(did, false,(didDocument)=>{
+      if (didDocument == null){
+        onSuccess(false);
+      }else{
+        onSuccess(true);
+      }
+    },(err)=>{
+      onError(err);
     });
   }
 

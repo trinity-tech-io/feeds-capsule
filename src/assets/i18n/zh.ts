@@ -64,7 +64,8 @@ export const zh = {
         "sharepost":"分享微说",
         "error400":"参数错误",
         "error500":"服务器错误",
-        "confirmdeletion":"确认删除?"
+        "confirmdeletion":"确认删除?",
+        "waitOnChain": "没有在链上检测到DID文档，如果DID已经发布，请等待5-10分钟"
     },
     "app":{
         "profileDetails":"档案详情",

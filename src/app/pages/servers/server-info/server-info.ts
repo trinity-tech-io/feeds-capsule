@@ -43,10 +43,12 @@ export class ServerInfoPage implements OnInit {
   public owner: string = "";
   public introduction: string = null;
   public feedsUrl: string = null;
+
   public elaAddress: string = "";
 
   public isPublic:string ="";
   public serverDetails: any[] = [];
+  public isShowQrcode: boolean = true;
 
   constructor(
     private actionSheetController:ActionSheetController,
@@ -90,7 +92,19 @@ export class ServerInfoPage implements OnInit {
       ) {
         server = this.feedService.getServerbyNodeId(this.nodeId);
         this.isBindServer = true;
-      } else {
+
+        this.isShowQrcode = false;
+        this.feedService.checkDIDOnSideChain(server.did,(isOnSideChain)=>{
+          this.zone.run(() => {
+            this.isShowQrcode = isOnSideChain;
+            if (!isOnSideChain){
+              this.native.toastWarn('common.waitOnChain');
+            }
+          });
+        });
+
+        
+      }else{
         server = this.feedService.getServerbyNodeId(this.nodeId);
         this.isBindServer = false;
       }
