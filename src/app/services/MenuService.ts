@@ -7,7 +7,7 @@ import { NativeService } from './NativeService';
 
 @Injectable()
 export class MenuService {
-    public postDetail:any;
+    public postDetail:any = null;
     constructor(
         private feedService: FeedService,
         private actionSheetController: ActionSheetController,

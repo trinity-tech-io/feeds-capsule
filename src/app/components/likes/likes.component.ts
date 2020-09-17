@@ -1,10 +1,9 @@
-import { Component, OnInit,Input} from '@angular/core';
+import { Component, OnInit ,Input,Output,EventEmitter} from '@angular/core';
 import { IonTabs} from '@ionic/angular';
 import { FeedService } from 'src/app/services/FeedService';
 import { ThemeService } from 'src/app/services/theme.service';
 import { UtilService } from 'src/app/services/utilService';
 import { NativeService } from 'src/app/services/NativeService';
-import { MenuService } from 'src/app/services/MenuService';
 import { TranslateService } from "@ngx-translate/core";
 import { FeedsPage } from 'src/app/pages/feeds/feeds.page'
 
@@ -19,14 +18,14 @@ export class LikesComponent implements OnInit {
   private images = {};
   @Input() likeList:any =[];
   @Input() nodeStatus:any = {};
+  @Output() fromChild=new EventEmitter();
   constructor(
     private feedspage: FeedsPage,
     private tabs: IonTabs,
     private feedService :FeedService,
     public theme:ThemeService,
     private translate:TranslateService,
-    private native:NativeService,
-    private menuService: MenuService) {
+    private native:NativeService) {
      
   }
 
@@ -137,7 +136,7 @@ export class LikesComponent implements OnInit {
 
   menuMore(nodeId: string , channelId: number){
     let channelName = this.getChannel(nodeId, channelId).name;
-    this.menuService.showChannelMenu(nodeId, channelId, channelName);
+    this.fromChild.emit({"nodeId":nodeId,"channelId":channelId,"channelName":channelName,"postId":0,"tabType":"mylike"});
   }
 
   getImage(nodeId: string, channelId: number, postId: number){

@@ -1,9 +1,7 @@
-import { Component, OnInit ,Input} from '@angular/core';
+import { Component, OnInit ,Input,Output,EventEmitter} from '@angular/core';
 import { FeedService } from 'src/app/services/FeedService';
 import { NativeService } from 'src/app/services/NativeService';
 import { ThemeService } from 'src/app/services/theme.service';
-import { MenuService } from 'src/app/services/MenuService';
-import { TranslateService } from "@ngx-translate/core";
 import { UtilService } from 'src/app/services/utilService';
 
 @Component({
@@ -12,14 +10,13 @@ import { UtilService } from 'src/app/services/utilService';
   styleUrls: ['./myfeeds.component.scss'],
 })
 export class MyfeedsComponent implements OnInit {
+  @Output() fromChild=new EventEmitter();
   @Input() channels:any = [];
   @Input() nodeStatus:any = {};
   constructor(
     private feedService: FeedService,
     public theme:ThemeService,
-    private native:NativeService,
-    private menuService: MenuService,
-    private translate:TranslateService) {
+    private native:NativeService) {
     
   }
 
@@ -63,7 +60,7 @@ export class MyfeedsComponent implements OnInit {
   }
 
   menuMore(nodeId: string , channelId: number, channelName: string){
-    this.menuService.showShareMenu(nodeId, channelId, channelName,0);
+    this.fromChild.emit({"nodeId":nodeId,"channelId":channelId,"channelName":channelName,"postId":0,"tabType":"myfeeds"});
   }
 
   handleClientNumber(nodeId){

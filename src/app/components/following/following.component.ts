@@ -1,11 +1,11 @@
-import { Component, OnInit,Input} from '@angular/core';
+import { Component, OnInit ,Input,Output,EventEmitter} from '@angular/core';
 import { FeedService } from '../../services/FeedService'
 import { IonTabs } from '@ionic/angular';
 import { FeedsPage } from 'src/app/pages/feeds/feeds.page'
 import { ThemeService } from 'src/app/services/theme.service';
 import { NativeService } from 'src/app/services/NativeService';
 import { UtilService } from 'src/app/services/utilService';
-import { MenuService } from 'src/app/services/MenuService';
+
 
 @Component({
   selector: 'app-following',
@@ -13,6 +13,7 @@ import { MenuService } from 'src/app/services/MenuService';
   styleUrls: ['./following.component.scss'],
 })
 export class FollowingComponent implements OnInit {
+  @Output() fromChild=new EventEmitter();
   @Input() followingList:any =[];
   @Input() nodeStatus:any = {};
   constructor(
@@ -20,8 +21,7 @@ export class FollowingComponent implements OnInit {
     private tabs: IonTabs,
     private feedService:FeedService,
     public theme:ThemeService,
-    private native:NativeService,
-    private menuService: MenuService) { 
+    private native:NativeService) { 
 
   }
 
@@ -59,7 +59,7 @@ export class FollowingComponent implements OnInit {
   }
 
   menuMore(nodeId: string , channelId: number, channelName: string){
-    this.menuService.showChannelMenu(nodeId, channelId, channelName);
+    this.fromChild.emit({"nodeId":nodeId,"channelId":channelId,"channelName":channelName,"postId":0,"tabType":"myfollow"});
   }
 
   pressName(channelName:string){
