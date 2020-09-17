@@ -20,7 +20,7 @@ export class DiscoverfeedsPage implements OnInit {
   public feedList = [];
   public connectionStatus = 1;
   public pageNum:number = 1;
-  public pageSize:number = 3;
+  public pageSize:number = 10;
   public myFeedSource:any = {};
   public serverStatisticsMap: any ={};
   public curServer:any ={};
