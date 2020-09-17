@@ -1,4 +1,121 @@
-.dTitle{
+.container {
+    background: #ffffff;
+    border: 1.2px solid #368bff;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 25px 5px;
+  
+    ion-img {
+        width: 67.2px;
+        height: 67.2px;
+        object-fit: contain;
+    }
+  
+    h2, h3, h4, ion-input {
+        color: #161740;
+        margin: 0;
+        padding: 0 15px;
+        font-size: 13px;
+        width: 100%;
+    }
+  
+    h4, ion-input {
+        padding-top: 5px;
+        padding-bottom: 20px;
+        --padding-top: 5px;
+        --padding-bottom: 20px;
+        --padding-start: 15px;
+        font-weight: 400;
+    }
+
+    h2 {
+        padding-bottom: 20px;
+        font-size: 20px;
+        font-weight: 700;
+        text-align: center;
+    }
+    
+    h3 {
+        padding-top: 5px;
+        font-weight: 700;
+        text-align: left;
+    }
+
+    ion-input {
+        color: #8888b0;
+    }
+  
+    .btn-row {
+        margin-top: 20px;
+        width: 100%;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+    
+        .btn {
+            height: 41px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 8px;
+    
+            ion-label {
+                font-size: 16px;
+                font-weight: 500;
+            }
+        }
+  
+        .cancel {
+            box-shadow: 0 3px 15px 0 #ededf0;
+            background-color: #ffffff;
+    
+            ion-label {
+                color: #000000;
+            }
+        }
+  
+        .confirm {
+            box-shadow: 0 3px 15px 0 #ededf0;
+            background-color: #368bff;
+    
+            ion-label {
+                color: #ffffff;
+            }
+        }
+    }
+}
+  
+.darkContainer {
+    background: #2b2c49;
+  
+    h2, h3, h4 {
+      color: #ffffff;
+    }
+  
+    ion-input {
+      color: #8888b0;
+    }
+  
+    .btn-row {
+        .cancel {
+            box-shadow: 0 3px 6px 0 #151626;
+            background-color: #202039;
+    
+            ion-label {
+                color: #ffffff;
+            }
+        }
+  
+        .confirm {
+            box-shadow: 0 3px 15px 0 #151626;
+        }
+    }   
+}
+
+/* .dTitle{
   font-size: 20px;
   font-weight: bold;
   font-stretch: normal;
@@ -63,4 +180,4 @@
         color: #ffffff;
     }
 }
-
+ */

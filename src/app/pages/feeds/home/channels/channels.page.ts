@@ -149,6 +149,10 @@ export class ChannelsPage implements OnInit {
       this.initTitle();
     });
 
+    this.events.subscribe("feeds:editChannel",()=>{
+      this.clickEdit()
+    });
+
     this.events.subscribe('feeds:subscribeFinish', (nodeId, channelId, name)=> {
       this.zone.run(() => {
         this.checkFollowStatus(this.nodeId,this.channelId);
@@ -173,11 +177,13 @@ export class ChannelsPage implements OnInit {
   }
 
   ionViewWillLeave(){
+    titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, null);
+
     this.events.unsubscribe("feeds:connectionChanged");
     this.events.unsubscribe("feeds:updateTitle");
+    this.events.unsubscribe("feeds:editChannel");
     this.events.unsubscribe("feeds:subscribeFinish");
     this.events.unsubscribe("feeds:unsubscribeFinish");
-
     this.events.unsubscribe("feeds:editPostFinish");
     this.events.unsubscribe("feeds:deletePostFinish");
     this.curPost={};
@@ -190,6 +196,16 @@ export class ChannelsPage implements OnInit {
 
   initTitle(){
     titleBarManager.setTitle(this.translate.instant("ChannelsPage.feeds"));
+
+    if (this.feedService.checkChannelIsMine(this.nodeId, this.channelId)) {
+      console.log('Channel is mine!');
+      titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, {
+        key: "editChannel",
+        iconPath: TitleBarPlugin.BuiltInIcon.EDIT
+      });
+    } else {
+      titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, null);
+    }
   }
 
   like(nodeId:string, channelId:number, postId:number){
@@ -294,16 +310,15 @@ export class ChannelsPage implements OnInit {
     return  obj.content;
   }
 
-    menuMore(post:any){
-      this.curPost = post;
-      let isMine = this.checkChannelIsMine();
-      if(isMine === 0 && post.post_status != 1){
-        this.menuService.showPostDetailMenu(post.nodeId, Number(post.channel_id), this.channelName,post.id);
-      }else{
-        this.menuService.showShareMenu(post.nodeId, Number(post.channel_id), this.channelName,post.id);
-      }
+  menuMore(post:any){
+    this.curPost = post;
+    let isMine = this.checkChannelIsMine();
+    if(isMine === 0 && post.post_status != 1){
+      this.menuService.showPostDetailMenu(post.nodeId, Number(post.channel_id), this.channelName,post.id);
+    }else{
+      this.menuService.showShareMenu(post.nodeId, Number(post.channel_id), this.channelName,post.id);
     }
-  
+  }
 
   checkServerStatus(nodeId: string){
     return this.feedService.getServerStatusFromId(nodeId);
@@ -318,12 +333,12 @@ export class ChannelsPage implements OnInit {
     this.isShowPrompt = true;
     this.popover = await this.popoverController.create({
       mode: 'ios',
-      cssClass: 'genericPopup',
+      cssClass: 'PaypromptComponent',
       component: PaypromptComponent,
       componentProps: {
         "title": this.translate.instant("ChannelsPage.tip"),
-        "elaAddress":elaAddress,
-        "defalutMemo":""
+        "elaAddress": elaAddress,
+        "defalutMemo": ""
       }
     });
     this.popover.onWillDismiss().then(() => {

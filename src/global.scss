@@ -57,10 +57,41 @@
   src: url('assets/fonts/montserrat/Montserrat-Black.ttf');
 }
 
+@font-face {
+  font-family: 'SourceSansPro';
+  font-weight: 400;
+  font-style: normal;
+  src: url('assets/fonts/sourcesanspro/SourceSansPro-Light.ttf');
+}
+@font-face {
+  font-family: 'SourceSansPro';
+  font-weight: 500;
+  font-style: normal;
+  src: url('assets/fonts/sourcesanspro/SourceSansPro-Regular.ttf');
+}
+@font-face {
+  font-family: 'SourceSansPro';
+  font-weight: 600;
+  font-style: normal;
+  src: url('assets/fonts/sourcesanspro/SourceSansPro-SemiBold.ttf');
+}
+@font-face {
+  font-family: 'SourceSansPro';
+  font-weight: 700;
+  font-style: normal;
+  src: url('assets/fonts/sourcesanspro/SourceSansPro-Bold.ttf');
+}
+
+@font-face {
+  font-family: 'SourceSansPro';
+  font-weight: 900;
+  font-style: normal;
+  src: url('assets/fonts/sourcesanspro/SourceSansPro-Black.ttf');
+}
+
 * {
   font-family: 'Montserrat' !important;
 }
-
 
 :root {
   ion-tab-button.tab-selected {
@@ -100,151 +131,89 @@ ion-input {
   }
 }
 
-ion-header {
+/** Ripple for clickable items **/
+.ripple {
+  position: relative;
+  overflow: hidden;
+}
 
-  ion-toolbar {
-    margin-top: 20px;
+/** Page filter when popup is showing **/
+.blur {
+  filter: blur(2.5px);
+  --ion-backdrop-color:#000000;
+}
 
-    .header-btns {
-      font-size: 25px;
-    }
+/** ion-slides pagination **/
+.swiper-pagination {
+  position: fixed;
+  bottom: 25px;
+  color: #ffffff;
+}
 
-    ion-title {
-      font-size: 23px;
-      font-weight: bold;
-    }
-  }
+/** Swipe notification **/
+.notification-swipe {
+  --background: transparent;
+  width: 100%;
+}
 
-  ion-segment {
-    margin-top: 10px;
-    color: #959595;
-    border: 0px;
-    border-radius: 0px;
+/****************** Postfrom Component ******************/
+.PostfromComponent {
+  --background: #ffffff;
+  --box-shadow: 0px 25px 35px 0  #5c5e7c;
 
-    .segment-button-checked{
-      background: #FFF;
-      color: #007AFF !important;
-      border-bottom: 1px solid #007AFF;
-    }
-
-    ion-segment-button {
-
-      ion-label {
-        margin: 0;
-        color: #959595;
-      }
+  .popover-wrapper{
+    .popover-content {
+      width: 85vw !important;
+      position: fixed;
+      bottom: 9%; // this is based on ion-tab-bar height which is 9%
+      overflow: visible;
+      border-radius: 25px;
     }
   }
 }
 
-ion-list {
-  background: #FAFAFA;
-  min-height: 100%;
-  padding: 0;
+.dark-PostfromComponent {
+  --background: #2e2f4e;
+  --box-shadow: 0px 25px 35px 0 #11132b;
 
-  .search-container {
-    position: sticky;
-    top: 0px;
-    z-index: 1;
-    display: flex;
-    justify-content: center;
-    background: #FAFAFA;
-    padding: 12px 0 0;
-
-    ion-searchbar {
-      width: 80%;
-      padding: 0;
-      margin: 0;
-    }
-  }
-
-  .section {
-    display: flex;
-    justify-content: center;
-
-    p {
-      width: 85%;
-      margin: 12px 0;
-      font-weight: bold !important;
-      font-size: 18px !important;
-      color: black;
-    }
-  }
-
-  ion-virtual-scroll {
-    display: inline;
-
-    ion-item {
-      --inner-padding-end: 0px;
-      --padding-start: 0px;
-
-      ion-row {
-        padding: 5px 0;
-
-        .img-container {
-          display: flex;
-          justify-content: flex-end;
-
-          ion-thumbnail {
-            border-radius: 15px !important;
-            border: solid 1px black;
-
-            ion-img {
-              border-radius: 15px;
-            }
-          }
-        }
-
-        .node-content {
-          display: flex;
-          align-items: center;
-
-            h2 {
-              font-size: 16px;
-              font-family: 'Raleway:500', sans-serif;
-              font-weight: normal;
-              margin: 0;
-            }
-
-            p {
-              font-size: 10px !important;
-              color: #959595;
-              margin: 0;
-            }
-        }
-
-        .btn-container {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-
-          ion-button {
-            --border-radius: 30px;
-            --box-shadow: none;
-
-            ion-label {
-              font-size: 9px;
-              padding: 0 5px;
-            }
-          }
-        }
-      }
+  .popover-wrapper{
+    .popover-content {
+      width: 85vw !important;
+      position: fixed;
+      bottom: 9%; // this is based on ion-tab-bar height which is 9%
+      overflow: visible;
+      border-radius: 25px;
     }
   }
 }
 
+/****************** donate Component ******************/
+.PaypromptComponent {
+  animation: animate;
+  animation-duration: 300ms;
+  animation-fill-mode: forwards;
 
-.genericPopup {
+  @keyframes animate {
+    0% { bottom: -1000px }
+    100% { bottom: 0px }
+  }
+
+  ion-backdrop {
+    background: transparent !important;
+  }
+
   .popover-wrapper{
     .popover-content {
       position: relative !important;
       margin: 0 auto !important;
       left: auto !important;
       top: auto !important;
-      width:85vw  !important;
+      width: 85vw !important;
     }
   }
 }
+
+/********* OLD *********/
 
 .ion-img-viewer{
    img{

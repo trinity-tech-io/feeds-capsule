@@ -65,17 +65,16 @@ export class DonationPage implements OnInit {
     this.showPayPrompt(this.elaAddress);
   }
 
-
   async showPayPrompt(elaAddress:string) {
     this.isShowPrompt = true;
     this.popover = await this.popoverController.create({
       mode: 'ios',
-      cssClass: 'genericPopup',
+      cssClass: 'PaypromptComponent',
       component: PaypromptComponent,
       componentProps: {
         "title": this.translate.instant("DonationPage.donation"),
-        "elaAddress":elaAddress,
-        "defalutMemo":this.translate.instant("DonationPage.defaultMemo")
+        "elaAddress": elaAddress,
+        "defalutMemo": this.translate.instant("DonationPage.defaultMemo")
       }
     });
     this.popover.onWillDismiss().then(() => {

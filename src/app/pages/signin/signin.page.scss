@@ -1,4 +1,126 @@
-.signbtn {
+.learnmore-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin-top: 15px;
+
+  ion-label {
+    font-size: 16px;
+    font-weight: 500;
+    color: #368bff;
+  }
+}
+
+ion-grid {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.top-110{
+  margin-top: 50px;
+}
+
+.top-25{
+  margin-top:35.6px;
+}
+
+.feeds{
+  padding:0px;
+  margin: 0px;
+  font-size: 40px;
+  font-weight: 900;
+  font-stretch: normal;
+  font-style: normal;
+  text-align:center;
+  color: #000000;
+}
+
+.feedslogo{
+  width: 97.7px;
+  height: 92px;
+  margin: 0 auto;
+  margin-top:67.9px;
+}
+
+.desktop {
+  padding:0px;
+  margin: 0px;
+  margin-top:5px;
+  font-size: 21px;
+  font-weight: 600;
+  font-stretch: normal;
+  font-style: normal;
+  text-align: center;
+  color: #000000;
+}
+
+.onboard-slide {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 30px;
+
+  .onboard-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 60px 15px;
+    border-radius: 17px;
+    background: #ffffff;
+    box-shadow: 0 3px 15px 0 #ededf0;
+    margin: 0;
+    width: 100%;
+
+    img {
+      width: 168.3px;
+      height: 190.1px;
+      object-fit: contain;
+    }
+  
+    ion-card-title {
+      font-size: 21px;
+      font-weight: 700;
+      color: #000000;
+      padding: 60px 0 15px;
+    }
+  
+    ion-card-subtitle {
+      font-size: 14px;
+      font-weight: 500;
+      color: #161740;
+      text-transform: none;
+    }
+  }
+}
+
+
+.darkSlides {
+  .white{
+    color:#ffffff;
+  }
+
+  .onboard-slide {
+    .onboard-card {
+      box-shadow: 0 3px 15px 0 #151626;
+      background-color: #2e2f4e;
+  
+      ion-card-title {
+        color: #ffffff;
+      }
+    
+      ion-card-subtitle {
+        color: #ffffff;
+      }
+    }
+  }
+}
+
+/* .signbtn {
     position: absolute;
     width: 80%;
     height: 45px;
@@ -51,3 +173,4 @@
    color:#ffffff;
   }
 }
+ */

@@ -5,6 +5,115 @@
 <ion-content>
   <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" pullFactor="0.5">
     <ion-refresher-content
+      class="refresh"
+      pullingText="{{'common.pullToRefresh'|translate}}"
+      pullingIcon="arrow-dropdown"
+      refreshingSpinner="crescent"
+      refreshingText="{{'common.Refreshing'|translate}}"
+    >
+    </ion-refresher-content>
+  </ion-refresher>
+
+  <!-------------------- NO FEEDS -------------------->
+  <div *ngIf="serverList.length === 0 && myFeedSource === null" class="empty-container">
+    <img src="./assets/images/empty-feeds-icon.svg">
+    <h1>{{ 'common.allempty'| translate }}</h1>
+    <p>{{ 'SearchPage.emptyDes' | translate }}</p>
+    <ion-row class="btn-row">
+      <ion-button (click)="exploreFeedSource()">
+        <ion-label>
+          {{ "HomePage.exploreFeeds" | translate }}
+        </ion-label>
+      </ion-button>
+    </ion-row>
+    <ion-row class="btn-row btn-row2">
+      <ion-button (click)="bindFeedSource()">
+        <ion-label>
+          {{ 'ServersPage.bindFeedSource' | translate }}
+        </ion-label>
+      </ion-button>
+    </ion-row>
+  </div>
+  
+  <!-------------------- HAS FEEDS -------------------->
+  <ion-grid class="feedSource-container" [class.darkContainer]="theme.darkMode">
+    <!-------------------- SERVER FEEDS -------------------->
+    <div class="source" *ngIf="serverList.length > 0">
+      <ion-row class="feedSource-header">
+        <img [src]="!theme.darkMode ? 'assets/images/play.svg' : 'assets/images/play-dark.svg'" [class.rotate]="showServers" (click)="showServers = !showServers">
+        <ion-label>{{ 'ServersPage.currentFeedSources' | translate }}</ion-label>
+      </ion-row>
+      <div *ngIf="showServers">
+        <ion-row
+          class="item-row ripple ion-activatable"
+          *ngFor="let server of serverList"
+          (click)="navToServerInfo(server.nodeId, false)"
+        >
+          <ion-col size="2.75" class="left-col">
+            <div class="feedAvatar">
+              <img src="assets/images/profile-2.svg">
+              <div class="offline" [class.online]="checkServerStatus(server.nodeId) === 0"></div>
+            </div>
+          </ion-col>
+          <ion-col size="7.5" class="middle-col">
+            <h1>{{ server.name }}</h1>
+            <p>{{ server.owner }}</p>
+            <ion-row class="users-row">
+              <img [src]="checkServerStatus(server.nodeId) === 0 ? 'assets/images/users-online.svg' : 'assets/images/users-offline.svg'">&nbsp;
+              <h2 [class.online]="checkServerStatus(server.nodeId) === 0">{{checkConnectClient(server.nodeId)}} <span>{{'ServersPage.users'| translate}}</span></h2>
+            </ion-row>
+          </ion-col>
+          <ion-col offset="0.5" size="1.25" class="right-col">
+            <img src="assets/images/chevron-thin-right.svg">
+          </ion-col>
+          <ion-ripple-effect></ion-ripple-effect>
+        </ion-row>
+      </div>
+    </div>
+    <!-------------------- MY FEEDS -------------------->
+    <div class="source" *ngIf="myFeedSource !== null">
+      <ion-row class="feedSource-header">
+        <img [src]="!theme.darkMode ? 'assets/images/play.svg' : 'assets/images/play-dark.svg'" [class.rotate]="showMyFeeds" (click)="showMyFeeds = !showMyFeeds">
+        <ion-label>{{ 'ServersPage.myFeedSources' | translate }}</ion-label>
+      </ion-row>
+      <div *ngIf="showMyFeeds">
+        <ion-row class="item-row ripple ion-activatable" (click)="navToServerInfo(myFeedSource.nodeId, true)">
+          <ion-col size="2.75" class="left-col">
+            <div class="feedAvatar">
+              <img src="assets/images/profile-2.svg">
+              <div class="offline" [class.online]="checkServerStatus(myFeedSource.nodeId) === 0"></div>
+            </div>
+          </ion-col>
+          <ion-col size="7.5" class="middle-col">
+            <h1>{{ myFeedSource.name }}</h1>
+            <p>{{ myFeedSource.owner }}</p>
+            <ion-row class="users-row">
+              <img [src]="checkServerStatus(myFeedSource.nodeId) === 0 ? 'assets/images/users-online.svg' : 'assets/images/users-offline.svg'">&nbsp;
+              <h2 [class.online]="checkServerStatus(myFeedSource.nodeId) === 0">{{checkConnectClient(myFeedSource.nodeId)}} <span>{{'ServersPage.users'| translate}}</span></h2>
+            </ion-row>
+          </ion-col>
+          <ion-col offset="0.5" size="1.25" class="right-col">
+            <img src="assets/images/chevron-thin-right.svg">
+          </ion-col>
+          <ion-ripple-effect></ion-ripple-effect>
+        </ion-row>
+      </div>  
+    </div>
+     <!-------------------- LABEL BUTTONS -------------------->
+    <ion-row class="buttons-row">
+      <ion-label (click)="exploreFeedSource()">{{ 'ServersPage.addNewFeedSources' | translate }}</ion-label>
+      <ion-label *ngIf="myFeedSource === null" (click)="bindFeedSource()">{{ 'ServersPage.createNewFeedSource' | translate}}</ion-label>
+    </ion-row>
+  </ion-grid>
+</ion-content>
+
+<!-- <ion-header *ngIf="connectionStatus == 1">
+  <div class="offline-header"></div>
+</ion-header>
+
+<ion-content>
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" pullFactor="0.5">
+    <ion-refresher-content
       pullingIcon="arrow-dropdown"
       pullingText="{{'common.pullToRefresh'|translate}}"
       refreshingSpinner="circles"
@@ -135,3 +244,4 @@
   </div>
 
 </ion-content>
+ -->

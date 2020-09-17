@@ -1,6 +1,6 @@
 import { Component, NgZone,ViewChild} from '@angular/core';
 import { Events } from '@ionic/angular';
-import { FeedService } from 'src/app/services/FeedService';
+import { FeedService, Avatar } from 'src/app/services/FeedService';
 import { ThemeService } from 'src/app/services/theme.service';
 import { UtilService } from 'src/app/services/utilService';
 import { TranslateService } from "@ngx-translate/core";
@@ -13,11 +13,14 @@ import { IonInfiniteScroll,IonContent} from '@ionic/angular';
   styleUrls: ['./notification.page.scss'],
 })
 export class NotificationPage {
+
   @ViewChild(IonContent,{static:true}) content: IonContent;
   @ViewChild(IonInfiniteScroll,{static:true}) infiniteScroll: IonInfiniteScroll;
+
   public connectionStatus = 1;
-  public avatar:string = ""; 
+  public avatar: Avatar; 
   public notificationList = [];
+
   // Optional parameters to pass to the swiper instance. See http://idangero.us/swiper/api/ for valid options.
   slideOpts = {
     initialSlide: 2,

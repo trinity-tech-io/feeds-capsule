@@ -1,6 +1,60 @@
 <ion-header *ngIf="connectionStatus == 1">
   <div class="offline-header"></div>
 </ion-header>
+
+<ion-content>
+  <ion-grid class="container" [class.darkContainer]="theme.darkMode">
+    <div class="server-header">
+      <ion-img class="headerImg" src="./assets/images/profile-2.svg"></ion-img>
+      <h1>{{ name }}</h1>
+      <p *ngIf="introduction && introduction !== name">{{ introduction }}</p>
+      <div class="offline" [class.online]="serverStatus === 0">
+        <span class="circle"></span>
+        <span class="status" *ngIf="serverStatus === 0">{{ 'ServerInfoPage.online' | translate}}</span>
+        <span class="status" *ngIf="serverStatus === 1">{{ 'ServerInfoPage.offline' | translate}}</span>
+        <ion-img [src]="serverStatus === 0 ? 'assets/images/users-online.svg' : 'assets/images/users-offline.svg'" class="usersonline"></ion-img>
+        <span class="clientNumber">{{ clientNumber }}</span>
+        <span class="users">{{'ServerInfoPage.users' | translate}}</span>
+      </div>
+    </div>
+    <div *ngFor="let server of serverDetails">
+      <ion-row *ngIf="server.details" class="detail-row" [class.removeBorder]="serverDetails.indexOf(server) === serverDetails.length - 1">
+        <ion-col size="12" class="left-col">
+            <h1>{{ server.type.toUpperCase() }}</h1>
+            <h2 *ngIf="!server.qrcode">{{ server.details }}</h2>
+            <div *ngIf="server.qrcode" class="qr-container">
+              <div class="qrcode">
+                <qrcode [qrdata]="feedsUrl" [size]="150" [level]="'M'"></qrcode>
+              </div>
+            </div>
+        </ion-col>
+      </ion-row>
+    </div>
+
+    <div style="margin-left: 34px; margin-right: 34px; margin-top: 25px;" *ngIf="address != ''">
+      <ion-button style="margin-top: 25px;" expand="block" mode="ios" (click)="addFeedSource()" [disabled]='buttonDisabled'>
+        <ion-label>{{'ServerInfoPage.addFeedSource' | translate}}</ion-label>
+      </ion-button>
+    </div>
+  
+    <div style="margin-left: 34px; margin-right: 34px; margin-top: 25px;" *ngIf="address == '' && !isBindServer">
+      <ion-button style="margin-top: 25px;" expand="block" mode="ios"  color="danger" (click)="removeFeedSource()">
+        <ion-label>{{'ServerInfoPage.removeFeedSource' | translate}}</ion-label>
+      </ion-button>
+    </div>
+  
+    <div style="margin-left: 34px; margin-right: 34px; margin-top: 25px;" *ngIf="address == '' && isBindServer">
+      <ion-button style="margin-top: 25px;" expand="block" mode="ios"  color="danger" (click)="deleteFeedSource()">
+        <ion-label>{{'ServerInfoPage.deleteFeedSource' | translate}}</ion-label>
+      </ion-button>
+    </div> 
+
+  </ion-grid>
+</ion-content>
+
+<!-- <ion-header *ngIf="connectionStatus == 1">
+  <div class="offline-header"></div>
+</ion-header>
 <ion-content [class.darkContainer]="theme.darkMode" [class.lightContainer]="!theme.darkMode" class="ion-padding">
    <div class="edit" (click)="clickEdit()" *ngIf="address ==='' && checkIsMine() == 0">
        <ion-img src="./assets/images/edit.svg" *ngIf="!theme.darkMode"></ion-img>
@@ -17,7 +71,7 @@
    <div class="three white">
        {{introduction}}
    </div>
-   <!--online-->
+
    <div class="four" *ngIf="serverStatus == 0">
        <span class="online-circle"></span>
        <span class="online">{{'ServerInfoPage.online' | translate}}</span>
@@ -25,7 +79,7 @@
        <span class="clientNumber">{{clientNumber}}</span>
        <span class="users">{{'ServerInfoPage.users' | translate}}</span>
    </div>
-   <!-- offline-->
+
    <div class="four" *ngIf="serverStatus == 1">
     <span class="offline-circle"></span>
     <span class="online offlinecolor">{{'ServerInfoPage.offline' | translate}}</span>
@@ -119,3 +173,4 @@
   </div>
  
 </ion-content>
+ -->

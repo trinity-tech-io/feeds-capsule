@@ -1,4 +1,58 @@
-.profile-image{
+ion-grid {
+    min-height: 100%;
+    padding: 30px 25px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+  
+    ion-row {
+        width: 100%;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+    
+        ion-col {
+            border-radius: 100%;
+            height: 74px;
+            width: 74px;
+            margin-bottom: 25px;
+            background-repeat: no-repeat;
+            background-size: contain;
+            position: relative;
+    
+            .check {
+            position: absolute;
+            z-index: 10;
+            border-radius: 100%;
+            height: 30px;
+            width: 30px;
+            bottom: -4px;
+            right: -4px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #368bff;
+    
+            ion-icon {
+                height: 24px;
+                width: 24px;
+            }
+            }
+        }
+
+        .uploadedAvatar {
+            background-size: cover;
+        }
+    }
+
+    .btn-row {
+        margin-top: 25px;
+        width: 95%;
+    }
+}
+
+/* .profile-image{
     width: 74px; 
     height: 74px;
 }
@@ -22,4 +76,4 @@
 
   .margintop{
       margin-top: 25px;
-  }
+  } */
