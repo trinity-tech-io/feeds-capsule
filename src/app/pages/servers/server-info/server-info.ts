@@ -165,6 +165,8 @@ export class ServerInfoPage implements OnInit {
   }
 
   ionViewDidEnter(){
+    this.initTitle();		
+    this.native.setTitleBarBackKeyShown(true);
   }
 
   ionViewWillLeave(){
