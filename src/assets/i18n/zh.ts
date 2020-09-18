@@ -63,7 +63,8 @@ export const zh = {
         "cdeleted":"(回复已删除)",
         "sharepost":"分享微说",
         "error400":"参数错误",
-        "error500":"服务器错误"
+        "error500":"服务器错误",
+        "confirmdeletion":"确认删除?"
     },
     "app":{
         "profileDetails":"档案详情",

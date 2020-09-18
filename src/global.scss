@@ -280,7 +280,7 @@ pre {
 }
 
 .editPost .action-sheet-group {
-
+   //background:#ff0000 !important;
   .action-sheet-button{
     border-bottom: 1px solid  rgba(34, 34, 34, 0.07);
   }
@@ -299,6 +299,30 @@ pre {
     }
   }
 }
+
+
+.dark .editPost .action-sheet-group {
+  background:#2e2f4e !important;
+ .action-sheet-button{
+   border-bottom: 1px solid  rgba(255,255,255, 0.07);
+ }
+
+ .action-sheet-button-inner{
+   justify-content: left;
+   font-size: 14px;
+   font-weight: 600;
+   color: #fff;
+   vertical-align: middle;
+
+   .action-sheet-icon{
+     margin-top:-4px;
+     margin-left:14px;
+     margin-right:10px;
+     color: #fff;
+   }
+ }
+}
+
 
 .status{
   position:absolute;
