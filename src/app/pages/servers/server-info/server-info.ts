@@ -193,10 +193,14 @@ export class ServerInfoPage implements OnInit {
       type: this.translate.instant('ServerInfoPage.name'),
       details: server.name ||  this.translate.instant('DIDdata.NotprovidedfromDIDDocument')
     });
-    this.serverDetails.push({
-      type: this.translate.instant('ServerInfoPage.owner'),
-      details: server.owner || ""
-    });
+
+    if (this.isOwner == 'true'){
+      this.serverDetails.push({
+        type: this.translate.instant('ServerInfoPage.owner'),
+        details: server.owner || ""
+      });  
+    }
+    
     this.serverDetails.push({
       type: this.translate.instant('ServerInfoPage.introduction'),
       details: server.introduction || ""
