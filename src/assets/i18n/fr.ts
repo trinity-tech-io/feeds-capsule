@@ -63,7 +63,8 @@ export const fr = {
         "cdeleted":"(comment deleted)",
         "sharepost":"Share Post",
         "error400":"required parameter absence",
-        "error500":"Server error"
+        "error500":"Server error",
+        "confirmdeletion":"Confirm deletion?"
     },
     "app":{
         "profileDetails":"Profile Details",

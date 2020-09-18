@@ -3,7 +3,7 @@ import { PopoverController,NavParams} from '@ionic/angular';
 import { ThemeService } from 'src/app/services/theme.service';
 import { NativeService } from 'src/app/services/NativeService';
 import { FeedService } from 'src/app/services/FeedService';
-
+import { PopupProvider } from 'src/app/services/popup';
 @Component({
   selector: 'app-edittool',
   templateUrl: './edittool.component.html',
@@ -22,6 +22,7 @@ export class EdittoolComponent implements OnInit {
     private popover: PopoverController, 
     private native:NativeService,
     private feedService: FeedService,
+    public  popupProvider:PopupProvider
   ) { }
 
   ngOnInit() {
@@ -47,11 +48,25 @@ export class EdittoolComponent implements OnInit {
 
   remove(){
     this.popover.dismiss();
-    this.native.showLoading("common.waitMoment",50000).then(()=>{
-      this.feedService.deleteComment(this.nodeId,Number(this.channelId),Number(this.postId),Number(this.commentId));
+     this.popupProvider.ionicConfirm(this,"","common.confirmdeletion",this.cancel,this.confirm,'tskth.svg');
+
+  }
+
+  cancel(that:any){
+    if(this.popover!=null){
+        this.popover.dismiss();
+     }
+  }
+
+confirm(that:any){
+   if(this.popover!=null){
+    this.popover.dismiss();
+   }
+    that.native.showLoading("common.waitMoment",50000).then(()=>{
+      that.feedService.deleteComment(that.nodeId,Number(that.channelId),Number(that.postId),Number(that.commentId));
     }).catch(()=>{
 
     })
-  }
+}
 
 }

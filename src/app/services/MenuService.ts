@@ -3,16 +3,22 @@ import { ActionSheetController } from '@ionic/angular';
 import { TranslateService} from '@ngx-translate/core';
 import { FeedService } from './FeedService';
 import { NativeService } from './NativeService';
-
+import { PopupProvider } from 'src/app/services/popup';
 
 @Injectable()
 export class MenuService {
+    public nodeId:string ="";
+    public channelId:number =0;
+    public postId:number =0;
+
     public postDetail:any = null;
+    public popover:any = null;
     constructor(
         private feedService: FeedService,
         private actionSheetController: ActionSheetController,
         private translate: TranslateService,
-        private native: NativeService
+        private native: NativeService,
+        public popupProvider:PopupProvider
     ) {
     }
 
@@ -161,6 +167,9 @@ export class MenuService {
 
 
     async showHomeMenu(nodeId: string, channelId: number, channelName: string,postId:number){
+        this.nodeId =nodeId;
+        this.channelId=channelId;
+        this.postId = postId;
         this.postDetail = await this.actionSheetController.create({
            cssClass: 'editPost',
            
@@ -228,12 +237,25 @@ export class MenuService {
                     this.native.toast("common.comingSoon");
                     break;
                 case "removePost":
-                    this.native.showLoading("common.waitMoment",50000).then(()=>{
-                        this.feedService.deletePost(nodeId, Number(channelId), Number(postId));
-                    }).catch(()=>{
-                        this.native.hideLoading();
-                   });
+                    this.popover = this.popupProvider.ionicConfirm(this,"","common.confirmdeletion",this.cancel,this.confirm,'tskth.svg');
                     break;    
             }
+    }
+
+    cancel(that:any){
+        if(this.popover!=null){
+            this.popover.dismiss();
+         }
+    }
+
+    confirm(that:any){
+        if(this.popover!=null){
+            this.popover.dismiss();
+        }
+        that.native.showLoading("common.waitMoment",50000).then(()=>{
+            that.feedService.deletePost(that.nodeId, Number(that.channelId), Number(that.postId));
+        }).catch(()=>{
+            that.native.hideLoading();
+       });
     }
 }
