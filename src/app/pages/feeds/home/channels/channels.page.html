@@ -102,7 +102,7 @@
     <div *ngFor="let post of postList let i=index" style="margin-top: 25px;">
       <div class="image-text-layout-div" >
         <ion-card-content class="ion-no-padding ion-no-margin">
-          <div class="menu-div"  (click)="menuMore(post)">
+          <div class="menu-div"  (click)="menuMore(post)"  *ngIf="post.post_status != 1">
             <img  src="./assets/images/dots-three-vertical.svg" *ngIf="!theme.darkMode" style="width:12.4;height:3px">
             <img  src="./assets/images/dots-three-vertical-dark.svg" *ngIf="theme.darkMode" style="width:12.4;height:3px">
           </div>

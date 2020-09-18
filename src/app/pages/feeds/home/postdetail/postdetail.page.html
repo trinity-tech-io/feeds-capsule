@@ -14,7 +14,7 @@
 
     <div class="image-text-layout-div" >
       <ion-card-content class="ion-no-padding ion-no-margin">
-          <div class="menu-div"  (click)="menuMore()">
+          <div class="menu-div"  (click)="menuMore()"  *ngIf="postStatus!=1">
             <img  src="./assets/images/dots-three-vertical.svg" *ngIf="!theme.darkMode" style="width:12.4;height:3px">
             <img  src="./assets/images/dots-three-vertical-dark.svg" *ngIf="theme.darkMode" style="width:12.4;height:3px">
           </div>
