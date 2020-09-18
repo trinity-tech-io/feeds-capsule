@@ -1,4 +1,4 @@
-<div *ngIf="channels.length === 0" class="empty-container">
+<!-- <div *ngIf="channels.length === 0" class="empty-container">
   <img src="./assets/images/empty-feeds-icon.svg">
   <h1>{{ 'common.allempty' | translate }}</h1>
   <p>{{'MyfeedsComponent.emptyDes' | translate }}</p>
@@ -44,6 +44,7 @@
       </ion-col>
       <ion-col size="1.5" class="right-col" (click)="menuMore(channel.nodeId, channel.id, channel.name)">
         <img [src]="!theme.darkMode ? './assets/images/dots-three-vertical.svg' : './assets/images/dots-three-vertical-dark.svg'">
+        <ion-ripple-effect></ion-ripple-effect>
       </ion-col>
       <ion-ripple-effect></ion-ripple-effect>
     </ion-row>
@@ -52,9 +53,9 @@
   <div class="new-feed-div">
     <div class="new-feed" (click)="createNewFeed()">{{ 'MyfeedsComponent.createNewFeed'|translate }}</div>
   </div>
-</ion-list>
+</ion-list> -->
 
-<!-- <div *ngIf="channels.length === 0" class="empty-container">
+<div *ngIf="channels.length === 0" class="empty-container">
   <img src="./assets/images/empty-feeds-icon.svg">
   <h1>{{ 'common.allempty' | translate }}</h1>
   <p>{{'MyfeedsComponent.emptyDes' | translate }}</p>
@@ -103,4 +104,3 @@
 <div class="new-feed-div" *ngIf="channels.length > 0">
     <div class="new-feed" (click)="createNewFeed()">{{'MyfeedsComponent.createNewFeed'|translate}}</div>
 </div>
- -->

@@ -57,13 +57,14 @@ export class DiscoverfeedsPage implements OnInit {
     });
 
     this.serverList = this.feedService.getServerList();
+    this.pageNum =1;
     this.initData("",false);
 
-    this.httpService.ajaxGet(ApiUrl.listPage+"?pageNum="+this.pageNum+"&pageSize="+this.pageSize).then((result)=>{
-      if(result["code"] === 200){
-        this.feedList = result["data"]["result"] || [];
-     }
-    });
+    // this.httpService.ajaxGet(ApiUrl.listPage+"?pageNum="+this.pageNum+"&pageSize="+this.pageSize).then((result)=>{
+    //   if(result["code"] === 200){
+    //     this.feedList = result["data"]["result"] || [];
+    //  }
+    // });
   }
 
   ionViewDidEnter(){
