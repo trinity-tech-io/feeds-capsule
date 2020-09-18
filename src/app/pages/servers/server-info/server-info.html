@@ -4,7 +4,10 @@
 
 <ion-content>
   <ion-grid class="container" [class.darkContainer]="theme.darkMode">
-
+    <div class="edit" (click)="clickEdit()" *ngIf="address ==='' && checkIsMine() == 0">
+      <ion-img src="./assets/images/edit.svg" *ngIf="!theme.darkMode"></ion-img>
+      <ion-img src="./assets/images/edit-dark.svg" *ngIf="theme.darkMode"></ion-img>
+    </div>
     <!--- SERVER HEADER --->
     <div class="server-header">
       <ion-img class="headerImg" src="./assets/images/profile-2.svg"></ion-img>
@@ -38,6 +41,13 @@
     <div style="margin-left: 34px; margin-right: 34px; margin-top: 25px;" *ngIf="address != ''">
       <ion-button style="margin-top: 25px;" expand="block" mode="ios" (click)="addFeedSource()" [disabled]='buttonDisabled'>
         <ion-label>{{'ServerInfoPage.addFeedSource' | translate}}</ion-label>
+      </ion-button>
+    </div>
+
+    <div style="margin-left: 34px; margin-right: 34px; margin-top: 25px;" *ngIf="checkIsMine() == 0 && address == ''">
+      <ion-button style="margin-top: 25px;" expand="block" mode="ios"  (click)="clickPublic()">
+        <ion-label *ngIf="isPublic === ''">{{'ServerInfoPage.public'|translate}}</ion-label>
+        <ion-label *ngIf="isPublic != ''">{{'ServerInfoPage.unpublic'|translate}}</ion-label>
       </ion-button>
     </div>
   
