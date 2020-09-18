@@ -40,6 +40,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      width: 100%;
       padding: 0;
 
       .indicator {
@@ -47,10 +48,10 @@
         border-radius: 100%;
         width: 16px;
         height: 16px;
+        margin-right: 10px;
       }
 
       .status {
-        display:inline-block;
         margin-right: 12.3px;
         margin-left: 4.1px;
         font-size: 11px;
@@ -114,6 +115,15 @@
 
   .removeBorder {
     border-bottom: none;
+  }
+
+  .btn-row {
+    width: 100%;
+    margin-top: 20px;
+
+    ion-button {
+      width: 95%;
+    }
   }
 }
 
