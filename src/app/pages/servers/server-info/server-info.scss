@@ -36,29 +36,17 @@
       overflow: hidden;
     }
 
-    .offline {
+    .status-row {
       display: flex;
       align-items: center;
       justify-content: center;
+      padding: 0;
 
-      ion-img {
-        width: 18.1px;
-        height: 14.7px;
-      }
-
-      .circle {
+      .indicator {
         background-color: #cdcde6;
-        display:inline-block;
-        vertical-align: middle;
+        border-radius: 100%;
         width: 16px;
         height: 16px;
-        -moz-border-radius: 8px;
-        -webkit-border-radius: 8px;
-        border-radius: 8px;
-      }
-
-      .users, .clientNumber {
-        color: #a0a2c4;
       }
 
       .status {
@@ -68,6 +56,16 @@
         font-size: 11px;
         font-weight: 500;
         color: #cdcde6;
+      }
+
+
+      ion-img {
+        width: 18.1px;
+        height: 14.7px;
+      }
+
+      .users, .clientNumber {
+        color: #a0a2c4;
       }
 
       .users {
@@ -86,7 +84,7 @@
     }
 
     .online {
-      .circle {
+      .indicator {
         background-color: #368bff;
       }
 
