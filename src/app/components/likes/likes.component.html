@@ -17,7 +17,9 @@
       <ion-col class="img-col" size="2.5" (click)="navTo(post.nodeId, post.channel_id)">
         <div class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode">
           <img src={{parseAvatar(post.nodeId,post.channel_id)}}>
-          <div class="offline" [class.online]="nodeStatus[post.nodeId] == 0"></div>
+          <div class="feed-source-card-status circlePosition">
+            <div class="offline" [class.online]="nodeStatus[post.nodeId] == 0"></div>
+          </div>
         </div>
       </ion-col>
       <ion-col class="content-col" size="9.5">
