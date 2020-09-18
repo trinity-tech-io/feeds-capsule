@@ -44,25 +44,28 @@
         <ion-col class="content-col" size="9.5">
           <ion-row class="top-row">
             <ion-col class="left-col" size="11" (press)="pressName(post.nodeId, post.channel_id)">
-              <ion-label>
+              <ion-label (click)="navTo(post.nodeId, post.channel_id)">
                 {{ getChannelName(post.nodeId, post.channel_id) }}
-                <span>- {{ handleDisplayTime(post.created_at) }}</span>
+                <span> {{ handleDisplayTime(post.created_at) }}</span>
               </ion-label>
             </ion-col>
-            <img 
+            <img  *ngIf="post.post_status!=1"
               [src]="!theme.darkMode ? './assets/images/dots-three-vertical.svg' : './assets/images/dots-three-vertical-dark.svg'"
               (click)="menuMore(post)"
             >
           </ion-row>
           <p>@{{ getChannelOwnerName(post.nodeId, post.channel_id) }}</p>
-          <h2 (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)">
+          <h2 (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)" *ngIf="post.post_status!=1">
             <pre >{{ getContentText(post.content) }}</pre>
           </h2>
+          <h2 (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)" *ngIf="post.post_status===1">
+            <pre >{{'common.deleted' | translate}}</pre>
+          </h2>
           <img 
-            *ngIf="images[post.nodeId+post.channel_id+post.id] !== 'none'"
+            *ngIf="post.post_status != 1 && images[post.nodeId+post.channel_id+post.id] != 'none'  && images[post.nodeId+post.channel_id+post.id] != undefine && images[post.nodeId+post.channel_id+post.id] != null && images[post.nodeId+post.channel_id+post.id] != 'undefine'"
             [src]="images[post.nodeId+post.channel_id+post.id]" 
             class="post-img"
-            (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)"
+            (click)="!menuService.optionsOn ? navToPostDetail(post.nodeId, post.channel_id, post.id) : menuService.hideOptions()"
           > 
           <ion-row class="bottom-row">
             <ion-col size="2.25" (click)="like(post.nodeId, post.channel_id, post.id)">
@@ -70,10 +73,11 @@
               <ion-label [class.liked]="checkMyLike(post.nodeId, post.channel_id, post.id)">{{ post.likes }}</ion-label>
             </ion-col>
             <ion-col (click)="showCommentPage(post.nodeId, post.channel_id, post.id)">
-<!--               <img [src]="post.comments ? '/assets/images/comment-s.svg' : '/assets/images/bubble-line.svg'">
-              <ion-label [class.commented]="post.comments">{{post.comments}}</ion-label> -->
               <img src="/assets/images/bubble-line.svg">
               <ion-label>{{ post.comments }}</ion-label>
+            </ion-col>
+            <ion-col>
+              <ion-label class="status" *ngIf="post.post_status === 2" style="right: -5px;">{{ 'common.edit' | translate}} </ion-label>
             </ion-col>
           </ion-row>
         </ion-col>
@@ -90,100 +94,29 @@
     </ion-infinite-scroll-content>
   </ion-infinite-scroll>
 
-</ion-content>
-
-<!-- <ion-header *ngIf="connectionStatus == 1">
-  <div class="offline-header"></div>
-</ion-header>
-
-<ion-content ion-padding>
-
-  <div *ngIf="postList.length === 0" class="empty-container">
-    <img src="./assets/images/empty-feeds-icon.svg">
-    <h1>{{ 'HomePage.allempty' | translate }}</h1>
-    <p>{{ "HomePage.emptyDes"| translate }}</p>
-    <ion-row class="btn-row">
-      <ion-button (click)="exploreFeeds()">
-        <ion-label>
-          {{ "HomePage.exploreFeeds" | translate }}
-        </ion-label>
-      </ion-button>
-    </ion-row>
-  </div>
-
-  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" pullFactor="0.5">
-    <ion-refresher-content
-      class="refresh"
-      pullingText="{{'common.pullToRefresh'|translate}}"
-      pullingIcon="arrow-dropdown"
-      refreshingText="">
-    </ion-refresher-content>
-  </ion-refresher>
-
-    <div *ngFor="let post of postList let i=index" [class.darkContainer]="theme.darkMode" class="scroll-container" id="my-scroll-container">
-
-      <div class="image-text-layout-div" >
-        <ion-card-content class="ion-no-padding ion-no-margin">
-          <div class="menu-div" (click)="menuMore(post)" *ngIf="post.post_status!=1">
-              <img  src="./assets/images/dots-three-vertical.svg" *ngIf="!theme.darkMode" style="width:12.4;height:3px">
-              <img  src="./assets/images/dots-three-vertical-dark.svg" *ngIf="theme.darkMode" style="width:12.4;height:3px">
-          </div>
-          <div class="image-text-div" (click)="navTo(post.nodeId, post.channel_id)">
-              <ion-avatar class="avatar-div">
-                <div class="feed-source-card-status circlePosition">
-                  <div class="online-circle"  *ngIf="nodeStatus[post.nodeId] == 0"></div>
-                  <div class="offline-circle" *ngIf="nodeStatus[post.nodeId] == 1"></div>
-                </div>
-                <img  src={{parseAvatar(post.nodeId,post.channel_id)}}>
-              </ion-avatar>
-    
-              <div class="text-div">
-                <div class="text1-div"> 
-                  <ion-label class="channel-title-small white" (press)="pressName(post.nodeId, post.channel_id)">{{getChannelName(post.nodeId, post.channel_id)}}</ion-label>
-                  <ion-label class="channel-ts"> {{handleDisplayTime(post.created_at)}}</ion-label>
-                </div>
-                <div  (click)="navTo(post.nodeId, post.channel_id)"> 
-                  <ion-label class="channel-desc-small" (press)="pressOwnName(post.nodeId, post.channel_id)">@{{getChannelOwnerName(post.nodeId, post.channel_id)}}</ion-label>
-                </div>
-              </div>
-          </div>
-    
-          <div style="margin-left: 81px;margin-top:-12px">
-
-           
-
-            <div class="channel-post-div" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)"  *ngIf="post.post_status === 1"> 
-              <ion-label class="channel-post white"><pre>{{'common.deleted' | translate}}</pre></ion-label>
-            </div>
-
-            <div class="channel-post-div" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)" *ngIf="post.post_status != 1"> 
-              <ion-label class="channel-post white"><pre>{{getContentText(post.content)}}</pre></ion-label>
-            </div>
-            
-            <ion-avatar  *ngIf="post.post_status != 1 && images[post.nodeId+post.channel_id+post.id] != 'none'  && images[post.nodeId+post.channel_id+post.id] != undefine && images[post.nodeId+post.channel_id+post.id] != null && images[post.nodeId+post.channel_id+post.id] != 'undefine'" class="content-img-without-margin" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)">
-              <img [src]="images[post.nodeId+post.channel_id+post.id]" style="margin-top: 2px;"> 
-            </ion-avatar>
-    
-            
-            <div class="channel-post-heart-comment-div">
-              <img class="like" [ngClass]="{'like-s': checkMyLike(post.nodeId, post.channel_id, post.id)}" (click)="like(post.nodeId, post.channel_id, post.id)">
-              <ion-label class="like-text" [ngClass]="{'like-s-text': checkMyLike(post.nodeId, post.channel_id, post.id)}" (click)="like(post.nodeId, post.channel_id, post.id)">{{post.likes}}</ion-label>
-    
-              <img src="./assets/images/bubble-line.svg" class="comment" (click)="showCommentPage(post.nodeId, post.channel_id, post.id)">
-              <ion-label class="comment-text"  (click)="showCommentPage(post.nodeId, post.channel_id, post.id)">{{post.comments}}</ion-label>
-
-              <ion-label class="status" *ngIf="post.post_status === 2" style="right: -5px;">{{ 'common.edit' | translate}} </ion-label>
-            </div>
-          </div>
-        </ion-card-content>
-      </div>
-      <div class="line-div white-line" *ngIf="i!=postList.length-1"></div>
+  <!-- OPTIONS POPUP 
+  <ion-row class="global-options" [class.global-darkOptions]="theme.darkMode" *ngIf="menuService.optionsOn">
+    <div class="close ion-activatable ripple" (click)="menuService.hideOptions()">
+      <img *ngIf="!theme.darkMode" src="/assets/icons/cross.svg">
+      <img *ngIf="theme.darkMode" src="/assets/icons/darkmode/cross.svg">
+      <ion-ripple-effect></ion-ripple-effect>
     </div>
+    <ion-col size="4.5" class="left-col" (click)="menuService.shareChannel()">
+      <div class="option">
+        <ion-icon mode="ios" name="share"></ion-icon>
+        <span>Share</span> 
+      </div>
+    </ion-col>
+    <ion-col size="3" class="middle-col">
+      <div class="divider"></div>
+    </ion-col>
+    <ion-col size="4.5" class="right-col" (click)="menuService.deleteChannel()">
+      <div class="option">
+        <ion-icon mode="ios" name="trash"></ion-icon>
+        <span>Unfollow</span>
+      </div>
+    </ion-col>
+  </ion-row>
 
-    <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event)">
-      <ion-infinite-scroll-content
-        loadingSpinner="bubbles"
-        loadingText="{{'common.loadingText'|translate}}">
-      </ion-infinite-scroll-content>
-    </ion-infinite-scroll>
-</ion-content> -->
+</ion-content>
+-->
