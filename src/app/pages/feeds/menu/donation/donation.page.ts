@@ -32,10 +32,7 @@ export class DonationPage implements OnInit {
   ngOnInit() {
   }
 
-  ionViewWillEnter() {
-    this.initTitle();
-    this.native.setTitleBarBackKeyShown(true);
-    
+  ionViewWillEnter() {    
     this.connectionStatus = this.feedService.getConnectionStatus();
     this.events.subscribe('feeds:connectionChanged',(status)=>{
       this.zone.run(() => {
@@ -46,10 +43,11 @@ export class DonationPage implements OnInit {
     this.events.subscribe("feeds:updateTitle",()=>{
       this.initTitle();
     });
-  
   }
 
   ionViewDidEnter(){
+    this.initTitle();
+    this.native.setTitleBarBackKeyShown(true);
   }
 
   initTitle(){

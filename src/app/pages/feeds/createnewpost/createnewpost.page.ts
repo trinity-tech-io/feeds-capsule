@@ -51,10 +51,7 @@ export class CreatenewpostPage implements OnInit {
     });
   }
 
-  ionViewWillEnter() {
-    this.initTitle();
-    this.native.setTitleBarBackKeyShown(true);
-    
+  ionViewWillEnter() {    
     this.connectionStatus = this.feedService.getConnectionStatus();
 
     this.events.subscribe('feeds:connectionChanged',(status) => {
@@ -105,6 +102,8 @@ export class CreatenewpostPage implements OnInit {
   }
 
   ionViewDidEnter() {
+    this.initTitle();
+    this.native.setTitleBarBackKeyShown(true);
   }
 
   initTitle(){

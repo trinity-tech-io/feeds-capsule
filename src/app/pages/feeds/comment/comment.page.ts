@@ -44,9 +44,6 @@ export class CommentPage implements OnInit {
   }
 
   ionViewWillEnter() {
-    this.initTitle();
-    this.native.setTitleBarBackKeyShown(true);
-    
     this.connectionStatus = this.feedService.getConnectionStatus();
     let channel = this.feedService.getChannelFromId(this.nodeId,this.channelId) || {};
     this.channelName = channel["name"] || "";
@@ -95,6 +92,8 @@ export class CommentPage implements OnInit {
   }
 
   ionViewDidEnter(){
+    this.initTitle();
+    this.native.setTitleBarBackKeyShown(true);
   }
 
   ionViewWillLeave(){

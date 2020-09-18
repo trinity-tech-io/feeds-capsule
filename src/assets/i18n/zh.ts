@@ -350,7 +350,7 @@ export const zh = {
         "description":"微频是一款非盈利社交应用项目，致力于持续改进用户体验和集成更多价值特性。您的捐献是对我们持续发布新版本的一种鼓励，同时也是一份责任提醒。",
         "receiver":"接收者",
         "amount":"数量",
-        "enterAmount":"Enter ELA Amount",
+        "enterAmount":"输入ELA数量",
         "memo":"备注",
         "defaultMemo":"捐赠微频项目",
         "supportFeeds":"支持微频",

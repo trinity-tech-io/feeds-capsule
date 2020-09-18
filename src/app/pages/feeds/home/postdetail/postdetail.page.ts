@@ -105,9 +105,6 @@ export class PostdetailPage implements OnInit {
   }
 
   ionViewWillEnter() {
-    this.initTitle();
-    this.native.setTitleBarBackKeyShown(true);
-    
     this.initData();
     this.connectionStatus = this.feedService.getConnectionStatus();
     this.feedService.refreshPostById(this.nodeId,this.channelId,this.postId);
@@ -199,6 +196,8 @@ export class PostdetailPage implements OnInit {
   }
 
   ionViewDidEnter() {
+    this.initTitle();
+    this.native.setTitleBarBackKeyShown(true);
   }
 
  

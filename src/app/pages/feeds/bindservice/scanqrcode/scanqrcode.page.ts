@@ -39,9 +39,6 @@ export class ScanqrcodePage implements OnInit {
   }
 
   ionViewWillEnter() {
-    this.initTitle();
-    this.native.setTitleBarBackKeyShown(true);
-    
     this.connectionStatus = this.feedService.getConnectionStatus();
     this.events.subscribe('feeds:connectionChanged',(status)=>{
       this.zone.run(() => {
@@ -55,6 +52,8 @@ export class ScanqrcodePage implements OnInit {
   }
 
   ionViewDidEnter() {
+    this.initTitle();
+    this.native.setTitleBarBackKeyShown(true);
   }
 
   ionViewWillLeave(){
