@@ -4,19 +4,23 @@
 
 <ion-content>
   <ion-grid class="container" [class.darkContainer]="theme.darkMode">
+
+    <!--- SERVER HEADER --->
     <div class="server-header">
       <ion-img class="headerImg" src="./assets/images/profile-2.svg"></ion-img>
       <h1>{{ name }}</h1>
       <p *ngIf="introduction && introduction !== name">{{ introduction }}</p>
-      <div class="offline" [class.online]="serverStatus === 0">
-        <span class="circle"></span>
+      <ion-row class="status-row" [class.online]="serverStatus === 0">
+       <!--  <div class="indicator"></div>
         <span class="status" *ngIf="serverStatus === 0">{{ 'ServerInfoPage.online' | translate}}</span>
-        <span class="status" *ngIf="serverStatus === 1">{{ 'ServerInfoPage.offline' | translate}}</span>
+        <span class="status" *ngIf="serverStatus === 1">{{ 'ServerInfoPage.offline' | translate}}</span> -->
         <ion-img [src]="serverStatus === 0 ? 'assets/images/users-online.svg' : 'assets/images/users-offline.svg'" class="usersonline"></ion-img>
         <span class="clientNumber">{{ clientNumber }}</span>
         <span class="users">{{'ServerInfoPage.users' | translate}}</span>
-      </div>
+      </ion-row>
     </div>
+
+    <!--- SERVER DETAILS --->
     <div *ngFor="let server of serverDetails">
       <ion-row *ngIf="server.details" class="detail-row" [class.removeBorder]="serverDetails.indexOf(server) === serverDetails.length - 1">
         <ion-col size="12" class="left-col">
