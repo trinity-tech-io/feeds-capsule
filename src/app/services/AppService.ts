@@ -58,6 +58,8 @@ export class AppService {
             }
           } else if (menuIcon.key === 'editChannel') {
             this.event.publish("feeds:editChannel");
+          } else if (menuIcon.key === 'editServer') {
+            this.event.publish("feeds:editServer");
           }
         });
     }

@@ -179,6 +179,10 @@ export class ServerInfoPage implements OnInit {
       this.initTitle();
     });
 
+    this.events.subscribe("feeds:editServer", () => {
+      this.clickEdit();
+    });
+
     this.events.subscribe("feeds:removeFeedSourceFinish", () => {
       this.native.hideLoading();
     });
@@ -190,18 +194,31 @@ export class ServerInfoPage implements OnInit {
   }
 
   ionViewWillLeave(){
+    titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, null);
+
     this.native.hideLoading();
     this.events.unsubscribe("feeds:connectionChanged");
     this.events.unsubscribe("feeds:updateServerList");
     this.events.unsubscribe("feeds:serverConnectionChanged");
     this.events.unsubscribe("feeds:removeFeedSourceFinish");
     this.events.unsubscribe("feeds:updateTitle");
+    this.events.unsubscribe("feeds:editServer");
     if(this.actionSheet!=null)
-    this.actionSheet.dismiss();
+      this.actionSheet.dismiss();
   }
 
   initTitle(){
     titleBarManager.setTitle(this.translate.instant('ServerInfoPage.title'));
+
+    if (this.address === '' && this.checkIsMine() == 0) {
+      console.log('Server is mine!');
+      titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, {
+        key: "editServer",
+        iconPath: TitleBarPlugin.BuiltInIcon.EDIT
+      });
+    } else {
+      titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, null);
+    }
   }
 
   navigateBackPage() {
