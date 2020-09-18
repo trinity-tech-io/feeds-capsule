@@ -376,7 +376,7 @@ pre {
     width: 55px;
   }
 
-  .offline {
+  /*.offline {
     width: 15px;
     height: 15px;
     position: absolute;
@@ -386,6 +386,13 @@ pre {
     background: #cdcde6;
     border-radius: 100%;
     border: 2px solid #f8f8ff;
+  }*/
+  
+  .offline{
+    width: 13px;
+    height: 13px;
+    background-color: #cdcde6;
+    border-radius: 6px;
   }
 
   .online {
