@@ -144,7 +144,7 @@ export const en = {
     },
     "CreatenewfeedPage":{
         "createNewFeed":"Create a New Feed",
-        "profileImage":"Profile image",
+        "profileImage":"Avatar",
         "des":"PICK AN IMAGE FOR YOUR FEED",
         "des1":"Avatar selected",
         "channelSource":"Feeds source",
