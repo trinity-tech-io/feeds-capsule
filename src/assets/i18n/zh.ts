@@ -79,6 +79,7 @@ export const zh = {
     "SigninPage":{
         "signIn":"登录微频",
         "Pleasewait": "请稍等...",
+        "feeds": 'feeds',
         "des":"进行",
         "des1":"有意义的对话",
         "des2":"了解Feeds更多信息？",
