@@ -19,7 +19,7 @@
                         <ion-label position="stacked">{{ 'IssuecredentialPage.elaaddress' | translate }}</ion-label>
                         <ion-input clearInput autofocus [placeholder]="'IssuecredentialPage.inputElaAddress' | translate" [(ngModel)] ="elaAddress"></ion-input>
                     </ion-col>
-                    <img [src]="!theme.darkMode ? './assets/images/scan.svg' : './assets/images/scan-dark.svg'">
+                    <img [src]="!theme.darkMode ? './assets/images/scan.svg' : './assets/images/scan-dark.svg'" (click)="clickScan()">
                 </ion-row>
             </ion-item>
         </ion-list>
