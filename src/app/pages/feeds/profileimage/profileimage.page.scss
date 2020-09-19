@@ -14,36 +14,45 @@ ion-grid {
         align-items: center;
     
         ion-col {
-            border-radius: 100%;
-            height: 74px;
-            width: 74px;
-            margin-bottom: 25px;
-            background-repeat: no-repeat;
-            background-size: contain;
-            position: relative;
-    
-            .check {
-            position: absolute;
-            z-index: 10;
-            border-radius: 100%;
-            height: 30px;
-            width: 30px;
-            bottom: -4px;
-            right: -4px;
             display: flex;
             justify-content: center;
             align-items: center;
-            background: #368bff;
-    
-            ion-icon {
-                height: 24px;
-                width: 24px;
-            }
-            }
-        }
+            padding: 0;
+            margin-bottom: 20px;
+          
 
-        .uploadedAvatar {
-            background-size: cover;
+            .avatar {
+                border-radius: 100%;
+                height: 70px;
+                width: 70px;
+                background-repeat: no-repeat;
+                background-size: contain;
+                position: relative;
+                overflow: visible;
+            }
+    
+            .check {
+                position: absolute;
+                z-index: 10;
+                border-radius: 100%;
+                height: 28px;
+                width: 28px;
+                bottom: -3px;
+                right: -3px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                background: #368bff;
+    
+                ion-icon {
+                    height: 20px;
+                    width: 20px;
+                }
+            }
+
+            .uploadedAvatar {
+                background-size: cover;
+            }
         }
     }
 
