@@ -7,8 +7,8 @@
   <ion-input type="number" clearInput autofocus [placeholder]="'DonationPage.enterAmount' | translate" [(ngModel)]="amount" class="nameValue"></ion-input>
   <h3>{{ 'DonationPage.memo' | translate }}</h3>
   <ion-input clearInput autofocus [placeholder]="'DonationPage.memo' | translate" [(ngModel)]="memo" [disabled]='disableMemo'></ion-input>
-  <ion-row class="btn-row">
-    <ion-col class="btn cancel ion-activatable ripple" size="5.6" (click)="cancel()">
+  <ion-row class="btns-row" [class.dark-btns-row]="theme.darkMode">
+    <ion-col class="btn cancel2 ion-activatable ripple" size="5.6" (click)="cancel()">
       <ion-label>{{ 'common.cancel' | translate }}</ion-label>
       <ion-ripple-effect></ion-ripple-effect>
     </ion-col>

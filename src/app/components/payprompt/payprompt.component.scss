@@ -47,45 +47,6 @@
     ion-input {
         color: #8888b0;
     }
-  
-    .btn-row {
-        margin-top: 20px;
-        width: 100%;
-        display: flex;
-        justify-content: space-around;
-        align-items: center;
-    
-        .btn {
-            height: 41px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            border-radius: 8px;
-    
-            ion-label {
-                font-size: 16px;
-                font-weight: 500;
-            }
-        }
-  
-        .cancel {
-            box-shadow: 0 3px 15px 0 #ededf0;
-            background-color: #ffffff;
-    
-            ion-label {
-                color: #000000;
-            }
-        }
-  
-        .confirm {
-            box-shadow: 0 3px 15px 0 #ededf0;
-            background-color: #368bff;
-    
-            ion-label {
-                color: #ffffff;
-            }
-        }
-    }
 }
   
 .darkContainer {
@@ -98,21 +59,6 @@
     ion-input {
       color: #8888b0;
     }
-  
-    .btn-row {
-        .cancel {
-            box-shadow: 0 3px 6px 0 #151626;
-            background-color: #202039;
-    
-            ion-label {
-                color: #ffffff;
-            }
-        }
-  
-        .confirm {
-            box-shadow: 0 3px 15px 0 #151626;
-        }
-    }   
 }
 
 /* .dTitle{

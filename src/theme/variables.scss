@@ -343,12 +343,24 @@ pre {
         }
     }
 
+    // Cancel Option #1 - Transparent background, blue label and border
     .cancel {
         border: solid 1.5px #368bff;
 
         ion-label {
             color: #368bff;
         }
+    }
+
+    // Cancel Option #2 - White button, black label 
+    .cancel2 {
+      box-shadow: 0 3px 15px 0 #ededf0;
+      background-color: #ffffff;
+      border: none;
+
+      ion-label {
+          color: #000000;
+      }
     }
     
     .confirm {
@@ -359,6 +371,25 @@ pre {
             color: #ffffff;
         }
     }
+}
+
+.dark-btns-row {
+  .cancel {
+  }
+
+  // Cancel Option #2 - Dark button, white label 
+  .cancel2 {
+    box-shadow: 0 3px 6px 0 #151626;
+    background-color: #202039;
+
+    ion-label {
+        color: #ffffff;
+    }
+  }
+
+  .confirm {
+    box-shadow: 0 3px 15px 0 #151626;
+  }
 }
 
 /********************** GLOBAL FEED AVATAR  **********************/

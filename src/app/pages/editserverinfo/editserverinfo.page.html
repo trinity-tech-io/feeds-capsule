@@ -1,5 +1,44 @@
 <ion-header *ngIf="connectionStatus == 1">
     <div class="offline-header"></div>
+</ion-header>
+
+<ion-content>
+    <ion-grid class="container" [class.darkContainer]="theme.darkMode">
+        <ion-list>
+            <ion-item lines="none">
+                <ion-label position="stacked">{{ 'IssuecredentialPage.serverName' | translate }}</ion-label>
+                <ion-input clearInput autofocus [placeholder]="'IssuecredentialPage.inputName' | translate" [(ngModel)] ="name"></ion-input>
+            </ion-item>
+            <ion-item lines="none">
+                <ion-label position="stacked">{{'IssuecredentialPage.serverDes' | translate }}</ion-label>
+                <ion-input clearInput autofocus [placeholder]="'IssuecredentialPage.inputServerDes' | translate" [(ngModel)] ="introduction"></ion-input>
+            </ion-item>
+            <ion-item lines="none">
+                <ion-row>
+                    <ion-col>
+                        <ion-label position="stacked">{{ 'IssuecredentialPage.elaaddress' | translate }}</ion-label>
+                        <ion-input clearInput autofocus [placeholder]="'IssuecredentialPage.inputElaAddress' | translate" [(ngModel)] ="elaAddress"></ion-input>
+                    </ion-col>
+                    <img [src]="!theme.darkMode ? './assets/images/scan.svg' : './assets/images/scan-dark.svg'">
+                </ion-row>
+            </ion-item>
+        </ion-list>
+
+        <ion-row class="btns-row" [class.dark-btns-row]="theme.darkMode">
+            <ion-col class="btn cancel ion-activatable ripple" size="5.6" (click)="cancel()">
+                <ion-label>{{ 'common.cancel' | translate }}</ion-label>
+                <ion-ripple-effect></ion-ripple-effect>
+            </ion-col>
+            <ion-col class="btn confirm ion-activatable ripple" size="5.6" (click)="confirm()">
+                <ion-label>{{ 'common.save' | translate }}</ion-label>
+                <ion-ripple-effect></ion-ripple-effect>
+            </ion-col>
+        </ion-row>
+    </ion-grid>
+</ion-content>
+
+<!-- <ion-header *ngIf="connectionStatus == 1">
+    <div class="offline-header"></div>
   </ion-header>
 <ion-content [class.darkContainer]="theme.darkMode">
     <ion-grid>
@@ -44,3 +83,4 @@
         </ion-row>
     </ion-grid>
 </ion-content>
+ -->
