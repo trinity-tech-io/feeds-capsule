@@ -1,63 +1,64 @@
-.learnmore-row {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  margin-top: 15px;
+.slide {
+  ion-grid {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0 30px;
+    
+    p {
+      margin: 5px 0 0;
+      font-size: 20px;
+      font-weight: 600;
+      text-align: center;
+      color: #000000;
+    }
 
-  ion-label {
-    font-size: 16px;
-    font-weight: 500;
-    color: #368bff;
+    .header-row {
+      margin-top: 125px;
+
+      ion-col {
+        ion-img {
+          width: 100px;
+          height: 100px;
+          margin: 0 auto;
+        }
+  
+        h1 {
+          margin: 0px;
+          font-size: 48px;
+          font-weight: 900;
+          text-align:center;
+          color: #000000;
+        }
+      }
+    }
+  
+    .intro-row {
+      margin-top: 30px;
+    }
+
+    .btn-row {
+      margin-top: 100px;
+      width: 100%;
+    }
+
+    .learnmore-row {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      margin-top: 15px;
+    
+      ion-label {
+        font-size: 16px;
+        font-weight: 500;
+        color: #368bff;
+      }
+    }    
   }
 }
 
-ion-grid {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-
-.top-110{
-  margin-top: 50px;
-}
-
-.top-25{
-  margin-top:35.6px;
-}
-
-.feeds{
-  padding:0px;
-  margin: 0px;
-  font-size: 40px;
-  font-weight: 900;
-  font-stretch: normal;
-  font-style: normal;
-  text-align:center;
-  color: #000000;
-}
-
-.feedslogo{
-  width: 97.7px;
-  height: 92px;
-  margin: 0 auto;
-  margin-top:67.9px;
-}
-
-.desktop {
-  padding:0px;
-  margin: 0px;
-  margin-top:5px;
-  font-size: 21px;
-  font-weight: 600;
-  font-stretch: normal;
-  font-style: normal;
-  text-align: center;
-  color: #000000;
-}
-
-.onboard-slide {
+.slide2 {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -100,11 +101,11 @@ ion-grid {
 
 
 .darkSlides {
-  .white{
-    color:#ffffff;
+  p, h1 {
+    color: #ffffff !important;
   }
 
-  .onboard-slide {
+  .slide2 {
     .onboard-card {
       box-shadow: 0 3px 15px 0 #151626;
       background-color: #2e2f4e;

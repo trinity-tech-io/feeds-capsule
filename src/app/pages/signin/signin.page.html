@@ -1,36 +1,39 @@
 <ion-content>
   <ion-slides #slide pager="true" [class.darkSlides]="theme.darkMode">
 
-    <ion-slide>
+    <ion-slide class="slide">
       <ion-grid>
-        <ion-row>
+
+        <ion-row class="header-row">
           <ion-col size="12">
-            <img src="assets/images/feeds-logo.svg" class="feedslogo"/> 
-            <p class="feeds white">{{'common.feeds'|translate}}</p>
+            <ion-img src="assets/images/feeds-logo.svg"></ion-img>  
+            <h1>{{ "SigninPage.feeds" | translate }}</h1>
           </ion-col>
         </ion-row>
   
-        <ion-row class="top-110">
+        <ion-row class="intro-row">
             <ion-col size="12">
-                <p class="desktop white">{{ "SigninPage.des"| translate }}</p>
-                <p class="desktop white">{{ "SigninPage.des1"| translate }}</p>
+              <p class="desktop white">{{ "SigninPage.des" | translate }}</p>
+              <p class="desktop white">{{ "SigninPage.des1" | translate }}</p>
             </ion-col>
         </ion-row>
   
-        <ion-row class="top-25 btn-row">
+        <ion-row class="btn-row">
           <ion-col size="12">
             <ion-button expand="block" color="primary" (click)="signIn()">
-              {{ "SigninPage.signIn"| translate }}
+              {{ "SigninPage.signIn" | translate }}
             </ion-button>
           </ion-col>
         </ion-row>
+
         <ion-row class="learnmore-row" (click)="learnMore(slide)">
           <ion-label>{{"SigninPage.des2"|translate}}</ion-label>
         </ion-row>
+
       </ion-grid> 
     </ion-slide>
 
-    <ion-slide class="onboard-slide">
+    <ion-slide class="slide2">
       <ion-card class="onboard-card">
         <img src='assets/onboard/slide1.svg'>
         <ion-card-title>
