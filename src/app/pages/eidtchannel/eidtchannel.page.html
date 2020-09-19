@@ -1,4 +1,43 @@
+<ion-header *ngIf="connectionStatus == 1">
+  <div class="offline-header"></div>
+</ion-header>
 
+<ion-content>
+  <ion-grid class="container" [class.darkContainer]="theme.darkMode">
+    <ion-list>
+        <ion-item lines="none">
+            <ion-label position="stacked">{{ 'CreatenewfeedPage.name' | translate }}</ion-label>
+            <ion-input clearInput autofocus class="content-value" [placeholder]="'CreatenewfeedPage.inputName'|translate" [(ngModel)] ="name"></ion-input>
+        </ion-item>
+        <ion-item lines="none">
+            <ion-label position="stacked">{{ 'CreatenewfeedPage.description' | translate }}</ion-label>
+            <ion-input clearInput autofocus class="content-value" [placeholder]="'CreatenewfeedPage.inputFeedDesc'|translate" [(ngModel)] ="des"></ion-input>
+        </ion-item>
+        <ion-item lines="none" (click)="profileimage()" class="removeBorder">
+          <ion-row>
+            <ion-col>
+              <ion-label position="stacked">{{ 'CreatenewfeedPage.profileImage'|translate }}</ion-label>
+              <h2>PICK AN IMAGE FOR YOUR FEED</h2>
+            </ion-col>
+            <ion-img src="assets/icons/right-arrow.svg"></ion-img>
+          </ion-row>
+        </ion-item>
+    </ion-list>
+  
+    <ion-row class="btns-row" [class.dark-btns-row]="theme.darkMode">
+      <ion-col class="btn cancel ion-activatable ripple" size="5.6" (click)="cancel()">
+          <ion-label>{{ 'common.cancel' | translate }}</ion-label>
+          <ion-ripple-effect></ion-ripple-effect>
+      </ion-col>
+      <ion-col class="btn confirm ion-activatable ripple" size="5.6" (click)="confirm()">
+          <ion-label>{{ 'common.save' | translate }}</ion-label>
+          <ion-ripple-effect></ion-ripple-effect>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>
+
+<!-- 
 <ion-header *ngIf="connectionStatus == 1">
   <div class="offline-header"></div>
 </ion-header>
@@ -45,4 +84,4 @@
     </ion-row>
   </ion-grid>
 </ion-content>
-
+ -->
