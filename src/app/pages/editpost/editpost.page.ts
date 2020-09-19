@@ -51,6 +51,8 @@ export class EditpostPage implements OnInit {
   }
 
   ionViewWillEnter() {
+    this.initTitle();
+    this.native.setTitleBarBackKeyShown(true);
     this.initData();
 
     this.events.subscribe('feeds:connectionChanged',(status)=>{
@@ -100,8 +102,6 @@ export class EditpostPage implements OnInit {
   }
 
   ionViewDidEnter() {
-    this.initTitle();
-    this.native.setTitleBarBackKeyShown(true);
   }
 
   initTitle(){

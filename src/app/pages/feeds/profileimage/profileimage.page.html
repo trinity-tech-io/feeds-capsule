@@ -11,44 +11,59 @@
         [ngStyle]="{ 'background-image': 'url(' + avatar.image + ')' }"
         (click)="selectIndex(avatar.index, avatar.image)"
       >
+        <div
+          class="avatar"
+          [ngStyle]="{ 'background-image': 'url(' + avatar.image + ')' }"
+          (click)="selectIndex(avatar.index, avatar.image)"
+        >
         <div 
           *ngIf="select === avatar.index"
           class="check" 
-          [ngStyle]="{ 'border': theme.darkMode ? '4px solid #191a2f' : '4px solid #f8f8ff' }"
+          [ngStyle]="{ 'border': theme.darkMode ? '3px solid #191a2f' : '4px solid #f8f8ff' }"
           >
           <ion-icon 
             name="checkmark"
             [ngStyle]="{ 'color': theme.darkMode ? '#191a2f' : '#f8f8ff' }"
           >
           </ion-icon>
+          </div>
         </div>
       </ion-col>
+
       <!-- HAS UPLOADED AVATAR -->
       <ion-col 
         *ngIf="uploadedAvatar"
+        size="3"
+      >
+      <div
         [ngStyle]="{ 'background-image': 'url(' + uploadedAvatar + ')' }"
-        class="uploadedAvatar"
         size="3"
         (click)="selectIndex(0, uploadedAvatar)"
+        class="avatar uploadedAvatar"
       >
         <div 
           *ngIf="select === 0"
           class="check" 
-          [ngStyle]="{ 'border': theme.darkMode ? '4px solid #191a2f' : '4px solid #f8f8ff' }"
-          >
+          [ngStyle]="{ 'border': theme.darkMode ? '3px solid #191a2f' : '4px solid #f8f8ff' }"
+        >
           <ion-icon 
             name="checkmark"
             [ngStyle]="{ 'color': theme.darkMode ? '#191a2f' : '#f8f8ff' }"
           >
           </ion-icon>
         </div>
+      </div>
       </ion-col>
+
       <!-- UPLOAD AVATAR -->
-      <ion-col 
-        [ngStyle]="{ 'background-image': theme.darkMode ? 'url(/assets/images/profile-add-dark.svg)' : 'url(/assets/images/profile-add.svg)' }"
-        size="3"
-        (click)="selectIndex(0)"
-      >
+
+      <ion-col size="3">
+        <div 
+          class="avatar" 
+          [ngStyle]="{ 'background-image': theme.darkMode ? 'url(/assets/images/profile-add-dark.svg)' : 'url(/assets/images/profile-add.svg)' }" 
+          (click)="selectIndex(0)"
+        >
+        </div>
       </ion-col>
     </ion-row>
   
