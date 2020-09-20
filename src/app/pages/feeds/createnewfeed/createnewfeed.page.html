@@ -7,17 +7,19 @@
     <ion-list>
         <ion-item lines="none">
             <ion-label position="stacked">{{ 'CreatenewfeedPage.name' | translate }}</ion-label>
-            <ion-input required type="text" placeholder="{{'CreatenewfeedPage.inputName'|translate}}" #name (ionChange)="onChangeName(name)"></ion-input>
+            <ion-input clearInput autofocus required type="text" placeholder="{{'CreatenewfeedPage.inputName'|translate}}" #name (ionChange)="onChangeName(name)"></ion-input>
         </ion-item>
         <ion-item lines="none">
             <ion-label position="stacked">{{ 'CreatenewfeedPage.description' | translate }}</ion-label>
-            <ion-input required type="text" placeholder="{{'CreatenewfeedPage.inputFeedDesc'|translate}}" #desc (ionChange)="onChangeText(desc)"></ion-input>
+            <ion-input clearInput autofocus required type="text" placeholder="{{'CreatenewfeedPage.inputFeedDesc'|translate}}" #desc (ionChange)="onChangeText(desc)"></ion-input>
         </ion-item>
         <ion-item lines="none" (click)="profileimage()">
           <ion-row>
             <ion-col>
               <ion-label position="stacked">{{ 'CreatenewfeedPage.profileImage'|translate }}</ion-label>
-              <h2>PICK AN IMAGE FOR YOUR FEED</h2>
+              <ion-avatar *ngIf="avatar != ''" style="margin-top: 5px;">
+                <img [src]="avatar">
+              </ion-avatar>
             </ion-col>
             <ion-img src="assets/icons/right-arrow.svg"></ion-img>
           </ion-row>

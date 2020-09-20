@@ -115,11 +115,12 @@ export class ProfileimagePage implements OnInit {
   }
 
   selectIndex(index: number, avatar?: string){
-    this.select = index;
+    //this.select = index;
     if (index === 0) {
       // If uploaded avatar exists and is selected, use it. Otherwise open camera
       avatar ? this.selectedAvatar = avatar : this.openCamera(0);
     } else {
+      this.select = index;
       this.selectedAvatar = "img://"+avatar;
     }
   }
@@ -145,15 +146,12 @@ export class ProfileimagePage implements OnInit {
     this.camera.openCamera(30,0,type,
       (imageUrl) => {
         this.zone.run(() => {
+          this.select = 0;
           this.uploadedAvatar = imageUrl;
           this.selectedAvatar = imageUrl;
         });
       }, (err) => {
-        this.native.toast_trans('common.noImageSelected');
-
-        // If err, use default avatar 
-        this.select = 1;
-        this.selectedAvatar = "img://"+"assets/images/profile-1.svg";
+       
       }
     );
   }

@@ -58,13 +58,7 @@ export class DiscoverfeedsPage implements OnInit {
 
     this.serverList = this.feedService.getServerList();
     this.pageNum =1;
-    this.initData("",false);
-
-    // this.httpService.ajaxGet(ApiUrl.listPage+"?pageNum="+this.pageNum+"&pageSize="+this.pageSize).then((result)=>{
-    //   if(result["code"] === 200){
-    //     this.feedList = result["data"]["result"] || [];
-    //  }
-    // });
+    this.initData("",true);
   }
 
   ionViewDidEnter(){
@@ -83,6 +77,7 @@ export class DiscoverfeedsPage implements OnInit {
   }
 
   clickItem(item:any){
+    //this.unPublicFeeds(item['did']);
     let address = item["url"] || "";
     if (address.length < 54 ||
       !address.startsWith('feeds://')||
@@ -176,4 +171,12 @@ loadData(events:any){
       events.target.complete();
   });
  }
+
+ unPublicFeeds(did:string){ 
+  this.httpService.ajaxGet(ApiUrl.remove+"?did="+did).then((result)=>{
+    if(result["code"] === 200){
+        this.native.toast_trans("ServerInfoPage.unpublicTip");
+    }
+  });
+} 
 }
