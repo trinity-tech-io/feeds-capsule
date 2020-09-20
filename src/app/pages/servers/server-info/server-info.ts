@@ -113,7 +113,7 @@ export class ServerInfoPage implements OnInit {
   }
 
   ionViewWillEnter() {
-    this.httpService.ajaxGet(ApiUrl.get+"?did="+this.didString,false).then((result)=>{
+    this.httpService.ajaxGet(ApiUrl.get+"?did="+this.didString,true).then((result)=>{
                  if(result["code"] === 200){
                     this.isPublic = result["data"] || "";
                  }

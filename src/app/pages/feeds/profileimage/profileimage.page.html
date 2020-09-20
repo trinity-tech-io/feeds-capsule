@@ -6,10 +6,9 @@
   <ion-grid>
     <ion-row>
       <!-- DEFAULT AVATARS -->
-      <ion-col 
+      <ion-col size="3"
         *ngFor="let avatar of avatars"
         [ngStyle]="{ 'background-image': 'url(' + avatar.image + ')' }"
-        size="2.5"
         (click)="selectIndex(avatar.index, avatar.image)"
       >
         <div 
@@ -29,7 +28,7 @@
         *ngIf="uploadedAvatar"
         [ngStyle]="{ 'background-image': 'url(' + uploadedAvatar + ')' }"
         class="uploadedAvatar"
-        size="2.5"
+        size="3"
         (click)="selectIndex(0, uploadedAvatar)"
       >
         <div 
@@ -47,7 +46,7 @@
       <!-- UPLOAD AVATAR -->
       <ion-col 
         [ngStyle]="{ 'background-image': theme.darkMode ? 'url(/assets/images/profile-add-dark.svg)' : 'url(/assets/images/profile-add.svg)' }"
-        size="2.5"
+        size="3"
         (click)="selectIndex(0)"
       >
       </ion-col>
