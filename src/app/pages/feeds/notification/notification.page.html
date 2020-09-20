@@ -27,7 +27,7 @@
             <img [src]="avatar ? 'data:'+avatar.contentType+';base64,'+avatar.data : './assets/images/default-contact.svg'">
           </ion-col>
           <ion-col size="9.75" class="right-col">
-            <h1 (press)="pressName(notification.userName)">{{ moreName(notification.userName) }} <span>- {{ handleDisplayTime(notification.time) }}</span></h1>
+            <h1 (press)="pressName(notification.userName)">{{ moreName(notification.userName) }} <span> {{ handleDisplayTime(notification.time) }}</span></h1>
             <p>{{ notification.behaviorText }} <span *ngIf="notification['readStatus']===1">-</span></p>
             <h2>{{ getNotificationContent(notification) }}</h2>
           </ion-col>

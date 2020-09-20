@@ -70,7 +70,7 @@
             <ion-col class="left-col" size="11" (press)="pressName(post.nodeId, post.channel_id)" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)">
               <ion-label>
                 {{ getChannel(post.nodeId, post.channel_id) }}
-                <span>- {{ handleDisplayTime(post.created_at) }}</span>
+                <span> {{ handleDisplayTime(post.created_at) }}</span>
               </ion-label>
             </ion-col>
             <img *ngIf="post.post_status != 1"
