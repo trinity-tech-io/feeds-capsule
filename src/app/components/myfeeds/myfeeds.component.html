@@ -1,4 +1,4 @@
-<!-- <div *ngIf="channels.length === 0" class="empty-container">
+<div *ngIf="channels.length === 0" class="empty-container">
   <img src="./assets/images/empty-feeds-icon.svg">
   <h1>{{ 'common.allempty' | translate }}</h1>
   <p>{{'MyfeedsComponent.emptyDes' | translate }}</p>
@@ -34,9 +34,8 @@
         size="8"
         class="middle-col"
         (click)="navTo(channel.nodeId, channel.id)"
-        (press)="pressName(channel.name)"
       >
-        <ion-label>{{ moreName(channel.name) }}</ion-label>
+        <ion-label (press)="pressName(channel.name)">{{ moreName(channel.name) }}</ion-label>
         <ion-row>
           <img src="./assets/images/bubble2.svg"> <br>
           <p><span>{{ channel.subscribers }}</span> {{ 'common.followers' | translate }}</p>
@@ -53,9 +52,9 @@
   <div class="new-feed-div">
     <div class="new-feed" (click)="createNewFeed()">{{ 'MyfeedsComponent.createNewFeed'|translate }}</div>
   </div>
-</ion-list> -->
+</ion-list>
 
-<div *ngIf="channels.length === 0" class="empty-container">
+<!-- <div *ngIf="channels.length === 0" class="empty-container">
   <img src="./assets/images/empty-feeds-icon.svg">
   <h1>{{ 'common.allempty' | translate }}</h1>
   <p>{{'MyfeedsComponent.emptyDes' | translate }}</p>
@@ -103,4 +102,4 @@
 
 <div class="new-feed-div" *ngIf="channels.length > 0">
     <div class="new-feed" (click)="createNewFeed()">{{'MyfeedsComponent.createNewFeed'|translate}}</div>
-</div>
+</div> -->
