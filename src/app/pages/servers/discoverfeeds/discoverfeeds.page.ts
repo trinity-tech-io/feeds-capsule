@@ -26,6 +26,7 @@ export class DiscoverfeedsPage implements OnInit {
   public curServer:any ={};
   public ownerDid:string ="";
   public totalNum:number = 0;
+  public isLoading:boolean =true;
   constructor(
     private zone: NgZone,
     private native: NativeService,
@@ -97,16 +98,19 @@ export class DiscoverfeedsPage implements OnInit {
   }
 
   initData(events:any,isLoading:boolean=true){
+    this.isLoading =true;
     this.myFeedSource = "";
     this.httpService.ajaxGet(ApiUrl.listPage+"?pageNum="+this.pageNum+"&pageSize="+this.pageSize,isLoading).then((result)=>{
       if(events!=""){
         events.target.complete();
       }
       if(result["code"] === 200){
+        this.isLoading =false;
          this.totalNum = result["data"]["total"];
          this.feedList = result["data"]["result"] || [];
       }
     }).catch((err)=>{
+      this.isLoading =false;
       if(events!=""){
         events.target.complete();
       }
@@ -168,5 +172,14 @@ loadData(events:any){
         this.native.toast_trans("ServerInfoPage.unpublicTip");
     }
   });
-} 
+}
+
+exploreFeedSource(){
+  if(this.feedService.getConnectionStatus() != 0){
+    this.native.toastWarn('common.connectionError');
+    return;
+ }
+this.native.navigateForward(['/menu/servers/add-server'],"");
+}
+
 }

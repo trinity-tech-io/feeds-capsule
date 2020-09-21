@@ -11,36 +11,53 @@
       refreshingText="">
     </ion-refresher-content>
   </ion-refresher>
+
+    <!-------------------- NO FEEDS -------------------->
+    <div *ngIf="feedList.length === 0&&!isLoading" class="empty-container">
+      <img src="./assets/images/empty-feeds-icon.svg">
+      <h1>{{ 'common.allempty'| translate }}</h1>
+      <p>{{ 'SearchPage.emptyDes' | translate }}</p>
   
-  <div class="feed-source" [class.darkContainer]="theme.darkMode">
-  <div class="feed-source-div" *ngIf="feedList.length >0" [class.darkContainer]="theme.darkMode">
-    <div  *ngFor="let item of feedList" (click)="clickItem(item)">
-    <ion-card class="ion-no-padding ion-no-margin"  class="feed-source-card">
-      <ion-card-content class="ion-no-padding ion-no-margin">
-
-        <div class="feed-source-card-right-img-div">
-          <img class="feed-source-card-right-img" src="assets/images/chevron-thin-right.svg">
-        </div>
-
-        <div class="feed-source-card-content">
-          <div class="feed-source-card-img-div" style="position:relative">
-            <img class="feed-source-card-img" src="assets/images/profile-2.svg">
-          </div>
-
-          <div class="feed-source-card-content-detail">
-            <div class="name white">{{item.name}}</div>
-            <div class="owner">{{item.description}}</div>
-            <div class="users-img-div">
-              <div class="users-online-text" style="margin-left: 0px">{{handleStatus(item.did) | translate}}</div>
-            </div>
-          </div>
-        </div>
-      </ion-card-content>
-    </ion-card>
-  </div>
+      <ion-row class="btn-row">
+        <ion-button (click)="exploreFeedSource()">
+          <ion-label>
+            {{ "ServersPage.addNewFeedSources" | translate }}
+          </ion-label>
+        </ion-button>
+      </ion-row>
     </div>
-  </div>
 
+      <!-------------------- HAS FEEDS -------------------->
+  <ion-grid class="feedSource-container" [class.darkContainer]="theme.darkMode">
+    <!-------------------- SERVER FEEDS -------------------->
+    <div class="source" *ngIf="feedList.length > 0">
+        <ion-row
+          class="item-row ripple ion-activatable"
+          *ngFor="let item of feedList"
+          (click)="clickItem(item)"
+        >
+          <ion-col size="2.75" class="left-col">
+            <div class="feedAvatar">
+              <img src="assets/images/profile-2.svg">
+            </div>
+          </ion-col>
+          <ion-col size="7.5" class="middle-col">
+            <h1>{{item.name}}</h1>
+            <p>{{item.description}}</p>
+            <p>{{handleStatus(item.did) | translate}}</p>
+          </ion-col>
+          <ion-col offset="0.5" size="1.25" class="right-col">
+            <img src="assets/images/chevron-thin-right.svg">
+          </ion-col>
+          <ion-ripple-effect></ion-ripple-effect>
+        </ion-row>
+    </div>
+
+    <ion-row class="buttons-row" *ngIf="feedList.length >0">
+      <ion-label (click)="exploreFeedSource()">{{ 'ServersPage.addNewFeedSources' | translate }}</ion-label>
+    </ion-row>
+  </ion-grid>
+  
   <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event)">
     <ion-infinite-scroll-content
       loadingSpinner="bubbles"
