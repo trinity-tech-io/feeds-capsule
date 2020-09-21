@@ -81,6 +81,11 @@ export const zh = {
         "Pleasewait": "请稍等...",
         "des":"进行",
         "des1":"有意义的对话",
+        "des2":"了解Feeds更多信息？",
+        "des3":"什么是Feeds？",
+        "des4":"跟随您的兴趣。",
+        "des5":"听听人们在谈论什么。",
+        "des6":"加入谈话吧。",
     },
     "FeedsPage":{
         "tabTitle1":"我的时间线",

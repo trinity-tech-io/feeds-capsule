@@ -81,6 +81,11 @@ export const en = {
         "Pleasewait":"Please wait...",
         "des":"Where meaningful",
         "des1":"conversations happens",
+        "des2":"Learn more about Feeds?",
+        "des3":"What is FeedS?",
+        "des4":"Follow your interests.",
+        "des5":"Hear what people are talking about.",
+        "des6":"Join the conversation.",
     },
     "FeedsPage":{
         "tabTitle1":"My Feeds Timeline",
