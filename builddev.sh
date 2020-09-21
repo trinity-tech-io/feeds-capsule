@@ -12,6 +12,12 @@ function package(){
   else
     echo "Error"
   fi
+
+  resetAboutpage
+}
+
+function resetAboutpage(){
+  git checkout ../src/app/pages/about/about.ts
 }
 
 function appendCommitId(){
