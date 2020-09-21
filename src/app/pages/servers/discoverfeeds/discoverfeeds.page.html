@@ -12,56 +12,9 @@
     </ion-refresher-content>
   </ion-refresher>
   
-  <div class="feed-source" [class.darkContainer]="theme.darkMode" *ngIf="myFeedSource != ''">
-    <div class="feed-source-div"> 
-      <img class="feed-source-img" src="assets/images/play.svg" *ngIf="!theme.darkMode">
-      <img class="feed-source-img" src="assets/images/play-dark.svg" *ngIf="theme.darkMode">
-      <ion-label class="feed-source-text white">{{'ServersPage.myFeedSources'| translate}}</ion-label>
-
-      <ion-card class="ion-no-padding ion-no-margin feed-source-card" (click)="navToServerInfo(myFeedSource.nodeId, true)">
-        <ion-card-content class="ion-no-padding ion-no-margin">
-          <div class="feed-source-card-right-img-div">
-            <img class="feed-source-card-right-img" src="assets/images/chevron-thin-right.svg">
-          </div>
-
-          <div class="feed-source-card-content">
-            <div class="feed-source-card-img-div" style="position:relative">
-              <img class="feed-source-card-img" src="assets/images/profile-2.svg" >
-              <div class="feed-source-card-status">
-                <div class="online-circle" *ngIf="checkServerStatus(myFeedSource.nodeId) == 0"></div>
-                <div class="offline-circle" *ngIf="checkServerStatus(myFeedSource.nodeId) == 1"></div>
-              </div>
-            </div>
-
-            <div class="feed-source-card-content-detail">
-              <div class="name white">{{curServer.name}}</div>
-              <div class="owner">{{curServer.owner}}</div>
-              <div class="users-img-div" *ngIf="checkServerStatus(myFeedSource.nodeId) == 0">
-                <img class="users-img" src="assets/images/users-online.svg">
-                <div class="users-num-online-text"> {{checkConnectClient(myFeedSource.nodeId)}}</div>
-                <div class="users-online-text">{{'ServersPage.users'| translate}}</div>
-              </div>
-
-              <div class="users-img-div" *ngIf="checkServerStatus(myFeedSource.nodeId) == 1">
-                <img class="users-img" src="assets/images/users-offline.svg">
-                <div class="users-num-offline-text"> {{checkConnectClient(myFeedSource.nodeId)}}</div>
-                <div class="users-offline-text">{{'ServersPage.users'| translate}}</div>
-              </div>
-
-            </div>
-          </div>
-        </ion-card-content>
-      </ion-card>
-    </div>
-  </div>
-
   <div class="feed-source" [class.darkContainer]="theme.darkMode">
   <div class="feed-source-div" *ngIf="feedList.length >0" [class.darkContainer]="theme.darkMode">
-    <img class="feed-source-img" src="assets/images/play.svg" *ngIf="!theme.darkMode">
-      <img class="feed-source-img" src="assets/images/play-dark.svg" *ngIf="theme.darkMode">
-      <ion-label class="feed-source-text white">{{'DiscoverfeedsPage.exploreFeeds'| translate}}</ion-label>
     <div  *ngFor="let item of feedList" (click)="clickItem(item)">
-    <!-- <ion-card class="ion-no-padding ion-no-margin"  class="feed-source-card" *ngIf="ownerDid!=item['did']"> -->
     <ion-card class="ion-no-padding ion-no-margin"  class="feed-source-card">
       <ion-card-content class="ion-no-padding ion-no-margin">
 
