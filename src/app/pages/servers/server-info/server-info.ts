@@ -73,6 +73,16 @@ export class ServerInfoPage implements OnInit {
       }
        
       this.initData();
+      
+      let didString = this.didString || "";
+      if(this.checkIsMine()===0&&didString != ''){
+       this.httpService.ajaxGet(ApiUrl.get+"?did="+this.didString,false).then((result)=>{
+         if(result["code"] === 200){
+            this.isPublic = result["data"] || "";
+         }
+       });
+      }
+      
     });
   }
 
@@ -128,15 +138,6 @@ export class ServerInfoPage implements OnInit {
   }
 
   ionViewWillEnter() {
-    let didString = this.didString || "";
-     if(this.checkIsMine()===0&&didString != ''){
-      this.httpService.ajaxGet(ApiUrl.get+"?did="+this.didString,true).then((result)=>{
-        if(result["code"] === 200){
-           this.isPublic = result["data"] || "";
-        }
-      });
-    }
-
 
     this.connectionStatus = this.feedService.getConnectionStatus();
     this.events.subscribe('feeds:connectionChanged', (status) => {
