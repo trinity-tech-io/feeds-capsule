@@ -1,4 +1,4 @@
-<!-- <ion-header *ngIf="connectionStatus == 1">
+<ion-header *ngIf="connectionStatus == 1">
   <div class="offline-header"></div>
 </ion-header>
 
@@ -55,7 +55,7 @@
           class="middle-col"
           (click)="navTo(channel.nodeId, channel.id)"
         >
-          <ion-label>{{ moreName(channel.name) }}</ion-label>
+          <ion-label (press)="pressName(channel.name)">{{ moreName(channel.name) }}</ion-label>
           <ion-row>
             <img src="./assets/images/bubble2.svg"> <br>
             <p><span>{{ channel.subscribers }}</span> {{ 'common.followers' | translate }}</p>
@@ -77,9 +77,9 @@
     </div> 
   </ion-list>
 
-</ion-content> -->
+</ion-content>
 
-<ion-header *ngIf="connectionStatus == 1">
+<!-- <ion-header *ngIf="connectionStatus == 1">
   <div class="offline-header"></div>
 </ion-header>
 <ion-content>
@@ -194,4 +194,4 @@
 
   <div class="addfeedssource1" (click)="addfeedssource()" *ngIf="channelList.length > 0">{{"SearchPage.addfeedssource"|translate}}</div>
 
-</ion-content>
+</ion-content> -->
