@@ -27,13 +27,13 @@
         </ion-label>
       </ion-button>
     </ion-row>
-    <ion-row class="btn-row btn-row2">
+    <!-- <ion-row class="btn-row btn-row2">
       <ion-button (click)="exploreFeedSource()">
         <ion-label>
           {{ "ServersPage.addNewFeedSources" | translate }}
         </ion-label>
       </ion-button>
-    </ion-row>
+    </ion-row> -->
     <ion-row class="btn-row btn-row2">
       <ion-button (click)="bindFeedSource()">
         <ion-label>
@@ -114,7 +114,7 @@
      <!-------------------- LABEL BUTTONS -------------------->
     <ion-row class="buttons-row" *ngIf="serverList.length >0">
       <ion-label (click)="discover()">{{ 'ServersPage.discover' | translate }}</ion-label>
-      <ion-label (click)="exploreFeedSource()">{{ 'ServersPage.addNewFeedSources' | translate }}</ion-label>
+      <!-- <ion-label (click)="exploreFeedSource()">{{ 'ServersPage.addNewFeedSources' | translate }}</ion-label> -->
       <ion-label *ngIf="myFeedSource === null" (click)="bindFeedSource()">{{ 'ServersPage.createNewFeedSource' | translate}}</ion-label>
     </ion-row>
   </ion-grid>
