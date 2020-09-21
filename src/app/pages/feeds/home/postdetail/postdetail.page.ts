@@ -55,7 +55,7 @@ export class PostdetailPage implements OnInit {
     private feedService :FeedService,
     public theme:ThemeService,
     private translate:TranslateService,
-    private menuService: MenuService) {
+    public menuService: MenuService) {
      
   }
 
@@ -318,7 +318,7 @@ export class PostdetailPage implements OnInit {
      this.nodeStatus[this.nodeId] = status;
   }
 
-  getImage(nodeId,channelId,postId){
+  getImage(){
     let nodeChannelPostId = this.nodeId+this.channelId+this.postId;
     let img = this.images[nodeChannelPostId] || "";
     if (img == ""){

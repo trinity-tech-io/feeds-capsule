@@ -123,8 +123,8 @@
       </ion-infinite-scroll-content>
     </ion-infinite-scroll>
   
-    <ion-row class="global-options" [class.global-darkOptions]="theme.darkMode" *ngIf="menuService.optionsOn">
-      <div class="close ion-activatable ripple" (click)="menuService.hideOptions()">
+    <!-- <ion-row class="global-options" [class.global-darkOptions]="theme.darkMode">
+      <div class="close ion-activatable ripple">
         <img *ngIf="!theme.darkMode" src="/assets/icons/cross.svg">
         <img *ngIf="theme.darkMode" src="/assets/icons/darkmode/cross.svg">
         <ion-ripple-effect></ion-ripple-effect>
@@ -144,7 +144,7 @@
           <span>Unfollow</span>
         </div>
       </ion-col>
-    </ion-row>
+    </ion-row> -->
   </div> 
 </ion-content>
   
