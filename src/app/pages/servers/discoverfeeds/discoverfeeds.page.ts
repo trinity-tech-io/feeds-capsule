@@ -99,7 +99,6 @@ export class DiscoverfeedsPage implements OnInit {
   initData(events:any,isLoading:boolean=true){
     this.myFeedSource = "";
     this.httpService.ajaxGet(ApiUrl.listPage+"?pageNum="+this.pageNum+"&pageSize="+this.pageSize,isLoading).then((result)=>{
-      this.initOwnerServe();
       if(events!=""){
         events.target.complete();
       }
@@ -113,15 +112,6 @@ export class DiscoverfeedsPage implements OnInit {
       }
      
     });
-  }
-
-  initOwnerServe(){
-    this.myFeedSource = this.feedService.getBindingServer() || "";
-    if(this.myFeedSource!=''){
-      this.curServer = this.feedService.getServerbyNodeId(this.myFeedSource.nodeId);
-      this.ownerDid = this.curServer["did"];
-      this.serverStatisticsMap = this.feedService.getServerStatisticsMap();
-    }
   }
 
   doRefresh(event:any){
