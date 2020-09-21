@@ -42,6 +42,7 @@ export class AppService {
           this.onMessageReceived(msg);
         });
         titleBarManager.addOnItemClickedListener((menuIcon)=>{
+          this.native.hideLoading();
           if (menuIcon.key == "back") {
               this.handleBack();
           } else if (menuIcon.key == "more"){
