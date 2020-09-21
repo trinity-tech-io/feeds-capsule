@@ -22,90 +22,12 @@
 
 import { Injectable } from '@angular/core';
 import { Events, Platform } from '@ionic/angular';
-// import { StorageService } from '../services/StorageService';
-
-// type UserInfo = {
-//     userId: string;
-//     name: string;
-//     description: string;
-//     hasAvatar: Boolean;
-//     gender: string;
-//     phone: string;
-//     email: string;
-//     region: string;
-// }
-
-// class SelfInfo{
-//     nodeId: string;
-//     userId: string;
-//     address: string;
-//     constructor(nodeId: string, userId: string, address: string){
-//     }
-// }
-
-
-
-
-
-// let friendsMap = {};
-// class FriendInfo{
-//     userInfo: UserInfo;
-
-
-
-//         /** The user info. */
-//         userInfo: UserInfo;
-//         /** The presence status. */
-//         presence: PresenceStatus;
-//         /** The connection status. */
-//         connection: ConnectionStatus;
-//         /** The friend's label name. */
-//         label: string;
-//     }
-// }
-
-
-/*
-export class ChatMessage {
-    messageId: string;
-    userId: string;
-    userAvatar: string;
-    toUserId: string;
-    time: number | string;
-    message: string;
-    status: string;
-} */
-// @Injectable()
-// class FeedMessage{
-//     nodeId: string;
-//     method: string;
-//     params: any;
-//     constructor(nodeId: string,
-//         method: string,
-//         params: any){
-
-//     }
-// }
-
 declare let carrierManager: CarrierPlugin.CarrierManager;
 
 let FriendInfo: CarrierPlugin.FriendInfo;
 let UserInfo: CarrierPlugin.UserInfo;
-
-
 let carrierInst: CarrierPlugin.Carrier;
-
 let eventBus = null;
-
-// var connectStatus ;
-
-// const bootstrapsOpts = [
-//     { ipv4: "13.58.208.50", port: "33445", publicKey: "89vny8MrKdDKs7Uta9RdVmspPjnRMdwMmaiEW27pZ7gh" },
-//     { ipv4: "18.216.102.47", port: "33445", publicKey: "G5z8MqiNDFTadFUPfMdYsYtkUDbX5mNCMVHMZtsCnFeb" },
-//     { ipv4: "18.216.6.197", port: "33445", publicKey: "H8sqhRrQuJZ6iLtP2wanxt4LzdNrN2NNFnpPdq1uJ9n2" },
-//     { ipv4: "52.83.171.135", port: "33445", publicKey: "5tuHgK1Q4CYf4K5PutsEPK5E3Z7cbtEBdx7LwmdzqXHL" },
-//     { ipv4: "52.83.191.228", port: "33445", publicKey: "3khtxZo89SBScAMaHhTvD68pPHiKxgZT6hTCSZZVgNEm" }
-// ];
 
 const createOption = {
     udpEnabled: true,
@@ -129,7 +51,8 @@ export class CarrierService {
         onFriendAdded: this.friendAddedCallback,
         onFriendRemoved: this.friendRemovedCallback,
         onFriendMessage: this.friendMessageCallback,
-        onFriendBinaryMessage: this.friendBinaryMessageCallback
+        onFriendBinaryMessage: this.friendBinaryMessageCallback,
+        onSessionRequest: this.sessionRequestCallback
     }
 
     constructor(public events: Events, public platform: Platform) {
@@ -196,6 +119,10 @@ export class CarrierService {
 
     friendBinaryMessageCallback(event) {
         eventBus.publish('carrier:friendBinaryMessage', event, Date.now());
+    }
+
+    sessionRequestCallback(event) {
+        eventBus.publish('carrier:sessionRequest', event, Date.now());
     }
 
     destroyCarrier() {
@@ -376,12 +303,43 @@ export class CarrierService {
     }
 
     errorFun(err, errorFun = null) {
-
         alert("error=>"+err);
         alert("errorFun"+JSON.stringify(errorFun));
     }
 
     getIdFromAddress(address: string, onSuccess:(userId: string)=>void, onError?:(err: string)=>void){
         carrierManager.getIdFromAddress(address, onSuccess,onError);
+    }
+
+    newSession(to: string, onSuccess:(session: CarrierPlugin.Session)=>void, onError?:(err: string)=>void){
+        carrierInst.newSession(to,onSuccess,onError);
+    }
+
+    sessionRequest(session: CarrierPlugin.Session, handler: CarrierPlugin.OnSessionRequestComplete, onSuccess:()=>void, onError?:(err: string)=>void){
+        session.request(handler, onSuccess, onError);
+    }
+
+    sessionStart(session: CarrierPlugin.Session, sdp: string, onSuccess:()=>void, onError?:(err: string)=>void){
+        session.start(sdp,onSuccess, onError);
+    }
+
+    sessionClose(session: CarrierPlugin.Session, onSuccess?:()=>void, onError?:(err: string)=>void){
+        session.close(onSuccess, onError);
+    }
+
+    sessionAddStream(session: CarrierPlugin.Session,type: CarrierPlugin.StreamType, options: Number, callbacks: CarrierPlugin.StreamCallbacks, onSuccess:(stream: CarrierPlugin.Stream)=>void, onError?:(err: string)=>void){
+        session.addStream(type,options,callbacks,onSuccess,onError);    
+    }
+
+    sessionRemov(session: CarrierPlugin.Session, stream: CarrierPlugin.Stream, onSuccess:(stream: CarrierPlugin.Stream)=>void, onError?:(err: string)=>void){
+        session.removeStream(stream, onSuccess, onError);
+    }
+
+    sessionReplyRequest(session: CarrierPlugin.Session, status: Number, reason: string, onSuccess:()=>void, onError?:(err: string)=>void){
+        session.replyRequest(status, reason, onSuccess, onError);
+    }
+
+    streamWrite(stream: CarrierPlugin.Stream, data: string, onSuccess:(bytesSent: Number)=>void, onError?:(err: string)=>void){
+        stream.write(data, onSuccess, onError);
     }
 }
