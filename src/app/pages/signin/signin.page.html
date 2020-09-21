@@ -5,7 +5,7 @@
       <ion-grid>
         <ion-row>
           <ion-col size="12">
-            <ion-img src="assets/images/feeds-logo.svg" class="feedslogo"></ion-img>  
+            <img src="assets/images/feeds-logo.svg" class="feedslogo"/> 
             <p class="feeds white">{{'common.feeds'|translate}}</p>
           </ion-col>
         </ion-row>
@@ -25,7 +25,7 @@
           </ion-col>
         </ion-row>
         <ion-row class="learnmore-row" (click)="learnMore(slide)">
-          <ion-label>Learn more about Feeds?</ion-label>
+          <ion-label>{{"SigninPage.des2"|translate}}</ion-label>
         </ion-row>
       </ion-grid> 
     </ion-slide>
@@ -34,12 +34,12 @@
       <ion-card class="onboard-card">
         <img src='assets/onboard/slide1.svg'>
         <ion-card-title>
-          What is feed?
+        {{"SigninPage.des3"|translate}} <br>
         </ion-card-title>
         <ion-card-subtitle>
-           Follow your interests. <br>
-           Hear what people are talking about.  <br>
-           Join the conversation. <br>
+          {{"SigninPage.des4"|translate}} <br>
+          {{"SigninPage.des5"|translate}} <br>
+          {{"SigninPage.des6"|translate}} <br>
         </ion-card-subtitle>
       </ion-card>
       <ion-row class="btn-row" (click)="signIn()">
@@ -53,29 +53,3 @@
 
   </ion-slides>
 </ion-content>
-
-<!--  <ion-content [class.darkContainer]="theme.darkMode">
-    <ion-grid>
-      <ion-row>
-        <ion-col size="12">
-          <ion-img src="assets/images/feeds-logo.svg" class="feedslogo"></ion-img>  
-          <p class="feeds white">{{'common.feeds'|translate}}</p>
-        </ion-col>
-      </ion-row>
-
-      <ion-row class="top-110">
-          <ion-col size="12">
-              <p class="desktop white">{{ "SigninPage.des"| translate }}</p>
-              <p class="desktop white">{{ "SigninPage.des1"| translate }}</p>
-          </ion-col>
-      </ion-row>
-
-      <ion-row class="top-25">
-        <ion-col size="12">
-          <ion-button expand="block" color="primary" (click)="signIn()" class="signbtn">
-            {{ "SigninPage.signIn"| translate }}
-          </ion-button>
-        </ion-col>
-      </ion-row>
-    </ion-grid> 
-</ion-content> -->
