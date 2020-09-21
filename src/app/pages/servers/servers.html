@@ -15,21 +15,29 @@
   </ion-refresher>
 
   <!-------------------- NO FEEDS -------------------->
-  <div *ngIf="serverList.length === 0 && myFeedSource === null" class="empty-container">
+  <div *ngIf="serverList.length === 0" class="empty-container">
     <img src="./assets/images/empty-feeds-icon.svg">
     <h1>{{ 'common.allempty'| translate }}</h1>
     <p>{{ 'SearchPage.emptyDes' | translate }}</p>
+
     <ion-row class="btn-row">
+      <ion-button (click)="discover()">
+        <ion-label>
+          {{ 'ServersPage.discover' | translate }}
+        </ion-label>
+      </ion-button>
+    </ion-row>
+    <ion-row class="btn-row btn-row2">
       <ion-button (click)="exploreFeedSource()">
         <ion-label>
-          {{ "HomePage.exploreFeeds" | translate }}
+          {{ "ServersPage.addNewFeedSources" | translate }}
         </ion-label>
       </ion-button>
     </ion-row>
     <ion-row class="btn-row btn-row2">
       <ion-button (click)="bindFeedSource()">
         <ion-label>
-          {{ 'ServersPage.bindFeedSource' | translate }}
+          {{ 'ServersPage.createNewFeedSource' | translate }}
         </ion-label>
       </ion-button>
     </ion-row>
@@ -104,149 +112,10 @@
       </div>  
     </div>
      <!-------------------- LABEL BUTTONS -------------------->
-    <ion-row class="buttons-row">
+    <ion-row class="buttons-row" *ngIf="serverList.length >0">
+      <ion-label (click)="discover()">{{ 'ServersPage.discover' | translate }}</ion-label>
       <ion-label (click)="exploreFeedSource()">{{ 'ServersPage.addNewFeedSources' | translate }}</ion-label>
       <ion-label *ngIf="myFeedSource === null" (click)="bindFeedSource()">{{ 'ServersPage.createNewFeedSource' | translate}}</ion-label>
-      <ion-label (click)="discover()">{{ 'ServersPage.discover' | translate }}</ion-label>
     </ion-row>
   </ion-grid>
 </ion-content>
-
-<!-- <ion-header *ngIf="connectionStatus == 1">
-  <div class="offline-header"></div>
-</ion-header>
-
-<ion-content>
-  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" pullFactor="0.5">
-    <ion-refresher-content
-      pullingIcon="arrow-dropdown"
-      pullingText="{{'common.pullToRefresh'|translate}}"
-      refreshingSpinner="circles"
-      refreshingText="">
-    </ion-refresher-content>
-  </ion-refresher>
-
-  <div *ngIf="serverList.length === 0 && myFeedSource === null" class="empty-container">
-    <img src="./assets/images/empty-feeds-icon.svg">
-    <h1>{{ 'common.allempty'| translate }}</h1>
-    <p>{{ 'SearchPage.emptyDes' | translate }}</p>
-    <ion-row class="btn-row">
-      <ion-button (click)="exploreFeedSource()">
-        <ion-label>
-          {{ "ServersPage.addFeedSources" | translate }}
-        </ion-label>
-      </ion-button>
-    </ion-row>
-    <ion-row class="btn-row btn-row2">
-      <ion-button (click)="bindFeedSource()">
-        <ion-label>
-          {{ 'ServersPage.bindFeedSource' | translate }}
-        </ion-label>
-      </ion-button>
-    </ion-row>
-
-    <ion-row class="btn-row btn-row2">
-      <ion-button (click)="discover()">
-        <ion-label>
-          {{ 'ServersPage.discover' | translate }}
-        </ion-label>
-      </ion-button>
-    </ion-row>
-  </div>
-  
-  <div class="feed-source" [class.darkContainer]="theme.darkMode">
-    <div class="feed-source-div" *ngIf="myFeedSource != null"> 
-      <img class="feed-source-img" src="assets/images/play.svg" *ngIf="!theme.darkMode">
-      <img class="feed-source-img" src="assets/images/play-dark.svg" *ngIf="theme.darkMode">
-      <ion-label class="feed-source-text white">{{'ServersPage.myFeedSources'| translate}}</ion-label>
-
-      <ion-card class="ion-no-padding ion-no-margin feed-source-card" (click)="navToServerInfo(myFeedSource.nodeId, true)">
-        <ion-card-content class="ion-no-padding ion-no-margin">
-          <div class="feed-source-card-right-img-div">
-            <img class="feed-source-card-right-img" src="assets/images/chevron-thin-right.svg">
-          </div>
-
-          <div class="feed-source-card-content">
-            <div class="feed-source-card-img-div" style="position:relative">
-              <img class="feed-source-card-img" src="assets/images/profile-2.svg" >
-              <div class="feed-source-card-status">
-                <div class="online-circle" *ngIf="checkServerStatus(myFeedSource.nodeId) == 0"></div>
-                <div class="offline-circle" *ngIf="checkServerStatus(myFeedSource.nodeId) == 1"></div>
-              </div>
-            </div>
-
-            <div class="feed-source-card-content-detail">
-              <div class="name white">{{myFeedSource.name}}</div>
-              <div class="owner">{{myFeedSource.owner}}</div>
-              <div class="users-img-div" *ngIf="checkServerStatus(myFeedSource.nodeId) == 0">
-                <img class="users-img" src="assets/images/users-online.svg">
-                <div class="users-num-online-text"> {{checkConnectClient(myFeedSource.nodeId)}}</div>
-                <div class="users-online-text">{{'ServersPage.users'| translate}}</div>
-              </div>
-
-              <div class="users-img-div" *ngIf="checkServerStatus(myFeedSource.nodeId) == 1">
-                <img class="users-img" src="assets/images/users-offline.svg">
-                <div class="users-num-offline-text"> {{checkConnectClient(myFeedSource.nodeId)}}</div>
-                <div class="users-offline-text">{{'ServersPage.users'| translate}}</div>
-              </div>
-
-            </div>
-          </div>
-        </ion-card-content>
-      </ion-card>
-    </div>
-
-    <div class="feed-source-div" *ngIf="serverList.length >0" [class.darkContainer]="theme.darkMode">
-      <img class="feed-source-img" src="assets/images/play.svg" *ngIf="!theme.darkMode">
-      <img class="feed-source-img" src="assets/images/play-dark.svg" *ngIf="theme.darkMode">
-      <ion-label class="feed-source-text white">{{'ServersPage.currentFeedSources'| translate}}</ion-label>
-
-      <ion-card class="ion-no-padding ion-no-margin"  class="feed-source-card" *ngFor="let server of serverList" (click)="navToServerInfo(server.nodeId, false)">
-        <ion-card-content class="ion-no-padding ion-no-margin">
-          <div class="feed-source-card-right-img-div">
-            <img class="feed-source-card-right-img" src="assets/images/chevron-thin-right.svg">
-          </div>
-
-          <div class="feed-source-card-content">
-            <div class="feed-source-card-img-div" style="position:relative">
-              <img class="feed-source-card-img" src="assets/images/profile-2.svg">
-              <div class="feed-source-card-status">
-                <div class="online-circle" *ngIf="checkServerStatus(server.nodeId) == 0"></div>
-                <div class="offline-circle" *ngIf="checkServerStatus(server.nodeId) == 1"></div>
-
-              </div>
-            </div>
-
-            <div class="feed-source-card-content-detail">
-              <div class="name white">{{server.name}}</div>
-              <div class="owner">{{server.owner}}</div>
-              <div class="users-img-div" *ngIf="checkServerStatus(server.nodeId) == 0">
-                <img class="users-img" src="assets/images/users-online.svg">
-                <div class="users-num-online-text"> {{checkConnectClient(server.nodeId)}}</div>
-                <div class="users-online-text">{{'ServersPage.users'| translate}}</div>
-              </div>
-
-
-              <div class="users-img-div" *ngIf="checkServerStatus(server.nodeId) == 1">
-                <img class="users-img" src="assets/images/users-offline.svg">
-                <div class="users-num-offline-text">{{checkConnectClient(server.nodeId)}}</div>
-                <div class="users-offline-text">{{'ServersPage.users'| translate}}</div>
-              </div>
-            </div>
-          </div>
-        </ion-card-content>
-      </ion-card>
-      <div class="button-div" *ngIf="myFeedSource == null">
-        <div class="explore-feed-source-button" (click)="exploreFeedSource()">{{'ServersPage.addNewFeedSources'| translate}}</div>
-        <div class="bind-feed-source-button" (click)="bindFeedSource()">{{'ServersPage.createNewFeedSource'| translate}}</div>
-        <div class="bind-feed-source-button" (click)="discover()">{{'ServersPage.discover'| translate}}</div>
-      </div>
-    </div>
-    <div class="button-div" *ngIf="myFeedSource != null">
-      <div class="explore-feed-source-button" (click)="exploreFeedSource()">{{'ServersPage.addNewFeedSources'| translate}}</div>
-      <div class="bind-feed-source-button" (click)="discover()">{{'ServersPage.discover'| translate}}</div>
-    </div> 
-  </div>
-
-</ion-content>
- -->

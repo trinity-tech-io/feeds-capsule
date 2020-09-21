@@ -48,8 +48,9 @@ export class ServerInfoPage implements OnInit {
 
   public isPublic:string ="";
   public serverDetails: any[] = [];
+  
   public isShowQrcode: boolean = true;
-
+  public actionSheet:any = null;
   constructor(
     private actionSheetController:ActionSheetController,
     private events: Events,
@@ -190,6 +191,8 @@ export class ServerInfoPage implements OnInit {
     this.events.unsubscribe("feeds:serverConnectionChanged");
     this.events.unsubscribe("feeds:removeFeedSourceFinish");
     this.events.unsubscribe("feeds:updateTitle");
+    if(this.actionSheet!=null)
+    this.actionSheet.dismiss();
   }
 
   initTitle(){
@@ -305,7 +308,8 @@ export class ServerInfoPage implements OnInit {
       return;
     }
 
-    const actionSheet = await this.actionSheetController.create({
+    this.actionSheet = await this.actionSheetController.create({
+      cssClass:'editPost',
       buttons: [{
         text: this.translate.instant("ServerInfoPage.DeletethisFeedSource"),
         role: 'destructive',
@@ -325,7 +329,14 @@ export class ServerInfoPage implements OnInit {
         }
       }]
     });
-    await actionSheet.present();
+
+    this.actionSheet.onWillDismiss().then(()=>{
+      if(this.actionSheet !=null){
+        this.actionSheet  = null;
+      }
+  });
+
+    await this.actionSheet.present();
 
   }
 
@@ -335,7 +346,8 @@ export class ServerInfoPage implements OnInit {
       return;
     }
 
-    const actionSheet = await this.actionSheetController.create({
+    this.actionSheet = await this.actionSheetController.create({
+      cssClass:'editPost',
       buttons: [{
         text: this.translate.instant("ServerInfoPage.RemovethisFeedSource"),
         role: 'destructive',
@@ -355,7 +367,12 @@ export class ServerInfoPage implements OnInit {
         }
       }]
     });
-    await actionSheet.present();
+    this.actionSheet.onWillDismiss().then(()=>{
+      if(this.actionSheet !=null){
+        this.actionSheet  = null;
+      }
+  });
+    await this.actionSheet.present();
   }
 
   clickEdit(){
