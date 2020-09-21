@@ -295,6 +295,8 @@ enum PublishType{
 enum PersistenceKey{
   ///////////////////////////////
   signInData = "signInData",
+  lastSignInData = "lastSignInData",
+
   signInRawData = "signInRawData",
 
   subscribedChannelsMap = "subscribedChannelsMap",
@@ -1311,7 +1313,14 @@ export class FeedService {
       description,
       this.getCurrentTimeNum()+this.getDaysTS(expDay)
     );
-    this.storeService.set(PersistenceKey.signInData, this.localSignInData);
+
+    this.checkSignInDataChange(this.localSignInData).then((isChange)=>{
+      if (isChange){
+        this.removeAllAccessToken();
+        this.storeService.set(PersistenceKey.signInData, this.localSignInData);
+        this.storeService.set(PersistenceKey.lastSignInData, this.localSignInData);
+      }
+    })
   }
 
   saveSignInData2(signInData: SignInData) {
@@ -1325,6 +1334,54 @@ export class FeedService {
 
   getSignInData(): SignInData {
     return this.localSignInData;
+  }
+
+  checkSignInDataChange(signInData: SignInData):Promise<boolean>{
+    return new Promise((resolve, reject) =>{
+      this.storeService.get(PersistenceKey.lastSignInData).then((lastSignInData)=>{
+        if (lastSignInData == null || lastSignInData == undefined){
+          resolve(true);
+          return ;
+        }
+
+        if (signInData.did != lastSignInData.did){
+          resolve(true);
+          return ;
+        }
+        if (signInData.name != lastSignInData.name){
+          resolve(true);
+          return ;
+        }
+        if (JSON.stringify(signInData.avatar) != JSON.stringify(lastSignInData.avatar)){
+          resolve(true);
+          return ;
+        }
+        if (signInData.email != lastSignInData.email){
+          resolve(true);
+          return ;
+        }
+        if (signInData.telephone != lastSignInData.telephone){
+          resolve(true);
+          return ;
+        }
+        if (signInData.location != lastSignInData.location){
+          resolve(true);
+          return ;
+        }
+        if (signInData.nickname != lastSignInData.nickname){
+          resolve(true);
+          return ;
+        }
+        if (signInData.description != lastSignInData.description){
+          resolve(true);
+          return ;
+        }
+
+        resolve(false);
+      },(reason)=>{
+        reject(reason);
+      })
+    });
   }
 
   initSignInDataAsync(onSuccess:(signInData: SignInData) => void,onError?:(errorData: any) => void){
@@ -4050,6 +4107,10 @@ export class FeedService {
   removeAccessTokenById(nodeId: string):Promise<any>{
     accessTokenMap[nodeId] = undefined;
     return this.storeService.set(PersistenceKey.accessTokenMap, accessTokenMap);
+  }
+
+  removeAllAccessToken(): Promise<any>{
+    return this.storeService.remove(PersistenceKey.accessTokenMap);
   }
 
   removeNotification():Promise<any>{
