@@ -50,6 +50,7 @@ import { TransportService } from './services/TransportService';
 import { SerializeDataService } from './services/SerializeDataService';
 import { MenuService } from './services/MenuService';
 import { FormateInfoService } from './services/FormateInfoService';
+import { SessionService } from './services/SessionService';
 
 import { IonicStorageModule } from '@ionic/storage';
 
@@ -154,6 +155,7 @@ export function anim(AnimationC: Animation, baseEl: any, position?: any): Promis
     Clipboard,
     CarrierService,
     NativeService,
+    SessionService,
     FeedService,
     TranslateService,
     ThemeService,

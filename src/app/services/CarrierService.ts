@@ -77,6 +77,7 @@ export class CarrierService {
 
     readyCallback(ret) {
         this.mIsReady = true;
+        console.log("ready");
         eventBus.publish('carrier:ready', ret, Date.now());
     }
 
@@ -94,6 +95,7 @@ export class CarrierService {
     }
 
     friendConnectionCallback(ret) {
+        console.log("===========friendConnectionCallback===============");
         eventBus.publish('carrier:friendConnection', ret, Date.now());
     }
 
@@ -122,6 +124,7 @@ export class CarrierService {
     }
 
     sessionRequestCallback(event) {
+        console.log("carrier:sessionRequest ==>"+JSON.stringify(event));
         eventBus.publish('carrier:sessionRequest', event, Date.now());
     }
 
@@ -331,7 +334,7 @@ export class CarrierService {
         session.addStream(type,options,callbacks,onSuccess,onError);    
     }
 
-    sessionRemov(session: CarrierPlugin.Session, stream: CarrierPlugin.Stream, onSuccess:(stream: CarrierPlugin.Stream)=>void, onError?:(err: string)=>void){
+    sessionRemoveStream(session: CarrierPlugin.Session, stream: CarrierPlugin.Stream, onSuccess:(stream: CarrierPlugin.Stream)=>void, onError?:(err: string)=>void){
         session.removeStream(stream, onSuccess, onError);
     }
 
@@ -341,5 +344,9 @@ export class CarrierService {
 
     streamWrite(stream: CarrierPlugin.Stream, data: string, onSuccess:(bytesSent: Number)=>void, onError?:(err: string)=>void){
         stream.write(data, onSuccess, onError);
+    }
+
+    test(session: CarrierPlugin.Session){
+
     }
 }
