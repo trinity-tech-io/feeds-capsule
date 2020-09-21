@@ -283,6 +283,9 @@ ion-input {
      margin-left:14px;
      margin-right:10px;
      color: #fff;
+     filter: drop-shadow(#fff 80px 0);
+     transform: translateX(-80px);
+     overflow:hidden;
    }
  }
 }
