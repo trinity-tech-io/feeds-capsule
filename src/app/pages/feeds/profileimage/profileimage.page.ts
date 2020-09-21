@@ -66,7 +66,7 @@ export class ProfileimagePage implements OnInit {
     private events: Events,
     private zone: NgZone,
     private translate: TranslateService,
-    private theme: ThemeService, 
+    public theme: ThemeService, 
     private feedService:FeedService,
     private camera: CameraService
   ) { }
