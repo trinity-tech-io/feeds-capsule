@@ -132,7 +132,7 @@ export class ChannelsPage implements OnInit {
 
   }
   ionViewWillEnter() {
-    this.styleObj.width = (screen.width - 85)+'px';
+    this.styleObj.width = (screen.width - 105)+'px';
     this.startIndex = 0;
     this.init();
     this.scrollToTop(1);

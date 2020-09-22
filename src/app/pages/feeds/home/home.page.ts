@@ -44,7 +44,7 @@ export class HomePage implements OnInit {
   ) {}
 
   ionViewWillEnter() {
-    this.styleObj.width = (screen.width - 85)+'px';
+    this.styleObj.width = (screen.width - 105)+'px';
     this.startIndex = 0;
     this.totalData = this.feedService.getPostList() || [];
     this.connectionStatus = this.feedService.getConnectionStatus();

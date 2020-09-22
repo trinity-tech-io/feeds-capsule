@@ -31,7 +31,7 @@ export class LikesComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.styleObj.width = (screen.width - 85)+'px';
+    this.styleObj.width = (screen.width - 105)+'px';
   
   }
 
