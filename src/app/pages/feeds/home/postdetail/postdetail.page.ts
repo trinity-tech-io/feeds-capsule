@@ -105,8 +105,8 @@ export class PostdetailPage implements OnInit {
   }
 
   ionViewWillEnter() {
-    this.styleObj.width = (screen.width - 35)+'px';
-    this.dstyleObj.width= (screen.width - 85)+'px';
+    this.styleObj.width = (screen.width - 55)+'px';
+    this.dstyleObj.width= (screen.width - 105)+'px';
     this.initData();
     this.connectionStatus = this.feedService.getConnectionStatus();
     this.feedService.refreshPostById(this.nodeId,this.channelId,this.postId);

@@ -47,10 +47,11 @@
         }
 
         .right-col {
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-
+            // display: flex;
+            // justify-content: flex-end;
+            // align-items: center;
+            position: absolute;
+            right: 0px;
             img {
                 width: 18.4px;
                 height: 4.4px;
@@ -169,6 +170,16 @@
                 border-radius: 50%;
                 border: 1.25px solid #368bff;
                 object-fit: cover;
+            }
+        }
+
+        .right-col {
+            position: absolute;
+            right: 0px;
+            img {
+                width: 18.4px;
+                height: 4.4px;
+                overflow: visible;              
             }
         }
 
