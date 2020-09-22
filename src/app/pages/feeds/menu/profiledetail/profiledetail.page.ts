@@ -76,7 +76,8 @@ export class ProfiledetailPage implements OnInit {
     this.name = signInData["nickname"] || signInData["name"] || "";
     this.avatar = signInData["avatar"] || null;
     this.description = signInData["description"] || "";
-    this.did = signInData["did"] || "";
+    // this.did = signInData["did"] || "";
+    this.did = this.feedService.rmDIDPrefix(signInData["did"] || "");
     this.telephone = signInData["telephone"] || "";
     this.email = signInData["email"] || "";
     this.location = signInData["location"] || "";

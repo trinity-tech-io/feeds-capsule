@@ -4404,4 +4404,13 @@ export class FeedService {
       serversStatus[keys[index]].status = ConnState.disconnected;
     }
   }
+
+  rmDIDPrefix(did: string): string{
+    let result = did ;
+    let isStartWith = did.startsWith("did:elastos:");
+    if (isStartWith)
+      result = did.substring(12, did.length);
+
+    return result;
+  }
 }
