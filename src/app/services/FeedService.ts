@@ -1322,6 +1322,9 @@ export class FeedService {
         this.removeAllAccessToken();
         this.storeService.set(PersistenceKey.signInData, this.localSignInData);
         this.storeService.set(PersistenceKey.lastSignInData, this.localSignInData);
+      }else{
+        this.storeService.set(PersistenceKey.signInData, this.localSignInData);
+        this.storeService.set(PersistenceKey.lastSignInData, this.localSignInData);
       }
     })
   }
