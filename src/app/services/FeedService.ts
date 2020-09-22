@@ -734,6 +734,28 @@ export class FeedService {
     return sortArr;
   }
 
+  getFollowedChannelList():Channels[]{
+    let list: Channels[] = [];
+    let map = channelsMap || {};
+    let keys: string[] = Object.keys(map);
+
+    for (let index in keys) {
+      let item = channelsMap[keys[index]] || "";
+      if (item == "")
+        continue;
+      if (channelsMap[keys[index]].isSubscribed)
+        list.push(channelsMap[keys[index]]);
+    }
+
+    let sortArr = [];
+
+    sortArr = _.sortBy(list,(item:any)=> {
+      return - Number(item.last_update);
+    });
+
+    return sortArr;
+  }
+
   getChannelsListFromNodeId(nodeId: string): Channels[]{
     let list: Channels[] = [];
     let keys: string[] = Object.keys(channelsMap);
