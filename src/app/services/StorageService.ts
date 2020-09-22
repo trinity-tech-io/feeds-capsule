@@ -14,9 +14,7 @@ export class StorageService {
     }
 
     set(key: string, value: any):Promise<any>{
-        return this.storage.set(key, value).catch((reason)=>{
-            this.native.toastdanger("common.cantSave");
-        });
+        return this.storage.set(key, value);
     }
 
     get(key: string):Promise<any>{
