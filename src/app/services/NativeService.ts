@@ -24,40 +24,40 @@ export class NativeService {
         private translate: TranslateService) {
     }
 
-    public toast(message: string = 'Operation completed', duration: number = 5000): void {
+    public toast(message: string = 'Operation completed', duration: number = 3000): void {
         message = this.translate.instant(message);
         this.toastCtrl.create({
             mode: 'ios',
             color: 'success',
             message,
-            duration: 5000,
+            duration: 3000,
             position: 'top'
         }).then(toast => toast.present());
     }
 
-    public toastWarn(message: string = 'Operation completed', duration: number = 5000): void {
+    public toastWarn(message: string = 'Operation completed', duration: number = 3000): void {
         message = this.translate.instant(message);
         this.toastCtrl.create({
             mode: 'ios',
             color: 'warning',
             message,
-            duration: 5000,
+            duration: 3000,
             position: 'top'
         }).then(toast => toast.present());
     }
 
-    public toastdanger(message: string = 'Operation completed', duration: number = 5000): void {
+    public toastdanger(message: string = 'Operation completed', duration: number = 3000): void {
         message = this.translate.instant(message);
         this.toastCtrl.create({
             mode: 'ios',
             color: 'danger',
             message,
-            duration: 5000,
+            duration: 3000,
             position: 'top'
         }).then(toast => toast.present());
     }
 
-    public toast_trans(_message: string = '', duration: number = 5000): void {
+    public toast_trans(_message: string = '', duration: number = 3000): void {
         _message = this.translate.instant(_message);
         this.toastCtrl.create({
             mode: 'ios',
