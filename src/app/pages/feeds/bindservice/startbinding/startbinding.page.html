@@ -1,12 +1,40 @@
 <ion-header *ngIf="connectionStatus == 1">
   <div class="offline-header"></div>
 </ion-header>
- <ion-content ion-padding [class.darkContainer]="theme.darkMode">
+
+<ion-content>
+  <ion-grid class="container" [class.darkContainer]="theme.darkMode">
+    <h1>{{'StartbindingPage.introduce'|translate}}</h1>
+    <div *ngIf="feedsUrl === '-1'">
+      <p>{{ 'StartbindingPage.introduce1' | translate }}</p>
+      <h2>{{ 'StartbindingPage.introduce2' | translate }}</h2>
+      <h3 (click)="scanService()">{{ nonce }}</h3>
+    </div>
+    <div *ngIf="feedsUrl !== '-1'">
+      <p>{{ 'StartbindingPage.linkServer' | translate }}</p>
+      <h2>{{ 'StartbindingPage.introduce3' | translate }}</h2>
+      <h3 (click)="scanService()">{{ feedsUrl }}</h3>
+    </div>
+    <ion-row class="btn-row">
+      <ion-button class="confirm" (click)="confirm()">
+        <ion-label>{{'StartbindingPage.confirm'|translate}}</ion-label>
+      </ion-button> 
+    </ion-row>
+    <ion-row class="btns-row">
+      <ion-col class="btn cancel ion-activatable ripple" size="4.5" (click)="abort()">
+        <ion-label>{{'StartbindingPage.abort'|translate}}</ion-label>
+        <ion-ripple-effect></ion-ripple-effect>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>
+
+<!--  <ion-content ion-padding [class.darkContainer]="theme.darkMode">
     <div class="first white">
          {{'StartbindingPage.introduce'|translate}}
     </div>
 
-    <!--首次绑定-->
+
     <div *ngIf="feedsUrl === '-1'">
       <div class="second" >
         <div class="introduce"> {{'StartbindingPage.introduce1'|translate}}</div>
@@ -21,7 +49,7 @@
      </div>
     </div>
 
-     <!--再次绑定-->
+
      <div *ngIf="feedsUrl != '-1'">
       <div class="second">
         <div class="introduce"> {{'StartbindingPage.linkServer'|translate}}</div>
@@ -40,7 +68,7 @@
 
     <div class="abort" (click)="abort()">{{'StartbindingPage.abort'|translate}}</div>
 
-</ion-content>
+</ion-content> -->
 
 
 
