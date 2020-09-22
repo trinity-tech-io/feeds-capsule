@@ -109,9 +109,11 @@ export class ChannelsPage implements OnInit {
   initRefresh(){
     this.totalData = this.feedService.getPostListFromChannel(this.nodeId, this.channelId) || [];
     if(this.totalData.length-this.pageNumber > this.pageNumber){
-      this.postList = this.totalData.slice(this.startIndex,this.pageNumber);
-      this.startIndex++;
+      this.postList = this.totalData.slice(0,this.startIndex*this.pageNumber+this.pageNumber);
       this.infiniteScroll.disabled =false;
+      if(this.startIndex === 0){
+        this.startIndex++;
+      }
     }else{
       this.postList = this.totalData.slice(0,this.totalData.length);
       this.infiniteScroll.disabled =true;
@@ -133,9 +135,9 @@ export class ChannelsPage implements OnInit {
   }
   ionViewWillEnter() {
     this.styleObj.width = (screen.width - 105)+'px';
-    this.startIndex = 0;
+    //this.startIndex = 0;
     this.init();
-    this.scrollToTop(1);
+    //this.scrollToTop(1);
     this.events.subscribe('feeds:connectionChanged',(status)=>{
       this.zone.run(() => {
         this.connectionStatus = status;

@@ -79,13 +79,18 @@
         </ion-col>
         <ion-col class="content-col" size="8">
           <ion-row class="top-row">
-            <ion-col class="left-col" size="11" (press)="userName(comment.user_name)">
+            <ion-col class="left-col" size="10.5" (press)="userName(comment.user_name)">
               <ion-label >
                 @{{ indexText(comment.user_name) }}
                 <span> {{ handleDisplayTime(comment.created_at) }}</span>
               </ion-label>
             </ion-col>
           </ion-row>
+          <ion-col class="right-col" size="1.5"  *ngIf="comment.status != 1 && checkCommentIsMine(comment)">
+            <img (click)="openEditTool($event,comment)"
+              [src]="!theme.darkMode ? './assets/images/dots-three-vertical.svg' : './assets/images/dots-three-vertical-dark.svg'"
+            >
+          </ion-col>
           <ion-label>
             <p (press)="userName(comment.user_name)">@{{ indexText(comment.user_name) }}</p>
           </ion-label>
@@ -105,12 +110,6 @@
               <ion-label class="status" style="right:-7px;" *ngIf="comment.status === 2">{{ 'common.edit' | translate}}</ion-label>
             </ion-col>
           </ion-row>
-        </ion-col>
-
-        <ion-col class="right-col" size="1.5"  *ngIf="comment.status != 1 && checkCommentIsMine(comment)">
-          <img (click)="openEditTool($event,comment)"
-            [src]="!theme.darkMode ? './assets/images/dots-three-vertical.svg' : './assets/images/dots-three-vertical-dark.svg'"
-          >
         </ion-col>
       </ion-row>
     </ion-grid>
