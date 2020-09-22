@@ -19,6 +19,7 @@ export class LikesComponent implements OnInit {
   @Input() likeList:any =[];
   @Input() nodeStatus:any = {};
   @Output() fromChild=new EventEmitter();
+  public styleObj:any = {width:""};
   constructor(
     private feedspage: FeedsPage,
     private tabs: IonTabs,
@@ -30,7 +31,7 @@ export class LikesComponent implements OnInit {
   }
 
   ngOnInit() {
-  
+    this.styleObj.width = (screen.width - 85)+'px';
   
   }
 

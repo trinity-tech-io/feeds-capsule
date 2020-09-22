@@ -392,5 +392,6 @@ export const zh = {
         "added":"已添加",
         "notadded":"未添加",
         "exploreFeeds":"探索微频",
+        "emptyDes":"还没有公开的微频源"
     }
 };

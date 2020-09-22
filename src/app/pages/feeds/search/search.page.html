@@ -22,7 +22,7 @@
     <ion-row class="btn-row">
       <ion-button (click)="addfeedssource()">
         <ion-label>
-          {{  "ServersPage.discover"  | translate }}
+          {{ "SearchPage.addfeedssource"  | translate }}
         </ion-label>
       </ion-button>
     </ion-row>
@@ -73,8 +73,7 @@
       </ion-row>
     </ion-item>
     <div class="new-feed-div" (click)="addfeedssource()" *ngIf="channelList.length > 0">
-      <!-- <div class="new-feed">{{ "SearchPage.addfeedssource" | translate }}</div> -->
-      <div class="new-feed">{{ "ServersPage.discover" | translate }}</div>
+        <div class="new-feed">{{ "SearchPage.addfeedssource" | translate }}</div>
     </div> 
   </ion-list>
 

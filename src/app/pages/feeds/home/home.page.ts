@@ -29,6 +29,7 @@ export class HomePage implements OnInit {
   public totalData = [];
   public images = {};
   public curPost:any = {};
+  public styleObj:any = {width:""};
   constructor(
     private elmRef: ElementRef,
     private feedspage: FeedsPage,
@@ -43,6 +44,7 @@ export class HomePage implements OnInit {
   ) {}
 
   ionViewWillEnter() {
+    this.styleObj.width = (screen.width - 85)+'px';
     this.startIndex = 0;
     this.totalData = this.feedService.getPostList() || [];
     this.connectionStatus = this.feedService.getConnectionStatus();
