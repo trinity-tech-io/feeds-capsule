@@ -42,7 +42,8 @@ export class ChannelsPage implements OnInit {
   public pageNumber:number = 5;
   public totalData:any = [];
 
-  public curPost:any = {}
+  public curPost:any = {};
+  public styleObj:any = {width:""};
   constructor(
     private popoverController:PopoverController,
     private zone: NgZone,
@@ -131,6 +132,7 @@ export class ChannelsPage implements OnInit {
 
   }
   ionViewWillEnter() {
+    this.styleObj.width = (screen.width - 85)+'px';
     this.startIndex = 0;
     this.init();
     this.scrollToTop(1);

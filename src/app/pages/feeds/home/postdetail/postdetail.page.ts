@@ -38,7 +38,6 @@ export class PostdetailPage implements OnInit {
   public nodeId:string = "";
   public channelId:number = 0;
   public postId:number = 0;
-  public objStyle:any={"width":""};
   public startIndex:number = 0;
   public pageNumber:number = 5;
   public totalData:any = [];
@@ -46,6 +45,8 @@ export class PostdetailPage implements OnInit {
   public popover: any;
   
   public postStatus = 0;
+  public styleObj:any = {width:""};
+  public dstyleObj:any = {width:""};
   constructor(
     private popoverController:PopoverController,
     private acRoute: ActivatedRoute,
@@ -96,7 +97,6 @@ export class PostdetailPage implements OnInit {
   }
   
   ngOnInit() {
-    this.objStyle["width"] = (screen.width - 157)+"px"; 
     this.acRoute.params.subscribe((data)=>{
       this.nodeId = data.nodeId;
       this.channelId = data.channelId;
@@ -105,6 +105,8 @@ export class PostdetailPage implements OnInit {
   }
 
   ionViewWillEnter() {
+    this.styleObj.width = (screen.width - 35)+'px';
+    this.dstyleObj.width= (screen.width - 85)+'px';
     this.initData();
     this.connectionStatus = this.feedService.getConnectionStatus();
     this.feedService.refreshPostById(this.nodeId,this.channelId,this.postId);

@@ -46,7 +46,7 @@
             <pre>{{'common.deleted' | translate}}</pre>
           </h2>
           <h2 *ngIf="postStatus!=1">
-            <pre>{{ getContentText(postContent) }}</pre>
+            <pre [ngStyle]="styleObj">{{ getContentText(postContent) }}</pre>
           </h2>
           <img 
             *ngIf="postStatus != 1 && getImage() != 'none' && getImage() != 'undefine' && getImage() != null"
@@ -93,7 +93,7 @@
             <pre>{{'common.cdeleted' | translate}}</pre>
           </h2>
           <h2 *ngIf="comment.status != 1">
-            <pre>{{ comment.content }}</pre>
+            <pre [ngStyle]="dstyleObj">{{ comment.content }}</pre>
           </h2>
           <ion-row class="bottom-row">
             <ion-col size="2.25" (click)="likeComment(comment.id)">

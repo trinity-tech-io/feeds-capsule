@@ -174,12 +174,4 @@ loadData(events:any){
   });
 }
 
-exploreFeedSource(){
-  if(this.feedService.getConnectionStatus() != 0){
-    this.native.toastWarn('common.connectionError');
-    return;
- }
-this.native.navigateForward(['/menu/servers/add-server'],"");
-}
-
 }

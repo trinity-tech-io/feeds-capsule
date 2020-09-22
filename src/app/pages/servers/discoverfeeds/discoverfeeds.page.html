@@ -16,15 +16,7 @@
     <div *ngIf="feedList.length === 0&&!isLoading" class="empty-container">
       <img src="./assets/images/empty-feeds-icon.svg">
       <h1>{{ 'common.allempty'| translate }}</h1>
-      <p>{{ 'SearchPage.emptyDes' | translate }}</p>
-  
-      <ion-row class="btn-row">
-        <ion-button (click)="exploreFeedSource()">
-          <ion-label>
-            {{ "ServersPage.addNewFeedSources" | translate }}
-          </ion-label>
-        </ion-button>
-      </ion-row>
+      <p>{{ 'DiscoverfeedsPage.emptyDes' | translate }}</p>
     </div>
 
       <!-------------------- HAS FEEDS -------------------->
@@ -52,10 +44,6 @@
           <ion-ripple-effect></ion-ripple-effect>
         </ion-row>
     </div>
-
-    <ion-row class="buttons-row" *ngIf="feedList.length >0">
-      <ion-label (click)="exploreFeedSource()">{{ 'ServersPage.addNewFeedSources' | translate }}</ion-label>
-    </ion-row>
   </ion-grid>
   
   <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event)">

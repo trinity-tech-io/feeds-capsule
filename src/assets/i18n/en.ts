@@ -392,5 +392,6 @@ export const en = {
         "added":"Added",
         "notadded":"Not added",
         "exploreFeeds":"Explore Feeds",
+        "emptyDes":"There is no public Feeds Source"
     }
 };
