@@ -71,7 +71,8 @@ ionViewWillEnter() {
 
   this.events.subscribe("feeds:updateServerList",()=>{
     this.zone.run(() => {
-    this.native.navigateForward('/menu/servers',""); 
+    //this.native.navigateForward('/menu/servers',""); 
+    this.native.navigateForward('discoverfeeds',""); 
     });
   });
 
@@ -159,7 +160,7 @@ addFeedSource() {
   this.feedService.addServer(this.carrierAddress,this.friendRequest,
     this.name, this.owner, this.introduction,
     this.didString, this.feedsUrl, ()=>{
-      this.native.navigateForward('/menu/servers',""); 
+      this.native.navigateForward('discoverfeeds',""); 
     },(err)=>{
       this.native.pop();
     });
