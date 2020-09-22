@@ -9,6 +9,8 @@ import { NativeService } from 'src/app/services/NativeService';
 import { SerializeDataService } from 'src/app/services/SerializeDataService';
 import { JWTMessageService } from 'src/app/services/JWTMessageService';
 import { ConnectionService } from 'src/app/services/ConnectionService';
+import { HttpService } from 'src/app/services/HttpService';
+import { ApiUrl } from 'src/app/services/ApiUrl';
 import * as _ from 'lodash';
 declare let didManager: DIDPlugin.DIDManager;
 declare let appManager: AppManagerPlugin.AppManager;
@@ -411,7 +413,8 @@ export class FeedService {
     private native: NativeService,
     private translate: TranslateService,
     private storeService: StorageService,
-    private connectionService: ConnectionService
+    private connectionService: ConnectionService,
+    private httpService: HttpService
   ) {
     eventBus = events;
     this.init();
@@ -3657,6 +3660,21 @@ export class FeedService {
       this.handleError(nodeId, error);
       return;
     }
+
+    if (bindingServerCache !=null && bindingServerCache!= undefined){
+      let did = bindingServerCache.did||"";
+      this.httpService.ajaxGet(ApiUrl.get+"?did="+did,false).then((result)=>{
+        if(result["code"] === 200){
+          if (result["data"] != undefined){
+            let name = bindingServerCache.name;
+            let description = bindingServerCache.introduction;
+            let feedUrl = bindingServerCache.feedsUrl;
+            this.updatePublic(did, name, description, feedUrl);
+          }
+        }
+      }); 
+    }
+    
     this.finishBinding(nodeId);
   }
 
@@ -4412,5 +4430,18 @@ export class FeedService {
       result = did.substring(12, did.length);
 
     return result;
+  }
+
+  updatePublic(did: string, name: string, description: string, url: string){
+    let obj = {
+      "did":did,
+      "name":name,
+      "description":description,
+      "url":url
+    };
+    this.httpService.ajaxPost(ApiUrl.update,obj).then((result)=>{
+      if(result["code"]=== 200){
+      }
+    });
   }
 }
