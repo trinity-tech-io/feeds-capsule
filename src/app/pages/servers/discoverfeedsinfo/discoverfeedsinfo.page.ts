@@ -36,6 +36,7 @@ public feedsUrl: string = null;
 public elaAddress: string = "";
 public isPublic:string ="";
 public serverInfo:any = {};
+public actionSheet:any = null;
 constructor(
   private actionSheetController:ActionSheetController,
   private events: Events,
@@ -71,23 +72,8 @@ ionViewWillEnter() {
 
   this.events.subscribe("feeds:updateServerList",()=>{
     this.zone.run(() => {
-    this.native.navigateForward('discoverfeeds',""); 
-    });
-  });
-
-  this.events.subscribe('feeds:serverConnectionChanged', serversStatus => {
-    this.zone.run(() => {
-        if (this.address == ""){
-          this.serverStatus = this.feedService.getServerStatusFromId(this.nodeId);
-        }
-    });
-  });
-
-  this.events.subscribe('feeds:serverConnectionChanged', serversStatus => {
-    this.zone.run(() => {
-        if (this.address == ""){
-          this.serverStatus = this.feedService.getServerStatusFromId(this.nodeId);
-        }
+    //this.native.navigateForward('discoverfeeds',""); 
+      this.getNodeId();
     });
   });
 
@@ -111,7 +97,6 @@ ionViewDidEnter(){
 
 ionViewWillLeave(){
   this.native.hideLoading();
-  this.events.unsubscribe("feeds:connectionChanged");
   this.events.unsubscribe("feeds:updateServerList");
   this.events.unsubscribe("feeds:serverConnectionChanged");
   this.events.unsubscribe("feeds:updateTitle");
@@ -159,11 +144,106 @@ addFeedSource() {
   this.feedService.addServer(this.carrierAddress,this.friendRequest,
     this.name, this.owner, this.introduction,
     this.didString, this.feedsUrl, ()=>{
-      this.native.navigateForward('discoverfeeds',""); 
+      //this.native.navigateForward('discoverfeeds',""); 
     },(err)=>{
       this.native.pop();
     });
 }
 
+async removeFeedSource(){
+  if(this.connectionStatus !== 0){
+    this.native.toastWarn('common.connectionError');
+    return;
+  }
+
+  this.actionSheet = await this.actionSheetController.create({
+    cssClass:'editPost',
+    buttons: [{
+      text: this.translate.instant("ServerInfoPage.RemovethisFeedSource"),
+      role: 'destructive',
+      icon: 'trash',
+      handler: () => {
+        this.native.showLoading('common.waitMoment');
+        this.feedService.removeFeedSource(this.nodeId).then(() => {
+          this.native.toast("ServerInfoPage.removeserver"); 
+          this.native.hideLoading();
+          this.navigateBackPage();
+        });
+      }
+    },{
+      text: this.translate.instant("ServerInfoPage.cancel"),
+      icon: 'close',
+      handler: () => {
+      }
+    }]
+  });
+  this.actionSheet.onWillDismiss().then(()=>{
+    if(this.actionSheet !=null){
+      this.actionSheet  = null;
+    }
+});
+  await this.actionSheet.present();
 }
+
+async deleteFeedSource(){
+  if(this.connectionStatus != 0){
+    this.native.toastWarn('common.connectionError');
+    return;
+  }
+
+  this.actionSheet = await this.actionSheetController.create({
+    cssClass:'editPost',
+    buttons: [{
+      text: this.translate.instant("ServerInfoPage.DeletethisFeedSource"),
+      role: 'destructive',
+      icon: 'trash',
+      handler: () => {
+        this.native.showLoading('common.waitMoment');
+        this.feedService.deleteFeedSource(this.nodeId).then(() => {
+          this.native.toast("ServerInfoPage.removeserver"); 
+          this.native.hideLoading();
+          this.navigateBackPage();
+        });
+      }
+    }, {
+      text: this.translate.instant("ServerInfoPage.cancel"),
+      icon: 'close',
+      handler: () => {
+      }
+    }]
+  });
+
+  this.actionSheet.onWillDismiss().then(()=>{
+    if(this.actionSheet !=null){
+      this.actionSheet  = null;
+    }
+});
+
+  await this.actionSheet.present();
+
+}
+
+
+getNodeId(){
+  let serverList = this.feedService.getServerList() || [];
+  let bindingServerList = this.feedService.getBindingServer();
+  
+  let bindingServer = _.find(bindingServerList,{did:this.serverInfo['did']}) || {};
+  console.log("===bindingServer=="+JSON.stringify(bindingServer));
+  let bindingnodeId = bindingServer["nodeId"] || "";
+  if(bindingnodeId!=""){
+      this.nodeId = bindingnodeId;
+      this.isBindServer =true;
+  }else{
+    this.isBindServer = false;
+    let server = _.find(serverList,{did:this.serverInfo['did']}) || {};
+     this.nodeId = server["nodeId"] || "";
+  }
+
+  
+}
+
+}
+
+
 
