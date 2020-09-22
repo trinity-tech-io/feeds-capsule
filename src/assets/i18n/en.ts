@@ -65,7 +65,7 @@ export const en = {
         "error400":"required parameter absence",
         "error500":"Server error",
         "confirmdeletion":"Confirm deletion?",
-        "waitOnChain": "Not resolve DIDDocument on side Chain, If DID has publish, please wait for 5-10 minutes"
+        "waitOnChain": "Not resolve DIDDocument on side Chain, if DID has been published, please wait for 5-10 minutes"
     },
     "app":{
         "profileDetails":"Profile Details",
@@ -252,7 +252,7 @@ export const en = {
         "public":"Public",
         "publicTip":"Public successfully",
         "unpublic":"Unpublic",
-        "unpublicTip":"UnPublic successfully",
+        "unpublicTip":"Unpublic successfully",
     },
     "ScanqrcodePage":{
         "introtitle": "Create a new",

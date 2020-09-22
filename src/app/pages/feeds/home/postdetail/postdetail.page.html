@@ -74,6 +74,11 @@
 
     <ion-grid *ngFor="let comment of commentList let i=index" class="post-grid comment-grid" [class.darkPostGrid]="theme.darkMode">
       <ion-row class="post-row">
+        <ion-col class="right-col" size="1.5"  *ngIf="comment.status != 1 && checkCommentIsMine(comment)">
+          <img (click)="openEditTool($event,comment)"
+            [src]="!theme.darkMode ? './assets/images/dots-three-vertical.svg' : './assets/images/dots-three-vertical-dark.svg'"
+          >
+        </ion-col>
         <ion-col class="img-col" size="2.5">
           <img class="comment-avatar" [src]="avatar ? avatar : './assets/images/default-contact.svg'">
         </ion-col>
@@ -86,11 +91,7 @@
               </ion-label>
             </ion-col>
           </ion-row>
-          <ion-col class="right-col" size="1.5"  *ngIf="comment.status != 1 && checkCommentIsMine(comment)">
-            <img (click)="openEditTool($event,comment)"
-              [src]="!theme.darkMode ? './assets/images/dots-three-vertical.svg' : './assets/images/dots-three-vertical-dark.svg'"
-            >
-          </ion-col>
+         
           <ion-label>
             <p (press)="userName(comment.user_name)">@{{ indexText(comment.user_name) }}</p>
           </ion-label>

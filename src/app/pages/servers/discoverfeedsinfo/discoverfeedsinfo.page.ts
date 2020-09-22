@@ -71,7 +71,6 @@ ionViewWillEnter() {
 
   this.events.subscribe("feeds:updateServerList",()=>{
     this.zone.run(() => {
-    //this.native.navigateForward('/menu/servers',""); 
     this.native.navigateForward('discoverfeeds',""); 
     });
   });
