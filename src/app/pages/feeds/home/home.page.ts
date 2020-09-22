@@ -280,7 +280,7 @@ export class HomePage implements OnInit {
       if(isMine === 0 && post.post_status != 1){
         this.menuService.showHomeMenu(post.nodeId, Number(post.channel_id),channelName,Number(post.id));
       }else{
-        this.menuService.showChannelMenu(post.nodeId, Number(post.channelId),channelName);
+        this.menuService.showChannelMenu(post.nodeId, Number(post.channel_id),channelName);
       }
   }
 
