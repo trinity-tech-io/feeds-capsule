@@ -461,6 +461,6 @@ export class ServerInfoPage implements OnInit {
       if(result["code"]=== 200){
         this.native.toast("test update");
       }
-});
+    });
   }
 }
