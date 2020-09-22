@@ -207,7 +207,7 @@ export const zh = {
         "currentFeedSources":"关联的微频源",
         "addNewFeedSources":"添加新的微频源",
         "createNewFeedSource":"创建新的微频源",
-        "discover":"发现"
+        "discover":"发现微频源"
       },
     "AddServerPage":{
         "scanorEnterManual":"扫描或者输入",

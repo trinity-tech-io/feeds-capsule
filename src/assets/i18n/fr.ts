@@ -207,7 +207,7 @@ export const fr = {
         "currentFeedSources":"Current Feeds Sources",
         "addNewFeedSources":"Add a New Feeds Source",
         "createNewFeedSource":"Create a New Feeds Source",
-        "discover":"Discover"
+        "discover":"Discover Feeds Sources"
     },
     "AddServerPage":{
         "scanorEnterManual":"Scan or Enter Manually",
