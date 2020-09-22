@@ -1,24 +1,21 @@
 export  class ApiUrl {
   /**后台服务*/
-  public static SERVER:string = 'https://www.trinity-tech.io/api/v1';
-
-  public static SERVER1:string = 'https://feeds.yoopig.com/api/v1';
-
+  public static SERVER:string = 'https://triniy-tech.io/feeds/api/v1/';
   /**register*/
-  public static register:string = ApiUrl.SERVER1 +'/register';
+  public static register:string = ApiUrl.SERVER +'/register';
 
    /**listAll*/
-  public static listAll:string = ApiUrl.SERVER1 +'/listAll';
+  public static listAll:string = ApiUrl.SERVER +'/listAll';
 
   /**get*/
-  public static get:string = ApiUrl.SERVER1 +'/get';
+  public static get:string = ApiUrl.SERVER +'/get';
 
    /**remove*/
-  public static remove:string = ApiUrl.SERVER1 +'/remove';
+  public static remove:string = ApiUrl.SERVER +'/remove';
 
   /**listPage*/
-  public static listPage:string = ApiUrl.SERVER1 +'/listPage';
+  public static listPage:string = ApiUrl.SERVER +'/listPage';
 
    /**update*/
-   public static update:string = ApiUrl.SERVER1 +'/update';
+   public static update:string = ApiUrl.SERVER +'/update';
 }
