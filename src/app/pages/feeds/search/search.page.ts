@@ -120,6 +120,7 @@ export class SearchPage implements OnInit {
   doRefresh(event) {
     let sid = setTimeout(() => {
       this.feedService.refreshChannels();
+      this.feedService.refreshSubscribedChannels();
       this.channelList = this.feedService.getChannelsList();
       event.target.complete();
       clearTimeout(sid);
