@@ -37,10 +37,11 @@ export class DiscoverfeedsPage implements OnInit {
     public httpService:HttpService) { }
     
   ngOnInit() {
-    
+    this.pageNum =1;
+    this.initData("",true);
   }
   ionViewWillEnter() {
-
+    this.serverList = this.feedService.getServerList();
     this.events.subscribe('feeds:serverStatisticsChanged', serverStatisticsMap =>{
       this.zone.run(() => {
           this.serverStatisticsMap = serverStatisticsMap || "";
@@ -56,10 +57,6 @@ export class DiscoverfeedsPage implements OnInit {
     this.events.subscribe("feeds:updateTitle",()=>{
       this.initTitle();
     });
-
-    this.serverList = this.feedService.getServerList();
-    this.pageNum =1;
-    this.initData("",true);
   }
 
   ionViewDidEnter(){
@@ -78,6 +75,10 @@ export class DiscoverfeedsPage implements OnInit {
   }
 
   clickItem(item:any){
+    if(this.connectionStatus != 0){
+      this.native.toastWarn('common.connectionError');
+      return;
+    }
     //this.unPublicFeeds(item['did']);
     let address = item["url"] || "";
     if (address.length < 54 ||
@@ -165,13 +166,4 @@ loadData(events:any){
       events.target.complete();
   });
  }
-
- unPublicFeeds(did:string){ 
-  this.httpService.ajaxGet(ApiUrl.remove+"?did="+did).then((result)=>{
-    if(result["code"] === 200){
-        this.native.toast_trans("ServerInfoPage.unpublicTip");
-    }
-  });
-}
-
 }
