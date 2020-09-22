@@ -233,7 +233,7 @@ export class ServerInfoPage implements OnInit {
     });
     this.serverDetails.push({
       type: this.translate.instant('ServerInfoPage.did'),
-      details: server.did
+      details: this.feedService.rmDIDPrefix(server.did)
     }); 
     this.serverDetails.push({
       type: this.translate.instant('ServerInfoPage.feedsSourceQRCode'),
