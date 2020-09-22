@@ -167,9 +167,7 @@ export class MenuService {
 
 
     async showHomeMenu(nodeId: string, channelId: number, channelName: string,postId:number){
-        this.nodeId =nodeId;
-        this.channelId=channelId;
-        this.postId = postId;
+     
         this.postDetail = await this.actionSheetController.create({
            cssClass: 'editPost',
            
@@ -221,6 +219,9 @@ export class MenuService {
    }
 
     handlePostDetailMenun(nodeId: string, channelId: number, channelName: string,postId:number,clickName:string){
+        this.nodeId =nodeId;
+        this.channelId=channelId;
+        this.postId = postId;
             switch(clickName){
                 case "editPost":
                     this.native.go(
