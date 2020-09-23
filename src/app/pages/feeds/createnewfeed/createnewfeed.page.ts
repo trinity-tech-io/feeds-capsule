@@ -2,7 +2,6 @@ import { Component, OnInit, NgZone } from '@angular/core';
 import { NavController, Events, PopoverController } from '@ionic/angular';
 import { ServerlistcomponentComponent } from '../../../components/serverlistcomponent/serverlistcomponent.component';
 import { FeedService } from 'src/app/services/FeedService';
-import { PopupProvider } from 'src/app/services/popup';
 import { NativeService } from 'src/app/services/NativeService';
 import { ThemeService } from 'src/app/services/theme.service';
 import { TranslateService } from "@ngx-translate/core";
@@ -28,7 +27,6 @@ export class CreatenewfeedPage implements OnInit {
     private navCtrl: NavController,
     private feedService: FeedService,
     private popoverController: PopoverController,
-    private popup: PopupProvider,
     private zone: NgZone,
     private events: Events,
     private native: NativeService,
@@ -157,14 +155,6 @@ export class CreatenewfeedPage implements OnInit {
     }
 
     this.createDialog(name.value,desc.value);
-
-    // this.popup.ionicConfirm(this.translate.instant("common.prompt"),this.translate.instant('common.des1')+this.selectedServer.did+"<br>"
-    //                         +this.translate.instant('common.channel')+name.value+"<br>"+this.translate.instant('common.description')+desc.value,
-    //                         this.translate.instant("common.ok"),this.translate.instant("common.cancel")).then((data)=>{
-    //                           if (data) {
-    //                             this.feedService.createTopic(this.selectedServer.nodeId, name.value, desc.value, this.channelAvatar);
-    //                           }
-    //                         });
   }
 
   profileimage(){
