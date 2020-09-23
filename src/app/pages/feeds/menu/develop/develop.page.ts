@@ -11,7 +11,9 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
   styleUrls: ['./develop.page.scss'],
 })
 export class DevelopPage implements OnInit {
+
   public alert = null;
+  
   constructor(
     public feedService :FeedService,
     public native: NativeService,
@@ -20,10 +22,12 @@ export class DevelopPage implements OnInit {
     public events: Events) { }
 
   ngOnInit() {
-   
   }
 
   ionViewWillEnter() {
+    this.initTitle();
+    this.native.setTitleBarBackKeyShown(true);
+
     this.events.subscribe("feeds:updateTitle",()=>{
       this.initTitle();
     });
@@ -31,8 +35,6 @@ export class DevelopPage implements OnInit {
   }
 
   ionViewDidEnter(){
-    this.initTitle();
-    this.native.setTitleBarBackKeyShown(true);
   }
 
   initTitle(){

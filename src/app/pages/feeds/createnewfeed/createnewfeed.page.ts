@@ -22,6 +22,7 @@ export class CreatenewfeedPage implements OnInit {
   public avatar = "";
   public selectedServer: any = null;
   public selectedChannelSource:string = 'Select channel source';
+
   constructor(
     private popover: PopoverController ,
     private navCtrl: NavController,
@@ -31,16 +32,17 @@ export class CreatenewfeedPage implements OnInit {
     private events: Events,
     private native: NativeService,
     public theme:ThemeService,
-    private translate:TranslateService) {
-
-    
-
-    }
+    private translate:TranslateService
+  ) {
+  }
 
   ngOnInit() {
   }
 
   ionViewWillEnter() {
+    this.initTitle();
+    this.native.setTitleBarBackKeyShown(true);
+    
     this.selectedServer = this.feedService.getBindingServer();
     this.selectedChannelSource = this.selectedServer.did;
     this.connectionStatus = this.feedService.getConnectionStatus();
@@ -74,8 +76,6 @@ export class CreatenewfeedPage implements OnInit {
   }
 
   ionViewDidEnter() {
-    this.initTitle();
-    this.native.setTitleBarBackKeyShown(true);
   }
 
   ionViewWillLeave(){

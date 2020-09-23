@@ -32,6 +32,10 @@ export class DisclaimerPage implements OnInit {
   }
 
   ionViewWillEnter() {
+    this.initTitle();
+    this.native.setTitleBarBackKeyShown(false);
+    appManager.setVisible('show');
+    
     this.styleObj["height"] = (screen.height - 215) +"px"
     this.events.subscribe("feeds:updateTitle",()=>{
       this.initTitle();
@@ -39,9 +43,6 @@ export class DisclaimerPage implements OnInit {
   }
 
   ionViewDidEnter(){
-    this.initTitle();
-    this.native.setTitleBarBackKeyShown(false);
-    appManager.setVisible('show');
   }
 
   initTitle(){

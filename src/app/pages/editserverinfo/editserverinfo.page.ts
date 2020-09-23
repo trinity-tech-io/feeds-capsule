@@ -14,6 +14,7 @@ declare let appManager: AppManagerPlugin.AppManager;
   styleUrls: ['./editserverinfo.page.scss'],
 })
 export class EditserverinfoPage implements OnInit {
+
   public connectionStatus = 1;
   public address:string = "";
   public name:string = "";
@@ -22,6 +23,7 @@ export class EditserverinfoPage implements OnInit {
   public nodeId: string = "";
   public did: string = "";
   public oldServerInfo:any = {};
+
   constructor(
     private feedService: FeedService,
     public activatedRoute:ActivatedRoute,
@@ -30,9 +32,8 @@ export class EditserverinfoPage implements OnInit {
     private events: Events,
     private native: NativeService,
     private zone:NgZone
-    ){ 
-
-    }
+  ) { 
+  }
 
   ngOnInit() {
     this.activatedRoute.queryParams.subscribe((data) => {

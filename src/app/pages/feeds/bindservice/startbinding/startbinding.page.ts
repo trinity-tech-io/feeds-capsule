@@ -53,10 +53,12 @@ export class StartbindingPage implements OnInit {
 
       this.carrierAddress = data.address;
     });
-
   }
 
   ionViewWillEnter() {
+    this.initTitle();
+    this.native.setTitleBarBackKeyShown(true);
+    
     this.connectionStatus = this.feedService.getConnectionStatus();
     this.events.subscribe('feeds:connectionChanged',(status)=>{
       this.zone.run(() => {
@@ -138,8 +140,6 @@ export class StartbindingPage implements OnInit {
   }
 
   ionViewDidEnter() {
-    this.initTitle();
-    this.native.setTitleBarBackKeyShown(true);
   }
 
   ionViewWillLeave(){
@@ -170,5 +170,7 @@ export class StartbindingPage implements OnInit {
     this.native.hideLoading();
   }
 
+  scanService() {
 
+  }
 }

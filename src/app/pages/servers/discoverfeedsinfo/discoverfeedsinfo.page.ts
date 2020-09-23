@@ -62,6 +62,9 @@ initData(){
 }
 
 ionViewWillEnter() {
+  this.initTitle();
+  this.native.setTitleBarBackKeyShown(true);
+  
   this.initData();
   this.connectionStatus = this.feedService.getConnectionStatus();
   this.events.subscribe('feeds:connectionChanged',(status)=>{
@@ -91,8 +94,6 @@ ionViewWillEnter() {
 }
 
 ionViewDidEnter(){
-  this.initTitle();
-  this.native.setTitleBarBackKeyShown(true);
 }
 
 ionViewWillLeave(){

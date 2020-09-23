@@ -41,6 +41,9 @@ export class DiscoverfeedsPage implements OnInit {
     this.initData("",true);
   }
   ionViewWillEnter() {
+    this.initTitle();
+    this.native.setTitleBarBackKeyShown(true);
+    
     this.serverList = this.feedService.getServerList();
     this.events.subscribe('feeds:serverStatisticsChanged', serverStatisticsMap =>{
       this.zone.run(() => {
@@ -60,8 +63,6 @@ export class DiscoverfeedsPage implements OnInit {
   }
 
   ionViewDidEnter(){
-    this.initTitle();
-    this.native.setTitleBarBackKeyShown(true);
   }
 
   ionViewWillLeave(){

@@ -72,6 +72,9 @@ export class ProfiledetailPage implements OnInit {
   }
 
   ionViewWillEnter() {
+    this.initTitle();
+    this.native.setTitleBarBackKeyShown(true);
+    
     let signInData = this.feedService.getSignInData() || {};
     this.name = signInData["nickname"] || signInData["name"] || "";
     this.avatar = signInData["avatar"] || null;
@@ -95,8 +98,6 @@ export class ProfiledetailPage implements OnInit {
   }
 
   ionViewDidEnter(){
-    this.initTitle();
-    this.native.setTitleBarBackKeyShown(true);
   }
 
   initTitle(){

@@ -422,7 +422,11 @@ pre {
   .offline{
     width: 13px;
     height: 13px;
+    position: absolute;
+    bottom: 0.5px;
+    right: 0.5px;
     background-color: #cdcde6;
+    border: 2px solid #f8f8ff;
     border-radius: 6px;
   }
 

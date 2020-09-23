@@ -78,6 +78,9 @@ export class ProfileimagePage implements OnInit {
   }
 
   ionViewWillEnter() {
+    this.initTitle();
+    this.native.setTitleBarBackKeyShown(true);
+    
     this.select = this.feedService.getSelsectIndex();
     this.selectedAvatar = this.feedService.getProfileIamge() || 'assets/images/profile-1.svg';
       
@@ -115,8 +118,6 @@ export class ProfileimagePage implements OnInit {
   }
 
   ionViewDidEnter() {
-    this.initTitle();
-    this.native.setTitleBarBackKeyShown(true);
   }
 
   initTitle(){

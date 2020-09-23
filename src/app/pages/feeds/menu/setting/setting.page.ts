@@ -29,15 +29,15 @@ export class SettingPage implements OnInit {
   }
 
   ionViewWillEnter() {
+    this.initTitle();
+    this.native.setTitleBarBackKeyShown(true);
+
     this.events.subscribe("feeds:updateTitle",()=>{
       this.initTitle();
     });
- 
   }
 
   ionViewDidEnter(){
-    this.initTitle();
-    this.native.setTitleBarBackKeyShown(true);
   }
 
   initTitle(){
