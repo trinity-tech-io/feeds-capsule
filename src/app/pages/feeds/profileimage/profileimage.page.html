@@ -6,10 +6,9 @@
   <ion-grid>
     <ion-row>
       <!-- DEFAULT AVATARS -->
-      <ion-col size="3"
+      <ion-col 
         *ngFor="let avatar of avatars"
-        [ngStyle]="{ 'background-image': 'url(' + avatar.image + ')' }"
-        (click)="selectIndex(avatar.index, avatar.image)"
+        size="3"
       >
         <div
           class="avatar"
@@ -29,7 +28,7 @@
           </div>
         </div>
       </ion-col>
-
+      
       <!-- HAS UPLOADED AVATAR -->
       <ion-col 
         *ngIf="uploadedAvatar"
@@ -74,105 +73,3 @@
     </ion-row>
   </ion-grid>
 </ion-content>
-
-
-<!-- <ion-header *ngIf="connectionStatus == 1">
-  <div class="offline-header"></div>
-</ion-header>
-<ion-content ion-padding>
-  <ion-row class="margintop">
-    <ion-col size="3">
-      <ion-avatar class="profile-image">
-        <img src="assets/images/profile-1.svg" (click)="selectIndex(1,'assets/images/profile-1.svg')">
-      </ion-avatar>
-      <div class="select-div" *ngIf="select == 1">
-        <img src="assets/images/profile-select.svg">
-      </div>
-    </ion-col>
-    <ion-col size="3">
-      <ion-avatar class="profile-image">
-        <img src="assets/images/profile-2.svg" (click)="selectIndex(2,'assets/images/profile-2.svg')">
-      </ion-avatar>
-      <div class="select-div" *ngIf="select == 2">
-        <img src="assets/images/profile-select.svg">
-      </div>
-    </ion-col>
-    <ion-col size="3">
-      <ion-avatar class="profile-image">
-        <img src="assets/images/profile-3.svg" (click)="selectIndex(3,'assets/images/profile-3.svg')">
-      </ion-avatar>
-      <div class="select-div" *ngIf="select == 3">
-        <img src="assets/images/profile-select.svg">
-      </div>
-    </ion-col>
-    <ion-col size="3">
-      <ion-avatar class="profile-image">
-        <img src="assets/images/profile-4.svg" (click)="selectIndex(4,'assets/images/profile-4.svg')">
-      </ion-avatar>
-      <div class="select-div" *ngIf="select == 4">
-        <img src="assets/images/profile-select.svg">
-      </div>
-    </ion-col>
-  </ion-row>
-<ion-row class="margintop">
-    <ion-col  size="3">
-      <ion-avatar class="profile-image">
-        <img src="assets/images/profile-5.svg" (click)="selectIndex(5,'assets/images/profile-5.svg')">
-      </ion-avatar>
-      <div class="select-div" *ngIf="select == 5">
-        <img src="assets/images/profile-select.svg">
-      </div>
-    </ion-col>
-
-    <ion-col size="3">
-      <ion-avatar class="profile-image">
-        <img src="assets/images/profile-6.svg" (click)="selectIndex(6,'assets/images/profile-6.svg')">
-      </ion-avatar>
-      <div class="select-div" *ngIf="select == 6">
-        <img src="assets/images/profile-select.svg">
-      </div>
-    </ion-col>
-
-    <ion-col size="3">
-      <ion-avatar class="profile-image">
-        <img src="assets/images/profile-7.svg" (click)="selectIndex(7,'assets/images/profile-7.svg')">
-      </ion-avatar>
-      <div class="select-div" *ngIf="select == 7">
-        <img src="assets/images/profile-select.svg">
-      </div>
-    </ion-col>
-
-    <ion-col  size="3">
-      <ion-avatar class="profile-image">
-        <img src="assets/images/profile-8.svg" (click)="selectIndex(8,'assets/images/profile-8.svg')">
-      </ion-avatar>
-      <div class="select-div" *ngIf="select == 8">
-        <img src="assets/images/profile-select.svg">
-      </div>
-    </ion-col>
-  </ion-row>
-
-      <ion-row class="margintop">
-
-        <ion-col size="3">
-          <ion-avatar class="profile-image">
-            <img src="assets/images/profile-9.svg" (click)="selectIndex(9,'assets/images/profile-9.svg')">
-          </ion-avatar>
-          <div class="select-div" *ngIf="select == 9">
-            <img src="assets/images/profile-select.svg">
-          </div>
-        </ion-col>
-        
-    <ion-col size="3">
-      <ion-avatar class="profile-image">
-        <img src={{userAvatar}} (click)="selectIndex(0)" *ngIf="userAvatar">
-      </ion-avatar>
-      <div class="select-div" *ngIf="select == 0">
-        <img src="assets/images/profile-select.svg">
-      </div>
-    </ion-col>
-  </ion-row>
-
-  <div class="confirm" (click)="confirm()">{{'ProfileimagePage.confirm'|translate}}</div>
-</ion-content>
- -->

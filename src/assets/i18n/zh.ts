@@ -65,7 +65,9 @@ export const zh = {
         "error400":"参数错误",
         "error500":"服务器错误",
         "confirmdeletion":"确认删除?",
-        "waitOnChain": "没有在链上检测到DID文档，如果DID已经发布，请等待5-10分钟"
+        "waitOnChain": "没有在链上检测到DID文档，如果DID已经发布，请等待5-10分钟",
+        "takePicture":"拍摄",
+        "photolibary":"从手机相册选择",
     },
     "app":{
         "profileDetails":"档案详情",

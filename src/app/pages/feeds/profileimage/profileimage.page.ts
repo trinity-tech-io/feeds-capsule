@@ -5,6 +5,7 @@ import { NativeService } from 'src/app/services/NativeService';
 import { TranslateService } from "@ngx-translate/core";
 import { ThemeService } from '../../../services/theme.service';
 import { FeedService } from 'src/app/services/FeedService';
+import { MenuService } from 'src/app/services/MenuService';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 @Component({
@@ -59,7 +60,7 @@ export class ProfileimagePage implements OnInit {
       image: 'assets/images/profile-9.svg',
     },
   ];
-
+  public pictureMenu:any = null;
   constructor(
     private native: NativeService,
     private navCtrl: NavController,
@@ -68,7 +69,8 @@ export class ProfileimagePage implements OnInit {
     private translate: TranslateService,
     public theme: ThemeService, 
     private feedService:FeedService,
-    private camera: CameraService
+    private camera: CameraService,
+    private menuService: MenuService,
   ) { }
 
   ngOnInit() {
@@ -95,6 +97,10 @@ export class ProfileimagePage implements OnInit {
     });
 
     this.events.subscribe("feeds:updateTitle",()=>{
+      if(this.menuService.postDetail!=null){
+        this.menuService.hideActionSheet();
+        this.addPic();
+      }
       this.initTitle();
     });
   }
@@ -102,7 +108,10 @@ export class ProfileimagePage implements OnInit {
   ionViewWillLeave(){
     this.camera = null;
     this.events.unsubscribe("feeds:connectionChanged");
-    this.events.unsubscribe("feeds:updateTitle"); 
+    this.events.unsubscribe("feeds:updateTitle");
+    if(this.pictureMenu!=null){
+      this.menuService.hideActionSheet();
+    }
   }
 
   ionViewDidEnter() {
@@ -118,7 +127,7 @@ export class ProfileimagePage implements OnInit {
     //this.select = index;
     if (index === 0) {
       // If uploaded avatar exists and is selected, use it. Otherwise open camera
-      avatar ? this.selectedAvatar = avatar : this.openCamera(0);
+      avatar ? this.selectedAvatar = avatar :this.addPic();
     } else {
       this.select = index;
       this.selectedAvatar = "img://"+avatar;
@@ -139,22 +148,39 @@ export class ProfileimagePage implements OnInit {
   }
 
   addPic(){
-    this.openCamera(0);
+    //this.openCamera(0);
+   this.pictureMenu = this.menuService.showPictureMenu(this,this.openCamera,this.openGallery);
   }
 
-  openCamera(type: number){
-    this.camera.openCamera(30,0,type,
-      (imageUrl) => {
-        this.zone.run(() => {
-          this.select = 0;
-          this.uploadedAvatar = imageUrl;
-          this.selectedAvatar = imageUrl;
+  openGallery(that:any){
+    that.camera.openCamera(30,0,0,
+      (imageUrl:any) => {
+        that.zone.run(() => {
+          that.select = 0;
+          that.uploadedAvatar = imageUrl;
+          that.selectedAvatar = imageUrl;
         });
       }, (err) => {
        
       }
     );
   }
+
+  openCamera(that:any){
+    that.camera.openCamera(30,0,1,
+      (imageUrl:any) => {
+        that.zone.run(() => {
+          that.select = 0;
+          that.uploadedAvatar = imageUrl;
+          that.selectedAvatar = imageUrl;
+        });
+      }, (err) => {
+       
+      }
+    );
+  }
+
+  
 
 }
 

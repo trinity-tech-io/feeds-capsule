@@ -65,7 +65,9 @@ export const fr = {
         "error400":"required parameter absence",
         "error500":"Server error",
         "confirmdeletion":"Confirm deletion?",
-        "waitOnChain": "Not resolve DIDDocument on side Chain, If DID has been published, please wait for 5-10 minutes"
+        "waitOnChain": "Not resolve DIDDocument on side Chain, If DID has been published, please wait for 5-10 minutes",
+        "takePicture":"Take Picture",
+        "photolibary":"Photo Library",
     },
     "app":{
         "profileDetails":"Profile Details",
