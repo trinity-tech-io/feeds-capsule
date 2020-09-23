@@ -7,7 +7,8 @@ import { NavParams} from '@ionic/angular';
   styleUrls: ['./confirmdialog.component.scss'],
 })
 export class ConfirmdialogComponent implements OnInit {
-  public title:string ="";
+
+  public title:string = "";
   public message:string ="";
   public okText:string="";
   public cancelText:string ="";
@@ -17,8 +18,11 @@ export class ConfirmdialogComponent implements OnInit {
   public imgagePath:string = "";
   public darkimgagePath:string = "";
   public that:any;
-  constructor(public theme: ThemeService,
-    private navParams: NavParams) { 
+
+  constructor(
+    public theme: ThemeService,
+    private navParams: NavParams
+  ) { 
       this.that = this.navParams.get('that');
       this.title = this.navParams.get('title');
       this.message = this.navParams.get('message');

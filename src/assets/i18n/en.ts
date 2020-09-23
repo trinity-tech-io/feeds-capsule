@@ -76,7 +76,6 @@ export const en = {
         "donation":"Donation",
         "signout":"Sign out",
         "des":"Sign out successfully",
-        "des1":"Are you sure to sign out?"
     },
     "SigninPage":{
         "signIn":"Sign In to Feeds",
@@ -124,6 +123,10 @@ export const en = {
     "LikesComponent":{
         "emptyLikeDes":"You haven't liked anything yet",
         "exploreFeeds":"Explore Feeds"
+    },
+    "ConfirmdialogComponent": {
+        "signoutTitle": 'Sign Out',
+        "signoutMessage": 'Are you sure you want to sign out?'
     },
     "SearchPage":{
         "emptyDes":"No Feeds yet",

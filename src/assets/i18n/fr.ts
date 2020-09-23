@@ -125,6 +125,10 @@ export const fr = {
         "emptyLikeDes":"You haven't liked anything yet",
         "exploreFeeds":"Explore Feeds"
     },
+    "ConfirmdialogComponent": {
+        "signoutTitle": 'Sign Out',
+        "signoutMessage": 'Are you sure you want to sign out?'
+    },
     "SearchPage":{
         "emptyDes":"No Feeds yet",
         "follow":"Follow",

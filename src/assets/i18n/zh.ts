@@ -125,6 +125,10 @@ export const zh = {
         "emptyLikeDes":"您还没有任何收藏",
         "exploreFeeds":"探索微频"
     },
+    "ConfirmdialogComponent": {
+        "signoutTitle": 'Sign Out',
+        "signoutMessage": 'Are you sure you want to sign out?'
+    },
     "SearchPage":{
         "emptyDes":"没有可关注的微频",
         "follow":"关注",

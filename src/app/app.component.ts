@@ -135,7 +135,15 @@ export class MyApp {
   }
 
   signout(){
-    this.popover = this.popupProvider.ionicConfirm(this,"","app.des1",this.cancel,this.confirm,'tskth.svg');
+    this.popover = this.popupProvider.ionicConfirm(
+      this,
+      // "ConfirmdialogComponent.signoutTitle",
+      "",
+      "ConfirmdialogComponent.signoutMessage",
+      this.cancel,
+      this.confirm,
+      'tskth.svg'
+    );
   }
 
   initProfileData(){
