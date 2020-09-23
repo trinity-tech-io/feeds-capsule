@@ -1,7 +1,26 @@
 <ion-header *ngIf="connectionStatus == 1">
   <div class="offline-header"></div>
 </ion-header>
-<ion-content ion-padding>
+
+<ion-content>
+  <ion-grid class="container">
+      <ion-img src="./assets/images/finsh.svg"></ion-img>
+      <p>{{ 'FinishPage.introduce' | translate }}</p>
+      <ion-row class="btn-row">
+        <ion-button class="confirm" (click)="createChannel()">
+          <ion-label>{{ 'FinishPage.introduce1' | translate }}</ion-label>
+        </ion-button> 
+      </ion-row>
+      <ion-row class="btns-row">
+        <ion-col class="btn cancel ion-activatable ripple" size="10" (click)="returnMain()">
+          <ion-label>{{ 'FinishPage.introduce2' | translate }}</ion-label>
+          <ion-ripple-effect></ion-ripple-effect>
+        </ion-col>
+      </ion-row>
+  </ion-grid>
+</ion-content>
+
+<!-- <ion-content padding>
   <div class="first">
       <ion-img src="./assets/images/finsh.svg"></ion-img>
   </div>
@@ -13,9 +32,10 @@
   <div class="createchannel" (click)="createChannel()">
     
     {{'FinishPage.introduce1'|translate}}
- </div>
+  </div>
 
   <div class="backmainscreen" (click)="returnMain()">
     {{'FinishPage.introduce2'|translate}}
   </div>
 </ion-content>
+ -->
