@@ -65,6 +65,10 @@ ionViewWillEnter() {
       this.native.pop();
     });
   });
+
+  this.events.subscribe("rpcRequest:error",()=>{
+    this.native.hideLoading();
+  });
 }
 
 initTitle(){
@@ -78,6 +82,8 @@ ionViewDidEnter(){
 ionViewWillLeave(){
   this.events.unsubscribe("feeds:updateTitle");
   this.events.unsubscribe("feeds:connectionChanged");
+  this.events.unsubscribe("feeds:editFeedInfoFinish");
+  this.events.unsubscribe("rpcRequest:error");
 }
 
 profileimage(){
@@ -107,7 +113,9 @@ confirm(){
   }
   
   if(this.checkparms()){
-    this.feedService.editFeedInfo(this.nodeId,Number(this.channelId),this.name, this.des,this.avatar);
+    this.native.showLoading("common.waitMoment").then(()=>{
+      this.feedService.editFeedInfo(this.nodeId,Number(this.channelId),this.name, this.des,this.avatar);
+    })
   }
 }
 
