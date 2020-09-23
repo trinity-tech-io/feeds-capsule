@@ -163,8 +163,8 @@ export class AppService {
       }
     
       this.carrierService.init();
-      this.native.setRootRouter(['bindservice/issuecredential/1/2']);
-      // this.native.setRootRouter(['/tabs/home']);
+      // this.native.setRootRouter(['bindservice/issuecredential/1/2']);
+      this.native.setRootRouter(['/tabs/home']);
       this.feedService.updateSignInDataExpTime(signInData);
     }
 
