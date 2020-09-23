@@ -259,4 +259,37 @@ export class MenuService {
             that.native.hideLoading();
        });
     }
+
+   async showPictureMenu(that:any,openCamera:any,openGallery:any){
+        this.postDetail = await this.actionSheetController.create({
+            cssClass: 'editPost',
+            buttons: [
+            {
+                text:this.translate.instant("common.takePicture"),
+                icon: 'camera',
+                handler:()=>{
+                    openCamera(that)
+                },
+            },
+            {
+                text:this.translate.instant("common.photolibary"),
+                icon: 'images',
+                handler:()=>{
+                openGallery(that)
+                },
+            }
+        ]
+        });
+
+       
+        this.postDetail.onWillDismiss().then(()=>{
+            if(this.postDetail !=null){
+                this.postDetail  = null;
+            }
+           
+        })
+        await this.postDetail.present();
+
+        return this.postDetail;
+    }
 }
