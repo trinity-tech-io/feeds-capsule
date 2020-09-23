@@ -3,13 +3,17 @@ import { TranslateService } from '@ngx-translate/core';
 import { AlertController} from '@ionic/angular';
 import {ConfirmdialogComponent} from '../components/confirmdialog/confirmdialog.component';
 import { PopoverController} from '@ionic/angular';
+
 @Injectable()
+
 export class PopupProvider {
-    public popover:any=null;
+
+    public popover: any = null;
+
     constructor(
-            private alertCtrl: AlertController,
-            private translate: TranslateService,
-            private popoverController:PopoverController
+        private alertCtrl: AlertController,
+        private translate: TranslateService,
+        private popoverController:PopoverController
     ) {}
 
     public ionicAlert(title: string, subTitle?: string, okText?: string): Promise<any> {
@@ -30,28 +34,36 @@ export class PopupProvider {
     };
 
     //tskth.svg
-     ionicConfirm(that:any,title: string, message: string, cancelFunction:any,okFunction:any,imgageName:string,okText?: string, cancelText?: string){
+    ionicConfirm(
+        that: any,
+        title: string,
+        message: string,
+        cancelFunction: any, 
+        okFunction: any, 
+        imgageName: string,
+        okText?: string, 
+        cancelText?: string
+    ){
         let ok = okText || "common.confirm";
         let cancel = cancelText || "common.cancel";
         return this.showConfirmdialog(that,title,message,cancelFunction,okFunction,imgageName,ok,cancel);
-     };
+    };
 
     public async showConfirmdialog(that:any,title: string,message: string,cancelFunction:any,okFunction:any,imgageName:string,okText?: string, cancelText?: string){
         this.popover = await this.popoverController.create({
             mode: 'ios',
-            cssClass:'genericPopup',
+            cssClass: 'ConfirmdialogComponent',
             component:ConfirmdialogComponent,
             componentProps: {
-                            "that":that, 
-                            "title":title,
-                             "message":message,
-                             "okText":okText,
-                             "cancelText":cancelText,
-                             "okFunction":okFunction,
-                             "cancelFunction":cancelFunction,
-                             "imgageName":imgageName
-                            },
-            translucent: true
+                "that":that, 
+                "title":title,
+                "message":message,
+                "okText":okText,
+                "cancelText":cancelText,
+                "okFunction":okFunction,
+                "cancelFunction":cancelFunction,
+                "imgageName":imgageName
+            },
           });
       
           this.popover.onWillDismiss().then(()=>{
