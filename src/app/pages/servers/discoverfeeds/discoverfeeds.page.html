@@ -48,8 +48,9 @@
   
   <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event)">
     <ion-infinite-scroll-content
-      loadingSpinner="bubbles"
-      loadingText="{{'common.loadingText'|translate}}">
+      class="ion-padding-top"
+      loadingSpinner="crescent"
+    >
     </ion-infinite-scroll-content>
   </ion-infinite-scroll>
 </ion-content>

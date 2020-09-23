@@ -138,6 +138,8 @@ export class ServerInfoPage implements OnInit {
   }
 
   ionViewWillEnter() {
+    this.initTitle();		
+    this.native.setTitleBarBackKeyShown(true);
 
     this.connectionStatus = this.feedService.getConnectionStatus();
     this.events.subscribe('feeds:connectionChanged', (status) => {
@@ -189,8 +191,6 @@ export class ServerInfoPage implements OnInit {
   }
 
   ionViewDidEnter(){
-    this.initTitle();		
-    this.native.setTitleBarBackKeyShown(true);
   }
 
   ionViewWillLeave(){

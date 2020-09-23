@@ -134,6 +134,9 @@ export class ChannelsPage implements OnInit {
 
   }
   ionViewWillEnter() {
+    this.initTitle();
+    this.native.setTitleBarBackKeyShown(true);
+    
     this.styleObj.width = (screen.width - 105)+'px';
     //this.startIndex = 0;
     this.init();
@@ -194,8 +197,6 @@ export class ChannelsPage implements OnInit {
   }
 
   ionViewDidEnter() {
-    this.initTitle();
-    this.native.setTitleBarBackKeyShown(true);
   }
 
   initTitle(){

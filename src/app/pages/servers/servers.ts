@@ -115,6 +115,9 @@ export class ServersPage implements OnInit {
     }
 
     ionViewWillEnter(){
+        this.initTitle();
+        this.native.setTitleBarBackKeyShown(true);
+        
         this.connectionStatus = this.feedService.getConnectionStatus();
         this.initData();
         this.events.subscribe("feeds:updateTitle",()=>{
@@ -125,8 +128,6 @@ export class ServersPage implements OnInit {
     }
 
     ionViewDidEnter() {
-        this.initTitle();
-        this.native.setTitleBarBackKeyShown(true);
     }
     
     ionViewWillLeave(){

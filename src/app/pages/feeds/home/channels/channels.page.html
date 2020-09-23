@@ -86,7 +86,7 @@
             <pre [ngStyle]="styleObj">{{ getContentText(post.content) }}</pre>
           </h2>
           <img 
-           *ngIf="post.post_status != 1 && getImage(post.nodeId,post.channel_id,post.id) != 'none'  && getImage(post.nodeId,post.channel_id,post.id)  != undefine && getImage(post.nodeId,post.channel_id,post.id)  != null && getImage(post.nodeId,post.channel_id,post.id)  != 'undefine'"
+           *ngIf="post.post_status != 1 && getImage(post.nodeId,post.channel_id,post.id) != 'none'  && getImage(post.nodeId,post.channel_id,post.id) != 'undefine' && getImage(post.nodeId,post.channel_id,post.id)  != null && getImage(post.nodeId,post.channel_id,post.id)  != 'undefine'"
             src="{{getImage(post.nodeId, post.channel_id, post.id)}}"
             class="post-img"
             (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)"

@@ -30,11 +30,13 @@ export class FinishPage implements OnInit {
       });
     }
 
-    ionViewDidEnter() {
-      this.connectionStatus = this.feedService.getConnectionStatus();
+    ionViewWillEnter() {
       this.initTitle();
       this.native.setTitleBarBackKeyShown(true);
+    }
 
+    ionViewDidEnter() {
+      this.connectionStatus = this.feedService.getConnectionStatus();
       this.events.subscribe('feeds:connectionChanged',(status)=>{
         this.zone.run(() => {
           this.connectionStatus = status;

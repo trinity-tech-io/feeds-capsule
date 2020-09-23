@@ -105,6 +105,9 @@ export class PostdetailPage implements OnInit {
   }
 
   ionViewWillEnter() {
+    this.initTitle();
+    this.native.setTitleBarBackKeyShown(true);
+    
     this.styleObj.width = (screen.width - 55)+'px';
     this.dstyleObj.width= (screen.width - 105)+'px';
     this.initData();
@@ -198,8 +201,6 @@ export class PostdetailPage implements OnInit {
   }
 
   ionViewDidEnter() {
-    this.initTitle();
-    this.native.setTitleBarBackKeyShown(true);
   }
 
  

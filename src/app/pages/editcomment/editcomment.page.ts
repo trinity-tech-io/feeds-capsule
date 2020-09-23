@@ -52,6 +52,9 @@ ngOnInit() {
 }
 
 ionViewWillEnter() {
+  this.initTitle();
+  this.native.setTitleBarBackKeyShown(true);
+  
   this.connectionStatus = this.feedService.getConnectionStatus();
   let channel = this.feedService.getChannelFromId(this.nodeId,this.channelId) || {};
   this.channelName = channel["name"] || "";
@@ -99,8 +102,6 @@ ionViewWillEnter() {
 }
 
 ionViewDidEnter(){
-  this.initTitle();
-  this.native.setTitleBarBackKeyShown(true);
 }
 
 ionViewWillLeave(){

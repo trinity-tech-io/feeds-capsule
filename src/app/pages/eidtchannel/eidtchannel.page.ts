@@ -22,7 +22,8 @@ public des:string="";
 public channelAvatar = "";
 public avatar = "";
 public oldChannelInfo:any = {};
-public oldChannelAvatar:string ="";
+public oldChannelAvatar:string = "";
+
 constructor(
   private feedService: FeedService,
   public activatedRoute:ActivatedRoute,
@@ -30,8 +31,8 @@ constructor(
   private translate:TranslateService,
   private events: Events,
   private native: NativeService,
-  private zone:NgZone) {
-
+  private zone:NgZone
+) {
   }
 
 ngOnInit() {
@@ -47,14 +48,18 @@ ngOnInit() {
 }
 
 ionViewWillEnter() {
+  this.initTitle();
+
   this.connectionStatus = this.feedService.getConnectionStatus();
   this.channelAvatar = this.feedService.getProfileIamge();
   this.avatar = this.feedService.parseChannelAvatar(this.channelAvatar);
+
   this.events.subscribe('feeds:connectionChanged',(status)=>{
     this.zone.run(() => {
       this.connectionStatus = status;
     });
   });
+  
   this.events.subscribe("feeds:updateTitle",()=>{
     this.initTitle();
   });
@@ -76,7 +81,6 @@ initTitle(){
 }
 
 ionViewDidEnter(){
-   this.initTitle();
 }
 
 ionViewWillLeave(){
