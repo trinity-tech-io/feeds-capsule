@@ -30,7 +30,6 @@ export const fr = {
         "connectionError":'No network is currently available, please try again later',
         "nopostyet":"No posts yet",
         "nodescriptionyet":'No description yet',
-        "pleasesigninfirst":"Please sign in first",
         "accept":"I agree",
         "naccepted":"I don’t agree",
         "moreThen0":"Please enter a number greater than 0",

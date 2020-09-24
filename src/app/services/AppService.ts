@@ -49,16 +49,12 @@ export class AppService {
         if (menuIcon.key == "back") {
             this.handleBack();
         } else if (menuIcon.key == "more"){
-          if (this.router.url.indexOf("/signin") >-1){
-            this.native.toast_trans("common.pleasesigninfirst");
-          } else {
             this.menuService.hideActionSheet();
             let value =  this.popoverController.getTop()["__zone_symbol__value"] || "";
             if(value!=""){
               this.popoverController.dismiss();
             }
             this.menu.open("menu");
-          }
         } else if (menuIcon.key === 'editChannel') {
           this.event.publish("feeds:editChannel");
         } else if (menuIcon.key === 'editServer') {
@@ -114,6 +110,10 @@ export class AppService {
         key: "more",
         iconPath: "assets/icon/more_menu.ico"
       });
+    }
+
+    hideright(){
+      titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.OUTER_RIGHT,null);
     }
 
     onMessageReceived(msg: AppManagerPlugin.ReceivedMessage) {
@@ -196,7 +196,7 @@ export class AppService {
         console.log('Incoming intent', intent);
         this.onReceiveIntent(intent);
       });
-    
+      this.addright();
       this.carrierService.init();
       this.native.setRootRouter(['/tabs/home']);
       this.feedService.updateSignInDataExpTime(signInData);

@@ -10,7 +10,6 @@ import { SplashscreenPage } from './pages/splashscreen/splashscreen.page';
 import { UtilService } from 'src/app/services/utilService';
 import { StorageService } from './services/StorageService';
 import { PopupProvider } from 'src/app/services/popup';
-declare let appManager: AppManagerPlugin.AppManager;
 @Component({
   selector: 'my-app',
   templateUrl: 'app.html',
@@ -47,7 +46,7 @@ export class MyApp {
 
   initializeApp() {
     this.platform.ready().then(() => {
-      this.native.networkInfoInit()
+      this.native.networkInfoInit();
       this.native.addNetworkListener(()=>{
         this.events.publish('feeds:networkStatusChanged', 1);
       },()=>{
@@ -79,8 +78,6 @@ export class MyApp {
       this.splash();
       return;
     }
-
-    this.appService.addright();
     this.appService.initializeApp();
   }
 
@@ -128,6 +125,7 @@ export class MyApp {
     this.storageService.remove("signInData").then(()=>{
       this.feedService.resetConnectionStatus();
       this.feedService.destroyCarrier();
+      this.appService.hideright();
       this.native.setRootRouter('signin');
       this.native.toast("app.des"); 
     }).catch((err)=>{
