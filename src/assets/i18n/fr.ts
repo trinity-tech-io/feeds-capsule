@@ -261,6 +261,7 @@ export const fr = {
         "unpublic":"Set Private",
         "unpublicTip":"Feeds Source is now private",
         "des":"Add my Feeds Source!",
+        "replyingto":"Replying to"
     },
     "ScanqrcodePage":{
         "introtitle": "Create a new",
