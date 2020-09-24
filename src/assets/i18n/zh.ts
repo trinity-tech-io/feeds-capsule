@@ -30,7 +30,6 @@ export const zh = {
         "connectionError":'当前无网络，请稍后再试',
         "nopostyet":"还未发布微说",
         "nodescriptionyet":'暂时没有描述',
-        "pleasesigninfirst":"请先登录",
         "accept":"同意",
         "naccepted":"不同意",
         "moreThen0":"请输入大于0的数额",

@@ -65,7 +65,6 @@ export class DisclaimerPage implements OnInit {
   init(){
     let isFirst = localStorage.getItem('org.elastos.dapp.feeds.first') || "";
     if (isFirst !== "") {
-      this.appService.addright();
       this.appService.initializeApp();
     } else {
       localStorage.setItem('org.elastos.dapp.feeds.first',"11");

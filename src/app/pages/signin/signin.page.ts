@@ -5,7 +5,7 @@ import { Events, LoadingController } from '@ionic/angular';
 import { NativeService } from 'src/app/services/NativeService';
 import { TranslateService } from "@ngx-translate/core";
 import { ThemeService } from 'src/app/services/theme.service';
-
+import { AppService } from '../../services/AppService';
 declare let appManager: AppManagerPlugin.AppManager;
 declare let didManager: DIDPlugin.DIDManager;
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
@@ -32,7 +32,8 @@ export class SigninPage implements OnInit {
     private carrierService:CarrierService,
     private translate:TranslateService,
     private event:Events,
-    public theme:ThemeService) { }
+    public theme:ThemeService,
+    public appService:AppService) { }
 
   ngOnInit() {
     
@@ -80,7 +81,7 @@ export class SigninPage implements OnInit {
       this.initApp();
       return;
     }
-
+    
     this.zone.run(()=>{
       this.native.showLoading('common.waitMoment',2000);
     });
@@ -183,6 +184,7 @@ export class SigninPage implements OnInit {
   }
 
   initApp(){
+    this.appService.addright();
     this.carrierService.init();
     this.native.setRootRouter('/tabs/home');
   }
