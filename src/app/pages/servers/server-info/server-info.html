@@ -4,12 +4,6 @@
 
 <ion-content>
   <ion-grid class="container" [class.darkContainer]="theme.darkMode">
-
-    <div class="edit" (click)="clickEdit()" *ngIf="address ==='' && checkIsMine() == 0">
-      <ion-img src="./assets/images/edit.svg" *ngIf="!theme.darkMode"></ion-img>
-      <ion-img src="./assets/images/edit-dark.svg" *ngIf="theme.darkMode"></ion-img>
-    </div>
-
     <!--- SERVER HEADER --->
     <div class="server-header">
       <ion-img class="headerImg" src="./assets/images/profile-2.svg"></ion-img>
