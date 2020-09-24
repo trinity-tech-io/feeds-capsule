@@ -280,7 +280,7 @@ export const zh = {
         "abort":"校验码不一致，中止绑定",
         "Connectingserver": "正在连接微频源...",
         "bindingError":"绑定过程出现异常",
-        "linkServerError": "您不是该微频源的持有者，请更换后重试。",
+        "linkServerError": "该微频源已被其他DID绑定，请更换后重试。",
     },
     "ImportdidPage": {
         "introduce": "创建您的微频源",

@@ -280,7 +280,7 @@ export const fr = {
         "abort":"Abort",
         "Connectingserver":"Connecting server...",
         "bindingError":"An exception occurred during the binding process",
-        "linkServerError": "You are not the owner of this service, please change and try again.",
+        "linkServerError": "The Feeds source has been bound by another DID, please change and try again.",
     },
     "ImportdidPage": {
         "introduce": "Create your Feeds Source",
