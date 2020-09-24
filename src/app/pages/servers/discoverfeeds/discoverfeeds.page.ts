@@ -110,9 +110,11 @@ export class DiscoverfeedsPage implements OnInit {
         this.isLoading =false;
          this.totalNum = result["data"]["total"];
          this.feedList = result["data"]["result"] || [];
+         this.infiniteScroll.disabled =false;
       }
     }).catch((err)=>{
       this.isLoading =false;
+      this.infiniteScroll.disabled =false;
       if(events!=""){
         events.target.complete();
       }
