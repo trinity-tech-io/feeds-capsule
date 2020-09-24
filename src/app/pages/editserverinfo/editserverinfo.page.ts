@@ -136,10 +136,10 @@ export class EditserverinfoPage implements OnInit {
       return false;
     }
 
-    if(this.elaAddress === ""){
-      this.native.toast_trans('IssuecredentialPage.elaaddress');
-      return false;
-    }
+    // if(this.elaAddress === ""){
+    //   this.native.toast_trans('IssuecredentialPage.elaaddress');
+    //   return false;
+    // }
 
     if(this.oldServerInfo["elaAddress"] === this.elaAddress && 
        this.oldServerInfo["name"] === this.name &&
