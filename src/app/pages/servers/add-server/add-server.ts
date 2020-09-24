@@ -38,8 +38,17 @@ export class AddServerPage implements OnInit {
     private popup: PopupProvider,
     private loadingController: LoadingController,
     private translate:TranslateService,
-    public theme: ThemeService
+    public theme: ThemeService,
+    public route: ActivatedRoute
   ) {
+ /*    this.route.queryParams.subscribe(params => {
+      if(params.source) {
+        console.log('SOURCEEEEE')
+        console.log("Handling intent 'addsource' with source - " + params);
+        this.checkValid(params.source);
+      }
+    }); */
+
       // this.acRoute.params.subscribe(data => {
       //   this.address = data.address;
       //   if (this.address == null ||
@@ -72,6 +81,13 @@ export class AddServerPage implements OnInit {
       });
     });
 
+    this.events.subscribe('intent:addsource',(intentSource)=>{
+      this.zone.run(() => {
+        console.log("Handling intent 'addsource' with source id - ", intentSource);
+        this.checkValid(intentSource);
+      });
+    });
+
     this.events.subscribe('feeds:updateServerList', ()=>{
       this.zone.run(() => {
           //this.native.pop();
@@ -89,6 +105,7 @@ export class AddServerPage implements OnInit {
     this.events.unsubscribe("feeds:updateTitle");
     this.events.unsubscribe("feeds:connectionChanged");
     this.events.unsubscribe("feeds:updateServerList");
+    this.events.unsubscribe("intent:addsource");
   }
 
   initTitle(){
@@ -98,8 +115,6 @@ export class AddServerPage implements OnInit {
   navToBack() {
     this.native.pop();
   }
-
-
 
   scanCode(){
     appManager.sendIntent("scanqrcode", {}, {}, (res) => {
@@ -129,7 +144,7 @@ export class AddServerPage implements OnInit {
         this.native.toastWarn("AddServerPage.tipMsg");
         return ;
     }
-    this.native.getNavCtrl().navigateForward(['/menu/servers/server-info', result,"0", false]);
+    this.native.getNavCtrl().navigateForward(['/menu/servers/server-info', result, "0", false]);
   }
 
 

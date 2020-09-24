@@ -128,20 +128,20 @@ export class NativeService {
         else {
             titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_LEFT, null);
         }
-      }
+    }
 
-      getNavCtrl(){
-          return this.navCtrl;
-      }
+    getNavCtrl(){
+        return this.navCtrl;
+    }
 
-      navigateForward(router:any, options:any):Promise<boolean>{ 
-          let option =options || ""; 
-          if(option!=""){
-           return this.navCtrl.navigateForward(router,options);
-          }else{
+    navigateForward(router:any, options:any):Promise<boolean>{ 
+        let option = options || ""; 
+        if(option !== ""){
+            return this.navCtrl.navigateForward(router, options);
+        } else {
             return this.navCtrl.navigateForward(router);
-          }
-      }
+        }
+    }
 
       getRouter(){
           return this.router;

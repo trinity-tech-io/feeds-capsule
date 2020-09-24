@@ -117,14 +117,24 @@
     border-bottom: none;
   }
 
-  .btn-row {
-    width: 100%;
+  .btns {
     margin-top: 20px;
 
-    ion-button {
-      width: 95%;
+    .btn-row {
+      width: 100%;
+      margin-top: 0px;
+  
+      ion-button {
+        width: 95%;
+      }
+    }
+  
+    .delete-row {
+      margin-top: 20px;
     }
   }
+
+  
 }
 
 .edit{

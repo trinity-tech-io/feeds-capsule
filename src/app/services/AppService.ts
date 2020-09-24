@@ -1,7 +1,5 @@
-
 import { Injectable} from '@angular/core';
-import { Router} from '@angular/router';
-//import { IonRouterOutlet } from '@ionic/angular';
+import { Router, NavigationExtras} from '@angular/router';
 import { ThemeService } from "./../services/theme.service";
 import { NgZone} from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
@@ -12,8 +10,11 @@ import { CarrierService } from '../services/CarrierService';
 import { BackhomeComponent} from '../components/backhome/backhome.component';
 import { MenuController,PopoverController } from '@ionic/angular';
 import { MenuService } from 'src/app/services/MenuService';
+
 declare let appManager: AppManagerPlugin.AppManager;
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
+
+let managerService: any;
 
 @Injectable({
     providedIn: 'root'
@@ -33,35 +34,64 @@ export class AppService {
       private carrierService: CarrierService,
       private menu: MenuController,
       private popoverController: PopoverController,
-      private menuService:MenuService
+      private menuService: MenuService,
+      private events: Events
     ) {
     }
 
     init() {
-        appManager.setListener((msg) => {
-          this.onMessageReceived(msg);
-        });
-        titleBarManager.addOnItemClickedListener((menuIcon)=>{
-          this.native.hideLoading();
-          if (menuIcon.key == "back") {
-              this.handleBack();
-          } else if (menuIcon.key == "more"){
-            if (this.router.url.indexOf("/signin") >-1){
-              this.native.toast_trans("common.pleasesigninfirst");
-            } else {
-              this.menuService.hideActionSheet();
-             let value =  this.popoverController.getTop()["__zone_symbol__value"] || "";
-             if(value!=""){
-               this.popoverController.dismiss();
-             }
-              this.menu.open("menu");
+      appManager.setListener((msg) => {
+        this.onMessageReceived(msg);
+      });
+
+      titleBarManager.addOnItemClickedListener((menuIcon)=>{
+        this.native.hideLoading();
+        if (menuIcon.key == "back") {
+            this.handleBack();
+        } else if (menuIcon.key == "more"){
+          if (this.router.url.indexOf("/signin") >-1){
+            this.native.toast_trans("common.pleasesigninfirst");
+          } else {
+            this.menuService.hideActionSheet();
+            let value =  this.popoverController.getTop()["__zone_symbol__value"] || "";
+            if(value!=""){
+              this.popoverController.dismiss();
             }
-          } else if (menuIcon.key === 'editChannel') {
-            this.event.publish("feeds:editChannel");
-          } else if (menuIcon.key === 'editServer') {
-            this.event.publish("feeds:editServer");
+            this.menu.open("menu");
           }
-        });
+        } else if (menuIcon.key === 'editChannel') {
+          this.event.publish("feeds:editChannel");
+        } else if (menuIcon.key === 'editServer') {
+          this.event.publish("feeds:editServer");
+        }
+      });
+    }
+
+    onReceiveIntent = (ret) => {
+      console.log("Intent received", ret, JSON.stringify(ret));
+
+      switch (ret.action) {
+        case "addsource":
+          console.log('addsource intent', ret);
+          this.zone.run(async () => {
+            this.native.getNavCtrl().navigateForward(
+              ['/menu/servers/server-info', ret.params.source, "0", false]
+            );
+
+         /*    this.events.publish("intent:addsource", ret.params.source); 
+            this.native.navigateForward(['menu/servers/add-server'], ""); */
+
+           /*  let props: NavigationExtras = {
+              queryParams: {
+                source: ret.params.source
+              }
+            }
+
+            this.router.navigate(['menu/servers/add-server'], props);
+          */
+          });
+          break;
+      }
     }
 
     handleBack(){
@@ -161,9 +191,13 @@ export class AppService {
         this.native.setRootRouter(['/signin']);
         return ;
       }
+
+      appManager.setIntentListener((intent: AppManagerPlugin.ReceivedIntent) => {
+        console.log('Incoming intent', intent);
+        this.onReceiveIntent(intent);
+      });
     
       this.carrierService.init();
-      // this.native.setRootRouter(['bindservice/issuecredential/1/2']);
       this.native.setRootRouter(['/tabs/home']);
       this.feedService.updateSignInDataExpTime(signInData);
     }

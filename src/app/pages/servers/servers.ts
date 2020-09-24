@@ -136,7 +136,7 @@ export class ServersPage implements OnInit {
     }
 
     initTitle(){
-    titleBarManager.setTitle(this.translate.instant('ServersPage.feedSources'));
+        titleBarManager.setTitle(this.translate.instant('ServersPage.feedSources'));
     }
 
     navToServerInfo(nodeId: string, isOwner: boolean) {

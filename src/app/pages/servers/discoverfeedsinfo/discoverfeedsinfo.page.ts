@@ -37,6 +37,7 @@ public elaAddress: string = "";
 public isPublic:string ="";
 public serverInfo:any = {};
 public actionSheet:any = null;
+
 constructor(
   private actionSheetController:ActionSheetController,
   private events: Events,
