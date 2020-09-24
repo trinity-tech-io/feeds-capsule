@@ -359,3 +359,16 @@ ion-input {
   }
 }
 
+.dark .genericPopup {
+  .popover-wrapper{
+    .popover-content {
+      position: relative !important;
+      margin: 0 auto !important;
+      left: auto !important;
+      top: auto !important;
+      width:85vw  !important;
+      background: #192a2f !important;
+    }
+  }
+}
+
