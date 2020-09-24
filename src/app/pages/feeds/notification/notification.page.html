@@ -33,8 +33,10 @@
           </ion-col>
         </ion-row>
       </ion-item>
-      <ion-item-options side="end" (ionSwipe)="delete(notification)">
-        <ion-item-option class="notification-swipe" expandable>&nbsp;</ion-item-option>
+       <!-- <ion-item-options side="end" (ionSwipe)="delete(notification)">
+       <ion-item-option class="notification-swipe" expandable>&nbsp;</ion-item-option> -->
+       <ion-item-options side="end">
+          <ion-item-option color="danger" (click)="delete(notification)">  <ion-icon slot="icon-only" name="trash"></ion-icon> {{'common.delete' | translate}}</ion-item-option>
       </ion-item-options>
     </ion-item-sliding>
   </div>
