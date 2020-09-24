@@ -79,7 +79,7 @@ export const en = {
     "SigninPage":{
         "signIn":"Sign In to Feeds",
         "Pleasewait":"Please wait...",
-        "feeds": 'feeds',
+        "feeds": 'Feeds',
         "des":"Where meaningful",
         "des1":"conversations happens",
         "des2":"Learn more about Feeds?",
@@ -259,6 +259,7 @@ export const en = {
         "publicTip":"Feeds Source is now public",
         "unpublic":"Set Private",
         "unpublicTip":"Feeds Source is now private",
+        "des":"Add my Feeds Source!",
     },
     "ScanqrcodePage":{
         "introtitle": "Create a new",

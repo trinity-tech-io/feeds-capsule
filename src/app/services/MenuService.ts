@@ -91,7 +91,7 @@ export class MenuService {
                     icon: 'share',
                     handler: () => {
                         appManager.sendIntent("share", {
-                            title: this.translate.instant(title),
+                            title:title,
                             url: qrCodeString
                           }, {}, () => {
                             this.postDetail.dismiss();
