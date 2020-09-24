@@ -181,6 +181,10 @@ export class ServerInfoPage implements OnInit {
     });
 
     this.events.subscribe("feeds:updateTitle", () => {
+      if(this.menuService.postDetail!=null){
+        this.menuService.hideActionSheet();
+        this.menuMore();
+      }
       this.initTitle();
     });
 
@@ -264,7 +268,7 @@ export class ServerInfoPage implements OnInit {
 
   menuMore() {
     const shareableUrl = "https://scheme.elastos.org/addsource?source="+encodeURIComponent(this.feedsUrl);
-    this.menuService.showQRShareMenu('Add my Feed Source!', shareableUrl);
+    this.menuService.showQRShareMenu(this.translate.instant('ServerInfoPage.des'),shareableUrl);
   }
 
   /* getShareableUrl(qrcode: string) {

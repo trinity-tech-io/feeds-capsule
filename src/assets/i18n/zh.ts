@@ -80,7 +80,7 @@ export const zh = {
     "SigninPage":{
         "signIn":"登录微频",
         "Pleasewait": "请稍等...",
-        "feeds": 'feeds',
+        "feeds": '微频',
         "des":"进行",
         "des1":"有意义的对话",
         "des2":"了解Feeds更多信息？",
@@ -126,7 +126,7 @@ export const zh = {
     },
     "ConfirmdialogComponent": {
         "signoutTitle": 'Sign Out',
-        "signoutMessage": 'Are you sure you want to sign out?'
+        "signoutMessage": '确认要登出吗？'
     },
     "SearchPage":{
         "emptyDes":"没有可关注的微频",
@@ -241,7 +241,7 @@ export const zh = {
         "introduction":"简要介绍",
         "did":"DID身份码",
         "addFeedSource":"添加微频源",
-        "shareFeedSource": "Share Feeds Source",
+        "shareFeedSource": "分享微频源",
         "removeFeedSource":"移除微频源",
         "deleteFeedSource":"删除微频源",
         "feedUrl":"微频源URL网址",
@@ -260,6 +260,7 @@ export const zh = {
         "publicTip":"公开成功",
         "unpublic":"取消公开",
         "unpublicTip":"取消公开成功",
+        "des":"添加我的微频源!",
     },
     "ScanqrcodePage":{
         "introtitle": "创建新的",
