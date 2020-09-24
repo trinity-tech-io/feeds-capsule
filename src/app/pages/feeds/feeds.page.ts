@@ -53,10 +53,6 @@ export class FeedsPage implements OnInit {
   }
 
   ionViewWillEnter() {
-    this.initTab();
-    this.initTile();
-    this.native.setTitleBarBackKeyShown(false);
-    appManager.setVisible("show");
 
     this.getUnReadNum();
     
@@ -79,6 +75,10 @@ export class FeedsPage implements OnInit {
   }
 
   ionViewDidEnter() {
+    this.initTab();
+    this.initTile();
+    this.native.setTitleBarBackKeyShown(false);
+    appManager.setVisible("show");
   }
 
   create(){
