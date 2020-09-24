@@ -67,10 +67,10 @@ export class ServerpromptComponent implements OnInit {
       return;
     }
 
-    if (this.elaAddress == ""){
-      this.native.toast_trans('IssuecredentialPage.inputElaAddress');
-      return;
-    }
+    // if (this.elaAddress == ""){
+    //   this.native.toast_trans('IssuecredentialPage.inputElaAddress');
+    //   return;
+    // }
 
     this.popover.dismiss();
     this.native.showLoading("common.waitMoment",5*60*1000).then(()=>{
