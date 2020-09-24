@@ -93,7 +93,7 @@
           </ion-row>
          
           <ion-label>
-            <p (press)="userName(comment.user_name)">@{{ indexText(comment.user_name) }}</p>
+            <p (press)="userName(channelOwner)">{{'ServerInfoPage.replyingto'|translate}} @{{ indexText(channelOwner) }}</p>
           </ion-label>
           <h2 *ngIf="comment.status === 1">
             <pre>{{'common.cdeleted' | translate}}</pre>

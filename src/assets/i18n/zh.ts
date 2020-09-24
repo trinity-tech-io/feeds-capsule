@@ -261,6 +261,7 @@ export const zh = {
         "unpublic":"取消公开",
         "unpublicTip":"取消公开成功",
         "des":"添加我的微频源!",
+        "replyingto":"回复给"
     },
     "ScanqrcodePage":{
         "introtitle": "创建新的",
