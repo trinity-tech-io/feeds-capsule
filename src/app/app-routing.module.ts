@@ -43,8 +43,6 @@ const routes: Routes = [
   { path: 'editcomment', loadChildren: './pages/editcomment/editcomment.module#EditcommentPageModule' },
   { path: 'discoverfeeds', loadChildren: './pages/servers/discoverfeeds/discoverfeeds.module#DiscoverfeedsPageModule' },
   { path: 'discoverfeedsinfo', loadChildren: './pages/servers/discoverfeedsinfo/discoverfeedsinfo.module#DiscoverfeedsinfoPageModule' },
-
-
 ];
 
 @NgModule({

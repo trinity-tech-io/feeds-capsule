@@ -8,6 +8,7 @@ import { HttpService } from 'src/app/services/HttpService';
 import { ActionSheetController } from '@ionic/angular';
 import { TranslateService } from "@ngx-translate/core";
 import { ApiUrl } from 'src/app/services/ApiUrl';
+import { MenuService } from 'src/app/services/MenuService';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 class Attribute {
@@ -59,9 +60,11 @@ export class ServerInfoPage implements OnInit {
     private native: NativeService,
     private acRoute: ActivatedRoute,
     private feedService: FeedService,
-    public theme:ThemeService,
-    private translate:TranslateService,
-    public httpService:HttpService) {}
+    public theme: ThemeService,
+    private translate: TranslateService,
+    public httpService: HttpService,
+    private menuService: MenuService
+  ) {}
 
   ngOnInit() {
     this.acRoute.params.subscribe(data => {
@@ -259,6 +262,15 @@ export class ServerInfoPage implements OnInit {
     });
   }
 
+  menuMore() {
+    const shareableUrl = "https://scheme.elastos.org/addsource?source="+encodeURIComponent(this.feedsUrl);
+    this.menuService.showQRShareMenu('Add my Feed Source!', shareableUrl);
+  }
+
+  /* getShareableUrl(qrcode: string) {
+    let url = "https://scheme.elastos.org/addsource?source="+encodeURIComponent(qrcode);
+  } */
+
   async presentLoading() {
     const loading = await this.loadingController.create({
       message: this.translate.instant("ServerInfoPage.Pleasewait"),
@@ -280,7 +292,6 @@ export class ServerInfoPage implements OnInit {
       this.navigateBackPage();
     }
   }
-
 
   resolveDid(){
     this.feedService.resolveDidDocument(this.address, null,

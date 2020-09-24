@@ -242,6 +242,7 @@ export const zh = {
         "introduction":"简要介绍",
         "did":"DID身份码",
         "addFeedSource":"添加微频源",
+        "shareFeedSource": "Share Feeds Source",
         "removeFeedSource":"移除微频源",
         "deleteFeedSource":"删除微频源",
         "feedUrl":"微频源URL网址",

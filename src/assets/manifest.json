@@ -43,5 +43,10 @@
   ],
   "background_color": "#4e8ef7",
   "theme_display": "show",
-  "theme_color": "#4e8ef7"
+  "theme_color": "#4e8ef7",
+  "intent_filters": [
+    {
+        "action": "addsource"
+    }
+  ]
 }

@@ -5,7 +5,10 @@ import { FeedService } from './FeedService';
 import { NativeService } from './NativeService';
 import { PopupProvider } from 'src/app/services/popup';
 
+declare let appManager: AppManagerPlugin.AppManager;
+
 @Injectable()
+
 export class MenuService {
     public nodeId:string ="";
     public channelId:number =0;
@@ -55,7 +58,7 @@ export class MenuService {
         await this.postDetail.present();
     }
 
-    async showShareMenu(nodeId: string, channelId: number, channelName: string,postId:number){
+    async showShareMenu(nodeId?: string, channelId?: number, channelName?: string, postId?:number) {
         this.postDetail = await this.actionSheetController.create({
             cssClass: 'editPost',
             buttons: [
@@ -75,6 +78,33 @@ export class MenuService {
                 this.postDetail  = null;
             }
            
+        })
+        await this.postDetail.present();
+    }
+
+    async showQRShareMenu(title: string, qrCodeString: string) {
+        this.postDetail = await this.actionSheetController.create({
+            cssClass: 'editPost',
+            buttons: [
+                {
+                    text: this.translate.instant("common.share"),
+                    icon: 'share',
+                    handler: () => {
+                        appManager.sendIntent("share", {
+                            title: this.translate.instant(title),
+                            url: qrCodeString
+                          }, {}, () => {
+                            this.postDetail.dismiss();
+                        });
+                    }
+                }
+            ]
+        });
+       
+        this.postDetail.onWillDismiss().then(()=>{
+            if(this.postDetail) {
+                this.postDetail = null;
+            }
         })
         await this.postDetail.present();
     }
