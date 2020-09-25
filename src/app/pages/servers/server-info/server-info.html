@@ -23,10 +23,12 @@
     <div *ngFor="let server of serverDetails">
       <ion-row *ngIf="server.details" class="detail-row" [class.removeBorder]="serverDetails.indexOf(server) === serverDetails.length - 1">
         <ion-col size="12" class="left-col">
-            <h1>{{ server.type.toUpperCase() }}</h1>
+            <h1 *ngIf="!server.qrcode">{{ server.type.toUpperCase() }}</h1>
+            <h1 *ngIf="server.qrcode&&isShowQrcode">{{ server.type.toUpperCase() }}</h1>
             <h2 *ngIf="!server.qrcode">{{ server.details }}</h2>
             <div *ngIf="server.qrcode" class="qr-container">
-              <div *ngIf="isShowQrcode" class="qrcode" (press)="menuMore()">
+              <h2 *ngIf="!isShowQrcode" >{{'common.waitOnChain'|translate}}</h2>
+              <div *ngIf="isShowQrcode" class="qrcode">
                 <qrcode [qrdata]="feedsUrl" [size]="150" [level]="'M'"></qrcode>
               </div>
             </div>
@@ -77,14 +79,14 @@
 
     <!--- BUTTONS --->
     <div class="btns">
-      <ion-row *ngIf="checkIsMine() == 0 && address == ''&&feedsUrl!=''" class="btn-row">
-        <ion-button (click)="clickPublic()">
+      <ion-row *ngIf="checkIsMine() == 0 && address == ''" class="btn-row">
+        <ion-button (click)="clickPublic()" [disabled]='!isShowQrcode'>
           <ion-label *ngIf="isPublic === ''">{{'ServerInfoPage.public'|translate}}</ion-label>
           <ion-label *ngIf="isPublic != ''">{{'ServerInfoPage.unpublic'|translate}}</ion-label>
         </ion-button>
       </ion-row>
-      <ion-row *ngIf="address != ''" class="btn-row">
-        <ion-button (click)="addFeedSource()">
+      <ion-row *ngIf="address != ''" class="btn-row" >
+        <ion-button (click)="addFeedSource()" [disabled]='buttonDisabled'>
           <ion-label>{{'ServerInfoPage.addFeedSource' | translate}}</ion-label>
         </ion-button>
       </ion-row>
