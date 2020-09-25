@@ -192,7 +192,7 @@ export class ServerInfoPage implements OnInit {
            this.unsubscribe(this.channel);
            return;
         }
-          this.menuMore();
+        //this.menuMore();
       }
       this.initTitle();
     });

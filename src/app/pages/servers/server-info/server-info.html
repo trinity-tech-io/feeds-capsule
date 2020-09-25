@@ -88,11 +88,11 @@
           <ion-label>{{'ServerInfoPage.addFeedSource' | translate}}</ion-label>
         </ion-button>
       </ion-row>
-      <ion-row *ngIf="address === ''" class="btn-row">
+      <!-- <ion-row *ngIf="address === ''" class="btn-row">
         <ion-button (click)="menuMore()">
           <ion-label>{{'ServerInfoPage.shareFeedSource' | translate}}</ion-label>
         </ion-button>
-        </ion-row>
+      </ion-row> -->
       <ion-row *ngIf="address === '' && !isBindServer" class="btn-row delete-row">
         <ion-button (click)="removeFeedSource()" color="danger">
           <ion-label>{{'ServerInfoPage.removeFeedSource' | translate}}</ion-label>
