@@ -9,6 +9,7 @@ import { ActionSheetController } from '@ionic/angular';
 import { TranslateService } from "@ngx-translate/core";
 import { ApiUrl } from 'src/app/services/ApiUrl';
 import { MenuService } from 'src/app/services/MenuService';
+import { UtilService } from 'src/app/services/utilService';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 class Attribute {
@@ -52,6 +53,10 @@ export class ServerInfoPage implements OnInit {
   
   public isShowQrcode: boolean = true;
   public actionSheet:any = null;
+  public  ownerChannelList:any = [];
+  public nodeStatus: any = {};
+  public channel:any =null;
+  public clickbutton:string ="";
   constructor(
     private actionSheetController:ActionSheetController,
     private events: Events,
@@ -143,7 +148,6 @@ export class ServerInfoPage implements OnInit {
   ionViewWillEnter() {
     this.initTitle();		
     this.native.setTitleBarBackKeyShown(true);
-
     this.connectionStatus = this.feedService.getConnectionStatus();
     this.events.subscribe('feeds:connectionChanged', (status) => {
       this.zone.run(() => {
@@ -183,7 +187,12 @@ export class ServerInfoPage implements OnInit {
     this.events.subscribe("feeds:updateTitle", () => {
       if(this.menuService.postDetail!=null){
         this.menuService.hideActionSheet();
-        this.menuMore();
+     
+        if(this.clickbutton === "unsubscribe"){
+           this.unsubscribe(this.channel);
+           return;
+        }
+          this.menuMore();
       }
       this.initTitle();
     });
@@ -194,6 +203,27 @@ export class ServerInfoPage implements OnInit {
 
     this.events.subscribe("feeds:removeFeedSourceFinish", () => {
       this.native.hideLoading();
+    });
+
+    this.events.subscribe('feeds:subscribeFinish', (nodeId, channelId, name)=> {
+      // this.native.toast(name + " subscribed");
+      this.zone.run(() => {
+        this.initMyFeeds();
+      });
+    });
+
+    this.events.subscribe('feeds:unsubscribeFinish', (nodeId, channelId, name) => {
+      // this.native.toast(name + " unsubscribed");
+      this.zone.run(() => {
+        this.clickbutton ="";
+        this.initMyFeeds();
+      });
+    });
+
+    this.events.subscribe("feeds:friendConnectionChanged", (nodeId, status)=>{
+      this.zone.run(()=>{
+        this.nodeStatus[nodeId] = status;
+      });
     });
   }
 
@@ -210,6 +240,10 @@ export class ServerInfoPage implements OnInit {
     this.events.unsubscribe("feeds:removeFeedSourceFinish");
     this.events.unsubscribe("feeds:updateTitle");
     this.events.unsubscribe("feeds:editServer");
+    this.events.unsubscribe('feeds:subscribeFinish');
+    this.events.unsubscribe('feeds:unsubscribeFinish');
+    this.events.unsubscribe('feeds:friendConnectionChanged');
+    this.clickbutton = "";
     if(this.actionSheet!=null)
       this.actionSheet.dismiss();
   }
@@ -218,11 +252,11 @@ export class ServerInfoPage implements OnInit {
     titleBarManager.setTitle(this.translate.instant('ServerInfoPage.title'));
 
     if (this.address === '' && this.checkIsMine() == 0) {
-      console.log('Server is mine!');
       titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, {
         key: "editServer",
         iconPath: TitleBarPlugin.BuiltInIcon.EDIT
       });
+      this.initMyFeeds();
     } else {
       titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, null);
     }
@@ -267,6 +301,7 @@ export class ServerInfoPage implements OnInit {
   }
 
   menuMore() {
+    this.clickbutton ="";
     const shareableUrl = "https://scheme.elastos.org/addsource?source="+encodeURIComponent(this.feedsUrl);
     this.menuService.showQRShareMenu(this.translate.instant('ServerInfoPage.des'),shareableUrl);
   }
@@ -495,4 +530,51 @@ export class ServerInfoPage implements OnInit {
       }
     });
   }
+
+  initMyFeeds(){
+    this.ownerChannelList = this.feedService.getMyChannelList();
+    this.initnodeStatus();
+  }
+
+  parseChannelAvatar(avatar: string): string{
+    return this.feedService.parseChannelAvatar(avatar);
+  }
+
+  moreName(name:string){
+    return UtilService.moreNanme(name);
+ }
+
+ pressName(channelName:string){
+  let name =channelName || "";
+  if(name != "" && name.length>15){
+    this.native.createTip(name);
+  }
+ }
+//channel.nodeId, channel.name, channel.id
+  unsubscribe(channel:any){
+    this.clickbutton = "unsubscribe";
+    this.channel = channel;
+    this.menuService.showUnsubscribeMenu(channel.nodeId, channel.id,channel.name);
+  }
+//channel.nodeId, channel.id
+  subscribe(channel:any){
+    if(this.feedService.getConnectionStatus() != 0){
+      this.native.toastWarn('common.connectionError');
+      return;
+    }
+    
+    this.feedService.subscribeChannel(channel.nodeId, channel.id);
+  }
+
+  initnodeStatus(){
+    for(let index =0 ;index<this.ownerChannelList.length;index++){
+           let nodeId = this.ownerChannelList[index]['nodeId'];
+           let status = this.checkServerStatus(nodeId);
+           this.nodeStatus[nodeId] = status;
+    }
+ }
+
+ checkServerStatus(nodeId: string){
+  return this.feedService.getServerStatusFromId(nodeId);
+ }
 }
