@@ -1,5 +1,5 @@
 import { Component, OnInit, NgZone } from '@angular/core';
-import { Events,LoadingController } from '@ionic/angular';
+import { Events} from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
 import { NativeService } from 'src/app/services/NativeService';
 import { FeedService } from 'src/app/services/FeedService';
@@ -60,7 +60,6 @@ export class ServerInfoPage implements OnInit {
   constructor(
     private actionSheetController:ActionSheetController,
     private events: Events,
-    private loadingController: LoadingController,
     private zone: NgZone,
     private native: NativeService,
     private acRoute: ActivatedRoute,
@@ -96,10 +95,9 @@ export class ServerInfoPage implements OnInit {
 
   initData(){
     if (this.address !== '') {
-      this.zone.run(() => {
-        this.presentLoading();
+      this.native.showLoading('common.waitMoment',2000).then(()=>{
+        this.queryServer();
       });
-      this.queryServer();
     } else {
       let server: any;
       let bindingServer = this.feedService.getBindingServer();
@@ -116,7 +114,7 @@ export class ServerInfoPage implements OnInit {
         this.feedService.checkDIDOnSideChain(server.did,(isOnSideChain)=>{
           this.zone.run(() => {
             this.isShowQrcode = isOnSideChain;
-            if (!isOnSideChain){
+            if (!this.isShowQrcode ){
               this.native.toastWarn('common.waitOnChain');
             }
           });
@@ -198,6 +196,10 @@ export class ServerInfoPage implements OnInit {
     });
 
     this.events.subscribe("feeds:editServer", () => {
+      if(!this.isShowQrcode){
+        this.native.toastWarn('common.waitOnChain');
+        return;
+      }
       this.clickEdit();
     });
 
@@ -310,15 +312,6 @@ export class ServerInfoPage implements OnInit {
     let url = "https://scheme.elastos.org/addsource?source="+encodeURIComponent(qrcode);
   } */
 
-  async presentLoading() {
-    const loading = await this.loadingController.create({
-      message: this.translate.instant("ServerInfoPage.Pleasewait"),
-      duration: 2000
-    });
-    await loading.present();
-
-    const { role, data } = await loading.onDidDismiss();
-  }
 
   queryServer(){
     if (
@@ -336,6 +329,7 @@ export class ServerInfoPage implements OnInit {
     this.feedService.resolveDidDocument(this.address, null,
       (server) => {
         this.zone.run(() => {
+          this.native.hideLoading();
           this.buttonDisabled = false;
           this.name = server.name || this.translate.instant('DIDdata.NotprovidedfromDIDDocument');
           this.owner = server.owner;
@@ -346,6 +340,7 @@ export class ServerInfoPage implements OnInit {
           this.collectServerData(server);
         });
       }, (err) => {
+        this.native.hideLoading();
         this.native.toastWarn("ServerInfoPage.error");
         this.buttonDisabled = true;
         this.navigateBackPage();
