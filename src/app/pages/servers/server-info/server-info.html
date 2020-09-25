@@ -77,7 +77,7 @@
 
     <!--- BUTTONS --->
     <div class="btns">
-      <ion-row *ngIf="checkIsMine() == 0 && address == ''" class="btn-row">
+      <ion-row *ngIf="checkIsMine() == 0 && address == ''&&feedsUrl!=''" class="btn-row">
         <ion-button (click)="clickPublic()">
           <ion-label *ngIf="isPublic === ''">{{'ServerInfoPage.public'|translate}}</ion-label>
           <ion-label *ngIf="isPublic != ''">{{'ServerInfoPage.unpublic'|translate}}</ion-label>
