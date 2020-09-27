@@ -940,7 +940,7 @@ export class FeedService {
   handleError(nodeId: string,error: any){
     eventBus.publish("rpcResponse:error");
     if(typeof error == "string")
-      this.native.toastWarn(error +" #"+this.getServerNameByNodeId(nodeId));  
+      this.native.toastWarn(this.formatErrorMsg(nodeId, error));  
     else
       this.processGeneralError(nodeId,error.code);
   }
@@ -3508,7 +3508,7 @@ export class FeedService {
       return ;
     this.setSigninTimeout(nodeId);
 
-    this.native.toast(this.translate.instant("common.loggingIn")+" #"+this.getServerNameByNodeId(nodeId));
+    this.native.toast(this.formatSigninMsg(nodeId));
     this.connectionService.signinChallengeRequest(nodeId, requiredCredential, this.getSignInData().did);
   }
 
@@ -3556,7 +3556,7 @@ export class FeedService {
     this.restoreData(nodeId);
 
     eventBus.publish("feeds:login_finish", nodeId);
-    this.native.toast(this.translate.instant("AddServerPage.Signinsuccess")+" #"+this.getServerNameByNodeId(nodeId));
+    this.native.toast(this.formatSigninSuccessMsg(nodeId));
     this.clearSigninTimeout(nodeId);
   }
 
@@ -4363,7 +4363,19 @@ export class FeedService {
         break;  
     }
 
-    this.native.toastWarn(errorMessage + " #" + this.getServerNameByNodeId(nodeId));
+    this.native.toastWarn(this.formatErrorMsg(nodeId,errorMessage));
+  }
+
+  formatErrorMsg(nodeId: string, errorMsg: string): string{
+    return "#"+this.getServerNameByNodeId(nodeId) + " - "+errorMsg;
+  }
+
+  formatSigninMsg(nodeId: string): string{
+    return this.translate.instant("common.loggingIn")+" #"+this.getServerNameByNodeId(nodeId);
+  }
+
+  formatSigninSuccessMsg(nodeId: string): string{
+    return this.translate.instant("common.signedInto")+" #"+this.getServerNameByNodeId(nodeId) + " "+this.translate.instant("common.successfully");
   }
 
   refreshPostById(nodeId: string, channelId: number, postId: number){

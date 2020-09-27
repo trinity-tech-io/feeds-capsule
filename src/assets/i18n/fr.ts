@@ -67,6 +67,8 @@ export const fr = {
         "waitOnChain": "Tips -  the DID of Feeds Source is being published.  Please be waiting for full confirmation from ID sidechain.",
         "takePicture":"Take Picture",
         "photolibary":"Photo Library",
+        "signedInto": "Signed into",
+        "successfully": "successfully"
     },
     "app":{
         "profileDetails":"Profile Details",
