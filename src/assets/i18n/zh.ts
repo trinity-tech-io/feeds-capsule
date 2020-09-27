@@ -64,7 +64,7 @@ export const zh = {
         "error400":"参数错误",
         "error500":"服务器错误",
         "confirmdeletion":"确认删除?",
-        "waitOnChain": "没有在链上检测到DID文档，如果DID已经发布，请等待5-10分钟",
+        "waitOnChain":"温馨提示 - 微频源服务DID已在ID侧链完成发布，请耐心等待完全确认。",
         "takePicture":"拍摄",
         "photolibary":"从手机相册选择",
     },
@@ -133,7 +133,7 @@ export const zh = {
         "follow":"关注",
         "following":"已关注",
         "searchFeeds":"搜索",
-        "addfeedssource":"添加微频源"
+        "addfeedssource":"添加微频源",
     },
     "ChannelsPage":{
         "feeds":"微频",

@@ -9,10 +9,11 @@
       <ion-img class="headerImg" src="./assets/images/profile-2.svg"></ion-img>
       <h1>{{ name }}</h1>
       <p *ngIf="introduction && introduction !== name">{{ introduction }}</p>
-      <ion-row class="status-row" [class.online]="serverStatus === 0">
-        <div class="indicator"></div>
-<!--         <span class="status" *ngIf="serverStatus === 0">{{ 'ServerInfoPage.online' | translate }}</span>
-        <span class="status" *ngIf="serverStatus === 1">{{ 'ServerInfoPage.offline' | translate }}</span>  -->
+      <ion-row class="status-row" [class.online]="serverStatus === 0"> 
+        <span class="online-circle" *ngIf="serverStatus === 0"></span>
+        <span class="clientNumber" *ngIf="serverStatus === 0">{{ 'ServerInfoPage.online' | translate }}</span>
+        <span class="offline-circle"  *ngIf="serverStatus === 1"></span>
+        <span class="clientNumber" *ngIf="serverStatus === 1">{{ 'ServerInfoPage.offline' | translate }}</span>
         <ion-img [src]="serverStatus === 0 ? 'assets/images/users-online.svg' : 'assets/images/users-offline.svg'"></ion-img>
         <span class="clientNumber">{{ clientNumber }}</span>
         <span class="users">{{'ServerInfoPage.users' | translate}}</span>
@@ -44,7 +45,7 @@
    <ion-list class="channel-list" [class.darkChannelList]="theme.darkMode" *ngIf="address == ''">
    <ion-item  *ngFor="let channel of ownerChannelList let i=index"
    lines="none">
-   <ion-row class="channel-row ion-activatable ripple">
+   <ion-row class="channel-row ion-activatable ripple" (click)="navTo(channel.nodeId, channel.id)">
       <ion-col
           size="2.5"
           class="left-col"
@@ -60,7 +61,6 @@
         <ion-col
           size="6.5"
           class="middle-col"
-          (click)="navTo(channel.nodeId, channel.id)"
         >
           <ion-label (press)="pressName(channel.name)">{{ moreName(channel.name) }}</ion-label>
           <ion-row>
@@ -69,12 +69,7 @@
           </ion-row>
         </ion-col>
         <ion-col size="3" class="right-col">
-          <ion-button *ngIf="!channel.isSubscribed" class="unsubscribed" fill="outline" (click)="subscribe(channel)">
-            <ion-label >{{'SearchPage.follow' | translate}}</ion-label>
-          </ion-button>
-          <ion-button *ngIf="channel.isSubscribed" (click)="unsubscribe(channel)">
-            <ion-label>{{ 'SearchPage.following' | translate }}</ion-label>
-          </ion-button>
+            <span  *ngIf="channel.isSubscribed" style="color: #368bff;font-weight: 500;font-size:12px;">{{ 'SearchPage.following' | translate }}</span>
         </ion-col>
         <ion-ripple-effect></ion-ripple-effect>
     </ion-row>
