@@ -67,6 +67,8 @@ export const zh = {
         "waitOnChain":"温馨提示 - 微频源服务DID已在ID侧链完成发布，请耐心等待完全确认。",
         "takePicture":"拍摄",
         "photolibary":"从手机相册选择",
+        "signedInto": "登录",
+        "successfully": "成功"
     },
     "app":{
         "profileDetails":"档案详情",
