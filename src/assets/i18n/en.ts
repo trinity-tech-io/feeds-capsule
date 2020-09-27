@@ -64,7 +64,7 @@ export const en = {
         "error400":"required parameter absence",
         "error500":"Server error",
         "confirmdeletion":"Confirm deletion?",
-        "waitOnChain": "Not resolve DIDDocument on side Chain, if DID has been published, please wait for 5-10 minutes",
+        "waitOnChain": "Tips -  the DID of Feeds Source is being published.  Please be waiting for full confirmation from ID sidechain.",
         "takePicture":"Take Picture",
         "photolibary":"Photo Library",
     },
@@ -132,7 +132,7 @@ export const en = {
         "follow":"Follow",
         "following":"Following",
         "searchFeeds":"Search Feeds",
-        'addfeedssource':'Add a Feeds Source'
+        'addfeedssource':'Add a Feeds Source',
     },
     "ChannelsPage":{
         "feeds":"Feeds",

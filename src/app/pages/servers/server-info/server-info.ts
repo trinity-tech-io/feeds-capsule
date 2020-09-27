@@ -575,4 +575,8 @@ export class ServerInfoPage implements OnInit {
  checkServerStatus(nodeId: string){
   return this.feedService.getServerStatusFromId(nodeId);
  }
+
+ navTo(nodeId:string, channelId:number){
+  this.native.navigateForward(['/channels', nodeId, channelId],"");
+ }
 }
