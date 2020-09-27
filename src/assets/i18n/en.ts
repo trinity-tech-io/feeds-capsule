@@ -83,7 +83,7 @@ export const en = {
         "des":"Where meaningful",
         "des1":"conversations happens",
         "des2":"Learn more about Feeds?",
-        "des3":"What is FeedS?",
+        "des3":"What is Feeds?",
         "des4":"Follow your interests.",
         "des5":"Hear what people are talking about.",
         "des6":"Join the conversation.",
