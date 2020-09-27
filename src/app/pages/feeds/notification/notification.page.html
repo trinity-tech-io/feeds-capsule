@@ -28,11 +28,13 @@
           </ion-col>
           <ion-col size="9.75" class="right-col">
             <h1 (press)="pressName(notification.userName)">{{ moreName(notification.userName) }} <span> {{ handleDisplayTime(notification.time) }}</span></h1>
-            <p>{{ notification.behaviorText }} <span *ngIf="notification['readStatus']===1" class="online-circle-blue" style="position: absolute;top:32px;right:10px"></span>
+            <p>{{ notification.behaviorText }} 
             <h2>{{ getNotificationContent(notification) }}</h2>
           </ion-col>
         </ion-row>
+       
       </ion-item>
+      <span *ngIf="notification['readStatus']===1" class="online-circle-blue" style="position: absolute;top:37px;right:29px;"></span>
        <!-- <ion-item-options side="end" (ionSwipe)="delete(notification)">
        <ion-item-option class="notification-swipe" expandable>&nbsp;</ion-item-option> -->
        <ion-item-options side="end">
