@@ -940,7 +940,7 @@ export class FeedService {
   handleError(nodeId: string,error: any){
     eventBus.publish("rpcResponse:error");
     if(typeof error == "string")
-      this.native.toastWarn(error);  
+      this.native.toastWarn(error +" #"+this.getServerNameByNodeId(nodeId));  
     else
       this.processGeneralError(nodeId,error.code);
   }
@@ -1311,6 +1311,16 @@ export class FeedService {
       return undefined;
     }
     return serverMap[nodeId];
+  }
+
+  getServerNameByNodeId(nodeId: string): string{
+    let serverName = "Unknow";
+    let server = this.getServerbyNodeId(nodeId);
+    if ( server != undefined ){
+      serverName = server.name;
+    }
+
+    return serverName;
   }
 
   saveSignInRAWData(jsonStr: string){
@@ -3497,7 +3507,8 @@ export class FeedService {
     if (this.isLogging[nodeId])
       return ;
     this.setSigninTimeout(nodeId);
-    this.native.toast("common.loggingIn");
+
+    this.native.toast(this.translate.instant("common.loggingIn")+" #"+this.getServerNameByNodeId(nodeId));
     this.connectionService.signinChallengeRequest(nodeId, requiredCredential, this.getSignInData().did);
   }
 
@@ -3545,7 +3556,7 @@ export class FeedService {
     this.restoreData(nodeId);
 
     eventBus.publish("feeds:login_finish", nodeId);
-    this.native.toast("AddServerPage.Signinsuccess");
+    this.native.toast(this.translate.instant("AddServerPage.Signinsuccess")+" #"+this.getServerNameByNodeId(nodeId));
     this.clearSigninTimeout(nodeId);
   }
 
@@ -4351,7 +4362,8 @@ export class FeedService {
         errorMessage = this.translate.instant("ErrorInfo.unsupportedRequests");
         break;  
     }
-    this.native.toastWarn(errorMessage);
+
+    this.native.toastWarn(errorMessage + " #" + this.getServerNameByNodeId(nodeId));
   }
 
   refreshPostById(nodeId: string, channelId: number, postId: number){
