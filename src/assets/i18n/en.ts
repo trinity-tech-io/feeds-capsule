@@ -260,7 +260,8 @@ export const en = {
         "unpublic":"Set Private",
         "unpublicTip":"Feeds Source is now private",
         "des":"Add my Feeds Source!",
-        "replyingto":"Replying to"
+        "replyingto":"Replying to",
+        "containedfeeds":"CONTAINED FEEDS",
     },
     "ScanqrcodePage":{
         "introtitle": "Create a new",
