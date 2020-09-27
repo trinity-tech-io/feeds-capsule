@@ -36,7 +36,12 @@
     </div>
 
     <!--myFeeds-->
-   <ion-list class="channel-list" [class.darkChannelList]="theme.darkMode" *ngIf="checkIsMine() == 0 && address == ''">
+   <ion-row class="detail-row removeBorder" style="padding-bottom: 5px;">
+     <ion-col size="12" class="left-col">
+      <h1>{{'ServerInfoPage.containedfeeds'|translate}}</h1>
+     </ion-col>
+   </ion-row> 
+   <ion-list class="channel-list" [class.darkChannelList]="theme.darkMode" *ngIf="address == ''">
    <ion-item  *ngFor="let channel of ownerChannelList let i=index"
    lines="none">
    <ion-row class="channel-row ion-activatable ripple">
@@ -108,126 +113,3 @@
     
   </ion-grid>
 </ion-content>
-
-<!-- <ion-header *ngIf="connectionStatus == 1">
-  <div class="offline-header"></div>
-</ion-header>
-<ion-content [class.darkContainer]="theme.darkMode" [class.lightContainer]="!theme.darkMode" class="ion-padding">
-   <div class="edit" (click)="clickEdit()" *ngIf="address ==='' && checkIsMine() == 0">
-       <ion-img src="./assets/images/edit.svg" *ngIf="!theme.darkMode"></ion-img>
-       <ion-img src="./assets/images/edit-dark.svg" *ngIf="theme.darkMode"></ion-img>
-   </div>
-   <div class="first">
-         <ion-img class="headerImg" src="./assets/images/profile-2.svg"></ion-img>
-   </div>
-
-   <div class="second white">
-        {{name}}
-   </div>
-
-   <div class="three white">
-       {{introduction}}
-   </div>
-
-   <div class="four" *ngIf="serverStatus == 0">
-       <span class="online-circle"></span>
-       <span class="online">{{'ServerInfoPage.online' | translate}}</span>
-       <ion-img  src="assets/images/users-online.svg" class="usersonline"></ion-img>
-       <span class="clientNumber">{{clientNumber}}</span>
-       <span class="users">{{'ServerInfoPage.users' | translate}}</span>
-   </div>
-
-   <div class="four" *ngIf="serverStatus == 1">
-    <span class="offline-circle"></span>
-    <span class="online offlinecolor">{{'ServerInfoPage.offline' | translate}}</span>
-    <ion-img  src="assets/images/users-offline.svg" class="usersonline"></ion-img>
-    <span class="clientNumber offlinecolor">{{clientNumber}}</span>
-    <span class="users offlinecolor">{{'ServerInfoPage.users' | translate}}</span>
-  </div>
-
-
-  <div class="detail-div" style="margin-top: 55px;">
-
-    <div class="detail-key-div">
-      <ion-label class="detail-key">{{'ServerInfoPage.name'|translate}}</ion-label>
-    </div>
-    <div class="detail-value-div">
-      <ion-label class="detail-value">{{name}}</ion-label>
-    </div>
-    <div class="detail-line bgColor2e2f4e"></div>
-  
-    <div *ngIf="isOwner == 'true'">
-      <div class="detail-key-div">
-        <ion-label class="detail-key">{{'ServerInfoPage.owner'|translate}}</ion-label>
-      </div>
-      <div class="detail-value-div">
-        <ion-label  class="detail-value">{{owner}} </ion-label>
-      </div>
-      <div class="detail-line bgColor2e2f4e"></div>
-    </div>
-
-    <div class="detail-key-div">
-      <ion-label class="detail-key">{{'ServerInfoPage.introduction'|translate}}</ion-label>
-    </div>
-    <div class="detail-value-div">
-      <ion-label  class="detail-value">{{introduction}} </ion-label>
-    </div>
-    <div class="detail-line bgColor2e2f4e"></div>
-
-    <div class="detail-key-div">
-      <ion-label class="detail-key">{{'ServerInfoPage.did'|translate}}</ion-label>
-    </div>
-    <div class="detail-value-div">
-      <ion-label  class="detail-value">{{didString}} </ion-label>
-    </div>
-    <div class="detail-line bgColor2e2f4e"></div>
-
-    <div class="detail-key-div">
-      <ion-label class="detail-key">{{'IssuecredentialPage.elaaddress'|translate}}</ion-label>
-    </div>
-    <div class="detail-value-div">
-      <ion-label  class="detail-value">{{elaAddress}} </ion-label>
-    </div>
-    <div class="detail-line bgColor2e2f4e"></div>
-
-
-    <div class="detail-key-div">
-      <ion-label class="detail-key">{{'ServerInfoPage.feedsSourceQRCode'|translate}}</ion-label>
-    </div>
-    
-    <div class="detail-value-div" *ngIf="feedsUrl===''">
-      <ion-label class="detail-value">{{'DIDdata.NotprovidedfromDIDDocument'|translate}}</ion-label>
-    </div>
-
-    <div *ngIf="isShowQrcode" style="width: 220px;margin: 0 auto;margin-top:10px;padding: 10px; background: white;">
-        <qrcode [qrdata]="feedsUrl" [size]="200" [level]="'M'"></qrcode>
-    </div>
-  </div>  
-
-  <div style="margin-left: 34px; margin-right: 34px; margin-top: 25px;" *ngIf="address != ''">
-    <ion-button style="margin-top: 25px;" expand="block" mode="ios" (click)="addFeedSource()" [disabled]='buttonDisabled'>
-      <ion-label>{{'ServerInfoPage.addFeedSource' | translate}}</ion-label>
-    </ion-button>
-  </div>
-
-  <div style="margin-left: 34px; margin-right: 34px; margin-top: 25px;" *ngIf="checkIsMine() == 0 && address == ''">
-    <ion-button style="margin-top: 25px;" expand="block" mode="ios"  (click)="clickPublic()">
-      <ion-label *ngIf="isPublic === ''">{{'ServerInfoPage.public'|translate}}</ion-label>
-      <ion-label *ngIf="isPublic != ''">{{'ServerInfoPage.unpublic'|translate}}</ion-label>
-    </ion-button>
-  </div>
-
-  <div style="margin-left: 34px; margin-right: 34px; margin-top: 25px;" *ngIf="address == '' && !isBindServer">
-    <ion-button style="margin-top: 25px;" expand="block" mode="ios"  color="danger" (click)="removeFeedSource()">
-      <ion-label>{{'ServerInfoPage.removeFeedSource' | translate}}</ion-label>
-    </ion-button>
-  </div>
-
-  <div style="margin-left: 34px; margin-right: 34px; margin-top: 25px;" *ngIf="address == '' && isBindServer">
-    <ion-button style="margin-top: 25px;" expand="block" mode="ios"  color="danger" (click)="deleteFeedSource()">
-      <ion-label>{{'ServerInfoPage.deleteFeedSource' | translate}}</ion-label>
-    </ion-button>
-  </div>
- 
-</ion-content>
- -->

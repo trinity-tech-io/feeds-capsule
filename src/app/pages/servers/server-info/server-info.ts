@@ -144,7 +144,10 @@ export class ServerInfoPage implements OnInit {
   }
 
   ionViewWillEnter() {
-    this.initTitle();		
+    this.initTitle();
+    if(this.address === ''){
+      this.initMyFeeds();
+    }
     this.native.setTitleBarBackKeyShown(true);
     this.connectionStatus = this.feedService.getConnectionStatus();
     this.events.subscribe('feeds:connectionChanged', (status) => {
@@ -258,7 +261,6 @@ export class ServerInfoPage implements OnInit {
         key: "editServer",
         iconPath: TitleBarPlugin.BuiltInIcon.EDIT
       });
-      this.initMyFeeds();
     } else {
       titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, null);
     }
@@ -527,7 +529,8 @@ export class ServerInfoPage implements OnInit {
   }
 
   initMyFeeds(){
-    this.ownerChannelList = this.feedService.getMyChannelList();
+    //this.ownerChannelList = this.feedService.getMyChannelList();
+    this.ownerChannelList = this.feedService.getChannelsListFromNodeId(this.nodeId);
     this.initnodeStatus();
   }
 
