@@ -49,6 +49,7 @@ import { JWTMessageService } from './services/JWTMessageService';
 import { TransportService } from './services/TransportService';
 import { SerializeDataService } from './services/SerializeDataService';
 import { MenuService } from './services/MenuService';
+import { FormateInfoService } from './services/FormateInfoService';
 
 import { IonicStorageModule } from '@ionic/storage';
 
@@ -167,6 +168,7 @@ export function anim(AnimationC: Animation, baseEl: any, position?: any): Promis
     TransportService,
     SerializeDataService,
     MenuService,
+    FormateInfoService,
     PostfromComponentPageModule,
     ConnectionService,
     HttpService,

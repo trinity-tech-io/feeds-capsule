@@ -226,8 +226,8 @@ export const fr = {
         "tipMsg":"Possible Feeds url error",
         "exploreFeedSources":"Explore Feeds Sources",
         "title":"Add a Feeds Source",
-        "serverMsg1": "Server :\n",
-        "serverMsg2": "\noffline!",
+        "serverMsg1": "Server : ",
+        "serverMsg2": " offline!",
         "Serveralreadyadded":"Server already added!",
         "Addserversuccess":"Server added successfully!",
         "Signinsuccess":"Signed in successfully!"
