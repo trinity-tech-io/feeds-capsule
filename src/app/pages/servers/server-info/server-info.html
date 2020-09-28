@@ -37,14 +37,14 @@
     </div>
 
     <!--myFeeds-->
-   <ion-row class="detail-row removeBorder" style="padding-bottom: 5px;">
+   <ion-row class="detail-row removeBorder feedstitle">
      <ion-col size="12" class="left-col">
       <h1>{{'ServerInfoPage.containedfeeds'|translate}}</h1>
      </ion-col>
    </ion-row> 
    <ion-list class="channel-list" [class.darkChannelList]="theme.darkMode" *ngIf="address == ''">
    <ion-item  *ngFor="let channel of ownerChannelList let i=index"
-   lines="none">
+   lines="none" style="border:none;">
    <ion-row class="channel-row ion-activatable ripple" (click)="navTo(channel.nodeId, channel.id)">
       <ion-col
           size="2.5"
@@ -60,7 +60,7 @@
           class="middle-col"
         >
           <ion-label (press)="pressName(channel.name)">
-            {{ moreName(channel.name) }} <span *ngIf="channel.isSubscribed">- {{ 'SearchPage.following' | translate }}</span>
+            {{ moreName(channel.name) }} <span *ngIf="channel.isSubscribed" style="font-size: 12px;font-weight: 500;">- {{ 'SearchPage.following' | translate }}</span>
           </ion-label>
         </ion-col>
         <ion-ripple-effect></ion-ripple-effect>
