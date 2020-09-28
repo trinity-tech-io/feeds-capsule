@@ -29,4 +29,12 @@ export class FormateInfoService {
         return this.translate.instant("AddServerPage.serverMsg1") + " #"+serverName + this.translate.instant("AddServerPage.serverMsg2")
     }
 
+    formatFollowSuccessMsg(feedsName: string): string{
+        return this.translate.instant("common.followed")+" "+feedsName+" "+this.translate.instant("common.successfully");
+    }
+
+    formatUnFollowSuccessMsg(feedsName: string): string{
+        return this.translate.instant("common.unfollowed")+" "+feedsName+" "+this.translate.instant("common.successfully");
+    }
+
 }

@@ -1326,6 +1326,16 @@ export class FeedService {
     return serverName;
   }
 
+  getFeedNameById(nodeId: string, channelId: number): string{
+    let feedName = "Unknow";
+    let channel = this.getChannelFromId(nodeId, channelId);
+    if ( channel !=undefined ){
+      feedName = channel.name;
+    }
+
+    return feedName;
+  }
+
   saveSignInRAWData(jsonStr: string){
     this.storeService.set(PersistenceKey.signInRawData, jsonStr);
   }
@@ -2911,7 +2921,7 @@ export class FeedService {
 
     this.updatePostWithTime(nodeId,request.id, 0);
 
-    this.native.toast("common.followSuccess");
+    this.native.toast(this.formateInfoService.formatFollowSuccessMsg(this.getFeedNameById(nodeId, request.id)));
   }
 
   handleUnsubscribeChannelResult(nodeId:string, request: any, error: any){
@@ -2945,8 +2955,7 @@ export class FeedService {
 
     this.deletePostFromChannel(nodeId, request.id);
 
-
-    this.native.toast("common.unFollowSuccess");
+    this.native.toast(this.formateInfoService.formatUnFollowSuccessMsg(this.getFeedNameById(nodeId, request.id)));
   }
 
   handleEditFeedInfo(nodeId: string, request: any, error: any){
