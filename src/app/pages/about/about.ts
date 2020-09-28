@@ -15,7 +15,7 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 export class AboutPage implements OnInit {
 
   public connectionStatus = 1;
-  public version = "v1.2.1";
+  public version = "v1.2.2";
   public curlangule = "";
   constructor(
     private zone: NgZone,
