@@ -37,7 +37,7 @@
     </div>
 
     <!--myFeeds-->
-   <ion-row class="detail-row removeBorder feedstitle">
+   <ion-row class="detail-row removeBorder feedstitle" *ngIf="ownerChannelList.length>0">
      <ion-col size="12" class="left-col">
       <h1>{{'ServerInfoPage.containedfeeds'|translate}}</h1>
      </ion-col>
