@@ -68,7 +68,9 @@ export const en = {
         "takePicture":"Take Picture",
         "photolibary":"Photo Library",
         "signedInto": "Signed into",
-        "successfully": "successfully"
+        "successfully": "successfully",
+        "followed": "Followed",
+        "unfollowed": "Unfollowed",
     },
     "app":{
         "profileDetails":"Profile Details",

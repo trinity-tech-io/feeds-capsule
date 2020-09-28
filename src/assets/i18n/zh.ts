@@ -68,7 +68,9 @@ export const zh = {
         "takePicture":"拍摄",
         "photolibary":"从手机相册选择",
         "signedInto": "登录",
-        "successfully": "成功"
+        "successfully": "成功",
+        "followed": "关注",
+        "unfollowed": "取消关注",
     },
     "app":{
         "profileDetails":"档案详情",
