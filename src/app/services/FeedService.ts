@@ -11,6 +11,8 @@ import { JWTMessageService } from 'src/app/services/JWTMessageService';
 import { ConnectionService } from 'src/app/services/ConnectionService';
 import { HttpService } from 'src/app/services/HttpService';
 import { ApiUrl } from 'src/app/services/ApiUrl';
+import { FormateInfoService } from 'src/app/services/FormateInfoService';
+
 import * as _ from 'lodash';
 declare let didManager: DIDPlugin.DIDManager;
 declare let appManager: AppManagerPlugin.AppManager;
@@ -414,7 +416,8 @@ export class FeedService {
     private translate: TranslateService,
     private storeService: StorageService,
     private connectionService: ConnectionService,
-    private httpService: HttpService
+    private httpService: HttpService,
+    private formateInfoService: FormateInfoService
   ) {
     eventBus = events;
     this.init();
@@ -940,7 +943,7 @@ export class FeedService {
   handleError(nodeId: string,error: any){
     eventBus.publish("rpcResponse:error");
     if(typeof error == "string")
-      this.native.toastWarn(this.formatErrorMsg(nodeId, error));  
+      this.native.toastWarn(this.formateInfoService.formatErrorMsg(nodeId, error));
     else
       this.processGeneralError(nodeId,error.code);
   }
@@ -1635,14 +1638,14 @@ export class FeedService {
     if(!this.hasAccessToken(nodeId))
       return;
     let accessToken: FeedsData.AccessToken = accessTokenMap[nodeId]||undefined;
-    this.connectionService.createChannel(nodeId,name,introduction,avatar,accessToken);
+    this.connectionService.createChannel(this.getServerNameByNodeId(nodeId),nodeId,name,introduction,avatar,accessToken);
   }
 
   publishPost(nodeId: string, channelId: number, content: any){
     if(!this.hasAccessToken(nodeId))
       return;
     let accessToken: FeedsData.AccessToken = accessTokenMap[nodeId]||undefined;
-    this.connectionService.publishPost(nodeId, channelId,content,accessToken);
+    this.connectionService.publishPost(this.getServerNameByNodeId(nodeId),nodeId, channelId,content,accessToken);
   }
 
   postComment(nodeId: string, channelId: number, postId: number,
@@ -1650,14 +1653,14 @@ export class FeedService {
     if(!this.hasAccessToken(nodeId))
       return;
     let accessToken: FeedsData.AccessToken = accessTokenMap[nodeId]||undefined;
-    this.connectionService.postComment(nodeId,channelId,postId,commentId,content,accessToken);
+    this.connectionService.postComment(this.getServerNameByNodeId(nodeId),nodeId,channelId,postId,commentId,content,accessToken);
   }
 
   postLike(nodeId: string, channelId: number, postId: number, commentId: number){
     if(!this.hasAccessToken(nodeId))
       return;
     let accessToken: FeedsData.AccessToken = accessTokenMap[nodeId]||undefined;
-    this.connectionService.postLike(nodeId, channelId, postId, commentId, accessToken);
+    this.connectionService.postLike(this.getServerNameByNodeId(nodeId),nodeId, channelId, postId, commentId, accessToken);
     if(!this.connectionService.checkServerConnection(nodeId)){
       return;
     }
@@ -1668,7 +1671,7 @@ export class FeedService {
     if(!this.hasAccessToken(nodeId))
       return;
     let accessToken: FeedsData.AccessToken = accessTokenMap[nodeId]||undefined;
-    this.connectionService.postUnlike(nodeId, channelId, postId, commentId, accessToken);
+    this.connectionService.postUnlike(this.getServerNameByNodeId(nodeId), nodeId, channelId, postId, commentId, accessToken);
     if(!this.connectionService.checkServerConnection(nodeId)){
       return;
     }
@@ -1680,7 +1683,7 @@ export class FeedService {
     if(!this.hasAccessToken(nodeId))
       return;
     let accessToken: FeedsData.AccessToken = accessTokenMap[nodeId]||undefined;
-    this.connectionService.getMyChannels(nodeId, field, upper_bound, lower_bound, max_counts,accessToken);
+    this.connectionService.getMyChannels(this.getServerNameByNodeId(nodeId), nodeId, field, upper_bound, lower_bound, max_counts,accessToken);
   }
 
   getMyChannelsMetaData(nodeId: string, field: Communication.field, upper_bound: number,
@@ -1688,7 +1691,7 @@ export class FeedService {
     if(!this.hasAccessToken(nodeId))
       return;
     let accessToken: FeedsData.AccessToken = accessTokenMap[nodeId]||undefined;
-    this.connectionService.getMyChannelsMetaData(nodeId, field, upper_bound, lower_bound, max_counts, accessToken);
+    this.connectionService.getMyChannelsMetaData(this.getServerNameByNodeId(nodeId), nodeId, field, upper_bound, lower_bound, max_counts, accessToken);
   }
 
   getChannels(nodeId: string, field: Communication.field, upper_bound: number,
@@ -1697,14 +1700,14 @@ export class FeedService {
       return;
 
     let accessToken: FeedsData.AccessToken = accessTokenMap[nodeId]||undefined;
-    this.connectionService.getChannels(nodeId, field, upper_bound, lower_bound, max_counts, accessToken);
+    this.connectionService.getChannels(this.getServerNameByNodeId(nodeId), nodeId, field, upper_bound, lower_bound, max_counts, accessToken);
   }
 
   getChannelDetail(nodeId: string, id: number){
     if(!this.hasAccessToken(nodeId))
       return;
     let accessToken: FeedsData.AccessToken = accessTokenMap[nodeId]||undefined;
-    this.connectionService.getChannelDetail(nodeId, id, accessToken);
+    this.connectionService.getChannelDetail(this.getServerNameByNodeId(nodeId), nodeId, id, accessToken);
   }
 
   getSubscribedChannels(nodeId: string, field: Communication.field, upper_bound: number,
@@ -1712,7 +1715,7 @@ export class FeedService {
     if(!this.hasAccessToken(nodeId))
       return;
     let accessToken: FeedsData.AccessToken = accessTokenMap[nodeId]||undefined;
-    this.connectionService.getSubscribedChannels(nodeId, field, upper_bound, lower_bound, max_counts, accessToken);
+    this.connectionService.getSubscribedChannels(this.getServerNameByNodeId(nodeId), nodeId, field, upper_bound, lower_bound, max_counts, accessToken);
   }
 
   getPost(nodeId: string, channel_id: number, by: Communication.field,
@@ -1720,7 +1723,7 @@ export class FeedService {
     if(!this.hasAccessToken(nodeId))
       return;
     let accessToken: FeedsData.AccessToken = accessTokenMap[nodeId]||undefined;
-    this.connectionService.getPost(nodeId, channel_id, by, upper_bound, lower_bound, max_counts, memo, accessToken);
+    this.connectionService.getPost(this.getServerNameByNodeId(nodeId), nodeId, channel_id, by, upper_bound, lower_bound, max_counts, memo, accessToken);
   }
 
   getComments(nodeId: string, channel_id: number, post_id: number,
@@ -1728,21 +1731,21 @@ export class FeedService {
     if(!this.hasAccessToken(nodeId))
       return;
     let accessToken: FeedsData.AccessToken = accessTokenMap[nodeId]||undefined;
-    this.connectionService.getComments(nodeId, channel_id, post_id, by, upper_bound, lower_bound,max_counts, isShowOfflineToast, accessToken);
+    this.connectionService.getComments(this.getServerNameByNodeId(nodeId), nodeId, channel_id, post_id, by, upper_bound, lower_bound,max_counts, isShowOfflineToast, accessToken);
   }
 
   getStatistics(nodeId: string){
     if(!this.hasAccessToken(nodeId))
       return;
     let accessToken: FeedsData.AccessToken = accessTokenMap[nodeId]||undefined;
-    this.connectionService.getStatistics(nodeId, accessToken);
+    this.connectionService.getStatistics(this.getServerNameByNodeId(nodeId), nodeId, accessToken);
   }
 
   subscribeChannel(nodeId: string, id: number){
     if(!this.hasAccessToken(nodeId))
       return;
     let accessToken: FeedsData.AccessToken = accessTokenMap[nodeId]||undefined;
-    this.connectionService.subscribeChannel(nodeId, id, accessToken);
+    this.connectionService.subscribeChannel(this.getServerNameByNodeId(nodeId),nodeId, id, accessToken);
 
     if(!this.connectionService.checkServerConnection(nodeId)){
       return;
@@ -1756,7 +1759,7 @@ export class FeedService {
       return;
 
     let accessToken: FeedsData.AccessToken = accessTokenMap[nodeId]||undefined;
-    this.connectionService.unsubscribeChannel(nodeId, id, accessToken);
+    this.connectionService.unsubscribeChannel(this.getServerNameByNodeId(nodeId),nodeId, id, accessToken);
 
     if(!this.connectionService.checkServerConnection(nodeId)){
       return;
@@ -1771,7 +1774,7 @@ export class FeedService {
 
     let avatarBin = this.serializeDataService.encodeData(avatar);
     let accessToken: FeedsData.AccessToken = accessTokenMap[nodeId]||undefined;
-    this.connectionService.editFeedInfo(nodeId, channelId, name, desc, avatarBin, accessToken);
+    this.connectionService.editFeedInfo(this.getServerNameByNodeId(nodeId),nodeId, channelId, name, desc, avatarBin, accessToken);
   }
 
   editPost(nodeId: string, channelId: number, postId: number, content: any){
@@ -1779,7 +1782,7 @@ export class FeedService {
       return;
 
     let accessToken: FeedsData.AccessToken = accessTokenMap[nodeId]||undefined;
-    this.connectionService.editPost(nodeId, channelId, postId, content, accessToken);
+    this.connectionService.editPost(this.getServerNameByNodeId(nodeId),nodeId, channelId, postId, content, accessToken);
   }
 
   deletePost(nodeId: string, channelId: number, postId: number){
@@ -1787,7 +1790,7 @@ export class FeedService {
       return;
 
     let accessToken: FeedsData.AccessToken = accessTokenMap[nodeId]||undefined;
-    this.connectionService.deletePost(nodeId, channelId, postId, accessToken);
+    this.connectionService.deletePost(this.getServerNameByNodeId(nodeId),nodeId, channelId, postId, accessToken);
   }
 
   editComment(nodeId: string, channelId: number, postId: number, commentId: number, 
@@ -1796,7 +1799,7 @@ export class FeedService {
       return;
 
     let accessToken: FeedsData.AccessToken = accessTokenMap[nodeId]||undefined;
-    this.connectionService.editComment(nodeId, channelId, postId, commentId, commentById, content, accessToken);
+    this.connectionService.editComment(this.getServerNameByNodeId(nodeId),nodeId, channelId, postId, commentId, commentById, content, accessToken);
   }
 
   deleteComment(nodeId: string, channelId: number, postId: number, commentId: number){
@@ -1804,7 +1807,7 @@ export class FeedService {
       return;
 
     let accessToken: FeedsData.AccessToken = accessTokenMap[nodeId]||undefined;
-    this.connectionService.deleteComment(nodeId, channelId, postId, commentId, accessToken);
+    this.connectionService.deleteComment(this.getServerNameByNodeId(nodeId),nodeId, channelId, postId, commentId, accessToken);
   }
   
   handleEditPost(nodeId: string, request: any, error: any){
@@ -1859,7 +1862,7 @@ export class FeedService {
       return;
       
     let accessToken: FeedsData.AccessToken = accessTokenMap[nodeId]||undefined;
-    this.connectionService.enableNotification(nodeId, accessToken);
+    this.connectionService.enableNotification(this.getServerNameByNodeId(nodeId),nodeId, accessToken);
   }
 
   ////handle push
@@ -3508,13 +3511,13 @@ export class FeedService {
       return ;
     this.setSigninTimeout(nodeId);
 
-    this.native.toast(this.formatSigninMsg(nodeId));
-    this.connectionService.signinChallengeRequest(nodeId, requiredCredential, this.getSignInData().did);
+    this.native.toast(this.formateInfoService.formatSigninMsg(this.getServerNameByNodeId(nodeId)));
+    this.connectionService.signinChallengeRequest(this.getServerNameByNodeId(nodeId), nodeId, requiredCredential, this.getSignInData().did);
   }
 
   signinConfirmRequest(nodeId: string, nonce: string, realm: string, requiredCredential: boolean){
     didSessionManager.authenticate(nonce, realm).then((presentation)=>{
-      this.connectionService.signinConfirmRequest(nodeId, nonce, realm, requiredCredential,presentation,this.getLocalCredential());
+      this.connectionService.signinConfirmRequest(this.getServerNameByNodeId(nodeId), nodeId, nonce, realm, requiredCredential,presentation,this.getLocalCredential());
     }).catch((err)=>{
       // console.log("err = "+err);
     });
@@ -3556,7 +3559,7 @@ export class FeedService {
     this.restoreData(nodeId);
 
     eventBus.publish("feeds:login_finish", nodeId);
-    this.native.toast(this.formatSigninSuccessMsg(nodeId));
+    this.native.toast(this.formateInfoService.formatSigninSuccessMsg(this.getServerNameByNodeId(nodeId)));
     this.clearSigninTimeout(nodeId);
   }
 
@@ -3584,21 +3587,21 @@ export class FeedService {
       return;
     this.setDeclareOwnerTimeout();
     isBindServer = true;
-    this.connectionService.declareOwnerRequest(nodeId, nonce, this.getSignInData().did);
+    this.connectionService.declareOwnerRequest(this.getServerNameByNodeId(nodeId), nodeId, nonce, this.getSignInData().did);
     cacheBindingAddress = carrierAddress;
   }
 
 
   importDidRequest(nodeId: string, mnemonic: string, passphrase: string, index: number){
-    this.connectionService.importDidRequest(nodeId, mnemonic, passphrase, index);
+    this.connectionService.importDidRequest(this.getServerNameByNodeId(nodeId), nodeId, mnemonic, passphrase, index);
   }
 
   createDidRequest(nodeId: string){
-    this.connectionService.createDidRequest(nodeId);
+    this.connectionService.createDidRequest(this.getServerNameByNodeId(nodeId), nodeId);
   }
 
   issueCredentialRequest(nodeId: string, credential: any){
-    this.connectionService.issueCredentialRequest(nodeId, credential);
+    this.connectionService.issueCredentialRequest(this.getServerNameByNodeId(nodeId), nodeId, credential);
   }
 
   doParseJWS(nodeId: string, jws: string, credential: any, requiredCredential: boolean, onSuccess:()=>void, onError: () => void){
@@ -4363,20 +4366,10 @@ export class FeedService {
         break;  
     }
 
-    this.native.toastWarn(this.formatErrorMsg(nodeId,errorMessage));
+    this.native.toastWarn(this.formateInfoService.formatErrorMsg(this.getServerNameByNodeId(nodeId),errorMessage));
   }
 
-  formatErrorMsg(nodeId: string, errorMsg: string): string{
-    return "#"+this.getServerNameByNodeId(nodeId) + " - "+errorMsg;
-  }
-
-  formatSigninMsg(nodeId: string): string{
-    return this.translate.instant("common.loggingIn")+" #"+this.getServerNameByNodeId(nodeId);
-  }
-
-  formatSigninSuccessMsg(nodeId: string): string{
-    return this.translate.instant("common.signedInto")+" #"+this.getServerNameByNodeId(nodeId) + " "+this.translate.instant("common.successfully");
-  }
+  
 
   refreshPostById(nodeId: string, channelId: number, postId: number){
     let memo = {
