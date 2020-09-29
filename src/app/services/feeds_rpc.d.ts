@@ -18,7 +18,7 @@ declare module Communication{
     }
 
     type declare_owner_response = {
-        jsonrpc: "2.0"
+        jsonrpc: "1.0"
         id     : jsonrpc_id
         result : {
             phase: "owner_declared" 
@@ -739,6 +739,71 @@ declare module Communication{
             subscribers : number
             avatar      : any
             last_update : number
+        }
+    }
+
+    type set_binary_request = {
+        version: "1.0"
+        method : "set_binary"
+        id     : jsonrpc_id
+        params : {
+            access_token: string
+            key         : string 
+            algo        : string // "None", "SHA256", "CRC"...
+            checksum    : string
+        }
+    }
+    
+    type set_binary_response = {
+        version: "1.0"
+        id     : jsonrpc_id
+        result : {
+            key         : string 
+        }
+        //or error : {
+        //    code : int64_t;
+        //    message: string
+        //}
+    }
+    
+    type get_binary_request = {
+        version: "1.0"
+        method : "get_binary"
+        id     : jsonrpc_id
+        params : {
+            access_token: string
+            key         : string 
+        }
+    }
+    
+    type get_binary_response = {
+        version: "1.0"
+        id     : jsonrpc_id
+        result : {
+            key         : string 
+            algo        : string // "None", "SHA256", "CRC"...
+            checksum    : string
+        } 
+        //or error : {
+        //    code : int64_t;
+        //    message: string
+        //}
+    }
+
+    type get_service_version_request = {
+        version: "1.0"
+        method : "get_service_version"
+        id     : jsonrpc_id
+        params : {
+            access_token: string
+        }
+    }
+
+    type get_service_version_response = {
+        version: "1.0"
+        id     : jsonrpc_id
+        result : {
+            version : string
         }
     }
 }

@@ -71,6 +71,7 @@ export const fr = {
         "successfully": "successfully",
         "followed": "Followed",
         "unfollowed": "Unfollowed",
+        "infoObtaining":"Information is being obtained"
     },
     "app":{
         "profileDetails":"Profile Details",
@@ -267,6 +268,7 @@ export const fr = {
         "des":"Add my Feeds Source!",
         "replyingto":"Replying to",
         "containedfeeds":"CONTAINED FEEDS",
+        "version":"version"
     },
     "ScanqrcodePage":{
         "introtitle": "Create a new",

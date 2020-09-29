@@ -195,6 +195,7 @@ type Server = {
   nodeId            : string
   feedsUrl          : string
   elaAddress        : string
+  version           : string
 }
 
 export class DidData{
@@ -1035,6 +1036,9 @@ export class FeedService {
         this.handleDeleteComment(nodeId, requestParams, error);
         break;
 
+      case FeedsData.MethodType.getServerVersion:
+        this.handleGetServerVersion(nodeId, result, error);
+        break;
       default:
         break;
     }
@@ -1146,7 +1150,8 @@ export class FeedService {
             carrierAddress    : carrierAddress,
             nodeId            : "",
             feedsUrl          : feedsUrl,
-            elaAddress        : ""
+            elaAddress        : "",
+            version           : "common.infoObtaining",
             // status            : ConnState.disconnected
           });
           return;
@@ -1165,6 +1170,7 @@ export class FeedService {
             nodeId            : "",
             feedsUrl          : feedsUrl,
             elaAddress        : "",
+            version           : "common.infoObtaining",
             // status            : ConnState.disconnected
         });
       } else {
@@ -1819,6 +1825,14 @@ export class FeedService {
     let accessToken: FeedsData.AccessToken = accessTokenMap[nodeId]||undefined;
     this.connectionService.deleteComment(this.getServerNameByNodeId(nodeId),nodeId, channelId, postId, commentId, accessToken);
   }
+
+  getServerVersion(nodeId: string){
+    if(!this.hasAccessToken(nodeId))
+      return;
+
+    let accessToken: FeedsData.AccessToken = accessTokenMap[nodeId]||undefined;
+    this.connectionService.getServerVersion(this.getServerNameByNodeId(nodeId),nodeId,accessToken);
+  }
   
   handleEditPost(nodeId: string, request: any, error: any){
     if (error != null && error != undefined && error.code != undefined){
@@ -1865,6 +1879,23 @@ export class FeedService {
     commentsMap[nodeId][channelId][postId][commentId].status = FeedsData.PostCommentStatus.deleted;
     this.storeService.set(PersistenceKey.commentsMap, commentsMap);
     eventBus.publish(PublishType.deleteCommentFinish);
+  }
+
+  handleGetServerVersion(nodeId: string, result: any, error: any){
+    if (error != null && error != undefined && error.code != undefined){
+      this.handleError(nodeId, error);
+      return;
+    }
+
+    let version = result.version;
+
+    if (serverMap != null &&
+        serverMap != undefined &&
+        serverMap[nodeId] != undefined){
+          serverMap[nodeId].version = version;
+          this.storeService.set(PersistenceKey.serverMap, serverMap);
+    }
+        
   }
 
   enableNotification(nodeId: string){
@@ -2995,6 +3026,9 @@ export class FeedService {
       this.handleError(nodeId, error);
       return;
     }
+
+    //do other things
+    this.getServerVersion(nodeId);
   }
 
   doSubscribeChannelFinish(nodeId: string, channelId: number){
@@ -3175,7 +3209,8 @@ export class FeedService {
         carrierAddress    : carrierAddress,
         nodeId            : nodeId,
         feedsUrl          : feedsUrl,
-        elaAddress        : ""
+        elaAddress        : "",
+        version           : "common.infoObtaining"
         // status            : ConnState.disconnected
       }
 
@@ -3795,7 +3830,8 @@ export class FeedService {
       carrierAddress    : cacheBindingAddress,
       nodeId            : nodeId,
       feedsUrl          : feedUrl,
-      elaAddress        : ""
+      elaAddress        : "",
+      version           : "common.infoObtaining"
     }
     this.handleImportDID(feedUrl, defaultServer, (server)=>{
         bindingServerCache = {
@@ -3806,7 +3842,8 @@ export class FeedService {
           carrierAddress    : server.carrierAddress,
           nodeId            : server.nodeId,
           feedsUrl          : server.feedsUrl,
-          elaAddress        : ""
+          elaAddress        : "",
+          version           : "common.infoObtaining"
         }
         onSuccess();
     },(err)=>{
@@ -3825,7 +3862,8 @@ export class FeedService {
       carrierAddress    : cacheBindingAddress,
       nodeId            : nodeId,
       feedsUrl          : feedUrl,
-      elaAddress        : ""
+      elaAddress        : "",
+      version           : "common.infoObtaining"
     }
     this.handleImportDID(feedUrl, defaultServer, (server)=>{
         bindingServerCache = {
@@ -3836,7 +3874,8 @@ export class FeedService {
           carrierAddress    : server.carrierAddress,
           nodeId            : server.nodeId,
           feedsUrl          : server.feedsUrl,
-          elaAddress        : ""
+          elaAddress        : "",
+          version           : "common.infoObtaining"
         }
         onSuccess();
         eventBus.publish("feeds:resolveDidSucess", nodeId, did);
