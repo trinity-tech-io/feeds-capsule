@@ -59,6 +59,8 @@ declare namespace FeedsData{
         editComment = "edit_comment",
         deleteComment = "delete_comment",
 
+        getServerVersion = "get_service_version",
+
         enable_notification = "enable_notification",
 
         //PUSH Notification

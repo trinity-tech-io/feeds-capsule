@@ -511,6 +511,22 @@ export class ConnectionService {
         this.sendRPCMessage(serverName, nodeId, request.method, request.params, "");
     }
 
+    getServerVersion(serverName: string, nodeId: string, accessToken: FeedsData.AccessToken){
+        if (accessToken == undefined)
+        return ;
+
+        let request: Communication.get_service_version_request = {
+            version: "1.0",
+            method : "get_service_version",
+            id     : -1,
+            params : {
+                access_token: accessToken.token
+            } 
+        }
+
+        this.sendRPCMessage(serverName, nodeId, request.method, request.params, ""); 
+    }
+
     sendRPCMessage(serverName: string, nodeId: string, method: string, params: any, memo: any, isShowOfflineToast: boolean = true){
         if(!this.checkServerConnection(nodeId)){
           this.events.publish("rpcRequest:error");

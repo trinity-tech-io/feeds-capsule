@@ -302,6 +302,10 @@ export class ServerInfoPage implements OnInit {
       details: server.feedsUrl || "",
       qrcode: true
     });
+    this.serverDetails.push({
+      type: this.translate.instant('ServerInfoPage.version'),
+      details: server.version || this.translate.instant('common.infoObtaining'),
+    });
   }
 
   menuMore() {

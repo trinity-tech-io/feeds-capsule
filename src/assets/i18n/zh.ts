@@ -71,6 +71,7 @@ export const zh = {
         "successfully": "成功",
         "followed": "关注",
         "unfollowed": "取消关注",
+        "infoObtaining": "信息获取中"
     },
     "app":{
         "profileDetails":"档案详情",
@@ -267,6 +268,7 @@ export const zh = {
         "des":"添加我的微频源!",
         "replyingto":"回复给",
         "containedfeeds":"包含的微频列表",
+        "version":"版本"
     },
     "ScanqrcodePage":{
         "introtitle": "创建新的",
