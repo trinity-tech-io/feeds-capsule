@@ -17,6 +17,7 @@ import {ConfirmdialogComponent} from './confirmdialog/confirmdialog.component';
 import { MyfeedsComponent} from './myfeeds/myfeeds.component';
 import { FollowingComponent} from './following/following.component';
 import { LikesComponent} from './likes/likes.component';
+import { CommentComponent } from './comment/comment.component';
 
 @NgModule({
   imports: [
@@ -26,8 +27,32 @@ import { LikesComponent} from './likes/likes.component';
     IonicModule,
   ],
 
-  declarations: [ConfirmdialogComponent,EdittoolComponent,MorenameComponent,BackhomeComponent,TipdialogComponent,PaypromptComponent,ServerpromptComponent,MyfeedsComponent,FollowingComponent,LikesComponent],
-  exports: [ConfirmdialogComponent,EdittoolComponent,MorenameComponent,BackhomeComponent,TipdialogComponent,PaypromptComponent,ServerpromptComponent,MyfeedsComponent,FollowingComponent,LikesComponent],
+  declarations: [
+    ConfirmdialogComponent,
+    EdittoolComponent,
+    MorenameComponent,
+    BackhomeComponent,
+    TipdialogComponent,
+    PaypromptComponent,
+    ServerpromptComponent,
+    MyfeedsComponent,
+    FollowingComponent,
+    LikesComponent,
+    CommentComponent
+  ],
+  exports: [
+    ConfirmdialogComponent,
+    EdittoolComponent,
+    MorenameComponent,
+    BackhomeComponent,
+    TipdialogComponent,
+    PaypromptComponent,
+    ServerpromptComponent,
+    MyfeedsComponent,
+    FollowingComponent,
+    LikesComponent,
+    CommentComponent
+  ],
 
   providers: [
   ],

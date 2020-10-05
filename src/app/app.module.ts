@@ -111,7 +111,7 @@ export function anim(AnimationC: Animation, baseEl: any, position?: any): Promis
 
 @NgModule({
   declarations: [
-    MyApp
+    MyApp,
   ],
   imports: [
     LazyLoadImageModule,
@@ -145,7 +145,7 @@ export function anim(AnimationC: Animation, baseEl: any, position?: any): Promis
   ],
   bootstrap: [MyApp],
   entryComponents: [
-    MyApp
+    MyApp,
   ],
   providers: [
     StatusBar,
