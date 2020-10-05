@@ -47,6 +47,9 @@ export class PostdetailPage implements OnInit {
   public postStatus = 0;
   public styleObj:any = {width:""};
   public dstyleObj:any = {width:""};
+
+  public hideComment = true;
+  
   constructor(
     private popoverController:PopoverController,
     private acRoute: ActivatedRoute,
@@ -227,6 +230,10 @@ export class PostdetailPage implements OnInit {
     }
 
     this.native.navigateForward(["comment",nodeId,channelId,postId],"");
+  }
+
+  showComment() {
+    this.hideComment = false;
   }
 
   checkMyLike(){

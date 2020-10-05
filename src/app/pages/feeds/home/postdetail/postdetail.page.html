@@ -16,6 +16,8 @@
   </ion-refresher>
 
   <div class="container">
+
+    <!---------------- POST DETAILS ---------------->
     <ion-grid class="postDetail-grid" [class.dark-postDetail-grid]="theme.darkMode">
       <ion-row class="top-row">
         <ion-col class="left-col" size="2.25">
@@ -61,7 +63,7 @@
           <img [src]="checkMyLike() ? '/assets/images/like-s.svg' : '/assets/images/like.svg'">
           <ion-label [class.liked]="checkMyLike()">{{ likesNum }}</ion-label>
         </ion-col>
-        <ion-col (click)="showCommentPage(nodeId,channelId,postId)">
+        <ion-col (click)="showCommentPage(nodeId, channelId, postId)">
           <img src="/assets/images/bubble-line.svg">
           <ion-label>{{ commentsNum }}</ion-label>
         </ion-col>
@@ -71,8 +73,8 @@
       </ion-row>
     </ion-grid>
 
-
-    <ion-grid *ngFor="let comment of commentList let i=index" class="post-grid comment-grid" [class.darkPostGrid]="theme.darkMode">
+    <!---------------- COMMENTS ---------------->
+    <ion-grid *ngFor="let comment of commentList let i=index" class="post-grid" [class.darkPostGrid]="theme.darkMode">
       <ion-row class="post-row">
         <ion-col class="right-col" size="1.5"  *ngIf="comment.status != 1 && checkCommentIsMine(comment)">
           <img (click)="openEditTool($event,comment)"
@@ -115,36 +117,22 @@
       </ion-row>
     </ion-grid>
 
-
     <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event)">
       <ion-infinite-scroll-content
         loadingSpinner="bubbles"
         loadingText="{{'common.loadingText'|translate}}">
       </ion-infinite-scroll-content>
     </ion-infinite-scroll>
-  
-    <!-- <ion-row class="global-options" [class.global-darkOptions]="theme.darkMode">
-      <div class="close ion-activatable ripple">
-        <img *ngIf="!theme.darkMode" src="/assets/icons/cross.svg">
-        <img *ngIf="theme.darkMode" src="/assets/icons/darkmode/cross.svg">
-        <ion-ripple-effect></ion-ripple-effect>
-      </div>
-      <ion-col size="4.5" class="left-col" (click)="menuService.shareChannel()">
-        <div class="option">
-          <ion-icon mode="ios" name="share"></ion-icon>
-          <span>Share</span> 
-        </div>
-      </ion-col>
-      <ion-col size="3" class="middle-col">
-        <div class="divider"></div>
-      </ion-col>
-      <ion-col size="4.5" class="right-col" (click)="menuService.deleteChannel()">
-        <div class="option">
-          <ion-icon mode="ios" name="trash"></ion-icon>
-          <span>Unfollow</span>
-        </div>
-      </ion-col>
-    </ion-row> -->
+
   </div> 
 </ion-content>
-  
+
+<!---------------- ADD COMMENT FOOTER ---------------->
+<app-comment
+  *ngIf="!hideComment"
+  [postId]="postId"
+  [nodeId]="nodeId "
+  [channelId]="channelId" 
+  [channelAvatar]="channelAvatar"
+  [channelName]="channelName"
+></app-comment>

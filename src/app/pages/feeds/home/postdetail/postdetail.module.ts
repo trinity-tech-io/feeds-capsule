@@ -4,8 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { Routes, RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { IonicModule } from '@ionic/angular';
-//import { NgxIonicImageViewerModule } from 'ngx-ionic-image-viewer';
 import { PostdetailPage } from './postdetail.page';
+import { ComponentsModule } from 'src/app/components/components.module';
 
 const routes: Routes = [
   {
@@ -20,8 +20,8 @@ const routes: Routes = [
     FormsModule,
     TranslateModule,
     IonicModule,
+    ComponentsModule,
     RouterModule.forChild(routes),
-    //NgxIonicImageViewerModule,
   ],
   declarations: [PostdetailPage]
 })

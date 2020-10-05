@@ -442,7 +442,6 @@ pre {
 
 /********************** GLOBAL CHANNEL LISTS **********************/
 .channel-list {
-  
   background: transparent;
   padding: 0;
   margin: 0;
@@ -455,6 +454,7 @@ pre {
 
     .channel-row {
       width: 100%;
+
       .left-col {
         display: flex;
         align-items: center;
