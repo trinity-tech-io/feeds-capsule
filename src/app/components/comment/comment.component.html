@@ -8,24 +8,32 @@
             <img src={{channelAvatar}}>
           </div>
         </ion-col>
-        <ion-col size="8" class="middle-col">
+        <ion-col size="9" class="middle-col">
           <ion-label>{{ channelName }}</ion-label>
+          <p>Comments</p>
         </ion-col>
-        <ion-col size="1.5" class="right-col"></ion-col>
+        <ion-col size="1.5" class="right-col" (click)="hideComponent()">
+          <ion-icon src="assets/icons/cross.svg"></ion-icon>
+        </ion-col>
       </ion-row>
     </ion-item>
 
-    <ion-textarea 
-      clearOnEdit="true"
-      autofocus="true"
-      rows="6" cols="20" 
-      [(ngModel)]="newComment" 
-      placeholder="{{'CommentPage.enterComments'|translate}}"
-    >
-    </ion-textarea>
+    <ion-row class="input-row">
+      <ion-col offset="1.5" size="10.5">
+        <ion-textarea 
+          #comment
+          clearOnEdit="true"
+          autofocus="true"
+          rows="6" cols="20" 
+          [(ngModel)]="newComment" 
+          placeholder="{{'CommentPage.enterComments'|translate}}"
+        >
+        </ion-textarea>
+      </ion-col>
+    </ion-row>
   
     <ion-row class="submit-row">
-      <ion-col class="left-col">
+      <ion-col offset="1.5" size="4" class="left-col">
         <ion-icon id="image" mode="ios" name="image" (click)="addImg()"></ion-icon>
         <ion-icon id="camera" mode="ios" name="camera" (click)="addImg()"></ion-icon>
       </ion-col>

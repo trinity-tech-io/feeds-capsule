@@ -208,6 +208,10 @@ pre {
   word-wrap: break-word;
 }
 
+ion-row {
+  width: 100%;
+}
+
 /********************** GLOBAL EMPTY FEEDS **********************/
 .empty-container {
   height: 100%;
@@ -453,8 +457,6 @@ pre {
     border-bottom: 1.5px solid #f0f1ff;
 
     .channel-row {
-      width: 100%;
-
       .left-col {
         display: flex;
         align-items: center;
@@ -473,6 +475,18 @@ pre {
             width: 100%;
           }
 
+          p {
+            margin: 0;
+            font-size: 10px;
+            font-weight: 600;
+            color: #a0a2c4;
+
+            span {
+              font-size: 13px;
+              font-weight: 700;
+            }
+          }
+
           ion-row {
             padding: 0;
             display: flex;
@@ -483,18 +497,6 @@ pre {
               height: 14.7px;
               object-fit: contain;
               margin-right: 3px;
-            }
-
-            p {
-              margin: 0;
-              font-size: 10px;
-              font-weight: 600;
-              color: #a0a2c4;
-
-              span {
-                font-size: 13px;
-                font-weight: 700;
-              }
             }
           }
       }

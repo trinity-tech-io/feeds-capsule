@@ -59,7 +59,8 @@ export class PostdetailPage implements OnInit {
     private feedService :FeedService,
     public theme:ThemeService,
     private translate:TranslateService,
-    public menuService: MenuService) {
+    public menuService: MenuService
+  ) {
      
   }
 
@@ -439,7 +440,16 @@ export class PostdetailPage implements OnInit {
     return 1;
   }
 
+  navTo(nodeId, channelId){
+    this.native.getNavCtrl().navigateForward(['/channels', nodeId, channelId]);
+  }
+
   checkCommentIsMine(comment:any){
     return this.feedService.checkCommentIsMine(comment.nodeId,Number(comment.channel_id),Number(comment.post_id),Number(comment.id));
+  }
+
+  hideComponent(event) {
+    console.log('Hide comment component?', event);
+    this.hideComment = true;
   }
 }
