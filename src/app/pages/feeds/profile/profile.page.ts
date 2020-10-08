@@ -28,12 +28,24 @@ export class ProfilePage implements OnInit {
   public avatar: Avatar = null;
   public description: string = "";
 
+  public hideComment = true;
+
+  // For comment component
+  public postId = null;
+  public nodeId = null;
+  public channelId = null
+  public channelAvatar = null;
+  public channelName = null;
+
+
   slideOpts = {
     initialSlide: 0,
     speed: 100,
     slidesPerView: 3,
   };
+
   public curItem:any = {};
+
   constructor(
     private feedService: FeedService,
     public theme:ThemeService,
@@ -280,7 +292,26 @@ export class ProfilePage implements OnInit {
           this.menuService.showChannelMenu(item.nodeId, item.channelId,item.channelName);
           break;  
     }
-   
+  }
+
+  showComment(commentParams) {
+    console.log(commentParams);
+    this.postId = commentParams.postId;
+    this.channelId = commentParams.channelId;
+    this.nodeId = commentParams.nodeId;
+    this.channelAvatar = commentParams.channelAvatar;
+    this.channelName = commentParams.channelName;
+    this.hideComment = false;
+  }
+
+  hideComponent(event) {
+    console.log('Hide comment component?', event);
+    this.postId = null;
+    this.channelId = null;
+    this.nodeId = null;
+    this.channelAvatar = null;
+    this.channelName = null;
+    this.hideComment = true;
   }
 
 }

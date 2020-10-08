@@ -1,4 +1,4 @@
-import { Component, OnInit ,Input,Output,EventEmitter} from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { IonTabs} from '@ionic/angular';
 import { FeedService } from 'src/app/services/FeedService';
 import { ThemeService } from 'src/app/services/theme.service';
@@ -15,24 +15,28 @@ import { FeedsPage } from 'src/app/pages/feeds/feeds.page'
   styleUrls: ['./likes.component.scss'],
 })
 export class LikesComponent implements OnInit {
+
   private images = {};
   @Input() likeList:any =[];
   @Input() nodeStatus:any = {};
-  @Output() fromChild=new EventEmitter();
+
+  @Output() fromChild = new EventEmitter();
+  @Output() commentParams = new EventEmitter();
+
   public styleObj:any = {width:""};
+
   constructor(
     private feedspage: FeedsPage,
     private tabs: IonTabs,
     private feedService :FeedService,
     public theme:ThemeService,
     private translate:TranslateService,
-    private native:NativeService) {
-     
+    private native:NativeService
+  ) {
   }
 
   ngOnInit() {
     this.styleObj.width = (screen.width - 105)+'px';
-  
   }
 
   channelName(nodeId, channelId){
@@ -176,4 +180,13 @@ export class LikesComponent implements OnInit {
     }
   }
 
+  showComment(nodeId, channelId, postId) {
+    this.commentParams.emit({
+      nodeId: nodeId,
+      channelId: channelId,
+      postId: postId,
+      channelAvatar: this.parseAvatar(nodeId, channelId),
+      channelName: this.channelName(nodeId, channelId),
+    });
+  }
 }
