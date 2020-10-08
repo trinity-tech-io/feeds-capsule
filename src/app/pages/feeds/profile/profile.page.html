@@ -13,8 +13,7 @@
     >
     </ion-refresher-content>
   </ion-refresher>
-
-  <ion-grid class="container" [class.darkContainer]="theme.darkMode">
+  <ion-grid class="container" [class.darkContainer]="theme.darkMode" [class.blur]="!hideComment">
 
     <div class="profile-header">
       <ion-img [src]="handleImages()"></ion-img>
@@ -34,15 +33,26 @@
       </div>
     </div>
   
-    <app-myfeeds *ngIf="selectType == 'ProfilePage.myFeeds'"  [channels] = "channels" [nodeStatus]="nodeStatus" (fromChild)="showMenuMore($event)"></app-myfeeds>
-    <app-following *ngIf="selectType == 'ProfilePage.following'"  [followingList] = "followingList" [nodeStatus]="nodeStatus" (fromChild)="showMenuMore($event)"></app-following>
+    <app-myfeeds 
+      *ngIf="selectType == 'ProfilePage.myFeeds'"
+      [channels] = "channels"
+      [nodeStatus]="nodeStatus"
+      (fromChild)="showMenuMore($event)">
+    </app-myfeeds>
+
+    <app-following 
+      *ngIf="selectType == 'ProfilePage.following'"
+      [followingList] = "followingList"
+      [nodeStatus]="nodeStatus"
+      (fromChild)="showMenuMore($event)">
+    </app-following>
+
     <app-likes 
       *ngIf="selectType == 'ProfilePage.myLikes'"
       [likeList] = "likeList"
       [nodeStatus]="nodeStatus" 
       (fromChild)="showMenuMore($event)"
-      (commentParams)="showComment($event)"
-    >
+      (commentParams)="showComment($event)">
     </app-likes>
     
   </ion-grid>
