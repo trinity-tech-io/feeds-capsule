@@ -11,9 +11,9 @@
       <p *ngIf="introduction && introduction !== name">{{ introduction }}</p>
       <ion-row class="status-row" [class.online]="serverStatus === 0"> 
         <span class="online-circle" *ngIf="serverStatus === 0"></span>
-        <span class="users" *ngIf="serverStatus === 0" style="margin-left: 4px;margin-right: 4px;">{{ 'ServerInfoPage.online' | translate }}</span>
+        <span class="users" *ngIf="serverStatus === 0" style="margin-left: 4px; margin-right: 8px;">{{ 'ServerInfoPage.online' | translate }}</span>
         <span class="offline-circle"  *ngIf="serverStatus === 1"></span>
-        <span class="users" *ngIf="serverStatus === 1" style="margin-left: 4px;margin-right: 4px;">{{ 'ServerInfoPage.offline' | translate }}</span>
+        <span class="users" *ngIf="serverStatus === 1" style="margin-left: 4px; margin-right: 8px;">{{ 'ServerInfoPage.offline' | translate }}</span>
         <ion-img [src]="serverStatus === 0 ? 'assets/images/users-online.svg' : 'assets/images/users-offline.svg'"></ion-img>
         <span class="clientNumber">{{ clientNumber }}</span>
         <span class="users">{{'ServerInfoPage.users' | translate}}</span>
