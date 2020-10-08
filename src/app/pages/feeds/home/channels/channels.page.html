@@ -2,7 +2,7 @@
   <div class="offline-header"></div>
 </ion-header>
 
-<ion-content [class.darkContainer]="theme.darkMode" [ngClass]="{'translucent-mask': isShowPrompt}">
+<ion-content [class.darkContainer]="theme.darkMode" [class.blur]="!hideComment" [ngClass]="{'translucent-mask': isShowPrompt}">
     
   <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" pullFactor="0.5">
     <ion-refresher-content
