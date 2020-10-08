@@ -19,9 +19,7 @@
   <ion-grid class="channel-header">
     <div class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode">
       <img src={{channelAvatar}}>
-      <div class="feed-source-card-status chancecirclePosition">
-        <div class="offline" [class.online]="nodeStatus[nodeId] == 0"></div>
-      </div>
+      <div class="offline" [class.online]="nodeStatus[nodeId] == 0"></div>
     </div>
     <h1>{{ channelName }}</h1>
     <ion-row class="sub-row">
@@ -60,9 +58,7 @@
         <ion-col class="img-col" size="2.5">
           <div class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode">
             <img src={{channelAvatar}}>
-            <div class="feed-source-card-status circlePosition">
-              <div class="offline" [class.online]="nodeStatus[post.nodeId] == 0"></div>
-            </div>
+            <div class="offline" [class.online]="nodeStatus[post.nodeId] == 0"></div>
           </div>
         </ion-col>
         <ion-col class="content-col" size="9.5">

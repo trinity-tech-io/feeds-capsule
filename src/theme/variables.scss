@@ -410,19 +410,7 @@ ion-row {
     width: 50px;
   }
   
-  /*.offline {
-    width: 13px;
-    height: 13px;
-    position: absolute;
-    z-index: 10;
-    top: 0.5px;
-    left: 0.5px;
-    background: #cdcde6;
-    border-radius: 100%;
-    border: 2px solid #f8f8ff;
-  }*/
-  
-  .offline{
+  .offline {
     width: 13px;
     height: 13px;
     position: absolute;
@@ -430,7 +418,7 @@ ion-row {
     right: 0.5px;
     background-color: #cdcde6;
     border: 2px solid #f8f8ff;
-    border-radius: 6px;
+    border-radius: 100%;
   }
 
   .online {
