@@ -1,5 +1,13 @@
 ion-footer {
   background: transparent;
+  animation: animate;
+  animation-duration: 150ms;
+  animation-fill-mode: forwards;
+
+  @keyframes animate {
+    0% { bottom: -1000px }
+    100% { bottom: 0px }
+  }
 
   .channel-list {
       padding: 10px 25px;
@@ -15,59 +23,59 @@ ion-footer {
   
                   .feedAvatar {
                       img {
-                        width: 40px;
-                        height: 40px;
+                          width: 40px;
+                          height: 40px;
                       }
                   }
               }
 
               .middle-col {
-                ion-label {
-                  margin: 0;
-                }
+                  ion-label {
+                      margin: 0;
+                      font-size: 14px;
+                  }
+
+                  p {
+                      font-weight: 500;
+                  }
+              }
+
+              .right-col {
+                  align-items: flex-start;
+                  justify-content: flex-end;
+                  padding-top: 10px;
+
+                  ion-icon {
+                    height: 14px;
+                    width: 14px;
+                  }
+              }
+          }
+      }
+
+      .input-row {
+          padding: 0;
+
+          ion-col {
+              padding-top: 0;
+              padding-bottom: 0;
+
+              ion-textarea {
+                  margin: 10px 0 5px;
+                  max-height: 192px;
+                  background-color: #f0f1ff;
+                  color: #000000;
+                  border-radius: 9px;
+                  --padding-start: 10px;
+                  font-family: 'SourceSansPro';
+                  font-size: 14px;
+                  font-weight: 400;
+                  line-height: 1.25;
               }
           }
       }
   
-      ion-textarea {
-          margin: 10px 0 15px;
-          height: 105px;
-          background-color: #f0f1ff;
-          color: #000000;
-          border-radius: 9px;
-          --padding-start: 10px;
-          font-family: 'SourceSansPro';
-          font-size: 14px;
-          font-weight: 500;
-          line-height: 1.25;
-      }
-  
-      .img-container {
-          position: relative;
-          width: 45%;
-          height: 100px;
-  
-          img {
-              width: 100%;
-              height: 100%;
-              object-fit: cover;
-              border-radius: 9px;
-              overflow-x: auto; 
-              overflow-y: auto; 
-          }
-  
-          .remove {
-              position: absolute;
-              z-index: 10;
-              right: -8px;
-              top: -8px;
-              width: 20px;
-              height: 20px;
-          }
-      }
-  
       .submit-row {
-          width: 100%;
           display: flex;
           justify-content: space-between;
   
@@ -112,6 +120,8 @@ ion-footer {
   
   .darkChannelList {
     background: #191a2f;
+    border-radius: 0;
+    border-top: 2px solid #2e2f4e;
 
     ion-item {
       .channel-row {
@@ -123,9 +133,13 @@ ion-footer {
       }
     }
 
-    ion-textarea {
-      background-color: #2e2f4e;
-      color: #ffffff;
+    .input-row {
+      ion-col {
+        ion-textarea {
+          background-color: #2e2f4e;
+          color: #ffffff;
+        }
+      }
     }
   }
 }

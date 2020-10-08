@@ -21,6 +21,7 @@ export class HomePage implements OnInit {
   @ViewChild(IonInfiniteScroll,{static:true}) infiniteScroll: IonInfiniteScroll;
 
   myScrollContainer!: HTMLElement;
+
   public connectionStatus = 1;
   public postList: any = [];
   public nodeStatus:any={};
@@ -30,6 +31,16 @@ export class HomePage implements OnInit {
   public images = {};
   public curPost:any = {};
   public styleObj:any = {width:""};
+
+  public hideComment = true;
+
+  // For comment component
+  public postId = null;
+  public nodeId = null;
+  public channelId = null
+  public channelAvatar = null;
+  public channelName = null;
+
   constructor(
     private elmRef: ElementRef,
     private feedspage: FeedsPage,
@@ -406,5 +417,24 @@ export class HomePage implements OnInit {
       return 0;
     
     return 1;
+  }
+
+  showComment(nodeId, channelId, postId) {
+    this.postId = postId;
+    this.channelId = channelId;
+    this.nodeId = nodeId;
+    this.channelAvatar = this.parseAvatar(nodeId, channelId);
+    this.channelName = this.getChannelName(nodeId, channelId);
+    this.hideComment = false;
+  }
+
+  hideComponent(event) {
+    console.log('Hide comment component?', event);
+    this.postId = null;
+    this.channelId = null;
+    this.nodeId = null;
+    this.channelAvatar = null;
+    this.channelName = null;
+    this.hideComment = true;
   }
 }

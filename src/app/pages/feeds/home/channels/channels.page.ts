@@ -21,6 +21,7 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 export class ChannelsPage implements OnInit {
   @ViewChild(IonContent,{static:true}) content: IonContent;
   @ViewChild(IonInfiniteScroll,{static:true}) infiniteScroll: IonInfiniteScroll;
+
   public images = {};
   public isShowPrompt: boolean = false;
   public popover:any;
@@ -44,6 +45,12 @@ export class ChannelsPage implements OnInit {
 
   public curPost:any = {};
   public styleObj:any = {width:""};
+
+  public hideComment = true;
+  
+  // For comment component
+  public postId = null;
+
   constructor(
     private popoverController:PopoverController,
     private zone: NgZone,
@@ -470,5 +477,16 @@ export class ChannelsPage implements OnInit {
        clearTimeout(sid)
      }, int);
    }
+
+  showComment(nodeId, channelId, postId) {
+    this.postId = postId;
+    this.hideComment = false;
+  }
+
+  hideComponent(event) {
+    console.log('Hide comment component?', event);
+    this.postId = null;
+    this.hideComment = true;
+  }
 
 }

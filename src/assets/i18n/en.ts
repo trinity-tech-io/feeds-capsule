@@ -354,7 +354,7 @@ export const en = {
     },
     "CommentPage":{
         "newComment":"New Comment",
-        "publishComment":"Publish comment",
+        "publishComment":"Post Reply",
         "enterComments":"Add Comment",
         "tipMsg1":"Comment sent successfully!"
     },

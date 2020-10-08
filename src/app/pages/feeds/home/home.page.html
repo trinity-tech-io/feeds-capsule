@@ -73,7 +73,7 @@
               <img [src]="checkMyLike(post.nodeId, post.channel_id, post.id) ? '/assets/images/like-s.svg' : '/assets/images/like.svg'">
               <ion-label [class.liked]="checkMyLike(post.nodeId, post.channel_id, post.id)">{{ post.likes }}</ion-label>
             </ion-col>
-            <ion-col (click)="showCommentPage(post.nodeId, post.channel_id, post.id)">
+            <ion-col (click)="showComment(post.nodeId, post.channel_id, post.id)">
               <img src="/assets/images/bubble-line.svg">
               <ion-label>{{ post.comments }}</ion-label>
             </ion-col>
@@ -95,29 +95,16 @@
     </ion-infinite-scroll-content>
   </ion-infinite-scroll>
 
-  <!-- OPTIONS POPUP 
-  <ion-row class="global-options" [class.global-darkOptions]="theme.darkMode" *ngIf="menuService.optionsOn">
-    <div class="close ion-activatable ripple" (click)="menuService.hideOptions()">
-      <img *ngIf="!theme.darkMode" src="/assets/icons/cross.svg">
-      <img *ngIf="theme.darkMode" src="/assets/icons/darkmode/cross.svg">
-      <ion-ripple-effect></ion-ripple-effect>
-    </div>
-    <ion-col size="4.5" class="left-col" (click)="menuService.shareChannel()">
-      <div class="option">
-        <ion-icon mode="ios" name="share"></ion-icon>
-        <span>Share</span> 
-      </div>
-    </ion-col>
-    <ion-col size="3" class="middle-col">
-      <div class="divider"></div>
-    </ion-col>
-    <ion-col size="4.5" class="right-col" (click)="menuService.deleteChannel()">
-      <div class="option">
-        <ion-icon mode="ios" name="trash"></ion-icon>
-        <span>Unfollow</span>
-      </div>
-    </ion-col>
-  </ion-row>
-
 </ion-content>
--->
+
+<!---------------- ADD COMMENT FOOTER ---------------->
+<app-comment
+  *ngIf="!hideComment"
+  [postId]="postId"
+  [nodeId]="nodeId "
+  [channelId]="channelId" 
+  [channelAvatar]="channelAvatar"
+  [channelName]="channelName"
+  (hideComment)="hideComponent($event)"
+></app-comment>
+
