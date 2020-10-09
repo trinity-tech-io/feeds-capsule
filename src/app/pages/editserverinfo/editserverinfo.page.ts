@@ -67,7 +67,14 @@ export class EditserverinfoPage implements OnInit {
         this.native.hideLoading();
         this.native.pop();
       });
-  });
+    });
+
+    this.events.subscribe('feeds:updateCredentialFinish',()=>{
+      this.zone.run(() => {
+        this.native.hideLoading();
+        this.native.pop();
+      });
+    });
   }
 
   ionViewDidEnter(){
@@ -116,7 +123,7 @@ export class EditserverinfoPage implements OnInit {
 
     if(this.checkParms()){
         this.native.showLoading('common.waitMoment').then(()=>{
-          this.feedService.issueCredential(this.nodeId,this.did, this.name, this.introduction,this.elaAddress,()=>{
+          this.feedService.doUpdateCredential(this.nodeId,this.did, this.name, this.introduction,this.elaAddress,()=>{
             this.native.hideLoading();
           },()=>{
             this.native.hideLoading();

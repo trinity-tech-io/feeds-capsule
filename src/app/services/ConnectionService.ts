@@ -419,7 +419,7 @@ export class ConnectionService {
         this.sendRPCMessage(serverName, nodeId, request.method, null, "");
     }
     
-    issueCredentialRequest(serverName: string, nodeId: string, credential: any){
+    issueCredentialRequest(serverName: string, nodeId: string, credential: string){
         let request: Communication.issue_credential_request = {
           version: "1.0",
           method : "issue_credential",
@@ -522,6 +522,23 @@ export class ConnectionService {
             params : {
                 access_token: accessToken.token
             } 
+        }
+
+        this.sendRPCMessage(serverName, nodeId, request.method, request.params, ""); 
+    }
+
+    updateCredential(serverName: string, nodeId: string, credential: string, accessToken: FeedsData.AccessToken){
+        if (accessToken == undefined)
+        return ;
+
+        let request: Communication.update_credential_request = {
+            version: "1.0",
+            method : "update_credential",
+            id     : -1,
+            params : {
+                access_token: accessToken.token,
+                credential: credential
+            }
         }
 
         this.sendRPCMessage(serverName, nodeId, request.method, request.params, ""); 
