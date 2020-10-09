@@ -595,6 +595,7 @@ declare module Communication{
         result : {
             did               : string
             connecting_clients: number
+            total_clients     : number
         }
     }
     
@@ -806,5 +807,22 @@ declare module Communication{
             version : string
         }
     }
+
+    type update_credential_request = {
+        version: "1.0"
+        method : "update_credential"
+        id     : jsonrpc_id
+        params : {
+            access_token: string
+            credential: string
+        }
+    }
+
+    type update_credential_response = {
+        version: "1.0"
+        id     : jsonrpc_id
+        result : null
+    }
+
 }
 

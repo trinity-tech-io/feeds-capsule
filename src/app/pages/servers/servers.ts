@@ -153,7 +153,7 @@ export class ServersPage implements OnInit {
             this.serverStatisticsMap[nodeId] == undefined)
             return 0;
         
-        return this.serverStatisticsMap[nodeId].connecting_clients;
+        return this.serverStatisticsMap[nodeId].total_clients||0;
     }
 
     checkServerStatus(nodeId: string){
