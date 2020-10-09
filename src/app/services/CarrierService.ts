@@ -354,6 +354,27 @@ export class CarrierService {
             });
     }
 
+
+    sendFriendBinaryMessageWithReceipt(nodeId: string, message: Uint8Array, onSuccess:()=>void, onError?:(err: string)=>void) {
+        if (this.platform.platforms().indexOf("cordova") < 0){
+            onSuccess();
+            return;
+        }
+        
+        carrierInst.sendFriendBinaryMessageWithReceipt(
+            nodeId, message,
+            (messageId: number, state: Number)=>{
+                console.log(messageId);
+                console.log(state);
+            },
+            () => {
+                onSuccess();
+            },
+            (err) => {
+                onError(err);
+            });
+    }
+
     errorFun(err, errorFun = null) {
 
         alert("error=>"+err);
