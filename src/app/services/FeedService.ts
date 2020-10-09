@@ -1043,6 +1043,10 @@ export class FeedService {
       case FeedsData.MethodType.getServerVersion:
         this.handleGetServerVersion(nodeId, result, error);
         break;
+
+      case FeedsData.MethodType.updateCredential:
+        this.handleUpdateCredentialResponse(nodeId, result, requestParams, error);
+        break;
       default:
         break;
     }
@@ -1838,6 +1842,14 @@ export class FeedService {
     this.connectionService.getServerVersion(this.getServerNameByNodeId(nodeId),nodeId,accessToken);
   }
   
+  updateCredential(nodeId: string, credential: string){
+    if(!this.hasAccessToken(nodeId))
+      return;
+
+    let accessToken: FeedsData.AccessToken = accessTokenMap[nodeId]||undefined;
+    this.connectionService.updateCredential(this.getServerNameByNodeId(nodeId), nodeId, credential, accessToken);
+  }
+
   handleEditPost(nodeId: string, request: any, error: any){
     if (error != null && error != undefined && error.code != undefined){
       this.handleError(nodeId, error);
@@ -3653,7 +3665,7 @@ export class FeedService {
     this.connectionService.createDidRequest(this.getServerNameByNodeId(nodeId), nodeId);
   }
 
-  issueCredentialRequest(nodeId: string, credential: any){
+  issueCredentialRequest(nodeId: string, credential: string){
     this.connectionService.issueCredentialRequest(this.getServerNameByNodeId(nodeId), nodeId, credential);
   }
 
@@ -3753,6 +3765,29 @@ export class FeedService {
       return;
     }
 
+    // if (bindingServerCache !=null && bindingServerCache!= undefined){
+    //   let did = bindingServerCache.did||"";
+    //   this.httpService.ajaxGet(ApiUrl.get+"?did="+did,false).then((result)=>{
+    //     if(result["code"] === 200){
+    //       if (result["data"] != undefined){
+    //         let name = bindingServerCache.name;
+    //         let description = bindingServerCache.introduction;
+    //         let feedUrl = bindingServerCache.feedsUrl;
+    //         this.updatePublic(did, name, description, feedUrl);
+    //       }
+    //     }
+    //   }); 
+    // }
+    
+    this.finishBinding(nodeId);
+  }
+
+  handleUpdateCredentialResponse(nodeId: string, result: any, requestParams: any, error: any){
+    if (error != null && error != undefined && error.code != undefined){
+      this.handleError(nodeId, error);
+      return;
+    }
+
     if (bindingServerCache !=null && bindingServerCache!= undefined){
       let did = bindingServerCache.did||"";
       this.httpService.ajaxGet(ApiUrl.get+"?did="+did,false).then((result)=>{
@@ -3766,12 +3801,30 @@ export class FeedService {
         }
       }); 
     }
-    
-    this.finishBinding(nodeId);
+
+    eventBus.publish("feeds:updateCredentialFinish");
+    this.signinChallengeRequest(nodeId, true);
   }
 
+  doIssueCredential(nodeId: string, did: string, serverName: string, serverDesc: string,elaAddress:string, onSuccess:()=> void, onError:()=>void){
+    this.issueCredential(nodeId,did, serverName,serverDesc,elaAddress,
+      (credential)=>{
+        this.issueCredentialRequest(nodeId, credential);
+      },
+      ()=>{}
+      );
+  }
 
-  issueCredential(nodeId: string, did: string, serverName: string, serverDesc: string,elaAddress:string, onSuccess:()=> void, onError:()=>void) {
+  doUpdateCredential(nodeId: string, did: string, serverName: string, serverDesc: string,elaAddress:string, onSuccess:()=> void, onError:()=>void){
+    this.issueCredential(nodeId,did, serverName,serverDesc,elaAddress,
+      (credential)=>{
+        this.updateCredential(nodeId, credential);
+      },
+      ()=>{}
+      );
+  }
+
+  issueCredential(nodeId: string, did: string, serverName: string, serverDesc: string,elaAddress:string, onSuccess:(credential: string)=> void, onError:()=>void) {
     if (did == "" || nodeId == ""){
       onError();
       return;
@@ -3812,8 +3865,7 @@ export class FeedService {
       if (response.result.credential) {
         bindingServerCache.name = serverName;
         bindingServerCache.introduction = serverDesc;
-        this.issueCredentialRequest(nodeId, response.result.credential);
-        onSuccess();
+        onSuccess(response.result.credential);
       }
       else {
         onError();

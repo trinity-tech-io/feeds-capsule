@@ -61,6 +61,7 @@ declare namespace FeedsData{
 
         getServerVersion = "get_service_version",
 
+        updateCredential = "update_credential",
         enable_notification = "enable_notification",
 
         //PUSH Notification
