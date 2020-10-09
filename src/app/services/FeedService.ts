@@ -182,8 +182,9 @@ type PostKey = {
 }
 
 type ServerStatistics = {
-  did               : string,
+  did               : string
   connecting_clients: number
+  total_clients     : number
 }
 
 type Server = {
@@ -659,7 +660,8 @@ export class FeedService {
       serverStatisticsMap[bindingServer.nodeId] == undefined)
       serverStatisticsMap[bindingServer.nodeId] = {
         did               : "string",
-        connecting_clients: 0
+        connecting_clients: 0,
+        total_clients     : 0
       }
 
     let list = this.getServerList();
@@ -668,7 +670,8 @@ export class FeedService {
         serverStatisticsMap[list[index].nodeId] == undefined)
         serverStatisticsMap[list[index].nodeId] ={
           did               : "string",
-          connecting_clients: 0
+          connecting_clients: 0,
+          total_clients     : 0
         }
     }
 
@@ -679,7 +682,7 @@ export class FeedService {
     if (serverStatisticsMap[nodeId] == null || serverStatisticsMap[nodeId] == undefined)
       return 0;
 
-    return serverStatisticsMap[nodeId].connecting_clients;
+    return serverStatisticsMap[nodeId].total_clients||0;
   }
 
   getMyChannelList(){
@@ -887,7 +890,8 @@ export class FeedService {
     if (serverStatisticsMap[server.nodeId] == undefined){
       serverStatisticsMap[server.nodeId] = {
         did               : server.did,
-        connecting_clients: 0
+        connecting_clients: 0,
+        total_clients     : 0
       }
     }
 
@@ -2906,9 +2910,14 @@ export class FeedService {
       return;
     }
 
+    let userDID = result.did || "";
+    let connectingClients = result.connecting_clients || 0;
+    let totalClients = result.total_clients || 0;
+
     let serverStatistics: ServerStatistics = {
-      did               : result.did,
-      connecting_clients: result.connecting_clients
+      did               : userDID,
+      connecting_clients: connectingClients,
+      total_clients     : totalClients
     }
 
     if (serverStatisticsMap == null || serverStatisticsMap == undefined)

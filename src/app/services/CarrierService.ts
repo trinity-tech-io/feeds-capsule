@@ -110,7 +110,8 @@ let eventBus = null;
 const createOption = {
     udpEnabled: true,
     persistentLocation: ".data",
-    binaryUsed: true
+    binaryUsed: true,
+    expressEnabled: false
 };
 
 @Injectable()
