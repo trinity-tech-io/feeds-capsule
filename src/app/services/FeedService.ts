@@ -1155,7 +1155,7 @@ export class FeedService {
             nodeId            : "",
             feedsUrl          : feedsUrl,
             elaAddress        : "",
-            version           : "common.infoObtaining",
+            version           : "",
             // status            : ConnState.disconnected
           });
           return;
@@ -1174,7 +1174,7 @@ export class FeedService {
             nodeId            : "",
             feedsUrl          : feedsUrl,
             elaAddress        : "",
-            version           : "common.infoObtaining",
+            version           : "",
             // status            : ConnState.disconnected
         });
       } else {
@@ -3219,7 +3219,7 @@ export class FeedService {
         nodeId            : nodeId,
         feedsUrl          : feedsUrl,
         elaAddress        : "",
-        version           : "common.infoObtaining"
+        version           : ""
         // status            : ConnState.disconnected
       }
 
@@ -3840,7 +3840,7 @@ export class FeedService {
       nodeId            : nodeId,
       feedsUrl          : feedUrl,
       elaAddress        : "",
-      version           : "common.infoObtaining"
+      version           : ""
     }
     this.handleImportDID(feedUrl, defaultServer, (server)=>{
         bindingServerCache = {
@@ -3852,7 +3852,7 @@ export class FeedService {
           nodeId            : server.nodeId,
           feedsUrl          : server.feedsUrl,
           elaAddress        : "",
-          version           : "common.infoObtaining"
+          version           : ""
         }
         onSuccess();
     },(err)=>{
@@ -3872,7 +3872,7 @@ export class FeedService {
       nodeId            : nodeId,
       feedsUrl          : feedUrl,
       elaAddress        : "",
-      version           : "common.infoObtaining"
+      version           : ""
     }
     this.handleImportDID(feedUrl, defaultServer, (server)=>{
         bindingServerCache = {
@@ -3884,7 +3884,7 @@ export class FeedService {
           nodeId            : server.nodeId,
           feedsUrl          : server.feedsUrl,
           elaAddress        : "",
-          version           : "common.infoObtaining"
+          version           : ""
         }
         onSuccess();
         eventBus.publish("feeds:resolveDidSucess", nodeId, did);
