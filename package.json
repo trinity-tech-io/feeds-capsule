@@ -41,6 +41,7 @@
     "nan": "^2.14.0",
     "ng-lazyload-image": "^9.0.0",
     "ngx-ionic-image-viewer": "^0.7.1",
+    "ngx-videogular": "^8.2.14",
     "node-gyp": "6.0.0",
     "node-sass": "4.12.0",
     "rxjs": "~6.5.1",
