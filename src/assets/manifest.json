@@ -37,7 +37,8 @@
     "NetworkStatus",
     "InAppBrowser",
     "DIDPlugin",
-    "Camera"
+    "Camera",
+    "Capture"
   ],
   "urls": [
     "https://www.trinity-tech.io/*"
