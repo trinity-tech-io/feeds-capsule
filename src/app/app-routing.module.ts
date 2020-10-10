@@ -45,6 +45,7 @@ const routes: Routes = [
   { path: 'discoverfeeds', loadChildren: './pages/servers/discoverfeeds/discoverfeeds.module#DiscoverfeedsPageModule' },
   { path: 'discoverfeedsinfo', loadChildren: './pages/servers/discoverfeedsinfo/discoverfeedsinfo.module#DiscoverfeedsinfoPageModule' },
   { path: 'videoplayer', loadChildren: './pages/videoplayer/videoplayer.module#VideoplayerPageModule' },
+  { path: 'videorecord', loadChildren: './pages/videorecord/videorecord.module#VideorecordPageModule' },
 ];
 
 @NgModule({
