@@ -1,5 +1,35 @@
-<ion-content>
+<ion-content class="padding">
+
+    <vg-player style="width: 100%;height:300px" *ngIf="flieUri">
+        <vg-overlay-play></vg-overlay-play>
+        <vg-buffering></vg-buffering>
+    
+        <vg-scrub-bar>
+            <vg-scrub-bar-current-time></vg-scrub-bar-current-time>
+            <vg-scrub-bar-buffering-time></vg-scrub-bar-buffering-time>
+        </vg-scrub-bar>
+    
+        <vg-controls [vgAutohide]="true">
+            <vg-play-pause></vg-play-pause>
+            <vg-playback-button></vg-playback-button>
+    
+            <vg-time-display vgProperty="current" vgFormat="mm:ss"></vg-time-display>
+            <vg-time-display vgProperty="total" vgFormat="mm:ss"></vg-time-display>
+            <vg-mute></vg-mute>
+            <vg-fullscreen></vg-fullscreen>
+        </vg-controls>
+  
+    <video #media [vgMedia]="media" id="singleVideo" preload="auto" crossorigin
+    poster="assets/images/logo.png" playsinline webkit-playsinline>
+    <source [src]="flieUri" [type]="videotype">
+    </video>
+  </vg-player>
+
+   <ion-button (click)="browsevideo()" style="margin-top: 30px;">
+    browsevideo
+   </ion-button>
+
    <ion-button (click)="videorecord()">
-       videorecord
+    recordvideo
    </ion-button>
 </ion-content>
