@@ -1,9 +1,5 @@
 import { Injectable } from '@angular/core';
 
-declare let Camera: CordovaCameraPlugin.Camera;
-
-let eventBus = null;
-
 @Injectable()
 export class CameraService {
     constructor(){
@@ -45,5 +41,21 @@ export class CameraService {
         function onFail(message) {
             error(message);
         };
+    }
+
+    getVideo():Promise<any>{
+       return new Promise((resolve, reject) => {
+            navigator.camera.getPicture((fileuri:string)=>{
+                resolve(fileuri);
+              },(message:any)=>{
+                reject(message);
+              },{
+                quality:30,
+                destinationType:0,
+                correctOrientation: true,
+                sourceType:0,
+                mediaType:1
+              });
+       });
     }
 }
