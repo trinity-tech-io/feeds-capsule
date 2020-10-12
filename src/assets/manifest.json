@@ -38,7 +38,8 @@
     "InAppBrowser",
     "DIDPlugin",
     "Camera",
-    "Capture"
+    "Capture",
+    "File"
   ],
   "urls": [
     "https://www.trinity-tech.io/*"
