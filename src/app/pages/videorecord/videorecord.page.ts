@@ -1,7 +1,9 @@
 import { Component, OnInit,NgZone  } from '@angular/core';
 import { CameraService } from 'src/app/services/CameraService';
+import { DomSanitizer } from '@angular/platform-browser';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 declare let appManager: AppManagerPlugin.AppManager;
+declare let cordova:Cordova;
 @Component({
   selector: 'app-videorecord',
   templateUrl: './videorecord.page.html',
@@ -20,10 +22,11 @@ export class VideorecordPage implements OnInit {
   //   "end": 0,
   //   "fullPath": "file:///storage/emulated/0/DCIM/Camera/video_20201012_144635.mp4"
   // }
-  public flieUri:string ="";
+  public flieUri:any ="";
   public videotype:string = "video/mp4";
   constructor(private camera: CameraService,
-              private zone:NgZone) { }
+              private zone:NgZone,
+              private sanitizer: DomSanitizer) { }
 
   ngOnInit() {
   }
@@ -37,12 +40,23 @@ export class VideorecordPage implements OnInit {
     navigator.device.capture.captureVideo((videosdata:any)=>{
       this.zone.run(()=>{
         let videodata = videosdata[0];
-        this.flieUri =  videodata['localURL'];
-        console.log("========"+JSON.stringify(this.flieUri));
+        //this.flieUri = videodata['localURL'];
+        //this.flieUri = this.sanitizer.bypassSecurityTrustResourceUrl(videodata['localURL']);
+        //console.log("========"+JSON.stringify());
+        //this.flieUri = 
+        console.log("========"+videodata['localURL']);
+        window.resolveLocalFileSystemURL(videodata['localURL'],(dirEntry: CordovaFilePlugin.DirectoryEntry)=>{
+              this.zone.run(()=>{
+                this.flieUri = dirEntry.toURL();
+                console.log("=====this.flieUri ==="+this.flieUri);
+              });
+        },(err)=>{
+
+        })
      });
   }, (error)=>{
        console.log("========"+JSON.stringify(error));
-  }, {limit:1});
+  }, {limit:1,duration:30});
   }
 
   browsevideo() {
