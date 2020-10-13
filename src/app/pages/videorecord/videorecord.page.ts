@@ -22,7 +22,7 @@ export class VideorecordPage implements OnInit {
   //   "end": 0,
   //   "fullPath": "file:///storage/emulated/0/DCIM/Camera/video_20201012_144635.mp4"
   // }
-  public flieUri:any ="";
+  public flieUri:string ="";
   public videotype:string = "video/mp4";
   constructor(private camera: CameraService,
               private zone:NgZone,
@@ -40,18 +40,27 @@ export class VideorecordPage implements OnInit {
     navigator.device.capture.captureVideo((videosdata:any)=>{
       this.zone.run(()=>{
         let videodata = videosdata[0];
-        //this.flieUri = videodata['localURL'];
+        //this.successVideo(videodata);
+        this.flieUri = videodata['localURL'];
         //this.flieUri = this.sanitizer.bypassSecurityTrustResourceUrl(videodata['localURL']);
         //console.log("========"+JSON.stringify());
         //this.flieUri = 
         console.log("========"+videodata['localURL']);
         window.resolveLocalFileSystemURL(videodata['localURL'],(dirEntry: CordovaFilePlugin.DirectoryEntry)=>{
-              this.zone.run(()=>{
-                this.flieUri = dirEntry.toURL();
-                console.log("=====this.flieUri ==="+this.flieUri);
-              });
-        },(err)=>{
+               console.log("==11111=="+dirEntry.toInternalURL());
+              //this.zone.run(()=>{
+                  // dirEntry.getFile(videodata['localURL'],{},(file)=>{
+                  //         file.createWriter((data)=>{
+                  //           console.log("====="+JSON.stringify(data));
+                  //         },()=>{
 
+                  //         })
+                  // },(err)=>{
+
+                  // })
+              //});
+        },(err)=>{
+          console.log("==22222==err"+JSON.stringify(err));
         })
      });
   }, (error)=>{
@@ -60,14 +69,61 @@ export class VideorecordPage implements OnInit {
   }
 
   browsevideo() {
-
     this.camera.getVideo().then((flieUri)=>{
-      console.log("====flieUri===="+flieUri);
-      this.flieUri = flieUri;
-    }).catch((err)=>{
-      console.log("====err===="+JSON.stringify(err));
-    })
-   
+      console.log("====flieUri===="+flieUri); 
+      flieUri = flieUri.replace("/storage/emulated/0/","/sdcard/")      
+      this.zone.run(()=>{
+        this.flieUri = "cdvfile://localhost"+flieUri;
+        let lastIndex = this.flieUri.lastIndexOf("/");
+        let fileName = this.flieUri.substring(lastIndex+1,this.flieUri.length);
+        console.log("====fileName===="+fileName); 
+        let path = this.flieUri.substring(0,lastIndex);
+        console.log("====path===="+path); 
+        //this.flieUri = "assets/movie.mp4";
+        //打开选择的路径
+         window.resolveLocalFileSystemURL(path,(dirEntry: CordovaFilePlugin.DirectoryEntry)=>{
+              console.log("========sucess"+dirEntry.toInternalURL());
+              dirEntry.getFile(fileName, { create: true, exclusive: false }, (fileEntry) => {
+                console.log('Downloaded file entry', fileEntry);
+                
+                let blob = new Blob();
+                
+                fileEntry.createWriter((fileWriter) => {
+                    fileWriter.onwriteend = (event) => {
+                        console.log("File written");
+                        //resolve('trinity:///data/' + fileName);
+                        //console.log("========"+blob.text());
+                    };
+                    fileWriter.onerror = (event) => {
+                        console.error('createWriter ERROR - ' + JSON.stringify(event));
+                        //reject(event);
+                        //this.resetProgress();
+                    };
+                    fileWriter.write(blob);
+                }, (err) => {
+                    console.error('createWriter ERROR - ' + JSON.stringify(err));
+                    //reject(err);
+                    //this.resetProgress();
+                });
+
+
+
+             
+                },(err) => {
+                    console.error('createWriter ERROR - ' + JSON.stringify(err));
+                    //reject(err);
+                    //this.resetProgress();
+                });
+       
+              },(err)=>{
+                console.log("========error"+JSON.stringify(err));
+              });
+    
+      });
+  }).catch((err)=>{
+
+  })
   }
+  
 
 }
