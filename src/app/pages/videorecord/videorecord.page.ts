@@ -22,7 +22,7 @@ export class VideorecordPage implements OnInit {
   //   "end": 0,
   //   "fullPath": "file:///storage/emulated/0/DCIM/Camera/video_20201012_144635.mp4"
   // }
-  public flieUri:string ="";
+  public flieUri:any ="";
   public videotype:string = "video/mp4";
   constructor(private camera: CameraService,
               private zone:NgZone,
@@ -73,11 +73,11 @@ export class VideorecordPage implements OnInit {
       console.log("====flieUri===="+flieUri); 
       flieUri = flieUri.replace("/storage/emulated/0/","/sdcard/")      
       this.zone.run(()=>{
-        this.flieUri = "cdvfile://localhost"+flieUri;
-        let lastIndex = this.flieUri.lastIndexOf("/");
-        let fileName = this.flieUri.substring(lastIndex+1,this.flieUri.length);
+        flieUri = "cdvfile://localhost"+flieUri;
+        let lastIndex = flieUri.lastIndexOf("/");
+        let fileName =  flieUri.substring(lastIndex+1,flieUri.length);
         console.log("====fileName===="+fileName); 
-        let path = this.flieUri.substring(0,lastIndex);
+        let path =  flieUri.substring(0,lastIndex);
         console.log("====path===="+path); 
         //this.flieUri = "assets/movie.mp4";
         //打开选择的路径
@@ -88,15 +88,20 @@ export class VideorecordPage implements OnInit {
 
                 //read
                 fileEntry.file((file)=>{
+                   console.log("=====filesize====="+file.size/1000/1000);
                    let  fileReader = new FileReader();
-                   fileReader.onloadend = function(event:any){
+                   fileReader.onloadend =(event:any)=>{
                     console.log("File loadend");
-                    console.log("===result===="+this.result);
+                    console.log("===result===="+fileReader.result.slice(0,100));
+                    this.zone.run(()=>{
+                      this.flieUri = fileReader.result;
+                    })
+                   
                    };
 
-                   let blod = new Blob();
+                   //let blod = new Blob();
 
-                   fileReader.readAsText(file);
+                   fileReader.readAsDataURL(file);
 
                 },(err)=>{
 
