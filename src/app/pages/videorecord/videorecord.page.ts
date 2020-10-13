@@ -85,26 +85,43 @@ export class VideorecordPage implements OnInit {
               console.log("========sucess"+dirEntry.toInternalURL());
               dirEntry.getFile(fileName, { create: true, exclusive: false }, (fileEntry) => {
                 console.log('Downloaded file entry', fileEntry);
-                
-                let blob = new Blob();
-                
-                fileEntry.createWriter((fileWriter) => {
-                    fileWriter.onwriteend = (event) => {
-                        console.log("File written");
-                        //resolve('trinity:///data/' + fileName);
-                        //console.log("========"+blob.text());
-                    };
-                    fileWriter.onerror = (event) => {
-                        console.error('createWriter ERROR - ' + JSON.stringify(event));
-                        //reject(event);
-                        //this.resetProgress();
-                    };
-                    fileWriter.write(blob);
-                }, (err) => {
-                    console.error('createWriter ERROR - ' + JSON.stringify(err));
-                    //reject(err);
-                    //this.resetProgress();
+
+                //read
+                fileEntry.file((file)=>{
+                   let  fileReader = new FileReader();
+                   fileReader.onloadend = function(event:any){
+                    console.log("File loadend");
+                    console.log("===result===="+this.result);
+                   };
+
+                   let blod = new Blob();
+
+                   fileReader.readAsText(file);
+
+                },(err)=>{
+
                 });
+                
+                //write
+
+                // fileEntry.createWriter((fileWriter) => {
+                //   let blob = new Blob();
+                //     fileWriter.onwriteend = (event) => {
+                //         console.log("File written");
+                //         //resolve('trinity:///data/' + fileName);
+                //         console.log("========"+blob.size);
+                //     };
+                //     fileWriter.onerror = (event) => {
+                //         console.error('createWriter ERROR - ' + JSON.stringify(event));
+                //         //reject(event);
+                //         //this.resetProgress();
+                //     };
+                //     fileWriter.write(blob);
+                // }, (err) => {
+                //     console.error('createWriter ERROR - ' + JSON.stringify(err));
+                //     //reject(err);
+                //     //this.resetProgress();
+                // });
 
 
 
