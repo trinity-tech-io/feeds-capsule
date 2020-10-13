@@ -43,7 +43,7 @@ export class CameraService {
         };
     }
 
-    getVideo():Promise<any>{
+    getVideo():Promise<string>{
        return new Promise((resolve, reject) => {
             navigator.camera.getPicture((fileuri:string)=>{
                 resolve(fileuri);
