@@ -1,5 +1,5 @@
 <ion-content class="padding">
-
+    <!-- <img [src]="posterImg"/> -->
     <vg-player style="width: 100%;height:300px" *ngIf="flieUri">
         <vg-overlay-play></vg-overlay-play>
         <vg-buffering></vg-buffering>
@@ -18,12 +18,15 @@
             <vg-mute></vg-mute>
             <vg-fullscreen></vg-fullscreen>
         </vg-controls>
-  
+     
     <video #media [vgMedia]="media" id="singleVideo" preload="auto"
-    poster="assets/images/logo.png" playsinline webkit-playsinline>
+    poster=""
+    playsinline webkit-playsinline>
     <source [src]="flieUri" [type]="videotype">
     </video>
   </vg-player>
+
+  
    <p *ngIf="uploadProgress>0" style="text-align: center;">视频加载中({{uploadProgress}})............</p>
    <!-- <ion-progress-bar [value]="uploadProgress" *ngIf="uploadProgress>0"></ion-progress-bar> -->
    <ion-button (click)="browsevideo()" style="margin-top: 30px;">
