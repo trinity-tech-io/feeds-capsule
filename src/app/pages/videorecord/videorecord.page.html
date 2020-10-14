@@ -24,7 +24,8 @@
     <source [src]="flieUri" [type]="videotype">
     </video>
   </vg-player>
-
+   <p *ngIf="uploadProgress>0" style="text-align: center;">视频加载中({{uploadProgress}})............</p>
+   <!-- <ion-progress-bar [value]="uploadProgress" *ngIf="uploadProgress>0"></ion-progress-bar> -->
    <ion-button (click)="browsevideo()" style="margin-top: 30px;">
     browsevideo
    </ion-button>
