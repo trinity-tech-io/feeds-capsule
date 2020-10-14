@@ -24,6 +24,7 @@ export class VideorecordPage implements OnInit {
   public flieUri:any ="";
   public videotype:string = "video/mp4";
   public uploadProgress:number=0;
+  public posterImg:string=""
   constructor(private camera: CameraService,
               private zone:NgZone,
               private sanitizer: DomSanitizer) { }
@@ -39,6 +40,7 @@ export class VideorecordPage implements OnInit {
 
   videorecord(){
     this.flieUri = '';
+    this.posterImg='';
     navigator.device.capture.captureVideo((videosdata:any)=>{
       this.zone.run(()=>{
         let videodata = videosdata[0];
@@ -56,6 +58,7 @@ export class VideorecordPage implements OnInit {
 
   browsevideo(){
     this.flieUri = '';
+    this.posterImg='';
     this.camera.getVideo().then((flieUri)=>{
       flieUri = flieUri.replace("/storage/emulated/0/","/sdcard/")      
       this.zone.run(()=>{
@@ -82,9 +85,25 @@ export class VideorecordPage implements OnInit {
 
               let fileReader = new FileReader();
               fileReader.onloadend =(event:any)=>{
-                
+
                this.zone.run(()=>{
                  this.flieUri = fileReader.result;
+                 
+                 let sid = setTimeout(()=>{
+                  //let img = new Image;
+                  let video:any = document.getElementById('singleVideo');
+                  video.setAttribute('crossOrigin', 'anonymous')
+                  let canvas = document.createElement('canvas');
+                  canvas.width = video.clientWidth
+                  canvas.height = video.clientHeight
+                  video.onloadeddata = (() => {
+                    canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height)
+                    this.posterImg= canvas.toDataURL("image/png");      
+                    video.setAttribute("poster",this.posterImg);
+                  });
+                  clearInterval(sid);
+                 },0);
+                
                })
               };
 
