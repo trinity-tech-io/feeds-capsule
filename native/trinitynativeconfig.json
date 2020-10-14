@@ -1,0 +1,20 @@
+{
+    "build": {
+        "root": "..",
+        "out": "../native-out"
+    },
+    "application": {
+        "name": "Feeds",
+        "nativepackageid": "io.trinitytech.dapp.feeds",
+        "icon": "../src/assets/images/logo.png",
+        "splashscreen": "./splash.png",
+        "intentscheme": {
+            "scheme": "https",
+            "path": "feeds.trinity-tech.io"
+        },
+        "version": {
+            "code": 101,
+            "name": "1.0.1"
+        }
+    }
+}
