@@ -41,6 +41,9 @@ export class HomePage implements OnInit {
   public channelAvatar = null;
   public channelName = null;
 
+  public clientHeight:number = 0;
+  public isLoadimage:any ={};
+
   constructor(
     private elmRef: ElementRef,
     private feedspage: FeedsPage,
@@ -56,6 +59,9 @@ export class HomePage implements OnInit {
 
   ionViewWillEnter() {
     this.styleObj.width = (screen.width - 105)+'px';
+    this.clientHeight =screen.availHeight;
+    console.log("=====this.clientHeight====="+this.clientHeight);
+    console.log("=====screen.height====="+screen.height);
     this.startIndex = 0;
     this.totalData = this.feedService.getPostList() || [];
     this.connectionStatus = this.feedService.getConnectionStatus();
@@ -313,7 +319,7 @@ export class HomePage implements OnInit {
       this.nodeStatus[nodeId] = status;
 
       let post = arr[index];
-      this.getImage(post.nodeId, post.channel_id, post.id);
+      //this.getImage(post.nodeId, post.channel_id, post.id);
       this.feedService.readChannel(post.nodeId+post.channel_id);
     }
   }
@@ -332,6 +338,7 @@ export class HomePage implements OnInit {
         this.postList = this.postList.concat(arr);
         });
         this.initnodeStatus(arr);
+        this.refreshImage();
         event.target.complete();
        }else{
         arr = this.totalData.slice(this.startIndex*this.pageNumber,this.totalData.length);
@@ -340,6 +347,7 @@ export class HomePage implements OnInit {
         });
         this.infiniteScroll.disabled =true;
         this.initnodeStatus(arr);
+        this.refreshImage();
         event.target.complete();
        }
       clearTimeout(sId);
@@ -361,6 +369,7 @@ export class HomePage implements OnInit {
         this.infiniteScroll.disabled =true;
       }
       this.initnodeStatus(this.postList);
+      this.refreshImage();
       event.target.complete();
       clearTimeout(sId);
     },500);
@@ -436,5 +445,80 @@ export class HomePage implements OnInit {
     this.channelAvatar = null;
     this.channelName = null;
     this.hideComment = true;
+  }
+
+  setVisibleareaImage(duration:any){
+    
+    let postgridList = document.getElementsByClassName("post-grid");
+    let postgridNum = document.getElementsByClassName("post-grid").length;
+  
+    for(let postgridindex =0;postgridindex<postgridNum;postgridindex++){ 
+      let id = postgridList[postgridindex].getAttribute("id") || '';
+      //let  pgHeight  =   postgridList[postgridindex].clientHeight;
+      let isload = this.isLoadimage[id] || "";
+      let postImage = document.getElementById(id+"postimg");
+      try {
+        if(id!=''&&isload===""&&postImage.getBoundingClientRect().top<=this.clientHeight){
+          this.isLoadimage[id] = "11";
+         this.feedService.loadPostContentImg(id).then((imagedata)=>{
+          //console.log("========="+postgridindex+'_'+id+'_'+postImage.getBoundingClientRect().top+"_"+this.clientHeight+"_"+typeof(duration)+"_"+postgridNum);
+              let image = imagedata || "";
+              if(image!=""){
+                //postImage.setAttribute("data-imgurl","111");
+                postImage.setAttribute("src",image);
+              }else{
+                //this.isLoadimage[id] = "11";
+                postImage.style.display = 'none'; 
+              }
+            }).catch(()=>{
+              postImage.style.display = 'none'; 
+              console.log("getImageError");
+            })
+        }else{
+          let postSrc =  postImage.getAttribute("src") || "";
+         
+          if(postImage.getBoundingClientRect().bottom-this.clientHeight<-this.clientHeight&&this.isLoadimage[id]!=""&&postSrc!=""){ 
+            //console.log("============="+postgridindex+"_"+id+'_'+postImage.getBoundingClientRect().bottom);   
+            this.isLoadimage[id] = "";
+            postImage.removeAttribute("src");
+          }
+        }
+      } catch (error) {
+      
+      }
+   
+    }
+
+  
+  }
+
+  ionViewDidEnter() {
+    this.refreshImage(); 
+  }
+
+  ionScroll(){
+    // this.content.getScrollElement().then((obj)=>{
+    //     this.curHeight = obj.scrollHeight;
+         
+    // }).catch((err)=>{
+
+    // });
+
+   //let sid = setTimeout(()=>{
+      this.setVisibleareaImage(0);
+      //clearTimeout(sid);
+    //},100);
+  }
+
+  refreshImage(){
+    let sid = setTimeout(()=>{
+      //this.content.getScrollElement().then((obj)=>{
+        this.isLoadimage ={};
+        this.setVisibleareaImage(0);
+      //}).catch((err)=>{
+  
+      //});
+      clearTimeout(sid);
+    },0);
   }
 }
