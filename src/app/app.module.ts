@@ -54,7 +54,6 @@ import { SessionService } from './services/SessionService';
 
 import { IonicStorageModule } from '@ionic/storage';
 
-import { LazyLoadImageModule } from 'ng-lazyload-image';
 
 export class WebpackTranslateLoader implements TranslateLoader {
   public getTranslation(lang: string): Observable<any> {
@@ -115,7 +114,6 @@ export function anim(AnimationC: Animation, baseEl: any, position?: any): Promis
     MyApp,
   ],
   imports: [
-    LazyLoadImageModule,
     NgxIonicImageViewerModule,
     QRCodeModule,
     CommonModule,
