@@ -1,7 +1,6 @@
 import { Component, OnInit,NgZone  } from '@angular/core';
 import { CameraService } from 'src/app/services/CameraService';
-import { DomSanitizer } from '@angular/platform-browser';
-declare let titleBarManager: TitleBarPlugin.TitleBarManager;
+import { VideoEditor } from '@ionic-native/video-editor/ngx';
 declare let appManager: AppManagerPlugin.AppManager;
 @Component({
   selector: 'app-videorecord',
@@ -27,7 +26,7 @@ export class VideorecordPage implements OnInit {
   public posterImg:string=""
   constructor(private camera: CameraService,
               private zone:NgZone,
-              private sanitizer: DomSanitizer) { }
+              public videoEditor:VideoEditor) { }
 
   ngOnInit() {
          
@@ -59,15 +58,21 @@ export class VideorecordPage implements OnInit {
   browsevideo(){
     this.flieUri = '';
     this.posterImg='';
+ 
     this.camera.getVideo().then((flieUri)=>{
-      flieUri = flieUri.replace("/storage/emulated/0/","/sdcard/")      
-      this.zone.run(()=>{
-        flieUri = "cdvfile://localhost"+flieUri;
-        let lastIndex = flieUri.lastIndexOf("/");
-        let fileName =  flieUri.substring(lastIndex+1,flieUri.length);
-        let filepath =  flieUri.substring(0,lastIndex);
-        this.readFile(fileName,filepath);
+      this.transcodeVideo(flieUri).then((newfileUri)=>{
+        console.log('video transcode success',newfileUri);
+      }).catch((err)=>{
+        console.log('video transcode error', err);
       });
+      //flieUri = flieUri.replace("/storage/emulated/0/","/sdcard/")      
+      // this.zone.run(()=>{
+      //   flieUri = "cdvfile://localhost"+flieUri;
+      //   let lastIndex = flieUri.lastIndexOf("/");
+      //   let fileName =  flieUri.substring(lastIndex+1,flieUri.length);
+      //   let filepath =  flieUri.substring(0,lastIndex);
+      //   this.readFile(fileName,filepath);
+      // });
   }).catch((err)=>{
       console.log("=====getVideoErr===="+JSON.stringify(err));
   })
@@ -167,6 +172,36 @@ export class VideorecordPage implements OnInit {
       },(err)=>{
         console.log("========error"+JSON.stringify(err));
       });
+  }
 
+  async transcodeVideo(path:any):Promise<string>{
+    const fileUri = path.startsWith('file://') ? path : `file://${path}`;
+    console.log("====fileUrl===="+fileUri);
+    const videoInfo = await this.videoEditor.getVideoInfo({ fileUri });
+    let width: number;
+    let height: number;
+
+    console.log("===videoInfo="+JSON.stringify(videoInfo));
+ 
+    // 视频比例
+    const ratio = videoInfo.width / videoInfo.height;
+ 
+    if (ratio > 1) {
+      width = videoInfo.width > 480 ? 480 : videoInfo.width;
+    } else if (ratio < 1) {
+      width = videoInfo.width > 360 ? 360 : videoInfo.width;
+    } else if (ratio === 1) {
+      width = videoInfo.width > 480 ? 480 : videoInfo.width;
+    }
+ 
+    height = +(width / ratio).toFixed(0);
+ 
+    return this.videoEditor.transcodeVideo({
+      fileUri,
+      outputFileName: `${Date.now()}`,
+      outputFileType: this.videoEditor.OutputFileType.MPEG4,
+      width,
+      height
+    });
   }
 }
