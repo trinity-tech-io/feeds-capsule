@@ -199,4 +199,12 @@ export class EditpostPage implements OnInit {
 
     this.connectionStatus = this.feedService.getConnectionStatus();
   }
+
+  videocam(){
+
+  }
+
+  selectvideo(){
+    
+  }
 }

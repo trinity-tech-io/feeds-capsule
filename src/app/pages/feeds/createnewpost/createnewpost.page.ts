@@ -170,5 +170,13 @@ export class CreatenewpostPage implements OnInit {
   pressName(channelName:string){
     this.native.createTip(channelName);
   }
+
+  videocam(){
+
+  }
+
+  selectvideo(){
+    
+  }
 }
  

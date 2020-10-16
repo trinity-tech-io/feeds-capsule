@@ -91,6 +91,7 @@ export class HomePage implements OnInit {
 
     this.events.subscribe('feeds:publishPostFinish',()=>{
       this.zone.run(() => {
+        this.isLoadimage ={};
         this.infiniteScroll.disabled =false;
         this.startIndex = 0;
         this.totalData = this.feedService.getPostList() || [];
@@ -103,6 +104,7 @@ export class HomePage implements OnInit {
           this.infiniteScroll.disabled =true;
         }
         this.scrollToTop(1);
+        this.refreshImage();
         this.initnodeStatus(this.postList);
       });
     });
@@ -115,7 +117,6 @@ export class HomePage implements OnInit {
 
    this.events.subscribe("feeds:editPostFinish",()=>{
     this.zone.run(()=>{
-
       this.totalData = this.feedService.getPostList() || [];
       if (this.totalData.length - this.pageNumber > this.pageNumber){
         this.postList = this.totalData.slice(0,(this.startIndex)*this.pageNumber);
@@ -124,6 +125,7 @@ export class HomePage implements OnInit {
         this.postList =  this.totalData;
         this.infiniteScroll.disabled =true;
       }
+      this.refreshImage();
       this.initnodeStatus(this.postList);
 
     });
@@ -140,6 +142,7 @@ export class HomePage implements OnInit {
         this.postList =  this.totalData;
         this.infiniteScroll.disabled =true;
       }
+      this.refreshImage();
       this.initnodeStatus(this.postList);
 
     });
