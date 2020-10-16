@@ -54,6 +54,8 @@ import { SessionService } from './services/SessionService';
 
 import { IonicStorageModule } from '@ionic/storage';
 
+import { VideoEditor } from '@ionic-native/video-editor/ngx';
+
 
 export class WebpackTranslateLoader implements TranslateLoader {
   public getTranslation(lang: string): Observable<any> {
@@ -147,6 +149,7 @@ export function anim(AnimationC: Animation, baseEl: any, position?: any): Promis
     MyApp,
   ],
   providers: [
+    VideoEditor,
     StatusBar,
     SplashScreen,
     Platform,

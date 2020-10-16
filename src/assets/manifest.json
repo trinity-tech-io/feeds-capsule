@@ -39,7 +39,8 @@
     "DIDPlugin",
     "Camera",
     "Capture",
-    "File"
+    "File",
+    "VideoEditor"
   ],
   "urls": [
     "https://www.trinity-tech.io/*"
