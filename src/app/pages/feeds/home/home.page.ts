@@ -458,7 +458,7 @@ export class HomePage implements OnInit {
       let isload = this.isLoadimage[id] || "";
       let postImage = document.getElementById(id+"postimg");
       try {
-        if(id!=''&&isload===""&&postImage.getBoundingClientRect().top<=this.clientHeight){
+        if(id!=''&&isload===""&&postImage.getBoundingClientRect().top-300<=this.clientHeight){
           this.isLoadimage[id] = "11";
          this.feedService.loadPostContentImg(id).then((imagedata)=>{
           //console.log("========="+postgridindex+'_'+id+'_'+postImage.getBoundingClientRect().top+"_"+this.clientHeight+"_"+typeof(duration)+"_"+postgridNum);
