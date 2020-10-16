@@ -31,6 +31,8 @@
       <ion-col class="left-col">
         <ion-icon id="image" mode="ios" name="image" (click)="addImg(0)"></ion-icon>
         <ion-icon id="camera" mode="ios" name="camera" (click)="addImg(1)"></ion-icon>
+        <ion-icon id="selectvideo" mode="ios" name="selectvideo" (click)="selectvideo()"></ion-icon>
+        <ion-icon id="videocam" name="videocam" (click)="videocam()"></ion-icon>
       </ion-col>
       <ion-col class="right-col" size="4.5">
         <ion-button (click)="post()">
@@ -41,49 +43,3 @@
   
   </ion-list>
 </ion-content>
-
-<!-- <ion-header *ngIf="connectionStatus == 1">
-  <div class="offline-header"></div>
-</ion-header>
-<ion-content [class.darkContainer]="theme.darkMode">
-     <div class="channel-img-small-div">
-      <div class="channel-img-small">
-        <ion-avatar style="position: relative;">
-          <div class="feed-source-card-status circlePosition">
-            <div class="online-circle"  *ngIf="nodeStatus[nodeId] == 0"></div>
-            <div class="offline-circle" *ngIf="nodeStatus[nodeId] == 1"></div>
-          </div>
-          <img  src={{channelAvatar}}>
-        </ion-avatar>
-      </div> 
-     </div>
-
-     <div class="rightContent">
-          <div> 
-            <ion-label class="channel-title-small ellipsis white" (press)="pressName(channelName)">{{channelName}}</ion-label>
-          </div>
-          <div>
-            <img src="./assets/images/bubble2.svg" class="bubble">
-            <ion-label class="channel-follower2">{{subscribers}} {{'common.followers'|translate}}</ion-label>
-          </div>
-    </div>
-    <ion-grid>
-    <ion-row>
-    <ion-col size="12">
-      <ion-item lines="none">
-        <ion-textarea  autoGrow="true" clearOnEdit="true" autofocus="true" rows="6" cols="20" rows="5" cols="20" placeholder="{{'CreatenewpostPage.des'|translate}}" [(ngModel)]="newPost" class="white"></ion-textarea>
-      </ion-item>
-    </ion-col>
-    </ion-row>
-  </ion-grid>
-    <div style="text-align: center;">
-      <img *ngIf="imgUrl != ''" class="channel-post-img" src="{{imgUrl}}" (click)="showBigImage(imgUrl)">
-    </div>
-
-
-   <div style="width:300px;margin:0 auto;margin-top: 10px;">
-    <ion-button expand="block" mode="ios" color="primary" (click)="addImg()" style="width: 120px;float: left;">{{'CreatenewpostPage.addimg'|translate}}</ion-button>
-    <ion-button expand="block" mode="ios" color="primary"  (click)="post()" style="width: 120px;float:right;">{{'CreatenewpostPage.post'|translate}}</ion-button>
-  </div>
-  </ion-content>
- -->
