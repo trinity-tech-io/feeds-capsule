@@ -28,6 +28,11 @@ export class EditpostPage implements OnInit {
   public channelId: number = 0;
   public postId: number = 0;
 
+  public posterImg:string = "";
+  public flieUri:any = "";
+  public uploadProgress:number = 0;
+  public videotype:string = "video/mp4";
+
   constructor(
     private events: Events,
     private native: NativeService,
@@ -201,10 +206,91 @@ export class EditpostPage implements OnInit {
   }
 
   videocam(){
-
+    this.flieUri = '';
+    this.posterImg='';
+    navigator.device.capture.captureVideo((videosdata:any)=>{
+      this.zone.run(()=>{
+        let videodata = videosdata[0];
+        let flieUri = videodata['localURL'];
+        let lastIndex = flieUri.lastIndexOf("/");
+        let fileName =  flieUri.substring(lastIndex+1,flieUri.length);
+        let filepath =  flieUri.substring(0,lastIndex);
+        this.readFile(fileName,filepath);
+     });
+  }, (error)=>{
+       console.log("===captureVideoErr==="+JSON.stringify(error));
+  }, {limit:1,duration:14});
   }
 
   selectvideo(){
-    
+    this.flieUri = '';
+    this.posterImg='';
+    this.camera.getVideo().then((flieUri)=>{
+      flieUri = flieUri.replace("/storage/emulated/0/","/sdcard/")      
+      this.zone.run(()=>{
+        flieUri = "cdvfile://localhost"+flieUri;
+        let lastIndex = flieUri.lastIndexOf("/");
+        let fileName =  flieUri.substring(lastIndex+1,flieUri.length);
+        let filepath =  flieUri.substring(0,lastIndex);
+        this.readFile(fileName,filepath);
+      });
+    }).catch((err)=>{
+      console.log("=====getVideoErr===="+JSON.stringify(err));
+     })
+  }
+
+  readFile(fileName:string,filepath:string){
+
+    window.resolveLocalFileSystemURL(filepath,
+      (dirEntry: CordovaFilePlugin.DirectoryEntry)=>{
+        dirEntry.getFile(fileName, 
+          { create: true, exclusive: false }, 
+          (fileEntry) => {
+
+            fileEntry.file((file)=>{
+
+              let fileReader = new FileReader();
+              fileReader.onloadend =(event:any)=>{
+
+               this.zone.run(()=>{
+                 this.flieUri = fileReader.result;
+                 
+                 let sid = setTimeout(()=>{
+                  //let img = new Image;
+                  let video:any = document.getElementById('singleVideo');
+                  video.setAttribute('crossOrigin', 'anonymous')
+                  let canvas = document.createElement('canvas');
+                  canvas.width = video.clientWidth
+                  canvas.height = video.clientHeight
+                  video.onloadeddata = (() => {
+                    canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height)
+                    this.posterImg= canvas.toDataURL("image/png");      
+                    video.setAttribute("poster",this.posterImg);
+                  });
+                  clearInterval(sid);
+                 },0);
+                
+               })
+              };
+
+              fileReader.onprogress = (event:any)=>{
+                this.zone.run(()=>{
+                  this.uploadProgress = parseInt((event.loaded/event.total)*100+'');
+                })
+              };
+              
+              fileReader.readAsDataURL(file);
+
+           },(err)=>{
+              console.log("=====readFileErr====="+JSON.stringify(err));
+           });
+          },
+          (err)=>{
+            console.log("=====getFileErr====="+JSON.stringify(err));
+          });
+      },
+      (err:any)=>{
+            console.log("=====pathErr====="+JSON.stringify(err));
+      });
   }
 }
