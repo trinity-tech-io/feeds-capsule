@@ -6,6 +6,10 @@ import { TranslateModule } from '@ngx-translate/core';
 import { IonicModule } from '@ionic/angular';
 
 import { CreatenewpostPage } from './createnewpost.page';
+import { VgCoreModule } from 'ngx-videogular';
+import { VgControlsModule } from 'ngx-videogular';
+import { VgOverlayPlayModule } from 'ngx-videogular';
+import { VgBufferingModule } from 'ngx-videogular';
 
 const routes: Routes = [
   {
@@ -17,6 +21,10 @@ const routes: Routes = [
 @NgModule({
   imports: [
     CommonModule,
+    VgCoreModule,
+    VgControlsModule,
+    VgOverlayPlayModule,
+    VgBufferingModule,
     FormsModule,
     TranslateModule,
     IonicModule,
