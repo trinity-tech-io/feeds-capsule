@@ -3,8 +3,8 @@
 </ion-header>
 
 <ion-content>
-  <ion-list class="channel-list" [class.darkChannelList]="theme.darkMode">
-
+  <!-- <ion-list class="channel-list" [class.darkChannelList]="theme.darkMode"> -->
+    <div class="channel-list" [class.darkChannelList]="theme.darkMode">
     <ion-item class="removeBorder" lines="none">
       <ion-row class="channel-row ion-activatable ripple">
         <ion-col size="2" class="left-col">
@@ -27,25 +27,27 @@
       <img class="remove" src="/assets/icons/remove.svg" (click)="imgUrl = ''"/>
     </div>
 
-    <div *ngIf="flieUri" style="position: relative;">
-    <img style="position:absolute;z-index: 10;right: -8px;top: -8px;width: 20px;height: 20px;" src="/assets/icons/remove.svg" (click)="flieUri = ''"/>
-    <vg-player style="width:200;height:200px" *ngIf="flieUri">
+    <div *ngIf="flieUri" style="width: 320px;height:200px;margin: 0 auto;">
+      <div style="position: relative;">
+      <img style="position:absolute;z-index: 10;right: -8px;top: -8px;width: 20px;height: 20px;" src="/assets/icons/remove.svg" (click)="flieUri = ''"/>
+      </div>
+    <vg-player  *ngIf="flieUri">
       <vg-overlay-play></vg-overlay-play>
       <vg-buffering></vg-buffering>
   
       <vg-scrub-bar>
           <vg-scrub-bar-current-time></vg-scrub-bar-current-time>
           <vg-scrub-bar-buffering-time></vg-scrub-bar-buffering-time>
-      </vg-scrub-bar>
-  
+      </vg-scrub-bar> 
+     
       <vg-controls [vgAutohide]="true">
           <vg-play-pause></vg-play-pause>
           <vg-playback-button></vg-playback-button>
   
           <vg-time-display vgProperty="current" vgFormat="mm:ss"></vg-time-display>
           <vg-time-display vgProperty="total" vgFormat="mm:ss"></vg-time-display>
-          <vg-mute></vg-mute>
-          <vg-fullscreen></vg-fullscreen>
+          <vg-mute></vg-mute> 
+          <vg-fullscreen></vg-fullscreen> 
       </vg-controls>
    
   <video #media [vgMedia]="media" id="singleVideo" preload="auto"
@@ -55,6 +57,8 @@
   </video>
   </vg-player>
   </div>
+
+  
     <p *ngIf="uploadProgress>0&&uploadProgress!=100" style="text-align: center;">视频加载中({{uploadProgress}})............</p>
 
     <ion-row class="submit-row">
@@ -70,6 +74,10 @@
         </ion-button>
       </ion-col>
     </ion-row>
+    
   
-  </ion-list>
+  </div>
+  
+
+
 </ion-content>
