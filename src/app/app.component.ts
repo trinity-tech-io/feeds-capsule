@@ -66,8 +66,8 @@ export class MyApp {
     this.appService.initTranslateConfig();
     this.appService.init();
     //this.native.setRootRouter("videoplayer");
-    this.native.setRootRouter("videorecord");
-    return;
+    //this.native.setRootRouter("videorecord");
+    //return;
     let isDisclaimer = localStorage.getItem('org.elastos.dapp.feeds.disclaimer') || "";
     if(isDisclaimer === ""){
        this.native.setRootRouter('disclaimer');

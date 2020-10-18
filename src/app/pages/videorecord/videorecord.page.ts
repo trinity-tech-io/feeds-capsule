@@ -23,7 +23,8 @@ export class VideorecordPage implements OnInit {
   public flieUri:any ="";
   public videotype:string = "video/mp4";
   public uploadProgress:number=0;
-  public posterImg:string=""
+  public posterImg:string="";
+  public transcode:number =0;
   constructor(private camera: CameraService,
               private zone:NgZone,
               public videoEditor:VideoEditor) { }
@@ -37,42 +38,59 @@ export class VideorecordPage implements OnInit {
   }
 
 
-  videorecord(){
+ videorecord(){
     this.flieUri = '';
     this.posterImg='';
+    this.transcode =0;
+    this.uploadProgress =0;
     navigator.device.capture.captureVideo((videosdata:any)=>{
       this.zone.run(()=>{
         let videodata = videosdata[0];
-        let flieUri = videodata['localURL'];
-        console.log("========"+videodata['localURL']);
-        let lastIndex = flieUri.lastIndexOf("/");
-        let fileName =  flieUri.substring(lastIndex+1,flieUri.length);
-        let filepath =  flieUri.substring(0,lastIndex);
-        this.readFile(fileName,filepath);
+        this.transcodeVideo(videodata['fullPath']).then((newfileUri)=>{
+          this.transcode =100;
+          console.log("====newfileUri====="+newfileUri)
+          newfileUri = "cdvfile://localhost"+newfileUri.replace("file//","");
+          newfileUri = newfileUri.replace("/storage/emulated/0/","/sdcard/");  
+          console.log("====newfileUri====="+newfileUri)
+          let lastIndex = newfileUri.lastIndexOf("/");
+          let fileName =  newfileUri.substring(lastIndex+1,newfileUri.length);
+          console.log("====fileName====="+fileName);
+          let filepath =  newfileUri.substring(0,lastIndex);
+          console.log("====filepath====="+filepath);
+          this.readFile(fileName,filepath);
+        });
      });
   }, (error)=>{
        console.log("===captureVideoErr==="+JSON.stringify(error));
-  }, {limit:1,duration:14});
+  }, {limit:1,duration:30});
   }
 
   browsevideo(){
     this.flieUri = '';
     this.posterImg='';
- 
+    this.transcode =0;
+    this.uploadProgress =0;
     this.camera.getVideo().then((flieUri)=>{
       this.transcodeVideo(flieUri).then((newfileUri)=>{
         console.log('video transcode success',newfileUri);
+      this.transcode =100;    
+      this.zone.run(()=>{
+        console.log("====newfileUri====="+newfileUri)
+        newfileUri = "cdvfile://localhost"+newfileUri.replace("file//","");
+        newfileUri = newfileUri.replace("/storage/emulated/0/","/sdcard/");  
+        console.log("====newfileUri====="+newfileUri)
+        let lastIndex = newfileUri.lastIndexOf("/");
+        let fileName =  newfileUri.substring(lastIndex+1,newfileUri.length);
+        console.log("====fileName====="+fileName);
+        let filepath =  newfileUri.substring(0,lastIndex);
+        console.log("====filepath====="+filepath);
+        this.readFile(fileName,filepath);
+      });
+
       }).catch((err)=>{
         console.log('video transcode error', err);
       });
-      //flieUri = flieUri.replace("/storage/emulated/0/","/sdcard/")      
-      // this.zone.run(()=>{
-      //   flieUri = "cdvfile://localhost"+flieUri;
-      //   let lastIndex = flieUri.lastIndexOf("/");
-      //   let fileName =  flieUri.substring(lastIndex+1,flieUri.length);
-      //   let filepath =  flieUri.substring(0,lastIndex);
-      //   this.readFile(fileName,filepath);
-      // });
+     
   }).catch((err)=>{
       console.log("=====getVideoErr===="+JSON.stringify(err));
   })
@@ -178,8 +196,8 @@ export class VideorecordPage implements OnInit {
     const fileUri = path.startsWith('file://') ? path : `file://${path}`;
     console.log("====fileUrl===="+fileUri);
     const videoInfo = await this.videoEditor.getVideoInfo({ fileUri });
-    let width: number;
-    let height: number;
+    let width: number = 0;
+    let height: number = 0;
 
     console.log("===videoInfo="+JSON.stringify(videoInfo));
  
@@ -193,15 +211,27 @@ export class VideorecordPage implements OnInit {
     } else if (ratio === 1) {
       width = videoInfo.width > 480 ? 480 : videoInfo.width;
     }
- 
+
+    let videoBitrate = videoInfo["bitrate"]/2;
+
+    console.log("===videoBitrate====="+videoBitrate);
+
     height = +(width / ratio).toFixed(0);
- 
+
     return this.videoEditor.transcodeVideo({
       fileUri,
       outputFileName: `${Date.now()}`,
       outputFileType: this.videoEditor.OutputFileType.MPEG4,
       width,
-      height
+      height,
+      videoBitrate:videoBitrate,
+      progress:(info:number)=>{
+        this.zone.run(()=>{
+          this.transcode = parseInt(info*100+'');
+        })
+      }
     });
   }
+
+
 }
