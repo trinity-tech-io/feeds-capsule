@@ -342,7 +342,7 @@ export class CarrierService {
         session.replyRequest(status, reason, onSuccess, onError);
     }
 
-    streamWrite(stream: CarrierPlugin.Stream, data: string, onSuccess:(bytesSent: Number)=>void, onError?:(err: string)=>void){
+    streamWrite(stream: CarrierPlugin.Stream, data: Uint8Array, onSuccess:(bytesSent: Number)=>void, onError?:(err: string)=>void){
         stream.write(data, onSuccess, onError);
     }
 
