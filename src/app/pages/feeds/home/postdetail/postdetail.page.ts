@@ -9,6 +9,7 @@ import { TranslateService } from "@ngx-translate/core";
 import { UtilService } from 'src/app/services/utilService';
 import { IonInfiniteScroll,PopoverController} from '@ionic/angular';
 import { EdittoolComponent } from '../../../../components/edittool/edittool.component';
+import { SessionService } from 'src/app/services/SessionService';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 @Component({
@@ -49,7 +50,6 @@ export class PostdetailPage implements OnInit {
   public dstyleObj:any = {width:""};
 
   public hideComment = true;
-  
   constructor(
     private popoverController:PopoverController,
     private acRoute: ActivatedRoute,
@@ -61,7 +61,6 @@ export class PostdetailPage implements OnInit {
     private translate:TranslateService,
     public menuService: MenuService
   ) {
-     
   }
 
   initData(){
@@ -451,5 +450,24 @@ export class PostdetailPage implements OnInit {
   hideComponent(event) {
     console.log('Hide comment component?', event);
     this.hideComment = true;
+  }
+
+  newSession(){
+    // this.sessionService.createSession(this.nodeId,(mSession, mStream)=>{
+      
+    // });
+  }
+
+  writeData(){
+    // this.sessionService.streamAddMagicNum(this.nodeId);
+    // this.sessionService.streamAddVersion(this.nodeId);
+    // let requestSize = this.sessionService.buildSetBinaryRequest("token","testKey");
+    // this.sessionService.streamAddRequestHeadSize(this.nodeId, requ);
+    // this.sessionService.streamAddData(this.nodeId, "hahahahaha");
+  }
+
+  closeSession(){
+    // this.sessionService.sessionClose(this.nodeId);
+    // let size = this.sessionService.streamAddRequestHeadSize(this.nodeId,0x9999);
   }
 }

@@ -115,6 +115,23 @@
       </ion-row>
     </ion-grid>
 
+    <ion-button (click)="newSession()">
+      <ion-label>
+        newSession
+      </ion-label>
+    </ion-button>
+    <ion-button (click)="writeData()">
+      <ion-label>
+        writeData
+      </ion-label>
+    </ion-button>
+    <ion-button (click)="closeSession()">
+      <ion-label>
+        closeSession
+      </ion-label>
+    </ion-button>
+
+    
     <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event)">
       <ion-infinite-scroll-content
         loadingSpinner="bubbles"
