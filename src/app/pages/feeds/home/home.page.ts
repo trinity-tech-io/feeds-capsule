@@ -542,7 +542,7 @@ export class HomePage implements OnInit {
     let  source = document.getElementById(id+"source");
     try {
       if(id!=''&&isloadVideoImg===""&&video.getBoundingClientRect().top>0&&video.getBoundingClientRect().top<=this.clientHeight){
-        //console.log("========="+rowindex+"==="+video.getBoundingClientRect().top);
+        console.log("========="+rowindex+"==="+video.getBoundingClientRect().top);
         this.isLoadVideoiamge[id] = "11";
         vgplayer.style.display = "none";
         this.feedService.loadVideoPosterImg(id).then((imagedata)=>{
@@ -562,7 +562,7 @@ export class HomePage implements OnInit {
                })
               //}
             }else{
-
+              console.log("========="+rowindex);
               video.style.display='none';
               vgplayer.style.display = 'none'; 
             }

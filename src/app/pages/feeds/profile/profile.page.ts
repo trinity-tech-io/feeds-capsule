@@ -46,6 +46,11 @@ export class ProfilePage implements OnInit {
 
   public curItem:any = {};
 
+  public clientHeight:number = 0;
+  public isLoadimage:any ={};
+  public isLoadVideoiamge:any = {};
+  public videoIamges:any ={};
+
   constructor(
     private feedService: FeedService,
     public theme:ThemeService,
@@ -80,17 +85,19 @@ export class ProfilePage implements OnInit {
     if(this.totalLikeList.length-this.pageNumber > this.pageNumber){
       
       this.likeList  = this.totalLikeList.slice(this.startIndex,this.pageNumber);
-     
+      this.refreshImage();
       this.startIndex++;
       this.infiniteScroll.disabled =false;
     }else{
       
       this.likeList = this.totalLikeList.slice(0,this.totalLikeList.length);
+      this.refreshImage();
       this.infiniteScroll.disabled =true;
     }
   }
 
   ionViewWillEnter() {
+    this.clientHeight =screen.availHeight;
     this.curItem = {};
     this.changeType(this.selectType);
     this.connectionStatus = this.feedService.getConnectionStatus();
@@ -249,6 +256,7 @@ export class ProfilePage implements OnInit {
          this.likeList = this.likeList.concat(arr);
          });
          this.initnodeStatus(arr);
+         this.refreshImage();
          event.target.complete();
         }else{
          arr = this.totalLikeList.slice(this.startIndex*this.pageNumber,this.totalLikeList.length);
@@ -257,6 +265,7 @@ export class ProfilePage implements OnInit {
          });
          this.infiniteScroll.disabled =true;
          this.initnodeStatus(arr);
+         this.refreshImage();
          event.target.complete();
          clearTimeout(sId);
         }
@@ -312,6 +321,140 @@ export class ProfilePage implements OnInit {
     this.channelAvatar = null;
     this.channelName = null;
     this.hideComment = true;
+  }
+
+  ionScroll(){
+
+    if(this.selectType === 'ProfilePage.myLikes'){
+       console.log("");
+    }
+  }
+
+  setVisibleareaImage(){
+
+    let postgridList = document.getElementsByClassName("postgridlike");
+    let postgridNum = document.getElementsByClassName("postgridlike").length;
+    console.log("====postgridNum====="+postgridNum);
+    for(let postgridindex =0;postgridindex<postgridNum;postgridindex++){ 
+      let id = postgridList[postgridindex].getAttribute("id") || '';
+      //postImg
+      this.handlePsotImg(id,postgridindex);
+
+      //video
+      this.hanldVideo(id,postgridindex);
+   
+    }
+
+  }
+
+
+  handlePsotImg(id:string,rowindex:number){
+    // 13 存在 12不存在
+    let isload = this.isLoadimage[id] || "";
+    let rpostImage = document.getElementById(id+"likerow");
+    let postImage:any = document.getElementById(id+"postimglike") || "";
+    //console.log("======="+rowindex+"-"+postImage+"-"+postImage.getBoundingClientRect().top);
+    try {
+      if(id!=''&&postImage!=""&&isload===""&&postImage.getBoundingClientRect().top>0&&postImage.getBoundingClientRect().top<=this.clientHeight){
+        //console.log("======="+rowindex+"-"+postImage.getBoundingClientRect().top+"-"+id+"");
+        rpostImage.style.display = "none";
+        this.isLoadimage[id] = "11";
+       this.feedService.loadPostContentImg(id).then((imagedata)=>{
+            let image = imagedata || "";
+            //console.log("=====ssssssimage"+image);
+            if(image!=""){
+              this.isLoadimage[id] ="13";
+              rpostImage.style.display = "block";
+              //this.images[id] = this.images;
+              this.zone.run(()=>{
+                postImage.setAttribute("src",image);
+                //this.images[id] = this.images;
+              });
+            
+              //rpostImage.style.display = "none";
+            }else{
+              this.zone.run(()=>{
+                //console.log("=====ssssss");
+                this.isLoadimage[id] ="12";
+                rpostImage.style.display = 'none';   
+              })
+            }
+          }).catch(()=>{
+            rpostImage.style.display = 'none'; 
+            console.log("getImageError");
+          })
+      }else{
+        let postImageSrc = postImage.getAttribute("src") || "";
+        if(postImage.getBoundingClientRect().top<-100&&this.isLoadimage[id]==="13"&&postImageSrc!=""){ 
+          //console.log("======="+rowindex);  
+          this.isLoadimage[id] = "";
+          postImage.removeAttribute("src");
+        }
+      }
+    } catch (error) {
+    
+    }
+  }
+
+  hanldVideo(id:string,rowindex:number){
+
+    let  isloadVideoImg  = this.isLoadVideoiamge[id] || "";
+    let  vgplayer = document.getElementById(id+"vgplayerlike");
+    let  video:any = document.getElementById(id+"videolike");
+    let  source = document.getElementById(id+"sourcelike");
+
+    //console.log("======"+rowindex+"-"+video.getBoundingClientRect().top)
+    try {
+      if(id!=''&&isloadVideoImg===""&&video.getBoundingClientRect().top>0&&video.getBoundingClientRect().top<=this.clientHeight){
+        //console.log("========="+rowindex+"==="+video.getBoundingClientRect().top);
+        this.isLoadVideoiamge[id] = "11";
+        vgplayer.style.display = "none";
+        this.feedService.loadVideoPosterImg(id).then((imagedata)=>{
+            let image = imagedata || "";
+            if(image!=""){
+              this.isLoadVideoiamge[id] = "13";
+              vgplayer.style.display = "block";
+              video.setAttribute("poster",image);
+                this.feedService.loadVideo(id).then((data:string)=>{
+                  this.zone.run(()=>{
+                   source.setAttribute("src",data);
+                   video.load();
+                  });
+               
+               }).catch((err)=>{
+                this.isLoadVideoiamge[id] = "12";
+               })
+              //}
+            }else{
+
+              video.style.display='none';
+              vgplayer.style.display = 'none'; 
+            }
+          }).catch(()=>{
+            vgplayer.style.display = 'none'; 
+            console.log("getImageError");
+          });
+      }else{
+        let postSrc =  video.getAttribute("poster") || "";
+        if(video.getBoundingClientRect().top<-100&&this.isLoadVideoiamge[id]==="13"&&postSrc!=""){
+          video.pause();
+          video.removeAttribute("poster");
+          source.removeAttribute("src");
+          this.isLoadVideoiamge[id]="";
+        }
+      }
+    } catch (error) {
+    
+    }
+  }
+
+  refreshImage(){
+    let sid = setTimeout(()=>{
+        this.isLoadimage ={};
+        this.isLoadVideoiamge ={};
+        this.setVisibleareaImage();
+      clearTimeout(sid);
+    },0);
   }
 
 }

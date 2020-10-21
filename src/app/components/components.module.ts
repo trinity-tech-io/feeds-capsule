@@ -19,10 +19,19 @@ import { FollowingComponent} from './following/following.component';
 import { LikesComponent} from './likes/likes.component';
 import { CommentComponent } from './comment/comment.component';
 
+import { VgCoreModule } from 'ngx-videogular';
+import { VgControlsModule } from 'ngx-videogular';
+import { VgOverlayPlayModule } from 'ngx-videogular';
+import { VgBufferingModule } from 'ngx-videogular';
+
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
+    VgCoreModule,
+    VgControlsModule,
+    VgOverlayPlayModule,
+    VgBufferingModule,
     TranslateModule,
     IonicModule,
   ],

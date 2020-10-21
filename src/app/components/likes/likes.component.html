@@ -12,7 +12,7 @@
 </div>
 
 <div *ngIf="likeList.length > 0">
-  <ion-grid *ngFor="let post of likeList let i=index" class="post-grid ion-activatable ripple" [class.darkPostGrid]="theme.darkMode" [class.removeBorder]="post === likeList[likeList.length - 1]">
+  <ion-grid *ngFor="let post of likeList let i=index" class="post-grid ion-activatable ripple postgridlike" [class.darkPostGrid]="theme.darkMode" [class.removeBorder]="post === likeList[likeList.length - 1]" id={{post.nodeId+post.channel_id+post.id}}>
     <ion-row class="post-row">
       <ion-col class="img-col" size="2.5" (click)="navTo(post.nodeId, post.channel_id)">
         <div class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode">
@@ -43,12 +43,66 @@
         <h2 (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)" *ngIf="post.post_status !=1">
           <pre [ngStyle]="styleObj">{{ getContentText(post.content) }}</pre>
         </h2>
-        <img 
+
+        <!-- <img 
           *ngIf="post.post_status != 1 && getImage(post.nodeId, post.channel_id, post.id) != 'none' && getImage(post.nodeId, post.channel_id, post.id) != null && getImage(post.nodeId, post.channel_id, post.id) != 'undefine' && getImage(post.nodeId, post.channel_id, post.id) != 'undefine'"
           src="{{getImage(post.nodeId, post.channel_id, post.id)}}"
           class="post-img"
           (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)"
-        > 
+        >  -->
+
+        <ion-row *ngIf="post.post_status != 1"  id ={{post.nodeId+post.channel_id+post.id}}likerow>
+          <ion-col size="8">
+             <img
+             id ={{post.nodeId+post.channel_id+post.id}}postimglike
+             class="post-img" 
+             />
+          </ion-col>
+          <ion-col size="4"  (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)">
+
+          </ion-col>
+          </ion-row>
+
+             <!--video-->
+
+             <ion-row *ngIf="post.post_status!=1" id={{post.nodeId+post.channel_id+post.id}}vgplayerlike>
+              <ion-col size="8">
+                 <div>
+                 <vg-player style="width:240;height:200px">
+                   <vg-overlay-play></vg-overlay-play>
+                   <vg-buffering></vg-buffering>
+               
+                   <vg-scrub-bar>
+                       <vg-scrub-bar-current-time></vg-scrub-bar-current-time>
+                       <vg-scrub-bar-buffering-time></vg-scrub-bar-buffering-time>
+                   </vg-scrub-bar>
+               
+                   <vg-controls [vgAutohide]="true"> 
+                          <!--<vg-play-pause></vg-play-pause>
+                         <vg-playback-button></vg-playback-button> -->
+               
+                       <!-- <vg-time-display vgProperty="current" vgFormat="mm:ss"></vg-time-display>
+                       <vg-time-display vgProperty="total" vgFormat="mm:ss"></vg-time-display>
+                       <vg-mute></vg-mute> -->
+                       <vg-fullscreen id="ww"></vg-fullscreen>
+                       <vg-time-display vgProperty="current" vgFormat="mm:ss"></vg-time-display>
+                       <vg-time-display vgProperty="total" vgFormat="mm:ss"></vg-time-display>
+                   </vg-controls>
+                
+               <video #media [vgMedia]="media" id ={{post.nodeId+post.channel_id+post.id}}videolike
+                poster=""
+               playsinline webkit-playsinline>
+               <source [src]="" type="video/mp4" id={{post.nodeId+post.channel_id+post.id}}sourcelike>
+               </video>
+               </vg-player>
+               </div>
+              </ion-col>
+              <ion-col size="4">
+  
+              </ion-col>
+           </ion-row>
+      
+
         <ion-row class="bottom-row">
           <ion-col size="2.25" (click)="like(post.nodeId, post.channel_id, post.id)">
             <img [src]="checkMyLike(post.nodeId, post.channel_id, post.id) ? '/assets/images/like-s.svg' : '/assets/images/like.svg'">
@@ -68,75 +122,3 @@
     <ion-ripple-effect></ion-ripple-effect>
   </ion-grid>
 </div>
-
-<!-- <div *ngIf="likeList.length === 0" class="empty-container">
-  <img src="./assets/images/empty-like-icon.svg">
-  <h1>{{ 'common.allempty' | translate }}</h1>
-  <p>{{ 'LikesComponent.emptyLikeDes' | translate }}</p>
-  <ion-row class="btn-row">
-    <ion-button (click)="exploreFeeds()">
-      <ion-label>
-        {{ 'FollowingComponent.exploreFeeds' | translate }}
-      </ion-label>
-    </ion-button>
-  </ion-row>
-</div>
-
-  <div *ngFor="let post of likeList let i=index" [class.darkContainer]="theme.darkMode">
-    <div class="image-text-layout-div" >
-      <ion-card-content class="ion-no-padding ion-no-margin">
-        <div class="menu-div" (click)="menuMore(post.nodeId, post.channel_id)">
-          <img  src="./assets/images/dots-three-vertical.svg" *ngIf="!theme.darkMode" style="width:12.4;height:3px">
-          <img  src="./assets/images/dots-three-vertical-dark.svg" *ngIf="theme.darkMode" style="width:12.4;height:3px">
-        </div>
-        <div class="image-text-div" (click)="navTo(post.nodeId, post.channel_id)">
-            <ion-avatar class="avatar-div" style="position: relative;">
-              <div class="feed-source-card-status circlePosition">
-                <div class="online-circle"  *ngIf="nodeStatus[post.nodeId] == 0"></div>
-                <div class="offline-circle" *ngIf="nodeStatus[post.nodeId] == 1"></div>
-              </div>
-              <img  src={{parseAvatar(post.nodeId,post.channel_id)}}>
-            </ion-avatar>
-
-            <div class="text-div">
-              <div class="text1-div"> 
-                <ion-label class="channel-title-small white" (press)="pressName(post.nodeId, post.channel_id)">{{channelName(post.nodeId, post.channel_id)}}</ion-label>
-                <ion-label class="channel-ts"> {{handleDisplayTime(post.created_at)}}</ion-label>
-              </div>
-              <div  (click)="navTo(post.nodeId, post.channel_id)"> 
-                <ion-label class="channel-desc-small" (press)="pressOwerName(post.nodeId, post.channel_id)">@{{channelOwnerName(post.nodeId, post.channel_id)}}</ion-label>
-              </div>
-            </div>
-        </div>
-
-        <div style="margin-left: 81px;margin-top:-12px">
-
-          <div class="channel-post-div"  (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)" *ngIf="post.post_status === 1"> 
-            <ion-label class="channel-post white"><pre>{{'common.deleted' | translate}}</pre></ion-label>
-          </div>
-
-          <div class="channel-post-div"  (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)" *ngIf="post.post_status != 1"> 
-            <ion-label class="channel-post white"><pre>{{getContentText(post.content)}}</pre></ion-label>
-          </div>
-
-        
-          <ion-avatar  *ngIf="post.post_status != 1 && getImage(post.nodeId, post.channel_id, post.id) != 'none' && getImage(post.nodeId, post.channel_id, post.id) != null && getImage(post.nodeId, post.channel_id, post.id) != 'undefine' && getImage(post.nodeId, post.channel_id, post.id) != undefine" class="content-img-without-margin" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)" style="margin-top: 5px;">
-            <img [src]="getImage(post.nodeId, post.channel_id, post.id)">
-          </ion-avatar>
-          
-          <div class="channel-post-heart-comment-div">
-            <img class="like" [ngClass]="{'like-s': checkMyLike(post.nodeId, post.channel_id, post.id)}" (click)="like(post.nodeId, post.channel_id, post.id)">
-            <ion-label class="like-text" [ngClass]="{'like-s-text': checkMyLike(post.nodeId, post.channel_id, post.id)}" (click)="like(post.nodeId, post.channel_id, post.id)">{{post.likes}}</ion-label>
-
-            <img src="./assets/images/bubble-line.svg" class="comment" (click)="showCommentPage(post.nodeId, post.channel_id, post.id)">
-            <ion-label class="comment-text"  (click)="showCommentPage($event, post.nodeId, post.channel_id, post.id)">{{post.comments}}</ion-label>
-
-            <ion-label class="status" *ngIf="post.post_status === 2" style="right: -5px;">{{ 'common.edit' | translate}} </ion-label>
-
-          </div>
-        </div>
-      </ion-card-content>
-    </div>
-    <div class="line-div white-line" *ngIf="i!=likeList.length-1"></div>
-  </div>
- -->

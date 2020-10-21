@@ -2,7 +2,7 @@
   <div class="offline-header"></div>
 </ion-header>
 
-<ion-content>
+<ion-content (ionScroll)="ionScroll()" [scrollEvents]="true">
   <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" pullFactor="0.5">
     <ion-refresher-content
       class="refresh"
