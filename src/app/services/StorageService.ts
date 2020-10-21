@@ -37,6 +37,31 @@ export class StorageService {
         return this.storage.remove("postContentImg"+nodeChannelPostId);
     }
 
+    saveVideo(nodeChannelPostId:string,content: any):Promise<any>{
+        return this.storage.set("video"+nodeChannelPostId,content);
+    }
+
+    loadVideo(nodeChannelPostId:string){
+        return this.storage.get("video"+nodeChannelPostId);
+    }
+
+    removeViedo(nodeChannelPostId:string){
+      return this.storage.remove("video"+nodeChannelPostId); 
+    }
+
+
+    saveVideoPosterImg(nodeChannelPostId:string,content: any):Promise<any>{
+        return this.storage.set("videoPosterImg"+nodeChannelPostId,content);
+    }
+
+    loadVideoPosterImg(nodeChannelPostId:string){
+        return this.storage.get("videoPosterImg"+nodeChannelPostId);
+    }
+
+    removeViedoPosterImg(nodeChannelPostId:string){
+      return this.storage.remove("videoPosterImg"+nodeChannelPostId); 
+    }
+
     setInfo(){
     }
 

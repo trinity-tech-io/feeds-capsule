@@ -7,6 +7,11 @@ import { IonicModule } from '@ionic/angular';
 import { PostdetailPage } from './postdetail.page';
 import { ComponentsModule } from 'src/app/components/components.module';
 
+import { VgCoreModule } from 'ngx-videogular';
+import { VgControlsModule } from 'ngx-videogular';
+import { VgOverlayPlayModule } from 'ngx-videogular';
+import { VgBufferingModule } from 'ngx-videogular';
+
 const routes: Routes = [
   {
     path: '',
@@ -17,9 +22,14 @@ const routes: Routes = [
 @NgModule({
   imports: [
     CommonModule,
+    VgCoreModule,
+    VgControlsModule,
+    VgOverlayPlayModule,
+    VgBufferingModule,
     FormsModule,
     TranslateModule,
     IonicModule,
+
     ComponentsModule,
     RouterModule.forChild(routes),
   ],

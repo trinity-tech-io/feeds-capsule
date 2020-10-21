@@ -67,11 +67,56 @@
             class="post-img"
             (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)"
           >  -->
-          <img *ngIf="post.post_status!=1" 
-            id ={{post.nodeId+post.channel_id+post.id}}postimg
-            class="post-img"
-            (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)"
-          >
+          <ion-row  *ngIf="post.post_status!=1">
+            <ion-col size="8">
+              <img
+              id ={{post.nodeId+post.channel_id+post.id}}postimg
+              class="post-img"
+              (click)="showBigImage(post.nodeId+post.channel_id+post.id)"
+            >
+            </ion-col>
+            <ion-col size="4"  (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)">
+
+            </ion-col>
+          </ion-row>
+
+          <ion-row *ngIf="post.post_status!=1" id={{post.nodeId+post.channel_id+post.id}}vgplayer>
+             <ion-col size="8">
+                <div>
+                <vg-player style="width:240;height:200px">
+                  <vg-overlay-play></vg-overlay-play>
+                  <vg-buffering></vg-buffering>
+              
+                  <vg-scrub-bar>
+                      <vg-scrub-bar-current-time></vg-scrub-bar-current-time>
+                      <vg-scrub-bar-buffering-time></vg-scrub-bar-buffering-time>
+                  </vg-scrub-bar>
+              
+                  <vg-controls [vgAutohide]="true"> 
+                         <!--<vg-play-pause></vg-play-pause>
+                        <vg-playback-button></vg-playback-button> -->
+              
+                      <!-- <vg-time-display vgProperty="current" vgFormat="mm:ss"></vg-time-display>
+                      <vg-time-display vgProperty="total" vgFormat="mm:ss"></vg-time-display>
+                      <vg-mute></vg-mute> -->
+                      <vg-fullscreen id="ww"></vg-fullscreen>
+                      <vg-time-display vgProperty="current" vgFormat="mm:ss"></vg-time-display>
+                      <vg-time-display vgProperty="total" vgFormat="mm:ss"></vg-time-display>
+                  </vg-controls>
+               
+              <video #media [vgMedia]="media" id ={{post.nodeId+post.channel_id+post.id}}video
+               poster=""
+              playsinline webkit-playsinline>
+              <source [src]="" type="video/mp4" id={{post.nodeId+post.channel_id+post.id}}source>
+              </video>
+              </vg-player>
+              </div>
+             </ion-col>
+             <ion-col size="4">
+
+             </ion-col>
+          </ion-row>
+        
           <ion-row class="bottom-row">
             <ion-col size="2.25" (click)="like(post.nodeId, post.channel_id, post.id)">
               <img [src]="checkMyLike(post.nodeId, post.channel_id, post.id) ? '/assets/images/like-s.svg' : '/assets/images/like.svg'">
@@ -97,6 +142,7 @@
       loadingSpinner="crescent"
     >
     </ion-infinite-scroll-content>
+
   </ion-infinite-scroll>
 
 </ion-content>
@@ -111,4 +157,3 @@
   [channelName]="channelName"
   (hideComment)="hideComponent($event)"
 ></app-comment>
-

@@ -4636,5 +4636,15 @@ export class FeedService {
     }
     this.sessionService.streamAddData(nodeId, valueData.subarray(currentSlice*step, valueData.length));
   }
+  
+  //videoPoster 
+  loadVideoPosterImg(nodeChannelPostId: string):Promise<any>{
+    return this.storeService.loadVideoPosterImg(nodeChannelPostId);
+  }
+
+  //video
+  loadVideo(nodeChannelPostId: string):Promise<any>{
+    return this.storeService.loadVideo(nodeChannelPostId);
+  }
 
 }

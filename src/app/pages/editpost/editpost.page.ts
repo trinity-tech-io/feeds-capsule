@@ -1,11 +1,13 @@
-import { Component, OnInit, NgZone } from '@angular/core';
-import { NavController, Events } from '@ionic/angular';
+import { Component, OnInit, NgZone} from '@angular/core';
+import { Events } from '@ionic/angular';
 import { FeedService } from 'src/app/services/FeedService';
 import { ActivatedRoute } from '@angular/router';
 import { NativeService } from '../../services/NativeService';
 import { CameraService } from 'src/app/services/CameraService';
 import { ThemeService } from '../../services/theme.service';
 import { TranslateService } from "@ngx-translate/core";
+import { StorageService } from 'src/app/services/StorageService';
+import { VgFullscreenAPI } from 'ngx-videogular';
 import * as _ from 'lodash';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 @Component({
@@ -14,7 +16,6 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
   styleUrls: ['./editpost.page.scss'],
 })
 export class EditpostPage implements OnInit {
-
   public connectionStatus = 1;
   public nodeStatus = {};
   public channelAvatar = "";
@@ -37,12 +38,13 @@ export class EditpostPage implements OnInit {
     private events: Events,
     private native: NativeService,
     private acRoute: ActivatedRoute,
-    private navCtrl: NavController,
     private camera: CameraService,
     private zone: NgZone,
     private feedService: FeedService,
     public theme:ThemeService,
-    private translate:TranslateService
+    private translate:TranslateService,
+    public vgFullscreenAPI:VgFullscreenAPI,
+    public storageService:StorageService 
   ) {
   }
 
@@ -135,7 +137,7 @@ export class EditpostPage implements OnInit {
     let myContent = {};
     myContent["text"] = this.newPost;
     myContent["img"] = this.imgUrl;
-
+    this.storageService.saveVideoPosterImg(this.nodeId+this.channelId+this.postId,this.posterImg);
     this.feedService.editPost(this.nodeId,Number(this.channelId),Number(this.postId),myContent);
     //add edit post     
   }  
@@ -254,9 +256,21 @@ export class EditpostPage implements OnInit {
 
                this.zone.run(()=>{
                  this.flieUri = fileReader.result;
+
+                 this.storageService.saveVideo("Av2VTUfG6Vs7EDpxvYicY3W39FbHipBsxYg7rs6hd8Dk110",this.flieUri).then(()=>{
+                  console.log("===11111===");
+                }).catch((err)=>{
+               console.log("2222222"+JSON.stringify(err));
+               });
                  
                  let sid = setTimeout(()=>{
                   //let img = new Image;
+                 let obj = document.getElementById("ww");
+                 obj.onclick=(obj:any)=>{
+                    //alert("===onChangeFullscreen===="+obj.isFullscreen);
+                    //obj.onChangeFullscreen(false);
+                    this.vgFullscreenAPI.toggleFullscreen(obj);
+                  };
                   let video:any = document.getElementById('singleVideo');
                   video.setAttribute('crossOrigin', 'anonymous')
                   let canvas = document.createElement('canvas');
@@ -264,7 +278,7 @@ export class EditpostPage implements OnInit {
                   canvas.height = video.clientHeight
                   video.onloadeddata = (() => {
                     canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height)
-                    this.posterImg= canvas.toDataURL("image/png");      
+                    this.posterImg= canvas.toDataURL("image/png",30);      
                     video.setAttribute("poster",this.posterImg);
                   });
                   clearInterval(sid);
@@ -293,4 +307,8 @@ export class EditpostPage implements OnInit {
             console.log("=====pathErr====="+JSON.stringify(err));
       });
   }
+
+  onChangeFullscreen(){
+    alert("===onChangeFullscreen====");
+  };
 }
