@@ -1,4 +1,4 @@
-import { Component, OnInit, NgZone,ViewChild} from '@angular/core';
+import { Component, OnInit, NgZone,ViewChild,ElementRef} from '@angular/core';
 import { Events} from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
 import { FeedService } from 'src/app/services/FeedService';
@@ -46,12 +46,20 @@ export class ChannelsPage implements OnInit {
   public curPost:any = {};
   public styleObj:any = {width:""};
 
+
   public hideComment = true;
   
   // For comment component
   public postId = null;
 
+  public clientHeight:number = 0;
+  public isLoadimage:any ={};
+  public isLoadVideoiamge:any = {};
+  public videoIamges:any ={};
+
+
   constructor(
+    private elmRef: ElementRef,
     private popoverController:PopoverController,
     private zone: NgZone,
     private events: Events,
@@ -121,9 +129,11 @@ export class ChannelsPage implements OnInit {
       if(this.startIndex === 0){
         this.startIndex++;
       }
+      this.refreshImage();
     }else{
       this.postList = this.totalData.slice(0,this.totalData.length);
       this.infiniteScroll.disabled =true;
+      this.refreshImage();
     }
   }
 
@@ -141,13 +151,12 @@ export class ChannelsPage implements OnInit {
 
   }
   ionViewWillEnter() {
+    this.clientHeight =screen.availHeight;
     this.initTitle();
     this.native.setTitleBarBackKeyShown(true);
     
     this.styleObj.width = (screen.width - 105)+'px';
-    //this.startIndex = 0;
     this.init();
-    //this.scrollToTop(1);
     this.events.subscribe('feeds:connectionChanged',(status)=>{
       this.zone.run(() => {
         this.connectionStatus = status;
@@ -181,11 +190,13 @@ export class ChannelsPage implements OnInit {
     });
 
     this.events.subscribe('feeds:editPostFinish',()=>{
+      this.refreshImage();
         this.initRefresh();
     });
 
     this.events.subscribe('feeds:deletePostFinish',()=>{
        this.native.hideLoading();
+       this.refreshImage();
        this.initRefresh();
     });
   }
@@ -204,6 +215,8 @@ export class ChannelsPage implements OnInit {
   }
 
   ionViewDidEnter() {
+    //this.setVisibleareaImage();
+    //this.refreshImage();
   }
 
   initTitle(){
@@ -360,19 +373,19 @@ export class ChannelsPage implements OnInit {
     return await this.popover.present();
   }
 
-  getImage(nodeId: string, channelId: number, postId: number){
-    let nodeChannelPostId = nodeId + channelId + postId;
-    let img = this.images[nodeChannelPostId] || "";
-    if (img == ""){
-      this.images[nodeChannelPostId] = "undefine";
-      this.feedService.loadPostContentImg(nodeChannelPostId).then((image)=>{
-        this.images[nodeChannelPostId] = image||"none";
-      }).catch(()=>{
-        console.log("getImageError");
-      })
-    }
-    return this.images[nodeChannelPostId];
-  }
+  // getImage(nodeId: string, channelId: number, postId: number){
+  //   let nodeChannelPostId = nodeId + channelId + postId;
+  //   let img = this.images[nodeChannelPostId] || "";
+  //   if (img == ""){
+  //     this.images[nodeChannelPostId] = "undefine";
+  //     this.feedService.loadPostContentImg(nodeChannelPostId).then((image)=>{
+  //       this.images[nodeChannelPostId] = image||"none";
+  //     }).catch(()=>{
+  //       console.log("getImageError");
+  //     })
+  //   }
+  //   return this.images[nodeChannelPostId];
+  // }
 
 
   doRefresh(event:any){
@@ -382,6 +395,7 @@ export class ChannelsPage implements OnInit {
       this.init();
       this.initStatus(this.postList);
       event.target.complete();
+      this.refreshImage();
       clearTimeout(sId);
     },500);
   }
@@ -395,6 +409,7 @@ export class ChannelsPage implements OnInit {
        this.zone.run(()=>{
         this.initStatus(arr);
         this.postList = this.postList.concat(arr);
+        this.refreshImage();
        });
        event.target.complete();
       }else{
@@ -404,6 +419,7 @@ export class ChannelsPage implements OnInit {
           this.postList =  this.postList.concat(arr);
        });
        this.infiniteScroll.disabled =true;
+       this.refreshImage();
        event.target.complete();
        clearTimeout(sId);
       }
@@ -487,6 +503,136 @@ export class ChannelsPage implements OnInit {
     console.log('Hide comment component?', event);
     this.postId = null;
     this.hideComment = true;
+  }
+
+  ionScroll(){
+    this.setVisibleareaImage();
+  }
+
+  setVisibleareaImage(){
+
+    let postgridList = document.getElementsByClassName("channelgird");
+    let postgridNum = document.getElementsByClassName("channelgird").length;
+    console.log("====postgridNum====="+postgridNum);
+    for(let postgridindex =0;postgridindex<postgridNum;postgridindex++){ 
+      let id = postgridList[postgridindex].getAttribute("id") || '';
+      //postImg
+      this.handlePsotImg(id,postgridindex);
+
+      //video
+      this.hanldVideo(id,postgridindex);
+   
+    }
+
+  }
+
+  handlePsotImg(id:string,rowindex:number){
+    // 13 存在 12不存在
+    let isload = this.isLoadimage[id] || "";
+    let rpostImage = document.getElementById(id+"channelrow");
+    let postImage:any = document.getElementById(id+"postimgchannel") || "";
+    //console.log("======="+rowindex+"-"+postImage+"-"+postImage.getBoundingClientRect().top);
+    try {
+      if(id!=''&&postImage!=""&&isload===""&&postImage.getBoundingClientRect().top>=0&&postImage.getBoundingClientRect().top<=this.clientHeight){
+        //console.log("======="+rowindex+"-"+postImage.getBoundingClientRect().top+"-"+id+"");
+        rpostImage.style.display = "none";
+        this.isLoadimage[id] = "11";
+       this.feedService.loadPostContentImg(id).then((imagedata)=>{
+            let image = imagedata || "";
+            //console.log("=====ssssssimage"+image);
+            if(image!=""){
+              this.isLoadimage[id] ="13";
+              rpostImage.style.display = "block";
+              //this.images[id] = this.images;
+              this.zone.run(()=>{
+                postImage.setAttribute("src",image);
+                //this.images[id] = this.images;
+              });
+            
+              //rpostImage.style.display = "none";
+            }else{
+              this.zone.run(()=>{
+                //console.log("=====ssssss");
+                this.isLoadimage[id] ="12";
+                rpostImage.style.display = 'none';   
+              })
+            }
+          }).catch(()=>{
+            rpostImage.style.display = 'none'; 
+            console.log("getImageError");
+          })
+      }else{
+        let postImageSrc = postImage.getAttribute("src") || "";
+        if(postImage.getBoundingClientRect().top<-100&&this.isLoadimage[id]==="13"&&postImageSrc!=""){ 
+          //console.log("======="+rowindex);  
+          this.isLoadimage[id] = "";
+          postImage.removeAttribute("src");
+        }
+      }
+    } catch (error) {
+    
+    }
+  }
+
+  hanldVideo(id:string,rowindex:number){
+
+    let  isloadVideoImg  = this.isLoadVideoiamge[id] || "";
+    let  vgplayer = document.getElementById(id+"vgplayerchannel");
+    let  video:any = document.getElementById(id+"videochannel");
+    let  source = document.getElementById(id+"sourcechannel");
+
+    console.log("======"+rowindex+"-"+video.getBoundingClientRect().top)
+    try {
+      if(id!=''&&isloadVideoImg===""&&video.getBoundingClientRect().top>0&&video.getBoundingClientRect().top<=this.clientHeight){
+        //console.log("========="+rowindex+"==="+video.getBoundingClientRect().top);
+        this.isLoadVideoiamge[id] = "11";
+        vgplayer.style.display = "none";
+        this.feedService.loadVideoPosterImg(id).then((imagedata)=>{
+            let image = imagedata || "";
+            if(image!=""){
+              this.isLoadVideoiamge[id] = "13";
+              vgplayer.style.display = "block";
+              video.setAttribute("poster",image);
+                this.feedService.loadVideo(id).then((data:string)=>{
+                  this.zone.run(()=>{
+                   source.setAttribute("src",data);
+                   video.load();
+                  });
+               
+               }).catch((err)=>{
+                this.isLoadVideoiamge[id] = "12";
+               })
+              //}
+            }else{
+
+              video.style.display='none';
+              vgplayer.style.display = 'none'; 
+            }
+          }).catch(()=>{
+            vgplayer.style.display = 'none'; 
+            console.log("getImageError");
+          });
+      }else{
+        let postSrc =  video.getAttribute("poster") || "";
+        if(video.getBoundingClientRect().top<-100&&this.isLoadVideoiamge[id]==="13"&&postSrc!=""){
+          video.pause();
+          video.removeAttribute("poster");
+          source.removeAttribute("src");
+          this.isLoadVideoiamge[id]="";
+        }
+      }
+    } catch (error) {
+    
+    }
+  }
+
+  refreshImage(){
+    let sid = setTimeout(()=>{
+        this.isLoadimage ={};
+        this.isLoadVideoiamge ={};
+        this.setVisibleareaImage();
+      clearTimeout(sid);
+    },0);
   }
 
 }
