@@ -31,7 +31,7 @@
   <!-- HAS POSTS  -->
   <div *ngIf="postList.length > 0">
     <ion-grid *ngFor="let post of postList let i=index" class="post-grid ion-activatable ripple" [class.darkPostGrid]="theme.darkMode" [class.blur]="!hideComment" id={{post.nodeId+post.channel_id+post.id}}>
-      <ion-row class="post-row" id={{post.nodeId+post.channel_id+post.id}}postrow>
+      <ion-row class="post-row">
         <ion-col class="img-col" size="2.5">
           <div class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode" (click)="navTo(post.nodeId, post.channel_id)">
             <img src={{parseAvatar(post.nodeId,post.channel_id)}}>
@@ -67,7 +67,7 @@
             class="post-img"
             (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)"
           >  -->
-          <ion-row  *ngIf="post.post_status!=1">
+          <ion-row  *ngIf="post.post_status!=1" id={{post.nodeId+post.channel_id+post.id}}rpostimg>
             <ion-col size="8">
               <img
               id ={{post.nodeId+post.channel_id+post.id}}postimg

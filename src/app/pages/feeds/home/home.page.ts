@@ -9,8 +9,6 @@ import { UtilService } from 'src/app/services/utilService';
 import { TranslateService } from "@ngx-translate/core";
 import { NativeService } from 'src/app/services/NativeService';
 import { IonInfiniteScroll } from '@ionic/angular';
-import { StorageService } from 'src/app/services/StorageService';
-import { timeStamp } from 'console';
 @Component({
   selector: 'app-home',
   templateUrl: './home.page.html',
@@ -59,16 +57,13 @@ export class HomePage implements OnInit {
     public theme:ThemeService,
     private translate:TranslateService,
     private native:NativeService,
-    private menuService: MenuService,
-    public  storageService:StorageService
+    private menuService: MenuService
   ) {}
 
   ionViewWillEnter() {
     this.refreshImage(); 
     this.styleObj.width = (screen.width - 105)+'px';
     this.clientHeight =screen.availHeight;
-    console.log("=====this.clientHeight====="+this.clientHeight);
-    console.log("=====screen.height====="+screen.height);
     this.startIndex = 0;
     this.totalData = this.feedService.getPostList() || [];
     this.connectionStatus = this.feedService.getConnectionStatus();
@@ -505,29 +500,30 @@ export class HomePage implements OnInit {
   handlePsotImg(id:string,rowindex:number){
     // 13 存在 12不存在
     let isload = this.isLoadimage[id] || "";
+    let rpostimg = document.getElementById(id+"rpostimg");
     let postImage = document.getElementById(id+"postimg");
     try {
       if(id!=''&&isload===""&&postImage.getBoundingClientRect().top>0&&postImage.getBoundingClientRect().top<=this.clientHeight){
         //console.log("======="+rowindex+"-"+postImage.getBoundingClientRect().top);
-        postImage.style.display = "none";
+        rpostimg.style.display = "none";
         this.isLoadimage[id] = "11";
        this.feedService.loadPostContentImg(id).then((imagedata)=>{
             let image = imagedata || "";
             if(image!=""){
               this.isLoadimage[id] ="13";
-              postImage.style.display = "block";
+              rpostimg.style.display = "block";
               postImage.setAttribute("src",image);
             }else{
               this.isLoadimage[id] ="12";
-              postImage.style.display = 'none'; 
+              rpostimg.style.display = 'none'; 
             }
           }).catch(()=>{
-            postImage.style.display = 'none'; 
+            rpostimg.style.display = 'none'; 
             console.log("getImageError");
           })
       }else{
          let postImageSrc = postImage.getAttribute("src") || "";
-        if(postImage.getBoundingClientRect().top<-100&&postImageSrc&&this.isLoadimage[id]==="13"&&postImageSrc!=""){ 
+        if(postImage.getBoundingClientRect().top<-100&&this.isLoadimage[id]==="13"&&postImageSrc!=""){ 
           //console.log("======="+rowindex);  
           this.isLoadimage[id] = "";
           postImage.removeAttribute("src");
@@ -549,13 +545,13 @@ export class HomePage implements OnInit {
         //console.log("========="+rowindex+"==="+video.getBoundingClientRect().top);
         this.isLoadVideoiamge[id] = "11";
         vgplayer.style.display = "none";
-        this.storageService.loadVideoPosterImg(id).then((imagedata)=>{
+        this.feedService.loadVideoPosterImg(id).then((imagedata)=>{
             let image = imagedata || "";
             if(image!=""){
               this.isLoadVideoiamge[id] = "13";
               vgplayer.style.display = "block";
               video.setAttribute("poster",image);
-                this.storageService.loadVideo(id).then((data:string)=>{
+                this.feedService.loadVideo(id).then((data:string)=>{
                   this.zone.run(()=>{
                    source.setAttribute("src",data);
                    video.load();
@@ -577,9 +573,9 @@ export class HomePage implements OnInit {
       }else{
         let postSrc =  video.getAttribute("poster") || "";
         if(video.getBoundingClientRect().top<-100&&this.isLoadVideoiamge[id]==="13"&&postSrc!=""){
+          video.pause();
           video.removeAttribute("poster");
           source.removeAttribute("src");
-          video.load();
           this.isLoadVideoiamge[id]="";
         }
       }

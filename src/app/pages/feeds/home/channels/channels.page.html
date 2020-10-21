@@ -2,7 +2,7 @@
   <div class="offline-header"></div>
 </ion-header>
 
-<ion-content [class.darkContainer]="theme.darkMode" [class.blur]="!hideComment" [ngClass]="{'translucent-mask': isShowPrompt}">
+<ion-content [class.darkContainer]="theme.darkMode" [class.blur]="!hideComment" [ngClass]="{'translucent-mask': isShowPrompt}" (ionScroll)="ionScroll()" [scrollEvents]="true">
     
   <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" pullFactor="0.5">
     <ion-refresher-content
@@ -53,7 +53,7 @@
 
   <!-- POSTS -->
   <div *ngIf="postList.length > 0">
-    <ion-grid *ngFor="let post of postList let i=index" class="post-grid ion-activatable ripple" [class.darkPostGrid]="theme.darkMode">
+    <ion-grid *ngFor="let post of postList let i=index" class="post-grid ion-activatable ripple channelgird" [class.darkPostGrid]="theme.darkMode" id={{post.nodeId+post.channel_id+post.id}}>
       <ion-row class="post-row">
         <ion-col class="img-col" size="2.5">
           <div class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode">
@@ -81,12 +81,64 @@
           <h2 *ngIf="post.post_status != 1"  (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)">
             <pre [ngStyle]="styleObj">{{ getContentText(post.content) }}</pre>
           </h2>
-          <img 
+          <!-- <img 
            *ngIf="post.post_status != 1 && getImage(post.nodeId,post.channel_id,post.id) != 'none'  && getImage(post.nodeId,post.channel_id,post.id) != 'undefine' && getImage(post.nodeId,post.channel_id,post.id)  != null && getImage(post.nodeId,post.channel_id,post.id)  != 'undefine'"
             src="{{getImage(post.nodeId, post.channel_id, post.id)}}"
             class="post-img"
             (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)"
-          > 
+          >  -->
+
+          <ion-row *ngIf="post.post_status != 1"  id ={{post.nodeId+post.channel_id+post.id}}channelrow>
+               <ion-col size="8">
+                  <img
+                  id ={{post.nodeId+post.channel_id+post.id}}postimgchannel
+                  class="post-img" 
+                  />
+               </ion-col>
+               <ion-col size="4"  (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)">
+
+               </ion-col>
+          </ion-row>
+
+          <!--video-->
+
+          <ion-row *ngIf="post.post_status!=1" id={{post.nodeId+post.channel_id+post.id}}vgplayerchannel>
+            <ion-col size="8">
+               <div>
+               <vg-player style="width:240;height:200px">
+                 <vg-overlay-play></vg-overlay-play>
+                 <vg-buffering></vg-buffering>
+             
+                 <vg-scrub-bar>
+                     <vg-scrub-bar-current-time></vg-scrub-bar-current-time>
+                     <vg-scrub-bar-buffering-time></vg-scrub-bar-buffering-time>
+                 </vg-scrub-bar>
+             
+                 <vg-controls [vgAutohide]="true"> 
+                        <!--<vg-play-pause></vg-play-pause>
+                       <vg-playback-button></vg-playback-button> -->
+             
+                     <!-- <vg-time-display vgProperty="current" vgFormat="mm:ss"></vg-time-display>
+                     <vg-time-display vgProperty="total" vgFormat="mm:ss"></vg-time-display>
+                     <vg-mute></vg-mute> -->
+                     <vg-fullscreen id="ww"></vg-fullscreen>
+                     <vg-time-display vgProperty="current" vgFormat="mm:ss"></vg-time-display>
+                     <vg-time-display vgProperty="total" vgFormat="mm:ss"></vg-time-display>
+                 </vg-controls>
+              
+             <video #media [vgMedia]="media" id ={{post.nodeId+post.channel_id+post.id}}videochannel
+              poster=""
+             playsinline webkit-playsinline>
+             <source [src]="" type="video/mp4" id={{post.nodeId+post.channel_id+post.id}}sourcechannel>
+             </video>
+             </vg-player>
+             </div>
+            </ion-col>
+            <ion-col size="4">
+
+            </ion-col>
+         </ion-row>
+
           <ion-row class="bottom-row">
             <ion-col size="2.25" (click)="like(post.nodeId, post.channel_id, post.id)">
               <img [src]="checkMyLike(post.nodeId, post.channel_id, post.id) ? '/assets/images/like-s.svg' : '/assets/images/like.svg'">
