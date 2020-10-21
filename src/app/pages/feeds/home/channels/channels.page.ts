@@ -581,9 +581,9 @@ export class ChannelsPage implements OnInit {
     let  video:any = document.getElementById(id+"videochannel");
     let  source = document.getElementById(id+"sourcechannel");
 
-    console.log("======"+rowindex+"-"+video.getBoundingClientRect().top)
+    //console.log("======"+rowindex+"-"+video.getBoundingClientRect().top)
     try {
-      if(id!=''&&isloadVideoImg===""&&video.getBoundingClientRect().top>0&&video.getBoundingClientRect().top<=this.clientHeight){
+      if(id!=''&&isloadVideoImg===""&&video.getBoundingClientRect().top>=0&&video.getBoundingClientRect().top<=this.clientHeight){
         //console.log("========="+rowindex+"==="+video.getBoundingClientRect().top);
         this.isLoadVideoiamge[id] = "11";
         vgplayer.style.display = "none";

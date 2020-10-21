@@ -7,8 +7,11 @@ import { IonicModule } from '@ionic/angular';
 
 import { ProfilePage } from './profile.page';
 
-// import { PostfromComponentPageModule } from '../../../components/postfrom/postfrom.component.module'
-// import { PostfromComponent } from '../../../components/postfrom/postfrom.component'
+import { VgCoreModule } from 'ngx-videogular';
+import { VgControlsModule } from 'ngx-videogular';
+import { VgOverlayPlayModule } from 'ngx-videogular';
+import { VgBufferingModule } from 'ngx-videogular';
+
 import {ComponentsModule} from '../../../components/components.module'
 const routes: Routes = [
   {
@@ -21,8 +24,10 @@ const routes: Routes = [
 @NgModule({
   declarations: [ProfilePage],
   imports: [
-    // ProfilePage.forChild(PostfromComponentPageModule),
-    // PostfromComponentPageModule,
+    VgCoreModule,
+    VgControlsModule,
+    VgOverlayPlayModule,
+    VgBufferingModule,
     ComponentsModule,
     CommonModule,
     FormsModule,

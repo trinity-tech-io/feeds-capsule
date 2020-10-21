@@ -257,7 +257,7 @@ export class EditpostPage implements OnInit {
                this.zone.run(()=>{
                  this.flieUri = fileReader.result;
 
-                 this.storageService.saveVideo("Av2VTUfG6Vs7EDpxvYicY3W39FbHipBsxYg7rs6hd8Dk110",this.flieUri).then(()=>{
+                 this.storageService.saveVideo(this.nodeId+this.channelId+this.postId,this.flieUri).then(()=>{
                   console.log("===11111===");
                 }).catch((err)=>{
                console.log("2222222"+JSON.stringify(err));
