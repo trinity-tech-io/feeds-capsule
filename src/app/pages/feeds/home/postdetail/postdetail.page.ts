@@ -1,4 +1,4 @@
-import { Component, OnInit, NgZone,ViewChild} from '@angular/core';
+import { Component, OnInit, NgZone,ViewChild,ElementRef} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Events} from '@ionic/angular';
 import { FeedService } from 'src/app/services/FeedService';
@@ -9,7 +9,9 @@ import { TranslateService } from "@ngx-translate/core";
 import { UtilService } from 'src/app/services/utilService';
 import { IonInfiniteScroll,PopoverController} from '@ionic/angular';
 import { EdittoolComponent } from '../../../../components/edittool/edittool.component';
+
 import { SessionService } from 'src/app/services/SessionService';
+import { VgFullscreenAPI} from 'ngx-videogular';
 
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
@@ -51,7 +53,13 @@ export class PostdetailPage implements OnInit {
   public dstyleObj:any = {width:""};
 
   public hideComment = true;
-  private ready = false;
+  
+  //public videoObj:any ={};
+  public videoPoster:string ="";
+  public posterImg:string ="";
+  public viedoObj:string ="";
+  public videoisShow:boolean = true;
+
   constructor(
     private popoverController:PopoverController,
     private acRoute: ActivatedRoute,
@@ -62,8 +70,9 @@ export class PostdetailPage implements OnInit {
     public theme:ThemeService,
     private translate:TranslateService,
     public menuService: MenuService,
-    private sessionService: SessionService
-  ) {
+    private sessionService: SessionService,
+    public vgFullscreenAPI:VgFullscreenAPI,
+    public el:ElementRef) {
   }
 
   initData(){
@@ -113,7 +122,6 @@ export class PostdetailPage implements OnInit {
   ionViewWillEnter() {
     this.initTitle();
     this.native.setTitleBarBackKeyShown(true);
-    
     this.styleObj.width = (screen.width - 55)+'px';
     this.dstyleObj.width= (screen.width - 105)+'px';
     this.initData();
@@ -207,6 +215,15 @@ export class PostdetailPage implements OnInit {
   }
 
   ionViewDidEnter() {
+    //alert("ssssssss");
+    // let sid = setTimeout(()=>{
+    //   this.getVideoPoster("sss");
+    //   //clearTimeout(sid);
+    // },0);
+
+    //this.getVideoPoster("sss");
+  
+   
   }
 
  
@@ -455,16 +472,11 @@ export class PostdetailPage implements OnInit {
     this.hideComment = true;
   }
 
+
   newSession(){
     
     this.events.subscribe("stream:onStateChangedCallback",(nodeId, stateName)=>{
-      if (this.nodeId === nodeId){
-        if (stateName === "connecting"){
-          this.ready = true;
-        }else{
-          this.ready = false;
-        }
-      }
+
     });
     this.sessionService.createSession(this.nodeId,(session,stream)=>{});
   }
@@ -472,7 +484,6 @@ export class PostdetailPage implements OnInit {
   writeData(){
     let nodeChannelPostId = this.nodeId+this.channelId+this.postId;;
     console.log("image = "+this.images[nodeChannelPostId] );
-    console.log("ready = "+this.ready );
 
     // if (this.ready){
       this.feedService.setBinary(this.nodeId,nodeChannelPostId,this.images[nodeChannelPostId],"accesstoken");
@@ -487,5 +498,38 @@ export class PostdetailPage implements OnInit {
   closeSession(){
     // this.sessionService.sessionClose(this.nodeId);
     // let size = this.sessionService.streamAddRequestHeadSize(this.nodeId,0x9999);
+  }
+
+  getVideoPoster(id:string){
+    this.feedService.loadVideoPosterImg(id).then((imagedata)=>{
+      let image = imagedata || "";
+      if(image!=""){
+            this.feedService.loadVideo(id).then((videodata:string)=>{
+              this.zone.run(()=>{
+                    this.viedoObj = videodata;
+                   let video:any =  this.el.nativeElement.querySelector("video");
+                   video.load();
+                  })
+            }).catch(()=>{
+
+            });
+        this.zone.run(()=>{
+            this.posterImg = imagedata;  
+        })
+      }else{
+        this.videoisShow = false;
+      }
+   }).catch((err)=>{
+
+   })
+  }
+
+  onPlayerReady(id:string) {
+    this.getVideoPoster(id);
+  }
+
+  clearVideo(){
+    this.posterImg ="";
+    this.viedoObj ="";
   }
 }

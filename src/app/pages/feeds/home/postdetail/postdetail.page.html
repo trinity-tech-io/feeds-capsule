@@ -53,7 +53,38 @@
             [src]="images[nodeId+channelId+postId]"
             class="post-img"
             (click)="showBigImage(images[nodeId+channelId+postId])"
-          > 
+          >
+
+          <!---video-->
+        <div *ngIf="postStatus != 1&&videoisShow">
+          <vg-player style="width:100%;height:200px;margin:0px auto;" (onPlayerReady)="onPlayerReady(nodeId+channelId+postId)">
+            <vg-overlay-play></vg-overlay-play>
+            <vg-buffering></vg-buffering>
+        
+            <vg-scrub-bar>
+                <vg-scrub-bar-current-time></vg-scrub-bar-current-time>
+                <vg-scrub-bar-buffering-time></vg-scrub-bar-buffering-time>
+            </vg-scrub-bar>
+        
+            <vg-controls [vgAutohide]="true" [vgAutohideTime]="5"> 
+                        <vg-play-pause></vg-play-pause>
+                          <!-- <vg-playback-button></vg-playback-button> -->
+              
+                <vg-time-display vgProperty="current" vgFormat="mm:ss"></vg-time-display>
+                <vg-time-display vgProperty="total" vgFormat="mm:ss"></vg-time-display>
+                <vg-mute></vg-mute>
+                <vg-fullscreen></vg-fullscreen>
+            </vg-controls>
+         
+        <video #media [vgMedia]="media" 
+        id={{nodeId+channelId+postId}}video
+        [poster]="posterImg"
+        playsinline webkit-playsinline>
+        <source [src]="viedoObj" type="video/mp4" id={{nodeId+channelId+postId}}source>
+        </video>
+        </vg-player>
+      </div>
+
         </ion-col>
       </ion-row>
       <ion-row class="bottom-row">
@@ -138,7 +169,6 @@
         loadingText="{{'common.loadingText'|translate}}">
       </ion-infinite-scroll-content>
     </ion-infinite-scroll>
-
   </div> 
 </ion-content>
 

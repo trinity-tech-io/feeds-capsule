@@ -9,6 +9,8 @@ import { UtilService } from 'src/app/services/utilService';
 import { TranslateService } from "@ngx-translate/core";
 import { NativeService } from 'src/app/services/NativeService';
 import { IonInfiniteScroll } from '@ionic/angular';
+import { StorageService } from 'src/app/services/StorageService';
+import { timeStamp } from 'console';
 @Component({
   selector: 'app-home',
   templateUrl: './home.page.html',
@@ -44,6 +46,9 @@ export class HomePage implements OnInit {
   public clientHeight:number = 0;
   public isLoadimage:any ={};
 
+  public isLoadVideoiamge:any = {};
+  public videoIamges:any ={};
+
   constructor(
     private elmRef: ElementRef,
     private feedspage: FeedsPage,
@@ -54,10 +59,12 @@ export class HomePage implements OnInit {
     public theme:ThemeService,
     private translate:TranslateService,
     private native:NativeService,
-    private menuService: MenuService
+    private menuService: MenuService,
+    public  storageService:StorageService
   ) {}
 
   ionViewWillEnter() {
+    this.refreshImage(); 
     this.styleObj.width = (screen.width - 105)+'px';
     this.clientHeight =screen.availHeight;
     console.log("=====this.clientHeight====="+this.clientHeight);
@@ -92,6 +99,7 @@ export class HomePage implements OnInit {
     this.events.subscribe('feeds:publishPostFinish',()=>{
       this.zone.run(() => {
         this.isLoadimage ={};
+        this.isLoadVideoiamge = {};
         this.infiniteScroll.disabled =false;
         this.startIndex = 0;
         this.totalData = this.feedService.getPostList() || [];
@@ -450,45 +458,18 @@ export class HomePage implements OnInit {
     this.hideComment = true;
   }
 
-  setVisibleareaImage(duration:any){
-    
+  setVisibleareaImage(){
     let postgridList = document.getElementsByClassName("post-grid");
     let postgridNum = document.getElementsByClassName("post-grid").length;
   
     for(let postgridindex =0;postgridindex<postgridNum;postgridindex++){ 
       let id = postgridList[postgridindex].getAttribute("id") || '';
-      //let  pgHeight  =   postgridList[postgridindex].clientHeight;
-      let isload = this.isLoadimage[id] || "";
-      let postImage = document.getElementById(id+"postimg");
-      try {
-        if(id!=''&&isload===""&&postImage.getBoundingClientRect().top-300<=this.clientHeight){
-          this.isLoadimage[id] = "11";
-         this.feedService.loadPostContentImg(id).then((imagedata)=>{
-          //console.log("========="+postgridindex+'_'+id+'_'+postImage.getBoundingClientRect().top+"_"+this.clientHeight+"_"+typeof(duration)+"_"+postgridNum);
-              let image = imagedata || "";
-              if(image!=""){
-                //postImage.setAttribute("data-imgurl","111");
-                postImage.setAttribute("src",image);
-              }else{
-                //this.isLoadimage[id] = "11";
-                postImage.style.display = 'none'; 
-              }
-            }).catch(()=>{
-              postImage.style.display = 'none'; 
-              console.log("getImageError");
-            })
-        }else{
-          let postSrc =  postImage.getAttribute("src") || "";
-         
-          if(postImage.getBoundingClientRect().bottom-this.clientHeight<-this.clientHeight&&this.isLoadimage[id]!=""&&postSrc!=""){ 
-            //console.log("============="+postgridindex+"_"+id+'_'+postImage.getBoundingClientRect().bottom);   
-            this.isLoadimage[id] = "";
-            postImage.removeAttribute("src");
-          }
-        }
-      } catch (error) {
-      
-      }
+
+      //postImg
+      this.handlePsotImg(id,postgridindex);
+
+      //video
+      this.hanldVideo(id,postgridindex);
    
     }
 
@@ -496,32 +477,115 @@ export class HomePage implements OnInit {
   }
 
   ionViewDidEnter() {
-    this.refreshImage(); 
+    //this.refreshImage();
   }
 
   ionScroll(){
-    // this.content.getScrollElement().then((obj)=>{
-    //     this.curHeight = obj.scrollHeight;
-         
-    // }).catch((err)=>{
-
-    // });
-
-   //let sid = setTimeout(()=>{
-      this.setVisibleareaImage(0);
-      //clearTimeout(sid);
-    //},100);
+      this.setVisibleareaImage();
   }
 
   refreshImage(){
     let sid = setTimeout(()=>{
-      //this.content.getScrollElement().then((obj)=>{
         this.isLoadimage ={};
-        this.setVisibleareaImage(0);
-      //}).catch((err)=>{
-  
-      //});
+        this.isLoadVideoiamge ={};
+        this.setVisibleareaImage();
       clearTimeout(sid);
     },0);
   }
+
+  showBigImage(id:any){
+    let idStr = id+"postimg";
+    let content = document.getElementById(idStr).getAttribute("src") || "";
+    if(content!=''){
+      this.native.openViewer(content,"common.image","FeedsPage.tabTitle1");
+    }
+  }
+
+
+  handlePsotImg(id:string,rowindex:number){
+    // 13 存在 12不存在
+    let isload = this.isLoadimage[id] || "";
+    let postImage = document.getElementById(id+"postimg");
+    try {
+      if(id!=''&&isload===""&&postImage.getBoundingClientRect().top>0&&postImage.getBoundingClientRect().top<=this.clientHeight){
+        //console.log("======="+rowindex+"-"+postImage.getBoundingClientRect().top);
+        postImage.style.display = "none";
+        this.isLoadimage[id] = "11";
+       this.feedService.loadPostContentImg(id).then((imagedata)=>{
+            let image = imagedata || "";
+            if(image!=""){
+              this.isLoadimage[id] ="13";
+              postImage.style.display = "block";
+              postImage.setAttribute("src",image);
+            }else{
+              this.isLoadimage[id] ="12";
+              postImage.style.display = 'none'; 
+            }
+          }).catch(()=>{
+            postImage.style.display = 'none'; 
+            console.log("getImageError");
+          })
+      }else{
+         let postImageSrc = postImage.getAttribute("src") || "";
+        if(postImage.getBoundingClientRect().top<-100&&postImageSrc&&this.isLoadimage[id]==="13"&&postImageSrc!=""){ 
+          //console.log("======="+rowindex);  
+          this.isLoadimage[id] = "";
+          postImage.removeAttribute("src");
+        }
+      }
+    } catch (error) {
+    
+    }
+  }
+
+  hanldVideo(id:string,rowindex:number){
+
+    let  isloadVideoImg  = this.isLoadVideoiamge[id] || "";
+    let  vgplayer = document.getElementById(id+"vgplayer");
+    let  video:any = document.getElementById(id+"video");
+    let  source = document.getElementById(id+"source");
+    try {
+      if(id!=''&&isloadVideoImg===""&&video.getBoundingClientRect().top>0&&video.getBoundingClientRect().top<=this.clientHeight){
+        //console.log("========="+rowindex+"==="+video.getBoundingClientRect().top);
+        this.isLoadVideoiamge[id] = "11";
+        vgplayer.style.display = "none";
+        this.storageService.loadVideoPosterImg(id).then((imagedata)=>{
+            let image = imagedata || "";
+            if(image!=""){
+              this.isLoadVideoiamge[id] = "13";
+              vgplayer.style.display = "block";
+              video.setAttribute("poster",image);
+                this.storageService.loadVideo(id).then((data:string)=>{
+                  this.zone.run(()=>{
+                   source.setAttribute("src",data);
+                   video.load();
+                  });
+               
+               }).catch((err)=>{
+                this.isLoadVideoiamge[id] = "12";
+               })
+              //}
+            }else{
+
+              video.style.display='none';
+              vgplayer.style.display = 'none'; 
+            }
+          }).catch(()=>{
+            vgplayer.style.display = 'none'; 
+            console.log("getImageError");
+          });
+      }else{
+        let postSrc =  video.getAttribute("poster") || "";
+        if(video.getBoundingClientRect().top<-100&&this.isLoadVideoiamge[id]==="13"&&postSrc!=""){
+          video.removeAttribute("poster");
+          source.removeAttribute("src");
+          video.load();
+          this.isLoadVideoiamge[id]="";
+        }
+      }
+    } catch (error) {
+    
+    }
+  }
+
 }
