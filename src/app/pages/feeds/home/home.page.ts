@@ -61,9 +61,9 @@ export class HomePage implements OnInit {
   ) {}
 
   ionViewWillEnter() {
-    this.refreshImage(); 
+    //this.refreshImage(); 
     this.styleObj.width = (screen.width - 105)+'px';
-    this.clientHeight =screen.availHeight;
+    this.clientHeight =screen.availHeight-58.5-60;
     this.startIndex = 0;
     this.totalData = this.feedService.getPostList() || [];
     this.connectionStatus = this.feedService.getConnectionStatus();
@@ -472,7 +472,7 @@ export class HomePage implements OnInit {
   }
 
   ionViewDidEnter() {
-    //this.refreshImage();
+    this.refreshImage();
   }
 
   ionScroll(){
@@ -503,8 +503,8 @@ export class HomePage implements OnInit {
     let rpostimg = document.getElementById(id+"rpostimg");
     let postImage = document.getElementById(id+"postimg");
     try {
-      if(id!=''&&isload===""&&postImage.getBoundingClientRect().top>0&&postImage.getBoundingClientRect().top<=this.clientHeight){
-        //console.log("======="+rowindex+"-"+postImage.getBoundingClientRect().top);
+      if(id!=''&&isload===""&&postImage.getBoundingClientRect().bottom>=0&&postImage.getBoundingClientRect().top<=this.clientHeight){
+        console.log("====进入==="+rowindex+"-"+postImage.getBoundingClientRect().top);
         rpostimg.style.display = "none";
         this.isLoadimage[id] = "11";
        this.feedService.loadPostContentImg(id).then((imagedata)=>{
@@ -522,12 +522,12 @@ export class HomePage implements OnInit {
             console.log("getImageError");
           })
       }else{
-         let postImageSrc = postImage.getAttribute("src") || "";
-        if(postImage.getBoundingClientRect().top<-100&&this.isLoadimage[id]==="13"&&postImageSrc!=""){ 
-          //console.log("======="+rowindex);  
-          this.isLoadimage[id] = "";
-          postImage.removeAttribute("src");
-        }
+        //  let postImageSrc = postImage.getAttribute("src") || "";
+        // if(this.isLoadimage[id]==="13"&&postImageSrc!=""){ 
+        //   console.log("====移除==="+rowindex+"-"+postImage.getBoundingClientRect().bottom); 
+        //   this.isLoadimage[id] = "";
+        //   postImage.removeAttribute("src");
+        // }
       }
     } catch (error) {
     
@@ -541,8 +541,8 @@ export class HomePage implements OnInit {
     let  video:any = document.getElementById(id+"video");
     let  source = document.getElementById(id+"source");
     try {
-      if(id!=''&&isloadVideoImg===""&&video.getBoundingClientRect().top>0&&video.getBoundingClientRect().top<=this.clientHeight){
-        console.log("========="+rowindex+"==="+video.getBoundingClientRect().top);
+      if(id!=''&&isloadVideoImg===""&&video.getBoundingClientRect().bottom>=0&&video.getBoundingClientRect().top<=this.clientHeight){
+        //console.log("========="+rowindex+"==="+video.getBoundingClientRect().top);
         this.isLoadVideoiamge[id] = "11";
         vgplayer.style.display = "none";
         this.feedService.loadVideoPosterImg(id).then((imagedata)=>{
@@ -562,7 +562,7 @@ export class HomePage implements OnInit {
                })
               //}
             }else{
-              console.log("========="+rowindex);
+              //console.log("========="+rowindex);
               video.style.display='none';
               vgplayer.style.display = 'none'; 
             }
@@ -571,13 +571,13 @@ export class HomePage implements OnInit {
             console.log("getImageError");
           });
       }else{
-        let postSrc =  video.getAttribute("poster") || "";
-        if(video.getBoundingClientRect().top<-100&&this.isLoadVideoiamge[id]==="13"&&postSrc!=""){
-          video.pause();
-          video.removeAttribute("poster");
-          source.removeAttribute("src");
-          this.isLoadVideoiamge[id]="";
-        }
+        // let postSrc =  video.getAttribute("poster") || "";
+        // if(this.isLoadVideoiamge[id]==="13"&&postSrc!=""){
+        //   video.pause();
+        //   video.removeAttribute("poster");
+        //   source.removeAttribute("src");
+        //   this.isLoadVideoiamge[id]="";
+        // }
       }
     } catch (error) {
     

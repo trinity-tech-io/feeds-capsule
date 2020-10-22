@@ -562,12 +562,12 @@ export class ChannelsPage implements OnInit {
             console.log("getImageError");
           })
       }else{
-        let postImageSrc = postImage.getAttribute("src") || "";
-        if(postImage.getBoundingClientRect().top<-100&&this.isLoadimage[id]==="13"&&postImageSrc!=""){ 
-          //console.log("======="+rowindex);  
-          this.isLoadimage[id] = "";
-          postImage.removeAttribute("src");
-        }
+        // let postImageSrc = postImage.getAttribute("src") || "";
+        // if(postImage.getBoundingClientRect().top<-100&&this.isLoadimage[id]==="13"&&postImageSrc!=""){ 
+        //   //console.log("======="+rowindex);  
+        //   this.isLoadimage[id] = "";
+        //   postImage.removeAttribute("src");
+        // }
       }
     } catch (error) {
     
@@ -613,13 +613,13 @@ export class ChannelsPage implements OnInit {
             console.log("getImageError");
           });
       }else{
-        let postSrc =  video.getAttribute("poster") || "";
-        if(video.getBoundingClientRect().top<-100&&this.isLoadVideoiamge[id]==="13"&&postSrc!=""){
-          video.pause();
-          video.removeAttribute("poster");
-          source.removeAttribute("src");
-          this.isLoadVideoiamge[id]="";
-        }
+        // let postSrc =  video.getAttribute("poster") || "";
+        // if(video.getBoundingClientRect().top<-100&&this.isLoadVideoiamge[id]==="13"&&postSrc!=""){
+        //   video.pause();
+        //   video.removeAttribute("poster");
+        //   source.removeAttribute("src");
+        //   this.isLoadVideoiamge[id]="";
+        // }
       }
     } catch (error) {
     
