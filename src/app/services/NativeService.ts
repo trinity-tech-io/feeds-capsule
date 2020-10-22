@@ -233,5 +233,44 @@ export class NativeService {
             popover = null;
         });
         return await popover.present();
-      }
+    }
+
+      /**
+ * 防抖节流
+ * @param {*} action 回调
+ * @param {*} delay 等待的时间
+ * @param {*} context this指针
+ * @param {Boolean} iselapsed 是否等待上一次
+ * @returns {Function}
+ */
+
+  public throttle(action:any, delay:number, context:any, iselapsed:boolean): Function {
+    let timeout = null;
+    let lastRun = 0;
+    return function () {
+        if (timeout) {
+            if (iselapsed) {
+                return;
+            } else {
+                clearTimeout(timeout);
+                timeout = null;
+            }
+        }
+        let elapsed = Date.now() - lastRun;
+        let args = arguments;
+        if (iselapsed && elapsed >= delay) {
+            runCallback();
+        } else {
+            timeout = setTimeout(runCallback, delay);
+        }
+        /**
+         * 执行回调
+         */
+        function runCallback() {
+            lastRun = Date.now();
+            timeout = false;
+            action.apply(context, args);
+        }
+    };
+  }
 }

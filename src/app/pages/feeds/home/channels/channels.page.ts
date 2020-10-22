@@ -129,10 +129,14 @@ export class ChannelsPage implements OnInit {
       if(this.startIndex === 0){
         this.startIndex++;
       }
+      this.isLoadimage ={};
+      this.isLoadVideoiamge ={};
       this.refreshImage();
     }else{
       this.postList = this.totalData.slice(0,this.totalData.length);
       this.infiniteScroll.disabled =true;
+      this.isLoadimage ={};
+      this.isLoadVideoiamge ={};
       this.refreshImage();
     }
   }
@@ -190,13 +194,11 @@ export class ChannelsPage implements OnInit {
     });
 
     this.events.subscribe('feeds:editPostFinish',()=>{
-      this.refreshImage();
         this.initRefresh();
     });
 
     this.events.subscribe('feeds:deletePostFinish',()=>{
        this.native.hideLoading();
-       this.refreshImage();
        this.initRefresh();
     });
   }
@@ -211,6 +213,8 @@ export class ChannelsPage implements OnInit {
     this.events.unsubscribe("feeds:unsubscribeFinish");
     this.events.unsubscribe("feeds:editPostFinish");
     this.events.unsubscribe("feeds:deletePostFinish");
+    this.isLoadimage ={};
+    this.isLoadVideoiamge ={};
     this.curPost={};
   }
 
@@ -494,6 +498,7 @@ export class ChannelsPage implements OnInit {
      }, int);
    }
 
+
   showComment(nodeId, channelId, postId) {
     this.postId = postId;
     this.hideComment = false;
@@ -506,14 +511,14 @@ export class ChannelsPage implements OnInit {
   }
 
   ionScroll(){
-    this.setVisibleareaImage();
+    this.native.throttle(this.setVisibleareaImage(),200,this,true);
   }
 
   setVisibleareaImage(){
 
     let postgridList = document.getElementsByClassName("channelgird");
     let postgridNum = document.getElementsByClassName("channelgird").length;
-    console.log("====postgridNum====="+postgridNum);
+    //console.log("====postgridNum====="+postgridNum);
     for(let postgridindex =0;postgridindex<postgridNum;postgridindex++){ 
       let id = postgridList[postgridindex].getAttribute("id") || '';
       //postImg
@@ -533,7 +538,7 @@ export class ChannelsPage implements OnInit {
     let postImage:any = document.getElementById(id+"postimgchannel") || "";
     //console.log("======="+rowindex+"-"+postImage+"-"+postImage.getBoundingClientRect().top);
     try {
-      if(id!=''&&postImage!=""&&isload===""&&postImage.getBoundingClientRect().top>=0&&postImage.getBoundingClientRect().top<=this.clientHeight){
+      if(id!=''&&postImage!=""&&isload===""&&postImage.getBoundingClientRect().bottom>=0&&postImage.getBoundingClientRect().top<=this.clientHeight){
         //console.log("======="+rowindex+"-"+postImage.getBoundingClientRect().top+"-"+id+"");
         rpostImage.style.display = "none";
         this.isLoadimage[id] = "11";
@@ -583,7 +588,7 @@ export class ChannelsPage implements OnInit {
 
     //console.log("======"+rowindex+"-"+video.getBoundingClientRect().top)
     try {
-      if(id!=''&&isloadVideoImg===""&&video.getBoundingClientRect().top>=0&&video.getBoundingClientRect().top<=this.clientHeight){
+      if(id!=''&&isloadVideoImg===""&&video.getBoundingClientRect().bottom>=0&&video.getBoundingClientRect().top<=this.clientHeight){
         //console.log("========="+rowindex+"==="+video.getBoundingClientRect().top);
         this.isLoadVideoiamge[id] = "11";
         vgplayer.style.display = "none";
@@ -628,8 +633,8 @@ export class ChannelsPage implements OnInit {
 
   refreshImage(){
     let sid = setTimeout(()=>{
-        this.isLoadimage ={};
-        this.isLoadVideoiamge ={};
+        //this.isLoadimage ={};
+        //this.isLoadVideoiamge ={};
         this.setVisibleareaImage();
       clearTimeout(sid);
     },0);
