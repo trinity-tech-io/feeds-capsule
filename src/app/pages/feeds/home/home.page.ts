@@ -107,6 +107,8 @@ export class HomePage implements OnInit {
           this.infiniteScroll.disabled =true;
         }
         this.scrollToTop(1);
+        this.isLoadimage ={};
+        this.isLoadVideoiamge ={};
         this.refreshImage();
         this.initnodeStatus(this.postList);
       });
@@ -128,6 +130,8 @@ export class HomePage implements OnInit {
         this.postList =  this.totalData;
         this.infiniteScroll.disabled =true;
       }
+      this.isLoadimage ={};
+      this.isLoadVideoiamge ={};
       this.refreshImage();
       this.initnodeStatus(this.postList);
 
@@ -145,6 +149,8 @@ export class HomePage implements OnInit {
         this.postList =  this.totalData;
         this.infiniteScroll.disabled =true;
       }
+      this.isLoadimage ={};
+      this.isLoadVideoiamge ={};
       this.refreshImage();
       this.initnodeStatus(this.postList);
 
@@ -175,6 +181,8 @@ export class HomePage implements OnInit {
     this.events.unsubscribe("feeds:publishPostFinish");
     this.events.unsubscribe("feeds:editPostFinish");
     this.events.unsubscribe("feeds:deletePostFinish");
+    this.isLoadimage ={};
+    this.isLoadVideoiamge ={};
     this.curPost={};
 }
 
@@ -375,6 +383,8 @@ export class HomePage implements OnInit {
         this.infiniteScroll.disabled =true;
       }
       this.initnodeStatus(this.postList);
+      this.isLoadimage ={};
+      this.isLoadVideoiamge ={};
       this.refreshImage();
       event.target.complete();
       clearTimeout(sId);
@@ -456,7 +466,7 @@ export class HomePage implements OnInit {
   setVisibleareaImage(){
     let postgridList = document.getElementsByClassName("post-grid");
     let postgridNum = document.getElementsByClassName("post-grid").length;
-  
+
     for(let postgridindex =0;postgridindex<postgridNum;postgridindex++){ 
       let id = postgridList[postgridindex].getAttribute("id") || '';
 
@@ -475,18 +485,6 @@ export class HomePage implements OnInit {
     this.refreshImage();
   }
 
-  ionScroll(){
-      this.setVisibleareaImage();
-  }
-
-  refreshImage(){
-    let sid = setTimeout(()=>{
-        this.isLoadimage ={};
-        this.isLoadVideoiamge ={};
-        this.setVisibleareaImage();
-      clearTimeout(sid);
-    },0);
-  }
 
   showBigImage(id:any){
     let idStr = id+"postimg";
@@ -503,28 +501,28 @@ export class HomePage implements OnInit {
     let rpostimg = document.getElementById(id+"rpostimg");
     let postImage = document.getElementById(id+"postimg");
     try {
-      if(id!=''&&isload===""&&postImage.getBoundingClientRect().bottom>=0&&postImage.getBoundingClientRect().top<=this.clientHeight){
-        console.log("====进入==="+rowindex+"-"+postImage.getBoundingClientRect().top);
-        rpostimg.style.display = "none";
-        this.isLoadimage[id] = "11";
-       this.feedService.loadPostContentImg(id).then((imagedata)=>{
-            let image = imagedata || "";
-            if(image!=""){
-              this.isLoadimage[id] ="13";
-              rpostimg.style.display = "block";
-              postImage.setAttribute("src",image);
-            }else{
-              this.isLoadimage[id] ="12";
+      if(id!=''&&isload === ""&&postImage.getBoundingClientRect().bottom>=0&&postImage.getBoundingClientRect().top<=this.clientHeight){
+          rpostimg.style.display = "none";
+          this.isLoadimage[id] = "11";
+         this.feedService.loadPostContentImg(id).then((imagedata)=>{
+              let image = imagedata || "";
+              if(image!=""){
+                this.isLoadimage[id] ="13";
+                rpostimg.style.display = "block";
+                postImage.setAttribute("src",image);
+              }else{
+                this.isLoadimage[id] ="12";
+                rpostimg.style.display = 'none'; 
+              }
+            }).catch(()=>{
               rpostimg.style.display = 'none'; 
-            }
-          }).catch(()=>{
-            rpostimg.style.display = 'none'; 
-            console.log("getImageError");
-          })
+              console.log("getImageError");
+            })
       }else{
         //  let postImageSrc = postImage.getAttribute("src") || "";
         // if(this.isLoadimage[id]==="13"&&postImageSrc!=""){ 
-        //   console.log("====移除==="+rowindex+"-"+postImage.getBoundingClientRect().bottom); 
+        //   //console.log("====移除==="+rowindex+"-"+postImage.getBoundingClientRect().bottom);
+        //   console.log("====移除==="+rowindex+"-"+JSON.stringify(postImage.getBoundingClientRect()));
         //   this.isLoadimage[id] = "";
         //   postImage.removeAttribute("src");
         // }
@@ -584,4 +582,17 @@ export class HomePage implements OnInit {
     }
   }
 
+  ionScroll(){
+    this.native.throttle(this.setVisibleareaImage(),200,this,true);
+  }
+
+
+  refreshImage(){
+    let sid = setTimeout(()=>{
+        //this.isLoadimage ={};
+        //this.isLoadVideoiamge ={};
+        this.setVisibleareaImage();
+        clearTimeout(sid);
+     },0);
+  }
 }

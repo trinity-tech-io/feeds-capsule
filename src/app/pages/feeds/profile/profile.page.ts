@@ -4,6 +4,8 @@ import { FeedService, Avatar } from 'src/app/services/FeedService';
 import { ThemeService } from 'src/app/services/theme.service';
 import { IonInfiniteScroll} from '@ionic/angular';
 import { MenuService } from 'src/app/services/MenuService';
+import { NativeService } from 'src/app/services/NativeService';
+
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.page.html',
@@ -56,7 +58,8 @@ export class ProfilePage implements OnInit {
     public theme:ThemeService,
     private events: Events,
     private zone: NgZone,
-    public menuService:MenuService
+    public menuService:MenuService,
+    public native:NativeService
   ) {
   }
 
@@ -85,12 +88,16 @@ export class ProfilePage implements OnInit {
     if(this.totalLikeList.length-this.pageNumber > this.pageNumber){
       
       this.likeList  = this.totalLikeList.slice(this.startIndex,this.pageNumber);
+      this.isLoadimage ={};
+      this.isLoadVideoiamge ={};
       this.refreshImage();
       this.startIndex++;
       this.infiniteScroll.disabled =false;
     }else{
       
       this.likeList = this.totalLikeList.slice(0,this.totalLikeList.length);
+      this.isLoadimage ={};
+      this.isLoadVideoiamge ={};
       this.refreshImage();
       this.infiniteScroll.disabled =true;
     }
@@ -179,6 +186,8 @@ export class ProfilePage implements OnInit {
     this.events.unsubscribe("feeds:deletePostFinish");
 
     this.events.unsubscribe("feeds:updateTitles");
+    this.isLoadimage ={};
+    this.isLoadVideoiamge ={};
     this.curItem = {};
   }
 
@@ -326,7 +335,7 @@ export class ProfilePage implements OnInit {
   ionScroll(){
 
     if(this.selectType === 'ProfilePage.myLikes'){
-         this.setVisibleareaImage();
+      this.native.throttle(this.setVisibleareaImage(),200,this,true);
     }
   }
 
@@ -334,7 +343,6 @@ export class ProfilePage implements OnInit {
 
     let postgridList = document.getElementsByClassName("postgridlike");
     let postgridNum = document.getElementsByClassName("postgridlike").length;
-    console.log("====postgridNum====="+postgridNum);
     for(let postgridindex =0;postgridindex<postgridNum;postgridindex++){ 
       let id = postgridList[postgridindex].getAttribute("id") || '';
       //postImg
@@ -385,7 +393,7 @@ export class ProfilePage implements OnInit {
             console.log("getImageError");
           })
       }else{
-        console.log("=====ss=="+rowindex+"-"+postImage+"-"+postImage.getBoundingClientRect().top);
+        //console.log("=====ss=="+rowindex+"-"+postImage+"-"+postImage.getBoundingClientRect().top);
         // let postImageSrc = postImage.getAttribute("src") || "";
         // if(postImage.getBoundingClientRect().top<-100&&this.isLoadimage[id]==="13"&&postImageSrc!=""){ 
         //   //console.log("======="+rowindex);  
@@ -452,8 +460,8 @@ export class ProfilePage implements OnInit {
 
   refreshImage(){
     let sid = setTimeout(()=>{
-        this.isLoadimage ={};
-        this.isLoadVideoiamge ={};
+        //this.isLoadimage ={};
+        //this.isLoadVideoiamge ={};
         this.setVisibleareaImage();
       clearTimeout(sid);
     },0);
