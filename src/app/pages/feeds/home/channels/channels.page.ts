@@ -635,4 +635,12 @@ export class ChannelsPage implements OnInit {
     },0);
   }
 
+  showBigImage(id:any){
+    let idStr = id+"postimg";
+    let content = document.getElementById(idStr).getAttribute("src") || "";
+    if(content!=''){
+      this.native.openViewer(content,"common.image","ChannelsPage.feeds");
+    }
+  }
+
 }

@@ -186,7 +186,10 @@ export class NativeService {
         modal.onWillDismiss().then(()=>{
              document.removeEventListener('click',(event)=> this.hide(modal),false);
             titleBarManager.setTitle(this.translate.instant(oldNameKey));
-            this.setTitleBarBackKeyShown(true);
+            if(oldNameKey!='FeedsPage.tabTitle2'){
+                this.setTitleBarBackKeyShown(true);
+            }
+           
         })
     
         return await modal.present().then(()=>{

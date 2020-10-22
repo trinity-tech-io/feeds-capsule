@@ -88,17 +88,14 @@
             (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)"
           >  -->
 
-          <ion-row *ngIf="post.post_status != 1"  id ={{post.nodeId+post.channel_id+post.id}}channelrow>
-               <ion-col size="8">
-                  <img
+          <div *ngIf="post.post_status != 1"  id ={{post.nodeId+post.channel_id+post.id}}channelrow>
+                <img
                   id ={{post.nodeId+post.channel_id+post.id}}postimgchannel
-                  class="post-img" 
-                  />
-               </ion-col>
-               <ion-col size="4"  (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)">
-
-               </ion-col>
-          </ion-row>
+                  class="post-img"
+                  style="width: 90%;"
+                  (click)="showBigImage(post.nodeId+post.channel_id+post.id)">
+                  <span style="width: 10%;display:inline-block;height: 191px;" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)"></span> 
+          </div>
 
           <!--video-->
 
