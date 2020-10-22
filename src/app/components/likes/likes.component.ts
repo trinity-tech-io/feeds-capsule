@@ -189,4 +189,13 @@ export class LikesComponent implements OnInit {
       channelName: this.channelName(nodeId, channelId),
     });
   }
+
+  showBigImage(id:any){
+    let idStr = id+"postimg";
+    let content = document.getElementById(idStr).getAttribute("src") || "";
+    if(content!=''){
+      this.native.openViewer(content,"common.image","FeedsPage.tabTitle2");
+    }
+  }
+
 }
