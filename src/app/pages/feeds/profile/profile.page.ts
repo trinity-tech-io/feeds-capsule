@@ -326,7 +326,7 @@ export class ProfilePage implements OnInit {
   ionScroll(){
 
     if(this.selectType === 'ProfilePage.myLikes'){
-       console.log("");
+         this.setVisibleareaImage();
     }
   }
 
@@ -353,10 +353,9 @@ export class ProfilePage implements OnInit {
     let isload = this.isLoadimage[id] || "";
     let rpostImage = document.getElementById(id+"likerow");
     let postImage:any = document.getElementById(id+"postimglike") || "";
-    //console.log("======="+rowindex+"-"+postImage+"-"+postImage.getBoundingClientRect().top);
     try {
-      if(id!=''&&postImage!=""&&isload===""&&postImage.getBoundingClientRect().top>0&&postImage.getBoundingClientRect().top<=this.clientHeight){
-        //console.log("======="+rowindex+"-"+postImage.getBoundingClientRect().top+"-"+id+"");
+      if(id!=''&&postImage!=""&&isload===""&&postImage.getBoundingClientRect().bottom>=0&&postImage.getBoundingClientRect().top<=this.clientHeight){
+        console.log("====进入==="+rowindex+"-"+postImage.getBoundingClientRect().top+"-"+id+"");
         rpostImage.style.display = "none";
         this.isLoadimage[id] = "11";
        this.feedService.loadPostContentImg(id).then((imagedata)=>{
@@ -380,16 +379,19 @@ export class ProfilePage implements OnInit {
               })
             }
           }).catch(()=>{
+            console.log("=====ss=="+rowindex+"-"+postImage+"-"+postImage.getBoundingClientRect().top);
+
             rpostImage.style.display = 'none'; 
             console.log("getImageError");
           })
       }else{
-        let postImageSrc = postImage.getAttribute("src") || "";
-        if(postImage.getBoundingClientRect().top<-100&&this.isLoadimage[id]==="13"&&postImageSrc!=""){ 
-          //console.log("======="+rowindex);  
-          this.isLoadimage[id] = "";
-          postImage.removeAttribute("src");
-        }
+        console.log("=====ss=="+rowindex+"-"+postImage+"-"+postImage.getBoundingClientRect().top);
+        // let postImageSrc = postImage.getAttribute("src") || "";
+        // if(postImage.getBoundingClientRect().top<-100&&this.isLoadimage[id]==="13"&&postImageSrc!=""){ 
+        //   //console.log("======="+rowindex);  
+        //   this.isLoadimage[id] = "";
+        //   postImage.removeAttribute("src");
+        // }
       }
     } catch (error) {
     
@@ -405,7 +407,7 @@ export class ProfilePage implements OnInit {
 
     //console.log("======"+rowindex+"-"+video.getBoundingClientRect().top)
     try {
-      if(id!=''&&isloadVideoImg===""&&video.getBoundingClientRect().top>0&&video.getBoundingClientRect().top<=this.clientHeight){
+      if(id!=''&&isloadVideoImg===""&&video.getBoundingClientRect().bottom>=0&&video.getBoundingClientRect().top<=this.clientHeight){
         //console.log("========="+rowindex+"==="+video.getBoundingClientRect().top);
         this.isLoadVideoiamge[id] = "11";
         vgplayer.style.display = "none";
@@ -435,13 +437,13 @@ export class ProfilePage implements OnInit {
             console.log("getImageError");
           });
       }else{
-        let postSrc =  video.getAttribute("poster") || "";
-        if(video.getBoundingClientRect().top<-100&&this.isLoadVideoiamge[id]==="13"&&postSrc!=""){
-          video.pause();
-          video.removeAttribute("poster");
-          source.removeAttribute("src");
-          this.isLoadVideoiamge[id]="";
-        }
+        // let postSrc =  video.getAttribute("poster") || "";
+        // if(video.getBoundingClientRect().top<-100&&this.isLoadVideoiamge[id]==="13"&&postSrc!=""){
+        //   video.pause();
+        //   video.removeAttribute("poster");
+        //   source.removeAttribute("src");
+        //   this.isLoadVideoiamge[id]="";
+        // }
       }
     } catch (error) {
     
