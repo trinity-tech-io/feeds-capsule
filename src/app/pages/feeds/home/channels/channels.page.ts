@@ -90,6 +90,7 @@ export class ChannelsPage implements OnInit {
       return;
     }
 
+    this.pauseAllVideo();
     this.showPayPrompt(server.elaAddress);
   }
 
@@ -282,20 +283,17 @@ export class ChannelsPage implements OnInit {
     }
   }
 
-  navTo(nodeId, channelId){
-    this.native.getNavCtrl().navigateForward(['/channels', nodeId, channelId]);
-  }
-
-  navToPostDetail(nodeId, channelId, postId){
+  navToPostDetail(nodeId:string, channelId:number, postId:number){
+    this.pauseVideo(nodeId+channelId+postId);
     this.native.getNavCtrl().navigateForward(['/postdetail',nodeId, channelId,postId]);
   }
 
-  showCommentPage(nodeId, channelId, postId){
+  showCommentPage(nodeId:string, channelId:string, postId:string){
     if(this.feedService.getConnectionStatus() != 0){
       this.native.toastWarn('common.connectionError');
       return;
     }
-
+    this.pauseAllVideo();
     this.native.navigateForward(["comment",nodeId,channelId,postId],"");
   }
 
@@ -340,6 +338,7 @@ export class ChannelsPage implements OnInit {
   }
 
   menuMore(post:any){
+    this.pauseAllVideo();
     this.curPost = post;
     let isMine = this.checkChannelIsMine();
     if (isMine === 0 && post.post_status != 1) {
@@ -359,6 +358,7 @@ export class ChannelsPage implements OnInit {
   }
   
   async showPayPrompt(elaAddress:string) {
+    this.pauseAllVideo();
     this.isShowPrompt = true;
     this.popover = await this.popoverController.create({
       mode: 'ios',
@@ -376,21 +376,6 @@ export class ChannelsPage implements OnInit {
     });
     return await this.popover.present();
   }
-
-  // getImage(nodeId: string, channelId: number, postId: number){
-  //   let nodeChannelPostId = nodeId + channelId + postId;
-  //   let img = this.images[nodeChannelPostId] || "";
-  //   if (img == ""){
-  //     this.images[nodeChannelPostId] = "undefine";
-  //     this.feedService.loadPostContentImg(nodeChannelPostId).then((image)=>{
-  //       this.images[nodeChannelPostId] = image||"none";
-  //     }).catch(()=>{
-  //       console.log("getImageError");
-  //     })
-  //   }
-  //   return this.images[nodeChannelPostId];
-  // }
-
 
   doRefresh(event:any){
     let sId =  setTimeout(() => {
@@ -440,6 +425,8 @@ export class ChannelsPage implements OnInit {
       this.native.toastWarn('common.connectionError');
       return;
     }
+
+     this.pauseAllVideo();
   
     if(this.channelAvatar.indexOf("data:image")>-1){
       this.feedService.setSelsectIndex(0);
@@ -538,7 +525,7 @@ export class ChannelsPage implements OnInit {
     let postImage:any = document.getElementById(id+"postimgchannel") || "";
     //console.log("======="+rowindex+"-"+postImage+"-"+postImage.getBoundingClientRect().top);
     try {
-      if(id!=''&&postImage!=""&&isload===""&&postImage.getBoundingClientRect().bottom>=0&&postImage.getBoundingClientRect().top<=this.clientHeight){
+      if(id!=''&&isload===""&&postImage.getBoundingClientRect().bottom>=0&&postImage.getBoundingClientRect().top<=this.clientHeight){
         //console.log("======="+rowindex+"-"+postImage.getBoundingClientRect().top+"-"+id+"");
         rpostImage.style.display = "none";
         this.isLoadimage[id] = "11";
@@ -584,9 +571,11 @@ export class ChannelsPage implements OnInit {
     let  isloadVideoImg  = this.isLoadVideoiamge[id] || "";
     let  vgplayer = document.getElementById(id+"vgplayerchannel");
     let  video:any = document.getElementById(id+"videochannel");
-    let  source = document.getElementById(id+"sourcechannel");
+    let  source:any = document.getElementById(id+"sourcechannel");
 
-    //console.log("======"+rowindex+"-"+video.getBoundingClientRect().top)
+    if(id!=""&&source!=""){
+      this.pauseVideo(id);
+   }
     try {
       if(id!=''&&isloadVideoImg===""&&video.getBoundingClientRect().bottom>=0&&video.getBoundingClientRect().top<=this.clientHeight){
         //console.log("========="+rowindex+"==="+video.getBoundingClientRect().top);
@@ -644,7 +633,29 @@ export class ChannelsPage implements OnInit {
     let idStr = id+"postimg";
     let content = document.getElementById(idStr).getAttribute("src") || "";
     if(content!=''){
+      this.pauseAllVideo();
       this.native.openViewer(content,"common.image","ChannelsPage.feeds");
+    }
+  }
+
+  pauseVideo(id:string){
+
+    let videoElement:any = document.getElementById(id+'videochannel') || "";
+    let source:any = document.getElementById(id+'sourcechannel') || "";
+    if(source!=""){
+      videoElement.pause();
+      //videoElement.removeAttribute('src'); // empty source
+      //videoElement.load();
+    }
+  }
+  
+  pauseAllVideo(){
+    let videoids = this.isLoadVideoiamge;
+    for(let id  in videoids){
+      let value = videoids[id] || "";
+      if(value === "13"){
+        this.pauseVideo(id);
+      }
     }
   }
 

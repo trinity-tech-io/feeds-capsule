@@ -14,7 +14,7 @@
 <div *ngIf="likeList.length > 0">
   <ion-grid *ngFor="let post of likeList let i=index" class="post-grid ion-activatable ripple postgridlike" [class.darkPostGrid]="theme.darkMode" [class.removeBorder]="post === likeList[likeList.length - 1]" id={{post.nodeId+post.channel_id+post.id}}>
     <ion-row class="post-row">
-      <ion-col class="img-col" size="2.5" (click)="navTo(post.nodeId, post.channel_id)">
+      <ion-col class="img-col" size="2.5" (click)="navTo(post.nodeId, post.channel_id,post.id)">
         <div class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode">
           <img src={{parseAvatar(post.nodeId,post.channel_id)}}>
           <div class="offline" [class.online]="nodeStatus[post.nodeId] == 0"></div>
@@ -22,7 +22,7 @@
       </ion-col>
       <ion-col class="content-col" size="9.5">
         <ion-row class="top-row">
-          <ion-col class="left-col" size="11" (press)="pressName(post.nodeId, post.channel_id)">
+          <ion-col class="left-col" size="11" (press)="pressName(post.nodeId, post.channel_id)" (click)="navTo(post.nodeId, post.channel_id,post.id)">
             <ion-label>
               {{ channelName(post.nodeId, post.channel_id) }}
               <span> {{ handleDisplayTime(post.created_at) }}</span>
