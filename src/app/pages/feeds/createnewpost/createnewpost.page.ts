@@ -6,6 +6,7 @@ import { NativeService } from '../../../services/NativeService';
 import { CameraService } from 'src/app/services/CameraService';
 import { ThemeService } from '../../../services/theme.service';
 import { TranslateService } from "@ngx-translate/core";
+import { VideoEditor } from '@ionic-native/video-editor/ngx';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 @Component({
@@ -29,6 +30,8 @@ export class CreatenewpostPage implements OnInit {
   public flieUri:any = "";
   public uploadProgress:number = 0;
   public videotype:string = "video/mp4";
+  public transcode:number = 0;
+
 
   constructor(
     private events: Events,
@@ -39,7 +42,8 @@ export class CreatenewpostPage implements OnInit {
     private zone: NgZone,
     private feedService: FeedService,
     public theme:ThemeService,
-    private translate:TranslateService
+    private translate:TranslateService,
+    public videoEditor:VideoEditor
   ) {
   }
 
@@ -111,6 +115,8 @@ export class CreatenewpostPage implements OnInit {
     this.events.unsubscribe("feeds:publishPostSuccess");
     this.events.unsubscribe("rpcRequest:error");
     this.events.unsubscribe("rpcResponse:error");
+    this.imgUrl="";
+    this.removeVideo();
   }
 
   ionViewDidEnter() {
@@ -122,7 +128,7 @@ export class CreatenewpostPage implements OnInit {
 
   post(){
     let  newPost = this.native.iGetInnerText(this.newPost);
-    if (newPost === "" && this.imgUrl === ""){
+    if (newPost === "" && this.imgUrl === ""&&this.flieUri === ""){
       this.native.toast_trans("CreatenewpostPage.tipMsg");
       return false;
     }
@@ -181,27 +187,39 @@ export class CreatenewpostPage implements OnInit {
   }
 
   videocam(){
-    this.flieUri = '';
-    this.posterImg='';
+    this.removeVideo();
+    this.transcode =0;
+    this.uploadProgress =0;
     navigator.device.capture.captureVideo((videosdata:any)=>{
       this.zone.run(()=>{
         let videodata = videosdata[0];
-        let flieUri = videodata['localURL'];
-        let lastIndex = flieUri.lastIndexOf("/");
-        let fileName =  flieUri.substring(lastIndex+1,flieUri.length);
-        let filepath =  flieUri.substring(0,lastIndex);
-        this.readFile(fileName,filepath);
+        this.transcodeVideo(videodata['fullPath']).then((newfileUri)=>{
+          this.transcode =100;
+          console.log("====newfileUri====="+newfileUri)
+          newfileUri = "cdvfile://localhost"+newfileUri.replace("file//","");
+          newfileUri = newfileUri.replace("/storage/emulated/0/","/sdcard/");  
+          console.log("====newfileUri====="+newfileUri)
+          let lastIndex = newfileUri.lastIndexOf("/");
+          let fileName =  newfileUri.substring(lastIndex+1,newfileUri.length);
+          console.log("====fileName====="+fileName);
+          let filepath =  newfileUri.substring(0,lastIndex);
+          console.log("====filepath====="+filepath);
+          this.readFile(fileName,filepath);
+        });
      });
   }, (error)=>{
        console.log("===captureVideoErr==="+JSON.stringify(error));
-  }, {limit:1,duration:14});
+  }, {limit:1,duration:30});
   }
 
-  selectvideo(){
+   selectvideo(){
     this.flieUri = '';
     this.posterImg='';
-    this.camera.getVideo().then((flieUri)=>{
-      flieUri = flieUri.replace("/storage/emulated/0/","/sdcard/")      
+    this.removeVideo();
+    this.transcode =0;
+    this.uploadProgress =0;
+    this.camera.getVideo().then((flieUri:string)=>{
+      flieUri = flieUri.replace("/storage/emulated/0/","/sdcard/");      
       this.zone.run(()=>{
         flieUri = "cdvfile://localhost"+flieUri;
         let lastIndex = flieUri.lastIndexOf("/");
@@ -223,7 +241,12 @@ export class CreatenewpostPage implements OnInit {
           (fileEntry) => {
 
             fileEntry.file((file)=>{
-
+              let filesize  = parseFloat((file.size/1000/1000).toFixed(2));
+              if(this.isVideoTipDes(filesize)){
+                 this.uploadProgress = 0;
+                 this.native.toast_trans(this.translate.instant("common.filevideodes"));
+                 return;
+              }
               let fileReader = new FileReader();
               fileReader.onloadend =(event:any)=>{
 
@@ -232,15 +255,16 @@ export class CreatenewpostPage implements OnInit {
                  
                  let sid = setTimeout(()=>{
                   //let img = new Image;
-                  let video:any = document.getElementById('singleVideo');
+                  let video:any = document.getElementById('addVideo');
                   video.setAttribute('crossOrigin', 'anonymous')
                   let canvas = document.createElement('canvas');
                   canvas.width = video.clientWidth
                   canvas.height = video.clientHeight
                   video.onloadeddata = (() => {
+                    this.zone.run(()=>{
                     canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height)
-                    this.posterImg= canvas.toDataURL("image/png");      
-                    video.setAttribute("poster",this.posterImg);
+                    this.posterImg= canvas.toDataURL("image/png"); 
+                    })
                   });
                   clearInterval(sid);
                  },0);
@@ -268,5 +292,77 @@ export class CreatenewpostPage implements OnInit {
             console.log("=====pathErr====="+JSON.stringify(err));
       });
   }
+
+  async transcodeVideo(path:any):Promise<string>{
+    const fileUri = path.startsWith('file://') ? path : `file://${path}`;
+    console.log("====fileUrl===="+fileUri);
+    const videoInfo = await this.videoEditor.getVideoInfo({ fileUri });
+    let width: number = 0;
+    let height: number = 0;
+
+    console.log("===videoInfo="+JSON.stringify(videoInfo));
+ 
+    // 视频比例
+    const ratio = videoInfo.width / videoInfo.height;
+ 
+    if (ratio > 1) {
+      width = videoInfo.width > 480 ? 480 : videoInfo.width;
+    } else if (ratio < 1) {
+      width = videoInfo.width > 360 ? 360 : videoInfo.width;
+    } else if (ratio === 1) {
+      width = videoInfo.width > 480 ? 480 : videoInfo.width;
+    }
+
+    let videoBitrate = videoInfo["bitrate"]/2;
+
+    console.log("===videoBitrate====="+videoBitrate);
+
+    height = +(width / ratio).toFixed(0);
+
+    return this.videoEditor.transcodeVideo({
+      fileUri,
+      outputFileName: `${Date.now()}`,
+      outputFileType: this.videoEditor.OutputFileType.MPEG4,
+      saveToLibrary:false,
+      width,
+      height,
+      videoBitrate:videoBitrate,
+      progress:(info:number)=>{
+        this.zone.run(()=>{
+          this.transcode = parseInt(info*100+'');
+        })
+      }
+    });
+  }
+
+  isVideoTipDes(filesize:number){
+   return filesize>10;
+  }
+
+  removeVideo(){
+    this.posterImg ="";
+    this.flieUri ="";
+    let video:any = document.getElementById('addVideo') || "";
+    if(video!=""){
+      video.load();
+    }
+  }
+  
+  // videocam(){
+  //   this.flieUri = '';
+  //   this.posterImg='';
+  //   navigator.device.capture.captureVideo((videosdata:any)=>{
+  //     this.zone.run(()=>{
+  //       let videodata = videosdata[0];
+  //       let flieUri = videodata['localURL'];
+  //       let lastIndex = flieUri.lastIndexOf("/");
+  //       let fileName =  flieUri.substring(lastIndex+1,flieUri.length);
+  //       let filepath =  flieUri.substring(0,lastIndex);
+  //       this.readFile(fileName,filepath);
+  //    });
+  // }, (error)=>{
+  //      console.log("===captureVideoErr==="+JSON.stringify(error));
+  // }, {limit:1,duration:14});
+  // }
 }
  

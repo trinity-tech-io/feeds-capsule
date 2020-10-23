@@ -4644,9 +4644,17 @@ export class FeedService {
     return this.storeService.loadVideoPosterImg(nodeChannelPostId);
   }
 
+  saveVideoPosterImg(nodeChannelPostId: string,content:any):Promise<any>{
+    return this.storeService.saveVideoPosterImg(nodeChannelPostId,content);
+  }
+
   //video
   loadVideo(nodeChannelPostId: string):Promise<any>{
     return this.storeService.loadVideo(nodeChannelPostId);
+  }
+
+  saveVideo(nodeChannelPostId: string,content:any):Promise<any>{
+    return this.saveVideo(nodeChannelPostId,content);
   }
 
 }

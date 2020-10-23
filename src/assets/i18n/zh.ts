@@ -71,7 +71,10 @@ export const zh = {
         "successfully": "成功",
         "followed": "关注",
         "unfollowed": "取消关注",
-        "infoObtaining": "信息获取中"
+        "infoObtaining": "信息获取中",
+        "filevideodes":"视频太大了",
+        "videoloading":"视频加载中",
+        "videocompression":"视频压缩中"
     },
     "app":{
         "profileDetails":"档案详情",
