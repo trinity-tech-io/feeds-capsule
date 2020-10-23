@@ -4598,13 +4598,15 @@ export class FeedService {
     });
   }
 
-  setBinary(nodeId: string, key: string, value: any , accessToken: string){
+  setBinary(nodeId: string, key: string, value: any){
+    let accessToken: FeedsData.AccessToken = accessTokenMap[nodeId]||undefined;
     let requestData = this.sessionService.buildSetBinaryRequest(accessToken, key);
     this.transportData(nodeId, key, requestData, value);
   }
 
   getBinary(nodeId: string, key: string, value: any){
-    let requestData = this.sessionService.buildGetBinaryRequest(nodeId, key);
+    let accessToken: FeedsData.AccessToken = accessTokenMap[nodeId]||undefined;
+    let requestData = this.sessionService.buildGetBinaryRequest(accessToken, key);
     this.transportData(nodeId, key, requestData, value);
   }
 

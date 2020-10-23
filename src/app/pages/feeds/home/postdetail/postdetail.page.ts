@@ -486,7 +486,9 @@ export class PostdetailPage implements OnInit {
     console.log("image = "+this.images[nodeChannelPostId] );
 
     // if (this.ready){
-      this.feedService.setBinary(this.nodeId,nodeChannelPostId,this.images[nodeChannelPostId],"accesstoken");
+      // this.feedService.setBinary(this.nodeId,nodeChannelPostId,this.images[nodeChannelPostId]);
+      this.feedService.getBinary(this.nodeId,nodeChannelPostId,this.images[nodeChannelPostId]);
+      
     // }
     // this.sessionService.streamAddMagicNum(this.nodeId);
     // this.sessionService.streamAddVersion(this.nodeId);

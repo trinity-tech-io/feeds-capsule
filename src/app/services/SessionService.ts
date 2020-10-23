@@ -12,7 +12,8 @@ type WorkedSession = {
     session     : CarrierPlugin.Session,
     stream      : CarrierPlugin.Stream,
     isStart     : boolean,
-    sdp         : string
+    sdp         : string,
+    StreamState : StreamState
 }
 
 type CachedData = {
@@ -34,6 +35,25 @@ const enum DecodeState{
 const pow32 = 0x100000000;   // 2^32
 const magicNumber: number = 0x0000A5202008275A;
 const version: number = 10000;
+
+const enum StreamState {
+    /** Raw stream. */
+    RAW = 0,
+    /** Initialized stream. */
+    INITIALIZED = 1,
+    /** The underlying transport is ready for the stream to start. */
+    TRANSPORT_READY = 2,
+    /** The stream is trying to connect the remote. */
+    CONNECTING = 3,
+    /** The stream connected with remove peer. */
+    CONNECTED = 4,
+    /** The stream is deactived. */
+    DEACTIVATED = 5,
+    /** The stream closed gracefully. */
+    CLOSED = 6,
+    /** The stream is on error, cannot to continue. */
+    ERROR = 7
+}
 
 const enum WorkedState {
     sessionInitialized = "sessionInitialized",
@@ -74,7 +94,8 @@ export class SessionService {
                 session     : mSession,
                 stream      : null,
                 isStart     : false,
-                sdp         : ""
+                sdp         : "",
+                StreamState : StreamState.RAW
             }
             this.carrierService.sessionAddStream(
                 mSession,
@@ -82,6 +103,7 @@ export class SessionService {
                 CarrierPlugin.StreamMode.RELIABLE, 
                 {
                     onStateChanged: function(event: any) {
+                        workedSessions[nodeId].StreamState = event.state;
                         var state_name = [
                             "raw",
                             "initialized",
@@ -327,13 +349,16 @@ export class SessionService {
         this.streamAddRequestBodySize(nodeId, bodySize);
     }
 
-    buildSetBinaryRequest(accessToken: string, key: string){
+    buildSetBinaryRequest(accessToken: FeedsData.AccessToken, key: string){
+        if (accessToken == undefined)
+            return ;
+
         let request = {
             version: "1.0",
             method : "set_binary",
             id     : 1,
             params : {
-                access_token: accessToken,
+                access_token: accessToken.token,
                 key         : key,
                 algo        : "None", // "None", "SHA256", "CRC"...
                 checksum    : ""
@@ -342,13 +367,16 @@ export class SessionService {
         return request;
     }
 
-    buildGetBinaryRequest(accessToken: string, key: string){
+    buildGetBinaryRequest(accessToken: FeedsData.AccessToken, key: string){
+        if (accessToken == undefined)
+            return ;
+
         let request = {
             version: "1.0",
             method : "get_binary",
             id     : 1,
             params : {
-                access_token: accessToken,
+                access_token: accessToken.token,
                 key         : key 
             }
         }

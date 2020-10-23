@@ -29,10 +29,7 @@ const routes: Routes = [
     FormsModule,
     TranslateModule,
     IonicModule,
-
     ComponentsModule,
-    RouterModule.forChild(routes),
-
     RouterModule.forChild(routes)
   ],
   declarations: [HomePage]
