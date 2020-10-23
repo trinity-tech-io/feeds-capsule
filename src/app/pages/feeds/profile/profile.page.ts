@@ -298,6 +298,7 @@ export class ProfilePage implements OnInit {
   }
 
   showMenuMore(item:any){
+    this.pauseAllVideo();
     this.curItem = item;
     switch(item['tabType']){
       case 'myfeeds':
@@ -411,9 +412,11 @@ export class ProfilePage implements OnInit {
     let  isloadVideoImg  = this.isLoadVideoiamge[id] || "";
     let  vgplayer = document.getElementById(id+"vgplayerlike");
     let  video:any = document.getElementById(id+"videolike");
-    let  source = document.getElementById(id+"sourcelike");
+    let  source:any = document.getElementById(id+"sourcelike") || "";
 
-    //console.log("======"+rowindex+"-"+video.getBoundingClientRect().top)
+    if(id!=""&&source!=""){
+      this.pauseVideo(id);
+   }
     try {
       if(id!=''&&isloadVideoImg===""&&video.getBoundingClientRect().bottom>=0&&video.getBoundingClientRect().top<=this.clientHeight){
         //console.log("========="+rowindex+"==="+video.getBoundingClientRect().top);
@@ -465,6 +468,28 @@ export class ProfilePage implements OnInit {
         this.setVisibleareaImage();
       clearTimeout(sid);
     },0);
+  }
+
+
+  pauseVideo(id:string){
+
+    let videoElement:any = document.getElementById(id+'videolike') || "";
+    let source:any = document.getElementById(id+'sourcelike') || "";
+    if(source!=""){
+      videoElement.pause();
+      //videoElement.removeAttribute('src'); // empty source
+      //videoElement.load();
+    }
+  }
+  
+  pauseAllVideo(){
+    let videoids = this.isLoadVideoiamge;
+    for(let id  in videoids){
+      let value = videoids[id] || "";
+      if(value === "13"){
+        this.pauseVideo(id);
+      }
+    }
   }
 
 }

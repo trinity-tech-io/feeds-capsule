@@ -19,7 +19,7 @@ export class LikesComponent implements OnInit {
   private images = {};
   @Input() likeList:any =[];
   @Input() nodeStatus:any = {};
-
+  @Input() isLoadVideoiamge:any ={};
   @Output() fromChild = new EventEmitter();
   @Output() commentParams = new EventEmitter();
 
@@ -83,19 +83,19 @@ export class LikesComponent implements OnInit {
     return this.feedService.parsePostContentText(content);
   }
 
-  getContentImg(content: any): string{
-    return this.feedService.parsePostContentImg(content);
-  }
 
-  navTo(nodeId, channelId){
+  navTo(nodeId:string, channelId:number, postId:number){
+    this.pauseVideo(nodeId+channelId+postId);
     this.native.getNavCtrl().navigateForward(['/channels', nodeId, channelId]);
   }
 
-  navToPostDetail(nodeId, channelId, postId){
+  navToPostDetail(nodeId:string, channelId:number, postId:number){
+    this.pauseVideo(nodeId+channelId+postId);
     this.native.getNavCtrl().navigateForward(['/postdetail',nodeId, channelId,postId]);
   }
 
-  showCommentPage(nodeId, channelId, postId){
+  showCommentPage(nodeId:string, channelId:number, postId:number){
+    this.pauseAllVideo();
     this.native.navigateForward(["/comment",nodeId,channelId,postId],"");
   }
 
@@ -144,20 +144,6 @@ export class LikesComponent implements OnInit {
     this.fromChild.emit({"nodeId":nodeId,"channelId":channelId,"channelName":channelName,"postId":0,"tabType":"mylike"});
   }
 
-  getImage(nodeId: string, channelId: number, postId: number){
-    let nodeChannelPostId = nodeId + channelId + postId;
-    let img = this.images[nodeChannelPostId] || "";
-    if (img == ""){
-      this.images[nodeChannelPostId] = "undefine";
-      this.feedService.loadPostContentImg(nodeChannelPostId).then((image)=>{
-        this.images[nodeChannelPostId] = image||"none";
-      }).catch(()=>{
-        console.log("getImageError");
-      })
-    }
-    return this.images[nodeChannelPostId];
-  }
-
   pressName(nodeId:string,channelId:string){
 
     let channel = this.getChannel(nodeId,channelId) || "";
@@ -194,8 +180,29 @@ export class LikesComponent implements OnInit {
     let idStr = id+"postimg";
     let content = document.getElementById(idStr).getAttribute("src") || "";
     if(content!=''){
+      this.pauseAllVideo();
       this.native.openViewer(content,"common.image","FeedsPage.tabTitle2");
     }
   }
 
+  pauseVideo(id:string){
+
+    let videoElement:any = document.getElementById(id+'videolike') || "";
+    let source:any = document.getElementById(id+'sourcelike') || "";
+    if(source!=""){
+      videoElement.pause();
+      //videoElement.removeAttribute('src'); // empty source
+      //videoElement.load();
+    }
+  }
+  
+  pauseAllVideo(){
+    let videoids = this.isLoadVideoiamge;
+    for(let id  in videoids){
+      let value = videoids[id] || "";
+      if(value === "13"){
+        this.pauseVideo(id);
+      }
+    }
+  }
 }

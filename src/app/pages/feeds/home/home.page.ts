@@ -473,10 +473,11 @@ export class HomePage implements OnInit {
 
 
   showBigImage(id:any){
-    this.pauseAllVideo();
+    
     let idStr = id+"postimg";
     let content = document.getElementById(idStr).getAttribute("src") || "";
     if(content!=''){
+      this.pauseAllVideo();
       this.native.openViewer(content,"common.image","FeedsPage.tabTitle1");
     }
   }
