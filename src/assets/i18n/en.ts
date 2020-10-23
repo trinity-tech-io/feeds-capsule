@@ -71,7 +71,10 @@ export const en = {
         "successfully": "successfully",
         "followed": "Followed",
         "unfollowed": "Unfollowed",
-        "infoObtaining":"Information is being obtained"
+        "infoObtaining":"Information is being obtained",
+        "filevideodes":"The video is too big",
+        "videoloading":"Video loading",
+        "videocompression":"Video compression"
     },
     "app":{
         "profileDetails":"Profile Details",

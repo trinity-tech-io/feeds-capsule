@@ -7,7 +7,7 @@
 
     <ion-item class="removeBorder" lines="none">
       <ion-row class="channel-row ion-activatable ripple">
-        <ion-col size="2" class="left-col">
+        <ion-col size="2.5" class="left-col">
           <div class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode">
             <img src={{channelAvatar}}>
             <div class="offline" [class.online]="nodeStatus[nodeId] == 0"></div>
@@ -28,9 +28,9 @@
     </div>
 
 
-    <div *ngIf="flieUri"  style="width: 320px;height:200px;margin: 0 auto;">
+    <div *ngIf="posterImg || flieUri"  style="width: 320px;height:200px;margin: 0 auto;">
       <div style="position: relative;">
-      <img style="position:absolute;z-index: 10;right: -8px;top: -8px;width: 20px;height: 20px;" src="/assets/icons/remove.svg" (click)="flieUri = ''"/>
+      <img style="position:absolute;z-index: 10;right: -8px;top: -8px;width: 20px;height: 20px;" src="/assets/icons/remove.svg" (click)="removeVideo()"/>
       </div>
       <vg-player style="width:200;height:200px" *ngIf="flieUri">
         <vg-overlay-play></vg-overlay-play>
@@ -51,22 +51,24 @@
             <vg-fullscreen id="ww"></vg-fullscreen>
         </vg-controls>
      
-    <video #media [vgMedia]="media" id="singleVideo" preload="auto"
-    poster=""
+    <video #media [vgMedia]="media" id="eidtVideo"
+    [poster]="posterImg"
     playsinline webkit-playsinline>
     <source [src]="flieUri" [type]="videotype">
     </video>
     </vg-player>
     </div>
 
-    <p *ngIf="uploadProgress>0&&uploadProgress!=100" style="text-align: center;">视频加载中({{uploadProgress}})............</p>
+    <p *ngIf="uploadProgress>0&&uploadProgress!=100" style="text-align: center;">{{"common.videoloading"|translate}}({{uploadProgress}})............</p>
+    <p *ngIf="transcode>0&&transcode!=100" style="text-align: center;">{{"common.videocompression"|translate}}({{transcode}})............</p>
+
   
     <ion-row class="submit-row">
       <ion-col class="left-col">
-        <ion-icon id="image" mode="ios" name="image" (click)="addImg(0)"></ion-icon>
-        <ion-icon id="camera" mode="ios" name="camera" (click)="addImg(1)"></ion-icon>
-        <ion-icon id="selectvideo" mode="ios" name="selectvideo" (click)="selectvideo()"></ion-icon>
-        <ion-icon id="videocam" name="videocam" (click)="videocam()"></ion-icon>
+        <ion-icon id="image" mode="ios" name="image" (click)="addImg(0)" *ngIf="posterImg ===''"></ion-icon>
+        <ion-icon id="camera" mode="ios" name="camera" (click)="addImg(1)"  *ngIf="posterImg ===''"></ion-icon>
+        <ion-icon id="selectvideo" mode="ios" name="selectvideo" (click)="selectvideo()" *ngIf="imgUrl === ''" ></ion-icon>
+        <ion-icon id="videocam" name="videocam" (click)="videocam()"*ngIf="imgUrl === ''"  ></ion-icon>
       </ion-col>
       <ion-col class="right-col" size="4.5">
         <ion-button (click)="post()">

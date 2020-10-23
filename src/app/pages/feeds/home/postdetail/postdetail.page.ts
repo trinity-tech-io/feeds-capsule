@@ -212,6 +212,8 @@ export class PostdetailPage implements OnInit {
     if(this.popover!=null){
       this.popover.dismiss();
     }
+
+    this.clearVideo();
   }
 
   ionViewDidEnter() {
@@ -533,5 +535,11 @@ export class PostdetailPage implements OnInit {
   clearVideo(){   
     this.posterImg ="";
     this.viedoObj ="";
+    let video:any =  this.el.nativeElement.querySelector("video") || "";
+    if(video!=""){
+      video.pause();;
+      video.load();
+    }
+  
   }
 }

@@ -214,14 +214,14 @@ export class ChannelsPage implements OnInit {
     this.events.unsubscribe("feeds:unsubscribeFinish");
     this.events.unsubscribe("feeds:editPostFinish");
     this.events.unsubscribe("feeds:deletePostFinish");
+    this.removeAllVideo();
     this.isLoadimage ={};
     this.isLoadVideoiamge ={};
     this.curPost={};
   }
 
   ionViewDidEnter() {
-    //this.setVisibleareaImage();
-    //this.refreshImage();
+    
   }
 
   initTitle(){
@@ -657,6 +657,25 @@ export class ChannelsPage implements OnInit {
         this.pauseVideo(id);
       }
     }
+  }
+
+
+  removeAllVideo(){
+    let videoids = this.isLoadVideoiamge;
+    for(let id  in videoids){
+      let value = videoids[id] || "";
+      if(value === "13"){
+        let videoElement:any = document.getElementById(id+'videochannel') || "";
+        let source:any = document.getElementById(id+'sourcechannel') || "";
+        if(source!=""){
+          videoElement.pause();
+          videoElement.removeAttribute('poster'); // empty source
+          source.removeAttribute('src'); // empty source
+          videoElement.load();
+        }
+      }
+    }
+  
   }
 
 }

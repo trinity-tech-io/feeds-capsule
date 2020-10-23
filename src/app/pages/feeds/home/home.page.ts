@@ -9,6 +9,7 @@ import { UtilService } from 'src/app/services/utilService';
 import { TranslateService } from "@ngx-translate/core";
 import { NativeService } from 'src/app/services/NativeService';
 import { IonInfiniteScroll } from '@ionic/angular';
+import { clearImmediate, clearInterval } from 'timers';
 @Component({
   selector: 'app-home',
   templateUrl: './home.page.html',
@@ -77,6 +78,7 @@ export class HomePage implements OnInit {
     }
     this.scrollToTop(1);
     this.initnodeStatus(this.postList);
+    this.refreshImage();
 
     this.events.subscribe("feeds:updateTitle",()=>{
       if(this.menuService.postDetail!=null){
@@ -181,6 +183,7 @@ export class HomePage implements OnInit {
     this.events.unsubscribe("feeds:publishPostFinish");
     this.events.unsubscribe("feeds:editPostFinish");
     this.events.unsubscribe("feeds:deletePostFinish");
+    this.removeAllVideo();
     this.isLoadimage ={};
     this.isLoadVideoiamge ={};
     this.curPost={};
@@ -452,7 +455,7 @@ export class HomePage implements OnInit {
   setVisibleareaImage(){
     let postgridList = document.getElementsByClassName("post-grid");
     let postgridNum = document.getElementsByClassName("post-grid").length;
-
+  
     for(let postgridindex =0;postgridindex<postgridNum;postgridindex++){ 
       let id = postgridList[postgridindex].getAttribute("id") || '';
 
@@ -468,7 +471,7 @@ export class HomePage implements OnInit {
   }
 
   ionViewDidEnter() {
-    this.refreshImage();
+   
   }
 
 
@@ -604,6 +607,23 @@ export class HomePage implements OnInit {
       let value = videoids[id] || "";
       if(value === "13"){
         this.pauseVideo(id);
+      }
+    }
+  }
+
+  removeAllVideo(){
+    let videoids = this.isLoadVideoiamge;
+    for(let id  in videoids){
+      let value = videoids[id] || "";
+      if(value === "13"){
+        let videoElement:any = document.getElementById(id+'video') || "";
+        let source:any = document.getElementById(id+'source') || "";
+        if(source!=""){
+          videoElement.pause();
+          videoElement.removeAttribute('poster'); // empty source
+          source.removeAttribute('src'); // empty source
+          videoElement.load();
+        }
       }
     }
   }

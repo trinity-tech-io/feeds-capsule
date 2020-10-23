@@ -186,6 +186,7 @@ export class ProfilePage implements OnInit {
     this.events.unsubscribe("feeds:deletePostFinish");
 
     this.events.unsubscribe("feeds:updateTitles");
+    this.removeAllVideo();
     this.isLoadimage ={};
     this.isLoadVideoiamge ={};
     this.curItem = {};
@@ -488,6 +489,23 @@ export class ProfilePage implements OnInit {
       let value = videoids[id] || "";
       if(value === "13"){
         this.pauseVideo(id);
+      }
+    }
+  }
+
+  removeAllVideo(){
+    let videoids = this.isLoadVideoiamge;
+    for(let id  in videoids){
+      let value = videoids[id] || "";
+      if(value === "13"){
+        let videoElement:any = document.getElementById(id+'videolike') || "";
+        let source:any = document.getElementById(id+'sourcelike') || "";
+        if(source!=""){
+          videoElement.pause();
+          videoElement.removeAttribute('poster'); // empty source
+          source.removeAttribute('src'); // empty source
+          videoElement.load();
+        }
       }
     }
   }
