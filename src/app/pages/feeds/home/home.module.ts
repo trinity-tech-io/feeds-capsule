@@ -4,7 +4,6 @@ import { FormsModule } from '@angular/forms';
 import { Routes, RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { IonicModule } from '@ionic/angular';
-import { LazyLoadImageModule } from 'ng-lazyload-image';
 import { HomePage } from './home.page';
 import { ComponentsModule } from 'src/app/components/components.module';
 
@@ -33,7 +32,6 @@ const routes: Routes = [
 
     ComponentsModule,
     RouterModule.forChild(routes),
-    LazyLoadImageModule,
 
     RouterModule.forChild(routes)
   ],
