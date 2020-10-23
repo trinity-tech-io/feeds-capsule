@@ -236,23 +236,23 @@ export class HomePage implements OnInit {
     this.feedService.postLike(nodeId,Number(channelId),Number(postId),0);
   }
 
-  navTo(nodeId, channelId){
+  navTo(nodeId:string, channelId:number,postId:number){
+    this.pauseVideo(nodeId+channelId+postId);
     this.native.getNavCtrl().navigateForward(['/channels', nodeId, channelId]);
   }
 
-  navToPostDetail(nodeId, channelId, postId){
+  navToPostDetail(nodeId:string, channelId:number, postId:number){
+    this.pauseVideo(nodeId+channelId+postId);
     this.native.getNavCtrl().navigateForward(['/postdetail',nodeId, channelId,postId]);
   }
 
-  refresh(){
-  }
-
-  showCommentPage(nodeId, channelId, postId){
+  showCommentPage(nodeId:string, channelId:number, postId:number){
     if(this.feedService.getConnectionStatus() != 0){
       this.native.toastWarn('common.connectionError');
       return;
     }
-    
+
+    this.pauseVideo(nodeId+channelId+postId);
     this.native.navigateForward(["comment",nodeId,channelId,postId],"");
   }
 
@@ -305,7 +305,7 @@ export class HomePage implements OnInit {
     if (channel == null || channel == undefined)
       return ;
     let channelName = channel.name;
-   
+    this.pauseAllVideo();
 
     let isMine = this.checkChannelIsMine(post.nodeId, post.channel_id);
       if(isMine === 0 && post.post_status != 1){
@@ -391,20 +391,6 @@ export class HomePage implements OnInit {
     },500);
   }
 
-  getImage(nodeId: string, channelId: number, postId: number){
-    let nodeChannelPostId = nodeId + channelId + postId;
-    let img = this.images[nodeChannelPostId] || "";
-    if (img == ""){
-      this.images[nodeChannelPostId] = "undefine";
-      this.feedService.loadPostContentImg(nodeChannelPostId).then((image)=>{
-        this.images[nodeChannelPostId] = image||"none";
-      }).catch(()=>{
-        console.log("getImageError");
-      })
-    }
-    return this.images[nodeChannelPostId];
-  }
-
   scrollToTop(int) {
    let sid = setTimeout(() => {
       this.content.scrollToTop(1);
@@ -487,6 +473,7 @@ export class HomePage implements OnInit {
 
 
   showBigImage(id:any){
+    this.pauseAllVideo();
     let idStr = id+"postimg";
     let content = document.getElementById(idStr).getAttribute("src") || "";
     if(content!=''){
@@ -536,8 +523,11 @@ export class HomePage implements OnInit {
 
     let  isloadVideoImg  = this.isLoadVideoiamge[id] || "";
     let  vgplayer = document.getElementById(id+"vgplayer");
-    let  video:any = document.getElementById(id+"video");
-    let  source = document.getElementById(id+"source");
+    let  video:any = document.getElementById(id+"video") || "";
+    let  source:any = document.getElementById(id+"source") || "";
+    if(id!=""&&source!=""){
+       this.pauseVideo(id);
+    }
     try {
       if(id!=''&&isloadVideoImg===""&&video.getBoundingClientRect().bottom>=0&&video.getBoundingClientRect().top<=this.clientHeight){
         //console.log("========="+rowindex+"==="+video.getBoundingClientRect().top);
@@ -594,5 +584,26 @@ export class HomePage implements OnInit {
         this.setVisibleareaImage();
         clearTimeout(sid);
      },0);
+  }
+
+  pauseVideo(id:string){
+
+    let videoElement:any = document.getElementById(id+'video') || "";
+    let source:any = document.getElementById(id+'source') || "";
+    if(source!=""){
+      videoElement.pause();
+      //videoElement.removeAttribute('src'); // empty source
+      //videoElement.load();
+    }
+  }
+  
+  pauseAllVideo(){
+    let videoids = this.isLoadVideoiamge;
+    for(let id  in videoids){
+      let value = videoids[id] || "";
+      if(value === "13"){
+        this.pauseVideo(id);
+      }
+    }
   }
 }

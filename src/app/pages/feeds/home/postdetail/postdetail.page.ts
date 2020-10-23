@@ -528,7 +528,7 @@ export class PostdetailPage implements OnInit {
     this.getVideoPoster(id);
   }
 
-  clearVideo(){
+  clearVideo(){   
     this.posterImg ="";
     this.viedoObj ="";
   }
