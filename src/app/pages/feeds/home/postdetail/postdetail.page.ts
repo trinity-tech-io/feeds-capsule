@@ -10,6 +10,7 @@ import { UtilService } from 'src/app/services/utilService';
 import { IonInfiniteScroll,PopoverController} from '@ionic/angular';
 import { EdittoolComponent } from '../../../../components/edittool/edittool.component';
 import { SessionService } from 'src/app/services/SessionService';
+
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 @Component({
@@ -50,6 +51,7 @@ export class PostdetailPage implements OnInit {
   public dstyleObj:any = {width:""};
 
   public hideComment = true;
+  private ready = false;
   constructor(
     private popoverController:PopoverController,
     private acRoute: ActivatedRoute,
@@ -59,7 +61,8 @@ export class PostdetailPage implements OnInit {
     private feedService :FeedService,
     public theme:ThemeService,
     private translate:TranslateService,
-    public menuService: MenuService
+    public menuService: MenuService,
+    private sessionService: SessionService
   ) {
   }
 
@@ -453,12 +456,27 @@ export class PostdetailPage implements OnInit {
   }
 
   newSession(){
-    // this.sessionService.createSession(this.nodeId,(mSession, mStream)=>{
-      
-    // });
+    
+    this.events.subscribe("stream:onStateChangedCallback",(nodeId, stateName)=>{
+      if (this.nodeId === nodeId){
+        if (stateName === "connecting"){
+          this.ready = true;
+        }else{
+          this.ready = false;
+        }
+      }
+    });
+    this.sessionService.createSession(this.nodeId,(session,stream)=>{});
   }
 
   writeData(){
+    let nodeChannelPostId = this.nodeId+this.channelId+this.postId;;
+    console.log("image = "+this.images[nodeChannelPostId] );
+    console.log("ready = "+this.ready );
+
+    // if (this.ready){
+      this.feedService.setBinary(this.nodeId,nodeChannelPostId,this.images[nodeChannelPostId],"accesstoken");
+    // }
     // this.sessionService.streamAddMagicNum(this.nodeId);
     // this.sessionService.streamAddVersion(this.nodeId);
     // let requestSize = this.sessionService.buildSetBinaryRequest("token","testKey");

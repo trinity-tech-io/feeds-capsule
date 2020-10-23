@@ -12,6 +12,7 @@ import { ConnectionService } from 'src/app/services/ConnectionService';
 import { HttpService } from 'src/app/services/HttpService';
 import { ApiUrl } from 'src/app/services/ApiUrl';
 import { FormateInfoService } from 'src/app/services/FormateInfoService';
+import { SessionService } from 'src/app/services/SessionService';
 
 import * as _ from 'lodash';
 declare let didManager: DIDPlugin.DIDManager;
@@ -419,7 +420,8 @@ export class FeedService {
     private storeService: StorageService,
     private connectionService: ConnectionService,
     private httpService: HttpService,
-    private formateInfoService: FormateInfoService
+    private formateInfoService: FormateInfoService,
+    private sessionService:SessionService
   ) {
     eventBus = events;
     this.init();
@@ -4595,4 +4597,44 @@ export class FeedService {
       }
     });
   }
+
+  setBinary(nodeId: string, key: string, value: any , accessToken: string){
+    let requestData = this.sessionService.buildSetBinaryRequest(accessToken, key);
+    this.transportData(nodeId, key, requestData, value);
+  }
+
+  getBinary(nodeId: string, key: string, value: any){
+    let requestData = this.sessionService.buildGetBinaryRequest(nodeId, key);
+    this.transportData(nodeId, key, requestData, value);
+  }
+
+  transportData(nodeId: string, key: string, request: any, value: any){
+    console.log("request ==>"+JSON.stringify(request));
+    let requestData = this.serializeDataService.encodeData(request);
+
+    let valueData = this.serializeDataService.encodeData(value);
+
+    this.sessionService.addHeader(nodeId, requestData.length, valueData.length);
+    this.sessionService.streamAddData(nodeId, requestData);
+
+    this.transportValueData(nodeId, valueData);
+  }
+
+
+  transportValueData(nodeId: string, valueData: Uint8Array){
+    let step = 512 ;
+    let currentSlice = 0;
+    let sumSlice = 0;
+
+    sumSlice = valueData.length / step;
+
+    console.log("valueData.length  ===>"+valueData.length );
+    for (let index = 0; index < sumSlice; index++) {
+      let sentData = valueData.subarray(currentSlice*step, (currentSlice+1)*step);
+      this.sessionService.streamAddData(nodeId, sentData);
+      currentSlice++;
+    }
+    this.sessionService.streamAddData(nodeId, valueData.subarray(currentSlice*step, valueData.length));
+  }
+
 }
