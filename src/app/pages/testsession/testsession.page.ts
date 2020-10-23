@@ -124,5 +124,13 @@ export class TestsessionPage implements OnInit {
     this.sessionService.toBytes(null);
   }
 
+  startSession(){
+
+  }
+
+  test(){
+    
+  }
+
 
 }
