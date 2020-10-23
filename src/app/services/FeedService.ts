@@ -4654,7 +4654,7 @@ export class FeedService {
   }
 
   saveVideo(nodeChannelPostId: string,content:any):Promise<any>{
-    return this.saveVideo(nodeChannelPostId,content);
+    return this.storeService.saveVideo(nodeChannelPostId,content);
   }
-
+  
 }

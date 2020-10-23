@@ -114,6 +114,7 @@ export class EditpostPage implements OnInit {
     this.flieUri="";
     this.imgUrl="";
     this.oldImgUrl="";
+      
     this.removeVideo();
   }
 
@@ -144,6 +145,18 @@ export class EditpostPage implements OnInit {
   }
 
   editPost(){
+  
+   
+    try {
+      this.feedService.saveVideoPosterImg(this.nodeId+this.channelId+this.postId,this.posterImg);
+      this.feedService.saveVideo(this.nodeId+this.channelId+this.postId,this.flieUri).then(()=>{
+      }).catch((err)=>{
+      });
+    } catch (error) {
+     
+    }
+   
+
     let myContent = {};
     myContent["text"] = this.newPost;
     myContent["img"] = this.imgUrl;
@@ -280,14 +293,7 @@ export class EditpostPage implements OnInit {
               fileReader.onloadend =(event:any)=>{
 
                this.zone.run(()=>{
-                 this.flieUri = fileReader.result;
-
-                 this.feedService.saveVideo(this.nodeId+this.channelId+this.postId,this.flieUri).then(()=>{
-                  console.log("===11111===");
-                }).catch((err)=>{
-               console.log("2222222"+JSON.stringify(err));
-               });
-                 
+                 this.flieUri = fileReader.result; 
                  let sid = setTimeout(()=>{
                   //let img = new Image;
                  let obj = document.getElementById("ww");
@@ -305,7 +311,7 @@ export class EditpostPage implements OnInit {
                     this.zone.run(()=>{
                     canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height)
                     this.posterImg= canvas.toDataURL("image/png",30);
-                    this.feedService.saveVideoPosterImg(this.nodeId+this.channelId+this.postId,this.posterImg)      
+                        
                     //video.setAttribute("poster",this.posterImg);
                     })
                     
