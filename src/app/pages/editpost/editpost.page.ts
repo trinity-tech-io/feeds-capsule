@@ -8,6 +8,7 @@ import { ThemeService } from '../../services/theme.service';
 import { TranslateService } from "@ngx-translate/core";
 import { VideoEditor } from '@ionic-native/video-editor/ngx';
 import { VgFullscreenAPI } from 'ngx-videogular';
+import { AppService } from 'src/app/services/AppService';
 import * as _ from 'lodash';
 import { clear } from 'console';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
@@ -47,7 +48,8 @@ export class EditpostPage implements OnInit {
     public theme:ThemeService,
     private translate:TranslateService,
     public vgFullscreenAPI:VgFullscreenAPI,
-    public videoEditor:VideoEditor 
+    public videoEditor:VideoEditor,
+    public appService:AppService, 
   ) {
   }
 
@@ -183,7 +185,7 @@ export class EditpostPage implements OnInit {
   }
 
   showBigImage(content: any){
-    this.native.openViewer(content,"common.image","CreatenewpostPage.addingPost");
+    this.native.openViewer(content,"common.image","CreatenewpostPage.addingPost",);
   }
 
   checkServerStatus(nodeId: string){

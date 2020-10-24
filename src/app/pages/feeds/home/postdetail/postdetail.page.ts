@@ -12,6 +12,9 @@ import { EdittoolComponent } from '../../../../components/edittool/edittool.comp
 
 import { SessionService } from 'src/app/services/SessionService';
 import { VgFullscreenAPI} from 'ngx-videogular';
+import { AppService } from 'src/app/services/AppService';
+
+
 
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
@@ -22,7 +25,7 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 })
 export class PostdetailPage implements OnInit {
   @ViewChild(IonInfiniteScroll,{static:true}) infiniteScroll: IonInfiniteScroll;
-  public images:any = {};
+  public postImage:string = "";
   public connectionStatus:number = 1;
   public nodeStatus:any ={};
   public avatar: string = "";
@@ -58,7 +61,8 @@ export class PostdetailPage implements OnInit {
   public videoPoster:string ="";
   public posterImg:string ="";
   public viedoObj:string ="";
-  public videoisShow:boolean = true;
+  public videoisShow:boolean = false;
+
 
   constructor(
     private popoverController:PopoverController,
@@ -72,6 +76,7 @@ export class PostdetailPage implements OnInit {
     public menuService: MenuService,
     private sessionService: SessionService,
     public vgFullscreenAPI:VgFullscreenAPI,
+    public appService:AppService,
     public el:ElementRef) {
   }
 
@@ -96,7 +101,6 @@ export class PostdetailPage implements OnInit {
     this.likesNum = post.likes;
     this.commentsNum = post.comments;
     this.initRefresh();
-    //this.scrollToTop(1);
   }
 
   initRefresh(){
@@ -120,6 +124,8 @@ export class PostdetailPage implements OnInit {
   }
 
   ionViewWillEnter() {
+    this.getImage();
+    this.getVideoPoster(this.nodeId+this.channelId+this.postId);
     this.initTitle();
     this.native.setTitleBarBackKeyShown(true);
     this.styleObj.width = (screen.width - 55)+'px';
@@ -207,7 +213,7 @@ export class PostdetailPage implements OnInit {
     this.events.unsubscribe("feeds:editCommentFinish");
     this.events.unsubscribe("feeds:deleteCommentFinish");
     this.events.unsubscribe("rpcRequest:error");
-    this.images = {};
+    this.postImage = "";
     this.menuService.hideActionSheet();
     if(this.popover!=null){
       this.popover.dismiss();
@@ -217,18 +223,31 @@ export class PostdetailPage implements OnInit {
   }
 
   ionViewDidEnter() {
-    //alert("ssssssss");
-    // let sid = setTimeout(()=>{
-    //   this.getVideoPoster("sss");
-    //   //clearTimeout(sid);
-    // },0);
+    let vgfullscreen = this.el.nativeElement.querySelector("vg-fullscreen");
+        vgfullscreen.onclick=()=>{
+        let isFullScreen = this.vgFullscreenAPI.isFullscreen;
+        if(isFullScreen){
+          this.native.setTitleBarBackKeyShown(true);
+          titleBarManager.setTitle(this.translate.instant("PostdetailPage.postview"));
+          this.appService.addright();
+        }else{
+          this.native.setTitleBarBackKeyShown(false);
+          titleBarManager.setTitle(this.translate.instant("common.video"));
+          this.appService.hideright();
+         
+        }
 
-    //this.getVideoPoster("sss");
-  
+        this.vgFullscreenAPI.toggleFullscreen(vgfullscreen);
+       
+     }
+
+     let vgoverlayplay:any = this.el.nativeElement.querySelector("vg-overlay-play");
+     vgoverlayplay.onclick = ()=>{
+       
    
+    }
   }
 
- 
   initTitle(){
     titleBarManager.setTitle(this.translate.instant("PostdetailPage.postview"));
   }
@@ -250,11 +269,11 @@ export class PostdetailPage implements OnInit {
       this.native.toastWarn('common.connectionError');
       return;
     }
-
     this.native.navigateForward(["comment",nodeId,channelId,postId],"");
   }
 
   showComment() {
+    this.pauseVideo();
     this.hideComment = false;
   }
 
@@ -323,7 +342,7 @@ export class PostdetailPage implements OnInit {
 
   menuMore(){
     let isMine = this.checkChannelIsMine();
-    // console.log("isMine==>"+isMine);
+    this.pauseVideo();
     if(isMine === 0 && this.postStatus != 1){
       this.menuService.showPostDetailMenu(this.nodeId, Number(this.channelId), this.channelName,this.postId);
     }else{
@@ -332,13 +351,7 @@ export class PostdetailPage implements OnInit {
   }
 
   showBigImage(content: any){
-    this.native.openViewer(content,"common.image","PostdetailPage.postview");
-  }
-
- 
-
-  commentComment(){
-    alert("TODO");
+    this.native.openViewer(content,"common.image","PostdetailPage.postview",this.appService);
   }
 
   checkServerStatus(nodeId: string){
@@ -352,22 +365,16 @@ export class PostdetailPage implements OnInit {
 
   getImage(){
     let nodeChannelPostId = this.nodeId+this.channelId+this.postId;
-    let img = this.images[nodeChannelPostId] || "";
-    if (img == ""){
-      this.images[nodeChannelPostId] = "undefine";
       this.feedService.loadPostContentImg(nodeChannelPostId).then((image)=>{
-        this.images[nodeChannelPostId] = image||"none";
+        this.postImage = image || "";
       }).catch(()=>{
         console.log("getImageError");
       })
-    }
-
-    return  this.images[nodeChannelPostId];
   }
 
   doRefresh(event:any){
     let sId =  setTimeout(() => {
-      this.images = {};
+      //this.postImage = "";
       this.startIndex = 0;
       this.initData();
       event.target.complete();
@@ -461,8 +468,8 @@ export class PostdetailPage implements OnInit {
     return 1;
   }
 
-  navTo(nodeId, channelId){
-    this.native.getNavCtrl().navigateForward(['/channels', nodeId, channelId]);
+  navTo(nodeId:string, channelId:number){
+    this.native.navigateForward(['/channels', nodeId, channelId],"");
   }
 
   checkCommentIsMine(comment:any){
@@ -485,11 +492,11 @@ export class PostdetailPage implements OnInit {
 
   writeData(){
     let nodeChannelPostId = this.nodeId+this.channelId+this.postId;;
-    console.log("image = "+this.images[nodeChannelPostId] );
+    console.log("image = "+this.postImage );
 
     // if (this.ready){
       // this.feedService.setBinary(this.nodeId,nodeChannelPostId,this.images[nodeChannelPostId]);
-      this.feedService.getBinary(this.nodeId,nodeChannelPostId,this.images[nodeChannelPostId]);
+      this.feedService.getBinary(this.nodeId,nodeChannelPostId,this.postImage);
       
     // }
     // this.sessionService.streamAddMagicNum(this.nodeId);
@@ -508,17 +515,10 @@ export class PostdetailPage implements OnInit {
     this.feedService.loadVideoPosterImg(id).then((imagedata)=>{
       let image = imagedata || "";
       if(image!=""){
-            this.feedService.loadVideo(id).then((videodata:string)=>{
-              this.zone.run(()=>{
-                    this.viedoObj = videodata;
-                   let video:any =  this.el.nativeElement.querySelector("video");
-                   video.load();
-                  })
-            }).catch(()=>{
-
-            });
         this.zone.run(()=>{
-            this.posterImg = imagedata;  
+           this.videoisShow = true;
+            this.posterImg = imagedata;
+            this.getVideo(id);
         })
       }else{
         this.videoisShow = false;
@@ -528,8 +528,22 @@ export class PostdetailPage implements OnInit {
    })
   }
 
-  onPlayerReady(id:string) {
-    this.getVideoPoster(id);
+  getVideo(id:string){
+      this.feedService.loadVideo(id).then((viedo)=>{
+        this.zone.run(()=>{
+          this.viedoObj = viedo;
+          let video:any = this.el.nativeElement.querySelector("video"); 
+          video.load();
+          video.pause();
+        }) 
+      }); 
+  }
+
+  pauseVideo(){
+    let video:any =  this.el.nativeElement.querySelector("video") || "";
+    if(video!=""){
+      video.pause();;
+    }
   }
 
   clearVideo(){   
@@ -540,6 +554,5 @@ export class PostdetailPage implements OnInit {
       video.pause();;
       video.load();
     }
-  
   }
 }

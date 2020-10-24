@@ -5,7 +5,6 @@ import { ThemeService } from 'src/app/services/theme.service';
 import { IonInfiniteScroll} from '@ionic/angular';
 import { MenuService } from 'src/app/services/MenuService';
 import { NativeService } from 'src/app/services/NativeService';
-
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.page.html',

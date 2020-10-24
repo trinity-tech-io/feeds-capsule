@@ -74,7 +74,8 @@ export const fr = {
         "infoObtaining":"Information is being obtained",
         "filevideodes":"The video is too big",
         "videoloading":"Video loading",
-        "videocompression":"Video compression"
+        "videocompression":"Video compression",
+        "video":"Video"
     },
     "app":{
         "profileDetails":"Profile Details",
