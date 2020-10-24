@@ -74,7 +74,8 @@ export const zh = {
         "infoObtaining": "信息获取中",
         "filevideodes":"视频太大了",
         "videoloading":"视频加载中",
-        "videocompression":"视频压缩中"
+        "videocompression":"视频压缩中",
+        "video":"视频"
     },
     "app":{
         "profileDetails":"档案详情",

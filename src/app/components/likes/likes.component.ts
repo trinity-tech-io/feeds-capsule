@@ -6,7 +6,7 @@ import { UtilService } from 'src/app/services/utilService';
 import { NativeService } from 'src/app/services/NativeService';
 import { TranslateService } from "@ngx-translate/core";
 import { FeedsPage } from 'src/app/pages/feeds/feeds.page'
-
+import { AppService } from 'src/app/services/AppService';
 
 
 @Component({
@@ -31,7 +31,8 @@ export class LikesComponent implements OnInit {
     private feedService :FeedService,
     public theme:ThemeService,
     private translate:TranslateService,
-    private native:NativeService
+    private native:NativeService,
+    public appService:AppService
   ) {
   }
 
@@ -181,7 +182,7 @@ export class LikesComponent implements OnInit {
     let content = document.getElementById(idStr).getAttribute("src") || "";
     if(content!=''){
       this.pauseAllVideo();
-      this.native.openViewer(content,"common.image","FeedsPage.tabTitle2");
+      this.native.openViewer(content,"common.image","FeedsPage.tabTitle2",this.appService);
     }
   }
 

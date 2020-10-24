@@ -168,9 +168,10 @@ export class NativeService {
         }, false);
     }
 
-    async openViewer(imgPath:string,newNameKey:string,oldNameKey:string) {
+    async openViewer(imgPath:string,newNameKey:string,oldNameKey:string,appService?:any) {
         titleBarManager.setTitle(this.translate.instant(newNameKey));
         this.setTitleBarBackKeyShown(false);
+        appService.hideright();
         const modal = await this.modalController.create({
           component: ViewerModalComponent,
           componentProps: {
@@ -189,6 +190,7 @@ export class NativeService {
             if(oldNameKey!='FeedsPage.tabTitle2'&&oldNameKey!='FeedsPage.tabTitle1'){
                 this.setTitleBarBackKeyShown(true);
             }
+            appService.addright();
            
         })
     

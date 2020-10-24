@@ -9,7 +9,7 @@ import { UtilService } from 'src/app/services/utilService';
 import { TranslateService } from "@ngx-translate/core";
 import { NativeService } from 'src/app/services/NativeService';
 import { IonInfiniteScroll } from '@ionic/angular';
-import { clearImmediate, clearInterval } from 'timers';
+import { AppService } from 'src/app/services/AppService';
 @Component({
   selector: 'app-home',
   templateUrl: './home.page.html',
@@ -58,7 +58,8 @@ export class HomePage implements OnInit {
     public theme:ThemeService,
     private translate:TranslateService,
     private native:NativeService,
-    private menuService: MenuService
+    private menuService: MenuService,
+    public appService:AppService
   ) {}
 
   ionViewWillEnter() {
@@ -481,7 +482,7 @@ export class HomePage implements OnInit {
     let content = document.getElementById(idStr).getAttribute("src") || "";
     if(content!=''){
       this.pauseAllVideo();
-      this.native.openViewer(content,"common.image","FeedsPage.tabTitle1");
+      this.native.openViewer(content,"common.image","FeedsPage.tabTitle1",this.appService);
     }
   }
 

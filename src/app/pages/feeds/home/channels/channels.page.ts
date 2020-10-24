@@ -9,8 +9,7 @@ import { MenuService } from 'src/app/services/MenuService';
 import { TranslateService } from "@ngx-translate/core";
 import { PaypromptComponent } from 'src/app/components/payprompt/payprompt.component'
 import { PopoverController,IonInfiniteScroll,IonContent} from '@ionic/angular';
-
-
+import { AppService } from 'src/app/services/AppService';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 @Component({
@@ -68,7 +67,8 @@ export class ChannelsPage implements OnInit {
     private feedService: FeedService,
     public theme:ThemeService,
     private translate:TranslateService,
-    private menuService: MenuService) {
+    private menuService: MenuService,
+    public appService:AppService) {
 
    
   }
@@ -634,7 +634,7 @@ export class ChannelsPage implements OnInit {
     let content = document.getElementById(idStr).getAttribute("src") || "";
     if(content!=''){
       this.pauseAllVideo();
-      this.native.openViewer(content,"common.image","ChannelsPage.feeds");
+      this.native.openViewer(content,"common.image","ChannelsPage.feeds",this.appService);
     }
   }
 

@@ -6,6 +6,7 @@ import { NativeService } from '../../../services/NativeService';
 import { CameraService } from 'src/app/services/CameraService';
 import { ThemeService } from '../../../services/theme.service';
 import { TranslateService } from "@ngx-translate/core";
+import { AppService } from 'src/app/services/AppService';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 @Component({
   selector: 'app-comment',
@@ -33,7 +34,8 @@ export class CommentPage implements OnInit {
     private zone: NgZone,
     private feedService: FeedService,
     public theme:ThemeService,
-    private translate:TranslateService) { }
+    private translate:TranslateService,
+    public appService:AppService) { }
 
   ngOnInit() {
     this.acRoute.params.subscribe((data)=>{
@@ -146,7 +148,7 @@ export class CommentPage implements OnInit {
   }
   
   showBigImage(content: any){
-    this.native.openViewer(content,"common.image","CreatenewpostPage.addingPost");
+    this.native.openViewer(content,"common.image","CreatenewpostPage.addingPost",this.appService);
   }
 
 }

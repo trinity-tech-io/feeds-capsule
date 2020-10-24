@@ -7,6 +7,7 @@ import { CameraService } from 'src/app/services/CameraService';
 import { ThemeService } from '../../../services/theme.service';
 import { TranslateService } from "@ngx-translate/core";
 import { VideoEditor } from '@ionic-native/video-editor/ngx';
+import { AppService } from 'src/app/services/AppService';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 @Component({
@@ -43,7 +44,8 @@ export class CreatenewpostPage implements OnInit {
     private feedService: FeedService,
     public theme:ThemeService,
     private translate:TranslateService,
-    public videoEditor:VideoEditor
+    public videoEditor:VideoEditor,
+    public appService:AppService
   ) {
   }
 
@@ -170,7 +172,7 @@ export class CreatenewpostPage implements OnInit {
   }
 
   showBigImage(content: any){
-    this.native.openViewer(content,"common.image","CreatenewpostPage.addingPost");
+    this.native.openViewer(content,"common.image","CreatenewpostPage.addingPost",this.appService);
   }
 
   checkServerStatus(nodeId: string){
