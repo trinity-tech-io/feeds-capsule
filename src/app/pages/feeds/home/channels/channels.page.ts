@@ -10,6 +10,7 @@ import { TranslateService } from "@ngx-translate/core";
 import { PaypromptComponent } from 'src/app/components/payprompt/payprompt.component'
 import { PopoverController,IonInfiniteScroll,IonContent} from '@ionic/angular';
 import { AppService } from 'src/app/services/AppService';
+import { VgFullscreenAPI} from 'ngx-videogular';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 @Component({
@@ -68,7 +69,8 @@ export class ChannelsPage implements OnInit {
     public theme:ThemeService,
     private translate:TranslateService,
     private menuService: MenuService,
-    public appService:AppService) {
+    public appService:AppService,
+    public vgFullscreenAPI:VgFullscreenAPI) {
 
    
   }
@@ -525,41 +527,43 @@ export class ChannelsPage implements OnInit {
     let postImage:any = document.getElementById(id+"postimgchannel") || "";
     //console.log("======="+rowindex+"-"+postImage+"-"+postImage.getBoundingClientRect().top);
     try {
-      if(id!=''&&isload===""&&postImage.getBoundingClientRect().bottom>=0&&postImage.getBoundingClientRect().top<=this.clientHeight){
+      if(id!=''&&postImage.getBoundingClientRect().top>=-this.clientHeight&&postImage.getBoundingClientRect().top<=this.clientHeight){
         //console.log("======="+rowindex+"-"+postImage.getBoundingClientRect().top+"-"+id+"");
-        rpostImage.style.display = "none";
-        this.isLoadimage[id] = "11";
-       this.feedService.loadPostContentImg(id).then((imagedata)=>{
-            let image = imagedata || "";
-            //console.log("=====ssssssimage"+image);
-            if(image!=""){
-              this.isLoadimage[id] ="13";
-              rpostImage.style.display = "block";
-              //this.images[id] = this.images;
-              this.zone.run(()=>{
-                postImage.setAttribute("src",image);
+        if(isload===""){
+          rpostImage.style.display = "none";
+          this.isLoadimage[id] = "11";
+         this.feedService.loadPostContentImg(id).then((imagedata)=>{
+              let image = imagedata || "";
+              //console.log("=====ssssssimage"+image);
+              if(image!=""){
+                this.isLoadimage[id] ="13";
+                rpostImage.style.display = "block";
                 //this.images[id] = this.images;
-              });
-            
-              //rpostImage.style.display = "none";
-            }else{
-              this.zone.run(()=>{
-                //console.log("=====ssssss");
-                this.isLoadimage[id] ="12";
-                rpostImage.style.display = 'none';   
-              })
-            }
-          }).catch(()=>{
-            rpostImage.style.display = 'none'; 
-            console.log("getImageError");
-          })
+                this.zone.run(()=>{
+                  postImage.setAttribute("src",image);
+                  //this.images[id] = this.images;
+                });
+              
+                //rpostImage.style.display = "none";
+              }else{
+                this.zone.run(()=>{
+                  //console.log("=====ssssss");
+                  this.isLoadimage[id] ="12";
+                  rpostImage.style.display = 'none';   
+                })
+              }
+            }).catch(()=>{
+              rpostImage.style.display = 'none'; 
+              console.log("getImageError");
+            })
+        }
       }else{
-        // let postImageSrc = postImage.getAttribute("src") || "";
-        // if(postImage.getBoundingClientRect().top<-100&&this.isLoadimage[id]==="13"&&postImageSrc!=""){ 
-        //   //console.log("======="+rowindex);  
-        //   this.isLoadimage[id] = "";
-        //   postImage.removeAttribute("src");
-        // }
+        let postImageSrc = postImage.getAttribute("src") || "";
+        if(postImage.getBoundingClientRect().top<-this.clientHeight&&this.isLoadimage[id]==="13"&&postImageSrc!=""){ 
+          //console.log("======="+rowindex);  
+          this.isLoadimage[id] = "";
+          postImage.removeAttribute("src");
+        }
       }
     } catch (error) {
     
@@ -577,43 +581,46 @@ export class ChannelsPage implements OnInit {
       this.pauseVideo(id);
    }
     try {
-      if(id!=''&&isloadVideoImg===""&&video.getBoundingClientRect().bottom>=0&&video.getBoundingClientRect().top<=this.clientHeight){
+      if(id!=''&&video.getBoundingClientRect().top>=-this.clientHeight&&video.getBoundingClientRect().top<=this.clientHeight){
         //console.log("========="+rowindex+"==="+video.getBoundingClientRect().top);
-        this.isLoadVideoiamge[id] = "11";
-        vgplayer.style.display = "none";
-        this.feedService.loadVideoPosterImg(id).then((imagedata)=>{
-            let image = imagedata || "";
-            if(image!=""){
-              this.isLoadVideoiamge[id] = "13";
-              vgplayer.style.display = "block";
-              video.setAttribute("poster",image);
-                this.feedService.loadVideo(id).then((data:string)=>{
-                  this.zone.run(()=>{
-                   source.setAttribute("src",data);
-                   video.load();
-                  });
-               
-               }).catch((err)=>{
-                this.isLoadVideoiamge[id] = "12";
-               })
-              //}
-            }else{
-
-              video.style.display='none';
+        if(isloadVideoImg===""){
+          this.isLoadVideoiamge[id] = "11";
+          vgplayer.style.display = "none";
+          this.feedService.loadVideoPosterImg(id).then((imagedata)=>{
+              let image = imagedata || "";
+              if(image!=""){
+                this.isLoadVideoiamge[id] = "13";
+                vgplayer.style.display = "block";
+                video.setAttribute("poster",image);
+                this.setFullScreen(id);
+                  this.feedService.loadVideo(id).then((data:string)=>{
+                    this.zone.run(()=>{
+                     source.setAttribute("src",data);
+                     video.load();
+                    });
+                 
+                 }).catch((err)=>{
+                  this.isLoadVideoiamge[id] = "12";
+                 })
+                //}
+              }else{
+  
+                video.style.display='none';
+                vgplayer.style.display = 'none'; 
+              }
+            }).catch(()=>{
               vgplayer.style.display = 'none'; 
-            }
-          }).catch(()=>{
-            vgplayer.style.display = 'none'; 
-            console.log("getImageError");
-          });
+              console.log("getImageError");
+            });
+        }
       }else{
-        // let postSrc =  video.getAttribute("poster") || "";
-        // if(video.getBoundingClientRect().top<-100&&this.isLoadVideoiamge[id]==="13"&&postSrc!=""){
-        //   video.pause();
-        //   video.removeAttribute("poster");
-        //   source.removeAttribute("src");
-        //   this.isLoadVideoiamge[id]="";
-        // }
+        let postSrc =  video.getAttribute("poster") || "";
+        if(video.getBoundingClientRect().top<-this.clientHeight&&this.isLoadVideoiamge[id]==="13"&&postSrc!=""){
+          video.pause();
+          video.removeAttribute("poster");
+          source.removeAttribute("src");
+          this.isLoadVideoiamge[id]="";
+        }
       }
     } catch (error) {
     
@@ -630,11 +637,15 @@ export class ChannelsPage implements OnInit {
   }
 
   showBigImage(id:any){
-    let idStr = id+"postimg";
+    let idStr = id+"postimgchannel";
     let content = document.getElementById(idStr).getAttribute("src") || "";
     if(content!=''){
       this.pauseAllVideo();
-      this.native.openViewer(content,"common.image","ChannelsPage.feeds",this.appService);
+      let isOwer = this.feedService.checkChannelIsMine(this.nodeId, this.channelId);
+      if(isOwer){
+        titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, null);
+      }
+      this.native.openViewer(content,"common.image","ChannelsPage.feeds",this.appService,isOwer);
     }
   }
 
@@ -676,6 +687,35 @@ export class ChannelsPage implements OnInit {
       }
     }
   
+  }
+
+  setFullScreen(id:string){
+    let vgfullscreen = document.getElementById(id+"vgfullscreenchannel");
+    vgfullscreen.onclick=()=>{
+    let isFullScreen = this.vgFullscreenAPI.isFullscreen;
+    if(isFullScreen){
+      this.native.setTitleBarBackKeyShown(true);
+      titleBarManager.setTitle(this.translate.instant("ChannelsPage.feeds"));
+      this.appService.addright();
+      if (this.feedService.checkChannelIsMine(this.nodeId, this.channelId)) {
+        titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, {
+          key: "editChannel",
+          iconPath: TitleBarPlugin.BuiltInIcon.EDIT
+        });
+      } else {
+        titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, null);
+      }
+    }else{
+      this.native.setTitleBarBackKeyShown(false);
+      titleBarManager.setTitle(this.translate.instant("common.video"));
+      titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, null);
+      this.appService.hideright();
+     
+    }
+
+    this.vgFullscreenAPI.toggleFullscreen(vgfullscreen);
+   
+ }
   }
 
 }

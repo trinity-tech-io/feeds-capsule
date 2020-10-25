@@ -168,7 +168,7 @@ export class NativeService {
         }, false);
     }
 
-    async openViewer(imgPath:string,newNameKey:string,oldNameKey:string,appService?:any) {
+    async openViewer(imgPath:string,newNameKey:string,oldNameKey:string,appService?:any,isOwer?:boolean) {
         titleBarManager.setTitle(this.translate.instant(newNameKey));
         this.setTitleBarBackKeyShown(false);
         appService.hideright();
@@ -189,6 +189,12 @@ export class NativeService {
             titleBarManager.setTitle(this.translate.instant(oldNameKey));
             if(oldNameKey!='FeedsPage.tabTitle2'&&oldNameKey!='FeedsPage.tabTitle1'){
                 this.setTitleBarBackKeyShown(true);
+            }
+            if(isOwer){
+                titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, {
+                    key: "editChannel",
+                    iconPath: TitleBarPlugin.BuiltInIcon.EDIT
+                  });
             }
             appService.addright();
            

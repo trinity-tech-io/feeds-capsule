@@ -223,7 +223,10 @@ export class PostdetailPage implements OnInit {
   }
 
   ionViewDidEnter() {
-    let vgfullscreen = this.el.nativeElement.querySelector("vg-fullscreen");
+    let vgfullscreen = this.el.nativeElement.querySelector("vg-fullscreen") || "";
+    if(vgfullscreen ===""){
+      return;
+    }
         vgfullscreen.onclick=()=>{
         let isFullScreen = this.vgFullscreenAPI.isFullscreen;
         if(isFullScreen){
@@ -241,11 +244,11 @@ export class PostdetailPage implements OnInit {
        
      }
 
-     let vgoverlayplay:any = this.el.nativeElement.querySelector("vg-overlay-play");
-     vgoverlayplay.onclick = ()=>{
+    //  let vgoverlayplay:any = this.el.nativeElement.querySelector("vg-overlay-play");
+    //  vgoverlayplay.onclick = ()=>{
        
    
-    }
+    // }
   }
 
   initTitle(){
