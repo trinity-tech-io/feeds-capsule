@@ -10,6 +10,8 @@ import { TranslateService } from "@ngx-translate/core";
 import { NativeService } from 'src/app/services/NativeService';
 import { IonInfiniteScroll } from '@ionic/angular';
 import { AppService } from 'src/app/services/AppService';
+import { VgFullscreenAPI} from 'ngx-videogular';
+declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 @Component({
   selector: 'app-home',
   templateUrl: './home.page.html',
@@ -48,6 +50,8 @@ export class HomePage implements OnInit {
   public isLoadVideoiamge:any = {};
   public videoIamges:any ={};
 
+  public postgridindex:number =0;
+
   constructor(
     private elmRef: ElementRef,
     private feedspage: FeedsPage,
@@ -59,7 +63,8 @@ export class HomePage implements OnInit {
     private translate:TranslateService,
     private native:NativeService,
     private menuService: MenuService,
-    public appService:AppService
+    public appService:AppService,
+    public vgFullscreenAPI:VgFullscreenAPI,
   ) {}
 
   ionViewWillEnter() {
@@ -77,10 +82,12 @@ export class HomePage implements OnInit {
       this.postList = this.totalData.slice(0,this.totalData.length);
       this.infiniteScroll.disabled =true;
     }
-    this.scrollToTop(1);
-    this.initnodeStatus(this.postList);
-    this.refreshImage();
-
+    this.zone.run(()=>{
+      this.refreshImage(0);
+      this.scrollToTop(1);
+      this.initnodeStatus(this.postList);
+    })
+   
     this.events.subscribe("feeds:updateTitle",()=>{
       if(this.menuService.postDetail!=null){
         this.menuService.hideActionSheet();
@@ -112,7 +119,7 @@ export class HomePage implements OnInit {
         this.scrollToTop(1);
         this.isLoadimage ={};
         this.isLoadVideoiamge ={};
-        this.refreshImage();
+        this.refreshImage(0);
         this.initnodeStatus(this.postList);
       });
     });
@@ -135,7 +142,7 @@ export class HomePage implements OnInit {
       }
       this.isLoadimage ={};
       this.isLoadVideoiamge ={};
-      this.refreshImage();
+      this.refreshImage(0);
       this.initnodeStatus(this.postList);
 
     });
@@ -154,7 +161,7 @@ export class HomePage implements OnInit {
       }
       this.isLoadimage ={};
       this.isLoadVideoiamge ={};
-      this.refreshImage();
+      this.refreshImage(0);
       this.initnodeStatus(this.postList);
 
     });
@@ -198,11 +205,8 @@ export class HomePage implements OnInit {
     console.log('即将卸载销毁');
 }
 
-  getChannel(nodeId, channelId):any{
+  getChannel(nodeId:string, channelId:number):any{
     return this.feedService.getChannelFromId(nodeId,channelId);
-  }
-
-  getContent(nodeChannelPostId: string){
   }
 
   getContentText(content: string): string{
@@ -226,7 +230,7 @@ export class HomePage implements OnInit {
     this.myScrollContainer = this.elmRef.nativeElement.querySelector('#my-scroll-container');
   }
 
-  like(nodeId, channelId, postId){
+  like(nodeId:string, channelId:number, postId:number){
     if(this.feedService.getConnectionStatus() != 0){
       this.native.toastWarn('common.connectionError');
       return;
@@ -353,20 +357,24 @@ export class HomePage implements OnInit {
         arr = this.totalData.slice(this.startIndex*this.pageNumber,(this.startIndex+1)*this.pageNumber);
         this.startIndex++;
         this.zone.run(()=>{
+        let len =this.postList.length-1;
         this.postList = this.postList.concat(arr);
-        });
+        this.refreshImage(len);
         this.initnodeStatus(arr);
-        this.refreshImage();
         event.target.complete();
+        });
+        
        }else{
         arr = this.totalData.slice(this.startIndex*this.pageNumber,this.totalData.length);
         this.zone.run(()=>{
+            let len =this.postList.length-1;
             this.postList = this.postList.concat(arr);
+            this.refreshImage(len-1);
+            this.infiniteScroll.disabled =true;
+            this.initnodeStatus(arr);
+            event.target.complete();
         });
-        this.infiniteScroll.disabled =true;
-        this.initnodeStatus(arr);
-        this.refreshImage();
-        event.target.complete();
+       
        }
       clearTimeout(sId);
     }, 500);
@@ -379,18 +387,30 @@ export class HomePage implements OnInit {
       this.startIndex = 0;
       this.totalData = this.feedService.getPostList() || [];
       if(this.totalData.length - this.pageNumber > this.pageNumber){
-        this.postList = this.totalData.slice(this.startIndex,this.pageNumber);
-        this.startIndex++;
-        this.infiniteScroll.disabled =false;
+        this.zone.run(()=>{
+          this.postList = this.totalData.slice(this.startIndex,this.pageNumber);
+          this.startIndex++;
+          this.infiniteScroll.disabled =false;
+          this.isLoadimage ={};
+          this.isLoadVideoiamge ={};
+          this.refreshImage(0);
+          this.initnodeStatus(this.postList);
+          event.target.complete();
+        })
+       
        }else{
-        this.postList = this.totalData.slice(0,this.totalData.length);
-        this.infiniteScroll.disabled =true;
+         this.zone.run(()=>{
+          this.postList = this.totalData.slice(0,this.totalData.length);
+          this.infiniteScroll.disabled =true;
+          this.isLoadimage ={};
+          this.isLoadVideoiamge ={};
+          this.refreshImage(0);
+          this.initnodeStatus(this.postList);
+          event.target.complete();
+         })
+        
       }
-      this.initnodeStatus(this.postList);
-      this.isLoadimage ={};
-      this.isLoadVideoiamge ={};
-      this.refreshImage();
-      event.target.complete();
+      
       clearTimeout(sId);
     },500);
   }
@@ -453,11 +473,10 @@ export class HomePage implements OnInit {
     this.hideComment = true;
   }
 
-  setVisibleareaImage(){
+  setVisibleareaImage(startPos:number){
     let postgridList = document.getElementsByClassName("post-grid");
     let postgridNum = document.getElementsByClassName("post-grid").length;
-  
-    for(let postgridindex =0;postgridindex<postgridNum;postgridindex++){ 
+    for(let postgridindex=0;postgridindex<postgridNum;postgridindex++){ 
       let id = postgridList[postgridindex].getAttribute("id") || '';
 
       //postImg
@@ -493,7 +512,12 @@ export class HomePage implements OnInit {
     let rpostimg = document.getElementById(id+"rpostimg");
     let postImage = document.getElementById(id+"postimg");
     try {
-      if(id!=''&&isload === ""&&postImage.getBoundingClientRect().bottom>=0&&postImage.getBoundingClientRect().top<=this.clientHeight){
+      if(id!=''&&postImage.getBoundingClientRect().top>=-this.clientHeight&&postImage.getBoundingClientRect().top<=this.clientHeight){
+        // if(rowindex === 2){
+        //   console.log("====进入==="+rowindex+"-"+JSON.stringify(postImage.getBoundingClientRect()));
+        // }
+
+        if(isload === ""){
           rpostimg.style.display = "none";
           this.isLoadimage[id] = "11";
          this.feedService.loadPostContentImg(id).then((imagedata)=>{
@@ -510,14 +534,15 @@ export class HomePage implements OnInit {
               rpostimg.style.display = 'none'; 
               console.log("getImageError");
             })
+        }
+     
       }else{
-        //  let postImageSrc = postImage.getAttribute("src") || "";
-        // if(this.isLoadimage[id]==="13"&&postImageSrc!=""){ 
-        //   //console.log("====移除==="+rowindex+"-"+postImage.getBoundingClientRect().bottom);
-        //   console.log("====移除==="+rowindex+"-"+JSON.stringify(postImage.getBoundingClientRect()));
-        //   this.isLoadimage[id] = "";
-        //   postImage.removeAttribute("src");
-        // }
+        let postImageSrc = postImage.getAttribute("src") || "";
+         if(postImage.getBoundingClientRect().top<-this.clientHeight&&this.isLoadimage[id]==="13"&&postImageSrc!=""){ 
+          // console.log("====移除==="+rowindex+"-"+postImage.getBoundingClientRect().top);
+          this.isLoadimage[id] = "";
+          postImage.removeAttribute("src");
+      }
       }
     } catch (error) {
     
@@ -534,43 +559,49 @@ export class HomePage implements OnInit {
        this.pauseVideo(id);
     }
     try {
-      if(id!=''&&isloadVideoImg===""&&video.getBoundingClientRect().bottom>=0&&video.getBoundingClientRect().top<=this.clientHeight){
-        //console.log("========="+rowindex+"==="+video.getBoundingClientRect().top);
-        this.isLoadVideoiamge[id] = "11";
-        vgplayer.style.display = "none";
-        this.feedService.loadVideoPosterImg(id).then((imagedata)=>{
-            let image = imagedata || "";
-            if(image!=""){
-              this.isLoadVideoiamge[id] = "13";
-              vgplayer.style.display = "block";
-              video.setAttribute("poster",image);
-                this.feedService.loadVideo(id).then((data:string)=>{
-                  this.zone.run(()=>{
-                   source.setAttribute("src",data);
-                   video.load();
-                  });
-               
-               }).catch((err)=>{
-                this.isLoadVideoiamge[id] = "12";
-               })
-              //}
-            }else{
-              //console.log("========="+rowindex);
-              video.style.display='none';
+      if(id!=''&&video.getBoundingClientRect().top>=-this.clientHeight&&video.getBoundingClientRect().top<=this.clientHeight){
+        //console.log("=====进入===="+rowindex+"==="+video.getBoundingClientRect().top);
+        if(isloadVideoImg===""){
+          this.isLoadVideoiamge[id] = "11";
+          vgplayer.style.display = "none";
+          this.feedService.loadVideoPosterImg(id).then((imagedata)=>{
+              let image = imagedata || "";
+              if(image!=""){
+                this.isLoadVideoiamge[id] = "13";
+                vgplayer.style.display = "block";
+                video.setAttribute("poster",image);
+                this.setFullScreen(id);
+                  this.feedService.loadVideo(id).then((data:string)=>{
+                    this.zone.run(()=>{
+                     source.setAttribute("src",data);
+                     video.load();
+                     video.pause();
+                    });
+                 
+                 }).catch((err)=>{
+                  this.isLoadVideoiamge[id] = "12";
+                 })
+                //}
+              }else{
+                //console.log("========="+rowindex);
+                video.style.display='none';
+                vgplayer.style.display = 'none'; 
+              }
+            }).catch(()=>{
               vgplayer.style.display = 'none'; 
-            }
-          }).catch(()=>{
-            vgplayer.style.display = 'none'; 
-            console.log("getImageError");
-          });
+              console.log("getImageError");
+            });
+        }
+     
       }else{
-        // let postSrc =  video.getAttribute("poster") || "";
-        // if(this.isLoadVideoiamge[id]==="13"&&postSrc!=""){
-        //   video.pause();
-        //   video.removeAttribute("poster");
-        //   source.removeAttribute("src");
-        //   this.isLoadVideoiamge[id]="";
-        // }
+        //console.log("=====移除===="+rowindex+"==="+video.getBoundingClientRect().top+"---"+video.getBoundingClientRect().bottom);
+        let postSrc =  video.getAttribute("poster") || "";
+        if(video.getBoundingClientRect().top<-this.clientHeight&&this.isLoadVideoiamge[id]==="13"&&postSrc!=""){
+          video.pause();
+          video.removeAttribute("poster");
+          source.removeAttribute("src");
+          this.isLoadVideoiamge[id]="";
+        }
       }
     } catch (error) {
     
@@ -578,15 +609,14 @@ export class HomePage implements OnInit {
   }
 
   ionScroll(){
-    this.native.throttle(this.setVisibleareaImage(),200,this,true);
+    this.native.throttle(this.setVisibleareaImage(this.postgridindex),200,this,true);
   }
 
 
-  refreshImage(){
+  refreshImage(startPos:number){
     let sid = setTimeout(()=>{
-        //this.isLoadimage ={};
-        //this.isLoadVideoiamge ={};
-        this.setVisibleareaImage();
+        this.postgridindex = startPos;
+        this.setVisibleareaImage(startPos);
         clearTimeout(sid);
      },0);
   }
@@ -627,5 +657,25 @@ export class HomePage implements OnInit {
         }
       }
     }
+  }
+
+  setFullScreen(id:string){
+    let vgfullscreen = document.getElementById(id+"vgfullscreenhome");
+    vgfullscreen.onclick=()=>{
+    let isFullScreen = this.vgFullscreenAPI.isFullscreen;
+    if(isFullScreen){
+      this.native.setTitleBarBackKeyShown(true);
+      titleBarManager.setTitle(this.translate.instant("FeedsPage.tabTitle1"));
+      this.appService.addright();
+    }else{
+      this.native.setTitleBarBackKeyShown(false);
+      titleBarManager.setTitle(this.translate.instant("common.video"));
+      this.appService.hideright();
+     
+    }
+
+    this.vgFullscreenAPI.toggleFullscreen(vgfullscreen);
+   
+ }
   }
 }
