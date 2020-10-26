@@ -109,6 +109,44 @@ export class CreatenewpostPage implements OnInit {
       this.initTitle();
     });
 
+    this.events.subscribe('stream:getBinaryResponse', () => {
+      this.zone.run(() => {
+        console.log("result==stream:getBinaryResponse====>")
+      });
+    });
+
+    this.events.subscribe('stream:getBinarySuccess', (nodeId, key) => {
+      this.zone.run(() => {
+        console.log("result==stream:getBinaryResponse====>")
+        this.feedService.loadPostContentImg(key).then((image)=>{
+          this.posterImg = image||"";
+        });
+      });
+    });
+
+    this.events.subscribe('stream:error', (nodeId, response) => {
+      this.zone.run(() => {
+
+        if (response.code == -107){
+          //TODO
+          console.log("result==FileNotExist");
+        }
+        
+        
+        console.log("result==stream:error=nodeId===>"+nodeId);
+        console.log("result==stream:error=code===>"+response.code)
+        console.log("result==stream:error=message===>"+response.message)
+
+      });
+    });
+   
+    this.events.subscribe('stream:onStateChangedCallback', (nodeId, state) => {
+      this.zone.run(() => {
+        if (state === 4){
+        }
+      });
+    });
+
     this.initnodeStatus();
   }
 
@@ -120,6 +158,12 @@ export class CreatenewpostPage implements OnInit {
     this.events.unsubscribe("feeds:publishPostSuccess");
     this.events.unsubscribe("rpcRequest:error");
     this.events.unsubscribe("rpcResponse:error");
+
+    this.events.unsubscribe("stream:getBinaryResponse");
+    this.events.unsubscribe("stream:getBinarySuccess");
+    this.events.unsubscribe("stream:error");
+    this.events.unsubscribe("stream:onStateChangedCallback");
+
     this.imgUrl="";
     this.removeVideo();
   }

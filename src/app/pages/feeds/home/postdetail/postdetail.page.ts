@@ -419,10 +419,10 @@ export class PostdetailPage implements OnInit {
     let nodeChannelPostId = this.nodeId+this.channelId+this.postId;
       this.feedService.loadPostContentImg(nodeChannelPostId).then((image)=>{
         this.postImage = image || "";
-        if(image[nodeChannelPostId] == ""){
+        if(this.postImage == ""){
           if (this.feedService.restoreSession(this.nodeId)){
             this.feedService.getBinary(this.nodeId,nodeChannelPostId);
-          } 
+          }
         }
       }).catch(()=>{
         console.log("getImageError");
