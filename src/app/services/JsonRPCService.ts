@@ -5,7 +5,7 @@ import { TransportService } from 'src/app/services/TransportService'
 
 let eventBus = null;
 let requestQueue: RequestBean[] = [];
-let autoIncreaseId: number = 0
+let autoIncreaseId: number = 0;
 export class RequestBean{
     constructor(
         public requestId: number,

@@ -84,7 +84,7 @@ export class CreatenewpostPage implements OnInit {
       });
      });
 
-    this.events.subscribe('feeds:publishPostSuccess', () => {
+    this.events.subscribe('feeds:publishPostSuccess', (postId) => {
       this.zone.run(()=>{
         this.navCtrl.pop().then(()=>{
           this.posterImg ='';
@@ -274,6 +274,9 @@ export class CreatenewpostPage implements OnInit {
                     })
                   });
                   clearInterval(sid);
+
+
+
                  },0);
                 
                })
