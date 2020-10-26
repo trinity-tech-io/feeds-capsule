@@ -72,6 +72,10 @@ export class CreatenewpostPage implements OnInit {
     
     this.connectionStatus = this.feedService.getConnectionStatus();
 
+    if (this.connectionStatus == 0){
+      this.feedService.restoreSession(this.nodeId);
+    }
+    
     this.events.subscribe('feeds:connectionChanged',(status) => {
       this.zone.run(() => {
         this.connectionStatus = status;
@@ -81,19 +85,15 @@ export class CreatenewpostPage implements OnInit {
     this.events.subscribe("feeds:friendConnectionChanged", (nodeId, status)=>{
       this.zone.run(()=>{
         this.nodeStatus[nodeId] = status;
+        if (this.connectionStatus == 0 && this.nodeId == nodeId && status == 0){
+          this.feedService.restoreSession(this.nodeId);
+        }
       });
      });
 
     this.events.subscribe('feeds:publishPostSuccess', (postId) => {
       this.zone.run(()=>{
-        
         this.feedService.sendData(this.nodeId,this.channelId,postId, 0 ,0, this.flieUri,this.imgUrl);
-        this.navCtrl.pop().then(()=>{
-          this.posterImg ='';
-          this.flieUri ='';
-          this.native.hideLoading();
-          this.native.toast_trans("CreatenewpostPage.tipMsg1");
-        });
       });
     });
 
@@ -117,11 +117,13 @@ export class CreatenewpostPage implements OnInit {
       });
     });
 
-    this.events.subscribe('stream:getBinarySuccess', (nodeId, key) => {
+    this.events.subscribe('stream:setBinarySuccess', (nodeId, key) => {
       this.zone.run(() => {
-        console.log("result==stream:getBinaryResponse====>")
-        this.feedService.loadPostContentImg(key).then((image)=>{
-          this.posterImg = image||"";
+        this.navCtrl.pop().then(()=>{
+          this.posterImg ='';
+          this.flieUri ='';
+          this.native.hideLoading();
+          this.native.toast_trans("CreatenewpostPage.tipMsg1");
         });
       });
     });
@@ -194,15 +196,47 @@ export class CreatenewpostPage implements OnInit {
   }
 
   sendPost(){
-    let myContent = {};
-    myContent["text"] = this.newPost;
-    myContent["img"] = this.imgUrl;
+    // let imgThumbs: FeedsData.ImgThumb[] = [];
+
+    // if (this.imgUrl!=""){
+    //   let imgThumb: FeedsData.ImgThumb = {
+    //     index: 0,
+    //     imgThumb: this.imgUrl
+    //   }
+    //   imgThumbs.push(imgThumb);
+    // }
+    let imgThumb = "";
+    let content = "";
+
+    if (this.imgUrl != ""){
+      this.feedService.compress(this.imgUrl).then((imageThumb)=>{
+        imgThumb = imageThumb;
+        content = this.feedService.createContent(this.newPost, this.posterImg, this.imgUrl, null);
+        this.feedService.publishPost(
+          this.nodeId,
+          this.channelId,
+          content
+        );
+      });
+    }else{
+      content = this.feedService.createContent(this.newPost, this.posterImg, null, null);
+      this.feedService.publishPost(
+        this.nodeId,
+        this.channelId,
+        content
+      );
+    }
+
+
+    // let myContent = {};
+    // myContent["text"] = this.newPost;
+    // myContent["img"] = this.imgUrl;
       
-    this.feedService.publishPost(
-      this.nodeId,
-      this.channelId,
-      JSON.stringify(myContent)
-    );
+    // this.feedService.publishPost(
+    //   this.nodeId,
+    //   this.channelId,
+    //   JSON.stringify(myContent)
+    // );
   }  
  
   addImg(type: number) {

@@ -10,6 +10,10 @@ declare namespace FeedsData{
         disconnected = 1
     }
 
+    type ImgThumb = {
+        index: number;
+        imgThumb: any;
+    }
     type AllFeed = {
         nodeId: string,
         avatar: string,

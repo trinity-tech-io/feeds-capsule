@@ -39,6 +39,7 @@ const magicNumber: number = 0x0000A5202008275A;
 const version: number = 10000;
 
 const enum StreamState {
+    NOTINIT = -1,
     /** Raw stream. */
     RAW = 0,
     /** Initialized stream. */
@@ -214,8 +215,9 @@ export class SessionService {
                             cacheData[nodeId].data.set(cache,0);
                             cacheData[nodeId].data.set(tmpData,cache.length);
                         }
-
+                        console.log("111111111");
                         let dataLength = cacheData[nodeId].data.length;
+                        console.log("state =="+cacheData[nodeId].state);
                         switch(cacheData[nodeId].state){
                             case DecodeState.prepare:
                                 for (let index = 0; index < dataLength - 23; index++) {
@@ -375,6 +377,18 @@ export class SessionService {
         };
         requestQueue.push(requestBean);
         console.log("request ===="+JSON.stringify(request));
+
+        cacheData[nodeId] = {
+            nodeId          : nodeId,
+            data            : new Uint8Array(0),
+            pointer         : 0,
+            headSize        : 0,
+            bodySize        : 0,
+            state           : DecodeState.prepare,
+            method          : "",
+            key             : "",
+        }
+        
         // let requestBean: RequestBean = {
         //     requestId: number,
         //     method: string,
@@ -433,12 +447,16 @@ export class SessionService {
     }
     
     streamAddData(nodeId: string, data: Uint8Array){
+        if (data.length<=0)
+            return ;
+
         if (workedSessions == null ||
             workedSessions == undefined ||
             workedSessions[nodeId] == undefined){
             console.log("stream null");
             return ;
         }
+
 
         let stream = workedSessions[nodeId].stream;
 
@@ -527,7 +545,7 @@ export class SessionService {
         );
     }
 
-    getSession(nodeId: string): WorkedSession{
+    getSession(nodeId: string): WorkedSession{        
         return workedSessions[nodeId];
     }
   
@@ -554,6 +572,8 @@ export class SessionService {
     }
 
     getSessionState(nodeId: string): StreamState{
+        if (workedSessions[nodeId] == undefined)
+            return -1 ;
         return workedSessions[nodeId].StreamState;
     }
 }
