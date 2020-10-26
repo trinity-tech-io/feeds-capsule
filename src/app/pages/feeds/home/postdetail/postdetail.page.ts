@@ -398,12 +398,19 @@ export class PostdetailPage implements OnInit {
   getImage(){
     let nodeChannelPostId = this.nodeId+this.channelId+this.postId;
       this.feedService.loadPostContentImg(nodeChannelPostId).then((image)=>{
+
+        // alert(image.length);
+        // this.feedService.compress(image).then((compressImg)=>{
+          // this.postImage = compressImg || "";  
+          // alert(this.postImage.length);
+        // });
+
         this.postImage = image || "";
-        if(this.postImage == ""){
-          if (this.feedService.restoreSession(this.nodeId)){
-            this.feedService.getBinary(this.nodeId,nodeChannelPostId);
-          }
-        }
+        // if(this.postImage == ""){
+        //   if (this.feedService.restoreSession(this.nodeId)){
+        //     this.feedService.getBinary(this.nodeId,nodeChannelPostId);
+        //   }
+        // }
       }).catch(()=>{
         console.log("getImageError");
       })
