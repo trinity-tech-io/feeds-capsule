@@ -125,6 +125,7 @@ export class EditpostPage implements OnInit {
   ionViewDidEnter() {
     let sid = setTimeout(()=>{
       this.setFullScreen();
+      this.setOverPlay();
       clearTimeout(sid);
     },100);
   }
@@ -396,31 +397,6 @@ export class EditpostPage implements OnInit {
    return filesize>10;
   }
 
-  setFullScreen(){
-    let vgfullscreen = this.el.nativeElement.querySelector("vg-fullscreen") || "";
-    console.log("===vgfullscreen===="+vgfullscreen);
-    if(vgfullscreen ===""){
-      return;
-    }
-    vgfullscreen.onclick=()=>{
-    let isFullScreen = this.vgFullscreenAPI.isFullscreen;
-    if(isFullScreen){
-      this.native.setTitleBarBackKeyShown(true);
-      titleBarManager.setTitle(this.translate.instant("EditpostPage.title"));
-      this.appService.addright();
-    }else{
-      this.native.setTitleBarBackKeyShown(false);
-      titleBarManager.setTitle(this.translate.instant("common.video"));
-      this.appService.hideright();
-     
-    }
-
-    this.vgFullscreenAPI.toggleFullscreen(vgfullscreen);
-   
- }
- }
-  
-
   // videocam(){
   //   this.flieUri = '';
   //   this.posterImg='';
@@ -447,15 +423,7 @@ export class EditpostPage implements OnInit {
           this.zone.run(()=>{
             this.posterImg = imgageData;
             this.oldPosterImg = imgageData;
-          });
-          this.feedService.loadVideo(this.nodeId+this.channelId+this.postId).then((video)=>{
-                 this.zone.run(()=>{
-                   this.flieUri = video;
-                   
-                 })
-          }).catch((err)=>{
-
-          });    
+          });   
         }
        });
 
@@ -471,5 +439,68 @@ export class EditpostPage implements OnInit {
     if(video!=""){
       video.load();
     }
+  }
+
+  setFullScreen(){
+    let vgfullscreen = this.el.nativeElement.querySelector("vg-fullscreen") || "";
+    if(vgfullscreen !=""){
+      vgfullscreen.onclick=()=>{
+        let isFullScreen = this.vgFullscreenAPI.isFullscreen;
+        if(isFullScreen){
+          this.native.setTitleBarBackKeyShown(true);
+          titleBarManager.setTitle(this.translate.instant("PostdetailPage.postview"));
+          this.appService.addright();
+        }else{
+          this.native.setTitleBarBackKeyShown(false);
+          titleBarManager.setTitle(this.translate.instant("common.video"));
+          this.appService.hideright();
+         
+        }
+        this.vgFullscreenAPI.toggleFullscreen(vgfullscreen);
+     }
+    }
+  }
+
+  setOverPlay(){
+    let vgoverlayplay:any = this.el.nativeElement.querySelector("vg-overlay-play") || "";
+    if(vgoverlayplay!=""){
+     vgoverlayplay.onclick = ()=>{
+      this.zone.run(()=>{
+        if(this.flieUri === ""){
+         this.getVideo(this.nodeId+this.channelId+this.postId);
+        }
+      });
+     }
+    }
+  }
+
+  getVideo(id:string){
+    // let videosource:any = this.el.nativeElement.querySelector("source") || "";
+    //   if(videosource===""){
+        console.log("zzzzzzzzz");
+        this.feedService.loadVideo(id).then((viedo:string)=>{
+          this.zone.run(()=>{
+            console.log("========="+viedo.substring(0,50));
+            this.flieUri = viedo;
+            let vgbuffering:any = this.el.nativeElement.querySelector("vg-buffering");
+                vgbuffering.style.display ="none";
+            let video:any = this.el.nativeElement.querySelector("video");
+            video.addEventListener('ended',()=>{
+                console.log("==========ended============")
+                let vgoverlayplay:any = this.el.nativeElement.querySelector("vg-overlay-play"); 
+                vgbuffering.style.display ="none";
+                vgoverlayplay.style.display = "block";  
+            });
+
+            video.addEventListener('pause',()=>{
+              console.log("==========pause============");
+              let vgoverlayplay:any = this.el.nativeElement.querySelector("vg-overlay-play");
+              vgoverlayplay.style.display = "block";  
+          });
+            video.load();
+            video.play();
+          }) 
+        }); 
+      // }
   }
 }

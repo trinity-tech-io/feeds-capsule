@@ -102,8 +102,8 @@
           <div *ngIf="post.post_status!=1" id={{post.nodeId+post.channel_id+post.id}}vgplayerchannel>
               <div style="width: 90%;display:inline-block;height:200px;">
                <vg-player>
-                 <vg-overlay-play></vg-overlay-play>
-                 <vg-buffering></vg-buffering>
+                 <vg-overlay-play id={{post.nodeId+post.channel_id+post.id}}vgoverlayplaychannel></vg-overlay-play>
+                 <vg-buffering id={{post.nodeId+post.channel_id+post.id}}vgbufferingchannel></vg-buffering>
              
                  <vg-scrub-bar>
                      <vg-scrub-bar-current-time></vg-scrub-bar-current-time>
