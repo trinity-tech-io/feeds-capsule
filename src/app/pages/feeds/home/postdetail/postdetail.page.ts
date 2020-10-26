@@ -208,12 +208,15 @@ export class PostdetailPage implements OnInit {
       });
     });
 
-    this.events.subscribe('stream:getBinarySuccess', (nodeId, key) => {
+    this.events.subscribe('stream:getBinarySuccess', (nodeId, key: string, value) => {
       this.zone.run(() => {
-        console.log("result==stream:getBinaryResponse====>")
-        this.feedService.loadPostContentImg(key).then((image)=>{
-          this.postImage = image||"";
-        });
+        console.log("result==stream:getBinarySuccess====>")
+        if (key.indexOf("img")){
+          console.log("result======>"+value)
+          this.native.hideLoading();
+          this.native.openViewer(value,"common.image","PostdetailPage.postview",this.appService);
+        }
+        
       });
     });
 
@@ -236,8 +239,9 @@ export class PostdetailPage implements OnInit {
     this.events.subscribe('stream:onStateChangedCallback', (nodeId, state) => {
       this.zone.run(() => {
         if (state === 4){
-          let nodeChannelPostId = this.nodeId+this.channelId+this.postId;
-          this.feedService.getBinary(this.nodeId, nodeChannelPostId);
+          
+          let key = this.feedService.getImageKey(this.nodeId,this.channelId,this.postId,0,0);
+          this.feedService.getBinary(this.nodeId, key);
         }
       });
     });
@@ -382,8 +386,29 @@ export class PostdetailPage implements OnInit {
     }
   }
 
-  showBigImage(content: any){
-    this.native.openViewer(content,"common.image","PostdetailPage.postview",this.appService);
+  showBigImage(){
+    this.zone.run(()=>{
+      this.native.showLoading("common.waitMoment").then(()=>{
+        let key = this.feedService.getImageKey(this.nodeId,this.channelId,this.postId,0,0);
+        this.feedService.loadRealImg(key).then((realImg)=>{
+          console.log("rrrrrrr ===>"+realImg)
+          let img = realImg || "";
+          if(img!=""){
+            this.native.hideLoading();
+            this.native.openViewer(realImg,"common.image","PostdetailPage.postview",this.appService);
+          }else{
+            if (this.feedService.restoreSession(this.nodeId)){
+              this.feedService.getBinary(this.nodeId, key);
+            }
+          }
+        });
+      }).catch(()=>{
+        this.native.hideLoading();
+      });
+      
+    });
+
+    
   }
 
   checkServerStatus(nodeId: string){
@@ -523,35 +548,6 @@ export class PostdetailPage implements OnInit {
   hideComponent(event) {
     console.log('Hide comment component?', event);
     this.hideComment = true;
-  }
-
-
-  newSession(){
-    
-    // this.events.subscribe("stream:onStateChangedCallback",(nodeId, stateName)=>{
-
-    // });
-    this.sessionService.createSession(this.nodeId,(session,stream)=>{});
-  }
-
-  writeData(){
-    let nodeChannelPostId = this.nodeId+this.channelId+this.postId;;
-    console.log("image = "+this.postImage );
-
-    // if (this.ready){
-      // this.feedService.setBinary(this.nodeId,nodeChannelPostId,this.postImage);
-      this.feedService.getBinary(this.nodeId,nodeChannelPostId);
-    // }
-    // this.sessionService.streamAddMagicNum(this.nodeId);
-    // this.sessionService.streamAddVersion(this.nodeId);
-    // let requestSize = this.sessionService.buildSetBinaryRequest("token","testKey");
-    // this.sessionService.streamAddRequestHeadSize(this.nodeId, requ);
-    // this.sessionService.streamAddData(this.nodeId, "hahahahaha");
-  }
-
-  closeSession(){
-    // this.sessionService.sessionClose(this.nodeId);
-    // let size = this.sessionService.streamAddRequestHeadSize(this.nodeId,0x9999);
   }
 
   getVideoPoster(id:string){
