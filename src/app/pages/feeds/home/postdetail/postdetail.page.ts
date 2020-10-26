@@ -272,32 +272,12 @@ export class PostdetailPage implements OnInit {
   }
 
   ionViewDidEnter() {
-    let vgfullscreen = this.el.nativeElement.querySelector("vg-fullscreen") || "";
-    if(vgfullscreen ===""){
-      return;
-    }
-        vgfullscreen.onclick=()=>{
-        let isFullScreen = this.vgFullscreenAPI.isFullscreen;
-        if(isFullScreen){
-          this.native.setTitleBarBackKeyShown(true);
-          titleBarManager.setTitle(this.translate.instant("PostdetailPage.postview"));
-          this.appService.addright();
-        }else{
-          this.native.setTitleBarBackKeyShown(false);
-          titleBarManager.setTitle(this.translate.instant("common.video"));
-          this.appService.hideright();
-         
-        }
-
-        this.vgFullscreenAPI.toggleFullscreen(vgfullscreen);
-       
-     }
-
-    //  let vgoverlayplay:any = this.el.nativeElement.querySelector("vg-overlay-play");
-    //  vgoverlayplay.onclick = ()=>{
-       
-   
-    // }
+    let sid = setTimeout(()=>{
+      this.setFullScreen();
+      this.setOverPlay();
+      clearTimeout(sid);
+    },0)
+    
   }
 
   initTitle(){
@@ -574,7 +554,7 @@ export class PostdetailPage implements OnInit {
         this.zone.run(()=>{
            this.videoisShow = true;
             this.posterImg = imagedata;
-            this.getVideo(id);
+            //this.getVideo(id);
         })
       }else{
         this.videoisShow = false;
@@ -585,14 +565,33 @@ export class PostdetailPage implements OnInit {
   }
 
   getVideo(id:string){
-      this.feedService.loadVideo(id).then((viedo)=>{
-        this.zone.run(()=>{
-          this.viedoObj = viedo;
-          let video:any = this.el.nativeElement.querySelector("video"); 
-          video.load();
-          video.pause();
-        }) 
-      }); 
+    // let videosource:any = this.el.nativeElement.querySelector("source") || "";
+    //   if(videosource===""){
+        console.log("zzzzzzzzz");
+        this.feedService.loadVideo(id).then((viedo:string)=>{
+          this.zone.run(()=>{
+            console.log("========="+viedo.substring(0,50));
+            this.viedoObj = viedo;
+            let vgbuffering:any = this.el.nativeElement.querySelector("vg-buffering");
+                vgbuffering.style.display ="none";
+            let video:any = this.el.nativeElement.querySelector("video");
+            video.addEventListener('ended',()=>{
+                console.log("==========ended============")
+                let vgoverlayplay:any = this.el.nativeElement.querySelector("vg-overlay-play"); 
+                vgbuffering.style.display ="none";
+                vgoverlayplay.style.display = "block";  
+            });
+
+            video.addEventListener('pause',()=>{
+              console.log("==========pause============");
+              let vgoverlayplay:any = this.el.nativeElement.querySelector("vg-overlay-play");
+              vgoverlayplay.style.display = "block";  
+          });
+            video.load();
+            video.play();
+          }) 
+        }); 
+      // }
   }
 
   pauseVideo(){
@@ -609,6 +608,39 @@ export class PostdetailPage implements OnInit {
     if(video!=""){
       video.pause();;
       video.load();
+    }
+  }
+
+  setFullScreen(){
+    let vgfullscreen = this.el.nativeElement.querySelector("vg-fullscreen") || "";
+    if(vgfullscreen !=""){
+      vgfullscreen.onclick=()=>{
+        let isFullScreen = this.vgFullscreenAPI.isFullscreen;
+        if(isFullScreen){
+          this.native.setTitleBarBackKeyShown(true);
+          titleBarManager.setTitle(this.translate.instant("PostdetailPage.postview"));
+          this.appService.addright();
+        }else{
+          this.native.setTitleBarBackKeyShown(false);
+          titleBarManager.setTitle(this.translate.instant("common.video"));
+          this.appService.hideright();
+         
+        }
+        this.vgFullscreenAPI.toggleFullscreen(vgfullscreen);
+     }
+    }
+  }
+
+  setOverPlay(){
+    let vgoverlayplay:any = this.el.nativeElement.querySelector("vg-overlay-play") || "";
+    if(vgoverlayplay!=""){
+     vgoverlayplay.onclick = ()=>{
+      this.zone.run(()=>{
+        if(this.viedoObj === ""){
+         this.getVideo(this.nodeId+this.channelId+this.postId);
+        }
+      });
+     }
     }
   }
 }

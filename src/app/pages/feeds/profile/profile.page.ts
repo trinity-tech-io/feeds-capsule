@@ -444,18 +444,9 @@ export class ProfilePage implements OnInit {
                 vgplayer.style.display = "block";
                 video.setAttribute("poster",image);
                 this.setFullScreen(id);
-                  this.feedService.loadVideo(id).then((data:string)=>{
-                    this.zone.run(()=>{
-                     source.setAttribute("src",data);
-                     video.load();
-                    });
-                 
-                 }).catch((err)=>{
-                  this.isLoadVideoiamge[id] = "12";
-                 })
-                //}
+                this.setOverPlay(id);
               }else{
-  
+                this.isLoadVideoiamge[id] = "12";
                 video.style.display='none';
                 vgplayer.style.display = 'none'; 
               }
@@ -557,6 +548,46 @@ export class ProfilePage implements OnInit {
       }
       }
     }
+  }
+
+
+  setOverPlay(id:string){
+    let vgoverlayplay:any = document.getElementById(id+"vgoverlayplaylike") || "";
+    let source:any = document.getElementById(id+"sourcelike") || "";
+
+    if(vgoverlayplay!=""){
+     vgoverlayplay.onclick = ()=>{
+      this.zone.run(()=>{
+         let sourceSrc = source.getAttribute("src") || "";
+         if(sourceSrc === ""){
+          this.getVideo(id,source);
+         }
+      });
+     }
+    }
+  }
+
+  getVideo(id:string,source:any){
+        this.feedService.loadVideo(id).then((viedo:string)=>{
+          this.zone.run(()=>{
+            source.setAttribute("src",viedo);
+            let vgbuffering:any = document.getElementById(id+"vgbufferinglike") || "";
+                vgbuffering.style.display ="none";
+            let video:any = document.getElementById(id+"videolike");
+            video.addEventListener('ended',()=>{
+                let vgoverlayplay:any = document.getElementById(id+"vgoverlayplaylike"); 
+                vgbuffering.style.display ="none";
+                vgoverlayplay.style.display = "block";  
+            });
+
+            video.addEventListener('pause',()=>{
+              let vgoverlayplay:any = document.getElementById(id+"vgoverlayplaylike");
+              vgoverlayplay.style.display = "block";  
+          });
+            video.load();
+            video.play();
+          }) 
+        }); 
   }
 
 }
