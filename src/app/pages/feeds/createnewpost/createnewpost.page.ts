@@ -1,4 +1,4 @@
-import { Component, OnInit, NgZone } from '@angular/core';
+import { Component, OnInit, NgZone,ElementRef} from '@angular/core';
 import { NavController, Events } from '@ionic/angular';
 import { FeedService } from 'src/app/services/FeedService';
 import { ActivatedRoute } from '@angular/router';
@@ -8,6 +8,7 @@ import { ThemeService } from '../../../services/theme.service';
 import { TranslateService } from "@ngx-translate/core";
 import { VideoEditor } from '@ionic-native/video-editor/ngx';
 import { AppService } from 'src/app/services/AppService';
+import { VgFullscreenAPI} from 'ngx-videogular';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 @Component({
@@ -45,7 +46,9 @@ export class CreatenewpostPage implements OnInit {
     public theme:ThemeService,
     private translate:TranslateService,
     public videoEditor:VideoEditor,
-    public appService:AppService
+    public appService:AppService,
+    public vgFullscreenAPI:VgFullscreenAPI,
+    public el:ElementRef
   ) {
   }
 
@@ -122,6 +125,7 @@ export class CreatenewpostPage implements OnInit {
   }
 
   ionViewDidEnter() {
+   
   }
 
   initTitle(){
@@ -257,6 +261,7 @@ export class CreatenewpostPage implements OnInit {
                  
                  let sid = setTimeout(()=>{
                   //let img = new Image;
+                  this.setFullScreen();
                   let video:any = document.getElementById('addVideo');
                   video.setAttribute('crossOrigin', 'anonymous')
                   let canvas = document.createElement('canvas');
@@ -265,7 +270,7 @@ export class CreatenewpostPage implements OnInit {
                   video.onloadeddata = (() => {
                     this.zone.run(()=>{
                     canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height)
-                    this.posterImg= canvas.toDataURL("image/png"); 
+                    this.posterImg= canvas.toDataURL("image/png",10); 
                     })
                   });
                   clearInterval(sid);
@@ -349,6 +354,31 @@ export class CreatenewpostPage implements OnInit {
       video.load();
     }
   }
+
+  setFullScreen(){
+    let vgfullscreen = this.el.nativeElement.querySelector("vg-fullscreen") || "";
+    if(vgfullscreen ===""){
+      return;
+    }
+    vgfullscreen.onclick=()=>{
+    let isFullScreen = this.vgFullscreenAPI.isFullscreen;
+    if(isFullScreen){
+      this.native.setTitleBarBackKeyShown(true);
+      titleBarManager.setTitle(this.translate.instant("CreatenewpostPage.addingPost"));
+      this.appService.addright();
+    }else{
+      this.native.setTitleBarBackKeyShown(false);
+      titleBarManager.setTitle(this.translate.instant("common.video"));
+      this.appService.hideright();
+     
+    }
+
+    this.vgFullscreenAPI.toggleFullscreen(vgfullscreen);
+   
+ }
+ }
+
+
   
   // videocam(){
   //   this.flieUri = '';
