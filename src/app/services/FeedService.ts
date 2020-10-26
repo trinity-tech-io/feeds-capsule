@@ -4408,6 +4408,14 @@ export class FeedService {
     return this.storeService.loadPostContentImg(nodeChannelPostId);
   }
 
+  loadRealImg(key: string): Promise<any>{
+    return this.storeService.loadRealImg(key);
+  }
+
+  removeRealImg(key: string): Promise<any>{
+    return this.storeService.removeRealImg(key);
+  }
+
   pay(receiver: string, amount: number, memo: string, onSuccess: (res:any)=>void, onError: (err: any)=>void){
     let param = {
       receiver: receiver, 

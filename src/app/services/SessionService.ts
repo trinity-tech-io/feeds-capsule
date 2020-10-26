@@ -4,7 +4,8 @@ import { NativeService } from 'src/app/services/NativeService';
 import { TranslateService } from '@ngx-translate/core';
 import { CarrierService } from 'src/app/services/CarrierService';
 import { SerializeDataService } from 'src/app/services/SerializeDataService';
-import { join } from 'path';
+import { StorageService } from 'src/app/services/StorageService';
+
 // let base64 = require('cordova/base64');
 let autoIncreaseId: number = 1;
 type WorkedSession = {
@@ -82,12 +83,13 @@ const enum ServerError {
     FileNotExists = -107
 }
 
-let mCarrierService;
 let eventBus:Events = null;
 let testSum = 0;
 let workedSessions: {[nodeId:string]: WorkedSession} = {}; 
 let cacheData: {[nodeId:string]: CachedData} = {};
+let mCarrierService: CarrierService;
 let mSerializeDataService:SerializeDataService;
+let mStorageService: StorageService;
 @Injectable()
 export class SessionService {
     public friendConnectionMap: {[nodeId:string]: FeedsData.ConnState};
@@ -96,8 +98,10 @@ export class SessionService {
         private native: NativeService,
         private translate: TranslateService,
         private carrierService: CarrierService,
-        private serializeDataService: SerializeDataService) {
+        private serializeDataService: SerializeDataService,
+        private storageService:StorageService) {
             eventBus = events;
+            mStorageService = this.storageService;
             mCarrierService = this.carrierService;
             mSerializeDataService = this.serializeDataService;
     }
@@ -758,11 +762,25 @@ function decodeBodyData(nodeId: string, cacheDataLength: number): boolean{
 
     let body = cacheData[nodeId].data.subarray(pointer, pointer + bodySize);
     console.log("----------body----------"+body.length);
+    let value = mSerializeDataService.decodeData(body);
+    console.log("----------value----------"+value);
+    
     
     let key = cacheData[nodeId].key;
-    eventBus.publish("stream:getBinarySuccess", nodeId, key);
 
-
+    if (cacheData[nodeId].method == "get_binary" ){
+        if (key.indexOf("video") == -1){
+            mStorageService.saveRealImg(key, value).then(()=>{
+                eventBus.publish("stream:getBinarySuccess", nodeId, key, value);
+            });    
+        }else{
+            mStorageService.saveVideo(key,value).then(()=>{
+                eventBus.publish("stream:getBinarySuccess", nodeId, key, value);
+            });
+            
+        }
+    }
+    
     cacheData[nodeId].state = DecodeState.finish;
     cacheData[nodeId].pointer = cacheData[nodeId].pointer + bodySize;
     return true;
