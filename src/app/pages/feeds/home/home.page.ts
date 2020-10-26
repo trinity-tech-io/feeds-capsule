@@ -191,6 +191,7 @@ export class HomePage implements OnInit {
     this.events.unsubscribe("feeds:publishPostFinish");
     this.events.unsubscribe("feeds:editPostFinish");
     this.events.unsubscribe("feeds:deletePostFinish");
+    this.removeImages();
     this.removeAllVideo();
     this.isLoadimage ={};
     this.isLoadVideoiamge ={};
@@ -664,7 +665,7 @@ export class HomePage implements OnInit {
     vgfullscreen.onclick=()=>{
     let isFullScreen = this.vgFullscreenAPI.isFullscreen;
     if(isFullScreen){
-      this.native.setTitleBarBackKeyShown(true);
+      this.native.setTitleBarBackKeyShown(false);
       titleBarManager.setTitle(this.translate.instant("FeedsPage.tabTitle1"));
       this.appService.addright();
     }else{
@@ -677,5 +678,18 @@ export class HomePage implements OnInit {
     this.vgFullscreenAPI.toggleFullscreen(vgfullscreen);
    
  }
+ }
+
+ removeImages(){
+  let iamgseids = this.isLoadimage;
+  for(let id  in iamgseids){
+    let value = iamgseids[id] || "";
+    if(value === "13"){
+      let imgElement:any = document.getElementById(id+'post-img') || "";
+           if(imgElement!=""){
+            imgElement.removeAttribute('src'); // empty source
+           }   
+      }
+    }
   }
 }

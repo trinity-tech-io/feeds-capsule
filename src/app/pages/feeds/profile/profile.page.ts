@@ -194,6 +194,7 @@ export class ProfilePage implements OnInit {
     this.events.unsubscribe("feeds:deletePostFinish");
 
     this.events.unsubscribe("feeds:updateTitles");
+    this.removeImages();
     this.removeAllVideo();
     this.isLoadimage ={};
     this.isLoadVideoiamge ={};
@@ -530,7 +531,7 @@ export class ProfilePage implements OnInit {
     vgfullscreen.onclick=()=>{
     let isFullScreen = this.vgFullscreenAPI.isFullscreen;
     if(isFullScreen){
-      this.native.setTitleBarBackKeyShown(true);
+      this.native.setTitleBarBackKeyShown(false);
       titleBarManager.setTitle(this.translate.instant("FeedsPage.tabTitle2"));
       this.appService.addright();
     }else{
@@ -543,6 +544,19 @@ export class ProfilePage implements OnInit {
     this.vgFullscreenAPI.toggleFullscreen(vgfullscreen);
    
  }
+ }
+
+ removeImages(){
+  let iamgseids = this.isLoadimage;
+  for(let id  in iamgseids){
+    let value = iamgseids[id] || "";
+    if(value === "13"){
+      let imgElement:any = document.getElementById(id+'postimglike') || "";
+      if(imgElement!=""){
+          imgElement.removeAttribute('src'); // empty source
+      }
+      }
+    }
   }
 
 }

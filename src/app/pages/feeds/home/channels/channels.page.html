@@ -99,10 +99,9 @@
 
           <!--video-->
 
-          <ion-row *ngIf="post.post_status!=1" id={{post.nodeId+post.channel_id+post.id}}vgplayerchannel>
-            <ion-col size="8">
-               <div>
-               <vg-player style="width:240;height:200px">
+          <div *ngIf="post.post_status!=1" id={{post.nodeId+post.channel_id+post.id}}vgplayerchannel>
+              <div style="width: 90%;display:inline-block;height:200px;">
+               <vg-player>
                  <vg-overlay-play></vg-overlay-play>
                  <vg-buffering></vg-buffering>
              
@@ -129,11 +128,10 @@
              </video>
              </vg-player>
              </div>
-            </ion-col>
-            <ion-col size="4">
 
-            </ion-col>
-         </ion-row>
+             <span style="width: 10%;display:inline-block;height:200px;" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)"></span> 
+
+          </div>
 
           <ion-row class="bottom-row">
             <ion-col size="2.25" (click)="like(post.nodeId, post.channel_id, post.id)">

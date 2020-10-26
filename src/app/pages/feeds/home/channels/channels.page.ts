@@ -216,6 +216,7 @@ export class ChannelsPage implements OnInit {
     this.events.unsubscribe("feeds:unsubscribeFinish");
     this.events.unsubscribe("feeds:editPostFinish");
     this.events.unsubscribe("feeds:deletePostFinish");
+    this.removeImages();
     this.removeAllVideo();
     this.isLoadimage ={};
     this.isLoadVideoiamge ={};
@@ -715,7 +716,20 @@ export class ChannelsPage implements OnInit {
 
     this.vgFullscreenAPI.toggleFullscreen(vgfullscreen);
    
- }
   }
+  }
+
+  removeImages(){
+    let iamgseids = this.isLoadimage;
+    for(let id  in iamgseids){
+      let value = iamgseids[id] || "";
+      if(value === "13"){
+        let imgElement:any = document.getElementById(id+'postimgchannel') || "";
+        if(imgElement!=""){
+            imgElement.removeAttribute('src'); // empty source
+        }
+        }
+      }
+    }
 
 }
