@@ -86,6 +86,8 @@ export class CreatenewpostPage implements OnInit {
 
     this.events.subscribe('feeds:publishPostSuccess', (postId) => {
       this.zone.run(()=>{
+        
+        this.feedService.sendData(this.nodeId,this.channelId,postId, 0 ,0, this.flieUri,this.imgUrl);
         this.navCtrl.pop().then(()=>{
           this.posterImg ='';
           this.flieUri ='';
@@ -143,6 +145,8 @@ export class CreatenewpostPage implements OnInit {
     this.events.subscribe('stream:onStateChangedCallback', (nodeId, state) => {
       this.zone.run(() => {
         if (state === 4){
+
+
         }
       });
     });
