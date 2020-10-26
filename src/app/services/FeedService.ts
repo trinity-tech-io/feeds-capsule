@@ -1935,6 +1935,7 @@ export class FeedService {
     let content = this.serializeDataService.decodeData(contentBin);
     let contentText = this.parsePostContentText(content);
     let contentImage = this.parsePostContentImg(content);
+    let videoThumbnail = this.parseVideoThumbnail(content);
 
     let mPostId = this.getPostId(nodeId, channel_id, id);
     this.postMap[mPostId] = {
@@ -1949,7 +1950,10 @@ export class FeedService {
       post_status : FeedsData.PostCommentStatus.available
     }
 
-    this.storeService.savePostContentImg(mPostId, contentImage);
+    if(contentImage !="")
+      this.storeService.savePostContentImg(mPostId, contentImage);
+    if (videoThumbnail!="")
+      this.storeService.saveVideoPosterImg(mPostId, videoThumbnail);
 
     let nodeChannelId = nodeId+channel_id;
     if (lastPostUpdateMap[nodeChannelId] == undefined){
@@ -2180,9 +2184,13 @@ export class FeedService {
 
     let contentText = this.parsePostContentText(content);
     let contentImage = this.parsePostContentImg(content);
+    let videoThumbnail = this.parseVideoThumbnail(content);
 
     let mPostId = this.getPostId(nodeId, channelId, postId);
-    this.storeService.savePostContentImg(mPostId, contentImage);
+    if(contentImage !="")
+      this.storeService.savePostContentImg(mPostId, contentImage);
+    if (videoThumbnail!="")
+      this.storeService.saveVideoPosterImg(mPostId, videoThumbnail);
 
     this.postMap[mPostId] = {
       nodeId     : nodeId,
@@ -2345,6 +2353,7 @@ export class FeedService {
     let content = this.serializeDataService.decodeData(contentBin);
     let contentText = this.parsePostContentText(content);
     let contentImage = this.parsePostContentImg(content);
+    let videoThumbnail = this.parseVideoThumbnail(content);
 
     let post:Post = {
       nodeId      : nodeId,
@@ -2360,7 +2369,10 @@ export class FeedService {
 
     let mPostId = this.getPostId(nodeId, channelId, postId);
    
-    this.storeService.savePostContentImg(mPostId, contentImage);
+    if(contentImage !="")
+      this.storeService.savePostContentImg(mPostId, contentImage);
+    if (videoThumbnail!="")
+      this.storeService.saveVideoPosterImg(mPostId, videoThumbnail);
 
     this.postMap[mPostId]=post;
 
@@ -2778,6 +2790,7 @@ export class FeedService {
       let content = this.serializeDataService.decodeData(contentBin);
       let contentText = this.parsePostContentText(content);
       let contentImage = this.parsePostContentImg(content);
+      let videoThumbnail = this.parseVideoThumbnail(content);
 
       let updatedAt = result[index].updated_at||createAt;
       let status = result[index].status||FeedsData.PostCommentStatus.available;
@@ -2787,7 +2800,10 @@ export class FeedService {
 
 
       let mPostId = this.getPostId(nodeId, channel_id, id);
-      this.storeService.savePostContentImg(mPostId,contentImage);
+      if(contentImage !="")
+        this.storeService.savePostContentImg(mPostId, contentImage);
+      if (videoThumbnail!="")
+        this.storeService.saveVideoPosterImg(mPostId, videoThumbnail);
 
       if(this.postMap[mPostId] == undefined){
         let nodeChannelId = nodeId + channel_id;
@@ -3505,27 +3521,22 @@ export class FeedService {
   }
 
   parsePostContentImg(content: any): string{
-    // if (content == undefined){
-    //   return "";
-    // }
-
-    // if (content.indexOf("img") != -1){
-    //   try {
-    //     let contentObj = JSON.parse(content);
-    //     return contentObj.img;
-    //   } catch(e) {
-    //     console.log("error ==> "+e);
-    //     return "";
-    //   }
-
-    // }
-
-    // return "";
-
     let contentObj = this.native.parseJSON(content) || "";
     
     if (contentObj.img != undefined)
       return contentObj.img
+
+    if (typeof contentObj != 'string')
+      return ""
+
+    return contentObj;
+  }
+
+  parseVideoThumbnail(content: any): string{
+    let contentObj = this.native.parseJSON(content) || "";
+    
+    if (contentObj.videoThumbnail != undefined)
+      return contentObj.videoThumbnail
 
     if (typeof contentObj != 'string')
       return ""
@@ -4627,7 +4638,7 @@ export class FeedService {
 
 
   transportValueData(nodeId: string, valueData: Uint8Array){
-    let step = 512 ;
+    let step = 2048 ;
     let currentSlice = 0;
     let sumSlice = 0;
 
@@ -4643,7 +4654,9 @@ export class FeedService {
   }
   
   restoreSession(nodeId: string): boolean{
-    switch(this.sessionService.getSessionState(nodeId)){
+    let state = this.sessionService.getSessionState(nodeId);
+    console.log("state===>"+state);
+    switch(state){
       case 0:
       case 1:
       case 2: 
@@ -4654,12 +4667,11 @@ export class FeedService {
       case 5:
       case 6:
       case 7:
+      case -1:
         this.sessionService.createSession(nodeId,(session, stream)=>{
         });
         return false;
-    }
-
-    
+    } 
   }
 
   //videoPoster 
@@ -4721,6 +4733,10 @@ export class FeedService {
 
   compress(imgData: string): Promise<any>{
     return new Promise((resolve, reject) =>{
+      if (imgData.length< 50*1000){
+        resolve(imgData);
+        return ;
+      }
       let image = new Image()     //新建一个img标签（不嵌入DOM节点，仅做canvas操作)
       image.src = imgData    //让该标签加载base64格式的原图
       image.onload = function() {    //图片加载完毕后再通过canvas压缩图片，否则图片还没加载完就压缩，结果图片是全黑的
@@ -4741,7 +4757,36 @@ export class FeedService {
           resolve(data);
       }
     });
+  }
 
+  createContent(text: string, videoThumb: string, img: string, imageThumb: FeedsData.ImgThumb[]): string{
+    // {"videoThumbnail":"","imageThumbnail":[{"index":0,"imgThumb":""}]}
+    // {"text":"123"}
+    // {"text":"123","imageThumbnail":[{"index":0,"imgThumb":"data:image/jpeg;base64,/9j/4}]}
+    // {"text":"123","videoThumbnail":"data:image/png;base64,iVB=="}
+    let content = {};
     
+    if (text != ""){
+      content["text"] = text ;
+    }
+    
+    if (img!=null && img != ""){
+      content["img"] = img;
+    }
+
+    if(videoThumb!=null && videoThumb!= ""){
+      content["videoThumbnail"] = videoThumb;  
+    }
+
+    if(imageThumb!=null && imageThumb.length > 0){
+      content["imageThumbnail"] = imageThumb;  
+    }
+
+    let contentStr = JSON.stringify(content);
+    console.log("content====>"+contentStr);
+    return contentStr;
+  }
+
+  parseContent(content: any){
   }
 }
