@@ -4679,5 +4679,29 @@ export class FeedService {
   saveVideo(nodeChannelPostId: string,content:any):Promise<any>{
     return this.storeService.saveVideo(nodeChannelPostId,content);
   }
+
+  getTextKey(nodeId: string, channelId: number, postId: number, commentId: number, index: number){
+    this.getKey(nodeId, channelId, postId, commentId)+"-text-"+index; 
+  }
+
+  getImageKey(nodeId: string, channelId: number, postId: number, commentId: number, index: number){
+    return this.getKey(nodeId, channelId, postId, commentId)+"-img-"+index;
+  }
+
+  getImageThumbnailKey(nodeId: string, channelId: number, postId: number, commentId: number, index: number){
+    return this.getKey(nodeId, channelId, postId, commentId)+"-img-thumbnail-"+index;
+  }
+
+  getVideoKey(nodeId: string, channelId: number, postId: number, commentId: number, index: number){
+    return this.getKey(nodeId, channelId, postId, commentId)+"-video-"+index;
+  }
+
+  getVideoThumbKey(nodeId: string, channelId: number, postId: number, commentId: number, index: number){
+    return this.getKey(nodeId, channelId, postId, commentId)+"-video-thumbnail-"+index;
+  }
+
+  getKey(nodeId: string, channelId: number, postId: number, commentId: number): string{
+    return nodeId + "-" + channelId + "-"+ postId + "-" + commentId;
+  }
   
 }
