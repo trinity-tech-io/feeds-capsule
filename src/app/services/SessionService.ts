@@ -6,7 +6,7 @@ import { CarrierService } from 'src/app/services/CarrierService';
 import { SerializeDataService } from 'src/app/services/SerializeDataService';
 import { join } from 'path';
 // let base64 = require('cordova/base64');
-
+let autoIncreaseId: number = 1;
 type WorkedSession = {
     nodeId      : string,
     session     : CarrierPlugin.Session,
@@ -22,7 +22,9 @@ type CachedData = {
     pointer         : number,
     headSize        : number,
     bodySize        : number,
-    state           : DecodeState
+    state           : DecodeState,
+    method          : string,
+    key             : string,
 }
 
 const enum DecodeState{
@@ -63,6 +65,20 @@ const enum WorkedState {
     streamConnecting = "streamConnecting",
     streamConnected = "streamConnected",
     streamStateClosed = "streamStateClosed"
+}
+let requestQueue: RequestBean[] = [];
+
+type RequestBean = {
+    requestId: number,
+    nodeId: string,
+    method: string,
+    requestParams: any,
+    memo: any
+}
+
+const enum ServerError {
+    WriteDataError = -100,
+    FileNotExists = -107
 }
 
 let mCarrierService;
@@ -117,7 +133,7 @@ export class SessionService {
 
                         var msg = "Stream [" + event.stream.id + "] state changed to: " + state_name[event.state];
                         console.log(msg);
-                        eventBus.publish("stream:onStateChangedCallback", nodeId, state_name[event.state]);
+                        eventBus.publish("stream:onStateChangedCallback", nodeId, event.state);
 
                         if (CarrierPlugin.StreamState.INITIALIZED == event.state){
                             console.log("aaaaaaaaaaaaaaa");
@@ -175,7 +191,6 @@ export class SessionService {
                                     }
                                 );
                             }
-                            
                         }
                     },
                     onStreamData: function(event: any) {
@@ -188,7 +203,9 @@ export class SessionService {
                                 pointer         : 0,
                                 headSize        : 0,
                                 bodySize        : 0,
-                                state           : DecodeState.prepare
+                                state           : DecodeState.prepare,
+                                method          : "",
+                                key             : "",
                             }
                             cacheData[nodeId].data.set(tmpData,0);
                         }else{
@@ -342,21 +359,40 @@ export class SessionService {
         this.streamAddData(nodeId, request);
     }
 
-    addHeader(nodeId: string, requestSize: number, bodySize: number){
+    addHeader(nodeId: string, requestSize: number, bodySize: number, request: any){
         this.streamAddMagicNum(nodeId);
         this.streamAddVersion(nodeId);
         this.streamAddRequestHeadSize(nodeId, requestSize);
         this.streamAddRequestBodySize(nodeId, bodySize);
+
+
+        let requestBean: RequestBean = {
+            requestId: request.id,
+            nodeId: nodeId,
+            method: request.method,
+            requestParams: request.params,
+            memo: ""
+        };
+        requestQueue.push(requestBean);
+        console.log("request ===="+JSON.stringify(request));
+        // let requestBean: RequestBean = {
+        //     requestId: number,
+        //     method: string,
+        //     requestParams: any,
+        //     memo: any
+        // }
+        // requestQueue.push(requestBean);
     }
 
     buildSetBinaryRequest(accessToken: FeedsData.AccessToken, key: string){
+        let id = autoIncreaseId++;
         if (accessToken == undefined)
             return ;
 
         let request = {
             version: "1.0",
             method : "set_binary",
-            id     : 1,
+            id     : id,
             params : {
                 access_token: accessToken.token,
                 key         : key,
@@ -368,13 +404,14 @@ export class SessionService {
     }
 
     buildGetBinaryRequest(accessToken: FeedsData.AccessToken, key: string){
+        let id = autoIncreaseId++;
         if (accessToken == undefined)
             return ;
 
         let request = {
             version: "1.0",
             method : "get_binary",
-            id     : 1,
+            id     : id,
             params : {
                 access_token: accessToken.token,
                 key         : key 
@@ -417,6 +454,7 @@ export class SessionService {
             console.log("stream write success");
             // console.log("bytesSent===>"+JSON.stringify(bytesSent));
         },(err)=>{
+            publishError(nodeId, createWriteDataError());
             console.log("stream write error ==>"+err);
         });
     }
@@ -513,6 +551,10 @@ export class SessionService {
         let versionBytes = encodeNum(version, 4);
         console.log("3333333333===>"+JSON.stringify(versionBytes));
         console.log("3333333333===>"+JSON.stringify(decodeNum(versionBytes,4)));        
+    }
+
+    getSessionState(nodeId: string): StreamState{
+        return workedSessions[nodeId].StreamState;
     }
 }
 
@@ -669,18 +711,11 @@ function decodeHeadData(nodeId: string, cacheDataLength: number): boolean{
     console.log("--------headResponse--------"+JSON.stringify(headResponse));
     console.log("--------response--------"+headResponse.length);
 
-    let test = uint8ArrayToString(headResponse);
-    console.log("----------response body----------"+JSON.stringify(test));
-
-    if (mSerializeDataService == undefined){
-        console.log("----------undefined----------");
-    }else{
-        console.log("----------nononono----------");
-    }
     let response = mSerializeDataService.decodeData(headResponse);
     console.log("----------response body----------"+JSON.stringify(response));
 
-    
+    parseResponse(response);
+
     cacheData[nodeId].state = DecodeState.decodeBody;
     cacheData[nodeId].pointer = cacheData[nodeId].pointer + headSize;
     return true;
@@ -704,6 +739,9 @@ function decodeBodyData(nodeId: string, cacheDataLength: number): boolean{
     let body = cacheData[nodeId].data.subarray(pointer, pointer + bodySize);
     console.log("----------body----------"+body.length);
     
+    let key = cacheData[nodeId].key;
+    eventBus.publish("stream:getBinarySuccess", nodeId, key);
+
 
     cacheData[nodeId].state = DecodeState.finish;
     cacheData[nodeId].pointer = cacheData[nodeId].pointer + bodySize;
@@ -726,4 +764,107 @@ function combineData(nodeId: string, cacheDataLength: number){
     cacheData[nodeId].data.set(remainData,0);
     cacheData[nodeId].pointer = 0;
     return true;
+}
+
+function parseResponse(response: any){
+    console.log("parseResponse");
+
+
+
+    
+    // {"version":"1.0","id":1,"result":{"key":"8afJxa7RTamSrXWxUCcZt8jnAAjAGfx4gmN5ECwq2XSi230","algo":"None","checksum":""}}
+
+    // {"version":"1.0","id":1,"result":{"key":"8afJxa7RTamSrXWxUCcZt8jnAAjAGfx4gmN5ECwq2XSi230"}}
+    let version: string = response.version || "";
+    if (version == "" || version != "1.0"){
+        console.log("version error");
+        return ;
+    }
+
+    let id = response.id || "";
+    if (id == ""){
+        console.log("id error");
+        return ;
+    }
+
+    let request = queryRequest(response.id, response.result);
+    let method = request.method;
+
+    console.log("request ===>"+method);
+    
+    let nodeId = request.nodeId;
+    cacheData[nodeId].method = method;
+    
+
+    // {"version":"1.0","id":1,"error":{"code":-154,"message":"MassDataUnsupportedAlgo"}}
+    let error = response.error||"";
+    if (error != ""){
+        let code = error.code;
+        let message = error.message;
+        console.log("Error :: code :"+code+", message : "+message);
+        publishError(nodeId, response.error);
+        // return error;
+        return ;
+    }
+
+
+ 
+
+
+
+    let key = response.result.key || "";
+    if (key == ""){
+        console.log("key error");
+        return ;
+    }
+
+    console.log("response ===>"+key);
+    cacheData[nodeId].key = key;
+
+
+
+
+    
+
+
+    if (method == "set_binary"){
+        console.log("111111");
+        eventBus.publish("stream:setBinaryResponse", nodeId);
+        eventBus.publish("stream:setBinarySuccess", nodeId);
+
+    } else if (method == "get_binary"){
+        console.log("22222");
+        eventBus.publish("stream:getBinaryResponse", nodeId);
+
+    }
+
+}
+
+function queryRequest(responseId: number, result: any): any{
+    for (let index = 0; index < requestQueue.length; index++) {
+        if (requestQueue[index].requestId == responseId){
+            let request = requestQueue[index];
+            if (result == null ||
+                result.is_last == null ||
+                result.is_last == undefined ||
+                result.is_last)
+                return requestQueue.splice(index,1)[0];
+            
+            return request;
+        }
+    }
+    return {};
+}
+
+function createWriteDataError(){
+    let response = {
+        code: -100,
+        message: "writeDataError"
+    }
+
+    return response;
+}
+
+function publishError(nodeId: string, response: any){
+    eventBus.publish("stream:error", nodeId,response);
 }

@@ -2368,7 +2368,7 @@ export class FeedService {
     
     eventBus.publish(PublishType.postEventSuccess);
     eventBus.publish(PublishType.postDataUpdate);
-    eventBus.publish(PublishType.publishPostSuccess);
+    eventBus.publish(PublishType.publishPostSuccess, postId);
     eventBus.publish(PublishType.publishPostFinish);
   }
 
@@ -4604,22 +4604,25 @@ export class FeedService {
     this.transportData(nodeId, key, requestData, value);
   }
 
-  getBinary(nodeId: string, key: string, value: any){
+  getBinary(nodeId: string, key: string){
     let accessToken: FeedsData.AccessToken = accessTokenMap[nodeId]||undefined;
     let requestData = this.sessionService.buildGetBinaryRequest(accessToken, key);
-    this.transportData(nodeId, key, requestData, value);
+    this.transportData(nodeId, key, requestData);
   }
 
-  transportData(nodeId: string, key: string, request: any, value: any){
+  transportData(nodeId: string, key: string, request: any, value: any = ""){
     console.log("request ==>"+JSON.stringify(request));
     let requestData = this.serializeDataService.encodeData(request);
 
-    let valueData = this.serializeDataService.encodeData(value);
-
-    this.sessionService.addHeader(nodeId, requestData.length, valueData.length);
-    this.sessionService.streamAddData(nodeId, requestData);
-
-    this.transportValueData(nodeId, valueData);
+    if (value != ""){
+      let valueData = this.serializeDataService.encodeData(value);
+      this.sessionService.addHeader(nodeId, requestData.length, valueData.length, request);
+      this.sessionService.streamAddData(nodeId, requestData);
+      this.transportValueData(nodeId, valueData);
+    }else{
+      this.sessionService.addHeader(nodeId, requestData.length, 0, request);
+      this.sessionService.streamAddData(nodeId, requestData);
+    }
   }
 
 
@@ -4639,6 +4642,26 @@ export class FeedService {
     this.sessionService.streamAddData(nodeId, valueData.subarray(currentSlice*step, valueData.length));
   }
   
+  restoreSession(nodeId: string): boolean{
+    switch(this.sessionService.getSessionState(nodeId)){
+      case 0:
+      case 1:
+      case 2: 
+      case 3:
+        return false;
+      case 4:
+        return true;
+      case 5:
+      case 6:
+      case 7:
+        this.sessionService.createSession(nodeId,(session, stream)=>{
+        });
+        return false;
+    }
+
+    
+  }
+
   //videoPoster 
   loadVideoPosterImg(nodeChannelPostId: string):Promise<any>{
     return this.storeService.loadVideoPosterImg(nodeChannelPostId);

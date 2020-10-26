@@ -199,6 +199,48 @@ export class PostdetailPage implements OnInit {
          this.native.hideLoading();
       });
     });
+
+
+
+    this.events.subscribe('stream:getBinaryResponse', () => {
+      this.zone.run(() => {
+        console.log("result==stream:getBinaryResponse====>")
+      });
+    });
+
+    this.events.subscribe('stream:getBinarySuccess', (nodeId, key) => {
+      this.zone.run(() => {
+        console.log("result==stream:getBinaryResponse====>")
+        this.feedService.loadPostContentImg(key).then((image)=>{
+          this.postImage = image||"";
+        });
+      });
+    });
+
+    this.events.subscribe('stream:error', (nodeId, response) => {
+      this.zone.run(() => {
+
+        if (response.code == -107){
+          //TODO
+          console.log("result==FileNotExist");
+        }
+        
+        
+        console.log("result==stream:error=nodeId===>"+nodeId);
+        console.log("result==stream:error=code===>"+response.code)
+        console.log("result==stream:error=message===>"+response.message)
+
+      });
+    });
+   
+    this.events.subscribe('stream:onStateChangedCallback', (nodeId, state) => {
+      this.zone.run(() => {
+        if (state === 4){
+          let nodeChannelPostId = this.nodeId+this.channelId+this.postId;
+          this.feedService.getBinary(this.nodeId, nodeChannelPostId);
+        }
+      });
+    });
   }
 
 
@@ -213,7 +255,14 @@ export class PostdetailPage implements OnInit {
     this.events.unsubscribe("feeds:editCommentFinish");
     this.events.unsubscribe("feeds:deleteCommentFinish");
     this.events.unsubscribe("rpcRequest:error");
+
     this.postImage = "";
+
+    this.events.unsubscribe("stream:getBinaryResponse");
+    this.events.unsubscribe("stream:getBinarySuccess");
+    this.events.unsubscribe("stream:error");
+    this.events.unsubscribe("stream:onStateChangedCallback");
+
     this.menuService.hideActionSheet();
     if(this.popover!=null){
       this.popover.dismiss();
@@ -370,6 +419,11 @@ export class PostdetailPage implements OnInit {
     let nodeChannelPostId = this.nodeId+this.channelId+this.postId;
       this.feedService.loadPostContentImg(nodeChannelPostId).then((image)=>{
         this.postImage = image || "";
+        if(image[nodeChannelPostId] == ""){
+          if (this.feedService.restoreSession(this.nodeId)){
+            this.feedService.getBinary(this.nodeId,nodeChannelPostId);
+          } 
+        }
       }).catch(()=>{
         console.log("getImageError");
       })
@@ -487,9 +541,9 @@ export class PostdetailPage implements OnInit {
 
   newSession(){
     
-    this.events.subscribe("stream:onStateChangedCallback",(nodeId, stateName)=>{
+    // this.events.subscribe("stream:onStateChangedCallback",(nodeId, stateName)=>{
 
-    });
+    // });
     this.sessionService.createSession(this.nodeId,(session,stream)=>{});
   }
 
@@ -498,9 +552,8 @@ export class PostdetailPage implements OnInit {
     console.log("image = "+this.postImage );
 
     // if (this.ready){
-      // this.feedService.setBinary(this.nodeId,nodeChannelPostId,this.images[nodeChannelPostId]);
-      this.feedService.getBinary(this.nodeId,nodeChannelPostId,this.postImage);
-      
+      // this.feedService.setBinary(this.nodeId,nodeChannelPostId,this.postImage);
+      this.feedService.getBinary(this.nodeId,nodeChannelPostId);
     // }
     // this.sessionService.streamAddMagicNum(this.nodeId);
     // this.sessionService.streamAddVersion(this.nodeId);
