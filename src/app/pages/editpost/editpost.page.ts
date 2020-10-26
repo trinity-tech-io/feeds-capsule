@@ -1,4 +1,4 @@
-import { Component, OnInit, NgZone} from '@angular/core';
+import { Component, OnInit, NgZone,ElementRef} from '@angular/core';
 import { Events } from '@ionic/angular';
 import { FeedService } from 'src/app/services/FeedService';
 import { ActivatedRoute } from '@angular/router';
@@ -49,7 +49,8 @@ export class EditpostPage implements OnInit {
     private translate:TranslateService,
     public vgFullscreenAPI:VgFullscreenAPI,
     public videoEditor:VideoEditor,
-    public appService:AppService, 
+    public appService:AppService,
+    public el:ElementRef 
   ) {
   }
 
@@ -65,6 +66,7 @@ export class EditpostPage implements OnInit {
   ionViewWillEnter() {
     this.initTitle();
     this.native.setTitleBarBackKeyShown(true);
+    this.initVideo();
     this.initData();
 
     this.events.subscribe('feeds:connectionChanged',(status)=>{
@@ -121,7 +123,10 @@ export class EditpostPage implements OnInit {
   }
 
   ionViewDidEnter() {
-    this.initVideo();
+    let sid = setTimeout(()=>{
+      this.setFullScreen();
+      clearTimeout(sid);
+    },100);
   }
 
   initTitle(){
@@ -298,12 +303,7 @@ export class EditpostPage implements OnInit {
                  this.flieUri = fileReader.result; 
                  let sid = setTimeout(()=>{
                   //let img = new Image;
-                 let obj = document.getElementById("ww");
-                 obj.onclick=(obj:any)=>{
-                    //alert("===onChangeFullscreen===="+obj.isFullscreen);
-                    //obj.onChangeFullscreen(false);
-                    this.vgFullscreenAPI.toggleFullscreen(obj);
-                  };
+                  this.setFullScreen();
                   let video:any = document.getElementById('eidtVideo');
                   video.setAttribute('crossOrigin', 'anonymous')
                   let canvas = document.createElement('canvas');
@@ -312,7 +312,7 @@ export class EditpostPage implements OnInit {
                   video.onloadeddata = (() => {
                     this.zone.run(()=>{
                     canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height)
-                    this.posterImg= canvas.toDataURL("image/png",30);
+                    this.posterImg= canvas.toDataURL("image/png",10);
                         
                     //video.setAttribute("poster",this.posterImg);
                     })
@@ -395,6 +395,30 @@ export class EditpostPage implements OnInit {
   isVideoTipDes(filesize:number){
    return filesize>10;
   }
+
+  setFullScreen(){
+    let vgfullscreen = this.el.nativeElement.querySelector("vg-fullscreen") || "";
+    console.log("===vgfullscreen===="+vgfullscreen);
+    if(vgfullscreen ===""){
+      return;
+    }
+    vgfullscreen.onclick=()=>{
+    let isFullScreen = this.vgFullscreenAPI.isFullscreen;
+    if(isFullScreen){
+      this.native.setTitleBarBackKeyShown(true);
+      titleBarManager.setTitle(this.translate.instant("EditpostPage.title"));
+      this.appService.addright();
+    }else{
+      this.native.setTitleBarBackKeyShown(false);
+      titleBarManager.setTitle(this.translate.instant("common.video"));
+      this.appService.hideright();
+     
+    }
+
+    this.vgFullscreenAPI.toggleFullscreen(vgfullscreen);
+   
+ }
+ }
   
 
   // videocam(){
@@ -427,6 +451,7 @@ export class EditpostPage implements OnInit {
           this.feedService.loadVideo(this.nodeId+this.channelId+this.postId).then((video)=>{
                  this.zone.run(()=>{
                    this.flieUri = video;
+                   
                  })
           }).catch((err)=>{
 
