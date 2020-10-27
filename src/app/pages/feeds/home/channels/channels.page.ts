@@ -235,6 +235,7 @@ export class ChannelsPage implements OnInit {
   
         if (response.code == -107){
           //TODO
+          this.native.hideLoading();
           console.log("result==FileNotExist");
         }
         
@@ -256,7 +257,7 @@ export class ChannelsPage implements OnInit {
           return;
   
         if (state === 4){
-          this.feedService.getBinary(this.nodeId, this.cacheGetBinaryRequestKey,this.cachedMediaType);
+          this.feedService.getBinary(nodeId, this.cacheGetBinaryRequestKey,this.cachedMediaType);
         }
       });
     });
@@ -714,8 +715,8 @@ export class ChannelsPage implements OnInit {
           }else{
             this.cacheGetBinaryRequestKey = key;
             this.cachedMediaType = "img";
-            if (this.feedService.restoreSession(this.nodeId)){
-              this.feedService.getBinary(this.nodeId, key,this.cachedMediaType);
+            if (this.feedService.restoreSession(nodeId)){
+              this.feedService.getBinary(nodeId, key,this.cachedMediaType);
             }
           }
         });

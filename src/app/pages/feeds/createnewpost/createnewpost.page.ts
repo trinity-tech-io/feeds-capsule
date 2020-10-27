@@ -66,7 +66,6 @@ export class CreatenewpostPage implements OnInit {
   }
 
   ionViewWillEnter() {
-    this.flieUri ="";
     this.initTitle();
     this.native.setTitleBarBackKeyShown(true);
     
@@ -93,6 +92,15 @@ export class CreatenewpostPage implements OnInit {
 
     this.events.subscribe('feeds:publishPostSuccess', (postId) => {
       this.zone.run(()=>{
+        if(this.imgUrl === "" && this.posterImg ===""){
+          this.zone.run(() => {
+            this.navCtrl.pop().then(()=>{
+              this.events.publish("update:tab",true);
+              this.native.hideLoading();
+              this.native.toast_trans("CreatenewpostPage.tipMsg1");
+            });
+          });
+        }
         this.feedService.sendData(this.nodeId,this.channelId,postId, 0 ,0, this.flieUri,this.imgUrl);
       });
     });
@@ -120,6 +128,8 @@ export class CreatenewpostPage implements OnInit {
     this.events.subscribe('stream:setBinarySuccess', (nodeId, key) => {
       this.zone.run(() => {
         this.navCtrl.pop().then(()=>{
+          this.events.publish("update:tab",true);
+          this.imgUrl ='';
           this.posterImg ='';
           this.flieUri ='';
           this.native.hideLoading();
@@ -158,6 +168,7 @@ export class CreatenewpostPage implements OnInit {
 
   ionViewWillLeave(){
     this.flieUri ="";
+    this.posterImg ="";
     this.events.unsubscribe("feeds:connectionChanged");
     this.events.unsubscribe("feeds:friendConnectionChanged");
     this.events.unsubscribe("feeds:updateTitle");
@@ -355,10 +366,7 @@ export class CreatenewpostPage implements OnInit {
                     this.posterImg= canvas.toDataURL("image/png",10); 
                     })
                   });
-                  clearInterval(sid);
-
-
-
+                  clearTimeout(sid);
                  },0);
                 
                })

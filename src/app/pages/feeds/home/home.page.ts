@@ -70,6 +70,26 @@ export class HomePage implements OnInit {
     public vgFullscreenAPI:VgFullscreenAPI,
   ) {}
 
+  initPostListData(){
+        //console.log("======feeds:publishPostFinish====");
+        this.infiniteScroll.disabled =false;
+        this.startIndex = 0;
+        this.totalData = this.feedService.getPostList() || [];
+        if (this.totalData.length - this.pageNumber > this.pageNumber){
+          this.postList = this.totalData.slice(this.startIndex,this.pageNumber);
+          this.startIndex++;
+          this.infiniteScroll.disabled =false;
+         } else {
+          this.postList =  this.totalData.slice(0,this.totalData.length);
+          this.infiniteScroll.disabled =true;
+        }
+        this.scrollToTop(1);
+        this.isLoadimage ={};
+        this.isLoadVideoiamge ={};
+        this.refreshImage(0);
+        this.initnodeStatus(this.postList);
+  }
+
   ionViewWillEnter() {
     //this.refreshImage(); 
     this.styleObj.width = (screen.width - 105)+'px';
@@ -104,28 +124,27 @@ export class HomePage implements OnInit {
       });
     });
 
-    this.events.subscribe('feeds:publishPostFinish',()=>{
-      this.zone.run(() => {
-        this.isLoadimage ={};
-        this.isLoadVideoiamge = {};
-        this.infiniteScroll.disabled =false;
-        this.startIndex = 0;
-        this.totalData = this.feedService.getPostList() || [];
-        if (this.totalData.length - this.pageNumber > this.pageNumber){
-          this.postList = this.totalData.slice(this.startIndex,this.pageNumber);
-          this.startIndex++;
-          this.infiniteScroll.disabled =false;
-         } else {
-          this.postList =  this.totalData.slice(0,this.totalData.length);
-          this.infiniteScroll.disabled =true;
-        }
-        this.scrollToTop(1);
-        this.isLoadimage ={};
-        this.isLoadVideoiamge ={};
-        this.refreshImage(0);
-        this.initnodeStatus(this.postList);
-      });
-    });
+    // this.events.subscribe('feeds:publishPostFinish',()=>{
+    //   this.zone.run(() => {
+    //     console.log("======feeds:publishPostFinish====");
+    //     this.infiniteScroll.disabled =false;
+    //     this.startIndex = 0;
+    //     this.totalData = this.feedService.getPostList() || [];
+    //     if (this.totalData.length - this.pageNumber > this.pageNumber){
+    //       this.postList = this.totalData.slice(this.startIndex,this.pageNumber);
+    //       this.startIndex++;
+    //       this.infiniteScroll.disabled =false;
+    //      } else {
+    //       this.postList =  this.totalData.slice(0,this.totalData.length);
+    //       this.infiniteScroll.disabled =true;
+    //     }
+    //     this.scrollToTop(1);
+    //     this.isLoadimage ={};
+    //     this.isLoadVideoiamge ={};
+    //     this.refreshImage(0);
+    //     this.initnodeStatus(this.postList);
+    //   });
+    // });
 
     this.events.subscribe("feeds:friendConnectionChanged", (nodeId, status)=>{
       this.zone.run(()=>{
@@ -170,8 +189,13 @@ export class HomePage implements OnInit {
     });
    });
 
-   this.events.subscribe("update:tab",()=>{
- 
+
+   this.events.subscribe("update:tab",(isInit)=>{
+    console.log("======post======");
+    if(isInit){
+      this.initPostListData();
+      return;
+    }
     this.totalData = this.feedService.getPostList() || [];
     if (this.totalData.length - this.pageNumber > this.pageNumber){
       this.postList = this.totalData.slice(0,(this.startIndex)*this.pageNumber);
@@ -180,6 +204,9 @@ export class HomePage implements OnInit {
       this.postList =  this.totalData;
       this.infiniteScroll.disabled =true;
     }
+    this.isLoadimage ={};
+    this.isLoadVideoiamge ={};
+    this.refreshImage(0);
     this.initnodeStatus(this.postList);
 
    });
@@ -213,6 +240,7 @@ export class HomePage implements OnInit {
 
       if (response.code == -107){
         //TODO
+        this.native.hideLoading();
         console.log("result==FileNotExist");
       }
       
@@ -234,7 +262,7 @@ export class HomePage implements OnInit {
         return;
 
       if (state === 4){
-        this.feedService.getBinary(this.nodeId, this.cacheGetBinaryRequestKey,this.cachedMediaType);
+        this.feedService.getBinary(nodeId, this.cacheGetBinaryRequestKey,this.cachedMediaType);
       }
     });
   });
@@ -249,7 +277,7 @@ export class HomePage implements OnInit {
     this.events.unsubscribe("feeds:publishPostFinish");
     this.events.unsubscribe("feeds:editPostFinish");
     this.events.unsubscribe("feeds:deletePostFinish");
-
+    
     this.events.unsubscribe("stream:getBinaryResponse");
     this.events.unsubscribe("stream:getBinarySuccess");
     this.events.unsubscribe("stream:error");
@@ -263,6 +291,7 @@ export class HomePage implements OnInit {
 }
 
   ionViewDidLeave() {
+   
     this.events.unsubscribe("update:tab");
   }
 
@@ -573,8 +602,8 @@ export class HomePage implements OnInit {
           }else{
             this.cacheGetBinaryRequestKey = key;
             this.cachedMediaType = "img";
-            if (this.feedService.restoreSession(this.nodeId)){
-              this.feedService.getBinary(this.nodeId, key, this.cachedMediaType);
+            if (this.feedService.restoreSession(nodeId)){
+              this.feedService.getBinary(nodeId, key, this.cachedMediaType);
             }
           }
         });
