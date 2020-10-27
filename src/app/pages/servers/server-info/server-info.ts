@@ -289,6 +289,12 @@ export class ServerInfoPage implements OnInit {
       type: this.translate.instant('ServerInfoPage.introduction'),
       details: server.introduction || ""
     });
+
+    this.serverDetails.push({
+      type: this.translate.instant('ServerInfoPage.version'),
+      details: server.version || this.translate.instant('common.infoObtaining'),
+    });
+    
     this.serverDetails.push({
       type: this.translate.instant('IssuecredentialPage.elaaddress'),
       details: server.elaAddress || ""
@@ -302,10 +308,7 @@ export class ServerInfoPage implements OnInit {
       details: server.feedsUrl || "",
       qrcode: true
     });
-    this.serverDetails.push({
-      type: this.translate.instant('ServerInfoPage.version'),
-      details: server.version || this.translate.instant('common.infoObtaining'),
-    });
+ 
   }
 
   menuMore() {
