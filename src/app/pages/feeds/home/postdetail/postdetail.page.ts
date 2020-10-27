@@ -214,12 +214,12 @@ export class PostdetailPage implements OnInit {
       this.zone.run(() => {
         this.cacheGetBinaryRequestKey = "";
         console.log("result==stream:getBinarySuccess====>")
-        if (mediaType === "img"){
-          // console.log("result======>"+value)
+        if (key.indexOf("img")>-1){
+          console.log("result======>"+value)
           this.native.hideLoading();
           this.native.openViewer(value,"common.image","PostdetailPage.postview",this.appService);
-        } else if (mediaType === "video"){
-          // console.log("video =====>"+value);
+        } else if (key.indexOf("video")>-1){
+          console.log("video =====>"+value)
           this.videoObj = value;
           this.loadVideo();
         }
