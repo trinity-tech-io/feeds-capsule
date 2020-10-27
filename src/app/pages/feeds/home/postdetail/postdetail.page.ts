@@ -63,6 +63,7 @@ export class PostdetailPage implements OnInit {
   public videoisShow:boolean = false;
 
   private cacheGetBinaryRequestKey = "";
+  private cachedMediaType = "";
 
   constructor(
     private popoverController:PopoverController,
@@ -207,16 +208,16 @@ export class PostdetailPage implements OnInit {
       });
     });
 
-    this.events.subscribe('stream:getBinarySuccess', (nodeId, key: string, value) => {
+    this.events.subscribe('stream:getBinarySuccess', (nodeId, key: string, value, mediaType) => {
       this.zone.run(() => {
         this.cacheGetBinaryRequestKey = "";
         console.log("result==stream:getBinarySuccess====>")
-        if (key.indexOf("img")){
-          console.log("result======>"+value)
+        if (mediaType === "img"){
+          // console.log("result======>"+value)
           this.native.hideLoading();
           this.native.openViewer(value,"common.image","PostdetailPage.postview",this.appService);
-        } else if (key.indexOf("video")){
-          console.log("video =====>"+value)
+        } else if (mediaType === "video"){
+          // console.log("video =====>"+value);
           this.videoObj = value;
           this.loadVideo();
         }
@@ -250,7 +251,7 @@ export class PostdetailPage implements OnInit {
           return;
 
         if (state === 4){
-          this.feedService.getBinary(this.nodeId, this.cacheGetBinaryRequestKey);
+          this.feedService.getBinary(this.nodeId, this.cacheGetBinaryRequestKey, this.cachedMediaType);
         }
       });
     });
@@ -407,8 +408,9 @@ export class PostdetailPage implements OnInit {
             this.native.openViewer(realImg,"common.image","PostdetailPage.postview",this.appService);
           }else{
             this.cacheGetBinaryRequestKey = key;
+            this.cachedMediaType = "img";
             if (this.feedService.restoreSession(this.nodeId)){
-              this.feedService.getBinary(this.nodeId, key);
+              this.feedService.getBinary(this.nodeId, key, this.cachedMediaType);
             }
           }
         });
@@ -578,15 +580,16 @@ export class PostdetailPage implements OnInit {
     // let videosource:any = this.el.nativeElement.querySelector("source") || "";
     //   if(videosource===""){
     console.log("zzzzzzzzz");
-    this.feedService.loadVideo(key).then((video:string)=>{
+    this.feedService.loadVideo(key).then((videodata:string)=>{
       this.zone.run(()=>{
         // console.log("========="+video.substring(0,50));
-        let videoData = video || "";
+        let videoData = videodata || "";
 
-        if (video == null){
+        if (videodata == null){
           this.cacheGetBinaryRequestKey = key;
+          this.cachedMediaType = "video";
           if (this.feedService.restoreSession(this.nodeId)){
-            this.feedService.getBinary(this.nodeId, key);
+            this.feedService.getBinary(this.nodeId, key, this.cachedMediaType);
           }
 
           return;
@@ -596,9 +599,26 @@ export class PostdetailPage implements OnInit {
           return ;
 
         this.videoObj = videoData;
-        console.log("========="+video.substring(0,50));
+        console.log("========="+this.videoObj.substring(0,50));
 
-        this.loadVideo();
+        // this.loadVideo();
+        let vgbuffering:any = this.el.nativeElement.querySelector("vg-buffering");
+        vgbuffering.style.display ="none";
+        let video:any = this.el.nativeElement.querySelector("video");
+        video.addEventListener('ended',()=>{
+            console.log("==========ended============")
+            let vgoverlayplay:any = this.el.nativeElement.querySelector("vg-overlay-play"); 
+            vgbuffering.style.display ="none";
+            vgoverlayplay.style.display = "block";  
+        });
+    
+        video.addEventListener('pause',()=>{
+          console.log("==========pause============");
+          let vgoverlayplay:any = this.el.nativeElement.querySelector("vg-overlay-play");
+          vgoverlayplay.style.display = "block";  
+        });
+        video.load();
+        video.play();
       });
     }); 
       // }

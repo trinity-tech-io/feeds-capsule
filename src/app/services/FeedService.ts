@@ -4617,19 +4617,19 @@ export class FeedService {
     });
   }
 
-  setBinary(nodeId: string, key: string, value: any){
+  setBinary(nodeId: string, key: string, value: any, mediaType: string){
     let accessToken: FeedsData.AccessToken = accessTokenMap[nodeId]||undefined;
     let requestData = this.sessionService.buildSetBinaryRequest(accessToken, key);
-    this.transportData(nodeId, key, requestData, value);
+    this.transportData(nodeId, key, requestData, mediaType, value);
   }
 
-  getBinary(nodeId: string, key: string){
+  getBinary(nodeId: string, key: string, mediaType: string){
     let accessToken: FeedsData.AccessToken = accessTokenMap[nodeId]||undefined;
     let requestData = this.sessionService.buildGetBinaryRequest(accessToken, key);
-    this.transportData(nodeId, key, requestData);
+    this.transportData(nodeId, key, requestData, mediaType);
   }
 
-  transportData(nodeId: string, key: string, request: any, value: any = ""){
+  transportData(nodeId: string, key: string, request: any, mediaType: string, value: any = ""){
     console.log("request ==>"+JSON.stringify(request));
     let requestData = this.serializeDataService.encodeData(request);
 
