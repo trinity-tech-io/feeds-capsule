@@ -10,7 +10,6 @@ import { UtilService } from 'src/app/services/utilService';
 import { IonInfiniteScroll,PopoverController} from '@ionic/angular';
 import { EdittoolComponent } from '../../../../components/edittool/edittool.component';
 
-import { SessionService } from 'src/app/services/SessionService';
 import { VgFullscreenAPI} from 'ngx-videogular';
 import { AppService } from 'src/app/services/AppService';
 
@@ -60,9 +59,10 @@ export class PostdetailPage implements OnInit {
   //public videoObj:any ={};
   public videoPoster:string ="";
   public posterImg:string ="";
-  public viedoObj:string ="";
+  public videoObj:string ="";
   public videoisShow:boolean = false;
 
+  private cacheGetBinaryRequestKey = "";
 
   constructor(
     private popoverController:PopoverController,
@@ -74,7 +74,6 @@ export class PostdetailPage implements OnInit {
     public theme:ThemeService,
     private translate:TranslateService,
     public menuService: MenuService,
-    private sessionService: SessionService,
     public vgFullscreenAPI:VgFullscreenAPI,
     public appService:AppService,
     public el:ElementRef) {
@@ -210,11 +209,16 @@ export class PostdetailPage implements OnInit {
 
     this.events.subscribe('stream:getBinarySuccess', (nodeId, key: string, value) => {
       this.zone.run(() => {
+        this.cacheGetBinaryRequestKey = "";
         console.log("result==stream:getBinarySuccess====>")
         if (key.indexOf("img")){
           console.log("result======>"+value)
           this.native.hideLoading();
           this.native.openViewer(value,"common.image","PostdetailPage.postview",this.appService);
+        } else if (key.indexOf("video")){
+          console.log("video =====>"+value)
+          this.videoObj = value;
+          this.loadVideo();
         }
         
       });
@@ -238,10 +242,15 @@ export class PostdetailPage implements OnInit {
    
     this.events.subscribe('stream:onStateChangedCallback', (nodeId, state) => {
       this.zone.run(() => {
+
+        console.log("cacheGetBinaryRequestKey ===>"+this.cacheGetBinaryRequestKey);
+        console.log("state ===>"+state);
+
+        if (this.cacheGetBinaryRequestKey == "")
+          return;
+
         if (state === 4){
-          
-          let key = this.feedService.getImageKey(this.nodeId,this.channelId,this.postId,0,0);
-          this.feedService.getBinary(this.nodeId, key);
+          this.feedService.getBinary(this.nodeId, this.cacheGetBinaryRequestKey);
         }
       });
     });
@@ -397,6 +406,7 @@ export class PostdetailPage implements OnInit {
             this.native.hideLoading();
             this.native.openViewer(realImg,"common.image","PostdetailPage.postview",this.appService);
           }else{
+            this.cacheGetBinaryRequestKey = key;
             if (this.feedService.restoreSession(this.nodeId)){
               this.feedService.getBinary(this.nodeId, key);
             }
@@ -405,10 +415,7 @@ export class PostdetailPage implements OnInit {
       }).catch(()=>{
         this.native.hideLoading();
       });
-      
     });
-
-    
   }
 
   checkServerStatus(nodeId: string){
@@ -567,34 +574,54 @@ export class PostdetailPage implements OnInit {
    })
   }
 
-  getVideo(id:string){
+  getVideo(key:string){
     // let videosource:any = this.el.nativeElement.querySelector("source") || "";
     //   if(videosource===""){
-        console.log("zzzzzzzzz");
-        this.feedService.loadVideo(id).then((viedo:string)=>{
-          this.zone.run(()=>{
-            console.log("========="+viedo.substring(0,50));
-            this.viedoObj = viedo;
-            let vgbuffering:any = this.el.nativeElement.querySelector("vg-buffering");
-                vgbuffering.style.display ="none";
-            let video:any = this.el.nativeElement.querySelector("video");
-            video.addEventListener('ended',()=>{
-                console.log("==========ended============")
-                let vgoverlayplay:any = this.el.nativeElement.querySelector("vg-overlay-play"); 
-                vgbuffering.style.display ="none";
-                vgoverlayplay.style.display = "block";  
-            });
+    console.log("zzzzzzzzz");
+    this.feedService.loadVideo(key).then((video:string)=>{
+      this.zone.run(()=>{
+        // console.log("========="+video.substring(0,50));
+        let videoData = video || "";
 
-            video.addEventListener('pause',()=>{
-              console.log("==========pause============");
-              let vgoverlayplay:any = this.el.nativeElement.querySelector("vg-overlay-play");
-              vgoverlayplay.style.display = "block";  
-          });
-            video.load();
-            video.play();
-          }) 
-        }); 
+        if (video == null){
+          this.cacheGetBinaryRequestKey = key;
+          if (this.feedService.restoreSession(this.nodeId)){
+            this.feedService.getBinary(this.nodeId, key);
+          }
+
+          return;
+        }
+
+        if (videoData == "")
+          return ;
+
+        this.videoObj = videoData;
+        console.log("========="+video.substring(0,50));
+
+        this.loadVideo();
+      });
+    }); 
       // }
+  }
+
+  loadVideo(){
+    let vgbuffering:any = this.el.nativeElement.querySelector("vg-buffering");
+    vgbuffering.style.display ="none";
+    let video:any = this.el.nativeElement.querySelector("video");
+    video.addEventListener('ended',()=>{
+        console.log("==========ended============")
+        let vgoverlayplay:any = this.el.nativeElement.querySelector("vg-overlay-play"); 
+        vgbuffering.style.display ="none";
+        vgoverlayplay.style.display = "block";  
+    });
+
+    video.addEventListener('pause',()=>{
+      console.log("==========pause============");
+      let vgoverlayplay:any = this.el.nativeElement.querySelector("vg-overlay-play");
+      vgoverlayplay.style.display = "block";  
+    });
+    video.load();
+    video.play();
   }
 
   pauseVideo(){
@@ -606,7 +633,7 @@ export class PostdetailPage implements OnInit {
 
   clearVideo(){   
     this.posterImg ="";
-    this.viedoObj ="";
+    this.videoObj ="";
     let video:any =  this.el.nativeElement.querySelector("video") || "";
     if(video!=""){
       video.pause();;
@@ -639,9 +666,13 @@ export class PostdetailPage implements OnInit {
     if(vgoverlayplay!=""){
      vgoverlayplay.onclick = ()=>{
       this.zone.run(()=>{
-        if(this.viedoObj === ""){
-         this.getVideo(this.nodeId+this.channelId+this.postId);
-        }
+        if (this.videoObj != "")
+          return;
+
+        let key = this.feedService.getVideoKey(this.nodeId,this.channelId,this.postId,0,0);
+        this.getVideo(key);
+
+
       });
      }
     }

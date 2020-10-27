@@ -777,7 +777,6 @@ function decodeBodyData(nodeId: string, cacheDataLength: number): boolean{
             mStorageService.saveVideo(key,value).then(()=>{
                 eventBus.publish("stream:getBinarySuccess", nodeId, key, value);
             });
-            
         }
     }
     
