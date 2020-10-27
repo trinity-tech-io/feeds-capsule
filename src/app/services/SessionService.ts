@@ -15,6 +15,7 @@ type WorkedSession = {
     isStart     : boolean,
     sdp         : string,
     StreamState : StreamState
+    sessionTimeout : NodeJS.Timer
 }
 
 type CachedData = {
@@ -91,6 +92,7 @@ let cacheData: {[nodeId:string]: CachedData} = {};
 let mCarrierService: CarrierService;
 let mSerializeDataService:SerializeDataService;
 let mStorageService: StorageService;
+
 @Injectable()
 export class SessionService {
     public friendConnectionMap: {[nodeId:string]: FeedsData.ConnState};
@@ -110,14 +112,14 @@ export class SessionService {
     createSession(nodeId: string, onSuccess:(session: CarrierPlugin.Session, stream: CarrierPlugin.Stream)=>void, onError?:(err: string)=>void){
         this.carrierService.newSession(nodeId,(mSession)=>{
             console.log("newSession success");
-            if (workedSessions)
             workedSessions[nodeId] = {
                 nodeId      : nodeId,
                 session     : mSession,
                 stream      : null,
                 isStart     : false,
                 sdp         : "",
-                StreamState : StreamState.RAW
+                StreamState : StreamState.RAW,
+                sessionTimeout : null
             }
             this.carrierService.sessionAddStream(
                 mSession,
@@ -142,6 +144,16 @@ export class SessionService {
                         eventBus.publish("stream:onStateChangedCallback", nodeId, event.state);
 
                         if (CarrierPlugin.StreamState.INITIALIZED == event.state){
+                            workedSessions[nodeId].sessionTimeout = setTimeout(() => {
+                                console.log("...............................")
+                                if (workedSessions[nodeId].StreamState != StreamState.CONNECTED){
+                                    console.log("..............................111111111111111111.")
+                                    workedSessions[nodeId].StreamState = -1;
+                                }
+
+                                clearTimeout(this.signinChallengeTimeout);
+                            }, 2*60*1000);
+
                             console.log("aaaaaaaaaaaaaaa");
                             mCarrierService.sessionRequest(
                                 mSession,
@@ -582,6 +594,14 @@ export class SessionService {
         if (workedSessions[nodeId] == undefined)
             return -1 ;
         return workedSessions[nodeId].StreamState;
+    }
+
+    cleanData(nodeId: string){
+        delete cacheData[nodeId];
+    }
+
+    cleanSession(nodeId: string){
+        delete workedSessions[nodeId];
     }
 }
 

@@ -4635,11 +4635,11 @@ export class FeedService {
 
     if (value != ""){
       let valueData = this.serializeDataService.encodeData(value);
-      this.sessionService.addHeader(nodeId, requestData.length, valueData.length, request);
+      this.sessionService.addHeader(nodeId, requestData.length, valueData.length, request, mediaType);
       this.sessionService.streamAddData(nodeId, requestData);
       this.transportValueData(nodeId, valueData);
     }else{
-      this.sessionService.addHeader(nodeId, requestData.length, 0, request);
+      this.sessionService.addHeader(nodeId, requestData.length, 0, request, mediaType);
       this.sessionService.streamAddData(nodeId, requestData);
     }
   }
@@ -4730,10 +4730,10 @@ export class FeedService {
     if (this.restoreSession(nodeId)){
       if (videoData != ""){
         let key = this.getVideoKey(nodeId,channelId,postId,commentId,index);
-        this.setBinary(nodeId,key,videoData);
+        this.setBinary(nodeId,key,videoData,"video");
       }else if(imgData != ""){
         let key = this.getImageKey(nodeId,channelId,postId,commentId,index);
-        this.setBinary(nodeId,key,imgData);
+        this.setBinary(nodeId,key,imgData,"img");
       }
     }
   }
