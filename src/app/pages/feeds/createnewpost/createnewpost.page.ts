@@ -177,7 +177,7 @@ export class CreatenewpostPage implements OnInit {
     this.events.unsubscribe("rpcResponse:error");
 
     this.events.unsubscribe("stream:getBinaryResponse");
-    this.events.unsubscribe("stream:getBinarySuccess");
+    this.events.unsubscribe("stream:setBinarySuccess");
     this.events.unsubscribe("stream:error");
     this.events.unsubscribe("stream:onStateChangedCallback");
 
