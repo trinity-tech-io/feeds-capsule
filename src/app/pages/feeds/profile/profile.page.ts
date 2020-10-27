@@ -284,7 +284,7 @@ export class ProfilePage implements OnInit {
         return;
 
       if (state === 4){
-        this.feedService.getBinary(this.nodeId, this.cacheGetBinaryRequestKey,this.cachedMediaType);
+        this.feedService.getBinary(nodeId, this.cacheGetBinaryRequestKey,this.cachedMediaType);
       }
     });
   });
@@ -716,8 +716,8 @@ export class ProfilePage implements OnInit {
           }else{
             this.cacheGetBinaryRequestKey = key;
             this.cachedMediaType ="img";
-            if (this.feedService.restoreSession(this.nodeId)){
-              this.feedService.getBinary(this.nodeId, key,this.cachedMediaType);
+            if (this.feedService.restoreSession(item.nodeId)){
+              this.feedService.getBinary(item.nodeId, key,this.cachedMediaType);
             }
           }
         });
