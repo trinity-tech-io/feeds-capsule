@@ -191,7 +191,7 @@ export class EditpostPage implements OnInit {
   }
 
   showBigImage(content: any){
-    this.native.openViewer(content,"common.image","CreatenewpostPage.addingPost",);
+     this.native.openViewer(content,"common.image","EditpostPage.title");
   }
 
   checkServerStatus(nodeId: string){

@@ -22,6 +22,7 @@ export class LikesComponent implements OnInit {
   @Input() isLoadVideoiamge:any ={};
   @Output() fromChild = new EventEmitter();
   @Output() commentParams = new EventEmitter();
+  @Output() clickImage = new EventEmitter();
 
   public styleObj:any = {width:""};
 
@@ -177,13 +178,8 @@ export class LikesComponent implements OnInit {
     });
   }
 
-  showBigImage(id:any){
-    let idStr = id+"postimg";
-    let content = document.getElementById(idStr).getAttribute("src") || "";
-    if(content!=''){
-      this.pauseAllVideo();
-      this.native.openViewer(content,"common.image","FeedsPage.tabTitle2",this.appService);
-    }
+  showBigImage(nodeId:string,channelId:number,postId:number){
+    this.clickImage.emit({"nodeId":nodeId,"channelId":channelId,"postId":postId,"tabType":"mylike"});
   }
 
   pauseVideo(id:string){

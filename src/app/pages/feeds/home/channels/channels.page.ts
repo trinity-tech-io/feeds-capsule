@@ -57,6 +57,8 @@ export class ChannelsPage implements OnInit {
   public isLoadVideoiamge:any = {};
   public videoIamges:any ={};
 
+  public cacheGetBinaryRequestKey:string="";
+  public cachedMediaType = "";
 
   constructor(
     private elmRef: ElementRef,
@@ -204,6 +206,60 @@ export class ChannelsPage implements OnInit {
        this.native.hideLoading();
        this.initRefresh();
     });
+
+    this.events.subscribe('stream:getBinaryResponse', () => {
+      this.zone.run(() => {
+        console.log("result==stream:getBinaryResponse====>")
+      });
+    });
+  
+    this.events.subscribe('stream:getBinarySuccess', (nodeId, key: string, value:string) => {
+      this.zone.run(() => {
+        this.cacheGetBinaryRequestKey = "";
+        console.log("result==stream:getBinarySuccess====>")
+        if (key.indexOf("img")>-1){
+          console.log("result======>"+value.substring(0,50));
+          this.native.hideLoading();
+          this.native.openViewer(value,"common.image","ChannelsPage.feeds",this.appService);
+        } else if (key.indexOf("video")>-1){
+          console.log("video =====>"+value.substring(0,50));
+          // this.videoObj = value;
+          // this.loadVideo();
+        }
+        
+      });
+    });
+  
+    this.events.subscribe('stream:error', (nodeId, response) => {
+      this.zone.run(() => {
+  
+        if (response.code == -107){
+          //TODO
+          console.log("result==FileNotExist");
+        }
+        
+        
+        console.log("result==stream:error=nodeId===>"+nodeId);
+        console.log("result==stream:error=code===>"+response.code)
+        console.log("result==stream:error=message===>"+response.message)
+  
+      });
+    });
+   
+    this.events.subscribe('stream:onStateChangedCallback', (nodeId, state) => {
+      this.zone.run(() => {
+  
+        console.log("cacheGetBinaryRequestKey ===>"+this.cacheGetBinaryRequestKey);
+        console.log("state ===>"+state);
+  
+        if (this.cacheGetBinaryRequestKey == "")
+          return;
+  
+        if (state === 4){
+          this.feedService.getBinary(this.nodeId, this.cacheGetBinaryRequestKey,this.cachedMediaType);
+        }
+      });
+    });
   }
 
   ionViewWillLeave(){
@@ -216,6 +272,12 @@ export class ChannelsPage implements OnInit {
     this.events.unsubscribe("feeds:unsubscribeFinish");
     this.events.unsubscribe("feeds:editPostFinish");
     this.events.unsubscribe("feeds:deletePostFinish");
+
+    this.events.unsubscribe("stream:getBinaryResponse");
+    this.events.unsubscribe("stream:getBinarySuccess");
+    this.events.unsubscribe("stream:error");
+    this.events.unsubscribe("stream:onStateChangedCallback");
+
     this.removeImages();
     this.removeAllVideo();
     this.isLoadimage ={};
@@ -628,17 +690,39 @@ export class ChannelsPage implements OnInit {
     },0);
   }
 
-  showBigImage(id:any){
-    let idStr = id+"postimgchannel";
-    let content = document.getElementById(idStr).getAttribute("src") || "";
-    if(content!=''){
-      this.pauseAllVideo();
-      let isOwer = this.feedService.checkChannelIsMine(this.nodeId, this.channelId);
-      if(isOwer){
-        titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, null);
-      }
-      this.native.openViewer(content,"common.image","ChannelsPage.feeds",this.appService,isOwer);
-    }
+  showBigImage(nodeId:string,channelId:number,postId:number){
+    // let idStr = id+"postimgchannel";
+    // let content = document.getElementById(idStr).getAttribute("src") || "";
+    // if(content!=''){
+    //   this.pauseAllVideo();
+    //   let isOwer = this.feedService.checkChannelIsMine(this.nodeId, this.channelId);
+    //   if(isOwer){
+    //     titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, null);
+    //   }
+    //   this.native.openViewer(content,"common.image","ChannelsPage.feeds",this.appService,isOwer);
+    // }
+
+    this.pauseAllVideo();
+    this.zone.run(()=>{
+      this.native.showLoading("common.waitMoment").then(()=>{
+        let key = this.feedService.getImageKey(nodeId,channelId,postId,0,0);
+        this.feedService.loadRealImg(key).then((realImg)=>{
+          let img = realImg || "";
+          if(img!=""){
+            this.native.hideLoading();
+            this.native.openViewer(realImg,"common.image","ChannelsPage.feeds",this.appService);
+          }else{
+            this.cacheGetBinaryRequestKey = key;
+            this.cachedMediaType = "img";
+            if (this.feedService.restoreSession(this.nodeId)){
+              this.feedService.getBinary(this.nodeId, key,this.cachedMediaType);
+            }
+          }
+        });
+      }).catch(()=>{
+        this.native.hideLoading();
+      });
+    });
   }
 
   pauseVideo(id:string){
