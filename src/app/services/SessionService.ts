@@ -26,6 +26,7 @@ type CachedData = {
     state           : DecodeState,
     method          : string,
     key             : string,
+    mediaType            : string
 }
 
 const enum DecodeState{
@@ -211,6 +212,7 @@ export class SessionService {
                                 state           : DecodeState.prepare,
                                 method          : "",
                                 key             : "",
+                                mediaType       : ""
                             }
                             cacheData[nodeId].data.set(tmpData,0);
                         }else{
@@ -365,7 +367,7 @@ export class SessionService {
         this.streamAddData(nodeId, request);
     }
 
-    addHeader(nodeId: string, requestSize: number, bodySize: number, request: any){
+    addHeader(nodeId: string, requestSize: number, bodySize: number, request: any, mediaType: string){
         this.streamAddMagicNum(nodeId);
         this.streamAddVersion(nodeId);
         this.streamAddRequestHeadSize(nodeId, requestSize);
@@ -391,6 +393,7 @@ export class SessionService {
             state           : DecodeState.prepare,
             method          : "",
             key             : "",
+            mediaType       : mediaType
         }
         
         // let requestBean: RequestBean = {
@@ -757,7 +760,7 @@ function decodeBodyData(nodeId: string, cacheDataLength: number): boolean{
     let bodySize = cacheData[nodeId].bodySize;
     let remainLength = cacheDataLength - pointer;
 
-    if (remainLength < bodySize)
+    if (remainLength < bodySize || bodySize == 0)
         return false;
 
     let body = cacheData[nodeId].data.subarray(pointer, pointer + bodySize);
@@ -771,11 +774,11 @@ function decodeBodyData(nodeId: string, cacheDataLength: number): boolean{
     if (cacheData[nodeId].method == "get_binary" ){
         if (key.indexOf("video") == -1){
             mStorageService.saveRealImg(key, value).then(()=>{
-                eventBus.publish("stream:getBinarySuccess", nodeId, key, value);
+                eventBus.publish("stream:getBinarySuccess", nodeId, key, value, cacheData[nodeId].mediaType);
             });    
         }else{
             mStorageService.saveVideo(key,value).then(()=>{
-                eventBus.publish("stream:getBinarySuccess", nodeId, key, value);
+                eventBus.publish("stream:getBinarySuccess", nodeId, key, value, cacheData[nodeId].mediaType);
             });
         }
     }
