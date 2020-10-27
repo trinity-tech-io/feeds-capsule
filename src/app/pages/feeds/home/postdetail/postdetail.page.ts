@@ -62,8 +62,10 @@ export class PostdetailPage implements OnInit {
   public videoObj:string ="";
   public videoisShow:boolean = false;
 
-  private cacheGetBinaryRequestKey = "";
-  private cachedMediaType = "";
+
+  public cacheGetBinaryRequestKey = "";
+  public cachedMediaType = "";
+
 
   constructor(
     private popoverController:PopoverController,
@@ -401,7 +403,6 @@ export class PostdetailPage implements OnInit {
       this.native.showLoading("common.waitMoment").then(()=>{
         let key = this.feedService.getImageKey(this.nodeId,this.channelId,this.postId,0,0);
         this.feedService.loadRealImg(key).then((realImg)=>{
-          console.log("rrrrrrr ===>"+realImg)
           let img = realImg || "";
           if(img!=""){
             this.native.hideLoading();

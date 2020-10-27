@@ -52,6 +52,9 @@ export class HomePage implements OnInit {
 
   public postgridindex:number =0;
 
+  public cacheGetBinaryRequestKey = "";
+  public cachedMediaType = "";
+
   constructor(
     private elmRef: ElementRef,
     private feedspage: FeedsPage,
@@ -180,6 +183,61 @@ export class HomePage implements OnInit {
     this.initnodeStatus(this.postList);
 
    });
+
+
+   this.events.subscribe('stream:getBinaryResponse', () => {
+    this.zone.run(() => {
+      console.log("result==stream:getBinaryResponse====>")
+    });
+  });
+
+  this.events.subscribe('stream:getBinarySuccess', (nodeId, key: string, value:string) => {
+    this.zone.run(() => {
+      this.cacheGetBinaryRequestKey = "";
+      console.log("result==stream:getBinarySuccess====>")
+      if (key.indexOf("img")>-1){
+        console.log("result======>"+value.substring(0,50));
+        this.native.hideLoading();
+        this.native.openViewer(value,"common.image","FeedsPage.tabTitle1",this.appService);
+      } else if (key.indexOf("video")>-1){
+        console.log("video =====>"+value.substring(0,50));
+        // this.videoObj = value;
+        // this.loadVideo();
+      }
+      
+    });
+  });
+
+  this.events.subscribe('stream:error', (nodeId, response) => {
+    this.zone.run(() => {
+
+      if (response.code == -107){
+        //TODO
+        console.log("result==FileNotExist");
+      }
+      
+      
+      console.log("result==stream:error=nodeId===>"+nodeId);
+      console.log("result==stream:error=code===>"+response.code)
+      console.log("result==stream:error=message===>"+response.message)
+
+    });
+  });
+ 
+  this.events.subscribe('stream:onStateChangedCallback', (nodeId, state) => {
+    this.zone.run(() => {
+
+      console.log("cacheGetBinaryRequestKey ===>"+this.cacheGetBinaryRequestKey);
+      console.log("state ===>"+state);
+
+      if (this.cacheGetBinaryRequestKey == "")
+        return;
+
+      if (state === 4){
+        this.feedService.getBinary(this.nodeId, this.cacheGetBinaryRequestKey,this.cachedMediaType);
+      }
+    });
+  });
    
   }
 
@@ -191,6 +249,12 @@ export class HomePage implements OnInit {
     this.events.unsubscribe("feeds:publishPostFinish");
     this.events.unsubscribe("feeds:editPostFinish");
     this.events.unsubscribe("feeds:deletePostFinish");
+
+    this.events.unsubscribe("stream:getBinaryResponse");
+    this.events.unsubscribe("stream:getBinarySuccess");
+    this.events.unsubscribe("stream:error");
+    this.events.unsubscribe("stream:onStateChangedCallback");
+
     this.removeImages();
     this.removeAllVideo();
     this.isLoadimage ={};
@@ -496,14 +560,28 @@ export class HomePage implements OnInit {
   }
 
 
-  showBigImage(id:any){
-    
-    let idStr = id+"postimg";
-    let content = document.getElementById(idStr).getAttribute("src") || "";
-    if(content!=''){
-      this.pauseAllVideo();
-      this.native.openViewer(content,"common.image","FeedsPage.tabTitle1",this.appService);
-    }
+  showBigImage(nodeId:string,channelId:number,postId:number){
+    this.pauseAllVideo();
+    this.zone.run(()=>{
+      this.native.showLoading("common.waitMoment").then(()=>{
+        let key = this.feedService.getImageKey(nodeId,channelId,postId,0,0);
+        this.feedService.loadRealImg(key).then((realImg)=>{
+          let img = realImg || "";
+          if(img!=""){
+            this.native.hideLoading();
+            this.native.openViewer(realImg,"common.image","FeedsPage.tabTitle1",this.appService);
+          }else{
+            this.cacheGetBinaryRequestKey = key;
+            this.cachedMediaType = "img";
+            if (this.feedService.restoreSession(this.nodeId)){
+              this.feedService.getBinary(this.nodeId, key, this.cachedMediaType);
+            }
+          }
+        });
+      }).catch(()=>{
+        this.native.hideLoading();
+      });
+    });
   }
 
 
