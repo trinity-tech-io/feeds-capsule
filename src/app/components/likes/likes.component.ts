@@ -168,11 +168,12 @@ export class LikesComponent implements OnInit {
     }
   }
 
-  showComment(nodeId, channelId, postId) {
+  showComment(nodeId:string, channelId:number, postId:number) {
     this.commentParams.emit({
       nodeId: nodeId,
       channelId: channelId,
       postId: postId,
+      onlineStatus:this.nodeStatus[nodeId],
       channelAvatar: this.parseAvatar(nodeId, channelId),
       channelName: this.channelName(nodeId, channelId),
     });

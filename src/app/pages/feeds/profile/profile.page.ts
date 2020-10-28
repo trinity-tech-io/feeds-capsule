@@ -34,6 +34,7 @@ export class ProfilePage implements OnInit {
   public description: string = "";
 
   public hideComment = true;
+  public onlineStatus = null; 
 
   // For comment component
   public postId = null;
@@ -296,6 +297,33 @@ export class ProfilePage implements OnInit {
       }
     });
   });
+
+  this.events.subscribe('rpcResponse:error', () => {
+    this.zone.run(() => {
+      this.native.hideLoading();
+    });
+  });
+
+ this.events.subscribe('rpcRequest:success', () => {
+  this.zone.run(() => {
+
+    this.likeList = this.feedService.getLikeList() || [];
+    if (this.likeList.length - this.pageNumber > this.pageNumber){
+      this.likeList = this.likeList.slice(0,(this.startIndex)*this.pageNumber);
+      this.infiniteScroll.disabled =false;
+     } else {
+       //this.likeList =  this.totalData;
+      this.infiniteScroll.disabled =true;
+    }
+    this.isLoadimage ={};
+    this.isLoadVideoiamge ={};
+    this.refreshImage();
+    this.initnodeStatus(this.likeList);
+    this.hideComponent(null);
+    this.native.hideLoading();
+    this.native.toast_trans("CommentPage.tipMsg1");
+  });
+ });
   }
 
   ionViewWillLeave(){
@@ -313,6 +341,9 @@ export class ProfilePage implements OnInit {
     this.events.unsubscribe("stream:getBinarySuccess");
     this.events.unsubscribe("stream:error");
     this.events.unsubscribe("stream:onStateChangedCallback");
+
+    this.events.unsubscribe("rpcResponse:error");
+    this.events.unsubscribe("rpcRequest:success");
 
     this.events.unsubscribe("feeds:updateTitles");
     this.removeImages();
@@ -451,6 +482,7 @@ export class ProfilePage implements OnInit {
     this.postId = commentParams.postId;
     this.channelId = commentParams.channelId;
     this.nodeId = commentParams.nodeId;
+    this.onlineStatus = commentParams.onlineStatus;
     this.channelAvatar = commentParams.channelAvatar;
     this.channelName = commentParams.channelName;
     this.hideComment = false;
@@ -464,6 +496,7 @@ export class ProfilePage implements OnInit {
     this.channelAvatar = null;
     this.channelName = null;
     this.hideComment = true;
+    this.onlineStatus = null;
   }
 
   ionScroll(){
