@@ -10,7 +10,6 @@ import { VideoEditor } from '@ionic-native/video-editor/ngx';
 import { VgFullscreenAPI } from 'ngx-videogular';
 import { AppService } from 'src/app/services/AppService';
 import * as _ from 'lodash';
-import { clear } from 'console';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 @Component({
   selector: 'app-editpost',

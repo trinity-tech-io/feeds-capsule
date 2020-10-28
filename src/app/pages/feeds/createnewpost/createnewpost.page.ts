@@ -119,11 +119,6 @@ export class CreatenewpostPage implements OnInit {
       this.initTitle();
     });
 
-    this.events.subscribe('stream:getBinaryResponse', () => {
-      this.zone.run(() => {
-        console.log("result==stream:getBinaryResponse====>")
-      });
-    });
 
     this.events.subscribe('stream:setBinarySuccess', (nodeId, key) => {
       this.zone.run(() => {
@@ -138,19 +133,10 @@ export class CreatenewpostPage implements OnInit {
       });
     });
 
-    this.events.subscribe('stream:error', (nodeId, response) => {
+    this.events.subscribe('stream:setBinaryError', (nodeId, response) => {
       this.zone.run(() => {
-
-        if (response.code == -107){
-          //TODO
-          console.log("result==FileNotExist");
-        }
-        
-        
-        console.log("result==stream:error=nodeId===>"+nodeId);
-        console.log("result==stream:error=code===>"+response.code)
-        console.log("result==stream:error=message===>"+response.message)
-
+        //response.code
+        this.native.hideLoading();
       });
     });
    
@@ -167,8 +153,7 @@ export class CreatenewpostPage implements OnInit {
   }
 
   ionViewWillLeave(){
-    this.flieUri ="";
-    this.posterImg ="";
+   
     this.events.unsubscribe("feeds:connectionChanged");
     this.events.unsubscribe("feeds:friendConnectionChanged");
     this.events.unsubscribe("feeds:updateTitle");
@@ -176,11 +161,12 @@ export class CreatenewpostPage implements OnInit {
     this.events.unsubscribe("rpcRequest:error");
     this.events.unsubscribe("rpcResponse:error");
 
-    this.events.unsubscribe("stream:getBinaryResponse");
     this.events.unsubscribe("stream:setBinarySuccess");
-    this.events.unsubscribe("stream:error");
+    this.events.unsubscribe("stream:setBinaryError");
     this.events.unsubscribe("stream:onStateChangedCallback");
 
+    this.flieUri ="";
+    this.posterImg ="";
     this.imgUrl="";
     this.removeVideo();
   }
@@ -222,7 +208,7 @@ export class CreatenewpostPage implements OnInit {
     if (this.imgUrl != ""){
       this.feedService.compress(this.imgUrl).then((imageThumb)=>{
         imgThumb = imageThumb;
-        content = this.feedService.createContent(this.newPost, this.posterImg, this.imgUrl, null);
+        content = this.feedService.createContent(this.newPost, this.posterImg,imgThumb, null);
         this.feedService.publishPost(
           this.nodeId,
           this.channelId,
