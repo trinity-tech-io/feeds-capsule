@@ -1,5 +1,5 @@
 import { Component, OnInit, NgZone,ElementRef} from '@angular/core';
-import { Events } from '@ionic/angular';
+import { NavController,Events } from '@ionic/angular';
 import { FeedService } from 'src/app/services/FeedService';
 import { ActivatedRoute } from '@angular/router';
 import { NativeService } from '../../services/NativeService';
@@ -36,10 +36,13 @@ export class EditpostPage implements OnInit {
   public uploadProgress:number = 0;
   public videotype:string = "video/mp4";
   public transcode:number = 0;
+  public cacheGetBinaryRequestKey:string ="";
+  public cachedMediaType = "";
 
   constructor(
     private events: Events,
     private native: NativeService,
+    private navCtrl: NavController,
     private acRoute: ActivatedRoute,
     private camera: CameraService,
     private zone: NgZone,
@@ -97,9 +100,94 @@ export class EditpostPage implements OnInit {
     this.events.subscribe('feeds:editPostFinish', () => {
       //let post = this.feedService.getPostFromId(this.nodeId, this.channelId, this.postId);
       //console.log("editPostFinish = "+JSON.stringify(post));
-      this.events.publish("update:tab");
-      this.native.hideLoading();
-      this.native.pop();
+      this.zone.run(()=>{
+        if(this.imgUrl === "" && this.posterImg ===""){
+          this.zone.run(() => {
+              this.events.publish("update:tab");
+              this.native.hideLoading();
+              this.native.pop();
+          });
+        }
+        this.feedService.sendData(this.nodeId,this.channelId,this.postId, 0 ,0, this.flieUri,this.imgUrl);
+      });
+      
+    });
+
+    this.events.subscribe('stream:getBinaryResponse', () => {
+      this.zone.run(() => {
+        console.log("result==stream:getBinaryResponse====>")
+      });
+    });
+
+    this.events.subscribe('stream:getBinarySuccess', (nodeId, key: string, value, mediaType) => {
+      this.zone.run(() => {
+        this.cacheGetBinaryRequestKey = "";
+        console.log("result==stream:getBinarySuccess====>")
+        if (key.indexOf("img")>-1){
+          console.log("result======>"+value.substring(0,50));
+          this.native.hideLoading();
+          this.native.openViewer(value,"common.image","PostdetailPage.postview",this.appService);
+        } else if (key.indexOf("video")>-1){
+          console.log("video =====>"+value.substring(0,50));
+          this.flieUri = value;
+          this.loadVideo();
+        }
+        
+      });
+    });
+
+    this.events.subscribe('stream:error', (nodeId, response) => {
+      this.zone.run(() => {
+
+        if (response.code == -107){
+          //TODO
+          console.log("result==FileNotExist");
+        }
+        
+        
+        console.log("result==stream:error=nodeId===>"+nodeId);
+        console.log("result==stream:error=code===>"+response.code)
+        console.log("result==stream:error=message===>"+response.message)
+
+      });
+    });
+   
+    this.events.subscribe('stream:onStateChangedCallback', (nodeId, state) => {
+      this.zone.run(() => {
+
+        console.log("cacheGetBinaryRequestKey ===>"+this.cacheGetBinaryRequestKey);
+        console.log("state ===>"+state);
+
+        if (this.cacheGetBinaryRequestKey == "")
+          return;
+
+        if (state === 4){
+          this.feedService.getBinary(this.nodeId, this.cacheGetBinaryRequestKey, this.cachedMediaType);
+        }
+      });
+    });
+
+
+    this.events.subscribe('stream:setBinarySuccess', (nodeId, key) => {
+      this.zone.run(() => {
+        this.navCtrl.pop().then(()=>{
+          this.events.publish("update:tab");
+          this.posterImg ="";
+          this.oldImgUrl="";
+          this.flieUri="";
+          this.imgUrl="";
+          this.oldImgUrl="";
+          this.native.hideLoading();
+          this.native.toast_trans("CreatenewpostPage.tipMsg1");
+        });
+      });
+    });
+
+    this.events.subscribe('stream:setBinaryError', (nodeId, response) => {
+      this.zone.run(() => {
+        //response.code
+        this.native.hideLoading();
+      });
     });
 
     this.initnodeStatus();
@@ -112,6 +200,12 @@ export class EditpostPage implements OnInit {
     this.events.unsubscribe("rpcRequest:error");
     this.events.unsubscribe("rpcResponse:error");
     this.events.unsubscribe("feeds:editPostFinish");
+
+    this.events.unsubscribe("stream:setBinarySuccess");
+    this.events.unsubscribe("stream:setBinaryError");
+    this.events.unsubscribe("stream:getBinarySuccess");
+    this.events.unsubscribe("stream:onStateChangedCallback");
+
     this.posterImg ="";
     this.oldImgUrl="";
     this.flieUri="";
@@ -152,23 +246,31 @@ export class EditpostPage implements OnInit {
   }
 
   editPost(){
-  
-   
-    try {
-      this.feedService.saveVideoPosterImg(this.nodeId+this.channelId+this.postId,this.posterImg);
-      this.feedService.saveVideo(this.nodeId+this.channelId+this.postId,this.flieUri).then(()=>{
-      }).catch((err)=>{
-      });
-    } catch (error) {
-     
-    }
-   
 
-    let myContent = {};
-    myContent["text"] = this.newPost;
-    myContent["img"] = this.imgUrl;
-    this.feedService.editPost(this.nodeId,Number(this.channelId),Number(this.postId),myContent);
-    //add edit post     
+    let imgThumb = "";
+    let content = "";
+
+    if (this.imgUrl != ""){
+      this.feedService.compress(this.imgUrl).then((imageThumb)=>{
+        imgThumb = imageThumb;
+        console.log("======11111====="+this.posterImg);
+        content = this.feedService.createContent(this.newPost,this.posterImg,imgThumb, null);
+        this.feedService.editPost(
+          this.nodeId,
+          this.channelId,
+          this.postId,
+          content
+        );
+      });
+    }else{
+      content = this.feedService.createContent(this.newPost, this.posterImg, null, null);
+      this.feedService.editPost(
+        this.nodeId,
+        this.channelId,
+        this.postId,
+        content
+      );
+    }
   }  
  
   addImg(type: number) {
@@ -466,40 +568,53 @@ export class EditpostPage implements OnInit {
      vgoverlayplay.onclick = ()=>{
       this.zone.run(()=>{
         if(this.flieUri === ""){
-         this.getVideo(this.nodeId+this.channelId+this.postId);
+          let key = this.feedService.getVideoKey(this.nodeId,this.channelId,this.postId,0,0);
+          this.getVideo(key);
+         //this.getVideo(this.nodeId+this.channelId+this.postId);
         }
       });
      }
     }
   }
 
-  getVideo(id:string){
-    // let videosource:any = this.el.nativeElement.querySelector("source") || "";
-    //   if(videosource===""){
-        console.log("zzzzzzzzz");
-        this.feedService.loadVideo(id).then((viedo:string)=>{
+  getVideo(key:string){
+        this.feedService.loadVideo(key).then((videodata:string)=>{
           this.zone.run(()=>{
-            console.log("========="+viedo.substring(0,50));
-            this.flieUri = viedo;
-            let vgbuffering:any = this.el.nativeElement.querySelector("vg-buffering");
-                vgbuffering.style.display ="none";
-            let video:any = this.el.nativeElement.querySelector("video");
-            video.addEventListener('ended',()=>{
-                console.log("==========ended============")
-                let vgoverlayplay:any = this.el.nativeElement.querySelector("vg-overlay-play"); 
-                vgbuffering.style.display ="none";
-                vgoverlayplay.style.display = "block";  
-            });
+           
+            let videoData = videodata || "";
 
-            video.addEventListener('pause',()=>{
-              console.log("==========pause============");
-              let vgoverlayplay:any = this.el.nativeElement.querySelector("vg-overlay-play");
-              vgoverlayplay.style.display = "block";  
-          });
-            video.load();
-            video.play();
+            if (videoData == ""){
+              this.cacheGetBinaryRequestKey = key;
+              this.cachedMediaType = "video";
+              if (this.feedService.restoreSession(this.nodeId)){
+                this.feedService.getBinary(this.nodeId, key, this.cachedMediaType);
+              }
+              return;
+            }
+            console.log("========="+videodata.substring(0,50));
+            this.flieUri = videoData;
+            this.loadVideo();
           }) 
         }); 
-      // }
+  }
+
+  loadVideo(){
+    let vgbuffering:any = this.el.nativeElement.querySelector("vg-buffering");
+    vgbuffering.style.display ="none";
+    let video:any = this.el.nativeElement.querySelector("video");
+     video.addEventListener('ended',()=>{
+    console.log("==========ended============")
+    let vgoverlayplay:any = this.el.nativeElement.querySelector("vg-overlay-play"); 
+    vgbuffering.style.display ="none";
+    vgoverlayplay.style.display = "block";  
+});
+
+   video.addEventListener('pause',()=>{
+  console.log("==========pause============");
+  let vgoverlayplay:any = this.el.nativeElement.querySelector("vg-overlay-play");
+  vgoverlayplay.style.display = "block";  
+});
+video.load();
+video.play();
   }
 }
