@@ -215,11 +215,11 @@ export class PostdetailPage implements OnInit {
         this.cacheGetBinaryRequestKey = "";
         console.log("result==stream:getBinarySuccess====>")
         if (key.indexOf("img")>-1){
-          console.log("result======>"+value)
+          console.log("result======>"+value.substring(0,50));
           this.native.hideLoading();
           this.native.openViewer(value,"common.image","PostdetailPage.postview",this.appService);
         } else if (key.indexOf("video")>-1){
-          console.log("video =====>"+value)
+          console.log("video =====>"+value.substring(0,50));
           this.videoObj = value;
           this.loadVideo();
         }
@@ -586,7 +586,7 @@ export class PostdetailPage implements OnInit {
         // console.log("========="+video.substring(0,50));
         let videoData = videodata || "";
 
-        if (videodata == null){
+        if (videoData == ""){
           this.cacheGetBinaryRequestKey = key;
           this.cachedMediaType = "video";
           if (this.feedService.restoreSession(this.nodeId)){
@@ -596,30 +596,26 @@ export class PostdetailPage implements OnInit {
           return;
         }
 
-        if (videoData == "")
-          return ;
-
         this.videoObj = videoData;
         console.log("========="+this.videoObj.substring(0,50));
-
-        // this.loadVideo();
-        let vgbuffering:any = this.el.nativeElement.querySelector("vg-buffering");
-        vgbuffering.style.display ="none";
-        let video:any = this.el.nativeElement.querySelector("video");
-        video.addEventListener('ended',()=>{
-            console.log("==========ended============")
-            let vgoverlayplay:any = this.el.nativeElement.querySelector("vg-overlay-play"); 
-            vgbuffering.style.display ="none";
-            vgoverlayplay.style.display = "block";  
-        });
+        this.loadVideo();
+        // let vgbuffering:any = this.el.nativeElement.querySelector("vg-buffering");
+        // vgbuffering.style.display ="none";
+        // let video:any = this.el.nativeElement.querySelector("video");
+        // video.addEventListener('ended',()=>{
+        //     console.log("==========ended============")
+        //     let vgoverlayplay:any = this.el.nativeElement.querySelector("vg-overlay-play"); 
+        //     vgbuffering.style.display ="none";
+        //     vgoverlayplay.style.display = "block";  
+        // });
     
-        video.addEventListener('pause',()=>{
-          console.log("==========pause============");
-          let vgoverlayplay:any = this.el.nativeElement.querySelector("vg-overlay-play");
-          vgoverlayplay.style.display = "block";  
-        });
-        video.load();
-        video.play();
+        // video.addEventListener('pause',()=>{
+        //   console.log("==========pause============");
+        //   let vgoverlayplay:any = this.el.nativeElement.querySelector("vg-overlay-play");
+        //   vgoverlayplay.style.display = "block";  
+        // });
+        // video.load();
+        // video.play();
       });
     }); 
       // }
