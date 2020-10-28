@@ -215,16 +215,18 @@ export class ChannelsPage implements OnInit {
   
     this.events.subscribe('stream:getBinarySuccess', (nodeId, key: string, value:string) => {
       this.zone.run(() => {
-        this.cacheGetBinaryRequestKey = "";
-        console.log("result==stream:getBinarySuccess====>")
         if (key.indexOf("img")>-1){
-          console.log("result======>"+value.substring(0,50));
+          this.cacheGetBinaryRequestKey = "";
           this.native.hideLoading();
           this.native.openViewer(value,"common.image","ChannelsPage.feeds",this.appService);
         } else if (key.indexOf("video")>-1){
-          console.log("video =====>"+value.substring(0,50));
-          // this.videoObj = value;
-          // this.loadVideo();
+          let arr = this.cacheGetBinaryRequestKey.split("-");
+          let nodeId =arr[0];
+          let channelId:any = arr[1];
+          let postId:any = arr[2];
+          let id = nodeId+channelId+postId;
+          this.cacheGetBinaryRequestKey = "";
+          this.loadVideo(id,value);
         }
         
       });
@@ -573,18 +575,24 @@ export class ChannelsPage implements OnInit {
     let postgridNum = document.getElementsByClassName("channelgird").length;
     //console.log("====postgridNum====="+postgridNum);
     for(let postgridindex =0;postgridindex<postgridNum;postgridindex++){ 
-      let id = postgridList[postgridindex].getAttribute("id") || '';
-      //postImg
-      this.handlePsotImg(id,postgridindex);
-
-      //video
-      this.hanldVideo(id,postgridindex);
+      let srcId = postgridList[postgridindex].getAttribute("id") || '';
+      if(srcId!=""){
+        let arr = srcId.split("-");
+        let nodeId = arr[0];
+        let channelId = arr[1];
+        let postId = arr[2];
+        let id = nodeId+channelId+postId;
+        //postImg
+        this.handlePsotImg(id,srcId,postgridindex);
+        //video
+        this.hanldVideo(id,srcId,postgridindex);
+      }
    
     }
 
   }
 
-  handlePsotImg(id:string,rowindex:number){
+  handlePsotImg(id:string,srcId:string,rowindex:number){
     // 13 存在 12不存在
     let isload = this.isLoadimage[id] || "";
     let rpostImage = document.getElementById(id+"channelrow");
@@ -634,7 +642,7 @@ export class ChannelsPage implements OnInit {
     }
   }
 
-  hanldVideo(id:string,rowindex:number){
+  hanldVideo(id:string,srcId:string,rowindex:number){
 
     let  isloadVideoImg  = this.isLoadVideoiamge[id] || "";
     let  vgplayer = document.getElementById(id+"vgplayerchannel");
@@ -657,7 +665,7 @@ export class ChannelsPage implements OnInit {
                 vgplayer.style.display = "block";
                 video.setAttribute("poster",image);
                 this.setFullScreen(id);
-                this.setOverPlay(id);
+                this.setOverPlay(id,srcId);
               }else{
                 this.isLoadVideoiamge[id] = "12";
                 video.style.display='none';
@@ -809,7 +817,7 @@ export class ChannelsPage implements OnInit {
     }
 
 
-    setOverPlay(id:string){
+    setOverPlay(id:string,srcId:string){
       let vgoverlayplay:any = document.getElementById(id+"vgoverlayplaychannel") || "";
       let source:any = document.getElementById(id+"sourcechannel") || "";
   
@@ -818,33 +826,57 @@ export class ChannelsPage implements OnInit {
         this.zone.run(()=>{
            let sourceSrc = source.getAttribute("src") || "";
            if(sourceSrc === ""){
-            this.getVideo(id,source);
+            this.getVideo(id,srcId);
            }
         });
        }
       }
     }
   
-    getVideo(id:string,source:any){
-          this.feedService.loadVideo(id).then((viedo:string)=>{
-            this.zone.run(()=>{
-              source.setAttribute("src",viedo);
-              let vgbuffering:any = document.getElementById(id+"vgbufferingchannel") || "";
-                  vgbuffering.style.display ="none";
-              let video:any = document.getElementById(id+"videochannel");
-              video.addEventListener('ended',()=>{
-                  let vgoverlayplay:any = document.getElementById(id+"vgoverlayplaychannel"); 
-                  vgbuffering.style.display ="none";
-                  vgoverlayplay.style.display = "block";  
-              });
+    getVideo(id:string,srcId:string){
+      let arr = srcId.split("-");
+      let nodeId =arr[0];
+      let channelId:any = arr[1];
+      let postId:any = arr[2];
   
-              video.addEventListener('pause',()=>{
-                let vgoverlayplay:any = document.getElementById(id+"vgoverlayplaychannel");
-                vgoverlayplay.style.display = "block";  
-            });
-              video.load();
-              video.play();
+      let key = this.feedService.getVideoKey(nodeId,channelId,postId,0,0);
+          this.feedService.loadVideo(key).then((videoResult:string)=>{
+            this.zone.run(()=>{
+              let videodata = videoResult || "";
+              if (videodata == ""){
+                this.cacheGetBinaryRequestKey = key;
+                this.cachedMediaType = "video";
+                if (this.feedService.restoreSession(nodeId)){
+                  this.feedService.getBinary(nodeId, key, this.cachedMediaType);
+                }
+                return;
+              }
+              this.loadVideo(id,videodata);
             }) 
           }); 
+    }
+
+
+    loadVideo(id:string,videodata:string){
+      let source:any = document.getElementById(id+"sourcechannel") || "";
+      if(source === ""){
+        return;
+      }
+      source.setAttribute("src",videodata);
+      let vgbuffering:any = document.getElementById(id+"vgbufferingchannel") || "";
+          vgbuffering.style.display ="none";
+      let video:any = document.getElementById(id+"videochannel");
+      video.addEventListener('ended',()=>{
+          let vgoverlayplay:any = document.getElementById(id+"vgoverlayplaychannel"); 
+          vgbuffering.style.display ="none";
+          vgoverlayplay.style.display = "block";  
+      });
+
+      video.addEventListener('pause',()=>{
+        let vgoverlayplay:any = document.getElementById(id+"vgoverlayplaychannel");
+        vgoverlayplay.style.display = "block";  
+    });
+      video.load();
+      video.play();
     }
 }

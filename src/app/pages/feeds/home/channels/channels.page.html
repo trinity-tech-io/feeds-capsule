@@ -53,7 +53,7 @@
 
   <!-- POSTS -->
   <div *ngIf="postList.length > 0">
-    <ion-grid *ngFor="let post of postList let i=index" class="post-grid ion-activatable ripple channelgird" [class.darkPostGrid]="theme.darkMode" id={{post.nodeId+post.channel_id+post.id}}>
+    <ion-grid *ngFor="let post of postList let i=index" class="post-grid ion-activatable ripple channelgird" [class.darkPostGrid]="theme.darkMode" id={{post.nodeId}}-{{post.channel_id}}-{{post.id}}>
       <ion-row class="post-row">
         <ion-col class="img-col" size="2.5">
           <div class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode">

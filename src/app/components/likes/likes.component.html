@@ -12,7 +12,7 @@
 </div>
 
 <div *ngIf="likeList.length > 0">
-  <ion-grid *ngFor="let post of likeList let i=index" class="post-grid ion-activatable ripple postgridlike" [class.darkPostGrid]="theme.darkMode" [class.removeBorder]="post === likeList[likeList.length - 1]" id={{post.nodeId+post.channel_id+post.id}}>
+  <ion-grid *ngFor="let post of likeList let i=index" class="post-grid ion-activatable ripple postgridlike" [class.darkPostGrid]="theme.darkMode" [class.removeBorder]="post === likeList[likeList.length - 1]" id={{post.nodeId}}-{{post.channel_id}}-{{post.id}}>
     <ion-row class="post-row">
       <ion-col class="img-col" size="2.5" (click)="navTo(post.nodeId, post.channel_id,post.id)">
         <div class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode">
