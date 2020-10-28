@@ -60,6 +60,8 @@ export class ChannelsPage implements OnInit {
   public cacheGetBinaryRequestKey:string="";
   public cachedMediaType = "";
 
+  public onlineStatus = null;
+
   constructor(
     private elmRef: ElementRef,
     private popoverController:PopoverController,
@@ -263,6 +265,34 @@ export class ChannelsPage implements OnInit {
         }
       });
     });
+
+
+    this.events.subscribe('rpcResponse:error', () => {
+      this.zone.run(() => {
+        this.native.hideLoading();
+      });
+    });
+  
+   this.events.subscribe('rpcRequest:success', () => {
+    this.zone.run(() => {
+  
+      this.totalData = this.feedService.getPostList() || [];
+      if (this.totalData.length - this.pageNumber > this.pageNumber){
+        this.postList = this.totalData.slice(0,(this.startIndex)*this.pageNumber);
+        this.infiniteScroll.disabled =false;
+       } else {
+        this.postList =  this.totalData;
+        this.infiniteScroll.disabled =true;
+      }
+      this.isLoadimage ={};
+      this.isLoadVideoiamge ={};
+      this.refreshImage();
+      this.initnodeStatus(this.postList);
+      this.hideComponent(null);
+      this.native.hideLoading();
+      this.native.toast_trans("CommentPage.tipMsg1");
+    });
+   });
   }
 
   ionViewWillLeave(){
@@ -275,6 +305,9 @@ export class ChannelsPage implements OnInit {
     this.events.unsubscribe("feeds:unsubscribeFinish");
     this.events.unsubscribe("feeds:editPostFinish");
     this.events.unsubscribe("feeds:deletePostFinish");
+
+    this.events.unsubscribe("rpcResponse:error");
+    this.events.unsubscribe("rpcRequest:success");
 
     this.events.unsubscribe("stream:getBinaryResponse");
     this.events.unsubscribe("stream:getBinarySuccess");
@@ -554,14 +587,21 @@ export class ChannelsPage implements OnInit {
    }
 
 
-  showComment(nodeId, channelId, postId) {
+  showComment(nodeId:string, channelId:number, postId:number) {
+      if(this.feedService.getConnectionStatus() != 0){
+      this.native.toastWarn('common.connectionError');
+      return;
+    }
+    this.pauseVideo(nodeId+channelId+postId);
     this.postId = postId;
+    this.onlineStatus = this.nodeStatus[nodeId];
     this.hideComment = false;
   }
 
-  hideComponent(event) {
+  hideComponent(event:any) {
     console.log('Hide comment component?', event);
     this.postId = null;
+    this.onlineStatus = null;
     this.hideComment = true;
   }
 

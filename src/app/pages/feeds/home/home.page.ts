@@ -36,6 +36,7 @@ export class HomePage implements OnInit {
   public styleObj:any = {width:""};
 
   public hideComment = true;
+ 
 
   // For comment component
   public postId = null;
@@ -43,6 +44,7 @@ export class HomePage implements OnInit {
   public channelId = null
   public channelAvatar = null;
   public channelName = null;
+  public onlineStatus = null;
 
   public clientHeight:number = 0;
   public isLoadimage:any ={};
@@ -268,8 +270,35 @@ export class HomePage implements OnInit {
       }
     });
   });
-   
-  }
+
+
+  this.events.subscribe('rpcResponse:error', () => {
+    this.zone.run(() => {
+      this.native.hideLoading();
+    });
+  });
+
+ this.events.subscribe('rpcRequest:success', () => {
+  this.zone.run(() => {
+
+    this.totalData = this.feedService.getPostList() || [];
+    if (this.totalData.length - this.pageNumber > this.pageNumber){
+      this.postList = this.totalData.slice(0,(this.startIndex)*this.pageNumber);
+      this.infiniteScroll.disabled =false;
+     } else {
+      this.postList =  this.totalData;
+      this.infiniteScroll.disabled =true;
+    }
+    this.isLoadimage ={};
+    this.isLoadVideoiamge ={};
+    this.refreshImage(0);
+    this.initnodeStatus(this.postList);
+    this.hideComponent(null);
+    this.native.hideLoading();
+    this.native.toast_trans("CommentPage.tipMsg1");
+  });
+ });
+}
 
  ionViewWillLeave(){
     this.events.unsubscribe("feeds:updateTitle");
@@ -284,6 +313,9 @@ export class HomePage implements OnInit {
     this.events.unsubscribe("stream:getBinarySuccess");
     this.events.unsubscribe("stream:error");
     this.events.unsubscribe("stream:onStateChangedCallback");
+
+    this.events.unsubscribe("rpcResponse:error");
+    this.events.unsubscribe("rpcRequest:success");
 
     this.removeImages();
     this.removeAllVideo();
@@ -348,16 +380,6 @@ export class HomePage implements OnInit {
   navToPostDetail(nodeId:string, channelId:number, postId:number){
     this.pauseVideo(nodeId+channelId+postId);
     this.native.getNavCtrl().navigateForward(['/postdetail',nodeId, channelId,postId]);
-  }
-
-  showCommentPage(nodeId:string, channelId:number, postId:number){
-    if(this.feedService.getConnectionStatus() != 0){
-      this.native.toastWarn('common.connectionError');
-      return;
-    }
-
-    this.pauseVideo(nodeId+channelId+postId);
-    this.native.navigateForward(["comment",nodeId,channelId,postId],"");
   }
 
   checkMyLike(nodeId: string, channelId: number, postId: number){
@@ -550,12 +572,31 @@ export class HomePage implements OnInit {
     return 1;
   }
 
-  showComment(nodeId, channelId, postId) {
+  showCommentPage(nodeId:string, channelId:number, postId:number){
+    if(this.feedService.getConnectionStatus() != 0){
+      this.native.toastWarn('common.connectionError');
+      return;
+    }
+
+    this.pauseVideo(nodeId+channelId+postId);
+    this.native.navigateForward(["comment",nodeId,channelId,postId],"");
+  }
+
+  showComment(nodeId:string,channelId:number, postId:number) {
+
+    if(this.feedService.getConnectionStatus() != 0){
+      this.native.toastWarn('common.connectionError');
+      return;
+    }
+
+    this.pauseVideo(nodeId+channelId+postId);
+
     this.postId = postId;
     this.channelId = channelId;
     this.nodeId = nodeId;
     this.channelAvatar = this.parseAvatar(nodeId, channelId);
     this.channelName = this.getChannelName(nodeId, channelId);
+    this.onlineStatus = this.nodeStatus[nodeId];
     this.hideComment = false;
   }
 
@@ -566,6 +607,7 @@ export class HomePage implements OnInit {
     this.nodeId = null;
     this.channelAvatar = null;
     this.channelName = null;
+    this.onlineStatus = null;
     this.hideComment = true;
   }
 
