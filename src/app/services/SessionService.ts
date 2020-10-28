@@ -927,4 +927,16 @@ function createWriteDataError(){
 
 function publishError(nodeId: string, response: any){
     eventBus.publish("stream:error", nodeId,response);
+    if (cacheData == null || cacheData == undefined || cacheData[nodeId] == undefined)
+        return;
+
+    if (cacheData[nodeId].method == "set_binary"){
+        eventBus.publish("stream:setBinaryError", nodeId,response);    
+        return ;
+    }
+
+    if (cacheData[nodeId].method == "get_binary"){
+        eventBus.publish("stream:getBinaryError", nodeId,response);    
+        return ;
+    }    
 }
