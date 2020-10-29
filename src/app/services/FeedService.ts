@@ -4367,11 +4367,11 @@ export class FeedService {
   }
 
   loadRealImg(key: string): Promise<any>{
-    return this.storeService.loadRealImg(key);
+    return this.storeService.get(key);
   }
 
   removeRealImg(key: string): Promise<any>{
-    return this.storeService.removeRealImg(key);
+    return this.storeService.remove(key);
   }
 
   pay(receiver: string, amount: number, memo: string, onSuccess: (res:any)=>void, onError: (err: any)=>void){
@@ -4614,6 +4614,9 @@ export class FeedService {
   }
   
   restoreSession(nodeId: string): boolean{
+    if(this.getServerStatusFromId(nodeId) == 1)
+      return false;
+
     let state = this.sessionService.getSessionState(nodeId);
     console.log("state===>"+state);
     switch(state){
@@ -4639,17 +4642,9 @@ export class FeedService {
     return this.storeService.loadVideoPosterImg(nodeChannelPostId);
   }
 
-  saveVideoPosterImg(nodeChannelPostId: string,content:any):Promise<any>{
-    return this.storeService.saveVideoPosterImg(nodeChannelPostId,content);
-  }
-
   //video
   loadVideo(nodeChannelPostId: string):Promise<any>{
     return this.storeService.loadVideo(nodeChannelPostId);
-  }
-
-  saveVideo(nodeChannelPostId: string,content:any):Promise<any>{
-    return this.storeService.saveVideo(nodeChannelPostId,content);
   }
 
   getTextKey(nodeId: string, channelId: number, postId: number, commentId: number, index: number){
@@ -4996,4 +4991,13 @@ export class FeedService {
     console.log("newkeys ===>"+JSON.stringify(newkeys));
 
   }
+
+  setData(key: string, value: any):Promise<any>{
+    return this.storeService.set(key, value);
+  }
+
+  getData(key: string):Promise<any>{
+    return this.storeService.get(key);
+  }
+  
 }

@@ -100,7 +100,9 @@ export class CreatenewpostPage implements OnInit {
               this.native.toast_trans("CreatenewpostPage.tipMsg1");
             });
           });
+          return;
         }
+        
         this.feedService.sendData(this.nodeId,this.channelId,postId, 0 ,0, this.flieUri,this.imgUrl);
       });
     });

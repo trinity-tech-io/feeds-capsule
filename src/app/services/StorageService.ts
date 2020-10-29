@@ -33,26 +33,8 @@ export class StorageService {
         return this.storage.get("postContentImg"+nodeChannelPostId);
     }
 
-    saveRealImg(key: string, value: string): Promise<any>{
-        console.log("saveRealImg key ===>"+key);
-        return this.storage.set("realImg:"+key, value);
-    }
-
-    loadRealImg(key: string): Promise<any>{
-        console.log("loadRealImg key ===>"+key);
-        return this.storage.get("realImg:"+key);
-    }
-
-    removeRealImg(key: string): Promise<any>{
-        return this.storage.remove("realImg:"+key);
-    }
-
     removePostContentImg(nodeChannelPostId:string): Promise<any>{
         return this.storage.remove("postContentImg"+nodeChannelPostId);
-    }
-
-    saveVideo(nodeChannelPostId:string,content: any):Promise<any>{
-        return this.storage.set("video"+nodeChannelPostId,content);
     }
 
     loadVideo(nodeChannelPostId:string){
@@ -61,11 +43,6 @@ export class StorageService {
 
     removeViedo(nodeChannelPostId:string){
       return this.storage.remove("video"+nodeChannelPostId); 
-    }
-
-
-    saveVideoPosterImg(nodeChannelPostId:string,content: any):Promise<any>{
-        return this.storage.set("videoPosterImg"+nodeChannelPostId,content);
     }
 
     loadVideoPosterImg(nodeChannelPostId:string){

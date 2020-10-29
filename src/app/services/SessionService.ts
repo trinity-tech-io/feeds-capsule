@@ -790,17 +790,11 @@ function decodeBodyData(nodeId: string, cacheDataLength: number): boolean{
     
     
     let key = cacheData[nodeId].key;
-
+    console.log("session key ===>"+key);
     if (cacheData[nodeId].method == "get_binary" ){
-        if (key.indexOf("video") == -1){
-            mStorageService.saveRealImg(key, value).then(()=>{
-                eventBus.publish("stream:getBinarySuccess", nodeId, key, value, cacheData[nodeId].mediaType);
-            });    
-        }else{
-            mStorageService.saveVideo(key,value).then(()=>{
-                eventBus.publish("stream:getBinarySuccess", nodeId, key, value, cacheData[nodeId].mediaType);
-            });
-        }
+        mStorageService.set(key,value).then(()=>{
+            eventBus.publish("stream:getBinarySuccess", nodeId, key, value, cacheData[nodeId].mediaType);
+        });
     }
     
     cacheData[nodeId].state = DecodeState.finish;
