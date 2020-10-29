@@ -22,15 +22,15 @@
     <ion-textarea clearOnEdit="true" autofocus="true" rows="6" cols="20" [(ngModel)]="newComment"  placeholder="{{'CommentPage.enterComments'|translate}}">
     </ion-textarea>
 
-    <div *ngIf="imgUrl !== ''" class="img-container">
+    <!-- <div *ngIf="imgUrl !== ''" class="img-container">
       <img src="{{imgUrl}}" (click)="showBigImage(imgUrl)" />
       <img class="remove" src="/assets/icons/remove.svg" (click)="imgUrl = ''"/>
-    </div>
+    </div> -->
   
     <ion-row class="submit-row">
       <ion-col class="left-col">
-        <ion-icon id="image" mode="ios" name="image" (click)="addImg()"></ion-icon>
-        <ion-icon id="camera" mode="ios" name="camera" (click)="addImg()"></ion-icon>
+        <!-- <ion-icon id="image" mode="ios" name="image" (click)="addImg()"></ion-icon>
+        <ion-icon id="camera" mode="ios" name="camera" (click)="addImg()"></ion-icon> -->
       </ion-col>
       <ion-col class="right-col" size="5.5">
         <ion-button (click)="publishComment()">
@@ -41,54 +41,3 @@
   
   </ion-list>
 </ion-content>
-
-<!-- 
-<ion-header *ngIf="connectionStatus == 1">
-  <div class="offline-header"></div>
-</ion-header>
-
-<ion-content ion-padding [class.darkContainer]="theme.darkMode">
-  <div class="channel-img-small-div">
-    <div class="channel-img-small">
-      <ion-avatar class="avatar-div" style="position: relative;">
-        <div class="feed-source-card-status circlePosition">
-          <div class="online-circle"  *ngIf="nodeStatus[nodeId] == 0"></div>
-          <div class="offline-circle" *ngIf="nodeStatus[nodeId] == 1"></div>
-        </div>
-        <img  src={{channelAvatar}}>
-      </ion-avatar>
-    </div> 
-   </div>
-
-   <div class="rightContent">
-    <div> 
-      <ion-label class="channel-title-small ellipsis white" (press)="pressName(channelName)">{{channelName}}</ion-label>
-    </div>
-    <div>
-      <img src="./assets/images/bubble2.svg" class="bubble">
-      <ion-label class="channel-follower2">{{subscribers}} {{'common.followers'|translate}}</ion-label>
-    </div>
-   </div>
-
-  <ion-grid>
-  <ion-row>
-      <ion-col size="12">
-        <ion-item lines="none">
-          <ion-textarea clearOnEdit="true" autofocus="true" rows="6" cols="20" [(ngModel)]="newComment"  placeholder="{{'CommentPage.enterComments'|translate}}"></ion-textarea>
-        </ion-item>
-      </ion-col>
-    </ion-row>
- </ion-grid>
-<div class="ion-padding" >
-  <ion-button
-    expand="block"
-    mode="ios"
-    color="primary"
-    (click)="publishComment()"
-  >
-    <ion-label>{{'EditcommentPage.savechanges'|translate}}</ion-label>
-  </ion-button>
-</div>
-
-</ion-content>
- -->
