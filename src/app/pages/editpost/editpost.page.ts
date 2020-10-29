@@ -246,15 +246,45 @@ export class EditpostPage implements OnInit {
   }
 
   editPost(){
-
-    let imgThumb = "";
-    let content = "";
+    if (this.imgUrl == ""&& this.flieUri == ""){
+      let content = this.feedService.createContent(this.newPost,null,null);
+      this.feedService.editPost(
+        this.nodeId,
+        this.channelId,
+        this.postId,
+        content
+      );
+    }else{
+      this.publishPostThrowMsg(); 
+    }
+  }
+  
+  publishPostThrowMsg(){
+    if (this.flieUri != ""){
+      let videoThumbs: FeedsData.VideoThumb = {
+        videoThumb   :   this.posterImg,
+        duration     :   0
+      };
+      let content = this.feedService.createContent(this.newPost, null, videoThumbs);
+      this.feedService.editPost(
+        this.nodeId,
+        this.channelId,
+        this.postId,
+        content
+      );
+      return;
+    }
 
     if (this.imgUrl != ""){
       this.feedService.compress(this.imgUrl).then((imageThumb)=>{
-        imgThumb = imageThumb;
-        console.log("======11111====="+this.posterImg);
-        content = this.feedService.createContent(this.newPost,this.posterImg,imgThumb, null);
+        let imgThumbs: FeedsData.ImgThumb[] = [];
+        let imgThumb: FeedsData.ImgThumb = {
+          index   : 0,
+          imgThumb: imageThumb
+        }
+        imgThumbs.push(imgThumb);
+
+        let content = this.feedService.createContent(this.newPost,imgThumbs,null);
         this.feedService.editPost(
           this.nodeId,
           this.channelId,
@@ -262,16 +292,8 @@ export class EditpostPage implements OnInit {
           content
         );
       });
-    }else{
-      content = this.feedService.createContent(this.newPost, this.posterImg, null, null);
-      this.feedService.editPost(
-        this.nodeId,
-        this.channelId,
-        this.postId,
-        content
-      );
     }
-  }  
+  }
  
   addImg(type: number) {
     this.camera.openCamera(
