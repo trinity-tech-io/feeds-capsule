@@ -15,6 +15,7 @@ import { FormateInfoService } from 'src/app/services/FormateInfoService';
 import { SessionService } from 'src/app/services/SessionService';
 
 import * as _ from 'lodash';
+import { stringify } from "querystring";
 declare let didManager: DIDPlugin.DIDManager;
 declare let appManager: AppManagerPlugin.AppManager;
 declare let didSessionManager: DIDSessionManagerPlugin.DIDSessionManager;
@@ -1932,28 +1933,22 @@ export class FeedService {
     let created_at: number = params.created_at;
     let updateAt: number = params.updated_at||created_at;
 
-    let content = this.serializeDataService.decodeData(contentBin);
-    let contentText = this.parsePostContentText(content);
-    let contentImage = this.parsePostContentImg(content);
-    let videoThumbnail = this.parseVideoThumbnail(content);
+    let contentStr = this.serializeDataService.decodeData(contentBin);
+
+    let content = this.parseContent(nodeId,channel_id,id,0,contentStr);
 
     let mPostId = this.getPostId(nodeId, channel_id, id);
     this.postMap[mPostId] = {
       nodeId     : nodeId,
       channel_id : channel_id,
       id         : id,
-      content    : contentText,
+      content    : content,
       comments   : 0,
       likes      : 0,
       created_at : created_at*1000,
       updated_at  : updateAt,
       post_status : FeedsData.PostCommentStatus.available
     }
-
-    if(contentImage !="")
-      this.storeService.savePostContentImg(mPostId, contentImage);
-    if (videoThumbnail!="")
-      this.storeService.saveVideoPosterImg(mPostId, videoThumbnail);
 
     let nodeChannelId = nodeId+channel_id;
     if (lastPostUpdateMap[nodeChannelId] == undefined){
@@ -2180,23 +2175,16 @@ export class FeedService {
     if (updatedAt > createdAt && status == FeedsData.PostCommentStatus.available)
       status = FeedsData.PostCommentStatus.edited
 
-    let content = this.serializeDataService.decodeData(contentBin);
-
-    let contentText = this.parsePostContentText(content);
-    let contentImage = this.parsePostContentImg(content);
-    let videoThumbnail = this.parseVideoThumbnail(content);
-
+    let contentStr = this.serializeDataService.decodeData(contentBin);
+    let content = this.parseContent(nodeId,channelId,postId,0,contentStr);
+    
     let mPostId = this.getPostId(nodeId, channelId, postId);
-    if(contentImage !="")
-      this.storeService.savePostContentImg(mPostId, contentImage);
-    if (videoThumbnail!="")
-      this.storeService.saveVideoPosterImg(mPostId, videoThumbnail);
-
+    
     this.postMap[mPostId] = {
       nodeId     : nodeId,
       channel_id : channelId,
       id         : postId,
-      content    : contentText,
+      content    : content,
       comments   : comments,
       likes      : likes,
       created_at : createdAt*1000,
@@ -2231,11 +2219,6 @@ export class FeedService {
       status = FeedsData.PostCommentStatus.edited
 
     let content = this.serializeDataService.decodeData(contentBin);
-
-    // let contentText = this.parsePostContentText(content);
-    // let contentImage = this.parsePostContentImg(content);
-    // let mPostId = this.getPostId(nodeId, channelId, postId);
-    // this.storeService.savePostContentImg(mPostId, contentImage);
 
     commentsMap[nodeId][channelId][postId][commentId] = {
       nodeId      : nodeId,
@@ -2350,16 +2333,14 @@ export class FeedService {
     let channelId = request.channel_id;
     let contentBin = request.content;
 
-    let content = this.serializeDataService.decodeData(contentBin);
-    let contentText = this.parsePostContentText(content);
-    let contentImage = this.parsePostContentImg(content);
-    let videoThumbnail = this.parseVideoThumbnail(content);
+    let contentStr = this.serializeDataService.decodeData(contentBin);
+    let content = this.parseContent(nodeId,channelId,postId,0,contentStr);
 
     let post:Post = {
       nodeId      : nodeId,
       channel_id  : channelId,
       id          : postId,
-      content     : contentText,
+      content     : content,
       comments    : 0,
       likes       : 0,
       created_at  : this.getCurrentTimeNum(),
@@ -2368,11 +2349,6 @@ export class FeedService {
     }
 
     let mPostId = this.getPostId(nodeId, channelId, postId);
-   
-    if(contentImage !="")
-      this.storeService.savePostContentImg(mPostId, contentImage);
-    if (videoThumbnail!="")
-      this.storeService.saveVideoPosterImg(mPostId, videoThumbnail);
 
     this.postMap[mPostId]=post;
 
@@ -2787,10 +2763,8 @@ export class FeedService {
       let comments   = result[index].comments;
       let likes      = result[index].likes;
       let createAt = result[index].created_at||0;
-      let content = this.serializeDataService.decodeData(contentBin);
-      let contentText = this.parsePostContentText(content);
-      let contentImage = this.parsePostContentImg(content);
-      let videoThumbnail = this.parseVideoThumbnail(content);
+      let contentStr = this.serializeDataService.decodeData(contentBin);
+      let content = this.parseContent(nodeId,channel_id,id,0,contentStr);
 
       let updatedAt = result[index].updated_at||createAt;
       let status = result[index].status||FeedsData.PostCommentStatus.available;
@@ -2800,11 +2774,7 @@ export class FeedService {
 
 
       let mPostId = this.getPostId(nodeId, channel_id, id);
-      if(contentImage !="")
-        this.storeService.savePostContentImg(mPostId, contentImage);
-      if (videoThumbnail!="")
-        this.storeService.saveVideoPosterImg(mPostId, videoThumbnail);
-
+      
       if(this.postMap[mPostId] == undefined){
         let nodeChannelId = nodeId + channel_id;
         if (!this.checkChannelIsMine(nodeId, channel_id))
@@ -2815,7 +2785,7 @@ export class FeedService {
         nodeId     : nodeId,
         channel_id : channel_id,
         id         : id,
-        content    : contentText,
+        content    : content,
         comments   : comments,
         likes      : likes,
         created_at : createAt*1000,
@@ -3508,7 +3478,7 @@ export class FeedService {
     return text.slice(0,half)+"..."+text.slice(text.length-half+1, text.length);
   }
 
-  parsePostContentText(content: string): string{
+  parsePostContentText(content: any): string{
     let contentObj = this.native.parseJSON(content) || "";
     
     if (contentObj.text != undefined)
@@ -3525,18 +3495,6 @@ export class FeedService {
     
     if (contentObj.img != undefined)
       return contentObj.img
-
-    if (typeof contentObj != 'string')
-      return ""
-
-    return contentObj;
-  }
-
-  parseVideoThumbnail(content: any): string{
-    let contentObj = this.native.parseJSON(content) || "";
-    
-    if (contentObj.videoThumbnail != undefined)
-      return contentObj.videoThumbnail
 
     if (typeof contentObj != 'string')
       return ""
@@ -4434,19 +4392,13 @@ export class FeedService {
   }
 
   reSavePostMap(){
-    let keys: string[] = Object.keys(this.postMap) || [];
-    for (let index = 0; index < keys.length; index++) {
-      let key = keys[index];
-      if(this.postMap[key] == undefined)
-        continue;
-      let content = this.postMap[key].content;
-      let img = this.parsePostContentImg(content);
-      if (img != "")
-        this.storeService.savePostContentImg(key, img);
-      this.postMap[key].content = this.parsePostContentText(content);
-    }
+    console.log("---------------------------------reSavePostMap");
+    // this.updatePostKey();
+
+    this.updateAllContentData();
     this.storeService.set(PersistenceKey.postMap, this.postMap);
   }
+
 
 
   saveChannelMap(){
@@ -4767,27 +4719,29 @@ export class FeedService {
     });
   }
 
-  createContent(text: string, videoThumb: string, img: string, imageThumb: FeedsData.ImgThumb[]): string{
+  createContent(text: string, imageThumb: FeedsData.ImgThumb[], videoThumb: FeedsData.VideoThumb): string{
     // {"videoThumbnail":"","imageThumbnail":[{"index":0,"imgThumb":""}]}
     // {"text":"123"}
     // {"text":"123","imageThumbnail":[{"index":0,"imgThumb":"data:image/jpeg;base64,/9j/4}]}
     // {"text":"123","videoThumbnail":"data:image/png;base64,iVB=="}
     let content = {};
+    content["version"]="1.0";
+    // content["type"]="";
     
     if (text != ""){
       content["text"] = text ;
+      // content["type"] = content["type"]+"text/";
     }
     
-    if (img!=null && img != ""){
-      content["img"] = img;
-    }
-
-    if(videoThumb!=null && videoThumb!= ""){
-      content["videoThumbnail"] = videoThumb;  
-    }
-
     if(imageThumb!=null && imageThumb.length > 0){
-      content["imageThumbnail"] = imageThumb;  
+      content["imageThumbnail"] = imageThumb;
+      // content["type"] = content["type"]+"img/";
+      // content["imgTotalNum"] = imageThumb.length;
+    }
+
+    if(videoThumb!=null && videoThumb!=undefined && JSON.stringify(videoThumb) != "{}"){
+      content["videoThumbnail"] = videoThumb;
+      // content["type"] = content["type"]+"video/";
     }
 
     let contentStr = JSON.stringify(content);
@@ -4795,6 +4749,251 @@ export class FeedService {
     return contentStr;
   }
 
-  parseContent(content: any){
+  parseContent(nodeId: string, channelId: number, postId: number, commentId: number, content: any): FeedsData.Content{
+    let contentObj = this.native.parseJSON(content) || "";
+    if (contentObj.version != undefined && contentObj.version === "1.0"){
+      return this.parseContentV1(nodeId, channelId, postId, commentId, contentObj);
+    }else{
+      return this.parseContentV0(nodeId, channelId, postId, commentId, contentObj);
+    }
+  }
+
+  parseContentV1(nodeId: string, channelId: number, postId: number, commentId: number, contentObj: any): FeedsData.Content{
+    // {"version":"1.0","text":"testText","imageThumbnail":[{"index":0,"imgThumb":"this.imgUrl"}],"videoThumbnail":"this.posterImg"}
+    let mVersion = contentObj.version || "";
+    let mText = contentObj.text || "";
+    let videoThumb = contentObj.videoThumbnail || ""
+    let mMediaType = FeedsData.MediaType.noMeida;
+
+    let videoThumbKeyObj:FeedsData.VideoThumbKey = undefined;
+    if (videoThumb != ""){
+      let mDuration = videoThumb.duration;
+      let mVideoThumbKey = this.getVideoThumbKey(nodeId, channelId, postId, commentId, 0);
+      this.storeService.set(mVideoThumbKey, videoThumb.videoThumb);
+      mMediaType = FeedsData.MediaType.containsVideo;
+
+      videoThumbKeyObj = {
+        videoThumbKey: mVideoThumbKey,
+        duration: mDuration
+      }
+    }
+
+    let imageThumbs = contentObj.imageThumbnail||"";
+    let imgThumbKeys: FeedsData.ImageThumbKey[] = [];
+    if (imageThumbs != ""){
+      for (let index = 0; index < imageThumbs.length; index++) {
+        let thumbIndex = index;
+        let key = this.getImageThumbnailKey(nodeId,channelId,postId,commentId,thumbIndex);
+        this.storeService.set(key,imageThumbs[index]);
+
+        imgThumbKeys[index] = {
+          index: thumbIndex,
+          imgThumbKey: key
+        }
+      }
+      mMediaType = FeedsData.MediaType.containsImg;
+    }
+
+    let content: FeedsData.Content = {
+      version         :   mVersion,
+      text            :   mText,
+      mediaType       :   mMediaType,
+      videoThumbKey   :   videoThumbKeyObj,
+      imgThumbKeys    :   imgThumbKeys
+    }
+
+    console.log("parse v1 result ==>"+JSON.stringify(content));
+
+    return content;
+  }
+
+  parseContentV0(nodeId: string, channelId: number, postId: number, commentId: number, contentObj: any): FeedsData.Content{
+    // {"text":"test","img":""}
+    let text = this.parsePostContentText(contentObj) || "";
+    let img = this.parsePostContentImg(contentObj) || "";
+    let imgThumbKeys: FeedsData.ImageThumbKey[] = [];
+    let mMediaType = FeedsData.MediaType.noMeida;
+    if (img != ""){
+      let key = this.getImageThumbnailKey(nodeId,channelId,postId,commentId,0);
+      this.storeService.set(key,img);
+
+      imgThumbKeys[0] = {
+        index: 0,
+        imgThumbKey: key
+      }
+      mMediaType = FeedsData.MediaType.containsImg;
+    }
+
+    let content: FeedsData.Content = {
+      version         :   "0",
+      text            :   text,
+      mediaType       :   mMediaType,
+      videoThumbKey   :   undefined,
+      imgThumbKeys    :   imgThumbKeys
+    }
+
+    console.log("parse v0 result ==>"+JSON.stringify(content));
+
+    return content;
+  }
+
+  getContentFromId(nodeId: string, channelId: number, postId: number, commentId: number): FeedsData.Content{
+    if (commentId == 0){
+      let post = this.getPostFromId(nodeId, channelId, postId);
+      if (post == undefined){
+        return undefined;
+      }
+      return post.content;
+    }else{
+      // TODO
+      return undefined;
+    }
+  }
+
+  getImgThumbsKeyFromId(nodeId: string, channelId: number, postId: number, commentId: number):FeedsData.ImageThumbKey[]{
+    let content = this.getContentFromId(nodeId,channelId,postId,commentId);
+    if (content == undefined || content.imgThumbKeys == undefined)
+      return undefined;
+
+    return content.imgThumbKeys;
+  }
+
+  getImgThumbKeyFromId(nodeId: string, channelId: number, postId: number, commentId: number, index: number):FeedsData.ImageThumbKey{
+    let imgThumbKeys = this.getImgThumbsKeyFromId(nodeId,channelId,postId,commentId);
+    if (imgThumbKeys.length == 0 || imgThumbKeys[index] == undefined)
+      return undefined;
+    
+    return imgThumbKeys[index];
+  }
+
+  getImgThumbKeyStrFromId(nodeId: string, channelId: number, postId: number, commentId: number, index: number): string{
+    let mImgThumbKey = this.getImgThumbKeyFromId(nodeId,channelId,postId,commentId, index);
+
+    return mImgThumbKey.imgThumbKey;
+  }
+
+  getVideoThumbFromId(nodeId: string, channelId: number, postId: number, commentId: number):FeedsData.VideoThumbKey{
+    let content = this.getContentFromId(nodeId, channelId, postId, commentId);
+    if (content == undefined)
+      return undefined;
+
+    return content.videoThumbKey;
+  }
+  
+  getVideoThumbStrFromId(nodeId: string, channelId: number, postId: number, commentId: number):string{
+    let mVideoThumbKey = this.getVideoThumbFromId(nodeId,channelId,postId,commentId);
+    if (mVideoThumbKey == undefined)
+      return undefined;
+
+    return mVideoThumbKey.videoThumbKey;
+  }
+
+  getVideoDurationFromId(nodeId: string, channelId: number, postId: number, commentId: number):number{
+    let mVideoThumbKey = this.getVideoThumbFromId(nodeId,channelId,postId,commentId);
+    if (mVideoThumbKey == undefined)
+      return undefined;
+
+    return mVideoThumbKey.duration;
+  }
+
+  updateAllContentData(){
+    let keys: string[] = Object.keys(this.postMap) || [];
+    console.log("oldkeys ===>"+JSON.stringify(keys));
+    for (let index = 0; index < keys.length; index++) {
+      let key = keys[index];
+      if(this.postMap[key] == undefined)
+        continue;
+      
+      console.log("---------befor----------");
+      console.log("post = "+key +"="+JSON.stringify(this.postMap[key]));
+      this.updateContentData(key);
+      console.log("---------after----------");
+      console.log("post = "+key +"="+JSON.stringify(this.postMap[key])); 
+    }
+  }
+
+  updateContentData(key: string){ //undefine =>v0
+    console.log("kkkkkkkkkkkkkkkkkkkkkkkk");
+    let post = this.postMap[key];
+    let content = post.content;
+    if (content == undefined){
+      console.log("11111111");
+      return ;
+    }
+    let contentObj = this.native.parseJSON(content);
+    if (content.version != undefined){
+      console.log("22222222"+JSON.stringify(content.version));
+      return;
+    }
+      
+    console.log("33333333");
+
+    let mText = this.parsePostContentText(content) || "";
+    let mImgThumbKeys: FeedsData.ImageThumbKey[] = [];
+    let mMediaType: FeedsData.MediaType = FeedsData.MediaType.noMeida;
+
+    let nodeId = post.nodeId;
+    let channelId = post.channel_id;
+    let postId = post.id;
+    
+    let mNCPId = nodeId+channelId+postId;
+    let imgKey = "postContentImg" + mNCPId ;
+    this.storeService.get(imgKey).then((image)=>{
+      let mImage = image || ""
+      if (mImage != ""){
+        mImgThumbKeys[0] = {
+          index: 0,
+          imgThumbKey: imgKey
+        }
+        mMediaType = FeedsData.MediaType.containsImg;
+      }
+
+      let finalContent:FeedsData.Content = {
+        version         :   "0",
+        text            :   mText,
+        mediaType       :   mMediaType,
+        videoThumbKey   :   undefined,
+        imgThumbKeys    :   mImgThumbKeys
+      }
+
+      post.content = finalContent;
+
+      console.log("+++++++++++++++++++++++++"+JSON.stringify(post.content));
+      this.postMap[key] = post;
+    });
+  }
+
+  updatePostKey(){
+    let keys: string[] = Object.keys(this.postMap) || [];
+    console.log("oldkeys ===>"+JSON.stringify(keys));
+    for (let index = 0; index < keys.length; index++) {
+      console.log("post ===>"+"Key:"+keys[index]+";"+JSON.stringify(this.postMap[keys[index]]));
+
+      let key = keys[index];
+      if(this.postMap[key] == undefined){
+        delete this.postMap[key];
+        continue;
+      }
+        
+      let post = this.postMap[key];
+  
+      let nodeId = post.nodeId;
+      let channelId = post.channel_id;
+      let postId = post.id;
+  
+      let newKey = this.getKey(nodeId,channelId,postId,0);
+  
+      if (key == newKey){
+        continue ;
+      }
+  
+      this.postMap[newKey] = post;
+      delete this.postMap[key];
+    }
+
+    let newkeys: string[] = Object.keys(this.postMap) || [];
+
+    console.log("newkeys ===>"+JSON.stringify(newkeys));
+
   }
 }

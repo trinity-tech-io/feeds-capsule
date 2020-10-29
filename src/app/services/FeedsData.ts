@@ -1,4 +1,10 @@
 declare namespace FeedsData{
+    const enum MediaType{
+        noMeida = 0 ,
+        containsImg = 1 ,
+        containsVideo = 2
+    }
+
     const enum PostCommentStatus {
         available = 0,
         deleted = 1,
@@ -10,10 +16,33 @@ declare namespace FeedsData{
         disconnected = 1
     }
 
-    type ImgThumb = {
-        index: number;
-        imgThumb: any;
+    type Content = {
+        version         :   string,
+        text            :   string,
+        mediaType       :   MediaType,
+        videoThumbKey   :   VideoThumbKey,
+        imgThumbKeys    :   ImageThumbKey[]
     }
+
+    type ImgThumb = {
+        index: number,
+        imgThumb: any
+    }
+
+    type ImageThumbKey = {
+        index       :   number,
+        imgThumbKey :   string
+    }
+    type VideoThumb = {
+        videoThumb      :   string,
+        duration        :   number
+    }
+
+    type VideoThumbKey = {
+        videoThumbKey   :   string,
+        duration        :   number
+    }
+
     type AllFeed = {
         nodeId: string,
         avatar: string,

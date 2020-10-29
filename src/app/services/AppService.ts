@@ -163,12 +163,14 @@ export class AppService {
     initializeApp() {
       let isLoadPost = false;
       let isLoadChannel = false;
-      let isNeedResave = localStorage.getItem('org.elastos.dapp.feeds.resavepost') || "";
+
+      // let isNeedResave = localStorage.getItem('org.elastos.dapp.feeds.resavepost') || "";
+      let isNeedUpdate = localStorage.getItem('org.elastos.dapp.feeds.updatedata') || "";
       this.feedService.updateVersionData();
       this.feedService.initSignInDataAsync((signInData) => {
         this.feedService.loadPostData().then(() => {
-          if(isNeedResave === ""){
-            localStorage.setItem('org.elastos.dapp.feeds.resavepost',"11");
+          if(isNeedUpdate === ""){
+            localStorage.setItem('org.elastos.dapp.feeds.updatedata',"1.3.0");
             this.feedService.reSavePostMap();
           }
           isLoadPost = true;

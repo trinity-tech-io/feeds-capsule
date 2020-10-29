@@ -121,7 +121,32 @@ export class TestsessionPage implements OnInit {
   writeData(){
     // this.streamAddData();
 
-    this.sessionService.toBytes(null);
+    // this.sessionService.toBytes(null);
+    let imgThumbs: FeedsData.ImgThumb[] = [];
+
+    let imgThumb: FeedsData.ImgThumb = {
+      index: 0,
+      imgThumb: "this.imgUrl"
+    }
+    imgThumbs.push(imgThumb);
+
+    let videoThumbs: FeedsData.VideoThumb = {
+      videoThumb   :   "videoThumb",
+      duration        :   0
+    };
+
+    // let json = this.feedService.createContent("text", imgThumbs, videoThumbs);
+
+    let json = {};
+    json["text"] = "test";
+    json["img"] = "img";
+
+    console.log("44444444444")
+    this.feedService.parseContent("nodeId",1,2,3,json);
+
+
+
+
   }
 
   startSession(){
