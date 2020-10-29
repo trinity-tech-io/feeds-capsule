@@ -193,48 +193,51 @@ export class CreatenewpostPage implements OnInit {
   }
 
   sendPost(){
-    // let imgThumbs: FeedsData.ImgThumb[] = [];
+    if (this.imgUrl == ""&& this.flieUri == ""){
+      let content = this.feedService.createContent(this.newPost,null,null);
+      this.feedService.publishPost(
+        this.nodeId,
+        this.channelId,
+        content
+      );
+    }else{
+      this.publishPostThrowMsg(); 
+    }
+  }
 
-    // if (this.imgUrl!=""){
-    //   let imgThumb: FeedsData.ImgThumb = {
-    //     index: 0,
-    //     imgThumb: this.imgUrl
-    //   }
-    //   imgThumbs.push(imgThumb);
-    // }
-    let imgThumb = "";
-    let content = "";
+  publishPostThrowMsg(){
+    if (this.flieUri != ""){
+      let videoThumbs: FeedsData.VideoThumb = {
+        videoThumb   :   this.posterImg,
+        duration     :   0
+      };
+      let content = this.feedService.createContent(this.newPost, null, videoThumbs);
+      this.feedService.publishPost(
+        this.nodeId,
+        this.channelId,
+        content
+      );
+      return;
+    }
 
     if (this.imgUrl != ""){
       this.feedService.compress(this.imgUrl).then((imageThumb)=>{
-        imgThumb = imageThumb;
-        content = this.feedService.createContent(this.newPost, this.posterImg,imgThumb, null);
+        let imgThumbs: FeedsData.ImgThumb[] = [];
+        let imgThumb: FeedsData.ImgThumb = {
+          index   : 0,
+          imgThumb: imageThumb
+        }
+        imgThumbs.push(imgThumb);
+
+        let content = this.feedService.createContent(this.newPost,imgThumbs,null);
         this.feedService.publishPost(
           this.nodeId,
           this.channelId,
           content
         );
       });
-    }else{
-      content = this.feedService.createContent(this.newPost, this.posterImg, null, null);
-      this.feedService.publishPost(
-        this.nodeId,
-        this.channelId,
-        content
-      );
     }
-
-
-    // let myContent = {};
-    // myContent["text"] = this.newPost;
-    // myContent["img"] = this.imgUrl;
-      
-    // this.feedService.publishPost(
-    //   this.nodeId,
-    //   this.channelId,
-    //   JSON.stringify(myContent)
-    // );
-  }  
+  }
  
   addImg(type: number) {
     this.camera.openCamera(
