@@ -95,7 +95,7 @@ export class HomePage implements OnInit {
   ionViewWillEnter() {
     //this.refreshImage(); 
     this.styleObj.width = (screen.width - 105)+'px';
-    this.clientHeight =screen.availHeight-58.5-60;
+    this.clientHeight =screen.availHeight;
     this.startIndex = 0;
     this.totalData = this.feedService.getPostList() || [];
     this.connectionStatus = this.feedService.getConnectionStatus();
@@ -744,9 +744,12 @@ export class HomePage implements OnInit {
         //console.log("=====移除===="+rowindex+"==="+video.getBoundingClientRect().top+"---"+video.getBoundingClientRect().bottom);
         let postSrc =  video.getAttribute("poster") || "";
         if(video.getBoundingClientRect().top<-this.clientHeight&&this.isLoadVideoiamge[id]==="13"&&postSrc!=""){
-          video.pause();
           video.removeAttribute("poster");
-          source.removeAttribute("src");
+          let sourcesrc =  source.getAttribute("src") || "";
+          if(sourcesrc  != ""){
+            video.pause();
+            source.removeAttribute("src");
+          }
           this.isLoadVideoiamge[id]="";
         }
       }
