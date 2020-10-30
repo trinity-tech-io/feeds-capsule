@@ -295,6 +295,7 @@ export class PostdetailPage implements OnInit {
     }
 
     this.clearVideo();
+    this.events.publish("addBinaryEvevnt");
   }
 
   ionViewDidEnter() {

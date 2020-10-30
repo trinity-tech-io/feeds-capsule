@@ -214,8 +214,41 @@ export class HomePage implements OnInit {
 
    });
 
+  this.events.subscribe('rpcResponse:error', () => {
+    this.zone.run(() => {
+      this.native.hideLoading();
+    });
+  });
 
-   this.events.subscribe('stream:getBinaryResponse', () => {
+ this.events.subscribe('rpcRequest:success', () => {
+  this.zone.run(() => {
+
+    this.totalData = this.feedService.getPostList() || [];
+    if (this.totalData.length - this.pageNumber > this.pageNumber){
+      this.postList = this.totalData.slice(0,(this.startIndex)*this.pageNumber);
+      this.infiniteScroll.disabled =false;
+     } else {
+      this.postList =  this.totalData;
+      this.infiniteScroll.disabled =true;
+    }
+    this.isLoadimage ={};
+    this.isLoadVideoiamge ={};
+    this.refreshImage(0);
+    this.initnodeStatus(this.postList);
+    this.hideComponent(null);
+    this.native.hideLoading();
+    this.native.toast_trans("CommentPage.tipMsg1");
+  });
+ });
+
+ this.addBinaryEvevnt();
+ this.events.subscribe("addBinaryEvevnt",()=>{
+    this.addBinaryEvevnt();
+ });
+}
+
+addBinaryEvevnt(){
+  this.events.subscribe('stream:getBinaryResponse', () => {
     this.zone.run(() => {
       console.log("result==stream:getBinaryResponse====>")
     });
@@ -271,34 +304,6 @@ export class HomePage implements OnInit {
       }
     });
   });
-
-
-  this.events.subscribe('rpcResponse:error', () => {
-    this.zone.run(() => {
-      this.native.hideLoading();
-    });
-  });
-
- this.events.subscribe('rpcRequest:success', () => {
-  this.zone.run(() => {
-
-    this.totalData = this.feedService.getPostList() || [];
-    if (this.totalData.length - this.pageNumber > this.pageNumber){
-      this.postList = this.totalData.slice(0,(this.startIndex)*this.pageNumber);
-      this.infiniteScroll.disabled =false;
-     } else {
-      this.postList =  this.totalData;
-      this.infiniteScroll.disabled =true;
-    }
-    this.isLoadimage ={};
-    this.isLoadVideoiamge ={};
-    this.refreshImage(0);
-    this.initnodeStatus(this.postList);
-    this.hideComponent(null);
-    this.native.hideLoading();
-    this.native.toast_trans("CommentPage.tipMsg1");
-  });
- });
 }
 
  ionViewWillLeave(){
@@ -326,7 +331,7 @@ export class HomePage implements OnInit {
 }
 
   ionViewDidLeave() {
-   
+    this.events.unsubscribe("addBinaryEvevnt");
     this.events.unsubscribe("update:tab");
   }
 

@@ -214,6 +214,8 @@ export class EditpostPage implements OnInit {
     this.oldImgUrl="";
       
     this.removeVideo();
+    this.events.publish("addBinaryEvevnt");
+
   }
 
   ionViewDidEnter() {

@@ -319,6 +319,7 @@ export class ChannelsPage implements OnInit {
     this.isLoadimage ={};
     this.isLoadVideoiamge ={};
     this.curPost={};
+    this.events.publish("addBinaryEvevnt");
   }
 
   ionViewDidEnter() {
