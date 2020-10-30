@@ -97,7 +97,8 @@
                       <vg-mute></vg-mute> -->
                       <vg-fullscreen id={{post.nodeId+post.channel_id+post.id}}vgfullscreenhome></vg-fullscreen>
                       <vg-time-display vgProperty="current" vgFormat="mm:ss"></vg-time-display>
-                      <vg-time-display vgProperty="total" vgFormat="mm:ss"></vg-time-display>
+                      <!-- <vg-time-display vgProperty="total" vgFormat="mm:ss"></vg-time-display> -->
+                      <span class="totaltime">{{handleTotal(post)}}</span>
                   </vg-controls>
                
               <video #media [vgMedia]="media" id ={{post.nodeId+post.channel_id+post.id}}video
