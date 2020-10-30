@@ -4779,7 +4779,7 @@ export class FeedService {
       for (let index = 0; index < imageThumbs.length; index++) {
         let thumbIndex = index;
         let key = this.getImageThumbnailKey(nodeId,channelId,postId,commentId,thumbIndex);
-        this.storeService.set(key,imageThumbs[index]);
+        this.storeService.set(key,imageThumbs[index].imgThumb);
 
         imgThumbKeys[index] = {
           index: thumbIndex,
