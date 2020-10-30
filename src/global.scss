@@ -372,3 +372,15 @@ ion-input {
   }
 }
 
+.totaltime{
+  user-select: none;
+  display: flex;
+  justify-content: center;
+  height: 50px;
+  width: 60px;
+  cursor: pointer;
+  color: white;
+  line-height: 50px;
+  pointer-events: none;
+}
+

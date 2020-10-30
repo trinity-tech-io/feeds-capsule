@@ -726,6 +726,7 @@ export class HomePage implements OnInit {
                 this.isLoadVideoiamge[id] = "13";
                 vgplayer.style.display = "block";
                 video.setAttribute("poster",image);
+                //video.
                 this.setFullScreen(id);
                 this.setOverPlay(id,srcId);
               }else{
@@ -907,6 +908,16 @@ export class HomePage implements OnInit {
     video.play();
   }
 
+  handleTotal(post:any){
+    let videoThumbKey = post.content["videoThumbKey"] || "";
+    let duration = 29;
+    if(videoThumbKey != ""){
+      duration = videoThumbKey["duration"] || 0;
+    } 
+    return UtilService.timeFilter(duration);
+  }
+
+
 //   this.feedService.loadVideo(id).then((data:string)=>{
 //     this.zone.run(()=>{
 //      source.setAttribute("src",data);
@@ -917,4 +928,5 @@ export class HomePage implements OnInit {
 //  }).catch((err)=>{
  
 //  })
+
 }

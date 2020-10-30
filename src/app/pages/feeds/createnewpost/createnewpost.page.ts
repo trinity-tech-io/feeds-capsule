@@ -33,6 +33,7 @@ export class CreatenewpostPage implements OnInit {
   public uploadProgress:number = 0;
   public videotype:string = "video/mp4";
   public transcode:number = 0;
+  public duration:number =0;
 
 
   constructor(
@@ -282,6 +283,7 @@ export class CreatenewpostPage implements OnInit {
     this.uploadProgress =0;
     navigator.device.capture.captureVideo((videosdata:any)=>{
       this.zone.run(()=>{
+        console.log("=====111===="+JSON.stringify(videosdata[0]));
         let videodata = videosdata[0];
         this.transcodeVideo(videodata['fullPath']).then((newfileUri)=>{
           this.transcode =100;
@@ -302,13 +304,19 @@ export class CreatenewpostPage implements OnInit {
   }, {limit:1,duration:30});
   }
 
-   selectvideo(){
+selectvideo(){
     this.flieUri = '';
     this.posterImg='';
     this.removeVideo();
     this.transcode =0;
     this.uploadProgress =0;
     this.camera.getVideo().then((flieUri:string)=>{
+      let path = flieUri.startsWith('file://') ? flieUri : `file://${flieUri}`;
+      console.log("=====path====="+path)
+      //{"width":1280,"height":720,"orientation":"portrait","duration":1.116,"size":1625145,"bitrate":11649784,"videoMediaType":"video/avc","audioMediaType":"audio/mp4a-latm"}
+      let videoInfo = this.getVideoInfo(path);
+      this.duration = videoInfo["duration"];
+
       flieUri = flieUri.replace("/storage/emulated/0/","/sdcard/");      
       this.zone.run(()=>{
         flieUri = "cdvfile://localhost"+flieUri;
@@ -320,7 +328,13 @@ export class CreatenewpostPage implements OnInit {
     }).catch((err)=>{
       console.log("=====getVideoErr===="+JSON.stringify(err));
      })
-  }
+  } 
+  async getVideoInfo(fileUri:string){
+    let videoInfo = await this.videoEditor.getVideoInfo({ fileUri:fileUri });
+    console.log("=====videoInfo====="+JSON.stringify(videoInfo));
+    return videoInfo;
+  } 
+  
 
   readFile(fileName:string,filepath:string){
 
@@ -331,6 +345,7 @@ export class CreatenewpostPage implements OnInit {
           (fileEntry) => {
 
             fileEntry.file((file)=>{
+              console.log("======file====="+JSON.stringify(file));
               let filesize  = parseFloat((file.size/1000/1000).toFixed(2));
               if(this.isVideoTipDes(filesize)){
                  this.uploadProgress = 0;
@@ -387,7 +402,8 @@ export class CreatenewpostPage implements OnInit {
   async transcodeVideo(path:any):Promise<string>{
     const fileUri = path.startsWith('file://') ? path : `file://${path}`;
     console.log("====fileUrl===="+fileUri);
-    const videoInfo = await this.videoEditor.getVideoInfo({ fileUri });
+    const videoInfo = await this.videoEditor.getVideoInfo({ fileUri:fileUri });
+    this.duration = videoInfo["duration"];
     let width: number = 0;
     let height: number = 0;
 
