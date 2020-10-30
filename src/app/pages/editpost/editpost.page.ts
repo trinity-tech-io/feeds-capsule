@@ -555,8 +555,6 @@ export class EditpostPage implements OnInit {
   // }
 
   initVideo(){
-
-    let sid = setTimeout(()=>{
       let key = this.feedService.getVideoThumbStrFromId(this.nodeId,this.channelId,this.postId,0);
       this.feedService.getData(key).then((idata:string)=>{
         let imgageData:string = idata || "";
@@ -567,10 +565,6 @@ export class EditpostPage implements OnInit {
           });   
         }
        });
-
-       clearTimeout(sid);
-    },0);
-  
   }
 
   removeVideo(){
@@ -618,7 +612,7 @@ export class EditpostPage implements OnInit {
   }
 
   getVideo(key:string){
-        this.feedService.loadVideo(key).then((videodata:string)=>{
+        this.feedService.getData(key).then((videodata:string)=>{
           this.zone.run(()=>{
            
             let videoData = videodata || "";
