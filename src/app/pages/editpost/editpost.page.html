@@ -46,7 +46,7 @@
             <vg-playback-button></vg-playback-button>
     
             <vg-time-display vgProperty="current" vgFormat="mm:ss"></vg-time-display>
-            <vg-time-display vgProperty="total" vgFormat="mm:ss"></vg-time-display>
+            <span class="totaltime">{{handleTotal(duration)}}</span>
             <vg-mute></vg-mute>
             <vg-fullscreen></vg-fullscreen>
         </vg-controls>

@@ -9,6 +9,7 @@ import { TranslateService } from "@ngx-translate/core";
 import { VideoEditor } from '@ionic-native/video-editor/ngx';
 import { VgFullscreenAPI } from 'ngx-videogular';
 import { AppService } from 'src/app/services/AppService';
+import { UtilService } from 'src/app/services/utilService';
 import * as _ from 'lodash';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 @Component({
@@ -38,6 +39,7 @@ export class EditpostPage implements OnInit {
   public transcode:number = 0;
   public cacheGetBinaryRequestKey:string ="";
   public cachedMediaType = "";
+  public duration:any = 0;
 
   constructor(
     private events: Events,
@@ -68,7 +70,6 @@ export class EditpostPage implements OnInit {
   ionViewWillEnter() {
     this.initTitle();
     this.native.setTitleBarBackKeyShown(true);
-    this.initVideo();
     this.initData();
 
     this.events.subscribe('feeds:connectionChanged',(status)=>{
@@ -263,7 +264,7 @@ export class EditpostPage implements OnInit {
     if (this.flieUri != ""){
       let videoThumbs: FeedsData.VideoThumb = {
         videoThumb   :   this.posterImg,
-        duration     :   0
+        duration     :   this.duration
       };
       let content = this.feedService.createContent(this.newPost, null, videoThumbs);
       this.feedService.editPost(
@@ -331,8 +332,13 @@ export class EditpostPage implements OnInit {
   }
 
   getImage(){
-    let nodeChannelPostId = this.nodeId+this.channelId+this.postId;
-    this.feedService.loadPostContentImg(nodeChannelPostId).then((image)=>{
+    //let nodeChannelPostId = this.nodeId+this.channelId+this.postId;
+    let thumbkey= this.feedService.getImgThumbKeyStrFromId(this.nodeId,this.channelId,this.postId,0,0);
+    let key = this.feedService.getImageKey(this.nodeId,this.channelId,this.postId,0,0);
+    if(thumbkey.startsWith("postContentImg")){
+         key = thumbkey;
+    }  
+    this.feedService.getData(key).then((image)=>{
       this.oldImgUrl = image || "";
       this.imgUrl = image || "";
     }).catch(()=>{
@@ -353,8 +359,16 @@ export class EditpostPage implements OnInit {
     this.channelName = channel["name"] || "";
     this.subscribers = channel["subscribers"] || "";
     this.channelAvatar = this.feedService.parseChannelAvatar(channel["avatar"]);
+    let post = this.feedService.getPostFromId(this.nodeId, this.channelId, this.postId);
+    if(post.content.mediaType === 1){
+      this.getImage();
+    }
 
-    this.getImage();
+    if(post.content.mediaType === 2){
+      this.duration = post.content["videoThumbKey"]["duration"];
+      this.initVideo();
+    }
+   
     this.getContent();
 
     this.connectionStatus = this.feedService.getConnectionStatus();
@@ -390,6 +404,8 @@ export class EditpostPage implements OnInit {
   selectvideo(){
     this.removeVideo();
     this.camera.getVideo().then((flieUri)=>{
+      let path = flieUri.startsWith('file://') ? flieUri : `file://${flieUri}`;
+      this.getVideoInfo(path);
       flieUri = flieUri.replace("/storage/emulated/0/","/sdcard/")      
       this.zone.run(()=>{
         flieUri = "cdvfile://localhost"+flieUri;
@@ -478,6 +494,7 @@ export class EditpostPage implements OnInit {
     const fileUri = path.startsWith('file://') ? path : `file://${path}`;
     console.log("====fileUrl===="+fileUri);
     const videoInfo = await this.videoEditor.getVideoInfo({ fileUri });
+    this.duration = videoInfo["duration"];
     let width: number = 0;
     let height: number = 0;
 
@@ -540,7 +557,8 @@ export class EditpostPage implements OnInit {
   initVideo(){
 
     let sid = setTimeout(()=>{
-      this.feedService.loadVideoPosterImg(this.nodeId+this.channelId+this.postId).then((idata:string)=>{
+      let key = this.feedService.getVideoThumbStrFromId(this.nodeId,this.channelId,this.postId,0);
+      this.feedService.getData(key).then((idata:string)=>{
         let imgageData:string = idata || "";
         if(imgageData != ""){
           this.zone.run(()=>{
@@ -639,4 +657,14 @@ export class EditpostPage implements OnInit {
 video.load();
 video.play();
   }
+
+async getVideoInfo(fileUri:string){
+    let videoInfo = await this.videoEditor.getVideoInfo({ fileUri:fileUri });
+    this.duration = videoInfo["duration"]
+    console.log("=====this.duration===="+this.duration);
+} 
+
+handleTotal(duration:any){ 
+  return UtilService.timeFilter(duration);
+}
 }
