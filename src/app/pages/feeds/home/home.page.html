@@ -30,7 +30,7 @@
 
   <!-- HAS POSTS  -->
   <div *ngIf="postList.length > 0">
-    <ion-grid *ngFor="let post of postList let i=index" class="post-grid ion-activatable ripple" [class.darkPostGrid]="theme.darkMode" [class.blur]="!hideComment" id={{post.nodeId}}-{{post.channel_id}}-{{post.id}}>
+    <ion-grid *ngFor="let post of postList let i=index" class="post-grid ion-activatable ripple" [class.darkPostGrid]="theme.darkMode" [class.blur]="!hideComment" id={{post.nodeId}}-{{post.channel_id}}-{{post.id}}-{{post.content.mediaType}}>
       <ion-row class="post-row">
         <ion-col class="img-col" size="2.5">
           <div class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode" (click)="navTo(post.nodeId, post.channel_id,post.id)">
@@ -68,7 +68,7 @@
             (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)"
           >  -->
 
-          <div *ngIf="post.post_status!=1" id={{post.nodeId+post.channel_id+post.id}}rpostimg style="width: 100%">
+          <div *ngIf="post.post_status!=1&&post.content.mediaType ===1" id={{post.nodeId+post.channel_id+post.id}}rpostimg style="width: 100%">
             <img
             id ={{post.nodeId+post.channel_id+post.id}}postimg
             class="post-img"
@@ -77,7 +77,7 @@
             <span style="width: 10%;display:inline-block;height: 191px;" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)"></span>
           </div>
        
-          <div *ngIf="post.post_status!=1" id={{post.nodeId+post.channel_id+post.id}}vgplayer style="width: 100%">
+          <div *ngIf="post.post_status!=1&&post.content.mediaType ===2" id={{post.nodeId+post.channel_id+post.id}}vgplayer style="width: 100%">
               <div style="width:90%;height:200px;display:inline-block;">
                 <vg-player>
                   <vg-overlay-play id={{post.nodeId+post.channel_id+post.id}}vgoverlayplayhome></vg-overlay-play>

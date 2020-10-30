@@ -49,7 +49,7 @@
             <pre [ngStyle]="styleObj">{{ getContentText(postContent) }}</pre>
           </h2>
           <img 
-            *ngIf="postStatus != 1 && postImage!= ''"
+            *ngIf="postStatus != 1&&postImage!= ''"
             [src]="postImage"
             class="post-img"
             (click)="showBigImage()"
@@ -69,7 +69,7 @@
             <vg-controls [vgAutohide]="true" [vgAutohideTime]="3">
                 <vg-play-pause></vg-play-pause>
                 <vg-time-display vgProperty="current" vgFormat="mm:ss" ></vg-time-display>
-                <vg-time-display vgProperty="total" vgFormat="mm:ss"></vg-time-display>
+                <span class="totaltime">{{handleTotal(post)}}</span>
                 <vg-mute></vg-mute>
                 <vg-fullscreen></vg-fullscreen>
             </vg-controls>

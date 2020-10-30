@@ -203,4 +203,14 @@ export class LikesComponent implements OnInit {
       }
     }
   }
+
+
+  handleTotal(post:any){
+    let videoThumbKey = post.content["videoThumbKey"] || "";
+    let duration = 29;
+    if(videoThumbKey != ""){
+      duration = videoThumbKey["duration"] || 0;
+    } 
+    return UtilService.timeFilter(duration);
+  }
 }

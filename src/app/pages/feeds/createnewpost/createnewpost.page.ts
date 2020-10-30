@@ -33,7 +33,7 @@ export class CreatenewpostPage implements OnInit {
   public uploadProgress:number = 0;
   public videotype:string = "video/mp4";
   public transcode:number = 0;
-  public duration:number =0;
+  public duration:any =0;
 
 
   constructor(
@@ -212,11 +212,11 @@ export class CreatenewpostPage implements OnInit {
     if (this.flieUri != ""){
       let videoThumbs: FeedsData.VideoThumb = {
         videoThumb   :   this.posterImg,
-        duration     :   0
+        duration     :   this.duration
       };
       let content = this.feedService.createContent(this.newPost, null, videoThumbs);
       this.feedService.publishPost(
-        this.nodeId,
+        this.nodeId,       
         this.channelId,
         content
       );
@@ -312,11 +312,7 @@ selectvideo(){
     this.uploadProgress =0;
     this.camera.getVideo().then((flieUri:string)=>{
       let path = flieUri.startsWith('file://') ? flieUri : `file://${flieUri}`;
-      console.log("=====path====="+path)
-      //{"width":1280,"height":720,"orientation":"portrait","duration":1.116,"size":1625145,"bitrate":11649784,"videoMediaType":"video/avc","audioMediaType":"audio/mp4a-latm"}
-      let videoInfo = this.getVideoInfo(path);
-      this.duration = videoInfo["duration"];
-
+      this.getVideoInfo(path);
       flieUri = flieUri.replace("/storage/emulated/0/","/sdcard/");      
       this.zone.run(()=>{
         flieUri = "cdvfile://localhost"+flieUri;
@@ -331,8 +327,8 @@ selectvideo(){
   } 
   async getVideoInfo(fileUri:string){
     let videoInfo = await this.videoEditor.getVideoInfo({ fileUri:fileUri });
-    console.log("=====videoInfo====="+JSON.stringify(videoInfo));
-    return videoInfo;
+    this.duration = videoInfo["duration"]
+    console.log("=====this.duration===="+this.duration);
   } 
   
 
@@ -404,6 +400,7 @@ selectvideo(){
     console.log("====fileUrl===="+fileUri);
     const videoInfo = await this.videoEditor.getVideoInfo({ fileUri:fileUri });
     this.duration = videoInfo["duration"];
+    console.log("====this.duration===="+this.duration);
     let width: number = 0;
     let height: number = 0;
 

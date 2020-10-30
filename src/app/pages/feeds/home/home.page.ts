@@ -85,6 +85,7 @@ export class HomePage implements OnInit {
           this.postList =  this.totalData.slice(0,this.totalData.length);
           this.infiniteScroll.disabled =true;
         }
+        console.log("========="+JSON.stringify(this.postList[0]));
         this.scrollToTop(1);
         this.isLoadimage ={};
         this.isLoadVideoiamge ={};
@@ -621,11 +622,17 @@ export class HomePage implements OnInit {
         let nodeId = arr[0];
         let channelId = arr[1];
         let postId = arr[2];
+        let mediaType = arr[3];
         let id = nodeId+channelId+postId;
         //postImg
-        this.handlePsotImg(id,srcId,postgridindex);
-       //video
-       this.hanldVideo(id,srcId,postgridindex);
+        if(mediaType === '1'){
+          this.handlePsotImg(id,srcId,postgridindex);
+        }
+         if(mediaType === '2'){
+          //video
+          this.hanldVideo(id,srcId,postgridindex);
+          } 
+      
       }
     }
 
@@ -641,8 +648,13 @@ export class HomePage implements OnInit {
     this.pauseAllVideo();
     this.zone.run(()=>{
       this.native.showLoading("common.waitMoment").then(()=>{
+
+        let thumbkey= this.feedService.getImgThumbKeyStrFromId(nodeId,channelId,postId,0,0);
         let key = this.feedService.getImageKey(nodeId,channelId,postId,0,0);
-        this.feedService.loadRealImg(key).then((realImg)=>{
+        if(thumbkey.startsWith("postContentImg")){
+             key = thumbkey;
+        }         
+        this.feedService.getData(key).then((realImg)=>{
           let img = realImg || "";
           if(img!=""){
             this.native.hideLoading();
@@ -676,7 +688,12 @@ export class HomePage implements OnInit {
         if(isload === ""){
           rpostimg.style.display = "none";
           this.isLoadimage[id] = "11";
-         this.feedService.loadPostContentImg(id).then((imagedata)=>{
+          let arr = srcId.split("-");
+          let nodeId =arr[0];
+          let channelId:any = arr[1];
+          let postId:any = arr[2];
+         let key = this.feedService.getImgThumbKeyStrFromId(nodeId,channelId,postId,0,0);
+         this.feedService.getData(key).then((imagedata)=>{
               let image = imagedata || "";
               if(image!=""){
                 this.isLoadimage[id] ="13";
@@ -720,7 +737,12 @@ export class HomePage implements OnInit {
         if(isloadVideoImg===""){
           this.isLoadVideoiamge[id] = "11";
           vgplayer.style.display = "none";
-          this.feedService.loadVideoPosterImg(id).then((imagedata)=>{
+          let arr = srcId.split("-");
+          let nodeId =arr[0];
+          let channelId:any = arr[1];
+          let postId:any = arr[2];
+          let key = this.feedService.getVideoThumbStrFromId(nodeId,channelId,postId,0);
+          this.feedService.getData(key).then((imagedata)=>{
               let image = imagedata || "";
               if(image!=""){
                 this.isLoadVideoiamge[id] = "13";
@@ -868,7 +890,7 @@ export class HomePage implements OnInit {
     let postId:any = arr[2];
 
     let key = this.feedService.getVideoKey(nodeId,channelId,postId,0,0);
-        this.feedService.loadVideo(key).then((videoResult:string)=>{
+        this.feedService.getData(key).then((videoResult:string)=>{
           this.zone.run(()=>{
             let videodata = videoResult || "";
             if (videodata == ""){
@@ -916,8 +938,6 @@ export class HomePage implements OnInit {
     } 
     return UtilService.timeFilter(duration);
   }
-
-
 //   this.feedService.loadVideo(id).then((data:string)=>{
 //     this.zone.run(()=>{
 //      source.setAttribute("src",data);
