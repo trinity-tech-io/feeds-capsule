@@ -126,8 +126,18 @@ export class PostdetailPage implements OnInit {
   }
 
   ionViewWillEnter() {
-    this.getImage();
-    this.getVideoPoster(this.nodeId+this.channelId+this.postId);
+    let post = this.feedService.getPostFromId(this.nodeId, this.channelId, this.postId);
+    if(post.content.mediaType === 1){
+      this.getImage();
+    } 
+    if(post.content.mediaType === 2){
+      let key = this.feedService.getVideoThumbStrFromId(this.nodeId,this.channelId,this.postId,0) || "";
+      if(key!=""){
+        this.getVideoPoster(key);
+      }
+    }
+  
+  
     this.initTitle();
     this.native.setTitleBarBackKeyShown(true);
     this.styleObj.width = (screen.width - 55)+'px';
@@ -401,8 +411,12 @@ export class PostdetailPage implements OnInit {
   showBigImage(){
     this.zone.run(()=>{
       this.native.showLoading("common.waitMoment").then(()=>{
+        let thumbkey= this.feedService.getImgThumbKeyStrFromId(this.nodeId,this.channelId,this.postId,0,0);
         let key = this.feedService.getImageKey(this.nodeId,this.channelId,this.postId,0,0);
-        this.feedService.loadRealImg(key).then((realImg)=>{
+        if(thumbkey.startsWith("postContentImg")){
+             key = thumbkey;
+        }  
+        this.feedService.getData(key).then((realImg)=>{
           let img = realImg || "";
           if(img!=""){
             this.native.hideLoading();
@@ -431,24 +445,15 @@ export class PostdetailPage implements OnInit {
   }
 
   getImage(){
-    let nodeChannelPostId = this.nodeId+this.channelId+this.postId;
-      this.feedService.loadPostContentImg(nodeChannelPostId).then((image)=>{
-
-        // alert(image.length);
-        // this.feedService.compress(image).then((compressImg)=>{
-          // this.postImage = compressImg || "";  
-          // alert(this.postImage.length);
-        // });
-
-        this.postImage = image || "";
-        // if(this.postImage == ""){
-        //   if (this.feedService.restoreSession(this.nodeId)){
-        //     this.feedService.getBinary(this.nodeId,nodeChannelPostId);
-        //   }
-        // }
-      }).catch(()=>{
-        console.log("getImageError");
-      })
+    let key = this.feedService.getImgThumbKeyStrFromId(this.nodeId,this.channelId,this.postId,0,0) || "";
+      if(key !=""){
+        this.feedService.getData(key).then((image)=>{
+          this.postImage = image || "";
+    }).catch(()=>{
+      console.log("getImageError");
+    })
+      }
+    
   }
 
   doRefresh(event:any){
@@ -561,7 +566,7 @@ export class PostdetailPage implements OnInit {
   }
 
   getVideoPoster(id:string){
-    this.feedService.loadVideoPosterImg(id).then((imagedata)=>{
+    this.feedService.getData(id).then((imagedata)=>{
       let image = imagedata || "";
       if(image!=""){
         this.zone.run(()=>{
@@ -581,7 +586,7 @@ export class PostdetailPage implements OnInit {
     // let videosource:any = this.el.nativeElement.querySelector("source") || "";
     //   if(videosource===""){
     console.log("zzzzzzzzz");
-    this.feedService.loadVideo(key).then((videodata:string)=>{
+    this.feedService.getData(key).then((videodata:string)=>{
       this.zone.run(()=>{
         // console.log("========="+video.substring(0,50));
         let videoData = videodata || "";
@@ -688,10 +693,18 @@ export class PostdetailPage implements OnInit {
 
         let key = this.feedService.getVideoKey(this.nodeId,this.channelId,this.postId,0,0);
         this.getVideo(key);
-
-
       });
      }
     }
+  }
+
+  handleTotal(){
+    let post = this.feedService.getPostFromId(this.nodeId, this.channelId, this.postId);
+    let videoThumbKey = post.content["videoThumbKey"] || "";
+    let duration = 29;
+    if(videoThumbKey != ""){
+      duration = videoThumbKey["duration"] || 0;
+    } 
+    return UtilService.timeFilter(duration);
   }
 }

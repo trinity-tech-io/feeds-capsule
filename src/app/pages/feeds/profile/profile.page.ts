@@ -517,11 +517,16 @@ export class ProfilePage implements OnInit {
         let nodeId = arr[0];
         let channelId = arr[1];
         let postId = arr[2];
+        let mediaType = arr[3];
         let id = nodeId+channelId+postId;
         //postImg
-        this.handlePsotImg(id,srcId,postgridindex);
-        //video
-        this.hanldVideo(id,srcId,postgridindex);
+        if(mediaType === '1'){
+          this.handlePsotImg(id,srcId,postgridindex);
+        }
+         if(mediaType === '2'){
+          //video
+          this.hanldVideo(id,srcId,postgridindex);
+          } 
       }
    
     }
@@ -540,7 +545,12 @@ export class ProfilePage implements OnInit {
         if(isload===""){
           rpostImage.style.display = "none";
         this.isLoadimage[id] = "11";
-       this.feedService.loadPostContentImg(id).then((imagedata)=>{
+        let arr = srcId.split("-");
+        let nodeId =arr[0];
+        let channelId:any = arr[1];
+        let postId:any = arr[2];
+        let key = this.feedService.getImgThumbKeyStrFromId(nodeId,channelId,postId,0,0);
+       this.feedService.getData(key).then((imagedata)=>{
             let image = imagedata || "";
             //console.log("=====ssssssimage"+image);
             if(image!=""){
@@ -597,7 +607,12 @@ export class ProfilePage implements OnInit {
         if(isloadVideoImg===""){
           this.isLoadVideoiamge[id] = "11";
           vgplayer.style.display = "none";
-          this.feedService.loadVideoPosterImg(id).then((imagedata)=>{
+          let arr = srcId.split("-");
+          let nodeId =arr[0];
+          let channelId:any = arr[1];
+          let postId:any = arr[2];
+          let key = this.feedService.getVideoThumbStrFromId(nodeId,channelId,postId,0);
+          this.feedService.getData(key).then((imagedata)=>{
               let image = imagedata || "";
               if(image!=""){
                 this.isLoadVideoiamge[id] = "13";
@@ -736,7 +751,7 @@ export class ProfilePage implements OnInit {
     let channelId:any = arr[1];
     let postId:any = arr[2];
     let key = this.feedService.getVideoKey(nodeId,channelId,postId,0,0);
-    this.feedService.loadVideo(key).then((videoResult:string)=>{
+    this.feedService.getData(key).then((videoResult:string)=>{
           this.zone.run(()=>{
             let videodata = videoResult || "";
             if (videodata == ""){
@@ -779,8 +794,12 @@ export class ProfilePage implements OnInit {
     this.pauseAllVideo();
     this.zone.run(()=>{
       this.native.showLoading("common.waitMoment").then(()=>{
+        let thumbkey= this.feedService.getImgThumbKeyStrFromId(item.nodeId,item.channelId,item.postId,0,0);
         let key = this.feedService.getImageKey(item.nodeId,item.channelId,item.postId,0,0);
-        this.feedService.loadRealImg(key).then((realImg)=>{
+        if(thumbkey.startsWith("postContentImg")){
+             key = thumbkey;
+        }  
+        this.feedService.getData(key).then((realImg)=>{
           let img = realImg || "";
           if(img!=""){
             this.native.hideLoading();

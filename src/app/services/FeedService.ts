@@ -4862,7 +4862,11 @@ export class FeedService {
   }
 
   getImgThumbKeyStrFromId(nodeId: string, channelId: number, postId: number, commentId: number, index: number): string{
-    let mImgThumbKey = this.getImgThumbKeyFromId(nodeId,channelId,postId,commentId, index);
+    let mImgThumbKey:any = this.getImgThumbKeyFromId(nodeId,channelId,postId,commentId, index) || "";
+
+    if(mImgThumbKey===""){
+      return "";
+    }
 
     return mImgThumbKey.imgThumbKey;
   }

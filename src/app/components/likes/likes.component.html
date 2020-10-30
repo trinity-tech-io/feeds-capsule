@@ -12,7 +12,7 @@
 </div>
 
 <div *ngIf="likeList.length > 0">
-  <ion-grid *ngFor="let post of likeList let i=index" class="post-grid ion-activatable ripple postgridlike" [class.darkPostGrid]="theme.darkMode" [class.removeBorder]="post === likeList[likeList.length - 1]" id={{post.nodeId}}-{{post.channel_id}}-{{post.id}}>
+  <ion-grid *ngFor="let post of likeList let i=index" class="post-grid ion-activatable ripple postgridlike" [class.darkPostGrid]="theme.darkMode" [class.removeBorder]="post === likeList[likeList.length - 1]" id={{post.nodeId}}-{{post.channel_id}}-{{post.id}}-{{post.content.mediaType}}>
     <ion-row class="post-row">
       <ion-col class="img-col" size="2.5" (click)="navTo(post.nodeId, post.channel_id,post.id)">
         <div class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode">
@@ -51,7 +51,7 @@
           (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)"
         >  -->
 
-        <div *ngIf="post.post_status != 1"  id ={{post.nodeId+post.channel_id+post.id}}likerow>
+        <div *ngIf="post.post_status != 1&&post.content.mediaType==1"  id ={{post.nodeId+post.channel_id+post.id}}likerow>
              <img
              id ={{post.nodeId+post.channel_id+post.id}}postimglike
              class="post-img" 
@@ -63,7 +63,7 @@
 
              <!--video-->
 
-             <div *ngIf="post.post_status!=1" id={{post.nodeId+post.channel_id+post.id}}vgplayerlike>
+             <div *ngIf="post.post_status!=1&&post.content.mediaType==2" id={{post.nodeId+post.channel_id+post.id}}vgplayerlike>
                  <div style="width: 90%;display:inline-block;height:200px;">
                  <vg-player>
                    <vg-overlay-play id={{post.nodeId+post.channel_id+post.id}}vgoverlayplaylike></vg-overlay-play>
@@ -83,7 +83,7 @@
                        <vg-mute></vg-mute> -->
                        <vg-fullscreen id={{post.nodeId+post.channel_id+post.id}}vgfullscreelike></vg-fullscreen>
                        <vg-time-display vgProperty="current" vgFormat="mm:ss"></vg-time-display>
-                       <vg-time-display vgProperty="total" vgFormat="mm:ss"></vg-time-display>
+                       <span class="totaltime">{{handleTotal(post)}}</span>
                    </vg-controls>
                 
                <video #media [vgMedia]="media" id ={{post.nodeId+post.channel_id+post.id}}videolike
