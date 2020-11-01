@@ -58,6 +58,9 @@ declare namespace FeedsData{
     }
 
     const enum MethodType {
+        declare_post = "declare_post",
+        notify_post = "notify_post",
+        
         create_channel = "create_channel",
         publish_post = "publish_post",
         post_comment = "post_comment",

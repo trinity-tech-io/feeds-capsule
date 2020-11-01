@@ -63,6 +63,46 @@ export class ConnectionService {
         this.sendRPCMessage(serverName, nodeId, request.method, request.params, "");
     }
 
+    //added v1.3.0 server
+    declarePost(serverName: string, nodeId: string, channelId: number, content: any, 
+        withNotify: boolean ,accessToken: FeedsData.AccessToken){
+        if (accessToken == undefined)
+            return ;
+
+        let contentBin = this.serializeDataService.encodeData(content);
+    
+        let request: Communication.declare_post_request = {
+            version: "1.0",
+            method : "declare_post",
+            id     : -1,
+            params : {
+                access_token    : accessToken.token,
+                channel_id  : Number(channelId),
+                content     : contentBin,
+                with_notify : withNotify
+            }
+        }
+        this.sendRPCMessage(serverName, nodeId, request.method, request.params, "");
+    }
+
+    //added v1.3.0 server
+    notifyPost(serverName: string, nodeId: string, channelId: number, postId: number,accessToken: FeedsData.AccessToken){
+        if (accessToken == undefined)
+            return ;
+    
+        let request: Communication.notify_post_request = {
+            version: "1.0",
+            method : "notify_post",
+            id     : -1,
+            params : {
+                access_token    : accessToken.token,
+                channel_id      : channelId,
+                post_id         : postId
+            } 
+        }
+        this.sendRPCMessage(serverName, nodeId, request.method, request.params, "");
+    }
+
     postComment(serverName: string, nodeId: string, channelId: number, postId: number,
               commentId: number , content: any, accessToken: FeedsData.AccessToken){
         if (accessToken == undefined)
