@@ -35,6 +35,8 @@ export class CreatenewpostPage implements OnInit {
   public transcode:number = 0;
   public duration:any =0;
 
+  private postId = 0;
+
 
   constructor(
     private events: Events,
@@ -104,9 +106,18 @@ export class CreatenewpostPage implements OnInit {
           return;
         }
         
+        // this.feedService.sendData(this.nodeId,this.channelId,postId, 0 ,0, this.flieUri,this.imgUrl);
+      });
+    });
+
+    this.events.subscribe('feeds:declarePostSuccess', (postId) => {
+      this.zone.run(()=>{
+        this.postId = postId;
         this.feedService.sendData(this.nodeId,this.channelId,postId, 0 ,0, this.flieUri,this.imgUrl);
       });
     });
+
+    
 
     this.events.subscribe('rpcRequest:error', () => {
       this.native.hideLoading();
@@ -125,6 +136,14 @@ export class CreatenewpostPage implements OnInit {
 
     this.events.subscribe('stream:setBinarySuccess', (nodeId, key) => {
       this.zone.run(() => {
+        if (this.postId != 0){
+          this.feedService.notifyPost(this.nodeId, this.channelId, this.postId);
+        }
+      });
+    });
+
+    this.events.subscribe('feeds:notifyPostSuccess', () => {
+      this.zone.run(() => {
         this.navCtrl.pop().then(()=>{
           this.events.publish("update:tab",true);
           this.imgUrl ='';
@@ -135,6 +154,7 @@ export class CreatenewpostPage implements OnInit {
         });
       });
     });
+    
 
     this.events.subscribe('stream:setBinaryError', (nodeId, response) => {
       this.zone.run(() => {
@@ -156,7 +176,6 @@ export class CreatenewpostPage implements OnInit {
   }
 
   ionViewWillLeave(){
-   
     this.events.unsubscribe("feeds:connectionChanged");
     this.events.unsubscribe("feeds:friendConnectionChanged");
     this.events.unsubscribe("feeds:updateTitle");
@@ -167,6 +186,10 @@ export class CreatenewpostPage implements OnInit {
     this.events.unsubscribe("stream:setBinarySuccess");
     this.events.unsubscribe("stream:setBinaryError");
     this.events.unsubscribe("stream:onStateChangedCallback");
+
+    this.events.unsubscribe("feeds:declarePostSuccess");
+    this.events.unsubscribe("feeds:notifyPostSuccess");
+    
 
     this.flieUri ="";
     this.posterImg ="";
@@ -216,11 +239,17 @@ export class CreatenewpostPage implements OnInit {
         duration     :   this.duration
       };
       let content = this.feedService.createContent(this.newPost, null, videoThumbs);
-      this.feedService.publishPost(
-        this.nodeId,       
+      // this.feedService.publishPost(
+      //   this.nodeId,       
+      //   this.channelId,
+      //   content
+      // );
+      this.feedService.declarePost(
+        this.nodeId,
         this.channelId,
-        content
-      );
+        content,
+        false
+      )
       return;
     }
 
@@ -234,11 +263,18 @@ export class CreatenewpostPage implements OnInit {
         imgThumbs.push(imgThumb);
 
         let content = this.feedService.createContent(this.newPost,imgThumbs,null);
-        this.feedService.publishPost(
+        // this.feedService.publishPost(
+        //   this.nodeId,
+        //   this.channelId,
+        //   content
+        // );
+
+        this.feedService.declarePost(
           this.nodeId,
           this.channelId,
-          content
-        );
+          content,
+          false
+        )
       });
     }
   }

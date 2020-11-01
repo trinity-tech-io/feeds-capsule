@@ -299,7 +299,8 @@ enum PublishType{
   deletePostFinish = "feeds:deletePostFinish",
   deleteCommentFinish = "feeds:deleteCommentFinish",
 
-  declarePostSuccess = "feeds:declarePostSuccess"
+  declarePostSuccess = "feeds:declarePostSuccess",
+  notifyPostSuccess = "feeds:notifyPostSuccess"
 }
 
 enum PersistenceKey{
@@ -2438,10 +2439,7 @@ export class FeedService {
 
       this.storeService.set(PersistenceKey.postMap, this.postMap);
     
-      eventBus.publish(PublishType.postEventSuccess);
-      eventBus.publish(PublishType.postDataUpdate);
-      eventBus.publish(PublishType.publishPostSuccess, postId);
-      eventBus.publish(PublishType.publishPostFinish);
+      eventBus.publish(PublishType.notifyPostSuccess);
 
       this.storeService.remove(cacheKey);
     })
