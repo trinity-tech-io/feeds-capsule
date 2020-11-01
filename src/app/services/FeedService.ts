@@ -298,6 +298,8 @@ enum PublishType{
   editCommentFinish = "feeds:editCommentFinish",
   deletePostFinish = "feeds:deletePostFinish",
   deleteCommentFinish = "feeds:deleteCommentFinish",
+
+  declarePostSuccess = "feeds:declarePostSuccess"
 }
 
 enum PersistenceKey{
@@ -1005,6 +1007,14 @@ export class FeedService {
         this.handleUnsubscribeChannelResult(nodeId, requestParams, error);
         break;
 
+      case FeedsData.MethodType.declare_post:
+        this.handleDeclarePostResult(nodeId, result, requestParams, error);
+        break;
+
+      case FeedsData.MethodType.notify_post:
+        this.handleNotifyPostResult(nodeId, result, requestParams, error);
+        break;
+
       case "update_feedinfo":
         this.handleEditFeedInfo(nodeId,requestParams,error);
         break;
@@ -1675,6 +1685,20 @@ export class FeedService {
     this.connectionService.publishPost(this.getServerNameByNodeId(nodeId),nodeId, channelId,content,accessToken);
   }
 
+  declarePost(nodeId: string, channelId: number, content: any, withNotify: boolean){
+    if(!this.hasAccessToken(nodeId))
+      return;
+    let accessToken: FeedsData.AccessToken = accessTokenMap[nodeId]||undefined;
+    this.connectionService.declarePost(this.getServerNameByNodeId(nodeId),nodeId, channelId,content,withNotify,accessToken);
+  }
+
+  notifyPost(nodeId: string, channelId: number, postId: number){
+    if(!this.hasAccessToken(nodeId))
+      return;
+    let accessToken: FeedsData.AccessToken = accessTokenMap[nodeId]||undefined;
+    this.connectionService.notifyPost(this.getServerNameByNodeId(nodeId),nodeId, channelId, postId,accessToken);
+  }
+
   postComment(nodeId: string, channelId: number, postId: number,
               commentId: number, content: any){
     if(!this.hasAccessToken(nodeId))
@@ -2329,10 +2353,13 @@ export class FeedService {
       return;
     }
     
-    let postId = result.id;
-    let channelId = request.channel_id;
-    let contentBin = request.content;
+    this.processPublishPostSuccess(nodeId, request.channel_id, result.id, request.content);
+  }
 
+  processPublishPostSuccess(nodeId: string, channelId: number, postId: number, contentBin: any){
+    // let postId = result.id;
+    // let channelId = request.channel_id;
+    // let contentBin = request.content;
     let contentStr = this.serializeDataService.decodeData(contentBin);
     let content = this.parseContent(nodeId,channelId,postId,0,contentStr);
 
@@ -2358,6 +2385,67 @@ export class FeedService {
     eventBus.publish(PublishType.postDataUpdate);
     eventBus.publish(PublishType.publishPostSuccess, postId);
     eventBus.publish(PublishType.publishPostFinish);
+  }
+
+  handleDeclarePostResult(nodeId: string, result: any, request: any, error: any){
+    if (error != null && error != undefined && error.code != undefined){
+      this.handleError(nodeId, error);
+      return;
+    }
+    
+    this.cachePost(nodeId, request.channel_id, result.id, request.content);
+  }
+
+  cachePost(nodeId: string, channelId: number, postId: number, contentBin: any){
+    let contentStr = this.serializeDataService.decodeData(contentBin);
+    let content = this.parseContent(nodeId,channelId,postId,0,contentStr);
+
+    let post:Post = {
+      nodeId      : nodeId,
+      channel_id  : channelId,
+      id          : postId,
+      content     : content,
+      comments    : 0,
+      likes       : 0,
+      created_at  : this.getCurrentTimeNum(),
+      updated_at  : this.getCurrentTimeNum(),
+      post_status : FeedsData.PostCommentStatus.available
+    }
+
+    let cacheKey = this.getCachePostKey(nodeId,channelId,postId,0);
+    this.storeService.set(cacheKey, post);
+    eventBus.publish(PublishType.declarePostSuccess, postId);
+  }
+
+  handleNotifyPostResult(nodeId: string, result: any, request: any, error: any){
+    if (error != null && error != undefined && error.code != undefined){
+      this.handleError(nodeId, error);
+      return;
+    }
+    
+    let channelId = request.channel_id;
+    let postId = request.post_id;
+
+    let cacheKey = this.getCachePostKey(nodeId, channelId, postId, 0);
+    this.storeService.get(cacheKey).then((post)=>{
+      if (post == null || post == undefined){
+        console.log("get cached post error");
+        return ;
+      }
+
+      let mPostId = this.getPostId(nodeId, channelId, postId);
+      this.postMap[mPostId]=post;
+
+      this.storeService.set(PersistenceKey.postMap, this.postMap);
+    
+      eventBus.publish(PublishType.postEventSuccess);
+      eventBus.publish(PublishType.postDataUpdate);
+      eventBus.publish(PublishType.publishPostSuccess, postId);
+      eventBus.publish(PublishType.publishPostFinish);
+
+      this.storeService.remove(cacheKey);
+    })
+
   }
 
   handlePostCommentResult(nodeId:string, result: any, request: any, error: any){
@@ -4667,6 +4755,9 @@ export class FeedService {
     return this.getKey(nodeId, channelId, postId, commentId)+"-video-thumbnail-"+index;
   }
 
+  getCachePostKey(nodeId: string, channelId: number, postId: number, commentId: number){
+    return this.getKey(nodeId, channelId, postId, commentId)+"-cached";
+  }
   getKey(nodeId: string, channelId: number, postId: number, commentId: number): string{
     return nodeId + "-" + channelId + "-"+ postId + "-" + commentId;
   }

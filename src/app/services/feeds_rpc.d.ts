@@ -824,5 +824,40 @@ declare module Communication{
         result : null
     }
 
+    type declare_post_request = {
+        version: "1.0"
+        method : "declare_post"
+        id     : jsonrpc_id
+        params : {
+            access_token    : string
+            channel_id  : number
+            content     : any
+            with_notify : boolean
+        } 
+    }
+
+    type declare_post_response = {
+        version: "1.0"
+        id     : jsonrpc_id
+        result : {
+            id: number
+        }
+    }
+
+    type notify_post_request = {
+        version: "1.0"
+        method : "notify_post"
+        id     : jsonrpc_id
+        params : {
+            access_token    : string
+            channel_id  : number
+            post_id  : number
+        } 
+    }
+
+    type notify_post_response = {
+        version: "1.0"
+        id     : jsonrpc_id
+    }
 }
 
