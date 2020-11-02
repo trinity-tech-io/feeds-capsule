@@ -25,33 +25,33 @@ export class StorageService {
         return this.storage.remove(key);
     }
 
-    savePostContentImg(nodeChannelPostId:string, content: any): Promise<any>{
-        return this.storage.set("postContentImg"+nodeChannelPostId, content);
-    }
+    // savePostContentImg(nodeChannelPostId:string, content: any): Promise<any>{
+    //     return this.storage.set("postContentImg"+nodeChannelPostId, content);
+    // }
 
-    loadPostContentImg(nodeChannelPostId:string): Promise<any>{
-        return this.storage.get("postContentImg"+nodeChannelPostId);
-    }
+    // loadPostContentImg(nodeChannelPostId:string): Promise<any>{
+    //     return this.storage.get("postContentImg"+nodeChannelPostId);
+    // }
 
-    removePostContentImg(nodeChannelPostId:string): Promise<any>{
-        return this.storage.remove("postContentImg"+nodeChannelPostId);
-    }
+    // removePostContentImg(nodeChannelPostId:string): Promise<any>{
+    //     return this.storage.remove("postContentImg"+nodeChannelPostId);
+    // }
 
-    loadVideo(nodeChannelPostId:string){
-        return this.storage.get("video"+nodeChannelPostId);
-    }
+    // loadVideo(nodeChannelPostId:string){
+    //     return this.storage.get("video"+nodeChannelPostId);
+    // }
 
-    removeViedo(nodeChannelPostId:string){
-      return this.storage.remove("video"+nodeChannelPostId); 
-    }
+    // removeViedo(nodeChannelPostId:string){
+    //   return this.storage.remove("video"+nodeChannelPostId); 
+    // }
 
-    loadVideoPosterImg(nodeChannelPostId:string){
-        return this.storage.get("videoPosterImg"+nodeChannelPostId);
-    }
+    // loadVideoPosterImg(nodeChannelPostId:string){
+    //     return this.storage.get("videoPosterImg"+nodeChannelPostId);
+    // }
 
-    removeViedoPosterImg(nodeChannelPostId:string){
-      return this.storage.remove("videoPosterImg"+nodeChannelPostId); 
-    }
+    // removeViedoPosterImg(nodeChannelPostId:string){
+    //   return this.storage.remove("videoPosterImg"+nodeChannelPostId); 
+    // }
 
     setInfo(){
     }
