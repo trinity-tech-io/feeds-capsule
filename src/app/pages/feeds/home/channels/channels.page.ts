@@ -293,6 +293,10 @@ export class ChannelsPage implements OnInit {
       this.native.toast_trans("CommentPage.tipMsg1");
     });
    });
+
+   this.events.subscribe('feeds:openRightMenu',()=>{
+    this.pauseAllVideo();
+   });  
   }
 
   ionViewWillLeave(){
@@ -313,6 +317,8 @@ export class ChannelsPage implements OnInit {
     this.events.unsubscribe("stream:getBinarySuccess");
     this.events.unsubscribe("stream:error");
     this.events.unsubscribe("stream:onStateChangedCallback");
+    this.events.unsubscribe("feeds:openRightMenu");
+   
 
     this.removeImages();
     this.removeAllVideo();
@@ -826,9 +832,9 @@ export class ChannelsPage implements OnInit {
       if(value === "13"){
         let videoElement:any = document.getElementById(id+'videochannel') || "";
         let source:any = document.getElementById(id+'sourcechannel') || "";
+        videoElement.removeAttribute('poster'); // empty source
         if(source!=""){
           videoElement.pause();
-          videoElement.removeAttribute('poster'); // empty source
           source.removeAttribute('src'); // empty source
           videoElement.load();
         }

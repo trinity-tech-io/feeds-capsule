@@ -267,6 +267,10 @@ export class PostdetailPage implements OnInit {
         }
       });
     });
+
+    this.events.subscribe('feeds:openRightMenu',()=>{
+      this.pauseVideo();
+     }); 
   }
 
 
@@ -288,6 +292,8 @@ export class PostdetailPage implements OnInit {
     this.events.unsubscribe("stream:getBinarySuccess");
     this.events.unsubscribe("stream:error");
     this.events.unsubscribe("stream:onStateChangedCallback");
+
+    this.events.unsubscribe("feeds:openRightMenu");
 
     this.menuService.hideActionSheet();
     if(this.popover!=null){
@@ -649,8 +655,8 @@ export class PostdetailPage implements OnInit {
 
   pauseVideo(){
     let video:any =  this.el.nativeElement.querySelector("video") || "";
-    if(video!=""){
-      video.pause();;
+    if(this.videoObj!=""&&video!=""){
+      video.pause();
     }
   }
 
@@ -658,7 +664,7 @@ export class PostdetailPage implements OnInit {
     this.posterImg ="";
     this.videoObj ="";
     let video:any =  this.el.nativeElement.querySelector("video") || "";
-    if(video!=""){
+    if(this.videoObj!=""&&video!=""){
       video.pause();;
       video.load();
     }

@@ -191,6 +191,11 @@ export class EditpostPage implements OnInit {
       });
     });
 
+    this.events.subscribe("feeds:openRightMenu",()=>{
+      //this.clVideo();
+      this.pauseVideo();
+    });
+
     this.initnodeStatus();
   }
 
@@ -206,7 +211,7 @@ export class EditpostPage implements OnInit {
     this.events.unsubscribe("stream:setBinaryError");
     this.events.unsubscribe("stream:getBinarySuccess");
     this.events.unsubscribe("stream:onStateChangedCallback");
-
+    this.events.unsubscribe("feeds:openRightMenu");
     this.posterImg ="";
     this.oldImgUrl="";
     this.flieUri="";
@@ -217,6 +222,13 @@ export class EditpostPage implements OnInit {
     this.events.publish("addBinaryEvevnt");
 
   }
+
+  pauseVideo(){
+    let video:any = document.getElementById('eidtVideo') || "";
+     if(this.flieUri!=""&&video!=""){
+       video.pause();
+     }
+   }
 
   ionViewDidEnter() {
     let sid = setTimeout(()=>{

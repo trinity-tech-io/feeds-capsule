@@ -172,6 +172,11 @@ export class CreatenewpostPage implements OnInit {
       });
     });
 
+    this.events.subscribe("feeds:openRightMenu",()=>{
+      //this.clVideo();
+      this.pauseVideo();
+    });
+
     this.initnodeStatus();
   }
 
@@ -186,6 +191,7 @@ export class CreatenewpostPage implements OnInit {
     this.events.unsubscribe("stream:setBinarySuccess");
     this.events.unsubscribe("stream:setBinaryError");
     this.events.unsubscribe("stream:onStateChangedCallback");
+    this.events.unsubscribe("feeds:openRightMenu");
 
     this.events.unsubscribe("feeds:declarePostSuccess");
     this.events.unsubscribe("feeds:notifyPostSuccess");
@@ -512,6 +518,12 @@ selectvideo(){
  }
  }
 
+ pauseVideo(){
+ let video:any = document.getElementById('addVideo') || "";
+  if(this.flieUri!=""&&video!=""){
+    video.pause();
+  }
+}
 
   
   // videocam(){

@@ -304,6 +304,11 @@ addBinaryEvevnt(){
       }
     });
   });
+
+  this.events.subscribe('feeds:openRightMenu',()=>{
+         this.pauseAllVideo();
+  });
+  
 }
 
  ionViewWillLeave(){
@@ -322,6 +327,7 @@ addBinaryEvevnt(){
 
     this.events.unsubscribe("rpcResponse:error");
     this.events.unsubscribe("rpcRequest:success");
+    this.events.unsubscribe('feeds:openRightMenu');
 
     this.removeImages();
     this.removeAllVideo();
@@ -827,9 +833,9 @@ addBinaryEvevnt(){
       if(value === "13"){
         let videoElement:any = document.getElementById(id+'video') || "";
         let source:any = document.getElementById(id+'source') || "";
+        videoElement.removeAttribute('poster'); // empty source
         if(source!=""){
           videoElement.pause();
-          videoElement.removeAttribute('poster'); // empty source
           source.removeAttribute('src'); // empty source
           videoElement.load();
         }
