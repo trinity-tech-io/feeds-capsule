@@ -49,12 +49,12 @@ export class FollowingComponent implements OnInit {
   }
 
   checkUnreadNumber(nodeId: string, channelId: number):number{
-    let nodeChannelId = nodeId + channelId ;
+    let nodeChannelId = this.feedService.getChannelId(nodeId, channelId);
     return this.feedService.getUnreadNumber(nodeChannelId);
   }
 
   read(nodeId: string, channelId: number){
-    let nodeChannelId = nodeId + channelId ;
+    let nodeChannelId = this.feedService.getChannelId(nodeId, channelId);
     this.feedService.readChannel(nodeChannelId);
   }
 
