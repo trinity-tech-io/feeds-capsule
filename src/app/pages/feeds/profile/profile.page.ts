@@ -324,6 +324,11 @@ export class ProfilePage implements OnInit {
     this.native.toast_trans("CommentPage.tipMsg1");
   });
  });
+
+ this.events.subscribe("feeds:openRightMenu",()=>{
+      this.pauseAllVideo();
+ });
+ 
   }
 
   ionViewWillLeave(){
@@ -346,6 +351,7 @@ export class ProfilePage implements OnInit {
     this.events.unsubscribe("rpcRequest:success");
 
     this.events.unsubscribe("feeds:updateTitles");
+    this.events.unsubscribe("feeds:openRightMenu");
     this.removeImages();
     this.removeAllVideo();
     this.isLoadimage ={};
@@ -685,9 +691,9 @@ export class ProfilePage implements OnInit {
       if(value === "13"){
         let videoElement:any = document.getElementById(id+'videolike') || "";
         let source:any = document.getElementById(id+'sourcelike') || "";
+        videoElement.removeAttribute('poster'); // empty source
         if(source!=""){
           videoElement.pause();
-          videoElement.removeAttribute('poster'); // empty source
           source.removeAttribute('src'); // empty source
           videoElement.load();
         }

@@ -49,6 +49,7 @@ export class AppService {
         if (menuIcon.key == "back") {
             this.handleBack();
         } else if (menuIcon.key == "more"){
+            this.events.publish("feeds:openRightMenu");
             this.menuService.hideActionSheet();
             let value =  this.popoverController.getTop()["__zone_symbol__value"] || "";
             if(value!=""){
