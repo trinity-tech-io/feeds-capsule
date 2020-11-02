@@ -82,7 +82,7 @@ export class FeedsPage implements OnInit {
   }
 
   create(){
-
+    this.event.publish("feeds:tabsendpost");
     if(this.feedService.getConnectionStatus() != 0){
       this.native.toastWarn('common.connectionError');
       return;

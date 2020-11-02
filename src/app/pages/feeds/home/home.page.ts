@@ -241,6 +241,10 @@ export class HomePage implements OnInit {
   });
  });
 
+ this.events.subscribe("feeds:tabsendpost",()=>{
+  this.pauseAllVideo();
+ });
+
  this.addBinaryEvevnt();
  this.events.subscribe("addBinaryEvevnt",()=>{
     this.addBinaryEvevnt();
@@ -328,6 +332,7 @@ addBinaryEvevnt(){
     this.events.unsubscribe("rpcResponse:error");
     this.events.unsubscribe("rpcRequest:success");
     this.events.unsubscribe('feeds:openRightMenu');
+    this.events.unsubscribe('feeds:tabsendpost');
 
     this.removeImages();
     this.removeAllVideo();
