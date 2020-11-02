@@ -4847,8 +4847,12 @@ export class FeedService {
         errorMessage = this.translate.instant("ErrorInfo.invalidVerifiableCredential");
         break;
       case -10:
-        errorMessage = this.translate.instant("ErrorInfo.unsupportedRequests");
-        break;  
+        // errorMessage = this.translate.instant("ErrorInfo.unsupportedRequests");
+        this.native.toastWarn(
+          this.translate.instant("common.theFeedSource")+
+          " #"+this.getServerNameByNodeId(nodeId) + 
+          this.translate.instant("ErrorInfo.needUpdateServerVersion"));
+        return;
     }
 
     this.native.toastWarn(this.formateInfoService.formatErrorMsg(this.getServerNameByNodeId(nodeId),errorMessage));
