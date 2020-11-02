@@ -96,8 +96,8 @@ export class ConnectionService {
             id     : -1,
             params : {
                 access_token    : accessToken.token,
-                channel_id      : channelId,
-                post_id         : postId
+                channel_id      : Number(channelId),
+                post_id         : Number(postId)
             } 
         }
         this.sendRPCMessage(serverName, nodeId, request.method, request.params, "");
