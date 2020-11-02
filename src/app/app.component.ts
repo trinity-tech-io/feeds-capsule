@@ -46,6 +46,12 @@ export class MyApp {
 
   initializeApp() {
     this.platform.ready().then(() => {
+       this.feedService.getData("feeds.developerMode").then((status)=>{
+            let dstatus = status || false;
+            this.feedService.setDeveloperMode(dstatus);
+       }).catch((err)=>{
+
+       });
       this.native.networkInfoInit();
       this.native.addNetworkListener(()=>{
         this.events.publish('feeds:networkStatusChanged', 1);
@@ -177,5 +183,9 @@ export class MyApp {
     }
     
     return 'data:'+this.avatar.contentType+';base64,'+this.avatar.data;
+  }
+
+  settings(){
+    this.native.navigateForward('settings',"");
   }
 }

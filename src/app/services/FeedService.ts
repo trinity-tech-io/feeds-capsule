@@ -388,6 +388,7 @@ export class FeedIntro{
 
 @Injectable()
 export class FeedService {
+  public developerMode:boolean = false;
   public localSignInData: SignInData = undefined;
   public currentLang:string ="";
   public curtab:string ="home";
@@ -5090,5 +5091,13 @@ export class FeedService {
   getData(key: string):Promise<any>{
     return this.storeService.get(key);
   }
-  
+
+ setDeveloperMode(status:boolean){
+    return this.developerMode = status;  
+  }
+
+  getDeveloperMode(){
+    return this.developerMode;
+  }
+ 
 }
