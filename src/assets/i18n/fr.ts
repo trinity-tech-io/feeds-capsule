@@ -84,7 +84,8 @@ export const fr = {
         "donation":"Donation",
         "signout":"Sign out",
         "des":"Sign out successfully",
-        "des1":"Are you sure to sign out?"
+        "des1":"Are you sure to sign out?",
+        "settings":"Settings"
     },
     "SigninPage":{
         "signIn":"Sign In to Feeds",
@@ -414,5 +415,10 @@ export const fr = {
         "notadded":"Not added",
         "exploreFeeds":"Explore Feeds",
         "emptyDes":"There is no public Feeds Source"
+    },
+    "SettingsPage":{
+        "devmode": "Developer Mode",
+        "on":"ON",
+        "off":"OFF"
     }
 };

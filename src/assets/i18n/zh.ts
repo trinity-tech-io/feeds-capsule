@@ -84,7 +84,8 @@ export const zh = {
         "donation":"捐赠",
         "signout":"登出",
         "des":"登出成功",
-        "des1":"确认要登出吗？"
+        "des1":"确认要登出吗？",
+        "settings":"设置"
     },
     "SigninPage":{
         "signIn":"登录微频",
@@ -413,5 +414,10 @@ export const zh = {
         "notadded":"未添加",
         "exploreFeeds":"探索微频",
         "emptyDes":"还没有公开的微频源"
+    },
+    "SettingsPage":{
+        "devmode": '开发者模式',
+        "on": '开',
+        "off": '关',
     }
 };
