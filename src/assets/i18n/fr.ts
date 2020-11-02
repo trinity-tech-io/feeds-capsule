@@ -75,7 +75,8 @@ export const fr = {
         "filevideodes":"The video is too big",
         "videoloading":"Video loading",
         "videocompression":"Video compression",
-        "video":"Video"
+        "video":"Video",
+        "theFeedSource": "The Feed source"
     },
     "app":{
         "profileDetails":"Profile Details",
@@ -393,7 +394,8 @@ export const fr = {
         "invalidParam":"Invalid Parameters",
         "invalidChallengeResponse":"Invalid Challenge Response",
         "invalidVerifiableCredential":"Invalid Verifiable Credential, please check your did on side chain.",
-        "unsupportedRequests":"Unsupported requests"
+        "unsupportedRequests":"Unsupported requests",
+        "needUpdateServerVersion":"is outdated vesion"
     },
     "EditserverinfoPage":{
         "title":"Edit Feeds Source Details",

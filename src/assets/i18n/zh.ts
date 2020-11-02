@@ -75,7 +75,8 @@ export const zh = {
         "filevideodes":"视频太大了",
         "videoloading":"视频加载中",
         "videocompression":"视频压缩中",
-        "video":"视频"
+        "video":"视频",
+        "theFeedSource": "微频源"
     },
     "app":{
         "profileDetails":"档案详情",
@@ -392,7 +393,8 @@ export const zh = {
         "invalidParam":"参数无效",
         "invalidChallengeResponse":"登录鉴权失败",
         "invalidVerifiableCredential":"服务器无法验证凭证信息,请检查你的DID是否已发布到侧链",
-        "unsupportedRequests":"不支持的请求"
+        "unsupportedRequests":"不支持的请求",
+        "needUpdateServerVersion":"需要升级"
     },
     "EditserverinfoPage":{
         "title":"编辑微频源详情",
