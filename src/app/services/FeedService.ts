@@ -51,6 +51,8 @@ let cacheBindingAddress: string = "";
 let localCredential: string = undefined;
 let isBindServer: boolean = false ;
 
+let cachedPost:{[key:string]:Post} = {};
+
 const enum ConnState {
   connected = 0,
   disconnected = 1
@@ -2358,9 +2360,6 @@ export class FeedService {
   }
 
   processPublishPostSuccess(nodeId: string, channelId: number, postId: number, contentBin: any){
-    // let postId = result.id;
-    // let channelId = request.channel_id;
-    // let contentBin = request.content;
     let contentStr = this.serializeDataService.decodeData(contentBin);
     let content = this.parseContent(nodeId,channelId,postId,0,contentStr);
 
@@ -2414,7 +2413,8 @@ export class FeedService {
     }
 
     let cacheKey = this.getCachePostKey(nodeId,channelId,postId,0);
-    this.storeService.set(cacheKey, post);
+    cachedPost[cacheKey] = post;
+    // this.storeService.set(cacheKey, post);
     eventBus.publish(PublishType.declarePostSuccess, postId);
   }
 
@@ -2428,22 +2428,20 @@ export class FeedService {
     let postId = request.post_id;
 
     let cacheKey = this.getCachePostKey(nodeId, channelId, postId, 0);
-    this.storeService.get(cacheKey).then((post)=>{
-      if (post == null || post == undefined){
-        console.log("get cached post error");
-        return ;
-      }
+    let post = cachedPost[cacheKey];
+    if (post == null || post == undefined){
+      console.log("get cached post error");
+      return ;
+    }
 
-      let mPostId = this.getPostId(nodeId, channelId, postId);
-      this.postMap[mPostId]=post;
+    let mPostId = this.getPostId(nodeId, channelId, postId);
+    this.postMap[mPostId]=post;
 
-      this.storeService.set(PersistenceKey.postMap, this.postMap);
-    
-      eventBus.publish(PublishType.notifyPostSuccess);
+    this.storeService.set(PersistenceKey.postMap, this.postMap);
+  
+    eventBus.publish(PublishType.notifyPostSuccess);
 
-      this.storeService.remove(cacheKey);
-    })
-
+    this.storeService.remove(cacheKey);
   }
 
   handlePostCommentResult(nodeId:string, result: any, request: any, error: any){
