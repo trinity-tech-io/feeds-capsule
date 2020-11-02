@@ -328,6 +328,11 @@ export class ProfilePage implements OnInit {
  this.events.subscribe("feeds:openRightMenu",()=>{
       this.pauseAllVideo();
  });
+
+
+ this.events.subscribe("feeds:tabsendpost",()=>{
+  this.pauseAllVideo();
+ });
  
   }
 
@@ -352,6 +357,7 @@ export class ProfilePage implements OnInit {
 
     this.events.unsubscribe("feeds:updateTitles");
     this.events.unsubscribe("feeds:openRightMenu");
+    this.events.unsubscribe("feeds:tabsendpost");
     this.removeImages();
     this.removeAllVideo();
     this.isLoadimage ={};
