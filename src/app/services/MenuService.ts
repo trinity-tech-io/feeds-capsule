@@ -252,25 +252,35 @@ export class MenuService {
         this.nodeId =nodeId;
         this.channelId=channelId;
         this.postId = postId;
-            switch(clickName){
-                case "editPost":
+        let server = this.feedService.getServerbyNodeId(nodeId);
+
+        switch(clickName){
+            case "editPost":
+                if(server != undefined && server.version != undefined){
                     this.native.go(
                         "/editpost", 
                         { 
-                          "nodeId":nodeId,
-                          "channelId":channelId,
-                          "postId":postId,
-                          "channelName":channelName
+                        "nodeId":nodeId,
+                        "channelId":channelId,
+                        "postId":postId,
+                        "channelName":channelName
                         }
-                      );
-                    break;
-                case "sharepost":
-                    this.native.toast("common.comingSoon");
-                    break;
-                case "removePost":
+                    );
+                }else{
+                    alert("The server needs to be upgraded to 1.3.0 or later");
+                }
+                break;
+            case "sharepost":
+                this.native.toast("common.comingSoon");
+                break;
+            case "removePost":
+                if(server != undefined && server.version != undefined){
                     this.popover = this.popupProvider.ionicConfirm(this,"","common.confirmdeletion",this.cancel,this.confirm,'tskth.svg');
-                    break;    
-            }
+                }else{
+                    alert("The server needs to be upgraded to 1.3.0 or later");
+                }
+                break;    
+        }
     }
 
     cancel(that:any){
