@@ -92,16 +92,16 @@ export class SettingsPage implements OnInit {
 
 
   removeData(){
+    this.feedService.removeAllServerFriends();
     this.storageService.clearAll().then(()=>{
       localStorage.clear();
       this.feedService.resetConnectionStatus();
       this.feedService.destroyCarrier();
-      //this.feedService.removeAllServerFriends();
       this.appService.hideright();
       this.native.setRootRouter('disclaimer');
       this.native.toast("SettingsPage.des1"); 
     }).catch((err)=>{
-
+       
     })
   }
 
