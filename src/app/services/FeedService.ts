@@ -4651,8 +4651,8 @@ export class FeedService {
   }
 
   removeAllServerFriends(){
-    let servers = serverMap|| "";
-
+    let servers = serverMap || "";
+    console.log("====servers===="+JSON.stringify(servers));
     if (servers == "")
       return;
 
