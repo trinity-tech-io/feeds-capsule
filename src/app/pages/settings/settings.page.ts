@@ -53,9 +53,9 @@ export class SettingsPage implements OnInit {
 
   ionViewWillLeave(){
     this.events.unsubscribe("feeds:updateTitle");
-    if(this.popover!=null){
-      this.popover.dismiss();
-    }
+    // if(this.popover!=null){
+    //   this.popover.dismiss();
+    // }
   }
 
   toggleDeveloperMode(){
@@ -96,6 +96,7 @@ export class SettingsPage implements OnInit {
       localStorage.clear();
       this.feedService.resetConnectionStatus();
       this.feedService.destroyCarrier();
+      //this.feedService.removeAllServerFriends();
       this.appService.hideright();
       this.native.setRootRouter('disclaimer');
       this.native.toast("SettingsPage.des1"); 
