@@ -192,7 +192,9 @@ export const fr = {
         "gender":"Gender",
         "telephone":"PHONE NUMBER",
         "email":"Email",
-        "location":"Location"
+        "location":"Location",
+        "carrieruserid":"Carrier UserId",
+        "UserId":"UserId"
     },
     "DevelopPage":{
         "develop":"Develop",
@@ -421,6 +423,9 @@ export const fr = {
     "SettingsPage":{
         "devmode": "Developer Mode",
         "on":"ON",
-        "off":"OFF"
+        "off":"OFF",
+        "cleandata":"Clean Data",  
+        "des":"Are you sure you want to clear the data?",
+        "des1":"Data cleared successfully",
     }
 };

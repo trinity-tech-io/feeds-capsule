@@ -4,6 +4,7 @@ import { FeedService, Avatar } from 'src/app/services/FeedService';
 import { NativeService } from 'src/app/services/NativeService';
 import { ThemeService } from 'src/app/services/theme.service';
 import { TranslateService } from "@ngx-translate/core";
+import { CarrierService } from '../../../../services/CarrierService';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 type ProfileDetail = {
@@ -17,7 +18,7 @@ type ProfileDetail = {
   styleUrls: ['./profiledetail.page.scss'],
 })
 export class ProfiledetailPage implements OnInit {
-
+  public developerMode:boolean =  false;
   public connectionStatus = 1;
   public avatar: Avatar = null;
   public name = "";
@@ -37,7 +38,8 @@ export class ProfiledetailPage implements OnInit {
     private feedService:FeedService,
     public  theme:ThemeService,
     private translate:TranslateService,
-    private events: Events
+    private events: Events,
+    private carrierService:CarrierService
   ) {
      
     }
@@ -52,10 +54,19 @@ export class ProfiledetailPage implements OnInit {
       type: this.translate.instant('ProfiledetailPage.name'),
       details:this.name
     })
+
     this.profileDetails.push({
       type: this.translate.instant('ProfiledetailPage.did'),
       details:this.did
     })
+
+    if(this.developerMode){
+      let carrierUserId = this.carrierService.getNodeId();
+      this.profileDetails.push({
+        type: this.translate.instant('ProfiledetailPage.carrieruserid'),
+        details:carrierUserId
+      })
+    }
  
     this.profileDetails.push({
       type: this.translate.instant('ProfiledetailPage.telephone'),
@@ -72,6 +83,7 @@ export class ProfiledetailPage implements OnInit {
   }
 
   ionViewWillEnter() {
+    this.developerMode = this.feedService.getDeveloperMode();
     this.initTitle();
     this.native.setTitleBarBackKeyShown(true);
     
@@ -123,6 +135,18 @@ export class ProfiledetailPage implements OnInit {
     }
     
     return 'data:'+this.avatar.contentType+';base64,'+this.avatar.data
+  }
+
+  copytext(text:any){
+    let textdata = text || "";
+    if(textdata!=""){
+      this.native.copyClipboard(text).then(()=>{
+        this.native.toast_trans("common.copysucceeded");
+    }).catch(()=>{
+  
+    });;
+    }
+ 
   }
   
 
