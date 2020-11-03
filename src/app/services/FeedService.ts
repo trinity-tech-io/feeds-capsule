@@ -4580,7 +4580,7 @@ export class FeedService {
       commentsMap[nodeId][channelId] = {}
 
     commentsMap[nodeId][channelId][postId] = undefined;
-
+    delete commentsMap[nodeId][channelId][postId];
     return this.storeService.set(PersistenceKey.commentsMap, commentsMap);
   }
 
@@ -4620,18 +4620,22 @@ export class FeedService {
 
   removeServerStatisticById(nodeId: string):Promise<any>{
     serverStatisticsMap[nodeId] = undefined;
+    delete serverStatisticsMap[nodeId];
     return this.storeService.set(PersistenceKey.serverStatisticsMap, serverStatisticsMap);
   }
 
   removeServerStatusById(nodeId: string):Promise<any>{
     serversStatus[nodeId] = undefined;
+    delete serversStatus[nodeId];
     return this.storeService.set(PersistenceKey.serversStatus, serversStatus);
   }
 
   removeServerById(nodeId: string):Promise<any>{
     serverMap[nodeId] = undefined;
+    delete serverMap[nodeId];
     return this.storeService.set(PersistenceKey.serverMap, serverMap);
   }
+
   removeServerFriendsById(nodeId: string, onSuccess: ()=>void, onError:(error)=>void){
     this.carrierService.isFriends(nodeId,(isFriend)=>{
       if (isFriend){
@@ -4644,6 +4648,27 @@ export class FeedService {
         onSuccess();
       }
     });
+  }
+
+  removeAllServerFriends(){
+    let servers = serverMap|| "";
+
+    if (servers == "")
+      return;
+
+    let keys: string[] = Object.keys(serverMap) || [];
+    for (let index = 0; index < keys.length; index++) {
+      let key = keys[index];
+      let server = serverMap[key];
+
+      if (server == undefined)
+        continue;
+
+      this.carrierService.removeFriend(server.nodeId,()=>{
+      },(err)=>{
+        console.log("Remove Friend error =>"+err);
+      });
+    }
   }
 
   removeBindServer(){
