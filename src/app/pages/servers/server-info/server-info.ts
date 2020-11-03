@@ -27,7 +27,7 @@ class Attribute {
 })
 
 export class ServerInfoPage implements OnInit {
-
+  public developerMode:boolean =  false;
   public connectionStatus = 1;
   public buttonDisabled: boolean = true;
   public friendRequest = 'Feeds/0.1';
@@ -94,6 +94,7 @@ export class ServerInfoPage implements OnInit {
   }
 
   initData(){
+    this.developerMode = this.feedService.getDeveloperMode();
     if (this.address !== '') {
       this.native.showLoading('common.waitMoment',2000).then(()=>{
         this.queryServer();
@@ -145,6 +146,7 @@ export class ServerInfoPage implements OnInit {
 
   ionViewWillEnter() {
     this.initTitle();
+    console.log("======this.developerMode======"+this.developerMode);
     if(this.address === ''){
       this.initMyFeeds();
     }
@@ -271,6 +273,7 @@ export class ServerInfoPage implements OnInit {
   }
 
   collectServerData(server) {
+    console.log("=========="+JSON.stringify(server));
     this.serverDetails = [];
 
     this.serverDetails.push({
@@ -284,7 +287,14 @@ export class ServerInfoPage implements OnInit {
         details: server.owner || ""
       });  
     }
-    
+
+    if(this.developerMode){
+      this.serverDetails.push({
+        type: this.translate.instant('ServerInfoPage.UserId'),
+        details: server.nodeId || ""
+      });
+    }
+
     this.serverDetails.push({
       type: this.translate.instant('ServerInfoPage.introduction'),
       details: server.introduction || ""
@@ -586,4 +596,15 @@ export class ServerInfoPage implements OnInit {
  navTo(nodeId:string, channelId:number){
   this.native.navigateForward(['/channels', nodeId, channelId],"");
  }
+
+ copytext(text:any){
+  let textdata = text || "";
+  if(textdata!=""){
+    this.native.copyClipboard(text).then(()=>{
+      this.native.toast_trans("common.copysucceeded");
+  }).catch(()=>{
+
+  });;
+  }
+}
 }

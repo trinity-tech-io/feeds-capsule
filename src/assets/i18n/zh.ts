@@ -192,7 +192,8 @@ export const zh = {
         "gender":"性别",
         "telephone":"号码",
         "email":"邮箱",
-        "location":"国家/地区"
+        "location":"国家/地区",
+        "carrieruserid":"Carrier UserId"
     },
     "DevelopPage":{
         "develop":"开发",
@@ -274,7 +275,8 @@ export const zh = {
         "des":"添加我的微频源!",
         "replyingto":"回复给",
         "containedfeeds":"包含的微频列表",
-        "version":"版本"
+        "version":"版本",
+        "UserId":"UserId"
     },
     "ScanqrcodePage":{
         "introtitle": "创建新的",
@@ -421,5 +423,8 @@ export const zh = {
         "devmode": '开发者模式',
         "on": '开',
         "off": '关',
+        "cleandata":"清空数据",
+        "des":"确认要清空数据吗？",
+        "des1":"清空数据成功",
     }
 };

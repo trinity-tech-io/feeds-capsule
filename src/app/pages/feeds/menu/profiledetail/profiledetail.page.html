@@ -11,70 +11,10 @@
     <div *ngFor="let profile of profileDetails" >
       <ion-row *ngIf="profile.details" class="detail-row">
         <ion-col size="12" class="left-col">
-            <h1>{{ profile.type.toUpperCase() }}</h1>
-            <h2>{{ profile.details }}</h2>
+            <h1>{{ profile.type }}</h1>
+            <h2 (click)="copytext(profile.details)">{{ profile.details }}</h2>
         </ion-col>
       </ion-row>
     </div>
   </ion-grid>
-
-
-<!--   <div class="detail-div">
-
-    <div class="detail-key-div">
-      <ion-label class="detail-key">{{'ProfiledetailPage.name'|translate}}</ion-label>
-    </div>
-    <div class="detail-value-div">
-      <ion-label class="detail-value">{{name}}</ion-label>
-    </div>
-    <div class="detail-line"></div>
-  
-    <div class="detail-key-div">
-      <ion-label class="detail-key">{{'ProfiledetailPage.did'|translate}}</ion-label>
-    </div>
-    <div class="detail-value-div">
-      <ion-label  class="detail-value">{{did}} </ion-label>
-    </div>
-    <div class="detail-line"></div>
-  
-    <div *ngIf="gender != ''">
-      <div class="detail-key-div">
-        <ion-label class="detail-key">{{'ProfiledetailPage.gender'|translate}}</ion-label>
-      </div>
-      <div class="detail-value-div">
-        <ion-label  class="detail-value">{{gender}} </ion-label>
-      </div>
-      <div class="detail-line"></div>
-    </div>
-  
-  
-    <div  *ngIf="telephone != ''">
-      <div class="detail-key-div">
-        <ion-label class="detail-key">{{'ProfiledetailPage.telephone'|translate}}</ion-label>
-      </div>
-      <div class="detail-value-div">
-        <ion-label class="detail-value">{{telephone}}</ion-label>
-      </div>
-      <div class="detail-line"></div>
-    </div>
-  
-    <div *ngIf="email != ''">
-      <div class="detail-key-div">
-        <ion-label class="detail-key">{{'ProfiledetailPage.email'|translate}}</ion-label>
-      </div>
-      <div class="detail-value-div">
-        <ion-label class="detail-value">{{email}}</ion-label>
-      </div>
-      <div class="detail-line"></div>
-    </div>
-  
-    <div *ngIf="location != ''">
-      <div class="detail-key-div">
-        <ion-label class="detail-key">{{'ProfiledetailPage.location'|translate}}</ion-label>
-      </div>
-      <div class="detail-value-div">
-        <ion-label class="detail-value">{{location}}</ion-label>
-      </div> 
-    </div>
-  </div>  -->
 </ion-content>

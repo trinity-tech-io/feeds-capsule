@@ -24,8 +24,8 @@
     <div *ngFor="let server of serverDetails">
       <ion-row *ngIf="server.details" class="detail-row" [class.removeBorder]="serverDetails.indexOf(server) === serverDetails.length - 1">
         <ion-col size="12" class="left-col">
-            <h1>{{ server.type.toUpperCase() }}</h1>
-            <h2 *ngIf="!server.qrcode">{{ server.details }}</h2>
+            <h1>{{ server.type }}</h1>
+            <h2 *ngIf="!server.qrcode" (click)="copytext(server.details)">{{ server.details }}</h2>
             <div *ngIf="server.qrcode" class="qr-container">
               <h2 *ngIf="!isShowQrcode" >{{'common.waitOnChain'|translate}}</h2>
               <div *ngIf="isShowQrcode" class="qrcode">
