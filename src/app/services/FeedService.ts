@@ -5327,6 +5327,15 @@ export class FeedService {
     return mVideoThumbKey.duration;
   }
 
+  getContentVersion(nodeId: string, channelId: number, postId: number, commentId: number): string{
+    let content = this.getContentFromId(nodeId,channelId,postId,commentId);
+
+    if (content == undefined || content.imgThumbKeys == undefined)
+      return undefined;
+
+    return content.version;
+  }
+
   updateAllContentData(){
     let keys: string[] = Object.keys(this.postMap) || [];
     console.log("oldkeys ===>"+JSON.stringify(keys));

@@ -346,9 +346,10 @@ export class EditpostPage implements OnInit {
   }
 
   getImage(){
+    let contentVersion = this.feedService.getContentVersion(this.nodeId,this.channelId,this.postId,0);
     let thumbkey= this.feedService.getImgThumbKeyStrFromId(this.nodeId,this.channelId,this.postId,0,0);
     let key = this.feedService.getImageKey(this.nodeId,this.channelId,this.postId,0,0);
-    if(thumbkey.startsWith("postContentImg")){
+    if(contentVersion == "0"){
          key = thumbkey;
     }  
     this.feedService.getData(key).then((image)=>{
