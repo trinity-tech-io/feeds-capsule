@@ -664,12 +664,12 @@ addBinaryEvevnt(){
     this.pauseAllVideo();
     this.zone.run(()=>{
       this.native.showLoading("common.waitMoment").then(()=>{
-
+        let contentVersion = this.feedService.getContentVersion(nodeId,channelId,postId,0);
         let thumbkey= this.feedService.getImgThumbKeyStrFromId(nodeId,channelId,postId,0,0);
         let key = this.feedService.getImageKey(nodeId,channelId,postId,0,0);
-        if(thumbkey.startsWith("postContentImg")){
+        if(contentVersion == "0"){
              key = thumbkey;
-        }         
+        }
         this.feedService.getData(key).then((realImg)=>{
           let img = realImg || "";
           if(img!=""){

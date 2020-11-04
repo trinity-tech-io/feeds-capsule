@@ -806,9 +806,10 @@ export class ProfilePage implements OnInit {
     this.pauseAllVideo();
     this.zone.run(()=>{
       this.native.showLoading("common.waitMoment").then(()=>{
+        let contentVersion = this.feedService.getContentVersion(item.nodeId,item.channelId,item.postId,0);
         let thumbkey= this.feedService.getImgThumbKeyStrFromId(item.nodeId,item.channelId,item.postId,0,0);
         let key = this.feedService.getImageKey(item.nodeId,item.channelId,item.postId,0,0);
-        if(thumbkey.startsWith("postContentImg")){
+        if(contentVersion == "0"){
              key = thumbkey;
         }  
         this.feedService.getData(key).then((realImg)=>{
