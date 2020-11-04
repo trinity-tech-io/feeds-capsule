@@ -114,7 +114,7 @@ export class ChannelsPage implements OnInit {
 
   init(){
     this.connectionStatus = this.feedService.getConnectionStatus();
-
+    this.initnodeStatus(this.nodeId);
     this.initChannelData();
     this.initRefresh();
     this.initStatus(this.postList);
@@ -411,7 +411,7 @@ export class ChannelsPage implements OnInit {
 
   checkFollowStatus(nodeId: string, channelId: number){
     let channelsMap = this.feedService.getChannelsMap();
-    let nodeChannelId = nodeId+channelId;
+    let nodeChannelId = this.feedService.getChannelId(nodeId,channelId);
     if (channelsMap[nodeChannelId] == undefined || !channelsMap[nodeChannelId].isSubscribed){
       this.followStatus = false;
     }
