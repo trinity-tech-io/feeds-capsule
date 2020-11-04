@@ -212,6 +212,20 @@ export class PostdetailPage implements OnInit {
       });
     });
 
+    this.events.subscribe('rpcResponse:error', () => {
+      this.zone.run(() => {
+        this.native.hideLoading();
+      });
+    });
+  
+   this.events.subscribe('rpcRequest:success', () => {
+    this.zone.run(() => {
+      this.initData();
+      this.native.hideLoading();
+      this.native.toast_trans("CommentPage.tipMsg1");
+    });
+   });
+
 
 
     this.events.subscribe('stream:getBinaryResponse', () => {
@@ -300,7 +314,10 @@ export class PostdetailPage implements OnInit {
       this.popover.dismiss();
     }
 
+    this.hideComment = true;
+
     this.clearVideo();
+    this.events.publish("update:tab");
     this.events.publish("addBinaryEvevnt");
   }
 
