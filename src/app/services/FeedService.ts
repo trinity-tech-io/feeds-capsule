@@ -4911,8 +4911,6 @@ export class FeedService {
   updateVersionData(){
     let updateCode = localStorage.getItem('org.elastos.dapp.feeds.update') || "0";
     if (Number(updateCode) < 8){
-      this.updateAllContentData();
-
       this.updatePostKey();
       this.updateSubscribedChannelsKey();
       this.updateChannelsKey();
@@ -4920,6 +4918,7 @@ export class FeedService {
       this.updateLikeCommentKey();
       this.updatePostUpdateKey();
       this.updateLastCommentUpdateKey();
+      this.updateAllContentData();
       localStorage.setItem("org.elastos.dapp.feeds.update","8");
     }
   }
