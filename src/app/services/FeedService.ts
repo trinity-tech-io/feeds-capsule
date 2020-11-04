@@ -4916,6 +4916,7 @@ export class FeedService {
       this.updateChannelsKey();
       this.updateMyChannelsKey();
       this.updateLikeCommentKey();
+      this.updateLikeKey();
       this.updatePostUpdateKey();
       this.updateLastCommentUpdateKey();
       this.updateAllContentData();
@@ -5606,6 +5607,37 @@ export class FeedService {
     console.log("---------------------------------updateLikeCommentKey newkeys"+JSON.stringify(newkeys));
 
     this.storeService.set(PersistenceKey.likeCommentMap, likeCommentMap);
+  }
+
+  updateLikeKey(){
+    let keys: string[] = Object.keys(likeMap) || [];
+    console.log("---------------------------------updateLikeKey keys"+JSON.stringify(keys));
+
+    for (let index = 0; index < keys.length; index++) {
+      let key = keys[index];
+      if(likeMap[key] == undefined){
+        delete likeMap[key];
+        continue;
+      }
+
+      let like = likeMap[key];
+      let nodeId = like.nodeId;
+      let channelId = like.channel_id;
+      let postId = like.id;
+      let commentId = 0;
+
+      let newKey = this.getCommentId(nodeId, channelId, postId, commentId);
+
+      if(key == newKey)
+        continue;
+
+        likeMap[newKey] = like;
+      delete likeMap[key];
+    }
+    let newkeys: string[] = Object.keys(likeMap) || [];
+    console.log("---------------------------------updateLikeKey newkeys"+JSON.stringify(newkeys));
+
+    this.storeService.set(PersistenceKey.likeMap, likeMap);
   }
 
   updatePostUpdateKey(){
