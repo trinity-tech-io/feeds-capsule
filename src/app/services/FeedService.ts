@@ -5010,6 +5010,7 @@ export class FeedService {
   setBinary(nodeId: string, key: string, value: any, mediaType: string){
     let accessToken: FeedsData.AccessToken = accessTokenMap[nodeId]||undefined;
     let requestData = this.sessionService.buildSetBinaryRequest(accessToken, key);
+    this.storeService.set(key, value);
     this.transportData(nodeId, key, requestData, mediaType, value);
   }
 
