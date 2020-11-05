@@ -557,8 +557,6 @@ export class ProfilePage implements OnInit {
               })
             }
           }).catch(()=>{
-            console.log("=====ss=="+rowindex+"-"+postImage+"-"+postImage.getBoundingClientRect().top);
-
             rpostImage.style.display = 'none'; 
             console.log("getImageError");
           })
