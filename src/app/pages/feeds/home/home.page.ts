@@ -114,19 +114,6 @@ export class HomePage implements OnInit {
       this.initnodeStatus(this.postList);
     })
    
-    this.events.subscribe("feeds:updateTitle",()=>{
-      if(this.menuService.postDetail!=null){
-        this.menuService.hideActionSheet();
-        this.menuMore(this.curPost);
-      }
-    });
-   
-    this.events.subscribe('feeds:connectionChanged',(status)=>{
-      this.zone.run(() => {
-        this.connectionStatus = status;
-      });
-    });
-
     // this.events.subscribe('feeds:publishPostFinish',()=>{
     //   this.zone.run(() => {
     //     console.log("======feeds:publishPostFinish====");
@@ -149,50 +136,6 @@ export class HomePage implements OnInit {
     //   });
     // });
 
-    this.events.subscribe("feeds:friendConnectionChanged", (nodeId, status)=>{
-      this.zone.run(()=>{
-        this.nodeStatus[nodeId] = status;
-      });
-    });
-
-   this.events.subscribe("feeds:editPostFinish",()=>{
-    this.zone.run(()=>{
-      this.totalData = this.feedService.getPostList() || [];
-      if (this.totalData.length - this.pageNumber > this.pageNumber){
-        this.postList = this.totalData.slice(0,(this.startIndex)*this.pageNumber);
-        this.infiniteScroll.disabled =false;
-       } else {
-        this.postList =  this.totalData;
-        this.infiniteScroll.disabled =true;
-      }
-      this.isLoadimage ={};
-      this.isLoadVideoiamge ={};
-      this.refreshImage(0);
-      this.initnodeStatus(this.postList);
-
-    });
-   });
-
-   this.events.subscribe("feeds:deletePostFinish",()=>{
-    this.zone.run(()=>{
-      this.native.hideLoading();
-      this.totalData = this.feedService.getPostList() || [];
-      if (this.totalData.length - this.pageNumber > this.pageNumber){
-        this.postList = this.totalData.slice(0,(this.startIndex)*this.pageNumber);
-        this.infiniteScroll.disabled =false;
-       } else {
-        this.postList =  this.totalData;
-        this.infiniteScroll.disabled =true;
-      }
-      this.isLoadimage ={};
-      this.isLoadVideoiamge ={};
-      this.refreshImage(0);
-      this.initnodeStatus(this.postList);
-
-    });
-   });
-
-
    this.events.subscribe("update:tab",(isInit)=>{
     console.log("======post======");
     if(isInit){
@@ -213,6 +156,77 @@ export class HomePage implements OnInit {
     this.initnodeStatus(this.postList);
 
    });
+
+ this.events.subscribe("feeds:tabsendpost",()=>{
+  this.pauseAllVideo();
+ });
+
+ this.addCommonEvents();
+
+ this.addBinaryEvevnt();
+ this.events.subscribe("addBinaryEvevnt",()=>{
+    this.addCommonEvents();
+    this.addBinaryEvevnt();
+ });
+}
+
+addCommonEvents(){
+
+  this.events.subscribe("feeds:updateTitle",()=>{
+    if(this.menuService.postDetail!=null){
+      this.menuService.hideActionSheet();
+      this.menuMore(this.curPost);
+    }
+  });
+ 
+  this.events.subscribe('feeds:connectionChanged',(status)=>{
+    this.zone.run(() => {
+      this.connectionStatus = status;
+    });
+  });
+
+  this.events.subscribe("feeds:friendConnectionChanged", (nodeId, status)=>{
+    this.zone.run(()=>{
+      this.nodeStatus[nodeId] = status;
+    });
+  });
+
+ this.events.subscribe("feeds:editPostFinish",()=>{
+  this.zone.run(()=>{
+    this.totalData = this.feedService.getPostList() || [];
+    if (this.totalData.length - this.pageNumber > this.pageNumber){
+      this.postList = this.totalData.slice(0,(this.startIndex)*this.pageNumber);
+      this.infiniteScroll.disabled =false;
+     } else {
+      this.postList =  this.totalData;
+      this.infiniteScroll.disabled =true;
+    }
+    this.isLoadimage ={};
+    this.isLoadVideoiamge ={};
+    this.refreshImage(0);
+    this.initnodeStatus(this.postList);
+
+  });
+ });
+
+ this.events.subscribe("feeds:deletePostFinish",()=>{
+  this.zone.run(()=>{
+    this.native.hideLoading();
+    this.totalData = this.feedService.getPostList() || [];
+    if (this.totalData.length - this.pageNumber > this.pageNumber){
+      this.postList = this.totalData.slice(0,(this.startIndex)*this.pageNumber);
+      this.infiniteScroll.disabled =false;
+     } else {
+      this.postList =  this.totalData;
+      this.infiniteScroll.disabled =true;
+    }
+    this.isLoadimage ={};
+    this.isLoadVideoiamge ={};
+    this.refreshImage(0);
+    this.initnodeStatus(this.postList);
+
+  });
+ });
 
   this.events.subscribe('rpcResponse:error', () => {
     this.zone.run(() => {
@@ -239,15 +253,6 @@ export class HomePage implements OnInit {
     this.native.hideLoading();
     this.native.toast_trans("CommentPage.tipMsg1");
   });
- });
-
- this.events.subscribe("feeds:tabsendpost",()=>{
-  this.pauseAllVideo();
- });
-
- this.addBinaryEvevnt();
- this.events.subscribe("addBinaryEvevnt",()=>{
-    this.addBinaryEvevnt();
  });
 }
 

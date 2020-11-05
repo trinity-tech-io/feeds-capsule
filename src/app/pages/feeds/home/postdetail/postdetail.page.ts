@@ -212,16 +212,20 @@ export class PostdetailPage implements OnInit {
       });
     });
 
-    this.events.subscribe('rpcResponse:error', () => {
-      this.zone.run(() => {
-        this.native.hideLoading();
-      });
-    });
-  
+
    this.events.subscribe('rpcRequest:success', () => {
     this.zone.run(() => {
-      this.initData();
+      this.totalData = this.feedService.getCommentList(this.nodeId, this.channelId, this.postId) || [];
+      if(this.totalData.length-this.pageNumber > this.pageNumber){
+        this.commentList = this.totalData.slice(this.startIndex*this.pageNumber,this.pageNumber);
+        this.startIndex++;
+        this.infiniteScroll.disabled =false;
+      }else{
+        this.commentList = this.totalData;
+        this.infiniteScroll.disabled =true;
+      }
       this.native.hideLoading();
+      this.hideComment =true;
       this.native.toast_trans("CommentPage.tipMsg1");
     });
    });
@@ -294,11 +298,13 @@ export class PostdetailPage implements OnInit {
     this.events.unsubscribe("feeds:friendConnectionChanged");
     this.events.unsubscribe("feeds:updateTitle");
     this.events.unsubscribe("feeds:refreshPostDetail");
+    
     this.events.unsubscribe("feeds:editPostFinish");
     this.events.unsubscribe("feeds:deletePostFinish");
     this.events.unsubscribe("feeds:editCommentFinish");
     this.events.unsubscribe("feeds:deleteCommentFinish");
     this.events.unsubscribe("rpcRequest:error");
+    this.events.unsubscribe("rpcRequest:success");
 
     this.postImage = "";
 
