@@ -36,6 +36,7 @@ export class CreatenewpostPage implements OnInit {
   public duration:any =0;
 
   private postId = 0;
+  private sessionState = -1;
 
 
   constructor(
@@ -74,9 +75,9 @@ export class CreatenewpostPage implements OnInit {
     
     this.connectionStatus = this.feedService.getConnectionStatus();
 
-    if (this.connectionStatus == 0){
-      this.feedService.restoreSession(this.nodeId);
-    }
+    // if (this.connectionStatus == 0){
+    //   this.feedService.restoreSession(this.nodeId);
+    // }
     
     this.events.subscribe('feeds:connectionChanged',(status) => {
       this.zone.run(() => {
@@ -87,13 +88,14 @@ export class CreatenewpostPage implements OnInit {
     this.events.subscribe("feeds:friendConnectionChanged", (nodeId, status)=>{
       this.zone.run(()=>{
         this.nodeStatus[nodeId] = status;
-        if (this.connectionStatus == 0 && this.nodeId == nodeId && status == 0){
-          this.feedService.restoreSession(this.nodeId);
-        }
+        // if (this.connectionStatus == 0 && this.nodeId == nodeId && status == 0){
+        //   this.feedService.restoreSession(this.nodeId);
+        // }
       });
      });
 
     this.events.subscribe('feeds:publishPostSuccess', (postId) => {
+      this.postId = postId;
       this.zone.run(()=>{
         if(this.imgUrl === "" && this.posterImg ===""){
           this.zone.run(() => {
@@ -113,7 +115,8 @@ export class CreatenewpostPage implements OnInit {
     this.events.subscribe('feeds:declarePostSuccess', (postId) => {
       this.zone.run(()=>{
         this.postId = postId;
-        this.feedService.sendData(this.nodeId,this.channelId,postId, 0 ,0, this.flieUri,this.imgUrl);
+        if (this.sessionState === 4)
+          this.feedService.sendData(this.nodeId,this.channelId,postId, 0 ,0, this.flieUri,this.imgUrl);
       });
     });
 
@@ -137,6 +140,7 @@ export class CreatenewpostPage implements OnInit {
     this.events.subscribe('stream:setBinarySuccess', (nodeId, key) => {
       this.zone.run(() => {
         if (this.postId != 0){
+          this.feedService.closeSession(this.nodeId);
           this.feedService.notifyPost(this.nodeId, this.channelId, this.postId);
         }
       });
@@ -160,14 +164,15 @@ export class CreatenewpostPage implements OnInit {
       this.zone.run(() => {
         //response.code
         this.native.hideLoading();
+        this.feedService.closeSession(this.nodeId);
       });
     });
    
     this.events.subscribe('stream:onStateChangedCallback', (nodeId, state) => {
       this.zone.run(() => {
-        if (state === 4){
-
-
+        this.sessionState = state;
+        if (state === 4 && this.postId != 0){
+          this.feedService.sendData(this.nodeId,this.channelId,this.postId, 0 ,0, this.flieUri,this.imgUrl);
         }
       });
     });
@@ -202,6 +207,7 @@ export class CreatenewpostPage implements OnInit {
     this.imgUrl="";
     this.removeVideo();
     this.events.publish("addBinaryEvevnt");
+    this.feedService.closeSession(this.nodeId);
   }
 
   ionViewDidEnter() {
@@ -234,6 +240,13 @@ export class CreatenewpostPage implements OnInit {
         content
       );
     }else{
+      if (this.feedService.getServerStatusFromId(this.nodeId) == 0){
+        this.feedService.restoreSession(this.nodeId);
+      }else{
+        //TODO alert user
+        console.log("Not connect to server");
+      }
+
       this.publishPostThrowMsg(); 
     }
   }

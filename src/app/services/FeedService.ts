@@ -5098,6 +5098,11 @@ export class FeedService {
     } 
   }
 
+
+  closeSession(nodeId: string){
+    this.sessionService.sessionClose(nodeId);
+  }
+
   getTextKey(nodeId: string, channelId: number, postId: number, commentId: number, index: number){
     this.getKey(nodeId, channelId, postId, commentId)+"-text-"+index; 
   }
