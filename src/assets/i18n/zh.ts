@@ -396,7 +396,7 @@ export const zh = {
         "invalidChallengeResponse":"登录鉴权失败",
         "invalidVerifiableCredential":"服务器无法验证凭证信息,请检查你的DID是否已发布到侧链",
         "unsupportedRequests":"不支持的请求",
-        "needUpdateServerVersion":"需要升级"
+        "needUpdateServerVersion":" 需要升级"
     },
     "EditserverinfoPage":{
         "title":"编辑微频源详情",

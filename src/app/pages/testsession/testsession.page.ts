@@ -30,13 +30,9 @@ export class TestsessionPage implements OnInit {
     this.events.subscribe("carrier:friendConnection",(ret)=>{
       let friendId = ret.friendId;
       let friendStatus = ret.status;
-      console.log("friendId = "+friendId);
-      console.log("friendStatus = "+friendStatus);
-
 
       if (this.nodeId == friendId){
-        console.log("==========================");
-        console.log("friendStatus = "+friendStatus);
+
       }
 
     });
@@ -48,23 +44,9 @@ export class TestsessionPage implements OnInit {
   scanCode(){
     appManager.sendIntent("scanqrcode", {}, {}, (res) => {
       let result: string = res.result.scannedContent;
-      console.log("scanqrcode result = "+result);
-      console.log("my nodeId = "+this.carrierService.getNodeId());
 
       this.getNodeId(result);
       this.addFriends(result);
-      // this.carrierService.isFriends(result, (isFriends)=>{
-      //   this.getNodeId(result);
-      //   console.log("111111111");
-      //   console.log("isFriends = "+JSON.stringify(isFriends));
-      //   console.log("2222222222");
-      //   if(isFriends){
-
-      //   }else{
-      //     this.addFriends(result);
-      //   }
-      // });
-      
     }, (err: any) => {
         console.error(err);
     });
@@ -75,12 +57,11 @@ export class TestsessionPage implements OnInit {
   }
 
   addFriends(address: string){
-
-    console.log("Address ===> "+ this.carrierService.getAddress());
+    // console.log("Address ===> "+ this.carrierService.getAddress());
     this.getNodeId("9Rcw5zVkWC4ftw1YBfVfWow6iYHpK7W2H6JSo7dbWT4RMsWaV19k");
-    console.log("addFriends");
+    // console.log("addFriends");
     this.carrierService.addFriend("9Rcw5zVkWC4ftw1YBfVfWow6iYHpK7W2H6JSo7dbWT4RMsWaV19k","auto-auth",()=>{
-      console.log("addFriends success");
+      // console.log("addFriends success");
     },()=>{
 
     })
@@ -93,7 +74,7 @@ export class TestsessionPage implements OnInit {
   }
 
   newSession(){
-    console.log("newSession = ");
+    // console.log("newSession = ");
     this.sessionService.createSession(this.nodeId, (mSession, mStream)=>{
       this.session = mSession ;
       this.stream = mStream ;
@@ -107,7 +88,7 @@ export class TestsessionPage implements OnInit {
   closeSession(){
     this.carrierService.sessionClose(this.session,
       ()=>{
-        console.log("close success");
+        // console.log("close success");
       })
   }
 
@@ -141,12 +122,7 @@ export class TestsessionPage implements OnInit {
     json["text"] = "test";
     json["img"] = "img";
 
-    console.log("44444444444")
     this.feedService.parseContent("nodeId",1,2,3,json);
-
-
-
-
   }
 
   startSession(){

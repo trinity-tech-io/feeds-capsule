@@ -397,7 +397,7 @@ export const fr = {
         "invalidChallengeResponse":"Invalid Challenge Response",
         "invalidVerifiableCredential":"Invalid Verifiable Credential, please check your did on side chain.",
         "unsupportedRequests":"Unsupported requests",
-        "needUpdateServerVersion":"is outdated vesion"
+        "needUpdateServerVersion":" is outdated vesion"
     },
     "EditserverinfoPage":{
         "title":"Edit Feeds Source Details",

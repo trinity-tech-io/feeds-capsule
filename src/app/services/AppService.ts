@@ -166,7 +166,6 @@ export class AppService {
         this.feedService.loadData().then(()=>{
           this.feedService.updateVersionData();
           this.initData(signInData);
-          console.log("zzzzzzzzzzzzzzzz");
         })
       });
     }
