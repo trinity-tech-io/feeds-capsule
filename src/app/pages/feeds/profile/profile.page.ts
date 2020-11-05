@@ -186,14 +186,11 @@ export class ProfilePage implements OnInit {
 
   this.events.subscribe('stream:getBinaryResponse', () => {
     this.zone.run(() => {
-      console.log("result==stream:getBinaryResponse====>")
     });
   });
 
   this.events.subscribe('stream:getBinarySuccess', (nodeId, key: string, value:string) => {
     this.zone.run(() => {
-      
-      console.log("result==stream:getBinarySuccess====>")
       if (key.indexOf("img")>-1){
         this.cacheGetBinaryRequestKey = "";
         //console.log("result======>"+value.substring(0,50));
@@ -216,24 +213,13 @@ export class ProfilePage implements OnInit {
     this.zone.run(() => {
 
       if (response.code == -107){
-        //TODO
-        console.log("result==FileNotExist");
       }
       this.native.hideLoading();
-      
-      console.log("result==stream:error=nodeId===>"+nodeId);
-      console.log("result==stream:error=code===>"+response.code)
-      console.log("result==stream:error=message===>"+response.message)
-
     });
   });
  
   this.events.subscribe('stream:onStateChangedCallback', (nodeId, state) => {
     this.zone.run(() => {
-
-      console.log("cacheGetBinaryRequestKey ===>"+this.cacheGetBinaryRequestKey);
-      console.log("state ===>"+state);
-
       if (this.cacheGetBinaryRequestKey == "")
         return;
 
@@ -243,13 +229,11 @@ export class ProfilePage implements OnInit {
     });
   }); this.events.subscribe('stream:getBinaryResponse', () => {
     this.zone.run(() => {
-      console.log("result==stream:getBinaryResponse====>")
     });
   });
 
   this.events.subscribe('stream:getBinarySuccess', (nodeId, key: string, value:string) => {
     this.zone.run(() => {
-      console.log("result==stream:getBinarySuccess====>")
       if (key.indexOf("img")>-1){
         this.cacheGetBinaryRequestKey = "";
         this.native.hideLoading();
@@ -271,23 +255,15 @@ export class ProfilePage implements OnInit {
     this.zone.run(() => {
 
       if (response.code == -107){
-        //TODO
-        console.log("result==FileNotExist");
       }
-      
-      
-      console.log("result==stream:error=nodeId===>"+nodeId);
-      console.log("result==stream:error=code===>"+response.code)
-      console.log("result==stream:error=message===>"+response.message)
+
+      this.native.hideLoading();
 
     });
   });
  
   this.events.subscribe('stream:onStateChangedCallback', (nodeId, state) => {
     this.zone.run(() => {
-
-      console.log("cacheGetBinaryRequestKey ===>"+this.cacheGetBinaryRequestKey);
-      console.log("state ===>"+state);
 
       if (this.cacheGetBinaryRequestKey == "")
         return;
@@ -490,7 +466,6 @@ export class ProfilePage implements OnInit {
   }
 
   showComment(commentParams) {
-    console.log(commentParams);
     this.postId = commentParams.postId;
     this.channelId = commentParams.channelId;
     this.nodeId = commentParams.nodeId;
@@ -501,7 +476,6 @@ export class ProfilePage implements OnInit {
   }
 
   hideComponent(event) {
-    console.log('Hide comment component?', event);
     this.postId = null;
     this.channelId = null;
     this.nodeId = null;

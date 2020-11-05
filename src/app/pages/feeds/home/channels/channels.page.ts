@@ -211,7 +211,7 @@ export class ChannelsPage implements OnInit {
 
     this.events.subscribe('stream:getBinaryResponse', () => {
       this.zone.run(() => {
-        console.log("result==stream:getBinaryResponse====>")
+        
       });
     });
   
@@ -239,23 +239,13 @@ export class ChannelsPage implements OnInit {
   
         if (response.code == -107){
           //TODO
-          this.native.hideLoading();
-          console.log("result==FileNotExist");
         }
-        
-        
-        console.log("result==stream:error=nodeId===>"+nodeId);
-        console.log("result==stream:error=code===>"+response.code)
-        console.log("result==stream:error=message===>"+response.message)
-  
+        this.native.hideLoading();
       });
     });
    
     this.events.subscribe('stream:onStateChangedCallback', (nodeId, state) => {
       this.zone.run(() => {
-  
-        console.log("cacheGetBinaryRequestKey ===>"+this.cacheGetBinaryRequestKey);
-        console.log("state ===>"+state);
   
         if (this.cacheGetBinaryRequestKey == "")
           return;
@@ -336,7 +326,6 @@ export class ChannelsPage implements OnInit {
     titleBarManager.setTitle(this.translate.instant("ChannelsPage.feeds"));
 
     if (this.feedService.checkChannelIsMine(this.nodeId, this.channelId)) {
-      console.log('Channel is mine!');
       titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, {
         key: "editChannel",
         iconPath: TitleBarPlugin.BuiltInIcon.EDIT
@@ -606,7 +595,6 @@ export class ChannelsPage implements OnInit {
   }
 
   hideComponent(event:any) {
-    console.log('Hide comment component?', event);
     this.postId = null;
     this.onlineStatus = null;
     this.hideComment = true;

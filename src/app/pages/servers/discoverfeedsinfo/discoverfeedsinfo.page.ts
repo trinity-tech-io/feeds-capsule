@@ -231,7 +231,6 @@ getNodeId(){
   let bindingServerList = this.feedService.getBindingServer();
   
   let bindingServer = _.find(bindingServerList,{did:this.serverInfo['did']}) || {};
-  console.log("===bindingServer=="+JSON.stringify(bindingServer));
   let bindingnodeId = bindingServer["nodeId"] || "";
   if(bindingnodeId!=""){
       this.nodeId = bindingnodeId;
