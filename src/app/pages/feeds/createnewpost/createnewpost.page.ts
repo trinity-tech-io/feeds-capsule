@@ -351,14 +351,25 @@ selectvideo(){
     this.camera.getVideo().then((flieUri:string)=>{
       let path = flieUri.startsWith('file://') ? flieUri : `file://${flieUri}`;
       this.getVideoInfo(path);
-      flieUri = flieUri.replace("/storage/emulated/0/","/sdcard/");      
-      this.zone.run(()=>{
-        flieUri = "cdvfile://localhost"+flieUri;
-        let lastIndex = flieUri.lastIndexOf("/");
-        let fileName =  flieUri.substring(lastIndex+1,flieUri.length);
-        let filepath =  flieUri.substring(0,lastIndex);
+      this.transcodeVideo(flieUri).then((newfileUri)=>{
+        this.transcode =100;
+        newfileUri = "cdvfile://localhost"+newfileUri.replace("file//","");
+        newfileUri = newfileUri.replace("/storage/emulated/0/","/sdcard/");  
+        let lastIndex = newfileUri.lastIndexOf("/");
+        let fileName =  newfileUri.substring(lastIndex+1,newfileUri.length);
+        let filepath =  newfileUri.substring(0,lastIndex);
         this.readFile(fileName,filepath);
       });
+      // let path = flieUri.startsWith('file://') ? flieUri : `file://${flieUri}`;
+      // this.getVideoInfo(path);
+      // flieUri = flieUri.replace("/storage/emulated/0/","/sdcard/");      
+      // this.zone.run(()=>{
+      //   flieUri = "cdvfile://localhost"+flieUri;
+      //   let lastIndex = flieUri.lastIndexOf("/");
+      //   let fileName =  flieUri.substring(lastIndex+1,flieUri.length);
+      //   let filepath =  flieUri.substring(0,lastIndex);
+      //   this.readFile(fileName,filepath);
+      // });
     }).catch((err)=>{
       console.log("=====getVideoErr===="+JSON.stringify(err));
      })
