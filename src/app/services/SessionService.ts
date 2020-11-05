@@ -111,7 +111,6 @@ export class SessionService {
   
     createSession(nodeId: string, onSuccess:(session: CarrierPlugin.Session, stream: CarrierPlugin.Stream)=>void, onError?:(err: string)=>void){
         this.carrierService.newSession(nodeId,(mSession)=>{
-            console.log("newSession success");
             workedSessions[nodeId] = {
                 nodeId      : nodeId,
                 session     : mSession,
@@ -145,48 +144,33 @@ export class SessionService {
 
                         if (CarrierPlugin.StreamState.INITIALIZED == event.state){
                             workedSessions[nodeId].sessionTimeout = setTimeout(() => {
-                                console.log("...............................")
                                 if (workedSessions[nodeId].StreamState != StreamState.CONNECTED){
-                                    console.log("..............................111111111111111111.")
                                     workedSessions[nodeId].StreamState = -1;
                                 }
 
                                 clearTimeout(this.signinChallengeTimeout);
                             }, 2*60*1000);
 
-                            console.log("aaaaaaaaaaaaaaa");
                             mCarrierService.sessionRequest(
                                 mSession,
                                 function (event:any){
-                                  console.log("3333333333333333333onSessionRequestCompleteCallback status: " + event.status + ", reason:" + event.reason + ", event.sdp:"+event.sdp);
-                      
-                                  if (event.status != 0) {
-                                      console.log("Session complete, status: " + event.status + ", reason:" + event.reason);
-                                  }
-                                  else {
                                     let sdp = event.sdp;
                                     workedSessions[nodeId].sdp = sdp;
-                                    mCarrierService.sessionStart(mSession, sdp, ()=>{
-                                        console.log("sessionStart success");
-                                        workedSessions[nodeId].isStart = true;
-                                        },(err)=>{
-                                        console.log("sessionStart error=>"+err);
-                                        }
-                                    );
-                                    
-                                    console.log("onSessionRequestCompleteCallback status = "+event.status);
-                                    console.log("onSessionRequestCompleteCallback reason = "+event.reason);
-                                    console.log("onSessionRequestCompleteCallback sdp = "+event.sdp);
-                          
-                          
-                                    console.log("22222222222222222222222");
-                                  }
+
+                                    if (workedSessions[nodeId].StreamState == StreamState.TRANSPORT_READY
+                                        && !workedSessions[nodeId].isStart){
+                                        mCarrierService.sessionStart(mSession, sdp, ()=>{
+                                            console.log("sessionStart success");
+                                            workedSessions[nodeId].isStart = true;
+                                            },(err)=>{
+                                            console.log("sessionStart error=>"+err);
+                                            }
+                                        );
+                                    }
                                 },
                                 ()=>{
-                                //   onSuccess();
                                   console.log("sessionRequest success");
                                 },(err)=>{
-                                //   onError(err);
                                   console.log("sessionRequest error"+err);
                           
                                 }
@@ -194,18 +178,13 @@ export class SessionService {
                         }
 
                         if (CarrierPlugin.StreamState.TRANSPORT_READY == event.state){
-                            console.log("bbbbbbbbbb");
                             let sdp = workedSessions[nodeId].sdp;
-                            console.log("sdp" + sdp);
-                            console.log("isStart" + !workedSessions[nodeId].isStart);
                             if (sdp != "" && !workedSessions[nodeId].isStart){
-                                console.log("ccccccccc");
                                 mCarrierService.sessionStart(mSession, sdp, ()=>{
                                     workedSessions[nodeId].isStart = true;
                                     console.log("sessionStart success");
                                     },(err)=>{
                                     console.log("sessionStart error");
-                                
                                     }
                                 );
                             }
@@ -213,7 +192,6 @@ export class SessionService {
                     },
                     onStreamData: function(event: any) {
                         let tmpData: Uint8Array = event.data;
-                        console.log("---onStreamData---"+tmpData.length);
                         if (cacheData[nodeId] == undefined){
                             cacheData[nodeId] = {
                                 nodeId          : nodeId,
@@ -233,16 +211,13 @@ export class SessionService {
                             cacheData[nodeId].data.set(cache,0);
                             cacheData[nodeId].data.set(tmpData,cache.length);
                         }
-                        console.log("111111111");
                         let dataLength = cacheData[nodeId].data.length;
-                        console.log("state =="+cacheData[nodeId].state);
                         switch(cacheData[nodeId].state){
                             case DecodeState.prepare:
                                 for (let index = 0; index < dataLength - 23; index++) {
                                     let decodeMagicNumData = cacheData[nodeId].data.subarray(index,index+8);
                                     let decodeMagicNumber = decodeNum(decodeMagicNumData,8);
                                     cacheData[nodeId].pointer = index;
-                                    console.log("decodeMagicNumber="+decodeMagicNumber);
         
                                     if( decodeMagicNumber != magicNumber )
                                         continue;
@@ -315,21 +290,10 @@ export class SessionService {
         this.carrierService.sessionRequest(
           session,
           function (event:any){
-            console.log("3333333333333333333onSessionRequestCompleteCallback status: " + event.status + ", reason:" + event.reason + ", event.sdp:"+event.sdp);
-
             if (event.status != 0) {
                 console.log("Session complete, status: " + event.status + ", reason:" + event.reason);
             }
             else {
-                // carrierService.session_ctx.remote_sdp = event.sdp;
-                // carrierService.session_start();
-                console.log("onSessionRequestCompleteCallback status = "+event.status);
-                console.log("onSessionRequestCompleteCallback reason = "+event.reason);
-                console.log("onSessionRequestCompleteCallback sdp = "+event.sdp);
-    
-    
-                console.log("22222222222222222222222");
-    
                 mCarrierService.sessionStart(event.session, event.sdp, ()=>{
                     console.log("sessionStart success");
                     },(err)=>{
@@ -476,82 +440,17 @@ export class SessionService {
             return ;
         }
 
-
         let stream = workedSessions[nodeId].stream;
 
         testSum += data.length
-        console.log("==========streamAddData============testSum = "+testSum);
-        console.log("==========streamAddData============data.length = "+data.length);
-        
-
-        // console.log("==========streamAddData============"+JSON.stringify(data));
         let base64 = uint8arrayToBase64(data);
 
         stream.write(base64,(bytesSent)=>{
             console.log("stream write success");
-            // console.log("bytesSent===>"+JSON.stringify(bytesSent));
         },(err)=>{
             publishError(nodeId, createWriteDataError());
             console.log("stream write error ==>"+err);
         });
-    }
-    
-    onStreamDataCallback(event) {
-
-
-
-
-        // let tmpData: Uint8Array = event.data;
-
-        // cacheData[nodeId]
-
-        // if(catchData)
-        
-        // console.log("Stream [" + event.stream.id + "] received data [" + event.data + "]");
-        // console.log("data = "+uint8ArrayToString(event.data));
-
-
-        // cacheData.push(event.data);
-        // console.log("cacheData ==>"+cacheData.length);
-        // console.log("cacheData ==>"+JSON.stringify(cacheData));
-        // let magicNumberData = cacheData.slice(0,8);
-        // console.log("magicNumberData = "+JSON.stringify(magicNumberData));
-        // let magicNumber = mSerializeDataService.decodeData(event.data);
-        // console.log("magicNumber = "+magicNumber);
-        // if (cacheData.length>=12){
-        //     let magicNumberData = cacheData.slice(0,8);
-        //     console.log("magicNumberData = "+JSON.stringify(magicNumberData));
-        //     let magicNumber = mSerializeDataService.decodeData(magicNumberData);
-        //     console.log("magicNumber = "+magicNumber);
-    
-        //     let versionData = cacheData.slice(9,12);
-        //     console.log("versionData = "+JSON.stringify(versionData));
-        //     let version = mSerializeDataService.decodeData(versionData);
-        //     console.log("version = "+version);
-    
-        //     console.log("data type= "+typeof(event.data));
-            
-        // }
-
-        eventBus.publish("stream:onStreamDataCallback",(event.stream.id, event.data));
-        
-    }
-    
-    onStateChangedCallback(event) {
-        var state_name = [
-            "raw",
-            "initialized",
-            "transport_ready",
-            "connecting",
-            "connected",
-            "deactivated",
-            "closed",
-            "failed"
-        ];
-
-        var msg = "Stream [" + event.stream.id + "] state changed to: " + state_name[event.state];
-        console.log(msg);
-        eventBus.publish("stream:onStateChangedCallback",(event.stream.id, state_name[event.state]));
     }
 
     sessionClose(nodeId: string){
@@ -576,18 +475,6 @@ export class SessionService {
 
         var tmpUint8Array = new Uint8Array(arr);
         return tmpUint8Array
-    }
-
-    toBytes(oldBuffer: Uint8Array){
-        let magicNumber = 0x0000A5202008275A;
-        let magicNumberBytes = encodeNum(magicNumber, 8);
-        console.log("777777=====>"+JSON.stringify(magicNumberBytes)); 
-        console.log("777777=====>"+JSON.stringify(decodeNum(magicNumberBytes, 8))); 
-
-        let version = 10000;
-        let versionBytes = encodeNum(version, 4);
-        console.log("3333333333===>"+JSON.stringify(versionBytes));
-        console.log("3333333333===>"+JSON.stringify(decodeNum(versionBytes,4)));        
     }
 
     getSessionState(nodeId: string): StreamState{
@@ -749,17 +636,10 @@ function decodeHeadData(nodeId: string, cacheDataLength: number): boolean{
 
     if (remainLength < headSize)
         return false;
-    console.log("--------cacheDataLength--------"+cacheDataLength);
 
-    console.log("--------remainLength--------"+remainLength);
-    console.log("--------pointer--------"+pointer);
-    console.log("--------headSize--------"+headSize);
     let headResponse = cacheData[nodeId].data.subarray(pointer,pointer + headSize);
-    console.log("--------headResponse--------"+JSON.stringify(headResponse));
-    console.log("--------response--------"+headResponse.length);
 
     let response = mSerializeDataService.decodeData(headResponse);
-    console.log("----------response body----------"+JSON.stringify(response));
 
     parseResponse(response);
 
@@ -784,13 +664,10 @@ function decodeBodyData(nodeId: string, cacheDataLength: number): boolean{
         return false;
 
     let body = cacheData[nodeId].data.subarray(pointer, pointer + bodySize);
-    console.log("----------body----------"+body.length);
+
     let value = mSerializeDataService.decodeData(body);
-    console.log("----------value----------"+value);
-    
     
     let key = cacheData[nodeId].key;
-    console.log("session key ===>"+key);
     if (cacheData[nodeId].method == "get_binary" ){
         mStorageService.set(key,value).then(()=>{
             eventBus.publish("stream:getBinarySuccess", nodeId, key, value, cacheData[nodeId].mediaType);
@@ -812,8 +689,6 @@ function combineData(nodeId: string, cacheDataLength: number){
     let pointer = cacheData[nodeId].pointer;
     let remainData = cacheData[nodeId].data.subarray(pointer, cacheDataLength);
 
-    console.log("remainData =="+remainData.length);
-    console.log("pointer =="+pointer);
     cacheData[nodeId].data = new Uint8Array(remainData.length);
     cacheData[nodeId].data.set(remainData,0);
     cacheData[nodeId].pointer = 0;
@@ -821,11 +696,6 @@ function combineData(nodeId: string, cacheDataLength: number){
 }
 
 function parseResponse(response: any){
-    console.log("parseResponse");
-
-
-
-    
     // {"version":"1.0","id":1,"result":{"key":"8afJxa7RTamSrXWxUCcZt8jnAAjAGfx4gmN5ECwq2XSi230","algo":"None","checksum":""}}
 
     // {"version":"1.0","id":1,"result":{"key":"8afJxa7RTamSrXWxUCcZt8jnAAjAGfx4gmN5ECwq2XSi230"}}
@@ -843,13 +713,10 @@ function parseResponse(response: any){
 
     let request = queryRequest(response.id, response.result);
     let method = request.method;
-
-    console.log("request ===>"+method);
     
     let nodeId = request.nodeId;
     cacheData[nodeId].method = method;
     
-
     // {"version":"1.0","id":1,"error":{"code":-154,"message":"MassDataUnsupportedAlgo"}}
     let error = response.error||"";
     if (error != ""){
@@ -861,37 +728,21 @@ function parseResponse(response: any){
         return ;
     }
 
-
- 
-
-
-
     let key = response.result.key || "";
     if (key == ""){
         console.log("key error");
         return ;
     }
 
-    console.log("response ===>"+key);
     cacheData[nodeId].key = key;
-
-
-
-
-    
-
-
     if (method == "set_binary"){
-        console.log("111111");
         eventBus.publish("stream:setBinaryResponse", nodeId);
         eventBus.publish("stream:setBinarySuccess", nodeId);
 
     } else if (method == "get_binary"){
-        console.log("22222");
         eventBus.publish("stream:getBinaryResponse", nodeId);
 
     }
-
 }
 
 function queryRequest(responseId: number, result: any): any{

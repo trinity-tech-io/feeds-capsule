@@ -105,7 +105,6 @@ export class CarrierService {
     }
 
     friendConnectionCallback(ret) {
-        console.log("===========friendConnectionCallback===============");
         eventBus.publish('carrier:friendConnection', ret, Date.now());
     }
 
@@ -134,7 +133,6 @@ export class CarrierService {
     }
 
     sessionRequestCallback(event) {
-        console.log("carrier:sessionRequest ==>"+JSON.stringify(event));
         eventBus.publish('carrier:sessionRequest', event, Date.now());
     }
 
@@ -304,8 +302,8 @@ export class CarrierService {
         carrierInst.sendFriendBinaryMessageWithReceipt(
             nodeId, message,
             (messageId: number, state: Number)=>{
-                console.log(messageId);
-                console.log(state);
+                // console.log(messageId);
+                // console.log(state);
             },
             () => {
                 onSuccess();

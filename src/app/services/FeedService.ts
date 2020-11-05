@@ -474,8 +474,6 @@ export class FeedService {
       let postMap = this.postMap || "";
       if( postMap == ""){
         this.storeService.get(PersistenceKey.postMap).then((mPostMap)=>{
-
-          console.log("aaaaaaaaaaaaa");
           this.postMap = mPostMap || {};
           resolve();
         }).catch(()=>{
@@ -492,7 +490,6 @@ export class FeedService {
       let channels = channelsMap || "";
       if( channels == ""){
         this.storeService.get(PersistenceKey.channelsMap).then((mChannelMap)=>{
-          console.log("bbbbbbbbbb");
           channelsMap = mChannelMap || {};
           resolve();
         }).catch(()=>{
@@ -509,7 +506,6 @@ export class FeedService {
       let credential = localCredential || "";
       if( credential == ""){
         this.storeService.get(PersistenceKey.credential).then((mCredential)=>{
-          console.log("ccccccccccccccc");
           localCredential = mCredential || "";
           resolve();
         }).catch(()=>{
@@ -526,7 +522,6 @@ export class FeedService {
       let lastPostUpdate = lastPostUpdateMap || "";
       if( lastPostUpdate == ""){
         this.storeService.get(PersistenceKey.lastPostUpdateMap).then((mLastPostUpdateMap)=>{
-          console.log("dddddddddddd");
           lastPostUpdateMap = mLastPostUpdateMap || {};
           resolve();
         }).catch(()=>{
@@ -543,7 +538,6 @@ export class FeedService {
       let myChannels = myChannelsMap || "";
       if( myChannels == ""){
         this.storeService.get(PersistenceKey.myChannelsMap).then((mMyChannelsMap)=>{
-          console.log("eeeeeeeeeeee");
           myChannelsMap = mMyChannelsMap || {};
           resolve();
         }).catch(()=>{
@@ -560,7 +554,6 @@ export class FeedService {
       let sStatus = serversStatus || "";
       if( sStatus == ""){
         this.storeService.get(PersistenceKey.serversStatus).then((mServersStatus)=>{
-          console.log("fffffffffffff");
           serversStatus = mServersStatus || {};
 
           let keys: string[] = Object.keys(serversStatus);
@@ -585,7 +578,6 @@ export class FeedService {
       let serverStatistics = serverStatisticsMap || "";
       if( serverStatistics == ""){
         this.storeService.get(PersistenceKey.serverStatisticsMap).then((mServerStatisticsMap)=>{
-          console.log("gggggggggggg");
           serverStatisticsMap = mServerStatisticsMap || {};
           resolve();
         }).catch(()=>{
@@ -602,7 +594,6 @@ export class FeedService {
       let servers = serverMap || "";
       if( servers == ""){
         this.storeService.get(PersistenceKey.serverMap).then((mServerMap)=>{
-          console.log("hhhhhhhhhhh");
           serverMap = mServerMap || {};
           resolve();
         }).catch(()=>{
@@ -619,7 +610,6 @@ export class FeedService {
       let subscribedChannels = subscribedChannelsMap || "";
       if( subscribedChannels == ""){
         this.storeService.get(PersistenceKey.subscribedChannelsMap).then((mSubscribedChannelsMap)=>{
-          console.log("iiiiiiiiii");
           subscribedChannelsMap = mSubscribedChannelsMap || {};
           resolve();
         }).catch(()=>{
@@ -636,7 +626,6 @@ export class FeedService {
       let comments = commentsMap || "";
       if( comments == ""){
         this.storeService.get(PersistenceKey.commentsMap).then((mCommentsMap)=>{
-          console.log("jjjjjjjjjjjjjj");
           commentsMap = mCommentsMap || {};
           resolve();
         }).catch(()=>{
@@ -653,7 +642,6 @@ export class FeedService {
       let unread = unreadMap || "";
       if( unread == ""){
         this.storeService.get(PersistenceKey.unreadMap).then((mUnreadMap)=>{
-          console.log("kkkkkkkkkkkkkk");
           unreadMap = mUnreadMap || {};
           resolve();
         }).catch(()=>{
@@ -670,7 +658,6 @@ export class FeedService {
       let likes = likeMap || "";
       if( likes == ""){
         this.storeService.get(PersistenceKey.likeMap).then((mLikeMap)=>{
-          console.log("llllllllllllll");
           likeMap = mLikeMap || {};
           resolve();
         }).catch(()=>{
@@ -687,7 +674,6 @@ export class FeedService {
       let accessTokens = accessTokenMap || "";
       if( accessTokens == ""){
         this.storeService.get(PersistenceKey.accessTokenMap).then((mAccessTokenMap)=>{
-          console.log("mmmmmmmmmmmm");
           accessTokenMap = mAccessTokenMap || {};
           resolve();
         }).catch(()=>{
@@ -704,7 +690,6 @@ export class FeedService {
       let bindServer = bindingServer || "";
       if( bindServer == ""){
         this.storeService.get(PersistenceKey.bindingServer).then((mBindingServer)=>{
-          console.log("nnnnnnnnnnnnnnn");
           bindingServer = mBindingServer || undefined;
           resolve();
         }).catch(()=>{
@@ -721,7 +706,6 @@ export class FeedService {
       let notifications = notificationList || "";
       if( notifications == ""){
         this.storeService.get(PersistenceKey.notificationList).then((mNotificationList)=>{
-          console.log("ooooooooooooooo");
           notificationList = mNotificationList || [];
           resolve();
         }).catch(()=>{
@@ -738,7 +722,6 @@ export class FeedService {
       let likeComments = likeCommentMap || "";
       if( likeComments == ""){
         this.storeService.get(PersistenceKey.likeCommentMap).then((mLikeCommentMap)=>{
-          console.log("pppppppppppppppppp");
           likeCommentMap = mLikeCommentMap || {};
           resolve();
         }).catch(()=>{
@@ -755,7 +738,6 @@ export class FeedService {
       let lastFeedUpdate = this.lastFeedUpdateMap || "";
       if( lastFeedUpdate == ""){
         this.storeService.get(PersistenceKey.lastFeedUpdateMap).then((mLastFeedUpdateMap)=>{
-          console.log("qqqqqqqqqqqqq");
           this.lastFeedUpdateMap = mLastFeedUpdateMap || {};
           resolve();
         }).catch(()=>{
@@ -772,7 +754,6 @@ export class FeedService {
       let lastCommentUpdate = this.lastCommentUpdateMap || "";
       if( lastCommentUpdate == ""){
         this.storeService.get(PersistenceKey.lastCommentUpdateMap).then((mLastCommentUpdateMap)=>{
-          console.log("rrrrrrrrrrr");
           this.lastCommentUpdateMap = mLastCommentUpdateMap || {};
           resolve();
         }).catch(()=>{
@@ -4102,7 +4083,7 @@ export class FeedService {
         onSuccess();
       },
       (err)=>{
-        // console.log("err =>"+err);
+
         console.log("error=>"+err);
 
         onError();
@@ -4698,7 +4679,6 @@ export class FeedService {
 
   removeAllServerFriends(){
     let servers = serverMap || "";
-    console.log("====servers===="+JSON.stringify(servers));
     if (servers == "")
       return;
 
@@ -4859,9 +4839,7 @@ export class FeedService {
     );
   }
 
-  reSavePostMap(){
-    console.log("---------------------------------reSavePostMap");
-    
+  reSavePostMap(){    
     this.updateAllContentData();
 
     this.updatePostKey();
@@ -5067,7 +5045,6 @@ export class FeedService {
   }
 
   transportData(nodeId: string, key: string, request: any, mediaType: string, value: any = ""){
-    console.log("request ==>"+JSON.stringify(request));
     let requestData = this.serializeDataService.encodeData(request);
 
     if (value != ""){
@@ -5089,7 +5066,6 @@ export class FeedService {
 
     sumSlice = valueData.length / step;
 
-    console.log("valueData.length  ===>"+valueData.length );
     for (let index = 0; index < sumSlice; index++) {
       let sentData = valueData.subarray(currentSlice*step, (currentSlice+1)*step);
       this.sessionService.streamAddData(nodeId, sentData);
@@ -5103,7 +5079,7 @@ export class FeedService {
       return false;
 
     let state = this.sessionService.getSessionState(nodeId);
-    console.log("state===>"+state);
+
     switch(state){
       case 0:
       case 1:
@@ -5218,7 +5194,6 @@ export class FeedService {
     }
 
     let contentStr = JSON.stringify(content);
-    console.log("content====>"+contentStr);
     return contentStr;
   }
 
@@ -5274,9 +5249,6 @@ export class FeedService {
       videoThumbKey   :   videoThumbKeyObj,
       imgThumbKeys    :   imgThumbKeys
     }
-
-    console.log("parse v1 result ==>"+JSON.stringify(content));
-
     return content;
   }
 
@@ -5304,8 +5276,6 @@ export class FeedService {
       videoThumbKey   :   undefined,
       imgThumbKeys    :   imgThumbKeys
     }
-
-    console.log("parse v0 result ==>"+JSON.stringify(content));
 
     return content;
   }
@@ -5384,36 +5354,26 @@ export class FeedService {
 
   updateAllContentData(){
     let keys: string[] = Object.keys(this.postMap) || [];
-    console.log("oldkeys ===>"+JSON.stringify(keys));
     for (let index = 0; index < keys.length; index++) {
       let key = keys[index];
       if(this.postMap[key] == undefined)
         continue;
       
-      console.log("---------befor----------");
-      console.log("post = "+key +"="+JSON.stringify(this.postMap[key]));
       this.updateContentData(key);
-      console.log("---------after----------");
-      console.log("post = "+key +"="+JSON.stringify(this.postMap[key])); 
     }
     this.storeService.set(PersistenceKey.postMap, this.postMap);
   }
 
   updateContentData(key: string){ //undefine =>v0
-    console.log("kkkkkkkkkkkkkkkkkkkkkkkk");
     let post = this.postMap[key];
     let content = post.content;
     if (content == undefined){
-      console.log("11111111");
       return ;
     }
     let contentObj = this.native.parseJSON(content);
     if (content.version != undefined){
-      console.log("22222222"+JSON.stringify(content.version));
       return;
     }
-      
-    console.log("33333333");
 
     let mText = this.parsePostContentText(content) || "";
     let mImgThumbKeys: FeedsData.ImageThumbKey[] = [];
@@ -5445,16 +5405,13 @@ export class FeedService {
 
       post.content = finalContent;
 
-      console.log("+++++++++++++++++++++++++"+JSON.stringify(post.content));
       this.postMap[key] = post;
     });
   }
 
   updatePostKey(){
     let keys: string[] = Object.keys(this.postMap) || [];
-    console.log("oldkeys ===>"+JSON.stringify(keys));
     for (let index = 0; index < keys.length; index++) {
-      console.log("post ===>"+"Key:"+keys[index]+";"+JSON.stringify(this.postMap[keys[index]]));
 
       let key = keys[index];
       if(this.postMap[key] == undefined){
@@ -5479,9 +5436,6 @@ export class FeedService {
     }
 
     this.storeService.set(PersistenceKey.postMap, this.postMap);
-
-    let newkeys: string[] = Object.keys(this.postMap) || [];
-    console.log("newkeys ===>"+JSON.stringify(newkeys));
   }
 
   setData(key: string, value: any):Promise<any>{
@@ -5520,7 +5474,6 @@ export class FeedService {
 
   updateSubscribedChannelsKey(){
     let keys: string[] = Object.keys(subscribedChannelsMap) || [];
-    console.log("---------------------------------updateSubscribedChannelsKey keys"+JSON.stringify(keys));
 
     for (let index = 0; index < keys.length; index++) {
       let key = keys[index];
@@ -5543,16 +5496,10 @@ export class FeedService {
       delete subscribedChannelsMap[key];
     }
     this.storeService.set(PersistenceKey.subscribedChannelsMap, subscribedChannelsMap);
-    let newkeys: string[] = Object.keys(subscribedChannelsMap) || [];
-    console.log("---------------------------------updateSubscribedChannelsKey newkeys"+JSON.stringify(newkeys));
-
   }
 
   updateChannelsKey(){
     let keys: string[] = Object.keys(channelsMap) || [];
-    let unreadkeys: string[] = Object.keys(unreadMap) || [];
-    console.log("---------------------------------updateChannelsKey keys"+JSON.stringify(keys));
-    console.log("---------------------------------updateChannelsKey unreadkeys"+JSON.stringify(unreadkeys));
 
     for (let index = 0; index < keys.length; index++) {
       let key = keys[index];
@@ -5585,18 +5532,10 @@ export class FeedService {
 
     this.storeService.set(PersistenceKey.channelsMap, channelsMap);
     this.storeService.set(PersistenceKey.unreadMap, unreadMap);
-
-    let channelsMapnewkeys: string[] = Object.keys(myChannelsMap) || [];
-    let unreadMapnewkeys: string[] = Object.keys(unreadMap) || [];
-    console.log("---------------------------------updateChannelsKey channelsMapnewkeys"+JSON.stringify(channelsMapnewkeys));
-    console.log("---------------------------------updateChannelsKey unreadMapnewkeys"+JSON.stringify(unreadMapnewkeys));
-
   }
 
   updateMyChannelsKey(){
-
     let keys: string[] = Object.keys(myChannelsMap) || [];
-    console.log("---------------------------------updateMyChannelsKey keys"+JSON.stringify(keys));
 
     for (let index = 0; index < keys.length; index++) {
       let key = keys[index];
@@ -5618,15 +5557,11 @@ export class FeedService {
       myChannelsMap[newKey] = channel;
       delete myChannelsMap[key];
     }
-    let newkeys: string[] = Object.keys(myChannelsMap) || [];
-    console.log("---------------------------------updateMyChannelsKey newkeys"+JSON.stringify(newkeys));
-
     this.storeService.set(PersistenceKey.myChannelsMap, myChannelsMap);
   }
  
   updateLikeCommentKey(){
     let keys: string[] = Object.keys(likeCommentMap) || [];
-    console.log("---------------------------------updateLikeCommentKey keys"+JSON.stringify(keys));
 
     for (let index = 0; index < keys.length; index++) {
       let key = keys[index];
@@ -5649,15 +5584,11 @@ export class FeedService {
       likeCommentMap[newKey] = likedComment;
       delete likeCommentMap[key];
     }
-    let newkeys: string[] = Object.keys(likeCommentMap) || [];
-    console.log("---------------------------------updateLikeCommentKey newkeys"+JSON.stringify(newkeys));
-
     this.storeService.set(PersistenceKey.likeCommentMap, likeCommentMap);
   }
 
   updateLikeKey(){
     let keys: string[] = Object.keys(likeMap) || [];
-    console.log("---------------------------------updateLikeKey keys"+JSON.stringify(keys));
 
     for (let index = 0; index < keys.length; index++) {
       let key = keys[index];
@@ -5685,15 +5616,11 @@ export class FeedService {
         };
       delete likeMap[key];
     }
-    let newkeys: string[] = Object.keys(likeMap) || [];
-    console.log("---------------------------------updateLikeKey newkeys"+JSON.stringify(newkeys));
-
     this.storeService.set(PersistenceKey.likeMap, likeMap);
   }
 
   updatePostUpdateKey(){
     let keys: string[] = Object.keys(lastPostUpdateMap) || [];
-    console.log("---------------------------------updatePostUpdateKey keys"+JSON.stringify(keys));
 
     for (let index = 0; index < keys.length; index++) {
       let key = keys[index];
@@ -5715,14 +5642,11 @@ export class FeedService {
       delete lastPostUpdateMap[key];
     }
 
-    let newkeys: string[] = Object.keys(lastPostUpdateMap) || [];
-    console.log("---------------------------------updatePostUpdateKey newkeys"+JSON.stringify(newkeys));
     this.storeService.set(PersistenceKey.lastPostUpdateMap, lastPostUpdateMap);
   }
 
   updateLastCommentUpdateKey(){
     let keys: string[] = Object.keys(this.lastCommentUpdateMap) || [];
-    console.log("---------------------------------updateLastCommentUpdateKey keys"+JSON.stringify(keys));
 
     for (let index = 0; index < keys.length; index++) {
       let key = keys[index];
@@ -5744,9 +5668,6 @@ export class FeedService {
       this.lastCommentUpdateMap[newKey] = lastCommentUpdate;
       delete this.lastCommentUpdateMap[key];
     }
-
-    let newkeys: string[] = Object.keys(this.lastCommentUpdateMap) || [];
-    console.log("---------------------------------updateLastCommentUpdateKey newkeys"+JSON.stringify(newkeys));
 
     this.storeService.set(PersistenceKey.lastCommentUpdateMap, this.lastCommentUpdateMap);
   }
