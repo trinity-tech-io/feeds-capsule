@@ -146,7 +146,6 @@ export class ServerInfoPage implements OnInit {
 
   ionViewWillEnter() {
     this.initTitle();
-    console.log("======this.developerMode======"+this.developerMode);
     if(this.address === ''){
       this.initMyFeeds();
     }
@@ -273,7 +272,7 @@ export class ServerInfoPage implements OnInit {
   }
 
   collectServerData(server) {
-    console.log("=========="+JSON.stringify(server));
+
     this.serverDetails = [];
 
     this.serverDetails.push({

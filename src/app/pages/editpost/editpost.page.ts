@@ -99,8 +99,6 @@ export class EditpostPage implements OnInit {
     });
 
     this.events.subscribe('feeds:editPostFinish', () => {
-      //let post = this.feedService.getPostFromId(this.nodeId, this.channelId, this.postId);
-      //console.log("editPostFinish = "+JSON.stringify(post));
       this.zone.run(()=>{
         if(this.imgUrl === "" && this.posterImg ===""){
           this.zone.run(() => {
@@ -116,20 +114,17 @@ export class EditpostPage implements OnInit {
 
     this.events.subscribe('stream:getBinaryResponse', () => {
       this.zone.run(() => {
-        console.log("result==stream:getBinaryResponse====>")
+       
       });
     });
 
     this.events.subscribe('stream:getBinarySuccess', (nodeId, key: string, value, mediaType) => {
       this.zone.run(() => {
         this.cacheGetBinaryRequestKey = "";
-        console.log("result==stream:getBinarySuccess====>")
         if (key.indexOf("img")>-1){
-          console.log("result======>"+value.substring(0,50));
           this.native.hideLoading();
           this.native.openViewer(value,"common.image","PostdetailPage.postview",this.appService);
         } else if (key.indexOf("video")>-1){
-          console.log("video =====>"+value.substring(0,50));
           this.flieUri = value;
           this.loadVideo();
         }
@@ -141,23 +136,15 @@ export class EditpostPage implements OnInit {
       this.zone.run(() => {
 
         if (response.code == -107){
-          //TODO
-          console.log("result==FileNotExist");
-        }
-        
-        
-        console.log("result==stream:error=nodeId===>"+nodeId);
-        console.log("result==stream:error=code===>"+response.code)
-        console.log("result==stream:error=message===>"+response.message)
 
+        }
+        this.native.hideLoading();
+        
       });
     });
    
     this.events.subscribe('stream:onStateChangedCallback', (nodeId, state) => {
       this.zone.run(() => {
-
-        console.log("cacheGetBinaryRequestKey ===>"+this.cacheGetBinaryRequestKey);
-        console.log("state ===>"+state);
 
         if (this.cacheGetBinaryRequestKey == "")
           return;
@@ -398,20 +385,15 @@ export class EditpostPage implements OnInit {
         let videodata = videosdata[0];
         this.transcodeVideo(videodata['fullPath']).then((newfileUri)=>{
           this.transcode =100;
-          console.log("====newfileUri====="+newfileUri)
           newfileUri = "cdvfile://localhost"+newfileUri.replace("file//","");
           newfileUri = newfileUri.replace("/storage/emulated/0/","/sdcard/");  
-          console.log("====newfileUri====="+newfileUri)
           let lastIndex = newfileUri.lastIndexOf("/");
           let fileName =  newfileUri.substring(lastIndex+1,newfileUri.length);
-          console.log("====fileName====="+fileName);
           let filepath =  newfileUri.substring(0,lastIndex);
-          console.log("====filepath====="+filepath);
           this.readFile(fileName,filepath);
         });
      });
   }, (error)=>{
-       console.log("===captureVideoErr==="+JSON.stringify(error));
   }, {limit:1,duration:30});
   }
 
@@ -506,14 +488,11 @@ export class EditpostPage implements OnInit {
 
   async transcodeVideo(path:any):Promise<string>{
     const fileUri = path.startsWith('file://') ? path : `file://${path}`;
-    console.log("====fileUrl===="+fileUri);
     const videoInfo = await this.videoEditor.getVideoInfo({ fileUri });
     this.duration = videoInfo["duration"];
     let width: number = 0;
     let height: number = 0;
 
-    console.log("===videoInfo="+JSON.stringify(videoInfo));
- 
     // 视频比例
     const ratio = videoInfo.width / videoInfo.height;
  
@@ -526,8 +505,6 @@ export class EditpostPage implements OnInit {
     }
 
     let videoBitrate = videoInfo["bitrate"]/2;
-
-    console.log("===videoBitrate====="+videoBitrate);
 
     height = +(width / ratio).toFixed(0);
 
@@ -639,7 +616,6 @@ export class EditpostPage implements OnInit {
               }
               return;
             }
-            console.log("========="+videodata.substring(0,50));
             this.flieUri = videoData;
             this.loadVideo();
           }) 
@@ -651,14 +627,12 @@ export class EditpostPage implements OnInit {
     vgbuffering.style.display ="none";
     let video:any = this.el.nativeElement.querySelector("video");
      video.addEventListener('ended',()=>{
-    console.log("==========ended============")
     let vgoverlayplay:any = this.el.nativeElement.querySelector("vg-overlay-play"); 
     vgbuffering.style.display ="none";
     vgoverlayplay.style.display = "block";  
 });
 
    video.addEventListener('pause',()=>{
-  console.log("==========pause============");
   let vgoverlayplay:any = this.el.nativeElement.querySelector("vg-overlay-play");
   vgoverlayplay.style.display = "block";  
 });
@@ -668,8 +642,7 @@ video.play();
 
 async getVideoInfo(fileUri:string){
     let videoInfo = await this.videoEditor.getVideoInfo({ fileUri:fileUri });
-    this.duration = videoInfo["duration"]
-    console.log("=====this.duration===="+this.duration);
+    this.duration = videoInfo["duration"];
 } 
 
 handleTotal(duration:any){ 

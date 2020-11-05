@@ -326,19 +326,14 @@ export class CreatenewpostPage implements OnInit {
     this.uploadProgress =0;
     navigator.device.capture.captureVideo((videosdata:any)=>{
       this.zone.run(()=>{
-        console.log("=====111===="+JSON.stringify(videosdata[0]));
         let videodata = videosdata[0];
         this.transcodeVideo(videodata['fullPath']).then((newfileUri)=>{
           this.transcode =100;
-          console.log("====newfileUri====="+newfileUri)
           newfileUri = "cdvfile://localhost"+newfileUri.replace("file//","");
           newfileUri = newfileUri.replace("/storage/emulated/0/","/sdcard/");  
-          console.log("====newfileUri====="+newfileUri)
           let lastIndex = newfileUri.lastIndexOf("/");
           let fileName =  newfileUri.substring(lastIndex+1,newfileUri.length);
-          console.log("====fileName====="+fileName);
           let filepath =  newfileUri.substring(0,lastIndex);
-          console.log("====filepath====="+filepath);
           this.readFile(fileName,filepath);
         });
      });
@@ -371,7 +366,6 @@ selectvideo(){
   async getVideoInfo(fileUri:string){
     let videoInfo = await this.videoEditor.getVideoInfo({ fileUri:fileUri });
     this.duration = videoInfo["duration"]
-    console.log("=====this.duration===="+this.duration);
   } 
   
 
@@ -440,15 +434,11 @@ selectvideo(){
 
   async transcodeVideo(path:any):Promise<string>{
     const fileUri = path.startsWith('file://') ? path : `file://${path}`;
-    console.log("====fileUrl===="+fileUri);
     const videoInfo = await this.videoEditor.getVideoInfo({ fileUri:fileUri });
     this.duration = videoInfo["duration"];
-    console.log("====this.duration===="+this.duration);
     let width: number = 0;
     let height: number = 0;
 
-    console.log("===videoInfo="+JSON.stringify(videoInfo));
- 
     // 视频比例
     const ratio = videoInfo.width / videoInfo.height;
  
@@ -461,8 +451,6 @@ selectvideo(){
     }
 
     let videoBitrate = videoInfo["bitrate"]/2;
-
-    console.log("===videoBitrate====="+videoBitrate);
 
     height = +(width / ratio).toFixed(0);
 

@@ -73,7 +73,6 @@ export class HomePage implements OnInit {
   ) {}
 
   initPostListData(){
-        //console.log("======feeds:publishPostFinish====");
         this.infiniteScroll.disabled =false;
         this.startIndex = 0;
         this.totalData = this.feedService.getPostList() || [];
@@ -85,7 +84,6 @@ export class HomePage implements OnInit {
           this.postList =  this.totalData.slice(0,this.totalData.length);
           this.infiniteScroll.disabled =true;
         }
-        console.log("========="+JSON.stringify(this.postList[0]));
         this.scrollToTop(1);
         this.isLoadimage ={};
         this.isLoadVideoiamge ={};
@@ -137,7 +135,6 @@ export class HomePage implements OnInit {
     // });
 
    this.events.subscribe("update:tab",(isInit)=>{
-    console.log("======post======");
     if(isInit){
       this.initPostListData();
       return;
@@ -259,7 +256,6 @@ addCommonEvents(){
 addBinaryEvevnt(){
   this.events.subscribe('stream:getBinaryResponse', () => {
     this.zone.run(() => {
-      console.log("result==stream:getBinaryResponse====>")
     });
   });
 
@@ -287,24 +283,14 @@ addBinaryEvevnt(){
 
       if (response.code == -107){
         //TODO
-        this.native.hideLoading();
-        console.log("result==FileNotExist");
+        //this.native.hideLoading();
       }
-      
-      
-      console.log("result==stream:error=nodeId===>"+nodeId);
-      console.log("result==stream:error=code===>"+response.code)
-      console.log("result==stream:error=message===>"+response.message)
-
+      this.native.hideLoading();
     });
   });
  
   this.events.subscribe('stream:onStateChangedCallback', (nodeId, state) => {
     this.zone.run(() => {
-
-      console.log("cacheGetBinaryRequestKey ===>"+this.cacheGetBinaryRequestKey);
-      console.log("state ===>"+state);
-
       if (this.cacheGetBinaryRequestKey == "")
         return;
 
@@ -352,7 +338,7 @@ addBinaryEvevnt(){
   }
 
   ionViewWillUnload() {
-    console.log('即将卸载销毁');
+   
 }
 
   getChannel(nodeId:string, channelId:number):any{
@@ -623,7 +609,6 @@ addBinaryEvevnt(){
   }
 
   hideComponent(event) {
-    console.log('Hide comment component?', event);
     this.postId = null;
     this.channelId = null;
     this.nodeId = null;

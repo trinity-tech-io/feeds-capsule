@@ -234,20 +234,17 @@ export class PostdetailPage implements OnInit {
 
     this.events.subscribe('stream:getBinaryResponse', () => {
       this.zone.run(() => {
-        console.log("result==stream:getBinaryResponse====>")
+        
       });
     });
 
     this.events.subscribe('stream:getBinarySuccess', (nodeId, key: string, value, mediaType) => {
       this.zone.run(() => {
         this.cacheGetBinaryRequestKey = "";
-        console.log("result==stream:getBinarySuccess====>")
         if (key.indexOf("img")>-1){
-          console.log("result======>"+value.substring(0,50));
           this.native.hideLoading();
           this.native.openViewer(value,"common.image","PostdetailPage.postview",this.appService);
         } else if (key.indexOf("video")>-1){
-          console.log("video =====>"+value.substring(0,50));
           this.videoObj = value;
           this.loadVideo();
         }
@@ -259,23 +256,14 @@ export class PostdetailPage implements OnInit {
       this.zone.run(() => {
 
         if (response.code == -107){
-          //TODO
-          console.log("result==FileNotExist");
+       
         }
-        
-        
-        console.log("result==stream:error=nodeId===>"+nodeId);
-        console.log("result==stream:error=code===>"+response.code)
-        console.log("result==stream:error=message===>"+response.message)
-
+        this.native.hideLoading();
       });
     });
    
     this.events.subscribe('stream:onStateChangedCallback', (nodeId, state) => {
       this.zone.run(() => {
-
-        console.log("cacheGetBinaryRequestKey ===>"+this.cacheGetBinaryRequestKey);
-        console.log("state ===>"+state);
 
         if (this.cacheGetBinaryRequestKey == "")
           return;
@@ -298,7 +286,7 @@ export class PostdetailPage implements OnInit {
     this.events.unsubscribe("feeds:friendConnectionChanged");
     this.events.unsubscribe("feeds:updateTitle");
     this.events.unsubscribe("feeds:refreshPostDetail");
-    
+
     this.events.unsubscribe("feeds:editPostFinish");
     this.events.unsubscribe("feeds:deletePostFinish");
     this.events.unsubscribe("feeds:editCommentFinish");
@@ -592,7 +580,6 @@ export class PostdetailPage implements OnInit {
   }
 
   hideComponent(event) {
-    console.log('Hide comment component?', event);
     this.hideComment = true;
   }
 
@@ -616,7 +603,6 @@ export class PostdetailPage implements OnInit {
   getVideo(key:string){
     // let videosource:any = this.el.nativeElement.querySelector("source") || "";
     //   if(videosource===""){
-    console.log("zzzzzzzzz");
     this.feedService.getData(key).then((videodata:string)=>{
       this.zone.run(()=>{
         // console.log("========="+video.substring(0,50));
@@ -633,7 +619,6 @@ export class PostdetailPage implements OnInit {
         }
 
         this.videoObj = videoData;
-        console.log("========="+this.videoObj.substring(0,50));
         this.loadVideo();
         // let vgbuffering:any = this.el.nativeElement.querySelector("vg-buffering");
         // vgbuffering.style.display ="none";
@@ -662,14 +647,12 @@ export class PostdetailPage implements OnInit {
     vgbuffering.style.display ="none";
     let video:any = this.el.nativeElement.querySelector("video");
     video.addEventListener('ended',()=>{
-        console.log("==========ended============")
         let vgoverlayplay:any = this.el.nativeElement.querySelector("vg-overlay-play"); 
         vgbuffering.style.display ="none";
         vgoverlayplay.style.display = "block";  
     });
 
     video.addEventListener('pause',()=>{
-      console.log("==========pause============");
       let vgoverlayplay:any = this.el.nativeElement.querySelector("vg-overlay-play");
       vgoverlayplay.style.display = "block";  
     });

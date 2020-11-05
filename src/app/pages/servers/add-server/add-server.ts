@@ -83,7 +83,6 @@ export class AddServerPage implements OnInit {
 
     this.events.subscribe('intent:addsource',(intentSource)=>{
       this.zone.run(() => {
-        console.log("Handling intent 'addsource' with source id - ", intentSource);
         this.checkValid(intentSource);
       });
     });
