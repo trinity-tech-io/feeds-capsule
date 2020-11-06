@@ -62,6 +62,8 @@ export class ChannelsPage implements OnInit {
 
   public onlineStatus = null;
 
+  public maxTextSize = 144;
+
   constructor(
     private elmRef: ElementRef,
     private popoverController:PopoverController,
@@ -366,6 +368,12 @@ export class ChannelsPage implements OnInit {
 
   getContentText(content: string): string{
     return this.feedService.parsePostContentText(content);
+  }
+
+  getContentShortText(post:any): string{
+    let   content = post.content;
+    let  text = this.feedService.parsePostContentText(content) || "";
+    return text.substring(0,this.maxTextSize)+"...";
   }
 
   getContentImg(content: any): string{
