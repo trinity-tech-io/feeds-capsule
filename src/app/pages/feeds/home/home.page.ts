@@ -839,7 +839,6 @@ addBinaryEvevnt(){
         let source:any = document.getElementById(id+'source') || "";
         videoElement.removeAttribute('poster'); // empty source
         if(source!=""){
-          videoElement.pause();
           source.removeAttribute('src'); // empty source
           videoElement.load();
         }
