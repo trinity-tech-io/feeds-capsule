@@ -25,6 +25,7 @@ export class LikesComponent implements OnInit {
   @Output() clickImage = new EventEmitter();
 
   public styleObj:any = {width:""};
+  public maxTextSize = 144;
 
   constructor(
     private feedspage: FeedsPage,
@@ -83,6 +84,12 @@ export class LikesComponent implements OnInit {
 
   getContentText(content: string): string{
     return this.feedService.parsePostContentText(content);
+  }
+
+  getContentShortText(post:any): string{
+    let   content = post.content;
+    let  text = this.feedService.parsePostContentText(content) || "";
+    return text.substring(0,this.maxTextSize)+"...";
   }
 
 

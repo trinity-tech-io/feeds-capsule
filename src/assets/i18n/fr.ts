@@ -76,7 +76,8 @@ export const fr = {
         "videoloading":"Video loading",
         "videocompression":"Video compression",
         "video":"Video",
-        "theFeedSource": "The Feed source"
+        "theFeedSource": "The Feed source",
+        "fulltext":"Full Text"
     },
     "app":{
         "profileDetails":"Profile Details",

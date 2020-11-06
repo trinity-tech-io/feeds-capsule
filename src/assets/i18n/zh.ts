@@ -76,7 +76,8 @@ export const zh = {
         "videoloading":"视频加载中",
         "videocompression":"视频压缩中",
         "video":"视频",
-        "theFeedSource": "微频源"
+        "theFeedSource": "微频源",
+        "fulltext":"全文"
     },
     "app":{
         "profileDetails":"档案详情",

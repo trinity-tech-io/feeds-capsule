@@ -55,8 +55,13 @@
             >
           </ion-row>
           <p>@{{ getChannelOwnerName(post.nodeId, post.channel_id) }}</p>
-          <h2 (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)" *ngIf="post.post_status!=1">
-            <pre [ngStyle]="styleObj">{{ getContentText(post.content) }}</pre>
+          <h2 *ngIf="post.post_status!=1">
+            <div *ngIf="getContentText(post.content).length<=maxTextSize" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)">
+              <pre [ngStyle]="styleObj">{{ getContentText(post.content) }}</pre>
+            </div>
+            <div *ngIf="getContentText(post.content).length>maxTextSize" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)">
+              <pre [ngStyle]="styleObj">{{ getContentShortText(post) }}<span style="color:#368bff;">{{"common.fulltext" | translate }}</span></pre>
+            </div>
           </h2>
           <h2 (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)" *ngIf="post.post_status===1">
             <pre>{{'common.deleted' | translate}}</pre>
