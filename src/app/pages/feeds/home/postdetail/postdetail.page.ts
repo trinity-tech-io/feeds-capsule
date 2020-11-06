@@ -240,6 +240,7 @@ export class PostdetailPage implements OnInit {
 
     this.events.subscribe('stream:getBinarySuccess', (nodeId, key: string, value, mediaType) => {
       this.zone.run(() => {
+        this.feedService.closeSession(nodeId);
         this.cacheGetBinaryRequestKey = "";
         if (key.indexOf("img")>-1){
           this.native.hideLoading();
@@ -248,7 +249,6 @@ export class PostdetailPage implements OnInit {
           this.videoObj = value;
           this.loadVideo();
         }
-        
       });
     });
 

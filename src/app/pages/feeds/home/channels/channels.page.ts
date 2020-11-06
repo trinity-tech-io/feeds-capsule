@@ -217,6 +217,7 @@ export class ChannelsPage implements OnInit {
   
     this.events.subscribe('stream:getBinarySuccess', (nodeId, key: string, value:string) => {
       this.zone.run(() => {
+        this.feedService.closeSession(nodeId);
         if (key.indexOf("img")>-1){
           this.cacheGetBinaryRequestKey = "";
           this.native.hideLoading();
