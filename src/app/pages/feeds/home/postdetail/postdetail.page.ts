@@ -672,7 +672,7 @@ export class PostdetailPage implements OnInit {
     this.videoObj ="";
     let video:any =  this.el.nativeElement.querySelector("video") || "";
     if(this.videoObj!=""&&video!=""){
-      video.pause();;
+      //video.pause();;
       video.load();
     }
   }

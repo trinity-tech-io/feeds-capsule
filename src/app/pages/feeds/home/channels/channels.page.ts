@@ -318,6 +318,7 @@ export class ChannelsPage implements OnInit {
     this.isLoadimage ={};
     this.isLoadVideoiamge ={};
     this.curPost={};
+    this.events.publish("update:tab");
     this.events.publish("addBinaryEvevnt");
   }
 
@@ -832,7 +833,6 @@ export class ChannelsPage implements OnInit {
         let source:any = document.getElementById(id+'sourcechannel') || "";
         videoElement.removeAttribute('poster'); // empty source
         if(source!=""){
-          videoElement.pause();
           source.removeAttribute('src'); // empty source
           videoElement.load();
         }
