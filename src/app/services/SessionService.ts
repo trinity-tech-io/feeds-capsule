@@ -12,7 +12,7 @@ type WorkedSession = {
     nodeId      : string,
     session     : CarrierPlugin.Session,
     stream      : CarrierPlugin.Stream,
-    isStart     : boolean,
+    // isStart     : boolean,
     sdp         : string,
     StreamState : StreamState
     sessionTimeout : NodeJS.Timer
@@ -115,7 +115,6 @@ export class SessionService {
                 nodeId      : nodeId,
                 session     : mSession,
                 stream      : null,
-                isStart     : false,
                 sdp         : "",
                 StreamState : StreamState.RAW,
                 sessionTimeout : null
@@ -126,7 +125,9 @@ export class SessionService {
                 CarrierPlugin.StreamMode.RELIABLE, 
                 {
                     onStateChanged: function(event: any) {
+                        console.log("event.state ====>"+event.state);
                         workedSessions[nodeId].StreamState = event.state;
+                        console.log("workedSessions[nodeId].StreamState ====>"+workedSessions[nodeId].StreamState);
                         var state_name = [
                             "raw",
                             "initialized",
@@ -156,12 +157,12 @@ export class SessionService {
                                 function (event:any){
                                     let sdp = event.sdp;
                                     workedSessions[nodeId].sdp = sdp;
+                                    console.log("sessionRequest sdp ==="+sdp);
 
-                                    if (workedSessions[nodeId].StreamState == StreamState.TRANSPORT_READY
-                                        && !workedSessions[nodeId].isStart){
+                                    if (workedSessions[nodeId].StreamState == StreamState.TRANSPORT_READY){
+                                        console.log("start session");
                                         mCarrierService.sessionStart(mSession, sdp, ()=>{
                                             console.log("sessionStart success");
-                                            workedSessions[nodeId].isStart = true;
                                             },(err)=>{
                                             console.log("sessionStart error=>"+err);
                                             }
@@ -172,16 +173,17 @@ export class SessionService {
                                   console.log("sessionRequest success");
                                 },(err)=>{
                                   console.log("sessionRequest error"+err);
-                          
                                 }
                               );
                         }
 
                         if (CarrierPlugin.StreamState.TRANSPORT_READY == event.state){
                             let sdp = workedSessions[nodeId].sdp;
-                            if (sdp != "" && !workedSessions[nodeId].isStart){
+                            console.log("sdp ==="+sdp);
+
+                            if (sdp != ""){
+                                console.log("start session");
                                 mCarrierService.sessionStart(mSession, sdp, ()=>{
-                                    workedSessions[nodeId].isStart = true;
                                     console.log("sessionStart success");
                                     },(err)=>{
                                     console.log("sessionStart error");
@@ -189,6 +191,15 @@ export class SessionService {
                                 );
                             }
                         }
+
+                        if (CarrierPlugin.StreamState.ERROR == event.state){
+                            publishError(nodeId, createStateError());
+                        }
+
+                        if (CarrierPlugin.StreamState.DEACTIVATED == event.state){
+                            publishError(nodeId, createStateDeactivated());
+                        }
+
                     },
                     onStreamData: function(event: any) {
                         let tmpData: Uint8Array = event.data;
@@ -761,6 +772,25 @@ function queryRequest(responseId: number, result: any): any{
     return {};
 }
 
+function createStateDeactivated(){
+    let response = {
+        code: -105,
+        message: "onStateChange to DEACTIVATED"
+    }
+
+    return response;
+}
+
+
+
+function createStateError(){
+    let response = {
+        code: -107,
+        message: "onStateChange to ERROR"
+    }
+
+    return response;
+}
 function createWriteDataError(){
     let response = {
         code: -100,
