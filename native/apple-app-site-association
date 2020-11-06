@@ -1,0 +1,11 @@
+{
+    "applinks": {
+        "apps": [],
+        "details": [
+            {
+                "appID": "X2ZZSKA63B.io.trinitytech.dapp.feeds",
+                "paths": ["*"]
+            }
+        ]
+    }
+}

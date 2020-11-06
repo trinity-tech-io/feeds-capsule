@@ -1,13 +1,12 @@
 {
     "build": {
-        "root": "..",
-        "out": "../native-out"
+        "out": "./native-out"
     },
     "application": {
         "name": "Feeds",
         "nativepackageid": "io.trinitytech.dapp.feeds",
-        "icon": "../src/assets/images/logo.png",
-        "splashscreen": "./splash.png",
+        "icon": "./src/assets/images/logo.png",
+        "splashscreen": "./native/splash.png",
         "intentscheme": {
             "scheme": "https",
             "path": "feeds.trinity-tech.io"
