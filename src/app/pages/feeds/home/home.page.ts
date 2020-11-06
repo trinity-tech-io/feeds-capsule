@@ -261,6 +261,8 @@ addBinaryEvevnt(){
 
   this.events.subscribe('stream:getBinarySuccess', (nodeId, key: string, value:string) => {
     this.zone.run(() => {
+      this.feedService.closeSession(nodeId);
+
       if (key.indexOf("img")>-1){
         this.cacheGetBinaryRequestKey = "";
         this.native.hideLoading();
@@ -273,8 +275,7 @@ addBinaryEvevnt(){
            let id = nodeId+channelId+postId;
            this.cacheGetBinaryRequestKey = "";
            this.loadVideo(id,value);
-      }
-      
+      }      
     });
   });
 

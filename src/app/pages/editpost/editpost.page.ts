@@ -120,6 +120,7 @@ export class EditpostPage implements OnInit {
 
     this.events.subscribe('stream:getBinarySuccess', (nodeId, key: string, value, mediaType) => {
       this.zone.run(() => {
+        this.feedService.closeSession(nodeId);
         this.cacheGetBinaryRequestKey = "";
         if (key.indexOf("img")>-1){
           this.native.hideLoading();
@@ -158,6 +159,7 @@ export class EditpostPage implements OnInit {
 
     this.events.subscribe('stream:setBinarySuccess', (nodeId, key) => {
       this.zone.run(() => {
+        this.feedService.closeSession(nodeId);
         this.navCtrl.pop().then(()=>{
           this.events.publish("update:tab");
           this.posterImg ="";

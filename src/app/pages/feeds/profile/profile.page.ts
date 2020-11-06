@@ -191,6 +191,7 @@ export class ProfilePage implements OnInit {
 
   this.events.subscribe('stream:getBinarySuccess', (nodeId, key: string, value:string) => {
     this.zone.run(() => {
+      this.feedService.closeSession(nodeId);
       if (key.indexOf("img")>-1){
         this.cacheGetBinaryRequestKey = "";
         //console.log("result======>"+value.substring(0,50));
@@ -229,25 +230,6 @@ export class ProfilePage implements OnInit {
     });
   }); this.events.subscribe('stream:getBinaryResponse', () => {
     this.zone.run(() => {
-    });
-  });
-
-  this.events.subscribe('stream:getBinarySuccess', (nodeId, key: string, value:string) => {
-    this.zone.run(() => {
-      if (key.indexOf("img")>-1){
-        this.cacheGetBinaryRequestKey = "";
-        this.native.hideLoading();
-        this.native.openViewer(value,"common.image","FeedsPage.tabTitle2",this.appService);
-      } else if (key.indexOf("video")>-1){
-        let arr = this.cacheGetBinaryRequestKey.split("-");
-        let nodeId =arr[0];
-        let channelId:any = arr[1];
-        let postId:any = arr[2];
-        let id = nodeId+channelId+postId;
-        this.cacheGetBinaryRequestKey = "";
-        this.loadVideo(id,value);
-      }
-      
     });
   });
 
