@@ -566,7 +566,10 @@ export class EditpostPage implements OnInit {
     this.flieUri ="";
     let video:any = document.getElementById('eidtVideo') || "";
     if(video!=""){
-      video.load();
+      let sid = setTimeout(()=>{
+        video.load();
+        clearTimeout(sid);
+      },10);
     }
   }
 

@@ -316,11 +316,11 @@ export class PostdetailPage implements OnInit {
   }
 
   ionViewDidEnter() {
-    let sid = setTimeout(()=>{
+    //let sid = setTimeout(()=>{
       this.setFullScreen();
       this.setOverPlay();
-      clearTimeout(sid);
-    },0)
+     // clearTimeout(sid);
+    //},10);
     
   }
 
@@ -605,7 +605,7 @@ export class PostdetailPage implements OnInit {
     //   if(videosource===""){
     this.feedService.getData(key).then((videodata:string)=>{
       this.zone.run(()=>{
-        // console.log("========="+video.substring(0,50));
+        
         let videoData = videodata || "";
 
         if (videoData == ""){
@@ -619,6 +619,7 @@ export class PostdetailPage implements OnInit {
         }
 
         this.videoObj = videoData;
+        console.log("========="+this.videoObj.substring(0,50));
         this.loadVideo();
         // let vgbuffering:any = this.el.nativeElement.querySelector("vg-buffering");
         // vgbuffering.style.display ="none";
@@ -643,21 +644,23 @@ export class PostdetailPage implements OnInit {
   }
 
   loadVideo(){
-    let vgbuffering:any = this.el.nativeElement.querySelector("vg-buffering");
-    vgbuffering.style.display ="none";
+    
     let video:any = this.el.nativeElement.querySelector("video");
     video.addEventListener('ended',()=>{
+      let vgbuffering:any = this.el.nativeElement.querySelector("vg-buffering");
         let vgoverlayplay:any = this.el.nativeElement.querySelector("vg-overlay-play"); 
         vgbuffering.style.display ="none";
         vgoverlayplay.style.display = "block";  
     });
 
     video.addEventListener('pause',()=>{
-      let vgoverlayplay:any = this.el.nativeElement.querySelector("vg-overlay-play");
-      vgoverlayplay.style.display = "block";  
+      let vgoverlayplay:any = this.el.nativeElement.querySelector("vg-overlay-play") || "";
+      if(vgoverlayplay!=""){
+        vgoverlayplay.style.display = "block";
+      }
     });
-    video.load();
-    video.play();
+      video.load();
+      video.play();
   }
 
   pauseVideo(){
@@ -667,14 +670,22 @@ export class PostdetailPage implements OnInit {
     }
   }
 
-  clearVideo(){   
-    this.posterImg ="";
-    this.videoObj ="";
+  clearVideo(){
     let video:any =  this.el.nativeElement.querySelector("video") || "";
-    if(this.videoObj!=""&&video!=""){
-      //video.pause();;
-      video.load();
-    }
+    let source:any =  this.el.nativeElement.querySelector("source") || ""; 
+    if(video!=""){
+      video.pause();
+      source.removeAttribute('src'); // empty source
+      let sid=setTimeout(()=>{
+        video.load();
+        clearTimeout(sid);
+      },10)
+      this.posterImg ="";
+      this.videoObj ="";
+     
+    }  
+   
+ 
   }
 
   setFullScreen(){

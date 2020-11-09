@@ -502,7 +502,10 @@ selectvideo(){
     this.flieUri ="";
     let video:any = document.getElementById('addVideo') || "";
     if(video!=""){
-      video.load();
+      let sid = setTimeout(()=>{
+        video.load();
+        clearTimeout(sid);
+      },10);
     }
   }
 

@@ -833,8 +833,12 @@ export class ChannelsPage implements OnInit {
         let source:any = document.getElementById(id+'sourcechannel') || "";
         videoElement.removeAttribute('poster'); // empty source
         if(source!=""){
+          videoElement.pause();
           source.removeAttribute('src'); // empty source
-          videoElement.load();
+          let sid=setTimeout(()=>{
+            videoElement.load();
+            clearTimeout(sid);
+          },10)
         }
       }
     }
@@ -945,7 +949,7 @@ export class ChannelsPage implements OnInit {
     });
       video.load();
       video.play();
-    }
+  }
 
     handleTotal(post:any){
       let videoThumbKey = post.content["videoThumbKey"] || "";

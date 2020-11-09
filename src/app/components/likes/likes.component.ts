@@ -196,8 +196,12 @@ export class LikesComponent implements OnInit {
     let source:any = document.getElementById(id+'sourcelike') || "";
     if(source!=""){
       videoElement.pause();
-      //videoElement.removeAttribute('src'); // empty source
-      //videoElement.load();
+      source.removeAttribute('src'); // empty source
+      let sid =setTimeout(()=>{
+        videoElement.load();
+        clearTimeout(sid);
+      },10);
+      
     }
   }
   

@@ -653,8 +653,12 @@ export class ProfilePage implements OnInit {
         let source:any = document.getElementById(id+'sourcelike') || "";
         videoElement.removeAttribute('poster'); // empty source
         if(source!=""){
+          videoElement.pause();
           source.removeAttribute('src'); // empty source
-          videoElement.load();
+          let sid=setTimeout(()=>{
+            videoElement.load();
+            clearTimeout(sid);
+          },10)
         }
       }
     }

@@ -1,4 +1,4 @@
-import { Component, OnInit, NgZone, ViewChild,ElementRef } from '@angular/core';
+import { Component, OnInit, NgZone, ViewChild,ElementRef} from '@angular/core';
 import { IonContent } from '@ionic/angular';
 import { Events,IonTabs} from '@ionic/angular';
 import { FeedService } from 'src/app/services/FeedService';
@@ -71,8 +71,9 @@ export class HomePage implements OnInit {
     private native:NativeService,
     private menuService: MenuService,
     public appService:AppService,
-    public vgFullscreenAPI:VgFullscreenAPI,
-  ) {}
+    public vgFullscreenAPI:VgFullscreenAPI) {
+      
+    }
 
   initPostListData(){
         this.infiniteScroll.disabled =false;
@@ -108,11 +109,11 @@ export class HomePage implements OnInit {
       this.postList = this.totalData.slice(0,this.totalData.length);
       this.infiniteScroll.disabled =true;
     }
-    this.zone.run(()=>{
+    // this.zone.run(()=>{
       this.refreshImage(0);
-      this.scrollToTop(1);
+      //this.scrollToTop(1);
       this.initnodeStatus(this.postList);
-    })
+    // })
    
     // this.events.subscribe('feeds:publishPostFinish',()=>{
     //   this.zone.run(() => {
@@ -839,12 +840,29 @@ addBinaryEvevnt(){
         let source:any = document.getElementById(id+'source') || "";
         videoElement.removeAttribute('poster'); // empty source
         if(source!=""){
+          //let vgoverlayplay:any = document.getElementById(id+"vgoverlayplayhome") || "";
+          //vgoverlayplay.style.display = 'block';
+          videoElement.pause();
           source.removeAttribute('src'); // empty source
-          videoElement.load();
+          let sid=setTimeout(()=>{
+            videoElement.load();
+            clearTimeout(sid);
+          },10)
+       
         }
       }
     }
   }
+
+  removeClass(elem, cls){
+    //if(hasClass(elem, cls)){
+        var newClass = ' ' + elem.className.replace(/[\t\r\n]/g, '') + ' ';
+        while(newClass.indexOf(' ' + cls + ' ') >= 0){
+            newClass = newClass.replace(' ' + cls + ' ', ' ');
+        }
+        elem.className = newClass.replace(/^\s+|\s+$/g, '');
+    //}
+ }
 
   setFullScreen(id:string){
     let vgfullscreen = document.getElementById(id+"vgfullscreenhome");
@@ -883,7 +901,6 @@ addBinaryEvevnt(){
   setOverPlay(id:string,srcId:string){
     let vgoverlayplay:any = document.getElementById(id+"vgoverlayplayhome") || "";
     let source:any = document.getElementById(id+"source") || "";
-
     if(vgoverlayplay!=""){
      vgoverlayplay.onclick = ()=>{
       this.zone.run(()=>{
@@ -926,7 +943,7 @@ addBinaryEvevnt(){
     if(source === ""){
       return;
     }
-    source.setAttribute("src",videodata);
+    source.setAttribute("src",videodata); 
     let vgbuffering:any = document.getElementById(id+"vgbufferinghome") || "";
         vgbuffering.style.display ="none";
     let video:any = document.getElementById(id+"video");
@@ -939,7 +956,7 @@ addBinaryEvevnt(){
     video.addEventListener('pause',()=>{
       let vgoverlayplay:any = document.getElementById(id+"vgoverlayplayhome");
       vgoverlayplay.style.display = "block";  
-  });
+   });
     video.load();
     video.play();
   }
