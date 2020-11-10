@@ -58,9 +58,9 @@
   </vg-player>
   </div>
 
-  
-    <p *ngIf="uploadProgress>0&&uploadProgress!=100" style="text-align: center;">{{"common.videoloading"|translate}}({{uploadProgress}})............</p>
-    <p *ngIf="transcode>0&&transcode!=100" style="text-align: center;">{{"common.videocompression"|translate}}({{transcode}})............</p>
+    <p *ngIf="totalProgress>0&&totalProgress!=100" style="text-align: center;">{{"common.videoloading"|translate}}{{totalProgress}}</p>
+    <!-- <p *ngIf="uploadProgress>0&&uploadProgress!=100" style="text-align: center;">{{"common.videoloading"|translate}}({{uploadProgress}})............</p> -->
+    <!-- <p *ngIf="transcode>0&&transcode!=100" style="text-align: center;">{{"common.videocompression"|translate}}({{transcode}})............</p> -->
 
     <ion-row class="submit-row">
       <ion-col class="left-col">
