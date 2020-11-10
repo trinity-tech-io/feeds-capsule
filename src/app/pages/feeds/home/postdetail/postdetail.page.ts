@@ -83,7 +83,6 @@ export class PostdetailPage implements OnInit {
   }
 
   initData(){
-    this.pauseVideo();
     this.initPostContent();
     this.initnodeStatus();
     let channel = this.feedService.getChannelFromId(this.nodeId, this.channelId) || "";
