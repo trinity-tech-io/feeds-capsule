@@ -948,7 +948,10 @@ export class ChannelsPage implements OnInit {
         vgoverlayplay.style.display = "block";  
     });
       video.load();
-      video.play();
+      let sid = setTimeout(()=>{
+        video.play();
+        clearTimeout(sid);
+      },0);
   }
 
     handleTotal(post:any){

@@ -242,6 +242,12 @@ export class EditpostPage implements OnInit {
       this.native.toast_trans("common.nochanges");
       return false;
     }
+
+    if(this.flieUri!=""&&this.posterImg === ""){
+      this.native.toast_trans("CreatenewpostPage.tipMsg2");
+       return false;
+    }
+    
     this.native.showLoading("common.waitMoment").then(()=>{
           this.editPost();
     }).catch(()=>{
@@ -643,7 +649,10 @@ export class EditpostPage implements OnInit {
   vgoverlayplay.style.display = "block";  
 });
 video.load();
-video.play();
+let sid = setTimeout(()=>{
+  video.play();
+  clearTimeout(sid);
+},0);
   }
 
 async getVideoInfo(fileUri:string){

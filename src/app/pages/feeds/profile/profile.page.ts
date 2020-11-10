@@ -756,7 +756,10 @@ export class ProfilePage implements OnInit {
       vgoverlayplay.style.display = "block";  
   });
     video.load();
-    video.play();
+    let sid = setTimeout(()=>{
+      video.play();
+      clearTimeout(sid);
+    },0);
    }
 
   showBigImage(item:any){

@@ -660,7 +660,10 @@ export class PostdetailPage implements OnInit {
       }
     });
       video.load();
-      video.play();
+      let sid = setTimeout(()=>{
+        video.play();
+        clearTimeout(sid);
+      },0);
   }
 
   pauseVideo(){
