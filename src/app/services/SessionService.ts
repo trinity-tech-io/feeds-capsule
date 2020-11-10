@@ -14,7 +14,7 @@ type WorkedSession = {
     stream      : CarrierPlugin.Stream,
     // isStart     : boolean,
     sdp         : string,
-    StreamState : StreamState
+    StreamState : FeedsData.StreamState
     sessionTimeout : NodeJS.Timer
 }
 
@@ -41,26 +41,6 @@ const pow32 = 0x100000000;   // 2^32
 const magicNumber: number = 0x0000A5202008275A;
 const version: number = 10000;
 
-const enum StreamState {
-    NOTINIT = -1,
-    /** Raw stream. */
-    RAW = 0,
-    /** Initialized stream. */
-    INITIALIZED = 1,
-    /** The underlying transport is ready for the stream to start. */
-    TRANSPORT_READY = 2,
-    /** The stream is trying to connect the remote. */
-    CONNECTING = 3,
-    /** The stream connected with remove peer. */
-    CONNECTED = 4,
-    /** The stream is deactived. */
-    DEACTIVATED = 5,
-    /** The stream closed gracefully. */
-    CLOSED = 6,
-    /** The stream is on error, cannot to continue. */
-    ERROR = 7
-}
-
 const enum WorkedState {
     sessionInitialized = "sessionInitialized",
     streamInitialized = "streamInitialized",
@@ -80,11 +60,6 @@ type RequestBean = {
     memo: any
 }
 
-const enum ServerError {
-    WriteDataError = -100,
-    FileNotExists = -107
-}
-
 let eventBus:Events = null;
 let testSum = 0;
 let workedSessions: {[nodeId:string]: WorkedSession} = {}; 
@@ -92,6 +67,7 @@ let cacheData: {[nodeId:string]: CachedData} = {};
 let mCarrierService: CarrierService;
 let mSerializeDataService:SerializeDataService;
 let mStorageService: StorageService;
+let sessionConnectionTimeOut = 1*60*1000;
 
 @Injectable()
 export class SessionService {
@@ -116,7 +92,7 @@ export class SessionService {
                 session     : mSession,
                 stream      : null,
                 sdp         : "",
-                StreamState : StreamState.RAW,
+                StreamState : FeedsData.StreamState.RAW,
                 sessionTimeout : null
             }
             this.carrierService.sessionAddStream(
@@ -125,8 +101,12 @@ export class SessionService {
                 CarrierPlugin.StreamMode.RELIABLE, 
                 {
                     onStateChanged: function(event: any) {
-                        console.log("event.state ====>"+event.state);
-                        workedSessions[nodeId].StreamState = event.state;
+                        if (workedSessions[nodeId] == undefined){
+                            console.log(nodeId + " current session is closed");
+                            return ;
+                        }
+                            
+                        workedSessions[nodeId].StreamState = event.state || FeedsData.StreamState.UNKNOW;
                         console.log("workedSessions[nodeId].StreamState ====>"+workedSessions[nodeId].StreamState);
                         var state_name = [
                             "raw",
@@ -136,48 +116,53 @@ export class SessionService {
                             "connected",
                             "deactivated",
                             "closed",
-                            "failed"
+                            "failed",
+                            "unknow"
                         ];
 
-                        var msg = "Stream [" + event.stream.id + "] state changed to: " + state_name[event.state];
+                        var msg = "Stream [" + event.stream.id + "] state changed to: " + state_name[workedSessions[nodeId].StreamState];
                         console.log(msg);
-                        eventBus.publish("stream:onStateChangedCallback", nodeId, event.state);
+                        eventBus.publish("stream:onStateChangedCallback", nodeId, workedSessions[nodeId].StreamState);
 
-                        if (CarrierPlugin.StreamState.INITIALIZED == event.state){
+                        if (FeedsData.StreamState.INITIALIZED == workedSessions[nodeId].StreamState){
                             workedSessions[nodeId].sessionTimeout = setTimeout(() => {
-                                if (workedSessions[nodeId].StreamState != StreamState.CONNECTED){
+                                if (workedSessions[nodeId].StreamState != FeedsData.StreamState.CONNECTED){
                                     workedSessions[nodeId].StreamState = -1;
                                 }
-
                                 clearTimeout(this.signinChallengeTimeout);
-                            }, 2*60*1000);
+                            }, sessionConnectionTimeOut);
 
-                            mCarrierService.sessionRequest(
-                                mSession,
-                                function (event:any){
-                                    let sdp = event.sdp;
-                                    workedSessions[nodeId].sdp = sdp;
-                                    console.log("sessionRequest sdp ==="+sdp);
-
-                                    if (workedSessions[nodeId].StreamState == StreamState.TRANSPORT_READY){
-                                        console.log("start session");
-                                        mCarrierService.sessionStart(mSession, sdp, ()=>{
-                                            console.log("sessionStart success");
-                                            },(err)=>{
-                                            console.log("sessionStart error=>"+err);
-                                            }
-                                        );
+                            let timer = setTimeout(()=>{
+                                console.log("start session request");
+                                mCarrierService.sessionRequest(
+                                    mSession,
+                                    function (event:any){
+                                        let sdp = event.sdp;
+                                        workedSessions[nodeId].sdp = sdp;
+                                        console.log("sessionRequest sdp ==="+sdp);
+    
+                                        if (workedSessions[nodeId].StreamState == FeedsData.StreamState.TRANSPORT_READY){
+                                            console.log("start session");
+                                            mCarrierService.sessionStart(mSession, sdp, ()=>{
+                                                console.log("sessionStart success");
+                                                },(err)=>{
+                                                console.log("sessionStart error=>"+err);
+                                                }
+                                            );
+                                        }
+                                    },
+                                    ()=>{
+                                      console.log("sessionRequest success");
+                                    },(err)=>{
+                                      console.log("sessionRequest error"+err);
                                     }
-                                },
-                                ()=>{
-                                  console.log("sessionRequest success");
-                                },(err)=>{
-                                  console.log("sessionRequest error"+err);
-                                }
-                              );
+                                  );
+                                clearTimeout(timer);
+                             },3000);
+                           
                         }
 
-                        if (CarrierPlugin.StreamState.TRANSPORT_READY == event.state){
+                        if (FeedsData.StreamState.TRANSPORT_READY == workedSessions[nodeId].StreamState){
                             let sdp = workedSessions[nodeId].sdp;
                             console.log("sdp ==="+sdp);
 
@@ -192,13 +177,14 @@ export class SessionService {
                             }
                         }
 
-                        if (CarrierPlugin.StreamState.ERROR == event.state){
+                        if (FeedsData.StreamState.ERROR == workedSessions[nodeId].StreamState){
                             publishError(nodeId, createStateError());
                         }
 
-                        if (CarrierPlugin.StreamState.DEACTIVATED == event.state){
+                        if (FeedsData.StreamState.DEACTIVATED == workedSessions[nodeId].StreamState){
                             publishError(nodeId, createStateDeactivated());
                         }
+
 
                     },
                     onStreamData: function(event: any) {
@@ -500,7 +486,7 @@ export class SessionService {
         return tmpUint8Array
     }
 
-    getSessionState(nodeId: string): StreamState{
+    getSessionState(nodeId: string): FeedsData.StreamState{
         if (workedSessions[nodeId] == undefined)
             return -1 ;
         return workedSessions[nodeId].StreamState;
@@ -650,8 +636,6 @@ function decodeHeadData(nodeId: string, cacheDataLength: number): boolean{
 
     if (cacheData[nodeId].state != DecodeState.decodeHead)
         return false;
-
-
     
     let pointer = cacheData[nodeId].pointer;
     let headSize = cacheData[nodeId].headSize;
@@ -693,6 +677,7 @@ function decodeBodyData(nodeId: string, cacheDataLength: number): boolean{
     let key = cacheData[nodeId].key;
     if (cacheData[nodeId].method == "get_binary" ){
         mStorageService.set(key,value).then(()=>{
+            console.log("publish stream:getBinarySuccess "+ nodeId);
             eventBus.publish("stream:getBinarySuccess", nodeId, key, value, cacheData[nodeId].mediaType);
         });
     }
@@ -759,10 +744,13 @@ function parseResponse(response: any){
 
     cacheData[nodeId].key = key;
     if (method == "set_binary"){
+        console.log("publish stream:setBinaryResponse "+ nodeId);
+        console.log("publish stream:setBinarySuccess "+ nodeId);
         eventBus.publish("stream:setBinaryResponse", nodeId);
         eventBus.publish("stream:setBinarySuccess", nodeId);
 
     } else if (method == "get_binary"){
+        console.log("publish stream:getBinaryResponse "+ nodeId);
         eventBus.publish("stream:getBinaryResponse", nodeId);
 
     }
@@ -786,7 +774,7 @@ function queryRequest(responseId: number, result: any): any{
 
 function createStateDeactivated(){
     let response = {
-        code: -105,
+        code: FeedsData.SessionError.STREAM_STATE_DEACTIVATED,
         message: "onStateChange to DEACTIVATED"
     }
 
@@ -797,7 +785,7 @@ function createStateDeactivated(){
 
 function createStateError(){
     let response = {
-        code: -107,
+        code: FeedsData.SessionError.STREAM_STATE_ERROR,
         message: "onStateChange to ERROR"
     }
 
@@ -805,7 +793,7 @@ function createStateError(){
 }
 function createWriteDataError(){
     let response = {
-        code: -100,
+        code: FeedsData.SessionError.WRITE_DATA_ERROR,
         message: "writeDataError"
     }
 
@@ -818,12 +806,12 @@ function publishError(nodeId: string, response: any){
         return;
 
     if (cacheData[nodeId].method == "set_binary"){
-        eventBus.publish("stream:setBinaryError", nodeId,response);    
+        eventBus.publish("stream:setBinaryError", nodeId,response);
         return ;
     }
 
     if (cacheData[nodeId].method == "get_binary"){
-        eventBus.publish("stream:getBinaryError", nodeId,response);    
+        eventBus.publish("stream:getBinaryError", nodeId,response);
         return ;
-    }    
+    }
 }

@@ -2276,17 +2276,8 @@ export class FeedService {
     }
 
     let nodeChannelId = this.getChannelId(nodeId, channel_id);
-    if (lastPostUpdateMap[nodeChannelId] == undefined){
-      lastPostUpdateMap[nodeChannelId] = {
-        nodeId:nodeId,
-        channelId:channel_id,
-        time:updateAt
-      }
-    }else{
-      lastPostUpdateMap[nodeChannelId].time = updateAt;
-    }
     
-    this.storeService.set(PersistenceKey.lastPostUpdateMap,lastPostUpdateMap);
+    this.updateLastPostUpdate(nodeChannelId, nodeId, channel_id, updateAt);
 
     this.storeService.set(PersistenceKey.postMap, this.postMap);
 
@@ -2340,23 +2331,12 @@ export class FeedService {
     }
 
     let ncpId = this.getPostId(nodeId, channel_id, post_id);
-    if (this.lastCommentUpdateMap[ncpId] == undefined){
-      this.lastCommentUpdateMap[ncpId] = {
-        nodeId: nodeId,
-        channelId: channel_id,
-        postId: post_id,
-        time: updatedAt
-      }
-    }else{
-      this.lastCommentUpdateMap[ncpId].time = updatedAt;
-    }
-    this.storeService.set(PersistenceKey.lastCommentUpdateMap, this.lastCommentUpdateMap);
     
+    this.updateLastCommentUpdate(ncpId, nodeId, channel_id, post_id, updatedAt);
 
-    let postId = this.getPostId(nodeId, channel_id, post_id);
-    this.postMap[postId].comments = this.postMap[postId].comments+1;
-    if (likeMap[postId] != null && likeMap[postId] != undefined){
-      likeMap[postId] = {
+    this.postMap[ncpId].comments = this.postMap[ncpId].comments+1;
+    if (likeMap[ncpId] != null && likeMap[ncpId] != undefined){
+      likeMap[ncpId] = {
         nodeId    : nodeId,
         channelId :channel_id,
         postId    :post_id,
@@ -2372,7 +2352,7 @@ export class FeedService {
     this.storeService.set(PersistenceKey.commentsMap, commentsMap);
     eventBus.publish(PublishType.commentDataUpdate);
 
-    eventBus.publish(PublishType.updataComment,nodeId,channel_id,post_id,this.postMap[postId].comments);
+    eventBus.publish(PublishType.updataComment,nodeId,channel_id,post_id,this.postMap[ncpId].comments);
 
     this.generateNotification(nodeId, channel_id, post_id,id,user_name,Behavior.comment,this.translate.instant("NotificationPage.commentPost"))  
   }
@@ -3004,16 +2984,8 @@ export class FeedService {
         channelsMap[nodeChannelId].last_update = result[index].last_update*1000;
       }
 
-      if (this.lastFeedUpdateMap[nodeId] == undefined ){
-        this.lastFeedUpdateMap[nodeId] = {
-          nodeId: nodeId,
-          time: update
-        }
-      } else{
-        this.lastFeedUpdateMap[nodeId].time = update;
-      }
+      this.updateLastFeedUpdate(nodeId, update);
     }
-    this.storeService.set(PersistenceKey.lastFeedUpdateMap, this.lastFeedUpdateMap);
     // this.storeService.set(PersistenceKey.channelsMap, channelsMap);
     this.saveChannelMap();
     this.refreshLocalChannels();
@@ -3205,22 +3177,11 @@ export class FeedService {
         this.storeService.set(PersistenceKey.likeMap,likeMap);
       }
         
-
       if (requestAction == RequestAction.defaultAction){
-        let nodeChannelId = this.getChannelId(nodeId, channel_id);
-
-        if (lastPostUpdateMap[nodeChannelId] == undefined){
-          lastPostUpdateMap[nodeChannelId] = {
-            nodeId: nodeId,
-            channelId: channel_id,
-            time:updatedAt
-          }
-        }else{
-          lastPostUpdateMap[nodeChannelId].time = updatedAt;
-        }
+        let key = this.getChannelId(nodeId, channel_id);
+        this.updateLastPostUpdate(key,nodeId, channel_id, updatedAt);
       }
     }
-
 
     if (requestAction == RequestAction.refreshPostDetail){
       this.storeService.set(PersistenceKey.postMap, this.postMap);
@@ -3229,7 +3190,6 @@ export class FeedService {
     }
 
     if (requestAction == RequestAction.defaultAction){
-      this.storeService.set(PersistenceKey.lastPostUpdateMap, lastPostUpdateMap);
       this.storeService.set(PersistenceKey.postMap, this.postMap);
       eventBus.publish(PublishType.postDataUpdate);
       return ;
@@ -3291,19 +3251,9 @@ export class FeedService {
       commentsMap[nodeId][channel_id][post_id][id] = comment;
 
       let ncpId = this.getPostId(nodeId, channel_id, post_id);
-      if (this.lastCommentUpdateMap[ncpId] == undefined){
-        this.lastCommentUpdateMap[ncpId] = {
-          nodeId: nodeId,
-          channelId: channel_id,
-          postId: post_id,
-          time: updatedAt
-        }
-      }else{
-        this.lastCommentUpdateMap[ncpId].time = updatedAt;
-      }
+      this.updateLastCommentUpdate(ncpId, nodeId, channel_id, post_id, updatedAt);
     }
 
-    this.storeService.set(PersistenceKey.lastCommentUpdateMap, this.lastCommentUpdateMap);
     this.storeService.set(PersistenceKey.commentsMap, commentsMap);
 
     eventBus.publish(PublishType.commentDataUpdate);
@@ -5675,5 +5625,51 @@ export class FeedService {
     }
 
     this.storeService.set(PersistenceKey.lastCommentUpdateMap, this.lastCommentUpdateMap);
+  }
+
+  updateLastPostUpdate(key: string, nodeId: string, channelId: number, updatedAt: number){
+    if (lastPostUpdateMap[key] == undefined){
+      lastPostUpdateMap[key] = {
+        nodeId: nodeId,
+        channelId: channelId,
+        time:updatedAt + 1
+      }
+    }else{
+      lastPostUpdateMap[key].time = updatedAt + 1;
+    }
+
+    this.storeService.set(PersistenceKey.lastPostUpdateMap, lastPostUpdateMap);
+  }
+
+  updateLastFeedUpdate(nodeId: string, updatedAt: number){
+    if (this.lastFeedUpdateMap[nodeId] == undefined){
+      this.lastFeedUpdateMap[nodeId] = {
+        nodeId: nodeId,
+        time: updatedAt + 1
+      }
+    } else{
+      this.lastFeedUpdateMap[nodeId].time = updatedAt + 1;
+    }
+
+    this.storeService.set(PersistenceKey.lastFeedUpdateMap, this.lastFeedUpdateMap);
+  }
+ 
+  updateLastCommentUpdate(key: string, nodeId: string, channelId: number, postId: number, updatedAt: number){
+    if (this.lastCommentUpdateMap[key] == undefined){
+      this.lastCommentUpdateMap[key] = {
+        nodeId: nodeId,
+        channelId: channelId,
+        postId: postId,
+        time: updatedAt + 1
+      }
+    }else{
+      this.lastCommentUpdateMap[key].time = updatedAt + 1;
+    }
+    this.storeService.set(PersistenceKey.lastCommentUpdateMap, this.lastCommentUpdateMap);
+  }
+
+  handleSessionError(nodeId: string, response: any){
+    this.closeSession(nodeId);
+    console.log("Session error :: nodeId : "+nodeId+" errorCode: "+response.code+" errorMessage:"+response.message);
   }
 }
