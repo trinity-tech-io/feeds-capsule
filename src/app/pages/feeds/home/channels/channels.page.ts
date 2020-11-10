@@ -951,7 +951,7 @@ export class ChannelsPage implements OnInit {
       let sid = setTimeout(()=>{
         video.play();
         clearTimeout(sid);
-      },0);
+      },20);
   }
 
     handleTotal(post:any){

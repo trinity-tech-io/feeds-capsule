@@ -664,7 +664,7 @@ video.load();
 let sid = setTimeout(()=>{
   video.play();
   clearTimeout(sid);
-},0);
+},20);
   }
 
 async getVideoInfo(fileUri:string){
