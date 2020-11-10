@@ -95,6 +95,7 @@ export class HomePage implements OnInit {
   }
 
   ionViewWillEnter() {
+    console.log("==========home=====");
     //this.refreshImage(); 
     this.styleObj.width = (screen.width - 105)+'px';
     this.clientHeight =screen.availHeight;
