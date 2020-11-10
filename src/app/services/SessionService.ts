@@ -465,6 +465,18 @@ export class SessionService {
     }
 
     sessionClose(nodeId: string){
+        let obj = workedSessions || "";
+        if(obj === ""){
+            return;
+        }
+        let item =  workedSessions[nodeId] || "";
+        if(item === ""){
+            return;
+        }
+        let session = workedSessions[nodeId].session || "";
+        if(session === ""){
+            return;
+        }
         this.carrierService.sessionClose(workedSessions[nodeId].session,
             ()=>{
                 delete workedSessions[nodeId];
