@@ -209,6 +209,7 @@ export class CreatenewpostPage implements OnInit {
     this.uploadProgress =0;
     this.totalProgress = 0;
     this.removeVideo();
+    this.events.publish("addBinaryEvevnt");
     this.feedService.closeSession(this.nodeId);
   }
 
