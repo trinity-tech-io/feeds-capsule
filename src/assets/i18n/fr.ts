@@ -356,6 +356,7 @@ export const fr = {
         "addingPost":"New Post",
         "tipMsg":"Please enter a message!",
         "tipMsg1":"Post sent successfully!",
+        "tipMsg2":"Video processing"
     },
     "DIDdata":{
         "Notprovided": "Not yet",

@@ -355,6 +355,7 @@ export const zh = {
         "addingPost":"新建微说",
         "tipMsg":"请输入内容！",
         "tipMsg1":"发布成功！",
+        "tipMsg2":"视频处理中"
     },
     "DIDdata": {
         "Notprovided": "暂无",
