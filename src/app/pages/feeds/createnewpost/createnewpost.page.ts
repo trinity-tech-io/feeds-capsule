@@ -223,6 +223,10 @@ export class CreatenewpostPage implements OnInit {
       this.native.toast_trans("CreatenewpostPage.tipMsg");
       return false;
     }
+    if(this.flieUri!=""&&this.posterImg === ""){
+        this.native.toast_trans("CreatenewpostPage.tipMsg2");
+         return false;
+    }
     this.native.showLoading("common.waitMoment").then(()=>{
       this.sendPost();
     }).catch(()=>{
@@ -429,7 +433,7 @@ selectvideo(){
                     })
                   });
                   clearTimeout(sid);
-                 },0);
+                 },20);
                 
                })
               };
