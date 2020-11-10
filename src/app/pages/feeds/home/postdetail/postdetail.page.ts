@@ -83,6 +83,8 @@ export class PostdetailPage implements OnInit {
   }
 
   initData(){
+    this.pauseVideo();
+    this.initPostContent();
     this.initnodeStatus();
     let channel = this.feedService.getChannelFromId(this.nodeId, this.channelId) || "";
     if (channel == "")
@@ -106,9 +108,6 @@ export class PostdetailPage implements OnInit {
   }
 
   initRefresh(){
-    this.clearVideo();
-    this.videoisShow = false;
-    this.initPostContent();
     this.totalData = this.feedService.getCommentList(this.nodeId, this.channelId, this.postId) || [];
     if(this.totalData.length-this.pageNumber > this.pageNumber){
       this.commentList = this.totalData.slice(this.startIndex,this.pageNumber);
