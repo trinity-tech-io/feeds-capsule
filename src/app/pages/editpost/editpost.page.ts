@@ -41,6 +41,8 @@ export class EditpostPage implements OnInit {
   public cachedMediaType = "";
   public duration:any = 0;
 
+  public totalProgress:number = 0;
+
   constructor(
     private events: Events,
     private native: NativeService,
@@ -208,7 +210,8 @@ export class EditpostPage implements OnInit {
     this.oldImgUrl="";
       
     this.removeVideo();
-    this.events.publish("addBinaryEvevnt");
+    //this.events.publish("addBinaryEvevnt");
+    this.feedService.closeSession(this.nodeId);
 
   }
 
@@ -464,14 +467,19 @@ export class EditpostPage implements OnInit {
                     
                   });
                   clearInterval(sid);
-                 },0);
+                 },20);
                 
                })
               };
 
               fileReader.onprogress = (event:any)=>{
                 this.zone.run(()=>{
-                  this.uploadProgress = parseInt((event.loaded/event.total)*100+'');
+                  this.uploadProgress = parseInt((event.loaded/event.total)*100/2+'');
+                  if(this.uploadProgress === 50){
+                     this.totalProgress = 100;
+                  }else{
+                    this.totalProgress = 50+this.uploadProgress;
+                  }
                 })
               };
               
@@ -527,7 +535,8 @@ export class EditpostPage implements OnInit {
       videoBitrate:videoBitrate,
       progress:(info:number)=>{
         this.zone.run(()=>{
-          this.transcode = parseInt(info*100+'');
+          this.transcode = parseInt(info*100/2+'');
+          this.totalProgress = this.transcode;
         })
       }
     });
@@ -568,6 +577,9 @@ export class EditpostPage implements OnInit {
   }
 
   removeVideo(){
+    this.totalProgress = 0;
+    this.uploadProgress =0;
+    this.totalProgress = 0;
     this.posterImg ="";
     this.flieUri ="";
     let video:any = document.getElementById('eidtVideo') || "";
