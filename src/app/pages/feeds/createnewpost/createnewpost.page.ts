@@ -38,6 +38,7 @@ export class CreatenewpostPage implements OnInit {
   private postId = 0;
   private sessionState = -1;
 
+  public totalProgress:number = 0;
 
   constructor(
     private events: Events,
@@ -204,6 +205,9 @@ export class CreatenewpostPage implements OnInit {
     this.flieUri ="";
     this.posterImg ="";
     this.imgUrl="";
+    this.totalProgress = 0;
+    this.uploadProgress =0;
+    this.totalProgress = 0;
     this.removeVideo();
     this.events.publish("addBinaryEvevnt");
     this.feedService.closeSession(this.nodeId);
@@ -340,6 +344,7 @@ export class CreatenewpostPage implements OnInit {
     this.removeVideo();
     this.transcode =0;
     this.uploadProgress =0;
+    this.totalProgress = 0;
     navigator.device.capture.captureVideo((videosdata:any)=>{
       this.zone.run(()=>{
         let videodata = videosdata[0];
@@ -364,6 +369,7 @@ selectvideo(){
     this.removeVideo();
     this.transcode =0;
     this.uploadProgress =0;
+    this.totalProgress = 0;
     this.camera.getVideo().then((flieUri:string)=>{
       let path = flieUri.startsWith('file://') ? flieUri : `file://${flieUri}`;
       this.getVideoInfo(path);
@@ -440,7 +446,8 @@ selectvideo(){
 
               fileReader.onprogress = (event:any)=>{
                 this.zone.run(()=>{
-                  this.uploadProgress = parseInt((event.loaded/event.total)*100+'');
+                  this.uploadProgress = parseInt((event.loaded/event.total)*100+'')/2;
+                  this.totalProgress = this.totalProgress+this.uploadProgress;
                 })
               };
               
@@ -491,7 +498,8 @@ selectvideo(){
       videoBitrate:videoBitrate,
       progress:(info:number)=>{
         this.zone.run(()=>{
-          this.transcode = parseInt(info*100+'');
+          this.transcode = parseInt(info*100+'')/2;
+          this.totalProgress = this.totalProgress+this.transcode;
         })
       }
     });
