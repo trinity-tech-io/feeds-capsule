@@ -209,15 +209,6 @@ export class ProfilePage implements OnInit {
       
     });
   });
-
-  this.events.subscribe('stream:error', (nodeId, response) => {
-    this.zone.run(() => {
-
-      if (response.code == -107){
-      }
-      this.native.hideLoading();
-    });
-  });
  
   this.events.subscribe('stream:onStateChangedCallback', (nodeId, state) => {
     this.zone.run(() => {
@@ -235,12 +226,8 @@ export class ProfilePage implements OnInit {
 
   this.events.subscribe('stream:error', (nodeId, response) => {
     this.zone.run(() => {
-
-      if (response.code == -107){
-      }
-
+      this.feedService.handleSessionError(nodeId, response);
       this.native.hideLoading();
-
     });
   });
  

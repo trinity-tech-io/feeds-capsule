@@ -239,10 +239,7 @@ export class ChannelsPage implements OnInit {
   
     this.events.subscribe('stream:error', (nodeId, response) => {
       this.zone.run(() => {
-  
-        if (response.code == -107){
-          //TODO
-        }
+        this.feedService.handleSessionError(nodeId, response);
         this.native.hideLoading();
       });
     });

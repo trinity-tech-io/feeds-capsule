@@ -16,6 +16,67 @@ declare namespace FeedsData{
         disconnected = 1
     }
 
+    const enum SessionError {
+        UnknownError                     = -101,
+        UnimplementedError               = -102,
+        NotFoundError                    = -103,
+        InvalidArgument                  = -104,
+        PointerReleasedError             = -105,
+        DevUUIDError                     = -106,
+        FileNotExistsError               = -107,
+        CreateDirectoryError             = -108,
+        SizeOverflowError                = -109,
+        StdSystemError                   = -110,
+        DidNotReady                      = -120,
+        InvalidAccessToken               = -121,
+        NotAuthorizedError               = -122,
+        CarrierSessionInitFailed         = -130,
+        CarrierSessionConnectFailed      = -131,
+        CarrierSessionCreateFailed       = -132,
+        CarrierSessionAddStreamFailed    = -133,
+        CarrierSessionTimeoutError       = -134,
+        CarrierSessionReplyFailed        = -135,
+        CarrierSessionStartFailed        = -136,
+        CarrierSessionBadStatus          = -137,
+        CarrierSessionDataNotEnough      = -138,
+        CarrierSessionUnsuppertedVersion = -139,
+        CarrierSessionReleasedError      = -140,
+        CarrierSessionSendFailed         = -141,
+        CarrierSessionErrorExists        = -142,
+        MassDataUnknownReqFailed         = -150,
+        MassDataUnmarshalReqFailed       = -151,
+        MassDataMarshalRespFailed        = -152,
+        MassDataUnsupportedVersion       = -153,
+        MassDataUnsupportedAlgo          = -154,
+
+        STREAM_STATE_DEACTIVATED = -205,
+        STREAM_STATE_CLOSED = -206,
+        STREAM_STATE_ERROR = -207,
+        
+        WRITE_DATA_ERROR = -301,
+    }
+
+    const enum StreamState {
+        NOTINIT = -1,
+        /** Raw stream. */
+        RAW = 0,
+        /** Initialized stream. */
+        INITIALIZED = 1,
+        /** The underlying transport is ready for the stream to start. */
+        TRANSPORT_READY = 2,
+        /** The stream is trying to connect the remote. */
+        CONNECTING = 3,
+        /** The stream connected with remove peer. */
+        CONNECTED = 4,
+        /** The stream is deactived. */
+        DEACTIVATED = 5,
+        /** The stream closed gracefully. */
+        CLOSED = 6,
+        /** The stream is on error, cannot to continue. */
+        ERROR = 7,
+        UNKNOW = 8
+    }
+
     type Content = {
         version         :   string,
         text            :   string,
