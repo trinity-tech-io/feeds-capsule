@@ -9,6 +9,7 @@ import { TranslateService } from "@ngx-translate/core";
 import { VideoEditor } from '@ionic-native/video-editor/ngx';
 import { AppService } from 'src/app/services/AppService';
 import { VgFullscreenAPI} from 'ngx-videogular';
+import { UtilService } from 'src/app/services/utilService';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 @Component({
@@ -28,7 +29,7 @@ export class CreatenewpostPage implements OnInit {
   public nodeId: string = "";
   public channelId: number = 0;
   
-  public posterImg:string = "";
+  public posterImg:any = "";
   public flieUri:any = "";
   public uploadProgress:number = 0;
   public videotype:string = "video/mp4";
@@ -194,6 +195,7 @@ export class CreatenewpostPage implements OnInit {
     this.events.unsubscribe("rpcRequest:error");
     this.events.unsubscribe("rpcResponse:error");
     this.events.unsubscribe("stream:setBinarySuccess");
+    this.events.unsubscribe("stream:getBinarySuccess");
     this.events.unsubscribe("stream:setBinaryError");
     this.events.unsubscribe("stream:onStateChangedCallback");
     this.events.unsubscribe("feeds:openRightMenu");
@@ -348,15 +350,16 @@ export class CreatenewpostPage implements OnInit {
     navigator.device.capture.captureVideo((videosdata:any)=>{
       this.zone.run(()=>{
         let videodata = videosdata[0];
-        this.transcodeVideo(videodata['fullPath']).then((newfileUri)=>{
-          this.transcode =100;
-          newfileUri = "cdvfile://localhost"+newfileUri.replace("file//","");
-          newfileUri = newfileUri.replace("/storage/emulated/0/","/sdcard/");  
-          let lastIndex = newfileUri.lastIndexOf("/");
-          let fileName =  newfileUri.substring(lastIndex+1,newfileUri.length);
-          let filepath =  newfileUri.substring(0,lastIndex);
-          this.readFile(fileName,filepath);
-        });
+        this.getVideoInfo(videodata['fullPath']);
+        // this.transcodeVideo(videodata['fullPath']).then((newfileUri)=>{
+        //   this.transcode =100;
+        //   newfileUri = "cdvfile://localhost"+newfileUri.replace("file//","");
+        //   newfileUri = newfileUri.replace("/storage/emulated/0/","/sdcard/");  
+        //   let lastIndex = newfileUri.lastIndexOf("/");
+        //   let fileName =  newfileUri.substring(lastIndex+1,newfileUri.length);
+        //   let filepath =  newfileUri.substring(0,lastIndex);
+        //   this.readFile(fileName,filepath);
+        // });
      });
   }, (error)=>{
        console.log("===captureVideoErr==="+JSON.stringify(error));
@@ -373,25 +376,6 @@ selectvideo(){
     this.camera.getVideo().then((flieUri:string)=>{
       let path = flieUri.startsWith('file://') ? flieUri : `file://${flieUri}`;
       this.getVideoInfo(path);
-      this.transcodeVideo(flieUri).then((newfileUri)=>{
-        this.transcode =100;
-        newfileUri = "cdvfile://localhost"+newfileUri.replace("file//","");
-        newfileUri = newfileUri.replace("/storage/emulated/0/","/sdcard/");  
-        let lastIndex = newfileUri.lastIndexOf("/");
-        let fileName =  newfileUri.substring(lastIndex+1,newfileUri.length);
-        let filepath =  newfileUri.substring(0,lastIndex);
-        this.readFile(fileName,filepath);
-      });
-      // let path = flieUri.startsWith('file://') ? flieUri : `file://${flieUri}`;
-      // this.getVideoInfo(path);
-      // flieUri = flieUri.replace("/storage/emulated/0/","/sdcard/");      
-      // this.zone.run(()=>{
-      //   flieUri = "cdvfile://localhost"+flieUri;
-      //   let lastIndex = flieUri.lastIndexOf("/");
-      //   let fileName =  flieUri.substring(lastIndex+1,flieUri.length);
-      //   let filepath =  flieUri.substring(0,lastIndex);
-      //   this.readFile(fileName,filepath);
-      // });
     }).catch((err)=>{
       console.log("=====getVideoErr===="+JSON.stringify(err));
      })
@@ -399,6 +383,7 @@ selectvideo(){
   async getVideoInfo(fileUri:string){
     let videoInfo = await this.videoEditor.getVideoInfo({ fileUri:fileUri });
     this.duration = videoInfo["duration"]
+    this.createThumbnail(fileUri);
   } 
   
 
@@ -411,7 +396,6 @@ selectvideo(){
           (fileEntry) => {
 
             fileEntry.file((file)=>{
-              console.log("======file====="+JSON.stringify(file));
               let filesize  = parseFloat((file.size/1000/1000).toFixed(2));
               if(this.isVideoTipDes(filesize)){
                  this.uploadProgress = 0;
@@ -420,27 +404,8 @@ selectvideo(){
               }
               let fileReader = new FileReader();
               fileReader.onloadend =(event:any)=>{
-
                this.zone.run(()=>{
-                 this.flieUri = fileReader.result;
-                 
-                 let sid = setTimeout(()=>{
-                  //let img = new Image;
-                  this.setFullScreen();
-                  let video:any = document.getElementById('addVideo');
-                  video.setAttribute('crossOrigin', 'anonymous')
-                  let canvas = document.createElement('canvas');
-                  canvas.width = video.clientWidth
-                  canvas.height = video.clientHeight
-                  video.onloadeddata = (() => {
-                    this.zone.run(()=>{
-                      canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height)
-                      this.posterImg= canvas.toDataURL("image/png",10); 
-                    })
-                  });
-                  clearTimeout(sid);
-                 },20);
-                
+                 this.flieUri = fileReader.result; 
                })
               };
 
@@ -557,6 +522,82 @@ selectvideo(){
     video.pause();
   }
 }
+
+ createThumbnail(path:string){
+  this.videoEditor.createThumbnail({fileUri:path,
+    outputFileName:`${Date.now()}`,
+    atTime: this.duration/10,
+    width: 320,
+    height: 480,
+    quality: 30
+  }).then((newfileUri)=>{
+      newfileUri = "cdvfile://localhost"+newfileUri.replace("file//","");
+      newfileUri = newfileUri.replace("/storage/emulated/0/","/sdcard/");  
+      let lastIndex = newfileUri.lastIndexOf("/");
+      let fileName =  newfileUri.substring(lastIndex+1,newfileUri.length);
+      let filepath =  newfileUri.substring(0,lastIndex);
+      this.readThumbnail(fileName,filepath);
+
+      this.transcodeVideo(path).then((newfileUri)=>{
+        this.transcode =100;
+        newfileUri = "cdvfile://localhost"+newfileUri.replace("file//","");
+        newfileUri = newfileUri.replace("/storage/emulated/0/","/sdcard/");  
+        let lastIndex = newfileUri.lastIndexOf("/");
+        let fileName =  newfileUri.substring(lastIndex+1,newfileUri.length);
+        let filepath =  newfileUri.substring(0,lastIndex);
+        this.readFile(fileName,filepath);
+      });
+  });
+}
+
+readThumbnail(fileName:string,filepath:string){
+  window.resolveLocalFileSystemURL(filepath,
+    (dirEntry: CordovaFilePlugin.DirectoryEntry)=>{
+      dirEntry.getFile(fileName, 
+        { create: true, exclusive: false }, 
+        (fileEntry) => {
+
+          fileEntry.file((file)=>{
+
+            let fileReader = new FileReader();
+            fileReader.onloadend =(event:any)=>{
+
+             this.zone.run(()=>{
+               this.posterImg = fileReader.result;
+             })
+            };
+
+            fileReader.onprogress = (event:any)=>{
+              this.zone.run(()=>{
+                this.uploadProgress = parseInt((event.loaded/event.total)*100/2+'');
+                if(this.uploadProgress === 50){
+                   this.totalProgress = 100;
+                }else{
+                  this.totalProgress = 50+this.uploadProgress;
+                }
+              })
+            };
+            
+            fileReader.readAsDataURL(file);
+
+         },(err)=>{
+            console.log("=====readFileErr====="+JSON.stringify(err));
+         });
+        },
+        (err)=>{
+          console.log("=====getFileErr====="+JSON.stringify(err));
+        });
+    },
+    (err:any)=>{
+          console.log("=====pathErr====="+JSON.stringify(err));
+    });
+}
+
+handleTotal(duration:any){ 
+  return UtilService.timeFilter(duration);
+}
+
+
 
   
   // videocam(){
