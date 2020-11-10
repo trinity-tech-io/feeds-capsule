@@ -433,15 +433,12 @@ selectvideo(){
                   canvas.height = video.clientHeight
                   video.onloadeddata = (() => {
                     this.zone.run(()=>{
-                    let sid = setTimeout(()=>{
                       canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height)
                       this.posterImg= canvas.toDataURL("image/png",10); 
-                    },10);
-                    clearTimeout(sid);
                     })
                   });
                   clearTimeout(sid);
-                 },0);
+                 },20);
                 
                })
               };
