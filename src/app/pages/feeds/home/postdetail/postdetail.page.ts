@@ -106,6 +106,9 @@ export class PostdetailPage implements OnInit {
   }
 
   initRefresh(){
+    this.clearVideo();
+    this.videoisShow = false;
+    this.initPostContent();
     this.totalData = this.feedService.getCommentList(this.nodeId, this.channelId, this.postId) || [];
     if(this.totalData.length-this.pageNumber > this.pageNumber){
       this.commentList = this.totalData.slice(this.startIndex,this.pageNumber);
@@ -125,7 +128,7 @@ export class PostdetailPage implements OnInit {
     });
   }
 
-  ionViewWillEnter() {
+  initPostContent(){
     let post = this.feedService.getPostFromId(this.nodeId, this.channelId, this.postId);
     if(post.content.mediaType === 1){
       this.getImage();
@@ -136,6 +139,10 @@ export class PostdetailPage implements OnInit {
         this.getVideoPoster(key);
       }
     }
+  }
+
+  ionViewWillEnter() {
+  
   
   
     this.initTitle();
@@ -674,6 +681,8 @@ export class PostdetailPage implements OnInit {
   }
 
   clearVideo(){
+    this.posterImg ="";
+    this.videoObj ="";
     let video:any =  this.el.nativeElement.querySelector("video") || "";
     let source:any =  this.el.nativeElement.querySelector("source") || ""; 
     if(video!=""){
@@ -683,9 +692,6 @@ export class PostdetailPage implements OnInit {
         video.load();
         clearTimeout(sid);
       },10)
-      this.posterImg ="";
-      this.videoObj ="";
-     
     }  
    
  
