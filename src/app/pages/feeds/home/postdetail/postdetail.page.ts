@@ -668,7 +668,7 @@ export class PostdetailPage implements OnInit {
       let sid = setTimeout(()=>{
         video.play();
         clearTimeout(sid);
-      },0);
+      },20);
   }
 
   pauseVideo(){

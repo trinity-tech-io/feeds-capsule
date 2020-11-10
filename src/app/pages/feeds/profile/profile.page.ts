@@ -759,7 +759,7 @@ export class ProfilePage implements OnInit {
     let sid = setTimeout(()=>{
       video.play();
       clearTimeout(sid);
-    },0);
+    },20);
    }
 
   showBigImage(item:any){
