@@ -209,7 +209,6 @@ export class CreatenewpostPage implements OnInit {
     this.uploadProgress =0;
     this.totalProgress = 0;
     this.removeVideo();
-    this.events.publish("addBinaryEvevnt");
     this.feedService.closeSession(this.nodeId);
   }
 
@@ -434,20 +433,27 @@ selectvideo(){
                   canvas.height = video.clientHeight
                   video.onloadeddata = (() => {
                     this.zone.run(()=>{
-                    canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height)
-                    this.posterImg= canvas.toDataURL("image/png",10); 
+                    let sid = setTimeout(()=>{
+                      canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height)
+                      this.posterImg= canvas.toDataURL("image/png",10); 
+                    },10);
+                    clearTimeout(sid);
                     })
                   });
                   clearTimeout(sid);
-                 },20);
+                 },0);
                 
                })
               };
 
               fileReader.onprogress = (event:any)=>{
                 this.zone.run(()=>{
-                  this.uploadProgress = parseInt((event.loaded/event.total)*100+'')/2;
-                  this.totalProgress = this.totalProgress+this.uploadProgress;
+                  this.uploadProgress = parseInt((event.loaded/event.total)*100/2+'');
+                  if(this.uploadProgress === 50){
+                     this.totalProgress = 100;
+                  }else{
+                    this.totalProgress = 50+this.uploadProgress;
+                  }
                 })
               };
               
@@ -498,8 +504,8 @@ selectvideo(){
       videoBitrate:videoBitrate,
       progress:(info:number)=>{
         this.zone.run(()=>{
-          this.transcode = parseInt(info*100+'')/2;
-          this.totalProgress = this.totalProgress+this.transcode;
+          this.transcode = parseInt(info*100/2+'');
+          this.totalProgress = this.transcode;
         })
       }
     });
@@ -512,6 +518,9 @@ selectvideo(){
   removeVideo(){
     this.posterImg ="";
     this.flieUri ="";
+    this.totalProgress = 0;
+    this.uploadProgress =0;
+    this.totalProgress = 0;
     let video:any = document.getElementById('addVideo') || "";
     if(video!=""){
       let sid = setTimeout(()=>{
