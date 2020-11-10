@@ -210,7 +210,7 @@ export class EditpostPage implements OnInit {
     this.oldImgUrl="";
       
     this.removeVideo();
-    //this.events.publish("addBinaryEvevnt");
+    this.events.publish("addBinaryEvevnt");
     this.feedService.closeSession(this.nodeId);
 
   }
