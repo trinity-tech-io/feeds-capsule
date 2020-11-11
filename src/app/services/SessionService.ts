@@ -128,38 +128,37 @@ export class SessionService {
                             workedSessions[nodeId].sessionTimeout = setTimeout(() => {
                                 if (workedSessions[nodeId].StreamState != FeedsData.StreamState.CONNECTED){
                                     workedSessions[nodeId].StreamState = -1;
+                                    publishError(nodeId, createCreateSessionTimeout());
                                 }
-                                clearTimeout(this.signinChallengeTimeout);
+                                clearTimeout(workedSessions[nodeId].sessionTimeout);
                             }, sessionConnectionTimeOut);
 
-                            let timer = setTimeout(()=>{
-                                console.log("start session request");
-                                mCarrierService.sessionRequest(
-                                    mSession,
-                                    function (event:any){
-                                        let sdp = event.sdp;
-                                        workedSessions[nodeId].sdp = sdp;
-                                        console.log("sessionRequest sdp ==="+sdp);
-    
-                                        if (workedSessions[nodeId].StreamState == FeedsData.StreamState.TRANSPORT_READY){
-                                            console.log("start session");
-                                            mCarrierService.sessionStart(mSession, sdp, ()=>{
+                            console.log("start session request");
+                            mCarrierService.sessionRequest(
+                                mSession,
+                                function (event:any){
+                                    let sdp = event.sdp;
+                                    workedSessions[nodeId].sdp = sdp;
+                                    console.log("sessionRequest sdp ==="+sdp);
+
+                                    if (workedSessions[nodeId].StreamState == FeedsData.StreamState.TRANSPORT_READY){
+                                        console.log("start session");
+                                        mCarrierService.sessionStart(mSession, sdp, ()=>{
                                                 console.log("sessionStart success");
-                                                },(err)=>{
+                                            },(err)=>{
+                                                publishError(nodeId, createSessionStartError());
                                                 console.log("sessionStart error=>"+err);
-                                                }
-                                            );
-                                        }
-                                    },
-                                    ()=>{
-                                      console.log("sessionRequest success");
-                                    },(err)=>{
-                                      console.log("sessionRequest error"+err);
+                                            }
+                                        );
                                     }
-                                  );
-                                clearTimeout(timer);
-                             },3000);
-                           
+                                },
+                                ()=>{
+                                    console.log("sessionRequest success");
+                                },(err)=>{
+                                    publishError(nodeId, createSessionRequestError());
+                                    console.log("sessionRequest error"+err);
+                                }
+                              );
                         }
 
                         if (FeedsData.StreamState.TRANSPORT_READY == workedSessions[nodeId].StreamState){
@@ -169,9 +168,10 @@ export class SessionService {
                             if (sdp != ""){
                                 console.log("start session");
                                 mCarrierService.sessionStart(mSession, sdp, ()=>{
-                                    console.log("sessionStart success");
+                                        console.log("sessionStart success");
                                     },(err)=>{
-                                    console.log("sessionStart error");
+                                        publishError(nodeId, createSessionStartError());
+                                        console.log("sessionStart error");
                                     }
                                 );
                             }
@@ -273,41 +273,15 @@ export class SessionService {
                     console.log("addStream success");
                 },(err) => {
                     onError(err);
+                    publishError(nodeId, createAddStreamError());
                     console.log("addStream error");
                 }
             );
             },(err)=>{
                 onError(err);
+                publishError(nodeId, createNewSessionError());
                 console.log("newSession error");
             }
-        );
-    }
-
-    sessionRequest(nodeId: string, session: CarrierPlugin.Session, onSuccess:()=>void, onError?:(err: string)=>void){
-        this.carrierService.sessionRequest(
-          session,
-          function (event:any){
-            if (event.status != 0) {
-                console.log("Session complete, status: " + event.status + ", reason:" + event.reason);
-            }
-            else {
-                mCarrierService.sessionStart(event.session, event.sdp, ()=>{
-                    console.log("sessionStart success");
-                    },(err)=>{
-                    console.log("sessionStart error");
-                
-                    }
-                );
-            }
-          },
-          ()=>{
-            onSuccess();
-            console.log("sessionRequest success");
-          },(err)=>{
-            onError(err);
-            console.log("sessionRequest error");
-    
-          }
         );
     }
 
@@ -569,28 +543,6 @@ function decodeNum(data: Uint8Array, size: number) {
     }
     return value;
 }
-// function uint8ToBase64 (rawData) {
-//     var numBytes = rawData.byteLength;
-//     var output = '';
-//     var segment;
-//     var table = b64_12bitTable();
-//     for (var i = 0; i < numBytes - 2; i += 3) {
-//         segment = (rawData[i] << 16) + (rawData[i + 1] << 8) + rawData[i + 2];
-//         output += table[segment >> 12];
-//         output += table[segment & 0xfff];
-//     }
-//     if (numBytes - i === 2) {
-//         segment = (rawData[i] << 16) + (rawData[i + 1] << 8);
-//         output += table[segment >> 12];
-//         output += b64_6bit[(segment & 0xfff) >> 6];
-//         output += '=';
-//     } else if (numBytes - i === 1) {
-//         segment = (rawData[i] << 16);
-//         output += table[segment >> 12];
-//         output += '==';
-//     }
-//     return output;
-// }
 
 function uint8ArrayToString(data: Uint8Array): string{
     var dataString = "";
@@ -800,6 +752,44 @@ function createWriteDataError(){
     return response;
 }
 
+function createSessionRequestError(){
+    let response = {
+        code: FeedsData.SessionError.SESSION_REQUEST_ERROR,
+        message: "sessionRequestError"
+    }
+    return response;
+}
+
+function createSessionStartError(){
+    let response = {
+        code: FeedsData.SessionError.SESSION_START_ERROR,
+        message: "sessionStartError"
+    }
+    return response;
+}
+
+function createAddStreamError(){
+    let response = {
+        code: FeedsData.SessionError.SESSION_ADD_STREAM_ERROR,
+        message: "addStreamError"
+    }
+    return response;
+}
+
+function createNewSessionError(){
+    let response = {
+        code: FeedsData.SessionError.SESSION_NEW_SESSION_ERROR,
+        message: "newSessionError"
+    }
+    return response;
+}
+function createCreateSessionTimeout(){
+    let response = {
+        code: FeedsData.SessionError.SESSION_CREATE_TIMEOUT,
+        message: "createSessionTimeoutError"
+    }
+    return response;
+}
 function publishError(nodeId: string, response: any){
     eventBus.publish("stream:error", nodeId,response);
     if (cacheData == null || cacheData == undefined || cacheData[nodeId] == undefined)
