@@ -105,8 +105,14 @@ export class SessionService {
                             console.log(nodeId + " current session is closed");
                             return ;
                         }
-                            
-                        workedSessions[nodeId].StreamState = event.state || FeedsData.StreamState.UNKNOW;
+
+                        if (event == undefined){
+                            console.log("onStateChanged event undefine");
+                            workedSessions[nodeId].StreamState = FeedsData.StreamState.UNKNOW
+                        }else{
+                            workedSessions[nodeId].StreamState = event.state
+                        }
+
                         console.log("workedSessions[nodeId].StreamState ====>"+workedSessions[nodeId].StreamState);
                         var state_name = [
                             "raw",
