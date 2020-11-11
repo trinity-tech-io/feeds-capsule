@@ -5635,6 +5635,11 @@ export class FeedService {
         time:updatedAt + 1
       }
     }else{
+      let oldTime = lastPostUpdateMap[key].time || 0;
+      if (oldTime > updatedAt){
+        return ;
+      }
+
       lastPostUpdateMap[key].time = updatedAt + 1;
     }
 
@@ -5648,6 +5653,10 @@ export class FeedService {
         time: updatedAt + 1
       }
     } else{
+      let oldTime = this.lastFeedUpdateMap[nodeId].time || 0;
+      if (oldTime > updatedAt){
+        return ;
+      }
       this.lastFeedUpdateMap[nodeId].time = updatedAt + 1;
     }
 
@@ -5663,6 +5672,10 @@ export class FeedService {
         time: updatedAt + 1
       }
     }else{
+      let oldTime = this.lastCommentUpdateMap[key].time || 0;
+      if (oldTime > updatedAt){
+        return ;
+      }
       this.lastCommentUpdateMap[key].time = updatedAt + 1;
     }
     this.storeService.set(PersistenceKey.lastCommentUpdateMap, this.lastCommentUpdateMap);
