@@ -344,9 +344,6 @@ export class CreatenewpostPage implements OnInit {
 
   videocam(){
     this.removeVideo();
-    this.transcode =0;
-    this.uploadProgress =0;
-    this.totalProgress = 0;
     navigator.device.capture.captureVideo((videosdata:any)=>{
       this.zone.run(()=>{
         let videodata = videosdata[0];
@@ -405,7 +402,12 @@ selectvideo(){
               let fileReader = new FileReader();
               fileReader.onloadend =(event:any)=>{
                this.zone.run(()=>{
-                 this.flieUri = fileReader.result; 
+                 this.flieUri = fileReader.result;
+                 let sid = setTimeout(()=>{
+                  //let img = new Image;
+                  this.setFullScreen();
+                  clearInterval(sid);
+                 },20);
                })
               };
 

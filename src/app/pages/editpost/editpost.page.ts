@@ -31,8 +31,8 @@ export class EditpostPage implements OnInit {
   public channelId: number = 0;
   public postId: number = 0;
 
-  public posterImg:string = "";
-  public oldPosterImg:string ="";
+  public posterImg:any = "";
+  public oldPosterImg:any ="";
   public flieUri:any = "";
   public uploadProgress:number = 0;
   public videotype:string = "video/mp4";
@@ -42,6 +42,8 @@ export class EditpostPage implements OnInit {
   public duration:any = 0;
 
   public totalProgress:number = 0;
+
+  public isShowVideo:boolean = false;
 
   constructor(
     private events: Events,
@@ -131,7 +133,6 @@ export class EditpostPage implements OnInit {
           this.flieUri = value;
           this.loadVideo();
         }
-        
       });
     });
 
@@ -387,18 +388,20 @@ export class EditpostPage implements OnInit {
     this.removeVideo();
     this.transcode =0;
     this.uploadProgress =0;
+    this.totalProgress =0;
     navigator.device.capture.captureVideo((videosdata:any)=>{
       this.zone.run(()=>{
         let videodata = videosdata[0];
-        this.transcodeVideo(videodata['fullPath']).then((newfileUri)=>{
-          this.transcode =100;
-          newfileUri = "cdvfile://localhost"+newfileUri.replace("file//","");
-          newfileUri = newfileUri.replace("/storage/emulated/0/","/sdcard/");  
-          let lastIndex = newfileUri.lastIndexOf("/");
-          let fileName =  newfileUri.substring(lastIndex+1,newfileUri.length);
-          let filepath =  newfileUri.substring(0,lastIndex);
-          this.readFile(fileName,filepath);
-        });
+        this.getVideoInfo(videodata);
+        // this.transcodeVideo(videodata['fullPath']).then((newfileUri)=>{
+        //   this.transcode =100;
+        //   newfileUri = "cdvfile://localhost"+newfileUri.replace("file//","");
+        //   newfileUri = newfileUri.replace("/storage/emulated/0/","/sdcard/");  
+        //   let lastIndex = newfileUri.lastIndexOf("/");
+        //   let fileName =  newfileUri.substring(lastIndex+1,newfileUri.length);
+        //   let filepath =  newfileUri.substring(0,lastIndex);
+        //   this.readFile(fileName,filepath);
+        // });
      });
   }, (error)=>{
   }, {limit:1,duration:30});
@@ -409,15 +412,15 @@ export class EditpostPage implements OnInit {
     this.camera.getVideo().then((flieUri)=>{
       let path = flieUri.startsWith('file://') ? flieUri : `file://${flieUri}`;
       this.getVideoInfo(path);
-      this.transcodeVideo(flieUri).then((newfileUri)=>{
-        this.transcode =100;
-        newfileUri = "cdvfile://localhost"+newfileUri.replace("file//","");
-        newfileUri = newfileUri.replace("/storage/emulated/0/","/sdcard/");  
-        let lastIndex = newfileUri.lastIndexOf("/");
-        let fileName =  newfileUri.substring(lastIndex+1,newfileUri.length);
-        let filepath =  newfileUri.substring(0,lastIndex);
-        this.readFile(fileName,filepath);
-      });
+      // this.transcodeVideo(flieUri).then((newfileUri)=>{
+      //   this.transcode =100;
+      //   newfileUri = "cdvfile://localhost"+newfileUri.replace("file//","");
+      //   newfileUri = newfileUri.replace("/storage/emulated/0/","/sdcard/");  
+      //   let lastIndex = newfileUri.lastIndexOf("/");
+      //   let fileName =  newfileUri.substring(lastIndex+1,newfileUri.length);
+      //   let filepath =  newfileUri.substring(0,lastIndex);
+      //   this.readFile(fileName,filepath);
+      // });
     }).catch((err)=>{
       console.log("=====getVideoErr===="+JSON.stringify(err));
      })
@@ -445,26 +448,12 @@ export class EditpostPage implements OnInit {
 
                this.zone.run(()=>{
                  this.flieUri = fileReader.result; 
+                 this.isShowVideo = true;
                  let sid = setTimeout(()=>{
                   //let img = new Image;
                   this.setFullScreen();
-                  let video:any = document.getElementById('eidtVideo');
-                  video.setAttribute('crossOrigin', 'anonymous')
-                  let canvas = document.createElement('canvas');
-                  canvas.width = video.clientWidth
-                  canvas.height = video.clientHeight
-                  video.onloadeddata = (() => {
-                    this.zone.run(()=>{
-                    canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height)
-                    this.posterImg= canvas.toDataURL("image/png",10);
-                        
-                    //video.setAttribute("poster",this.posterImg);
-                    })
-                    
-                  });
                   clearInterval(sid);
                  },20);
-                
                })
               };
 
@@ -565,6 +554,7 @@ export class EditpostPage implements OnInit {
         let imgageData:string = idata || "";
         if(imgageData != ""){
           this.zone.run(()=>{
+            this.isShowVideo = true;
             this.posterImg = imgageData;
             this.oldPosterImg = imgageData;
           });   
@@ -573,6 +563,7 @@ export class EditpostPage implements OnInit {
   }
 
   removeVideo(){
+    this.isShowVideo = false;
     this.totalProgress = 0;
     this.uploadProgress =0;
     this.totalProgress = 0;
@@ -666,9 +657,80 @@ let sid = setTimeout(()=>{
 async getVideoInfo(fileUri:string){
     let videoInfo = await this.videoEditor.getVideoInfo({ fileUri:fileUri });
     this.duration = videoInfo["duration"];
+    this.createThumbnail(fileUri);
 } 
 
 handleTotal(duration:any){ 
   return UtilService.timeFilter(duration);
+}
+
+createThumbnail(path:string){
+  this.videoEditor.createThumbnail({fileUri:path,
+    outputFileName:`${Date.now()}`,
+    atTime: this.duration/10,
+    width: 320,
+    height: 480,
+    quality: 30
+  }).then((newfileUri)=>{
+      newfileUri = "cdvfile://localhost"+newfileUri.replace("file//","");
+      newfileUri = newfileUri.replace("/storage/emulated/0/","/sdcard/");  
+      let lastIndex = newfileUri.lastIndexOf("/");
+      let fileName =  newfileUri.substring(lastIndex+1,newfileUri.length);
+      let filepath =  newfileUri.substring(0,lastIndex);
+      this.readThumbnail(fileName,filepath);
+
+      this.transcodeVideo(path).then((newfileUri)=>{
+        this.transcode =100;
+        newfileUri = "cdvfile://localhost"+newfileUri.replace("file//","");
+        newfileUri = newfileUri.replace("/storage/emulated/0/","/sdcard/");  
+        let lastIndex = newfileUri.lastIndexOf("/");
+        let fileName =  newfileUri.substring(lastIndex+1,newfileUri.length);
+        let filepath =  newfileUri.substring(0,lastIndex);
+        this.readFile(fileName,filepath);
+      });
+  });
+}
+
+readThumbnail(fileName:string,filepath:string){
+  window.resolveLocalFileSystemURL(filepath,
+    (dirEntry: CordovaFilePlugin.DirectoryEntry)=>{
+      dirEntry.getFile(fileName, 
+        { create: true, exclusive: false }, 
+        (fileEntry) => {
+
+          fileEntry.file((file)=>{
+
+            let fileReader = new FileReader();
+            fileReader.onloadend =(event:any)=>{
+
+             this.zone.run(()=>{
+               this.posterImg = fileReader.result;
+             })
+            };
+
+            fileReader.onprogress = (event:any)=>{
+              this.zone.run(()=>{
+                this.uploadProgress = parseInt((event.loaded/event.total)*100/2+'');
+                if(this.uploadProgress === 50){
+                   this.totalProgress = 100;
+                }else{
+                  this.totalProgress = 50+this.uploadProgress;
+                }
+              })
+            };
+            
+            fileReader.readAsDataURL(file);
+
+         },(err)=>{
+            console.log("=====readFileErr====="+JSON.stringify(err));
+         });
+        },
+        (err)=>{
+          console.log("=====getFileErr====="+JSON.stringify(err));
+        });
+    },
+    (err:any)=>{
+          console.log("=====pathErr====="+JSON.stringify(err));
+    });
 }
 }
