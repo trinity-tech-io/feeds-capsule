@@ -54,6 +54,13 @@ declare namespace FeedsData{
         STREAM_STATE_ERROR = -207,
         
         WRITE_DATA_ERROR = -301,
+
+        SESSION_CREATE_TIMEOUT = -300,
+        SESSION_NEW_SESSION_ERROR = -311,
+        SESSION_ADD_STREAM_ERROR = -312,
+        SESSION_REQUEST_ERROR = -313,
+        SESSION_START_ERROR = -314,        
+        
     }
 
     const enum StreamState {
