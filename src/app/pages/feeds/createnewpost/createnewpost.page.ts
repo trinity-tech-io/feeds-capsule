@@ -225,6 +225,11 @@ export class CreatenewpostPage implements OnInit {
 
   post(){
     let  newPost = this.native.iGetInnerText(this.newPost);
+    if (this.feedService.getServerStatusFromId(this.nodeId) == 0){
+      this.native.toast_trans("common.connectionError");
+      return;
+    }
+
     if (newPost === "" && this.imgUrl === ""&&this.flieUri === ""){
       this.native.toast_trans("CreatenewpostPage.tipMsg");
       return false;
@@ -248,19 +253,26 @@ export class CreatenewpostPage implements OnInit {
         this.channelId,
         content
       );
-    }else{
-      if (this.feedService.getServerStatusFromId(this.nodeId) == 0){
-        this.feedService.restoreSession(this.nodeId);
-      }else{
-        //TODO alert user
-        console.log("Not connect to server");
-      }
-
-      this.publishPostThrowMsg(); 
+      return ;
     }
+
+    if (this.feedService.getServerStatusFromId(this.nodeId) == 0){
+      this.feedService.restoreSession(this.nodeId);
+    }else{
+      return;
+    }
+
+    this.publishPostThrowMsg(); 
   }
 
   publishPostThrowMsg(){
+    if (this.feedService.getServerStatusFromId(this.nodeId) != 0){
+      this.native.toast_trans("common.connectionError");
+      return;
+    }
+
+    this.feedService.restoreSession(this.nodeId);
+
     if (this.flieUri != ""){
       let videoThumbs: FeedsData.VideoThumb = {
         videoThumb   :   this.posterImg,
