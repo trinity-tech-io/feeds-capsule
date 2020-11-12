@@ -16,6 +16,12 @@ declare namespace FeedsData{
         disconnected = 1
     }
 
+    const enum EditState{
+        NoChange,
+        TextChange,
+        TextImageChange,
+        TextVideoChange,
+    }
     const enum SessionError {
         UnknownError                     = -101,
         UnimplementedError               = -102,

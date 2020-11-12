@@ -951,6 +951,7 @@ export class FeedService {
   }
 
   getServerStatusFromId(nodeId: string): number{
+    
     if (this.getConnectionStatus() == FeedsData.ConnState.disconnected ||
       serversStatus[nodeId] == null || 
       serversStatus[nodeId] == undefined){
@@ -3751,9 +3752,6 @@ export class FeedService {
       if (like == null || like == undefined)
         continue;
 
-      // if (this.getChannelFromId(like.nodeId, like.channelId) == undefined)
-      //   continue;
-
       let post = this.getPostFromId(like.nodeId,like.channelId,like.postId);
       if (post == undefined)
         continue;
@@ -5684,5 +5682,24 @@ export class FeedService {
   handleSessionError(nodeId: string, response: any){
     this.closeSession(nodeId);
     console.log("Session error :: nodeId : "+nodeId+" errorCode: "+response.code+" errorMessage:"+response.message);
+  }
+
+  createVideoContent(postText: string, videoThumb: any, durition: number): string{
+    let videoThumbs: FeedsData.VideoThumb = {
+      videoThumb   :   videoThumb,
+      duration     :   durition
+    };
+    return this.createContent(postText, null, videoThumbs);
+  }
+
+  createOneImgContent(postText: string, imageThumb: any): string{
+    let imgThumbs: FeedsData.ImgThumb[] = [];
+    let imgThumb: FeedsData.ImgThumb = {
+      index   : 0,
+      imgThumb: imageThumb
+    }
+    imgThumbs.push(imgThumb);
+
+    return this.createContent(postText,imgThumbs,null);
   }
 }
