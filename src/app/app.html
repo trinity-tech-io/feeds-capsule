@@ -26,6 +26,14 @@
                     <h1>{{ 'app.feedSources' | translate }}</h1>
                 </div>
             </ion-menu-toggle>
+
+            <ion-menu-toggle>
+                <div (click)="settings()">
+                    <ion-icon name="settings" style="width: 30px;height: 30px;"></ion-icon>
+                    <h1>{{ 'app.settings' | translate }}</h1>
+                </div>
+            </ion-menu-toggle>
+            
             <ion-menu-toggle>
                 <div (click)="about()">
                     <img src="./assets/images/menu-about.svg" *ngIf="!theme.darkMode">
@@ -51,12 +59,7 @@
             </ion-menu-toggle>
 
 
-            <ion-menu-toggle>
-                <div (click)="settings()">
-                    <ion-icon name="settings" style="width: 30px;height: 30px;"></ion-icon>
-                    <h1>{{ 'app.settings' | translate }}</h1>
-                </div>
-            </ion-menu-toggle>
+
 
 
             
