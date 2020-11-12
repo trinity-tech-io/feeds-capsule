@@ -13,6 +13,7 @@ import { MorenameComponent} from './morename/morename.component';
 import { EdittoolComponent} from './edittool/edittool.component';
 
 import {ConfirmdialogComponent} from './confirmdialog/confirmdialog.component';
+import {AlertdialogComponent} from './alertdialog/alertdialog.component';
 
 import { MyfeedsComponent} from './myfeeds/myfeeds.component';
 import { FollowingComponent} from './following/following.component';
@@ -37,6 +38,7 @@ import { VgBufferingModule } from 'ngx-videogular';
   ],
 
   declarations: [
+    AlertdialogComponent,
     ConfirmdialogComponent,
     EdittoolComponent,
     MorenameComponent,
@@ -50,6 +52,7 @@ import { VgBufferingModule } from 'ngx-videogular';
     CommentComponent
   ],
   exports: [
+    AlertdialogComponent,
     ConfirmdialogComponent,
     EdittoolComponent,
     MorenameComponent,
@@ -65,7 +68,7 @@ import { VgBufferingModule } from 'ngx-videogular';
 
   providers: [
   ],
-  entryComponents: [ConfirmdialogComponent,EdittoolComponent,MorenameComponent,BackhomeComponent,TipdialogComponent,ServerpromptComponent,
+  entryComponents: [AlertdialogComponent,ConfirmdialogComponent,EdittoolComponent,MorenameComponent,BackhomeComponent,TipdialogComponent,ServerpromptComponent,
     PaypromptComponent,],
 })
 export class ComponentsModule { }
