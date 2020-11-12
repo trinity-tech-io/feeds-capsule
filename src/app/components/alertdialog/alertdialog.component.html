@@ -1,0 +1,17 @@
+<div class="container" [class.darkContainer]="theme.darkMode">
+  <ion-row class="header">
+    <img [src]="!theme.darkMode ? imgagePath : darkimgagePath">
+    <h1>{{ title | translate }}</h1>
+  </ion-row>
+  <ion-row>
+    <ion-col class="message">
+      <p>{{ message | translate }}</p>
+    </ion-col>
+  </ion-row>
+  <ion-row class="btns-row">
+    <ion-col class="btn confirm ion-activatable ripple" size="5.5" (click)="confirm(that)">
+        <ion-label>{{ okText | translate }}</ion-label>
+        <ion-ripple-effect></ion-ripple-effect>
+    </ion-col>
+  </ion-row>
+</div>

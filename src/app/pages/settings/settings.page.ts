@@ -53,9 +53,9 @@ export class SettingsPage implements OnInit {
 
   ionViewWillLeave(){
     this.events.unsubscribe("feeds:updateTitle");
-    // if(this.popover!=null){
-    //   this.popover.dismiss();
-    // }
+    if(this.popover!=null){
+      this.popover.dismiss();
+    }
   }
 
   toggleDeveloperMode(){

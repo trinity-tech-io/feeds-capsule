@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { AlertController} from '@ionic/angular';
 import {ConfirmdialogComponent} from '../components/confirmdialog/confirmdialog.component';
+import {AlertdialogComponent} from '../components/alertdialog/alertdialog.component';
 import { PopoverController} from '@ionic/angular';
 
 @Injectable()
@@ -16,22 +17,42 @@ export class PopupProvider {
         private popoverController:PopoverController
     ) {}
 
-    public ionicAlert(title: string, subTitle?: string, okText?: string): Promise<any> {
-        return new Promise((resolve, reject) => {
-            this.alertCtrl.create({
-                header : this.translate.instant(title),
-                subHeader : this.translate.instant(subTitle),
-                backdropDismiss: false,
-                cssClass: 'my-custom-alert',
-                buttons: [{
-                    text: okText ? okText : this.translate.instant('confirm'),
-                    handler: () => {
-                        resolve();
-                    }
-                }]
-            }).then(alert => alert.present());
-        });
+    public ionicAlert(
+        that: any,
+        title: string,
+        message: string,
+        okFunction: any, 
+        imgageName: string,
+        okText?: string) {
+        let ok = okText || "common.confirm";
+        return this.showalertdialog(that,title,message,okFunction,imgageName,ok);
     };
+
+    public async showalertdialog(that:any,title: string,message: string,okFunction:any,imgageName:string,okText?: string){
+        this.popover = await this.popoverController.create({
+            mode: 'ios',
+            cssClass: 'ConfirmdialogComponent',
+            component:AlertdialogComponent,
+            componentProps: {
+                "that":that, 
+                "title":title,
+                "message":message,
+                "okText":okText,
+                "okFunction":okFunction,
+                "imgageName":imgageName
+            },
+          });
+      
+          this.popover.onWillDismiss().then(()=>{
+               if(this.popover!=null){
+                 this.popover = null;
+               }
+                
+          })
+         await this.popover.present();
+
+         return this.popover;
+    }
 
     //tskth.svg
     ionicConfirm(
