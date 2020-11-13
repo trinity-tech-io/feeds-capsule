@@ -56,11 +56,12 @@
           </ion-row>
           <p>@{{ getChannelOwnerName(post.nodeId, post.channel_id) }}</p>
           <h2 *ngIf="post.post_status!=1">
-            <div *ngIf="getContentText(post.content).length<=maxTextSize" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)">
+            <div *ngIf="getPostContentTextSize(post.content)<=maxTextSize" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)">
               <pre [ngStyle]="styleObj">{{ getContentText(post.content) }}</pre>
             </div>
-            <div *ngIf="getContentText(post.content).length>maxTextSize" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)">
-              <pre [ngStyle]="styleObj">{{ getContentShortText(post) }}<span style="color:#368bff;">{{"common.fulltext" | translate }}</span></pre>
+            <div *ngIf="getPostContentTextSize(post.content)>maxTextSize" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)">
+              <pre [ngStyle]="styleObj">{{ getContentShortText(post) }}</pre>
+              <pre style="color:#368bff;">{{"common.fulltext" | translate }}</pre>
             </div>
           </h2>
           <h2 (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)" *ngIf="post.post_status===1">
