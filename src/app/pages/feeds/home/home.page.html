@@ -73,7 +73,7 @@
             class="post-img"
             style="width: 90%;"
             (click)="showBigImage(post.nodeId,post.channel_id,post.id)">
-            <span style="width: 10%;display:inline-block;height: 191px;" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)"></span>
+            <span class="topostdetailimg" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)"></span>
           </div>
        
           <div *ngIf="post.post_status!=1&&post.content.mediaType ===2" id={{post.nodeId+post.channel_id+post.id}}vgplayer style="width: 100%">
@@ -99,7 +99,7 @@
               </video>
               </vg-player>
              </div>
-              <span style="width: 10%;display:inline-block;height: 200px;" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)"></span>
+              <span class="topostdetailvideo" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)"></span>
             </div>
 
           <ion-row class="bottom-row">
