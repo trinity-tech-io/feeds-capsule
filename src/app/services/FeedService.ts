@@ -2508,7 +2508,7 @@ export class FeedService {
     }
 
     if (likeMap[mPostId] != undefined){
-      likeMap[postId] = {
+      likeMap[mPostId] = {
         nodeId    : nodeId,
         channelId : channelId,
         postId    : postId,
