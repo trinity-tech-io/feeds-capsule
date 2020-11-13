@@ -481,8 +481,8 @@ export class ConnectionService {
             id     : -1,
             params : {
                 access_token: accessToken.token,
-                channel_id  : channelId,
-                id          : postId,
+                channel_id  : Number(channelId),
+                id          : Number(postId),
                 content     : contentBin
             } 
         }
