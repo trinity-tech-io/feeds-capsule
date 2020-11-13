@@ -71,7 +71,11 @@ public static dateFormat(date: Date, sFormat: String = 'yyyy-MM-dd'): string {
 
   public static handleDisplayTime(createTime:number){
       let disPlayStr:any;
-      let curTime = new Date().getTime();
+      let postDate = new Date(createTime);
+      let curData = new Date();
+      let curTime = curData.getTime();
+      let postyear = postDate.getFullYear();
+      let curyear = curData.getFullYear();
       let chazhi = curTime - createTime;
     
       if(chazhi>0&&chazhi<this.oneminute){
@@ -87,12 +91,12 @@ public static dateFormat(date: Date, sFormat: String = 'yyyy-MM-dd'): string {
            return {content:disPlayStr,type:"h"};
       }
 
-      if(chazhi>=this.hour24&&chazhi<(31*this.hour24)){
+      if(chazhi>=this.hour24&&chazhi<(7*this.hour24)){
         disPlayStr = Math.floor(chazhi/(24*1000*60*60));
         return {content:disPlayStr,type:"day"};
       }
 
-      if(chazhi>=(31*this.hour24)&&chazhi<365*24*60*60*1000){
+      if(chazhi>=(7*this.hour24)&&postyear===curyear){
         disPlayStr = this.dateFormat(new Date(createTime),"MM-dd");
         return  {content:disPlayStr,type:"d"};
       }
