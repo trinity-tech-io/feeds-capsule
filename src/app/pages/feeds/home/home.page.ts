@@ -57,7 +57,7 @@ export class HomePage implements OnInit {
   public cacheGetBinaryRequestKey = "";
   public cachedMediaType = "";
 
-  public maxTextSize = 144;
+  public maxTextSize = 240;
 
   constructor(
     private elmRef: ElementRef,
@@ -353,7 +353,13 @@ addBinaryEvevnt(){
   getContentShortText(post:any): string{
     let   content = post.content;
     let  text = this.feedService.parsePostContentText(content) || "";
-    return text.substring(0,this.maxTextSize)+"...";
+    return text.substring(0,180);
+  }
+
+  getPostContentTextSize(content:string){
+   let text = this.feedService.parsePostContentText(content);
+   let size = UtilService.getSize(text);
+   return size;
   }
 
   getContentImg(content: any): string{

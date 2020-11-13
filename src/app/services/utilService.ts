@@ -136,5 +136,25 @@ public static dateFormat(date: Date, sFormat: String = 'yyyy-MM-dd'): string {
     }
     return result
   }
+
+
+  public static getSize(dataName:string) {
+    let totalLength = 0;
+    let charCode:number = 0;
+    for (var i = 0; i < dataName.length; i++) {
+    charCode = dataName.charCodeAt(i);
+    if (charCode < 0x007f) {
+    totalLength++;
+    } else if ((0x0080 <= charCode) && (charCode <= 0x07ff)) {
+    totalLength += 2;
+    } else if ((0x0800 <= charCode) && (charCode <= 0xffff)) {
+    totalLength += 3;
+    } else {
+    totalLength += 4;
+    }
+    }
+    var totalLengthMax=Number(totalLength);
+    return totalLengthMax;
+    }
 }
 
