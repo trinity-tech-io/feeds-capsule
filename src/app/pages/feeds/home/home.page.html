@@ -66,13 +66,7 @@
           <h2 (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)" *ngIf="post.post_status===1">
             <pre>{{'common.deleted' | translate}}</pre>
           </h2>
-          <!-- <img 
-            *ngIf="post.post_status != 1 && images[post.nodeId+post.channel_id+post.id] != 'none' && images[post.nodeId+post.channel_id+post.id] != 'undefine' && images[post.nodeId+post.channel_id+post.id] != null && images[post.nodeId+post.channel_id+post.id] != 'undefine'"
-            [src]="images[post.nodeId+post.channel_id+post.id]" 
-            class="post-img"
-            (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)"
-          >  -->
-
+          
           <div *ngIf="post.post_status!=1&&post.content.mediaType ===1" id={{post.nodeId+post.channel_id+post.id}}rpostimg style="width: 100%">
             <img
             id ={{post.nodeId+post.channel_id+post.id}}postimg
@@ -94,16 +88,9 @@
                   </vg-scrub-bar>
               
                   <vg-controls> 
-                         <vg-play-pause></vg-play-pause>
-                        <!--<vg-playback-button></vg-playback-button> -->
-              
-                      <!-- <vg-time-display vgProperty="current" vgFormat="mm:ss"></vg-time-display>
-                      <vg-time-display vgProperty="total" vgFormat="mm:ss"></vg-time-display>
-                      <vg-mute></vg-mute> -->
-                      <vg-fullscreen id={{post.nodeId+post.channel_id+post.id}}vgfullscreenhome></vg-fullscreen>
                       <vg-time-display vgProperty="current" vgFormat="mm:ss"></vg-time-display>
-                      <!-- <vg-time-display vgProperty="total" vgFormat="mm:ss"></vg-time-display> -->
                       <span class="totaltime">{{handleTotal(post)}}</span>
+                      <vg-fullscreen id={{post.nodeId+post.channel_id+post.id}}vgfullscreenhome></vg-fullscreen>
                   </vg-controls>
                
               <video #media [vgMedia]="media" id ={{post.nodeId+post.channel_id+post.id}}video
