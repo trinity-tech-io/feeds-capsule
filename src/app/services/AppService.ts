@@ -1,5 +1,5 @@
 import { Injectable} from '@angular/core';
-import { Router, NavigationExtras} from '@angular/router';
+import { Router} from '@angular/router';
 import { ThemeService } from "./../services/theme.service";
 import { NgZone} from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
@@ -7,9 +7,9 @@ import { Events } from '@ionic/angular';
 import { NativeService } from '../services/NativeService';
 import { FeedService, SignInData } from '../services/FeedService';
 import { CarrierService } from '../services/CarrierService';
-import { BackhomeComponent} from '../components/backhome/backhome.component';
 import { MenuController,PopoverController } from '@ionic/angular';
 import { MenuService } from 'src/app/services/MenuService';
+import { PopupProvider } from 'src/app/services/popup';
 
 declare let appManager: AppManagerPlugin.AppManager;
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
@@ -22,7 +22,7 @@ let managerService: any;
 export class AppService {
 
     // @ViewChild(IonRouterOutlet,{static:true}) ionRouterOutlet: IonRouterOutlet;
-
+    public popover:any = null;
     constructor(
       private router: Router,
       public theme: ThemeService,
@@ -33,6 +33,7 @@ export class AppService {
       private feedService: FeedService,
       private carrierService: CarrierService,
       private menu: MenuController,
+      public popupProvider:PopupProvider,
       private popoverController: PopoverController,
       private menuService: MenuService,
       private events: Events
@@ -189,16 +190,28 @@ export class AppService {
     }
 
     async createDialog(){
-      let popover = await this.popoverController.create({
-        mode: 'ios',
-        cssClass: 'genericPopup',
-        component: BackhomeComponent,
-      });
-      popover.onWillDismiss().then(() => {
-          popover = null;
-      });
-      
-      return await popover.present();
+    
+      this.popover = this.popupProvider.ionicConfirm(
+        this,
+        // "ConfirmdialogComponent.signoutTitle",
+        "",
+        "common.des2",
+        this.cancel,
+        this.confirm,
+        'tskth.svg'
+      );
+    }
+
+
+    cancel(that:any){
+      if(this.popover!=null){
+         this.popover.dismiss();
+      }
+    }
+  
+    confirm(that:any){
+      this.popover.dismiss();
+      that.native.setRootRouter(['/tabs/home']);
     }
 
     initTab(){
