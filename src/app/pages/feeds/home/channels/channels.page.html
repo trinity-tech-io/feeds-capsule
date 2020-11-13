@@ -69,7 +69,8 @@
                 <span> {{ handleDisplayTime(post.created_at) }}</span>
               </ion-label>
             </ion-col>
-            <img *ngIf="post.post_status != 1"
+            <img class="moremenuclick"
+            *ngIf="post.post_status != 1"
               [src]="!theme.darkMode ? './assets/images/dots-three-vertical.svg' : './assets/images/dots-three-vertical-dark.svg'"
               (click)="menuMore(post)"
             >
