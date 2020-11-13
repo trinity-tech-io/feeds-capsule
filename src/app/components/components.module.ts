@@ -8,7 +8,6 @@ import { FormsModule } from '@angular/forms';
 import { ServerpromptComponent} from './serverprompt/serverprompt.component';
 import { PaypromptComponent } from './payprompt/payprompt.component';
 import { TipdialogComponent} from './tipdialog/tipdialog.component';
-import { BackhomeComponent} from './backhome/backhome.component';
 import { MorenameComponent} from './morename/morename.component';
 import { EdittoolComponent} from './edittool/edittool.component';
 
@@ -42,7 +41,6 @@ import { VgBufferingModule } from 'ngx-videogular';
     ConfirmdialogComponent,
     EdittoolComponent,
     MorenameComponent,
-    BackhomeComponent,
     TipdialogComponent,
     PaypromptComponent,
     ServerpromptComponent,
@@ -56,7 +54,6 @@ import { VgBufferingModule } from 'ngx-videogular';
     ConfirmdialogComponent,
     EdittoolComponent,
     MorenameComponent,
-    BackhomeComponent,
     TipdialogComponent,
     PaypromptComponent,
     ServerpromptComponent,
@@ -68,7 +65,7 @@ import { VgBufferingModule } from 'ngx-videogular';
 
   providers: [
   ],
-  entryComponents: [AlertdialogComponent,ConfirmdialogComponent,EdittoolComponent,MorenameComponent,BackhomeComponent,TipdialogComponent,ServerpromptComponent,
+  entryComponents: [AlertdialogComponent,ConfirmdialogComponent,EdittoolComponent,MorenameComponent,TipdialogComponent,ServerpromptComponent,
     PaypromptComponent,],
 })
 export class ComponentsModule { }
