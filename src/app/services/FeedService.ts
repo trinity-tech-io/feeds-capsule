@@ -5169,13 +5169,15 @@ export class FeedService {
     let videoThumbKeyObj:FeedsData.VideoThumbKey = undefined;
     if (videoThumb != ""){
       let mDuration = videoThumb.duration;
+      let size = videoThumb.videoSize || 0;
       let mVideoThumbKey = this.getVideoThumbKey(nodeId, channelId, postId, commentId, 0);
       this.storeService.set(mVideoThumbKey, videoThumb.videoThumb);
       mMediaType = FeedsData.MediaType.containsVideo;
 
       videoThumbKeyObj = {
-        videoThumbKey: mVideoThumbKey,
-        duration: mDuration
+        videoThumbKey : mVideoThumbKey,
+        duration      : mDuration,
+        videoSize     : size
       }
     }
 
@@ -5183,13 +5185,17 @@ export class FeedService {
     let imgThumbKeys: FeedsData.ImageThumbKey[] = [];
     if (imageThumbs != ""){
       for (let index = 0; index < imageThumbs.length; index++) {
-        let thumbIndex = index;
+        let imageThumb:FeedsData.ImgThumb = imageThumbs[index];
+        let thumbIndex = imageThumb.index;
+        let image = imageThumb.imgThumb;
+        let size = imageThumb.imgSize;
         let key = this.getImageThumbnailKey(nodeId,channelId,postId,commentId,thumbIndex);
-        this.storeService.set(key,imageThumbs[index].imgThumb);
+        this.storeService.set(key, image);
 
         imgThumbKeys[index] = {
-          index: thumbIndex,
-          imgThumbKey: key
+          index       : thumbIndex,
+          imgThumbKey : key,
+          imgSize     : size
         }
       }
       mMediaType = FeedsData.MediaType.containsImg;
@@ -5213,11 +5219,13 @@ export class FeedService {
     let mMediaType = FeedsData.MediaType.noMeida;
     if (img != ""){
       let key = this.getImageThumbnailKey(nodeId,channelId,postId,commentId,0);
+      let size = img.length;
       this.storeService.set(key,img);
 
       imgThumbKeys[0] = {
-        index: 0,
-        imgThumbKey: key
+        index       : 0,
+        imgThumbKey : key,
+        imgSize     : size
       }
       mMediaType = FeedsData.MediaType.containsImg;
     }
@@ -5340,10 +5348,12 @@ export class FeedService {
     let imgKey = "postContentImg" + mNCPId ;
     this.storeService.get(imgKey).then((image)=>{
       let mImage = image || ""
+      let size = mImage.length;
       if (mImage != ""){
         mImgThumbKeys[0] = {
-          index: 0,
-          imgThumbKey: imgKey
+          index       : 0,
+          imgThumbKey : imgKey,
+          imgSize     : size
         }
         mMediaType = FeedsData.MediaType.containsImg;
       }
@@ -5684,19 +5694,21 @@ export class FeedService {
     console.log("Session error :: nodeId : "+nodeId+" errorCode: "+response.code+" errorMessage:"+response.message);
   }
 
-  createVideoContent(postText: string, videoThumb: any, durition: number): string{
+  createVideoContent(postText: string, videoThumb: any, durition: number, videoSize: number): string{
     let videoThumbs: FeedsData.VideoThumb = {
-      videoThumb   :   videoThumb,
-      duration     :   durition
+      videoThumb  :   videoThumb,
+      duration    :   durition,
+      videoSize   :   videoSize
     };
     return this.createContent(postText, null, videoThumbs);
   }
 
-  createOneImgContent(postText: string, imageThumb: any): string{
+  createOneImgContent(postText: string, imageThumb: any, imageSize: number): string{
     let imgThumbs: FeedsData.ImgThumb[] = [];
     let imgThumb: FeedsData.ImgThumb = {
       index   : 0,
-      imgThumb: imageThumb
+      imgThumb: imageThumb,
+      imgSize : imageSize
     }
     imgThumbs.push(imgThumb);
 

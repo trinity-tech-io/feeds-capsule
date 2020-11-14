@@ -30,7 +30,7 @@ export class CreatenewpostPage implements OnInit {
   public channelId: number = 0;
   
   public posterImg:any = "";
-  public flieUri:any = "";
+  public flieUri:string = "";
   public uploadProgress:number = 0;
   public videotype:string = "video/mp4";
   public transcode:number = 0;
@@ -274,9 +274,11 @@ export class CreatenewpostPage implements OnInit {
     this.feedService.restoreSession(this.nodeId);
 
     if (this.flieUri != ""){
+      let size = this.flieUri.length;
       let videoThumbs: FeedsData.VideoThumb = {
-        videoThumb   :   this.posterImg,
-        duration     :   this.duration
+        videoThumb  :   this.posterImg,
+        duration    :   this.duration,
+        videoSize   :   size
       };
       let content = this.feedService.createContent(this.newPost, null, videoThumbs);
       // this.feedService.publishPost(
@@ -294,11 +296,13 @@ export class CreatenewpostPage implements OnInit {
     }
 
     if (this.imgUrl != ""){
+      let size = this.imgUrl.length;
       this.feedService.compress(this.imgUrl).then((imageThumb)=>{
         let imgThumbs: FeedsData.ImgThumb[] = [];
         let imgThumb: FeedsData.ImgThumb = {
           index   : 0,
-          imgThumb: imageThumb
+          imgThumb: imageThumb,
+          imgSize : size
         }
         imgThumbs.push(imgThumb);
 
@@ -414,12 +418,20 @@ selectvideo(){
               let fileReader = new FileReader();
               fileReader.onloadend =(event:any)=>{
                this.zone.run(()=>{
-                 this.flieUri = fileReader.result;
-                 let sid = setTimeout(()=>{
+                  let result = fileReader.result;
+                  if (typeof result == "string")
+                    this.flieUri = result;
+                  else{
+                    ab2str(result,function(str){
+                      this.flieUri = str;
+                    });
+                  }
+                  
+                  let sid = setTimeout(()=>{
                   //let img = new Image;
                   this.setFullScreen();
                   clearInterval(sid);
-                 },20);
+                  },20);
                })
               };
 
@@ -631,4 +643,9 @@ handleTotal(duration:any){
   // }, {limit:1,duration:14});
   // }
 }
- 
+function ab2str(u,f) {
+  var b = new Blob([u]);
+  var r = new FileReader();
+   r.readAsText(b, 'utf-8');
+   r.onload = function (){if(f)f.call(null,r.result)}
+}

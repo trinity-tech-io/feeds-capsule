@@ -99,22 +99,26 @@ declare namespace FeedsData{
     }
 
     type ImgThumb = {
-        index: number,
-        imgThumb: any
+        index   : number,
+        imgThumb: any,
+        imgSize    : number
     }
 
     type ImageThumbKey = {
         index       :   number,
-        imgThumbKey :   string
+        imgThumbKey :   string,
+        imgSize   :   number
     }
     type VideoThumb = {
         videoThumb      :   string,
-        duration        :   number
+        duration        :   number,
+        videoSize       :   number
     }
 
     type VideoThumbKey = {
         videoThumbKey   :   string,
-        duration        :   number
+        duration        :   number,
+        videoSize       :   number
     }
 
     type AllFeed = {

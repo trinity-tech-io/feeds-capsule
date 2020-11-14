@@ -24,7 +24,7 @@ export class AboutPage implements OnInit {
     private events: Events,
     private feedService: FeedService,
     public theme: ThemeService
-  ) {}
+  ) {alert(Number.MAX_VALUE);}
 
     ngOnInit() {
     }
