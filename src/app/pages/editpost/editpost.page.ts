@@ -34,7 +34,7 @@ export class EditpostPage implements OnInit {
 
   public posterImg:any = "";
   public oldPosterImg:any ="";
-  public flieUri:any = "";
+  public flieUri:string = "";
   public uploadProgress:number = 0;
   public videotype:string = "video/mp4";
   public transcode:number = 0;
@@ -46,6 +46,8 @@ export class EditpostPage implements OnInit {
 
   public isShowVideo:boolean = false;
   private editState:FeedsData.EditState = FeedsData.EditState.NoChange;
+  private throwMsgTransDataLimit = 4 * 1000 * 1000;
+  private transDataChannel:FeedsData.TransDataChannel = FeedsData.TransDataChannel.MESSAGE;
 
   constructor(
     private events: Events,
@@ -159,19 +161,17 @@ export class EditpostPage implements OnInit {
       });
     });
 
+    
+    this.events.subscribe('feeds:setBinaryFinish', (nodeId, key) => {
+      this.zone.run(() => {
+        this.processSetBinaryResult();
+      });
+    });
 
     this.events.subscribe('stream:setBinarySuccess', (nodeId, key) => {
       this.zone.run(() => {
         this.feedService.closeSession(nodeId);
-        this.navCtrl.pop().then(()=>{
-          this.events.publish("update:tab");
-          this.posterImg ="";
-          this.oldImgUrl="";
-          this.flieUri="";
-          this.imgUrl="";
-          this.native.hideLoading();
-          this.native.toast_trans("CreatenewpostPage.tipMsg1");
-        });
+        this.processSetBinaryResult();
       });
     });
 
@@ -197,7 +197,9 @@ export class EditpostPage implements OnInit {
     this.events.unsubscribe("rpcRequest:error");
     this.events.unsubscribe("rpcResponse:error");
     this.events.unsubscribe("feeds:editPostFinish");
-
+    
+    this.events.unsubscribe("feeds:setBinaryFinish");
+    
     this.events.unsubscribe("stream:setBinarySuccess");
     this.events.unsubscribe("stream:setBinaryError");
     this.events.unsubscribe("stream:onStateChangedCallback");
@@ -277,8 +279,9 @@ export class EditpostPage implements OnInit {
     //content img & only text changed
     if (this.newPost != this.oldNewPost && this.imgUrl == this.oldImgUrl && this.imgUrl != ""){
       this.editState = FeedsData.EditState.TextChange;
+      let size = this.feedService.getContentDataSize(this.nodeId, this.channelId, this.postId, 0, 0, FeedsData.MediaType.containsImg);
       this.feedService.compress(this.imgUrl).then((imageThumb)=>{
-        let content = this.feedService.createOneImgContent(this.newPost, imageThumb);
+        let content = this.feedService.createOneImgContent(this.newPost, imageThumb, size);
         this.publishEditedPost(content);
       });
       return;
@@ -287,7 +290,8 @@ export class EditpostPage implements OnInit {
     //content video && only text changed
     if (this.newPost != this.oldNewPost && this.posterImg == this.oldPosterImg && this.posterImg != ""){
       this.editState = FeedsData.EditState.TextChange;
-      let content = this.feedService.createVideoContent(this.newPost, this.posterImg, this.duration);
+      let size = this.feedService.getContentDataSize(this.nodeId, this.channelId, this.postId, 0, 0, FeedsData.MediaType.containsVideo);
+      let content = this.feedService.createVideoContent(this.newPost, this.posterImg, this.duration, size);
       this.publishEditedPost(content);
       return;
     }
@@ -301,11 +305,19 @@ export class EditpostPage implements OnInit {
     //   return;
     // }
 
-    this.feedService.restoreSession(this.nodeId);
+    let videoSize = this.flieUri.length;
+    let imgSize = this.imgUrl.length;
+
+    if (videoSize > this.throwMsgTransDataLimit || imgSize > this.throwMsgTransDataLimit){
+      this.transDataChannel = FeedsData.TransDataChannel.SESSION
+      this.feedService.restoreSession(this.nodeId);
+    }else{
+      this.transDataChannel = FeedsData.TransDataChannel.MESSAGE
+    }
 
     if (this.flieUri != "" && this.posterImg != this.oldImgUrl){
       this.editState = FeedsData.EditState.TextVideoChange;
-      let content = this.feedService.createVideoContent(this.newPost, this.posterImg, this.duration);
+      let content = this.feedService.createVideoContent(this.newPost, this.posterImg, this.duration, videoSize);
       this.publishEditedPost(content);
       return;
     }
@@ -313,7 +325,7 @@ export class EditpostPage implements OnInit {
     if (this.imgUrl != "" && this.imgUrl != this.oldImgUrl){
       this.feedService.compress(this.imgUrl).then((imageThumb)=>{
         this.editState = FeedsData.EditState.TextImageChange;
-        let content = this.feedService.createOneImgContent(this.newPost, imageThumb);
+        let content = this.feedService.createOneImgContent(this.newPost, imageThumb, imgSize);
         this.publishEditedPost(content);
       });
     }
@@ -470,7 +482,15 @@ export class EditpostPage implements OnInit {
               fileReader.onloadend =(event:any)=>{
 
                this.zone.run(()=>{
-                 this.flieUri = fileReader.result; 
+                //  this.flieUri = fileReader.result; 
+                 let result = fileReader.result;
+                  if (typeof result == "string")
+                    this.flieUri = result;
+                  else{
+                    ab2str(result,function(str){
+                      this.flieUri = str;
+                    });
+                  }
                  this.isShowVideo = true;
                  let sid = setTimeout(()=>{
                   //let img = new Image;
@@ -756,5 +776,24 @@ readThumbnail(fileName:string,filepath:string){
     (err:any)=>{
           console.log("=====pathErr====="+JSON.stringify(err));
     });
+  }
+
+  processSetBinaryResult(){
+    this.navCtrl.pop().then(()=>{
+      this.events.publish("update:tab");
+      this.posterImg ="";
+      this.oldImgUrl="";
+      this.flieUri="";
+      this.imgUrl="";
+      this.native.hideLoading();
+      this.native.toast_trans("CreatenewpostPage.tipMsg1");
+    });
+  } 
 }
+
+function ab2str(u,f) {
+  var b = new Blob([u]);
+  var r = new FileReader();
+   r.readAsText(b, 'utf-8');
+   r.onload = function (){if(f)f.call(null,r.result)}
 }

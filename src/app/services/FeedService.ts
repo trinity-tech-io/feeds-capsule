@@ -1362,6 +1362,16 @@ export class FeedService {
       case FeedsData.MethodType.updateCredential:
         this.handleUpdateCredentialResponse(nodeId, result, requestParams, error);
         break;
+
+
+      case FeedsData.MethodType.setBinary:
+        this.handleSetBinaryResponse(nodeId, result, requestParams, error);
+        break;
+
+
+      case FeedsData.MethodType.getBinary:
+        this.handleGetBinaryResponse(nodeId, result, requestParams, error);
+        break;
       default:
         break;
     }
@@ -4152,6 +4162,32 @@ export class FeedService {
     this.signinChallengeRequest(nodeId, true);
   }
 
+
+  handleSetBinaryResponse(nodeId, result, requestParams, error){
+    if (error != null && error != undefined && error.code != undefined){
+      this.handleError(nodeId, error);
+      return;
+    }
+
+    eventBus.publish("feeds:setBinaryFinish", nodeId);
+  }
+
+  handleGetBinaryResponse(nodeId, result, requestParams, error){
+    if (error != null && error != undefined && error.code != undefined){
+      this.handleError(nodeId, error);
+      return;
+    }
+
+    let key = result.key;
+    let contentBin = result.content;
+
+    let value = this.serializeDataService.decodeData(contentBin);
+    this.storeService.set(key, value).then(()=>{
+        console.log("feeds:getBinaryFinish nodeId>>> "+ nodeId+" key>>>"+key+" value>>>"+value);
+        eventBus.publish("feeds:getBinaryFinish", nodeId, key, value);
+    });
+  }
+
   doIssueCredential(nodeId: string, did: string, serverName: string, serverDesc: string,elaAddress:string, onSuccess:()=> void, onError:()=>void){
     this.issueCredential(nodeId,did, serverName,serverDesc,elaAddress,
       (credential)=>{
@@ -5092,6 +5128,32 @@ export class FeedService {
     }
   }
 
+  sendDataFromMsg(nodeId: string, channelId: number, postId: number, 
+    commentId: number, index: number,
+    videoData: any, imgData: any){
+      if (videoData != ""){
+        let key = this.getVideoKey(nodeId,channelId,postId,commentId,index);
+        this.setBinaryFromMsg(nodeId,key,videoData);
+      }else if(imgData != ""){
+        let key = this.getImageKey(nodeId,channelId,postId,commentId,index);
+        this.setBinaryFromMsg(nodeId,key,imgData);
+      }
+  }
+
+  setBinaryFromMsg(nodeId: string, key: string, content: any){
+    if(!this.hasAccessToken(nodeId))
+      return;
+    let accessToken: FeedsData.AccessToken = accessTokenMap[nodeId]||undefined;
+    this.connectionService.setBinary(this.getServerNameByNodeId(nodeId),nodeId,key,content,accessToken);
+  }
+
+  getBinaryFromMsg(nodeId: string, key: string){
+    if(!this.hasAccessToken(nodeId))
+      return;
+    let accessToken: FeedsData.AccessToken = accessTokenMap[nodeId]||undefined;
+    this.connectionService.getBinary(this.getServerNameByNodeId(nodeId),nodeId,key,accessToken);
+  }
+
 
   compress(imgData: string): Promise<any>{
     return new Promise((resolve, reject) =>{
@@ -5219,7 +5281,7 @@ export class FeedService {
     let mMediaType = FeedsData.MediaType.noMeida;
     if (img != ""){
       let key = this.getImageThumbnailKey(nodeId,channelId,postId,commentId,0);
-      let size = img.length;
+      let size = img.length || 0;
       this.storeService.set(key,img);
 
       imgThumbKeys[0] = {
@@ -5280,7 +5342,7 @@ export class FeedService {
     return mImgThumbKey.imgThumbKey;
   }
 
-  getVideoThumbFromId(nodeId: string, channelId: number, postId: number, commentId: number):FeedsData.VideoThumbKey{
+  getVideoThumbKeyFromId(nodeId: string, channelId: number, postId: number, commentId: number):FeedsData.VideoThumbKey{
     let content = this.getContentFromId(nodeId, channelId, postId, commentId);
     if (content == undefined)
       return undefined;
@@ -5289,7 +5351,7 @@ export class FeedService {
   }
   
   getVideoThumbStrFromId(nodeId: string, channelId: number, postId: number, commentId: number):string{
-    let mVideoThumbKey = this.getVideoThumbFromId(nodeId,channelId,postId,commentId);
+    let mVideoThumbKey = this.getVideoThumbKeyFromId(nodeId,channelId,postId,commentId);
     if (mVideoThumbKey == undefined)
       return undefined;
 
@@ -5297,7 +5359,7 @@ export class FeedService {
   }
 
   getVideoDurationFromId(nodeId: string, channelId: number, postId: number, commentId: number):number{
-    let mVideoThumbKey = this.getVideoThumbFromId(nodeId,channelId,postId,commentId);
+    let mVideoThumbKey = this.getVideoThumbKeyFromId(nodeId,channelId,postId,commentId);
     if (mVideoThumbKey == undefined)
       return undefined;
 
@@ -5311,6 +5373,25 @@ export class FeedService {
       return undefined;
 
     return content.version;
+  }
+
+  getContentDataSize(nodeId: string, channelId: number, postId: number, commentId: number, index: number, mediaType: FeedsData.MediaType): number{
+    switch (mediaType){
+      case FeedsData.MediaType.noMeida:
+        return 0;
+      case FeedsData.MediaType.containsImg:
+        let imgThumbKey: FeedsData.ImageThumbKey = this.getImgThumbKeyFromId(nodeId, channelId, postId, commentId, index);
+        if (imgThumbKey == undefined)
+          return 0;
+        else 
+          return imgThumbKey.imgSize;
+      case FeedsData.MediaType.containsVideo:
+        let videoThumbKey: FeedsData.VideoThumbKey = this.getVideoThumbKeyFromId(nodeId,channelId,postId,commentId);
+        if (videoThumbKey == undefined)
+          return 0;
+        else
+          return videoThumbKey.videoSize;
+    }
   }
 
   updateAllContentData(){
@@ -5427,7 +5508,7 @@ export class FeedService {
       }
     }
 
-    let videoThumb = this.getVideoThumbFromId(nodeId, channelId, postId, commentId);
+    let videoThumb = this.getVideoThumbKeyFromId(nodeId, channelId, postId, commentId);
     if (videoThumb != null && videoThumb != undefined){
       this.storeService.remove(videoThumb.videoThumbKey);
       let videoKey = this.getVideoKey(nodeId,channelId,postId,commentId,0);

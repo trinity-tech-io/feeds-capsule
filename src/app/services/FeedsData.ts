@@ -68,7 +68,10 @@ declare namespace FeedsData{
         SESSION_START_ERROR = -314,        
         
     }
-
+    const enum TransDataChannel {
+        MESSAGE,
+        SESSION
+    }
     const enum StreamState {
         NOTINIT = -1,
         /** Raw stream. */
@@ -178,6 +181,8 @@ declare namespace FeedsData{
         updateCredential = "update_credential",
         enable_notification = "enable_notification",
 
+        getBinary = "get_binary",
+        setBinary = "set_binary",
         //PUSH Notification
         newPostNotification = "new_post",
         newCommentNotification = "new_comment",

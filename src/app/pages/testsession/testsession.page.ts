@@ -105,16 +105,16 @@ export class TestsessionPage implements OnInit {
     // this.sessionService.toBytes(null);
     let imgThumbs: FeedsData.ImgThumb[] = [];
 
-    let imgThumb: FeedsData.ImgThumb = {
-      index: 0,
-      imgThumb: "this.imgUrl"
-    }
-    imgThumbs.push(imgThumb);
+    // let imgThumb: FeedsData.ImgThumb = {
+    //   index: 0,
+    //   imgThumb: "this.imgUrl"
+    // }
+    // imgThumbs.push(imgThumb);
 
-    let videoThumbs: FeedsData.VideoThumb = {
-      videoThumb   :   "videoThumb",
-      duration        :   0
-    };
+    // let videoThumbs: FeedsData.VideoThumb = {
+    //   videoThumb   :   "videoThumb",
+    //   duration        :   0
+    // };
 
     // let json = this.feedService.createContent("text", imgThumbs, videoThumbs);
 

@@ -553,7 +553,7 @@ export class ConnectionService {
 
     getServerVersion(serverName: string, nodeId: string, accessToken: FeedsData.AccessToken){
         if (accessToken == undefined)
-        return ;
+            return ;
 
         let request: Communication.get_service_version_request = {
             version: "1.0",
@@ -569,7 +569,7 @@ export class ConnectionService {
 
     updateCredential(serverName: string, nodeId: string, credential: string, accessToken: FeedsData.AccessToken){
         if (accessToken == undefined)
-        return ;
+            return ;
 
         let request: Communication.update_credential_request = {
             version: "1.0",
@@ -578,6 +578,43 @@ export class ConnectionService {
             params : {
                 access_token: accessToken.token,
                 credential: credential
+            }
+        }
+
+        this.sendRPCMessage(serverName, nodeId, request.method, request.params, ""); 
+    }
+
+    setBinary(serverName: string, nodeId: string, key: string,  content: any, accessToken: FeedsData.AccessToken){
+        if (accessToken == undefined)
+            return ;
+
+        let request: Communication.set_binary_request = {
+            version: "1.0",
+            method : "set_binary",
+            id     : -1,
+            params : {
+                access_token: accessToken.token,
+                key         : key,
+                algo        : "None", // "None", "SHA256", "CRC"...
+                checksum    : "",
+                content     : content
+            }
+        }
+
+        this.sendRPCMessage(serverName, nodeId, request.method, request.params, ""); 
+    }
+
+    getBinary(serverName: string, nodeId: string, key: string, accessToken: FeedsData.AccessToken){
+        if (accessToken == undefined)
+            return ;
+
+        let request: Communication.get_binary_request = {
+            version: "1.0",
+            method : "get_binary",
+            id     : -1,
+            params : {
+                access_token: accessToken.token,
+                key         : key
             }
         }
 
