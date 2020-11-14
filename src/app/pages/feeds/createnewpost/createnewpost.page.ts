@@ -40,7 +40,8 @@ export class CreatenewpostPage implements OnInit {
   private sessionState = -1;
 
   public totalProgress:number = 0;
-
+  private throwMsgTransDataLimit = 4 * 1000 * 1000;
+  private transDataChannel:FeedsData.TransDataChannel = FeedsData.TransDataChannel.MESSAGE;
   constructor(
     private events: Events,
     private native: NativeService,
@@ -117,8 +118,16 @@ export class CreatenewpostPage implements OnInit {
     this.events.subscribe('feeds:declarePostSuccess', (postId) => {
       this.zone.run(()=>{
         this.postId = postId;
-        if (this.sessionState === 4)
-          this.feedService.sendData(this.nodeId,this.channelId,postId, 0 ,0, this.flieUri,this.imgUrl);
+        if (this.transDataChannel == FeedsData.TransDataChannel.MESSAGE){
+          this.feedService.sendDataFromMsg(this.nodeId,this.channelId,postId, 0 ,0, this.flieUri,this.imgUrl);
+          return;
+        }
+
+        if (this.transDataChannel == FeedsData.TransDataChannel.SESSION){
+          if (this.sessionState === FeedsData.StreamState.CONNECTED)
+            this.feedService.sendData(this.nodeId,this.channelId,postId, 0 ,0, this.flieUri,this.imgUrl);
+          return;
+        }
       });
     });
 
@@ -138,6 +147,14 @@ export class CreatenewpostPage implements OnInit {
       this.initTitle();
     });
 
+    this.events.subscribe('feeds:setBinaryFinish', (nodeId, key) => {
+      this.zone.run(() => {
+        if (this.postId != 0){
+          this.feedService.closeSession(this.nodeId);
+          this.feedService.notifyPost(this.nodeId, this.channelId, this.postId);
+        }
+      });
+    });
 
     this.events.subscribe('stream:setBinarySuccess', (nodeId, key) => {
       this.zone.run(() => {
@@ -194,8 +211,10 @@ export class CreatenewpostPage implements OnInit {
     this.events.unsubscribe("feeds:publishPostSuccess");
     this.events.unsubscribe("rpcRequest:error");
     this.events.unsubscribe("rpcResponse:error");
+    
+    this.events.unsubscribe("feeds:feeds:setBinaryFinish");
+    
     this.events.unsubscribe("stream:setBinarySuccess");
-    this.events.unsubscribe("stream:getBinarySuccess");
     this.events.unsubscribe("stream:setBinaryError");
     this.events.unsubscribe("stream:onStateChangedCallback");
     this.events.unsubscribe("feeds:openRightMenu");
@@ -225,7 +244,7 @@ export class CreatenewpostPage implements OnInit {
 
   post(){
     let  newPost = this.native.iGetInnerText(this.newPost);
-    if (this.feedService.getServerStatusFromId(this.nodeId) == 0){
+    if (this.feedService.getServerStatusFromId(this.nodeId) != 0){
       this.native.toast_trans("common.connectionError");
       return;
     }
@@ -256,36 +275,32 @@ export class CreatenewpostPage implements OnInit {
       return ;
     }
 
-    if (this.feedService.getServerStatusFromId(this.nodeId) == 0){
-      this.feedService.restoreSession(this.nodeId);
-    }else{
-      return;
-    }
-
     this.publishPostThrowMsg(); 
   }
 
   publishPostThrowMsg(){
-    if (this.feedService.getServerStatusFromId(this.nodeId) != 0){
-      this.native.toast_trans("common.connectionError");
-      return;
+    // if (this.feedService.getServerStatusFromId(this.nodeId) != 0){
+    //   this.native.toast_trans("common.connectionError");
+    //   return;
+    // }
+
+    let videoSize = this.flieUri.length;
+    let imgSize = this.imgUrl.length;
+
+    if (videoSize > this.throwMsgTransDataLimit || imgSize > this.throwMsgTransDataLimit){
+      this.transDataChannel = FeedsData.TransDataChannel.SESSION
+      this.feedService.restoreSession(this.nodeId);
+    }else{
+      this.transDataChannel = FeedsData.TransDataChannel.MESSAGE
     }
-
-    this.feedService.restoreSession(this.nodeId);
-
+    
     if (this.flieUri != ""){
-      let size = this.flieUri.length;
       let videoThumbs: FeedsData.VideoThumb = {
         videoThumb  :   this.posterImg,
         duration    :   this.duration,
-        videoSize   :   size
+        videoSize   :   videoSize
       };
-      let content = this.feedService.createContent(this.newPost, null, videoThumbs);
-      // this.feedService.publishPost(
-      //   this.nodeId,       
-      //   this.channelId,
-      //   content
-      // );
+    let content = this.feedService.createContent(this.newPost, null, videoThumbs);
       this.feedService.declarePost(
         this.nodeId,
         this.channelId,
@@ -296,23 +311,16 @@ export class CreatenewpostPage implements OnInit {
     }
 
     if (this.imgUrl != ""){
-      let size = this.imgUrl.length;
       this.feedService.compress(this.imgUrl).then((imageThumb)=>{
         let imgThumbs: FeedsData.ImgThumb[] = [];
         let imgThumb: FeedsData.ImgThumb = {
           index   : 0,
           imgThumb: imageThumb,
-          imgSize : size
+          imgSize : imgSize
         }
         imgThumbs.push(imgThumb);
 
         let content = this.feedService.createContent(this.newPost,imgThumbs,null);
-        // this.feedService.publishPost(
-        //   this.nodeId,
-        //   this.channelId,
-        //   content
-        // );
-
         this.feedService.declarePost(
           this.nodeId,
           this.channelId,

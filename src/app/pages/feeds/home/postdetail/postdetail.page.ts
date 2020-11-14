@@ -243,17 +243,16 @@ export class PostdetailPage implements OnInit {
       });
     });
 
+    this.events.subscribe('feeds:getBinaryFinish', (nodeId, key: string, value, mediaType) => {
+      this.zone.run(() => {
+        this.processGetBinaryResult(key, value);
+      });
+    });
+
     this.events.subscribe('stream:getBinarySuccess', (nodeId, key: string, value, mediaType) => {
       this.zone.run(() => {
         this.feedService.closeSession(nodeId);
-        this.cacheGetBinaryRequestKey = "";
-        if (key.indexOf("img")>-1){
-          this.native.hideLoading();
-          this.native.openViewer(value,"common.image","PostdetailPage.postview",this.appService);
-        } else if (key.indexOf("video")>-1){
-          this.videoObj = value;
-          this.loadVideo();
-        }
+        this.processGetBinaryResult(key, value);
       });
     });
 
@@ -293,6 +292,9 @@ export class PostdetailPage implements OnInit {
     this.events.unsubscribe("feeds:deletePostFinish");
     this.events.unsubscribe("feeds:editCommentFinish");
     this.events.unsubscribe("feeds:deleteCommentFinish");
+
+    this.events.unsubscribe("feeds:getBinaryFinish");
+
     this.events.unsubscribe("rpcRequest:error");
     this.events.unsubscribe("rpcRequest:success");
 
@@ -735,5 +737,16 @@ export class PostdetailPage implements OnInit {
       duration = videoThumbKey["duration"] || 0;
     } 
     return UtilService.timeFilter(duration);
+  }
+
+  processGetBinaryResult(key: string, value: string){
+    this.cacheGetBinaryRequestKey = "";
+    if (key.indexOf("img")>-1){
+      this.native.hideLoading();
+      this.native.openViewer(value,"common.image","PostdetailPage.postview",this.appService);
+    } else if (key.indexOf("video")>-1){
+      this.videoObj = value;
+      this.loadVideo();
+    }
   }
 }

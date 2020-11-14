@@ -752,6 +752,7 @@ declare module Communication{
             key         : string 
             algo        : string // "None", "SHA256", "CRC"...
             checksum    : string
+            content     : any
         }
     }
     
@@ -784,6 +785,7 @@ declare module Communication{
             key         : string 
             algo        : string // "None", "SHA256", "CRC"...
             checksum    : string
+            content     : any
         } 
         //or error : {
         //    code : int64_t;

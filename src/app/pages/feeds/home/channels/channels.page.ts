@@ -216,24 +216,17 @@ export class ChannelsPage implements OnInit {
         
       });
     });
+
+    this.events.subscribe('feeds:getBinaryFinish', (nodeId, key: string, value:string) => {
+      this.zone.run(() => {
+        this.processGetBinaryResult(key, value);
+      });
+    });
   
     this.events.subscribe('stream:getBinarySuccess', (nodeId, key: string, value:string) => {
       this.zone.run(() => {
         this.feedService.closeSession(nodeId);
-        if (key.indexOf("img")>-1){
-          this.cacheGetBinaryRequestKey = "";
-          this.native.hideLoading();
-          this.native.openViewer(value,"common.image","ChannelsPage.feeds",this.appService);
-        } else if (key.indexOf("video")>-1){
-          let arr = this.cacheGetBinaryRequestKey.split("-");
-          let nodeId =arr[0];
-          let channelId:any = arr[1];
-          let postId:any = arr[2];
-          let id = nodeId+channelId+postId;
-          this.cacheGetBinaryRequestKey = "";
-          this.loadVideo(id,value);
-        }
-        
+        this.processGetBinaryResult(key, value);
       });
     });
   
@@ -299,6 +292,8 @@ export class ChannelsPage implements OnInit {
     this.events.unsubscribe("feeds:unsubscribeFinish");
     this.events.unsubscribe("feeds:editPostFinish");
     this.events.unsubscribe("feeds:deletePostFinish");
+
+    this.events.unsubscribe("feeds:getBinaryFinish");
 
     this.events.unsubscribe("rpcResponse:error");
     this.events.unsubscribe("rpcRequest:success");
@@ -966,4 +961,21 @@ export class ChannelsPage implements OnInit {
       } 
       return UtilService.timeFilter(duration);
     }
+
+  processGetBinaryResult(key: string, value: string){
+    if (key.indexOf("img")>-1){
+      this.cacheGetBinaryRequestKey = "";
+      this.native.hideLoading();
+      this.native.openViewer(value,"common.image","ChannelsPage.feeds",this.appService);
+    } else if (key.indexOf("video")>-1){
+      let arr = this.cacheGetBinaryRequestKey.split("-");
+      let nodeId =arr[0];
+      let channelId:any = arr[1];
+      let postId:any = arr[2];
+      let id = nodeId+channelId+postId;
+      this.cacheGetBinaryRequestKey = "";
+      this.loadVideo(id,value);
+    }
+  }
+
 }
