@@ -33,6 +33,7 @@ declare namespace FeedsData{
         CreateDirectoryError             = -108,
         SizeOverflowError                = -109,
         StdSystemError                   = -110,
+        OutOfMemoryError                 = -111,
         DidNotReady                      = -120,
         InvalidAccessToken               = -121,
         NotAuthorizedError               = -122,
@@ -65,7 +66,7 @@ declare namespace FeedsData{
         SESSION_NEW_SESSION_ERROR = -311,
         SESSION_ADD_STREAM_ERROR = -312,
         SESSION_REQUEST_ERROR = -313,
-        SESSION_START_ERROR = -314,        
+        SESSION_START_ERROR = -314,
         
     }
     const enum TransDataChannel {

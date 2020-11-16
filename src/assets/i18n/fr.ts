@@ -411,6 +411,7 @@ export const fr = {
         "CreateDirectoryError": "Create Directory Error",
         "SizeOverflowError": "Size Overflow Error",
         "StdSystemError": "StdSystem Error",
+        "OutOfMemoryError": "Server Out Of Memory Error",
         "DidNotReady": "Did Not Ready",
         "InvalidAccessToken": "Invalid Access Token",
         "NotAuthorizedError": "Not Authorized Error",

@@ -4166,6 +4166,7 @@ export class FeedService {
 
   handleSetBinaryResponse(nodeId, result, requestParams, error){
     if (error != null && error != undefined && error.code != undefined){
+      this.translateBinaryError(nodeId, error.code);
       this.handleError(nodeId, error);
       return;
     }
@@ -4175,9 +4176,12 @@ export class FeedService {
 
   handleGetBinaryResponse(nodeId, result, requestParams, error){
     if (error != null && error != undefined && error.code != undefined){
+      this.translateBinaryError(nodeId, error.code);
       this.handleError(nodeId, error);
       return;
     }
+
+    
 
     let key = result.key;
     let contentBin = result.content;
@@ -5774,6 +5778,7 @@ export class FeedService {
   }
 
   handleSessionError(nodeId: string, response: any){
+    this.translateBinaryError(nodeId,response.code);
     this.closeSession(nodeId);
     console.log("Session error :: nodeId : "+nodeId+" errorCode: "+response.code+" errorMessage:"+response.message);
   }
@@ -5808,5 +5813,135 @@ export class FeedService {
       // this.transDataChannel = FeedsData.TransDataChannel.MESSAGE
       this.getBinaryFromMsg(nodeId, key);
     }
-  }  
+  }
+
+  translateBinaryError(nodeId: string, errorCode: number){
+    let errorMsg = this.translate.instant("ErrorInfo.UnknownError");
+    switch(errorCode){
+      case FeedsData.SessionError.UnknownError:
+        errorMsg = this.translate.instant("ErrorInfo.UnknownError");
+        break;
+      case FeedsData.SessionError.UnimplementedError:
+        errorMsg = this.translate.instant("ErrorInfo.UnimplementedError");
+        break;
+      case FeedsData.SessionError.NotFoundError:
+        errorMsg = this.translate.instant("ErrorInfo.NotFoundError");
+        break;
+      case FeedsData.SessionError.InvalidArgument:
+        errorMsg = this.translate.instant("ErrorInfo.InvalidArgument");
+        break;
+      case FeedsData.SessionError.PointerReleasedError:
+        errorMsg = this.translate.instant("ErrorInfo.PointerReleasedError");
+        break;
+      case FeedsData.SessionError.DevUUIDError:
+        errorMsg = this.translate.instant("ErrorInfo.DevUUIDError");
+        break;
+      case FeedsData.SessionError.FileNotExistsError:
+        errorMsg = this.translate.instant("ErrorInfo.FileNotExistsError");
+        break;
+      case FeedsData.SessionError.CreateDirectoryError:
+        errorMsg = this.translate.instant("ErrorInfo.CreateDirectoryError");
+        break;
+      case FeedsData.SessionError.SizeOverflowError:
+        errorMsg = this.translate.instant("ErrorInfo.SizeOverflowError");
+        break;
+      case FeedsData.SessionError.StdSystemError:
+        errorMsg = this.translate.instant("ErrorInfo.StdSystemError");
+        break;
+      case FeedsData.SessionError.OutOfMemoryError:
+        errorMsg = this.translate.instant("ErrorInfo.OutOfMemoryError");
+        break;
+      case FeedsData.SessionError.DidNotReady:
+        errorMsg = this.translate.instant("ErrorInfo.DidNotReady");
+        break;
+      case FeedsData.SessionError.InvalidAccessToken:
+        errorMsg = this.translate.instant("ErrorInfo.InvalidAccessToken");
+        break;
+      case FeedsData.SessionError.NotAuthorizedError:
+        errorMsg = this.translate.instant("ErrorInfo.NotAuthorizedError");
+        break;
+      case FeedsData.SessionError.CarrierSessionInitFailed:
+        errorMsg = this.translate.instant("ErrorInfo.CarrierSessionInitFailed");
+        break;
+      case FeedsData.SessionError.CarrierSessionConnectFailed:
+        errorMsg = this.translate.instant("ErrorInfo.CarrierSessionConnectFailed");
+        break;
+      case FeedsData.SessionError.CarrierSessionCreateFailed:
+        errorMsg = this.translate.instant("ErrorInfo.CarrierSessionCreateFailed");
+        break;
+      case FeedsData.SessionError.CarrierSessionAddStreamFailed:
+        errorMsg = this.translate.instant("ErrorInfo.CarrierSessionAddStreamFailed");
+        break;
+      case FeedsData.SessionError.CarrierSessionTimeoutError:
+        errorMsg = this.translate.instant("ErrorInfo.CarrierSessionTimeoutError");
+        break;
+      case FeedsData.SessionError.CarrierSessionReplyFailed:
+        errorMsg = this.translate.instant("ErrorInfo.CarrierSessionReplyFailed");
+        break;
+      case FeedsData.SessionError.CarrierSessionStartFailed:
+        errorMsg = this.translate.instant("ErrorInfo.CarrierSessionStartFailed");
+        break;
+      case FeedsData.SessionError.CarrierSessionBadStatus:
+        errorMsg = this.translate.instant("ErrorInfo.CarrierSessionBadStatus");
+        break;
+      case FeedsData.SessionError.CarrierSessionDataNotEnough:
+        errorMsg = this.translate.instant("ErrorInfo.CarrierSessionDataNotEnough");
+        break;
+      case FeedsData.SessionError.CarrierSessionUnsuppertedVersion:
+        errorMsg = this.translate.instant("ErrorInfo.CarrierSessionUnsuppertedVersion");
+        break;
+      case FeedsData.SessionError.CarrierSessionReleasedError:
+        errorMsg = this.translate.instant("ErrorInfo.CarrierSessionReleasedError");
+        break;
+      case FeedsData.SessionError.CarrierSessionSendFailed:
+        errorMsg = this.translate.instant("ErrorInfo.CarrierSessionSendFailed");
+        break;
+      case FeedsData.SessionError.CarrierSessionErrorExists:
+        errorMsg = this.translate.instant("ErrorInfo.CarrierSessionErrorExists");
+        break;
+      case FeedsData.SessionError.MassDataUnknownReqFailed:
+        errorMsg = this.translate.instant("ErrorInfo.MassDataUnknownReqFailed");
+        break;
+      case FeedsData.SessionError.MassDataUnmarshalReqFailed:
+        errorMsg = this.translate.instant("ErrorInfo.MassDataUnmarshalReqFailed");
+        break;
+      case FeedsData.SessionError.MassDataMarshalRespFailed:
+        errorMsg = this.translate.instant("ErrorInfo.MassDataMarshalRespFailed");
+        break;
+      case FeedsData.SessionError.MassDataUnsupportedVersion:
+        errorMsg = this.translate.instant("ErrorInfo.MassDataUnsupportedVersion");
+        break;
+      case FeedsData.SessionError.MassDataUnsupportedAlgo:
+        errorMsg = this.translate.instant("ErrorInfo.MassDataUnsupportedAlgo");
+        break;
+      case FeedsData.SessionError.STREAM_STATE_DEACTIVATED:
+        errorMsg = this.translate.instant("ErrorInfo.STREAM_STATE_DEACTIVATED");
+        break;
+      case FeedsData.SessionError.STREAM_STATE_CLOSED:
+        errorMsg = this.translate.instant("ErrorInfo.STREAM_STATE_CLOSED");
+        break;
+      case FeedsData.SessionError.STREAM_STATE_ERROR:
+        errorMsg = this.translate.instant("ErrorInfo.STREAM_STATE_ERROR");
+        break;
+      case FeedsData.SessionError.WRITE_DATA_ERROR:
+        errorMsg = this.translate.instant("ErrorInfo.WRITE_DATA_ERROR");
+        break;
+      case FeedsData.SessionError.SESSION_CREATE_TIMEOUT:
+        errorMsg = this.translate.instant("ErrorInfo.SESSION_CREATE_TIMEOUT");
+        break;
+      case FeedsData.SessionError.SESSION_NEW_SESSION_ERROR:
+        errorMsg = this.translate.instant("ErrorInfo.SESSION_NEW_SESSION_ERROR");
+        break;
+      case FeedsData.SessionError.SESSION_ADD_STREAM_ERROR:
+        errorMsg = this.translate.instant("ErrorInfo.SESSION_ADD_STREAM_ERROR");
+        break;
+      case FeedsData.SessionError.SESSION_REQUEST_ERROR:
+        errorMsg = this.translate.instant("ErrorInfo.SESSION_REQUEST_ERROR");
+        break;
+      case FeedsData.SessionError.SESSION_START_ERROR:
+        errorMsg = this.translate.instant("ErrorInfo.SESSION_START_ERROR");
+        break;
+    }
+    this.native.toastWarn(this.formateInfoService.formatErrorMsg(this.getServerNameByNodeId(nodeId),errorMsg));
+  }
 }
