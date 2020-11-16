@@ -69,16 +69,18 @@
           </h2>
           
           <div *ngIf="post.post_status!=1&&post.content.mediaType ===1" id={{post.nodeId+post.channel_id+post.id}}rpostimg style="width: 100%">
+            <span class="lefttopostdetailimg" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)"></span>
             <img
             id ={{post.nodeId+post.channel_id+post.id}}postimg
             class="post-img"
-            style="width: 90%;"
+            style="width: 100%;"
             (click)="showBigImage(post.nodeId,post.channel_id,post.id)">
             <span class="topostdetailimg" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)"></span>
           </div>
        
           <div *ngIf="post.post_status!=1&&post.content.mediaType ===2" id={{post.nodeId+post.channel_id+post.id}}vgplayer style="width: 100%">
-              <div style="width:90%;height:200px;display:inline-block;">
+              <div style="width:100%;height:200px;display:inline-block;">
+                <span class="lefttopostdetailvideo" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)"></span>
                 <vg-player>
                   <vg-overlay-play id={{post.nodeId+post.channel_id+post.id}}vgoverlayplayhome></vg-overlay-play>
                   <vg-buffering id={{post.nodeId+post.channel_id+post.id}}vgbufferinghome></vg-buffering>

@@ -384,21 +384,38 @@ ion-input {
   pointer-events: none;
 }
 
-.topostdetailimg{
-  width: 10%;
+.lefttopostdetailimg{
+  width: 27%;
   display:inline-block;
   height: 191px;
   position: absolute;
-  right: -7px
+  left:-25%;
+}
+
+.topostdetailimg{
+  width: 24px;
+  display:inline-block;
+  height: 191px;
+  position: absolute;
+  right:-19px;
+}
+
+
+.lefttopostdetailvideo{
+  width: 27%;
+  display:inline-block;
+  height:200px;
+  position: absolute;
+  left:-25%;
 }
 
 
 .topostdetailvideo{
-  width: 10%;
+  width:24px;
   display:inline-block;
   height: 200px;
   position: absolute;
-  right: -7px
+  right:-19px;
 }
 
 .post-grid .post-row .content-col .top-row .moremenuclick{
