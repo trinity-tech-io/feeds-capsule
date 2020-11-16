@@ -93,11 +93,13 @@ export class EditpostPage implements OnInit {
      });
 
     this.events.subscribe('rpcRequest:error', () => {
-          this.native.hideLoading();
+      this.pauseVideo();
+      this.native.hideLoading();
     });
 
     this.events.subscribe('rpcResponse:error', () => {
       this.zone.run(() => {
+        this.pauseVideo();
         this.native.hideLoading();
       });
     });
@@ -143,9 +145,10 @@ export class EditpostPage implements OnInit {
     //   });
     // });
 
-    this.events.subscribe('stream:error', (nodeId, response) => {
+    this.events.subscribe('stream:error', (nodeId, error) => {
       this.zone.run(() => {
-        this.feedService.handleSessionError(nodeId, response);
+        this.feedService.handleSessionError(nodeId, error);
+        this.pauseVideo();
         this.native.hideLoading();
       });
     });
@@ -200,6 +203,7 @@ export class EditpostPage implements OnInit {
     
     this.events.unsubscribe("feeds:setBinaryFinish");
     
+    this.events.unsubscribe("stream:error");
     this.events.unsubscribe("stream:setBinarySuccess");
     this.events.unsubscribe("stream:setBinaryError");
     this.events.unsubscribe("stream:onStateChangedCallback");

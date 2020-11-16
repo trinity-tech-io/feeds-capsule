@@ -219,6 +219,7 @@ export class ProfilePage implements OnInit {
   this.events.subscribe('stream:error', (nodeId, error) => {
     this.zone.run(() => {
       this.feedService.handleSessionError(nodeId, error);
+      this.pauseAllVideo();
       this.native.hideLoading();
     });
   });
@@ -235,8 +236,16 @@ export class ProfilePage implements OnInit {
     });
   });
 
+  this.events.subscribe('rpcRequest:error', () => {
+    this.zone.run(() => {
+      this.pauseAllVideo();
+      this.native.hideLoading();
+    });
+  });
+
   this.events.subscribe('rpcResponse:error', () => {
     this.zone.run(() => {
+      this.pauseAllVideo();
       this.native.hideLoading();
     });
   });
@@ -291,6 +300,7 @@ export class ProfilePage implements OnInit {
     this.events.unsubscribe("stream:error");
     this.events.unsubscribe("stream:onStateChangedCallback");
 
+    this.events.unsubscribe("rpcRequest:error");
     this.events.unsubscribe("rpcResponse:error");
     this.events.unsubscribe("rpcRequest:success");
 

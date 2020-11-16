@@ -213,7 +213,15 @@ export class PostdetailPage implements OnInit {
 
     this.events.subscribe('rpcRequest:error', () => {
       this.zone.run(() => {
-         this.native.hideLoading();
+        this.pauseVideo();
+        this.native.hideLoading();
+      });
+    });
+
+    this.events.subscribe('rpcResponse:error', () => {
+      this.zone.run(() => {
+        this.pauseVideo();
+        this.native.hideLoading();
       });
     });
 
@@ -259,6 +267,7 @@ export class PostdetailPage implements OnInit {
     this.events.subscribe('stream:error', (nodeId, error) => {
       this.zone.run(() => {
         this.feedService.handleSessionError(nodeId, error);
+        this.pauseVideo();
         this.native.hideLoading();
       });
     });
@@ -296,6 +305,7 @@ export class PostdetailPage implements OnInit {
     this.events.unsubscribe("feeds:getBinaryFinish");
 
     this.events.unsubscribe("rpcRequest:error");
+    this.events.unsubscribe("rpcResponse:error");
     this.events.unsubscribe("rpcRequest:success");
 
     this.postImage = "";
