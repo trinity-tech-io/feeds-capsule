@@ -212,7 +212,7 @@ export class CreatenewpostPage implements OnInit {
     this.events.unsubscribe("rpcRequest:error");
     this.events.unsubscribe("rpcResponse:error");
     
-    this.events.unsubscribe("feeds:feeds:setBinaryFinish");
+    this.events.unsubscribe("feeds:setBinaryFinish");
     
     this.events.unsubscribe("stream:setBinarySuccess");
     this.events.unsubscribe("stream:setBinaryError");
