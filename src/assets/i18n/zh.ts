@@ -410,6 +410,7 @@ export const zh = {
         "CreateDirectoryError": "创建目录出错",
         "SizeOverflowError": "大小溢出错误",
         "StdSystemError": "StdSystem出错",
+        "OutOfMemoryError": "服务端内存溢出",
         "DidNotReady": "Did未准备好",
         "InvalidAccessToken": "无效的访问Token",
         "NotAuthorizedError": "未授权",
