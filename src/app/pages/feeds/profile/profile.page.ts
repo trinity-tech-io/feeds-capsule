@@ -707,9 +707,7 @@ export class ProfilePage implements OnInit {
             if (videodata == ""){
               this.cacheGetBinaryRequestKey = key;
               this.cachedMediaType = "video";
-              if (this.feedService.restoreSession(nodeId)){
-                this.feedService.getBinary(nodeId, key, this.cachedMediaType);
-              }
+              this.feedService.processGetBinary(nodeId, channelId, postId, 0, 0, FeedsData.MediaType.containsVideo, key);
               return;
             }
             this.loadVideo(id,videodata);
@@ -761,9 +759,7 @@ export class ProfilePage implements OnInit {
           }else{
             this.cacheGetBinaryRequestKey = key;
             this.cachedMediaType ="img";
-            if (this.feedService.restoreSession(item.nodeId)){
-              this.feedService.getBinary(item.nodeId, key,this.cachedMediaType);
-            }
+            this.feedService.processGetBinary(item.nodeId,item.channelId,item.postId, 0, 0, FeedsData.MediaType.containsImg, key);
           }
         });
       }).catch(()=>{

@@ -447,9 +447,7 @@ export class PostdetailPage implements OnInit {
           }else{
             this.cacheGetBinaryRequestKey = key;
             this.cachedMediaType = "img";
-            if (this.feedService.restoreSession(this.nodeId)){
-              this.feedService.getBinary(this.nodeId, key, this.cachedMediaType);
-            }
+            this.feedService.processGetBinary(this.nodeId, this.channelId, this.postId, 0, 0, FeedsData.MediaType.containsImg, key)
           }
         });
       }).catch(()=>{
@@ -615,9 +613,7 @@ export class PostdetailPage implements OnInit {
         if (videoData == ""){
           this.cacheGetBinaryRequestKey = key;
           this.cachedMediaType = "video";
-          if (this.feedService.restoreSession(this.nodeId)){
-            this.feedService.getBinary(this.nodeId, key, this.cachedMediaType);
-          }
+          this.feedService.processGetBinary(this.nodeId, this.channelId, this.postId, 0, 0, FeedsData.MediaType.containsVideo, key);
 
           return;
         }

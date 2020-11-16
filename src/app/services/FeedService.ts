@@ -421,6 +421,7 @@ export class FeedService {
   private isDeclareFinish: boolean = false;
   private lastFeedUpdateMap:{[nodeId:string]: FeedUpdateTime};
   private lastCommentUpdateMap:{[key: string]: CommentUpdateTime};
+  private throwMsgTransDataLimit = 4*1000*1000;
   public constructor(
     private serializeDataService: SerializeDataService,
     private jwtMessageService: JWTMessageService,
@@ -5797,4 +5798,15 @@ export class FeedService {
 
     return this.createContent(postText,imgThumbs,null);
   }
+
+  processGetBinary(nodeId: string, channelId: number, postId: number, commentId: number, index: number, mediaType: FeedsData.MediaType, key: string){
+    let size = this.getContentDataSize(nodeId, channelId, postId, commentId, index, mediaType);
+    if (size > this.throwMsgTransDataLimit){
+      // this.transDataChannel = FeedsData.TransDataChannel.SESSION
+      this.restoreSession(nodeId);
+    }else{
+      // this.transDataChannel = FeedsData.TransDataChannel.MESSAGE
+      this.getBinaryFromMsg(nodeId, key);
+    }
+  }  
 }
