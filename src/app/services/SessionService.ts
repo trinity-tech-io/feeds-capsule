@@ -796,18 +796,19 @@ function createCreateSessionTimeout(){
     }
     return response;
 }
-function publishError(nodeId: string, response: any){
-    eventBus.publish("stream:error", nodeId,response);
+
+function publishError(nodeId: string, error: any){
+    eventBus.publish("stream:error", nodeId,error);
     if (cacheData == null || cacheData == undefined || cacheData[nodeId] == undefined)
         return;
 
     if (cacheData[nodeId].method == "set_binary"){
-        eventBus.publish("stream:setBinaryError", nodeId,response);
+        eventBus.publish("stream:setBinaryError", nodeId,error);
         return ;
     }
 
     if (cacheData[nodeId].method == "get_binary"){
-        eventBus.publish("stream:getBinaryError", nodeId,response);
+        eventBus.publish("stream:getBinaryError", nodeId,error);
         return ;
     }
 }

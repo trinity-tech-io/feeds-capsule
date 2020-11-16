@@ -56,17 +56,18 @@ declare namespace FeedsData{
         MassDataUnsupportedVersion       = -153,
         MassDataUnsupportedAlgo          = -154,
 
-        STREAM_STATE_DEACTIVATED = -205,
-        STREAM_STATE_CLOSED = -206,
-        STREAM_STATE_ERROR = -207,
+        OFFLINE                          = -200,
+        STREAM_STATE_DEACTIVATED         = -205,
+        STREAM_STATE_CLOSED              = -206,
+        STREAM_STATE_ERROR               = -207,
         
-        WRITE_DATA_ERROR = -301,
+        WRITE_DATA_ERROR                 = -301,
 
-        SESSION_CREATE_TIMEOUT = -300,
-        SESSION_NEW_SESSION_ERROR = -311,
-        SESSION_ADD_STREAM_ERROR = -312,
-        SESSION_REQUEST_ERROR = -313,
-        SESSION_START_ERROR = -314,
+        SESSION_CREATE_TIMEOUT           = -300,
+        SESSION_NEW_SESSION_ERROR        = -311,
+        SESSION_ADD_STREAM_ERROR         = -312,
+        SESSION_REQUEST_ERROR            = -313,
+        SESSION_START_ERROR              = -314,
         
     }
     const enum TransDataChannel {

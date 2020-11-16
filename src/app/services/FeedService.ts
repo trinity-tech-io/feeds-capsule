@@ -1257,8 +1257,11 @@ export class FeedService {
     eventBus.publish("rpcResponse:error");
     if(typeof error == "string")
       this.native.toastWarn(this.formateInfoService.formatErrorMsg(nodeId, error));
-    else
-      this.processGeneralError(nodeId,error.code);
+    else{
+        this.processGeneralError(nodeId,error.code);
+        return;
+    }
+      
   }
 
   handleResult(method:string, nodeId: string ,result: any , request: any, error: any){
@@ -4166,7 +4169,6 @@ export class FeedService {
 
   handleSetBinaryResponse(nodeId, result, requestParams, error){
     if (error != null && error != undefined && error.code != undefined){
-      this.translateBinaryError(nodeId, error.code);
       this.handleError(nodeId, error);
       return;
     }
@@ -4891,8 +4893,11 @@ export class FeedService {
           " #"+this.getServerNameByNodeId(nodeId) + 
           this.translate.instant("ErrorInfo.needUpdateServerVersion"));
         return;
-    }
 
+      default:
+        errorMessage = this.translateBinaryError(nodeId, errorCode);
+        return;
+    }
     this.native.toastWarn(this.formateInfoService.formatErrorMsg(this.getServerNameByNodeId(nodeId),errorMessage));
   }
 
@@ -5062,10 +5067,23 @@ export class FeedService {
     }
     this.sessionService.streamAddData(nodeId, valueData.subarray(currentSlice*step, valueData.length));
   }
-  
+
+  createOfflineError(){
+    let response = {
+        code: FeedsData.SessionError.OFFLINE,
+        message: "serverOffline"
+    }
+    return response;
+  }
+
   restoreSession(nodeId: string): boolean{
-    if(this.getServerStatusFromId(nodeId) == 1)
+    if(this.getServerStatusFromId(nodeId) == 1){
+      eventBus.publish("stream:error",nodeId,this.createOfflineError());
+      // eventBus.publish("sessionRequest:error", nodeId,this.createCreateOfflineError());
+      this.native.toast(this.formateInfoService.formatOfflineMsg(this.getServerNameByNodeId(nodeId)));
       return false;
+    }
+      
 
     let state = this.sessionService.getSessionState(nodeId);
 
@@ -5777,10 +5795,11 @@ export class FeedService {
     this.storeService.set(PersistenceKey.lastCommentUpdateMap, this.lastCommentUpdateMap);
   }
 
-  handleSessionError(nodeId: string, response: any){
-    this.translateBinaryError(nodeId,response.code);
+  handleSessionError(nodeId: string, error: any){
+    // eventBus.publish("sessionResponse:error",nodeId, error);
+    this.translateBinaryError(nodeId,error.code);
     this.closeSession(nodeId);
-    console.log("Session error :: nodeId : "+nodeId+" errorCode: "+response.code+" errorMessage:"+response.message);
+    console.log("Session error :: nodeId : "+nodeId+" errorCode: "+error.code+" errorMessage:"+error.message);
   }
 
   createVideoContent(postText: string, videoThumb: any, durition: number, videoSize: number): string{
