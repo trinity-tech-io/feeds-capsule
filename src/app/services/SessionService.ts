@@ -6,16 +6,26 @@ import { CarrierService } from 'src/app/services/CarrierService';
 import { SerializeDataService } from 'src/app/services/SerializeDataService';
 import { StorageService } from 'src/app/services/StorageService';
 
+
 // let base64 = require('cordova/base64');
 let autoIncreaseId: number = 1;
 type WorkedSession = {
-    nodeId      : string,
-    session     : CarrierPlugin.Session,
-    stream      : CarrierPlugin.Stream,
+    nodeId          : string,
+    session         : CarrierPlugin.Session,
+    stream          : CarrierPlugin.Stream,
     // isStart     : boolean,
-    sdp         : string,
-    StreamState : FeedsData.StreamState
-    sessionTimeout : NodeJS.Timer
+    sdp             : string,
+    StreamState     : FeedsData.StreamState
+    sessionTimeout  : NodeJS.Timer
+}
+
+type Progress = {
+    nodeId      : string,
+    key         : string,
+    method      : string,
+    pointer     : number,
+    totalSize   : number,
+    progress    : number,
 }
 
 type CachedData = {
@@ -27,7 +37,7 @@ type CachedData = {
     state           : DecodeState,
     method          : string,
     key             : string,
-    mediaType            : string
+    mediaType       : string
 }
 
 const enum DecodeState{
@@ -61,8 +71,8 @@ type RequestBean = {
 }
 
 let eventBus:Events = null;
-let testSum = 0;
 let workedSessions: {[nodeId:string]: WorkedSession} = {}; 
+let progress: {[nodeId:string]: Progress} = {};
 let cacheData: {[nodeId:string]: CachedData} = {};
 let mCarrierService: CarrierService;
 let mSerializeDataService:SerializeDataService;
@@ -88,12 +98,12 @@ export class SessionService {
     createSession(nodeId: string, onSuccess:(session: CarrierPlugin.Session, stream: CarrierPlugin.Stream)=>void, onError?:(err: string)=>void){
         this.carrierService.newSession(nodeId,(mSession)=>{
             workedSessions[nodeId] = {
-                nodeId      : nodeId,
-                session     : mSession,
-                stream      : null,
-                sdp         : "",
-                StreamState : FeedsData.StreamState.RAW,
-                sessionTimeout : null
+                nodeId          : nodeId,
+                session         : mSession,
+                stream          : null,
+                sdp             : "",
+                StreamState     : FeedsData.StreamState.RAW,
+                sessionTimeout  : null,
             }
             this.carrierService.sessionAddStream(
                 mSession,
@@ -195,6 +205,7 @@ export class SessionService {
                     },
                     onStreamData: function(event: any) {
                         let tmpData: Uint8Array = event.data;
+                        
                         if (cacheData[nodeId] == undefined){
                             cacheData[nodeId] = {
                                 nodeId          : nodeId,
@@ -205,7 +216,7 @@ export class SessionService {
                                 state           : DecodeState.prepare,
                                 method          : "",
                                 key             : "",
-                                mediaType       : ""
+                                mediaType       : "",
                             }
                             cacheData[nodeId].data.set(tmpData,0);
                         }else{
@@ -320,11 +331,20 @@ export class SessionService {
         this.streamAddData(nodeId, request);
     }
 
-    addHeader(nodeId: string, requestSize: number, bodySize: number, request: any, mediaType: string){
+    addHeader(nodeId: string, requestSize: number, bodySize: number, request: any, mediaType: string, method: string, key: string){
         this.streamAddMagicNum(nodeId);
         this.streamAddVersion(nodeId);
         this.streamAddRequestHeadSize(nodeId, requestSize);
         this.streamAddRequestBodySize(nodeId, bodySize);
+
+        progress[nodeId] = {
+            nodeId      : nodeId,
+            key         : key,
+            method      : method,
+            pointer     : 0,
+            totalSize   : bodySize,
+            progress    : 0,
+        }
 
 
         let requestBean: RequestBean = {
@@ -346,7 +366,7 @@ export class SessionService {
             state           : DecodeState.prepare,
             method          : "",
             key             : "",
-            mediaType       : mediaType
+            mediaType       : mediaType,
         }
         
         // let requestBean: RequestBean = {
@@ -419,8 +439,13 @@ export class SessionService {
 
         let stream = workedSessions[nodeId].stream;
 
-        testSum += data.length
         let base64 = uint8arrayToBase64(data);
+
+        if (progress[nodeId] != undefined && progress[nodeId].method == "set_binary"){
+            progress[nodeId].pointer += data.length;
+            calculateProgress(nodeId);
+        }
+
 
         stream.write(base64,(bytesSent)=>{
             console.log("stream write success");
@@ -446,9 +471,14 @@ export class SessionService {
         console.log("close session")
         this.carrierService.sessionClose(workedSessions[nodeId].session,
             ()=>{
+                workedSessions[nodeId] = undefined;
                 delete workedSessions[nodeId];
+
                 // workedSessions[nodeId] = undefined;
                 console.log("close session success");
+
+                progress[nodeId] = undefined;
+                delete progress[nodeId];
             }
         );
     }
@@ -626,9 +656,14 @@ function decodeBodyData(nodeId: string, cacheDataLength: number): boolean{
     let bodySize = cacheData[nodeId].bodySize;
     let remainLength = cacheDataLength - pointer;
 
+    if (progress[nodeId] != undefined && progress[nodeId].method == "get_binary"){
+        progress[nodeId].pointer = remainLength;
+        calculateProgress(nodeId);
+    }
+
     if (remainLength < bodySize || bodySize == 0)
         return false;
-
+    
     let body = cacheData[nodeId].data.subarray(pointer, pointer + bodySize);
 
     let value = mSerializeDataService.decodeData(body);
@@ -711,7 +746,6 @@ function parseResponse(response: any){
     } else if (method == "get_binary"){
         console.log("publish stream:getBinaryResponse "+ nodeId);
         eventBus.publish("stream:getBinaryResponse", nodeId);
-
     }
 }
 
@@ -812,4 +846,20 @@ function publishError(nodeId: string, error: any){
         eventBus.publish("stream:getBinaryError", nodeId,error);
         return ;
     }
+}
+
+function calculateProgress(nodeId: string){
+    if (progress[nodeId] == undefined)
+        return;
+    
+    let curProgress = Math.floor(progress[nodeId].pointer/progress[nodeId].totalSize * 100);
+    if (progress[nodeId].progress < curProgress){
+        progress[nodeId].progress = curProgress;
+        publishProgress(nodeId, progress[nodeId].progress,  progress[nodeId].method, progress[nodeId].key);
+    }
+}
+
+function publishProgress(nodeId: string, progress: number, method: string, key: string){
+    console.log("publish progress>>"+progress);
+    eventBus.publish("stream:progress", nodeId, progress, method, key);
 }
