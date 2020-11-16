@@ -588,6 +588,7 @@ export class ConnectionService {
         if (accessToken == undefined)
             return ;
 
+        let contentBin = this.serializeDataService.encodeData(content);
         let request: Communication.set_binary_request = {
             version: "1.0",
             method : "set_binary",
@@ -597,7 +598,7 @@ export class ConnectionService {
                 key         : key,
                 algo        : "None", // "None", "SHA256", "CRC"...
                 checksum    : "",
-                content     : content
+                content     : contentBin
             }
         }
 
