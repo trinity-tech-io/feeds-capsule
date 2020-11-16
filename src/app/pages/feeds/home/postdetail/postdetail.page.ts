@@ -256,9 +256,9 @@ export class PostdetailPage implements OnInit {
       });
     });
 
-    this.events.subscribe('stream:error', (nodeId, response) => {
+    this.events.subscribe('stream:error', (nodeId, error) => {
       this.zone.run(() => {
-        this.feedService.handleSessionError(nodeId, response);
+        this.feedService.handleSessionError(nodeId, error);
         this.native.hideLoading();
       });
     });
