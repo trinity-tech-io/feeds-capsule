@@ -217,6 +217,7 @@ export class CreatenewpostPage implements OnInit {
     this.events.unsubscribe("stream:setBinarySuccess");
     this.events.unsubscribe("stream:setBinaryError");
     this.events.unsubscribe("stream:onStateChangedCallback");
+    this.events.unsubscribe("stream:getBinarySuccess");
     this.events.unsubscribe("feeds:openRightMenu");
 
     this.events.unsubscribe("feeds:declarePostSuccess");
@@ -226,7 +227,7 @@ export class CreatenewpostPage implements OnInit {
     this.flieUri ="";
     this.posterImg ="";
     this.imgUrl="";
-    this.totalProgress = 0;
+    this.transcode = 0;
     this.uploadProgress =0;
     this.totalProgress = 0;
     this.removeVideo();
@@ -419,9 +420,16 @@ selectvideo(){
             fileEntry.file((file)=>{
               let filesize  = parseFloat((file.size/1000/1000).toFixed(2));
               if(this.isVideoTipDes(filesize)){
-                 this.uploadProgress = 0;
-                 this.native.toast_trans(this.translate.instant("common.filevideodes"));
-                 return;
+                this.zone.run(()=>{
+                  this.flieUri ="";
+                  this.posterImg ="";
+                  this.imgUrl="";
+                  this.transcode = 0;
+                  this.uploadProgress =0;
+                  this.totalProgress = 0;
+                  this.native.toast_trans(this.translate.instant("common.filevideodes"));
+                });
+                return;
               }
               let fileReader = new FileReader();
               fileReader.onloadend =(event:any)=>{
@@ -602,14 +610,14 @@ readThumbnail(fileName:string,filepath:string){
             };
 
             fileReader.onprogress = (event:any)=>{
-              this.zone.run(()=>{
-                this.uploadProgress = parseInt((event.loaded/event.total)*100/2+'');
-                if(this.uploadProgress === 50){
-                   this.totalProgress = 100;
-                }else{
-                  this.totalProgress = 50+this.uploadProgress;
-                }
-              })
+              // this.zone.run(()=>{
+              //   this.uploadProgress = parseInt((event.loaded/event.total)*100/2+'');
+              //   if(this.uploadProgress === 50){
+              //      this.totalProgress = 100;
+              //   }else{
+              //     this.totalProgress = 50+this.uploadProgress;
+              //   }
+              // })
             };
             
             fileReader.readAsDataURL(file);
