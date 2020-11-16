@@ -5143,6 +5143,8 @@ export class FeedService {
   setBinaryFromMsg(nodeId: string, key: string, content: any){
     if(!this.hasAccessToken(nodeId))
       return;
+
+    this.storeService.set(key, content);
     let accessToken: FeedsData.AccessToken = accessTokenMap[nodeId]||undefined;
     this.connectionService.setBinary(this.getServerNameByNodeId(nodeId),nodeId,key,content,accessToken);
   }
