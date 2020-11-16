@@ -58,7 +58,7 @@ export class HomePage implements OnInit {
   public cachedMediaType = "";
 
   public maxTextSize = 240;
-
+  
   constructor(
     private elmRef: ElementRef,
     private feedspage: FeedsPage,
@@ -289,7 +289,7 @@ addBinaryEvevnt(){
       if (this.cacheGetBinaryRequestKey == "")
         return;
 
-      if (state === 4){
+      if (state === FeedsData.StreamState.CONNECTED){
         this.feedService.getBinary(nodeId, this.cacheGetBinaryRequestKey,this.cachedMediaType);
       }
     });
@@ -647,11 +647,8 @@ addBinaryEvevnt(){
           //video
           this.hanldVideo(id,srcId,postgridindex);
           } 
-      
       }
     }
-
-  
   }
 
   ionViewDidEnter() {
@@ -677,9 +674,8 @@ addBinaryEvevnt(){
           }else{
             this.cacheGetBinaryRequestKey = key;
             this.cachedMediaType = "img";
-            if (this.feedService.restoreSession(nodeId)){
-              this.feedService.getBinary(nodeId, key, this.cachedMediaType);
-            }
+
+            this.feedService.processGetBinary(nodeId, channelId, postId, 0, 0, FeedsData.MediaType.containsImg, key)
           }
         });
       }).catch(()=>{
@@ -926,9 +922,8 @@ addBinaryEvevnt(){
             if (videodata == ""){
               this.cacheGetBinaryRequestKey = key;
               this.cachedMediaType = "video";
-              if (this.feedService.restoreSession(nodeId)){
-                this.feedService.getBinary(nodeId, key, this.cachedMediaType);
-              }
+
+              this.feedService.processGetBinary(nodeId, channelId, postId, 0, 0, FeedsData.MediaType.containsVideo, key)
               return;
             }
             this.loadVideo(id,videodata);
@@ -996,5 +991,5 @@ addBinaryEvevnt(){
          this.loadVideo(id,value);
     }
   }
-    
+
 }
