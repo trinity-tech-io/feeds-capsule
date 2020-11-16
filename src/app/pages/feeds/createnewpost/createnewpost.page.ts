@@ -42,6 +42,7 @@ export class CreatenewpostPage implements OnInit {
   public totalProgress:number = 0;
   private throwMsgTransDataLimit = 4 * 1000 * 1000;
   private transDataChannel:FeedsData.TransDataChannel = FeedsData.TransDataChannel.MESSAGE;
+
   constructor(
     private events: Events,
     private native: NativeService,
@@ -125,7 +126,8 @@ export class CreatenewpostPage implements OnInit {
 
         if (this.transDataChannel == FeedsData.TransDataChannel.SESSION){
           if (this.sessionState === FeedsData.StreamState.CONNECTED)
-            this.feedService.sendData(this.nodeId,this.channelId,postId, 0 ,0, this.flieUri,this.imgUrl);
+            this.feedService.sendData(this.nodeId,this.channelId,this.postId, 0 ,0, this.flieUri,this.imgUrl);
+            this.native.updateLoadingMsg(this.translate.instant("common.uploading"));
           return;
         }
       });
@@ -188,12 +190,19 @@ export class CreatenewpostPage implements OnInit {
         this.feedService.closeSession(this.nodeId);
       });
     });
+
+    this.events.subscribe('stream:progress',(nodeId,progress)=>{
+      this.zone.run(() => {
+        this.native.updateLoadingMsg(this.translate.instant("common.uploading")+" "+progress+"%");
+      });
+    })
    
     this.events.subscribe('stream:onStateChangedCallback', (nodeId, state) => {
       this.zone.run(() => {
         this.sessionState = state;
         if (state === 4 && this.postId != 0){
           this.feedService.sendData(this.nodeId,this.channelId,this.postId, 0 ,0, this.flieUri,this.imgUrl);
+          this.native.updateLoadingMsg(this.translate.instant("common.uploading"));
         }
       });
     });
@@ -258,6 +267,7 @@ export class CreatenewpostPage implements OnInit {
         this.native.toast_trans("CreatenewpostPage.tipMsg2");
          return false;
     }
+
     this.native.showLoading("common.waitMoment", 5*60*1000).then(()=>{
       this.sendPost();
     }).catch(()=>{

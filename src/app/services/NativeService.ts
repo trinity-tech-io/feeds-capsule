@@ -102,6 +102,10 @@ export class NativeService {
             return await this.loading.present();
     };
 
+    public updateLoadingMsg(msg: string){
+        this.loading.message = msg;
+    }
+
     public hideLoading(): void {
             if(this.loading !=null){
                 this.loading.dismiss();

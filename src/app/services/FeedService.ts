@@ -5045,11 +5045,11 @@ export class FeedService {
 
     if (value != ""){
       let valueData = this.serializeDataService.encodeData(value);
-      this.sessionService.addHeader(nodeId, requestData.length, valueData.length, request, mediaType);
+      this.sessionService.addHeader(nodeId, requestData.length, valueData.length, request, mediaType, request.method, key);
       this.sessionService.streamAddData(nodeId, requestData);
       this.transportValueData(nodeId, valueData);
     }else{
-      this.sessionService.addHeader(nodeId, requestData.length, 0, request, mediaType);
+      this.sessionService.addHeader(nodeId, requestData.length, 0, request, mediaType,  request.method, key);
       this.sessionService.streamAddData(nodeId, requestData);
     }
   }
@@ -5062,12 +5062,26 @@ export class FeedService {
 
     sumSlice = valueData.length / step;
 
-    for (let index = 0; index < sumSlice; index++) {
+    let transDataInter = setInterval(()=>{
+      if (currentSlice >= sumSlice){
+        this.sessionService.streamAddData(nodeId, valueData.subarray(currentSlice*step, valueData.length));
+        clearInterval(transDataInter);
+        return;
+      }
+
       let sentData = valueData.subarray(currentSlice*step, (currentSlice+1)*step);
       this.sessionService.streamAddData(nodeId, sentData);
       currentSlice++;
-    }
-    this.sessionService.streamAddData(nodeId, valueData.subarray(currentSlice*step, valueData.length));
+
+    },15);
+    
+
+    // for (let index = 0; index < sumSlice; index++) {
+    //   let sentData = valueData.subarray(currentSlice*step, (currentSlice+1)*step);
+    //   this.sessionService.streamAddData(nodeId, sentData).then();
+    //   setTimeout
+    //   currentSlice++;
+    // }
   }
 
   createOfflineError(){

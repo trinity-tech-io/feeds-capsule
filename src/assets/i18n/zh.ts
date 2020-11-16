@@ -78,6 +78,8 @@ export const zh = {
         "video":"视频",
         "theFeedSource": "微频源",
         "fulltext":"全文",
+        "uploading":"正在上传",
+        "downloading": "正在下载"
     },
     "app":{
         "profileDetails":"档案详情",
