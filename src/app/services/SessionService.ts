@@ -443,11 +443,12 @@ export class SessionService {
         if(session === ""){
             return;
         }
+        console.log("close session")
         this.carrierService.sessionClose(workedSessions[nodeId].session,
             ()=>{
                 delete workedSessions[nodeId];
                 // workedSessions[nodeId] = undefined;
-                console.log("close success");
+                console.log("close session success");
             }
         );
     }

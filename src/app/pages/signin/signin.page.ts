@@ -129,7 +129,9 @@ export class SigninPage implements OnInit {
         didManager.VerifiablePresentationBuilder.fromJson(JSON.stringify(response.result.presentation), (presentation) => {
           this.zone.run(()=>{
             let credentials = presentation.getCredentials();
-
+            // for (let index = 0; index < credentials.length; index++) {
+            //   console.log("credentials>>"+JSON.stringify(credentials[index]));              
+            // }
             this.saveCredentialById(data.did,credentials, "name");
 
             let interests = this.findCredentialValueById(data.did, credentials, "interests", "");

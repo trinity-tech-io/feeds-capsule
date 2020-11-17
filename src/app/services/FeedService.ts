@@ -303,6 +303,7 @@ enum PublishType{
   editFeedInfoFinish = "feeds:editFeedInfoFinish",
 
   editPostFinish = "feeds:editPostFinish",
+  editPostSuccess = "feeds:editPostSuccess",
   editCommentFinish = "feeds:editCommentFinish",
   deletePostFinish = "feeds:deletePostFinish",
   deleteCommentFinish = "feeds:deleteCommentFinish",
@@ -2531,10 +2532,10 @@ export class FeedService {
       };
       this.storeService.set(PersistenceKey.likeMap,likeMap);
     }
-      
-
+    
     this.storeService.set(PersistenceKey.postMap, this.postMap);
     eventBus.publish(PublishType.editPostFinish);
+    eventBus.publish(PublishType.editPostSuccess);
   }
 
   handleNewCommentUpdate(nodeId: string, params: any){
@@ -4406,6 +4407,7 @@ export class FeedService {
   }
 
   getLocalCredential(){
+    // console.log("localCredential>>"+localCredential);
     return localCredential;
   }
 
