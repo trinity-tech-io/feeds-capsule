@@ -61,16 +61,16 @@
             <vg-overlay-play id={{nodeId+channelId+postId}}vgoverlayplaypostdetail></vg-overlay-play>
             <vg-buffering  id={{nodeId+channelId+postId}}vgbufferingpostdetail></vg-buffering>
         
-            <vg-scrub-bar>
+            <vg-scrub-bar id={{nodeId+channelId+postId}}vgscrubbarpostdetail style="display:none;">
                 <vg-scrub-bar-current-time></vg-scrub-bar-current-time>
                 <vg-scrub-bar-buffering-time></vg-scrub-bar-buffering-time>
             </vg-scrub-bar>
         
-            <vg-controls [vgAutohide]="true" [vgAutohideTime]="3">
-                <vg-play-pause></vg-play-pause>
+            <vg-controls id={{nodeId+channelId+postId}}vgcontrolspostdetail style="display:none;">
+                <!-- <vg-play-pause></vg-play-pause>
                 <vg-time-display vgProperty="current" vgFormat="mm:ss" ></vg-time-display>
                 <span class="totaltime">{{handleTotal(post)}}</span>
-                <vg-mute></vg-mute>
+                <vg-mute></vg-mute> -->
                 <vg-fullscreen id={{nodeId+channelId+postId}}vgfullscreenpostdetail></vg-fullscreen>
             </vg-controls>
          
