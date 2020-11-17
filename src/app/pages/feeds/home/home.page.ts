@@ -943,23 +943,36 @@ addBinaryEvevnt(){
     }
     source.setAttribute("src",videodata); 
     let vgbuffering:any = document.getElementById(id+"vgbufferinghome") || "";
-        vgbuffering.style.display ="none";
+    let vgoverlayplay:any = document.getElementById(id+"vgoverlayplayhome"); 
+    let vgscrubbar:any = document.getElementById(id+"vgscrubbarhome"); 
+    let vgcontrol:any = document.getElementById(id+"vgcontrolshome"); 
+
     let video:any = document.getElementById(id+"video");
     video.addEventListener('ended',()=>{
-        let vgoverlayplay:any = document.getElementById(id+"vgoverlayplayhome"); 
         vgbuffering.style.display ="none";
-        vgoverlayplay.style.display = "block";  
+        vgoverlayplay.style.display = "block";
+        vgscrubbar.style.display ="none";
+        vgcontrol.style.display = "none";  
     });
 
     video.addEventListener('pause',()=>{
-      let vgoverlayplay:any = document.getElementById(id+"vgoverlayplayhome");
-      vgoverlayplay.style.display = "block";  
+      vgbuffering.style.display ="none";
+      vgoverlayplay.style.display = "block";
+      vgscrubbar.style.display ="none";
+      vgcontrol.style.display = "none";  
    });
-    video.load();
-    let sid = setTimeout(()=>{
-        video.play();
-        clearTimeout(sid);
-    },20);
+
+   video.addEventListener('play',()=>{
+    vgscrubbar.style.display ="block";
+    vgcontrol.style.display = "block";  
+   });
+
+
+   video.addEventListener('canplay',()=>{
+        vgbuffering.style.display ="none";
+        video.play(); 
+   });
+   video.load();
   }
 
   handleTotal(post:any){

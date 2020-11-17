@@ -938,23 +938,32 @@ export class ChannelsPage implements OnInit {
       }
       source.setAttribute("src",videodata);
       let vgbuffering:any = document.getElementById(id+"vgbufferingchannel") || "";
-          vgbuffering.style.display ="none";
+      let vgoverlayplay:any = document.getElementById(id+"vgoverlayplaychannel"); 
       let video:any = document.getElementById(id+"videochannel");
+      let vgscrubbar:any = document.getElementById(id+"vgscrubbarchannel"); 
+      let vgcontrol:any = document.getElementById(id+"vgcontrolschannel"); 
       video.addEventListener('ended',()=>{
-          let vgoverlayplay:any = document.getElementById(id+"vgoverlayplaychannel"); 
           vgbuffering.style.display ="none";
           vgoverlayplay.style.display = "block";  
       });
 
       video.addEventListener('pause',()=>{
-        let vgoverlayplay:any = document.getElementById(id+"vgoverlayplaychannel");
+        vgbuffering.style.display ="none";
         vgoverlayplay.style.display = "block";  
-    });
+       });
+
+       video.addEventListener('play',()=>{
+        vgscrubbar.style.display ="block";
+        vgcontrol.style.display = "block";  
+       });
+    
+    
+       video.addEventListener('canplay',()=>{
+            vgbuffering.style.display ="none";
+            video.play(); 
+       });
+
       video.load();
-      let sid = setTimeout(()=>{
-        video.play();
-        clearTimeout(sid);
-      },20);
   }
 
     handleTotal(post:any){
