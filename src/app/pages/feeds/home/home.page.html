@@ -85,14 +85,14 @@
                   <vg-overlay-play id={{post.nodeId+post.channel_id+post.id}}vgoverlayplayhome></vg-overlay-play>
                   <vg-buffering id={{post.nodeId+post.channel_id+post.id}}vgbufferinghome></vg-buffering>
               
-                  <vg-scrub-bar>
+                  <vg-scrub-bar id={{post.nodeId+post.channel_id+post.id}}vgscrubbarhome style="display: none;">
                       <vg-scrub-bar-current-time></vg-scrub-bar-current-time>
                       <vg-scrub-bar-buffering-time></vg-scrub-bar-buffering-time>
                   </vg-scrub-bar>
               
-                  <vg-controls> 
-                      <vg-time-display vgProperty="current" vgFormat="mm:ss"></vg-time-display>
-                      <span class="totaltime">{{handleTotal(post)}}</span>
+                  <vg-controls id={{post.nodeId+post.channel_id+post.id}}vgcontrolshome style="display: none;">
+                      <!-- <vg-time-display vgProperty="current" vgFormat="mm:ss"></vg-time-display>
+                      <span class="totaltime">{{handleTotal(post)}}</span> -->
                       <vg-fullscreen id={{post.nodeId+post.channel_id+post.id}}vgfullscreenhome></vg-fullscreen>
                   </vg-controls>
                

@@ -731,23 +731,35 @@ export class ProfilePage implements OnInit {
     }
     source.setAttribute("src",videodata);
     let vgbuffering:any = document.getElementById(id+"vgbufferinglike") || "";
-        vgbuffering.style.display ="none";
+    let vgoverlayplay:any = document.getElementById(id+"vgoverlayplaylike"); 
     let video:any = document.getElementById(id+"videolike");
+    let vgscrubbar:any = document.getElementById(id+"vgscrubbarlike"); 
+      let vgcontrol:any = document.getElementById(id+"vgcontrolslike"); 
     video.addEventListener('ended',()=>{
-        let vgoverlayplay:any = document.getElementById(id+"vgoverlayplaylike"); 
         vgbuffering.style.display ="none";
         vgoverlayplay.style.display = "block";  
     });
 
     video.addEventListener('pause',()=>{
-      let vgoverlayplay:any = document.getElementById(id+"vgoverlayplaylike");
       vgoverlayplay.style.display = "block";  
+      vgbuffering.style.display ="none";
   });
+
+  video.addEventListener('play',()=>{
+    vgscrubbar.style.display ="block";
+    vgcontrol.style.display = "block";  
+   });
+
+
+   video.addEventListener('canplay',()=>{
+        vgbuffering.style.display ="none";
+        video.play(); 
+   });
     video.load();
-    let sid = setTimeout(()=>{
-      video.play();
-      clearTimeout(sid);
-    },20);
+    // let sid = setTimeout(()=>{
+    //   video.play();
+    //   clearTimeout(sid);
+    // },20);
    }
 
   showBigImage(item:any){
