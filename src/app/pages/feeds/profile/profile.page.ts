@@ -619,9 +619,9 @@ export class ProfilePage implements OnInit {
     let videoElement:any = document.getElementById(id+'videolike') || "";
     let source:any = document.getElementById(id+'sourcelike') || "";
     if(source!=""){
-      videoElement.pause();
-      //videoElement.removeAttribute('src'); // empty source
-      //videoElement.load();
+      if(!videoElement.paused){  //判断是否处于暂停状态
+        videoElement.pause();
+      }
     }
   }
   
@@ -644,7 +644,6 @@ export class ProfilePage implements OnInit {
         let source:any = document.getElementById(id+'sourcelike') || "";
         videoElement.removeAttribute('poster'); // empty source
         if(source!=""){
-          videoElement.pause();
           source.removeAttribute('src'); // empty source
           let sid=setTimeout(()=>{
             videoElement.load();

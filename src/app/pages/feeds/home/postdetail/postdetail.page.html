@@ -58,8 +58,8 @@
           <!---video-->
         <div *ngIf="postStatus != 1&&videoisShow&&posterImg!=''" style="width:100%;height:200px;margin:0px auto;margin-top:10px;">
           <vg-player>
-            <vg-overlay-play></vg-overlay-play>
-            <vg-buffering></vg-buffering>
+            <vg-overlay-play id={{nodeId+channelId+postId}}vgoverlayplaypostdetail></vg-overlay-play>
+            <vg-buffering  id={{nodeId+channelId+postId}}vgbufferingpostdetail></vg-buffering>
         
             <vg-scrub-bar>
                 <vg-scrub-bar-current-time></vg-scrub-bar-current-time>
@@ -71,14 +71,13 @@
                 <vg-time-display vgProperty="current" vgFormat="mm:ss" ></vg-time-display>
                 <span class="totaltime">{{handleTotal(post)}}</span>
                 <vg-mute></vg-mute>
-                <vg-fullscreen></vg-fullscreen>
+                <vg-fullscreen id={{nodeId+channelId+postId}}vgfullscreenpostdetail></vg-fullscreen>
             </vg-controls>
          
         <video #media [vgMedia]="media" 
-        id={{nodeId+channelId+postId}}video
-        [poster]="posterImg"
+        id={{nodeId+channelId+postId}}postdetailvideo
         playsinline webkit-playsinline>
-        <source [src]="videoObj" type="video/mp4" id={{nodeId+channelId+postId}}source>
+        <source  type="video/mp4" id={{nodeId+channelId+postId}}postdetailsource>
         </video>
         </vg-player>
       </div>

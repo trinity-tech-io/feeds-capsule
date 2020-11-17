@@ -818,9 +818,9 @@ addBinaryEvevnt(){
     let videoElement:any = document.getElementById(id+'video') || "";
     let source:any = document.getElementById(id+'source') || "";
     if(source!=""){
-      videoElement.pause();
-      //videoElement.removeAttribute('src'); // empty source
-      //videoElement.load();
+      if(!videoElement.paused){  //判断是否处于暂停状态
+        videoElement.pause();
+      }
     }
   }
   
@@ -843,15 +843,11 @@ addBinaryEvevnt(){
         let source:any = document.getElementById(id+'source') || "";
         videoElement.removeAttribute('poster'); // empty source
         if(source!=""){
-          //let vgoverlayplay:any = document.getElementById(id+"vgoverlayplayhome") || "";
-          //vgoverlayplay.style.display = 'block';
-          videoElement.pause();
           source.removeAttribute('src'); // empty source
           let sid=setTimeout(()=>{
             videoElement.load();
             clearTimeout(sid);
           },10)
-       
         }
       }
     }
