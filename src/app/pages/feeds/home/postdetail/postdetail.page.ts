@@ -643,26 +643,38 @@ export class PostdetailPage implements OnInit {
     let source:any = document.getElementById(id+"postdetailsource") || "";
     source.setAttribute("src",videodata); 
     let  video:any = document.getElementById(id+"postdetailvideo") || "";
+    let vgbuffering:any = document.getElementById(id+"vgbufferingpostdetail");
+    let vgoverlayplay:any = document.getElementById(id+"vgoverlayplaypostdetail"); 
+    let vgcontrol:any = document.getElementById(id+"vgcontrolspostdetail");
+    let vgscrubbar:any = document.getElementById(id+"vgscrubbarpostdetail"); 
     video.addEventListener('ended',()=>{
-      let vgbuffering:any = document.getElementById(id+"vgbufferingpostdetail");
-        let vgoverlayplay:any = document.getElementById(id+"vgoverlayplaypostdetail"); 
+     
         vgbuffering.style.display ="none";
         vgoverlayplay.style.display = "block";  
     });
 
     video.addEventListener('pause',()=>{
-      let vgbuffering:any = document.getElementById(id+"vgbufferingpostdetail");
       vgbuffering.style.display ="none";
-      let vgoverlayplay:any = document.getElementById(id+"vgoverlayplaypostdetail"); 
       if(vgoverlayplay!=""){
         vgoverlayplay.style.display = "block";
       }
     });
+
+    video.addEventListener('play',()=>{
+      vgscrubbar.style.display ="block";
+      vgcontrol.style.display = "block";  
+     });
+  
+  
+     video.addEventListener('canplay',()=>{
+          vgbuffering.style.display ="none";
+          video.play(); 
+     });
       video.load();
-      let sid = setTimeout(()=>{
-        video.play();
-        clearTimeout(sid);
-      },20);
+      // let sid = setTimeout(()=>{
+      //   video.play();
+      //   clearTimeout(sid);
+      // },20);
   }
 
   pauseVideo(){
