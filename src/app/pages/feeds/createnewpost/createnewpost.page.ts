@@ -258,7 +258,7 @@ export class CreatenewpostPage implements OnInit {
         this.native.toast_trans("CreatenewpostPage.tipMsg2");
          return false;
     }
-    this.native.showLoading("common.waitMoment").then(()=>{
+    this.native.showLoading("common.waitMoment", 5*60*1000).then(()=>{
       this.sendPost();
     }).catch(()=>{
       this.native.hideLoading();

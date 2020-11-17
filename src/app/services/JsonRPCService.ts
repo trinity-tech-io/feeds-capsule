@@ -47,7 +47,6 @@ export class JsonRPCService {
         this.events.subscribe('transport:receiveMessage', event => {
             let data = serializeDataService.decodeData(event.message);
             // console.log("receive--->"+JSON.stringify(data));
-
             eventBus.publish('jrpc:receiveMessage',this.response(event.from, data));
         });
     }

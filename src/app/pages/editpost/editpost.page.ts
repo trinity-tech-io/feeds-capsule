@@ -106,23 +106,13 @@ export class EditpostPage implements OnInit {
       this.initTitle();
     });
 
-    this.events.subscribe('feeds:editPostFinish', () => {
+    this.events.subscribe("feeds:editPostSuccess",()=>{
       this.zone.run(()=>{
-        if (this.editState == FeedsData.EditState.TextChange){
-          this.zone.run(() => {
-            this.events.publish("update:tab");
-            this.native.hideLoading();
-            this.native.pop();
-          });
-        }
-
-        // if (this.editState == EditState.TextImageChange || this.editState == EditState.TextVideoChange){
-          // this.feedService.sendData(this.nodeId,this.channelId,this.postId, 0 ,0, this.flieUri,this.imgUrl);
-        // }
+        this.events.publish("update:tab");
+        this.native.hideLoading();
+        this.native.pop();
       });
-      
     });
-
 
     this.events.subscribe('stream:error', (nodeId, error) => {
       this.zone.run(() => {
@@ -178,7 +168,7 @@ export class EditpostPage implements OnInit {
     this.events.unsubscribe("feeds:updateTitle");
     this.events.unsubscribe("rpcRequest:error");
     this.events.unsubscribe("rpcResponse:error");
-    this.events.unsubscribe("feeds:editPostFinish");
+    this.events.unsubscribe("feeds:editPostSuccess");
     
     this.events.unsubscribe("feeds:setBinaryFinish");
     
