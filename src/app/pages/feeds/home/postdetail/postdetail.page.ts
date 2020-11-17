@@ -291,6 +291,11 @@ export class PostdetailPage implements OnInit {
 
 
   ionViewWillLeave(){//清楚订阅事件代码
+ 
+  }
+
+
+  ionViewDidLeave(){
     this.events.unsubscribe("feeds:connectionChanged");
     this.events.unsubscribe("feeds:commentDataUpdate");
     this.events.unsubscribe("feeds:friendConnectionChanged");
@@ -308,8 +313,6 @@ export class PostdetailPage implements OnInit {
     this.events.unsubscribe("rpcResponse:error");
     this.events.unsubscribe("rpcRequest:success");
 
-    this.postImage = "";
-
     this.events.unsubscribe("stream:getBinaryResponse");
     this.events.unsubscribe("stream:getBinarySuccess");
     this.events.unsubscribe("stream:error");
@@ -323,19 +326,14 @@ export class PostdetailPage implements OnInit {
     }
 
     this.hideComment = true;
-
+    this.postImage = "";
     this.clearVideo();
     this.events.publish("update:tab");
     this.events.publish("addBinaryEvevnt");
   }
 
   ionViewDidEnter() {
-    //let sid = setTimeout(()=>{
-      this.setFullScreen();
-      this.setOverPlay();
-     // clearTimeout(sid);
-    //},10);
-    
+   
   }
 
   initTitle(){
@@ -602,7 +600,11 @@ export class PostdetailPage implements OnInit {
         this.zone.run(()=>{
            this.videoisShow = true;
             this.posterImg = imagedata;
-            //this.getVideo(id);
+            let id = this.nodeId+this.channelId+this.postId;
+            let  video:any = document.getElementById(id+"postdetailvideo") || "";
+            video.setAttribute("poster",this.posterImg);
+            this.setFullScreen();
+            this.setOverPlay();
         })
       }else{
         this.videoisShow = false;
@@ -630,41 +632,28 @@ export class PostdetailPage implements OnInit {
 
         this.videoObj = videoData;
         console.log("========="+this.videoObj.substring(0,50));
-        this.loadVideo();
-        // let vgbuffering:any = this.el.nativeElement.querySelector("vg-buffering");
-        // vgbuffering.style.display ="none";
-        // let video:any = this.el.nativeElement.querySelector("video");
-        // video.addEventListener('ended',()=>{
-        //     console.log("==========ended============")
-        //     let vgoverlayplay:any = this.el.nativeElement.querySelector("vg-overlay-play"); 
-        //     vgbuffering.style.display ="none";
-        //     vgoverlayplay.style.display = "block";  
-        // });
-    
-        // video.addEventListener('pause',()=>{
-        //   console.log("==========pause============");
-        //   let vgoverlayplay:any = this.el.nativeElement.querySelector("vg-overlay-play");
-        //   vgoverlayplay.style.display = "block";  
-        // });
-        // video.load();
-        // video.play();
+        this.loadVideo(videoData);
       });
     }); 
       // }
   }
 
-  loadVideo(){
-    
-    let video:any = this.el.nativeElement.querySelector("video");
+  loadVideo(videodata:any){
+    let id = this.nodeId+this.channelId+this.postId;
+    let source:any = document.getElementById(id+"postdetailsource") || "";
+    source.setAttribute("src",videodata); 
+    let  video:any = document.getElementById(id+"postdetailvideo") || "";
     video.addEventListener('ended',()=>{
-      let vgbuffering:any = this.el.nativeElement.querySelector("vg-buffering");
-        let vgoverlayplay:any = this.el.nativeElement.querySelector("vg-overlay-play"); 
+      let vgbuffering:any = document.getElementById(id+"vgbufferingpostdetail");
+        let vgoverlayplay:any = document.getElementById(id+"vgoverlayplaypostdetail"); 
         vgbuffering.style.display ="none";
         vgoverlayplay.style.display = "block";  
     });
 
     video.addEventListener('pause',()=>{
-      let vgoverlayplay:any = this.el.nativeElement.querySelector("vg-overlay-play") || "";
+      let vgbuffering:any = document.getElementById(id+"vgbufferingpostdetail");
+      vgbuffering.style.display ="none";
+      let vgoverlayplay:any = document.getElementById(id+"vgoverlayplaypostdetail"); 
       if(vgoverlayplay!=""){
         vgoverlayplay.style.display = "block";
       }
@@ -677,31 +666,34 @@ export class PostdetailPage implements OnInit {
   }
 
   pauseVideo(){
-    let video:any =  this.el.nativeElement.querySelector("video") || "";
-    if(this.videoObj!=""&&video!=""){
-      video.pause();
+    let id = this.nodeId+this.channelId+this.postId;
+    let  video:any = document.getElementById(id+"postdetailvideo") || "";
+    if(!video.paused){  //判断是否处于暂停状态
+			  video.pause();  //停止播放
     }
   }
 
   clearVideo(){
-    this.posterImg ="";
-    this.videoObj ="";
-    let video:any =  this.el.nativeElement.querySelector("video") || "";
-    let source:any =  this.el.nativeElement.querySelector("source") || ""; 
-    if(video!=""){
-      video.pause();
-      source.removeAttribute('src'); // empty source
-      let sid=setTimeout(()=>{
-        video.load();
-        clearTimeout(sid);
-      },10)
-    }  
-   
- 
+    if(this.posterImg != ""){
+      let id = this.nodeId+this.channelId+this.postId;
+       this.posterImg ="";
+       let  video:any = document.getElementById(id+"postdetailvideo") || "";
+       video.removeAttribute('poster');
+       if(this.videoObj!=""){
+        this.videoObj ="";
+        let source:any = document.getElementById(id+"postdetailsource") || "";
+        source.removeAttribute('src'); // empty source
+        let sid=setTimeout(()=>{
+          video.load();
+          clearTimeout(sid);
+        },10)
+       }
+    }
   }
 
   setFullScreen(){
-    let vgfullscreen = this.el.nativeElement.querySelector("vg-fullscreen") || "";
+    let id = this.nodeId+this.channelId+this.postId;
+    let vgfullscreen:any = document.getElementById(id+"vgfullscreenpostdetail") || "";
     if(vgfullscreen !=""){
       vgfullscreen.onclick=()=>{
         let isFullScreen = this.vgFullscreenAPI.isFullscreen;
@@ -721,11 +713,14 @@ export class PostdetailPage implements OnInit {
   }
 
   setOverPlay(){
-    let vgoverlayplay:any = this.el.nativeElement.querySelector("vg-overlay-play") || "";
+    let id = this.nodeId+this.channelId+this.postId;
+    let vgoverlayplay:any = document.getElementById(id+"vgoverlayplaypostdetail") || "";
     if(vgoverlayplay!=""){
      vgoverlayplay.onclick = ()=>{
       this.zone.run(()=>{
-        if (this.videoObj != "")
+        let source:any = document.getElementById(id+"postdetailsource") || "";
+        let sourceSrc = source.getAttribute("src") || "";
+        if (sourceSrc != "")
           return;
 
         let key = this.feedService.getVideoKey(this.nodeId,this.channelId,this.postId,0,0);
@@ -752,7 +747,7 @@ export class PostdetailPage implements OnInit {
       this.native.openViewer(value,"common.image","PostdetailPage.postview",this.appService);
     } else if (key.indexOf("video")>-1){
       this.videoObj = value;
-      this.loadVideo();
+      this.loadVideo(value);
     }
   }
 }
