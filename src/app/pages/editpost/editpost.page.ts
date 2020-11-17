@@ -27,13 +27,11 @@ export class EditpostPage implements OnInit {
   public newPost: string="";
   public oldNewPost: string = "";
   public imgUrl: string = "";
-  public oldImgUrl: string = "";
   public nodeId: string = "";
   public channelId: number = 0;
   public postId: number = 0;
 
   public posterImg:any = "";
-  public oldPosterImg:any ="";
   public flieUri:string = "";
   public uploadProgress:number = 0;
   public videotype:string = "video/mp4";
@@ -125,25 +123,6 @@ export class EditpostPage implements OnInit {
       
     });
 
-    // this.events.subscribe('stream:getBinaryResponse', () => {
-    //   this.zone.run(() => {
-       
-    //   });
-    // });
-
-    // this.events.subscribe('stream:getBinarySuccess', (nodeId, key: string, value, mediaType) => {
-    //   this.zone.run(() => {
-    //     this.feedService.closeSession(nodeId);
-    //     this.cacheGetBinaryRequestKey = "";
-    //     if (key.indexOf("img")>-1){
-    //       this.native.hideLoading();
-    //       this.native.openViewer(value,"common.image","PostdetailPage.postview",this.appService);
-    //     } else if (key.indexOf("video")>-1){
-    //       this.flieUri = value;
-    //       this.loadVideo();
-    //     }
-    //   });
-    // });
 
     this.events.subscribe('stream:error', (nodeId, error) => {
       this.zone.run(() => {
@@ -210,7 +189,6 @@ export class EditpostPage implements OnInit {
     this.events.unsubscribe("feeds:openRightMenu");
     this.events.unsubscribe("stream:getBinarySuccess");
     this.posterImg ="";
-    this.oldImgUrl="";
     this.flieUri="";
     this.imgUrl="";
       
@@ -221,18 +199,15 @@ export class EditpostPage implements OnInit {
   }
 
   pauseVideo(){
-    let video:any = document.getElementById('eidtVideo') || "";
-     if(this.flieUri!=""&&video!=""){
-       video.pause();
-     }
+    let id = this.nodeId+this.channelId+this.postId;
+    let  video:any = document.getElementById(id+"videoeditpost") || "";
+    if(!video.paused){  //判断是否处于暂停状态
+			  video.pause();  //停止播放
+    }
    }
 
   ionViewDidEnter() {
-    let sid = setTimeout(()=>{
-      this.setFullScreen();
-      this.setOverPlay();
-      clearTimeout(sid);
-    },100);
+ 
   }
 
   initTitle(){
@@ -251,16 +226,12 @@ export class EditpostPage implements OnInit {
       return false;
     }
 
-    if(this.oldNewPost === newPost && this.oldImgUrl === this.imgUrl&&this.oldPosterImg === this.posterImg){
+    if(this.oldNewPost === newPost){
       this.native.toast_trans("common.nochanges");
       return false;
     }
 
-    if(this.flieUri!=""&&this.posterImg === ""){
-      this.native.toast_trans("CreatenewpostPage.tipMsg2");
-       return false;
-    }
-    
+
     this.native.showLoading("common.waitMoment").then(()=>{
           this.editPost();
     }).catch(()=>{
@@ -282,7 +253,7 @@ export class EditpostPage implements OnInit {
     }
     
     //content img & only text changed
-    if (this.newPost != this.oldNewPost && this.imgUrl == this.oldImgUrl && this.imgUrl != ""){
+    if (this.newPost != this.oldNewPost && this.imgUrl != ""){
       this.editState = FeedsData.EditState.TextChange;
       let size = this.feedService.getContentDataSize(this.nodeId, this.channelId, this.postId, 0, 0, FeedsData.MediaType.containsImg);
       this.feedService.compress(this.imgUrl).then((imageThumb)=>{
@@ -293,7 +264,7 @@ export class EditpostPage implements OnInit {
     }
 
     //content video && only text changed
-    if (this.newPost != this.oldNewPost && this.posterImg == this.oldPosterImg && this.posterImg != ""){
+    if (this.newPost != this.oldNewPost && this.posterImg != ""){
       this.editState = FeedsData.EditState.TextChange;
       let size = this.feedService.getContentDataSize(this.nodeId, this.channelId, this.postId, 0, 0, FeedsData.MediaType.containsVideo);
       let content = this.feedService.createVideoContent(this.newPost, this.posterImg, this.duration, size);
@@ -320,14 +291,14 @@ export class EditpostPage implements OnInit {
       this.transDataChannel = FeedsData.TransDataChannel.MESSAGE
     }
 
-    if (this.flieUri != "" && this.posterImg != this.oldImgUrl){
+    if (this.flieUri != ""){
       this.editState = FeedsData.EditState.TextVideoChange;
       let content = this.feedService.createVideoContent(this.newPost, this.posterImg, this.duration, videoSize);
       this.publishEditedPost(content);
       return;
     }
 
-    if (this.imgUrl != "" && this.imgUrl != this.oldImgUrl){
+    if (this.imgUrl != ""){
       this.feedService.compress(this.imgUrl).then((imageThumb)=>{
         this.editState = FeedsData.EditState.TextImageChange;
         let content = this.feedService.createOneImgContent(this.newPost, imageThumb, imgSize);
@@ -388,7 +359,6 @@ export class EditpostPage implements OnInit {
          key = thumbkey;
     }  
     this.feedService.getData(key).then((image)=>{
-      this.oldImgUrl = image || "";
       this.imgUrl = image || "";
     }).catch(()=>{
       console.log("getImageError");
@@ -410,10 +380,12 @@ export class EditpostPage implements OnInit {
     this.channelAvatar = this.feedService.parseChannelAvatar(channel["avatar"]);
     let post = this.feedService.getPostFromId(this.nodeId, this.channelId, this.postId);
     if(post.content.mediaType === 1){
+      this.isShowVideo = false;
       this.getImage();
     }
 
     if(post.content.mediaType === 2){
+      this.isShowVideo = true;
       this.duration = post.content["videoThumbKey"]["duration"];
       this.initVideo();
     }
@@ -506,7 +478,8 @@ export class EditpostPage implements OnInit {
                  this.isShowVideo = true;
                  let sid = setTimeout(()=>{
                   //let img = new Image;
-                  this.setFullScreen();
+                  let id = this.nodeId+this.channelId+this.nodeId;
+                  this.setFullScreen(id);
                   clearInterval(sid);
                  },20);
                })
@@ -611,7 +584,15 @@ export class EditpostPage implements OnInit {
           this.zone.run(()=>{
             this.isShowVideo = true;
             this.posterImg = imgageData;
-            this.oldPosterImg = imgageData;
+            let id = this.nodeId+this.channelId+this.postId;
+            let sid =setTimeout(()=>{
+              let video = document.getElementById(id+"videoeditpost");
+              video.setAttribute("poster",imgageData);
+              this.setFullScreen(id);
+              this.setOverPlay(id);
+              clearTimeout(sid);
+            },0);
+      
           });   
         }
        });
@@ -622,19 +603,25 @@ export class EditpostPage implements OnInit {
     this.totalProgress = 0;
     this.uploadProgress =0;
     this.totalProgress = 0;
-    this.posterImg ="";
-    this.flieUri ="";
-    let video:any = document.getElementById('eidtVideo') || "";
-    if(video!=""){
-      let sid = setTimeout(()=>{
-        video.load();
-        clearTimeout(sid);
-      },10);
+    if(this.posterImg != ""){
+      let id = this.nodeId+this.channelId+this.postId;
+       this.posterImg ="";
+       let  video:any = document.getElementById(id+"videoeditpost") || "";
+       video.removeAttribute('poster');
+       if(this.flieUri!=""){
+        this.flieUri ="";
+        let source:any = document.getElementById(id+"sourceeditpost") || "";
+        source.removeAttribute('src'); // empty source
+        let sid=setTimeout(()=>{
+          video.load();
+          clearTimeout(sid);
+        },10)
+       }
     }
   }
 
-  setFullScreen(){
-    let vgfullscreen = this.el.nativeElement.querySelector("vg-fullscreen") || "";
+  setFullScreen(id:string){
+    let vgfullscreen:any = document.getElementById(id+"vgfullscreeneditpost") || "";
     if(vgfullscreen !=""){
       vgfullscreen.onclick=()=>{
         let isFullScreen = this.vgFullscreenAPI.isFullscreen;
@@ -653,12 +640,14 @@ export class EditpostPage implements OnInit {
     }
   }
 
-  setOverPlay(){
-    let vgoverlayplay:any = this.el.nativeElement.querySelector("vg-overlay-play") || "";
+  setOverPlay(id:string){
+    let vgoverlayplay:any = document.getElementById(id+"vgoverlayplayeditpost") || "";
     if(vgoverlayplay!=""){
      vgoverlayplay.onclick = ()=>{
       this.zone.run(()=>{
-        if(this.flieUri === ""){
+        let source:any = document.getElementById(id+"sourceeditpost") || "";
+        let  sourceSrc = source.getAttribute("src") || "";
+        if(sourceSrc === ""){
           let key = this.feedService.getVideoKey(this.nodeId,this.channelId,this.postId,0,0);
           this.getVideo(key);
          //this.getVideo(this.nodeId+this.channelId+this.postId);
@@ -672,42 +661,53 @@ export class EditpostPage implements OnInit {
     console.log("getVideo ===>"+key);
         this.feedService.getData(key).then((videodata:string)=>{
           this.zone.run(()=>{
-           
             let videoData = videodata || "";
-
-            // if (videoData == ""){
-              // this.cacheGetBinaryRequestKey = key;
-              // this.cachedMediaType = "video";
-              // if (this.feedService.restoreSession(this.nodeId)){
-              //   this.feedService.getBinary(this.nodeId, key, this.cachedMediaType);
-              // }
-              // return;
-            // }
             this.flieUri = videoData;
-            this.loadVideo();
+            this.loadVideo(videoData);
           }) 
         }); 
   }
 
-  loadVideo(){
-    let vgbuffering:any = this.el.nativeElement.querySelector("vg-buffering");
-    vgbuffering.style.display ="none";
-    let video:any = this.el.nativeElement.querySelector("video");
+  loadVideo(videoData:string){
+    let id =this.nodeId+this.channelId+this.postId;
+    let source:any = document.getElementById(id+"sourceeditpost") || "";
+    source.setAttribute("src",videoData);
+    let vgbuffering:any = document.getElementById(id+"vgbufferingeditpost");
+    let vgoverlayplay:any = document.getElementById(id+"vgoverlayplayeditpost");
+    let vgscrubbar:any = document.getElementById(id+"vgscrubbareditpost");
+    let vgcontrol:any = document.getElementById(id+"vgcontrolseditpost");  
+    let video:any = document.getElementById(id+"videoeditpost") || "";
+  
      video.addEventListener('ended',()=>{
-    let vgoverlayplay:any = this.el.nativeElement.querySelector("vg-overlay-play"); 
     vgbuffering.style.display ="none";
-    vgoverlayplay.style.display = "block";  
-});
+    vgoverlayplay.style.display = "block";
+    vgscrubbar.style.display ="none";
+    vgcontrol.style.display = "none";   
+  });
 
-   video.addEventListener('pause',()=>{
-  let vgoverlayplay:any = this.el.nativeElement.querySelector("vg-overlay-play");
-  vgoverlayplay.style.display = "block";  
-});
+  video.addEventListener('pause',()=>{
+  vgbuffering.style.display ="none";
+  vgoverlayplay.style.display = "block"; 
+  vgscrubbar.style.display ="none";
+  vgcontrol.style.display = "none";  
+  });
+
+  video.addEventListener('play',()=>{
+    vgscrubbar.style.display ="block";
+    vgcontrol.style.display = "block";  
+   });
+
+
+  video.addEventListener('canplay',()=>{
+        vgbuffering.style.display ="none";
+        video.play(); 
+  });
+
 video.load();
-let sid = setTimeout(()=>{
-  video.play();
-  clearTimeout(sid);
-},20);
+// let sid = setTimeout(()=>{
+//   video.play();
+//   clearTimeout(sid);
+// },20);
   }
 
 async getVideoInfo(fileUri:string){
@@ -794,7 +794,6 @@ readThumbnail(fileName:string,filepath:string){
     this.navCtrl.pop().then(()=>{
       this.events.publish("update:tab");
       this.posterImg ="";
-      this.oldImgUrl="";
       this.flieUri="";
       this.imgUrl="";
       this.native.hideLoading();
