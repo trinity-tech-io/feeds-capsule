@@ -24,47 +24,46 @@
 
     <div *ngIf="imgUrl !== ''" class="img-container">
       <img src="{{imgUrl}}" (click)="showBigImage(imgUrl)" />
-      <img class="remove" src="/assets/icons/remove.svg" (click)="imgUrl = ''"/>
+      <!-- <img class="remove" src="/assets/icons/remove.svg" (click)="imgUrl = ''"/> -->
     </div>
 
 
-    <div *ngIf="isShowVideo"  style="width: 320px;height:200px;margin: 0 auto;">
-      <div style="position: relative;">
+    <div *ngIf="posterImg!==''" style="width: 320px;height:200px;margin: 0 auto;">
+      <!-- <div style="position: relative;">
       <img style="position:absolute;z-index: 10;right: -8px;top: -8px;width: 20px;height: 20px;" src="/assets/icons/remove.svg" (click)="removeVideo()"/>
-      </div>
-      <vg-player *ngIf="isShowVideo">
-        <vg-overlay-play></vg-overlay-play>
-        <vg-buffering></vg-buffering>
+      </div> -->
+      <vg-player>
+        <vg-overlay-play id={{nodeId+channelId+postId}}vgoverlayplayeditpost></vg-overlay-play>
+        <vg-buffering id={{nodeId+channelId+postId}}vgbufferingeditpost></vg-buffering>
     
-        <vg-scrub-bar>
+        <vg-scrub-bar id={{nodeId+channelId+postId}}vgscrubbareditpost style="display: none;">
             <vg-scrub-bar-current-time></vg-scrub-bar-current-time>
             <vg-scrub-bar-buffering-time></vg-scrub-bar-buffering-time>
         </vg-scrub-bar>
     
-        <vg-controls [vgAutohide]="true">
-            <vg-play-pause></vg-play-pause>
-            <vg-playback-button></vg-playback-button>
+        <vg-controls id={{nodeId+channelId+postId}}vgcontrolseditpost style="display: none;">
+            <!-- <vg-play-pause></vg-play-pause> -->
+            <!-- <vg-playback-button></vg-playback-button>
     
             <vg-time-display vgProperty="current" vgFormat="mm:ss"></vg-time-display>
             <span class="totaltime">{{handleTotal(duration)}}</span>
-            <vg-mute></vg-mute>
-            <vg-fullscreen></vg-fullscreen>
+            <vg-mute></vg-mute> -->
+            <vg-fullscreen id={{nodeId+channelId+postId}}vgfullscreeneditpost></vg-fullscreen>
         </vg-controls>
      
-    <video #media [vgMedia]="media" id="eidtVideo"
-    [poster]="posterImg"
+    <video #media [vgMedia]="media" id={{nodeId+channelId+postId}}videoeditpost
     playsinline webkit-playsinline>
-    <source [src]="flieUri" [type]="videotype">
+    <source  [type]="videotype" id={{nodeId+channelId+postId}}sourceeditpost>
     </video>
     </vg-player>
     </div>
     <p *ngIf="totalProgress>0&&totalProgress!=100" style="text-align: center;">{{"common.videoloading"|translate}} {{totalProgress}}%</p>
     <ion-row class="submit-row">
       <ion-col class="left-col">
-        <ion-icon id="image" mode="ios" name="image" (click)="addImg(0)" *ngIf="posterImg ===''"></ion-icon>
+        <!-- <ion-icon id="image" mode="ios" name="image" (click)="addImg(0)" *ngIf="posterImg ===''"></ion-icon>
         <ion-icon id="camera" mode="ios" name="camera" (click)="addImg(1)"  *ngIf="posterImg ===''"></ion-icon>
         <ion-icon id="selectvideo" mode="ios" name="selectvideo" (click)="selectvideo()" *ngIf="imgUrl === ''" ></ion-icon>
-        <ion-icon id="videocam" name="videocam" (click)="videocam()"*ngIf="imgUrl === ''"  ></ion-icon>
+        <ion-icon id="videocam" name="videocam" (click)="videocam()"*ngIf="imgUrl === ''"  ></ion-icon> -->
       </ion-col>
       <ion-col class="right-col" size="4.5">
         <ion-button (click)="post()">
