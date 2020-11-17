@@ -226,8 +226,6 @@ export class CreatenewpostPage implements OnInit {
     this.events.unsubscribe("feeds:notifyPostSuccess");
     
 
-    this.flieUri ="";
-    this.posterImg ="";
     this.imgUrl="";
     this.transcode = 0;
     this.uploadProgress =0;
@@ -391,8 +389,6 @@ export class CreatenewpostPage implements OnInit {
   }
 
 selectvideo(){
-    this.flieUri = '';
-    this.posterImg='';
     this.removeVideo();
     this.transcode =0;
     this.uploadProgress =0;
@@ -448,8 +444,11 @@ selectvideo(){
                   let sid = setTimeout(()=>{
                   //let img = new Image;
                   this.setFullScreen();
+                  let video:any = document.getElementById("videocreatepost") || "";
+                  video.setAttribute("poster",this.posterImg);
+                  this.setOverPlay(this.flieUri)
                   clearInterval(sid);
-                  },20);
+                  },0);
                })
               };
 
@@ -523,22 +522,28 @@ selectvideo(){
   }
 
   removeVideo(){
-    this.posterImg ="";
-    this.flieUri ="";
     this.totalProgress = 0;
     this.uploadProgress =0;
     this.totalProgress = 0;
-    let video:any = document.getElementById('addVideo') || "";
-    if(video!=""){
-      let sid = setTimeout(()=>{
-        video.load();
-        clearTimeout(sid);
-      },10);
+    if(this.posterImg != ""){
+       this.posterImg ="";
+       let  video:any = document.getElementById("videocreatepost") || "";
+       video.removeAttribute('poster');
+       if(this.flieUri!=""){
+        this.flieUri ="";
+        let source:any = document.getElementById("sourcecreatepost") || "";
+        source.removeAttribute('src'); // empty source
+        let sid=setTimeout(()=>{
+          video.load();
+          clearTimeout(sid);
+        },10)
+       }
     }
   }
 
   setFullScreen(){
-    let vgfullscreen = this.el.nativeElement.querySelector("vg-fullscreen") || "";
+
+    let vgfullscreen:any = document.getElementById("vgfullscreecreatepost") || "";
     if(vgfullscreen ===""){
       return;
     }
@@ -560,10 +565,68 @@ selectvideo(){
  }
  }
 
+ setOverPlay(fileUri:string){
+  let vgoverlayplay:any = document.getElementById("vgoverlayplaycreatepost") || "";
+  if(vgoverlayplay!=""){
+   vgoverlayplay.onclick = ()=>{
+    this.zone.run(()=>{
+      let source:any = document.getElementById("sourcecreatepost") || "";
+      let  sourceSrc = source.getAttribute("src") || "";
+      if(sourceSrc === ""){
+           this.loadVideo(fileUri);
+      }
+    });
+   }
+  }
+}
+
+loadVideo(videoData:string){
+
+  let video:any = document.getElementById("videocreatepost") || "";
+  let source:any = document.getElementById("sourcecreatepost") || "";
+  source.setAttribute("src",videoData);
+  let vgbuffering:any = document.getElementById("vgbufferingcreatepost");
+  let vgoverlayplay:any = document.getElementById("vgoverlayplaycreatepost");
+  let vgscrubbar:any = document.getElementById("vgscrubbarcreatepost");
+  let vgcontrol:any = document.getElementById("vgcontrolscreatepost");  
+
+
+   video.addEventListener('ended',()=>{
+  vgbuffering.style.display ="none";
+  vgoverlayplay.style.display = "block";
+  vgscrubbar.style.display ="none";
+  vgcontrol.style.display = "none";   
+});
+
+video.addEventListener('pause',()=>{
+vgbuffering.style.display ="none";
+vgoverlayplay.style.display = "block"; 
+vgscrubbar.style.display ="none";
+vgcontrol.style.display = "none";  
+});
+
+video.addEventListener('play',()=>{
+  vgscrubbar.style.display ="block";
+  vgcontrol.style.display = "block";  
+ });
+
+
+video.addEventListener('canplay',()=>{
+      vgbuffering.style.display ="none";
+      video.play(); 
+});
+
+video.load();
+// let sid = setTimeout(()=>{
+//   video.play();
+//   clearTimeout(sid);
+// },20);
+}
+
  pauseVideo(){
- let video:any = document.getElementById('addVideo') || "";
-  if(this.flieUri!=""&&video!=""){
-    video.pause();
+  let  video:any = document.getElementById("videocreatepost") || "";
+  if(!video.paused){  //判断是否处于暂停状态
+      video.pause();  //停止播放
   }
 }
 
