@@ -116,6 +116,19 @@ export class CreatenewfeedPage implements OnInit {
   }
 
   createChannel(name: HTMLInputElement, desc: HTMLInputElement){
+    this.feedService.checkDIDOnSideChain(this.selectedServer.did,(isOnSideChain)=>{
+      this.zone.run(() => {
+        if (!isOnSideChain ){
+          this.native.toastWarn('common.waitOnChain');
+          return ;
+        }
+        this.processCreateChannel(name, desc);
+      });
+    });
+  }
+
+  processCreateChannel(name: HTMLInputElement, desc: HTMLInputElement){
+
     let nameValue = name.value || "";
         nameValue = this.native.iGetInnerText(nameValue);
     if (nameValue==""){
