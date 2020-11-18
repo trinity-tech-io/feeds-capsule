@@ -548,18 +548,17 @@ selectvideo(){
       return;
     }
     vgfullscreen.onclick=()=>{
-    let isFullScreen = this.vgFullscreenAPI.isFullscreen;
-    if(isFullScreen){
-      this.native.setTitleBarBackKeyShown(true);
-      titleBarManager.setTitle(this.translate.instant("CreatenewpostPage.addingPost"));
-      this.appService.addright();
-    }else{
-      this.native.setTitleBarBackKeyShown(false);
-      titleBarManager.setTitle(this.translate.instant("common.video"));
-      this.appService.hideright();
+    // let isFullScreen = this.vgFullscreenAPI.isFullscreen;
+    // if(isFullScreen){
+    //   this.native.setTitleBarBackKeyShown(true);
+    //   titleBarManager.setTitle(this.translate.instant("CreatenewpostPage.addingPost"));
+    //   this.appService.addright();
+    // }else{
+    //   this.native.setTitleBarBackKeyShown(false);
+    //   titleBarManager.setTitle(this.translate.instant("common.video"));
+    //   this.appService.hideright();
      
-    }
-
+    // }
     this.vgFullscreenAPI.toggleFullscreen(vgfullscreen);
    
  }

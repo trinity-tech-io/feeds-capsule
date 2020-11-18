@@ -612,17 +612,17 @@ export class EditpostPage implements OnInit {
     let vgfullscreen:any = document.getElementById(id+"vgfullscreeneditpost") || "";
     if(vgfullscreen !=""){
       vgfullscreen.onclick=()=>{
-        let isFullScreen = this.vgFullscreenAPI.isFullscreen;
-        if(isFullScreen){
-          this.native.setTitleBarBackKeyShown(true);
-          titleBarManager.setTitle(this.translate.instant("PostdetailPage.postview"));
-          this.appService.addright();
-        }else{
-          this.native.setTitleBarBackKeyShown(false);
-          titleBarManager.setTitle(this.translate.instant("common.video"));
-          this.appService.hideright();
+        // let isFullScreen = this.vgFullscreenAPI.isFullscreen;
+        // if(isFullScreen){
+        //   this.native.setTitleBarBackKeyShown(true);
+        //   titleBarManager.setTitle(this.translate.instant("PostdetailPage.postview"));
+        //   this.appService.addright();
+        // }else{
+        //   this.native.setTitleBarBackKeyShown(false);
+        //   titleBarManager.setTitle(this.translate.instant("common.video"));
+        //   this.appService.hideright();
          
-        }
+        // }
         this.vgFullscreenAPI.toggleFullscreen(vgfullscreen);
      }
     }

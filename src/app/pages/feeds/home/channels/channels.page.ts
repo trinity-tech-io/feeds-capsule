@@ -732,7 +732,7 @@ export class ChannelsPage implements OnInit {
                 this.isLoadVideoiamge[id] = "13";
                 vgplayer.style.display = "block";
                 video.setAttribute("poster",image);
-                this.setFullScreen(id);
+                //this.setFullScreen(id);
                 this.setOverPlay(id,srcId);
               }else{
                 this.isLoadVideoiamge[id] = "12";
