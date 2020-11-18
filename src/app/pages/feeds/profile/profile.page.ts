@@ -579,7 +579,7 @@ export class ProfilePage implements OnInit {
                 this.isLoadVideoiamge[id] = "13";
                 vgplayer.style.display = "block";
                 video.setAttribute("poster",image);
-                this.setFullScreen(id);
+                //this.setFullScreen(id);
                 this.setOverPlay(id,srcId);
               }else{
                 this.isLoadVideoiamge[id] = "12";
@@ -738,20 +738,22 @@ export class ProfilePage implements OnInit {
     let vgoverlayplay:any = document.getElementById(id+"vgoverlayplaylike"); 
     let video:any = document.getElementById(id+"videolike");
     let vgscrubbar:any = document.getElementById(id+"vgscrubbarlike"); 
-      let vgcontrol:any = document.getElementById(id+"vgcontrolslike"); 
+      //let vgcontrol:any = document.getElementById(id+"vgcontrolslike"); 
     video.addEventListener('ended',()=>{
         vgbuffering.style.display ="none";
-        vgoverlayplay.style.display = "block";  
+        vgoverlayplay.style.display = "block";
+        vgscrubbar.style.display ="none";  
     });
 
     video.addEventListener('pause',()=>{
       vgoverlayplay.style.display = "block";  
       vgbuffering.style.display ="none";
+      vgscrubbar.style.display ="none";
   });
 
   video.addEventListener('play',()=>{
     vgscrubbar.style.display ="block";
-    vgcontrol.style.display = "block";  
+    //vgcontrol.style.display = "block";  
    });
 
 

@@ -56,7 +56,7 @@
           >
 
           <!---video-->
-        <div *ngIf="postStatus != 1&&videoisShow&&posterImg!=''" style="width:100%;height:200px;margin:0px auto;margin-top:10px;">
+        <div *ngIf="postStatus != 1&&posterImg!=''" style="width:100%;height:200px;margin:0px auto;margin-top:10px;">
           <vg-player>
             <vg-overlay-play id={{nodeId+channelId+postId}}vgoverlayplaypostdetail></vg-overlay-play>
             <vg-buffering  id={{nodeId+channelId+postId}}vgbufferingpostdetail></vg-buffering>

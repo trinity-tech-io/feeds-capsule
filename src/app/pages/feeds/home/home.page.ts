@@ -768,7 +768,7 @@ addBinaryEvevnt(){
                 vgplayer.style.display = "block";
                 video.setAttribute("poster",image);
                 //video.
-                this.setFullScreen(id);
+                //this.setFullScreen(id);
                 this.setOverPlay(id,srcId);
               }else{
                 //console.log("========="+rowindex);
@@ -945,26 +945,26 @@ addBinaryEvevnt(){
     let vgbuffering:any = document.getElementById(id+"vgbufferinghome") || "";
     let vgoverlayplay:any = document.getElementById(id+"vgoverlayplayhome"); 
     let vgscrubbar:any = document.getElementById(id+"vgscrubbarhome"); 
-    let vgcontrol:any = document.getElementById(id+"vgcontrolshome"); 
+    //let vgcontrol:any = document.getElementById(id+"vgcontrolshome"); 
 
     let video:any = document.getElementById(id+"video");
     video.addEventListener('ended',()=>{
         vgbuffering.style.display ="none";
         vgoverlayplay.style.display = "block";
         vgscrubbar.style.display ="none";
-        vgcontrol.style.display = "none";  
+        //vgcontrol.style.display = "none";  
     });
 
     video.addEventListener('pause',()=>{
       vgbuffering.style.display ="none";
       vgoverlayplay.style.display = "block";
       vgscrubbar.style.display ="none";
-      vgcontrol.style.display = "none";  
+      //vgcontrol.style.display = "none";  
    });
 
    video.addEventListener('play',()=>{
     vgscrubbar.style.display ="block";
-    vgcontrol.style.display = "block";  
+    //vgcontrol.style.display = "block";  
    });
 
 
