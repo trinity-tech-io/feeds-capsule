@@ -95,7 +95,7 @@
             (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)"
           >  -->
 
-          <div *ngIf="post.post_status != 1&&post.content.mediaType ===1"  id ={{post.nodeId+post.channel_id+post.id}}channelrow>
+          <div *ngIf="post.post_status != 1&&post.content.mediaType ===1"  id ={{post.nodeId+post.channel_id+post.id}}channelrow style="width: 100%">
             <span class="lefttopostdetailimg" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)"></span> 
                 <img
                   id ={{post.nodeId+post.channel_id+post.id}}postimgchannel
@@ -107,7 +107,7 @@
 
           <!--video-->
 
-          <div *ngIf="post.post_status!=1&&post.content.mediaType ===2" id={{post.nodeId+post.channel_id+post.id}}vgplayerchannel>
+          <div *ngIf="post.post_status!=1&&post.content.mediaType ===2" id={{post.nodeId+post.channel_id+post.id}}vgplayerchannel style="width:100%">
               <div style="width: 100%;display:inline-block;height:200px;">
               <span  class="lefttopostdetailvideo" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)"></span> 
                <vg-player>

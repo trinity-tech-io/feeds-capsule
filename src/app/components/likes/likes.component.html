@@ -57,7 +57,7 @@
           (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)"
         >  -->
 
-        <div *ngIf="post.post_status != 1&&post.content.mediaType==1"  id ={{post.nodeId+post.channel_id+post.id}}likerow>
+        <div *ngIf="post.post_status != 1&&post.content.mediaType==1"  id ={{post.nodeId+post.channel_id+post.id}}likerow style="width: 100%">
           <span class="lefttopostdetailimg" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)"></span> 
              <img
              id ={{post.nodeId+post.channel_id+post.id}}postimglike
@@ -70,7 +70,7 @@
 
              <!--video-->
 
-             <div *ngIf="post.post_status!=1&&post.content.mediaType==2" id={{post.nodeId+post.channel_id+post.id}}vgplayerlike>
+             <div *ngIf="post.post_status!=1&&post.content.mediaType==2" id={{post.nodeId+post.channel_id+post.id}}vgplayerlike style="width:100%;">
                  <div style="width: 100%;display:inline-block;height:200px;">
                 <span  class="lefttopostdetailvideo" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)"></span> 
                  <vg-player>
