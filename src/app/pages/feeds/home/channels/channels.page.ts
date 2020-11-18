@@ -941,20 +941,22 @@ export class ChannelsPage implements OnInit {
       let vgoverlayplay:any = document.getElementById(id+"vgoverlayplaychannel"); 
       let video:any = document.getElementById(id+"videochannel");
       let vgscrubbar:any = document.getElementById(id+"vgscrubbarchannel"); 
-      let vgcontrol:any = document.getElementById(id+"vgcontrolschannel"); 
+      //let vgcontrol:any = document.getElementById(id+"vgcontrolschannel"); 
       video.addEventListener('ended',()=>{
           vgbuffering.style.display ="none";
           vgoverlayplay.style.display = "block";  
+          vgscrubbar.style.display ="none";  
       });
 
       video.addEventListener('pause',()=>{
         vgbuffering.style.display ="none";
-        vgoverlayplay.style.display = "block";  
+        vgoverlayplay.style.display = "block";
+        vgscrubbar.style.display ="none";  
        });
 
        video.addEventListener('play',()=>{
         vgscrubbar.style.display ="block";
-        vgcontrol.style.display = "block";  
+        //vgcontrol.style.display = "block";  
        });
     
     

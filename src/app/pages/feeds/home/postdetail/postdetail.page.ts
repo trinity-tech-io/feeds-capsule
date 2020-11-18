@@ -601,10 +601,14 @@ export class PostdetailPage implements OnInit {
            this.videoisShow = true;
             this.posterImg = imagedata;
             let id = this.nodeId+this.channelId+this.postId;
-            let  video:any = document.getElementById(id+"postdetailvideo") || "";
-            video.setAttribute("poster",this.posterImg);
-            this.setFullScreen();
-            this.setOverPlay();
+            let sid =setTimeout(()=>{
+              let  video:any = document.getElementById(id+"postdetailvideo") || "";
+              video.setAttribute("poster",this.posterImg);
+              this.setFullScreen();
+              this.setOverPlay();
+              clearTimeout(sid);
+            },0);
+         
         })
       }else{
         this.videoisShow = false;
@@ -708,17 +712,17 @@ export class PostdetailPage implements OnInit {
     let vgfullscreen:any = document.getElementById(id+"vgfullscreenpostdetail") || "";
     if(vgfullscreen !=""){
       vgfullscreen.onclick=()=>{
-        let isFullScreen = this.vgFullscreenAPI.isFullscreen;
-        if(isFullScreen){
-          this.native.setTitleBarBackKeyShown(true);
-          titleBarManager.setTitle(this.translate.instant("PostdetailPage.postview"));
-          this.appService.addright();
-        }else{
-          this.native.setTitleBarBackKeyShown(false);
-          titleBarManager.setTitle(this.translate.instant("common.video"));
-          this.appService.hideright();
+        // let isFullScreen = this.vgFullscreenAPI.isFullscreen;
+        // if(isFullScreen){
+        //   this.native.setTitleBarBackKeyShown(true);
+        //   titleBarManager.setTitle(this.translate.instant("PostdetailPage.postview"));
+        //   this.appService.addright();
+        // }else{
+        //   this.native.setTitleBarBackKeyShown(false);
+        //   titleBarManager.setTitle(this.translate.instant("common.video"));
+        //   this.appService.hideright();
          
-        }
+        // }
         this.vgFullscreenAPI.toggleFullscreen(vgfullscreen);
      }
     }
