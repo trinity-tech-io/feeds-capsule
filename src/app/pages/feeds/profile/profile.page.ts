@@ -170,11 +170,15 @@ export class ProfilePage implements OnInit {
     });
 
     this.events.subscribe('feeds:editPostFinish',()=>{
-      this.initLike();
+      this.zone.run(() => {
+        this.initLike();
+      });
     });
 
   this.events.subscribe('feeds:deletePostFinish',()=>{
+    this.zone.run(() => {
       this.initLike();
+    });
   });
 
   this.events.subscribe("feeds:updateTitle",()=>{
