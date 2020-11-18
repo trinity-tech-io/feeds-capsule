@@ -48,12 +48,30 @@ export class CreatenewfeedPage implements OnInit {
     this.connectionStatus = this.feedService.getConnectionStatus();
     this.channelAvatar = this.feedService.getProfileIamge();
     this.avatar = this.feedService.parseChannelAvatar(this.channelAvatar);
+
+    this.events.subscribe('rpcRequest:error', () => {
+      this.zone.run(() => {
+         this.native.hideLoading();
+      });
+    });
+  
+    this.events.subscribe('rpcResponse:error', () => {
+      this.zone.run(() => {
+        this.native.hideLoading();
+      });
+    });
+
     this.events.subscribe("tipdialog-cancel",()=>{
        this.popover.dismiss();
     });
     this.events.subscribe("tipdialog-confirm",(name,des)=>{
        this.popover.dismiss();
-       this.feedService.createTopic(this.selectedServer.nodeId, name, des, this.channelAvatar);
+       this.native.showLoading("common.waitMoment").then(()=>{
+        this.feedService.createTopic(this.selectedServer.nodeId, name, des, this.channelAvatar);
+       }).catch(()=>{
+        this.native.hideLoading();
+       });
+      
 
     });
     this.events.subscribe('feeds:connectionChanged',(status)=>{
@@ -63,6 +81,7 @@ export class CreatenewfeedPage implements OnInit {
     });
     this.events.subscribe('feeds:createTopicSuccess', () => {
       this.zone.run(() => {
+        this.native.hideLoading();
         this.navCtrl.pop().then(()=>{
           this.native.toast(this.translate.instant("CreatenewfeedPage.createfeedsuccess"));
         });
@@ -84,6 +103,9 @@ export class CreatenewfeedPage implements OnInit {
     this.events.unsubscribe("feeds:connectionChanged");
     this.events.unsubscribe("feeds:createTopicSuccess");
     this.events.unsubscribe("feeds:updateTitle");
+    this.events.unsubscribe("rpcRequest:error");
+    this.events.unsubscribe("rpcResponse:error");
+    this.native.hideLoading();
   }
 
   initTitle(){
