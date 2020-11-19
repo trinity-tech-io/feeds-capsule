@@ -13,6 +13,8 @@ import { HttpService } from 'src/app/services/HttpService';
 import { ApiUrl } from 'src/app/services/ApiUrl';
 import { FormateInfoService } from 'src/app/services/FormateInfoService';
 import { SessionService } from 'src/app/services/SessionService';
+import { PopupProvider } from 'src/app/services/popup';
+
 import * as _ from 'lodash';
 
 declare let didManager: DIDPlugin.DIDManager;
@@ -423,6 +425,7 @@ export class FeedService {
   private lastFeedUpdateMap:{[nodeId:string]: FeedUpdateTime};
   private lastCommentUpdateMap:{[key: string]: CommentUpdateTime};
   private throwMsgTransDataLimit = 4*1000*1000;
+  private alertPopover:HTMLIonPopoverElement = null;
   public constructor(
     private serializeDataService: SerializeDataService,
     private jwtMessageService: JWTMessageService,
@@ -436,7 +439,8 @@ export class FeedService {
     private connectionService: ConnectionService,
     private httpService: HttpService,
     private formateInfoService: FormateInfoService,
-    private sessionService:SessionService
+    private sessionService:SessionService,
+    private popupProvider:PopupProvider
   ) {
     eventBus = events;
     this.init();
@@ -5978,5 +5982,28 @@ export class FeedService {
         break;
     }
     this.native.toastWarn(this.formateInfoService.formatErrorMsg(this.getServerNameByNodeId(nodeId),errorMsg));
+  }
+
+  checkBindingServerVersion(server: Server, quit:any){
+    console.log("server>>"+JSON.stringify(server));
+    if(server == undefined || 
+      server.version == undefined||
+      server.version == ""){
+      this.popupProvider.ionicAlert(
+        this,
+        "",
+        "common.mustUpdate",
+        quit,
+        'tskth.svg'
+      ).then((popover)=>{
+        this.alertPopover = popover;
+      });
+    }
+  }
+
+  hideAlertPopover(){
+    if (this.alertPopover!=null && this.alertPopover!= undefined){
+      this.alertPopover.dismiss();
+    }
   }
 }

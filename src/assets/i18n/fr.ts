@@ -79,7 +79,8 @@ export const fr = {
         "theFeedSource": "The Feed source",
         "fulltext":"Full Text",
         "uploading":"Uploading",
-        "downloading": "Downloading"
+        "downloading": "Downloading",
+        "mustUpdate": "Your feeds service is out-dated. Please upgrade it to latest version, otherwise you could not post feed."
     },
     "app":{
         "profileDetails":"Profile Details",

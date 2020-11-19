@@ -32,7 +32,7 @@ export class CreatenewfeedPage implements OnInit {
     private events: Events,
     private native: NativeService,
     public theme:ThemeService,
-    private translate:TranslateService
+    private translate:TranslateService,
   ) {
   }
 
@@ -91,7 +91,14 @@ export class CreatenewfeedPage implements OnInit {
     this.events.subscribe("feeds:updateTitle",()=>{
       this.initTitle();
     });
-  
+
+    this.feedService.checkBindingServerVersion(this.selectedServer,()=>{
+      this.zone.run(() => {
+        this.navCtrl.pop().then(()=>{
+          this.feedService.hideAlertPopover();
+        });
+      });
+    });
   }
 
   ionViewDidEnter() {
@@ -221,5 +228,4 @@ export class CreatenewfeedPage implements OnInit {
     
     return await popover.present();
   }
-
 }

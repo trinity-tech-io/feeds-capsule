@@ -160,6 +160,15 @@ export class EditpostPage implements OnInit {
     });
 
     this.initnodeStatus();
+
+    let server = this.feedService.getServerbyNodeId(this.nodeId);
+    this.feedService.checkBindingServerVersion(server,()=>{
+      this.zone.run(() => {
+        this.navCtrl.pop().then(()=>{
+          this.feedService.hideAlertPopover();
+        });
+      });
+    });
   }
 
   ionViewWillLeave(){
