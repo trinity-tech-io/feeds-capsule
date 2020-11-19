@@ -195,12 +195,14 @@ export class ProfilePage implements OnInit {
 
   this.events.subscribe('feeds:getBinaryFinish', (nodeId, key: string, value:string) => {
     this.zone.run(() => {
+      this.native.hideLoading();
       this.processGetBinaryResult(key, value);
     });
   });
 
   this.events.subscribe('stream:getBinarySuccess', (nodeId, key: string, value:string) => {
     this.zone.run(() => {
+      this.native.hideLoading();
       this.feedService.closeSession(nodeId);
       this.processGetBinaryResult(key, value);
     });
@@ -228,14 +230,21 @@ export class ProfilePage implements OnInit {
     });
   });
  
+  this.events.subscribe('stream:progress',(nodeId,progress)=>{
+    this.zone.run(() => {
+      this.native.updateLoadingMsg(this.translate.instant("common.downloading")+" "+progress+"%");
+    });
+  });
+
   this.events.subscribe('stream:onStateChangedCallback', (nodeId, state) => {
     this.zone.run(() => {
 
       if (this.cacheGetBinaryRequestKey == "")
         return;
 
-      if (state === 4){
+      if (state === FeedsData.StreamState.CONNECTED){
         this.feedService.getBinary(nodeId, this.cacheGetBinaryRequestKey,this.cachedMediaType);
+        this.native.updateLoadingMsg(this.translate.instant("common.downloading"));
       }
     });
   });
@@ -311,6 +320,9 @@ export class ProfilePage implements OnInit {
     this.events.unsubscribe("feeds:updateTitles");
     this.events.unsubscribe("feeds:openRightMenu");
     this.events.unsubscribe("feeds:tabsendpost");
+    this.events.unsubscribe("stream:progress");
+
+    this.native.hideLoading();
     this.removeImages();
     this.removeAllVideo();
     this.isLoadimage ={};
@@ -720,7 +732,11 @@ export class ProfilePage implements OnInit {
             if (videodata == ""){
               this.cacheGetBinaryRequestKey = key;
               this.cachedMediaType = "video";
-              this.feedService.processGetBinary(nodeId, channelId, postId, 0, 0, FeedsData.MediaType.containsVideo, key);
+              this.native.showLoading("common.waitMoment", 5*60*1000).then(()=>{
+                this.feedService.processGetBinary(nodeId, channelId, postId, 0, 0, FeedsData.MediaType.containsVideo, key);
+              }).catch(()=>{
+                this.native.hideLoading();
+              });
               return;
             }
             this.loadVideo(id,videodata);
@@ -771,7 +787,7 @@ export class ProfilePage implements OnInit {
   showBigImage(item:any){
     this.pauseAllVideo();
     this.zone.run(()=>{
-      this.native.showLoading("common.waitMoment").then(()=>{
+      this.native.showLoading("common.waitMoment",5*60*1000).then(()=>{
         let contentVersion = this.feedService.getContentVersion(item.nodeId,item.channelId,item.postId,0);
         let thumbkey= this.feedService.getImgThumbKeyStrFromId(item.nodeId,item.channelId,item.postId,0,0);
         let key = this.feedService.getImageKey(item.nodeId,item.channelId,item.postId,0,0);

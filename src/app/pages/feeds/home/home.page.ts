@@ -277,6 +277,7 @@ addBinaryEvevnt(){
 
   this.events.subscribe('stream:getBinarySuccess', (nodeId, key: string, value:string) => {
     this.zone.run(() => {
+      this.native.hideLoading();
       this.feedService.closeSession(nodeId);
       this.processGetBinaryResult(key, value);
     });
@@ -289,6 +290,12 @@ addBinaryEvevnt(){
       this.native.hideLoading();
     });
   });
+
+  this.events.subscribe('stream:progress',(nodeId,progress)=>{
+    this.zone.run(() => {
+      this.native.updateLoadingMsg(this.translate.instant("common.downloading")+" "+progress+"%");
+    });
+  })
  
   this.events.subscribe('stream:onStateChangedCallback', (nodeId, state) => {
     this.zone.run(() => {
@@ -297,6 +304,7 @@ addBinaryEvevnt(){
 
       if (state === FeedsData.StreamState.CONNECTED){
         this.feedService.getBinary(nodeId, this.cacheGetBinaryRequestKey,this.cachedMediaType);
+        this.native.updateLoadingMsg(this.translate.instant("common.downloading"));
       }
     });
   });
@@ -322,6 +330,7 @@ addBinaryEvevnt(){
     this.events.unsubscribe("stream:getBinarySuccess");
     this.events.unsubscribe("stream:error");
     this.events.unsubscribe("stream:onStateChangedCallback");
+    this.events.unsubscribe("stream:progress");
 
     this.events.unsubscribe("rpcRequest:error");
     this.events.unsubscribe("rpcResponse:error");
@@ -334,6 +343,7 @@ addBinaryEvevnt(){
     this.isLoadimage ={};
     this.isLoadVideoiamge ={};
     this.curPost={};
+    this.native.hideLoading();
 }
 
   ionViewDidLeave() {
@@ -666,7 +676,7 @@ addBinaryEvevnt(){
   showBigImage(nodeId:string,channelId:number,postId:number){
     this.pauseAllVideo();
     this.zone.run(()=>{
-      this.native.showLoading("common.waitMoment").then(()=>{
+      this.native.showLoading("common.waitMoment", 5*60*1000).then(()=>{
         let contentVersion = this.feedService.getContentVersion(nodeId,channelId,postId,0);
         let thumbkey= this.feedService.getImgThumbKeyStrFromId(nodeId,channelId,postId,0,0);
         let key = this.feedService.getImageKey(nodeId,channelId,postId,0,0);
@@ -925,8 +935,11 @@ addBinaryEvevnt(){
             if (videodata == ""){
               this.cacheGetBinaryRequestKey = key;
               this.cachedMediaType = "video";
-
-              this.feedService.processGetBinary(nodeId, channelId, postId, 0, 0, FeedsData.MediaType.containsVideo, key)
+              this.native.showLoading("common.waitMoment", 5*60*1000).then(()=>{
+                this.feedService.processGetBinary(nodeId, channelId, postId, 0, 0, FeedsData.MediaType.containsVideo, key)
+              }).catch(()=>{
+                this.native.hideLoading();
+              });
               return;
             }
             this.loadVideo(id,videodata);
