@@ -655,8 +655,9 @@ function decodeBodyData(nodeId: string, cacheDataLength: number): boolean{
     let pointer = cacheData[nodeId].pointer
     let bodySize = cacheData[nodeId].bodySize;
     let remainLength = cacheDataLength - pointer;
-
+    
     if (progress[nodeId] != undefined && progress[nodeId].method == "get_binary"){
+        progress[nodeId].totalSize = bodySize;
         progress[nodeId].pointer = remainLength;
         calculateProgress(nodeId);
     }
@@ -849,9 +850,13 @@ function publishError(nodeId: string, error: any){
 }
 
 function calculateProgress(nodeId: string){
+    
     if (progress[nodeId] == undefined)
         return;
-    
+
+    if (progress[nodeId].totalSize <= 0)
+        return;
+
     let curProgress = Math.floor(progress[nodeId].pointer/progress[nodeId].totalSize * 100);
     if (progress[nodeId].progress < curProgress){
         progress[nodeId].progress = curProgress;
