@@ -39,11 +39,11 @@ export class PostfromComponent implements OnInit {
     }
 
     let server = this.feedService.getServerbyNodeId(nodeId);
-    if(server != undefined && server.version != undefined){
-      this.navCtrl.navigateForward(['createnewpost/',nodeId,channelId]);
-    }else{
-      alert("The server needs to be upgraded to 1.3.0 or later");
-    }
+    if (!this.feedService.checkBindingServerVersion(server, ()=>{
+      this.feedService.hideAlertPopover();
+    })) return;
+
+    this.navCtrl.navigateForward(['createnewpost/',nodeId,channelId]);
     
     // this.router.navigate(['createnewpost/',nodeId,channelId]);
     // this.router.navigate(['createnewpost']);

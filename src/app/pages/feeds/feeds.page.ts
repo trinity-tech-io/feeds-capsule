@@ -95,6 +95,10 @@ export class FeedsPage implements OnInit {
     }
 
 
+    if (!this.feedService.checkBindingServerVersion(bindingServer, ()=>{
+      this.feedService.hideAlertPopover();
+    })) return;
+
 
     if(this.feedService.getMyChannelList().length === 0){
       this.native.navigateForward(['/createnewfeed'],"");

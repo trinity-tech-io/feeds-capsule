@@ -43,6 +43,11 @@ export class MyfeedsComponent implements OnInit {
         this.native.toastWarn('common.connectionError');
         return;
       }
+
+      if (!this.feedService.checkBindingServerVersion(bindServer, ()=>{
+        this.feedService.hideAlertPopover();
+      })) return;
+  
       this.native.navigateForward(['/createnewfeed'],"");
     }
     else 
