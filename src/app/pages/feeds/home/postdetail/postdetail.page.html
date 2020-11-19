@@ -57,8 +57,8 @@
 
           <!---video-->
         <div *ngIf="postStatus != 1&&posterImg!=''" style="width:100%;height:200px;margin:0px auto;margin-top:10px;">
-          <span *ngIf="downProgress>0">{{downProgress}}%</span>
-          <ion-progress-bar *ngIf="downProgress>0" [value]="downProgress/100"></ion-progress-bar>
+          <span *ngIf="downProgress>0&&downProgress!=100">{{downProgress}}%</span>
+          <ion-progress-bar *ngIf="downProgress>0&&downProgress!=100" [value]="downProgress/100"></ion-progress-bar>
           <vg-player>
             <vg-overlay-play id={{nodeId+channelId+postId}}vgoverlayplaypostdetail></vg-overlay-play>
             <vg-buffering  id={{nodeId+channelId+postId}}vgbufferingpostdetail></vg-buffering>
