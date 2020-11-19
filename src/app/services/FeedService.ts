@@ -1151,6 +1151,7 @@ export class FeedService {
       let mServerMap = serverMap || {};
       let server = mServerMap[friendId]||"";
       if (server != "" )
+        this.getServerVersion(friendId);
         this.doFriendConnection(friendId, friendStatus);  
     });
   }
@@ -2259,7 +2260,12 @@ export class FeedService {
           serverMap[nodeId].version = version;
           this.storeService.set(PersistenceKey.serverMap, serverMap);
     }
-        
+
+    if (bindingServer.nodeId == nodeId){
+      bindingServer.version = version;
+      this.storeService.set(PersistenceKey.bindingServer, bindingServer);
+    }
+    
   }
 
   enableNotification(nodeId: string){
@@ -3410,9 +3416,6 @@ export class FeedService {
       this.handleError(nodeId, error);
       return;
     }
-
-    //do other things
-    this.getServerVersion(nodeId);
   }
 
   doSubscribeChannelFinish(nodeId: string, channelId: number){
