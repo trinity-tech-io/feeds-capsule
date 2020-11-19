@@ -12,6 +12,7 @@ import { EdittoolComponent } from '../../../../components/edittool/edittool.comp
 
 import { VgFullscreenAPI} from 'ngx-videogular';
 import { AppService } from 'src/app/services/AppService';
+import { clearInterval } from 'timers';
 
 
 
@@ -65,6 +66,8 @@ export class PostdetailPage implements OnInit {
 
   public cacheGetBinaryRequestKey = "";
   public cachedMediaType = "";
+
+  public downProgress:number = 0;
 
 
   constructor(
@@ -140,9 +143,6 @@ export class PostdetailPage implements OnInit {
   }
 
   ionViewWillEnter() {
-  
-  
-  
     this.initTitle();
     this.native.setTitleBarBackKeyShown(true);
     this.styleObj.width = (screen.width - 55)+'px';
@@ -220,7 +220,7 @@ export class PostdetailPage implements OnInit {
 
     this.events.subscribe('rpcResponse:error', () => {
       this.zone.run(() => {
-        this.pauseVideo();
+        //this.pauseVideo();
         this.native.hideLoading();
       });
     });
@@ -284,6 +284,12 @@ export class PostdetailPage implements OnInit {
       });
     });
 
+    this.events.subscribe('stream:progress',(nodeId,progress)=>{
+        this.zone.run(() => {
+          this.downProgress = progress;
+        });
+    })
+
     this.events.subscribe('feeds:openRightMenu',()=>{
       this.pauseVideo();
      }); 
@@ -317,7 +323,7 @@ export class PostdetailPage implements OnInit {
     this.events.unsubscribe("stream:getBinarySuccess");
     this.events.unsubscribe("stream:error");
     this.events.unsubscribe("stream:onStateChangedCallback");
-
+    this.events.unsubscribe("stream:progress");
     this.events.unsubscribe("feeds:openRightMenu");
 
     this.menuService.hideActionSheet();
@@ -327,6 +333,7 @@ export class PostdetailPage implements OnInit {
 
     this.hideComment = true;
     this.postImage = "";
+    this.downProgress = 0;
     this.clearVideo();
     this.events.publish("update:tab");
     this.events.publish("addBinaryEvevnt");
@@ -622,7 +629,7 @@ export class PostdetailPage implements OnInit {
     // let videosource:any = this.el.nativeElement.querySelector("source") || "";
     //   if(videosource===""){
     this.feedService.getData(key).then((videodata:string)=>{
-      this.zone.run(()=>{
+      //this.zone.run(()=>{
         
         let videoData = videodata || "";
 
@@ -638,7 +645,7 @@ export class PostdetailPage implements OnInit {
         console.log("========="+this.videoObj.substring(0,50));
         this.loadVideo(videoData);
       });
-    }); 
+    //}); 
       // }
   }
 
@@ -729,11 +736,12 @@ export class PostdetailPage implements OnInit {
   }
 
   setOverPlay(){
+  
     let id = this.nodeId+this.channelId+this.postId;
     let vgoverlayplay:any = document.getElementById(id+"vgoverlayplaypostdetail") || "";
     if(vgoverlayplay!=""){
      vgoverlayplay.onclick = ()=>{
-      this.zone.run(()=>{
+      //this.zone.run(()=>{
         let source:any = document.getElementById(id+"postdetailsource") || "";
         let sourceSrc = source.getAttribute("src") || "";
         if (sourceSrc != "")
@@ -741,7 +749,7 @@ export class PostdetailPage implements OnInit {
 
         let key = this.feedService.getVideoKey(this.nodeId,this.channelId,this.postId,0,0);
         this.getVideo(key);
-      });
+      //});
      }
     }
   }
