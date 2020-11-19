@@ -256,29 +256,30 @@ export class MenuService {
 
         switch(clickName){
             case "editPost":
-                if(server != undefined && server.version != undefined){
-                    this.native.go(
-                        "/editpost", 
-                        { 
-                        "nodeId":nodeId,
-                        "channelId":channelId,
-                        "postId":postId,
-                        "channelName":channelName
-                        }
-                    );
-                }else{
-                    alert("The server needs to be upgraded to 1.3.0 or later");
-                }
+                let server = this.feedService.getServerbyNodeId(nodeId);
+                if (!this.feedService.checkBindingServerVersion(server, ()=>{
+                    this.feedService.hideAlertPopover();
+                })) return;
+                    
+                this.native.go(
+                    "/editpost", 
+                    { 
+                    "nodeId":nodeId,
+                    "channelId":channelId,
+                    "postId":postId,
+                    "channelName":channelName
+                    }
+                );
                 break;
             case "sharepost":
                 this.native.toast("common.comingSoon");
                 break;
             case "removePost":
-                if(server != undefined && server.version != undefined){
-                    this.popover = this.popupProvider.ionicConfirm(this,"","common.confirmdeletion",this.cancel,this.confirm,'tskth.svg');
-                }else{
-                    alert("The server needs to be upgraded to 1.3.0 or later");
-                }
+                if (!this.feedService.checkBindingServerVersion(server, ()=>{
+                    this.feedService.hideAlertPopover();
+                })) return;
+                
+                this.popover = this.popupProvider.ionicConfirm(this,"","common.confirmdeletion",this.cancel,this.confirm,'tskth.svg');
                 break;    
         }
     }

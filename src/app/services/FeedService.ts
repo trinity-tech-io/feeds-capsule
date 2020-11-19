@@ -5984,7 +5984,7 @@ export class FeedService {
     this.native.toastWarn(this.formateInfoService.formatErrorMsg(this.getServerNameByNodeId(nodeId),errorMsg));
   }
 
-  checkBindingServerVersion(server: Server, quit:any){
+  checkBindingServerVersion(server: Server, quit:any): boolean{
     console.log("server>>"+JSON.stringify(server));
     if(server == undefined || 
       server.version == undefined||
@@ -5998,7 +5998,10 @@ export class FeedService {
       ).then((popover)=>{
         this.alertPopover = popover;
       });
+      return false;
     }
+
+    return true;
   }
 
   hideAlertPopover(){
