@@ -33,6 +33,7 @@ export class PopupProvider {
             mode: 'ios',
             cssClass: 'ConfirmdialogComponent',
             component:AlertdialogComponent,
+            backdropDismiss: false,
             componentProps: {
                 "that":that, 
                 "title":title,
