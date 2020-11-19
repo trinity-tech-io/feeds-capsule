@@ -239,6 +239,7 @@ export class CreatenewpostPage implements OnInit {
     this.events.unsubscribe("stream:onStateChangedCallback");
     this.events.unsubscribe("stream:getBinarySuccess");
     this.events.unsubscribe("feeds:openRightMenu");
+    this.events.unsubscribe("stream:progress");
 
     this.events.unsubscribe("feeds:declarePostSuccess");
     this.events.unsubscribe("feeds:notifyPostSuccess");

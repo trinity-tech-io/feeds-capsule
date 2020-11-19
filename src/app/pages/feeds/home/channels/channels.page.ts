@@ -219,14 +219,22 @@ export class ChannelsPage implements OnInit {
 
     this.events.subscribe('feeds:getBinaryFinish', (nodeId, key: string, value:string) => {
       this.zone.run(() => {
+        this.native.hideLoading();
         this.processGetBinaryResult(key, value);
       });
     });
   
     this.events.subscribe('stream:getBinarySuccess', (nodeId, key: string, value:string) => {
       this.zone.run(() => {
+        this.native.hideLoading();
         this.feedService.closeSession(nodeId);
         this.processGetBinaryResult(key, value);
+      });
+    });
+
+    this.events.subscribe('stream:progress',(nodeId,progress)=>{
+      this.zone.run(() => {
+        this.native.updateLoadingMsg(this.translate.instant("common.downloading")+" "+progress+"%");
       });
     });
   
@@ -244,8 +252,9 @@ export class ChannelsPage implements OnInit {
         if (this.cacheGetBinaryRequestKey == "")
           return;
   
-        if (state === 4){
+        if (state === FeedsData.StreamState.CONNECTED){
           this.feedService.getBinary(nodeId, this.cacheGetBinaryRequestKey,this.cachedMediaType);
+          this.native.updateLoadingMsg(this.translate.instant("common.downloading"));
         }
       });
     });
@@ -287,7 +296,7 @@ export class ChannelsPage implements OnInit {
 
    this.events.subscribe('feeds:openRightMenu',()=>{
     this.pauseAllVideo();
-   });  
+   });
   }
 
   ionViewWillLeave(){
@@ -312,7 +321,7 @@ export class ChannelsPage implements OnInit {
     this.events.unsubscribe("stream:error");
     this.events.unsubscribe("stream:onStateChangedCallback");
     this.events.unsubscribe("feeds:openRightMenu");
-   
+    this.events.unsubscribe("stream:progress");
 
     this.removeImages();
     this.removeAllVideo();
@@ -321,6 +330,7 @@ export class ChannelsPage implements OnInit {
     this.curPost={};
     this.events.publish("update:tab");
     this.events.publish("addBinaryEvevnt");
+    this.native.hideLoading();
   }
 
   ionViewDidEnter() {
@@ -784,7 +794,7 @@ export class ChannelsPage implements OnInit {
 
     this.pauseAllVideo();
     this.zone.run(()=>{
-      this.native.showLoading("common.waitMoment").then(()=>{
+      this.native.showLoading("common.waitMoment", 5*60*1000).then(()=>{
         let contentVersion = this.feedService.getContentVersion(nodeId,channelId,postId,0);
         let thumbkey= this.feedService.getImgThumbKeyStrFromId(nodeId,channelId,postId,0,0);
         let key = this.feedService.getImageKey(nodeId,channelId,postId,0,0);
@@ -922,7 +932,11 @@ export class ChannelsPage implements OnInit {
               if (videodata == ""){
                 this.cacheGetBinaryRequestKey = key;
                 this.cachedMediaType = "video";
-                this.feedService.processGetBinary(nodeId, channelId, postId, 0, 0, FeedsData.MediaType.containsVideo, key)
+                this.native.showLoading("common.waitMoment", 5*60*1000).then(()=>{
+                  this.feedService.processGetBinary(nodeId, channelId, postId, 0, 0, FeedsData.MediaType.containsVideo, key)
+                }).catch(()=>{
+                  this.native.hideLoading();
+                });
                 return;
               }
               this.loadVideo(id,videodata);

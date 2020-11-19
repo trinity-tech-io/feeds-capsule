@@ -204,83 +204,87 @@ export class SessionService {
 
                     },
                     onStreamData: function(event: any) {
-                        let tmpData: Uint8Array = event.data;
+                        let timeout = setTimeout(()=>{
+                            let tmpData: Uint8Array = event.data;
                         
-                        if (cacheData[nodeId] == undefined){
-                            cacheData[nodeId] = {
-                                nodeId          : nodeId,
-                                data            : new Uint8Array(tmpData.length),
-                                pointer         : 0,
-                                headSize        : 0,
-                                bodySize        : 0,
-                                state           : DecodeState.prepare,
-                                method          : "",
-                                key             : "",
-                                mediaType       : "",
+                            if (cacheData[nodeId] == undefined){
+                                cacheData[nodeId] = {
+                                    nodeId          : nodeId,
+                                    data            : new Uint8Array(tmpData.length),
+                                    pointer         : 0,
+                                    headSize        : 0,
+                                    bodySize        : 0,
+                                    state           : DecodeState.prepare,
+                                    method          : "",
+                                    key             : "",
+                                    mediaType       : "",
+                                }
+                                cacheData[nodeId].data.set(tmpData,0);
+                            }else{
+                                let cache: Uint8Array = cacheData[nodeId].data;
+                                cacheData[nodeId].data = new Uint8Array(tmpData.length+cache.length);
+                                cacheData[nodeId].data.set(cache,0);
+                                cacheData[nodeId].data.set(tmpData,cache.length);
                             }
-                            cacheData[nodeId].data.set(tmpData,0);
-                        }else{
-                            let cache: Uint8Array = cacheData[nodeId].data;
-                            cacheData[nodeId].data = new Uint8Array(tmpData.length+cache.length);
-                            cacheData[nodeId].data.set(cache,0);
-                            cacheData[nodeId].data.set(tmpData,cache.length);
-                        }
-                        let dataLength = cacheData[nodeId].data.length;
-                        switch(cacheData[nodeId].state){
-                            case DecodeState.prepare:
-                                for (let index = 0; index < dataLength - 23; index++) {
-                                    let decodeMagicNumData = cacheData[nodeId].data.subarray(index,index+8);
-                                    let decodeMagicNumber = decodeNum(decodeMagicNumData,8);
-                                    cacheData[nodeId].pointer = index;
-        
-                                    if( decodeMagicNumber != magicNumber )
-                                        continue;
-
-                                    let decodeVersionData = cacheData[nodeId].data.subarray(index+8,index+12);
-                                    let decodeVersion = decodeNum(decodeVersionData,4);
-                                    if (decodeVersion != version)
-                                        continue;
-
-                                    let decodeHeadSizeData = cacheData[nodeId].data.subarray(index+12,index+16);
-                                    let decodeHeadSize = decodeNum(decodeHeadSizeData,4);
-
-                                    let decodeBodySizeData = cacheData[nodeId].data.subarray(index+16,index+24);
-                                    let decodeBodySize = decodeNum(decodeBodySizeData,8);
-
-                                    cacheData[nodeId].headSize = decodeHeadSize;
-                                    cacheData[nodeId].bodySize = decodeBodySize;
-                                    cacheData[nodeId].state = DecodeState.decodeHead;
-                                    cacheData[nodeId].pointer = cacheData[nodeId].pointer + 24;
-                                    break;
-                                }
-                                
-                                if (!decodeHeadData(nodeId, dataLength)){
-                                    break;
-                                }
+                            let dataLength = cacheData[nodeId].data.length;
+                            switch(cacheData[nodeId].state){
+                                case DecodeState.prepare:
+                                    for (let index = 0; index < dataLength - 23; index++) {
+                                        let decodeMagicNumData = cacheData[nodeId].data.subarray(index,index+8);
+                                        let decodeMagicNumber = decodeNum(decodeMagicNumData,8);
+                                        cacheData[nodeId].pointer = index;
+            
+                                        if( decodeMagicNumber != magicNumber )
+                                            continue;
+    
+                                        let decodeVersionData = cacheData[nodeId].data.subarray(index+8,index+12);
+                                        let decodeVersion = decodeNum(decodeVersionData,4);
+                                        if (decodeVersion != version)
+                                            continue;
+    
+                                        let decodeHeadSizeData = cacheData[nodeId].data.subarray(index+12,index+16);
+                                        let decodeHeadSize = decodeNum(decodeHeadSizeData,4);
+    
+                                        let decodeBodySizeData = cacheData[nodeId].data.subarray(index+16,index+24);
+                                        let decodeBodySize = decodeNum(decodeBodySizeData,8);
+    
+                                        cacheData[nodeId].headSize = decodeHeadSize;
+                                        cacheData[nodeId].bodySize = decodeBodySize;
+                                        cacheData[nodeId].state = DecodeState.decodeHead;
+                                        cacheData[nodeId].pointer = cacheData[nodeId].pointer + 24;
+                                        break;
+                                    }
                                     
-                                if (!decodeBodyData(nodeId, dataLength)){
+                                    if (!decodeHeadData(nodeId, dataLength)){
+                                        break;
+                                    }
+                                        
+                                    if (!decodeBodyData(nodeId, dataLength)){
+                                        break;
+                                    }
+    
                                     break;
-                                }
-
-                                break;
-                            case DecodeState.decodeHead:
-                                if (!decodeHeadData(nodeId, dataLength)){
-                                    break;
-                                }
+                                case DecodeState.decodeHead:
+                                    if (!decodeHeadData(nodeId, dataLength)){
+                                        break;
+                                    }
+                                        
+                                    if (!decodeBodyData(nodeId, dataLength)){
+                                        break;
+                                    }
                                     
-                                if (!decodeBodyData(nodeId, dataLength)){
                                     break;
-                                }
-                                
-                                break;
-                            case DecodeState.decodeBody:
-                                if (!decodeBodyData(nodeId, dataLength)){
+                                case DecodeState.decodeBody:
+                                    if (!decodeBodyData(nodeId, dataLength)){
+                                        break;
+                                    }
                                     break;
-                                }
-                                break;
-                        }
+                            }
+    
+                            combineData(nodeId, dataLength);
 
-                        combineData(nodeId, dataLength);
+                            clearTimeout(timeout);
+                        },10);
                     }
                 }, 
                 (mStream)=>{

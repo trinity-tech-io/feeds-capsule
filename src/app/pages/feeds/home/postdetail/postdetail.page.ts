@@ -253,12 +253,14 @@ export class PostdetailPage implements OnInit {
 
     this.events.subscribe('feeds:getBinaryFinish', (nodeId, key: string, value, mediaType) => {
       this.zone.run(() => {
+        this.native.hideLoading();
         this.processGetBinaryResult(key, value);
       });
     });
 
     this.events.subscribe('stream:getBinarySuccess', (nodeId, key: string, value, mediaType) => {
       this.zone.run(() => {
+        this.native.hideLoading();
         this.feedService.closeSession(nodeId);
         this.processGetBinaryResult(key, value);
       });
@@ -271,7 +273,7 @@ export class PostdetailPage implements OnInit {
         this.native.hideLoading();
       });
     });
-   
+
     this.events.subscribe('stream:onStateChangedCallback', (nodeId, state) => {
       this.zone.run(() => {
 
@@ -286,6 +288,7 @@ export class PostdetailPage implements OnInit {
 
     this.events.subscribe('stream:progress',(nodeId,progress)=>{
         this.zone.run(() => {
+          this.native.updateLoadingMsg(this.translate.instant("common.downloading")+" "+progress+"%");
           this.downProgress = progress;
         });
     })
@@ -337,6 +340,7 @@ export class PostdetailPage implements OnInit {
     this.clearVideo();
     this.events.publish("update:tab");
     this.events.publish("addBinaryEvevnt");
+    this.native.hideLoading();
   }
 
   ionViewDidEnter() {
@@ -447,7 +451,7 @@ export class PostdetailPage implements OnInit {
 
   showBigImage(){
     this.zone.run(()=>{
-      this.native.showLoading("common.waitMoment").then(()=>{
+      this.native.showLoading("common.waitMoment", 5*60*1000).then(()=>{
         let contentVersion = this.feedService.getContentVersion(this.nodeId,this.channelId,this.postId,0);
         let thumbkey= this.feedService.getImgThumbKeyStrFromId(this.nodeId,this.channelId,this.postId,0,0);
         let key = this.feedService.getImageKey(this.nodeId,this.channelId,this.postId,0,0);
@@ -636,8 +640,11 @@ export class PostdetailPage implements OnInit {
         if (videoData == ""){
           this.cacheGetBinaryRequestKey = key;
           this.cachedMediaType = "video";
-          this.feedService.processGetBinary(this.nodeId, this.channelId, this.postId, 0, 0, FeedsData.MediaType.containsVideo, key);
-
+          this.native.showLoading("common.waitMoment", 5*60*1000).then(()=>{
+            this.feedService.processGetBinary(this.nodeId, this.channelId, this.postId, 0, 0, FeedsData.MediaType.containsVideo, key);
+          }).catch(()=>{
+            this.native.hideLoading();
+          });
           return;
         }
 

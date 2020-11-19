@@ -103,7 +103,8 @@ export class NativeService {
     };
 
     public updateLoadingMsg(msg: string){
-        this.loading.message = msg;
+        if (this.loading!= null && this.loading != undefined)
+            this.loading.message = msg;
     }
 
     public hideLoading(): void {
