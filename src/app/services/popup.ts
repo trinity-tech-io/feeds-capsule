@@ -54,6 +54,12 @@ export class PopupProvider {
          return this.popover;
     }
 
+    hideAlertPopover(){
+        if(this.popover!=null){
+            this.popover.dismiss();
+        }
+    }
+
     //tskth.svg
     ionicConfirm(
         that: any,

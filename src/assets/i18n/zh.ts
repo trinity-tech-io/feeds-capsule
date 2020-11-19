@@ -79,7 +79,8 @@ export const zh = {
         "theFeedSource": "微频源",
         "fulltext":"全文",
         "uploading":"正在上传",
-        "downloading": "正在下载"
+        "downloading": "正在下载",
+        "mustUpdate": "您的Feeds 服务版本需要升级到最新版本，否则您将无法发布内容。"
     },
     "app":{
         "profileDetails":"档案详情",
