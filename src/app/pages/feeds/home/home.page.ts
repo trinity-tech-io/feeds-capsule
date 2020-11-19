@@ -236,7 +236,6 @@ addCommonEvents(){
 
   this.events.subscribe('rpcResponse:error', () => {
     this.zone.run(() => {
-      this.pauseAllVideo();
       this.native.hideLoading();
     });
   });
