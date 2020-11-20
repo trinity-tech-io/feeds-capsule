@@ -508,11 +508,6 @@ export class EditpostPage implements OnInit {
       });
   }
 
-  onChangeFullscreen(){
-    alert("===onChangeFullscreen====");
-  };
-
-
   async transcodeVideo(path:any):Promise<string>{
     const fileUri = path.startsWith('file://') ? path : `file://${path}`;
     const videoInfo = await this.videoEditor.getVideoInfo({ fileUri });

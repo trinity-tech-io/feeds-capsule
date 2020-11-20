@@ -2749,7 +2749,7 @@ export class FeedService {
     let cacheKey = this.getCachePostKey(nodeId, channelId, postId, 0);
     let post = cachedPost[cacheKey];
     if (post == null || post == undefined){
-      console.log("get cached post error");
+      //console.log("get cached post error");
       return ;
     }
 
@@ -4054,7 +4054,7 @@ export class FeedService {
       },
       (err)=>{
 
-        console.log("error=>"+err);
+        //console.log("error=>"+err);
 
         onError();
       }
@@ -4198,7 +4198,7 @@ export class FeedService {
 
     let value = this.serializeDataService.decodeData(contentBin);
     this.storeService.set(key, value).then(()=>{
-        console.log("feeds:getBinaryFinish nodeId>>> "+ nodeId+" key>>>"+key+" value>>>"+value);
+        //console.log("feeds:getBinaryFinish nodeId>>> "+ nodeId+" key>>>"+key+" value>>>"+value);
         eventBus.publish("feeds:getBinaryFinish", nodeId, key, value);
     });
   }
@@ -4266,13 +4266,13 @@ export class FeedService {
       }
       else {
         onError();
-        console.log("Failed to issue a credential - empty credential returned");
+        //console.log("Failed to issue a credential - empty credential returned");
         return;
         // this.didDemoService.toast("Failed to issue a credential - empty credential returned");
       }
     }, (err)=>{
       onError();
-      console.log("Failed to issue a credential: "+JSON.stringify(err));
+      //console.log("Failed to issue a credential: "+JSON.stringify(err));
       return ;
       // this.didDemoService.toast("Failed to issue a credential: "+JSON.stringify(err));
     })
@@ -5822,7 +5822,7 @@ export class FeedService {
     // eventBus.publish("sessionResponse:error",nodeId, error);
     this.translateBinaryError(nodeId,error.code);
     this.closeSession(nodeId);
-    console.log("Session error :: nodeId : "+nodeId+" errorCode: "+error.code+" errorMessage:"+error.message);
+    //console.log("Session error :: nodeId : "+nodeId+" errorCode: "+error.code+" errorMessage:"+error.message);
   }
 
   createVideoContent(postText: string, videoThumb: any, durition: number, videoSize: number): string{
@@ -5988,7 +5988,7 @@ export class FeedService {
   }
 
   checkBindingServerVersion(server: Server, quit:any): boolean{
-    console.log("server>>"+JSON.stringify(server));
+    //console.log("server>>"+JSON.stringify(server));
     if(server == undefined || 
       server.version == undefined||
       server.version == ""){

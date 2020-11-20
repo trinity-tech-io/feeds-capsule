@@ -112,18 +112,18 @@ export class SessionService {
                 {
                     onStateChanged: function(event: any) {
                         if (workedSessions[nodeId] == undefined){
-                            console.log(nodeId + " current session is closed");
+                            //console.log(nodeId + " current session is closed");
                             return ;
                         }
 
                         if (event == undefined){
-                            console.log("onStateChanged event undefine");
+                            //console.log("onStateChanged event undefine");
                             workedSessions[nodeId].StreamState = FeedsData.StreamState.UNKNOW
                         }else{
                             workedSessions[nodeId].StreamState = event.state
                         }
 
-                        console.log("workedSessions[nodeId].StreamState ====>"+workedSessions[nodeId].StreamState);
+                        //console.log("workedSessions[nodeId].StreamState ====>"+workedSessions[nodeId].StreamState);
                         var state_name = [
                             "raw",
                             "initialized",
@@ -137,7 +137,7 @@ export class SessionService {
                         ];
 
                         var msg = "Stream [" + event.stream.id + "] state changed to: " + state_name[workedSessions[nodeId].StreamState];
-                        console.log(msg);
+                        //console.log(msg);
                         eventBus.publish("stream:onStateChangedCallback", nodeId, workedSessions[nodeId].StreamState);
 
                         if (FeedsData.StreamState.INITIALIZED == workedSessions[nodeId].StreamState){
@@ -149,45 +149,45 @@ export class SessionService {
                                 clearTimeout(workedSessions[nodeId].sessionTimeout);
                             }, sessionConnectionTimeOut);
 
-                            console.log("start session request");
+                            //console.log("start session request");
                             mCarrierService.sessionRequest(
                                 mSession,
                                 function (event:any){
                                     let sdp = event.sdp;
                                     workedSessions[nodeId].sdp = sdp;
-                                    console.log("sessionRequest sdp ==="+sdp);
+                                    //console.log("sessionRequest sdp ==="+sdp);
 
                                     if (workedSessions[nodeId].StreamState == FeedsData.StreamState.TRANSPORT_READY){
-                                        console.log("start session");
+                                        //console.log("start session");
                                         mCarrierService.sessionStart(mSession, sdp, ()=>{
-                                                console.log("sessionStart success");
+                                                //console.log("sessionStart success");
                                             },(err)=>{
                                                 publishError(nodeId, createSessionStartError());
-                                                console.log("sessionStart error=>"+err);
+                                                //console.log("sessionStart error=>"+err);
                                             }
                                         );
                                     }
                                 },
                                 ()=>{
-                                    console.log("sessionRequest success");
+                                    //console.log("sessionRequest success");
                                 },(err)=>{
                                     publishError(nodeId, createSessionRequestError());
-                                    console.log("sessionRequest error"+err);
+                                    //console.log("sessionRequest error"+err);
                                 }
                               );
                         }
 
                         if (FeedsData.StreamState.TRANSPORT_READY == workedSessions[nodeId].StreamState){
                             let sdp = workedSessions[nodeId].sdp;
-                            console.log("sdp ==="+sdp);
+                            //console.log("sdp ==="+sdp);
 
                             if (sdp != ""){
-                                console.log("start session");
+                                //console.log("start session");
                                 mCarrierService.sessionStart(mSession, sdp, ()=>{
-                                        console.log("sessionStart success");
+                                        //console.log("sessionStart success");
                                     },(err)=>{
                                         publishError(nodeId, createSessionStartError());
-                                        console.log("sessionStart error");
+                                        //console.log("sessionStart error");
                                     }
                                 );
                             }
@@ -291,17 +291,17 @@ export class SessionService {
                     workedSessions[nodeId].stream = mStream;
                     workedSessions[nodeId].session = mSession;
                     onSuccess(mSession,mStream);
-                    console.log("addStream success");
+                    //console.log("addStream success");
                 },(err) => {
                     onError(err);
                     publishError(nodeId, createAddStreamError());
-                    console.log("addStream error");
+                    //console.log("addStream error");
                 }
             );
             },(err)=>{
                 onError(err);
                 publishError(nodeId, createNewSessionError());
-                console.log("newSession error");
+                //console.log("newSession error");
             }
         );
     }
@@ -359,7 +359,7 @@ export class SessionService {
             memo: ""
         };
         requestQueue.push(requestBean);
-        console.log("request ===="+JSON.stringify(request));
+        //console.log("request ===="+JSON.stringify(request));
 
         cacheData[nodeId] = {
             nodeId          : nodeId,
@@ -437,7 +437,7 @@ export class SessionService {
         if (workedSessions == null ||
             workedSessions == undefined ||
             workedSessions[nodeId] == undefined){
-            console.log("stream null");
+            //console.log("stream null");
             return ;
         }
 
@@ -452,10 +452,10 @@ export class SessionService {
 
 
         stream.write(base64,(bytesSent)=>{
-            console.log("stream write success");
+            //console.log("stream write success");
         },(err)=>{
             publishError(nodeId, createWriteDataError());
-            console.log("stream write error ==>"+err);
+            //console.log("stream write error ==>"+err);
         });
     }
 
@@ -472,14 +472,14 @@ export class SessionService {
         if(session === ""){
             return;
         }
-        console.log("close session")
+        //console.log("close session")
         this.carrierService.sessionClose(workedSessions[nodeId].session,
             ()=>{
                 workedSessions[nodeId] = undefined;
                 delete workedSessions[nodeId];
 
                 // workedSessions[nodeId] = undefined;
-                console.log("close session success");
+                //console.log("close session success");
 
                 progress[nodeId] = undefined;
                 delete progress[nodeId];
@@ -559,7 +559,7 @@ function encodeNum(data: number, size: number): Uint8Array{
     }else if (size === 8){
         return parseInt64(data);
     }else {
-        console.log("Size error.")
+        //console.log("Size error.")
         return null;
     }
 }
@@ -676,7 +676,7 @@ function decodeBodyData(nodeId: string, cacheDataLength: number): boolean{
     let key = cacheData[nodeId].key;
     if (cacheData[nodeId].method == "get_binary" ){
         mStorageService.set(key,value).then(()=>{
-            console.log("publish stream:getBinarySuccess "+ nodeId);
+            //console.log("publish stream:getBinarySuccess "+ nodeId);
             eventBus.publish("stream:getBinarySuccess", nodeId, key, value, cacheData[nodeId].mediaType);
         });
     }
@@ -708,13 +708,13 @@ function parseResponse(response: any){
     // {"version":"1.0","id":1,"result":{"key":"8afJxa7RTamSrXWxUCcZt8jnAAjAGfx4gmN5ECwq2XSi230"}}
     let version: string = response.version || "";
     if (version == "" || version != "1.0"){
-        console.log("version error");
+        //console.log("version error");
         return ;
     }
 
     let id = response.id || "";
     if (id == ""){
-        console.log("id error");
+        //console.log("id error");
         return ;
     }
 
@@ -729,7 +729,7 @@ function parseResponse(response: any){
     if (error != ""){
         let code = error.code;
         let message = error.message;
-        console.log("Error :: code :"+code+", message : "+message);
+        //console.log("Error :: code :"+code+", message : "+message);
         publishError(nodeId, response.error);
         // return error;
         return ;
@@ -737,19 +737,19 @@ function parseResponse(response: any){
 
     let key = response.result.key || "";
     if (key == ""){
-        console.log("key error");
+        //console.log("key error");
         return ;
     }
 
     cacheData[nodeId].key = key;
     if (method == "set_binary"){
-        console.log("publish stream:setBinaryResponse "+ nodeId);
-        console.log("publish stream:setBinarySuccess "+ nodeId);
+        //console.log("publish stream:setBinaryResponse "+ nodeId);
+        //console.log("publish stream:setBinarySuccess "+ nodeId);
         eventBus.publish("stream:setBinaryResponse", nodeId);
         eventBus.publish("stream:setBinarySuccess", nodeId);
 
     } else if (method == "get_binary"){
-        console.log("publish stream:getBinaryResponse "+ nodeId);
+        //console.log("publish stream:getBinaryResponse "+ nodeId);
         eventBus.publish("stream:getBinaryResponse", nodeId);
     }
 }
@@ -869,6 +869,6 @@ function calculateProgress(nodeId: string){
 }
 
 function publishProgress(nodeId: string, progress: number, method: string, key: string){
-    console.log("publish progress>>"+progress);
+    //console.log("publish progress>>"+progress);
     eventBus.publish("stream:progress", nodeId, progress, method, key);
 }
