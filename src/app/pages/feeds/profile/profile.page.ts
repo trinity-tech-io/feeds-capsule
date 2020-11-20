@@ -251,14 +251,14 @@ export class ProfilePage implements OnInit {
 
   this.events.subscribe('rpcRequest:error', () => {
     this.zone.run(() => {
-      this.pauseAllVideo();
+      //this.pauseAllVideo();
       this.native.hideLoading();
     });
   });
 
   this.events.subscribe('rpcResponse:error', () => {
     this.zone.run(() => {
-      this.pauseAllVideo();
+      //this.pauseAllVideo();
       this.native.hideLoading();
     });
   });
@@ -609,7 +609,7 @@ export class ProfilePage implements OnInit {
           video.removeAttribute("poster");
           let sourcesrc =  source.getAttribute("src") || "";
           if(sourcesrc  != ""){
-            video.pause();
+            //video.pause();
             source.removeAttribute("src");
           }
           this.isLoadVideoiamge[id]="";
@@ -659,7 +659,8 @@ export class ProfilePage implements OnInit {
         let videoElement:any = document.getElementById(id+'videolike') || "";
         let source:any = document.getElementById(id+'sourcelike') || "";
         videoElement.removeAttribute('poster'); // empty source
-        if(source!=""){
+        let sourcesrc =  source.getAttribute("src") || "";
+        if(sourcesrc!=""){
           source.removeAttribute('src'); // empty source
           let sid=setTimeout(()=>{
             videoElement.load();

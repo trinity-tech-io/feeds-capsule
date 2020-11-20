@@ -213,7 +213,7 @@ export class PostdetailPage implements OnInit {
 
     this.events.subscribe('rpcRequest:error', () => {
       this.zone.run(() => {
-        this.pauseVideo();
+        //this.pauseVideo();
         this.native.hideLoading();
       });
     });

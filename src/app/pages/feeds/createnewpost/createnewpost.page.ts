@@ -136,13 +136,13 @@ export class CreatenewpostPage implements OnInit {
     
 
     this.events.subscribe('rpcRequest:error', () => {
-      this.pauseVideo();
+      //this.pauseVideo();
       this.native.hideLoading();
     });
 
     this.events.subscribe('rpcResponse:error', () => {
       this.zone.run(() => {
-        this.pauseVideo();
+        //this.pauseVideo();
         this.native.hideLoading();
       });
     });
