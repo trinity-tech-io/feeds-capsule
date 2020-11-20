@@ -124,7 +124,7 @@ export class AppService {
           try {
               params = JSON.parse(params);
           } catch (e) {
-              console.log('Params are not JSON format: ', params);
+              //console.log('Params are not JSON format: ', params);
           }
         }
         switch (msg.type) {
@@ -180,7 +180,7 @@ export class AppService {
       }
 
       appManager.setIntentListener((intent: AppManagerPlugin.ReceivedIntent) => {
-        console.log('Incoming intent', intent);
+        //console.log('Incoming intent', intent);
         this.onReceiveIntent(intent);
       });
       this.addright();
