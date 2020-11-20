@@ -230,7 +230,6 @@ addCommonEvents(){
  });
 
   this.events.subscribe('rpcRequest:error', () => {
-    this.pauseAllVideo();
     this.native.hideLoading();
   });
 
@@ -798,7 +797,7 @@ addBinaryEvevnt(){
           video.removeAttribute("poster");
           let sourcesrc =  source.getAttribute("src") || "";
           if(sourcesrc  != ""){
-            video.pause();
+            //video.pause();
             source.removeAttribute("src");
           }
           this.isLoadVideoiamge[id]="";
@@ -851,7 +850,8 @@ addBinaryEvevnt(){
         let videoElement:any = document.getElementById(id+'video') || "";
         let source:any = document.getElementById(id+'source') || "";
         videoElement.removeAttribute('poster'); // empty source
-        if(source!=""){
+        let sourcesrc =  source.getAttribute("src") || "";
+        if(sourcesrc!=""){
           source.removeAttribute('src'); // empty source
           let sid=setTimeout(()=>{
             videoElement.load();

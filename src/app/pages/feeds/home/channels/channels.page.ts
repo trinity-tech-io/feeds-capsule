@@ -261,14 +261,12 @@ export class ChannelsPage implements OnInit {
 
     this.events.subscribe('rpcRequest:error', () => {
       this.zone.run(() => {
-        this.pauseAllVideo();
         this.native.hideLoading();
       });
     });
 
     this.events.subscribe('rpcResponse:error', () => {
       this.zone.run(() => {
-        this.pauseAllVideo();
         this.native.hideLoading();
       });
     });
@@ -760,7 +758,7 @@ export class ChannelsPage implements OnInit {
           video.removeAttribute("poster");
           let sourcesrc =  source.getAttribute("src") || "";
           if(sourcesrc  != ""){
-            video.pause();
+            //video.pause();
             source.removeAttribute("src");
           }
           this.isLoadVideoiamge[id]="";
@@ -848,7 +846,8 @@ export class ChannelsPage implements OnInit {
         let videoElement:any = document.getElementById(id+'videochannel') || "";
         let source:any = document.getElementById(id+'sourcechannel') || "";
         videoElement.removeAttribute('poster'); // empty source
-        if(source!=""){
+        let sourcesrc =  source.getAttribute("src") || "";
+        if(sourcesrc!=""){
           source.removeAttribute('src'); // empty source
           let sid=setTimeout(()=>{
             videoElement.load();
