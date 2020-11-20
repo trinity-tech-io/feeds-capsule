@@ -66,11 +66,11 @@ export class AppService {
     }
 
     onReceiveIntent = (ret) => {
-      console.log("Intent received", ret, JSON.stringify(ret));
+      //console.log("Intent received", ret, JSON.stringify(ret));
 
       switch (ret.action) {
         case "addsource":
-          console.log('addsource intent', ret);
+          //console.log('addsource intent', ret);
           this.zone.run(async () => {
             this.native.getNavCtrl().navigateForward(
               ['/menu/servers/server-info', ret.params.source, "0", false]

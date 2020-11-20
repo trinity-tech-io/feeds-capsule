@@ -649,7 +649,6 @@ export class PostdetailPage implements OnInit {
         }
 
         this.videoObj = videoData;
-        console.log("========="+this.videoObj.substring(0,50));
         this.loadVideo(videoData);
       });
     //}); 
