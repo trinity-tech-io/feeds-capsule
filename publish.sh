@@ -2,9 +2,9 @@
 
 
 function publish(){
-  echo 'Publish news is ' \"$news\"
-  trinity-cli publish --did did:elastos:iqtWRVjz7gsYhyuQEb1hYNNmWQt1Z9geXg#primary --news $news
- echo 'publish success'
+  echo 'Publish news is ' "$news"
+  trinity-cli publish --did did:elastos:iqtWRVjz7gsYhyuQEb1hYNNmWQt1Z9geXg#primary --news "$news"
+  echo 'publish success'
 }
 
 
