@@ -269,6 +269,7 @@ addBinaryEvevnt(){
   this.events.subscribe('feeds:getBinaryFinish', (nodeId, key: string, value:string) => {
     this.zone.run(() => {
       this.processGetBinaryResult(key, value);
+      this.native.hideLoading();
     });
   });
 
