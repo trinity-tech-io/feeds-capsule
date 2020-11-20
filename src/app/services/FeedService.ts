@@ -54,6 +54,12 @@ let isBindServer: boolean = false ;
 
 let cachedPost:{[key:string]:Post} = {};
 
+type ServerVersion = {
+  nodeId        : string,
+  versionName   : string,
+  versionCode   : number
+}
+
 type Likes = {
   nodeId    : string,
   channelId : number,
@@ -208,7 +214,6 @@ type Server = {
   nodeId            : string
   feedsUrl          : string
   elaAddress        : string
-  version           : string
 }
 
 export class DidData{
@@ -346,6 +351,8 @@ enum PersistenceKey{
   likeCommentMap = "likeCommentMap",
   lastFeedUpdateMap = "lastFeedUpdateMap",
   lastCommentUpdateMap = "lastCommentUpdateMap",
+
+  serverVersions = "serverVersions",
 }
 
 let expDay = 10;
@@ -426,6 +433,8 @@ export class FeedService {
   private lastCommentUpdateMap:{[key: string]: CommentUpdateTime};
   private throwMsgTransDataLimit = 4*1000*1000;
   private alertPopover:HTMLIonPopoverElement = null;
+  private serverVersions: {[nodeId: string]: ServerVersion} = {};
+
   public constructor(
     private serializeDataService: SerializeDataService,
     private jwtMessageService: JWTMessageService,
@@ -473,6 +482,17 @@ export class FeedService {
 
   public getProfileIamge(){
       return this.profileIamge;     
+  }
+
+  loadServerVersions(){
+    return new Promise((resolve, reject) =>{
+      this.storeService.get(PersistenceKey.serverVersions).then((mServervVersions)=>{
+        this.serverVersions = mServervVersions || {};
+        resolve();
+      }).catch(()=>{
+        reject();
+      });
+    });
   }
 
   loadPostData(){
@@ -773,6 +793,7 @@ export class FeedService {
 
   async loadData(){
     await Promise.all([
+      this.loadServerVersions(),
       this.loadPostData(),
       this.loadChannelData(),
       this.loadCredential(),
@@ -1148,10 +1169,14 @@ export class FeedService {
         did: "string",
         status: friendStatus
       }
+
+      let serverVersionCode = this.getServerVersionCodeByNodeId(friendId);
+      if (serverVersionCode < 0)
+        this.getServerVersion(friendId);
+
       let mServerMap = serverMap || {};
       let server = mServerMap[friendId]||"";
       if (server != "" )
-        this.getServerVersion(friendId);
         this.doFriendConnection(friendId, friendStatus);  
     });
   }
@@ -1494,7 +1519,6 @@ export class FeedService {
             nodeId            : "",
             feedsUrl          : feedsUrl,
             elaAddress        : "",
-            version           : "",
             // status            : ConnState.disconnected
           });
           return;
@@ -1513,7 +1537,6 @@ export class FeedService {
             nodeId            : "",
             feedsUrl          : feedsUrl,
             elaAddress        : "",
-            version           : "",
             // status            : ConnState.disconnected
         });
       } else {
@@ -2184,11 +2207,7 @@ export class FeedService {
   }
 
   getServerVersion(nodeId: string){
-    if(!this.hasAccessToken(nodeId))
-      return;
-
-    let accessToken: FeedsData.AccessToken = accessTokenMap[nodeId]||undefined;
-    this.connectionService.getServerVersion(this.getServerNameByNodeId(nodeId),nodeId,accessToken);
+    this.connectionService.getServerVersion(this.getServerNameByNodeId(nodeId),nodeId);
   }
   
   updateCredential(nodeId: string, credential: string){
@@ -2247,25 +2266,30 @@ export class FeedService {
   }
 
   handleGetServerVersion(nodeId: string, result: any, error: any){
-    if (error != null && error != undefined && error.code != undefined){
-      this.handleError(nodeId, error);
-      return;
-    }
+    // if (error != null && error != undefined && error.code != undefined){
+    //   this.handleError(nodeId, error);
+    //   return;
+    // }
 
     let version = result.version;
 
-    if (serverMap != null &&
-        serverMap != undefined &&
-        serverMap[nodeId] != undefined){
-          serverMap[nodeId].version = version;
-          this.storeService.set(PersistenceKey.serverMap, serverMap);
-    }
+    if (this.serverVersions == null ||
+      this.serverVersions == undefined)
+      this.serverVersions = {};
 
-    if (bindingServer.nodeId == nodeId){
-      bindingServer.version = version;
-      this.storeService.set(PersistenceKey.bindingServer, bindingServer);
+    let serverVersion = this.serverVersions[nodeId]||""
+    if (serverVersion == ""){
+      this.serverVersions[nodeId] = {
+        nodeId        : nodeId,
+        versionName   : version,
+        versionCode   : 1
+      }
+    }else {
+      this.serverVersions[nodeId].nodeId = nodeId;
+      this.serverVersions[nodeId].versionCode = 1;
+      this.serverVersions[nodeId].versionName = version;  
     }
-    
+    this.storeService.set(PersistenceKey.serverVersions, this.serverVersions);
   }
 
   enableNotification(nodeId: string){
@@ -4301,7 +4325,6 @@ export class FeedService {
           nodeId            : server.nodeId,
           feedsUrl          : server.feedsUrl,
           elaAddress        : "",
-          version           : ""
         }
         onSuccess();
     },(err)=>{
@@ -4333,7 +4356,6 @@ export class FeedService {
           nodeId            : server.nodeId,
           feedsUrl          : server.feedsUrl,
           elaAddress        : "",
-          version           : ""
         }
         onSuccess();
         eventBus.publish("feeds:resolveDidSucess", nodeId, did);
@@ -5987,11 +6009,12 @@ export class FeedService {
     this.native.toastWarn(this.formateInfoService.formatErrorMsg(this.getServerNameByNodeId(nodeId),errorMsg));
   }
 
-  checkBindingServerVersion(server: Server, quit:any): boolean{
-    //console.log("server>>"+JSON.stringify(server));
-    if(server == undefined || 
-      server.version == undefined||
-      server.version == ""){
+  checkBindingServerVersion(quit:any): boolean{
+    if (bindingServer == null || bindingServer == undefined)
+      return;
+
+    let serverVersion = this.getServerVersionByNodeId(bindingServer.nodeId);
+    if (serverVersion == ""){
       this.popupProvider.ionicAlert(
         this,
         "",
@@ -6011,5 +6034,24 @@ export class FeedService {
     if (this.alertPopover!=null && this.alertPopover!= undefined){
       this.alertPopover.dismiss();
     }
+  }
+
+  getServerVersionByNodeId(nodeId: string){
+    if (this.serverVersions == null ||
+      this.serverVersions == undefined ||
+      this.serverVersions[nodeId] == undefined){
+        return "";
+    }
+    let version = this.serverVersions[nodeId].versionName||"";
+    return version;
+  }
+
+  getServerVersionCodeByNodeId(nodeId: string): number{
+    if (this.serverVersions == null ||
+      this.serverVersions == undefined||
+      this.serverVersions[nodeId] == undefined)
+        return -1;
+    let serverVersionCode = this.serverVersions[nodeId].versionCode||-1;
+    return serverVersionCode;
   }
 }

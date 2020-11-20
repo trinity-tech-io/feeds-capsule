@@ -59,6 +59,10 @@ export class FinishPage implements OnInit {
       return;
     }
 
+    if (!this.feedService.checkBindingServerVersion(()=>{
+      this.feedService.hideAlertPopover();
+    })) return;
+    
     this.native.navigateForward(['/createnewfeed'],{
       replaceUrl: true
     });

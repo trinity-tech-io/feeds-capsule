@@ -551,16 +551,13 @@ export class ConnectionService {
         this.sendRPCMessage(serverName, nodeId, request.method, request.params, "");
     }
 
-    getServerVersion(serverName: string, nodeId: string, accessToken: FeedsData.AccessToken){
-        if (accessToken == undefined)
-            return ;
-
+    getServerVersion(serverName: string, nodeId: string){
         let request: Communication.get_service_version_request = {
             version: "1.0",
             method : "get_service_version",
             id     : -1,
             params : {
-                access_token: accessToken.token
+                access_token: ""
             } 
         }
 

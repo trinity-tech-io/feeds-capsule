@@ -95,7 +95,7 @@ export class FeedsPage implements OnInit {
     }
 
 
-    if (!this.feedService.checkBindingServerVersion(bindingServer, ()=>{
+    if (!this.feedService.checkBindingServerVersion(()=>{
       this.feedService.hideAlertPopover();
     })) return;
 

@@ -44,7 +44,7 @@ export class MyfeedsComponent implements OnInit {
         return;
       }
 
-      if (!this.feedService.checkBindingServerVersion(bindServer, ()=>{
+      if (!this.feedService.checkBindingServerVersion(()=>{
         this.feedService.hideAlertPopover();
       })) return;
   
