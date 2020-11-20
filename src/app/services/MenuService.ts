@@ -256,8 +256,7 @@ export class MenuService {
 
         switch(clickName){
             case "editPost":
-                let server = this.feedService.getServerbyNodeId(nodeId);
-                if (!this.feedService.checkBindingServerVersion(server, ()=>{
+                if (!this.feedService.checkBindingServerVersion(()=>{
                     this.feedService.hideAlertPopover();
                 })) return;
                     
@@ -275,7 +274,7 @@ export class MenuService {
                 this.native.toast("common.comingSoon");
                 break;
             case "removePost":
-                if (!this.feedService.checkBindingServerVersion(server, ()=>{
+                if (!this.feedService.checkBindingServerVersion(()=>{
                     this.feedService.hideAlertPopover();
                 })) return;
                 

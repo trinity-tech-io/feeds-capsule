@@ -299,10 +299,15 @@ export class ServerInfoPage implements OnInit {
       details: server.introduction || ""
     });
 
-    this.serverDetails.push({
-      type: this.translate.instant('ServerInfoPage.version'),
-      details: server.version || this.translate.instant('common.infoObtaining'),
-    });
+    let version = this.feedService.getServerVersionByNodeId(server.nodeId)
+    console.log("serverinfo version"+version);
+    if (version != ""){
+      this.serverDetails.push({
+        type: this.translate.instant('ServerInfoPage.version'),
+        details: version || this.translate.instant('common.infoObtaining'),
+      });
+    }
+    
     
     this.serverDetails.push({
       type: this.translate.instant('IssuecredentialPage.elaaddress'),

@@ -38,8 +38,7 @@ export class PostfromComponent implements OnInit {
       return;
     }
 
-    let server = this.feedService.getServerbyNodeId(nodeId);
-    if (!this.feedService.checkBindingServerVersion(server, ()=>{
+    if (!this.feedService.checkBindingServerVersion(()=>{
       this.feedService.hideAlertPopover();
     })) return;
 

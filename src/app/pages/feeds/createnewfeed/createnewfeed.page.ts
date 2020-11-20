@@ -92,7 +92,7 @@ export class CreatenewfeedPage implements OnInit {
       this.initTitle();
     });
 
-    this.feedService.checkBindingServerVersion(this.selectedServer,()=>{
+    this.feedService.checkBindingServerVersion(()=>{
       this.zone.run(() => {
         this.navCtrl.pop().then(()=>{
           this.feedService.hideAlertPopover();
