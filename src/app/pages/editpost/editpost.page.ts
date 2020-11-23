@@ -187,7 +187,7 @@ export class EditpostPage implements OnInit {
     this.events.unsubscribe("feeds:openRightMenu");
     this.events.unsubscribe("stream:getBinarySuccess");
     this.imgUrl="";
-      
+    this.native.hideLoading();
     this.removeVideo();
     this.events.publish("addBinaryEvevnt");
     this.feedService.closeSession(this.nodeId);
@@ -596,21 +596,24 @@ export class EditpostPage implements OnInit {
     this.totalProgress = 0;
     this.uploadProgress =0;
     this.totalProgress = 0;
-    if(this.posterImg != ""){
-      let id = this.nodeId+this.channelId+this.postId;
-       this.posterImg ="";
-       let  video:any = document.getElementById(id+"videoeditpost") || "";
-       video.removeAttribute('poster');
-       if(this.flieUri!=""){
-        this.flieUri ="";
-        let source:any = document.getElementById(id+"sourceeditpost") || "";
-        source.removeAttribute('src'); // empty source
+    this.posterImg = "";
+    this.flieUri = "";
+    let id = this.nodeId+this.channelId+this.postId;
+    let  video:any = document.getElementById(id+"videoeditpost") || "";
+    if(video != ""){
+         video.removeAttribute('poster');
+       }
+    let source:any = document.getElementById(id+"sourceeditpost") || "";
+       if(source != ""){
+        source.removeAttribute('poster');
+    }
+      
+    if(video != ""){
         let sid=setTimeout(()=>{
           video.load();
           clearTimeout(sid);
         },10)
-       }
-    }
+    }    
   }
 
   setFullScreen(id:string){

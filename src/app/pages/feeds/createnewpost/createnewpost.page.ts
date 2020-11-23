@@ -212,6 +212,7 @@ export class CreatenewpostPage implements OnInit {
       this.pauseVideo();
     });
 
+
     this.initnodeStatus();
 
     this.feedService.checkBindingServerVersion(()=>{
@@ -243,6 +244,7 @@ export class CreatenewpostPage implements OnInit {
     this.events.unsubscribe("feeds:declarePostSuccess");
     this.events.unsubscribe("feeds:notifyPostSuccess");
     
+    this.native.hideLoading();
 
     this.imgUrl="";
     this.transcode = 0;
@@ -544,20 +546,27 @@ selectvideo(){
     this.totalProgress = 0;
     this.uploadProgress =0;
     this.totalProgress = 0;
-    if(this.posterImg != ""){
-       this.posterImg ="";
-       let  video:any = document.getElementById("videocreatepost") || "";
-       video.removeAttribute('poster');
-       if(this.flieUri!=""){
-        this.flieUri ="";
-        let source:any = document.getElementById("sourcecreatepost") || "";
+    this.posterImg ="";
+    this.flieUri ="";
+    let  video:any = document.getElementById("videocreatepost") || "";
+    if(video!=""){
+          video.removeAttribute('poster');
+      }
+    let source:any = document.getElementById("sourcecreatepost") || "";
+    if(source!=""){
         source.removeAttribute('src'); // empty source
-        let sid=setTimeout(()=>{
-          video.load();
-          clearTimeout(sid);
-        },10)
-       }
     }
+
+    if(video!=""){
+      let sid=setTimeout(()=>{
+        video.load();
+        clearTimeout(sid);
+      },10)
+    }
+       
+        
+      
+      
   }
 
   setFullScreen(){
