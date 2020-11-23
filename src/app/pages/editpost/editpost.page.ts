@@ -195,10 +195,12 @@ export class EditpostPage implements OnInit {
   }
 
   pauseVideo(){
-    let id = this.nodeId+this.channelId+this.postId;
-    let  video:any = document.getElementById(id+"videoeditpost") || "";
-    if(!video.paused){  //判断是否处于暂停状态
-			  video.pause();  //停止播放
+    if(this.posterImg != ""){
+      let id = this.nodeId+this.channelId+this.postId;
+      let  video:any = document.getElementById(id+"videoeditpost") || "";
+      if(!video.paused){  //判断是否处于暂停状态
+          video.pause();  //停止播放
+      }
     }
    }
 
@@ -331,7 +333,7 @@ export class EditpostPage implements OnInit {
   }
 
   showBigImage(content: any){
-     this.native.openViewer(content,"common.image","EditpostPage.title");
+     this.native.openViewer(content,"common.image","EditpostPage.title",this.appService);
   }
 
   checkServerStatus(nodeId: string){
