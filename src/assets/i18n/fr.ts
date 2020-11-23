@@ -77,7 +77,7 @@ export const fr = {
         "videocompression":"Video compression",
         "video":"Video",
         "theFeedSource": "The Feed source",
-        "fulltext":"Full Text",
+        "fulltext":"read more",
         "uploading":"Uploading",
         "downloading": "Downloading",
         "mustUpdate": "Your feeds service is out-dated. Please upgrade it to latest version, otherwise you could not post feed."
