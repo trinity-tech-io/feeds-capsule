@@ -14,6 +14,7 @@ import { ApiUrl } from 'src/app/services/ApiUrl';
 import { FormateInfoService } from 'src/app/services/FormateInfoService';
 import { SessionService } from 'src/app/services/SessionService';
 import { PopupProvider } from 'src/app/services/popup';
+import { LogUtils } from 'src/app/services/LogUtils';
 
 import * as _ from 'lodash';
 
@@ -449,7 +450,8 @@ export class FeedService {
     private httpService: HttpService,
     private formateInfoService: FormateInfoService,
     private sessionService:SessionService,
-    private popupProvider:PopupProvider
+    private popupProvider:PopupProvider,
+    private logUtils: LogUtils
   ) {
     eventBus = events;
     this.init();
@@ -457,6 +459,8 @@ export class FeedService {
 
   init(){
     this.initData();
+
+    
     this.initCallback();
   }
 
@@ -3644,6 +3648,9 @@ export class FeedService {
   }
 
   getChannelFromId(nodeId: string, id: number): Channels{
+    console.log("nodeId>>"+nodeId);
+    console.log("channelId>>"+id);
+    console.log("channelsMap>>"+JSON.stringify(channelsMap));
     if (channelsMap == null || channelsMap == undefined)
       return undefined;
 
