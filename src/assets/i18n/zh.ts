@@ -77,7 +77,7 @@ export const zh = {
         "videocompression":"视频压缩中",
         "video":"视频",
         "theFeedSource": "微频源",
-        "fulltext":"全文",
+        "fulltext":"更多",
         "uploading":"正在上传",
         "downloading": "正在下载",
         "mustUpdate": "您的Feeds 服务版本需要升级到最新版本，否则您将无法发布内容。"
