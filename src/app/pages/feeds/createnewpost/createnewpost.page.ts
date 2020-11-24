@@ -9,8 +9,10 @@ import { TranslateService } from "@ngx-translate/core";
 import { VideoEditor } from '@ionic-native/video-editor/ngx';
 import { AppService } from 'src/app/services/AppService';
 import { UtilService } from 'src/app/services/utilService';
-declare let titleBarManager: TitleBarPlugin.TitleBarManager;
+import { LogUtils } from 'src/app/services/LogUtils';
 
+declare let titleBarManager: TitleBarPlugin.TitleBarManager;
+let TAG: string = "Feeds-createpost";
 @Component({
   selector: 'app-createnewpost',
   templateUrl: './createnewpost.page.html',
@@ -55,7 +57,8 @@ export class CreatenewpostPage implements OnInit {
     public videoEditor:VideoEditor,
     public appService:AppService,
     public el:ElementRef,
-    public modalController:ModalController
+    public modalController:ModalController,
+    private logUtils: LogUtils
   ) {
   }
 
@@ -406,7 +409,7 @@ export class CreatenewpostPage implements OnInit {
         // });
      });
   }, (error)=>{
-       console.log("===captureVideoErr==="+JSON.stringify(error));
+       this.logUtils.loge("captureVideo error:"+JSON.stringify(error),TAG);
   }, {limit:1,duration:30});
   }
 
@@ -419,7 +422,7 @@ selectvideo(){
       let path = flieUri.startsWith('file://') ? flieUri : `file://${flieUri}`;
       this.getVideoInfo(path);
     }).catch((err)=>{
-      console.log("=====getVideoErr===="+JSON.stringify(err));
+      this.logUtils.loge("getVideo error:"+JSON.stringify(err),TAG);
      })
   } 
   async getVideoInfo(fileUri:string){
@@ -488,15 +491,15 @@ selectvideo(){
               fileReader.readAsDataURL(file);
 
            },(err)=>{
-              console.log("=====readFileErr====="+JSON.stringify(err));
+            this.logUtils.loge("readVideo error:"+JSON.stringify(err),TAG);
            });
           },
           (err)=>{
-            console.log("=====getFileErr====="+JSON.stringify(err));
+            this.logUtils.loge("getFile error:"+JSON.stringify(err),TAG);
           });
       },
       (err:any)=>{
-            console.log("=====pathErr====="+JSON.stringify(err));
+        this.logUtils.loge("path error:"+JSON.stringify(err),TAG);
       });
   }
 
@@ -713,15 +716,15 @@ readThumbnail(fileName:string,filepath:string){
             fileReader.readAsDataURL(file);
 
          },(err)=>{
-            console.log("=====readFileErr====="+JSON.stringify(err));
+            this.logUtils.loge("readFile error:"+JSON.stringify(err),TAG);
          });
         },
         (err)=>{
-          console.log("=====getFileErr====="+JSON.stringify(err));
+          this.logUtils.loge("getFile error:"+JSON.stringify(err),TAG);
         });
     },
     (err:any)=>{
-          console.log("=====pathErr====="+JSON.stringify(err));
+      this.logUtils.loge("path error:"+JSON.stringify(err),TAG);
     });
 }
 
@@ -745,7 +748,7 @@ handleTotal(duration:any){
   //       this.readFile(fileName,filepath);
   //    });
   // }, (error)=>{
-  //      console.log("===captureVideoErr==="+JSON.stringify(error));
+  //      this.logUtils.loge("captureVideo error:"+JSON.stringify(err),TAG);
   // }, {limit:1,duration:14});
   // }
 }

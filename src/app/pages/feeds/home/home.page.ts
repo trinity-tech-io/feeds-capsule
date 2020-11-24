@@ -10,6 +10,10 @@ import { TranslateService } from "@ngx-translate/core";
 import { NativeService } from 'src/app/services/NativeService';
 import { IonInfiniteScroll } from '@ionic/angular';
 import { AppService } from 'src/app/services/AppService';
+import { LogUtils } from 'src/app/services/LogUtils';
+
+let TAG: string = "Feeds-home";
+
 @Component({
   selector: 'app-home',
   templateUrl: './home.page.html',
@@ -72,8 +76,8 @@ export class HomePage implements OnInit {
     private native:NativeService,
     private menuService: MenuService,
     public appService:AppService,
-    public modalController: ModalController) {
-      
+    public modalController: ModalController,
+    private logUtils: LogUtils) {
     }
 
   initPostListData(){
@@ -118,7 +122,6 @@ export class HomePage implements OnInit {
    
     // this.events.subscribe('feeds:publishPostFinish',()=>{
     //   this.zone.run(() => {
-    //     console.log("======feeds:publishPostFinish====");
     //     this.infiniteScroll.disabled =false;
     //     this.startIndex = 0;
     //     this.totalData = this.feedService.getPostList() || [];
@@ -712,7 +715,7 @@ addBinaryEvevnt(){
     try {
       if(id!=''&&postImage.getBoundingClientRect().top>=-this.clientHeight&&postImage.getBoundingClientRect().top<=this.clientHeight){
         // if(rowindex === 2){
-        //   console.log("====进入==="+rowindex+"-"+JSON.stringify(postImage.getBoundingClientRect()));
+        //  this.logUtils.logd("entry "+rowindex+"-"+JSON.stringify(postImage.getBoundingClientRect()),TAG);
         // }
 
         if(isload === ""){
@@ -733,16 +736,16 @@ addBinaryEvevnt(){
                 this.isLoadimage[id] ="12";
                 rpostimg.style.display = 'none'; 
               }
-            }).catch(()=>{
+            }).catch((reason)=>{
               rpostimg.style.display = 'none'; 
-              console.log("getImageError");
+              this.logUtils.loge("getImageData error:"+JSON.stringify(reason),TAG);
             })
         }
      
       }else{
         let postImageSrc = postImage.getAttribute("src") || "";
          if(postImage.getBoundingClientRect().top<-this.clientHeight&&this.isLoadimage[id]==="13"&&postImageSrc!=""){ 
-          // console.log("====移除==="+rowindex+"-"+postImage.getBoundingClientRect().top);
+          // this.logUtils.logd("remove error:"+rowindex+"-"+postImage.getBoundingClientRect().top,TAG);
           this.isLoadimage[id] = "";
           postImage.removeAttribute("src");
       }
@@ -763,7 +766,7 @@ addBinaryEvevnt(){
     }
     try {
       if(id!=''&&video.getBoundingClientRect().top>=-this.clientHeight&&video.getBoundingClientRect().top<=this.clientHeight){
-        //console.log("=====进入===="+rowindex+"==="+video.getBoundingClientRect().top);
+        // this.logUtils.logd("entry "+rowindex+"==="+video.getBoundingClientRect().top,TAG);
         if(isloadVideoImg===""){
           this.isLoadVideoiamge[id] = "11";
           vgplayer.style.display = "none";
@@ -782,19 +785,19 @@ addBinaryEvevnt(){
                 this.setFullScreen(id);
                 this.setOverPlay(id,srcId);
               }else{
-                //console.log("========="+rowindex);
+                //this.logUtils.logd("rowindex "+rowindex, TAG);
                 this.isLoadVideoiamge[id] = "12";
                 video.style.display='none';
                 vgplayer.style.display = 'none'; 
               }
-            }).catch(()=>{
+            }).catch((reason)=>{
               vgplayer.style.display = 'none'; 
-              console.log("getImageError");
+              this.logUtils.loge("getImageData error:"+JSON.stringify(reason),TAG);
             });
         }
      
       }else{
-        //console.log("=====移除===="+rowindex+"==="+video.getBoundingClientRect().top+"---"+video.getBoundingClientRect().bottom);
+        // this.logUtils.logd("remove: index = "+rowindex+" top = "+video.getBoundingClientRect().top+" bottom = "+video.getBoundingClientRect().bottom,TAG);
         let postSrc =  video.getAttribute("poster") || "";
         if(video.getBoundingClientRect().top<-this.clientHeight&&this.isLoadVideoiamge[id]==="13"&&postSrc!=""){
           video.removeAttribute("poster");

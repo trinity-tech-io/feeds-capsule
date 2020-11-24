@@ -10,9 +10,10 @@ import { UtilService } from 'src/app/services/utilService';
 import { IonInfiniteScroll,PopoverController} from '@ionic/angular';
 import { EdittoolComponent } from '../../../../components/edittool/edittool.component';
 import { AppService } from 'src/app/services/AppService';
-
+import { LogUtils } from 'src/app/services/LogUtils';
 
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
+let TAG: string = "Feeds-postview";
 
 @Component({
   selector: 'app-postdetail',
@@ -80,7 +81,8 @@ export class PostdetailPage implements OnInit {
     private translate:TranslateService,
     public menuService: MenuService,
     public appService:AppService,
-    public modalController: ModalController) {
+    public modalController: ModalController,
+    private logUtils: LogUtils) {
   }
 
   initData(){
@@ -489,14 +491,13 @@ export class PostdetailPage implements OnInit {
 
   getImage(){
     let key = this.feedService.getImgThumbKeyStrFromId(this.nodeId,this.channelId,this.postId,0,0) || "";
-      if(key !=""){
-        this.feedService.getData(key).then((image)=>{
-          this.postImage = image || "";
-    }).catch(()=>{
-      console.log("getImageError");
-    })
-      }
-    
+    if(key !=""){
+      this.feedService.getData(key).then((image)=>{
+        this.postImage = image || "";
+      }).catch((reason)=>{
+        this.logUtils.loge("getImageData error:"+JSON.stringify(reason),TAG);
+      })
+    }
   }
 
   doRefresh(event:any){

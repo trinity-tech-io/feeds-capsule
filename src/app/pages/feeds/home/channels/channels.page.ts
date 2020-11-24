@@ -10,7 +10,9 @@ import { TranslateService } from "@ngx-translate/core";
 import { PaypromptComponent } from 'src/app/components/payprompt/payprompt.component'
 import { PopoverController,IonInfiniteScroll,IonContent} from '@ionic/angular';
 import { AppService } from 'src/app/services/AppService';
+import { LogUtils } from 'src/app/services/LogUtils';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
+let TAG: string = "Feeds-feeds";
 
 @Component({
   selector: 'app-channels',
@@ -77,9 +79,8 @@ export class ChannelsPage implements OnInit {
     private translate:TranslateService,
     private menuService: MenuService,
     public appService:AppService,
-    public modalController:ModalController) {
-
-   
+    public modalController:ModalController,
+    private logUtils: LogUtils) {
   }
 
   subscribe(){
@@ -637,7 +638,6 @@ export class ChannelsPage implements OnInit {
 
     let postgridList = document.getElementsByClassName("channelgird");
     let postgridNum = document.getElementsByClassName("channelgird").length;
-    //console.log("====postgridNum====="+postgridNum);
     for(let postgridindex =0;postgridindex<postgridNum;postgridindex++){ 
       let srcId = postgridList[postgridindex].getAttribute("id") || '';
       if(srcId!=""){
@@ -666,10 +666,8 @@ export class ChannelsPage implements OnInit {
     let isload = this.isLoadimage[id] || "";
     let rpostImage = document.getElementById(id+"channelrow");
     let postImage:any = document.getElementById(id+"postimgchannel") || "";
-    //console.log("======="+rowindex+"-"+postImage+"-"+postImage.getBoundingClientRect().top);
     try {
       if(id!=''&&postImage.getBoundingClientRect().top>=-this.clientHeight&&postImage.getBoundingClientRect().top<=this.clientHeight){
-        //console.log("======="+rowindex+"-"+postImage.getBoundingClientRect().top+"-"+id+"");
         if(isload===""){
           rpostImage.style.display = "none";
           this.isLoadimage[id] = "11";
@@ -680,7 +678,6 @@ export class ChannelsPage implements OnInit {
          let key = this.feedService.getImgThumbKeyStrFromId(nodeId,channelId,postId,0,0);
          this.feedService.getData(key).then((imagedata)=>{
               let image = imagedata || "";
-              //console.log("=====ssssssimage"+image);
               if(image!=""){
                 this.isLoadimage[id] ="13";
                 rpostImage.style.display = "block";
@@ -693,26 +690,24 @@ export class ChannelsPage implements OnInit {
                 //rpostImage.style.display = "none";
               }else{
                 this.zone.run(()=>{
-                  //console.log("=====ssssss");
                   this.isLoadimage[id] ="12";
                   rpostImage.style.display = 'none';   
                 })
               }
-            }).catch(()=>{
+            }).catch((reason)=>{
               rpostImage.style.display = 'none'; 
-              console.log("getImageError");
+              this.logUtils.loge("getImageData error:"+JSON.stringify(reason),TAG);
             })
         }
       }else{
         let postImageSrc = postImage.getAttribute("src") || "";
         if(postImage.getBoundingClientRect().top<-this.clientHeight&&this.isLoadimage[id]==="13"&&postImageSrc!=""){ 
-          //console.log("======="+rowindex);  
           this.isLoadimage[id] = "";
           postImage.removeAttribute("src");
         }
       }
     } catch (error) {
-    
+      this.logUtils.loge("getImageData error:"+JSON.stringify(error),TAG);
     }
   }
 
@@ -728,7 +723,6 @@ export class ChannelsPage implements OnInit {
    }
     try {
       if(id!=''&&video.getBoundingClientRect().top>=-this.clientHeight&&video.getBoundingClientRect().top<=this.clientHeight){
-        //console.log("========="+rowindex+"==="+video.getBoundingClientRect().top);
         if(isloadVideoImg===""){
           this.isLoadVideoiamge[id] = "11";
           vgplayer.style.display = "none";
@@ -750,9 +744,9 @@ export class ChannelsPage implements OnInit {
                 video.style.display='none';
                 vgplayer.style.display = 'none'; 
               }
-            }).catch(()=>{
+            }).catch((reason)=>{
               vgplayer.style.display = 'none'; 
-              console.log("getImageError");
+              this.logUtils.loge("getVideoData error:"+JSON.stringify(reason),TAG);
             });
         }
       }else{

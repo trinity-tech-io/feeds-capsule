@@ -43,8 +43,6 @@ export class AddServerPage implements OnInit {
   ) {
  /*    this.route.queryParams.subscribe(params => {
       if(params.source) {
-        console.log('SOURCEEEEE')
-        console.log("Handling intent 'addsource' with source - " + params);
         this.checkValid(params.source);
       }
     }); */

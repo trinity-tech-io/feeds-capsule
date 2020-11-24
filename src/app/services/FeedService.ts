@@ -22,6 +22,7 @@ declare let didManager: DIDPlugin.DIDManager;
 declare let appManager: AppManagerPlugin.AppManager;
 declare let didSessionManager: DIDSessionManagerPlugin.DIDSessionManager;
 
+let TAG: string = "Feeds-service";
 let subscribedChannelsMap:{[nodeChannelId: string]: Channels};
 let channelsMap:{[nodeChannelId: string]: Channels} ;
 let myChannelsMap:{[nodeChannelId: string]: MyChannel};
@@ -2777,7 +2778,6 @@ export class FeedService {
     let cacheKey = this.getCachePostKey(nodeId, channelId, postId, 0);
     let post = cachedPost[cacheKey];
     if (post == null || post == undefined){
-      //console.log("get cached post error");
       return ;
     }
 
@@ -2785,7 +2785,6 @@ export class FeedService {
     this.postMap[mPostId]=post;
 
     this.storeService.set(PersistenceKey.postMap, this.postMap);
-  
     eventBus.publish(PublishType.notifyPostSuccess);
 
     this.storeService.remove(cacheKey);
@@ -3648,9 +3647,6 @@ export class FeedService {
   }
 
   getChannelFromId(nodeId: string, id: number): Channels{
-    console.log("nodeId>>"+nodeId);
-    console.log("channelId>>"+id);
-    console.log("channelsMap>>"+JSON.stringify(channelsMap));
     if (channelsMap == null || channelsMap == undefined)
       return undefined;
 
@@ -3983,7 +3979,7 @@ export class FeedService {
     didSessionManager.authenticate(nonce, realm).then((presentation)=>{
       this.connectionService.signinConfirmRequest(this.getServerNameByNodeId(nodeId), nodeId, nonce, realm, requiredCredential,presentation,this.getLocalCredential());
     }).catch((err)=>{
-      // console.log("err = "+err);
+      this.logUtils.loge("authenticate error:"+JSON.stringify(err),TAG);
     });
   }
 
@@ -4084,9 +4080,7 @@ export class FeedService {
         onSuccess();
       },
       (err)=>{
-
-        //console.log("error=>"+err);
-
+        this.logUtils.loge("parseJWS error:"+JSON.stringify(err),TAG);
         onError();
       }
       );
@@ -4097,12 +4091,12 @@ export class FeedService {
       if (result){
         onSuccess(result);
       }else{
-        // console.log("error")
+        this.logUtils.loge("parseJWT error: result = "+JSON.stringify(result),TAG);
       }
 
     }).catch((err)=>{
       onError(err);
-      // console.log("err = "+err);
+      this.logUtils.loge("parseJWT error: "+JSON.stringify(err),TAG);
     });
   }
 
@@ -4229,7 +4223,6 @@ export class FeedService {
 
     let value = this.serializeDataService.decodeData(contentBin);
     this.storeService.set(key, value).then(()=>{
-        //console.log("feeds:getBinaryFinish nodeId>>> "+ nodeId+" key>>>"+key+" value>>>"+value);
         eventBus.publish("feeds:getBinaryFinish", nodeId, key, value);
     });
   }
@@ -4297,15 +4290,13 @@ export class FeedService {
       }
       else {
         onError();
-        //console.log("Failed to issue a credential - empty credential returned");
+        this.logUtils.loge("Failed to issue a credential - empty credential returned" ,TAG);
         return;
-        // this.didDemoService.toast("Failed to issue a credential - empty credential returned");
       }
     }, (err)=>{
       onError();
-      //console.log("Failed to issue a credential: "+JSON.stringify(err));
+      this.logUtils.loge("Failed to issue a credential: "+JSON.stringify(err), TAG);
       return ;
-      // this.didDemoService.toast("Failed to issue a credential: "+JSON.stringify(err));
     })
   }
 
@@ -4443,7 +4434,6 @@ export class FeedService {
   }
 
   getLocalCredential(){
-    // console.log("localCredential>>"+localCredential);
     return localCredential;
   }
 
@@ -4721,7 +4711,7 @@ export class FeedService {
 
       this.carrierService.removeFriend(server.nodeId,()=>{
       },(err)=>{
-        console.log("Remove Friend error =>"+err);
+        this.logUtils.loge("Remove Friend error: "+JSON.stringify(err), TAG);
       });
     }
   }
@@ -4812,8 +4802,6 @@ export class FeedService {
 
   checkChannelIsMine(nodeId: string, channelId: number): boolean{
     let channel = this.getChannelFromId(nodeId, channelId);
-    // console.log("channel ==>"+JSON.stringify(channel));
-    // console.log("this.getSignInData().did ==>"+this.getSignInData().did);
     if (channel.owner_did == this.getSignInData().did)
       return true;
 
@@ -4822,15 +4810,9 @@ export class FeedService {
 
   checkCommentIsMine(nodeId: string, channelId: number, postId: number, commentId: number):boolean{
     let comment = commentsMap[nodeId][channelId][postId][commentId];
-    // console.log("comment ==>"+JSON.stringify(comment));
-    // console.log("this.getSignInData().did ==>"+this.getSignInData().did);
     let did = comment.user_did || "";
     if (did == this.getSignInData().did)
       return true;
-
-    // if (comment.user_name == this.getSignInData().name || 
-    //   comment.user_name == this.getSignInData().nickname)
-    //   return true;
 
     return false;
   }
@@ -5851,7 +5833,7 @@ export class FeedService {
     // eventBus.publish("sessionResponse:error",nodeId, error);
     this.translateBinaryError(nodeId,error.code);
     this.closeSession(nodeId);
-    //console.log("Session error :: nodeId : "+nodeId+" errorCode: "+error.code+" errorMessage:"+error.message);
+    this.logUtils.logd("Session error :: nodeId : "+nodeId+" errorCode: "+error.code+" errorMessage:"+error.message, TAG);
   }
 
   createVideoContent(postText: string, videoThumb: any, durition: number, videoSize: number): string{

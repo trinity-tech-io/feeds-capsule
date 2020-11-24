@@ -57,11 +57,8 @@ export class TestsessionPage implements OnInit {
   }
 
   addFriends(address: string){
-    // console.log("Address ===> "+ this.carrierService.getAddress());
     this.getNodeId("9Rcw5zVkWC4ftw1YBfVfWow6iYHpK7W2H6JSo7dbWT4RMsWaV19k");
-    // console.log("addFriends");
     this.carrierService.addFriend("9Rcw5zVkWC4ftw1YBfVfWow6iYHpK7W2H6JSo7dbWT4RMsWaV19k","auto-auth",()=>{
-      // console.log("addFriends success");
     },()=>{
 
     })
@@ -74,7 +71,6 @@ export class TestsessionPage implements OnInit {
   }
 
   newSession(){
-    // console.log("newSession = ");
     this.sessionService.createSession(this.nodeId, (mSession, mStream)=>{
       this.session = mSession ;
       this.stream = mStream ;
@@ -88,7 +84,6 @@ export class TestsessionPage implements OnInit {
   closeSession(){
     this.carrierService.sessionClose(this.session,
       ()=>{
-        // console.log("close success");
       })
   }
 
