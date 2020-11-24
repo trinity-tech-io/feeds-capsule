@@ -1,6 +1,6 @@
-import { Component, OnInit, NgZone,ViewChild,ElementRef} from '@angular/core';
+import { Component, OnInit, NgZone,ViewChild} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Events} from '@ionic/angular';
+import { Events,ModalController} from '@ionic/angular';
 import { FeedService } from 'src/app/services/FeedService';
 import { NativeService } from 'src/app/services/NativeService';
 import { MenuService } from 'src/app/services/MenuService';
@@ -9,10 +9,7 @@ import { TranslateService } from "@ngx-translate/core";
 import { UtilService } from 'src/app/services/utilService';
 import { IonInfiniteScroll,PopoverController} from '@ionic/angular';
 import { EdittoolComponent } from '../../../../components/edittool/edittool.component';
-
-import { VgFullscreenAPI} from 'ngx-videogular';
 import { AppService } from 'src/app/services/AppService';
-import { computeStackId } from '@ionic/angular/dist/directives/navigation/stack-utils';
 
 
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
@@ -70,6 +67,8 @@ export class PostdetailPage implements OnInit {
 
   public mediaType:any;
 
+  public fullScreenmodal:any="";
+
   constructor(
     private popoverController:PopoverController,
     private acRoute: ActivatedRoute,
@@ -80,9 +79,8 @@ export class PostdetailPage implements OnInit {
     public theme:ThemeService,
     private translate:TranslateService,
     public menuService: MenuService,
-    public vgFullscreenAPI:VgFullscreenAPI,
     public appService:AppService,
-    public el:ElementRef) {
+    public modalController: ModalController) {
   }
 
   initData(){
@@ -295,6 +293,7 @@ export class PostdetailPage implements OnInit {
 
     this.events.subscribe('feeds:openRightMenu',()=>{
       this.pauseVideo();
+      this.hideFullScreen();
      }); 
   }
 
@@ -344,6 +343,7 @@ export class PostdetailPage implements OnInit {
     this.events.publish("update:tab");
     this.events.publish("addBinaryEvevnt");
     this.native.hideLoading();
+    this.hideFullScreen();
   }
 
   ionViewDidEnter() {
@@ -710,21 +710,24 @@ export class PostdetailPage implements OnInit {
 
   clearVideo(){
     if(this.postStatus != 1&&this.mediaType===2){
-      if(this.posterImg != ""){
+        this.posterImg ="";
+         this.videoObj ="";
         let id = this.nodeId+this.channelId+this.postId;
-         this.posterImg ="";
          let  video:any = document.getElementById(id+"postdetailvideo") || "";
-         video.removeAttribute('poster');
-         if(this.videoObj!=""){
-          this.videoObj ="";
-          let source:any = document.getElementById(id+"postdetailsource") || "";
-          source.removeAttribute('src'); // empty source
-          let sid=setTimeout(()=>{
-            video.load();
-            clearTimeout(sid);
-          },10)
+         if(video!=""){
+           video.removeAttribute('poster');
          }
-      }
+         
+          let source:any = document.getElementById(id+"postdetailsource") || "";
+          if(source != ""){
+            source.removeAttribute('src'); // empty source
+          }
+          if(video!=""){
+            let sid=setTimeout(()=>{
+              video.load();
+              clearTimeout(sid);
+            },10)
+          }
     }
    
   }
@@ -734,19 +737,17 @@ export class PostdetailPage implements OnInit {
     let vgfullscreen:any = document.getElementById(id+"vgfullscreenpostdetail") || "";
     if(vgfullscreen !=""){
       vgfullscreen.onclick=()=>{
-        // let isFullScreen = this.vgFullscreenAPI.isFullscreen;
-        // if(isFullScreen){
-        //   this.native.setTitleBarBackKeyShown(true);
-        //   titleBarManager.setTitle(this.translate.instant("PostdetailPage.postview"));
-        //   this.appService.addright();
-        // }else{
-        //   this.native.setTitleBarBackKeyShown(false);
-        //   titleBarManager.setTitle(this.translate.instant("common.video"));
-        //   this.appService.hideright();
-         
-        // }
-        this.vgFullscreenAPI.toggleFullscreen(vgfullscreen);
+         this.pauseVideo();
+         let postImg:string = document.getElementById(id+"postdetailvideo").getAttribute("poster");
+         let videoSrc:string = document.getElementById(id+"postdetailsource").getAttribute("src");
+         this.fullScreenmodal = this.native.setVideoFullScreen(postImg,videoSrc);
      }
+    }
+  }
+
+  hideFullScreen(){
+    if(this.fullScreenmodal != ""){
+      this.modalController.dismiss();
     }
   }
 

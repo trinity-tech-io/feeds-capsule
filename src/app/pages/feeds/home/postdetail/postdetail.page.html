@@ -69,11 +69,7 @@
             </vg-scrub-bar>
         
             <vg-controls id={{nodeId+channelId+postId}}vgcontrolspostdetail style="display:none;">
-                <!-- <vg-play-pause></vg-play-pause>
-                <vg-time-display vgProperty="current" vgFormat="mm:ss" ></vg-time-display>
-                <span class="totaltime">{{handleTotal(post)}}</span>
-                <vg-mute></vg-mute> -->
-                <vg-fullscreen id={{nodeId+channelId+postId}}vgfullscreenpostdetail></vg-fullscreen>
+                <img class="vgfullscreen" id={{nodeId+channelId+postId}}vgfullscreenpostdetail src="assets/images/fullscreen.svg"/>
             </vg-controls>
          
         <video #media [vgMedia]="media" 
