@@ -2,7 +2,9 @@ import { Injectable } from '@angular/core';
 import { Events } from '@ionic/angular';
 import { SerializeDataService } from 'src/app/services/SerializeDataService'
 import { TransportService } from 'src/app/services/TransportService'
+import { LogUtils } from 'src/app/services/LogUtils';
 
+let TAG: string = "Feeds-JSONRpc"
 let eventBus = null;
 let requestQueue: RequestBean[] = [];
 let autoIncreaseId: number = 0;
@@ -42,11 +44,12 @@ export class JsonRPCService {
     constructor(
         private serializeDataService: SerializeDataService,
         private transportService: TransportService,
-        private events: Events) {
+        private events: Events,
+        private logUtils: LogUtils) {
         eventBus = events;
         this.events.subscribe('transport:receiveMessage', event => {
             let data = serializeDataService.decodeData(event.message);
-            // console.log("receive--->"+JSON.stringify(data));
+            this.logUtils.logd("receive msg > nodeId = " +event.from +" msg = "+JSON.stringify(data), TAG);
             eventBus.publish('jrpc:receiveMessage',this.response(event.from, data));
         });
     }
@@ -63,9 +66,7 @@ export class JsonRPCService {
         let requestBean = new RequestBean(id,method,params,memo);
         requestQueue.push(requestBean);
         let request = this.assembleJson(id, method, params, memo);
-
-        // console.log("request--->nodeId:"+nodeId+"param:"+JSON.stringify(request));
-
+        this.logUtils.logd("send msg > nodeId = " +nodeId +" request = "+JSON.stringify(request), TAG);
         let encodeData = this.serializeDataService.encodeData(request);
         
         this.transportService.sendArrayMessage(

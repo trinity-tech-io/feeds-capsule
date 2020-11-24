@@ -87,7 +87,6 @@ export class CarrierService {
 
     readyCallback(ret) {
         this.mIsReady = true;
-        //console.log("ready");
         eventBus.publish('carrier:ready', ret, Date.now());
     }
 
@@ -302,8 +301,6 @@ export class CarrierService {
         carrierInst.sendFriendBinaryMessageWithReceipt(
             nodeId, message,
             (messageId: number, state: Number)=>{
-                // console.log(messageId);
-                // console.log(state);
             },
             () => {
                 onSuccess();

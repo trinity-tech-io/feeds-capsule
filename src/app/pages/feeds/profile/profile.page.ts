@@ -7,7 +7,11 @@ import { MenuService } from 'src/app/services/MenuService';
 import { NativeService } from 'src/app/services/NativeService';
 import { AppService } from 'src/app/services/AppService';
 import { TranslateService } from "@ngx-translate/core";
+import { LogUtils } from 'src/app/services/LogUtils';
+
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
+let TAG: string = "Feeds-profile";
+
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.page.html',
@@ -70,8 +74,8 @@ export class ProfilePage implements OnInit {
     public native:NativeService,
     public appService:AppService,
     private translate:TranslateService,
-    public modalController:ModalController
-
+    public modalController:ModalController,
+    private logUtils: LogUtils
   ) {
   }
 
@@ -519,7 +523,6 @@ export class ProfilePage implements OnInit {
     let postImage:any = document.getElementById(id+"postimglike") || "";
     try {
       if(id!=''&&postImage.getBoundingClientRect().top>=-this.clientHeight&&postImage.getBoundingClientRect().top<=this.clientHeight){
-        //console.log("====进入==="+rowindex+"-"+postImage.getBoundingClientRect().top+"-"+id+"");
         if(isload===""){
           rpostImage.style.display = "none";
         this.isLoadimage[id] = "11";
@@ -530,7 +533,6 @@ export class ProfilePage implements OnInit {
         let key = this.feedService.getImgThumbKeyStrFromId(nodeId,channelId,postId,0,0);
        this.feedService.getData(key).then((imagedata)=>{
             let image = imagedata || "";
-            //console.log("=====ssssssimage"+image);
             if(image!=""){
               this.isLoadimage[id] ="13";
               rpostImage.style.display = "block";
@@ -543,27 +545,24 @@ export class ProfilePage implements OnInit {
               //rpostImage.style.display = "none";
             }else{
               this.zone.run(()=>{
-                //console.log("=====ssssss");
                 this.isLoadimage[id] ="12";
                 rpostImage.style.display = 'none';   
               })
             }
-          }).catch(()=>{
+          }).catch((reason)=>{
             rpostImage.style.display = 'none'; 
-            console.log("getImageError");
+            this.logUtils.loge("getImageData error:"+JSON.stringify(reason),TAG);
           })
         }
       }else{
-        //console.log("=====ss=="+rowindex+"-"+postImage+"-"+postImage.getBoundingClientRect().top);
         let postImageSrc = postImage.getAttribute("src") || "";
         if(postImage.getBoundingClientRect().top<-this.clientHeight&&this.isLoadimage[id]==="13"&&postImageSrc!=""){ 
-          //console.log("======="+rowindex);  
           this.isLoadimage[id] = "";
           postImage.removeAttribute("src");
         }
       }
     } catch (error) {
-    
+      this.logUtils.loge("getImageData error:"+JSON.stringify(error),TAG);
     }
   }
 
@@ -579,7 +578,6 @@ export class ProfilePage implements OnInit {
    }
     try {
       if(id!=''&&video.getBoundingClientRect().top>=-this.clientHeight&&video.getBoundingClientRect().top<=this.clientHeight){
-        //console.log("========="+rowindex+"==="+video.getBoundingClientRect().top);
         if(isloadVideoImg===""){
           this.isLoadVideoiamge[id] = "11";
           vgplayer.style.display = "none";
@@ -601,9 +599,9 @@ export class ProfilePage implements OnInit {
                 video.style.display='none';
                 vgplayer.style.display = 'none'; 
               }
-            }).catch(()=>{
+            }).catch((reason)=>{
               vgplayer.style.display = 'none'; 
-              console.log("getImageError");
+              this.logUtils.loge("getVideoData error:"+JSON.stringify(reason),TAG);
             });
         }
       }else{
@@ -619,7 +617,7 @@ export class ProfilePage implements OnInit {
         }
       }
     } catch (error) {
-    
+      this.logUtils.loge("getVideoData error:"+JSON.stringify(error),TAG);
     }
   }
 
@@ -816,7 +814,6 @@ export class ProfilePage implements OnInit {
   processGetBinaryResult(key: string, value: string){
     if (key.indexOf("img")>-1){
       this.cacheGetBinaryRequestKey = "";
-      //console.log("result======>"+value.substring(0,50));
       this.native.hideLoading();
       this.native.openViewer(value,"common.image","FeedsPage.tabTitle1",this.appService);
     } else if (key.indexOf("video")>-1){

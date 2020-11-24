@@ -9,8 +9,10 @@ import { TranslateService } from "@ngx-translate/core";
 import { VideoEditor } from '@ionic-native/video-editor/ngx';
 import { AppService } from 'src/app/services/AppService';
 import { UtilService } from 'src/app/services/utilService';
+import { LogUtils } from 'src/app/services/LogUtils';
 import * as _ from 'lodash';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
+let TAG: string = "Feeds-editpost";
 @Component({
   selector: 'app-editpost',
   templateUrl: './editpost.page.html',
@@ -59,7 +61,8 @@ export class EditpostPage implements OnInit {
     public modalController:ModalController,
     public videoEditor:VideoEditor,
     public appService:AppService,
-    public el:ElementRef 
+    public el:ElementRef,
+    private logUtils: LogUtils
   ) {
   }
 
@@ -359,8 +362,8 @@ export class EditpostPage implements OnInit {
     }  
     this.feedService.getData(key).then((image)=>{
       this.imgUrl = image || "";
-    }).catch(()=>{
-      console.log("getImageError");
+    }).catch((reason)=>{
+      this.logUtils.loge("getImageData error:"+JSON.stringify(reason),TAG);
     })
   }
 
@@ -432,8 +435,8 @@ export class EditpostPage implements OnInit {
       //   let filepath =  newfileUri.substring(0,lastIndex);
       //   this.readFile(fileName,filepath);
       // });
-    }).catch((err)=>{
-      console.log("=====getVideoErr===="+JSON.stringify(err));
+    }).catch((reason)=>{
+      this.logUtils.loge("getVideoData error:"+JSON.stringify(reason),TAG);
      })
   }
 
@@ -498,15 +501,15 @@ export class EditpostPage implements OnInit {
               fileReader.readAsDataURL(file);
 
            },(err)=>{
-              console.log("=====readFileErr====="+JSON.stringify(err));
+              this.logUtils.loge("readFileData error:"+JSON.stringify(err),TAG);
            });
           },
           (err)=>{
-            console.log("=====getFileErr====="+JSON.stringify(err));
+            this.logUtils.loge("getFileData error:"+JSON.stringify(err),TAG);
           });
       },
       (err:any)=>{
-            console.log("=====pathErr====="+JSON.stringify(err));
+        this.logUtils.loge("path error:"+JSON.stringify(err),TAG);
       });
   }
 
@@ -566,7 +569,7 @@ export class EditpostPage implements OnInit {
   //       this.readFile(fileName,filepath);
   //    });
   // }, (error)=>{
-  //      console.log("===captureVideoErr==="+JSON.stringify(error));
+  //      this.logUtils.loge("captureVideo error:"+JSON.stringify(err),TAG);
   // }, {limit:1,duration:14});
   // }
 
@@ -653,14 +656,14 @@ export class EditpostPage implements OnInit {
   }
 
   getVideo(key:string){
-    console.log("getVideo ===>"+key);
-        this.feedService.getData(key).then((videodata:string)=>{
-          this.zone.run(()=>{
-            let videoData = videodata || "";
-            this.flieUri = videoData;
-            this.loadVideo(videoData);
-          }) 
-        }); 
+    this.logUtils.logi("getVideo >> key = "+key,TAG);
+    this.feedService.getData(key).then((videodata:string)=>{
+      this.zone.run(()=>{
+        let videoData = videodata || "";
+        this.flieUri = videoData;
+        this.loadVideo(videoData);
+      }) 
+    }); 
   }
 
   loadVideo(videoData:string){
@@ -773,15 +776,15 @@ readThumbnail(fileName:string,filepath:string){
             fileReader.readAsDataURL(file);
 
          },(err)=>{
-            console.log("=====readFileErr====="+JSON.stringify(err));
+          this.logUtils.loge("readFileData error:"+JSON.stringify(err),TAG);
          });
         },
         (err)=>{
-          console.log("=====getFileErr====="+JSON.stringify(err));
+          this.logUtils.loge("getFileData error:"+JSON.stringify(err),TAG);
         });
     },
     (err:any)=>{
-          console.log("=====pathErr====="+JSON.stringify(err));
+      this.logUtils.loge("path error:"+JSON.stringify(err),TAG);
     });
   }
 

@@ -300,7 +300,6 @@ export class ServerInfoPage implements OnInit {
     });
 
     let version = this.feedService.getServerVersionByNodeId(server.nodeId)
-    console.log("serverinfo version"+version);
     if (version != ""){
       this.serverDetails.push({
         type: this.translate.instant('ServerInfoPage.version'),
