@@ -1,5 +1,5 @@
 import { Component, OnInit, NgZone,ViewChild,ElementRef} from '@angular/core';
-import { Events} from '@ionic/angular';
+import { Events,ModalController} from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
 import { FeedService } from 'src/app/services/FeedService';
 import { NativeService } from 'src/app/services/NativeService';
@@ -10,7 +10,6 @@ import { TranslateService } from "@ngx-translate/core";
 import { PaypromptComponent } from 'src/app/components/payprompt/payprompt.component'
 import { PopoverController,IonInfiniteScroll,IonContent} from '@ionic/angular';
 import { AppService } from 'src/app/services/AppService';
-import { VgFullscreenAPI} from 'ngx-videogular';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 @Component({
@@ -64,6 +63,8 @@ export class ChannelsPage implements OnInit {
 
   public maxTextSize = 240;
 
+  public fullScreenmodal:any = "";
+
   constructor(
     private elmRef: ElementRef,
     private popoverController:PopoverController,
@@ -76,7 +77,7 @@ export class ChannelsPage implements OnInit {
     private translate:TranslateService,
     private menuService: MenuService,
     public appService:AppService,
-    public vgFullscreenAPI:VgFullscreenAPI) {
+    public modalController:ModalController) {
 
    
   }
@@ -294,6 +295,7 @@ export class ChannelsPage implements OnInit {
 
    this.events.subscribe('feeds:openRightMenu',()=>{
     this.pauseAllVideo();
+    this.hideFullScreen();
    });
   }
 
@@ -329,6 +331,7 @@ export class ChannelsPage implements OnInit {
     this.events.publish("update:tab");
     this.events.publish("addBinaryEvevnt");
     this.native.hideLoading();
+    this.hideFullScreen();
   }
 
   ionViewDidEnter() {
@@ -740,7 +743,7 @@ export class ChannelsPage implements OnInit {
                 this.isLoadVideoiamge[id] = "13";
                 vgplayer.style.display = "block";
                 video.setAttribute("poster",image);
-                //this.setFullScreen(id);
+                this.setFullScreen(id);
                 this.setOverPlay(id,srcId);
               }else{
                 this.isLoadVideoiamge[id] = "12";
@@ -862,30 +865,17 @@ export class ChannelsPage implements OnInit {
   setFullScreen(id:string){
     let vgfullscreen = document.getElementById(id+"vgfullscreenchannel");
     vgfullscreen.onclick=()=>{
-    let isFullScreen = this.vgFullscreenAPI.isFullscreen;
-    if(isFullScreen){
-      this.native.setTitleBarBackKeyShown(true);
-      titleBarManager.setTitle(this.translate.instant("ChannelsPage.feeds"));
-      this.appService.addright();
-      if (this.feedService.checkChannelIsMine(this.nodeId, this.channelId)) {
-        titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, {
-          key: "editChannel",
-          iconPath: TitleBarPlugin.BuiltInIcon.EDIT
-        });
-      } else {
-        titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, null);
-      }
-    }else{
-      this.native.setTitleBarBackKeyShown(false);
-      titleBarManager.setTitle(this.translate.instant("common.video"));
-      titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, null);
-      this.appService.hideright();
-     
+      this.pauseVideo(id);
+      let postImg:string = document.getElementById(id+"videochannel").getAttribute("poster");
+      let videoSrc:string = document.getElementById(id+"sourcechannel").getAttribute("src");
+      this.fullScreenmodal = this.native.setVideoFullScreen(postImg,videoSrc);  
     }
-
-    this.vgFullscreenAPI.toggleFullscreen(vgfullscreen);
-   
   }
+
+  hideFullScreen(){
+    if(this.fullScreenmodal != ""){
+      this.modalController.dismiss();
+    }
   }
 
   removeImages(){
@@ -954,22 +944,24 @@ export class ChannelsPage implements OnInit {
       let vgoverlayplay:any = document.getElementById(id+"vgoverlayplaychannel"); 
       let video:any = document.getElementById(id+"videochannel");
       let vgscrubbar:any = document.getElementById(id+"vgscrubbarchannel"); 
-      //let vgcontrol:any = document.getElementById(id+"vgcontrolschannel"); 
+      let vgcontrol:any = document.getElementById(id+"vgcontrolschannel"); 
       video.addEventListener('ended',()=>{
           vgbuffering.style.display ="none";
           vgoverlayplay.style.display = "block";  
           vgscrubbar.style.display ="none";  
+          vgcontrol.style.display = "none"; 
       });
 
       video.addEventListener('pause',()=>{
         vgbuffering.style.display ="none";
         vgoverlayplay.style.display = "block";
-        vgscrubbar.style.display ="none";  
+        vgscrubbar.style.display ="none"; 
+        vgcontrol.style.display = "none"; 
        });
 
        video.addEventListener('play',()=>{
         vgscrubbar.style.display ="block";
-        //vgcontrol.style.display = "block";  
+        vgcontrol.style.display = "block";  
        });
     
     

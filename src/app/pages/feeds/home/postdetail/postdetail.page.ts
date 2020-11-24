@@ -671,10 +671,12 @@ export class PostdetailPage implements OnInit {
      
         vgbuffering.style.display ="none";
         vgoverlayplay.style.display = "block";  
+        vgcontrol.style.display = "none";
     });
 
     video.addEventListener('pause',()=>{
       vgbuffering.style.display ="none";
+      vgcontrol.style.display = "none";
       if(vgoverlayplay!=""){
         vgoverlayplay.style.display = "block";
       }

@@ -48,7 +48,11 @@
             <vg-time-display vgProperty="current" vgFormat="mm:ss"></vg-time-display>
             <span class="totaltime">{{handleTotal(duration)}}</span>
             <vg-mute></vg-mute> -->
-            <vg-fullscreen id={{nodeId+channelId+postId}}vgfullscreeneditpost></vg-fullscreen>
+            <!-- <vg-fullscreen id={{nodeId+channelId+postId}}vgfullscreeneditpost></vg-fullscreen> -->
+
+            <img class="vgfullscreen" id={{nodeId+channelId+postId}}vgfullscreeneditpost src="assets/images/fullscreen.svg"/>
+
+
         </vg-controls>
      
     <video #media [vgMedia]="media" id={{nodeId+channelId+postId}}videoeditpost
