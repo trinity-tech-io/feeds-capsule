@@ -119,9 +119,10 @@
                      <vg-scrub-bar-buffering-time></vg-scrub-bar-buffering-time>
                  </vg-scrub-bar>
              
-                 <!-- <vg-controls id={{post.nodeId+post.channel_id+post.id}}vgcontrolschannel style="display: none;"> 
-                     <vg-fullscreen id={{post.nodeId+post.channel_id+post.id}}vgfullscreenchannel></vg-fullscreen>
-                 </vg-controls> -->
+                 <vg-controls id={{post.nodeId+post.channel_id+post.id}}vgcontrolschannel style="display: none;"> 
+                     <!-- <vg-fullscreen id={{post.nodeId+post.channel_id+post.id}}vgfullscreenchannel></vg-fullscreen> -->
+                     <img class="vgfullscreen" id={{post.nodeId+post.channel_id+post.id}}vgfullscreenchannel src="assets/images/fullscreen.svg"/>
+                 </vg-controls>
               
              <video #media [vgMedia]="media" id ={{post.nodeId+post.channel_id+post.id}}videochannel
              playsinline webkit-playsinline>

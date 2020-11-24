@@ -1,5 +1,5 @@
 import { Component, OnInit, NgZone,ElementRef} from '@angular/core';
-import { NavController, Events } from '@ionic/angular';
+import { NavController, Events,ModalController } from '@ionic/angular';
 import { FeedService } from 'src/app/services/FeedService';
 import { ActivatedRoute } from '@angular/router';
 import { NativeService } from '../../../services/NativeService';
@@ -8,7 +8,6 @@ import { ThemeService } from '../../../services/theme.service';
 import { TranslateService } from "@ngx-translate/core";
 import { VideoEditor } from '@ionic-native/video-editor/ngx';
 import { AppService } from 'src/app/services/AppService';
-import { VgFullscreenAPI} from 'ngx-videogular';
 import { UtilService } from 'src/app/services/utilService';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
@@ -42,7 +41,7 @@ export class CreatenewpostPage implements OnInit {
   public totalProgress:number = 0;
   private throwMsgTransDataLimit = 4 * 1000 * 1000;
   private transDataChannel:FeedsData.TransDataChannel = FeedsData.TransDataChannel.MESSAGE;
-
+  public fullScreenmodal:any ="";
   constructor(
     private events: Events,
     private native: NativeService,
@@ -55,8 +54,8 @@ export class CreatenewpostPage implements OnInit {
     private translate:TranslateService,
     public videoEditor:VideoEditor,
     public appService:AppService,
-    public vgFullscreenAPI:VgFullscreenAPI,
-    public el:ElementRef
+    public el:ElementRef,
+    public modalController:ModalController
   ) {
   }
 
@@ -210,6 +209,7 @@ export class CreatenewpostPage implements OnInit {
     this.events.subscribe("feeds:openRightMenu",()=>{
       //this.clVideo();
       this.pauseVideo();
+      this.hideFullScreen();
     });
 
 
@@ -245,6 +245,7 @@ export class CreatenewpostPage implements OnInit {
     this.events.unsubscribe("feeds:notifyPostSuccess");
     
     this.native.hideLoading();
+    this.hideFullScreen();
 
     this.imgUrl="";
     this.transcode = 0;
@@ -576,21 +577,18 @@ selectvideo(){
       return;
     }
     vgfullscreen.onclick=()=>{
-    // let isFullScreen = this.vgFullscreenAPI.isFullscreen;
-    // if(isFullScreen){
-    //   this.native.setTitleBarBackKeyShown(true);
-    //   titleBarManager.setTitle(this.translate.instant("CreatenewpostPage.addingPost"));
-    //   this.appService.addright();
-    // }else{
-    //   this.native.setTitleBarBackKeyShown(false);
-    //   titleBarManager.setTitle(this.translate.instant("common.video"));
-    //   this.appService.hideright();
-     
-    // }
-    this.vgFullscreenAPI.toggleFullscreen(vgfullscreen);
-   
+      this.pauseVideo();
+      let postImg:string = document.getElementById("videocreatepost").getAttribute("poster");
+      let videoSrc:string = document.getElementById("sourcecreatepost").getAttribute("src");
+      this.fullScreenmodal = this.native.setVideoFullScreen(postImg,videoSrc);
+    }
  }
- }
+
+ hideFullScreen(){
+  if(this.fullScreenmodal != ""){
+    this.modalController.dismiss();
+  }
+}
 
  setOverPlay(fileUri:string){
   let vgoverlayplay:any = document.getElementById("vgoverlayplaycreatepost") || "";

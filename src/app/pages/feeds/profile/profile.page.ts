@@ -1,11 +1,10 @@
 import { Component, OnInit, NgZone ,ViewChild,Output,EventEmitter} from '@angular/core';
-import { Events } from '@ionic/angular';
+import { Events,ModalController} from '@ionic/angular';
 import { FeedService, Avatar } from 'src/app/services/FeedService';
 import { ThemeService } from 'src/app/services/theme.service';
 import { IonInfiniteScroll} from '@ionic/angular';
 import { MenuService } from 'src/app/services/MenuService';
 import { NativeService } from 'src/app/services/NativeService';
-import { VgFullscreenAPI} from 'ngx-videogular';
 import { AppService } from 'src/app/services/AppService';
 import { TranslateService } from "@ngx-translate/core";
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
@@ -60,6 +59,8 @@ export class ProfilePage implements OnInit {
   public cacheGetBinaryRequestKey:string="";
   public cachedMediaType = "";
 
+  public fullScreenmodal:any = "";
+
   constructor(
     private feedService: FeedService,
     public theme:ThemeService,
@@ -68,8 +69,8 @@ export class ProfilePage implements OnInit {
     public menuService:MenuService,
     public native:NativeService,
     public appService:AppService,
-    public vgFullscreenAPI:VgFullscreenAPI,
     private translate:TranslateService,
+    public modalController:ModalController
 
   ) {
   }
@@ -286,6 +287,7 @@ export class ProfilePage implements OnInit {
 
  this.events.subscribe("feeds:openRightMenu",()=>{
       this.pauseAllVideo();
+      this.hideFullScreen();
  });
 
 
@@ -323,6 +325,7 @@ export class ProfilePage implements OnInit {
     this.events.unsubscribe("stream:progress");
 
     this.native.hideLoading();
+    this.hideFullScreen();
     this.removeImages();
     this.removeAllVideo();
     this.isLoadimage ={};
@@ -591,7 +594,7 @@ export class ProfilePage implements OnInit {
                 this.isLoadVideoiamge[id] = "13";
                 vgplayer.style.display = "block";
                 video.setAttribute("poster",image);
-                //this.setFullScreen(id);
+                this.setFullScreen(id);
                 this.setOverPlay(id,srcId);
               }else{
                 this.isLoadVideoiamge[id] = "12";
@@ -674,21 +677,17 @@ export class ProfilePage implements OnInit {
   setFullScreen(id:string){
     let vgfullscreen = document.getElementById(id+"vgfullscreelike");
     vgfullscreen.onclick=()=>{
-    let isFullScreen = this.vgFullscreenAPI.isFullscreen;
-    if(isFullScreen){
-      this.native.setTitleBarBackKeyShown(false);
-      titleBarManager.setTitle(this.translate.instant("FeedsPage.tabTitle2"));
-      this.appService.addright();
-    }else{
-      this.native.setTitleBarBackKeyShown(false);
-      titleBarManager.setTitle(this.translate.instant("common.video"));
-      this.appService.hideright();
-     
+         this.pauseVideo(id);
+         let postImg:string = document.getElementById(id+"videolike").getAttribute("poster");
+      let videoSrc:string = document.getElementById(id+"sourcelike").getAttribute("src");
+      this.fullScreenmodal = this.native.setVideoFullScreen(postImg,videoSrc);  
     }
-
-    this.vgFullscreenAPI.toggleFullscreen(vgfullscreen);
-   
  }
+
+ hideFullScreen(){
+  if(this.fullScreenmodal != ""){
+    this.modalController.dismiss();
+  }
  }
 
  removeImages(){
@@ -755,22 +754,24 @@ export class ProfilePage implements OnInit {
     let vgoverlayplay:any = document.getElementById(id+"vgoverlayplaylike"); 
     let video:any = document.getElementById(id+"videolike");
     let vgscrubbar:any = document.getElementById(id+"vgscrubbarlike"); 
-      //let vgcontrol:any = document.getElementById(id+"vgcontrolslike"); 
+    let vgcontrol:any = document.getElementById(id+"vgcontrolslike"); 
     video.addEventListener('ended',()=>{
         vgbuffering.style.display ="none";
         vgoverlayplay.style.display = "block";
-        vgscrubbar.style.display ="none";  
+        vgscrubbar.style.display ="none"; 
+        vgcontrol.style.display = "none";  
     });
 
     video.addEventListener('pause',()=>{
       vgoverlayplay.style.display = "block";  
       vgbuffering.style.display ="none";
       vgscrubbar.style.display ="none";
+      vgcontrol.style.display = "none"; 
   });
 
   video.addEventListener('play',()=>{
     vgscrubbar.style.display ="block";
-    //vgcontrol.style.display = "block";  
+    vgcontrol.style.display = "block";  
    });
 
 

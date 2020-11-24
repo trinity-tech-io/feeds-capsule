@@ -10,7 +10,6 @@ import { TranslateService } from "@ngx-translate/core";
 import { NativeService } from 'src/app/services/NativeService';
 import { IonInfiniteScroll } from '@ionic/angular';
 import { AppService } from 'src/app/services/AppService';
-declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 @Component({
   selector: 'app-home',
   templateUrl: './home.page.html',

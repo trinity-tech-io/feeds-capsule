@@ -1,5 +1,5 @@
 import { Component, OnInit, NgZone,ElementRef} from '@angular/core';
-import { NavController,Events } from '@ionic/angular';
+import { NavController,Events,ModalController} from '@ionic/angular';
 import { FeedService } from 'src/app/services/FeedService';
 import { ActivatedRoute } from '@angular/router';
 import { NativeService } from '../../services/NativeService';
@@ -7,7 +7,6 @@ import { CameraService } from 'src/app/services/CameraService';
 import { ThemeService } from '../../services/theme.service';
 import { TranslateService } from "@ngx-translate/core";
 import { VideoEditor } from '@ionic-native/video-editor/ngx';
-import { VgFullscreenAPI } from 'ngx-videogular';
 import { AppService } from 'src/app/services/AppService';
 import { UtilService } from 'src/app/services/utilService';
 import * as _ from 'lodash';
@@ -46,7 +45,7 @@ export class EditpostPage implements OnInit {
   private editState:FeedsData.EditState = FeedsData.EditState.NoChange;
   private throwMsgTransDataLimit = 4 * 1000 * 1000;
   private transDataChannel:FeedsData.TransDataChannel = FeedsData.TransDataChannel.MESSAGE;
-
+  public fullScreenmodal:any = "";
   constructor(
     private events: Events,
     private native: NativeService,
@@ -57,7 +56,7 @@ export class EditpostPage implements OnInit {
     private feedService: FeedService,
     public theme:ThemeService,
     private translate:TranslateService,
-    public vgFullscreenAPI:VgFullscreenAPI,
+    public modalController:ModalController,
     public videoEditor:VideoEditor,
     public appService:AppService,
     public el:ElementRef 
@@ -157,6 +156,7 @@ export class EditpostPage implements OnInit {
     this.events.subscribe("feeds:openRightMenu",()=>{
       //this.clVideo();
       this.pauseVideo();
+      this.hideFullScreen();
     });
 
     this.initnodeStatus();
@@ -188,6 +188,7 @@ export class EditpostPage implements OnInit {
     this.events.unsubscribe("stream:getBinarySuccess");
     this.imgUrl="";
     this.native.hideLoading();
+    this.hideFullScreen();
     this.removeVideo();
     this.events.publish("addBinaryEvevnt");
     this.feedService.closeSession(this.nodeId);
@@ -620,19 +621,17 @@ export class EditpostPage implements OnInit {
     let vgfullscreen:any = document.getElementById(id+"vgfullscreeneditpost") || "";
     if(vgfullscreen !=""){
       vgfullscreen.onclick=()=>{
-        // let isFullScreen = this.vgFullscreenAPI.isFullscreen;
-        // if(isFullScreen){
-        //   this.native.setTitleBarBackKeyShown(true);
-        //   titleBarManager.setTitle(this.translate.instant("PostdetailPage.postview"));
-        //   this.appService.addright();
-        // }else{
-        //   this.native.setTitleBarBackKeyShown(false);
-        //   titleBarManager.setTitle(this.translate.instant("common.video"));
-        //   this.appService.hideright();
-         
-        // }
-        this.vgFullscreenAPI.toggleFullscreen(vgfullscreen);
+        this.pauseVideo();
+        let postImg:string = document.getElementById(id+"videoeditpost").getAttribute("poster");
+        let videoSrc:string = document.getElementById(id+"sourceeditpost").getAttribute("src");
+        this.fullScreenmodal = this.native.setVideoFullScreen(postImg,videoSrc);
      }
+    }
+  }
+
+  hideFullScreen(){
+    if(this.fullScreenmodal != ""){
+      this.modalController.dismiss();
     }
   }
 

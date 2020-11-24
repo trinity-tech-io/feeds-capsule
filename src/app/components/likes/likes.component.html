@@ -77,14 +77,15 @@
                    <vg-overlay-play id={{post.nodeId+post.channel_id+post.id}}vgoverlayplaylike></vg-overlay-play>
                    <vg-buffering id={{post.nodeId+post.channel_id+post.id}}vgbufferinglike></vg-buffering>
                
-                   <vg-scrub-bar id={{post.nodeId+post.channel_id+post.id}}vgscrubbarlike>
+                   <vg-scrub-bar id={{post.nodeId+post.channel_id+post.id}}vgscrubbarlike style="display: none;">
                        <vg-scrub-bar-current-time></vg-scrub-bar-current-time>
                        <vg-scrub-bar-buffering-time></vg-scrub-bar-buffering-time>
                    </vg-scrub-bar>
                
-                   <!-- <vg-controls id={{post.nodeId+post.channel_id+post.id}}vgcontrolslike> 
-                       <vg-fullscreen id={{post.nodeId+post.channel_id+post.id}}vgfullscreelike></vg-fullscreen>
-                   </vg-controls> -->
+                   <vg-controls id={{post.nodeId+post.channel_id+post.id}}vgcontrolslike style="display: none;"> 
+                       <!-- <vg-fullscreen id={{post.nodeId+post.channel_id+post.id}}vgfullscreelike></vg-fullscreen> -->
+                       <img class="vgfullscreen" id={{post.nodeId+post.channel_id+post.id}}vgfullscreelike src="assets/images/fullscreen.svg"/>
+                   </vg-controls>
                 
                <video #media [vgMedia]="media" id ={{post.nodeId+post.channel_id+post.id}}videolike
                playsinline webkit-playsinline>
