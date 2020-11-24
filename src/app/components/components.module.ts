@@ -18,6 +18,7 @@ import { MyfeedsComponent} from './myfeeds/myfeeds.component';
 import { FollowingComponent} from './following/following.component';
 import { LikesComponent} from './likes/likes.component';
 import { CommentComponent } from './comment/comment.component';
+import { VideofullscreenComponent } from './videofullscreen/videofullscreen.component';
 
 import { VgCoreModule } from 'ngx-videogular';
 import { VgControlsModule } from 'ngx-videogular';
@@ -47,7 +48,8 @@ import { VgBufferingModule } from 'ngx-videogular';
     MyfeedsComponent,
     FollowingComponent,
     LikesComponent,
-    CommentComponent
+    CommentComponent,
+    VideofullscreenComponent
   ],
   exports: [
     AlertdialogComponent,
@@ -60,12 +62,13 @@ import { VgBufferingModule } from 'ngx-videogular';
     MyfeedsComponent,
     FollowingComponent,
     LikesComponent,
-    CommentComponent
+    CommentComponent,
+    VideofullscreenComponent
   ],
 
   providers: [
   ],
-  entryComponents: [AlertdialogComponent,ConfirmdialogComponent,EdittoolComponent,MorenameComponent,TipdialogComponent,ServerpromptComponent,
+  entryComponents: [VideofullscreenComponent,AlertdialogComponent,ConfirmdialogComponent,EdittoolComponent,MorenameComponent,TipdialogComponent,ServerpromptComponent,
     PaypromptComponent,],
 })
 export class ComponentsModule { }
