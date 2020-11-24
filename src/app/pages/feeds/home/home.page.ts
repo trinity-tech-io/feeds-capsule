@@ -1,5 +1,5 @@
 import { Component, OnInit, NgZone, ViewChild,ElementRef} from '@angular/core';
-import { IonContent } from '@ionic/angular';
+import { IonContent,ModalController} from '@ionic/angular';
 import { Events,IonTabs} from '@ionic/angular';
 import { FeedService } from 'src/app/services/FeedService';
 import { MenuService } from 'src/app/services/MenuService';
@@ -58,8 +58,11 @@ export class HomePage implements OnInit {
   public cachedMediaType = "";
 
   public maxTextSize = 240;
+
+  public fullScreenmodal:any = "";
   
   constructor(
+   
     private elmRef: ElementRef,
     private feedspage: FeedsPage,
     private tabs: IonTabs,
@@ -71,7 +74,8 @@ export class HomePage implements OnInit {
     private native:NativeService,
     private menuService: MenuService,
     public appService:AppService,
-    public vgFullscreenAPI:VgFullscreenAPI) {
+    public vgFullscreenAPI:VgFullscreenAPI,
+    public modalController: ModalController) {
       
     }
 
@@ -309,6 +313,7 @@ addBinaryEvevnt(){
   });
 
   this.events.subscribe('feeds:openRightMenu',()=>{
+         this.hideFullScreen();
          this.pauseAllVideo();
   });
   
@@ -342,6 +347,7 @@ addBinaryEvevnt(){
     this.isLoadimage ={};
     this.isLoadVideoiamge ={};
     this.curPost={};
+    this.hideFullScreen();
     this.native.hideLoading();
 }
 
@@ -776,7 +782,7 @@ addBinaryEvevnt(){
                 vgplayer.style.display = "block";
                 video.setAttribute("poster",image);
                 //video.
-                //this.setFullScreen(id);
+                this.setFullScreen(id);
                 this.setOverPlay(id,srcId);
               }else{
                 //console.log("========="+rowindex);
@@ -875,21 +881,17 @@ addBinaryEvevnt(){
   setFullScreen(id:string){
     let vgfullscreen = document.getElementById(id+"vgfullscreenhome");
     vgfullscreen.onclick=()=>{
-    let isFullScreen = this.vgFullscreenAPI.isFullscreen;
-    if(isFullScreen){
-      this.native.setTitleBarBackKeyShown(false);
-      titleBarManager.setTitle(this.translate.instant("FeedsPage.tabTitle1"));
-      this.appService.addright();
-    }else{
-      this.native.setTitleBarBackKeyShown(false);
-      titleBarManager.setTitle(this.translate.instant("common.video"));
-      this.appService.hideright();
-     
+      this.pauseVideo(id);
+      let postImg:string = document.getElementById(id+"video").getAttribute("poster");
+      let videoSrc:string = document.getElementById(id+"source").getAttribute("src");
+      this.fullScreenmodal = this.native.setVideoFullScreen(postImg,videoSrc);
     }
-
-    this.vgFullscreenAPI.toggleFullscreen(vgfullscreen);
-   
  }
+
+ hideFullScreen(){
+   if(this.fullScreenmodal != ""){
+     this.modalController.dismiss();
+   }
  }
 
  removeImages(){
@@ -957,14 +959,14 @@ addBinaryEvevnt(){
     let vgbuffering:any = document.getElementById(id+"vgbufferinghome") || "";
     let vgoverlayplay:any = document.getElementById(id+"vgoverlayplayhome"); 
     let vgscrubbar:any = document.getElementById(id+"vgscrubbarhome"); 
-    //let vgcontrol:any = document.getElementById(id+"vgcontrolshome"); 
+    let vgcontrol:any = document.getElementById(id+"vgcontrolshome"); 
 
     let video:any = document.getElementById(id+"video");
     video.addEventListener('ended',()=>{
         vgbuffering.style.display ="none";
         vgoverlayplay.style.display = "block";
         vgscrubbar.style.display ="none";
-        //vgcontrol.style.display = "none";  
+        vgcontrol.style.display = "none";  
     });
 
     video.addEventListener('pause',()=>{
@@ -976,7 +978,7 @@ addBinaryEvevnt(){
 
    video.addEventListener('play',()=>{
     vgscrubbar.style.display ="block";
-    //vgcontrol.style.display = "block";  
+    vgcontrol.style.display = "block";  
    });
 
 

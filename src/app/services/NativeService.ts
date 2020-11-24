@@ -7,6 +7,7 @@ import { TranslateService} from '@ngx-translate/core';
 import { ModalController } from '@ionic/angular';
 import { ViewerModalComponent } from 'ngx-ionic-image-viewer';
 import { MorenameComponent} from './../components/morename/morename.component';
+import { VideofullscreenComponent } from './../components/videofullscreen/videofullscreen.component';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 @Injectable()
@@ -286,4 +287,18 @@ export class NativeService {
         }
     };
   }
+
+
+    async setVideoFullScreen(postImg:string,videoSrc:string) {
+        const modal = await this.modalController.create({
+          component: VideofullscreenComponent,
+          componentProps: {
+            'postImg': postImg,
+            'videoSrc': videoSrc,
+          }
+        });
+        await modal.present();
+
+        return modal;
+    }
 }

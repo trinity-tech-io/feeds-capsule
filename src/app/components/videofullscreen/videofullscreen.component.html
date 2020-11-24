@@ -1,0 +1,14 @@
+<div style="width: 100%;display:inline-block;height: 100%;">
+      <vg-player>
+          <vg-overlay-play id="fullscreenvgoverlayplay"></vg-overlay-play>
+             <vg-buffering id="fullscreenvgbuffering"></vg-buffering>
+                <vg-scrub-bar id="fullscreenvgscrubbar">
+                    <vg-scrub-bar-current-time></vg-scrub-bar-current-time>
+                    <vg-scrub-bar-buffering-time></vg-scrub-bar-buffering-time>
+                </vg-scrub-bar>
+            <video #media [vgMedia]="media" id = "fullscreenvideo"
+            playsinline webkit-playsinline>
+            <source  type="video/mp4" id="fullscreensource">
+            </video>
+       </vg-player>
+</div>
