@@ -131,6 +131,25 @@ vg-fullscreen {
   right: 0px;
 }
 
+vg-player vg-controls .vgfullscreen {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  display: flex;
+  justify-content: flex-end;
+  height: 24px;
+  width: 24px;
+  cursor: pointer;
+  color: white;
+  line-height: 24px;
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+}
+
 vg-player vg-scrub-bar {
   -webkit-touch-callout: none;
   -webkit-user-select: none;
