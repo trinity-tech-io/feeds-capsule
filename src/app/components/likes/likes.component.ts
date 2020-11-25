@@ -16,10 +16,11 @@ import { AppService } from 'src/app/services/AppService';
 })
 export class LikesComponent implements OnInit {
 
-  private images = {};
   @Input() likeList:any =[];
   @Input() nodeStatus:any = {};
   @Input() isLoadVideoiamge:any ={};
+  @Input() downProgressObj:any ={};
+  @Input() downStatusObj:any={};
   @Output() fromChild = new EventEmitter();
   @Output() commentParams = new EventEmitter();
   @Output() clickImage = new EventEmitter();

@@ -80,7 +80,10 @@ export const zh = {
         "fulltext":"更多",
         "uploading":"正在上传",
         "downloading": "正在下载",
-        "mustUpdate": "您的Feeds 服务版本需要升级到最新版本，否则您将无法发布内容。"
+        "mustUpdate": "您的Feeds 服务版本需要升级到最新版本，否则您将无法发布内容。",
+        "downstatus1":"连接中",
+        "downstatus2":"连接成功",
+        "downstatus3":"开始下载"
     },
     "app":{
         "profileDetails":"档案详情",

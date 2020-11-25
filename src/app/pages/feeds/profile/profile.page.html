@@ -35,7 +35,7 @@
   
     <app-myfeeds *ngIf="selectType == 'ProfilePage.myFeeds'"  [channels] = "channels" [nodeStatus]="nodeStatus" (fromChild)="showMenuMore($event)"></app-myfeeds>
     <app-following *ngIf="selectType == 'ProfilePage.following'"  [followingList] = "followingList" [nodeStatus]="nodeStatus" (fromChild)="showMenuMore($event)"></app-following>
-    <app-likes  *ngIf="selectType == 'ProfilePage.myLikes'" [likeList] = "likeList" [nodeStatus]="nodeStatus" [isLoadVideoiamge]="isLoadVideoiamge"  (fromChild)="showMenuMore($event)" (commentParams)="showComment($event)" (clickImage)="showBigImage($event)"></app-likes>
+    <app-likes  *ngIf="selectType == 'ProfilePage.myLikes'"  [downStatusObj]="downStatusObj"  [downProgressObj]="downProgressObj"  [likeList] = "likeList" [nodeStatus]="nodeStatus" [isLoadVideoiamge]="isLoadVideoiamge"  (fromChild)="showMenuMore($event)" (commentParams)="showComment($event)" (clickImage)="showBigImage($event)"></app-likes>
     
   </ion-grid>
   <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event)">

@@ -10,10 +10,9 @@ import { TranslateService } from "@ngx-translate/core";
 import { PaypromptComponent } from 'src/app/components/payprompt/payprompt.component'
 import { PopoverController,IonInfiniteScroll,IonContent} from '@ionic/angular';
 import { AppService } from 'src/app/services/AppService';
-import { LogUtils } from 'src/app/services/LogUtils';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
+import { LogUtils } from 'src/app/services/LogUtils';
 let TAG: string = "Feeds-feeds";
-
 @Component({
   selector: 'app-channels',
   templateUrl: './channels.page.html',
@@ -67,6 +66,11 @@ export class ChannelsPage implements OnInit {
 
   public fullScreenmodal:any = "";
 
+  public downProgressObj ={};
+  public curPostId:string = "";
+
+  public downStatusObj = {};
+
   constructor(
     private elmRef: ElementRef,
     private popoverController:PopoverController,
@@ -81,6 +85,8 @@ export class ChannelsPage implements OnInit {
     public appService:AppService,
     public modalController:ModalController,
     private logUtils: LogUtils) {
+
+   
   }
 
   subscribe(){
@@ -222,13 +228,17 @@ export class ChannelsPage implements OnInit {
     this.events.subscribe('feeds:getBinaryFinish', (nodeId, key: string, value:string) => {
       this.zone.run(() => {
         this.native.hideLoading();
+        this.downProgressObj[this.curPostId] = 0;
+        this.downStatusObj[this.curPostId] = "";
         this.processGetBinaryResult(key, value);
       });
     });
   
     this.events.subscribe('stream:getBinarySuccess', (nodeId, key: string, value:string) => {
       this.zone.run(() => {
-        this.native.hideLoading();
+        //this.native.hideLoading();
+        this.downProgressObj[this.curPostId] = 0;
+        this.downStatusObj[this.curPostId] = "";
         this.feedService.closeSession(nodeId);
         this.processGetBinaryResult(key, value);
       });
@@ -236,7 +246,9 @@ export class ChannelsPage implements OnInit {
 
     this.events.subscribe('stream:progress',(nodeId,progress)=>{
       this.zone.run(() => {
-        this.native.updateLoadingMsg(this.translate.instant("common.downloading")+" "+progress+"%");
+        //this.native.updateLoadingMsg(this.translate.instant("common.downloading")+" "+progress+"%");
+        this.downProgressObj[this.curPostId] = progress;
+        this.downStatusObj[this.curPostId] = "3";
       });
     });
   
@@ -244,7 +256,9 @@ export class ChannelsPage implements OnInit {
       this.zone.run(() => {
         this.feedService.handleSessionError(nodeId, error);
         this.pauseAllVideo();
-        this.native.hideLoading();
+        this.downProgressObj[this.curPostId] = 0;
+        this.downStatusObj[this.curPostId] = "";
+        //this.native.hideLoading();
       });
     });
    
@@ -255,8 +269,9 @@ export class ChannelsPage implements OnInit {
           return;
   
         if (state === FeedsData.StreamState.CONNECTED){
+          this.downStatusObj[this.curPostId] = "2";
           this.feedService.getBinary(nodeId, this.cacheGetBinaryRequestKey,this.cachedMediaType);
-          this.native.updateLoadingMsg(this.translate.instant("common.downloading"));
+          //this.native.updateLoadingMsg(this.translate.instant("common.downloading"));
         }
       });
     });
@@ -295,6 +310,9 @@ export class ChannelsPage implements OnInit {
    });
 
    this.events.subscribe('feeds:openRightMenu',()=>{
+    this.curPostId = "";
+    this.downProgressObj ={};
+    this.downStatusObj ={};
     this.pauseAllVideo();
     this.hideFullScreen();
    });
@@ -329,6 +347,9 @@ export class ChannelsPage implements OnInit {
     this.isLoadimage ={};
     this.isLoadVideoiamge ={};
     this.curPost={};
+    this.downProgressObj = {};
+    this.downStatusObj = {};
+    this.curPostId ="";
     this.events.publish("update:tab");
     this.events.publish("addBinaryEvevnt");
     this.native.hideLoading();
@@ -635,7 +656,9 @@ export class ChannelsPage implements OnInit {
   }
 
   setVisibleareaImage(){
-
+    this.curPostId = "";
+    this.downProgressObj = {};
+    this.downStatusObj = {};
     let postgridList = document.getElementsByClassName("channelgird");
     let postgridNum = document.getElementsByClassName("channelgird").length;
     for(let postgridindex =0;postgridindex<postgridNum;postgridindex++){ 
@@ -892,6 +915,9 @@ export class ChannelsPage implements OnInit {
   
       if(vgoverlayplay!=""){
        vgoverlayplay.onclick = ()=>{
+        this.curPostId = id;
+        this.downProgressObj = {};
+        this.downStatusObj = {};
         this.zone.run(()=>{
            let sourceSrc = source.getAttribute("src") || "";
            if(sourceSrc === ""){
@@ -913,15 +939,17 @@ export class ChannelsPage implements OnInit {
             this.zone.run(()=>{
               let videodata = videoResult || "";
               if (videodata == ""){
+                this.downStatusObj[id] = "1";
                 this.cacheGetBinaryRequestKey = key;
                 this.cachedMediaType = "video";
-                this.native.showLoading("common.waitMoment", 5*60*1000).then(()=>{
+                //this.native.showLoading("common.waitMoment", 5*60*1000).then(()=>{
                   this.feedService.processGetBinary(nodeId, channelId, postId, 0, 0, FeedsData.MediaType.containsVideo, key)
-                }).catch(()=>{
-                  this.native.hideLoading();
-                });
+                //}).catch(()=>{
+                  //this.native.hideLoading();
+                //});
                 return;
               }
+              this.downStatusObj[id] = "";
               this.loadVideo(id,videodata);
             }) 
           }); 

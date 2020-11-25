@@ -14,7 +14,6 @@ import { LogUtils } from 'src/app/services/LogUtils';
 
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 let TAG: string = "Feeds-postview";
-
 @Component({
   selector: 'app-postdetail',
   templateUrl: './postdetail.page.html',
@@ -65,6 +64,8 @@ export class PostdetailPage implements OnInit {
   public cachedMediaType = "";
 
   public downProgress:number = 0;
+
+  public downStatus:string = "";
 
   public mediaType:any;
 
@@ -253,14 +254,17 @@ export class PostdetailPage implements OnInit {
 
     this.events.subscribe('feeds:getBinaryFinish', (nodeId, key: string, value, mediaType) => {
       this.zone.run(() => {
-        this.native.hideLoading();
+        this.downProgress = 0;
+        //this.native.hideLoading();
         this.processGetBinaryResult(key, value);
       });
     });
 
     this.events.subscribe('stream:getBinarySuccess', (nodeId, key: string, value, mediaType) => {
       this.zone.run(() => {
-        this.native.hideLoading();
+        //this.native.hideLoading();
+        this.downStatus = "";
+        this.downProgress = 0;
         this.feedService.closeSession(nodeId);
         this.processGetBinaryResult(key, value);
       });
@@ -271,6 +275,8 @@ export class PostdetailPage implements OnInit {
         this.feedService.handleSessionError(nodeId, error);
         this.pauseVideo();
         this.native.hideLoading();
+        this.downProgress = 0;
+        this.downStatus = "";
       });
     });
 
@@ -280,7 +286,8 @@ export class PostdetailPage implements OnInit {
         if (this.cacheGetBinaryRequestKey == "")
           return;
 
-        if (state === 4){
+        if (state === FeedsData.StreamState.CONNECTED){
+          this.downStatus = '2';
           this.feedService.getBinary(this.nodeId, this.cacheGetBinaryRequestKey, this.cachedMediaType);
         }
       });
@@ -288,7 +295,8 @@ export class PostdetailPage implements OnInit {
 
     this.events.subscribe('stream:progress',(nodeId,progress)=>{
         this.zone.run(() => {
-          this.native.updateLoadingMsg(this.translate.instant("common.downloading")+" "+progress+"%");
+          //this.native.updateLoadingMsg(this.translate.instant("common.downloading")+" "+progress+"%");
+          this.downStatus = '3';
           this.downProgress = progress;
         });
     })
@@ -498,6 +506,7 @@ export class PostdetailPage implements OnInit {
         this.logUtils.loge("getImageData error:"+JSON.stringify(reason),TAG);
       })
     }
+    
   }
 
   doRefresh(event:any){
@@ -634,29 +643,25 @@ export class PostdetailPage implements OnInit {
   }
 
   getVideo(key:string){
-    // let videosource:any = this.el.nativeElement.querySelector("source") || "";
-    //   if(videosource===""){
+    
     this.feedService.getData(key).then((videodata:string)=>{
-      //this.zone.run(()=>{
-        
-        let videoData = videodata || "";
 
+        let videoData = videodata || "";
         if (videoData == ""){
+          this.downStatus = '1';
           this.cacheGetBinaryRequestKey = key;
           this.cachedMediaType = "video";
-          this.native.showLoading("common.waitMoment", 5*60*1000).then(()=>{
+          //this.native.showLoading("common.waitMoment", 5*60*1000).then(()=>{
             this.feedService.processGetBinary(this.nodeId, this.channelId, this.postId, 0, 0, FeedsData.MediaType.containsVideo, key);
-          }).catch(()=>{
-            this.native.hideLoading();
-          });
+          //}).catch(()=>{
+            //this.native.hideLoading();
+          //});
           return;
         }
-
+        this.downStatus = "";
         this.videoObj = videoData;
         this.loadVideo(videoData);
       });
-    //}); 
-      // }
   }
 
   loadVideo(videodata:any){
