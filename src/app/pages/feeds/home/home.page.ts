@@ -11,9 +11,7 @@ import { NativeService } from 'src/app/services/NativeService';
 import { IonInfiniteScroll } from '@ionic/angular';
 import { AppService } from 'src/app/services/AppService';
 import { LogUtils } from 'src/app/services/LogUtils';
-
 let TAG: string = "Feeds-home";
-
 @Component({
   selector: 'app-home',
   templateUrl: './home.page.html',
@@ -62,6 +60,10 @@ export class HomePage implements OnInit {
   public maxTextSize = 240;
 
   public fullScreenmodal:any = "";
+
+  public downProgressObj ={};
+  public curPostId:string = "";
+  public downStatusObj = {};
   
   constructor(
    
@@ -78,6 +80,7 @@ export class HomePage implements OnInit {
     public appService:AppService,
     public modalController: ModalController,
     private logUtils: LogUtils) {
+      
     }
 
   initPostListData(){
@@ -120,27 +123,6 @@ export class HomePage implements OnInit {
       this.initnodeStatus(this.postList);
     // })
    
-    // this.events.subscribe('feeds:publishPostFinish',()=>{
-    //   this.zone.run(() => {
-    //     this.infiniteScroll.disabled =false;
-    //     this.startIndex = 0;
-    //     this.totalData = this.feedService.getPostList() || [];
-    //     if (this.totalData.length - this.pageNumber > this.pageNumber){
-    //       this.postList = this.totalData.slice(this.startIndex,this.pageNumber);
-    //       this.startIndex++;
-    //       this.infiniteScroll.disabled =false;
-    //      } else {
-    //       this.postList =  this.totalData.slice(0,this.totalData.length);
-    //       this.infiniteScroll.disabled =true;
-    //     }
-    //     this.scrollToTop(1);
-    //     this.isLoadimage ={};
-    //     this.isLoadVideoiamge ={};
-    //     this.refreshImage(0);
-    //     this.initnodeStatus(this.postList);
-    //   });
-    // });
-
    this.events.subscribe("update:tab",(isInit)=>{
     if(isInit){
       this.initPostListData();
@@ -162,6 +144,7 @@ export class HomePage implements OnInit {
    });
 
  this.events.subscribe("feeds:tabsendpost",()=>{
+  this.downProgressObj = {};
   this.pauseAllVideo();
  });
 
@@ -280,7 +263,9 @@ addBinaryEvevnt(){
 
   this.events.subscribe('stream:getBinarySuccess', (nodeId, key: string, value:string) => {
     this.zone.run(() => {
-      this.native.hideLoading();
+      //this.native.hideLoading();
+      this.downProgressObj[this.curPostId] = 0;
+      this.downStatusObj[this.curPostId] = "";
       this.feedService.closeSession(nodeId);
       this.processGetBinaryResult(key, value);
     });
@@ -290,13 +275,17 @@ addBinaryEvevnt(){
     this.zone.run(() => {
       this.feedService.handleSessionError(nodeId, error);
       this.pauseAllVideo();
-      this.native.hideLoading();
+      //this.native.hideLoading();
+      this.downStatusObj[this.curPostId] = "";
+      this.downProgressObj[this.curPostId] = 0;
     });
   });
 
   this.events.subscribe('stream:progress',(nodeId,progress)=>{
     this.zone.run(() => {
-      this.native.updateLoadingMsg(this.translate.instant("common.downloading")+" "+progress+"%");
+      //this.native.updateLoadingMsg(this.translate.instant("common.downloading")+" "+progress+"%");
+      this.downStatusObj[this.curPostId] = "3";
+      this.downProgressObj[this.curPostId] = progress;
     });
   })
  
@@ -306,13 +295,17 @@ addBinaryEvevnt(){
         return;
 
       if (state === FeedsData.StreamState.CONNECTED){
+        this.downStatusObj[this.curPostId] = "2";
         this.feedService.getBinary(nodeId, this.cacheGetBinaryRequestKey,this.cachedMediaType);
-        this.native.updateLoadingMsg(this.translate.instant("common.downloading"));
+        //this.native.updateLoadingMsg(this.translate.instant("common.downloading"));
       }
     });
   });
 
   this.events.subscribe('feeds:openRightMenu',()=>{
+         this.curPostId ="";
+         this.downProgressObj ={};
+         this.downStatusObj = {};
          this.hideFullScreen();
          this.pauseAllVideo();
   });
@@ -347,6 +340,9 @@ addBinaryEvevnt(){
     this.isLoadimage ={};
     this.isLoadVideoiamge ={};
     this.curPost={};
+    this.downProgressObj ={};
+    this.downStatusObj = {};
+    this.curPostId = "";
     this.hideFullScreen();
     this.native.hideLoading();
 }
@@ -650,6 +646,9 @@ addBinaryEvevnt(){
   }
 
   setVisibleareaImage(startPos:number){
+    this.curPostId = "";
+    this.downProgressObj = {};
+    this.downStatusObj = {};
     let postgridList = document.getElementsByClassName("post-grid");
     let postgridNum = document.getElementsByClassName("post-grid").length;
     for(let postgridindex=0;postgridindex<postgridNum;postgridindex++){ 
@@ -737,7 +736,7 @@ addBinaryEvevnt(){
                 rpostimg.style.display = 'none'; 
               }
             }).catch((reason)=>{
-              rpostimg.style.display = 'none'; 
+              rpostimg.style.display = 'none';
               this.logUtils.loge("getImageData error:"+JSON.stringify(reason),TAG);
             })
         }
@@ -913,6 +912,9 @@ addBinaryEvevnt(){
     let source:any = document.getElementById(id+"source") || "";
     if(vgoverlayplay!=""){
      vgoverlayplay.onclick = ()=>{
+      this.curPostId = id;
+      this.downProgressObj = {};
+      this.downStatusObj ={};
       this.zone.run(()=>{
          let sourceSrc = source.getAttribute("src") || "";
          if(sourceSrc === ""){
@@ -935,15 +937,17 @@ addBinaryEvevnt(){
           this.zone.run(()=>{
             let videodata = videoResult || "";
             if (videodata == ""){
+              this.downStatusObj[id] = "1";
               this.cacheGetBinaryRequestKey = key;
               this.cachedMediaType = "video";
-              this.native.showLoading("common.waitMoment", 5*60*1000).then(()=>{
+              //this.native.showLoading("common.waitMoment", 5*60*1000).then(()=>{
                 this.feedService.processGetBinary(nodeId, channelId, postId, 0, 0, FeedsData.MediaType.containsVideo, key)
-              }).catch(()=>{
-                this.native.hideLoading();
-              });
+              //}).catch(()=>{
+                //this.native.hideLoading();
+              //});
               return;
             }
+            this.downStatusObj[id] = "";
             this.loadVideo(id,videodata);
           }) 
         }); 
