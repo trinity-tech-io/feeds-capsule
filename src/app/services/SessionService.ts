@@ -5,15 +5,15 @@ import { TranslateService } from '@ngx-translate/core';
 import { CarrierService } from 'src/app/services/CarrierService';
 import { SerializeDataService } from 'src/app/services/SerializeDataService';
 import { StorageService } from 'src/app/services/StorageService';
+import { LogUtils } from 'src/app/services/LogUtils';
 
-
-// let base64 = require('cordova/base64');
+let TAG: string = "Feeds-session"
+let mLogUtils: LogUtils;
 let autoIncreaseId: number = 1;
 type WorkedSession = {
     nodeId          : string,
     session         : CarrierPlugin.Session,
     stream          : CarrierPlugin.Stream,
-    // isStart     : boolean,
     sdp             : string,
     StreamState     : FeedsData.StreamState
     sessionTimeout  : NodeJS.Timer
@@ -38,6 +38,8 @@ type CachedData = {
     method          : string,
     key             : string,
     mediaType       : string
+    unprocessLength : number
+    unProcessDatas  : Uint8Array[]
 }
 
 const enum DecodeState{
@@ -51,15 +53,6 @@ const pow32 = 0x100000000;   // 2^32
 const magicNumber: number = 0x0000A5202008275A;
 const version: number = 10000;
 
-const enum WorkedState {
-    sessionInitialized = "sessionInitialized",
-    streamInitialized = "streamInitialized",
-    streamTransportReady = "streamTransportReady",
-    sessionCompletion = "sessionCompletion",
-    streamConnecting = "streamConnecting",
-    streamConnected = "streamConnected",
-    streamStateClosed = "streamStateClosed"
-}
 let requestQueue: RequestBean[] = [];
 
 type RequestBean = {
@@ -88,11 +81,13 @@ export class SessionService {
         private translate: TranslateService,
         private carrierService: CarrierService,
         private serializeDataService: SerializeDataService,
-        private storageService:StorageService) {
+        private storageService:StorageService,
+        private logUtils: LogUtils) {
             eventBus = events;
             mStorageService = this.storageService;
             mCarrierService = this.carrierService;
             mSerializeDataService = this.serializeDataService;
+            mLogUtils = this.logUtils;
     }
   
     createSession(nodeId: string, onSuccess:(session: CarrierPlugin.Session, stream: CarrierPlugin.Stream)=>void, onError?:(err: string)=>void){
@@ -104,7 +99,8 @@ export class SessionService {
                 sdp             : "",
                 StreamState     : FeedsData.StreamState.RAW,
                 sessionTimeout  : null,
-            }
+            };
+
             this.carrierService.sessionAddStream(
                 mSession,
                 CarrierPlugin.StreamType.APPLICATION,
@@ -112,18 +108,17 @@ export class SessionService {
                 {
                     onStateChanged: function(event: any) {
                         if (workedSessions[nodeId] == undefined){
-                            //console.log(nodeId + " current session is closed");
+                            mLogUtils.logd(nodeId + "> current session is closed",TAG);
                             return ;
                         }
 
                         if (event == undefined){
-                            //console.log("onStateChanged event undefine");
+                            mLogUtils.logd(nodeId + "> onStateChanged event undefine",TAG);
                             workedSessions[nodeId].StreamState = FeedsData.StreamState.UNKNOW
                         }else{
                             workedSessions[nodeId].StreamState = event.state
                         }
 
-                        //console.log("workedSessions[nodeId].StreamState ====>"+workedSessions[nodeId].StreamState);
                         var state_name = [
                             "raw",
                             "initialized",
@@ -135,9 +130,7 @@ export class SessionService {
                             "failed",
                             "unknow"
                         ];
-
-                        var msg = "Stream [" + event.stream.id + "] state changed to: " + state_name[workedSessions[nodeId].StreamState];
-                        //console.log(msg);
+                        mLogUtils.logd(nodeId + "> stream [" + event.stream.id + "] state change to "+state_name[workedSessions[nodeId].StreamState],TAG);
                         eventBus.publish("stream:onStateChangedCallback", nodeId, workedSessions[nodeId].StreamState);
 
                         if (FeedsData.StreamState.INITIALIZED == workedSessions[nodeId].StreamState){
@@ -149,47 +142,31 @@ export class SessionService {
                                 clearTimeout(workedSessions[nodeId].sessionTimeout);
                             }, sessionConnectionTimeOut);
 
-                            //console.log("start session request");
+                            mLogUtils.logd(nodeId + "> start session request",TAG);
                             mCarrierService.sessionRequest(
                                 mSession,
                                 function (event:any){
                                     let sdp = event.sdp;
                                     workedSessions[nodeId].sdp = sdp;
-                                    //console.log("sessionRequest sdp ==="+sdp);
-
+                                    mLogUtils.logd(nodeId + "> sessionRequest sdp = "+sdp,TAG);
                                     if (workedSessions[nodeId].StreamState == FeedsData.StreamState.TRANSPORT_READY){
-                                        //console.log("start session");
-                                        mCarrierService.sessionStart(mSession, sdp, ()=>{
-                                                //console.log("sessionStart success");
-                                            },(err)=>{
-                                                publishError(nodeId, createSessionStartError());
-                                                //console.log("sessionStart error=>"+err);
-                                            }
-                                        );
+                                        sessionStart(nodeId, mSession, sdp);
                                     }
                                 },
                                 ()=>{
-                                    //console.log("sessionRequest success");
+                                    mLogUtils.logd(nodeId + "> sessionRequest success",TAG);
                                 },(err)=>{
                                     publishError(nodeId, createSessionRequestError());
-                                    //console.log("sessionRequest error"+err);
+                                    mLogUtils.loge(nodeId + "> sessionRequest error "+JSON.stringify(err),TAG);
                                 }
                               );
                         }
 
                         if (FeedsData.StreamState.TRANSPORT_READY == workedSessions[nodeId].StreamState){
                             let sdp = workedSessions[nodeId].sdp;
-                            //console.log("sdp ==="+sdp);
-
+                            mLogUtils.logd(nodeId + "> transport ready sdp = "+sdp,TAG);
                             if (sdp != ""){
-                                //console.log("start session");
-                                mCarrierService.sessionStart(mSession, sdp, ()=>{
-                                        //console.log("sessionStart success");
-                                    },(err)=>{
-                                        publishError(nodeId, createSessionStartError());
-                                        //console.log("sessionStart error");
-                                    }
-                                );
+                              sessionStart(nodeId, mSession, sdp);
                             }
                         }
 
@@ -200,134 +177,75 @@ export class SessionService {
                         if (FeedsData.StreamState.DEACTIVATED == workedSessions[nodeId].StreamState){
                             publishError(nodeId, createStateDeactivated());
                         }
-
-
                     },
-                    onStreamData: function(event: any) {
-                        let timeout = setTimeout(()=>{
-                            let tmpData: Uint8Array = event.data;
-                        
-                            if (cacheData[nodeId] == undefined){
-                                cacheData[nodeId] = {
-                                    nodeId          : nodeId,
-                                    data            : new Uint8Array(tmpData.length),
-                                    pointer         : 0,
-                                    headSize        : 0,
-                                    bodySize        : 0,
-                                    state           : DecodeState.prepare,
-                                    method          : "",
-                                    key             : "",
-                                    mediaType       : "",
-                                }
-                                cacheData[nodeId].data.set(tmpData,0);
-                            }else{
-                                let cache: Uint8Array = cacheData[nodeId].data;
-                                cacheData[nodeId].data = new Uint8Array(tmpData.length+cache.length);
-                                cacheData[nodeId].data.set(cache,0);
-                                cacheData[nodeId].data.set(tmpData,cache.length);
-                            }
-                            let dataLength = cacheData[nodeId].data.length;
-                            switch(cacheData[nodeId].state){
-                                case DecodeState.prepare:
-                                    for (let index = 0; index < dataLength - 23; index++) {
-                                        let decodeMagicNumData = cacheData[nodeId].data.subarray(index,index+8);
-                                        let decodeMagicNumber = decodeNum(decodeMagicNumData,8);
-                                        cacheData[nodeId].pointer = index;
-            
-                                        if( decodeMagicNumber != magicNumber )
-                                            continue;
-    
-                                        let decodeVersionData = cacheData[nodeId].data.subarray(index+8,index+12);
-                                        let decodeVersion = decodeNum(decodeVersionData,4);
-                                        if (decodeVersion != version)
-                                            continue;
-    
-                                        let decodeHeadSizeData = cacheData[nodeId].data.subarray(index+12,index+16);
-                                        let decodeHeadSize = decodeNum(decodeHeadSizeData,4);
-    
-                                        let decodeBodySizeData = cacheData[nodeId].data.subarray(index+16,index+24);
-                                        let decodeBodySize = decodeNum(decodeBodySizeData,8);
-    
-                                        cacheData[nodeId].headSize = decodeHeadSize;
-                                        cacheData[nodeId].bodySize = decodeBodySize;
-                                        cacheData[nodeId].state = DecodeState.decodeHead;
-                                        cacheData[nodeId].pointer = cacheData[nodeId].pointer + 24;
-                                        break;
-                                    }
-                                    
-                                    if (!decodeHeadData(nodeId, dataLength)){
-                                        break;
-                                    }
-                                        
-                                    if (!decodeBodyData(nodeId, dataLength)){
-                                        break;
-                                    }
-    
-                                    break;
-                                case DecodeState.decodeHead:
-                                    if (!decodeHeadData(nodeId, dataLength)){
-                                        break;
-                                    }
-                                        
-                                    if (!decodeBodyData(nodeId, dataLength)){
-                                        break;
-                                    }
-                                    
-                                    break;
-                                case DecodeState.decodeBody:
-                                    if (!decodeBodyData(nodeId, dataLength)){
-                                        break;
-                                    }
-                                    break;
-                            }
-    
-                            combineData(nodeId, dataLength);
 
-                            clearTimeout(timeout);
-                        },10);
+                    onStreamData: function(event: any) {
+                        let tmpData: Uint8Array = event.data;
+                        mLogUtils.logd(nodeId + "> onStreamData length "+tmpData.length,TAG);
+                        if (cacheData[nodeId] == undefined){
+                            cacheData[nodeId] = {
+                                nodeId          : nodeId,
+                                data            : new Uint8Array(0),
+                                pointer         : 0,
+                                headSize        : 0,
+                                bodySize        : 0,
+                                state           : DecodeState.prepare,
+                                method          : "",
+                                key             : "",
+                                mediaType       : "",
+                                unprocessLength : 0,
+                                unProcessDatas  : [],
+                            }
+                        }
+
+                        if (DecodeState.decodeBody == cacheData[nodeId].state){
+                            checkBody(nodeId, tmpData);
+                            return;
+                        }
+                        
+                        let cache: Uint8Array = cacheData[nodeId].data;
+                        cacheData[nodeId].data = new Uint8Array(tmpData.length+cache.length);
+                        cacheData[nodeId].data.set(cache,0);
+                        cacheData[nodeId].data.set(tmpData,cache.length);
+                        decodeData(nodeId);
                     }
                 }, 
                 (mStream)=>{
                     workedSessions[nodeId].stream = mStream;
                     workedSessions[nodeId].session = mSession;
                     onSuccess(mSession,mStream);
-                    //console.log("addStream success");
+                    mLogUtils.logd(nodeId + "> addStream success ",TAG);
                 },(err) => {
                     onError(err);
                     publishError(nodeId, createAddStreamError());
-                    //console.log("addStream error");
+                    mLogUtils.loge(nodeId + "> addStream error "+JSON.stringify(err),TAG);
                 }
             );
             },(err)=>{
                 onError(err);
                 publishError(nodeId, createNewSessionError());
-                //console.log("newSession error");
+                mLogUtils.loge(nodeId + "> newSession error "+JSON.stringify(err),TAG);
             }
         );
     }
 
     streamAddMagicNum(nodeId: string){
         let bytesData = encodeNum(magicNumber,8);
-        // let base64 = uint8arrayToBase64(bytesData);
         this.streamAddData(nodeId, bytesData);
     }
 
     streamAddVersion(nodeId: string){
-        
         let bytesData = encodeNum(version,4);
-        // let base64 = uint8arrayToBase64(bytesData);
         this.streamAddData(nodeId, bytesData);
     }
 
     streamAddRequestHeadSize(nodeId: string, headSize: number){
         let bytesData = encodeNum(headSize,4);
-        // let base64 = uint8arrayToBase64(bytesData);
         this.streamAddData(nodeId, bytesData);
     }
 
     streamAddRequestBodySize(nodeId: string, bodySize: number){
         let bytesData = encodeNum(bodySize,8);
-        // let base64 = uint8arrayToBase64(bytesData);
         this.streamAddData(nodeId, bytesData);
     }
 
@@ -350,7 +268,6 @@ export class SessionService {
             progress    : 0,
         }
 
-
         let requestBean: RequestBean = {
             requestId: request.id,
             nodeId: nodeId,
@@ -359,8 +276,7 @@ export class SessionService {
             memo: ""
         };
         requestQueue.push(requestBean);
-        //console.log("request ===="+JSON.stringify(request));
-
+        mLogUtils.logd(nodeId + "> session request param = "+JSON.stringify(request),TAG);
         cacheData[nodeId] = {
             nodeId          : nodeId,
             data            : new Uint8Array(0),
@@ -371,15 +287,9 @@ export class SessionService {
             method          : "",
             key             : "",
             mediaType       : mediaType,
+            unprocessLength  : 0,
+            unProcessDatas  : []
         }
-        
-        // let requestBean: RequestBean = {
-        //     requestId: number,
-        //     method: string,
-        //     requestParams: any,
-        //     memo: any
-        // }
-        // requestQueue.push(requestBean);
     }
 
     buildSetBinaryRequest(accessToken: FeedsData.AccessToken, key: string){
@@ -418,18 +328,6 @@ export class SessionService {
         return request;
     }
 
-    handleSetBinaryResult(){
-
-    }
-
-    handleGetBinaryResult(){
-
-    }
-
-    stramAddBase64Data(nodeId: string, data: any){
-
-    }
-    
     streamAddData(nodeId: string, data: Uint8Array){
         if (data.length<=0)
             return ;
@@ -437,7 +335,7 @@ export class SessionService {
         if (workedSessions == null ||
             workedSessions == undefined ||
             workedSessions[nodeId] == undefined){
-            //console.log("stream null");
+            mLogUtils.logd(nodeId + "> stream null = ",TAG);
             return ;
         }
 
@@ -450,12 +348,11 @@ export class SessionService {
             calculateProgress(nodeId);
         }
 
-
         stream.write(base64,(bytesSent)=>{
-            //console.log("stream write success");
+            mLogUtils.logd(nodeId + "> stream write "+base64.length,TAG);
         },(err)=>{
             publishError(nodeId, createWriteDataError());
-            //console.log("stream write error ==>"+err);
+            mLogUtils.logd(nodeId + "> stream write error "+JSON.stringify(err),TAG);
         });
     }
 
@@ -472,17 +369,18 @@ export class SessionService {
         if(session === ""){
             return;
         }
-        //console.log("close session")
+        mLogUtils.logd(nodeId + "> close session",TAG);
         this.carrierService.sessionClose(workedSessions[nodeId].session,
             ()=>{
                 workedSessions[nodeId] = undefined;
                 delete workedSessions[nodeId];
-
-                // workedSessions[nodeId] = undefined;
-                //console.log("close session success");
-
+                
                 progress[nodeId] = undefined;
                 delete progress[nodeId];
+
+                cacheData[nodeId] = undefined;
+                delete cacheData[nodeId];
+                mLogUtils.logd(nodeId + "> close session success",TAG);
             }
         );
     }
@@ -559,7 +457,7 @@ function encodeNum(data: number, size: number): Uint8Array{
     }else if (size === 8){
         return parseInt64(data);
     }else {
-        //console.log("Size error.")
+        console.log("Size error.")
         return null;
     }
 }
@@ -623,7 +521,7 @@ function base64ToUint8Array(base64String: string): Uint8Array {
     return outputArray;
 }
 
-function decodeHeadData(nodeId: string, cacheDataLength: number): boolean{
+function decodeHeadData(nodeId: string): boolean{
     if (cacheData == null || cacheData == undefined || cacheData[nodeId] == undefined)
         return false;
 
@@ -632,7 +530,7 @@ function decodeHeadData(nodeId: string, cacheDataLength: number): boolean{
     
     let pointer = cacheData[nodeId].pointer;
     let headSize = cacheData[nodeId].headSize;
-    let remainLength = cacheDataLength - pointer;
+    let remainLength = cacheData[nodeId].data.length - pointer;
 
     if (remainLength < headSize)
         return false;
@@ -648,7 +546,7 @@ function decodeHeadData(nodeId: string, cacheDataLength: number): boolean{
     return true;
 }
 
-function decodeBodyData(nodeId: string, cacheDataLength: number): boolean{
+function decodeBodyData(nodeId: string): boolean{
     if (cacheData == null || cacheData == undefined || cacheData[nodeId] == undefined)
         return false;
 
@@ -658,7 +556,7 @@ function decodeBodyData(nodeId: string, cacheDataLength: number): boolean{
     let headSize = cacheData[nodeId].headSize;
     let pointer = cacheData[nodeId].pointer
     let bodySize = cacheData[nodeId].bodySize;
-    let remainLength = cacheDataLength - pointer;
+    let remainLength = cacheData[nodeId].data.length - pointer;
     
     if (progress[nodeId] != undefined && progress[nodeId].method == "get_binary"){
         progress[nodeId].totalSize = bodySize;
@@ -669,6 +567,7 @@ function decodeBodyData(nodeId: string, cacheDataLength: number): boolean{
     if (remainLength < bodySize || bodySize == 0)
         return false;
     
+    
     let body = cacheData[nodeId].data.subarray(pointer, pointer + bodySize);
 
     let value = mSerializeDataService.decodeData(body);
@@ -676,7 +575,7 @@ function decodeBodyData(nodeId: string, cacheDataLength: number): boolean{
     let key = cacheData[nodeId].key;
     if (cacheData[nodeId].method == "get_binary" ){
         mStorageService.set(key,value).then(()=>{
-            //console.log("publish stream:getBinarySuccess "+ nodeId);
+            mLogUtils.logd(nodeId +" > getBinarySuccess key ="+key, TAG);
             eventBus.publish("stream:getBinarySuccess", nodeId, key, value, cacheData[nodeId].mediaType);
         });
     }
@@ -686,7 +585,7 @@ function decodeBodyData(nodeId: string, cacheDataLength: number): boolean{
     return true;
 }
 
-function combineData(nodeId: string, cacheDataLength: number){
+function combineData(nodeId: string){
     if (cacheData == null || cacheData == undefined || cacheData[nodeId] == undefined)
         return false;
 
@@ -694,11 +593,13 @@ function combineData(nodeId: string, cacheDataLength: number){
         return false;
 
     let pointer = cacheData[nodeId].pointer;
-    let remainData = cacheData[nodeId].data.subarray(pointer, cacheDataLength);
+    let remainData = cacheData[nodeId].data.subarray(pointer, cacheData[nodeId].data.length);
 
     cacheData[nodeId].data = new Uint8Array(remainData.length);
     cacheData[nodeId].data.set(remainData,0);
     cacheData[nodeId].pointer = 0;
+
+    cacheData[nodeId].unprocessLength = cacheData[nodeId].data.length;
     return true;
 }
 
@@ -708,13 +609,13 @@ function parseResponse(response: any){
     // {"version":"1.0","id":1,"result":{"key":"8afJxa7RTamSrXWxUCcZt8jnAAjAGfx4gmN5ECwq2XSi230"}}
     let version: string = response.version || "";
     if (version == "" || version != "1.0"){
-        //console.log("version error");
+        mLogUtils.logd("version err", TAG);
         return ;
     }
 
     let id = response.id || "";
     if (id == ""){
-        //console.log("id error");
+        mLogUtils.logd("id err", TAG);
         return ;
     }
 
@@ -729,7 +630,7 @@ function parseResponse(response: any){
     if (error != ""){
         let code = error.code;
         let message = error.message;
-        //console.log("Error :: code :"+code+", message : "+message);
+        mLogUtils.logd(nodeId+"> Error :: code :"+code+", message : "+message, TAG);
         publishError(nodeId, response.error);
         // return error;
         return ;
@@ -737,19 +638,19 @@ function parseResponse(response: any){
 
     let key = response.result.key || "";
     if (key == ""){
-        //console.log("key error");
+        mLogUtils.logd("id err", TAG);
         return ;
     }
 
     cacheData[nodeId].key = key;
     if (method == "set_binary"){
-        //console.log("publish stream:setBinaryResponse "+ nodeId);
-        //console.log("publish stream:setBinarySuccess "+ nodeId);
+        mLogUtils.logd(nodeId+"> publish stream:setBinaryResponse", TAG);
+        mLogUtils.logd(nodeId+"> publish stream:setBinarySuccess", TAG);
         eventBus.publish("stream:setBinaryResponse", nodeId);
         eventBus.publish("stream:setBinarySuccess", nodeId);
 
     } else if (method == "get_binary"){
-        //console.log("publish stream:getBinaryResponse "+ nodeId);
+        mLogUtils.logd(nodeId+"> publish stream:getBinaryResponse", TAG);
         eventBus.publish("stream:getBinaryResponse", nodeId);
     }
 }
@@ -775,26 +676,22 @@ function createStateDeactivated(){
         code: FeedsData.SessionError.STREAM_STATE_DEACTIVATED,
         message: "onStateChange to DEACTIVATED"
     }
-
     return response;
 }
-
-
 
 function createStateError(){
     let response = {
         code: FeedsData.SessionError.STREAM_STATE_ERROR,
         message: "onStateChange to ERROR"
     }
-
     return response;
 }
+
 function createWriteDataError(){
     let response = {
         code: FeedsData.SessionError.WRITE_DATA_ERROR,
         message: "writeDataError"
     }
-
     return response;
 }
 
@@ -829,6 +726,7 @@ function createNewSessionError(){
     }
     return response;
 }
+
 function createCreateSessionTimeout(){
     let response = {
         code: FeedsData.SessionError.SESSION_CREATE_TIMEOUT,
@@ -854,7 +752,6 @@ function publishError(nodeId: string, error: any){
 }
 
 function calculateProgress(nodeId: string){
-    
     if (progress[nodeId] == undefined)
         return;
 
@@ -869,6 +766,117 @@ function calculateProgress(nodeId: string){
 }
 
 function publishProgress(nodeId: string, progress: number, method: string, key: string){
-    //console.log("publish progress>>"+progress);
+    mLogUtils.logd(nodeId+"> publish progress "+progress, TAG);
     eventBus.publish("stream:progress", nodeId, progress, method, key);
+}
+
+function decodeHeader(nodeId: string){
+    for (let index = 0; index < cacheData[nodeId].data.length - 23; index++) {
+        let decodeMagicNumData = cacheData[nodeId].data.subarray(index,index+8);
+        let decodeMagicNumber = decodeNum(decodeMagicNumData,8);
+        cacheData[nodeId].pointer = index;
+
+        if( decodeMagicNumber != magicNumber )
+            continue;
+
+        let decodeVersionData = cacheData[nodeId].data.subarray(index+8,index+12);
+        let decodeVersion = decodeNum(decodeVersionData,4);
+        if (decodeVersion != version)
+            continue;
+
+        let decodeHeadSizeData = cacheData[nodeId].data.subarray(index+12,index+16);
+        let decodeHeadSize = decodeNum(decodeHeadSizeData,4);
+
+        let decodeBodySizeData = cacheData[nodeId].data.subarray(index+16,index+24);
+        let decodeBodySize = decodeNum(decodeBodySizeData,8);
+
+        cacheData[nodeId].headSize = decodeHeadSize;
+        cacheData[nodeId].bodySize = decodeBodySize;
+        cacheData[nodeId].state = DecodeState.decodeHead;
+        cacheData[nodeId].pointer = cacheData[nodeId].pointer + 24;
+        break;
+    }
+}
+
+function decodeData(nodeId: string){
+    switch(cacheData[nodeId].state){
+        case DecodeState.prepare:
+            decodeHeader(nodeId);
+            if (!decodeHeadData(nodeId)){
+                break;
+            }   
+            if (!decodeBodyData(nodeId)){
+                break;
+            }
+            break;
+        case DecodeState.decodeHead:
+            if (!decodeHeadData(nodeId)){
+                break;
+            }   
+            if (!decodeBodyData(nodeId)){
+                break;
+            }
+            break;
+        case DecodeState.decodeBody:
+            if (!decodeBodyData(nodeId)){
+                break;
+            }
+            break;
+    }
+
+    combineData(nodeId);
+}
+
+function checkBody(nodeId: string, data: Uint8Array){
+    if (cacheData[nodeId].bodySize == 0){
+        console.log("no body");
+        return ;
+    }
+
+    cacheData[nodeId].unprocessLength += data.length;
+    cacheData[nodeId].unProcessDatas.push(data);
+
+    progress[nodeId].pointer = cacheData[nodeId].unprocessLength;
+    progress[nodeId].totalSize = cacheData[nodeId].bodySize;
+    calculateProgress(nodeId);
+
+    if (cacheData[nodeId].unprocessLength >= cacheData[nodeId].bodySize){
+        let body = new Uint8Array(cacheData[nodeId].bodySize);
+        let processPoint: number = 0;
+
+        body.set(cacheData[nodeId].data,0);
+        processPoint+=cacheData[nodeId].data.length;
+
+        let unProcessDataArray = cacheData[nodeId].unProcessDatas;
+        for (let index = 0; index < unProcessDataArray.length; index++) {
+            body.set(unProcessDataArray[index],processPoint);
+            processPoint += unProcessDataArray[index].length;
+        }
+
+        let value = mSerializeDataService.decodeData(body);
+        
+        let key = cacheData[nodeId].key;
+        if (cacheData[nodeId].method == "get_binary" ){
+            mStorageService.set(key,value).then(()=>{
+                mLogUtils.logd(nodeId+"> publish stream:getBinarySuccess", TAG);
+                eventBus.publish("stream:getBinarySuccess", nodeId, key, value, cacheData[nodeId].mediaType);
+            });
+        }
+        
+        cacheData[nodeId].state = DecodeState.finish;
+        cacheData[nodeId].pointer = 0;
+
+        return ;
+    }
+}
+
+function sessionStart(nodeId: string, mSession:CarrierPlugin.Session, sdp: string){
+    mLogUtils.logd(nodeId + "> start session",TAG);
+    mCarrierService.sessionStart(mSession, sdp, ()=>{
+            mLogUtils.logd(nodeId + "> start session success",TAG);
+        },(err)=>{
+            mLogUtils.loge(nodeId + "> start session error "+err,TAG);
+            publishError(nodeId, createSessionStartError());
+        }
+    );
 }
