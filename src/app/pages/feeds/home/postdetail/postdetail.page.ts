@@ -645,7 +645,7 @@ export class PostdetailPage implements OnInit {
   getVideo(key:string){
     
     this.feedService.getData(key).then((videodata:string)=>{
-
+      this.zone.run(()=>{
         let videoData = videodata || "";
         if (videoData == ""){
           this.downStatus = '1';
@@ -661,6 +661,7 @@ export class PostdetailPage implements OnInit {
         this.downStatus = "";
         this.videoObj = videoData;
         this.loadVideo(videoData);
+      });
       });
   }
 
@@ -765,7 +766,7 @@ export class PostdetailPage implements OnInit {
     let vgoverlayplay:any = document.getElementById(id+"vgoverlayplaypostdetail") || "";
     if(vgoverlayplay!=""){
      vgoverlayplay.onclick = ()=>{
-      //this.zone.run(()=>{
+      this.zone.run(()=>{
         let source:any = document.getElementById(id+"postdetailsource") || "";
         let sourceSrc = source.getAttribute("src") || "";
         if (sourceSrc != "")
@@ -773,7 +774,7 @@ export class PostdetailPage implements OnInit {
 
         let key = this.feedService.getVideoKey(this.nodeId,this.channelId,this.postId,0,0);
         this.getVideo(key);
-      //});
+      });
      }
     }
   }
