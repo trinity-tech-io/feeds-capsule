@@ -51,6 +51,7 @@ import { SerializeDataService } from './services/SerializeDataService';
 import { MenuService } from './services/MenuService';
 import { FormateInfoService } from './services/FormateInfoService';
 import { SessionService } from './services/SessionService';
+import { LogUtils } from 'src/app/services/LogUtils';
 
 import { IonicStorageModule } from '@ionic/storage';
 
@@ -206,6 +207,7 @@ export function anim(AnimationC: Animation, baseEl: any, position?: any): Promis
     PostfromComponentPageModule,
     ConnectionService,
     HttpService,
+    LogUtils,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     {provide: ErrorHandler, useClass: ErrorHandler}
   ]
