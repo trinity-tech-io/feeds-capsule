@@ -7,6 +7,7 @@ import { MenuService } from 'src/app/services/MenuService';
 import { NativeService } from 'src/app/services/NativeService';
 import { AppService } from 'src/app/services/AppService';
 import { TranslateService } from "@ngx-translate/core";
+import { PopupProvider } from 'src/app/services/popup';
 import { LogUtils } from 'src/app/services/LogUtils';
 let TAG: string = "Feeds-profile";
 @Component({
@@ -68,6 +69,8 @@ export class ProfilePage implements OnInit {
 
   public downStatusObj = {};
 
+  public popover:any = "";
+
   constructor(
     private feedService: FeedService,
     public theme:ThemeService,
@@ -78,7 +81,8 @@ export class ProfilePage implements OnInit {
     public appService:AppService,
     private translate:TranslateService,
     public modalController:ModalController,
-    private logUtils: LogUtils
+    private logUtils: LogUtils,
+    public  popupProvider:PopupProvider
   ) {
   }
 
@@ -497,9 +501,7 @@ export class ProfilePage implements OnInit {
   }
 
   setVisibleareaImage(){
-    this.curPostId = "";
-    this.downProgressObj ={};
-    this.downStatusObj ={};
+   
     let postgridList = document.getElementsByClassName("postgridlike");
     let postgridNum = document.getElementsByClassName("postgridlike").length;
     for(let postgridindex =0;postgridindex<postgridNum;postgridindex++){ 
@@ -582,10 +584,10 @@ export class ProfilePage implements OnInit {
     let  vgplayer = document.getElementById(id+"vgplayerlike");
     let  video:any = document.getElementById(id+"videolike");
     let  source:any = document.getElementById(id+"sourcelike") || "";
-
-    if(id!=""&&source!=""){
-      this.pauseVideo(id);
-   }
+    let  downStatus = this.downStatusObj[id] || "";
+    if(id!=""&&source!=""&&downStatus===''){
+       this.pauseVideo(id);
+    }
     try {
       if(id!=''&&video.getBoundingClientRect().top>=-this.clientHeight&&video.getBoundingClientRect().top<=this.clientHeight){
         if(isloadVideoImg===""){
@@ -718,9 +720,11 @@ export class ProfilePage implements OnInit {
 
     if(vgoverlayplay!=""){
      vgoverlayplay.onclick = ()=>{
-      this.curPostId = id;
-      this.downProgressObj ={};
-      this.downStatusObj ={};
+      if(this.isExitDown()){
+        this.openAlert();
+        this.pauseVideo(id);
+        return;
+      }
       this.zone.run(()=>{
          let sourceSrc = source.getAttribute("src") || "";
          if(sourceSrc === ""){
@@ -736,19 +740,23 @@ export class ProfilePage implements OnInit {
     let nodeId =arr[0];
     let channelId:any = arr[1];
     let postId:any = arr[2];
+    this.curPostId = id;
+    this.downProgressObj ={};
+    this.downStatusObj ={};
     let key = this.feedService.getVideoKey(nodeId,channelId,postId,0,0);
     this.feedService.getData(key).then((videoResult:string)=>{
           this.zone.run(()=>{
             let videodata = videoResult || "";
             if (videodata == ""){
-              this.downStatusObj[id] = "1";
               this.cacheGetBinaryRequestKey = key;
               this.cachedMediaType = "video";
-              //this.native.showLoading("common.waitMoment", 5*60*1000).then(()=>{
-                this.feedService.processGetBinary(nodeId, channelId, postId, 0, 0, FeedsData.MediaType.containsVideo, key);
-              //}).catch(()=>{
-                //this.native.hideLoading();
-              //});
+              let transDataChannel =  this.feedService.processGetBinary(nodeId, channelId, postId, 0, 0, FeedsData.MediaType.containsVideo, key);
+              if(transDataChannel){
+                this.downProgressObj[id] = 0;
+                this.downStatusObj[id] = "1";
+                }else{
+                this.downStatusObj[id] = "";
+                }
               return;
             }
             this.downStatusObj[id] = "";
@@ -841,5 +849,37 @@ export class ProfilePage implements OnInit {
       this.loadVideo(id,value);
     }
   }
+
+  isExitDown(){
+
+    if((JSON.stringify(this.downStatusObj) == "{}")){
+          return false;
+    }
+
+    for(var key in this.downStatusObj) {
+      if(this.downStatusObj[key] != ""){
+            return true;
+      }
+    }
+
+  }
+
+  openAlert(){
+    this.popover = this.popupProvider.ionicAlert(
+      this,
+      // "ConfirmdialogComponent.signoutTitle",
+      "",
+      "common.downDes",
+      this.cancel,
+      'tskth.svg'
+    );
+  }
+
+  cancel(that:any){
+      if(this.popover!=null){
+         this.popover.dismiss();
+      }
+  }
+
 
 }

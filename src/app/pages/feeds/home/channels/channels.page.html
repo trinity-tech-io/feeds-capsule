@@ -111,8 +111,6 @@
             <span *ngIf="downStatusObj[post.nodeId+post.channel_id++post.id]==='1'">{{'common.downstatus1'|translate}}....</span>
             <span *ngIf="downStatusObj[post.nodeId+post.channel_id++post.id]==='2'">{{'common.downstatus2'|translate}}....</span>
             <span *ngIf="downStatusObj[post.nodeId+post.channel_id++post.id]==='3'&&downProgressObj[post.nodeId+post.channel_id++post.id]>0&&downProgressObj[post.nodeId+post.channel_id++post.id]!=100">{{'common.downstatus3'|translate}} {{downProgressObj[post.nodeId+post.channel_id++post.id]}}%</span>
-            <ion-progress-bar *ngIf="downStatusObj[post.nodeId+post.channel_id++post.id]==='3'&&downProgressObj[post.nodeId+post.channel_id++post.id]>0&&downProgressObj[post.nodeId+post.channel_id++post.id]!=100" [value]="downProgressObj[post.nodeId+post.channel_id++post.id]/100"></ion-progress-bar>
-
               <div style="width: 100%;display:inline-block;height:200px;">
               <span  class="lefttopostdetailvideo" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)"></span> 
                <vg-player>
@@ -134,6 +132,7 @@
              <source  type="video/mp4" id={{post.nodeId+post.channel_id+post.id}}sourcechannel>
              </video>
              </vg-player>
+             <ion-progress-bar *ngIf="downStatusObj[post.nodeId+post.channel_id++post.id]!=''&&downProgressObj[post.nodeId+post.channel_id++post.id]>=0&&downProgressObj[post.nodeId+post.channel_id++post.id]!=100" [value]="downProgressObj[post.nodeId+post.channel_id++post.id]/100" style="margin-top: -13px;"></ion-progress-bar>
              </div>
 
              <span  class="topostdetailvideo" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)"></span> 
