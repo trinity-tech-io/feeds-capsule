@@ -17,6 +17,23 @@ export class PopupProvider {
         private popoverController:PopoverController
     ) {}
 
+
+    public ionicAlert1(title: string, subTitle?: string, okText?: string): Promise<any> {
+        return new Promise((resolve, reject) => {
+            this.alertCtrl.create({
+                header : this.translate.instant(title),
+                subHeader: subTitle ? this.translate.instant(subTitle) : '',
+                backdropDismiss: false,
+                buttons: [{
+                    text: okText ? okText : this.translate.instant('confirm'),
+                    handler: () => {
+                        resolve();
+                    }
+                }]
+            }).then(alert => alert.present());
+        });
+    };
+
     public ionicAlert(
         that: any,
         title: string,

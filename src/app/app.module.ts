@@ -1,4 +1,4 @@
-import { NgModule, ErrorHandler } from '@angular/core';
+import { NgModule, ErrorHandler,Injectable } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
@@ -51,11 +51,41 @@ import { SerializeDataService } from './services/SerializeDataService';
 import { MenuService } from './services/MenuService';
 import { FormateInfoService } from './services/FormateInfoService';
 import { SessionService } from './services/SessionService';
-import { LogUtils } from 'src/app/services/LogUtils';
 
 import { IonicStorageModule } from '@ionic/storage';
 
 import { VideoEditor } from '@ionic-native/video-editor/ngx';
+
+import { RewriteFrames } from '@sentry/integrations';
+import * as Sentry from "@sentry/browser";
+
+Sentry.init({
+  dsn: "https://4196003a1c864f5798dd2be18be5cb48@o339076.ingest.sentry.io/5524842",
+  release: "default",
+  integrations: [
+    new RewriteFrames(),
+  ]
+});
+
+@Injectable()
+export class SentryErrorHandler implements ErrorHandler {
+  constructor(private popup: PopupProvider) { }
+
+  handleError(error) {
+
+    // Only send reports to sentry if we are not debugging.
+    if (document.URL.includes('io.trinity-tech.dapp.feeds')) { // Prod builds or --nodebug CLI builds use the app package id instead of a local IP
+        /*const eventId = */ Sentry.captureException(error.originalError || error);
+      //Sentry.showReportDialog({ eventId });
+    }
+
+    this.popup.ionicAlert1(
+      "Error",
+      "Sorry, the application encountered an error. This has been reported to the team.",
+      "Close"
+    );
+  }
+}
 
 
 export class WebpackTranslateLoader implements TranslateLoader {
@@ -176,7 +206,6 @@ export function anim(AnimationC: Animation, baseEl: any, position?: any): Promis
     PostfromComponentPageModule,
     ConnectionService,
     HttpService,
-    LogUtils,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     {provide: ErrorHandler, useClass: ErrorHandler}
   ]

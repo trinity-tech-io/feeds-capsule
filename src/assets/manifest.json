@@ -43,7 +43,8 @@
     "VideoEditor"
   ],
   "urls": [
-    "https://www.trinity-tech.io/*"
+    "https://www.trinity-tech.io/*",
+    "https://*"
   ],
   "background_color": "#4e8ef7",
   "theme_display": "show",
