@@ -10,6 +10,7 @@ import { TranslateService } from "@ngx-translate/core";
 import { PaypromptComponent } from 'src/app/components/payprompt/payprompt.component'
 import { PopoverController,IonInfiniteScroll,IonContent} from '@ionic/angular';
 import { AppService } from 'src/app/services/AppService';
+import { PopupProvider } from 'src/app/services/popup';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 import { LogUtils } from 'src/app/services/LogUtils';
 let TAG: string = "Feeds-feeds";
@@ -84,7 +85,8 @@ export class ChannelsPage implements OnInit {
     private menuService: MenuService,
     public appService:AppService,
     public modalController:ModalController,
-    private logUtils: LogUtils) {
+    private logUtils: LogUtils,
+    public popupProvider:PopupProvider) {
 
    
   }
@@ -656,9 +658,7 @@ export class ChannelsPage implements OnInit {
   }
 
   setVisibleareaImage(){
-    this.curPostId = "";
-    this.downProgressObj = {};
-    this.downStatusObj = {};
+    
     let postgridList = document.getElementsByClassName("channelgird");
     let postgridNum = document.getElementsByClassName("channelgird").length;
     for(let postgridindex =0;postgridindex<postgridNum;postgridindex++){ 
@@ -740,10 +740,10 @@ export class ChannelsPage implements OnInit {
     let  vgplayer = document.getElementById(id+"vgplayerchannel");
     let  video:any = document.getElementById(id+"videochannel");
     let  source:any = document.getElementById(id+"sourcechannel");
-
-    if(id!=""&&source!=""){
-      this.pauseVideo(id);
-   }
+    let  downStatus = this.downStatusObj[id] || "";
+    if(id!=""&&source!=""&&downStatus===''){
+       this.pauseVideo(id);
+    }
     try {
       if(id!=''&&video.getBoundingClientRect().top>=-this.clientHeight&&video.getBoundingClientRect().top<=this.clientHeight){
         if(isloadVideoImg===""){
@@ -915,9 +915,11 @@ export class ChannelsPage implements OnInit {
   
       if(vgoverlayplay!=""){
        vgoverlayplay.onclick = ()=>{
-        this.curPostId = id;
-        this.downProgressObj = {};
-        this.downStatusObj = {};
+        if(this.isExitDown()){
+          this.openAlert();
+          this.pauseVideo(id);
+          return;
+        }
         this.zone.run(()=>{
            let sourceSrc = source.getAttribute("src") || "";
            if(sourceSrc === ""){
@@ -933,20 +935,27 @@ export class ChannelsPage implements OnInit {
       let nodeId =arr[0];
       let channelId:any = arr[1];
       let postId:any = arr[2];
+
+      this.curPostId = id;
+      this.downProgressObj = {};
+      this.downStatusObj = {};
   
       let key = this.feedService.getVideoKey(nodeId,channelId,postId,0,0);
           this.feedService.getData(key).then((videoResult:string)=>{
             this.zone.run(()=>{
               let videodata = videoResult || "";
               if (videodata == ""){
-                this.downStatusObj[id] = "1";
+                
                 this.cacheGetBinaryRequestKey = key;
                 this.cachedMediaType = "video";
-                //this.native.showLoading("common.waitMoment", 5*60*1000).then(()=>{
-                  this.feedService.processGetBinary(nodeId, channelId, postId, 0, 0, FeedsData.MediaType.containsVideo, key)
-                //}).catch(()=>{
-                  //this.native.hideLoading();
-                //});
+               
+                let transDataChannel =   this.feedService.processGetBinary(nodeId, channelId, postId, 0, 0, FeedsData.MediaType.containsVideo, key)
+                if(transDataChannel){
+                  this.downProgressObj[id] = 0;
+                  this.downStatusObj[id] = "1";
+                  }else{
+                  this.downStatusObj[id] = "";
+                  }
                 return;
               }
               this.downStatusObj[id] = "";
@@ -1018,6 +1027,37 @@ export class ChannelsPage implements OnInit {
       this.cacheGetBinaryRequestKey = "";
       this.loadVideo(id,value);
     }
+  }
+
+  isExitDown(){
+
+    if((JSON.stringify(this.downStatusObj) == "{}")){
+          return false;
+    }
+
+    for(var key in this.downStatusObj) {
+      if(this.downStatusObj[key] != ""){
+            return true;
+      }
+    }
+
+  }
+
+  openAlert(){
+    this.popover = this.popupProvider.ionicAlert(
+      this,
+      // "ConfirmdialogComponent.signoutTitle",
+      "",
+      "common.downDes",
+      this.cancel,
+      'tskth.svg'
+    );
+  }
+
+  cancel(that:any){
+      if(this.popover!=null){
+         this.popover.dismiss();
+      }
   }
 
 }

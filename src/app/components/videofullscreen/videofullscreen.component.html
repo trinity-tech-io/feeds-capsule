@@ -6,6 +6,10 @@
                     <vg-scrub-bar-current-time></vg-scrub-bar-current-time>
                     <vg-scrub-bar-buffering-time></vg-scrub-bar-buffering-time>
                 </vg-scrub-bar>
+            <vg-controls id="fullscreenvgcontrols" (click)="tcFullScreen()"> 
+                    <!-- <vg-fullscreen id={{post.nodeId+post.channel_id+post.id}}vgfullscreenchannel></vg-fullscreen> -->
+                    <img class="vgfullscreen" id="tcvgfullscreen" src="assets/images/tcFullScreen.svg"/>
+            </vg-controls>
             <video #media [vgMedia]="media" id = "fullscreenvideo"
             playsinline webkit-playsinline>
             <source  type="video/mp4" id="fullscreensource">

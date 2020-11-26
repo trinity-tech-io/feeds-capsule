@@ -11,6 +11,7 @@ import { NativeService } from 'src/app/services/NativeService';
 import { IonInfiniteScroll } from '@ionic/angular';
 import { AppService } from 'src/app/services/AppService';
 import { LogUtils } from 'src/app/services/LogUtils';
+import { PopupProvider } from 'src/app/services/popup';
 let TAG: string = "Feeds-home";
 @Component({
   selector: 'app-home',
@@ -64,6 +65,8 @@ export class HomePage implements OnInit {
   public downProgressObj ={};
   public curPostId:string = "";
   public downStatusObj = {};
+
+  public popover:any = "";
   
   constructor(
    
@@ -79,7 +82,8 @@ export class HomePage implements OnInit {
     private menuService: MenuService,
     public appService:AppService,
     public modalController: ModalController,
-    private logUtils: LogUtils) {
+    private logUtils: LogUtils,
+    public popupProvider:PopupProvider) {
       
     }
 
@@ -255,6 +259,8 @@ addBinaryEvevnt(){
 
   this.events.subscribe('feeds:getBinaryFinish', (nodeId, key: string, value:string) => {
     this.zone.run(() => {
+      this.downProgressObj[this.curPostId] = 0;
+      this.downStatusObj[this.curPostId] = "";
       this.processGetBinaryResult(key, value);
       this.native.hideLoading();
     });
@@ -646,9 +652,6 @@ addBinaryEvevnt(){
   }
 
   setVisibleareaImage(startPos:number){
-    this.curPostId = "";
-    this.downProgressObj = {};
-    this.downStatusObj = {};
     let postgridList = document.getElementsByClassName("post-grid");
     let postgridNum = document.getElementsByClassName("post-grid").length;
     for(let postgridindex=0;postgridindex<postgridNum;postgridindex++){ 
@@ -760,7 +763,8 @@ addBinaryEvevnt(){
     let  vgplayer = document.getElementById(id+"vgplayer");
     let  video:any = document.getElementById(id+"video") || "";
     let  source:any = document.getElementById(id+"source") || "";
-    if(id!=""&&source!=""){
+    let  downStatus = this.downStatusObj[id] || "";
+    if(id!=""&&source!=""&&downStatus===''){
        this.pauseVideo(id);
     }
     try {
@@ -912,11 +916,13 @@ addBinaryEvevnt(){
     let source:any = document.getElementById(id+"source") || "";
     if(vgoverlayplay!=""){
      vgoverlayplay.onclick = ()=>{
-      this.curPostId = id;
-      this.downProgressObj = {};
-      this.downStatusObj ={};
       this.zone.run(()=>{
-         let sourceSrc = source.getAttribute("src") || "";
+        if(this.isExitDown()){
+          this.openAlert();
+          this.pauseVideo(id);
+          return;
+        }
+        let sourceSrc = source.getAttribute("src") || "";
          if(sourceSrc === ""){
           this.getVideo(id,srcId);
          }
@@ -931,20 +937,23 @@ addBinaryEvevnt(){
     let nodeId =arr[0];
     let channelId:any = arr[1];
     let postId:any = arr[2];
-
+    this.curPostId = id;
+    this.downProgressObj = {};
+    this.downStatusObj = {};
     let key = this.feedService.getVideoKey(nodeId,channelId,postId,0,0);
         this.feedService.getData(key).then((videoResult:string)=>{
           this.zone.run(()=>{
             let videodata = videoResult || "";
             if (videodata == ""){
-              this.downStatusObj[id] = "1";
               this.cacheGetBinaryRequestKey = key;
               this.cachedMediaType = "video";
-              //this.native.showLoading("common.waitMoment", 5*60*1000).then(()=>{
-                this.feedService.processGetBinary(nodeId, channelId, postId, 0, 0, FeedsData.MediaType.containsVideo, key)
-              //}).catch(()=>{
-                //this.native.hideLoading();
-              //});
+              let transDataChannel = this.feedService.processGetBinary(nodeId, channelId, postId, 0, 0, FeedsData.MediaType.containsVideo, key);
+              if(transDataChannel){
+              this.downProgressObj[id] = 0;
+              this.downStatusObj[id] = "1";
+              }else{
+              this.downStatusObj[id] = "";
+              }
               return;
             }
             this.downStatusObj[id] = "";
@@ -1001,16 +1010,7 @@ addBinaryEvevnt(){
     } 
     return UtilService.timeFilter(duration);
   }
-//   this.feedService.loadVideo(id).then((data:string)=>{
-//     this.zone.run(()=>{
-//      source.setAttribute("src",data);
-//      video.load();
-//      video.pause();
-//     });
- 
-//  }).catch((err)=>{
- 
-//  })
+
   processGetBinaryResult(key: string, value: string){
     if (key.indexOf("img")>-1){
       this.cacheGetBinaryRequestKey = "";
@@ -1025,6 +1025,37 @@ addBinaryEvevnt(){
          this.cacheGetBinaryRequestKey = "";
          this.loadVideo(id,value);
     }
+  }
+
+  isExitDown(){
+
+    if((JSON.stringify(this.downStatusObj) == "{}")){
+          return false;
+    }
+
+    for(var key in this.downStatusObj) {
+      if(this.downStatusObj[key] != ""){
+            return true;
+      }
+    }
+
+  }
+
+  openAlert(){
+    this.popover = this.popupProvider.ionicAlert(
+      this,
+      // "ConfirmdialogComponent.signoutTitle",
+      "",
+      "common.downDes",
+      this.cancel,
+      'tskth.svg'
+    );
+  }
+
+  cancel(that:any){
+      if(this.popover!=null){
+         this.popover.dismiss();
+      }
   }
 
 }

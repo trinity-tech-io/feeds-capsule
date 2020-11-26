@@ -83,7 +83,8 @@ export const fr = {
         "mustUpdate": "Your feeds service is out-dated. Please upgrade it to latest version, otherwise you could not post feed.",
         "downstatus1":"Connecting",
         "downstatus2":"Successfully connected",
-        "downstatus3":"Downloading"
+        "downstatus3":"Downloading",
+        "downDes":"The video is being downloaded..."
     },
     "app":{
         "profileDetails":"Profile Details",

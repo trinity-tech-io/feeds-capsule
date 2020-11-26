@@ -648,15 +648,17 @@ export class PostdetailPage implements OnInit {
       this.zone.run(()=>{
         let videoData = videodata || "";
         if (videoData == ""){
-          this.downStatus = '1';
+      
           this.cacheGetBinaryRequestKey = key;
           this.cachedMediaType = "video";
-          //this.native.showLoading("common.waitMoment", 5*60*1000).then(()=>{
-            this.feedService.processGetBinary(this.nodeId, this.channelId, this.postId, 0, 0, FeedsData.MediaType.containsVideo, key);
-          //}).catch(()=>{
-            //this.native.hideLoading();
-          //});
-          return;
+
+         let transDataChannel = this.feedService.processGetBinary(this.nodeId, this.channelId, this.postId, 0, 0, FeedsData.MediaType.containsVideo, key);
+         if(transDataChannel){
+           this.downStatus = '1';
+         }else{
+           this.downStatus = '';
+         }
+        return;
         }
         this.downStatus = "";
         this.videoObj = videoData;

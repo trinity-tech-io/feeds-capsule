@@ -1,4 +1,5 @@
-import { Component, OnInit, Input, Output, EventEmitter} from '@angular/core';
+import { Component, OnInit, Input} from '@angular/core';
+import { ModalController} from '@ionic/angular';
 
 @Component({
   selector: 'app-videofullscreen',
@@ -8,7 +9,7 @@ import { Component, OnInit, Input, Output, EventEmitter} from '@angular/core';
 export class VideofullscreenComponent implements OnInit {
   @Input() public postImg = "";
   @Input() public videoSrc = "";
-  constructor() { }
+  constructor(public modalController:ModalController) { }
 
   ngOnInit() {
     this.palyVideo();
@@ -70,6 +71,10 @@ export class VideofullscreenComponent implements OnInit {
   });
 
 video.load();
+  }
+
+  tcFullScreen(){
+    this.modalController.dismiss();
   }
 
 }

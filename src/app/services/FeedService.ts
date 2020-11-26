@@ -5862,10 +5862,11 @@ export class FeedService {
     if (size > this.throwMsgTransDataLimit){
       // this.transDataChannel = FeedsData.TransDataChannel.SESSION
       this.restoreSession(nodeId);
-    }else{
-      // this.transDataChannel = FeedsData.TransDataChannel.MESSAGE
-      this.getBinaryFromMsg(nodeId, key);
+      return true;
     }
+      // this.transDataChannel = FeedsData.TransDataChannel.MESSAGE
+    this.getBinaryFromMsg(nodeId, key);
+    return false;
   }
 
   translateBinaryError(nodeId: string, errorCode: number){
