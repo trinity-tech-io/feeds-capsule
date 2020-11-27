@@ -252,6 +252,9 @@ export class ChannelsPage implements OnInit {
 
     this.events.subscribe('stream:progress',(nodeId,progress)=>{
       this.zone.run(() => {
+        if(this.curPostId != ""){
+          return;
+        }
         this.downProgressObj[this.curPostId] = progress;
         this.downStatusObj[this.curPostId] = "3";
         if(this.cachedMediaType==="img"&&this.downStatusObj[this.curPostId]!=''){
@@ -958,16 +961,21 @@ export class ChannelsPage implements OnInit {
       let channelId:any = arr[1];
       let postId:any = arr[2];
 
-      this.curPostId = id;
-      this.downProgressObj = {};
-      this.downStatusObj = {};
+      // this.curPostId = id;
+      // this.downProgressObj = {};
+      // this.downStatusObj = {};
   
       let key = this.feedService.getVideoKey(nodeId,channelId,postId,0,0);
           this.feedService.getData(key).then((videoResult:string)=>{
             this.zone.run(()=>{
               let videodata = videoResult || "";
               if (videodata == ""){
-                
+                if(this.isExitDown()){
+                  this.openAlert();
+                  this.pauseVideo(id);
+                  return;
+                }
+                this.curPostId = id;
                 this.cacheGetBinaryRequestKey = key;
                 this.cachedMediaType = "video";
                
@@ -1073,6 +1081,8 @@ export class ChannelsPage implements OnInit {
             return true;
       }
     }
+
+    return false;
 
   }
 
