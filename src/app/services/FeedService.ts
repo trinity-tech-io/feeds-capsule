@@ -5091,7 +5091,7 @@ export class FeedService {
       this.sessionService.streamAddData(nodeId, sentData);
       currentSlice++;
 
-    },15);
+    },1);
     
 
     // for (let index = 0; index < sumSlice; index++) {

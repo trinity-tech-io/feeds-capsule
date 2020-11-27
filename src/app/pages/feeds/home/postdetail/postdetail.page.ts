@@ -314,7 +314,19 @@ export class PostdetailPage implements OnInit {
       this.native.hideLoading();
       this.pauseVideo();
       this.hideFullScreen();
-     }); 
+     });
+
+     this.events.subscribe('stream:closed',(nodeId)=>{
+      let mNodeId = nodeId || "";
+      if (mNodeId != ""){
+        this.feedService.closeSession(mNodeId);
+      }
+      this.downStatus ="";
+      this.downProgress = 0;
+      this.native.hideLoading();
+      this.pauseVideo();
+      this.hideFullScreen();
+    });
   }
 
 
@@ -345,7 +357,7 @@ export class PostdetailPage implements OnInit {
      this.events.unsubscribe("stream:onStateChangedCallback");
      this.events.unsubscribe("stream:progress");
      this.events.unsubscribe("feeds:openRightMenu");
-
+     this.events.unsubscribe("stream:closed");
   }
 
 
