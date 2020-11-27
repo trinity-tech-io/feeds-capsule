@@ -294,7 +294,7 @@ addBinaryEvevnt(){
 
   this.events.subscribe('stream:progress',(nodeId,progress)=>{
     this.zone.run(() => {
-      if(this.curPostId != ""){
+      if(this.curPostId === ""){
         return;
       }
       this.downStatusObj[this.curPostId] = "3";

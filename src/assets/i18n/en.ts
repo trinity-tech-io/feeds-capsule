@@ -72,7 +72,7 @@ export const en = {
         "followed": "Followed",
         "unfollowed": "Unfollowed",
         "infoObtaining":"Information is being obtained",
-        "filevideodes":"The video is too big",
+        "filevideodes":"The instance video exceeds the maximum limit",
         "videoloading":"Video loading",
         "videocompression":"Video compression",
         "video":"Video",

@@ -252,7 +252,7 @@ export class ChannelsPage implements OnInit {
 
     this.events.subscribe('stream:progress',(nodeId,progress)=>{
       this.zone.run(() => {
-        if(this.curPostId != ""){
+        if(this.curPostId === ""){
           return;
         }
         this.downProgressObj[this.curPostId] = progress;
