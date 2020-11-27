@@ -985,8 +985,8 @@ export class ChannelsPage implements OnInit {
                       this.curNodeId = "";
                       return;
                     }
-                  },()=>{
-
+                  },(err)=>{
+                    this.pauseVideo(id);
                   });
                 return;
               }

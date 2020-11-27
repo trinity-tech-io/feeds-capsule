@@ -689,6 +689,7 @@ export class PostdetailPage implements OnInit {
               }
             },
             (err)=>{
+              this.pauseVideo();
             });
         return;
         }

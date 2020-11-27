@@ -778,7 +778,7 @@ export class ProfilePage implements OnInit {
                     this.curNodeId="";
                   }
                 },(err)=>{
-
+                  this.pauseVideo(id);
                 });
               return;
             }
