@@ -13,6 +13,7 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 @Injectable()
 export class NativeService {
     public loading:any = null;
+    public modal:any = null;
     constructor(
         private popoverController:PopoverController,
         public modalController: ModalController,
@@ -175,10 +176,12 @@ export class NativeService {
     }
 
     async openViewer(imgPath:string,newNameKey:string,oldNameKey:string,appService?:any,isOwer?:boolean) {
-        titleBarManager.setTitle(this.translate.instant(newNameKey));
-        this.setTitleBarBackKeyShown(false);
-        appService.hideright();
-        const modal = await this.modalController.create({
+       
+        if(this.modal === null){ 
+         titleBarManager.setTitle(this.translate.instant(newNameKey));
+         this.setTitleBarBackKeyShown(false);
+         appService.hideright();
+          this.modal = await this.modalController.create({
           component: ViewerModalComponent,
           componentProps: {
             src: imgPath,
@@ -190,8 +193,8 @@ export class NativeService {
         });
 
 
-        modal.onWillDismiss().then(()=>{
-             document.removeEventListener('click',(event)=> this.hide(modal),false);
+        this.modal.onWillDismiss().then(()=>{
+             document.removeEventListener('click',(event)=> this.hide(this.modal),false);
             titleBarManager.setTitle(this.translate.instant(oldNameKey));
             if(oldNameKey!='FeedsPage.tabTitle2'&&oldNameKey!='FeedsPage.tabTitle1'){
                 this.setTitleBarBackKeyShown(true);
@@ -206,15 +209,17 @@ export class NativeService {
            
         })
     
-        return await modal.present().then(()=>{
+        return await this.modal.present().then(()=>{
                 const el = document.querySelector('ion-modal');
-                el.addEventListener('click', (event) => this.hide(modal), true);
+                el.addEventListener('click', (event) => this.hide(this.modal), true);
           
         });
+        }
       }
 
       hide(modal:any){
         modal.dismiss();
+        this.modal = null;
       }
 
       parseJSON(str:string): any{
