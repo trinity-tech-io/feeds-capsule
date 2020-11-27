@@ -491,12 +491,21 @@ export class PostdetailPage implements OnInit {
           }else{
             this.cacheGetBinaryRequestKey = key;
             this.cachedMediaType = "img";
-            let transDataChannel = this.feedService.processGetBinary(this.nodeId, this.channelId, this.postId, 0, 0, FeedsData.MediaType.containsImg, key);
-            if(transDataChannel){
-              this.downStatus = '1';
-            }else{
-              this.downStatus = '';
-            }
+            this.feedService.processGetBinary(this.nodeId, this.channelId, this.postId, 0, 0, FeedsData.MediaType.containsImg, key,
+              (transDataChannel)=>{
+                if (transDataChannel == FeedsData.TransDataChannel.SESSION){
+                  this.downStatus = '1';
+                  return;
+                }
+
+                if (transDataChannel == FeedsData.TransDataChannel.MESSAGE){
+                  this.downStatus = '';
+                  return;
+                }
+              },
+              (err)=>{
+                this.native.hideLoading();
+              });
           }
         });
       }).catch(()=>{
@@ -665,16 +674,22 @@ export class PostdetailPage implements OnInit {
       this.zone.run(()=>{
         let videoData = videodata || "";
         if (videoData == ""){
-      
           this.cacheGetBinaryRequestKey = key;
           this.cachedMediaType = "video";
 
-         let transDataChannel = this.feedService.processGetBinary(this.nodeId, this.channelId, this.postId, 0, 0, FeedsData.MediaType.containsVideo, key);
-         if(transDataChannel){
-           this.downStatus = '1';
-         }else{
-           this.downStatus = '';
-         }
+          this.feedService.processGetBinary(this.nodeId, this.channelId, this.postId, 0, 0, FeedsData.MediaType.containsVideo, key,
+            (transDataChannel)=>{
+              if (transDataChannel == FeedsData.TransDataChannel.SESSION){
+                this.downStatus = '1';
+                return;
+              }
+              if (transDataChannel == FeedsData.TransDataChannel.MESSAGE){
+                this.downStatus = '';
+                return;
+              }
+            },
+            (err)=>{
+            });
         return;
         }
         this.downStatus = "";

@@ -767,15 +767,19 @@ export class ProfilePage implements OnInit {
             if (videodata == ""){
               this.cacheGetBinaryRequestKey = key;
               this.cachedMediaType = "video";
-              let transDataChannel =  this.feedService.processGetBinary(nodeId, channelId, postId, 0, 0, FeedsData.MediaType.containsVideo, key);
-              if(transDataChannel){
-                this.downProgressObj[id] = 0;
-                this.downStatusObj[id] = "1";
-                this.curNodeId=nodeId;
-                }else{
-                this.downStatusObj[id] = "";
-                this.curNodeId="";
-                }
+              this.feedService.processGetBinary(nodeId, channelId, postId, 0, 0, FeedsData.MediaType.containsVideo, key,
+                (transDataChannel)=>{
+                  if (transDataChannel == FeedsData.TransDataChannel.SESSION){
+                    this.downProgressObj[id] = 0;
+                    this.downStatusObj[id] = "1";
+                    this.curNodeId=nodeId;
+                  }else{
+                    this.downStatusObj[id] = "";
+                    this.curNodeId="";
+                  }
+                },(err)=>{
+
+                });
               return;
             }
             this.downStatusObj[id] = "";
@@ -848,14 +852,18 @@ export class ProfilePage implements OnInit {
           }else{
             this.cacheGetBinaryRequestKey = key;
             this.cachedMediaType ="img";
-            let transDataChannel = this.feedService.processGetBinary(item.nodeId,item.channelId,item.postId, 0, 0, FeedsData.MediaType.containsImg, key);
-            if(transDataChannel){
-              this.downStatusObj[item.nodeId+item.channelId+item.postId] = "1";
-              this.curNodeId = item.nodeId;
-            }else{
-              this.downStatusObj[item.nodeId+item.channelId+item.postId] = "";
-              this.curNodeId = "";
-            }
+            this.feedService.processGetBinary(item.nodeId,item.channelId,item.postId, 0, 0, FeedsData.MediaType.containsImg, key,
+              (transDataChannel)=>{
+                if (transDataChannel == FeedsData.TransDataChannel.SESSION){
+                  this.downStatusObj[item.nodeId+item.channelId+item.postId] = "1";
+                  this.curNodeId = item.nodeId;
+                }else{
+                  this.downStatusObj[item.nodeId+item.channelId+item.postId] = "";
+                  this.curNodeId = "";
+                }
+              },(err)=>{
+                this.native.hideLoading();
+              });
           }
         });
       }).catch(()=>{

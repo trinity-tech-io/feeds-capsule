@@ -834,14 +834,22 @@ export class ChannelsPage implements OnInit {
           }else{
             this.cacheGetBinaryRequestKey = key;
             this.cachedMediaType = "img";
-            let transDataChannel = this.feedService.processGetBinary(nodeId, channelId, postId, 0, 0, FeedsData.MediaType.containsImg, key);
-            if(transDataChannel){
-              this.downStatusObj[nodeId+channelId+postId] = "1";
-              this.curNodeId = nodeId;
-            }else{
-              this.downStatusObj[nodeId+channelId+postId] = "";
-              this.curNodeId = "";
-            }
+            this.feedService.processGetBinary(nodeId, channelId, postId, 0, 0, FeedsData.MediaType.containsImg, key,
+              (transDataChannel)=>{
+                if (transDataChannel == FeedsData.TransDataChannel.SESSION){
+                  this.downStatusObj[nodeId+channelId+postId] = "1";
+                  this.curNodeId = nodeId;
+                  return;
+                }
+
+                if (transDataChannel == FeedsData.TransDataChannel.MESSAGE){
+                  this.downStatusObj[nodeId+channelId+postId] = "";
+                  this.curNodeId = "";
+                  return;
+                }
+              },(err)=>{
+                this.native.hideLoading();
+              });
           }
         });
       }).catch(()=>{
@@ -963,15 +971,23 @@ export class ChannelsPage implements OnInit {
                 this.cacheGetBinaryRequestKey = key;
                 this.cachedMediaType = "video";
                
-                let transDataChannel =   this.feedService.processGetBinary(nodeId, channelId, postId, 0, 0, FeedsData.MediaType.containsVideo, key)
-                if(transDataChannel){
-                  this.downProgressObj[id] = 0;
-                  this.downStatusObj[id] = "1";
-                  this.curNodeId = nodeId;
-                  }else{
-                  this.downStatusObj[id] = "";
-                  this.curNodeId = "";
-                  }
+                this.feedService.processGetBinary(nodeId, channelId, postId, 0, 0, FeedsData.MediaType.containsVideo, key,
+                  (transDataChannel)=>{
+                    if (transDataChannel == FeedsData.TransDataChannel.SESSION){
+                      this.downProgressObj[id] = 0;
+                      this.downStatusObj[id] = "1";
+                      this.curNodeId = nodeId;
+                      return;
+                    }
+
+                    if (transDataChannel == FeedsData.TransDataChannel.MESSAGE){
+                      this.downStatusObj[id] = "";
+                      this.curNodeId = "";
+                      return;
+                    }
+                  },()=>{
+
+                  });
                 return;
               }
               this.downStatusObj[id] = "";

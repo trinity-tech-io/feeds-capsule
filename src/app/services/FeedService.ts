@@ -5857,16 +5857,24 @@ export class FeedService {
     return this.createContent(postText,imgThumbs,null);
   }
 
-  processGetBinary(nodeId: string, channelId: number, postId: number, commentId: number, index: number, mediaType: FeedsData.MediaType, key: string){
+  processGetBinary(nodeId: string, channelId: number, postId: number, commentId: number, 
+    index: number, mediaType: FeedsData.MediaType, key: string, onSuccess: (transDataChannel: FeedsData.TransDataChannel)=> void, onError:(err: string) => void){
+    if(this.getServerStatusFromId(nodeId) == 1){
+      this.native.toast(this.formateInfoService.formatOfflineMsg(this.getServerNameByNodeId(nodeId)));
+      onError(nodeId + "offline");
+      return;
+    }
+      
     let size = this.getContentDataSize(nodeId, channelId, postId, commentId, index, mediaType);
     if (size > this.throwMsgTransDataLimit){
-      // this.transDataChannel = FeedsData.TransDataChannel.SESSION
       this.restoreSession(nodeId);
-      return true;
+      onSuccess(FeedsData.TransDataChannel.SESSION);
+      return;
     }
-      // this.transDataChannel = FeedsData.TransDataChannel.MESSAGE
+
     this.getBinaryFromMsg(nodeId, key);
-    return false;
+    onSuccess(FeedsData.TransDataChannel.MESSAGE);
+    return;
   }
 
   translateBinaryError(nodeId: string, errorCode: number){
