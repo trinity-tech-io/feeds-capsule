@@ -185,7 +185,7 @@ export class CreatenewpostPage implements OnInit {
     });
     
 
-    this.events.subscribe('stream:setBinaryError', (nodeId, response) => {
+    this.events.subscribe('stream:error', (nodeId, response) => {
       this.zone.run(() => {
         //response.code
         this.native.hideLoading();
@@ -238,7 +238,7 @@ export class CreatenewpostPage implements OnInit {
     this.events.unsubscribe("feeds:setBinaryFinish");
     
     this.events.unsubscribe("stream:setBinarySuccess");
-    this.events.unsubscribe("stream:setBinaryError");
+    this.events.unsubscribe("stream:error");
     this.events.unsubscribe("stream:onStateChangedCallback");
     this.events.unsubscribe("stream:getBinarySuccess");
     this.events.unsubscribe("feeds:openRightMenu");
