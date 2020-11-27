@@ -141,7 +141,7 @@ export class SessionService {
                                 }
                                 if (workedSessions[nodeId] != undefined)
                                     clearTimeout(workedSessions[nodeId].sessionTimeout);
-                                    
+
                             }, sessionConnectionTimeOut);
 
                             mLogUtils.logd(nodeId + "> start session request",TAG);
@@ -178,6 +178,10 @@ export class SessionService {
 
                         if (workedSessions[nodeId] != undefined && FeedsData.StreamState.DEACTIVATED == workedSessions[nodeId].StreamState){
                             publishError(nodeId, createStateDeactivated());
+                        }
+
+                        if (workedSessions[nodeId] != undefined && FeedsData.StreamState.CLOSED == workedSessions[nodeId].StreamState){
+                            publishCloseSession(nodeId);
                         }
                     },
 
@@ -655,6 +659,10 @@ function parseResponse(response: any){
         mLogUtils.logd(nodeId+"> publish stream:getBinaryResponse", TAG);
         eventBus.publish("stream:getBinaryResponse", nodeId);
     }
+}
+
+function publishCloseSession(nodeId: string){
+    eventBus.publish("stream:closed", nodeId);
 }
 
 function queryRequest(responseId: number, result: any): any{

@@ -332,6 +332,18 @@ export class ChannelsPage implements OnInit {
     this.pauseAllVideo();
     this.hideFullScreen();
    });
+
+   this.events.subscribe('stream:closed',(nodeId)=>{
+      let mNodeId = nodeId || "";
+      if (mNodeId != ""){
+        this.feedService.closeSession(mNodeId);
+      }
+      this.pauseAllVideo();
+      this.native.hideLoading();
+      this.downStatusObj[this.curPostId] = "";
+      this.curNodeId = "";
+      this.downProgressObj[this.curPostId] = 0;
+    });
   }
 
   ionViewWillLeave(){
@@ -357,7 +369,7 @@ export class ChannelsPage implements OnInit {
     this.events.unsubscribe("stream:onStateChangedCallback");
     this.events.unsubscribe("feeds:openRightMenu");
     this.events.unsubscribe("stream:progress");
-
+    this.events.unsubscribe("stream:closed");
     this.removeImages();
     this.removeAllVideo();
     this.isLoadimage ={};

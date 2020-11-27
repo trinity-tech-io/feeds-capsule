@@ -331,6 +331,17 @@ addBinaryEvevnt(){
          this.pauseAllVideo();
   });
   
+  this.events.subscribe('stream:closed',(nodeId)=>{
+    let mNodeId = nodeId || "";
+    if (mNodeId != ""){
+      this.feedService.closeSession(mNodeId);
+    }
+    this.pauseAllVideo();
+    this.native.hideLoading();
+    this.downStatusObj[this.curPostId] = "";
+    this.curNodeId = "";
+    this.downProgressObj[this.curPostId] = 0;
+  });
 }
 
  ionViewWillLeave(){
@@ -349,6 +360,7 @@ addBinaryEvevnt(){
     this.events.unsubscribe("stream:error");
     this.events.unsubscribe("stream:onStateChangedCallback");
     this.events.unsubscribe("stream:progress");
+    this.events.unsubscribe("stream:closed");
 
     this.events.unsubscribe("rpcRequest:error");
     this.events.unsubscribe("rpcResponse:error");
@@ -1085,9 +1097,8 @@ addBinaryEvevnt(){
             return true;
       }
     }
-
+    
     return false;
-
   }
 
   openAlert(){
