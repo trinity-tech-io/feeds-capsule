@@ -69,6 +69,8 @@ export class HomePage implements OnInit {
   public popover:any = "";
 
   public curNodeId:string = "";
+
+  public curImgPostId:string = "";
   
   constructor(
    
@@ -152,6 +154,10 @@ export class HomePage implements OnInit {
  this.events.subscribe("feeds:tabsendpost",()=>{
   this.downProgressObj = {};
   this.pauseAllVideo();
+ });
+
+ this.events.subscribe("feeds:createpost",()=>{
+          this.clearData();
  });
 
  this.addCommonEvents();
@@ -260,33 +266,33 @@ addBinaryEvevnt(){
   });
 
   this.events.subscribe('feeds:getBinaryFinish', (nodeId, key: string, value:string) => {
-    this.zone.run(() => {
-      this.downProgressObj[this.curPostId] = 0;
-      this.curNodeId = "";
-      this.downStatusObj[this.curPostId] = "";
+    this.zone.run(() => { 
+
       this.processGetBinaryResult(key, value);
-      this.native.hideLoading();
+
     });
   });
 
 
   this.events.subscribe('stream:getBinarySuccess', (nodeId, key: string, value:string) => {
     this.zone.run(() => {
-      this.native.hideLoading();
-      this.downProgressObj[this.curPostId] = 0;
-      this.downStatusObj[this.curPostId] = "";
+
       this.curNodeId = "";
       this.feedService.closeSession(nodeId);
       this.processGetBinaryResult(key, value);
+
     });
   });
 
   this.events.subscribe('stream:error', (nodeId, error) => {
     this.zone.run(() => {
-      this.feedService.handleSessionError(nodeId, error);
-      this.pauseAllVideo();
       this.native.hideLoading();
+      this.pauseAllVideo();
+      this.feedService.handleSessionError(nodeId, error);
+      
+      
       this.downStatusObj[this.curPostId] = "";
+      this.downStatusObj[this.curImgPostId] = "";
       this.curNodeId = "";
       this.downProgressObj[this.curPostId] = 0;
     });
@@ -297,11 +303,15 @@ addBinaryEvevnt(){
       if(this.curPostId === ""){
         return;
       }
-      this.downStatusObj[this.curPostId] = "3";
       this.downProgressObj[this.curPostId] = progress;
-      if(this.cachedMediaType==="img"&&this.downStatusObj[this.curPostId]!=''){
+      if(this.curImgPostId=== ""){
+        return;
+      }
+
+      if(this.downStatusObj[this.curImgPostId]!=''){
         this.native.updateLoadingMsg(this.translate.instant("common.downloading")+" "+progress+"%");
       }
+
     });
   })
  
@@ -313,7 +323,11 @@ addBinaryEvevnt(){
       if (state === FeedsData.StreamState.CONNECTED){
         this.downStatusObj[this.curPostId] = "2";
         this.feedService.getBinary(nodeId, this.cacheGetBinaryRequestKey,this.cachedMediaType);
-        if(this.cachedMediaType==="img"&&this.downStatusObj[this.curPostId]!=''){
+        if(this.curImgPostId=== ""){
+          return;
+        }
+
+        if(this.downStatusObj[this.curImgPostId]!=''){
              this.native.updateLoadingMsg(this.translate.instant("common.downloading"));
         }
       }
@@ -322,76 +336,86 @@ addBinaryEvevnt(){
 
   this.events.subscribe('feeds:openRightMenu',()=>{
          this.curPostId ="";
-         this.curNodeId = "";
+         this.curImgPostId ="";
          this.downProgressObj ={};
          this.downStatusObj = {};
-         this.feedService.closeSession(this.nodeId);
          this.native.hideLoading();
          this.hideFullScreen();
          this.pauseAllVideo();
+         if(this.curNodeId!=""){
+          this.feedService.closeSession(this.curNodeId);
+          this.curNodeId = "";
+         }
   });
   
   this.events.subscribe('stream:closed',(nodeId)=>{
     let mNodeId = nodeId || "";
-    if (mNodeId != ""){
-      this.feedService.closeSession(mNodeId);
-    }
     this.pauseAllVideo();
     this.native.hideLoading();
     this.downStatusObj[this.curPostId] = "";
     this.curNodeId = "";
     this.downProgressObj[this.curPostId] = 0;
+    if (mNodeId != ""){
+      this.feedService.closeSession(mNodeId);
+    }
   });
 }
 
  ionViewWillLeave(){
-    this.events.unsubscribe("feeds:updateTitle");
-    this.events.unsubscribe("feeds:connectionChanged");
-    this.events.unsubscribe("feeds:postDataUpdate");
-    this.events.unsubscribe("feeds:friendConnectionChanged");
-    this.events.unsubscribe("feeds:publishPostFinish");
-    this.events.unsubscribe("feeds:editPostFinish");
-    this.events.unsubscribe("feeds:deletePostFinish");
+   this.events.unsubscribe("feeds:createpost");
+   this.clearData();
+}
 
-    this.events.unsubscribe("feeds:getBinaryFinish");
+clearData(){
+  if(this.curNodeId!=""){
+    this.feedService.closeSession(this.curNodeId);
+  }
+   this.events.unsubscribe("feeds:updateTitle");
+   this.events.unsubscribe("feeds:connectionChanged");
+   this.events.unsubscribe("feeds:postDataUpdate");
+   this.events.unsubscribe("feeds:friendConnectionChanged");
+   this.events.unsubscribe("feeds:publishPostFinish");
+   this.events.unsubscribe("feeds:editPostFinish");
+   this.events.unsubscribe("feeds:deletePostFinish");
 
-    this.events.unsubscribe("stream:getBinaryResponse");
-    this.events.unsubscribe("stream:getBinarySuccess");
-    this.events.unsubscribe("stream:error");
-    this.events.unsubscribe("stream:onStateChangedCallback");
-    this.events.unsubscribe("stream:progress");
-    this.events.unsubscribe("stream:closed");
+   this.events.unsubscribe("feeds:getBinaryFinish");
 
-    this.events.unsubscribe("rpcRequest:error");
-    this.events.unsubscribe("rpcResponse:error");
-    this.events.unsubscribe("rpcRequest:success");
-    this.events.unsubscribe('feeds:openRightMenu');
-    this.events.unsubscribe('feeds:tabsendpost');
+   this.events.unsubscribe("stream:getBinaryResponse");
+   this.events.unsubscribe("stream:getBinarySuccess");
+   this.events.unsubscribe("stream:error");
+   this.events.unsubscribe("stream:onStateChangedCallback");
+   this.events.unsubscribe("stream:progress");
+   this.events.unsubscribe("stream:closed");
 
-    this.removeImages();
-    this.removeAllVideo();
-    this.isLoadimage ={};
-    this.isLoadVideoiamge ={};
-    this.curPost={};
-    this.downProgressObj ={};
-    this.downStatusObj = {};
-    if(this.curNodeId!=""){
-      this.feedService.closeSession(this.curNodeId);
-    }
-    this.curPostId = "";
-    this.curNodeId = "";
-    this.hideFullScreen();
-    this.native.hideLoading();
+   this.events.unsubscribe("rpcRequest:error");
+   this.events.unsubscribe("rpcResponse:error");
+   this.events.unsubscribe("rpcRequest:success");
+   this.events.unsubscribe('feeds:openRightMenu');
+   this.events.unsubscribe('feeds:tabsendpost');
+
+   this.removeImages();
+   this.removeAllVideo();
+   this.isLoadimage ={};
+   this.isLoadVideoiamge ={};
+   this.curPost={};
+   this.downProgressObj ={};
+   this.downStatusObj = {};
+   this.curPostId = "";
+   this.curImgPostId ="";
+   this.curNodeId = "";
+   this.hideFullScreen();
+   this.native.hideLoading();
 }
 
   ionViewDidLeave() {
+    console.log("ionViewDidLeave");
     this.events.unsubscribe("addBinaryEvevnt");
     this.events.unsubscribe("update:tab");
   }
 
   ionViewWillUnload() {
-   
-}
+    console.log("ionViewWillUnload");
+  }
 
   getChannel(nodeId:string, channelId:number):any{
     return this.feedService.getChannelFromId(nodeId,channelId);
@@ -445,13 +469,15 @@ addBinaryEvevnt(){
   }
 
   navTo(nodeId:string, channelId:number,postId:number){
-    this.pauseVideo(nodeId+channelId+postId);
+    this.clearData();
     this.native.getNavCtrl().navigateForward(['/channels', nodeId, channelId]);
   }
 
   navToPostDetail(nodeId:string, channelId:number, postId:number){
-    this.pauseVideo(nodeId+channelId+postId);
+    this.clearData();
     this.native.getNavCtrl().navigateForward(['/postdetail',nodeId, channelId,postId]);
+    //this.pauseVideo(nodeId+channelId+postId);
+    
   }
 
   checkMyLike(nodeId: string, channelId: number, postId: number){
@@ -712,7 +738,6 @@ addBinaryEvevnt(){
 
 
   showBigImage(nodeId:string,channelId:number,postId:number){
-    this.curPostId = nodeId+channelId+postId;
     this.pauseAllVideo();
     this.zone.run(()=>{
       this.native.showLoading("common.waitMoment", 5*60*1000).then(()=>{
@@ -725,14 +750,20 @@ addBinaryEvevnt(){
         this.feedService.getData(key).then((realImg)=>{
           let img = realImg || "";
           if(img!=""){
-            this.curNodeId = "";
+            //this.curNodeId = "";
             this.downStatusObj[nodeId+channelId+postId] = "";
             this.native.hideLoading();
             this.native.openViewer(realImg,"common.image","FeedsPage.tabTitle1",this.appService);
           }else{
+            if(this.isExitDown()){
+              this.native.hideLoading();
+              this.openAlert();
+              return;
+            }
+            this.curImgPostId = nodeId+channelId+postId;
             this.cacheGetBinaryRequestKey = key;
             this.cachedMediaType = "img";
-
+             
             this.feedService.processGetBinary(nodeId, channelId, postId, 0, 0, FeedsData.MediaType.containsImg, key,
               (transDataChannel)=>{
                 if (transDataChannel == FeedsData.TransDataChannel.SESSION){
@@ -896,7 +927,10 @@ addBinaryEvevnt(){
     for(let id  in videoids){
       let value = videoids[id] || "";
       if(value === "13"){
-        this.pauseVideo(id);
+        let  downStatus = this.downStatusObj[id] || "";
+        if(downStatus === ""){
+          this.pauseVideo(id);
+        }
       }
     }
   }
@@ -912,10 +946,10 @@ addBinaryEvevnt(){
         let sourcesrc =  source.getAttribute("src") || "";
         if(sourcesrc!=""){
           source.removeAttribute('src'); // empty source
-          let sid=setTimeout(()=>{
-            videoElement.load();
-            clearTimeout(sid);
-          },10)
+          // let sid=setTimeout(()=>{
+          //   videoElement.load();
+          //   clearTimeout(sid);
+          // },10)
         }
       }
     }
@@ -987,8 +1021,8 @@ addBinaryEvevnt(){
         let videodata = videoResult || "";
         if (videodata == ""){
           if(this.isExitDown()){
-            this.openAlert();
             this.pauseVideo(id);
+            this.openAlert();
             return;
           }
           this.curPostId = id;
@@ -1004,18 +1038,19 @@ addBinaryEvevnt(){
               }
 
               if (transDataChannel == FeedsData.TransDataChannel.MESSAGE){
-                this.downStatusObj[id] = "";
+                this.downStatusObj[id] = "1";
+                this.downProgressObj[id] = 0;
                 this.curNodeId = "";
                 return;
               }
             },
             (err)=>{
               this.pauseVideo(id);
+              this.native.hideLoading();
             });
           return;
         }
         this.downStatusObj[id] = "";
-        this.curNodeId = "";
         this.loadVideo(id,videodata);
       }) 
     }); 
@@ -1045,7 +1080,7 @@ addBinaryEvevnt(){
       vgbuffering.style.display ="none";
       vgoverlayplay.style.display = "block";
       vgscrubbar.style.display ="none";
-      //vgcontrol.style.display = "none";  
+      vgcontrol.style.display = "none";  
    });
 
    video.addEventListener('play',()=>{
@@ -1071,11 +1106,16 @@ addBinaryEvevnt(){
   }
 
   processGetBinaryResult(key: string, value: string){
+    this.native.hideLoading();
     if (key.indexOf("img")>-1){
+      this.downStatusObj[this.curImgPostId] = "";
+      this.curImgPostId = "";
       this.cacheGetBinaryRequestKey = "";
-      this.native.hideLoading();
       this.native.openViewer(value,"common.image","FeedsPage.tabTitle1",this.appService);
     } else if (key.indexOf("video")>-1){
+         this.downProgressObj[this.curPostId] = 0;
+         this.downStatusObj[this.curPostId] = "";
+         this.curNodeId="";
          let arr = this.cacheGetBinaryRequestKey.split("-");
          let nodeId =arr[0];
          let channelId:any = arr[1];

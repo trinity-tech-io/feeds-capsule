@@ -106,6 +106,7 @@ export class FeedsPage implements OnInit {
     }
 
     if(this.feedService.getMyChannelList().length === 1){
+      this.event.publish("feeds:createpost");
       let myChannel = this.feedService.getMyChannelList()[0];
       this.native.navigateForward(['createnewpost/',myChannel.nodeId,myChannel.id],"");
       return;

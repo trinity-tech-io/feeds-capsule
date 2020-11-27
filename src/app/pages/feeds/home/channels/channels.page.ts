@@ -72,7 +72,9 @@ export class ChannelsPage implements OnInit {
 
   public downStatusObj = {};
 
-  public curNodeId:string = ""; 
+  public curNodeId:string = "";
+  
+  public curImgPostId:string = "";
 
   constructor(
     private elmRef: ElementRef,
@@ -231,22 +233,14 @@ export class ChannelsPage implements OnInit {
 
     this.events.subscribe('feeds:getBinaryFinish', (nodeId, key: string, value:string) => {
       this.zone.run(() => {
-        this.native.hideLoading();
-        this.downProgressObj[this.curPostId] = 0;
-        this.downStatusObj[this.curPostId] = "";
-        this.curNodeId = "";
         this.processGetBinaryResult(key, value);
       });
     });
   
     this.events.subscribe('stream:getBinarySuccess', (nodeId, key: string, value:string) => {
       this.zone.run(() => {
-        this.native.hideLoading();
-        this.downProgressObj[this.curPostId] = 0;
-        this.downStatusObj[this.curPostId] = "";
-        this.curNodeId ="";
-        this.feedService.closeSession(nodeId);
         this.processGetBinaryResult(key, value);
+        this.feedService.closeSession(nodeId);
       });
     });
 
@@ -256,8 +250,10 @@ export class ChannelsPage implements OnInit {
           return;
         }
         this.downProgressObj[this.curPostId] = progress;
-        this.downStatusObj[this.curPostId] = "3";
-        if(this.cachedMediaType==="img"&&this.downStatusObj[this.curPostId]!=''){
+        if(this.curImgPostId=== ""){
+          return;
+        }
+        if(this.downStatusObj[this.curImgPostId]!=''){
             this.native.updateLoadingMsg(this.translate.instant("common.downloading")+" "+progress+"%");
         }
       });
@@ -283,7 +279,7 @@ export class ChannelsPage implements OnInit {
         if (state === FeedsData.StreamState.CONNECTED){
           this.downStatusObj[this.curPostId] = "2";
           this.feedService.getBinary(nodeId, this.cacheGetBinaryRequestKey,this.cachedMediaType);
-          if(this.cachedMediaType==="img"&&this.downStatusObj[this.curPostId]!=''){
+          if(this.downStatusObj[this.curImgPostId]!=''){
             this.native.updateLoadingMsg(this.translate.instant("common.downloading"));
           }
         }
@@ -325,6 +321,7 @@ export class ChannelsPage implements OnInit {
 
    this.events.subscribe('feeds:openRightMenu',()=>{
     this.curPostId = "";
+    this.curImgPostId = "";
     this.feedService.closeSession(this.curNodeId);
     this.curNodeId = "";
     this.downProgressObj ={};
@@ -382,6 +379,7 @@ export class ChannelsPage implements OnInit {
     }
     this.curNodeId ="";
     this.curPostId ="";
+    this.curImgPostId = "";
     this.events.publish("update:tab");
     this.events.publish("addBinaryEvevnt");
     this.native.hideLoading();
@@ -829,7 +827,6 @@ export class ChannelsPage implements OnInit {
   }
 
   showBigImage(nodeId:string,channelId:number,postId:number){
-    this.curPostId = nodeId+channelId+postId;
     this.pauseAllVideo();
     this.zone.run(()=>{
       this.native.showLoading("common.waitMoment", 5*60*1000).then(()=>{
@@ -842,11 +839,18 @@ export class ChannelsPage implements OnInit {
         this.feedService.getData(key).then((realImg)=>{
           let img = realImg || "";
           if(img!=""){
-            this.curNodeId = "";
+            //this.curNodeId = "";
+            //this.curImgPostId = nodeId+channelId+postId;
             this.downStatusObj[nodeId+channelId+postId] = "";
             this.native.hideLoading();
             this.native.openViewer(realImg,"common.image","ChannelsPage.feeds",this.appService);
           }else{
+            if(this.isExitDown()){
+              this.native.hideLoading();
+              this.openAlert();
+              return;
+            }
+            this.curImgPostId = nodeId+channelId+postId;
             this.cacheGetBinaryRequestKey = key;
             this.cachedMediaType = "img";
             this.feedService.processGetBinary(nodeId, channelId, postId, 0, 0, FeedsData.MediaType.containsImg, key,
@@ -858,7 +862,7 @@ export class ChannelsPage implements OnInit {
                 }
 
                 if (transDataChannel == FeedsData.TransDataChannel.MESSAGE){
-                  this.downStatusObj[nodeId+channelId+postId] = "";
+                  this.downStatusObj[nodeId+channelId+postId] = "1";
                   this.curNodeId = "";
                   return;
                 }
@@ -889,7 +893,10 @@ export class ChannelsPage implements OnInit {
     for(let id  in videoids){
       let value = videoids[id] || "";
       if(value === "13"){
-        this.pauseVideo(id);
+        let  downStatus = this.downStatusObj[id] || "";
+        if(downStatus === ""){
+          this.pauseVideo(id);
+        }
       }
     }
   }
@@ -952,11 +959,6 @@ export class ChannelsPage implements OnInit {
   
       if(vgoverlayplay!=""){
        vgoverlayplay.onclick = ()=>{
-        if(this.isExitDown()){
-          this.openAlert();
-          this.pauseVideo(id);
-          return;
-        }
         this.zone.run(()=>{
            let sourceSrc = source.getAttribute("src") || "";
            if(sourceSrc === ""){
@@ -983,8 +985,8 @@ export class ChannelsPage implements OnInit {
               let videodata = videoResult || "";
               if (videodata == ""){
                 if(this.isExitDown()){
-                  this.openAlert();
                   this.pauseVideo(id);
+                  this.openAlert();
                   return;
                 }
                 this.curPostId = id;
@@ -1001,17 +1003,18 @@ export class ChannelsPage implements OnInit {
                     }
 
                     if (transDataChannel == FeedsData.TransDataChannel.MESSAGE){
-                      this.downStatusObj[id] = "";
+                      this.downProgressObj[id] = 0;
+                      this.downStatusObj[id] = "1";
                       this.curNodeId = "";
                       return;
                     }
                   },(err)=>{
                     this.pauseVideo(id);
+                    this.native.hideLoading();
                   });
                 return;
               }
               this.downStatusObj[id] = "";
-              this.curNodeId = "";
               this.loadVideo(id,videodata);
             }) 
           }); 
@@ -1067,11 +1070,17 @@ export class ChannelsPage implements OnInit {
     }
 
   processGetBinaryResult(key: string, value: string){
+    this.native.hideLoading();
     if (key.indexOf("img")>-1){
+      this.downStatusObj[this.curImgPostId] = "";
+      this.curImgPostId = "";
       this.cacheGetBinaryRequestKey = "";
       this.native.hideLoading();
       this.native.openViewer(value,"common.image","ChannelsPage.feeds",this.appService);
     } else if (key.indexOf("video")>-1){
+      this.downProgressObj[this.curPostId] = 0;
+      this.downStatusObj[this.curPostId] = "";
+      this.curPostId ="";
       let arr = this.cacheGetBinaryRequestKey.split("-");
       let nodeId =arr[0];
       let channelId:any = arr[1];

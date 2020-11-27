@@ -582,7 +582,7 @@ function decodeBodyData(nodeId: string): boolean{
     if (cacheData[nodeId].method == "get_binary" ){
         mStorageService.set(key,value).then(()=>{
             mLogUtils.logd(nodeId +" > getBinarySuccess key ="+key, TAG);
-            eventBus.publish("stream:getBinarySuccess", nodeId, key, value, cacheData[nodeId].mediaType);
+            eventBus.publish("stream:getBinarySuccess", nodeId, key, value);
         });
     }
     
@@ -869,7 +869,7 @@ function checkBody(nodeId: string, data: Uint8Array){
         if (cacheData[nodeId].method == "get_binary" ){
             mStorageService.set(key,value).then(()=>{
                 mLogUtils.logd(nodeId+"> publish stream:getBinarySuccess", TAG);
-                eventBus.publish("stream:getBinarySuccess", nodeId, key, value, cacheData[nodeId].mediaType);
+                eventBus.publish("stream:getBinarySuccess", nodeId, key, value);
             });
         }
         

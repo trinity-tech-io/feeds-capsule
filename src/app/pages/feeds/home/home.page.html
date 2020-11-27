@@ -104,8 +104,8 @@
               </video>
               </vg-player>
              </div>
-             <ion-progress-bar *ngIf="downStatusObj[post.nodeId+post.channel_id++post.id]!=''&&downProgressObj[post.nodeId+post.channel_id++post.id]>=0&&downProgressObj[post.nodeId+post.channel_id++post.id]!=100" [value]="downProgressObj[post.nodeId+post.channel_id++post.id]/100" style="margin-top: -13;"></ion-progress-bar>
-              <span class="topostdetailvideo" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)"></span>
+             <span class="topostdetailvideo" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)"></span>
+             <ion-progress-bar *ngIf="downStatusObj[post.nodeId+post.channel_id++post.id]!=''&&downProgressObj[post.nodeId+post.channel_id++post.id]>=0&&downProgressObj[post.nodeId+post.channel_id++post.id]!=100" [value]="downProgressObj[post.nodeId+post.channel_id++post.id]/100" style="margin-top: -13px;"></ion-progress-bar>
             </div>
 
           <ion-row class="bottom-row">
