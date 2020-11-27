@@ -84,7 +84,7 @@ export const zh = {
         "downstatus1":"连接中",
         "downstatus2":"连接成功",
         "downstatus3":"开始下载",
-        "downDes":"视频正在下载中..."
+        "downDes":"已有视频文件正下载中，请等待下载完成后再试。"
     },
     "app":{
         "profileDetails":"档案详情",
