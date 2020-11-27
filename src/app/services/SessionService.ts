@@ -139,7 +139,9 @@ export class SessionService {
                                     workedSessions[nodeId].StreamState = FeedsData.StreamState.NOTINIT;
                                     publishError(nodeId, createCreateSessionTimeout());
                                 }
-                                clearTimeout(workedSessions[nodeId].sessionTimeout);
+                                if (workedSessions[nodeId] != undefined)
+                                    clearTimeout(workedSessions[nodeId].sessionTimeout);
+                                    
                             }, sessionConnectionTimeOut);
 
                             mLogUtils.logd(nodeId + "> start session request",TAG);
