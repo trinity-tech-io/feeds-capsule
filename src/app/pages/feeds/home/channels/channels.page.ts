@@ -72,6 +72,8 @@ export class ChannelsPage implements OnInit {
 
   public downStatusObj = {};
 
+  public curNodeId:string = ""; 
+
   constructor(
     private elmRef: ElementRef,
     private popoverController:PopoverController,
@@ -232,15 +234,17 @@ export class ChannelsPage implements OnInit {
         this.native.hideLoading();
         this.downProgressObj[this.curPostId] = 0;
         this.downStatusObj[this.curPostId] = "";
+        this.curNodeId = "";
         this.processGetBinaryResult(key, value);
       });
     });
   
     this.events.subscribe('stream:getBinarySuccess', (nodeId, key: string, value:string) => {
       this.zone.run(() => {
-        //this.native.hideLoading();
+        this.native.hideLoading();
         this.downProgressObj[this.curPostId] = 0;
         this.downStatusObj[this.curPostId] = "";
+        this.curNodeId ="";
         this.feedService.closeSession(nodeId);
         this.processGetBinaryResult(key, value);
       });
@@ -248,9 +252,11 @@ export class ChannelsPage implements OnInit {
 
     this.events.subscribe('stream:progress',(nodeId,progress)=>{
       this.zone.run(() => {
-        //this.native.updateLoadingMsg(this.translate.instant("common.downloading")+" "+progress+"%");
         this.downProgressObj[this.curPostId] = progress;
         this.downStatusObj[this.curPostId] = "3";
+        if(this.cachedMediaType==="img"&&this.downStatusObj[this.curPostId]!=''){
+            this.native.updateLoadingMsg(this.translate.instant("common.downloading")+" "+progress+"%");
+        }
       });
     });
   
@@ -260,7 +266,8 @@ export class ChannelsPage implements OnInit {
         this.pauseAllVideo();
         this.downProgressObj[this.curPostId] = 0;
         this.downStatusObj[this.curPostId] = "";
-        //this.native.hideLoading();
+        this.curNodeId = "";
+        this.native.hideLoading();
       });
     });
    
@@ -273,7 +280,9 @@ export class ChannelsPage implements OnInit {
         if (state === FeedsData.StreamState.CONNECTED){
           this.downStatusObj[this.curPostId] = "2";
           this.feedService.getBinary(nodeId, this.cacheGetBinaryRequestKey,this.cachedMediaType);
-          //this.native.updateLoadingMsg(this.translate.instant("common.downloading"));
+          if(this.cachedMediaType==="img"&&this.downStatusObj[this.curPostId]!=''){
+            this.native.updateLoadingMsg(this.translate.instant("common.downloading"));
+          }
         }
       });
     });
@@ -313,6 +322,8 @@ export class ChannelsPage implements OnInit {
 
    this.events.subscribe('feeds:openRightMenu',()=>{
     this.curPostId = "";
+    this.feedService.closeSession(this.curNodeId);
+    this.curNodeId = "";
     this.downProgressObj ={};
     this.downStatusObj ={};
     this.pauseAllVideo();
@@ -351,6 +362,10 @@ export class ChannelsPage implements OnInit {
     this.curPost={};
     this.downProgressObj = {};
     this.downStatusObj = {};
+    if(this.curNodeId !=""){
+      this.feedService.closeSession(this.curNodeId);
+    }
+    this.curNodeId ="";
     this.curPostId ="";
     this.events.publish("update:tab");
     this.events.publish("addBinaryEvevnt");
@@ -799,17 +814,7 @@ export class ChannelsPage implements OnInit {
   }
 
   showBigImage(nodeId:string,channelId:number,postId:number){
-    // let idStr = id+"postimgchannel";
-    // let content = document.getElementById(idStr).getAttribute("src") || "";
-    // if(content!=''){
-    //   this.pauseAllVideo();
-    //   let isOwer = this.feedService.checkChannelIsMine(this.nodeId, this.channelId);
-    //   if(isOwer){
-    //     titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, null);
-    //   }
-    //   this.native.openViewer(content,"common.image","ChannelsPage.feeds",this.appService,isOwer);
-    // }
-
+    this.curPostId = nodeId+channelId+postId;
     this.pauseAllVideo();
     this.zone.run(()=>{
       this.native.showLoading("common.waitMoment", 5*60*1000).then(()=>{
@@ -822,12 +827,21 @@ export class ChannelsPage implements OnInit {
         this.feedService.getData(key).then((realImg)=>{
           let img = realImg || "";
           if(img!=""){
+            this.curNodeId = "";
+            this.downStatusObj[nodeId+channelId+postId] = "";
             this.native.hideLoading();
             this.native.openViewer(realImg,"common.image","ChannelsPage.feeds",this.appService);
           }else{
             this.cacheGetBinaryRequestKey = key;
             this.cachedMediaType = "img";
-            this.feedService.processGetBinary(nodeId, channelId, postId, 0, 0, FeedsData.MediaType.containsImg, key);
+            let transDataChannel = this.feedService.processGetBinary(nodeId, channelId, postId, 0, 0, FeedsData.MediaType.containsImg, key);
+            if(transDataChannel){
+              this.downStatusObj[nodeId+channelId+postId] = "1";
+              this.curNodeId = nodeId;
+            }else{
+              this.downStatusObj[nodeId+channelId+postId] = "";
+              this.curNodeId = "";
+            }
           }
         });
       }).catch(()=>{
@@ -953,12 +967,15 @@ export class ChannelsPage implements OnInit {
                 if(transDataChannel){
                   this.downProgressObj[id] = 0;
                   this.downStatusObj[id] = "1";
+                  this.curNodeId = nodeId;
                   }else{
                   this.downStatusObj[id] = "";
+                  this.curNodeId = "";
                   }
                 return;
               }
               this.downStatusObj[id] = "";
+              this.curNodeId = "";
               this.loadVideo(id,videodata);
             }) 
           }); 

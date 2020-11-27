@@ -255,14 +255,15 @@ export class PostdetailPage implements OnInit {
     this.events.subscribe('feeds:getBinaryFinish', (nodeId, key: string, value, mediaType) => {
       this.zone.run(() => {
         this.downProgress = 0;
-        //this.native.hideLoading();
+        this.downStatus = "";
+        this.native.hideLoading();
         this.processGetBinaryResult(key, value);
       });
     });
 
     this.events.subscribe('stream:getBinarySuccess', (nodeId, key: string, value, mediaType) => {
       this.zone.run(() => {
-        //this.native.hideLoading();
+        this.native.hideLoading();
         this.downStatus = "";
         this.downProgress = 0;
         this.feedService.closeSession(nodeId);
@@ -289,19 +290,28 @@ export class PostdetailPage implements OnInit {
         if (state === FeedsData.StreamState.CONNECTED){
           this.downStatus = '2';
           this.feedService.getBinary(this.nodeId, this.cacheGetBinaryRequestKey, this.cachedMediaType);
+          if(this.cachedMediaType === 'img'&&this.downStatus!=""){
+            this.native.updateLoadingMsg(this.translate.instant("common.downloading"));
+          }
         }
       });
     });
 
     this.events.subscribe('stream:progress',(nodeId,progress)=>{
         this.zone.run(() => {
-          //this.native.updateLoadingMsg(this.translate.instant("common.downloading")+" "+progress+"%");
           this.downStatus = '3';
           this.downProgress = progress;
+          if(this.cachedMediaType === 'img'&&this.downStatus!=""){
+            this.native.updateLoadingMsg(this.translate.instant("common.downloading")+" "+progress+"%");
+          }
         });
     })
 
     this.events.subscribe('feeds:openRightMenu',()=>{
+      this.downStatus ="";
+      this.downProgress = 0;
+      this.feedService.closeSession(this.nodeId);
+      this.native.hideLoading();
       this.pauseVideo();
       this.hideFullScreen();
      }); 
@@ -349,6 +359,7 @@ export class PostdetailPage implements OnInit {
     this.hideComment = true;
     this.postImage = "";
     this.downProgress = 0;
+    this.feedService.closeSession(this.nodeId);
     this.clearVideo();
     this.events.publish("update:tab");
     this.events.publish("addBinaryEvevnt");
@@ -474,12 +485,18 @@ export class PostdetailPage implements OnInit {
         this.feedService.getData(key).then((realImg)=>{
           let img = realImg || "";
           if(img!=""){
+            this.downStatus = "";
             this.native.hideLoading();
             this.native.openViewer(realImg,"common.image","PostdetailPage.postview",this.appService);
           }else{
             this.cacheGetBinaryRequestKey = key;
             this.cachedMediaType = "img";
-            this.feedService.processGetBinary(this.nodeId, this.channelId, this.postId, 0, 0, FeedsData.MediaType.containsImg, key)
+            let transDataChannel = this.feedService.processGetBinary(this.nodeId, this.channelId, this.postId, 0, 0, FeedsData.MediaType.containsImg, key);
+            if(transDataChannel){
+              this.downStatus = '1';
+            }else{
+              this.downStatus = '';
+            }
           }
         });
       }).catch(()=>{
