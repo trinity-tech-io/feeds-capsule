@@ -133,10 +133,10 @@ export class SessionService {
                         mLogUtils.logd(nodeId + "> stream [" + event.stream.id + "] state change to "+state_name[workedSessions[nodeId].StreamState],TAG);
                         eventBus.publish("stream:onStateChangedCallback", nodeId, workedSessions[nodeId].StreamState);
 
-                        if (FeedsData.StreamState.INITIALIZED == workedSessions[nodeId].StreamState){
+                        if (workedSessions[nodeId] != undefined && FeedsData.StreamState.INITIALIZED == workedSessions[nodeId].StreamState){
                             workedSessions[nodeId].sessionTimeout = setTimeout(() => {
-                                if (workedSessions[nodeId].StreamState != FeedsData.StreamState.CONNECTED){
-                                    workedSessions[nodeId].StreamState = -1;
+                                if (workedSessions[nodeId] != undefined && workedSessions[nodeId].StreamState != FeedsData.StreamState.CONNECTED){
+                                    workedSessions[nodeId].StreamState = FeedsData.StreamState.NOTINIT;
                                     publishError(nodeId, createCreateSessionTimeout());
                                 }
                                 clearTimeout(workedSessions[nodeId].sessionTimeout);
@@ -149,7 +149,7 @@ export class SessionService {
                                     let sdp = event.sdp;
                                     workedSessions[nodeId].sdp = sdp;
                                     mLogUtils.logd(nodeId + "> sessionRequest sdp = "+sdp,TAG);
-                                    if (workedSessions[nodeId].StreamState == FeedsData.StreamState.TRANSPORT_READY){
+                                    if (workedSessions[nodeId] != undefined && workedSessions[nodeId].StreamState == FeedsData.StreamState.TRANSPORT_READY){
                                         sessionStart(nodeId, mSession, sdp);
                                     }
                                 },
@@ -162,7 +162,7 @@ export class SessionService {
                               );
                         }
 
-                        if (FeedsData.StreamState.TRANSPORT_READY == workedSessions[nodeId].StreamState){
+                        if (workedSessions[nodeId] != undefined && FeedsData.StreamState.TRANSPORT_READY == workedSessions[nodeId].StreamState){
                             let sdp = workedSessions[nodeId].sdp;
                             mLogUtils.logd(nodeId + "> transport ready sdp = "+sdp,TAG);
                             if (sdp != ""){
@@ -170,11 +170,11 @@ export class SessionService {
                             }
                         }
 
-                        if (FeedsData.StreamState.ERROR == workedSessions[nodeId].StreamState){
+                        if (workedSessions[nodeId] != undefined && FeedsData.StreamState.ERROR == workedSessions[nodeId].StreamState){
                             publishError(nodeId, createStateError());
                         }
 
-                        if (FeedsData.StreamState.DEACTIVATED == workedSessions[nodeId].StreamState){
+                        if (workedSessions[nodeId] != undefined && FeedsData.StreamState.DEACTIVATED == workedSessions[nodeId].StreamState){
                             publishError(nodeId, createStateDeactivated());
                         }
                     },
