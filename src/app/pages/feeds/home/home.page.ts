@@ -967,7 +967,6 @@ addBinaryEvevnt(){
   }
 
   getVideo(id:string,srcId:string){
-
     let arr = srcId.split("-");
     let nodeId =arr[0];
     let channelId:any = arr[1];
@@ -998,6 +997,7 @@ addBinaryEvevnt(){
               }
             },
             (err)=>{
+              this.pauseVideo(id);
             });
           return;
         }
