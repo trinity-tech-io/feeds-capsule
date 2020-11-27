@@ -261,7 +261,7 @@ export class PostdetailPage implements OnInit {
       });
     });
 
-    this.events.subscribe('stream:getBinarySuccess', (nodeId, key: string, value, mediaType) => {
+    this.events.subscribe('stream:getBinarySuccess', (nodeId, key: string, value) => {
       this.zone.run(() => {
         this.native.hideLoading();
         this.downStatus = "";
@@ -299,7 +299,6 @@ export class PostdetailPage implements OnInit {
 
     this.events.subscribe('stream:progress',(nodeId,progress)=>{
         this.zone.run(() => {
-          this.downStatus = '3';
           this.downProgress = progress;
           if(this.cachedMediaType === 'img'&&this.downStatus!=""){
             this.native.updateLoadingMsg(this.translate.instant("common.downloading")+" "+progress+"%");

@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { NavController, PopoverController } from '@ionic/angular';
+import { NavController, PopoverController,Events} from '@ionic/angular';
 import { FeedService } from 'src/app/services/FeedService';
 import { ThemeService } from '../../services/theme.service';
-import { Router } from '@angular/router';
 import { NativeService } from 'src/app/services/NativeService';
-import { TranslateService } from "@ngx-translate/core";
+
+
 
 @Component({
   selector: 'app-postfrom',
@@ -21,10 +21,9 @@ export class PostfromComponent implements OnInit {
     private native: NativeService,
     private navCtrl: NavController,
     private feedService: FeedService,
-    private router: Router,
+    private event: Events,
     private popover: PopoverController,
-    public theme:ThemeService,
-    private translate:TranslateService) {
+    public theme:ThemeService) {
     this.channels = this.feedService.refreshMyChannels();
     this.initnodeStatus();
   }
@@ -41,8 +40,8 @@ export class PostfromComponent implements OnInit {
     if (!this.feedService.checkBindingServerVersion(()=>{
       this.feedService.hideAlertPopover();
     })) return;
-
-    this.navCtrl.navigateForward(['createnewpost/',nodeId,channelId]);
+    this.event.publish("feeds:createpost");
+    this.navCtrl.navigateForward(['/createnewpost',nodeId,channelId]);
     
     // this.router.navigate(['createnewpost/',nodeId,channelId]);
     // this.router.navigate(['createnewpost']);

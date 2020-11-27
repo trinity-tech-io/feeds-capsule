@@ -278,7 +278,7 @@ export class CreatenewpostPage implements OnInit {
       this.native.toast_trans("CreatenewpostPage.tipMsg");
       return false;
     }
-    if(this.flieUri!=""&&this.posterImg === ""){
+    if(this.posterImg!=""&& this.flieUri=== ""){
         this.native.toast_trans("CreatenewpostPage.tipMsg2");
          return false;
     }
@@ -652,6 +652,9 @@ video.load();
 }
 
  pauseVideo(){
+  if(this.flieUri === ""){
+    return;
+  }
   let  video:any = document.getElementById("videocreatepost") || "";
   if(!video.paused){  //判断是否处于暂停状态
       video.pause();  //停止播放
