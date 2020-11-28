@@ -357,6 +357,8 @@ export class PostdetailPage implements OnInit {
      this.events.unsubscribe("stream:progress");
      this.events.unsubscribe("feeds:openRightMenu");
      this.events.unsubscribe("stream:closed");
+     this.events.publish("update:tab");
+     this.events.publish("addBinaryEvevnt");
   }
 
 
@@ -372,8 +374,6 @@ export class PostdetailPage implements OnInit {
     this.downProgress = 0;
     this.feedService.closeSession(this.nodeId);
     this.clearVideo();
-    this.events.publish("update:tab");
-    this.events.publish("addBinaryEvevnt");
     this.native.hideLoading();
     this.hideFullScreen();
   }
