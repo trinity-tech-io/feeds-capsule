@@ -301,7 +301,7 @@ export class ChannelsPage implements OnInit {
    this.events.subscribe('rpcRequest:success', () => {
     this.zone.run(() => {
   
-      this.totalData = this.feedService.getPostList() || [];
+      this.totalData =  this.feedService.getPostListFromChannel(this.nodeId, this.channelId) || [];
       if (this.totalData.length - this.pageNumber > this.pageNumber){
         this.postList = this.totalData.slice(0,(this.startIndex)*this.pageNumber);
         this.infiniteScroll.disabled =false;
