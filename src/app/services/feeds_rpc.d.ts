@@ -861,5 +861,38 @@ declare module Communication{
         version: "1.0"
         id     : jsonrpc_id
     }
+
+    type standard_sign_in_request = {
+        version: "1.0"
+        method : "standard_sign_in"
+        id     : jsonrpc_id
+        params : {
+            document    : string
+        } 
+    }
+
+    type standard_sign_in_response = {
+        version: "1.0"
+        result : {
+            challenge    : string
+        }
+    }
+
+    type standard_did_auth_request = {
+        version: "1.0"
+        method : "standard_did_auth"
+        id     : jsonrpc_id
+        params : {
+            vp    : string
+        } 
+    }
+
+    type standard_did_auth_response = {
+        version: "1.0"
+        result : {
+            access_token    : string
+        }
+    }
+
 }
 
