@@ -407,6 +407,9 @@ export class FeedIntro{
 @Injectable()
 export class FeedService {
   public developerMode:boolean = false;
+  public hideDeletedPosts:boolean = false;
+  public hideDeletedComments:boolean = false;
+  public hideOfflineFeeds:boolean = true;
   public localSignInData: SignInData = undefined;
   public currentLang:string ="";
   public curtab:string ="home";
@@ -5549,13 +5552,37 @@ export class FeedService {
     return this.storeService.get(key);
   }
 
- setDeveloperMode(status:boolean){
+  setDeveloperMode(status:boolean){
     return this.developerMode = status;  
   }
 
   getDeveloperMode(){
     return this.developerMode;
   }
+
+  setHideDeletedPosts(status:boolean){
+    return this.hideDeletedPosts = status;
+  }
+
+  getHideDeletedPosts(){
+  return this.hideDeletedPosts;
+  }
+
+  setHideDeletedComments(status:boolean){
+   return this.hideDeletedComments = status;
+  } 
+
+ getHideDeletedComments(){
+  return this.hideDeletedComments;
+  }
+
+ setHideOfflineFeeds(status:boolean){
+  return this.hideOfflineFeeds = status;
+ }
+
+ getHideOfflineFeeds(){
+  return this.hideOfflineFeeds;
+ }
  
   removeMediaData(nodeId: string, channelId: number, postId: number, commentId: number){
     let imgThumbs = this.getImgThumbsKeyFromId(nodeId,channelId,postId,commentId);

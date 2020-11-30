@@ -208,10 +208,6 @@ export const fr = {
         "develop":"Develop",
         "clearAllData":"Clear All Data"
     },
-    "SettingPage":{
-        "setting":"Settings",
-        "emptyDes":"No setting items for now"
-    },
     "AboutPage":{
         "about":"About Feeds",
         "version":"version",
@@ -475,10 +471,11 @@ export const fr = {
     },
     "SettingsPage":{
         "devmode": "Developer Mode",
-        "on":"ON",
-        "off":"OFF",
         "cleandata":"Clean Data",
         "des":"Are you sure you want to clear the data?",
         "des1":"Data cleared successfully",
+        "hidedeletepost":'Dispaly posts with label "deleted"',
+        "hidedeletecomment":'Dispaly comments with label "deleted"',
+        "hideOfflinefeed":"Dispaly online Feeds only"
     }
 };
