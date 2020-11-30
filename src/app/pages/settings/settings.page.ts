@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { Events } from '@ionic/angular';
+import { Events,PopoverController} from '@ionic/angular';
 import { TranslateService } from "@ngx-translate/core";
-import { ThemeService } from 'src/app/services/theme.service';
-import { NativeService } from 'src/app/services/NativeService';
-import { FeedService } from 'src/app/services/FeedService';
-import { PopupProvider } from 'src/app/services/popup';
+import { ThemeService } from '../../services/theme.service';
+import { NativeService } from '../../services/NativeService';
+import { FeedService } from '../../services/FeedService';
+import { PopupProvider } from '../../services/popup';
 import { StorageService } from '../../services/StorageService';
 import { AppService } from '../../services/AppService';
 
@@ -17,6 +17,9 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 })
 export class SettingsPage implements OnInit {
   public developerMode:boolean =  false;
+  public hideDeletedPosts:boolean = false;;
+  public hideDeletedComments:boolean = false;
+  public hideOfflineFeeds:boolean = true;
   public popover:any = null;
   constructor(
     private feedService:FeedService,
@@ -27,6 +30,7 @@ export class SettingsPage implements OnInit {
     public theme:ThemeService,
     public popupProvider:PopupProvider,
     public storageService:StorageService,
+    private popoverController:PopoverController
     ) { 
 
   }
@@ -39,6 +43,9 @@ export class SettingsPage implements OnInit {
   }
 
   ionViewWillEnter() {
+    this.hideDeletedPosts = this.feedService.getHideDeletedPosts();
+    this.hideDeletedComments = this.feedService.getHideDeletedComments();
+    this.hideOfflineFeeds = this.feedService.getHideOfflineFeeds();
     this.developerMode = this.feedService.getDeveloperMode();
     this.initTitle();
     this.native.setTitleBarBackKeyShown(true);
@@ -54,8 +61,26 @@ export class SettingsPage implements OnInit {
   ionViewWillLeave(){
     this.events.unsubscribe("feeds:updateTitle");
     if(this.popover!=null){
-      this.popover.dismiss();
+      this.popoverController.dismiss();
     }
+  }
+
+  toggleHideDeletedPosts(){
+    this.hideDeletedPosts = !this.hideDeletedPosts;
+    this.feedService.setHideDeletedPosts(this.hideDeletedPosts);
+    this.feedService.setData("feeds.hideDeletedPosts",this.hideDeletedPosts);
+  }
+
+  toggleHideDeletedComments(){
+    this.hideDeletedComments = !this.hideDeletedComments;
+    this.feedService.setHideDeletedComments(this.hideDeletedComments);
+    this.feedService.setData("feeds.hideDeletedComments",this.hideDeletedComments);
+  }
+
+  toggleHideOfflineFeeds(){
+    this.hideOfflineFeeds = !this.hideOfflineFeeds;
+    this.feedService.setDeveloperMode(this.developerMode);
+    this.feedService.setData("feeds.hideOfflineFeeds",this.developerMode);
   }
 
   toggleDeveloperMode(){
@@ -78,13 +103,13 @@ export class SettingsPage implements OnInit {
 
   cancel(that:any){
     if(this.popover!=null){
-       this.popover.dismiss();
+      this.popover.dismiss();
     }
   }
 
   confirm(that:any){
     if(this.popover!=null){
-       this.popover.dismiss();
+      this.popover.dismiss();
     }
     
      that.removeData();

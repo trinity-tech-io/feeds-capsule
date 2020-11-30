@@ -207,10 +207,6 @@ export const zh = {
         "develop":"开发",
         "clearAllData":"清除所有数据"
     },
-    "SettingPage":{
-        "setting":"设置",
-        "emptyDes":"目前没有设置项"
-    },
     "AboutPage":{
         "about":"关于微频",
         "version":"版本",
@@ -474,10 +470,11 @@ export const zh = {
     },
     "SettingsPage":{
         "devmode": '开发者模式',
-        "on": '开',
-        "off": '关',
         "cleandata":"清空数据",
         "des":"确认要清空数据吗？",
         "des1":"清空数据成功",
+        "hidedeletepost":'“删除”的微说',
+        "hidedeletecomment":'“删除”的微评',
+        "hideOfflinefeed":"仅显示在线状态的Feeds"
     }
 };

@@ -46,12 +46,7 @@ export class MyApp {
 
   initializeApp() {
     this.platform.ready().then(() => {
-       this.feedService.getData("feeds.developerMode").then((status)=>{
-            let dstatus = status || false;
-            this.feedService.setDeveloperMode(dstatus);
-       }).catch((err)=>{
-
-       });
+      this.initSetting();
       this.native.networkInfoInit();
       this.native.addNetworkListener(()=>{
         this.events.publish('feeds:networkStatusChanged', 1);
@@ -59,6 +54,38 @@ export class MyApp {
         this.events.publish('feeds:networkStatusChanged', 0);
       });
         this.initDisclaimer();
+    });
+  }
+
+  initSetting(){
+
+    this.feedService.getData("feeds.developerMode").then((status)=>{
+      let dstatus = status || false;
+      this.feedService.setDeveloperMode(dstatus);
+    }).catch((err)=>{
+
+    });
+
+  
+    this.feedService.getData("feeds.hideDeletedPosts").then((status)=>{
+      let dstatus = status || false;
+      this.feedService.setHideDeletedPosts(dstatus);
+    }).catch((err)=>{
+
+    });
+
+    this.feedService.getData("feeds.hideDeletedComments").then((status)=>{
+      let dstatus = status || false;
+      this.feedService.setHideDeletedComments(dstatus);
+    }).catch((err)=>{
+
+    });
+
+    this.feedService.getData("feeds.hideOfflineFeeds").then((status)=>{
+      let dstatus = status || true;
+      this.feedService.setHideOfflineFeeds(dstatus);
+    }).catch((err)=>{
+
     });
   }
 
