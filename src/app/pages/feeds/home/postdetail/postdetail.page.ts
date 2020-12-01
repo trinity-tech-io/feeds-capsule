@@ -53,7 +53,6 @@ export class PostdetailPage implements OnInit {
 
   public hideComment = true;
   
-  //public videoObj:any ={};
   public videoPoster:string ="";
   public posterImg:string ="";
   public videoObj:string ="";
@@ -70,6 +69,8 @@ export class PostdetailPage implements OnInit {
   public mediaType:any;
 
   public fullScreenmodal:any="";
+
+  public hideDeletedComments:boolean = false;
 
   constructor(
     private popoverController:PopoverController,
@@ -144,6 +145,7 @@ export class PostdetailPage implements OnInit {
   }
 
   ionViewWillEnter() {
+    this.hideDeletedComments = this.feedService.getHideDeletedComments();
     this.initTitle();
     this.native.setTitleBarBackKeyShown(true);
     this.styleObj.width = (screen.width - 55)+'px';
@@ -719,24 +721,20 @@ export class PostdetailPage implements OnInit {
     let vgbuffering:any = document.getElementById(id+"vgbufferingpostdetail");
     let vgoverlayplay:any = document.getElementById(id+"vgoverlayplaypostdetail"); 
     let vgcontrol:any = document.getElementById(id+"vgcontrolspostdetail");
-    let vgscrubbar:any = document.getElementById(id+"vgscrubbarpostdetail"); 
     video.addEventListener('ended',()=>{
-     
-        vgbuffering.style.display ="none";
+
         vgoverlayplay.style.display = "block";  
+        vgbuffering.style.display ="none";
         vgcontrol.style.display = "none";
     });
 
     video.addEventListener('pause',()=>{
+      vgoverlayplay.style.display = "block";
       vgbuffering.style.display ="none";
       vgcontrol.style.display = "none";
-      if(vgoverlayplay!=""){
-        vgoverlayplay.style.display = "block";
-      }
     });
 
     video.addEventListener('play',()=>{
-      vgscrubbar.style.display ="block";
       vgcontrol.style.display = "block";  
      });
   
@@ -745,11 +743,7 @@ export class PostdetailPage implements OnInit {
           vgbuffering.style.display ="none";
           video.play(); 
      });
-      video.load();
-      // let sid = setTimeout(()=>{
-      //   video.play();
-      //   clearTimeout(sid);
-      // },20);
+     video.load();
   }
 
   pauseVideo(){

@@ -75,6 +75,8 @@ export class ProfilePage implements OnInit {
 
   public curImgPostId:string = "";
 
+  public hideDeletedPosts:boolean = false;
+
   constructor(
     private feedService: FeedService,
     public theme:ThemeService,
@@ -131,10 +133,20 @@ export class ProfilePage implements OnInit {
   }
 
   ionViewWillEnter() {
+
+    this.hideDeletedPosts = this.feedService.getHideDeletedPosts();
+
     this.clientHeight =screen.availHeight;
     this.curItem = {};
     this.changeType(this.selectType);
     this.connectionStatus = this.feedService.getConnectionStatus();
+
+    this.events.subscribe("feeds:hideDeletedPosts",()=>{
+      this.zone.run(()=>{
+       this.hideDeletedPosts = this.feedService.getHideDeletedPosts();
+      });
+    });
+
     this.events.subscribe('feeds:connectionChanged',(status)=>{
       this.zone.run(() => {
         this.connectionStatus = status;
@@ -366,6 +378,7 @@ export class ProfilePage implements OnInit {
     this.events.unsubscribe("feeds:tabsendpost");
     this.events.unsubscribe("stream:progress");
     this.events.unsubscribe("stream:closed");
+    this.events.unsubscribe("feeds:hideDeletedPosts");
     
     this.native.hideLoading();
     this.hideFullScreen();
@@ -822,24 +835,20 @@ export class ProfilePage implements OnInit {
     let vgbuffering:any = document.getElementById(id+"vgbufferinglike") || "";
     let vgoverlayplay:any = document.getElementById(id+"vgoverlayplaylike"); 
     let video:any = document.getElementById(id+"videolike");
-    let vgscrubbar:any = document.getElementById(id+"vgscrubbarlike"); 
     let vgcontrol:any = document.getElementById(id+"vgcontrolslike"); 
     video.addEventListener('ended',()=>{
-        vgbuffering.style.display ="none";
-        vgoverlayplay.style.display = "block";
-        vgscrubbar.style.display ="none"; 
-        vgcontrol.style.display = "none";  
+       vgoverlayplay.style.display = "block";
+       vgbuffering.style.display ="none";
+       vgcontrol.style.display = "none";  
     });
 
     video.addEventListener('pause',()=>{
       vgoverlayplay.style.display = "block";  
       vgbuffering.style.display ="none";
-      vgscrubbar.style.display ="none";
       vgcontrol.style.display = "none"; 
   });
 
   video.addEventListener('play',()=>{
-    vgscrubbar.style.display ="block";
     vgcontrol.style.display = "block";  
    });
 
@@ -849,10 +858,6 @@ export class ProfilePage implements OnInit {
         video.play(); 
    });
     video.load();
-    // let sid = setTimeout(()=>{
-    //   video.play();
-    //   clearTimeout(sid);
-    // },20);
    }
 
   showBigImage(item:any){
