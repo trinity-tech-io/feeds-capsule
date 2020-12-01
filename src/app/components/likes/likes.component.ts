@@ -21,6 +21,7 @@ export class LikesComponent implements OnInit {
   @Input() isLoadVideoiamge:any ={};
   @Input() downProgressObj:any ={};
   @Input() downStatusObj:any={};
+  @Input() hideDeletedPosts:boolean = false;
   @Output() fromChild = new EventEmitter();
   @Output() commentParams = new EventEmitter();
   @Output() clickImage = new EventEmitter();

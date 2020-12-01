@@ -61,11 +61,6 @@
             <vg-overlay-play id={{nodeId+channelId+postId}}vgoverlayplaypostdetail></vg-overlay-play>
             <vg-buffering  id={{nodeId+channelId+postId}}vgbufferingpostdetail></vg-buffering>
         
-            <vg-scrub-bar id={{nodeId+channelId+postId}}vgscrubbarpostdetail style="display:none;">
-                <vg-scrub-bar-current-time></vg-scrub-bar-current-time>
-                <vg-scrub-bar-buffering-time></vg-scrub-bar-buffering-time>
-            </vg-scrub-bar>
-        
             <vg-controls id={{nodeId+channelId+postId}}vgcontrolspostdetail style="display:none;">
                 <img class="vgfullscreen" id={{nodeId+channelId+postId}}vgfullscreenpostdetail src="assets/images/fullscreen.svg"/>
             </vg-controls>
@@ -96,7 +91,8 @@
     </ion-grid>
 
     <!---------------- COMMENTS ---------------->
-    <ion-grid *ngFor="let comment of commentList let i=index" class="post-grid" [class.darkPostGrid]="theme.darkMode">
+    <div *ngFor="let comment of commentList let i=index">
+    <ion-grid  class="post-grid" [class.darkPostGrid]="theme.darkMode" *ngIf="comment.status!= 1 || hideDeletedComments">
       <ion-row class="post-row">
         <ion-col class="right-col" size="1.5"  *ngIf="comment.status != 1 && checkCommentIsMine(comment)">
           <img (click)="openEditTool($event,comment)"
@@ -138,6 +134,7 @@
         </ion-col>
       </ion-row>
     </ion-grid>
+  </div>
 
     <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event)">
       <ion-infinite-scroll-content

@@ -71,6 +71,8 @@ export class HomePage implements OnInit {
   public curNodeId:string = "";
 
   public curImgPostId:string = "";
+
+  public hideDeletedPosts:boolean = false;
   
   constructor(
    
@@ -111,7 +113,7 @@ export class HomePage implements OnInit {
   }
 
   ionViewWillEnter() {
-    //this.refreshImage(); 
+    this.hideDeletedPosts = this.feedService.getHideDeletedPosts();
     this.styleObj.width = (screen.width - 105)+'px';
     this.clientHeight =screen.availHeight;
     this.startIndex = 0;
@@ -132,6 +134,7 @@ export class HomePage implements OnInit {
     // })
    
    this.events.subscribe("update:tab",(isInit)=>{
+    this.hideDeletedPosts = this.feedService.getHideDeletedPosts();
     if(isInit){
       this.initPostListData();
       return;
@@ -160,6 +163,12 @@ export class HomePage implements OnInit {
           this.clearData();
  });
 
+ this.events.subscribe("feeds:hideDeletedPosts",()=>{
+  this.zone.run(()=>{
+   this.hideDeletedPosts = this.feedService.getHideDeletedPosts();
+  });
+});
+
  this.addCommonEvents();
 
  this.addBinaryEvevnt();
@@ -170,7 +179,6 @@ export class HomePage implements OnInit {
 }
 
 addCommonEvents(){
-
   this.events.subscribe("feeds:updateTitle",()=>{
     if(this.menuService.postDetail!=null){
       this.menuService.hideActionSheet();
@@ -392,7 +400,7 @@ clearData(){
    this.events.unsubscribe("rpcRequest:success");
    this.events.unsubscribe('feeds:openRightMenu');
    this.events.unsubscribe('feeds:tabsendpost');
-
+   this.events.unsubscribe('feeds:hideDeletedPosts');
    this.removeImages();
    this.removeAllVideo();
    this.isLoadimage ={};
@@ -1065,26 +1073,22 @@ clearData(){
     source.setAttribute("src",videodata); 
     let vgbuffering:any = document.getElementById(id+"vgbufferinghome") || "";
     let vgoverlayplay:any = document.getElementById(id+"vgoverlayplayhome"); 
-    let vgscrubbar:any = document.getElementById(id+"vgscrubbarhome"); 
     let vgcontrol:any = document.getElementById(id+"vgcontrolshome"); 
 
     let video:any = document.getElementById(id+"video");
     video.addEventListener('ended',()=>{
-        vgbuffering.style.display ="none";
-        vgoverlayplay.style.display = "block";
-        vgscrubbar.style.display ="none";
-        vgcontrol.style.display = "none";  
+       vgoverlayplay.style.display = "block";
+       vgbuffering.style.display ="none";
+       vgcontrol.style.display = "none";  
     });
 
     video.addEventListener('pause',()=>{
       vgbuffering.style.display ="none";
       vgoverlayplay.style.display = "block";
-      vgscrubbar.style.display ="none";
       vgcontrol.style.display = "none";  
    });
 
    video.addEventListener('play',()=>{
-    vgscrubbar.style.display ="block";
     vgcontrol.style.display = "block";  
    });
 
