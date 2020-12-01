@@ -68,6 +68,7 @@ export class SettingsPage implements OnInit {
   toggleHideDeletedPosts(){
     this.hideDeletedPosts = !this.hideDeletedPosts;
     this.feedService.setHideDeletedPosts(this.hideDeletedPosts);
+    this.events.publish("feeds:hideDeletedPosts");
     this.feedService.setData("feeds.hideDeletedPosts",this.hideDeletedPosts);
   }
 
