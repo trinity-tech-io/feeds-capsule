@@ -619,6 +619,34 @@ export class ConnectionService {
         this.sendRPCMessage(serverName, nodeId, request.method, request.params, "");
     }
 
+
+    standardSignIn(serverName: string, nodeId: string, didDocument: string){
+        let request: Communication.standard_sign_in_request = {
+            version: "1.0",
+            method : "standard_sign_in",
+            id     : -1,
+            params : {
+                document    : didDocument
+            }
+        }
+
+        this.sendRPCMessage(serverName, nodeId, request.method, request.params, ""); 
+    }
+
+    standardDidAuth(serverName: string, nodeId: string, verifiablePresentation: string, name: string){
+        let request: Communication.standard_did_auth_request = {
+            version: "1.0",
+            method : "standard_did_auth",
+            id     : -1,
+            params : {
+                user_name   : name,
+                jwt_vp      : verifiablePresentation
+            }
+        }
+
+        this.sendRPCMessage(serverName, nodeId, request.method, request.params, ""); 
+    }
+
     sendRPCMessage(serverName: string, nodeId: string, method: string, params: any, memo: any, isShowOfflineToast: boolean = true){
         if(!this.checkServerConnection(nodeId)){
           this.events.publish("rpcRequest:error");

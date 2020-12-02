@@ -85,7 +85,7 @@ export class SigninPage implements OnInit {
     this.zone.run(()=>{
       this.native.showLoading('common.waitMoment',2000);
     });
-    appManager.sendIntent("https://did.elastos.net/credaccess", {
+    appManager.sendIntent("credaccess", {
       claims: {
         name: true,
         avatar: {

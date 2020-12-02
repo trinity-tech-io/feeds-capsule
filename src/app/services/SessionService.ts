@@ -463,7 +463,7 @@ function encodeNum(data: number, size: number): Uint8Array{
     }else if (size === 8){
         return parseInt64(data);
     }else {
-        console.log("Size error.")
+        mLogUtils.loge("Size error.",TAG);
         return null;
     }
 }
@@ -839,7 +839,7 @@ function decodeData(nodeId: string){
 
 function checkBody(nodeId: string, data: Uint8Array){
     if (cacheData[nodeId].bodySize == 0){
-        console.log("no body");
+        mLogUtils.logd("no body",TAG);
         return ;
     }
 

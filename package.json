@@ -19,6 +19,7 @@
     "@angular/platform-browser": "~8.1.2",
     "@angular/platform-browser-dynamic": "~8.1.2",
     "@angular/router": "~8.1.2",
+    "@elastosfoundation/trinity-dapp-sdk": "^1.0.19",
     "@elastosfoundation/trinity-types": "^1.1.97",
     "@ionic-native/clipboard": "^5.18.0",
     "@ionic-native/core": "^5.0.0",
@@ -30,6 +31,8 @@
     "@ionic/angular": "^4.7.1",
     "@ionic/storage": "2.2.0",
     "@ngx-translate/core": "^12.1.2",
+    "@sentry/browser": "~5.11.0",
+    "@sentry/integrations": "~5.11.1",
     "@types/node": "^8.9.5",
     "@ygoe/msgpack": "^1.0.2",
     "angularx-qrcode": "^1.6.4",
@@ -46,9 +49,7 @@
     "node-sass": "4.12.0",
     "rxjs": "~6.5.1",
     "tslib": "^1.9.0",
-    "zone.js": "~0.9.1",
-    "@sentry/browser": "~5.11.0",
-    "@sentry/integrations": "~5.11.1"
+    "zone.js": "~0.9.1"
   },
   "devDependencies": {
     "@angular-devkit/architect": "~0.803.9",
