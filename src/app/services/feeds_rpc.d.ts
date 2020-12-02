@@ -551,8 +551,8 @@ declare module Communication{
         id     : jsonrpc_id
         params : {
             access_token   : string
-            channel_id : number
-            post_id    : number
+            channel_id : number     
+            post_id    : number     
             by         : field
             upper_bound: number | null 
             lower_bound: number | null
@@ -874,16 +874,18 @@ declare module Communication{
     type standard_sign_in_response = {
         version: "1.0"
         result : {
-            challenge    : string
+            jwt_challenge    : string
         }
     }
+
 
     type standard_did_auth_request = {
         version: "1.0"
         method : "standard_did_auth"
         id     : jsonrpc_id
         params : {
-            vp    : string
+            user_name   : string
+            jwt_vp      : string
         } 
     }
 
@@ -894,5 +896,39 @@ declare module Communication{
         }
     }
 
-}
+    type get_multi_comments_request = {
+        version: "1.0"
+        method : "get_multi_comments"
+        id     : jsonrpc_id
+        params : {
+            access_token: string
+            channel_id  : number    //channel_id
+            post_id     : number    //post_id
+            by          : field     //id
+            upper_bound : number    
+            lower_bound : number    
+            max_count   : number
+        }
+    }
 
+    type get_multi_comments_response = {
+        version: "1.0"
+        id     : jsonrpc_id
+        result : {
+            is_last : boolean
+            comments: {
+                channel_id      : number          //channel_id    ->feeds
+                post_id         : number          //post_id       ->post
+                comment_id      : number          //comment_id    -> comment
+                refer_comment_id: number|0
+                status          : FeedsData.PostCommentStatus
+                user_did        : string
+                user_name       : string  
+                content         : any | null      //bin | null
+                likes           : number
+                created_at      : number
+                updated_at      : number
+            }[]
+        }
+    }
+}

@@ -52,6 +52,7 @@ import { MenuService } from './services/MenuService';
 import { FormatInfoService } from './services/FormatInfoService';
 import { SessionService } from './services/SessionService';
 import { LogUtils } from 'src/app/services/LogUtils';
+import { StandardAuthService } from 'src/app/services/StandardAuthService';
 
 import { IonicStorageModule } from '@ionic/storage';
 
@@ -208,6 +209,7 @@ export function anim(AnimationC: Animation, baseEl: any, position?: any): Promis
     ConnectionService,
     HttpService,
     LogUtils,
+    StandardAuthService,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     {provide: ErrorHandler, useClass: ErrorHandler}
   ]

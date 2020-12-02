@@ -185,6 +185,10 @@ declare namespace FeedsData{
 
         getBinary = "get_binary",
         setBinary = "set_binary",
+
+        standard_sign_in = "standard_sign_in",
+        standard_did_auth = "standard_did_auth",
+
         //PUSH Notification
         newPostNotification = "new_post",
         newCommentNotification = "new_comment",

@@ -15,6 +15,7 @@ import { FormatInfoService } from 'src/app/services/FormatInfoService';
 import { SessionService } from 'src/app/services/SessionService';
 import { PopupProvider } from 'src/app/services/popup';
 import { LogUtils } from 'src/app/services/LogUtils';
+import { StandardAuthService } from 'src/app/services/StandardAuthService';
 
 import * as _ from 'lodash';
 
@@ -455,7 +456,8 @@ export class FeedService {
     private formatInfoService: FormatInfoService,
     private sessionService:SessionService,
     private popupProvider:PopupProvider,
-    private logUtils: LogUtils
+    private logUtils: LogUtils,
+    private standardAuth: StandardAuthService
   ) {
     eventBus = events;
     this.init();
@@ -825,6 +827,7 @@ export class FeedService {
 
   initData(){
     if(localCredential == null || localCredential == undefined){
+
       this.storeService.get(PersistenceKey.credential).then((credential)=>{
         localCredential = credential;
       });
@@ -1409,9 +1412,14 @@ export class FeedService {
         break;
 
 
-      case FeedsData.MethodType.getBinary:
-        this.handleGetBinaryResponse(nodeId, result, requestParams, error);
+      case FeedsData.MethodType.standard_sign_in:
+        this.handleStandardSignInResponse(nodeId, result, requestParams, error);
         break;
+
+      case FeedsData.MethodType.standard_did_auth:
+        this.handleStandardDidAuthResponse(nodeId, result, requestParams, error);
+        break;
+
       default:
         break;
     }
@@ -3972,7 +3980,8 @@ export class FeedService {
     this.setSigninTimeout(nodeId);
 
     this.native.toast(this.formatInfoService.formatSigninMsg(this.getServerNameByNodeId(nodeId)));
-    this.connectionService.signinChallengeRequest(this.getServerNameByNodeId(nodeId), nodeId, requiredCredential, this.getSignInData().did);
+    // this.connectionService.signinChallengeRequest(this.getServerNameByNodeId(nodeId), nodeId, requiredCredential, this.getSignInData().did);
+    this.standardSignIn(nodeId);
   }
 
   signinConfirmRequest(nodeId: string, nonce: string, realm: string, requiredCredential: boolean){
@@ -4225,6 +4234,23 @@ export class FeedService {
     this.storeService.set(key, value).then(()=>{
         eventBus.publish("feeds:getBinaryFinish", nodeId, key, value);
     });
+  }
+
+  handleStandardSignInResponse(nodeId, result, requestParams, error){
+    if (error != null && error != undefined && error.code != undefined){
+      this.handleError(nodeId, error);
+      return;
+    }
+
+    let challenge = result.jwt_challenge;
+    this.standardAuth.generateAuthPresentationJWT(challenge).then((presentation)=>{
+      this.logUtils.logd("generateAuthPresentationJWT presentation is "+presentation,TAG);
+      this.standardDidAuth(nodeId, presentation);
+    });
+  }
+
+  handleStandardDidAuthResponse(nodeId, result, requestParams, error){
+    this.handleSigninConfirm(nodeId,result,error);
   }
 
   doIssueCredential(nodeId: string, did: string, serverName: string, serverDesc: string,elaAddress:string, onSuccess:()=> void, onError:()=>void){
@@ -6075,5 +6101,16 @@ export class FeedService {
         return -1;
     let serverVersionCode = this.serverVersions[nodeId].versionCode||-1;
     return serverVersionCode;
+  }
+
+  standardSignIn(nodeId: string){
+    this.standardAuth.getInstanceDIDDoc().then((didDocument)=>{
+      this.logUtils.logd("getInstanceDIDDoc didDocument is "+didDocument,TAG);
+      this.connectionService.standardSignIn(this.getServerNameByNodeId(nodeId),nodeId, didDocument);
+    })
+  }
+
+  standardDidAuth(nodeId: string, verifiablePresentation: string){
+    this.connectionService.standardDidAuth(this.getServerNameByNodeId(nodeId),nodeId,verifiablePresentation, this.getSignInData().name);
   }
 }
