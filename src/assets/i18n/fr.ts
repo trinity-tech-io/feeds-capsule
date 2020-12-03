@@ -367,8 +367,8 @@ export const fr = {
     "CommentPage":{
         "newComment":"New Comment",
         "publishComment":"Post Reply",
-        "enterComments":"Add Comment",
-        "tipMsg1":"Comment sent successfully!"
+        "inputComment": "Input comment here",
+        "tipMsg1": "Your comment has been posted successfully."
     },
     "DisclaimerPage":{
         "title":"Disclaimer",
@@ -461,7 +461,7 @@ export const fr = {
     "EditCommentPage":{
         "title":"Edit Comment",
         "saveChanges":"Save changes",
-        "notModified": "You has not modified the content of your comment yet"
+        "notModifiedYet": "You has not modified the content of your comment yet."
     },
     "DiscoverfeedsPage":{
         "title":"Discover Feeds Sources",
