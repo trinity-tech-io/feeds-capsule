@@ -232,7 +232,7 @@ export const zh = {
         "discover":"发现微频源"
       },
     "AddServerPage":{
-        "scanorEnterManual":"扫描或者输入",
+        "scanOrEnterAddress":"扫描或请直接输入",
         "sourceAddress":"微频源地址",
         "openQRScanner":"扫描微频源二维码",
         "confirm":"确认",
@@ -242,8 +242,8 @@ export const zh = {
         "title":"添加微频源",
         "serverMsg1": "微频源 : ",
         "serverMsg2": " 离线!",
-        "Serveralreadyadded": "该微频源已经添加过了!",
-        "Addserversuccess": "添加微频源成功!",
+        "serverAlreadyAdded": "该微频源已经在您的关注列表中了.",
+        "serverAddedSuccess": "添加微频源成功，您可以关注里面的微频了.",
         "Signinsuccess": "登录成功!"
       },
     "ServerInfoPage":{

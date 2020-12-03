@@ -231,7 +231,7 @@ export const en = {
         "discover":"Discover Feeds Sources"
     },
     "AddServerPage":{
-        "scanorEnterManual":"Scan or Enter Manually",
+        "scanOrEnterAddress":"Scan or Manually Enter",
         "sourceAddress":"Feeds Source Address",
         "openQRScanner":"Open QR Scanner",
         "confirm":"Confirm",
@@ -241,8 +241,8 @@ export const en = {
         "title":"Add a Feeds Source",
         "serverMsg1": "Server : ",
         "serverMsg2": " offline!",
-        "Serveralreadyadded":"Server already added!",
-        "Addserversuccess":"Server added successfully!",
+        "serverAlreadyAdded":"This Feeds Source has already been added.",
+        "serverAddedSuccess":"The Feeds source was added successfully.",
         "Signinsuccess":"Signed in successfully!"
     },
     "ServerInfoPage":{

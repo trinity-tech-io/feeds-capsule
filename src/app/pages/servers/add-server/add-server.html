@@ -8,7 +8,7 @@
       height: 54.9px;" src="assets/images/empty-feeds-icon.svg">
     </div>
 
-    <div style="  
+    <div style="
     margin-top: 24px;
     font-family: Montserrat;
     font-size: 24px;
@@ -18,7 +18,7 @@
     line-height: 1.25;
     letter-spacing: 1.2px;
     text-align: center;
-    color: #8888b0;">{{'AddServerPage.scanorEnterManual'|translate}}</div>
+    color: #8888b0;">{{'AddServerPage.scanOrEnterAddress'|translate}}</div>
     <div style="  font-family: Montserrat;
     font-size: 24px;
     font-weight: 500;
@@ -51,11 +51,11 @@
   <ion-grid class="container" [class.darkContainer]="theme.darkMode">
     <img src="assets/images/empty-feeds-icon.svg">
     <h1>
-        {{ 'AddServerPage.scanorEnterManual' | translate }}
+        {{ 'AddServerPage.scanOrEnterAddress' | translate }}
         {{ 'AddServerPage.sourceAddress' | translate }}
     </h1>
     <ion-row class="input-row">
-        <ion-input 
+        <ion-input
           required
           type="text"
           placeholder="{{'AddServerPage.sourceaddresshere'|translate}}"
@@ -105,17 +105,17 @@
     <b>Name: </b><br>
     {{name}}
     </ion-label>
-    
-  </ion-item>  
-  
+
+  </ion-item>
+
   <ion-item lines="none" *ngIf="buttonDisabled == false">
     <ion-label>
 
     <b>Owner: </b><br>
     {{owner}}
     </ion-label>
-    
-  </ion-item>  
+
+  </ion-item>
 
   <ion-item lines="none" *ngIf="buttonDisabled == false">
     <ion-label>
@@ -123,8 +123,8 @@
     <b>Introduction: </b><br>
     {{introduction}}
     </ion-label>
-    
-  </ion-item>  
+
+  </ion-item>
 
   <ion-item lines="none" *ngIf="buttonDisabled == false">
     <ion-label>
@@ -132,11 +132,11 @@
     <b>DID: </b><br>
     {{did}}
     </ion-label>
-    
-  </ion-item>  
-  
 
-  
+  </ion-item>
+
+
+
   <div class="ion-padding" *ngIf="connectStatus == 0">
     <ion-button expand="block" mode="ios" (click)="addServer()" [disabled]='buttonDisabled'>
       <ion-label>Add New Server</ion-label>
