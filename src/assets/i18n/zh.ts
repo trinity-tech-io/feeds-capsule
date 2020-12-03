@@ -240,8 +240,8 @@ export const zh = {
         "tipMsg":"微频源地址可能错误",
         "exploreFeedSources":"探索微频源",
         "title":"添加微频源",
-        "serverMsg1": "微频源 : ",
-        "serverMsg2": " 离线!",
+        "feedsSource": "微频源: ",
+        "serverWentOffline": " 已变成离线.",
         "serverAlreadyAdded": "该微频源已经在您的关注列表中了.",
         "serverAddedSuccess": "添加微频源成功，您可以关注里面的微频了.",
         "Signinsuccess": "登录成功!"

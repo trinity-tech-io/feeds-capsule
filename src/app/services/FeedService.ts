@@ -11,7 +11,7 @@ import { JWTMessageService } from 'src/app/services/JWTMessageService';
 import { ConnectionService } from 'src/app/services/ConnectionService';
 import { HttpService } from 'src/app/services/HttpService';
 import { ApiUrl } from 'src/app/services/ApiUrl';
-import { FormateInfoService } from 'src/app/services/FormateInfoService';
+import { FormatInfoService } from 'src/app/services/FormatInfoService';
 import { SessionService } from 'src/app/services/SessionService';
 import { PopupProvider } from 'src/app/services/popup';
 import { LogUtils } from 'src/app/services/LogUtils';
@@ -452,7 +452,7 @@ export class FeedService {
     private storeService: StorageService,
     private connectionService: ConnectionService,
     private httpService: HttpService,
-    private formateInfoService: FormateInfoService,
+    private formatInfoService: FormatInfoService,
     private sessionService:SessionService,
     private popupProvider:PopupProvider,
     private logUtils: LogUtils
@@ -1292,7 +1292,7 @@ export class FeedService {
   handleError(nodeId: string,error: any){
     eventBus.publish("rpcResponse:error");
     if(typeof error == "string")
-      this.native.toastWarn(this.formateInfoService.formatErrorMsg(nodeId, error));
+      this.native.toastWarn(this.formatInfoService.formatErrorMsg(nodeId, error));
     else{
         this.processGeneralError(nodeId,error.code);
         return;
@@ -3369,7 +3369,7 @@ export class FeedService {
 
     this.updatePostWithTime(nodeId,request.id, 0);
 
-    this.native.toast(this.formateInfoService.formatFollowSuccessMsg(this.getFeedNameById(nodeId, request.id)));
+    this.native.toast(this.formatInfoService.formatFollowSuccessMsg(this.getFeedNameById(nodeId, request.id)));
   }
 
   handleUnsubscribeChannelResult(nodeId:string, request: any, error: any){
@@ -3403,7 +3403,7 @@ export class FeedService {
 
     this.deletePostFromChannel(nodeId, request.id);
 
-    this.native.toast(this.formateInfoService.formatUnFollowSuccessMsg(this.getFeedNameById(nodeId, request.id)));
+    this.native.toast(this.formatInfoService.formatUnFollowSuccessMsg(this.getFeedNameById(nodeId, request.id)));
   }
 
   handleEditFeedInfo(nodeId: string, request: any, error: any){
@@ -3971,7 +3971,7 @@ export class FeedService {
       return ;
     this.setSigninTimeout(nodeId);
 
-    this.native.toast(this.formateInfoService.formatSigninMsg(this.getServerNameByNodeId(nodeId)));
+    this.native.toast(this.formatInfoService.formatSigninMsg(this.getServerNameByNodeId(nodeId)));
     this.connectionService.signinChallengeRequest(this.getServerNameByNodeId(nodeId), nodeId, requiredCredential, this.getSignInData().did);
   }
 
@@ -4019,7 +4019,7 @@ export class FeedService {
     this.restoreData(nodeId);
 
     eventBus.publish("feeds:login_finish", nodeId);
-    this.native.toast(this.formateInfoService.formatSigninSuccessMsg(this.getServerNameByNodeId(nodeId)));
+    this.native.toast(this.formatInfoService.formatSigninSuccessMsg(this.getServerNameByNodeId(nodeId)));
     this.clearSigninTimeout(nodeId);
   }
 
@@ -4465,7 +4465,8 @@ export class FeedService {
     return bindingServer;
   }
 
-  addServer(carrierAddress: string,friendRequest: string,
+  addServer(carrierAddress: string,
+    friendRequest: string,
     name: string, owner: string, introduction: string,
     did: string, feedsUrl: string,
     onSuccess:()=>void, onError?:(err: string)=>void){
@@ -4484,8 +4485,7 @@ export class FeedService {
 
           this.carrierService.addFriend(carrierAddress, friendRequest,
             () => {
-                this.saveServer(name, owner, introduction,
-                                    did, carrierAddress, feedsUrl);
+                this.saveServer(name, owner, introduction, did, carrierAddress, feedsUrl);
             }, (err) => {
                 this.alertError("Add server error: " + err);
             });
@@ -4918,7 +4918,7 @@ export class FeedService {
         errorMessage = this.translateBinaryError(nodeId, errorCode);
         return;
     }
-    this.native.toastWarn(this.formateInfoService.formatErrorMsg(this.getServerNameByNodeId(nodeId),errorMessage));
+    this.native.toastWarn(this.formatInfoService.formatErrorMsg(this.getServerNameByNodeId(nodeId),errorMessage));
   }
 
 
@@ -5114,7 +5114,7 @@ export class FeedService {
     if(this.getServerStatusFromId(nodeId) == 1){
       eventBus.publish("stream:error",nodeId,this.createOfflineError());
       // eventBus.publish("sessionRequest:error", nodeId,this.createCreateOfflineError());
-      this.native.toast(this.formateInfoService.formatOfflineMsg(this.getServerNameByNodeId(nodeId)));
+      this.native.toast(this.formatInfoService.formatOfflineMsg(this.getServerNameByNodeId(nodeId)));
       return false;
     }
 
@@ -5884,7 +5884,7 @@ export class FeedService {
   processGetBinary(nodeId: string, channelId: number, postId: number, commentId: number,
     index: number, mediaType: FeedsData.MediaType, key: string, onSuccess: (transDataChannel: FeedsData.TransDataChannel)=> void, onError:(err: string) => void){
     if(this.getServerStatusFromId(nodeId) == 1){
-      this.native.toast(this.formateInfoService.formatOfflineMsg(this.getServerNameByNodeId(nodeId)));
+      this.native.toast(this.formatInfoService.formatOfflineMsg(this.getServerNameByNodeId(nodeId)));
       onError(nodeId + "offline");
       return;
     }
@@ -6028,7 +6028,7 @@ export class FeedService {
         errorMsg = this.translate.instant("ErrorInfo.SESSION_START_ERROR");
         break;
     }
-    this.native.toastWarn(this.formateInfoService.formatErrorMsg(this.getServerNameByNodeId(nodeId),errorMsg));
+    this.native.toastWarn(this.formatInfoService.formatErrorMsg(this.getServerNameByNodeId(nodeId),errorMsg));
   }
 
   checkBindingServerVersion(quit:any): boolean{
