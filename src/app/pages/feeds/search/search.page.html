@@ -3,18 +3,17 @@
 </ion-header>
 
 <ion-content>
-  
+
   <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" pullFactor="0.5">
     <ion-refresher-content
       class="refresh"
-      pullingText="{{'common.pullToRefresh'|translate}}"
+      pullingText="{{'common.releaseToRefresh'|translate}}"
       pullingIcon="arrow-dropdown"
       refreshingSpinner="crescent"
-      refreshingText="{{'common.Refreshing'|translate}}"
-    >
+      refreshingText="{{'beingRefresh'|translate}}">
     </ion-refresher-content>
   </ion-refresher>
-  
+
   <div *ngIf="channelList.length === 0" class="empty-container">
     <img src="./assets/images/empty-feeds-icon.svg">
     <h1>{{ 'common.allempty' | translate }}</h1>
@@ -72,7 +71,7 @@
     </ion-item>
     <div class="new-feed-div" (click)="addfeedssource()" *ngIf="channelList.length > 0">
         <div class="new-feed">{{ "SearchPage.addfeedssource" | translate }}</div>
-    </div> 
+    </div>
   </ion-list>
 
 </ion-content>
@@ -103,7 +102,7 @@
 
     <ion-refresher-content
       class="refresh"
-      pullingText="{{'common.pullToRefresh'|translate}}"
+      pullingText="{{'common.releaseToRefresh'|translate}}"
       pullingIcon="arrow-dropdown"
       refreshingText="">
     </ion-refresher-content>
@@ -112,7 +111,7 @@
   <div *ngFor="let channel of channelList let i=index" [class.darkContainer]="theme.darkMode">
       <ion-grid>
         <ion-row>
-          <ion-col  
+          <ion-col
             (click)="navTo(channel.nodeId, channel.id)"
             size="2.25"
             size-lg="2.25"
@@ -156,7 +155,7 @@
               <div style="display: flex; margin-top: 3px">
                 <img style="  width: 18.1px;
                 height: 14.7px;" src="./assets/images/bubble2.svg" >
-                <div style="  
+                <div style="
                 margin-left: 3px;
                 width: 150px;
                 height: 18px;
@@ -170,7 +169,7 @@
                 text-align: left;
                 color: #a0a2c4;">{{channel.subscribers}} {{'common.followers'|translate}}</div>
               </div>
-              
+
             </div>
 
           </ion-col>
@@ -185,7 +184,7 @@
           </ion-col>
         </ion-row>
       </ion-grid>
-      
+
     <div class="line-div white-line"  *ngIf="i!=channelList.length-1"></div>
 
   </div>

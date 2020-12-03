@@ -7,11 +7,10 @@
   <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" pullFactor="0.5">
     <ion-refresher-content
       class="refresh"
-      pullingText="{{'common.pullToRefresh'|translate}}"
+      pullingText="{{'common.releaseToRefresh'|translate}}"
       pullingIcon="arrow-dropdown"
       refreshingSpinner="crescent"
-      refreshingText="{{'common.Refreshing'|translate}}"
-    >
+      refreshingText="{{'common.beingRefresh'|translate}}" >
     </ion-refresher-content>
   </ion-refresher>
 
@@ -48,7 +47,7 @@
           <h2 *ngIf="postStatus!=1">
             <pre [ngStyle]="styleObj">{{ getContentText(postContent) }}</pre>
           </h2>
-          <img 
+          <img
             *ngIf="postStatus != 1&&mediaType===1&&postImage!= ''"
             [src]="postImage"
             class="post-img"
@@ -60,12 +59,12 @@
           <vg-player>
             <vg-overlay-play id={{nodeId+channelId+postId}}vgoverlayplaypostdetail></vg-overlay-play>
             <vg-buffering  id={{nodeId+channelId+postId}}vgbufferingpostdetail></vg-buffering>
-        
+
             <vg-controls id={{nodeId+channelId+postId}}vgcontrolspostdetail style="display:none;">
                 <img class="vgfullscreen" id={{nodeId+channelId+postId}}vgfullscreenpostdetail src="assets/images/fullscreen.svg"/>
             </vg-controls>
-         
-        <video #media [vgMedia]="media" 
+
+        <video #media [vgMedia]="media"
         id={{nodeId+channelId+postId}}postdetailvideo
         playsinline webkit-playsinline>
         <source  type="video/mp4" id={{nodeId+channelId+postId}}postdetailsource>
@@ -111,7 +110,7 @@
               </ion-label>
             </ion-col>
           </ion-row>
-         
+
           <ion-label>
             <p (press)="userName(channelOwner)">{{'ServerInfoPage.replyingto'|translate}} @{{ indexText(channelOwner) }}</p>
           </ion-label>
@@ -142,7 +141,7 @@
         loadingText="{{'common.loadingText'|translate}}">
       </ion-infinite-scroll-content>
     </ion-infinite-scroll>
-  </div> 
+  </div>
 </ion-content>
 
 <!---------------- ADD COMMENT FOOTER ---------------->
@@ -150,7 +149,7 @@
   *ngIf="!hideComment"
   [postId]="postId"
   [nodeId]="nodeId "
-  [channelId]="channelId" 
+  [channelId]="channelId"
   [channelAvatar]="channelAvatar"
   [channelName]="channelName"
   (hideComment)="hideComponent($event)"

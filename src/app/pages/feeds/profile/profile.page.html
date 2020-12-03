@@ -6,11 +6,10 @@
   <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" pullFactor="0.5">
     <ion-refresher-content
       class="refresh"
-      pullingText="{{'common.pullToRefresh'|translate}}"
+      pullingText="{{'common.releaseToRefresh'|translate}}"
       pullingIcon="arrow-dropdown"
       refreshingSpinner="crescent"
-      refreshingText="{{'common.Refreshing'|translate}}"
-    >
+      refreshingText="{{'common.beingRefresh'|translate}}">
     </ion-refresher-content>
   </ion-refresher>
   <ion-grid class="container" [class.darkContainer]="theme.darkMode" [class.blur]="!hideComment">
@@ -32,11 +31,11 @@
         <span>{{'ProfilePage.myLikes' | translate }}</span>
       </div>
     </div>
-  
+
     <app-myfeeds *ngIf="selectType == 'ProfilePage.myFeeds'"  [channels] = "channels" [nodeStatus]="nodeStatus" (fromChild)="showMenuMore($event)"></app-myfeeds>
     <app-following *ngIf="selectType == 'ProfilePage.following'"  [followingList] = "followingList" [nodeStatus]="nodeStatus" (fromChild)="showMenuMore($event)"></app-following>
     <app-likes  *ngIf="selectType == 'ProfilePage.myLikes'" [hideDeletedPosts] = "hideDeletedPosts"  [downStatusObj]="downStatusObj"  [downProgressObj]="downProgressObj"  [likeList] = "likeList" [nodeStatus]="nodeStatus" [isLoadVideoiamge]="isLoadVideoiamge"  (fromChild)="showMenuMore($event)" (commentParams)="showComment($event)" (clickImage)="showBigImage($event)"></app-likes>
-    
+
   </ion-grid>
   <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event)">
     <ion-infinite-scroll-content
@@ -52,7 +51,7 @@
   *ngIf="!hideComment"
   [postId]="postId"
   [nodeId]="nodeId "
-  [channelId]="channelId" 
+  [channelId]="channelId"
   [channelAvatar]="channelAvatar"
   [onlineStatus]="onlineStatus"
   [channelName]="channelName"
