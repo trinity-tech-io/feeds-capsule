@@ -8,37 +8,34 @@
             <img src="assets/images/feeds-logo.svg">
             <ion-card-title>{{'AboutPage.version' | translate}} {{version}}</ion-card-title>
         </ion-card>
-    
+
         <ion-list>
-            <ion-row class="details" (click)="goWebsite()">
+            <ion-row class="details" (click)="gotoWebsite()">
                 <h4>{{'AboutPage.website'|translate}}</h4>
                 <p>www.trinity-tech.io</p>
             </ion-row>
 
-            <ion-row class="details" (click)="copyemail()">
+            <ion-row class="details" (click)="copyEmailAddress()">
                 <h4>{{'AboutPage.email'|translate}}</h4>
                 <p>feeds@trinity-tech.io</p>
             </ion-row>
 
 
-            <ion-row class="details" (click)="telegram()">
+            <ion-row class="details" (click)="gotoTelegram()">
                 <h4>{{'AboutPage.telegram'|translate}}</h4>
                 <p>https://t.me/feedscapsule</p>
             </ion-row>
 
-            <ion-row class="details" (click)="disclaimer()">
+            <ion-row class="details" (click)="showDisclaimer()">
                 <h4>{{'AboutPage.disclaimer'|translate}}</h4>
                 <p>https://www.trinity-tech.io/disclaimer.html</p>
             </ion-row>
 
-            <!-- <ion-row class="details" (click)="help()">
+            <!-- <ion-row class="details" (click)="showHelp()">
                 <h4>{{'AboutPage.help'|translate}}</h4>
-                <p *ngIf="curlangule==='zh'">https://github.com/elastos-trinity/feeds-manual-docs/blob/master/Feeds_Manual_zh.md</p>
-                <p *ngIf="curlangule!='zh'">https://github.com/elastos-trinity/feeds-manual-docs/blob/master/Feeds_Manual_en.md</p>
+                <p *ngIf="currentLanguage==='zh'">https://github.com/elastos-trinity/feeds-manual-docs/blob/master/Feeds_Manual_zh.md</p>
+                <p *ngIf="currentLanguage!='zh'">https://github.com/elastos-trinity/feeds-manual-docs/blob/master/Feeds_Manual_en.md</p>
             </ion-row> -->
-
         </ion-list>
-    </ion-grid>    
+    </ion-grid>
 </ion-content>
- 
-
