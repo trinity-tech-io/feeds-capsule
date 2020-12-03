@@ -72,7 +72,7 @@ export const zh = {
         "followed": "关注",
         "unfollowed": "取消关注",
         "infoObtaining": "信息获取中",
-        "filevideodes":"此视频文件超过最大限制",
+        "filevideodes":"您的视频文件播放长度超出当前限制 (15秒）",
         "videoloading":"视频加载中",
         "videocompression":"视频压缩中",
         "video":"视频",
