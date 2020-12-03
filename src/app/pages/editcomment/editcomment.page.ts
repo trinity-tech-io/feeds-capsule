@@ -118,7 +118,7 @@ export class EditCommentPage implements OnInit {
   publishComment(){
     let newComment = this.native.iGetInnerText(this.newComment) || "";
     if(newComment===""){
-      this.native.toast_trans('CommentPage.enterComments');
+      this.native.toast_trans('CommentPage.inputComment');
       return false;
     }
 

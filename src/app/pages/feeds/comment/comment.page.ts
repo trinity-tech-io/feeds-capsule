@@ -48,13 +48,13 @@ export class CommentPage implements OnInit {
   ionViewWillEnter() {
     this.initTitle();
     this.native.setTitleBarBackKeyShown(true);
-    
+
     this.connectionStatus = this.feedService.getConnectionStatus();
     let channel = this.feedService.getChannelFromId(this.nodeId,this.channelId) || {};
     this.channelName = channel["name"] || "";
     this.subscribers = channel["subscribers"] || "";
     this.channelAvatar = this.feedService.parseChannelAvatar(channel["avatar"]) || "";
- 
+
 
     this.events.subscribe('feeds:connectionChanged',(status)=>{
       this.zone.run(() => {
@@ -78,20 +78,20 @@ export class CommentPage implements OnInit {
       });
     });
 
-   this.events.subscribe('rpcRequest:success', () => {
-    this.zone.run(() => {
-      this.navCtrl.pop().then(()=>{
-        this.native.hideLoading();
-        this.native.toast_trans("CommentPage.tipMsg1");
+    this.events.subscribe('rpcRequest:success', () => {
+      this.zone.run(() => {
+        this.navCtrl.pop().then(()=>{
+          this.native.hideLoading();
+          this.native.toast_trans("CommentPage.tipMsg1");
+        });
       });
     });
-   });
 
-   this.events.subscribe("feeds:friendConnectionChanged", (nodeId, status)=>{
-    this.zone.run(()=>{
-      this.nodeStatus[nodeId] = status;
+    this.events.subscribe("feeds:friendConnectionChanged", (nodeId, status)=>{
+      this.zone.run(()=>{
+        this.nodeStatus[nodeId] = status;
+      });
     });
-   });
 
     this.initnodeStatus();
   }
@@ -114,16 +114,15 @@ export class CommentPage implements OnInit {
   publishComment(){
     let newComment = this.native.iGetInnerText(this.newComment) || "";
     if(newComment===""){
-      this.native.toast_trans('CommentPage.enterComments');
+      this.native.toast_trans('CommentPage.inputComment');
       return false;
     }
 
     this.native.showLoading("common.waitMoment").then(()=>{
-           this.sendComment();
+      this.sendComment();
     }).catch(()=>{
-         this.native.hideLoading();
+      this.native.hideLoading();
     });
-
   }
 
   sendComment(){
@@ -146,9 +145,8 @@ export class CommentPage implements OnInit {
   addImg() {
     this.native.toast("common.comingSoon");
   }
-  
+
   showBigImage(content: any){
     this.native.openViewer(content,"common.image","CreatenewpostPage.addingPost",this.appService);
   }
-
 }

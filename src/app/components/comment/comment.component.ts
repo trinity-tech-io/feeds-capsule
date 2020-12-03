@@ -15,7 +15,7 @@ export class CommentComponent implements OnInit {
 
   @Input() public channelAvatar = "";
   @Input() public channelName = "";
-  
+
   @Input() public nodeId = "";
   @Input() public channelId = 0;
   @Input() public postId = 0;
@@ -55,7 +55,7 @@ export class CommentComponent implements OnInit {
 
     let newComment = this.native.iGetInnerText(this.newComment) || "";
     if(newComment===""){
-      this.native.toast_trans('CommentPage.enterComments');
+      this.native.toast_trans('CommentPage.inputComment');
       return false;
     }
 

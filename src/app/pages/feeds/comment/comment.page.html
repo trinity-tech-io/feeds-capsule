@@ -1,7 +1,7 @@
 <ion-header *ngIf="connectionStatus == 1">
   <div class="offline-header"></div>
 </ion-header>
-    
+
 <ion-content>
   <ion-list class="channel-list" [class.darkChannelList]="theme.darkMode">
 
@@ -19,14 +19,14 @@
       </ion-row>
     </ion-item>
 
-    <ion-textarea clearOnEdit="true" autofocus="true" rows="6" cols="20" [(ngModel)]="newComment" placeholder="{{'CommentPage.enterComments'|translate}}">
+    <ion-textarea clearOnEdit="true" autofocus="true" rows="6" cols="20" [(ngModel)]="newComment" placeholder="{{'CommentPage.inputComment'|translate}}">
     </ion-textarea>
 
     <div *ngIf="imgUrl !== ''" class="img-container">
       <img src="{{imgUrl}}" (click)="showBigImage(imgUrl)" />
       <img class="remove" src="/assets/icons/remove.svg" (click)="imgUrl = ''"/>
     </div>
-  
+
     <ion-row class="submit-row">
       <ion-col class="left-col">
         <ion-icon id="image" mode="ios" name="image" (click)="addImg()"></ion-icon>
@@ -38,10 +38,10 @@
         </ion-button>
       </ion-col>
     </ion-row>
-  
+
   </ion-list>
 </ion-content>
-  
+
 
 <!-------------------------------- DESIGN WITH CHANNEL DETAILS -------------------------------->
 <!-- <ion-header *ngIf="connectionStatus == 1">
@@ -75,7 +75,7 @@
       </ion-row>
     </ion-item>
 
-    <ion-textarea clearOnEdit="true" autofocus="true" placeholder="{{'CommentPage.enterComments'|translate}}" [(ngModel)]="newComment">
+    <ion-textarea clearOnEdit="true" autofocus="true" placeholder="{{'CommentPage.inputComment'|translate}}" [(ngModel)]="newComment">
     </ion-textarea>
 
     <ion-row class="submit-row">
@@ -103,11 +103,11 @@
         </div>
         <img  src={{channelAvatar}}>
       </ion-avatar>
-    </div> 
+    </div>
    </div>
 
    <div class="rightContent">
-    <div> 
+    <div>
       <ion-label class="channel-title-small ellipsis white" (press)="pressName(channelName)">{{channelName}}</ion-label>
     </div>
     <div>
@@ -121,12 +121,12 @@
       <ion-col size="12">
         <ion-item lines="none">
           <img *ngIf="eventImaUrl != ''" src="{{eventImgUrl}}">
-          <ion-textarea clearOnEdit="true" autofocus="true" rows="6" cols="20" [(ngModel)]="newComment"  placeholder="{{'CommentPage.enterComments'|translate}}"></ion-textarea>
+          <ion-textarea clearOnEdit="true" autofocus="true" rows="6" cols="20" [(ngModel)]="newComment"  placeholder="{{'CommentPage.inputComment'|translate}}"></ion-textarea>
         </ion-item>
       </ion-col>
       <ion-col size="2">
           <ion-button fill="clear" mode="ios" color="dark" (click)="addPic()">
-          <ion-icon name="images"></ion-icon>  
+          <ion-icon name="images"></ion-icon>
           </ion-button>
       </ion-col>
     </ion-row>
