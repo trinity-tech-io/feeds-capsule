@@ -459,7 +459,8 @@ export const zh = {
     },
     "EditCommentPage":{
         "title":"编辑微评",
-        "saveChanges":"保存修改"
+        "saveChanges":"保存修改",
+        "notModifiedYet": "您还没有修改评论内容"
     },
     "DiscoverfeedsPage":{
         "title":"发现微频源",
