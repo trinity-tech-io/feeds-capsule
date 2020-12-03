@@ -407,15 +407,6 @@ export class EditpostPage implements OnInit {
       this.zone.run(()=>{
         let videodata = videosdata[0];
         this.getVideoInfo(videodata);
-        // this.transcodeVideo(videodata['fullPath']).then((newfileUri)=>{
-        //   this.transcode =100;
-        //   newfileUri = "cdvfile://localhost"+newfileUri.replace("file//","");
-        //   newfileUri = newfileUri.replace("/storage/emulated/0/","/sdcard/");  
-        //   let lastIndex = newfileUri.lastIndexOf("/");
-        //   let fileName =  newfileUri.substring(lastIndex+1,newfileUri.length);
-        //   let filepath =  newfileUri.substring(0,lastIndex);
-        //   this.readFile(fileName,filepath);
-        // });
      });
   }, (error)=>{
   }, {limit:1,duration:30});
@@ -426,15 +417,6 @@ export class EditpostPage implements OnInit {
     this.camera.getVideo().then((flieUri)=>{
       let path = flieUri.startsWith('file://') ? flieUri : `file://${flieUri}`;
       this.getVideoInfo(path);
-      // this.transcodeVideo(flieUri).then((newfileUri)=>{
-      //   this.transcode =100;
-      //   newfileUri = "cdvfile://localhost"+newfileUri.replace("file//","");
-      //   newfileUri = newfileUri.replace("/storage/emulated/0/","/sdcard/");  
-      //   let lastIndex = newfileUri.lastIndexOf("/");
-      //   let fileName =  newfileUri.substring(lastIndex+1,newfileUri.length);
-      //   let filepath =  newfileUri.substring(0,lastIndex);
-      //   this.readFile(fileName,filepath);
-      // });
     }).catch((reason)=>{
       this.logUtils.loge("getVideoData error:"+JSON.stringify(reason),TAG);
      })
@@ -556,23 +538,6 @@ export class EditpostPage implements OnInit {
    return filesize>10;
   }
 
-  // videocam(){
-  //   this.flieUri = '';
-  //   this.posterImg='';
-  //   navigator.device.capture.captureVideo((videosdata:any)=>{
-  //     this.zone.run(()=>{
-  //       let videodata = videosdata[0];
-  //       let flieUri = videodata['localURL'];
-  //       let lastIndex = flieUri.lastIndexOf("/");
-  //       let fileName =  flieUri.substring(lastIndex+1,flieUri.length);
-  //       let filepath =  flieUri.substring(0,lastIndex);
-  //       this.readFile(fileName,filepath);
-  //    });
-  // }, (error)=>{
-  //      this.logUtils.loge("captureVideo error:"+JSON.stringify(err),TAG);
-  // }, {limit:1,duration:14});
-  // }
-
   initVideo(){
       let key = this.feedService.getVideoThumbStrFromId(this.nodeId,this.channelId,this.postId,0);
       this.feedService.getData(key).then((idata:string)=>{
@@ -648,7 +613,6 @@ export class EditpostPage implements OnInit {
         if(sourceSrc === ""){
           let key = this.feedService.getVideoKey(this.nodeId,this.channelId,this.postId,0,0);
           this.getVideo(key);
-         //this.getVideo(this.nodeId+this.channelId+this.postId);
         }
       });
      }
@@ -672,40 +636,31 @@ export class EditpostPage implements OnInit {
     source.setAttribute("src",videoData);
     let vgbuffering:any = document.getElementById(id+"vgbufferingeditpost");
     let vgoverlayplay:any = document.getElementById(id+"vgoverlayplayeditpost");
-    let vgscrubbar:any = document.getElementById(id+"vgscrubbareditpost");
     let vgcontrol:any = document.getElementById(id+"vgcontrolseditpost");  
     let video:any = document.getElementById(id+"videoeditpost") || "";
   
-     video.addEventListener('ended',()=>{
-    vgbuffering.style.display ="none";
-    vgoverlayplay.style.display = "block";
-    vgscrubbar.style.display ="none";
-    vgcontrol.style.display = "none";   
-  });
+    video.addEventListener('ended',()=>{
+     vgoverlayplay.style.display = "block";
+     vgbuffering.style.display ="none";
+     vgcontrol.style.display = "none";   
+    });
 
   video.addEventListener('pause',()=>{
   vgbuffering.style.display ="none";
   vgoverlayplay.style.display = "block"; 
-  vgscrubbar.style.display ="none";
   vgcontrol.style.display = "none";  
   });
 
   video.addEventListener('play',()=>{
-    vgscrubbar.style.display ="block";
     vgcontrol.style.display = "block";  
    });
 
 
   video.addEventListener('canplay',()=>{
-        vgbuffering.style.display ="none";
-        video.play(); 
+    vgbuffering.style.display ="none";
+    video.play(); 
   });
-
-video.load();
-// let sid = setTimeout(()=>{
-//   video.play();
-//   clearTimeout(sid);
-// },20);
+  video.load();
   }
 
 async getVideoInfo(fileUri:string){

@@ -36,23 +36,8 @@
         <vg-overlay-play id={{nodeId+channelId+postId}}vgoverlayplayeditpost></vg-overlay-play>
         <vg-buffering id={{nodeId+channelId+postId}}vgbufferingeditpost></vg-buffering>
     
-        <vg-scrub-bar id={{nodeId+channelId+postId}}vgscrubbareditpost style="display: none;">
-            <vg-scrub-bar-current-time></vg-scrub-bar-current-time>
-            <vg-scrub-bar-buffering-time></vg-scrub-bar-buffering-time>
-        </vg-scrub-bar>
-    
         <vg-controls id={{nodeId+channelId+postId}}vgcontrolseditpost style="display: none;">
-            <!-- <vg-play-pause></vg-play-pause> -->
-            <!-- <vg-playback-button></vg-playback-button>
-    
-            <vg-time-display vgProperty="current" vgFormat="mm:ss"></vg-time-display>
-            <span class="totaltime">{{handleTotal(duration)}}</span>
-            <vg-mute></vg-mute> -->
-            <!-- <vg-fullscreen id={{nodeId+channelId+postId}}vgfullscreeneditpost></vg-fullscreen> -->
-
             <img class="vgfullscreen" id={{nodeId+channelId+postId}}vgfullscreeneditpost src="assets/images/fullscreen.svg"/>
-
-
         </vg-controls>
      
     <video #media [vgMedia]="media" id={{nodeId+channelId+postId}}videoeditpost
