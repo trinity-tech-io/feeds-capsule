@@ -2,8 +2,8 @@ export const zh = {
     "common":{
         "followers":"关注",
         "allempty":"空空如也",
-        "pullToRefresh":"释放更新",
-        "Refreshing":"刷新中...",
+        "releaseToRefresh":"释放刷新内容",
+        "beingRefresh":"刷新中...",
         "cancel":"取消",
         "ok":"确定",
         "confirm":"确认",
