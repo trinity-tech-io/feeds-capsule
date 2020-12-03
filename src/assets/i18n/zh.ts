@@ -366,8 +366,8 @@ export const zh = {
     "CommentPage":{
         "newComment":"新建微评",
         "publishComment":"发布微评",
-        "enterComments":"输入微评",
-        "tipMsg1":"发布成功！"
+        "inputComment": "输入评论",
+        "tipMsg1":"您的评论已经发布成功"
     },
     "DisclaimerPage":{
         "title":"免责声明",
