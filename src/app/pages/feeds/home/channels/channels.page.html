@@ -3,15 +3,14 @@
 </ion-header>
 
 <ion-content [class.darkContainer]="theme.darkMode" [class.blur]="!hideComment" [ngClass]="{'translucent-mask': isShowPrompt}" (ionScroll)="ionScroll()" [scrollEvents]="true">
-    
+
   <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" pullFactor="0.5">
     <ion-refresher-content
       class="refresh"
-      pullingText="{{'common.pullToRefresh'|translate}}"
+      pullingText="{{'common.releaseToRefresh'|translate}}"
       pullingIcon="arrow-dropdown"
       refreshingSpinner="crescent"
-      refreshingText="{{'common.Refreshing'|translate}}"
-    >
+      refreshingText="{{'common.beingRefresh'|translate}}">
     </ion-refresher-content>
   </ion-refresher>
 
@@ -89,36 +88,36 @@
               <pre [ngStyle]="styleObj" style="color:#368bff;">{{"common.fulltext" | translate }}</pre>
             </div>
           </h2>
-      
+
           <div *ngIf="post.post_status != 1&&post.content.mediaType ===1"  id ={{post.nodeId+post.channel_id+post.id}}channelrow style="width: 100%">
-            <span class="lefttopostdetailimg" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)"></span> 
+            <span class="lefttopostdetailimg" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)"></span>
                 <img
                   id ={{post.nodeId+post.channel_id+post.id}}postimgchannel
                   class="post-img"
                   style="width: 100%;"
                   (click)="showBigImage(post.nodeId,post.channel_id,post.id)">
-                  <span class="topostdetailimg" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)"></span> 
+                  <span class="topostdetailimg" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)"></span>
           </div>
 
           <!--video-->
 
           <div *ngIf="post.post_status!=1&&post.content.mediaType ===2" id={{post.nodeId+post.channel_id+post.id}}vgplayerchannel style="width:100%">
               <div style="width: 100%;display:inline-block;height:200px;">
-              <span  class="lefttopostdetailvideo" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)"></span> 
+              <span  class="lefttopostdetailvideo" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)"></span>
                <vg-player>
                  <vg-overlay-play id={{post.nodeId+post.channel_id+post.id}}vgoverlayplaychannel></vg-overlay-play>
                  <vg-buffering id={{post.nodeId+post.channel_id+post.id}}vgbufferingchannel></vg-buffering>
-                 <vg-controls id={{post.nodeId+post.channel_id+post.id}}vgcontrolschannel style="display: none;"> 
+                 <vg-controls id={{post.nodeId+post.channel_id+post.id}}vgcontrolschannel style="display: none;">
                      <img class="vgfullscreen" id={{post.nodeId+post.channel_id+post.id}}vgfullscreenchannel src="assets/images/fullscreen.svg"/>
                  </vg-controls>
-              
+
              <video #media [vgMedia]="media" id ={{post.nodeId+post.channel_id+post.id}}videochannel
              playsinline webkit-playsinline>
              <source  type="video/mp4" id={{post.nodeId+post.channel_id+post.id}}sourcechannel>
              </video>
              </vg-player>
              </div>
-             <span  class="topostdetailvideo" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)"></span> 
+             <span  class="topostdetailvideo" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)"></span>
              <ion-progress-bar *ngIf="downStatusObj[post.nodeId+post.channel_id++post.id]!=''&&downProgressObj[post.nodeId+post.channel_id++post.id]>=0&&downProgressObj[post.nodeId+post.channel_id++post.id]!=100" [value]="downProgressObj[post.nodeId+post.channel_id++post.id]/100" style="margin-top: -13px;"></ion-progress-bar>
           </div>
 
@@ -157,7 +156,7 @@
   *ngIf="!hideComment"
   [postId]="postId"
   [nodeId]="nodeId "
-  [channelId]="channelId" 
+  [channelId]="channelId"
   [channelAvatar]="channelAvatar"
   [channelName]="channelName"
   [onlineStatus]="onlineStatus"

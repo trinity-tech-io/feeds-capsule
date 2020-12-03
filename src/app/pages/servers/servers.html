@@ -6,11 +6,10 @@
   <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" pullFactor="0.5">
     <ion-refresher-content
       class="refresh"
-      pullingText="{{'common.pullToRefresh'|translate}}"
+      pullingText="{{'common.releaseToRefresh'|translate}}"
       pullingIcon="arrow-dropdown"
       refreshingSpinner="crescent"
-      refreshingText="{{'common.Refreshing'|translate}}"
-    >
+      refreshingText="{{'common.beingRefresh'|translate}}">
     </ion-refresher-content>
   </ion-refresher>
 
@@ -42,7 +41,7 @@
       </ion-button>
     </ion-row>
   </div>
-  
+
   <!-------------------- HAS FEEDS -------------------->
   <ion-grid class="feedSource-container" [class.darkContainer]="theme.darkMode">
     <!-------------------- SERVER FEEDS -------------------->
@@ -105,7 +104,7 @@
           </ion-col>
           <ion-ripple-effect></ion-ripple-effect>
         </ion-row>
-      </div>  
+      </div>
     </div>
      <!-------------------- LABEL BUTTONS -------------------->
     <ion-row class="buttons-row" *ngIf="serverList.length >0">

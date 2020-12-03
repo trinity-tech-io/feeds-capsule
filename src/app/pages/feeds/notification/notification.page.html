@@ -6,11 +6,10 @@
   <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" pullFactor="0.5">
     <ion-refresher-content
       class="refresh"
-      pullingText="{{'common.pullToRefresh'|translate}}"
+      pullingText="{{'common.releaseToRefresh'|translate}}"
       pullingIcon="arrow-dropdown"
       refreshingSpinner="crescent"
-      refreshingText="{{'common.Refreshing'|translate}}"
-    >
+      refreshingText="{{'common.beingRefresh'|translate}}">
     </ion-refresher-content>
   </ion-refresher>
 
@@ -28,11 +27,11 @@
           </ion-col>
           <ion-col size="9.75" class="right-col">
             <h1 (press)="pressName(notification.userName)">{{ moreName(notification.userName) }} <span> {{ handleDisplayTime(notification.time) }}</span></h1>
-            <p>{{ notification.behaviorText }} 
+            <p>{{ notification.behaviorText }}
             <h2>{{ getNotificationContent(notification) }}</h2>
           </ion-col>
         </ion-row>
-       
+
       </ion-item>
       <span *ngIf="notification['readStatus']===1" class="online-circle-blue" style="position: absolute;top:37px;right:29px;"></span>
        <!-- <ion-item-options side="end" (ionSwipe)="delete(notification)">
