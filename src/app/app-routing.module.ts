@@ -25,7 +25,7 @@ const routes: Routes = [
   { path: 'bindservice/issuecredential/:nodeId/:did', loadChildren: './pages/feeds/bindservice/issuecredential/issuecredential.module#IssuecredentialPageModule' },
   { path: 'bindservice/finish/:nodeId', loadChildren: './pages/feeds/bindservice/finish/finish.module#FinishPageModule' },
   { path: 'bindservice/startbinding/:nodeId/:nonce/:address/:did/:feedsUrl', loadChildren: './pages/feeds/bindservice/startbinding/startbinding.module#StartbindingPageModule' },
-  
+
   { path: 'channels/:nodeId/:channelId', loadChildren: './pages/feeds/home/channels/channels.module#ChannelsPageModule' },
   { path: 'postdetail/:nodeId/:channelId/:postId', loadChildren: './pages/feeds/home/postdetail/postdetail.module#PostdetailPageModule' },
 
@@ -35,13 +35,13 @@ const routes: Routes = [
   { path: 'menu/develop', loadChildren: './pages/feeds/menu/develop/develop.module#DevelopPageModule' },
   { path: 'menu/donation', loadChildren: './pages/feeds/menu/donation/donation.module#DonationPageModule' },
   { path: 'menu/testsession', loadChildren: './pages/testsession/testsession.module#TestsessionPageModule' },
-  
+
   { path: 'disclaimer', loadChildren: './pages/disclaimer/disclaimer.module#DisclaimerPageModule' },
 
   { path: 'editserverinfo', loadChildren: './pages/editserverinfo/editserverinfo.module#EditserverinfoPageModule' },
   { path: 'eidtchannel', loadChildren: './pages/eidtchannel/eidtchannel.module#EidtchannelPageModule' },
-  { path: 'editpost', loadChildren: './pages/editpost/editpost.module#EditpostPageModule' },
-  { path: 'editcomment', loadChildren: './pages/editcomment/editcomment.module#EditcommentPageModule' },
+  { path: 'editpost', loadChildren: './pages/editpost/editpost.module#EditPostPageModule' },
+  { path: 'editcomment', loadChildren: './pages/editcomment/editcomment.module#EditCommentPageModule' },
   { path: 'discoverfeeds', loadChildren: './pages/servers/discoverfeeds/discoverfeeds.module#DiscoverfeedsPageModule' },
   { path: 'discoverfeedsinfo', loadChildren: './pages/servers/discoverfeedsinfo/discoverfeedsinfo.module#DiscoverfeedsinfoPageModule' },
   { path: 'settings', loadChildren: './pages/settings/settings.module#SettingsPageModule' }

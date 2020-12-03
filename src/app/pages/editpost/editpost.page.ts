@@ -19,7 +19,7 @@ let TAG: string = "Feeds-editpost";
   styleUrls: ['./editpost.page.scss'],
 })
 
-export class EditpostPage implements OnInit {
+export class EditPostPage implements OnInit {
   public connectionStatus = 1;
   public nodeStatus = {};
   public channelAvatar = "";
@@ -70,8 +70,8 @@ export class EditpostPage implements OnInit {
     this.acRoute.queryParams.subscribe((data) => {
       let item = _.cloneDeep(data);
       this.nodeId = item["nodeId"] || "";
-      this.channelId = item["channelId"] || "";  
-      this.postId = item["postId"] || "";    
+      this.channelId = item["channelId"] || "";
+      this.postId = item["postId"] || "";
     });
   }
 
@@ -123,7 +123,7 @@ export class EditpostPage implements OnInit {
         this.native.hideLoading();
       });
     });
-   
+
     this.events.subscribe('stream:onStateChangedCallback', (nodeId, state) => {
       this.zone.run(() => {
         if (state != FeedsData.StreamState.CONNECTED)
@@ -135,7 +135,6 @@ export class EditpostPage implements OnInit {
       });
     });
 
-    
     this.events.subscribe('feeds:setBinaryFinish', (nodeId, key) => {
       this.zone.run(() => {
         this.processSetBinaryResult();
@@ -180,9 +179,9 @@ export class EditpostPage implements OnInit {
     this.events.unsubscribe("rpcRequest:error");
     this.events.unsubscribe("rpcResponse:error");
     this.events.unsubscribe("feeds:editPostSuccess");
-    
+
     this.events.unsubscribe("feeds:setBinaryFinish");
-    
+
     this.events.unsubscribe("stream:error");
     this.events.unsubscribe("stream:setBinarySuccess");
     this.events.unsubscribe("stream:setBinaryError");
@@ -209,11 +208,11 @@ export class EditpostPage implements OnInit {
    }
 
   ionViewDidEnter() {
- 
+
   }
 
   initTitle(){
-    titleBarManager.setTitle(this.translate.instant("EditpostPage.title"));
+    titleBarManager.setTitle(this.translate.instant("EditPostPage.title"));
   }
 
   post(){
@@ -221,7 +220,7 @@ export class EditpostPage implements OnInit {
       this.native.toast_trans("common.connectionError");
       return;
     }
-    
+
     let newPost = this.native.iGetInnerText(this.newPost);
     if (newPost === "" && this.imgUrl === ""&&this.flieUri === ""){
       this.native.toast_trans("CreatenewpostPage.tipMsg");
@@ -253,7 +252,7 @@ export class EditpostPage implements OnInit {
       this.publishEditedPost(content);
       return ;
     }
-    
+
     //content img & only text changed
     if (this.newPost != this.oldNewPost && this.imgUrl != ""){
       this.editState = FeedsData.EditState.TextChange;
@@ -337,7 +336,7 @@ export class EditpostPage implements OnInit {
   }
 
   showBigImage(content: any){
-     this.native.openViewer(content,"common.image","EditpostPage.title",this.appService);
+     this.native.openViewer(content,"common.image","EditPostPage.title",this.appService);
   }
 
   checkServerStatus(nodeId: string){
@@ -359,7 +358,7 @@ export class EditpostPage implements OnInit {
     let key = this.feedService.getImageKey(this.nodeId,this.channelId,this.postId,0,0);
     if(contentVersion == "0"){
          key = thumbkey;
-    }  
+    }
     this.feedService.getData(key).then((image)=>{
       this.imgUrl = image || "";
     }).catch((reason)=>{
@@ -391,7 +390,7 @@ export class EditpostPage implements OnInit {
       this.duration = post.content["videoThumbKey"]["duration"];
       this.initVideo();
     }
-   
+
     this.getContent();
 
     this.connectionStatus = this.feedService.getConnectionStatus();
@@ -426,8 +425,8 @@ export class EditpostPage implements OnInit {
 
     window.resolveLocalFileSystemURL(filepath,
       (dirEntry: CordovaFilePlugin.DirectoryEntry)=>{
-        dirEntry.getFile(fileName, 
-          { create: true, exclusive: false }, 
+        dirEntry.getFile(fileName,
+          { create: true, exclusive: false },
           (fileEntry) => {
 
             fileEntry.file((file)=>{
@@ -450,7 +449,7 @@ export class EditpostPage implements OnInit {
               fileReader.onloadend =(event:any)=>{
 
                this.zone.run(()=>{
-                //  this.flieUri = fileReader.result; 
+                //  this.flieUri = fileReader.result;
                  let result = fileReader.result;
                   if (typeof result == "string")
                     this.flieUri = result;
@@ -479,7 +478,7 @@ export class EditpostPage implements OnInit {
                   }
                 })
               };
-              
+
               fileReader.readAsDataURL(file);
 
            },(err)=>{
@@ -504,7 +503,7 @@ export class EditpostPage implements OnInit {
 
     // 视频比例
     const ratio = videoInfo.width / videoInfo.height;
- 
+
     if (ratio > 1) {
       width = videoInfo.width > 480 ? 480 : videoInfo.width;
     } else if (ratio < 1) {
@@ -554,8 +553,8 @@ export class EditpostPage implements OnInit {
               this.setOverPlay(id);
               clearTimeout(sid);
             },0);
-      
-          });   
+
+          });
         }
        });
   }
@@ -576,13 +575,13 @@ export class EditpostPage implements OnInit {
        if(source != ""){
         source.removeAttribute('poster');
     }
-      
+
     if(video != ""){
         let sid=setTimeout(()=>{
           video.load();
           clearTimeout(sid);
         },10)
-    }    
+    }
   }
 
   setFullScreen(id:string){
@@ -626,8 +625,8 @@ export class EditpostPage implements OnInit {
         let videoData = videodata || "";
         this.flieUri = videoData;
         this.loadVideo(videoData);
-      }) 
-    }); 
+      })
+    });
   }
 
   loadVideo(videoData:string){
@@ -636,30 +635,30 @@ export class EditpostPage implements OnInit {
     source.setAttribute("src",videoData);
     let vgbuffering:any = document.getElementById(id+"vgbufferingeditpost");
     let vgoverlayplay:any = document.getElementById(id+"vgoverlayplayeditpost");
-    let vgcontrol:any = document.getElementById(id+"vgcontrolseditpost");  
+    let vgcontrol:any = document.getElementById(id+"vgcontrolseditpost");
     let video:any = document.getElementById(id+"videoeditpost") || "";
-  
+
     video.addEventListener('ended',()=>{
      vgoverlayplay.style.display = "block";
      vgbuffering.style.display ="none";
-     vgcontrol.style.display = "none";   
+     vgcontrol.style.display = "none";
     });
 
   video.addEventListener('pause',()=>{
   vgbuffering.style.display ="none";
-  vgoverlayplay.style.display = "block"; 
-  vgcontrol.style.display = "none";  
+  vgoverlayplay.style.display = "block";
+  vgcontrol.style.display = "none";
   });
 
   video.addEventListener('play',()=>{
-    vgcontrol.style.display = "block";  
+    vgcontrol.style.display = "block";
    });
-
 
   video.addEventListener('canplay',()=>{
     vgbuffering.style.display ="none";
-    video.play(); 
+    video.play();
   });
+
   video.load();
   }
 
@@ -667,9 +666,9 @@ async getVideoInfo(fileUri:string){
     let videoInfo = await this.videoEditor.getVideoInfo({ fileUri:fileUri });
     this.duration = videoInfo["duration"];
     this.createThumbnail(fileUri);
-} 
+}
 
-handleTotal(duration:any){ 
+handleTotal(duration:any){
   return UtilService.timeFilter(duration);
 }
 
@@ -682,7 +681,7 @@ createThumbnail(path:string){
     quality: 30
   }).then((newfileUri)=>{
       newfileUri = "cdvfile://localhost"+newfileUri.replace("file//","");
-      newfileUri = newfileUri.replace("/storage/emulated/0/","/sdcard/");  
+      newfileUri = newfileUri.replace("/storage/emulated/0/","/sdcard/");
       let lastIndex = newfileUri.lastIndexOf("/");
       let fileName =  newfileUri.substring(lastIndex+1,newfileUri.length);
       let filepath =  newfileUri.substring(0,lastIndex);
@@ -691,7 +690,7 @@ createThumbnail(path:string){
       this.transcodeVideo(path).then((newfileUri)=>{
         this.transcode =100;
         newfileUri = "cdvfile://localhost"+newfileUri.replace("file//","");
-        newfileUri = newfileUri.replace("/storage/emulated/0/","/sdcard/");  
+        newfileUri = newfileUri.replace("/storage/emulated/0/","/sdcard/");
         let lastIndex = newfileUri.lastIndexOf("/");
         let fileName =  newfileUri.substring(lastIndex+1,newfileUri.length);
         let filepath =  newfileUri.substring(0,lastIndex);
@@ -703,8 +702,8 @@ createThumbnail(path:string){
 readThumbnail(fileName:string,filepath:string){
   window.resolveLocalFileSystemURL(filepath,
     (dirEntry: CordovaFilePlugin.DirectoryEntry)=>{
-      dirEntry.getFile(fileName, 
-        { create: true, exclusive: false }, 
+      dirEntry.getFile(fileName,
+        { create: true, exclusive: false },
         (fileEntry) => {
 
           fileEntry.file((file)=>{
@@ -727,7 +726,7 @@ readThumbnail(fileName:string,filepath:string){
               //   }
               // })
             };
-            
+
             fileReader.readAsDataURL(file);
 
          },(err)=>{
@@ -752,7 +751,7 @@ readThumbnail(fileName:string,filepath:string){
       this.native.hideLoading();
       this.native.toast_trans("CreatenewpostPage.tipMsg1");
     });
-  } 
+  }
 }
 
 function ab2str(u,f) {
