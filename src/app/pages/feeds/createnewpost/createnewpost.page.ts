@@ -398,15 +398,6 @@ export class CreatenewpostPage implements OnInit {
       this.zone.run(()=>{
         let videodata = videosdata[0];
         this.getVideoInfo(videodata['fullPath']);
-        // this.transcodeVideo(videodata['fullPath']).then((newfileUri)=>{
-        //   this.transcode =100;
-        //   newfileUri = "cdvfile://localhost"+newfileUri.replace("file//","");
-        //   newfileUri = newfileUri.replace("/storage/emulated/0/","/sdcard/");  
-        //   let lastIndex = newfileUri.lastIndexOf("/");
-        //   let fileName =  newfileUri.substring(lastIndex+1,newfileUri.length);
-        //   let filepath =  newfileUri.substring(0,lastIndex);
-        //   this.readFile(fileName,filepath);
-        // });
      });
   }, (error)=>{
        this.logUtils.loge("captureVideo error:"+JSON.stringify(error),TAG);
@@ -615,26 +606,22 @@ loadVideo(videoData:string){
   source.setAttribute("src",videoData);
   let vgbuffering:any = document.getElementById("vgbufferingcreatepost");
   let vgoverlayplay:any = document.getElementById("vgoverlayplaycreatepost");
-  let vgscrubbar:any = document.getElementById("vgscrubbarcreatepost");
   let vgcontrol:any = document.getElementById("vgcontrolscreatepost");  
 
 
-   video.addEventListener('ended',()=>{
-  vgbuffering.style.display ="none";
+  video.addEventListener('ended',()=>{
   vgoverlayplay.style.display = "block";
-  vgscrubbar.style.display ="none";
+  vgbuffering.style.display ="none";
   vgcontrol.style.display = "none";   
 });
 
 video.addEventListener('pause',()=>{
-vgbuffering.style.display ="none";
-vgoverlayplay.style.display = "block"; 
-vgscrubbar.style.display ="none";
-vgcontrol.style.display = "none";  
+  vgoverlayplay.style.display = "block";  
+  vgbuffering.style.display ="none";
+  vgcontrol.style.display = "none";  
 });
 
 video.addEventListener('play',()=>{
-  vgscrubbar.style.display ="block";
   vgcontrol.style.display = "block";  
  });
 
@@ -735,25 +722,6 @@ handleTotal(duration:any){
   return UtilService.timeFilter(duration);
 }
 
-
-
-  
-  // videocam(){
-  //   this.flieUri = '';
-  //   this.posterImg='';
-  //   navigator.device.capture.captureVideo((videosdata:any)=>{
-  //     this.zone.run(()=>{
-  //       let videodata = videosdata[0];
-  //       let flieUri = videodata['localURL'];
-  //       let lastIndex = flieUri.lastIndexOf("/");
-  //       let fileName =  flieUri.substring(lastIndex+1,flieUri.length);
-  //       let filepath =  flieUri.substring(0,lastIndex);
-  //       this.readFile(fileName,filepath);
-  //    });
-  // }, (error)=>{
-  //      this.logUtils.loge("captureVideo error:"+JSON.stringify(err),TAG);
-  // }, {limit:1,duration:14});
-  // }
 }
 function ab2str(u,f) {
   var b = new Blob([u]);
