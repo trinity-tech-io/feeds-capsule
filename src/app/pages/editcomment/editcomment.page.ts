@@ -12,159 +12,155 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
   templateUrl: './editcomment.page.html',
   styleUrls: ['./editcomment.page.scss'],
 })
-export class EditcommentPage implements OnInit { 
+export class EditCommentPage implements OnInit {
+  public connectionStatus = 1;
+  public nodeStatus:any={};
+  public channelAvatar = "";
+  public channelName = "";
+  public subscribers:string = "";
+  public newComment: string="";
+  public oldNewComment: string="";
+  public nodeId: string ="";
+  public channelId: number= 0;
+  public postId: number = 0;
+  public commentById:Number = 0;
+  public commentId:Number = 0;
+  public imgUrl: string = "";
 
-public connectionStatus = 1;
-public nodeStatus:any={};
-public channelAvatar = "";
-public channelName = "";
-public subscribers:string = "";
-public newComment: string="";
-public oldNewComment: string="";
-public nodeId: string ="";
-public channelId: number= 0;
-public postId: number = 0;
-public commentById:Number = 0;
-public commentId:Number = 0;
-public imgUrl: string = "";
+  constructor(
+    private events: Events,
+    private native: NativeService,
+    private acRoute: ActivatedRoute,
+    private navCtrl: NavController,
+    private zone: NgZone,
+    private feedService: FeedService,
+    public theme:ThemeService,
+    private translate:TranslateService) { }
 
-constructor(
-  private events: Events,
-  private native: NativeService,
-  private acRoute: ActivatedRoute,
-  private navCtrl: NavController,
-  private zone: NgZone,
-  private feedService: FeedService,
-  public theme:ThemeService,
-  private translate:TranslateService) { }
-
-ngOnInit() {
-  this.acRoute.queryParams.subscribe((data)=>{
-    let item = _.cloneDeep(data);
-    this.nodeId = item.nodeId;
-    this.channelId = item.channelId;
-    this.postId = item.postId;
-    this.commentById = item.commentById;
-    this.commentId = item.commentId;
-    let content = item.content || "";
-    this.getContent(content);
-  });
-}
-
-ionViewWillEnter() {
-  this.initTitle();
-  this.native.setTitleBarBackKeyShown(true);
-  
-  this.connectionStatus = this.feedService.getConnectionStatus();
-  let channel = this.feedService.getChannelFromId(this.nodeId,this.channelId) || {};
-  this.channelName = channel["name"] || "";
-  this.subscribers = channel["subscribers"] || "";
-  this.channelAvatar = this.feedService.parseChannelAvatar(channel["avatar"]) || "";
-
- 
-  this.events.subscribe('feeds:connectionChanged',(status)=>{
-    this.zone.run(() => {
-      this.connectionStatus = status;
+  ngOnInit() {
+    this.acRoute.queryParams.subscribe((data)=>{
+      let item = _.cloneDeep(data);
+      this.nodeId = item.nodeId;
+      this.channelId = item.channelId;
+      this.postId = item.postId;
+      this.commentById = item.commentById;
+      this.commentId = item.commentId;
+      let content = item.content || "";
+      this.getContent(content);
     });
-  });
+  }
 
-  this.events.subscribe("feeds:updateTitle",()=>{
+  ionViewWillEnter() {
     this.initTitle();
-  });
+    this.native.setTitleBarBackKeyShown(true);
 
-  this.events.subscribe('rpcRequest:error', () => {
+    this.connectionStatus = this.feedService.getConnectionStatus();
+    let channel = this.feedService.getChannelFromId(this.nodeId,this.channelId) || {};
+    this.channelName = channel["name"] || "";
+    this.subscribers = channel["subscribers"] || "";
+    this.channelAvatar = this.feedService.parseChannelAvatar(channel["avatar"]) || "";
+
+
+    this.events.subscribe('feeds:connectionChanged',(status)=>{
+      this.zone.run(() => {
+        this.connectionStatus = status;
+      });
+    });
+
+    this.events.subscribe("feeds:updateTitle",()=>{
+      this.initTitle();
+    });
+
+    this.events.subscribe('rpcRequest:error', () => {
+      this.zone.run(() => {
+        this.native.hideLoading();
+      });
+    });
+
+    this.events.subscribe('rpcResponse:error', () => {
+      this.zone.run(() => {
+        this.native.hideLoading();
+      });
+    });
+
+  this.events.subscribe('feeds:editCommentFinish', () => {
     this.zone.run(() => {
-       this.native.hideLoading();
+      this.navCtrl.pop().then(()=>{
+        this.native.hideLoading();
+      });
     });
   });
 
-  this.events.subscribe('rpcResponse:error', () => {
-    this.zone.run(() => {
-      this.native.hideLoading();
+  this.events.subscribe("feeds:friendConnectionChanged", (nodeId, status)=>{
+    this.zone.run(()=>{
+      this.nodeStatus[nodeId] = status;
     });
   });
 
- this.events.subscribe('feeds:editCommentFinish', () => {
-  this.zone.run(() => {
-    this.navCtrl.pop().then(()=>{
-      this.native.hideLoading();
-    });
-  });
- });
-
- this.events.subscribe("feeds:friendConnectionChanged", (nodeId, status)=>{
-  this.zone.run(()=>{
-    this.nodeStatus[nodeId] = status;
-  });
- });
-
-  this.initnodeStatus();
-}
-
-ionViewDidEnter(){
-}
-
-ionViewWillLeave(){
-  this.events.unsubscribe("feeds:connectionChanged");
-  this.events.unsubscribe("feeds:updateTitle");
-  this.events.unsubscribe("rpcRequest:error");
-  this.events.unsubscribe("rpcResponse:error");
-  this.events.unsubscribe("feeds:editCommentFinish");
-}
-
-initTitle(){
-  titleBarManager.setTitle(this.translate.instant("EditcommentPage.title"));
-}
-
-publishComment(){
-  let newComment = this.native.iGetInnerText(this.newComment) || "";
-  if(newComment===""){
-    this.native.toast_trans('CommentPage.enterComments');
-    return false;
+    this.initnodeStatus();
   }
 
-  if(this.newComment === this.oldNewComment){
-    this.native.toast_trans("common.nochanges");
-    return false;
+  ionViewDidEnter(){
   }
 
-  this.native.showLoading("common.waitMoment").then(()=>{
-         this.editComment();
-  }).catch(()=>{
-       this.native.hideLoading();
-  });
+  ionViewWillLeave(){
+    this.events.unsubscribe("feeds:connectionChanged");
+    this.events.unsubscribe("feeds:updateTitle");
+    this.events.unsubscribe("rpcRequest:error");
+    this.events.unsubscribe("rpcResponse:error");
+    this.events.unsubscribe("feeds:editCommentFinish");
+  }
 
+  initTitle(){
+    titleBarManager.setTitle(this.translate.instant("EditCommentPage.title"));
+  }
+
+  publishComment(){
+    let newComment = this.native.iGetInnerText(this.newComment) || "";
+    if(newComment===""){
+      this.native.toast_trans('CommentPage.enterComments');
+      return false;
+    }
+
+    if(this.newComment === this.oldNewComment){
+      this.native.toast_trans("common.nochanges");
+      return false;
+    }
+
+    this.native.showLoading("common.waitMoment").then(()=>{
+          this.editComment();
+    }).catch(()=>{
+        this.native.hideLoading();
+    });
+  }
+
+  editComment(){
+    this.feedService.editComment(this.nodeId,Number(this.channelId),Number(this.postId),Number(this.commentId),Number(this.commentById),this.newComment);
+  }
+
+  checkServerStatus(nodeId: string){
+    return this.feedService.getServerStatusFromId(nodeId);
+  }
+
+  initnodeStatus(){
+    let status = this.checkServerStatus(this.nodeId);
+    this.nodeStatus[this.nodeId] = status;
+  }
+
+  pressName(channelName:string){
+    this.native.createTip(channelName);
+  }
+
+  getContent(content:string){
+    this.newComment = content;
+    this.oldNewComment = content;
+  }
+
+  addImg() {
+    this.native.toast("common.comingSoon");
+  }
+
+  showBigImage(content: any){
+    this.native.openViewer(content,"common.image","CreatenewpostPage.addingPost");
+  }
 }
-
-editComment(){
-   this.feedService.editComment(this.nodeId,Number(this.channelId),Number(this.postId),Number(this.commentId),Number(this.commentById),this.newComment);
-}
-
-checkServerStatus(nodeId: string){
-  return this.feedService.getServerStatusFromId(nodeId);
-}
-
-initnodeStatus(){
-   let status = this.checkServerStatus(this.nodeId);
-  this.nodeStatus[this.nodeId] = status;
-}
-
-pressName(channelName:string){
-  this.native.createTip(channelName);
-}
-
-getContent(content:string){
-  this.newComment = content;
-  this.oldNewComment = content;
-}
-
-addImg() {
-  this.native.toast("common.comingSoon");
-}
-
-showBigImage(content: any){
-  this.native.openViewer(content,"common.image","CreatenewpostPage.addingPost");
-}
-
-}
-

@@ -454,13 +454,13 @@ export const fr = {
     "EidtchannelPage":{
         "title":"Edit Feed Info",
     },
-    "EditpostPage":{
+    "EditPostPage":{
         "title":"Edit Post",
-        "savechanges":"Save changes"
+        "saveChanges":"Save changes"
     },
-    "EditcommentPage":{
+    "EditCommentPage":{
         "title":"Edit Comment",
-        "savechanges":"Save changes"
+        "saveChanges":"Save changes"
     },
     "DiscoverfeedsPage":{
         "title":"Discover Feeds Sources",

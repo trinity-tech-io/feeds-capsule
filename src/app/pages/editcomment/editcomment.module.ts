@@ -5,12 +5,12 @@ import { Routes, RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { IonicModule } from '@ionic/angular';
 
-import { EditcommentPage } from './editcomment.page';
+import { EditCommentPage } from './editcomment.page';
 
 const routes: Routes = [
   {
     path: '',
-    component: EditcommentPage
+    component: EditCommentPage
   }
 ];
 
@@ -22,6 +22,6 @@ const routes: Routes = [
     IonicModule,
     RouterModule.forChild(routes)
   ],
-  declarations: [EditcommentPage]
+  declarations: [EditCommentPage]
 })
-export class EditcommentPageModule {}
+export class EditCommentPageModule {}
