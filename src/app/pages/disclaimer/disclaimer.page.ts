@@ -15,7 +15,6 @@ declare let appManager: AppManagerPlugin.AppManager;
   styleUrls: ['./disclaimer.page.scss'],
 })
 export class DisclaimerPage implements OnInit {
-
   public styleObj:any={"height":""};
 
   constructor(
@@ -35,7 +34,7 @@ export class DisclaimerPage implements OnInit {
     this.initTitle();
     this.native.setTitleBarBackKeyShown(false);
     appManager.setVisible('show');
-    
+
     this.styleObj["height"] = (screen.height - 215) +"px"
     this.events.subscribe("feeds:updateTitle",()=>{
       this.initTitle();
@@ -45,19 +44,21 @@ export class DisclaimerPage implements OnInit {
   ionViewDidEnter(){
   }
 
-  initTitle(){
-    titleBarManager.setTitle(this.translate.instant("DisclaimerPage.disclaimer"));
+  private initTitle(){
+    titleBarManager.setTitle(this.translate.instant("DisclaimerPage.title"));
   }
 
   ionViewWillLeave(){
     this.events.unsubscribe("feeds:updateTitle");
   }
 
-  cancel(){
+  // deny the disclaimer
+  deny(){
     appManager.close();
   }
 
-  confirm(){
+  // accept the disclaimer
+  accept(){
     localStorage.setItem('org.elastos.dapp.feeds.disclaimer',"11");
     this.init();
   }
@@ -72,7 +73,7 @@ export class DisclaimerPage implements OnInit {
     }
   }
 
-  async splash() {
+  private async splash() {
     const splash = await this.modalCtrl.create({ component: SplashscreenPage });
     return await splash.present();
   }
