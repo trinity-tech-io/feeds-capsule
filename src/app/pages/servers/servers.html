@@ -42,7 +42,7 @@
       </ion-button>
     </ion-row>
   </div>
-  
+
   <!-------------------- HAS FEEDS -------------------->
   <ion-grid class="feedSource-container" [class.darkContainer]="theme.darkMode">
     <!-------------------- SERVER FEEDS -------------------->
@@ -65,7 +65,6 @@
           </ion-col>
           <ion-col size="7.5" class="middle-col">
             <h1>{{ server.name }}</h1>
-            <p>{{ server.owner }}</p>
             <ion-row class="users-row">
               <img [src]="checkServerStatus(server.nodeId) === 0 ? 'assets/images/users-online.svg' : 'assets/images/users-offline.svg'">&nbsp;
               <h2 [class.online]="checkServerStatus(server.nodeId) === 0">{{checkConnectClient(server.nodeId)}} <span>{{'ServersPage.users'| translate}}</span></h2>
@@ -94,7 +93,6 @@
           </ion-col>
           <ion-col size="7.5" class="middle-col">
             <h1>{{ myFeedSource.name }}</h1>
-            <p>{{ myFeedSource.owner }}</p>
             <ion-row class="users-row">
               <img [src]="checkServerStatus(myFeedSource.nodeId) === 0 ? 'assets/images/users-online.svg' : 'assets/images/users-offline.svg'">&nbsp;
               <h2 [class.online]="checkServerStatus(myFeedSource.nodeId) === 0">{{checkConnectClient(myFeedSource.nodeId)}} <span>{{'ServersPage.users'| translate}}</span></h2>
@@ -105,7 +103,7 @@
           </ion-col>
           <ion-ripple-effect></ion-ripple-effect>
         </ion-row>
-      </div>  
+      </div>
     </div>
      <!-------------------- LABEL BUTTONS -------------------->
     <ion-row class="buttons-row" *ngIf="serverList.length >0">
