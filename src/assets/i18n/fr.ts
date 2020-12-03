@@ -460,7 +460,8 @@ export const fr = {
     },
     "EditCommentPage":{
         "title":"Edit Comment",
-        "saveChanges":"Save changes"
+        "saveChanges":"Save changes",
+        "notModified": "You has not modified the content of your comment yet"
     },
     "DiscoverfeedsPage":{
         "title":"Discover Feeds Sources",

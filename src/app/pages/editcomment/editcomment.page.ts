@@ -83,19 +83,19 @@ export class EditCommentPage implements OnInit {
       });
     });
 
-  this.events.subscribe('feeds:editCommentFinish', () => {
-    this.zone.run(() => {
-      this.navCtrl.pop().then(()=>{
-        this.native.hideLoading();
+    this.events.subscribe('feeds:editCommentFinish', () => {
+      this.zone.run(() => {
+        this.navCtrl.pop().then(()=>{
+          this.native.hideLoading();
+        });
       });
     });
-  });
 
-  this.events.subscribe("feeds:friendConnectionChanged", (nodeId, status)=>{
-    this.zone.run(()=>{
-      this.nodeStatus[nodeId] = status;
+    this.events.subscribe("feeds:friendConnectionChanged", (nodeId, status)=>{
+      this.zone.run(()=>{
+        this.nodeStatus[nodeId] = status;
+      });
     });
-  });
 
     this.initnodeStatus();
   }
@@ -123,14 +123,14 @@ export class EditCommentPage implements OnInit {
     }
 
     if(this.newComment === this.oldNewComment){
-      this.native.toast_trans("common.nochanges");
+      this.native.toast_trans("EditCommentPage.notModifiedYet");
       return false;
     }
 
     this.native.showLoading("common.waitMoment").then(()=>{
-          this.editComment();
+      this.editComment();
     }).catch(()=>{
-        this.native.hideLoading();
+      this.native.hideLoading();
     });
   }
 
