@@ -41,27 +41,29 @@ export class VideofullscreenComponent implements OnInit {
 
   
   palyVideo(){
-    let video:any =  document.getElementById("fullscreenvideo");
+    let video:any = document.getElementById("fullscreenvideo");
     video.setAttribute("poster",this.postImg);
     document.getElementById("fullscreensource").setAttribute("src",this.videoSrc);
     let vgbuffering:any = document.getElementById("fullscreenvgbuffering");
     let vgoverlayplay:any = document.getElementById("fullscreenvgoverlayplay");
     let vgscrubbar:any = document.getElementById("fullscreenvgscrubbar");
  
-     video.addEventListener('ended',()=>{
-    vgbuffering.style.display ="none";
-    vgoverlayplay.style.display = "block";
-    vgscrubbar.style.display ="none";  
-  });
+    video.addEventListener('ended',()=>{
+      vgoverlayplay.style.display = "block";
+      vgbuffering.style.display ="none";
+      vgscrubbar.style.display ="none";
+    });
 
   video.addEventListener('pause',()=>{
-  vgbuffering.style.display ="none";
+
   vgoverlayplay.style.display = "block"; 
-  vgscrubbar.style.display ="none";
+  vgscrubbar.style.display ="block";
+  vgbuffering.style.display ="none";
+
   });
 
   video.addEventListener('play',()=>{
-    vgscrubbar.style.display ="block"; 
+    vgscrubbar.style.display ="none"; 
    });
 
 
@@ -69,8 +71,7 @@ export class VideofullscreenComponent implements OnInit {
         vgbuffering.style.display ="none";
         video.play(); 
   });
-
-video.load();
+  video.load();
   }
 
   tcFullScreen(){
