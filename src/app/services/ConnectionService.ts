@@ -4,7 +4,7 @@ import { NativeService } from 'src/app/services/NativeService';
 import { TranslateService } from '@ngx-translate/core';
 import { JsonRPCService } from 'src/app/services/JsonRPCService';
 import { SerializeDataService } from 'src/app/services/SerializeDataService';
-import { FormateInfoService } from 'src/app/services/FormateInfoService';
+import { FormatInfoService } from 'src/app/services/FormatInfoService';
 
 @Injectable()
 export class ConnectionService {
@@ -16,7 +16,7 @@ export class ConnectionService {
         private translate: TranslateService,
         private jsonRPCService: JsonRPCService,
         private serializeDataService: SerializeDataService,
-        private formateInfoService: FormateInfoService) {
+        private formatInfoService: FormatInfoService) {
     }
 
     request(){
@@ -26,9 +26,9 @@ export class ConnectionService {
                  avatar: any, accessToken: FeedsData.AccessToken){
         if (accessToken == undefined)
             return ;
-            
+
         let avatarBin = this.serializeDataService.encodeData(avatar);
-    
+
         let request: Communication.create_channel_request = {
             version: "1.0",
             method : "create_channel",
@@ -43,13 +43,13 @@ export class ConnectionService {
         this.sendRPCMessage(serverName, nodeId, request.method, request.params, "");
     }
 
-    publishPost(serverName: string, nodeId: string, channelId: number, content: any, 
+    publishPost(serverName: string, nodeId: string, channelId: number, content: any,
                 accessToken: FeedsData.AccessToken){
         if (accessToken == undefined)
             return ;
 
         let contentBin = this.serializeDataService.encodeData(content);
-    
+
         let request: Communication.publish_post_request = {
             version: "1.0",
             method : "publish_post",
@@ -64,13 +64,13 @@ export class ConnectionService {
     }
 
     //added v1.3.0 server
-    declarePost(serverName: string, nodeId: string, channelId: number, content: any, 
+    declarePost(serverName: string, nodeId: string, channelId: number, content: any,
         withNotify: boolean ,accessToken: FeedsData.AccessToken){
         if (accessToken == undefined)
             return ;
 
         let contentBin = this.serializeDataService.encodeData(content);
-    
+
         let request: Communication.declare_post_request = {
             version: "1.0",
             method : "declare_post",
@@ -89,7 +89,7 @@ export class ConnectionService {
     notifyPost(serverName: string, nodeId: string, channelId: number, postId: number,accessToken: FeedsData.AccessToken){
         if (accessToken == undefined)
             return ;
-    
+
         let request: Communication.notify_post_request = {
             version: "1.0",
             method : "notify_post",
@@ -98,7 +98,7 @@ export class ConnectionService {
                 access_token    : accessToken.token,
                 channel_id      : Number(channelId),
                 post_id         : Number(postId)
-            } 
+            }
         }
         this.sendRPCMessage(serverName, nodeId, request.method, request.params, "");
     }
@@ -125,7 +125,7 @@ export class ConnectionService {
         this.sendRPCMessage(serverName, nodeId, request.method, request.params, "");
     }
 
-    postLike(serverName: string, nodeId: string, channelId: number, postId: number, 
+    postLike(serverName: string, nodeId: string, channelId: number, postId: number,
             commentId: number, accessToken: FeedsData.AccessToken){
         if (accessToken == undefined)
             return ;
@@ -144,7 +144,7 @@ export class ConnectionService {
         this.sendRPCMessage(serverName, nodeId, request.method, request.params, "");
     }
 
-    postUnlike(serverName: string, nodeId:string, channelId: number, postId: number, 
+    postUnlike(serverName: string, nodeId:string, channelId: number, postId: number,
             commentId: number, accessToken: FeedsData.AccessToken){
         if (accessToken == undefined)
             return ;
@@ -181,13 +181,13 @@ export class ConnectionService {
             }
         }
         this.sendRPCMessage(serverName, nodeId, request.method, request.params,"", false);
-    }   
+    }
 
     getMyChannelsMetaData(serverName: string, nodeId: string, field: Communication.field, upper_bound: number,
                         lower_bound: number, max_counts: number, accessToken: FeedsData.AccessToken){
         if (accessToken == undefined)
             return ;
-                
+
         let request: Communication.get_my_channels_metadata_request = {
             version: "1.0",
             method : "get_my_channels_metadata",
@@ -207,7 +207,7 @@ export class ConnectionService {
               lower_bound: number, max_counts: number, accessToken: FeedsData.AccessToken){
         if (accessToken == undefined)
             return ;
-            
+
         let request: Communication.get_channels_request = {
             version: "1.0",
             method : "get_channels",
@@ -260,7 +260,7 @@ export class ConnectionService {
     }
 
     getPost(serverName: string, nodeId: string, channel_id: number, by: Communication.field,
-            upper_bound: number, lower_bound: number , max_counts: number, memo: any, 
+            upper_bound: number, lower_bound: number , max_counts: number, memo: any,
             accessToken: FeedsData.AccessToken){
         if (accessToken == undefined)
             return ;
@@ -282,7 +282,7 @@ export class ConnectionService {
     }
 
     getComments(serverName: string, nodeId: string, channel_id: number, post_id: number,
-              by:Communication.field, upper_bound: number, lower_bound: number, 
+              by:Communication.field, upper_bound: number, lower_bound: number,
               max_counts:number, isShowOfflineToast: boolean, accessToken: FeedsData.AccessToken){
         if (accessToken == undefined)
             return ;
@@ -307,7 +307,7 @@ export class ConnectionService {
     getStatistics(serverName: string, nodeId: string, accessToken: FeedsData.AccessToken){
         if (accessToken == undefined)
             return ;
-    
+
         let request:Communication.get_statistics_request = {
             version: "1.0",
             method : "get_statistics",
@@ -322,7 +322,7 @@ export class ConnectionService {
     subscribeChannel(serverName: string, nodeId: string, id: number, accessToken: FeedsData.AccessToken){
         if (accessToken == undefined)
             return ;
-    
+
         let request: Communication.subscribe_channel_request = {
             version: "1.0",
             method : "subscribe_channel",
@@ -354,7 +354,7 @@ export class ConnectionService {
     editFeedInfo(serverName: string, nodeId: string, channelId: number, name: string , desc: string, avatarBin: any, accessToken: FeedsData.AccessToken){
         if (accessToken == undefined)
             return ;
-        
+
         let request: Communication.update_feedinfo_request = {
             version: "1.0",
             method : "update_feedinfo",
@@ -365,7 +365,7 @@ export class ConnectionService {
                 name          : name,
                 introduction  : desc,
                 avatar        : avatarBin
-            } 
+            }
         }
         this.sendRPCMessage(serverName, nodeId, request.method, request.params,"");
     }
@@ -373,7 +373,7 @@ export class ConnectionService {
     enableNotification(serverName: string, nodeId: string, accessToken: FeedsData.AccessToken){
         if (accessToken == undefined)
             return ;
-    
+
         let request: Communication.enable_notification_request = {
             version: "1.0",
             method : "enable_notification",
@@ -458,7 +458,7 @@ export class ConnectionService {
         }
         this.sendRPCMessage(serverName, nodeId, request.method, null, "");
     }
-    
+
     issueCredentialRequest(serverName: string, nodeId: string, credential: string){
         let request: Communication.issue_credential_request = {
           version: "1.0",
@@ -484,7 +484,7 @@ export class ConnectionService {
                 channel_id  : Number(channelId),
                 id          : Number(postId),
                 content     : contentBin
-            } 
+            }
         }
         this.sendRPCMessage(serverName, nodeId, request.method, request.params,"");
     }
@@ -501,9 +501,9 @@ export class ConnectionService {
                 access_token: accessToken.token,
                 channel_id  : channelId,
                 id          : postId
-            } 
+            }
         }
-    
+
         this.sendRPCMessage(serverName, nodeId, request.method, request.params,"");
     }
 
@@ -525,13 +525,13 @@ export class ConnectionService {
                 id          : commentId,        //comment_id
                 comment_id  : commentById,   //comment_id | 0
                 content     : contentBin           //bin
-            } 
+            }
         }
-    
+
         this.sendRPCMessage(serverName, nodeId, request.method, request.params,"");
     }
 
-    deleteComment(serverName: string, nodeId: string, channelId: number, postId: number, 
+    deleteComment(serverName: string, nodeId: string, channelId: number, postId: number,
                 commentId: number, accessToken: FeedsData.AccessToken){
         if (accessToken == undefined)
             return ;
@@ -545,9 +545,9 @@ export class ConnectionService {
                 channel_id  : channelId,        //channel_id
                 post_id     : postId,        //post_id
                 id          : commentId        //comment_id
-            } 
+            }
         }
-    
+
         this.sendRPCMessage(serverName, nodeId, request.method, request.params, "");
     }
 
@@ -558,10 +558,10 @@ export class ConnectionService {
             id     : -1,
             params : {
                 access_token: ""
-            } 
+            }
         }
 
-        this.sendRPCMessage(serverName, nodeId, request.method, request.params, ""); 
+        this.sendRPCMessage(serverName, nodeId, request.method, request.params, "");
     }
 
     updateCredential(serverName: string, nodeId: string, credential: string, accessToken: FeedsData.AccessToken){
@@ -578,7 +578,7 @@ export class ConnectionService {
             }
         }
 
-        this.sendRPCMessage(serverName, nodeId, request.method, request.params, ""); 
+        this.sendRPCMessage(serverName, nodeId, request.method, request.params, "");
     }
 
     setBinary(serverName: string, nodeId: string, key: string,  content: any, accessToken: FeedsData.AccessToken){
@@ -599,7 +599,7 @@ export class ConnectionService {
             }
         }
 
-        this.sendRPCMessage(serverName, nodeId, request.method, request.params, ""); 
+        this.sendRPCMessage(serverName, nodeId, request.method, request.params, "");
     }
 
     getBinary(serverName: string, nodeId: string, key: string, accessToken: FeedsData.AccessToken){
@@ -616,14 +616,14 @@ export class ConnectionService {
             }
         }
 
-        this.sendRPCMessage(serverName, nodeId, request.method, request.params, ""); 
+        this.sendRPCMessage(serverName, nodeId, request.method, request.params, "");
     }
 
     sendRPCMessage(serverName: string, nodeId: string, method: string, params: any, memo: any, isShowOfflineToast: boolean = true){
         if(!this.checkServerConnection(nodeId)){
           this.events.publish("rpcRequest:error");
           if (isShowOfflineToast)
-            this.native.toast(this.formateInfoService.formatOfflineMsg(serverName));
+            this.native.toast(this.formatInfoService.formatOfflineMsg(serverName));
           return;
         }
         this.jsonRPCService.request(
@@ -632,7 +632,7 @@ export class ConnectionService {
             params,
             memo,
             ()=>{
-        
+
             },
             (error)=>{
                 this.events.publish("rpcRequest:error");
@@ -642,7 +642,7 @@ export class ConnectionService {
     }
 
     response(){
-        
+
     }
 
     checkServerConnection(nodeId: string): boolean{
@@ -651,7 +651,7 @@ export class ConnectionService {
           this.friendConnectionMap[nodeId] == undefined||
           this.friendConnectionMap[nodeId] == FeedsData.ConnState.disconnected)
           return false ;
-    
+
         return true ;
     }
 
