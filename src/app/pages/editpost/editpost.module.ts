@@ -5,7 +5,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { IonicModule } from '@ionic/angular';
 
-import { EditpostPage } from './editpost.page';
+import { EditPostPage } from './editpost.page';
 import { VgCoreModule } from 'ngx-videogular';
 import { VgControlsModule } from 'ngx-videogular';
 import { VgOverlayPlayModule } from 'ngx-videogular';
@@ -14,7 +14,7 @@ import { VgBufferingModule } from 'ngx-videogular';
 const routes: Routes = [
   {
     path: '',
-    component: EditpostPage
+    component: EditPostPage
   }
 ];
 
@@ -30,6 +30,6 @@ const routes: Routes = [
     TranslateModule,
     RouterModule.forChild(routes)
   ],
-  declarations: [EditpostPage]
+  declarations: [EditPostPage]
 })
-export class EditpostPageModule {}
+export class EditPostPageModule{}

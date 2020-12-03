@@ -453,13 +453,13 @@ export const zh = {
     "EidtchannelPage":{
        "title":"编辑微频信息",
     },
-    "EditpostPage":{
+    "EditPostPage":{
         "title":"编辑微说",
-        "savechanges":"保存修改"
+        "saveChanges":"保存修改"
     },
-    "EditcommentPage":{
+    "EditCommentPage":{
         "title":"编辑微评",
-        "savechanges":"保存修改"
+        "saveChanges":"保存修改"
     },
     "DiscoverfeedsPage":{
         "title":"发现微频源",
