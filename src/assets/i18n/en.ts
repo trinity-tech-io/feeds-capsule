@@ -239,8 +239,8 @@ export const en = {
         "tipMsg":"Possible Feeds url error",
         "exploreFeedSources":"Explore Feeds Sources",
         "title":"Add a Feeds Source",
-        "serverMsg1": "Server : ",
-        "serverMsg2": " offline!",
+        "feedsSource": "Feeds Source : ",
+        "serverWentOffline": " went offline.",
         "serverAlreadyAdded":"This Feeds Source has already been added.",
         "serverAddedSuccess":"The Feeds source was added successfully.",
         "Signinsuccess":"Signed in successfully!"

@@ -41,15 +41,15 @@ import { HttpService } from './services/HttpService';
 
 import { PopupProvider } from './services/popup';
 import { CameraService } from './services/CameraService';
-import { ServerlistComponentModule } from './components/serverlistcomponent/serverlistcomponent.module'; 
-import { QRCodeModule } from 'angularx-qrcode'; 
+import { ServerlistComponentModule } from './components/serverlistcomponent/serverlistcomponent.module';
+import { QRCodeModule } from 'angularx-qrcode';
 import { PostfromComponentPageModule } from './components/postfrom/postfrom.component.module'
 import { SplashscreenPageModule } from './pages/splashscreen/splashscreen.module';
 import { JWTMessageService } from './services/JWTMessageService';
 import { TransportService } from './services/TransportService';
 import { SerializeDataService } from './services/SerializeDataService';
 import { MenuService } from './services/MenuService';
-import { FormateInfoService } from './services/FormateInfoService';
+import { FormatInfoService } from './services/FormatInfoService';
 import { SessionService } from './services/SessionService';
 import { LogUtils } from 'src/app/services/LogUtils';
 
@@ -104,7 +104,7 @@ export class WebpackTranslateLoader implements TranslateLoader {
           observer.next(en);
           break;
         default:
-          observer.next(en); 
+          observer.next(en);
       }
       observer.complete();
     });
@@ -203,7 +203,7 @@ export function anim(AnimationC: Animation, baseEl: any, position?: any): Promis
     TransportService,
     SerializeDataService,
     MenuService,
-    FormateInfoService,
+    FormatInfoService,
     PostfromComponentPageModule,
     ConnectionService,
     HttpService,

@@ -4,7 +4,7 @@ import { NativeService } from 'src/app/services/NativeService';
 import { TranslateService } from '@ngx-translate/core';
 
 @Injectable()
-export class FormateInfoService {
+export class FormatInfoService {
     public friendConnectionMap: {[nodeId:string]: FeedsData.ConnState};
 
     constructor(
@@ -26,7 +26,7 @@ export class FormateInfoService {
     }
 
     formatOfflineMsg(serverName: string): string{
-        return this.translate.instant("AddServerPage.serverMsg1") + " #"+serverName + this.translate.instant("AddServerPage.serverMsg2")
+        return this.translate.instant("AddServerPage.feedsSource") + " #"+serverName + this.translate.instant("AddServerPage.serverWentOffline")
     }
 
     formatFollowSuccessMsg(feedsName: string): string{
