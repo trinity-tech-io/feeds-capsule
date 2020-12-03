@@ -4472,7 +4472,7 @@ export class FeedService {
     isBindServer = false;
     this.checkIsAlreadyFriends(carrierAddress,(isFriend)=>{
       if (isFriend){
-        this.native.toast_trans("AddServerPage.Serveralreadyadded");
+        this.native.toast_trans("AddServerPage.ServerAlreadyAdded");
         onSuccess();
       }else{
         this.carrierService.isValidAddress(carrierAddress, (isValid) => {
