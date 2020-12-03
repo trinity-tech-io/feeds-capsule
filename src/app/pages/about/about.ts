@@ -13,10 +13,10 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 })
 
 export class AboutPage implements OnInit {
-
   public connectionStatus = 1;
   public version = "v1.3.2";
-  public curlangule = "";
+  public currentLanguage = "";
+
   constructor(
     private zone: NgZone,
     private native: NativeService,
@@ -32,7 +32,7 @@ export class AboutPage implements OnInit {
     ionViewWillEnter() {
       this.initTitle();
       this.native.setTitleBarBackKeyShown(true);
-      
+
       this.connectionStatus = this.feedService.getConnectionStatus();
       this.events.subscribe('feeds:connectionChanged',(status)=>{
         this.zone.run(() => {
@@ -47,34 +47,34 @@ export class AboutPage implements OnInit {
 
     ionViewDidEnter(){
     }
-  
+
     initTitle(){
-      this.curlangule = this.feedService.getCurrentLang();
+      this.currentLanguage = this.feedService.getCurrentLang();
       titleBarManager.setTitle(this.translate.instant("AboutPage.about"));
     }
-  
 
-  goWebsite() {
+
+  gotoWebsite() {
     this.native.openUrl("http://www.trinity-tech.io");
   }
 
-  disclaimer(){
+  showDisclaimer(){
     this.native.openUrl("https://www.trinity-tech.io/disclaimer.html");
   }
 
-  help(){
-     if(this.curlangule === 'zh'){
+  showHelp(){
+     if(this.currentLanguage === 'zh'){
       this.native.openUrl("https://github.com/elastos-trinity/feeds-manual-docs/blob/master/Feeds_Manual_zh.md");
      }else{
       this.native.openUrl("https://github.com/elastos-trinity/feeds-manual-docs/blob/master/Feeds_Manual_en.md");
      }
   }
 
-  telegram(){
+  gotoTelegram(){
     this.native.openUrl("https://t.me/feedscapsule");
   }
 
-  copyemail(){
+  copyEmailAddress(){
     this.native.copyClipboard("feeds@trinity-tech.io").then(()=>{
       this.native.toast_trans("common.copysucceeded");
   }).catch(()=>{
@@ -82,10 +82,8 @@ export class AboutPage implements OnInit {
   });;
   }
 
-
   ionViewWillLeave(){
     this.events.unsubscribe("feeds:connectionChanged");
     this.events.unsubscribe("feeds:updateTitle");
   }
-
 }
