@@ -352,10 +352,10 @@ export const zh = {
     "CreatenewpostPage":{
         "addimg":"添加图片",
         "post":"发布",
-        "des":"在此处输入...",
+        "des":"在此输入...",
         "addingPost":"新建微说",
-        "tipMsg":"请输入内容！",
-        "tipMsg1":"发布成功！",
+        "tipMsg":"请输入内容",
+        "tipMsg1":"您的Post已经发布成功",
         "tipMsg2":"视频处理中"
     },
     "DIDdata": {

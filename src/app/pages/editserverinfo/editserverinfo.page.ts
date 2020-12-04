@@ -6,15 +6,17 @@ import { FeedService } from 'src/app/services/FeedService';
 import { ActivatedRoute } from '@angular/router';
 import { NativeService } from 'src/app/services/NativeService';
 import * as _ from 'lodash';
+
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 declare let appManager: AppManagerPlugin.AppManager;
+
 @Component({
   selector: 'app-editserverinfo',
   templateUrl: './editserverinfo.page.html',
   styleUrls: ['./editserverinfo.page.scss'],
 })
-export class EditserverinfoPage implements OnInit {
 
+export class EditserverinfoPage implements OnInit {
   public connectionStatus = 1;
   public address:string = "";
   public name:string = "";
