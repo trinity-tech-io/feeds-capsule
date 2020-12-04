@@ -4018,7 +4018,6 @@ export class FeedService {
 
     accessTokenMap[nodeId] = {
       token: result.access_token ,
-      exp: result.exp*1000,
       isExpire: false
     };
 
@@ -4411,11 +4410,6 @@ export class FeedService {
   checkExp(mAccessToken: FeedsData.AccessToken): boolean{
     let accessToken = mAccessToken || undefined;
     if(accessToken == undefined){
-      return true;
-    }
-
-    let exp = accessToken.exp || 0;
-    if (exp < this.getCurrentTimeNum()){
       return true;
     }
 
