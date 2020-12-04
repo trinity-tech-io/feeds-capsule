@@ -12,7 +12,6 @@ let TAG = "Feeds";
 @Injectable()
 export class LogUtils {
     private level:LogLevel = LogLevel.WARN;
-
     constructor() {}
     log(msg: string, tag: string, level: LogLevel){
         if (!this.checkLogLevel(level)){

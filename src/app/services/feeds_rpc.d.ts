@@ -806,7 +806,8 @@ declare module Communication{
         version: "1.0"
         id     : jsonrpc_id
         result : {
-            version : string
+            version         : string
+            version_code    : number
         }
     }
 

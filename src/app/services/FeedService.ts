@@ -1182,7 +1182,7 @@ export class FeedService {
       }
 
       let serverVersionCode = this.getServerVersionCodeByNodeId(friendId);
-      if (serverVersionCode < 0)
+      if (serverVersionCode < 10400)
         this.getServerVersion(friendId);
 
       let mServerMap = serverMap || {};
@@ -2288,6 +2288,7 @@ export class FeedService {
     // }
 
     let version = result.version;
+    let versionCode = result.version_code||1;
 
     if (this.serverVersions == null ||
       this.serverVersions == undefined)
@@ -2298,11 +2299,11 @@ export class FeedService {
       this.serverVersions[nodeId] = {
         nodeId        : nodeId,
         versionName   : version,
-        versionCode   : 1
+        versionCode   : versionCode
       }
     }else {
       this.serverVersions[nodeId].nodeId = nodeId;
-      this.serverVersions[nodeId].versionCode = 1;
+      this.serverVersions[nodeId].versionCode = versionCode;
       this.serverVersions[nodeId].versionName = version;
     }
     this.storeService.set(PersistenceKey.serverVersions, this.serverVersions);
