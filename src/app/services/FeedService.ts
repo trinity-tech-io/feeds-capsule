@@ -3129,8 +3129,6 @@ export class FeedService {
           avatar: avatar,
           isSubscribed:true
         }
-
-
         // channelsMap
       }else {
         subscribedChannelsMap[nodeChannelId].nodeId = nodeId;
@@ -3164,9 +3162,7 @@ export class FeedService {
       this.updatePostWithTime(nodeId, channelId, 0);
     }
 
-
     this.storeService.set(PersistenceKey.subscribedChannelsMap,subscribedChannelsMap);
-
 
     let list: Channels[] = [];
     let keys: string[] = Object.keys(subscribedChannelsMap);
@@ -3194,8 +3190,6 @@ export class FeedService {
     let requestAction: number = request.memo.action || RequestAction.defaultAction;
 
     for (let index = 0; index < result.length; index++) {
-
-
       let channel_id = result[index].channel_id;
       let id         = result[index].id;
       let contentBin    = result[index].content;
@@ -3259,8 +3253,6 @@ export class FeedService {
       eventBus.publish(PublishType.postDataUpdate);
       return ;
     }
-
-
   }
 
   handleGetCommentsResult(nodeId: string, responseResult: any, error: any){
@@ -4445,16 +4437,22 @@ export class FeedService {
       let channelId = list[index].id;
       this.updatePost(friendId,channelId);
 
-      let postList = this.getPostListFromChannel(friendId,channelId);
-      for (let postIndex = 0; postIndex < postList.length; postIndex++) {
-        // const element = array[postIndex];
-        let post: Post = postList[postIndex];
-        let postId: number = post.id;
-        this.updateComment(friendId, channelId, postId);
+      // let postList = this.getPostListFromChannel(friendId,channelId);
+      // for (let postIndex = 0; postIndex < postList.length; postIndex++) {
+      //   // const element = array[postIndex];
+      //   let post: Post = postList[postIndex];
+      //   let postId: number = post.id;
+      //   this.updateComment(friendId, channelId, postId);
+      // }
+
+      let bindingServer = this.getBindingserver() || null;
+      if (bindingServer !=null && bindingServer.nodeId == friendId){
+        let mLastCommentUpdateMap = this.lastCommentUpdateMap || "";
+        let commentUpdateTime = mLastCommentUpdateMap[friendId] || "";
+        let lastCommentTime = commentUpdateTime["time"] || 0;
+        this.getMultiComments(friendId, 0, 0, Communication.field.last_update, 0 , lastCommentTime,0);
       }
     }
-
-
     // this.getAllChannelDetails(friendId);
     // this.getChannels(friendId, Communication.field.last_update, 0, 0, 0);
   }
