@@ -1,11 +1,8 @@
 import { Component, OnInit, NgZone } from '@angular/core';
-import { Router } from '@angular/router';
-import { NavController } from '@ionic/angular';
 import { FeedService } from 'src/app/services/FeedService';
 import { ActivatedRoute } from '@angular/router';
 import { Events } from '@ionic/angular';
 import { NativeService } from 'src/app/services/NativeService';
-import { TranslateService } from "@ngx-translate/core";
 import { ThemeService } from 'src/app/services/theme.service';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
@@ -23,10 +20,7 @@ export class ImportdidPage implements OnInit {
     private zone: NgZone,
     private events: Events,
     private acRoute: ActivatedRoute,
-    private router: Router,
-    private navCtrl: NavController,
     private feedService:FeedService,
-    private translate:TranslateService,
     public  theme:ThemeService
     ) {
     }
@@ -40,7 +34,7 @@ export class ImportdidPage implements OnInit {
     ionViewWillEnter() {
       this.initTitle();
       this.native.setTitleBarBackKeyShown(true);
-      
+
       this.connectionStatus = this.feedService.getConnectionStatus();
       this.events.subscribe('feeds:connectionChanged',(status)=>{
         this.zone.run(() => {
@@ -75,7 +69,7 @@ export class ImportdidPage implements OnInit {
         });
       });
     }
-  
+
     ionViewDidEnter() {
     }
 
@@ -86,12 +80,12 @@ export class ImportdidPage implements OnInit {
       this.events.unsubscribe('feeds:resolveDidSucess');
       this.events.unsubscribe("rpcResponse:error");
     }
-  
-  
+
+
     initTitle(){
       titleBarManager.setTitle(this.title);
     }
-  
+
   createNewDid(){
     if(this.feedService.getConnectionStatus() != 0){
       this.native.toastWarn('common.connectionError');
@@ -101,10 +95,6 @@ export class ImportdidPage implements OnInit {
     this.native.showLoading("common.waitMoment",5*60*1000).then(()=>{
       this.feedService.createDidRequest(this.nodeId);
     });
-    
-  }
 
-  // importDid(){
-  //   this.native.getNavCtrl().navigateForward(['/bindservice/importmnemonic', this.nodeId]);
-  // }
+  }
 }

@@ -29,7 +29,7 @@
           <h2>{{ selectedChannelSource }}</h2>
         </ion-item>
     </ion-list>
-  
+
     <ion-row class="btn-row">
         <ion-button (click)="createChannel(name,desc)" >
             <ion-label> {{'CreatenewfeedPage.createFeed'|translate}}</ion-label>
@@ -37,57 +37,3 @@
     </ion-row>
   </ion-grid>
 </ion-content>
-
-<!-- <ion-header *ngIf="connectionStatus == 1">
-  <div class="offline-header"></div>
-</ion-header>
-<ion-content class="ion-padding" [class.darkContainer]="theme.darkMode">
-      <div>
-        <ion-label  class="content-key white">{{'CreatenewfeedPage.name'|translate}}<span *ngIf="namelen>0">({{namelen}})</span></ion-label>
-      </div>
-      <div class="detail-value-div">
-        <ion-input required type="text" class="content-value " placeholder="{{'CreatenewfeedPage.inputName'|translate}}" #name (ionChange)="onChangeName(name)"></ion-input>
-      </div>
-      <div class="detail-line line-dark"></div>
-
-      <div class="detail-key-div">
-        <ion-label  class="content-key white">{{'CreatenewfeedPage.description'|translate}}<span *ngIf="len>0">({{len}})</span></ion-label>
-      </div>
-      <div class="detail-value-div">
-        <ion-input required type="text" class="content-value " placeholder="{{'CreatenewfeedPage.inputFeedDesc'|translate}}" #desc (ionChange)="onChangeText(desc)"></ion-input>
-      </div>
-      <div class="detail-line line-dark"></div>
-
-      <div style="width: 100%; display: flex;" (click)="profileimage()">
-        <div style="width: 100%;" >
-          <div class="detail-key-div">
-            <ion-label  class="content-key white">{{'CreatenewfeedPage.profileImage'|translate}}</ion-label>
-          </div>
-        </div>
-        <div style="display: flex; float: right;height: 0px auto; margin-top: 27px;">
-          <img src="assets/images/chevron-thin-right.svg">
-        </div>
-      </div>
-      <ion-avatar *ngIf="avatar != ''">
-        <img src={{avatar}}>
-      </ion-avatar>
-      <div class="detail-line line-dark"></div>
-
-      <div style="width: 100%; display: flex;">
-        <div style="width: 100%;" >
-          <div class="detail-key-div">
-            <ion-label  class="content-key white">{{'CreatenewfeedPage.channelSource'|translate}}</ion-label>
-          </div>
-          <div class="detail-value-div">
-            <ion-label class="content-value ">{{selectedChannelSource}}</ion-label>
-          </div>
-        </div>
-      </div>
-
-
-    <div (click)="createChannel(name,desc)" class="createChannel">
-
-        {{'CreatenewfeedPage.createFeed'|translate}}
-
-    </div>
-</ion-content> -->

@@ -109,6 +109,7 @@ export class EditCommentPage implements OnInit {
     this.events.unsubscribe("rpcRequest:error");
     this.events.unsubscribe("rpcResponse:error");
     this.events.unsubscribe("feeds:editCommentFinish");
+    this.events.unsubscribe("feeds:friendConnectionChanged");
   }
 
   initTitle(){
