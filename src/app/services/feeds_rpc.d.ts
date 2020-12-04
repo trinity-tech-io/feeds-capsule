@@ -416,7 +416,7 @@ declare module Communication{
             name        : string
             introduction: string
             owner_name  : string
-            owner_did   : string 
+            owner_did   : string
             subscribers : number
             last_update : number
             avatar      : any
@@ -446,7 +446,7 @@ declare module Communication{
                 name        : string
                 introduction: string
                 owner_name  : string
-                owner_did   : string 
+                owner_did   : string
                 subscribers : number
                 last_update : number
                 avatar      : any
@@ -551,8 +551,8 @@ declare module Communication{
         id     : jsonrpc_id
         params : {
             access_token   : string
-            channel_id : number     
-            post_id    : number     
+            channel_id : number
+            post_id    : number
             by         : field
             upper_bound: number | null 
             lower_bound: number | null
@@ -682,7 +682,7 @@ declare module Communication{
             post_id   : number
             id        : number
             comment_id: number
-            user_name : string 
+            user_name : string
             content   : any
             created_at: number
         }
@@ -905,8 +905,8 @@ declare module Communication{
             channel_id  : number    //channel_id
             post_id     : number    //post_id
             by          : field     //id
-            upper_bound : number    
-            lower_bound : number    
+            upper_bound : number
+            lower_bound : number
             max_count   : number
         }
     }

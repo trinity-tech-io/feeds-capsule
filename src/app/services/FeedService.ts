@@ -1420,6 +1420,9 @@ export class FeedService {
         this.handleStandardDidAuthResponse(nodeId, result, requestParams, error);
         break;
 
+      case FeedsData.MethodType.get_multi_comments:
+        this.handleGetMultiComments(nodeId, result, requestParams, error);
+        break;
       default:
         break;
     }
@@ -4252,6 +4255,15 @@ export class FeedService {
     this.handleSigninConfirm(nodeId,result,error);
   }
 
+  handleGetMultiComments(nodeId: string, result: any, requestParams: any, error: any){
+    if (error != null && error != undefined && error.code != undefined){
+      this.handleError(nodeId, error);
+      return;
+    }
+
+    this.logUtils.logd("result>"+result,TAG);
+  }
+
   doIssueCredential(nodeId: string, did: string, serverName: string, serverDesc: string,elaAddress:string, onSuccess:()=> void, onError:()=>void){
     this.issueCredential(nodeId,did, serverName,serverDesc,elaAddress,
       (credential)=>{
@@ -5158,7 +5170,6 @@ export class FeedService {
         return false;
     }
   }
-
 
   closeSession(nodeId: string){
     this.sessionService.sessionClose(nodeId);
@@ -6106,5 +6117,13 @@ export class FeedService {
 
   standardDidAuth(nodeId: string, verifiablePresentation: string){
     this.connectionService.standardDidAuth(this.getServerNameByNodeId(nodeId),nodeId,verifiablePresentation, this.getSignInData().name);
+  }
+
+  getMultiComments(nodeId: string, channelId: number, postId: number, by: Communication.field, 
+                  upperBound: number, lowerBound: number,maxCounts:number){
+    if(!this.hasAccessToken(nodeId))
+      return;
+    let accessToken: FeedsData.AccessToken = accessTokenMap[nodeId]||undefined;
+    this.connectionService.getMultiComments(this.getServerNameByNodeId(nodeId), nodeId, channelId, postId, by, upperBound, lowerBound, maxCounts, accessToken);    
   }
 }
