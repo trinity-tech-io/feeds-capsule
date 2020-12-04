@@ -355,7 +355,7 @@ export const en = {
         "des":"What's happening?",
         "addingPost":"New Post",
         "tipMsg":"Please enter a message!",
-        "tipMsg1":"Post sent successfully!",
+        "tipMsg1": "Your post has been successfully sent.",
         "tipMsg2":"Video processing"
     },
     "DIDdata":{
@@ -367,7 +367,7 @@ export const en = {
         "newComment":"New Comment",
         "publishComment":"Post Reply",
         "inputComment": "Input comment here",
-        "tipMsg1": "Your comment has been posted successfully."
+        "tipMsg1": "Your comment has been successfully sent."
     },
     "DisclaimerPage":{
         "title":"Disclaimer",

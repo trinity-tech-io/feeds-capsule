@@ -50,7 +50,7 @@ export class ServerInfoPage implements OnInit {
 
   public isPublic:string ="";
   public serverDetails: any[] = [];
-  
+
   public isShowQrcode: boolean = true;
   public actionSheet:any = null;
   public  ownerChannelList:any = [];
@@ -74,13 +74,13 @@ export class ServerInfoPage implements OnInit {
     this.acRoute.params.subscribe(data => {
       this.isOwner = data.isOwner || "";
       this.address = data.address || "";
-  
+
       if (data.nodeId !== "0") {
         this.nodeId = data.nodeId || "";
       }
-       
+
       this.initData();
-      
+
       let didString = this.didString || "";
       if(this.checkIsMine()===0&&didString != ''){
        this.httpService.ajaxGet(ApiUrl.get+"?did="+this.didString,false).then((result)=>{
@@ -89,7 +89,7 @@ export class ServerInfoPage implements OnInit {
          }
        });
       }
-      
+
     });
   }
 
@@ -102,7 +102,7 @@ export class ServerInfoPage implements OnInit {
     } else {
       let server: any;
       let bindingServer = this.feedService.getBindingServer();
-      
+
       if (
         bindingServer !== null &&
         bindingServer !== undefined &&
@@ -121,7 +121,7 @@ export class ServerInfoPage implements OnInit {
           });
         });
 
-        
+
       }else{
         server = this.feedService.getServerbyNodeId(this.nodeId);
         this.isBindServer = false;
@@ -159,10 +159,10 @@ export class ServerInfoPage implements OnInit {
 
     this.events.subscribe("feeds:updateServerList", () => {
       this.zone.run(() => {
-      this.native.navigateForward('/menu/servers',""); 
+      this.native.navigateForward('/menu/servers',"");
       });
     });
-  
+
     this.events.subscribe('feeds:serverConnectionChanged', serversStatus => {
       this.zone.run(() => {
           if (this.address === ""){
@@ -180,7 +180,7 @@ export class ServerInfoPage implements OnInit {
     });
 
     this.events.subscribe('feeds:login_finish',  () => {
-      this.zone.run(() => { 
+      this.zone.run(() => {
         this.initData();
         this.native.hideLoading();
       });
@@ -189,7 +189,7 @@ export class ServerInfoPage implements OnInit {
     this.events.subscribe("feeds:updateTitle", () => {
       if(this.menuService.postDetail!=null){
         this.menuService.hideActionSheet();
-     
+
         if(this.clickbutton === "unsubscribe"){
            this.unsubscribe(this.channel);
            return;
@@ -272,7 +272,6 @@ export class ServerInfoPage implements OnInit {
   }
 
   collectServerData(server) {
-
     this.serverDetails = [];
 
     this.serverDetails.push({
@@ -284,10 +283,10 @@ export class ServerInfoPage implements OnInit {
       this.serverDetails.push({
         type: this.translate.instant('ServerInfoPage.owner'),
         details: server.owner || ""
-      });  
+      });
     }
 
-    if(this.developerMode){
+    if (this.developerMode){
       this.serverDetails.push({
         type: this.translate.instant('ServerInfoPage.UserId'),
         details: server.nodeId || ""
@@ -306,22 +305,24 @@ export class ServerInfoPage implements OnInit {
         details: version || this.translate.instant('common.infoObtaining'),
       });
     }
-    
-    
-    this.serverDetails.push({
-      type: this.translate.instant('IssuecredentialPage.elaaddress'),
-      details: server.elaAddress || ""
-    });
+
+    if (server.elaAddress != "") {
+      this.serverDetails.push({
+        type: this.translate.instant('IssuecredentialPage.elaaddress'),
+        details: server.elaAddress || ""
+      });
+    }
+
     this.serverDetails.push({
       type: this.translate.instant('ServerInfoPage.did'),
       details: this.feedService.rmDIDPrefix(server.did)
-    }); 
+    });
+
     this.serverDetails.push({
       type: this.translate.instant('ServerInfoPage.feedsSourceQRCode'),
       details: server.feedsUrl || "",
       qrcode: true
     });
- 
   }
 
   menuMore() {
@@ -334,14 +335,12 @@ export class ServerInfoPage implements OnInit {
     let url = "https://scheme.elastos.org/addsource?source="+encodeURIComponent(qrcode);
   } */
 
-
   queryServer(){
-    if (
-      this.address.length > 53 &&
-      this.address.startsWith('feeds://') &&
-      this.address.indexOf("did:elastos:")
-    ) this.resolveDid();
-    else {
+    if (this.address.length > 53 &&
+        this.address.startsWith('feeds://') &&
+        this.address.indexOf("did:elastos:")) {
+      this.resolveDid();
+    } else {
       this.native.toastWarn("ServerInfoPage.Feedurlmaybeerror");
       this.navigateBackPage();
     }
@@ -383,11 +382,11 @@ export class ServerInfoPage implements OnInit {
       this.owner,
       this.introduction,
       this.didString,
-      this.feedsUrl, 
-    () => {
-      this.native.navigateForward('/menu/servers',""); 
-    }, (err) => {
-      this.native.pop();
+      this.feedsUrl,
+      () => {
+        this.native.navigateForward('/menu/servers',"");
+      }, (err) => {
+        this.native.pop();
     });
   }
 
@@ -406,7 +405,7 @@ export class ServerInfoPage implements OnInit {
         handler: () => {
           this.native.showLoading('common.waitMoment');
           this.feedService.deleteFeedSource(this.nodeId).then(() => {
-            this.native.toast("ServerInfoPage.removeserver"); 
+            this.native.toast("ServerInfoPage.removeserver");
             this.native.hideLoading();
             this.navigateBackPage();
           });
@@ -426,7 +425,6 @@ export class ServerInfoPage implements OnInit {
   });
 
     await this.actionSheet.present();
-
   }
 
   async removeFeedSource(){
@@ -444,7 +442,7 @@ export class ServerInfoPage implements OnInit {
         handler: () => {
           this.native.showLoading('common.waitMoment');
           this.feedService.removeFeedSource(this.nodeId).then(() => {
-            this.native.toast("ServerInfoPage.removeserver"); 
+            this.native.toast("ServerInfoPage.removeserver");
             this.native.hideLoading();
             this.navigateBackPage();
           });
@@ -476,8 +474,8 @@ export class ServerInfoPage implements OnInit {
     }
 
     this.native.go(
-      "/editserverinfo", 
-      { 
+      "/editserverinfo",
+      {
         "address": this.address,
         "name": this.name,
         "introduction": this.introduction,
@@ -493,7 +491,7 @@ export class ServerInfoPage implements OnInit {
     if (bindingServer === null || bindingServer === undefined) {
       return 1;
     }
-    
+
     let bindServerDid = bindingServer.did || '';
     if (this.didString === bindServerDid)
       return 0;
@@ -516,7 +514,7 @@ export class ServerInfoPage implements OnInit {
       "description":this.introduction,
       "url":this.feedsUrl
     };
-   
+
     this.httpService.ajaxPost(ApiUrl.register,obj).then((result)=>{
       if(result["code"] === 200){
           this.isPublic = "111";
@@ -525,7 +523,7 @@ export class ServerInfoPage implements OnInit {
     });
   }
 
-  unPublicFeeds(){ 
+  unPublicFeeds(){
     this.httpService.ajaxGet(ApiUrl.remove+"?did="+this.didString).then((result)=>{
       if(result["code"] === 200){
           this.isPublic = "";
@@ -580,7 +578,7 @@ export class ServerInfoPage implements OnInit {
       this.native.toastWarn('common.connectionError');
       return;
     }
-    
+
     this.feedService.subscribeChannel(channel.nodeId, channel.id);
   }
 

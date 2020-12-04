@@ -135,7 +135,7 @@ export class EditCommentPage implements OnInit {
     });
   }
 
-  editComment(){
+  private editComment(){
     this.feedService.editComment(this.nodeId,Number(this.channelId),Number(this.postId),Number(this.commentId),Number(this.commentById),this.newComment);
   }
 
