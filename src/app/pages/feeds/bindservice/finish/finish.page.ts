@@ -3,7 +3,6 @@ import { ActivatedRoute } from '@angular/router';
 import { Events } from '@ionic/angular';
 import { NativeService } from 'src/app/services/NativeService';
 import { FeedService } from 'src/app/services/FeedService';
-import { TranslateService } from "@ngx-translate/core";
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 @Component({
@@ -20,8 +19,7 @@ export class FinishPage implements OnInit {
     private acRoute: ActivatedRoute,
     private events: Events,
     private zone: NgZone,
-    private feedService:FeedService,
-    private translate:TranslateService) {
+    private feedService:FeedService) {
     }
 
     ngOnInit(){
@@ -43,12 +41,12 @@ export class FinishPage implements OnInit {
         });
       });
     }
-  
+
     ionViewWillLeave(){
       this.events.unsubscribe("feeds:connectionChanged");
     }
-  
-  
+
+
     initTitle(){
       titleBarManager.setTitle(this.title);
     }
@@ -62,7 +60,7 @@ export class FinishPage implements OnInit {
     if (!this.feedService.checkBindingServerVersion(()=>{
       this.feedService.hideAlertPopover();
     })) return;
-    
+
     this.native.navigateForward(['/createnewfeed'],{
       replaceUrl: true
     });

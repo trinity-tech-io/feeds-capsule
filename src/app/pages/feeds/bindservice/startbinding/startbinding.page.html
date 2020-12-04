@@ -18,7 +18,7 @@
     <ion-row class="btn-row">
       <ion-button class="confirm" (click)="confirm()">
         <ion-label>{{'StartbindingPage.confirm'|translate}}</ion-label>
-      </ion-button> 
+      </ion-button>
     </ion-row>
     <ion-row class="btns-row">
       <ion-col class="btn cancel ion-activatable ripple" size="8.5" (click)="abort()">
@@ -28,47 +28,5 @@
     </ion-row>
   </ion-grid>
 </ion-content>
-
-<!--  <ion-content ion-padding [class.darkContainer]="theme.darkMode">
-    <div class="first white">
-         {{'StartbindingPage.introduce'|translate}}
-    </div>
-
-
-    <div *ngIf="feedsUrl === '-1'">
-      <div class="second" >
-        <div class="introduce"> {{'StartbindingPage.introduce1'|translate}}</div>
-     </div>
-
-     <div class="second" style="margin-top: 94px;" *ngIf="feedsUrl === '-1'">
-      <div class="introduce"> {{'StartbindingPage.introduce2'|translate}}</div>
-     </div>
-
-     <div class="three" (click)="scanService()" *ngIf="feedsUrl === '-1'">
-      {{nonce}}
-     </div>
-    </div>
-
-
-     <div *ngIf="feedsUrl != '-1'">
-      <div class="second">
-        <div class="introduce"> {{'StartbindingPage.linkServer'|translate}}</div>
-      </div>
-
-      <div class="second" style="margin-top: 94px;">
-        <div class="introduce"> {{'StartbindingPage.introduce3'|translate}}</div>
-       </div>
-
-      <div class="four" (click)="scanService()">
-        <p style="margin:5px 10px 5px 10px;">{{feedsUrl}}</p>
-      </div>
-    </div>
-
-    <div class="confirm" (click)="confirm()">{{'StartbindingPage.confirm'|translate}}</div>
-
-    <div class="abort" (click)="abort()">{{'StartbindingPage.abort'|translate}}</div>
-
-</ion-content> -->
-
 
 

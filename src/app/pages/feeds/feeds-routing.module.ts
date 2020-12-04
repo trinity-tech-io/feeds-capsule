@@ -54,8 +54,7 @@ const routes: Routes = [
         pathMatch: 'full'
       },
     ]
-  },
-  { path: 'comment/:nodeId/:channelId/:postId', loadChildren: './comment/comment.module#CommentPageModule' },
+  }
 ];
 
 @NgModule({

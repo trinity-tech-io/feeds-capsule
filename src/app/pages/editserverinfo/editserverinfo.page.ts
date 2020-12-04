@@ -32,7 +32,7 @@ export class EditserverinfoPage implements OnInit {
     private events: Events,
     private native: NativeService,
     private zone:NgZone
-  ) { 
+  ) {
   }
 
   ngOnInit() {
@@ -51,7 +51,7 @@ export class EditserverinfoPage implements OnInit {
   ionViewWillEnter() {
     this.initTitle();
     this.native.setTitleBarBackKeyShown(true);
-    
+
     this.connectionStatus = this.feedService.getConnectionStatus();
     this.events.subscribe('feeds:connectionChanged',(status)=>{
       this.zone.run(() => {
@@ -85,6 +85,7 @@ export class EditserverinfoPage implements OnInit {
     this.events.unsubscribe("feeds:updateTitle");
     this.events.unsubscribe("feeds:connectionChanged");
     this.events.unsubscribe("feeds:bindServerFinish");
+    this.events.unsubscribe("feeds:updateCredentialFinish");
   }
 
   initTitle(){
@@ -115,7 +116,7 @@ export class EditserverinfoPage implements OnInit {
       this.native.toastWarn('common.connectionError');
       return;
     }
-    
+
     if(this.feedService.getServerStatusFromId(this.nodeId) != 0){
       this.native.toastWarn('common.connectionError');
       return;
@@ -148,7 +149,7 @@ export class EditserverinfoPage implements OnInit {
     //   return false;
     // }
 
-    if(this.oldServerInfo["elaAddress"] === this.elaAddress && 
+    if(this.oldServerInfo["elaAddress"] === this.elaAddress &&
        this.oldServerInfo["name"] === this.name &&
        this.oldServerInfo["introduction"] === this.introduction){
         this.native.toast_trans('common.nochanges');

@@ -29,7 +29,6 @@ const routes: Routes = [
   { path: 'channels/:nodeId/:channelId', loadChildren: './pages/feeds/home/channels/channels.module#ChannelsPageModule' },
   { path: 'postdetail/:nodeId/:channelId/:postId', loadChildren: './pages/feeds/home/postdetail/postdetail.module#PostdetailPageModule' },
 
-  { path: 'menu/setting', loadChildren: './pages/feeds/menu/setting/setting.module#SettingPageModule' },
   { path: 'menu/profiledetail', loadChildren: './pages/feeds/menu/profiledetail/profiledetail.module#ProfiledetailPageModule' },
   { path: 'menu/about', loadChildren: './pages/about/about.module#AboutPageModule' },
   { path: 'menu/develop', loadChildren: './pages/feeds/menu/develop/develop.module#DevelopPageModule' },

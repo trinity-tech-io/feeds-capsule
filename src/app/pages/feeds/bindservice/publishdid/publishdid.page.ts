@@ -1,6 +1,6 @@
 import { Component, OnInit, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
-import { NavController, Events } from '@ionic/angular';
+import { Events } from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
 import { FeedService } from 'src/app/services/FeedService';
 import { NativeService } from 'src/app/services/NativeService';
@@ -23,13 +23,12 @@ export class PublishdidPage implements OnInit {
     private events: Events,
     private zone: NgZone,
     private acRoute: ActivatedRoute,
-    private router: Router,
     private native: NativeService,
     private feedService:FeedService,
     private translate:TranslateService,
-    public theme:ThemeService, 
+    public theme:ThemeService,
     ) {
-    
+
     }
 
     ngOnInit() {
@@ -43,7 +42,7 @@ export class PublishdidPage implements OnInit {
     ionViewWillEnter() {
       this.initTitle();
       this.native.setTitleBarBackKeyShown(true);
-      
+
       this.connectionStatus = this.feedService.getConnectionStatus();
       this.events.subscribe('feeds:connectionChanged',(status)=>{
         this.zone.run(() => {
@@ -51,15 +50,15 @@ export class PublishdidPage implements OnInit {
         });
       });
     }
-    
+
     ionViewDidEnter() {
     }
-  
+
     ionViewWillLeave(){
       this.events.unsubscribe("feeds:connectionChanged");
     }
-  
-  
+
+
     initTitle(){
       titleBarManager.setTitle(this.translate.instant(this.title));
     }
@@ -74,7 +73,7 @@ export class PublishdidPage implements OnInit {
   }
 
   doPublishDid(){
-    this.feedService.publishDid(this.payload, 
+    this.feedService.publishDid(this.payload,
       (res)=>{
         this.zone.run(() => {
             //{"action":"didtransaction","result":{"txid":null},"from":"org.elastos.trinity.dapp.wallet"}
@@ -82,7 +81,7 @@ export class PublishdidPage implements OnInit {
             let txId = result["txid"] || "";
             if(txId===''){
               return;
-            } 
+            }
             this.native.navigateForward(['/bindservice/issuecredential',this.nodeId, this.did],{
               replaceUrl: true
           });
