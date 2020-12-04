@@ -60,39 +60,48 @@ export class MyApp {
   initSetting(){
 
     this.feedService.getData("feeds.developerMode").then((status)=>{
-      let dstatus = status || false;
+      let dstatus = status;
       this.feedService.setDeveloperMode(dstatus);
     }).catch((err)=>{
 
     });
 
-  
+
     this.feedService.getData("feeds.hideDeletedPosts").then((status)=>{
-      let dstatus = status || false;
-      this.feedService.setHideDeletedPosts(dstatus);
+      if(status === null){
+        this.feedService.setHideDeletedPosts(false);
+        return;
+      }
+      this.feedService.setHideDeletedPosts(status);
     }).catch((err)=>{
 
     });
 
     this.feedService.getData("feeds.hideDeletedComments").then((status)=>{
-      let dstatus = status || false;
-      this.feedService.setHideDeletedComments(dstatus);
+      if(status === null){
+        this.feedService.setHideDeletedComments(false);
+        return;
+      }
+      this.feedService.setHideDeletedComments(status);
     }).catch((err)=>{
 
     });
 
     this.feedService.getData("feeds.hideOfflineFeeds").then((status)=>{
-      let dstatus = status || true;
-      this.feedService.setHideOfflineFeeds(dstatus);
+      if(status === null){
+        this.feedService.setHideOfflineFeeds(true);
+        return;
+      }
+      this.feedService.setHideOfflineFeeds(status);
     }).catch((err)=>{
 
     });
   }
 
   initDisclaimer(){
-  
+
     //localStorage.setItem('org.elastos.dapp.feeds.disclaimer',"");
-    //localStorage.setItem('org.elastos.dapp.feeds.first',""); 
+    //localStorage.setItem('org.elastos.dapp.feeds.first',"");
 
     this.statusBar.styleDefault();
     this.splashScreen.hide();
@@ -152,9 +161,9 @@ export class MyApp {
     if(this.popover!=null){
        this.popover.dismiss();
     }
-    
+
     that.clearData();
-  
+
   }
 
   clearData(){
@@ -163,7 +172,7 @@ export class MyApp {
       this.feedService.destroyCarrier();
       this.appService.hideright();
       this.native.setRootRouter('signin');
-      this.native.toast("app.des"); 
+      this.native.toast("app.des");
     }).catch((err)=>{
     })
   }
@@ -208,7 +217,7 @@ export class MyApp {
     if(contentType === "" || cdata === ""){
       return 'assets/images/default-contact.svg';
     }
-    
+
     return 'data:'+this.avatar.contentType+';base64,'+this.avatar.data;
   }
 

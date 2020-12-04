@@ -31,7 +31,7 @@ export class SettingsPage implements OnInit {
     public popupProvider:PopupProvider,
     public storageService:StorageService,
     private popoverController:PopoverController
-    ) { 
+    ) {
 
   }
 
@@ -49,7 +49,7 @@ export class SettingsPage implements OnInit {
     this.developerMode = this.feedService.getDeveloperMode();
     this.initTitle();
     this.native.setTitleBarBackKeyShown(true);
-    
+
     this.events.subscribe("feeds:updateTitle",()=>{
       this.initTitle();
     });
@@ -80,8 +80,9 @@ export class SettingsPage implements OnInit {
 
   toggleHideOfflineFeeds(){
     this.hideOfflineFeeds = !this.hideOfflineFeeds;
-    this.feedService.setDeveloperMode(this.developerMode);
-    this.feedService.setData("feeds.hideOfflineFeeds",this.developerMode);
+    this.feedService.setHideOfflineFeeds(this.hideOfflineFeeds);
+    this.events.publish("feeds:hideOfflineFeeds");
+    this.feedService.setData("feeds.hideOfflineFeeds",this.hideOfflineFeeds);
   }
 
   toggleDeveloperMode(){
@@ -112,7 +113,7 @@ export class SettingsPage implements OnInit {
     if(this.popover!=null){
       this.popover.dismiss();
     }
-    
+
      that.removeData();
   }
 
@@ -125,9 +126,9 @@ export class SettingsPage implements OnInit {
       this.feedService.destroyCarrier();
       this.appService.hideright();
       this.native.setRootRouter('disclaimer');
-      this.native.toast("SettingsPage.des1"); 
+      this.native.toast("SettingsPage.des1");
     }).catch((err)=>{
-       
+
     })
   }
 
