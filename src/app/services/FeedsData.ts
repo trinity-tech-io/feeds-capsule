@@ -136,7 +136,6 @@ declare namespace FeedsData{
 
     type AccessToken = {
         token: string ;
-        exp: number ;
         isExpire: boolean;
     }
 
