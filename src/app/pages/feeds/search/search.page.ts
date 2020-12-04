@@ -16,7 +16,7 @@ export class SearchPage implements OnInit {
   public connectionStatus = 1;
   public nodeStatus: any = {};
   public channelList= [];
-
+  public hideOfflineFeeds:boolean = true;
   constructor(
     private feedService: FeedService,
     private events: Events,
@@ -39,38 +39,47 @@ export class SearchPage implements OnInit {
 
     this.events.subscribe("feeds:friendConnectionChanged", (nodeId, status)=>{
       this.zone.run(()=>{
-        this.nodeStatus[nodeId] = status;
+        //this.nodeStatus[nodeId] = status;
+        this.initChannelData();
       });
     });
 
     this.events.subscribe('feeds:subscribeFinish', (nodeId, channelId, name)=> {
       // this.native.toast(name + " subscribed");
       this.zone.run(() => {
-        this.channelList  = this.feedService.getChannelsList();
-        this.initnodeStatus();
+        // this.channelList  = this.feedService.getChannelsList();
+        // this.initnodeStatus();
+        this.initChannelData();
       });
     });
 
     this.events.subscribe('feeds:unsubscribeFinish', (nodeId, channelId, name) => {
       // this.native.toast(name + " unsubscribed");
       this.zone.run(() => {
-        this.channelList  = this.feedService.getChannelsList();
-        this.initnodeStatus();
+        // this.channelList  = this.feedService.getChannelsList();
+        // this.initnodeStatus();
+        this.initChannelData();
       });
     });
 
     this.events.subscribe('feeds:refreshChannels', list =>{
       this.zone.run(() => {
-        this.channelList = this.feedService.getChannelsList();
-        this.initnodeStatus();
+        // this.channelList = this.feedService.getChannelsList();
+        // this.initnodeStatus();
+        this.initChannelData();
       });
     });
 
     this.events.subscribe('feeds:channelsDataUpdate', () =>{
       this.zone.run(() => {
-        this.channelList  = this.feedService.getChannelsList();
-        this.initnodeStatus();
+        //this.channelList  = this.feedService.getChannelsList();
+        this.initChannelData();
+        //this.initnodeStatus();
       });
+    });
+
+    this.events.subscribe("feeds:hideOfflineFeeds",()=>{
+      this.initChannelData();
     });
   }
 
@@ -85,9 +94,27 @@ export class SearchPage implements OnInit {
 
   ionViewWillEnter() {
     this.connectionStatus = this.feedService.getConnectionStatus();
-    this.channelList  = this.feedService.getChannelsList();
-    this.initnodeStatus();
+    this.initChannelData();
+    //this.initnodeStatus();
     this.initSubscribe();
+  }
+
+  initChannelData(){
+    this.channelList = [];
+    let channelData = this.feedService.getChannelsList();
+    this.hideOfflineFeeds = this.feedService.getHideOfflineFeeds();
+    if(this.hideOfflineFeeds){
+      for(let index=0;index<channelData.length;index++){
+        let nodeId = channelData[index]['nodeId'];
+        let status = this.checkServerStatus(nodeId);
+        this.nodeStatus[nodeId] = status;
+        if(this.nodeStatus[nodeId] === 0){
+           this.channelList.push(channelData[index]);
+        }
+      }
+      return;
+    }
+    this.channelList = channelData;
   }
 
   ionViewWillLeave(){
@@ -120,13 +147,14 @@ export class SearchPage implements OnInit {
     let sid = setTimeout(() => {
       this.feedService.refreshChannels();
       this.feedService.refreshSubscribedChannels();
-      this.channelList = this.feedService.getChannelsList();
+      //this.channelList = this.feedService.getChannelsList();
+      this.initChannelData();
       event.target.complete();
       clearTimeout(sid);
     }, 2000);
   }
 
-  navTo(nodeId, channelId){
+  navTo(nodeId:string, channelId:number){
     this.native.navigateForward(['/channels', nodeId, channelId],"");
   }
 
