@@ -91,7 +91,7 @@
 
     <!---------------- COMMENTS ---------------->
     <div *ngFor="let comment of commentList let i=index">
-    <ion-grid  class="post-grid" [class.darkPostGrid]="theme.darkMode" *ngIf="comment.status!= 1 || hideDeletedComments">
+    <ion-grid  class="post-grid" [class.darkPostGrid]="theme.darkMode">
       <ion-row class="post-row">
         <ion-col class="right-col" size="1.5"  *ngIf="comment.status != 1 && checkCommentIsMine(comment)">
           <img (click)="openEditTool($event,comment)"
