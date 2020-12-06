@@ -11,7 +11,7 @@ import { IonInfiniteScroll,PopoverController} from '@ionic/angular';
 import { EdittoolComponent } from '../../../../components/edittool/edittool.component';
 import { AppService } from 'src/app/services/AppService';
 import { LogUtils } from 'src/app/services/LogUtils';
-
+import * as _ from 'lodash';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 let TAG: string = "Feeds-postview";
 @Component({
@@ -35,7 +35,7 @@ export class PostdetailPage implements OnInit {
   public postTS:number = 0;
   public likesNum:number = 0;
   public commentsNum:number = 0;
-  
+
   public commentList:any = [];
 
   public nodeId:string = "";
@@ -46,13 +46,13 @@ export class PostdetailPage implements OnInit {
   public totalData:any = [];
 
   public popover: any;
-  
+
   public postStatus = 0;
   public styleObj:any = {width:""};
   public dstyleObj:any = {width:""};
 
   public hideComment = true;
-  
+
   public videoPoster:string ="";
   public posterImg:string ="";
   public videoObj:string ="";
@@ -87,8 +87,8 @@ export class PostdetailPage implements OnInit {
     private logUtils: LogUtils) {
   }
 
-  initData(){
-   
+  initData(isInit:boolean){
+
     let channel = this.feedService.getChannelFromId(this.nodeId, this.channelId) || "";
 
     this.channelWName = channel["name"] || "";
@@ -99,12 +99,17 @@ export class PostdetailPage implements OnInit {
 
     this.initPostContent();
     this.initnodeStatus();
+    if(isInit){
+      this.initRefresh();
+    }else{
+      this.refreshCommentList();
+    }
 
-    this.initRefresh();
   }
 
   initRefresh(){
-    this.totalData = this.feedService.getCommentList(this.nodeId, this.channelId, this.postId) || [];
+    this.startIndex = 0;
+    this.totalData = this.sortCommentList();
     if(this.totalData.length-this.pageNumber > this.pageNumber){
       this.commentList = this.totalData.slice(this.startIndex,this.pageNumber);
       this.startIndex++;
@@ -114,7 +119,28 @@ export class PostdetailPage implements OnInit {
       this.infiniteScroll.disabled =true;
     }
   }
-  
+
+  refreshCommentList(){
+    this.totalData = this.sortCommentList();
+    if (this.totalData.length - this.pageNumber*this.startIndex > this.pageNumber){
+      this.commentList = this.totalData.slice(0,(this.startIndex)*this.pageNumber);
+      this.infiniteScroll.disabled =false;
+     } else {
+      this.commentList =  this.totalData;
+      this.infiniteScroll.disabled =true;
+    }
+  }
+
+  sortCommentList(){
+
+   let commentList = this.feedService.getCommentList(this.nodeId, this.channelId, this.postId) || [];
+   this.hideDeletedComments = this.feedService.getHideDeletedComments();
+   if(!this.hideDeletedComments){
+      commentList = _.filter(commentList ,(item:any)=> { return item.status != 1; });
+   }
+   return commentList;
+  }
+
   ngOnInit() {
     this.acRoute.params.subscribe((data)=>{
       this.nodeId = data.nodeId;
@@ -125,17 +151,17 @@ export class PostdetailPage implements OnInit {
 
   initPostContent(){
     let post = this.feedService.getPostFromId(this.nodeId, this.channelId, this.postId);
-   
+
     this.postStatus = post.post_status || 0;
     this.mediaType = post.content.mediaType;
     this.postContent = post.content;
     this.postTS = post.created_at;
     this.likesNum = post.likes;
     this.commentsNum = post.comments;
-    
+
     if(this.mediaType === 1){
       this.getImage();
-    } 
+    }
     if(post.content.mediaType === 2){
       let key = this.feedService.getVideoThumbStrFromId(this.nodeId,this.channelId,this.postId,0) || "";
       if(key!=""){
@@ -150,7 +176,7 @@ export class PostdetailPage implements OnInit {
     this.native.setTitleBarBackKeyShown(true);
     this.styleObj.width = (screen.width - 55)+'px';
     this.dstyleObj.width= (screen.width - 105)+'px';
-    this.initData();
+    this.initData(true);
     this.connectionStatus = this.feedService.getConnectionStatus();
     this.feedService.refreshPostById(this.nodeId,this.channelId,this.postId);
 
@@ -162,16 +188,16 @@ export class PostdetailPage implements OnInit {
         this.connectionStatus = status;
       });
     });
-  
+
 
     this.events.subscribe('feeds:commentDataUpdate',()=>{
       this.zone.run(() => {
         this.startIndex = 0;
-        this.initData();
+        this.initData(true);
       });
     });
-    
-  
+
+
     this.events.subscribe("feeds:friendConnectionChanged", (nodeId, status)=>{
       this.zone.run(()=>{
         this.nodeStatus[nodeId] = status;
@@ -184,34 +210,34 @@ export class PostdetailPage implements OnInit {
       }
       this.initTitle();
     });
-  
+
     this.events.subscribe("feeds:refreshPostDetail", ()=>{
       this.zone.run(() => {
         let post = this.feedService.getPostFromId(this.nodeId, this.channelId, this.postId);
         this.postContent = post.content;
         this.postTS = post.created_at;
         this.likesNum = post.likes;
-        this.commentsNum = post.comments;  
+        this.commentsNum = post.comments;
       });
     });
 
     this.events.subscribe('feeds:editPostFinish', () => {
-      this.initData();
+      this.initData(true);
     });
 
     this.events.subscribe('feeds:deletePostFinish', () => {
       this.events.publish("update:tab");
       this.native.hideLoading();
-      this.initData();
+      this.initData(true);
     });
 
     this.events.subscribe('feeds:editCommentFinish', () => {
-      this.initData();
+      this.initData(false);
     });
-     
+
     this.events.subscribe('feeds:deleteCommentFinish', () => {
       this.native.hideLoading();
-      this.initData();
+      this.initData(false);
     });
 
     this.events.subscribe('rpcRequest:error', () => {
@@ -250,7 +276,7 @@ export class PostdetailPage implements OnInit {
 
     this.events.subscribe('stream:getBinaryResponse', () => {
       this.zone.run(() => {
-        
+
       });
     });
 
@@ -341,17 +367,17 @@ export class PostdetailPage implements OnInit {
      this.events.unsubscribe("feeds:friendConnectionChanged");
      this.events.unsubscribe("feeds:updateTitle");
      this.events.unsubscribe("feeds:refreshPostDetail");
- 
-   
+
+
      this.events.unsubscribe("feeds:deletePostFinish");
      this.events.unsubscribe("feeds:deleteCommentFinish");
- 
+
      this.events.unsubscribe("feeds:getBinaryFinish");
- 
+
      this.events.unsubscribe("rpcRequest:error");
      this.events.unsubscribe("rpcResponse:error");
      this.events.unsubscribe("rpcRequest:success");
- 
+
      this.events.unsubscribe("stream:getBinaryResponse");
      this.events.unsubscribe("stream:getBinarySuccess");
      this.events.unsubscribe("stream:error");
@@ -365,7 +391,7 @@ export class PostdetailPage implements OnInit {
 
 
   ionViewDidLeave(){
-   
+
     this.menuService.hideActionSheet();
     if(this.popover!=null){
       this.popover.dismiss();
@@ -381,7 +407,7 @@ export class PostdetailPage implements OnInit {
   }
 
   ionViewDidEnter() {
-   
+
   }
 
   initTitle(){
@@ -467,7 +493,7 @@ export class PostdetailPage implements OnInit {
       return obj.content+this.translate.instant('HomePage.hoursAgo');
     }
     if(obj.type === 'day'){
-      
+
       if(obj.content === 1){
         return this.translate.instant('common.yesterday');
       }
@@ -494,7 +520,7 @@ export class PostdetailPage implements OnInit {
         let key = this.feedService.getImageKey(this.nodeId,this.channelId,this.postId,0,0);
         if(contentVersion == "0"){
              key = thumbkey;
-        }  
+        }
         this.feedService.getData(key).then((realImg)=>{
           let img = realImg || "";
           if(img!=""){
@@ -545,14 +571,13 @@ export class PostdetailPage implements OnInit {
         this.logUtils.loge("getImageData error:"+JSON.stringify(reason),TAG);
       })
     }
-    
+
   }
 
   doRefresh(event:any){
     let sId =  setTimeout(() => {
       //this.postImage = "";
-      this.startIndex = 0;
-      this.initData();
+      this.initData(true);
       event.target.complete();
       clearTimeout(sId);
     },500);
@@ -560,7 +585,7 @@ export class PostdetailPage implements OnInit {
 
   loadData(event:any){
     let sId = setTimeout(() => {
-      let arr = [];        
+      let arr = [];
       if(this.totalData.length - this.pageNumber*this.startIndex>this.pageNumber){
        arr = this.totalData.slice(this.startIndex*this.pageNumber,(this.startIndex+1)*this.pageNumber);
        this.startIndex++;
@@ -581,7 +606,7 @@ export class PostdetailPage implements OnInit {
       }
     },500);
 
-  
+
   }
 
   pressName(){
@@ -626,7 +651,7 @@ export class PostdetailPage implements OnInit {
          if(this.popover!=null){
            this.popover = null;
          }
-          
+
     })
     return await this.popover.present();
   }
@@ -640,7 +665,7 @@ export class PostdetailPage implements OnInit {
   checkChannelIsMine(){
     if (this.feedService.checkChannelIsMine(this.nodeId, this.channelId))
       return 0;
-    
+
     return 1;
   }
 
@@ -671,7 +696,7 @@ export class PostdetailPage implements OnInit {
               this.setOverPlay();
               clearTimeout(sid);
             },0);
-         
+
         })
       }else{
         this.videoisShow = false;
@@ -682,7 +707,7 @@ export class PostdetailPage implements OnInit {
   }
 
   getVideo(key:string){
-    
+
     this.feedService.getData(key).then((videodata:string)=>{
       this.zone.run(()=>{
         let videoData = videodata || "";
@@ -716,14 +741,14 @@ export class PostdetailPage implements OnInit {
   loadVideo(videodata:any){
     let id = this.nodeId+this.channelId+this.postId;
     let source:any = document.getElementById(id+"postdetailsource") || "";
-    source.setAttribute("src",videodata); 
+    source.setAttribute("src",videodata);
     let  video:any = document.getElementById(id+"postdetailvideo") || "";
     let vgbuffering:any = document.getElementById(id+"vgbufferingpostdetail");
-    let vgoverlayplay:any = document.getElementById(id+"vgoverlayplaypostdetail"); 
+    let vgoverlayplay:any = document.getElementById(id+"vgoverlayplaypostdetail");
     let vgcontrol:any = document.getElementById(id+"vgcontrolspostdetail");
     video.addEventListener('ended',()=>{
 
-        vgoverlayplay.style.display = "block";  
+        vgoverlayplay.style.display = "block";
         vgbuffering.style.display ="none";
         vgcontrol.style.display = "none";
     });
@@ -735,13 +760,13 @@ export class PostdetailPage implements OnInit {
     });
 
     video.addEventListener('play',()=>{
-      vgcontrol.style.display = "block";  
+      vgcontrol.style.display = "block";
      });
-  
-  
+
+
      video.addEventListener('canplay',()=>{
           vgbuffering.style.display ="none";
-          video.play(); 
+          video.play();
      });
      video.load();
   }
@@ -766,7 +791,7 @@ export class PostdetailPage implements OnInit {
          if(video!=""){
            video.removeAttribute('poster');
          }
-         
+
           let source:any = document.getElementById(id+"postdetailsource") || "";
           if(source != ""){
             source.removeAttribute('src'); // empty source
@@ -778,7 +803,7 @@ export class PostdetailPage implements OnInit {
             },10)
           }
     }
-   
+
   }
 
   setFullScreen(){
@@ -801,7 +826,7 @@ export class PostdetailPage implements OnInit {
   }
 
   setOverPlay(){
-  
+
     let id = this.nodeId+this.channelId+this.postId;
     let vgoverlayplay:any = document.getElementById(id+"vgoverlayplaypostdetail") || "";
     if(vgoverlayplay!=""){
@@ -825,7 +850,7 @@ export class PostdetailPage implements OnInit {
     let duration = 29;
     if(videoThumbKey != ""){
       duration = videoThumbKey["duration"] || 0;
-    } 
+    }
     return UtilService.timeFilter(duration);
   }
 
