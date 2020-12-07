@@ -4238,9 +4238,15 @@ export class FeedService {
     }
 
     let challenge = result.jwt_challenge;
-    this.standardAuth.generateAuthPresentationJWT(challenge).then((presentation)=>{
-      this.logUtils.logd("generateAuthPresentationJWT presentation is "+presentation,TAG);
-      this.standardDidAuth(nodeId, presentation);
+    this.standardAuth.generateAuthPresentationJWT(challenge).then((standAuthResult)=>{
+      this.logUtils.logd("generateAuthPresentationJWT presentation is "+standAuthResult.jwtToken,TAG);
+      if (serverMap != null && serverMap != undefined){
+        serverMap[nodeId].name = standAuthResult.serverName;
+        serverMap[nodeId].introduction = standAuthResult.serverDescription;
+        serverMap[nodeId].elaAddress = standAuthResult.elaAddress;
+        this.storeService.set(PersistenceKey.serverMap, serverMap);  
+      }
+      this.standardDidAuth(nodeId, standAuthResult.jwtToken);
     });
   }
 

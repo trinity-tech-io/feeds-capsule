@@ -95,6 +95,13 @@ declare namespace FeedsData{
         UNKNOW = 8
     }
 
+    type StandardAuthResult = {
+        jwtToken            : string,
+        serverName          : string,
+        serverDescription   : string,
+        elaAddress          : string
+    }
+
     type Content = {
         version         :   string,
         text            :   string,
