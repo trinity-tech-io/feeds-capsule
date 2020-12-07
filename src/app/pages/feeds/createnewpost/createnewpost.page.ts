@@ -419,7 +419,7 @@ selectvideo(){
   async getVideoInfo(fileUri:string){
     let videoInfo = await this.videoEditor.getVideoInfo({ fileUri:fileUri });
     this.duration = videoInfo["duration"];
-    if(this.duration > 15){
+    if(parseInt(this.duration) > 15){
       this.flieUri ="";
       this.posterImg ="";
       this.imgUrl="";
