@@ -4,6 +4,7 @@ import { LogUtils } from 'src/app/services/LogUtils';
 
 declare let didManager: DIDPlugin.DIDManager;
 let TAG: string = "StandardAuthService";
+
 @Injectable()
 export class StandardAuthService {
     private didHelper:TrinitySDK.DID.DIDHelper;
@@ -27,7 +28,7 @@ export class StandardAuthService {
         });
     }
     
-    generateAuthPresentationJWT(authChallengeJwttoken: string): Promise<string> {
+    generateAuthPresentationJWT(authChallengeJwttoken: string): Promise<FeedsData.StandardAuthResult> {
         this.logUtils.logd("Start pro")
         return new Promise(async (resolve, reject)=>{
             this.logUtils.logd("Starting process to generate auth presentation JWT, authChallengeJwttoken is "+authChallengeJwttoken,TAG);
@@ -53,6 +54,11 @@ export class StandardAuthService {
             // Generate a authentication presentation and put the credential + back-end info such as nonce inside
             let nonce = parseResult.payload["nonce"] as string;
             let realm = parseResult.payload["iss"] as string;
+
+            let name = parseResult.payload["name"] as string||"";
+            let description = parseResult.payload["description"] as string||"";
+            let elaAddress = parseResult.payload["elaAddress"] as string||"";
+
 
             this.logUtils.logd("Getting app instance DID",TAG);
             let appInstanceDID = (await this.didHelper.getOrCreateAppInstanceDID()).did;
@@ -84,7 +90,13 @@ export class StandardAuthService {
                             presentation: JSON.parse(await presentation.toJson())
                         }, validityDays, appInstanceDIDInfo.storePassword, (jwtToken)=>{
                             this.logUtils.logd("JWT created for presentation:"+ jwtToken,TAG);
-                            resolve(jwtToken);
+                            let result:FeedsData.StandardAuthResult = {
+                                jwtToken            : jwtToken,
+                                serverName          : name,
+                                serverDescription   : description,
+                                elaAddress          : elaAddress
+                            }
+                            resolve(result);
                         }, (err)=>{
                             reject(err);
                         });
