@@ -13,6 +13,7 @@ import { AppService } from 'src/app/services/AppService';
 import { PopupProvider } from 'src/app/services/popup';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 import { LogUtils } from 'src/app/services/LogUtils';
+import * as _ from 'lodash';
 let TAG: string = "Feeds-feeds";
 @Component({
   selector: 'app-channels',
@@ -49,7 +50,7 @@ export class ChannelsPage implements OnInit {
 
 
   public hideComment = true;
-  
+
   // For comment component
   public postId = null;
 
@@ -73,7 +74,7 @@ export class ChannelsPage implements OnInit {
   public downStatusObj = {};
 
   public curNodeId:string = "";
-  
+
   public curImgPostId:string = "";
 
   public hideDeletedPosts:boolean = false;
@@ -94,7 +95,7 @@ export class ChannelsPage implements OnInit {
     private logUtils: LogUtils,
     public popupProvider:PopupProvider) {
 
-   
+
   }
 
   subscribe(){
@@ -102,13 +103,13 @@ export class ChannelsPage implements OnInit {
       this.native.toastWarn('common.connectionError');
       return;
     }
-    
+
     this.feedService.subscribeChannel(this.nodeId, Number(this.channelId));
   }
 
   tip(){
     let server = this.feedService.getServerbyNodeId(this.nodeId)||undefined;
-    
+
     if (server == undefined ||server.elaAddress == undefined || server.elaAddress == ""){
       this.native.toast('common.noElaAddress');
       return;
@@ -136,7 +137,6 @@ export class ChannelsPage implements OnInit {
     this.initChannelData();
     this.initRefresh();
     this.initStatus(this.postList);
-  
   }
 
   initStatus(arr:any){
@@ -146,8 +146,18 @@ export class ChannelsPage implements OnInit {
      }
   }
 
+  sortChannelList(){
+    let channelList = this.feedService.getPostListFromChannel(this.nodeId, this.channelId) || [];;
+    this.hideDeletedPosts = this.feedService.getHideDeletedPosts();
+    if(!this.hideDeletedPosts){
+      channelList = _.filter(channelList ,(item:any)=> { return item.post_status != 1; });
+    }
+    return channelList;
+  }
+
   initRefresh(){
-    this.totalData = this.feedService.getPostListFromChannel(this.nodeId, this.channelId) || [];
+    this.totalData = this.sortChannelList();
+    this.startIndex = 0;
     if(this.totalData.length-this.pageNumber > this.pageNumber){
       this.postList = this.totalData.slice(0,this.startIndex*this.pageNumber+this.pageNumber);
       this.infiniteScroll.disabled =false;
@@ -158,7 +168,7 @@ export class ChannelsPage implements OnInit {
       this.isLoadVideoiamge ={};
       this.refreshImage();
     }else{
-      this.postList = this.totalData.slice(0,this.totalData.length);
+      this.postList = this.totalData;
       this.infiniteScroll.disabled =true;
       this.isLoadimage ={};
       this.isLoadVideoiamge ={};
@@ -166,12 +176,30 @@ export class ChannelsPage implements OnInit {
     }
   }
 
+  refreshChannelList(){
+    if(this.startIndex === 0){
+      this.initRefresh();
+      return;
+    }
+    this.totalData = this.sortChannelList();
+    if (this.totalData.length - this.pageNumber*this.startIndex > this.pageNumber){
+      this.postList = this.totalData.slice(0,(this.startIndex)*this.pageNumber);
+      this.infiniteScroll.disabled =false;
+     } else {
+      this.postList =  this.totalData;
+      this.infiniteScroll.disabled =true;
+    }
+    this.isLoadimage ={};
+    this.isLoadVideoiamge ={};
+    this.refreshImage();
+  }
+
   initChannelData(){
     let channel = this.feedService.getChannelFromId(this.nodeId, this.channelId);
     this.checkFollowStatus(this.nodeId,this.channelId);
     if (channel == null || channel == undefined)
       return ;
-      
+
     this.channelName = channel.name;
     this.channelOwner = this.feedService.indexText(channel.owner_name,25,25);
     this.channelDesc = channel.introduction;
@@ -180,14 +208,12 @@ export class ChannelsPage implements OnInit {
 
   }
   ionViewWillEnter() {
-    
-    this.hideDeletedPosts = this.feedService.getHideDeletedPosts();
 
+    this.hideDeletedPosts = this.feedService.getHideDeletedPosts();
     this.clientHeight =screen.availHeight;
-    this.initTitle();
     this.native.setTitleBarBackKeyShown(true);
-    
     this.styleObj.width = (screen.width - 105)+'px';
+    this.initTitle();
     this.init();
 
     this.events.subscribe('feeds:connectionChanged',(status)=>{
@@ -201,7 +227,7 @@ export class ChannelsPage implements OnInit {
         this.menuService.hideActionSheet();
         this.menuMore(this.curPost);
       }
-     
+
       this.initTitle();
     });
 
@@ -214,7 +240,7 @@ export class ChannelsPage implements OnInit {
         this.checkFollowStatus(this.nodeId,this.channelId);
       });
     });
-    
+
     this.events.subscribe('feeds:unsubscribeFinish', (nodeId, channelId, name) => {
       this.zone.run(() => {
         this.checkFollowStatus(this.nodeId,this.channelId);
@@ -223,17 +249,21 @@ export class ChannelsPage implements OnInit {
     });
 
     this.events.subscribe('feeds:editPostFinish',()=>{
-        this.initRefresh();
+        this.zone.run(() => {
+          this.refreshChannelList();
+        });
     });
 
     this.events.subscribe('feeds:deletePostFinish',()=>{
        this.native.hideLoading();
-       this.initRefresh();
+       this.zone.run(() => {
+        this.refreshChannelList();
+       });
     });
 
     this.events.subscribe('stream:getBinaryResponse', () => {
       this.zone.run(() => {
-        
+
       });
     });
 
@@ -242,7 +272,7 @@ export class ChannelsPage implements OnInit {
         this.processGetBinaryResult(key, value);
       });
     });
-  
+
     this.events.subscribe('stream:getBinarySuccess', (nodeId, key: string, value:string) => {
       this.zone.run(() => {
         this.processGetBinaryResult(key, value);
@@ -264,7 +294,7 @@ export class ChannelsPage implements OnInit {
         }
       });
     });
-  
+
     this.events.subscribe('stream:error', (nodeId, error) => {
       this.zone.run(() => {
         this.feedService.handleSessionError(nodeId, error);
@@ -275,13 +305,13 @@ export class ChannelsPage implements OnInit {
         this.native.hideLoading();
       });
     });
-   
+
     this.events.subscribe('stream:onStateChangedCallback', (nodeId, state) => {
       this.zone.run(() => {
-  
+
         if (this.cacheGetBinaryRequestKey == "")
           return;
-  
+
         if (state === FeedsData.StreamState.CONNECTED){
           this.downStatusObj[this.curPostId] = "2";
           this.feedService.getBinary(nodeId, this.cacheGetBinaryRequestKey,this.cachedMediaType);
@@ -303,18 +333,10 @@ export class ChannelsPage implements OnInit {
         this.native.hideLoading();
       });
     });
-  
+
    this.events.subscribe('rpcRequest:success', () => {
     this.zone.run(() => {
-  
-      this.totalData =  this.feedService.getPostListFromChannel(this.nodeId, this.channelId) || [];
-      if (this.totalData.length - this.pageNumber > this.pageNumber){
-        this.postList = this.totalData.slice(0,(this.startIndex)*this.pageNumber);
-        this.infiniteScroll.disabled =false;
-       } else {
-        this.postList =  this.totalData;
-        this.infiniteScroll.disabled =true;
-      }
+      this.refreshChannelList();
       this.isLoadimage ={};
       this.isLoadVideoiamge ={};
       this.refreshImage();
@@ -393,7 +415,7 @@ export class ChannelsPage implements OnInit {
   }
 
   ionViewDidEnter() {
-    
+
   }
 
   initTitle(){
@@ -422,19 +444,16 @@ export class ChannelsPage implements OnInit {
 
     this.feedService.postLike(nodeId,Number(channelId),Number(postId),0);
   }
- 
-  comment(){
-    alert("comment")
-  }
 
-  getChannel(nodeId, channelId):any{
+
+  getChannel(nodeId:string, channelId:number):any{
     let channel = this.feedService.getChannelFromId(nodeId,channelId) || "";
     if(channel === ""){
          return ""
     }else{
       return UtilService.moreNanme(channel["name"]);
     }
-    
+
   }
 
   getContentText(content: string): string{
@@ -540,7 +559,7 @@ export class ChannelsPage implements OnInit {
     let status = this.checkServerStatus(nodeId);
     this.nodeStatus[nodeId] = status;
   }
-  
+
   async showPayPrompt(elaAddress:string) {
     this.pauseAllVideo();
     this.isShowPrompt = true;
@@ -575,7 +594,7 @@ export class ChannelsPage implements OnInit {
 
   loadData(event:any){
     let sId = setTimeout(() => {
-      let arr = [];        
+      let arr = [];
       if(this.totalData.length - this.pageNumber*this.startIndex>this.pageNumber){
        arr = this.totalData.slice(this.startIndex*this.pageNumber,(this.startIndex+1)*this.pageNumber);
        this.startIndex++;
@@ -611,7 +630,7 @@ export class ChannelsPage implements OnInit {
     }
 
      this.pauseAllVideo();
-  
+
     if(this.channelAvatar.indexOf("data:image")>-1){
       this.feedService.setSelsectIndex(0);
       this.feedService.setProfileIamge(this.channelAvatar);
@@ -628,14 +647,14 @@ export class ChannelsPage implements OnInit {
         "name":this.channelName,
         "des":this.channelDesc,
       });
-   
+
     this.native.go("/eidtchannel");
   }
 
   checkChannelIsMine(){
     if (this.feedService.checkChannelIsMine(this.nodeId, this.channelId))
       return 0;
-    
+
     return 1;
   }
 
@@ -692,10 +711,10 @@ export class ChannelsPage implements OnInit {
   }
 
   setVisibleareaImage(){
-    
+
     let postgridList = document.getElementsByClassName("channelgird");
     let postgridNum = document.getElementsByClassName("channelgird").length;
-    for(let postgridindex =0;postgridindex<postgridNum;postgridindex++){ 
+    for(let postgridindex =0;postgridindex<postgridNum;postgridindex++){
       let srcId = postgridList[postgridindex].getAttribute("id") || '';
       if(srcId!=""){
         let arr = srcId.split("-");
@@ -711,9 +730,9 @@ export class ChannelsPage implements OnInit {
          if(mediaType === '2'){
           //video
           this.hanldVideo(id,srcId,postgridindex);
-          } 
+          }
       }
-   
+
     }
 
   }
@@ -743,22 +762,22 @@ export class ChannelsPage implements OnInit {
                   postImage.setAttribute("src",image);
                   //this.images[id] = this.images;
                 });
-              
+
                 //rpostImage.style.display = "none";
               }else{
                 this.zone.run(()=>{
                   this.isLoadimage[id] ="12";
-                  rpostImage.style.display = 'none';   
+                  rpostImage.style.display = 'none';
                 })
               }
             }).catch((reason)=>{
-              rpostImage.style.display = 'none'; 
+              rpostImage.style.display = 'none';
               this.logUtils.loge("getImageData error:"+JSON.stringify(reason),TAG);
             })
         }
       }else{
         let postImageSrc = postImage.getAttribute("src") || "";
-        if(postImage.getBoundingClientRect().top<-this.clientHeight&&this.isLoadimage[id]==="13"&&postImageSrc!=""){ 
+        if(postImage.getBoundingClientRect().top<-this.clientHeight&&this.isLoadimage[id]==="13"&&postImageSrc!=""){
           this.isLoadimage[id] = "";
           postImage.removeAttribute("src");
         }
@@ -799,10 +818,10 @@ export class ChannelsPage implements OnInit {
               }else{
                 this.isLoadVideoiamge[id] = "12";
                 video.style.display='none';
-                vgplayer.style.display = 'none'; 
+                vgplayer.style.display = 'none';
               }
             }).catch((reason)=>{
-              vgplayer.style.display = 'none'; 
+              vgplayer.style.display = 'none';
               this.logUtils.loge("getVideoData error:"+JSON.stringify(reason),TAG);
             });
         }
@@ -819,7 +838,7 @@ export class ChannelsPage implements OnInit {
         }
       }
     } catch (error) {
-    
+
     }
   }
 
@@ -841,7 +860,7 @@ export class ChannelsPage implements OnInit {
         let key = this.feedService.getImageKey(nodeId,channelId,postId,0,0);
         if(contentVersion == "0"){
           key = thumbkey;
-        }  
+        }
         this.feedService.getData(key).then((realImg)=>{
           let img = realImg || "";
           if(img!=""){
@@ -893,7 +912,7 @@ export class ChannelsPage implements OnInit {
       }
     }
   }
-  
+
   pauseAllVideo(){
     let videoids = this.isLoadVideoiamge;
     for(let id  in videoids){
@@ -926,7 +945,7 @@ export class ChannelsPage implements OnInit {
         }
       }
     }
-  
+
   }
 
   setFullScreen(id:string){
@@ -935,7 +954,7 @@ export class ChannelsPage implements OnInit {
       this.pauseVideo(id);
       let postImg:string = document.getElementById(id+"videochannel").getAttribute("poster");
       let videoSrc:string = document.getElementById(id+"sourcechannel").getAttribute("src");
-      this.fullScreenmodal = this.native.setVideoFullScreen(postImg,videoSrc);  
+      this.fullScreenmodal = this.native.setVideoFullScreen(postImg,videoSrc);
     }
   }
 
@@ -962,7 +981,7 @@ export class ChannelsPage implements OnInit {
     setOverPlay(id:string,srcId:string){
       let vgoverlayplay:any = document.getElementById(id+"vgoverlayplaychannel") || "";
       let source:any = document.getElementById(id+"sourcechannel") || "";
-  
+
       if(vgoverlayplay!=""){
        vgoverlayplay.onclick = ()=>{
         this.zone.run(()=>{
@@ -974,7 +993,7 @@ export class ChannelsPage implements OnInit {
        }
       }
     }
-  
+
     getVideo(id:string,srcId:string){
       let arr = srcId.split("-");
       let nodeId =arr[0];
@@ -984,7 +1003,7 @@ export class ChannelsPage implements OnInit {
       // this.curPostId = id;
       // this.downProgressObj = {};
       // this.downStatusObj = {};
-  
+
       let key = this.feedService.getVideoKey(nodeId,channelId,postId,0,0);
           this.feedService.getData(key).then((videoResult:string)=>{
             this.zone.run(()=>{
@@ -998,7 +1017,7 @@ export class ChannelsPage implements OnInit {
                 this.curPostId = id;
                 this.cacheGetBinaryRequestKey = key;
                 this.cachedMediaType = "video";
-               
+
                 this.feedService.processGetBinary(nodeId, channelId, postId, 0, 0, FeedsData.MediaType.containsVideo, key,
                   (transDataChannel)=>{
                     if (transDataChannel == FeedsData.TransDataChannel.SESSION){
@@ -1022,8 +1041,8 @@ export class ChannelsPage implements OnInit {
               }
               this.downStatusObj[id] = "";
               this.loadVideo(id,videodata);
-            }) 
-          }); 
+            })
+          });
     }
 
 
@@ -1034,29 +1053,29 @@ export class ChannelsPage implements OnInit {
       }
       source.setAttribute("src",videodata);
       let vgbuffering:any = document.getElementById(id+"vgbufferingchannel") || "";
-      let vgoverlayplay:any = document.getElementById(id+"vgoverlayplaychannel"); 
+      let vgoverlayplay:any = document.getElementById(id+"vgoverlayplaychannel");
       let video:any = document.getElementById(id+"videochannel");
-      let vgcontrol:any = document.getElementById(id+"vgcontrolschannel"); 
+      let vgcontrol:any = document.getElementById(id+"vgcontrolschannel");
       video.addEventListener('ended',()=>{
           vgbuffering.style.display ="none";
-          vgoverlayplay.style.display = "block";  
-          vgcontrol.style.display = "none"; 
+          vgoverlayplay.style.display = "block";
+          vgcontrol.style.display = "none";
       });
 
       video.addEventListener('pause',()=>{
         vgbuffering.style.display ="none";
         vgoverlayplay.style.display = "block";
-        vgcontrol.style.display = "none"; 
+        vgcontrol.style.display = "none";
        });
 
        video.addEventListener('play',()=>{
-        vgcontrol.style.display = "block";  
+        vgcontrol.style.display = "block";
        });
-    
-    
+
+
        video.addEventListener('canplay',()=>{
             vgbuffering.style.display ="none";
-            video.play(); 
+            video.play();
        });
 
       video.load();
@@ -1067,7 +1086,7 @@ export class ChannelsPage implements OnInit {
       let duration = 29;
       if(videoThumbKey != ""){
         duration = videoThumbKey["duration"] || 0;
-      } 
+      }
       return UtilService.timeFilter(duration);
     }
 

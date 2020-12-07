@@ -13,7 +13,7 @@
 
 <div *ngIf="likeList.length > 0">
   <div *ngFor="let post of likeList let i=index">
-  <ion-grid *ngIf="post.post_status!=1 || hideDeletedPosts" class="post-grid ion-activatable ripple postgridlike" [class.darkPostGrid]="theme.darkMode" [class.removeBorder]="post === likeList[likeList.length - 1]" id={{post.nodeId}}-{{post.channel_id}}-{{post.id}}-{{post.content.mediaType}}>
+  <ion-grid  class="post-grid ion-activatable ripple postgridlike" [class.darkPostGrid]="theme.darkMode" [class.removeBorder]="post === likeList[likeList.length - 1]" id={{post.nodeId}}-{{post.channel_id}}-{{post.id}}-{{post.content.mediaType}}>
     <ion-row class="post-row">
       <ion-col class="img-col" size="2.5" (click)="navTo(post.nodeId, post.channel_id,post.id)">
         <div class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode">
@@ -52,30 +52,30 @@
         </h2>
 
         <div *ngIf="post.post_status != 1&&post.content.mediaType==1"  id ={{post.nodeId+post.channel_id+post.id}}likerow style="width: 100%">
-          <span class="lefttopostdetailimg" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)"></span> 
+          <span class="lefttopostdetailimg" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)"></span>
              <img
              id ={{post.nodeId+post.channel_id+post.id}}postimglike
-             class="post-img" 
+             class="post-img"
              style="width: 100%;"
               (click)="showBigImage(post.nodeId,post.channel_id,post.id)"
              />
-             <span class="topostdetailimg" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)"></span> 
+             <span class="topostdetailimg" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)"></span>
          </div>
 
              <!--video-->
 
              <div *ngIf="post.post_status!=1&&post.content.mediaType==2" id={{post.nodeId+post.channel_id+post.id}}vgplayerlike style="width:100%;">
                  <div style="width: 100%;display:inline-block;height:200px;">
-                <span  class="lefttopostdetailvideo" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)"></span> 
+                <span  class="lefttopostdetailvideo" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)"></span>
                  <vg-player>
                    <vg-overlay-play id={{post.nodeId+post.channel_id+post.id}}vgoverlayplaylike></vg-overlay-play>
                    <vg-buffering id={{post.nodeId+post.channel_id+post.id}}vgbufferinglike></vg-buffering>
-               
-                   <vg-controls id={{post.nodeId+post.channel_id+post.id}}vgcontrolslike style="display: none;"> 
+
+                   <vg-controls id={{post.nodeId+post.channel_id+post.id}}vgcontrolslike style="display: none;">
                        <!-- <vg-fullscreen id={{post.nodeId+post.channel_id+post.id}}vgfullscreelike></vg-fullscreen> -->
                        <img class="vgfullscreen" id={{post.nodeId+post.channel_id+post.id}}vgfullscreelike src="assets/images/fullscreen.svg"/>
                    </vg-controls>
-                
+
                <video #media [vgMedia]="media" id ={{post.nodeId+post.channel_id+post.id}}videolike
                playsinline webkit-playsinline>
                <source  type="video/mp4" id={{post.nodeId+post.channel_id+post.id}}sourcelike>
@@ -85,7 +85,7 @@
               <span  class="topostdetailvideo" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)"></span>
               <ion-progress-bar *ngIf="downStatusObj[post.nodeId+post.channel_id++post.id]!=''&&downProgressObj[post.nodeId+post.channel_id++post.id]>=0&&downProgressObj[post.nodeId+post.channel_id++post.id]!=100" [value]="downProgressObj[post.nodeId+post.channel_id++post.id]/100" style="margin-top: -13px;"></ion-progress-bar>
             </div>
-      
+
 
         <ion-row class="bottom-row">
           <ion-col size="2.25" (click)="like(post.nodeId, post.channel_id, post.id)">

@@ -1,4 +1,4 @@
-import { Component, OnInit, NgZone ,ViewChild,Output,EventEmitter} from '@angular/core';
+import { Component, OnInit, NgZone ,ViewChild} from '@angular/core';
 import { Events,ModalController} from '@ionic/angular';
 import { FeedService, Avatar } from 'src/app/services/FeedService';
 import { ThemeService } from 'src/app/services/theme.service';
@@ -9,6 +9,7 @@ import { AppService } from 'src/app/services/AppService';
 import { TranslateService } from "@ngx-translate/core";
 import { PopupProvider } from 'src/app/services/popup';
 import { LogUtils } from 'src/app/services/LogUtils';
+import * as _ from 'lodash';
 let TAG: string = "Feeds-profile";
 @Component({
   selector: 'app-profile',
@@ -18,7 +19,7 @@ let TAG: string = "Feeds-profile";
 export class ProfilePage implements OnInit {
   @ViewChild(IonInfiniteScroll,{static:true}) infiniteScroll: IonInfiniteScroll;
 
-  public nodeStatus = {}; //friends status; 
+  public nodeStatus = {}; //friends status;
   public channels = []; //myFeeds page
   public followingList = []; // following page
   public totalLikeList = [];
@@ -26,7 +27,7 @@ export class ProfilePage implements OnInit {
   public pageNumber:number = 5;
   public likeList = []; //like page
   public connectionStatus = 1;
-  public selectType: string = "ProfilePage.myFeeds"; 
+  public selectType: string = "ProfilePage.myFeeds";
   public followers = 0;
 
   // Sign in data
@@ -35,7 +36,7 @@ export class ProfilePage implements OnInit {
   public description: string = "";
 
   public hideComment = true;
-  public onlineStatus = null; 
+  public onlineStatus = null;
 
   // For comment component
   public postId = null;
@@ -64,14 +65,14 @@ export class ProfilePage implements OnInit {
   public fullScreenmodal:any = "";
 
   public downProgressObj ={};
- 
-  public curPostId:string = ""; 
+
+  public curPostId:string = "";
 
   public downStatusObj = {};
 
   public popover:any = "";
 
-  public curNodeId:string = ""; 
+  public curNodeId:string = "";
 
   public curImgPostId:string = "";
 
@@ -113,9 +114,10 @@ export class ProfilePage implements OnInit {
   }
 
   initRefresh(){
-    this.totalLikeList = this.feedService.getLikeList() || [];
+    this.totalLikeList = this.sortLikeList();
+    this.startIndex = 0;
     if(this.totalLikeList.length-this.pageNumber > this.pageNumber){
-      
+
       this.likeList  = this.totalLikeList.slice(this.startIndex,this.pageNumber);
       this.isLoadimage ={};
       this.isLoadVideoiamge ={};
@@ -123,13 +125,41 @@ export class ProfilePage implements OnInit {
       this.startIndex++;
       this.infiniteScroll.disabled =false;
     }else{
-      
+
       this.likeList = this.totalLikeList.slice(0,this.totalLikeList.length);
       this.isLoadimage ={};
       this.isLoadVideoiamge ={};
       this.refreshImage();
       this.infiniteScroll.disabled =true;
     }
+  }
+
+  refreshLikeList(){
+     if(this.startIndex ===0){
+       this.initRefresh();
+       return;
+     }
+
+     this.likeList = this.sortLikeList();
+     if (this.likeList.length - this.pageNumber*this.startIndex > this.pageNumber){
+       this.likeList = this.likeList.slice(0,(this.startIndex)*this.pageNumber);
+       this.infiniteScroll.disabled =false;
+      } else {
+       this.likeList =  this.likeList;
+       this.infiniteScroll.disabled =true;
+     }
+     this.isLoadimage ={};
+     this.isLoadVideoiamge ={};
+     this.refreshImage();
+  }
+
+  sortLikeList(){
+   let likeList =  this.feedService.getLikeList() || [];
+   this.hideDeletedPosts = this.feedService.getHideDeletedPosts();
+   if(!this.hideDeletedPosts){
+    likeList = _.filter(likeList,(item:any)=> { return item.post_status != 1; });
+   }
+   return likeList;
   }
 
   ionViewWillEnter() {
@@ -144,6 +174,7 @@ export class ProfilePage implements OnInit {
     this.events.subscribe("feeds:hideDeletedPosts",()=>{
       this.zone.run(()=>{
        this.hideDeletedPosts = this.feedService.getHideDeletedPosts();
+       this.refreshLikeList();
       });
     });
 
@@ -152,7 +183,7 @@ export class ProfilePage implements OnInit {
         this.connectionStatus = status;
       });
     });
-  
+
     let signInData = this.feedService.getSignInData() || {};
 
     this.name =  signInData["nickname"] || signInData["name"] || "";
@@ -170,8 +201,9 @@ export class ProfilePage implements OnInit {
 
     this.events.subscribe('feeds:updateLikeList', (list) => {
       this.zone.run(() => {
-        this.totalLikeList = list;
-        this.initLike();
+        // this.totalLikeList = list;
+        // this.initLike();
+        this.refreshLikeList();
         //this.initnodeStatus(this.likeList);
       });
      });
@@ -199,13 +231,13 @@ export class ProfilePage implements OnInit {
 
     this.events.subscribe('feeds:editPostFinish',()=>{
       this.zone.run(() => {
-        this.initLike();
+        this.refreshLikeList();
       });
     });
 
   this.events.subscribe('feeds:deletePostFinish',()=>{
     this.zone.run(() => {
-      this.initLike();
+      this.refreshLikeList();
     });
   });
 
@@ -233,7 +265,7 @@ export class ProfilePage implements OnInit {
       this.processGetBinaryResult(key, value);
     });
   });
- 
+
  this.events.subscribe('stream:getBinaryResponse', () => {
     this.zone.run(() => {
     });
@@ -251,7 +283,7 @@ export class ProfilePage implements OnInit {
       this.downStatusObj= {};
     });
   });
- 
+
   this.events.subscribe('stream:progress',(nodeId,progress)=>{
     this.zone.run(() => {
       if(this.curPostId === ""){
@@ -300,15 +332,7 @@ export class ProfilePage implements OnInit {
 
  this.events.subscribe('rpcRequest:success', () => {
   this.zone.run(() => {
-
-    this.likeList = this.feedService.getLikeList() || [];
-    if (this.likeList.length - this.pageNumber > this.pageNumber){
-      this.likeList = this.likeList.slice(0,(this.startIndex)*this.pageNumber);
-      this.infiniteScroll.disabled =false;
-     } else {
-       //this.likeList =  this.totalData;
-      this.infiniteScroll.disabled =true;
-    }
+    this.refreshLikeList();
     this.isLoadimage ={};
     this.isLoadVideoiamge ={};
     this.refreshImage();
@@ -337,7 +361,7 @@ export class ProfilePage implements OnInit {
    this.downProgressObj = {};
   this.pauseAllVideo();
  });
- 
+
     this.events.subscribe('stream:closed',(nodeId)=>{
       let mNodeId = nodeId || "";
       if (mNodeId != ""){
@@ -379,7 +403,7 @@ export class ProfilePage implements OnInit {
     this.events.unsubscribe("stream:progress");
     this.events.unsubscribe("stream:closed");
     this.events.unsubscribe("feeds:hideDeletedPosts");
-    
+
     this.native.hideLoading();
     this.hideFullScreen();
     this.removeImages();
@@ -449,7 +473,7 @@ export class ProfilePage implements OnInit {
       },500);
       break;
     }
-  
+
   }
 
   loadData(event:any){
@@ -462,7 +486,7 @@ export class ProfilePage implements OnInit {
       break;
       case 'ProfilePage.myLikes':
       let sId = setTimeout(() => {
-        let arr = [];        
+        let arr = [];
         if(this.totalLikeList.length - this.pageNumber*this.startIndex>this.pageNumber){
          arr = this.totalLikeList.slice(this.startIndex*this.pageNumber,(this.startIndex+1)*this.pageNumber);
          this.startIndex++;
@@ -471,7 +495,7 @@ export class ProfilePage implements OnInit {
          });
          this.refreshImage();
          this.initnodeStatus(arr);
-       
+
          event.target.complete();
         }else{
          arr = this.totalLikeList.slice(this.startIndex*this.pageNumber,this.totalLikeList.length);
@@ -481,7 +505,7 @@ export class ProfilePage implements OnInit {
          this.refreshImage();
          this.infiniteScroll.disabled =true;
          this.initnodeStatus(arr);
-         
+
          event.target.complete();
          clearTimeout(sId);
         }
@@ -500,7 +524,7 @@ export class ProfilePage implements OnInit {
     if(contentType === "" || cdata === ""){
       return 'assets/images/default-contact.svg';
     }
-    
+
     return 'data:'+this.avatar.contentType+';base64,'+this.avatar.data
   }
 
@@ -516,7 +540,7 @@ export class ProfilePage implements OnInit {
         break;
       case 'mylike':
           this.menuService.showChannelMenu(item.nodeId, item.channelId,item.channelName);
-          break;  
+          break;
     }
   }
 
@@ -548,10 +572,10 @@ export class ProfilePage implements OnInit {
   }
 
   setVisibleareaImage(){
-   
+
     let postgridList = document.getElementsByClassName("postgridlike");
     let postgridNum = document.getElementsByClassName("postgridlike").length;
-    for(let postgridindex =0;postgridindex<postgridNum;postgridindex++){ 
+    for(let postgridindex =0;postgridindex<postgridNum;postgridindex++){
       let srcId = postgridList[postgridindex].getAttribute("id") || '';
       if(srcId!=""){
         let arr = srcId.split("-");
@@ -567,9 +591,9 @@ export class ProfilePage implements OnInit {
          if(mediaType === '2'){
           //video
           this.hanldVideo(id,srcId,postgridindex);
-          } 
+          }
       }
-   
+
     }
 
   }
@@ -600,22 +624,22 @@ export class ProfilePage implements OnInit {
                 postImage.setAttribute("src",image);
                 //this.images[id] = this.images;
               });
-            
+
               //rpostImage.style.display = "none";
             }else{
               this.zone.run(()=>{
                 this.isLoadimage[id] ="12";
-                rpostImage.style.display = 'none';   
+                rpostImage.style.display = 'none';
               })
             }
           }).catch((reason)=>{
-            rpostImage.style.display = 'none'; 
+            rpostImage.style.display = 'none';
             this.logUtils.loge("getImageData error:"+JSON.stringify(reason),TAG);
           })
         }
       }else{
         let postImageSrc = postImage.getAttribute("src") || "";
-        if(postImage.getBoundingClientRect().top<-this.clientHeight&&this.isLoadimage[id]==="13"&&postImageSrc!=""){ 
+        if(postImage.getBoundingClientRect().top<-this.clientHeight&&this.isLoadimage[id]==="13"&&postImageSrc!=""){
           this.isLoadimage[id] = "";
           postImage.removeAttribute("src");
         }
@@ -656,10 +680,10 @@ export class ProfilePage implements OnInit {
               }else{
                 this.isLoadVideoiamge[id] = "12";
                 video.style.display='none';
-                vgplayer.style.display = 'none'; 
+                vgplayer.style.display = 'none';
               }
             }).catch((reason)=>{
-              vgplayer.style.display = 'none'; 
+              vgplayer.style.display = 'none';
               this.logUtils.loge("getVideoData error:"+JSON.stringify(reason),TAG);
             });
         }
@@ -700,7 +724,7 @@ export class ProfilePage implements OnInit {
       }
     }
   }
-  
+
   pauseAllVideo(){
     let videoids = this.isLoadVideoiamge;
     for(let id  in videoids){
@@ -740,7 +764,7 @@ export class ProfilePage implements OnInit {
          this.pauseVideo(id);
          let postImg:string = document.getElementById(id+"videolike").getAttribute("poster");
       let videoSrc:string = document.getElementById(id+"sourcelike").getAttribute("src");
-      this.fullScreenmodal = this.native.setVideoFullScreen(postImg,videoSrc);  
+      this.fullScreenmodal = this.native.setVideoFullScreen(postImg,videoSrc);
     }
  }
 
@@ -799,7 +823,7 @@ export class ProfilePage implements OnInit {
                 return;
               }
               this.curPostId = id;
-              
+
               this.cacheGetBinaryRequestKey = key;
               this.cachedMediaType = "video";
               this.feedService.processGetBinary(nodeId, channelId, postId, 0, 0, FeedsData.MediaType.containsVideo, key,
@@ -822,8 +846,8 @@ export class ProfilePage implements OnInit {
             this.downStatusObj[id] = "";
             this.curNodeId="";
             this.loadVideo(id,videodata);
-          }) 
-        }); 
+          })
+        });
    }
 
    loadVideo(id:string,videodata:string){
@@ -833,29 +857,29 @@ export class ProfilePage implements OnInit {
     }
     source.setAttribute("src",videodata);
     let vgbuffering:any = document.getElementById(id+"vgbufferinglike") || "";
-    let vgoverlayplay:any = document.getElementById(id+"vgoverlayplaylike"); 
+    let vgoverlayplay:any = document.getElementById(id+"vgoverlayplaylike");
     let video:any = document.getElementById(id+"videolike");
-    let vgcontrol:any = document.getElementById(id+"vgcontrolslike"); 
+    let vgcontrol:any = document.getElementById(id+"vgcontrolslike");
     video.addEventListener('ended',()=>{
        vgoverlayplay.style.display = "block";
        vgbuffering.style.display ="none";
-       vgcontrol.style.display = "none";  
+       vgcontrol.style.display = "none";
     });
 
     video.addEventListener('pause',()=>{
-      vgoverlayplay.style.display = "block";  
+      vgoverlayplay.style.display = "block";
       vgbuffering.style.display ="none";
-      vgcontrol.style.display = "none"; 
+      vgcontrol.style.display = "none";
   });
 
   video.addEventListener('play',()=>{
-    vgcontrol.style.display = "block";  
+    vgcontrol.style.display = "block";
    });
 
 
    video.addEventListener('canplay',()=>{
         vgbuffering.style.display ="none";
-        video.play(); 
+        video.play();
    });
     video.load();
    }
@@ -869,7 +893,7 @@ export class ProfilePage implements OnInit {
         let key = this.feedService.getImageKey(item.nodeId,item.channelId,item.postId,0,0);
         if(contentVersion == "0"){
              key = thumbkey;
-        }  
+        }
         this.feedService.getData(key).then((realImg)=>{
           let img = realImg || "";
           if(img!=""){
@@ -916,7 +940,7 @@ export class ProfilePage implements OnInit {
     } else if (key.indexOf("video")>-1){
       this.downProgressObj[this.curPostId] = 0;
       this.downStatusObj[this.curPostId] = "";
-      this.curPostId = ""; 
+      this.curPostId = "";
       let arr = this.cacheGetBinaryRequestKey.split("-");
       let nodeId =arr[0];
       let channelId:any = arr[1];
