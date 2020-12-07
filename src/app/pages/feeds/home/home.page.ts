@@ -12,6 +12,7 @@ import { IonInfiniteScroll } from '@ionic/angular';
 import { AppService } from 'src/app/services/AppService';
 import { LogUtils } from 'src/app/services/LogUtils';
 import { PopupProvider } from 'src/app/services/popup';
+import * as _ from 'lodash';
 let TAG: string = "Feeds-home";
 @Component({
   selector: 'app-home',
@@ -37,7 +38,7 @@ export class HomePage implements OnInit {
   public styleObj:any = {width:""};
 
   public hideComment = true;
- 
+
 
   // For comment component
   public postId = null;
@@ -73,9 +74,9 @@ export class HomePage implements OnInit {
   public curImgPostId:string = "";
 
   public hideDeletedPosts:boolean = false;
-  
+
   constructor(
-   
+
     private elmRef: ElementRef,
     private feedspage: FeedsPage,
     private tabs: IonTabs,
@@ -90,19 +91,19 @@ export class HomePage implements OnInit {
     public modalController: ModalController,
     private logUtils: LogUtils,
     public popupProvider:PopupProvider) {
-      
+
     }
 
   initPostListData(){
         this.infiniteScroll.disabled =false;
         this.startIndex = 0;
-        this.totalData = this.feedService.getPostList() || [];
+        this.totalData = this.sortPostList();
         if (this.totalData.length - this.pageNumber > this.pageNumber){
           this.postList = this.totalData.slice(this.startIndex,this.pageNumber);
           this.startIndex++;
           this.infiniteScroll.disabled =false;
          } else {
-          this.postList =  this.totalData.slice(0,this.totalData.length);
+          this.postList =  this.totalData;
           this.infiniteScroll.disabled =true;
         }
         this.scrollToTop(1);
@@ -112,35 +113,22 @@ export class HomePage implements OnInit {
         this.initnodeStatus(this.postList);
   }
 
-  ionViewWillEnter() {
-    this.hideDeletedPosts = this.feedService.getHideDeletedPosts();
-    this.styleObj.width = (screen.width - 105)+'px';
-    this.clientHeight =screen.availHeight;
-    this.startIndex = 0;
-    this.totalData = this.feedService.getPostList() || [];
-    this.connectionStatus = this.feedService.getConnectionStatus();
-    if(this.totalData.length - this.pageNumber > this.pageNumber) {
-      this.postList = this.totalData.slice(this.startIndex,this.pageNumber);
-      this.startIndex++;
-      this.infiniteScroll.disabled =false;
-    } else {
-      this.postList = this.totalData.slice(0,this.totalData.length);
-      this.infiniteScroll.disabled =true;
-    }
-    // this.zone.run(()=>{
-      this.refreshImage(0);
-      //this.scrollToTop(1);
-      this.initnodeStatus(this.postList);
-    // })
-   
-   this.events.subscribe("update:tab",(isInit)=>{
-    this.hideDeletedPosts = this.feedService.getHideDeletedPosts();
-    if(isInit){
+  sortPostList(){
+   let postList = this.feedService.getPostList() || [];
+   this.hideDeletedPosts = this.feedService.getHideDeletedPosts();
+   if(!this.hideDeletedPosts){
+    postList = _.filter(postList ,(item:any)=> { return item.post_status != 1; });
+   }
+   return postList;
+  }
+
+  refreshPostList(){
+    if(this.startIndex === 0){
       this.initPostListData();
       return;
     }
-    this.totalData = this.feedService.getPostList() || [];
-    if (this.totalData.length - this.pageNumber > this.pageNumber){
+    this.totalData = this.sortPostList();
+    if (this.totalData.length - this.pageNumber*this.startIndex > this.pageNumber){
       this.postList = this.totalData.slice(0,(this.startIndex)*this.pageNumber);
       this.infiniteScroll.disabled =false;
      } else {
@@ -151,8 +139,30 @@ export class HomePage implements OnInit {
     this.isLoadVideoiamge ={};
     this.refreshImage(0);
     this.initnodeStatus(this.postList);
+  }
 
-   });
+  ionViewWillEnter() {
+    this.connectionStatus = this.feedService.getConnectionStatus();
+    this.styleObj.width = (screen.width - 105)+'px';
+    this.clientHeight =screen.availHeight;
+    this.initPostListData();
+    // this.zone.run(()=>{
+      this.refreshImage(0);
+      //this.scrollToTop(1);
+      this.initnodeStatus(this.postList);
+    // })
+
+   this.events.subscribe("update:tab",(isInit)=>{
+    this.zone.run(()=>{
+      this.hideDeletedPosts = this.feedService.getHideDeletedPosts();
+      if(isInit){
+        this.initPostListData();
+        return;
+      }
+      this.refreshPostList();
+     });
+    });
+
 
  this.events.subscribe("feeds:tabsendpost",()=>{
   this.downProgressObj = {};
@@ -166,6 +176,7 @@ export class HomePage implements OnInit {
  this.events.subscribe("feeds:hideDeletedPosts",()=>{
   this.zone.run(()=>{
    this.hideDeletedPosts = this.feedService.getHideDeletedPosts();
+   this.refreshPostList();
   });
 });
 
@@ -185,7 +196,7 @@ addCommonEvents(){
       this.menuMore(this.curPost);
     }
   });
- 
+
   this.events.subscribe('feeds:connectionChanged',(status)=>{
     this.zone.run(() => {
       this.connectionStatus = status;
@@ -200,38 +211,14 @@ addCommonEvents(){
 
  this.events.subscribe("feeds:editPostFinish",()=>{
   this.zone.run(()=>{
-    this.totalData = this.feedService.getPostList() || [];
-    if (this.totalData.length - this.pageNumber > this.pageNumber){
-      this.postList = this.totalData.slice(0,(this.startIndex)*this.pageNumber);
-      this.infiniteScroll.disabled =false;
-     } else {
-      this.postList =  this.totalData;
-      this.infiniteScroll.disabled =true;
-    }
-    this.isLoadimage ={};
-    this.isLoadVideoiamge ={};
-    this.refreshImage(0);
-    this.initnodeStatus(this.postList);
-
+    this.refreshPostList();
   });
  });
 
  this.events.subscribe("feeds:deletePostFinish",()=>{
   this.zone.run(()=>{
     this.native.hideLoading();
-    this.totalData = this.feedService.getPostList() || [];
-    if (this.totalData.length - this.pageNumber > this.pageNumber){
-      this.postList = this.totalData.slice(0,(this.startIndex)*this.pageNumber);
-      this.infiniteScroll.disabled =false;
-     } else {
-      this.postList =  this.totalData;
-      this.infiniteScroll.disabled =true;
-    }
-    this.isLoadimage ={};
-    this.isLoadVideoiamge ={};
-    this.refreshImage(0);
-    this.initnodeStatus(this.postList);
-
+    this.refreshPostList();
   });
  });
 
@@ -247,19 +234,7 @@ addCommonEvents(){
 
  this.events.subscribe('rpcRequest:success', () => {
   this.zone.run(() => {
-
-    this.totalData = this.feedService.getPostList() || [];
-    if (this.totalData.length - this.pageNumber > this.pageNumber){
-      this.postList = this.totalData.slice(0,(this.startIndex)*this.pageNumber);
-      this.infiniteScroll.disabled =false;
-     } else {
-      this.postList =  this.totalData;
-      this.infiniteScroll.disabled =true;
-    }
-    this.isLoadimage ={};
-    this.isLoadVideoiamge ={};
-    this.refreshImage(0);
-    this.initnodeStatus(this.postList);
+    this.refreshPostList();
     this.hideComponent(null);
     this.native.hideLoading();
     this.native.toast_trans("CommentPage.tipMsg1");
@@ -274,7 +249,7 @@ addBinaryEvevnt(){
   });
 
   this.events.subscribe('feeds:getBinaryFinish', (nodeId, key: string, value:string) => {
-    this.zone.run(() => { 
+    this.zone.run(() => {
 
       this.processGetBinaryResult(key, value);
 
@@ -297,8 +272,8 @@ addBinaryEvevnt(){
       this.native.hideLoading();
       this.pauseAllVideo();
       this.feedService.handleSessionError(nodeId, error);
-      
-      
+
+
       this.downStatusObj[this.curPostId] = "";
       this.downStatusObj[this.curImgPostId] = "";
       this.curNodeId = "";
@@ -322,7 +297,7 @@ addBinaryEvevnt(){
 
     });
   })
- 
+
   this.events.subscribe('stream:onStateChangedCallback', (nodeId, state) => {
     this.zone.run(() => {
       if (this.cacheGetBinaryRequestKey == "")
@@ -355,7 +330,7 @@ addBinaryEvevnt(){
           this.curNodeId = "";
          }
   });
-  
+
   this.events.subscribe('stream:closed',(nodeId)=>{
     let mNodeId = nodeId || "";
     this.pauseAllVideo();
@@ -416,13 +391,11 @@ clearData(){
 }
 
   ionViewDidLeave() {
-    console.log("ionViewDidLeave");
     this.events.unsubscribe("addBinaryEvevnt");
     this.events.unsubscribe("update:tab");
   }
 
   ionViewWillUnload() {
-    console.log("ionViewWillUnload");
   }
 
   getChannel(nodeId:string, channelId:number):any{
@@ -485,7 +458,7 @@ clearData(){
     this.clearData();
     this.native.getNavCtrl().navigateForward(['/postdetail',nodeId, channelId,postId]);
     //this.pauseVideo(nodeId+channelId+postId);
-    
+
   }
 
   checkMyLike(nodeId: string, channelId: number, postId: number){
@@ -576,7 +549,7 @@ clearData(){
 
   loadData(event){
    let sId = setTimeout(() => {
-      let arr = [];        
+      let arr = [];
        if(this.totalData.length - this.pageNumber*this.startIndex>this.pageNumber){
         arr = this.totalData.slice(this.startIndex*this.pageNumber,(this.startIndex+1)*this.pageNumber);
         this.startIndex++;
@@ -587,7 +560,7 @@ clearData(){
         this.initnodeStatus(arr);
         event.target.complete();
         });
-        
+
        }else{
         arr = this.totalData.slice(this.startIndex*this.pageNumber,this.totalData.length);
         this.zone.run(()=>{
@@ -598,7 +571,7 @@ clearData(){
             this.initnodeStatus(arr);
             event.target.complete();
         });
-       
+
        }
       clearTimeout(sId);
     }, 500);
@@ -621,7 +594,7 @@ clearData(){
           this.initnodeStatus(this.postList);
           event.target.complete();
         })
-       
+
        }else{
          this.zone.run(()=>{
           this.postList = this.totalData.slice(0,this.totalData.length);
@@ -632,9 +605,9 @@ clearData(){
           this.initnodeStatus(this.postList);
           event.target.complete();
          })
-        
+
       }
-      
+
       clearTimeout(sId);
     },500);
   }
@@ -674,7 +647,7 @@ clearData(){
   checkChannelIsMine(nodeId:string,channelId:number){
     if (this.feedService.checkChannelIsMine(nodeId,channelId))
       return 0;
-    
+
     return 1;
   }
 
@@ -719,7 +692,7 @@ clearData(){
   setVisibleareaImage(startPos:number){
     let postgridList = document.getElementsByClassName("post-grid");
     let postgridNum = document.getElementsByClassName("post-grid").length;
-    for(let postgridindex=0;postgridindex<postgridNum;postgridindex++){ 
+    for(let postgridindex=0;postgridindex<postgridNum;postgridindex++){
       let srcId = postgridList[postgridindex].getAttribute("id") || '';
       if(srcId!=""){
         let arr = srcId.split("-");
@@ -735,13 +708,13 @@ clearData(){
          if(mediaType === '2'){
           //video
           this.hanldVideo(id,srcId,postgridindex);
-          } 
+          }
       }
     }
   }
 
   ionViewDidEnter() {
-   
+
   }
 
 
@@ -771,7 +744,7 @@ clearData(){
             this.curImgPostId = nodeId+channelId+postId;
             this.cacheGetBinaryRequestKey = key;
             this.cachedMediaType = "img";
-             
+
             this.feedService.processGetBinary(nodeId, channelId, postId, 0, 0, FeedsData.MediaType.containsImg, key,
               (transDataChannel)=>{
                 if (transDataChannel == FeedsData.TransDataChannel.SESSION){
@@ -825,24 +798,24 @@ clearData(){
                 postImage.setAttribute("src",image);
               }else{
                 this.isLoadimage[id] ="12";
-                rpostimg.style.display = 'none'; 
+                rpostimg.style.display = 'none';
               }
             }).catch((reason)=>{
               rpostimg.style.display = 'none';
               this.logUtils.loge("getImageData error:"+JSON.stringify(reason),TAG);
             })
         }
-     
+
       }else{
         let postImageSrc = postImage.getAttribute("src") || "";
-         if(postImage.getBoundingClientRect().top<-this.clientHeight&&this.isLoadimage[id]==="13"&&postImageSrc!=""){ 
+         if(postImage.getBoundingClientRect().top<-this.clientHeight&&this.isLoadimage[id]==="13"&&postImageSrc!=""){
           // this.logUtils.logd("remove error:"+rowindex+"-"+postImage.getBoundingClientRect().top,TAG);
           this.isLoadimage[id] = "";
           postImage.removeAttribute("src");
       }
       }
     } catch (error) {
-    
+
     }
   }
 
@@ -880,14 +853,14 @@ clearData(){
                 //this.logUtils.logd("rowindex "+rowindex, TAG);
                 this.isLoadVideoiamge[id] = "12";
                 video.style.display='none';
-                vgplayer.style.display = 'none'; 
+                vgplayer.style.display = 'none';
               }
             }).catch((reason)=>{
-              vgplayer.style.display = 'none'; 
+              vgplayer.style.display = 'none';
               this.logUtils.loge("getImageData error:"+JSON.stringify(reason),TAG);
             });
         }
-     
+
       }else{
         // this.logUtils.logd("remove: index = "+rowindex+" top = "+video.getBoundingClientRect().top+" bottom = "+video.getBoundingClientRect().bottom,TAG);
         let postSrc =  video.getAttribute("poster") || "";
@@ -902,7 +875,7 @@ clearData(){
         }
       }
     } catch (error) {
-    
+
     }
   }
 
@@ -929,7 +902,7 @@ clearData(){
       }
     }
   }
-  
+
   pauseAllVideo(){
     let videoids = this.isLoadVideoiamge;
     for(let id  in videoids){
@@ -997,7 +970,7 @@ clearData(){
       let imgElement:any = document.getElementById(id+'post-img') || "";
            if(imgElement!=""){
             imgElement.removeAttribute('src'); // empty source
-           }   
+           }
       }
     }
   }
@@ -1060,8 +1033,8 @@ clearData(){
         }
         this.downStatusObj[id] = "";
         this.loadVideo(id,videodata);
-      }) 
-    }); 
+      })
+    });
   }
 
   loadVideo(id:string,videodata:string){
@@ -1070,32 +1043,32 @@ clearData(){
     if(source === ""){
       return;
     }
-    source.setAttribute("src",videodata); 
+    source.setAttribute("src",videodata);
     let vgbuffering:any = document.getElementById(id+"vgbufferinghome") || "";
-    let vgoverlayplay:any = document.getElementById(id+"vgoverlayplayhome"); 
-    let vgcontrol:any = document.getElementById(id+"vgcontrolshome"); 
+    let vgoverlayplay:any = document.getElementById(id+"vgoverlayplayhome");
+    let vgcontrol:any = document.getElementById(id+"vgcontrolshome");
 
     let video:any = document.getElementById(id+"video");
     video.addEventListener('ended',()=>{
        vgoverlayplay.style.display = "block";
        vgbuffering.style.display ="none";
-       vgcontrol.style.display = "none";  
+       vgcontrol.style.display = "none";
     });
 
     video.addEventListener('pause',()=>{
       vgbuffering.style.display ="none";
       vgoverlayplay.style.display = "block";
-      vgcontrol.style.display = "none";  
+      vgcontrol.style.display = "none";
    });
 
    video.addEventListener('play',()=>{
-    vgcontrol.style.display = "block";  
+    vgcontrol.style.display = "block";
    });
 
 
    video.addEventListener('canplay',()=>{
         vgbuffering.style.display ="none";
-        video.play(); 
+        video.play();
    });
    video.load();
   }
@@ -1105,7 +1078,7 @@ clearData(){
     let duration = 29;
     if(videoThumbKey != ""){
       duration = videoThumbKey["duration"] || 0;
-    } 
+    }
     return UtilService.timeFilter(duration);
   }
 
@@ -1141,7 +1114,7 @@ clearData(){
             return true;
       }
     }
-    
+
     return false;
   }
 
