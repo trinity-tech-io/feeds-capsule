@@ -1,4 +1,4 @@
-import { Component, OnInit, NgZone,ViewChild,ElementRef} from '@angular/core';
+import { Component, OnInit, NgZone,ViewChild} from '@angular/core';
 import { Events,ModalController} from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
 import { FeedService } from 'src/app/services/FeedService';
@@ -80,7 +80,6 @@ export class ChannelsPage implements OnInit {
   public hideDeletedPosts:boolean = false;
 
   constructor(
-    private elmRef: ElementRef,
     private popoverController:PopoverController,
     private zone: NgZone,
     private events: Events,
@@ -158,12 +157,11 @@ export class ChannelsPage implements OnInit {
   initRefresh(){
     this.totalData = this.sortChannelList();
     this.startIndex = 0;
-    if(this.totalData.length-this.pageNumber > this.pageNumber){
-      this.postList = this.totalData.slice(0,this.startIndex*this.pageNumber+this.pageNumber);
+    if(this.totalData.length-this.pageNumber > 0){
+      this.postList = this.totalData.slice(0,this.pageNumber);
       this.infiniteScroll.disabled =false;
-      if(this.startIndex === 0){
-        this.startIndex++;
-      }
+      this.startIndex++;
+
       this.isLoadimage ={};
       this.isLoadVideoiamge ={};
       this.refreshImage();
@@ -182,7 +180,7 @@ export class ChannelsPage implements OnInit {
       return;
     }
     this.totalData = this.sortChannelList();
-    if (this.totalData.length - this.pageNumber*this.startIndex > this.pageNumber){
+    if (this.totalData.length - this.pageNumber*this.startIndex > 0){
       this.postList = this.totalData.slice(0,(this.startIndex)*this.pageNumber);
       this.infiniteScroll.disabled =false;
      } else {
@@ -595,7 +593,7 @@ export class ChannelsPage implements OnInit {
   loadData(event:any){
     let sId = setTimeout(() => {
       let arr = [];
-      if(this.totalData.length - this.pageNumber*this.startIndex>this.pageNumber){
+      if(this.totalData.length - this.pageNumber*this.startIndex>0){
        arr = this.totalData.slice(this.startIndex*this.pageNumber,(this.startIndex+1)*this.pageNumber);
        this.startIndex++;
        this.zone.run(()=>{
@@ -779,7 +777,7 @@ export class ChannelsPage implements OnInit {
         let postImageSrc = postImage.getAttribute("src") || "";
         if(postImage.getBoundingClientRect().top<-this.clientHeight&&this.isLoadimage[id]==="13"&&postImageSrc!=""){
           this.isLoadimage[id] = "";
-          postImage.removeAttribute("src");
+          postImage.setAttribute("src","assets/images/loading.gif");
         }
       }
     } catch (error) {
@@ -827,8 +825,8 @@ export class ChannelsPage implements OnInit {
         }
       }else{
         let postSrc =  video.getAttribute("poster") || "";
-        if(video.getBoundingClientRect().top<-this.clientHeight&&this.isLoadVideoiamge[id]==="13"&&postSrc!=""){
-          video.removeAttribute("poster");
+        if(video.getBoundingClientRect().top<-this.clientHeight&&this.isLoadVideoiamge[id]==="13"&&postSrc!="assets/images/loading.gif"){
+          video.setAttribute("poster","assets/images/loading.gif");
           let sourcesrc =  source.getAttribute("src") || "";
           if(sourcesrc  != ""){
             //video.pause();
@@ -933,15 +931,17 @@ export class ChannelsPage implements OnInit {
       let value = videoids[id] || "";
       if(value === "13"){
         let videoElement:any = document.getElementById(id+'videochannel') || "";
+        if(videoElement!=""){
+          //videoElement.setAttribute('poster',"assets/images/loading.gif"); // empty source
+        }
         let source:any = document.getElementById(id+'sourcechannel') || "";
-        videoElement.removeAttribute('poster'); // empty source
         let sourcesrc =  source.getAttribute("src") || "";
-        if(sourcesrc!=""){
+        if(source!=""&&sourcesrc!=""){
           source.removeAttribute('src'); // empty source
-          let sid=setTimeout(()=>{
-            videoElement.load();
-            clearTimeout(sid);
-          },10)
+          // let sid=setTimeout(()=>{
+          //   videoElement.load();
+          //   clearTimeout(sid);
+          // },10)
         }
       }
     }

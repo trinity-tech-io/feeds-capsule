@@ -21,7 +21,7 @@ let TAG: string = "Feeds-postview";
 })
 export class PostdetailPage implements OnInit {
   @ViewChild(IonInfiniteScroll,{static:true}) infiniteScroll: IonInfiniteScroll;
-  public postImage:string = "";
+  public postImage:string = "assets/images/loading.gif";
   public connectionStatus:number = 1;
   public nodeStatus:any ={};
   public avatar: string = "";
@@ -110,8 +110,8 @@ export class PostdetailPage implements OnInit {
   initRefresh(){
     this.startIndex = 0;
     this.totalData = this.sortCommentList();
-    if(this.totalData.length-this.pageNumber > this.pageNumber){
-      this.commentList = this.totalData.slice(this.startIndex,this.pageNumber);
+    if(this.totalData.length-this.pageNumber > 0){
+      this.commentList = this.totalData.slice(0,this.pageNumber);
       this.startIndex++;
       this.infiniteScroll.disabled =false;
     }else{
@@ -122,7 +122,7 @@ export class PostdetailPage implements OnInit {
 
   refreshCommentList(){
     this.totalData = this.sortCommentList();
-    if (this.totalData.length - this.pageNumber*this.startIndex > this.pageNumber){
+    if (this.totalData.length - this.pageNumber*this.startIndex > 0){
       this.commentList = this.totalData.slice(0,(this.startIndex)*this.pageNumber);
       this.infiniteScroll.disabled =false;
      } else {
@@ -586,7 +586,7 @@ export class PostdetailPage implements OnInit {
   loadData(event:any){
     let sId = setTimeout(() => {
       let arr = [];
-      if(this.totalData.length - this.pageNumber*this.startIndex>this.pageNumber){
+      if(this.totalData.length - this.pageNumber*this.startIndex>0){
        arr = this.totalData.slice(this.startIndex*this.pageNumber,(this.startIndex+1)*this.pageNumber);
        this.startIndex++;
        this.zone.run(()=>{
@@ -789,7 +789,7 @@ export class PostdetailPage implements OnInit {
         let id = this.nodeId+this.channelId+this.postId;
          let  video:any = document.getElementById(id+"postdetailvideo") || "";
          if(video!=""){
-           video.removeAttribute('poster');
+           //video.removeAttribute('poster');
          }
 
           let source:any = document.getElementById(id+"postdetailsource") || "";
@@ -797,10 +797,10 @@ export class PostdetailPage implements OnInit {
             source.removeAttribute('src'); // empty source
           }
           if(video!=""){
-            let sid=setTimeout(()=>{
-              video.load();
-              clearTimeout(sid);
-            },10)
+            // let sid=setTimeout(()=>{
+            //   video.load();
+            //   clearTimeout(sid);
+            // },10)
           }
     }
 

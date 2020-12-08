@@ -116,9 +116,9 @@ export class ProfilePage implements OnInit {
   initRefresh(){
     this.totalLikeList = this.sortLikeList();
     this.startIndex = 0;
-    if(this.totalLikeList.length-this.pageNumber > this.pageNumber){
+    if(this.totalLikeList.length-this.pageNumber > 0){
 
-      this.likeList  = this.totalLikeList.slice(this.startIndex,this.pageNumber);
+      this.likeList  = this.totalLikeList.slice(0,this.pageNumber);
       this.isLoadimage ={};
       this.isLoadVideoiamge ={};
       this.refreshImage();
@@ -126,7 +126,7 @@ export class ProfilePage implements OnInit {
       this.infiniteScroll.disabled =false;
     }else{
 
-      this.likeList = this.totalLikeList.slice(0,this.totalLikeList.length);
+      this.likeList = this.totalLikeList;
       this.isLoadimage ={};
       this.isLoadVideoiamge ={};
       this.refreshImage();
@@ -140,12 +140,12 @@ export class ProfilePage implements OnInit {
        return;
      }
 
-     this.likeList = this.sortLikeList();
-     if (this.likeList.length - this.pageNumber*this.startIndex > this.pageNumber){
+    this.totalLikeList = this.sortLikeList();
+     if (this.totalLikeList.length - this.pageNumber*this.startIndex > 0){
        this.likeList = this.likeList.slice(0,(this.startIndex)*this.pageNumber);
        this.infiniteScroll.disabled =false;
       } else {
-       this.likeList =  this.likeList;
+       this.likeList =  this.totalLikeList;
        this.infiniteScroll.disabled =true;
      }
      this.isLoadimage ={};
@@ -487,7 +487,7 @@ export class ProfilePage implements OnInit {
       case 'ProfilePage.myLikes':
       let sId = setTimeout(() => {
         let arr = [];
-        if(this.totalLikeList.length - this.pageNumber*this.startIndex>this.pageNumber){
+        if(this.totalLikeList.length - this.pageNumber*this.startIndex>0){
          arr = this.totalLikeList.slice(this.startIndex*this.pageNumber,(this.startIndex+1)*this.pageNumber);
          this.startIndex++;
          this.zone.run(()=>{
@@ -641,10 +641,11 @@ export class ProfilePage implements OnInit {
         let postImageSrc = postImage.getAttribute("src") || "";
         if(postImage.getBoundingClientRect().top<-this.clientHeight&&this.isLoadimage[id]==="13"&&postImageSrc!=""){
           this.isLoadimage[id] = "";
-          postImage.removeAttribute("src");
+          postImage.setAttribute("src","assets/images/loading.gif");
         }
       }
     } catch (error) {
+      this.isLoadimage[id] = "";
       this.logUtils.loge("getImageData error:"+JSON.stringify(error),TAG);
     }
   }
@@ -690,9 +691,9 @@ export class ProfilePage implements OnInit {
       }else{
         let postSrc =  video.getAttribute("poster") || "";
         if(video.getBoundingClientRect().top<-this.clientHeight&&this.isLoadVideoiamge[id]==="13"&&postSrc!=""){
-          video.removeAttribute("poster");
+          video.setAttribute("poster","assets/images/loading.gif");
           let sourcesrc =  source.getAttribute("src") || "";
-          if(sourcesrc  != ""){
+          if(sourcesrc!= ""){
             //video.pause();
             source.removeAttribute("src");
           }
@@ -744,15 +745,17 @@ export class ProfilePage implements OnInit {
       let value = videoids[id] || "";
       if(value === "13"){
         let videoElement:any = document.getElementById(id+'videolike') || "";
+        if(videoElement!=""){
+          //videoElement.removeAttribute('poster',"assets/images/loading.gif"); // empty source
+        }
         let source:any = document.getElementById(id+'sourcelike') || "";
-        videoElement.removeAttribute('poster'); // empty source
         let sourcesrc =  source.getAttribute("src") || "";
-        if(sourcesrc!=""){
+        if(source!=""&&sourcesrc!=""){
           source.removeAttribute('src'); // empty source
-          let sid=setTimeout(()=>{
-            videoElement.load();
-            clearTimeout(sid);
-          },10)
+          // let sid=setTimeout(()=>{
+          //   videoElement.load();
+          //   clearTimeout(sid);
+          // },10)
         }
       }
     }
