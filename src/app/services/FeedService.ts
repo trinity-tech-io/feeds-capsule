@@ -28,7 +28,6 @@ let subscribedChannelsMap:{[nodeChannelId: string]: Channels};
 let channelsMap:{[nodeChannelId: string]: Channels} ;
 let myChannelsMap:{[nodeChannelId: string]: MyChannel};
 let unreadMap:{[nodeChannelId: string]: number};
-// let postKeyMap: {[nodeChannelPostId: string]: PostKey};
 let serverStatisticsMap:{[nodeId: string]: ServerStatistics};
 let commentsMap:{[nodeId: string]: NodeChannelPostComment};
 let serversStatus:{[nodeId: string]: ServerStatus};
@@ -40,7 +39,7 @@ let lastPostUpdateMap:{[nodeChannelId:string]: PostUpdateTime};
 let localSubscribedList:Channels[] = new Array<Channels>();
 let localMyChannelList:Channels[] = new Array<Channels>();
 let localChannelsList:Channels[] = new Array<Channels>();
-let localPostList:Post[] = new Array<Post>();
+
 let bindingServer: Server;
 let bindingServerCache: Server;
 
@@ -53,7 +52,6 @@ let notificationList:Notification[] = [];
 
 let cacheBindingAddress: string = "";
 let localCredential: string = undefined;
-let isBindServer: boolean = false ;
 
 let cachedPost:{[key:string]:Post} = {};
 
@@ -270,6 +268,8 @@ enum PublishType{
 
   postDataUpdate = "feeds:postDataUpdate",
   commentDataUpdate = "feeds:commentDataUpdate",
+  getCommentFinish = "feeds:getCommentFinish",
+
   myChannelsDataUpdate = "feeds:myChannelsDataUpdate",
   subscribedDataUpdate = "feeds:subscribedChannelsDataUpdate",
   channelsDataUpdate = "feeds:channelsDataUpdate",
@@ -286,11 +286,8 @@ enum PublishType{
   refreshChannels = "feeds:refreshChannels",
   loadMoreChannels = "feeds:loadMoreChannels",
 
-
   refreshSubscribedChannels = "feeds:refreshSubscribedChannels",
   loadMoreSubscribedChannels = "feeds:loadMoreSubscribedChannels",
-
-  updataComment = "feeds:updataComment",
 
   updataCommentLike = "feeds:updataCommentLike",
 
@@ -437,6 +434,7 @@ export class FeedService {
   private isDeclareFinish: boolean = false;
   private lastFeedUpdateMap:{[nodeId:string]: FeedUpdateTime};
   private lastCommentUpdateMap:{[key: string]: CommentUpdateTime};
+
   private throwMsgTransDataLimit = 4*1000*1000;
   private alertPopover:HTMLIonPopoverElement = null;
   private serverVersions: {[nodeId: string]: ServerVersion} = {};
@@ -1340,7 +1338,7 @@ export class FeedService {
         this.handleGetPostsResult(nodeId, result, request, error);
         break;
       case FeedsData.MethodType.get_comments:
-        this.handleGetCommentsResult(nodeId, result, error);
+        this.handleGetCommentsResult(nodeId, result, request, error);
         break;
       case FeedsData.MethodType.get_statistics:
         this.handleGetStatisticsResult(nodeId, result, error);
@@ -2357,71 +2355,70 @@ export class FeedService {
   }
 
   handleNewCommentNotification(nodeId: string, params: any){
-    let channel_id: number= params.channel_id;
-    let post_id: number = params.post_id;
-    let id: number = params.id;
-    let comment_id: number = params.comment_id;
+    let channelId: number= params.channel_id;
+    let postId: number = params.post_id;
+    let commentId: number = params.id;
+    let referCommentId: number = params.comment_id;
     let contentBin: any = params.content;
-    let user_name: any = params.user_name;
+    let userName: any = params.user_name;
     let createdAt: number = params.created_at || 0;
     let updatedAt: number = params.updated_at || createdAt;
     let status: FeedsData.PostCommentStatus = params.status || FeedsData.PostCommentStatus.available;
     let userDid: string = params.user_did || "";
 
-    if (updatedAt > createdAt && status == FeedsData.PostCommentStatus.available)
-      status = FeedsData.PostCommentStatus.edited
+    let lastCommentUpdateKey = this.getPostId(nodeId, channelId, postId);
+    this.processNewComment(nodeId,channelId,postId,commentId,referCommentId,
+      userName,0,createdAt,updatedAt,status,userDid,contentBin, lastCommentUpdateKey);
+  }
 
+  async processNewComment(nodeId: string, channelId: number, postId: number, commentId: number, referCommentId: number,
+                userName: string, likes: number, createdAt: number, updatedAt: number, status: FeedsData.PostCommentStatus,
+                userDid: string, contentBin: any, lastCommentUpdateKey: string){
     let content = this.serializeDataService.decodeData(contentBin);
 
+    this.updateCommentMap(nodeId, channelId, postId, commentId, referCommentId,
+      userName, likes, createdAt, updatedAt, status,userDid, content);
+    await this.storeService.set(PersistenceKey.commentsMap, commentsMap);
+    this.updateLastCommentUpdate(lastCommentUpdateKey, nodeId, channelId, postId, updatedAt);
+    eventBus.publish(PublishType.commentDataUpdate);
+
+    let ncpId = this.getPostId(nodeId, channelId, postId);
+    this.postMap[ncpId].comments = this.postMap[ncpId].comments+1;
+    await this.storeService.set(PersistenceKey.postMap,this.postMap);
+    eventBus.publish(PublishType.postDataUpdate);
+
+    this.generateNotification(nodeId, channelId, postId,commentId,userName,Behavior.comment,this.translate.instant("NotificationPage.commentPost"))
+  }
+
+  updateCommentMap(nodeId: string, channelId: number, postId: number, commentId: number, referCommentId: number,
+                  userName: string, likes: number, createdAt: number, updatedAt: number, status: FeedsData.PostCommentStatus,
+                  userDid: string, content: any){
     if (commentsMap == null || commentsMap == undefined)
       commentsMap = {};
     if (commentsMap[nodeId] == null || commentsMap[nodeId] == undefined)
       commentsMap[nodeId] = {};
-    if (commentsMap[nodeId][channel_id] == null || commentsMap[nodeId][channel_id] == undefined)
-      commentsMap[nodeId][channel_id] = {};
-    if (commentsMap[nodeId][channel_id][post_id] == null || commentsMap[nodeId][channel_id][post_id]==undefined)
-      commentsMap[nodeId][channel_id][post_id] = {};
+    if (commentsMap[nodeId][channelId] == null || commentsMap[nodeId][channelId] == undefined)
+      commentsMap[nodeId][channelId] = {};
+    if (commentsMap[nodeId][channelId][postId] == null || commentsMap[nodeId][channelId][postId]==undefined)
+      commentsMap[nodeId][channelId][postId] = {};
 
-    commentsMap[nodeId][channel_id][post_id][id] = {
+    if (updatedAt > createdAt && status == FeedsData.PostCommentStatus.available)
+      status = FeedsData.PostCommentStatus.edited;
+
+    commentsMap[nodeId][channelId][postId][commentId] = {
       nodeId     : nodeId,
-      channel_id : channel_id,
-      post_id    : post_id,
-      id         : id,
-      comment_id : comment_id,
-      user_name  : user_name,
+      channel_id : channelId,
+      post_id    : postId,
+      id         : commentId,
+      comment_id : referCommentId,
+      user_name  : userName,
       content    : content,
-      likes      : 0,
+      likes      : likes,
       created_at : createdAt*1000,
       updated_at : updatedAt,
       status     : status,
       user_did   : userDid
     }
-
-    let ncpId = this.getPostId(nodeId, channel_id, post_id);
-
-    this.updateLastCommentUpdate(ncpId, nodeId, channel_id, post_id, updatedAt);
-
-    this.postMap[ncpId].comments = this.postMap[ncpId].comments+1;
-    if (likeMap[ncpId] != null && likeMap[ncpId] != undefined){
-      likeMap[ncpId] = {
-        nodeId    : nodeId,
-        channelId :channel_id,
-        postId    :post_id,
-        commentId :0
-      };
-      this.storeService.set(PersistenceKey.likeMap, likeMap);
-      eventBus.publish(PublishType.updateLikeList, this.getLikeList());
-    }
-
-    this.storeService.set(PersistenceKey.postMap,this.postMap);
-    eventBus.publish(PublishType.postDataUpdate);
-
-    this.storeService.set(PersistenceKey.commentsMap, commentsMap);
-    eventBus.publish(PublishType.commentDataUpdate);
-
-    eventBus.publish(PublishType.updataComment,nodeId,channel_id,post_id,this.postMap[ncpId].comments);
-
-    this.generateNotification(nodeId, channel_id, post_id,id,user_name,Behavior.comment,this.translate.instant("NotificationPage.commentPost"))
   }
 
   generateNotification(nodeId: string, channelId: number, postId: number, commentId:number,
@@ -3255,7 +3252,7 @@ export class FeedService {
     }
   }
 
-  handleGetCommentsResult(nodeId: string, responseResult: any, error: any){
+  handleGetCommentsResult(nodeId: string, responseResult: any, requestParams: any, error: any){
     if (error != null && error != undefined && error.code != undefined){
       this.handleError(nodeId, error);
       return;
@@ -3263,57 +3260,27 @@ export class FeedService {
 
     let result = responseResult.comments;
     for (let index = 0; index < result.length; index++) {
-      let channel_id = result[index].channel_id;
-      let post_id = result[index].post_id;
-      let id         = result[index].id;
-      let comment_id = result[index].comment_id;
-      let contentBin    = result[index].content;
-      let likes = result[index].likes;
-      let createdAt = result[index].created_at;
-      let user_name = result[index].user_name;
-      let updatedAt = result[index].updated_at;
-      let status = result[index].status;
-      let userDid = result[index].user_did;
+      let channelId       = result[index].channel_id;
+      let postId          = result[index].post_id;
+      let commentId       = result[index].id;
+      let referCommentId  = result[index].comment_id;
+      let contentBin      = result[index].content;
+      let likes           = result[index].likes;
+      let createdAt       = result[index].created_at;
+      let userName        = result[index].user_name;
+      let updatedAt       = result[index].updated_at;
+      let status          = result[index].status;
+      let userDid         = result[index].user_did;
 
-      let content = this.serializeDataService.decodeData(contentBin);
-
-      if (updatedAt > createdAt && status == FeedsData.PostCommentStatus.available)
-        status = FeedsData.PostCommentStatus.edited
-
-
-      let comment:Comment = {
-        nodeId     : nodeId,
-        channel_id : channel_id,
-        post_id    : post_id,
-        id         : id,
-        comment_id : comment_id,
-        user_name  : user_name,
-        content    : content,
-        likes      : likes,
-        created_at : createdAt*1000,
-        updated_at : updatedAt,
-        status     : status,
-        user_did   : userDid
-      }
-
-      if (commentsMap == null || commentsMap == undefined)
-        commentsMap = {};
-      if (commentsMap[nodeId] == null || commentsMap[nodeId] == undefined)
-        commentsMap[nodeId] = {};
-      if (commentsMap[nodeId][channel_id] == null || commentsMap[nodeId][channel_id] == undefined)
-        commentsMap[nodeId][channel_id] = {}
-      if (commentsMap[nodeId][channel_id][post_id] == null || commentsMap[nodeId][channel_id][post_id] == undefined)
-        commentsMap[nodeId][channel_id][post_id] = {}
-
-      commentsMap[nodeId][channel_id][post_id][id] = comment;
-
-      let ncpId = this.getPostId(nodeId, channel_id, post_id);
-      this.updateLastCommentUpdate(ncpId, nodeId, channel_id, post_id, updatedAt);
+      let lastCommentUpdateKey = this.getPostId(nodeId, channelId, postId);
+      this.processNewComment(nodeId,channelId,postId,commentId,referCommentId,
+        userName,likes,createdAt,updatedAt,status,userDid,contentBin,lastCommentUpdateKey);
     }
+    let reqParams = requestParams.requestParams;
+    reqParams.channel_id;
 
-    this.storeService.set(PersistenceKey.commentsMap, commentsMap);
-
-    eventBus.publish(PublishType.commentDataUpdate);
+    eventBus. getCommentFinish
+    eventBus.publish(PublishType.getCommentFinish,nodeId,reqParams.channel_id,reqParams.post_id);
   }
 
   handleGetStatisticsResult(nodeId: string, result: any, error: any){
@@ -3746,7 +3713,7 @@ export class FeedService {
     let list: Post[] = [];
     this.postMap = this.postMap || {};
     let keys: string[] = Object.keys(this.postMap) || [];
-    localPostList = [];
+    // localPostList = [];
     for (let index in keys) {
       if (this.postMap[keys[index]] == null || this.postMap[keys[index]] == undefined)
         continue;
@@ -3779,7 +3746,7 @@ export class FeedService {
   getPostListFromChannel(nodeId: string, channelId: number){
     let list: Post[] = [];
     let keys: string[] = Object.keys(this.postMap);
-    localPostList = [];
+    // localPostList = [];
     for (const index in keys) {
       if (this.postMap[keys[index]] == null || this.postMap[keys[index]] == undefined)
         continue;
@@ -4050,7 +4017,7 @@ export class FeedService {
     if (this.isDeclearing)
       return;
     this.setDeclareOwnerTimeout();
-    isBindServer = true;
+    // isBindServer = true;
     this.connectionService.declareOwnerRequest(this.getServerNameByNodeId(nodeId), nodeId, nonce, this.getSignInData().did);
     cacheBindingAddress = carrierAddress;
   }
@@ -4254,13 +4221,29 @@ export class FeedService {
     this.handleSigninConfirm(nodeId,result,error);
   }
 
-  handleGetMultiComments(nodeId: string, result: any, requestParams: any, error: any){
+  async handleGetMultiComments(nodeId: string, responseResult: any, requestParams: any, error: any){
     if (error != null && error != undefined && error.code != undefined){
       this.handleError(nodeId, error);
       return;
     }
+    let result = responseResult.comments;
+    for (let index = 0; index < result.length; index++) {
+      let channelId       = result[index].channel_id;
+      let postId          = result[index].post_id;
+      let commentId       = result[index].id;
+      let referCommentId  = result[index].comment_id;
+      let contentBin      = result[index].content;
+      let likes           = result[index].likes;
+      let createdAt       = result[index].created_at;
+      let userName        = result[index].user_name;
+      let updatedAt       = result[index].updated_at;
+      let status          = result[index].status;
+      let userDid         = result[index].user_did;
 
-    this.logUtils.logd("result>"+result,TAG);
+      let lastCommentUpdateKey = this.getPostId(nodeId, 0, 0);
+      this.processNewComment(nodeId,channelId,postId,commentId,referCommentId,
+        userName,likes,createdAt,updatedAt,status,userDid,contentBin,lastCommentUpdateKey);
+    }
   }
 
   doIssueCredential(nodeId: string, did: string, serverName: string, serverDesc: string,elaAddress:string, onSuccess:()=> void, onError:()=>void){
@@ -4453,8 +4436,10 @@ export class FeedService {
 
       let bindingServer = this.getBindingserver() || null;
       if (bindingServer !=null && bindingServer.nodeId == friendId){
+        console.log("this.lastCommentUpdateMap = "+JSON.stringify(this.lastCommentUpdateMap));
+        let lastCommentUpdateKey = this.getPostId(friendId,0,0);
         let mLastCommentUpdateMap = this.lastCommentUpdateMap || "";
-        let commentUpdateTime = mLastCommentUpdateMap[friendId] || "";
+        let commentUpdateTime = mLastCommentUpdateMap[lastCommentUpdateKey] || "";
         let lastCommentTime = commentUpdateTime["time"] || 0;
         this.getMultiComments(friendId, 0, 0, Communication.field.last_update, 0 , lastCommentTime,0);
       }
@@ -4507,7 +4492,7 @@ export class FeedService {
     name: string, owner: string, introduction: string,
     did: string, feedsUrl: string,
     onSuccess:()=>void, onError?:(err: string)=>void){
-    isBindServer = false;
+    // isBindServer = false;
     this.checkIsAlreadyFriends(carrierAddress,(isFriend)=>{
       if (isFriend){
         this.native.toast_trans("AddServerPage.ServerAlreadyAdded");
@@ -4847,6 +4832,9 @@ export class FeedService {
 
   checkCommentIsMine(nodeId: string, channelId: number, postId: number, commentId: number):boolean{
     let comment = commentsMap[nodeId][channelId][postId][commentId];
+    if(comment == undefined)
+      return false;
+
     let did = comment.user_did || "";
     if (did == this.getSignInData().did)
       return true;
