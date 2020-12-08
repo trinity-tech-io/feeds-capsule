@@ -961,6 +961,7 @@ export class ChannelsPage implements OnInit {
   hideFullScreen(){
     if(this.fullScreenmodal != ""){
       this.modalController.dismiss();
+      this.fullScreenmodal = "";
     }
   }
 

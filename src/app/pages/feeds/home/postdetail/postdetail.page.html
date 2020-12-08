@@ -118,7 +118,14 @@
           <h2 *ngIf="comment.status === 1">
             <pre>{{'common.cdeleted' | translate}}</pre>
           </h2>
-          <h2 *ngIf="comment.status != 1">
+          <h2 *ngIf="comment.status != 1&&getPostContentTextSize(comment.content)<=maxTextSize">
+            <pre [ngStyle]="dstyleObj">{{ comment.content }}</pre>
+          </h2>
+          <h2 *ngIf="comment.status != 1&&getPostContentTextSize(comment.content)>maxTextSize&&!isFullContent[comment.id]" (click)="showFullContent(comment.id)">
+            <pre [ngStyle]="dstyleObj">{{ handleCommentContent(comment.content) }}</pre>
+            <pre [ngStyle]="styleObj" style="color:#368bff;">{{"common.fulltext" | translate }}</pre>
+          </h2>
+          <h2 *ngIf="comment.status != 1&&getPostContentTextSize(comment.content)>maxTextSize&&isFullContent[comment.id]" (click)="hideFullContent(comment.id)">
             <pre [ngStyle]="dstyleObj">{{ comment.content }}</pre>
           </h2>
           <ion-row class="bottom-row">
