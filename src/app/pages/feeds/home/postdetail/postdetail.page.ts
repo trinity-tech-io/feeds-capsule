@@ -92,7 +92,6 @@ export class PostdetailPage implements OnInit {
   }
 
   initData(isInit:boolean){
-
     let channel = this.feedService.getChannelFromId(this.nodeId, this.channelId) || "";
 
     this.channelWName = channel["name"] || "";
@@ -108,7 +107,6 @@ export class PostdetailPage implements OnInit {
     }else{
       this.refreshCommentList();
     }
-
   }
 
   initRefresh(){
@@ -136,7 +134,6 @@ export class PostdetailPage implements OnInit {
   }
 
   sortCommentList(){
-
    let commentList = this.feedService.getCommentList(this.nodeId, this.channelId, this.postId) || [];
    this.hideDeletedComments = this.feedService.getHideDeletedComments();
    if(!this.hideDeletedComments){
@@ -189,6 +186,7 @@ export class PostdetailPage implements OnInit {
 
     this.events.subscribe('feeds:connectionChanged',(status)=>{
       this.zone.run(() => {
+        this.logUtils.logd("feeds:connectionChanged",TAG);
         this.connectionStatus = status;
       });
     });
@@ -196,18 +194,32 @@ export class PostdetailPage implements OnInit {
 
     this.events.subscribe('feeds:commentDataUpdate',()=>{
       this.zone.run(() => {
+        this.logUtils.logd("feeds:commentDataUpdate",TAG);
         this.startIndex = 0;
         this.initData(true);
       });
     });
 
-
+    this.events.subscribe('feeds:getCommentFinish',(nodeId, channelId, postId)=>{
+      this.logUtils.logd("feeds:getCommentFinish",TAG);
+      this.zone.run(() => {
+        if (nodeId == this.nodeId && channelId == this.channelId && postId == this.postId){
+          this.startIndex = 0;
+          this.initData(true);
+          titleBarManager.hideActivityIndicator(TitleBarPlugin.TitleBarActivityType.OTHER);
+        }
+      });
+    });
+    
     this.events.subscribe("feeds:friendConnectionChanged", (nodeId, status)=>{
       this.zone.run(()=>{
+        this.logUtils.logd("feeds:friendConnectionChanged",TAG);
         this.nodeStatus[nodeId] = status;
       });
     });
+
     this.events.subscribe("feeds:updateTitle",()=>{
+      this.logUtils.logd("feeds:updateTitle",TAG);
       if(this.menuService.postDetail!=null){
         this.menuService.hideActionSheet();
         this.menuMore();
@@ -217,6 +229,7 @@ export class PostdetailPage implements OnInit {
 
     this.events.subscribe("feeds:refreshPostDetail", ()=>{
       this.zone.run(() => {
+        this.logUtils.logd("feeds:refreshPostDetail",TAG);
         let post = this.feedService.getPostFromId(this.nodeId, this.channelId, this.postId);
         this.postContent = post.content;
         this.postTS = post.created_at;
@@ -226,26 +239,31 @@ export class PostdetailPage implements OnInit {
     });
 
     this.events.subscribe('feeds:editPostFinish', () => {
+      this.logUtils.logd("feeds:editPostFinish",TAG);
       this.initData(true);
     });
 
     this.events.subscribe('feeds:deletePostFinish', () => {
+      this.logUtils.logd("feeds:deletePostFinish",TAG);
       this.events.publish("update:tab");
       this.native.hideLoading();
       this.initData(true);
     });
 
     this.events.subscribe('feeds:editCommentFinish', () => {
+      this.logUtils.logd("feeds:editCommentFinish",TAG);
       this.initData(false);
     });
 
     this.events.subscribe('feeds:deleteCommentFinish', () => {
+      this.logUtils.logd("feeds:deleteCommentFinish",TAG);
       this.native.hideLoading();
       this.initData(false);
     });
 
     this.events.subscribe('rpcRequest:error', () => {
       this.zone.run(() => {
+        this.logUtils.logd("rpcRequest:error",TAG);
         //this.pauseVideo();
         this.native.hideLoading();
       });
@@ -253,14 +271,15 @@ export class PostdetailPage implements OnInit {
 
     this.events.subscribe('rpcResponse:error', () => {
       this.zone.run(() => {
+        this.logUtils.logd("rpcResponse:error",TAG);
         //this.pauseVideo();
         this.native.hideLoading();
       });
     });
 
-
    this.events.subscribe('rpcRequest:success', () => {
     this.zone.run(() => {
+      this.logUtils.logd("rpcRequest:success",TAG);
       this.totalData = this.feedService.getCommentList(this.nodeId, this.channelId, this.postId) || [];
       if(this.totalData.length-this.pageNumber > this.pageNumber){
         this.commentList = this.totalData.slice(this.startIndex*this.pageNumber,this.pageNumber);
@@ -273,19 +292,19 @@ export class PostdetailPage implements OnInit {
       this.native.hideLoading();
       this.hideComment =true;
       this.native.toast_trans("CommentPage.tipMsg1");
+      });
     });
-   });
-
-
 
     this.events.subscribe('stream:getBinaryResponse', () => {
       this.zone.run(() => {
+        this.logUtils.logd("stream:getBinaryResponse",TAG);
 
       });
     });
 
     this.events.subscribe('feeds:getBinaryFinish', (nodeId, key: string, value, mediaType) => {
       this.zone.run(() => {
+        this.logUtils.logd("feeds:getBinaryFinish",TAG);
         this.downProgress = 0;
         this.downStatus = "";
         this.native.hideLoading();
@@ -295,6 +314,7 @@ export class PostdetailPage implements OnInit {
 
     this.events.subscribe('stream:getBinarySuccess', (nodeId, key: string, value) => {
       this.zone.run(() => {
+        this.logUtils.logd("stream:getBinarySuccess",TAG);
         this.native.hideLoading();
         this.downStatus = "";
         this.downProgress = 0;
@@ -305,6 +325,7 @@ export class PostdetailPage implements OnInit {
 
     this.events.subscribe('stream:error', (nodeId, error) => {
       this.zone.run(() => {
+        this.logUtils.logd("stream:error",TAG);
         this.feedService.handleSessionError(nodeId, error);
         this.pauseVideo();
         this.native.hideLoading();
@@ -315,7 +336,7 @@ export class PostdetailPage implements OnInit {
 
     this.events.subscribe('stream:onStateChangedCallback', (nodeId, state) => {
       this.zone.run(() => {
-
+        this.logUtils.logd("stream:onStateChangedCallback",TAG);
         if (this.cacheGetBinaryRequestKey == "")
           return;
 
@@ -331,6 +352,7 @@ export class PostdetailPage implements OnInit {
 
     this.events.subscribe('stream:progress',(nodeId,progress)=>{
         this.zone.run(() => {
+          this.logUtils.logd("stream:progress",TAG);
           this.downProgress = progress;
           if(this.cachedMediaType === 'img'&&this.downStatus!=""){
             this.native.updateLoadingMsg(this.translate.instant("common.downloading")+" "+progress+"%");
@@ -339,6 +361,7 @@ export class PostdetailPage implements OnInit {
     })
 
     this.events.subscribe('feeds:openRightMenu',()=>{
+      this.logUtils.logd("feeds:openRightMenu",TAG);
       this.downStatus ="";
       this.downProgress = 0;
       this.feedService.closeSession(this.nodeId);
@@ -348,6 +371,7 @@ export class PostdetailPage implements OnInit {
      });
 
      this.events.subscribe('stream:closed',(nodeId)=>{
+      this.logUtils.logd("stream:closed",TAG);
       let mNodeId = nodeId || "";
       if (mNodeId != ""){
         this.feedService.closeSession(mNodeId);
@@ -358,11 +382,12 @@ export class PostdetailPage implements OnInit {
       this.pauseVideo();
       this.hideFullScreen();
     });
+
+    titleBarManager.showActivityIndicator(TitleBarPlugin.TitleBarActivityType.OTHER, "Loading latest comments");
   }
 
 
   ionViewWillLeave(){//清楚订阅事件代码
-
      this.events.unsubscribe("feeds:editCommentFinish");
      this.events.unsubscribe("feeds:editPostFinish");
 
@@ -391,11 +416,13 @@ export class PostdetailPage implements OnInit {
      this.events.unsubscribe("stream:closed");
      this.events.publish("update:tab");
      this.events.publish("addBinaryEvevnt");
+     this.events.unsubscribe("feeds:getCommentFinish");
+     
+     titleBarManager.hideActivityIndicator(TitleBarPlugin.TitleBarActivityType.OTHER);
   }
 
 
   ionViewDidLeave(){
-
     this.menuService.hideActionSheet();
     if(this.popover!=null){
       this.popover.dismiss();
@@ -610,8 +637,6 @@ export class PostdetailPage implements OnInit {
        clearTimeout(sId);
       }
     },500);
-
-
   }
 
   pressName(){
@@ -656,11 +681,9 @@ export class PostdetailPage implements OnInit {
          if(this.popover!=null){
            this.popover = null;
          }
-
     })
     return await this.popover.present();
   }
-
 
   handleCommentStatus(){
     let status = "(edit)"
@@ -777,7 +800,6 @@ export class PostdetailPage implements OnInit {
   }
 
   pauseVideo(){
-
     if(this.postStatus != 1&&this.mediaType===2){
       let id = this.nodeId+this.channelId+this.postId;
       let  video:any = document.getElementById(id+"postdetailvideo") || "";
@@ -789,26 +811,25 @@ export class PostdetailPage implements OnInit {
 
   clearVideo(){
     if(this.postStatus != 1&&this.mediaType===2){
-        this.posterImg ="";
-         this.videoObj ="";
-        let id = this.nodeId+this.channelId+this.postId;
-         let  video:any = document.getElementById(id+"postdetailvideo") || "";
-         if(video!=""){
-           //video.removeAttribute('poster');
-         }
+      this.posterImg ="";
+      this.videoObj ="";
+      let id = this.nodeId+this.channelId+this.postId;
+      let video:any = document.getElementById(id+"postdetailvideo") || "";
+      if(video!=""){
+        //video.removeAttribute('poster');
+      }
 
-          let source:any = document.getElementById(id+"postdetailsource") || "";
-          if(source != ""){
-            source.removeAttribute('src'); // empty source
-          }
-          if(video!=""){
-            // let sid=setTimeout(()=>{
-            //   video.load();
-            //   clearTimeout(sid);
-            // },10)
-          }
+      let source:any = document.getElementById(id+"postdetailsource") || "";
+      if(source != ""){
+        source.removeAttribute('src'); // empty source
+      }
+      if(video!=""){
+        // let sid=setTimeout(()=>{
+        //   video.load();
+        //   clearTimeout(sid);
+        // },10)
+      }
     }
-
   }
 
   setFullScreen(){
