@@ -172,3 +172,14 @@ vg-player vg-scrub-bar {
   transition: bottom 1s, opacity 0.5s;
   z-index: 301;
 }
+
+vg-player vg-buffering .vg-buffering .bufferingContainer {
+  width: 100%;
+  position: absolute;
+  cursor: pointer;
+  top: 62%;
+  margin-top: -50px;
+  zoom: 1;
+  filter: alpha(opacity=60);
+  opacity: 0.6;
+}

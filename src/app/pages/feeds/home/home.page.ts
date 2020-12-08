@@ -98,8 +98,8 @@ export class HomePage implements OnInit {
         this.infiniteScroll.disabled =false;
         this.startIndex = 0;
         this.totalData = this.sortPostList();
-        if (this.totalData.length - this.pageNumber > this.pageNumber){
-          this.postList = this.totalData.slice(this.startIndex,this.pageNumber);
+        if (this.totalData.length - this.pageNumber > 0){
+          this.postList = this.totalData.slice(0,this.pageNumber);
           this.startIndex++;
           this.infiniteScroll.disabled =false;
          } else {
@@ -128,7 +128,7 @@ export class HomePage implements OnInit {
       return;
     }
     this.totalData = this.sortPostList();
-    if (this.totalData.length - this.pageNumber*this.startIndex > this.pageNumber){
+    if (this.totalData.length - this.pageNumber*this.startIndex > 0){
       this.postList = this.totalData.slice(0,(this.startIndex)*this.pageNumber);
       this.infiniteScroll.disabled =false;
      } else {
@@ -550,7 +550,7 @@ clearData(){
   loadData(event){
    let sId = setTimeout(() => {
       let arr = [];
-       if(this.totalData.length - this.pageNumber*this.startIndex>this.pageNumber){
+       if(this.totalData.length - this.pageNumber*this.startIndex>0){
         arr = this.totalData.slice(this.startIndex*this.pageNumber,(this.startIndex+1)*this.pageNumber);
         this.startIndex++;
         this.zone.run(()=>{
@@ -582,10 +582,10 @@ clearData(){
       this.images = {};
       this.infiniteScroll.disabled =false;
       this.startIndex = 0;
-      this.totalData = this.feedService.getPostList() || [];
-      if(this.totalData.length - this.pageNumber > this.pageNumber){
+      this.totalData = this.sortPostList();
+      if(this.totalData.length - this.pageNumber > 0){
         this.zone.run(()=>{
-          this.postList = this.totalData.slice(this.startIndex,this.pageNumber);
+          this.postList = this.totalData.slice(0,this.pageNumber);
           this.startIndex++;
           this.infiniteScroll.disabled =false;
           this.isLoadimage ={};
@@ -597,7 +597,7 @@ clearData(){
 
        }else{
          this.zone.run(()=>{
-          this.postList = this.totalData.slice(0,this.totalData.length);
+          this.postList = this.totalData;
           this.infiniteScroll.disabled =true;
           this.isLoadimage ={};
           this.isLoadVideoiamge ={};
@@ -794,8 +794,8 @@ clearData(){
               let image = imagedata || "";
               if(image!=""){
                 this.isLoadimage[id] ="13";
-                rpostimg.style.display = "block";
                 postImage.setAttribute("src",image);
+                rpostimg.style.display = "block";
               }else{
                 this.isLoadimage[id] ="12";
                 rpostimg.style.display = 'none';
@@ -811,11 +811,11 @@ clearData(){
          if(postImage.getBoundingClientRect().top<-this.clientHeight&&this.isLoadimage[id]==="13"&&postImageSrc!=""){
           // this.logUtils.logd("remove error:"+rowindex+"-"+postImage.getBoundingClientRect().top,TAG);
           this.isLoadimage[id] = "";
-          postImage.removeAttribute("src");
+          postImage.setAttribute("src","assets/images/loading.gif");
       }
       }
     } catch (error) {
-
+        this.isLoadimage[id] = "";
     }
   }
 
@@ -844,8 +844,8 @@ clearData(){
               let image = imagedata || "";
               if(image!=""){
                 this.isLoadVideoiamge[id] = "13";
-                vgplayer.style.display = "block";
                 video.setAttribute("poster",image);
+                vgplayer.style.display = "block";
                 //video.
                 this.setFullScreen(id);
                 this.setOverPlay(id,srcId);
@@ -856,7 +856,9 @@ clearData(){
                 vgplayer.style.display = 'none';
               }
             }).catch((reason)=>{
+              video.style.display='none';
               vgplayer.style.display = 'none';
+              this.isLoadVideoiamge[id] = "";
               this.logUtils.loge("getImageData error:"+JSON.stringify(reason),TAG);
             });
         }
@@ -864,8 +866,8 @@ clearData(){
       }else{
         // this.logUtils.logd("remove: index = "+rowindex+" top = "+video.getBoundingClientRect().top+" bottom = "+video.getBoundingClientRect().bottom,TAG);
         let postSrc =  video.getAttribute("poster") || "";
-        if(video.getBoundingClientRect().top<-this.clientHeight&&this.isLoadVideoiamge[id]==="13"&&postSrc!=""){
-          video.removeAttribute("poster");
+        if(video.getBoundingClientRect().top<-this.clientHeight&&this.isLoadVideoiamge[id]==="13"&&postSrc!="assets/images/loading.gif"){
+          video.setAttribute("poster","assets/images/loading.gif");
           let sourcesrc =  source.getAttribute("src") || "";
           if(sourcesrc  != ""){
             //video.pause();
@@ -875,7 +877,7 @@ clearData(){
         }
       }
     } catch (error) {
-
+         this.isLoadVideoiamge[id]="";
     }
   }
 
@@ -922,15 +924,19 @@ clearData(){
       let value = videoids[id] || "";
       if(value === "13"){
         let videoElement:any = document.getElementById(id+'video') || "";
+        if(videoElement!=""){
+          videoElement.setAttribute('poster',""); // empty source
+        }
         let source:any = document.getElementById(id+'source') || "";
-        videoElement.removeAttribute('poster'); // empty source
-        let sourcesrc =  source.getAttribute("src") || "";
-        if(sourcesrc!=""){
-          source.removeAttribute('src'); // empty source
-          // let sid=setTimeout(()=>{
-          //   videoElement.load();
-          //   clearTimeout(sid);
-          // },10)
+        if(source!=""){
+          let sourcesrc =  source.getAttribute("src") || "";
+          if(source!=""&&sourcesrc!=""){
+            source.removeAttribute('src'); // empty source
+            // let sid=setTimeout(()=>{
+            //   videoElement.load();
+            //   clearTimeout(sid);
+            // },10)
+          }
         }
       }
     }
@@ -959,6 +965,7 @@ clearData(){
  hideFullScreen(){
    if(this.fullScreenmodal != ""){
      this.modalController.dismiss();
+     this.fullScreenmodal = "";
    }
  }
 
