@@ -570,6 +570,7 @@ selectvideo(){
  hideFullScreen(){
   if(this.fullScreenmodal != ""){
     this.modalController.dismiss();
+    this.fullScreenmodal = "";
   }
 }
 

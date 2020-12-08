@@ -774,6 +774,7 @@ export class ProfilePage implements OnInit {
  hideFullScreen(){
   if(this.fullScreenmodal != ""){
     this.modalController.dismiss();
+    this.fullScreenmodal = "";
   }
  }
 

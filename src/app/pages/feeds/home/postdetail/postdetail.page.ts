@@ -72,6 +72,10 @@ export class PostdetailPage implements OnInit {
 
   public hideDeletedComments:boolean = false;
 
+  public maxTextSize = 240;
+
+  public isFullContent = {};
+
   constructor(
     private popoverController:PopoverController,
     private acRoute: ActivatedRoute,
@@ -399,6 +403,7 @@ export class PostdetailPage implements OnInit {
 
     this.hideComment = true;
     this.postImage = "";
+    this.isFullContent = {};
     this.downProgress = 0;
     this.feedService.closeSession(this.nodeId);
     this.clearVideo();
@@ -822,6 +827,7 @@ export class PostdetailPage implements OnInit {
   hideFullScreen(){
     if(this.fullScreenmodal != ""){
       this.modalController.dismiss();
+      this.fullScreenmodal = "";
     }
   }
 
@@ -863,5 +869,22 @@ export class PostdetailPage implements OnInit {
       this.videoObj = value;
       this.loadVideo(value);
     }
+  }
+
+  getPostContentTextSize(content:string){
+    let size = UtilService.getSize(content);
+    return size;
+  }
+
+  handleCommentContent(text:string){
+    return text.substring(0,180);
+  }
+
+  showFullContent(commentId:string){
+     this.isFullContent[commentId] = true;
+  }
+
+  hideFullContent(commentId:string){
+    this.isFullContent[commentId] = false;
   }
 }
