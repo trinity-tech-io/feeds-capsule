@@ -2368,23 +2368,29 @@ export class FeedService {
     let status: FeedsData.PostCommentStatus = params.status || FeedsData.PostCommentStatus.available;
     let userDid: string = params.user_did || "";
 
-    let lastCommentUpdateKey = this.getPostId(nodeId, channelId, postId);
+    
     this.processNewComment(nodeId,channelId,postId,commentId,referCommentId,
-      userName,0,createdAt,updatedAt,status,userDid,contentBin, lastCommentUpdateKey);
+      userName,0,createdAt,updatedAt,status,userDid,contentBin);
+
+    if(this.checkChannelIsMine(nodeId,channelId)){
+      let lastCommentUpdateKey = this.getPostId(nodeId, 0, 0);
+      this.updateLastCommentUpdate(lastCommentUpdateKey, nodeId, channelId, postId, updatedAt);
+    }
   }
 
   async processNewComment(nodeId: string, channelId: number, postId: number, commentId: number, referCommentId: number,
                 userName: string, likes: number, createdAt: number, updatedAt: number, status: FeedsData.PostCommentStatus,
-                userDid: string, contentBin: any, lastCommentUpdateKey: string){
+                userDid: string, contentBin: any){
     let content = this.serializeDataService.decodeData(contentBin);
 
     this.updateCommentMap(nodeId, channelId, postId, commentId, referCommentId,
       userName, likes, createdAt, updatedAt, status,userDid, content);
     await this.storeService.set(PersistenceKey.commentsMap, commentsMap);
-    this.updateLastCommentUpdate(lastCommentUpdateKey, nodeId, channelId, postId, updatedAt);
-    eventBus.publish(PublishType.commentDataUpdate);
 
     let ncpId = this.getPostId(nodeId, channelId, postId);
+    this.updateLastCommentUpdate(ncpId, nodeId, channelId, postId, updatedAt);
+    eventBus.publish(PublishType.commentDataUpdate);
+
     this.postMap[ncpId].comments = this.postMap[ncpId].comments+1;
     await this.storeService.set(PersistenceKey.postMap,this.postMap);
     eventBus.publish(PublishType.postDataUpdate);
@@ -3274,9 +3280,13 @@ export class FeedService {
       let status          = result[index].status;
       let userDid         = result[index].user_did;
 
-      let lastCommentUpdateKey = this.getPostId(nodeId, channelId, postId);
       this.processNewComment(nodeId,channelId,postId,commentId,referCommentId,
-        userName,likes,createdAt,updatedAt,status,userDid,contentBin,lastCommentUpdateKey);
+        userName,likes,createdAt,updatedAt,status,userDid,contentBin);
+
+      if(this.checkChannelIsMine(nodeId,channelId)){
+        let lastCommentUpdateKey = this.getPostId(nodeId, 0, 0);
+        this.updateLastCommentUpdate(lastCommentUpdateKey, nodeId, channelId, postId, updatedAt);
+      }
     }
     let reqParams = requestParams.requestParams;
     reqParams.channel_id;
@@ -4239,9 +4249,13 @@ export class FeedService {
       let status          = result[index].status;
       let userDid         = result[index].user_did;
 
-      let lastCommentUpdateKey = this.getPostId(nodeId, 0, 0);
       this.processNewComment(nodeId,channelId,postId,commentId,referCommentId,
-        userName,likes,createdAt,updatedAt,status,userDid,contentBin,lastCommentUpdateKey);
+        userName,likes,createdAt,updatedAt,status,userDid,contentBin);
+
+      if(this.checkChannelIsMine(nodeId,channelId)){
+        let lastCommentUpdateKey = this.getPostId(nodeId, 0, 0);
+        this.updateLastCommentUpdate(lastCommentUpdateKey, nodeId, channelId, postId, updatedAt);
+      }
     }
   }
 
