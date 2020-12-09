@@ -82,7 +82,8 @@ export const en = {
         "downstatus1":"Connecting",
         "downstatus2":"Successfully connected",
         "downstatus3":"Downloading",
-        "downDes":"There is an instant video being downloaded, please wait for that download to end and try again"
+        "downDes":"There is an instant video being downloaded, please wait for that download to end and try again",
+        "loadingLastestComment":"Loading latest comments",
     },
     "app":{
         "profileDetails":"Profile Details",
