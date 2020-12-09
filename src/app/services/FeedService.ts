@@ -24,6 +24,7 @@ declare let appManager: AppManagerPlugin.AppManager;
 declare let didSessionManager: DIDSessionManagerPlugin.DIDSessionManager;
 
 let TAG: string = "Feeds-service";
+let versionCode: number = 10400;
 let subscribedChannelsMap:{[nodeChannelId: string]: Channels};
 let channelsMap:{[nodeChannelId: string]: Channels} ;
 let myChannelsMap:{[nodeChannelId: string]: MyChannel};
@@ -2356,7 +2357,7 @@ export class FeedService {
     eventBus.publish(PublishType.postDataUpdate);
   }
 
-  handleNewCommentNotification(nodeId: string, params: any){
+  async handleNewCommentNotification(nodeId: string, params: any){
     let channelId: number= params.channel_id;
     let postId: number = params.post_id;
     let commentId: number = params.id;
@@ -2368,9 +2369,13 @@ export class FeedService {
     let status: FeedsData.PostCommentStatus = params.status || FeedsData.PostCommentStatus.available;
     let userDid: string = params.user_did || "";
 
-    
-    this.processNewComment(nodeId,channelId,postId,commentId,referCommentId,
+    await this.processNewComment(nodeId,channelId,postId,commentId,referCommentId,
       userName,0,createdAt,updatedAt,status,userDid,contentBin);
+
+    let ncpId = this.getPostId(nodeId, channelId, postId);
+    this.postMap[ncpId].comments = this.postMap[ncpId].comments+1;
+    await this.storeService.set(PersistenceKey.postMap,this.postMap);
+    eventBus.publish(PublishType.postDataUpdate);
 
     if(this.checkChannelIsMine(nodeId,channelId)){
       let lastCommentUpdateKey = this.getPostId(nodeId, 0, 0);
@@ -2378,24 +2383,24 @@ export class FeedService {
     }
   }
 
-  async processNewComment(nodeId: string, channelId: number, postId: number, commentId: number, referCommentId: number,
+  processNewComment(nodeId: string, channelId: number, postId: number, commentId: number, referCommentId: number,
                 userName: string, likes: number, createdAt: number, updatedAt: number, status: FeedsData.PostCommentStatus,
-                userDid: string, contentBin: any){
-    let content = this.serializeDataService.decodeData(contentBin);
+                userDid: string, contentBin: any): Promise<void>{
+    return new Promise(async (resolve, reject) =>{
+      let content = this.serializeDataService.decodeData(contentBin);
 
-    this.updateCommentMap(nodeId, channelId, postId, commentId, referCommentId,
-      userName, likes, createdAt, updatedAt, status,userDid, content);
-    await this.storeService.set(PersistenceKey.commentsMap, commentsMap);
+      this.updateCommentMap(nodeId, channelId, postId, commentId, referCommentId,
+        userName, likes, createdAt, updatedAt, status,userDid, content);
+      await this.storeService.set(PersistenceKey.commentsMap, commentsMap);
+  
+      let ncpId = this.getPostId(nodeId, channelId, postId);
+      this.updateLastCommentUpdate(ncpId, nodeId, channelId, postId, updatedAt);
+      eventBus.publish(PublishType.commentDataUpdate);
 
-    let ncpId = this.getPostId(nodeId, channelId, postId);
-    this.updateLastCommentUpdate(ncpId, nodeId, channelId, postId, updatedAt);
-    eventBus.publish(PublishType.commentDataUpdate);
-
-    this.postMap[ncpId].comments = this.postMap[ncpId].comments+1;
-    await this.storeService.set(PersistenceKey.postMap,this.postMap);
-    eventBus.publish(PublishType.postDataUpdate);
-
-    this.generateNotification(nodeId, channelId, postId,commentId,userName,Behavior.comment,this.translate.instant("NotificationPage.commentPost"))
+      this.generateNotification(nodeId, channelId, postId,commentId,userName,Behavior.comment,this.translate.instant("NotificationPage.commentPost"))
+  
+      resolve();
+    });
   }
 
   updateCommentMap(nodeId: string, channelId: number, postId: number, commentId: number, referCommentId: number,
@@ -3260,7 +3265,7 @@ export class FeedService {
     }
   }
 
-  handleGetCommentsResult(nodeId: string, responseResult: any, requestParams: any, error: any){
+  async handleGetCommentsResult(nodeId: string, responseResult: any, requestParams: any, error: any){
     if (error != null && error != undefined && error.code != undefined){
       this.handleError(nodeId, error);
       return;
@@ -3280,7 +3285,7 @@ export class FeedService {
       let status          = result[index].status;
       let userDid         = result[index].user_did;
 
-      this.processNewComment(nodeId,channelId,postId,commentId,referCommentId,
+      await this.processNewComment(nodeId,channelId,postId,commentId,referCommentId,
         userName,likes,createdAt,updatedAt,status,userDid,contentBin);
 
       if(this.checkChannelIsMine(nodeId,channelId)){
@@ -4239,8 +4244,8 @@ export class FeedService {
     for (let index = 0; index < result.length; index++) {
       let channelId       = result[index].channel_id;
       let postId          = result[index].post_id;
-      let commentId       = result[index].id;
-      let referCommentId  = result[index].comment_id;
+      let commentId       = result[index].comment_id;
+      let referCommentId  = result[index].refer_comment_id;
       let contentBin      = result[index].content;
       let likes           = result[index].likes;
       let createdAt       = result[index].created_at;
@@ -4249,7 +4254,7 @@ export class FeedService {
       let status          = result[index].status;
       let userDid         = result[index].user_did;
 
-      this.processNewComment(nodeId,channelId,postId,commentId,referCommentId,
+      await this.processNewComment(nodeId,channelId,postId,commentId,referCommentId,
         userName,likes,createdAt,updatedAt,status,userDid,contentBin);
 
       if(this.checkChannelIsMine(nodeId,channelId)){
@@ -4449,7 +4454,6 @@ export class FeedService {
 
       let bindingServer = this.getBindingserver() || null;
       if (bindingServer !=null && bindingServer.nodeId == friendId){
-        console.log("this.lastCommentUpdateMap = "+JSON.stringify(this.lastCommentUpdateMap));
         let lastCommentUpdateKey = this.getPostId(friendId,0,0);
         let mLastCommentUpdateMap = this.lastCommentUpdateMap || "";
         let commentUpdateTime = mLastCommentUpdateMap[lastCommentUpdateKey] || "";
