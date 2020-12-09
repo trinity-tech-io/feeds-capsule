@@ -367,7 +367,7 @@ export const fr = {
     "CommentPage":{
         "newComment":"New Comment",
         "publishComment":"Post Reply",
-        "inputComment": "Input comment here",
+        "inputComment": "Leave a comment",
         "tipMsg1": "Your comment has been successfully sent."
     },
     "DisclaimerPage":{
