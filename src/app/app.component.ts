@@ -87,15 +87,15 @@ export class MyApp {
 
     });
 
-    this.feedService.getData("feeds.hideOfflineFeeds").then((status)=>{
-      if(status === null){
-        this.feedService.setHideOfflineFeeds(true);
-        return;
-      }
-      this.feedService.setHideOfflineFeeds(status);
-    }).catch((err)=>{
+    // this.feedService.getData("feeds.hideOfflineFeeds").then((status)=>{
+    //   if(status === null){
+    //     this.feedService.setHideOfflineFeeds(true);
+    //     return;
+    //   }
+    //   this.feedService.setHideOfflineFeeds(status);
+    // }).catch((err)=>{
 
-    });
+    // });
   }
 
   initDisclaimer(){

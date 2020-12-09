@@ -16,7 +16,7 @@ export class SearchPage implements OnInit {
   public connectionStatus = 1;
   public nodeStatus: any = {};
   public channelList= [];
-  public hideOfflineFeeds:boolean = true;
+  public hideOfflineFeeds:boolean = false;
   constructor(
     private feedService: FeedService,
     private events: Events,
@@ -102,7 +102,7 @@ export class SearchPage implements OnInit {
   initChannelData(){
     this.channelList = [];
     let channelData = this.feedService.getChannelsList();
-    this.hideOfflineFeeds = this.feedService.getHideOfflineFeeds();
+    //this.hideOfflineFeeds = this.feedService.getHideOfflineFeeds();
     if(this.hideOfflineFeeds){
       for(let index=0;index<channelData.length;index++){
         let nodeId = channelData[index]['nodeId'];
