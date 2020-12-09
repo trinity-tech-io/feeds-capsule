@@ -6073,11 +6073,16 @@ export class FeedService {
   }
 
   checkBindingServerVersion(quit:any): boolean{
+    this.logUtils.logw("Binded server is "+JSON.stringify(bindingServer));
     if (bindingServer == null || bindingServer == undefined)
       return;
 
+    if (this.serverVersions == null || this.serverVersions == undefined || this.serverVersions[bindingServer.nodeId] == undefined)
+      return;
+
     let serverVersion = this.getServerVersionByNodeId(bindingServer.nodeId);
-    if (serverVersion == ""){
+    let currentVC = this.serverVersions[bindingServer.nodeId].versionCode;
+    if (serverVersion == "" || currentVC < versionCode){
       this.popupProvider.ionicAlert(
         this,
         "",
@@ -6089,7 +6094,6 @@ export class FeedService {
       });
       return false;
     }
-
     return true;
   }
 
