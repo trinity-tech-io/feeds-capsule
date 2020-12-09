@@ -95,7 +95,6 @@ export class SearchPage implements OnInit {
   ionViewWillEnter() {
     this.connectionStatus = this.feedService.getConnectionStatus();
     this.initChannelData();
-    //this.initnodeStatus();
     this.initSubscribe();
   }
 
@@ -115,6 +114,7 @@ export class SearchPage implements OnInit {
       return;
     }
     this.channelList = channelData;
+    this.initnodeStatus();
   }
 
   ionViewWillLeave(){
