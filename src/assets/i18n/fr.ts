@@ -84,6 +84,8 @@ export const fr = {
         "downstatus3":"Downloading",
         "downDes":"There is an instant video being downloaded, please wait for that download to end and try again",
         "loadingLastestComment":"Loading latest comments",
+        "showless":"show less",
+        "showmore":"show more"
     },
     "app":{
         "profileDetails":"Profile Details",

@@ -123,10 +123,11 @@
           </h2>
           <h2 *ngIf="comment.status != 1&&getPostContentTextSize(comment.content)>maxTextSize&&!isFullContent[comment.id]" (click)="showFullContent(comment.id)">
             <pre [ngStyle]="dstyleObj">{{ handleCommentContent(comment.content) }}</pre>
-            <pre [ngStyle]="styleObj" style="color:#368bff;">{{"common.fulltext" | translate }}</pre>
+            <pre [ngStyle]="styleObj" style="color:#368bff;">{{"common.showmore" | translate }}</pre>
           </h2>
           <h2 *ngIf="comment.status != 1&&getPostContentTextSize(comment.content)>maxTextSize&&isFullContent[comment.id]" (click)="hideFullContent(comment.id)">
             <pre [ngStyle]="dstyleObj">{{ comment.content }}</pre>
+            <pre [ngStyle]="styleObj" style="color:#368bff;">{{"common.showless" | translate }}</pre>
           </h2>
           <ion-row class="bottom-row">
             <ion-col size="2.25" (click)="likeComment(comment.id)">
