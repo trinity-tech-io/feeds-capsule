@@ -76,6 +76,8 @@ export class PostdetailPage implements OnInit {
 
   public isFullContent = {};
 
+  public isOwnComment = {};
+
   constructor(
     private popoverController:PopoverController,
     private acRoute: ActivatedRoute,
@@ -120,6 +122,15 @@ export class PostdetailPage implements OnInit {
       this.commentList = this.totalData;
       this.infiniteScroll.disabled =true;
     }
+    this.initOwnCommentObj();
+  }
+
+  initOwnCommentObj(){
+    let len = this.commentList.length;
+    for(let index = 0;index<len;index++){
+        let comment = this.commentList[index];
+        this.checkCommentIsMine(comment);
+    }
   }
 
   refreshCommentList(){
@@ -131,6 +142,7 @@ export class PostdetailPage implements OnInit {
       this.commentList =  this.totalData;
       this.infiniteScroll.disabled =true;
     }
+    this.initOwnCommentObj();
   }
 
   sortCommentList(){
@@ -210,7 +222,7 @@ export class PostdetailPage implements OnInit {
         }
       });
     });
-    
+
     this.events.subscribe("feeds:friendConnectionChanged", (nodeId, status)=>{
       this.zone.run(()=>{
         this.logUtils.logd("feeds:friendConnectionChanged",TAG);
@@ -280,15 +292,8 @@ export class PostdetailPage implements OnInit {
    this.events.subscribe('rpcRequest:success', () => {
     this.zone.run(() => {
       this.logUtils.logd("rpcRequest:success",TAG);
-      this.totalData = this.feedService.getCommentList(this.nodeId, this.channelId, this.postId) || [];
-      if(this.totalData.length-this.pageNumber > this.pageNumber){
-        this.commentList = this.totalData.slice(this.startIndex*this.pageNumber,this.pageNumber);
-        this.startIndex++;
-        this.infiniteScroll.disabled =false;
-      }else{
-        this.commentList = this.totalData;
-        this.infiniteScroll.disabled =true;
-      }
+      this.startIndex = 0;
+      this.initRefresh();
       this.native.hideLoading();
       this.hideComment =true;
       this.native.toast_trans("CommentPage.tipMsg1");
@@ -417,7 +422,7 @@ export class PostdetailPage implements OnInit {
      this.events.publish("update:tab");
      this.events.publish("addBinaryEvevnt");
      this.events.unsubscribe("feeds:getCommentFinish");
-     
+
      titleBarManager.hideActivityIndicator(TitleBarPlugin.TitleBarActivityType.OTHER);
   }
 
@@ -431,6 +436,7 @@ export class PostdetailPage implements OnInit {
     this.hideComment = true;
     this.postImage = "";
     this.isFullContent = {};
+    this.isOwnComment = {};
     this.downProgress = 0;
     this.feedService.closeSession(this.nodeId);
     this.clearVideo();
@@ -625,6 +631,7 @@ export class PostdetailPage implements OnInit {
        this.commentList = this.commentList.concat(arr);
        });
        this.initnodeStatus();
+       this.initOwnCommentObj();
        event.target.complete();
       }else{
        arr = this.totalData.slice(this.startIndex*this.pageNumber,this.totalData.length);
@@ -633,6 +640,7 @@ export class PostdetailPage implements OnInit {
        });
        this.infiniteScroll.disabled =true;
        this.initnodeStatus();
+       this.initOwnCommentObj();
        event.target.complete();
        clearTimeout(sId);
       }
@@ -702,7 +710,9 @@ export class PostdetailPage implements OnInit {
   }
 
   checkCommentIsMine(comment:any){
-    return this.feedService.checkCommentIsMine(comment.nodeId,Number(comment.channel_id),Number(comment.post_id),Number(comment.id));
+    let commentId = comment.id;
+    let isOwnComment = this.feedService.checkCommentIsMine(comment.nodeId,Number(comment.channel_id),Number(comment.post_id),Number(comment.id));
+    this.isOwnComment[commentId] = isOwnComment;
   }
 
   hideComponent(event) {

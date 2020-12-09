@@ -94,7 +94,7 @@
     <div *ngFor="let comment of commentList let i=index">
     <ion-grid  class="post-grid" [class.darkPostGrid]="theme.darkMode">
       <ion-row class="post-row">
-        <ion-col class="right-col" size="1.5"  *ngIf="comment.status != 1 && checkCommentIsMine(comment)">
+        <ion-col class="right-col" size="1.5"  *ngIf="comment.status != 1 && isOwnComment[comment.id]">
           <img (click)="openEditTool($event,comment)"
             [src]="!theme.darkMode ? './assets/images/dots-three-vertical.svg' : './assets/images/dots-three-vertical-dark.svg'"
           >
@@ -145,8 +145,8 @@
 
     <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event)">
       <ion-infinite-scroll-content
-        loadingSpinner="bubbles"
-        loadingText="{{'common.loadingText'|translate}}">
+      class="ion-padding-top"
+      loadingSpinner="crescent">
       </ion-infinite-scroll-content>
     </ion-infinite-scroll>
   </div>
