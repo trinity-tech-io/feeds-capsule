@@ -1404,11 +1404,13 @@ export class FeedService {
         this.handleUpdateCredentialResponse(nodeId, result, requestParams, error);
         break;
 
-
       case FeedsData.MethodType.setBinary:
         this.handleSetBinaryResponse(nodeId, result, requestParams, error);
         break;
 
+      case FeedsData.MethodType.getBinary:
+        this.handleGetBinaryResponse(nodeId, result, requestParams, error);
+        break;
 
       case FeedsData.MethodType.standard_sign_in:
         this.handleStandardSignInResponse(nodeId, result, requestParams, error);
@@ -4186,12 +4188,9 @@ export class FeedService {
       this.handleError(nodeId, error);
       return;
     }
-
-
-
     let key = result.key;
     let contentBin = result.content;
-
+    
     let value = this.serializeDataService.decodeData(contentBin);
     this.storeService.set(key, value).then(()=>{
         eventBus.publish("feeds:getBinaryFinish", nodeId, key, value);

@@ -388,7 +388,7 @@ export class PostdetailPage implements OnInit {
       this.hideFullScreen();
     });
 
-    titleBarManager.showActivityIndicator(TitleBarPlugin.TitleBarActivityType.OTHER, "Loading latest comments");
+    titleBarManager.showActivityIndicator(TitleBarPlugin.TitleBarActivityType.OTHER, this.translate.instant("common.loadingLastestComment"));
   }
 
 
