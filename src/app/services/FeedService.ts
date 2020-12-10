@@ -4460,14 +4460,14 @@ export class FeedService {
     }
 
     if (this.getServerVersionCodeByNodeId(friendId) >= newCommentVersion){
-      let bindingServer = this.getBindingserver() || null;
-      if (bindingServer !=null && bindingServer.nodeId == friendId){
-        let lastCommentUpdateKey = this.getPostId(friendId,0,0);
-        let mLastCommentUpdateMap = this.lastCommentUpdateMap || "";
-        let commentUpdateTime = mLastCommentUpdateMap[lastCommentUpdateKey] || "";
-        let lastCommentTime = commentUpdateTime["time"] || 0;
-        this.getMultiComments(friendId, 0, 0, Communication.field.last_update, 0 , lastCommentTime,0);
-      }
+      // let bindingServer = this.getBindingserver() || null;
+      // if (bindingServer !=null && bindingServer.nodeId == friendId){
+      let lastCommentUpdateKey = this.getPostId(friendId,0,0);
+      let mLastCommentUpdateMap = this.lastCommentUpdateMap || "";
+      let commentUpdateTime = mLastCommentUpdateMap[lastCommentUpdateKey] || "";
+      let lastCommentTime = commentUpdateTime["time"] || 0;
+      this.getMultiComments(friendId, 0, 0, Communication.field.last_update, 0 , lastCommentTime,0);
+      // }
     }
   }
 
