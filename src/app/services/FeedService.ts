@@ -25,6 +25,8 @@ declare let didSessionManager: DIDSessionManagerPlugin.DIDSessionManager;
 
 let TAG: string = "Feeds-service";
 let versionCode: number = 10400;
+let newAuthVersion: number = 10400;
+let newCommentVersion: number = 10400;
 let subscribedChannelsMap:{[nodeChannelId: string]: Channels};
 let channelsMap:{[nodeChannelId: string]: Channels} ;
 let myChannelsMap:{[nodeChannelId: string]: MyChannel};
@@ -1180,9 +1182,9 @@ export class FeedService {
         status: friendStatus
       }
 
-      let serverVersionCode = this.getServerVersionCodeByNodeId(friendId);
-      if (serverVersionCode < 10400)
-        this.getServerVersion(friendId);
+      // let serverVersionCode = this.getServerVersionCodeByNodeId(friendId);
+      // if (serverVersionCode < versionCode)
+      this.getServerVersion(friendId);
 
       let mServerMap = serverMap || {};
       let server = mServerMap[friendId]||"";
@@ -3960,7 +3962,11 @@ export class FeedService {
     this.setSigninTimeout(nodeId);
 
     this.native.toast(this.formatInfoService.formatSigninMsg(this.getServerNameByNodeId(nodeId)));
-    // this.connectionService.signinChallengeRequest(this.getServerNameByNodeId(nodeId), nodeId, requiredCredential, this.getSignInData().did);
+    if (this.getServerVersionCodeByNodeId(nodeId) < newAuthVersion){
+      this.connectionService.signinChallengeRequest(this.getServerNameByNodeId(nodeId), nodeId, requiredCredential, this.getSignInData().did);
+      return;
+    }
+
     this.standardSignIn(nodeId);
   }
 
@@ -4436,7 +4442,6 @@ export class FeedService {
   prepare(friendId: string){
     this.getStatistics(friendId);
     this.enableNotification(friendId);
-    // this.queryChannelCreationPermission(friendId);
 
     this.updateFeed(friendId);
     let list = this.getSubscribedChannelsFromNodeId(friendId);
@@ -4444,14 +4449,17 @@ export class FeedService {
       let channelId = list[index].id;
       this.updatePost(friendId,channelId);
 
-      // let postList = this.getPostListFromChannel(friendId,channelId);
-      // for (let postIndex = 0; postIndex < postList.length; postIndex++) {
-      //   // const element = array[postIndex];
-      //   let post: Post = postList[postIndex];
-      //   let postId: number = post.id;
-      //   this.updateComment(friendId, channelId, postId);
-      // }
+      if (this.getServerVersionCodeByNodeId(friendId) < newCommentVersion){
+        let postList = this.getPostListFromChannel(friendId,channelId);
+        for (let postIndex = 0; postIndex < postList.length; postIndex++) {
+          let post: Post = postList[postIndex];
+          let postId: number = post.id;
+          this.updateComment(friendId, channelId, postId);
+        }
+      }
+    }
 
+    if (this.getServerVersionCodeByNodeId(friendId) >= newCommentVersion){
       let bindingServer = this.getBindingserver() || null;
       if (bindingServer !=null && bindingServer.nodeId == friendId){
         let lastCommentUpdateKey = this.getPostId(friendId,0,0);
@@ -4461,10 +4469,7 @@ export class FeedService {
         this.getMultiComments(friendId, 0, 0, Communication.field.last_update, 0 , lastCommentTime,0);
       }
     }
-    // this.getAllChannelDetails(friendId);
-    // this.getChannels(friendId, Communication.field.last_update, 0, 0, 0);
   }
-
 
   saveCredential(credential: string){
     localCredential = credential;
@@ -6081,7 +6086,8 @@ export class FeedService {
       return;
 
     let serverVersion = this.getServerVersionByNodeId(bindingServer.nodeId);
-    let currentVC = this.serverVersions[bindingServer.nodeId].versionCode;
+    let currentVC = this.getServerVersionCodeByNodeId(bindingServer.nodeId)
+    // let currentVC = this.serverVersions[bindingServer.nodeId].versionCode;
     if (serverVersion == "" || currentVC < versionCode){
       this.popupProvider.ionicAlert(
         this,
