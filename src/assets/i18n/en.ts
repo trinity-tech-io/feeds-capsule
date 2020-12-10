@@ -479,6 +479,8 @@ export const en = {
         "des1":"Data cleared successfully",
         "hidedeletepost":'Dispaly posts with label "deleted"',
         "hidedeletecomment":'Dispaly comments with label "deleted"',
-        "hideOfflinefeed":"Dispaly online Feeds only"
+        "hideOfflinefeed":"Dispaly online Feeds only",
+        "on":"ON",
+        "off":"OFF"
     }
 };

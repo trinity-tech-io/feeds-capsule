@@ -479,6 +479,8 @@ export const zh = {
         "des1":"清空数据成功",
         "hidedeletepost":'“删除”的微说',
         "hidedeletecomment":'“删除”的微评',
-        "hideOfflinefeed":"仅显示在线状态的Feeds"
+        "hideOfflinefeed":"仅显示在线状态的Feeds",
+        "on":"开",
+        "off":"关"
     }
 };
