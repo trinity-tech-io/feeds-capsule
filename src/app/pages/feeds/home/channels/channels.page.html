@@ -94,7 +94,7 @@
                 <img
                   id ={{post.nodeId+post.channel_id+post.id}}postimgchannel
                   class="post-img"
-                  src="assets/images/loading.gif"
+                  src="assets/images/loading.png"
                   style="width: 100%;"
                   (click)="showBigImage(post.nodeId,post.channel_id,post.id)">
                   <span class="topostdetailimg" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)"></span>
@@ -113,7 +113,7 @@
                  </vg-controls>
 
              <video #media [vgMedia]="media" id ={{post.nodeId+post.channel_id+post.id}}videochannel
-             poster="assets/images/loading.gif"
+             poster="assets/images/loading.png"
              playsinline webkit-playsinline>
              <source  type="video/mp4" id={{post.nodeId+post.channel_id+post.id}}sourcechannel>
              </video>

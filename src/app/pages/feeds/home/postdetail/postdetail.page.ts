@@ -21,7 +21,7 @@ let TAG: string = "Feeds-postview";
 })
 export class PostdetailPage implements OnInit {
   @ViewChild(IonInfiniteScroll,{static:true}) infiniteScroll: IonInfiniteScroll;
-  public postImage:string = "assets/images/loading.gif";
+  public postImage:string = "assets/images/loading.png";
   public connectionStatus:number = 1;
   public nodeStatus:any ={};
   public avatar: string = "";
@@ -193,8 +193,8 @@ export class PostdetailPage implements OnInit {
     this.connectionStatus = this.feedService.getConnectionStatus();
     this.feedService.refreshPostById(this.nodeId,this.channelId,this.postId);
 
-    // if (this.connectionStatus == 0)
-    //   this.feedService.updateComment(this.nodeId, Number(this.channelId) ,Number(this.postId));
+    //if (this.connectionStatus == 0)
+      //this.feedService.updateComment(this.nodeId, Number(this.channelId) ,Number(this.postId));
 
     this.events.subscribe('feeds:connectionChanged',(status)=>{
       this.zone.run(() => {
@@ -218,7 +218,7 @@ export class PostdetailPage implements OnInit {
         if (nodeId == this.nodeId && channelId == this.channelId && postId == this.postId){
           this.startIndex = 0;
           this.initData(true);
-          // titleBarManager.hideActivityIndicator(TitleBarPlugin.TitleBarActivityType.OTHER);
+          //titleBarManager.hideActivityIndicator(TitleBarPlugin.TitleBarActivityType.OTHER);
         }
       });
     });
@@ -423,7 +423,7 @@ export class PostdetailPage implements OnInit {
      this.events.publish("addBinaryEvevnt");
      this.events.unsubscribe("feeds:getCommentFinish");
 
-    //  titleBarManager.hideActivityIndicator(TitleBarPlugin.TitleBarActivityType.OTHER);
+     //titleBarManager.hideActivityIndicator(TitleBarPlugin.TitleBarActivityType.OTHER);
   }
 
 
@@ -720,11 +720,11 @@ export class PostdetailPage implements OnInit {
   }
 
   getVideoPoster(id:string){
+    this.videoisShow = true;
     this.feedService.getData(id).then((imagedata)=>{
       let image = imagedata || "";
       if(image!=""){
         this.zone.run(()=>{
-           this.videoisShow = true;
             this.posterImg = imagedata;
             let id = this.nodeId+this.channelId+this.postId;
             let sid =setTimeout(()=>{
