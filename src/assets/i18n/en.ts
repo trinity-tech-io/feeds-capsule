@@ -477,8 +477,8 @@ export const en = {
         "cleandata":"Clean Data",
         "des":"Are you sure you want to clear the data?",
         "des1":"Data cleared successfully",
-        "hidedeletepost":'Dispaly posts with label "deleted"',
-        "hidedeletecomment":'Dispaly comments with label "deleted"',
+        "hidedeletepost":'Display posts labeled with (deleted)',
+        "hidedeletecomment":'Display comments labeled with (deleted)',
         "hideOfflinefeed":"Dispaly online Feeds only",
         "on":"ON",
         "off":"OFF"
