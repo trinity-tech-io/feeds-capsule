@@ -783,7 +783,7 @@ clearData(){
         // }
 
         if(isload === ""){
-          rpostimg.style.display = "none";
+          //rpostimg.style.display = "none";
           this.isLoadimage[id] = "11";
           let arr = srcId.split("-");
           let nodeId =arr[0];
@@ -795,7 +795,7 @@ clearData(){
               if(image!=""){
                 this.isLoadimage[id] ="13";
                 postImage.setAttribute("src",image);
-                rpostimg.style.display = "block";
+                //rpostimg.style.display = "block";
               }else{
                 this.isLoadimage[id] ="12";
                 rpostimg.style.display = 'none';
@@ -811,7 +811,7 @@ clearData(){
          if(postImage.getBoundingClientRect().top<-this.clientHeight&&this.isLoadimage[id]==="13"&&postImageSrc!=""){
           // this.logUtils.logd("remove error:"+rowindex+"-"+postImage.getBoundingClientRect().top,TAG);
           this.isLoadimage[id] = "";
-          postImage.setAttribute("src","assets/images/loading.gif");
+          postImage.setAttribute("src","assets/images/loading.png");
       }
       }
     } catch (error) {
@@ -834,7 +834,7 @@ clearData(){
         // this.logUtils.logd("entry "+rowindex+"==="+video.getBoundingClientRect().top,TAG);
         if(isloadVideoImg===""){
           this.isLoadVideoiamge[id] = "11";
-          vgplayer.style.display = "none";
+          //vgplayer.style.display = "none";
           let arr = srcId.split("-");
           let nodeId =arr[0];
           let channelId:any = arr[1];
@@ -845,7 +845,7 @@ clearData(){
               if(image!=""){
                 this.isLoadVideoiamge[id] = "13";
                 video.setAttribute("poster",image);
-                vgplayer.style.display = "block";
+                //vgplayer.style.display = "block";
                 //video.
                 this.setFullScreen(id);
                 this.setOverPlay(id,srcId);
@@ -866,8 +866,8 @@ clearData(){
       }else{
         // this.logUtils.logd("remove: index = "+rowindex+" top = "+video.getBoundingClientRect().top+" bottom = "+video.getBoundingClientRect().bottom,TAG);
         let postSrc =  video.getAttribute("poster") || "";
-        if(video.getBoundingClientRect().top<-this.clientHeight&&this.isLoadVideoiamge[id]==="13"&&postSrc!="assets/images/loading.gif"){
-          video.setAttribute("poster","assets/images/loading.gif");
+        if(video.getBoundingClientRect().top<-this.clientHeight&&this.isLoadVideoiamge[id]==="13"&&postSrc!="assets/images/loading.png"){
+          video.setAttribute("poster","assets/images/loading.png");
           let sourcesrc =  source.getAttribute("src") || "";
           if(sourcesrc  != ""){
             //video.pause();
@@ -925,7 +925,7 @@ clearData(){
       if(value === "13"){
         let videoElement:any = document.getElementById(id+'video') || "";
         if(videoElement!=""){
-          videoElement.setAttribute('poster',""); // empty source
+          //videoElement.setAttribute('poster',""); // empty source
         }
         let source:any = document.getElementById(id+'source') || "";
         if(source!=""){

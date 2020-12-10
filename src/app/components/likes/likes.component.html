@@ -55,6 +55,7 @@
           <span class="lefttopostdetailimg" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)"></span>
              <img
              id ={{post.nodeId+post.channel_id+post.id}}postimglike
+             src="assets/images/loading.png"
              class="post-img"
              style="width: 100%;"
               (click)="showBigImage(post.nodeId,post.channel_id,post.id)"
@@ -77,6 +78,7 @@
                    </vg-controls>
 
                <video #media [vgMedia]="media" id ={{post.nodeId+post.channel_id+post.id}}videolike
+               poster="assets/images/loading.png"
                playsinline webkit-playsinline>
                <source  type="video/mp4" id={{post.nodeId+post.channel_id+post.id}}sourcelike>
                </video>

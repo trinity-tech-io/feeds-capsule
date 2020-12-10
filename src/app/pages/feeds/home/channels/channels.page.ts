@@ -743,7 +743,7 @@ export class ChannelsPage implements OnInit {
     try {
       if(id!=''&&postImage.getBoundingClientRect().top>=-this.clientHeight&&postImage.getBoundingClientRect().top<=this.clientHeight){
         if(isload===""){
-          rpostImage.style.display = "none";
+          //rpostImage.style.display = "none";
           this.isLoadimage[id] = "11";
           let arr = srcId.split("-");
           let nodeId =arr[0];
@@ -754,7 +754,7 @@ export class ChannelsPage implements OnInit {
               let image = imagedata || "";
               if(image!=""){
                 this.isLoadimage[id] ="13";
-                rpostImage.style.display = "block";
+                //rpostImage.style.display = "block";
                 //this.images[id] = this.images;
                 this.zone.run(()=>{
                   postImage.setAttribute("src",image);
@@ -777,7 +777,7 @@ export class ChannelsPage implements OnInit {
         let postImageSrc = postImage.getAttribute("src") || "";
         if(postImage.getBoundingClientRect().top<-this.clientHeight&&this.isLoadimage[id]==="13"&&postImageSrc!=""){
           this.isLoadimage[id] = "";
-          postImage.setAttribute("src","assets/images/loading.gif");
+          postImage.setAttribute("src","assets/images/loading.png");
         }
       }
     } catch (error) {
@@ -799,7 +799,7 @@ export class ChannelsPage implements OnInit {
       if(id!=''&&video.getBoundingClientRect().top>=-this.clientHeight&&video.getBoundingClientRect().top<=this.clientHeight){
         if(isloadVideoImg===""){
           this.isLoadVideoiamge[id] = "11";
-          vgplayer.style.display = "none";
+          //vgplayer.style.display = "none";
           let arr = srcId.split("-");
           let nodeId =arr[0];
           let channelId:any = arr[1];
@@ -809,7 +809,7 @@ export class ChannelsPage implements OnInit {
               let image = imagedata || "";
               if(image!=""){
                 this.isLoadVideoiamge[id] = "13";
-                vgplayer.style.display = "block";
+                //vgplayer.style.display = "block";
                 video.setAttribute("poster",image);
                 this.setFullScreen(id);
                 this.setOverPlay(id,srcId);
@@ -825,8 +825,8 @@ export class ChannelsPage implements OnInit {
         }
       }else{
         let postSrc =  video.getAttribute("poster") || "";
-        if(video.getBoundingClientRect().top<-this.clientHeight&&this.isLoadVideoiamge[id]==="13"&&postSrc!="assets/images/loading.gif"){
-          video.setAttribute("poster","assets/images/loading.gif");
+        if(video.getBoundingClientRect().top<-this.clientHeight&&this.isLoadVideoiamge[id]==="13"&&postSrc!="assets/images/loading.png"){
+          video.setAttribute("poster","assets/images/loading.png");
           let sourcesrc =  source.getAttribute("src") || "";
           if(sourcesrc  != ""){
             //video.pause();
@@ -932,7 +932,7 @@ export class ChannelsPage implements OnInit {
       if(value === "13"){
         let videoElement:any = document.getElementById(id+'videochannel') || "";
         if(videoElement!=""){
-          //videoElement.setAttribute('poster',"assets/images/loading.gif"); // empty source
+          //videoElement.setAttribute('poster',"assets/images/loading.png"); // empty source
         }
         let source:any = document.getElementById(id+'sourcechannel') || "";
         let sourcesrc =  source.getAttribute("src") || "";
