@@ -71,7 +71,7 @@ export const fr = {
         "unfollowed": "Unfollowed",
         "infoObtaining":"Information is being obtained",
         "filevideodes":"The playback length of this video exceeds the limit of 15 seconds",
-        "videoloading":"Video loading",
+        "videoloading":"Uploading...",
         "videocompression":"Video compression",
         "video":"Video",
         "theFeedSource": "The Feed source",
