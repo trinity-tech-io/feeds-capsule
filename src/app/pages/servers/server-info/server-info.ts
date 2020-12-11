@@ -139,7 +139,7 @@ export class ServerInfoPage implements OnInit {
       this.owner = server.owner;
       this.introduction = server.introduction;
       this.feedsUrl = server.feedsUrl || "";
-      this.elaAddress = server.elaAddress || this.translate.instant('DIDdata.Notprovided');
+      this.elaAddress = server.elaAddress || "";
       this.collectServerData(server);
     }
   }
@@ -306,12 +306,12 @@ export class ServerInfoPage implements OnInit {
       });
     }
 
-    if (server.elaAddress != "") {
-      this.serverDetails.push({
-        type: this.translate.instant('IssuecredentialPage.elaaddress'),
-        details: server.elaAddress || ""
-      });
-    }
+    // if (server.elaAddress != "") {
+    this.serverDetails.push({
+      type: this.translate.instant('IssuecredentialPage.elaaddress'),
+      details: server.elaAddress || this.translate.instant('DIDdata.Notprovided')
+    });
+    // }
 
     this.serverDetails.push({
       type: this.translate.instant('ServerInfoPage.did'),
