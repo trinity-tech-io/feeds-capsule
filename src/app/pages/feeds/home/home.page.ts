@@ -345,6 +345,7 @@ addBinaryEvevnt(){
 }
 
  ionViewWillLeave(){
+   this.events.unsubscribe('feeds:hideDeletedPosts');
    this.events.unsubscribe("feeds:createpost");
    this.clearData();
 }
@@ -375,7 +376,6 @@ clearData(){
    this.events.unsubscribe("rpcRequest:success");
    this.events.unsubscribe('feeds:openRightMenu');
    this.events.unsubscribe('feeds:tabsendpost');
-   this.events.unsubscribe('feeds:hideDeletedPosts');
    this.removeImages();
    this.removeAllVideo();
    this.isLoadimage ={};
