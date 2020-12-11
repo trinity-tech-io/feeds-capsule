@@ -5029,13 +5029,15 @@ export class FeedService {
     });
   }
 
-  checkDIDDocument(did: string){
-    this.checkDIDOnSideChain(did, (isOnSideChain)=>{
-      if (!isOnSideChain)
-        this.promptpublishdid();
-    },(err)=>{
-      this.native.toastdanger('common.resolveDidDocumentError');
-    })
+  checkDIDDocument(did: string): Promise<boolean>{
+    return new Promise((resolve, reject) =>{
+      this.checkDIDOnSideChain(did, (isOnSideChain)=>{
+        resolve(isOnSideChain);
+      },(err)=>{
+        this.native.toastdanger('common.resolveDidDocumentError');
+        reject(err);
+      })
+    });
   }
 
   checkDIDOnSideChain(did: string, onSuccess: (isOnSideChain: boolean)=>void, onError?: (err: any)=>void){
