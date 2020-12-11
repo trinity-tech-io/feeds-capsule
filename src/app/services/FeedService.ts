@@ -2394,13 +2394,13 @@ export class FeedService {
       this.updateCommentMap(nodeId, channelId, postId, commentId, referCommentId,
         userName, likes, createdAt, updatedAt, status,userDid, content);
       await this.storeService.set(PersistenceKey.commentsMap, commentsMap);
-  
+
       let ncpId = this.getPostId(nodeId, channelId, postId);
       this.updateLastCommentUpdate(ncpId, nodeId, channelId, postId, updatedAt);
       eventBus.publish(PublishType.commentDataUpdate);
 
       this.generateNotification(nodeId, channelId, postId,commentId,userName,Behavior.comment,this.translate.instant("NotificationPage.commentPost"))
-  
+
       resolve();
     });
   }
@@ -4211,7 +4211,7 @@ export class FeedService {
     }
     let key = result.key;
     let contentBin = result.content;
-    
+
     let value = this.serializeDataService.decodeData(contentBin);
     this.storeService.set(key, value).then(()=>{
         eventBus.publish("feeds:getBinaryFinish", nodeId, key, value);
@@ -4231,7 +4231,7 @@ export class FeedService {
         serverMap[nodeId].name = standAuthResult.serverName;
         serverMap[nodeId].introduction = standAuthResult.serverDescription;
         serverMap[nodeId].elaAddress = standAuthResult.elaAddress;
-        this.storeService.set(PersistenceKey.serverMap, serverMap);  
+        this.storeService.set(PersistenceKey.serverMap, serverMap);
       }
       this.standardDidAuth(nodeId, standAuthResult.jwtToken);
     });
@@ -4887,7 +4887,7 @@ export class FeedService {
       memo: memo
     }
 
-    appManager.sendIntent("https://wallet.elastos.net/", param, {}, 
+    appManager.sendIntent("https://wallet.elastos.net/pay", param, {},
       (response: any) => {
         onSuccess(response);
       },
@@ -6139,11 +6139,11 @@ export class FeedService {
     this.connectionService.standardDidAuth(this.getServerNameByNodeId(nodeId),nodeId,verifiablePresentation, this.getSignInData().name);
   }
 
-  getMultiComments(nodeId: string, channelId: number, postId: number, by: Communication.field, 
+  getMultiComments(nodeId: string, channelId: number, postId: number, by: Communication.field,
                   upperBound: number, lowerBound: number,maxCounts:number){
     if(!this.hasAccessToken(nodeId))
       return;
     let accessToken: FeedsData.AccessToken = accessTokenMap[nodeId]||undefined;
-    this.connectionService.getMultiComments(this.getServerNameByNodeId(nodeId), nodeId, channelId, postId, by, upperBound, lowerBound, maxCounts, accessToken);    
+    this.connectionService.getMultiComments(this.getServerNameByNodeId(nodeId), nodeId, channelId, postId, by, upperBound, lowerBound, maxCounts, accessToken);
   }
 }
