@@ -85,7 +85,8 @@ export const zh = {
         "downDes":"已有视频文件正下载中，请等待下载完成后再试。",
         "loadingLastestComment":"正在加载最新评论",
         "showless":"显示更少",
-        "showmore":"显示更多"
+        "showmore":"显示更多",
+        "didnotrelease":"DID发布上链后，Feeds 才能正常运行"
     },
     "app":{
         "profileDetails":"档案详情",
@@ -477,7 +478,7 @@ export const zh = {
         "cleandata":"清空数据",
         "des":"确认要清空数据吗？",
         "des1":"清空数据成功",
-        "hidedeletepost":  '显示标记“删除”的微说‘,
+        "hidedeletepost":'显示标记“删除”的微说',
         "hidedeletecomment":'显示标记“删除”的评论',
         "hideOfflinefeed":"仅显示在线状态的Feeds",
         "on":"开",
