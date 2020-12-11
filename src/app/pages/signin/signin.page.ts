@@ -6,6 +6,7 @@ import { NativeService } from 'src/app/services/NativeService';
 import { TranslateService } from "@ngx-translate/core";
 import { ThemeService } from 'src/app/services/theme.service';
 import { AppService } from '../../services/AppService';
+import { PopupProvider } from 'src/app/services/popup';
 declare let appManager: AppManagerPlugin.AppManager;
 declare let didManager: DIDPlugin.DIDManager;
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
@@ -16,13 +17,13 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
   styleUrls: ['./signin.page.scss'],
 })
 export class SigninPage implements OnInit {
-  
+
   private fakedata:boolean = false;
   public signedIn: boolean = false;
   public did: string = "";
   public userName: string = "";
   public emailAddress: string = "";
-
+  public popover:any = "";
   constructor(
     private events: Events,
     private native: NativeService,
@@ -33,10 +34,11 @@ export class SigninPage implements OnInit {
     private translate:TranslateService,
     private event:Events,
     public theme:ThemeService,
-    public appService:AppService) { }
+    public appService:AppService,
+    public popupProvider:PopupProvider) { }
 
   ngOnInit() {
-    
+
   }
 
   initTile(){
@@ -47,7 +49,7 @@ export class SigninPage implements OnInit {
     this.initTile();
     this.native.setTitleBarBackKeyShown(false);
     appManager.setVisible("show");
-    
+
     this.event.subscribe("feeds:updateTitle",()=>{
       this.initTile();
     });
@@ -81,7 +83,7 @@ export class SigninPage implements OnInit {
       this.initApp();
       return;
     }
-    
+
     this.zone.run(()=>{
       this.native.showLoading('common.waitMoment',2000);
     });
@@ -156,8 +158,9 @@ export class SigninPage implements OnInit {
             this.feedService.checkDIDDocument(data.did).then((isOnSideChain)=>{
               if (!isOnSideChain){
                 //show one button dialog
-                //if click this button 
+                //if click this button
                 //call feedService.promptpublishdid() function
+                this.openAlert();
                 return;
               }
               this.initApp();
@@ -206,6 +209,24 @@ export class SigninPage implements OnInit {
     description: string
   ) {
     this.feedService.saveSignInData(did, name, avatar, email, telephone, location,nickname,description);
+  }
+
+  openAlert(){
+    this.popover = this.popupProvider.ionicAlert(
+      this,
+      // "ConfirmdialogComponent.signoutTitle",
+      "",
+      "common.didnotrelease",
+      this.confirm,
+      'tskth.svg'
+    );
+  }
+
+  confirm(that:any){
+      if(this.popover!=null){
+         this.popover.dismiss();
+         that.feedService.promptpublishdid();
+      }
   }
 
 }

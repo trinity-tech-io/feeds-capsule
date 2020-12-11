@@ -85,7 +85,8 @@ export const fr = {
         "downDes":"There is an instant video being downloaded, please wait for that download to end and try again",
         "loadingLastestComment":"Loading latest comments",
         "showless":"show less",
-        "showmore":"show more"
+        "showmore":"show more",
+        "didnotrelease":"Feeds can work normally after DID is published on the chain"
     },
     "app":{
         "profileDetails":"Profile Details",
