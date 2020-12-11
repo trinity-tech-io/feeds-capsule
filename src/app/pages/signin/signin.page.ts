@@ -153,8 +153,15 @@ export class SigninPage implements OnInit {
               description
             );
             this.events.publish("feeds:signinSuccess");
-            this.feedService.checkDIDDocument(data.did);
-            this.initApp();
+            this.feedService.checkDIDDocument(data.did).then((isOnSideChain)=>{
+              if (!isOnSideChain){
+                //show one button dialog
+                //if click this button 
+                //call feedService.promptpublishdid() function
+                return;
+              }
+              this.initApp();
+            });
           });
         });
       }
