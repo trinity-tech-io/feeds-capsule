@@ -5161,7 +5161,7 @@ export class FeedService {
     if(this.getServerStatusFromId(nodeId) == 1){
       eventBus.publish("stream:error",nodeId,this.createOfflineError());
       // eventBus.publish("sessionRequest:error", nodeId,this.createCreateOfflineError());
-      this.native.toast(this.formatInfoService.formatOfflineMsg(this.getServerNameByNodeId(nodeId)));
+      // this.native.toast(this.formatInfoService.formatOfflineMsg(this.getServerNameByNodeId(nodeId)));
       return false;
     }
 
@@ -5930,7 +5930,7 @@ export class FeedService {
   processGetBinary(nodeId: string, channelId: number, postId: number, commentId: number,
     index: number, mediaType: FeedsData.MediaType, key: string, onSuccess: (transDataChannel: FeedsData.TransDataChannel)=> void, onError:(err: string) => void){
     if(this.getServerStatusFromId(nodeId) == 1){
-      this.native.toast(this.formatInfoService.formatOfflineMsg(this.getServerNameByNodeId(nodeId)));
+      // this.native.toast(this.formatInfoService.formatOfflineMsg(this.getServerNameByNodeId(nodeId)));
       onError(nodeId + "offline");
       return;
     }
