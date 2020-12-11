@@ -477,8 +477,8 @@ export const zh = {
         "cleandata":"清空数据",
         "des":"确认要清空数据吗？",
         "des1":"清空数据成功",
-        "hidedeletepost":'“删除”的微说',
-        "hidedeletecomment":'“删除”的微评',
+        "hidedeletepost":  '显示标记“删除”的微说‘,
+        "hidedeletecomment":'显示标记“删除”的评论',
         "hideOfflinefeed":"仅显示在线状态的Feeds",
         "on":"开",
         "off":"关"
