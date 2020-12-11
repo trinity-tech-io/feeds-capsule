@@ -1567,7 +1567,7 @@ export class FeedService {
   }
 
   createPresentation(nonce, realm, onSuccess: (presentation: any)=>void, onError?: (err:any)=>void){
-    appManager.sendIntent("credaccess", {}, {}, (response: any) => {
+    appManager.sendIntent("https://did.elastos.net/credaccess", {}, {}, (response: any) => {
       if (response && response.result && response.result.presentation)
         onSuccess(response.result.presentation);
     },
@@ -3922,7 +3922,7 @@ export class FeedService {
     }
     let requestStr = JSON.stringify(params);
     let request =  JSON.parse(requestStr);
-    appManager.sendIntent("didtransaction", request, {}, onSuccess, onError);
+    appManager.sendIntent("https://wallet.elastos.net/didtransaction", request, {}, onSuccess, onError);
   }
 
   setSigninTimeout(nodeId: string){
@@ -4306,7 +4306,7 @@ export class FeedService {
      * For this demo, the subject DID is ourself, so we will be able to import the credential we issued
      * to our own DID profile (which is a useless use case, as usually DIDs are issued for others).
      */
-    appManager.sendIntent("credissue", {
+    appManager.sendIntent("https://did.elastos.net/credissue", {
       identifier: "credential", // unique identifier for this credential
       types: ["BasicProfileCredential"], // Additional credential types (strings) such as BasicProfileCredential.
       subjectdid: did, // DID targeted by the created credential. Only that did will be able to import the credential.
@@ -4887,7 +4887,7 @@ export class FeedService {
       memo: memo
     }
 
-    appManager.sendIntent("pay", param, {}, 
+    appManager.sendIntent("https://wallet.elastos.net/", param, {}, 
       (response: any) => {
         onSuccess(response);
       },
@@ -5022,7 +5022,7 @@ export class FeedService {
   }
 
   promptpublishdid(){
-    appManager.sendIntent("promptpublishdid", {}, {}, (response: any) => {
+    appManager.sendIntent("https://did.elastos.net/promptpublishdid", {}, {}, (response: any) => {
     },
     (err)=>{
       this.native.toastdanger('common.promptPublishDidError');
