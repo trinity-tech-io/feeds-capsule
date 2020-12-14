@@ -48,6 +48,7 @@ export class EditPostPage implements OnInit {
   private throwMsgTransDataLimit = 4 * 1000 * 1000;
   private transDataChannel:FeedsData.TransDataChannel = FeedsData.TransDataChannel.MESSAGE;
   public fullScreenmodal:any = "";
+  public imagelist = [];
   constructor(
     private events: Events,
     private native: NativeService,
@@ -335,8 +336,10 @@ export class EditPostPage implements OnInit {
     );
   }
 
-  showBigImage(content: any){
-     this.native.openViewer(content,"common.image","EditPostPage.title",this.appService);
+  showBigImage(item:any){
+    let imageIndex = item["imageIndex"];
+    let content = this.imagelist[imageIndex]["path"];
+    this.native.openViewer(content,"common.image","EditPostPage.title",this.appService);
   }
 
   checkServerStatus(nodeId: string){
@@ -360,7 +363,10 @@ export class EditPostPage implements OnInit {
          key = thumbkey;
     }
     this.feedService.getData(key).then((image)=>{
-      this.imgUrl = image || "";
+      let path = image || "";
+      if(path!=""){
+        this.imagelist.push({"path":path});
+      }
     }).catch((reason)=>{
       this.logUtils.loge("getImageData error:"+JSON.stringify(reason),TAG);
     })
@@ -382,7 +388,30 @@ export class EditPostPage implements OnInit {
     let post = this.feedService.getPostFromId(this.nodeId, this.channelId, this.postId);
     if(post.content.mediaType === 1){
       this.isShowVideo = false;
-      this.getImage();
+      let contentVersion = this.feedService.getContentVersion(this.nodeId,this.channelId,this.postId,0);
+      if(contentVersion === "0"){
+        this.getImage();
+        return;
+      }
+      let imgThumbKeys = post.content.imgThumbKeys || [];
+      console.log("===imgThumbKeys===="+imgThumbKeys.length);
+      let len = imgThumbKeys.length;
+      for(let index = 0;index<len;index++){
+        console.log("===imgThumbKey===="+index);
+        console.log("===imgThumbKey===="+JSON.stringify(imgThumbKeys[index]));
+           let item = imgThumbKeys[index];
+           let key = item["imgThumbKey"];
+           console.log("===imgThumbKey===="+key);
+           this.feedService.getData(key).then((image)=>{
+            let path= image || "";
+            console.log("===path===="+path);
+            if(path!=""){
+              this.imagelist.push({"path":path});
+            }
+          }).catch((reason)=>{
+            this.logUtils.loge("getImageData error:"+JSON.stringify(reason),TAG);
+          })
+      }
     }
 
     if(post.content.mediaType === 2){

@@ -21,11 +21,19 @@
 
     <ion-textarea  autoGrow="true"  autofocus="true" placeholder="{{'CreatenewpostPage.des'|translate}}" [(ngModel)]="newPost">
     </ion-textarea>
-
-    <div *ngIf="imgUrl !== ''" class="img-container">
-      <img src="{{imgUrl}}" (click)="showBigImage(imgUrl)" />
+    <!--jiugongge-->
+    <app-imagelist
+    *ngIf="imagelist.length>0"
+    [isShowDelete] = true
+    [imagelist] = "imagelist"
+    (deleteImage)="deleteImage($event)"
+    (showBigImage)="showBigImage($event)"
+    >
+    </app-imagelist>
+    <!-- <div *ngIf="imgUrl !== ''" class="img-container">
+      <img src="{{imgUrl}}" (click)="showBigImage(imgUrl)"/>
       <img class="remove" src="/assets/icons/remove.svg" (click)="imgUrl = ''"/>
-    </div>
+    </div> -->
 
     <div *ngIf="flieUri" style="width: 320px;height:200px;margin: 0 auto;">
       <div style="position: relative;">
@@ -34,11 +42,11 @@
     <vg-player  *ngIf="flieUri">
       <vg-overlay-play id="vgoverlayplaycreatepost"></vg-overlay-play>
       <vg-buffering id="vgbufferingcreatepost"></vg-buffering>
-  
+
       <vg-controls id="vgcontrolscreatepost" style="display:none;">
           <img class="vgfullscreen" id="vgfullscreecreatepost" src="assets/images/fullscreen.svg"/>
       </vg-controls>
-   
+
   <video #media [vgMedia]="media" id="videocreatepost"
   playsinline webkit-playsinline>
   <source  [type]="videotype" id="sourcecreatepost">
@@ -51,8 +59,8 @@
       <ion-col class="left-col">
         <ion-icon id="image" mode="ios" name="image" (click)="addImg(0)" *ngIf="posterImg ===''"></ion-icon>
         <ion-icon id="camera" mode="ios" name="camera" (click)="addImg(1)"  *ngIf="posterImg ===''"></ion-icon>
-        <ion-icon id="selectvideo" mode="ios" name="selectvideo" (click)="selectvideo()" *ngIf="imgUrl === ''" ></ion-icon>
-        <ion-icon id="videocam" name="videocam" (click)="videocam()"*ngIf="imgUrl === ''"  ></ion-icon>
+        <ion-icon id="selectvideo" mode="ios" name="selectvideo" (click)="selectvideo()" *ngIf="imagelist.length === 0" ></ion-icon>
+        <ion-icon id="videocam" name="videocam" (click)="videocam()" *ngIf="imagelist.length === 0"  ></ion-icon>
       </ion-col>
       <ion-col class="right-col" size="4.5">
         <ion-button (click)="post()">

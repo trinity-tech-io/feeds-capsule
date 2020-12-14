@@ -10,7 +10,6 @@ import { VideoEditor } from '@ionic-native/video-editor/ngx';
 import { AppService } from 'src/app/services/AppService';
 import { UtilService } from 'src/app/services/utilService';
 import { LogUtils } from 'src/app/services/LogUtils';
-
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 let TAG: string = "Feeds-createpost";
 @Component({
@@ -26,7 +25,6 @@ export class CreatenewpostPage implements OnInit {
   public channelName = "";
   public subscribers: string = "";
   public newPost: string= "";
-  public imgUrl: string = "";
   public nodeId: string = "";
   public channelId: number = 0;
 
@@ -44,6 +42,8 @@ export class CreatenewpostPage implements OnInit {
   private throwMsgTransDataLimit = 4 * 1000 * 1000;
   private transDataChannel:FeedsData.TransDataChannel = FeedsData.TransDataChannel.MESSAGE;
   public fullScreenmodal:any ="";
+  public imagelist = [];
+  public setBinaryFinishCount = 0;
   constructor(
     private events: Events,
     private native: NativeService,
@@ -103,7 +103,7 @@ export class CreatenewpostPage implements OnInit {
     this.events.subscribe('feeds:publishPostSuccess', (postId) => {
       this.postId = postId;
       this.zone.run(()=>{
-        if(this.imgUrl === "" && this.posterImg ===""){
+        if(this.imagelist.length === 0 && this.posterImg ===""){
           this.zone.run(() => {
             this.navCtrl.pop().then(()=>{
               this.events.publish("update:tab",true);
@@ -122,13 +122,16 @@ export class CreatenewpostPage implements OnInit {
       this.zone.run(()=>{
         this.postId = postId;
         if (this.transDataChannel == FeedsData.TransDataChannel.MESSAGE){
-          this.feedService.sendDataFromMsg(this.nodeId,this.channelId,postId, 0 ,0, this.flieUri,this.imgUrl);
+          let len = this.imagelist.length;
+          for(let imageIndex=0;imageIndex<len;imageIndex++){
+            this.feedService.sendDataFromMsg(this.nodeId,this.channelId,postId, 0 ,imageIndex, this.flieUri,this.imagelist[imageIndex]["path"]);
+          }
           return;
         }
 
         if (this.transDataChannel == FeedsData.TransDataChannel.SESSION){
           if (this.sessionState === FeedsData.StreamState.CONNECTED)
-            this.feedService.sendData(this.nodeId,this.channelId,this.postId, 0 ,0, this.flieUri,this.imgUrl);
+            this.feedService.sendData(this.nodeId,this.channelId,this.postId, 0 ,0, this.flieUri,this.imagelist[0]["path"]);
             this.native.updateLoadingMsg(this.translate.instant("common.uploading"));
           return;
         }
@@ -139,12 +142,14 @@ export class CreatenewpostPage implements OnInit {
 
     this.events.subscribe('rpcRequest:error', () => {
       //this.pauseVideo();
+      this.setBinaryFinishCount = 0;
       this.native.hideLoading();
     });
 
     this.events.subscribe('rpcResponse:error', () => {
       this.zone.run(() => {
         //this.pauseVideo();
+        this.setBinaryFinishCount = 0;
         this.native.hideLoading();
       });
     });
@@ -153,11 +158,17 @@ export class CreatenewpostPage implements OnInit {
       this.initTitle();
     });
 
-    this.events.subscribe('feeds:setBinaryFinish', (nodeId, key) => {
+    this.events.subscribe('feeds:setBinaryFinish', (nodeId, key:string) => {
       this.zone.run(() => {
+
         if (this.postId != 0){
-          this.feedService.closeSession(this.nodeId);
-          this.feedService.notifyPost(this.nodeId, this.channelId, this.postId);
+          this.setBinaryFinishCount++;
+          if(this.imagelist.length == this.setBinaryFinishCount){
+            this.setBinaryFinishCount = 0;
+            this.feedService.closeSession(this.nodeId);
+            this.feedService.notifyPost(this.nodeId, this.channelId, this.postId);
+          }
+
         }
       });
     });
@@ -165,8 +176,13 @@ export class CreatenewpostPage implements OnInit {
     this.events.subscribe('stream:setBinarySuccess', (nodeId, key) => {
       this.zone.run(() => {
         if (this.postId != 0){
-          this.feedService.closeSession(this.nodeId);
-          this.feedService.notifyPost(this.nodeId, this.channelId, this.postId);
+          this.setBinaryFinishCount++;
+          if(this.imagelist.length === this.setBinaryFinishCount){
+            this.setBinaryFinishCount = 0;
+            this.feedService.closeSession(this.nodeId);
+            this.feedService.notifyPost(this.nodeId, this.channelId, this.postId);
+          }
+
         }
       });
     });
@@ -175,7 +191,7 @@ export class CreatenewpostPage implements OnInit {
       this.zone.run(() => {
         this.navCtrl.pop().then(()=>{
           this.events.publish("update:tab",true);
-          this.imgUrl ='';
+          this.imagelist =[];
           this.posterImg ='';
           this.flieUri ='';
           this.native.hideLoading();
@@ -188,6 +204,7 @@ export class CreatenewpostPage implements OnInit {
     this.events.subscribe('stream:error', (nodeId, response) => {
       this.zone.run(() => {
         //response.code
+        this.setBinaryFinishCount = 0;
         this.native.hideLoading();
         this.feedService.closeSession(this.nodeId);
       });
@@ -203,7 +220,7 @@ export class CreatenewpostPage implements OnInit {
       this.zone.run(() => {
         this.sessionState = state;
         if (state === 4 && this.postId != 0){
-          this.feedService.sendData(this.nodeId,this.channelId,this.postId, 0 ,0, this.flieUri,this.imgUrl);
+          this.feedService.sendData(this.nodeId,this.channelId,this.postId, 0 ,0, this.flieUri,this.imagelist[0]);
           this.native.updateLoadingMsg(this.translate.instant("common.uploading"));
         }
       });
@@ -250,10 +267,11 @@ export class CreatenewpostPage implements OnInit {
     this.native.hideLoading();
     this.hideFullScreen();
 
-    this.imgUrl="";
+    this.imagelist =[];
     this.transcode = 0;
     this.uploadProgress =0;
     this.totalProgress = 0;
+    this.setBinaryFinishCount = 0;
     this.removeVideo();
     this.events.publish("addBinaryEvevnt");
     this.feedService.closeSession(this.nodeId);
@@ -274,7 +292,7 @@ export class CreatenewpostPage implements OnInit {
       return;
     }
 
-    if (newPost === "" && this.imgUrl === ""&&this.flieUri === ""){
+    if (newPost === "" && this.imagelist.length === 0 &&this.flieUri === ""){
       this.native.toast_trans("CreatenewpostPage.tipMsg");
       return false;
     }
@@ -291,7 +309,7 @@ export class CreatenewpostPage implements OnInit {
   }
 
   sendPost(){
-    if (this.imgUrl == ""&& this.flieUri == ""){
+    if (this.imagelist.length == 0 && this.flieUri == ""){
       let content = this.feedService.createContent(this.newPost,null,null);
       this.feedService.publishPost(
         this.nodeId,
@@ -309,11 +327,8 @@ export class CreatenewpostPage implements OnInit {
     //   this.native.toast_trans("common.connectionError");
     //   return;
     // }
-
     let videoSize = this.flieUri.length;
-    let imgSize = this.imgUrl.length;
-
-    if (videoSize > this.throwMsgTransDataLimit || imgSize > this.throwMsgTransDataLimit){
+    if (videoSize > this.throwMsgTransDataLimit){
       this.transDataChannel = FeedsData.TransDataChannel.SESSION
       this.feedService.restoreSession(this.nodeId);
     }else{
@@ -336,16 +351,36 @@ export class CreatenewpostPage implements OnInit {
       return;
     }
 
-    if (this.imgUrl != ""){
-      this.feedService.compress(this.imgUrl).then((imageThumb)=>{
-        let imgThumbs: FeedsData.ImgThumb[] = [];
-        let imgThumb: FeedsData.ImgThumb = {
-          index   : 0,
-          imgThumb: imageThumb,
-          imgSize : imgSize
-        }
-        imgThumbs.push(imgThumb);
+    if(this.imagelist.length > 0){
+       this.sendImageList();
+    }
+  }
 
+  sendImageList(){
+   let len = this.imagelist.length;
+   let imgThumbs: FeedsData.ImgThumb[] = [];
+   for(let index=0;index<len;index++){
+    let imageThumb = this.imagelist[index]["path"];
+    let imgSize = imageThumb.length;
+    this.sendImg(index,imageThumb,imgSize,imgThumbs);
+   }
+  }
+
+  sendImg(index:number,imageThumb:string,imgSize:number,imgThumbs:any){
+    if(imgSize > this.throwMsgTransDataLimit){
+      this.transDataChannel = FeedsData.TransDataChannel.SESSION
+      this.feedService.restoreSession(this.nodeId);
+    }else{
+      this.transDataChannel = FeedsData.TransDataChannel.MESSAGE
+    }
+    this.feedService.compress(imageThumb).then((imageThumb)=>{
+      let imgThumb: FeedsData.ImgThumb = {
+        index   : index,
+        imgThumb: imageThumb,
+        imgSize : imgSize
+      }
+      imgThumbs.push(imgThumb);
+      if(imgThumbs.length == this.imagelist.length){
         let content = this.feedService.createContent(this.newPost,imgThumbs,null);
         this.feedService.declarePost(
           this.nodeId,
@@ -353,8 +388,8 @@ export class CreatenewpostPage implements OnInit {
           content,
           false
         )
-      });
-    }
+      }
+    });
   }
 
   addImg(type: number) {
@@ -362,20 +397,22 @@ export class CreatenewpostPage implements OnInit {
       30, 0, type,
       (imageUrl: any) => {
         this.zone.run(() => {
-          this.imgUrl = imageUrl;
+          //this.imgUrl = imageUrl;
+          this.imagelist.push({"path":imageUrl});
         });
       },
       (err: any) => {
         console.error('Add img err', err);
-        let imgUrl = this.imgUrl || "";
-        if(imgUrl) {
+        if(this.imagelist.length===0) {
           this.native.toast_trans('common.noImageSelected');
         }
       }
     );
   }
 
-  showBigImage(content: any){
+  showBigImage(item: any){
+    let imageIndex = item["imageIndex"];
+    let content = this.imagelist[imageIndex]["path"];
     this.native.openViewer(content,"common.image","CreatenewpostPage.addingPost",this.appService);
   }
 
@@ -422,7 +459,7 @@ selectvideo(){
     if(parseInt(this.duration) > 15){
       this.flieUri ="";
       this.posterImg ="";
-      this.imgUrl="";
+      this.imagelist=[];
       this.transcode = 0;
       this.uploadProgress =0;
       this.totalProgress = 0;
@@ -707,6 +744,11 @@ readThumbnail(fileName:string,filepath:string){
 
 handleTotal(duration:any){
   return UtilService.timeFilter(duration);
+}
+
+deleteImage(item:any){
+  let imageIndex = item["imageIndex"];
+  this.imagelist.splice(imageIndex,1);
 }
 
 }

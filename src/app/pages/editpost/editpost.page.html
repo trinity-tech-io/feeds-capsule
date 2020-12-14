@@ -1,7 +1,7 @@
 <ion-header *ngIf="connectionStatus == 1">
   <div class="offline-header"></div>
 </ion-header>
-  
+
 <ion-content>
   <div class="channel-list" [class.darkChannelList]="theme.darkMode">
 
@@ -22,10 +22,16 @@
     <ion-textarea  autoGrow="true"  autofocus="true" placeholder="{{'CreatenewpostPage.des'|translate}}" [(ngModel)]="newPost">
     </ion-textarea>
 
-    <div *ngIf="imgUrl !== ''" class="img-container">
+    <app-imagelist
+    *ngIf="imagelist.length>0"
+    [imagelist] = "imagelist"
+    (showBigImage)="showBigImage($event)"
+    >
+    </app-imagelist>
+
+    <!-- <div *ngIf="imgUrl !== ''" class="img-container">
       <img src="{{imgUrl}}" (click)="showBigImage(imgUrl)" />
-      <!-- <img class="remove" src="/assets/icons/remove.svg" (click)="imgUrl = ''"/> -->
-    </div>
+    </div> -->
 
 
     <div *ngIf="posterImg!==''" style="width: 320px;height:200px;margin: 0 auto;">
@@ -35,11 +41,11 @@
       <vg-player>
         <vg-overlay-play id={{nodeId+channelId+postId}}vgoverlayplayeditpost></vg-overlay-play>
         <vg-buffering id={{nodeId+channelId+postId}}vgbufferingeditpost></vg-buffering>
-    
+
         <vg-controls id={{nodeId+channelId+postId}}vgcontrolseditpost style="display: none;">
             <img class="vgfullscreen" id={{nodeId+channelId+postId}}vgfullscreeneditpost src="assets/images/fullscreen.svg"/>
         </vg-controls>
-     
+
     <video #media [vgMedia]="media" id={{nodeId+channelId+postId}}videoeditpost
     playsinline webkit-playsinline>
     <source  [type]="videotype" id={{nodeId+channelId+postId}}sourceeditpost>
@@ -60,6 +66,6 @@
         </ion-button>
       </ion-col>
     </ion-row>
-  
+
   </div>
 </ion-content>

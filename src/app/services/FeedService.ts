@@ -4200,7 +4200,7 @@ export class FeedService {
       return;
     }
 
-    eventBus.publish("feeds:setBinaryFinish", nodeId);
+    eventBus.publish("feeds:setBinaryFinish", nodeId,result.key);
   }
 
   handleGetBinaryResponse(nodeId, result, requestParams, error){

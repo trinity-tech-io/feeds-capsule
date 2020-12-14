@@ -13,6 +13,7 @@ import { EdittoolComponent} from './edittool/edittool.component';
 
 import {ConfirmdialogComponent} from './confirmdialog/confirmdialog.component';
 import {AlertdialogComponent} from './alertdialog/alertdialog.component';
+import {ImagelistComponent} from './imagelist/imagelist.component';
 
 import { MyfeedsComponent} from './myfeeds/myfeeds.component';
 import { FollowingComponent} from './following/following.component';
@@ -38,6 +39,7 @@ import { VgBufferingModule } from 'ngx-videogular';
   ],
 
   declarations: [
+    ImagelistComponent,
     AlertdialogComponent,
     ConfirmdialogComponent,
     EdittoolComponent,
@@ -52,6 +54,7 @@ import { VgBufferingModule } from 'ngx-videogular';
     VideofullscreenComponent
   ],
   exports: [
+    ImagelistComponent,
     AlertdialogComponent,
     ConfirmdialogComponent,
     EdittoolComponent,
