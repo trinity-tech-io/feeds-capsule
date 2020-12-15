@@ -27,7 +27,7 @@ export class EditPostPage implements OnInit {
   public subscribers:string = "";
   public newPost: string="";
   public oldNewPost: string = "";
-  public imgUrl: string = "";
+  //public imgUrl: string = "";
   public nodeId: string = "";
   public channelId: number = 0;
   public postId: number = 0;
@@ -49,6 +49,7 @@ export class EditPostPage implements OnInit {
   private transDataChannel:FeedsData.TransDataChannel = FeedsData.TransDataChannel.MESSAGE;
   public fullScreenmodal:any = "";
   public imagelist = [];
+  public setBinaryFinishCount = 0;
   constructor(
     private events: Events,
     private native: NativeService,
@@ -94,12 +95,14 @@ export class EditPostPage implements OnInit {
      });
 
     this.events.subscribe('rpcRequest:error', () => {
+      this.setBinaryFinishCount = 0;
       this.pauseVideo();
       this.native.hideLoading();
     });
 
     this.events.subscribe('rpcResponse:error', () => {
       this.zone.run(() => {
+        this.setBinaryFinishCount = 0;
         this.pauseVideo();
         this.native.hideLoading();
       });
@@ -119,6 +122,7 @@ export class EditPostPage implements OnInit {
 
     this.events.subscribe('stream:error', (nodeId, error) => {
       this.zone.run(() => {
+        this.setBinaryFinishCount = 0;
         this.feedService.handleSessionError(nodeId, error);
         this.pauseVideo();
         this.native.hideLoading();
@@ -131,26 +135,38 @@ export class EditPostPage implements OnInit {
           return;
 
         if (this.editState == FeedsData.EditState.TextImageChange || this.editState == FeedsData.EditState.TextVideoChange){
-          this.feedService.sendData(this.nodeId,this.channelId,this.postId, 0 ,0, this.flieUri,this.imgUrl);
+          let imageLen = this.imagelist.length;
+          for(let imageIndex = 0;imageIndex<imageLen;imageLen++){
+            this.feedService.sendData(this.nodeId,this.channelId,this.postId, 0 ,imageIndex, this.flieUri,this.imagelist[0]["path"]);
+          }
         }
       });
     });
 
     this.events.subscribe('feeds:setBinaryFinish', (nodeId, key) => {
       this.zone.run(() => {
-        this.processSetBinaryResult();
+        this.setBinaryFinishCount++;
+        if(this.imagelist.length == this.setBinaryFinishCount){
+          this.setBinaryFinishCount = 0;
+           this.processSetBinaryResult();
+        }
       });
     });
 
     this.events.subscribe('stream:setBinarySuccess', (nodeId, key) => {
       this.zone.run(() => {
+        this.setBinaryFinishCount++;
+        if(this.imagelist.length == this.setBinaryFinishCount){
+        this.setBinaryFinishCount = 0;
         this.feedService.closeSession(nodeId);
         this.processSetBinaryResult();
+      }
       });
     });
 
     this.events.subscribe('stream:setBinaryError', (nodeId, response) => {
       this.zone.run(() => {
+        this.setBinaryFinishCount = 0;
         this.feedService.closeSession(nodeId);
         this.native.hideLoading();
       });
@@ -189,7 +205,9 @@ export class EditPostPage implements OnInit {
     this.events.unsubscribe("stream:onStateChangedCallback");
     this.events.unsubscribe("feeds:openRightMenu");
     this.events.unsubscribe("stream:getBinarySuccess");
-    this.imgUrl="";
+    //this.imgUrl="";
+    this.imagelist = [];
+    this.setBinaryFinishCount = 0;
     this.native.hideLoading();
     this.hideFullScreen();
     this.removeVideo();
@@ -223,7 +241,7 @@ export class EditPostPage implements OnInit {
     }
 
     let newPost = this.native.iGetInnerText(this.newPost);
-    if (newPost === "" && this.imgUrl === ""&&this.flieUri === ""){
+    if (newPost === "" && this.imagelist.length === 0&&this.flieUri === ""){
       this.native.toast_trans("CreatenewpostPage.tipMsg");
       return false;
     }
@@ -241,13 +259,45 @@ export class EditPostPage implements OnInit {
     });
   }
 
+  sendImageList(){
+    this.editState = FeedsData.EditState.TextImageChange;
+    let len = this.imagelist.length;
+    let imgThumbs: FeedsData.ImgThumb[] = [];
+    for(let index=0;index<len;index++){
+     let imageThumb = this.imagelist[index]["path"];
+     let imgSize = imageThumb.length;
+     this.sendImg(index,imageThumb,imgSize,imgThumbs);
+    }
+  }
+
+  sendImg(index:number,imageThumb:string,imgSize:number,imgThumbs:any){
+    if(imgSize > this.throwMsgTransDataLimit){
+      this.transDataChannel = FeedsData.TransDataChannel.SESSION
+      this.feedService.restoreSession(this.nodeId);
+    }else{
+      this.transDataChannel = FeedsData.TransDataChannel.MESSAGE
+    }
+    this.feedService.compress(imageThumb).then((imageThumb)=>{
+      let imgThumb: FeedsData.ImgThumb = {
+        index   : index,
+        imgThumb: imageThumb,
+        imgSize : imgSize
+      }
+      imgThumbs.push(imgThumb);
+      if(imgThumbs.length == this.imagelist.length){
+        let content = this.feedService.createContent(this.newPost,imgThumbs,null);
+        this.publishEditedPost(content);
+      }
+    });
+  }
+
   editPost(){
     // if (this.feedService.getServerStatusFromId(this.nodeId) != 0){
     //   this.native.toast_trans("common.connectionError");
     //   return;
     // }
 
-    if ((this.imgUrl == ""&& this.posterImg == "" && this.flieUri == "")){
+    if ((this.imagelist.length == 0&& this.posterImg == "" && this.flieUri == "")){
       this.editState = FeedsData.EditState.TextChange;
       let content = this.feedService.createContent(this.newPost,null,null);
       this.publishEditedPost(content);
@@ -255,13 +305,16 @@ export class EditPostPage implements OnInit {
     }
 
     //content img & only text changed
-    if (this.newPost != this.oldNewPost && this.imgUrl != ""){
+    if (this.newPost != this.oldNewPost && this.imagelist.length >0){
       this.editState = FeedsData.EditState.TextChange;
-      let size = this.feedService.getContentDataSize(this.nodeId, this.channelId, this.postId, 0, 0, FeedsData.MediaType.containsImg);
-      this.feedService.compress(this.imgUrl).then((imageThumb)=>{
-        let content = this.feedService.createOneImgContent(this.newPost, imageThumb, size);
-        this.publishEditedPost(content);
-      });
+
+      // let size = this.feedService.getContentDataSize(this.nodeId, this.channelId, this.postId, 0, 0, FeedsData.MediaType.containsImg);
+      // this.feedService.compress(this.imgUrl).then((imageThumb)=>{
+      //   let content = this.feedService.createOneImgContent(this.newPost, imageThumb, size);
+      //   this.publishEditedPost(content);
+      // });
+      this.sendImageList();
+
       return;
     }
 
@@ -284,9 +337,9 @@ export class EditPostPage implements OnInit {
     // }
 
     let videoSize = this.flieUri.length;
-    let imgSize = this.imgUrl.length;
+    //let imgSize = this.imgUrl.length;
 
-    if (videoSize > this.throwMsgTransDataLimit || imgSize > this.throwMsgTransDataLimit){
+    if (videoSize > this.throwMsgTransDataLimit){
       this.transDataChannel = FeedsData.TransDataChannel.SESSION
       this.feedService.restoreSession(this.nodeId);
     }else{
@@ -300,12 +353,13 @@ export class EditPostPage implements OnInit {
       return;
     }
 
-    if (this.imgUrl != ""){
-      this.feedService.compress(this.imgUrl).then((imageThumb)=>{
-        this.editState = FeedsData.EditState.TextImageChange;
-        let content = this.feedService.createOneImgContent(this.newPost, imageThumb, imgSize);
-        this.publishEditedPost(content);
-      });
+    if (this.imagelist.length>0){
+      this.sendImageList();
+      // this.feedService.compress(this.imgUrl).then((imageThumb)=>{
+      //   this.editState = FeedsData.EditState.TextImageChange;
+      //   let content = this.feedService.createOneImgContent(this.newPost, imageThumb, imgSize);
+      //   this.publishEditedPost(content);
+      // });
     }
   }
 
@@ -323,13 +377,13 @@ export class EditPostPage implements OnInit {
       30, 0, type,
       (imageUrl: any) => {
         this.zone.run(() => {
-          this.imgUrl = imageUrl;
+          //this.imgUrl = imageUrl;
         });
       },
       (err: any) => {
         console.error('Add img err', err);
-        let imgUrl = this.imgUrl || "";
-        if (imgUrl === "") {
+        //let imgUrl = this.imgUrl || "";
+        if (this.imagelist.length === 0) {
           this.native.toast_trans('common.noImageSelected');
         }
       }
@@ -465,7 +519,7 @@ export class EditPostPage implements OnInit {
                 this.zone.run(()=>{
                   this.flieUri ="";
                   this.posterImg ="";
-                  this.imgUrl="";
+                  this.imagelist =[];
                   this.transcode = 0;
                   this.uploadProgress =0;
                   this.totalProgress = 0;
@@ -777,7 +831,7 @@ readThumbnail(fileName:string,filepath:string){
       this.events.publish("update:tab");
       this.posterImg ="";
       this.flieUri="";
-      this.imgUrl="";
+      this.imagelist =[];
       this.native.hideLoading();
       this.native.toast_trans("CreatenewpostPage.tipMsg1");
     });
