@@ -153,9 +153,7 @@ export class MyApp {
     }
   }
 
-  // gotoTestSessionPage(){
-  //   this.native.navigateForward('/menu/testsession',"");
-  // }
+
 
   confirm(that:any){
     if(this.popover!=null){
