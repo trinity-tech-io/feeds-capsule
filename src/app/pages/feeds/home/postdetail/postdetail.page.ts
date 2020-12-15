@@ -78,6 +78,8 @@ export class PostdetailPage implements OnInit {
 
   public isOwnComment = {};
 
+  public imagesKeys = [];
+
   constructor(
     private popoverController:PopoverController,
     private acRoute: ActivatedRoute,
@@ -164,7 +166,6 @@ export class PostdetailPage implements OnInit {
 
   initPostContent(){
     let post = this.feedService.getPostFromId(this.nodeId, this.channelId, this.postId);
-
     this.postStatus = post.post_status || 0;
     this.mediaType = post.content.mediaType;
     this.postContent = post.content;
@@ -173,8 +174,10 @@ export class PostdetailPage implements OnInit {
     this.commentsNum = post.comments;
 
     if(this.mediaType === 1){
+      this.imagesKeys = post.content.imgThumbKeys || [];
+      if(this.imagesKeys.length === 1){}
       this.getImage();
-    }
+      }
     if(post.content.mediaType === 2){
       let key = this.feedService.getVideoThumbStrFromId(this.nodeId,this.channelId,this.postId,0) || "";
       if(key!=""){
@@ -437,6 +440,7 @@ export class PostdetailPage implements OnInit {
     this.postImage = "";
     this.isFullContent = {};
     this.isOwnComment = {};
+    this.imagesKeys = [];
     this.downProgress = 0;
     this.feedService.closeSession(this.nodeId);
     this.clearVideo();

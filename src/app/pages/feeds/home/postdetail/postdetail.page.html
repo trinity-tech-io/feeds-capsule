@@ -48,11 +48,17 @@
             <pre [ngStyle]="styleObj">{{ getContentText(postContent) }}</pre>
           </h2>
           <img
-            *ngIf="postStatus != 1&&mediaType===1&&postImage!= ''"
+            *ngIf="imagesKeys.length===1&&postStatus != 1&&mediaType===1&&postImage!= ''"
             [src]="postImage"
             class="post-img"
             (click)="showBigImage()"
           >
+
+          <app-imageview
+          *ngIf="imagesKeys.length>1"
+          [imageKeys] = "imagesKeys"
+          >
+          </app-imageview>
 
           <!---video-->
         <div *ngIf="postStatus != 1&&mediaType===2&&posterImg!=''" style="width:100%;height:200px;margin-top:10px;">
