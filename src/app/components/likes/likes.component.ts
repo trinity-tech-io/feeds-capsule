@@ -29,6 +29,8 @@ export class LikesComponent implements OnInit {
   public styleObj:any = {width:""};
   public maxTextSize = 240;
 
+  public imageHeight:number = 0;
+
   constructor(
     private feedspage: FeedsPage,
     private tabs: IonTabs,
@@ -42,6 +44,7 @@ export class LikesComponent implements OnInit {
 
   ngOnInit() {
     this.styleObj.width = (screen.width - 105)+'px';
+    this.imageHeight = (screen.width - 105)/3;
   }
 
   channelName(nodeId, channelId){
@@ -71,7 +74,7 @@ export class LikesComponent implements OnInit {
       this.native.toastWarn('common.connectionError');
       return;
     }
-    
+
     if (this.checkMyLike(nodeId,channelId,postId)){
       this.feedService.postUnlike(nodeId,Number(channelId),Number(postId),0);
       return ;
@@ -148,7 +151,7 @@ export class LikesComponent implements OnInit {
       return obj.content+this.translate.instant('HomePage.hoursAgo');
     }
     if(obj.type === 'day'){
-      
+
       if(obj.content === 1){
         return this.translate.instant('common.yesterday');
       }
@@ -174,7 +177,7 @@ export class LikesComponent implements OnInit {
   }
 
   pressOwerName(nodeId:string,channelId:string){
-    
+
     let channel = this.getChannel(nodeId,channelId) || "";
     if(channel != ""){
       let name =channel["owner_name"] || "";
@@ -195,8 +198,12 @@ export class LikesComponent implements OnInit {
     });
   }
 
-  showBigImage(nodeId:string,channelId:number,postId:number){
-    this.clickImage.emit({"nodeId":nodeId,"channelId":channelId,"postId":postId,"tabType":"mylike"});
+  showBigImage(post:any){
+    let nodeId =  post.nodeId;
+    let channelId = post.channel_id;
+    let postId = post.id;
+    let imageIndex = post.imageIndex || 0;
+    this.clickImage.emit({"imageIndex":imageIndex,"nodeId":nodeId,"channelId":channelId,"postId":postId,"tabType":"mylike"});
   }
 
   pauseVideo(id:string){
@@ -210,10 +217,10 @@ export class LikesComponent implements OnInit {
         videoElement.load();
         clearTimeout(sid);
       },10);
-      
+
     }
   }
-  
+
   pauseAllVideo(){
     let videoids = this.isLoadVideoiamge;
     for(let id  in videoids){
@@ -230,7 +237,7 @@ export class LikesComponent implements OnInit {
     let duration = 29;
     if(videoThumbKey != ""){
       duration = videoThumbKey["duration"] || 0;
-    } 
+    }
     return UtilService.timeFilter(duration);
   }
 }

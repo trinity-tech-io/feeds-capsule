@@ -889,12 +889,13 @@ export class ProfilePage implements OnInit {
    }
 
   showBigImage(item:any){
+    let imageIndex = item.imageIndex || 0;
     this.pauseAllVideo();
     this.zone.run(()=>{
       this.native.showLoading("common.waitMoment",5*60*1000).then(()=>{
         let contentVersion = this.feedService.getContentVersion(item.nodeId,item.channelId,item.postId,0);
-        let thumbkey= this.feedService.getImgThumbKeyStrFromId(item.nodeId,item.channelId,item.postId,0,0);
-        let key = this.feedService.getImageKey(item.nodeId,item.channelId,item.postId,0,0);
+        let thumbkey= this.feedService.getImgThumbKeyStrFromId(item.nodeId,item.channelId,item.postId,0,imageIndex);
+        let key = this.feedService.getImageKey(item.nodeId,item.channelId,item.postId,0,imageIndex);
         if(contentVersion == "0"){
              key = thumbkey;
         }
@@ -914,7 +915,7 @@ export class ProfilePage implements OnInit {
             this.curImgPostId = item.nodeId+item.channelId+item.postId;
             this.cacheGetBinaryRequestKey = key;
             this.cachedMediaType ="img";
-            this.feedService.processGetBinary(item.nodeId,item.channelId,item.postId, 0, 0, FeedsData.MediaType.containsImg, key,
+            this.feedService.processGetBinary(item.nodeId,item.channelId,item.postId, 0,imageIndex, FeedsData.MediaType.containsImg, key,
               (transDataChannel)=>{
                 if (transDataChannel == FeedsData.TransDataChannel.SESSION){
                   this.downStatusObj[item.nodeId+item.channelId+item.postId] = "1";
