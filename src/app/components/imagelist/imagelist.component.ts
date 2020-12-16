@@ -10,9 +10,12 @@ export class ImagelistComponent implements OnInit {
   @Input() imagelist:any =[];
   @Output() deleteImage = new EventEmitter();
   @Output() showBigImage = new EventEmitter();
+  public styleObj:any = {height:""};
   constructor() { }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.styleObj.height=(screen.width-72)/3+"px";
+  }
 
   delimg(index:number){
     this.deleteImage.emit({"imageIndex":index});

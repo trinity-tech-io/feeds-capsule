@@ -1,10 +1,8 @@
 <ion-grid>
   <ion-row class="ion-align-items-center">
-    <ion-col size="4" *ngFor="let item of imagelist let imageIndex=index">
-        <div class="img-container" (click)="showBigImg(imageIndex)">
+    <ion-col size="4" *ngFor="let item of imagelist let imageIndex=index" [ngStyle]="styleObj">
           <img src="{{item.path}}"/>
           <img *ngIf="isShowDelete" class="remove" src="/assets/icons/remove.svg" (click)="delimg(imageIndex)"/>
-        </div>
     </ion-col>
   </ion-row>
 </ion-grid>
