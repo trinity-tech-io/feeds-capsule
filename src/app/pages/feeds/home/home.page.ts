@@ -108,10 +108,10 @@ export class HomePage implements OnInit {
           this.postList =  this.totalData;
           this.infiniteScroll.disabled =true;
         }
-        this.scrollToTop(1);
+
         this.isLoadimage ={};
         this.isLoadVideoiamge ={};
-        this.refreshImage(0);
+        this.scrollToTop(1);
         this.initnodeStatus(this.postList);
   }
 
@@ -710,10 +710,14 @@ clearData(){
         let channelId = arr[1];
         let postId = arr[2];
         let mediaType = arr[3];
+
         let id = nodeId+channelId+postId;
         //postImg
         if(mediaType === '1'){
-          this.handlePsotImg(id,srcId,postgridindex);
+          let imageNum = parseInt(arr[4]);
+          for(let imageIndex =0;imageIndex<imageNum;imageIndex++){
+            this.handlePsotImg(id,srcId,imageIndex,postgridindex);
+          }
         }
          if(mediaType === '2'){
           //video
@@ -785,33 +789,28 @@ clearData(){
   }
 
 
-  handlePsotImg(id:string,srcId:string,rowindex:number){
+  handlePsotImg(id:string,srcId:string,imageIndex:number,rowindex:number){
     // 13 存在 12不存在
-    let isload = this.isLoadimage[id] || "";
+    let isload = this.isLoadimage[id+imageIndex] || "";
     let rpostimg = document.getElementById(id+"rpostimg");
-    let postImage = document.getElementById(id+"postimg");
+    let postImage = document.getElementById(id+"home_"+imageIndex+"_postimg");
     try {
-      if(id!=''&&postImage.getBoundingClientRect().top>=-this.clientHeight&&postImage.getBoundingClientRect().top<=this.clientHeight){
-        // if(rowindex === 2){
-        //  this.logUtils.logd("entry "+rowindex+"-"+JSON.stringify(postImage.getBoundingClientRect()),TAG);
-        // }
-
+      if(id!=''&&postImage.getBoundingClientRect().top>=-100&&postImage.getBoundingClientRect().top<=this.clientHeight){
+        //this.logUtils.logw("entry "+rowindex+"-"+JSON.stringify(postImage.getBoundingClientRect()),TAG);
         if(isload === ""){
-          //rpostimg.style.display = "none";
-          this.isLoadimage[id] = "11";
+          this.isLoadimage[id+imageIndex] = "11";
           let arr = srcId.split("-");
           let nodeId =arr[0];
           let channelId:any = arr[1];
           let postId:any = arr[2];
-         let key = this.feedService.getImgThumbKeyStrFromId(nodeId,channelId,postId,0,0);
+         let key = this.feedService.getImgThumbKeyStrFromId(nodeId,channelId,postId,0,imageIndex);
          this.feedService.getData(key).then((imagedata)=>{
               let image = imagedata || "";
               if(image!=""){
-                this.isLoadimage[id] ="13";
+                this.isLoadimage[id+imageIndex] ="13";
                 postImage.setAttribute("src",image);
-                //rpostimg.style.display = "block";
               }else{
-                this.isLoadimage[id] ="12";
+                this.isLoadimage[id+imageIndex] ="12";
                 rpostimg.style.display = 'none';
               }
             }).catch((reason)=>{
@@ -822,10 +821,10 @@ clearData(){
 
       }else{
         let postImageSrc = postImage.getAttribute("src") || "";
-         if(postImage.getBoundingClientRect().top<-this.clientHeight&&this.isLoadimage[id]==="13"&&postImageSrc!=""){
-          // this.logUtils.logd("remove error:"+rowindex+"-"+postImage.getBoundingClientRect().top,TAG);
-          this.isLoadimage[id] = "";
-          postImage.setAttribute("src","assets/images/loading.png");
+         if(postImage.getBoundingClientRect().top<-100&&this.isLoadimage[id+imageIndex]==="13"&&postImageSrc!=""){
+            //this.logUtils.logw("remove error:"+rowindex+"-"+postImage.getBoundingClientRect().top,TAG);
+            this.isLoadimage[id+imageIndex] = "";
+            postImage.setAttribute("src","assets/images/loading.png");
       }
       }
     } catch (error) {
@@ -844,7 +843,7 @@ clearData(){
        this.pauseVideo(id);
     }
     try {
-      if(id!=''&&video.getBoundingClientRect().top>=-this.clientHeight&&video.getBoundingClientRect().top<=this.clientHeight){
+      if(id!=''&&video.getBoundingClientRect().top>=-100&&video.getBoundingClientRect().top<=this.clientHeight){
         // this.logUtils.logd("entry "+rowindex+"==="+video.getBoundingClientRect().top,TAG);
         if(isloadVideoImg===""){
           this.isLoadVideoiamge[id] = "11";
@@ -880,7 +879,7 @@ clearData(){
       }else{
         // this.logUtils.logd("remove: index = "+rowindex+" top = "+video.getBoundingClientRect().top+" bottom = "+video.getBoundingClientRect().bottom,TAG);
         let postSrc =  video.getAttribute("poster") || "";
-        if(video.getBoundingClientRect().top<-this.clientHeight&&this.isLoadVideoiamge[id]==="13"&&postSrc!="assets/images/loading.png"){
+        if(video.getBoundingClientRect().top<-100&&this.isLoadVideoiamge[id]==="13"&&postSrc!="assets/images/loading.png"){
           video.setAttribute("poster","assets/images/loading.png");
           let sourcesrc =  source.getAttribute("src") || "";
           if(sourcesrc  != ""){

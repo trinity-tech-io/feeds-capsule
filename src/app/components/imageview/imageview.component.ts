@@ -18,7 +18,9 @@ export class ImageviewComponent implements OnInit {
 
   ngOnInit() {
     this.styleObj.height=this.imageHeight+"px";
-    this.handleImageKeys();
+    if(this.name === "postdetail"){
+      this.handleImageKeys();
+    }
   }
 
   handleImageKeys(){

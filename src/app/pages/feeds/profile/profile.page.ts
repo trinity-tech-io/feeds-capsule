@@ -586,7 +586,10 @@ export class ProfilePage implements OnInit {
         let id = nodeId+channelId+postId;
         //postImg
         if(mediaType === '1'){
-          this.handlePsotImg(id,srcId,postgridindex);
+          let imageNum = parseInt(arr[4]);
+          for(let imageIndex =0;imageIndex<imageNum;imageIndex++){
+            this.handlePsotImg(id,srcId,imageIndex,postgridindex);
+          }
         }
          if(mediaType === '2'){
           //video
@@ -599,16 +602,16 @@ export class ProfilePage implements OnInit {
   }
 
 
-  handlePsotImg(id:string,srcId:string,rowindex:number){
+  handlePsotImg(id:string,srcId:string,imageIndex:number,rowindex:number){
     // 13 存在 12不存在
-    let isload = this.isLoadimage[id] || "";
+    let isload = this.isLoadimage[id+imageIndex] || "";
     let rpostImage = document.getElementById(id+"likerow");
-    let postImage:any = document.getElementById(id+"postimglike") || "";
+    let postImage:any = document.getElementById(id+"like_"+imageIndex+"_postimg") || "";
     try {
-      if(id!=''&&postImage.getBoundingClientRect().top>=-this.clientHeight&&postImage.getBoundingClientRect().top<=this.clientHeight){
+      if(id!=''&&postImage.getBoundingClientRect().top>=-100&&postImage.getBoundingClientRect().top<=this.clientHeight){
         if(isload===""){
         //rpostImage.style.display = "none";
-        this.isLoadimage[id] = "11";
+        this.isLoadimage[id+imageIndex] = "11";
         let arr = srcId.split("-");
         let nodeId =arr[0];
         let channelId:any = arr[1];
@@ -617,7 +620,7 @@ export class ProfilePage implements OnInit {
        this.feedService.getData(key).then((imagedata)=>{
             let image = imagedata || "";
             if(image!=""){
-              this.isLoadimage[id] ="13";
+              this.isLoadimage[id+imageIndex] ="13";
               //rpostImage.style.display = "block";
               //this.images[id] = this.images;
               this.zone.run(()=>{
@@ -628,7 +631,7 @@ export class ProfilePage implements OnInit {
               //rpostImage.style.display = "none";
             }else{
               this.zone.run(()=>{
-                this.isLoadimage[id] ="12";
+                this.isLoadimage[id+imageIndex] ="12";
                 rpostImage.style.display = 'none';
               })
             }
@@ -639,13 +642,13 @@ export class ProfilePage implements OnInit {
         }
       }else{
         let postImageSrc = postImage.getAttribute("src") || "";
-        if(postImage.getBoundingClientRect().top<-this.clientHeight&&this.isLoadimage[id]==="13"&&postImageSrc!=""){
-          this.isLoadimage[id] = "";
+        if(postImage.getBoundingClientRect().top<-100&&this.isLoadimage[id+imageIndex]==="13"&&postImageSrc!=""){
+          this.isLoadimage[id+imageIndex] = "";
           postImage.setAttribute("src","assets/images/loading.png");
         }
       }
     } catch (error) {
-      this.isLoadimage[id] = "";
+      this.isLoadimage[id+imageIndex] = "";
       this.logUtils.loge("getImageData error:"+JSON.stringify(error),TAG);
     }
   }
@@ -661,7 +664,7 @@ export class ProfilePage implements OnInit {
        this.pauseVideo(id);
     }
     try {
-      if(id!=''&&video.getBoundingClientRect().top>=-this.clientHeight&&video.getBoundingClientRect().top<=this.clientHeight){
+      if(id!=''&&video.getBoundingClientRect().top>=-100&&video.getBoundingClientRect().top<=this.clientHeight){
         if(isloadVideoImg===""){
           this.isLoadVideoiamge[id] = "11";
           //vgplayer.style.display = "none";
@@ -690,7 +693,7 @@ export class ProfilePage implements OnInit {
         }
       }else{
         let postSrc =  video.getAttribute("poster") || "";
-        if(video.getBoundingClientRect().top<-this.clientHeight&&this.isLoadVideoiamge[id]==="13"&&postSrc!=""){
+        if(video.getBoundingClientRect().top<-100&&this.isLoadVideoiamge[id]==="13"&&postSrc!=""){
           video.setAttribute("poster","assets/images/loading.png");
           let sourcesrc =  source.getAttribute("src") || "";
           if(sourcesrc!= ""){
