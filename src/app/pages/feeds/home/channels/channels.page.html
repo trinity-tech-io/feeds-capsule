@@ -89,15 +89,28 @@
             </div>
           </h2>
 
-          <div *ngIf="post.post_status != 1&&post.content.mediaType ===1"  id ={{post.nodeId+post.channel_id+post.id}}channelrow style="width: 100%">
+          <div *ngIf="post.content.imgThumbKeys.length===1&&post.post_status != 1&&post.content.mediaType ===1"  id ={{post.nodeId+post.channel_id+post.id}}channelrow style="width: 100%;position: relative;">
             <span class="lefttopostdetailimg" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)"></span>
                 <img
                   id ={{post.nodeId+post.channel_id+post.id}}postimgchannel
                   class="post-img"
                   src="assets/images/loading.png"
                   style="width: 100%;"
-                  (click)="showBigImage(post.nodeId,post.channel_id,post.id)">
+                  (click)="showBigImage(post)">
                   <span class="topostdetailimg" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)"></span>
+          </div>
+
+          <div *ngIf="post.content.imgThumbKeys.length>1&&post.post_status != 1&&post.content.mediaType ===1"  id ={{post.nodeId+post.channel_id+post.id}}channelrow style="width: 100%;position: relative;">
+            <span class="lefttopostdetailimg" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)"></span>
+            <app-imageview
+            [imageHeight]="imageHeight"
+            name="channel"
+            [post]="post"
+            [imageKeys] = "post.content.imgThumbKeys"
+            (showBigImage) = "showBigImage($event)"
+            >
+            </app-imageview>
+            <span class="topostdetailimg" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)"></span>
           </div>
 
           <!--video-->

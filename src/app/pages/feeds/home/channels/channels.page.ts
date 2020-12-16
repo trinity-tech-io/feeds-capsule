@@ -79,6 +79,8 @@ export class ChannelsPage implements OnInit {
 
   public hideDeletedPosts:boolean = false;
 
+  public imageHeight:number = 0;
+
   constructor(
     private popoverController:PopoverController,
     private zone: NgZone,
@@ -211,6 +213,7 @@ export class ChannelsPage implements OnInit {
     this.clientHeight =screen.availHeight;
     this.native.setTitleBarBackKeyShown(true);
     this.styleObj.width = (screen.width - 105)+'px';
+    this.imageHeight = (screen.width-105)/3;
     this.initTitle();
     this.init();
 
@@ -849,13 +852,17 @@ export class ChannelsPage implements OnInit {
     },0);
   }
 
-  showBigImage(nodeId:string,channelId:number,postId:number){
+  showBigImage(post:any){
+    let nodeId =  post.nodeId;
+    let channelId = post.channel_id;
+    let postId = post.id;
+    let imageIndex = post.imageIndex || 0;
     this.pauseAllVideo();
     this.zone.run(()=>{
       this.native.showLoading("common.waitMoment", 5*60*1000).then(()=>{
         let contentVersion = this.feedService.getContentVersion(nodeId,channelId,postId,0);
-        let thumbkey= this.feedService.getImgThumbKeyStrFromId(nodeId,channelId,postId,0,0);
-        let key = this.feedService.getImageKey(nodeId,channelId,postId,0,0);
+        let thumbkey= this.feedService.getImgThumbKeyStrFromId(nodeId,channelId,postId,0,imageIndex);
+        let key = this.feedService.getImageKey(nodeId,channelId,postId,0,imageIndex);
         if(contentVersion == "0"){
           key = thumbkey;
         }
@@ -876,7 +883,7 @@ export class ChannelsPage implements OnInit {
             this.curImgPostId = nodeId+channelId+postId;
             this.cacheGetBinaryRequestKey = key;
             this.cachedMediaType = "img";
-            this.feedService.processGetBinary(nodeId, channelId, postId, 0, 0, FeedsData.MediaType.containsImg, key,
+            this.feedService.processGetBinary(nodeId, channelId, postId, 0,imageIndex, FeedsData.MediaType.containsImg, key,
               (transDataChannel)=>{
                 if (transDataChannel == FeedsData.TransDataChannel.SESSION){
                   this.downStatusObj[nodeId+channelId+postId] = "1";
