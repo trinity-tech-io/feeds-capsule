@@ -123,6 +123,10 @@ export class CreatenewpostPage implements OnInit {
         this.postId = postId;
         if (this.transDataChannel == FeedsData.TransDataChannel.MESSAGE){
           let len = this.imagelist.length;
+          if(len === 0){
+            this.feedService.sendDataFromMsg(this.nodeId,this.channelId,postId, 0 ,0, this.flieUri,"");
+             return;
+          }
           for(let imageIndex=0;imageIndex<len;imageIndex++){
             this.feedService.sendDataFromMsg(this.nodeId,this.channelId,postId, 0 ,imageIndex, this.flieUri,this.imagelist[imageIndex]["path"]);
           }
@@ -162,6 +166,11 @@ export class CreatenewpostPage implements OnInit {
       this.zone.run(() => {
 
         if (this.postId != 0){
+          if(this.imagelist.length === 0){
+            this.feedService.closeSession(this.nodeId);
+            this.feedService.notifyPost(this.nodeId, this.channelId, this.postId);
+            return;
+          }
           this.setBinaryFinishCount++;
           if(this.imagelist.length == this.setBinaryFinishCount){
             this.setBinaryFinishCount = 0;
@@ -176,6 +185,11 @@ export class CreatenewpostPage implements OnInit {
     this.events.subscribe('stream:setBinarySuccess', (nodeId, key) => {
       this.zone.run(() => {
         if (this.postId != 0){
+          if(this.imagelist.length === 0){
+            this.feedService.closeSession(this.nodeId);
+            this.feedService.notifyPost(this.nodeId, this.channelId, this.postId);
+            return;
+          }
           this.setBinaryFinishCount++;
           if(this.imagelist.length === this.setBinaryFinishCount){
             this.setBinaryFinishCount = 0;

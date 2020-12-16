@@ -136,6 +136,10 @@ export class EditPostPage implements OnInit {
 
         if (this.editState == FeedsData.EditState.TextImageChange || this.editState == FeedsData.EditState.TextVideoChange){
           let imageLen = this.imagelist.length;
+          if(imageLen == 0){
+            this.feedService.sendData(this.nodeId,this.channelId,this.postId, 0 ,0, this.flieUri,"");
+            return;
+          }
           for(let imageIndex = 0;imageIndex<imageLen;imageLen++){
             this.feedService.sendData(this.nodeId,this.channelId,this.postId, 0 ,imageIndex, this.flieUri,this.imagelist[0]["path"]);
           }
@@ -145,16 +149,25 @@ export class EditPostPage implements OnInit {
 
     this.events.subscribe('feeds:setBinaryFinish', (nodeId, key) => {
       this.zone.run(() => {
+        if(this.imagelist.length == 0){
+          this.processSetBinaryResult();
+          return;
+        }
         this.setBinaryFinishCount++;
         if(this.imagelist.length == this.setBinaryFinishCount){
           this.setBinaryFinishCount = 0;
-           this.processSetBinaryResult();
+          this.processSetBinaryResult();
         }
       });
     });
 
     this.events.subscribe('stream:setBinarySuccess', (nodeId, key) => {
       this.zone.run(() => {
+        if(this.imagelist.length == 0){
+        this.feedService.closeSession(nodeId);
+        this.processSetBinaryResult();
+          return;
+        }
         this.setBinaryFinishCount++;
         if(this.imagelist.length == this.setBinaryFinishCount){
         this.setBinaryFinishCount = 0;

@@ -80,6 +80,10 @@ export class PostdetailPage implements OnInit {
 
   public imagesKeys = [];
 
+  public imageHeight:number = 0;
+
+  public post:any = {};
+
   constructor(
     private popoverController:PopoverController,
     private acRoute: ActivatedRoute,
@@ -166,6 +170,7 @@ export class PostdetailPage implements OnInit {
 
   initPostContent(){
     let post = this.feedService.getPostFromId(this.nodeId, this.channelId, this.postId);
+    this.post = post;
     this.postStatus = post.post_status || 0;
     this.mediaType = post.content.mediaType;
     this.postContent = post.content;
@@ -192,6 +197,7 @@ export class PostdetailPage implements OnInit {
     this.native.setTitleBarBackKeyShown(true);
     this.styleObj.width = (screen.width - 55)+'px';
     this.dstyleObj.width= (screen.width - 105)+'px';
+    this.imageHeight = (screen.width-72)/3;
     this.initData(true);
     this.connectionStatus = this.feedService.getConnectionStatus();
     this.feedService.refreshPostById(this.nodeId,this.channelId,this.postId);

@@ -1,7 +1,7 @@
 <ion-grid>
   <ion-row class="ion-align-items-center">
     <ion-col size="4" *ngFor="let item of imageKeys" [ngStyle]="styleObj" (click)="showBigImg(item)">
-          <img id={{item.imgThumbKey}} src="assets/images/loading.png"/>
+          <img id={{post.nodeId+post.channel_id+post.id+name}}_{{item.index}}_postimg src="assets/images/loading.png"/>
     </ion-col>
   </ion-row>
 </ion-grid>

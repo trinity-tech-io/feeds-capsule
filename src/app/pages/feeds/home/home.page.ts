@@ -75,6 +75,8 @@ export class HomePage implements OnInit {
 
   public hideDeletedPosts:boolean = false;
 
+  public imageHeight:number = 0;
+
   constructor(
 
     private elmRef: ElementRef,
@@ -145,6 +147,7 @@ export class HomePage implements OnInit {
     this.connectionStatus = this.feedService.getConnectionStatus();
     this.styleObj.width = (screen.width - 105)+'px';
     this.clientHeight =screen.availHeight;
+    this.imageHeight = (screen.width-105)/3;
     this.initPostListData();
     // this.zone.run(()=>{
       this.refreshImage(0);
@@ -725,13 +728,17 @@ clearData(){
   }
 
 
-  showBigImage(nodeId:string,channelId:number,postId:number){
+  showBigImage(post:any){
+    let nodeId =  post.nodeId;
+    let channelId = post.channel_id;
+    let postId = post.id;
+    let imageIndex = post.imageIndex || 0;
     this.pauseAllVideo();
     this.zone.run(()=>{
       this.native.showLoading("common.waitMoment", 5*60*1000).then(()=>{
         let contentVersion = this.feedService.getContentVersion(nodeId,channelId,postId,0);
-        let thumbkey= this.feedService.getImgThumbKeyStrFromId(nodeId,channelId,postId,0,0);
-        let key = this.feedService.getImageKey(nodeId,channelId,postId,0,0);
+        let thumbkey= this.feedService.getImgThumbKeyStrFromId(nodeId,channelId,postId,0,imageIndex);
+        let key = this.feedService.getImageKey(nodeId,channelId,postId,0,imageIndex);
         if(contentVersion == "0"){
              key = thumbkey;
         }

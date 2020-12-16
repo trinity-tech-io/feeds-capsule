@@ -55,7 +55,10 @@
           >
 
           <app-imageview
-          *ngIf="imagesKeys.length>1"
+          *ngIf="imagesKeys.length>1&&postStatus != 1&&mediaType===1"
+          [imageHeight]="imageHeight"
+          [post]="post"
+          name="postdetail"
           [imageKeys] = "imagesKeys"
           (showBigImage)="showBigImage($event)"
           >
