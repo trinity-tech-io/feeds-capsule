@@ -57,6 +57,7 @@
           <app-imageview
           *ngIf="imagesKeys.length>1"
           [imageKeys] = "imagesKeys"
+          (showBigImage)="showBigImage($event)"
           >
           </app-imageview>
 

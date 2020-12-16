@@ -7,6 +7,7 @@ import { FeedService } from '../../services/FeedService';
 })
 export class ImageviewComponent implements OnInit {
   @Input() imageKeys =[];
+  @Output() showBigImage = new EventEmitter();
   public styleObj:any = {height:""};
   constructor(
   private feedService:FeedService
@@ -29,8 +30,8 @@ export class ImageviewComponent implements OnInit {
     }
   }
 
-  showBigImg(imgThumbKey:string){
-
+  showBigImg(item:any){
+    this.showBigImage.emit({"imageIndex":item["index"]});
   }
 
 }
