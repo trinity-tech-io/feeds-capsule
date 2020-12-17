@@ -750,7 +750,7 @@ clearData(){
           let img = realImg || "";
           if(img!=""){
             //this.curNodeId = "";
-            this.downStatusObj[nodeId+channelId+postId] = "";
+            this.downStatusObj[nodeId+channelId+postId+imageIndex] = "";
             this.native.hideLoading();
             this.native.openViewer(realImg,"common.image","FeedsPage.tabTitle1",this.appService);
           }else{
@@ -759,20 +759,20 @@ clearData(){
               this.openAlert();
               return;
             }
-            this.curImgPostId = nodeId+channelId+postId;
+            this.curImgPostId = nodeId+channelId+postId+imageIndex;
             this.cacheGetBinaryRequestKey = key;
             this.cachedMediaType = "img";
 
             this.feedService.processGetBinary(nodeId, channelId, postId, 0, 0, FeedsData.MediaType.containsImg, key,
               (transDataChannel)=>{
                 if (transDataChannel == FeedsData.TransDataChannel.SESSION){
-                  this.downStatusObj[nodeId+channelId+postId] = "1";
+                  this.downStatusObj[nodeId+channelId+postId+imageIndex] = "1";
                   this.curNodeId = nodeId;
                   return;
                 }
 
                 if (transDataChannel == FeedsData.TransDataChannel.MESSAGE){
-                  this.downStatusObj[nodeId+channelId+postId] = "";
+                  this.downStatusObj[nodeId+channelId+postId+imageIndex] = "";
                   this.curNodeId = "";
                   return;
                 }
