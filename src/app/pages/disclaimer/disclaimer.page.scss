@@ -1,12 +1,16 @@
+
 ion-grid {
+    background:#494A49;
+    height: 100%;
     .bg{
+      height:540px;
       background:#ffffff;
       border-radius: 17px;
       overflow:auto;
       padding:0px 10px;
     }
 
-    padding:15px;
+    padding:10px 30px;
 
     .des {
         padding:0px;
@@ -16,7 +20,4 @@ ion-grid {
         font-size: 16px;
         color: #161740;
     }
-}
-
-.darkContainer {
 }
