@@ -15,7 +15,7 @@ declare let appManager: AppManagerPlugin.AppManager;
   styleUrls: ['./disclaimer.page.scss'],
 })
 export class DisclaimerPage implements OnInit {
-  public styleObj:any={"height":""};
+  public styleObj:any={"margin-top":""};
 
   constructor(
     private modalCtrl: ModalController,
@@ -34,8 +34,8 @@ export class DisclaimerPage implements OnInit {
     this.initTitle();
     this.native.setTitleBarBackKeyShown(false);
     appManager.setVisible('show');
+    this.styleObj["height"] = (screen.height - 160) +"px";
 
-    this.styleObj["height"] = (screen.height - 215) +"px"
     this.events.subscribe("feeds:updateTitle",()=>{
       this.initTitle();
     });
