@@ -565,7 +565,6 @@ export class PostdetailPage implements OnInit {
     if(this.imagesKeys.length>1){
       imageIndex = item["imageIndex"];
     }
-    console.log("=====imageIndex===="+imageIndex);
     this.zone.run(()=>{
       this.native.showLoading("common.waitMoment", 5*60*1000).then(()=>{
         let contentVersion = this.feedService.getContentVersion(this.nodeId,this.channelId,this.postId,0);

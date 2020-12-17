@@ -906,7 +906,7 @@ export class ProfilePage implements OnInit {
           let img = realImg || "";
           if(img!=""){
             //this.curNodeId = "";
-            this.downStatusObj[item.nodeId+item.channelId+item.postId] = "";
+            this.downStatusObj[item.nodeId+item.channelId+item.postId+imageIndex] = "";
             this.native.hideLoading();
             this.native.openViewer(realImg,"common.image","FeedsPage.tabTitle2",this.appService);
           }else{
@@ -915,16 +915,16 @@ export class ProfilePage implements OnInit {
               this.openAlert();
               return;
             }
-            this.curImgPostId = item.nodeId+item.channelId+item.postId;
+            this.curImgPostId = item.nodeId+item.channelId+item.postId+imageIndex;
             this.cacheGetBinaryRequestKey = key;
             this.cachedMediaType ="img";
             this.feedService.processGetBinary(item.nodeId,item.channelId,item.postId, 0,imageIndex, FeedsData.MediaType.containsImg, key,
               (transDataChannel)=>{
                 if (transDataChannel == FeedsData.TransDataChannel.SESSION){
-                  this.downStatusObj[item.nodeId+item.channelId+item.postId] = "1";
+                  this.downStatusObj[item.nodeId+item.channelId+item.postId+imageIndex] = "1";
                   this.curNodeId = item.nodeId;
                 }else{
-                  this.downStatusObj[item.nodeId+item.channelId+item.postId] = "1";
+                  this.downStatusObj[item.nodeId+item.channelId+item.postId+imageIndex] = "1";
                   this.curNodeId = "";
                 }
               },(err)=>{
