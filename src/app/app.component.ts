@@ -166,6 +166,7 @@ export class MyApp {
 
   clearData(){
     this.storageService.remove("signInData").then(()=>{
+      this.events.publish("feeds:clearHomeEvent");
       this.feedService.resetConnectionStatus();
       this.feedService.destroyCarrier();
       this.appService.hideright();

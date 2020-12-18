@@ -151,7 +151,14 @@ export class HomePage implements OnInit {
       //this.scrollToTop(1);
       this.initnodeStatus(this.postList);
     // })
-
+   this.events.subscribe("feeds:clearHomeEvent",()=>{
+            this.events.unsubscribe('feeds:hideDeletedPosts');
+            this.events.unsubscribe("feeds:createpost");
+            this.events.unsubscribe("addBinaryEvevnt");
+            this.events.unsubscribe("update:tab");
+            this.clearData();
+            this.events.unsubscribe("feeds:clearHomeEvent");
+   });
    this.events.subscribe("update:tab",(isInit)=>{
     this.zone.run(()=>{
       this.hideDeletedPosts = this.feedService.getHideDeletedPosts();

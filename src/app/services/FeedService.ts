@@ -426,7 +426,7 @@ export class FeedService {
   private carrierStatus:FeedsData.ConnState = FeedsData.ConnState.disconnected;
   private networkStatus:FeedsData.ConnState = FeedsData.ConnState.disconnected;
   private connectionStatus = FeedsData.ConnState.disconnected ;
-  private lastConnectionStatus = FeedsData.ConnState.connected ;
+  private lastConnectionStatus = FeedsData.ConnState.disconnected ;
   private isLogging: {[nodeId: string]: boolean} = {};
   private signinChallengeTimeout: NodeJS.Timer;
   private autoSigninInterval;
@@ -5060,6 +5060,7 @@ export class FeedService {
     this.connectionService.resetConnectionStatus();
     this.resetServerConnectionStatus();
     this.connectionStatus = FeedsData.ConnState.disconnected;
+    this.lastConnectionStatus = FeedsData.ConnState.disconnected;
   }
 
   resetServerConnectionStatus(){
