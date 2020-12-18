@@ -15,14 +15,14 @@
             <ion-menu-toggle>
                 <div (click)="profiledetail()">
                     <img src="./assets/images/menu-profile.svg" *ngIf="!theme.darkMode">
-                    <img src="./assets/images/menu-profile-dark.svg" *ngIf="theme.darkMode">
+                    <img src="./assets/images/darkmode/menu-profile.svg" *ngIf="theme.darkMode">
                     <h1>{{ 'app.profileDetails' | translate }}</h1>
                 </div>
             </ion-menu-toggle>
             <ion-menu-toggle>
                 <div (click)="goToFeedSource()">
                     <img src="./assets/images/menu-feeds.svg" *ngIf="!theme.darkMode">
-                    <img src="./assets/images/menu-feeds-dark.svg" *ngIf="theme.darkMode">
+                    <img src="./assets/images/darkmode/menu-feeds.svg" *ngIf="theme.darkMode">
                     <h1>{{ 'app.feedSources' | translate }}</h1>
                 </div>
             </ion-menu-toggle>
@@ -30,7 +30,7 @@
             <ion-menu-toggle>
                 <div (click)="donation()">
                     <img src="./assets/images/menu-donation.svg" *ngIf="!theme.darkMode">
-                    <img src="./assets/images/menu-donation-dark.svg" *ngIf="theme.darkMode">
+                    <img src="./assets/images/darkmode/menu-donation.svg" *ngIf="theme.darkMode">
                     <h1>{{ 'app.donation' | translate }}</h1>
                 </div>
             </ion-menu-toggle>
@@ -41,11 +41,11 @@
                     <h1>{{ 'app.settings' | translate }}</h1>
                 </div>
             </ion-menu-toggle>
-            
+
             <ion-menu-toggle>
                 <div (click)="about()">
                     <img src="./assets/images/menu-about.svg" *ngIf="!theme.darkMode">
-                    <img src="./assets/images/menu-about-dark.svg" *ngIf="theme.darkMode">
+                    <img src="./assets/images/darkmode/menu-about.svg" *ngIf="theme.darkMode">
                     <h1>{{ 'app.about' | translate }}</h1>
                 </div>
             </ion-menu-toggle>
@@ -63,5 +63,4 @@
     <ion-router-outlet  id="my-content"></ion-router-outlet>
 
   </ion-app>
-  
-  
+
