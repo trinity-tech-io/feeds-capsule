@@ -616,7 +616,7 @@ export class ProfilePage implements OnInit {
         let nodeId =arr[0];
         let channelId:any = arr[1];
         let postId:any = arr[2];
-        let key = this.feedService.getImgThumbKeyStrFromId(nodeId,channelId,postId,0,0);
+        let key = this.feedService.getImgThumbKeyStrFromId(nodeId,channelId,postId,0,imageIndex);
        this.feedService.getData(key).then((imagedata)=>{
             let image = imagedata || "";
             if(image!=""){
