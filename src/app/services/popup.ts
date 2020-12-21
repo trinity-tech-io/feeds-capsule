@@ -27,7 +27,7 @@ export class PopupProvider {
                 buttons: [{
                     text: okText ? okText : this.translate.instant('confirm'),
                     handler: () => {
-                        resolve();
+                        resolve(null);
                     }
                 }]
             }).then(alert => alert.present());
