@@ -499,7 +499,7 @@ export class FeedService {
     return new Promise((resolve, reject) =>{
       this.storeService.get(PersistenceKey.serverVersions).then((mServervVersions)=>{
         this.serverVersions = mServervVersions || {};
-        resolve();
+        resolve(mServervVersions);
       }).catch(()=>{
         reject();
       });
@@ -512,12 +512,12 @@ export class FeedService {
       if( postMap == ""){
         this.storeService.get(PersistenceKey.postMap).then((mPostMap)=>{
           this.postMap = mPostMap || {};
-          resolve();
+          resolve(mPostMap);
         }).catch(()=>{
           reject();
         });
       }else{
-          resolve();
+          resolve(postMap);
       }
     });
   }
@@ -528,12 +528,12 @@ export class FeedService {
       if( channels == ""){
         this.storeService.get(PersistenceKey.channelsMap).then((mChannelMap)=>{
           channelsMap = mChannelMap || {};
-          resolve();
+          resolve(mChannelMap);
         }).catch(()=>{
           reject();
       });
       }else{
-          resolve();
+          resolve(channels);
       }
     });
   }
@@ -544,12 +544,12 @@ export class FeedService {
       if( credential == ""){
         this.storeService.get(PersistenceKey.credential).then((mCredential)=>{
           localCredential = mCredential || "";
-          resolve();
+          resolve(mCredential);
         }).catch(()=>{
           reject();
         });
       }else{
-          resolve();
+          resolve(localCredential);
       }
     });
   }
@@ -560,12 +560,12 @@ export class FeedService {
       if( lastPostUpdate == ""){
         this.storeService.get(PersistenceKey.lastPostUpdateMap).then((mLastPostUpdateMap)=>{
           lastPostUpdateMap = mLastPostUpdateMap || {};
-          resolve();
+          resolve(mLastPostUpdateMap);
         }).catch(()=>{
           reject();
         });
       }else{
-          resolve();
+          resolve(lastPostUpdate);
       }
     });
   }
@@ -576,12 +576,12 @@ export class FeedService {
       if( myChannels == ""){
         this.storeService.get(PersistenceKey.myChannelsMap).then((mMyChannelsMap)=>{
           myChannelsMap = mMyChannelsMap || {};
-          resolve();
+          resolve(mMyChannelsMap);
         }).catch(()=>{
           reject();
         });
       }else{
-          resolve();
+          resolve(myChannels);
       }
     });
   }
@@ -600,12 +600,12 @@ export class FeedService {
               serversStatus[keys[index]].status = ConnState.disconnected;
           }
 
-          resolve();
+          resolve(mServersStatus);
         }).catch(()=>{
           reject();
         });
       }else{
-          resolve();
+          resolve(sStatus);
       }
     });
   }
@@ -616,12 +616,12 @@ export class FeedService {
       if( serverStatistics == ""){
         this.storeService.get(PersistenceKey.serverStatisticsMap).then((mServerStatisticsMap)=>{
           serverStatisticsMap = mServerStatisticsMap || {};
-          resolve();
+          resolve(mServerStatisticsMap);
         }).catch(()=>{
           reject();
         });
       }else{
-          resolve();
+          resolve(serverStatistics);
       }
     });
   }
@@ -632,12 +632,12 @@ export class FeedService {
       if( servers == ""){
         this.storeService.get(PersistenceKey.serverMap).then((mServerMap)=>{
           serverMap = mServerMap || {};
-          resolve();
+          resolve(mServerMap);
         }).catch(()=>{
           reject();
         });
       }else{
-          resolve();
+          resolve(servers);
       }
     });
   }
@@ -648,12 +648,12 @@ export class FeedService {
       if( subscribedChannels == ""){
         this.storeService.get(PersistenceKey.subscribedChannelsMap).then((mSubscribedChannelsMap)=>{
           subscribedChannelsMap = mSubscribedChannelsMap || {};
-          resolve();
+          resolve(mSubscribedChannelsMap);
         }).catch(()=>{
           reject();
         });
       }else{
-          resolve();
+          resolve(subscribedChannels);
       }
     });
   }
@@ -664,12 +664,12 @@ export class FeedService {
       if( comments == ""){
         this.storeService.get(PersistenceKey.commentsMap).then((mCommentsMap)=>{
           commentsMap = mCommentsMap || {};
-          resolve();
+          resolve(mCommentsMap);
         }).catch(()=>{
           reject();
         });
       }else{
-          resolve();
+          resolve(comments);
       }
     });
   }
@@ -680,12 +680,12 @@ export class FeedService {
       if( unread == ""){
         this.storeService.get(PersistenceKey.unreadMap).then((mUnreadMap)=>{
           unreadMap = mUnreadMap || {};
-          resolve();
+          resolve(mUnreadMap);
         }).catch(()=>{
           reject();
         });
       }else{
-          resolve();
+          resolve(unread);
       }
     });
   }
@@ -696,12 +696,12 @@ export class FeedService {
       if( likes == ""){
         this.storeService.get(PersistenceKey.likeMap).then((mLikeMap)=>{
           likeMap = mLikeMap || {};
-          resolve();
+          resolve(mLikeMap);
         }).catch(()=>{
           reject();
         });
       }else{
-          resolve();
+          resolve(likes);
       }
     });
   }
@@ -712,12 +712,12 @@ export class FeedService {
       if( accessTokens == ""){
         this.storeService.get(PersistenceKey.accessTokenMap).then((mAccessTokenMap)=>{
           accessTokenMap = mAccessTokenMap || {};
-          resolve();
+          resolve(mAccessTokenMap);
         }).catch(()=>{
           reject();
         });
       }else{
-          resolve();
+          resolve(accessTokens);
       }
     });
   }
@@ -728,12 +728,12 @@ export class FeedService {
       if( bindServer == ""){
         this.storeService.get(PersistenceKey.bindingServer).then((mBindingServer)=>{
           bindingServer = mBindingServer || undefined;
-          resolve();
+          resolve(mBindingServer);
         }).catch(()=>{
           reject();
         });
       }else{
-          resolve();
+          resolve(bindServer);
       }
     });
   }
@@ -744,12 +744,12 @@ export class FeedService {
       if( notifications == ""){
         this.storeService.get(PersistenceKey.notificationList).then((mNotificationList)=>{
           notificationList = mNotificationList || [];
-          resolve();
+          resolve(mNotificationList);
         }).catch(()=>{
           reject();
         });
       }else{
-          resolve();
+          resolve(notifications);
       }
     });
   }
@@ -760,12 +760,12 @@ export class FeedService {
       if( likeComments == ""){
         this.storeService.get(PersistenceKey.likeCommentMap).then((mLikeCommentMap)=>{
           likeCommentMap = mLikeCommentMap || {};
-          resolve();
+          resolve(mLikeCommentMap);
         }).catch(()=>{
           reject();
         });
       }else{
-          resolve();
+          resolve(likeComments);
       }
     });
   }
@@ -776,12 +776,12 @@ export class FeedService {
       if( lastFeedUpdate == ""){
         this.storeService.get(PersistenceKey.lastFeedUpdateMap).then((mLastFeedUpdateMap)=>{
           this.lastFeedUpdateMap = mLastFeedUpdateMap || {};
-          resolve();
+          resolve(mLastFeedUpdateMap);
         }).catch(()=>{
           reject();
         });
       }else{
-          resolve();
+          resolve(lastFeedUpdate);
       }
     });
   }
@@ -792,12 +792,12 @@ export class FeedService {
       if( lastCommentUpdate == ""){
         this.storeService.get(PersistenceKey.lastCommentUpdateMap).then((mLastCommentUpdateMap)=>{
           this.lastCommentUpdateMap = mLastCommentUpdateMap || {};
-          resolve();
+          resolve(mLastCommentUpdateMap);
         }).catch(()=>{
           reject();
         });
       }else{
-          resolve();
+          resolve(lastCommentUpdate);
       }
     });
   }
@@ -4631,7 +4631,7 @@ export class FeedService {
     );
 
     return new Promise((resolve, reject) =>{
-      resolve();
+      resolve(null);
     });
   }
 
@@ -4807,7 +4807,7 @@ export class FeedService {
       notificationList.splice(index, 1);
       this.storeService.set(PersistenceKey.notificationList, notificationList);
       eventBus.publish(PublishType.UpdateNotification);
-      resolve();
+      resolve(null);
     });
   }
 
