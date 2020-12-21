@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import * as TrinitySDK from '@elastosfoundation/trinity-dapp-sdk';
 import { LogUtils } from 'src/app/services/LogUtils';
+import { StorageService } from 'src/app/services/StorageService';
 
 declare let didManager: DIDPlugin.DIDManager;
 let TAG: string = "StandardAuthService";
@@ -8,7 +9,9 @@ let TAG: string = "StandardAuthService";
 @Injectable()
 export class StandardAuthService {
     private didHelper:TrinitySDK.DID.DIDHelper;
-    constructor(private logUtils:LogUtils) {
+    private appIdCredential:DIDPlugin.VerifiableCredential = null;
+    constructor(private logUtils: LogUtils,
+                private storeService: StorageService) {
         this.didHelper = new TrinitySDK.DID.DIDHelper();
     }
 
@@ -63,11 +66,13 @@ export class StandardAuthService {
             this.logUtils.logd("Getting app instance DID",TAG);
             let appInstanceDID = (await this.didHelper.getOrCreateAppInstanceDID()).did;
             let appInstanceDIDInfo = await this.didHelper.getExistingAppInstanceDIDInfo();
+            
+            //work around
+            this.appIdCredential = await this.getAppIdCredentialFromStorage(this.appIdCredential);
+            this.appIdCredential = await this.checkAppIdCredentialStatus(this.appIdCredential);
 
-            this.logUtils.logd("Getting app identity credential",TAG);
-            let appIdCredential = await this.didHelper.getOrCreateAppIdentityCredential();
-            this.logUtils.logd("appIdCredential is "+JSON.stringify(appIdCredential),TAG);
-            if (!appIdCredential) {
+            this.logUtils.logd("appIdCredential is "+JSON.stringify(this.appIdCredential),TAG);
+            if (!this.appIdCredential) {
                 this.logUtils.logw("Empty app id credential",TAG);
                 resolve(null);
                 return;
@@ -75,7 +80,7 @@ export class StandardAuthService {
 
             // Create the presentation that includes back end challenge (nonce) and the app id credential.
             appInstanceDID.createVerifiablePresentation([
-                appIdCredential
+                this.appIdCredential
             ], realm, nonce, appInstanceDIDInfo.storePassword, async (presentation)=>{
                 if (presentation) {
                     // Generate the back end authentication JWT
@@ -154,4 +159,48 @@ export class StandardAuthService {
             }
         });
     }
+
+    getAppIdCredentialFromStorage(appIdCredential: DIDPlugin.VerifiableCredential): Promise<DIDPlugin.VerifiableCredential>{
+        return new Promise(async (resolve, reject)=>{
+            if (appIdCredential != null && appIdCredential != undefined){
+                this.logUtils.logd("Get credential from memory , credential is "+JSON.stringify(appIdCredential),TAG);
+                resolve(appIdCredential);
+                return ;
+            }
+
+            let mAppIdCredential = await this.storeService.get("appIdCredential")
+            this.logUtils.logd("Get credential from storage , credential is "+JSON.stringify(mAppIdCredential),TAG);
+            resolve(mAppIdCredential);
+        });
+    }
+
+    checkAppIdCredentialStatus(appIdCredential: DIDPlugin.VerifiableCredential): Promise<DIDPlugin.VerifiableCredential>{
+        return new Promise(async (resolve, reject)=>{
+            if (this.checkCredentialValid(appIdCredential)){
+                this.logUtils.logd("Credential valid , credential is "+JSON.stringify(appIdCredential),TAG);
+                resolve(appIdCredential);
+                return ;
+            }
+
+            this.logUtils.logd("Credential invalid",TAG);
+            this.logUtils.logd("Getting app identity credential",TAG);
+            let mAppIdCredential = await this.didHelper.getOrCreateAppIdentityCredential();
+            this.logUtils.logd("Get app identity credential, credential is "+JSON.stringify(mAppIdCredential),TAG);
+            resolve(mAppIdCredential);
+        });
+    }
+
+    checkCredentialValid(appIdCredential: DIDPlugin.VerifiableCredential): boolean{
+        if (appIdCredential == null || appIdCredential == undefined){
+            return false;
+        }
+
+        let currentData = new Date;
+        if (appIdCredential.getExpirationDate().valueOf()<currentData.valueOf()){
+            return false;
+        }
+
+        return true;
+    }
+
 }
