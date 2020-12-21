@@ -1918,7 +1918,7 @@ export class FeedService {
         isLocalRefresh = false;
         // let lastFeedUpdate = this.lastFeedUpdateMap[nodeId].time || 0;
         // this.getChannels(nodeId, Communication.field.last_update, 0, lastFeedUpdate, 0);
-        this.updateFeed(nodeId);
+        this.updateFeed(nodeId, false);
       }
     }
 
@@ -3822,10 +3822,13 @@ export class FeedService {
     this.updatePostWithTime(nodeId, channelId, lastPostTime);
   }
 
-  updateFeed(nodeId: string){
-    let mLastFeedUpdateMap = this.lastFeedUpdateMap || "";
-    let update = mLastFeedUpdateMap[nodeId] || "";
-    let lastFeedTime = update["time"] || 0;
+  updateFeed(nodeId: string, refreshAll: boolean){
+    let lastFeedTime: number = 0;
+    if (!refreshAll){
+      let mLastFeedUpdateMap = this.lastFeedUpdateMap || "";
+      let update = mLastFeedUpdateMap[nodeId] || "";
+      lastFeedTime = update["time"] || 0;
+    }
     this.updateFeedsWithTime(nodeId,lastFeedTime);
   }
 
@@ -4443,7 +4446,7 @@ export class FeedService {
     this.getStatistics(friendId);
     this.enableNotification(friendId);
 
-    this.updateFeed(friendId);
+    this.updateFeed(friendId, true);
     let list = this.getSubscribedChannelsFromNodeId(friendId);
     for (let index = 0; index < list.length; index++) {
       let channelId = list[index].id;
