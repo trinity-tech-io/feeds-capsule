@@ -14,7 +14,7 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 export class AboutPage implements OnInit {
   public connectionStatus = 1;
-  public version = "v1.4.0";
+  public version = "v1.4.1";
   public currentLanguage = "";
 
   constructor(
