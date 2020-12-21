@@ -24,9 +24,9 @@ declare let appManager: AppManagerPlugin.AppManager;
 declare let didSessionManager: DIDSessionManagerPlugin.DIDSessionManager;
 
 let TAG: string = "Feeds-service";
-let versionCode: number = 10401;
-let newAuthVersion: number = 10401;
-let newCommentVersion: number = 10401;
+let versionCode: number = 10400;
+let newAuthVersion: number = 10400;
+let newCommentVersion: number = 10400;
 let subscribedChannelsMap:{[nodeChannelId: string]: Channels};
 let channelsMap:{[nodeChannelId: string]: Channels} ;
 let myChannelsMap:{[nodeChannelId: string]: MyChannel};
