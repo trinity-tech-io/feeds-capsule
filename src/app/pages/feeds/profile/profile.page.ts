@@ -605,7 +605,7 @@ export class ProfilePage implements OnInit {
     let rpostImage = document.getElementById(id+"likerow");
     let postImage:any = document.getElementById(id+"postimglike") || "";
     try {
-      if(id!=''&&postImage.getBoundingClientRect().top>=-this.clientHeight&&postImage.getBoundingClientRect().top<=this.clientHeight){
+      if(id!=''&&postImage.getBoundingClientRect().top>=-100&&postImage.getBoundingClientRect().top<=this.clientHeight){
         if(isload===""){
         //rpostImage.style.display = "none";
         this.isLoadimage[id] = "11";
@@ -639,7 +639,7 @@ export class ProfilePage implements OnInit {
         }
       }else{
         let postImageSrc = postImage.getAttribute("src") || "";
-        if(postImage.getBoundingClientRect().top<-this.clientHeight&&this.isLoadimage[id]==="13"&&postImageSrc!=""){
+        if(postImage.getBoundingClientRect().top<-100&&this.isLoadimage[id]==="13"&&postImageSrc!=""){
           this.isLoadimage[id] = "";
           postImage.setAttribute("src","assets/images/loading.png");
         }
@@ -661,7 +661,7 @@ export class ProfilePage implements OnInit {
        this.pauseVideo(id);
     }
     try {
-      if(id!=''&&video.getBoundingClientRect().top>=-this.clientHeight&&video.getBoundingClientRect().top<=this.clientHeight){
+      if(id!=''&&video.getBoundingClientRect().top>=-100&&video.getBoundingClientRect().top<=this.clientHeight){
         if(isloadVideoImg===""){
           this.isLoadVideoiamge[id] = "11";
           //vgplayer.style.display = "none";
@@ -690,7 +690,7 @@ export class ProfilePage implements OnInit {
         }
       }else{
         let postSrc =  video.getAttribute("poster") || "";
-        if(video.getBoundingClientRect().top<-this.clientHeight&&this.isLoadVideoiamge[id]==="13"&&postSrc!=""){
+        if(video.getBoundingClientRect().top<-100&&this.isLoadVideoiamge[id]==="13"&&postSrc!=""){
           video.setAttribute("poster","assets/images/loading.png");
           let sourcesrc =  source.getAttribute("src") || "";
           if(sourcesrc!= ""){
