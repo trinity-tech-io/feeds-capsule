@@ -792,7 +792,7 @@ clearData(){
     let rpostimg = document.getElementById(id+"rpostimg");
     let postImage = document.getElementById(id+"postimg");
     try {
-      if(id!=''&&postImage.getBoundingClientRect().top>=-this.clientHeight&&postImage.getBoundingClientRect().top<=this.clientHeight){
+      if(id!=''&&postImage.getBoundingClientRect().top>=-100&&postImage.getBoundingClientRect().top<=this.clientHeight){
         // if(rowindex === 2){
         //  this.logUtils.logd("entry "+rowindex+"-"+JSON.stringify(postImage.getBoundingClientRect()),TAG);
         // }
@@ -823,7 +823,7 @@ clearData(){
 
       }else{
         let postImageSrc = postImage.getAttribute("src") || "";
-         if(postImage.getBoundingClientRect().top<-this.clientHeight&&this.isLoadimage[id]==="13"&&postImageSrc!=""){
+         if(postImage.getBoundingClientRect().top<-100&&this.isLoadimage[id]==="13"&&postImageSrc!=""){
           // this.logUtils.logd("remove error:"+rowindex+"-"+postImage.getBoundingClientRect().top,TAG);
           this.isLoadimage[id] = "";
           postImage.setAttribute("src","assets/images/loading.png");
@@ -845,7 +845,7 @@ clearData(){
        this.pauseVideo(id);
     }
     try {
-      if(id!=''&&video.getBoundingClientRect().top>=-this.clientHeight&&video.getBoundingClientRect().top<=this.clientHeight){
+      if(id!=''&&video.getBoundingClientRect().top>=-100&&video.getBoundingClientRect().top<=this.clientHeight){
         // this.logUtils.logd("entry "+rowindex+"==="+video.getBoundingClientRect().top,TAG);
         if(isloadVideoImg===""){
           this.isLoadVideoiamge[id] = "11";
@@ -881,7 +881,7 @@ clearData(){
       }else{
         // this.logUtils.logd("remove: index = "+rowindex+" top = "+video.getBoundingClientRect().top+" bottom = "+video.getBoundingClientRect().bottom,TAG);
         let postSrc =  video.getAttribute("poster") || "";
-        if(video.getBoundingClientRect().top<-this.clientHeight&&this.isLoadVideoiamge[id]==="13"&&postSrc!="assets/images/loading.png"){
+        if(video.getBoundingClientRect().top<-100&&this.isLoadVideoiamge[id]==="13"&&postSrc!="assets/images/loading.png"){
           video.setAttribute("poster","assets/images/loading.png");
           let sourcesrc =  source.getAttribute("src") || "";
           if(sourcesrc  != ""){
