@@ -141,7 +141,7 @@ export class PostdetailPage implements OnInit {
 
   refreshCommentList(){
     this.totalData = this.sortCommentList();
-    if (this.totalData.length - this.pageNumber*this.startIndex > 0){
+    if (this.startIndex!=0&&this.totalData.length - this.pageNumber*this.startIndex > 0){
       this.commentList = this.totalData.slice(0,(this.startIndex)*this.pageNumber);
       this.infiniteScroll.disabled =false;
      } else {
