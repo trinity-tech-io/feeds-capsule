@@ -3394,6 +3394,7 @@ export class FeedService {
     this.deletePostFromChannel(nodeId, request.id);
 
     this.native.toast(this.formatInfoService.formatUnFollowSuccessMsg(this.getFeedNameById(nodeId, request.id)));
+    eventBus.publish("feeds:unfollowFeedsFinish");
   }
 
   handleEditFeedInfo(nodeId: string, request: any, error: any){

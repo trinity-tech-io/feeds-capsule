@@ -146,19 +146,25 @@ export class HomePage implements OnInit {
     this.styleObj.width = (screen.width - 105)+'px';
     this.clientHeight =screen.availHeight;
     this.initPostListData();
-    // this.zone.run(()=>{
-      this.refreshImage(0);
-      //this.scrollToTop(1);
-      this.initnodeStatus(this.postList);
-    // })
-   this.events.subscribe("feeds:clearHomeEvent",()=>{
+    this.refreshImage(0);
+    this.initnodeStatus(this.postList);
+
+    this.events.subscribe('feeds:unfollowFeedsFinish', (nodeId, channelId, name) => {
+      this.zone.run(() => {
+          this.hideDeletedPosts = this.feedService.getHideDeletedPosts();
+          this.refreshPostList();
+      });
+    });
+
+    this.events.subscribe("feeds:clearHomeEvent",()=>{
             this.events.unsubscribe('feeds:hideDeletedPosts');
             this.events.unsubscribe("feeds:createpost");
             this.events.unsubscribe("addBinaryEvevnt");
             this.events.unsubscribe("update:tab");
+            this.events.unsubscribe("feeds:unfollowFeedsFinish");
             this.clearData();
             this.events.unsubscribe("feeds:clearHomeEvent");
-   });
+    });
    this.events.subscribe("update:tab",(isInit)=>{
     this.zone.run(()=>{
       this.hideDeletedPosts = this.feedService.getHideDeletedPosts();
@@ -354,6 +360,7 @@ addBinaryEvevnt(){
  ionViewWillLeave(){
    this.events.unsubscribe('feeds:hideDeletedPosts');
    this.events.unsubscribe("feeds:createpost");
+   this.events.unsubscribe("feeds:unfollowFeedsFinish");
    this.clearData();
 }
 
@@ -599,6 +606,7 @@ clearData(){
           this.isLoadVideoiamge ={};
           this.refreshImage(0);
           this.initnodeStatus(this.postList);
+          if(event!=null)
           event.target.complete();
         })
 
@@ -610,11 +618,11 @@ clearData(){
           this.isLoadVideoiamge ={};
           this.refreshImage(0);
           this.initnodeStatus(this.postList);
+          if(event!=null)
           event.target.complete();
          })
 
       }
-
       clearTimeout(sId);
     },500);
   }
