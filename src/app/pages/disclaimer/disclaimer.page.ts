@@ -34,7 +34,7 @@ export class DisclaimerPage implements OnInit {
     this.initTitle();
     this.native.setTitleBarBackKeyShown(false);
     appManager.setVisible('show');
-    this.styleObj["height"] = (screen.height - 160) +"px";
+    this.styleObj["height"] = (screen.height - 245) +"px";
 
     this.events.subscribe("feeds:updateTitle",()=>{
       this.initTitle();
