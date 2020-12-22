@@ -86,7 +86,8 @@ export const zh = {
         "loadingLastestComment":"正在加载最新评论",
         "showless":"显示更少",
         "showmore":"显示更多",
-        "didnotrelease":"DID发布上链后，Feeds 才能正常运行"
+        "didnotrelease":"DID发布上链后，Feeds 才能正常运行",
+        "unknow":"未知"
     },
     "app":{
         "profileDetails":"档案详情",

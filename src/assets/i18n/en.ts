@@ -86,7 +86,8 @@ export const en = {
         "loadingLastestComment":"Loading latest comments",
         "showless":"show less",
         "showmore":"show more",
-        "didnotrelease":"Feeds can work normally after DID is published on the chain"
+        "didnotrelease":"Feeds can work normally after DID is published on the chain",
+        "unknow":"Unknow"
     },
     "app":{
         "profileDetails":"Profile Details",
