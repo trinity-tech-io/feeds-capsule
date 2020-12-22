@@ -1167,6 +1167,7 @@ export class FeedService {
     this.events.subscribe('carrier:friendConnection', ret => {
       let friendId = ret.friendId;
       let friendStatus = ret.status;
+      this.logUtils.logd("Friend connection changed to "+friendStatus,TAG);
       eventBus.publish(PublishType.friendConnectionChanged, friendId, friendStatus);
 
       if (this.connectionService.friendConnectionMap == null || this.connectionService.friendConnectionMap == undefined)
@@ -1182,28 +1183,20 @@ export class FeedService {
         status: friendStatus
       }
 
-      // let serverVersionCode = this.getServerVersionCodeByNodeId(friendId);
-      // if (serverVersionCode < versionCode)
-      this.getServerVersion(friendId);
-
-      let mServerMap = serverMap || {};
-      let server = mServerMap[friendId]||"";
-      if (server != "" )
-        this.doFriendConnection(friendId, friendStatus);
+      if (friendStatus == FeedsData.ConnState.connected)
+        this.getServerVersion(friendId);
     });
   }
 
-  doFriendConnection(friendId: string, friendStatus:any){
-    if (friendStatus == FeedsData.ConnState.connected){
-      let accessToken = accessTokenMap[friendId]||undefined;
-      if (this.checkExp(accessToken)){
-        this.signinChallengeRequest(friendId,true);
-      }else{
-        this.prepare(friendId);
-      }
+  doFriendConnection(friendId: string){
+    let accessToken = accessTokenMap[friendId]||undefined;
+    if (this.checkExp(accessToken)){
+      this.signinChallengeRequest(friendId,true);
+    }else{
+      this.prepare(friendId);
+    }
     this.storeService.set(PersistenceKey.serversStatus,serversStatus);
     eventBus.publish(PublishType.serverConnectionChanged,serversStatus);
-    }
   }
 
   friendAddCallback(){
@@ -2285,10 +2278,10 @@ export class FeedService {
   }
 
   handleGetServerVersion(nodeId: string, result: any, error: any){
-    // if (error != null && error != undefined && error.code != undefined){
-    //   this.handleError(nodeId, error);
-    //   return;
-    // }
+    if (error != null && error != undefined && error.code != undefined){
+      this.afterFriendConnection(nodeId);
+      return;
+    }
 
     let version = result.version;
     let versionCode = result.version_code||1;
@@ -2310,6 +2303,7 @@ export class FeedService {
       this.serverVersions[nodeId].versionName = version;
     }
     this.storeService.set(PersistenceKey.serverVersions, this.serverVersions);
+    this.afterFriendConnection(nodeId);
   }
 
   enableNotification(nodeId: string){
@@ -6152,5 +6146,12 @@ export class FeedService {
       return;
     let accessToken: FeedsData.AccessToken = accessTokenMap[nodeId]||undefined;
     this.connectionService.getMultiComments(this.getServerNameByNodeId(nodeId), nodeId, channelId, postId, by, upperBound, lowerBound, maxCounts, accessToken);
+  }
+
+  afterFriendConnection(friendId: string){
+    let mServerMap = serverMap || {};
+    let server = mServerMap[friendId]||"";
+    if (server != "")
+      this.doFriendConnection(friendId);
   }
 }
