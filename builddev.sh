@@ -25,7 +25,7 @@ function appendCommitId(){
 
   COMMITID=$(git log --format=%h -1)
   echo 'CommitID is '$COMMITID
-  sed -i "" "s/version = \"v[0-9.]*/&.${COMMITID}/" $dest
+  sed -i "" "s/version = \"v[0-9.]*/&(${COMMITID})/" $dest
   echo 'Append commit success'
   package
 }
