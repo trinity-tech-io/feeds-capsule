@@ -1701,7 +1701,7 @@ export class FeedService {
   }
 
   getServerNameByNodeId(nodeId: string): string{
-    let serverName = this.translate.instant("common.unknow");
+    let serverName = this.translate.instant("common.unknown");
     let server = this.getServerbyNodeId(nodeId);
     if ( server != undefined ){
       serverName = server.name;
@@ -1711,7 +1711,7 @@ export class FeedService {
   }
 
   getFeedNameById(nodeId: string, channelId: number): string{
-    let feedName = this.translate.instant("common.unknow");
+    let feedName = this.translate.instant("common.unknown");
     let channel = this.getChannelFromId(nodeId, channelId);
     if ( channel !=undefined ){
       feedName = channel.name;
