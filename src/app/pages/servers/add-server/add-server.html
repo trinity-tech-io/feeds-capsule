@@ -2,52 +2,7 @@
   <div class="offline-header"></div>
 </ion-header>
 <ion-content>
-  <!-- <div>
-    <div style="margin-top: 33px;" class="center-flex">
-      <img style="  width: 82.5px;
-      height: 54.9px;" src="assets/images/empty-feeds-icon.svg">
-    </div>
-
-    <div style="
-    margin-top: 24px;
-    font-family: Montserrat;
-    font-size: 24px;
-    font-weight: 500;
-    font-stretch: normal;
-    font-style: normal;
-    line-height: 1.25;
-    letter-spacing: 1.2px;
-    text-align: center;
-    color: #8888b0;">{{'AddServerPage.scanOrEnterAddress'|translate}}</div>
-    <div style="  font-family: Montserrat;
-    font-size: 24px;
-    font-weight: 500;
-    font-stretch: normal;
-    font-style: normal;
-    line-height: 1.25;
-    letter-spacing: 1.2px;
-    text-align: center;
-    color: #8888b0;">{{'AddServerPage.sourceAddress'|translate}}</div>
-
-    <ion-item style="margin-top: 37px;" lines="none">
-      <div class="roundedRectangle">
-        <ion-input  class="ion-padding"  required type="text" placeholder="{{'AddServerPage.sourceaddresshere'|translate}}" [(ngModel)]="address"></ion-input>
-      </div>
-    </ion-item>
-    <div style="margin-left: 34px; margin-right: 34px; margin-top: 48px;">
-      <ion-button style="margin-top: 25px;" expand="block" mode="ios" (click)="scanCode()">
-        <ion-icon name="qr-scanner" slot="start" ></ion-icon>
-        <ion-label>{{'AddServerPage.openQRScanner'|translate}}</ion-label>
-      </ion-button>
-    </div>
-
-    <div style="margin-left: 34px; margin-right: 34px; margin-top: 25px;">
-      <ion-button style="margin-top: 25px;" expand="block" mode="ios" (click)="confirm()" [disabled]='buttonDisabled'>
-        <ion-label>{{'AddServerPage.confirm'|translate}}</ion-label>
-      </ion-button>
-    </div>
-  </div> -->
-
+  <canvas id="qrcanvas" width="500" height="500" style="display: none;"></canvas>
   <ion-grid class="container" [class.darkContainer]="theme.darkMode">
     <img src="assets/images/empty-feeds-icon.svg">
     <h1>
@@ -70,6 +25,15 @@
         </ion-label>
       </ion-button>
     </ion-row>
+
+    <ion-row class="btn-row">
+      <ion-button (click)="scanImage()">
+        <ion-label>
+          {{ 'AddServerPage.scanimg' | translate }}
+        </ion-label>
+      </ion-button>
+    </ion-row>
+
     <ion-row class="btn-row">
       <ion-button (click)="confirm()" [disabled]='buttonDisabled'>
         <ion-label>
@@ -78,68 +42,4 @@
       </ion-button>
     </ion-row>
   </ion-grid>
-
-
-
-  <!-- <div class="offline-content" *ngIf="connectStatus != 0 ">
-    <ion-label>disconnect</ion-label>
-  </div>
-
-  <div class="ion-padding" *ngIf="connectStatus == 0">
-    <ion-button expand="block" mode="ios" (click)="scanCode()">
-      <ion-icon name="qr-scanner" slot="start" ></ion-icon>
-      <ion-label>Scan</ion-label>
-    </ion-button>
-    <ion-label>or manual enter address</ion-label>
-
-  </div>
-
-  <ion-item lines="none" *ngIf="connectStatus == 0">
-    <div class="roundedRectangle">
-      <ion-input  class="ion-padding"  required type="text" placeholder="Source Address" [(ngModel)]="address" (change)="onChange()"></ion-input>
-    </div>
-  </ion-item>
-  <ion-item lines="none" *ngIf="buttonDisabled == false">
-    <ion-label>
-
-    <b>Name: </b><br>
-    {{name}}
-    </ion-label>
-
-  </ion-item>
-
-  <ion-item lines="none" *ngIf="buttonDisabled == false">
-    <ion-label>
-
-    <b>Owner: </b><br>
-    {{owner}}
-    </ion-label>
-
-  </ion-item>
-
-  <ion-item lines="none" *ngIf="buttonDisabled == false">
-    <ion-label>
-
-    <b>Introduction: </b><br>
-    {{introduction}}
-    </ion-label>
-
-  </ion-item>
-
-  <ion-item lines="none" *ngIf="buttonDisabled == false">
-    <ion-label>
-
-    <b>DID: </b><br>
-    {{did}}
-    </ion-label>
-
-  </ion-item>
-
-
-
-  <div class="ion-padding" *ngIf="connectStatus == 0">
-    <ion-button expand="block" mode="ios" (click)="addServer()" [disabled]='buttonDisabled'>
-      <ion-label>Add New Server</ion-label>
-    </ion-button>
-  </div> -->
 </ion-content>

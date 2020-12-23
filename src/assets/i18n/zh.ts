@@ -247,7 +247,9 @@ export const zh = {
         "serverWentOffline": " 已变成离线",
         "serverAlreadyAdded": "该微频源已经在您的关注列表中了",
         "serverAddedSuccess": "添加微频源成功，您可以关注里面的微频了",
-        "Signinsuccess": "登录成功!"
+        "Signinsuccess": "登录成功!",
+        "scanimg":"导入微频源二维码",
+        "tipMsg1":"未发现二维码",
       },
     "ServerInfoPage":{
         "title":"微频源详情",

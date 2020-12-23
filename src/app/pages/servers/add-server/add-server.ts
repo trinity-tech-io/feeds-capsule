@@ -7,6 +7,8 @@ import { AppService } from 'src/app/services/AppService';
 import { PopupProvider } from 'src/app/services/popup';
 import { TranslateService } from "@ngx-translate/core";
 import { ThemeService } from 'src/app/services/theme.service';
+import { CameraService } from 'src/app/services/CameraService';
+import jsQR from "jsqr";
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 declare let appManager: AppManagerPlugin.AppManager;
 @Component({
@@ -18,9 +20,9 @@ declare let appManager: AppManagerPlugin.AppManager;
 export class AddServerPage implements OnInit {
   public  connectionStatus = 1;
   public  address: string = '';
-  
+
   public  buttonDisabled = false;
-  
+
   public  name: string;
   public  owner: string;
   public  introduction: string;
@@ -39,7 +41,8 @@ export class AddServerPage implements OnInit {
     private loadingController: LoadingController,
     private translate:TranslateService,
     public theme: ThemeService,
-    public route: ActivatedRoute
+    public route: ActivatedRoute,
+    private camera: CameraService
   ) {
  /*    this.route.queryParams.subscribe(params => {
       if(params.source) {
@@ -59,7 +62,7 @@ export class AddServerPage implements OnInit {
       //   this.queryServer();
       // });
     }
-  
+
 
   ngOnInit() {
   }
@@ -67,7 +70,7 @@ export class AddServerPage implements OnInit {
   ionViewWillEnter() {
     this.initTitle();
     this.native.setTitleBarBackKeyShown(true);
-    
+
     this.connectionStatus = this.feedService.getConnectionStatus();
     this.events.subscribe("feeds:updateTitle",()=>{
       this.initTitle();
@@ -125,7 +128,7 @@ export class AddServerPage implements OnInit {
   alertError(error: string){
     alert (error);
   }
-  
+
   // onChange(){
   //   this.queryServer();
   // }
@@ -144,6 +147,41 @@ export class AddServerPage implements OnInit {
     this.native.getNavCtrl().navigateForward(['/menu/servers/server-info', result, "0", false]);
   }
 
+  scanImage(){
+    this.addImg(0);
+  }
 
+  addImg(type: number) {
+    this.camera.openCamera(
+      80, 0, type,
+      (imageUrl: any) => {
+        this.zone.run(() => {
+           this.base64ToqR(imageUrl);
+        });
+      },
+      (err: any) => {
+        console.error('Add img err', err);
+      }
+    );
+  }
+
+ base64ToqR(data:string) {
+  let qrcanvas:any = document.getElementById("qrcanvas");
+  let ctx = qrcanvas.getContext("2d");
+    let img = new Image();
+    img.src = data;
+    img.onload = ()=>{
+       ctx.drawImage(img, 0, 0,500,500);
+       let imageData = ctx.getImageData(0, 0,500,500);
+       const code = jsQR(imageData.data,500,500, {
+            inversionAttempts: "dontInvert",
+        });
+        if(code){
+           this.checkValid(code.data);
+        }else{
+          this.native.toastWarn("AddServerPage.tipMsg1");
+        }
+    };
+}
 
 }

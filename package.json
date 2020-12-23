@@ -41,6 +41,7 @@
     "cordova-sqlite-storage": "5.0.1",
     "core-js": "^2.5.4",
     "hammerjs": "^2.0.8",
+    "jsqr": "^1.3.1",
     "lodash": "^4.17.20",
     "nan": "^2.14.0",
     "ngx-ionic-image-viewer": "^0.7.1",
