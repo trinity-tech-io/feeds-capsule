@@ -248,7 +248,9 @@ export const fr = {
         "serverWentOffline": " went offline.",
         "serverAlreadyAdded":"This Feeds Source has already been added.",
         "serverAddedSuccess":"The Feeds source was added successfully.",
-        "Signinsuccess":"Signed in successfully!"
+        "Signinsuccess":"Signed in successfully!",
+        "scanimg":"Import QRcode from Picture",
+        "tipMsg1":"No QR code found",
     },
     "ServerInfoPage":{
         "title":"Feeds Source Details",
