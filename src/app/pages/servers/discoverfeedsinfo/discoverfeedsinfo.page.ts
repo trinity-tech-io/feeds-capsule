@@ -15,7 +15,7 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
   templateUrl: './discoverfeedsinfo.page.html',
   styleUrls: ['./discoverfeedsinfo.page.scss'],
 })
-export class DiscoverfeedsinfoPage implements OnInit { 
+export class DiscoverfeedsinfoPage implements OnInit {
 public  connectionStatus = 1;
 public  buttonDisabled: boolean = true;
 public  friendRequest = 'Feeds/0.1';
@@ -65,7 +65,7 @@ initData(){
 ionViewWillEnter() {
   this.initTitle();
   this.native.setTitleBarBackKeyShown(true);
-  
+
   this.initData();
   this.connectionStatus = this.feedService.getConnectionStatus();
   this.events.subscribe('feeds:connectionChanged',(status)=>{
@@ -76,13 +76,13 @@ ionViewWillEnter() {
 
   this.events.subscribe("feeds:updateServerList",()=>{
     this.zone.run(() => {
-    //this.native.navigateForward('discoverfeeds',""); 
+    //this.native.navigateForward('discoverfeeds',"");
       this.getNodeId();
     });
   });
 
   this.events.subscribe('feeds:login_finish',  () => {
-    this.zone.run(() => { 
+    this.zone.run(() => {
       this.initData();
       this.native.hideLoading();
     });
@@ -122,7 +122,7 @@ resolveDid(){
     (server)=>{
       this.zone.run(()=>{
         this.buttonDisabled = false;
-        this.name = server.name || this.translate.instant('DIDdata.NotprovidedfromDIDDocument');
+        this.name = this.serverInfo.name || this.translate.instant('DIDdata.NotprovidedfromDIDDocument');
         this.owner = server.owner;
         this.introduction = server.introduction || this.translate.instant('DIDdata.NotprovidedfromDIDDocument');
         this.didString = server.did;
@@ -146,7 +146,7 @@ addFeedSource() {
   this.feedService.addServer(this.carrierAddress,this.friendRequest,
     this.name, this.owner, this.introduction,
     this.didString, this.feedsUrl, ()=>{
-      //this.native.navigateForward('discoverfeeds',""); 
+      //this.native.navigateForward('discoverfeeds',"");
     },(err)=>{
       this.native.pop();
     });
@@ -167,7 +167,7 @@ async removeFeedSource(){
       handler: () => {
         this.native.showLoading('common.waitMoment');
         this.feedService.removeFeedSource(this.nodeId).then(() => {
-          this.native.toast("ServerInfoPage.removeserver"); 
+          this.native.toast("ServerInfoPage.removeserver");
           this.native.hideLoading();
           this.navigateBackPage();
         });
@@ -202,7 +202,7 @@ async deleteFeedSource(){
       handler: () => {
         this.native.showLoading('common.waitMoment');
         this.feedService.deleteFeedSource(this.nodeId).then(() => {
-          this.native.toast("ServerInfoPage.removeserver"); 
+          this.native.toast("ServerInfoPage.removeserver");
           this.native.hideLoading();
           this.navigateBackPage();
         });
@@ -229,7 +229,7 @@ async deleteFeedSource(){
 getNodeId(){
   let serverList = this.feedService.getServerList() || [];
   let bindingServerList = this.feedService.getBindingServer();
-  
+
   let bindingServer = _.find(bindingServerList,{did:this.serverInfo['did']}) || {};
   let bindingnodeId = bindingServer["nodeId"] || "";
   if(bindingnodeId!=""){
@@ -241,7 +241,7 @@ getNodeId(){
      this.nodeId = server["nodeId"] || "";
   }
 
-  
+
 }
 
 }
