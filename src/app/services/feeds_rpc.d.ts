@@ -390,13 +390,12 @@ declare module Communication{
                 name        : string
                 introduction: string
                 owner_name  : string
-                owner_did   : string 
+                owner_did   : string
                 subscribers : number
                 last_update : number
                 avatar      : any
-            }[]  
+            }[]
         }
-        
     }
     
     type get_channel_detail_request = {
@@ -879,7 +878,6 @@ declare module Communication{
         }
     }
 
-
     type standard_did_auth_request = {
         version: "1.0"
         method : "standard_did_auth"
@@ -932,4 +930,56 @@ declare module Communication{
             }[]
         }
     }
+
+    type get_multi_likes_and_comments_count_request = {
+        version: "1.0"
+        method : "get_multi_likes_and_comments_count"
+        id     : jsonrpc_id
+        params : {
+            access_token: string
+            channel_id  : number
+            post_id     : number
+            by          : field
+            upper_bound : number
+            lower_bound : number
+            max_count   : number
+        }
+    }
+
+    // new api
+    type get_multi_likes_and_comments_count_response = {
+        version: "1.0"
+        id     : jsonrpc_id
+        result : {
+            is_last : boolean
+            posts : {
+                channel_id      : number      //channel_id
+                post_id         : number      //post_id
+                comments_count  : number
+                likes_count     : number
+            }[]
+        }
+    }
+
+    type get_multi_subscribers_count_request = {
+        version: "1.0"
+        method : "get_multi_subscribers_count"
+        id     : jsonrpc_id
+        params : {
+            access_token    : string
+            channel_id      : number // 0
+        }
+    }
+
+    type get_multi_subscribers_count_response = {
+        version: "1.0"
+        id     : jsonrpc_id
+        result : {
+            is_last : boolean
+            channels: {
+                channel_id          : number
+                subscribers_count   : number
+            }[]
+        }
+    }    
 }
