@@ -195,6 +195,9 @@ declare namespace FeedsData{
         standard_sign_in = "standard_sign_in",
         standard_did_auth = "standard_did_auth",
         get_multi_comments = "get_multi_comments",
+
+        get_multi_subscribers_count = "get_multi_subscribers_count",
+        get_multi_likes_and_comments_count = "get_multi_likes_and_comments_count",
         
         //PUSH Notification
         newPostNotification = "new_post",

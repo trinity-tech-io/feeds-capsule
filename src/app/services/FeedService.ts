@@ -1419,6 +1419,14 @@ export class FeedService {
       case FeedsData.MethodType.get_multi_comments:
         this.handleGetMultiComments(nodeId, result, requestParams, error);
         break;
+
+      case FeedsData.MethodType.get_multi_subscribers_count:
+        this.handleGetMultiSubscribesCount(nodeId, result, requestParams, error);
+        break;
+
+      // case FeedsData.MethodType.get_multi_likes_and_comments_count:
+      //   this.handleGetMultiLikesAndCommentsCount(nodeId, result, requestParams, error);
+      //   break;
       default:
         break;
     }
@@ -4268,6 +4276,59 @@ export class FeedService {
     }
   }
 
+  async handleGetMultiSubscribesCount(nodeId: string, responseResult: any, requestParams: any, error: any){
+    if (error != null && error != undefined && error.code != undefined){
+      this.handleError(nodeId, error);
+      return;
+    }
+
+    let result = responseResult.channels;
+    for (let index = 0; index < result.length; index++) {
+        let channelId = result[index].channel_id;
+        let subscribesCount = result[index].subscribers_count;
+        await this.updateLocalSubscribesCount(nodeId,channelId,subscribesCount);
+    }
+  }
+
+  async updateLocalSubscribesCount(nodeId: string, channelId: number, subscribesCount: number){
+    let nodeChannelId = this.getChannelId(nodeId, channelId);
+    if (channelsMap == null || channelsMap == undefined)
+      channelsMap = {};
+    if (channelsMap[nodeChannelId] == null || channelsMap[nodeChannelId] == undefined)
+      return ;
+
+    channelsMap[nodeChannelId].subscribers = subscribesCount;    
+    await this.storeService.set(PersistenceKey.channelsMap,channelsMap);
+  }
+  // async handleGetMultiComments(nodeId: string, responseResult: any, requestParams: any, error: any){
+  //   if (error != null && error != undefined && error.code != undefined){
+  //     this.handleError(nodeId, error);
+  //     return;
+  //   }
+  //   let result = responseResult.comments;
+  //   for (let index = 0; index < result.length; index++) {
+  //     let channelId       = result[index].channel_id;
+  //     let postId          = result[index].post_id;
+  //     let commentId       = result[index].comment_id;
+  //     let referCommentId  = result[index].refer_comment_id;
+  //     let contentBin      = result[index].content;
+  //     let likes           = result[index].likes;
+  //     let createdAt       = result[index].created_at;
+  //     let userName        = result[index].user_name;
+  //     let updatedAt       = result[index].updated_at;
+  //     let status          = result[index].status;
+  //     let userDid         = result[index].user_did;
+
+  //     await this.processNewComment(nodeId,channelId,postId,commentId,referCommentId,
+  //       userName,likes,createdAt,updatedAt,status,userDid,contentBin);
+
+  //     if(this.checkChannelIsMine(nodeId,channelId)){
+  //       let lastCommentUpdateKey = this.getPostId(nodeId, 0, 0);
+  //       this.updateLastCommentUpdate(lastCommentUpdateKey, nodeId, channelId, postId, updatedAt);
+  //     }
+  //   }
+  // }
+
   doIssueCredential(nodeId: string, did: string, serverName: string, serverDesc: string,elaAddress:string, onSuccess:()=> void, onError:()=>void){
     this.issueCredential(nodeId,did, serverName,serverDesc,elaAddress,
       (credential)=>{
@@ -4467,6 +4528,9 @@ export class FeedService {
       this.getMultiComments(friendId, 0, 0, Communication.field.last_update, 0 , lastCommentTime,0);
       // }
     }
+
+    this.getMultiSubscribersCount(friendId, 0);
+    this.getMultiLikesAndCommentsCount(friendId,0,0,Communication.field.last_update,0,0,0);
   }
 
   saveCredential(credential: string){
@@ -6153,5 +6217,21 @@ export class FeedService {
     let server = mServerMap[friendId]||"";
     if (server != "")
       this.doFriendConnection(friendId);
+  }
+
+  getMultiSubscribersCount(nodeId: string, channelId: number){
+    if(!this.hasAccessToken(nodeId))
+      return;
+    let accessToken: FeedsData.AccessToken = accessTokenMap[nodeId]||undefined;
+    this.connectionService.getMultiSubscribers(this.getServerNameByNodeId(nodeId), nodeId, channelId, accessToken);
+  }
+
+  getMultiLikesAndCommentsCount(nodeId: string, channelId: number,
+                              postId: number, by: Communication.field, upperBound:number, lowerBound: number,
+                              maxCount: number){
+    if(!this.hasAccessToken(nodeId))
+      return;
+    let accessToken: FeedsData.AccessToken = accessTokenMap[nodeId]||undefined;
+    this.connectionService.getMultiLikesAndCommentsCount(this.getServerNameByNodeId(nodeId), nodeId, channelId, postId, by, upperBound, lowerBound, maxCount, accessToken);
   }
 }

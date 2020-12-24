@@ -670,6 +670,45 @@ export class ConnectionService {
         this.sendRPCMessage(serverName, nodeId, request.method, request.params, "", false); 
     }
 
+    getMultiSubscribers(serverName: string,nodeId: string, channelId: number, accessToken: FeedsData.AccessToken){
+        if (accessToken == undefined)
+            return ;
+
+        let request: Communication.get_multi_subscribers_count_request = {
+            version: "1.0",
+            method : "get_multi_subscribers_count",
+            id     : -1,
+            params : {
+                access_token    : accessToken.token,
+                channel_id      : channelId // 0
+            }
+        }
+        this.sendRPCMessage(serverName, nodeId, request.method, request.params, "", false); 
+    }
+
+    getMultiLikesAndCommentsCount(serverName: string,nodeId: string, channelId: number,
+                    postId: number, by: Communication.field, upperBound:number, lowerBound: number,
+                    maxCount: number, accessToken: FeedsData.AccessToken){
+        if (accessToken == undefined)
+            return ;
+
+        let request: Communication.get_multi_likes_and_comments_count_request = {
+            version: "1.0",
+            method : "get_multi_likes_and_comments_count",
+            id     : -1,
+            params : {
+                access_token: accessToken.token,
+                channel_id  : channelId,
+                post_id     : postId,
+                by          : by,
+                upper_bound : upperBound,
+                lower_bound : lowerBound,
+                max_count   : maxCount
+            }
+        }
+        this.sendRPCMessage(serverName, nodeId, request.method, request.params, "", false); 
+    }
+
     sendRPCMessage(serverName: string, nodeId: string, method: string, params: any, memo: any, isShowOfflineToast: boolean = true){
         if(!this.checkServerConnection(nodeId)){
           this.events.publish("rpcRequest:error");
