@@ -4,7 +4,7 @@
     },
     "application": {
         "name": "Feeds",
-        "nativepackageid": "io.trinity_tech.feeds",
+        "nativepackageid": "io.trinitytech.dapp.feeds",
         "icon": "./src/assets/images/logo.png",
         "splashscreen": "./native/splash.png",
         "intentscheme": {
