@@ -2,6 +2,7 @@
    <div class="offline-header"></div>
  </ion-header>
  <ion-content>
+   <canvas id="qrcanvas1" width="500" height="500" style="display: none;"></canvas>
     <ion-grid class="container" [class.darkContainer]="theme.darkMode">
        <h1>
          {{ 'ScanqrcodePage.introtitle' | translate }} <br>
@@ -12,7 +13,7 @@
          {{'ScanqrcodePage.introduce2'|translate}}
       </p>
       <ion-row class="input-row">
-         <ion-col size="10" class="left-col">
+         <ion-col size="8" class="left-col">
             <ion-input
                type="text"
                placeholder="{{'ScanqrcodePage.introduce4'|translate}}"
@@ -22,6 +23,9 @@
          </ion-col>
          <ion-col size="2" class="right-col">
             <img (click)="scanService()" [src]="!theme.darkMode ? 'assets/icons/scan.svg' : 'assets/icons/darkmode/scan.svg'"/>
+         </ion-col>
+         <ion-col size="2" class="right-col">
+            <img (click)="scanImage()" [src]="!theme.darkMode ? 'assets/icons/scanImage.svg' : 'assets/icons/darkmode/scanImage.svg'"/>
          </ion-col>
       </ion-row>
     </ion-grid>
