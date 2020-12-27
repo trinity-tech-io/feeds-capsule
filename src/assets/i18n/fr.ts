@@ -293,7 +293,7 @@ export const fr = {
         "introduce1":"Be sure you have a new Feeds source/service setup on your device and a QRcode address displayed on the browser.",
         "introduce2":"Scan the QRcode to bind your current DID with the Feeds source/service.",
         // "introduce3":"to proceed",
-        "introduce4":"Scan your QRcode address"
+        "introduce4":"Scan your QRcode"
     },
     "StartbindingPage":{
         "introduce":"Create a new Feeds Source",
