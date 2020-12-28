@@ -111,6 +111,7 @@ export class HomePage implements OnInit {
 
         this.isLoadimage ={};
         this.isLoadVideoiamge ={};
+        this.refreshImage(0);
         this.scrollToTop(1);
         this.initnodeStatus(this.postList);
   }
@@ -150,9 +151,9 @@ export class HomePage implements OnInit {
     this.imageHeight = (screen.width-105)/3;
     this.initPostListData();
     // this.zone.run(()=>{
-      this.refreshImage(0);
+      //this.refreshImage(0);
       //this.scrollToTop(1);
-      this.initnodeStatus(this.postList);
+      //this.initnodeStatus(this.postList);
     // })
    this.events.subscribe("feeds:clearHomeEvent",()=>{
             this.events.unsubscribe('feeds:hideDeletedPosts');
