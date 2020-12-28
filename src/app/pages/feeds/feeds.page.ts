@@ -5,6 +5,7 @@ import { FeedService } from '../../services/FeedService';
 import { NativeService } from '../../services/NativeService';
 import { TranslateService } from "@ngx-translate/core";
 import { ThemeService } from 'src/app/services/theme.service';
+import { PopupProvider } from 'src/app/services/popup';
 import { Events } from '@ionic/angular';
 import * as _ from 'lodash';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
@@ -19,14 +20,15 @@ export class FeedsPage implements OnInit {
   public totalunread:number = 0;
   public title = "";
   public currentTab = "";
-
+  public popover:any = "";
   constructor(
     private native: NativeService,
     private feedService: FeedService,
     private popoverController: PopoverController,
     private translate:TranslateService,
     public theme:ThemeService,
-    private event:Events
+    private event:Events,
+    public popupProvider:PopupProvider
   ) {
   }
 
@@ -48,14 +50,14 @@ export class FeedsPage implements OnInit {
           break;
       case "search":
           this.search()
-          break;             
+          break;
       }
   }
 
   ionViewWillEnter() {
 
     this.getUnReadNum();
-    
+
     this.event.subscribe("feeds:updateTitle",()=>{
       this.initTile();
     });
@@ -66,6 +68,11 @@ export class FeedsPage implements OnInit {
   }
 
   ionViewWillLeave(){
+    let value =  this.popoverController.getTop()["__zone_symbol__value"] || "";
+    if(value!=""){
+      this.popoverController.dismiss();
+      this.popover = "";
+    }
     this.event.unsubscribe("feeds:updateTitle");
     this.event.unsubscribe("feeds:UpdateNotification");
   }
@@ -90,7 +97,7 @@ export class FeedsPage implements OnInit {
 
     let bindingServer = this.feedService.getBindingServer();
     if (bindingServer == null || bindingServer == undefined){
-      this.native.navigateForward(['/bindservice/scanqrcode'],"");
+      this.checkDid();
       return ;
     }
 
@@ -111,7 +118,7 @@ export class FeedsPage implements OnInit {
       this.native.navigateForward(['createnewpost/',myChannel.nodeId,myChannel.id],"");
       return;
     }
-      
+
     if(this.feedService.getMyChannelList().length>1){
       this.openPopOverComponent();
       return ;
@@ -178,5 +185,38 @@ export class FeedsPage implements OnInit {
     let uList =  _.filter(nList,(item:any)=>{ return item.readStatus === 1; });
     this.totalunread = uList.length;
 
+    }
+
+    checkDid(){
+      let signInData = this.feedService.getSignInData() || {};
+      let did = signInData["did"];
+      this.feedService.checkDIDDocument(did).then((isOnSideChain)=>{
+        if (!isOnSideChain){
+          //show one button dialog
+          //if click this button
+          //call feedService.promptpublishdid() function
+          this.openAlert();
+          return;
+        }
+        this.native.navigateForward(['/bindservice/scanqrcode'],"");
+      });
+    }
+
+    openAlert(){
+      this.popover = this.popupProvider.ionicAlert(
+        this,
+        // "ConfirmdialogComponent.signoutTitle",
+        "",
+        "common.didnotrelease",
+        this.confirm,
+        'tskth.svg'
+      );
+    }
+
+    confirm(that:any){
+        if(this.popover!=null){
+           this.popover.dismiss();
+           that.feedService.promptpublishdid();
+        }
     }
 }

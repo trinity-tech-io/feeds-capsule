@@ -6,7 +6,6 @@ import { NativeService } from 'src/app/services/NativeService';
 import { TranslateService } from "@ngx-translate/core";
 import { ThemeService } from 'src/app/services/theme.service';
 import { AppService } from '../../services/AppService';
-import { PopupProvider } from 'src/app/services/popup';
 declare let appManager: AppManagerPlugin.AppManager;
 declare let didManager: DIDPlugin.DIDManager;
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
@@ -23,7 +22,6 @@ export class SigninPage implements OnInit {
   public did: string = "";
   public userName: string = "";
   public emailAddress: string = "";
-  public popover:any = "";
   constructor(
     private events: Events,
     private native: NativeService,
@@ -34,8 +32,7 @@ export class SigninPage implements OnInit {
     private translate:TranslateService,
     private event:Events,
     public theme:ThemeService,
-    public appService:AppService,
-    public popupProvider:PopupProvider) { }
+    public appService:AppService) { }
 
   ngOnInit() {
 
@@ -155,16 +152,7 @@ export class SigninPage implements OnInit {
               description
             );
             this.events.publish("feeds:signinSuccess");
-            this.feedService.checkDIDDocument(data.did).then((isOnSideChain)=>{
-              if (!isOnSideChain){
-                //show one button dialog
-                //if click this button
-                //call feedService.promptpublishdid() function
-                this.openAlert();
-                return;
-              }
-              this.initApp();
-            });
+            this.initApp();
           });
         });
       }
@@ -209,24 +197,6 @@ export class SigninPage implements OnInit {
     description: string
   ) {
     this.feedService.saveSignInData(did, name, avatar, email, telephone, location,nickname,description);
-  }
-
-  openAlert(){
-    this.popover = this.popupProvider.ionicAlert(
-      this,
-      // "ConfirmdialogComponent.signoutTitle",
-      "",
-      "common.didnotrelease",
-      this.confirm,
-      'tskth.svg'
-    );
-  }
-
-  confirm(that:any){
-      if(this.popover!=null){
-         this.popover.dismiss();
-         that.feedService.promptpublishdid();
-      }
   }
 
 }

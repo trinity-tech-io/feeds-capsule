@@ -76,7 +76,7 @@ export class AppService {
               ['/menu/servers/server-info', ret.params.source, "0", false]
             );
 
-         /*    this.events.publish("intent:addsource", ret.params.source); 
+         /*    this.events.publish("intent:addsource", ret.params.source);
             this.native.navigateForward(['menu/servers/add-server'], ""); */
 
            /*  let props: NavigationExtras = {
@@ -172,7 +172,7 @@ export class AppService {
     }
 
     initData(signInData: SignInData){
-      if (signInData == null || 
+      if (signInData == null ||
         signInData == undefined ||
         this.feedService.getCurrentTimeNum() > signInData.expiresTS ){
         this.native.setRootRouter(['/signin']);
@@ -190,7 +190,7 @@ export class AppService {
     }
 
     async createDialog(){
-    
+
       this.popover = this.popupProvider.ionicConfirm(
         this,
         // "ConfirmdialogComponent.signoutTitle",
@@ -208,7 +208,7 @@ export class AppService {
          this.popover.dismiss();
       }
     }
-  
+
     confirm(that:any){
       this.popover.dismiss();
       that.native.setRootRouter(['/tabs/home']);
@@ -228,7 +228,7 @@ export class AppService {
             break;
         case "search":
           this.native.setRootRouter(['/tabs/search']);
-            break;             
+            break;
         }
     }
 }
