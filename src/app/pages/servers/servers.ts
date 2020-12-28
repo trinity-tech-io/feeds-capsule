@@ -1,10 +1,10 @@
 import { Component, OnInit, NgZone } from '@angular/core';
-import { NavController, Events, Platform } from '@ionic/angular';
+import { Events,PopoverController} from '@ionic/angular';
 import { NativeService } from 'src/app/services/NativeService';
 import { FeedService } from 'src/app/services/FeedService';
-import { Router } from '@angular/router';
 import { ThemeService } from 'src/app/services/theme.service';
 import { TranslateService } from "@ngx-translate/core";
+import { PopupProvider } from 'src/app/services/popup';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 @Component({
@@ -23,17 +23,16 @@ export class ServersPage implements OnInit {
 
     public showServers = true;
     public showMyFeeds = true;
-
+    public popover:any = "";
     constructor(
-        private navCtrl: NavController,
         private events: Events,
-        private platform: Platform,
         private zone: NgZone,
         private native: NativeService,
         private feedService: FeedService,
-        private router: Router,
+        private popoverController: PopoverController,
         public theme:ThemeService,
-        private translate:TranslateService ) {
+        private translate:TranslateService,
+        public popupProvider:PopupProvider) {
     }
 
     ngOnInit() {
@@ -71,9 +70,9 @@ export class ServersPage implements OnInit {
 
                 if (bindingServer != null && bindingServer != undefined)
                     this.myFeedSource = bindingServer;
-        
+
                 this.serversStatus = this.feedService.getServersStatus();
-        
+
                 this.serverStatisticsMap = this.feedService.getServerStatisticsMap();
             });
         });
@@ -97,7 +96,7 @@ export class ServersPage implements OnInit {
         }
         this.serversStatus = this.feedService.getServersStatus();
         this.serverStatisticsMap = this.feedService.getServerStatisticsMap();
-        
+
     }
 
     doRefresh(event) {
@@ -117,7 +116,7 @@ export class ServersPage implements OnInit {
     ionViewWillEnter(){
         this.initTitle();
         this.native.setTitleBarBackKeyShown(true);
-        
+
         this.connectionStatus = this.feedService.getConnectionStatus();
         this.initData();
         this.events.subscribe("feeds:updateTitle",()=>{
@@ -129,8 +128,13 @@ export class ServersPage implements OnInit {
 
     ionViewDidEnter() {
     }
-    
+
     ionViewWillLeave(){
+        let value =  this.popoverController.getTop()["__zone_symbol__value"] || "";
+        if(value!=""){
+          this.popoverController.dismiss();
+          this.popover = "";
+        }
         this.removeSubscribe();
         this.events.unsubscribe("feeds:updateTitle");
     }
@@ -152,7 +156,7 @@ export class ServersPage implements OnInit {
             this.serverStatisticsMap == undefined ||
             this.serverStatisticsMap[nodeId] == undefined)
             return 0;
-        
+
         return this.serverStatisticsMap[nodeId].total_clients||0;
     }
 
@@ -165,8 +169,7 @@ export class ServersPage implements OnInit {
             this.native.toastWarn('common.connectionError');
             return;
         }
-      
-        this.native.navigateForward(['/bindservice/scanqrcode'],"");
+        this.checkDid("/bindservice/scanqrcode");
     }
 
     exploreFeedSource(){
@@ -174,12 +177,48 @@ export class ServersPage implements OnInit {
             this.native.toastWarn('common.connectionError');
             return;
         }
-        
-        this.native.navigateForward(['/menu/servers/add-server'],"");
+        this.checkDid("/menu/servers/add-server");
     }
 
     discover(){
-       this.native.go("discoverfeeds"); 
+       this.native.go("discoverfeeds");
     }
+
+    checkDid(jumpPage:string){
+        let signInData = this.feedService.getSignInData() || {};
+        let did = signInData["did"];
+        this.feedService.checkDIDDocument(did).then((isOnSideChain)=>{
+          if (!isOnSideChain){
+            //show one button dialog
+            //if click this button
+            //call feedService.promptpublishdid() function
+            this.openAlert();
+            return;
+          }
+          if(jumpPage === "/bindservice/scanqrcode"){
+            this.native.navigateForward(['/bindservice/scanqrcode'],"");
+          }else if(jumpPage === "/menu/servers/add-server"){
+            this.native.navigateForward(['/menu/servers/add-server'],"");
+          }
+        });
+      }
+
+      openAlert(){
+        this.popover = this.popupProvider.ionicAlert(
+          this,
+          // "ConfirmdialogComponent.signoutTitle",
+          "",
+          "common.didnotrelease",
+          this.confirm,
+          'tskth.svg'
+        );
+      }
+
+      confirm(that:any){
+          if(this.popover!=null){
+             this.popover.dismiss();
+             that.feedService.promptpublishdid();
+          }
+      }
 
 }

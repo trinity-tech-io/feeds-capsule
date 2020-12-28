@@ -1,5 +1,5 @@
 import { Component, OnInit, NgZone } from '@angular/core';
-import { Events} from '@ionic/angular';
+import { Events,PopoverController} from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
 import { NativeService } from 'src/app/services/NativeService';
 import { FeedService } from 'src/app/services/FeedService';
@@ -7,8 +7,8 @@ import { ThemeService } from 'src/app/services/theme.service';
 import { HttpService } from 'src/app/services/HttpService';
 import { ActionSheetController } from '@ionic/angular';
 import { TranslateService } from "@ngx-translate/core";
+import { PopupProvider } from 'src/app/services/popup';
 import * as _ from 'lodash';
-import { ApiUrl } from 'src/app/services/ApiUrl';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 @Component({
   selector: 'app-discoverfeedsinfo',
@@ -37,7 +37,7 @@ public elaAddress: string = "";
 public isPublic:string ="";
 public serverInfo:any = {};
 public actionSheet:any = null;
-
+public popover:any = "";
 constructor(
   private actionSheetController:ActionSheetController,
   private events: Events,
@@ -47,7 +47,9 @@ constructor(
   private feedService: FeedService,
   public theme:ThemeService,
   private translate:TranslateService,
-  public httpService:HttpService) {}
+  public httpService:HttpService,
+  private popoverController: PopoverController,
+  public popupProvider:PopupProvider) {}
 
 ngOnInit() {
 
@@ -98,6 +100,11 @@ ionViewDidEnter(){
 }
 
 ionViewWillLeave(){
+  let value =  this.popoverController.getTop()["__zone_symbol__value"] || "";
+  if(value!=""){
+    this.popoverController.dismiss();
+    this.popover = "";
+  }
   this.native.hideLoading();
   this.events.unsubscribe("feeds:updateServerList");
   this.events.unsubscribe("feeds:serverConnectionChanged");
@@ -142,14 +149,49 @@ addFeedSource() {
     this.native.toastWarn('common.connectionError');
     return;
   }
+  this.checkDid();
+}
 
-  this.feedService.addServer(this.carrierAddress,this.friendRequest,
-    this.name, this.owner, this.introduction,
-    this.didString, this.feedsUrl, ()=>{
-      //this.native.navigateForward('discoverfeeds',"");
-    },(err)=>{
-      this.native.pop();
-    });
+
+checkDid(){
+  let signInData = this.feedService.getSignInData() || {};
+  let did = signInData["did"];
+  this.feedService.checkDIDDocument(did).then((isOnSideChain)=>{
+    if (!isOnSideChain){
+      //show one button dialog
+      //if click this button
+      //call feedService.promptpublishdid() function
+      this.openAlert();
+      return;
+    }
+
+    this.feedService.addServer(this.carrierAddress,this.friendRequest,
+      this.name, this.owner, this.introduction,
+      this.didString, this.feedsUrl, ()=>{
+        //this.native.navigateForward('discoverfeeds',"");
+      },(err)=>{
+        this.native.pop();
+      });
+
+  });
+}
+
+openAlert(){
+  this.popover = this.popupProvider.ionicAlert(
+    this,
+    // "ConfirmdialogComponent.signoutTitle",
+    "",
+    "common.didnotrelease",
+    this.confirm,
+    'tskth.svg'
+  );
+}
+
+confirm(that:any){
+    if(this.popover!=null){
+       this.popover.dismiss();
+       that.feedService.promptpublishdid();
+    }
 }
 
 async removeFeedSource(){

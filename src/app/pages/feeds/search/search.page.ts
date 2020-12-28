@@ -1,11 +1,11 @@
 import { Component, OnInit, NgZone} from '@angular/core';
 import { FeedService } from 'src/app/services/FeedService';
-import { Events } from '@ionic/angular';
+import { Events,PopoverController } from '@ionic/angular';
 import { NativeService } from 'src/app/services/NativeService';
 import { ThemeService } from 'src/app/services/theme.service';
 import { MenuService } from 'src/app/services/MenuService';
 import { UtilService } from 'src/app/services/utilService';
-
+import { PopupProvider } from 'src/app/services/popup';
 @Component({
   selector: 'app-search',
   templateUrl: './search.page.html',
@@ -17,13 +17,16 @@ export class SearchPage implements OnInit {
   public nodeStatus: any = {};
   public channelList= [];
   public hideOfflineFeeds:boolean = false;
+  public popover:any = "";
   constructor(
     private feedService: FeedService,
     private events: Events,
     private zone: NgZone,
     private native: NativeService,
     public theme:ThemeService,
-    private menuService: MenuService
+    private menuService: MenuService,
+    private popoverController: PopoverController,
+    public popupProvider:PopupProvider
   ) {
   }
 
@@ -84,6 +87,11 @@ export class SearchPage implements OnInit {
   }
 
   removeSubscribe(){
+    let value =  this.popoverController.getTop()["__zone_symbol__value"] || "";
+    if(value!=""){
+      this.popoverController.dismiss();
+      this.popover = "";
+    }
     this.events.unsubscribe("feeds:connectionChanged");
     this.events.unsubscribe('feeds:friendConnectionChanged');
     this.events.unsubscribe('feeds:subscribeFinish');
@@ -167,8 +175,7 @@ export class SearchPage implements OnInit {
       this.native.toastWarn('common.connectionError');
       return;
     }
-
-    this.native.navigateForward(['/menu/servers/add-server'],"");
+    this.checkDid();
   }
 
   checkServerStatus(nodeId: string){
@@ -193,5 +200,38 @@ export class SearchPage implements OnInit {
     this.native.createTip(name);
   }
  }
+
+ checkDid(){
+  let signInData = this.feedService.getSignInData() || {};
+  let did = signInData["did"];
+  this.feedService.checkDIDDocument(did).then((isOnSideChain)=>{
+    if (!isOnSideChain){
+      //show one button dialog
+      //if click this button
+      //call feedService.promptpublishdid() function
+      this.openAlert();
+      return;
+    }
+    this.native.navigateForward(['/menu/servers/add-server'],"");
+  });
+}
+
+openAlert(){
+  this.popover = this.popupProvider.ionicAlert(
+    this,
+    // "ConfirmdialogComponent.signoutTitle",
+    "",
+    "common.didnotrelease",
+    this.confirm,
+    'tskth.svg'
+  );
+}
+
+confirm(that:any){
+    if(this.popover!=null){
+       this.popover.dismiss();
+       that.feedService.promptpublishdid();
+    }
+}
 
 }

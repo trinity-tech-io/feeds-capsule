@@ -44,7 +44,7 @@ export class MenuService {
                         this.native.toastWarn('common.connectionError');
                         return;
                     }
-                    
+
                     this.feedService.unsubscribeChannel(nodeId,channelId);
                 }
             }]
@@ -72,12 +72,12 @@ export class MenuService {
         ]
         });
 
-       
+
         this.postDetail.onWillDismiss().then(()=>{
             if(this.postDetail !=null){
                 this.postDetail  = null;
             }
-           
+
         })
         await this.postDetail.present();
     }
@@ -100,7 +100,7 @@ export class MenuService {
                 }
             ]
         });
-       
+
         this.postDetail.onWillDismiss().then(()=>{
             if(this.postDetail) {
                 this.postDetail = null;
@@ -120,7 +120,7 @@ export class MenuService {
               }
             }]
           });
-          
+
           this.postDetail.onWillDismiss().then(()=>{
             if(this.postDetail !=null){
                 this.postDetail  = null;
@@ -153,17 +153,18 @@ export class MenuService {
     }
 
     hideActionSheet(){
-        if(this.postDetail !=null)
-        this.postDetail.dismiss();
+        if(this.postDetail!=null){
+          this.postDetail.dismiss();
+        }
     }
 
     async showPostDetailMenu(nodeId: string, channelId: number, channelName: string,postId:number){
          this.postDetail = await this.actionSheetController.create({
             cssClass: 'editPost',
-            
+
             buttons: [
             {
-                    text: this.translate.instant("common.sharepost"), 
+                    text: this.translate.instant("common.sharepost"),
                     icon: 'share',
                     handler: () => {
                     this.handlePostDetailMenun(nodeId,channelId,channelName,postId,"sharepost");
@@ -190,20 +191,20 @@ export class MenuService {
             if(this.postDetail !=null){
                 this.postDetail  = null;
             }
-           
+
         })
         await this.postDetail.present();
     }
 
 
     async showHomeMenu(nodeId: string, channelId: number, channelName: string,postId:number){
-     
+
         this.postDetail = await this.actionSheetController.create({
            cssClass: 'editPost',
-           
+
            buttons: [
            {
-                   text: this.translate.instant("common.sharepost"), 
+                   text: this.translate.instant("common.sharepost"),
                    icon: 'share',
                    handler: () => {
                    this.handlePostDetailMenun(nodeId,channelId,channelName,postId,"sharepost");
@@ -232,7 +233,7 @@ export class MenuService {
                     this.native.toastWarn('common.connectionError');
                     return;
                 }
-                
+
                 this.feedService.unsubscribeChannel(nodeId,channelId);
             }
         }
@@ -243,7 +244,7 @@ export class MenuService {
            if(this.postDetail !=null){
                this.postDetail  = null;
            }
-          
+
        })
        await this.postDetail.present();
    }
@@ -259,10 +260,10 @@ export class MenuService {
                 if (!this.feedService.checkBindingServerVersion(()=>{
                     this.feedService.hideAlertPopover();
                 })) return;
-                    
+
                 this.native.go(
-                    "/editpost", 
-                    { 
+                    "/editpost",
+                    {
                     "nodeId":nodeId,
                     "channelId":channelId,
                     "postId":postId,
@@ -277,9 +278,9 @@ export class MenuService {
                 if (!this.feedService.checkBindingServerVersion(()=>{
                     this.feedService.hideAlertPopover();
                 })) return;
-                
+
                 this.popover = this.popupProvider.ionicConfirm(this,"","common.confirmdeletion",this.cancel,this.confirm,'tskth.svg');
-                break;    
+                break;
         }
     }
 
@@ -321,12 +322,12 @@ export class MenuService {
         ]
         });
 
-       
+
         this.postDetail.onWillDismiss().then(()=>{
             if(this.postDetail !=null){
                 this.postDetail  = null;
             }
-           
+
         })
         await this.postDetail.present();
 
