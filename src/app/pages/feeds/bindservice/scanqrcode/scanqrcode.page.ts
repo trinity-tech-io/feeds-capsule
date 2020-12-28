@@ -83,6 +83,7 @@ export class ScanqrcodePage implements OnInit {
   handleAddress(){
     if (!this.scanContent.startsWith('feeds://') &&
     !this.scanContent.startsWith('feeds_raw://')){
+      this.scanContent = "";
       alert(this.translate.instant("AddServerPage.tipMsg"));
       return ;
   }
