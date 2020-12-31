@@ -422,6 +422,7 @@ export class FeedService {
   private serviceNonce = "";
   private serviceRealm = "";
   private profileIamge = "assets/images/profile-1.svg";
+  private clipProfileIamge = "";
   private selsectIndex = 1;
   private carrierStatus:FeedsData.ConnState = FeedsData.ConnState.disconnected;
   private networkStatus:FeedsData.ConnState = FeedsData.ConnState.disconnected;
@@ -493,6 +494,14 @@ export class FeedService {
 
   public getProfileIamge(){
       return this.profileIamge;
+  }
+
+  public setClipProfileIamge(clipProfileIamge:string){
+    return this.clipProfileIamge = clipProfileIamge;
+  }
+
+  public getClipProfileIamge(){
+  return this.clipProfileIamge;
   }
 
   loadServerVersions(){
@@ -4297,7 +4306,7 @@ export class FeedService {
     if (channelsMap[nodeChannelId] == null || channelsMap[nodeChannelId] == undefined)
       return ;
 
-    channelsMap[nodeChannelId].subscribers = subscribesCount;    
+    channelsMap[nodeChannelId].subscribers = subscribesCount;
     await this.storeService.set(PersistenceKey.channelsMap,channelsMap);
   }
   // async handleGetMultiComments(nodeId: string, responseResult: any, requestParams: any, error: any){
