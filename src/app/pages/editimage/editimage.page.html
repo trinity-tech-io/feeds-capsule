@@ -1,0 +1,12 @@
+<ion-content (click)="finish()">
+  <image-cropper
+        [imageURL]="headPortrait"
+        [maintainAspectRatio]="true"
+        [aspectRatio]="16 / 16"
+        [imageQuality]="30"
+        [cropperStaticWidth]="70"
+        [cropperStaticHeight]="70"
+        format="png"
+        (imageCropped)="imageCropped($event)"
+      ></image-cropper>
+</ion-content>

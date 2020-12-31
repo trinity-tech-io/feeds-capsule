@@ -67,30 +67,37 @@ export class ProfileimagePage implements OnInit {
     private events: Events,
     private zone: NgZone,
     private translate: TranslateService,
-    public theme: ThemeService, 
+    public theme: ThemeService,
     private feedService:FeedService,
     private camera: CameraService,
     private menuService: MenuService,
   ) { }
 
   ngOnInit() {
-    
+
   }
 
   ionViewWillEnter() {
     this.initTitle();
     this.native.setTitleBarBackKeyShown(true);
-    
     this.select = this.feedService.getSelsectIndex();
-    this.selectedAvatar = this.feedService.getProfileIamge() || 'assets/images/profile-1.svg';
-      
+    let clipProfileIamge = this.feedService.getClipProfileIamge();
+    if(clipProfileIamge!=""){
+      this.select = 0;
+      this.selectedAvatar = clipProfileIamge;
+      this.feedService.setClipProfileIamge("");
+    }else{
+      this.selectedAvatar = this.feedService.getProfileIamge() || 'assets/images/profile-1.svg';
+    }
+
+
     // Check if an uploaded avatar exists. If so, select it and have it displayed
     if(this.selectedAvatar.indexOf("data:image") === -1) {;
       this.uploadedAvatar = null;
     } else {
       this.uploadedAvatar = this.selectedAvatar;
     }
-   
+
     this.connectionStatus = this.feedService.getConnectionStatus();
 
     this.events.subscribe('feeds:connectionChanged',(status)=>{
@@ -109,7 +116,7 @@ export class ProfileimagePage implements OnInit {
   }
 
   ionViewWillLeave(){
-    this.camera = null;
+    //this.camera = null;
     this.events.unsubscribe("feeds:connectionChanged");
     this.events.unsubscribe("feeds:updateTitle");
     if(this.pictureMenu!=null){
@@ -156,13 +163,15 @@ export class ProfileimagePage implements OnInit {
   openGallery(that:any){
     that.camera.openCamera(30,0,0,
       (imageUrl:any) => {
-        that.zone.run(() => {
-          that.select = 0;
-          that.uploadedAvatar = imageUrl;
-          that.selectedAvatar = imageUrl;
-        });
+        //that.zone.run(() => {
+          that.native.navigateForward(['editimage'],"");
+          that.feedService.setClipProfileIamge(imageUrl);
+          //that.select = 0;
+          //that.uploadedAvatar = imageUrl;
+          //that.selectedAvatar = imageUrl;
+        //});
       }, (err) => {
-       
+
       }
     );
   }
@@ -170,18 +179,20 @@ export class ProfileimagePage implements OnInit {
   openCamera(that:any){
     that.camera.openCamera(30,0,1,
       (imageUrl:any) => {
-        that.zone.run(() => {
-          that.select = 0;
-          that.uploadedAvatar = imageUrl;
-          that.selectedAvatar = imageUrl;
-        });
+        //that.zone.run(() => {
+          that.native.navigateForward(['editimage'],"");
+          that.feedService.setClipProfileIamge(imageUrl);
+          //that.select = 0;
+          //that.uploadedAvatar = imageUrl;
+          //that.selectedAvatar = imageUrl;
+        //});
       }, (err) => {
-       
+
       }
     );
   }
 
-  
+
 
 }
 
