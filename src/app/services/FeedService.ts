@@ -127,6 +127,11 @@ type CommentUpdateTime = {
   time: number
 }
 
+type LikesAndCommentsCountUpdateTime = {
+  nodeId: string,
+  time: number
+}
+
 type ServerStatus = {
   nodeId: string,
   did: string,
@@ -355,6 +360,8 @@ enum PersistenceKey{
   lastFeedUpdateMap = "lastFeedUpdateMap",
   lastCommentUpdateMap = "lastCommentUpdateMap",
 
+  lastMultiLikesAndCommentsCountUpdateMap = "lastMultiLikesAndCommentsCountUpdateMap",
+
   serverVersions = "serverVersions",
 }
 
@@ -438,6 +445,9 @@ export class FeedService {
   private isDeclareFinish: boolean = false;
   private lastFeedUpdateMap:{[nodeId:string]: FeedUpdateTime};
   private lastCommentUpdateMap:{[key: string]: CommentUpdateTime};
+  private lastMultiLikesAndCommentsCountUpdateMap:{[key: string]: LikesAndCommentsCountUpdateTime};
+  private lastMultiLikesAndCommentsCountUpdateMapCache:{[key: string]: LikesAndCommentsCountUpdateTime};
+  
 
   private throwMsgTransDataLimit = 4*1000*1000;
   private alertPopover:HTMLIonPopoverElement = null;
@@ -937,6 +947,10 @@ export class FeedService {
     this.storeService.get(PersistenceKey.lastCommentUpdateMap).then((mLastCommentUpdateMap) => {
       this.lastCommentUpdateMap = mLastCommentUpdateMap || {};
     });
+
+    this.storeService.get(PersistenceKey.lastMultiLikesAndCommentsCountUpdateMap).then((mLastMultiLikesAndCommentsCountUpdateMap) =>{
+      this.lastMultiLikesAndCommentsCountUpdateMap = mLastMultiLikesAndCommentsCountUpdateMap || {};
+    });
   }
 
   initCallback(){
@@ -1433,9 +1447,9 @@ export class FeedService {
         this.handleGetMultiSubscribesCount(nodeId, result, requestParams, error);
         break;
 
-      // case FeedsData.MethodType.get_multi_likes_and_comments_count:
-      //   this.handleGetMultiLikesAndCommentsCount(nodeId, result, requestParams, error);
-      //   break;
+      case FeedsData.MethodType.get_multi_likes_and_comments_count:
+        this.handleGetMultiLikesAndCommentsCount(nodeId, result, requestParams, error);
+        break;
       default:
         break;
     }
@@ -4258,7 +4272,7 @@ export class FeedService {
 
   async handleGetMultiComments(nodeId: string, responseResult: any, requestParams: any, error: any){
     if (error != null && error != undefined && error.code != undefined){
-      this.handleError(nodeId, error);
+      // this.handleError(nodeId, error);
       return;
     }
     let result = responseResult.comments;
@@ -4287,7 +4301,7 @@ export class FeedService {
 
   async handleGetMultiSubscribesCount(nodeId: string, responseResult: any, requestParams: any, error: any){
     if (error != null && error != undefined && error.code != undefined){
-      this.handleError(nodeId, error);
+      // this.handleError(nodeId, error);
       return;
     }
 
@@ -4309,34 +4323,48 @@ export class FeedService {
     channelsMap[nodeChannelId].subscribers = subscribesCount;
     await this.storeService.set(PersistenceKey.channelsMap,channelsMap);
   }
-  // async handleGetMultiComments(nodeId: string, responseResult: any, requestParams: any, error: any){
-  //   if (error != null && error != undefined && error.code != undefined){
-  //     this.handleError(nodeId, error);
-  //     return;
-  //   }
-  //   let result = responseResult.comments;
-  //   for (let index = 0; index < result.length; index++) {
-  //     let channelId       = result[index].channel_id;
-  //     let postId          = result[index].post_id;
-  //     let commentId       = result[index].comment_id;
-  //     let referCommentId  = result[index].refer_comment_id;
-  //     let contentBin      = result[index].content;
-  //     let likes           = result[index].likes;
-  //     let createdAt       = result[index].created_at;
-  //     let userName        = result[index].user_name;
-  //     let updatedAt       = result[index].updated_at;
-  //     let status          = result[index].status;
-  //     let userDid         = result[index].user_did;
 
-  //     await this.processNewComment(nodeId,channelId,postId,commentId,referCommentId,
-  //       userName,likes,createdAt,updatedAt,status,userDid,contentBin);
+  async handleGetMultiLikesAndCommentsCount(nodeId: string, responseResult: any, requestParams: any, error: any){
+    if (error != null && error != undefined && error.code != undefined){
+      // this.handleError(nodeId, error);
+      return;
+    }
 
-  //     if(this.checkChannelIsMine(nodeId,channelId)){
-  //       let lastCommentUpdateKey = this.getPostId(nodeId, 0, 0);
-  //       this.updateLastCommentUpdate(lastCommentUpdateKey, nodeId, channelId, postId, updatedAt);
-  //     }
-  //   }
-  // }
+    this.lastMultiLikesAndCommentsCountUpdateMap[nodeId] = this.lastMultiLikesAndCommentsCountUpdateMapCache[nodeId];
+    this.storeService.set(PersistenceKey.lastMultiLikesAndCommentsCountUpdateMap,this.lastMultiLikesAndCommentsCountUpdateMap);
+
+    let result = responseResult.posts;
+    for (let index = 0; index < result.length; index++) {
+        let channelId = result[index].channel_id;
+        let postId = result[index].post_id;
+        let commentsCount = result[index].comments_count;
+        let likesCount = result[index].likes_count;
+
+        this.checkLikesAndCommentsCount(nodeId, channelId, postId, likesCount, commentsCount);
+    }
+    await this.savePostMap();
+  }
+
+  checkLikesAndCommentsCount(nodeId: string, channelId: number, postId: number, likesCount: number, commentsCount: number){
+    if (this.postMap == null || this.postMap == undefined)
+      this.postMap = {};
+      
+    let ncpId = this.getPostId(nodeId, channelId, postId);
+    if (this.postMap[ncpId] == undefined)
+      return ;
+
+    if (this.postMap[ncpId].likes != likesCount){
+      this.postMap[ncpId].likes = likesCount;
+    }
+
+    if (this.postMap[ncpId].comments != commentsCount){
+      this.postMap[ncpId].comments = commentsCount;   
+    }
+  }
+
+  async savePostMap(){
+    await this.storeService.set(PersistenceKey.postMap,this.postMap);
+  }
 
   doIssueCredential(nodeId: string, did: string, serverName: string, serverDesc: string,elaAddress:string, onSuccess:()=> void, onError:()=>void){
     this.issueCredential(nodeId,did, serverName,serverDesc,elaAddress,
@@ -4344,7 +4372,7 @@ export class FeedService {
         this.issueCredentialRequest(nodeId, credential);
       },
       ()=>{}
-      );
+    );
   }
 
   doUpdateCredential(nodeId: string, did: string, serverName: string, serverDesc: string,elaAddress:string, onSuccess:()=> void, onError:()=>void){
@@ -4535,12 +4563,33 @@ export class FeedService {
       let commentUpdateTime = mLastCommentUpdateMap[lastCommentUpdateKey] || "";
       let lastCommentTime = commentUpdateTime["time"] || 0;
       this.getMultiComments(friendId, 0, 0, Communication.field.last_update, 0 , lastCommentTime,0);
+      this.getMultiSubscribersCount(friendId, 0);
+      this.updateMultiLikesAndCommentsCount(friendId);
       // }
     }
 
-    this.getMultiSubscribersCount(friendId, 0);
-    this.getMultiLikesAndCommentsCount(friendId,0,0,Communication.field.last_update,0,0,0);
+
   }
+
+  updateMultiLikesAndCommentsCount(nodeId: string){
+    let updateTime = 0;
+    if (this.lastMultiLikesAndCommentsCountUpdateMap != null && 
+      this.lastMultiLikesAndCommentsCountUpdateMap != undefined &&
+      this.lastMultiLikesAndCommentsCountUpdateMap[nodeId] != undefined){
+        updateTime = this.lastMultiLikesAndCommentsCountUpdateMap[nodeId].time;
+    }
+    
+    if (this.lastMultiLikesAndCommentsCountUpdateMapCache == null ||
+      this.lastMultiLikesAndCommentsCountUpdateMapCache == undefined){
+        this.lastMultiLikesAndCommentsCountUpdateMapCache = {};
+    }
+    this.lastMultiLikesAndCommentsCountUpdateMapCache[nodeId] = {
+      nodeId: nodeId,
+      time: this.getCurrentTimeNum()
+    };
+    this.getMultiLikesAndCommentsCount(nodeId,0,0,Communication.field.last_update,0,updateTime,0);
+  }
+  
 
   saveCredential(credential: string){
     localCredential = credential;
