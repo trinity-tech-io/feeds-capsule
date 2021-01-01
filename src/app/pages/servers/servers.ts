@@ -17,11 +17,8 @@ export class ServersPage implements OnInit {
 
     public connectionStatus = 1;
     public myFeedSource = null;
-    public serverList:any = [];
-    public serversStatus: any;
     public serverStatisticsMap: any;
 
-    public showServers = true;
     public showMyFeeds = true;
     public popover:any = "";
     constructor(
@@ -45,11 +42,6 @@ export class ServersPage implements OnInit {
             });
         });
 
-        this.events.subscribe('feeds:serverConnectionChanged', serversStatus => {
-            this.zone.run(() => {
-                this.serversStatus = serversStatus;
-            });
-        });
 
         this.events.subscribe('feeds:serverStatisticsChanged', serverStatisticsMap =>{
             this.zone.run(() => {
@@ -70,47 +62,44 @@ export class ServersPage implements OnInit {
 
                 if (bindingServer != null && bindingServer != undefined)
                     this.myFeedSource = bindingServer;
-
-                this.serversStatus = this.feedService.getServersStatus();
-
-                this.serverStatisticsMap = this.feedService.getServerStatisticsMap();
+                    this.serverStatisticsMap = this.feedService.getServerStatisticsMap();
             });
         });
     }
 
     removeSubscribe(){
         this.events.unsubscribe("feeds:connectionChanged");
-        this.events.unsubscribe("feeds:serverConnectionChanged");
         this.events.unsubscribe("feeds:serverStatisticsChanged");
         this.events.unsubscribe("feeds:login_finish");
         this.events.unsubscribe("feeds:bindServerFinish");
     }
 
     initData(){
-        this.serverList = this.feedService.getServerList();
-        let bindingServer = this.feedService.getBindingServer();
-        if (bindingServer != null && bindingServer != undefined){
+        let bindingServer = this.feedService.getBindingServer() || null;
+        if (bindingServer != null){
             this.myFeedSource = this.feedService.getServerbyNodeId(bindingServer.nodeId);
         }else{
             this.myFeedSource = null;
         }
-        this.serversStatus = this.feedService.getServersStatus();
+        this.serverStatisticsMap = this.feedService.getServerStatisticsMap();
+    }
+
+    doRefresh(event:any) {
+
+      let sid= setTimeout(() => {
+
+        let bindingServer = this.feedService.getBindingServer() || null;
+        if (bindingServer != null){
+            this.myFeedSource = this.feedService.getServerbyNodeId(bindingServer.nodeId);
+        }else{
+            this.myFeedSource = null;
+        }
+
         this.serverStatisticsMap = this.feedService.getServerStatisticsMap();
 
-    }
-
-    doRefresh(event) {
-        for (let index = 0; index < this.serverList.length; index++) {
-            if (this.serverList[index] != undefined)
-                this.feedService.getStatistics(this.serverList[index].nodeId);
-        }
-      let sid= setTimeout(() => {
             event.target.complete();
             clearTimeout(sid);
-        }, 2000);
-    }
-
-    ngOnDestroy() {
+       }, 2000);
     }
 
     ionViewWillEnter(){
@@ -160,28 +149,12 @@ export class ServersPage implements OnInit {
         return this.serverStatisticsMap[nodeId].total_clients||0;
     }
 
-    checkServerStatus(nodeId: string){
-        return this.feedService.getServerStatusFromId(nodeId);
-    }
-
     bindFeedSource(){
         if(this.feedService.getConnectionStatus() != 0){
             this.native.toastWarn('common.connectionError');
             return;
         }
         this.checkDid("/bindservice/scanqrcode");
-    }
-
-    exploreFeedSource(){
-        if(this.feedService.getConnectionStatus() != 0){
-            this.native.toastWarn('common.connectionError');
-            return;
-        }
-        this.checkDid("/menu/servers/add-server");
-    }
-
-    discover(){
-       this.native.go("discoverfeeds");
     }
 
     checkDid(jumpPage:string){
@@ -220,5 +193,9 @@ export class ServersPage implements OnInit {
              that.feedService.promptpublishdid();
           }
       }
+
+     checkServerStatus(nodeId: string){
+        return this.feedService.getServerStatusFromId(nodeId);
+     }
 
 }
