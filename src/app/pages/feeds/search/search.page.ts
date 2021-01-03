@@ -212,7 +212,7 @@ export class SearchPage implements OnInit {
       this.openAlert();
       return;
     }
-    this.native.navigateForward(['/menu/servers/add-server'],"");
+    this.native.navigateForward(['/bindservice/scanqrcode'],"");
   });
 }
 
@@ -232,6 +232,10 @@ confirm(that:any){
        this.popover.dismiss();
        that.feedService.promptpublishdid();
     }
+}
+
+discover(){
+  this.native.go("discoverfeeds");
 }
 
 }
