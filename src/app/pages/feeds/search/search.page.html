@@ -18,10 +18,19 @@
     <img src="./assets/images/empty-feeds-icon.svg">
     <h1>{{ 'common.allempty' | translate }}</h1>
     <p>{{ 'SearchPage.emptyDes' | translate }}</p>
+
     <ion-row class="btn-row">
+      <ion-button (click)="discover()">
+        <ion-label>
+          {{ 'ServersPage.discover' | translate }}
+        </ion-label>
+      </ion-button>
+    </ion-row>
+
+    <ion-row class="btn-row" style="margin-top:7px;">
       <ion-button (click)="addfeedssource()">
         <ion-label>
-          {{ "SearchPage.addfeedssource"  | translate }}
+          {{ "ServersPage.createNewFeedSource"  | translate }}
         </ion-label>
       </ion-button>
     </ion-row>
@@ -71,8 +80,8 @@
       </ion-row>
     </ion-item>
     </div>
-    <div class="new-feed-div" (click)="addfeedssource()" *ngIf="channelList.length > 0">
-        <div class="new-feed">{{ "SearchPage.addfeedssource" | translate }}</div>
+    <div class="new-feed-div" (click)="discover()" *ngIf="channelList.length > 0">
+        <div class="new-feed">{{ 'ServersPage.discover' | translate }}</div>
     </div>
   </ion-list>
 
