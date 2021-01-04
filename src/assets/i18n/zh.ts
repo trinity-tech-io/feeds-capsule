@@ -488,6 +488,7 @@ export const zh = {
         "off":"关"
     },
     "DiscoverfeedPage":{
-
+       "title":"发现微频",
+       "emptyDes":"还没有公开的微频"
     }
 };
