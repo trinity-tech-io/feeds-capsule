@@ -486,5 +486,8 @@ export const zh = {
         "hideOfflinefeed":"仅显示在线状态的Feeds",
         "on":"开",
         "off":"关"
+    },
+    "DiscoverfeedPage":{
+
     }
 };
