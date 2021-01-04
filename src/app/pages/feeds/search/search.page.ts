@@ -235,7 +235,7 @@ confirm(that:any){
 }
 
 discover(){
-  this.native.go("discoverfeeds");
+  this.native.go("discoverfeed");
 }
 
 }

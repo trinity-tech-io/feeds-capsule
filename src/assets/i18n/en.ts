@@ -486,5 +486,9 @@ export const en = {
         "hideOfflinefeed":"Dispaly online Feeds only",
         "on":"ON",
         "off":"OFF"
+    },
+    "DiscoverfeedPage":{
+        "title":"Discover Feed",
+        "emptyDes":"There is no public Feed"
     }
 };
