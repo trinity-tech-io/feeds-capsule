@@ -673,8 +673,6 @@ export class ConnectionService {
     sendRPCMessage(serverName: string, nodeId: string, method: string, params: any, memo: any, isShowOfflineToast: boolean = true){
         if(!this.checkServerConnection(nodeId)){
           this.events.publish("rpcRequest:error");
-          if (isShowOfflineToast)
-            // this.native.toast(this.formatInfoService.formatOfflineMsg(serverName));
           return;
         }
         this.jsonRPCService.request(
@@ -687,7 +685,6 @@ export class ConnectionService {
             },
             (error)=>{
                 this.events.publish("rpcRequest:error");
-                this.native.toast(JSON.stringify(error));
             }
         );
     }
