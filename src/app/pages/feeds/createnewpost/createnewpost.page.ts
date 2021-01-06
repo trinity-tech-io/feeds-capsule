@@ -1,5 +1,5 @@
 import { Component, OnInit, NgZone,ElementRef} from '@angular/core';
-import { NavController, Events,ModalController } from '@ionic/angular';
+import { NavController, Events,ModalController,Platform } from '@ionic/angular';
 import { FeedService } from 'src/app/services/FeedService';
 import { ActivatedRoute } from '@angular/router';
 import { NativeService } from '../../../services/NativeService';
@@ -10,7 +10,6 @@ import { VideoEditor } from '@ionic-native/video-editor/ngx';
 import { AppService } from 'src/app/services/AppService';
 import { UtilService } from 'src/app/services/utilService';
 import { LogUtils } from 'src/app/services/LogUtils';
-
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 let TAG: string = "Feeds-createpost";
 @Component({
@@ -45,6 +44,7 @@ export class CreatenewpostPage implements OnInit {
   private transDataChannel:FeedsData.TransDataChannel = FeedsData.TransDataChannel.MESSAGE;
   public fullScreenmodal:any ="";
   constructor(
+    private platform: Platform,
     private events: Events,
     private native: NativeService,
     private acRoute: ActivatedRoute,
@@ -419,7 +419,7 @@ selectvideo(){
   async getVideoInfo(fileUri:string){
     let videoInfo = await this.videoEditor.getVideoInfo({ fileUri:fileUri });
     this.duration = videoInfo["duration"];
-    if(parseInt(this.duration) > 15){
+    if(parseInt(this.duration) >=15){
       this.flieUri ="";
       this.posterImg ="";
       this.imgUrl="";
@@ -434,7 +434,6 @@ selectvideo(){
 
 
   readFile(fileName:string,filepath:string){
-
     window.resolveLocalFileSystemURL(filepath,
       (dirEntry: CordovaFilePlugin.DirectoryEntry)=>{
         dirEntry.getFile(fileName,
@@ -643,23 +642,49 @@ video.load();
     height: 480,
     quality: 30
   }).then((newfileUri)=>{
-      newfileUri = "cdvfile://localhost"+newfileUri.replace("file//","");
-      newfileUri = newfileUri.replace("/storage/emulated/0/","/sdcard/");
-      let lastIndex = newfileUri.lastIndexOf("/");
-      let fileName =  newfileUri.substring(lastIndex+1,newfileUri.length);
-      let filepath =  newfileUri.substring(0,lastIndex);
+      //newfileUri = "cdvfile://localhost"+newfileUri.replace("file//","");
+      //newfileUri = newfileUri.replace("/storage/emulated/0/","/sdcard/");
+      // let lastIndex = newfileUri.lastIndexOf("/");
+      // let fileName =  newfileUri.substring(lastIndex+1,newfileUri.length);
+      // let filepath =  newfileUri.substring(0,lastIndex);
+      let pathObj = this.handlePath(newfileUri);
+      let fileName =  pathObj["fileName"];
+      let filepath =  pathObj["filepath"];
       this.readThumbnail(fileName,filepath);
 
       this.transcodeVideo(path).then((newfileUri)=>{
         this.transcode =100;
-        newfileUri = "cdvfile://localhost"+newfileUri.replace("file//","");
-        newfileUri = newfileUri.replace("/storage/emulated/0/","/sdcard/");
-        let lastIndex = newfileUri.lastIndexOf("/");
-        let fileName =  newfileUri.substring(lastIndex+1,newfileUri.length);
-        let filepath =  newfileUri.substring(0,lastIndex);
+        //newfileUri = "cdvfile://localhost"+newfileUri.replace("file//","");
+        //newfileUri = newfileUri.replace("/storage/emulated/0/","/sdcard/");
+        // let lastIndex = newfileUri.lastIndexOf("/");
+        // let fileName =  newfileUri.substring(lastIndex+1,newfileUri.length);
+        // let filepath =  newfileUri.substring(0,lastIndex);
+        let pathObj = this.handlePath(newfileUri);
+        let fileName =  pathObj["fileName"];
+        let filepath =  pathObj["filepath"];
         this.readFile(fileName,filepath);
       });
+      //this.iosReadFile(path);
   });
+}
+
+handlePath(fileUri:string){
+  let pathObj = {};
+  if (this.platform.is('android')) {
+        fileUri = "cdvfile://localhost"+fileUri.replace("file//","");
+        fileUri =  fileUri.replace("/storage/emulated/0/","/sdcard/");
+        let lastIndex = fileUri.lastIndexOf("/");
+        pathObj["fileName"] =  fileUri.substring(lastIndex+1,fileUri.length);
+        pathObj["filepath"] =  fileUri.substring(0,lastIndex);
+  }else if (this.platform.is('ios')) {
+        let lastIndex = fileUri.lastIndexOf("/");
+        pathObj["fileName"] =  fileUri.substring(lastIndex+1,fileUri.length);
+        let filepath = fileUri.substring(0,lastIndex);
+        filepath = filepath.startsWith('file://') ? filepath : `file://${filepath}`;
+        pathObj["filepath"] =  filepath;
+  }
+
+  return pathObj;
 }
 
 readThumbnail(fileName:string,filepath:string){
