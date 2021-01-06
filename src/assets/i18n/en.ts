@@ -490,5 +490,8 @@ export const en = {
     "DiscoverfeedPage":{
         "title":"Discover Feed",
         "emptyDes":"There is no public Feed"
+    },
+    "DiscoverfeedinfoPage":{
+        "title":"Feed info"
     }
 };

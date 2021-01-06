@@ -1,0 +1,65 @@
+<ion-header *ngIf="connectionStatus == 1">
+  <div class="offline-header"></div>
+</ion-header>
+<ion-content>
+  <ion-grid class="container" [class.darkContainer]="theme.darkMode">
+    <!--- SERVER HEADER --->
+    <div class="server-header">
+      <ion-img class="headerImg" src="./assets/images/profile-2.svg"></ion-img>
+      <h1>{{ serverInfo['name'] }}</h1>
+      <p>{{serverInfo['description']}}</p>
+    </div>
+
+      <!--- SERVER DETAILS --->
+
+        <ion-row class="detail-row">
+          <ion-col size="12" class="left-col">
+              <h1>{{'ServerInfoPage.name'|translate}}</h1>
+              <h2>{{serverInfo['name']}}</h2>
+          </ion-col>
+        </ion-row>
+
+        <ion-row class="detail-row">
+          <ion-col size="12" class="left-col">
+              <h1>{{'ServerInfoPage.introduction'|translate}}</h1>
+              <h2>{{serverInfo['description']}}</h2>
+          </ion-col>
+        </ion-row>
+
+        <ion-row class="detail-row">
+          <ion-col size="12" class="left-col">
+              <h1>{{'ServerInfoPage.did'|translate}}</h1>
+              <h2>{{serverInfo['did']}}</h2>
+          </ion-col>
+        </ion-row>
+
+        <ion-row class="detail-row removeBorder">
+          <ion-col size="12" class="left-col">
+              <h1>{{'ServerInfoPage.feedsSourceQRCode'|translate}}</h1>
+              <div class="qr-container">
+                <div class="qrcode">
+                  <qrcode [qrdata]="feedsUrl" [size]="150" [level]="'M'"></qrcode>
+                </div>
+              </div>
+          </ion-col>
+        </ion-row>
+
+        <div style="margin-left: 34px; margin-right: 34px; margin-top: 25px;" *ngIf="nodeId===''">
+          <ion-button style="margin-top: 25px;" expand="block" mode="ios" (click)="addFeedSource()">
+            <ion-label>{{'ServerInfoPage.addFeedSource' | translate}}</ion-label>
+          </ion-button>
+        </div>
+
+        <div style="margin-left: 34px; margin-right: 34px; margin-top: 25px;" *ngIf="nodeId!=''&&!isBindServer">
+          <ion-button style="margin-top: 25px;" expand="block" mode="ios"  color="danger" (click)="removeFeedSource()">
+            <ion-label>{{'ServerInfoPage.removeFeedSource' | translate}}</ion-label>
+          </ion-button>
+        </div>
+
+        <div style="margin-left: 34px; margin-right: 34px; margin-top: 25px;" *ngIf="nodeId!=''&&isBindServer">
+          <ion-button style="margin-top: 25px;" expand="block" mode="ios"  color="danger" (click)="deleteFeedSource()">
+            <ion-label>{{'ServerInfoPage.deleteFeedSource' | translate}}</ion-label>
+          </ion-button>
+        </div>
+  </ion-grid>
+</ion-content>
