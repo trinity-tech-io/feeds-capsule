@@ -44,7 +44,8 @@ const routes: Routes = [
   { path: 'discoverfeedsinfo', loadChildren: './pages/servers/discoverfeedsinfo/discoverfeedsinfo.module#DiscoverfeedsinfoPageModule' },
   { path: 'settings', loadChildren: './pages/settings/settings.module#SettingsPageModule' },
   { path: 'editimage', loadChildren: './pages/editimage/editimage.module#EditimagePageModule' },
-  { path: 'discoverfeed', loadChildren: './pages/discoverfeed/discoverfeed.module#DiscoverfeedPageModule' }
+  { path: 'discoverfeed', loadChildren: './pages/discoverfeed/discoverfeed.module#DiscoverfeedPageModule' },
+  { path: 'discoverfeedinfo', loadChildren: './pages/discoverfeedinfo/discoverfeedinfo.module#DiscoverfeedinfoPageModule' }
 ];
 
 @NgModule({
