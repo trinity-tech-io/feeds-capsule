@@ -1,0 +1,68 @@
+<ion-header *ngIf="connectionStatus == 1">
+  <div class="offline-header"></div>
+</ion-header>
+
+<ion-content>
+  <ion-grid class="container" [class.darkContainer]="theme.darkMode">
+
+      <!--- Feed HEADER --->
+      <div class="server-header">
+        <img class="headerImg" [src]="avatar"/>
+        <h1>{{ name }}</h1>
+        <p>{{des}}</p>
+      </div>
+
+      <ion-row class="detail-row">
+        <ion-col size="12" class="left-col">
+            <h1>{{'CreatenewfeedPage.name'|translate}}</h1>
+            <h2>{{name}}</h2>
+        </ion-col>
+      </ion-row>
+
+      <ion-row class="detail-row">
+        <ion-col size="12" class="left-col">
+            <h1>{{'CreatenewfeedPage.description'|translate}}</h1>
+            <h2>{{des}}</h2>
+        </ion-col>
+      </ion-row>
+
+      <ion-row class="detail-row">
+        <ion-col size="12" class="left-col">
+            <h1>{{'ServerInfoPage.did'|translate}}</h1>
+            <h2>{{serverInfo['did']}}</h2>
+        </ion-col>
+      </ion-row>
+
+      <ion-row class="detail-row removeBorder">
+        <ion-col size="12" class="left-col">
+            <h1>{{'ServerInfoPage.feedsSourceQRCode'|translate}}</h1>
+            <div class="qr-container">
+              <div class="qrcode">
+                <qrcode [qrdata]="feedsUrl" [size]="150" [level]="'M'"></qrcode>
+              </div>
+            </div>
+        </ion-col>
+      </ion-row>
+
+      <div style="margin-left: 34px; margin-right: 34px; margin-top: 25px;" *ngIf="isOwer == 0">
+        <ion-button style="margin-top: 25px;" expand="block" mode="ios" (click)="addFeedSource()">
+          <ion-button (click)="clickPublic()">
+            <ion-label *ngIf="isPublic === ''">{{'ServerInfoPage.public'|translate}}</ion-label>
+            <ion-label *ngIf="isPublic != ''">{{'ServerInfoPage.unpublic'|translate}}</ion-label>
+          </ion-button>
+        </ion-button>
+      </div>
+
+    <!-- <ion-row class="btns-row" [class.dark-btns-row]="theme.darkMode">
+      <ion-col class="btn cancel ion-activatable ripple" size="5.6" (click)="cancel()">
+          <ion-label>{{ 'common.cancel' | translate }}</ion-label>
+          <ion-ripple-effect></ion-ripple-effect>
+      </ion-col>
+      <ion-col class="btn confirm ion-activatable ripple" size="5.6" (click)="confirm()">
+          <ion-label>{{ 'common.save' | translate }}</ion-label>
+          <ion-ripple-effect></ion-ripple-effect>
+      </ion-col>
+    </ion-row> -->
+  </ion-grid>
+</ion-content>
+

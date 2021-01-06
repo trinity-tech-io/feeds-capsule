@@ -493,5 +493,8 @@ export const zh = {
     },
     "DiscoverfeedinfoPage":{
         "title":"微频信息"
+    },
+    "FeedinfoPage":{
+       "title":"微频信息"
     }
 };

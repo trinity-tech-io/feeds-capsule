@@ -493,5 +493,8 @@ export const en = {
     },
     "DiscoverfeedinfoPage":{
         "title":"Feed info"
+    },
+    "FeedinfoPage":{
+        "title":"Feed info"
     }
 };
