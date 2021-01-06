@@ -229,10 +229,6 @@ export class ChannelsPage implements OnInit {
       this.initTitle();
     });
 
-    this.events.subscribe("feeds:editChannel",()=>{
-      this.clickEdit()
-    });
-
     this.events.subscribe('feeds:subscribeFinish', (nodeId, channelId, name)=> {
       this.zone.run(() => {
         this.checkFollowStatus(this.nodeId,this.channelId);
@@ -370,11 +366,9 @@ export class ChannelsPage implements OnInit {
   }
 
   ionViewWillLeave(){
-    titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, null);
 
     this.events.unsubscribe("feeds:connectionChanged");
     this.events.unsubscribe("feeds:updateTitle");
-    this.events.unsubscribe("feeds:editChannel");
     this.events.unsubscribe("feeds:subscribeFinish");
     this.events.unsubscribe("feeds:unsubscribeFinish");
     this.events.unsubscribe("feeds:editPostFinish");
@@ -418,15 +412,6 @@ export class ChannelsPage implements OnInit {
 
   initTitle(){
     titleBarManager.setTitle(this.translate.instant("ChannelsPage.feeds"));
-
-    if (this.feedService.checkChannelIsMine(this.nodeId, this.channelId)) {
-      titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, {
-        key: "editChannel",
-        iconPath: TitleBarPlugin.BuiltInIcon.EDIT
-      });
-    } else {
-      titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, null);
-    }
   }
 
   like(nodeId:string, channelId:number, postId:number){
@@ -614,39 +599,6 @@ export class ChannelsPage implements OnInit {
        clearTimeout(sId);
       }
     },500);
-  }
-
-  clickEdit(){
-    if(this.feedService.getConnectionStatus() != 0){
-      this.native.toastWarn('common.connectionError');
-      return;
-    }
-
-    if(this.feedService.getServerStatusFromId(this.nodeId) != 0){
-      this.native.toastWarn('common.connectionError');
-      return;
-    }
-
-     this.pauseAllVideo();
-
-    if(this.channelAvatar.indexOf("data:image")>-1){
-      this.feedService.setSelsectIndex(0);
-      this.feedService.setProfileIamge(this.channelAvatar);
-    }else if(this.channelAvatar.indexOf("assets/images")>-1){
-      let index = this.channelAvatar.substring(this.channelAvatar.length-5,this.channelAvatar.length-4);
-      this.feedService.setSelsectIndex(index);
-      this.feedService.setProfileIamge(this.channelAvatar);
-    }
-
-    this.feedService.setChannelInfo(
-      {
-        "nodeId":this.nodeId,
-        "channelId":this.channelId,
-        "name":this.channelName,
-        "des":this.channelDesc,
-      });
-
-    this.native.go("/eidtchannel");
   }
 
   checkChannelIsMine(){
@@ -1146,4 +1098,23 @@ export class ChannelsPage implements OnInit {
       }
   }
 
+  clickAvatar(){
+   if(this.channelAvatar.indexOf("data:image")>-1){
+    this.feedService.setSelsectIndex(0);
+    this.feedService.setProfileIamge(this.channelAvatar);
+   }else if(this.channelAvatar.indexOf("assets/images")>-1){
+    let index = this.channelAvatar.substring(this.channelAvatar.length-5,this.channelAvatar.length-4);
+    this.feedService.setSelsectIndex(index);
+    this.feedService.setProfileIamge(this.channelAvatar);
+   }
+
+  this.feedService.setChannelInfo(
+    {
+      "nodeId":this.nodeId,
+      "channelId":this.channelId,
+      "name":this.channelName,
+      "des":this.channelDesc,
+    });
+   this.native.navigateForward(['/feedinfo'],"");
+  }
 }
