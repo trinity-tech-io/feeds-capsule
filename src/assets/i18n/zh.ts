@@ -492,7 +492,8 @@ export const zh = {
        "emptyDes":"还没有公开的微频"
     },
     "DiscoverfeedinfoPage":{
-        "title":"微频信息"
+        "title":"微频信息",
+        "addFeed":"添加微频",
     },
     "FeedinfoPage":{
        "title":"微频信息"
