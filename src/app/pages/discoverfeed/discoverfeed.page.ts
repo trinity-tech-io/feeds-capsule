@@ -14,11 +14,30 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
   templateUrl: './discoverfeed.page.html',
   styleUrls: ['./discoverfeed.page.scss'],
 })
+// let obj = {
+//   "did":this.serverInfo['did'],
+//   "name":this.name,
+//   "description":this.des,
+//   "url":this.feedsUrl,
+//   "feedsUrlHash":feedsUrlHash,
+//   "feedsAvatar":this.channelAvatar,
+//   "followers":followers,
+//   "ownerName":this.serverInfo["owner"]
+// };
 export class DiscoverfeedPage implements OnInit {
 
   @ViewChild(IonInfiniteScroll,{static:true}) infiniteScroll: IonInfiniteScroll;
   public serverList = [];
-  public feedList = [];
+  public feedList = [{
+    "did":"did",
+    "name":"testname",
+    "description":"testdes",
+    "url":"testurl",
+    "feedsUrlHash":"testhash",
+    "feedsAvatar":"testchannelAvatar",
+    "followers":"2",
+    "ownerName":"ownerName"
+  }];
   public connectionStatus = 1;
   public pageNum:number = 1;
   public pageSize:number = 10;
@@ -39,7 +58,7 @@ export class DiscoverfeedPage implements OnInit {
 
   ngOnInit() {
     this.pageNum =1;
-    this.initData("",true);
+    //this.initData("",true);
   }
   ionViewWillEnter() {
     this.initTitle();
@@ -77,27 +96,29 @@ export class DiscoverfeedPage implements OnInit {
   }
 
   clickItem(item:any){
-    if(this.connectionStatus != 0){
-      this.native.toastWarn('common.connectionError');
-      return;
-    }
-    //this.unPublicFeeds(item['did']);
-    let address = item["url"] || "";
-    if (address.length < 54 ||
-      !address.startsWith('feeds://')||
-      !address.indexOf("did:elastos:")){
-        this.native.toastWarn("AddServerPage.tipMsg");
-        return;
-    }
+  //   if(this.connectionStatus != 0){
+  //     this.native.toastWarn('common.connectionError');
+  //     return;
+  //   }
+  //   let address = item["url"] || "";
+  //   if (address.length < 54 ||
+  //     !address.startsWith('feeds://')||
+  //     !address.indexOf("did:elastos:")){
+  //       this.native.toastWarn("AddServerPage.tipMsg");
+  //       return;
+  //   }
 
-   let server = _.find(this.serverList,{did:item['did']});
-   if(!server){
-      this.native.go("discoverfeedsinfo",{
-      params:item
-      });
-      return;
-   }
-   this.navToServerInfo(server.nodeId,false);
+  //  let server = _.find(this.serverList,{did:item['did']});
+  //  if(!server){
+  //     this.native.go("discoverfeedinfo",{
+  //     params:item
+  //     });
+  //     return;
+  //  }
+  //  this.navToServerInfo(server.nodeId,false);
+   this.native.go("discoverfeedinfo",{
+    params:item
+    });
   }
 
   initData(events:any,isLoading:boolean=true){

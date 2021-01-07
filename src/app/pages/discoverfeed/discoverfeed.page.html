@@ -35,6 +35,10 @@
             </ion-col>
             <ion-col size="7.5" class="middle-col">
               <h1>{{item.name}}</h1>
+              <ion-row>
+                <img src="./assets/images/bubble2.svg"> <br>
+                <p><span>{{ item.followers }}</span> {{ 'common.followers' | translate }}</p>
+              </ion-row>
               <p>{{item.description}}</p>
               <p style="color:#368bff;font-weight:700;">{{handleStatus(item.did) | translate}}</p>
             </ion-col>
