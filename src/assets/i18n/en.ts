@@ -492,7 +492,8 @@ export const en = {
         "emptyDes":"There is no public Feed"
     },
     "DiscoverfeedinfoPage":{
-        "title":"Feed info"
+        "title":"Feed info",
+        "addFeed":"Add feed",
     },
     "FeedinfoPage":{
         "title":"Feed info"
