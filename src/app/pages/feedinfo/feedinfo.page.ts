@@ -1,10 +1,13 @@
-import { Component, OnInit,NgZone } from '@angular/core';
+import { Component, OnInit,NgZone, ɵSWITCH_CHANGE_DETECTOR_REF_FACTORY__POST_R3__ } from '@angular/core';
 import { TranslateService } from "@ngx-translate/core";
 import { Events} from '@ionic/angular';
-import { ThemeService } from 'src/app/services/theme.service';
-import { FeedService } from 'src/app/services/FeedService';
+import { ThemeService } from '../../services/theme.service';
+import { FeedService } from '../../services/FeedService';
 import { ActivatedRoute } from '@angular/router';
-import { NativeService } from 'src/app/services/NativeService';
+import { NativeService } from '../../services/NativeService';
+import { HttpService } from '../../services/HttpService';
+import { ApiUrl } from '../../services/ApiUrl';
+import { UtilService } from 'src/app/services/utilService';
 import * as _ from 'lodash';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
@@ -38,6 +41,7 @@ export class FeedinfoPage implements OnInit {
   public feedsUrl: string = null;
   public isOwer:number = 2;
   public isPublic:string = "";
+  public qrcodeString:string = null;
   constructor(
     private feedService: FeedService,
     public activatedRoute:ActivatedRoute,
@@ -45,22 +49,26 @@ export class FeedinfoPage implements OnInit {
     private translate:TranslateService,
     private events: Events,
     private native: NativeService,
-    private zone:NgZone
+    private zone:NgZone,
+    private httpService: HttpService,
   ) {
     }
 
   ngOnInit() {
 
       let item = this.feedService.getChannelInfo();
+      console.log("=====item====="+JSON.stringify(item));
       this.oldChannelInfo = item;
       let channelInfo  = _.cloneDeep(item);
       this.nodeId = channelInfo["nodeId"] || "";
       this.serverInfo = this.feedService.getServerbyNodeId(this.nodeId);
-      this.feedsUrl = this.serverInfo['feedsUrl'] || null;
+      let feedsUrl = this.serverInfo['feedsUrl'] || null;
       let did = this.serverInfo['did'] || "";
       this.isOwer = this.checkIsMine(did);
       this.channelId = channelInfo["channelId"] || "";
+      this.feedsUrl = feedsUrl+"/"+this.channelId;
       this.name = channelInfo["name"] || "";
+      this.qrcodeString = this.feedsUrl+"#"+this.name;
       this.des = channelInfo["des"] || "";
       this.oldChannelAvatar = this.feedService.getProfileIamge();
   }
@@ -211,7 +219,45 @@ export class FeedinfoPage implements OnInit {
   }
 
   clickPublic(){
+    if(this.isPublic === ""){
+      this.publicFeeds();
+   }else{
+      this.unPublicFeeds();
+   }
+  }
 
+  publicFeeds(){
+    let channel = this.feedService.getChannelFromId(this.nodeId, this.channelId);
+    let followers = channel.subscribers;
+    let feedsUrlHash = UtilService.SHA256(this.feedsUrl);
+    let obj = {
+      "did":this.serverInfo['did'],
+      "name":this.name,
+      "description":this.des,
+      "url":this.feedsUrl,
+      "feedsUrlHash":feedsUrlHash,
+      "feedsAvatar":this.channelAvatar,
+      "followers":followers,
+      "ownerName":this.serverInfo["owner"]
+    };
+
+    console.log("==parm=="+JSON.stringify(obj));
+
+    this.httpService.ajaxPost(ApiUrl.register,obj).then((result)=>{
+      if(result["code"] === 200){
+          this.isPublic = "111";
+          this.native.toast_trans("ServerInfoPage.publicTip");
+      }
+    });
+  }
+
+  unPublicFeeds(){
+    // this.httpService.ajaxGet(ApiUrl.remove+"?did="+this.didString).then((result)=>{
+    //   if(result["code"] === 200){
+    //       this.isPublic = "";
+    //       this.native.toast_trans("ServerInfoPage.unpublicTip");
+    //   }
+    // });
   }
 
   clickEdit(){
