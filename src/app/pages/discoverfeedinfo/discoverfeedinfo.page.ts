@@ -16,6 +16,18 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
   templateUrl: './discoverfeedinfo.page.html',
   styleUrls: ['./discoverfeedinfo.page.scss'],
 })
+
+// let obj = {
+//   "did":this.serverInfo['did'],
+//   "name":this.name,
+//   "description":this.des,
+//   "url":this.feedsUrl,
+//   "feedsUrlHash":feedsUrlHash,
+//   "feedsAvatar":this.channelAvatar,
+//   "followers":followers,
+//   "ownerName":this.serverInfo["owner"]
+// };
+
 export class DiscoverfeedinfoPage implements OnInit {
 
   public  connectionStatus = 1;
