@@ -45,24 +45,15 @@
       </ion-row>
 
       <div style="margin-left: 34px; margin-right: 34px; margin-top: 25px;" *ngIf="isOwer == 0">
-        <ion-button style="margin-top: 25px;" expand="block" mode="ios" (click)="addFeedSource()">
-          <ion-button (click)="clickPublic()">
-            <ion-label *ngIf="isPublic === ''">{{'ServerInfoPage.public'|translate}}</ion-label>
-            <ion-label *ngIf="isPublic != ''">{{'ServerInfoPage.unpublic'|translate}}</ion-label>
-          </ion-button>
+        <ion-button style="margin-top: 25px;" expand="block" mode="ios" *ngIf="isPublic === ''" (click)="clickPublic()">
+            <ion-label >{{'ServerInfoPage.public'|translate}}</ion-label>
+            <ion-label>{{'ServerInfoPage.unpublic'|translate}}</ion-label>
         </ion-button>
-      </div>
 
-    <!-- <ion-row class="btns-row" [class.dark-btns-row]="theme.darkMode">
-      <ion-col class="btn cancel ion-activatable ripple" size="5.6" (click)="cancel()">
-          <ion-label>{{ 'common.cancel' | translate }}</ion-label>
-          <ion-ripple-effect></ion-ripple-effect>
-      </ion-col>
-      <ion-col class="btn confirm ion-activatable ripple" size="5.6" (click)="confirm()">
-          <ion-label>{{ 'common.save' | translate }}</ion-label>
-          <ion-ripple-effect></ion-ripple-effect>
-      </ion-col>
-    </ion-row> -->
+        <ion-button style="margin-top: 25px;" expand="block" mode="ios" *ngIf="isPublic != ''"  (click)="unPublicFeeds()">
+          <ion-label>{{'ServerInfoPage.unpublic'|translate}}</ion-label>
+      </ion-button>
+      </div>
   </ion-grid>
 </ion-content>
 

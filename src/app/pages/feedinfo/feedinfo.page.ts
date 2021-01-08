@@ -1,4 +1,4 @@
-import { Component, OnInit,NgZone, ɵSWITCH_CHANGE_DETECTOR_REF_FACTORY__POST_R3__ } from '@angular/core';
+import { Component, OnInit,NgZone} from '@angular/core';
 import { TranslateService } from "@ngx-translate/core";
 import { Events} from '@ionic/angular';
 import { ThemeService } from '../../services/theme.service';
@@ -8,6 +8,7 @@ import { NativeService } from '../../services/NativeService';
 import { HttpService } from '../../services/HttpService';
 import { ApiUrl } from '../../services/ApiUrl';
 import { UtilService } from 'src/app/services/utilService';
+import { StorageService } from '../../services/StorageService';
 import * as _ from 'lodash';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
@@ -42,6 +43,7 @@ export class FeedinfoPage implements OnInit {
   public isOwer:number = 2;
   public isPublic:string = "";
   public qrcodeString:string = null;
+  public feedPublicStatus:any = {};
   constructor(
     private feedService: FeedService,
     public activatedRoute:ActivatedRoute,
@@ -51,13 +53,12 @@ export class FeedinfoPage implements OnInit {
     private native: NativeService,
     private zone:NgZone,
     private httpService: HttpService,
+    public storageService:StorageService,
   ) {
     }
 
   ngOnInit() {
-
       let item = this.feedService.getChannelInfo();
-      console.log("=====item====="+JSON.stringify(item));
       this.oldChannelInfo = item;
       let channelInfo  = _.cloneDeep(item);
       this.nodeId = channelInfo["nodeId"] || "";
@@ -68,6 +69,9 @@ export class FeedinfoPage implements OnInit {
       this.channelId = channelInfo["channelId"] || "";
       this.feedsUrl = feedsUrl+"/"+this.channelId;
       this.name = channelInfo["name"] || "";
+      this.feedPublicStatus = this.feedService.getFeedPublicStatus();
+      let feedsUrlHash =UtilService.SHA256(this.feedsUrl);
+      this.isPublic = this.feedPublicStatus[feedsUrlHash] || "";
       this.qrcodeString = this.feedsUrl+"#"+this.name;
       this.des = channelInfo["des"] || "";
       this.oldChannelAvatar = this.feedService.getProfileIamge();
@@ -241,23 +245,28 @@ export class FeedinfoPage implements OnInit {
       "ownerName":this.serverInfo["owner"]
     };
 
-    console.log("==parm=="+JSON.stringify(obj));
-
     this.httpService.ajaxPost(ApiUrl.register,obj).then((result)=>{
       if(result["code"] === 200){
-          this.isPublic = "111";
+          this.isPublic = "1";
+          this.feedPublicStatus[feedsUrlHash] = "1";
+          this.feedService.setFeedPublicStatus(this.feedPublicStatus);
+          this.storageService.set("feeds.feedPublicStatus",JSON.stringify(this.feedPublicStatus));
           this.native.toast_trans("ServerInfoPage.publicTip");
       }
     });
   }
 
   unPublicFeeds(){
-    // this.httpService.ajaxGet(ApiUrl.remove+"?did="+this.didString).then((result)=>{
-    //   if(result["code"] === 200){
-    //       this.isPublic = "";
-    //       this.native.toast_trans("ServerInfoPage.unpublicTip");
-    //   }
-    // });
+    let feedsUrlHash = UtilService.SHA256(this.feedsUrl);
+    this.httpService.ajaxGet(ApiUrl.remove+"?feedsUrlHash="+feedsUrlHash).then((result)=>{
+      if(result["code"] === 200){
+          this.isPublic = "";
+          this.feedPublicStatus =_.omit(this.feedPublicStatus,[feedsUrlHash]);
+          this.feedService.setFeedPublicStatus(this.feedPublicStatus);
+          this.storageService.set("feeds.feedPublicStatus",JSON.stringify(this.feedPublicStatus));
+          this.native.toast_trans("ServerInfoPage.unpublicTip");
+      }
+    });
   }
 
   clickEdit(){

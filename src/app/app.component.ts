@@ -47,6 +47,7 @@ export class MyApp {
   initializeApp() {
     this.platform.ready().then(() => {
       this.initSetting();
+      this.initFeedPublicStatus();
       this.native.networkInfoInit();
       this.native.addNetworkListener(()=>{
         this.events.publish('feeds:networkStatusChanged', 1);
@@ -54,6 +55,18 @@ export class MyApp {
         this.events.publish('feeds:networkStatusChanged', 0);
       });
         this.initDisclaimer();
+    });
+  }
+
+  initFeedPublicStatus(){
+    this.feedService.getData("feeds.feedPublicStatus").then((feedPublicStatus)=>{
+      if(feedPublicStatus === null){
+        this.feedService.setFeedPublicStatus({});
+        return;
+      }
+      this.feedService.setFeedPublicStatus(JSON.parse(feedPublicStatus));
+    }).catch((err)=>{
+
     });
   }
 

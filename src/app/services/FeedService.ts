@@ -414,6 +414,7 @@ export class FeedIntro{
 
 @Injectable()
 export class FeedService {
+  public feedPublicStatus:any = {};
   public developerMode:boolean = false;
   public hideDeletedPosts:boolean = false;
   public hideDeletedComments:boolean = false;
@@ -6292,4 +6293,12 @@ export class FeedService {
     let accessToken: FeedsData.AccessToken = accessTokenMap[nodeId]||undefined;
     this.connectionService.getMultiLikesAndCommentsCount(this.getServerNameByNodeId(nodeId), nodeId, channelId, postId, by, upperBound, lowerBound, maxCount, accessToken);
   }
+
+  setFeedPublicStatus(feedPublicStatus:any){
+      this.feedPublicStatus = feedPublicStatus;
+  }
+
+  getFeedPublicStatus(){
+   return this.feedPublicStatus;
+}
 }
