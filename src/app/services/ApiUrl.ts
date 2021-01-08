@@ -1,6 +1,7 @@
 export  class ApiUrl {
   /**后台服务*/
-  public static SERVER:string = 'https://www.trinity-tech.io/feeds/api/v1';
+  //public static SERVER:string = 'https://www.trinity-tech.io/feeds/api/v1';
+  public static SERVER:string = 'https://www.trinity-tech.io/feeds/api/v2';
   /**register*/
   public static register:string = ApiUrl.SERVER +'/register';
 
