@@ -47,7 +47,6 @@
       <div style="margin-left: 34px; margin-right: 34px; margin-top: 25px;" *ngIf="isOwer == 0">
         <ion-button style="margin-top: 25px;" expand="block" mode="ios" *ngIf="isPublic === ''" (click)="clickPublic()">
             <ion-label >{{'ServerInfoPage.public'|translate}}</ion-label>
-            <ion-label>{{'ServerInfoPage.unpublic'|translate}}</ion-label>
         </ion-button>
 
         <ion-button style="margin-top: 25px;" expand="block" mode="ios" *ngIf="isPublic != ''"  (click)="unPublicFeeds()">

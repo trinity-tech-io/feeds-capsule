@@ -242,7 +242,8 @@ export class FeedinfoPage implements OnInit {
       "feedsUrlHash":feedsUrlHash,
       "feedsAvatar":this.channelAvatar,
       "followers":followers,
-      "ownerName":this.serverInfo["owner"]
+      "ownerName":this.serverInfo["owner"],
+      "nodeId":this.nodeId
     };
 
     this.httpService.ajaxPost(ApiUrl.register,obj).then((result)=>{
