@@ -38,27 +38,21 @@
               <h1>{{'ServerInfoPage.feedsSourceQRCode'|translate}}</h1>
               <div class="qr-container">
                 <div class="qrcode">
-                  <qrcode [qrdata]="feedsUrl" [size]="150" [level]="'M'"></qrcode>
+                  <qrcode [qrdata]="qrcodeString" [size]="150" [level]="'M'"></qrcode>
                 </div>
               </div>
           </ion-col>
         </ion-row>
 
-        <div style="margin-left: 34px; margin-right: 34px; margin-top: 25px;" *ngIf="nodeId===''">
-          <ion-button style="margin-top: 25px;" expand="block" mode="ios" (click)="addFeedSource()">
-            <ion-label>{{'DiscoverfeedinfoPage.addFeed' | translate}}</ion-label>
+        <div style="margin-left: 34px; margin-right: 34px; margin-top: 25px;" *ngIf="!isSubscribed">
+          <ion-button style="margin-top: 25px;" expand="block" mode="ios" (click)="subscribe()">
+            <ion-label>{{'common.followers' | translate}}</ion-label>
           </ion-button>
         </div>
 
-        <div style="margin-left: 34px; margin-right: 34px; margin-top: 25px;" *ngIf="nodeId!=''&&!isBindServer">
-          <ion-button style="margin-top: 25px;" expand="block" mode="ios"  color="danger" (click)="removeFeedSource()">
-            <ion-label>{{'ServerInfoPage.removeFeedSource' | translate}}</ion-label>
-          </ion-button>
-        </div>
-
-        <div style="margin-left: 34px; margin-right: 34px; margin-top: 25px;" *ngIf="nodeId!=''&&isBindServer">
-          <ion-button style="margin-top: 25px;" expand="block" mode="ios"  color="danger" (click)="deleteFeedSource()">
-            <ion-label>{{'ServerInfoPage.deleteFeedSource' | translate}}</ion-label>
+        <div style="margin-left: 34px; margin-right: 34px; margin-top: 25px;" *ngIf="isSubscribed">
+          <ion-button style="margin-top: 25px;" expand="block" mode="ios" (click)="unsubscribe()">
+            <ion-label>{{'common.unsubscribe' | translate}}</ion-label>
           </ion-button>
         </div>
   </ion-grid>
