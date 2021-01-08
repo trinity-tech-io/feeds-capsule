@@ -10,6 +10,8 @@ import { TranslateService } from "@ngx-translate/core";
 import { ApiUrl } from 'src/app/services/ApiUrl';
 import { MenuService } from 'src/app/services/MenuService';
 import { UtilService } from 'src/app/services/utilService';
+import { StorageService } from '../../../services/StorageService';
+import * as _ from 'lodash';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 class Attribute {
@@ -48,7 +50,6 @@ export class ServerInfoPage implements OnInit {
 
   public elaAddress: string = "";
 
-  public isPublic:string ="";
   public serverDetails: any[] = [];
 
   public isShowQrcode: boolean = true;
@@ -57,6 +58,7 @@ export class ServerInfoPage implements OnInit {
   public nodeStatus: any = {};
   public channel:any =null;
   public clickbutton:string ="";
+  public feedPublicStatus:any = {};
   constructor(
     private actionSheetController:ActionSheetController,
     private events: Events,
@@ -67,7 +69,8 @@ export class ServerInfoPage implements OnInit {
     public theme: ThemeService,
     private translate: TranslateService,
     public httpService: HttpService,
-    private menuService: MenuService
+    private menuService: MenuService,
+    private storageService:StorageService
   ) {}
 
   ngOnInit() {
@@ -80,15 +83,6 @@ export class ServerInfoPage implements OnInit {
       }
 
       this.initData();
-
-      let didString = this.didString || "";
-      if(this.checkIsMine()===0&&didString != ''){
-       this.httpService.ajaxGet(ApiUrl.get+"?did="+this.didString,false).then((result)=>{
-         if(result["code"] === 200){
-            this.isPublic = result["data"] || "";
-         }
-       });
-      }
 
     });
   }
@@ -148,6 +142,7 @@ export class ServerInfoPage implements OnInit {
     this.initTitle();
     if(this.address === ''){
       this.initMyFeeds();
+      this.feedPublicStatus = this.feedService.getFeedPublicStatus();
     }
     this.native.setTitleBarBackKeyShown(true);
     this.connectionStatus = this.feedService.getConnectionStatus();
@@ -499,34 +494,42 @@ export class ServerInfoPage implements OnInit {
     return 1;
   }
 
-  clickPublic(){
-    if(this.isPublic === ""){
-       this.publicFeeds();
-    }else{
-       this.unPublicFeeds();
-    }
-  }
 
-  publicFeeds(){
+  publicFeeds(channel:any){
+    let feedsUrl = this.feedsUrl+"/"+channel["id"];
+    let channelAvatar = this.feedService.parseChannelAvatar(channel["avatar"]);
+    let feedsUrlHash = UtilService.SHA256(feedsUrl);
     let obj = {
-      "did":this.didString,
-      "name":this.name,
-      "description":this.introduction,
-      "url":this.feedsUrl
+      "did":channel["owner_did"],
+      "name":channel["name"],
+      "description":channel["introduction"],
+      "url":feedsUrl,
+      "feedsUrlHash":feedsUrlHash,
+      "feedsAvatar":channelAvatar,
+      "followers":channel["subscribers"],
+      "ownerName":channel["owner_name"],
+      "nodeId":this.nodeId
     };
 
     this.httpService.ajaxPost(ApiUrl.register,obj).then((result)=>{
       if(result["code"] === 200){
-          this.isPublic = "111";
+          this.feedPublicStatus[feedsUrlHash] = "1";
+          this.feedService.setFeedPublicStatus(this.feedPublicStatus);
+          this.storageService.set("feeds.feedPublicStatus",JSON.stringify(this.feedPublicStatus));
           this.native.toast_trans("ServerInfoPage.publicTip");
       }
     });
   }
 
-  unPublicFeeds(){
-    this.httpService.ajaxGet(ApiUrl.remove+"?did="+this.didString).then((result)=>{
+
+  unPublicFeeds(channel:any){
+    let feedsUrl = this.feedsUrl+"/"+channel["id"];
+    let feedsUrlHash = UtilService.SHA256(feedsUrl);
+    this.httpService.ajaxGet(ApiUrl.remove+"?feedsUrlHash="+feedsUrlHash).then((result)=>{
       if(result["code"] === 200){
-          this.isPublic = "";
+          this.feedPublicStatus =_.omit(this.feedPublicStatus,[feedsUrlHash]);
+          this.feedService.setFeedPublicStatus(this.feedPublicStatus);
+          this.storageService.set("feeds.feedPublicStatus",JSON.stringify(this.feedPublicStatus));
           this.native.toast_trans("ServerInfoPage.unpublicTip");
       }
     });
@@ -607,5 +610,11 @@ export class ServerInfoPage implements OnInit {
 
   });;
   }
+}
+
+handlePublic(channelId:string){
+    let feedsUrl = this.feedsUrl+"/"+channelId;
+    let feedsUrlHash = UtilService.SHA256(feedsUrl);
+    return this.feedPublicStatus[feedsUrlHash] || "";
 }
 }

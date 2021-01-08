@@ -9,7 +9,7 @@
       <ion-img class="headerImg" src="./assets/images/profile-2.svg"></ion-img>
       <h1>{{ name }}</h1>
       <p *ngIf="introduction && introduction !== name">{{ introduction }}</p>
-      <ion-row class="status-row" [class.online]="serverStatus === 0"> 
+      <ion-row class="status-row" [class.online]="serverStatus === 0">
         <span class="online-circle" *ngIf="serverStatus === 0"></span>
         <span class="users" *ngIf="serverStatus === 0" style="margin-left: 4px; margin-right: 8px;">{{ 'ServerInfoPage.online' | translate }}</span>
         <span class="offline-circle"  *ngIf="serverStatus === 1"></span>
@@ -41,11 +41,11 @@
      <ion-col size="12" class="left-col">
       <h1>{{'ServerInfoPage.containedfeeds'|translate}}</h1>
      </ion-col>
-   </ion-row> 
+   </ion-row>
    <ion-list class="channel-list" [class.darkChannelList]="theme.darkMode" *ngIf="address == ''">
    <ion-item  *ngFor="let channel of ownerChannelList let i=index"
    lines="none" style="border:none;">
-   <ion-row class="channel-row ion-activatable ripple" (click)="navTo(channel.nodeId, channel.id)">
+   <ion-row class="channel-row ion-activatable ripple">
       <ion-col
           size="2.5"
           class="left-col"
@@ -56,12 +56,22 @@
           </div>
         </ion-col>
         <ion-col
-          size="9.5"
+          size="6.5"
           class="middle-col"
+          (click)="navTo(channel.nodeId, channel.id)"
         >
           <ion-label (press)="pressName(channel.name)">
             {{ moreName(channel.name) }} <span *ngIf="channel.isSubscribed" style="font-size: 12px;font-weight: 500;">- {{ 'SearchPage.following' | translate }}</span>
           </ion-label>
+        </ion-col>
+
+        <ion-col size="3" class="right-col">
+          <ion-button *ngIf="handlePublic(channel.id)==''" class="unsubscribed" fill="outline" (click)="publicFeeds(channel)" [disabled]='!isShowQrcode'>
+            <ion-label >{{'ServerInfoPage.public' | translate}}</ion-label>
+          </ion-button>
+          <ion-button *ngIf="handlePublic(channel.id)!=''" (click)="unPublicFeeds(channel)" [disabled]='!isShowQrcode'>
+            <ion-label>{{ 'ServerInfoPage.unpublic' | translate }}</ion-label>
+          </ion-button>
         </ion-col>
         <ion-ripple-effect></ion-ripple-effect>
     </ion-row>
@@ -70,12 +80,6 @@
 
     <!--- BUTTONS --->
     <div class="btns">
-      <ion-row *ngIf="checkIsMine() == 0 && address == ''" class="btn-row">
-        <ion-button (click)="clickPublic()" [disabled]='!isShowQrcode'>
-          <ion-label *ngIf="isPublic === ''">{{'ServerInfoPage.public'|translate}}</ion-label>
-          <ion-label *ngIf="isPublic != ''">{{'ServerInfoPage.unpublic'|translate}}</ion-label>
-        </ion-button>
-      </ion-row>
       <ion-row *ngIf="address != ''" class="btn-row" >
         <ion-button (click)="addFeedSource()" [disabled]='buttonDisabled'>
           <ion-label>{{'ServerInfoPage.addFeedSource' | translate}}</ion-label>
@@ -97,6 +101,6 @@
         </ion-button>
       </ion-row>
     </div>
-    
+
   </ion-grid>
 </ion-content>
