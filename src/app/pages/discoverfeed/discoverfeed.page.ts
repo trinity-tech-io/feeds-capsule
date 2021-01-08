@@ -24,20 +24,26 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 //   "followers":followers,
 //   "ownerName":this.serverInfo["owner"]
 // };
+
+// channel
+// {
+// 	"nodeId": "CqYSEtXU21KsQQMx9D8y3Rpoe6559NE384Qj6j95V1pJ",
+// 	"id": 5,
+// 	"name": "test19",
+// 	"introduction": "test19",
+// 	"owner_name": "test",
+// 	"owner_did": "did:elastos:imZgAo9W38Vzo1pJQfHp6NJp9LZsrnRPRr",
+// 	"subscribers": 0,
+// 	"last_update": 1608534192000,
+// 	"last_post": "",
+// 	"avatar": "assets/images/profile-1.svg",
+// 	"isSubscribed": false
+// }
 export class DiscoverfeedPage implements OnInit {
 
   @ViewChild(IonInfiniteScroll,{static:true}) infiniteScroll: IonInfiniteScroll;
-  public serverList = [];
-  public feedList = [{
-    "did":"did",
-    "name":"testname",
-    "description":"testdes",
-    "url":"testurl",
-    "feedsUrlHash":"testhash",
-    "feedsAvatar":"testchannelAvatar",
-    "followers":"2",
-    "ownerName":"ownerName"
-  }];
+  public channelList = [];
+  public feedList = [];
   public connectionStatus = 1;
   public pageNum:number = 1;
   public pageSize:number = 10;
@@ -58,13 +64,13 @@ export class DiscoverfeedPage implements OnInit {
 
   ngOnInit() {
     this.pageNum =1;
-    //this.initData("",true);
+    this.initData("",true);
   }
   ionViewWillEnter() {
     this.initTitle();
     this.native.setTitleBarBackKeyShown(true);
 
-    this.serverList = this.feedService.getServerList();
+    this.channelList = this.feedService.getChannelsList();
     this.events.subscribe('feeds:serverStatisticsChanged', serverStatisticsMap =>{
       this.zone.run(() => {
           this.serverStatisticsMap = serverStatisticsMap || "";
@@ -96,31 +102,37 @@ export class DiscoverfeedPage implements OnInit {
   }
 
   clickItem(item:any){
-  //   if(this.connectionStatus != 0){
-  //     this.native.toastWarn('common.connectionError');
-  //     return;
-  //   }
-  //   let address = item["url"] || "";
-  //   if (address.length < 54 ||
-  //     !address.startsWith('feeds://')||
-  //     !address.indexOf("did:elastos:")){
-  //       this.native.toastWarn("AddServerPage.tipMsg");
-  //       return;
-  //   }
-
-  //  let server = _.find(this.serverList,{did:item['did']});
-  //  if(!server){
-  //     this.native.go("discoverfeedinfo",{
-  //     params:item
-  //     });
-  //     return;
-  //  }
-  //  this.navToServerInfo(server.nodeId,false);
-   this.native.go("discoverfeedinfo",{
-    params:item
+  let nodeId = item["nodeId"];
+  let feedUrl = item["url"];
+  console.log("feedUrl"+JSON.stringify(feedUrl.split("/")));
+  let channelId = feedUrl.split("/")[4];
+  let channel:any = _.find(this.channelList,(item:any)=>{
+     return (item["nodeId"]==nodeId&&item["id"]==channelId)
+  });
+  if(!channel.isSubscribed){
+    this.native.go("discoverfeedinfo",{
+     params:item
     });
-  }
+  }else{
+    if(item["feedsAvatar"].indexOf("data:image")>-1){
+      this.feedService.setSelsectIndex(0);
+      this.feedService.setProfileIamge(item["feedsAvatar"]);
+     }else if(item["feedsAvatar"].indexOf("assets/images")>-1){
+      let index = item["feedsAvatar"].substring(item["feedsAvatar"].length-5,item["feedsAvatar"].length-4);
+      this.feedService.setSelsectIndex(index);
+      this.feedService.setProfileIamge(item["feedsAvatar"]);
+     }
 
+    this.feedService.setChannelInfo(
+      {
+        "nodeId":nodeId,
+        "channelId":channelId,
+        "name":item["name"],
+        "des":item["description"]
+      });
+     this.native.navigateForward(['/feedinfo'],"");
+    }
+  }
   initData(events:any,isLoading:boolean=true){
     this.isLoading =true;
     this.myFeedSource = "";
@@ -149,9 +161,17 @@ export class DiscoverfeedPage implements OnInit {
       this.initData(event,false);
   }
 
-  handleStatus(did:string){
-
-    if(!_.find(this.serverList,{did:did})) {
+  handleStatus(item:any){
+     let nodeId = item["nodeId"];
+     let feedUrl = item["url"];
+     console.log("feedUrl"+JSON.stringify(feedUrl.split("/")));
+     let channelId = feedUrl.split("/")[4];
+     console.log("nodeId"+nodeId);
+     console.log("channelId"+channelId);
+     let channel:any = _.find(this.channelList,(item:any)=>{
+        return (item["nodeId"]==nodeId&&item["id"]==channelId)
+     });
+    if(!channel.isSubscribed){
         return "DiscoverfeedsPage.notadded"
     }
     return "DiscoverfeedsPage.added";

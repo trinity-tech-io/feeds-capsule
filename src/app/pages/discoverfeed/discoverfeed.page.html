@@ -30,7 +30,7 @@
           >
             <ion-col size="2.75" class="left-col">
               <div class="feedAvatar">
-                <img src="assets/images/profile-2.svg">
+                <img [src]="item.feedsAvatar">
               </div>
             </ion-col>
             <ion-col size="7.5" class="middle-col">
@@ -40,7 +40,7 @@
                 <p><span>{{ item.followers }}</span> {{ 'common.followers' | translate }}</p>
               </ion-row>
               <p>{{item.description}}</p>
-              <p style="color:#368bff;font-weight:700;">{{handleStatus(item.did) | translate}}</p>
+              <p style="color:#368bff;font-weight:700;">{{handleStatus(item) | translate}}</p>
             </ion-col>
             <ion-col offset="0.5" size="1.25" class="right-col">
               <img src="assets/images/chevron-thin-right.svg">
