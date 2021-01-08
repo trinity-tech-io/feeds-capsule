@@ -13,12 +13,12 @@
   "category": "social",
   "icons": [
     {
-      "src": "assets/images/logo.png",
+      "src": "assets/images/dapplogo.png",
       "sizes": "512x512",
       "type": "image/png"
     },
     {
-      "src": "assets/images/logo.png",
+      "src": "assets/images/dapplogo.png",
       "sizes": "128x128",
       "type": "image/png"
     }
