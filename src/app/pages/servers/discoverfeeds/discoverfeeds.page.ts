@@ -35,7 +35,7 @@ export class DiscoverfeedsPage implements OnInit {
     private feedService: FeedService,
     public theme: ThemeService,
     public httpService:HttpService) { }
-    
+
   ngOnInit() {
     this.pageNum =1;
     this.initData("",true);
@@ -43,7 +43,7 @@ export class DiscoverfeedsPage implements OnInit {
   ionViewWillEnter() {
     this.initTitle();
     this.native.setTitleBarBackKeyShown(true);
-    
+
     this.serverList = this.feedService.getServerList();
     this.events.subscribe('feeds:serverStatisticsChanged', serverStatisticsMap =>{
       this.zone.run(() => {
@@ -118,7 +118,7 @@ export class DiscoverfeedsPage implements OnInit {
       if(events!=""){
         events.target.complete();
       }
-     
+
     });
   }
 
@@ -128,7 +128,7 @@ export class DiscoverfeedsPage implements OnInit {
   }
 
   handleStatus(did:string){
-   
+
     if(!_.find(this.serverList,{did:did})) {
         return "DiscoverfeedsPage.notadded"
     }
@@ -137,7 +137,7 @@ export class DiscoverfeedsPage implements OnInit {
 
   navToServerInfo(nodeId: string, isOwner: boolean) {
     this.native.navigateForward(['/menu/servers/server-info',nodeId, isOwner],"");
-}
+  }
 
 checkServerStatus(nodeId: string){
   return this.feedService.getServerStatusFromId(nodeId);
@@ -147,7 +147,7 @@ checkConnectClient(nodeId: string){
   if (this.serverStatisticsMap == "" ||
       this.serverStatisticsMap[nodeId] == undefined)
       return 0;
-  
+
   return this.serverStatisticsMap[nodeId].connecting_clients;
 }
 
