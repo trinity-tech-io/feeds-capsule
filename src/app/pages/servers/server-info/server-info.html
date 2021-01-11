@@ -3,6 +3,7 @@
 </ion-header>
 
 <ion-content>
+
   <ion-grid class="container" [class.darkContainer]="theme.darkMode">
     <!--- SERVER HEADER --->
     <div class="server-header">
@@ -42,7 +43,7 @@
       <h1>{{'ServerInfoPage.containedfeeds'|translate}}</h1>
      </ion-col>
    </ion-row>
-   <ion-list class="channel-list" [class.darkChannelList]="theme.darkMode" *ngIf="address == ''">
+   <ion-list class="channel-list" [class.darkChannelList]="theme.darkMode">
    <ion-item  *ngFor="let channel of ownerChannelList let i=index"
    lines="none" style="border:none;">
    <ion-row class="channel-row ion-activatable ripple">
@@ -80,22 +81,14 @@
 
     <!--- BUTTONS --->
     <div class="btns">
-      <ion-row *ngIf="address != ''" class="btn-row" >
-        <ion-button (click)="addFeedSource()" [disabled]='buttonDisabled'>
-          <ion-label>{{'ServerInfoPage.addFeedSource' | translate}}</ion-label>
-        </ion-button>
-      </ion-row>
+
       <!-- <ion-row *ngIf="address === ''" class="btn-row">
         <ion-button (click)="menuMore()">
           <ion-label>{{'ServerInfoPage.shareFeedSource' | translate}}</ion-label>
         </ion-button>
       </ion-row> -->
-      <ion-row *ngIf="address === '' && !isBindServer" class="btn-row delete-row">
-        <ion-button (click)="removeFeedSource()" color="danger">
-          <ion-label>{{'ServerInfoPage.removeFeedSource' | translate}}</ion-label>
-        </ion-button>
-      </ion-row>
-      <ion-row *ngIf="address == '' && isBindServer" class="btn-row delete-row">
+
+      <ion-row *ngIf="isBindServer" class="btn-row delete-row">
         <ion-button (click)="deleteFeedSource()" color="danger">
           <ion-label>{{'ServerInfoPage.deleteFeedSource' | translate}}</ion-label>
         </ion-button>
