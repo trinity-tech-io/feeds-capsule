@@ -146,8 +146,6 @@ export class MyApp {
   }
 
   goToFeedSource(){
-    //this.native.navigateForward('/menu/servers',"");
-    //this.native.navigateForward(['/menu/servers/server-info',"1",true],"");
     this.checkDid();
   }
 

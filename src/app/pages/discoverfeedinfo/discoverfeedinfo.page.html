@@ -45,13 +45,13 @@
         </ion-row>
 
         <div style="margin-left: 34px; margin-right: 34px; margin-top: 25px;" *ngIf="!isSubscribed">
-          <ion-button style="margin-top: 25px;" expand="block" mode="ios" (click)="subscribe()">
+          <ion-button style="margin-top: 25px;" expand="block" mode="ios" (click)="checkDid('subscribe')">
             <ion-label>{{'common.followers' | translate}}</ion-label>
           </ion-button>
         </div>
 
         <div style="margin-left: 34px; margin-right: 34px; margin-top: 25px;" *ngIf="isSubscribed">
-          <ion-button style="margin-top: 25px;" expand="block" mode="ios" (click)="unsubscribe()">
+          <ion-button style="margin-top: 25px;" expand="block" mode="ios" (click)="checkDid('unsubscribe')">
             <ion-label>{{'common.unsubscribe' | translate}}</ion-label>
           </ion-button>
         </div>
