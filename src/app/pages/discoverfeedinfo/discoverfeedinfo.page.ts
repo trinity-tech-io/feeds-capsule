@@ -201,7 +201,13 @@ export class DiscoverfeedinfoPage implements OnInit {
   let channel:any = _.find(channelList,(item:any)=>{
      return (item["nodeId"]==nodeId&&item["id"]==channelId)
   });
-  return channel.isSubscribed;
+  channel = channel || "";
+  if(channel === ""){
+      return false;
+  }else{
+    return channel.isSubscribed;
+  }
+
   }
 
 }

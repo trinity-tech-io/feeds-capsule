@@ -5,7 +5,7 @@
   <ion-grid class="container" [class.darkContainer]="theme.darkMode">
     <!--- SERVER HEADER --->
     <div class="server-header">
-      <ion-img class="headerImg" src="./assets/images/profile-2.svg"></ion-img>
+      <img class="headerImg" [src]="serverInfo['feedsAvatar']"/>
       <h1>{{ serverInfo['name'] }}</h1>
       <p>{{serverInfo['description']}}</p>
     </div>
