@@ -1,5 +1,5 @@
 import { Component, OnInit, NgZone } from '@angular/core';
-import { Events} from '@ionic/angular';
+import { Events,PopoverController} from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
 import { NativeService } from 'src/app/services/NativeService';
 import { FeedService } from 'src/app/services/FeedService';
@@ -35,7 +35,6 @@ export class ServerInfoPage implements OnInit {
   public friendRequest = 'Feeds/0.1';
   public carrierAddress: string;
 
-  public address: string = '';
   public isOwner: string = "false";
   public serverStatus:number = 1;
   public clientNumber:number = 0;
@@ -59,6 +58,8 @@ export class ServerInfoPage implements OnInit {
   public channel:any =null;
   public clickbutton:string ="";
   public feedPublicStatus:any = {};
+  public popover:any = "";
+  public bindingServer:any = null;
   constructor(
     private actionSheetController:ActionSheetController,
     private events: Events,
@@ -70,41 +71,23 @@ export class ServerInfoPage implements OnInit {
     private translate: TranslateService,
     public httpService: HttpService,
     private menuService: MenuService,
-    private storageService:StorageService
+    private storageService:StorageService,
+    private popoverController:PopoverController
   ) {}
 
   ngOnInit() {
-    this.acRoute.params.subscribe(data => {
-      this.isOwner = data.isOwner || "";
-      this.address = data.address || "";
 
-      if (data.nodeId !== "0") {
-        this.nodeId = data.nodeId || "";
-      }
-
-      this.initData();
-
-    });
   }
 
   initData(){
     this.developerMode = this.feedService.getDeveloperMode();
-    if (this.address !== '') {
-      this.native.showLoading('common.waitMoment',2000).then(()=>{
-        this.queryServer();
-      });
-    } else {
       let server: any;
-      let bindingServer = this.feedService.getBindingServer();
+      this.bindingServer = this.feedService.getBindingServer() || null;
 
-      if (
-        bindingServer !== null &&
-        bindingServer !== undefined &&
-        this.nodeId === bindingServer.nodeId
-      ) {
-        server = this.feedService.getServerbyNodeId(this.nodeId);
+      if (this.bindingServer !== null) {
+        this.nodeId = this.bindingServer.nodeId;
+        server = this.feedService.getServerbyNodeId(this.nodeId) || null;
         this.isBindServer = true;
-
         this.isShowQrcode = false;
         this.feedService.checkDIDOnSideChain(server.did,(isOnSideChain)=>{
           this.zone.run(() => {
@@ -114,17 +97,12 @@ export class ServerInfoPage implements OnInit {
             }
           });
         });
-
-
-      }else{
-        server = this.feedService.getServerbyNodeId(this.nodeId);
-        this.isBindServer = false;
       }
 
       this.serverStatus = this.feedService.getServerStatusFromId(this.nodeId);
       this.clientNumber = this.feedService.getServerStatisticsNumber(this.nodeId);
 
-      if (server === undefined) {
+      if (server === null) {
         return ;
       }
 
@@ -135,15 +113,15 @@ export class ServerInfoPage implements OnInit {
       this.feedsUrl = server.feedsUrl || "";
       this.elaAddress = server.elaAddress || "";
       this.collectServerData(server);
-    }
   }
 
   ionViewWillEnter() {
     this.initTitle();
-    if(this.address === ''){
-      this.initMyFeeds();
-      this.feedPublicStatus = this.feedService.getFeedPublicStatus();
-    }
+    this.initData();
+    this.initMyFeeds();
+    this.initPublicStatus();
+    this.feedPublicStatus = this.feedService.getFeedPublicStatus();
+
     this.native.setTitleBarBackKeyShown(true);
     this.connectionStatus = this.feedService.getConnectionStatus();
     this.events.subscribe('feeds:connectionChanged', (status) => {
@@ -152,25 +130,9 @@ export class ServerInfoPage implements OnInit {
       });
     });
 
-    this.events.subscribe("feeds:updateServerList", () => {
-      this.zone.run(() => {
-      this.native.navigateForward('/menu/servers',"");
-      });
-    });
-
     this.events.subscribe('feeds:serverConnectionChanged', serversStatus => {
       this.zone.run(() => {
-          if (this.address === ""){
             this.serverStatus = this.feedService.getServerStatusFromId(this.nodeId);
-          }
-      });
-    });
-
-    this.events.subscribe('feeds:serverConnectionChanged', serversStatus => {
-      this.zone.run(() => {
-          if (this.address === ""){
-            this.serverStatus = this.feedService.getServerStatusFromId(this.nodeId);
-          }
       });
     });
 
@@ -233,10 +195,14 @@ export class ServerInfoPage implements OnInit {
 
   ionViewWillLeave(){
     titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, null);
+    let value =  this.popoverController.getTop()["__zone_symbol__value"] || "";
+    if(value!=""){
+      this.popoverController.dismiss();
+      this.popover = "";
+    }
 
     this.native.hideLoading();
     this.events.unsubscribe("feeds:connectionChanged");
-    this.events.unsubscribe("feeds:updateServerList");
     this.events.unsubscribe("feeds:serverConnectionChanged");
     this.events.unsubscribe("feeds:removeFeedSourceFinish");
     this.events.unsubscribe("feeds:updateTitle");
@@ -252,7 +218,7 @@ export class ServerInfoPage implements OnInit {
   initTitle(){
     titleBarManager.setTitle(this.translate.instant('ServerInfoPage.title'));
 
-    if (this.address === '' && this.checkIsMine() == 0) {
+    if (this.checkIsMine() == 0) {
       titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, {
         key: "editServer",
         iconPath: TitleBarPlugin.BuiltInIcon.EDIT
@@ -329,40 +295,6 @@ export class ServerInfoPage implements OnInit {
   /* getShareableUrl(qrcode: string) {
     let url = "https://scheme.elastos.org/addsource?source="+encodeURIComponent(qrcode);
   } */
-
-  queryServer(){
-    if (this.address.length > 53 &&
-        this.address.startsWith('feeds://') &&
-        this.address.indexOf("did:elastos:")) {
-      this.resolveDid();
-    } else {
-      this.native.toastWarn("ServerInfoPage.Feedurlmaybeerror");
-      this.navigateBackPage();
-    }
-  }
-
-  resolveDid(){
-    this.feedService.resolveDidDocument(this.address, null,
-      (server) => {
-        this.zone.run(() => {
-          this.native.hideLoading();
-          this.buttonDisabled = false;
-          this.name = server.name || this.translate.instant('DIDdata.NotprovidedfromDIDDocument');
-          this.owner = server.owner;
-          this.introduction = server.introduction;
-          this.didString = server.did;
-          this.carrierAddress = server.carrierAddress;
-          this.feedsUrl = server.feedsUrl || "";
-          this.collectServerData(server);
-        });
-      }, (err) => {
-        this.native.hideLoading();
-        this.native.toastWarn("ServerInfoPage.error");
-        this.buttonDisabled = true;
-        this.navigateBackPage();
-      }
-    );
-  }
 
   addFeedSource() {
     if(this.connectionStatus !== 0){
@@ -471,7 +403,7 @@ export class ServerInfoPage implements OnInit {
     this.native.go(
       "/editserverinfo",
       {
-        "address": this.address,
+        "address":"",
         "name": this.name,
         "introduction": this.introduction,
         "elaAddress": this.elaAddress,
@@ -615,6 +547,44 @@ export class ServerInfoPage implements OnInit {
 handlePublic(channelId:string){
     let feedsUrl = this.feedsUrl+"/"+channelId;
     let feedsUrlHash = UtilService.SHA256(feedsUrl);
-    return this.feedPublicStatus[feedsUrlHash] || "";
+    let publicStatus = this.feedPublicStatus[feedsUrlHash] || "";
+    return publicStatus;
+}
+
+initPublicStatus(){
+  let len = this.ownerChannelList.length;
+  let index = 0;
+  let sid=setInterval(()=>{
+      if(index === (len-1)){
+        let item = this.ownerChannelList[index];
+        let channelid = item["id"];
+        this.getPublicStatus(channelid);
+        clearInterval(sid);
+      }else{
+        let item = this.ownerChannelList[index];
+        let channelid = item["id"];
+        this.getPublicStatus(channelid);
+        index++;
+      }
+  },100);
+
+}
+getPublicStatus(channelId:string){
+  let feedsUrl = this.feedsUrl+"/"+channelId;
+  let feedsUrlHash = UtilService.SHA256(feedsUrl);
+  let publicStatus = this.feedPublicStatus[feedsUrlHash] || "";
+  if(publicStatus === ""){
+    this.httpService.ajaxGet(ApiUrl.get+"?feedsUrlHash="+feedsUrlHash,false).then(
+      (result)=>{
+      if(result["code"] === 200){
+         let resultData = result["data"] || "";
+         if(resultData!=""){
+          this.feedPublicStatus[feedsUrlHash] = "1";
+          this.feedService.setFeedPublicStatus(this.feedPublicStatus);
+          this.storageService.set("feeds.feedPublicStatus",JSON.stringify(this.feedPublicStatus));
+         }
+      }
+    })
+  }
 }
 }

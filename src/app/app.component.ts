@@ -1,5 +1,5 @@
 import { Component} from '@angular/core';
-import { Platform, ModalController, Events} from '@ionic/angular';
+import { Platform, ModalController, Events,PopoverController} from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { FeedService, Avatar } from './services/FeedService';
@@ -34,7 +34,8 @@ export class MyApp {
     public theme:ThemeService,
     public native:NativeService,
     public storageService:StorageService,
-    public popupProvider:PopupProvider
+    public popupProvider:PopupProvider,
+    private popoverController:PopoverController
   ) {
       this.sService =storageService;
       this.initializeApp();
@@ -145,7 +146,9 @@ export class MyApp {
   }
 
   goToFeedSource(){
-    this.native.navigateForward('/menu/servers',"");
+    //this.native.navigateForward('/menu/servers',"");
+    //this.native.navigateForward(['/menu/servers/server-info',"1",true],"");
+    this.checkDid();
   }
 
   // goToDev(){
@@ -236,4 +239,60 @@ export class MyApp {
   settings(){
     this.native.navigateForward('settings',"");
   }
+
+  checkDid(){
+    let signInData = this.feedService.getSignInData() || {};
+    let did = signInData["did"];
+    this.feedService.checkDIDDocument(did).then((isOnSideChain)=>{
+      if (!isOnSideChain){
+        //show one button dialog
+        //if click this button
+        //call feedService.promptpublishdid() function
+        this.openAlert();
+        return;
+      }
+      this.handleJump();
+    });
+  }
+
+  handleJump(){
+    if(this.feedService.getConnectionStatus() != 0){
+      this.native.toastWarn('common.connectionError');
+      return;
+    }
+    let bindingServer = this.feedService.getBindingServer() || null;
+    if(bindingServer === null){
+      this.native.navigateForward(['/bindservice/scanqrcode'],"");
+    }else{
+      this.native.navigateForward(['/menu/servers/server-info'],"");
+    }
+
+  }
+
+  openAlert(){
+    this.popover = this.popupProvider.ionicAlert(
+      this,
+      // "ConfirmdialogComponent.signoutTitle",
+      "",
+      "common.didnotrelease",
+      this.confirm1,
+      'tskth.svg'
+    );
+  }
+
+  confirm1(that:any){
+      if(this.popover!=null){
+         this.popover.dismiss();
+         that.feedService.promptpublishdid();
+      }
+  }
+
+  ionViewWillLeave(){
+    let value =  this.popoverController.getTop()["__zone_symbol__value"] || "";
+    if(value!=""){
+      this.popoverController.dismiss();
+      this.popover = "";
+    }
+  }
+
 }
