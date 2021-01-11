@@ -172,23 +172,23 @@ export class DiscoverfeedinfoPage implements OnInit {
   }
 
   subscribe(){
-    let  nodeId = this.feedInfo["nodeId"]
-    console.log("===nodeId==="+nodeId);
+    // let  nodeId = this.feedInfo["nodeId"]
+    // let channelId = feedUrl.split("/")[4];
+    // let feedName = this.feedInfo["name"];
     let feedUrl = this.feedInfo["url"];
-    let channelId = feedUrl.split("/")[4];
-    console.log("=== channelId==="+channelId);
-    let feedName = this.feedInfo["name"];
-    console.log("===feedName==="+feedName);
+    this.feedService.addFeed(feedUrl).then((isSuccess)=>{
+      if (isSuccess){
+        this.native.pop();
+        return;
+      }
+    });
   }
 
   async unsubscribe(){
     let  nodeId = this.feedInfo["nodeId"]
-    console.log("===nodeId==="+nodeId);
     let feedUrl = this.feedInfo["url"];
     let channelId = feedUrl.split("/")[4];
-    console.log("=== channelId==="+channelId);
     let feedName = this.feedInfo["name"];
-    console.log("===feedName==="+feedName);
     this.menuService.showUnsubscribeMenu(nodeId,channelId,feedName);
   }
 

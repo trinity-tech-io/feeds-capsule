@@ -208,4 +208,48 @@ declare namespace FeedsData{
         postUpdateNotification="post_update",
         commentUpdateNotification="comment_update",
     }
+
+    const enum FriendState{
+        NONE_STATE,
+        IS_FRIEND,
+        IS_ADDED
+    }
+
+    const enum FollowFeedStatus{
+        NONE,
+        ADD_FRIEND_READY,
+        ADD_FRIEND_FINISH,
+        ADD_FRIEND_ERROR,
+        FRIEND_ONLINE,
+        FRIEND_OFFLINE,
+        SIGNIN_READY,
+        SIGNIN_FINISH,
+        SIGNIN_ERROR,
+        FOLLOW_FEED_READY,
+        FOLLOW_FEED_FINISH,
+        FOLLOW_FEED_ERROR,
+        FINISH,
+        ERROR,
+    }
+    
+    type FeedUrl = {
+        did             : string,
+        carrierAddress  : string,
+        feedId          : number,
+        feedName        : string,
+        feedUrl         : string,
+        serverUrl       : string
+    }
+    
+    type ToBeAddedFeed = {
+        nodeId          : string
+        did             : string
+        carrierAddress  : string
+        feedId          : number
+        feedName        : string
+        feedUrl         : string
+        serverUrl       : string
+        status          : FollowFeedStatus
+        friendState     : FriendState
+    }
 }

@@ -16,6 +16,7 @@ import { SessionService } from 'src/app/services/SessionService';
 import { PopupProvider } from 'src/app/services/popup';
 import { LogUtils } from 'src/app/services/LogUtils';
 import { StandardAuthService } from 'src/app/services/StandardAuthService';
+import { AddFeedService } from 'src/app/services/AddFeedService';
 
 import * as _ from 'lodash';
 
@@ -470,7 +471,8 @@ export class FeedService {
     private sessionService:SessionService,
     private popupProvider:PopupProvider,
     private logUtils: LogUtils,
-    private standardAuth: StandardAuthService
+    private standardAuth: StandardAuthService,
+    private addFeedService: AddFeedService
   ) {
     eventBus = events;
     this.init();
@@ -3464,6 +3466,7 @@ export class FeedService {
 
   doSubscribeChannelFinish(nodeId: string, channelId: number){
     let nodeChannelId = this.getChannelId(nodeId, channelId);
+
     channelsMap[nodeChannelId].isSubscribed = true;
 
     let subscribeNum = channelsMap[nodeChannelId].subscribers;
@@ -3638,9 +3641,22 @@ export class FeedService {
   }
 
   saveServer(name: string, owner: string, introduction: string,
-    did: string, carrierAddress: string , feedsUrl: string){
+    did: string, carrierAddress: string , serverUrl: string, nodeId: string){
+    if (nodeId != null && nodeId != undefined){
+      let server = this.generateServer(name, owner, introduction,did, carrierAddress, serverUrl, nodeId);
+      this.resolveServer(server, null);
+      return ;
+    }
+
     this.carrierService.getIdFromAddress(carrierAddress, (nodeId)=>{
-      let server = {
+      let server = this.generateServer(name, owner, introduction,did, carrierAddress, serverUrl, nodeId);
+      this.resolveServer(server, null);
+    });
+  }
+
+  generateServer(name: string, owner: string, introduction: string,
+    did: string, carrierAddress: string , feedsUrl: string, nodeId: string): Server{
+      return {
         name              : name,
         owner             : owner,
         introduction      : introduction,
@@ -3649,14 +3665,8 @@ export class FeedService {
         nodeId            : nodeId,
         feedsUrl          : feedsUrl,
         elaAddress        : "",
-        version           : ""
-        // status            : ConnState.disconnected
       }
-
-      this.resolveServer(server, null);
-    });
   }
-
   insertFakeData(){
 
     this.storeService.remove(PersistenceKey.myChannelsMap);
@@ -3875,8 +3885,16 @@ export class FeedService {
       if (subscribedChannelsMap[keys[index]].nodeId == nodeId)
         list.push(subscribedChannelsMap[keys[index]])
     }
-
     return list;
+  }
+
+  checkFeedsIsSubscribed(nodeId: string, feedId: number): boolean{
+    let nodeChannelId = this.getChannelId(nodeId, feedId);
+    if (channelsMap == null || channelsMap == undefined ||
+      channelsMap[nodeChannelId] == null || channelsMap[nodeChannelId] == undefined)
+      return false;
+
+    return channelsMap[nodeChannelId].isSubscribed;
   }
 
   getSubscribedMap(){
@@ -4044,6 +4062,12 @@ export class FeedService {
     eventBus.publish("feeds:login_finish", nodeId);
     this.native.toast(this.formatInfoService.formatSigninSuccessMsg(this.getServerNameByNodeId(nodeId)));
     this.clearSigninTimeout(nodeId);
+
+    let toBeAddedFeeds: FeedsData.ToBeAddedFeed[] = this.addFeedService.getToBeAddedFeedsInfoByNodeId(nodeId);
+    for (let index = 0; index < toBeAddedFeeds.length; index++) {
+      let toBeAddedFeed = toBeAddedFeeds[index];
+      this.subscribeChannel(toBeAddedFeed.nodeId, toBeAddedFeed.feedId); 
+    }
   }
 
   startDeclareOwner(nodeId: string, carrierAddress: string, nonce: string){
@@ -4539,13 +4563,13 @@ export class FeedService {
     this.getStatistics(friendId);
     this.enableNotification(friendId);
 
-    this.updateFeed(friendId, true);
     let list = this.getSubscribedChannelsFromNodeId(friendId);
     for (let index = 0; index < list.length; index++) {
       let channelId = list[index].id;
       this.updatePost(friendId,channelId);
 
       if (this.getServerVersionCodeByNodeId(friendId) < newCommentVersion){
+        this.updateFeed(friendId, true);
         let postList = this.getPostListFromChannel(friendId,channelId);
         for (let postIndex = 0; postIndex < postList.length; postIndex++) {
           let post: Post = postList[postIndex];
@@ -4566,9 +4590,9 @@ export class FeedService {
       this.getMultiSubscribersCount(friendId, 0);
       this.updateMultiLikesAndCommentsCount(friendId);
       // }
+      this.getMultiSubscribersCount(friendId, 0);
+      this.getMultiLikesAndCommentsCount(friendId,0,0,Communication.field.last_update,0,0,0);
     }
-
-
   }
 
   updateMultiLikesAndCommentsCount(nodeId: string){
@@ -4649,7 +4673,7 @@ export class FeedService {
 
           this.carrierService.addFriend(carrierAddress, friendRequest,
             () => {
-                this.saveServer(name, owner, introduction, did, carrierAddress, feedsUrl);
+                this.saveServer(name, owner, introduction, did, carrierAddress, feedsUrl, null);
             }, (err) => {
                 this.alertError("Add server error: " + err);
             });
@@ -6293,11 +6317,32 @@ export class FeedService {
     this.connectionService.getMultiLikesAndCommentsCount(this.getServerNameByNodeId(nodeId), nodeId, channelId, postId, by, upperBound, lowerBound, maxCount, accessToken);
   }
 
+  addFeed(feedUrl: string): Promise<string>{
+    return new Promise((resolve, reject) =>{
+      this.addFeedService.addFeed(feedUrl).then((toBeAddedFeed:FeedsData.ToBeAddedFeed)=>{
+        if (toBeAddedFeed.friendState == FeedsData.FriendState.IS_FRIEND){
+          let isSubscribed = this.checkFeedsIsSubscribed(toBeAddedFeed.nodeId, toBeAddedFeed.feedId);
+          if (!isSubscribed)
+            this.subscribeChannel(toBeAddedFeed.nodeId, toBeAddedFeed.feedId);
+          resolve("success");
+          return ;
+        }
+
+        this.saveServer("Unknow",toBeAddedFeed.did, "Unknow",toBeAddedFeed.did, toBeAddedFeed.carrierAddress,toBeAddedFeed.serverUrl,toBeAddedFeed.nodeId);
+        resolve("success");
+      }).catch((reason)=>{
+        this.logUtils.loge("AddFeed error "+reason, TAG);
+        reject("fail")
+      });
+    });
+  }
+
   setFeedPublicStatus(feedPublicStatus:any){
-      this.feedPublicStatus = feedPublicStatus;
+    this.feedPublicStatus = feedPublicStatus;
   }
 
   getFeedPublicStatus(){
-   return this.feedPublicStatus;
-}
+    return this.feedPublicStatus;
+  }
+
 }
