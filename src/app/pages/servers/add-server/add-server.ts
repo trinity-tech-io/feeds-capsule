@@ -8,6 +8,7 @@ import { PopupProvider } from 'src/app/services/popup';
 import { TranslateService } from "@ngx-translate/core";
 import { ThemeService } from 'src/app/services/theme.service';
 import { CameraService } from 'src/app/services/CameraService';
+import { AddFeedService } from 'src/app/services/AddFeedService';
 import jsQR from "jsqr";
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 declare let appManager: AppManagerPlugin.AppManager;
@@ -42,7 +43,8 @@ export class AddServerPage implements OnInit {
     private translate:TranslateService,
     public theme: ThemeService,
     public route: ActivatedRoute,
-    private camera: CameraService
+    private camera: CameraService,
+    private addFeedService: AddFeedService
   ) {
  /*    this.route.queryParams.subscribe(params => {
       if(params.source) {
@@ -91,7 +93,7 @@ export class AddServerPage implements OnInit {
     this.events.subscribe('feeds:updateServerList', ()=>{
       this.zone.run(() => {
           //this.native.pop();
-          this.native.go('/menu/servers');
+          // this.native.go('/menu/servers');
       });
     });
    }
@@ -120,9 +122,9 @@ export class AddServerPage implements OnInit {
     appManager.sendIntent("scanqrcode", {}, {}, (res) => {
       let result: string = res.result.scannedContent;
       this.checkValid(result);
-  }, (err: any) => {
-      console.error(err);
-  });
+    }, (err: any) => {
+        console.error(err);
+    });
   }
 
   alertError(error: string){
@@ -144,7 +146,14 @@ export class AddServerPage implements OnInit {
         this.native.toastWarn("AddServerPage.tipMsg");
         return ;
     }
-    this.native.getNavCtrl().navigateForward(['/menu/servers/server-info', result, "0", false]);
+
+    this.feedService.addFeed(result).then((isSuccess)=>{
+      if (isSuccess){
+        this.native.pop();
+        return;
+      }
+    });
+    // this.native.getNavCtrl().navigateForward(['/menu/servers/server-info', result, "0", false]);
   }
 
   scanImage(){

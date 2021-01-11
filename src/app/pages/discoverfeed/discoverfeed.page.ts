@@ -125,7 +125,6 @@ export class DiscoverfeedPage implements OnInit {
       if(events!=""){
         events.target.complete();
       }
-
     });
   }
 

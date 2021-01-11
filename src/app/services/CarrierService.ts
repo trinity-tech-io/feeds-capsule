@@ -226,7 +226,7 @@ export class CarrierService {
        carrierInst.getFriends(onSuccess,onError);
     }
 
-    isFriends(userId: string, onSuccess:(isFriend: Boolean)=>void, onError?:(err: string)=>void){
+    isFriends(userId: string, onSuccess:(res: any)=>void, onError?:(err: string)=>void){
         if (this.platform.platforms().indexOf("cordova") < 0){
             onSuccess(null);
             return ;

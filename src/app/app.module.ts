@@ -53,6 +53,7 @@ import { FormatInfoService } from './services/FormatInfoService';
 import { SessionService } from './services/SessionService';
 import { LogUtils } from 'src/app/services/LogUtils';
 import { StandardAuthService } from 'src/app/services/StandardAuthService';
+import { AddFeedService } from 'src/app/services/AddFeedService';
 
 import { IonicStorageModule } from '@ionic/storage';
 
@@ -208,6 +209,7 @@ export function anim(AnimationC: Animation, baseEl: any, position?: any): Promis
     PostfromComponentPageModule,
     ConnectionService,
     HttpService,
+    AddFeedService,
     LogUtils,
     StandardAuthService,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
