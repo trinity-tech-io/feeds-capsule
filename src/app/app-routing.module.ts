@@ -7,7 +7,6 @@ const routes: Routes = [
   { path: 'tabs', loadChildren: './pages/feeds/feeds.module#FeedsPageModule' },
   { path: 'splashscreen', loadChildren: './pages/splashscreen/splashscreen.module#SplashscreenPageModule' },
 
-  { path: 'menu/servers', loadChildren: './pages/servers/servers.module#ServersPageModule' },
   { path: 'menu/servers/server-info', loadChildren: './pages/servers/server-info/server-info.module#ServerInfoPageModule'},
   { path: 'menu/servers/add-server', loadChildren: './pages/servers/add-server/add-server.module#AddServerPageModule'},
 
@@ -38,8 +37,6 @@ const routes: Routes = [
   { path: 'eidtchannel', loadChildren: './pages/eidtchannel/eidtchannel.module#EidtchannelPageModule' },
   { path: 'editpost', loadChildren: './pages/editpost/editpost.module#EditPostPageModule' },
   { path: 'editcomment', loadChildren: './pages/editcomment/editcomment.module#EditCommentPageModule' },
-  { path: 'discoverfeeds', loadChildren: './pages/servers/discoverfeeds/discoverfeeds.module#DiscoverfeedsPageModule' },
-  { path: 'discoverfeedsinfo', loadChildren: './pages/servers/discoverfeedsinfo/discoverfeedsinfo.module#DiscoverfeedsinfoPageModule' },
   { path: 'settings', loadChildren: './pages/settings/settings.module#SettingsPageModule' },
   { path: 'editimage', loadChildren: './pages/editimage/editimage.module#EditimagePageModule' },
   { path: 'discoverfeed', loadChildren: './pages/discoverfeed/discoverfeed.module#DiscoverfeedPageModule' },

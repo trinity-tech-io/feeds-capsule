@@ -3464,7 +3464,6 @@ export class FeedService {
 
   doSubscribeChannelFinish(nodeId: string, channelId: number){
     let nodeChannelId = this.getChannelId(nodeId, channelId);
-
     channelsMap[nodeChannelId].isSubscribed = true;
 
     let subscribeNum = channelsMap[nodeChannelId].subscribers;

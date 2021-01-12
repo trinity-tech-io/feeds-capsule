@@ -212,7 +212,7 @@ export class SearchPage implements OnInit {
       this.openAlert();
       return;
     }
-    this.native.navigateForward(['/bindservice/scanqrcode'],"");
+    this.native.navigateForward(['/menu/servers/add-server'],"");
   });
 }
 

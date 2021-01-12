@@ -87,7 +87,8 @@ export const zh = {
         "showless":"显示更少",
         "showmore":"显示更多",
         "didnotrelease":"DID发布上链后，Feeds 才能正常运行",
-        "unknown":"未知"
+        "unknown":"未知",
+        "unfollow":"未关注"
     },
     "app":{
         "profileDetails":"档案详情",
