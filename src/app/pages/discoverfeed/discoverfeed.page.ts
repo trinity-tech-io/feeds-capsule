@@ -143,9 +143,9 @@ export class DiscoverfeedPage implements OnInit {
      });
     channel = channel || "";
     if(channel === "" || !channel.isSubscribed){
-        return "DiscoverfeedsPage.notadded"
+        return "common.unfollow"
     }
-    return "DiscoverfeedsPage.added";
+    return "common.followers";
   }
 
 loadData(events:any){

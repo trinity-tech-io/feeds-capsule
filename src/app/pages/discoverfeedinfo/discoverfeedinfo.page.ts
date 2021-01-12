@@ -31,8 +31,7 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 export class DiscoverfeedinfoPage implements OnInit {
 
   public  connectionStatus = 1;
-  public serverInfo:any = {};
-  public actionSheet:any = null;
+  public feedInfo:any = {};
   public popover:any = "";
   public isSubscribed:boolean = false;
   public qrcodeString:string = null;
@@ -53,15 +52,15 @@ export class DiscoverfeedinfoPage implements OnInit {
   ngOnInit() {
 
     this.acRoute.queryParams.subscribe((data) => {
-      this.serverInfo = _.cloneDeep(data)["params"];
+      this.feedInfo = _.cloneDeep(data)["params"];
     });
 
   }
 
   ionViewWillEnter() {
-    this.feedsUrl = this.serverInfo['url'] || "";
-    this.qrcodeString = this.feedsUrl+"#"+this.serverInfo["name"] || null;
-    this.isSubscribed = this.getChannelStatus(this.serverInfo);
+    this.feedsUrl = this.feedInfo['url'] || "";
+    this.qrcodeString = this.feedsUrl+"#"+this.feedInfo["name"] || null;
+    this.isSubscribed = this.getChannelStatus(this.feedInfo);
     this.initTitle();
     this.native.setTitleBarBackKeyShown(true);
 
@@ -173,40 +172,40 @@ export class DiscoverfeedinfoPage implements OnInit {
   }
 
   subscribe(){
-    let  nodeId = this.serverInfo["nodeId"]
+    let  nodeId = this.feedInfo["nodeId"]
     console.log("===nodeId==="+nodeId);
-    let feedUrl = this.serverInfo["url"];
+    let feedUrl = this.feedInfo["url"];
     let channelId = feedUrl.split("/")[4];
     console.log("=== channelId==="+channelId);
-    let feedName = this.serverInfo["name"];
+    let feedName = this.feedInfo["name"];
     console.log("===feedName==="+feedName);
   }
 
   async unsubscribe(){
-    let  nodeId = this.serverInfo["nodeId"]
+    let  nodeId = this.feedInfo["nodeId"]
     console.log("===nodeId==="+nodeId);
-    let feedUrl = this.serverInfo["url"];
+    let feedUrl = this.feedInfo["url"];
     let channelId = feedUrl.split("/")[4];
     console.log("=== channelId==="+channelId);
-    let feedName = this.serverInfo["name"];
+    let feedName = this.feedInfo["name"];
     console.log("===feedName==="+feedName);
     this.menuService.showUnsubscribeMenu(nodeId,channelId,feedName);
   }
 
   getChannelStatus(item:any){
-  let nodeId = item["nodeId"];
-  let feedUrl = item["url"];
-  let channelId = feedUrl.split("/")[4];
-  let channelList = this.feedService.getChannelsList() || [];
-  let channel:any = _.find(channelList,(item:any)=>{
-     return (item["nodeId"]==nodeId&&item["id"]==channelId)
-  });
-  channel = channel || "";
-  if(channel === ""){
-      return false;
-  }else{
+    let nodeId = item["nodeId"];
+    let feedUrl = item["url"];
+    let channelId = feedUrl.split("/")[4];
+    let channelList = this.feedService.getChannelsList() || [];
+    let channel:any = _.find(channelList,(item:any)=>{
+      return (item["nodeId"]==nodeId&&item["id"]==channelId)
+    });
+    channel = channel || "";
+    if(channel === ""){
+        return false;
+    }
+
     return channel.isSubscribed;
-  }
 
   }
 
