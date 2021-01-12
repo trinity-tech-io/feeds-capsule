@@ -44,6 +44,7 @@ export class FeedinfoPage implements OnInit {
   public isPublic:string = "";
   public qrcodeString:string = null;
   public feedPublicStatus:any = {};
+  public nodeStatus:any = {};
   constructor(
     private feedService: FeedService,
     public activatedRoute:ActivatedRoute,
@@ -79,7 +80,7 @@ export class FeedinfoPage implements OnInit {
 
   ionViewWillEnter() {
     this.initTitle();
-
+    this.initnodeStatus(this.nodeId);
     this.connectionStatus = this.feedService.getConnectionStatus();
     this.channelAvatar = this.feedService.getProfileIamge();
     this.avatar = this.feedService.parseChannelAvatar(this.channelAvatar);
@@ -108,6 +109,12 @@ export class FeedinfoPage implements OnInit {
     this.events.subscribe("feeds:editChannel",()=>{
       this.clickEdit()
     });
+
+    this.events.subscribe("feeds:friendConnectionChanged", (nodeId, status)=>{
+      this.zone.run(()=>{
+        this.nodeStatus[nodeId] = status;
+      });
+    });
   }
 
   initTitle(){
@@ -132,6 +139,7 @@ export class FeedinfoPage implements OnInit {
     this.events.unsubscribe("feeds:connectionChanged");
     this.events.unsubscribe("feeds:editFeedInfoFinish");
     this.events.unsubscribe("rpcRequest:error");
+    this.events.unsubscribe("feeds:friendConnectionChanged");
   }
 
   profileimage(){
@@ -282,5 +290,14 @@ export class FeedinfoPage implements OnInit {
     }
 
     this.native.go("/eidtchannel");
+  }
+
+  initnodeStatus(nodeId:string) {
+    let status = this.checkServerStatus(nodeId);
+    this.nodeStatus[nodeId] = status;
+  }
+
+  checkServerStatus(nodeId: string){
+    return this.feedService.getServerStatusFromId(nodeId);
   }
 }
