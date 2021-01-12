@@ -7,7 +7,10 @@
 
       <!--- Feed HEADER --->
       <div class="server-header">
+        <div style="position: relative;">
         <img class="headerImg" [src]="avatar"/>
+        <div class="offline" [class.online]="nodeStatus[nodeId] == 0"></div>
+        </div>
         <h1>{{ name }}</h1>
         <p>{{des}}</p>
       </div>

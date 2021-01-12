@@ -363,6 +363,12 @@ export class ChannelsPage implements OnInit {
       this.curNodeId = "";
       this.downProgressObj[this.curPostId] = 0;
     });
+
+    this.events.subscribe("feeds:friendConnectionChanged", (nodeId, status)=>{
+      this.zone.run(()=>{
+        this.nodeStatus[nodeId] = status;
+      });
+    });
   }
 
   ionViewWillLeave(){
@@ -387,6 +393,7 @@ export class ChannelsPage implements OnInit {
     this.events.unsubscribe("feeds:openRightMenu");
     this.events.unsubscribe("stream:progress");
     this.events.unsubscribe("stream:closed");
+    this.events.unsubscribe("feeds:friendConnectionChanged");
     this.removeImages();
     this.removeAllVideo();
     this.isLoadimage ={};

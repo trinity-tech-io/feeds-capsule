@@ -88,7 +88,8 @@ export const fr = {
         "showmore":"show more",
         "didnotrelease":"Feeds can work normally after DID is published on the chain",
         "unknown":"Unknown",
-        "unfollow":"Unfollow"
+        "unfollow":"Unfollow",
+        "adding":"Adding"
     },
     "app":{
         "profileDetails":"Profile Details",

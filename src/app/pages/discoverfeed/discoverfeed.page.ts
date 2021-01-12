@@ -145,7 +145,13 @@ export class DiscoverfeedPage implements OnInit {
     if(channel === "" || !channel.isSubscribed){
         return "common.unfollow"
     }
-    return "common.followers";
+
+    if(channel.isSubscribed){
+      return "SearchPage.following";
+    }
+
+    return "common.adding";
+
   }
 
 loadData(events:any){
