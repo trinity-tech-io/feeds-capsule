@@ -20,22 +20,7 @@ export class SearchPage implements OnInit {
   public channelList= [];
   public hideOfflineFeeds:boolean = false;
   public popover:any = "";
-  public addingChanneList = [
-    {
-    "nodeId": "CqYSEtXU21KsQQMx9D8y3Rpoe6559NE384Qj6j95V1pJ",
-    "id": 5,
-    "name": "test19",
-    "introduction": "test19",
-    "owner_name": "test",
-    "owner_did": "did:elastos:imZgAo9W38Vzo1pJQfHp6NJp9LZsrnRPRr",
-    "subscribers": 0,
-    "last_update": 1608534192000,
-    "last_post": "",
-    "avatar": "assets/images/profile-1.svg",
-    "isSubscribed": false,
-    "status":0
-  }
-];
+  public addingChanneList = [];
   constructor(
     private feedService: FeedService,
     private events: Events,
@@ -107,7 +92,13 @@ export class SearchPage implements OnInit {
       this.zone.run(() => {
         this.initChannelData();
       });
-    })
+    });
+
+    this.events.subscribe("addFeed:statusChanged",()=>{
+      this.zone.run(() => {
+        this.addingChanneList = this.feedService.getToBeAddedFeedsList();
+      });
+    });
   }
 
   removeSubscribe(){
@@ -123,11 +114,13 @@ export class SearchPage implements OnInit {
     this.events.unsubscribe('feeds:refreshChannels');
     this.events.unsubscribe('feeds:channelsDataUpdate');
     this.events.unsubscribe('feeds:refreshSubscribedChannels');
+    this.events.unsubscribe('addFeed:statusChanged');
   }
 
   ionViewWillEnter() {
 
     this.connectionStatus = this.feedService.getConnectionStatus();
+    this.addingChanneList = this.feedService.getToBeAddedFeedsList() || [];
     this.initChannelData();
     this.initSubscribe();
   }
@@ -135,7 +128,6 @@ export class SearchPage implements OnInit {
   initChannelData(){
     this.channelList = [];
     let channelData = this.feedService.getChannelsList();
-    //this.hideOfflineFeeds = this.feedService.getHideOfflineFeeds();
     if(this.hideOfflineFeeds){
       for(let index=0;index<channelData.length;index++){
         let nodeId = channelData[index]['nodeId'];
@@ -172,10 +164,6 @@ export class SearchPage implements OnInit {
     if(events.target.value == ""){
       this.channelList  = this.feedService.getChannelsList();
     }
-
-    this.addingChanneList = this.addingChanneList.filter(
-      channel=>channel.name.toLowerCase().indexOf(events.target.value.toLowerCase()) > -1
-    );
 
     this.channelList = this.channelList.filter(
       channel=>channel.name.toLowerCase().indexOf(events.target.value.toLowerCase()) > -1
