@@ -168,7 +168,7 @@ export class ServerInfoPage implements OnInit {
       this.native.hideLoading();
     });
 
-    this.events.subscribe('feeds:subscribeFinish', (nodeId, channelId, name)=> {
+    this.events.subscribe('feeds:subscribeFinish', (nodeId, channelId)=> {
       // this.native.toast(name + " subscribed");
       this.zone.run(() => {
         this.initMyFeeds();

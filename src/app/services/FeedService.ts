@@ -325,7 +325,9 @@ enum PublishType{
   deleteCommentFinish = "feeds:deleteCommentFinish",
 
   declarePostSuccess = "feeds:declarePostSuccess",
-  notifyPostSuccess = "feeds:notifyPostSuccess"
+  notifyPostSuccess = "feeds:notifyPostSuccess",
+
+  addFeedFinish = "feeds:addFeedFinish",
 }
 
 enum PersistenceKey{
@@ -1113,18 +1115,36 @@ export class FeedService {
     return sortArr;
   }
 
-  getFollowedChannelList():Channels[]{
+  getSubscribedFeedsList(): Channels[]{
     let list: Channels[] = [];
-    let map = channelsMap || {};
+    let map = subscribedChannelsMap|| {};
     let keys: string[] = Object.keys(map);
 
-    for (let index in keys) {
-      let item = channelsMap[keys[index]] || "";
-      if (item == "")
+    for (let index = 0; index < keys.length; index++) {
+      const subscribedFeed = subscribedChannelsMap[keys[index]];
+
+      let feed = this.getChannelFromId(subscribedFeed.nodeId, subscribedFeed.id);
+      if (feed == null || feed == undefined)
         continue;
-      if (channelsMap[keys[index]].isSubscribed)
-        list.push(channelsMap[keys[index]]);
+      list.push(feed);
     }
+
+    return list;
+  }
+
+  getFollowedChannelList():Channels[]{
+    // let list: Channels[] = [];
+    // let map = channelsMap || {};
+    // let keys: string[] = Object.keys(map);
+
+    // for (let index in keys) {
+    //   let item = channelsMap[keys[index]] || "";
+    //   if (item == "")
+    //     continue;
+    //   if (channelsMap[keys[index]].isSubscribed)
+    //     list.push(channelsMap[keys[index]]);
+    // }
+    let list = this.getSubscribedFeedsList();
 
     let sortArr = [];
 
@@ -3361,15 +3381,14 @@ export class FeedService {
     let nodeChannelId = this.getChannelId(nodeId, request.id);
     if (error != null && error != undefined && error.code == -4){
 
-      if (channelsMap == null || channelsMap == undefined ||
-          channelsMap[nodeChannelId] == null || channelsMap[nodeChannelId] == undefined)
-          return ;
+      if (channelsMap != null && channelsMap != undefined &&
+          channelsMap[nodeChannelId] != null && channelsMap[nodeChannelId] != undefined)
+        channelsMap[nodeChannelId].isSubscribed = true;
 
-      channelsMap[nodeChannelId].isSubscribed = true;
       // this.storeService.set(PersistenceKey.channelsMap,channelsMap);
       this.saveChannelMap();
-      eventBus.publish(PublishType.subscribeFinish, nodeId,request.id, channelsMap[nodeChannelId].name);
-
+      eventBus.publish(PublishType.subscribeFinish, nodeId,request.id);
+      eventBus.publish(PublishType.addFeedFinish, nodeId,request.id);
       return;
     }
 
@@ -3387,6 +3406,7 @@ export class FeedService {
     // this.updatePostWithTime(nodeId,request.id, 0);
 
     this.native.toast(this.formatInfoService.formatFollowSuccessMsg(this.getFeedNameById(nodeId, request.id)));
+    eventBus.publish(PublishType.addFeedFinish, nodeId, request.id);
   }
 
   handleUnsubscribeChannelResult(nodeId:string, request: any, error: any){
@@ -3476,7 +3496,7 @@ export class FeedService {
     let subscribeNum = channelsMap[nodeChannelId].subscribers;
     channelsMap[nodeChannelId].subscribers = subscribeNum + 1;
 
-    eventBus.publish(PublishType.subscribeFinish, nodeId, channelId, channelsMap[nodeChannelId].name);
+    eventBus.publish(PublishType.subscribeFinish, nodeId, channelId);
   }
 
   doSubscribeChannelError(nodeId: string, channelId: number){
@@ -3487,7 +3507,7 @@ export class FeedService {
     if (subscribeNum > 0 )
       channelsMap[nodeChannelId].subscribers = subscribeNum - 1;
 
-    eventBus.publish(PublishType.subscribeFinish, nodeId,channelId, channelsMap[nodeChannelId].name);
+    eventBus.publish(PublishType.subscribeFinish, nodeId,channelId);
   }
 
   doUnsubscribeChannelFinish(nodeId: string, channelId: number){
@@ -5011,10 +5031,9 @@ export class FeedService {
 
   checkChannelIsMine(nodeId: string, channelId: number): boolean{
     let channel = this.getChannelFromId(nodeId, channelId);
-    if (channel.owner_did == this.getSignInData().did)
-      return true;
-
-    return false;
+    if (channel == null || channel == undefined || channel.owner_did != this.getSignInData().did)
+      return false;
+    return true;
   }
 
   checkCommentIsMine(nodeId: string, channelId: number, postId: number, commentId: number):boolean{
@@ -6349,7 +6368,7 @@ export class FeedService {
           return ;
         }
 
-        this.saveServer(toBeAddedFeed.feedName,toBeAddedFeed.did, "Unknow",toBeAddedFeed.did, toBeAddedFeed.carrierAddress,toBeAddedFeed.serverUrl,toBeAddedFeed.nodeId);
+        this.saveServer("Unknow",toBeAddedFeed.did, "Unknow",toBeAddedFeed.did, toBeAddedFeed.carrierAddress,toBeAddedFeed.serverUrl,toBeAddedFeed.nodeId);
         resolve("success");
       }).catch((reason)=>{
         this.logUtils.loge("AddFeed error "+reason, TAG);
@@ -6358,7 +6377,7 @@ export class FeedService {
     });
   }
 
-  getToBeAddedFeedsList(){
+  getToBeAddedFeedsList(): FeedsData.ToBeAddedFeed[]{
     return this.addFeedService.getToBeAddedFeedsList();
   }
 

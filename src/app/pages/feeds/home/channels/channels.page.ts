@@ -229,7 +229,7 @@ export class ChannelsPage implements OnInit {
       this.initTitle();
     });
 
-    this.events.subscribe('feeds:subscribeFinish', (nodeId, channelId, name)=> {
+    this.events.subscribe('feeds:subscribeFinish', (nodeId, channelId)=> {
       this.zone.run(() => {
         this.checkFollowStatus(this.nodeId,this.channelId);
       });

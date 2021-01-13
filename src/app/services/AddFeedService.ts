@@ -42,10 +42,11 @@ export class AddFeedService {
             this.changeTobeAddedFeedStatusByNodeId(nodeId, FeedsData.FollowFeedStatus.SIGNIN_FINISH);
         });
         
-        this.events.subscribe("feeds:subscribeFinish",(nodeId, feedId, feedName)=>{
-            this.changeTobeAddedFeedStatusByNodeFeedId(nodeId, feedId, FeedsData.FollowFeedStatus.FOLLOW_FEED_FINISH);
-            this.changeTobeAddedFeedStatusByNodeFeedId(nodeId, feedId, FeedsData.FollowFeedStatus.FINISH);
-            this.removeTobeAddedFeedStatusByNodeFeedId(nodeId, feedId);
+        this.events.subscribe("feeds:addFeedFinish",async (nodeId, feedId, feedName)=>{
+            await this.changeTobeAddedFeedStatusByNodeFeedId(nodeId, feedId, FeedsData.FollowFeedStatus.FOLLOW_FEED_FINISH);
+            await this.changeTobeAddedFeedStatusByNodeFeedId(nodeId, feedId, FeedsData.FollowFeedStatus.FINISH);
+            await this.removeTobeAddedFeedStatusByNodeFeedId(nodeId, feedId);
+            this.events.publish("addFeed:finish",nodeId,feedId);
         });
     }
 
@@ -61,11 +62,12 @@ export class AddFeedService {
                 }
 
                 let decodeResult:FeedsData.FeedUrl = this.decodeFeedUrl(feedUrl);
+                this.logUtils.logd("Decode result = "+JSON.stringify(decodeResult));
                 let feedName = decodeResult.feedName;
-                let avatar = "";
+                let avatar = "./assets/images/profile-1.svg";
                 let follower = 0;
 
-                if (inputFeedName != null && inputFeedName != undefined || inputFeedName != "")
+                if (inputFeedName != null && inputFeedName != undefined && inputFeedName != "")
                     feedName = inputFeedName;
 
                 if (inputAvatar != null && inputAvatar != undefined && inputAvatar != "")
@@ -152,6 +154,7 @@ export class AddFeedService {
                 list.push(listToBeAddedFeedFromNode[fromNodeIndex]);
             }
         }
+
         return list;
     }
 
@@ -172,7 +175,7 @@ export class AddFeedService {
         }
 
         if (tmp.length = 3){
-            let mFeedName = "";
+            let mFeedName = "Unknow";
             let mFeedId = 0;
             if (tmp[2].indexOf("#") > 0){
                 let feedField = tmp[2].split("#");
@@ -182,7 +185,7 @@ export class AddFeedService {
                     this.logUtils.loge("Type convert error "+error, TAG);
                 }
                 
-                mFeedName = feedField[1];
+                mFeedName = feedField[1]||"Unknow";
             }else{
                 mFeedId = Number(tmp[2]);
             }
