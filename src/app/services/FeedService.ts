@@ -3418,6 +3418,7 @@ export class FeedService {
 
     this.refreshLocalSubscribedChannels();
 
+    delete subscribedChannelsMap[nodeChannelId];
     this.deletePostFromChannel(nodeId, request.id);
 
     this.native.toast(this.formatInfoService.formatUnFollowSuccessMsg(this.getFeedNameById(nodeId, request.id)));
@@ -6338,6 +6339,10 @@ export class FeedService {
         reject("fail")
       });
     });
+  }
+
+  getToBeAddedFeedsList(){
+    return this.addFeedService.getToBeAddedFeedsList();
   }
 
   setFeedPublicStatus(feedPublicStatus:any){
