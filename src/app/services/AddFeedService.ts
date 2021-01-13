@@ -50,7 +50,7 @@ export class AddFeedService {
         });
     }
 
-    addFeed(feedUrl: string): Promise<FeedsData.ToBeAddedFeed>{
+    addFeed(feedUrl: string, inputAvatar: string, inputFollower: number, inputFeedName: string): Promise<FeedsData.ToBeAddedFeed>{
         return new Promise(async (resolve, reject) =>{
             this.logUtils.logd("Start process addFeed",TAG);
             try{
@@ -62,6 +62,19 @@ export class AddFeedService {
                 }
 
                 let decodeResult:FeedsData.FeedUrl = this.decodeFeedUrl(feedUrl);
+                let feedName = decodeResult.feedName;
+                let avatar = "";
+                let follower = 0;
+
+                if (inputFeedName != null && inputFeedName != undefined || inputFeedName != "")
+                    feedName = inputFeedName;
+
+                if (inputAvatar != null && inputAvatar != undefined && inputAvatar != "")
+                    avatar = inputAvatar;
+
+                if (inputFollower != null && inputFollower != undefined && inputFollower >0)
+                    follower = inputFollower;
+
                 if (decodeResult == null || decodeResult == undefined){
                     let error = "Feed Url decode error";
                     this.logUtils.loge(error, TAG);
@@ -74,10 +87,11 @@ export class AddFeedService {
                 this.logUtils.logd("nodeId is "+nodeId, TAG);
                 
                 this.checkTobeAddedFeedMap(nodeId);
+
                 this.tobeAddedFeedMap[nodeId][decodeResult.feedId] = 
                     this.generateToBeAddedFeed(nodeId, decodeResult.carrierAddress, decodeResult.feedId, 
-                        decodeResult.feedName, decodeResult.did, decodeResult.serverUrl, decodeResult.feedUrl, 
-                        FeedsData.FollowFeedStatus.NONE, FeedsData.FriendState.NONE_STATE);
+                        feedName, decodeResult.did, decodeResult.serverUrl, decodeResult.feedUrl, 
+                        FeedsData.FollowFeedStatus.NONE, FeedsData.FriendState.NONE_STATE, avatar, follower);
 
                 this.changeTobeAddedFeedStatusByNodeId(nodeId, FeedsData.FollowFeedStatus.ADD_FRIEND_READY);
 
@@ -206,7 +220,8 @@ export class AddFeedService {
     }
 
     generateToBeAddedFeed(nodeId: string, carrierAddress: string, feedId: number, feedName: string, 
-        did: string, serverUrl: string, feedUrl: string, status : FeedsData.FollowFeedStatus, state: FeedsData.FriendState): FeedsData.ToBeAddedFeed{
+        did: string, serverUrl: string, feedUrl: string, status : FeedsData.FollowFeedStatus, state: FeedsData.FriendState,
+        avatar: string, follower: number): FeedsData.ToBeAddedFeed{
         return {
             nodeId          : nodeId,
             did             : did,
@@ -216,7 +231,9 @@ export class AddFeedService {
             feedUrl         : feedUrl,
             serverUrl       : serverUrl,
             status          : status,
-            friendState     : state
+            friendState     : state,
+            avatar          : avatar,
+            follower        : follower
         }
     }
 

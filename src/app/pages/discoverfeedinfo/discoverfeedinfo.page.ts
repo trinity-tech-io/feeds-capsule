@@ -172,11 +172,12 @@ export class DiscoverfeedinfoPage implements OnInit {
   }
 
   subscribe(){
-    // let  nodeId = this.feedInfo["nodeId"]
-    // let channelId = feedUrl.split("/")[4];
-    // let feedName = this.feedInfo["name"];
     let feedUrl = this.feedInfo["url"];
-    this.feedService.addFeed(feedUrl).then((isSuccess)=>{
+    let avatar = this.feedInfo["feedsAvatar"];
+    let followers = this.feedInfo["followers"];
+    let feedName = this.feedInfo["name"];
+
+    this.feedService.addFeed(feedUrl, avatar, followers, feedName).then((isSuccess)=>{
       if (isSuccess){
         this.native.pop();
         return;

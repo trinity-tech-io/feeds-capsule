@@ -251,5 +251,7 @@ declare namespace FeedsData{
         serverUrl       : string
         status          : FollowFeedStatus
         friendState     : FriendState
+        avatar          : string
+        follower        : number
     }
 }

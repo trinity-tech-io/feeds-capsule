@@ -6321,9 +6321,9 @@ export class FeedService {
     this.connectionService.getMultiLikesAndCommentsCount(this.getServerNameByNodeId(nodeId), nodeId, channelId, postId, by, upperBound, lowerBound, maxCount, accessToken);
   }
 
-  addFeed(feedUrl: string): Promise<string>{
+  addFeed(feedUrl: string, avatar: string, follower: number, feedName: string): Promise<string>{
     return new Promise((resolve, reject) =>{
-      this.addFeedService.addFeed(feedUrl).then((toBeAddedFeed:FeedsData.ToBeAddedFeed)=>{
+      this.addFeedService.addFeed(feedUrl, avatar, follower, feedName).then((toBeAddedFeed:FeedsData.ToBeAddedFeed)=>{
         if (toBeAddedFeed.friendState == FeedsData.FriendState.IS_FRIEND){
           let isSubscribed = this.checkFeedsIsSubscribed(toBeAddedFeed.nodeId, toBeAddedFeed.feedId);
           if (!isSubscribed)
