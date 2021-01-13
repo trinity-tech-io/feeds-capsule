@@ -51,7 +51,7 @@
             class="left-col"
           >
             <div class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode">
-              <img src={{parseChannelAvatar(addingchannel.feedsAvatar)}}>
+              <img src={{parseChannelAvatar(addingchannel.avatar)}}>
               <div class="offline"></div>
             </div>
           </ion-col>
@@ -62,7 +62,7 @@
             <ion-label (press)="pressName(addingchannel.feedName)">{{ moreName(addingchannel.feedName) }}</ion-label>
             <ion-row>
               <img src="./assets/images/bubble2.svg"> <br>
-              <p><span>{{ addingchannel.followers }}</span> {{ 'common.followers' | translate }}</p>
+              <p><span>{{ addingchannel.follower }}</span> {{ 'common.followers' | translate }}</p>
             </ion-row>
           </ion-col>
           <ion-col size="4" style="text-align:right;" class="right-col">
