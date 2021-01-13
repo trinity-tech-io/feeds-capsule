@@ -19,7 +19,6 @@ export class AddFeedService {
         private storageService: StorageService,
         private events: Events,
         private logUtils: LogUtils) {
-        
         this.loadData().then((map)=>{
             this.tobeAddedFeedMap = map||{};
             this.subscribeEvent();

@@ -104,7 +104,7 @@ export class ProfilePage implements OnInit {
   initFolling(){
     this.followingList = this.feedService.getFollowedChannelList();
     this.initnodeStatus(this.followingList);
-    this.feedService.refreshSubscribedChannels();
+    this.feedService.updateSubscribedFeed();
   }
 
   initLike(){

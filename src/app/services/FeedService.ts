@@ -3850,6 +3850,10 @@ export class FeedService {
     this.getChannels(nodeId,Communication.field.last_update, 0, lastUpdateTime,0);
   }
 
+  updateFeedsByFeedId(nodeId: string, feedId: number){
+    this.getChannels(nodeId,Communication.field.id, feedId, feedId, 1);
+  }
+
   updateCommentsWithTime(nodeId: string, channelId: number, postId: number, lastUpdateTime: number){
     this.getComments(nodeId, channelId, postId , Communication.field.last_update, 0, lastUpdateTime, 0, false);
   }
@@ -3870,6 +3874,19 @@ export class FeedService {
       lastFeedTime = update["time"] || 0;
     }
     this.updateFeedsWithTime(nodeId,lastFeedTime);
+  }
+
+  updateSubscribedFeed(){
+    let subscribedFeedsMap = subscribedChannelsMap || {}
+    let keys: string[] = Object.keys(subscribedFeedsMap);
+    for (let index = 0; index < keys.length; index++) {
+      const feed = subscribedFeedsMap[keys[index]];
+      if (feed == null || feed == undefined)
+        continue;
+      if (serversStatus[feed.nodeId].status == ConnState.disconnected)
+        continue;
+      this.updateFeedsByFeedId(feed.nodeId, feed.id);
+    }
   }
 
   updateComment(nodeId: string, channelId: number, postId: number){
