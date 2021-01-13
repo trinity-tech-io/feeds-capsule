@@ -162,6 +162,8 @@ export const fr = {
         "status1":"Add friend reday",
         "status2":"Add friend finish",
         "status3":"Add friend error",
+        "status4":"Friend online",
+        "status5":"Friend offline",
         "status6":"Signin reday",
         "status7":"Signin finish",
         "status8":"Signin error",
