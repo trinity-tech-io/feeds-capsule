@@ -130,6 +130,18 @@ export class AddFeedService {
         return result;
     }
 
+    getToBeAddedFeedsList(): FeedsData.ToBeAddedFeed[]{
+        let list:FeedsData.ToBeAddedFeed[] = [];
+        let keys: string[] = Object.keys(this.tobeAddedFeedMap) || [];
+        for (let index = 0; index < keys.length; index++) {
+            let listToBeAddedFeedFromNode = this.getToBeAddedFeedsInfoByNodeId(keys[index]);
+            for (let fromNodeIndex = 0; fromNodeIndex < listToBeAddedFeedFromNode.length; fromNodeIndex++) {
+                list.push(listToBeAddedFeedFromNode[fromNodeIndex]);
+            }
+        }
+        return list;
+    }
+
     decodeFeedUrl(feedUrl: string):FeedsData.FeedUrl{
         let tmpString = feedUrl.replace("feeds://","");
         

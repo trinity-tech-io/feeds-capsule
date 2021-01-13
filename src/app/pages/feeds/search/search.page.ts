@@ -122,6 +122,7 @@ export class SearchPage implements OnInit {
     this.events.unsubscribe('feeds:unsubscribeFinish');
     this.events.unsubscribe('feeds:refreshChannels');
     this.events.unsubscribe('feeds:channelsDataUpdate');
+    this.events.unsubscribe('feeds:refreshSubscribedChannels');
   }
 
   ionViewWillEnter() {
