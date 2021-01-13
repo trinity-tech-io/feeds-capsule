@@ -248,14 +248,12 @@ export class AddFeedService {
         this.checkTobeAddedFeedMap(nodeId);
         let keys: string[] = Object.keys(this.tobeAddedFeedMap[nodeId]) || [];
         for (let index = 0; index < keys.length; index++) {
-            this.tobeAddedFeedMap[nodeId][keys[index]].status = status;
-            this.logUtils.logd("Change status, nodeId = "+nodeId+" FeedId = "+keys[index]+ " status = "+ status, TAG);
+            this.changeTobeAddedFeedStatusByNodeFeedId(nodeId, keys[index], status);
         }
-
-        await this.saveData();
     }
 
-    async changeTobeAddedFeedStatusByNodeFeedId(nodeId: string, feedId: number, status: FeedsData.FollowFeedStatus){
+    async changeTobeAddedFeedStatusByNodeFeedId(nodeId: string, feedId: string, status: FeedsData.FollowFeedStatus){
+        this.logUtils.logd("Change status, nodeId = "+nodeId+" FeedId = "+feedId+ " status = "+ status, TAG);
         this.checkTobeAddedFeedMap(nodeId);
         if (this.tobeAddedFeedMap[nodeId][feedId] == null || this.tobeAddedFeedMap[nodeId][feedId] == undefined){
             this.logUtils.loge("tobeAddedFeedMap null", TAG);
@@ -265,6 +263,8 @@ export class AddFeedService {
         this.tobeAddedFeedMap[nodeId][feedId].status = status;
 
         await this.saveData();
+
+        this.events.publish("addFeed:statusChanged", nodeId, feedId, status);
     }
 
     async removeTobeAddedFeedStatusByNodeFeedId(nodeId: string, feedId: number){
