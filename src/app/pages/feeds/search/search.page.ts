@@ -11,6 +11,8 @@ import { PopupProvider } from 'src/app/services/popup';
   templateUrl: './search.page.html',
   styleUrls: ['./search.page.scss'],
 })
+
+
 export class SearchPage implements OnInit {
 
   public connectionStatus = 1;
@@ -18,6 +20,22 @@ export class SearchPage implements OnInit {
   public channelList= [];
   public hideOfflineFeeds:boolean = false;
   public popover:any = "";
+  public addingChanneList = [
+    {
+    "nodeId": "CqYSEtXU21KsQQMx9D8y3Rpoe6559NE384Qj6j95V1pJ",
+    "id": 5,
+    "name": "test19",
+    "introduction": "test19",
+    "owner_name": "test",
+    "owner_did": "did:elastos:imZgAo9W38Vzo1pJQfHp6NJp9LZsrnRPRr",
+    "subscribers": 0,
+    "last_update": 1608534192000,
+    "last_post": "",
+    "avatar": "assets/images/profile-1.svg",
+    "isSubscribed": false,
+    "status":0
+  }
+];
   constructor(
     private feedService: FeedService,
     private events: Events,
@@ -107,6 +125,7 @@ export class SearchPage implements OnInit {
   }
 
   ionViewWillEnter() {
+
     this.connectionStatus = this.feedService.getConnectionStatus();
     this.initChannelData();
     this.initSubscribe();
@@ -152,9 +171,16 @@ export class SearchPage implements OnInit {
     if(events.target.value == ""){
       this.channelList  = this.feedService.getChannelsList();
     }
+
+    this.addingChanneList = this.addingChanneList.filter(
+      channel=>channel.name.toLowerCase().indexOf(events.target.value.toLowerCase()) > -1
+    );
+
     this.channelList = this.channelList.filter(
       channel=>channel.name.toLowerCase().indexOf(events.target.value.toLowerCase()) > -1
-      );
+    );
+
+
   }
 
   doRefresh(event) {
@@ -242,6 +268,12 @@ confirm(that:any){
 
 discover(){
   this.native.go("discoverfeed");
+}
+
+handleStatus(item:any){
+  let status = item["status"] || 0;
+  let keyString ="SearchPage.status";
+   return keyString+status;
 }
 
 }
