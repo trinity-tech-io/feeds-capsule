@@ -14,7 +14,7 @@
     </ion-refresher-content>
   </ion-refresher>
 
-  <div *ngIf="channelList.length === 0" class="empty-container">
+  <div *ngIf="channelList.length === 0 && addingChanneList.length ===0" class="empty-container">
     <img src="./assets/images/empty-feeds-icon.svg">
     <h1>{{ 'common.allempty' | translate }}</h1>
     <p>{{ 'SearchPage.emptyDes' | translate }}</p>
@@ -36,13 +36,49 @@
     </ion-row>
   </div>
 
-  <ion-list *ngIf="channelList.length > 0" class="channel-list" [class.darkChannelList]="theme.darkMode">
+  <ion-list *ngIf="channelList.length > 0 || addingChanneList.length > 0" class="channel-list" [class.darkChannelList]="theme.darkMode">
     <div class="search-container" [class.dark-search-container]="theme.darkMode">
       <ion-searchbar placeholder="{{ 'SearchPage.searchFeeds' | translate }}" (ionInput)="getItems($event)" mode="ios"></ion-searchbar>
     </div>
-    <div>
+    <!-- adding Feed-->
     <ion-item
-      *ngFor="let channel of channelList let i=index"
+        *ngFor="let addingchannel of addingChanneList"
+        [class.removeBorder]="addingchannel === addingChanneList[addingChanneList.length - 1]"
+        lines="none">
+        <ion-row class="channel-row ion-activatable ripple">
+          <ion-col
+            size="2.5"
+            class="left-col"
+            (click)="navTo(addingchannel.nodeId, addingchannel.id)"
+          >
+            <div class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode">
+              <img src={{parseChannelAvatar(addingchannel.avatar)}}>
+              <div class="offline" [class.online]="nodeStatus[addingchannel.nodeId] === 0"></div>
+            </div>
+          </ion-col>
+          <ion-col
+            size="6.5"
+            class="middle-col"
+            (click)="navTo(addingchannel.nodeId,addingchannel.id)"
+          >
+            <ion-label (press)="pressName(addingchannel.name)">{{ moreName(addingchannel.name) }}</ion-label>
+            <ion-row>
+              <img src="./assets/images/bubble2.svg"> <br>
+              <p><span>{{ addingchannel.subscribers }}</span> {{ 'common.followers' | translate }}</p>
+            </ion-row>
+          </ion-col>
+          <ion-col size="3" class="right-col">
+            <ion-button>
+              <ion-label>{{ handleStatus(addingchannel) | translate }}</ion-label>
+            </ion-button>
+          </ion-col>
+          <ion-ripple-effect></ion-ripple-effect>
+        </ion-row>
+      </ion-item>
+
+    <!-- added Feed-->
+    <ion-item
+      *ngFor="let channel of channelList"
       [class.removeBorder]="channel === channelList[channelList.length - 1]"
       lines="none"
     >
@@ -79,7 +115,7 @@
         <ion-ripple-effect></ion-ripple-effect>
       </ion-row>
     </ion-item>
-    </div>
+
     <div class="new-feed-div" (click)="discover()" *ngIf="channelList.length > 0" style="margin-bottom: 5px;">
         <div class="new-feed">{{ 'ServersPage.discover' | translate }}</div>
     </div>
