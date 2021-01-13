@@ -84,7 +84,6 @@ export class FeedinfoPage implements OnInit {
     this.connectionStatus = this.feedService.getConnectionStatus();
     this.channelAvatar = this.feedService.getProfileIamge();
     this.avatar = this.feedService.parseChannelAvatar(this.channelAvatar);
-
     this.events.subscribe('feeds:connectionChanged',(status)=>{
       this.zone.run(() => {
         this.connectionStatus = status;

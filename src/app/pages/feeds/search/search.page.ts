@@ -17,7 +17,7 @@ export class SearchPage implements OnInit {
 
   public connectionStatus = 1;
   public nodeStatus: any = {};
-  public channelList= [];
+  public subscribedFeedList= [];
   public hideOfflineFeeds:boolean = false;
   public popover:any = "";
   public addingChanneList = [];
@@ -50,7 +50,7 @@ export class SearchPage implements OnInit {
       });
     });
 
-    this.events.subscribe('feeds:subscribeFinish', (nodeId, channelId, name)=> {
+    this.events.subscribe('feeds:subscribeFinish', (nodeId, channelId)=> {
       // this.native.toast(name + " subscribed");
       this.zone.run(() => {
         // this.channelList  = this.feedService.getChannelsList();
@@ -99,6 +99,12 @@ export class SearchPage implements OnInit {
         this.addingChanneList = this.feedService.getToBeAddedFeedsList();
       });
     });
+
+    this.events.subscribe("addFeed:finish",()=>{
+      this.zone.run(() => {
+        this.addingChanneList = this.feedService.getToBeAddedFeedsList();
+      });
+    })
   }
 
   removeSubscribe(){
@@ -126,20 +132,21 @@ export class SearchPage implements OnInit {
   }
 
   initChannelData(){
-    this.channelList = [];
-    let channelData = this.feedService.getChannelsList();
+    this.subscribedFeedList = [];
+    let channelData = this.feedService.getSubscribedFeedsList();
+
     if(this.hideOfflineFeeds){
       for(let index=0;index<channelData.length;index++){
         let nodeId = channelData[index]['nodeId'];
         let status = this.checkServerStatus(nodeId);
         this.nodeStatus[nodeId] = status;
         if(this.nodeStatus[nodeId] === 0){
-           this.channelList.push(channelData[index]);
+           this.subscribedFeedList.push(channelData[index]);
         }
       }
       return;
     }
-    this.channelList = channelData;
+    this.subscribedFeedList = channelData;
     this.initnodeStatus();
   }
 
@@ -162,10 +169,10 @@ export class SearchPage implements OnInit {
 
   getItems(events){
     if(events.target.value == ""){
-      this.channelList  = this.feedService.getChannelsList();
+      this.subscribedFeedList  = this.feedService.getSubscribedFeedsList();
     }
 
-    this.channelList = this.channelList.filter(
+    this.subscribedFeedList = this.subscribedFeedList.filter(
       channel=>channel.name.toLowerCase().indexOf(events.target.value.toLowerCase()) > -1
     );
 
@@ -204,18 +211,18 @@ export class SearchPage implements OnInit {
   }
 
   initnodeStatus(){
-    for(let index =0 ;index<this.channelList.length;index++){
-           let nodeId = this.channelList[index]['nodeId'];
+    for(let index =0 ;index<this.subscribedFeedList.length;index++){
+           let nodeId = this.subscribedFeedList[index]['nodeId'];
            let status = this.checkServerStatus(nodeId);
            this.nodeStatus[nodeId] = status;
     }
  }
 
  moreName(name:string){
-    return UtilService.moreNanme(name);
+  return UtilService.moreNanme(name)
  }
 
- pressName(channelName:string){
+ pressName(channelName:string){  
   let name =channelName || "";
   if(name != "" && name.length>15){
     this.native.createTip(name);
