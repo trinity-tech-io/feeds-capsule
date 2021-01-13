@@ -3218,6 +3218,8 @@ export class FeedService {
     }else{
       this.loadMoreLocalSubscribedChannels();
     }
+
+    eventBus.publish(PublishType.refreshSubscribedChannels);
   }
 
   handleGetPostsResult(nodeId: string, responseResult: any, request: any, error: any){
@@ -3377,15 +3379,12 @@ export class FeedService {
       return;
     }
 
-    // channelsMap[nodeChannelId].isSubscribed = true;
-
     this.saveChannelMap();
-    // this.storeService.set(PersistenceKey.channelsMap,channelsMap);
-    // eventBus.publish(PublishType.subscribeFinish, nodeId,request.id, channelsMap[nodeChannelId].name);
 
-    this.refreshSubscribedChannels();
+    // this.refreshSubscribedChannels();
+    this.getSubscribedChannels(nodeId, Communication.field.id,request.id,request.id,1);
 
-    this.updatePostWithTime(nodeId,request.id, 0);
+    // this.updatePostWithTime(nodeId,request.id, 0);
 
     this.native.toast(this.formatInfoService.formatFollowSuccessMsg(this.getFeedNameById(nodeId, request.id)));
   }
@@ -3466,6 +3465,10 @@ export class FeedService {
 
   doSubscribeChannelFinish(nodeId: string, channelId: number){
     let nodeChannelId = this.getChannelId(nodeId, channelId);
+
+    if (channelsMap == null || channelsMap == undefined ||
+      channelsMap[nodeChannelId] == null || channelsMap[nodeChannelId] == undefined)
+      return ;
 
     channelsMap[nodeChannelId].isSubscribed = true;
 
@@ -6328,7 +6331,7 @@ export class FeedService {
           return ;
         }
 
-        this.saveServer("Unknow",toBeAddedFeed.did, "Unknow",toBeAddedFeed.did, toBeAddedFeed.carrierAddress,toBeAddedFeed.serverUrl,toBeAddedFeed.nodeId);
+        this.saveServer(toBeAddedFeed.feedName,toBeAddedFeed.did, "Unknow",toBeAddedFeed.did, toBeAddedFeed.carrierAddress,toBeAddedFeed.serverUrl,toBeAddedFeed.nodeId);
         resolve("success");
       }).catch((reason)=>{
         this.logUtils.loge("AddFeed error "+reason, TAG);

@@ -140,7 +140,7 @@ export class AddFeedService {
                 did             : tmp[0],
                 carrierAddress  : tmp[1],
                 feedId          : 0,
-                feedName        : "",
+                feedName        : "Unknow",
                 feedUrl         : feedUrl,
                 serverUrl       : feedUrl
             }

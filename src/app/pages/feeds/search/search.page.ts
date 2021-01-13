@@ -84,6 +84,12 @@ export class SearchPage implements OnInit {
     this.events.subscribe("feeds:hideOfflineFeeds",()=>{
       this.initChannelData();
     });
+
+    this.events.subscribe("feeds:refreshSubscribedChannels",()=>{
+      this.zone.run(() => {
+        this.initChannelData();
+      });
+    })
   }
 
   removeSubscribe(){
