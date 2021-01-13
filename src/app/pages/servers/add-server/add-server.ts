@@ -147,7 +147,7 @@ export class AddServerPage implements OnInit {
         return ;
     }
 
-    this.feedService.addFeed(result).then((isSuccess)=>{
+    this.feedService.addFeed(result,"",0,"").then((isSuccess)=>{
       if (isSuccess){
         this.native.pop();
         return;
