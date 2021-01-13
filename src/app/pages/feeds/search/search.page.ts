@@ -121,7 +121,6 @@ export class SearchPage implements OnInit {
 
     this.connectionStatus = this.feedService.getConnectionStatus();
     this.addingChanneList = this.feedService.getToBeAddedFeedsList() || [];
-    console.log("=====this.addingChanneList====="+JSON.stringify(this.addingChanneList));
     this.initChannelData();
     this.initSubscribe();
   }
