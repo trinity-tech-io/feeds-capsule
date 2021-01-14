@@ -170,6 +170,7 @@ export const zh = {
         "status9":"Follow feed reday",
         "status10":"Follow feed finish",
         "status11":"Follow feed error",
+        "discover":"发现Feeds"
     },
     "ChannelsPage":{
         "feeds":"Feeds",
