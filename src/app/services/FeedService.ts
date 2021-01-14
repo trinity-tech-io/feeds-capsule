@@ -6381,6 +6381,10 @@ export class FeedService {
     return this.addFeedService.getToBeAddedFeedsList();
   }
 
+  checkIsTobeAddedFeeds(nodeId: string, feedId: number): boolean{
+    return this.addFeedService.checkIsTobeAddedFeeds(nodeId, feedId);
+  }
+
   setFeedPublicStatus(feedPublicStatus:any){
     this.feedPublicStatus = feedPublicStatus;
   }
