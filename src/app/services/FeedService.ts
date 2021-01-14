@@ -25,9 +25,10 @@ declare let appManager: AppManagerPlugin.AppManager;
 declare let didSessionManager: DIDSessionManagerPlugin.DIDSessionManager;
 
 let TAG: string = "Feeds-service";
-let versionCode: number = 10400;
+let versionCode: number = 10500;
 let newAuthVersion: number = 10400;
 let newCommentVersion: number = 10400;
+let newMultiPropCountVersion: number = 10500;
 let subscribedChannelsMap:{[nodeChannelId: string]: Channels};
 let channelsMap:{[nodeChannelId: string]: Channels} ;
 let myChannelsMap:{[nodeChannelId: string]: MyChannel};
@@ -4604,6 +4605,7 @@ export class FeedService {
   prepare(friendId: string){
     this.getStatistics(friendId);
     this.enableNotification(friendId);
+    this.updateFeed(friendId, true);
 
     let list = this.getSubscribedChannelsFromNodeId(friendId);
     for (let index = 0; index < list.length; index++) {
@@ -4611,7 +4613,6 @@ export class FeedService {
       this.updatePost(friendId,channelId);
 
       if (this.getServerVersionCodeByNodeId(friendId) < newCommentVersion){
-        this.updateFeed(friendId, true);
         let postList = this.getPostListFromChannel(friendId,channelId);
         for (let postIndex = 0; postIndex < postList.length; postIndex++) {
           let post: Post = postList[postIndex];
@@ -4629,11 +4630,11 @@ export class FeedService {
       let commentUpdateTime = mLastCommentUpdateMap[lastCommentUpdateKey] || "";
       let lastCommentTime = commentUpdateTime["time"] || 0;
       this.getMultiComments(friendId, 0, 0, Communication.field.last_update, 0 , lastCommentTime,0);
+    }
+
+    if (this.getServerVersionCodeByNodeId(friendId) >= newMultiPropCountVersion){
       this.getMultiSubscribersCount(friendId, 0);
       this.updateMultiLikesAndCommentsCount(friendId);
-      // }
-      this.getMultiSubscribersCount(friendId, 0);
-      this.getMultiLikesAndCommentsCount(friendId,0,0,Communication.field.last_update,0,0,0);
     }
   }
 
