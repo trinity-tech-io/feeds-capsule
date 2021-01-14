@@ -169,6 +169,7 @@ export const fr = {
         "status9":"Follow feed reday",
         "status10":"Follow feed finish",
         "status11":"Follow feed error",
+        "discover":"Discover Feeds"
     },
     "ChannelsPage":{
         "feeds":"Feeds",
