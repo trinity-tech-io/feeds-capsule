@@ -9,12 +9,12 @@ export const zh = {
         "confirm":"确认",
         "des":"清空 <strong>所有缓存数据</strong>!!!",
         "prompt":"提示",
-        "des1":"确认微频",
+        "des1":"确认Feeds",
         "server":"Feeds出版号:",
-        "channel":"微频:",
+        "channel":"Feeds:",
         "description":"描述:",
         "pleaseInput":"请输入",
-        "feeds":"微频",
+        "feeds":"Feeds",
         "just":"刚刚",
         "yesterday":"昨天",
         "unsubscribe":"取消关注",
@@ -45,7 +45,7 @@ export const zh = {
         "waitMoment": "请稍候...",
         "issuecredentialError": "颁发凭证出错，请检查二维码或重试",
         "save":"保存",
-        "feed":"微频:",
+        "feed":"Feeds:",
         "image":"图片",
         "nochanges":"没有修改内容",
         "cantSave":"无法存储数据，请检查存储状态",
@@ -94,7 +94,7 @@ export const zh = {
     "app":{
         "profileDetails":"档案详情",
         "feedSources":"Feeds出版号",
-        "about":"关于微频",
+        "about":"关于Feeds",
         "donation":"捐赠",
         "signout":"登出",
         "des":"登出成功",
@@ -102,13 +102,13 @@ export const zh = {
         "settings":"设置"
     },
     "SigninPage":{
-        "signIn":"登录微频",
+        "signIn":"登录Feeds",
         "Pleasewait": "请稍等...",
-        "feeds": '微频',
+        "feeds": 'Feeds',
         "des":"进行",
         "des1":"有意义的对话",
-        "des2":"了解微频更多信息？",
-        "des3":"什么是微频？",
+        "des2":"了解Feeds更多信息？",
+        "des3":"什么是Feeds？",
         "des4":"跟随您的兴趣。",
         "des5":"听听人们在谈论什么。",
         "des6":"加入谈话吧。",
@@ -117,12 +117,12 @@ export const zh = {
         "tabTitle1":"我的时间线",
         "tabTitle2":"我的档案",
         "tabTitle3":"消息通知",
-        "tabTitle4":"探索微频"
+        "tabTitle4":"探索Feeds"
     },
     "HomePage":{
         "allempty":"空空如也",
-        "emptyDes":"尚未关注过任何微频",
-        "exploreFeeds":"探索微频",
+        "emptyDes":"尚未关注过任何Feeds",
+        "exploreFeeds":"探索Feeds",
         "minutesAgo":"分钟前",
         "hoursAgo":"小时前",
         "daysAgo":"天前",
@@ -131,29 +131,29 @@ export const zh = {
         "oneminuteAgo":"分钟前"
     },
     "ProfilePage":{
-        "myFeeds":"我的微频",
+        "myFeeds":"我的Feeds",
         "following":"关注",
         "myLikes":"赞/收藏"
     },
     "MyfeedsComponent":{
-        "emptyDes":"您还没有微频",
-        "createFeed":"创建微频",
-        "createNewFeed":"创建新的微频"
+        "emptyDes":"您还没有Feeds",
+        "createFeed":"创建Feeds",
+        "createNewFeed":"创建新的Feeds"
     },
     "FollowingComponent":{
-        "emptyDes":"尚未关注过任何微频",
-        "exploreFeeds":"探索微频"
+        "emptyDes":"尚未关注过任何Feeds",
+        "exploreFeeds":"探索Feeds"
     },
     "LikesComponent":{
         "emptyLikeDes":"您还没有任何收藏",
-        "exploreFeeds":"探索微频"
+        "exploreFeeds":"探索Feeds"
     },
     "ConfirmdialogComponent": {
         "signoutTitle": 'Sign Out',
         "signoutMessage": '确认要登出吗？'
     },
     "SearchPage":{
-        "emptyDes":"没有可关注的微频",
+        "emptyDes":"没有可关注的Feeds",
         "follow":"关注",
         "following":"已关注",
         "searchFeeds":"搜索",
@@ -172,27 +172,27 @@ export const zh = {
         "status11":"Follow feed error",
     },
     "ChannelsPage":{
-        "feeds":"微频",
+        "feeds":"Feeds",
         "follow":"关注",
         "following":"已关注",
         "tip":"打赏"
     },
     "NotificationPage":{
         "emptyDes":"还未收到通知",
-        "followedFeed":"关注了您的微频",
+        "followedFeed":"关注了您的Feeds",
         "likedPost":"赞了微说",
         "commentPost":"在微说留了言",
         "likedComment":"赞了微评"
     },
     "CreatenewfeedPage":{
-        "createNewFeed":"创建新的微频",
-        "profileImage":"微频头像",
-        "des":"为微频选择一张头像",
+        "createNewFeed":"创建新的Feeds",
+        "profileImage":"Feeds头像",
+        "des":"为Feeds选择一张头像",
         "des1":"头像已选择",
         "channelSource":"Feeds出版号",
-        "name":"微频名称",
-        "description":"微频描述",
-        "createFeed":"创建微频",
+        "name":"Feeds名称",
+        "description":"Feeds描述",
+        "createFeed":"创建Feeds",
         "tipMsg":"请选择一个头像",
         "tipMsg1":"请输入名称",
         "tipMsg2":"请输入描述信息",
@@ -200,13 +200,13 @@ export const zh = {
         "tipMsgLength":"描述信息长度最大为128",
         "inputName":"输入名称",
         "inputFeedDesc":"输入描述",
-        "channelSourceDes":"在哪里保存您的微频",
-        "createfeedsuccess": "创建微频成功!",
+        "channelSourceDes":"在哪里保存您的Feeds",
+        "createfeedsuccess": "创建Feeds成功!",
         "tipMsgLength1":"描述信息长度最大为32",
-        "alreadyExist":"微频已经存在，请更换名称后重试"
+        "alreadyExist":"Feeds已经存在，请更换名称后重试"
     },
     "ProfileimagePage":{
-        "title":"微频头像",
+        "title":"Feeds头像",
         "confirm":"确认"
     },
     "ProfiledetailPage":{
@@ -225,11 +225,11 @@ export const zh = {
         "clearAllData":"清除所有数据"
     },
     "AboutPage":{
-        "about":"关于微频",
+        "about":"关于Feeds",
         "version":"版本",
         "website":"团队网址",
         "disclaimer":"免责声明",
-        "help":"微频使用手册",
+        "help":"Feeds使用手册",
         'email':'邮箱',
         'telegram':'电报',
     },
@@ -260,14 +260,14 @@ export const zh = {
         "feedsSource": "Feeds出版号: ",
         "serverWentOffline": " 已变成离线",
         "serverAlreadyAdded": "该Feeds出版号已经在您的关注列表中了",
-        "serverAddedSuccess": "添加Feeds出版号成功，您可以关注里面的微频了",
+        "serverAddedSuccess": "添加Feeds出版号成功，您可以关注里面的Feeds了",
         "Signinsuccess": "登录成功!",
         "scanimg":"导入二维码图片",
         "tipMsg1":"未发现二维码",
       },
     "ServerInfoPage":{
         "title":"Feeds出版号详情",
-        "publicFeed":"公共的微频",
+        "publicFeed":"公共的Feeds",
         "online":"在线",
         "users":"用户",
         "offline":"离线",
@@ -297,7 +297,7 @@ export const zh = {
         "unpublicTip":"取消公开成功",
         "des":"添加我的Feeds出版号!",
         "replyingto":"回复给",
-        "containedfeeds":"包含的微频列表",
+        "containedfeeds":"包含的Feeds列表",
         "version":"版本",
         "UserId":"UserId"
     },
@@ -361,12 +361,12 @@ export const zh = {
         "inputElaAddress":"请输入ELA地址",
     },
     "FinishPage": {
-        "introduce": "Feeds出版号绑定成功。恭喜您有了属于自己的Feeds出版号服务，现在您可以开始创建微频。",
-        "introduce1": "新建微频",
+        "introduce": "Feeds出版号绑定成功。恭喜您有了属于自己的Feeds出版号服务，现在您可以开始创建Feeds。",
+        "introduce1": "新建Feeds",
         "introduce2": "返回主页面",
     },
     "PostfromComponent":{
-        "des":"选择一个微频来发布"
+        "des":"选择一个Feeds来发布"
     },
     "CreatenewpostPage":{
         "addimg":"添加图片",
@@ -391,8 +391,8 @@ export const zh = {
     "DisclaimerPage":{
         "title":"免责声明",
         "declaration":"点击\“同意\”，即表示您接受并同意我们以下条款：",
-        "copyright":"微频由Trinity Tech Co.，Ltd.及其相关团队（“Trinity” 或 “我们”）拥有并运营，并且您同意遵守以下微频应用程序的特定条款（统称为“条款”）。",
-        "bodyText":"通过使用我们的微频应用程序、其内容和服务（以下简称“应用程序”），您同意对您使用该应用程序以及您发布和提供的任何内容承担全部责任，包括遵守法律、法规和规定。 您应该只发布和提供可以与他人共享的内容。 您必须年满13周岁才能使用该应用程序，或者在您所在的辖区（即市、省或国家）不再被视为未成年人。 我们不认可、支持、说明或保证应用程序上任何内容的完整性、真实性、准确性或可靠性。 您在此确认：在使用该应用程序时，您可能会接触到有害的、不准确的或不适当的内容。",
+        "copyright":"Feeds由Trinity Tech Co.，Ltd.及其相关团队（“Trinity” 或 “我们”）拥有并运营，并且您同意遵守以下Feeds应用程序的特定条款（统称为“条款”）。",
+        "bodyText":"通过使用我们的Feeds应用程序、其内容和服务（以下简称“应用程序”），您同意对您使用该应用程序以及您发布和提供的任何内容承担全部责任，包括遵守法律、法规和规定。 您应该只发布和提供可以与他人共享的内容。 您必须年满13周岁才能使用该应用程序，或者在您所在的辖区（即市、省或国家）不再被视为未成年人。 我们不认可、支持、说明或保证应用程序上任何内容的完整性、真实性、准确性或可靠性。 您在此确认：在使用该应用程序时，您可能会接触到有害的、不准确的或不适当的内容。",
 
         "acceptText":"同意",
         "denyText":"不同意"
@@ -401,13 +401,13 @@ export const zh = {
         "donation": "捐赠",
         "donate": "捐赠",
         "donationELAAddress":"捐赠 ELA 地址",
-        "description":"微频是一款非盈利社交应用项目，致力于持续改进用户体验和集成更多价值特性。您的捐献是对我们持续发布新版本的一种鼓励，同时也是一份责任提醒。",
+        "description":"Feeds是一款非盈利社交应用项目，致力于持续改进用户体验和集成更多价值特性。您的捐献是对我们持续发布新版本的一种鼓励，同时也是一份责任提醒。",
         "receiver":"接收者",
         "amount":"数量",
         "enterAmount":"输入ELA数量",
         "memo":"备注",
-        "defaultMemo":"捐赠微频项目",
-        "supportFeeds":"支持微频",
+        "defaultMemo":"捐赠Feeds项目",
+        "supportFeeds":"支持Feeds",
     },
     "ErrorInfo":{
         "alreadyExists":"内容已经存在",
@@ -470,7 +470,7 @@ export const zh = {
         "title":"编辑Feeds出版号详情",
     },
     "EidtchannelPage":{
-       "title":"编辑微频信息",
+       "title":"编辑Feeds信息",
     },
     "EditPostPage":{
         "title":"编辑微说",
@@ -485,7 +485,7 @@ export const zh = {
         "title":"发现Feeds出版号",
         "added":"已添加",
         "notadded":"未添加",
-        "exploreFeeds":"探索微频",
+        "exploreFeeds":"探索Feeds",
         "emptyDes":"还没有公开的Feeds出版号"
     },
     "SettingsPage":{
@@ -500,14 +500,14 @@ export const zh = {
         "off":"关"
     },
     "DiscoverfeedPage":{
-       "title":"发现微频",
-       "emptyDes":"还没有公开的微频"
+       "title":"发现Feeds",
+       "emptyDes":"还没有公开的Feeds"
     },
     "DiscoverfeedinfoPage":{
-        "title":"微频信息",
-        "addFeed":"添加微频",
+        "title":"Feeds信息",
+        "addFeed":"添加Feeds",
     },
     "FeedinfoPage":{
-       "title":"微频信息"
+       "title":"Feeds信息"
     }
 };
