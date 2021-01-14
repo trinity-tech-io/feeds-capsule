@@ -1,14 +1,11 @@
 import { Component, OnInit, NgZone } from '@angular/core';
-import { Events, Platform, LoadingController } from '@ionic/angular';
+import { Events} from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
 import { FeedService } from 'src/app/services/FeedService';
 import { NativeService } from 'src/app/services/NativeService';
-import { AppService } from 'src/app/services/AppService';
-import { PopupProvider } from 'src/app/services/popup';
 import { TranslateService } from "@ngx-translate/core";
 import { ThemeService } from 'src/app/services/theme.service';
 import { CameraService } from 'src/app/services/CameraService';
-import { AddFeedService } from 'src/app/services/AddFeedService';
 import jsQR from "jsqr";
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 declare let appManager: AppManagerPlugin.AppManager;
@@ -33,18 +30,12 @@ export class AddServerPage implements OnInit {
   constructor(
     private events: Events,
     private zone: NgZone,
-    private acRoute: ActivatedRoute,
-    private platform: Platform,
     private native: NativeService,
     private feedService: FeedService,
-    private appService: AppService,
-    private popup: PopupProvider,
-    private loadingController: LoadingController,
     private translate:TranslateService,
     public theme: ThemeService,
     public route: ActivatedRoute,
-    private camera: CameraService,
-    private addFeedService: AddFeedService
+    private camera: CameraService
   ) {
  /*    this.route.queryParams.subscribe(params => {
       if(params.source) {
@@ -143,7 +134,7 @@ export class AddServerPage implements OnInit {
   checkValid(result: string){
     if (result.length < 54 ||
       !result.startsWith('feeds://')||
-      !result.indexOf("did:elastos:")){
+      !result.indexOf("did:elastos:") || result.indexOf("/")!=4){
         this.native.toastWarn("AddServerPage.tipMsg");
         return ;
     }
