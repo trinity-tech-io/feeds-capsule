@@ -12,8 +12,8 @@
             "path": "feeds.trinity-tech.io"
         },
         "version": {
-            "code": 10401,
-            "name": "1.4.1"
+            "code": 10500,
+            "name": "1.5.0"
         }
     }
 }
