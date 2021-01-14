@@ -45,8 +45,7 @@ export class SearchPage implements OnInit {
 
     this.events.subscribe("feeds:friendConnectionChanged", (nodeId, status)=>{
       this.zone.run(()=>{
-        //this.nodeStatus[nodeId] = status;
-        this.initChannelData();
+        this.nodeStatus[nodeId] = status;
       });
     });
 
