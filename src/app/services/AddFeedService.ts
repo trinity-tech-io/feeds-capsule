@@ -50,19 +50,11 @@ export class AddFeedService {
         });
     }
 
-    addFeed(feedUrl: string, inputAvatar: string, inputFollower: number, inputFeedName: string): Promise<FeedsData.ToBeAddedFeed>{
+    addFeed(decodeResult:FeedsData.FeedUrl, nodeId: string, inputAvatar: string, inputFollower: number, inputFeedName: string): Promise<FeedsData.ToBeAddedFeed>{
         return new Promise(async (resolve, reject) =>{
             this.logUtils.logd("Start process addFeed",TAG);
             try{
-                if (this.checkFeedUrl(feedUrl)){
-                    let error = "Feed Url is error";
-                    this.logUtils.loge(error, TAG);
-                    reject(error);
-                    return;
-                }
-
-                let decodeResult:FeedsData.FeedUrl = this.decodeFeedUrl(feedUrl);
-                this.logUtils.logd("Decode result = "+JSON.stringify(decodeResult));
+                this.logUtils.logd("Decode result = "+JSON.stringify(decodeResult), TAG);
                 let feedName = decodeResult.feedName;
                 let avatar = "./assets/images/profile-1.svg";
                 let follower = 0;
@@ -82,10 +74,6 @@ export class AddFeedService {
                     reject(error);
                     return;
                 }
-                this.logUtils.logd("Decode feedUrl result is "+JSON.stringify(decodeResult),TAG);
-
-                let nodeId = await this.getNodeIdFromAddress(decodeResult.carrierAddress);
-                this.logUtils.logd("nodeId is "+nodeId, TAG);
                 
                 this.checkTobeAddedFeedMap(nodeId);
 
@@ -159,6 +147,12 @@ export class AddFeedService {
     }
 
     decodeFeedUrl(feedUrl: string):FeedsData.FeedUrl{
+        if (this.checkFeedUrl(feedUrl)){
+            let error = "Feed Url is error";
+            this.logUtils.loge(error, TAG);
+            return null;
+        }
+
         let tmpString = feedUrl.replace("feeds://","");
         
         let tmp: string[] = tmpString.split("/")
@@ -207,6 +201,7 @@ export class AddFeedService {
         return new Promise((resolve, reject) =>{
             this.carrierService.getIdFromAddress(carrierAddress,
                 (userId)=>{
+                    this.logUtils.logd("nodeId is "+userId, TAG);
                     resolve(userId);
                 },
                 (error)=>{
