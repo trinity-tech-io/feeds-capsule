@@ -108,6 +108,7 @@ export class AddServerPage implements OnInit {
     this.events.unsubscribe("feeds:connectionChanged");
     this.events.unsubscribe("feeds:updateServerList");
     this.events.unsubscribe("intent:addsource");
+    this.events.publish("feeds:search");
   }
 
   initTitle(){

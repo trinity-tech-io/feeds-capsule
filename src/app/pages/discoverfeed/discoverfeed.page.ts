@@ -75,7 +75,7 @@ export class DiscoverfeedPage implements OnInit {
       this.zone.run(() => {
           this.serverStatisticsMap = serverStatisticsMap || "";
       });
-  });
+    });
     this.connectionStatus = this.feedService.getConnectionStatus();
     this.events.subscribe('feeds:connectionChanged',(status)=>{
       this.zone.run(() => {
@@ -95,6 +95,7 @@ export class DiscoverfeedPage implements OnInit {
     this.events.unsubscribe("feeds:connectionChanged");
     this.events.unsubscribe("feeds:updateTitle");
     this.events.unsubscribe("feeds:serverStatisticsChanged");
+    this.events.publish("feeds:search");
   }
 
   initTitle(){

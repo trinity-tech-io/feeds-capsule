@@ -125,6 +125,13 @@ export class SearchPage implements OnInit {
 
   ionViewWillEnter() {
 
+    this.events.subscribe("feeds:search",()=>{
+         this.init();
+    });
+    this.init();
+  }
+
+  init(){
     this.connectionStatus = this.feedService.getConnectionStatus();
     this.addingChanneList = this.feedService.getToBeAddedFeedsList() || [];
     this.initChannelData();
@@ -151,6 +158,7 @@ export class SearchPage implements OnInit {
   }
 
   ionViewWillLeave(){
+    this.events.unsubscribe("feeds:search");
     this.removeSubscribe();
   }
 
@@ -222,7 +230,7 @@ export class SearchPage implements OnInit {
   return UtilService.moreNanme(name)
  }
 
- pressName(channelName:string){  
+ pressName(channelName:string){
   let name =channelName || "";
   if(name != "" && name.length>15){
     this.native.createTip(name);
@@ -240,6 +248,7 @@ export class SearchPage implements OnInit {
       this.openAlert();
       return;
     }
+    this.removeSubscribe();
     this.native.navigateForward(['/menu/servers/add-server'],"");
   });
 }
@@ -263,6 +272,7 @@ confirm(that:any){
 }
 
 discover(){
+  this.removeSubscribe();
   this.native.go("discoverfeed");
 }
 
