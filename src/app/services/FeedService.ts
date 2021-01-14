@@ -1121,8 +1121,9 @@ export class FeedService {
     let keys: string[] = Object.keys(map);
 
     for (let index = 0; index < keys.length; index++) {
-      const subscribedFeed = subscribedChannelsMap[keys[index]];
-
+      const subscribedFeed = subscribedChannelsMap[keys[index]] || null;
+      if (subscribedFeed == null)
+        continue;
       let feed = this.getChannelFromId(subscribedFeed.nodeId, subscribedFeed.id);
       if (feed == null || feed == undefined)
         continue;
@@ -6358,8 +6359,20 @@ export class FeedService {
   }
 
   addFeed(feedUrl: string, avatar: string, follower: number, feedName: string): Promise<string>{
-    return new Promise((resolve, reject) =>{
-      this.addFeedService.addFeed(feedUrl, avatar, follower, feedName).then((toBeAddedFeed:FeedsData.ToBeAddedFeed)=>{
+    return new Promise(async (resolve, reject) =>{
+      
+      let decodeResult:FeedsData.FeedUrl = this.addFeedService.decodeFeedUrl(feedUrl);
+      let nodeId = await this.addFeedService.getNodeIdFromAddress(decodeResult.carrierAddress);
+
+      let feeds = this.getChannelFromId(nodeId, decodeResult.feedId) || null;
+      let isFriend = await this.addFeedService.checkIsFriends(nodeId);
+      if (isFriend && feeds != null){
+        this.native.toast("common.feedsAlreadyAdded");
+        resolve("success");
+        return ;
+      }
+
+      this.addFeedService.addFeed(decodeResult, nodeId, avatar, follower, feedName).then((toBeAddedFeed:FeedsData.ToBeAddedFeed)=>{
         if (toBeAddedFeed.friendState == FeedsData.FriendState.IS_FRIEND){
           let isSubscribed = this.checkFeedsIsSubscribed(toBeAddedFeed.nodeId, toBeAddedFeed.feedId);
           if (!isSubscribed)

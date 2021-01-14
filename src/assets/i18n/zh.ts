@@ -89,7 +89,8 @@ export const zh = {
         "didnotrelease":"DID发布上链后，Feeds 才能正常运行",
         "unknown":"未知",
         "unfollow":"未关注",
-        "adding":"添加中"
+        "adding":"添加中",
+        "feedsAlreadyAdded":"已添加过该Feeds"
     },
     "app":{
         "profileDetails":"档案详情",
