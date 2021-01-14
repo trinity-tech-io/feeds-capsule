@@ -33,9 +33,9 @@ export class DiscoverfeedinfoPage implements OnInit {
   public  connectionStatus = 1;
   public feedInfo:any = {};
   public popover:any = "";
-  public isSubscribed:boolean = false;
   public qrcodeString:string = null;
   public feedsUrl:string = null;
+  public status:string ="";
   constructor(
     private events: Events,
     private zone: NgZone,
@@ -60,7 +60,7 @@ export class DiscoverfeedinfoPage implements OnInit {
   ionViewWillEnter() {
     this.feedsUrl = this.feedInfo['url'] || "";
     this.qrcodeString = this.feedsUrl+"#"+this.feedInfo["name"] || null;
-    this.isSubscribed = this.getChannelStatus(this.feedInfo);
+    this.status = this.getChannelStatus(this.feedInfo);
     this.initTitle();
     this.native.setTitleBarBackKeyShown(true);
 
@@ -90,13 +90,13 @@ export class DiscoverfeedinfoPage implements OnInit {
 
     this.events.subscribe("feeds:unsubscribeFinish",()=>{
       this.zone.run(() => {
-          this.isSubscribed = false;
+          this.status = '1';
       });
     });
 
     this.events.subscribe("feeds:subscribeFinish",()=>{
       this.zone.run(() => {
-         this.isSubscribed = true;
+         this.status = '2';
       });
     });
 
@@ -197,17 +197,16 @@ export class DiscoverfeedinfoPage implements OnInit {
     let nodeId = item["nodeId"];
     let feedUrl = item["url"];
     let channelId = feedUrl.split("/")[4];
-    let channelList = this.feedService.getChannelsList() || [];
-    let channel:any = _.find(channelList,(item:any)=>{
-      return (item["nodeId"]==nodeId&&item["id"]==channelId)
-    });
-    channel = channel || "";
-    if(channel === ""){
-        return false;
+    if (this.feedService.checkIsTobeAddedFeeds(nodeId, channelId)){
+          return "0";
     }
 
-    return channel.isSubscribed;
-
-  }
+    let feeds = this.feedService.getChannelFromId(nodeId, channelId) || null;
+    if (feeds == null || !feeds.isSubscribed){
+          return "1";
+    }
+    if (feeds.isSubscribed)
+          return "2";
+    }
 
 }

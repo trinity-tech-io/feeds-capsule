@@ -43,7 +43,6 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 export class DiscoverfeedPage implements OnInit {
 
   @ViewChild(IonInfiniteScroll,{static:true}) infiniteScroll: IonInfiniteScroll;
-  public channelList = [];
   public feedList = [];
   public connectionStatus = 1;
   public pageNum:number = 1;
@@ -71,7 +70,6 @@ export class DiscoverfeedPage implements OnInit {
     this.initTitle();
     this.native.setTitleBarBackKeyShown(true);
 
-    this.channelList = this.feedService.getChannelsList() ||[];
     this.events.subscribe('feeds:serverStatisticsChanged', serverStatisticsMap =>{
       this.zone.run(() => {
           this.serverStatisticsMap = serverStatisticsMap || "";
