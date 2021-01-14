@@ -112,11 +112,11 @@
       </ion-row>
     </ion-item>
 
-    <div class="new-feed-div" (click)="discover()" *ngIf="subscribedFeedList.length > 0" style="margin-bottom: 5px;">
+    <div class="new-feed-div" (click)="discover()" *ngIf="subscribedFeedList.length > 0 || addingChanneList.length > 0" style="margin-bottom: 5px;">
         <div class="new-feed">{{ 'ServersPage.discover' | translate }}</div>
     </div>
 
-    <div class="new-feed-div" (click)="addfeedssource()" *ngIf="subscribedFeedList.length > 0" style="margin-top:7px;">
+    <div class="new-feed-div" (click)="addfeedssource()" *ngIf="subscribedFeedList.length > 0 || addingChanneList.length > 0" style="margin-top:7px;">
       <div class="new-feed"> {{ "SearchPage.addfeedssource"  | translate }}</div>
     </div>
   </ion-list>
