@@ -6366,7 +6366,7 @@ export class FeedService {
 
       let feeds = this.getChannelFromId(nodeId, decodeResult.feedId) || null;
       let isFriend = await this.addFeedService.checkIsFriends(nodeId);
-      if (isFriend && feeds != null){
+      if (isFriend && feeds != null && feeds.isSubscribed){
         this.native.toast("common.feedsAlreadyAdded");
         resolve("success");
         return ;
