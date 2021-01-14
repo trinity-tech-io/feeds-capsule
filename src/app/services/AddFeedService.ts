@@ -337,4 +337,14 @@ export class AddFeedService {
             });
         });
     }
+
+    checkIsTobeAddedFeeds(nodeId: string, feedId: number): boolean{
+        let feedIdStr = String(feedId) ;
+        if (this.tobeAddedFeedMap == null || this.tobeAddedFeedMap == undefined ||
+            this.tobeAddedFeedMap[nodeId] == null || this.tobeAddedFeedMap[nodeId] == undefined ||
+            this.tobeAddedFeedMap[nodeId][feedIdStr] == null || this.tobeAddedFeedMap[nodeId][feedIdStr] == undefined){
+                return false ;
+            }
+        return true;
+    }
 }

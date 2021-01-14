@@ -7,6 +7,7 @@ import { ThemeService } from 'src/app/services/theme.service';
 import { HttpService } from 'src/app/services/HttpService';
 import { ApiUrl } from 'src/app/services/ApiUrl';
 import { IonInfiniteScroll } from '@ionic/angular';
+
 import * as _ from 'lodash';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 @Component({
@@ -135,23 +136,18 @@ export class DiscoverfeedPage implements OnInit {
   }
 
   handleStatus(item:any){
-     let nodeId = item["nodeId"];
-     let feedUrl = item["url"];
-     let channelId = feedUrl.split("/")[4];
-     let channel:any = _.find(this.channelList,(item:any)=>{
-        return (item["nodeId"]==nodeId&&item["id"]==channelId)
-     });
-    channel = channel || "";
-    if(channel === "" || !channel.isSubscribed){
-        return "common.unfollow"
-    }
+    let nodeId = item["nodeId"];
+    let feedUrl = item["url"];
+    let channelId = feedUrl.split("/")[4];
 
-    if(channel.isSubscribed){
+    if (this.feedService.checkIsTobeAddedFeeds(nodeId, channelId))
+      return "common.adding";
+
+    let feeds = this.feedService.getChannelFromId(nodeId, channelId) || null;
+    if (feeds == null || !feeds.isSubscribed)
+      return "common.unfollow";
+    if (feeds.isSubscribed)
       return "SearchPage.following";
-    }
-
-    return "common.adding";
-
   }
 
 loadData(events:any){
