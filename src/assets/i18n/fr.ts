@@ -1,4 +1,4 @@
-export const en = {
+export const fr = {
     "common":{
         "followers":"Followers",
         "allempty":"All Empty",
