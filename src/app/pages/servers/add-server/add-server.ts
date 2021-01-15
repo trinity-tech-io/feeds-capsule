@@ -111,7 +111,7 @@ export class AddServerPage implements OnInit {
   }
 
   scanCode(){
-    appManager.sendIntent("scanqrcode", {}, {}, (res) => {
+    appManager.sendIntent("https://scanner.elastos.net/scanqrcode", {}, {}, (res) => {
       let result: string = res.result.scannedContent;
       this.checkValid(result);
     }, (err: any) => {

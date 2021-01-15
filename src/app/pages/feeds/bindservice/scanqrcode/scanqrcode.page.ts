@@ -70,7 +70,7 @@ export class ScanqrcodePage implements OnInit {
   scanAddress() {
     this.waitFriendsOnline = false;
 
-    appManager.sendIntent("scanqrcode", {}, {}, (res) => {
+    appManager.sendIntent("https://scanner.elastos.net/scanqrcode", {}, {}, (res) => {
       let content = res.result.scannedContent;
       let contentStr = String(content);
       this.scanContent = contentStr;
