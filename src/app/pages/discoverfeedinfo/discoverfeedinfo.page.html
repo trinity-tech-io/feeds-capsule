@@ -14,7 +14,7 @@
 
         <ion-row class="detail-row">
           <ion-col size="12" class="left-col">
-              <h1>{{'ServerInfoPage.name'|translate}}</h1>
+              <h1>{{'DiscoverfeedinfoPage.feeds'|translate}}</h1>
               <h2>{{feedInfo['name']}}</h2>
           </ion-col>
         </ion-row>
@@ -46,19 +46,19 @@
 
         <div style="margin-left: 34px; margin-right: 34px; margin-top: 25px;" *ngIf="status ==='0'">
           <ion-button style="margin-top: 25px;" expand="block" mode="ios">
-            <ion-label>{{'common.followers' | translate}}</ion-label>
+            <ion-label>{{'DiscoverfeedinfoPage.processing' | translate}}</ion-label>
           </ion-button>
         </div>
 
         <div style="margin-left: 34px; margin-right: 34px; margin-top: 25px;" *ngIf="status ==='1'">
           <ion-button style="margin-top: 25px;" expand="block" mode="ios" (click)="checkDid('subscribe')">
-            <ion-label>{{'common.followers' | translate}}</ion-label>
+            <ion-label>{{'DiscoverfeedinfoPage.follow' | translate}}</ion-label>
           </ion-button>
         </div>
 
         <div style="margin-left: 34px; margin-right: 34px; margin-top: 25px;" *ngIf="status ==='2'">
-          <ion-button style="margin-top: 25px;" expand="block" mode="ios" (click)="checkDid('unsubscribe')">
-            <ion-label>{{'common.unsubscribe' | translate}}</ion-label>
+          <ion-button style="margin-top: 25px;" expand="block" mode="ios" (click)="checkDid('unsubscribe')" color="danger">
+            <ion-label>{{'DiscoverfeedinfoPage.unfollow' | translate}}</ion-label>
           </ion-button>
         </div>
   </ion-grid>

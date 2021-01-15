@@ -156,7 +156,7 @@ export const zh = {
     "SearchPage":{
         "emptyDes":"没有可关注的Feeds",
         "follow":"关注",
-        "following":"已关注",
+        "following":"正在关注",
         "searchFeeds":"搜索",
         "addfeedssource":"添加Feeds",
         "status0":"Adding",
@@ -508,8 +508,13 @@ export const zh = {
     "DiscoverfeedinfoPage":{
         "title":"Feeds信息",
         "addFeed":"添加Feeds",
+        "feeds":"Feeds",
+        "follow":"关注",
+        "unfollow":"取消关注",
+        "processing":"处理中"
     },
     "FeedinfoPage":{
-       "title":"Feeds信息"
+       "title":"Feeds信息",
+       "feeds":"Feeds"
     }
 };
