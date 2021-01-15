@@ -9,9 +9,9 @@ export const en = {
         "confirm":"Confirm",
         "des":"Clear <strong>all cached data</strong>!!!",
         "prompt":"Prompt",
-        "des1":"Confirm New Feed",
+        "des1":"Confirm New Feeds",
         "server":"Feeds Publisher Account:",
-        "channel":"Feed:",
+        "channel":"Feeds:",
         "description":"Description:",
         "pleaseInput":"Please input ",
         "feeds":"Feeds",
@@ -45,7 +45,7 @@ export const en = {
         "waitMoment": "Please wait...",
         "issuecredentialError": "There was an error issuing the certificate. Please check the QR code or try again",
         "save":"Save",
-        "feed":"Feed:",
+        "feed":"Feeds:",
         "image":"Image",
         "nochanges":"No changes",
         "cantSave":"Don’t save data, Please check the storage status.",
@@ -137,8 +137,8 @@ export const en = {
     },
     "MyfeedsComponent":{
         "emptyDes":"You have no Feeds",
-        "createFeed":"Create a Feed",
-        "createNewFeed":"Create a New Feed"
+        "createFeed":"Create Feeds",
+        "createNewFeed":"Create New Feeds"
     },
     "FollowingComponent":{
         "emptyDes":"Not following any Feeds yet",
@@ -186,14 +186,14 @@ export const en = {
         "likedComment":"Liked your comment"
     },
     "CreatenewfeedPage":{
-        "createNewFeed":"Create a New Feed",
+        "createNewFeed":"Create New Feeds",
         "profileImage":"Avatar",
         "des":"PICK AN IMAGE FOR YOUR FEED",
         "des1":"Avatar selected",
         "channelSource":"Feeds Publisher Account",
         "name":"Name",
         "description":"Description",
-        "createFeed":"Create a Feed",
+        "createFeed":"Create Feeds",
         "tipMsg":"Please select an avatar",
         "tipMsg1":"Please input name",
         "tipMsg2":"Please input description",
@@ -202,9 +202,9 @@ export const en = {
         "inputName":"INPUT NAME",
         "inputFeedDesc":"INPUT DESCRIPTION",
         "channelSourceDes":"WHERE TO STORE YOUR FEEDS",
-        "createfeedsuccess":"Feed created successfully!",
+        "createfeedsuccess":"Feeds created successfully!",
         "tipMsgLength1":"The maximum length of the name message should be 32",
-        "alreadyExist":"Feed already exists, please change the name and try again"
+        "alreadyExist":"Feeds already exists, please change the name and try again"
     },
     "ProfileimagePage":{
         "title":"Profile Image",
@@ -364,7 +364,7 @@ export const en = {
     },
     "FinishPage": {
         "introduce": "Completed the binding for the Feeds Publisher Account. Congratulations, you have your own Feeds Publisher Account now and can new a Feed on this Feeds Publisher Account with your desire.",
-        "introduce1": "Create a new Feed",
+        "introduce1": "Create new Feeds",
         "introduce2": "Return to main screen",
     },
     "PostfromComponent":{
@@ -472,7 +472,7 @@ export const en = {
         "title":"Edit Feeds Publisher Account Details",
     },
     "EidtchannelPage":{
-        "title":"Edit Feed Info",
+        "title":"Edit Feeds Info",
      },
     "EditPostPage":{
         "title":"Edit Post",
@@ -502,14 +502,14 @@ export const en = {
         "off":"OFF"
     },
     "DiscoverfeedPage":{
-        "title":"Discover Feed",
-        "emptyDes":"There is no public Feed"
+        "title":"Discover Feeds",
+        "emptyDes":"There is no public Feeds"
     },
     "DiscoverfeedinfoPage":{
-        "title":"Feed info",
-        "addFeed":"Add feed",
+        "title":"Feeds info",
+        "addFeed":"Add feeds",
     },
     "FeedinfoPage":{
-        "title":"Feed info"
+        "title":"Feeds info"
     }
 };
