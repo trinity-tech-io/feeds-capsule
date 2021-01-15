@@ -507,9 +507,14 @@ export const fr = {
     },
     "DiscoverfeedinfoPage":{
         "title":"Feeds info",
-        "addFeed":"Add feeds",
+        "addFeed":"Add Feeds",
+        "feeds":"Feeds",
+        "follow":"Follow",
+        "unfollow":"Unfollow",
+        "processing":"Processing"
     },
     "FeedinfoPage":{
-        "title":"Feeds info"
+        "title":"Feeds info",
+        "feeds":"Feeds"
     }
 };

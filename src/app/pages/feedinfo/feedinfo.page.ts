@@ -250,7 +250,8 @@ export class FeedinfoPage implements OnInit {
       "feedsAvatar":this.channelAvatar,
       "followers":followers,
       "ownerName":this.serverInfo["owner"],
-      "nodeId":this.nodeId
+      "nodeId":this.nodeId,
+      "ownerDid":channel["owner_did"]
     };
 
     this.httpService.ajaxPost(ApiUrl.register,obj).then((result)=>{

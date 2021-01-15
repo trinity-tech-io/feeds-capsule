@@ -139,7 +139,7 @@ export class DiscoverfeedPage implements OnInit {
     let channelId = feedUrl.split("/")[4];
 
     if (this.feedService.checkIsTobeAddedFeeds(nodeId, channelId))
-      return "common.adding";
+      return "DiscoverfeedinfoPage.processing";
 
     let feeds = this.feedService.getChannelFromId(nodeId, channelId) || null;
     if (feeds == null || !feeds.isSubscribed)
