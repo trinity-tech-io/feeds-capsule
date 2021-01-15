@@ -95,7 +95,7 @@ export class EditserverinfoPage implements OnInit {
   }
 
   clickScan(){
-    appManager.sendIntent('scanqrcode', {}, {}, (res) => {
+    appManager.sendIntent('https://scanner.elastos.net/scanqrcode', {}, {}, (res) => {
       this.zone.run(()=>{
         let scannedContent = res.result.scannedContent || "";
         if(scannedContent != ""&& scannedContent.indexOf("elastos:")>-1){
