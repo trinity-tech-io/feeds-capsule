@@ -414,16 +414,13 @@ export class ServerInfoPage implements OnInit {
   }
 
   checkIsMine(){
-    let bindingServer = this.feedService.getBindingServer();
-    if (bindingServer === null || bindingServer === undefined) {
+    let bindingServer = this.feedService.getBindingServer() || null;
+    if (bindingServer === null) {
       return 1;
     }
-
-    let bindServerDid = bindingServer.did || '';
-    if (this.didString === bindServerDid)
+    // let bindServerDid = bindingServer.did || '';
+    // if (this.didString === bindServerDid)
       return 0;
-
-    return 1;
   }
 
 
@@ -483,7 +480,7 @@ export class ServerInfoPage implements OnInit {
 
   initMyFeeds(){
     //this.ownerChannelList = this.feedService.getMyChannelList();
-    this.ownerChannelList = this.feedService.getChannelsListFromNodeId(this.nodeId);
+    this.ownerChannelList = this.feedService.getChannelsListFromNodeId(this.nodeId) || [];
     this.initnodeStatus();
   }
 
@@ -553,6 +550,9 @@ handlePublic(channelId:string){
 
 initPublicStatus(){
   let len = this.ownerChannelList.length;
+  if(len === 0){
+    return;
+  }
   let index = 0;
   let sid=setInterval(()=>{
       if(index === (len-1)){
