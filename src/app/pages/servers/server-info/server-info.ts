@@ -429,7 +429,7 @@ export class ServerInfoPage implements OnInit {
     let channelAvatar = this.feedService.parseChannelAvatar(channel["avatar"]);
     let feedsUrlHash = UtilService.SHA256(feedsUrl);
     let obj = {
-      "did":channel["owner_did"],
+      "did":this.bindingServer['did'],
       "name":channel["name"],
       "description":channel["introduction"],
       "url":feedsUrl,
@@ -437,7 +437,8 @@ export class ServerInfoPage implements OnInit {
       "feedsAvatar":channelAvatar,
       "followers":channel["subscribers"],
       "ownerName":channel["owner_name"],
-      "nodeId":this.nodeId
+      "nodeId":this.nodeId,
+      "ownerDid":channel["owner_did"]
     };
 
     this.httpService.ajaxPost(ApiUrl.register,obj).then((result)=>{
