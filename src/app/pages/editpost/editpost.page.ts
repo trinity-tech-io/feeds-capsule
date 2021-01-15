@@ -257,10 +257,10 @@ export class EditPostPage implements OnInit {
     if (this.newPost != this.oldNewPost && this.imgUrl != ""){
       this.editState = FeedsData.EditState.TextChange;
       let size = this.feedService.getContentDataSize(this.nodeId, this.channelId, this.postId, 0, 0, FeedsData.MediaType.containsImg);
-      this.feedService.compress(this.imgUrl).then((imageThumb)=>{
-        let content = this.feedService.createOneImgContent(this.newPost, imageThumb, size);
+      //this.feedService.compress(this.imgUrl).then((imageThumb)=>{
+        let content = this.feedService.createOneImgContent(this.newPost,this.imgUrl, size);
         this.publishEditedPost(content);
-      });
+      //});
       return;
     }
 
@@ -353,13 +353,8 @@ export class EditPostPage implements OnInit {
   }
 
   getImage(){
-    let contentVersion = this.feedService.getContentVersion(this.nodeId,this.channelId,this.postId,0);
     let thumbkey= this.feedService.getImgThumbKeyStrFromId(this.nodeId,this.channelId,this.postId,0,0);
-    let key = this.feedService.getImageKey(this.nodeId,this.channelId,this.postId,0,0);
-    if(contentVersion == "0"){
-         key = thumbkey;
-    }
-    this.feedService.getData(key).then((image)=>{
+    this.feedService.getData(thumbkey).then((image)=>{
       this.imgUrl = image || "";
     }).catch((reason)=>{
       this.logUtils.loge("getImageData error:"+JSON.stringify(reason),TAG);
