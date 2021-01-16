@@ -4051,7 +4051,7 @@ export class FeedService {
       return ;
     this.setSigninTimeout(nodeId);
 
-    this.native.toast(this.formatInfoService.formatSigninMsg(this.getServerNameByNodeId(nodeId)));
+    // this.native.toast(this.formatInfoService.formatSigninMsg(this.getServerNameByNodeId(nodeId)));
     if (this.getServerVersionCodeByNodeId(nodeId) < newAuthVersion){
       this.connectionService.signinChallengeRequest(this.getServerNameByNodeId(nodeId), nodeId, requiredCredential, this.getSignInData().did);
       return;
@@ -4103,7 +4103,7 @@ export class FeedService {
     this.restoreData(nodeId);
 
     eventBus.publish("feeds:login_finish", nodeId);
-    this.native.toast(this.formatInfoService.formatSigninSuccessMsg(this.getServerNameByNodeId(nodeId)));
+    // this.native.toast(this.formatInfoService.formatSigninSuccessMsg(this.getServerNameByNodeId(nodeId)));
     this.clearSigninTimeout(nodeId);
 
     let toBeAddedFeeds: FeedsData.ToBeAddedFeed[] = this.addFeedService.getToBeAddedFeedsInfoByNodeId(nodeId);
