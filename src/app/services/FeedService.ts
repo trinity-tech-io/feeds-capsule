@@ -3222,6 +3222,8 @@ export class FeedService {
         channelsMap[nodeChannelId].isSubscribed = true;
       }
       this.updatePostWithTime(nodeId, channelId, 0);
+
+      this.processTobeAddedFeedsFinish(nodeId, channelId);
     }
 
     this.storeService.set(PersistenceKey.subscribedChannelsMap,subscribedChannelsMap);
@@ -3390,7 +3392,6 @@ export class FeedService {
       // this.storeService.set(PersistenceKey.channelsMap,channelsMap);
       this.saveChannelMap();
       eventBus.publish(PublishType.subscribeFinish, nodeId,request.id);
-      eventBus.publish(PublishType.addFeedFinish, nodeId,request.id);
       return;
     }
 
@@ -3408,7 +3409,6 @@ export class FeedService {
     // this.updatePostWithTime(nodeId,request.id, 0);
 
     this.native.toast(this.formatInfoService.formatFollowSuccessMsg(this.getFeedNameById(nodeId, request.id)));
-    eventBus.publish(PublishType.addFeedFinish, nodeId, request.id);
   }
 
   handleUnsubscribeChannelResult(nodeId:string, request: any, error: any){
@@ -4635,6 +4635,12 @@ export class FeedService {
     if (this.getServerVersionCodeByNodeId(friendId) >= newMultiPropCountVersion){
       this.getMultiSubscribersCount(friendId, 0);
       this.updateMultiLikesAndCommentsCount(friendId);
+    }
+
+    let toBeAddedFeeds: FeedsData.ToBeAddedFeed[] = this.addFeedService.getToBeAddedFeedsInfoByNodeId(friendId);
+    for (let index = 0; index < toBeAddedFeeds.length; index++) {
+      let toBeAddedFeed = toBeAddedFeeds[index];
+      this.subscribeChannel(toBeAddedFeed.nodeId, toBeAddedFeed.feedId); 
     }
   }
 
@@ -6395,8 +6401,8 @@ export class FeedService {
     return this.addFeedService.getToBeAddedFeedsList();
   }
 
-  checkIsTobeAddedFeeds(nodeId: string, feedId: number): boolean{
-    return this.addFeedService.checkIsTobeAddedFeeds(nodeId, feedId);
+  checkIsTobeAddedFeeds(nodeId: string, feedsId: number): boolean{
+    return this.addFeedService.checkIsTobeAddedFeeds(nodeId, feedsId);
   }
 
   setFeedPublicStatus(feedPublicStatus:any){
@@ -6407,4 +6413,10 @@ export class FeedService {
     return this.feedPublicStatus;
   }
 
+  processTobeAddedFeedsFinish(nodeId: string, feedsId: number){
+    if (this.checkIsTobeAddedFeeds(nodeId, feedsId)){
+      eventBus.publish(PublishType.addFeedFinish, nodeId, feedsId);
+    }
+  }
+  
 }
