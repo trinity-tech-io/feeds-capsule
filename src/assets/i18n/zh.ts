@@ -150,7 +150,7 @@ export const zh = {
         "exploreFeeds":"探索Feeds"
     },
     "ConfirmdialogComponent": {
-        "signoutTitle": 'Sign Out',
+        "signoutTitle": '登出',
         "signoutMessage": '确认要登出吗？'
     },
     "SearchPage":{
@@ -159,18 +159,18 @@ export const zh = {
         "following":"正在关注",
         "searchFeeds":"搜索",
         "addfeedssource":"添加Feeds",
-        "status0":"Adding",
-        "status1":"Add friend reday",
-        "status2":"Add friend finish",
-        "status3":"Add friend error",
-        "status4":"Friend online",
-        "status5":"Friend offline",
-        "status6":"Signin reday",
-        "status7":"Signin finish",
-        "status8":"Signin error",
-        "status9":"Follow feed reday",
-        "status10":"Follow feed finish",
-        "status11":"Follow feed error",
+        "status0":"添加中",
+        "status1":"处理中",
+        "status2":"处理中",
+        "status3":"处理中",
+        "status4":"处理中",
+        "status5":"处理中",
+        "status6":"处理中",
+        "status7":"处理中",
+        "status8":"登录出错",
+        "status9":"处理中",
+        "status10":"处理中",
+        "status11":"关注Feeds出错",
         "discover":"发现Feeds"
     },
     "ChannelsPage":{
