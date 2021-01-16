@@ -267,7 +267,7 @@ export const fr = {
         "tipMsg1":"No QR code found",
     },
     "ServerInfoPage":{
-        "title":"Feeds Publisher Account Details",
+        "title":"Account Details",
         "publicFeed":"Public Feeds",
         "online":"Online",
         "users":"Users",
@@ -292,9 +292,9 @@ export const fr = {
         "removeserver": "Feeds Publisher Account Service removed",
         "feedsSourceQRCode":"Feeds Publisher Account QRCode",
         "error":"resolve diddocument error",
-        "public":"Set Public",
+        "public":"Public",
         "publicTip":"Feeds Publisher Account is now public",
-        "unpublic":"Set Private",
+        "unpublic":"Unpublic",
         "unpublicTip":"Feeds Publisher Account is now private",
         "des":"Add my Feeds Publisher Account!",
         "replyingto":"Replying to",
@@ -469,7 +469,7 @@ export const fr = {
         "SESSION_START_ERROR": "Session: Start Error",
     },
     "EditserverinfoPage":{
-        "title":"Edit Feeds Publisher Account Details",
+        "title":"Edit Account",
     },
     "EidtchannelPage":{
         "title":"Edit Feeds Info",

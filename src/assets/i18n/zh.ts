@@ -268,7 +268,7 @@ export const zh = {
         "tipMsg1":"未发现二维码",
       },
     "ServerInfoPage":{
-        "title":"Feeds出版号详情",
+        "title":"出版号详情",
         "publicFeed":"公共的Feeds",
         "online":"在线",
         "users":"用户",
@@ -469,7 +469,7 @@ export const zh = {
         "SESSION_START_ERROR": "Session: 启动出错",
     },
     "EditserverinfoPage":{
-        "title":"编辑Feeds出版号详情",
+        "title":"编辑出版号",
     },
     "EidtchannelPage":{
        "title":"编辑Feeds信息",
