@@ -7,7 +7,7 @@
     <div class="server-header">
       <img class="headerImg" [src]="feedInfo['feedsAvatar']"/>
       <h1>{{feedInfo['name'] }}</h1>
-      <p>{{feedInfo['description']}}</p>
+      <!-- <p>{{feedInfo['description']}}</p> -->
     </div>
 
       <!--- SERVER DETAILS --->
@@ -35,7 +35,7 @@
 
         <ion-row class="detail-row removeBorder">
           <ion-col size="12" class="left-col">
-              <h1>{{'ServerInfoPage.feedsSourceQRCode'|translate}}</h1>
+              <h1>{{'DiscoverfeedinfoPage.feedsQrcode'|translate}}</h1>
               <div class="qr-container">
                 <div class="qrcode">
                   <qrcode [qrdata]="qrcodeString" [size]="150" [level]="'M'"></qrcode>
