@@ -139,11 +139,11 @@ export class DiscoverfeedPage implements OnInit {
     let channelId = feedUrl.split("/")[4];
 
     if (this.feedService.checkIsTobeAddedFeeds(nodeId, channelId))
-      return "DiscoverfeedinfoPage.processing";
+      return "DiscoverfeedinfoPage.beingProcessing";
 
     let feeds = this.feedService.getChannelFromId(nodeId, channelId) || null;
     if (feeds == null || !feeds.isSubscribed)
-      return "common.unfollow";
+      return "common.notFollowYet";
     if (feeds.isSubscribed)
       return "SearchPage.following";
   }

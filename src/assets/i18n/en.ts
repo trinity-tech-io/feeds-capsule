@@ -90,11 +90,12 @@ export const en = {
         "unknown":"Unknown",
         "unfollow":"Unfollow",
         "adding":"Adding",
-        "feedsAlreadyAdded":"This feed has already been added"
+        "feedsAlreadyAdded":"This feed has already been added",
+        "notFollowYet":"Not follow yet"
     },
     "app":{
         "profileDetails":"Profile Details",
-        "feedSources":"Feeds Publisher Account",
+        "feedSources":"Publisher Account",
         "about":"About Feeds",
         "donation":"Donation",
         "signout":"Sign out",
@@ -170,7 +171,7 @@ export const en = {
         "status9":"Processing",
         "status10":"Processing",
         "status11":"Follow feed error",
-        "discover":"Discover Feeds"
+        "discover":"Explore on Discovery Square"
     },
     "ChannelsPage":{
         "feeds":"Feeds",
@@ -502,19 +503,21 @@ export const en = {
         "off":"OFF"
     },
     "DiscoverfeedPage":{
-        "title":"Discover Feeds",
+        "title":"Discovery Square",
         "emptyDes":"There is no public Feeds"
     },
     "DiscoverfeedinfoPage":{
-        "title":"Feeds info",
+        "title":"Feeds details",
         "addFeed":"Add Feeds",
         "feeds":"Feeds",
         "follow":"Follow",
-        "unfollow":"Unfollow",
-        "processing":"Processing"
+        "unfollow":"Following",
+        "processing":"Processing",
+        "beingProcessing":"Being processing for confirmation",
+        "feedsQrcode":"Feeds QRCode"
     },
     "FeedinfoPage":{
-        "title":"Feeds info",
+        "title":"Feeds details",
         "feeds":"Feeds"
     }
 };

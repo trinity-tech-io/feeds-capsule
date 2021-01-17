@@ -90,11 +90,12 @@ export const zh = {
         "unknown":"未知",
         "unfollow":"未关注",
         "adding":"添加中",
-        "feedsAlreadyAdded":"已添加过该Feeds"
+        "feedsAlreadyAdded":"已添加过该Feeds",
+        "notFollowYet":"未关注"
     },
     "app":{
         "profileDetails":"档案详情",
-        "feedSources":"Feeds出版号",
+        "feedSources":"出版号",
         "about":"关于Feeds",
         "donation":"捐赠",
         "signout":"登出",
@@ -158,7 +159,7 @@ export const zh = {
         "follow":"关注",
         "following":"正在关注",
         "searchFeeds":"搜索",
-        "addfeedssource":"添加Feeds",
+        "addfeedssource":"扫描二维码添加Feeds",
         "status0":"添加中",
         "status1":"处理中",
         "status2":"处理中",
@@ -171,7 +172,7 @@ export const zh = {
         "status9":"处理中",
         "status10":"处理中",
         "status11":"关注Feeds出错",
-        "discover":"发现Feeds"
+        "discover":"探索广场"
     },
     "ChannelsPage":{
         "feeds":"Feeds",
@@ -502,19 +503,21 @@ export const zh = {
         "off":"关"
     },
     "DiscoverfeedPage":{
-       "title":"发现Feeds",
+       "title":"探索广场",
        "emptyDes":"还没有公开的Feeds"
     },
     "DiscoverfeedinfoPage":{
-        "title":"Feeds信息",
+        "title":"Feeds详情",
         "addFeed":"添加Feeds",
         "feeds":"Feeds",
         "follow":"关注",
-        "unfollow":"取消关注",
-        "processing":"处理中"
+        "unfollow":"关注中",
+        "processing":"关注确认中",
+        "beingProcessing":"关注确认中",
+        "feedsQrcode":"Feeds二维码"
     },
     "FeedinfoPage":{
-       "title":"Feeds信息",
+       "title":"Feeds详情",
        "feeds":"Feeds"
     }
 };
