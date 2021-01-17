@@ -9,7 +9,8 @@
         "splashscreen": "./native/splash.png",
         "intentscheme": {
             "scheme": "https",
-            "path": "feeds.trinity-tech.io"
+            "path": "feeds.trinity-tech.io",
+            "custom":"feeds"
         },
         "version": {
             "code": 10500,
