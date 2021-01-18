@@ -256,7 +256,7 @@ export const zh = {
         "sourceAddress":"Feeds地址",
         "openQRScanner":"扫描二维码",
         "confirm":"确认",
-        "sourceaddresshere":"输入Feeds出版号地址",
+        "sourceaddresshere":"输入Feeds地址",
         "tipMsg":"URL地址可能错误",
         "exploreFeedSources":"探索Feeds出版号",
         "title":"添加Feeds",
