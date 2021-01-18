@@ -279,7 +279,7 @@ export const en = {
         "did":"DID",
         "addFeedSource": "Add Feeds Publisher Account",
         "removeFeedSource":"Remove Feeds Publisher Account",
-        "deleteFeedSource":"Delete Feeds Publisher Account",
+        "deleteFeedSource":"Delete Publisher Account",
         "shareFeedSource": "Share Feeds Publisher Account",
         "feedUrl":"Feeds URL",
         "serverInfo":"Server Info",
@@ -287,7 +287,7 @@ export const en = {
         "Feedurlmaybeerror":"Possible Feeds url error.",
         "DeletethisFeedSource":"Delete this Feeds Publisher Account",
         "cancel":"Cancel",
-        "DeleteFeedSource":"Delete Feeds Publisher Account!",
+        "DeleteFeedSource":"Delete Publisher Account!",
         "RemovethisFeedSource":"Remove this Feeds Publisher Account",
         "RemoveFeedSource":"Remove Feeds Publisher Account!",
         "removeserver": "Feeds Publisher Account Service removed",
@@ -301,7 +301,8 @@ export const en = {
         "replyingto":"Replying to",
         "containedfeeds":"Contained Feeds",
         "version":"version",
-        "UserId":"UserId"
+        "UserId":"UserId",
+        "beingPublic":"Being Public"
     },
     "ScanqrcodePage":{
         "introtitle": "Create a new",
