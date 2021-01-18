@@ -255,7 +255,7 @@ export const fr = {
         "sourceAddress":"Feeds Address",
         "openQRScanner":"Open QR Scanner",
         "confirm":"Confirm",
-        "sourceaddresshere":"Enter Feeds Publisher Account address here",
+        "sourceaddresshere":"Enter Feeds address here",
         "tipMsg":"Possible URL error",
         "exploreFeedSources":"Explore Feeds Publisher Account",
         "title":"Add New Feeds",
