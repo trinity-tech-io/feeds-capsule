@@ -134,11 +134,18 @@ export class AddServerPage implements OnInit {
   checkValid(result: string){
     if (result.length < 54 ||
       !result.startsWith('feeds://')||
-      !result.indexOf("did:elastos:") || result.indexOf("/")!=4){
+      !result.indexOf("did:elastos:")){
         this.native.toastWarn("AddServerPage.tipMsg");
         return ;
     }
 
+    let splitStr = result.split("/")
+    if (splitStr.length!=5||
+      splitStr[4] == ""){
+        this.native.toastWarn("AddServerPage.tipMsg");
+        return ;
+    }
+    
     this.feedService.addFeed(result,"",0,"").then((isSuccess)=>{
       if (isSuccess){
         this.native.pop();
