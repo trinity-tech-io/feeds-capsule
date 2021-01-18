@@ -71,7 +71,7 @@
             <ion-label >{{'ServerInfoPage.public' | translate}}</ion-label>
           </ion-button>
           <ion-button *ngIf="handlePublic(channel.id)!=''" (click)="unPublicFeeds(channel)" [disabled]='!isShowQrcode'>
-            <ion-label>{{ 'ServerInfoPage.unpublic' | translate }}</ion-label>
+            <ion-label>{{ 'ServerInfoPage.beingPublic' | translate }}</ion-label>
           </ion-button>
         </ion-col>
         <ion-ripple-effect></ion-ripple-effect>
