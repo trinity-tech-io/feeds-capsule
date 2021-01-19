@@ -3432,7 +3432,7 @@ export class FeedService {
       return;
     }
 
-    subscribedChannelsMap[nodeChannelId] = undefined;
+    // subscribedChannelsMap[nodeChannelId] = undefined;
 
     // this.storeService.set(PersistenceKey.channelsMap,channelsMap);
     this.saveChannelMap();
@@ -3440,7 +3440,7 @@ export class FeedService {
 
     this.refreshLocalSubscribedChannels();
 
-    delete subscribedChannelsMap[nodeChannelId];
+    // delete subscribedChannelsMap[nodeChannelId];
     this.deletePostFromChannel(nodeId, request.id);
 
     this.native.toast(this.formatInfoService.formatUnFollowSuccessMsg(this.getFeedNameById(nodeId, request.id)));
