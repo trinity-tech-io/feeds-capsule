@@ -172,7 +172,7 @@ export const en = {
         "status10":"Processing",
         "status11":"Follow feed error",
         "discover":"Explore on Discovery Square",
-        "des1":"Your subscription request to this feed is on going, this takes a few seconds. Would you like to cancel this subscription",
+        "des1":"Your subscription request to this feed is on going, this takes a few seconds. Would you like to cancel this subscription？",
         "des2":"删除",
         "des3":"继续等待"
     },
