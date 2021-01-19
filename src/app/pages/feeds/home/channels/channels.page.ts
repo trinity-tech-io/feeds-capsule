@@ -1121,6 +1121,8 @@ export class ChannelsPage implements OnInit {
       "channelId":this.channelId,
       "name":this.channelName,
       "des":this.channelDesc,
+      "followStatus":this.followStatus,
+      "channelSubscribes":this.channelSubscribes
     });
    this.native.navigateForward(['/feedinfo'],"");
   }

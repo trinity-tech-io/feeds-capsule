@@ -36,6 +36,8 @@ export class DiscoverfeedinfoPage implements OnInit {
   public qrcodeString:string = null;
   public feedsUrl:string = null;
   public status:string ="";
+  public channelSubscribes: number = 0;
+  public followStatus: boolean = false;
   constructor(
     private events: Events,
     private zone: NgZone,
@@ -209,4 +211,7 @@ export class DiscoverfeedinfoPage implements OnInit {
           return "2";
     }
 
+  tip(){
+    this.native.toast("tip");
+  }
 }
