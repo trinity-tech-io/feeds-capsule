@@ -24,12 +24,19 @@
 
       <ion-row class="detail-row">
         <ion-col size="12" class="left-col">
-            <h1>{{'CreatenewfeedPage.description'|translate}}</h1>
-            <h2>{{des}}</h2>
+            <h1>{{'IssuecredentialPage.elaaddress'|translate}}</h1>
+            <h2>{{elaAddress}}</h2>
         </ion-col>
       </ion-row>
 
-      <ion-row class="detail-row">
+      <ion-row class="detail-row" *ngIf="developerMode">
+        <ion-col size="12" class="left-col">
+            <h1>{{'ServerInfoPage.version'|translate}}</h1>
+            <h2>{{severVersion}}</h2>
+        </ion-col>
+      </ion-row>
+
+      <ion-row class="detail-row" *ngIf="developerMode">
         <ion-col size="12" class="left-col">
             <h1>{{'ServerInfoPage.did'|translate}}</h1>
             <h2>{{serverInfo['did']}}</h2>
