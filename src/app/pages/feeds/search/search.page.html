@@ -43,7 +43,6 @@
     <!-- adding Feed-->
     <ion-item
         *ngFor="let addingchannel of addingChanneList"
-        [class.removeBorder]="addingchannel === addingChanneList[addingChanneList.length - 1]"
         lines="none">
         <ion-row class="channel-row ion-activatable ripple">
           <ion-col
@@ -56,7 +55,7 @@
             </div>
           </ion-col>
           <ion-col
-            size="5.5"
+            size="6.5"
             class="middle-col"
           >
             <ion-label (press)="pressName(addingchannel.feedName)">{{ moreName(addingchannel.feedName) }}</ion-label>
@@ -65,9 +64,12 @@
               <p><span>{{ addingchannel.follower }}</span> {{ 'common.followers' | translate }}</p>
             </ion-row>
           </ion-col>
-          <ion-col size="4" style="text-align:right;" class="right-col">
-               <span class="status">{{ handleStatus(addingchannel) | translate }}</span>
+          <ion-col size="3" class="right-col">
+            <ion-button class="unsubscribed" fill="outline" (click)="handeleStatus(addingchannel)">
+              <ion-label >{{ handleStatus(addingchannel) | translate }}</ion-label>
+            </ion-button>
           </ion-col>
+          <ion-ripple-effect></ion-ripple-effect>
           <ion-ripple-effect></ion-ripple-effect>
         </ion-row>
       </ion-item>
@@ -75,7 +77,6 @@
     <!-- added Feed-->
     <ion-item
       *ngFor="let channel of subscribedFeedList"
-      [class.removeBorder]="channel === subscribedFeedList[subscribedFeedList.length - 1]"
       lines="none"
     >
       <ion-row class="channel-row ion-activatable ripple">
@@ -112,13 +113,21 @@
       </ion-row>
     </ion-item>
 
-    <div class="new-feed-div" (click)="discover()" *ngIf="subscribedFeedList.length > 0 || addingChanneList.length > 0" style="margin-bottom: 5px;">
-        <div class="new-feed">{{ 'SearchPage.discover' | translate }}</div>
-    </div>
 
-    <div class="new-feed-div" (click)="addfeedssource()" *ngIf="subscribedFeedList.length > 0 || addingChanneList.length > 0" style="margin-top:7px;">
-      <div class="new-feed"> {{ "SearchPage.addfeedssource"  | translate }}</div>
-    </div>
+    <ion-item lines="none" *ngIf="subscribedFeedList.length > 0 || addingChanneList.length > 0">
+        <ion-row class="channel-row ion-activatable ripple">
+          <ion-col size="12" (click)="discover()">
+              <ion-label style="margin-left: 18px;font-weight: 700;padding: 0;overflow: visible;">{{'SearchPage.discover' | translate}}</ion-label>
+          </ion-col>
+        </ion-row>
+    </ion-item>
+    <ion-item lines="none" *ngIf="subscribedFeedList.length > 0 || addingChanneList.length > 0" style="border:none;">
+    <ion-row class="channel-row ion-activatable ripple">
+      <ion-col size="12" (click)="addfeedssource()">
+          <ion-label style="margin-left: 18px;font-weight: 700;padding: 0;overflow: visible;">{{ "SearchPage.addfeedssource" | translate}}</ion-label>
+      </ion-col>
+    </ion-row>
+    </ion-item>
   </ion-list>
 
 </ion-content>

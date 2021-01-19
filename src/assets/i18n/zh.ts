@@ -159,7 +159,7 @@ export const zh = {
         "follow":"关注",
         "following":"正在关注",
         "searchFeeds":"搜索",
-        "addfeedssource":"扫描二维码添加Feeds",
+        "addfeedssource":"扫描二维码关注Feeds",
         "status0":"添加中",
         "status1":"处理中",
         "status2":"处理中",
@@ -172,7 +172,10 @@ export const zh = {
         "status9":"处理中",
         "status10":"处理中",
         "status11":"关注Feeds出错",
-        "discover":"探索广场"
+        "discover":"进入广场探索Feeds",
+        "des1":"您关注此feed的请求正被确认中，请耐心等待30秒左右。确认需要取消请求关注该Feeds？",
+        "des2":"删除",
+        "des3":"继续等待"
     },
     "ChannelsPage":{
         "feeds":"Feeds",
