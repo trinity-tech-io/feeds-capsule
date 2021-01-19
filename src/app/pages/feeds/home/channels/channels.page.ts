@@ -557,6 +557,7 @@ export class ChannelsPage implements OnInit {
       mode: 'ios',
       cssClass: 'PaypromptComponent',
       component: PaypromptComponent,
+      backdropDismiss: false,
       componentProps: {
         "title": this.translate.instant("ChannelsPage.tip"),
         "elaAddress": elaAddress,

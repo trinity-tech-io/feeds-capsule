@@ -1,10 +1,9 @@
-import { Component, OnInit, ViewChild,NgZone} from '@angular/core';
+import { Component, OnInit,NgZone} from '@angular/core';
 import { PopoverController,NavParams} from '@ionic/angular';
 import { ThemeService } from 'src/app/services/theme.service';
 import { FeedService } from 'src/app/services/FeedService';
 import { NativeService } from 'src/app/services/NativeService';
 
-declare let appManager: AppManagerPlugin.AppManager;
 @Component({
   selector: 'app-payprompt',
   templateUrl: './payprompt.component.html',
@@ -12,18 +11,18 @@ declare let appManager: AppManagerPlugin.AppManager;
 })
 export class PaypromptComponent implements OnInit {
   public elaAddress:string ="";
-  public amount : number = 0;
+  public amount:any = "";
   public memo: string = "";
   public defalutMemo: string = "";
   public title: string = "";
   public disableMemo:boolean = false;
-  constructor( 
-    private native:NativeService, 
+  constructor(
+    private native:NativeService,
     private feedService:FeedService,
     private navParams: NavParams,
-    private popover: PopoverController,  
+    private popover: PopoverController,
     public theme: ThemeService,
-    public  zone:NgZone) { 
+    public  zone:NgZone) {
 
   }
 
@@ -64,7 +63,7 @@ export class PaypromptComponent implements OnInit {
       if(txId===''){
         this.native.toastWarn('common.fail');
         return;
-      } 
+      }
 
       this.native.toast('common.success');
       this.popover.dismiss();
