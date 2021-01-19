@@ -251,81 +251,88 @@ export class SearchPage implements OnInit {
  }
 
  checkDid(){
-  let signInData = this.feedService.getSignInData() || {};
-  let did = signInData["did"];
-  this.feedService.checkDIDDocument(did).then((isOnSideChain)=>{
-    if (!isOnSideChain){
-      //show one button dialog
-      //if click this button
-      //call feedService.promptpublishdid() function
-      this.openAlert();
-      return;
-    }
+    let signInData = this.feedService.getSignInData() || {};
+    let did = signInData["did"];
+    this.feedService.checkDIDDocument(did).then((isOnSideChain)=>{
+      if (!isOnSideChain){
+        //show one button dialog
+        //if click this button
+        //call feedService.promptpublishdid() function
+        this.openAlert();
+        return;
+      }
+      this.removeSubscribe();
+      this.native.navigateForward(['/menu/servers/add-server'],"");
+    });
+  }
+
+  openAlert(){
+    this.popover = this.popupProvider.ionicAlert(
+      this,
+      // "ConfirmdialogComponent.signoutTitle",
+      "",
+      "common.didnotrelease",
+      this.confirm,
+      'tskth.svg'
+    );
+  }
+
+  confirm(that:any){
+      if(this.popover!=null){
+        this.popover.dismiss();
+        that.feedService.promptpublishdid();
+      }
+  }
+
+  discover(){
     this.removeSubscribe();
-    this.native.navigateForward(['/menu/servers/add-server'],"");
-  });
-}
+    this.native.go("discoverfeed");
+  }
 
-openAlert(){
-  this.popover = this.popupProvider.ionicAlert(
-    this,
-    // "ConfirmdialogComponent.signoutTitle",
-    "",
-    "common.didnotrelease",
-    this.confirm,
-    'tskth.svg'
-  );
-}
+  handleStatus(item:any){
+    let status = item["status"] || 0;
+    let keyString ="SearchPage.status";
+    return keyString+status;
+  }
 
-confirm(that:any){
+  handeleStatus(addingchannel:any){
+    this.curAddingItem = addingchannel;
+    this.popover = this.popupProvider.ionicConfirm(
+      this,
+      // "ConfirmdialogComponent.signoutTitle",
+      "",
+      "SearchPage.des1",
+      this.cancel,
+      this.confirm1,
+      'tskth.svg',
+    );
+  }
+
+  confirm1(that:any){
     if(this.popover!=null){
-       this.popover.dismiss();
-       that.feedService.promptpublishdid();
+      this.popover.dismiss();
+      let nodeId = that.curAddingItem["nodeId"];
+      let feedId = that.curAddingItem["feedId"];
+      //that.feedService.promptpublishdid();
+
+      that.feedService.removeTobeAddedFeeds(nodeId,feedId).then(()=>{
+        that.zone.run(() => {
+
+          console.log("removeTobeAddedFeeds==========================");
+          that.addingChanneList = that.feedService.getToBeAddedFeedsList();
+        });
+      });
     }
-}
+  }
 
-discover(){
-  this.removeSubscribe();
-  this.native.go("discoverfeed");
-}
-
-handleStatus(item:any){
-  let status = item["status"] || 0;
-  let keyString ="SearchPage.status";
-   return keyString+status;
-}
-
-handeleStatus(addingchannel:any){
-  this.curAddingItem = addingchannel;
-  this.popover = this.popupProvider.ionicConfirm(
-    this,
-    // "ConfirmdialogComponent.signoutTitle",
-    "",
-    "SearchPage.des1",
-    this.cancel,
-    this.confirm1,
-    'tskth.svg',
-  );
-}
-
-confirm1(that:any){
-  if(this.popover!=null){
-    this.popover.dismiss();
-    let nodeId = that.curAddingItem["nodeId"];
-    let feedId = that.curAddingItem["feedId"];
-    //that.feedService.promptpublishdid();
-
- }
-}
-
-cancel(that:any){
-  if(this.popover!=null){
-    this.popover.dismiss();
-    let nodeId = that.curAddingItem["nodeId"];
-    let feedId = that.curAddingItem["feedId"];
-    that.feedService.removeTobeAddedFeeds(nodeId,feedId);
-    //that.feedService.promptpublishdid();
- }
-}
+  cancel(that:any){
+    if(this.popover!=null){
+      this.popover.dismiss();
+      let nodeId = that.curAddingItem["nodeId"];
+      let feedId = that.curAddingItem["feedId"];
+      that.feedService.continueAddFeeds(nodeId, feedId);
+      //that.feedService.promptpublishdid();
+    }
+  }
 
 }

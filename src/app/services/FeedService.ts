@@ -6419,8 +6419,12 @@ export class FeedService {
     }
   }
  
-  removeTobeAddedFeeds(nodeId: string, feedId: number){
-    this.addFeedService.removeTobeAddedFeedStatusByNodeFeedId(nodeId, feedId);
+  removeTobeAddedFeeds(nodeId: string, feedId: number): Promise<void>{
+    return this.addFeedService.removeTobeAddedFeedStatusByNodeFeedId(nodeId, feedId);
+  }
+
+  continueAddFeeds(nodeId: string, feedId: number){
+    //TODO
   }
 
   checkValueValid(value: string): boolean{
