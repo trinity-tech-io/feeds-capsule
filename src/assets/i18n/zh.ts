@@ -210,7 +210,7 @@ export const zh = {
         "createfeedsuccess": "创建Feeds成功!",
         "tipMsgLength1":"描述信息长度最大为32",
         "alreadyExist":"Feeds已经存在，请更换名称后重试",
-        "nameContainInvalidChars": "'Feeds名称' 包含非法字符",
+        "nameContainInvalidChars": "Feeds 名称 不能包含除字母a-zA-Z，数字0-9, 连字符- 以及 下划线_ 之外的所有其他字符。",
     },
     "ProfileimagePage":{
         "title":"Feeds头像",
