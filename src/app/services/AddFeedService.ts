@@ -264,17 +264,20 @@ export class AddFeedService {
         this.events.publish("addFeed:statusChanged", nodeId, feedId, status);
     }
 
-    async removeTobeAddedFeedStatusByNodeFeedId(nodeId: string, feedId: number){
-        let feedIdStr = String(feedId);
-        this.checkTobeAddedFeedMap(nodeId);
-        if (this.tobeAddedFeedMap[nodeId][feedIdStr] == null || this.tobeAddedFeedMap[nodeId][feedIdStr] == undefined){
-            this.logUtils.loge("tobeAddedFeedMap null", TAG);
-            return;
-        }
-
-        delete this.tobeAddedFeedMap[nodeId][feedIdStr];
-
-        await this.saveData();
+    async removeTobeAddedFeedStatusByNodeFeedId(nodeId: string, feedId: number): Promise<void>{
+        return new Promise(async (resolve, reject) =>{
+            let feedIdStr = String(feedId);
+            this.checkTobeAddedFeedMap(nodeId);
+            if (this.tobeAddedFeedMap[nodeId][feedIdStr] == null || this.tobeAddedFeedMap[nodeId][feedIdStr] == undefined){
+                this.logUtils.loge("tobeAddedFeedMap null", TAG);
+                return;
+            }
+    
+            delete this.tobeAddedFeedMap[nodeId][feedIdStr];
+    
+            await this.saveData();
+            resolve();
+        });
     }
 
     saveData(): Promise<any>{
