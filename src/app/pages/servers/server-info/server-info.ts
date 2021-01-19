@@ -474,7 +474,7 @@ export class ServerInfoPage implements OnInit {
     };
     this.httpService.ajaxPost(ApiUrl.update,obj).then((result)=>{
       if(result["code"]=== 200){
-        this.native.toast("test update");
+        //this.native.toast("test update");
       }
     });
   }
