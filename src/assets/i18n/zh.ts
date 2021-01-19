@@ -206,7 +206,8 @@ export const zh = {
         "channelSourceDes":"在哪里保存您的Feeds",
         "createfeedsuccess": "创建Feeds成功!",
         "tipMsgLength1":"描述信息长度最大为32",
-        "alreadyExist":"Feeds已经存在，请更换名称后重试"
+        "alreadyExist":"Feeds已经存在，请更换名称后重试",
+        "nameContainInvalidChars": "'Feeds名称' 包含非法字符",
     },
     "ProfileimagePage":{
         "title":"Feeds头像",

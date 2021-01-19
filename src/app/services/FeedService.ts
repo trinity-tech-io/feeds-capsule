@@ -6422,4 +6422,9 @@ export class FeedService {
   removeTobeAddedFeeds(nodeId: string, feedId: number){
     this.addFeedService.removeTobeAddedFeedStatusByNodeFeedId(nodeId, feedId);
   }
+
+  checkValueValid(value: string): boolean{
+    let regEx = new RegExp("[`~!@#$%^&*()+=|{}':;',\\[\\]<>/?~！@#￥%……&*（）——+|{}【】《》 ‘；：”“’。，、？]");
+    return regEx.test(value);
+  }
 }

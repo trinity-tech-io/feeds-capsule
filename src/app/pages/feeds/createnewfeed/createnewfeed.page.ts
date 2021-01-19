@@ -157,7 +157,6 @@ export class CreatenewfeedPage implements OnInit {
   }
 
   processCreateChannel(name: HTMLInputElement, desc: HTMLInputElement){
-
     let nameValue = name.value || "";
         nameValue = this.native.iGetInnerText(nameValue);
     if (nameValue==""){
@@ -195,7 +194,13 @@ export class CreatenewfeedPage implements OnInit {
       this.native.toast_trans("CreatenewfeedPage.tipMsg3");
       return ;
     }
-
+    
+    let checkRes = this.feedService.checkValueValid(name.value);
+    if (checkRes){
+      this.native.toast_trans("CreatenewfeedPage.nameContainInvalidChars");
+      return ;
+    }
+    
     this.createDialog(name.value,desc.value);
   }
 
