@@ -9,6 +9,7 @@ import { HttpService } from '../../services/HttpService';
 import { ApiUrl } from '../../services/ApiUrl';
 import { UtilService } from 'src/app/services/utilService';
 import { StorageService } from '../../services/StorageService';
+import { MenuService } from 'src/app/services/MenuService';
 import * as _ from 'lodash';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
@@ -48,6 +49,8 @@ export class FeedinfoPage implements OnInit {
   public severVersion:string ="";
   public elaAddress:string ="";
   public developerMode:boolean =  false;
+  public channelSubscribes: number = 0;
+  public followStatus: boolean = false;
   constructor(
     private feedService: FeedService,
     public activatedRoute:ActivatedRoute,
@@ -58,6 +61,7 @@ export class FeedinfoPage implements OnInit {
     private zone:NgZone,
     private httpService: HttpService,
     public storageService:StorageService,
+    private menuService: MenuService
   ) {
     }
 
@@ -81,6 +85,12 @@ export class FeedinfoPage implements OnInit {
       this.qrcodeString = this.feedsUrl+"#"+this.name;
       this.des = channelInfo["des"] || "";
       this.oldChannelAvatar = this.feedService.getProfileIamge();
+
+      this.followStatus = channelInfo["followStatus"]||null;
+      if (this.followStatus == null)
+        this.followStatus = false;
+      
+      this.channelSubscribes = channelInfo["channelSubscribes"]||0;
   }
 
   ionViewWillEnter() {
@@ -120,6 +130,12 @@ export class FeedinfoPage implements OnInit {
         this.nodeStatus[nodeId] = status;
       });
     });
+
+    this.events.subscribe('feeds:unsubscribeFinish', (nodeId, channelId, name) => {
+      this.zone.run(() => {
+        this.native.setRootRouter(['/tabs/home']);
+      });
+    });
   }
 
   initTitle(){
@@ -139,6 +155,7 @@ export class FeedinfoPage implements OnInit {
 
   ionViewWillLeave(){
     titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, null);
+    this.events.unsubscribe("feeds:unsubscribeFinish");
     this.events.unsubscribe("feeds:editChannel");
     this.events.unsubscribe("feeds:updateTitle");
     this.events.unsubscribe("feeds:connectionChanged");
@@ -305,5 +322,22 @@ export class FeedinfoPage implements OnInit {
 
   checkServerStatus(nodeId: string){
     return this.feedService.getServerStatusFromId(nodeId);
+  }
+
+  tip(){
+    this.native.toast("tip");
+  }
+
+  subscribe(){
+    if(this.feedService.getConnectionStatus() != 0){
+      this.native.toastWarn('common.connectionError');
+      return;
+    }
+
+    this.feedService.subscribeChannel(this.nodeId, Number(this.channelId));
+  }
+
+  unsubscribe(){
+    this.menuService.showUnsubscribeMenuWithoutName(this.nodeId, Number(this.channelId));
   }
 }
