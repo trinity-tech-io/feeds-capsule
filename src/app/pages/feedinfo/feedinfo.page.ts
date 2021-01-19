@@ -45,6 +45,9 @@ export class FeedinfoPage implements OnInit {
   public qrcodeString:string = null;
   public feedPublicStatus:any = {};
   public nodeStatus:any = {};
+  public severVersion:string ="";
+  public elaAddress:string ="";
+  public developerMode:boolean =  false;
   constructor(
     private feedService: FeedService,
     public activatedRoute:ActivatedRoute,
@@ -64,6 +67,8 @@ export class FeedinfoPage implements OnInit {
       let channelInfo  = _.cloneDeep(item);
       this.nodeId = channelInfo["nodeId"] || "";
       this.serverInfo = this.feedService.getServerbyNodeId(this.nodeId);
+      this.severVersion = this.feedService.getServerVersionByNodeId(this.nodeId) || this.translate.instant('common.infoObtaining');
+      this.elaAddress = this.serverInfo["elaAddress"] || this.translate.instant('DIDdata.Notprovided');
       let feedsUrl = this.serverInfo['feedsUrl'] || null;
       let did = this.serverInfo['did'] || "";
       this.isOwer = this.checkIsMine(did);
@@ -79,6 +84,7 @@ export class FeedinfoPage implements OnInit {
   }
 
   ionViewWillEnter() {
+    this.developerMode = this.feedService.getDeveloperMode();
     this.initTitle();
     this.initnodeStatus(this.nodeId);
     this.connectionStatus = this.feedService.getConnectionStatus();
