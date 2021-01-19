@@ -330,7 +330,7 @@ export const en = {
     },
     "ImportdidPage": {
         "introduce": "Create your Feeds Publisher Account",
-        "introduce1": "Request selected Feeds Publisher Account/service to generate a new DID as an identifer of itself.",
+        "introduce1": "Request selected Feeds Publisher Account to generate a new DID as an identifer of itself.",
         "createanewDID": "Proceed to create a new DID",
         "importanexistDID": "Import an existing DID",
     },
