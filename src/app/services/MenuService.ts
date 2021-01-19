@@ -111,6 +111,7 @@ export class MenuService {
 
     async showUnsubscribeMenu(nodeId: string, channelId: number, channelName: string){
         this.postDetail  = await this.actionSheetController.create({
+            cssClass: 'editPost',
             buttons: [{
               text: this.translate.instant("common.unsubscribe")+' @'+channelName,
               role: 'destructive',
