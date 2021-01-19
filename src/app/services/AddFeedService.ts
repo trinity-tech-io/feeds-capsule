@@ -265,13 +265,14 @@ export class AddFeedService {
     }
 
     async removeTobeAddedFeedStatusByNodeFeedId(nodeId: string, feedId: number){
+        let feedIdStr = String(feedId);
         this.checkTobeAddedFeedMap(nodeId);
-        if (this.tobeAddedFeedMap[nodeId][feedId] == null || this.tobeAddedFeedMap[nodeId][feedId] == undefined){
+        if (this.tobeAddedFeedMap[nodeId][feedIdStr] == null || this.tobeAddedFeedMap[nodeId][feedIdStr] == undefined){
             this.logUtils.loge("tobeAddedFeedMap null", TAG);
             return;
         }
 
-        delete this.tobeAddedFeedMap[nodeId][feedId];
+        delete this.tobeAddedFeedMap[nodeId][feedIdStr];
 
         await this.saveData();
     }

@@ -6418,5 +6418,8 @@ export class FeedService {
       eventBus.publish(PublishType.addFeedFinish, nodeId, feedsId);
     }
   }
-  
+ 
+  removeTobeAddedFeeds(nodeId: string, feedId: number){
+    this.addFeedService.removeTobeAddedFeedStatusByNodeFeedId(nodeId, feedId);
+  }
 }
