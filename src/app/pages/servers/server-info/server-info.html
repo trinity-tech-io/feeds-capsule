@@ -62,7 +62,7 @@
           (click)="navTo(channel.nodeId, channel.id)"
         >
           <ion-label (press)="pressName(channel.name)">
-            {{ moreName(channel.name) }} <span *ngIf="channel.isSubscribed" style="font-size: 12px;font-weight: 500;">- {{ 'SearchPage.following' | translate }}</span>
+            {{ moreName(channel.name) }}
           </ion-label>
         </ion-col>
 
