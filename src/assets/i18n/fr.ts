@@ -209,7 +209,7 @@ export const fr = {
         "createfeedsuccess":"Feeds created successfully!",
         "tipMsgLength1":"The maximum length of the name message should be 32",
         "alreadyExist":"Feeds already exists, please change the name and try again",
-        "nameContainInvalidChars": "'Feeds name' contains illegal characters",
+        "nameContainInvalidChars": "Feeds Name can not include all other characters except alphabet letters a-zA-Z, digit 0-9, the hyphen mark - and the underline _.",
     },
     "ProfileimagePage":{
         "title":"Profile Image",
