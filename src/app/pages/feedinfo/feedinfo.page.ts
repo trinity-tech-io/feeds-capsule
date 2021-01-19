@@ -89,7 +89,7 @@ export class FeedinfoPage implements OnInit {
       this.followStatus = channelInfo["followStatus"]||null;
       if (this.followStatus == null)
         this.followStatus = false;
-      
+
       this.channelSubscribes = channelInfo["channelSubscribes"]||0;
   }
 
@@ -122,7 +122,7 @@ export class FeedinfoPage implements OnInit {
     });
 
     this.events.subscribe("feeds:editChannel",()=>{
-      this.clickEdit()
+      this.clickEdit();
     });
 
     this.events.subscribe("feeds:friendConnectionChanged", (nodeId, status)=>{

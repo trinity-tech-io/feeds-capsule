@@ -95,6 +95,7 @@ export class DiscoverfeedPage implements OnInit {
     this.events.unsubscribe("feeds:updateTitle");
     this.events.unsubscribe("feeds:serverStatisticsChanged");
     this.events.publish("feeds:search");
+    this.pageSize =1;
   }
 
   initTitle(){

@@ -5,6 +5,9 @@ import { ThemeService } from 'src/app/services/theme.service';
 import { FeedService } from 'src/app/services/FeedService';
 import { ActivatedRoute } from '@angular/router';
 import { NativeService } from 'src/app/services/NativeService';
+import { HttpService } from 'src/app/services/HttpService';
+import { ApiUrl } from 'src/app/services/ApiUrl';
+import { UtilService } from 'src/app/services/utilService';
 import * as _ from 'lodash';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
@@ -23,7 +26,7 @@ public channelAvatar = "";
 public avatar = "";
 public oldChannelInfo:any = {};
 public oldChannelAvatar:string = "";
-
+public isPublic:string ="";
 constructor(
   private feedService: FeedService,
   public activatedRoute:ActivatedRoute,
@@ -31,7 +34,8 @@ constructor(
   private translate:TranslateService,
   private events: Events,
   private native: NativeService,
-  private zone:NgZone
+  private zone:NgZone,
+  private httpService:HttpService
 ) {
   }
 
@@ -49,7 +53,7 @@ ngOnInit() {
 
 ionViewWillEnter() {
   this.initTitle();
-
+  this.getPublicStatus();
   this.connectionStatus = this.feedService.getConnectionStatus();
   this.channelAvatar = this.feedService.getProfileIamge();
   this.avatar = this.feedService.parseChannelAvatar(this.channelAvatar);
@@ -59,13 +63,14 @@ ionViewWillEnter() {
       this.connectionStatus = status;
     });
   });
-  
+
   this.events.subscribe("feeds:updateTitle",()=>{
     this.initTitle();
   });
 
   this.events.subscribe("feeds:editFeedInfoFinish",()=>{
     this.zone.run(() => {
+      this.updatePublicData();
       this.native.hideLoading();
       this.native.pop();
     });
@@ -115,7 +120,7 @@ confirm(){
     this.native.toastWarn('common.connectionError');
     return;
   }
-  
+
   if(this.checkparms()){
     this.native.showLoading("common.waitMoment").then(()=>{
       this.feedService.editFeedInfo(this.nodeId,Number(this.channelId),this.name, this.des,this.avatar);
@@ -154,7 +159,7 @@ if(this.channelAvatar === ""){
   return false;
 }
 
-if(this.oldChannelInfo["name"] === this.name && 
+if(this.oldChannelInfo["name"] === this.name &&
 this.oldChannelInfo["des"] === this.des &&
 this.oldChannelAvatar === this.channelAvatar ){
  this.native.toast_trans('common.nochanges');
@@ -163,6 +168,44 @@ this.oldChannelAvatar === this.channelAvatar ){
 
 return true;
 }
+
+updatePublicData(){
+  if(this.isPublic === ""){
+    return;
+  }
+  let serverInfo = this.feedService.getServerbyNodeId(this.nodeId);
+  let feedsUrl = serverInfo["feedsUrl"]+"/"+this.channelId;
+  let feedsUrlHash = UtilService.SHA256(feedsUrl);
+    let obj = {
+      "feedsUrlHash":feedsUrlHash,
+      "name":this.name,
+      "description":this.des,
+      "feedsAvatar":this.avatar,
+      "followers":this.oldChannelInfo["subscribers"]
+    };
+    this.httpService.ajaxPost(ApiUrl.update,obj,false).then((result)=>{
+      if(result["code"]=== 200){
+        this.native.toast("test update");
+      }
+    });
+  }
+
+  getPublicStatus(){
+    let serverInfo = this.feedService.getServerbyNodeId(this.nodeId);
+    let feedsUrl = serverInfo["feedsUrl"]+"/"+this.channelId;
+    let feedsUrlHash = UtilService.SHA256(feedsUrl);
+    this.httpService.ajaxGet(ApiUrl.get+"?feedsUrlHash="+feedsUrlHash,false).then(
+      (result)=>{
+      if(result["code"] === 200){
+        let resultData = result["data"] || "";
+        if(resultData!=""){
+          this.isPublic = "1"
+        }else{
+          this.isPublic = ""
+        }
+    }
+    })
+  }
 
 }
 
