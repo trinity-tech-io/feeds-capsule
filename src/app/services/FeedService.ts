@@ -6379,6 +6379,13 @@ export class FeedService {
         return ;
       }
 
+      if (isFriend && feeds != null && !feeds.isSubscribed){
+        let nodeChannelId = this.getChannelId(nodeId, decodeResult.feedId);
+        subscribedChannelsMap[nodeChannelId] = undefined;
+        delete subscribedChannelsMap[nodeChannelId];
+        await this.storeService.set(PersistenceKey.subscribedChannelsMap,subscribedChannelsMap);
+      }
+
       this.addFeedService.addFeed(decodeResult, nodeId, avatar, follower, feedName).then((toBeAddedFeed:FeedsData.ToBeAddedFeed)=>{
         if (toBeAddedFeed.friendState == FeedsData.FriendState.IS_FRIEND){
           let isSubscribed = this.checkFeedsIsSubscribed(toBeAddedFeed.nodeId, toBeAddedFeed.feedId);
