@@ -20,7 +20,21 @@ export class SearchPage implements OnInit {
   public subscribedFeedList= [];
   public hideOfflineFeeds:boolean = false;
   public popover:any = "";
+  public curAddingItem = {};
   public addingChanneList = [];
+  // {
+  //   "nodeId": "8Dsp9jkTg8TEfCkwMoXimwjLeaRidMczLZYNWbKGj1SF",
+  //   "did": "did:elastos:ibfZa4jQ1QgDRP9rpfbUbZWpXgbd9z7oKF",
+  //   "carrierAddress": "GsfYTr2bTBSppVxMYwj2e8gPpx4CRAZVd2NjehUmRAWYeuiLWmaH",
+  //   "feedId": 4,
+  //   "feedName": "feeds_testing 4",
+  //   "feedUrl": "feeds://did:elastos:ibfZa4jQ1QgDRP9rpfbUbZWpXgbd9z7oKF/GsfYTr2bTBSppVxMYwj2e8gPpx4CRAZVd2NjehUmRAWYeuiLWmaH/4",
+  //   "serverUrl": "feeds://did:elastos:ibfZa4jQ1QgDRP9rpfbUbZWpXgbd9z7oKF/GsfYTr2bTBSppVxMYwj2e8gPpx4CRAZVd2NjehUmRAWYeuiLWmaH",
+  //   "status": 7,
+  //   "friendState": 2,
+  //   "avatar":"./assets/images/profile-1.svg",
+  //   "follower": 5
+  // }
   constructor(
     private feedService: FeedService,
     private events: Events,
@@ -123,7 +137,6 @@ export class SearchPage implements OnInit {
   }
 
   ionViewWillEnter() {
-
     this.events.subscribe("feeds:search",()=>{
          this.init();
     });
@@ -159,6 +172,7 @@ export class SearchPage implements OnInit {
   ionViewWillLeave(){
     this.events.unsubscribe("feeds:search");
     this.removeSubscribe();
+    this.curAddingItem="";
   }
 
   subscribe(nodeId: string, id: number){
@@ -279,6 +293,39 @@ handleStatus(item:any){
   let status = item["status"] || 0;
   let keyString ="SearchPage.status";
    return keyString+status;
+}
+
+handeleStatus(addingchannel:any){
+  this.curAddingItem = addingchannel;
+  this.popover = this.popupProvider.ionicConfirm(
+    this,
+    // "ConfirmdialogComponent.signoutTitle",
+    "",
+    "SearchPage.des1",
+    this.cancel,
+    this.confirm1,
+    'tskth.svg',
+  );
+}
+
+confirm1(that:any){
+  if(this.popover!=null){
+    this.popover.dismiss();
+    let nodeId = that.curAddingItem["nodeId"];
+    let feedId = that.curAddingItem["feedId"];
+    //that.feedService.promptpublishdid();
+
+ }
+}
+
+cancel(that:any){
+  if(this.popover!=null){
+    this.popover.dismiss();
+    let nodeId = that.curAddingItem["nodeId"];
+    let feedId = that.curAddingItem["feedId"];
+    that.feedService.removeTobeAddedFeeds(nodeId,feedId);
+    //that.feedService.promptpublishdid();
+ }
 }
 
 }
