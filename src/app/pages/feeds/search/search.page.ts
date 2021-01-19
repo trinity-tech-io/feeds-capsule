@@ -317,8 +317,6 @@ export class SearchPage implements OnInit {
 
       that.feedService.removeTobeAddedFeeds(nodeId,feedId).then(()=>{
         that.zone.run(() => {
-
-          console.log("removeTobeAddedFeeds==========================");
           that.addingChanneList = that.feedService.getToBeAddedFeedsList();
         });
       });
