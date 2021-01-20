@@ -39,7 +39,7 @@ An initial **technical preview version v1.0.0** has been released with the follo
 
 - [x] Post content with images
 
-- [ ] Post short video less than 30seconds [ **UPCOMING**]
+- [x] Post instant video
 
 - [ ] Private/Payment feeds [ **IN PLAN** ]
 
