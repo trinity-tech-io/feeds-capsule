@@ -1290,10 +1290,10 @@ export class FeedService {
     if (serverMap == null || serverMap == undefined)
       serverMap = {}
 
-    if (serverMap[server.nodeId] != undefined)
-      this.native.toast("AddServerPage.serverAlreadyAdded");
-    else
-      this.native.toast("AddServerPage.serverAddedSuccess");
+    // if (serverMap[server.nodeId] != undefined)
+    //   this.native.toast("AddServerPage.serverAlreadyAdded");
+    // else
+    //   this.native.toast("AddServerPage.serverAddedSuccess");
 
     // if (server != bindingServer)
     serverMap[server.nodeId] = server ;
