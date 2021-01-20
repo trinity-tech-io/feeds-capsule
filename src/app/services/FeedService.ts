@@ -452,7 +452,7 @@ export class FeedService {
   private lastCommentUpdateMap:{[key: string]: CommentUpdateTime};
   private lastMultiLikesAndCommentsCountUpdateMap:{[key: string]: LikesAndCommentsCountUpdateTime};
   private lastMultiLikesAndCommentsCountUpdateMapCache:{[key: string]: LikesAndCommentsCountUpdateTime};
-  
+
 
   private throwMsgTransDataLimit = 4*1000*1000;
   private alertPopover:HTMLIonPopoverElement = null;
@@ -4109,7 +4109,7 @@ export class FeedService {
     let toBeAddedFeeds: FeedsData.ToBeAddedFeed[] = this.addFeedService.getToBeAddedFeedsInfoByNodeId(nodeId);
     for (let index = 0; index < toBeAddedFeeds.length; index++) {
       let toBeAddedFeed = toBeAddedFeeds[index];
-      this.subscribeChannel(toBeAddedFeed.nodeId, toBeAddedFeed.feedId); 
+      this.subscribeChannel(toBeAddedFeed.nodeId, toBeAddedFeed.feedId);
     }
   }
 
@@ -4271,20 +4271,6 @@ export class FeedService {
       return;
     }
 
-    if (bindingServerCache !=null && bindingServerCache!= undefined){
-      let did = bindingServerCache.did||"";
-      this.httpService.ajaxGet(ApiUrl.get+"?did="+did,false).then((result)=>{
-        if(result["code"] === 200){
-          if (result["data"] != undefined){
-            let name = bindingServerCache.name;
-            let description = bindingServerCache.introduction;
-            let feedUrl = bindingServerCache.feedsUrl;
-            this.updatePublic(did, name, description, feedUrl);
-          }
-        }
-      });
-    }
-
     eventBus.publish("feeds:updateCredentialFinish");
     this.signinChallengeRequest(nodeId, true);
   }
@@ -4415,7 +4401,7 @@ export class FeedService {
   checkLikesAndCommentsCount(nodeId: string, channelId: number, postId: number, likesCount: number, commentsCount: number){
     if (this.postMap == null || this.postMap == undefined)
       this.postMap = {};
-      
+
     let ncpId = this.getPostId(nodeId, channelId, postId);
     if (this.postMap[ncpId] == undefined)
       return ;
@@ -4425,7 +4411,7 @@ export class FeedService {
     }
 
     if (this.postMap[ncpId].comments != commentsCount){
-      this.postMap[ncpId].comments = commentsCount;   
+      this.postMap[ncpId].comments = commentsCount;
     }
   }
 
@@ -4640,18 +4626,18 @@ export class FeedService {
     let toBeAddedFeeds: FeedsData.ToBeAddedFeed[] = this.addFeedService.getToBeAddedFeedsInfoByNodeId(friendId);
     for (let index = 0; index < toBeAddedFeeds.length; index++) {
       let toBeAddedFeed = toBeAddedFeeds[index];
-      this.subscribeChannel(toBeAddedFeed.nodeId, toBeAddedFeed.feedId); 
+      this.subscribeChannel(toBeAddedFeed.nodeId, toBeAddedFeed.feedId);
     }
   }
 
   updateMultiLikesAndCommentsCount(nodeId: string){
     let updateTime = 0;
-    if (this.lastMultiLikesAndCommentsCountUpdateMap != null && 
+    if (this.lastMultiLikesAndCommentsCountUpdateMap != null &&
       this.lastMultiLikesAndCommentsCountUpdateMap != undefined &&
       this.lastMultiLikesAndCommentsCountUpdateMap[nodeId] != undefined){
         updateTime = this.lastMultiLikesAndCommentsCountUpdateMap[nodeId].time;
     }
-    
+
     if (this.lastMultiLikesAndCommentsCountUpdateMapCache == null ||
       this.lastMultiLikesAndCommentsCountUpdateMapCache == undefined){
         this.lastMultiLikesAndCommentsCountUpdateMapCache = {};
@@ -4662,7 +4648,7 @@ export class FeedService {
     };
     this.getMultiLikesAndCommentsCount(nodeId,0,0,Communication.field.last_update,0,updateTime,0);
   }
-  
+
 
   saveCredential(credential: string){
     localCredential = credential;
@@ -5272,19 +5258,6 @@ export class FeedService {
       result = did.substring(12, did.length);
 
     return result;
-  }
-
-  updatePublic(did: string, name: string, description: string, url: string){
-    let obj = {
-      "did":did,
-      "name":name,
-      "description":description,
-      "url":url
-    };
-    this.httpService.ajaxPost(ApiUrl.update,obj).then((result)=>{
-      if(result["code"]=== 200){
-      }
-    });
   }
 
   setBinary(nodeId: string, key: string, value: any, mediaType: string){
@@ -6367,7 +6340,7 @@ export class FeedService {
 
   addFeed(feedUrl: string, avatar: string, follower: number, feedName: string): Promise<string>{
     return new Promise(async (resolve, reject) =>{
-      
+
       let decodeResult:FeedsData.FeedUrl = this.addFeedService.decodeFeedUrl(feedUrl);
       let nodeId = await this.addFeedService.getNodeIdFromAddress(decodeResult.carrierAddress);
 
@@ -6425,7 +6398,7 @@ export class FeedService {
       eventBus.publish(PublishType.addFeedFinish, nodeId, feedsId);
     }
   }
- 
+
   removeTobeAddedFeeds(nodeId: string, feedId: number): Promise<void>{
     return this.addFeedService.removeTobeAddedFeedStatusByNodeFeedId(nodeId, feedId);
   }
