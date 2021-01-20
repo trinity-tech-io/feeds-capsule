@@ -3221,28 +3221,17 @@ export class FeedService {
       }else{
         channelsMap[nodeChannelId].isSubscribed = true;
       }
-      this.updatePostWithTime(nodeId, channelId, 0);
 
-      this.processTobeAddedFeedsFinish(nodeId, channelId);
+      if (request.max_count == 1){
+        this.updatePostWithTime(nodeId, channelId, 0);
+        this.processTobeAddedFeedsFinish(nodeId, channelId);
+        eventBus.publish(PublishType.subscribeFinish, nodeId,channelId);
+        this.native.toast(this.formatInfoService.formatFollowSuccessMsg(this.getFeedNameById(nodeId, channelId)));
+      }      
     }
 
+    this.saveChannelMap();
     this.storeService.set(PersistenceKey.subscribedChannelsMap,subscribedChannelsMap);
-
-    let list: Channels[] = [];
-    let keys: string[] = Object.keys(subscribedChannelsMap);
-    for (const index in keys) {
-      if (subscribedChannelsMap[keys[index]] == undefined)
-        continue;
-        list.push(subscribedChannelsMap[keys[index]]);
-    }
-    list.sort((a, b) => Number(b.last_update) - Number(a.last_update));
-
-    if (request.upper_bound == null){
-      this.refreshLocalSubscribedChannels();
-    }else{
-      this.loadMoreLocalSubscribedChannels();
-    }
-
     eventBus.publish(PublishType.refreshSubscribedChannels);
   }
 
@@ -3382,16 +3371,8 @@ export class FeedService {
   }
 
   handleSubscribeChannelResult(nodeId: string, request: any, error: any){
-    let nodeChannelId = this.getChannelId(nodeId, request.id);
     if (error != null && error != undefined && error.code == -4){
-
-      if (channelsMap != null && channelsMap != undefined &&
-          channelsMap[nodeChannelId] != null && channelsMap[nodeChannelId] != undefined)
-        channelsMap[nodeChannelId].isSubscribed = true;
-
-      // this.storeService.set(PersistenceKey.channelsMap,channelsMap);
-      this.saveChannelMap();
-      eventBus.publish(PublishType.subscribeFinish, nodeId,request.id);
+      this.getSubscribedChannels(nodeId, Communication.field.id,request.id,request.id,1);
       return;
     }
 
@@ -3401,14 +3382,7 @@ export class FeedService {
       return;
     }
 
-    this.saveChannelMap();
-
-    // this.refreshSubscribedChannels();
     this.getSubscribedChannels(nodeId, Communication.field.id,request.id,request.id,1);
-
-    // this.updatePostWithTime(nodeId,request.id, 0);
-
-    this.native.toast(this.formatInfoService.formatFollowSuccessMsg(this.getFeedNameById(nodeId, request.id)));
   }
 
   handleUnsubscribeChannelResult(nodeId:string, request: any, error: any){
@@ -3432,7 +3406,10 @@ export class FeedService {
       return;
     }
 
-    // subscribedChannelsMap[nodeChannelId] = undefined;
+    channelsMap[nodeChannelId].isSubscribed = false;
+    subscribedChannelsMap[nodeChannelId] = undefined;
+    
+    delete subscribedChannelsMap[nodeChannelId];
 
     // this.storeService.set(PersistenceKey.channelsMap,channelsMap);
     this.saveChannelMap();
@@ -3440,7 +3417,6 @@ export class FeedService {
 
     this.refreshLocalSubscribedChannels();
 
-    // delete subscribedChannelsMap[nodeChannelId];
     this.deletePostFromChannel(nodeId, request.id);
 
     this.native.toast(this.formatInfoService.formatUnFollowSuccessMsg(this.getFeedNameById(nodeId, request.id)));

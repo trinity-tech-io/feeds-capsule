@@ -14,7 +14,7 @@
     </ion-refresher-content>
   </ion-refresher>
 
-  <div *ngIf="subscribedFeedList.length === 0 && addingChanneList.length ===0" class="empty-container">
+  <div *ngIf="feedsList.length === 0 && addingChanneList.length ===0" class="empty-container">
     <img src="./assets/images/empty-feeds-icon.svg">
     <h1>{{ 'common.allempty' | translate }}</h1>
     <p>{{ 'SearchPage.emptyDes' | translate }}</p>
@@ -36,7 +36,7 @@
     </ion-row>
   </div>
 
-  <ion-list *ngIf="subscribedFeedList.length > 0 || addingChanneList.length > 0" class="channel-list" [class.darkChannelList]="theme.darkMode">
+  <ion-list *ngIf="feedsList.length > 0 || addingChanneList.length > 0" class="channel-list" [class.darkChannelList]="theme.darkMode">
     <div class="search-container" [class.dark-search-container]="theme.darkMode">
       <ion-searchbar placeholder="{{ 'SearchPage.searchFeeds' | translate }}" (ionInput)="getItems($event)" mode="ios"></ion-searchbar>
     </div>
@@ -76,7 +76,7 @@
 
     <!-- added Feed-->
     <ion-item
-      *ngFor="let channel of subscribedFeedList"
+      *ngFor="let channel of feedsList"
       lines="none"
     >
       <ion-row class="channel-row ion-activatable ripple">
@@ -114,14 +114,14 @@
     </ion-item>
 
 
-    <ion-item lines="none" *ngIf="subscribedFeedList.length > 0 || addingChanneList.length > 0">
+    <ion-item lines="none" *ngIf="feedsList.length > 0 || addingChanneList.length > 0">
         <ion-row class="channel-row ion-activatable ripple">
           <ion-col size="12" (click)="discover()">
               <ion-label style="margin-left: 18px;font-weight: 700;padding: 0;overflow: visible;">{{'SearchPage.discover' | translate}}</ion-label>
           </ion-col>
         </ion-row>
     </ion-item>
-    <ion-item lines="none" *ngIf="subscribedFeedList.length > 0 || addingChanneList.length > 0" style="border:none;">
+    <ion-item lines="none" *ngIf="feedsList.length > 0 || addingChanneList.length > 0" style="border:none;">
     <ion-row class="channel-row ion-activatable ripple">
       <ion-col size="12" (click)="addfeedssource()">
           <ion-label style="margin-left: 18px;font-weight: 700;padding: 0;overflow: visible;">{{ "SearchPage.addfeedssource" | translate}}</ion-label>
