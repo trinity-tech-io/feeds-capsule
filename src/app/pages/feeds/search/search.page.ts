@@ -17,7 +17,7 @@ export class SearchPage implements OnInit {
 
   public connectionStatus = 1;
   public nodeStatus: any = {};
-  public subscribedFeedList= [];
+  public feedsList= [];
   public hideOfflineFeeds:boolean = false;
   public popover:any = "";
   public curAddingItem = {};
@@ -151,8 +151,8 @@ export class SearchPage implements OnInit {
   }
 
   initChannelData(){
-    this.subscribedFeedList = [];
-    let channelData = this.feedService.getSubscribedFeedsList();
+    this.feedsList = [];
+    let channelData = this.feedService.getChannelsList();
 
     if(this.hideOfflineFeeds){
       for(let index=0;index<channelData.length;index++){
@@ -160,12 +160,12 @@ export class SearchPage implements OnInit {
         let status = this.checkServerStatus(nodeId);
         this.nodeStatus[nodeId] = status;
         if(this.nodeStatus[nodeId] === 0){
-           this.subscribedFeedList.push(channelData[index]);
+           this.feedsList.push(channelData[index]);
         }
       }
       return;
     }
-    this.subscribedFeedList = channelData;
+    this.feedsList = channelData;
     this.initnodeStatus();
   }
 
@@ -190,10 +190,10 @@ export class SearchPage implements OnInit {
 
   getItems(events){
     if(events.target.value == ""){
-      this.subscribedFeedList  = this.feedService.getSubscribedFeedsList();
+      this.feedsList  = this.feedService.getChannelsList();
     }
 
-    this.subscribedFeedList = this.subscribedFeedList.filter(
+    this.feedsList = this.feedsList.filter(
       channel=>channel.name.toLowerCase().indexOf(events.target.value.toLowerCase()) > -1
     );
 
@@ -232,8 +232,8 @@ export class SearchPage implements OnInit {
   }
 
   initnodeStatus(){
-    for(let index =0 ;index<this.subscribedFeedList.length;index++){
-           let nodeId = this.subscribedFeedList[index]['nodeId'];
+    for(let index =0 ;index<this.feedsList.length;index++){
+           let nodeId = this.feedsList[index]['nodeId'];
            let status = this.checkServerStatus(nodeId);
            this.nodeStatus[nodeId] = status;
     }
