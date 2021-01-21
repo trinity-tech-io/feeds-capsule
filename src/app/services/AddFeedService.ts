@@ -338,12 +338,27 @@ export class AddFeedService {
     }
 
     checkIsTobeAddedFeeds(nodeId: string, feedId: number): boolean{
+        if (feedId == 0){
+            return this.checkIsTobeAddedFeedsFromNodeId(nodeId);
+        }
+        return this.checkIsTobeAddedFeedsFromFeedId(nodeId, feedId);
+    }
+
+    private checkIsTobeAddedFeedsFromNodeId(nodeId: string): boolean{
+        if (this.tobeAddedFeedMap == null || this.tobeAddedFeedMap == undefined ||
+            this.tobeAddedFeedMap[nodeId] == null || this.tobeAddedFeedMap[nodeId] == undefined){
+            return false;
+        }
+        return true;
+    }
+
+    private checkIsTobeAddedFeedsFromFeedId(nodeId: string, feedId: number): boolean{
         let feedIdStr = String(feedId) ;
         if (this.tobeAddedFeedMap == null || this.tobeAddedFeedMap == undefined ||
             this.tobeAddedFeedMap[nodeId] == null || this.tobeAddedFeedMap[nodeId] == undefined ||
             this.tobeAddedFeedMap[nodeId][feedIdStr] == null || this.tobeAddedFeedMap[nodeId][feedIdStr] == undefined){
-                return false ;
-            }
+            return false ;
+        }
         return true;
     }
 }
