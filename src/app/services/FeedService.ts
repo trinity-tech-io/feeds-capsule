@@ -6391,7 +6391,7 @@ export class FeedService {
   }
 
   checkValueValid(value: string): boolean{
-    let regEx = new RegExp("[`~!@#$%^&*()+=|{}':;',\\[\\]<>/?~！@#￥%……&*（）——+|{}【】《》 ‘；：”“’。，、？]");
+    let regEx = new RegExp("[`~!@#$%^&*()+=|{}':;',\\[\\]<>/?~！@#￥%……&*（）——+|{}【】《》‘；：”“’。，、？]");
     return regEx.test(value);
   }
 }
