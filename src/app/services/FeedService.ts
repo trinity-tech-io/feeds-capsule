@@ -361,11 +361,11 @@ enum PersistenceKey{
   notificationList = "notificationList",
 
   likeCommentMap = "likeCommentMap",
-  lastFeedUpdateMap = "lastFeedUpdateMap",
+  // lastFeedUpdateMap = "lastFeedUpdateMap",
   lastCommentUpdateMap = "lastCommentUpdateMap",
 
   lastMultiLikesAndCommentsCountUpdateMap = "lastMultiLikesAndCommentsCountUpdateMap",
-
+  lastSubscribedFeedsUpdateMap = "lastSubscribedFeedsUpdateMap",
   serverVersions = "serverVersions",
 }
 
@@ -448,7 +448,8 @@ export class FeedService {
   private declareOwnerTimeout: NodeJS.Timer;
   private declareOwnerInterval: NodeJS.Timer;
   private isDeclareFinish: boolean = false;
-  private lastFeedUpdateMap:{[nodeId:string]: FeedUpdateTime};
+  // private lastFeedUpdateMap:{[nodeId:string]: FeedUpdateTime};
+  private lastSubscribedFeedsUpdateMap:{[nodeId:string]: FeedUpdateTime};
   private lastCommentUpdateMap:{[key: string]: CommentUpdateTime};
   private lastMultiLikesAndCommentsCountUpdateMap:{[key: string]: LikesAndCommentsCountUpdateTime};
   private lastMultiLikesAndCommentsCountUpdateMapCache:{[key: string]: LikesAndCommentsCountUpdateTime};
@@ -795,21 +796,21 @@ export class FeedService {
     });
   }
 
-  loadLastFeedUpdateMap(){
-    return new Promise((resolve, reject) =>{
-      let lastFeedUpdate = this.lastFeedUpdateMap || "";
-      if( lastFeedUpdate == ""){
-        this.storeService.get(PersistenceKey.lastFeedUpdateMap).then((mLastFeedUpdateMap)=>{
-          this.lastFeedUpdateMap = mLastFeedUpdateMap || {};
-          resolve(mLastFeedUpdateMap);
-        }).catch(()=>{
-          reject();
-        });
-      }else{
-          resolve(lastFeedUpdate);
-      }
-    });
-  }
+  // loadLastFeedUpdateMap(){
+  //   return new Promise((resolve, reject) =>{
+  //     let lastFeedUpdate = this.lastFeedUpdateMap || "";
+  //     if( lastFeedUpdate == ""){
+  //       this.storeService.get(PersistenceKey.lastFeedUpdateMap).then((mLastFeedUpdateMap)=>{
+  //         this.lastFeedUpdateMap = mLastFeedUpdateMap || {};
+  //         resolve(mLastFeedUpdateMap);
+  //       }).catch(()=>{
+  //         reject();
+  //       });
+  //     }else{
+  //         resolve(lastFeedUpdate);
+  //     }
+  //   });
+  // }
 
   loadLastCommentUpdateMap(){
     return new Promise((resolve, reject) =>{
@@ -823,6 +824,22 @@ export class FeedService {
         });
       }else{
           resolve(lastCommentUpdate);
+      }
+    });
+  }
+
+  loadLastSubscribedFeedUpdateMap(){
+    return new Promise((resolve, reject) =>{
+      let lastSubscribedFeedUpdate = this.lastSubscribedFeedsUpdateMap || "";
+      if( lastSubscribedFeedUpdate == ""){
+        this.storeService.get(PersistenceKey.lastSubscribedFeedsUpdateMap).then((mLastSubscribedFeedsUpdate)=>{
+          this.lastSubscribedFeedsUpdateMap = mLastSubscribedFeedsUpdate || {};
+          resolve(mLastSubscribedFeedsUpdate);
+        }).catch(()=>{
+          reject();
+        });
+      }else{
+          resolve(lastSubscribedFeedUpdate);
       }
     });
   }
@@ -846,8 +863,9 @@ export class FeedService {
       this.loadBindingServer(),
       this.loadNotificationList(),
       this.loadLikeCommentMap(),
-      this.loadLastFeedUpdateMap(),
-      this.loadLastCommentUpdateMap()
+      // this.loadLastFeedUpdateMap(),
+      this.loadLastCommentUpdateMap(),
+      this.loadLastSubscribedFeedUpdateMap()
     ]);
   }
 
@@ -946,9 +964,9 @@ export class FeedService {
         likeCommentMap = {};
     });
 
-    this.storeService.get(PersistenceKey.lastFeedUpdateMap).then((mLastFeedUpdateMap)=>{
-      this.lastFeedUpdateMap = mLastFeedUpdateMap || {};
-    });
+    // this.storeService.get(PersistenceKey.lastFeedUpdateMap).then((mLastFeedUpdateMap)=>{
+    //   this.lastFeedUpdateMap = mLastFeedUpdateMap || {};
+    // });
 
     this.storeService.get(PersistenceKey.lastCommentUpdateMap).then((mLastCommentUpdateMap) => {
       this.lastCommentUpdateMap = mLastCommentUpdateMap || {};
@@ -957,6 +975,10 @@ export class FeedService {
     this.storeService.get(PersistenceKey.lastMultiLikesAndCommentsCountUpdateMap).then((mLastMultiLikesAndCommentsCountUpdateMap) =>{
       this.lastMultiLikesAndCommentsCountUpdateMap = mLastMultiLikesAndCommentsCountUpdateMap || {};
     });
+
+    this.storeService.get(PersistenceKey.lastSubscribedFeedsUpdateMap).then((mLastSubscribedFeedsUpdateMap)=>{
+      this.lastSubscribedFeedsUpdateMap = mLastSubscribedFeedsUpdateMap;
+    })
   }
 
   initCallback(){
@@ -1921,23 +1943,23 @@ export class FeedService {
 
   //// do
 
-  refreshSubscribedChannels(){
-    let list = this.getServerList();
-    let isLocalRefresh = true;
+  // refreshSubscribedChannels(){
+  //   let list = this.getServerList();
+  //   let isLocalRefresh = true;
 
-    for (let index = 0; index < list.length; index++) {
-      if (serversStatus[list[index].nodeId] == undefined ||
-        serversStatus[list[index].nodeId].status == ConnState.disconnected)
-        continue;
-      else {
-        isLocalRefresh = false;
-        this.getSubscribedChannels(list[index].nodeId, Communication.field.last_update, 0, 0,10);
-      }
-    }
+  //   for (let index = 0; index < list.length; index++) {
+  //     if (serversStatus[list[index].nodeId] == undefined ||
+  //       serversStatus[list[index].nodeId].status == ConnState.disconnected)
+  //       continue;
+  //     else {
+  //       isLocalRefresh = false;
+  //       this.getSubscribedChannels(list[index].nodeId, Communication.field.last_update, 0, 0,10);
+  //     }
+  //   }
 
-    if (isLocalRefresh)
-      this.refreshLocalSubscribedChannels();
-  }
+  //   if (isLocalRefresh)
+  //     this.refreshLocalSubscribedChannels();
+  // }
 
   refreshLocalSubscribedChannels():Channels[]{
     localSubscribedList.slice(0,localSubscribedList.length);
@@ -1955,25 +1977,25 @@ export class FeedService {
     eventBus.publish(PublishType.loadMoreSubscribedChannels,localSubscribedList);
   }
 
-  refreshChannels(){
-    let list = this.getServerList();
-    let isLocalRefresh = true;
+  // refreshChannels(){
+  //   let list = this.getServerList();
+  //   let isLocalRefresh = true;
 
-    for (let index = 0; index < list.length; index++) {
-      let nodeId = list[index].nodeId;
-      if (serversStatus[nodeId].status == ConnState.disconnected)
-        continue;
-      else {
-        isLocalRefresh = false;
-        // let lastFeedUpdate = this.lastFeedUpdateMap[nodeId].time || 0;
-        // this.getChannels(nodeId, Communication.field.last_update, 0, lastFeedUpdate, 0);
-        this.updateFeed(nodeId, false);
-      }
-    }
+  //   for (let index = 0; index < list.length; index++) {
+  //     let nodeId = list[index].nodeId;
+  //     if (serversStatus[nodeId].status == ConnState.disconnected)
+  //       continue;
+  //     else {
+  //       isLocalRefresh = false;
+  //       // let lastFeedUpdate = this.lastFeedUpdateMap[nodeId].time || 0;
+  //       // this.getChannels(nodeId, Communication.field.last_update, 0, lastFeedUpdate, 0);
+  //       this.updateFeed(nodeId, false);
+  //     }
+  //   }
 
-    if (isLocalRefresh)
-      this.refreshLocalChannels();
-  }
+  //   if (isLocalRefresh)
+  //     this.refreshLocalChannels();
+  // }
 
   refreshLocalChannels():Channels[]{
     localChannelsList.slice(0,localChannelsList.length);
@@ -2005,10 +2027,6 @@ export class FeedService {
     for (let index = start; index < end; index++)
       localList.push(list[index]);
     return localList;
-  }
-
-  loadMoreChannels(nodeId: string, upper_bound: number){
-    this.getChannels(nodeId, Communication.field.last_update, upper_bound, 0, 10);
   }
 
   refreshMyChannels(): Channels[]{
@@ -3111,7 +3129,7 @@ export class FeedService {
         channelsMap[nodeChannelId].last_update = result[index].last_update*1000;
       }
 
-      this.updateLastFeedUpdate(nodeId, update);
+      // this.updateLastFeedUpdate(nodeId, update);
     }
     // this.storeService.set(PersistenceKey.channelsMap, channelsMap);
     this.saveChannelMap();
@@ -3228,7 +3246,9 @@ export class FeedService {
         eventBus.publish(PublishType.subscribeFinish, nodeId,channelId);
         this.native.toast(this.formatInfoService.formatFollowSuccessMsg(this.getFeedNameById(nodeId, channelId)));
         this.updateData(nodeId);
-      }      
+      }else{
+        this.updateLastSubscribedFeedsUpdate(nodeId, last_update);
+      }
     }
 
     this.saveChannelMap();
@@ -3845,9 +3865,9 @@ export class FeedService {
     this.getPost(nodeId,channelId,Communication.field.last_update,0,lastPostTime,0,"");
   }
 
-  updateFeedsWithTime(nodeId: string, lastUpdateTime: number){
-    this.getChannels(nodeId,Communication.field.last_update, 0, lastUpdateTime,0);
-  }
+  // updateFeedsWithTime(nodeId: string, lastUpdateTime: number){
+  //   this.getChannels(nodeId,Communication.field.last_update, 0, lastUpdateTime,0);
+  // }
 
   updateFeedsByFeedId(nodeId: string, feedId: number){
     this.getChannels(nodeId,Communication.field.id, feedId, feedId, 1);
@@ -3865,15 +3885,15 @@ export class FeedService {
     this.updatePostWithTime(nodeId, channelId, lastPostTime);
   }
 
-  updateFeed(nodeId: string, refreshAll: boolean){
-    let lastFeedTime: number = 0;
-    if (!refreshAll){
-      let mLastFeedUpdateMap = this.lastFeedUpdateMap || "";
-      let update = mLastFeedUpdateMap[nodeId] || "";
-      lastFeedTime = update["time"] || 0;
-    }
-    this.updateFeedsWithTime(nodeId,lastFeedTime);
-  }
+  // updateFeed(nodeId: string, refreshAll: boolean){
+  //   let lastFeedTime: number = 0;
+  //   if (!refreshAll){
+  //     let mLastFeedUpdateMap = this.lastFeedUpdateMap || "";
+  //     let update = mLastFeedUpdateMap[nodeId] || "";
+  //     lastFeedTime = update["time"] || 0;
+  //   }
+  //   this.updateFeedsWithTime(nodeId,lastFeedTime);
+  // }
 
   updateSubscribedFeed(){
     let subscribedFeedsMap = subscribedChannelsMap || {}
@@ -3886,6 +3906,16 @@ export class FeedService {
         continue;
       this.updateFeedsByFeedId(feed.nodeId, feed.id);
     }
+  }
+
+  updateSubscribedFeedsWithTime(nodeId: string){
+    let lastSubscribedFeedsTime: number = 0;
+
+    let mLastSubscribedFeedUpdateMap = this.lastSubscribedFeedsUpdateMap || "";
+    let update = mLastSubscribedFeedUpdateMap[nodeId] || "";
+    lastSubscribedFeedsTime = update["time"] || 0;
+
+    this.getSubscribedChannels(nodeId,Communication.field.last_update, 0, lastSubscribedFeedsTime,0);
   }
 
   updateComment(nodeId: string, channelId: number, postId: number){
@@ -4574,8 +4604,7 @@ export class FeedService {
   }
 
   updateData(friendId: string){
-    this.updateFeed(friendId, true);
-
+    this.updateSubscribedFeedsWithTime(friendId);
     let list = this.getSubscribedChannelsFromNodeId(friendId);
     for (let index = 0; index < list.length; index++) {
       let channelId = list[index].id;
@@ -4773,7 +4802,7 @@ export class FeedService {
       await this.removeLastPostUpdate(nodeId,channelId);
     }
 
-    await this.removeLastFeedUpdate(nodeId);
+    // await this.removeLastFeedUpdate(nodeId);
     await this.removeServerStatisticById(nodeId);
     await this.removeServerStatusById(nodeId);
     await this.removeServerById(nodeId);
@@ -4808,11 +4837,11 @@ export class FeedService {
     return this.storeService.set(PersistenceKey.lastCommentUpdateMap,this.lastCommentUpdateMap);
   }
 
-  removeLastFeedUpdate(nodeId: string): Promise<any>{
-    this.lastFeedUpdateMap[nodeId] = undefined;
-    delete this.lastFeedUpdateMap[nodeId];
-    return this.storeService.set(PersistenceKey.lastFeedUpdateMap,this.lastFeedUpdateMap);
-  }
+  // removeLastFeedUpdate(nodeId: string): Promise<any>{
+  //   this.lastFeedUpdateMap[nodeId] = undefined;
+  //   delete this.lastFeedUpdateMap[nodeId];
+  //   return this.storeService.set(PersistenceKey.lastFeedUpdateMap,this.lastFeedUpdateMap);
+  // }
 
   removeLikeById(nodeId: string, channelId: number, postId: number):Promise<any>{
     let key = this.getKey(nodeId, channelId, postId, 0);
@@ -6015,21 +6044,39 @@ export class FeedService {
     this.storeService.set(PersistenceKey.lastPostUpdateMap, lastPostUpdateMap);
   }
 
-  updateLastFeedUpdate(nodeId: string, updatedAt: number){
-    if (this.lastFeedUpdateMap[nodeId] == undefined){
-      this.lastFeedUpdateMap[nodeId] = {
+  // updateLastFeedUpdate(nodeId: string, updatedAt: number){
+  //   if (this.lastFeedUpdateMap[nodeId] == undefined){
+  //     this.lastFeedUpdateMap[nodeId] = {
+  //       nodeId: nodeId,
+  //       time: updatedAt + 1
+  //     }
+  //   } else{
+  //     let oldTime = this.lastFeedUpdateMap[nodeId].time || 0;
+  //     if (oldTime > updatedAt){
+  //       return ;
+  //     }
+  //     this.lastFeedUpdateMap[nodeId].time = updatedAt + 1;
+  //   }
+
+  //   this.storeService.set(PersistenceKey.lastFeedUpdateMap, this.lastFeedUpdateMap);
+  // }
+
+
+  updateLastSubscribedFeedsUpdate(nodeId: string, updatedAt: number){
+    if (this.lastSubscribedFeedsUpdateMap[nodeId] == undefined){
+      this.lastSubscribedFeedsUpdateMap[nodeId] = {
         nodeId: nodeId,
         time: updatedAt + 1
       }
     } else{
-      let oldTime = this.lastFeedUpdateMap[nodeId].time || 0;
+      let oldTime = this.lastSubscribedFeedsUpdateMap[nodeId].time || 0;
       if (oldTime > updatedAt){
         return ;
       }
-      this.lastFeedUpdateMap[nodeId].time = updatedAt + 1;
+      this.lastSubscribedFeedsUpdateMap[nodeId].time = updatedAt + 1;
     }
 
-    this.storeService.set(PersistenceKey.lastFeedUpdateMap, this.lastFeedUpdateMap);
+    this.storeService.set(PersistenceKey.lastSubscribedFeedsUpdateMap, this.lastSubscribedFeedsUpdateMap);
   }
 
   updateLastCommentUpdate(key: string, nodeId: string, channelId: number, postId: number, updatedAt: number){
