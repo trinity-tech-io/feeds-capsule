@@ -3227,6 +3227,7 @@ export class FeedService {
         this.processTobeAddedFeedsFinish(nodeId, channelId);
         eventBus.publish(PublishType.subscribeFinish, nodeId,channelId);
         this.native.toast(this.formatInfoService.formatFollowSuccessMsg(this.getFeedNameById(nodeId, channelId)));
+        this.updateData(nodeId);
       }      
     }
 
@@ -4567,6 +4568,12 @@ export class FeedService {
   prepare(friendId: string){
     this.getStatistics(friendId);
     this.enableNotification(friendId);
+    if (!this.addFeedService.checkIsTobeAddedFeeds(friendId, 0)){
+      this.updateData(friendId);
+    }
+  }
+
+  updateData(friendId: string){
     this.updateFeed(friendId, true);
 
     let list = this.getSubscribedChannelsFromNodeId(friendId);
