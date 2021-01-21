@@ -349,6 +349,8 @@ export class AddFeedService {
             this.tobeAddedFeedMap[nodeId] == null || this.tobeAddedFeedMap[nodeId] == undefined){
             return false;
         }
+        if (this.getToBeAddedFeedsInfoByNodeId(nodeId).length == 0)
+            return false
         return true;
     }
 
