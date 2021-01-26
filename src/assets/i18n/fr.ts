@@ -107,7 +107,7 @@ export const fr = {
         "Pleasewait":"Please wait...",
         "feeds": 'Feeds',
         "des":"Where meaningful",
-        "des1":"conversations happens",
+        "des1":"conversations happen",
         "des2":"Learn more about Feeds?",
         "des3":"What is Feeds?",
         "des4":"Follow your interests.",
@@ -386,7 +386,7 @@ export const fr = {
         "tipMsg2":"Video processing"
     },
     "DIDdata":{
-        "Notprovided": "Not yet",
+        "Notprovided": "Not set yet",
         "NotprovidedfromDIDDocument":"Information is being obtained",
         "NoDescription":"No description or interest yet"
     },

@@ -386,7 +386,7 @@ export const zh = {
         "tipMsg2":"视频处理中"
     },
     "DIDdata": {
-        "Notprovided": "暂无",
+        "Notprovided": "还未设置",
         "NotprovidedfromDIDDocument": "信息获取中",
         "NoDescription":"暂无个人简介和兴趣爱好信息"
     },
