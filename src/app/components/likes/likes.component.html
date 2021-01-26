@@ -41,7 +41,7 @@
           <pre [ngStyle]="styleObj">{{'common.deleted' | translate}}</pre>
         </h2>
 
-        <h2 (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)" *ngIf="post.post_status !=1">
+        <h2 (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)" (press)="pressContent(post.content)" *ngIf="post.post_status !=1">
           <div *ngIf="getPostContentTextSize(post.content)<=maxTextSize" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)">
             <pre [ngStyle]="styleObj">{{ getContentText(post.content) }}</pre>
           </div>

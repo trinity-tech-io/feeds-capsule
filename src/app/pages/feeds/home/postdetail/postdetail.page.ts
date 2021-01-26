@@ -918,4 +918,13 @@ export class PostdetailPage implements OnInit {
   hideFullContent(commentId:string){
     this.isFullContent[commentId] = false;
   }
+
+  pressContent(postContent:string){
+    let text = this.feedService.parsePostContentText(postContent);
+    this.native.copyClipboard(text).then(()=>{
+      this.native.toast_trans("common.copysucceeded");
+    }).catch(()=>{
+
+    });
+  }
 }

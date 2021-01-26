@@ -616,29 +616,6 @@ export class ChannelsPage implements OnInit {
     return 1;
   }
 
-  pressName(nodeId:string,channelId: number){
-    let name ="";
-    let channel = this.feedService.getChannelFromId(nodeId,channelId) || "";
-    if (channel != ""){
-      name = channel["name"] || "";
-    }
-    if(name != "" && name.length>15){
-      this.native.createTip(name);
-    }
-  }
-
-  pressOwnName(nodeId:string,channelId: number){
-    let name ="";
-    let channel = this.feedService.getChannelFromId(nodeId,channelId) || "";
-    if (channel != ""){
-      name = channel["owner_name"] || "";
-    }
-    if(name != "" && name.length>40){
-      this.native.createTip(name);
-    }
-  }
-
-
   scrollToTop(int) {
     let sid = setTimeout(() => {
        this.content.scrollToTop(1);
@@ -1127,4 +1104,14 @@ export class ChannelsPage implements OnInit {
     });
    this.native.navigateForward(['/feedinfo'],"");
   }
+
+  pressContent(postContent:string){
+    let text = this.feedService.parsePostContentText(postContent);
+    this.native.copyClipboard(text).then(()=>{
+      this.native.toast_trans("common.copysucceeded");
+    }).catch(()=>{
+
+    });
+  }
+
 }
