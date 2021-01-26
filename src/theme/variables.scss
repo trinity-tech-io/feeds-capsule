@@ -192,7 +192,7 @@
 
   --ion-text-color: #ffffff;
   --ion-text-color-rgb: 255,255,255;
-  
+
   --ion-item-background: #272d41;
 
   --ion-backdrop-color:#ffffff;
@@ -339,7 +339,7 @@ ion-row {
         justify-content: center;
         align-items: center;
         border-radius: 10px;
-    
+
         ion-label {
             font-size: 16px;
             font-weight: 500;
@@ -355,7 +355,7 @@ ion-row {
         }
     }
 
-    // Cancel Option #2 - White button, black label 
+    // Cancel Option #2 - White button, black label
     .cancel2 {
       box-shadow: 0 3px 15px 0 #ededf0;
       background-color: #ffffff;
@@ -365,11 +365,11 @@ ion-row {
           color: #000000;
       }
     }
-    
+
     .confirm {
         box-shadow: 0 3px 15px 0 #ededf0;
         background-color: #368bff;
-        
+
         ion-label {
             color: #ffffff;
         }
@@ -380,7 +380,7 @@ ion-row {
   .cancel {
   }
 
-  // Cancel Option #2 - Dark button, white label 
+  // Cancel Option #2 - Dark button, white label
   .cancel2 {
     box-shadow: 0 3px 6px 0 #151626;
     background-color: #202039;
@@ -409,7 +409,7 @@ ion-row {
     height: 50px;
     width: 50px;
   }
-  
+
   .offline {
     width: 13px;
     height: 13px;
@@ -455,7 +455,7 @@ ion-row {
         display: flex;
         flex-direction: column;
         align-items: flex-start;
-        justify-content: center;  
+        justify-content: center;
 
           ion-label {
             font-size: 16px;
@@ -499,13 +499,13 @@ ion-row {
           height: 4.4px;
           object-fit: contain;
         }
-      
+
         ion-button {
-          width: 76.8px;
+          // width: 88px;
           height: 28px;
           --border-radius: 30px;
           --box-shadow: none;
-      
+
           ion-label {
             font-size: 9px !important;
             font-weight: 700;
@@ -594,7 +594,7 @@ ion-row {
         img {
           width: 18.4px;
           height: 4.4px;
-          overflow: visible;              
+          overflow: visible;
         }
       }
 
@@ -763,7 +763,7 @@ ion-row {
     .button-inner {
       justify-content: center;
     }
-  } 
+  }
 }
 
 .bottom-sheet-popover .popover-content {
@@ -776,7 +776,7 @@ ion-row {
   // top: calc(100% - 280px) !important;
   // z-index: -1;
   max-height: 280px;
-  min-height: 280px; 
+  min-height: 280px;
   border-top-left-radius: 35px;
   border-top-right-radius: 35px;
 }
@@ -802,7 +802,7 @@ ion-row {
   top: calc(100% - 170px) !important;
   z-index: -1;
   max-height: 140px;
-  min-height: 140px; 
+  min-height: 140px;
   // border-top-left-radius: 35px;
   // border-top-right-radius: 35px;
   // border-bottom-left-radius: 35px;
@@ -842,8 +842,8 @@ ion-row {
 
 .channel-img-div{
   position: relative;
-  text-align: center; 
-  width: 100%; 
+  text-align: center;
+  width: 100%;
   margin-top: 14.5px;
 }
 .channel-img{
@@ -854,7 +854,7 @@ ion-row {
 }
 .channel-title-div{
   text-align: center;
-  width: 100%; 
+  width: 100%;
   margin-top: 14px;
 }
 
@@ -871,7 +871,7 @@ ion-row {
 }
 
 .channel-owner-div{
-  width: 100%; 
+  width: 100%;
   text-align: center;
 }
 
@@ -894,10 +894,10 @@ ion-row {
 .channel-desc-div{
   padding-right: 29px;
   text-align: center;
-  width: 100%; 
+  width: 100%;
   padding-top: 14px;
   padding-left: 29px;
-  
+
 }
 
 .channel-desc{
@@ -1030,7 +1030,7 @@ ion-row {
   font-stretch: normal;
   font-style: normal;
   line-height: 1.27;
-  letter-spacing: normal; 
+  letter-spacing: normal;
   color: #a0a2c4;
 
   margin-left: 5px;
@@ -1306,7 +1306,7 @@ ion-header {
 }
 
 .box{
-  width: 171px; 
+  width: 171px;
   height: 153px;
 
   display: inline-block;
@@ -1351,7 +1351,7 @@ vertical-align: middle;
   width: 100%;
   height: 100%;
   display: flex;
-  align-items: center; 
+  align-items: center;
   text-align: center;
 }
 
@@ -1394,7 +1394,7 @@ vertical-align: middle;
 
   margin-left: 34px;
   margin-right: 34px;
-  
+
   margin-top: 60px;
   margin-bottom: 10px;
 
@@ -1607,14 +1607,14 @@ vertical-align: middle;
 
   .bind-feed-source-button-div{
     height: 41px;
-    margin-top: 28px; 
-    margin-left: 32px; 
-    margin-right: 32px; 
+    margin-top: 28px;
+    margin-left: 32px;
+    margin-right: 32px;
   }
 }
 
 .feed-source{
-  width: 100%; 
+  width: 100%;
   margin: 20px;
   .feed-source-div{
     margin-bottom: 40px;
@@ -1644,9 +1644,9 @@ vertical-align: middle;
       height: 100px;
 
       .feed-source-card-right-img-div{
-        margin-right: 16px ; 
-        float: right; 
-        margin-top: 40px; 
+        margin-right: 16px ;
+        float: right;
+        margin-top: 40px;
 
         .feed-source-card-right-img{
           width: 6.7px;
@@ -1655,18 +1655,18 @@ vertical-align: middle;
       }
 
       .feed-source-card-content{
-        display: flex; 
-        margin-left: 17px; 
+        display: flex;
+        margin-left: 17px;
         width: calc(100% - 40px -32px);
 
         .feed-source-card-img-div{
-          margin-top: 22px; 
-          margin-bottom: 22px; 
-          width: 58px; 
+          margin-top: 22px;
+          margin-bottom: 22px;
+          width: 58px;
           height: 58px;
 
           .feed-source-card-img{
-            width: 56px; 
+            width: 56px;
             height: 56px;
           }
 
@@ -1680,14 +1680,14 @@ vertical-align: middle;
         .feed-source-card-content-detail{
           flex-wrap: nowrap;
           width: calc(100% - 20px - 17px - 56px);
-          margin-top: 17px; 
+          margin-top: 17px;
           margin-left: 12px;
 
           .name{
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
-            
+
             font-family: Montserrat;
             font-size: 17px;
             font-weight: bold;
@@ -1718,7 +1718,7 @@ vertical-align: middle;
 
           .users-img-div{
             margin-top: 5px;
-            width: 100%; 
+            width: 100%;
             flex-wrap: nowrap;
             display: flex;
 
@@ -1773,7 +1773,7 @@ vertical-align: middle;
   }
 
   .button-div{
-    margin-top: 40px; 
+    margin-top: 40px;
     margin-left: 20px;
     margin-bottom: 40px;
 
@@ -1787,7 +1787,7 @@ vertical-align: middle;
       text-align: left;
       color: #368bff;
     }
-  
+
     .bind-feed-source-button{
       margin-top: 23px;
       font-family: MontserratMedium;
@@ -1800,11 +1800,11 @@ vertical-align: middle;
       color: #368bff;
     }
   }
-  
+
 }
 
 .content-img {
-  width: calc(100% - 37px - 37px); 
+  width: calc(100% - 37px - 37px);
   height: 202px;
 
   --border-radius: 8px;
@@ -1812,7 +1812,7 @@ vertical-align: middle;
 
 .content-img-without-margin {
   margin-top: 2px;
-  width: 100%; 
+  width: 100%;
   height: 202px;
 
   --border-radius: 8px;
@@ -1831,8 +1831,8 @@ vertical-align: middle;
   position: fixed;
   top: 36px;
   left: 0;
-  z-index: 10; 
-  width: 100%; 
+  z-index: 10;
+  width: 100%;
   height: 100%;
 
   .trans-big-img{
@@ -1845,7 +1845,7 @@ vertical-align: middle;
     .image{
       width:auto;
       height:auto; max-width: 100%;
-      max-height: 100%; 
+      max-height: 100%;
     }
   }
 }
