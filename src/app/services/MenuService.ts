@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ActionSheetController } from '@ionic/angular';
+import { ActionSheetController} from '@ionic/angular';
 import { TranslateService} from '@ngx-translate/core';
 import { FeedService } from './FeedService';
 import { NativeService } from './NativeService';
@@ -35,7 +35,7 @@ export class MenuService {
                 handler: () => {
                     this.native.toast("common.comingSoon");
                 }
-            }, {
+            },{
                 text: this.translate.instant("common.unsubscribe"),
                 role: 'destructive',
                 icon: 'trash',
@@ -46,6 +46,15 @@ export class MenuService {
                     }
 
                     this.feedService.unsubscribeChannel(nodeId,channelId);
+                }
+            },{
+                text: this.translate.instant("common.cancel"),
+                role: 'cancel',
+                icon: 'close-circle',
+                handler: () => {
+                    if(this.postDetail !=null){
+                       this.postDetail.dismiss();
+                    }
                 }
             }]
         });
@@ -67,6 +76,16 @@ export class MenuService {
                 icon: 'share',
                 handler: () => {
                     this.native.toast("common.comingSoon");
+                }
+            },
+            {
+                text: this.translate.instant("common.cancel"),
+                role: 'cancel',
+                icon: 'close-circle',
+                handler: () => {
+                    if(this.postDetail !=null){
+                       this.postDetail.dismiss();
+                    }
                 }
             }
         ]
@@ -97,6 +116,16 @@ export class MenuService {
                             this.postDetail.dismiss();
                         });
                     }
+                },
+                {
+                    text: this.translate.instant("common.cancel"),
+                    role: 'cancel',
+                    icon: 'close-circle',
+                    handler: () => {
+                        if(this.postDetail !=null){
+                           this.postDetail.dismiss();
+                        }
+                    }
                 }
             ]
         });
@@ -119,7 +148,18 @@ export class MenuService {
               handler: () => {
                 this.feedService.unsubscribeChannel(nodeId, channelId);
               }
-            }]
+            },
+            {
+                text: this.translate.instant("common.cancel"),
+                role: 'cancel',
+                icon: 'close-circle',
+                handler: () => {
+                    if(this.postDetail !=null){
+                       this.postDetail.dismiss();
+                    }
+                }
+            }
+        ]
           });
 
           this.postDetail.onWillDismiss().then(()=>{
@@ -141,6 +181,16 @@ export class MenuService {
               handler: () => {
                 this.feedService.unsubscribeChannel(nodeId, channelId);
               }
+            },
+            {
+                text: this.translate.instant("common.cancel"),
+                role: 'cancel',
+                icon: 'close-circle',
+                handler: () => {
+                    if(this.postDetail !=null){
+                       this.postDetail.dismiss();
+                    }
+                }
             }]
           });
 
@@ -162,7 +212,6 @@ export class MenuService {
     async showPostDetailMenu(nodeId: string, channelId: number, channelName: string,postId:number){
          this.postDetail = await this.actionSheetController.create({
             cssClass: 'editPost',
-
             buttons: [
             {
                     text: this.translate.instant("common.sharepost"),
@@ -180,9 +229,20 @@ export class MenuService {
             },
             {
                 text: this.translate.instant("common.removepost"),
+                role: 'destructive',
                 icon: 'detle',
                 handler: () => {
                     this.handlePostDetailMenun(nodeId,channelId,channelName,postId,"removePost");
+                }
+            },
+            {
+                text: this.translate.instant("common.cancel"),
+                role: 'cancel',
+                icon: 'close-circle',
+                handler: () => {
+                    if(this.postDetail !=null){
+                       this.postDetail.dismiss();
+                    }
                 }
             }
         ]
@@ -236,6 +296,15 @@ export class MenuService {
                 }
 
                 this.feedService.unsubscribeChannel(nodeId,channelId);
+            }
+        },{
+            text: this.translate.instant("common.cancel"),
+            role: 'cancel',
+            icon: 'close-circle',
+            handler: () => {
+                if(this.postDetail !=null){
+                   this.postDetail.dismiss();
+                }
             }
         }
        ]
@@ -319,6 +388,16 @@ export class MenuService {
                 handler:()=>{
                 openGallery(that)
                 },
+            },
+            {
+                text: this.translate.instant("common.cancel"),
+                role: 'cancel',
+                icon: 'close-circle',
+                handler: () => {
+                    if(this.postDetail !=null){
+                       this.postDetail.dismiss();
+                    }
+                }
             }
         ]
         });

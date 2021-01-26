@@ -260,6 +260,10 @@ ion-input {
     border-bottom: 1px solid  rgba(34, 34, 34, 0.07);
   }
 
+  .action-sheet-destructive .action-sheet-button-inner{
+    color:#ff0000;
+  }
+
   .action-sheet-button-inner{
     justify-content: left;
     font-size: 14px;
@@ -276,10 +280,23 @@ ion-input {
 }
 
 
-.dark .editPost .action-sheet-group {
-  background:#2e2f4e !important;
+.dark .editPost .action-sheet-group{
+  --background:#2e2f4e !important;
  .action-sheet-button{
    border-bottom: 1px solid  rgba(255,255,255, 0.07);
+ }
+
+ .action-sheet-destructive .action-sheet-button-inner{
+  color:#ff0000;
+  .action-sheet-icon{
+    margin-top:-4px;
+    margin-left:14px;
+    margin-right:10px;
+    color: #fff;
+    filter: drop-shadow(#ff0000 80px 0);
+    transform: translateX(-80px);
+    overflow:hidden;
+  }
  }
 
  .action-sheet-button-inner{
@@ -301,6 +318,10 @@ ion-input {
  }
 }
 
+.dark .editPost .action-sheet-group-cancel .action-sheet-cancel.sc-ion-action-sheet-ios {
+  background:#2e2f4e !important;
+  font-weight: 600;
+}
 
 .status{
   position:absolute;
