@@ -44,7 +44,7 @@
           <h2 *ngIf="postStatus===1">
             <pre>{{'common.deleted' | translate}}</pre>
           </h2>
-          <h2 *ngIf="postStatus!=1">
+          <h2 *ngIf="postStatus!=1" (press)="pressContent(postContent)">
             <pre [ngStyle]="styleObj">{{ getContentText(postContent) }}</pre>
           </h2>
           <img

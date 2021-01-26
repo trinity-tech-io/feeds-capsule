@@ -71,7 +71,7 @@ export class LikesComponent implements OnInit {
       this.native.toastWarn('common.connectionError');
       return;
     }
-    
+
     if (this.checkMyLike(nodeId,channelId,postId)){
       this.feedService.postUnlike(nodeId,Number(channelId),Number(postId),0);
       return ;
@@ -148,7 +148,7 @@ export class LikesComponent implements OnInit {
       return obj.content+this.translate.instant('HomePage.hoursAgo');
     }
     if(obj.type === 'day'){
-      
+
       if(obj.content === 1){
         return this.translate.instant('common.yesterday');
       }
@@ -174,7 +174,7 @@ export class LikesComponent implements OnInit {
   }
 
   pressOwerName(nodeId:string,channelId:string){
-    
+
     let channel = this.getChannel(nodeId,channelId) || "";
     if(channel != ""){
       let name =channel["owner_name"] || "";
@@ -210,10 +210,10 @@ export class LikesComponent implements OnInit {
         videoElement.load();
         clearTimeout(sid);
       },10);
-      
+
     }
   }
-  
+
   pauseAllVideo(){
     let videoids = this.isLoadVideoiamge;
     for(let id  in videoids){
@@ -230,7 +230,18 @@ export class LikesComponent implements OnInit {
     let duration = 29;
     if(videoThumbKey != ""){
       duration = videoThumbKey["duration"] || 0;
-    } 
+    }
     return UtilService.timeFilter(duration);
   }
+
+
+  pressContent(postContent:string){
+    let text = this.feedService.parsePostContentText(postContent);
+    this.native.copyClipboard(text).then(()=>{
+      this.native.toast_trans("common.copysucceeded");
+    }).catch(()=>{
+
+    });
+  }
+
 }

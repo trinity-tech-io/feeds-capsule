@@ -634,31 +634,6 @@ clearData(){
     }, int);
   }
 
-  pressName(nodeId:string,channelId: number){
-    let name ="";
-    let channel = this.getChannel(nodeId, channelId) || "";
-    if (channel != ""){
-      name = channel.name || "";
-    }
-    if(name != "" && name.length>15){
-      this.native.createTip(name);
-    }
-  }
-
-  pressOwnName(nodeId:string,channelId: number){
-
-    let name ="";
-    let channel = this.getChannel(nodeId, channelId) || "";
-    if (channel != "") {
-         name  =  channel["owner_name"] || "";
-    }
-
-    if(name != "" && name.length>40){
-      this.native.createTip(name);
-    }
-
-  }
-
   checkChannelIsMine(nodeId:string,channelId:number){
     if (this.feedService.checkChannelIsMine(nodeId,channelId))
       return 0;
@@ -1155,6 +1130,15 @@ clearData(){
       if(this.popover!=null){
          this.popover.dismiss();
       }
+  }
+
+  pressContent(postContent:string){
+    let text = this.feedService.parsePostContentText(postContent);
+    this.native.copyClipboard(text).then(()=>{
+      this.native.toast_trans("common.copysucceeded");
+    }).catch(()=>{
+
+    });
   }
 
 }
