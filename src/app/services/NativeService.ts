@@ -69,7 +69,7 @@ export class NativeService {
         }).then(toast => toast.present());
     }
 
-  
+
     public copyClipboard(text) {
         return this.clipboard.copy(text);
     }
@@ -86,7 +86,7 @@ export class NativeService {
         this.navCtrl.navigateRoot(router);
     }
 
-   
+
     public async showLoading(content: string = '', durationTime: number = 30000) {
         content = this.translate.instant(content);
 
@@ -140,8 +140,8 @@ export class NativeService {
         return this.navCtrl;
     }
 
-    navigateForward(router:any, options:any):Promise<boolean>{ 
-        let option = options || ""; 
+    navigateForward(router:any, options:any):Promise<boolean>{
+        let option = options || "";
         if(option !== ""){
             return this.navCtrl.navigateForward(router, options);
         } else {
@@ -175,7 +175,7 @@ export class NativeService {
     }
 
     async openViewer(imgPath:string,newNameKey:string,oldNameKey:string,appService?:any,isOwer?:boolean) {
-       
+
          titleBarManager.setTitle(this.translate.instant(newNameKey));
          this.setTitleBarBackKeyShown(false);
          appService.hideright();
@@ -204,9 +204,9 @@ export class NativeService {
                   });
             }
             appService.addright();
-           
+
         })
-    
+
         return await modal.present().then(()=>{
 
                 const el:any = document.querySelector('ion-modal') || "";
@@ -292,16 +292,21 @@ export class NativeService {
   }
 
 
-    async setVideoFullScreen(postImg:string,videoSrc:string) {
-        const modal = await this.modalController.create({
+async setVideoFullScreen(postImg:string,videoSrc:string) {
+    const modal = await this.modalController.create({
           component: VideofullscreenComponent,
           componentProps: {
             'postImg': postImg,
             'videoSrc': videoSrc,
           }
         });
-        await modal.present();
+    await modal.present();
+    return modal;
+}
 
-        return modal;
-    }
+public clickUrl(url:string,event:any){
+        this.openUrl(url);
+        event.stopPropagation();
+}
+
 }
