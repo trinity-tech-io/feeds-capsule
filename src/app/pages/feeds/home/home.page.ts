@@ -468,7 +468,17 @@ clearData(){
     this.native.getNavCtrl().navigateForward(['/channels', nodeId, channelId]);
   }
 
-  navToPostDetail(nodeId:string, channelId:number, postId:number){
+  navToPostDetail(nodeId:string, channelId:number, postId:number,event?:any){
+    event = event || "";
+    if(event!=""){
+     let e = event||window.event; //兼容IE8
+     let target = e.target||e.srcElement;  //判断目标事件
+     if(target.tagName.toLowerCase()=="span"){
+      let url = target.textContent || target.innerText;
+      this.native.clickUrl(url,event);
+      return;
+     }
+    }
     this.clearData();
     this.native.getNavCtrl().navigateForward(['/postdetail',nodeId, channelId,postId]);
     //this.pauseVideo(nodeId+channelId+postId);

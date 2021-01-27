@@ -927,4 +927,16 @@ export class PostdetailPage implements OnInit {
 
     });
   }
+
+  clickUrl(event:any){
+    event = event || "";
+    if(event!=""){
+     let e = event||window.event; //兼容IE8
+     let target = e.target||e.srcElement;  //判断目标事件
+     if(target.tagName.toLowerCase()=="span"){
+      let url = target.textContent || target.innerText;
+      this.native.clickUrl(url,event);
+     }
+    }
+  }
 }

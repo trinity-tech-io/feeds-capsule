@@ -44,7 +44,8 @@
   ],
   "urls": [
     "https://www.trinity-tech.io/*",
-    "https://*"
+    "https://*",
+    "http://*"
   ],
   "background_color": "#4e8ef7",
   "theme_display": "show",

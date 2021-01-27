@@ -25,6 +25,8 @@ import { VgControlsModule } from 'ngx-videogular';
 import { VgOverlayPlayModule } from 'ngx-videogular';
 import { VgBufferingModule } from 'ngx-videogular';
 
+import { ShareModule } from 'src/app/share/share.module';
+
 @NgModule({
   imports: [
     CommonModule,
@@ -35,6 +37,7 @@ import { VgBufferingModule } from 'ngx-videogular';
     VgBufferingModule,
     TranslateModule,
     IonicModule,
+    ShareModule,
   ],
 
   declarations: [
