@@ -145,7 +145,10 @@ export class MyApp {
   }
 
   goToFeedSource(){
-    this.checkDid();
+    let sid = setTimeout(()=>{
+      this.checkDid();
+      clearTimeout(sid);
+    },0);
   }
 
   // goToDev(){

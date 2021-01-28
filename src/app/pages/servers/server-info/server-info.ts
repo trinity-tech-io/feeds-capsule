@@ -1,6 +1,5 @@
 import { Component, OnInit, NgZone } from '@angular/core';
 import { Events,PopoverController} from '@ionic/angular';
-import { ActivatedRoute } from '@angular/router';
 import { NativeService } from 'src/app/services/NativeService';
 import { FeedService } from 'src/app/services/FeedService';
 import { ThemeService } from 'src/app/services/theme.service';
@@ -54,7 +53,6 @@ export class ServerInfoPage implements OnInit {
   public isShowQrcode: boolean = true;
   public actionSheet:any = null;
   public  ownerChannelList:any = [];
-  public nodeStatus: any = {};
   public channel:any =null;
   public clickbutton:string ="";
   public feedPublicStatus:any = {};
@@ -65,7 +63,6 @@ export class ServerInfoPage implements OnInit {
     private events: Events,
     private zone: NgZone,
     private native: NativeService,
-    private acRoute: ActivatedRoute,
     private feedService: FeedService,
     public theme: ThemeService,
     private translate: TranslateService,
@@ -175,12 +172,6 @@ export class ServerInfoPage implements OnInit {
         this.initMyFeeds();
       });
     });
-
-    this.events.subscribe("feeds:friendConnectionChanged", (nodeId, status)=>{
-      this.zone.run(()=>{
-        this.nodeStatus[nodeId] = status;
-      });
-    });
   }
 
   ionViewDidEnter(){
@@ -197,12 +188,12 @@ export class ServerInfoPage implements OnInit {
     this.native.hideLoading();
     this.events.unsubscribe("feeds:connectionChanged");
     this.events.unsubscribe("feeds:serverConnectionChanged");
+    this.events.unsubscribe("feeds:login_finish");
     this.events.unsubscribe("feeds:removeFeedSourceFinish");
     this.events.unsubscribe("feeds:updateTitle");
     this.events.unsubscribe("feeds:editServer");
     this.events.unsubscribe('feeds:subscribeFinish');
     this.events.unsubscribe('feeds:unsubscribeFinish');
-    this.events.unsubscribe('feeds:friendConnectionChanged');
     this.clickbutton = "";
     if(this.actionSheet!=null)
       this.actionSheet.dismiss();
@@ -475,7 +466,6 @@ export class ServerInfoPage implements OnInit {
   initMyFeeds(){
     //this.ownerChannelList = this.feedService.getMyChannelList();
     this.ownerChannelList = this.feedService.getChannelsListFromNodeId(this.nodeId) || [];
-    this.initnodeStatus();
   }
 
   parseChannelAvatar(avatar: string): string{
@@ -507,14 +497,6 @@ export class ServerInfoPage implements OnInit {
 
     this.feedService.subscribeChannel(channel.nodeId, channel.id);
   }
-
-  initnodeStatus(){
-    for(let index =0 ;index<this.ownerChannelList.length;index++){
-           let nodeId = this.ownerChannelList[index]['nodeId'];
-           let status = this.checkServerStatus(nodeId);
-           this.nodeStatus[nodeId] = status;
-    }
- }
 
  checkServerStatus(nodeId: string){
   return this.feedService.getServerStatusFromId(nodeId);
