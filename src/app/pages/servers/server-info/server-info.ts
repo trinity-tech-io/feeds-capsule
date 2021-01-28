@@ -1,15 +1,16 @@
 import { Component, OnInit, NgZone } from '@angular/core';
 import { Events,PopoverController} from '@ionic/angular';
-import { NativeService } from 'src/app/services/NativeService';
-import { FeedService } from 'src/app/services/FeedService';
-import { ThemeService } from 'src/app/services/theme.service';
-import { HttpService } from 'src/app/services/HttpService';
+import { NativeService } from '../../../services/NativeService';
+import { FeedService } from '../../../services/FeedService';
+import { ThemeService } from '../../../services/theme.service';
+import { HttpService } from '../../../services/HttpService';
 import { ActionSheetController } from '@ionic/angular';
 import { TranslateService } from "@ngx-translate/core";
-import { ApiUrl } from 'src/app/services/ApiUrl';
-import { MenuService } from 'src/app/services/MenuService';
-import { UtilService } from 'src/app/services/utilService';
+import { ApiUrl } from '../../../services/ApiUrl';
+import { MenuService } from '../../../services/MenuService';
+import { UtilService } from '../../../services/utilService';
 import { StorageService } from '../../../services/StorageService';
+import { PopupProvider } from '../../../services/popup';
 import * as _ from 'lodash';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
@@ -58,6 +59,7 @@ export class ServerInfoPage implements OnInit {
   public feedPublicStatus:any = {};
   public popover:any = "";
   public bindingServer:any = null;
+  public curChannel:any = null;
   constructor(
     private actionSheetController:ActionSheetController,
     private events: Events,
@@ -69,7 +71,8 @@ export class ServerInfoPage implements OnInit {
     public httpService: HttpService,
     private menuService: MenuService,
     private storageService:StorageService,
-    private popoverController:PopoverController
+    private popoverController:PopoverController,
+    public popupProvider:PopupProvider,
   ) {}
 
   ngOnInit() {
@@ -195,6 +198,7 @@ export class ServerInfoPage implements OnInit {
     this.events.unsubscribe('feeds:subscribeFinish');
     this.events.unsubscribe('feeds:unsubscribeFinish');
     this.clickbutton = "";
+    this.curChannel = null;
     if(this.actionSheet!=null)
       this.actionSheet.dismiss();
   }
@@ -407,8 +411,16 @@ export class ServerInfoPage implements OnInit {
       return 0;
   }
 
+  clickPublicFeeds(channel:any){
+    this.curChannel = channel;
+    if(this.developerMode){
+      this.developerModeConfirm();
+      return;
+    }
+    this.publicFeeds(channel,"");
+  }
 
-  publicFeeds(channel:any){
+  publicFeeds(channel:any,developerMode:string){
     let feedsUrl = this.feedsUrl+"/"+channel["id"];
     let channelAvatar = this.feedService.parseChannelAvatar(channel["avatar"]);
     let feedsUrlHash = UtilService.SHA256(feedsUrl);
@@ -424,6 +436,10 @@ export class ServerInfoPage implements OnInit {
       "nodeId":this.nodeId,
       "ownerDid":channel["owner_did"]
     };
+
+    if(developerMode!=""){
+      obj["purpose"] = "1";
+    }
 
     this.httpService.ajaxPost(ApiUrl.register,obj).then((result)=>{
       if(result["code"] === 200){
@@ -563,4 +579,33 @@ getPublicStatus(channelId:string){
     })
   }
 }
+
+developerModeConfirm(){
+  this.popover = this.popupProvider.ionicConfirm(
+    this,
+    // "ConfirmdialogComponent.signoutTitle",
+    "",
+    "ServerInfoPage.des1",
+    this.cancel,
+    this.confirm,
+    'tskth.svg',
+    "ServerInfoPage.des2",
+    "ServerInfoPage.des3",
+  );
+}
+
+cancel(that:any){
+  if(this.popover!=null){
+    this.popover.dismiss();
+  }
+  that.publicFeeds(that.curChannel,"");
+}
+
+confirm(that:any){
+  if(this.popover!=null){
+    this.popover.dismiss();
+  }
+  that.publicFeeds(that.curChannel,"1");
+}
+
 }

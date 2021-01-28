@@ -67,7 +67,7 @@
         </ion-col>
 
         <ion-col size="3" class="right-col">
-          <ion-button *ngIf="handlePublic(channel.id)==''" class="unsubscribed" fill="outline" (click)="publicFeeds(channel)" [disabled]='!isShowQrcode'>
+          <ion-button *ngIf="handlePublic(channel.id)==''" class="unsubscribed" fill="outline" (click)="clickPublicFeeds(channel)" [disabled]='!isShowQrcode'>
             <ion-label >{{'ServerInfoPage.public' | translate}}</ion-label>
           </ion-button>
           <ion-button *ngIf="handlePublic(channel.id)!=''" (click)="unPublicFeeds(channel)" [disabled]='!isShowQrcode'>

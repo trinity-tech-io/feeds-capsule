@@ -23,10 +23,11 @@
     <ion-grid class="feedSource-container" [class.darkContainer]="theme.darkMode">
       <!-------------------- SERVER FEEDS -------------------->
       <div class="source" *ngIf="feedList.length > 0">
+        <div  *ngFor="let item of feedList"
+              (click)="clickItem(item)">
           <ion-row
             class="item-row ripple ion-activatable"
-            *ngFor="let item of feedList"
-            (click)="clickItem(item)"
+            *ngIf="handleShow(item)"
           >
             <ion-col size="2.75" class="left-col">
               <div class="feedAvatar">
@@ -47,6 +48,7 @@
             </ion-col>
             <ion-ripple-effect></ion-ripple-effect>
           </ion-row>
+        </div>
       </div>
     </ion-grid>
 
