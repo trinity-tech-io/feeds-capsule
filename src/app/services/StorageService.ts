@@ -21,37 +21,9 @@ export class StorageService {
         return this.storage.get(key);
     }
 
-   public remove(key: string): Promise<any>{
+    public remove(key: string): Promise<any>{
         return this.storage.remove(key);
     }
-
-    // savePostContentImg(nodeChannelPostId:string, content: any): Promise<any>{
-    //     return this.storage.set("postContentImg"+nodeChannelPostId, content);
-    // }
-
-    // loadPostContentImg(nodeChannelPostId:string): Promise<any>{
-    //     return this.storage.get("postContentImg"+nodeChannelPostId);
-    // }
-
-    // removePostContentImg(nodeChannelPostId:string): Promise<any>{
-    //     return this.storage.remove("postContentImg"+nodeChannelPostId);
-    // }
-
-    // loadVideo(nodeChannelPostId:string){
-    //     return this.storage.get("video"+nodeChannelPostId);
-    // }
-
-    // removeViedo(nodeChannelPostId:string){
-    //   return this.storage.remove("video"+nodeChannelPostId); 
-    // }
-
-    // loadVideoPosterImg(nodeChannelPostId:string){
-    //     return this.storage.get("videoPosterImg"+nodeChannelPostId);
-    // }
-
-    // removeViedoPosterImg(nodeChannelPostId:string){
-    //   return this.storage.remove("videoPosterImg"+nodeChannelPostId); 
-    // }
 
     setInfo(){
     }
@@ -59,4 +31,6 @@ export class StorageService {
     clearAll():Promise<any>{
         return this.storage.clear();
     }
+
+
 }

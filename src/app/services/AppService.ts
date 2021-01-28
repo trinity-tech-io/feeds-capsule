@@ -184,7 +184,7 @@ export class AppService {
         this.onReceiveIntent(intent);
       });
       this.addright();
-      this.carrierService.init();
+      this.carrierService.init(signInData.did);
       this.native.setRootRouter(['/tabs/home']);
       this.feedService.updateSignInDataExpTime(signInData);
     }

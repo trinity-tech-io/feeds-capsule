@@ -7,7 +7,6 @@ import { TranslateService } from "@ngx-translate/core";
 import { ThemeService } from 'src/app/services/theme.service';
 import { AppService } from '../../services/AppService';
 declare let appManager: AppManagerPlugin.AppManager;
-declare let didManager: DIDPlugin.DIDManager;
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 @Component({
@@ -16,8 +15,6 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
   styleUrls: ['./signin.page.scss'],
 })
 export class SigninPage implements OnInit {
-
-  private fakedata:boolean = false;
   public signedIn: boolean = false;
   public did: string = "";
   public userName: string = "";
@@ -64,139 +61,16 @@ export class SigninPage implements OnInit {
   }
 
   signIn(){
-    if (this.fakedata){
-      this.saveData(
-        "did:elastos:iaP7GCmtcbf3Kiy7PX8zUVaWTzZQG3Kkka",
-        "fakename",
-        null,
-        "fakeemail",
-        "faketelephone",
-        "fakelocation",
-        "fakenickname",
-        "fakedescription"
-      );
-
-      this.feedService.updateSignInDataExpTimeTo(this.feedService.getSignInData(),0);
-      this.initApp();
-      return;
-    }
-
     this.zone.run(()=>{
       this.native.showLoading('common.waitMoment',2000);
     });
-    appManager.sendIntent("https://did.elastos.net/credaccess", {
-      claims: {
-        name: true,
-        avatar: {
-          required: false,
-          reason: "For profile picture"
-        },
-        email: {
-          required: false,
-          reason: "Maybe Feeds dapp need"
-        },
-        gender: {
-          required: false,
-          reason: "Maybe Feeds dapp need"
-        },
-        telephone: {
-          required: false,
-          reason: "Maybe Feeds dapp need"
-        },
-        nation: {
-          required: false,
-          reason: "Maybe Feeds dapp need"
-        },
-        nickname:{
-          required: false,
-          reason: "Maybe Feeds dapp need"
-        },
-        description:{
-          required: false,
-          reason: "Maybe Feeds dapp need"
-        },
-        interests:{
-          required: false,
-          reason: "Maybe Feeds dapp need"
-        }
-      }
-    }, {}, (response: any) => {
-      if (response && response.result && response.result.presentation) {
-        let data = response.result;
-
-        // Create a real presentation object from json data
-        didManager.VerifiablePresentationBuilder.fromJson(JSON.stringify(response.result.presentation), (presentation) => {
-          this.zone.run(()=>{
-            let credentials = presentation.getCredentials();
-            this.saveCredentialById(data.did,credentials, "name");
-
-            let interests = this.findCredentialValueById(data.did, credentials, "interests", "");
-            let desc = this.findCredentialValueById(data.did, credentials, "description", "");
-
-            let description = this.translate.instant("DIDdata.NoDescription");
-
-            if (desc !== "") {
-              description = desc;
-            } else if (interests != "") {
-              description = interests;
-            }
-
-            this.saveData(
-              data.did,
-              this.findCredentialValueById(data.did, credentials, "name", this.translate.instant("DIDdata.Notprovided")),
-              this.findCredentialValueById(data.did, credentials, "avatar", this.translate.instant("DIDdata.Notprovided")),
-              this.findCredentialValueById(data.did, credentials, "email", this.translate.instant("DIDdata.Notprovided")),
-              this.findCredentialValueById(data.did, credentials, "telephone", this.translate.instant("DIDdata.Notprovided")),
-              this.findCredentialValueById(data.did, credentials, "nation", this.translate.instant("DIDdata.Notprovided")),
-              this.findCredentialValueById(data.did, credentials, "nickname",""),
-              description
-            );
-            this.events.publish("feeds:signinSuccess");
-            this.initApp();
-          });
-        });
+    this.feedService.signIn().then((isSuccess)=>{
+      if (isSuccess){
+        this.appService.addright();
+        this.native.hideLoading();
+        this.native.setRootRouter('/tabs/home');
+        return;
       }
     });
   }
-
-  findCredentialValueById(did: string, credentials: DIDPlugin.VerifiableCredential[], fragment: string, defaultValue: string) {
-    let matchingCredential = credentials.find((c)=>{
-      return c.getFragment() == fragment;
-    });
-
-    if (!matchingCredential)
-      return defaultValue;
-    else
-      return matchingCredential.getSubject()[fragment];
-  }
-
-  saveCredentialById(did: string, credentials: DIDPlugin.VerifiableCredential[], fragment: string) {
-    let matchingCredential = credentials.find((c)=>{
-      return c.getFragment() == fragment;
-    });
-
-    if (matchingCredential){
-      this.feedService.saveCredential(JSON.stringify(matchingCredential));
-    }
-  }
-
-  initApp(){
-    this.appService.addright();
-    this.carrierService.init();
-    this.native.setRootRouter('/tabs/home');
-  }
-
-  saveData(
-    did: string,
-    name: string,
-    avatar: Avatar,
-    email: string,
-    telephone: string,
-    location: string,
-    nickname:string,
-    description: string
-  ) {
-    this.feedService.saveSignInData(did, name, avatar, email, telephone, location,nickname,description);
-  }
-
 }
