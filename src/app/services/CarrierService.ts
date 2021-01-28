@@ -39,12 +39,7 @@ let eventBus = null;
 //     { ipv4: "52.83.191.228", port: "33445", publicKey: "3khtxZo89SBScAMaHhTvD68pPHiKxgZT6hTCSZZVgNEm" }
 // ];
 
-const createOption:any = {
-    udpEnabled: true,
-    persistentLocation: ".data",
-    binaryUsed: true,
-    expressEnabled: false
-};
+
 
 @Injectable()
 export class CarrierService {
@@ -69,7 +64,7 @@ export class CarrierService {
         eventBus = events;
     }
 
-    init() {
+    init(did: string) {
         if (this.platform.platforms().indexOf("cordova") < 0){
             this.myInterval = setInterval(() => {
                 this.readyCallback(null);
@@ -77,7 +72,7 @@ export class CarrierService {
             }, 2000);
         } else {
             if (!this.mIsReady)
-                this.createObject(this.createCarrierInstanceSuccess, this.createCarrierInstanceError);
+                this.createObject(did, this.createCarrierInstanceSuccess, this.createCarrierInstanceError);
         }
     }
 
@@ -152,7 +147,8 @@ export class CarrierService {
 
     // ------------------------------------------------------------
 
-    createObject(success, error) {
+    createObject(did: string, success, error) {
+        let createOption = this.generateCreateOption(did);
         carrierManager.createObject(
             this.callbacks, createOption,
             (ret: any) => {success(ret); },
@@ -351,7 +347,12 @@ export class CarrierService {
         stream.write(data, onSuccess, onError);
     }
 
-    test(session: CarrierPlugin.Session){
-
+    generateCreateOption(did: string){
+        return {
+            udpEnabled: true,
+            persistentLocation: "."+did,
+            binaryUsed: true,
+            expressEnabled: false
+        };
     }
 }

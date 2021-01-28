@@ -6,9 +6,7 @@ import { CarrierService } from 'src/app/services/CarrierService';
 import { StorageService } from 'src/app/services/StorageService';
 
 let TAG: string = "Feeds::AddFeedService";
-
-
-
+let tobeAddFeedsPersistenceKey = "tobeAddedFeedMap";
 @Injectable()
 export class AddFeedService {
     //feeds://did:elastos:ixxxxxxx/carrieraddress/feedid#feedname
@@ -281,11 +279,11 @@ export class AddFeedService {
     }
 
     saveData(): Promise<any>{
-        return this.storageService.set("tobeAddedFeedMap", this.tobeAddedFeedMap);
+        return this.storageService.set(tobeAddFeedsPersistenceKey, this.tobeAddedFeedMap);
     }
 
     loadData(): Promise<{[nodeFeedId: string]: {[feedId: string]: FeedsData.ToBeAddedFeed}}>{
-        return this.storageService.get("tobeAddedFeedMap");
+        return this.storageService.get(tobeAddFeedsPersistenceKey);
     }
 
     checkIsFriends(nodeId: string): Promise<Boolean>{
@@ -362,5 +360,11 @@ export class AddFeedService {
             return false ;
         }
         return true;
+    }
+
+
+    async cleanTobeAddedFeedMap(){
+        this.tobeAddedFeedMap = {};
+        await this.storageService.remove(tobeAddFeedsPersistenceKey);
     }
 }

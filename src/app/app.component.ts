@@ -37,7 +37,6 @@ export class MyApp {
     public popupProvider:PopupProvider,
     private popoverController:PopoverController
   ) {
-      this.sService =storageService;
       this.initializeApp();
       this.initProfileData();
       this.events.subscribe("feeds:signinSuccess",()=>{

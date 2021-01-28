@@ -10,7 +10,6 @@ import { SerializeDataService } from 'src/app/services/SerializeDataService';
 import { JWTMessageService } from 'src/app/services/JWTMessageService';
 import { ConnectionService } from 'src/app/services/ConnectionService';
 import { HttpService } from 'src/app/services/HttpService';
-import { ApiUrl } from 'src/app/services/ApiUrl';
 import { FormatInfoService } from 'src/app/services/FormatInfoService';
 import { SessionService } from 'src/app/services/SessionService';
 import { PopupProvider } from 'src/app/services/popup';
@@ -56,7 +55,7 @@ let signInServerList = [];
 let notificationList:Notification[] = [];
 
 let cacheBindingAddress: string = "";
-let localCredential: string = undefined;
+let localCredential: string = "";
 
 let cachedPost:{[key:string]:Post} = {};
 
@@ -423,12 +422,11 @@ export class FeedService {
   public hideDeletedPosts:boolean = false;
   public hideDeletedComments:boolean = false;
   public hideOfflineFeeds:boolean = true;
-  public localSignInData: SignInData = undefined;
+  public localSignInData: SignInData = null;
   public currentLang:string ="";
   public curtab:string ="home";
   public channelInfo:any ={};
   public postMap: {[ncpId: string]: Post};
-  public testMode = true;
   private nonce = "";
   private realm = "";
   private serviceNonce = "";
@@ -442,7 +440,6 @@ export class FeedService {
   private lastConnectionStatus = FeedsData.ConnState.disconnected ;
   private isLogging: {[nodeId: string]: boolean} = {};
   private signinChallengeTimeout: NodeJS.Timer;
-  private autoSigninInterval;
   private isSavingChannel:boolean = false;
   private isDeclearing = false;
   private declareOwnerTimeout: NodeJS.Timer;
@@ -738,6 +735,7 @@ export class FeedService {
       if( accessTokens == ""){
         this.storeService.get(PersistenceKey.accessTokenMap).then((mAccessTokenMap)=>{
           accessTokenMap = mAccessTokenMap || {};
+          this.logUtils.logd("accessTokenMap = "+JSON.stringify(accessTokenMap),TAG);
           resolve(mAccessTokenMap);
         }).catch(()=>{
           reject();
@@ -1802,17 +1800,32 @@ export class FeedService {
     this.storeService.set(PersistenceKey.signInRawData, jsonStr);
   }
 
-  saveSignInData(
-    did: string,
-    name: string,
-    avatar: Avatar,
-    email: string,
-    telephone: string,
-    location: string,
-    nickname:string,
-    description: string
-  ){
-    this.localSignInData = new SignInData(
+  saveSignInData(did: string, name: string, avatar: Avatar, email: string,
+    telephone: string, location: string, nickname:string, description: string): Promise<SignInData>{
+    return new Promise((resolve, reject) =>{
+      this.localSignInData = this.generateSignInData(did, name, avatar, email,
+        telephone, location, nickname, description);
+      this.checkSignInDataChange(this.localSignInData).then(async (isChange)=>{
+        this.logUtils.logd("checkSignInDataChange isChange is "+isChange, TAG);
+        if (isChange){
+          this.cleanAllData();
+          this.storeService.set(PersistenceKey.signInData, this.localSignInData);
+          this.storeService.set(PersistenceKey.lastSignInData, this.localSignInData);
+          resolve(this.localSignInData);
+        }else{
+          this.storeService.set(PersistenceKey.signInData, this.localSignInData);
+          this.storeService.set(PersistenceKey.lastSignInData, this.localSignInData);
+          resolve(this.localSignInData);
+        }
+      }).catch((reason)=>{
+        reject(reason);
+      })
+    });
+  }
+
+  generateSignInData(did: string, name: string, avatar: Avatar, email: string,
+    telephone: string, location: string, nickname:string, description: string){
+    return new SignInData(
       did,
       name,
       avatar,
@@ -1823,26 +1836,11 @@ export class FeedService {
       description,
       this.getCurrentTimeNum()+this.getDaysTS(expDay)
     );
-
-    this.checkSignInDataChange(this.localSignInData).then((isChange)=>{
-      if (isChange){
-        this.removeAllAccessToken();
-        this.storeService.set(PersistenceKey.signInData, this.localSignInData);
-        this.storeService.set(PersistenceKey.lastSignInData, this.localSignInData);
-      }else{
-        this.storeService.set(PersistenceKey.signInData, this.localSignInData);
-        this.storeService.set(PersistenceKey.lastSignInData, this.localSignInData);
-      }
-    })
   }
 
   saveSignInData2(signInData: SignInData) {
     this.localSignInData = signInData;
     this.storeService.set(PersistenceKey.signInData, signInData);
-  }
-
-  cleanSignInData(){
-    this.storeService.remove(PersistenceKey.signInData);
   }
 
   getSignInData(): SignInData {
@@ -3360,9 +3358,6 @@ export class FeedService {
       }
     }
     let reqParams = requestParams.requestParams;
-    reqParams.channel_id;
-
-    eventBus. getCommentFinish
     eventBus.publish(PublishType.getCommentFinish,nodeId,reqParams.channel_id,reqParams.post_id);
   }
 
@@ -4694,6 +4689,12 @@ export class FeedService {
 
     this.storeService.remove(PersistenceKey.notificationList);
     this.storeService.remove(PersistenceKey.likeCommentMap);
+
+  }
+
+  async removeSigninData(){
+    this.localSignInData = null;
+    await this.storeService.remove(PersistenceKey.signInData);
   }
 
   getBindingServer(): Server{
@@ -6440,5 +6441,217 @@ export class FeedService {
   checkValueValid(value: string): boolean{
     let regEx = new RegExp("[`~!@#$%^&*()+=|{}':;',\\[\\]<>/?~！@#￥%……&*（）——+|{}【】《》‘；：”“’。，、？]");
     return regEx.test(value);
+  }
+
+  signOut(){
+    return new Promise((resolve, reject) =>{
+    });   
+  }
+
+  signIn(): Promise<string>{
+    return new Promise(async (resolve, reject) =>{
+      let res = await this.credaccess();
+      if (!res){
+        this.logUtils.loge("credaccess error")
+        reject("credaccess error");
+        return;
+      }
+
+      let did = await this.decodeSignInData(res);
+      if(!did){
+        this.logUtils.loge("decodeSignInData error");
+        return;
+      }
+      resolve(did);
+      this.carrierService.init(did);
+    });
+  }
+
+  decodeSignInData(data: any): Promise<string>{
+    return new Promise((resolve, reject) =>{
+      didManager.VerifiablePresentationBuilder.fromJson(JSON.stringify(data.presentation), async (presentation) => {
+        let credentials = presentation.getCredentials();
+        this.saveCredentialById(data.did,credentials, "name");
+  
+        let interests = this.findCredentialValueById(data.did, credentials, "interests", "");
+        let desc = this.findCredentialValueById(data.did, credentials, "description", "");
+  
+        let description = this.translate.instant("DIDdata.NoDescription");
+  
+        if (desc !== "") {
+          description = desc;
+        } else if (interests != "") {
+          description = interests;
+        }
+  
+        this.saveSignInData(
+          data.did,
+          this.findCredentialValueById(data.did, credentials, "name", this.translate.instant("DIDdata.Notprovided")),
+          this.findCredentialValueById(data.did, credentials, "avatar", this.translate.instant("DIDdata.Notprovided")),
+          this.findCredentialValueById(data.did, credentials, "email", this.translate.instant("DIDdata.Notprovided")),
+          this.findCredentialValueById(data.did, credentials, "telephone", this.translate.instant("DIDdata.Notprovided")),
+          this.findCredentialValueById(data.did, credentials, "nation", this.translate.instant("DIDdata.Notprovided")),
+          this.findCredentialValueById(data.did, credentials, "nickname",""),
+          description
+        ).then((signInData)=>{
+          this.events.publish("feeds:signinSuccess");
+          resolve(data.did);
+        }).catch((err)=>{
+          this.logUtils.loge("saveSignInData error");
+          reject(err);
+        });
+      },(err)=>{
+        reject(err);
+      });
+    });
+  }
+
+  saveCredentialById(did: string, credentials: DIDPlugin.VerifiableCredential[], fragment: string) {
+    let matchingCredential = credentials.find((c)=>{
+      return c.getFragment() == fragment;
+    });
+
+    if (matchingCredential){
+      this.saveCredential(JSON.stringify(matchingCredential));
+    }
+  }
+
+  findCredentialValueById(did: string, credentials: DIDPlugin.VerifiableCredential[], fragment: string, defaultValue: string) {
+    let matchingCredential = credentials.find((c)=>{
+      return c.getFragment() == fragment;
+    });
+
+    if (!matchingCredential)
+      return defaultValue;
+    else
+      return matchingCredential.getSubject()[fragment];
+  }
+
+  credaccess(): Promise<any>{
+    return new Promise((resolve, reject) =>{
+      appManager.sendIntent("https://did.elastos.net/credaccess", {
+      claims: {
+        name: true,
+        avatar: {
+          required: false,
+          reason: "For profile picture"
+        },
+        email: {
+          required: false,
+          reason: "Maybe Feeds dapp need"
+        },
+        gender: {
+          required: false,
+          reason: "Maybe Feeds dapp need"
+        },
+        telephone: {
+          required: false,
+          reason: "Maybe Feeds dapp need"
+        },
+        nation: {
+          required: false,
+          reason: "Maybe Feeds dapp need"
+        },
+        nickname:{
+          required: false,
+          reason: "Maybe Feeds dapp need"
+        },
+        description:{
+          required: false,
+          reason: "Maybe Feeds dapp need"
+        },
+        interests:{
+          required: false,
+          reason: "Maybe Feeds dapp need"
+        }
+      }
+    }, {}, (response: any) => {
+        if (response && response.result && response.result.presentation) {
+          let data = response.result;
+          resolve(data);
+          return;
+        }
+        reject("credaccess error response is "+JSON.stringify(response));
+      },(err)=>{
+        reject(err);
+      });
+    });
+  }
+
+  cleanAllData(){
+    this.storeService.clearAll();
+    this.cleanCacheData();
+  }
+
+  cleanCacheData(){
+    subscribedChannelsMap = {};
+    channelsMap = {};
+    myChannelsMap = {};
+    unreadMap = {};
+    serverStatisticsMap = {};
+    commentsMap = {};
+    serversStatus = {};
+    creationPermissionMap = {};
+    likeMap = {};
+    likeCommentMap = {};
+    lastPostUpdateMap = {};
+
+
+    localSubscribedList = [];
+    localMyChannelList = [];
+    localChannelsList = [];
+
+    bindingServer = null;
+    bindingServerCache = null;
+    serverMap = {};
+
+    accessTokenMap = {};
+    signInServerList = [];
+
+    notificationList = [];
+    cacheBindingAddress = "";
+    localCredential = "";
+    cachedPost = {};
+
+    this.feedPublicStatus = {};
+    // this.localSignInData = null;
+
+    // this.developerMode = false;
+    // this.hideDeletedPosts = false;
+    // this.hideDeletedComments = false;
+    // this.hideOfflineFeeds = false;
+    // this.currentLang ="";
+
+    this.channelInfo = {};
+    this.postMap = {};
+
+    this.curtab = "home";
+    this.nonce = "";
+    this.realm = "";
+    this.serviceNonce = "";
+    this.serviceRealm = "";
+    this.profileIamge = "assets/images/profile-1.svg";
+    this.clipProfileIamge = "";
+    this.selsectIndex = 1;
+
+    this.carrierStatus = FeedsData.ConnState.disconnected;
+    this.networkStatus = FeedsData.ConnState.disconnected;
+    this.connectionStatus = FeedsData.ConnState.disconnected ;
+    this.lastConnectionStatus = FeedsData.ConnState.disconnected ;
+    this.isLogging = {};
+    this.signinChallengeTimeout = null;
+    this.isSavingChannel = false;
+    this.isDeclearing = false;
+    this.declareOwnerTimeout = null;
+    this.declareOwnerInterval = null;
+    this.isDeclareFinish = false;
+
+    this.lastSubscribedFeedsUpdateMap = {};
+    this.lastCommentUpdateMap = {};
+    this.lastMultiLikesAndCommentsCountUpdateMap = {};
+    this.lastMultiLikesAndCommentsCountUpdateMapCache = {};
+  
+    this.alertPopover = null;
+    this.serverVersions = {};
   }
 }
