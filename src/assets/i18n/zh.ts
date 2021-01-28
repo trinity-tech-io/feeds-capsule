@@ -307,7 +307,10 @@ export const zh = {
         "containedfeeds":"包含的Feeds列表",
         "version":"版本",
         "UserId":"UserId",
-        "beingPublic":"已公开"
+        "beingPublic":"已公开",
+        "des1":"开启开发者模式后，可以选择公开Feeds或公开测试Feeds",
+        "des2":"测试Feeds",
+        "des3":"公开Feeds"
     },
     "ScanqrcodePage":{
         "introtitle": "创建新的",

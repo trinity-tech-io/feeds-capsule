@@ -53,6 +53,7 @@ export class DiscoverfeedPage implements OnInit {
   public ownerDid:string ="";
   public totalNum:number = 0;
   public isLoading:boolean =true;
+  public developerMode:boolean =  false;
   constructor(
     private zone: NgZone,
     private native: NativeService,
@@ -67,6 +68,7 @@ export class DiscoverfeedPage implements OnInit {
     this.initData("",true);
   }
   ionViewWillEnter() {
+    this.developerMode = this.feedService.getDeveloperMode();
     this.initTitle();
     this.native.setTitleBarBackKeyShown(true);
 
@@ -165,5 +167,13 @@ loadData(events:any){
   }).catch((err)=>{
       events.target.complete();
   });
+ }
+
+ handleShow(item:any){
+  let purpose = item["purpose"] || "";
+  if(purpose === "" || this.developerMode){
+      return true;
+  }
+  return false;
  }
 }

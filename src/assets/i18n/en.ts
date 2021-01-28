@@ -306,7 +306,10 @@ export const en = {
         "containedfeeds":"Contained Feeds",
         "version":"version",
         "UserId":"UserId",
-        "beingPublic":"Being Public"
+        "beingPublic":"Being Public",
+        "des1":"When developer mode is opened You can choose public or public test Feeds",
+        "des2":"Test Feeds",
+        "des3":"Public Feeds"
     },
     "ScanqrcodePage":{
         "introtitle": "Create a new",
