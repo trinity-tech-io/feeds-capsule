@@ -54,11 +54,12 @@ import { SessionService } from './services/SessionService';
 import { LogUtils } from 'src/app/services/LogUtils';
 import { StandardAuthService } from 'src/app/services/StandardAuthService';
 import { AddFeedService } from 'src/app/services/AddFeedService';
+import { FileService } from 'src/app/services/FileService';
+import { FileHelperService } from 'src/app/services/FileHelperService';
 
 import { IonicStorageModule } from '@ionic/storage';
 
 import { VideoEditor } from '@ionic-native/video-editor/ngx';
-
 import { RewriteFrames } from '@sentry/integrations';
 import * as Sentry from "@sentry/browser";
 
@@ -212,6 +213,8 @@ export function anim(AnimationC: Animation, baseEl: any, position?: any): Promis
     AddFeedService,
     LogUtils,
     StandardAuthService,
+    FileService,
+    FileHelperService,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     {provide: ErrorHandler, useClass: ErrorHandler}
   ]

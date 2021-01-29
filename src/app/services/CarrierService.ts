@@ -22,13 +22,14 @@
 
 import { Injectable } from '@angular/core';
 import { Events, Platform } from '@ionic/angular';
+import { FileHelperService } from 'src/app/services/FileHelperService';
+
 declare let carrierManager: CarrierPlugin.CarrierManager;
 
 let FriendInfo: CarrierPlugin.FriendInfo;
 let UserInfo: CarrierPlugin.UserInfo;
 let carrierInst: CarrierPlugin.Carrier;
 let eventBus = null;
-
 // var connectStatus ;
 
 // const bootstrapsOpts = [
@@ -60,8 +61,12 @@ export class CarrierService {
         onSessionRequest: this.sessionRequestCallback
     }
 
-    constructor(public events: Events, public platform: Platform) {
+    constructor(
+        public events: Events, 
+        public platform: Platform,
+        private fileHelperService: FileHelperService) {
         eventBus = events;
+        
     }
 
     init(did: string) {
@@ -147,8 +152,15 @@ export class CarrierService {
 
     // ------------------------------------------------------------
 
-    createObject(did: string, success, error) {
-        let createOption = this.generateCreateOption(did);
+    private processDid(did: string): string{
+        let checkStr = "did:elastos:";
+        return "."+did.replace(checkStr,"");
+    }
+
+    async createObject(did: string, success, error) {
+        let newName = this.processDid(did);
+        await this.fileHelperService.moveCarrierData(".data", newName);
+        let createOption = this.generateCreateOption(newName);
         carrierManager.createObject(
             this.callbacks, createOption,
             (ret: any) => {success(ret); },
@@ -347,10 +359,10 @@ export class CarrierService {
         stream.write(data, onSuccess, onError);
     }
 
-    generateCreateOption(did: string){
+    generateCreateOption(path: string){
         return {
             udpEnabled: true,
-            persistentLocation: "."+did,
+            persistentLocation: path,
             binaryUsed: true,
             expressEnabled: false
         };

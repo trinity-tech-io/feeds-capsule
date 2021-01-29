@@ -174,18 +174,17 @@ export class MyApp {
     }
 
     that.clearData();
-
+    
   }
 
   clearData(){
-    this.storageService.remove("signInData").then(()=>{
+    this.feedService.signOut().then(()=>{
       this.events.publish("feeds:clearHomeEvent");
-      this.feedService.resetConnectionStatus();
-      this.feedService.destroyCarrier();
       this.appService.hideright();
       this.native.setRootRouter('signin');
       this.native.toast("app.des");
     }).catch((err)=>{
+      //TODO
     })
   }
 
