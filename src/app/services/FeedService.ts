@@ -366,6 +366,7 @@ enum PersistenceKey{
   lastMultiLikesAndCommentsCountUpdateMap = "lastMultiLikesAndCommentsCountUpdateMap",
   lastSubscribedFeedsUpdateMap = "lastSubscribedFeedsUpdateMap",
   serverVersions = "serverVersions",
+  isSignOut = "isSignOut",
 }
 
 let expDay = 10;
@@ -6443,8 +6444,18 @@ export class FeedService {
     return regEx.test(value);
   }
 
-  signOut(){
+  signOut(): Promise<boolean>{
     return new Promise((resolve, reject) =>{
+      let isSuccess: boolean = false;
+      this.storeService.remove("signInData").then(()=>{
+        this.resetConnectionStatus();
+        this.destroyCarrier();
+        isSuccess = true;
+        this.storeService.set(PersistenceKey.isSignOut, isSuccess);
+        resolve(isSuccess);
+      }).catch((err)=>{
+        reject(err);
+      })
     });   
   }
 
@@ -6463,7 +6474,7 @@ export class FeedService {
         return;
       }
       resolve(did);
-      this.carrierService.init(did);
+      this.carrierService.init(did, );
     });
   }
 
@@ -6495,7 +6506,7 @@ export class FeedService {
           description
         ).then((signInData)=>{
           this.events.publish("feeds:signinSuccess");
-          resolve(data.did);
+          resolve(signInData.did);
         }).catch((err)=>{
           this.logUtils.loge("saveSignInData error");
           reject(err);
