@@ -423,7 +423,7 @@ clearData(){
   getContentShortText(post:any): string{
     let   content = post.content;
     let  text = this.feedService.parsePostContentText(content) || "";
-    return text.substring(0,180);
+    return text.substring(0,180)+"...";
   }
 
   getPostContentTextSize(content:string){
