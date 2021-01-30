@@ -136,13 +136,6 @@ export class ServerInfoPage implements OnInit {
       });
     });
 
-    this.events.subscribe('feeds:login_finish',  () => {
-      this.zone.run(() => {
-        this.initData();
-        this.native.hideLoading();
-      });
-    });
-
     this.events.subscribe("feeds:updateTitle", () => {
       if(this.menuService.postDetail!=null){
         this.menuService.hideActionSheet();

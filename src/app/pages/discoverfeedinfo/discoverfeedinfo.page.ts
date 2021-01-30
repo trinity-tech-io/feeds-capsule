@@ -81,12 +81,6 @@ export class DiscoverfeedinfoPage implements OnInit {
       });
     });
 
-    this.events.subscribe('feeds:login_finish',  () => {
-      this.zone.run(() => {
-
-      });
-    });
-
     this.events.subscribe("feeds:updateTitle",()=>{
       this.initTitle();
     });
