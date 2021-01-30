@@ -159,7 +159,11 @@ export class CarrierService {
 
     async createObject(did: string, success, error) {
         let newName = this.processDid(did);
-        await this.fileHelperService.moveCarrierData(".data", newName);
+        try{
+            await this.fileHelperService.moveCarrierData(".data", newName);
+        }catch(error){
+        }
+        
         let createOption = this.generateCreateOption(newName);
         carrierManager.createObject(
             this.callbacks, createOption,
