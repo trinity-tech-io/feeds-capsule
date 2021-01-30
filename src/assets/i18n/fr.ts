@@ -289,7 +289,7 @@ export const fr = {
         "serverInfo":"Server Info",
         "Pleasewait":"Please wait...",
         "Feedurlmaybeerror":"Possible Feeds url error.",
-        "DeletethisFeedSource":"Delete this Feeds Publisher Account",
+        "DeletethisFeedSource":"Delete Publisher Account",
         "cancel":"Cancel",
         "DeleteFeedSource":"Delete Publisher Account!",
         "RemovethisFeedSource":"Remove this Feeds Publisher Account",
