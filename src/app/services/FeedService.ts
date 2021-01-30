@@ -6645,10 +6645,10 @@ export class FeedService {
     this.clipProfileIamge = "";
     this.selsectIndex = 1;
 
-    this.carrierStatus = FeedsData.ConnState.disconnected;
-    this.networkStatus = FeedsData.ConnState.disconnected;
-    this.connectionStatus = FeedsData.ConnState.disconnected ;
-    this.lastConnectionStatus = FeedsData.ConnState.disconnected ;
+    // this.carrierStatus = FeedsData.ConnState.disconnected;
+    // this.networkStatus = FeedsData.ConnState.disconnected;
+    // this.connectionStatus = FeedsData.ConnState.disconnected ;
+    // this.lastConnectionStatus = FeedsData.ConnState.disconnected ;
     this.isLogging = {};
     this.signinChallengeTimeout = null;
     this.isSavingChannel = false;
