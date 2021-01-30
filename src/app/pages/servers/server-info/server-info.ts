@@ -327,7 +327,8 @@ export class ServerInfoPage implements OnInit {
         }
       }, {
         text: this.translate.instant("ServerInfoPage.cancel"),
-        icon: 'close',
+        role: 'cancel',
+        icon: 'close-circle',
         handler: () => {
         }
       }]
