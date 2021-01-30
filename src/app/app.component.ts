@@ -145,10 +145,10 @@ export class MyApp {
   }
 
   goToFeedSource(){
-    let sid = setTimeout(()=>{
+    // let sid = setTimeout(()=>{
       this.checkDid();
-      clearTimeout(sid);
-    },0);
+    //   clearTimeout(sid);
+    // },0);
   }
 
   // goToDev(){
@@ -269,9 +269,15 @@ export class MyApp {
     }
     let bindingServer = this.feedService.getBindingServer() || null;
     if(bindingServer === null){
-      this.native.navigateForward(['/bindservice/scanqrcode'],"");
+      let sid = setTimeout(() => {
+        this.native.navigateForward(['/bindservice/scanqrcode'],"");
+        clearTimeout(sid);
+      },0);
     }else{
-      this.native.navigateForward(['/menu/servers/server-info'],"");
+      let sid = setTimeout(() => {
+        this.native.navigateForward(['/menu/servers/server-info'],"");
+        clearTimeout(sid);
+      },0);
     }
 
   }
