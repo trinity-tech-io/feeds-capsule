@@ -10,7 +10,7 @@ export class FileService {
 
     resolveLocalFileSystemURL(): Promise<CordovaFilePlugin.DirectoryEntry>{
         return new Promise((resolve, reject) =>{
-            window.resolveLocalFileSystemURL(cordova.file.dataDirectory, 
+            window.resolveLocalFileSystemURL(cordova.file.dataDirectory,
                 (dirEntry: CordovaFilePlugin.DirectoryEntry) =>{
                     resolve(dirEntry);
                 },
@@ -76,7 +76,7 @@ export class FileService {
     //@param parent  The directory to which to move the entry.
     moveTo(entry: CordovaFilePlugin.Entry, parent: CordovaFilePlugin.DirectoryEntry, newName: string): Promise<CordovaFilePlugin.Entry>{
         return new Promise((resolve, reject) =>{
-            entry.moveTo(parent, newName, 
+            entry.moveTo(parent, newName,
                 (entry: CordovaFilePlugin.Entry)=>{
                     resolve(entry);
                 },
@@ -125,16 +125,16 @@ export class FileService {
         });
     }
 
-    readFileData(entry: CordovaFilePlugin.FileEntry): Promise<String>{
-        return new Promise(async (resolve, reject) =>{
-            let file = await this.getFileData(entry);
-            file.text().then((text)=>{
-                resolve(text);
-            }).catch((error)=>{
-                reject(error);
-            });
-        });
-    }
+    // readFileData(entry: CordovaFilePlugin.FileEntry): Promise<String>{
+    //     return new Promise(async (resolve, reject) =>{
+    //         let file = await this.getFileData(entry);
+    //         file.text().then((text)=>{
+    //             resolve(text);
+    //         }).catch((error)=>{
+    //             reject(error);
+    //         });
+    //     });
+    // }
 
     removeFile(entry: CordovaFilePlugin.Entry): Promise<boolean>{
         return new Promise((resolve, reject) =>{
@@ -150,7 +150,7 @@ export class FileService {
 
     transError(errorCode: number): string{
         switch(errorCode){
-            case CordovaFilePlugin.FileError.NOT_FOUND_ERR: 
+            case CordovaFilePlugin.FileError.NOT_FOUND_ERR:
                 return "NOT_FOUND_ERR";
             case CordovaFilePlugin.FileError.SECURITY_ERR:
                 return "SECURITY_ERR";
@@ -176,6 +176,6 @@ export class FileService {
                 return "PATH_EXISTS_ERR";
         }
     }
-    
+
 
 }
