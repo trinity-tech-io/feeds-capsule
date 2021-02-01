@@ -1,11 +1,12 @@
 import { Component, OnInit, NgZone } from '@angular/core';
-import { Events} from '@ionic/angular';
+import { Events,PopoverController} from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
-import { FeedService } from 'src/app/services/FeedService';
-import { NativeService } from 'src/app/services/NativeService';
+import { FeedService } from '../../../services/FeedService';
+import { NativeService } from '../../../services/NativeService';
 import { TranslateService } from "@ngx-translate/core";
-import { ThemeService } from 'src/app/services/theme.service';
-import { CameraService } from 'src/app/services/CameraService';
+import { ThemeService } from '../../../services/theme.service';
+import { CameraService } from '../../../services/CameraService';
+import { PopupProvider } from '../../../services/popup';
 import jsQR from "jsqr";
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 declare let appManager: AppManagerPlugin.AppManager;
@@ -26,6 +27,7 @@ export class AddServerPage implements OnInit {
   public  introduction: string;
   public  did: string;
   public  feedsUrl: string;
+  public  popover:any = null;
 
   constructor(
     private events: Events,
@@ -35,7 +37,9 @@ export class AddServerPage implements OnInit {
     private translate:TranslateService,
     public theme: ThemeService,
     public route: ActivatedRoute,
-    private camera: CameraService
+    private camera: CameraService,
+    public popupProvider:PopupProvider,
+    private popoverController:PopoverController
   ) {
  /*    this.route.queryParams.subscribe(params => {
       if(params.source) {
@@ -100,6 +104,11 @@ export class AddServerPage implements OnInit {
     this.events.unsubscribe("feeds:updateServerList");
     this.events.unsubscribe("intent:addsource");
     this.events.publish("feeds:search");
+    let value =  this.popoverController.getTop()["__zone_symbol__value"] || "";
+    if(value!=""){
+      this.popoverController.dismiss();
+      this.popover = "";
+    }
   }
 
   initTitle(){
@@ -111,12 +120,11 @@ export class AddServerPage implements OnInit {
   }
 
   scanCode(){
-    appManager.sendIntent("https://scanner.elastos.net/scanqrcode", {}, {}, (res) => {
-      let result: string = res.result.scannedContent;
-      this.checkValid(result);
-    }, (err: any) => {
-        console.error(err);
-    });
+    if(this.feedService.getConnectionStatus() != 0){
+      this.native.toastWarn('common.connectionError');
+      return;
+    }
+    this.checkDid("scanCode");
   }
 
   alertError(error: string){
@@ -128,7 +136,11 @@ export class AddServerPage implements OnInit {
   // }
 
   confirm(){
-    this.checkValid(this.address);
+    if(this.feedService.getConnectionStatus() != 0){
+      this.native.toastWarn('common.connectionError');
+      return;
+    }
+    this.checkDid("confirm");
   }
 
   checkValid(result: string){
@@ -145,7 +157,7 @@ export class AddServerPage implements OnInit {
         this.native.toastWarn("AddServerPage.tipMsg");
         return ;
     }
-    
+
     this.feedService.addFeed(result,"",0,"").then((isSuccess)=>{
       if (isSuccess){
         this.native.pop();
@@ -156,7 +168,11 @@ export class AddServerPage implements OnInit {
   }
 
   scanImage(){
-    this.addImg(0);
+    if(this.feedService.getConnectionStatus() != 0){
+      this.native.toastWarn('common.connectionError');
+      return;
+    }
+    this.checkDid("scanImage");
   }
 
   addImg(type: number) {
@@ -190,6 +206,62 @@ export class AddServerPage implements OnInit {
           this.native.toastWarn("AddServerPage.tipMsg1");
         }
     };
+}
+
+checkDid(clickType:string){
+  let signInData = this.feedService.getSignInData() || {};
+  let did = signInData["did"];
+  this.feedService.checkDIDDocument(did).then((isOnSideChain)=>{
+    if (!isOnSideChain){
+      //show one button dialog
+      //if click this button
+      //call feedService.promptpublishdid() function
+      this.openAlert();
+      return;
+    }
+    this.handleJump(clickType);
+  });
+}
+
+openAlert(){
+  this.popover = this.popupProvider.ionicAlert(
+    this,
+    // "ConfirmdialogComponent.signoutTitle",
+    "",
+    "common.didnotrelease",
+    this.confirm1,
+    'tskth.svg'
+  );
+}
+
+confirm1(that:any){
+    if(this.popover!=null){
+       this.popover.dismiss();
+       that.feedService.promptpublishdid();
+    }
+}
+
+handleJump(clickType:string){
+    if(clickType === "scanCode"){
+      appManager.sendIntent("https://scanner.elastos.net/scanqrcode", {}, {}, (res) => {
+        let result: string = res.result.scannedContent;
+        this.checkValid(result);
+      }, (err: any) => {
+          console.error(err);
+      });
+         return;
+    }
+    if(clickType === "scanImage"){
+      this.addImg(0);
+      return;
+    }
+
+    if(clickType === "confirm"){
+      this.checkValid(this.address);
+      return;
+    }
+
+
 }
 
 }

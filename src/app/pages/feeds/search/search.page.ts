@@ -224,7 +224,8 @@ export class SearchPage implements OnInit {
       this.native.toastWarn('common.connectionError');
       return;
     }
-    this.checkDid();
+    this.removeSubscribe();
+    this.native.navigateForward(['/menu/servers/add-server'],"");
   }
 
   checkServerStatus(nodeId: string){
@@ -249,40 +250,6 @@ export class SearchPage implements OnInit {
     this.native.createTip(name);
   }
  }
-
- checkDid(){
-    let signInData = this.feedService.getSignInData() || {};
-    let did = signInData["did"];
-    this.feedService.checkDIDDocument(did).then((isOnSideChain)=>{
-      if (!isOnSideChain){
-        //show one button dialog
-        //if click this button
-        //call feedService.promptpublishdid() function
-        this.openAlert();
-        return;
-      }
-      this.removeSubscribe();
-      this.native.navigateForward(['/menu/servers/add-server'],"");
-    });
-  }
-
-  openAlert(){
-    this.popover = this.popupProvider.ionicAlert(
-      this,
-      // "ConfirmdialogComponent.signoutTitle",
-      "",
-      "common.didnotrelease",
-      this.confirm,
-      'tskth.svg'
-    );
-  }
-
-  confirm(that:any){
-      if(this.popover!=null){
-        this.popover.dismiss();
-        that.feedService.promptpublishdid();
-      }
-  }
 
   discover(){
     this.removeSubscribe();

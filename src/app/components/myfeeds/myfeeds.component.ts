@@ -60,17 +60,6 @@ export class MyfeedsComponent implements OnInit {
   }
 
   checkDid(){
-    let signInData = this.feedService.getSignInData() || {};
-    let did = signInData["did"];
-    this.feedService.checkDIDDocument(did).then((isOnSideChain)=>{
-      if (!isOnSideChain){
-        //show one button dialog
-        //if click this button
-        //call feedService.promptpublishdid() function
-        this.openAlert();
-        return;
-      }
-
       this.feedService.setProfileIamge("assets/images/profile-1.svg");
       this.feedService.setSelsectIndex(1);
       if(this.feedService.getConnectionStatus() != 0){
@@ -93,26 +82,6 @@ export class MyfeedsComponent implements OnInit {
         this.native.navigateForward(['/createnewfeed'],"");
       }else{
         this.native.getNavCtrl().navigateForward(['/bindservice/scanqrcode']);
-      }
-
-    });
-  }
-
-  openAlert(){
-    this.popover = this.popupProvider.ionicAlert(
-      this,
-      // "ConfirmdialogComponent.signoutTitle",
-      "",
-      "common.didnotrelease",
-      this.confirm,
-      'tskth.svg'
-    );
-  }
-
-  confirm(that:any){
-      if(this.popover!=null){
-         this.popover.dismiss();
-         that.feedService.promptpublishdid();
       }
   }
 }

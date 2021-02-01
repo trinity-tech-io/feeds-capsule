@@ -97,7 +97,7 @@ export class FeedsPage implements OnInit {
 
     let bindingServer = this.feedService.getBindingServer();
     if (bindingServer == null || bindingServer == undefined){
-      this.checkDid();
+      this.native.navigateForward(['/bindservice/scanqrcode'],"");
       return ;
     }
 
@@ -185,38 +185,5 @@ export class FeedsPage implements OnInit {
     let uList =  _.filter(nList,(item:any)=>{ return item.readStatus === 1; });
     this.totalunread = uList.length;
 
-    }
-
-    checkDid(){
-      let signInData = this.feedService.getSignInData() || {};
-      let did = signInData["did"];
-      this.feedService.checkDIDDocument(did).then((isOnSideChain)=>{
-        if (!isOnSideChain){
-          //show one button dialog
-          //if click this button
-          //call feedService.promptpublishdid() function
-          this.openAlert();
-          return;
-        }
-        this.native.navigateForward(['/bindservice/scanqrcode'],"");
-      });
-    }
-
-    openAlert(){
-      this.popover = this.popupProvider.ionicAlert(
-        this,
-        // "ConfirmdialogComponent.signoutTitle",
-        "",
-        "common.didnotrelease",
-        this.confirm,
-        'tskth.svg'
-      );
-    }
-
-    confirm(that:any){
-        if(this.popover!=null){
-           this.popover.dismiss();
-           that.feedService.promptpublishdid();
-        }
     }
 }
