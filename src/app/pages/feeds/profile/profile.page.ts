@@ -441,6 +441,7 @@ export class ProfilePage implements OnInit {
   }
 
   initnodeStatus(list:any){
+    list = list || [];
      for(let index =0 ;index<list.length;index++){
             let nodeId = list[index]['nodeId'];
             let status = this.checkServerStatus(nodeId);
