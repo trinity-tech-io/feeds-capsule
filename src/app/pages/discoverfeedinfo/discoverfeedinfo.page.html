@@ -22,7 +22,7 @@
       <ion-row class="channel-btns-row">
         <ion-col size="3.5">
           <ion-button *ngIf="status ==='0'" class="subscribed" fill="outline" [disabled]="true">
-            <ion-label>{{'DiscoverfeedinfoPage.processing' | translate}}</ion-label>
+            <ion-label>{{ handleStatus() | translate}}</ion-label>
           </ion-button>
           <ion-button *ngIf="status ==='1'" class="unsubscribed" fill="outline" (click)="checkDid('subscribe')">
             <ion-label>{{'DiscoverfeedinfoPage.follow' | translate}}</ion-label>
