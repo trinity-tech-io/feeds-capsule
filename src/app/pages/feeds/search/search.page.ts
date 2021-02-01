@@ -18,10 +18,10 @@ export class SearchPage implements OnInit {
   public connectionStatus = 1;
   public nodeStatus: any = {};
   public feedsList= [];
-  public hideOfflineFeeds:boolean = false;
   public popover:any = "";
   public curAddingItem = {};
   public addingChanneList = [];
+  public hideUnFollowFeeds:boolean = false;
   // {
   //   "nodeId": "8Dsp9jkTg8TEfCkwMoXimwjLeaRidMczLZYNWbKGj1SF",
   //   "did": "did:elastos:ibfZa4jQ1QgDRP9rpfbUbZWpXgbd9z7oKF",
@@ -97,7 +97,7 @@ export class SearchPage implements OnInit {
       });
     });
 
-    this.events.subscribe("feeds:hideOfflineFeeds",()=>{
+    this.events.subscribe("feeds:hideUnFollowFeeds",()=>{
       this.initChannelData();
     });
 
@@ -134,6 +134,7 @@ export class SearchPage implements OnInit {
     this.events.unsubscribe('feeds:channelsDataUpdate');
     this.events.unsubscribe('feeds:refreshSubscribedChannels');
     this.events.unsubscribe('addFeed:statusChanged');
+    this.events.unsubscribe('feeds:hideUnFollowFeeds');
   }
 
   ionViewWillEnter() {
@@ -153,13 +154,15 @@ export class SearchPage implements OnInit {
   initChannelData(){
     this.feedsList = [];
     let channelData = this.feedService.getChannelsList();
-
-    if(this.hideOfflineFeeds){
+    this.hideUnFollowFeeds = this.feedService.getHideUnFollowFeeds();
+    if(!this.hideUnFollowFeeds){
       for(let index=0;index<channelData.length;index++){
-        let nodeId = channelData[index]['nodeId'];
+        let item = channelData[index];
+        let nodeId = item['nodeId'];
         let status = this.checkServerStatus(nodeId);
         this.nodeStatus[nodeId] = status;
-        if(this.nodeStatus[nodeId] === 0){
+        let isSubscribed = item["isSubscribed"];
+        if(isSubscribed){
            this.feedsList.push(channelData[index]);
         }
       }
