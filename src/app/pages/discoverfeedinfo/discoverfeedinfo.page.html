@@ -27,7 +27,7 @@
           <ion-button *ngIf="status ==='1'" class="unsubscribed" fill="outline" (click)="checkDid('subscribe')">
             <ion-label>{{'DiscoverfeedinfoPage.follow' | translate}}</ion-label>
           </ion-button>
-          <ion-button *ngIf="status ==='2'" class="subscribed" (click)="checkDid('unsubscribe')">
+          <ion-button *ngIf="status ==='2'" class="subscribed" (click)="unsubscribe()">
             <ion-label>{{ 'DiscoverfeedinfoPage.unfollow' | translate }}</ion-label>
           </ion-button>
         </ion-col>

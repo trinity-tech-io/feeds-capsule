@@ -145,10 +145,7 @@ export class MyApp {
   }
 
   goToFeedSource(){
-    // let sid = setTimeout(()=>{
-      this.checkDid();
-    //   clearTimeout(sid);
-    // },0);
+    this.handleJump();
   }
 
   // goToDev(){
@@ -247,21 +244,6 @@ export class MyApp {
     this.native.navigateForward('settings',"");
   }
 
-  checkDid(){
-    let signInData = this.feedService.getSignInData() || {};
-    let did = signInData["did"];
-    this.feedService.checkDIDDocument(did).then((isOnSideChain)=>{
-      if (!isOnSideChain){
-        //show one button dialog
-        //if click this button
-        //call feedService.promptpublishdid() function
-        this.openAlert();
-        return;
-      }
-      this.handleJump();
-    });
-  }
-
   handleJump(){
     if(this.feedService.getConnectionStatus() != 0){
       this.native.toastWarn('common.connectionError');
@@ -269,42 +251,17 @@ export class MyApp {
     }
     let bindingServer = this.feedService.getBindingServer() || null;
     if(bindingServer === null){
-      let sid = setTimeout(() => {
         this.native.navigateForward(['/bindservice/scanqrcode'],"");
-        clearTimeout(sid);
-      },0);
     }else{
-      let sid = setTimeout(() => {
         this.native.navigateForward(['/menu/servers/server-info'],"");
-        clearTimeout(sid);
-      },0);
     }
-
-  }
-
-  openAlert(){
-    this.popover = this.popupProvider.ionicAlert(
-      this,
-      // "ConfirmdialogComponent.signoutTitle",
-      "",
-      "common.didnotrelease",
-      this.confirm1,
-      'tskth.svg'
-    );
-  }
-
-  confirm1(that:any){
-      if(this.popover!=null){
-         this.popover.dismiss();
-         that.feedService.promptpublishdid();
-      }
   }
 
   ionViewWillLeave(){
     let value =  this.popoverController.getTop()["__zone_symbol__value"] || "";
     if(value!=""){
       this.popoverController.dismiss();
-      this.popover = "";
+      this.popover = null;
     }
   }
 

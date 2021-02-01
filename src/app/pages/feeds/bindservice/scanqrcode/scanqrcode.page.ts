@@ -1,11 +1,12 @@
 import { Component, OnInit, NgZone } from '@angular/core';
-import { FeedService } from 'src/app/services/FeedService';
-import { CarrierService } from 'src/app/services/CarrierService';
-import { NativeService } from 'src/app/services/NativeService';
-import { ThemeService } from 'src/app/services/theme.service';
+import { FeedService } from '../../../../services/FeedService';
+import { CarrierService } from '../../../../services/CarrierService';
+import { NativeService } from '../../../../services/NativeService';
+import { ThemeService } from '../../../../services/theme.service';
 import { TranslateService } from "@ngx-translate/core";
-import { Events } from '@ionic/angular';
-import { CameraService } from 'src/app/services/CameraService';
+import { Events,PopoverController} from '@ionic/angular';
+import { CameraService } from '../../../../services/CameraService';
+import { PopupProvider } from '../../../../services/popup';
 import jsQR from "jsqr";
 
 declare let appManager: AppManagerPlugin.AppManager;
@@ -24,7 +25,7 @@ export class ScanqrcodePage implements OnInit {
   public carrierAddress: string;
   public scanContent: string;
   public nonce: string = "0";
-
+  public popover:any = null;
   constructor(
     private events: Events,
     private native: NativeService,
@@ -33,7 +34,9 @@ export class ScanqrcodePage implements OnInit {
     private carrier: CarrierService,
     private translate:TranslateService,
     public  theme:ThemeService,
-    private camera: CameraService
+    private camera: CameraService,
+    public popupProvider:PopupProvider,
+    private popoverController:PopoverController
     ) {
   }
 
@@ -61,10 +64,19 @@ export class ScanqrcodePage implements OnInit {
 
   ionViewWillLeave(){
     this.events.unsubscribe("feeds:connectionChanged");
+    let value =  this.popoverController.getTop()["__zone_symbol__value"] || "";
+    if(value!=""){
+      this.popoverController.dismiss();
+      this.popover = null;
+    }
   }
 
   scanService(){
-    this.scanAddress();
+    if(this.feedService.getConnectionStatus() != 0){
+      this.native.toastWarn('common.connectionError');
+      return;
+    }
+    this.checkDid("scanService");
   }
 
   scanAddress() {
@@ -134,7 +146,11 @@ export class ScanqrcodePage implements OnInit {
 
 
   scanImage(){
-    this.addImg(0);
+    if(this.feedService.getConnectionStatus() != 0){
+      this.native.toastWarn('common.connectionError');
+      return;
+    }
+    this.checkDid("scanImage");
   }
 
   addImg(type: number) {
@@ -169,5 +185,49 @@ export class ScanqrcodePage implements OnInit {
           this.native.toastWarn("AddServerPage.tipMsg1");
         }
     };
-}
+  }
+
+  checkDid(clickType:string){
+    let signInData = this.feedService.getSignInData() || {};
+    let did = signInData["did"];
+    this.feedService.checkDIDDocument(did).then((isOnSideChain)=>{
+      if (!isOnSideChain){
+        //show one button dialog
+        //if click this button
+        //call feedService.promptpublishdid() function
+        this.openAlert();
+        return;
+      }
+      this.handleJump(clickType);
+    });
+  }
+
+  openAlert(){
+    this.popover = this.popupProvider.ionicAlert(
+      this,
+      // "ConfirmdialogComponent.signoutTitle",
+      "",
+      "common.didnotrelease",
+      this.confirm,
+      'tskth.svg'
+    );
+  }
+
+  confirm(that:any){
+      if(this.popover!=null){
+         this.popover.dismiss();
+         that.feedService.promptpublishdid();
+      }
+  }
+
+  handleJump(clickType:string){
+      if(clickType === "scanService"){
+           this.scanAddress();
+           return;
+      }
+      if(clickType === "scanImage"){
+        this.addImg(0);
+        return;
+      }
+  }
 }
