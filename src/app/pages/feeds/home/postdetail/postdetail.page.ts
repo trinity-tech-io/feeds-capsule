@@ -196,24 +196,24 @@ export class PostdetailPage implements OnInit {
     //if (this.connectionStatus == 0)
       //this.feedService.updateComment(this.nodeId, Number(this.channelId) ,Number(this.postId));
 
-    this.events.subscribe('feeds:connectionChanged',(status)=>{
+    this.events.subscribe(FeedsEvent.PublishType.connectionChanged,(status)=>{
       this.zone.run(() => {
-        this.logUtils.logd("feeds:connectionChanged",TAG);
+        this.logUtils.logd(FeedsEvent.PublishType.connectionChanged,TAG);
         this.connectionStatus = status;
       });
     });
 
 
-    this.events.subscribe('feeds:commentDataUpdate',()=>{
+    this.events.subscribe(FeedsEvent.PublishType.commentDataUpdate,()=>{
       this.zone.run(() => {
-        this.logUtils.logd("feeds:commentDataUpdate",TAG);
+        this.logUtils.logd("received commentDataUpdate event",TAG);
         this.startIndex = 0;
         this.initData(true);
       });
     });
 
-    this.events.subscribe('feeds:getCommentFinish',(nodeId, channelId, postId)=>{
-      this.logUtils.logd("feeds:getCommentFinish",TAG);
+    this.events.subscribe(FeedsEvent.PublishType.getCommentFinish,(nodeId, channelId, postId)=>{
+      this.logUtils.logd("received getCommentFinish event",TAG);
       this.zone.run(() => {
         if (nodeId == this.nodeId && channelId == this.channelId && postId == this.postId){
           this.startIndex = 0;
@@ -223,14 +223,14 @@ export class PostdetailPage implements OnInit {
       });
     });
 
-    this.events.subscribe("feeds:friendConnectionChanged", (nodeId, status)=>{
+    this.events.subscribe(FeedsEvent.PublishType.friendConnectionChanged, (nodeId, status)=>{
       this.zone.run(()=>{
-        this.logUtils.logd("feeds:friendConnectionChanged",TAG);
+        this.logUtils.logd("received friendConnectionChanged event",TAG);
         this.nodeStatus[nodeId] = status;
       });
     });
 
-    this.events.subscribe("feeds:updateTitle",()=>{
+    this.events.subscribe(FeedsEvent.PublishType.updateTitle,()=>{
       this.logUtils.logd("feeds:updateTitle",TAG);
       if(this.menuService.postDetail!=null){
         this.menuService.hideActionSheet();
@@ -239,9 +239,9 @@ export class PostdetailPage implements OnInit {
       this.initTitle();
     });
 
-    this.events.subscribe("feeds:refreshPostDetail", ()=>{
+    this.events.subscribe(FeedsEvent.PublishType.refreshPostDetail, ()=>{
       this.zone.run(() => {
-        this.logUtils.logd("feeds:refreshPostDetail",TAG);
+        this.logUtils.logd("receive refreshPostDetail event",TAG);
         let post = this.feedService.getPostFromId(this.nodeId, this.channelId, this.postId);
         this.postContent = post.content;
         this.postTS = post.created_at;
@@ -250,30 +250,30 @@ export class PostdetailPage implements OnInit {
       });
     });
 
-    this.events.subscribe('feeds:editPostFinish', () => {
-      this.logUtils.logd("feeds:editPostFinish",TAG);
+    this.events.subscribe(FeedsEvent.PublishType.editPostFinish, () => {
+      this.logUtils.logd("receive editPostFinish event",TAG);
       this.initData(true);
     });
 
-    this.events.subscribe('feeds:deletePostFinish', () => {
-      this.logUtils.logd("feeds:deletePostFinish",TAG);
-      this.events.publish("update:tab");
+    this.events.subscribe(FeedsEvent.PublishType.deletePostFinish, () => {
+      this.logUtils.logd("receive deletePostFinish event",TAG);
+      this.events.publish(FeedsEvent.PublishType.updateTab);
       this.native.hideLoading();
       this.initData(true);
     });
 
-    this.events.subscribe('feeds:editCommentFinish', () => {
-      this.logUtils.logd("feeds:editCommentFinish",TAG);
+    this.events.subscribe(FeedsEvent.PublishType.editCommentFinish, () => {
+      this.logUtils.logd("receive editCommentFinish event",TAG);
       this.initData(false);
     });
 
-    this.events.subscribe('feeds:deleteCommentFinish', () => {
-      this.logUtils.logd("feeds:deleteCommentFinish",TAG);
+    this.events.subscribe(FeedsEvent.PublishType.deleteCommentFinish, () => {
+      this.logUtils.logd("receive deleteCommentFinish event",TAG);
       this.native.hideLoading();
       this.initData(false);
     });
 
-    this.events.subscribe('rpcRequest:error', () => {
+    this.events.subscribe(FeedsEvent.PublishType.rpcRequestError, () => {
       this.zone.run(() => {
         this.logUtils.logd("rpcRequest:error",TAG);
         //this.pauseVideo();
@@ -281,7 +281,7 @@ export class PostdetailPage implements OnInit {
       });
     });
 
-    this.events.subscribe('rpcResponse:error', () => {
+    this.events.subscribe(FeedsEvent.PublishType.rpcResponseError, () => {
       this.zone.run(() => {
         this.logUtils.logd("rpcResponse:error",TAG);
         //this.pauseVideo();
@@ -289,7 +289,7 @@ export class PostdetailPage implements OnInit {
       });
     });
 
-   this.events.subscribe('rpcRequest:success', () => {
+   this.events.subscribe(FeedsEvent.PublishType.rpcRequestSuccess, () => {
     this.zone.run(() => {
       this.logUtils.logd("rpcRequest:success",TAG);
       this.startIndex = 0;
@@ -300,16 +300,16 @@ export class PostdetailPage implements OnInit {
       });
     });
 
-    this.events.subscribe('stream:getBinaryResponse', () => {
+    this.events.subscribe(FeedsEvent.PublishType.streamGetBinaryResponse, () => {
       this.zone.run(() => {
-        this.logUtils.logd("stream:getBinaryResponse",TAG);
+        this.logUtils.logd("received streamGetBinaryResponse",TAG);
 
       });
     });
 
-    this.events.subscribe('feeds:getBinaryFinish', (nodeId, key: string, value, mediaType) => {
+    this.events.subscribe(FeedsEvent.PublishType.getBinaryFinish, (nodeId, key: string, value, mediaType) => {
       this.zone.run(() => {
-        this.logUtils.logd("feeds:getBinaryFinish",TAG);
+        this.logUtils.logd("receive getBinaryFinish",TAG);
         this.downProgress = 0;
         this.downStatus = "";
         this.native.hideLoading();
@@ -317,9 +317,9 @@ export class PostdetailPage implements OnInit {
       });
     });
 
-    this.events.subscribe('stream:getBinarySuccess', (nodeId, key: string, value) => {
+    this.events.subscribe(FeedsEvent.PublishType.streamGetBinarySuccess, (nodeId, key: string, value) => {
       this.zone.run(() => {
-        this.logUtils.logd("stream:getBinarySuccess",TAG);
+        this.logUtils.logd("receive streamGetBinarySuccess",TAG);
         this.native.hideLoading();
         this.downStatus = "";
         this.downProgress = 0;
@@ -328,9 +328,9 @@ export class PostdetailPage implements OnInit {
       });
     });
 
-    this.events.subscribe('stream:error', (nodeId, error) => {
+    this.events.subscribe(FeedsEvent.PublishType.streamError, (nodeId, error) => {
       this.zone.run(() => {
-        this.logUtils.logd("stream:error",TAG);
+        this.logUtils.logd("reveive streamError",TAG);
         this.feedService.handleSessionError(nodeId, error);
         this.pauseVideo();
         this.native.hideLoading();
@@ -339,9 +339,9 @@ export class PostdetailPage implements OnInit {
       });
     });
 
-    this.events.subscribe('stream:onStateChangedCallback', (nodeId, state) => {
+    this.events.subscribe(FeedsEvent.PublishType.streamOnStateChangedCallback, (nodeId, state) => {
       this.zone.run(() => {
-        this.logUtils.logd("stream:onStateChangedCallback",TAG);
+        this.logUtils.logd("receive streamOnStateChangedCallback",TAG);
         if (this.cacheGetBinaryRequestKey == "")
           return;
 
@@ -355,9 +355,9 @@ export class PostdetailPage implements OnInit {
       });
     });
 
-    this.events.subscribe('stream:progress',(nodeId,progress)=>{
+    this.events.subscribe(FeedsEvent.PublishType.streamProgress,(nodeId,progress)=>{
         this.zone.run(() => {
-          this.logUtils.logd("stream:progress",TAG);
+          this.logUtils.logd("receive streamProgress",TAG);
           this.downProgress = progress;
           if(this.cachedMediaType === 'img'&&this.downStatus!=""){
             this.native.updateLoadingMsg(this.translate.instant("common.downloading")+" "+progress+"%");
@@ -365,8 +365,8 @@ export class PostdetailPage implements OnInit {
         });
     })
 
-    this.events.subscribe('feeds:openRightMenu',()=>{
-      this.logUtils.logd("feeds:openRightMenu",TAG);
+    this.events.subscribe(FeedsEvent.PublishType.openRightMenu,()=>{
+      this.logUtils.logd("receive openRightMenu event",TAG);
       this.downStatus ="";
       this.downProgress = 0;
       this.feedService.closeSession(this.nodeId);
@@ -375,8 +375,8 @@ export class PostdetailPage implements OnInit {
       this.hideFullScreen();
      });
 
-     this.events.subscribe('stream:closed',(nodeId)=>{
-      this.logUtils.logd("stream:closed",TAG);
+     this.events.subscribe(FeedsEvent.PublishType.streamClosed,(nodeId)=>{
+      this.logUtils.logd("receive streamClosed event",TAG);
       let mNodeId = nodeId || "";
       if (mNodeId != ""){
         this.feedService.closeSession(mNodeId);
@@ -393,35 +393,35 @@ export class PostdetailPage implements OnInit {
 
 
   ionViewWillLeave(){//清楚订阅事件代码
-     this.events.unsubscribe("feeds:editCommentFinish");
-     this.events.unsubscribe("feeds:editPostFinish");
+     this.events.unsubscribe(FeedsEvent.PublishType.editCommentFinish);
+     this.events.unsubscribe(FeedsEvent.PublishType.editPostFinish);
 
-     this.events.unsubscribe("feeds:connectionChanged");
-     this.events.unsubscribe("feeds:commentDataUpdate");
-     this.events.unsubscribe("feeds:friendConnectionChanged");
-     this.events.unsubscribe("feeds:updateTitle");
-     this.events.unsubscribe("feeds:refreshPostDetail");
+     this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
+     this.events.unsubscribe(FeedsEvent.PublishType.commentDataUpdate);
+     this.events.unsubscribe(FeedsEvent.PublishType.friendConnectionChanged);
+     this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
+     this.events.unsubscribe(FeedsEvent.PublishType.refreshPostDetail);
 
 
-     this.events.unsubscribe("feeds:deletePostFinish");
-     this.events.unsubscribe("feeds:deleteCommentFinish");
+     this.events.unsubscribe(FeedsEvent.PublishType.deletePostFinish);
+     this.events.unsubscribe(FeedsEvent.PublishType.deleteCommentFinish);
 
-     this.events.unsubscribe("feeds:getBinaryFinish");
+     this.events.unsubscribe(FeedsEvent.PublishType.getBinaryFinish);
 
-     this.events.unsubscribe("rpcRequest:error");
-     this.events.unsubscribe("rpcResponse:error");
-     this.events.unsubscribe("rpcRequest:success");
+     this.events.unsubscribe(FeedsEvent.PublishType.rpcRequestError);
+     this.events.unsubscribe(FeedsEvent.PublishType.rpcResponseError);
+     this.events.unsubscribe(FeedsEvent.PublishType.rpcRequestSuccess);
 
-     this.events.unsubscribe("stream:getBinaryResponse");
-     this.events.unsubscribe("stream:getBinarySuccess");
-     this.events.unsubscribe("stream:error");
-     this.events.unsubscribe("stream:onStateChangedCallback");
-     this.events.unsubscribe("stream:progress");
-     this.events.unsubscribe("feeds:openRightMenu");
-     this.events.unsubscribe("stream:closed");
-     this.events.publish("update:tab");
-     this.events.publish("addBinaryEvevnt");
-     this.events.unsubscribe("feeds:getCommentFinish");
+     this.events.unsubscribe(FeedsEvent.PublishType.streamGetBinaryResponse);
+     this.events.unsubscribe(FeedsEvent.PublishType.streamGetBinarySuccess);
+     this.events.unsubscribe(FeedsEvent.PublishType.streamError);
+     this.events.unsubscribe(FeedsEvent.PublishType.streamOnStateChangedCallback);
+     this.events.unsubscribe(FeedsEvent.PublishType.streamProgress);
+     this.events.unsubscribe(FeedsEvent.PublishType.openRightMenu);
+     this.events.unsubscribe(FeedsEvent.PublishType.streamClosed);
+     this.events.publish(FeedsEvent.PublishType.updateTab);
+     this.events.publish(FeedsEvent.PublishType.addBinaryEvevnt);
+     this.events.unsubscribe(FeedsEvent.PublishType.getCommentFinish);
 
      //titleBarManager.hideActivityIndicator(TitleBarPlugin.TitleBarActivityType.OTHER);
   }

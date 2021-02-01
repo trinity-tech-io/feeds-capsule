@@ -40,7 +40,7 @@ export class PostfromComponent implements OnInit {
     if (!this.feedService.checkBindingServerVersion(()=>{
       this.feedService.hideAlertPopover();
     })) return;
-    this.event.publish("feeds:createpost");
+    this.event.publish(FeedsEvent.PublishType.createpost);
     this.navCtrl.navigateForward(['/createnewpost',nodeId,channelId]);
     
     // this.router.navigate(['createnewpost/',nodeId,channelId]);

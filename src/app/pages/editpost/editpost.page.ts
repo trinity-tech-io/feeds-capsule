@@ -80,43 +80,43 @@ export class EditPostPage implements OnInit {
     this.native.setTitleBarBackKeyShown(true);
     this.initData();
 
-    this.events.subscribe('feeds:connectionChanged',(status)=>{
+    this.events.subscribe(FeedsEvent.PublishType.connectionChanged,(status)=>{
       this.zone.run(() => {
         this.connectionStatus = status;
       });
     });
 
-    this.events.subscribe("feeds:friendConnectionChanged", (nodeId, status)=>{
+    this.events.subscribe(FeedsEvent.PublishType.friendConnectionChanged, (nodeId, status)=>{
       this.zone.run(()=>{
         this.nodeStatus[nodeId] = status;
       });
      });
 
-    this.events.subscribe('rpcRequest:error', () => {
+    this.events.subscribe(FeedsEvent.PublishType.rpcRequestError, () => {
       this.pauseVideo();
       this.native.hideLoading();
     });
 
-    this.events.subscribe('rpcResponse:error', () => {
+    this.events.subscribe(FeedsEvent.PublishType.rpcResponseError, () => {
       this.zone.run(() => {
         this.pauseVideo();
         this.native.hideLoading();
       });
     });
 
-    this.events.subscribe("feeds:updateTitle",()=>{
+    this.events.subscribe(FeedsEvent.PublishType.updateTitle,()=>{
       this.initTitle();
     });
 
-    this.events.subscribe("feeds:editPostSuccess",()=>{
+    this.events.subscribe(FeedsEvent.PublishType.editPostSuccess,()=>{
       this.zone.run(()=>{
-        this.events.publish("update:tab");
+        this.events.publish(FeedsEvent.PublishType.updateTab);
         this.native.hideLoading();
         this.native.pop();
       });
     });
 
-    this.events.subscribe('stream:error', (nodeId, error) => {
+    this.events.subscribe(FeedsEvent.PublishType.streamError, (nodeId, error) => {
       this.zone.run(() => {
         this.feedService.handleSessionError(nodeId, error);
         this.pauseVideo();
@@ -124,7 +124,7 @@ export class EditPostPage implements OnInit {
       });
     });
 
-    this.events.subscribe('stream:onStateChangedCallback', (nodeId, state) => {
+    this.events.subscribe(FeedsEvent.PublishType.streamOnStateChangedCallback, (nodeId, state) => {
       this.zone.run(() => {
         if (state != FeedsData.StreamState.CONNECTED)
           return;
@@ -135,27 +135,27 @@ export class EditPostPage implements OnInit {
       });
     });
 
-    this.events.subscribe('feeds:setBinaryFinish', (nodeId, key) => {
+    this.events.subscribe(FeedsEvent.PublishType.setBinaryFinish, (nodeId, key) => {
       this.zone.run(() => {
         this.processSetBinaryResult();
       });
     });
 
-    this.events.subscribe('stream:setBinarySuccess', (nodeId, key) => {
+    this.events.subscribe(FeedsEvent.PublishType.streamSetBinarySuccess, (nodeId, key) => {
       this.zone.run(() => {
         this.feedService.closeSession(nodeId);
         this.processSetBinaryResult();
       });
     });
 
-    this.events.subscribe('stream:setBinaryError', (nodeId, response) => {
+    this.events.subscribe(FeedsEvent.PublishType.streamSetBinaryError, (nodeId, response) => {
       this.zone.run(() => {
         this.feedService.closeSession(nodeId);
         this.native.hideLoading();
       });
     });
 
-    this.events.subscribe("feeds:openRightMenu",()=>{
+    this.events.subscribe(FeedsEvent.PublishType.openRightMenu,()=>{
       //this.clVideo();
       this.pauseVideo();
       this.hideFullScreen();
@@ -173,26 +173,26 @@ export class EditPostPage implements OnInit {
   }
 
   ionViewWillLeave(){
-    this.events.unsubscribe("feeds:connectionChanged");
-    this.events.unsubscribe("feeds:friendConnectionChanged");
-    this.events.unsubscribe("feeds:updateTitle");
-    this.events.unsubscribe("rpcRequest:error");
-    this.events.unsubscribe("rpcResponse:error");
-    this.events.unsubscribe("feeds:editPostSuccess");
+    this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
+    this.events.unsubscribe(FeedsEvent.PublishType.friendConnectionChanged);
+    this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
+    this.events.unsubscribe(FeedsEvent.PublishType.rpcRequestError);
+    this.events.unsubscribe(FeedsEvent.PublishType.rpcResponseError);
+    this.events.unsubscribe(FeedsEvent.PublishType.editPostSuccess);
 
-    this.events.unsubscribe("feeds:setBinaryFinish");
+    this.events.unsubscribe(FeedsEvent.PublishType.setBinaryFinish);
 
-    this.events.unsubscribe("stream:error");
-    this.events.unsubscribe("stream:setBinarySuccess");
-    this.events.unsubscribe("stream:setBinaryError");
-    this.events.unsubscribe("stream:onStateChangedCallback");
-    this.events.unsubscribe("feeds:openRightMenu");
-    this.events.unsubscribe("stream:getBinarySuccess");
+    this.events.unsubscribe(FeedsEvent.PublishType.streamError);
+    this.events.unsubscribe(FeedsEvent.PublishType.streamSetBinarySuccess);
+    this.events.unsubscribe(FeedsEvent.PublishType.streamSetBinaryError);
+    this.events.unsubscribe(FeedsEvent.PublishType.streamOnStateChangedCallback);
+    this.events.unsubscribe(FeedsEvent.PublishType.openRightMenu);
+    this.events.unsubscribe(FeedsEvent.PublishType.streamGetBinarySuccess);
     this.imgUrl="";
     this.native.hideLoading();
     this.hideFullScreen();
     this.removeVideo();
-    this.events.publish("addBinaryEvevnt");
+    this.events.publish(FeedsEvent.PublishType.addBinaryEvevnt);
     this.feedService.closeSession(this.nodeId);
 
   }
@@ -740,7 +740,7 @@ readThumbnail(fileName:string,filepath:string){
 
   processSetBinaryResult(){
     this.navCtrl.pop().then(()=>{
-      this.events.publish("update:tab");
+      this.events.publish(FeedsEvent.PublishType.updateTab);
       this.posterImg ="";
       this.flieUri="";
       this.imgUrl="";

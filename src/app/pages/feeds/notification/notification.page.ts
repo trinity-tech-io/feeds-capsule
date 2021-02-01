@@ -49,7 +49,7 @@ export class NotificationPage {
   ionViewWillEnter() {
     
     this.connectionStatus = this.feedService.getConnectionStatus();
-    this.events.subscribe('feeds:connectionChanged',(status)=>{
+    this.events.subscribe(FeedsEvent.PublishType.connectionChanged,(status)=>{
       this.zone.run(() => {
         this.connectionStatus = status;
       });
@@ -73,7 +73,7 @@ export class NotificationPage {
   }
 
   ionViewWillLeave(){
-    this.events.unsubscribe("feeds:connectionChanged");
+    this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
   }
 
   goToServer(){

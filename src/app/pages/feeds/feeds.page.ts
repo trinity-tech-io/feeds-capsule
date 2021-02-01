@@ -58,11 +58,11 @@ export class FeedsPage implements OnInit {
 
     this.getUnReadNum();
 
-    this.event.subscribe("feeds:updateTitle",()=>{
+    this.event.subscribe(FeedsEvent.PublishType.updateTitle,()=>{
       this.initTile();
     });
 
-    this.event.subscribe("feeds:UpdateNotification",()=>{
+    this.event.subscribe(FeedsEvent.PublishType.UpdateNotification,()=>{
        this.getUnReadNum();
     });
   }
@@ -73,8 +73,8 @@ export class FeedsPage implements OnInit {
       this.popoverController.dismiss();
       this.popover = "";
     }
-    this.event.unsubscribe("feeds:updateTitle");
-    this.event.unsubscribe("feeds:UpdateNotification");
+    this.event.unsubscribe(FeedsEvent.PublishType.updateTitle);
+    this.event.unsubscribe(FeedsEvent.PublishType.UpdateNotification);
   }
 
   initTile(){
@@ -89,7 +89,7 @@ export class FeedsPage implements OnInit {
   }
 
   create(){
-    this.event.publish("feeds:tabsendpost");
+    this.event.publish(FeedsEvent.PublishType.tabSendPost);
     if(this.feedService.getConnectionStatus() != 0){
       this.native.toastWarn('common.connectionError');
       return;
@@ -113,7 +113,7 @@ export class FeedsPage implements OnInit {
     }
 
     if(this.feedService.getMyChannelList().length === 1){
-      this.event.publish("feeds:createpost");
+      this.event.publish(FeedsEvent.PublishType.createpost);
       let myChannel = this.feedService.getMyChannelList()[0];
       this.native.navigateForward(['createnewpost/',myChannel.nodeId,myChannel.id],"");
       return;

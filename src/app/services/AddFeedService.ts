@@ -24,7 +24,7 @@ export class AddFeedService {
     }
 
     subscribeEvent(){
-        this.events.subscribe("feeds:friendConnectionChanged",(friendId, friendStatus)=>{
+        this.events.subscribe(FeedsEvent.PublishType.friendConnectionChanged,(friendId, friendStatus)=>{
             if (friendStatus == FeedsData.ConnState.connected){
                 this.changeTobeAddedFeedStatusByNodeId(friendId, FeedsData.FollowFeedStatus.FRIEND_ONLINE);
                 return ;
@@ -36,15 +36,15 @@ export class AddFeedService {
             }
         });
 
-        this.events.subscribe("feeds:login_finish",(nodeId)=>{
+        this.events.subscribe(FeedsEvent.PublishType.login_finish,(nodeId)=>{
             this.changeTobeAddedFeedStatusByNodeId(nodeId, FeedsData.FollowFeedStatus.SIGNIN_FINISH);
         });
         
-        this.events.subscribe("feeds:addFeedFinish",async (nodeId, feedId, feedName)=>{
+        this.events.subscribe(FeedsEvent.PublishType.addFeedFinish,async (nodeId, feedId, feedName)=>{
             await this.changeTobeAddedFeedStatusByNodeFeedId(nodeId, feedId, FeedsData.FollowFeedStatus.FOLLOW_FEED_FINISH);
             await this.changeTobeAddedFeedStatusByNodeFeedId(nodeId, feedId, FeedsData.FollowFeedStatus.FINISH);
             await this.removeTobeAddedFeedStatusByNodeFeedId(nodeId, feedId);
-            this.events.publish("addFeed:finish",nodeId,feedId);
+            this.events.publish(FeedsEvent.PublishType.addFeed_Finish, nodeId,feedId);
         });
     }
 
@@ -259,7 +259,7 @@ export class AddFeedService {
 
         await this.saveData();
 
-        this.events.publish("addFeed:statusChanged", nodeId, feedId, status);
+        this.events.publish(FeedsEvent.PublishType.addFeedStatusChanged, nodeId, feedId, status);
     }
 
     async removeTobeAddedFeedStatusByNodeFeedId(nodeId: string, feedId: number): Promise<void>{

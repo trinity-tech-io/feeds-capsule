@@ -35,7 +35,7 @@ export class FinishPage implements OnInit {
 
     ionViewDidEnter() {
       this.connectionStatus = this.feedService.getConnectionStatus();
-      this.events.subscribe('feeds:connectionChanged',(status)=>{
+      this.events.subscribe(FeedsEvent.PublishType.connectionChanged,(status)=>{
         this.zone.run(() => {
           this.connectionStatus = status;
         });
@@ -43,7 +43,7 @@ export class FinishPage implements OnInit {
     }
 
     ionViewWillLeave(){
-      this.events.unsubscribe("feeds:connectionChanged");
+      this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
     }
 
 

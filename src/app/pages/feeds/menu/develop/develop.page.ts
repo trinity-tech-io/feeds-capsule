@@ -28,7 +28,7 @@ export class DevelopPage implements OnInit {
     this.initTitle();
     this.native.setTitleBarBackKeyShown(true);
 
-    this.events.subscribe("feeds:updateTitle",()=>{
+    this.events.subscribe(FeedsEvent.PublishType.updateTitle,()=>{
       this.initTitle();
     });
    
@@ -75,7 +75,7 @@ export class DevelopPage implements OnInit {
     if(this.alert!=null){
       this.alert = null;
     }
-    this.events.unsubscribe("feeds:updateTitle");
+    this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
   }
 
 }

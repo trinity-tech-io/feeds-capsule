@@ -44,7 +44,7 @@ export class SigninPage implements OnInit {
     this.native.setTitleBarBackKeyShown(false);
     appManager.setVisible("show");
 
-    this.event.subscribe("feeds:updateTitle",()=>{
+    this.event.subscribe(FeedsEvent.PublishType.updateTitle,()=>{
       this.initTile();
     });
   }
@@ -53,7 +53,7 @@ export class SigninPage implements OnInit {
   }
 
   ionViewWillLeave(){
-    this.event.unsubscribe("feeds:updateTitle");
+    this.event.unsubscribe(FeedsEvent.PublishType.updateTitle);
   }
 
   learnMore(slide) {

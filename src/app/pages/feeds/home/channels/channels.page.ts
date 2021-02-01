@@ -214,13 +214,13 @@ export class ChannelsPage implements OnInit {
     this.initTitle();
     this.init();
 
-    this.events.subscribe('feeds:connectionChanged',(status)=>{
+    this.events.subscribe(FeedsEvent.PublishType.connectionChanged,(status)=>{
       this.zone.run(() => {
         this.connectionStatus = status;
       });
     });
 
-    this.events.subscribe("feeds:updateTitle",()=>{
+    this.events.subscribe(FeedsEvent.PublishType.updateTitle,()=>{
       if(this.menuService.postDetail!=null){
         this.menuService.hideActionSheet();
         this.menuMore(this.curPost);
@@ -229,52 +229,52 @@ export class ChannelsPage implements OnInit {
       this.initTitle();
     });
 
-    this.events.subscribe('feeds:subscribeFinish', (nodeId, channelId)=> {
+    this.events.subscribe(FeedsEvent.PublishType.subscribeFinish, (nodeId, channelId)=> {
       this.zone.run(() => {
         this.checkFollowStatus(this.nodeId,this.channelId);
       });
     });
 
-    this.events.subscribe('feeds:unsubscribeFinish', (nodeId, channelId, name) => {
+    this.events.subscribe(FeedsEvent.PublishType.unsubscribeFinish, (nodeId, channelId, name) => {
       this.zone.run(() => {
         this.checkFollowStatus(this.nodeId,this.channelId);
         this.native.setRootRouter(['/tabs/home']);
       });
     });
 
-    this.events.subscribe('feeds:editPostFinish',()=>{
+    this.events.subscribe(FeedsEvent.PublishType.editPostFinish,()=>{
         this.zone.run(() => {
           this.refreshChannelList();
         });
     });
 
-    this.events.subscribe('feeds:deletePostFinish',()=>{
+    this.events.subscribe(FeedsEvent.PublishType.deletePostFinish,()=>{
        this.native.hideLoading();
        this.zone.run(() => {
         this.refreshChannelList();
        });
     });
 
-    this.events.subscribe('stream:getBinaryResponse', () => {
+    this.events.subscribe(FeedsEvent.PublishType.streamGetBinaryResponse, () => {
       this.zone.run(() => {
 
       });
     });
 
-    this.events.subscribe('feeds:getBinaryFinish', (nodeId, key: string, value:string) => {
+    this.events.subscribe(FeedsEvent.PublishType.getBinaryFinish, (nodeId, key: string, value:string) => {
       this.zone.run(() => {
         this.processGetBinaryResult(key, value);
       });
     });
 
-    this.events.subscribe('stream:getBinarySuccess', (nodeId, key: string, value:string) => {
+    this.events.subscribe(FeedsEvent.PublishType.streamGetBinarySuccess, (nodeId, key: string, value:string) => {
       this.zone.run(() => {
         this.processGetBinaryResult(key, value);
         this.feedService.closeSession(nodeId);
       });
     });
 
-    this.events.subscribe('stream:progress',(nodeId,progress)=>{
+    this.events.subscribe(FeedsEvent.PublishType.streamProgress,(nodeId,progress)=>{
       this.zone.run(() => {
         if(this.curPostId === ""){
           return;
@@ -289,7 +289,7 @@ export class ChannelsPage implements OnInit {
       });
     });
 
-    this.events.subscribe('stream:error', (nodeId, error) => {
+    this.events.subscribe(FeedsEvent.PublishType.streamError, (nodeId, error) => {
       this.zone.run(() => {
         this.feedService.handleSessionError(nodeId, error);
         this.pauseAllVideo();
@@ -300,7 +300,7 @@ export class ChannelsPage implements OnInit {
       });
     });
 
-    this.events.subscribe('stream:onStateChangedCallback', (nodeId, state) => {
+    this.events.subscribe(FeedsEvent.PublishType.streamOnStateChangedCallback, (nodeId, state) => {
       this.zone.run(() => {
 
         if (this.cacheGetBinaryRequestKey == "")
@@ -316,19 +316,19 @@ export class ChannelsPage implements OnInit {
       });
     });
 
-    this.events.subscribe('rpcRequest:error', () => {
+    this.events.subscribe(FeedsEvent.PublishType.rpcRequestError, () => {
       this.zone.run(() => {
         this.native.hideLoading();
       });
     });
 
-    this.events.subscribe('rpcResponse:error', () => {
+    this.events.subscribe(FeedsEvent.PublishType.rpcResponseError, () => {
       this.zone.run(() => {
         this.native.hideLoading();
       });
     });
 
-   this.events.subscribe('rpcRequest:success', () => {
+   this.events.subscribe(FeedsEvent.PublishType.rpcRequestSuccess, () => {
     this.zone.run(() => {
       this.refreshChannelList();
       this.isLoadimage ={};
@@ -341,7 +341,7 @@ export class ChannelsPage implements OnInit {
     });
    });
 
-   this.events.subscribe('feeds:openRightMenu',()=>{
+   this.events.subscribe(FeedsEvent.PublishType.openRightMenu,()=>{
     this.curPostId = "";
     this.curImgPostId = "";
     this.feedService.closeSession(this.curNodeId);
@@ -352,7 +352,7 @@ export class ChannelsPage implements OnInit {
     this.hideFullScreen();
    });
 
-   this.events.subscribe('stream:closed',(nodeId)=>{
+   this.events.subscribe(FeedsEvent.PublishType.streamClosed,(nodeId)=>{
       let mNodeId = nodeId || "";
       if (mNodeId != ""){
         this.feedService.closeSession(mNodeId);
@@ -364,7 +364,7 @@ export class ChannelsPage implements OnInit {
       this.downProgressObj[this.curPostId] = 0;
     });
 
-    this.events.subscribe("feeds:friendConnectionChanged", (nodeId, status)=>{
+    this.events.subscribe(FeedsEvent.PublishType.friendConnectionChanged, (nodeId, status)=>{
       this.zone.run(()=>{
         this.nodeStatus[nodeId] = status;
       });
@@ -373,27 +373,27 @@ export class ChannelsPage implements OnInit {
 
   ionViewWillLeave(){
 
-    this.events.unsubscribe("feeds:connectionChanged");
-    this.events.unsubscribe("feeds:updateTitle");
-    this.events.unsubscribe("feeds:subscribeFinish");
-    this.events.unsubscribe("feeds:unsubscribeFinish");
-    this.events.unsubscribe("feeds:editPostFinish");
-    this.events.unsubscribe("feeds:deletePostFinish");
+    this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
+    this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
+    this.events.unsubscribe(FeedsEvent.PublishType.subscribeFinish);
+    this.events.unsubscribe(FeedsEvent.PublishType.unsubscribeFinish);
+    this.events.unsubscribe(FeedsEvent.PublishType.editPostFinish);
+    this.events.unsubscribe(FeedsEvent.PublishType.deletePostFinish);
 
-    this.events.unsubscribe("feeds:getBinaryFinish");
+    this.events.unsubscribe(FeedsEvent.PublishType.getBinaryFinish);
 
-    this.events.unsubscribe("rpcRequest:error");
-    this.events.unsubscribe("rpcResponse:error");
-    this.events.unsubscribe("rpcRequest:success");
+    this.events.unsubscribe(FeedsEvent.PublishType.rpcRequestError);
+    this.events.unsubscribe(FeedsEvent.PublishType.rpcResponseError);
+    this.events.unsubscribe(FeedsEvent.PublishType.rpcRequestSuccess);
 
-    this.events.unsubscribe("stream:getBinaryResponse");
-    this.events.unsubscribe("stream:getBinarySuccess");
-    this.events.unsubscribe("stream:error");
-    this.events.unsubscribe("stream:onStateChangedCallback");
-    this.events.unsubscribe("feeds:openRightMenu");
-    this.events.unsubscribe("stream:progress");
-    this.events.unsubscribe("stream:closed");
-    this.events.unsubscribe("feeds:friendConnectionChanged");
+    this.events.unsubscribe(FeedsEvent.PublishType.streamGetBinaryResponse);
+    this.events.unsubscribe(FeedsEvent.PublishType.streamGetBinarySuccess);
+    this.events.unsubscribe(FeedsEvent.PublishType.streamError);
+    this.events.unsubscribe(FeedsEvent.PublishType.streamOnStateChangedCallback);
+    this.events.unsubscribe(FeedsEvent.PublishType.openRightMenu);
+    this.events.unsubscribe(FeedsEvent.PublishType.streamProgress);
+    this.events.unsubscribe(FeedsEvent.PublishType.streamClosed);
+    this.events.unsubscribe(FeedsEvent.PublishType.friendConnectionChanged);
     this.removeImages();
     this.removeAllVideo();
     this.isLoadimage ={};
@@ -407,8 +407,8 @@ export class ChannelsPage implements OnInit {
     this.curNodeId ="";
     this.curPostId ="";
     this.curImgPostId = "";
-    this.events.publish("update:tab");
-    this.events.publish("addBinaryEvevnt");
+    this.events.publish(FeedsEvent.PublishType.updateTab);
+    this.events.publish(FeedsEvent.PublishType.addBinaryEvevnt);
     this.native.hideLoading();
     this.hideFullScreen();
   }

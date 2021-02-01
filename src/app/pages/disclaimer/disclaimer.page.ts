@@ -36,7 +36,7 @@ export class DisclaimerPage implements OnInit {
     appManager.setVisible('show');
     this.styleObj["height"] = (screen.height - 245) +"px";
 
-    this.events.subscribe("feeds:updateTitle",()=>{
+    this.events.subscribe(FeedsEvent.PublishType.updateTitle,()=>{
       this.initTitle();
     });
   }
@@ -49,7 +49,7 @@ export class DisclaimerPage implements OnInit {
   }
 
   ionViewWillLeave(){
-    this.events.unsubscribe("feeds:updateTitle");
+    this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
   }
 
   // deny the disclaimer

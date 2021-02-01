@@ -60,7 +60,7 @@ export class StartbindingPage implements OnInit {
     this.native.setTitleBarBackKeyShown(true);
     
     this.connectionStatus = this.feedService.getConnectionStatus();
-    this.events.subscribe('feeds:connectionChanged',(status)=>{
+    this.events.subscribe(FeedsEvent.PublishType.connectionChanged,(status)=>{
       this.zone.run(() => {
         this.connectionStatus = status;
         if (this.connectionStatus == 1){
@@ -69,7 +69,7 @@ export class StartbindingPage implements OnInit {
       });
     });
     
-    this.events.subscribe('feeds:owner_declared', (nodeId, phase, did, payload) => {
+    this.events.subscribe(FeedsEvent.PublishType.owner_declared, (nodeId, phase, did, payload) => {
       switch(phase){
         case "owner_declared":
           this.zone.run(() => {
@@ -93,7 +93,7 @@ export class StartbindingPage implements OnInit {
       this.native.hideLoading();
     });
     
-    this.events.subscribe('feeds:issue_credential', () => {
+    this.events.subscribe(FeedsEvent.PublishType.issue_credential, () => {
       this.zone.run(() => {
           this.native.getNavCtrl().navigateForward(['/bindservice/finish/',this.nodeId],{
             replaceUrl: true
@@ -101,7 +101,7 @@ export class StartbindingPage implements OnInit {
       });
     });
     
-    this.events.subscribe("feeds:friendConnectionChanged", (nodeId, status)=>{
+    this.events.subscribe(FeedsEvent.PublishType.friendConnectionChanged, (nodeId, status)=>{
       if(this.nodeId == nodeId && status == 0)
       this.native.hideLoading();
     });
@@ -109,7 +109,7 @@ export class StartbindingPage implements OnInit {
     // this.native.showLoading("Connecting server").then(() => {
     // });
 
-    this.events.subscribe('feeds:resolveDidError', (nodeId, did, payload) => {
+    this.events.subscribe(FeedsEvent.PublishType.resolveDidError, (nodeId, did, payload) => {
       this.zone.run(() => {
           this.native.navigateForward(['/bindservice/publishdid/',nodeId, did, payload],{
             replaceUrl: true
@@ -119,7 +119,7 @@ export class StartbindingPage implements OnInit {
     });
 
     
-    this.events.subscribe('feeds:resolveDidSucess', (nodeId, did) => {
+    this.events.subscribe(FeedsEvent.PublishType.resolveDidSucess, (nodeId, did) => {
       this.zone.run(() => {
           this.native.navigateForward(['/bindservice/issuecredential', nodeId, did],{
             replaceUrl: true
@@ -128,7 +128,7 @@ export class StartbindingPage implements OnInit {
       });
     });
 
-    this.events.subscribe('rpcResponse:error',()=>{
+    this.events.subscribe(FeedsEvent.PublishType.rpcResponseError,()=>{
       this.zone.run(() => {
         this.native.hideLoading();
       });
@@ -145,13 +145,13 @@ export class StartbindingPage implements OnInit {
   ionViewWillLeave(){
     this.native.hideLoading();
     this.feedService.cleanDeclareOwner();
-    this.events.unsubscribe("feeds:connectionChanged");
-    this.events.unsubscribe("feeds:owner_declared");
-    this.events.unsubscribe("feeds:issue_credential");
-    this.events.unsubscribe("feeds:friendConnectionChanged");
-    this.events.unsubscribe("feeds:resolveDidError");
-    this.events.unsubscribe("feeds:resolveDidSucess");
-    this.events.unsubscribe("rpcResponse:error");
+    this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
+    this.events.unsubscribe(FeedsEvent.PublishType.owner_declared);
+    this.events.unsubscribe(FeedsEvent.PublishType.issue_credential);
+    this.events.unsubscribe(FeedsEvent.PublishType.friendConnectionChanged);
+    this.events.unsubscribe(FeedsEvent.PublishType.resolveDidError);
+    this.events.unsubscribe(FeedsEvent.PublishType.resolveDidSucess);
+    this.events.unsubscribe(FeedsEvent.PublishType.rpcResponseError);
   }
 
   confirm(){

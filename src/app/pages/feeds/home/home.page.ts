@@ -149,23 +149,24 @@ export class HomePage implements OnInit {
     this.refreshImage(0);
     this.initnodeStatus(this.postList);
 
-    this.events.subscribe('feeds:unfollowFeedsFinish', (nodeId, channelId, name) => {
+    this.events.subscribe(FeedsEvent.PublishType.unfollowFeedsFinish, (nodeId, channelId, name) => {
       this.zone.run(() => {
           this.hideDeletedPosts = this.feedService.getHideDeletedPosts();
           this.refreshPostList();
       });
     });
 
-    this.events.subscribe("feeds:clearHomeEvent",()=>{
-            this.events.unsubscribe('feeds:hideDeletedPosts');
-            this.events.unsubscribe("feeds:createpost");
-            this.events.unsubscribe("addBinaryEvevnt");
-            this.events.unsubscribe("update:tab");
-            this.events.unsubscribe("feeds:unfollowFeedsFinish");
+    this.events.subscribe(FeedsEvent.PublishType.clearHomeEvent,()=>{
+            this.events.unsubscribe(FeedsEvent.PublishType.hideDeletedPosts);
+            this.events.unsubscribe(FeedsEvent.PublishType.createpost);
+            this.events.unsubscribe(FeedsEvent.PublishType.addBinaryEvevnt);
+            this.events.unsubscribe(FeedsEvent.PublishType.updateTab);
+            this.events.unsubscribe(FeedsEvent.PublishType.unfollowFeedsFinish);
             this.clearData();
-            this.events.unsubscribe("feeds:clearHomeEvent");
+            this.events.unsubscribe(FeedsEvent.PublishType.clearHomeEvent);
     });
-   this.events.subscribe("update:tab",(isInit)=>{
+
+   this.events.subscribe(FeedsEvent.PublishType.updateTab,(isInit)=>{
     this.zone.run(()=>{
       this.hideDeletedPosts = this.feedService.getHideDeletedPosts();
       if(isInit){
@@ -177,16 +178,16 @@ export class HomePage implements OnInit {
     });
 
 
- this.events.subscribe("feeds:tabsendpost",()=>{
+ this.events.subscribe(FeedsEvent.PublishType.tabSendPost,()=>{
   this.downProgressObj = {};
   this.pauseAllVideo();
  });
 
- this.events.subscribe("feeds:createpost",()=>{
+ this.events.subscribe(FeedsEvent.PublishType.createpost,()=>{
           this.clearData();
  });
 
- this.events.subscribe("feeds:hideDeletedPosts",()=>{
+ this.events.subscribe(FeedsEvent.PublishType.hideDeletedPosts,()=>{
   this.zone.run(()=>{
    this.hideDeletedPosts = this.feedService.getHideDeletedPosts();
    this.refreshPostList();
@@ -196,56 +197,56 @@ export class HomePage implements OnInit {
  this.addCommonEvents();
 
  this.addBinaryEvevnt();
- this.events.subscribe("addBinaryEvevnt",()=>{
+ this.events.subscribe(FeedsEvent.PublishType.addBinaryEvevnt, ()=>{
     this.addCommonEvents();
     this.addBinaryEvevnt();
  });
 }
 
 addCommonEvents(){
-  this.events.subscribe("feeds:updateTitle",()=>{
+  this.events.subscribe(FeedsEvent.PublishType.updateTitle,()=>{
     if(this.menuService.postDetail!=null){
       this.menuService.hideActionSheet();
       this.menuMore(this.curPost);
     }
   });
 
-  this.events.subscribe('feeds:connectionChanged',(status)=>{
+  this.events.subscribe(FeedsEvent.PublishType.connectionChanged,(status)=>{
     this.zone.run(() => {
       this.connectionStatus = status;
     });
   });
 
-  this.events.subscribe("feeds:friendConnectionChanged", (nodeId, status)=>{
+  this.events.subscribe(FeedsEvent.PublishType.friendConnectionChanged, (nodeId, status)=>{
     this.zone.run(()=>{
       this.nodeStatus[nodeId] = status;
     });
   });
 
- this.events.subscribe("feeds:editPostFinish",()=>{
+ this.events.subscribe(FeedsEvent.PublishType.editPostFinish,()=>{
   this.zone.run(()=>{
     this.refreshPostList();
   });
  });
 
- this.events.subscribe("feeds:deletePostFinish",()=>{
+ this.events.subscribe(FeedsEvent.PublishType.deletePostFinish,()=>{
   this.zone.run(()=>{
     this.native.hideLoading();
     this.refreshPostList();
   });
  });
 
-  this.events.subscribe('rpcRequest:error', () => {
+  this.events.subscribe(FeedsEvent.PublishType.rpcRequestError, () => {
     this.native.hideLoading();
   });
 
-  this.events.subscribe('rpcResponse:error', () => {
+  this.events.subscribe(FeedsEvent.PublishType.rpcResponseError, () => {
     this.zone.run(() => {
       this.native.hideLoading();
     });
   });
 
- this.events.subscribe('rpcRequest:success', () => {
+ this.events.subscribe(FeedsEvent.PublishType.rpcRequestSuccess, () => {
   this.zone.run(() => {
     this.refreshPostList();
     this.hideComponent(null);
@@ -256,12 +257,12 @@ addCommonEvents(){
 }
 
 addBinaryEvevnt(){
-  this.events.subscribe('stream:getBinaryResponse', () => {
+  this.events.subscribe(FeedsEvent.PublishType.streamGetBinaryResponse, () => {
     this.zone.run(() => {
     });
   });
 
-  this.events.subscribe('feeds:getBinaryFinish', (nodeId, key: string, value:string) => {
+  this.events.subscribe(FeedsEvent.PublishType.getBinaryFinish, (nodeId, key: string, value:string) => {
     this.zone.run(() => {
 
       this.processGetBinaryResult(key, value);
@@ -270,7 +271,7 @@ addBinaryEvevnt(){
   });
 
 
-  this.events.subscribe('stream:getBinarySuccess', (nodeId, key: string, value:string) => {
+  this.events.subscribe(FeedsEvent.PublishType.streamGetBinarySuccess, (nodeId, key: string, value:string) => {
     this.zone.run(() => {
 
       this.curNodeId = "";
@@ -280,7 +281,7 @@ addBinaryEvevnt(){
     });
   });
 
-  this.events.subscribe('stream:error', (nodeId, error) => {
+  this.events.subscribe(FeedsEvent.PublishType.streamError, (nodeId, error) => {
     this.zone.run(() => {
       this.native.hideLoading();
       this.pauseAllVideo();
@@ -294,7 +295,7 @@ addBinaryEvevnt(){
     });
   });
 
-  this.events.subscribe('stream:progress',(nodeId,progress)=>{
+  this.events.subscribe(FeedsEvent.PublishType.streamProgress,(nodeId,progress)=>{
     this.zone.run(() => {
       if(this.curPostId === ""){
         return;
@@ -311,7 +312,7 @@ addBinaryEvevnt(){
     });
   })
 
-  this.events.subscribe('stream:onStateChangedCallback', (nodeId, state) => {
+  this.events.subscribe(FeedsEvent.PublishType.streamOnStateChangedCallback, (nodeId, state) => {
     this.zone.run(() => {
       if (this.cacheGetBinaryRequestKey == "")
         return;
@@ -330,7 +331,7 @@ addBinaryEvevnt(){
     });
   });
 
-  this.events.subscribe('feeds:openRightMenu',()=>{
+  this.events.subscribe(FeedsEvent.PublishType.openRightMenu,()=>{
          this.curPostId ="";
          this.curImgPostId ="";
          this.downProgressObj ={};
@@ -344,7 +345,7 @@ addBinaryEvevnt(){
          }
   });
 
-  this.events.subscribe('stream:closed',(nodeId)=>{
+  this.events.subscribe(FeedsEvent.PublishType.streamClosed,(nodeId)=>{
     let mNodeId = nodeId || "";
     this.pauseAllVideo();
     this.native.hideLoading();
@@ -358,9 +359,9 @@ addBinaryEvevnt(){
 }
 
  ionViewWillLeave(){
-   this.events.unsubscribe('feeds:hideDeletedPosts');
-   this.events.unsubscribe("feeds:createpost");
-   this.events.unsubscribe("feeds:unfollowFeedsFinish");
+   this.events.unsubscribe(FeedsEvent.PublishType.hideDeletedPosts);
+   this.events.unsubscribe(FeedsEvent.PublishType.createpost);
+   this.events.unsubscribe(FeedsEvent.PublishType.unfollowFeedsFinish);
    this.clearData();
 }
 
@@ -368,28 +369,28 @@ clearData(){
   if(this.curNodeId!=""){
     this.feedService.closeSession(this.curNodeId);
   }
-   this.events.unsubscribe("feeds:updateTitle");
-   this.events.unsubscribe("feeds:connectionChanged");
-   this.events.unsubscribe("feeds:postDataUpdate");
-   this.events.unsubscribe("feeds:friendConnectionChanged");
-   this.events.unsubscribe("feeds:publishPostFinish");
-   this.events.unsubscribe("feeds:editPostFinish");
-   this.events.unsubscribe("feeds:deletePostFinish");
+   this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
+   this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
+  //  this.events.unsubscribe("feeds:postDataUpdate");
+   this.events.unsubscribe(FeedsEvent.PublishType.friendConnectionChanged);
+  //  this.events.unsubscribe("feeds:publishPostFinish");
+   this.events.unsubscribe(FeedsEvent.PublishType.editPostFinish);
+   this.events.unsubscribe(FeedsEvent.PublishType.deletePostFinish);
 
-   this.events.unsubscribe("feeds:getBinaryFinish");
+   this.events.unsubscribe(FeedsEvent.PublishType.getBinaryFinish);
 
-   this.events.unsubscribe("stream:getBinaryResponse");
-   this.events.unsubscribe("stream:getBinarySuccess");
-   this.events.unsubscribe("stream:error");
-   this.events.unsubscribe("stream:onStateChangedCallback");
-   this.events.unsubscribe("stream:progress");
-   this.events.unsubscribe("stream:closed");
+   this.events.unsubscribe(FeedsEvent.PublishType.streamGetBinaryResponse);
+   this.events.unsubscribe(FeedsEvent.PublishType.streamGetBinarySuccess);
+   this.events.unsubscribe(FeedsEvent.PublishType.streamError);
+   this.events.unsubscribe(FeedsEvent.PublishType.streamOnStateChangedCallback);
+   this.events.unsubscribe(FeedsEvent.PublishType.streamProgress);
+   this.events.unsubscribe(FeedsEvent.PublishType.streamClosed);
 
-   this.events.unsubscribe("rpcRequest:error");
-   this.events.unsubscribe("rpcResponse:error");
-   this.events.unsubscribe("rpcRequest:success");
-   this.events.unsubscribe('feeds:openRightMenu');
-   this.events.unsubscribe('feeds:tabsendpost');
+   this.events.unsubscribe(FeedsEvent.PublishType.rpcRequestError);
+   this.events.unsubscribe(FeedsEvent.PublishType.rpcResponseError);
+   this.events.unsubscribe(FeedsEvent.PublishType.rpcRequestSuccess);
+   this.events.unsubscribe(FeedsEvent.PublishType.openRightMenu);
+   this.events.unsubscribe(FeedsEvent.PublishType.tabSendPost);
    this.removeImages();
    this.removeAllVideo();
    this.isLoadimage ={};
@@ -405,8 +406,8 @@ clearData(){
 }
 
   ionViewDidLeave() {
-    this.events.unsubscribe("addBinaryEvevnt");
-    this.events.unsubscribe("update:tab");
+    this.events.unsubscribe(FeedsEvent.PublishType.addBinaryEvevnt);
+    this.events.unsubscribe(FeedsEvent.PublishType.updateTab);
   }
 
   ionViewWillUnload() {

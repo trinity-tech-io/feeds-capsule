@@ -99,12 +99,12 @@ export class ProfiledetailPage implements OnInit {
 
     this.collectData();
 
-    this.events.subscribe('feeds:connectionChanged',(status)=>{
+    this.events.subscribe(FeedsEvent.PublishType.connectionChanged,(status)=>{
       this.zone.run(() => {
         this.connectionStatus = status;
       });
     });
-    this.events.subscribe("feeds:updateTitle",()=>{
+    this.events.subscribe(FeedsEvent.PublishType.updateTitle,()=>{
       this.initTitle();
     });
   }
@@ -120,8 +120,8 @@ export class ProfiledetailPage implements OnInit {
   }
 
   ionViewWillLeave(){
-    this.events.unsubscribe("feeds:connectionChanged");
-    this.events.unsubscribe("feeds:updateTitle");
+    this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
+    this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
   }
 
   handleImages(){

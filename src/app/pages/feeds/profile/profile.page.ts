@@ -171,14 +171,14 @@ export class ProfilePage implements OnInit {
     this.changeType(this.selectType);
     this.connectionStatus = this.feedService.getConnectionStatus();
 
-    this.events.subscribe("feeds:hideDeletedPosts",()=>{
+    this.events.subscribe(FeedsEvent.PublishType.hideDeletedPosts,()=>{
       this.zone.run(()=>{
        this.hideDeletedPosts = this.feedService.getHideDeletedPosts();
        this.refreshLikeList();
       });
     });
 
-    this.events.subscribe('feeds:connectionChanged',(status)=>{
+    this.events.subscribe(FeedsEvent.PublishType.connectionChanged,(status)=>{
       this.zone.run(() => {
         this.connectionStatus = status;
       });
@@ -191,7 +191,7 @@ export class ProfilePage implements OnInit {
     this.description = signInData["description"] || "";
 
 
-    this.events.subscribe('feeds:refreshSubscribedChannels', list => {
+    this.events.subscribe(FeedsEvent.PublishType.refreshSubscribedChannels, list => {
       this.zone.run(() => {
         this.followingList = list;
         this.initnodeStatus(this.followingList);
@@ -199,7 +199,7 @@ export class ProfilePage implements OnInit {
     });
 
 
-    this.events.subscribe('feeds:updateLikeList', (list) => {
+    this.events.subscribe(FeedsEvent.PublishType.updateLikeList, (list) => {
       this.zone.run(() => {
         // this.totalLikeList = list;
         // this.initLike();
@@ -208,20 +208,20 @@ export class ProfilePage implements OnInit {
       });
      });
 
-     this.events.subscribe("feeds:friendConnectionChanged", (nodeId, status)=>{
+     this.events.subscribe(FeedsEvent.PublishType.friendConnectionChanged, (nodeId, status)=>{
       this.zone.run(()=>{
         this.nodeStatus[nodeId] = status;
       });
      });
 
-     this.events.subscribe('feeds:channelsDataUpdate', () =>{
+     this.events.subscribe(FeedsEvent.PublishType.channelsDataUpdate, () =>{
       this.zone.run(()=>{
         this.channels = this.feedService.getMyChannelList();
         this.initnodeStatus(this.channels);
       });
     });
 
-    this.events.subscribe('feeds:refreshPage',()=>{
+    this.events.subscribe(FeedsEvent.PublishType.refreshPage,()=>{
       this.zone.run(() => {
           this.initMyFeeds();
           this.initFolling();
@@ -229,49 +229,49 @@ export class ProfilePage implements OnInit {
       });
     });
 
-    this.events.subscribe('feeds:editPostFinish',()=>{
+    this.events.subscribe(FeedsEvent.PublishType.editPostFinish,()=>{
       this.zone.run(() => {
         this.refreshLikeList();
       });
     });
 
-  this.events.subscribe('feeds:deletePostFinish',()=>{
+  this.events.subscribe(FeedsEvent.PublishType.deletePostFinish,()=>{
     this.zone.run(() => {
       this.refreshLikeList();
     });
   });
 
-  this.events.subscribe("feeds:updateTitle",()=>{
+  this.events.subscribe(FeedsEvent.PublishType.updateTitle,()=>{
     if(this.menuService.postDetail!=null){
       this.menuService.hideActionSheet();
       this.showMenuMore(this.curItem);
     }
   });
 
-  this.events.subscribe('stream:getBinaryResponse', () => {
+  this.events.subscribe(FeedsEvent.PublishType.streamGetBinaryResponse, () => {
     this.zone.run(() => {
     });
   });
 
-  this.events.subscribe('feeds:getBinaryFinish', (nodeId, key: string, value:string) => {
+  this.events.subscribe(FeedsEvent.PublishType.getBinaryFinish, (nodeId, key: string, value:string) => {
     this.zone.run(() => {
       this.processGetBinaryResult(key, value);
     });
   });
 
-  this.events.subscribe('stream:getBinarySuccess', (nodeId, key: string, value:string) => {
+  this.events.subscribe(FeedsEvent.PublishType.streamGetBinarySuccess, (nodeId, key: string, value:string) => {
     this.zone.run(() => {
       this.feedService.closeSession(nodeId);
       this.processGetBinaryResult(key, value);
     });
   });
 
- this.events.subscribe('stream:getBinaryResponse', () => {
+ this.events.subscribe(FeedsEvent.PublishType.streamGetBinaryResponse, () => {
     this.zone.run(() => {
     });
   });
 
-  this.events.subscribe('stream:error', (nodeId, error) => {
+  this.events.subscribe(FeedsEvent.PublishType.streamError, (nodeId, error) => {
     this.zone.run(() => {
       this.feedService.handleSessionError(nodeId, error);
       this.pauseAllVideo();
@@ -284,7 +284,7 @@ export class ProfilePage implements OnInit {
     });
   });
 
-  this.events.subscribe('stream:progress',(nodeId,progress)=>{
+  this.events.subscribe(FeedsEvent.PublishType.streamProgress,(nodeId,progress)=>{
     this.zone.run(() => {
       if(this.curPostId === ""){
         return;
@@ -299,7 +299,7 @@ export class ProfilePage implements OnInit {
     });
   });
 
-  this.events.subscribe('stream:onStateChangedCallback', (nodeId, state) => {
+  this.events.subscribe(FeedsEvent.PublishType.streamOnStateChangedCallback, (nodeId, state) => {
     this.zone.run(() => {
 
       if (this.cacheGetBinaryRequestKey == "")
@@ -316,21 +316,21 @@ export class ProfilePage implements OnInit {
     });
   });
 
-  this.events.subscribe('rpcRequest:error', () => {
+  this.events.subscribe(FeedsEvent.PublishType.rpcRequestError, () => {
     this.zone.run(() => {
       //this.pauseAllVideo();
       this.native.hideLoading();
     });
   });
 
-  this.events.subscribe('rpcResponse:error', () => {
+  this.events.subscribe(FeedsEvent.PublishType.rpcResponseError, () => {
     this.zone.run(() => {
       //this.pauseAllVideo();
       this.native.hideLoading();
     });
   });
 
- this.events.subscribe('rpcRequest:success', () => {
+ this.events.subscribe(FeedsEvent.PublishType.rpcRequestSuccess, () => {
   this.zone.run(() => {
     this.refreshLikeList();
     this.isLoadimage ={};
@@ -343,7 +343,7 @@ export class ProfilePage implements OnInit {
   });
  });
 
- this.events.subscribe("feeds:openRightMenu",()=>{
+ this.events.subscribe(FeedsEvent.PublishType.openRightMenu,()=>{
      this.curPostId = "";
      this.curImgPostId ="";
      if(this.curNodeId != ""){
@@ -357,12 +357,12 @@ export class ProfilePage implements OnInit {
  });
 
 
- this.events.subscribe("feeds:tabsendpost",()=>{
+ this.events.subscribe(FeedsEvent.PublishType.tabSendPost,()=>{
    this.downProgressObj = {};
   this.pauseAllVideo();
  });
 
-    this.events.subscribe('stream:closed',(nodeId)=>{
+    this.events.subscribe(FeedsEvent.PublishType.streamClosed,(nodeId)=>{
       let mNodeId = nodeId || "";
       if (mNodeId != ""){
         this.feedService.closeSession(mNodeId);
@@ -376,33 +376,33 @@ export class ProfilePage implements OnInit {
   }
 
   ionViewWillLeave(){
-    this.events.unsubscribe("feeds:refreshSubscribedChannels");
-    this.events.unsubscribe("feeds:updateLikeList");
-    this.events.unsubscribe("feeds:connectionChanged");
-    this.events.unsubscribe("feeds:friendConnectionChanged");
-    this.events.unsubscribe("feeds:channelsDataUpdate");
-    this.events.unsubscribe('feeds:refreshPage');
+    this.events.unsubscribe(FeedsEvent.PublishType.refreshSubscribedChannels);
+    this.events.unsubscribe(FeedsEvent.PublishType.updateLikeList);
+    this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
+    this.events.unsubscribe(FeedsEvent.PublishType.friendConnectionChanged);
+    this.events.unsubscribe(FeedsEvent.PublishType.channelsDataUpdate);
+    this.events.unsubscribe(FeedsEvent.PublishType.refreshPage);
 
-    this.events.unsubscribe("feeds:editPostFinish");
-    this.events.unsubscribe("feeds:deletePostFinish");
+    this.events.unsubscribe(FeedsEvent.PublishType.editPostFinish);
+    this.events.unsubscribe(FeedsEvent.PublishType.deletePostFinish);
 
-    this.events.unsubscribe("feeds:getBinaryFinish");
+    this.events.unsubscribe(FeedsEvent.PublishType.getBinaryFinish);
 
-    this.events.unsubscribe("stream:getBinaryResponse");
-    this.events.unsubscribe("stream:getBinarySuccess");
-    this.events.unsubscribe("stream:error");
-    this.events.unsubscribe("stream:onStateChangedCallback");
+    this.events.unsubscribe(FeedsEvent.PublishType.streamGetBinaryResponse);
+    this.events.unsubscribe(FeedsEvent.PublishType.streamGetBinarySuccess);
+    this.events.unsubscribe(FeedsEvent.PublishType.streamError);
+    this.events.unsubscribe(FeedsEvent.PublishType.streamOnStateChangedCallback);
 
-    this.events.unsubscribe("rpcRequest:error");
-    this.events.unsubscribe("rpcResponse:error");
-    this.events.unsubscribe("rpcRequest:success");
+    this.events.unsubscribe(FeedsEvent.PublishType.rpcRequestError);
+    this.events.unsubscribe(FeedsEvent.PublishType.rpcResponseError);
+    this.events.unsubscribe(FeedsEvent.PublishType.rpcRequestSuccess);
 
-    this.events.unsubscribe("feeds:updateTitles");
-    this.events.unsubscribe("feeds:openRightMenu");
-    this.events.unsubscribe("feeds:tabsendpost");
-    this.events.unsubscribe("stream:progress");
-    this.events.unsubscribe("stream:closed");
-    this.events.unsubscribe("feeds:hideDeletedPosts");
+    this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
+    this.events.unsubscribe(FeedsEvent.PublishType.openRightMenu);
+    this.events.unsubscribe(FeedsEvent.PublishType.tabSendPost);
+    this.events.unsubscribe(FeedsEvent.PublishType.streamProgress);
+    this.events.unsubscribe(FeedsEvent.PublishType.streamClosed);
+    this.events.unsubscribe(FeedsEvent.PublishType.hideDeletedPosts);
 
     this.native.hideLoading();
     this.hideFullScreen();

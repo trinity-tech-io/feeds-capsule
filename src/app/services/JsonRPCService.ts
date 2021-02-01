@@ -47,10 +47,10 @@ export class JsonRPCService {
         private events: Events,
         private logUtils: LogUtils) {
         eventBus = events;
-        this.events.subscribe('transport:receiveMessage', event => {
+        this.events.subscribe(FeedsEvent.PublishType.transportReceiveMessage, event => {
             let data = serializeDataService.decodeData(event.message);
             this.logUtils.logd("receive msg > nodeId = " +event.from +" msg = "+JSON.stringify(data), TAG);
-            eventBus.publish('jrpc:receiveMessage',this.response(event.from, data));
+            eventBus.publish(FeedsEvent.PublishType.jrpcReceiveMessage, this.response(event.from, data));
         });
     }
 

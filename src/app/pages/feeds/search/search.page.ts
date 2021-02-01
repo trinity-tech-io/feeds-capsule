@@ -51,19 +51,19 @@ export class SearchPage implements OnInit {
   }
 
   initSubscribe(){
-    this.events.subscribe('feeds:connectionChanged',(status)=>{
+    this.events.subscribe(FeedsEvent.PublishType.connectionChanged,(status)=>{
       this.zone.run(() => {
         this.connectionStatus = status;
       });
     });
 
-    this.events.subscribe("feeds:friendConnectionChanged", (nodeId, status)=>{
+    this.events.subscribe(FeedsEvent.PublishType.friendConnectionChanged, (nodeId, status)=>{
       this.zone.run(()=>{
         this.nodeStatus[nodeId] = status;
       });
     });
 
-    this.events.subscribe('feeds:subscribeFinish', (nodeId, channelId)=> {
+    this.events.subscribe(FeedsEvent.PublishType.subscribeFinish, (nodeId, channelId)=> {
       // this.native.toast(name + " subscribed");
       this.zone.run(() => {
         // this.channelList  = this.feedService.getChannelsList();
@@ -72,7 +72,7 @@ export class SearchPage implements OnInit {
       });
     });
 
-    this.events.subscribe('feeds:unsubscribeFinish', (nodeId, channelId, name) => {
+    this.events.subscribe(FeedsEvent.PublishType.unsubscribeFinish, (nodeId, channelId, name) => {
       // this.native.toast(name + " unsubscribed");
       this.zone.run(() => {
         // this.channelList  = this.feedService.getChannelsList();
@@ -81,7 +81,7 @@ export class SearchPage implements OnInit {
       });
     });
 
-    this.events.subscribe('feeds:refreshChannels', list =>{
+    this.events.subscribe(FeedsEvent.PublishType.refreshChannels, list =>{
       this.zone.run(() => {
         // this.channelList = this.feedService.getChannelsList();
         // this.initnodeStatus();
@@ -89,7 +89,7 @@ export class SearchPage implements OnInit {
       });
     });
 
-    this.events.subscribe('feeds:channelsDataUpdate', () =>{
+    this.events.subscribe(FeedsEvent.PublishType.channelsDataUpdate, () =>{
       this.zone.run(() => {
         //this.channelList  = this.feedService.getChannelsList();
         this.initChannelData();
@@ -97,23 +97,23 @@ export class SearchPage implements OnInit {
       });
     });
 
-    this.events.subscribe("feeds:hideUnFollowFeeds",()=>{
+    this.events.subscribe(FeedsEvent.PublishType.hideUnFollowFeeds ,()=>{
       this.initChannelData();
     });
 
-    this.events.subscribe("feeds:refreshSubscribedChannels",()=>{
+    this.events.subscribe(FeedsEvent.PublishType.refreshSubscribedChannels,()=>{
       this.zone.run(() => {
         this.initChannelData();
       });
     });
 
-    this.events.subscribe("addFeed:statusChanged",()=>{
+    this.events.subscribe(FeedsEvent.PublishType.addFeedStatusChanged,()=>{
       this.zone.run(() => {
         this.addingChanneList = this.feedService.getToBeAddedFeedsList();
       });
     });
 
-    this.events.subscribe("addFeed:finish",()=>{
+    this.events.subscribe(FeedsEvent.PublishType.addFeed_Finish,()=>{
       this.zone.run(() => {
         this.addingChanneList = this.feedService.getToBeAddedFeedsList();
       });
@@ -126,19 +126,20 @@ export class SearchPage implements OnInit {
       this.popoverController.dismiss();
       this.popover = "";
     }
-    this.events.unsubscribe("feeds:connectionChanged");
-    this.events.unsubscribe('feeds:friendConnectionChanged');
-    this.events.unsubscribe('feeds:subscribeFinish');
-    this.events.unsubscribe('feeds:unsubscribeFinish');
-    this.events.unsubscribe('feeds:refreshChannels');
-    this.events.unsubscribe('feeds:channelsDataUpdate');
-    this.events.unsubscribe('feeds:refreshSubscribedChannels');
-    this.events.unsubscribe('addFeed:statusChanged');
-    this.events.unsubscribe('feeds:hideUnFollowFeeds');
+    this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
+    this.events.unsubscribe(FeedsEvent.PublishType.friendConnectionChanged);
+    this.events.unsubscribe(FeedsEvent.PublishType.subscribeFinish);
+    this.events.unsubscribe(FeedsEvent.PublishType.unsubscribeFinish);
+    this.events.unsubscribe(FeedsEvent.PublishType.refreshChannels);
+    this.events.unsubscribe(FeedsEvent.PublishType.channelsDataUpdate);
+    this.events.unsubscribe(FeedsEvent.PublishType.refreshSubscribedChannels);
+    this.events.unsubscribe(FeedsEvent.PublishType.addFeedStatusChanged);
+    this.events.unsubscribe(FeedsEvent.PublishType.hideUnFollowFeeds);
+    this.events.unsubscribe(FeedsEvent.PublishType.addFeed_Finish);
   }
 
   ionViewWillEnter() {
-    this.events.subscribe("feeds:search",()=>{
+    this.events.subscribe(FeedsEvent.PublishType.search, ()=>{
          this.init();
     });
     this.init();
@@ -173,7 +174,7 @@ export class SearchPage implements OnInit {
   }
 
   ionViewWillLeave(){
-    this.events.unsubscribe("feeds:search");
+    this.events.unsubscribe(FeedsEvent.PublishType.search);
     this.removeSubscribe();
     this.curAddingItem="";
   }

@@ -39,7 +39,7 @@ export class MyApp {
   ) {
       this.initializeApp();
       this.initProfileData();
-      this.events.subscribe("feeds:signinSuccess",()=>{
+      this.events.subscribe(FeedsEvent.PublishType.signinSuccess,()=>{
         this.initProfileData();
       })
   }
@@ -50,9 +50,9 @@ export class MyApp {
       this.initFeedPublicStatus();
       this.native.networkInfoInit();
       this.native.addNetworkListener(()=>{
-        this.events.publish('feeds:networkStatusChanged', 1);
+        this.events.publish(FeedsEvent.PublishType.networkStatusChanged, 1);
       },()=>{
-        this.events.publish('feeds:networkStatusChanged', 0);
+        this.events.publish(FeedsEvent.PublishType.networkStatusChanged, 0);
       });
         this.initDisclaimer();
     });
@@ -197,7 +197,7 @@ export class MyApp {
 
   clearData(){
     this.feedService.signOut().then(()=>{
-      this.events.publish("feeds:clearHomeEvent");
+      this.events.publish(FeedsEvent.PublishType.clearHomeEvent);
       this.appService.hideright();
       this.native.setRootRouter('signin');
       this.native.toast("app.des");

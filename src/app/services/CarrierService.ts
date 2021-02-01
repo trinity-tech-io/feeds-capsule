@@ -87,7 +87,7 @@ export class CarrierService {
 
     readyCallback(ret) {
         this.mIsReady = true;
-        eventBus.publish('carrier:ready', ret, Date.now());
+        eventBus.publish(FeedsEvent.PublishType.carrierReady, ret, Date.now());
     }
 
     createCarrierInstanceSuccess(ret: any) {
@@ -100,39 +100,39 @@ export class CarrierService {
     }
 
     conectionCallback(event) {
-        eventBus.publish('carrier:connectionChanged', event.status, Date.now());
+        eventBus.publish(FeedsEvent.PublishType.carrierConnectionChanged, event.status, Date.now());
     }
 
     friendConnectionCallback(ret) {
-        eventBus.publish('carrier:friendConnection', ret, Date.now());
+        eventBus.publish(FeedsEvent.PublishType.carrierFriendConnection, ret, Date.now());
     }
 
     friendInfoCallback(ret) {
-        eventBus.publish('carrier:friendInfo', ret, Date.now());
+        eventBus.publish(FeedsEvent.PublishType.carrierFriendInfo, ret, Date.now());
     }
 
     friendListCallback(event) {
-        eventBus.publish('carrier:friendList', event.friends.length, Date.now());
+        eventBus.publish(FeedsEvent.PublishType.carrierFriendList, event.friends.length, Date.now());
     }
 
     friendAddedCallback(ret) {
-        eventBus.publish('carrier:friendAdded', ret, Date.now());
+        eventBus.publish(FeedsEvent.PublishType.carrierFriendAdded, ret, Date.now());
     }
 
     friendRemovedCallback(ret) {
-        eventBus.publish('carrier:friendRemoved', ret, Date.now());
+        eventBus.publish(FeedsEvent.PublishType.carrierFriendRemoved, ret, Date.now());
     }
 
     friendMessageCallback(event)  {
-        eventBus.publish('carrier:friendMessage', event, Date.now());
+        eventBus.publish(FeedsEvent.PublishType.carrierFriendMessage, event, Date.now());
     }
 
     friendBinaryMessageCallback(event) {
-        eventBus.publish('carrier:friendBinaryMessage', event, Date.now());
+        eventBus.publish(FeedsEvent.PublishType.carrierFriendBinaryMessage, event, Date.now());
     }
 
     sessionRequestCallback(event) {
-        eventBus.publish('carrier:sessionRequest', event, Date.now());
+        eventBus.publish(FeedsEvent.PublishType.carrierSessionRequest, event, Date.now());
     }
 
     destroyCarrier() {
