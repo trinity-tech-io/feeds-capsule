@@ -749,7 +749,10 @@ export class ProfilePage implements OnInit {
           //videoElement.removeAttribute('poster',"assets/images/loading.gif"); // empty source
         }
         let source:any = document.getElementById(id+'sourcelike') || "";
-        let sourcesrc =  source.getAttribute("src") || "";
+        let sourcesrc = "";
+        if(source!=""){
+          sourcesrc =  source.getAttribute("src") || "";
+        }
         if(source!=""&&sourcesrc!=""){
           source.removeAttribute('src'); // empty source
           // let sid=setTimeout(()=>{

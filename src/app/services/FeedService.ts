@@ -6287,7 +6287,7 @@ export class FeedService {
   }
 
   checkBindingServerVersion(quit:any): boolean{
-    this.logUtils.logw("Binded server is "+JSON.stringify(bindingServer));
+    this.logUtils.logd("Binded server is "+JSON.stringify(bindingServer));
     if (bindingServer == null || bindingServer == undefined)
       return;
 
