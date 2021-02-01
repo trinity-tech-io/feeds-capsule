@@ -3178,7 +3178,7 @@ export class FeedService {
       return ;
     }
 
-    let result = responseResult.channels;
+    let result = responseResult.channels || [];
     for (let index = 0; index < result.length; index++) {
       let channelId = result[index].id;
       let name = result[index].name;
