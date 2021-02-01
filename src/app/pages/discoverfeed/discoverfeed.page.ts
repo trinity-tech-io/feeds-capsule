@@ -138,12 +138,16 @@ export class DiscoverfeedPage implements OnInit {
   handleStatus(item:any){
     let nodeId = item["nodeId"];
     let feedUrl = item["url"];
-    let channelId = feedUrl.split("/")[4];
+    let feedId = feedUrl.split("/")[4];
 
-    if (this.feedService.checkIsTobeAddedFeeds(nodeId, channelId))
-      return "DiscoverfeedinfoPage.processing";
+    if (this.feedService.checkIsTobeAddedFeeds(nodeId,feedId)){
+      let feeds = this.feedService.getToBeAddedFeedsInfoByNodeFeedId(nodeId,feedId) || {};
+      let status =  feeds["status"] || 0;
+      let keyString ="SearchPage.status";
+      return keyString+status;
+    }
 
-    let feeds = this.feedService.getChannelFromId(nodeId, channelId) || null;
+    let feeds = this.feedService.getChannelFromId(nodeId,feedId) || null;
     if (feeds == null || !feeds.isSubscribed)
       return "common.notFollowYet";
     if (feeds.isSubscribed)

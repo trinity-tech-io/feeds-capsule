@@ -110,10 +110,10 @@ export class DiscoverfeedinfoPage implements OnInit {
     }
     this.native.hideLoading();
     this.events.unsubscribe("feeds:updateServerList");
-    this.events.unsubscribe("feeds:serverConnectionChanged");
     this.events.unsubscribe("feeds:updateTitle");
     this.events.unsubscribe("feeds:unsubscribeFinish");
     this.events.unsubscribe("feeds:subscribeFinish");
+    this.events.unsubscribe("feeds:connectionChanged");
   }
 
   initTitle(){
@@ -169,6 +169,7 @@ export class DiscoverfeedinfoPage implements OnInit {
   }
 
   subscribe(){
+    this.status = '0';
     let feedUrl = this.feedInfo["url"];
     let avatar = this.feedInfo["feedsAvatar"];
     let followers = this.feedInfo["followers"];
@@ -179,6 +180,8 @@ export class DiscoverfeedinfoPage implements OnInit {
         this.native.pop();
         return;
       }
+    }).catch((err)=>{
+      this.status = '1';
     });
   }
 
@@ -208,5 +211,18 @@ export class DiscoverfeedinfoPage implements OnInit {
 
   tip(){
     this.native.toast("tip");
+  }
+
+  handleStatus(){
+    let nodeId = this.feedInfo["nodeId"];
+    let feedUrl = this.feedInfo["url"];
+    let feedId = feedUrl.split("/")[4];
+
+    if (this.feedService.checkIsTobeAddedFeeds(nodeId,feedId)){
+      let feeds = this.feedService.getToBeAddedFeedsInfoByNodeFeedId(nodeId,feedId) || {};
+      let status =  feeds["status"] || 0;
+      let keyString ="SearchPage.status";
+      return keyString+status;
+    }
   }
 }

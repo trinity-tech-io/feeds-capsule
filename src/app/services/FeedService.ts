@@ -6674,4 +6674,8 @@ export class FeedService {
     this.alertPopover = null;
     this.serverVersions = {};
   }
+
+  getToBeAddedFeedsInfoByNodeFeedId(nodeId:string,feedId:number){
+    return this.addFeedService.getToBeAddedFeedsInfoByNodeFeedId(nodeId,feedId);
+  }
 }
