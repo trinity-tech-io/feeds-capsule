@@ -23,11 +23,11 @@ export class TipdialogComponent implements OnInit {
   }
 
   cancel(){
-    this.events.publish("tipdialog-cancel");
+    this.events.publish(FeedsEvent.PublishType.tipdialogCancel);
   }
 
   confirm(){
-    this.events.publish("tipdialog-confirm",this.feedName,this.feedDesc);
+    this.events.publish(FeedsEvent.PublishType.tipdialogConfirm,this.feedName,this.feedDesc);
   }
 
 }

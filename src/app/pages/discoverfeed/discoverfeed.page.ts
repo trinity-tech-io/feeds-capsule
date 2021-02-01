@@ -72,19 +72,19 @@ export class DiscoverfeedPage implements OnInit {
     this.initTitle();
     this.native.setTitleBarBackKeyShown(true);
 
-    this.events.subscribe('feeds:serverStatisticsChanged', serverStatisticsMap =>{
+    this.events.subscribe(FeedsEvent.PublishType.serverStatisticsChanged, serverStatisticsMap =>{
       this.zone.run(() => {
           this.serverStatisticsMap = serverStatisticsMap || "";
       });
     });
     this.connectionStatus = this.feedService.getConnectionStatus();
-    this.events.subscribe('feeds:connectionChanged',(status)=>{
+    this.events.subscribe(FeedsEvent.PublishType.connectionChanged,(status)=>{
       this.zone.run(() => {
         this.connectionStatus = status;
       });
     });
 
-    this.events.subscribe("feeds:updateTitle",()=>{
+    this.events.subscribe(FeedsEvent.PublishType.updateTitle,()=>{
       this.initTitle();
     });
   }
@@ -93,10 +93,10 @@ export class DiscoverfeedPage implements OnInit {
   }
 
   ionViewWillLeave(){
-    this.events.unsubscribe("feeds:connectionChanged");
-    this.events.unsubscribe("feeds:updateTitle");
-    this.events.unsubscribe("feeds:serverStatisticsChanged");
-    this.events.publish("feeds:search");
+    this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
+    this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
+    this.events.unsubscribe(FeedsEvent.PublishType.serverStatisticsChanged);
+    this.events.publish(FeedsEvent.PublishType.search);
   }
 
   initTitle(){

@@ -10,8 +10,8 @@ export class JWTMessageService {
         private events: Events) {
         eventBus = events;
 
-        this.events.subscribe('transport:receiveJWTMessage', event => {
-            eventBus.publish('jwt:receiveJWTMessage',this.parseJWT(event.message));            
+        this.events.subscribe(FeedsEvent.PublishType.transportReceiveJWTMessage, event => {
+            eventBus.publish(FeedsEvent.PublishType.jwtReceiveJWTMessage,this.parseJWT(event.message));
         });
     }
 

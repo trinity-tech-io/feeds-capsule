@@ -23,7 +23,7 @@ export class EditimagePage implements OnInit {
   }
 
   ionViewWillEnter() {
-    this.events.subscribe("feeds:editImages",()=>{
+    this.events.subscribe(FeedsEvent.PublishType.editImages,()=>{
       this.finish();
     });
     this.appService.hideright();
@@ -37,7 +37,7 @@ export class EditimagePage implements OnInit {
   }
 
   ionViewWillLeave(){
-    this.events.unsubscribe("feeds:editImages");
+    this.events.unsubscribe(FeedsEvent.PublishType.editImages);
     this.appService.addright();
     titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, null);
     let croppedImage = this.feedService.getClipProfileIamge();

@@ -46,7 +46,7 @@ export class IssuecredentialPage implements OnInit {
       this.native.setTitleBarBackKeyShown(true);
       
       this.connectionStatus = this.feedService.getConnectionStatus();
-      this.events.subscribe('feeds:connectionChanged',(status)=>{
+      this.events.subscribe(FeedsEvent.PublishType.connectionChanged,(status)=>{
         this.zone.run(() => {
           this.connectionStatus = status;
           if (this.connectionStatus == 1){
@@ -55,7 +55,7 @@ export class IssuecredentialPage implements OnInit {
         });
       });
 
-      this.events.subscribe('feeds:issue_credential', () => {
+      this.events.subscribe(FeedsEvent.PublishType.issue_credential, () => {
         this.zone.run(() => {
           this.native.navigateForward(['/bindservice/finish/',this.nodeId],{
             replaceUrl: true
@@ -64,7 +64,7 @@ export class IssuecredentialPage implements OnInit {
         });
       });
 
-      this.events.subscribe('rpcResponse:error',()=>{
+      this.events.subscribe(FeedsEvent.PublishType.rpcResponseError,()=>{
         this.zone.run(() => {
           this.native.hideLoading();
         });
@@ -76,9 +76,9 @@ export class IssuecredentialPage implements OnInit {
 
     ionViewWillLeave(){
       this.native.hideLoading();
-      this.events.unsubscribe("feeds:connectionChanged");
-      this.events.unsubscribe('feeds:issue_credential');
-      this.events.unsubscribe("rpcResponse:error");
+      this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
+      this.events.unsubscribe(FeedsEvent.PublishType.issue_credential);
+      this.events.unsubscribe(FeedsEvent.PublishType.rpcResponseError);
       if(this.popover!=null){
          this.popover.dismiss();
       }

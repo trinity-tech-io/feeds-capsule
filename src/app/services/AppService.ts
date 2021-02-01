@@ -50,7 +50,7 @@ export class AppService {
         if (menuIcon.key == "back") {
             this.handleBack();
         } else if (menuIcon.key == "more"){
-            this.events.publish("feeds:openRightMenu");
+            this.events.publish(FeedsEvent.PublishType.openRightMenu);
             this.menuService.hideActionSheet();
             let value =  this.popoverController.getTop()["__zone_symbol__value"] || "";
             if(value!=""){
@@ -58,11 +58,11 @@ export class AppService {
             }
             this.menu.open("menu");
         } else if (menuIcon.key === 'editChannel') {
-          this.event.publish("feeds:editChannel");
+          this.event.publish(FeedsEvent.PublishType.editChannel);
         } else if (menuIcon.key === 'editServer') {
-          this.event.publish("feeds:editServer");
+          this.event.publish(FeedsEvent.PublishType.editServer);
         }else if(menuIcon.key === 'editImages'){
-          this.events.publish("feeds:editImages");
+          this.events.publish(FeedsEvent.PublishType.editImages);
         }
       });
     }
@@ -161,7 +161,7 @@ export class AppService {
       this.feedService.setCurrentLang(currentLang);
       this.translate.setDefaultLang(currentLang);
       this.translate.use(currentLang);
-      this.event.publish("feeds:updateTitle");
+      this.event.publish(FeedsEvent.PublishType.updateTitle);
     }
 
     initializeApp() {

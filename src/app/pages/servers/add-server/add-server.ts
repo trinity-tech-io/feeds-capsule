@@ -69,23 +69,23 @@ export class AddServerPage implements OnInit {
     this.native.setTitleBarBackKeyShown(true);
 
     this.connectionStatus = this.feedService.getConnectionStatus();
-    this.events.subscribe("feeds:updateTitle",()=>{
+    this.events.subscribe(FeedsEvent.PublishType.updateTitle,()=>{
       this.initTitle();
     });
 
-    this.events.subscribe('feeds:connectionChanged',(status)=>{
+    this.events.subscribe(FeedsEvent.PublishType.connectionChanged,(status)=>{
       this.zone.run(() => {
         this.connectionStatus = status;
       });
     });
 
-    this.events.subscribe('intent:addsource',(intentSource)=>{
-      this.zone.run(() => {
-        this.checkValid(intentSource);
-      });
-    });
+    // this.events.subscribe('intent:addsource',(intentSource)=>{
+    //   this.zone.run(() => {
+    //     this.checkValid(intentSource);
+    //   });
+    // });
 
-    this.events.subscribe('feeds:updateServerList', ()=>{
+    this.events.subscribe(FeedsEvent.PublishType.updateServerList, ()=>{
       this.zone.run(() => {
           //this.native.pop();
           // this.native.go('/menu/servers');
@@ -98,12 +98,12 @@ export class AddServerPage implements OnInit {
   }
 
   ionViewWillLeave(){
-    this.events.unsubscribe("feeds:connectionChanged");
-    this.events.unsubscribe("feeds:updateTitle");
-    this.events.unsubscribe("feeds:connectionChanged");
-    this.events.unsubscribe("feeds:updateServerList");
-    this.events.unsubscribe("intent:addsource");
-    this.events.publish("feeds:search");
+    this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
+    this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
+    this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
+    this.events.unsubscribe(FeedsEvent.PublishType.updateServerList);
+    // this.events.unsubscribe("intent:addsource");
+    this.events.publish(FeedsEvent.PublishType.search);
     let value =  this.popoverController.getTop()["__zone_symbol__value"] || "";
     if(value!=""){
       this.popoverController.dismiss();

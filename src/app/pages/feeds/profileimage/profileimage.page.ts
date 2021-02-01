@@ -100,13 +100,13 @@ export class ProfileimagePage implements OnInit {
 
     this.connectionStatus = this.feedService.getConnectionStatus();
 
-    this.events.subscribe('feeds:connectionChanged',(status)=>{
+    this.events.subscribe(FeedsEvent.PublishType.connectionChanged,(status)=>{
       this.zone.run(() => {
         this.connectionStatus = status;
       });
     });
 
-    this.events.subscribe("feeds:updateTitle",()=>{
+    this.events.subscribe(FeedsEvent.PublishType.updateTitle,()=>{
       if(this.menuService.postDetail!=null){
         this.menuService.hideActionSheet();
         this.addPic();
@@ -117,8 +117,8 @@ export class ProfileimagePage implements OnInit {
 
   ionViewWillLeave(){
     //this.camera = null;
-    this.events.unsubscribe("feeds:connectionChanged");
-    this.events.unsubscribe("feeds:updateTitle");
+    this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
+    this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
     if(this.pictureMenu!=null){
       this.menuService.hideActionSheet();
     }

@@ -34,13 +34,13 @@ export class AboutPage implements OnInit {
       this.native.setTitleBarBackKeyShown(true);
 
       this.connectionStatus = this.feedService.getConnectionStatus();
-      this.events.subscribe('feeds:connectionChanged',(status)=>{
+      this.events.subscribe(FeedsEvent.PublishType.connectionChanged,(status)=>{
         this.zone.run(() => {
           this.connectionStatus = status;
         });
       });
 
-      this.events.subscribe("feeds:updateTitle",()=>{
+      this.events.subscribe(FeedsEvent.PublishType.updateTitle,()=>{
         this.initTitle();
       });
     }
@@ -83,7 +83,7 @@ export class AboutPage implements OnInit {
   }
 
   ionViewWillLeave(){
-    this.events.unsubscribe("feeds:connectionChanged");
-    this.events.unsubscribe("feeds:updateTitle");
+    this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
+    this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
   }
 }

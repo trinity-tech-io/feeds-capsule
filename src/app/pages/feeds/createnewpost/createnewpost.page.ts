@@ -85,13 +85,13 @@ export class CreatenewpostPage implements OnInit {
     //   this.feedService.restoreSession(this.nodeId);
     // }
 
-    this.events.subscribe('feeds:connectionChanged',(status) => {
+    this.events.subscribe(FeedsEvent.PublishType.connectionChanged,(status) => {
       this.zone.run(() => {
         this.connectionStatus = status;
       });
     });
 
-    this.events.subscribe("feeds:friendConnectionChanged", (nodeId, status)=>{
+    this.events.subscribe(FeedsEvent.PublishType.friendConnectionChanged, (nodeId, status)=>{
       this.zone.run(()=>{
         this.nodeStatus[nodeId] = status;
         // if (this.connectionStatus == 0 && this.nodeId == nodeId && status == 0){
@@ -100,13 +100,13 @@ export class CreatenewpostPage implements OnInit {
       });
      });
 
-    this.events.subscribe('feeds:publishPostSuccess', (postId) => {
+    this.events.subscribe(FeedsEvent.PublishType.publishPostSuccess, (postId) => {
       this.postId = postId;
       this.zone.run(()=>{
         if(this.imgUrl === "" && this.posterImg ===""){
           this.zone.run(() => {
             this.navCtrl.pop().then(()=>{
-              this.events.publish("update:tab",true);
+              this.events.publish(FeedsEvent.PublishType.updateTab, true);
               this.native.hideLoading();
               this.native.toast_trans("CreatenewpostPage.tipMsg1");
             });
@@ -118,7 +118,7 @@ export class CreatenewpostPage implements OnInit {
       });
     });
 
-    this.events.subscribe('feeds:declarePostSuccess', (postId) => {
+    this.events.subscribe(FeedsEvent.PublishType.declarePostSuccess, (postId) => {
       this.zone.run(()=>{
         this.postId = postId;
         if (this.transDataChannel == FeedsData.TransDataChannel.MESSAGE){
@@ -137,23 +137,23 @@ export class CreatenewpostPage implements OnInit {
 
 
 
-    this.events.subscribe('rpcRequest:error', () => {
+    this.events.subscribe(FeedsEvent.PublishType.rpcRequestError, () => {
       //this.pauseVideo();
       this.native.hideLoading();
     });
 
-    this.events.subscribe('rpcResponse:error', () => {
+    this.events.subscribe(FeedsEvent.PublishType.rpcResponseError, () => {
       this.zone.run(() => {
         //this.pauseVideo();
         this.native.hideLoading();
       });
     });
 
-    this.events.subscribe("feeds:updateTitle",()=>{
+    this.events.subscribe(FeedsEvent.PublishType.updateTitle,()=>{
       this.initTitle();
     });
 
-    this.events.subscribe('feeds:setBinaryFinish', (nodeId, key) => {
+    this.events.subscribe(FeedsEvent.PublishType.setBinaryFinish, (nodeId, key) => {
       this.zone.run(() => {
         if (this.postId != 0){
           this.feedService.closeSession(this.nodeId);
@@ -162,7 +162,7 @@ export class CreatenewpostPage implements OnInit {
       });
     });
 
-    this.events.subscribe('stream:setBinarySuccess', (nodeId, key) => {
+    this.events.subscribe(FeedsEvent.PublishType.streamSetBinarySuccess, (nodeId, key) => {
       this.zone.run(() => {
         if (this.postId != 0){
           this.feedService.closeSession(this.nodeId);
@@ -171,10 +171,10 @@ export class CreatenewpostPage implements OnInit {
       });
     });
 
-    this.events.subscribe('feeds:notifyPostSuccess', () => {
+    this.events.subscribe(FeedsEvent.PublishType.notifyPostSuccess, () => {
       this.zone.run(() => {
         this.navCtrl.pop().then(()=>{
-          this.events.publish("update:tab",true);
+          this.events.publish(FeedsEvent.PublishType.updateTab,true);
           this.imgUrl ='';
           this.posterImg ='';
           this.flieUri ='';
@@ -185,7 +185,7 @@ export class CreatenewpostPage implements OnInit {
     });
 
 
-    this.events.subscribe('stream:error', (nodeId, response) => {
+    this.events.subscribe(FeedsEvent.PublishType.streamError, (nodeId, response) => {
       this.zone.run(() => {
         //response.code
         this.native.hideLoading();
@@ -193,13 +193,13 @@ export class CreatenewpostPage implements OnInit {
       });
     });
 
-    this.events.subscribe('stream:progress',(nodeId,progress)=>{
+    this.events.subscribe(FeedsEvent.PublishType.streamProgress,(nodeId,progress)=>{
       this.zone.run(() => {
         this.native.updateLoadingMsg(this.translate.instant("common.uploading")+" "+progress+"%");
       });
     })
 
-    this.events.subscribe('stream:onStateChangedCallback', (nodeId, state) => {
+    this.events.subscribe(FeedsEvent.PublishType.streamOnStateChangedCallback, (nodeId, state) => {
       this.zone.run(() => {
         this.sessionState = state;
         if (state === 4 && this.postId != 0){
@@ -209,7 +209,7 @@ export class CreatenewpostPage implements OnInit {
       });
     });
 
-    this.events.subscribe("feeds:openRightMenu",()=>{
+    this.events.subscribe(FeedsEvent.PublishType.openRightMenu,()=>{
       //this.clVideo();
       this.pauseVideo();
       this.hideFullScreen();
@@ -228,24 +228,24 @@ export class CreatenewpostPage implements OnInit {
   }
 
   ionViewWillLeave(){
-    this.events.unsubscribe("feeds:connectionChanged");
-    this.events.unsubscribe("feeds:friendConnectionChanged");
-    this.events.unsubscribe("feeds:updateTitle");
-    this.events.unsubscribe("feeds:publishPostSuccess");
-    this.events.unsubscribe("rpcRequest:error");
-    this.events.unsubscribe("rpcResponse:error");
+    this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
+    this.events.unsubscribe(FeedsEvent.PublishType.friendConnectionChanged);
+    this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
+    this.events.unsubscribe(FeedsEvent.PublishType.publishPostSuccess);
+    this.events.unsubscribe(FeedsEvent.PublishType.rpcRequestError);
+    this.events.unsubscribe(FeedsEvent.PublishType.rpcResponseError);
 
-    this.events.unsubscribe("feeds:setBinaryFinish");
+    this.events.unsubscribe(FeedsEvent.PublishType.setBinaryFinish);
 
-    this.events.unsubscribe("stream:setBinarySuccess");
-    this.events.unsubscribe("stream:error");
-    this.events.unsubscribe("stream:onStateChangedCallback");
-    this.events.unsubscribe("stream:getBinarySuccess");
-    this.events.unsubscribe("feeds:openRightMenu");
-    this.events.unsubscribe("stream:progress");
+    this.events.unsubscribe(FeedsEvent.PublishType.streamSetBinarySuccess);
+    this.events.unsubscribe(FeedsEvent.PublishType.streamError);
+    this.events.unsubscribe(FeedsEvent.PublishType.streamOnStateChangedCallback);
+    this.events.unsubscribe(FeedsEvent.PublishType.streamGetBinarySuccess);
+    this.events.unsubscribe(FeedsEvent.PublishType.openRightMenu);
+    this.events.unsubscribe(FeedsEvent.PublishType.streamProgress);
 
-    this.events.unsubscribe("feeds:declarePostSuccess");
-    this.events.unsubscribe("feeds:notifyPostSuccess");
+    this.events.unsubscribe(FeedsEvent.PublishType.declarePostSuccess);
+    this.events.unsubscribe(FeedsEvent.PublishType.notifyPostSuccess);
 
     this.native.hideLoading();
     this.hideFullScreen();
@@ -255,7 +255,7 @@ export class CreatenewpostPage implements OnInit {
     this.uploadProgress =0;
     this.totalProgress = 0;
     this.removeVideo();
-    this.events.publish("addBinaryEvevnt");
+    this.events.publish(FeedsEvent.PublishType.addBinaryEvevnt);
     this.feedService.closeSession(this.nodeId);
   }
 

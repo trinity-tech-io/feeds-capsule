@@ -49,22 +49,23 @@ export class CreatenewfeedPage implements OnInit {
     this.channelAvatar = this.feedService.getProfileIamge();
     this.avatar = this.feedService.parseChannelAvatar(this.channelAvatar);
 
-    this.events.subscribe('rpcRequest:error', () => {
+    this.events.subscribe(FeedsEvent.PublishType.rpcRequestError, () => {
       this.zone.run(() => {
          this.native.hideLoading();
       });
     });
   
-    this.events.subscribe('rpcResponse:error', () => {
+    this.events.subscribe(FeedsEvent.PublishType.rpcResponseError, () => {
       this.zone.run(() => {
         this.native.hideLoading();
       });
     });
 
-    this.events.subscribe("tipdialog-cancel",()=>{
+    this.events.subscribe(FeedsEvent.PublishType.tipdialogCancel,()=>{
        this.popover.dismiss();
     });
-    this.events.subscribe("tipdialog-confirm",(name,des)=>{
+
+    this.events.subscribe(FeedsEvent.PublishType.tipdialogConfirm, (name,des)=>{
        this.popover.dismiss();
        this.native.showLoading("common.waitMoment").then(()=>{
         this.feedService.createTopic(this.selectedServer.nodeId, name, des, this.channelAvatar);
@@ -74,12 +75,12 @@ export class CreatenewfeedPage implements OnInit {
       
 
     });
-    this.events.subscribe('feeds:connectionChanged',(status)=>{
+    this.events.subscribe(FeedsEvent.PublishType.connectionChanged,(status)=>{
       this.zone.run(() => {
         this.connectionStatus = status;
       });
     });
-    this.events.subscribe('feeds:createTopicSuccess', () => {
+    this.events.subscribe(FeedsEvent.PublishType.createTopicSuccess, () => {
       this.zone.run(() => {
         this.native.hideLoading();
         this.navCtrl.pop().then(()=>{
@@ -88,7 +89,7 @@ export class CreatenewfeedPage implements OnInit {
       });
     });
 
-    this.events.subscribe("feeds:updateTitle",()=>{
+    this.events.subscribe(FeedsEvent.PublishType.updateTitle,()=>{
       this.initTitle();
     });
 
@@ -105,13 +106,13 @@ export class CreatenewfeedPage implements OnInit {
   }
 
   ionViewWillLeave(){
-    this.events.unsubscribe("tipdialog-cancel");
-    this.events.unsubscribe("tipdialog-confirm");
-    this.events.unsubscribe("feeds:connectionChanged");
-    this.events.unsubscribe("feeds:createTopicSuccess");
-    this.events.unsubscribe("feeds:updateTitle");
-    this.events.unsubscribe("rpcRequest:error");
-    this.events.unsubscribe("rpcResponse:error");
+    this.events.unsubscribe(FeedsEvent.PublishType.tipdialogCancel);
+    this.events.unsubscribe(FeedsEvent.PublishType.tipdialogConfirm);
+    this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
+    this.events.unsubscribe(FeedsEvent.PublishType.createTopicSuccess);
+    this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
+    this.events.unsubscribe(FeedsEvent.PublishType.rpcRequestError);
+    this.events.unsubscribe(FeedsEvent.PublishType.rpcResponseError);
     this.native.hideLoading();
   }
 

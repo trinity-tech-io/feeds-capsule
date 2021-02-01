@@ -36,7 +36,7 @@ export class ImportdidPage implements OnInit {
       this.native.setTitleBarBackKeyShown(true);
 
       this.connectionStatus = this.feedService.getConnectionStatus();
-      this.events.subscribe('feeds:connectionChanged',(status)=>{
+      this.events.subscribe(FeedsEvent.PublishType.connectionChanged,(status)=>{
         this.zone.run(() => {
           this.connectionStatus = status;
           if (this.connectionStatus == 1){
@@ -45,7 +45,7 @@ export class ImportdidPage implements OnInit {
         });
       });
 
-      this.events.subscribe('feeds:resolveDidError', (nodeId, did, payload) => {
+      this.events.subscribe(FeedsEvent.PublishType.resolveDidError, (nodeId, did, payload) => {
         this.zone.run(() => {
             this.native.navigateForward(['/bindservice/publishdid/',nodeId, did, payload],{
               replaceUrl: true
@@ -54,7 +54,7 @@ export class ImportdidPage implements OnInit {
         });
       });
 
-      this.events.subscribe('feeds:resolveDidSucess', (nodeId, did) => {
+      this.events.subscribe(FeedsEvent.PublishType.resolveDidSucess, (nodeId, did) => {
         this.zone.run(() => {
             this.native.getNavCtrl().navigateForward(['/bindservice/issuecredential', nodeId, did],{
               replaceUrl: true
@@ -63,7 +63,7 @@ export class ImportdidPage implements OnInit {
         });
       });
 
-      this.events.subscribe('rpcResponse:error',()=>{
+      this.events.subscribe(FeedsEvent.PublishType.rpcResponseError,()=>{
         this.zone.run(() => {
           this.native.hideLoading();
         });
@@ -75,10 +75,10 @@ export class ImportdidPage implements OnInit {
 
     ionViewWillLeave(){
       this.native.hideLoading();
-      this.events.unsubscribe("feeds:connectionChanged");
-      this.events.unsubscribe('feeds:resolveDidError');
-      this.events.unsubscribe('feeds:resolveDidSucess');
-      this.events.unsubscribe("rpcResponse:error");
+      this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
+      this.events.unsubscribe(FeedsEvent.PublishType.resolveDidError);
+      this.events.unsubscribe(FeedsEvent.PublishType.resolveDidSucess);
+      this.events.unsubscribe(FeedsEvent.PublishType.rpcResponseError);
     }
 
 

@@ -124,19 +124,19 @@ export class ServerInfoPage implements OnInit {
 
     this.native.setTitleBarBackKeyShown(true);
     this.connectionStatus = this.feedService.getConnectionStatus();
-    this.events.subscribe('feeds:connectionChanged', (status) => {
+    this.events.subscribe(FeedsEvent.PublishType.connectionChanged, (status) => {
       this.zone.run(() => {
         this.connectionStatus = status;
       });
     });
 
-    this.events.subscribe('feeds:serverConnectionChanged', serversStatus => {
+    this.events.subscribe(FeedsEvent.PublishType.serverConnectionChanged, serversStatus => {
       this.zone.run(() => {
             this.serverStatus = this.feedService.getServerStatusFromId(this.nodeId);
       });
     });
 
-    this.events.subscribe("feeds:updateTitle", () => {
+    this.events.subscribe(FeedsEvent.PublishType.updateTitle, () => {
       if(this.menuService.postDetail!=null){
         this.menuService.hideActionSheet();
 
@@ -149,7 +149,7 @@ export class ServerInfoPage implements OnInit {
       this.initTitle();
     });
 
-    this.events.subscribe("feeds:editServer", () => {
+    this.events.subscribe(FeedsEvent.PublishType.editServer, () => {
       if(!this.isShowQrcode){
         this.native.toastWarn('common.waitOnChain');
         return;
@@ -157,18 +157,18 @@ export class ServerInfoPage implements OnInit {
       this.clickEdit();
     });
 
-    this.events.subscribe("feeds:removeFeedSourceFinish", () => {
+    this.events.subscribe(FeedsEvent.PublishType.removeFeedSourceFinish, () => {
       this.native.hideLoading();
     });
 
-    this.events.subscribe('feeds:subscribeFinish', (nodeId, channelId)=> {
+    this.events.subscribe(FeedsEvent.PublishType.subscribeFinish, (nodeId, channelId)=> {
       // this.native.toast(name + " subscribed");
       this.zone.run(() => {
         this.initMyFeeds();
       });
     });
 
-    this.events.subscribe('feeds:unsubscribeFinish', (nodeId, channelId, name) => {
+    this.events.subscribe(FeedsEvent.PublishType.unsubscribeFinish, (nodeId, channelId, name) => {
       // this.native.toast(name + " unsubscribed");
       this.zone.run(() => {
         this.clickbutton ="";
@@ -189,14 +189,14 @@ export class ServerInfoPage implements OnInit {
     }
 
     this.native.hideLoading();
-    this.events.unsubscribe("feeds:connectionChanged");
-    this.events.unsubscribe("feeds:serverConnectionChanged");
-    this.events.unsubscribe("feeds:login_finish");
-    this.events.unsubscribe("feeds:removeFeedSourceFinish");
-    this.events.unsubscribe("feeds:updateTitle");
-    this.events.unsubscribe("feeds:editServer");
-    this.events.unsubscribe('feeds:subscribeFinish');
-    this.events.unsubscribe('feeds:unsubscribeFinish');
+    this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
+    this.events.unsubscribe(FeedsEvent.PublishType.serverConnectionChanged);
+    this.events.unsubscribe(FeedsEvent.PublishType.login_finish);
+    this.events.unsubscribe(FeedsEvent.PublishType.removeFeedSourceFinish);
+    this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
+    this.events.unsubscribe(FeedsEvent.PublishType.editServer);
+    this.events.unsubscribe(FeedsEvent.PublishType.subscribeFinish);
+    this.events.unsubscribe(FeedsEvent.PublishType.unsubscribeFinish);
     this.clickbutton = "";
     this.curChannel = null;
     if(this.actionSheet!=null)

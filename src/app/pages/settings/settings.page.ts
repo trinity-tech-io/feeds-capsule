@@ -52,7 +52,7 @@ export class SettingsPage implements OnInit {
     this.initTitle();
     this.native.setTitleBarBackKeyShown(true);
 
-    this.events.subscribe("feeds:updateTitle",()=>{
+    this.events.subscribe(FeedsEvent.PublishType.updateTitle,()=>{
       this.initTitle();
     });
   }
@@ -61,7 +61,7 @@ export class SettingsPage implements OnInit {
   }
 
   ionViewWillLeave(){
-    this.events.unsubscribe("feeds:updateTitle");
+    this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
     if(this.popover!=null){
       this.popoverController.dismiss();
     }
@@ -70,7 +70,7 @@ export class SettingsPage implements OnInit {
   toggleHideDeletedPosts(){
     this.hideDeletedPosts = !this.hideDeletedPosts;
     this.feedService.setHideDeletedPosts(this.hideDeletedPosts);
-    this.events.publish("feeds:hideDeletedPosts");
+    this.events.publish(FeedsEvent.PublishType.hideDeletedPosts);
     this.feedService.setData("feeds.hideDeletedPosts",this.hideDeletedPosts);
   }
 
@@ -83,7 +83,7 @@ export class SettingsPage implements OnInit {
   toggleHideOfflineFeeds(){
     this.hideOfflineFeeds = !this.hideOfflineFeeds;
     this.feedService.setHideOfflineFeeds(this.hideOfflineFeeds);
-    this.events.publish("feeds:hideOfflineFeeds");
+    this.events.publish(FeedsEvent.PublishType.hideOfflineFeeds);
     this.feedService.setData("feeds.hideOfflineFeeds",this.hideOfflineFeeds);
   }
 
@@ -137,7 +137,7 @@ export class SettingsPage implements OnInit {
   toggleHideUnFollowFeeds(){
     this.hideUnFollowFeeds = !this.hideUnFollowFeeds;
     this.feedService.setHideUnFollowFeeds(this.hideUnFollowFeeds);
-    this.events.publish("feeds:hideUnFollowFeeds");
+    this.events.publish(FeedsEvent.PublishType.hideUnFollowFeeds);
     this.feedService.setData("feeds.unFollowFeeds",this.hideUnFollowFeeds);
   }
 

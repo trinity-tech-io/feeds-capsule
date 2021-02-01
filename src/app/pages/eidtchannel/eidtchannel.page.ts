@@ -58,17 +58,17 @@ ionViewWillEnter() {
   this.channelAvatar = this.feedService.getProfileIamge();
   this.avatar = this.feedService.parseChannelAvatar(this.channelAvatar);
 
-  this.events.subscribe('feeds:connectionChanged',(status)=>{
+  this.events.subscribe(FeedsEvent.PublishType.connectionChanged,(status)=>{
     this.zone.run(() => {
       this.connectionStatus = status;
     });
   });
 
-  this.events.subscribe("feeds:updateTitle",()=>{
+  this.events.subscribe(FeedsEvent.PublishType.updateTitle,()=>{
     this.initTitle();
   });
 
-  this.events.subscribe("feeds:editFeedInfoFinish",()=>{
+  this.events.subscribe(FeedsEvent.PublishType.editFeedInfoFinish,()=>{
     this.zone.run(() => {
       this.updatePublicData();
       this.native.hideLoading();
@@ -76,7 +76,7 @@ ionViewWillEnter() {
     });
   });
 
-  this.events.subscribe("rpcRequest:error",()=>{
+  this.events.subscribe(FeedsEvent.PublishType.rpcRequestError,()=>{
     this.native.hideLoading();
   });
 }
@@ -89,10 +89,10 @@ ionViewDidEnter(){
 }
 
 ionViewWillLeave(){
-  this.events.unsubscribe("feeds:updateTitle");
-  this.events.unsubscribe("feeds:connectionChanged");
-  this.events.unsubscribe("feeds:editFeedInfoFinish");
-  this.events.unsubscribe("rpcRequest:error");
+  this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
+  this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
+  this.events.unsubscribe(FeedsEvent.PublishType.editFeedInfoFinish);
+  this.events.unsubscribe(FeedsEvent.PublishType.rpcRequestError);
 }
 
 profileimage(){

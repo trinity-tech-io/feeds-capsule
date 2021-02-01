@@ -106,38 +106,38 @@ export class FeedinfoPage implements OnInit {
     this.connectionStatus = this.feedService.getConnectionStatus();
     this.channelAvatar = this.feedService.getProfileIamge();
     this.avatar = this.feedService.parseChannelAvatar(this.channelAvatar);
-    this.events.subscribe('feeds:connectionChanged',(status)=>{
+    this.events.subscribe(FeedsEvent.PublishType.connectionChanged,(status)=>{
       this.zone.run(() => {
         this.connectionStatus = status;
       });
     });
 
-    this.events.subscribe("feeds:updateTitle",()=>{
+    this.events.subscribe(FeedsEvent.PublishType.updateTitle,()=>{
       this.initTitle();
     });
 
-    this.events.subscribe("feeds:editFeedInfoFinish",()=>{
+    this.events.subscribe(FeedsEvent.PublishType.editFeedInfoFinish,()=>{
       this.zone.run(() => {
         this.native.hideLoading();
         this.native.pop();
       });
     });
 
-    this.events.subscribe("rpcRequest:error",()=>{
+    this.events.subscribe(FeedsEvent.PublishType.rpcRequestError,()=>{
       this.native.hideLoading();
     });
 
-    this.events.subscribe("feeds:editChannel",()=>{
+    this.events.subscribe(FeedsEvent.PublishType.editChannel,()=>{
       this.clickEdit();
     });
 
-    this.events.subscribe("feeds:friendConnectionChanged", (nodeId, status)=>{
+    this.events.subscribe(FeedsEvent.PublishType.friendConnectionChanged, (nodeId, status)=>{
       this.zone.run(()=>{
         this.nodeStatus[nodeId] = status;
       });
     });
 
-    this.events.subscribe('feeds:unsubscribeFinish', (nodeId, channelId, name) => {
+    this.events.subscribe(FeedsEvent.PublishType.unsubscribeFinish, (nodeId, channelId, name) => {
       this.zone.run(() => {
         this.native.setRootRouter(['/tabs/home']);
       });
@@ -161,13 +161,13 @@ export class FeedinfoPage implements OnInit {
 
   ionViewWillLeave(){
     titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, null);
-    this.events.unsubscribe("feeds:unsubscribeFinish");
-    this.events.unsubscribe("feeds:editChannel");
-    this.events.unsubscribe("feeds:updateTitle");
-    this.events.unsubscribe("feeds:connectionChanged");
-    this.events.unsubscribe("feeds:editFeedInfoFinish");
-    this.events.unsubscribe("rpcRequest:error");
-    this.events.unsubscribe("feeds:friendConnectionChanged");
+    this.events.unsubscribe(FeedsEvent.PublishType.unsubscribeFinish);
+    this.events.unsubscribe(FeedsEvent.PublishType.editChannel);
+    this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
+    this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
+    this.events.unsubscribe(FeedsEvent.PublishType.editFeedInfoFinish);
+    this.events.unsubscribe(FeedsEvent.PublishType.rpcRequestError);
+    this.events.unsubscribe(FeedsEvent.PublishType.friendConnectionChanged);
   }
 
   profileimage(){

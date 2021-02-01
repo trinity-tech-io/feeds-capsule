@@ -48,7 +48,7 @@ export class ScanqrcodePage implements OnInit {
     this.native.setTitleBarBackKeyShown(true);
 
     this.connectionStatus = this.feedService.getConnectionStatus();
-    this.events.subscribe('feeds:connectionChanged',(status)=>{
+    this.events.subscribe(FeedsEvent.PublishType.connectionChanged,(status)=>{
       this.zone.run(() => {
         this.connectionStatus = status;
       });
@@ -63,7 +63,7 @@ export class ScanqrcodePage implements OnInit {
   }
 
   ionViewWillLeave(){
-    this.events.unsubscribe("feeds:connectionChanged");
+    this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
     let value =  this.popoverController.getTop()["__zone_symbol__value"] || "";
     if(value!=""){
       this.popoverController.dismiss();

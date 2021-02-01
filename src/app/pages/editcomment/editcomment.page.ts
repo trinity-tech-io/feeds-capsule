@@ -61,29 +61,29 @@ export class EditCommentPage implements OnInit {
     this.channelAvatar = this.feedService.parseChannelAvatar(channel["avatar"]) || "";
 
 
-    this.events.subscribe('feeds:connectionChanged',(status)=>{
+    this.events.subscribe(FeedsEvent.PublishType.connectionChanged,(status)=>{
       this.zone.run(() => {
         this.connectionStatus = status;
       });
     });
 
-    this.events.subscribe("feeds:updateTitle",()=>{
+    this.events.subscribe(FeedsEvent.PublishType.updateTitle,()=>{
       this.initTitle();
     });
 
-    this.events.subscribe('rpcRequest:error', () => {
+    this.events.subscribe(FeedsEvent.PublishType.rpcRequestError, () => {
       this.zone.run(() => {
         this.native.hideLoading();
       });
     });
 
-    this.events.subscribe('rpcResponse:error', () => {
+    this.events.subscribe(FeedsEvent.PublishType.rpcResponseError, () => {
       this.zone.run(() => {
         this.native.hideLoading();
       });
     });
 
-    this.events.subscribe('feeds:editCommentFinish', () => {
+    this.events.subscribe(FeedsEvent.PublishType.editCommentFinish, () => {
       this.zone.run(() => {
         this.navCtrl.pop().then(()=>{
           this.native.hideLoading();
@@ -91,7 +91,7 @@ export class EditCommentPage implements OnInit {
       });
     });
 
-    this.events.subscribe("feeds:friendConnectionChanged", (nodeId, status)=>{
+    this.events.subscribe(FeedsEvent.PublishType.friendConnectionChanged, (nodeId, status)=>{
       this.zone.run(()=>{
         this.nodeStatus[nodeId] = status;
       });
@@ -104,12 +104,12 @@ export class EditCommentPage implements OnInit {
   }
 
   ionViewWillLeave(){
-    this.events.unsubscribe("feeds:connectionChanged");
-    this.events.unsubscribe("feeds:updateTitle");
-    this.events.unsubscribe("rpcRequest:error");
-    this.events.unsubscribe("rpcResponse:error");
-    this.events.unsubscribe("feeds:editCommentFinish");
-    this.events.unsubscribe("feeds:friendConnectionChanged");
+    this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
+    this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
+    this.events.unsubscribe(FeedsEvent.PublishType.rpcRequestError);
+    this.events.unsubscribe(FeedsEvent.PublishType.rpcResponseError);
+    this.events.unsubscribe(FeedsEvent.PublishType.editCommentFinish);
+    this.events.unsubscribe(FeedsEvent.PublishType.friendConnectionChanged);
   }
 
   initTitle(){

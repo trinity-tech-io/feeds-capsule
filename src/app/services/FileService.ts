@@ -92,7 +92,7 @@ export class FileService {
         return new Promise(async (resolve, reject) =>{
             let startPos = 0;
             if (isAppend){
-                let file = await this.getFileData(entry);
+                let file:File = await this.getFileData(entry);
                 startPos = file.size;
             }
 

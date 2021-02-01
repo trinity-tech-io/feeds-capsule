@@ -68,30 +68,30 @@ export class DiscoverfeedinfoPage implements OnInit {
     this.native.setTitleBarBackKeyShown(true);
 
     this.connectionStatus = this.feedService.getConnectionStatus();
-    this.events.subscribe('feeds:connectionChanged',(status)=>{
+    this.events.subscribe(FeedsEvent.PublishType.connectionChanged,(status)=>{
       this.zone.run(() => {
         this.connectionStatus = status;
       });
     });
 
-    this.events.subscribe("feeds:updateServerList",()=>{
+    this.events.subscribe(FeedsEvent.PublishType.updateServerList,()=>{
       this.zone.run(() => {
       //this.native.navigateForward('discoverfeeds',"");
       //this.getNodeId();
       });
     });
 
-    this.events.subscribe("feeds:updateTitle",()=>{
+    this.events.subscribe(FeedsEvent.PublishType.updateTitle,()=>{
       this.initTitle();
     });
 
-    this.events.subscribe("feeds:unsubscribeFinish",()=>{
+    this.events.subscribe(FeedsEvent.PublishType.unsubscribeFinish,()=>{
       this.zone.run(() => {
           this.status = '1';
       });
     });
 
-    this.events.subscribe("feeds:subscribeFinish",()=>{
+    this.events.subscribe(FeedsEvent.PublishType.subscribeFinish,()=>{
       this.zone.run(() => {
          this.status = '2';
       });
@@ -109,11 +109,11 @@ export class DiscoverfeedinfoPage implements OnInit {
       this.popover = "";
     }
     this.native.hideLoading();
-    this.events.unsubscribe("feeds:updateServerList");
-    this.events.unsubscribe("feeds:updateTitle");
-    this.events.unsubscribe("feeds:unsubscribeFinish");
-    this.events.unsubscribe("feeds:subscribeFinish");
-    this.events.unsubscribe("feeds:connectionChanged");
+    this.events.unsubscribe(FeedsEvent.PublishType.updateServerList);
+    this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
+    this.events.unsubscribe(FeedsEvent.PublishType.unsubscribeFinish);
+    this.events.unsubscribe(FeedsEvent.PublishType.subscribeFinish);
+    this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
   }
 
   initTitle(){

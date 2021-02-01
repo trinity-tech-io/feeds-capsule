@@ -12,19 +12,19 @@ export class TransportService {
         private events: Events) {
         eventBus = events;
 
-        this.events.subscribe('feeds:signInServerListChanged', list => {
+        this.events.subscribe(FeedsEvent.PublishType.signInServerListChanged, list => {
            this.signInServerList = list;         
         });
         
-        this.events.subscribe('carrier:friendMessage', event => {
+        this.events.subscribe(FeedsEvent.PublishType.carrierFriendMessage, event => {
             if (this.check(event.from))
-                eventBus.publish('transport:receiveMessage',event);
+                eventBus.publish(FeedsEvent.PublishType.transportReceiveMessage, event);
             else 
-                eventBus.publish('transport:receiveJWTMessage',event);
+                eventBus.publish(FeedsEvent.PublishType.transportReceiveJWTMessage,event);
         });
 
-        this.events.subscribe('carrier:friendBinaryMessage', event => {
-            eventBus.publish('transport:receiveMessage',event);
+        this.events.subscribe(FeedsEvent.PublishType.carrierFriendBinaryMessage, event => {
+            eventBus.publish(FeedsEvent.PublishType.transportReceiveMessage,event);
         });
     }
 
