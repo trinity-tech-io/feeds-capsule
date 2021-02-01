@@ -508,7 +508,8 @@ export const zh = {
         "hidedeletecomment":'显示标记“删除”的评论',
         "hideOfflinefeed":"仅显示在线状态的Feeds",
         "on":"开",
-        "off":"关"
+        "off":"关",
+        "hideunfollowfeeds":'显示标记“未关注”的Feeds”'
     },
     "DiscoverfeedPage":{
        "title":"探索广场",

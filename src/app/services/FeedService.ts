@@ -423,6 +423,7 @@ export class FeedService {
   public hideDeletedPosts:boolean = false;
   public hideDeletedComments:boolean = false;
   public hideOfflineFeeds:boolean = true;
+  public hideUnFollowFeeds:boolean = false;
   public localSignInData: SignInData = null;
   public currentLang:string ="";
   public curtab:string ="home";
@@ -3425,7 +3426,7 @@ export class FeedService {
 
     channelsMap[nodeChannelId].isSubscribed = false;
     subscribedChannelsMap[nodeChannelId] = undefined;
-    
+
     delete subscribedChannelsMap[nodeChannelId];
 
     // this.storeService.set(PersistenceKey.channelsMap,channelsMap);
@@ -5785,8 +5786,16 @@ export class FeedService {
     return this.developerMode;
   }
 
+  setHideUnFollowFeeds(status:boolean){
+     this.hideUnFollowFeeds = status;
+  }
+
+  getHideUnFollowFeeds(){
+    return this.hideUnFollowFeeds;
+  }
+
   setHideDeletedPosts(status:boolean){
-    return this.hideDeletedPosts = status;
+    this.hideDeletedPosts = status;
   }
 
   getHideDeletedPosts(){
@@ -5794,7 +5803,7 @@ export class FeedService {
   }
 
   setHideDeletedComments(status:boolean){
-   return this.hideDeletedComments = status;
+    this.hideDeletedComments = status;
   }
 
  getHideDeletedComments(){
@@ -5802,7 +5811,7 @@ export class FeedService {
   }
 
  setHideOfflineFeeds(status:boolean){
-  return this.hideOfflineFeeds = status;
+  this.hideOfflineFeeds = status;
  }
 
  getHideOfflineFeeds(){
@@ -6456,7 +6465,7 @@ export class FeedService {
       }).catch((err)=>{
         reject(err);
       })
-    });   
+    });
   }
 
   signIn(): Promise<string>{
@@ -6483,18 +6492,18 @@ export class FeedService {
       didManager.VerifiablePresentationBuilder.fromJson(JSON.stringify(data.presentation), async (presentation) => {
         let credentials = presentation.getCredentials();
         this.saveCredentialById(data.did,credentials, "name");
-  
+
         let interests = this.findCredentialValueById(data.did, credentials, "interests", "");
         let desc = this.findCredentialValueById(data.did, credentials, "description", "");
-  
+
         let description = this.translate.instant("DIDdata.NoDescription");
-  
+
         if (desc !== "") {
           description = desc;
         } else if (interests != "") {
           description = interests;
         }
-  
+
         this.saveSignInData(
           data.did,
           this.findCredentialValueById(data.did, credentials, "name", this.translate.instant("DIDdata.Notprovided")),
@@ -6661,7 +6670,7 @@ export class FeedService {
     this.lastCommentUpdateMap = {};
     this.lastMultiLikesAndCommentsCountUpdateMap = {};
     this.lastMultiLikesAndCommentsCountUpdateMapCache = {};
-  
+
     this.alertPopover = null;
     this.serverVersions = {};
   }
