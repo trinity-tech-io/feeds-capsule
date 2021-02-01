@@ -56,11 +56,11 @@ export class FileService {
     }
 
     //@param path: Either an absolute path or a relative path from this DirectoryEntry
-    getFile(dirEntry: CordovaFilePlugin.DirectoryEntry, path: string): Promise<CordovaFilePlugin.FileEntry>{
+    getFile(dirEntry: CordovaFilePlugin.DirectoryEntry, path: string, isCreate: boolean): Promise<CordovaFilePlugin.FileEntry>{
         return new Promise((resolve, reject) =>{
             // create: Used to indicate that the user wants to create a file or directory if it was not previously there.
             // exclusive: By itself, exclusive must have no effect. Used with create, it must cause getFile and getDirectory to fail if the target path already exists.
-            let options: CordovaFilePlugin.Flags = {create: false, exclusive: false};
+            let options: CordovaFilePlugin.Flags = {create: isCreate, exclusive: false};
             dirEntry.getFile(path, options,
                 (fileEntry: CordovaFilePlugin.FileEntry)=>{
                     resolve(fileEntry);
@@ -82,6 +82,66 @@ export class FileService {
                 },
                 (error)=>{
                     this.logUtils.loge("moveTo error "+JSON.stringify(error),TAG);
+                    reject(error);
+                }
+            );
+        });
+    }
+
+    writeData(entry: CordovaFilePlugin.FileEntry, data: Blob| string, isAppend: boolean){
+        return new Promise(async (resolve, reject) =>{
+            let startPos = 0;
+            if (isAppend){
+                let file = await this.getFileData(entry);
+                startPos = file.size;
+            }
+
+            entry.createWriter(
+                (writer: CordovaFilePlugin.FileWriter)=>{
+                    try{
+                        if (isAppend)
+                            writer.seek(startPos);
+                        writer.write(data);
+                    }catch(error){
+                        reject(error);
+                    }
+                },(error)=>{
+                    reject(error);
+                }
+            );
+        });
+    }
+
+    getFileData(entry: CordovaFilePlugin.FileEntry): Promise<File>{
+        return new Promise((resolve, reject) =>{
+            entry.file(
+                (file: File)=>{
+                    resolve(file);
+                },
+                (error: CordovaFilePlugin.FileError)=>{
+                    reject(error);
+                }
+            )
+        });
+    }
+
+    readFileData(entry: CordovaFilePlugin.FileEntry): Promise<String>{
+        return new Promise(async (resolve, reject) =>{
+            let file = await this.getFileData(entry);
+            file.text().then((text)=>{
+                resolve(text);
+            }).catch((error)=>{
+                reject(error);
+            });
+        });
+    }
+
+    removeFile(entry: CordovaFilePlugin.Entry): Promise<boolean>{
+        return new Promise((resolve, reject) =>{
+            entry.remove(
+                ()=>{
+                    resolve(true);
+                },(error)=>{
                     reject(error);
                 }
             );
@@ -117,4 +177,5 @@ export class FileService {
         }
     }
     
+
 }
