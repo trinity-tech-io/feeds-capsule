@@ -413,6 +413,10 @@ export class ServerInfoPage implements OnInit {
   }
 
   clickPublicFeeds(channel:any){
+    if(this.feedService.getConnectionStatus() !== 0){
+      this.native.toastWarn('common.connectionError');
+      return;
+    }
     this.curChannel = channel;
     if(this.developerMode){
       this.developerModeConfirm();
@@ -454,6 +458,10 @@ export class ServerInfoPage implements OnInit {
 
 
   unPublicFeeds(channel:any){
+    if(this.feedService.getConnectionStatus() !== 0){
+      this.native.toastWarn('common.connectionError');
+      return;
+    }
     let feedsUrl = this.feedsUrl+"/"+channel["id"];
     let feedsUrlHash = UtilService.SHA256(feedsUrl);
     this.httpService.ajaxGet(ApiUrl.remove+"?feedsUrlHash="+feedsUrlHash).then((result)=>{

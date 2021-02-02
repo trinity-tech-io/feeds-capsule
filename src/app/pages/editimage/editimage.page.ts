@@ -3,6 +3,7 @@ import { ImageCroppedEvent } from 'ngx-image-cropper';
 import { FeedService } from '../../services/FeedService';
 import { NativeService } from '../../services/NativeService';
 import { Events} from '@ionic/angular';
+import { AppService } from '../../services/AppService';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 @Component({
   selector: 'app-editimage',
@@ -15,7 +16,8 @@ export class EditimagePage implements OnInit {
   constructor(
     private feedService:FeedService,
     private nativeService:NativeService,
-    private events:Events) { }
+    private events:Events,
+    private appService:AppService) { }
 
   ngOnInit() {
   }
@@ -24,9 +26,11 @@ export class EditimagePage implements OnInit {
     this.events.subscribe("feeds:editImages",()=>{
       this.finish();
     });
+    this.appService.hideright();
     titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, {
       key: "editImages",
-      iconPath:TitleBarPlugin.BuiltInIcon.ADD
+      iconPath:"assets/icon/yes.ico"
+      //iconPath:TitleBarPlugin.BuiltInIcon.ADD
     });
 
     this.headPortrait = this.feedService.getClipProfileIamge();
@@ -34,6 +38,7 @@ export class EditimagePage implements OnInit {
 
   ionViewWillLeave(){
     this.events.unsubscribe("feeds:editImages");
+    this.appService.addright();
     titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, null);
     let croppedImage = this.feedService.getClipProfileIamge();
     if(this.headPortrait === croppedImage){
