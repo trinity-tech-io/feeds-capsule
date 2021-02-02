@@ -4,7 +4,6 @@ import { TranslateService} from '@ngx-translate/core';
 import { FeedService } from './FeedService';
 import { NativeService } from './NativeService';
 import { PopupProvider } from 'src/app/services/popup';
-
 declare let appManager: AppManagerPlugin.AppManager;
 
 @Injectable()
@@ -38,7 +37,7 @@ export class MenuService {
             },{
                 text: this.translate.instant("common.unsubscribe"),
                 role: 'destructive',
-                icon: 'trash',
+                icon: 'person-remove',
                 handler: () => {
                     if(this.feedService.getConnectionStatus() != 0){
                         this.native.toastWarn('common.connectionError');
@@ -144,7 +143,7 @@ export class MenuService {
             buttons: [{
               text: this.translate.instant("common.unsubscribe")+' @'+channelName,
               role: 'destructive',
-              icon: 'trash',
+              icon: 'person-remove',
               handler: () => {
                 this.feedService.unsubscribeChannel(nodeId, channelId);
               }
@@ -177,7 +176,7 @@ export class MenuService {
             buttons: [{
               text: this.translate.instant("common.unsubscribe"),
               role: 'destructive',
-              icon: 'trash',
+              icon: 'person-remove',
               handler: () => {
                 this.feedService.unsubscribeChannel(nodeId, channelId);
               }
@@ -230,7 +229,7 @@ export class MenuService {
             {
                 text: this.translate.instant("common.removepost"),
                 role: 'destructive',
-                icon: 'detle',
+                icon: 'trash',
                 handler: () => {
                     this.handlePostDetailMenun(nodeId,channelId,channelName,postId,"removePost");
                 }
@@ -281,7 +280,7 @@ export class MenuService {
            {
                text: this.translate.instant("common.removepost"),
                role: 'destructive',
-               icon: 'detle',
+               icon: 'trash',
                handler: () => {
                    this.handlePostDetailMenun(nodeId,channelId,channelName,postId,"removePost");
                }
@@ -289,7 +288,7 @@ export class MenuService {
            {
             text: this.translate.instant("common.unsubscribe"),
             role: 'destructive',
-            icon: 'trash',
+            icon: 'person-remove',
             handler: () => {
                 if(this.feedService.getConnectionStatus() != 0){
                     this.native.toastWarn('common.connectionError');
