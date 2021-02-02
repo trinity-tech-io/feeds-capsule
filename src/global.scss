@@ -261,7 +261,7 @@ ion-input {
   }
 
   .action-sheet-destructive .action-sheet-button-inner{
-    color:#ff0000;
+    color:#E77978;
   }
 
   .action-sheet-button-inner{
@@ -293,11 +293,9 @@ ion-input {
     margin-left:14px;
     margin-right:10px;
     color: #E77978;
-    filter: drop-shadow(#E77978 80px 0);
-    -webkit-filter:drop-shadow(#E77978 80px 0);
-    transform: translateX(-80px);
-    -webkit-transform:translateX(-80px);
-    overflow:hidden;
+    // filter: drop-shadow(#E77978 0px 0);
+    // transform: translateX(0px);
+    // overflow:hidden;
   }
  }
 
@@ -313,11 +311,9 @@ ion-input {
      margin-left:14px;
      margin-right:10px;
      color: #fff;
-     filter: drop-shadow(#fff 80px 0);
-     -webkit-filter: drop-shadow(#fff 80px 0);
-     transform: translateX(-80px);
-     -webkit-transform: translateX(-80px);
-     overflow:hidden;
+    //  filter: drop-shadow(#fff 80px 0);
+    //  transform: translateX(-80px);
+    //  overflow:hidden;
    }
  }
 }

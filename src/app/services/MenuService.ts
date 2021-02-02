@@ -222,7 +222,7 @@ export class MenuService {
             },
             {
                     text: this.translate.instant("common.editpost"),
-                    icon: 'edit',
+                    icon: 'create',
                     handler: () => {
                        this.handlePostDetailMenun(nodeId,channelId,channelName,postId,"editPost");
                     }
@@ -273,7 +273,7 @@ export class MenuService {
            },
            {
                    text: this.translate.instant("common.editpost"),
-                   icon: 'edit',
+                   icon: 'create',
                    handler: () => {
                       this.handlePostDetailMenun(nodeId,channelId,channelName,postId,"editPost");
                    }
