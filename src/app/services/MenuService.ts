@@ -280,6 +280,7 @@ export class MenuService {
            },
            {
                text: this.translate.instant("common.removepost"),
+               role: 'destructive',
                icon: 'detle',
                handler: () => {
                    this.handlePostDetailMenun(nodeId,channelId,channelName,postId,"removePost");
