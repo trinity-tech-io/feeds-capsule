@@ -156,6 +156,14 @@ export class MyApp {
      this.native.navigateForward('/menu/about',"");
   }
 
+  checkIsShowDonation(){
+    let isShowButton = true;
+    if (this.platform.is('ios'))
+      isShowButton = false;
+
+    return isShowButton;
+  }
+
   donation(){
     this.native.navigateForward('/menu/donation',"");
   }

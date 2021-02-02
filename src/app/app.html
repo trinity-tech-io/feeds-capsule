@@ -27,7 +27,7 @@
                 </div>
             </ion-menu-toggle>
 
-            <ion-menu-toggle>
+            <ion-menu-toggle *ngIf="checkIsShowDonation()">
                 <div (click)="donation()">
                     <img src="./assets/images/menu-donation.svg" *ngIf="!theme.darkMode">
                     <img src="./assets/images/darkmode/menu-donation.svg" *ngIf="theme.darkMode">
