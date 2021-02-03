@@ -22,6 +22,7 @@ export class SearchPage implements OnInit {
   public curAddingItem = {};
   public addingChanneList = [];
   public hideUnFollowFeeds:boolean = false;
+  public isSearch:string ="";
   // {
   //   "nodeId": "8Dsp9jkTg8TEfCkwMoXimwjLeaRidMczLZYNWbKGj1SF",
   //   "did": "did:elastos:ibfZa4jQ1QgDRP9rpfbUbZWpXgbd9z7oKF",
@@ -193,8 +194,9 @@ export class SearchPage implements OnInit {
   }
 
   getItems(events){
+    this.isSearch = events.target.value || "";
     if(events.target.value == ""){
-      this.feedsList  = this.feedService.getChannelsList();
+      this.initChannelData();
       this.addingChanneList = this.feedService.getToBeAddedFeedsList();
     }
 
