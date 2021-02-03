@@ -1,3 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" id="prefix__dots-three-vertical" width="18.978" height="4.538" viewBox="0 0 18.978 4.538">
-    <path id="prefix__dots-three-vertical-2" fill="#161740" d="M14.75 8.5a2.269 2.269 0 1 0 2.268 2.269A2.27 2.27 0 0 0 14.75 8.5zm0-2.682a2.269 2.269 0 1 0-2.27-2.269 2.269 2.269 0 0 0 2.27 2.269zm0 9.9a2.269 2.269 0 1 0 2.268 2.269 2.27 2.27 0 0 0-2.268-2.267z" data-name="dots-three-vertical" transform="rotate(90 16.369 3.889)"/>
+<svg width="20" height="20" xmlns="http://www.w3.org/2000/svg">
+
+ <g>
+  <title>background</title>
+  <rect fill="none" id="canvas_background" height="22" width="22" y="-1" x="-1"/>
+ </g>
+ <g>
+  <title>Layer 1</title>
+  <path transform="rotate(90 9.95787 10.0426)" d="m9.958869,7.774599a2.269,2.269 0 1 0 2.268,2.269001a2.27,2.27 0 0 0 -2.268,-2.269001zm0,-2.682a2.269,2.269 0 1 0 -2.27,-2.269001a2.269,2.269 0 0 0 2.27,2.269001zm0,9.899994a2.269,2.269 0 1 0 2.268,2.268991a2.27,2.27 0 0 0 -2.268,-2.266988l0,-0.002003z" fill="#161740" id="prefix__dots-three-vertical-2"/>
+ </g>
 </svg>
