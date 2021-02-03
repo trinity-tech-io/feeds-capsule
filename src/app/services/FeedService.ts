@@ -1076,7 +1076,7 @@ export class FeedService {
   getSubscribedFeedsList(): Channels[]{
     let list: Channels[] = [];
     let map = subscribedChannelsMap|| {};
-    let keys: string[] = Object.keys(map);
+    let keys: string[] = Object.keys(map) || [];
 
     for (let index = 0; index < keys.length; index++) {
       const subscribedFeed = subscribedChannelsMap[keys[index]] || null;
@@ -3829,7 +3829,7 @@ export class FeedService {
 
   updateSubscribedFeed(){
     let subscribedFeedsMap = subscribedChannelsMap || {}
-    let keys: string[] = Object.keys(subscribedFeedsMap);
+    let keys: string[] = Object.keys(subscribedFeedsMap) || [];
     for (let index = 0; index < keys.length; index++) {
       const feed = subscribedFeedsMap[keys[index]];
       if (feed == null || feed == undefined)
