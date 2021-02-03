@@ -34,7 +34,7 @@ export class HttpService{
         if(isLoading){
           this.native.hideLoading();
         }
-        this.native.toast(JSON.stringify(error));
+        this.native.toast("common.httperror");
         reject(error);
       })
     })

@@ -91,7 +91,8 @@ export const fr = {
         "unfollow":"Unfollow",
         "adding":"Adding",
         "feedsAlreadyAdded":"This feed has already been added",
-        "notFollowYet":"Not follow yet"
+        "notFollowYet":"Not follow yet",
+        "httperror":"Service exception, try again later"
     },
     "app":{
         "profileDetails":"Profile Details",
@@ -173,8 +174,6 @@ export const fr = {
         "status11":"Processing",
         "discover":"Explore on Discovery Square",
         "des1":"Your subscription request to this feed is on going, this takes a few seconds. Would you like to cancel this subscription？",
-        "des2":"删除",
-        "des3":"继续等待"
     },
     "ChannelsPage":{
         "feeds":"Feeds",
