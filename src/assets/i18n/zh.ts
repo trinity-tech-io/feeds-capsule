@@ -91,7 +91,8 @@ export const zh = {
         "unfollow":"未关注",
         "adding":"添加中",
         "feedsAlreadyAdded":"已添加过该Feeds",
-        "notFollowYet":"未关注"
+        "notFollowYet":"未关注",
+        "httperror":"服务异常，稍后再试"
     },
     "app":{
         "profileDetails":"档案详情",
@@ -174,8 +175,6 @@ export const zh = {
         "status11":"关注Feeds出错",
         "discover":"进入广场探索Feeds",
         "des1":"您关注此feed的请求正被确认中，请耐心等待30秒左右。确认需要取消请求关注该Feeds？",
-        "des2":"删除",
-        "des3":"继续等待"
     },
     "ChannelsPage":{
         "feeds":"Feeds",
