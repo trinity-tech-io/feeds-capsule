@@ -3175,12 +3175,13 @@ export class FeedService {
         channelsMap[nodeChannelId].isSubscribed = true;
       }
 
+      this.updatePost(nodeId,channelId);
+      this.updateCommentData(nodeId, channelId);
       if (request.max_count == 1){
-        this.updatePostWithTime(nodeId, channelId, 0);
         this.processTobeAddedFeedsFinish(nodeId, channelId);
         eventBus.publish(FeedsEvent.PublishType.subscribeFinish, nodeId,channelId);
         this.native.toast(this.formatInfoService.formatFollowSuccessMsg(this.getFeedNameById(nodeId, channelId)));
-        this.updateData(nodeId);
+        // this.updateData(nodeId);
       }else{
         this.updateLastSubscribedFeedsUpdate(nodeId, last_update);
       }
@@ -4044,12 +4045,6 @@ export class FeedService {
     eventBus.publish(FeedsEvent.PublishType.login_finish, nodeId);
     // this.native.toast(this.formatInfoService.formatSigninSuccessMsg(this.getServerNameByNodeId(nodeId)));
     this.clearSigninTimeout(nodeId);
-
-    let toBeAddedFeeds: FeedsData.ToBeAddedFeed[] = this.addFeedService.getToBeAddedFeedsInfoByNodeId(nodeId);
-    for (let index = 0; index < toBeAddedFeeds.length; index++) {
-      let toBeAddedFeed = toBeAddedFeeds[index];
-      this.subscribeChannel(toBeAddedFeed.nodeId, toBeAddedFeed.feedId);
-    }
   }
 
   startDeclareOwner(nodeId: string, carrierAddress: string, nonce: string){
@@ -4530,27 +4525,40 @@ export class FeedService {
   prepare(friendId: string){
     this.getStatistics(friendId);
     this.enableNotification(friendId);
-    if (!this.addFeedService.checkIsTobeAddedFeeds(friendId, 0)){
-      this.updateData(friendId);
+    this.updateData(friendId);
+    // if (!this.addFeedService.checkIsTobeAddedFeeds(friendId, 0)){
+    //   this.updateData(friendId);
+    // }
+  }
+
+  updateCommentData(nodeId: string, feedsId: number){
+    if (this.getServerVersionCodeByNodeId(nodeId) < newCommentVersion){
+      let postList = this.getPostListFromChannel(nodeId,feedsId);
+      for (let postIndex = 0; postIndex < postList.length; postIndex++) {
+        let post: Post = postList[postIndex];
+        let postId: number = post.id;
+        this.updateComment(nodeId, feedsId, postId);
+      }
     }
   }
 
   updateData(friendId: string){
-    this.updateSubscribedFeedsWithTime(friendId);
     let list = this.getSubscribedChannelsFromNodeId(friendId);
-    for (let index = 0; index < list.length; index++) {
-      let channelId = list[index].id;
-      this.updatePost(friendId,channelId);
+    if (list.length>0)
+      this.updateSubscribedFeedsWithTime(friendId);
+    // for (let index = 0; index < list.length; index++) {
+    //   let channelId = list[index].id;
+    //   this.updatePost(friendId,channelId);
 
-      if (this.getServerVersionCodeByNodeId(friendId) < newCommentVersion){
-        let postList = this.getPostListFromChannel(friendId,channelId);
-        for (let postIndex = 0; postIndex < postList.length; postIndex++) {
-          let post: Post = postList[postIndex];
-          let postId: number = post.id;
-          this.updateComment(friendId, channelId, postId);
-        }
-      }
-    }
+    //   if (this.getServerVersionCodeByNodeId(friendId) < newCommentVersion){
+    //     let postList = this.getPostListFromChannel(friendId,channelId);
+    //     for (let postIndex = 0; postIndex < postList.length; postIndex++) {
+    //       let post: Post = postList[postIndex];
+    //       let postId: number = post.id;
+    //       this.updateComment(friendId, channelId, postId);
+    //     }
+    //   }
+    // }
 
     if (this.getServerVersionCodeByNodeId(friendId) >= newCommentVersion){
       // let bindingServer = this.getBindingserver() || null;
@@ -4938,7 +4946,9 @@ export class FeedService {
   }
 
   restoreData(nodeId: string){
-    this.getSubscribedChannels(nodeId, Communication.field.last_update, 0, 0, 0);
+    if (!this.checkIsTobeAddedFeeds(nodeId, 0)){
+      this.getSubscribedChannels(nodeId, Communication.field.last_update, 0, 0, 0);
+    }
 
     if(bindingServer !=null && bindingServer != undefined && nodeId == bindingServer.nodeId)
       this.getMyChannels(nodeId,Communication.field.last_update,0,0,0);
@@ -6338,8 +6348,10 @@ export class FeedService {
       this.addFeedService.addFeed(decodeResult, nodeId, avatar, follower, feedName).then((toBeAddedFeed:FeedsData.ToBeAddedFeed)=>{
         if (toBeAddedFeed.friendState == FeedsData.FriendState.IS_FRIEND){
           let isSubscribed = this.checkFeedsIsSubscribed(toBeAddedFeed.nodeId, toBeAddedFeed.feedId);
-          if (!isSubscribed)
+          if (!isSubscribed){
             this.subscribeChannel(toBeAddedFeed.nodeId, toBeAddedFeed.feedId);
+          }
+            
           resolve("success");
           return ;
         }
