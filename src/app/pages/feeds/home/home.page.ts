@@ -465,8 +465,10 @@ clearData(){
   }
 
   navTo(nodeId:string, channelId:number,postId:number){
+    this.pauseVideo(nodeId+channelId+postId);
     this.clearData();
     this.native.getNavCtrl().navigateForward(['/channels', nodeId, channelId]);
+
   }
 
   navToPostDetail(nodeId:string, channelId:number, postId:number,event?:any){
@@ -480,10 +482,9 @@ clearData(){
       return;
      }
     }
+    this.pauseVideo(nodeId+channelId+postId);
     this.clearData();
     this.native.getNavCtrl().navigateForward(['/postdetail',nodeId, channelId,postId]);
-    //this.pauseVideo(nodeId+channelId+postId);
-
   }
 
   checkMyLike(nodeId: string, channelId: number, postId: number){
