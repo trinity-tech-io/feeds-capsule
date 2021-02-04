@@ -197,7 +197,7 @@ export class SearchPage implements OnInit {
     this.isSearch = events.target.value || "";
     if(events.target.value == ""){
       this.initChannelData();
-      this.addingChanneList = this.feedService.getToBeAddedFeedsList();
+      this.addingChanneList = this.feedService.getToBeAddedFeedsList() || [];
     }
 
     this.addingChanneList = this.addingChanneList.filter(
