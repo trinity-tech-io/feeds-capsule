@@ -3110,7 +3110,8 @@ export class FeedService {
     // this.storeService.set(PersistenceKey.channelsMap, channelsMap);
   }
 
-  handleGetSubscribedChannelsResult(nodeId: string, responseResult: any, request: any, error: any){
+  async handleGetSubscribedChannelsResult(nodeId: string, responseResult: any, request: any, error: any){
+    let isAddFeeds = false;
     if (error != null && error != undefined && error.code != undefined){
       this.handleError(nodeId, error);
       return;
@@ -3185,7 +3186,8 @@ export class FeedService {
       this.updatePost(nodeId,channelId);
       this.updateCommentData(nodeId, channelId);
       if (request.max_count == 1){
-        this.processTobeAddedFeedsFinish(nodeId, channelId);
+        isAddFeeds = true;
+        await this.processTobeAddedFeedsFinish(nodeId, channelId);
         eventBus.publish(FeedsEvent.PublishType.subscribeFinish, nodeId,channelId);
         this.native.toast(this.formatInfoService.formatFollowSuccessMsg(this.getFeedNameById(nodeId, channelId)));
         this.getMultiComments(nodeId, channelId, 0, Communication.field.last_update, 0, 0, 0);
@@ -3198,7 +3200,8 @@ export class FeedService {
 
     this.saveChannelMap();
     this.storeService.set(PersistenceKey.subscribedChannelsMap,subscribedChannelsMap);
-    eventBus.publish(FeedsEvent.PublishType.refreshSubscribedChannels);
+    if (!isAddFeeds)
+      eventBus.publish(FeedsEvent.PublishType.refreshSubscribedChannels);
   }
 
   handleGetPostsResult(nodeId: string, responseResult: any, request: any, error: any){
@@ -6393,11 +6396,11 @@ export class FeedService {
     return this.feedPublicStatus;
   }
 
-  processTobeAddedFeedsFinish(nodeId: string, feedsId: number){
+  async processTobeAddedFeedsFinish(nodeId: string, feedsId: number){
     // if (this.checkIsTobeAddedFeeds(nodeId, feedsId)){
     //   eventBus.publish(FeedsEvent.PublishType.addFeedFinish, nodeId, feedsId);
     // }
-    this.addFeedService.processTobeAddedFeedsFinish(nodeId, feedsId);
+    await this.addFeedService.processTobeAddedFeedsFinish(nodeId, feedsId);
   }
 
   removeTobeAddedFeeds(nodeId: string, feedId: number): Promise<void>{

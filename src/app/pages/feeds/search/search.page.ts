@@ -69,6 +69,7 @@ export class SearchPage implements OnInit {
       this.zone.run(() => {
         // this.channelList  = this.feedService.getChannelsList();
         // this.initnodeStatus();
+        this.addingChanneList = this.feedService.getToBeAddedFeedsList();
         this.initChannelData();
       });
     });
@@ -113,12 +114,6 @@ export class SearchPage implements OnInit {
         this.addingChanneList = this.feedService.getToBeAddedFeedsList();
       });
     });
-
-    this.events.subscribe(FeedsEvent.PublishType.addFeed_Finish,()=>{
-      this.zone.run(() => {
-        this.addingChanneList = this.feedService.getToBeAddedFeedsList();
-      });
-    })
   }
 
   removeSubscribe(){
@@ -136,7 +131,6 @@ export class SearchPage implements OnInit {
     this.events.unsubscribe(FeedsEvent.PublishType.refreshSubscribedChannels);
     this.events.unsubscribe(FeedsEvent.PublishType.addFeedStatusChanged);
     this.events.unsubscribe(FeedsEvent.PublishType.hideUnFollowFeeds);
-    this.events.unsubscribe(FeedsEvent.PublishType.addFeed_Finish);
   }
 
   ionViewWillEnter() {

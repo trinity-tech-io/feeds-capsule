@@ -50,7 +50,6 @@ export class AddFeedService {
         await this.changeTobeAddedFeedStatusByNodeFeedId(nodeId, String(feedId), FeedsData.FollowFeedStatus.FOLLOW_FEED_FINISH);
         await this.changeTobeAddedFeedStatusByNodeFeedId(nodeId, String(feedId), FeedsData.FollowFeedStatus.FINISH);
         await this.removeTobeAddedFeedStatusByNodeFeedId(nodeId, feedId);
-        this.events.publish(FeedsEvent.PublishType.addFeed_Finish, nodeId,feedId);
     }
 
     addFeed(decodeResult:FeedsData.FeedUrl, nodeId: string, inputAvatar: string, inputFollower: number, inputFeedName: string): Promise<FeedsData.ToBeAddedFeed>{
