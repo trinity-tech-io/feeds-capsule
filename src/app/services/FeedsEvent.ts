@@ -42,7 +42,6 @@ declare namespace FeedsEvent{
         hideOfflineFeeds = "feeds:hideOfflineFeeds",
         hideUnFollowFeeds = "feeds:hideUnFollowFeeds",
 
-        addFeed_Finish = "addFeed:finish",
         addFeedStatusChanged = "addFeed:statusChanged",
         openRightMenu = "feeds:openRightMenu",
         editChannel = "feeds:editChannel",
