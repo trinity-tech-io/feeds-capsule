@@ -358,7 +358,7 @@ export class FeedService {
   public hideDeletedPosts:boolean = false;
   public hideDeletedComments:boolean = false;
   public hideOfflineFeeds:boolean = true;
-  public hideUnFollowFeeds:boolean = false;
+  public hideUnFollowFeeds:boolean = true;
   public localSignInData: SignInData = null;
   public currentLang:string ="";
   public curtab:string ="home";
@@ -6363,7 +6363,7 @@ export class FeedService {
           if (!isSubscribed){
             this.subscribeChannel(toBeAddedFeed.nodeId, toBeAddedFeed.feedId);
           }
-            
+
           resolve("success");
           return ;
         }

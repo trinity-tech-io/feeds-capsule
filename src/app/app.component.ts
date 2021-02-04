@@ -102,7 +102,7 @@ export class MyApp {
 
     this.feedService.getData("feeds.unFollowFeeds").then((status)=>{
       if(status === null){
-        this.feedService.setHideUnFollowFeeds(false);
+        this.feedService.setHideUnFollowFeeds(true);
         return;
       }
       this.feedService.setHideUnFollowFeeds(status);
