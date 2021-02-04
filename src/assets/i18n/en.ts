@@ -91,7 +91,7 @@ export const en = {
         "unfollow":"Unfollow",
         "adding":"Adding",
         "feedsAlreadyAdded":"This feed has already been added",
-        "notFollowYet":"Not follow yet",
+        "notFollowYet":"Follow",
         "httperror":"Service exception, try again later"
     },
     "app":{
