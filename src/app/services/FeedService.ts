@@ -1148,6 +1148,13 @@ export class FeedService {
     this.events.subscribe(FeedsEvent.PublishType.carrierReady, () => {
       this.restoreRelation();
     });
+
+    // if need readd feeds , open this code
+    // let list = this.addFeedService.getToBeAddedFeedsList();
+    // for (let index = 0; index < list.length; index++) {
+    //   const tobeAddedFeeds = list[index];
+    //   this.addFeed(tobeAddedFeeds.feedUrl, tobeAddedFeeds.avatar, tobeAddedFeeds.follower, tobeAddedFeeds.feedName);
+    // }
   }
 
   restoreRelation(){
@@ -3181,6 +3188,8 @@ export class FeedService {
         this.processTobeAddedFeedsFinish(nodeId, channelId);
         eventBus.publish(FeedsEvent.PublishType.subscribeFinish, nodeId,channelId);
         this.native.toast(this.formatInfoService.formatFollowSuccessMsg(this.getFeedNameById(nodeId, channelId)));
+        this.getMultiComments(nodeId, channelId, 0, Communication.field.last_update, 0, 0, 0);
+
         // this.updateData(nodeId);
       }else{
         this.updateLastSubscribedFeedsUpdate(nodeId, last_update);
@@ -4567,7 +4576,10 @@ export class FeedService {
       let mLastCommentUpdateMap = this.lastCommentUpdateMap || "";
       let commentUpdateTime = mLastCommentUpdateMap[lastCommentUpdateKey] || "";
       let lastCommentTime = commentUpdateTime["time"] || 0;
-      this.getMultiComments(friendId, 0, 0, Communication.field.last_update, 0 , lastCommentTime,0);
+      let list = this.getSubscribedChannelsFromNodeId(friendId);
+      for (let index = 0; index < list.length; index++) {
+        this.getMultiComments(friendId, list[index].id, 0, Communication.field.last_update, 0 , lastCommentTime,0);
+      }
     }
 
     if (this.getServerVersionCodeByNodeId(friendId) >= newMultiPropCountVersion){
@@ -6382,9 +6394,10 @@ export class FeedService {
   }
 
   processTobeAddedFeedsFinish(nodeId: string, feedsId: number){
-    if (this.checkIsTobeAddedFeeds(nodeId, feedsId)){
-      eventBus.publish(FeedsEvent.PublishType.addFeedFinish, nodeId, feedsId);
-    }
+    // if (this.checkIsTobeAddedFeeds(nodeId, feedsId)){
+    //   eventBus.publish(FeedsEvent.PublishType.addFeedFinish, nodeId, feedsId);
+    // }
+    this.addFeedService.processTobeAddedFeedsFinish(nodeId, feedsId);
   }
 
   removeTobeAddedFeeds(nodeId: string, feedId: number): Promise<void>{

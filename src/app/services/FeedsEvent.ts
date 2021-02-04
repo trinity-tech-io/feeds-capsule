@@ -132,7 +132,7 @@ declare namespace FeedsEvent{
         declarePostSuccess = "feeds:declarePostSuccess",
         notifyPostSuccess = "feeds:notifyPostSuccess",
       
-        addFeedFinish = "feeds:addFeedFinish",
+        // addFeedFinish = "feeds:addFeedFinish",
 
         publishPostFinish = "feeds:publishPostFinish",
         postDataUpdate = "feeds:postDataUpdate",
