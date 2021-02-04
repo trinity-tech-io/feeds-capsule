@@ -7,6 +7,7 @@ import { StorageService } from 'src/app/services/StorageService';
 
 let TAG: string = "Feeds::AddFeedService";
 let tobeAddFeedsPersistenceKey = "tobeAddedFeedMap";
+let tobeAddedFeedTimer = [];
 @Injectable()
 export class AddFeedService {
     //feeds://did:elastos:ixxxxxxx/carrieraddress/feedid#feedname
@@ -40,12 +41,16 @@ export class AddFeedService {
             this.changeTobeAddedFeedStatusByNodeId(nodeId, FeedsData.FollowFeedStatus.SIGNIN_FINISH);
         });
         
-        this.events.subscribe(FeedsEvent.PublishType.addFeedFinish,async (nodeId, feedId, feedName)=>{
-            await this.changeTobeAddedFeedStatusByNodeFeedId(nodeId, feedId, FeedsData.FollowFeedStatus.FOLLOW_FEED_FINISH);
-            await this.changeTobeAddedFeedStatusByNodeFeedId(nodeId, feedId, FeedsData.FollowFeedStatus.FINISH);
-            await this.removeTobeAddedFeedStatusByNodeFeedId(nodeId, feedId);
-            this.events.publish(FeedsEvent.PublishType.addFeed_Finish, nodeId,feedId);
-        });
+        // this.events.subscribe(FeedsEvent.PublishType.addFeedFinish,async (nodeId, feedId, feedName)=>{
+        // });
+    }
+
+    async processTobeAddedFeedsFinish(nodeId: string, feedId: number){
+        this.clearTobeAddedFeedTimer(nodeId);
+        await this.changeTobeAddedFeedStatusByNodeFeedId(nodeId, String(feedId), FeedsData.FollowFeedStatus.FOLLOW_FEED_FINISH);
+        await this.changeTobeAddedFeedStatusByNodeFeedId(nodeId, String(feedId), FeedsData.FollowFeedStatus.FINISH);
+        await this.removeTobeAddedFeedStatusByNodeFeedId(nodeId, feedId);
+        this.events.publish(FeedsEvent.PublishType.addFeed_Finish, nodeId,feedId);
     }
 
     addFeed(decodeResult:FeedsData.FeedUrl, nodeId: string, inputAvatar: string, inputFollower: number, inputFeedName: string): Promise<FeedsData.ToBeAddedFeed>{
@@ -240,6 +245,11 @@ export class AddFeedService {
     }
 
     async changeTobeAddedFeedStatusByNodeId(nodeId: string, status: FeedsData.FollowFeedStatus){
+        this.setTimeoutStatus(nodeId);
+        this.processChangeTobeAddedFeedStatusByNodeId(nodeId, status);
+    }
+
+    processChangeTobeAddedFeedStatusByNodeId(nodeId: string, status: FeedsData.FollowFeedStatus){
         this.checkTobeAddedFeedMap(nodeId);
         let keys: string[] = Object.keys(this.tobeAddedFeedMap[nodeId]) || [];
         for (let index = 0; index < keys.length; index++) {
@@ -366,5 +376,20 @@ export class AddFeedService {
     async cleanTobeAddedFeedMap(){
         this.tobeAddedFeedMap = {};
         await this.storageService.remove(tobeAddFeedsPersistenceKey);
+    }
+
+    setTimeoutStatus(nodeId: string){
+        this.clearTobeAddedFeedTimer(nodeId);
+        tobeAddedFeedTimer[nodeId] = setTimeout(()=>{
+            this.processChangeTobeAddedFeedStatusByNodeId(nodeId, FeedsData.FollowFeedStatus.DISCONNECTED);
+            this.clearTobeAddedFeedTimer(nodeId);
+        },120000);
+    }
+
+    clearTobeAddedFeedTimer(nodeId: string){
+        if (tobeAddedFeedTimer[nodeId] != null&&tobeAddedFeedTimer[nodeId] != undefined){
+            clearTimeout(tobeAddedFeedTimer[nodeId]);
+            tobeAddedFeedTimer[nodeId] = null;
+        }
     }
 }

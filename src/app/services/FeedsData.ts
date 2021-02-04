@@ -230,6 +230,7 @@ declare namespace FeedsData{
         FOLLOW_FEED_ERROR,
         FINISH,
         ERROR,
+        DISCONNECTED
     }
     
     type FeedUrl = {
