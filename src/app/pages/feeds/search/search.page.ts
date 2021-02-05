@@ -195,7 +195,7 @@ export class SearchPage implements OnInit {
     }
 
     this.addingChanneList = this.addingChanneList.filter(
-      channel=>channel.name.toLowerCase().indexOf(events.target.value.toLowerCase()) > -1
+      channel=>channel.feedName.toLowerCase().indexOf(events.target.value.toLowerCase()) > -1
     );
 
     this.feedsList = this.feedsList.filter(
