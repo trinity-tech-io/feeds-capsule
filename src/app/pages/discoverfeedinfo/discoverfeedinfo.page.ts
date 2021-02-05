@@ -85,15 +85,25 @@ export class DiscoverfeedinfoPage implements OnInit {
       this.initTitle();
     });
 
-    this.events.subscribe(FeedsEvent.PublishType.unsubscribeFinish,()=>{
+    this.events.subscribe(FeedsEvent.PublishType.unsubscribeFinish,(nodeId:string,channelId:number)=>{
       this.zone.run(() => {
-          this.status = '1';
+        let  feedNodeId = this.feedInfo["nodeId"]
+        let feedUrl = this.feedInfo["url"];
+        let feedId = feedUrl.split("/")[4];
+        if(feedNodeId === nodeId && feedId == channelId){
+           this.status = '1';
+        }
       });
     });
 
-    this.events.subscribe(FeedsEvent.PublishType.subscribeFinish,()=>{
+    this.events.subscribe(FeedsEvent.PublishType.subscribeFinish,(nodeId:string,channelId:number)=>{
       this.zone.run(() => {
-         this.status = '2';
+        let  feedNodeId = this.feedInfo["nodeId"]
+        let feedUrl = this.feedInfo["url"];
+        let feedId = feedUrl.split("/")[4];
+        if(feedNodeId === nodeId && feedId == channelId){
+          this.status = '2';
+        }
       });
     });
 
