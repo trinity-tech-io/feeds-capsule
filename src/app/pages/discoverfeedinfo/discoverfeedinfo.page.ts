@@ -62,7 +62,7 @@ export class DiscoverfeedinfoPage implements OnInit {
   ionViewWillEnter() {
     this.channelSubscribes = this.feedInfo["followers"];
     this.feedsUrl = this.feedInfo['url'] || "";
-    this.qrcodeString = this.feedsUrl+"#"+this.feedInfo["name"] || null;
+    this.qrcodeString = this.feedsUrl+"#"+encodeURIComponent(this.feedInfo["name"]) || null;
     this.status = this.getChannelStatus(this.feedInfo);
     this.initTitle();
     this.native.setTitleBarBackKeyShown(true);

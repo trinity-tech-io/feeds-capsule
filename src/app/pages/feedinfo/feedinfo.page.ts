@@ -88,7 +88,7 @@ export class FeedinfoPage implements OnInit {
       this.feedPublicStatus = this.feedService.getFeedPublicStatus();
       let feedsUrlHash =UtilService.SHA256(this.feedsUrl);
       this.isPublic = this.feedPublicStatus[feedsUrlHash] || "";
-      this.qrcodeString = this.feedsUrl+"#"+this.name;
+      this.qrcodeString = this.feedsUrl+"#"+encodeURIComponent(this.name);
       this.des = channelInfo["des"] || "";
       this.oldChannelAvatar = this.feedService.getProfileIamge();
 
@@ -373,5 +373,5 @@ export class FeedinfoPage implements OnInit {
     });
     return await this.popover.present();
   }
-  
+
 }

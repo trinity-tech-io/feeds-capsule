@@ -40,7 +40,7 @@ export class AddFeedService {
         this.events.subscribe(FeedsEvent.PublishType.login_finish,(nodeId)=>{
             this.changeTobeAddedFeedStatusByNodeId(nodeId, FeedsData.FollowFeedStatus.SIGNIN_FINISH);
         });
-        
+
         // this.events.subscribe(FeedsEvent.PublishType.addFeedFinish,async (nodeId, feedId, feedName)=>{
         // });
     }
@@ -76,12 +76,12 @@ export class AddFeedService {
                     reject(error);
                     return;
                 }
-                
+
                 this.checkTobeAddedFeedMap(nodeId);
 
-                this.tobeAddedFeedMap[nodeId][decodeResult.feedId] = 
-                    this.generateToBeAddedFeed(nodeId, decodeResult.carrierAddress, decodeResult.feedId, 
-                        feedName, decodeResult.did, decodeResult.serverUrl, decodeResult.feedUrl, 
+                this.tobeAddedFeedMap[nodeId][decodeResult.feedId] =
+                    this.generateToBeAddedFeed(nodeId, decodeResult.carrierAddress, decodeResult.feedId,
+                        feedName, decodeResult.did, decodeResult.serverUrl, decodeResult.feedUrl,
                         FeedsData.FollowFeedStatus.NONE, FeedsData.FriendState.NONE_STATE, avatar, follower);
 
                 this.changeTobeAddedFeedStatusByNodeId(nodeId, FeedsData.FollowFeedStatus.ADD_FRIEND_READY);
@@ -156,7 +156,7 @@ export class AddFeedService {
         }
 
         let tmpString = feedUrl.replace("feeds://","");
-        
+
         let tmp: string[] = tmpString.split("/")
         let result: FeedsData.FeedUrl = null;
         if (tmp.length < 3){
@@ -180,8 +180,8 @@ export class AddFeedService {
                 }catch(error){
                     this.logUtils.loge("Type convert error "+error, TAG);
                 }
-                
-                mFeedName = feedField[1]||"Unknow";
+
+                mFeedName = decodeURIComponent(feedField[1])||"Unknow";
             }else{
                 mFeedId = Number(tmp[2]);
             }
@@ -218,7 +218,7 @@ export class AddFeedService {
         return nodeId + "-" + feedId;
     }
 
-    generateToBeAddedFeed(nodeId: string, carrierAddress: string, feedId: number, feedName: string, 
+    generateToBeAddedFeed(nodeId: string, carrierAddress: string, feedId: number, feedName: string,
         did: string, serverUrl: string, feedUrl: string, status : FeedsData.FollowFeedStatus, state: FeedsData.FriendState,
         avatar: string, follower: number): FeedsData.ToBeAddedFeed{
         return {
@@ -279,9 +279,9 @@ export class AddFeedService {
                 this.logUtils.loge("tobeAddedFeedMap null", TAG);
                 return;
             }
-    
+
             delete this.tobeAddedFeedMap[nodeId][feedIdStr];
-    
+
             await this.saveData();
             resolve();
         });
