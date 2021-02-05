@@ -1179,7 +1179,7 @@ export class FeedService {
     this.events.subscribe(FeedsEvent.PublishType.carrierFriendConnection, ret => {
       let friendId = ret.friendId;
       let friendStatus = ret.status;
-      this.logUtils.logd("Friend connection changed to "+friendStatus,TAG);
+      this.logUtils.logd("Friend:"+friendId+" connection changed to "+friendStatus,TAG);
       eventBus.publish(FeedsEvent.PublishType.friendConnectionChanged, friendId, friendStatus);
 
       if (this.connectionService.friendConnectionMap == null || this.connectionService.friendConnectionMap == undefined)
