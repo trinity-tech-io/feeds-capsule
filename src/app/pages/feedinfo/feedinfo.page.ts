@@ -77,7 +77,7 @@ export class FeedinfoPage implements OnInit {
       let channelInfo  = _.cloneDeep(item);
       this.nodeId = channelInfo["nodeId"] || "";
       this.serverInfo = this.feedService.getServerbyNodeId(this.nodeId);
-      this.severVersion = this.feedService.getServerVersionByNodeId(this.nodeId) || this.translate.instant('common.infoObtaining');
+      this.severVersion = this.feedService.getServerVersionByNodeId(this.nodeId) || '<1.3.0(Outdated)';
       this.elaAddress = this.serverInfo["elaAddress"] || this.translate.instant('DIDdata.Notprovided');
       let feedsUrl = this.serverInfo['feedsUrl'] || null;
       let did = this.serverInfo['did'] || "";

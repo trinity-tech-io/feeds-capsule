@@ -251,7 +251,7 @@ export class ServerInfoPage implements OnInit {
     if (version != ""){
       this.serverDetails.push({
         type: this.translate.instant('ServerInfoPage.version'),
-        details: version || this.translate.instant('common.infoObtaining'),
+        details: version || "<1.3.0(Outdated)",
       });
     }
 
