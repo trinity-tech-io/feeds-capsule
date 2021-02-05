@@ -226,6 +226,21 @@ type Server = {
   elaAddress        : string
 }
 
+type SyncPostStatus = {
+  nodeId        : string,
+  feedsId       : number,
+  isSyncFinish  : boolean,
+  lastUpdate    : number
+}
+
+type SyncCommentStatus = {
+  nodeId        : string,
+  feedsId       : number,
+  postId        : number,
+  isSyncFinish  : boolean,
+  lastUpdate    : number
+}
+
 export class DidData{
   constructor(
     public did: string,
@@ -302,6 +317,9 @@ enum PersistenceKey{
   lastSubscribedFeedsUpdateMap = "lastSubscribedFeedsUpdateMap",
   serverVersions = "serverVersions",
   isSignOut = "isSignOut",
+
+  syncPostStatusMap = "syncPostStatusMap",
+  syncCommentStatusMap = "syncCommentStatusMap",
 }
 
 let expDay = 10;
@@ -392,6 +410,8 @@ export class FeedService {
   private throwMsgTransDataLimit = 4*1000*1000;
   private alertPopover:HTMLIonPopoverElement = null;
   private serverVersions: {[nodeId: string]: ServerVersion} = {};
+  private syncPostStatusMap: {[nodeChannelId: string]: SyncPostStatus} = {};
+  private syncCommentStatusMap: {[nodeChannelId: string]: SyncCommentStatus} = {};
 
   public constructor(
     private serializeDataService: SerializeDataService,
@@ -460,8 +480,8 @@ export class FeedService {
       this.storeService.get(PersistenceKey.serverVersions).then((mServervVersions)=>{
         this.serverVersions = mServervVersions || {};
         resolve(mServervVersions);
-      }).catch(()=>{
-        reject();
+      }).catch((error)=>{
+        reject(error);
       });
     });
   }
@@ -473,8 +493,8 @@ export class FeedService {
         this.storeService.get(PersistenceKey.postMap).then((mPostMap)=>{
           this.postMap = mPostMap || {};
           resolve(mPostMap);
-        }).catch(()=>{
-          reject();
+        }).catch((error)=>{
+          reject(error);
         });
       }else{
           resolve(postMap);
@@ -489,8 +509,8 @@ export class FeedService {
         this.storeService.get(PersistenceKey.channelsMap).then((mChannelMap)=>{
           channelsMap = mChannelMap || {};
           resolve(mChannelMap);
-        }).catch(()=>{
-          reject();
+        }).catch((error)=>{
+          reject(error);
       });
       }else{
           resolve(channels);
@@ -505,8 +525,8 @@ export class FeedService {
         this.storeService.get(PersistenceKey.credential).then((mCredential)=>{
           localCredential = mCredential || "";
           resolve(mCredential);
-        }).catch(()=>{
-          reject();
+        }).catch((error)=>{
+          reject(error);
         });
       }else{
           resolve(localCredential);
@@ -521,8 +541,8 @@ export class FeedService {
         this.storeService.get(PersistenceKey.lastPostUpdateMap).then((mLastPostUpdateMap)=>{
           lastPostUpdateMap = mLastPostUpdateMap || {};
           resolve(mLastPostUpdateMap);
-        }).catch(()=>{
-          reject();
+        }).catch((error)=>{
+          reject(error);
         });
       }else{
           resolve(lastPostUpdate);
@@ -537,8 +557,8 @@ export class FeedService {
         this.storeService.get(PersistenceKey.myChannelsMap).then((mMyChannelsMap)=>{
           myChannelsMap = mMyChannelsMap || {};
           resolve(mMyChannelsMap);
-        }).catch(()=>{
-          reject();
+        }).catch((error)=>{
+          reject(error);
         });
       }else{
           resolve(myChannels);
@@ -561,8 +581,8 @@ export class FeedService {
           }
 
           resolve(mServersStatus);
-        }).catch(()=>{
-          reject();
+        }).catch((error)=>{
+          reject(error);
         });
       }else{
           resolve(sStatus);
@@ -577,8 +597,8 @@ export class FeedService {
         this.storeService.get(PersistenceKey.serverStatisticsMap).then((mServerStatisticsMap)=>{
           serverStatisticsMap = mServerStatisticsMap || {};
           resolve(mServerStatisticsMap);
-        }).catch(()=>{
-          reject();
+        }).catch((error)=>{
+          reject(error);
         });
       }else{
           resolve(serverStatistics);
@@ -593,8 +613,8 @@ export class FeedService {
         this.storeService.get(PersistenceKey.serverMap).then((mServerMap)=>{
           serverMap = mServerMap || {};
           resolve(mServerMap);
-        }).catch(()=>{
-          reject();
+        }).catch((error)=>{
+          reject(error);
         });
       }else{
           resolve(servers);
@@ -609,8 +629,8 @@ export class FeedService {
         this.storeService.get(PersistenceKey.subscribedChannelsMap).then((mSubscribedChannelsMap)=>{
           subscribedChannelsMap = mSubscribedChannelsMap || {};
           resolve(mSubscribedChannelsMap);
-        }).catch(()=>{
-          reject();
+        }).catch((error)=>{
+          reject(error);
         });
       }else{
           resolve(subscribedChannels);
@@ -625,8 +645,8 @@ export class FeedService {
         this.storeService.get(PersistenceKey.commentsMap).then((mCommentsMap)=>{
           commentsMap = mCommentsMap || {};
           resolve(mCommentsMap);
-        }).catch(()=>{
-          reject();
+        }).catch((error)=>{
+          reject(error);
         });
       }else{
           resolve(comments);
@@ -657,8 +677,8 @@ export class FeedService {
         this.storeService.get(PersistenceKey.likeMap).then((mLikeMap)=>{
           likeMap = mLikeMap || {};
           resolve(mLikeMap);
-        }).catch(()=>{
-          reject();
+        }).catch((error)=>{
+          reject(error);
         });
       }else{
           resolve(likes);
@@ -674,8 +694,8 @@ export class FeedService {
           accessTokenMap = mAccessTokenMap || {};
           this.logUtils.logd("accessTokenMap = "+JSON.stringify(accessTokenMap),TAG);
           resolve(mAccessTokenMap);
-        }).catch(()=>{
-          reject();
+        }).catch((error)=>{
+          reject(error);
         });
       }else{
           resolve(accessTokens);
@@ -690,8 +710,8 @@ export class FeedService {
         this.storeService.get(PersistenceKey.bindingServer).then((mBindingServer)=>{
           bindingServer = mBindingServer || undefined;
           resolve(mBindingServer);
-        }).catch(()=>{
-          reject();
+        }).catch((error)=>{
+          reject(error);
         });
       }else{
           resolve(bindServer);
@@ -706,8 +726,8 @@ export class FeedService {
         this.storeService.get(PersistenceKey.notificationList).then((mNotificationList)=>{
           notificationList = mNotificationList || [];
           resolve(mNotificationList);
-        }).catch(()=>{
-          reject();
+        }).catch((error)=>{
+          reject(error);
         });
       }else{
           resolve(notifications);
@@ -722,8 +742,8 @@ export class FeedService {
         this.storeService.get(PersistenceKey.likeCommentMap).then((mLikeCommentMap)=>{
           likeCommentMap = mLikeCommentMap || {};
           resolve(mLikeCommentMap);
-        }).catch(()=>{
-          reject();
+        }).catch((error)=>{
+          reject(error);
         });
       }else{
           resolve(likeComments);
@@ -754,8 +774,8 @@ export class FeedService {
         this.storeService.get(PersistenceKey.lastCommentUpdateMap).then((mLastCommentUpdateMap)=>{
           this.lastCommentUpdateMap = mLastCommentUpdateMap || {};
           resolve(mLastCommentUpdateMap);
-        }).catch(()=>{
-          reject();
+        }).catch((error)=>{
+          reject(error);
         });
       }else{
           resolve(lastCommentUpdate);
@@ -770,14 +790,47 @@ export class FeedService {
         this.storeService.get(PersistenceKey.lastSubscribedFeedsUpdateMap).then((mLastSubscribedFeedsUpdate)=>{
           this.lastSubscribedFeedsUpdateMap = mLastSubscribedFeedsUpdate || {};
           resolve(mLastSubscribedFeedsUpdate);
-        }).catch(()=>{
-          reject();
+        }).catch((error)=>{
+          reject(error);
         });
       }else{
           resolve(lastSubscribedFeedUpdate);
       }
     });
   }
+
+  loadSyncCommentStatusMap(){
+    return new Promise((resolve, reject) =>{
+      let syncCommentStatus = this.syncCommentStatusMap || "";
+      if( syncCommentStatus == ""){
+        this.storeService.get(PersistenceKey.syncCommentStatusMap).then((mSyncCommentStatusMap)=>{
+          this.syncCommentStatusMap = mSyncCommentStatusMap || {};
+          resolve(mSyncCommentStatusMap);
+        }).catch((error)=>{
+          reject(error);
+        });
+      }else{
+          resolve(syncCommentStatus);
+      }
+    });
+  }
+
+  loadSyncPostStatusMap(){
+    return new Promise((resolve, reject) =>{
+      let syncPostStatus = this.syncPostStatusMap || "";
+      if( syncPostStatus == ""){
+        this.storeService.get(PersistenceKey.syncPostStatusMap).then((mSyncPostStatusMap)=>{
+          this.syncPostStatusMap = mSyncPostStatusMap || {};
+          resolve(mSyncPostStatusMap);
+        }).catch((error)=>{
+          reject(error);
+        });
+      }else{
+          resolve(syncPostStatus);
+      }
+    });
+  }
+
 
   async loadData(){
     await Promise.all([
@@ -800,7 +853,9 @@ export class FeedService {
       this.loadLikeCommentMap(),
       // this.loadLastFeedUpdateMap(),
       this.loadLastCommentUpdateMap(),
-      this.loadLastSubscribedFeedUpdateMap()
+      this.loadLastSubscribedFeedUpdateMap(),
+      this.loadSyncCommentStatusMap(),
+      this.loadSyncPostStatusMap()
     ]);
   }
 
@@ -913,7 +968,15 @@ export class FeedService {
 
     this.storeService.get(PersistenceKey.lastSubscribedFeedsUpdateMap).then((mLastSubscribedFeedsUpdateMap)=>{
       this.lastSubscribedFeedsUpdateMap = mLastSubscribedFeedsUpdateMap;
-    })
+    });
+
+    this.storeService.get(PersistenceKey.syncCommentStatusMap).then((mSyncCommentStatusMap)=>{
+      this.syncCommentStatusMap = mSyncCommentStatusMap;
+    });
+
+    this.storeService.get(PersistenceKey.syncPostStatusMap).then((mSyncPostStatusMap)=>{
+      this.syncPostStatusMap = mSyncPostStatusMap;
+    });
   }
 
   initCallback(){
@@ -2389,10 +2452,13 @@ export class FeedService {
     await this.storeService.set(PersistenceKey.postMap,this.postMap);
     eventBus.publish(FeedsEvent.PublishType.postDataUpdate);
 
-    if(this.checkChannelIsMine(nodeId,channelId)){
-      let lastCommentUpdateKey = this.getPostId(nodeId, 0, 0);
-      this.updateLastCommentUpdate(lastCommentUpdateKey, nodeId, channelId, postId, updatedAt);
-    }
+    // if(this.checkChannelIsMine(nodeId,channelId)){
+    this.updateLastCommentUpdate(ncpId, nodeId, channelId, postId, updatedAt);
+
+    let lastCommentUpdateKey = this.getPostId(nodeId, channelId, 0);
+    this.updateLastCommentUpdate(lastCommentUpdateKey, nodeId, channelId, 0, updatedAt);
+    
+    // }
   }
 
   processNewComment(nodeId: string, channelId: number, postId: number, commentId: number, referCommentId: number,
@@ -2407,6 +2473,10 @@ export class FeedService {
 
       let ncpId = this.getPostId(nodeId, channelId, postId);
       this.updateLastCommentUpdate(ncpId, nodeId, channelId, postId, updatedAt);
+
+      let ncId = this.getPostId(nodeId, channelId,0);
+      this.updateLastCommentUpdate(ncpId, nodeId, channelId, 0, updatedAt);
+
       eventBus.publish(FeedsEvent.PublishType.commentDataUpdate);
 
       this.generateNotification(nodeId, channelId, postId,commentId,userName,Behavior.comment,this.translate.instant("NotificationPage.commentPost"))
@@ -3001,6 +3071,9 @@ export class FeedService {
           isSubscribed:false
         }
       }
+
+      this.syncPost(nodeId, id);
+      this.syncComment(nodeId, id);
     }
 
     this.storeService.set(PersistenceKey.myChannelsMap, myChannelsMap);
@@ -3183,16 +3256,19 @@ export class FeedService {
         channelsMap[nodeChannelId].isSubscribed = true;
       }
 
-      this.updatePost(nodeId,channelId);
-      this.updateCommentData(nodeId, channelId);
+      // this.updatePost(nodeId,channelId);
+      // this.updateCommentData(nodeId, channelId);
       if (request.max_count == 1){
         isAddFeeds = true;
         await this.processTobeAddedFeedsFinish(nodeId, channelId);
         eventBus.publish(FeedsEvent.PublishType.subscribeFinish, nodeId,channelId);
         this.native.toast(this.formatInfoService.formatFollowSuccessMsg(this.getFeedNameById(nodeId, channelId)));
-        this.getMultiComments(nodeId, channelId, 0, Communication.field.last_update, 0, 0, 0);
+        // this.getMultiComments(nodeId, channelId, 0, Communication.field.last_update, 0, 0, 0);
 
+        // this.updatePostFromLatest(nodeId,channelId);
         // this.updateData(nodeId);
+        this.syncPost(nodeId, channelId);
+        this.syncComment(nodeId, channelId);
       }else{
         this.updateLastSubscribedFeedsUpdate(nodeId, last_update);
       }
@@ -3229,16 +3305,9 @@ export class FeedService {
       if (updatedAt > createAt && status == FeedsData.PostCommentStatus.available)
         status = FeedsData.PostCommentStatus.edited
 
-
       let mPostId = this.getPostId(nodeId, channel_id, id);
 
-      if(this.postMap[mPostId] == undefined){
-        let nodeChannelId = this.getChannelId(nodeId, channel_id);
-        if (!this.checkChannelIsMine(nodeId, channel_id))
-          unreadMap[nodeChannelId] = unreadMap[nodeChannelId]+1;
-      }
-
-      this.postMap[mPostId] = {
+      let post = {
         nodeId     : nodeId,
         channel_id : channel_id,
         id         : id,
@@ -3249,6 +3318,18 @@ export class FeedService {
         updated_at  : updatedAt,
         post_status : status
       }
+
+      if (!this.checkSyncPostStatus(nodeId, channel_id)){
+        this.generateSyncPostStatus(nodeId, channel_id, false, updatedAt);
+      }
+      
+      if(this.postMap[mPostId] == undefined){
+        let nodeChannelId = this.getChannelId(nodeId, channel_id);
+        if (!this.checkChannelIsMine(nodeId, channel_id))
+          unreadMap[nodeChannelId] = unreadMap[nodeChannelId]+1;
+      }
+
+      this.postMap[mPostId] = post;
 
       if (likeMap[mPostId] != undefined){
         likeMap[mPostId] = {
@@ -3264,6 +3345,19 @@ export class FeedService {
         let key = this.getChannelId(nodeId, channel_id);
         this.updateLastPostUpdate(key,nodeId, channel_id, updatedAt);
       }
+
+      if(this.getServerVersionCodeByNodeId(nodeId)< newCommentVersion){
+        this.syncCommentOld(nodeId, channel_id, id);
+      }
+    }
+
+    let reqFeedsId = request.requestParams.channel_id;
+    if (result.length == 0){
+      this.generateSyncPostStatus(nodeId, reqFeedsId, true, 0);
+    }
+
+    if (!this.checkSyncPostStatus(nodeId, reqFeedsId)){
+      this.updatePostWithTime(nodeId, reqFeedsId, this.getSyncPostLastUpdate(nodeId, reqFeedsId)-1, 0, 1);
     }
 
     if (requestAction == RequestAction.refreshPostDetail){
@@ -3302,11 +3396,26 @@ export class FeedService {
       await this.processNewComment(nodeId,channelId,postId,commentId,referCommentId,
         userName,likes,createdAt,updatedAt,status,userDid,contentBin);
 
-      if(this.checkChannelIsMine(nodeId,channelId)){
-        let lastCommentUpdateKey = this.getPostId(nodeId, 0, 0);
-        this.updateLastCommentUpdate(lastCommentUpdateKey, nodeId, channelId, postId, updatedAt);
+      if (!this.checkSyncCommentStatus(nodeId, channelId, postId)){
+        this.generateSyncCommentStatus(nodeId, channelId, postId, false, updatedAt);
       }
+
+      // if(this.checkChannelIsMine(nodeId,channelId)){
+      let lastCommentUpdateKey = this.getPostId(nodeId, channelId, postId);
+      this.updateLastCommentUpdate(lastCommentUpdateKey, nodeId, channelId, postId, updatedAt);
+      // }
     }
+
+    let reqFeedsId = requestParams.requestParams.channel_id;
+    let reqPostId = requestParams.requestParams.post_id;
+
+    if (result.length == 0){
+      this.generateSyncCommentStatus(nodeId, reqFeedsId, reqPostId, true, 0);
+    }
+    if (!this.checkSyncCommentStatus(nodeId, reqFeedsId, 0)){
+      this.updateCommentsWithTime(nodeId, reqFeedsId, reqPostId, this.getSyncCommentLastUpdate(nodeId, reqFeedsId, 0) - 1, 0, 2);
+    }
+
     let reqParams = requestParams.requestParams;
     eventBus.publish(FeedsEvent.PublishType.getCommentFinish,nodeId,reqParams.channel_id,reqParams.post_id);
   }
@@ -3806,8 +3915,8 @@ export class FeedService {
     return list;
   }
 
-  updatePostWithTime(nodeId: string, channelId:number, lastPostTime: number){
-    this.getPost(nodeId,channelId,Communication.field.last_update,0,lastPostTime,0,"");
+  updatePostWithTime(nodeId: string, channelId:number, upper_bound: number, lower_bound: number, maxCount: number){
+    this.getPost(nodeId,channelId, Communication.field.last_update, upper_bound, lower_bound, maxCount,"");
   }
 
   // updateFeedsWithTime(nodeId: string, lastUpdateTime: number){
@@ -3818,16 +3927,35 @@ export class FeedService {
     this.getChannels(nodeId,Communication.field.id, feedId, feedId, 1);
   }
 
-  updateCommentsWithTime(nodeId: string, channelId: number, postId: number, lastUpdateTime: number){
-    this.getComments(nodeId, channelId, postId , Communication.field.last_update, 0, lastUpdateTime, 0, false);
+  updateMultiCommentsWithTime(nodeId: string, feedsId: number,upper_bound: number, lower_bound: number, max_counts:number){
+    this.getMultiComments(nodeId, feedsId, 0, Communication.field.last_update, upper_bound, lower_bound, max_counts);
   }
 
-  updatePost(nodeId: string, channelId:number){
-    let nodeChannelId = this.getChannelId(nodeId, channelId);
+  updateCommentsWithTime(nodeId: string, channelId: number, postId: number, upper_bound: number, lower_bound: number, max_counts:number){
+    this.getComments(nodeId, channelId, postId , Communication.field.last_update, upper_bound, lower_bound, max_counts, false);
+  }
+
+  updatePost(nodeId: string, feedsId:number){
+    let nodeChannelId = this.getChannelId(nodeId, feedsId);
     let mlastPostUpdateMap = lastPostUpdateMap || "";
     let postUpdate = mlastPostUpdateMap[nodeChannelId]||"";
     let lastPostTime = postUpdate["time"] || 0;
-    this.updatePostWithTime(nodeId, channelId, lastPostTime);
+    this.updatePostWithTime(nodeId, feedsId, 0, lastPostTime, 0);
+  }
+
+  updatePostWithId(nodeId: string, feedsId:number, from: number, to: number){
+    this.getPost(nodeId,feedsId,Communication.field.id,to,from,1,"");
+  }
+
+  updatePostFromId(nodeId: string, feedsId: number){
+    let to = this.checkLoadPostId(nodeId, feedsId);
+    if (to>1)
+      this.updatePostWithId(nodeId, feedsId, to, 0);
+  }
+
+  checkLoadPostId(nodeId: string, feedsId: number): number{
+      let feedsList = this.getPostListFromChannel(nodeId, feedsId);
+      return feedsList[feedsList.length-1].id;
   }
 
   // updateFeed(nodeId: string, refreshAll: boolean){
@@ -3863,12 +3991,20 @@ export class FeedService {
     this.getSubscribedChannels(nodeId,Communication.field.last_update, 0, lastSubscribedFeedsTime,0);
   }
 
+  updateMultiComment(nodeId: string, feedsId: number){
+    let ncpId = this.getPostId(nodeId, feedsId, 0);
+    let mLastCommentUpdateMap = this.lastCommentUpdateMap || "";
+    let commentUpdateTime = mLastCommentUpdateMap[ncpId] || "";
+    let lastCommentTime = commentUpdateTime["time"] || 0;
+    this.updateMultiCommentsWithTime(nodeId, feedsId, 0, lastCommentTime, 0);
+  }
+
   updateComment(nodeId: string, channelId: number, postId: number){
     let ncpId = this.getPostId(nodeId,channelId,postId);
     let mLastCommentUpdateMap = this.lastCommentUpdateMap || "";
     let commentUpdateTime = mLastCommentUpdateMap[ncpId] || "";
     let lastCommentTime = commentUpdateTime["time"] || 0;
-    this.updateCommentsWithTime(nodeId, channelId, postId, lastCommentTime);
+    this.updateCommentsWithTime(nodeId, channelId, postId, 0, lastCommentTime, 0);
   }
 
   getSubscribedChannelsFromNodeId(nodeId: string): Channels[]{
@@ -4291,10 +4427,22 @@ export class FeedService {
       await this.processNewComment(nodeId,channelId,postId,commentId,referCommentId,
         userName,likes,createdAt,updatedAt,status,userDid,contentBin);
 
-      if(this.checkChannelIsMine(nodeId,channelId)){
-        let lastCommentUpdateKey = this.getPostId(nodeId, 0, 0);
-        this.updateLastCommentUpdate(lastCommentUpdateKey, nodeId, channelId, postId, updatedAt);
+      // if(this.checkChannelIsMine(nodeId,channelId)){
+      let lastCommentUpdateKey = this.getPostId(nodeId, channelId, 0);
+      this.updateLastCommentUpdate(lastCommentUpdateKey, nodeId, channelId, 0, updatedAt);
+      // }
+
+      if (!this.checkSyncCommentStatus(nodeId, channelId, 0)){
+        this.generateSyncCommentStatus(nodeId, channelId, 0, false, updatedAt);
       }
+    }
+
+    let reqFeedsId = requestParams.channel_id;
+    if (result.length == 0){
+      this.generateSyncCommentStatus(nodeId, reqFeedsId, 0, true, 0);
+    }
+    if (!this.checkSyncCommentStatus(nodeId, reqFeedsId, 0)){
+      this.updateMultiCommentsWithTime(nodeId, reqFeedsId, this.getSyncCommentLastUpdate(nodeId, reqFeedsId, 0) - 1, 0, 2);
     }
   }
 
@@ -4554,46 +4702,78 @@ export class FeedService {
     }
   }
 
+  syncMultiComment(nodeId: string, feedsId: number){
+    if (!this.checkSyncCommentStatus(nodeId, feedsId, 0)){
+      let lastUpdate = this.getSyncCommentLastUpdate(nodeId, feedsId, 0) - 1;
+      if (lastUpdate<0)
+        lastUpdate = 0;
+      this.updateMultiCommentsWithTime(nodeId, feedsId, lastUpdate, 0, 2);
+    }else{
+      this.updateMultiComment(nodeId, feedsId);
+    }
+  }
+  syncCommentOld(nodeId: string, feedsId: number, postId: number){
+    if (!this.checkSyncCommentStatus(nodeId, feedsId, postId)){
+      let lastUpdate = this.getSyncCommentLastUpdate(nodeId, feedsId, postId)-1;
+      if (lastUpdate<0)
+        lastUpdate = 0;
+      this.updateCommentsWithTime(nodeId, feedsId, postId, lastUpdate, 0, 2);
+    }else{
+      this.updateComment(nodeId, feedsId, postId);
+    }
+  }
+
+  syncComment(nodeId: string, feedsId: number){
+    if (this.getServerVersionCodeByNodeId(nodeId) >= newCommentVersion){
+      this.syncMultiComment(nodeId, feedsId);
+    }else{
+      let postList = this.getPostListFromChannel(nodeId,feedsId);
+      for (let postIndex = 0; postIndex < postList.length; postIndex++) {
+        const post: Post = postList[postIndex];
+        let postId: number = post.id;
+        this.syncCommentOld(nodeId, feedsId, postId);
+      }
+    }
+  }
+
+  syncPost(nodeId: string, feedsId: number){
+    if (!this.checkSyncPostStatus(nodeId, feedsId)){
+      let lastUpdate = this.getSyncPostLastUpdate(nodeId, feedsId)-1;
+      if (lastUpdate<0)
+        lastUpdate = 0;
+      this.updatePostWithTime(nodeId, feedsId, lastUpdate, 0, 1);
+    }else{
+      this.updatePost(nodeId, feedsId);
+    }
+  }
+
   updateData(friendId: string){
+    let toBeAddedFeeds: FeedsData.ToBeAddedFeed[] = this.addFeedService.getToBeAddedFeedsInfoByNodeId(friendId);
+    for (let index = 0; index < toBeAddedFeeds.length; index++) {
+      let toBeAddedFeed = toBeAddedFeeds[index];
+      this.subscribeChannel(toBeAddedFeed.nodeId, toBeAddedFeed.feedId);
+    }
+
+    if(bindingServer !=null && bindingServer != undefined && friendId == bindingServer.nodeId){
+      if (this.getMyChannelList().length == 0)
+        this.getMyChannels(friendId,Communication.field.last_update,0,0,0);
+    }
+    
     let list = this.getSubscribedChannelsFromNodeId(friendId);
-    if (list.length>0)
+    if (list.length>0){
       this.updateSubscribedFeedsWithTime(friendId);
-    // for (let index = 0; index < list.length; index++) {
-    //   let channelId = list[index].id;
-    //   this.updatePost(friendId,channelId);
 
-    //   if (this.getServerVersionCodeByNodeId(friendId) < newCommentVersion){
-    //     let postList = this.getPostListFromChannel(friendId,channelId);
-    //     for (let postIndex = 0; postIndex < postList.length; postIndex++) {
-    //       let post: Post = postList[postIndex];
-    //       let postId: number = post.id;
-    //       this.updateComment(friendId, channelId, postId);
-    //     }
-    //   }
-    // }
-
-    if (this.getServerVersionCodeByNodeId(friendId) >= newCommentVersion){
-      // let bindingServer = this.getBindingserver() || null;
-      // if (bindingServer !=null && bindingServer.nodeId == friendId){
-      let lastCommentUpdateKey = this.getPostId(friendId,0,0);
-      let mLastCommentUpdateMap = this.lastCommentUpdateMap || "";
-      let commentUpdateTime = mLastCommentUpdateMap[lastCommentUpdateKey] || "";
-      let lastCommentTime = commentUpdateTime["time"] || 0;
-      let list = this.getSubscribedChannelsFromNodeId(friendId);
       for (let index = 0; index < list.length; index++) {
-        this.getMultiComments(friendId, list[index].id, 0, Communication.field.last_update, 0 , lastCommentTime,0);
+        const feeds: Channels = list[index];
+        let feedsId = feeds.id;
+        this.syncPost(friendId, feedsId);
+        this.syncComment(friendId, feedsId);
       }
     }
 
     if (this.getServerVersionCodeByNodeId(friendId) >= newMultiPropCountVersion){
       this.getMultiSubscribersCount(friendId, 0);
       this.updateMultiLikesAndCommentsCount(friendId);
-    }
-
-    let toBeAddedFeeds: FeedsData.ToBeAddedFeed[] = this.addFeedService.getToBeAddedFeedsInfoByNodeId(friendId);
-    for (let index = 0; index < toBeAddedFeeds.length; index++) {
-      let toBeAddedFeed = toBeAddedFeeds[index];
-      this.subscribeChannel(toBeAddedFeed.nodeId, toBeAddedFeed.feedId);
     }
   }
 
@@ -6640,5 +6820,70 @@ export class FeedService {
 
   getToBeAddedFeedsInfoByNodeFeedId(nodeId:string,feedId:number){
     return this.addFeedService.getToBeAddedFeedsInfoByNodeFeedId(nodeId,feedId);
+  }
+
+  getSyncPostLastUpdate(nodeId:string, feedsId: number): number{
+    if (this.syncPostStatusMap == null || this.syncPostStatusMap == undefined)
+      return 0;
+    let ncId = this.getChannelId(nodeId, feedsId);
+    if (this.syncPostStatusMap[ncId] == null || this.syncPostStatusMap[ncId] == undefined)
+      return 0;
+    return this.syncPostStatusMap[ncId].lastUpdate;
+  }
+
+  generateSyncPostStatus(nodeId: string, feedsId: number, isSyncFinish: boolean, lastUpdate:  number){
+    if (this.syncPostStatusMap == null || this.syncPostStatusMap == undefined)
+      this.syncPostStatusMap = {};
+    let ncId = this.getChannelId(nodeId, feedsId);
+    this.syncPostStatusMap[ncId] = {
+      nodeId        : nodeId,
+      feedsId       : feedsId,
+      isSyncFinish  : isSyncFinish,
+      lastUpdate    : lastUpdate
+    }
+
+    this.storeService.set(PersistenceKey.syncPostStatusMap, this.syncPostStatusMap);
+  }
+
+  checkSyncPostStatus(nodeId: string, feedsId: number){
+    if (this.syncPostStatusMap == null || this.syncPostStatusMap  == undefined)
+      return false;
+    let ncId = this.getChannelId(nodeId, feedsId);
+    if (this.syncPostStatusMap[ncId] == null || this.syncPostStatusMap[ncId] == undefined)
+      return false;
+    return this.syncPostStatusMap[ncId].isSyncFinish;
+  }
+
+  getSyncCommentLastUpdate(nodeId:string, feedsId: number, postId: number): number{
+    if (this.syncCommentStatusMap == null || this.syncCommentStatusMap == undefined)
+      return 0;
+    let ncpId = this.getPostId(nodeId, feedsId, postId);
+    if (this.syncCommentStatusMap[ncpId] == null || this.syncCommentStatusMap[ncpId] == undefined)
+      return 0;
+    return this.syncCommentStatusMap[ncpId].lastUpdate;
+  }
+
+  generateSyncCommentStatus(nodeId: string, feedsId: number, postId: number, isSyncFinish: boolean, lastUpdate:  number){
+    if (this.syncCommentStatusMap == null || this.syncCommentStatusMap == undefined)
+      this.syncCommentStatusMap = {};
+    let ncpId = this.getPostId(nodeId, feedsId, postId);
+    this.syncCommentStatusMap[ncpId] = {
+      nodeId        : nodeId,
+      feedsId       : feedsId,
+      postId        : postId,
+      isSyncFinish  : isSyncFinish,
+      lastUpdate    : lastUpdate
+    }
+
+    this.storeService.set(PersistenceKey.syncCommentStatusMap, this.syncCommentStatusMap);
+  }
+
+  checkSyncCommentStatus(nodeId: string, feedsId: number, postId: number){
+    if (this.syncCommentStatusMap == null || this.syncCommentStatusMap == undefined)
+      return false;
+    let ncpId = this.getPostId(nodeId, feedsId, postId);
+    if (this.syncCommentStatusMap[ncpId] == null || this.syncCommentStatusMap[ncpId] == undefined)
+      return false;
+    return this.syncCommentStatusMap[ncpId].isSyncFinish;
   }
 }
