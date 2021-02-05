@@ -10,6 +10,14 @@ import { SplashscreenPage } from './pages/splashscreen/splashscreen.page';
 import { UtilService } from 'src/app/services/utilService';
 import { StorageService } from './services/StorageService';
 import { PopupProvider } from 'src/app/services/popup';
+import { LogUtils } from 'src/app/services/LogUtils';
+enum LogLevel {
+  NONE,
+  ERROR,
+  WARN,
+  INFO,
+  DEBUG,
+}
 @Component({
   selector: 'my-app',
   templateUrl: 'app.html',
@@ -35,7 +43,8 @@ export class MyApp {
     public native:NativeService,
     public storageService:StorageService,
     public popupProvider:PopupProvider,
-    private popoverController:PopoverController
+    private popoverController:PopoverController,
+    private logUtils: LogUtils
   ) {
       this.initializeApp();
       this.initProfileData();
@@ -73,8 +82,18 @@ export class MyApp {
   initSetting(){
 
     this.feedService.getData("feeds.developerMode").then((status)=>{
-      let dstatus = status;
-      this.feedService.setDeveloperMode(dstatus);
+      if(status === null){
+        this.feedService.setDeveloperMode(false);
+        this.logUtils.setLogLevel(LogLevel.WARN);
+        return;
+      }
+      if(status){
+        this.logUtils.setLogLevel(LogLevel.DEBUG);
+      }else{
+        this.logUtils.setLogLevel(LogLevel.WARN);
+      }
+      this.feedService.setDeveloperMode(status);
+
     }).catch((err)=>{
 
     });

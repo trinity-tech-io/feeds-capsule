@@ -7,7 +7,14 @@ import { FeedService } from '../../services/FeedService';
 import { PopupProvider } from '../../services/popup';
 import { StorageService } from '../../services/StorageService';
 import { AppService } from '../../services/AppService';
-
+import { LogUtils } from 'src/app/services/LogUtils';
+enum LogLevel {
+  NONE,
+  ERROR,
+  WARN,
+  INFO,
+  DEBUG,
+}
 
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 @Component({
@@ -31,7 +38,8 @@ export class SettingsPage implements OnInit {
     public theme:ThemeService,
     public popupProvider:PopupProvider,
     public storageService:StorageService,
-    private popoverController:PopoverController
+    private popoverController:PopoverController,
+    private logUtils: LogUtils
     ) {
 
   }
@@ -91,6 +99,11 @@ export class SettingsPage implements OnInit {
     this.developerMode = !this.developerMode;
     this.feedService.setDeveloperMode(this.developerMode);
     this.feedService.setData("feeds.developerMode",this.developerMode);
+    if(this.developerMode){
+      this.logUtils.setLogLevel(LogLevel.DEBUG);
+    }else{
+      this.logUtils.setLogLevel(LogLevel.WARN);
+    }
   }
 
   cleanData(){
