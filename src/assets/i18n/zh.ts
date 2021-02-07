@@ -92,7 +92,8 @@ export const zh = {
         "adding":"添加中",
         "feedsAlreadyAdded":"已添加过该Feeds",
         "notFollowYet":"未关注",
-        "httperror":"服务异常，稍后再试"
+        "httperror":"服务异常，稍后再试",
+        "textcopied":"文本已拷贝"
     },
     "app":{
         "profileDetails":"档案详情",

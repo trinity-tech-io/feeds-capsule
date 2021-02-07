@@ -922,7 +922,7 @@ export class PostdetailPage implements OnInit {
   pressContent(postContent:string){
     let text = this.feedService.parsePostContentText(postContent);
     this.native.copyClipboard(text).then(()=>{
-      this.native.toast_trans("common.copysucceeded");
+      this.native.toast_trans("common.textcopied");
     }).catch(()=>{
 
     });
