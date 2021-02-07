@@ -92,7 +92,8 @@ export const fr = {
         "adding":"Adding",
         "feedsAlreadyAdded":"This feed has already been added",
         "notFollowYet":"Follow",
-        "httperror":"Service exception, try again later"
+        "httperror":"Service exception, try again later",
+        "textcopied":"Text copied"
     },
     "app":{
         "profileDetails":"Profile Details",
