@@ -179,7 +179,7 @@ export class DiscoverfeedinfoPage implements OnInit {
   }
 
   subscribe(){
-    this.status = '0';
+    //this.status = '0';
     let feedUrl = this.feedInfo["url"];
     let avatar = this.feedInfo["feedsAvatar"];
     let followers = this.feedInfo["followers"];

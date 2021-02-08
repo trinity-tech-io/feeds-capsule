@@ -137,11 +137,28 @@ export class FeedinfoPage implements OnInit {
       });
     });
 
+    this.events.subscribe(FeedsEvent.PublishType.subscribeFinish, (nodeId, channelId)=> {
+      this.zone.run(() => {
+        this.checkFollowStatus(this.nodeId,this.channelId);
+      });
+    });
+
     this.events.subscribe(FeedsEvent.PublishType.unsubscribeFinish, (nodeId, channelId, name) => {
       this.zone.run(() => {
         this.native.setRootRouter(['/tabs/home']);
       });
     });
+  }
+
+  checkFollowStatus(nodeId: string, channelId: number){
+    let channelsMap = this.feedService.getChannelsMap();
+    let nodeChannelId = this.feedService.getChannelId(nodeId,channelId);
+    if (channelsMap[nodeChannelId] == undefined || !channelsMap[nodeChannelId].isSubscribed){
+      this.followStatus = false;
+    }
+    else{
+      this.followStatus = true;
+    }
   }
 
   initTitle(){
@@ -162,6 +179,7 @@ export class FeedinfoPage implements OnInit {
   ionViewWillLeave(){
     titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, null);
     this.events.unsubscribe(FeedsEvent.PublishType.unsubscribeFinish);
+    this.events.unsubscribe(FeedsEvent.PublishType.subscribeFinish);
     this.events.unsubscribe(FeedsEvent.PublishType.editChannel);
     this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
     this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
