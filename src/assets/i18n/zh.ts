@@ -174,6 +174,7 @@ export const zh = {
         "status9":"等待",
         "status10":"等待",
         "status11":"关注Feeds出错",
+        "status12":"等待",
         "status14":"无法连接",
         "discover":"进入广场探索Feeds",
         "des1":"您关注此feed的请求正被确认中，请耐心等待30秒左右。确认需要取消请求关注该Feeds？",
