@@ -1815,7 +1815,7 @@ export class FeedService {
       this.checkSignInDataChange(this.localSignInData).then(async (isChange)=>{
         this.logUtils.logd("checkSignInDataChange isChange is "+isChange, TAG);
         if (isChange){
-          this.cleanAllData();
+          await this.cleanAllData();
           this.storeService.set(PersistenceKey.signInData, this.localSignInData);
           this.storeService.set(PersistenceKey.lastSignInData, this.localSignInData);
           resolve(this.localSignInData);
@@ -6741,8 +6741,9 @@ export class FeedService {
     });
   }
 
-  cleanAllData(){
-    this.storeService.clearAll();
+  async cleanAllData(){
+    await this.addFeedService.cleanTobeAddedFeedMap();
+    await this.storeService.clearAll();
     this.cleanCacheData();
   }
 
