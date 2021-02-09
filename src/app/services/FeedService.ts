@@ -1264,10 +1264,13 @@ export class FeedService {
   }
 
   doFriendConnection(friendId: string){
+    this.logUtils.logd("doFriendConnection");
     let accessToken = accessTokenMap[friendId]||undefined;
     if (this.checkExp(accessToken)){
+      this.logUtils.logd("Prepare signinChallengeRequest");
       this.signinChallengeRequest(friendId,true);
     }else{
+      this.logUtils.logd("Prepare prepare");
       this.prepare(friendId);
     }
     this.storeService.set(PersistenceKey.serversStatus,serversStatus);
@@ -4133,6 +4136,7 @@ export class FeedService {
   }
 
   signinChallengeRequest(nodeId: string , requiredCredential: boolean){
+    this.logUtils.logd("Start signinChallengeRequest");
     if(this.isLogging[nodeId] == undefined)
       this.isLogging[nodeId] = false;
     if (this.isLogging[nodeId])
@@ -4669,6 +4673,7 @@ export class FeedService {
   }
 
   checkExp(mAccessToken: FeedsData.AccessToken): boolean{
+    this.logUtils.logd("checkExp");
     let accessToken = mAccessToken || undefined;
     if(accessToken == undefined){
       return true;
@@ -6478,6 +6483,7 @@ export class FeedService {
   }
 
   standardSignIn(nodeId: string){
+    this.logUtils.logd("Start getInstanceDIDDoc nodeId: "+nodeId,TAG);
     this.standardAuth.getInstanceDIDDoc().then((didDocument)=>{
       this.logUtils.logd("getInstanceDIDDoc didDocument is "+didDocument,TAG);
       this.connectionService.standardSignIn(this.getServerNameByNodeId(nodeId),nodeId, didDocument);
@@ -6497,6 +6503,7 @@ export class FeedService {
   }
 
   afterFriendConnection(friendId: string){
+    this.logUtils.logd("afterFriendConnection");
     let mServerMap = serverMap || {};
     let server = mServerMap[friendId]||"";
     if (server != "")
@@ -6542,11 +6549,13 @@ export class FeedService {
 
       this.addFeedService.addFeed(decodeResult, nodeId, avatar, follower, feedName).then((toBeAddedFeed:FeedsData.ToBeAddedFeed)=>{
         if (toBeAddedFeed.friendState == FeedsData.FriendState.IS_FRIEND){
+          this.logUtils.logd("addFeed: server is friend");
           let isSubscribed = this.checkFeedsIsSubscribed(toBeAddedFeed.nodeId, toBeAddedFeed.feedId);
           if (!isSubscribed){
             this.subscribeChannel(toBeAddedFeed.nodeId, toBeAddedFeed.feedId);
           }
 
+          this.saveServer(toBeAddedFeed.feedName, toBeAddedFeed.did, "Unknow", toBeAddedFeed.did, toBeAddedFeed.carrierAddress,toBeAddedFeed.serverUrl,toBeAddedFeed.nodeId);
           resolve("success");
           return ;
         }
