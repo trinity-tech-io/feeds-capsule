@@ -173,6 +173,7 @@ export const fr = {
         "status9":"Pending",
         "status10":"Pending",
         "status11":"Pending",
+        "status12":"Pending",
         "status14":"Disconnected",
         "discover":"Explore on Discovery Square",
         "des1":"Your subscription request to this feed is on going, this takes a few seconds. Would you like to cancel this subscription？",
