@@ -25,7 +25,6 @@ enum LogLevel {
 })
 
 export class MyApp {
-  public didString = null;
   public name: string = "";
   public avatar: Avatar = null;
   public wName: string = "";
@@ -241,19 +240,11 @@ export class MyApp {
     this.feedService.initSignInDataAsync((signInData)=>{
       if (signInData == null || signInData == undefined)
         return ;
-      this.didString = signInData.did || "";
       this.wName = signInData.nickname || signInData.name || "";
       this.avatar = signInData.avatar || null;
       this.name = UtilService.moreNanme(this.wName,15);
     },(error)=>{
     });
-  }
-
-  pressName(){
-    let mName = this.wName||"";
-    if(mName != "" && mName.length>15){
-      this.native.createTip(mName);
-    }
   }
 
   handleImages(){
