@@ -97,48 +97,6 @@ enum Behavior {
   follow
 }
 
-enum PersistenceKey{
-  ///////////////////////////////
-  signInData = "signInData",
-  lastSignInData = "lastSignInData",
-
-  signInRawData = "signInRawData",
-
-  subscribedChannelsMap = "subscribedChannelsMap",
-  channelsMap = "channelsMap",
-  myChannelsMap = "myChannelsMap",
-  unreadMap = "unreadMap",
-  postMap = "postMap",
-  lastPostUpdateMap = "lastPostUpdateMap",
-  commentsMap = "commentsMap",
-  serverStatisticsMap = "serverStatisticsMap",
-  serversStatus = "serversStatus",
-  subscribeStatusMap = "subscribeStatusMap",
-  likeMap = "likeMap",
-
-  // bindingServerMap = "bindingServerMap",
-  accessTokenMap = "accessTokenMap",
-  credential = "credential",
-
-  bindingServer = "bindingServer",
-
-  serverMap = "serverMap",
-
-  notificationList = "notificationList",
-
-  likeCommentMap = "likeCommentMap",
-  // lastFeedUpdateMap = "lastFeedUpdateMap",
-  lastCommentUpdateMap = "lastCommentUpdateMap",
-
-  lastMultiLikesAndCommentsCountUpdateMap = "lastMultiLikesAndCommentsCountUpdateMap",
-  lastSubscribedFeedsUpdateMap = "lastSubscribedFeedsUpdateMap",
-  serverVersions = "serverVersions",
-  isSignOut = "isSignOut",
-
-  syncPostStatusMap = "syncPostStatusMap",
-  syncCommentStatusMap = "syncCommentStatusMap",
-}
-
 let expDay = 10;
 
 let eventBus = null;
@@ -294,7 +252,7 @@ export class FeedService {
 
   loadServerVersions(){
     return new Promise((resolve, reject) =>{
-      this.storeService.get(PersistenceKey.serverVersions).then((mServervVersions)=>{
+      this.storeService.get(FeedsData.PersistenceKey.serverVersions).then((mServervVersions)=>{
         this.serverVersions = mServervVersions || {};
         resolve(mServervVersions);
       }).catch((error)=>{
@@ -307,7 +265,7 @@ export class FeedService {
     return new Promise((resolve, reject) =>{
       let postMap = this.postMap || "";
       if( postMap == ""){
-        this.storeService.get(PersistenceKey.postMap).then((mPostMap)=>{
+        this.storeService.get(FeedsData.PersistenceKey.postMap).then((mPostMap)=>{
           this.postMap = mPostMap || {};
           resolve(mPostMap);
         }).catch((error)=>{
@@ -323,7 +281,7 @@ export class FeedService {
     return new Promise((resolve, reject) =>{
       let channels = channelsMap || "";
       if( channels == ""){
-        this.storeService.get(PersistenceKey.channelsMap).then((mChannelMap)=>{
+        this.storeService.get(FeedsData.PersistenceKey.channelsMap).then((mChannelMap)=>{
           channelsMap = mChannelMap || {};
           resolve(mChannelMap);
         }).catch((error)=>{
@@ -339,7 +297,7 @@ export class FeedService {
     return new Promise((resolve, reject) =>{
       let credential = localCredential || "";
       if( credential == ""){
-        this.storeService.get(PersistenceKey.credential).then((mCredential)=>{
+        this.storeService.get(FeedsData.PersistenceKey.credential).then((mCredential)=>{
           localCredential = mCredential || "";
           resolve(mCredential);
         }).catch((error)=>{
@@ -355,7 +313,7 @@ export class FeedService {
     return new Promise((resolve, reject) =>{
       let lastPostUpdate = lastPostUpdateMap || "";
       if( lastPostUpdate == ""){
-        this.storeService.get(PersistenceKey.lastPostUpdateMap).then((mLastPostUpdateMap)=>{
+        this.storeService.get(FeedsData.PersistenceKey.lastPostUpdateMap).then((mLastPostUpdateMap)=>{
           lastPostUpdateMap = mLastPostUpdateMap || {};
           resolve(mLastPostUpdateMap);
         }).catch((error)=>{
@@ -371,7 +329,7 @@ export class FeedService {
     return new Promise((resolve, reject) =>{
       let myChannels = myChannelsMap || "";
       if( myChannels == ""){
-        this.storeService.get(PersistenceKey.myChannelsMap).then((mMyChannelsMap)=>{
+        this.storeService.get(FeedsData.PersistenceKey.myChannelsMap).then((mMyChannelsMap)=>{
           myChannelsMap = mMyChannelsMap || {};
           resolve(mMyChannelsMap);
         }).catch((error)=>{
@@ -387,7 +345,7 @@ export class FeedService {
     return new Promise((resolve, reject) =>{
       let sStatus = serversStatus || "";
       if( sStatus == ""){
-        this.storeService.get(PersistenceKey.serversStatus).then((mServersStatus)=>{
+        this.storeService.get(FeedsData.PersistenceKey.serversStatus).then((mServersStatus)=>{
           serversStatus = mServersStatus || {};
 
           let keys: string[] = Object.keys(serversStatus);
@@ -411,7 +369,7 @@ export class FeedService {
     return new Promise((resolve, reject) =>{
       let serverStatistics = serverStatisticsMap || "";
       if( serverStatistics == ""){
-        this.storeService.get(PersistenceKey.serverStatisticsMap).then((mServerStatisticsMap)=>{
+        this.storeService.get(FeedsData.PersistenceKey.serverStatisticsMap).then((mServerStatisticsMap)=>{
           serverStatisticsMap = mServerStatisticsMap || {};
           resolve(mServerStatisticsMap);
         }).catch((error)=>{
@@ -427,7 +385,7 @@ export class FeedService {
     return new Promise((resolve, reject) =>{
       let servers = serverMap || "";
       if( servers == ""){
-        this.storeService.get(PersistenceKey.serverMap).then((mServerMap)=>{
+        this.storeService.get(FeedsData.PersistenceKey.serverMap).then((mServerMap)=>{
           serverMap = mServerMap || {};
           resolve(mServerMap);
         }).catch((error)=>{
@@ -459,7 +417,7 @@ export class FeedService {
     return new Promise((resolve, reject) =>{
       let comments = commentsMap || "";
       if( comments == ""){
-        this.storeService.get(PersistenceKey.commentsMap).then((mCommentsMap)=>{
+        this.storeService.get(FeedsData.PersistenceKey.commentsMap).then((mCommentsMap)=>{
           commentsMap = mCommentsMap || {};
           resolve(mCommentsMap);
         }).catch((error)=>{
@@ -475,7 +433,7 @@ export class FeedService {
     return new Promise((resolve, reject) =>{
       let unread = unreadMap || "";
       if( unread == ""){
-        this.storeService.get(PersistenceKey.unreadMap).then((mUnreadMap)=>{
+        this.storeService.get(FeedsData.PersistenceKey.unreadMap).then((mUnreadMap)=>{
           unreadMap = mUnreadMap || {};
           resolve(mUnreadMap);
         }).catch(()=>{
@@ -491,7 +449,7 @@ export class FeedService {
     return new Promise((resolve, reject) =>{
       let likes = likeMap || "";
       if( likes == ""){
-        this.storeService.get(PersistenceKey.likeMap).then((mLikeMap)=>{
+        this.storeService.get(FeedsData.PersistenceKey.likeMap).then((mLikeMap)=>{
           likeMap = mLikeMap || {};
           resolve(mLikeMap);
         }).catch((error)=>{
@@ -507,7 +465,7 @@ export class FeedService {
     return new Promise((resolve, reject) =>{
       let accessTokens = accessTokenMap || "";
       if( accessTokens == ""){
-        this.storeService.get(PersistenceKey.accessTokenMap).then((mAccessTokenMap)=>{
+        this.storeService.get(FeedsData.PersistenceKey.accessTokenMap).then((mAccessTokenMap)=>{
           accessTokenMap = mAccessTokenMap || {};
           this.logUtils.logd("accessTokenMap = "+JSON.stringify(accessTokenMap),TAG);
           resolve(mAccessTokenMap);
@@ -524,7 +482,7 @@ export class FeedService {
     return new Promise((resolve, reject) =>{
       let bindServer = bindingServer || "";
       if( bindServer == ""){
-        this.storeService.get(PersistenceKey.bindingServer).then((mBindingServer)=>{
+        this.storeService.get(FeedsData.PersistenceKey.bindingServer).then((mBindingServer)=>{
           bindingServer = mBindingServer || undefined;
           resolve(mBindingServer);
         }).catch((error)=>{
@@ -540,7 +498,7 @@ export class FeedService {
     return new Promise((resolve, reject) =>{
       let notifications = notificationList || "";
       if( notifications == ""){
-        this.storeService.get(PersistenceKey.notificationList).then((mNotificationList)=>{
+        this.storeService.get(FeedsData.PersistenceKey.notificationList).then((mNotificationList)=>{
           notificationList = mNotificationList || [];
           resolve(mNotificationList);
         }).catch((error)=>{
@@ -556,7 +514,7 @@ export class FeedService {
     return new Promise((resolve, reject) =>{
       let likeComments = likeCommentMap || "";
       if( likeComments == ""){
-        this.storeService.get(PersistenceKey.likeCommentMap).then((mLikeCommentMap)=>{
+        this.storeService.get(FeedsData.PersistenceKey.likeCommentMap).then((mLikeCommentMap)=>{
           likeCommentMap = mLikeCommentMap || {};
           resolve(mLikeCommentMap);
         }).catch((error)=>{
@@ -588,7 +546,7 @@ export class FeedService {
     return new Promise((resolve, reject) =>{
       let lastCommentUpdate = this.lastCommentUpdateMap || "";
       if( lastCommentUpdate == ""){
-        this.storeService.get(PersistenceKey.lastCommentUpdateMap).then((mLastCommentUpdateMap)=>{
+        this.storeService.get(FeedsData.PersistenceKey.lastCommentUpdateMap).then((mLastCommentUpdateMap)=>{
           this.lastCommentUpdateMap = mLastCommentUpdateMap || {};
           resolve(mLastCommentUpdateMap);
         }).catch((error)=>{
@@ -604,7 +562,7 @@ export class FeedService {
     return new Promise((resolve, reject) =>{
       let lastSubscribedFeedUpdate = this.lastSubscribedFeedsUpdateMap || "";
       if( lastSubscribedFeedUpdate == ""){
-        this.storeService.get(PersistenceKey.lastSubscribedFeedsUpdateMap).then((mLastSubscribedFeedsUpdate)=>{
+        this.storeService.get(FeedsData.PersistenceKey.lastSubscribedFeedsUpdateMap).then((mLastSubscribedFeedsUpdate)=>{
           this.lastSubscribedFeedsUpdateMap = mLastSubscribedFeedsUpdate || {};
           resolve(mLastSubscribedFeedsUpdate);
         }).catch((error)=>{
@@ -620,7 +578,7 @@ export class FeedService {
     return new Promise((resolve, reject) =>{
       let syncCommentStatus = this.syncCommentStatusMap || "";
       if( syncCommentStatus == ""){
-        this.storeService.get(PersistenceKey.syncCommentStatusMap).then((mSyncCommentStatusMap)=>{
+        this.storeService.get(FeedsData.PersistenceKey.syncCommentStatusMap).then((mSyncCommentStatusMap)=>{
           this.syncCommentStatusMap = mSyncCommentStatusMap || {};
           resolve(mSyncCommentStatusMap);
         }).catch((error)=>{
@@ -636,7 +594,7 @@ export class FeedService {
     return new Promise((resolve, reject) =>{
       let syncPostStatus = this.syncPostStatusMap || "";
       if( syncPostStatus == ""){
-        this.storeService.get(PersistenceKey.syncPostStatusMap).then((mSyncPostStatusMap)=>{
+        this.storeService.get(FeedsData.PersistenceKey.syncPostStatusMap).then((mSyncPostStatusMap)=>{
           this.syncPostStatusMap = mSyncPostStatusMap || {};
           resolve(mSyncPostStatusMap);
         }).catch((error)=>{
@@ -679,27 +637,27 @@ export class FeedService {
   initData(){
     if(localCredential == null || localCredential == undefined){
 
-      this.storeService.get(PersistenceKey.credential).then((credential)=>{
+      this.storeService.get(FeedsData.PersistenceKey.credential).then((credential)=>{
         localCredential = credential;
       });
     }
 
     // this.loadPostData();
 
-    this.storeService.get(PersistenceKey.lastPostUpdateMap).then((mLastPostUpdateMap)=>{
+    this.storeService.get(FeedsData.PersistenceKey.lastPostUpdateMap).then((mLastPostUpdateMap)=>{
       lastPostUpdateMap = mLastPostUpdateMap;
       if(lastPostUpdateMap == null || lastPostUpdateMap == undefined)
         lastPostUpdateMap = {}
     });
 
-    this.storeService.get(PersistenceKey.myChannelsMap).then((mMyChannelsMap)=>{
+    this.storeService.get(FeedsData.PersistenceKey.myChannelsMap).then((mMyChannelsMap)=>{
       myChannelsMap = mMyChannelsMap;
       if (myChannelsMap == null || myChannelsMap ==undefined ){
         myChannelsMap ={};
       }
     });
 
-    this.storeService.get(PersistenceKey.serversStatus).then((mServersStatus)=>{
+    this.storeService.get(FeedsData.PersistenceKey.serversStatus).then((mServersStatus)=>{
       serversStatus = mServersStatus;
       if (serversStatus == null || serversStatus == undefined){
         serversStatus = {};
@@ -713,7 +671,7 @@ export class FeedService {
       }
     });
 
-    this.storeService.get(PersistenceKey.serverStatisticsMap).then((mServerStatisticsMap)=>{
+    this.storeService.get(FeedsData.PersistenceKey.serverStatisticsMap).then((mServerStatisticsMap)=>{
       serverStatisticsMap = mServerStatisticsMap ;
       if (serverStatisticsMap == null || serverStatisticsMap == undefined){
         serverStatisticsMap = {};
@@ -721,51 +679,51 @@ export class FeedService {
     });
 
 
-    this.storeService.get(PersistenceKey.serverMap).then((mServerMap)=>{
+    this.storeService.get(FeedsData.PersistenceKey.serverMap).then((mServerMap)=>{
       serverMap = mServerMap;
       if(serverMap == null || serverMap == undefined)
         serverMap = {};
     });
 
-    this.storeService.get(PersistenceKey.subscribedChannelsMap).then((mSubscribedChannelsMap)=>{
+    this.storeService.get(FeedsData.PersistenceKey.subscribedChannelsMap).then((mSubscribedChannelsMap)=>{
       subscribedChannelsMap = mSubscribedChannelsMap;
       if (subscribedChannelsMap == null || subscribedChannelsMap == undefined)
         subscribedChannelsMap = {};
     });
 
-    this.storeService.get(PersistenceKey.commentsMap).then((mCommentsMap)=>{
+    this.storeService.get(FeedsData.PersistenceKey.commentsMap).then((mCommentsMap)=>{
       commentsMap = mCommentsMap;
       if(commentsMap == null || commentsMap == undefined)
         commentsMap = {};
     });
 
-    this.storeService.get(PersistenceKey.unreadMap).then((mUnreadMap)=>{
+    this.storeService.get(FeedsData.PersistenceKey.unreadMap).then((mUnreadMap)=>{
       unreadMap = mUnreadMap;
       if(unreadMap == null || unreadMap == undefined)
         unreadMap = {};
     });
 
-    this.storeService.get(PersistenceKey.likeMap).then((mLikeMap)=>{
+    this.storeService.get(FeedsData.PersistenceKey.likeMap).then((mLikeMap)=>{
       likeMap = mLikeMap;
       if (likeMap == null || likeMap == undefined)
         likeMap = {};
     });
 
-    this.storeService.get(PersistenceKey.accessTokenMap).then((mAccessTokenMap)=>{
+    this.storeService.get(FeedsData.PersistenceKey.accessTokenMap).then((mAccessTokenMap)=>{
       accessTokenMap = mAccessTokenMap|| {};
     });
 
-    this.storeService.get(PersistenceKey.bindingServer).then((mBindingServer)=>{
+    this.storeService.get(FeedsData.PersistenceKey.bindingServer).then((mBindingServer)=>{
       bindingServer = mBindingServer ;
     });
 
-    this.storeService.get(PersistenceKey.notificationList).then((mNotificationList)=>{
+    this.storeService.get(FeedsData.PersistenceKey.notificationList).then((mNotificationList)=>{
       notificationList = mNotificationList;
       if (notificationList == null || notificationList == undefined)
         notificationList = [];
     });
 
-    this.storeService.get(PersistenceKey.likeCommentMap).then((mLikeCommentMap)=>{
+    this.storeService.get(FeedsData.PersistenceKey.likeCommentMap).then((mLikeCommentMap)=>{
       likeCommentMap = mLikeCommentMap;
       if (likeCommentMap == null || likeCommentMap == undefined)
         likeCommentMap = {};
@@ -775,23 +733,23 @@ export class FeedService {
     //   this.lastFeedUpdateMap = mLastFeedUpdateMap || {};
     // });
 
-    this.storeService.get(PersistenceKey.lastCommentUpdateMap).then((mLastCommentUpdateMap) => {
+    this.storeService.get(FeedsData.PersistenceKey.lastCommentUpdateMap).then((mLastCommentUpdateMap) => {
       this.lastCommentUpdateMap = mLastCommentUpdateMap || {};
     });
 
-    this.storeService.get(PersistenceKey.lastMultiLikesAndCommentsCountUpdateMap).then((mLastMultiLikesAndCommentsCountUpdateMap) =>{
+    this.storeService.get(FeedsData.PersistenceKey.lastMultiLikesAndCommentsCountUpdateMap).then((mLastMultiLikesAndCommentsCountUpdateMap) =>{
       this.lastMultiLikesAndCommentsCountUpdateMap = mLastMultiLikesAndCommentsCountUpdateMap || {};
     });
 
-    this.storeService.get(PersistenceKey.lastSubscribedFeedsUpdateMap).then((mLastSubscribedFeedsUpdateMap)=>{
+    this.storeService.get(FeedsData.PersistenceKey.lastSubscribedFeedsUpdateMap).then((mLastSubscribedFeedsUpdateMap)=>{
       this.lastSubscribedFeedsUpdateMap = mLastSubscribedFeedsUpdateMap;
     });
 
-    this.storeService.get(PersistenceKey.syncCommentStatusMap).then((mSyncCommentStatusMap)=>{
+    this.storeService.get(FeedsData.PersistenceKey.syncCommentStatusMap).then((mSyncCommentStatusMap)=>{
       this.syncCommentStatusMap = mSyncCommentStatusMap;
     });
 
-    this.storeService.get(PersistenceKey.syncPostStatusMap).then((mSyncPostStatusMap)=>{
+    this.storeService.get(FeedsData.PersistenceKey.syncPostStatusMap).then((mSyncPostStatusMap)=>{
       this.syncPostStatusMap = mSyncPostStatusMap;
     });
   }
@@ -928,7 +886,7 @@ export class FeedService {
     if (unreadMap == null || unreadMap == undefined)
       unreadMap = {};
     unreadMap[nodeChannelId] = 0;
-    this.storeService.set(PersistenceKey.unreadMap,unreadMap);
+    this.storeService.set(FeedsData.PersistenceKey.unreadMap,unreadMap);
   }
 
   getChannelsList():FeedsData.Channels[]{
@@ -1090,7 +1048,7 @@ export class FeedService {
       this.logUtils.logd("Prepare prepare");
       this.prepare(friendId);
     }
-    this.storeService.set(PersistenceKey.serversStatus,serversStatus);
+    this.storeService.set(FeedsData.PersistenceKey.serversStatus,serversStatus);
     eventBus.publish(FeedsEvent.PublishType.serverConnectionChanged,serversStatus);
   }
 
@@ -1145,9 +1103,9 @@ export class FeedService {
     // if (server != bindingServer)
     serverMap[server.nodeId] = server ;
 
-    this.storeService.set(PersistenceKey.serversStatus,serversStatus);
-    this.storeService.set(PersistenceKey.serverMap, serverMap);
-    this.storeService.set(PersistenceKey.serverStatisticsMap,serverStatisticsMap);
+    this.storeService.set(FeedsData.PersistenceKey.serversStatus,serversStatus);
+    this.storeService.set(FeedsData.PersistenceKey.serverMap, serverMap);
+    this.storeService.set(FeedsData.PersistenceKey.serverStatisticsMap,serverStatisticsMap);
 
     eventBus.publish(FeedsEvent.PublishType.updateServerList, this.getServerList(), Date.now());
   }
@@ -1624,7 +1582,7 @@ export class FeedService {
   }
 
   saveSignInRAWData(jsonStr: string){
-    this.storeService.set(PersistenceKey.signInRawData, jsonStr);
+    this.storeService.set(FeedsData.PersistenceKey.signInRawData, jsonStr);
   }
 
   saveSignInData(did: string, name: string, avatar: Avatar, email: string,
@@ -1636,12 +1594,12 @@ export class FeedService {
         this.logUtils.logd("checkSignInDataChange isChange is "+isChange, TAG);
         if (isChange){
           await this.cleanAllData();
-          this.storeService.set(PersistenceKey.signInData, this.localSignInData);
-          this.storeService.set(PersistenceKey.lastSignInData, this.localSignInData);
+          this.storeService.set(FeedsData.PersistenceKey.signInData, this.localSignInData);
+          this.storeService.set(FeedsData.PersistenceKey.lastSignInData, this.localSignInData);
           resolve(this.localSignInData);
         }else{
-          this.storeService.set(PersistenceKey.signInData, this.localSignInData);
-          this.storeService.set(PersistenceKey.lastSignInData, this.localSignInData);
+          this.storeService.set(FeedsData.PersistenceKey.signInData, this.localSignInData);
+          this.storeService.set(FeedsData.PersistenceKey.lastSignInData, this.localSignInData);
           resolve(this.localSignInData);
         }
       }).catch((reason)=>{
@@ -1667,7 +1625,7 @@ export class FeedService {
 
   saveSignInData2(signInData: SignInData) {
     this.localSignInData = signInData;
-    this.storeService.set(PersistenceKey.signInData, signInData);
+    this.storeService.set(FeedsData.PersistenceKey.signInData, signInData);
   }
 
   getSignInData(): SignInData {
@@ -1676,7 +1634,7 @@ export class FeedService {
 
   checkSignInDataChange(signInData: SignInData):Promise<boolean>{
     return new Promise((resolve, reject) =>{
-      this.storeService.get(PersistenceKey.lastSignInData).then((lastSignInData)=>{
+      this.storeService.get(FeedsData.PersistenceKey.lastSignInData).then((lastSignInData)=>{
         if (lastSignInData == null || lastSignInData == undefined){
           resolve(true);
           return ;
@@ -1728,7 +1686,7 @@ export class FeedService {
       return ;
     }
 
-    this.storeService.get(PersistenceKey.signInData).then((signinData)=>{
+    this.storeService.get(FeedsData.PersistenceKey.signInData).then((signinData)=>{
       this.localSignInData = signinData;
       onSuccess(this.localSignInData);
     }).catch((error)=>{
@@ -2110,7 +2068,7 @@ export class FeedService {
 
     let mPostId = this.getPostId(nodeId, channelId, postId);
     this.postMap[mPostId].post_status = FeedsData.PostCommentStatus.deleted;
-    this.storeService.set(PersistenceKey.postMap, this.postMap);
+    this.storeService.set(FeedsData.PersistenceKey.postMap, this.postMap);
 
     this.removeMediaData(nodeId, channelId, postId, 0);
 
@@ -2135,7 +2093,7 @@ export class FeedService {
     let commentId = request.id
 
     commentsMap[nodeId][channelId][postId][commentId].status = FeedsData.PostCommentStatus.deleted;
-    this.storeService.set(PersistenceKey.commentsMap, commentsMap);
+    this.storeService.set(FeedsData.PersistenceKey.commentsMap, commentsMap);
     eventBus.publish(FeedsEvent.PublishType.deleteCommentFinish);
   }
 
@@ -2164,7 +2122,7 @@ export class FeedService {
       this.serverVersions[nodeId].versionCode = versionCode;
       this.serverVersions[nodeId].versionName = version;
     }
-    this.storeService.set(PersistenceKey.serverVersions, this.serverVersions);
+    this.storeService.set(FeedsData.PersistenceKey.serverVersions, this.serverVersions);
     this.afterFriendConnection(nodeId);
   }
 
@@ -2205,12 +2163,12 @@ export class FeedService {
 
     this.updateLastPostUpdate(nodeChannelId, nodeId, channel_id, updateAt);
 
-    this.storeService.set(PersistenceKey.postMap, this.postMap);
+    this.storeService.set(FeedsData.PersistenceKey.postMap, this.postMap);
 
     if (!this.checkChannelIsMine(nodeId, channel_id))
       unreadMap[nodeChannelId] = unreadMap[nodeChannelId]+1;
 
-    this.storeService.set(PersistenceKey.unreadMap,unreadMap);
+    this.storeService.set(FeedsData.PersistenceKey.unreadMap,unreadMap);
 
     eventBus.publish(FeedsEvent.PublishType.postDataUpdate);
   }
@@ -2232,7 +2190,7 @@ export class FeedService {
 
     let ncpId = this.getPostId(nodeId, channelId, postId);
     this.postMap[ncpId].comments = this.postMap[ncpId].comments+1;
-    await this.storeService.set(PersistenceKey.postMap,this.postMap);
+    await this.storeService.set(FeedsData.PersistenceKey.postMap,this.postMap);
     eventBus.publish(FeedsEvent.PublishType.postDataUpdate);
 
     // if(this.checkChannelIsMine(nodeId,channelId)){
@@ -2252,7 +2210,7 @@ export class FeedService {
 
       this.updateCommentMap(nodeId, channelId, postId, commentId, referCommentId,
         userName, likes, createdAt, updatedAt, status,userDid, content);
-      await this.storeService.set(PersistenceKey.commentsMap, commentsMap);
+      await this.storeService.set(FeedsData.PersistenceKey.commentsMap, commentsMap);
 
       let ncpId = this.getPostId(nodeId, channelId, postId);
       this.updateLastCommentUpdate(ncpId, nodeId, channelId, postId, updatedAt);
@@ -2322,7 +2280,7 @@ export class FeedService {
       readStatus:1
     }
     notificationList.push(notification);
-    this.storeService.set(PersistenceKey.notificationList, notificationList);
+    this.storeService.set(FeedsData.PersistenceKey.notificationList, notificationList);
     eventBus.publish(FeedsEvent.PublishType.UpdateNotification);
 
   }
@@ -2337,7 +2295,7 @@ export class FeedService {
     if (comment_id == 0){
       let postId = this.getPostId(nodeId,channel_id,post_id);
       this.postMap[postId].likes = totalCount;
-      this.storeService.set(PersistenceKey.postMap,this.postMap);
+      this.storeService.set(FeedsData.PersistenceKey.postMap,this.postMap);
       if (likeMap[postId] != null && likeMap[postId] != undefined){
         likeMap[postId] = {
           nodeId    : nodeId,
@@ -2345,14 +2303,14 @@ export class FeedService {
           postId    :post_id,
           commentId :0
         };
-        this.storeService.set(PersistenceKey.likeMap, likeMap);
+        this.storeService.set(FeedsData.PersistenceKey.likeMap, likeMap);
         eventBus.publish(FeedsEvent.PublishType.updateLikeList, this.getLikeList());
       }
       eventBus.publish(FeedsEvent.PublishType.postDataUpdate);
     }else {
       commentsMap[nodeId][channel_id][post_id][comment_id].likes = totalCount;
 
-      this.storeService.set(PersistenceKey.commentsMap, commentsMap);
+      this.storeService.set(FeedsData.PersistenceKey.commentsMap, commentsMap);
       eventBus.publish(FeedsEvent.PublishType.commentDataUpdate);
     }
 
@@ -2415,7 +2373,7 @@ export class FeedService {
     if (subscribers != 0)
       channelsMap[nodeChannelId].subscribers = subscribers;
 
-    this.storeService.set(PersistenceKey.channelsMap,channelsMap);
+    this.storeService.set(FeedsData.PersistenceKey.channelsMap,channelsMap);
     eventBus.publish(FeedsEvent.PublishType.editFeedInfoFinish, nodeChannelId);
   }
 
@@ -2456,10 +2414,10 @@ export class FeedService {
         postId    : postId,
         commentId : 0
       };
-      this.storeService.set(PersistenceKey.likeMap,likeMap);
+      this.storeService.set(FeedsData.PersistenceKey.likeMap,likeMap);
     }
 
-    this.storeService.set(PersistenceKey.postMap, this.postMap);
+    this.storeService.set(FeedsData.PersistenceKey.postMap, this.postMap);
     eventBus.publish(FeedsEvent.PublishType.editPostFinish);
     eventBus.publish(FeedsEvent.PublishType.editPostSuccess);
   }
@@ -2497,7 +2455,7 @@ export class FeedService {
       user_did    : userDid
     }
 
-    this.storeService.set(PersistenceKey.commentsMap, commentsMap);
+    this.storeService.set(FeedsData.PersistenceKey.commentsMap, commentsMap);
     eventBus.publish(FeedsEvent.PublishType.editCommentFinish);
   }
 
@@ -2571,12 +2529,12 @@ export class FeedService {
       nodeId: nodeId,
       channelId: channelId
     };
-    this.storeService.set(PersistenceKey.myChannelsMap,myChannelsMap);
+    this.storeService.set(FeedsData.PersistenceKey.myChannelsMap,myChannelsMap);
 
     if (channelsMap == null || channelsMap == undefined)
       channelsMap = {};
     channelsMap[nodeChannelId] = channel;
-    // this.storeService.set(PersistenceKey.channelsMap, channelsMap);
+    // this.storeService.set(FeedsData.PersistenceKey.channelsMap, channelsMap);
     this.saveChannelMap();
 
     eventBus.publish(FeedsEvent.PublishType.createTopicSuccess);
@@ -2614,7 +2572,7 @@ export class FeedService {
 
     this.postMap[mPostId]=post;
 
-    this.storeService.set(PersistenceKey.postMap, this.postMap);
+    this.storeService.set(FeedsData.PersistenceKey.postMap, this.postMap);
 
     eventBus.publish(FeedsEvent.PublishType.postEventSuccess);
     eventBus.publish(FeedsEvent.PublishType.postDataUpdate);
@@ -2671,7 +2629,7 @@ export class FeedService {
     let mPostId = this.getPostId(nodeId, channelId, postId);
     this.postMap[mPostId]=post;
 
-    this.storeService.set(PersistenceKey.postMap, this.postMap);
+    this.storeService.set(FeedsData.PersistenceKey.postMap, this.postMap);
     eventBus.publish(FeedsEvent.PublishType.notifyPostSuccess);
 
     this.storeService.remove(cacheKey);
@@ -2714,10 +2672,10 @@ export class FeedService {
     // let mPostId = this.getPostId(nodeId, channel_id, post_id);
     // postMap[mPostId].comments = postMap[mPostId].comments+1;
 
-    // this.storeService.set(PersistenceKey.postMap,postMap);
+    // this.storeService.set(FeedsData.PersistenceKey.postMap,postMap);
     // eventBus.publish(PublishType.postDataUpdate);
 
-    // this.storeService.set(PersistenceKey.commentsMap, commentsMap);
+    // this.storeService.set(FeedsData.PersistenceKey.commentsMap, commentsMap);
     // eventBus.publish(PublishType.commentDataUpdate);
 
     // eventBus.publish(PublishType.updataComment,nodeId,channel_id,post_id,postMap[mPostId].comments);
@@ -2738,7 +2696,7 @@ export class FeedService {
           postId    : post_id,
           commentId : 0
         };
-        this.storeService.set(PersistenceKey.likeMap, likeMap);
+        this.storeService.set(FeedsData.PersistenceKey.likeMap, likeMap);
         eventBus.publish(FeedsEvent.PublishType.postDataUpdate);
 
       }else{
@@ -2749,7 +2707,7 @@ export class FeedService {
           post_id    : post_id,
           id         : comment_id,
         }
-        this.storeService.set(PersistenceKey.likeCommentMap, likeCommentMap);
+        this.storeService.set(FeedsData.PersistenceKey.likeCommentMap, likeCommentMap);
         eventBus.publish(FeedsEvent.PublishType.commentDataUpdate)
 
       }
@@ -2763,11 +2721,11 @@ export class FeedService {
     }
 
     if (comment_id == 0){
-      this.storeService.set(PersistenceKey.postMap,this.postMap);
-      this.storeService.set(PersistenceKey.likeMap, likeMap);
+      this.storeService.set(FeedsData.PersistenceKey.postMap,this.postMap);
+      this.storeService.set(FeedsData.PersistenceKey.likeMap, likeMap);
     }else {
-      this.storeService.set(PersistenceKey.commentsMap, commentsMap);
-      this.storeService.set(PersistenceKey.likeCommentMap, likeCommentMap);
+      this.storeService.set(FeedsData.PersistenceKey.commentsMap, commentsMap);
+      this.storeService.set(FeedsData.PersistenceKey.likeCommentMap, likeCommentMap);
     }
 
   }
@@ -2782,13 +2740,13 @@ export class FeedService {
       if(comment_id == 0){
         // likeMap[mPostId] = undefined;
         delete likeMap[mPostId];
-        this.storeService.set(PersistenceKey.likeMap, likeMap);
+        this.storeService.set(FeedsData.PersistenceKey.likeMap, likeMap);
 
         eventBus.publish(FeedsEvent.PublishType.postDataUpdate);
       }else{
         let commentKey = this.getLikeCommentId(nodeId, channel_id, post_id, comment_id);
         likeCommentMap[commentKey] = undefined;
-        this.storeService.set(PersistenceKey.likeCommentMap,likeCommentMap);
+        this.storeService.set(FeedsData.PersistenceKey.likeCommentMap,likeCommentMap);
         eventBus.publish(FeedsEvent.PublishType.commentDataUpdate);
       }
 
@@ -2802,11 +2760,11 @@ export class FeedService {
     }
 
     if (comment_id == 0){
-      this.storeService.set(PersistenceKey.postMap,this.postMap);
-      this.storeService.set(PersistenceKey.likeMap, likeMap);
+      this.storeService.set(FeedsData.PersistenceKey.postMap,this.postMap);
+      this.storeService.set(FeedsData.PersistenceKey.likeMap, likeMap);
     }else {
-      this.storeService.set(PersistenceKey.commentsMap, commentsMap);
-      this.storeService.set(PersistenceKey.likeCommentMap,likeCommentMap);
+      this.storeService.set(FeedsData.PersistenceKey.commentsMap, commentsMap);
+      this.storeService.set(FeedsData.PersistenceKey.likeCommentMap,likeCommentMap);
     }
   }
 
@@ -2859,7 +2817,7 @@ export class FeedService {
       this.syncComment(nodeId, id);
     }
 
-    this.storeService.set(PersistenceKey.myChannelsMap, myChannelsMap);
+    this.storeService.set(FeedsData.PersistenceKey.myChannelsMap, myChannelsMap);
     eventBus.publish(FeedsEvent.PublishType.myChannelsDataUpdate);
   }
 
@@ -2878,7 +2836,7 @@ export class FeedService {
 
       channelsMap[nodeChannelId].subscribers = subscribers;
     }
-    this.storeService.set(PersistenceKey.myChannelsMap, myChannelsMap);
+    this.storeService.set(FeedsData.PersistenceKey.myChannelsMap, myChannelsMap);
     eventBus.publish(FeedsEvent.PublishType.myChannelsDataUpdate);
   }
 
@@ -2929,7 +2887,7 @@ export class FeedService {
 
       // this.updateLastFeedUpdate(nodeId, update);
     }
-    // this.storeService.set(PersistenceKey.channelsMap, channelsMap);
+    // this.storeService.set(FeedsData.PersistenceKey.channelsMap, channelsMap);
     this.saveChannelMap();
     this.refreshLocalChannels();
   }
@@ -2963,7 +2921,7 @@ export class FeedService {
     channelsMap[nodeChannelId].subscribers = subscribers;
 
     this.saveChannelMap();
-    // this.storeService.set(PersistenceKey.channelsMap, channelsMap);
+    // this.storeService.set(FeedsData.PersistenceKey.channelsMap, channelsMap);
   }
 
   async handleGetSubscribedChannelsResult(nodeId: string, responseResult: any, request: any, error: any){
@@ -3058,7 +3016,7 @@ export class FeedService {
     }
 
     this.saveChannelMap();
-    this.storeService.set(PersistenceKey.subscribedChannelsMap,subscribedChannelsMap);
+    this.storeService.set(FeedsData.PersistenceKey.subscribedChannelsMap,subscribedChannelsMap);
     if (!isAddFeeds)
       eventBus.publish(FeedsEvent.PublishType.refreshSubscribedChannels);
   }
@@ -3121,7 +3079,7 @@ export class FeedService {
           postId    : id,
           commentId : 0
         };
-        this.storeService.set(PersistenceKey.likeMap,likeMap);
+        this.storeService.set(FeedsData.PersistenceKey.likeMap,likeMap);
       }
 
       if (requestAction == RequestAction.defaultAction){
@@ -3144,13 +3102,13 @@ export class FeedService {
     }
 
     if (requestAction == RequestAction.refreshPostDetail){
-      this.storeService.set(PersistenceKey.postMap, this.postMap);
+      this.storeService.set(FeedsData.PersistenceKey.postMap, this.postMap);
       eventBus.publish(FeedsEvent.PublishType.refreshPostDetail);
       return ;
     }
 
     if (requestAction == RequestAction.defaultAction){
-      this.storeService.set(PersistenceKey.postMap, this.postMap);
+      this.storeService.set(FeedsData.PersistenceKey.postMap, this.postMap);
       eventBus.publish(FeedsEvent.PublishType.postDataUpdate);
       return ;
     }
@@ -3224,7 +3182,7 @@ export class FeedService {
 
     serverStatisticsMap[nodeId] = serverStatistics;
 
-    this.storeService.set(PersistenceKey.serverStatisticsMap, serverStatisticsMap);
+    this.storeService.set(FeedsData.PersistenceKey.serverStatisticsMap, serverStatisticsMap);
     eventBus.publish(FeedsEvent.PublishType.serverStatisticsChanged,serverStatisticsMap);
   }
 
@@ -3248,11 +3206,11 @@ export class FeedService {
     if (error != null && error != undefined && error.code == -4){
 
       channelsMap[nodeChannelId].isSubscribed = false;
-      // this.storeService.set(PersistenceKey.channelsMap,channelsMap);
+      // this.storeService.set(FeedsData.PersistenceKey.channelsMap,channelsMap);
       this.saveChannelMap();
 
       subscribedChannelsMap[nodeChannelId] = undefined;
-      this.storeService.set(PersistenceKey.subscribedChannelsMap,subscribedChannelsMap);
+      this.storeService.set(FeedsData.PersistenceKey.subscribedChannelsMap,subscribedChannelsMap);
 
       eventBus.publish(FeedsEvent.PublishType.unsubscribeFinish, nodeId,request.id, channelsMap[nodeChannelId].name);
       return;
@@ -3269,9 +3227,9 @@ export class FeedService {
 
     delete subscribedChannelsMap[nodeChannelId];
 
-    // this.storeService.set(PersistenceKey.channelsMap,channelsMap);
+    // this.storeService.set(FeedsData.PersistenceKey.channelsMap,channelsMap);
     this.saveChannelMap();
-    this.storeService.set(PersistenceKey.subscribedChannelsMap,subscribedChannelsMap);
+    this.storeService.set(FeedsData.PersistenceKey.subscribedChannelsMap,subscribedChannelsMap);
 
     this.refreshLocalSubscribedChannels();
 
@@ -3303,7 +3261,7 @@ export class FeedService {
     if (avatarBin != "")
       channelsMap[nodeChannelId].avatar = avatar;
 
-    this.storeService.set(PersistenceKey.channelsMap,channelsMap);
+    this.storeService.set(FeedsData.PersistenceKey.channelsMap,channelsMap);
     eventBus.publish(FeedsEvent.PublishType.editFeedInfoFinish, nodeChannelId);
   }
 
@@ -3529,7 +3487,7 @@ export class FeedService {
   }
   insertFakeData(){
 
-    this.storeService.remove(PersistenceKey.myChannelsMap);
+    this.storeService.remove(FeedsData.PersistenceKey.myChannelsMap);
   }
 
   getChannelFromId(nodeId: string, id: number): FeedsData.Channels{
@@ -3831,13 +3789,13 @@ export class FeedService {
     //   if (postMap[keys[index]].nodeId == nodeId && postMap[keys[index]].channel_id == channelId)
     //     postMap[keys[index]] = undefined;
     // }
-    // this.storeService.set(PersistenceKey.postMap,postMap);
+    // this.storeService.set(FeedsData.PersistenceKey.postMap,postMap);
     // eventBus.publish(PublishType.postDataUpdate);
 
     // let nodeChannelId = nodeId+channelId;
     // if (lastPostUpdateMap[nodeChannelId] != null && lastPostUpdateMap[nodeChannelId] != undefined){
     //   lastPostUpdateMap[nodeChannelId].time = null
-    //   this.storeService.set(PersistenceKey.lastPostUpdateMap,lastPostUpdateMap);
+    //   this.storeService.set(FeedsData.PersistenceKey.lastPostUpdateMap,lastPostUpdateMap);
     // }
 
     eventBus.publish(FeedsEvent.PublishType.postDataUpdate);
@@ -3969,7 +3927,7 @@ export class FeedService {
       isExpire: false
     };
 
-    this.storeService.set(PersistenceKey.accessTokenMap, accessTokenMap);
+    this.storeService.set(FeedsData.PersistenceKey.accessTokenMap, accessTokenMap);
 
     this.prepare(nodeId);
     this.restoreData(nodeId);
@@ -4026,7 +3984,7 @@ export class FeedService {
         serverMap[nodeId].name = credential.credentialSubject.name;
         serverMap[nodeId].introduction = credential.credentialSubject.description;
         serverMap[nodeId].elaAddress = credential.credentialSubject.elaAddress;
-        this.storeService.set(PersistenceKey.serverMap, serverMap);
+        this.storeService.set(FeedsData.PersistenceKey.serverMap, serverMap);
 
         let payloadStr = JSON.stringify(res.payload);
         let payload = JSON.parse(payloadStr);
@@ -4179,7 +4137,7 @@ export class FeedService {
         serverMap[nodeId].name = standAuthResult.serverName;
         serverMap[nodeId].introduction = standAuthResult.serverDescription;
         serverMap[nodeId].elaAddress = standAuthResult.elaAddress;
-        this.storeService.set(PersistenceKey.serverMap, serverMap);
+        this.storeService.set(FeedsData.PersistenceKey.serverMap, serverMap);
       }
       this.standardDidAuth(nodeId, standAuthResult.jwtToken);
     });
@@ -4252,7 +4210,7 @@ export class FeedService {
       return ;
 
     channelsMap[nodeChannelId].subscribers = subscribesCount;
-    await this.storeService.set(PersistenceKey.channelsMap,channelsMap);
+    await this.storeService.set(FeedsData.PersistenceKey.channelsMap,channelsMap);
   }
 
   async handleGetMultiLikesAndCommentsCount(nodeId: string, responseResult: any, requestParams: any, error: any){
@@ -4262,7 +4220,7 @@ export class FeedService {
     }
 
     this.lastMultiLikesAndCommentsCountUpdateMap[nodeId] = this.lastMultiLikesAndCommentsCountUpdateMapCache[nodeId];
-    this.storeService.set(PersistenceKey.lastMultiLikesAndCommentsCountUpdateMap,this.lastMultiLikesAndCommentsCountUpdateMap);
+    this.storeService.set(FeedsData.PersistenceKey.lastMultiLikesAndCommentsCountUpdateMap,this.lastMultiLikesAndCommentsCountUpdateMap);
 
     let result = responseResult.posts;
     for (let index = 0; index < result.length; index++) {
@@ -4294,7 +4252,7 @@ export class FeedService {
   }
 
   async savePostMap(){
-    await this.storeService.set(PersistenceKey.postMap,this.postMap);
+    await this.storeService.set(FeedsData.PersistenceKey.postMap,this.postMap);
   }
 
   doIssueCredential(nodeId: string, did: string, serverName: string, serverDesc: string,elaAddress:string, onSuccess:()=> void, onError:()=>void){
@@ -4436,7 +4394,7 @@ export class FeedService {
 
   finishBinding(nodeId: string){
     bindingServer = bindingServerCache;
-    this.storeService.set(PersistenceKey.bindingServer,bindingServer);
+    this.storeService.set(FeedsData.PersistenceKey.bindingServer,bindingServer);
     this.addServer(bindingServer.carrierAddress,
                   'Feeds/0.1',
                   bindingServer.name,
@@ -4585,7 +4543,7 @@ export class FeedService {
   saveCredential(credential: string){
     localCredential = credential;
 
-    this.storeService.set(PersistenceKey.credential, localCredential);
+    this.storeService.set(FeedsData.PersistenceKey.credential, localCredential);
   }
 
   getLocalCredential(){
@@ -4593,33 +4551,33 @@ export class FeedService {
   }
 
   removeAllData(){
-    this.storeService.remove(PersistenceKey.signInData);
-    this.storeService.remove(PersistenceKey.signInRawData);
-    this.storeService.remove(PersistenceKey.subscribedChannelsMap);
-    this.storeService.remove(PersistenceKey.channelsMap);
-    this.storeService.remove(PersistenceKey.myChannelsMap);
-    this.storeService.remove(PersistenceKey.unreadMap);
-    this.storeService.remove(PersistenceKey.postMap);
-    this.storeService.remove(PersistenceKey.lastPostUpdateMap);
-    this.storeService.remove(PersistenceKey.commentsMap);
-    this.storeService.remove(PersistenceKey.serverStatisticsMap);
-    this.storeService.remove(PersistenceKey.serversStatus);
-    this.storeService.remove(PersistenceKey.subscribeStatusMap);
-    this.storeService.remove(PersistenceKey.likeMap);
-    this.storeService.remove(PersistenceKey.accessTokenMap);
+    this.storeService.remove(FeedsData.PersistenceKey.signInData);
+    this.storeService.remove(FeedsData.PersistenceKey.signInRawData);
+    this.storeService.remove(FeedsData.PersistenceKey.subscribedChannelsMap);
+    this.storeService.remove(FeedsData.PersistenceKey.channelsMap);
+    this.storeService.remove(FeedsData.PersistenceKey.myChannelsMap);
+    this.storeService.remove(FeedsData.PersistenceKey.unreadMap);
+    this.storeService.remove(FeedsData.PersistenceKey.postMap);
+    this.storeService.remove(FeedsData.PersistenceKey.lastPostUpdateMap);
+    this.storeService.remove(FeedsData.PersistenceKey.commentsMap);
+    this.storeService.remove(FeedsData.PersistenceKey.serverStatisticsMap);
+    this.storeService.remove(FeedsData.PersistenceKey.serversStatus);
+    this.storeService.remove(FeedsData.PersistenceKey.subscribeStatusMap);
+    this.storeService.remove(FeedsData.PersistenceKey.likeMap);
+    this.storeService.remove(FeedsData.PersistenceKey.accessTokenMap);
 
-    this.storeService.remove(PersistenceKey.credential);
-    this.storeService.remove(PersistenceKey.bindingServer);
-    this.storeService.remove(PersistenceKey.serverMap);
+    this.storeService.remove(FeedsData.PersistenceKey.credential);
+    this.storeService.remove(FeedsData.PersistenceKey.bindingServer);
+    this.storeService.remove(FeedsData.PersistenceKey.serverMap);
 
-    this.storeService.remove(PersistenceKey.notificationList);
-    this.storeService.remove(PersistenceKey.likeCommentMap);
+    this.storeService.remove(FeedsData.PersistenceKey.notificationList);
+    this.storeService.remove(FeedsData.PersistenceKey.likeCommentMap);
 
   }
 
   async removeSigninData(){
     this.localSignInData = null;
-    await this.storeService.remove(PersistenceKey.signInData);
+    await this.storeService.remove(FeedsData.PersistenceKey.signInData);
   }
 
   getBindingServer(): FeedsData.Server{
@@ -4753,27 +4711,27 @@ export class FeedService {
     let nodeChannelId = this.getChannelId(nodeId, channelId);
     lastPostUpdateMap[nodeChannelId] = undefined;
     delete lastPostUpdateMap[nodeChannelId];
-    return this.storeService.set(PersistenceKey.lastPostUpdateMap, lastPostUpdateMap);
+    return this.storeService.set(FeedsData.PersistenceKey.lastPostUpdateMap, lastPostUpdateMap);
   }
 
   removeLastCommentUpdate(nodeId: string, channelId: number, postId: number): Promise<any>{
     let ncpId = this.getPostId(nodeId, channelId, postId);
     this.lastCommentUpdateMap[ncpId] = undefined;
     delete this.lastCommentUpdateMap[ncpId];
-    return this.storeService.set(PersistenceKey.lastCommentUpdateMap,this.lastCommentUpdateMap);
+    return this.storeService.set(FeedsData.PersistenceKey.lastCommentUpdateMap,this.lastCommentUpdateMap);
   }
 
   // removeLastFeedUpdate(nodeId: string): Promise<any>{
   //   this.lastFeedUpdateMap[nodeId] = undefined;
   //   delete this.lastFeedUpdateMap[nodeId];
-  //   return this.storeService.set(PersistenceKey.lastFeedUpdateMap,this.lastFeedUpdateMap);
+  //   return this.storeService.set(FeedsData.PersistenceKey.lastFeedUpdateMap,this.lastFeedUpdateMap);
   // }
 
   removeLikeById(nodeId: string, channelId: number, postId: number):Promise<any>{
     let key = this.getKey(nodeId, channelId, postId, 0);
     likeMap[key] = undefined;
     delete likeMap[key];
-    return this.storeService.set(PersistenceKey.likeMap, likeMap);
+    return this.storeService.set(FeedsData.PersistenceKey.likeMap, likeMap);
   }
 
   removeCommentById(nodeId: string, channelId: number, postId: number):Promise<any>{
@@ -4788,59 +4746,59 @@ export class FeedService {
 
     commentsMap[nodeId][channelId][postId] = undefined;
     delete commentsMap[nodeId][channelId][postId];
-    return this.storeService.set(PersistenceKey.commentsMap, commentsMap);
+    return this.storeService.set(FeedsData.PersistenceKey.commentsMap, commentsMap);
   }
 
   removePostById(nodeId: string, channelId: number, postId: number):Promise<any>{
     let key = this.getKey(nodeId, channelId, postId, 0);
     delete this.postMap[key];
-    return this.storeService.set(PersistenceKey.postMap, this.postMap);
+    return this.storeService.set(FeedsData.PersistenceKey.postMap, this.postMap);
   }
 
   removeChannelById(nodeId: string, channelId: number):Promise<any>{
     let nodeChannelId = this.getChannelId(nodeId, channelId);
     channelsMap[nodeChannelId] = undefined;
     delete channelsMap[nodeChannelId];
-    return this.storeService.set(PersistenceKey.channelsMap,channelsMap);
+    return this.storeService.set(FeedsData.PersistenceKey.channelsMap,channelsMap);
   }
 
   removeMyChannelById(nodeId: string, channelId: number):Promise<any>{
     let nodeChannelId = this.getChannelId(nodeId, channelId);
     myChannelsMap[nodeChannelId] = undefined;
     delete myChannelsMap[nodeChannelId];
-    return this.storeService.set(PersistenceKey.myChannelsMap, myChannelsMap);
+    return this.storeService.set(FeedsData.PersistenceKey.myChannelsMap, myChannelsMap);
   }
 
   removeSubscribedChannelById(nodeId: string, channelId: number):Promise<any>{
     let nodeChannelId = this.getChannelId(nodeId, channelId);
     subscribedChannelsMap[nodeChannelId] = undefined;
     delete subscribedChannelsMap[nodeChannelId];
-    return this.storeService.set(PersistenceKey.subscribedChannelsMap, subscribedChannelsMap);
+    return this.storeService.set(FeedsData.PersistenceKey.subscribedChannelsMap, subscribedChannelsMap);
   }
 
   removeUnreadStatueById(nodeId: string, channelId: number):Promise<any>{
     let nodeChannelId = this.getChannelId(nodeId, channelId);
     unreadMap[nodeChannelId] = 0;
     delete unreadMap[nodeChannelId];
-    return this.storeService.set(PersistenceKey.unreadMap, unreadMap);
+    return this.storeService.set(FeedsData.PersistenceKey.unreadMap, unreadMap);
   }
 
   removeServerStatisticById(nodeId: string):Promise<any>{
     serverStatisticsMap[nodeId] = undefined;
     delete serverStatisticsMap[nodeId];
-    return this.storeService.set(PersistenceKey.serverStatisticsMap, serverStatisticsMap);
+    return this.storeService.set(FeedsData.PersistenceKey.serverStatisticsMap, serverStatisticsMap);
   }
 
   removeServerStatusById(nodeId: string):Promise<any>{
     serversStatus[nodeId] = undefined;
     delete serversStatus[nodeId];
-    return this.storeService.set(PersistenceKey.serversStatus, serversStatus);
+    return this.storeService.set(FeedsData.PersistenceKey.serversStatus, serversStatus);
   }
 
   removeServerById(nodeId: string):Promise<any>{
     serverMap[nodeId] = undefined;
     delete serverMap[nodeId];
-    return this.storeService.set(PersistenceKey.serverMap, serverMap);
+    return this.storeService.set(FeedsData.PersistenceKey.serverMap, serverMap);
   }
 
   removeServerFriendsById(nodeId: string, onSuccess: ()=>void, onError:(error)=>void){
@@ -4883,21 +4841,21 @@ export class FeedService {
 
   removeAccessTokenById(nodeId: string):Promise<any>{
     accessTokenMap[nodeId] = undefined;
-    return this.storeService.set(PersistenceKey.accessTokenMap, accessTokenMap);
+    return this.storeService.set(FeedsData.PersistenceKey.accessTokenMap, accessTokenMap);
   }
 
   removeAllAccessToken(): Promise<any>{
-    return this.storeService.remove(PersistenceKey.accessTokenMap);
+    return this.storeService.remove(FeedsData.PersistenceKey.accessTokenMap);
   }
 
   removeNotification():Promise<any>{
     notificationList.splice(0, notificationList.length);
-    return this.storeService.set(PersistenceKey.notificationList, notificationList);
+    return this.storeService.set(FeedsData.PersistenceKey.notificationList, notificationList);
   }
 
   removeBindingServer(){
     bindingServer = undefined;
-    this.storeService.remove(PersistenceKey.bindingServer);
+    this.storeService.remove(FeedsData.PersistenceKey.bindingServer);
   }
 
   getNotificationList(): FeedsData.Notification[]{
@@ -4912,14 +4870,14 @@ export class FeedService {
       return ;
 
     notification.readStatus = readStatus;
-    this.storeService.set(PersistenceKey.notificationList, notificationList);
+    this.storeService.set(FeedsData.PersistenceKey.notificationList, notificationList);
   }
 
   deleteNotification(notification: FeedsData.Notification):Promise<any>{
     return new Promise((resolve, reject) =>{
       let index = notificationList.indexOf(notification);
       notificationList.splice(index, 1);
-      this.storeService.set(PersistenceKey.notificationList, notificationList);
+      this.storeService.set(FeedsData.PersistenceKey.notificationList, notificationList);
       eventBus.publish(FeedsEvent.PublishType.UpdateNotification);
       resolve(null);
     });
@@ -5032,7 +4990,7 @@ export class FeedService {
   saveChannelMap(){
     if (!this.isSavingChannel){
       this.isSavingChannel = true;
-      this.storeService.set(PersistenceKey.channelsMap, channelsMap).then(()=>{
+      this.storeService.set(FeedsData.PersistenceKey.channelsMap, channelsMap).then(()=>{
         this.isSavingChannel = false;;
       });
     }
@@ -5056,7 +5014,7 @@ export class FeedService {
       case -5:
         // errorMessage = this.translate.instant("ErrorInfo.tokenExpired");
         accessTokenMap[nodeId].isExpire = true;
-        this.storeService.set(PersistenceKey.accessTokenMap,accessTokenMap);
+        this.storeService.set(FeedsData.PersistenceKey.accessTokenMap,accessTokenMap);
         this.signinChallengeRequest(nodeId,true);
         return ;
       case -6:
@@ -5616,7 +5574,7 @@ export class FeedService {
 
       this.updateContentData(key);
     }
-    this.storeService.set(PersistenceKey.postMap, this.postMap);
+    this.storeService.set(FeedsData.PersistenceKey.postMap, this.postMap);
   }
 
   updateContentData(key: string){ //undefine =>v0
@@ -5692,7 +5650,7 @@ export class FeedService {
       delete this.postMap[key];
     }
 
-    this.storeService.set(PersistenceKey.postMap, this.postMap);
+    this.storeService.set(FeedsData.PersistenceKey.postMap, this.postMap);
   }
 
   setData(key: string, value: any):Promise<any>{
@@ -5776,7 +5734,7 @@ export class FeedService {
       subscribedChannelsMap[newKey] = channel;
       delete subscribedChannelsMap[key];
     }
-    this.storeService.set(PersistenceKey.subscribedChannelsMap, subscribedChannelsMap);
+    this.storeService.set(FeedsData.PersistenceKey.subscribedChannelsMap, subscribedChannelsMap);
   }
 
   updateChannelsKey(){
@@ -5811,8 +5769,8 @@ export class FeedService {
       delete channelsMap[key];
     }
 
-    this.storeService.set(PersistenceKey.channelsMap, channelsMap);
-    this.storeService.set(PersistenceKey.unreadMap, unreadMap);
+    this.storeService.set(FeedsData.PersistenceKey.channelsMap, channelsMap);
+    this.storeService.set(FeedsData.PersistenceKey.unreadMap, unreadMap);
   }
 
   updateMyChannelsKey(){
@@ -5838,7 +5796,7 @@ export class FeedService {
       myChannelsMap[newKey] = channel;
       delete myChannelsMap[key];
     }
-    this.storeService.set(PersistenceKey.myChannelsMap, myChannelsMap);
+    this.storeService.set(FeedsData.PersistenceKey.myChannelsMap, myChannelsMap);
   }
 
   updateLikeCommentKey(){
@@ -5865,7 +5823,7 @@ export class FeedService {
       likeCommentMap[newKey] = likedComment;
       delete likeCommentMap[key];
     }
-    this.storeService.set(PersistenceKey.likeCommentMap, likeCommentMap);
+    this.storeService.set(FeedsData.PersistenceKey.likeCommentMap, likeCommentMap);
   }
 
   updateLikeKey(){
@@ -5897,7 +5855,7 @@ export class FeedService {
         };
       delete likeMap[key];
     }
-    this.storeService.set(PersistenceKey.likeMap, likeMap);
+    this.storeService.set(FeedsData.PersistenceKey.likeMap, likeMap);
   }
 
   updatePostUpdateKey(){
@@ -5923,7 +5881,7 @@ export class FeedService {
       delete lastPostUpdateMap[key];
     }
 
-    this.storeService.set(PersistenceKey.lastPostUpdateMap, lastPostUpdateMap);
+    this.storeService.set(FeedsData.PersistenceKey.lastPostUpdateMap, lastPostUpdateMap);
   }
 
   updateLastCommentUpdateKey(){
@@ -5950,7 +5908,7 @@ export class FeedService {
       delete this.lastCommentUpdateMap[key];
     }
 
-    this.storeService.set(PersistenceKey.lastCommentUpdateMap, this.lastCommentUpdateMap);
+    this.storeService.set(FeedsData.PersistenceKey.lastCommentUpdateMap, this.lastCommentUpdateMap);
   }
 
   updateLastPostUpdate(key: string, nodeId: string, channelId: number, updatedAt: number){
@@ -5969,7 +5927,7 @@ export class FeedService {
       lastPostUpdateMap[key].time = updatedAt + 1;
     }
 
-    this.storeService.set(PersistenceKey.lastPostUpdateMap, lastPostUpdateMap);
+    this.storeService.set(FeedsData.PersistenceKey.lastPostUpdateMap, lastPostUpdateMap);
   }
 
   // updateLastFeedUpdate(nodeId: string, updatedAt: number){
@@ -5986,7 +5944,7 @@ export class FeedService {
   //     this.lastFeedUpdateMap[nodeId].time = updatedAt + 1;
   //   }
 
-  //   this.storeService.set(PersistenceKey.lastFeedUpdateMap, this.lastFeedUpdateMap);
+  //   this.storeService.set(FeedsData.PersistenceKey.lastFeedUpdateMap, this.lastFeedUpdateMap);
   // }
 
 
@@ -6004,7 +5962,7 @@ export class FeedService {
       this.lastSubscribedFeedsUpdateMap[nodeId].time = updatedAt + 1;
     }
 
-    this.storeService.set(PersistenceKey.lastSubscribedFeedsUpdateMap, this.lastSubscribedFeedsUpdateMap);
+    this.storeService.set(FeedsData.PersistenceKey.lastSubscribedFeedsUpdateMap, this.lastSubscribedFeedsUpdateMap);
   }
 
   updateLastCommentUpdate(key: string, nodeId: string, channelId: number, postId: number, updatedAt: number){
@@ -6022,7 +5980,7 @@ export class FeedService {
       }
       this.lastCommentUpdateMap[key].time = updatedAt + 1;
     }
-    this.storeService.set(PersistenceKey.lastCommentUpdateMap, this.lastCommentUpdateMap);
+    this.storeService.set(FeedsData.PersistenceKey.lastCommentUpdateMap, this.lastCommentUpdateMap);
   }
 
   handleSessionError(nodeId: string, error: any){
@@ -6316,7 +6274,7 @@ export class FeedService {
         let nodeChannelId = this.getChannelId(nodeId, decodeResult.feedId);
         subscribedChannelsMap[nodeChannelId] = undefined;
         delete subscribedChannelsMap[nodeChannelId];
-        await this.storeService.set(PersistenceKey.subscribedChannelsMap,subscribedChannelsMap);
+        await this.storeService.set(FeedsData.PersistenceKey.subscribedChannelsMap,subscribedChannelsMap);
       }
 
       this.addFeedService.addFeed(decodeResult, nodeId, avatar, follower, feedName).then((toBeAddedFeed:FeedsData.ToBeAddedFeed)=>{
@@ -6384,7 +6342,7 @@ export class FeedService {
         this.resetConnectionStatus();
         this.destroyCarrier();
         isSuccess = true;
-        this.storeService.set(PersistenceKey.isSignOut, isSuccess);
+        this.storeService.set(FeedsData.PersistenceKey.isSignOut, isSuccess);
         resolve(isSuccess);
       }).catch((err)=>{
         reject(err);
@@ -6624,7 +6582,7 @@ export class FeedService {
       lastUpdate    : lastUpdate
     }
 
-    this.storeService.set(PersistenceKey.syncPostStatusMap, this.syncPostStatusMap);
+    this.storeService.set(FeedsData.PersistenceKey.syncPostStatusMap, this.syncPostStatusMap);
   }
 
   checkSyncPostStatus(nodeId: string, feedsId: number){
@@ -6657,7 +6615,7 @@ export class FeedService {
       lastUpdate    : lastUpdate
     }
 
-    this.storeService.set(PersistenceKey.syncCommentStatusMap, this.syncCommentStatusMap);
+    this.storeService.set(FeedsData.PersistenceKey.syncCommentStatusMap, this.syncCommentStatusMap);
   }
 
   checkSyncCommentStatus(nodeId: string, feedsId: number, postId: number){
