@@ -27,218 +27,36 @@ let versionCode: number = 10500;
 let newAuthVersion: number = 10400;
 let newCommentVersion: number = 10400;
 let newMultiPropCountVersion: number = 10500;
-let subscribedChannelsMap:{[nodeChannelId: string]: Channels};
-let channelsMap:{[nodeChannelId: string]: Channels} ;
-let myChannelsMap:{[nodeChannelId: string]: MyChannel};
+let subscribedChannelsMap:{[nodeChannelId: string]: FeedsData.Channels};
+let channelsMap:{[nodeChannelId: string]: FeedsData.Channels} ;
+let myChannelsMap:{[nodeChannelId: string]: FeedsData.MyChannel};
 let unreadMap:{[nodeChannelId: string]: number};
-let serverStatisticsMap:{[nodeId: string]: ServerStatistics};
-let commentsMap:{[nodeId: string]: NodeChannelPostComment};
-let serversStatus:{[nodeId: string]: ServerStatus};
+let serverStatisticsMap:{[nodeId: string]: FeedsData.ServerStatistics};
+let commentsMap:{[nodeId: string]: FeedsData.NodeChannelPostComment};
+let serversStatus:{[nodeId: string]: FeedsData.ServerStatus};
 let creationPermissionMap:{[nodeId: string]: boolean};
-let likeMap:{[key:string]:Likes};
-let likeCommentMap:{[nodechannelpostCommentId: string]: LikedComment};
-let lastPostUpdateMap:{[nodeChannelId:string]: PostUpdateTime};
+let likeMap:{[key:string]:FeedsData.Likes};
+let likeCommentMap:{[nodechannelpostCommentId: string]: FeedsData.LikedComment};
+let lastPostUpdateMap:{[nodeChannelId:string]: FeedsData.PostUpdateTime};
 
-let localSubscribedList:Channels[] = new Array<Channels>();
-let localMyChannelList:Channels[] = new Array<Channels>();
-let localChannelsList:Channels[] = new Array<Channels>();
+let localSubscribedList:FeedsData.Channels[] = new Array<FeedsData.Channels>();
+let localMyChannelList:FeedsData.Channels[] = new Array<FeedsData.Channels>();
+let localChannelsList:FeedsData.Channels[] = new Array<FeedsData.Channels>();
 
-let bindingServer: Server;
-let bindingServerCache: Server;
+let bindingServer: FeedsData.Server;
+let bindingServerCache: FeedsData.Server;
 
-let serverMap: {[nodeId: string]: Server};
+let serverMap: {[nodeId: string]: FeedsData.Server};
 
 let accessTokenMap:{[nodeId:string]:FeedsData.AccessToken};
 let signInServerList = [];
 
-let notificationList:Notification[] = [];
+let notificationList: FeedsData.Notification[] = [];
 
 let cacheBindingAddress: string = "";
 let localCredential: string = "";
 
-let cachedPost:{[key:string]:Post} = {};
-
-type ServerVersion = {
-  nodeId        : string,
-  versionName   : string,
-  versionCode   : number
-}
-
-type Likes = {
-  nodeId    : string,
-  channelId : number,
-  postId    : number,
-  commentId : number
-}
-
-const enum ConnState {
-  connected = 0,
-  disconnected = 1
-}
-
-type BindURLData = {
-  did: string;
-  carrierAddress: string;
-  nonce: string;
-}
-
-type Notification = {
-  id: string;
-  userName: string;
-  behavior: Behavior;
-  behaviorText: string;
-  details: Details;
-  time: number;
-  readStatus: number;
-}
-
-type Details = {
-  nodeId: string;
-  channelId: number;
-  postId: number;
-  commentId: number;
-}
-
-type SignResult = {
-  signingdid: string,
-  publickey: string,
-  signature: string
-}
-
-type SignIntentResponse = {
-  result: SignResult
-}
-
-type PostUpdateTime = {
-  nodeId: string,
-  channelId: number,
-  time:number
-}
-
-type FeedUpdateTime = {
-  nodeId: string,
-  time:number
-}
-
-type CommentUpdateTime = {
-  nodeId: string,
-  channelId: number,
-  postId: number,
-  time: number
-}
-
-type LikesAndCommentsCountUpdateTime = {
-  nodeId: string,
-  time: number
-}
-
-type ServerStatus = {
-  nodeId: string,
-  did: string,
-  status: ConnState
-}
-type NodeChannelPostComment ={
-  [channelId: number]: ChannelPostComment;
-}
-type ChannelPostComment = {
-  [postId:number]: PostComment
-}
-type PostComment = {
-  [commentId: number]: Comment
-}
-
-type MyChannel = {
-  nodeId: string,
-  channelId: number
-}
-
-type Channels = {
-    nodeId:string,
-    id: number,
-    name: string,
-    introduction: string,
-    owner_name: string,
-    owner_did: string,
-    subscribers : number,
-    last_update : number,
-    last_post: any,
-    avatar: any,
-    isSubscribed: boolean
-}
-
-type Comment = {
-    nodeId      : string,
-    channel_id  : number,
-    post_id     : number,
-    id          : number,
-    comment_id  : number | 0,
-    user_name   : string,
-    content     : any,
-    likes       : number,
-    created_at  : number,
-    updated_at  : number,
-    status      : FeedsData.PostCommentStatus,
-    user_did    : string
-}
-
-type LikedComment = {
-  nodeId     : string,
-  channel_id : number,
-  post_id    : number,
-  id         : number,
-}
-
-type ChannelPost = {
-  [postId: number]: Post
-}
-
-type Post = {
-    nodeId      : string,
-    channel_id  : number,
-    id          : number,
-    content     : any,
-    comments    : number,
-    likes       : number,
-    created_at  : number,
-    updated_at  : number,
-    post_status : FeedsData.PostCommentStatus
-}
-
-type PostKey = {
-  created_at: number;
-}
-
-type ServerStatistics = {
-  did               : string
-  connecting_clients: number
-  total_clients     : number
-}
-
-type Server = {
-  name              : string
-  owner             : string
-  introduction      : string
-  did               : string
-  carrierAddress    : string
-  nodeId            : string
-  feedsUrl          : string
-  elaAddress        : string
-}
-
-type SyncPostStatus = {
-  nodeId        : string,
-  feedsId       : number,
-  isSyncFinish  : boolean,
-  lastUpdate    : number
-}
-
-type SyncCommentStatus = {
-  nodeId        : string,
-  feedsId       : number,
-  postId        : number,
-  isSyncFinish  : boolean,
-  lastUpdate    : number
-}
+let cachedPost:{[key:string]:FeedsData.Post} = {};
 
 export class DidData{
   constructor(
@@ -381,7 +199,7 @@ export class FeedService {
   public currentLang:string ="";
   public curtab:string ="home";
   public channelInfo:any ={};
-  public postMap: {[ncpId: string]: Post};
+  public postMap: {[ncpId: string]: FeedsData.Post};
   private nonce = "";
   private realm = "";
   private serviceNonce = "";
@@ -401,17 +219,17 @@ export class FeedService {
   private declareOwnerInterval: NodeJS.Timer;
   private isDeclareFinish: boolean = false;
   // private lastFeedUpdateMap:{[nodeId:string]: FeedUpdateTime};
-  private lastSubscribedFeedsUpdateMap:{[nodeId:string]: FeedUpdateTime};
-  private lastCommentUpdateMap:{[key: string]: CommentUpdateTime};
-  private lastMultiLikesAndCommentsCountUpdateMap:{[key: string]: LikesAndCommentsCountUpdateTime};
-  private lastMultiLikesAndCommentsCountUpdateMapCache:{[key: string]: LikesAndCommentsCountUpdateTime};
+  private lastSubscribedFeedsUpdateMap:{[nodeId:string]: FeedsData.FeedUpdateTime};
+  private lastCommentUpdateMap:{[key: string]: FeedsData.CommentUpdateTime};
+  private lastMultiLikesAndCommentsCountUpdateMap:{[key: string]: FeedsData.LikesAndCommentsCountUpdateTime};
+  private lastMultiLikesAndCommentsCountUpdateMapCache:{[key: string]: FeedsData.LikesAndCommentsCountUpdateTime};
 
 
   private throwMsgTransDataLimit = 4*1000*1000;
   private alertPopover:HTMLIonPopoverElement = null;
-  private serverVersions: {[nodeId: string]: ServerVersion} = {};
-  private syncPostStatusMap: {[nodeChannelId: string]: SyncPostStatus} = {};
-  private syncCommentStatusMap: {[nodeChannelId: string]: SyncCommentStatus} = {};
+  private serverVersions: {[nodeId: string]: FeedsData.ServerVersion} = {};
+  private syncPostStatusMap: {[nodeChannelId: string]: FeedsData.SyncPostStatus} = {};
+  private syncCommentStatusMap: {[nodeChannelId: string]: FeedsData.SyncCommentStatus} = {};
 
   public constructor(
     private serializeDataService: SerializeDataService,
@@ -576,7 +394,7 @@ export class FeedService {
           for (const index in keys) {
             if (serversStatus[keys[index]] == undefined)
               continue;
-              serversStatus[keys[index]].status = ConnState.disconnected;
+              serversStatus[keys[index]].status = FeedsData.ConnState.disconnected;
           }
 
           resolve(mServersStatus);
@@ -625,12 +443,12 @@ export class FeedService {
     return new Promise((resolve, reject) =>{
       let subscribedChannels = subscribedChannelsMap || "";
       if( subscribedChannels == ""){
-        this.storeService.get(PersistenceKey.subscribedChannelsMap).then((mSubscribedChannelsMap)=>{
-          subscribedChannelsMap = mSubscribedChannelsMap || {};
-          resolve(mSubscribedChannelsMap);
-        }).catch((error)=>{
-          reject(error);
-        });
+          this.storeService.get(FeedsData.PersistenceKey.subscribedChannelsMap).then((mSubscribedChannelsMap)=>{
+              subscribedChannelsMap = mSubscribedChannelsMap || {};
+              resolve(mSubscribedChannelsMap);
+          }).catch((error)=>{
+              reject(error);
+          });
       }else{
           resolve(subscribedChannels);
       }
@@ -891,7 +709,7 @@ export class FeedService {
       for (const index in keys) {
         if (serversStatus[keys[index]] == undefined)
           continue;
-          serversStatus[keys[index]].status = ConnState.disconnected;
+          serversStatus[keys[index]].status = FeedsData.ConnState.disconnected;
       }
     });
 
@@ -991,10 +809,10 @@ export class FeedService {
     return this.connectionStatus;
   }
 
-  getServerList(): Server[]{
+  getServerList(): FeedsData.Server[]{
     if (serverMap == null || serverMap == undefined)
       serverMap = {};
-    let list: Server[] = [];
+    let list: FeedsData.Server[] = [];
     let nodeIdArray: string[] = Object.keys(serverMap)||[];
     for (const index in nodeIdArray) {
       if (serverMap[nodeIdArray[index]] == undefined)
@@ -1005,8 +823,8 @@ export class FeedService {
     return list;
   }
 
-  getOtherServerList(): Server[]{
-    let list: Server[] = [];
+  getOtherServerList(): FeedsData.Server[]{
+    let list: FeedsData.Server[] = [];
     let nodeIdArray: string[] = Object.keys(serverMap);
     for (const index in nodeIdArray) {
       if (serverMap[nodeIdArray[index]] == undefined)
@@ -1022,18 +840,18 @@ export class FeedService {
     return list;
   }
 
-  getCreationServerList(): Server[]{
-    let list: Server[] = [];
+  getCreationServerList(): FeedsData.Server[]{
+    let list: FeedsData.Server[] = [];
     if(bindingServer != null && bindingServer != undefined)
       list.push(bindingServer);
     return list;
   }
 
-  getBindingserver():Server {
+  getBindingserver():FeedsData.Server {
     return bindingServer;
   }
 
-  getServersStatus():  {[nodeId: string]: ServerStatus} {
+  getServersStatus():  {[nodeId: string]: FeedsData.ServerStatus} {
     return serversStatus;
   }
 
@@ -1048,7 +866,7 @@ export class FeedService {
     return serversStatus[nodeId].status;
   }
 
-  getServerStatisticsMap():{[nodeId: string]: ServerStatistics}{
+  getServerStatisticsMap():{[nodeId: string]: FeedsData.ServerStatistics}{
     if (bindingServer != null &&
       bindingServer!= undefined &&
       serverStatisticsMap[bindingServer.nodeId] == undefined)
@@ -1080,7 +898,7 @@ export class FeedService {
   }
 
   getMyChannelList(){
-    let list: Channels[] = [];
+    let list: FeedsData.Channels[] = [];
     myChannelsMap = myChannelsMap || {};
     let keys: string[] = Object.keys(myChannelsMap);
     for (const index in keys) {
@@ -1113,9 +931,9 @@ export class FeedService {
     this.storeService.set(PersistenceKey.unreadMap,unreadMap);
   }
 
-  getChannelsList():Channels[]{
+  getChannelsList():FeedsData.Channels[]{
 
-    let list: Channels[] = [];
+    let list: FeedsData.Channels[] = [];
     let map = channelsMap || {};
     let keys: string[] = Object.keys(map);
 
@@ -1135,8 +953,8 @@ export class FeedService {
     return sortArr;
   }
 
-  getSubscribedFeedsList(): Channels[]{
-    let list: Channels[] = [];
+  getSubscribedFeedsList(): FeedsData.Channels[]{
+    let list: FeedsData.Channels[] = [];
     let map = subscribedChannelsMap|| {};
     let keys: string[] = Object.keys(map) || [];
 
@@ -1153,7 +971,7 @@ export class FeedService {
     return list;
   }
 
-  getFollowedChannelList():Channels[]{
+  getFollowedChannelList():FeedsData.Channels[]{
     // let list: Channels[] = [];
     // let map = channelsMap || {};
     // let keys: string[] = Object.keys(map);
@@ -1176,8 +994,8 @@ export class FeedService {
     return sortArr;
   }
 
-  getChannelsListFromNodeId(nodeId: string): Channels[]{
-    let list: Channels[] = [];
+  getChannelsListFromNodeId(nodeId: string): FeedsData.Channels[]{
+    let list: FeedsData.Channels[] = [];
     let keys: string[] = Object.keys(channelsMap);
     for (const index in keys) {
       if (channelsMap[keys[index]] == undefined)
@@ -1278,7 +1096,7 @@ export class FeedService {
 
   friendAddCallback(){
     this.events.subscribe(FeedsEvent.PublishType.carrierFriendAdded, msg => {
-      let status: ConnState = msg.friendInfo.status;
+      let status: FeedsData.ConnState = msg.friendInfo.status;
       let nodeId = msg.friendInfo.userInfo.userId;
       if (bindingServer !=null && bindingServer == undefined)
         if (bindingServer.nodeId == nodeId)
@@ -1290,7 +1108,7 @@ export class FeedService {
     });
   }
 
-  resolveServer(server: Server, status: ConnState){
+  resolveServer(server: FeedsData.Server, status: FeedsData.ConnState){
     if (serversStatus == null || serversStatus == undefined)
         serversStatus = {};
 
@@ -1298,7 +1116,7 @@ export class FeedService {
       serversStatus[server.nodeId] = {
         nodeId: server.nodeId,
         did: server.did,
-        status: ConnState.disconnected
+        status: FeedsData.ConnState.disconnected
       }
     }
 
@@ -1586,7 +1404,7 @@ export class FeedService {
     return feedUrl.substring(start, end);
   }
 
-  resolveDidDocument(feedsUrl: string, defaultServer:Server, onSuccess: (server: Server)=>void, onError?: (err: any)=>void){
+  resolveDidDocument(feedsUrl: string, defaultServer: FeedsData.Server, onSuccess: (server: FeedsData.Server)=>void, onError?: (err: any)=>void){
     let didData = this.parseDid(feedsUrl);
 
     didManager.resolveDidDocument(didData.did, false,(didDocument)=>{
@@ -1778,7 +1596,7 @@ export class FeedService {
 
 
 
-  getServerbyNodeId(nodeId: string): Server{
+  getServerbyNodeId(nodeId: string): FeedsData.Server{
     if (serverMap == undefined) {
       return undefined;
     }
@@ -1968,7 +1786,7 @@ export class FeedService {
   //     this.refreshLocalSubscribedChannels();
   // }
 
-  refreshLocalSubscribedChannels():Channels[]{
+  refreshLocalSubscribedChannels():FeedsData.Channels[]{
     localSubscribedList.slice(0,localSubscribedList.length);
     localSubscribedList=[];
     let channels = this.sortChannels(0, subscribedChannelsMap,localSubscribedList);
@@ -2004,7 +1822,7 @@ export class FeedService {
   //     this.refreshLocalChannels();
   // }
 
-  refreshLocalChannels():Channels[]{
+  refreshLocalChannels():FeedsData.Channels[]{
     localChannelsList.slice(0,localChannelsList.length);
     localChannelsList=[];
     let channels = this.sortChannels(0, channelsMap,localChannelsList);
@@ -2012,8 +1830,8 @@ export class FeedService {
     return channels;
   }
 
-  sortChannels(start: number, map: {}, localList: Channels[]): Channels[]{
-    let list: Channels[] = [];
+  sortChannels(start: number, map: {}, localList: FeedsData.Channels[]): FeedsData.Channels[]{
+    let list: FeedsData.Channels[] = [];
     if (map ==null || map == undefined)
       map = {}
 
@@ -2044,7 +1862,7 @@ export class FeedService {
       return;
     }
 
-    let list: Channels[] = [];
+    let list: FeedsData.Channels[] = [];
     let keys: string[] = Object.keys(myChannelsMap);
     for (const index in keys) {
       if (myChannelsMap[keys[index]] == null || myChannelsMap[keys[index]] == undefined)
@@ -2489,7 +2307,7 @@ export class FeedService {
     if (userName == this.getSignInData().name)
       return ;
 
-    let notification:Notification = {
+    let notification: FeedsData.Notification = {
       id: this.generateUUID(),
       userName: userName,
       behavior: behavior,
@@ -2730,7 +2548,7 @@ export class FeedService {
 
     let avatar = this.serializeDataService.decodeData(avatarBin);
 
-    let channel:Channels = {
+    let channel: FeedsData.Channels = {
       nodeId: nodeId,
       id: channelId,
       name: channelName,
@@ -2780,7 +2598,7 @@ export class FeedService {
     let contentStr = this.serializeDataService.decodeData(contentBin);
     let content = this.parseContent(nodeId,channelId,postId,0,contentStr);
 
-    let post:Post = {
+    let post: FeedsData.Post = {
       nodeId      : nodeId,
       channel_id  : channelId,
       id          : postId,
@@ -2817,7 +2635,7 @@ export class FeedService {
     let contentStr = this.serializeDataService.decodeData(contentBin);
     let content = this.parseContent(nodeId,channelId,postId,0,contentStr);
 
-    let post:Post = {
+    let post: FeedsData.Post = {
       nodeId      : nodeId,
       channel_id  : channelId,
       id          : postId,
@@ -3395,7 +3213,7 @@ export class FeedService {
     let connectingClients = result.connecting_clients || 0;
     let totalClients = result.total_clients || 0;
 
-    let serverStatistics: ServerStatistics = {
+    let serverStatistics: FeedsData.ServerStatistics = {
       did               : userDID,
       connecting_clients: connectingClients,
       total_clients     : totalClients
@@ -3660,7 +3478,7 @@ export class FeedService {
   }
 
   ////
-  loadMoreChannelsTest(list: Channels[]){
+  loadMoreChannelsTest(list: FeedsData.Channels[]){
     let num = list.length;
     for (let index = 0; index < 10; index++) {
       if (num <108){
@@ -3697,7 +3515,7 @@ export class FeedService {
   }
 
   generateServer(name: string, owner: string, introduction: string,
-    did: string, carrierAddress: string , feedsUrl: string, nodeId: string): Server{
+    did: string, carrierAddress: string , feedsUrl: string, nodeId: string): FeedsData.Server{
       return {
         name              : name,
         owner             : owner,
@@ -3714,7 +3532,7 @@ export class FeedService {
     this.storeService.remove(PersistenceKey.myChannelsMap);
   }
 
-  getChannelFromId(nodeId: string, id: number): Channels{
+  getChannelFromId(nodeId: string, id: number): FeedsData.Channels{
     if (channelsMap == null || channelsMap == undefined)
       return undefined;
 
@@ -3722,7 +3540,7 @@ export class FeedService {
     return channelsMap[nodeChannelId];
   }
 
-  getPostFromId(nodeId: string, channelId: number, postId: number):Post{
+  getPostFromId(nodeId: string, channelId: number, postId: number): FeedsData.Post{
     if (this.postMap == null || this.postMap == undefined || this.postMap == {})
       return undefined;
 
@@ -3730,7 +3548,7 @@ export class FeedService {
     return this.postMap[mPostId];
   }
 
-  getCommentFromId(nodeId: string, channelId: number, postId: number, commentId: number):Comment{
+  getCommentFromId(nodeId: string, channelId: number, postId: number, commentId: number): FeedsData.Comment{
     if (commentsMap == null || commentsMap == undefined ||
         commentsMap[nodeId] == null || commentsMap[nodeId] == undefined ||
         commentsMap[nodeId][channelId] == null || commentsMap[nodeId][channelId] == undefined ||
@@ -3750,7 +3568,7 @@ export class FeedService {
     return serverMap[nodeId].did;
   }
 
-  getCommentList(nodeId: string, channelId: number, postId: number): Comment[]{
+  getCommentList(nodeId: string, channelId: number, postId: number): FeedsData.Comment[]{
     if (commentsMap == null || commentsMap == undefined ||
        commentsMap[nodeId] == null || commentsMap == undefined ||
        commentsMap[nodeId][channelId] == null || commentsMap[nodeId][channelId] == undefined ||
@@ -3759,10 +3577,10 @@ export class FeedService {
     }
 
 
-    let list: Comment[] =[];
+    let list: FeedsData.Comment[] =[];
     let keys: string[] = Object.keys(commentsMap[nodeId][channelId][postId]);
     for (const index in keys) {
-      let comment: Comment = commentsMap[nodeId][channelId][postId][keys[index]];
+      let comment: FeedsData.Comment = commentsMap[nodeId][channelId][postId][keys[index]];
       if (comment == undefined)
         continue;
 
@@ -3806,8 +3624,8 @@ export class FeedService {
     return num;
   }
 
-  getPostList(): Post[]{
-    let list: Post[] = [];
+  getPostList(): FeedsData.Post[]{
+    let list: FeedsData.Post[] = [];
     this.postMap = this.postMap || {};
     let keys: string[] = Object.keys(this.postMap) || [];
     // localPostList = [];
@@ -3841,7 +3659,7 @@ export class FeedService {
   }
 
   getPostListFromChannel(nodeId: string, channelId: number){
-    let list: Post[] = [];
+    let list: FeedsData.Post[] = [];
     let keys: string[] = Object.keys(this.postMap);
     // localPostList = [];
     for (const index in keys) {
@@ -3856,8 +3674,8 @@ export class FeedService {
     return list;
   }
 
-  getLikeList(): Post[]{
-    let list: Post[] = [];
+  getLikeList(): FeedsData.Post[]{
+    let list: FeedsData.Post[] = [];
 
     let keys: string[] = [];
     if (likeMap != null && likeMap != undefined)
@@ -3940,7 +3758,7 @@ export class FeedService {
       const feed = subscribedFeedsMap[keys[index]];
       if (feed == null || feed == undefined)
         continue;
-      if (serversStatus[feed.nodeId].status == ConnState.disconnected)
+      if (serversStatus[feed.nodeId].status == FeedsData.ConnState.disconnected)
         continue;
       this.updateFeedsByFeedId(feed.nodeId, feed.id);
     }
@@ -3972,9 +3790,9 @@ export class FeedService {
     this.updateCommentsWithTime(nodeId, channelId, postId, 0, lastCommentTime, 0);
   }
 
-  getSubscribedChannelsFromNodeId(nodeId: string): Channels[]{
+  getSubscribedChannelsFromNodeId(nodeId: string): FeedsData.Channels[]{
     let keys: string[] = Object.keys(subscribedChannelsMap);
-    let list: Channels[] = [];
+    let list: FeedsData.Channels[] = [];
     for (const index in keys) {
       if (subscribedChannelsMap[keys[index]] == null || subscribedChannelsMap[keys[index]] == undefined)
         continue;
@@ -4286,7 +4104,7 @@ export class FeedService {
 
   }
 
-  handleImportDID(feedUrl: string, defaultServer: Server, onSuccess: (server: Server)=>void, onError: (err: any)=>void){
+  handleImportDID(feedUrl: string, defaultServer: FeedsData.Server, onSuccess: (server: FeedsData.Server)=>void, onError: (err: any)=>void){
     this.resolveDidDocument(feedUrl, defaultServer, onSuccess, onError);
   }
 
@@ -4662,7 +4480,7 @@ export class FeedService {
     if (this.getServerVersionCodeByNodeId(nodeId) < newCommentVersion){
       let postList = this.getPostListFromChannel(nodeId,feedsId);
       for (let postIndex = 0; postIndex < postList.length; postIndex++) {
-        let post: Post = postList[postIndex];
+        let post: FeedsData.Post = postList[postIndex];
         let postId: number = post.id;
         this.updateComment(nodeId, feedsId, postId);
       }
@@ -4696,7 +4514,7 @@ export class FeedService {
     }else{
       let postList = this.getPostListFromChannel(nodeId,feedsId);
       for (let postIndex = 0; postIndex < postList.length; postIndex++) {
-        const post: Post = postList[postIndex];
+        const post: FeedsData.Post = postList[postIndex];
         let postId: number = post.id;
         this.syncCommentOld(nodeId, feedsId, postId);
       }
@@ -4731,7 +4549,7 @@ export class FeedService {
       this.updateSubscribedFeedsWithTime(friendId);
 
       for (let index = 0; index < list.length; index++) {
-        const feeds: Channels = list[index];
+        const feeds: FeedsData.Channels = list[index];
         let feedsId = feeds.id;
         this.syncPost(friendId, feedsId);
         this.syncComment(friendId, feedsId);
@@ -4804,7 +4622,7 @@ export class FeedService {
     await this.storeService.remove(PersistenceKey.signInData);
   }
 
-  getBindingServer(): Server{
+  getBindingServer(): FeedsData.Server{
     return bindingServer;
   }
 
@@ -4845,14 +4663,14 @@ export class FeedService {
     alert(error);
   }
 
-  getLikeFromId(key: string): Likes{
+  getLikeFromId(key: string): FeedsData.Likes{
     if (likeMap == null || likeMap == undefined)
       likeMap = {};
 
     return likeMap[key];
   }
 
-  getLikedCommentFromId(nodeChannelPostCommentId: string): LikedComment{
+  getLikedCommentFromId(nodeChannelPostCommentId: string): FeedsData.LikedComment{
     if (likeCommentMap == null || likeCommentMap == undefined)
       likeCommentMap = {};
     return likeCommentMap[nodeChannelPostCommentId];
@@ -5082,14 +4900,14 @@ export class FeedService {
     this.storeService.remove(PersistenceKey.bindingServer);
   }
 
-  getNotificationList(): Notification[]{
+  getNotificationList(): FeedsData.Notification[]{
     if(notificationList == null || notificationList == undefined || notificationList.length == 0)
       return [];
-    let list:Notification[] = notificationList.sort((a, b) => Number(b.time) - Number(a.time));
+    let list: FeedsData.Notification[] = notificationList.sort((a, b) => Number(b.time) - Number(a.time));
     return list;
   }
 
-  setNotificationReadStatus(notification: Notification, readStatus: number){
+  setNotificationReadStatus(notification: FeedsData.Notification, readStatus: number){
     if (notification == undefined)
       return ;
 
@@ -5097,7 +4915,7 @@ export class FeedService {
     this.storeService.set(PersistenceKey.notificationList, notificationList);
   }
 
-  deleteNotification(notification: Notification):Promise<any>{
+  deleteNotification(notification: FeedsData.Notification):Promise<any>{
     return new Promise((resolve, reject) =>{
       let index = notificationList.indexOf(notification);
       notificationList.splice(index, 1);
@@ -5116,7 +4934,7 @@ export class FeedService {
       this.getMyChannels(nodeId,Communication.field.last_update,0,0,0);
   }
 
-  parseBindServerUrl(content: string): BindURLData{
+  parseBindServerUrl(content: string): FeedsData.BindURLData{
     if (content.startsWith("feeds_raw://")){
       let tmpString = content.replace("feeds_raw://","");
       let tmp: string[] = tmpString.split("/")
@@ -5369,7 +5187,7 @@ export class FeedService {
     for (let index = 0; index < keys.length; index++) {
       if (serversStatus[keys[index]] == undefined)
         continue;
-      serversStatus[keys[index]].status = ConnState.disconnected;
+      serversStatus[keys[index]].status = FeedsData.ConnState.disconnected;
     }
   }
 

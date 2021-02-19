@@ -255,4 +255,224 @@ declare namespace FeedsData{
         avatar          : string
         follower        : number
     }
+
+    const enum PersistenceKey{
+        ///////////////////////////////
+        signInData = "signInData",
+        lastSignInData = "lastSignInData",
+      
+        signInRawData = "signInRawData",
+      
+        subscribedChannelsMap = "subscribedChannelsMap",
+        channelsMap = "channelsMap",
+        myChannelsMap = "myChannelsMap",
+        unreadMap = "unreadMap",
+        postMap = "postMap",
+        lastPostUpdateMap = "lastPostUpdateMap",
+        commentsMap = "commentsMap",
+        serverStatisticsMap = "serverStatisticsMap",
+        serversStatus = "serversStatus",
+        subscribeStatusMap = "subscribeStatusMap",
+        likeMap = "likeMap",
+      
+        // bindingServerMap = "bindingServerMap",
+        accessTokenMap = "accessTokenMap",
+        credential = "credential",
+      
+        bindingServer = "bindingServer",
+      
+        serverMap = "serverMap",
+      
+        notificationList = "notificationList",
+      
+        likeCommentMap = "likeCommentMap",
+        // lastFeedUpdateMap = "lastFeedUpdateMap",
+        lastCommentUpdateMap = "lastCommentUpdateMap",
+      
+        lastMultiLikesAndCommentsCountUpdateMap = "lastMultiLikesAndCommentsCountUpdateMap",
+        lastSubscribedFeedsUpdateMap = "lastSubscribedFeedsUpdateMap",
+        serverVersions = "serverVersions",
+        isSignOut = "isSignOut",
+      
+        syncPostStatusMap = "syncPostStatusMap",
+        syncCommentStatusMap = "syncCommentStatusMap",
+    }
+
+
+    type ServerVersion = {
+        nodeId        : string,
+        versionName   : string,
+        versionCode   : number
+    }
+    
+    type Likes = {
+        nodeId    : string,
+        channelId : number,
+        postId    : number,
+        commentId : number
+    }
+    
+    type BindURLData = {
+        did: string;
+        carrierAddress: string;
+        nonce: string;
+    }
+    
+    type Notification = {
+        id: string;
+        userName: string;
+        behavior: Behavior;
+        behaviorText: string;
+        details: Details;
+        time: number;
+        readStatus: number;
+    }
+    
+    type Details = {
+        nodeId: string;
+        channelId: number;
+        postId: number;
+        commentId: number;
+    }
+    
+    type SignResult = {
+        signingdid: string,
+        publickey: string,
+        signature: string
+    }
+    
+    type SignIntentResponse = {
+        result: SignResult
+    }
+    
+    type PostUpdateTime = {
+        nodeId: string,
+        channelId: number,
+        time:number
+    }
+    
+    type FeedUpdateTime = {
+        nodeId: string,
+        time:number
+    }
+    
+    type CommentUpdateTime = {
+        nodeId: string,
+        channelId: number,
+        postId: number,
+        time: number
+    }
+    
+    type LikesAndCommentsCountUpdateTime = {
+        nodeId: string,
+        time: number
+    }
+    
+    type ServerStatus = {
+        nodeId: string,
+        did: string,
+        status: ConnState
+    }
+    type NodeChannelPostComment ={
+        [channelId: number]: ChannelPostComment;
+    }
+    type ChannelPostComment = {
+        [postId:number]: PostComment
+    }
+    type PostComment = {
+        [commentId: number]: Comment
+    }
+    
+    type MyChannel = {
+        nodeId: string,
+        channelId: number
+    }
+    
+    type Channels = {
+        nodeId:string,
+        id: number,
+        name: string,
+        introduction: string,
+        owner_name: string,
+        owner_did: string,
+        subscribers : number,
+        last_update : number,
+        last_post: any,
+        avatar: any,
+        isSubscribed: boolean
+    }
+    
+    type Comment = {
+        nodeId      : string,
+        channel_id  : number,
+        post_id     : number,
+        id          : number,
+        comment_id  : number | 0,
+        user_name   : string,
+        content     : any,
+        likes       : number,
+        created_at  : number,
+        updated_at  : number,
+        status      : FeedsData.PostCommentStatus,
+        user_did    : string
+    }
+    
+    type LikedComment = {
+        nodeId     : string,
+        channel_id : number,
+        post_id    : number,
+        id         : number,
+    }
+    
+    type ChannelPost = {
+        [postId: number]: Post
+    }
+    
+    type Post = {
+        nodeId      : string,
+        channel_id  : number,
+        id          : number,
+        content     : any,
+        comments    : number,
+        likes       : number,
+        created_at  : number,
+        updated_at  : number,
+        post_status : FeedsData.PostCommentStatus
+    }
+    
+    type PostKey = {
+        created_at: number;
+    }
+    
+    type ServerStatistics = {
+        did               : string
+        connecting_clients: number
+        total_clients     : number
+    }
+    
+    type Server = {
+        name              : string
+        owner             : string
+        introduction      : string
+        did               : string
+        carrierAddress    : string
+        nodeId            : string
+        feedsUrl          : string
+        elaAddress        : string
+    }
+    
+    type SyncPostStatus = {
+        nodeId        : string,
+        feedsId       : number,
+        isSyncFinish  : boolean,
+        lastUpdate    : number
+    }
+    
+    type SyncCommentStatus = {
+        nodeId        : string,
+        feedsId       : number,
+        postId        : number,
+        isSyncFinish  : boolean,
+        lastUpdate    : number
+    }
 }
