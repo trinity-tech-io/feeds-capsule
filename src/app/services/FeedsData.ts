@@ -475,4 +475,16 @@ declare namespace FeedsData{
         isSyncFinish  : boolean,
         lastUpdate    : number
     }
+
+    const enum RequestAction{
+        defaultAction,
+        refreshPostDetail
+    }
+
+    const enum Behavior {
+        comment,
+        likedPost,
+        likedComment,
+        follow
+    }
 }
