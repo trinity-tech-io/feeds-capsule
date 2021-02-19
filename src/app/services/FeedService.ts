@@ -86,17 +86,6 @@ export class Avatar {
   type?: string;
 }
 
-enum RequestAction{
-  defaultAction,
-  refreshPostDetail
-}
-enum Behavior {
-  comment,
-  likedPost,
-  likedComment,
-  follow
-}
-
 let expDay = 10;
 
 let eventBus = null;
@@ -2220,7 +2209,7 @@ export class FeedService {
 
       eventBus.publish(FeedsEvent.PublishType.commentDataUpdate);
 
-      this.generateNotification(nodeId, channelId, postId,commentId,userName,Behavior.comment,this.translate.instant("NotificationPage.commentPost"))
+      this.generateNotification(nodeId, channelId, postId,commentId,userName,FeedsData.Behavior.comment,this.translate.instant("NotificationPage.commentPost"))
 
       resolve();
     });
@@ -2258,7 +2247,7 @@ export class FeedService {
   }
 
   generateNotification(nodeId: string, channelId: number, postId: number, commentId:number,
-                    userName: string, behavior:Behavior, behaviorText: string){
+                    userName: string, behavior: FeedsData.Behavior, behaviorText: string){
     if (!this.checkChannelIsMine(nodeId, channelId))
       return ;
 
@@ -2315,12 +2304,12 @@ export class FeedService {
     }
 
     let behaviorText: string = "";
-    let behavior: Behavior;
+    let behavior: FeedsData.Behavior;
     if (comment_id == 0){
-      behavior = Behavior.likedPost;
+      behavior = FeedsData.Behavior.likedPost;
       behaviorText = this.translate.instant("NotificationPage.likedPost");
     }else{
-      behavior = Behavior.likedComment;
+      behavior = FeedsData.Behavior.likedComment;
       behaviorText = this.translate.instant("NotificationPage.likedComment");
     }
 
@@ -2332,7 +2321,7 @@ export class FeedService {
     let user_name = params.user_name;
     let user_did = params.user_did;
 
-    this.generateNotification(nodeId, channel_id, 0,0, user_name,Behavior.follow, this.translate.instant("NotificationPage.followedFeed"))
+    this.generateNotification(nodeId, channel_id, 0,0, user_name,FeedsData.Behavior.follow, this.translate.instant("NotificationPage.followedFeed"))
   }
 
   handleNewFeedInfoUpdateNotification(nodeId: string, params: any){
@@ -3028,7 +3017,7 @@ export class FeedService {
     }
 
     let result = responseResult.posts;
-    let requestAction: number = request.memo.action || RequestAction.defaultAction;
+    let requestAction: number = request.memo.action || FeedsData.RequestAction.defaultAction;
 
     for (let index = 0; index < result.length; index++) {
       let channel_id = result[index].channel_id;
@@ -3082,7 +3071,7 @@ export class FeedService {
         this.storeService.set(FeedsData.PersistenceKey.likeMap,likeMap);
       }
 
-      if (requestAction == RequestAction.defaultAction){
+      if (requestAction == FeedsData.RequestAction.defaultAction){
         let key = this.getChannelId(nodeId, channel_id);
         this.updateLastPostUpdate(key,nodeId, channel_id, updatedAt);
       }
@@ -3101,13 +3090,13 @@ export class FeedService {
       this.updatePostWithTime(nodeId, reqFeedsId, this.getSyncPostLastUpdate(nodeId, reqFeedsId)-1, 0, 1);
     }
 
-    if (requestAction == RequestAction.refreshPostDetail){
+    if (requestAction == FeedsData.RequestAction.refreshPostDetail){
       this.storeService.set(FeedsData.PersistenceKey.postMap, this.postMap);
       eventBus.publish(FeedsEvent.PublishType.refreshPostDetail);
       return ;
     }
 
-    if (requestAction == RequestAction.defaultAction){
+    if (requestAction == FeedsData.RequestAction.defaultAction){
       this.storeService.set(FeedsData.PersistenceKey.postMap, this.postMap);
       eventBus.publish(FeedsEvent.PublishType.postDataUpdate);
       return ;
@@ -5048,7 +5037,7 @@ export class FeedService {
 
   refreshPostById(nodeId: string, channelId: number, postId: number){
     let memo = {
-      action: RequestAction.refreshPostDetail
+      action: FeedsData.RequestAction.refreshPostDetail
     }
     this.getPost(nodeId, channelId,Communication.field.id,Number(postId),Number(postId),0 ,memo);
   }
