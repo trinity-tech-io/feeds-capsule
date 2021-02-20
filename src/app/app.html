@@ -10,13 +10,6 @@
             </ion-row>
 
             <ion-menu-toggle>
-                <div (click)="profiledetail()">
-                    <img src="./assets/images/menu-profile.svg" *ngIf="!theme.darkMode">
-                    <img src="./assets/images/darkmode/menu-profile.svg" *ngIf="theme.darkMode">
-                    <h1>{{ 'app.profileDetails' | translate }}</h1>
-                </div>
-            </ion-menu-toggle>
-            <ion-menu-toggle>
                 <div (click)="goToFeedSource()">
                     <img src="./assets/images/menu-feeds.svg" *ngIf="!theme.darkMode">
                     <img src="./assets/images/darkmode/menu-feeds.svg" *ngIf="theme.darkMode">

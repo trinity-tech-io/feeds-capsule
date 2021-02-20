@@ -14,7 +14,7 @@
   </ion-refresher>
   <ion-grid class="container" [class.darkContainer]="theme.darkMode" [class.blur]="!hideComment">
 
-    <div class="profile-header">
+    <div class="profile-header" (click)="profiledetail()">
       <ion-img [src]="handleImages()"></ion-img>
       <h1>{{ name }}</h1>
       <p>{{ description }}</p>
