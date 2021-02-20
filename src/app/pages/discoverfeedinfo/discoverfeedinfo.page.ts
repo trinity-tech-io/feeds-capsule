@@ -29,7 +29,7 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 // };
 
 export class DiscoverfeedinfoPage implements OnInit {
-
+  public developerMode:boolean =  false;
   public  connectionStatus = 1;
   public feedInfo:any = {};
   public popover:any = "";
@@ -60,6 +60,7 @@ export class DiscoverfeedinfoPage implements OnInit {
   }
 
   ionViewWillEnter() {
+    this.developerMode = this.feedService.getDeveloperMode();
     this.channelSubscribes = this.feedInfo["followers"];
     this.feedsUrl = this.feedInfo['url'] || "";
     this.qrcodeString = this.feedsUrl+"#"+encodeURIComponent(this.feedInfo["name"]) || null;
