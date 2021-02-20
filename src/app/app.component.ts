@@ -168,10 +168,6 @@ export class MyApp {
     return await splash.present();
   }
 
-  profiledetail(){
-    this.native.navigateForward('/menu/profiledetail',"");
-  }
-
   goToFeedSource(){
     this.handleJump();
   }

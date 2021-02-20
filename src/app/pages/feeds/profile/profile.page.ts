@@ -992,5 +992,9 @@ export class ProfilePage implements OnInit {
       }
   }
 
+  profiledetail(){
+    this.native.navigateForward('/menu/profiledetail',"");
+  }
+
 
 }
