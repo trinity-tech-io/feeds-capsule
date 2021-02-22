@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { IonTabs} from '@ionic/angular';
+import { IonTabs,Platform} from '@ionic/angular';
 import { FeedService } from 'src/app/services/FeedService';
 import { ThemeService } from 'src/app/services/theme.service';
 import { UtilService } from 'src/app/services/utilService';
@@ -28,8 +28,9 @@ export class LikesComponent implements OnInit {
 
   public styleObj:any = {width:""};
   public maxTextSize = 240;
-
+  public isPress:boolean = false;
   constructor(
+    private platform: Platform,
     private feedspage: FeedsPage,
     private tabs: IonTabs,
     private feedService :FeedService,
@@ -108,6 +109,10 @@ export class LikesComponent implements OnInit {
   }
 
   navToPostDetail(nodeId:string, channelId:number, postId:number,event?:any){
+    if(this.isPress){
+      this.isPress = false;
+      return;
+    }
     event = event || "";
     if(event!=""){
      let e = event||window.event; //兼容IE8
@@ -246,6 +251,9 @@ export class LikesComponent implements OnInit {
 
 
   pressContent(postContent:string){
+    if(this.platform.is('ios')){
+      this.isPress = true;
+    }
     let text = this.feedService.parsePostContentText(postContent);
     this.native.copyClipboard(text).then(()=>{
       this.native.toast_trans("common.textcopied");
