@@ -1,5 +1,5 @@
 import { Component, OnInit, NgZone,ViewChild} from '@angular/core';
-import { Events,ModalController} from '@ionic/angular';
+import { Events,ModalController,Platform} from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
 import { FeedService } from 'src/app/services/FeedService';
 import { NativeService } from 'src/app/services/NativeService';
@@ -79,7 +79,10 @@ export class ChannelsPage implements OnInit {
 
   public hideDeletedPosts:boolean = false;
 
+  public isPress:boolean = false;
+
   constructor(
+    private platform: Platform,
     private popoverController:PopoverController,
     private zone: NgZone,
     private events: Events,
@@ -477,6 +480,10 @@ export class ChannelsPage implements OnInit {
   }
 
   navToPostDetail(nodeId:string, channelId:number, postId:number,event?:any){
+    if(this.isPress){
+      this.isPress = false;
+      return;
+    }
     event = event || "";
     if(event!=""){
      let e = event||window.event; //兼容IE8
@@ -1116,6 +1123,9 @@ export class ChannelsPage implements OnInit {
   }
 
   pressContent(postContent:string){
+    if(this.platform.is('ios')){
+      this.isPress = true;
+    }
     let text = this.feedService.parsePostContentText(postContent);
     this.native.copyClipboard(text).then(()=>{
       this.native.toast_trans("common.textcopied");

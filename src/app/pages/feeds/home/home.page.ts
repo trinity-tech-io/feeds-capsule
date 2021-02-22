@@ -1,5 +1,5 @@
 import { Component, OnInit, NgZone, ViewChild,ElementRef} from '@angular/core';
-import { IonContent,ModalController} from '@ionic/angular';
+import { IonContent,ModalController,Platform } from '@ionic/angular';
 import { Events,IonTabs} from '@ionic/angular';
 import { FeedService } from 'src/app/services/FeedService';
 import { MenuService } from 'src/app/services/MenuService';
@@ -75,8 +75,10 @@ export class HomePage implements OnInit {
 
   public hideDeletedPosts:boolean = false;
 
-  constructor(
+  public isPress:boolean = false;
 
+  constructor(
+    private platform: Platform,
     private elmRef: ElementRef,
     private feedspage: FeedsPage,
     private tabs: IonTabs,
@@ -472,6 +474,10 @@ clearData(){
   }
 
   navToPostDetail(nodeId:string, channelId:number, postId:number,event?:any){
+    if(this.isPress){
+       this.isPress =false;
+      return;
+    }
     event = event || "";
     if(event!=""){
      let e = event||window.event; //兼容IE8
@@ -1145,12 +1151,14 @@ clearData(){
   }
 
   pressContent(postContent:string){
+    if(this.platform.is('ios')){
+       this.isPress = true;
+    }
+
     let text = this.feedService.parsePostContentText(postContent);
     this.native.copyClipboard(text).then(()=>{
       this.native.toast_trans("common.textcopied");
     }).catch(()=>{
-
     });
   }
-
 }
