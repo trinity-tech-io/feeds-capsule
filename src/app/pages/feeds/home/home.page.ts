@@ -77,6 +77,8 @@ export class HomePage implements OnInit {
 
   public isPress:boolean = false;
 
+  public isSearch:string ="";
+
   constructor(
     private platform: Platform,
     private elmRef: ElementRef,
@@ -1160,5 +1162,25 @@ clearData(){
       this.native.toast_trans("common.textcopied");
     }).catch(()=>{
     });
+  }
+
+  getItems(events:any){
+    this.isSearch = events.target.value || "";
+    if(events.target.value == ""){
+        this.refreshPostList();
+        return;
+    }
+
+    this.postList = _.filter(this.postList,(post:any)=>{
+      let text = this.getContentText(post.content);
+      return text.toLowerCase().indexOf(events.target.value.toLowerCase()) > -1;
+    })
+
+    // this.postList = this.postList.filter(
+    //   (post:any)=>{
+    //     let text = this.getContentText(post.content);
+    //     text.toLowerCase().indexOf(events.target.value.toLowerCase()) > -1
+    //   }
+    // );
   }
 }
