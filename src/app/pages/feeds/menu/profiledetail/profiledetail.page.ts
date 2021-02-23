@@ -68,18 +68,27 @@ export class ProfiledetailPage implements OnInit {
       })
     }
 
-    this.profileDetails.push({
-      type: this.translate.instant('ProfiledetailPage.telephone'),
-      details:this.telephone
-    })
-    this.profileDetails.push({
-      type: this.translate.instant('ProfiledetailPage.email'),
-      details: this.email
-    })
-    this.profileDetails.push({
-      type: this.translate.instant('ProfiledetailPage.location'),
-      details: this.location
-    })
+    if(this.telephone !="还未设置"){
+      this.profileDetails.push({
+        type: this.translate.instant('ProfiledetailPage.telephone'),
+        details:this.telephone
+      })
+    }
+
+    if(this.email!="还未设置"){
+      this.profileDetails.push({
+        type: this.translate.instant('ProfiledetailPage.email'),
+        details: this.email
+      })
+    }
+
+    if(this.location!="还未设置"){
+      this.profileDetails.push({
+        type: this.translate.instant('ProfiledetailPage.location'),
+        details: this.location
+      })
+    }
+
   }
 
   ionViewWillEnter() {
