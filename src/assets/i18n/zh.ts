@@ -132,7 +132,8 @@ export const zh = {
         "daysAgo":"天前",
         "onedayAgo":"天前",
         "onehourAgo":"小时前",
-        "oneminuteAgo":"分钟前"
+        "oneminuteAgo":"分钟前",
+        "searchPosts":"搜索"
     },
     "ProfilePage":{
         "myFeeds":"我的Feeds",

@@ -131,7 +131,8 @@ export const en = {
         "daysAgo":" days ago",
         "onedayAgo":" day ago",
         "onehourAgo":" hour ago",
-        "oneminuteAgo":" minute ago"
+        "oneminuteAgo":" minute ago",
+        "searchPosts":"Search Posts"
     },
     "ProfilePage":{
         "myFeeds":"My Feeds",
