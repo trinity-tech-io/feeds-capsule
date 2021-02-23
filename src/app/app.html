@@ -2,7 +2,7 @@
     <ion-menu side="end" type="overlay" menuId="menu" [class.darkMenu]="theme.darkMode" contentId="my-content">
         <ion-content>
 
-            <ion-row class="profile-card">
+            <ion-row class="profile-card" (click)="profiledetail()">
                 <ion-col size="12" class="left-col">
                     <img [src]="handleImages()"/>
                     <h1>{{ name }}</h1>

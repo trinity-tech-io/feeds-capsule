@@ -1,5 +1,5 @@
 import { Component} from '@angular/core';
-import { Platform, ModalController, Events,PopoverController} from '@ionic/angular';
+import { Platform, ModalController, Events,PopoverController,MenuController} from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { FeedService, Avatar } from './services/FeedService';
@@ -43,7 +43,8 @@ export class MyApp {
     public storageService:StorageService,
     public popupProvider:PopupProvider,
     private popoverController:PopoverController,
-    private logUtils: LogUtils
+    private logUtils: LogUtils,
+    private menuController:MenuController
   ) {
       this.initializeApp();
       this.initProfileData();
@@ -279,6 +280,11 @@ export class MyApp {
       this.popoverController.dismiss();
       this.popover = null;
     }
+  }
+
+  profiledetail(){
+    this.menuController.close();
+    this.native.navigateForward('/menu/profiledetail',"");
   }
 
 }
