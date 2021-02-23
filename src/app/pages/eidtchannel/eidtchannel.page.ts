@@ -1,6 +1,6 @@
 import { Component, OnInit,NgZone } from '@angular/core';
 import { TranslateService } from "@ngx-translate/core";
-import { Events} from '@ionic/angular';
+import { Events,PopoverController} from '@ionic/angular';
 import { ThemeService } from 'src/app/services/theme.service';
 import { FeedService } from 'src/app/services/FeedService';
 import { ActivatedRoute } from '@angular/router';
@@ -35,7 +35,8 @@ constructor(
   private events: Events,
   private native: NativeService,
   private zone:NgZone,
-  private httpService:HttpService
+  private httpService:HttpService,
+  private popoverController:PopoverController
 ) {
   }
 
@@ -89,6 +90,10 @@ ionViewDidEnter(){
 }
 
 ionViewWillLeave(){
+  let value =  this.popoverController.getTop()["__zone_symbol__value"] || "";
+  if(value!=""){
+    this.popoverController.dismiss();
+  }
   this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
   this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
   this.events.unsubscribe(FeedsEvent.PublishType.editFeedInfoFinish);

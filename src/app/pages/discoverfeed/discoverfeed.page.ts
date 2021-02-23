@@ -1,5 +1,5 @@
 import { Component, OnInit, NgZone,ViewChild} from '@angular/core';
-import { Events } from '@ionic/angular';
+import { Events,PopoverController} from '@ionic/angular';
 import { NativeService } from 'src/app/services/NativeService';
 import { TranslateService } from "@ngx-translate/core";
 import { FeedService } from 'src/app/services/FeedService';
@@ -61,7 +61,8 @@ export class DiscoverfeedPage implements OnInit {
     private events: Events,
     private feedService: FeedService,
     public theme: ThemeService,
-    public httpService:HttpService) { }
+    public httpService:HttpService,
+    private popoverController:PopoverController) { }
 
   ngOnInit() {
     this.pageNum =1;
@@ -93,6 +94,10 @@ export class DiscoverfeedPage implements OnInit {
   }
 
   ionViewWillLeave(){
+    let value =  this.popoverController.getTop()["__zone_symbol__value"] || "";
+    if(value!=""){
+      this.popoverController.dismiss();
+    }
     this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
     this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
     this.events.unsubscribe(FeedsEvent.PublishType.serverStatisticsChanged);

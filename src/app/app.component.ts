@@ -253,7 +253,7 @@ export class MyApp {
       return 'assets/images/default-contact.svg';
     }
 
-    return 'data:'+this.avatar.contentType+';base64,'+this.avatar.data;
+    return 'data:'+contentType+';base64,'+this.avatar.data;
   }
 
   settings(){

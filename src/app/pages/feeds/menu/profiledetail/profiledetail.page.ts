@@ -41,7 +41,7 @@ export class ProfiledetailPage implements OnInit {
     private events: Events,
     private carrierService:CarrierService
   ) {
-     
+
     }
 
   ngOnInit() {
@@ -67,7 +67,7 @@ export class ProfiledetailPage implements OnInit {
         details:carrierUserId
       })
     }
- 
+
     this.profileDetails.push({
       type: this.translate.instant('ProfiledetailPage.telephone'),
       details:this.telephone
@@ -86,7 +86,7 @@ export class ProfiledetailPage implements OnInit {
     this.developerMode = this.feedService.getDeveloperMode();
     this.initTitle();
     this.native.setTitleBarBackKeyShown(true);
-    
+
     let signInData = this.feedService.getSignInData() || {};
     this.name = signInData["nickname"] || signInData["name"] || "";
     this.avatar = signInData["avatar"] || null;
@@ -133,8 +133,8 @@ export class ProfiledetailPage implements OnInit {
     if(contentType === "" || cdata === ""){
       return 'assets/images/default-contact.svg';
     }
-    
-    return 'data:'+this.avatar.contentType+';base64,'+this.avatar.data
+
+    return 'data:'+contentType+';base64,'+this.avatar.data;
   }
 
   copytext(text:any){
@@ -143,11 +143,11 @@ export class ProfiledetailPage implements OnInit {
       this.native.copyClipboard(text).then(()=>{
         this.native.toast_trans("common.copysucceeded");
     }).catch(()=>{
-  
+
     });;
     }
- 
+
   }
-  
+
 
 }
