@@ -1,11 +1,12 @@
-import { Component, OnInit, NgZone} from '@angular/core';
+import { Component, OnInit,ViewChild,NgZone} from '@angular/core';
 import { FeedService } from 'src/app/services/FeedService';
-import { Events,PopoverController } from '@ionic/angular';
+import { Events,PopoverController,IonRefresher  } from '@ionic/angular';
 import { NativeService } from 'src/app/services/NativeService';
 import { ThemeService } from 'src/app/services/theme.service';
 import { MenuService } from 'src/app/services/MenuService';
 import { UtilService } from 'src/app/services/utilService';
 import { PopupProvider } from 'src/app/services/popup';
+import * as _ from 'lodash';
 @Component({
   selector: 'app-search',
   templateUrl: './search.page.html',
@@ -14,6 +15,7 @@ import { PopupProvider } from 'src/app/services/popup';
 
 
 export class SearchPage implements OnInit {
+  @ViewChild(IonRefresher,{static:true}) ionRefresher:IonRefresher;
 
   public connectionStatus = 1;
   public nodeStatus: any = {};
@@ -21,8 +23,10 @@ export class SearchPage implements OnInit {
   public popover:any = "";
   public curAddingItem = {};
   public addingChanneList = [];
+  public searchAddingChanneList = [];
   public hideUnFollowFeeds:boolean = false;
   public isSearch:string ="";
+  public searchfeedsList = [];
   // {
   //   "nodeId": "8Dsp9jkTg8TEfCkwMoXimwjLeaRidMczLZYNWbKGj1SF",
   //   "did": "did:elastos:ibfZa4jQ1QgDRP9rpfbUbZWpXgbd9z7oKF",
@@ -69,7 +73,8 @@ export class SearchPage implements OnInit {
       this.zone.run(() => {
         // this.channelList  = this.feedService.getChannelsList();
         // this.initnodeStatus();
-        this.addingChanneList = this.feedService.getToBeAddedFeedsList();
+        this.addingChanneList = this.feedService.getToBeAddedFeedsList() || [];
+        this.searchAddingChanneList = _.cloneDeep(this.addingChanneList);
         this.initChannelData();
       });
     });
@@ -111,7 +116,8 @@ export class SearchPage implements OnInit {
 
     this.events.subscribe(FeedsEvent.PublishType.addFeedStatusChanged,()=>{
       this.zone.run(() => {
-        this.addingChanneList = this.feedService.getToBeAddedFeedsList();
+        this.addingChanneList = this.feedService.getToBeAddedFeedsList() || [];
+        this.searchAddingChanneList = _.cloneDeep(this.addingChanneList);
       });
     });
   }
@@ -143,6 +149,7 @@ export class SearchPage implements OnInit {
   init(){
     this.connectionStatus = this.feedService.getConnectionStatus();
     this.addingChanneList = this.feedService.getToBeAddedFeedsList() || [];
+    this.searchAddingChanneList = _.cloneDeep(this.addingChanneList);
     this.initChannelData();
     this.initSubscribe();
   }
@@ -165,6 +172,7 @@ export class SearchPage implements OnInit {
       return;
     }
     this.feedsList = channelData;
+    this.searchfeedsList = _.cloneDeep(this.feedsList);
     this.initnodeStatus();
   }
 
@@ -190,15 +198,19 @@ export class SearchPage implements OnInit {
   getItems(events){
     this.isSearch = events.target.value || "";
     if(events.target.value == ""){
+      this.ionRefresher.disabled = false;
       this.initChannelData();
       this.addingChanneList = this.feedService.getToBeAddedFeedsList() || [];
+      this.searchAddingChanneList = _.cloneDeep(this.addingChanneList);
+      return;
     }
+    this.ionRefresher.disabled = true;
 
-    this.addingChanneList = this.addingChanneList.filter(
+    this.addingChanneList = this.searchAddingChanneList.filter(
       channel=>channel.feedName.toLowerCase().indexOf(events.target.value.toLowerCase()) > -1
     );
 
-    this.feedsList = this.feedsList.filter(
+    this.feedsList = this.searchfeedsList.filter(
       channel=>channel.name.toLowerCase().indexOf(events.target.value.toLowerCase()) > -1
     );
 
