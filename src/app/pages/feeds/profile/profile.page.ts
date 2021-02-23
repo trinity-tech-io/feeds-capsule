@@ -526,7 +526,7 @@ export class ProfilePage implements OnInit {
       return 'assets/images/default-contact.svg';
     }
 
-    return 'data:'+this.avatar.contentType+';base64,'+this.avatar.data
+    return 'data:'+contentType+';base64,'+this.avatar.data
   }
 
   showMenuMore(item:any){

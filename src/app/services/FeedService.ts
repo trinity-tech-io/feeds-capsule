@@ -9,7 +9,6 @@ import { NativeService } from 'src/app/services/NativeService';
 import { SerializeDataService } from 'src/app/services/SerializeDataService';
 import { JWTMessageService } from 'src/app/services/JWTMessageService';
 import { ConnectionService } from 'src/app/services/ConnectionService';
-import { HttpService } from 'src/app/services/HttpService';
 import { FormatInfoService } from 'src/app/services/FormatInfoService';
 import { SessionService } from 'src/app/services/SessionService';
 import { PopupProvider } from 'src/app/services/popup';
@@ -424,7 +423,6 @@ export class FeedService {
     private translate: TranslateService,
     private storeService: StorageService,
     private connectionService: ConnectionService,
-    private httpService: HttpService,
     private formatInfoService: FormatInfoService,
     private sessionService:SessionService,
     private popupProvider:PopupProvider,
@@ -2460,7 +2458,7 @@ export class FeedService {
 
     let lastCommentUpdateKey = this.getPostId(nodeId, channelId, 0);
     this.updateLastCommentUpdate(lastCommentUpdateKey, nodeId, channelId, 0, updatedAt);
-    
+
     // }
   }
 
@@ -3325,7 +3323,7 @@ export class FeedService {
       if (!this.checkSyncPostStatus(nodeId, channel_id)){
         this.generateSyncPostStatus(nodeId, channel_id, false, updatedAt);
       }
-      
+
       if(this.postMap[mPostId] == undefined){
         let nodeChannelId = this.getChannelId(nodeId, channel_id);
         if (!this.checkChannelIsMine(nodeId, channel_id))
@@ -4763,7 +4761,7 @@ export class FeedService {
       if (this.getMyChannelList().length == 0)
         this.getMyChannels(friendId,Communication.field.last_update,0,0,0);
     }
-    
+
     let list = this.getSubscribedChannelsFromNodeId(friendId);
     if (list.length>0){
       this.updateSubscribedFeedsWithTime(friendId);

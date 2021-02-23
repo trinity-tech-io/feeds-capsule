@@ -1,6 +1,8 @@
 import {Injectable} from '@angular/core';
 import { HttpClient,HttpHeaders} from '@angular/common/http';
 import { NativeService } from 'src/app/services/NativeService';
+import { PopupProvider } from 'src/app/services/popup';
+import { PopoverController} from '@ionic/angular';
 @Injectable()
 export class HttpService{
   public httpOptions = {
@@ -8,11 +10,12 @@ export class HttpService{
         "Content-Type": "application/json"
       })
   };
-
-
+  public popover:any = null;
   constructor(
            public httpClient:HttpClient,
-           public native:NativeService
+           public native:NativeService,
+           public popupProvider:PopupProvider,
+           private popoverController: PopoverController,
            ){
 
   }
@@ -34,7 +37,7 @@ export class HttpService{
         if(isLoading){
           this.native.hideLoading();
         }
-        this.native.toast("common.httperror");
+        this.openAlert();
         reject(error);
       })
     })
@@ -57,10 +60,32 @@ export class HttpService{
         if(isLoading){
           this.native.hideLoading();
         }
-        this.native.toast(JSON.stringify(error));
+        this.openAlert();
         reject(error);
       })
     })
+  }
+
+  openAlert(){
+    let value =  this.popoverController.getTop()["__zone_symbol__value"] || "";
+    if(value!=""){
+      return;
+    }
+    this.popover = this.popupProvider.ionicAlert(
+      this,
+      // "ConfirmdialogComponent.signoutTitle",
+      "",
+      "common.httperror",
+      this.confirm,
+      'tskth.svg'
+    );
+  }
+
+  confirm(that:any){
+      if(this.popover!=null){
+         this.popover.dismiss();
+         this.popover = null;
+      }
   }
 
 
