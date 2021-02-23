@@ -247,25 +247,28 @@ export class ServerInfoPage implements OnInit {
       details: server.introduction || ""
     });
 
-    let version = this.feedService.getServerVersionByNodeId(server.nodeId)
-    if (version != ""){
-      this.serverDetails.push({
-        type: this.translate.instant('ServerInfoPage.version'),
-        details: version || "<1.3.0(Outdated)",
-      });
+    if(this.developerMode){
+      let version = this.feedService.getServerVersionByNodeId(server.nodeId)
+      if (version != ""){
+        this.serverDetails.push({
+          type: this.translate.instant('ServerInfoPage.version'),
+          details: version || "<1.3.0(Outdated)",
+        });
+      }
     }
-
     // if (server.elaAddress != "") {
     this.serverDetails.push({
       type: this.translate.instant('IssuecredentialPage.elaaddress'),
       details: server.elaAddress || this.translate.instant('DIDdata.Notprovided')
     });
     // }
+    if(this.developerMode){
+      this.serverDetails.push({
+        type: this.translate.instant('ServerInfoPage.did'),
+        details: this.feedService.rmDIDPrefix(server.did)
+      });
+    }
 
-    this.serverDetails.push({
-      type: this.translate.instant('ServerInfoPage.did'),
-      details: this.feedService.rmDIDPrefix(server.did)
-    });
 
     this.serverDetails.push({
       type: this.translate.instant('ServerInfoPage.feedsSourceQRCode'),
