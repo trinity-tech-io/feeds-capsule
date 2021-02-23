@@ -28,7 +28,7 @@
   </div>
 
   <div class="search-container" [class.dark-search-container]="theme.darkMode" *ngIf="postList.length > 0 || isSearch!=''">
-    <ion-searchbar placeholder="{{ 'SearchPage.searchFeeds' | translate }}" (ionInput)="getItems($event)" mode="ios"></ion-searchbar>
+    <ion-searchbar placeholder="{{ 'SearchPage.searchFeeds' | translate }}" (ionChange)="getItems($event)" mode="ios"></ion-searchbar>
   </div>
 
   <!-- HAS POSTS  -->

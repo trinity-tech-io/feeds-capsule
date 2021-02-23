@@ -8,7 +8,7 @@ import { ThemeService } from 'src/app/services/theme.service';
 import { UtilService } from 'src/app/services/utilService';
 import { TranslateService } from "@ngx-translate/core";
 import { NativeService } from 'src/app/services/NativeService';
-import { IonInfiniteScroll } from '@ionic/angular';
+import { IonInfiniteScroll,IonRefresher } from '@ionic/angular';
 import { AppService } from 'src/app/services/AppService';
 import { LogUtils } from 'src/app/services/LogUtils';
 import { PopupProvider } from 'src/app/services/popup';
@@ -24,6 +24,7 @@ export class HomePage implements OnInit {
 
   @ViewChild(IonContent,{static:true}) content: IonContent;
   @ViewChild(IonInfiniteScroll,{static:true}) infiniteScroll: IonInfiniteScroll;
+  @ViewChild(IonRefresher,{static:true}) ionRefresher:IonRefresher;
 
   myScrollContainer!: HTMLElement;
 
@@ -79,6 +80,8 @@ export class HomePage implements OnInit {
 
   public isSearch:string ="";
 
+  public searchPostList = [];
+
   constructor(
     private platform: Platform,
     private elmRef: ElementRef,
@@ -110,6 +113,7 @@ export class HomePage implements OnInit {
           this.postList =  this.totalData;
           this.infiniteScroll.disabled =true;
         }
+        this.searchPostList = _.cloneDeep(this.postList);
         this.scrollToTop(1);
         this.isLoadimage ={};
         this.isLoadVideoiamge ={};
@@ -139,6 +143,7 @@ export class HomePage implements OnInit {
       this.postList =  this.totalData;
       this.infiniteScroll.disabled =true;
     }
+    this.searchPostList = _.cloneDeep(this.postList);
     this.isLoadimage ={};
     this.isLoadVideoiamge ={};
     this.refreshImage(0);
@@ -590,6 +595,7 @@ clearData(){
         this.zone.run(()=>{
         let len =this.postList.length-1;
         this.postList = this.postList.concat(arr);
+        this.searchPostList = _.cloneDeep(this.postList);
         this.refreshImage(len);
         this.initnodeStatus(arr);
         event.target.complete();
@@ -600,6 +606,7 @@ clearData(){
         this.zone.run(()=>{
             let len =this.postList.length-1;
             this.postList = this.postList.concat(arr);
+            this.searchPostList = _.cloneDeep(this.postList);
             this.refreshImage(len-1);
             this.infiniteScroll.disabled =true;
             this.initnodeStatus(arr);
@@ -1167,20 +1174,17 @@ clearData(){
   getItems(events:any){
     this.isSearch = events.target.value || "";
     if(events.target.value == ""){
+        this.infiniteScroll.disabled = false;
+        this.ionRefresher.disabled = false;
         this.refreshPostList();
         return;
     }
+    this.ionRefresher.disabled = true;
+    this.infiniteScroll.disabled = true;
 
-    this.postList = _.filter(this.postList,(post:any)=>{
+    this.postList = _.filter(this.searchPostList,(post:any)=>{
       let text = this.getContentText(post.content);
       return text.toLowerCase().indexOf(events.target.value.toLowerCase()) > -1;
-    })
-
-    // this.postList = this.postList.filter(
-    //   (post:any)=>{
-    //     let text = this.getContentText(post.content);
-    //     text.toLowerCase().indexOf(events.target.value.toLowerCase()) > -1
-    //   }
-    // );
+    });
   }
 }
