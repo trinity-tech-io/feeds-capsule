@@ -93,7 +93,8 @@ export const zh = {
         "feedsAlreadyAdded": "已添加过该Feed",
         "notFollowYet": "未关注",
         "httperror": "服务异常，稍后再试",
-        "textcopied": "文本已拷贝"
+        "textcopied": "文本已拷贝",
+        "connectionError1":"此Feed当前不在线，待上线后请重试"
     },
     "app":{
         "profileDetails": "档案详情",

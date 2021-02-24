@@ -458,6 +458,11 @@ clearData(){
       return;
     }
 
+    if(this.checkServerStatus(nodeId) != 0){
+      this.native.toastWarn('common.connectionError1');
+      return;
+    }
+
     if (this.checkMyLike(nodeId,channelId,postId)){
       this.feedService.postUnlike(nodeId,Number(channelId),Number(postId),0);
       return ;
@@ -659,20 +664,15 @@ clearData(){
     return 1;
   }
 
-  showCommentPage(nodeId:string, channelId:number, postId:number){
+  showComment(nodeId:string,channelId:number, postId:number) {
+
     if(this.feedService.getConnectionStatus() != 0){
       this.native.toastWarn('common.connectionError');
       return;
     }
 
-    this.pauseVideo(nodeId+channelId+postId);
-    this.native.navigateForward(["comment",nodeId,channelId,postId],"");
-  }
-
-  showComment(nodeId:string,channelId:number, postId:number) {
-
-    if(this.feedService.getConnectionStatus() != 0){
-      this.native.toastWarn('common.connectionError');
+    if(this.checkServerStatus(nodeId) != 0){
+      this.native.toastWarn('common.connectionError1');
       return;
     }
 

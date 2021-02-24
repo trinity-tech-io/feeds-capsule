@@ -117,6 +117,17 @@ export class EditCommentPage implements OnInit {
   }
 
   publishComment(){
+
+    if (this.feedService.getServerStatusFromId(this.nodeId) != 0){
+      this.native.toast_trans("common.connectionError");
+      return;
+    }
+
+    if(this.checkServerStatus(this.nodeId) != 0){
+      this.native.toastWarn('common.connectionError1');
+      return;
+    }
+
     let newComment = this.native.iGetInnerText(this.newComment) || "";
     if(newComment===""){
       this.native.toast_trans('CommentPage.inputComment');

@@ -188,10 +188,25 @@ export class SearchPage implements OnInit {
       return;
     }
 
+    if(this.checkServerStatus(nodeId) != 0){
+      this.native.toastWarn('common.connectionError1');
+      return;
+    }
+
     this.feedService.subscribeChannel(nodeId, id);
   }
 
   async unsubscribe(nodeId: string, name: string, id: number){
+
+    if(this.feedService.getConnectionStatus() != 0){
+      this.native.toastWarn('common.connectionError');
+      return;
+    }
+
+    if(this.checkServerStatus(nodeId) != 0){
+      this.native.toastWarn('common.connectionError1');
+      return;
+    }
     this.menuService.showUnsubscribeMenu(nodeId, id, name);
   }
 
