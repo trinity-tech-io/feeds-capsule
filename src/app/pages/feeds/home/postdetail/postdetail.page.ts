@@ -464,15 +464,18 @@ export class PostdetailPage implements OnInit {
     return this.feedService.indexText(text,20,20);
   }
 
-  showCommentPage(nodeId,channelId,postId){
+  showComment() {
+
+    if(this.checkServerStatus(this.nodeId) != 0){
+      this.native.toastWarn('common.connectionError1');
+      return;
+    }
+
     if(this.feedService.getConnectionStatus() != 0){
       this.native.toastWarn('common.connectionError');
       return;
     }
-    this.native.navigateForward(["comment",nodeId,channelId,postId],"");
-  }
 
-  showComment() {
     this.pauseVideo();
     this.hideComment = false;
   }
@@ -491,6 +494,11 @@ export class PostdetailPage implements OnInit {
       return;
     }
 
+    if(this.checkServerStatus(this.nodeId) != 0){
+      this.native.toastWarn('common.connectionError1');
+      return;
+    }
+
     if (this.checkMyLike()){
       this.feedService.postUnlike(this.nodeId,Number(this.channelId),Number(this.postId),0);
       return ;
@@ -500,8 +508,14 @@ export class PostdetailPage implements OnInit {
   }
 
   likeComment(commentId: number){
+
     if(this.feedService.getConnectionStatus() != 0){
       this.native.toastWarn('common.connectionError');
+      return;
+    }
+
+    if(this.checkServerStatus(this.nodeId) != 0){
+      this.native.toastWarn('common.connectionError1');
       return;
     }
 

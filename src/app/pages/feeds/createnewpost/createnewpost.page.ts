@@ -274,6 +274,11 @@ export class CreatenewpostPage implements OnInit {
       return;
     }
 
+    if(this.checkServerStatus(this.nodeId) != 0){
+      this.native.toastWarn('common.connectionError1');
+      return;
+    }
+
     if (newPost === "" && this.imgUrl === ""&&this.flieUri === ""){
       this.native.toast_trans("CreatenewpostPage.tipMsg");
       return false;

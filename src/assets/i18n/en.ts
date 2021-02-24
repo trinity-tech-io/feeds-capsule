@@ -93,7 +93,8 @@ export const en = {
         "feedsAlreadyAdded": "This feed has already been added",
         "notFollowYet": "Follow",
         "httperror": "Service exception, try again later",
-        "textcopied": "Text copied"
+        "textcopied": "Text copied",
+        "connectionError1":"The feed is being offline now, try it again when it becomes online"
     },
     "app": {
         "profileDetails": "Profile Details",

@@ -101,8 +101,14 @@ export class ChannelsPage implements OnInit {
   }
 
   subscribe(){
+
     if(this.feedService.getConnectionStatus() != 0){
       this.native.toastWarn('common.connectionError');
+      return;
+    }
+
+    if(this.checkServerStatus(this.nodeId) != 0){
+      this.native.toastWarn('common.connectionError1');
       return;
     }
 
@@ -110,6 +116,17 @@ export class ChannelsPage implements OnInit {
   }
 
   tip(){
+
+    if(this.feedService.getConnectionStatus() != 0){
+      this.native.toastWarn('common.connectionError');
+      return;
+    }
+
+    if(this.checkServerStatus(this.nodeId) != 0){
+      this.native.toastWarn('common.connectionError1');
+      return;
+    }
+
     let server = this.feedService.getServerbyNodeId(this.nodeId)||undefined;
 
     if (server == undefined ||server.elaAddress == undefined || server.elaAddress == ""){
@@ -122,6 +139,17 @@ export class ChannelsPage implements OnInit {
   }
 
   async unsubscribe(){
+
+    if(this.feedService.getConnectionStatus() != 0){
+      this.native.toastWarn('common.connectionError');
+      return;
+    }
+
+    if(this.checkServerStatus(this.nodeId) != 0){
+      this.native.toastWarn('common.connectionError1');
+      return;
+    }
+
     this.menuService.showUnsubscribeMenuWithoutName(this.nodeId, Number(this.channelId));
 
   }
@@ -430,6 +458,11 @@ export class ChannelsPage implements OnInit {
       return;
     }
 
+    if(this.checkServerStatus(nodeId) != 0){
+      this.native.toastWarn('common.connectionError1');
+      return;
+    }
+
     if (this.checkMyLike(nodeId,channelId,postId)){
       this.feedService.postUnlike(nodeId,Number(channelId),Number(postId),0);
       return ;
@@ -496,15 +529,6 @@ export class ChannelsPage implements OnInit {
     }
     this.pauseVideo(nodeId+channelId+postId);
     this.native.getNavCtrl().navigateForward(['/postdetail',nodeId, channelId,postId]);
-  }
-
-  showCommentPage(nodeId:string, channelId:string, postId:string){
-    if(this.feedService.getConnectionStatus() != 0){
-      this.native.toastWarn('common.connectionError');
-      return;
-    }
-    this.pauseAllVideo();
-    this.native.navigateForward(["comment",nodeId,channelId,postId],"");
   }
 
   checkMyLike(nodeId: string, channelId: number, postId: number){
@@ -642,10 +666,17 @@ export class ChannelsPage implements OnInit {
 
 
   showComment(nodeId:string, channelId:number, postId:number) {
-      if(this.feedService.getConnectionStatus() != 0){
+
+    if(this.feedService.getConnectionStatus() != 0){
       this.native.toastWarn('common.connectionError');
       return;
     }
+
+    if(this.checkServerStatus(nodeId) != 0){
+      this.native.toastWarn('common.connectionError1');
+      return;
+    }
+
     this.pauseVideo(nodeId+channelId+postId);
     this.postId = postId;
     this.onlineStatus = this.nodeStatus[nodeId];

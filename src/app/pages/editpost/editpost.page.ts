@@ -221,6 +221,11 @@ export class EditPostPage implements OnInit {
       return;
     }
 
+    if(this.checkServerStatus(this.nodeId) != 0){
+      this.native.toastWarn('common.connectionError1');
+      return;
+    }
+
     let newPost = this.native.iGetInnerText(this.newPost);
     if (newPost === "" && this.imgUrl === ""&&this.flieUri === ""){
       this.native.toast_trans("CreatenewpostPage.tipMsg");
