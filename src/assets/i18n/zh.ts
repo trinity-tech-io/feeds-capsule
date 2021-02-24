@@ -287,7 +287,7 @@ export const zh = {
         // "addFeedSource": "添加Feeds出版号",
         // "removeFeedSource": "移除Feeds出版号",
         "deleteFeedSource": "删除出版号",
-        "shareFeedSource": "分享Feeds出版号",
+        // "shareFeedSource": "分享Feeds出版号",
         // "feedUrl": "Feeds URL 网址",
         // "serverInfo": "源信息",
         // "Pleasewait": "请稍候...",
