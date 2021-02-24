@@ -1,7 +1,7 @@
 export const fr = {
     "common": {
         "followers": "Followers",
-        "allempty": "This Feed is empty",
+        "allempty": "All Empty",
         "releaseToRefresh": "Release to refresh",
         "beingRefresh": "Refreshing...",
         "cancel": "Cancel",
@@ -9,7 +9,7 @@ export const fr = {
         "confirm": "Confirm",
         "des": "Clear <strong>all cached data</strong>!!!",
         // "prompt": "Prompt",
-        "des1": "Confirm New Feeds",
+        "des1": "Confirm New Feed",
         "server": "Feeds Publisher Account:",
         // "channel": "Feeds:",
         "description": "Bio:",
@@ -55,7 +55,7 @@ export const fr = {
         "removecomment": "Delete Comment",
         "edit": "( edited )",
         "deleted": "(post deleted)",
-        "promptPublishDidError": "Prompt DID publication error",
+        "promptPublishDidError": "DID publication error",
         "resolveDidDocumentError": "Resolve DID Document error",
         "cdeleted": "(comment deleted)",
         "sharepost": "Share Post",
@@ -123,7 +123,7 @@ export const fr = {
         "tabTitle4": "Explore Feeds"
     },
     "HomePage": {
-        "allempty": "Empty",
+        "allempty": "All Empty",
         "emptyDes": "Not following any Feeds yet",
         "exploreFeeds": "Explore Feeds",
         "minutesAgo": " minutes ago",
@@ -141,7 +141,7 @@ export const fr = {
     "MyfeedsComponent": {
         "emptyDes": "You have no Feeds",
         "createFeed": "Create Feeds",
-        "createNewFeed": "Create New Feeds"
+        "createNewFeed": "Create New Feed"
     },
     "FollowingComponent": {
         "emptyDes": "Not following any Feeds yet",
@@ -179,7 +179,7 @@ export const fr = {
         "des1": "Your subscription request to this feed is ongoing; this takes a few seconds. Would you like to cancel this subscription？",
     },
     "ChannelsPage": {
-        "feeds": "Feeds",
+        "feeds": "Feed",
         // "follow": "Follow",
         // "following": "Following",
         "tip": "Tip"
@@ -192,14 +192,14 @@ export const fr = {
         "likedComment": "Liked your comment"
     },
     "CreatenewfeedPage": {
-        "createNewFeed": "Create New Feeds",
+        "createNewFeed": "Create New Feed",
         "profileImage": "Avatar",
         "des": "PICK AN IMAGE FOR YOUR FEED",
         // "des1": "Avatar selected",
         "channelSource": "Feeds Publisher Account",
         "name": "Name",
         "description": "Bio",
-        "createFeed": "Create Feeds",
+        "createFeed": "Create Feed",
         "tipMsg": "Select an avatar",
         "tipMsg1": "Add name",
         "tipMsg2": "Add Bio",
@@ -208,10 +208,10 @@ export const fr = {
         "inputName": "ADD NAME",
         "inputFeedDesc": "ADD BIO",
         // "channelSourceDes": "WHERE TO STORE YOUR FEEDS?",
-        "createfeedsuccess": "Feeds created successfully!",
+        "createfeedsuccess": "Feed created successfully!",
         "tipMsgLength1": "The maximum length of the name message is 32 characters",
         "alreadyExist": "Feed already exists. Please change the name and try again",
-        "nameContainInvalidChars": "Feed Name can not include characters except alphabet letters A-Z, a-z,digits 0-9, the hyphen “-”, and the underscore “_”.",
+        "nameContainInvalidChars": "Feed Name can not include characters except alphabet letters A-Z, a-z, digits 0-9, the hyphen “-”, and the underscore “_”.",
     },
     "ProfileimagePage": {
         "title": "Profile Image",
@@ -374,7 +374,7 @@ export const fr = {
     },
     "FinishPage": {
         "introduce": "Completed binding for the Feeds Publisher Account. Congratulations, you have your own Feeds Publisher Account now, and you can create a Feed on this Feeds Publisher Account with your desire.",
-        "introduce1": "Create new Feeds",
+        "introduce1": "Create new Feed",
         "introduce2": "Return to main screen",
     },
     "PostfromComponent": {
@@ -478,7 +478,7 @@ export const fr = {
         "title": "Edit Account",
     },
     "EidtchannelPage": {
-        "title": "Edit Feeds Info",
+        "title": "Edit Feed Info",
     },
     "EditPostPage": {
         "title": "Edit Post",
@@ -513,17 +513,17 @@ export const fr = {
         "emptyDes": "There are no public Feeds"
     },
     "DiscoverfeedinfoPage": {
-        "title": "Feeds details",
+        "title": "Feed details",
         // "addFeed": "Add Feeds",
         "feeds": "Name",
         "follow": "Follow",
         "unfollow": "Following",
         "processing": "Processing",
         // "beingProcessing": "Currently processing for confirmation",
-        "feedsQrcode": "Feeds QR Code"
+        "feedsQrcode": "Feed QR Code"
     },
     "FeedinfoPage": {
-        "title": "Feeds details",
-        "feeds": "Feeds"
+        "title": "Feed details",
+        "feeds": "Feed"
     }
 };
