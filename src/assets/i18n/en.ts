@@ -258,10 +258,10 @@ export const en = {
     // },
     "AddServerPage": {
         "scanOrEnterAddress": "Scan or Manually Enter",
-        "sourceAddress": "Feeds Address",
+        "sourceAddress": "Feed Address",
         "openQRScanner": "Open QR Scanner",
         "confirm": "Confirm",
-        "sourceaddresshere": "Enter Feeds address here",
+        "sourceaddresshere": "Enter Feed address here",
         "tipMsg": "Possible URL error",
         // "exploreFeedSources": "Explore Feeds Publisher Account",
         "title": "Add a New Feed",

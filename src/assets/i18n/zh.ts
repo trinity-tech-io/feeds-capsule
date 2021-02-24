@@ -259,10 +259,10 @@ export const zh = {
     //   },
     "AddServerPage":{
         "scanOrEnterAddress": "扫描或请直接输入",
-        "sourceAddress": "Feeds地址",
+        "sourceAddress": "Feed地址",
         "openQRScanner": "扫描二维码",
         "confirm": "确认",
-        "sourceaddresshere": "输入Feeds地址",
+        "sourceaddresshere": "输入Feed地址",
         "tipMsg": "URL地址可能错误",
         // "exploreFeedSources": "探索Feeds出版号",
         "title": "添加Feeds",
