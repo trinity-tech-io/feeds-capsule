@@ -345,27 +345,27 @@ declare module Communication{
         }
     }
     
-    type get_my_channels_metadata_request = {
-        version: "1.0"
-        method : "get_my_channels_metadata"
-        id     : jsonrpc_id
-        params : {
-            access_token    : string
-            by              : field
-            upper_bound     : number | null
-            lower_bound     : number | null
-            max_count       : number
-        }
-    }
+    // type get_my_channels_metadata_request = {
+    //     version: "1.0"
+    //     method : "get_my_channels_metadata"
+    //     id     : jsonrpc_id
+    //     params : {
+    //         access_token    : string
+    //         by              : field
+    //         upper_bound     : number | null
+    //         lower_bound     : number | null
+    //         max_count       : number
+    //     }
+    // }
 
-    type get_my_channels_metadata_response = {
-        version: "1.0"
-        id     : jsonrpc_id
-        result : {
-            id          : number
-            subscribers : number
-        }[]
-    }
+    // type get_my_channels_metadata_response = {
+    //     version: "1.0"
+    //     id     : jsonrpc_id
+    //     result : {
+    //         id          : number
+    //         subscribers : number
+    //     }[]
+    // }
     
     type get_channels_request = {
         version: "1.0"

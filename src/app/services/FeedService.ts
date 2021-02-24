@@ -17,24 +17,25 @@ import { StandardAuthService } from 'src/app/services/StandardAuthService';
 import { AddFeedService } from 'src/app/services/AddFeedService';
 
 import * as _ from 'lodash';
+import { DataHelper } from "./DataHelper";
 
 declare let didManager: DIDPlugin.DIDManager;
 declare let appManager: AppManagerPlugin.AppManager;
 declare let didSessionManager: DIDSessionManagerPlugin.DIDSessionManager;
 
-let TAG: string = "Feeds-service";
+const TAG: string = "Feeds-service";
 let versionCode: number = 10500;
 let newAuthVersion: number = 10400;
 let newCommentVersion: number = 10400;
 let newMultiPropCountVersion: number = 10500;
-let subscribedChannelsMap:{[nodeChannelId: string]: FeedsData.Channels};
-let channelsMap:{[nodeChannelId: string]: FeedsData.Channels} ;
+
+// let subscribedChannelsMap:{[nodeChannelId: string]: FeedsData.Channels};
+// let channelsMap:{[nodeChannelId: string]: FeedsData.Channels} ;
 let myChannelsMap:{[nodeChannelId: string]: FeedsData.MyChannel};
 let unreadMap:{[nodeChannelId: string]: number};
 let serverStatisticsMap:{[nodeId: string]: FeedsData.ServerStatistics};
 let commentsMap:{[nodeId: string]: FeedsData.NodeChannelPostComment};
 let serversStatus:{[nodeId: string]: FeedsData.ServerStatus};
-let creationPermissionMap:{[nodeId: string]: boolean};
 let likeMap:{[key:string]:FeedsData.Likes};
 let likeCommentMap:{[nodechannelpostCommentId: string]: FeedsData.LikedComment};
 let lastPostUpdateMap:{[nodeChannelId:string]: FeedsData.PostUpdateTime};
@@ -49,7 +50,6 @@ let bindingServerCache: FeedsData.Server;
 let serverMap: {[nodeId: string]: FeedsData.Server};
 
 let accessTokenMap:{[nodeId:string]:FeedsData.AccessToken};
-let signInServerList = [];
 
 let notificationList: FeedsData.Notification[] = [];
 
@@ -87,51 +87,7 @@ export class Avatar {
 }
 
 let expDay = 10;
-
 let eventBus = null;
-
-let currentFeedEventKey: string = "";
-
-let postEventTmp: FeedEvents;
-
-
-export class AllFeed{
-  constructor(
-    public nodeId: string,
-    public avatar: string,
-    public topic: string,
-    public desc: string,
-    public subscribeState: string){
-  }
-}
-
-export class MyFeed {
-  constructor(
-    public avatar: string,
-    public nodeId: string,
-    public name: string,
-    public desc: string,
-    public lastUpdated: string,
-    public imageUrl: string,
-    public lastEvent: string,
-    public archive: boolean) {}
-}
-
-export class FeedEvents{
-  constructor(
-    public nodeId: string,
-    public topic: string,
-    public timestamp: string,
-    public message: string,
-    public seqno: number,
-    public imageUrl: string){
-  }
-}
-
-export class FeedIntro{
-  constructor(public description: string){
-  }
-}
 
 @Injectable()
 export class FeedService {
@@ -165,7 +121,6 @@ export class FeedService {
   private declareOwnerTimeout: NodeJS.Timer;
   private declareOwnerInterval: NodeJS.Timer;
   private isDeclareFinish: boolean = false;
-  // private lastFeedUpdateMap:{[nodeId:string]: FeedUpdateTime};
   private lastSubscribedFeedsUpdateMap:{[nodeId:string]: FeedsData.FeedUpdateTime};
   private lastCommentUpdateMap:{[key: string]: FeedsData.CommentUpdateTime};
   private lastMultiLikesAndCommentsCountUpdateMap:{[key: string]: FeedsData.LikesAndCommentsCountUpdateTime};
@@ -194,7 +149,8 @@ export class FeedService {
     private popupProvider:PopupProvider,
     private logUtils: LogUtils,
     private standardAuth: StandardAuthService,
-    private addFeedService: AddFeedService
+    private addFeedService: AddFeedService,
+    private dataHelper: DataHelper
   ) {
     eventBus = events;
     this.init();
@@ -267,19 +223,7 @@ export class FeedService {
   }
 
   loadChannelData(){
-    return new Promise((resolve, reject) =>{
-      let channels = channelsMap || "";
-      if( channels == ""){
-        this.storeService.get(FeedsData.PersistenceKey.channelsMap).then((mChannelMap)=>{
-          channelsMap = mChannelMap || {};
-          resolve(mChannelMap);
-        }).catch((error)=>{
-          reject(error);
-      });
-      }else{
-          resolve(channels);
-      }
-    });
+    return this.dataHelper.loadChannelsMap();
   }
 
   loadCredential(){
@@ -386,21 +330,9 @@ export class FeedService {
     });
   }
 
-  loadSubscribedChannels(){
-    return new Promise((resolve, reject) =>{
-      let subscribedChannels = subscribedChannelsMap || "";
-      if( subscribedChannels == ""){
-          this.storeService.get(FeedsData.PersistenceKey.subscribedChannelsMap).then((mSubscribedChannelsMap)=>{
-              subscribedChannelsMap = mSubscribedChannelsMap || {};
-              resolve(mSubscribedChannelsMap);
-          }).catch((error)=>{
-              reject(error);
-          });
-      }else{
-          resolve(subscribedChannels);
-      }
-    });
-  }
+  // loadSubscribedChannels(){
+  //   return this.dataHelper.loadSubscribedChannels();
+  // }
 
   loadComments(){
     return new Promise((resolve, reject) =>{
@@ -515,22 +447,6 @@ export class FeedService {
     });
   }
 
-  // loadLastFeedUpdateMap(){
-  //   return new Promise((resolve, reject) =>{
-  //     let lastFeedUpdate = this.lastFeedUpdateMap || "";
-  //     if( lastFeedUpdate == ""){
-  //       this.storeService.get(PersistenceKey.lastFeedUpdateMap).then((mLastFeedUpdateMap)=>{
-  //         this.lastFeedUpdateMap = mLastFeedUpdateMap || {};
-  //         resolve(mLastFeedUpdateMap);
-  //       }).catch(()=>{
-  //         reject();
-  //       });
-  //     }else{
-  //         resolve(lastFeedUpdate);
-  //     }
-  //   });
-  // }
-
   loadLastCommentUpdateMap(){
     return new Promise((resolve, reject) =>{
       let lastCommentUpdate = this.lastCommentUpdateMap || "";
@@ -595,7 +511,6 @@ export class FeedService {
     });
   }
 
-
   async loadData(){
     await Promise.all([
       this.loadServerVersions(),
@@ -607,7 +522,7 @@ export class FeedService {
       this.loadServersStatus(),
       this.loadServerStatistics(),
       this.loadServers(),
-      this.loadSubscribedChannels(),
+      // this.loadSubscribedChannels(),
       this.loadComments(),
       this.loadUnreadMap(),
       this.loadLikeMap(),
@@ -615,7 +530,6 @@ export class FeedService {
       this.loadBindingServer(),
       this.loadNotificationList(),
       this.loadLikeCommentMap(),
-      // this.loadLastFeedUpdateMap(),
       this.loadLastCommentUpdateMap(),
       this.loadLastSubscribedFeedUpdateMap(),
       this.loadSyncCommentStatusMap(),
@@ -674,11 +588,12 @@ export class FeedService {
         serverMap = {};
     });
 
-    this.storeService.get(FeedsData.PersistenceKey.subscribedChannelsMap).then((mSubscribedChannelsMap)=>{
-      subscribedChannelsMap = mSubscribedChannelsMap;
-      if (subscribedChannelsMap == null || subscribedChannelsMap == undefined)
-        subscribedChannelsMap = {};
-    });
+    // this.storeService.get(FeedsData.PersistenceKey.subscribedChannelsMap).then((mSubscribedChannelsMap)=>{
+    //   subscribedChannelsMap = mSubscribedChannelsMap;
+    //   if (subscribedChannelsMap == null || subscribedChannelsMap == undefined)
+    //     subscribedChannelsMap = {};
+    // });
+
 
     this.storeService.get(FeedsData.PersistenceKey.commentsMap).then((mCommentsMap)=>{
       commentsMap = mCommentsMap;
@@ -845,22 +760,7 @@ export class FeedService {
   }
 
   getMyChannelList(){
-    let list: FeedsData.Channels[] = [];
-    myChannelsMap = myChannelsMap || {};
-    let keys: string[] = Object.keys(myChannelsMap);
-    for (const index in keys) {
-      if (myChannelsMap[keys[index]] == undefined)
-        continue;
-
-      if (channelsMap != null && channelsMap != undefined &&
-          channelsMap[keys[index]] != undefined){
-            let channel = channelsMap[keys[index]];
-            list.push(channel);
-          }
-    }
-    list.sort((a, b) => Number(b.last_update) - Number(a.last_update));
-
-    return list;
+    return this.dataHelper.getMyChannelList(FeedsData.SortType.lastUpdateRevert);
   }
 
   getUnreadNumber(nodeChannelId: string){
@@ -879,58 +779,11 @@ export class FeedService {
   }
 
   getChannelsList():FeedsData.Channels[]{
-
-    let list: FeedsData.Channels[] = [];
-    let map = channelsMap || {};
-    let keys: string[] = Object.keys(map);
-
-    for (let index in keys) {
-      let item = channelsMap[keys[index]] || "";
-      if (item == "")
-        continue;
-      list.push(channelsMap[keys[index]]);
-    }
-
-    let sortArr = [];
-
-    sortArr = _.sortBy(list,(item:any)=> {
-      return - Number(item.last_update);
-    });
-
-    return sortArr;
-  }
-
-  getSubscribedFeedsList(): FeedsData.Channels[]{
-    let list: FeedsData.Channels[] = [];
-    let map = subscribedChannelsMap|| {};
-    let keys: string[] = Object.keys(map) || [];
-
-    for (let index = 0; index < keys.length; index++) {
-      const subscribedFeed = subscribedChannelsMap[keys[index]] || null;
-      if (subscribedFeed == null)
-        continue;
-      let feed = this.getChannelFromId(subscribedFeed.nodeId, subscribedFeed.id);
-      if (feed == null || feed == undefined)
-        continue;
-      list.push(feed);
-    }
-
-    return list;
+    return this.dataHelper.getChannelsList();
   }
 
   getFollowedChannelList():FeedsData.Channels[]{
-    // let list: Channels[] = [];
-    // let map = channelsMap || {};
-    // let keys: string[] = Object.keys(map);
-
-    // for (let index in keys) {
-    //   let item = channelsMap[keys[index]] || "";
-    //   if (item == "")
-    //     continue;
-    //   if (channelsMap[keys[index]].isSubscribed)
-    //     list.push(channelsMap[keys[index]]);
-    // }
-    let list = this.getSubscribedFeedsList();
+    let list = this.dataHelper.getSubscribedFeedsList();
 
     let sortArr = [];
 
@@ -942,16 +795,7 @@ export class FeedService {
   }
 
   getChannelsListFromNodeId(nodeId: string): FeedsData.Channels[]{
-    let list: FeedsData.Channels[] = [];
-    let keys: string[] = Object.keys(channelsMap);
-    for (const index in keys) {
-      if (channelsMap[keys[index]] == undefined)
-        continue;
-
-      if (channelsMap[keys[index]].nodeId == nodeId)
-        list.push(channelsMap[keys[index]]);
-    }
-    return list;
+    return this.dataHelper.getChannelsListFromNodeId(nodeId);
   }
 
   getAllChannelDetails(nodeId: string){
@@ -1160,9 +1004,9 @@ export class FeedService {
       case FeedsData.MethodType.get_my_channels:
         this.handleGetMyChannelsResult(nodeId, result, error);
         break;
-      case FeedsData.MethodType.get_my_channels_metadata:
-        this.handleGetMyChannelsMetaDataResult(nodeId, result, error);
-        break;
+      // case FeedsData.MethodType.get_my_channels_metadata:
+      //   this.handleGetMyChannelsMetaDataResult(nodeId, result, error);
+      //   break;
       case FeedsData.MethodType.get_channels:
         this.handleGetChannelsResult(nodeId, result, requestParams, error);
         break;
@@ -1491,13 +1335,6 @@ export class FeedService {
     return uuid;
   }
 
-  checkSignInServerList(nodeId: string){
-    if (signInServerList.indexOf(nodeId) == -1){
-      signInServerList.push(nodeId);
-      eventBus.publish(FeedsEvent.PublishType.signInServerListChanged,signInServerList);
-    }
-  }
-
   checkSignInServerStatus(nodeId: string): boolean{
     let accessToken = accessTokenMap[nodeId] || undefined;
     return this.checkExp(accessToken);
@@ -1713,70 +1550,6 @@ export class FeedService {
   getPostMap(){
   }
 
-  //// do
-
-  // refreshSubscribedChannels(){
-  //   let list = this.getServerList();
-  //   let isLocalRefresh = true;
-
-  //   for (let index = 0; index < list.length; index++) {
-  //     if (serversStatus[list[index].nodeId] == undefined ||
-  //       serversStatus[list[index].nodeId].status == ConnState.disconnected)
-  //       continue;
-  //     else {
-  //       isLocalRefresh = false;
-  //       this.getSubscribedChannels(list[index].nodeId, Communication.field.last_update, 0, 0,10);
-  //     }
-  //   }
-
-  //   if (isLocalRefresh)
-  //     this.refreshLocalSubscribedChannels();
-  // }
-
-  refreshLocalSubscribedChannels():FeedsData.Channels[]{
-    localSubscribedList.slice(0,localSubscribedList.length);
-    localSubscribedList=[];
-    let channels = this.sortChannels(0, subscribedChannelsMap,localSubscribedList);
-    eventBus.publish(FeedsEvent.PublishType.refreshSubscribedChannels,localSubscribedList);
-    return channels;
-  }
-
-  loadMoreSubscribedChannels(){
-  }
-
-  loadMoreLocalSubscribedChannels(){
-    this.sortChannels(localSubscribedList.length, subscribedChannelsMap,localSubscribedList);
-    eventBus.publish(FeedsEvent.PublishType.loadMoreSubscribedChannels,localSubscribedList);
-  }
-
-  // refreshChannels(){
-  //   let list = this.getServerList();
-  //   let isLocalRefresh = true;
-
-  //   for (let index = 0; index < list.length; index++) {
-  //     let nodeId = list[index].nodeId;
-  //     if (serversStatus[nodeId].status == ConnState.disconnected)
-  //       continue;
-  //     else {
-  //       isLocalRefresh = false;
-  //       // let lastFeedUpdate = this.lastFeedUpdateMap[nodeId].time || 0;
-  //       // this.getChannels(nodeId, Communication.field.last_update, 0, lastFeedUpdate, 0);
-  //       this.updateFeed(nodeId, false);
-  //     }
-  //   }
-
-  //   if (isLocalRefresh)
-  //     this.refreshLocalChannels();
-  // }
-
-  refreshLocalChannels():FeedsData.Channels[]{
-    localChannelsList.slice(0,localChannelsList.length);
-    localChannelsList=[];
-    let channels = this.sortChannels(0, channelsMap,localChannelsList);
-    eventBus.publish(FeedsEvent.PublishType.refreshChannels,localChannelsList);
-    return channels;
-  }
-
   sortChannels(start: number, map: {}, localList: FeedsData.Channels[]): FeedsData.Channels[]{
     let list: FeedsData.Channels[] = [];
     if (map ==null || map == undefined)
@@ -1799,41 +1572,6 @@ export class FeedService {
     for (let index = start; index < end; index++)
       localList.push(list[index]);
     return localList;
-  }
-
-  loadMoreMyChannels(){
-    let end: number;
-    let start: number = localMyChannelList.length;
-    if (myChannelsMap == null || myChannelsMap == undefined){
-      eventBus.publish(FeedsEvent.PublishType.loadMoreMyChannel,[]);
-      return;
-    }
-
-    let list: FeedsData.Channels[] = [];
-    let keys: string[] = Object.keys(myChannelsMap);
-    for (const index in keys) {
-      if (myChannelsMap[keys[index]] == null || myChannelsMap[keys[index]] == undefined)
-        continue;
-
-      if (channelsMap != null && channelsMap != undefined &&
-        channelsMap[keys[index]] != undefined){
-          let channel = channelsMap[keys[index]];
-          list.push(channel);
-        }
-    }
-
-    list.sort((a, b) => Number(b.last_update) - Number(a.last_update));
-
-    if (localMyChannelList.length+10>list.length){
-      end = list.length;
-    }else{
-      end = localMyChannelList.length+10;
-    }
-
-    for (let index = start ; index < end; index++)
-      localMyChannelList.push(list[index]);
-
-    eventBus.publish(FeedsEvent.PublishType.loadMoreMyChannel);
   }
 
   //// new request
@@ -1903,13 +1641,13 @@ export class FeedService {
     this.connectionService.getMyChannels(this.getServerNameByNodeId(nodeId), nodeId, field, upper_bound, lower_bound, max_counts,accessToken);
   }
 
-  getMyChannelsMetaData(nodeId: string, field: Communication.field, upper_bound: number,
-                        lower_bound: number, max_counts: number){
-    if(!this.hasAccessToken(nodeId))
-      return;
-    let accessToken: FeedsData.AccessToken = accessTokenMap[nodeId]||undefined;
-    this.connectionService.getMyChannelsMetaData(this.getServerNameByNodeId(nodeId), nodeId, field, upper_bound, lower_bound, max_counts, accessToken);
-  }
+  // getMyChannelsMetaData(nodeId: string, field: Communication.field, upper_bound: number,
+  //                       lower_bound: number, max_counts: number){
+  //   if(!this.hasAccessToken(nodeId))
+  //     return;
+  //   let accessToken: FeedsData.AccessToken = accessTokenMap[nodeId]||undefined;
+  //   this.connectionService.getMyChannelsMetaData(this.getServerNameByNodeId(nodeId), nodeId, field, upper_bound, lower_bound, max_counts, accessToken);
+  // }
 
   getChannels(nodeId: string, field: Communication.field, upper_bound: number,
               lower_bound: number, max_counts: number){
@@ -2334,9 +2072,10 @@ export class FeedService {
     let avatar = this.serializeDataService.decodeData(avatarBin)||"";
 
     let nodeChannelId = this.getChannelId(nodeId, channelId) || "";
+    let originChannel = this.dataHelper.getChannel(nodeChannelId);
 
-    if (channelsMap[nodeChannelId] == undefined){
-      channelsMap[nodeChannelId] = {
+    if (originChannel == null){
+      let channel = {
         nodeId:nodeId,
         id: channelId,
         name: name,
@@ -2349,20 +2088,23 @@ export class FeedService {
         avatar: "",
         isSubscribed: true
       }
+      this.dataHelper.updateChannel(nodeChannelId, channel);
+      eventBus.publish(FeedsEvent.PublishType.editFeedInfoFinish, nodeChannelId);
+      return ;
     }
 
     if (name != "")
-      channelsMap[nodeChannelId].name = name;
+      originChannel.name = name;
     if (desc != "")
-      channelsMap[nodeChannelId].introduction = desc;
+      originChannel.introduction = desc;
     if (avatarBin != "")
-      channelsMap[nodeChannelId].avatar = avatar;
+      originChannel.avatar = avatar;
     if (last_update != "")
-      channelsMap[nodeChannelId].last_update = last_update;
+      originChannel.last_update = last_update;
     if (subscribers != 0)
-      channelsMap[nodeChannelId].subscribers = subscribers;
+      originChannel.subscribers = subscribers;
 
-    this.storeService.set(FeedsData.PersistenceKey.channelsMap,channelsMap);
+    this.dataHelper.updateChannel(nodeChannelId, originChannel);
     eventBus.publish(FeedsEvent.PublishType.editFeedInfoFinish, nodeChannelId);
   }
 
@@ -2520,11 +2262,7 @@ export class FeedService {
     };
     this.storeService.set(FeedsData.PersistenceKey.myChannelsMap,myChannelsMap);
 
-    if (channelsMap == null || channelsMap == undefined)
-      channelsMap = {};
-    channelsMap[nodeChannelId] = channel;
-    // this.storeService.set(FeedsData.PersistenceKey.channelsMap, channelsMap);
-    this.saveChannelMap();
+    this.dataHelper.updateChannel(nodeChannelId, channel);
 
     eventBus.publish(FeedsEvent.PublishType.createTopicSuccess);
     eventBus.publish(FeedsEvent.PublishType.channelsDataUpdate);
@@ -2783,11 +2521,9 @@ export class FeedService {
         channelId: id
       }
 
-      if (channelsMap == null || channelsMap == undefined)
-        channelsMap = {};
-
-      if (channelsMap[nodeChannelId] == undefined){
-        channelsMap[nodeChannelId] = {
+      let originChannel = this.dataHelper.getChannel(nodeChannelId);
+      if (originChannel == null){
+        let channel = {
           nodeId: nodeId,
           id: id,
           name: name,
@@ -2800,6 +2536,8 @@ export class FeedService {
           avatar: avatar,
           isSubscribed:false
         }
+
+        this.dataHelper.updateChannel(nodeChannelId, channel);
       }
 
       this.syncPost(nodeId, id);
@@ -2810,24 +2548,24 @@ export class FeedService {
     eventBus.publish(FeedsEvent.PublishType.myChannelsDataUpdate);
   }
 
-  handleGetMyChannelsMetaDataResult(nodeId: string, result: any, error: any){
-    if (error != null && error != undefined && error.code != undefined){
-      this.handleError(nodeId, error);
-      return;
-    }
+  // handleGetMyChannelsMetaDataResult(nodeId: string, result: any, error: any){
+  //   if (error != null && error != undefined && error.code != undefined){
+  //     this.handleError(nodeId, error);
+  //     return;
+  //   }
 
-    for (let index = 0; index < result.length; index++) {
+  //   for (let index = 0; index < result.length; index++) {
 
-      let id: number = result[index].id;
-      let subscribers: number = result[index];
+  //     let id: number = result[index].id;
+  //     let subscribers: number = result[index];
 
-      let nodeChannelId = this.getChannelId(nodeId, id);
+  //     let nodeChannelId = this.getChannelId(nodeId, id);
 
-      channelsMap[nodeChannelId].subscribers = subscribers;
-    }
-    this.storeService.set(FeedsData.PersistenceKey.myChannelsMap, myChannelsMap);
-    eventBus.publish(FeedsEvent.PublishType.myChannelsDataUpdate);
-  }
+  //     channelsMap[nodeChannelId].subscribers = subscribers;
+  //   }
+  //   this.storeService.set(FeedsData.PersistenceKey.myChannelsMap, myChannelsMap);
+  //   eventBus.publish(FeedsEvent.PublishType.myChannelsDataUpdate);
+  // }
 
   handleGetChannelsResult(nodeId: string, responseResult: any , request: any, error: any){
     let result = responseResult.channels;
@@ -2842,15 +2580,13 @@ export class FeedService {
 
       let nodeChannelId = this.getChannelId(nodeId, id);
 
-      if (channelsMap == null || channelsMap == undefined)
-        channelsMap = {};
-
+      let originChannel = this.dataHelper.getChannel(nodeChannelId);
 
       let avatarBin = result[index].avatar;
       let avatar = this.serializeDataService.decodeData(avatarBin);
       let update = result[index].last_update;
-      if (channelsMap[nodeChannelId] == undefined){
-        channelsMap[nodeChannelId] = {
+      if (originChannel == null){
+        originChannel = {
           nodeId      : nodeId,
           id          : id,
           name        : result[index].name,
@@ -2863,22 +2599,19 @@ export class FeedService {
           avatar      : avatar,
           isSubscribed:false
         }
+
       }else{
-        channelsMap[nodeChannelId].name = result[index].name;
-        channelsMap[nodeChannelId].avatar = avatar;
+        originChannel.name = result[index].name;
+        originChannel.avatar = avatar;
 
-        channelsMap[nodeChannelId].introduction = result[index].introduction;
-        channelsMap[nodeChannelId].owner_name = result[index].owner_name;
-        channelsMap[nodeChannelId].owner_did = result[index].owner_did;
-        channelsMap[nodeChannelId].subscribers = result[index].subscribers;
-        channelsMap[nodeChannelId].last_update = result[index].last_update*1000;
+        originChannel.introduction = result[index].introduction;
+        originChannel.owner_name = result[index].owner_name;
+        originChannel.owner_did = result[index].owner_did;
+        originChannel.subscribers = result[index].subscribers;
+        originChannel.last_update = result[index].last_update*1000;
       }
-
-      // this.updateLastFeedUpdate(nodeId, update);
+      this.dataHelper.updateChannel(nodeChannelId, originChannel);
     }
-    // this.storeService.set(FeedsData.PersistenceKey.channelsMap, channelsMap);
-    this.saveChannelMap();
-    this.refreshLocalChannels();
   }
 
   handleGetChannelDetailResult(nodeId: string, result: any, error: any){
@@ -2899,18 +2632,16 @@ export class FeedService {
     let avatar = this.serializeDataService.decodeData(avatarBin);
 
     let nodeChannelId = this.getChannelId(nodeId, id);
-    if(channelsMap == null || channelsMap == undefined)
-      channelsMap = {}
-    channelsMap[nodeChannelId].avatar = avatar;
-    channelsMap[nodeChannelId].introduction = introduction;
-    channelsMap[nodeChannelId].last_update = last_update;
-    channelsMap[nodeChannelId].name = name;
-    channelsMap[nodeChannelId].owner_name = owner_name;
-    channelsMap[nodeChannelId].owner_did = owner_did;
-    channelsMap[nodeChannelId].subscribers = subscribers;
+    let originChannel = this.dataHelper.getChannel(nodeChannelId);
+    originChannel.avatar = avatar;
+    originChannel.introduction = introduction;
+    originChannel.last_update = last_update;
+    originChannel.name = name;
+    originChannel.owner_name = owner_name;
+    originChannel.owner_did = owner_did;
+    originChannel.subscribers = subscribers;
 
-    this.saveChannelMap();
-    // this.storeService.set(FeedsData.PersistenceKey.channelsMap, channelsMap);
+    this.dataHelper.updateChannel(nodeChannelId, originChannel);
   }
 
   async handleGetSubscribedChannelsResult(nodeId: string, responseResult: any, request: any, error: any){
@@ -2936,40 +2667,11 @@ export class FeedService {
       let avatarBin = result[index].avatar;
 
       let avatar = this.serializeDataService.decodeData(avatarBin);
-
-      if (subscribedChannelsMap == null|| subscribedChannelsMap == undefined)
-        subscribedChannelsMap = {};
-
       let nodeChannelId = this.getChannelId(nodeId, channelId);
-      if (subscribedChannelsMap[nodeChannelId] == undefined){
-        subscribedChannelsMap[nodeChannelId] = {
-          nodeId: nodeId,
-          id: channelId,
-          name: name,
-          introduction: introduction,
-          owner_name: owner_name,
-          owner_did: owner_did,
-          subscribers : subscribers,
-          last_update : last_update*1000,
-          last_post:"",
-          avatar: avatar,
-          isSubscribed:true
-        }
-        // channelsMap
-      }else {
-        subscribedChannelsMap[nodeChannelId].nodeId = nodeId;
-        subscribedChannelsMap[nodeChannelId].id = channelId;
-        subscribedChannelsMap[nodeChannelId].name = name;
-        subscribedChannelsMap[nodeChannelId].introduction = introduction;
-        subscribedChannelsMap[nodeChannelId].owner_name = owner_name;
-        subscribedChannelsMap[nodeChannelId].owner_did = owner_did;
-        subscribedChannelsMap[nodeChannelId].subscribers = subscribers;
-        subscribedChannelsMap[nodeChannelId].last_update = last_update*1000;
-        subscribedChannelsMap[nodeChannelId].avatar = avatar;
-      }
+      let originChannel = this.dataHelper.getChannel(nodeChannelId);
 
-      if (channelsMap[nodeChannelId] == undefined){
-        channelsMap[nodeChannelId] = {
+      if (originChannel == null){
+        originChannel = {
           nodeId: nodeId,
           id: channelId,
           name: name,
@@ -2983,11 +2685,10 @@ export class FeedService {
           isSubscribed:true
         }
       }else{
-        channelsMap[nodeChannelId].isSubscribed = true;
+        originChannel.isSubscribed = true;
       }
+      this.dataHelper.updateChannel(nodeChannelId, originChannel);
 
-      // this.updatePost(nodeId,channelId);
-      // this.updateCommentData(nodeId, channelId);
       if (request.max_count == 1){
         isAddFeeds = true;
         await this.processTobeAddedFeedsFinish(nodeId, channelId);
@@ -3004,8 +2705,6 @@ export class FeedService {
       }
     }
 
-    this.saveChannelMap();
-    this.storeService.set(FeedsData.PersistenceKey.subscribedChannelsMap,subscribedChannelsMap);
     if (!isAddFeeds)
       eventBus.publish(FeedsEvent.PublishType.refreshSubscribedChannels);
   }
@@ -3192,16 +2891,13 @@ export class FeedService {
 
   handleUnsubscribeChannelResult(nodeId:string, request: any, error: any){
     let nodeChannelId = this.getChannelId(nodeId, request.id);
+    let originChannel = this.dataHelper.getChannel(nodeChannelId);
     if (error != null && error != undefined && error.code == -4){
-
-      channelsMap[nodeChannelId].isSubscribed = false;
-      // this.storeService.set(FeedsData.PersistenceKey.channelsMap,channelsMap);
-      this.saveChannelMap();
-
-      subscribedChannelsMap[nodeChannelId] = undefined;
-      this.storeService.set(FeedsData.PersistenceKey.subscribedChannelsMap,subscribedChannelsMap);
-
-      eventBus.publish(FeedsEvent.PublishType.unsubscribeFinish, nodeId,request.id, channelsMap[nodeChannelId].name);
+      if (nodeChannelId != null){
+        originChannel.isSubscribed = false;
+        this.dataHelper.updateChannel(nodeChannelId, originChannel);
+      }
+      eventBus.publish(FeedsEvent.PublishType.unsubscribeFinish, nodeId,request.id, originChannel.name);
       return;
     }
 
@@ -3211,17 +2907,11 @@ export class FeedService {
       return;
     }
 
-    channelsMap[nodeChannelId].isSubscribed = false;
-    subscribedChannelsMap[nodeChannelId] = undefined;
-
-    delete subscribedChannelsMap[nodeChannelId];
-
-    // this.storeService.set(FeedsData.PersistenceKey.channelsMap,channelsMap);
-    this.saveChannelMap();
-    this.storeService.set(FeedsData.PersistenceKey.subscribedChannelsMap,subscribedChannelsMap);
-
-    this.refreshLocalSubscribedChannels();
-
+    if (nodeChannelId != null){
+      originChannel.isSubscribed = false;
+      this.dataHelper.updateChannel(nodeChannelId, originChannel);
+    }
+    // this.refreshLocalSubscribedChannels();
     this.deletePostFromChannel(nodeId, request.id);
 
     this.native.toast(this.formatInfoService.formatUnFollowSuccessMsg(this.getFeedNameById(nodeId, request.id)));
@@ -3242,22 +2932,15 @@ export class FeedService {
     let avatar = this.serializeDataService.decodeData(avatarBin)||"";
 
     let nodeChannelId = this.getChannelId(nodeId, channelId)|| "";
-
+    let originChannel = this.dataHelper.getChannel(nodeChannelId);
     if (name != "")
-      channelsMap[nodeChannelId].name = name;
+      originChannel.name = name;
     if (desc != "")
-      channelsMap[nodeChannelId].introduction = desc;
+      originChannel.introduction = desc;
     if (avatarBin != "")
-      channelsMap[nodeChannelId].avatar = avatar;
-
-    this.storeService.set(FeedsData.PersistenceKey.channelsMap,channelsMap);
+      originChannel.avatar = avatar;
+    this.dataHelper.updateChannel(nodeChannelId, originChannel);
     eventBus.publish(FeedsEvent.PublishType.editFeedInfoFinish, nodeChannelId);
-  }
-
-  handleQueryChannelCreationPermissionResult(nodeId: string, result: any){
-    if (creationPermissionMap == null || creationPermissionMap == undefined)
-      creationPermissionMap = {};
-    creationPermissionMap[nodeId]=result.authorized;
   }
 
   handleEnableNotificationResult(nodeId: string, error: any){
@@ -3269,46 +2952,55 @@ export class FeedService {
 
   doSubscribeChannelFinish(nodeId: string, channelId: number){
     let nodeChannelId = this.getChannelId(nodeId, channelId);
+    let originChannel = this.dataHelper.getChannel(nodeChannelId);
 
-    if (channelsMap == null || channelsMap == undefined ||
-      channelsMap[nodeChannelId] == null || channelsMap[nodeChannelId] == undefined)
+    if (originChannel == null)
       return ;
 
-    channelsMap[nodeChannelId].isSubscribed = true;
+    originChannel.isSubscribed = true;
 
-    let subscribeNum = channelsMap[nodeChannelId].subscribers;
-    channelsMap[nodeChannelId].subscribers = subscribeNum + 1;
+    let subscribeNum = originChannel.subscribers;
+    originChannel.subscribers = subscribeNum + 1;
 
+    this.dataHelper.updateChannel(nodeChannelId, originChannel);
     eventBus.publish(FeedsEvent.PublishType.subscribeFinish, nodeId, channelId);
   }
 
   doSubscribeChannelError(nodeId: string, channelId: number){
     let nodeChannelId = this.getChannelId(nodeId, channelId);
-    channelsMap[nodeChannelId].isSubscribed = false;
+    let originChannel = this.dataHelper.getChannel(nodeChannelId);
 
-    let subscribeNum = channelsMap[nodeChannelId].subscribers;
+    originChannel.isSubscribed = false;
+
+    let subscribeNum = originChannel.subscribers;
     if (subscribeNum > 0 )
-      channelsMap[nodeChannelId].subscribers = subscribeNum - 1;
-
+      originChannel.subscribers = subscribeNum - 1;
+    this.dataHelper.updateChannel(nodeChannelId, originChannel);
     eventBus.publish(FeedsEvent.PublishType.subscribeFinish, nodeId,channelId);
   }
 
   doUnsubscribeChannelFinish(nodeId: string, channelId: number){
     let nodeChannelId = this.getChannelId(nodeId, channelId);
-    channelsMap[nodeChannelId].isSubscribed = false;
-    let subscribeNum = channelsMap[nodeChannelId].subscribers;
-    if (subscribeNum > 0 )
-      channelsMap[nodeChannelId].subscribers = subscribeNum - 1;
+    let originChannel = this.dataHelper.getChannel(nodeChannelId);
 
-    eventBus.publish(FeedsEvent.PublishType.unsubscribeFinish, nodeId, channelId, channelsMap[nodeChannelId].name);
+    originChannel.isSubscribed = false;
+    let subscribeNum = originChannel.subscribers;
+    if (subscribeNum > 0 )
+      originChannel.subscribers = subscribeNum - 1;
+    this.dataHelper.updateChannel(nodeChannelId, originChannel);
+    eventBus.publish(FeedsEvent.PublishType.unsubscribeFinish, nodeId, channelId, originChannel.name);
   }
 
   doUnsubscribeChannelError(nodeId: string, channelId: number){
     let nodeChannelId = this.getChannelId(nodeId, channelId);
-    channelsMap[nodeChannelId].isSubscribed = true;
-    let subscribeNum = channelsMap[nodeChannelId].subscribers;
-    channelsMap[nodeChannelId].subscribers = subscribeNum + 1;
-    eventBus.publish(FeedsEvent.PublishType.unsubscribeFinish, nodeId, channelId, channelsMap[nodeChannelId].name);
+    let originChannel = this.dataHelper.getChannel(nodeChannelId);
+
+    originChannel.isSubscribed = true;
+    let subscribeNum = originChannel.subscribers;
+    originChannel.subscribers = subscribeNum + 1;
+
+    this.dataHelper.updateChannel(nodeChannelId, originChannel);
+    eventBus.publish(FeedsEvent.PublishType.unsubscribeFinish, nodeId, channelId, originChannel.name);
   }
 
   doPostLikeFinish(nodeId: string, channel_id: number, post_id: number, comment_id: number){
@@ -3480,11 +3172,8 @@ export class FeedService {
   }
 
   getChannelFromId(nodeId: string, id: number): FeedsData.Channels{
-    if (channelsMap == null || channelsMap == undefined)
-      return undefined;
-
     let nodeChannelId = this.getChannelId(nodeId, id);
-    return channelsMap[nodeChannelId];
+    return this.dataHelper.getChannel(nodeChannelId);
   }
 
   getPostFromId(nodeId: string, channelId: number, postId: number): FeedsData.Post{
@@ -3547,18 +3236,6 @@ export class FeedService {
 
   }
 
-  getSubscribedChannelNumber(): number{
-    let keys: string[] = Object.keys(subscribedChannelsMap);
-    let num: number = 0;
-    for (const index in keys) {
-      if (subscribedChannelsMap[keys[index]] == null || subscribedChannelsMap[keys[index]] == undefined)
-        continue;
-      num++;
-    }
-
-    return num;
-  }
-
   getOwnChannelNumber(): number{
     let keys: string[] = Object.keys(myChannelsMap);
     let num: number = 0;
@@ -3581,7 +3258,8 @@ export class FeedService {
         continue;
 
       let nodeChannelId = this.getChannelId(this.postMap[keys[index]].nodeId, this.postMap[keys[index]].channel_id);
-      if (subscribedChannelsMap[nodeChannelId] != null || subscribedChannelsMap[nodeChannelId] != undefined)
+      let feed = this.dataHelper.getChannel(nodeChannelId);
+      if (feed.isSubscribed)
         list.push(this.postMap[keys[index]]);
     }
 
@@ -3699,16 +3377,17 @@ export class FeedService {
   // }
 
   updateSubscribedFeed(){
-    let subscribedFeedsMap = subscribedChannelsMap || {}
-    let keys: string[] = Object.keys(subscribedFeedsMap) || [];
-    for (let index = 0; index < keys.length; index++) {
-      const feed = subscribedFeedsMap[keys[index]];
-      if (feed == null || feed == undefined)
-        continue;
-      if (serversStatus[feed.nodeId].status == FeedsData.ConnState.disconnected)
-        continue;
-      this.updateFeedsByFeedId(feed.nodeId, feed.id);
-    }
+    //TODO
+    // let subscribedFeedsMap = this.dataHelper.getSubscribedChannelsMap();
+    // let keys: string[] = Object.keys(subscribedFeedsMap) || [];
+    // for (let index = 0; index < keys.length; index++) {
+    //   const feed = subscribedFeedsMap[keys[index]];
+    //   if (feed == null || feed == undefined)
+    //     continue;
+    //   if (serversStatus[feed.nodeId].status == FeedsData.ConnState.disconnected)
+    //     continue;
+    //   this.updateFeedsByFeedId(feed.nodeId, feed.id);
+    // }
   }
 
   updateSubscribedFeedsWithTime(nodeId: string){
@@ -3738,36 +3417,29 @@ export class FeedService {
   }
 
   getSubscribedChannelsFromNodeId(nodeId: string): FeedsData.Channels[]{
-    let keys: string[] = Object.keys(subscribedChannelsMap);
+    let feedList = this.dataHelper.getChannelsListFromNodeId(nodeId);
     let list: FeedsData.Channels[] = [];
-    for (const index in keys) {
-      if (subscribedChannelsMap[keys[index]] == null || subscribedChannelsMap[keys[index]] == undefined)
+    for (let index = 0; index < feedList.length; index++) {
+      const feed = feedList[index];
+      if (feed == null || feed == undefined)
         continue;
-      if (subscribedChannelsMap[keys[index]].nodeId == nodeId)
-        list.push(subscribedChannelsMap[keys[index]])
+      if (feed.isSubscribed)
+        list.push(feed);
     }
     return list;
   }
 
   checkFeedsIsSubscribed(nodeId: string, feedId: number): boolean{
     let nodeChannelId = this.getChannelId(nodeId, feedId);
-    if (channelsMap == null || channelsMap == undefined ||
-      channelsMap[nodeChannelId] == null || channelsMap[nodeChannelId] == undefined)
+    let originChannel = this.dataHelper.getChannel(nodeChannelId);
+    if (originChannel == null)
       return false;
 
-    return channelsMap[nodeChannelId].isSubscribed;
-  }
-
-  getSubscribedMap(){
-    if (subscribedChannelsMap == null || subscribedChannelsMap == undefined)
-      subscribedChannelsMap = {};
-    return subscribedChannelsMap;
+    return originChannel.isSubscribed;
   }
 
   getChannelsMap(){
-    if (channelsMap == null || channelsMap == undefined)
-      channelsMap = {};
-    return channelsMap;
+    return this.dataHelper.getChannelsMap();
   }
 
   deletePostFromChannel(nodeId: string ,channelId: number){
@@ -4177,7 +3849,7 @@ export class FeedService {
     }
   }
 
-  async handleGetMultiSubscribesCount(nodeId: string, responseResult: any, requestParams: any, error: any){
+  handleGetMultiSubscribesCount(nodeId: string, responseResult: any, requestParams: any, error: any){
     if (error != null && error != undefined && error.code != undefined){
       // this.handleError(nodeId, error);
       return;
@@ -4187,19 +3859,18 @@ export class FeedService {
     for (let index = 0; index < result.length; index++) {
         let channelId = result[index].channel_id;
         let subscribesCount = result[index].subscribers_count;
-        await this.updateLocalSubscribesCount(nodeId,channelId,subscribesCount);
+        this.updateLocalSubscribesCount(nodeId,channelId,subscribesCount);
     }
   }
 
-  async updateLocalSubscribesCount(nodeId: string, channelId: number, subscribesCount: number){
+  updateLocalSubscribesCount(nodeId: string, channelId: number, subscribesCount: number){
     let nodeChannelId = this.getChannelId(nodeId, channelId);
-    if (channelsMap == null || channelsMap == undefined)
-      channelsMap = {};
-    if (channelsMap[nodeChannelId] == null || channelsMap[nodeChannelId] == undefined)
+    let originChannel = this.dataHelper.getChannel(nodeChannelId);
+    if (originChannel == null)
       return ;
 
-    channelsMap[nodeChannelId].subscribers = subscribesCount;
-    await this.storeService.set(FeedsData.PersistenceKey.channelsMap,channelsMap);
+    originChannel.subscribers = subscribesCount;
+    this.dataHelper.updateChannel(nodeId, originChannel);
   }
 
   async handleGetMultiLikesAndCommentsCount(nodeId: string, responseResult: any, requestParams: any, error: any){
@@ -4479,7 +4150,7 @@ export class FeedService {
     }
   }
 
-  updateData(friendId: string){
+  async updateData(friendId: string){
     let toBeAddedFeeds: FeedsData.ToBeAddedFeed[] = this.addFeedService.getToBeAddedFeedsInfoByNodeId(friendId);
     for (let index = 0; index < toBeAddedFeeds.length; index++) {
       let toBeAddedFeed = toBeAddedFeeds[index];
@@ -4490,8 +4161,9 @@ export class FeedService {
       if (this.getMyChannelList().length == 0)
         this.getMyChannels(friendId,Communication.field.last_update,0,0,0);
     }
+    
+    let list = await this.getSubscribedChannelsFromNodeId(friendId);
 
-    let list = this.getSubscribedChannelsFromNodeId(friendId);
     if (list.length>0){
       this.updateSubscribedFeedsWithTime(friendId);
 
@@ -4669,7 +4341,6 @@ export class FeedService {
         await this.removeLastCommentUpdate(nodeId,channelId,postId);
       }
       await this.removeChannelById(nodeId, channelId);
-      await this.removeSubscribedChannelById(nodeId, channelId);
       await this.removeUnreadStatueById(nodeId, channelId);
       await this.removeMyChannelById(nodeId, channelId);
       await this.removeLastPostUpdate(nodeId,channelId);
@@ -4744,11 +4415,9 @@ export class FeedService {
     return this.storeService.set(FeedsData.PersistenceKey.postMap, this.postMap);
   }
 
-  removeChannelById(nodeId: string, channelId: number):Promise<any>{
+  removeChannelById(nodeId: string, channelId: number){
     let nodeChannelId = this.getChannelId(nodeId, channelId);
-    channelsMap[nodeChannelId] = undefined;
-    delete channelsMap[nodeChannelId];
-    return this.storeService.set(FeedsData.PersistenceKey.channelsMap,channelsMap);
+    this.dataHelper.deleteChannel(nodeChannelId);
   }
 
   removeMyChannelById(nodeId: string, channelId: number):Promise<any>{
@@ -4756,13 +4425,6 @@ export class FeedService {
     myChannelsMap[nodeChannelId] = undefined;
     delete myChannelsMap[nodeChannelId];
     return this.storeService.set(FeedsData.PersistenceKey.myChannelsMap, myChannelsMap);
-  }
-
-  removeSubscribedChannelById(nodeId: string, channelId: number):Promise<any>{
-    let nodeChannelId = this.getChannelId(nodeId, channelId);
-    subscribedChannelsMap[nodeChannelId] = undefined;
-    delete subscribedChannelsMap[nodeChannelId];
-    return this.storeService.set(FeedsData.PersistenceKey.subscribedChannelsMap, subscribedChannelsMap);
   }
 
   removeUnreadStatueById(nodeId: string, channelId: number):Promise<any>{
@@ -4972,17 +4634,6 @@ export class FeedService {
     this.updateLikeCommentKey();
     this.updatePostUpdateKey();
     this.updateLastCommentUpdateKey();
-  }
-
-
-
-  saveChannelMap(){
-    if (!this.isSavingChannel){
-      this.isSavingChannel = true;
-      this.storeService.set(FeedsData.PersistenceKey.channelsMap, channelsMap).then(()=>{
-        this.isSavingChannel = false;;
-      });
-    }
   }
 
   processGeneralError(nodeId: string, errorCode: number){
@@ -5268,8 +4919,9 @@ export class FeedService {
   getCachePostKey(nodeId: string, channelId: number, postId: number, commentId: number){
     return this.getKey(nodeId, channelId, postId, commentId)+"-cached";
   }
+
   getKey(nodeId: string, channelId: number, postId: number, commentId: number): string{
-    return nodeId + "-" + channelId + "-"+ postId + "-" + commentId;
+    return this.dataHelper.getKey(nodeId, channelId, postId, commentId);
   }
 
   sendData(nodeId: string, channelId: number, postId: number,
@@ -5701,65 +5353,65 @@ export class FeedService {
   }
 
   updateSubscribedChannelsKey(){
-    let keys: string[] = Object.keys(subscribedChannelsMap) || [];
+    // let keys: string[] = Object.keys(subscribedChannelsMap) || [];
 
-    for (let index = 0; index < keys.length; index++) {
-      let key = keys[index];
-      if(subscribedChannelsMap[key] == undefined){
-        delete subscribedChannelsMap[key];
-        continue;
-      }
+    // for (let index = 0; index < keys.length; index++) {
+    //   let key = keys[index];
+    //   if(subscribedChannelsMap[key] == undefined){
+    //     delete subscribedChannelsMap[key];
+    //     continue;
+    //   }
 
-      let channel = subscribedChannelsMap[key];
-      let nodeId = channel.nodeId;
-      let channelId = channel.id;
+    //   let channel = subscribedChannelsMap[key];
+    //   let nodeId = channel.nodeId;
+    //   let channelId = channel.id;
 
-      let newKey = this.getChannelId(nodeId, channelId);
+    //   let newKey = this.getChannelId(nodeId, channelId);
 
 
-      if(key == newKey)
-        continue;
+    //   if(key == newKey)
+    //     continue;
 
-      subscribedChannelsMap[newKey] = channel;
-      delete subscribedChannelsMap[key];
-    }
-    this.storeService.set(FeedsData.PersistenceKey.subscribedChannelsMap, subscribedChannelsMap);
+    //   subscribedChannelsMap[newKey] = channel;
+    //   delete subscribedChannelsMap[key];
+    // }
+    // this.storeService.set(FeedsData.PersistenceKey.subscribedChannelsMap, subscribedChannelsMap);
   }
 
   updateChannelsKey(){
-    let keys: string[] = Object.keys(channelsMap) || [];
+    // let keys: string[] = Object.keys(channelsMap) || [];
 
-    for (let index = 0; index < keys.length; index++) {
-      let key = keys[index];
-      if(channelsMap[key] == undefined){
-        delete channelsMap[key];
-        continue;
-      }
+    // for (let index = 0; index < keys.length; index++) {
+    //   let key = keys[index];
+    //   if(channelsMap[key] == undefined){
+    //     delete channelsMap[key];
+    //     continue;
+    //   }
 
-      if(unreadMap[key] == undefined){
-        delete unreadMap[key];
-      }
+    //   if(unreadMap[key] == undefined){
+    //     delete unreadMap[key];
+    //   }
 
-      let channel = channelsMap[key];
-      let nodeId = channel.nodeId;
-      let channelId = channel.id;
+    //   let channel = channelsMap[key];
+    //   let nodeId = channel.nodeId;
+    //   let channelId = channel.id;
 
-      let newKey = this.getChannelId(nodeId, channelId);
+    //   let newKey = this.getChannelId(nodeId, channelId);
 
 
-      if(key == newKey)
-        continue;
+    //   if(key == newKey)
+    //     continue;
 
-      let unreadNumber = unreadMap[key];
-      unreadMap[newKey] = unreadNumber;
-      delete unreadMap[key];
+    //   let unreadNumber = unreadMap[key];
+    //   unreadMap[newKey] = unreadNumber;
+    //   delete unreadMap[key];
 
-      channelsMap[newKey] = channel;
-      delete channelsMap[key];
-    }
+    //   channelsMap[newKey] = channel;
+    //   delete channelsMap[key];
+    // }
 
-    this.storeService.set(FeedsData.PersistenceKey.channelsMap, channelsMap);
-    this.storeService.set(FeedsData.PersistenceKey.unreadMap, unreadMap);
+    // this.storeService.set(FeedsData.PersistenceKey.channelsMap, channelsMap);
+    // this.storeService.set(FeedsData.PersistenceKey.unreadMap, unreadMap);
   }
 
   updateMyChannelsKey(){
@@ -6259,13 +5911,6 @@ export class FeedService {
         return ;
       }
 
-      if (isFriend && feeds != null && !feeds.isSubscribed){
-        let nodeChannelId = this.getChannelId(nodeId, decodeResult.feedId);
-        subscribedChannelsMap[nodeChannelId] = undefined;
-        delete subscribedChannelsMap[nodeChannelId];
-        await this.storeService.set(FeedsData.PersistenceKey.subscribedChannelsMap,subscribedChannelsMap);
-      }
-
       this.addFeedService.addFeed(decodeResult, nodeId, avatar, follower, feedName).then((toBeAddedFeed:FeedsData.ToBeAddedFeed)=>{
         if (toBeAddedFeed.friendState == FeedsData.FriendState.IS_FRIEND){
           this.logUtils.logd("addFeed: server is friend");
@@ -6476,14 +6121,15 @@ export class FeedService {
   }
 
   cleanCacheData(){
-    subscribedChannelsMap = {};
-    channelsMap = {};
+    // subscribedChannelsMap = {};
+    // this.dataHelper.initSubscribedChannelsMap();
+    // channelsMap = {};
+    this.dataHelper.initChannelsMap();
     myChannelsMap = {};
     unreadMap = {};
     serverStatisticsMap = {};
     commentsMap = {};
     serversStatus = {};
-    creationPermissionMap = {};
     likeMap = {};
     likeCommentMap = {};
     lastPostUpdateMap = {};
@@ -6498,7 +6144,6 @@ export class FeedService {
     serverMap = {};
 
     accessTokenMap = {};
-    signInServerList = [];
 
     notificationList = [];
     cacheBindingAddress = "";

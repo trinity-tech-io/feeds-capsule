@@ -183,25 +183,25 @@ export class ConnectionService {
         this.sendRPCMessage(serverName, nodeId, request.method, request.params,"", false);
     }
 
-    getMyChannelsMetaData(serverName: string, nodeId: string, field: Communication.field, upper_bound: number,
-                        lower_bound: number, max_counts: number, accessToken: FeedsData.AccessToken){
-        if (accessToken == undefined)
-            return ;
+    // getMyChannelsMetaData(serverName: string, nodeId: string, field: Communication.field, upper_bound: number,
+    //                     lower_bound: number, max_counts: number, accessToken: FeedsData.AccessToken){
+    //     if (accessToken == undefined)
+    //         return ;
 
-        let request: Communication.get_my_channels_metadata_request = {
-            version: "1.0",
-            method : "get_my_channels_metadata",
-            id     : -1,
-            params : {
-                access_token    : accessToken.token,
-                by              : field,
-                upper_bound     : upper_bound,
-                lower_bound     : lower_bound,
-                max_count       : max_counts,
-            }
-        }
-        this.sendRPCMessage(serverName, nodeId, request.method, request.params,"" ,false);
-    }
+    //     let request: Communication.get_my_channels_metadata_request = {
+    //         version: "1.0",
+    //         method : "get_my_channels_metadata",
+    //         id     : -1,
+    //         params : {
+    //             access_token    : accessToken.token,
+    //             by              : field,
+    //             upper_bound     : upper_bound,
+    //             lower_bound     : lower_bound,
+    //             max_count       : max_counts,
+    //         }
+    //     }
+    //     this.sendRPCMessage(serverName, nodeId, request.method, request.params,"" ,false);
+    // }
 
     getChannels(serverName: string, nodeId: string, field: Communication.field, upper_bound: number,
               lower_bound: number, max_counts: number, accessToken: FeedsData.AccessToken){

@@ -1,4 +1,8 @@
 declare namespace FeedsData{
+    const enum SortType{
+        lastUpdateRevert = 0
+    }
+
     const enum MediaType{
         noMeida = 0 ,
         containsImg = 1 ,
@@ -155,7 +159,7 @@ declare namespace FeedsData{
         post_comment = "post_comment",
         post_like = "post_like",
         get_my_channels = "get_my_channels",
-        get_my_channels_metadata = "get_my_channels_metadata",
+        // get_my_channels_metadata = "get_my_channels_metadata",
         get_channels = "get_channels",
         get_channel_detail = "get_channel_detail",
         get_subscribed_channels = "get_subscribed_channels",
