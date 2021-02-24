@@ -298,7 +298,7 @@ export const zh = {
         "RemovethisFeedSource": "移除这个Feeds出版号",
         // "RemoveFeedSource": "移除Feeds出版号!",
         "removeserver": "已移除Feeds出版号",
-        "feedsSourceQRCode": "Feeds出版号二维码",
+        "feedsSourceQRCode": "出版号二维码",
         // "error": "解析DID文档错误",
         "public": "公开",
         "publicTip": "公开成功",
@@ -312,7 +312,8 @@ export const zh = {
         "beingPublic": "已公开",
         "des1": "开启开发者模式后，可以选择公开Feeds或公开测试Feeds",
         "des2": "测试Feeds",
-        "des3": "公开Feeds"
+        "des3": "公开Feeds",
+        "feedsSourceQRCodeDes":"该二维码仅限于发布者自己使用，可用于在其他设备上绑定出版号",
     },
     "ScanqrcodePage":{
         "introtitle": "创建新的",
