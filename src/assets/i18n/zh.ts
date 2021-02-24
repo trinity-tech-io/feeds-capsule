@@ -9,7 +9,7 @@ export const zh = {
         "confirm": "确认",
         "des": "清空 <strong>所有缓存数据</strong>!!!",
         // "prompt": "提示",
-        "des1": "确认Feeds",
+        "des1": "确认Feed",
         "server": "Feeds出版号:",
         // "channel": "Feeds:",
         "description": "描述:",
@@ -90,7 +90,7 @@ export const zh = {
         "unknown": "未知",
         // "unfollow": "未关注",
         // "adding": "添加中",
-        "feedsAlreadyAdded": "已添加过该Feeds",
+        "feedsAlreadyAdded": "已添加过该Feed",
         "notFollowYet": "未关注",
         "httperror": "服务异常，稍后再试",
         "textcopied": "文本已拷贝"
@@ -142,7 +142,7 @@ export const zh = {
     "MyfeedsComponent":{
         "emptyDes": "您还没有Feeds",
         "createFeed": "创建Feeds",
-        "createNewFeed": "创建新的Feeds"
+        "createNewFeed": "创建新的Feed"
     },
     "FollowingComponent":{
         "emptyDes": "尚未关注过任何Feeds",
@@ -177,10 +177,10 @@ export const zh = {
         "status12": "等待",
         "status14": "无法连接",
         "discover": "进入广场探索Feeds",
-        "des1": "您关注此feed的请求正被确认中，请耐心等待30秒左右。确认需要取消请求关注该Feeds？",
+        "des1": "您关注此Feed的请求正被确认中，请耐心等待30秒左右。确认需要取消请求关注该Feed？",
     },
     "ChannelsPage":{
-        "feeds": "Feeds",
+        "feeds": "Feed",
         // "follow": "关注",
         // "following": "已关注",
         "tip": "打赏"
@@ -193,14 +193,14 @@ export const zh = {
         "likedComment": "赞了微评"
     },
     "CreatenewfeedPage":{
-        "createNewFeed": "创建新的Feeds",
-        "profileImage": "Feeds头像",
-        "des": "为Feeds选择一张头像",
+        "createNewFeed": "创建新的Feed",
+        "profileImage": "Feed头像",
+        "des": "为Feed选择一张头像",
         // "des1": "头像已选择",
         "channelSource": "Feeds出版号",
-        "name": "Feeds名称",
-        "description": "Feeds描述",
-        "createFeed": "创建Feeds",
+        "name": "Feed名称",
+        "description": "Feed描述",
+        "createFeed": "创建Feed",
         "tipMsg": "请选择一个头像",
         "tipMsg1": "请输入名称",
         "tipMsg2": "请输入描述信息",
@@ -208,14 +208,14 @@ export const zh = {
         "tipMsgLength": "描述信息长度最大为128",
         "inputName": "输入名称",
         "inputFeedDesc": "输入描述",
-        // "channelSourceDes": "在哪里保存您的Feeds",
-        "createfeedsuccess": "创建Feeds成功!",
+        // "channelSourceDes": "在哪里保存您的FeedS",
+        "createfeedsuccess": "创建Feed成功!",
         "tipMsgLength1": "描述信息长度最大为32",
-        "alreadyExist": "Feeds已经存在，请更换名称后重试",
-        "nameContainInvalidChars": "Feeds 名称 不能包含除字母a-zA-Z，数字0-9, 连字符- 以及 下划线_ 之外的所有其他字符。",
+        "alreadyExist": "Feed已经存在，请更换名称后重试",
+        "nameContainInvalidChars": "Feed名称 不能包含除字母a-z，A-Z，数字0-9， 连字符- 以及 下划线_ 之外的所有其他字符。",
     },
     "ProfileimagePage":{
-        "title": "Feeds头像",
+        "title": "Feed头像",
         "confirm": "确认"
     },
     "ProfiledetailPage":{
@@ -374,12 +374,12 @@ export const zh = {
         "inputElaAddress": "请输入ELA地址",
     },
     "FinishPage": {
-        "introduce": "Feeds出版号绑定成功。恭喜您有了属于自己的Feeds出版号服务，现在您可以开始创建Feeds。",
-        "introduce1": "新建Feeds",
+        "introduce": "Feeds出版号绑定成功。恭喜您有了属于自己的Feeds出版号服务，现在您可以开始创建Feed。",
+        "introduce1": "新建Feed",
         "introduce2": "返回主页面",
     },
     "PostfromComponent":{
-        "des": "选择一个Feeds来发布"
+        "des": "选择一个Feed来发布"
     },
     "CreatenewpostPage":{
         // "addimg": "添加图片",
@@ -479,7 +479,7 @@ export const zh = {
         "title": "编辑出版号",
     },
     "EidtchannelPage":{
-       "title": "编辑Feeds信息",
+       "title": "编辑Feed信息",
     },
     "EditPostPage":{
         "title": "编辑微说",
@@ -514,17 +514,17 @@ export const zh = {
        "emptyDes": "还没有公开的Feeds"
     },
     "DiscoverfeedinfoPage":{
-        "title": "Feeds详情",
+        "title": "Feed详情",
         // "addFeed": "添加Feeds",
         "feeds": "名称",
         "follow": "关注",
         "unfollow": "关注中",
         "processing": "关注确认中",
         // "beingProcessing": "关注确认中",
-        "feedsQrcode": "Feeds二维码"
+        "feedsQrcode": "Feed二维码"
     },
     "FeedinfoPage":{
-       "title": "Feeds详情",
-       "feeds": "Feeds"
+       "title": "Feed详情",
+       "feeds": "Feed"
     }
 };
