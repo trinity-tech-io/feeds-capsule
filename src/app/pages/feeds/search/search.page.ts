@@ -76,41 +76,41 @@ export class SearchPage implements OnInit {
         this.addingChanneList = this.feedService.getToBeAddedFeedsList() || [];
         this.searchAddingChanneList = _.cloneDeep(this.addingChanneList);
         this.initChannelData();
+        this.handleSearch();
       });
     });
 
     this.events.subscribe(FeedsEvent.PublishType.unsubscribeFinish, (nodeId, channelId, name) => {
       // this.native.toast(name + " unsubscribed");
       this.zone.run(() => {
-        // this.channelList  = this.feedService.getChannelsList();
-        // this.initnodeStatus();
         this.initChannelData();
+        this.handleSearch();
       });
     });
 
     this.events.subscribe(FeedsEvent.PublishType.refreshChannels, list =>{
       this.zone.run(() => {
-        // this.channelList = this.feedService.getChannelsList();
-        // this.initnodeStatus();
         this.initChannelData();
+        this.handleSearch();
       });
     });
 
     this.events.subscribe(FeedsEvent.PublishType.channelsDataUpdate, () =>{
       this.zone.run(() => {
-        //this.channelList  = this.feedService.getChannelsList();
         this.initChannelData();
-        //this.initnodeStatus();
+        this.handleSearch();
       });
     });
 
     this.events.subscribe(FeedsEvent.PublishType.hideUnFollowFeeds ,()=>{
       this.initChannelData();
+      this.handleSearch();
     });
 
     this.events.subscribe(FeedsEvent.PublishType.refreshSubscribedChannels,()=>{
       this.zone.run(() => {
         this.initChannelData();
+        this.handleSearch();
       });
     });
 
@@ -118,6 +118,7 @@ export class SearchPage implements OnInit {
       this.zone.run(() => {
         this.addingChanneList = this.feedService.getToBeAddedFeedsList() || [];
         this.searchAddingChanneList = _.cloneDeep(this.addingChanneList);
+        this.handleSearch();
       });
     });
   }
@@ -152,6 +153,7 @@ export class SearchPage implements OnInit {
     this.searchAddingChanneList = _.cloneDeep(this.addingChanneList);
     this.initChannelData();
     this.initSubscribe();
+    this.handleSearch();
   }
 
   initChannelData(){
@@ -221,15 +223,20 @@ export class SearchPage implements OnInit {
     }
     this.ionRefresher.disabled = true;
 
+    this.handleSearch();
+  }
+
+  handleSearch(){
+    if(this.isSearch===""){
+        return;
+    }
     this.addingChanneList = this.searchAddingChanneList.filter(
-      channel=>channel.feedName.toLowerCase().indexOf(events.target.value.toLowerCase()) > -1
+      channel=>channel.feedName.toLowerCase().indexOf(this.isSearch.toLowerCase()) > -1
     );
 
     this.feedsList = this.searchfeedsList.filter(
-      channel=>channel.name.toLowerCase().indexOf(events.target.value.toLowerCase()) > -1
+      channel=>channel.name.toLowerCase().indexOf(this.isSearch.toLowerCase()) > -1
     );
-
-
   }
 
   doRefresh(event) {
