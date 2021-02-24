@@ -33,6 +33,7 @@
                 <qrcode [qrdata]="feedsUrl" [size]="150" [level]="'M'"></qrcode>
               </div>
             </div>
+            <h2 *ngIf="server.qrcode&&isShowQrcode" style="margin-top:10px;">{{'ServerInfoPage.feedsSourceQRCodeDes'|translate}}</h2>
         </ion-col>
       </ion-row>
     </div>
@@ -81,13 +82,6 @@
 
     <!--- BUTTONS --->
     <div class="btns">
-
-      <!-- <ion-row *ngIf="address === ''" class="btn-row">
-        <ion-button (click)="menuMore()">
-          <ion-label>{{'ServerInfoPage.shareFeedSource' | translate}}</ion-label>
-        </ion-button>
-      </ion-row> -->
-
       <ion-row *ngIf="isBindServer" class="btn-row delete-row">
         <ion-button (click)="deleteFeedSource()" color="danger">
           <ion-label>{{'ServerInfoPage.deleteFeedSource' | translate}}</ion-label>

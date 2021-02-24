@@ -297,7 +297,7 @@ export const en = {
         "RemovethisFeedSource": "Remove this Feeds Publisher Account",
         // "RemoveFeedSource": "Remove Feeds Publisher Account!",
         "removeserver": "Feeds Publisher Account Service removed",
-        "feedsSourceQRCode": "Feeds Publisher Account QRCode",
+        "feedsSourceQRCode": "Publisher Account QRCode",
         // "error": "Resolve DID document error",
         "public": "Public",
         "publicTip": "Feeds Publisher Account is now public",
@@ -311,7 +311,8 @@ export const en = {
         "beingPublic": "Being Public",
         "des1": "When developer mode is opened You can choose public or public test Feeds",
         "des2": "Test Feeds",
-        "des3": "Public Feeds"
+        "des3": "Public Feeds",
+        "feedsSourceQRCodeDes":"This QRCode is only limited to your personal use, used to bind your publisher account on other devices",
     },
     "ScanqrcodePage": {
         "introtitle": "Create a new",
