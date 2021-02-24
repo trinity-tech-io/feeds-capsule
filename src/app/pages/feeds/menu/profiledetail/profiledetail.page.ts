@@ -68,21 +68,21 @@ export class ProfiledetailPage implements OnInit {
       })
     }
 
-    if(this.telephone !="还未设置"){
+    if(this.telephone!="还未设置"&&this.telephone!="Not set yet"){
       this.profileDetails.push({
         type: this.translate.instant('ProfiledetailPage.telephone'),
         details:this.telephone
       })
     }
 
-    if(this.email!="还未设置"){
+    if(this.email!="还未设置"&&this.email!="Not set yet"){
       this.profileDetails.push({
         type: this.translate.instant('ProfiledetailPage.email'),
         details: this.email
       })
     }
 
-    if(this.location!="还未设置"){
+    if(this.location!="还未设置"&&this.location!="Not set yet"){
       this.profileDetails.push({
         type: this.translate.instant('ProfiledetailPage.location'),
         details: this.location
