@@ -286,7 +286,7 @@ export const en = {
         // "addFeedSource": "Add Feeds Publisher Account",
         // "removeFeedSource": "Remove Feeds Publisher Account",
         "deleteFeedSource": "Delete Publisher Account",
-        "shareFeedSource": "Share Feeds Publisher Account",
+        // "shareFeedSource": "Share Feeds Publisher Account",
         // "feedUrl": "Feeds URL",
         // "serverInfo": "Server Info",
         // "Pleasewait": "Please wait...",
