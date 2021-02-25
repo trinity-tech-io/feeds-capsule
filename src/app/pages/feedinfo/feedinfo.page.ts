@@ -66,7 +66,7 @@ export class FeedinfoPage implements OnInit {
       this.nodeId = channelInfo["nodeId"] || "";
       this.serverInfo = this.feedService.getServerbyNodeId(this.nodeId);
       this.severVersion = this.feedService.getServerVersionByNodeId(this.nodeId) || '<1.3.0(Outdated)';
-      this.elaAddress = this.serverInfo["elaAddress"] || this.translate.instant('DIDdata.Notprovided');
+      this.elaAddress = this.serverInfo["elaAddress"] || 'common.emptyElaAddressDes';
       let feedsUrl = this.serverInfo['feedsUrl'] || null;
       this.channelId = channelInfo["channelId"] || "";
       this.feedsUrl = feedsUrl+"/"+this.channelId;
