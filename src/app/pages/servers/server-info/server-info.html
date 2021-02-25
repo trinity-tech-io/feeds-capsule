@@ -33,7 +33,7 @@
                 <qrcode [qrdata]="feedsUrl" [size]="150" [level]="'M'"></qrcode>
               </div>
             </div>
-            <h2 *ngIf="server.qrcode&&isShowQrcode" style="margin-top:10px;">{{'ServerInfoPage.feedsSourceQRCodeDes'|translate}}</h2>
+            <h2 *ngIf="feedsUrl!=null&&server.qrcode&&isShowQrcode" style="margin-top:10px;font-size: 9px!important;color:#8888b0">{{'ServerInfoPage.feedsSourceQRCodeDes'|translate}}</h2>
         </ion-col>
       </ion-row>
     </div>
