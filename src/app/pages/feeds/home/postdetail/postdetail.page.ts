@@ -1,6 +1,6 @@
 import { Component, OnInit, NgZone,ViewChild} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Events,ModalController} from '@ionic/angular';
+import { Events,ModalController,Platform} from '@ionic/angular';
 import { FeedService } from 'src/app/services/FeedService';
 import { NativeService } from 'src/app/services/NativeService';
 import { MenuService } from 'src/app/services/MenuService';
@@ -78,7 +78,10 @@ export class PostdetailPage implements OnInit {
 
   public isOwnComment = {};
 
+  public isPress:boolean = false;
+
   constructor(
+    private platform: Platform,
     private popoverController:PopoverController,
     private acRoute: ActivatedRoute,
     private events: Events,
@@ -934,6 +937,9 @@ export class PostdetailPage implements OnInit {
   }
 
   pressContent(postContent:string){
+    if(this.platform.is('ios')){
+      this.isPress = true;
+   }
     let text = this.feedService.parsePostContentText(postContent);
     this.native.copyClipboard(text).then(()=>{
       this.native.toast_trans("common.textcopied");
@@ -948,6 +954,10 @@ export class PostdetailPage implements OnInit {
      let e = event||window.event; //兼容IE8
      let target = e.target||e.srcElement;  //判断目标事件
      if(target.tagName.toLowerCase()=="span"){
+      if(this.isPress){
+        this.isPress =false;
+       return;
+      }
       let url = target.textContent || target.innerText;
       this.native.clickUrl(url,event);
      }
