@@ -114,6 +114,7 @@ export class HomePage implements OnInit {
           this.infiniteScroll.disabled =true;
         }
         this.searchPostList = _.cloneDeep(this.postList);
+        this.handleSearch();
         this.scrollToTop(1);
         this.isLoadimage ={};
         this.isLoadVideoiamge ={};
@@ -144,6 +145,7 @@ export class HomePage implements OnInit {
       this.infiniteScroll.disabled =true;
     }
     this.searchPostList = _.cloneDeep(this.postList);
+    this.handleSearch();
     this.isLoadimage ={};
     this.isLoadVideoiamge ={};
     this.refreshImage(0);
@@ -1179,12 +1181,20 @@ clearData(){
         this.refreshPostList();
         return;
     }
+
+    this.handleSearch();
+
+  }
+
+  handleSearch(){
+    if(this.isSearch === ""){
+      return;
+    }
     this.ionRefresher.disabled = true;
     this.infiniteScroll.disabled = true;
-
     this.postList = _.filter(this.searchPostList,(post:any)=>{
       let text = this.getContentText(post.content);
-      return text.toLowerCase().indexOf(events.target.value.toLowerCase()) > -1;
+      return text.toLowerCase().indexOf(this.isSearch.toLowerCase()) > -1;
     });
   }
 }
