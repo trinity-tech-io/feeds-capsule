@@ -94,7 +94,8 @@ export const fr = {
         "notFollowYet": "Follow",
         "httperror": "Service exception, try again later",
         "textcopied": "Text copied",
-        "connectionError1":"The feed is being offline now, try it again when it becomes online"
+        "connectionError1":"The feed is being offline now, try it again when it becomes online",
+        "emptyElaAddressDes":"Not set yet"
     },
     "app": {
         "profileDetails": "Profile Details",

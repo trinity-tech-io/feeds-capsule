@@ -94,7 +94,8 @@ export const zh = {
         "notFollowYet": "未关注",
         "httperror": "服务异常，稍后再试",
         "textcopied": "文本已拷贝",
-        "connectionError1":"此Feed当前不在线，待上线后请重试"
+        "connectionError1":"此Feed当前不在线，待上线后请重试",
+        "emptyElaAddressDes":"还未设置"
     },
     "app":{
         "profileDetails": "档案详情",
@@ -393,7 +394,7 @@ export const zh = {
         "tipMsg2": "视频处理中"
     },
     "DIDdata": {
-        "Notprovided": "还未设置",
+        "Notprovided": "",
         "NotprovidedfromDIDDocument": "信息获取中",
         "NoDescription": "暂无个人简介和兴趣爱好信息"
     },
