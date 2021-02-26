@@ -1196,5 +1196,10 @@ clearData(){
       let text = this.getContentText(post.content);
       return text.toLowerCase().indexOf(this.isSearch.toLowerCase()) > -1;
     });
+
+    this.isLoadimage ={};
+    this.isLoadVideoiamge ={};
+    this.refreshImage(0);
+    this.initnodeStatus(this.postList);
   }
 }
