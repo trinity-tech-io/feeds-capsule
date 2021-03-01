@@ -42,7 +42,7 @@ export class CreatenewfeedPage implements OnInit {
   ionViewWillEnter() {
     this.initTitle();
     this.native.setTitleBarBackKeyShown(true);
-    
+
     this.selectedServer = this.feedService.getBindingServer();
     this.selectedChannelSource = this.selectedServer.did;
     this.connectionStatus = this.feedService.getConnectionStatus();
@@ -54,7 +54,7 @@ export class CreatenewfeedPage implements OnInit {
          this.native.hideLoading();
       });
     });
-  
+
     this.events.subscribe(FeedsEvent.PublishType.rpcResponseError, () => {
       this.zone.run(() => {
         this.native.hideLoading();
@@ -72,7 +72,7 @@ export class CreatenewfeedPage implements OnInit {
        }).catch(()=>{
         this.native.hideLoading();
        });
-      
+
 
     });
     this.events.subscribe(FeedsEvent.PublishType.connectionChanged,(status)=>{
@@ -146,7 +146,20 @@ export class CreatenewfeedPage implements OnInit {
   }
 
   createChannel(name: HTMLInputElement, desc: HTMLInputElement){
-    this.feedService.checkDIDOnSideChain(this.selectedServer.did,(isOnSideChain)=>{
+
+   if(this.feedService.getConnectionStatus() != 0){
+      this.native.toastWarn('common.connectionError');
+      return;
+   }
+
+   let feedList = this.feedService.getMyChannelList() || [];
+
+   if(feedList.length>5){
+     this.native.toastWarn("CreatenewfeedPage.feedMaxNumber");
+     return;
+   }
+
+   this.feedService.checkDIDOnSideChain(this.selectedServer.did,(isOnSideChain)=>{
       this.zone.run(() => {
         if (!isOnSideChain ){
           this.native.toastWarn('common.waitOnChain');
@@ -195,13 +208,13 @@ export class CreatenewfeedPage implements OnInit {
       this.native.toast_trans("CreatenewfeedPage.tipMsg3");
       return ;
     }
-    
+
     let checkRes = this.feedService.checkValueValid(name.value);
     if (checkRes){
       this.native.toast_trans("CreatenewfeedPage.nameContainInvalidChars");
       return ;
     }
-    
+
     this.createDialog(name.value,desc.value);
   }
 
@@ -231,7 +244,7 @@ export class CreatenewfeedPage implements OnInit {
     popover.onWillDismiss().then(() => {
         popover = null;
     });
-    
+
     return await popover.present();
   }
 }

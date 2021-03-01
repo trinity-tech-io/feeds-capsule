@@ -749,7 +749,7 @@ handleTotal(duration:any){
 
 clickFeedAvatar(){
   this.hideSwitchFeed = true;
-  this.feedList = this.feedService.refreshMyChannels();
+  this.feedList = this.feedService.getMyChannelList() || [];
 }
 
 hideComponent(feed:any){
