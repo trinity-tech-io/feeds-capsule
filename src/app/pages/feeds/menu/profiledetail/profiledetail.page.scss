@@ -5,16 +5,16 @@
         padding-top: 20px;
         padding-bottom: 20px;
         border-bottom: 2px solid rgba(34, 34, 34, 0.07);
-    
+
         ion-col {
           padding: 0;
         }
-    
+
         .left-col {
           h1, h2 {
             margin: 0;
           }
-    
+
           h1 {
             font-size: 11px;
             font-weight: 700;
@@ -23,14 +23,14 @@
             color: #8888b0;
             margin-bottom: 5px;
           }
-    
+
           h2 {
             font-size: 15px;
             font-weight: 500;
             letter-spacing: 0.8px;
           }
         }
-    
+
         .right-col {
           display: flex;
           justify-content: flex-end;
@@ -44,25 +44,3 @@
     border-bottom: 2px solid #2e2f4e;
   }
 }
-
-/* .darkContainer{
-    .channel-title-div .channel-title{
-         color: #ffffff;
-    }
-
-    .center-flex .profile-sub-text{
-        color: #ffffff;
-    }
-
-    .center-flex .profile-subscribe{
-        color: #ffffff;
-    }
-
-    .channel-desc-div .channel-desc{
-        color: #ffffff;
-    }
-
-    .detail-div .detail-value-div .detail-value{
-        color: #ffffff;
-    }
-} */

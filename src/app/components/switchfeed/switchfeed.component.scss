@@ -1,0 +1,235 @@
+.darkbackdrop{
+  background-color:#fff;
+}
+
+.lightbackdrop{
+    background-color:#000;
+}
+
+.backdrop{
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    display: block;
+    position: absolute;
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+    contain: strict;
+    cursor: pointer;
+    opacity: 0.3;
+    -ms-touch-action: none;
+    touch-action: none;
+    z-index:998;
+}
+.feedlist {
+ width: calc(100vw - 16px);
+ max-height:254px;
+ position:absolute;
+ bottom:80px;
+ left:8px;
+ z-index:999;
+ border-radius:13px;
+ overflow: auto;
+}
+
+.darkfeedlist{
+    background: #2e2f4e!important;
+    .borderbottom{
+        border-bottom: 1px solid rgba(255,255,255,.07);
+    }
+}
+
+.lightfeedlist{
+    background-color:#fff!important;
+}
+
+.lightfeedname{
+    color: #000;
+}
+
+.drakfeedname{
+    color: #fff;
+}
+
+.borderbottom{
+  border-bottom: 1px solid rgba(34,34,34,.07)
+}
+
+.feedlist .feedrow{
+    .left-col {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+    }
+
+    .feedAvatar {
+        display: flex;
+        align-items: center;
+        position: relative;
+        border-radius: 50%;
+
+        img {
+          border-radius: 50%;
+          object-fit: cover;
+          overflow: hidden;
+          height: 50px;
+          width: 50px;
+        }
+
+        .offline {
+          width: 13px;
+          height: 13px;
+          position: absolute;
+          bottom: 0.5px;
+          right: 0.5px;
+          background-color: #cdcde6;
+          border-radius: 100%;
+        }
+
+        .online {
+          background: #2dd36f;
+        }
+    }
+
+    .middle-col {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: center;
+
+        ion-label {
+          font-size: 16px;
+          font-weight: 700;
+          width: 100%;
+        }
+
+        p {
+          margin: 0;
+          font-size: 10px;
+          font-weight: 600;
+          color: #a0a2c4;
+
+          span {
+            font-size: 13px;
+            font-weight: 700;
+          }
+        }
+
+        ion-row {
+          padding: 0;
+          display: flex;
+          align-items: center;
+
+          img {
+            width:20px;
+            height:20px;
+            object-fit: contain;
+            margin-right: 3px;
+          }
+        }
+    }
+
+    .right-col {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+
+      img {
+        width: 20px;
+        height: 20px;
+        object-fit: contain;
+      }
+
+      ion-button {
+        // width: 88px;
+        height: 28px;
+        --border-radius: 30px;
+        --box-shadow: none;
+
+        ion-label {
+          font-size: 9px !important;
+          font-weight: 700;
+          padding: 0;
+          overflow: visible;
+        }
+      }
+
+      .unsubscribed {
+        --border-width: 1.5px;
+        --border-style: solid;
+        --border-color: #8888b0;
+        --background: transparent;
+        --background-activated: transparent;
+        --background-activated-opacity: none;
+        --background-focused: transparent;
+        --background-focused-opacity: none;
+
+        ion-label {
+           color:#8888b0;
+        }
+      }
+    }
+}
+
+.feedcancel{
+ width: calc(100vw - 16px);
+ height:56px;
+ line-height:56px;
+ position:absolute;
+ bottom:10px;
+ left:8px;
+ background-color:#fff!important;
+ z-index:999;
+ border-radius:13px;
+ overflow: auto;
+
+ ion-icon{
+   width: 28px;
+   height: 28px;
+   margin-left: 10px;
+ }
+
+ span{
+    margin-top: -18px;
+    margin-left: 5px;
+    justify-content: left;
+    font-size: 14px;
+    font-weight: 600;
+    color: #000;
+    vertical-align: middle;
+    display: inline-block;
+}
+}
+
+.darkfeedcancel{
+    width: calc(100vw - 16px);
+    height:56px;
+    line-height:56px;
+    position:absolute;
+    bottom:10px;
+    left:8px;
+    background: #2e2f4e!important;
+    z-index:999;
+    border-radius:13px;
+    overflow: auto;
+
+    ion-icon{
+      width: 28px;
+      height: 28px;
+      margin-left: 10px;
+      color: #fff;
+    }
+
+    span{
+       margin-top: -18px;
+       margin-left: 5px;
+       justify-content: left;
+       font-size: 14px;
+       font-weight: 600;
+       color: #fff;
+       vertical-align: middle;
+       display: inline-block;
+   }
+   }
+

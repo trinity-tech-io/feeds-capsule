@@ -1,22 +1,22 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { PostfromComponent } from './postfrom.component';
+import { SwitchfeedComponent } from './switchfeed.component';
 
-describe('PostfromComponent', () => {
-  let component: PostfromComponent;
-  let fixture: ComponentFixture<PostfromComponent>;
+describe('SwitchfeedComponent', () => {
+  let component: SwitchfeedComponent;
+  let fixture: ComponentFixture<SwitchfeedComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ PostfromComponent ],
+      declarations: [ SwitchfeedComponent ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(PostfromComponent);
+    fixture = TestBed.createComponent(SwitchfeedComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

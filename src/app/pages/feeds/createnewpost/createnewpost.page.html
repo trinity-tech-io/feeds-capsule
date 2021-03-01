@@ -5,7 +5,7 @@
 <ion-content>
   <!-- <ion-list class="channel-list" [class.darkChannelList]="theme.darkMode"> -->
     <div class="channel-list" [class.darkChannelList]="theme.darkMode">
-    <ion-item class="removeBorder" lines="none">
+    <ion-item class="removeBorder" lines="none" (click)="clickFeedAvatar()">
       <ion-row class="channel-row ion-activatable ripple">
         <ion-col size="2.5" class="left-col">
           <div class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode">
@@ -34,11 +34,11 @@
     <vg-player  *ngIf="flieUri">
       <vg-overlay-play id="vgoverlayplaycreatepost"></vg-overlay-play>
       <vg-buffering id="vgbufferingcreatepost"></vg-buffering>
-  
+
       <vg-controls id="vgcontrolscreatepost" style="display:none;">
           <img class="vgfullscreen" id="vgfullscreecreatepost" src="assets/images/fullscreen.svg"/>
       </vg-controls>
-   
+
   <video #media [vgMedia]="media" id="videocreatepost"
   playsinline webkit-playsinline>
   <source  [type]="videotype" id="sourcecreatepost">
@@ -62,3 +62,12 @@
     </ion-row>
   </div>
   </ion-content>
+  <app-switchfeed
+  *ngIf="hideSwitchFeed"
+  [feedList] = "feedList"
+  [nodeStatus] ="nodeStatus"
+  (hideComment)="hideComponent($event)"
+  >
+  </app-switchfeed>
+
+

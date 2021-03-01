@@ -1,15 +1,15 @@
 import { Component, OnInit, NgZone,ElementRef} from '@angular/core';
-import { NavController, Events,ModalController,Platform } from '@ionic/angular';
-import { FeedService } from 'src/app/services/FeedService';
-import { ActivatedRoute } from '@angular/router';
+import {  NavController, Events,ModalController,Platform } from '@ionic/angular';
+import { FeedService } from '../../../services/FeedService';
 import { NativeService } from '../../../services/NativeService';
-import { CameraService } from 'src/app/services/CameraService';
+import { CameraService } from '../../../services/CameraService';
 import { ThemeService } from '../../../services/theme.service';
 import { TranslateService } from "@ngx-translate/core";
 import { VideoEditor } from '@ionic-native/video-editor/ngx';
-import { AppService } from 'src/app/services/AppService';
-import { UtilService } from 'src/app/services/utilService';
-import { LogUtils } from 'src/app/services/LogUtils';
+import { AppService } from '../../../services/AppService';
+import { UtilService } from '../../../services/utilService';
+import { LogUtils } from '../../../services/LogUtils';
+import { StorageService } from '../../../services/StorageService';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 let TAG: string = "Feeds-createpost";
 @Component({
@@ -43,11 +43,13 @@ export class CreatenewpostPage implements OnInit {
   private throwMsgTransDataLimit = 4 * 1000 * 1000;
   private transDataChannel:FeedsData.TransDataChannel = FeedsData.TransDataChannel.MESSAGE;
   public fullScreenmodal:any ="";
+
+  public feedList = [];
+  public hideSwitchFeed:boolean = false;
   constructor(
     private platform: Platform,
     private events: Events,
     private native: NativeService,
-    private acRoute: ActivatedRoute,
     private navCtrl: NavController,
     private camera: CameraService,
     private zone: NgZone,
@@ -58,32 +60,36 @@ export class CreatenewpostPage implements OnInit {
     public appService:AppService,
     public el:ElementRef,
     public modalController:ModalController,
-    private logUtils: LogUtils
+    private logUtils: LogUtils,
+    private storageService: StorageService,
   ) {
   }
 
   ngOnInit() {
-    this.acRoute.params.subscribe((data)=>{
-      this.nodeId = data.nodeId;
-      this.channelId = data.channelId;
 
-      let channel = this.feedService.getChannelFromId(this.nodeId,this.channelId) || {};
+  }
 
-      this.channelName = channel["name"] || "";
-      this.subscribers = channel["subscribers"] || "";
-      this.channelAvatar = this.feedService.parseChannelAvatar(channel["avatar"]);
-    });
+  initFeed(){
+
+    let currentFeed = this.feedService.getCurrentFeed();
+
+    this.nodeId = currentFeed["nodeId"];
+    this.channelId = currentFeed["feedId"];
+
+    let myFeed = this.feedService.getChannelFromId(this.nodeId,this.channelId) || {};
+
+    this.channelName = myFeed["name"] || "";
+    this.subscribers = myFeed["subscribers"] || "";
+    this.channelAvatar = this.feedService.parseChannelAvatar(myFeed["avatar"]);
   }
 
   ionViewWillEnter() {
+
     this.initTitle();
     this.native.setTitleBarBackKeyShown(true);
 
     this.connectionStatus = this.feedService.getConnectionStatus();
-
-    // if (this.connectionStatus == 0){
-    //   this.feedService.restoreSession(this.nodeId);
-    // }
+    this.initFeed();
 
     this.events.subscribe(FeedsEvent.PublishType.connectionChanged,(status) => {
       this.zone.run(() => {
@@ -225,9 +231,11 @@ export class CreatenewpostPage implements OnInit {
         });
       });
     });
+
   }
 
   ionViewWillLeave(){
+    this.hideSwitchFeed = false;
     this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
     this.events.unsubscribe(FeedsEvent.PublishType.friendConnectionChanged);
     this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
@@ -737,6 +745,28 @@ readThumbnail(fileName:string,filepath:string){
 
 handleTotal(duration:any){
   return UtilService.timeFilter(duration);
+}
+
+clickFeedAvatar(){
+  this.hideSwitchFeed = true;
+  this.feedList = this.feedService.refreshMyChannels();
+}
+
+hideComponent(feed:any){
+  if(feed === null){
+    this.hideSwitchFeed = false;
+    return;
+  }
+  this.nodeId = feed.nodeId;
+  this.channelId = feed.id;
+  let currentFeed = {
+    "nodeId": this.nodeId,
+    "feedId": this.channelId
+  }
+  this.feedService.setCurrentFeed(currentFeed);
+  this.storageService.set("feeds.currentFeed",JSON.stringify(currentFeed));
+  this.initFeed();
+  this.hideSwitchFeed = false;
 }
 
 }

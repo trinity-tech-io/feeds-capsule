@@ -43,7 +43,6 @@ import { PopupProvider } from './services/popup';
 import { CameraService } from './services/CameraService';
 import { ServerlistComponentModule } from './components/serverlistcomponent/serverlistcomponent.module';
 import { QRCodeModule } from 'angularx-qrcode';
-import { PostfromComponentPageModule } from './components/postfrom/postfrom.component.module'
 import { SplashscreenPageModule } from './pages/splashscreen/splashscreen.module';
 import { JWTMessageService } from './services/JWTMessageService';
 import { TransportService } from './services/TransportService';
@@ -158,7 +157,6 @@ export function anim(AnimationC: Animation, baseEl: any, position?: any): Promis
     HttpClientModule,
     AppRoutingModule,
     ComponentsModule,
-    PostfromComponentPageModule,
     ServerlistComponentModule,
     SplashscreenPageModule,
     IonicModule.forRoot({
@@ -207,7 +205,6 @@ export function anim(AnimationC: Animation, baseEl: any, position?: any): Promis
     SerializeDataService,
     MenuService,
     FormatInfoService,
-    PostfromComponentPageModule,
     ConnectionService,
     HttpService,
     AddFeedService,

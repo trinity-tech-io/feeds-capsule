@@ -13,7 +13,7 @@ const routes: Routes = [
   { path: 'signin', loadChildren: './pages/signin/signin.module#SigninPageModule' },
 
   { path: 'createnewfeed', loadChildren: './pages/feeds/createnewfeed/createnewfeed.module#CreatenewfeedPageModule' },
-  { path: 'createnewpost/:nodeId/:channelId', loadChildren: './pages/feeds/createnewpost/createnewpost.module#CreatenewpostPageModule' },
+  { path: 'createnewpost', loadChildren: './pages/feeds/createnewpost/createnewpost.module#CreatenewpostPageModule' },
   { path: 'profileimage', loadChildren: './pages/feeds/profileimage/profileimage.module#ProfileimagePageModule' },
 
   { path: 'bindservice/scanqrcode', loadChildren: './pages/feeds/bindservice/scanqrcode/scanqrcode.module#ScanqrcodePageModule'},
