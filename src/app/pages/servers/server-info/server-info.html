@@ -33,7 +33,7 @@
                 <qrcode [qrdata]="feedsUrl" [size]="150" [level]="'M'"></qrcode>
               </div>
             </div>
-            <h2 *ngIf="feedsUrl!=null&&server.qrcode&&isShowQrcode" style="margin-top:10px;font-size: 9px!important;color:#8888b0">{{'ServerInfoPage.feedsSourceQRCodeDes'|translate}}</h2>
+          <h2 *ngIf="feedsUrl!=null&&server.qrcode&&isShowQrcode" style="margin-top:10px;font-size: 9px!important;color:#8888b0">{{'ServerInfoPage.feedsSourceQRCodeDes'|translate}}</h2>
         </ion-col>
       </ion-row>
     </div>
@@ -58,7 +58,7 @@
           </div>
         </ion-col>
         <ion-col
-          size="6.5"
+          size="5.5"
           class="middle-col"
           (click)="navTo(channel.nodeId, channel.id)"
         >
@@ -67,14 +67,12 @@
           </ion-label>
         </ion-col>
 
-        <ion-col size="3" class="right-col">
-          <ion-button *ngIf="handlePublic(channel.id)==''" class="unsubscribed" fill="outline" (click)="clickPublicFeeds(channel)" [disabled]='!isShowQrcode'>
-            <ion-label >{{'ServerInfoPage.public' | translate}}</ion-label>
-          </ion-button>
-          <ion-button *ngIf="handlePublic(channel.id)!=''" (click)="unPublicFeeds(channel)" [disabled]='!isShowQrcode'>
-            <ion-label>{{ 'ServerInfoPage.beingPublic' | translate }}</ion-label>
-          </ion-button>
-        </ion-col>
+        <ion-col size="4" class="arrow-col">
+          <div class="theme-toggle light-toggled">
+              <div [ngClass]="{'light-mode':handlePublic(channel.id)=='','dark-mode':handlePublic(channel.id)!=''}" (click)="clickPublicFeeds(channel)"><p>{{ 'ServerInfoPage.public' | translate }}</p></div>
+              <div [ngClass]="{'dark-mode':handlePublic(channel.id)=='','light-mode':handlePublic(channel.id)!=''}" (click)="unPublicFeeds(channel)"><p>{{ 'ServerInfoPage.beingPublic' | translate }}</p></div>
+          </div>
+      </ion-col>
         <ion-ripple-effect></ion-ripple-effect>
     </ion-row>
   </ion-item>

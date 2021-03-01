@@ -1,5 +1,61 @@
 .container {
-  padding: 20px;
+  padding: 10px;
+
+  .arrow-col {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+
+    img {
+      width: 7.7px;
+      height: 13.3px;
+    }
+
+    ion-toggle {
+      zoom: 0.85;
+    }
+
+    .theme-toggle {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 60%;
+      width: 100%;
+      border-radius: 17px;
+      background-color: #dddddd;
+
+      div {
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        p {
+          font-size: 9px!important;
+          color:#8888b0;
+          font-weight: 700;
+          letter-spacing: 1.09px;
+          margin: 0;
+        }
+      }
+    }
+
+    .light-toggled {
+      .dark-mode {
+        width: 45%
+      }
+
+      .light-mode {
+        width: 55%;
+        border-radius: 17px;
+        background-color: #2dd36f;
+        text-align: center;
+        p {
+          color: #ffffff !important;
+        }
+      }
+    }
+  }
 
   .server-header {
     padding: 20px;
@@ -11,13 +67,13 @@
     box-shadow: 0 3px 15px 0 #ededf0;
     background-color: #ffffff;
     margin-bottom: 25px;
-  
+
     ion-img {
       width: 56px;
       height: 56px;
       object-fit: cover;
     }
-  
+
     h1 {
       margin: 0;
       padding: 15px 0px 7.5px;
@@ -25,10 +81,10 @@
       font-weight: 600;
       text-align: center;
     }
-  
+
     p {
       margin: 0;
-      padding-bottom: 15px; 
+      padding-bottom: 15px;
       font-size: 15px;
       font-weight: 500;
       letter-spacing: 0.8px;
@@ -109,7 +165,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
-  
+
       .qrcode {
         padding: 15px;
         background: #ffffff;
@@ -128,18 +184,18 @@
     .btn-row {
       width: 100%;
       margin-top: 0px;
-  
+
       ion-button {
         width: 95%;
       }
     }
-  
+
     .delete-row {
       margin-top:0px;
     }
   }
 
-  
+
 }
 
 .edit{

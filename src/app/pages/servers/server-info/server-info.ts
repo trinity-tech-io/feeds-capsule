@@ -420,6 +420,17 @@ export class ServerInfoPage implements OnInit {
       this.native.toastWarn('common.connectionError');
       return;
     }
+
+    if(!this.isShowQrcode){
+      this.native.toastWarn('common.waitOnChain');
+      return;
+    }
+
+    if(this.handlePublic(channel["id"])!=""){
+       this.unPublicFeeds(channel);
+      return;
+    }
+
     this.curChannel = channel;
     if(this.developerMode){
       this.developerModeConfirm();
@@ -465,6 +476,17 @@ export class ServerInfoPage implements OnInit {
       this.native.toastWarn('common.connectionError');
       return;
     }
+
+    if(!this.isShowQrcode){
+      this.native.toastWarn('common.waitOnChain');
+      return;
+    }
+
+    if(this.handlePublic(channel["id"])===""){
+      this.clickPublicFeeds(channel);
+      return;
+    }
+
     let feedsUrl = this.feedsUrl+"/"+channel["id"];
     let feedsUrlHash = UtilService.SHA256(feedsUrl);
     this.httpService.ajaxGet(ApiUrl.remove+"?feedsUrlHash="+feedsUrlHash).then((result)=>{
