@@ -156,37 +156,6 @@ ion-input {
   width: 100%;
 }
 
-/****************** Postfrom Component ******************/
-.PostfromComponent {
-  --background: #ffffff;
-  --box-shadow: 0px 25px 35px 0  #5c5e7c;
-
-  .popover-wrapper{
-    .popover-content {
-      width: 85vw !important;
-      position: fixed;
-      bottom: 9%; // this is based on ion-tab-bar height which is 9%
-      overflow: visible;
-      border-radius: 25px;
-    }
-  }
-}
-
-.dark-PostfromComponent {
-  --background: #2e2f4e;
-  --box-shadow: 0px 25px 35px 0 #11132b;
-
-  .popover-wrapper{
-    .popover-content {
-      width: 85vw !important;
-      position: fixed;
-      bottom: 9%; // this is based on ion-tab-bar height which is 9%
-      overflow: visible;
-      border-radius: 25px;
-    }
-  }
-}
-
 /****************** donate Component ******************/
 .PaypromptComponent {
   animation: animate;

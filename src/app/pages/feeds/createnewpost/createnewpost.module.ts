@@ -10,6 +10,7 @@ import { VgCoreModule } from 'ngx-videogular';
 import { VgControlsModule } from 'ngx-videogular';
 import { VgOverlayPlayModule } from 'ngx-videogular';
 import { VgBufferingModule } from 'ngx-videogular';
+import {ComponentsModule} from '../../../components/components.module'
 
 const routes: Routes = [
   {
@@ -25,6 +26,7 @@ const routes: Routes = [
     VgControlsModule,
     VgOverlayPlayModule,
     VgBufferingModule,
+    ComponentsModule,
     FormsModule,
     TranslateModule,
     IonicModule,

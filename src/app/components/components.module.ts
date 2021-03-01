@@ -18,6 +18,8 @@ import { MyfeedsComponent} from './myfeeds/myfeeds.component';
 import { FollowingComponent} from './following/following.component';
 import { LikesComponent} from './likes/likes.component';
 import { CommentComponent } from './comment/comment.component';
+import { SwitchfeedComponent } from './switchfeed/switchfeed.component';
+
 import { VideofullscreenComponent } from './videofullscreen/videofullscreen.component';
 
 import { VgCoreModule } from 'ngx-videogular';
@@ -52,6 +54,7 @@ import { ShareModule } from 'src/app/share/share.module';
     FollowingComponent,
     LikesComponent,
     CommentComponent,
+    SwitchfeedComponent,
     VideofullscreenComponent
   ],
   exports: [
@@ -66,6 +69,7 @@ import { ShareModule } from 'src/app/share/share.module';
     FollowingComponent,
     LikesComponent,
     CommentComponent,
+    SwitchfeedComponent,
     VideofullscreenComponent
   ],
 

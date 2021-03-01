@@ -14,7 +14,7 @@ declare namespace FeedsEvent{
 
         ////////
         networkStatusChanged = "feeds:networkStatusChanged",
-        
+
         ////////
         rpcRequestError = "rpcRequest:error",
         rpcResponseError = "rpcResponse:error",
@@ -30,10 +30,10 @@ declare namespace FeedsEvent{
         clearHomeEvent = "feeds:clearHomeEvent",
         hideDeletedPosts = "feeds:hideDeletedPosts",
         createpost = "feeds:createpost",
-        
+
         tipdialogCancel = "tipdialog-cancel",
         tipdialogConfirm = "tipdialog-confirm",
-        
+
         search = "feeds:search",
 
         updateTab = "update:tab",
@@ -81,56 +81,56 @@ declare namespace FeedsEvent{
         unsubscribeFinish = "feeds:unsubscribeFinish",
         updateServerList = "feeds:updateServerList",
         connectionChanged="feeds:connectionChanged",
-      
+
         commentDataUpdate = "feeds:commentDataUpdate",
         getCommentFinish = "feeds:getCommentFinish",
-      
+
         myChannelsDataUpdate = "feeds:myChannelsDataUpdate",
         subscribedDataUpdate = "feeds:subscribedChannelsDataUpdate",
         channelsDataUpdate = "feeds:channelsDataUpdate",
-      
+
         refreshMyChannel = "feeds:refreshMyChannel",
         loadMoreMyChannel = "feeds:loadMoreMyChannel",
         serverConnectionChanged = "feeds:serverConnectionChanged",
-      
+
         serverStatisticsChanged = "feeds:serverStatisticsChanged",
-      
+
         refreshPost = "feeds:refreshPost",
         loadMorePost = "feeds:loadMorePost",
-      
+
         refreshChannels = "feeds:refreshChannels",
         loadMoreChannels = "feeds:loadMoreChannels",
-      
+
         refreshSubscribedChannels = "feeds:refreshSubscribedChannels",
         loadMoreSubscribedChannels = "feeds:loadMoreSubscribedChannels",
-      
+
         updataCommentLike = "feeds:updataCommentLike",
-      
+
         updateLikeList = "feeds:updateLikeList",
-      
+
         signInServerListChanged = "feeds:signInServerListChanged",
-      
+
         friendConnectionChanged = "feeds:friendConnectionChanged",
         publishPostSuccess = "feeds:publishPostSuccess",
-      
+
         bindServerFinish = "feeds:bindServerFinish",
         removeFeedSourceFinish = "feeds:removeFeedSourceFinish",
-      
+
         refreshPage = "feeds:refreshPage",
         UpdateNotification = "feeds:UpdateNotification",
         refreshPostDetail = "feeds:refreshPostDetail",
-      
+
         editFeedInfoFinish = "feeds:editFeedInfoFinish",
-      
+
         editPostFinish = "feeds:editPostFinish",
         editPostSuccess = "feeds:editPostSuccess",
         editCommentFinish = "feeds:editCommentFinish",
         deletePostFinish = "feeds:deletePostFinish",
         deleteCommentFinish = "feeds:deleteCommentFinish",
-      
+
         declarePostSuccess = "feeds:declarePostSuccess",
         notifyPostSuccess = "feeds:notifyPostSuccess",
-      
+
         // addFeedFinish = "feeds:addFeedFinish",
 
         publishPostFinish = "feeds:publishPostFinish",

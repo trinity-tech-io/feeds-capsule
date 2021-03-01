@@ -57,6 +57,7 @@ export class MyApp {
     this.platform.ready().then(() => {
       this.initSetting();
       this.initFeedPublicStatus();
+      this.initCurrentFeed();
       this.native.networkInfoInit();
       this.native.addNetworkListener(()=>{
         this.events.publish(FeedsEvent.PublishType.networkStatusChanged, 1);
@@ -64,6 +65,18 @@ export class MyApp {
         this.events.publish(FeedsEvent.PublishType.networkStatusChanged, 0);
       });
         this.initDisclaimer();
+    });
+  }
+
+  initCurrentFeed(){
+    this.feedService.getData("feeds.currentFeed").then((currentFeed)=>{
+      if(currentFeed === null){
+        this.feedService.setCurrentFeed(null);
+        return;
+      }
+      this.feedService.setCurrentFeed(JSON.parse(currentFeed));
+    }).catch((err)=>{
+
     });
   }
 

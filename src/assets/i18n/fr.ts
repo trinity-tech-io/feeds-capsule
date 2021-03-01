@@ -380,9 +380,6 @@ export const fr = {
         "introduce1": "Create new Feed",
         "introduce2": "Return to main screen",
     },
-    "PostfromComponent": {
-        "des": "Choose one of your Feeds to post from"
-    },
     "CreatenewpostPage": {
         // "addimg": "Add an image",
         "post": "Post",

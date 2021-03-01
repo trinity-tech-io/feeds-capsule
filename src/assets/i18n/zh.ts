@@ -381,9 +381,6 @@ export const zh = {
         "introduce1": "新建Feed",
         "introduce2": "返回主页面",
     },
-    "PostfromComponent":{
-        "des": "选择一个Feed来发布"
-    },
     "CreatenewpostPage":{
         // "addimg": "添加图片",
         "post": "发布",

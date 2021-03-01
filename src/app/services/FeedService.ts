@@ -370,6 +370,7 @@ export class FeedIntro{
 
 @Injectable()
 export class FeedService {
+  public currentFeed:any = null;
   public feedPublicStatus:any = {};
   public developerMode:boolean = false;
   public hideDeletedPosts:boolean = false;
@@ -6893,5 +6894,13 @@ export class FeedService {
     if (this.syncCommentStatusMap[ncpId] == null || this.syncCommentStatusMap[ncpId] == undefined)
       return false;
     return this.syncCommentStatusMap[ncpId].isSyncFinish;
+  }
+
+  getCurrentFeed(){
+     return this.currentFeed;
+  }
+
+  setCurrentFeed(currentFeed:any){
+    this.currentFeed = currentFeed;
   }
 }
