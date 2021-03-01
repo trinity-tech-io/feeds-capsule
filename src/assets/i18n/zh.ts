@@ -215,6 +215,7 @@ export const zh = {
         "tipMsgLength1": "描述信息长度最大为32",
         "alreadyExist": "Feed已经存在，请更换名称后重试",
         "nameContainInvalidChars": "Feed名称 不能包含除字母a-z，A-Z，数字0-9， 连字符- 以及 下划线_ 之外的所有其他字符。",
+        "feedMaxNumber":"最多可以创建5个Feed"
     },
     "ProfileimagePage":{
         "title": "Feed头像",

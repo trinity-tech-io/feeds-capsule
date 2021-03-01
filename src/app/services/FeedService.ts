@@ -2036,43 +2036,6 @@ export class FeedService {
     return localList;
   }
 
-  refreshMyChannels(): Channels[]{
-    if (myChannelsMap == null || myChannelsMap == undefined){
-      eventBus.publish(FeedsEvent.PublishType.refreshMyChannel,[]);
-      return [];
-    }
-
-    let list: Channels[] = [];
-    let keys: string[] = Object.keys(myChannelsMap);
-    localMyChannelList = [];
-    for (const index in keys) {
-      if (myChannelsMap[keys[index]] == null || myChannelsMap[keys[index]] == undefined)
-        continue;
-
-      if (channelsMap != null && channelsMap != undefined &&
-        channelsMap[keys[index]] != undefined){
-          let channel = channelsMap[keys[index]];
-          list.push(channel);
-        }
-    }
-
-    list.sort((a, b) => Number(b.last_update) - Number(a.last_update));
-
-    localMyChannelList.slice(0,localMyChannelList.length);
-    let end:number = 0;
-    if (list.length>10){
-      end = 10;
-    }else{
-      end = list.length;
-    }
-
-    for (let index = 0; index < end; index++)
-      localMyChannelList.push(list[index]);
-
-    eventBus.publish(FeedsEvent.PublishType.refreshMyChannel,localMyChannelList);
-    return localMyChannelList;
-  }
-
   loadMoreMyChannels(){
     let end: number;
     let start: number = localMyChannelList.length;
