@@ -214,7 +214,8 @@ export const en = {
         "tipMsgLength1": "The maximum length of the name message is 32 characters",
         "alreadyExist": "Feed already exists. Please change the name and try again",
         "nameContainInvalidChars": "Feed Name can not include characters except alphabet letters A-Z, a-z, digits 0-9, the hyphen “-”, and the underscore “_”.",
-        "feedMaxNumber":"The maximum number of feeds can be created is 5"
+        "feedMaxNumber":"The maximum number of feeds can be created is 5",
+        "feedNum":"You can create up to 5 Feeds"
     },
     "ProfileimagePage": {
         "title": "Profile Image",
