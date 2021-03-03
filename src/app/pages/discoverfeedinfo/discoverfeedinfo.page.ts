@@ -125,6 +125,7 @@ export class DiscoverfeedinfoPage implements OnInit {
     this.events.unsubscribe(FeedsEvent.PublishType.unsubscribeFinish);
     this.events.unsubscribe(FeedsEvent.PublishType.subscribeFinish);
     this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
+    this.events.publish(FeedsEvent.PublishType.search);
   }
 
   initTitle(){

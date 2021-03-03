@@ -318,7 +318,6 @@ export const zh = {
         "des2": "测试Feeds",
         "des3": "公开Feeds",
         "feedsSourceQRCodeDes":"该二维码仅限于发布者自己使用，可用于在其他设备上绑定出版号",
-        "":""
     },
     "ScanqrcodePage":{
         "introtitle": "创建新的",

@@ -5,5 +5,54 @@
 
 ion-searchbar {
     margin-top: 0;
+    padding-right:0px;
+}
+
+.right-col {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  overflow: hidden;
+
+  img {
+      width: 32px;
+      height: 32px;
+      object-fit: contain;
+  }
+}
+
+.search-container {
+  display: flex;
+  justify-content: center;
+  // padding: 12px 0;
+
+  ion-searchbar {
+      width:90%;
+    // padding: 0;
+    // margin: 0;
+
+    .searchbar-input-container{
+      height: 40px;
+
+      .searchbar-input {
+        border-radius: 9px;
+        background-color: #f0f1ff;
+        font-size: 16px;
+        font-weight: 400;
+      }
+    }
+  }
+}
+
+.dark-search-container {
+  ion-searchbar {
+    .searchbar-input-container{
+      .searchbar-input {
+        color: #cfd1f7;
+        background-color: #2d2e4d;
+      }
+    }
+  }
 }
 
