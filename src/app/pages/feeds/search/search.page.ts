@@ -3,7 +3,6 @@ import { FeedService } from '../../../services/FeedService';
 import { Events,PopoverController,IonRefresher,IonInfiniteScroll} from '@ionic/angular';
 import { NativeService } from '../../../services/NativeService';
 import { ThemeService } from '../../../services/theme.service';
-import { MenuService } from '../../../services/MenuService';
 import { UtilService } from '../../../services/utilService';
 import { PopupProvider } from '../../../services/popup';
 import { CameraService } from '../../../services/CameraService';
@@ -42,6 +41,9 @@ export class SearchPage implements OnInit {
   public searchSquareList = [];
   public followingList = [];
   public httpAllData = [];
+  public unfollowedFeed = [];
+  public searchUnfollowedFeed = [];
+
   // {
   //   "nodeId": "8Dsp9jkTg8TEfCkwMoXimwjLeaRidMczLZYNWbKGj1SF",
   //   "did": "did:elastos:ibfZa4jQ1QgDRP9rpfbUbZWpXgbd9z7oKF",
@@ -61,7 +63,6 @@ export class SearchPage implements OnInit {
     private zone: NgZone,
     private native: NativeService,
     public theme:ThemeService,
-    private menuService: MenuService,
     private popoverController: PopoverController,
     private popupProvider:PopupProvider,
     private camera: CameraService,
@@ -91,40 +92,37 @@ export class SearchPage implements OnInit {
     this.events.subscribe(FeedsEvent.PublishType.subscribeFinish, (nodeId, channelId)=> {
       // this.native.toast(name + " subscribed");
       this.zone.run(() => {
+        this.unfollowedFeed = this.getUnfollowedFeed() || [];
+        this.searchUnfollowedFeed = _.cloneDeep(this.unfollowedFeed);
+        let status = this.checkServerStatus(nodeId);
+        this.nodeStatus[nodeId] = status;
         this.addingChanneList = this.feedService.getToBeAddedFeedsList() || [];
         this.searchAddingChanneList = _.cloneDeep(this.addingChanneList);
         this.handleSearch();
       });
     });
 
-    this.events.subscribe(FeedsEvent.PublishType.unsubscribeFinish, (nodeId, channelId, name) => {
-      // this.native.toast(name + " unsubscribed");
-      this.zone.run(() => {
-        this.handleSearch();
-      });
-    });
+    // this.events.subscribe(FeedsEvent.PublishType.refreshChannels, list =>{
+    //   this.zone.run(() => {
+    //     this.handleSearch();
+    //   });
+    // });
 
-    this.events.subscribe(FeedsEvent.PublishType.refreshChannels, list =>{
-      this.zone.run(() => {
-        this.handleSearch();
-      });
-    });
-
-    this.events.subscribe(FeedsEvent.PublishType.channelsDataUpdate, () =>{
-      this.zone.run(() => {
-        this.handleSearch();
-      });
-    });
+    // this.events.subscribe(FeedsEvent.PublishType.channelsDataUpdate, () =>{
+    //   this.zone.run(() => {
+    //     this.handleSearch();
+    //   });
+    // });
 
     this.events.subscribe(FeedsEvent.PublishType.hideUnFollowFeeds ,()=>{
-      this.handleSearch();
+         this.hideUnFollowFeeds = this.feedService.getHideUnFollowFeeds();
     });
 
-    this.events.subscribe(FeedsEvent.PublishType.refreshSubscribedChannels,()=>{
-      this.zone.run(() => {
-        this.handleSearch();
-      });
-    });
+    // this.events.subscribe(FeedsEvent.PublishType.refreshSubscribedChannels,()=>{
+    //   this.zone.run(() => {
+    //     this.handleSearch();
+    //   });
+    // });
 
     this.events.subscribe(FeedsEvent.PublishType.addFeedStatusChanged,()=>{
       this.zone.run(() => {
@@ -144,10 +142,9 @@ export class SearchPage implements OnInit {
     this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
     this.events.unsubscribe(FeedsEvent.PublishType.friendConnectionChanged);
     this.events.unsubscribe(FeedsEvent.PublishType.subscribeFinish);
-    this.events.unsubscribe(FeedsEvent.PublishType.unsubscribeFinish);
-    this.events.unsubscribe(FeedsEvent.PublishType.refreshChannels);
-    this.events.unsubscribe(FeedsEvent.PublishType.channelsDataUpdate);
-    this.events.unsubscribe(FeedsEvent.PublishType.refreshSubscribedChannels);
+    //this.events.unsubscribe(FeedsEvent.PublishType.refreshChannels);
+    //this.events.unsubscribe(FeedsEvent.PublishType.channelsDataUpdate);
+    //this.events.unsubscribe(FeedsEvent.PublishType.refreshSubscribedChannels);
     this.events.unsubscribe(FeedsEvent.PublishType.addFeedStatusChanged);
     this.events.unsubscribe(FeedsEvent.PublishType.hideUnFollowFeeds);
   }
@@ -161,7 +158,9 @@ export class SearchPage implements OnInit {
 
   init(){
     this.developerMode = this.feedService.getDeveloperMode();
+    this.hideUnFollowFeeds = this.feedService.getHideUnFollowFeeds();
     this.connectionStatus = this.feedService.getConnectionStatus();
+    this.unfollowedFeed = this.getUnfollowedFeed();
     this.discoverSquareList = this.filterdiscoverSquareList(this.discoverSquareList);
     this.initSubscribe();
     this.handleSearch();
@@ -187,26 +186,13 @@ export class SearchPage implements OnInit {
     this.feedService.subscribeChannel(nodeId, id);
   }
 
-  async unsubscribe(nodeId: string, name: string, id: number){
-
-    if(this.feedService.getConnectionStatus() != 0){
-      this.native.toastWarn('common.connectionError');
-      return;
-    }
-
-    if(this.checkServerStatus(nodeId) != 0){
-      this.native.toastWarn('common.connectionError1');
-      return;
-    }
-    this.menuService.showUnsubscribeMenu(nodeId, id, name);
-  }
-
-  getItems(events){
+  getItems(events:any){
     this.isSearch = events.target.value || "";
     if(events.target.value == ""){
       this.ionRefresher.disabled = false;
       this.infiniteScroll.disabled = false;
       this.addingChanneList = this.feedService.getToBeAddedFeedsList() || [];
+      this.unfollowedFeed = this.getUnfollowedFeed() || [];
       this.discoverSquareList = _.cloneDeep(this.searchSquareList);
       this.searchAddingChanneList = _.cloneDeep(this.addingChanneList);
       return;
@@ -222,6 +208,10 @@ export class SearchPage implements OnInit {
     }
     this.addingChanneList = this.searchAddingChanneList.filter(
       channel=>channel.feedName.toLowerCase().indexOf(this.isSearch.toLowerCase()) > -1
+    );
+
+    this.searchUnfollowedFeed = this.searchUnfollowedFeed.filter(
+      feed=>feed.name.toLowerCase().indexOf(this.isSearch.toLowerCase()) > -1
     );
 
     this.discoverSquareList = this.searchSquareList.filter(
@@ -518,6 +508,7 @@ checkValid(result: string){
 
   filterdiscoverSquareList(discoverSquare:any){
    this.developerMode = this.feedService.getDeveloperMode();
+   this.initnodeStatus();
    this.followingList = this.feedService.getFollowedChannelList() || [];
    this.addingChanneList = this.feedService.getToBeAddedFeedsList() || [];
    this.searchAddingChanneList = _.cloneDeep(this.addingChanneList);
@@ -527,6 +518,39 @@ checkValid(result: string){
     });
     this.searchSquareList =_.cloneDeep(this.discoverSquareList);
     return discoverSquareList;
+  }
+
+  // let channelData = this.feedService.getChannelsList();
+  // this.hideUnFollowFeeds = this.feedService.getHideUnFollowFeeds();
+  // if(!this.hideUnFollowFeeds){
+  //   for(let index=0;index<channelData.length;index++){
+  //     let item = channelData[index];
+  //     let nodeId = item['nodeId'];
+  //     let status = this.checkServerStatus(nodeId);
+  //     this.nodeStatus[nodeId] = status;
+  //     let isSubscribed = item["isSubscribed"];
+  //     if(isSubscribed){
+  //        this.feedsList.push(channelData[index]);
+  //     }
+  //   }
+  //   return;
+  // }
+
+  getUnfollowedFeed(){
+   let feedList = this.feedService.getChannelsList() || [];
+   let unfollowedFeed =  _.filter(feedList,(feed)=>{
+              return !feed["isSubscribed"];
+   });
+   this.searchUnfollowedFeed = _.cloneDeep(this.unfollowedFeed);
+   return unfollowedFeed;
+  }
+
+  initnodeStatus(){
+    _.each(this.followingList,(feed)=>{
+      let nodeId = feed['nodeId'];
+      let status = this.checkServerStatus(nodeId);
+      this.nodeStatus[nodeId] = status;
+    });
   }
 
 }
