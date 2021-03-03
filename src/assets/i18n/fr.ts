@@ -95,7 +95,8 @@ export const fr = {
         "httperror": "Service exception, try again later",
         "textcopied": "Text copied",
         "connectionError1":"The feed is being offline now, try it again when it becomes online",
-        "emptyElaAddressDes":"Not set yet"
+        "emptyElaAddressDes":"Not set yet",
+        "qRcodePreview":"QR code Preview"
     },
     "app": {
         "profileDetails": "Profile Details",

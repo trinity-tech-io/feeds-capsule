@@ -95,7 +95,8 @@ export const zh = {
         "httperror": "服务异常，稍后再试",
         "textcopied": "文本已拷贝",
         "connectionError1":"此Feed当前不在线，待上线后请重试",
-        "emptyElaAddressDes":"还未设置"
+        "emptyElaAddressDes":"还未设置",
+        "qRcodePreview":"二维码预览图"
     },
     "app":{
         "profileDetails": "档案详情",
