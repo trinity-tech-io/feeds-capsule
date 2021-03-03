@@ -1,12 +1,17 @@
 import { Component, OnInit,ViewChild,NgZone} from '@angular/core';
-import { FeedService } from 'src/app/services/FeedService';
-import { Events,PopoverController,IonRefresher  } from '@ionic/angular';
-import { NativeService } from 'src/app/services/NativeService';
-import { ThemeService } from 'src/app/services/theme.service';
-import { MenuService } from 'src/app/services/MenuService';
-import { UtilService } from 'src/app/services/utilService';
-import { PopupProvider } from 'src/app/services/popup';
+import { FeedService } from '../../../services/FeedService';
+import { Events,PopoverController,IonRefresher,IonInfiniteScroll} from '@ionic/angular';
+import { NativeService } from '../../../services/NativeService';
+import { ThemeService } from '../../../services/theme.service';
+import { MenuService } from '../../../services/MenuService';
+import { UtilService } from '../../../services/utilService';
+import { PopupProvider } from '../../../services/popup';
+import { CameraService } from '../../../services/CameraService';
+import { HttpService } from '../../../services/HttpService';
+import { ApiUrl } from '../../../services/ApiUrl';
+import jsQR from "jsqr";
 import * as _ from 'lodash';
+declare let appManager: AppManagerPlugin.AppManager;
 @Component({
   selector: 'app-search',
   templateUrl: './search.page.html',
@@ -15,11 +20,12 @@ import * as _ from 'lodash';
 
 
 export class SearchPage implements OnInit {
+
+  @ViewChild(IonInfiniteScroll,{static:true}) infiniteScroll: IonInfiniteScroll;
   @ViewChild(IonRefresher,{static:true}) ionRefresher:IonRefresher;
 
   public connectionStatus = 1;
   public nodeStatus: any = {};
-  public feedsList= [];
   public popover:any = "";
   public curAddingItem = {};
   public addingChanneList = [];
@@ -27,6 +33,15 @@ export class SearchPage implements OnInit {
   public hideUnFollowFeeds:boolean = false;
   public isSearch:string ="";
   public searchfeedsList = [];
+  public discoverSquareList = [];
+  public pageNum:number = 1;
+  public pageSize:number = 5;
+  public totalNum:number = 0;
+  public isLoading:boolean =true;
+  public developerMode:boolean =  false;
+  public searchSquareList = [];
+  public followingList = [];
+  public httpAllData = [];
   // {
   //   "nodeId": "8Dsp9jkTg8TEfCkwMoXimwjLeaRidMczLZYNWbKGj1SF",
   //   "did": "did:elastos:ibfZa4jQ1QgDRP9rpfbUbZWpXgbd9z7oKF",
@@ -48,11 +63,16 @@ export class SearchPage implements OnInit {
     public theme:ThemeService,
     private menuService: MenuService,
     private popoverController: PopoverController,
-    public popupProvider:PopupProvider
+    private popupProvider:PopupProvider,
+    private camera: CameraService,
+    private httpService:HttpService
+
   ) {
   }
 
   ngOnInit() {
+    this.pageNum =1;
+    this.initData("",true);
   }
 
   initSubscribe(){
@@ -71,11 +91,8 @@ export class SearchPage implements OnInit {
     this.events.subscribe(FeedsEvent.PublishType.subscribeFinish, (nodeId, channelId)=> {
       // this.native.toast(name + " subscribed");
       this.zone.run(() => {
-        // this.channelList  = this.feedService.getChannelsList();
-        // this.initnodeStatus();
         this.addingChanneList = this.feedService.getToBeAddedFeedsList() || [];
         this.searchAddingChanneList = _.cloneDeep(this.addingChanneList);
-        this.initChannelData();
         this.handleSearch();
       });
     });
@@ -83,33 +100,28 @@ export class SearchPage implements OnInit {
     this.events.subscribe(FeedsEvent.PublishType.unsubscribeFinish, (nodeId, channelId, name) => {
       // this.native.toast(name + " unsubscribed");
       this.zone.run(() => {
-        this.initChannelData();
         this.handleSearch();
       });
     });
 
     this.events.subscribe(FeedsEvent.PublishType.refreshChannels, list =>{
       this.zone.run(() => {
-        this.initChannelData();
         this.handleSearch();
       });
     });
 
     this.events.subscribe(FeedsEvent.PublishType.channelsDataUpdate, () =>{
       this.zone.run(() => {
-        this.initChannelData();
         this.handleSearch();
       });
     });
 
     this.events.subscribe(FeedsEvent.PublishType.hideUnFollowFeeds ,()=>{
-      this.initChannelData();
       this.handleSearch();
     });
 
     this.events.subscribe(FeedsEvent.PublishType.refreshSubscribedChannels,()=>{
       this.zone.run(() => {
-        this.initChannelData();
         this.handleSearch();
       });
     });
@@ -148,34 +160,11 @@ export class SearchPage implements OnInit {
   }
 
   init(){
+    this.developerMode = this.feedService.getDeveloperMode();
     this.connectionStatus = this.feedService.getConnectionStatus();
-    this.addingChanneList = this.feedService.getToBeAddedFeedsList() || [];
-    this.searchAddingChanneList = _.cloneDeep(this.addingChanneList);
-    this.initChannelData();
+    this.discoverSquareList = this.filterdiscoverSquareList(this.discoverSquareList);
     this.initSubscribe();
     this.handleSearch();
-  }
-
-  initChannelData(){
-    this.feedsList = [];
-    let channelData = this.feedService.getChannelsList();
-    this.hideUnFollowFeeds = this.feedService.getHideUnFollowFeeds();
-    if(!this.hideUnFollowFeeds){
-      for(let index=0;index<channelData.length;index++){
-        let item = channelData[index];
-        let nodeId = item['nodeId'];
-        let status = this.checkServerStatus(nodeId);
-        this.nodeStatus[nodeId] = status;
-        let isSubscribed = item["isSubscribed"];
-        if(isSubscribed){
-           this.feedsList.push(channelData[index]);
-        }
-      }
-      return;
-    }
-    this.feedsList = channelData;
-    this.searchfeedsList = _.cloneDeep(this.feedsList);
-    this.initnodeStatus();
   }
 
   ionViewWillLeave(){
@@ -216,13 +205,14 @@ export class SearchPage implements OnInit {
     this.isSearch = events.target.value || "";
     if(events.target.value == ""){
       this.ionRefresher.disabled = false;
-      this.initChannelData();
+      this.infiniteScroll.disabled = false;
       this.addingChanneList = this.feedService.getToBeAddedFeedsList() || [];
+      this.discoverSquareList = _.cloneDeep(this.searchSquareList);
       this.searchAddingChanneList = _.cloneDeep(this.addingChanneList);
       return;
     }
     this.ionRefresher.disabled = true;
-
+    this.infiniteScroll.disabled = true;
     this.handleSearch();
   }
 
@@ -234,17 +224,18 @@ export class SearchPage implements OnInit {
       channel=>channel.feedName.toLowerCase().indexOf(this.isSearch.toLowerCase()) > -1
     );
 
-    this.feedsList = this.searchfeedsList.filter(
-      channel=>channel.name.toLowerCase().indexOf(this.isSearch.toLowerCase()) > -1
+    this.discoverSquareList = this.searchSquareList.filter(
+      feed=>feed.name.toLowerCase().indexOf(this.isSearch.toLowerCase()) > -1
     );
+
+
   }
 
   doRefresh(event) {
     let sid = setTimeout(() => {
-      // this.feedService.refreshChannels();
       this.feedService.updateSubscribedFeed();
-      //this.channelList = this.feedService.getChannelsList();
-      this.initChannelData();
+      this.pageNum = 1;
+      this.initData(event,false);
       event.target.complete();
       clearTimeout(sid);
     }, 2000);
@@ -270,14 +261,6 @@ export class SearchPage implements OnInit {
   checkServerStatus(nodeId: string){
     return this.feedService.getServerStatusFromId(nodeId);
   }
-
-  initnodeStatus(){
-    for(let index =0 ;index<this.feedsList.length;index++){
-           let nodeId = this.feedsList[index]['nodeId'];
-           let status = this.checkServerStatus(nodeId);
-           this.nodeStatus[nodeId] = status;
-    }
- }
 
  moreName(name:string){
   return UtilService.moreNanme(name)
@@ -327,7 +310,16 @@ export class SearchPage implements OnInit {
 
       that.feedService.removeTobeAddedFeeds(nodeId,feedId).then(()=>{
         that.zone.run(() => {
-          that.addingChanneList = that.feedService.getToBeAddedFeedsList();
+          that.addingChanneList = that.feedService.getToBeAddedFeedsList() || [];
+          that.searchAddingChanneList = _.cloneDeep(that.addingChanneList);
+          let feed =_.filter(that.httpAllData,(feed)=>{
+            let  feedNodeId = feed["nodeId"]
+            let feedUrl = feed["url"];
+            let feedId = feedUrl.split("/")[4];
+                return feedNodeId==nodeId&&feedId==feedId;
+          })[0];
+          that.discoverSquareList.push(feed);
+          that.searchSquareList = _.cloneDeep(that.discoverSquareList);
         });
       });
     }
@@ -341,6 +333,200 @@ export class SearchPage implements OnInit {
       that.feedService.continueAddFeeds(nodeId, feedId);
       //that.feedService.promptpublishdid();
     }
+  }
+
+  scanService(){
+
+    if(this.feedService.getConnectionStatus() != 0){
+      this.native.toastWarn('common.connectionError');
+      return;
+    }
+
+    this.handleJump("scanService")
+  }
+
+  scanImage(){
+    if(this.feedService.getConnectionStatus() != 0){
+      this.native.toastWarn('common.connectionError');
+      return;
+    }
+    this.handleJump("scanImage");
+  }
+
+  handleJump(clickType:string){
+    if(clickType === "scanService"){
+      appManager.sendIntent("https://scanner.elastos.net/scanqrcode", {}, {}, (res) => {
+        let result: string = res.result.scannedContent;
+        this.checkValid(result);
+      }, (err: any) => {
+          console.error(err);
+      });
+         return;
+    }
+    if(clickType === "scanImage"){
+      this.addImg(0);
+      return;
+    }
+  }
+
+  addImg(type: number) {
+    this.camera.openCamera(
+      80, 0, type,
+      (imageUrl: any) => {
+        this.zone.run(() => {
+           this.base64ToqR(imageUrl);
+        });
+      },
+      (err: any) => {
+        console.error('Add img err', err);
+      }
+    );
+  }
+
+  base64ToqR(data:string) {
+    let qrcanvas:any = document.getElementById("qrcanvas2");
+    let ctx = qrcanvas.getContext("2d");
+      let img = new Image();
+      img.src = data;
+      img.onload = ()=>{
+         ctx.drawImage(img, 0, 0,500,500);
+         let imageData = ctx.getImageData(0, 0,500,500);
+         const code = jsQR(imageData.data,500,500, {
+              inversionAttempts: "dontInvert",
+          });
+          if(code){
+            if(code){
+              this.checkValid(code.data);
+           }else{
+             this.native.toastWarn("AddServerPage.tipMsg1");
+           }
+          }else{
+            this.native.toastWarn("AddServerPage.tipMsg1");
+          }
+      };
+    }
+
+checkValid(result: string){
+    if (result.length < 54 ||
+        !result.startsWith('feeds://')||
+        !result.indexOf("did:elastos:")){
+          this.native.toastWarn("AddServerPage.tipMsg");
+          return ;
+      }
+
+    let splitStr = result.split("/")
+      if (splitStr.length!=5||
+        splitStr[4] == ""){
+          this.native.toastWarn("AddServerPage.tipMsg");
+          return ;
+    }
+
+    this.feedService.addFeed(result,"",0,"").then((isSuccess)=>{
+        if (isSuccess){
+          this.native.pop();
+          return;
+        }
+      });
+  }
+
+  loadData(events:any){
+    this.pageNum =this.pageNum+1;
+     this.httpService.ajaxGet(ApiUrl.listPage+"?pageNum="+this.pageNum+"&pageSize="+this.pageSize,false).then((result)=>{
+      if(result["code"] === 200){
+         this.totalNum = result["data"]["total"];
+         let arr = result["data"]["result"] || [];
+         let discoverSquareList = this.discoverSquareList.concat(arr);
+         this.httpAllData = _.cloneDeep(discoverSquareList);
+         this.discoverSquareList = this.filterdiscoverSquareList(discoverSquareList);
+      }
+      if(this.pageNum*this.pageSize>=this.totalNum){
+        this.infiniteScroll.disabled =true;
+      }else{
+        this.infiniteScroll.disabled =false;
+        if(this.discoverSquareList.length<=13){
+           this.loadData(null);
+        }
+      }
+      this.infiniteScroll.complete();
+    }).catch((err)=>{
+      this.infiniteScroll.complete();
+    });
+   }
+
+   initData(events:any,isLoading:boolean=true){
+    this.isLoading =true;
+    this.httpService.ajaxGet(ApiUrl.listPage+"?pageNum="+this.pageNum+"&pageSize="+this.pageSize,isLoading).then((result)=>{
+      if(events!=""){
+        events.target.complete();
+      }
+      if(result["code"] === 200){
+        this.isLoading =false;
+         this.totalNum = result["data"]["total"];
+         let discoverSquareList = result["data"]["result"] || [];
+         this.httpAllData = _.cloneDeep(discoverSquareList);
+         this.discoverSquareList = this.filterdiscoverSquareList(discoverSquareList);
+         this.searchSquareList =_.cloneDeep(this.discoverSquareList);
+         this.infiniteScroll.disabled =false;
+         if(this.discoverSquareList.length<=13){
+             this.loadData(null);
+         }
+
+      }
+    }).catch((err)=>{
+      this.isLoading =false;
+      this.infiniteScroll.disabled =false;
+      if(events!=""){
+        events.target.complete();
+      }
+    });
+  }
+
+  clickItem(feed:any){
+    this.native.go("discoverfeedinfo",{
+      params:feed
+     });
+  }
+
+  handleShow(feed:any){
+
+    let  feedNodeId = feed["nodeId"]
+    let feedUrl = feed["url"];
+    let feedId = feedUrl.split("/")[4];
+    let followFeed = _.filter(this.followingList,(item:any)=>{
+        return (feedNodeId==item["nodeId"]&&feedId==item["id"]);
+    });
+
+    if(followFeed.length>0){
+        return false;
+    }
+
+    let addingFeed = _.filter(this.addingChanneList,(item:any)=>{
+      return (feedNodeId==item["nodeId"]&&feedId==item["feedId"]);
+    });
+
+    if(addingFeed.length>0){
+      return false;
+    }
+
+    let purpose = feed["purpose"] || "";
+    if(purpose == "" || this.developerMode){
+        return true;
+     }
+
+    return true;
+  }
+
+  filterdiscoverSquareList(discoverSquare:any){
+   this.developerMode = this.feedService.getDeveloperMode();
+   this.followingList = this.feedService.getFollowedChannelList() || [];
+   this.addingChanneList = this.feedService.getToBeAddedFeedsList() || [];
+   this.searchAddingChanneList = _.cloneDeep(this.addingChanneList);
+   let discoverSquareList = [];
+    discoverSquareList =  _.filter(discoverSquare,(feed:any)=>{
+      return this.handleShow(feed);
+    });
+    this.searchSquareList =_.cloneDeep(this.discoverSquareList);
+    return discoverSquareList;
   }
 
 }
