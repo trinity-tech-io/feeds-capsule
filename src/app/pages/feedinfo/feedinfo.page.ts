@@ -7,6 +7,7 @@ import { NativeService } from '../../services/NativeService';
 import { MenuService } from '../../services/MenuService';
 import { PopoverController} from '@ionic/angular';
 import { PaypromptComponent } from '../../components/payprompt/payprompt.component'
+import { AppService } from '../../services/AppService';
 
 import * as _ from 'lodash';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
@@ -55,7 +56,8 @@ export class FeedinfoPage implements OnInit {
     private events: Events,
     private native: NativeService,
     private zone:NgZone,
-    private menuService: MenuService
+    private menuService: MenuService,
+    private appService:AppService
   ) {
     }
 
@@ -309,5 +311,13 @@ export class FeedinfoPage implements OnInit {
     });
     return await this.popover.present();
   }
+
+  showPreviewQrcode(feedsUrl:string){
+    let isOwner = this.feedService.checkChannelIsMine(this.nodeId, this.channelId);
+    if(isOwner){
+      titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, null);
+    }
+    this.native.showPreviewQrcode(feedsUrl,"common.qRcodePreview","FeedinfoPage.title","feedinfo",this.appService,isOwner);
+ }
 
 }

@@ -71,7 +71,7 @@
       <ion-row class="detail-row removeBorder">
         <ion-col size="12" class="left-col">
             <h1>{{'DiscoverfeedinfoPage.feedsQrcode'|translate}}</h1>
-            <div class="qr-container">
+            <div class="qr-container" (click)="showPreviewQrcode(qrcodeString)">
               <div class="qrcode">
                 <qrcode [qrdata]="qrcodeString" [size]="150" [level]="'M'"></qrcode>
               </div>

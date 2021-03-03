@@ -8,6 +8,7 @@ import { ModalController } from '@ionic/angular';
 import { ViewerModalComponent } from 'ngx-ionic-image-viewer';
 import { MorenameComponent} from './../components/morename/morename.component';
 import { VideofullscreenComponent } from './../components/videofullscreen/videofullscreen.component';
+import { PreviewqrcodeComponent }  from './../components/previewqrcode/previewqrcode.component';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 @Injectable()
@@ -308,5 +309,39 @@ public clickUrl(url:string,event:any){
         this.openUrl(url);
         event.stopPropagation();
 }
+
+async showPreviewQrcode(qrCodeString:string,newNameKey:string,oldNameKey:string,page:string,appService:any,isOwner?:boolean) {
+
+    titleBarManager.setTitle(this.translate.instant(newNameKey));
+    this.setTitleBarBackKeyShown(false);
+    appService.hideright();
+    const modal = await this.modalController.create({
+      component:PreviewqrcodeComponent,
+      backdropDismiss:true,
+      componentProps: {
+        'qrCodeString':qrCodeString
+      }
+    });
+    modal.onWillDismiss().then(()=>{
+        titleBarManager.setTitle(this.translate.instant(oldNameKey));
+        this.setTitleBarBackKeyShown(true);
+        if(page === "serverinfo"){
+            titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, {
+                key: "editServer",
+                iconPath: TitleBarPlugin.BuiltInIcon.EDIT
+            });
+        }
+        if(page === "feedinfo"){
+            if(isOwner){
+                titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, {
+                    key: "editChannel",
+                    iconPath: TitleBarPlugin.BuiltInIcon.EDIT
+             });
+            }
+        }
+        appService.addright();
+    })
+    return await modal.present();
+  }
 
 }

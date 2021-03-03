@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
-
+import { QRCodeModule } from 'angularx-qrcode';
 
 import { ServerpromptComponent} from './serverprompt/serverprompt.component';
 import { PaypromptComponent } from './payprompt/payprompt.component';
@@ -19,6 +19,7 @@ import { FollowingComponent} from './following/following.component';
 import { LikesComponent} from './likes/likes.component';
 import { CommentComponent } from './comment/comment.component';
 import { SwitchfeedComponent } from './switchfeed/switchfeed.component';
+import { PreviewqrcodeComponent } from './previewqrcode/previewqrcode.component';
 
 import { VideofullscreenComponent } from './videofullscreen/videofullscreen.component';
 
@@ -40,6 +41,7 @@ import { ShareModule } from 'src/app/share/share.module';
     TranslateModule,
     IonicModule,
     ShareModule,
+    QRCodeModule
   ],
 
   declarations: [
@@ -49,6 +51,7 @@ import { ShareModule } from 'src/app/share/share.module';
     MorenameComponent,
     TipdialogComponent,
     PaypromptComponent,
+    PreviewqrcodeComponent,
     ServerpromptComponent,
     MyfeedsComponent,
     FollowingComponent,
@@ -64,6 +67,7 @@ import { ShareModule } from 'src/app/share/share.module';
     MorenameComponent,
     TipdialogComponent,
     PaypromptComponent,
+    PreviewqrcodeComponent,
     ServerpromptComponent,
     MyfeedsComponent,
     FollowingComponent,
@@ -76,6 +80,6 @@ import { ShareModule } from 'src/app/share/share.module';
   providers: [
   ],
   entryComponents: [VideofullscreenComponent,AlertdialogComponent,ConfirmdialogComponent,EdittoolComponent,MorenameComponent,TipdialogComponent,ServerpromptComponent,
-    PaypromptComponent,],
+    PaypromptComponent,PreviewqrcodeComponent],
 })
 export class ComponentsModule { }

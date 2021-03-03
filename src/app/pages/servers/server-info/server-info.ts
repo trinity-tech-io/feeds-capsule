@@ -11,6 +11,8 @@ import { MenuService } from '../../../services/MenuService';
 import { UtilService } from '../../../services/utilService';
 import { StorageService } from '../../../services/StorageService';
 import { PopupProvider } from '../../../services/popup';
+import { AppService } from '../../../services/AppService';
+
 import * as _ from 'lodash';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
@@ -73,6 +75,7 @@ export class ServerInfoPage implements OnInit {
     private storageService:StorageService,
     private popoverController:PopoverController,
     public popupProvider:PopupProvider,
+    private appService:AppService
   ) {}
 
   ngOnInit() {
@@ -643,6 +646,11 @@ confirm(that:any){
     this.popover.dismiss();
   }
   that.publicFeeds(that.curChannel,"1");
+}
+
+showPreviewQrcode(feedsUrl:string){
+   titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, null);
+   this.native.showPreviewQrcode(feedsUrl,"common.qRcodePreview","ServerInfoPage.title","serverinfo",this.appService);
 }
 
 }
