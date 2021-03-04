@@ -29,17 +29,12 @@
 
   <ion-list  class="channel-list" [class.darkChannelList]="theme.darkMode">
 
-    <ion-row *ngIf="unfollowedFeed.length > 0 || addingChanneList.length > 0 || discoverSquareList.length > 0 || isSearch!=''">
-      <ion-col size="9" class="search-container" [class.dark-search-container]="theme.darkMode">
-        <ion-searchbar placeholder="{{ 'SearchPage.searchFeeds' | translate }}" (ionInput)="getItems($event)" mode="ios"></ion-searchbar>
-      </ion-col>
-      <ion-col size="1.5" class="right-col">
-        <img (click)="scanService()" [src]="!theme.darkMode ? 'assets/icons/scan.svg' : 'assets/icons/darkmode/scan.svg'"/>
-      </ion-col>
-      <ion-col size="1.5" class="right-col">
-        <img (click)="scanImage()" [src]="!theme.darkMode ? 'assets/icons/scanImage.svg' : 'assets/icons/darkmode/scanImage.svg'"/>
-      </ion-col>
-    </ion-row>
+
+    <div class="search-container" [class.dark-search-container]="theme.darkMode"  *ngIf="unfollowedFeed.length > 0 || addingChanneList.length > 0 || discoverSquareList.length > 0 || isSearch!=''">
+      <img *ngIf="isSearch===''" (click)="scanService()" [src]="!theme.darkMode ? 'assets/icons/scan.svg' : 'assets/icons/darkmode/scan.svg'" class="scanService" [ngStyle]="scanServiceStyle"/>
+      <img *ngIf="isSearch===''" (click)="scanImage()" [src]="!theme.darkMode ? 'assets/icons/scanImage.svg' : 'assets/icons/darkmode/scanImage.svg'" class="scanImage" [ngStyle]="scanImageStyle"/>
+      <ion-searchbar placeholder="{{ 'SearchPage.searchFeeds' | translate }}" (ionInput)="getItems($event)" mode="ios"></ion-searchbar>
+    </div>
 
     <!-- adding Feed-->
     <ion-item
@@ -59,7 +54,7 @@
             size="6.5"
             class="middle-col"
           >
-            <ion-label (press)="pressName(addingchannel.feedName)">{{ moreName(addingchannel.feedName) }}</ion-label>
+            <ion-label>{{ moreName(addingchannel.feedName) }}</ion-label>
             <ion-row>
               <img src="./assets/images/bubble2.svg"> <br>
               <p><span>{{ addingchannel.follower }}</span> {{ 'common.followers' | translate }}</p>
@@ -96,14 +91,14 @@
         class="middle-col"
         (click)="navTo(feed.nodeId,feed.id)"
       >
-        <ion-label (press)="pressName(feed.name)">{{ moreName(feed.name) }}</ion-label>
+        <ion-label>{{ moreName(feed.name) }}</ion-label>
         <ion-row>
           <img src="./assets/images/bubble2.svg"> <br>
           <p><span>{{ feed.subscribers }}</span> {{ 'common.followers' | translate }}</p>
         </ion-row>
       </ion-col>
       <ion-col size="3" class="right-col">
-        <ion-button *ngIf="!feed.isSubscribed" class="unsubscribed" fill="outline" (click)="subscribe(feed.nodeId,feed.id)">
+        <ion-button  class="unsubscribed" fill="outline" (click)="subscribe(feed.nodeId,feed.id)">
           <ion-label >{{'SearchPage.follow' | translate}}</ion-label>
         </ion-button>
       </ion-col>
@@ -116,10 +111,11 @@
       lines="none"
       *ngFor="let feed of discoverSquareList"
     >
-      <ion-row class="channel-row ion-activatable ripple" (click)="clickItem(feed)">
+      <ion-row class="channel-row ion-activatable ripple">
         <ion-col
           size="2.5"
           class="left-col"
+          (click)="clickItem(feed)"
         >
           <div class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode">
             <img src={{parseChannelAvatar(feed.feedsAvatar)}}>
@@ -128,20 +124,18 @@
         <ion-col
           size="6.5"
           class="middle-col"
+          (click)="clickItem(feed)"
         >
-          <ion-label (press)="pressName(feed.name)">{{ moreName(feed.name) }}</ion-label>
+          <ion-label>{{ moreName(feed.name) }}</ion-label>
           <ion-row>
             <img src="./assets/images/bubble2.svg"> <br>
             <p><span>{{ feed.followers}}</span> {{ 'common.followers' | translate }}</p>
           </ion-row>
         </ion-col>
         <ion-col size="3" class="right-col">
-          <!-- <ion-button *ngIf="!channel.isSubscribed" class="unsubscribed" fill="outline" (click)="subscribe(channel.nodeId, channel.id)">
+          <ion-button class="unsubscribed" fill="outline" (click)="discoverSubscribe(feed)">
             <ion-label >{{'SearchPage.follow' | translate}}</ion-label>
           </ion-button>
-          <ion-button *ngIf="channel.isSubscribed" (click)="unsubscribe(channel.nodeId, channel.name, channel.id)">
-            <ion-label>{{ 'SearchPage.following' | translate }}</ion-label>
-          </ion-button> -->
         </ion-col>
         <ion-ripple-effect></ion-ripple-effect>
       </ion-row>

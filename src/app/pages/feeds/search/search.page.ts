@@ -39,10 +39,13 @@ export class SearchPage implements OnInit {
   public isLoading:boolean =true;
   public developerMode:boolean =  false;
   public searchSquareList = [];
-  public followingList = [];
+  public followedList = [];
   public httpAllData = [];
   public unfollowedFeed = [];
   public searchUnfollowedFeed = [];
+
+  public scanImageStyle ={"right":""};
+  public scanServiceStyle ={"right":""};
 
   // {
   //   "nodeId": "8Dsp9jkTg8TEfCkwMoXimwjLeaRidMczLZYNWbKGj1SF",
@@ -72,6 +75,8 @@ export class SearchPage implements OnInit {
   }
 
   ngOnInit() {
+    this.scanImageStyle["right"] = screen.width*7.5/100+5+"px";
+    this.scanServiceStyle["right"] = screen.width*7.5/100+32+"px";
     this.pageNum =1;
     this.initData("",true);
   }
@@ -302,13 +307,16 @@ export class SearchPage implements OnInit {
         that.zone.run(() => {
           that.addingChanneList = that.feedService.getToBeAddedFeedsList() || [];
           that.searchAddingChanneList = _.cloneDeep(that.addingChanneList);
-          let feed =_.filter(that.httpAllData,(feed)=>{
+          let feedlist =_.filter(that.httpAllData,(feed)=>{
             let  feedNodeId = feed["nodeId"]
             let feedUrl = feed["url"];
             let feedId = feedUrl.split("/")[4];
                 return feedNodeId==nodeId&&feedId==feedId;
-          })[0];
-          that.discoverSquareList.push(feed);
+          });
+          if(feedlist.length>0){
+            let feed = feedlist[0];
+            that.discoverSquareList.push(feed);
+          }
           that.searchSquareList = _.cloneDeep(that.discoverSquareList);
         });
       });
@@ -482,7 +490,7 @@ checkValid(result: string){
     let  feedNodeId = feed["nodeId"]
     let feedUrl = feed["url"];
     let feedId = feedUrl.split("/")[4];
-    let followFeed = _.filter(this.followingList,(item:any)=>{
+    let followFeed = _.filter(this.followedList,(item:any)=>{
         return (feedNodeId==item["nodeId"]&&feedId==item["id"]);
     });
 
@@ -509,7 +517,7 @@ checkValid(result: string){
   filterdiscoverSquareList(discoverSquare:any){
    this.developerMode = this.feedService.getDeveloperMode();
    this.initnodeStatus();
-   this.followingList = this.feedService.getFollowedChannelList() || [];
+   this.followedList = this.feedService.getChannelsList() || [];
    this.addingChanneList = this.feedService.getToBeAddedFeedsList() || [];
    this.searchAddingChanneList = _.cloneDeep(this.addingChanneList);
    let discoverSquareList = [];
@@ -519,22 +527,6 @@ checkValid(result: string){
     this.searchSquareList =_.cloneDeep(this.discoverSquareList);
     return discoverSquareList;
   }
-
-  // let channelData = this.feedService.getChannelsList();
-  // this.hideUnFollowFeeds = this.feedService.getHideUnFollowFeeds();
-  // if(!this.hideUnFollowFeeds){
-  //   for(let index=0;index<channelData.length;index++){
-  //     let item = channelData[index];
-  //     let nodeId = item['nodeId'];
-  //     let status = this.checkServerStatus(nodeId);
-  //     this.nodeStatus[nodeId] = status;
-  //     let isSubscribed = item["isSubscribed"];
-  //     if(isSubscribed){
-  //        this.feedsList.push(channelData[index]);
-  //     }
-  //   }
-  //   return;
-  // }
 
   getUnfollowedFeed(){
    let feedList = this.feedService.getChannelsList() || [];
@@ -546,10 +538,28 @@ checkValid(result: string){
   }
 
   initnodeStatus(){
-    _.each(this.followingList,(feed)=>{
+    _.each(this.unfollowedFeed,(feed)=>{
       let nodeId = feed['nodeId'];
       let status = this.checkServerStatus(nodeId);
       this.nodeStatus[nodeId] = status;
+    });
+  }
+
+  discoverSubscribe(feedInfo:any){
+
+    let feedUrl = feedInfo["url"];
+    let avatar =  feedInfo["feedsAvatar"];
+    let followers = feedInfo["followers"];
+    let feedName = feedInfo["name"];
+
+    this.feedService.addFeed(feedUrl, avatar, followers, feedName).then((isSuccess)=>{
+      if(isSuccess){
+        this.zone.run(()=>{
+          this.init();
+        });
+      }
+    }).catch((err)=>{
+
     });
   }
 
