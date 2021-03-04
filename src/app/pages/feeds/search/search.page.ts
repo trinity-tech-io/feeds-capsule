@@ -343,17 +343,6 @@ export class SearchPage implements OnInit {
     this.handleJump("scanService")
   }
 
-  scanImage(){
-    if(this.feedService.getConnectionStatus() != 0){
-      this.native.toastWarn('common.connectionError');
-      return;
-    }
-    if(this.isSearch!=''){
-          return;
-    }
-    this.handleJump("scanImage");
-
-  }
 
   handleJump(clickType:string){
     if(clickType === "scanService"){

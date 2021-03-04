@@ -16,7 +16,7 @@
   <ion-list  class="channel-list" [class.darkChannelList]="theme.darkMode">
 
     <div class="search-container" [class.dark-search-container]="theme.darkMode">
-      <img *ngIf="isSearch===''" [src]="!theme.darkMode ? 'assets/icons/scan.svg' : 'assets/icons/darkmode/scan.svg'" class="scanService" [ngStyle]="scanServiceStyle"/>
+      <img *ngIf="isSearch===''" [src]="!theme.darkMode ? 'assets/icons/scan.svg' : 'assets/icons/darkmode/scan.svg'" class="scanService" [ngStyle]="scanServiceStyle" (click)="scanService()"/>
       <ion-searchbar #searchbar placeholder="{{ 'SearchPage.searchFeeds' | translate }}" (ionInput)="getItems($event)" mode="ios"></ion-searchbar>
     </div>
 

@@ -8,7 +8,6 @@ const routes: Routes = [
   { path: 'splashscreen', loadChildren: './pages/splashscreen/splashscreen.module#SplashscreenPageModule' },
 
   { path: 'menu/servers/server-info', loadChildren: './pages/servers/server-info/server-info.module#ServerInfoPageModule'},
-  { path: 'menu/servers/add-server', loadChildren: './pages/servers/add-server/add-server.module#AddServerPageModule'},
 
   { path: 'signin', loadChildren: './pages/signin/signin.module#SigninPageModule' },
 
