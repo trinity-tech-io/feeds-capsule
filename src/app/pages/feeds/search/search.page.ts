@@ -1,6 +1,6 @@
 import { Component, OnInit,ViewChild,NgZone} from '@angular/core';
 import { FeedService } from '../../../services/FeedService';
-import { Events,PopoverController,IonRefresher,IonInfiniteScroll} from '@ionic/angular';
+import { Events,PopoverController,IonRefresher,IonInfiniteScroll, IonSearchbar} from '@ionic/angular';
 import { NativeService } from '../../../services/NativeService';
 import { ThemeService } from '../../../services/theme.service';
 import { UtilService } from '../../../services/utilService';
@@ -8,7 +8,6 @@ import { PopupProvider } from '../../../services/popup';
 import { CameraService } from '../../../services/CameraService';
 import { HttpService } from '../../../services/HttpService';
 import { ApiUrl } from '../../../services/ApiUrl';
-import jsQR from "jsqr";
 import * as _ from 'lodash';
 declare let appManager: AppManagerPlugin.AppManager;
 @Component({
@@ -22,6 +21,7 @@ export class SearchPage implements OnInit {
 
   @ViewChild(IonInfiniteScroll,{static:true}) infiniteScroll: IonInfiniteScroll;
   @ViewChild(IonRefresher,{static:true}) ionRefresher:IonRefresher;
+  @ViewChild('searchbar', {static: false}) searchbar:IonSearchbar;
 
   public connectionStatus = 1;
   public nodeStatus: any = {};
@@ -43,10 +43,7 @@ export class SearchPage implements OnInit {
   public httpAllData = [];
   public unfollowedFeed = [];
   public searchUnfollowedFeed = [];
-
-  public scanImageStyle ={"right":""};
   public scanServiceStyle ={"right":""};
-
   // {
   //   "nodeId": "8Dsp9jkTg8TEfCkwMoXimwjLeaRidMczLZYNWbKGj1SF",
   //   "did": "did:elastos:ibfZa4jQ1QgDRP9rpfbUbZWpXgbd9z7oKF",
@@ -75,8 +72,7 @@ export class SearchPage implements OnInit {
   }
 
   ngOnInit() {
-    this.scanImageStyle["right"] = screen.width*7.5/100+5+"px";
-    this.scanServiceStyle["right"] = screen.width*7.5/100+32+"px";
+    this.scanServiceStyle["right"] = screen.width*7.5/100+5+"px";
     this.pageNum =1;
     this.initData("",true);
   }
@@ -193,6 +189,10 @@ export class SearchPage implements OnInit {
 
   getItems(events:any){
     this.isSearch = events.target.value || "";
+    if(this.checkFeedUrl(this.isSearch)){
+      this.addFeedUrl(this.isSearch);
+      return;
+    }
     if(events.target.value == ""){
       this.ionRefresher.disabled = false;
       this.infiniteScroll.disabled = false;
@@ -348,7 +348,11 @@ export class SearchPage implements OnInit {
       this.native.toastWarn('common.connectionError');
       return;
     }
+    if(this.isSearch!=''){
+          return;
+    }
     this.handleJump("scanImage");
+
   }
 
   handleJump(clickType:string){
@@ -361,48 +365,7 @@ export class SearchPage implements OnInit {
       });
          return;
     }
-    if(clickType === "scanImage"){
-      this.addImg(0);
-      return;
-    }
   }
-
-  addImg(type: number) {
-    this.camera.openCamera(
-      80, 0, type,
-      (imageUrl: any) => {
-        this.zone.run(() => {
-           this.base64ToqR(imageUrl);
-        });
-      },
-      (err: any) => {
-        console.error('Add img err', err);
-      }
-    );
-  }
-
-  base64ToqR(data:string) {
-    let qrcanvas:any = document.getElementById("qrcanvas2");
-    let ctx = qrcanvas.getContext("2d");
-      let img = new Image();
-      img.src = data;
-      img.onload = ()=>{
-         ctx.drawImage(img, 0, 0,500,500);
-         let imageData = ctx.getImageData(0, 0,500,500);
-         const code = jsQR(imageData.data,500,500, {
-              inversionAttempts: "dontInvert",
-          });
-          if(code){
-            if(code){
-              this.checkValid(code.data);
-           }else{
-             this.native.toastWarn("AddServerPage.tipMsg1");
-           }
-          }else{
-            this.native.toastWarn("AddServerPage.tipMsg1");
-          }
-      };
-    }
 
 checkValid(result: string){
     if (result.length < 54 ||
@@ -555,11 +518,42 @@ checkValid(result: string){
     this.feedService.addFeed(feedUrl, avatar, followers, feedName).then((isSuccess)=>{
       if(isSuccess){
         this.zone.run(()=>{
+          this.isSearch = "";
           this.init();
         });
       }
     }).catch((err)=>{
 
+    });
+  }
+
+  checkFeedUrl(feedUrl: string): boolean{
+    if (feedUrl == null || feedUrl == undefined || feedUrl == ""){
+        return false;
+    }
+    if (feedUrl.length < 54 ||
+      !feedUrl.startsWith('feeds://')||
+      !feedUrl.indexOf("did:elastos:")){
+        return false;
+    }
+
+    let splitStr = feedUrl.split("/")
+    if (splitStr.length!=5||
+      splitStr[4] == ""){
+        return false;
+    }
+    return true;
+  }
+
+  addFeedUrl(result: string){
+    this.feedService.addFeed(result,"",0,"").then((isSuccess)=>{
+      if (isSuccess){
+          this.zone.run(()=>{
+            this.searchbar.value = "";
+            this.isSearch ="";
+            this.init();
+          })
+      }
     });
   }
 

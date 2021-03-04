@@ -3,7 +3,6 @@
 </ion-header>
 
 <ion-content>
-  <canvas id="qrcanvas2" width="500" height="500" style="display: none;"></canvas>
   <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" pullFactor="0.5">
     <ion-refresher-content
       class="refresh"
@@ -14,26 +13,11 @@
     </ion-refresher-content>
   </ion-refresher>
 
-  <div *ngIf="unfollowedFeed.length===0 && discoverSquareList.length === 0 && addingChanneList.length ===0&&isSearch===''&&!isLoading" class="empty-container">
-    <img src="./assets/images/empty-feeds-icon.svg">
-    <h1>{{ 'common.allempty' | translate }}</h1>
-    <p>{{ 'SearchPage.emptyDes' | translate }}</p>
-    <ion-row class="btn-row">
-      <ion-button (click)="addfeedssource()">
-        <ion-label>
-          {{ "SearchPage.addfeedssource"  | translate }}
-        </ion-label>
-      </ion-button>
-    </ion-row>
-  </div>
-
   <ion-list  class="channel-list" [class.darkChannelList]="theme.darkMode">
 
-
-    <div class="search-container" [class.dark-search-container]="theme.darkMode"  *ngIf="unfollowedFeed.length > 0 || addingChanneList.length > 0 || discoverSquareList.length > 0 || isSearch!=''">
-      <img *ngIf="isSearch===''" (click)="scanService()" [src]="!theme.darkMode ? 'assets/icons/scan.svg' : 'assets/icons/darkmode/scan.svg'" class="scanService" [ngStyle]="scanServiceStyle"/>
-      <img *ngIf="isSearch===''" (click)="scanImage()" [src]="!theme.darkMode ? 'assets/icons/scanImage.svg' : 'assets/icons/darkmode/scanImage.svg'" class="scanImage" [ngStyle]="scanImageStyle"/>
-      <ion-searchbar placeholder="{{ 'SearchPage.searchFeeds' | translate }}" (ionInput)="getItems($event)" mode="ios"></ion-searchbar>
+    <div class="search-container" [class.dark-search-container]="theme.darkMode">
+      <img *ngIf="isSearch===''" [src]="!theme.darkMode ? 'assets/icons/scan.svg' : 'assets/icons/darkmode/scan.svg'" class="scanService" [ngStyle]="scanServiceStyle"/>
+      <ion-searchbar #searchbar placeholder="{{ 'SearchPage.searchFeeds' | translate }}" (ionInput)="getItems($event)" mode="ios"></ion-searchbar>
     </div>
 
     <!-- adding Feed-->
