@@ -8,6 +8,7 @@ import { HttpService } from '../../services/HttpService';
 import { MenuService } from '../../services/MenuService';
 import { TranslateService } from "@ngx-translate/core";
 import { PopupProvider } from '../../services/popup';
+import { AppService } from '../../services/AppService';
 import * as _ from 'lodash';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
@@ -49,7 +50,9 @@ export class DiscoverfeedinfoPage implements OnInit {
     public httpService:HttpService,
     private popoverController: PopoverController,
     public popupProvider:PopupProvider,
-    private menuService: MenuService) {}
+    private menuService: MenuService,
+    private appService:AppService
+    ) {}
 
   ngOnInit() {
 
@@ -236,5 +239,9 @@ export class DiscoverfeedinfoPage implements OnInit {
       let keyString ="SearchPage.status";
       return keyString+status;
     }
+  }
+
+  showPreviewQrcode(feedsUrl:string){
+    this.native.showPreviewQrcode(feedsUrl,"common.qRcodePreview","DiscoverfeedinfoPage.title","discoverfeedinfo",this.appService);
   }
 }
