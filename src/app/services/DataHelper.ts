@@ -7,9 +7,7 @@ let TAG: string = "DataHelper";
 
 @Injectable()
 export class DataHelper {
-    // private subscribedChannelsMap: {[nodeChannelId: string]: FeedsData.Channels} = {};
     private channelsMap: {[nodeChannelId: string]: FeedsData.Channels} = {};
-    private myChannelsMap: {[nodeChannelId: string]: FeedsData.MyChannel} = {};
     private postMap: {[ncpId: string]: FeedsData.Post} = {};
     private commentsMap: {[nodeId: string]: FeedsData.NodeChannelPostComment} = {};
     private serverMap: {[nodeId: string]: FeedsData.Server} = {};
@@ -76,68 +74,7 @@ export class DataHelper {
         private storageService: StorageService) {
     }
 
-
     ////subscribedChannelsMap
-    // setSubscribedChannelsMap(subscribedChannelsMap: {[nodeChannelId: string]: FeedsData.Channels}){
-    //     this.subscribedChannelsMap = subscribedChannelsMap;
-    //     this.saveData(FeedsData.PersistenceKey.subscribedChannelsMap, this.subscribedChannelsMap);
-    // }
-
-    // loadSubscribedChannels(): Promise<{[nodeChannelId: string]: FeedsData.Channels}>{
-    //     return new Promise(async (resolve, reject) =>{
-    //         try {
-    //             console.log("this.subscribedChannelsMap ===>>>>"+JSON.stringify(this.subscribedChannelsMap));
-    //             if (JSON.stringify(this.subscribedChannelsMap) == "{}"){
-    //                 this.loadData(FeedsData.PersistenceKey.subscribedChannelsMap).then((subscribedChannelsMap)=>{
-    //                     this.subscribedChannelsMap = subscribedChannelsMap;
-    //                     console.log("1111111111this.subscribedChannelsMap = "+JSON.stringify(this.subscribedChannelsMap));
-    //                     resolve(this.subscribedChannelsMap);
-    //                     return ;
-    //                 });
-    //             }
-    //             console.log("2222222222222222this.subscribedChannelsMap = "+JSON.stringify(this.subscribedChannelsMap));
-    //             resolve(this.subscribedChannelsMap);
-    //         } catch (error) {
-    //             reject(error);
-    //         }
-    //     });
-    // }
-
-    // getSubscribedChannelsMap(): {[nodeChannelId: string]: FeedsData.Channels}{
-    //     return this.subscribedChannelsMap||{};
-    // }
-
-    // getSubscribedChannels(key: string): FeedsData.Channels{
-    //     if (!this.subscribedChannelsMap){
-    //         return null;
-    //     }
-
-    //     return this.subscribedChannelsMap[key];
-    // }
-
-    // updateSubscribedChannels(key: string, subscribedChannels: FeedsData.Channels){
-    //     console.log("bbbbbbbb");
-    //     this.subscribedChannelsMap[key] = subscribedChannels;
-    //     this.saveData(FeedsData.PersistenceKey.subscribedChannelsMap, this.subscribedChannelsMap);
-    // }
-
-    // deleteSubscribedChannel(key: string): Promise<any>{
-    //     this.subscribedChannelsMap[key] = undefined;
-    //     delete this.subscribedChannelsMap[key];
-    //     return this.saveData(FeedsData.PersistenceKey.subscribedChannelsMap, this.subscribedChannelsMap);
-    // }
-
-    // isExistSubscribedChannel(key: string): boolean{
-    //     if (this.subscribedChannelsMap[key] == null || this.subscribedChannelsMap[key] == undefined)
-    //         return false;
-
-    //     return true;
-    // }
-
-    // initSubscribedChannelsMap(){
-    //     this.subscribedChannelsMap = {};
-    // }
-
     getSubscribedFeedsList(): FeedsData.Channels[]{
         let list: FeedsData.Channels[] = [];
         let map = this.getChannelsMap();
@@ -249,73 +186,74 @@ export class DataHelper {
     }
 
     //// myChannelsMap
-    setMyChannelMap(myChannelsMap: {[nodeChannelId: string]: FeedsData.MyChannel}){
-        this.myChannelsMap = myChannelsMap;
-        this.saveData(FeedsData.PersistenceKey.myChannelsMap, this.myChannelsMap);
-    }
+    // setMyChannelMap(myChannelsMap: {[nodeChannelId: string]: FeedsData.MyChannel}){
+    //     this.myChannelsMap = myChannelsMap;
+    //     this.saveData(FeedsData.PersistenceKey.myChannelsMap, this.myChannelsMap);
+    // }
 
-    loadMyChannelMap(): Promise<{[nodeChannelId: string]: FeedsData.MyChannel}>{
-        return new Promise(async (resolve, reject) =>{
-            try {
-                if (this.myChannelsMap == {}){
-                    this.myChannelsMap = await this.loadData(FeedsData.PersistenceKey.myChannelsMap) || {};
-                    resolve(this.myChannelsMap);
-                    return ;
-                }
-                resolve(this.myChannelsMap);
-            } catch (error) {
-                reject(error);
-            }
-        });
-    }
+    // loadMyChannelMap(): Promise<{[nodeChannelId: string]: FeedsData.MyChannel}>{
+    //     return new Promise(async (resolve, reject) =>{
+    //         try {
+    //             if (this.myChannelsMap == {}){
+    //                 this.myChannelsMap = await this.loadData(FeedsData.PersistenceKey.myChannelsMap) || {};
+    //                 resolve(this.myChannelsMap);
+    //                 return ;
+    //             }
+    //             resolve(this.myChannelsMap);
+    //         } catch (error) {
+    //             reject(error);
+    //         }
+    //     });
+    // }
 
-    getMyChannelsMap(): {[nodeChannelId: string]: FeedsData.MyChannel}{
-        return this.myChannelsMap||{};
-    }
+    // getMyChannelsMap(): {[nodeChannelId: string]: FeedsData.MyChannel}{
+    //     return this.myChannelsMap||{};
+    // }
 
-    getMyChannel(key: string): FeedsData.MyChannel{
-        if (!this.myChannelsMap){
-            return null;
-        }
+    // getMyChannel(key: string): FeedsData.MyChannel{
+    //     if (!this.myChannelsMap){
+    //         return null;
+    //     }
 
-        return this.myChannelsMap[key];
-    }
+    //     return this.myChannelsMap[key];
+    // }
 
-    updateMyChannel(key: string, myChannelsMap: FeedsData.MyChannel){
-        this.myChannelsMap[key] = myChannelsMap;
-        this.saveData(FeedsData.PersistenceKey.myChannelsMap, this.myChannelsMap);
-    }
+    // updateMyChannel(key: string, myChannelsMap: FeedsData.MyChannel){
+    //     this.myChannelsMap[key] = myChannelsMap;
+    //     this.saveData(FeedsData.PersistenceKey.myChannelsMap, this.myChannelsMap);
+    // }
 
-    deleteMyChannel(key: string): Promise<any>{
-        this.myChannelsMap[key] = undefined;
-        delete this.myChannelsMap[key];
-        return this.saveData(FeedsData.PersistenceKey.myChannelsMap, this.myChannelsMap);
-    }
+    // deleteMyChannel(key: string): Promise<any>{
+    //     this.myChannelsMap[key] = undefined;
+    //     delete this.myChannelsMap[key];
+    //     return this.saveData(FeedsData.PersistenceKey.myChannelsMap, this.myChannelsMap);
+    // }
 
-    isExistMyChannel(key: string): boolean{
-        if (this.myChannelsMap[key] == null || this.myChannelsMap[key] == undefined)
-            return false;
-        return true;
-    }
+    // isExistMyChannel(key: string): boolean{
+    //     if (this.myChannelsMap[key] == null || this.myChannelsMap[key] == undefined)
+    //         return false;
+    //     return true;
+    // }
 
-    initMyChannelsMap(){
-        this.myChannelsMap = {};
-    }
+    // initMyChannelsMap(){
+    //     this.myChannelsMap = {};
+    // }
 
-    getMyChannelList(sortType: FeedsData.SortType){
-        let list: FeedsData.Channels[] = [];
-        let keys: string[] = Object.keys(this.myChannelsMap);
-        for (const index in keys) {
-          if (this.myChannelsMap[keys[index]] == undefined)
-            continue;
+    getMyChannelList(nodeId: string){
+        // let list: FeedsData.Channels[] = [];
+        // let keys: string[] = Object.keys(this.myChannelsMap);
+        // for (const index in keys) {
+        //   if (this.myChannelsMap[keys[index]] == undefined)
+        //     continue;
     
-          if(this.isExistChannel(keys[index])){
-            let channel = this.getChannel[keys[index]];
-            list.push(channel);
-          }
-        }
-        list.sort((a, b) => Number(b.last_update) - Number(a.last_update));
-        return list;
+        //   if(this.isExistChannel(keys[index])){
+        //     let channel = this.getChannel[keys[index]];
+        //     list.push(channel);
+        //   }
+        // }
+        // list.sort((a, b) => Number(b.last_update) - Number(a.last_update));
+        // return list;
+        return this.getChannelsListFromNodeId(nodeId);
     }
 
     //// postMap

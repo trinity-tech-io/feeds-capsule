@@ -31,7 +31,7 @@ let newMultiPropCountVersion: number = 10500;
 
 // let subscribedChannelsMap:{[nodeChannelId: string]: FeedsData.Channels};
 // let channelsMap:{[nodeChannelId: string]: FeedsData.Channels} ;
-let myChannelsMap:{[nodeChannelId: string]: FeedsData.MyChannel};
+// let myChannelsMap:{[nodeChannelId: string]: FeedsData.MyChannel};
 let unreadMap:{[nodeChannelId: string]: number};
 let serverStatisticsMap:{[nodeId: string]: FeedsData.ServerStatistics};
 let commentsMap:{[nodeId: string]: FeedsData.NodeChannelPostComment};
@@ -254,22 +254,6 @@ export class FeedService {
         });
       }else{
           resolve(lastPostUpdate);
-      }
-    });
-  }
-
-  loadMyChannels(){
-    return new Promise((resolve, reject) =>{
-      let myChannels = myChannelsMap || "";
-      if( myChannels == ""){
-        this.storeService.get(FeedsData.PersistenceKey.myChannelsMap).then((mMyChannelsMap)=>{
-          myChannelsMap = mMyChannelsMap || {};
-          resolve(mMyChannelsMap);
-        }).catch((error)=>{
-          reject(error);
-        });
-      }else{
-          resolve(myChannels);
       }
     });
   }
@@ -518,7 +502,7 @@ export class FeedService {
       this.loadChannelData(),
       this.loadCredential(),
       this.loadLastPostUpdate(),
-      this.loadMyChannels(),
+      // this.loadMyChannels(),
       this.loadServersStatus(),
       this.loadServerStatistics(),
       this.loadServers(),
@@ -551,13 +535,6 @@ export class FeedService {
       lastPostUpdateMap = mLastPostUpdateMap;
       if(lastPostUpdateMap == null || lastPostUpdateMap == undefined)
         lastPostUpdateMap = {}
-    });
-
-    this.storeService.get(FeedsData.PersistenceKey.myChannelsMap).then((mMyChannelsMap)=>{
-      myChannelsMap = mMyChannelsMap;
-      if (myChannelsMap == null || myChannelsMap ==undefined ){
-        myChannelsMap ={};
-      }
     });
 
     this.storeService.get(FeedsData.PersistenceKey.serversStatus).then((mServersStatus)=>{
@@ -760,7 +737,9 @@ export class FeedService {
   }
 
   getMyChannelList(){
-    return this.dataHelper.getMyChannelList(FeedsData.SortType.lastUpdateRevert);
+    if (bindingServer == null || bindingServer == undefined)
+      return [];
+    return this.dataHelper.getMyChannelList(bindingServer.nodeId);
   }
 
   getUnreadNumber(nodeChannelId: string){
@@ -2253,15 +2232,6 @@ export class FeedService {
 
     let nodeChannelId = this.getChannelId(nodeId, channelId);
 
-    if (myChannelsMap == null || myChannelsMap == undefined)
-      myChannelsMap = {};
-
-    myChannelsMap[nodeChannelId] = {
-      nodeId: nodeId,
-      channelId: channelId
-    };
-    this.storeService.set(FeedsData.PersistenceKey.myChannelsMap,myChannelsMap);
-
     this.dataHelper.updateChannel(nodeChannelId, channel);
 
     eventBus.publish(FeedsEvent.PublishType.createTopicSuccess);
@@ -2513,14 +2483,6 @@ export class FeedService {
 
       let nodeChannelId = this.getChannelId(nodeId, id) ;
 
-      if (myChannelsMap == null || myChannelsMap == undefined)
-        myChannelsMap = {};
-
-      myChannelsMap[nodeChannelId] = {
-        nodeId: nodeId,
-        channelId: id
-      }
-
       let originChannel = this.dataHelper.getChannel(nodeChannelId);
       if (originChannel == null){
         let channel = {
@@ -2544,7 +2506,6 @@ export class FeedService {
       this.syncComment(nodeId, id);
     }
 
-    this.storeService.set(FeedsData.PersistenceKey.myChannelsMap, myChannelsMap);
     eventBus.publish(FeedsEvent.PublishType.myChannelsDataUpdate);
   }
 
@@ -3233,19 +3194,6 @@ export class FeedService {
   }
 
   getCommentListFrom(nodeId: string, channelId: number, postId: number){
-
-  }
-
-  getOwnChannelNumber(): number{
-    let keys: string[] = Object.keys(myChannelsMap);
-    let num: number = 0;
-    for (const index in keys) {
-      if (myChannelsMap[keys[index]] == null || myChannelsMap[keys[index]] == undefined)
-        continue;
-      num++;
-    }
-
-    return num;
   }
 
   getPostList(): FeedsData.Post[]{
@@ -3870,7 +3818,7 @@ export class FeedService {
       return ;
 
     originChannel.subscribers = subscribesCount;
-    this.dataHelper.updateChannel(nodeId, originChannel);
+    this.dataHelper.updateChannel(nodeChannelId, originChannel);
   }
 
   async handleGetMultiLikesAndCommentsCount(nodeId: string, responseResult: any, requestParams: any, error: any){
@@ -4342,7 +4290,6 @@ export class FeedService {
       }
       await this.removeChannelById(nodeId, channelId);
       await this.removeUnreadStatueById(nodeId, channelId);
-      await this.removeMyChannelById(nodeId, channelId);
       await this.removeLastPostUpdate(nodeId,channelId);
     }
 
@@ -4381,12 +4328,6 @@ export class FeedService {
     return this.storeService.set(FeedsData.PersistenceKey.lastCommentUpdateMap,this.lastCommentUpdateMap);
   }
 
-  // removeLastFeedUpdate(nodeId: string): Promise<any>{
-  //   this.lastFeedUpdateMap[nodeId] = undefined;
-  //   delete this.lastFeedUpdateMap[nodeId];
-  //   return this.storeService.set(FeedsData.PersistenceKey.lastFeedUpdateMap,this.lastFeedUpdateMap);
-  // }
-
   removeLikeById(nodeId: string, channelId: number, postId: number):Promise<any>{
     let key = this.getKey(nodeId, channelId, postId, 0);
     likeMap[key] = undefined;
@@ -4418,13 +4359,6 @@ export class FeedService {
   removeChannelById(nodeId: string, channelId: number){
     let nodeChannelId = this.getChannelId(nodeId, channelId);
     this.dataHelper.deleteChannel(nodeChannelId);
-  }
-
-  removeMyChannelById(nodeId: string, channelId: number):Promise<any>{
-    let nodeChannelId = this.getChannelId(nodeId, channelId);
-    myChannelsMap[nodeChannelId] = undefined;
-    delete myChannelsMap[nodeChannelId];
-    return this.storeService.set(FeedsData.PersistenceKey.myChannelsMap, myChannelsMap);
   }
 
   removeUnreadStatueById(nodeId: string, channelId: number):Promise<any>{
@@ -5415,29 +5349,29 @@ export class FeedService {
   }
 
   updateMyChannelsKey(){
-    let keys: string[] = Object.keys(myChannelsMap) || [];
+    // let keys: string[] = Object.keys(myChannelsMap) || [];
 
-    for (let index = 0; index < keys.length; index++) {
-      let key = keys[index];
-      if(myChannelsMap[key] == undefined){
-        delete myChannelsMap[key];
-        continue;
-      }
+    // for (let index = 0; index < keys.length; index++) {
+    //   let key = keys[index];
+    //   if(myChannelsMap[key] == undefined){
+    //     delete myChannelsMap[key];
+    //     continue;
+    //   }
 
-      let channel = myChannelsMap[key];
-      let nodeId = channel.nodeId;
-      let channelId = channel.channelId;
+    //   let channel = myChannelsMap[key];
+    //   let nodeId = channel.nodeId;
+    //   let channelId = channel.channelId;
 
-      let newKey = this.getChannelId(nodeId, channelId);
+    //   let newKey = this.getChannelId(nodeId, channelId);
 
 
-      if(key == newKey)
-        continue;
+    //   if(key == newKey)
+    //     continue;
 
-      myChannelsMap[newKey] = channel;
-      delete myChannelsMap[key];
-    }
-    this.storeService.set(FeedsData.PersistenceKey.myChannelsMap, myChannelsMap);
+    //   myChannelsMap[newKey] = channel;
+    //   delete myChannelsMap[key];
+    // }
+    // this.storeService.set(FeedsData.PersistenceKey.myChannelsMap, myChannelsMap);
   }
 
   updateLikeCommentKey(){
@@ -6125,7 +6059,7 @@ export class FeedService {
     // this.dataHelper.initSubscribedChannelsMap();
     // channelsMap = {};
     this.dataHelper.initChannelsMap();
-    myChannelsMap = {};
+    // myChannelsMap = {};
     unreadMap = {};
     serverStatisticsMap = {};
     commentsMap = {};
