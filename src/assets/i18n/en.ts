@@ -62,7 +62,7 @@ export const en = {
         "error400": "Absent required parameter error",
         "error500": "Server error",
         "confirmdeletion": "Are you sure you want to delete?",
-        "waitOnChain": "Tips -  the DID of the Feeds Publisher Account is being published.  Please wait for full confirmation from the DID Sidechain.",
+        "waitOnChain": "Tips - the DID of the Feeds Publisher Account is being published. Please wait for full confirmation from the DID Sidechain.",
         "takePicture": "Take Picture",
         "photolibary": "Photo Library",
         "signedInto": "Signed In",
@@ -90,13 +90,13 @@ export const en = {
         "unknown": "Unknown",
         // "unfollow": "Unfollow",
         // "adding": "Adding",
-        "feedsAlreadyAdded": "This feed has already been added",
+        "feedsAlreadyAdded": "This feed has already been following",
         "notFollowYet": "Follow",
         "httperror": "Service exception, try again later",
         "textcopied": "Text copied",
-        "connectionError1":"The feed is being offline now, try it again when it becomes online",
-        "emptyElaAddressDes":"Not set yet",
-        "qRcodePreview":"QR code Preview"
+        "connectionError1": "The feed is being offline now, try it again when it becomes online",
+        "emptyElaAddressDes": "Not set yet",
+        "qRcodePreview": "QR code Preview"
     },
     "app": {
         "profileDetails": "Profile Details",
@@ -215,8 +215,8 @@ export const en = {
         "tipMsgLength1": "The maximum length of the name message is 32 characters",
         "alreadyExist": "Feed already exists. Please change the name and try again",
         "nameContainInvalidChars": "Feed Name can not include characters except alphabet letters A-Z, a-z, digits 0-9, the hyphen “-”, and the underscore “_”.",
-        "feedMaxNumber":"The maximum number of feeds can be created is 5",
-        "feedNum":"You can create up to 5 Feeds"
+        "feedMaxNumber": "The maximum number of feeds can be created is 5",
+        "feedNum": "You can create up to 5 Feeds"
     },
     "ProfileimagePage": {
         "title": "Profile Image",
@@ -314,10 +314,10 @@ export const en = {
         "version": "version",
         "UserId": "UserId",
         "beingPublic": "Public",
-        "des1": "When developer mode is opened You can choose public or public test Feeds",
+        "des1": "When developer mode is opened, you can choose public or public test Feeds",
         "des2": "Test Feeds",
         "des3": "Public Feeds",
-        "feedsSourceQRCodeDes":"This QRCode is only limited to your personal use, used to bind your publisher account on other devices",
+        "feedsSourceQRCodeDes": "This QRCode is only limited to your personal use, used to bind your publisher account on other devices",
     },
     "ScanqrcodePage": {
         "introtitle": "Create a new",
