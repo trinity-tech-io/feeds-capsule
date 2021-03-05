@@ -36,7 +36,6 @@
     </ion-grid>
 
       <!--- SERVER DETAILS --->
-
         <ion-row class="detail-row">
           <ion-col size="12" class="left-col">
               <h1>{{'DiscoverfeedinfoPage.feeds'|translate}}</h1>
@@ -48,6 +47,13 @@
           <ion-col size="12" class="left-col">
               <h1>{{'ServerInfoPage.introduction'|translate}}</h1>
               <h2>{{feedInfo['description']}}</h2>
+          </ion-col>
+        </ion-row>
+
+        <ion-row class="detail-row" *ngIf="developerMode">
+          <ion-col size="12" class="left-col">
+              <h1>NodeId</h1>
+              <h2>{{feedInfo["nodeId"]}}</h2>
           </ion-col>
         </ion-row>
 
