@@ -29,9 +29,6 @@ let newAuthVersion: number = 10400;
 let newCommentVersion: number = 10400;
 let newMultiPropCountVersion: number = 10500;
 
-// let subscribedChannelsMap:{[nodeChannelId: string]: FeedsData.Channels};
-// let channelsMap:{[nodeChannelId: string]: FeedsData.Channels} ;
-// let myChannelsMap:{[nodeChannelId: string]: FeedsData.MyChannel};
 let unreadMap:{[nodeChannelId: string]: number};
 let serverStatisticsMap:{[nodeId: string]: FeedsData.ServerStatistics};
 let commentsMap:{[nodeId: string]: FeedsData.NodeChannelPostComment};
@@ -564,13 +561,6 @@ export class FeedService {
       if(serverMap == null || serverMap == undefined)
         serverMap = {};
     });
-
-    // this.storeService.get(FeedsData.PersistenceKey.subscribedChannelsMap).then((mSubscribedChannelsMap)=>{
-    //   subscribedChannelsMap = mSubscribedChannelsMap;
-    //   if (subscribedChannelsMap == null || subscribedChannelsMap == undefined)
-    //     subscribedChannelsMap = {};
-    // });
-
 
     this.storeService.get(FeedsData.PersistenceKey.commentsMap).then((mCommentsMap)=>{
       commentsMap = mCommentsMap;
@@ -1620,14 +1610,6 @@ export class FeedService {
     this.connectionService.getMyChannels(this.getServerNameByNodeId(nodeId), nodeId, field, upper_bound, lower_bound, max_counts,accessToken);
   }
 
-  // getMyChannelsMetaData(nodeId: string, field: Communication.field, upper_bound: number,
-  //                       lower_bound: number, max_counts: number){
-  //   if(!this.hasAccessToken(nodeId))
-  //     return;
-  //   let accessToken: FeedsData.AccessToken = accessTokenMap[nodeId]||undefined;
-  //   this.connectionService.getMyChannelsMetaData(this.getServerNameByNodeId(nodeId), nodeId, field, upper_bound, lower_bound, max_counts, accessToken);
-  // }
-
   getChannels(nodeId: string, field: Communication.field, upper_bound: number,
               lower_bound: number, max_counts: number){
     if(!this.hasAccessToken(nodeId))
@@ -2338,44 +2320,7 @@ export class FeedService {
       return;
     }
 
-    eventBus.publish(FeedsEvent.PublishType.rpcRequestSuccess);
-    // let id = result.id;
-    // let channel_id = request.channel_id;
-    // let post_id = request.post_id;
-    // let comment_id = request.comment_id;
-    // let content = request.content;
-
-
-    // let comment: Comment = {
-    //   channel_id : channel_id,
-    //   post_id    : post_id,
-    //   id         : id,
-    //   user_name  : "me",
-    //   comment_id : comment_id,
-    //   content    : content,
-    //   likes      : 0,
-    //   created_at : this.getCurrentTimeNum()
-    // }
-
-    // if (commentsMap == null || commentsMap == undefined)
-    //   commentsMap = {}
-    // if (commentsMap[channel_id] == null || commentsMap[channel_id] == undefined)
-    //   commentsMap[channel_id] = {}
-    // if (commentsMap[channel_id][post_id] == null || commentsMap[channel_id][post_id] == undefined)
-    //   commentsMap[channel_id][post_id] = {}
-
-    // commentsMap[channel_id][post_id][id] = comment;
-
-    // let mPostId = this.getPostId(nodeId, channel_id, post_id);
-    // postMap[mPostId].comments = postMap[mPostId].comments+1;
-
-    // this.storeService.set(FeedsData.PersistenceKey.postMap,postMap);
-    // eventBus.publish(PublishType.postDataUpdate);
-
-    // this.storeService.set(FeedsData.PersistenceKey.commentsMap, commentsMap);
-    // eventBus.publish(PublishType.commentDataUpdate);
-
-    // eventBus.publish(PublishType.updataComment,nodeId,channel_id,post_id,postMap[mPostId].comments);
+    eventBus.publish(FeedsEvent.PublishType.rpcRequestSuccess)
   }
 
   handlePostLikeResult(nodeId:string, request: any, error: any){
@@ -2508,25 +2453,6 @@ export class FeedService {
 
     eventBus.publish(FeedsEvent.PublishType.myChannelsDataUpdate);
   }
-
-  // handleGetMyChannelsMetaDataResult(nodeId: string, result: any, error: any){
-  //   if (error != null && error != undefined && error.code != undefined){
-  //     this.handleError(nodeId, error);
-  //     return;
-  //   }
-
-  //   for (let index = 0; index < result.length; index++) {
-
-  //     let id: number = result[index].id;
-  //     let subscribers: number = result[index];
-
-  //     let nodeChannelId = this.getChannelId(nodeId, id);
-
-  //     channelsMap[nodeChannelId].subscribers = subscribers;
-  //   }
-  //   this.storeService.set(FeedsData.PersistenceKey.myChannelsMap, myChannelsMap);
-  //   eventBus.publish(FeedsEvent.PublishType.myChannelsDataUpdate);
-  // }
 
   handleGetChannelsResult(nodeId: string, responseResult: any , request: any, error: any){
     let result = responseResult.channels;
@@ -3173,7 +3099,6 @@ export class FeedService {
          return [];
     }
 
-
     let list: FeedsData.Comment[] =[];
     let keys: string[] = Object.keys(commentsMap[nodeId][channelId][postId]);
     for (const index in keys) {
@@ -3313,16 +3238,6 @@ export class FeedService {
       let feedsList = this.getPostListFromChannel(nodeId, feedsId);
       return feedsList[feedsList.length-1].id;
   }
-
-  // updateFeed(nodeId: string, refreshAll: boolean){
-  //   let lastFeedTime: number = 0;
-  //   if (!refreshAll){
-  //     let mLastFeedUpdateMap = this.lastFeedUpdateMap || "";
-  //     let update = mLastFeedUpdateMap[nodeId] || "";
-  //     lastFeedTime = update["time"] || 0;
-  //   }
-  //   this.updateFeedsWithTime(nodeId,lastFeedTime);
-  // }
 
   updateSubscribedFeed(){
     //TODO
@@ -3680,21 +3595,6 @@ export class FeedService {
       this.handleError(nodeId, error);
       return;
     }
-
-    // if (bindingServerCache !=null && bindingServerCache!= undefined){
-    //   let did = bindingServerCache.did||"";
-    //   this.httpService.ajaxGet(ApiUrl.get+"?did="+did,false).then((result)=>{
-    //     if(result["code"] === 200){
-    //       if (result["data"] != undefined){
-    //         let name = bindingServerCache.name;
-    //         let description = bindingServerCache.introduction;
-    //         let feedUrl = bindingServerCache.feedsUrl;
-    //         this.updatePublic(did, name, description, feedUrl);
-    //       }
-    //     }
-    //   });
-    // }
-
     this.finishBinding(nodeId);
   }
 
@@ -5287,91 +5187,12 @@ export class FeedService {
   }
 
   updateSubscribedChannelsKey(){
-    // let keys: string[] = Object.keys(subscribedChannelsMap) || [];
-
-    // for (let index = 0; index < keys.length; index++) {
-    //   let key = keys[index];
-    //   if(subscribedChannelsMap[key] == undefined){
-    //     delete subscribedChannelsMap[key];
-    //     continue;
-    //   }
-
-    //   let channel = subscribedChannelsMap[key];
-    //   let nodeId = channel.nodeId;
-    //   let channelId = channel.id;
-
-    //   let newKey = this.getChannelId(nodeId, channelId);
-
-
-    //   if(key == newKey)
-    //     continue;
-
-    //   subscribedChannelsMap[newKey] = channel;
-    //   delete subscribedChannelsMap[key];
-    // }
-    // this.storeService.set(FeedsData.PersistenceKey.subscribedChannelsMap, subscribedChannelsMap);
   }
 
   updateChannelsKey(){
-    // let keys: string[] = Object.keys(channelsMap) || [];
-
-    // for (let index = 0; index < keys.length; index++) {
-    //   let key = keys[index];
-    //   if(channelsMap[key] == undefined){
-    //     delete channelsMap[key];
-    //     continue;
-    //   }
-
-    //   if(unreadMap[key] == undefined){
-    //     delete unreadMap[key];
-    //   }
-
-    //   let channel = channelsMap[key];
-    //   let nodeId = channel.nodeId;
-    //   let channelId = channel.id;
-
-    //   let newKey = this.getChannelId(nodeId, channelId);
-
-
-    //   if(key == newKey)
-    //     continue;
-
-    //   let unreadNumber = unreadMap[key];
-    //   unreadMap[newKey] = unreadNumber;
-    //   delete unreadMap[key];
-
-    //   channelsMap[newKey] = channel;
-    //   delete channelsMap[key];
-    // }
-
-    // this.storeService.set(FeedsData.PersistenceKey.channelsMap, channelsMap);
-    // this.storeService.set(FeedsData.PersistenceKey.unreadMap, unreadMap);
   }
 
   updateMyChannelsKey(){
-    // let keys: string[] = Object.keys(myChannelsMap) || [];
-
-    // for (let index = 0; index < keys.length; index++) {
-    //   let key = keys[index];
-    //   if(myChannelsMap[key] == undefined){
-    //     delete myChannelsMap[key];
-    //     continue;
-    //   }
-
-    //   let channel = myChannelsMap[key];
-    //   let nodeId = channel.nodeId;
-    //   let channelId = channel.channelId;
-
-    //   let newKey = this.getChannelId(nodeId, channelId);
-
-
-    //   if(key == newKey)
-    //     continue;
-
-    //   myChannelsMap[newKey] = channel;
-    //   delete myChannelsMap[key];
-    // }
-    // this.storeService.set(FeedsData.PersistenceKey.myChannelsMap, myChannelsMap);
   }
 
   updateLikeCommentKey(){
@@ -5504,24 +5325,6 @@ export class FeedService {
 
     this.storeService.set(FeedsData.PersistenceKey.lastPostUpdateMap, lastPostUpdateMap);
   }
-
-  // updateLastFeedUpdate(nodeId: string, updatedAt: number){
-  //   if (this.lastFeedUpdateMap[nodeId] == undefined){
-  //     this.lastFeedUpdateMap[nodeId] = {
-  //       nodeId: nodeId,
-  //       time: updatedAt + 1
-  //     }
-  //   } else{
-  //     let oldTime = this.lastFeedUpdateMap[nodeId].time || 0;
-  //     if (oldTime > updatedAt){
-  //       return ;
-  //     }
-  //     this.lastFeedUpdateMap[nodeId].time = updatedAt + 1;
-  //   }
-
-  //   this.storeService.set(FeedsData.PersistenceKey.lastFeedUpdateMap, this.lastFeedUpdateMap);
-  // }
-
 
   updateLastSubscribedFeedsUpdate(nodeId: string, updatedAt: number){
     if (this.lastSubscribedFeedsUpdateMap[nodeId] == undefined){
@@ -6085,13 +5888,6 @@ export class FeedService {
     cachedPost = {};
 
     this.feedPublicStatus = {};
-    // this.localSignInData = null;
-
-    // this.developerMode = false;
-    // this.hideDeletedPosts = false;
-    // this.hideDeletedComments = false;
-    // this.hideOfflineFeeds = false;
-    // this.currentLang ="";
 
     this.channelInfo = {};
     this.postMap = {};
@@ -6105,10 +5901,6 @@ export class FeedService {
     this.clipProfileIamge = "";
     this.selsectIndex = 1;
 
-    // this.carrierStatus = FeedsData.ConnState.disconnected;
-    // this.networkStatus = FeedsData.ConnState.disconnected;
-    // this.connectionStatus = FeedsData.ConnState.disconnected ;
-    // this.lastConnectionStatus = FeedsData.ConnState.disconnected ;
     this.isLogging = {};
     this.signinChallengeTimeout = null;
     this.isSavingChannel = false;
