@@ -90,7 +90,7 @@ export const zh = {
         "unknown": "未知",
         // "unfollow": "未关注",
         // "adding": "添加中",
-        "feedsAlreadyAdded": "已添加过该Feed",
+        "feedsAlreadyAdded": "该Feed已经关注过了",
         "notFollowYet": "未关注",
         "httperror": "服务异常，稍后再试",
         "textcopied": "文本已拷贝",
