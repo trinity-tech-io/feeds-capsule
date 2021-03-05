@@ -5,7 +5,6 @@ import { NativeService } from '../../../services/NativeService';
 import { ThemeService } from '../../../services/theme.service';
 import { UtilService } from '../../../services/utilService';
 import { PopupProvider } from '../../../services/popup';
-import { CameraService } from '../../../services/CameraService';
 import { HttpService } from '../../../services/HttpService';
 import { ApiUrl } from '../../../services/ApiUrl';
 import * as _ from 'lodash';
@@ -65,9 +64,7 @@ export class SearchPage implements OnInit {
     public theme:ThemeService,
     private popoverController: PopoverController,
     private popupProvider:PopupProvider,
-    private camera: CameraService,
     private httpService:HttpService
-
   ) {
   }
 
@@ -215,7 +212,7 @@ export class SearchPage implements OnInit {
       channel=>channel.feedName.toLowerCase().indexOf(this.isSearch.toLowerCase()) > -1
     );
 
-    this.searchUnfollowedFeed = this.searchUnfollowedFeed.filter(
+    this.unfollowedFeed = this.searchUnfollowedFeed.filter(
       feed=>feed.name.toLowerCase().indexOf(this.isSearch.toLowerCase()) > -1
     );
 
@@ -507,7 +504,6 @@ checkValid(result: string){
     this.feedService.addFeed(feedUrl, avatar, followers, feedName).then((isSuccess)=>{
       if(isSuccess){
         this.zone.run(()=>{
-          this.isSearch = "";
           this.init();
         });
       }
