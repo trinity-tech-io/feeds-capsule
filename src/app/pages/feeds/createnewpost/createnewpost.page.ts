@@ -84,7 +84,7 @@ export class CreatenewpostPage implements OnInit {
   }
 
   ionViewWillEnter() {
-
+    this.feedList = this.feedService.getMyChannelList() || [];
     this.initTitle();
     this.native.setTitleBarBackKeyShown(true);
 
@@ -748,8 +748,9 @@ handleTotal(duration:any){
 }
 
 clickFeedAvatar(){
-  this.hideSwitchFeed = true;
-  this.feedList = this.feedService.getMyChannelList() || [];
+  if(this.feedList.length>1){
+    this.hideSwitchFeed = true;
+  }
 }
 
 hideComponent(feed:any){

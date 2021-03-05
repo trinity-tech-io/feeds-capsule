@@ -12,13 +12,16 @@ export class SwitchfeedComponent implements OnInit {
   @Input() public feedList = [];
   @Input() public nodeStatus = {};
   @Output() hideComment = new EventEmitter();
+  public currentFeed:any ={};
 
   constructor(
     public theme: ThemeService,
     public native: NativeService,
     private feedService: FeedService) { }
 
-  ngOnInit() {}
+  ngOnInit() {
+   this.currentFeed  = this.feedService.getCurrentFeed();
+  }
 
   parseAvatar(avatar: string): string{
     return this.feedService.parseChannelAvatar(avatar);

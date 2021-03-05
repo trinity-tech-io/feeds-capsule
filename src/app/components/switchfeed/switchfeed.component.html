@@ -25,7 +25,9 @@
           </ion-row>
         </ion-col>
         <ion-col size="1.5" class="right-col">
-           <!-- <img [src]="!theme.darkMode ? './assets/images/dots-three-vertical.svg' : './assets/images/dots-three-vertical-dark.svg'"> -->
+           <img *ngIf="currentFeed['nodeId']===feed.nodeId&&currentFeed['feedId']===feed.id" src="./assets/images/radioSelect.svg">
+           <img *ngIf="currentFeed['nodeId']===feed.nodeId&&currentFeed['feedId']!=feed.id" src="./assets/images/radiounSelect.svg">
+           <!-- <ion-icon *ngIf="currentFeed['nodeId']===feed.nodeId&&currentFeed['feedId']===feed.id" name="checkmark-circle-outline" style="color: #2dd36f;width: 26px;height: 26px"></ion-icon> -->
         </ion-col>
         <ion-ripple-effect></ion-ripple-effect>
       </ion-row>
