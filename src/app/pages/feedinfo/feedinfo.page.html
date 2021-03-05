@@ -56,6 +56,13 @@
 
       <ion-row class="detail-row" *ngIf="developerMode">
         <ion-col size="12" class="left-col">
+            <h1>NodeId</h1>
+            <h2>{{nodeId}}</h2>
+        </ion-col>
+      </ion-row>
+
+      <ion-row class="detail-row" *ngIf="developerMode">
+        <ion-col size="12" class="left-col">
             <h1>{{'ServerInfoPage.version'|translate}}</h1>
             <h2>{{severVersion}}</h2>
         </ion-col>
