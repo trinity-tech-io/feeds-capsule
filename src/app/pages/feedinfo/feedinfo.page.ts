@@ -318,6 +318,5 @@ export class FeedinfoPage implements OnInit {
       titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, null);
     }
     this.native.showPreviewQrcode(feedsUrl,"common.qRcodePreview","FeedinfoPage.title","feedinfo",this.appService,isOwner);
- }
-
+  }
 }
