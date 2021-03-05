@@ -27,7 +27,6 @@ export class SettingsPage implements OnInit {
   public hideDeletedPosts:boolean = false;;
   public hideDeletedComments:boolean = false;
   public hideOfflineFeeds:boolean = true;
-  public hideUnFollowFeeds:boolean = false;
   public popover:any = null;
   constructor(
     private feedService:FeedService,
@@ -56,7 +55,6 @@ export class SettingsPage implements OnInit {
     this.hideDeletedComments = this.feedService.getHideDeletedComments();
     this.hideOfflineFeeds = this.feedService.getHideOfflineFeeds();
     this.developerMode = this.feedService.getDeveloperMode();
-    this.hideUnFollowFeeds = this.feedService.getHideUnFollowFeeds();
     this.initTitle();
     this.native.setTitleBarBackKeyShown(true);
 
@@ -146,12 +144,4 @@ export class SettingsPage implements OnInit {
 
     })
   }
-
-  toggleHideUnFollowFeeds(){
-    this.hideUnFollowFeeds = !this.hideUnFollowFeeds;
-    this.feedService.setHideUnFollowFeeds(this.hideUnFollowFeeds);
-    this.events.publish(FeedsEvent.PublishType.hideUnFollowFeeds);
-    this.feedService.setData("feeds.unFollowFeeds",this.hideUnFollowFeeds);
-  }
-
 }
