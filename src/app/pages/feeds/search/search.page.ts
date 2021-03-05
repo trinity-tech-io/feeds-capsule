@@ -158,7 +158,9 @@ export class SearchPage implements OnInit {
   }
 
   getItems(events:any){
-    this.isSearch = events.target.value || "";
+    if (!(events && (events.keyCode === 13 || events.keyCode === 8))){
+      return;
+    }
     if(this.checkFeedUrl(this.isSearch)){
       this.addFeedUrl(this.isSearch);
       return;
@@ -177,6 +179,25 @@ export class SearchPage implements OnInit {
     this.handleSearch();
   }
 
+  ionClear(){
+    this.isSearch = "";
+    if(this.checkFeedUrl(this.isSearch)){
+      this.addFeedUrl(this.isSearch);
+      return;
+    }
+    if(this.isSearch == ""){
+      this.ionRefresher.disabled = false;
+      this.infiniteScroll.disabled = false;
+      this.addingChanneList = this.feedService.getToBeAddedFeedsList() || [];
+      this.unfollowedFeed = this.getUnfollowedFeed() || [];
+      this.discoverSquareList = _.cloneDeep(this.searchSquareList);
+      this.searchAddingChanneList = _.cloneDeep(this.addingChanneList);
+      return;
+    }
+    this.ionRefresher.disabled = true;
+    this.infiniteScroll.disabled = true;
+    this.handleSearch();
+  }
   handleSearch(){
     if(this.isSearch===""){
         return;

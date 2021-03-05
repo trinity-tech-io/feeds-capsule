@@ -17,7 +17,9 @@
 
     <div class="search-container" [class.dark-search-container]="theme.darkMode">
       <img *ngIf="isSearch===''" [src]="!theme.darkMode ? 'assets/icons/scan.svg' : 'assets/icons/darkmode/scan.svg'" class="scanService" [ngStyle]="scanServiceStyle" (click)="scanService()"/>
-      <ion-searchbar #searchbar placeholder="{{ 'SearchPage.searchFeeds' | translate }}" (ionInput)="getItems($event)" mode="ios"></ion-searchbar>
+      <form action="javascript:return true;" style="display: flex;justify-content: center;width: 100%;">
+        <ion-searchbar #searchbar  [(ngModel)]="isSearch" inputmode="search"  enterkeyhint="search" placeholder="{{ 'SearchPage.searchFeeds' | translate }}" (keyup)="getItems($event)" mode="ios" [ngModelOptions]="{standalone: true}" (ionClear)="ionClear()"></ion-searchbar>
+      </form>
     </div>
 
     <!-- adding Feed-->
