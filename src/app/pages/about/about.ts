@@ -55,11 +55,11 @@ export class AboutPage implements OnInit {
 
 
   gotoWebsite() {
-    this.native.openUrl("http://www.trinity-tech.io");
+    this.native.openUrl("https://trinity-feeds.app");
   }
 
   showDisclaimer(){
-    this.native.openUrl("https://www.trinity-tech.io/disclaimer.html");
+    this.native.openUrl("https://trinitytech.io/disclaimer.html");
   }
 
   showHelp(){
