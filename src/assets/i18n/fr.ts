@@ -508,8 +508,7 @@ export const fr = {
         "hidedeletecomment": 'Display comments labeled with (deleted)',
         "hideOfflinefeed": "Display online Feeds only",
         "on": "ON",
-        "off": "OFF",
-        "hideunfollowfeeds": 'Display feeds labeled with (unFollow)'
+        "off": "OFF"
     },
     "DiscoverfeedPage": {
         "title": "Discovery Square",

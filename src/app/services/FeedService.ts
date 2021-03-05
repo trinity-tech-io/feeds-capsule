@@ -376,7 +376,6 @@ export class FeedService {
   public hideDeletedPosts:boolean = false;
   public hideDeletedComments:boolean = false;
   public hideOfflineFeeds:boolean = true;
-  public hideUnFollowFeeds:boolean = true;
   public localSignInData: SignInData = null;
   public currentLang:string ="";
   public curtab:string ="home";
@@ -5891,14 +5890,6 @@ export class FeedService {
 
   getDeveloperMode(){
     return this.developerMode;
-  }
-
-  setHideUnFollowFeeds(status:boolean){
-     this.hideUnFollowFeeds = status;
-  }
-
-  getHideUnFollowFeeds(){
-    return this.hideUnFollowFeeds;
   }
 
   setHideDeletedPosts(status:boolean){

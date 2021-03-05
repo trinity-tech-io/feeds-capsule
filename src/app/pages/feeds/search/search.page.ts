@@ -28,7 +28,6 @@ export class SearchPage implements OnInit {
   public curAddingItem = {};
   public addingChanneList = [];
   public searchAddingChanneList = [];
-  public hideUnFollowFeeds:boolean = false;
   public isSearch:string ="";
   public searchfeedsList = [];
   public discoverSquareList = [];
@@ -100,27 +99,6 @@ export class SearchPage implements OnInit {
       });
     });
 
-    // this.events.subscribe(FeedsEvent.PublishType.refreshChannels, list =>{
-    //   this.zone.run(() => {
-    //     this.handleSearch();
-    //   });
-    // });
-
-    // this.events.subscribe(FeedsEvent.PublishType.channelsDataUpdate, () =>{
-    //   this.zone.run(() => {
-    //     this.handleSearch();
-    //   });
-    // });
-
-    this.events.subscribe(FeedsEvent.PublishType.hideUnFollowFeeds ,()=>{
-         this.hideUnFollowFeeds = this.feedService.getHideUnFollowFeeds();
-    });
-
-    // this.events.subscribe(FeedsEvent.PublishType.refreshSubscribedChannels,()=>{
-    //   this.zone.run(() => {
-    //     this.handleSearch();
-    //   });
-    // });
 
     this.events.subscribe(FeedsEvent.PublishType.addFeedStatusChanged,()=>{
       this.zone.run(() => {
@@ -140,11 +118,7 @@ export class SearchPage implements OnInit {
     this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
     this.events.unsubscribe(FeedsEvent.PublishType.friendConnectionChanged);
     this.events.unsubscribe(FeedsEvent.PublishType.subscribeFinish);
-    //this.events.unsubscribe(FeedsEvent.PublishType.refreshChannels);
-    //this.events.unsubscribe(FeedsEvent.PublishType.channelsDataUpdate);
-    //this.events.unsubscribe(FeedsEvent.PublishType.refreshSubscribedChannels);
     this.events.unsubscribe(FeedsEvent.PublishType.addFeedStatusChanged);
-    this.events.unsubscribe(FeedsEvent.PublishType.hideUnFollowFeeds);
   }
 
   ionViewWillEnter() {
@@ -156,7 +130,6 @@ export class SearchPage implements OnInit {
 
   init(){
     this.developerMode = this.feedService.getDeveloperMode();
-    this.hideUnFollowFeeds = this.feedService.getHideUnFollowFeeds();
     this.connectionStatus = this.feedService.getConnectionStatus();
     this.unfollowedFeed = this.getUnfollowedFeed();
     this.discoverSquareList = this.filterdiscoverSquareList(this.discoverSquareList);

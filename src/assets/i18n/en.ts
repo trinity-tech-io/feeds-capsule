@@ -509,7 +509,6 @@ export const en = {
         "hideOfflinefeed": "Display online Feeds only",
         "on": "ON",
         "off": "OFF",
-        "hideunfollowfeeds": 'Display feeds labeled with (unFollow)'
     },
     "DiscoverfeedPage": {
         "title": "Discovery Square",
