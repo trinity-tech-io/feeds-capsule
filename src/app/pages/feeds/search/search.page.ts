@@ -158,14 +158,13 @@ export class SearchPage implements OnInit {
   }
 
   getItems(events:any){
-    if (!(events && (events.keyCode === 13 || events.keyCode === 8))){
-      return;
-    }
+    this.isSearch = events.target.value || "";
+   if((events && (events.keyCode === 13) || (events.keyCode===8&&this.isSearch===""))){
     if(this.checkFeedUrl(this.isSearch)){
       this.addFeedUrl(this.isSearch);
       return;
     }
-    if(events.target.value == ""){
+    if(this.isSearch == ""){
       this.ionRefresher.disabled = false;
       this.infiniteScroll.disabled = false;
       this.addingChanneList = this.feedService.getToBeAddedFeedsList() || [];
@@ -176,7 +175,8 @@ export class SearchPage implements OnInit {
     }
     this.ionRefresher.disabled = true;
     this.infiniteScroll.disabled = true;
-    this.handleSearch();
+      this.handleSearch();
+    }
   }
 
   ionClear(){
@@ -476,7 +476,7 @@ checkValid(result: string){
    let unfollowedFeed =  _.filter(feedList,(feed)=>{
               return !feed["isSubscribed"];
    });
-   this.searchUnfollowedFeed = _.cloneDeep(this.unfollowedFeed);
+   this.searchUnfollowedFeed = _.cloneDeep(unfollowedFeed);
    return unfollowedFeed;
   }
 
