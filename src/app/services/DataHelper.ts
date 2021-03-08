@@ -100,16 +100,10 @@ export class DataHelper {
         return new Promise(async (resolve, reject) =>{
             try {
                 if (JSON.stringify(this.channelsMap) == "{}"){
-                    console.log("11111111111111111channelsMap {}")
                     this.channelsMap = await this.loadData(FeedsData.PersistenceKey.channelsMap) || {};
-
-                    console.log("2222222222222222channelsMap = "+JSON.stringify(this.channelsMap));
-
                     resolve(this.channelsMap);
                     return ;
                 }
-                console.log("333333333333333channelsMap {}")
-
                 resolve(this.channelsMap);
             } catch (error) {
                 reject(error);
@@ -496,10 +490,10 @@ export class DataHelper {
         this.saveData(FeedsData.PersistenceKey.likeCommentMap, this.likeCommentMap);
     }
 
-    getLikeCommentMap(): Promise<{[nodechannelpostCommentId: string]: FeedsData.LikedComment}>{
+    loadLikeCommentMap(): Promise<{[nodechannelpostCommentId: string]: FeedsData.LikedComment}>{
         return new Promise(async (resolve, reject) =>{
             try {
-                if (this.likeCommentMap == {}){
+                if (JSON.stringify(this.likeCommentMap) == "{}"){
                     this.likeCommentMap = await this.loadData(FeedsData.PersistenceKey.likeCommentMap) || {};
                     resolve(this.likeCommentMap);
                     return ;
@@ -511,6 +505,44 @@ export class DataHelper {
         });
     }
 
+    generatedLikedComment(nodeId: string, feedId: number, postId: number, commentId: number): FeedsData.LikedComment{
+        return {
+            nodeId     : nodeId,
+            channel_id : feedId,
+            post_id    : postId,
+            id         : commentId,
+        }
+    }
+
+    getLikedComment(key: string): FeedsData.LikedComment{
+        if (this.likeCommentMap == null || this.likeCommentMap == undefined)
+            return null;
+        return this.likeCommentMap[key];
+    }
+
+    updateLikedComment(key: string, likedComment: FeedsData.LikedComment){
+        if (this.likeCommentMap == null || this.likeCommentMap == undefined)
+            this.likeCommentMap = {};
+        this.likeCommentMap[key] = likedComment;
+        this.saveData(FeedsData.PersistenceKey.likeCommentMap, this.likeCommentMap);
+    }
+
+    deleteLikedComment(key: string){
+        if (this.likeCommentMap == null || this.likeCommentMap == undefined)
+            this.likeCommentMap = {};
+        this.likeCommentMap[key] = null;
+        delete this.likeCommentMap[key];
+        this.saveData(FeedsData.PersistenceKey.likeCommentMap, this.likeCommentMap);
+    }
+
+    getCommentFromLikedComment(){
+
+    }
+
+    initLikedCommentMap(){
+        this.likeCommentMap = {};
+    }
+    
     ////lastSubscribedFeedsUpdateMap
     setLastSubscribedFeedsUpdateMap(lastSubscribedFeedsUpdateMap:{[nodeId:string]: FeedsData.FeedUpdateTime}){
         this.lastSubscribedFeedsUpdateMap = lastSubscribedFeedsUpdateMap;

@@ -31,15 +31,8 @@ let newMultiPropCountVersion: number = 10500;
 
 let unreadMap:{[nodeChannelId: string]: number};
 let serverStatisticsMap:{[nodeId: string]: FeedsData.ServerStatistics};
-// let commentsMap:{[nodeId: string]: FeedsData.NodeChannelPostComment};
 let serversStatus:{[nodeId: string]: FeedsData.ServerStatus};
-// let likeMap:{[key:string]:FeedsData.Likes};
-let likeCommentMap:{[nodechannelpostCommentId: string]: FeedsData.LikedComment};
 let lastPostUpdateMap:{[nodeChannelId:string]: FeedsData.PostUpdateTime};
-
-let localSubscribedList:FeedsData.Channels[] = new Array<FeedsData.Channels>();
-let localMyChannelList:FeedsData.Channels[] = new Array<FeedsData.Channels>();
-let localChannelsList:FeedsData.Channels[] = new Array<FeedsData.Channels>();
 
 let bindingServer: FeedsData.Server;
 let bindingServerCache: FeedsData.Server;
@@ -377,19 +370,7 @@ export class FeedService {
   }
 
   loadLikeCommentMap(){
-    return new Promise((resolve, reject) =>{
-      let likeComments = likeCommentMap || "";
-      if( likeComments == ""){
-        this.storeService.get(FeedsData.PersistenceKey.likeCommentMap).then((mLikeCommentMap)=>{
-          likeCommentMap = mLikeCommentMap || {};
-          resolve(mLikeCommentMap);
-        }).catch((error)=>{
-          reject(error);
-        });
-      }else{
-          resolve(likeComments);
-      }
-    });
+    return this.dataHelper.loadCommentsMap();
   }
 
   loadLastCommentUpdateMap(){
@@ -545,16 +526,6 @@ export class FeedService {
       if (notificationList == null || notificationList == undefined)
         notificationList = [];
     });
-
-    this.storeService.get(FeedsData.PersistenceKey.likeCommentMap).then((mLikeCommentMap)=>{
-      likeCommentMap = mLikeCommentMap;
-      if (likeCommentMap == null || likeCommentMap == undefined)
-        likeCommentMap = {};
-    });
-
-    // this.storeService.get(PersistenceKey.lastFeedUpdateMap).then((mLastFeedUpdateMap)=>{
-    //   this.lastFeedUpdateMap = mLastFeedUpdateMap || {};
-    // });
 
     this.storeService.get(FeedsData.PersistenceKey.lastCommentUpdateMap).then((mLastCommentUpdateMap) => {
       this.lastCommentUpdateMap = mLastCommentUpdateMap || {};
@@ -2270,15 +2241,9 @@ export class FeedService {
 
       }else{
         let commentKey = this.getLikeCommentId(nodeId, channel_id, post_id, comment_id);
-        likeCommentMap[commentKey] = {
-          nodeId     : nodeId,
-          channel_id : channel_id,
-          post_id    : post_id,
-          id         : comment_id,
-        }
-        this.storeService.set(FeedsData.PersistenceKey.likeCommentMap, likeCommentMap);
+        let likedComment = this.dataHelper.generatedLikedComment(nodeId, channel_id, post_id, comment_id);
+        this.dataHelper.updateLikedComment(commentKey, likedComment);
         eventBus.publish(FeedsEvent.PublishType.commentDataUpdate)
-
       }
       return ;
     }
@@ -2288,15 +2253,6 @@ export class FeedService {
       this.handleError(nodeId, error);
       return;
     }
-
-    if (comment_id == 0){
-      // this.storeService.set(FeedsData.PersistenceKey.postMap,this.postMap);
-      // this.storeService.set(FeedsData.PersistenceKey.likeMap, likeMap);
-    }else {
-      // this.storeService.set(FeedsData.PersistenceKey.commentsMap, commentsMap);
-      this.storeService.set(FeedsData.PersistenceKey.likeCommentMap, likeCommentMap);
-    }
-
   }
 
   handlePostUnLikeResult(nodeId:string, request: any, error: any){
@@ -2311,11 +2267,9 @@ export class FeedService {
         eventBus.publish(FeedsEvent.PublishType.postDataUpdate);
       }else{
         let commentKey = this.getLikeCommentId(nodeId, channel_id, post_id, comment_id);
-        likeCommentMap[commentKey] = undefined;
-        this.storeService.set(FeedsData.PersistenceKey.likeCommentMap,likeCommentMap);
+        this.dataHelper.deleteLikedComment(commentKey);
         eventBus.publish(FeedsEvent.PublishType.commentDataUpdate);
       }
-
       return ;
     }
 
@@ -2323,14 +2277,6 @@ export class FeedService {
       this.doPostUnLikeError(nodeId,channel_id, post_id, comment_id);
       this.handleError(nodeId, error);
       return;
-    }
-
-    if (comment_id == 0){
-      // this.storeService.set(FeedsData.PersistenceKey.postMap,this.postMap);
-      // this.storeService.set(FeedsData.PersistenceKey.likeMap, likeMap);
-    }else {
-      // this.storeService.set(FeedsData.PersistenceKey.commentsMap, commentsMap);
-      this.storeService.set(FeedsData.PersistenceKey.likeCommentMap,likeCommentMap);
     }
   }
 
@@ -2821,12 +2767,8 @@ export class FeedService {
 
     }else {
       let commentKey = this.getLikeCommentId(nodeId, channel_id, post_id, comment_id);
-      likeCommentMap[commentKey] = {
-        nodeId     : nodeId,
-        channel_id : channel_id,
-        post_id    : post_id,
-        id         : comment_id,
-      }
+      let likedComment = this.dataHelper.generatedLikedComment(nodeId, channel_id, post_id, comment_id);
+      this.dataHelper.updateLikedComment(commentKey, likedComment);
 
       let originComment = this.dataHelper.getComment(nodeId, channel_id, post_id, comment_id);
       originComment.likes = originComment.likes + 1;
@@ -2851,7 +2793,7 @@ export class FeedService {
       eventBus.publish(FeedsEvent.PublishType.postDataUpdate);
     }else {
       let commentKey = this.getLikeCommentId(nodeId, channel_id, post_id, comment_id);
-      likeCommentMap[commentKey] = undefined;
+      this.dataHelper.deleteLikedComment(commentKey);
 
       let originComment = this.dataHelper.getComment(nodeId, channel_id, post_id, comment_id);
       let likeNum = originComment.likes;
@@ -2884,12 +2826,9 @@ export class FeedService {
         originComment.likes = likeNum - 1;
         this.dataHelper.updateComment(nodeId, channel_id, post_id, comment_id, originComment);
       }
-
       let commentKey = this.getLikeCommentId(nodeId, channel_id, post_id, comment_id);
-      likeCommentMap[commentKey] = undefined;
-
+      this.dataHelper.deleteLikedComment(commentKey);
       eventBus.publish(FeedsEvent.PublishType.commentDataUpdate)
-
     }
   }
 
@@ -2913,12 +2852,8 @@ export class FeedService {
       this.dataHelper.updateComment(nodeId, channel_id, post_id, comment_id, originComment);
 
       let commentKey = this.getLikeCommentId(nodeId, channel_id, post_id, comment_id);
-      likeCommentMap[commentKey] = {
-        nodeId     : nodeId,
-        channel_id : channel_id,
-        post_id    : post_id,
-        id         : comment_id,
-      }
+      let likedComment = this.dataHelper.generatedLikedComment(nodeId, channel_id, post_id, comment_id);
+      this.dataHelper.updateLikedComment(commentKey, likedComment);
       eventBus.publish(FeedsEvent.PublishType.commentDataUpdate)
     }
   }
@@ -3941,21 +3876,19 @@ export class FeedService {
   }
 
   getLikedCommentFromId(nodeChannelPostCommentId: string): FeedsData.LikedComment{
-    if (likeCommentMap == null || likeCommentMap == undefined)
-      likeCommentMap = {};
-    return likeCommentMap[nodeChannelPostCommentId];
+    return this.dataHelper.getLikedComment(nodeChannelPostCommentId);
   }
 
   checkMyLike(nodeId: string, channelId: number, postId: number): boolean{
     let key = this.getKey(nodeId, channelId, postId,0);
-    if(this.getLikeFromId(key) == undefined)
+    if(this.getLikeFromId(key) == null || this.getLikeFromId(key) == undefined)
       return false;
     return true;
   }
 
   checkLikedComment(nodeId: string, channelId: number, postId: number, commentId: number): boolean{
     let key = this.getKey(nodeId, channelId, postId, commentId);
-    if(this.getLikedCommentFromId(key) == undefined)
+    if(this.getLikedCommentFromId(key) == null || this.getLikedCommentFromId(key) == undefined)
       return false;
     return true;
   }
@@ -4985,30 +4918,30 @@ export class FeedService {
   }
 
   updateLikeCommentKey(){
-    let keys: string[] = Object.keys(likeCommentMap) || [];
+    // let keys: string[] = Object.keys(likeCommentMap) || [];
 
-    for (let index = 0; index < keys.length; index++) {
-      let key = keys[index];
-      if(likeCommentMap[key] == undefined){
-        delete likeCommentMap[key];
-        continue;
-      }
+    // for (let index = 0; index < keys.length; index++) {
+    //   let key = keys[index];
+    //   if(likeCommentMap[key] == undefined){
+    //     delete likeCommentMap[key];
+    //     continue;
+    //   }
 
-      let likedComment = likeCommentMap[key];
-      let nodeId = likedComment.nodeId;
-      let channelId = likedComment.channel_id;
-      let postId = likedComment.post_id;
-      let commentId = likedComment.id;
+    //   let likedComment = likeCommentMap[key];
+    //   let nodeId = likedComment.nodeId;
+    //   let channelId = likedComment.channel_id;
+    //   let postId = likedComment.post_id;
+    //   let commentId = likedComment.id;
 
-      let newKey = this.getCommentId(nodeId, channelId, postId, commentId);
+    //   let newKey = this.getCommentId(nodeId, channelId, postId, commentId);
 
-      if(key == newKey)
-        continue;
+    //   if(key == newKey)
+    //     continue;
 
-      likeCommentMap[newKey] = likedComment;
-      delete likeCommentMap[key];
-    }
-    this.storeService.set(FeedsData.PersistenceKey.likeCommentMap, likeCommentMap);
+    //   likeCommentMap[newKey] = likedComment;
+    //   delete likeCommentMap[key];
+    // }
+    // this.storeService.set(FeedsData.PersistenceKey.likeCommentMap, likeCommentMap);
   }
 
   updateLikeKey(){
@@ -5647,25 +5580,14 @@ export class FeedService {
   }
 
   cleanCacheData(){
-    // subscribedChannelsMap = {};
-    // this.dataHelper.initSubscribedChannelsMap();
-    // channelsMap = {};
     this.dataHelper.initChannelsMap();
-    // myChannelsMap = {};
     unreadMap = {};
     serverStatisticsMap = {};
-    // commentsMap = {};
     this.dataHelper.initCommentsMap();
     serversStatus = {};
-    // likeMap = {};
     this.dataHelper.initLikeMap();
-    likeCommentMap = {};
+    this.dataHelper.initLikedCommentMap();
     lastPostUpdateMap = {};
-
-
-    localSubscribedList = [];
-    localMyChannelList = [];
-    localChannelsList = [];
 
     bindingServer = null;
     bindingServerCache = null;
