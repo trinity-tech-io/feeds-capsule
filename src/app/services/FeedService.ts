@@ -34,7 +34,7 @@ let serverStatisticsMap:{[nodeId: string]: FeedsData.ServerStatistics};
 let serversStatus:{[nodeId: string]: FeedsData.ServerStatus};
 let lastPostUpdateMap:{[nodeChannelId:string]: FeedsData.PostUpdateTime};
 
-let bindingServer: FeedsData.Server;
+// let bindingServer: FeedsData.Server;
 let bindingServerCache: FeedsData.Server;
 
 let serverMap: {[nodeId: string]: FeedsData.Server};
@@ -338,19 +338,7 @@ export class FeedService {
   }
 
   loadBindingServer(){
-    return new Promise((resolve, reject) =>{
-      let bindServer = bindingServer || "";
-      if( bindServer == ""){
-        this.storeService.get(FeedsData.PersistenceKey.bindingServer).then((mBindingServer)=>{
-          bindingServer = mBindingServer || undefined;
-          resolve(mBindingServer);
-        }).catch((error)=>{
-          reject(error);
-        });
-      }else{
-          resolve(bindServer);
-      }
-    });
+    return this.dataHelper.loadBindingServer();
   }
 
   loadNotificationList(){
@@ -444,11 +432,9 @@ export class FeedService {
       this.loadChannelData(),
       this.loadCredential(),
       this.loadLastPostUpdate(),
-      // this.loadMyChannels(),
       this.loadServersStatus(),
       this.loadServerStatistics(),
       this.loadServers(),
-      // this.loadSubscribedChannels(),
       this.loadComments(),
       this.loadUnreadMap(),
       this.loadLikeMap(),
@@ -517,10 +503,6 @@ export class FeedService {
       accessTokenMap = mAccessTokenMap|| {};
     });
 
-    this.storeService.get(FeedsData.PersistenceKey.bindingServer).then((mBindingServer)=>{
-      bindingServer = mBindingServer ;
-    });
-
     this.storeService.get(FeedsData.PersistenceKey.notificationList).then((mNotificationList)=>{
       notificationList = mNotificationList;
       if (notificationList == null || notificationList == undefined)
@@ -581,12 +563,8 @@ export class FeedService {
     for (const index in nodeIdArray) {
       if (serverMap[nodeIdArray[index]] == undefined)
         continue;
-
-      if (bindingServer != null &&
-        bindingServer != undefined &&
-        serverMap[nodeIdArray[index]].nodeId == bindingServer.nodeId)
+      if (this.dataHelper.isBindingServer(serverMap[nodeIdArray[index]].nodeId))
         continue;
-
       list.push(serverMap[nodeIdArray[index]]);
     }
     return list;
@@ -594,13 +572,10 @@ export class FeedService {
 
   getCreationServerList(): FeedsData.Server[]{
     let list: FeedsData.Server[] = [];
-    if(bindingServer != null && bindingServer != undefined)
-      list.push(bindingServer);
+    let bindServer = this.dataHelper.getBindingServer();
+    if(bindServer != null && bindServer != undefined)
+      list.push(bindServer);
     return list;
-  }
-
-  getBindingserver():FeedsData.Server {
-    return bindingServer;
   }
 
   getServersStatus():  {[nodeId: string]: FeedsData.ServerStatus} {
@@ -619,6 +594,7 @@ export class FeedService {
   }
 
   getServerStatisticsMap():{[nodeId: string]: FeedsData.ServerStatistics}{
+    let bindingServer = this.dataHelper.getBindingServer();
     if (bindingServer != null &&
       bindingServer!= undefined &&
       serverStatisticsMap[bindingServer.nodeId] == undefined)
@@ -650,6 +626,7 @@ export class FeedService {
   }
 
   getMyChannelList(){
+    let bindingServer = this.getBindingServer();
     if (bindingServer == null || bindingServer == undefined)
       return [];
     return this.dataHelper.getMyChannelList(bindingServer.nodeId);
@@ -781,9 +758,8 @@ export class FeedService {
     this.events.subscribe(FeedsEvent.PublishType.carrierFriendAdded, msg => {
       let status: FeedsData.ConnState = msg.friendInfo.status;
       let nodeId = msg.friendInfo.userInfo.userId;
-      if (bindingServer !=null && bindingServer == undefined)
-        if (bindingServer.nodeId == nodeId)
-          return ;
+      if (this.dataHelper.isBindingServer(nodeId))
+        return ;
 
       let server = this.getServerbyNodeId(nodeId);
       if (server != null && server != undefined)
@@ -3642,8 +3618,8 @@ export class FeedService {
   }
 
   finishBinding(nodeId: string){
-    bindingServer = bindingServerCache;
-    this.storeService.set(FeedsData.PersistenceKey.bindingServer,bindingServer);
+    this.dataHelper.setBindingServer(bindingServerCache);
+    let bindingServer = this.dataHelper.getBindingServer();
     this.addServer(bindingServer.carrierAddress,
                   'Feeds/0.1',
                   bindingServer.name,
@@ -3746,12 +3722,12 @@ export class FeedService {
       this.subscribeChannel(toBeAddedFeed.nodeId, toBeAddedFeed.feedId);
     }
 
-    if(bindingServer !=null && bindingServer != undefined && friendId == bindingServer.nodeId){
+    if (this.dataHelper.isBindingServer(friendId)){
       if (this.getMyChannelList().length == 0)
         this.getMyChannels(friendId,Communication.field.last_update,0,0,0);
     }
     
-    let list = await this.getSubscribedChannelsFromNodeId(friendId);
+    let list = this.getSubscribedChannelsFromNodeId(friendId);
 
     if (list.length>0){
       this.updateSubscribedFeedsWithTime(friendId);
@@ -3831,7 +3807,7 @@ export class FeedService {
   }
 
   getBindingServer(): FeedsData.Server{
-    return bindingServer;
+    return this.dataHelper.getBindingServer();
   }
 
   addServer(carrierAddress: string,
@@ -4061,8 +4037,7 @@ export class FeedService {
   }
 
   removeBindingServer(){
-    bindingServer = undefined;
-    this.storeService.remove(FeedsData.PersistenceKey.bindingServer);
+    this.dataHelper.deleteBindingServer();
   }
 
   getNotificationList(): FeedsData.Notification[]{
@@ -4095,8 +4070,9 @@ export class FeedService {
       this.getSubscribedChannels(nodeId, Communication.field.last_update, 0, 0, 0);
     }
 
-    if(bindingServer !=null && bindingServer != undefined && nodeId == bindingServer.nodeId)
+    if (this.dataHelper.isBindingServer(nodeId)){
       this.getMyChannels(nodeId,Communication.field.last_update,0,0,0);
+    } 
   }
 
   parseBindServerUrl(content: string): FeedsData.BindURLData{
@@ -5262,6 +5238,7 @@ export class FeedService {
   }
 
   checkBindingServerVersion(quit:any): boolean{
+    let bindingServer = this.dataHelper.getBindingServer();
     this.logUtils.logd("Binded server is "+JSON.stringify(bindingServer));
     if (bindingServer == null || bindingServer == undefined)
       return;
@@ -5589,7 +5566,8 @@ export class FeedService {
     this.dataHelper.initLikedCommentMap();
     lastPostUpdateMap = {};
 
-    bindingServer = null;
+    // bindingServer = null;
+    this.dataHelper.initBindingServer();
     bindingServerCache = null;
     serverMap = {};
 

@@ -542,7 +542,7 @@ export class DataHelper {
     initLikedCommentMap(){
         this.likeCommentMap = {};
     }
-    
+
     ////lastSubscribedFeedsUpdateMap
     setLastSubscribedFeedsUpdateMap(lastSubscribedFeedsUpdateMap:{[nodeId:string]: FeedsData.FeedUpdateTime}){
         this.lastSubscribedFeedsUpdateMap = lastSubscribedFeedsUpdateMap;
@@ -706,7 +706,7 @@ export class DataHelper {
         this.saveData(FeedsData.PersistenceKey.bindingServer, this.bindingServer);
     }
 
-    getBindingServer(): Promise<FeedsData.Server>{
+    loadBindingServer(): Promise<FeedsData.Server>{
         return new Promise(async (resolve, reject) =>{
             try {
                 if (this.bindingServer == null){
@@ -719,6 +719,32 @@ export class DataHelper {
                 reject(error);
             }
         });
+    }
+    
+    getBindingServer(): FeedsData.Server{
+        return this.bindingServer;
+    }
+
+    updateBindingServer(server: FeedsData.Server){
+        this.bindingServer = server
+        this.saveData(FeedsData.PersistenceKey.bindingServer, this.bindingServer);
+    }
+
+    deleteBindingServer(){
+        this.bindingServer = null;
+        this.saveData(FeedsData.PersistenceKey.bindingServer, this.bindingServer);
+    }
+
+    isBindingServer(nodeId: string): boolean{
+        if(this.bindingServer == null || this.bindingServer == undefined)
+            return false;
+        if (this.bindingServer.nodeId != nodeId)
+            return false;
+        return true;
+    }
+
+    initBindingServer(){
+        this.bindingServer = null;
     }
 
     ////bindingServerCache
