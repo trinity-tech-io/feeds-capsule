@@ -643,10 +643,10 @@ export class DataHelper {
         this.saveData(FeedsData.PersistenceKey.unreadMap, this.unreadMap);
     }
 
-    getUnreadMap(): Promise<{[nodeChannelId: string]: number}>{
+    loadUnreadMap(): Promise<{[nodeChannelId: string]: number}>{
         return new Promise(async (resolve, reject) =>{
             try {
-                if (this.unreadMap == {}){
+                if (JSON.stringify(this.unreadMap) == "{}"){
                     this.unreadMap = await this.loadData(FeedsData.PersistenceKey.unreadMap) || {};
                     resolve(this.unreadMap);
                     return ;
@@ -656,6 +656,38 @@ export class DataHelper {
                 reject(error);
             }
         });
+    }
+
+    getUnreadNumber(nodeChannelId: string): number{
+        if (this.unreadMap == null || this.unreadMap == undefined)
+            this.unreadMap = {};
+        if (this.unreadMap[nodeChannelId] == null || this.unreadMap[nodeChannelId] == undefined)
+            return 0;
+        return this.unreadMap[nodeChannelId];
+    }
+
+    readMsg(nodeChannelId: string){
+        if (this.unreadMap == null || this.unreadMap == undefined)
+            this.unreadMap = {};
+        this.unreadMap[nodeChannelId] = 0;
+        this.saveData(FeedsData.PersistenceKey.unreadMap, this.unreadMap);
+    }
+
+    receivedUnread(nodeChannelId: string){
+        if (this.unreadMap == null || this.unreadMap == undefined)
+            this.unreadMap = {};
+        this.unreadMap[nodeChannelId] = this.unreadMap[nodeChannelId]+1;
+        this.saveData(FeedsData.PersistenceKey.unreadMap, this.unreadMap);
+    }
+
+    deleteUnread(nodeChannelId: string){
+        this.unreadMap[nodeChannelId] = 0;
+        delete this.unreadMap[nodeChannelId];
+        this.saveData(FeedsData.PersistenceKey.unreadMap, this.unreadMap);
+    }
+
+    initUnreadMap(){
+        this.unreadMap = {};
     }
 
     ////serverStatisticsMap
