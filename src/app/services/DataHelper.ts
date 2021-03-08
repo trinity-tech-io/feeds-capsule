@@ -421,10 +421,10 @@ export class DataHelper {
         this.saveData(FeedsData.PersistenceKey.likeMap, this.likeMap);
     }
 
-    getLikeMap(): Promise<{[key:string]:FeedsData.Likes}>{
+    loadLikeMap(): Promise<{[key:string]:FeedsData.Likes}>{
         return new Promise(async (resolve, reject) =>{
             try {
-                if (this.likeMap == {}){
+                if (JSON.stringify(this.likeMap) == "{}"){
                     this.likeMap = await this.loadData(FeedsData.PersistenceKey.likeMap) || {};
                     resolve(this.likeMap);
                     return ;
@@ -436,6 +436,60 @@ export class DataHelper {
         });
     }
 
+    generateLikes(nodeId: string, feedId: number, postId: number, commentId: number): FeedsData.Likes{
+        return {
+            nodeId    : nodeId,
+            channelId : feedId,
+            postId    : postId,
+            commentId : commentId
+        }
+    }
+
+    getLikes(key: string): FeedsData.Likes{
+        if (this.likeMap == null || this.likeMap == undefined || 
+            this.likeMap[key] == null || this.likeMap[key] == undefined)
+                return null;
+        return this.likeMap[key];
+    }
+
+    updateLikes(key: string, likes: FeedsData.Likes){
+        if (this.likeMap == null || this.likeMap == undefined)
+            this.likeMap = {};
+        this.likeMap[key] = likes;
+        this.saveData(FeedsData.PersistenceKey.likeMap, this.likeMap);
+    }
+
+    deleteLikes(key: string) {
+        this.likeMap[key] = null;
+        delete this.likeMap[key];
+        this.saveData(FeedsData.PersistenceKey.likeMap, this.likeMap);
+    }
+
+    getLikedPostList(): FeedsData.Post[]{
+        let list: FeedsData.Post[] = [];
+    
+        let keys: string[] = [];
+        if (this.likeMap != null && this.likeMap != undefined)
+            keys = Object.keys(this.likeMap);
+    
+        for (const index in keys) {
+            let like = this.likeMap[keys[index]];
+            if (like == null || like == undefined)
+                continue;
+            let key = this.getKey(like.nodeId, like.channelId, like.postId, 0);
+            let post = this.getPost(key);
+            if (post == undefined)
+                continue;
+            list.push(post);
+        }
+    
+        list.sort((a, b) => Number(b.created_at) - Number(a.created_at));
+        return list;
+    }
+
+    initLikeMap(){
+        this.likeMap = {};
+    }
     ////likeCommentMap
     setLikeCommentMap(likeCommentMap: {[nodechannelpostCommentId: string]: FeedsData.LikedComment}){
         this.likeCommentMap = likeCommentMap;
