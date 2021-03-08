@@ -293,10 +293,10 @@ export class DataHelper {
         this.saveData(FeedsData.PersistenceKey.commentsMap, this.commentsMap);
     }
 
-    getCommentsMap(): Promise<{[nodeId: string]: FeedsData.NodeChannelPostComment}>{
+    loadCommentsMap(): Promise<{[nodeId: string]: FeedsData.NodeChannelPostComment}>{
         return new Promise(async (resolve, reject) =>{
             try {
-                if (this.commentsMap == {}){
+                if (JSON.stringify(this.commentsMap) == "{}"){
                     this.commentsMap = await this.loadData(FeedsData.PersistenceKey.commentsMap) || {};
                     resolve(this.commentsMap);
                     return ;
@@ -308,6 +308,71 @@ export class DataHelper {
         });
     }
 
+    getComment(nodeId: string, feedId: number, postId: number, commentId: number): FeedsData.Comment{
+        if (this.commentsMap == null || this.commentsMap == undefined ||
+            this.commentsMap[nodeId] == null || this.commentsMap[nodeId] == undefined||
+            this.commentsMap[nodeId][feedId] == null || this.commentsMap[nodeId][feedId] == undefined ||
+            this.commentsMap[nodeId][feedId][postId] ==null || this.commentsMap[nodeId][feedId][postId] == undefined ||
+            this.commentsMap[nodeId][feedId][postId][commentId] == null || this.commentsMap[nodeId][feedId][postId][commentId] == undefined){
+                return null ;
+            }
+        return this.commentsMap[nodeId][feedId][postId][commentId];
+    }
+
+    updateComment(nodeId: string, feedId: number, postId: number, commentId: number, comment: FeedsData.Comment){
+        if (this.commentsMap == null || this.commentsMap == undefined)
+            this.commentsMap = {};
+        if (this.commentsMap[nodeId] == null || this.commentsMap[nodeId] == undefined)
+            this.commentsMap[nodeId] = {};
+        if (this.commentsMap[nodeId][feedId] == null || this.commentsMap[nodeId][feedId] == undefined)
+            this.commentsMap[nodeId][feedId] = {};
+        if (this.commentsMap[nodeId][feedId][postId] == null || this.commentsMap[nodeId][feedId][postId] == undefined)
+            this.commentsMap[nodeId][feedId][postId] = {};
+        this.commentsMap[nodeId][feedId][postId][commentId] = comment;
+        this.saveData(FeedsData.PersistenceKey.commentsMap, this.commentsMap);
+    }
+
+    deleteComment(nodeId: string, feedId: number, postId: number, commentId: number){
+        this.commentsMap[nodeId][feedId][postId][commentId] = undefined;
+        delete this.commentsMap[nodeId][feedId][postId][commentId];
+        this.saveData(FeedsData.PersistenceKey.commentsMap, this.commentsMap);
+    }
+
+    deleteCommentFromPost(nodeId: string, feedId: number, postId: number){
+        this.commentsMap[nodeId][feedId][postId] = undefined;
+        delete this.commentsMap[nodeId][feedId][postId];
+        this.saveData(FeedsData.PersistenceKey.commentsMap, this.commentsMap);
+    }
+
+    getCommentList(nodeId: string, channelId: number, postId: number): FeedsData.Comment[]{
+        if (this.commentsMap == null || this.commentsMap == undefined ||
+           this.commentsMap[nodeId] == null || this.commentsMap == undefined ||
+           this.commentsMap[nodeId][channelId] == null || this.commentsMap[nodeId][channelId] == undefined ||
+           this.commentsMap[nodeId][channelId][postId] == null || this.commentsMap[nodeId][channelId][postId] == undefined){
+             return [];
+        }
+    
+        let list: FeedsData.Comment[] =[];
+        let keys: string[] = Object.keys(this.commentsMap[nodeId][channelId][postId]);
+        for (const index in keys) {
+          let comment: FeedsData.Comment = this.commentsMap[nodeId][channelId][postId][keys[index]];
+          if (comment == undefined)
+            continue;
+    
+          list.push(comment);
+          // if (commentById == 0)
+          //   list.push(comment); //post comment list
+          // else if (comment.comment_id == commentById)
+          //   list.push(comment); //comment comment list
+        }
+    
+        list.sort((a, b) => Number(b.created_at) - Number(a.created_at));
+        return list;
+    }
+
+    initCommentsMap(){
+        this.commentsMap = {};
+    }
     ////serverMap
     setServerMap(serverMap: {[nodeId: string]: FeedsData.Server}){
         this.serverMap = serverMap;
