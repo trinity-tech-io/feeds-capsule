@@ -196,10 +196,10 @@ export class DataHelper {
         this.saveData(FeedsData.PersistenceKey.postMap, this.postMap);
     }
 
-    getPostMap(): Promise<{[ncpId: string]: FeedsData.Post}>{
+    loadPostMap(): Promise<{[ncpId: string]: FeedsData.Post}>{
         return new Promise(async (resolve, reject) =>{
             try {
-                if (this.postMap == {}){
+                if (JSON.stringify(this.postMap) == "{}"){
                     this.postMap = await this.loadData(FeedsData.PersistenceKey.postMap) || {};
                     resolve(this.postMap);
                     return ;
@@ -211,6 +211,82 @@ export class DataHelper {
         });
     }
 
+    deletePost(key: string){
+        this.postMap[key].post_status = FeedsData.PostCommentStatus.deleted;
+        this.saveData(FeedsData.PersistenceKey.postMap, this.postMap);
+    }
+
+    updatePost(key: string, post: FeedsData.Post){
+        this.postMap[key] = post;
+        this.saveData(FeedsData.PersistenceKey.postMap, this.postMap);
+    }
+
+    getPost(key: string): FeedsData.Post{
+        if (!this.postMap)
+            return null;
+        return this.postMap[key];
+    }
+
+    generatePost(nodeId: string, feedId: number, postId: number, content: any, 
+                comments: number, likes: number, createdAt: number, updatedAt: number, 
+                postStatus: FeedsData.PostCommentStatus){
+        let post: FeedsData.Post = {
+            nodeId: nodeId,
+            channel_id: feedId,
+            id: postId,
+            content: content,
+            comments: comments,
+            likes: likes,
+            created_at: createdAt,
+            updated_at: updatedAt,
+            post_status: postStatus
+        }
+        return post;
+    }
+
+    isExistPost(key: string): boolean{
+        if (this.postMap[key] == null || this.postMap[key] == undefined)
+            return false ;
+        return true;
+    }
+
+    getPostList(): FeedsData.Post[]{
+        let list: FeedsData.Post[] = [];
+        this.postMap = this.postMap || {};
+        let keys: string[] = Object.keys(this.postMap) || [];
+        for (let index in keys) {
+          if (this.postMap[keys[index]] == null || this.postMap[keys[index]] == undefined)
+            continue;
+    
+          let nodeChannelId = this.getKey(this.postMap[keys[index]].nodeId, this.postMap[keys[index]].channel_id, 0, 0);
+          let feed = this.getChannel(nodeChannelId);
+          if (feed.isSubscribed)
+            list.push(this.postMap[keys[index]]);
+        }
+    
+        list.sort((a, b) => Number(b.created_at) - Number(a.created_at));
+        return list;
+    }
+
+    getPostListFromChannel(nodeId: string, channelId: number){
+        let list: FeedsData.Post[] = [];
+        let keys: string[] = Object.keys(this.postMap);
+        // localPostList = [];
+        for (const index in keys) {
+          if (this.postMap[keys[index]] == null || this.postMap[keys[index]] == undefined)
+            continue;
+    
+          if (this.postMap[keys[index]].nodeId == nodeId && this.postMap[keys[index]].channel_id == channelId)
+            list.push(this.postMap[keys[index]]);
+        }
+    
+        list.sort((a, b) => Number(b.created_at) - Number(a.created_at));
+        return list;
+    }
+
+    initPostMap(){
+        this.channelsMap = {};
+    }
     //// commentsMap
     setCommentsMap(commentsMap: {[nodeId: string]: FeedsData.NodeChannelPostComment}){
         this.commentsMap = commentsMap;
