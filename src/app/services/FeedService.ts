@@ -33,7 +33,7 @@ let unreadMap:{[nodeChannelId: string]: number};
 let serverStatisticsMap:{[nodeId: string]: FeedsData.ServerStatistics};
 // let commentsMap:{[nodeId: string]: FeedsData.NodeChannelPostComment};
 let serversStatus:{[nodeId: string]: FeedsData.ServerStatus};
-let likeMap:{[key:string]:FeedsData.Likes};
+// let likeMap:{[key:string]:FeedsData.Likes};
 let likeCommentMap:{[nodechannelpostCommentId: string]: FeedsData.LikedComment};
 let lastPostUpdateMap:{[nodeChannelId:string]: FeedsData.PostUpdateTime};
 
@@ -324,19 +324,7 @@ export class FeedService {
   }
 
   loadLikeMap(){
-    return new Promise((resolve, reject) =>{
-      let likes = likeMap || "";
-      if( likes == ""){
-        this.storeService.get(FeedsData.PersistenceKey.likeMap).then((mLikeMap)=>{
-          likeMap = mLikeMap || {};
-          resolve(mLikeMap);
-        }).catch((error)=>{
-          reject(error);
-        });
-      }else{
-          resolve(likes);
-      }
-    });
+    return this.dataHelper.loadPostMap();
   }
 
   loadAccessTokenMap(){
@@ -542,12 +530,6 @@ export class FeedService {
       unreadMap = mUnreadMap;
       if(unreadMap == null || unreadMap == undefined)
         unreadMap = {};
-    });
-
-    this.storeService.get(FeedsData.PersistenceKey.likeMap).then((mLikeMap)=>{
-      likeMap = mLikeMap;
-      if (likeMap == null || likeMap == undefined)
-        likeMap = {};
     });
 
     this.storeService.get(FeedsData.PersistenceKey.accessTokenMap).then((mAccessTokenMap)=>{
@@ -1953,16 +1935,9 @@ export class FeedService {
       }
       this.dataHelper.updatePost(key, originPost);
 
-      if (likeMap[key] != null && likeMap[key] != undefined){
-        likeMap[key] = {
-          nodeId    : nodeId,
-          channelId :channel_id,
-          postId    :post_id,
-          commentId :0
-        };
-        this.storeService.set(FeedsData.PersistenceKey.likeMap, likeMap);
-        eventBus.publish(FeedsEvent.PublishType.updateLikeList, this.getLikeList());
-      }
+      let likes = this.dataHelper.generateLikes(nodeId, channel_id, post_id, 0);
+      this.dataHelper.updateLikes(key, likes);
+      eventBus.publish(FeedsEvent.PublishType.updateLikeList, this.getLikeList());
       eventBus.publish(FeedsEvent.PublishType.postDataUpdate);
     }else {
       let originComment = this.dataHelper.getComment(nodeId, channel_id, post_id, comment_id);
@@ -2067,18 +2042,11 @@ export class FeedService {
       updated_at  : updatedAt,
       post_status : status
     }
-
-    if (likeMap[key] != undefined){
-      likeMap[key] = {
-        nodeId    : nodeId,
-        channelId : channelId,
-        postId    : postId,
-        commentId : 0
-      };
-      this.storeService.set(FeedsData.PersistenceKey.likeMap,likeMap);
-    }
-
     this.dataHelper.updatePost(key, post);
+
+    let likesObj = this.dataHelper.generateLikes(nodeId, channelId, postId, 0);
+    this.dataHelper.updateLikes(key, likesObj);
+    
     eventBus.publish(FeedsEvent.PublishType.editPostFinish);
     eventBus.publish(FeedsEvent.PublishType.editPostSuccess);
   }
@@ -2292,17 +2260,12 @@ export class FeedService {
     let post_id: number = request.post_id;
     let comment_id: number = request.comment_id;
 
-    let mPostId = this.getPostId(nodeId, channel_id, post_id);
+    let key = this.getPostId(nodeId, channel_id, post_id);
 
     if (error != null && error != undefined && error.code == -4){
       if (comment_id == 0){
-        likeMap[mPostId] = {
-          nodeId    : nodeId,
-          channelId : channel_id,
-          postId    : post_id,
-          commentId : 0
-        };
-        this.storeService.set(FeedsData.PersistenceKey.likeMap, likeMap);
+        let likesObj = this.dataHelper.generateLikes(nodeId, channel_id, post_id, 0);
+        this.dataHelper.updateLikes(key, likesObj);
         eventBus.publish(FeedsEvent.PublishType.postDataUpdate);
 
       }else{
@@ -2328,7 +2291,7 @@ export class FeedService {
 
     if (comment_id == 0){
       // this.storeService.set(FeedsData.PersistenceKey.postMap,this.postMap);
-      this.storeService.set(FeedsData.PersistenceKey.likeMap, likeMap);
+      // this.storeService.set(FeedsData.PersistenceKey.likeMap, likeMap);
     }else {
       // this.storeService.set(FeedsData.PersistenceKey.commentsMap, commentsMap);
       this.storeService.set(FeedsData.PersistenceKey.likeCommentMap, likeCommentMap);
@@ -2341,13 +2304,10 @@ export class FeedService {
     let post_id: number = request.post_id;
     let comment_id: number = request.comment_id;
 
-    let mPostId = this.getPostId(nodeId, channel_id, post_id);
+    let key = this.getPostId(nodeId, channel_id, post_id);
     if (error != null && error != undefined && error.code == -4){
       if(comment_id == 0){
-        // likeMap[mPostId] = undefined;
-        delete likeMap[mPostId];
-        this.storeService.set(FeedsData.PersistenceKey.likeMap, likeMap);
-
+        this.dataHelper.deleteLikes(key);
         eventBus.publish(FeedsEvent.PublishType.postDataUpdate);
       }else{
         let commentKey = this.getLikeCommentId(nodeId, channel_id, post_id, comment_id);
@@ -2367,7 +2327,7 @@ export class FeedService {
 
     if (comment_id == 0){
       // this.storeService.set(FeedsData.PersistenceKey.postMap,this.postMap);
-      this.storeService.set(FeedsData.PersistenceKey.likeMap, likeMap);
+      // this.storeService.set(FeedsData.PersistenceKey.likeMap, likeMap);
     }else {
       // this.storeService.set(FeedsData.PersistenceKey.commentsMap, commentsMap);
       this.storeService.set(FeedsData.PersistenceKey.likeCommentMap,likeCommentMap);
@@ -2612,15 +2572,8 @@ export class FeedService {
 
       this.dataHelper.updatePost(key, post);
 
-      if (likeMap[key] != undefined){
-        likeMap[key] = {
-          nodeId    : nodeId,
-          channelId : channel_id,
-          postId    : id,
-          commentId : 0
-        };
-        this.storeService.set(FeedsData.PersistenceKey.likeMap,likeMap);
-      }
+      let likesObj = this.dataHelper.generateLikes(nodeId, channel_id, id, 0);
+      this.dataHelper.updateLikes(key, likesObj);
 
       if (requestAction == FeedsData.RequestAction.defaultAction){
         let key = this.getChannelId(nodeId, channel_id);
@@ -2856,12 +2809,8 @@ export class FeedService {
   doPostLikeFinish(nodeId: string, channel_id: number, post_id: number, comment_id: number){
     let key = this.getPostId(nodeId, channel_id, post_id);
     if (comment_id == 0){
-      likeMap[key] = {
-        nodeId    : nodeId,
-        channelId : channel_id,
-        postId    : post_id,
-        commentId : 0
-      };
+      let likesObj = this.dataHelper.generateLikes(nodeId, channel_id, post_id, 0);
+      this.dataHelper.updateLikes(key, likesObj);
 
       let originPost = this.dataHelper.getPost(key);
       originPost.likes = originPost.likes+1;
@@ -2890,8 +2839,7 @@ export class FeedService {
   doPostLikeError(nodeId: string, channel_id: number, post_id: number, comment_id: number){
     let key = this.getPostId(nodeId, channel_id, post_id);
     if (comment_id == 0){
-      likeMap[key] = undefined;
-
+      this.dataHelper.deleteLikes(key);
       let originPost = this.dataHelper.getPost(key);
       let likeNum = originPost.likes;
       if (likeNum > 0){
@@ -2919,6 +2867,7 @@ export class FeedService {
     let key = this.getPostId(nodeId, channel_id, post_id);
 
     if (comment_id == 0){
+      this.dataHelper.deleteLikes(key);
       let originPost = this.dataHelper.getPost(key);
       let likeNum = originPost.likes;
       if (likeNum > 0){
@@ -2951,12 +2900,10 @@ export class FeedService {
       let originPost = this.dataHelper.getPost(key);
       originPost.likes = originPost.likes +1;
       this.dataHelper.updatePost(key, originPost);
-      likeMap[key] = {
-        nodeId    : nodeId,
-        channelId : channel_id,
-        postId    : post_id,
-        commentId : 0
-      };
+
+      let likesObj = this.dataHelper.generateLikes(nodeId, channel_id, post_id, 0);
+      this.dataHelper.updateLikes(key, likesObj);
+
       eventBus.publish(FeedsEvent.PublishType.updateLikeList, this.getLikeList());
       eventBus.publish(FeedsEvent.PublishType.postDataUpdate);
 
@@ -2972,33 +2919,8 @@ export class FeedService {
         post_id    : post_id,
         id         : comment_id,
       }
-
       eventBus.publish(FeedsEvent.PublishType.commentDataUpdate)
-
     }
-  }
-
-  ////
-  loadMoreChannelsTest(list: FeedsData.Channels[]){
-    let num = list.length;
-    for (let index = 0; index < 10; index++) {
-      if (num <108){
-        list.push({
-          nodeId:"",
-          id: num+index,
-          name: String(num+index),
-          introduction: "string",
-          owner_name: "string",
-          owner_did: "string",
-          subscribers : 0,
-          last_update : num+index,
-          last_post:"",
-          avatar:null,
-          isSubscribed:false
-        })
-      }
-    }
-    // list.push()
   }
 
   saveServer(name: string, owner: string, introduction: string,
@@ -3085,36 +3007,12 @@ export class FeedService {
   }
 
   getLikeList(): FeedsData.Post[]{
-    let list: FeedsData.Post[] = [];
-
-    let keys: string[] = [];
-    if (likeMap != null && likeMap != undefined)
-      keys = Object.keys(likeMap);
-
-    for (const index in keys) {
-      let like = likeMap[keys[index]];
-
-      if (like == null || like == undefined)
-        continue;
-
-      let post = this.getPostFromId(like.nodeId,like.channelId,like.postId);
-      if (post == undefined)
-        continue;
-
-      list.push(post);
-    }
-
-    list.sort((a, b) => Number(b.created_at) - Number(a.created_at));
-    return list;
+    return this.dataHelper.getLikedPostList();
   }
 
   updatePostWithTime(nodeId: string, channelId:number, upper_bound: number, lower_bound: number, maxCount: number){
     this.getPost(nodeId,channelId, Communication.field.last_update, upper_bound, lower_bound, maxCount,"");
   }
-
-  // updateFeedsWithTime(nodeId: string, lastUpdateTime: number){
-  //   this.getChannels(nodeId,Communication.field.last_update, 0, lastUpdateTime,0);
-  // }
 
   updateFeedsByFeedId(nodeId: string, feedId: number){
     this.getChannels(nodeId,Communication.field.id, feedId, feedId, 1);
@@ -4039,10 +3937,7 @@ export class FeedService {
   }
 
   getLikeFromId(key: string): FeedsData.Likes{
-    if (likeMap == null || likeMap == undefined)
-      likeMap = {};
-
-    return likeMap[key];
+    return this.dataHelper.getLikes(key);
   }
 
   getLikedCommentFromId(nodeChannelPostCommentId: string): FeedsData.LikedComment{
@@ -4091,9 +3986,9 @@ export class FeedService {
       for (let postIndex = 0; postIndex < postList.length; postIndex++) {
         const post = postList[postIndex];
         let postId = post.id;
-        await this.removeLikeById(nodeId, channelId, postId)
+        this.removeLikeById(nodeId, channelId, postId)
         this.removePostById(nodeId, channelId, postId);
-        await this.removeCommentById(nodeId, channelId, postId);
+        this.removeCommentById(nodeId, channelId, postId);
         await this.removeLastCommentUpdate(nodeId,channelId,postId);
       }
       this.removeChannelById(nodeId, channelId);
@@ -4136,11 +4031,9 @@ export class FeedService {
     return this.storeService.set(FeedsData.PersistenceKey.lastCommentUpdateMap,this.lastCommentUpdateMap);
   }
 
-  removeLikeById(nodeId: string, channelId: number, postId: number):Promise<any>{
+  removeLikeById(nodeId: string, channelId: number, postId: number){
     let key = this.getKey(nodeId, channelId, postId, 0);
-    likeMap[key] = undefined;
-    delete likeMap[key];
-    return this.storeService.set(FeedsData.PersistenceKey.likeMap, likeMap);
+    this.dataHelper.deleteLikes(key);
   }
 
   removeCommentById(nodeId: string, channelId: number, postId: number){
@@ -5119,35 +5012,35 @@ export class FeedService {
   }
 
   updateLikeKey(){
-    let keys: string[] = Object.keys(likeMap) || [];
+    // let keys: string[] = Object.keys(likeMap) || [];
 
-    for (let index = 0; index < keys.length; index++) {
-      let key = keys[index];
-      if(likeMap[key] == undefined){
-        delete likeMap[key];
-        continue;
-      }
+    // for (let index = 0; index < keys.length; index++) {
+    //   let key = keys[index];
+    //   if(likeMap[key] == undefined){
+    //     delete likeMap[key];
+    //     continue;
+    //   }
 
-      let like:any = likeMap[key];
-      let nodeId = like.nodeId;
-      let channelId = like.channel_id;
-      let postId = like.id;
-      let commentId = 0;
+    //   let like:any = likeMap[key];
+    //   let nodeId = like.nodeId;
+    //   let channelId = like.channel_id;
+    //   let postId = like.id;
+    //   let commentId = 0;
 
-      let newKey = this.getCommentId(nodeId, channelId, postId, commentId);
+    //   let newKey = this.getCommentId(nodeId, channelId, postId, commentId);
 
-      if(key == newKey)
-        continue;
+    //   if(key == newKey)
+    //     continue;
 
-        likeMap[newKey] = {
-          nodeId    : nodeId,
-          channelId : channelId,
-          postId    : postId,
-          commentId : 0
-        };
-      delete likeMap[key];
-    }
-    this.storeService.set(FeedsData.PersistenceKey.likeMap, likeMap);
+    //     likeMap[newKey] = {
+    //       nodeId    : nodeId,
+    //       channelId : channelId,
+    //       postId    : postId,
+    //       commentId : 0
+    //     };
+    //   delete likeMap[key];
+    // }
+    // this.storeService.set(FeedsData.PersistenceKey.likeMap, likeMap);
   }
 
   updatePostUpdateKey(){
@@ -5764,7 +5657,8 @@ export class FeedService {
     // commentsMap = {};
     this.dataHelper.initCommentsMap();
     serversStatus = {};
-    likeMap = {};
+    // likeMap = {};
+    this.dataHelper.initLikeMap();
     likeCommentMap = {};
     lastPostUpdateMap = {};
 
