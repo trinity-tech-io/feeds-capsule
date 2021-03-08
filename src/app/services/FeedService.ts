@@ -29,12 +29,10 @@ let newAuthVersion: number = 10400;
 let newCommentVersion: number = 10400;
 let newMultiPropCountVersion: number = 10500;
 
-let unreadMap:{[nodeChannelId: string]: number};
 let serverStatisticsMap:{[nodeId: string]: FeedsData.ServerStatistics};
 let serversStatus:{[nodeId: string]: FeedsData.ServerStatus};
 let lastPostUpdateMap:{[nodeChannelId:string]: FeedsData.PostUpdateTime};
 
-// let bindingServer: FeedsData.Server;
 let bindingServerCache: FeedsData.Server;
 
 let serverMap: {[nodeId: string]: FeedsData.Server};
@@ -301,19 +299,7 @@ export class FeedService {
   }
 
   loadUnreadMap(){
-    return new Promise((resolve, reject) =>{
-      let unread = unreadMap || "";
-      if( unread == ""){
-        this.storeService.get(FeedsData.PersistenceKey.unreadMap).then((mUnreadMap)=>{
-          unreadMap = mUnreadMap || {};
-          resolve(mUnreadMap);
-        }).catch(()=>{
-          reject();
-        });
-      }else{
-          resolve(unread);
-      }
-    });
+    return this.dataHelper.loadUnreadMap();
   }
 
   loadLikeMap(){
@@ -493,12 +479,6 @@ export class FeedService {
         serverMap = {};
     });
 
-    this.storeService.get(FeedsData.PersistenceKey.unreadMap).then((mUnreadMap)=>{
-      unreadMap = mUnreadMap;
-      if(unreadMap == null || unreadMap == undefined)
-        unreadMap = {};
-    });
-
     this.storeService.get(FeedsData.PersistenceKey.accessTokenMap).then((mAccessTokenMap)=>{
       accessTokenMap = mAccessTokenMap|| {};
     });
@@ -632,19 +612,12 @@ export class FeedService {
     return this.dataHelper.getMyChannelList(bindingServer.nodeId);
   }
 
-  getUnreadNumber(nodeChannelId: string){
-    if (unreadMap == null || unreadMap == undefined)
-      unreadMap = {};
-    if (unreadMap[nodeChannelId]==null || unreadMap[nodeChannelId] == undefined)
-      return 0;
-    return unreadMap[nodeChannelId];
+  getUnreadNumber(nodeChannelId: string): number{
+    return this.dataHelper.getUnreadNumber(nodeChannelId);
   }
 
   readChannel(nodeChannelId: string){
-    if (unreadMap == null || unreadMap == undefined)
-      unreadMap = {};
-    unreadMap[nodeChannelId] = 0;
-    this.storeService.set(FeedsData.PersistenceKey.unreadMap,unreadMap);
+    this.dataHelper.readMsg(nodeChannelId);
   }
 
   getChannelsList():FeedsData.Channels[]{
@@ -1731,29 +1704,15 @@ export class FeedService {
 
     let content = this.parseContent(nodeId,channel_id,id,0,contentStr);
 
-    let mPostId = this.getPostId(nodeId, channel_id, id);
-
-    let post = {
-      nodeId     : nodeId,
-      channel_id : channel_id,
-      id         : id,
-      content    : content,
-      comments   : 0,
-      likes      : 0,
-      created_at : created_at*1000,
-      updated_at  : updateAt,
-      post_status : FeedsData.PostCommentStatus.available
-    }
-    this.dataHelper.updatePost(mPostId, post);
+    let key = this.getPostId(nodeId, channel_id, id);
+    let post = this.dataHelper.generatePost(nodeId, channel_id, id, content, 0, 0, created_at*1000, updateAt, FeedsData.PostCommentStatus.available);
+    this.dataHelper.updatePost(key, post);
 
     let nodeChannelId = this.getChannelId(nodeId, channel_id);
     this.updateLastPostUpdate(nodeChannelId, nodeId, channel_id, updateAt);
 
     if (!this.checkChannelIsMine(nodeId, channel_id))
-      unreadMap[nodeChannelId] = unreadMap[nodeChannelId]+1;
-
-    this.storeService.set(FeedsData.PersistenceKey.unreadMap,unreadMap);
-
+      this.dataHelper.receivedUnread(nodeChannelId);
     eventBus.publish(FeedsEvent.PublishType.postDataUpdate);
   }
 
@@ -2489,7 +2448,7 @@ export class FeedService {
       if(this.dataHelper.isExistPost(key)){
         let nodeChannelId = this.getChannelId(nodeId, channel_id);
         if (!this.checkChannelIsMine(nodeId, channel_id))
-          unreadMap[nodeChannelId] = unreadMap[nodeChannelId]+1;
+          this.dataHelper.receivedUnread(nodeChannelId);
       }
 
       this.dataHelper.updatePost(key, post);
@@ -3959,11 +3918,9 @@ export class FeedService {
     this.dataHelper.deleteChannel(nodeChannelId);
   }
 
-  removeUnreadStatueById(nodeId: string, channelId: number):Promise<any>{
+  removeUnreadStatueById(nodeId: string, channelId: number){
     let nodeChannelId = this.getChannelId(nodeId, channelId);
-    unreadMap[nodeChannelId] = 0;
-    delete unreadMap[nodeChannelId];
-    return this.storeService.set(FeedsData.PersistenceKey.unreadMap, unreadMap);
+    this.dataHelper.deleteUnread(nodeChannelId);
   }
 
   removeServerStatisticById(nodeId: string):Promise<any>{
@@ -5558,7 +5515,7 @@ export class FeedService {
 
   cleanCacheData(){
     this.dataHelper.initChannelsMap();
-    unreadMap = {};
+    this.dataHelper.initUnreadMap();
     serverStatisticsMap = {};
     this.dataHelper.initCommentsMap();
     serversStatus = {};
@@ -5566,7 +5523,6 @@ export class FeedService {
     this.dataHelper.initLikedCommentMap();
     lastPostUpdateMap = {};
 
-    // bindingServer = null;
     this.dataHelper.initBindingServer();
     bindingServerCache = null;
     serverMap = {};
@@ -5581,7 +5537,6 @@ export class FeedService {
     this.feedPublicStatus = {};
 
     this.channelInfo = {};
-    // this.postMap = {};
     this.dataHelper.initPostMap();
 
     this.curtab = "home";
