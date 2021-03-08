@@ -59,7 +59,7 @@ export class AboutPage implements OnInit {
   }
 
   showDisclaimer(){
-    this.native.openUrl("https://trinitytech.io/disclaimer.html");
+    this.native.openUrl(" https://trinity-feeds.app/disclaimer");
   }
 
   showHelp(){
