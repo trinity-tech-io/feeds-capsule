@@ -1004,11 +1004,11 @@ export class DataHelper {
         this.saveData(FeedsData.PersistenceKey.notificationList, this.notificationList);
     }
 
-    getNotificationList(){
+    loadNotificationList(){
         return new Promise(async (resolve, reject) =>{
             try {
-                if (this.notificationList == null){
-                    this.notificationList = await this.loadData(FeedsData.PersistenceKey.notificationList) || {};
+                if (this.notificationList.length == 0){
+                    this.notificationList = await this.loadData(FeedsData.PersistenceKey.notificationList) || [];
                     resolve(this.notificationList);
                     return ;
                 }
@@ -1019,6 +1019,34 @@ export class DataHelper {
         });
     }
 
+    appendNotification(notification: FeedsData.Notification){
+        if (this.notificationList == null || this.notificationList == undefined)
+            this.notificationList = [];
+        this.notificationList.push(notification);
+        this.saveData(FeedsData.PersistenceKey.notificationList, this.notificationList);
+    }
+
+    getNotificationList(): FeedsData.Notification[]{
+        if(this.notificationList == null || this.notificationList == undefined || this.notificationList.length == 0)
+            return [];
+        let list: FeedsData.Notification[] = this.notificationList.sort((a, b) => Number(b.time) - Number(a.time));
+        return list;
+    }
+
+    deleteAllNotification(){
+        this.notificationList.splice(0, this.notificationList.length);
+        this.saveData(FeedsData.PersistenceKey.notificationList, this.notificationList);
+    }
+
+    deleteNotification(notification: FeedsData.Notification){
+        let index = this.notificationList.indexOf(notification);
+        this.notificationList.splice(index, 1);
+        this.saveData(FeedsData.PersistenceKey.notificationList, this.notificationList);
+    }
+
+    initNotificationList(){
+        this.notificationList = [];
+    }
     ////cacheBindingAddress
     setCacheBindingAddress(cacheBindingAddress: string){
         this.cacheBindingAddress = cacheBindingAddress

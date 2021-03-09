@@ -33,10 +33,6 @@ let lastPostUpdateMap:{[nodeChannelId:string]: FeedsData.PostUpdateTime};
 
 let bindingServerCache: FeedsData.Server;
 
-// let accessTokenMap:{[nodeId:string]:FeedsData.AccessToken};
-
-let notificationList: FeedsData.Notification[] = [];
-
 let cacheBindingAddress: string = "";
 let localCredential: string = "";
 
@@ -242,10 +238,6 @@ export class FeedService {
     return this.dataHelper.loadServerMap();
   }
 
-  // loadSubscribedChannels(){
-  //   return this.dataHelper.loadSubscribedChannels();
-  // }
-
   loadComments(){
     return this.dataHelper.loadCommentsMap();
   }
@@ -267,19 +259,7 @@ export class FeedService {
   }
 
   loadNotificationList(){
-    return new Promise((resolve, reject) =>{
-      let notifications = notificationList || "";
-      if( notifications == ""){
-        this.storeService.get(FeedsData.PersistenceKey.notificationList).then((mNotificationList)=>{
-          notificationList = mNotificationList || [];
-          resolve(mNotificationList);
-        }).catch((error)=>{
-          reject(error);
-        });
-      }else{
-          resolve(notifications);
-      }
-    });
+    return this.dataHelper.loadNotificationList();
   }
 
   loadLikeCommentMap(){
@@ -385,12 +365,6 @@ export class FeedService {
       lastPostUpdateMap = mLastPostUpdateMap;
       if(lastPostUpdateMap == null || lastPostUpdateMap == undefined)
         lastPostUpdateMap = {}
-    });
-
-    this.storeService.get(FeedsData.PersistenceKey.notificationList).then((mNotificationList)=>{
-      notificationList = mNotificationList;
-      if (notificationList == null || notificationList == undefined)
-        notificationList = [];
     });
 
     this.storeService.get(FeedsData.PersistenceKey.lastCommentUpdateMap).then((mLastCommentUpdateMap) => {
@@ -1622,10 +1596,9 @@ export class FeedService {
       time:this.getCurrentTimeNum(),
       readStatus:1
     }
-    notificationList.push(notification);
-    this.storeService.set(FeedsData.PersistenceKey.notificationList, notificationList);
-    eventBus.publish(FeedsEvent.PublishType.UpdateNotification);
 
+    this.dataHelper.appendNotification(notification);
+    eventBus.publish(FeedsEvent.PublishType.UpdateNotification);
   }
 
   handleNewLikesNotification(nodeId: string, params: any){
@@ -3753,9 +3726,8 @@ export class FeedService {
     return this.storeService.remove(FeedsData.PersistenceKey.accessTokenMap);
   }
 
-  removeNotification():Promise<any>{
-    notificationList.splice(0, notificationList.length);
-    return this.storeService.set(FeedsData.PersistenceKey.notificationList, notificationList);
+  removeNotification(){
+    this.dataHelper.deleteAllNotification();
   }
 
   removeBindingServer(){
@@ -3763,25 +3735,21 @@ export class FeedService {
   }
 
   getNotificationList(): FeedsData.Notification[]{
-    if(notificationList == null || notificationList == undefined || notificationList.length == 0)
-      return [];
-    let list: FeedsData.Notification[] = notificationList.sort((a, b) => Number(b.time) - Number(a.time));
-    return list;
+    return this.dataHelper.getNotificationList();
   }
 
   setNotificationReadStatus(notification: FeedsData.Notification, readStatus: number){
     if (notification == undefined)
       return ;
 
+    this.dataHelper.deleteNotification(notification);
     notification.readStatus = readStatus;
-    this.storeService.set(FeedsData.PersistenceKey.notificationList, notificationList);
+    this.dataHelper.appendNotification(notification);
   }
 
   deleteNotification(notification: FeedsData.Notification):Promise<any>{
     return new Promise((resolve, reject) =>{
-      let index = notificationList.indexOf(notification);
-      notificationList.splice(index, 1);
-      this.storeService.set(FeedsData.PersistenceKey.notificationList, notificationList);
+      this.dataHelper.deleteNotification(notification);
       eventBus.publish(FeedsEvent.PublishType.UpdateNotification);
       resolve(null);
     });
@@ -5280,8 +5248,7 @@ export class FeedService {
     bindingServerCache = null;
     this.dataHelper.initServerMap();
     this.dataHelper.initAccessTokenMap();
-
-    notificationList = [];
+    this.dataHelper.initNotificationList();
     cacheBindingAddress = "";
     localCredential = "";
     cachedPost = {};
