@@ -29,7 +29,7 @@ let newAuthVersion: number = 10400;
 let newCommentVersion: number = 10400;
 let newMultiPropCountVersion: number = 10500;
 
-let serversStatus:{[nodeId: string]: FeedsData.ServerStatus};
+// let serversStatus:{[nodeId: string]: FeedsData.ServerStatus};
 let lastPostUpdateMap:{[nodeChannelId:string]: FeedsData.PostUpdateTime};
 
 let bindingServerCache: FeedsData.Server;
@@ -234,27 +234,7 @@ export class FeedService {
   }
 
   loadServersStatus(){
-    return new Promise((resolve, reject) =>{
-      let sStatus = serversStatus || "";
-      if( sStatus == ""){
-        this.storeService.get(FeedsData.PersistenceKey.serversStatus).then((mServersStatus)=>{
-          serversStatus = mServersStatus || {};
-
-          let keys: string[] = Object.keys(serversStatus);
-          for (const index in keys) {
-            if (serversStatus[keys[index]] == undefined)
-              continue;
-              serversStatus[keys[index]].status = FeedsData.ConnState.disconnected;
-          }
-
-          resolve(mServersStatus);
-        }).catch((error)=>{
-          reject(error);
-        });
-      }else{
-          resolve(sStatus);
-      }
-    });
+    return this.dataHelper.loadServersStatus();
   }
 
   loadServerStatistics(){
@@ -438,20 +418,6 @@ export class FeedService {
         lastPostUpdateMap = {}
     });
 
-    this.storeService.get(FeedsData.PersistenceKey.serversStatus).then((mServersStatus)=>{
-      serversStatus = mServersStatus;
-      if (serversStatus == null || serversStatus == undefined){
-        serversStatus = {};
-      }
-
-      let keys: string[] = Object.keys(serversStatus);
-      for (const index in keys) {
-        if (serversStatus[keys[index]] == undefined)
-          continue;
-          serversStatus[keys[index]].status = FeedsData.ConnState.disconnected;
-      }
-    });
-
     this.storeService.get(FeedsData.PersistenceKey.serverMap).then((mServerMap)=>{
       serverMap = mServerMap;
       if(serverMap == null || serverMap == undefined)
@@ -537,19 +503,8 @@ export class FeedService {
     return list;
   }
 
-  getServersStatus():  {[nodeId: string]: FeedsData.ServerStatus} {
-    return serversStatus;
-  }
-
   getServerStatusFromId(nodeId: string): number{
-
-    if (this.getConnectionStatus() == FeedsData.ConnState.disconnected ||
-      serversStatus[nodeId] == null ||
-      serversStatus[nodeId] == undefined){
-        return 1;
-    }
-
-    return serversStatus[nodeId].status;
+    return this.dataHelper.getServerStatusStatus(nodeId);
   }
 
   // getServerStatisticsMap():{[nodeId: string]: FeedsData.ServerStatistics}{
@@ -675,14 +630,9 @@ export class FeedService {
         this.connectionService.friendConnectionMap = {};
 
       this.connectionService.friendConnectionMap[friendId] = friendStatus;
-      if(serversStatus == null ||serversStatus == undefined)
-        serversStatus = {}
-
-      serversStatus[friendId] = {
-        nodeId: friendId,
-        did: "string",
-        status: friendStatus
-      }
+      
+      let serverStatus = this.dataHelper.generateServerStatus(friendId, "", friendStatus);
+      this.dataHelper.updateServerStatus(friendId, serverStatus);
 
       if (friendStatus == FeedsData.ConnState.connected)
         this.getServerVersion(friendId);
@@ -699,8 +649,8 @@ export class FeedService {
       this.logUtils.logd("Prepare prepare");
       this.prepare(friendId);
     }
-    this.storeService.set(FeedsData.PersistenceKey.serversStatus,serversStatus);
-    eventBus.publish(FeedsEvent.PublishType.serverConnectionChanged,serversStatus);
+
+    eventBus.publish(FeedsEvent.PublishType.serverConnectionChanged);
   }
 
   friendAddCallback(){
@@ -717,19 +667,12 @@ export class FeedService {
   }
 
   resolveServer(server: FeedsData.Server, status: FeedsData.ConnState){
-    if (serversStatus == null || serversStatus == undefined)
-        serversStatus = {};
-
-    if (serversStatus[server.nodeId] == undefined){
-      serversStatus[server.nodeId] = {
-        nodeId: server.nodeId,
-        did: server.did,
-        status: FeedsData.ConnState.disconnected
-      }
+    if(status == null){
+      status = FeedsData.ConnState.disconnected;
     }
-
-    if (status != null)
-      return serversStatus[server.nodeId].status = status;
+    let originServerStatus = this.dataHelper.getServerStatus(server.nodeId);
+    originServerStatus.status = status;
+    this.dataHelper.updateServerStatus(server.nodeId, originServerStatus);    
 
     this.dataHelper.generateEmptyStatistics(server.nodeId);
 
@@ -738,7 +681,6 @@ export class FeedService {
 
     serverMap[server.nodeId] = server ;
 
-    this.storeService.set(FeedsData.PersistenceKey.serversStatus,serversStatus);
     this.storeService.set(FeedsData.PersistenceKey.serverMap, serverMap);
     eventBus.publish(FeedsEvent.PublishType.updateServerList, this.getServerList(), Date.now());
   }
@@ -3526,7 +3468,7 @@ export class FeedService {
   }
 
   finishBinding(nodeId: string){
-    this.dataHelper.setBindingServer(bindingServerCache);
+    this.dataHelper.updateBindingServer(bindingServerCache);
     let bindingServer = this.dataHelper.getBindingServer();
     this.addServer(bindingServer.carrierAddress,
                   'Feeds/0.1',
@@ -3876,10 +3818,8 @@ export class FeedService {
     this.dataHelper.deleteServerStatistics(nodeId);
   }
 
-  removeServerStatusById(nodeId: string):Promise<any>{
-    serversStatus[nodeId] = undefined;
-    delete serversStatus[nodeId];
-    return this.storeService.set(FeedsData.PersistenceKey.serversStatus, serversStatus);
+  removeServerStatusById(nodeId: string){
+    this.dataHelper.deleteServerStatus(nodeId);
   }
 
   removeServerById(nodeId: string):Promise<any>{
@@ -4216,13 +4156,7 @@ export class FeedService {
   }
 
   resetServerConnectionStatus(){
-    let serverConnectionMap = serversStatus||{};
-    let keys: string[] = Object.keys(serverConnectionMap) || [];
-    for (let index = 0; index < keys.length; index++) {
-      if (serversStatus[keys[index]] == undefined)
-        continue;
-      serversStatus[keys[index]].status = FeedsData.ConnState.disconnected;
-    }
+    this.dataHelper.resetServerConnectionStatus();
   }
 
   rmDIDPrefix(did: string): string{
@@ -5465,7 +5399,8 @@ export class FeedService {
     this.dataHelper.initUnreadMap();
     this.dataHelper.initServerStatisticMap();
     this.dataHelper.initCommentsMap();
-    serversStatus = {};
+    // serversStatus = {};
+    this.dataHelper.initServersConnectionStatus()
     this.dataHelper.initLikeMap();
     this.dataHelper.initLikedCommentMap();
     lastPostUpdateMap = {};

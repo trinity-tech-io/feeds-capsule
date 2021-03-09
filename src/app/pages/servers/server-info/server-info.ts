@@ -133,7 +133,7 @@ export class ServerInfoPage implements OnInit {
       });
     });
 
-    this.events.subscribe(FeedsEvent.PublishType.serverConnectionChanged, serversStatus => {
+    this.events.subscribe(FeedsEvent.PublishType.serverConnectionChanged, () => {
       this.zone.run(() => {
             this.serverStatus = this.feedService.getServerStatusFromId(this.nodeId);
       });
