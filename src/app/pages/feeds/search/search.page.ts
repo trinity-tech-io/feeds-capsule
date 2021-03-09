@@ -292,11 +292,7 @@ export class SearchPage implements OnInit {
     if(this.popover!=null){
       this.popover.dismiss();
       let nodeId = that.curAddingItem["nodeId"];
-      console.log("======nodeId======"+nodeId);
       let srcfeedId = that.curAddingItem["feedId"];
-      console.log("======feedId======"+srcfeedId);
-      //that.feedService.promptpublishdid();
-
       that.feedService.removeTobeAddedFeeds(nodeId,srcfeedId).then(()=>{
         that.zone.run(() => {
           that.addingChanneList = that.feedService.getToBeAddedFeedsList() || [];
@@ -305,10 +301,8 @@ export class SearchPage implements OnInit {
             let  feedNodeId = feed["nodeId"]
             let feedUrl = feed["url"];
             let feedId = feedUrl.split("/")[4];
-            console.log("===feedId=="+feedId);
                 return feedNodeId==nodeId&&feedId==srcfeedId;
           });
-          console.log("======feedlist======"+feedlist.length);
           if(feedlist.length>0){
             let feed = feedlist[0];
             that.discoverSquareList.push(feed);
