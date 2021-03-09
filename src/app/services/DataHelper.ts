@@ -1063,11 +1063,11 @@ export class DataHelper {
         this.saveData(FeedsData.PersistenceKey.credential, this.localCredential);
     }
 
-    getLocalCredential(): Promise<string>{
+    loadLocalCredential(): Promise<string>{
         return new Promise(async (resolve, reject) =>{
             try {
                 if (this.localCredential == ""){
-                    this.localCredential = await this.loadData(FeedsData.PersistenceKey.credential) || {};
+                    this.localCredential = await this.loadData(FeedsData.PersistenceKey.credential) || "";
                     resolve(this.localCredential);
                     return ;
                 }
@@ -1078,6 +1078,19 @@ export class DataHelper {
         });
     }
 
+    updateLocalCredential(credential: string){
+        this.localCredential = credential;
+        this.saveData(FeedsData.PersistenceKey.credential, this.localCredential);
+    }
+
+    getLocalCredential(){
+        return this.localCredential;
+    }
+
+    initLocalCredential(){
+        this.localCredential = "";
+    }
+    
     ////cachedPost
     setCachedPost(cachedPost: {[key:string]:FeedsData.Post}){
         this.cachedPost = cachedPost;
@@ -1087,7 +1100,6 @@ export class DataHelper {
         return this.cachedPost;
     }
 
-
     ////feedPublicStatus
     setFeedPublicStatus(feedPublicStatus: any){
         this.feedPublicStatus = feedPublicStatus
@@ -1096,7 +1108,6 @@ export class DataHelper {
     getFeedPublicStatus():any{
         return this.feedPublicStatus;
     }
-
 
     ////carrierStatus
     setCarrierStatus(carrierStatus: FeedsData.ConnState){

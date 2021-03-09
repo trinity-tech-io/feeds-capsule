@@ -34,7 +34,7 @@ let lastPostUpdateMap:{[nodeChannelId:string]: FeedsData.PostUpdateTime};
 let bindingServerCache: FeedsData.Server;
 
 let cacheBindingAddress: string = "";
-let localCredential: string = "";
+// let localCredential: string = "";
 
 let cachedPost:{[key:string]:FeedsData.Post} = {};
 
@@ -195,19 +195,7 @@ export class FeedService {
   }
 
   loadCredential(){
-    return new Promise((resolve, reject) =>{
-      let credential = localCredential || "";
-      if( credential == ""){
-        this.storeService.get(FeedsData.PersistenceKey.credential).then((mCredential)=>{
-          localCredential = mCredential || "";
-          resolve(mCredential);
-        }).catch((error)=>{
-          reject(error);
-        });
-      }else{
-          resolve(localCredential);
-      }
-    });
+    return this.dataHelper.loadLocalCredential();
   }
 
   loadLastPostUpdate(){
@@ -355,12 +343,6 @@ export class FeedService {
   }
 
   initData(){
-    if(localCredential == null || localCredential == undefined){
-      this.storeService.get(FeedsData.PersistenceKey.credential).then((credential)=>{
-        localCredential = credential;
-      });
-    }
-
     this.storeService.get(FeedsData.PersistenceKey.lastPostUpdateMap).then((mLastPostUpdateMap)=>{
       lastPostUpdateMap = mLastPostUpdateMap;
       if(lastPostUpdateMap == null || lastPostUpdateMap == undefined)
@@ -3483,13 +3465,11 @@ export class FeedService {
 
 
   saveCredential(credential: string){
-    localCredential = credential;
-
-    this.storeService.set(FeedsData.PersistenceKey.credential, localCredential);
+    this.dataHelper.updateLocalCredential(credential);
   }
 
   getLocalCredential(){
-    return localCredential;
+    return this.dataHelper.getLocalCredential();
   }
 
   removeAllData(){
@@ -5250,7 +5230,7 @@ export class FeedService {
     this.dataHelper.initAccessTokenMap();
     this.dataHelper.initNotificationList();
     cacheBindingAddress = "";
-    localCredential = "";
+    this.dataHelper.initLocalCredential();
     cachedPost = {};
 
     this.feedPublicStatus = {};
