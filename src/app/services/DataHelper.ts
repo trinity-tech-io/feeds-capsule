@@ -696,10 +696,10 @@ export class DataHelper {
         this.saveData(FeedsData.PersistenceKey.serverStatisticsMap, this.serverStatisticsMap);
     }
 
-    getServerStatisticsMap():Promise<{[nodeId: string]: FeedsData.ServerStatistics}>{
+    loadServerStatisticsMap():Promise<{[nodeId: string]: FeedsData.ServerStatistics}>{
         return new Promise(async (resolve, reject) =>{
             try {
-                if (this.serverStatisticsMap == {}){
+                if (JSON.stringify(this.serverStatisticsMap) == "{}"){
                     this.serverStatisticsMap = await this.loadData(FeedsData.PersistenceKey.serverStatisticsMap) || {};
                     resolve(this.serverStatisticsMap);
                     return ;
@@ -711,6 +711,45 @@ export class DataHelper {
         });
     }
 
+    generateServerStatistics(did: string, connectingClients: number, totalClients: number): FeedsData.ServerStatistics{
+        return {
+            did               : did,
+            connecting_clients: connectingClients,
+            total_clients     : totalClients
+        }
+    }
+
+    generateEmptyStatistics(did: string){
+        return this.generateServerStatistics(did, 0 , 0);
+    }
+
+    getServerStatisticsNumber(nodeId: string): number{
+        if (this.serverStatisticsMap == null || this.serverStatisticsMap == undefined)
+            this.serverStatisticsMap = {};
+        if (this.serverStatisticsMap[nodeId] == null || this.serverStatisticsMap[nodeId] == undefined)
+            return 0;
+        return this.serverStatisticsMap[nodeId].total_clients||0;
+    }
+
+    updateServerStatistics(nodeId: string, serverStatistics: FeedsData.ServerStatistics){
+        if (this.serverStatisticsMap == null || this.serverStatisticsMap == undefined)
+            this.serverStatisticsMap = {};
+        this.serverStatisticsMap[nodeId] = serverStatistics;
+        this.saveData(FeedsData.PersistenceKey.serverStatisticsMap, this.serverStatisticsMap);
+    }
+
+    deleteServerStatistics(nodeId: string){
+        if (this.serverStatisticsMap == null || this.serverStatisticsMap == undefined)
+            this.serverStatisticsMap = {};
+        this.serverStatisticsMap[nodeId] = null;
+        delete this.serverStatisticsMap[nodeId];
+        this.saveData(FeedsData.PersistenceKey.serverStatisticsMap, this.serverStatisticsMap);
+    }
+
+    initServerStatisticMap(){
+        this.serverStatisticsMap = {};
+    }
+    
     ////serversStatus
     setServersStatus(serversStatus: {[nodeId: string]: FeedsData.ServerStatus}){
         this.serversStatus = serversStatus;

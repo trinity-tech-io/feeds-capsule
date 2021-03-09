@@ -29,7 +29,6 @@ let newAuthVersion: number = 10400;
 let newCommentVersion: number = 10400;
 let newMultiPropCountVersion: number = 10500;
 
-let serverStatisticsMap:{[nodeId: string]: FeedsData.ServerStatistics};
 let serversStatus:{[nodeId: string]: FeedsData.ServerStatus};
 let lastPostUpdateMap:{[nodeChannelId:string]: FeedsData.PostUpdateTime};
 
@@ -259,19 +258,7 @@ export class FeedService {
   }
 
   loadServerStatistics(){
-    return new Promise((resolve, reject) =>{
-      let serverStatistics = serverStatisticsMap || "";
-      if( serverStatistics == ""){
-        this.storeService.get(FeedsData.PersistenceKey.serverStatisticsMap).then((mServerStatisticsMap)=>{
-          serverStatisticsMap = mServerStatisticsMap || {};
-          resolve(mServerStatisticsMap);
-        }).catch((error)=>{
-          reject(error);
-        });
-      }else{
-          resolve(serverStatistics);
-      }
-    });
+    return this.dataHelper.loadServerStatisticsMap();
   }
 
   loadServers(){
@@ -465,14 +452,6 @@ export class FeedService {
       }
     });
 
-    this.storeService.get(FeedsData.PersistenceKey.serverStatisticsMap).then((mServerStatisticsMap)=>{
-      serverStatisticsMap = mServerStatisticsMap ;
-      if (serverStatisticsMap == null || serverStatisticsMap == undefined){
-        serverStatisticsMap = {};
-      }
-    });
-
-
     this.storeService.get(FeedsData.PersistenceKey.serverMap).then((mServerMap)=>{
       serverMap = mServerMap;
       if(serverMap == null || serverMap == undefined)
@@ -573,36 +552,33 @@ export class FeedService {
     return serversStatus[nodeId].status;
   }
 
-  getServerStatisticsMap():{[nodeId: string]: FeedsData.ServerStatistics}{
-    let bindingServer = this.dataHelper.getBindingServer();
-    if (bindingServer != null &&
-      bindingServer!= undefined &&
-      serverStatisticsMap[bindingServer.nodeId] == undefined)
-      serverStatisticsMap[bindingServer.nodeId] = {
-        did               : "string",
-        connecting_clients: 0,
-        total_clients     : 0
-      }
+  // getServerStatisticsMap():{[nodeId: string]: FeedsData.ServerStatistics}{
+  //   let bindingServer = this.dataHelper.getBindingServer();
+  //   if (bindingServer != null &&
+  //     bindingServer!= undefined &&
+  //     serverStatisticsMap[bindingServer.nodeId] == undefined)
+  //     serverStatisticsMap[bindingServer.nodeId] = {
+  //       did               : "string",
+  //       connecting_clients: 0,
+  //       total_clients     : 0
+  //     }
 
-    let list = this.getServerList();
-    for (let index = 0; index < list.length; index++) {
-      if (serverStatisticsMap[list[index].nodeId] == null ||
-        serverStatisticsMap[list[index].nodeId] == undefined)
-        serverStatisticsMap[list[index].nodeId] ={
-          did               : "string",
-          connecting_clients: 0,
-          total_clients     : 0
-        }
-    }
+  //   let list = this.getServerList();
+  //   for (let index = 0; index < list.length; index++) {
+  //     if (serverStatisticsMap[list[index].nodeId] == null ||
+  //       serverStatisticsMap[list[index].nodeId] == undefined)
+  //       serverStatisticsMap[list[index].nodeId] ={
+  //         did               : "string",
+  //         connecting_clients: 0,
+  //         total_clients     : 0
+  //       }
+  //   }
 
-    return serverStatisticsMap;
-  }
+  //   return serverStatisticsMap;
+  // }
 
   getServerStatisticsNumber(nodeId: string): number{
-    if (serverStatisticsMap[nodeId] == null || serverStatisticsMap[nodeId] == undefined)
-      return 0;
-
-    return serverStatisticsMap[nodeId].total_clients||0;
+    return this.dataHelper.getServerStatisticsNumber(nodeId);
   }
 
   getMyChannelList(){
@@ -755,32 +731,15 @@ export class FeedService {
     if (status != null)
       return serversStatus[server.nodeId].status = status;
 
-    if (serverStatisticsMap == null || serverStatisticsMap == undefined)
-      serverStatisticsMap = {};
-
-    if (serverStatisticsMap[server.nodeId] == undefined){
-      serverStatisticsMap[server.nodeId] = {
-        did               : server.did,
-        connecting_clients: 0,
-        total_clients     : 0
-      }
-    }
+    this.dataHelper.generateEmptyStatistics(server.nodeId);
 
     if (serverMap == null || serverMap == undefined)
       serverMap = {}
 
-    // if (serverMap[server.nodeId] != undefined)
-    //   this.native.toast("AddServerPage.serverAlreadyAdded");
-    // else
-    //   this.native.toast("AddServerPage.serverAddedSuccess");
-
-    // if (server != bindingServer)
     serverMap[server.nodeId] = server ;
 
     this.storeService.set(FeedsData.PersistenceKey.serversStatus,serversStatus);
     this.storeService.set(FeedsData.PersistenceKey.serverMap, serverMap);
-    this.storeService.set(FeedsData.PersistenceKey.serverStatisticsMap,serverStatisticsMap);
-
     eventBus.publish(FeedsEvent.PublishType.updateServerList, this.getServerList(), Date.now());
   }
 
@@ -2543,19 +2502,9 @@ export class FeedService {
     let connectingClients = result.connecting_clients || 0;
     let totalClients = result.total_clients || 0;
 
-    let serverStatistics: FeedsData.ServerStatistics = {
-      did               : userDID,
-      connecting_clients: connectingClients,
-      total_clients     : totalClients
-    }
-
-    if (serverStatisticsMap == null || serverStatisticsMap == undefined)
-      serverStatisticsMap = {};
-
-    serverStatisticsMap[nodeId] = serverStatistics;
-
-    this.storeService.set(FeedsData.PersistenceKey.serverStatisticsMap, serverStatisticsMap);
-    eventBus.publish(FeedsEvent.PublishType.serverStatisticsChanged,serverStatisticsMap);
+    let serverStatistics: FeedsData.ServerStatistics = this.dataHelper.generateServerStatistics(userDID, connectingClients, totalClients);
+    this.dataHelper.updateServerStatistics(nodeId, serverStatistics);
+    eventBus.publish(FeedsEvent.PublishType.serverStatisticsChanged);
   }
 
   handleSubscribeChannelResult(nodeId: string, request: any, error: any){
@@ -3923,10 +3872,8 @@ export class FeedService {
     this.dataHelper.deleteUnread(nodeChannelId);
   }
 
-  removeServerStatisticById(nodeId: string):Promise<any>{
-    serverStatisticsMap[nodeId] = undefined;
-    delete serverStatisticsMap[nodeId];
-    return this.storeService.set(FeedsData.PersistenceKey.serverStatisticsMap, serverStatisticsMap);
+  removeServerStatisticById(nodeId: string){
+    this.dataHelper.deleteServerStatistics(nodeId);
   }
 
   removeServerStatusById(nodeId: string):Promise<any>{
@@ -5516,7 +5463,7 @@ export class FeedService {
   cleanCacheData(){
     this.dataHelper.initChannelsMap();
     this.dataHelper.initUnreadMap();
-    serverStatisticsMap = {};
+    this.dataHelper.initServerStatisticMap();
     this.dataHelper.initCommentsMap();
     serversStatus = {};
     this.dataHelper.initLikeMap();
