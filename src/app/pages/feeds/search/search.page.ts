@@ -276,6 +276,7 @@ export class SearchPage implements OnInit {
 
   handeleStatus(addingchannel:any){
     this.curAddingItem = addingchannel;
+    console.log("======this.curAddingItem======"+JSON.stringify(this.curAddingItem));
     this.popover = this.popupProvider.ionicConfirm(
       this,
       // "ConfirmdialogComponent.signoutTitle",
@@ -291,10 +292,12 @@ export class SearchPage implements OnInit {
     if(this.popover!=null){
       this.popover.dismiss();
       let nodeId = that.curAddingItem["nodeId"];
-      let feedId = that.curAddingItem["feedId"];
+      console.log("======nodeId======"+nodeId);
+      let srcfeedId = that.curAddingItem["feedId"];
+      console.log("======feedId======"+srcfeedId);
       //that.feedService.promptpublishdid();
 
-      that.feedService.removeTobeAddedFeeds(nodeId,feedId).then(()=>{
+      that.feedService.removeTobeAddedFeeds(nodeId,srcfeedId).then(()=>{
         that.zone.run(() => {
           that.addingChanneList = that.feedService.getToBeAddedFeedsList() || [];
           that.searchAddingChanneList = _.cloneDeep(that.addingChanneList);
@@ -302,8 +305,10 @@ export class SearchPage implements OnInit {
             let  feedNodeId = feed["nodeId"]
             let feedUrl = feed["url"];
             let feedId = feedUrl.split("/")[4];
-                return feedNodeId==nodeId&&feedId==feedId;
+            console.log("===feedId=="+feedId);
+                return feedNodeId==nodeId&&feedId==srcfeedId;
           });
+          console.log("======feedlist======"+feedlist.length);
           if(feedlist.length>0){
             let feed = feedlist[0];
             that.discoverSquareList.push(feed);
