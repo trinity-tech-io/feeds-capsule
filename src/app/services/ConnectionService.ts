@@ -24,7 +24,7 @@ export class ConnectionService {
 
     createChannel(serverName: string, nodeId: string, name: string, introduction: string,
                  avatar: any, accessToken: FeedsData.AccessToken){
-        if (accessToken == undefined)
+        if (accessToken == null || accessToken == undefined)
             return ;
 
         let avatarBin = this.serializeDataService.encodeData(avatar);
@@ -45,7 +45,7 @@ export class ConnectionService {
 
     publishPost(serverName: string, nodeId: string, channelId: number, content: any,
                 accessToken: FeedsData.AccessToken){
-        if (accessToken == undefined)
+        if (accessToken == null || accessToken == undefined)
             return ;
 
         let contentBin = this.serializeDataService.encodeData(content);
@@ -66,7 +66,7 @@ export class ConnectionService {
     //added v1.3.0 server
     declarePost(serverName: string, nodeId: string, channelId: number, content: any,
         withNotify: boolean ,accessToken: FeedsData.AccessToken){
-        if (accessToken == undefined)
+        if (accessToken == null || accessToken == undefined)
             return ;
 
         let contentBin = this.serializeDataService.encodeData(content);
@@ -87,7 +87,7 @@ export class ConnectionService {
 
     //added v1.3.0 server
     notifyPost(serverName: string, nodeId: string, channelId: number, postId: number,accessToken: FeedsData.AccessToken){
-        if (accessToken == undefined)
+        if (accessToken == null || accessToken == undefined)
             return ;
 
         let request: Communication.notify_post_request = {
@@ -105,7 +105,7 @@ export class ConnectionService {
 
     postComment(serverName: string, nodeId: string, channelId: number, postId: number,
               commentId: number , content: any, accessToken: FeedsData.AccessToken){
-        if (accessToken == undefined)
+        if (accessToken == null || accessToken == undefined)
             return ;
 
         let contentBin = this.serializeDataService.encodeData(content);
@@ -127,7 +127,7 @@ export class ConnectionService {
 
     postLike(serverName: string, nodeId: string, channelId: number, postId: number,
             commentId: number, accessToken: FeedsData.AccessToken){
-        if (accessToken == undefined)
+        if (accessToken == null || accessToken == undefined)
             return ;
 
         let request: Communication.post_like_request = {
@@ -146,7 +146,7 @@ export class ConnectionService {
 
     postUnlike(serverName: string, nodeId:string, channelId: number, postId: number,
             commentId: number, accessToken: FeedsData.AccessToken){
-        if (accessToken == undefined)
+        if (accessToken == null || accessToken == undefined)
             return ;
 
         let request: Communication.post_unlike_request = {
@@ -165,7 +165,7 @@ export class ConnectionService {
 
    getMyChannels(serverName: string, nodeId: string, field: Communication.field, upper_bound: number,
                 lower_bound: number, max_counts: number, accessToken: FeedsData.AccessToken){
-        if (accessToken == undefined)
+        if (accessToken == null || accessToken == undefined)
             return ;
 
         let request: Communication.get_my_channels_request = {
@@ -205,7 +205,7 @@ export class ConnectionService {
 
     getChannels(serverName: string, nodeId: string, field: Communication.field, upper_bound: number,
               lower_bound: number, max_counts: number, accessToken: FeedsData.AccessToken){
-        if (accessToken == undefined)
+        if (accessToken == null || accessToken == undefined)
             return ;
 
         let request: Communication.get_channels_request = {
@@ -224,7 +224,7 @@ export class ConnectionService {
     }
 
     getChannelDetail(serverName: string, nodeId: string, id: number, accessToken: FeedsData.AccessToken){
-        if (accessToken == undefined)
+        if (accessToken == null || accessToken == undefined)
             return ;
 
         let request: Communication.get_channel_detail_request = {
@@ -241,7 +241,7 @@ export class ConnectionService {
 
     getSubscribedChannels(serverName: string, nodeId: string, field: Communication.field, upper_bound: number,
                             lower_bound: number, max_counts: number, accessToken: FeedsData.AccessToken){
-        if (accessToken == undefined)
+        if (accessToken == null || accessToken == undefined)
             return ;
 
         let request: Communication.get_subscribed_channels_request = {
@@ -262,7 +262,7 @@ export class ConnectionService {
     getPost(serverName: string, nodeId: string, channel_id: number, by: Communication.field,
             upper_bound: number, lower_bound: number , max_counts: number, memo: any,
             accessToken: FeedsData.AccessToken){
-        if (accessToken == undefined)
+        if (accessToken == null || accessToken == undefined)
             return ;
 
         let request: Communication.get_posts_request = {
@@ -284,7 +284,7 @@ export class ConnectionService {
     getComments(serverName: string, nodeId: string, channel_id: number, post_id: number,
               by:Communication.field, upper_bound: number, lower_bound: number,
               max_counts:number, isShowOfflineToast: boolean, accessToken: FeedsData.AccessToken){
-        if (accessToken == undefined)
+        if (accessToken == null || accessToken == undefined)
             return ;
 
         let request:Communication.get_comments_request = {
@@ -305,7 +305,7 @@ export class ConnectionService {
     }
 
     getStatistics(serverName: string, nodeId: string, accessToken: FeedsData.AccessToken){
-        if (accessToken == undefined)
+        if (accessToken == null || accessToken == undefined)
             return ;
 
         let request:Communication.get_statistics_request = {
@@ -320,7 +320,7 @@ export class ConnectionService {
     }
 
     subscribeChannel(serverName: string, nodeId: string, id: number, accessToken: FeedsData.AccessToken){
-        if (accessToken == undefined)
+        if (accessToken == null || accessToken == undefined)
             return ;
 
         let request: Communication.subscribe_channel_request = {
@@ -336,7 +336,7 @@ export class ConnectionService {
     }
 
     unsubscribeChannel(serverName: string, nodeId: string, id: number, accessToken: FeedsData.AccessToken){
-        if (accessToken == undefined)
+        if (accessToken == null || accessToken == undefined)
             return ;
 
         let request: Communication.unsubscribe_channel_request = {
@@ -352,7 +352,7 @@ export class ConnectionService {
     }
 
     editFeedInfo(serverName: string, nodeId: string, channelId: number, name: string , desc: string, avatarBin: any, accessToken: FeedsData.AccessToken){
-        if (accessToken == undefined)
+        if (accessToken == null || accessToken == undefined)
             return ;
 
         let request: Communication.update_feedinfo_request = {
@@ -371,7 +371,7 @@ export class ConnectionService {
     }
 
     enableNotification(serverName: string, nodeId: string, accessToken: FeedsData.AccessToken){
-        if (accessToken == undefined)
+        if (accessToken == null || accessToken == undefined)
             return ;
 
         let request: Communication.enable_notification_request = {
@@ -472,7 +472,7 @@ export class ConnectionService {
     }
 
     editPost(serverName: string, nodeId: string, channelId: number, postId: number, content: any, accessToken: FeedsData.AccessToken){
-        if (accessToken == undefined)
+        if (accessToken == null || accessToken == undefined)
             return ;
         let contentBin = this.serializeDataService.encodeData(content);
         let request: Communication.edit_post_request = {
@@ -490,7 +490,7 @@ export class ConnectionService {
     }
 
     deletePost(serverName: string, nodeId: string, channelId: number, postId: number, accessToken: FeedsData.AccessToken){
-        if (accessToken == undefined)
+        if (accessToken == null || accessToken == undefined)
             return ;
 
         let request: Communication.delete_post_request = {
@@ -509,7 +509,7 @@ export class ConnectionService {
 
     editComment(serverName: string, nodeId: string, channelId: number, postId: number, commentId: number,
                 commentById: number, content: any, accessToken: FeedsData.AccessToken){
-        if (accessToken == undefined)
+        if (accessToken == null || accessToken == undefined)
             return ;
 
         let contentBin = this.serializeDataService.encodeData(content);
@@ -533,7 +533,7 @@ export class ConnectionService {
 
     deleteComment(serverName: string, nodeId: string, channelId: number, postId: number,
                 commentId: number, accessToken: FeedsData.AccessToken){
-        if (accessToken == undefined)
+        if (accessToken == null || accessToken == undefined)
             return ;
 
         let request: Communication.delete_comment_request = {
@@ -565,7 +565,7 @@ export class ConnectionService {
     }
 
     updateCredential(serverName: string, nodeId: string, credential: string, accessToken: FeedsData.AccessToken){
-        if (accessToken == undefined)
+        if (accessToken == null || accessToken == undefined)
             return ;
 
         let request: Communication.update_credential_request = {
@@ -582,7 +582,7 @@ export class ConnectionService {
     }
 
     setBinary(serverName: string, nodeId: string, key: string,  content: any, accessToken: FeedsData.AccessToken){
-        if (accessToken == undefined)
+        if (accessToken == null || accessToken == undefined)
             return ;
 
         let contentBin = this.serializeDataService.encodeData(content);
@@ -603,7 +603,7 @@ export class ConnectionService {
     }
 
     getBinary(serverName: string, nodeId: string, key: string, accessToken: FeedsData.AccessToken){
-        if (accessToken == undefined)
+        if (accessToken == null || accessToken == undefined)
             return ;
 
         let request: Communication.get_binary_request = {
@@ -650,7 +650,7 @@ export class ConnectionService {
     getMultiComments(serverName: string, nodeId: string, channelId: number, postId: number,
                     by:Communication.field, upperBound: number, lowerBound: number,
                     maxCounts:number, accessToken: FeedsData.AccessToken){
-        if (accessToken == undefined)
+        if (accessToken == null || accessToken == undefined)
             return ;
 
         let request: Communication.get_multi_comments_request = {
@@ -671,7 +671,7 @@ export class ConnectionService {
     }
 
     getMultiSubscribers(serverName: string,nodeId: string, channelId: number, accessToken: FeedsData.AccessToken){
-        if (accessToken == undefined)
+        if (accessToken == null || accessToken == undefined)
             return ;
 
         let request: Communication.get_multi_subscribers_count_request = {
@@ -689,7 +689,7 @@ export class ConnectionService {
     getMultiLikesAndCommentsCount(serverName: string,nodeId: string, channelId: number,
                     postId: number, by: Communication.field, upperBound:number, lowerBound: number,
                     maxCount: number, accessToken: FeedsData.AccessToken){
-        if (accessToken == undefined)
+        if (accessToken == null || accessToken == undefined)
             return ;
 
         let request: Communication.get_multi_likes_and_comments_count_request = {

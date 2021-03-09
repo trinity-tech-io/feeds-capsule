@@ -33,7 +33,7 @@ let lastPostUpdateMap:{[nodeChannelId:string]: FeedsData.PostUpdateTime};
 
 let bindingServerCache: FeedsData.Server;
 
-let accessTokenMap:{[nodeId:string]:FeedsData.AccessToken};
+// let accessTokenMap:{[nodeId:string]:FeedsData.AccessToken};
 
 let notificationList: FeedsData.Notification[] = [];
 
@@ -259,20 +259,7 @@ export class FeedService {
   }
 
   loadAccessTokenMap(){
-    return new Promise((resolve, reject) =>{
-      let accessTokens = accessTokenMap || "";
-      if( accessTokens == ""){
-        this.storeService.get(FeedsData.PersistenceKey.accessTokenMap).then((mAccessTokenMap)=>{
-          accessTokenMap = mAccessTokenMap || {};
-          this.logUtils.logd("accessTokenMap = "+JSON.stringify(accessTokenMap),TAG);
-          resolve(mAccessTokenMap);
-        }).catch((error)=>{
-          reject(error);
-        });
-      }else{
-          resolve(accessTokens);
-      }
-    });
+    return this.dataHelper.loadAccessTokenMap();
   }
 
   loadBindingServer(){
@@ -398,10 +385,6 @@ export class FeedService {
       lastPostUpdateMap = mLastPostUpdateMap;
       if(lastPostUpdateMap == null || lastPostUpdateMap == undefined)
         lastPostUpdateMap = {}
-    });
-
-    this.storeService.get(FeedsData.PersistenceKey.accessTokenMap).then((mAccessTokenMap)=>{
-      accessTokenMap = mAccessTokenMap|| {};
     });
 
     this.storeService.get(FeedsData.PersistenceKey.notificationList).then((mNotificationList)=>{
@@ -573,7 +556,7 @@ export class FeedService {
 
   doFriendConnection(friendId: string){
     this.logUtils.logd("doFriendConnection");
-    let accessToken = accessTokenMap[friendId]||undefined;
+    let accessToken = this.dataHelper.getAccessToken(friendId) || null;
     if (this.checkExp(accessToken)){
       this.logUtils.logd("Prepare signinChallengeRequest");
       this.signinChallengeRequest(friendId,true);
@@ -1005,14 +988,12 @@ export class FeedService {
   }
 
   checkSignInServerStatus(nodeId: string): boolean{
-    let accessToken = accessTokenMap[nodeId] || undefined;
+    let accessToken = this.dataHelper.getAccessToken(nodeId);
     return this.checkExp(accessToken);
   }
 
   hasAccessToken(nodeId: string): boolean{
-    if (accessTokenMap == undefined)
-      accessTokenMap = {};
-    let accessToken = accessTokenMap[nodeId] || undefined
+    let accessToken = this.dataHelper.getAccessToken(nodeId)||null;
     if (this.checkExp(accessToken)){
       this.signinChallengeRequest(nodeId,true);
       return false;
@@ -1244,28 +1225,28 @@ export class FeedService {
   createChannel(nodeId: string, name: string, introduction: string, avatar: any){
     if(!this.hasAccessToken(nodeId))
       return;
-    let accessToken: FeedsData.AccessToken = accessTokenMap[nodeId]||undefined;
+    let accessToken: FeedsData.AccessToken = this.dataHelper.getAccessToken(nodeId) || null;
     this.connectionService.createChannel(this.getServerNameByNodeId(nodeId),nodeId,name,introduction,avatar,accessToken);
   }
 
   publishPost(nodeId: string, channelId: number, content: any){
     if(!this.hasAccessToken(nodeId))
       return;
-    let accessToken: FeedsData.AccessToken = accessTokenMap[nodeId]||undefined;
+    let accessToken: FeedsData.AccessToken = this.dataHelper.getAccessToken(nodeId) || null;
     this.connectionService.publishPost(this.getServerNameByNodeId(nodeId),nodeId, channelId,content,accessToken);
   }
 
   declarePost(nodeId: string, channelId: number, content: any, withNotify: boolean){
     if(!this.hasAccessToken(nodeId))
       return;
-    let accessToken: FeedsData.AccessToken = accessTokenMap[nodeId]||undefined;
+    let accessToken: FeedsData.AccessToken = this.dataHelper.getAccessToken(nodeId) || null;
     this.connectionService.declarePost(this.getServerNameByNodeId(nodeId),nodeId, channelId,content,withNotify,accessToken);
   }
 
   notifyPost(nodeId: string, channelId: number, postId: number){
     if(!this.hasAccessToken(nodeId))
       return;
-    let accessToken: FeedsData.AccessToken = accessTokenMap[nodeId]||undefined;
+    let accessToken: FeedsData.AccessToken = this.dataHelper.getAccessToken(nodeId) || null;
     this.connectionService.notifyPost(this.getServerNameByNodeId(nodeId),nodeId, channelId, postId,accessToken);
   }
 
@@ -1273,14 +1254,14 @@ export class FeedService {
               commentId: number, content: any){
     if(!this.hasAccessToken(nodeId))
       return;
-    let accessToken: FeedsData.AccessToken = accessTokenMap[nodeId]||undefined;
+    let accessToken: FeedsData.AccessToken = this.dataHelper.getAccessToken(nodeId) || null;
     this.connectionService.postComment(this.getServerNameByNodeId(nodeId),nodeId,channelId,postId,commentId,content,accessToken);
   }
 
   postLike(nodeId: string, channelId: number, postId: number, commentId: number){
     if(!this.hasAccessToken(nodeId))
       return;
-    let accessToken: FeedsData.AccessToken = accessTokenMap[nodeId]||undefined;
+    let accessToken: FeedsData.AccessToken = this.dataHelper.getAccessToken(nodeId) || null;
     this.connectionService.postLike(this.getServerNameByNodeId(nodeId),nodeId, channelId, postId, commentId, accessToken);
     if(!this.connectionService.checkServerConnection(nodeId)){
       return;
@@ -1291,7 +1272,7 @@ export class FeedService {
   postUnlike(nodeId:string, channelId: number, postId: number, commentId: number){
     if(!this.hasAccessToken(nodeId))
       return;
-    let accessToken: FeedsData.AccessToken = accessTokenMap[nodeId]||undefined;
+    let accessToken: FeedsData.AccessToken = this.dataHelper.getAccessToken(nodeId) || null;
     this.connectionService.postUnlike(this.getServerNameByNodeId(nodeId), nodeId, channelId, postId, commentId, accessToken);
     if(!this.connectionService.checkServerConnection(nodeId)){
       return;
@@ -1303,7 +1284,7 @@ export class FeedService {
                 lower_bound: number, max_counts: number){
     if(!this.hasAccessToken(nodeId))
       return;
-    let accessToken: FeedsData.AccessToken = accessTokenMap[nodeId]||undefined;
+    let accessToken: FeedsData.AccessToken = this.dataHelper.getAccessToken(nodeId) || null;
     this.connectionService.getMyChannels(this.getServerNameByNodeId(nodeId), nodeId, field, upper_bound, lower_bound, max_counts,accessToken);
   }
 
@@ -1312,14 +1293,14 @@ export class FeedService {
     if(!this.hasAccessToken(nodeId))
       return;
 
-    let accessToken: FeedsData.AccessToken = accessTokenMap[nodeId]||undefined;
+    let accessToken: FeedsData.AccessToken = this.dataHelper.getAccessToken(nodeId) || null;
     this.connectionService.getChannels(this.getServerNameByNodeId(nodeId), nodeId, field, upper_bound, lower_bound, max_counts, accessToken);
   }
 
   getChannelDetail(nodeId: string, id: number){
     if(!this.hasAccessToken(nodeId))
       return;
-    let accessToken: FeedsData.AccessToken = accessTokenMap[nodeId]||undefined;
+    let accessToken: FeedsData.AccessToken = this.dataHelper.getAccessToken(nodeId) || null;
     this.connectionService.getChannelDetail(this.getServerNameByNodeId(nodeId), nodeId, id, accessToken);
   }
 
@@ -1327,7 +1308,7 @@ export class FeedService {
                         lower_bound: number, max_counts: number){
     if(!this.hasAccessToken(nodeId))
       return;
-    let accessToken: FeedsData.AccessToken = accessTokenMap[nodeId]||undefined;
+    let accessToken: FeedsData.AccessToken = this.dataHelper.getAccessToken(nodeId) || null;
     this.connectionService.getSubscribedChannels(this.getServerNameByNodeId(nodeId), nodeId, field, upper_bound, lower_bound, max_counts, accessToken);
   }
 
@@ -1335,7 +1316,7 @@ export class FeedService {
           upper_bound: number, lower_bound: number , max_counts: number, memo: any){
     if(!this.hasAccessToken(nodeId))
       return;
-    let accessToken: FeedsData.AccessToken = accessTokenMap[nodeId]||undefined;
+    let accessToken: FeedsData.AccessToken = this.dataHelper.getAccessToken(nodeId) || null;
     this.connectionService.getPost(this.getServerNameByNodeId(nodeId), nodeId, channel_id, by, upper_bound, lower_bound, max_counts, memo, accessToken);
   }
 
@@ -1343,21 +1324,21 @@ export class FeedService {
               by:Communication.field, upper_bound: number, lower_bound: number, max_counts:number, isShowOfflineToast: boolean){
     if(!this.hasAccessToken(nodeId))
       return;
-    let accessToken: FeedsData.AccessToken = accessTokenMap[nodeId]||undefined;
+    let accessToken: FeedsData.AccessToken = this.dataHelper.getAccessToken(nodeId) || null;
     this.connectionService.getComments(this.getServerNameByNodeId(nodeId), nodeId, channel_id, post_id, by, upper_bound, lower_bound,max_counts, isShowOfflineToast, accessToken);
   }
 
   getStatistics(nodeId: string){
     if(!this.hasAccessToken(nodeId))
       return;
-    let accessToken: FeedsData.AccessToken = accessTokenMap[nodeId]||undefined;
+    let accessToken: FeedsData.AccessToken = this.dataHelper.getAccessToken(nodeId) || null;
     this.connectionService.getStatistics(this.getServerNameByNodeId(nodeId), nodeId, accessToken);
   }
 
   subscribeChannel(nodeId: string, id: number){
     if(!this.hasAccessToken(nodeId))
       return;
-    let accessToken: FeedsData.AccessToken = accessTokenMap[nodeId]||undefined;
+    let accessToken: FeedsData.AccessToken = this.dataHelper.getAccessToken(nodeId) || null;
     this.connectionService.subscribeChannel(this.getServerNameByNodeId(nodeId),nodeId, id, accessToken);
 
     if(!this.connectionService.checkServerConnection(nodeId)){
@@ -1371,7 +1352,7 @@ export class FeedService {
     if(!this.hasAccessToken(nodeId))
       return;
 
-    let accessToken: FeedsData.AccessToken = accessTokenMap[nodeId]||undefined;
+    let accessToken: FeedsData.AccessToken = this.dataHelper.getAccessToken(nodeId) || null;
     this.connectionService.unsubscribeChannel(this.getServerNameByNodeId(nodeId),nodeId, id, accessToken);
 
     if(!this.connectionService.checkServerConnection(nodeId)){
@@ -1386,7 +1367,7 @@ export class FeedService {
       return;
 
     let avatarBin = this.serializeDataService.encodeData(avatar);
-    let accessToken: FeedsData.AccessToken = accessTokenMap[nodeId]||undefined;
+    let accessToken: FeedsData.AccessToken = this.dataHelper.getAccessToken(nodeId) || null;
     this.connectionService.editFeedInfo(this.getServerNameByNodeId(nodeId),nodeId, channelId, name, desc, avatarBin, accessToken);
   }
 
@@ -1394,7 +1375,7 @@ export class FeedService {
     if(!this.hasAccessToken(nodeId))
       return;
 
-    let accessToken: FeedsData.AccessToken = accessTokenMap[nodeId]||undefined;
+    let accessToken: FeedsData.AccessToken = this.dataHelper.getAccessToken(nodeId) || null;
     this.connectionService.editPost(this.getServerNameByNodeId(nodeId),nodeId, channelId, postId, content, accessToken);
   }
 
@@ -1402,7 +1383,7 @@ export class FeedService {
     if(!this.hasAccessToken(nodeId))
       return;
 
-    let accessToken: FeedsData.AccessToken = accessTokenMap[nodeId]||undefined;
+    let accessToken: FeedsData.AccessToken = this.dataHelper.getAccessToken(nodeId) || null;
     this.connectionService.deletePost(this.getServerNameByNodeId(nodeId),nodeId, channelId, postId, accessToken);
   }
 
@@ -1411,7 +1392,7 @@ export class FeedService {
     if(!this.hasAccessToken(nodeId))
       return;
 
-    let accessToken: FeedsData.AccessToken = accessTokenMap[nodeId]||undefined;
+    let accessToken: FeedsData.AccessToken = this.dataHelper.getAccessToken(nodeId) || null;
     this.connectionService.editComment(this.getServerNameByNodeId(nodeId),nodeId, channelId, postId, commentId, commentById, content, accessToken);
   }
 
@@ -1419,7 +1400,7 @@ export class FeedService {
     if(!this.hasAccessToken(nodeId))
       return;
 
-    let accessToken: FeedsData.AccessToken = accessTokenMap[nodeId]||undefined;
+    let accessToken: FeedsData.AccessToken = this.dataHelper.getAccessToken(nodeId) || null;
     this.connectionService.deleteComment(this.getServerNameByNodeId(nodeId),nodeId, channelId, postId, commentId, accessToken);
   }
 
@@ -1431,7 +1412,7 @@ export class FeedService {
     if(!this.hasAccessToken(nodeId))
       return;
 
-    let accessToken: FeedsData.AccessToken = accessTokenMap[nodeId]||undefined;
+    let accessToken: FeedsData.AccessToken = this.dataHelper.getAccessToken(nodeId) || null;
     this.connectionService.updateCredential(this.getServerNameByNodeId(nodeId), nodeId, credential, accessToken);
   }
 
@@ -1513,7 +1494,7 @@ export class FeedService {
     if(!this.hasAccessToken(nodeId))
       return;
 
-    let accessToken: FeedsData.AccessToken = accessTokenMap[nodeId]||undefined;
+    let accessToken: FeedsData.AccessToken = this.dataHelper.getAccessToken(nodeId) || null;
     this.connectionService.enableNotification(this.getServerNameByNodeId(nodeId),nodeId, accessToken);
   }
 
@@ -2929,21 +2910,13 @@ export class FeedService {
       return;
     }
 
-    if (accessTokenMap == null || accessTokenMap == undefined)
-      accessTokenMap = {};
-
-    accessTokenMap[nodeId] = {
-      token: result.access_token ,
-      isExpire: false
-    };
-
-    this.storeService.set(FeedsData.PersistenceKey.accessTokenMap, accessTokenMap);
+    let accessToken = this.dataHelper.generateAccessToken(result.access_token, false);
+    this.dataHelper.updateAccessToken(nodeId, accessToken);
 
     this.prepare(nodeId);
     this.restoreData(nodeId);
 
     eventBus.publish(FeedsEvent.PublishType.login_finish, nodeId);
-    // this.native.toast(this.formatInfoService.formatSigninSuccessMsg(this.getServerNameByNodeId(nodeId)));
     this.clearSigninTimeout(nodeId);
   }
 
@@ -3407,8 +3380,8 @@ export class FeedService {
 
   checkExp(mAccessToken: FeedsData.AccessToken): boolean{
     this.logUtils.logd("checkExp");
-    let accessToken = mAccessToken || undefined;
-    if(accessToken == undefined){
+    let accessToken = mAccessToken || null;
+    if(accessToken == null || accessToken == undefined){
       return true;
     }
 
@@ -3676,20 +3649,17 @@ export class FeedService {
     }
 
     // await this.removeLastFeedUpdate(nodeId);
-    await this.removeServerStatisticById(nodeId);
-    await this.removeServerStatusById(nodeId);
-    await this.removeServerById(nodeId);
-    await this.removeAccessTokenById(nodeId).then(
-      ()=>{
-        this.removeServerFriendsById(nodeId, ()=>{
-          eventBus.publish(FeedsEvent.PublishType.removeFeedSourceFinish);
-          eventBus.publish(FeedsEvent.PublishType.refreshPage);
-        },(error)=>{
-          eventBus.publish(FeedsEvent.PublishType.removeFeedSourceFinish);
-          eventBus.publish(FeedsEvent.PublishType.refreshPage);
-        });
-      }
-    );
+    this.removeServerStatisticById(nodeId);
+    this.removeServerStatusById(nodeId);
+    this.removeServerById(nodeId);
+    this.removeAccessTokenById(nodeId);
+    this.removeServerFriendsById(nodeId, ()=>{
+      eventBus.publish(FeedsEvent.PublishType.removeFeedSourceFinish);
+      eventBus.publish(FeedsEvent.PublishType.refreshPage);
+    },(error)=>{
+      eventBus.publish(FeedsEvent.PublishType.removeFeedSourceFinish);
+      eventBus.publish(FeedsEvent.PublishType.refreshPage);
+    });
 
     return new Promise((resolve, reject) =>{
       resolve(null);
@@ -3775,9 +3745,8 @@ export class FeedService {
 
   }
 
-  removeAccessTokenById(nodeId: string):Promise<any>{
-    accessTokenMap[nodeId] = undefined;
-    return this.storeService.set(FeedsData.PersistenceKey.accessTokenMap, accessTokenMap);
+  removeAccessTokenById(nodeId: string){
+    this.dataHelper.deleteAccessToken(nodeId);
   }
 
   removeAllAccessToken(): Promise<any>{
@@ -3933,9 +3902,9 @@ export class FeedService {
         errorMessage = this.translate.instant("ErrorInfo.wrongState");
         break;
       case -5:
-        // errorMessage = this.translate.instant("ErrorInfo.tokenExpired");
-        accessTokenMap[nodeId].isExpire = true;
-        this.storeService.set(FeedsData.PersistenceKey.accessTokenMap,accessTokenMap);
+        let originAccessToken = this.dataHelper.getAccessToken(nodeId);
+        originAccessToken.isExpire = true;
+        this.dataHelper.updateAccessToken(nodeId, originAccessToken);
         this.signinChallengeRequest(nodeId,true);
         return ;
       case -6:
@@ -4074,14 +4043,14 @@ export class FeedService {
   }
 
   setBinary(nodeId: string, key: string, value: any, mediaType: string){
-    let accessToken: FeedsData.AccessToken = accessTokenMap[nodeId]||undefined;
+    let accessToken: FeedsData.AccessToken = this.dataHelper.getAccessToken(nodeId) || null;
     let requestData = this.sessionService.buildSetBinaryRequest(accessToken, key);
     this.storeService.set(key, value);
     this.transportData(nodeId, key, requestData, mediaType, value);
   }
 
   getBinary(nodeId: string, key: string, mediaType: string){
-    let accessToken: FeedsData.AccessToken = accessTokenMap[nodeId]||undefined;
+    let accessToken: FeedsData.AccessToken = this.dataHelper.getAccessToken(nodeId) || null;
     let requestData = this.sessionService.buildGetBinaryRequest(accessToken, key);
     this.transportData(nodeId, key, requestData, mediaType);
   }
@@ -4230,17 +4199,16 @@ export class FeedService {
       return;
 
     this.storeService.set(key, content);
-    let accessToken: FeedsData.AccessToken = accessTokenMap[nodeId]||undefined;
+    let accessToken: FeedsData.AccessToken = this.dataHelper.getAccessToken(nodeId) || null;
     this.connectionService.setBinary(this.getServerNameByNodeId(nodeId),nodeId,key,content,accessToken);
   }
 
   getBinaryFromMsg(nodeId: string, key: string){
     if(!this.hasAccessToken(nodeId))
       return;
-    let accessToken: FeedsData.AccessToken = accessTokenMap[nodeId]||undefined;
+    let accessToken: FeedsData.AccessToken = this.dataHelper.getAccessToken(nodeId) || null;
     this.connectionService.getBinary(this.getServerNameByNodeId(nodeId),nodeId,key,accessToken);
   }
-
 
   compress(imgData: string): Promise<any>{
     return new Promise((resolve, reject) =>{
@@ -5048,7 +5016,7 @@ export class FeedService {
                   upperBound: number, lowerBound: number,maxCounts:number){
     if(!this.hasAccessToken(nodeId))
       return;
-    let accessToken: FeedsData.AccessToken = accessTokenMap[nodeId]||undefined;
+    let accessToken: FeedsData.AccessToken = this.dataHelper.getAccessToken(nodeId) || null;
     this.connectionService.getMultiComments(this.getServerNameByNodeId(nodeId), nodeId, channelId, postId, by, upperBound, lowerBound, maxCounts, accessToken);
   }
 
@@ -5062,7 +5030,7 @@ export class FeedService {
   getMultiSubscribersCount(nodeId: string, channelId: number){
     if(!this.hasAccessToken(nodeId))
       return;
-    let accessToken: FeedsData.AccessToken = accessTokenMap[nodeId]||undefined;
+    let accessToken: FeedsData.AccessToken = this.dataHelper.getAccessToken(nodeId) || null;
     this.connectionService.getMultiSubscribers(this.getServerNameByNodeId(nodeId), nodeId, channelId, accessToken);
   }
 
@@ -5071,7 +5039,7 @@ export class FeedService {
                               maxCount: number){
     if(!this.hasAccessToken(nodeId))
       return;
-    let accessToken: FeedsData.AccessToken = accessTokenMap[nodeId]||undefined;
+    let accessToken: FeedsData.AccessToken = this.dataHelper.getAccessToken(nodeId) || null;
     this.connectionService.getMultiLikesAndCommentsCount(this.getServerNameByNodeId(nodeId), nodeId, channelId, postId, by, upperBound, lowerBound, maxCount, accessToken);
   }
 
@@ -5311,8 +5279,7 @@ export class FeedService {
     this.dataHelper.initBindingServer();
     bindingServerCache = null;
     this.dataHelper.initServerMap();
-
-    accessTokenMap = {};
+    this.dataHelper.initAccessTokenMap();
 
     notificationList = [];
     cacheBindingAddress = "";

@@ -300,7 +300,7 @@ export class SessionService {
 
     buildSetBinaryRequest(accessToken: FeedsData.AccessToken, key: string){
         let id = autoIncreaseId++;
-        if (accessToken == undefined)
+        if (accessToken == null || accessToken == undefined)
             return ;
 
         let request = {
@@ -319,7 +319,7 @@ export class SessionService {
 
     buildGetBinaryRequest(accessToken: FeedsData.AccessToken, key: string){
         let id = autoIncreaseId++;
-        if (accessToken == undefined)
+        if (accessToken == null || accessToken == undefined)
             return ;
 
         let request = {

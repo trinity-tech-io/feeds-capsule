@@ -467,10 +467,10 @@ export class DataHelper {
         this.saveData(FeedsData.PersistenceKey.accessTokenMap, this.accessTokenMap);
     }
 
-    getAccessTokenMap(): Promise<{[nodeId:string]:FeedsData.AccessToken}>{
+    loadAccessTokenMap(): Promise<{[nodeId:string]:FeedsData.AccessToken}>{
         return new Promise(async (resolve, reject) =>{
             try {
-                if (this.accessTokenMap == {}){
+                if (JSON.stringify(this.accessTokenMap) == "{}"){
                     this.accessTokenMap = await this.loadData(FeedsData.PersistenceKey.accessTokenMap) || {};
                     resolve(this.accessTokenMap);
                     return ;
@@ -480,6 +480,38 @@ export class DataHelper {
                 reject(error);
             }
         });
+    }
+
+    getAccessToken(nodeId: string): FeedsData.AccessToken{
+        if (this.accessTokenMap == null || this.accessTokenMap == undefined)
+            this.accessTokenMap = {}
+        return this.accessTokenMap[nodeId];
+    }
+
+    generateAccessToken(token: string, isExpire: boolean): FeedsData.AccessToken{
+        return {
+            token: token,
+            isExpire: isExpire
+        }
+    }
+
+    updateAccessToken(nodeId: string, accessToken: FeedsData.AccessToken){
+        if (this.accessTokenMap == null || this.accessTokenMap == undefined)
+            this.accessTokenMap = {}
+        this.accessTokenMap[nodeId] = accessToken;
+        this.saveData(FeedsData.PersistenceKey.accessTokenMap, this.accessTokenMap);
+    }
+
+    deleteAccessToken(nodeId){
+        if (this.accessTokenMap == null || this.accessTokenMap == undefined)
+            this.accessTokenMap = {}
+        this.accessTokenMap[nodeId] = null;
+        delete this.accessTokenMap[nodeId];
+        this.saveData(FeedsData.PersistenceKey.accessTokenMap, this.accessTokenMap);
+    }
+
+    initAccessTokenMap(){
+        this.accessTokenMap = {};
     }
 
     ////likeMap
