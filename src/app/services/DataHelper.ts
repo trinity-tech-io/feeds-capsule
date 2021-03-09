@@ -373,10 +373,10 @@ export class DataHelper {
         this.saveData(FeedsData.PersistenceKey.serverMap, this.serverMap);
     }
 
-    getServerMap(): Promise<{[nodeId: string]: FeedsData.Server}>{
+    loadServerMap(): Promise<{[nodeId: string]: FeedsData.Server}>{
         return new Promise(async (resolve, reject) =>{
             try {
-                if (this.serverMap == {}){
+                if (JSON.stringify(this.serverMap) == "{}"){
                     this.serverMap = await this.loadData(FeedsData.PersistenceKey.serverMap) || {};
                     resolve(this.serverMap);
                     return ;
@@ -388,6 +388,79 @@ export class DataHelper {
         });
     }
 
+    getServerList(): FeedsData.Server[]{
+        if (this.serverMap == null || this.serverMap == undefined)
+            this.serverMap = {};
+        let list: FeedsData.Server[] = [];
+        let nodeIdArray: string[] = Object.keys(this.serverMap)||[];
+        for (const index in nodeIdArray) {
+            let server = this.serverMap[nodeIdArray[index]];
+            if (server == null || server == undefined)
+                continue;
+    
+            list.push(this.serverMap[nodeIdArray[index]]);
+        }
+        return list;
+    }
+
+    isContainsServer(nodeId: string): boolean{
+        let server = this.getServer(nodeId);
+        if (server == null || server == undefined)
+            return false;
+        return true;
+    }
+
+    getOtherServerList(): FeedsData.Server[]{
+        if (this.serverMap == null || this.serverMap == undefined)
+            this.serverMap = {};
+        let list: FeedsData.Server[] = [];
+        let nodeIdArray: string[] = Object.keys(this.serverMap);
+        for (const index in nodeIdArray) {
+            if (this.serverMap[nodeIdArray[index]] == undefined)
+                continue;
+            if (this.isBindingServer(this.serverMap[nodeIdArray[index]].nodeId))
+            continue;
+            list.push(this.serverMap[nodeIdArray[index]]);
+        }
+        return list;
+    }
+
+    updateServer(nodeId: string, server: FeedsData.Server){
+        if (this.serverMap == null || this.serverMap == undefined)
+            this.serverMap = {};
+        this.serverMap[nodeId] = server;
+        this.saveData(nodeId, server);
+    }
+
+    getServer(nodeId: string): FeedsData.Server{
+        if (this.serverMap == null || this.serverMap == undefined)
+            this.serverMap = {};
+        return this.serverMap[nodeId];
+    }
+
+    generateServer(name: string, owner: string, introduction: string, did: string, carrierAddress: string,
+                nodeId: string, feedsUrl: string, elaAddress: string): FeedsData.Server{
+        return {
+            name              : name,
+            owner             : owner, 
+            introduction      : introduction,
+            did               : did,
+            carrierAddress    : carrierAddress,
+            nodeId            : nodeId,
+            feedsUrl          : feedsUrl,
+            elaAddress        : elaAddress
+        }
+    }
+
+    deleteServer(nodeId: string){
+        this.serverMap[nodeId] = null;
+        delete this.serverMap[nodeId];
+        this.saveData(FeedsData.PersistenceKey.serverMap, this.serverMap);
+    }
+
+    initServerMap(){
+        this.serverMap = {};
+    }
     ////accessTokenMap
     setAccessTokenMap(accessTokenMap: {[nodeId:string]:FeedsData.AccessToken}){
         this.accessTokenMap = accessTokenMap;

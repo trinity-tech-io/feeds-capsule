@@ -27,14 +27,11 @@ const TAG: string = "Feeds-service";
 let versionCode: number = 10500;
 let newAuthVersion: number = 10400;
 let newCommentVersion: number = 10400;
-let newMultiPropCountVersion: number = 10500;
+let newMultiPropCountVersion: number = 10500
 
-// let serversStatus:{[nodeId: string]: FeedsData.ServerStatus};
 let lastPostUpdateMap:{[nodeChannelId:string]: FeedsData.PostUpdateTime};
 
 let bindingServerCache: FeedsData.Server;
-
-let serverMap: {[nodeId: string]: FeedsData.Server};
 
 let accessTokenMap:{[nodeId:string]:FeedsData.AccessToken};
 
@@ -242,19 +239,7 @@ export class FeedService {
   }
 
   loadServers(){
-    return new Promise((resolve, reject) =>{
-      let servers = serverMap || "";
-      if( servers == ""){
-        this.storeService.get(FeedsData.PersistenceKey.serverMap).then((mServerMap)=>{
-          serverMap = mServerMap || {};
-          resolve(mServerMap);
-        }).catch((error)=>{
-          reject(error);
-        });
-      }else{
-          resolve(servers);
-      }
-    });
+    return this.dataHelper.loadServerMap();
   }
 
   // loadSubscribedChannels(){
@@ -404,24 +389,15 @@ export class FeedService {
 
   initData(){
     if(localCredential == null || localCredential == undefined){
-
       this.storeService.get(FeedsData.PersistenceKey.credential).then((credential)=>{
         localCredential = credential;
       });
     }
 
-    // this.loadPostData();
-
     this.storeService.get(FeedsData.PersistenceKey.lastPostUpdateMap).then((mLastPostUpdateMap)=>{
       lastPostUpdateMap = mLastPostUpdateMap;
       if(lastPostUpdateMap == null || lastPostUpdateMap == undefined)
         lastPostUpdateMap = {}
-    });
-
-    this.storeService.get(FeedsData.PersistenceKey.serverMap).then((mServerMap)=>{
-      serverMap = mServerMap;
-      if(serverMap == null || serverMap == undefined)
-        serverMap = {};
     });
 
     this.storeService.get(FeedsData.PersistenceKey.accessTokenMap).then((mAccessTokenMap)=>{
@@ -469,30 +445,11 @@ export class FeedService {
   }
 
   getServerList(): FeedsData.Server[]{
-    if (serverMap == null || serverMap == undefined)
-      serverMap = {};
-    let list: FeedsData.Server[] = [];
-    let nodeIdArray: string[] = Object.keys(serverMap)||[];
-    for (const index in nodeIdArray) {
-      if (serverMap[nodeIdArray[index]] == undefined)
-        continue;
-
-      list.push(serverMap[nodeIdArray[index]]);
-    }
-    return list;
+    return this.dataHelper.getServerList();
   }
 
   getOtherServerList(): FeedsData.Server[]{
-    let list: FeedsData.Server[] = [];
-    let nodeIdArray: string[] = Object.keys(serverMap);
-    for (const index in nodeIdArray) {
-      if (serverMap[nodeIdArray[index]] == undefined)
-        continue;
-      if (this.dataHelper.isBindingServer(serverMap[nodeIdArray[index]].nodeId))
-        continue;
-      list.push(serverMap[nodeIdArray[index]]);
-    }
-    return list;
+    return this.dataHelper.getOtherServerList();
   }
 
   getCreationServerList(): FeedsData.Server[]{
@@ -506,31 +463,6 @@ export class FeedService {
   getServerStatusFromId(nodeId: string): number{
     return this.dataHelper.getServerStatusStatus(nodeId);
   }
-
-  // getServerStatisticsMap():{[nodeId: string]: FeedsData.ServerStatistics}{
-  //   let bindingServer = this.dataHelper.getBindingServer();
-  //   if (bindingServer != null &&
-  //     bindingServer!= undefined &&
-  //     serverStatisticsMap[bindingServer.nodeId] == undefined)
-  //     serverStatisticsMap[bindingServer.nodeId] = {
-  //       did               : "string",
-  //       connecting_clients: 0,
-  //       total_clients     : 0
-  //     }
-
-  //   let list = this.getServerList();
-  //   for (let index = 0; index < list.length; index++) {
-  //     if (serverStatisticsMap[list[index].nodeId] == null ||
-  //       serverStatisticsMap[list[index].nodeId] == undefined)
-  //       serverStatisticsMap[list[index].nodeId] ={
-  //         did               : "string",
-  //         connecting_clients: 0,
-  //         total_clients     : 0
-  //       }
-  //   }
-
-  //   return serverStatisticsMap;
-  // }
 
   getServerStatisticsNumber(nodeId: string): number{
     return this.dataHelper.getServerStatisticsNumber(nodeId);
@@ -674,14 +606,9 @@ export class FeedService {
     originServerStatus.status = status;
     this.dataHelper.updateServerStatus(server.nodeId, originServerStatus);    
 
-    this.dataHelper.generateEmptyStatistics(server.nodeId);
+    this.dataHelper.generateEmptyStatistics(server.nodeId)
 
-    if (serverMap == null || serverMap == undefined)
-      serverMap = {}
-
-    serverMap[server.nodeId] = server ;
-
-    this.storeService.set(FeedsData.PersistenceKey.serverMap, serverMap);
+    this.dataHelper.updateServer(server.nodeId, server)
     eventBus.publish(FeedsEvent.PublishType.updateServerList, this.getServerList(), Date.now());
   }
 
@@ -1123,10 +1050,7 @@ export class FeedService {
 
 
   getServerbyNodeId(nodeId: string): FeedsData.Server{
-    if (serverMap == undefined) {
-      return undefined;
-    }
-    return serverMap[nodeId];
+    return this.dataHelper.getServer(nodeId);
   }
 
   getServerNameByNodeId(nodeId: string): string{
@@ -2730,15 +2654,6 @@ export class FeedService {
     return this.dataHelper.getComment(nodeId, channelId, postId, commentId);
   }
 
-  queryServerDID(nodeId:string): string{
-    if (serverMap == null ||
-      serverMap == undefined ||
-      serverMap[nodeId] == undefined)
-      return "";
-
-    return serverMap[nodeId].did;
-  }
-
   getCommentList(nodeId: string, channelId: number, postId: number): FeedsData.Comment[]{
     return this.dataHelper.getCommentList(nodeId, channelId, postId);
   }
@@ -3076,10 +2991,11 @@ export class FeedService {
   doParseJWS(nodeId: string, jws: string, credential: any, requiredCredential: boolean, onSuccess:()=>void, onError: () => void){
     this.parseJWS(false,jws,
       (res)=>{
-        serverMap[nodeId].name = credential.credentialSubject.name;
-        serverMap[nodeId].introduction = credential.credentialSubject.description;
-        serverMap[nodeId].elaAddress = credential.credentialSubject.elaAddress;
-        this.storeService.set(FeedsData.PersistenceKey.serverMap, serverMap);
+        let server = this.dataHelper.getServer(nodeId);
+        server.name = credential.credentialSubject.name;
+        server.introduction = credential.credentialSubject.description;
+        server.elaAddress = credential.credentialSubject.elaAddress;
+        this.dataHelper.updateServer(nodeId, server);
 
         let payloadStr = JSON.stringify(res.payload);
         let payload = JSON.parse(payloadStr);
@@ -3213,12 +3129,16 @@ export class FeedService {
     let challenge = result.jwt_challenge;
     this.standardAuth.generateAuthPresentationJWT(challenge).then((standAuthResult)=>{
       this.logUtils.logd("generateAuthPresentationJWT presentation is "+standAuthResult.jwtToken,TAG);
-      if (serverMap != null && serverMap != undefined){
-        serverMap[nodeId].name = standAuthResult.serverName;
-        serverMap[nodeId].introduction = standAuthResult.serverDescription;
-        serverMap[nodeId].elaAddress = standAuthResult.elaAddress;
-        this.storeService.set(FeedsData.PersistenceKey.serverMap, serverMap);
+      let server = this.dataHelper.getServer(nodeId);
+      if (server != null && server != undefined){
+        server.name = standAuthResult.serverName;
+        server.introduction = standAuthResult.serverDescription;
+        server.elaAddress = standAuthResult.elaAddress;
+      }else{
+        //TODO
+        // server = this.dataHelper.generateServer();
       }
+      this.dataHelper.updateServer(nodeId, server);
       this.standardDidAuth(nodeId, standAuthResult.jwtToken);
     });
   }
@@ -3822,10 +3742,8 @@ export class FeedService {
     this.dataHelper.deleteServerStatus(nodeId);
   }
 
-  removeServerById(nodeId: string):Promise<any>{
-    serverMap[nodeId] = undefined;
-    delete serverMap[nodeId];
-    return this.storeService.set(FeedsData.PersistenceKey.serverMap, serverMap);
+  removeServerById(nodeId: string){
+    this.dataHelper.deleteServer(nodeId);
   }
 
   removeServerFriendsById(nodeId: string, onSuccess: ()=>void, onError:(error)=>void){
@@ -3843,18 +3761,9 @@ export class FeedService {
   }
 
   removeAllServerFriends(){
-    let servers = serverMap || "";
-    if (servers == "")
-      return;
-
-    let keys: string[] = Object.keys(serverMap) || [];
-    for (let index = 0; index < keys.length; index++) {
-      let key = keys[index];
-      let server = serverMap[key];
-
-      if (server == undefined)
-        continue;
-
+    let list = this.dataHelper.getServerList();
+    for (let index = 0; index < list.length; index++) {
+      const server = list[index];
       this.carrierService.removeFriend(server.nodeId,()=>{
       },(err)=>{
         this.logUtils.loge("Remove Friend error: "+JSON.stringify(err), TAG);
@@ -3970,14 +3879,10 @@ export class FeedService {
   checkIsAlreadyFriends(carrierAddress: string, onSuccess: (isFriends: boolean) =>void){
     this.carrierService.getIdFromAddress(carrierAddress,
       (userId)=>{
-        if (serverMap == null || serverMap == undefined)
-          serverMap = {};
-
-        if(serverMap[userId] != undefined){
+        if (this.dataHelper.isContainsServer(userId)){
           onSuccess(true);
           return ;
         }
-
         onSuccess(false);
         return ;
       });
@@ -5149,9 +5054,8 @@ export class FeedService {
 
   afterFriendConnection(friendId: string){
     this.logUtils.logd("afterFriendConnection");
-    let mServerMap = serverMap || {};
-    let server = mServerMap[friendId]||"";
-    if (server != "")
+    let server = this.dataHelper.getServer(friendId)||null
+    if (server != null)
       this.doFriendConnection(friendId);
   }
 
@@ -5399,7 +5303,6 @@ export class FeedService {
     this.dataHelper.initUnreadMap();
     this.dataHelper.initServerStatisticMap();
     this.dataHelper.initCommentsMap();
-    // serversStatus = {};
     this.dataHelper.initServersConnectionStatus()
     this.dataHelper.initLikeMap();
     this.dataHelper.initLikedCommentMap();
@@ -5407,7 +5310,7 @@ export class FeedService {
 
     this.dataHelper.initBindingServer();
     bindingServerCache = null;
-    serverMap = {};
+    this.dataHelper.initServerMap();
 
     accessTokenMap = {};
 
