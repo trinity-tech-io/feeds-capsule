@@ -471,7 +471,6 @@ export class ServerInfoPage implements OnInit {
           this.feedPublicStatus[feedsUrlHash] = "1";
           this.feedService.setFeedPublicStatus(this.feedPublicStatus);
           this.storageService.set("feeds.feedPublicStatus",JSON.stringify(this.feedPublicStatus));
-          this.native.toast_trans("ServerInfoPage.publicTip");
       }
     });
   }
@@ -500,7 +499,6 @@ export class ServerInfoPage implements OnInit {
           this.feedPublicStatus =_.omit(this.feedPublicStatus,[feedsUrlHash]);
           this.feedService.setFeedPublicStatus(this.feedPublicStatus);
           this.storageService.set("feeds.feedPublicStatus",JSON.stringify(this.feedPublicStatus));
-          this.native.toast_trans("ServerInfoPage.unpublicTip");
       }
     });
   }
