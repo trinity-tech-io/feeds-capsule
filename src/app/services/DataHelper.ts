@@ -749,18 +749,25 @@ export class DataHelper {
     initServerStatisticMap(){
         this.serverStatisticsMap = {};
     }
-    
+
     ////serversStatus
     setServersStatus(serversStatus: {[nodeId: string]: FeedsData.ServerStatus}){
         this.serversStatus = serversStatus;
         this.saveData(FeedsData.PersistenceKey.serversStatus, this.serversStatus);
     }
 
-    getServersStatus(): Promise<{[nodeId: string]: FeedsData.ServerStatus}>{
+    loadServersStatus(): Promise<{[nodeId: string]: FeedsData.ServerStatus}>{
         return new Promise(async (resolve, reject) =>{
             try {
-                if (this.serversStatus == {}){
+                if (JSON.stringify(this.serversStatus) == "{}"){
                     this.serversStatus = await this.loadData(FeedsData.PersistenceKey.serversStatus) || {};
+                    let keys: string[] = Object.keys(this.serversStatus);
+                    for (const index in keys) {
+                        if (this.serversStatus[keys[index]] == undefined)
+                        continue;
+                        this.serversStatus[keys[index]].status = FeedsData.ConnState.disconnected;
+                    }
+          
                     resolve(this.serversStatus);
                     return ;
                 }
@@ -769,6 +776,65 @@ export class DataHelper {
                 reject(error);
             }
         });
+    }
+
+    generateServerStatus(nodeId: string, did: string, status: FeedsData.ConnState){
+        return {
+            nodeId  : nodeId,
+            did     : did,
+            status  : status
+        }
+    }
+
+    getServerStatusStatus(nodeId: string): FeedsData.ConnState{
+        if (this.getConnectionStatus() == FeedsData.ConnState.disconnected ||
+            this.serversStatus[nodeId] == null || this.serversStatus[nodeId] == undefined)
+            return 1;
+
+        return this.serversStatus[nodeId].status;
+    }
+
+    getServerStatus(nodeId: string){
+        if (this.serversStatus == null || this.serversStatus == undefined)
+            this.serversStatus = {};
+        if (this.serversStatus[nodeId] == null || this.serversStatus[nodeId] == undefined){
+            let serverStatus = this.generateServerStatus(nodeId, "", FeedsData.ConnState.disconnected);
+            this.serversStatus[nodeId] = serverStatus;
+        }
+        return this.serversStatus[nodeId];
+    }
+
+    updateServerStatus(nodeId: string, serverStatus: FeedsData.ServerStatus){
+        if (this.serversStatus == null || this.serversStatus == undefined)
+            this.serversStatus = {};
+        if (this.serversStatus[nodeId] == null || this.serversStatus[nodeId] == undefined){
+            let serverStatus = this.generateServerStatus(nodeId, "", FeedsData.ConnState.disconnected);
+            this.serversStatus[nodeId] = serverStatus;
+        }
+        this.serversStatus[nodeId] = serverStatus;
+        this.saveData(FeedsData.PersistenceKey.serversStatus, this.serversStatus);
+    }
+
+    deleteServerStatus(nodeId: string){
+        this.serversStatus[nodeId] = null;
+        delete this.serversStatus[nodeId];
+        this.saveData(FeedsData.PersistenceKey.serversStatus, this.serversStatus);
+    }
+
+    resetServerConnectionStatus(){
+        let serverConnectionMap = this.serversStatus||{};
+        let keys: string[] = Object.keys(serverConnectionMap) || [];
+        for (let index = 0; index < keys.length; index++) {
+            let serverStatus = this.serversStatus[keys[index]];
+            if (serverStatus == null || serverStatus == undefined)
+                continue;
+            serverStatus.status = FeedsData.ConnState.disconnected;
+            this.updateServerStatus(serverStatus.nodeId, serverStatus);
+        }
+    }
+
+    initServersConnectionStatus(){
+        this.serversStatus = {};
     }
 
     ////bindingServer
