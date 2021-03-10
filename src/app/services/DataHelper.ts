@@ -686,9 +686,10 @@ export class DataHelper {
     }
 
     getLastSubscribedFeedsUpdateTime(nodeId: string): number{
-        let lastSubscribedFeedUpdate = this.getLastSubscribedFeedsUpdate(nodeId) || null;
-        let lastSubscribedFeedUpdateTime = lastSubscribedFeedUpdate.time || 0;
-        return lastSubscribedFeedUpdateTime;
+        let lastSubscribedFeedUpdate: FeedsData.FeedUpdateTime = this.getLastSubscribedFeedsUpdate(nodeId) || null;
+        if (lastSubscribedFeedUpdate == null || lastSubscribedFeedUpdate == undefined)
+            return 0;
+        return lastSubscribedFeedUpdate.time || 0;
     }
 
     updateLastSubscribedFeedsUpdate(nodeId: string, lastUpdate: FeedsData.FeedUpdateTime){
@@ -747,9 +748,10 @@ export class DataHelper {
     }
 
     getLastCommentUpdateTime(key: string): number{
-        let lasCommentUpdate = this.getLastCommentUpdate(key) || null
-        let lastCommentTime = lasCommentUpdate.time || 0;
-        return lastCommentTime;
+        let lastCommentUpdate: FeedsData.CommentUpdateTime = this.getLastCommentUpdate(key) || null ;
+        if (lastCommentUpdate == null || lastCommentUpdate == undefined)
+            return 0;
+        return lastCommentUpdate.time || 0;
     }
 
     updateLastComment(key: string, lastCommentUpdate: FeedsData.CommentUpdateTime){
@@ -799,9 +801,10 @@ export class DataHelper {
     }
 
     getLastMultiLikesAndCommentsCountUpdateTime(nodeId: string): number{
-        let lastUpdate = this.getLastMultiLikesAndCommentsCountUpdate(nodeId);
-        let updateTime = lastUpdate.time || 0;
-        return updateTime;
+        let lastUpdate:FeedsData.LikesAndCommentsCountUpdateTime = this.getLastMultiLikesAndCommentsCountUpdate(nodeId) || null;
+        if (lastUpdate == null || lastUpdate == undefined)
+            return 0;
+        return lastUpdate.time || 0;
     }
 
     updateLastMultiLikesAndCommentsCountUpdate(nodeId: string, lastUpdate: FeedsData.LikesAndCommentsCountUpdateTime){
@@ -868,9 +871,10 @@ export class DataHelper {
     }
 
     getLastPostUpdateTime(key: string): number{
-        let lastPostUpdate = this.getLastPostUpdate(key) || null;
-        let lastPostTime = lastPostUpdate["time"] || 0;
-        return lastPostTime;
+        let lastPostUpdate: FeedsData.PostUpdateTime = this.getLastPostUpdate(key) || null;
+        if (lastPostUpdate == null || lastPostUpdate == undefined)
+            return 0;
+        return lastPostUpdate.time || 0;
     }
 
     updateLastPostUpdate(key: string, lastPostUpdate: FeedsData.PostUpdateTime){
