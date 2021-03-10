@@ -306,7 +306,6 @@ export const zh = {
         "feedsSourceQRCode": "出版号二维码",
         // "error": "解析DID文档错误",
         "public": "私密",
-        "unpublic": "已公开",
         "des": "添加我的Feeds出版号!",
         "replyingto": "回复给",
         "containedfeeds": "包含的Feeds列表",
