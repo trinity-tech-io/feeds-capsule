@@ -100,7 +100,7 @@ export class FeedService {
   private throwMsgTransDataLimit = 4*1000*1000;
   private alertPopover:HTMLIonPopoverElement = null;
   private syncPostStatusMap: {[nodeChannelId: string]: FeedsData.SyncPostStatus} = {};
-  private syncCommentStatusMap: {[nodeChannelId: string]: FeedsData.SyncCommentStatus} = {};
+  // private syncCommentStatusMap: {[nodeChannelId: string]: FeedsData.SyncCommentStatus} = {};
 
   public constructor(
     private serializeDataService: SerializeDataService,
@@ -233,19 +233,7 @@ export class FeedService {
   }
 
   loadSyncCommentStatusMap(){
-    return new Promise((resolve, reject) =>{
-      let syncCommentStatus = this.syncCommentStatusMap || "";
-      if( syncCommentStatus == ""){
-        this.storeService.get(FeedsData.PersistenceKey.syncCommentStatusMap).then((mSyncCommentStatusMap)=>{
-          this.syncCommentStatusMap = mSyncCommentStatusMap || {};
-          resolve(mSyncCommentStatusMap);
-        }).catch((error)=>{
-          reject(error);
-        });
-      }else{
-          resolve(syncCommentStatus);
-      }
-    });
+    return this.dataHelper.loadSyncCommentStatusMap();
   }
 
   loadSyncPostStatusMap(){
@@ -294,10 +282,6 @@ export class FeedService {
   }
 
   initData(){
-    this.storeService.get(FeedsData.PersistenceKey.syncCommentStatusMap).then((mSyncCommentStatusMap)=>{
-      this.syncCommentStatusMap = mSyncCommentStatusMap;
-    });
-
     this.storeService.get(FeedsData.PersistenceKey.syncPostStatusMap).then((mSyncPostStatusMap)=>{
       this.syncPostStatusMap = mSyncPostStatusMap;
     });
@@ -5178,36 +5162,19 @@ export class FeedService {
   }
 
   getSyncCommentLastUpdate(nodeId:string, feedsId: number, postId: number): number{
-    if (this.syncCommentStatusMap == null || this.syncCommentStatusMap == undefined)
-      return 0;
     let ncpId = this.getPostId(nodeId, feedsId, postId);
-    if (this.syncCommentStatusMap[ncpId] == null || this.syncCommentStatusMap[ncpId] == undefined)
-      return 0;
-    return this.syncCommentStatusMap[ncpId].lastUpdate;
+    return this.dataHelper.getSyncCommentLastUpdateTime(ncpId);
   }
 
   generateSyncCommentStatus(nodeId: string, feedsId: number, postId: number, isSyncFinish: boolean, lastUpdate:  number){
-    if (this.syncCommentStatusMap == null || this.syncCommentStatusMap == undefined)
-      this.syncCommentStatusMap = {};
     let ncpId = this.getPostId(nodeId, feedsId, postId);
-    this.syncCommentStatusMap[ncpId] = {
-      nodeId        : nodeId,
-      feedsId       : feedsId,
-      postId        : postId,
-      isSyncFinish  : isSyncFinish,
-      lastUpdate    : lastUpdate
-    }
-
-    this.storeService.set(FeedsData.PersistenceKey.syncCommentStatusMap, this.syncCommentStatusMap);
+    let syncCommentStatus = this.dataHelper.generateSyncCommentStatus(nodeId, feedsId, postId, isSyncFinish, lastUpdate);
+    this.dataHelper.updateSyncCommentStatus(ncpId, syncCommentStatus);
   }
 
-  checkSyncCommentStatus(nodeId: string, feedsId: number, postId: number){
-    if (this.syncCommentStatusMap == null || this.syncCommentStatusMap == undefined)
-      return false;
+  checkSyncCommentStatus(nodeId: string, feedsId: number, postId: number): boolean{
     let ncpId = this.getPostId(nodeId, feedsId, postId);
-    if (this.syncCommentStatusMap[ncpId] == null || this.syncCommentStatusMap[ncpId] == undefined)
-      return false;
-    return this.syncCommentStatusMap[ncpId].isSyncFinish;
+    return this.dataHelper.isSyncCommnetFinish(ncpId);
   }
 
   getCurrentFeed(){

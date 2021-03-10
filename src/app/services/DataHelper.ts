@@ -1246,6 +1246,60 @@ export class DataHelper {
         this.localCredential = "";
     }
 
+    //// syncCommentStatusMap
+    setSyncCommentStatusMap(syncCommentStatusMap: {[nodeChannelId: string]: FeedsData.SyncCommentStatus}){
+        this.syncCommentStatusMap = syncCommentStatusMap;
+        this.saveData(FeedsData.PersistenceKey.syncCommentStatusMap, this.syncCommentStatusMap);
+    }
+
+    loadSyncCommentStatusMap(): Promise<{[nodeChannelId: string]: FeedsData.SyncCommentStatus}>{
+        return new Promise(async (resolve, reject) =>{
+            try {
+                if (JSON.stringify(this.syncCommentStatusMap) == "{}"){
+                    this.syncCommentStatusMap = await this.loadData(FeedsData.PersistenceKey.syncCommentStatusMap) || {};
+                    resolve(this.syncCommentStatusMap);
+                    return ;
+                }
+                resolve(this.syncCommentStatusMap);
+            } catch (error) {
+                reject(error);
+            }
+        });
+    }
+
+    generateSyncCommentStatus(nodeId: string, feedsId: number, postId: number, isSyncFinish: boolean, lastUpdate:  number): FeedsData.SyncCommentStatus{
+        return {
+          nodeId        : nodeId,
+          feedsId       : feedsId,
+          postId        : postId,
+          isSyncFinish  : isSyncFinish,
+          lastUpdate    : lastUpdate
+        }
+    }
+
+    getSyncCommentLastUpdateTime(key: string): number{
+        if (this.syncCommentStatusMap == null || this.syncCommentStatusMap == undefined)
+            this.syncCommentStatusMap = {};
+        if (this.syncCommentStatusMap[key] == null || this.syncCommentStatusMap[key] == undefined)
+            return 0;
+        return this.syncCommentStatusMap[key].lastUpdate || 0;
+    }
+
+    updateSyncCommentStatus(key: string, syncCommentStatus: FeedsData.SyncCommentStatus){
+        if (this.syncCommentStatusMap == null || this.syncCommentStatusMap == undefined)
+            this.syncCommentStatusMap = {};
+        this.syncCommentStatusMap[key] = syncCommentStatus;
+        this.saveData(FeedsData.PersistenceKey.syncCommentStatusMap, this.syncCommentStatusMap);
+    }
+
+    isSyncCommnetFinish(key: string): boolean{
+        if (this.syncCommentStatusMap == null || this.syncCommentStatusMap == undefined)
+            this.syncCommentStatusMap = {};
+        if (this.syncCommentStatusMap[key] == null || this.syncCommentStatusMap[key] == undefined)
+            return false;
+        return this.syncCommentStatusMap[key].isSyncFinish || false;
+    }
+
     ////cachedPost
     setCachedPost(cachedPost: {[key:string]:FeedsData.Post}){
         this.cachedPost = cachedPost;
