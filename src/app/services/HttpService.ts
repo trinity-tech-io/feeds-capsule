@@ -34,10 +34,13 @@ export class HttpService{
         }
         resove(response);
       }, (error) => {
-        if(isLoading){
+       let sid = setTimeout(()=>{
+          if(isLoading){
           this.native.hideLoading();
-        }
-        this.openAlert();
+          }
+          this.openAlert();
+          clearTimeout(sid);
+        },500);
         reject(error);
       })
     })
@@ -57,10 +60,13 @@ export class HttpService{
         }
         resove(response);
       }, (error) => {
-        if(isLoading){
+        let sid = setTimeout(()=>{
+          if(isLoading){
           this.native.hideLoading();
-        }
-        this.openAlert();
+          }
+          this.openAlert();
+          clearTimeout(sid);
+        },500);
         reject(error);
       })
     })
