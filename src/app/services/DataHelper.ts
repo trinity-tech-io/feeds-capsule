@@ -21,6 +21,9 @@ export class DataHelper {
     private lastMultiLikesAndCommentsCountUpdateMapCache: {[key: string]: FeedsData.LikesAndCommentsCountUpdateTime} = {};
     private lastPostUpdateMap: {[nodeChannelId:string]: FeedsData.PostUpdateTime} = {};
 
+    private syncPostStatusMap: {[nodeChannelId: string]: FeedsData.SyncPostStatus} = {};
+    private syncCommentStatusMap:{[nodeChannelId: string]: FeedsData.SyncCommentStatus} = {};
+
     private unreadMap: {[nodeChannelId: string]: number} = {};
     private serverStatisticsMap: {[nodeId: string]: FeedsData.ServerStatistics} = {};
     
@@ -774,10 +777,10 @@ export class DataHelper {
         this.saveData(FeedsData.PersistenceKey.lastMultiLikesAndCommentsCountUpdateMap, this.lastMultiLikesAndCommentsCountUpdateMap);
     }
 
-    getLastMultiLikesAndCommentsCountUpdateMap(): Promise<{[key: string]: FeedsData.LikesAndCommentsCountUpdateTime}>{
+    loadLastMultiLikesAndCommentsCountUpdateMap(): Promise<{[key: string]: FeedsData.LikesAndCommentsCountUpdateTime}>{
         return new Promise(async (resolve, reject) =>{
             try {
-                if (this.lastMultiLikesAndCommentsCountUpdateMap == {}){
+                if (JSON.stringify(this.lastMultiLikesAndCommentsCountUpdateMap) == "{}"){
                     this.lastMultiLikesAndCommentsCountUpdateMap = await this.loadData(FeedsData.PersistenceKey.lastMultiLikesAndCommentsCountUpdateMap) || {};
                     resolve(this.lastMultiLikesAndCommentsCountUpdateMap);
                     return ;
@@ -789,6 +792,36 @@ export class DataHelper {
         });
     }
 
+    getLastMultiLikesAndCommentsCountUpdate(nodeId: string): FeedsData.LikesAndCommentsCountUpdateTime{
+        if (this.lastMultiLikesAndCommentsCountUpdateMap == null || this.lastMultiLikesAndCommentsCountUpdateMap == undefined)
+            this.lastMultiLikesAndCommentsCountUpdateMap = {}
+        return this.lastMultiLikesAndCommentsCountUpdateMap[nodeId];
+    }
+
+    getLastMultiLikesAndCommentsCountUpdateTime(nodeId: string): number{
+        let lastUpdate = this.getLastMultiLikesAndCommentsCountUpdate(nodeId);
+        let updateTime = lastUpdate.time || 0;
+        return updateTime;
+    }
+
+    updateLastMultiLikesAndCommentsCountUpdate(nodeId: string, lastUpdate: FeedsData.LikesAndCommentsCountUpdateTime){
+        if (this.lastMultiLikesAndCommentsCountUpdateMap == null || this.lastMultiLikesAndCommentsCountUpdateMap == undefined)
+            this.lastMultiLikesAndCommentsCountUpdateMap = {}
+        this.lastMultiLikesAndCommentsCountUpdateMap[nodeId] = lastUpdate;
+        this.saveData(FeedsData.PersistenceKey.lastMultiLikesAndCommentsCountUpdateMap, this.lastMultiLikesAndCommentsCountUpdateMap);
+    }
+
+    deleteLastMultiLikesAndCommentsCountUpdateMap(nodeId: string){
+        if (this.lastMultiLikesAndCommentsCountUpdateMap == null || this.lastMultiLikesAndCommentsCountUpdateMap == undefined)
+            this.lastMultiLikesAndCommentsCountUpdateMap = {}
+        this.lastMultiLikesAndCommentsCountUpdateMap[nodeId] = null;
+        delete this.lastMultiLikesAndCommentsCountUpdateMap[nodeId];
+        this.saveData(FeedsData.PersistenceKey.lastMultiLikesAndCommentsCountUpdateMap, this.lastMultiLikesAndCommentsCountUpdateMap);
+    }
+
+    initLastMultiLikesAndCommentsCountUpdateMap(){
+        this.lastMultiLikesAndCommentsCountUpdateMap = {};
+    }
 
     ////lastMultiLikesAndCommentsCountUpdateMapCache
     setLastMultiLikesAndCommentsCountUpdateMapCache(lastMultiLikesAndCommentsCountUpdateMapCache: {[key: string]: FeedsData.LikesAndCommentsCountUpdateTime}){

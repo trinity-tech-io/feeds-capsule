@@ -95,9 +95,7 @@ export class FeedService {
   private declareOwnerTimeout: NodeJS.Timer;
   private declareOwnerInterval: NodeJS.Timer;
   private isDeclareFinish: boolean = false;
-  private lastMultiLikesAndCommentsCountUpdateMap:{[key: string]: FeedsData.LikesAndCommentsCountUpdateTime};
   private lastMultiLikesAndCommentsCountUpdateMapCache:{[key: string]: FeedsData.LikesAndCommentsCountUpdateTime};
-
 
   private throwMsgTransDataLimit = 4*1000*1000;
   private alertPopover:HTMLIonPopoverElement = null;
@@ -231,6 +229,10 @@ export class FeedService {
     return this.dataHelper.loadLastSubscribedFeedsUpdateMap();
   }
 
+  loadLastMultiLikesAndCommentsCountUpdateMap(){
+    return this.dataHelper.loadLastMultiLikesAndCommentsCountUpdateMap();
+  }
+
   loadSyncCommentStatusMap(){
     return new Promise((resolve, reject) =>{
       let syncCommentStatus = this.syncCommentStatusMap || "";
@@ -282,15 +284,12 @@ export class FeedService {
       this.loadLastCommentUpdateMap(),
       this.loadLastSubscribedFeedUpdateMap(),
       this.loadSyncCommentStatusMap(),
-      this.loadSyncPostStatusMap()
+      this.loadSyncPostStatusMap(),
+      this.loadLastMultiLikesAndCommentsCountUpdateMap()
     ]);
   }
 
   initData(){
-    this.storeService.get(FeedsData.PersistenceKey.lastMultiLikesAndCommentsCountUpdateMap).then((mLastMultiLikesAndCommentsCountUpdateMap) =>{
-      this.lastMultiLikesAndCommentsCountUpdateMap = mLastMultiLikesAndCommentsCountUpdateMap || {};
-    });
-
     this.storeService.get(FeedsData.PersistenceKey.syncCommentStatusMap).then((mSyncCommentStatusMap)=>{
       this.syncCommentStatusMap = mSyncCommentStatusMap;
     });
@@ -3066,9 +3065,7 @@ export class FeedService {
       return;
     }
 
-    this.lastMultiLikesAndCommentsCountUpdateMap[nodeId] = this.lastMultiLikesAndCommentsCountUpdateMapCache[nodeId];
-    this.storeService.set(FeedsData.PersistenceKey.lastMultiLikesAndCommentsCountUpdateMap,this.lastMultiLikesAndCommentsCountUpdateMap);
-
+    this.dataHelper.updateLastMultiLikesAndCommentsCountUpdate(nodeId, this.lastMultiLikesAndCommentsCountUpdateMapCache[nodeId]);
     let result = responseResult.posts;
     for (let index = 0; index < result.length; index++) {
         let channelId = result[index].channel_id;
@@ -3365,12 +3362,7 @@ export class FeedService {
   }
 
   updateMultiLikesAndCommentsCount(nodeId: string){
-    let updateTime = 0;
-    if (this.lastMultiLikesAndCommentsCountUpdateMap != null &&
-      this.lastMultiLikesAndCommentsCountUpdateMap != undefined &&
-      this.lastMultiLikesAndCommentsCountUpdateMap[nodeId] != undefined){
-        updateTime = this.lastMultiLikesAndCommentsCountUpdateMap[nodeId].time;
-    }
+    let updateTime = this.dataHelper.getLastMultiLikesAndCommentsCountUpdateTime(nodeId);
 
     if (this.lastMultiLikesAndCommentsCountUpdateMapCache == null ||
       this.lastMultiLikesAndCommentsCountUpdateMapCache == undefined){
@@ -5164,7 +5156,7 @@ export class FeedService {
 
     this.dataHelper.initLastSubscribedFeedsUpdateMap();
     this.dataHelper.initLastCommentUpdateMap();
-    this.lastMultiLikesAndCommentsCountUpdateMap = {};
+    this.dataHelper.initLastMultiLikesAndCommentsCountUpdateMap();
     this.lastMultiLikesAndCommentsCountUpdateMapCache = {};
 
     this.alertPopover = null;
