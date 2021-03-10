@@ -113,7 +113,6 @@ export class FeedsPage implements OnInit {
     }
 
     let currentFeed = this.feedService.getCurrentFeed();
-
     if(currentFeed === null){
       let myFeed = this.feedService.getMyChannelList()[0];
       let currentFeed = {
@@ -122,7 +121,10 @@ export class FeedsPage implements OnInit {
       }
       this.feedService.setCurrentFeed(currentFeed);
       this.storageService.set("feeds.currentFeed",JSON.stringify(currentFeed));
-      this.native.navigateForward(["createnewpost"],"");
+    }
+    let nodeId = this.feedService.getMyChannelList()[0]["nodeId"];
+    if(this.checkServerStatus(nodeId) != 0){
+      this.native.toastWarn('common.connectionError1');
       return;
     }
     this.native.navigateForward(["createnewpost"],"");
@@ -177,5 +179,9 @@ export class FeedsPage implements OnInit {
     let uList =  _.filter(nList,(item:any)=>{ return item.readStatus === 1; });
     this.totalunread = uList.length;
 
+    }
+
+    checkServerStatus(nodeId: string){
+      return this.feedService.getServerStatusFromId(nodeId);
     }
 }
