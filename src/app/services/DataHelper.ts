@@ -654,10 +654,10 @@ export class DataHelper {
         this.saveData(FeedsData.PersistenceKey.lastSubscribedFeedsUpdateMap, this.lastSubscribedFeedsUpdateMap);
     }
 
-    getLastSubscribedFeedsUpdateMap(): Promise<{[nodeId:string]: FeedsData.FeedUpdateTime}>{
+    loadLastSubscribedFeedsUpdateMap(): Promise<{[nodeId:string]: FeedsData.FeedUpdateTime}>{
         return new Promise(async (resolve, reject) =>{
             try {
-                if (this.lastSubscribedFeedsUpdateMap == {}){
+                if (JSON.stringify(this.lastSubscribedFeedsUpdateMap) == "{}"){
                     this.lastSubscribedFeedsUpdateMap = await this.loadData(FeedsData.PersistenceKey.lastSubscribedFeedsUpdateMap) || {};
                     resolve(this.lastSubscribedFeedsUpdateMap);
                     return ;
@@ -667,6 +667,44 @@ export class DataHelper {
                 reject(error);
             }
         });
+    }
+
+    generateLastSubscribedFeedsUpdate(nodeId: string, updateTime: number):FeedsData.FeedUpdateTime{
+        return {
+            nodeId: nodeId,
+            time: updateTime
+        }
+    }
+
+    getLastSubscribedFeedsUpdate(nodeId: string): FeedsData.FeedUpdateTime{
+        if (this.lastSubscribedFeedsUpdateMap == null || this.lastSubscribedFeedsUpdateMap == undefined)
+            this.lastSubscribedFeedsUpdateMap = {};
+        return this.lastSubscribedFeedsUpdateMap[nodeId];
+    }
+
+    getLastSubscribedFeedsUpdateTime(nodeId: string): number{
+        let lastSubscribedFeedUpdate = this.getLastSubscribedFeedsUpdate(nodeId) || null;
+        let lastSubscribedFeedUpdateTime = lastSubscribedFeedUpdate.time || 0;
+        return lastSubscribedFeedUpdateTime;
+    }
+
+    updateLastSubscribedFeedsUpdate(nodeId: string, lastUpdate: FeedsData.FeedUpdateTime){
+        if (this.lastSubscribedFeedsUpdateMap == null || this.lastSubscribedFeedsUpdateMap == undefined)
+            this.lastSubscribedFeedsUpdateMap = {};
+        this.lastSubscribedFeedsUpdateMap[nodeId] = lastUpdate;
+        this.saveData(FeedsData.PersistenceKey.lastSubscribedFeedsUpdateMap, this.lastSubscribedFeedsUpdateMap);
+    }
+
+    deleteLastSubscribedFeedsUpdate(nodeId: string){
+        if (this.lastSubscribedFeedsUpdateMap == null || this.lastSubscribedFeedsUpdateMap == undefined)
+            this.lastSubscribedFeedsUpdateMap = {};
+        this.lastSubscribedFeedsUpdateMap[nodeId] = null;
+        delete this.lastSubscribedFeedsUpdateMap[nodeId];
+        this.saveData(FeedsData.PersistenceKey.lastSubscribedFeedsUpdateMap, this.lastSubscribedFeedsUpdateMap);
+    }
+
+    initLastSubscribedFeedsUpdateMap(){
+        this.lastSubscribedFeedsUpdateMap = {};
     }
 
     ////lastCommentUpdateMap
