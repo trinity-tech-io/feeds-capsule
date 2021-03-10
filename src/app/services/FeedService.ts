@@ -86,7 +86,7 @@ export class FeedService {
   private selsectIndex = 1;
   private carrierStatus:FeedsData.ConnState = FeedsData.ConnState.disconnected;
   private networkStatus:FeedsData.ConnState = FeedsData.ConnState.disconnected;
-  private connectionStatus = FeedsData.ConnState.disconnected ;
+
   private lastConnectionStatus = FeedsData.ConnState.disconnected ;
   private isLogging: {[nodeId: string]: boolean} = {};
   private signinChallengeTimeout: NodeJS.Timer;
@@ -312,8 +312,8 @@ export class FeedService {
     this.connectionChangedCallback();
   }
 
-  getConnectionStatus() {
-    return this.connectionStatus;
+  getConnectionStatus(): FeedsData.ConnState{
+    return this.dataHelper.getConnectionStatus();
   }
 
   getServerList(): FeedsData.Server[]{
@@ -502,14 +502,15 @@ export class FeedService {
     let networkStatus: number = this.getNetworkStatus();
     let carrierStatus: number = this.getCarrierStatus();
     if (networkStatus == FeedsData.ConnState.connected && carrierStatus == FeedsData.ConnState.connected){
-      this.connectionStatus = FeedsData.ConnState.connected;
+      this.dataHelper.setConnectionStatus(FeedsData.ConnState.connected);
     }else if(networkStatus == FeedsData.ConnState.disconnected || carrierStatus == FeedsData.ConnState.disconnected){
-      this.connectionStatus = FeedsData.ConnState.disconnected;
+      this.dataHelper.setConnectionStatus(FeedsData.ConnState.disconnected);
     }
 
-    if (this.lastConnectionStatus != this.connectionStatus){
-      this.lastConnectionStatus = this.connectionStatus;
-      eventBus.publish(FeedsEvent.PublishType.connectionChanged, this.connectionStatus, Date.now());
+    let connectionStatus = this.dataHelper.getConnectionStatus();
+    if (this.lastConnectionStatus != connectionStatus){
+      this.lastConnectionStatus = connectionStatus;
+      eventBus.publish(FeedsEvent.PublishType.connectionChanged, connectionStatus, Date.now());
     }
   }
 
@@ -3868,7 +3869,7 @@ export class FeedService {
   resetConnectionStatus(){
     this.connectionService.resetConnectionStatus();
     this.resetServerConnectionStatus();
-    this.connectionStatus = FeedsData.ConnState.disconnected;
+    this.dataHelper.setConnectionStatus(FeedsData.ConnState.disconnected);
     this.lastConnectionStatus = FeedsData.ConnState.disconnected;
   }
 
