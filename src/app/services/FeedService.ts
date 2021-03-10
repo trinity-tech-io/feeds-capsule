@@ -99,7 +99,6 @@ export class FeedService {
 
   private throwMsgTransDataLimit = 4*1000*1000;
   private alertPopover:HTMLIonPopoverElement = null;
-  private serverVersions: {[nodeId: string]: FeedsData.ServerVersion} = {};
   private syncPostStatusMap: {[nodeChannelId: string]: FeedsData.SyncPostStatus} = {};
   private syncCommentStatusMap: {[nodeChannelId: string]: FeedsData.SyncCommentStatus} = {};
 
@@ -265,8 +264,13 @@ export class FeedService {
     });
   }
 
+  loadServerVersions(){
+    return this.dataHelper.loadServerVersion();
+  }
+
   async loadData(){
     await Promise.all([
+      this.loadServerVersions(),
       this.loadPostData(),
       this.loadChannelData(),
       this.loadCredential(),
@@ -1351,27 +1355,10 @@ export class FeedService {
       this.afterFriendConnection(nodeId);
       return;
     }
-
     let version = result.version;
     let versionCode = result.version_code||1;
-
-    if (this.serverVersions == null ||
-      this.serverVersions == undefined)
-      this.serverVersions = {};
-
-    let serverVersion = this.serverVersions[nodeId]||""
-    if (serverVersion == ""){
-      this.serverVersions[nodeId] = {
-        nodeId        : nodeId,
-        versionName   : version,
-        versionCode   : versionCode
-      }
-    }else {
-      this.serverVersions[nodeId].nodeId = nodeId;
-      this.serverVersions[nodeId].versionCode = versionCode;
-      this.serverVersions[nodeId].versionName = version;
-    }
-    this.storeService.set(FeedsData.PersistenceKey.serverVersions, this.serverVersions);
+    let serverVersion = this.dataHelper.generateServerVersion(nodeId, version, versionCode);
+    this.dataHelper.updateServerVersion(nodeId, serverVersion);
     this.afterFriendConnection(nodeId);
   }
 
@@ -4801,13 +4788,14 @@ export class FeedService {
     if (bindingServer == null || bindingServer == undefined)
       return;
 
-    if (this.serverVersions == null || this.serverVersions == undefined || this.serverVersions[bindingServer.nodeId] == undefined)
+    let serverVersion = this.dataHelper.getServerVersion(bindingServer.nodeId);
+    if (serverVersion == null || serverVersion == undefined)
       return;
 
-    let serverVersion = this.getServerVersionByNodeId(bindingServer.nodeId);
+    let serverVersionName = this.getServerVersionByNodeId(bindingServer.nodeId);
     let currentVC = this.getServerVersionCodeByNodeId(bindingServer.nodeId)
     // let currentVC = this.serverVersions[bindingServer.nodeId].versionCode;
-    if (serverVersion == "" || currentVC < versionCode){
+    if (serverVersionName == "" || currentVC < versionCode){
       this.popupProvider.ionicAlert(
         this,
         "",
@@ -4828,23 +4816,12 @@ export class FeedService {
     }
   }
 
-  getServerVersionByNodeId(nodeId: string){
-    if (this.serverVersions == null ||
-      this.serverVersions == undefined ||
-      this.serverVersions[nodeId] == undefined){
-        return "";
-    }
-    let version = this.serverVersions[nodeId].versionName||"";
-    return version;
+  getServerVersionByNodeId(nodeId: string): string{
+    return this.dataHelper.getServerVersionName(nodeId);
   }
 
   getServerVersionCodeByNodeId(nodeId: string): number{
-    if (this.serverVersions == null ||
-      this.serverVersions == undefined||
-      this.serverVersions[nodeId] == undefined)
-        return -1;
-    let serverVersionCode = this.serverVersions[nodeId].versionCode||-1;
-    return serverVersionCode;
+    return this.dataHelper.getServerVersionCode(nodeId);
   }
 
   standardSignIn(nodeId: string){
@@ -5160,7 +5137,7 @@ export class FeedService {
     this.lastMultiLikesAndCommentsCountUpdateMapCache = {};
 
     this.alertPopover = null;
-    this.serverVersions = {};
+    this.dataHelper.initServerVersion();
   }
 
   getToBeAddedFeedsInfoByNodeFeedId(nodeId:string,feedId:number){
