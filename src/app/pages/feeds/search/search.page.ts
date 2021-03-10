@@ -276,7 +276,6 @@ export class SearchPage implements OnInit {
 
   handeleStatus(addingchannel:any){
     this.curAddingItem = addingchannel;
-    console.log("======this.curAddingItem======"+JSON.stringify(this.curAddingItem));
     this.popover = this.popupProvider.ionicConfirm(
       this,
       // "ConfirmdialogComponent.signoutTitle",
