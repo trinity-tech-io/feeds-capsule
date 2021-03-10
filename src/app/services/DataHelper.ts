@@ -1314,10 +1314,58 @@ export class DataHelper {
         this.serverVersions = serverVersions;
     }
 
-    getServerVersion(): {[nodeId: string]: FeedsData.ServerVersion}{
-        return this.serverVersions;
+    loadServerVersion(): Promise<{[nodeId: string]: FeedsData.ServerVersion}>{
+        return new Promise(async (resolve, reject) =>{
+            try {
+                if (JSON.stringify(this.serverVersions) == "{}"){
+                    this.serverVersions = await this.loadData(FeedsData.PersistenceKey.serverVersions) || {};
+                    resolve(this.serverVersions);
+                    return ;
+                }
+                resolve(this.serverVersions);
+            } catch (error) {
+                reject(error);
+            }
+        });
     }
 
+    generateServerVersion(nodeId: string, name: string, code: number): FeedsData.ServerVersion{
+        return {
+            nodeId        : nodeId,
+            versionName   : name,
+            versionCode   : code
+        }
+    }
+
+    getServerVersion(key: string): FeedsData.ServerVersion{
+        if (this.serverVersions == null || this.serverVersions == undefined)
+            this.serverVersions = {};
+        return this.serverVersions[key];
+    }
+
+    getServerVersionCode(key: string): number{
+        let serverVersion = this.getServerVersion(key) || null;
+        if (serverVersion == null || serverVersion == undefined)
+            return 0;
+        return serverVersion.versionCode || 0;
+    }
+
+    getServerVersionName(key: string): string{
+        let serverVersion = this.getServerVersion(key) || null;
+        if (serverVersion == null || serverVersion == undefined)
+            return "";
+        return serverVersion.versionName || "";
+    }
+
+    updateServerVersion(key: string, serverVersion: FeedsData.ServerVersion){
+        if (this.serverVersions == null || this.serverVersions == undefined)
+            this.serverVersions = {};
+        this.serverVersions[key] = serverVersion;
+        this.saveData(FeedsData.PersistenceKey.serverVersions, this.serverVersions);
+    }
+    initServerVersion(){
+        this.serverVersions = {};
+    }
     ////currentLang
     setCurrentLang(currentLang: string){
         this.currentLang = currentLang;
