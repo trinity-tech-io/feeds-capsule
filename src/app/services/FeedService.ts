@@ -370,6 +370,7 @@ export class FeedIntro{
 
 @Injectable()
 export class FeedService {
+  public discoverfeeds:any = [];
   public currentFeed:any = null;
   public feedPublicStatus:any = {};
   public developerMode:boolean = false;
@@ -6856,5 +6857,13 @@ export class FeedService {
 
   setCurrentFeed(currentFeed:any){
     this.currentFeed = currentFeed;
+  }
+
+  getDiscoverfeeds(){
+    return this.discoverfeeds;
+  }
+
+  setDiscoverfeeds(discoverfeeds:any){
+    return this.discoverfeeds = discoverfeeds;
   }
 }

@@ -7,6 +7,7 @@ import { UtilService } from '../../../services/utilService';
 import { PopupProvider } from '../../../services/popup';
 import { HttpService } from '../../../services/HttpService';
 import { ApiUrl } from '../../../services/ApiUrl';
+import { StorageService } from '../../../services/StorageService';
 import * as _ from 'lodash';
 declare let appManager: AppManagerPlugin.AppManager;
 @Component({
@@ -63,14 +64,13 @@ export class SearchPage implements OnInit {
     public theme:ThemeService,
     private popoverController: PopoverController,
     private popupProvider:PopupProvider,
-    private httpService:HttpService
+    private httpService:HttpService,
+    public  storageService:StorageService,
   ) {
   }
 
   ngOnInit() {
     this.scanServiceStyle["right"] = screen.width*7.5/100+5+"px";
-    this.pageNum =1;
-    this.initData("",true);
   }
 
   initSubscribe(){
@@ -129,6 +129,14 @@ export class SearchPage implements OnInit {
   }
 
   init(){
+    let discoverfeeds = this.feedService.getDiscoverfeeds();
+    if(discoverfeeds.length === 0){
+        this.pageNum =1;
+        this.initData("",true);
+    }else{
+      this.httpAllData = _.cloneDeep(discoverfeeds);
+      this.discoverSquareList = _.cloneDeep(discoverfeeds);
+    }
     this.developerMode = this.feedService.getDeveloperMode();
     this.connectionStatus = this.feedService.getConnectionStatus();
     this.unfollowedFeed = this.getUnfollowedFeed();
@@ -376,6 +384,7 @@ checkValid(result: string){
          let arr = result["data"]["result"] || [];
          let discoverSquareList = this.discoverSquareList.concat(arr);
          this.httpAllData = _.cloneDeep(discoverSquareList);
+         this.handleCache(arr);
          this.discoverSquareList = this.filterdiscoverSquareList(discoverSquareList);
       }
       if(this.pageNum*this.pageSize>=this.totalNum){
@@ -402,6 +411,7 @@ checkValid(result: string){
         this.isLoading =false;
          this.totalNum = result["data"]["total"];
          let discoverSquareList = result["data"]["result"] || [];
+         this.handleCache(discoverSquareList);
          this.httpAllData = _.cloneDeep(discoverSquareList);
          this.discoverSquareList = this.filterdiscoverSquareList(discoverSquareList);
          this.searchSquareList =_.cloneDeep(this.discoverSquareList);
@@ -532,6 +542,21 @@ checkValid(result: string){
           })
       }
     });
+  }
+
+  handleCache(addArr:any){
+    let discoverfeeds = this.feedService.getDiscoverfeeds() || [];
+    _.each(addArr,(feed:any)=>{
+      if(this.isExitFeed(discoverfeeds,feed) === ""){
+        discoverfeeds.push(feed);
+      }
+    });
+    this.feedService.setDiscoverfeeds(discoverfeeds);
+    this.storageService.set("feed:discoverfeeds",JSON.stringify(discoverfeeds));
+  }
+
+  isExitFeed(discoverfeeds:any,feed:any){
+   return _.find(discoverfeeds,feed) || "";
   }
 
 }

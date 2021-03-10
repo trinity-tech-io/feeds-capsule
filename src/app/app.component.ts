@@ -58,6 +58,7 @@ export class MyApp {
       this.initSetting();
       this.initFeedPublicStatus();
       this.initCurrentFeed();
+      this.initDiscoverfeeds();
       this.native.networkInfoInit();
       this.native.addNetworkListener(()=>{
         this.events.publish(FeedsEvent.PublishType.networkStatusChanged, 1);
@@ -65,6 +66,18 @@ export class MyApp {
         this.events.publish(FeedsEvent.PublishType.networkStatusChanged, 0);
       });
         this.initDisclaimer();
+    });
+  }
+
+  initDiscoverfeeds(){
+    this.feedService.getData("feed:discoverfeeds").then((discoverfeeds)=>{
+      if(discoverfeeds === null){
+        this.feedService.setDiscoverfeeds([]);
+        return;
+      }
+      this.feedService.setDiscoverfeeds(JSON.parse(discoverfeeds));
+    }).catch((err)=>{
+
     });
   }
 
