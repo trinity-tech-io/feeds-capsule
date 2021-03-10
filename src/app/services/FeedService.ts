@@ -99,8 +99,6 @@ export class FeedService {
 
   private throwMsgTransDataLimit = 4*1000*1000;
   private alertPopover:HTMLIonPopoverElement = null;
-  private syncPostStatusMap: {[nodeChannelId: string]: FeedsData.SyncPostStatus} = {};
-  // private syncCommentStatusMap: {[nodeChannelId: string]: FeedsData.SyncCommentStatus} = {};
 
   public constructor(
     private serializeDataService: SerializeDataService,
@@ -126,9 +124,6 @@ export class FeedService {
   }
 
   init(){
-    this.initData();
-
-
     this.initCallback();
   }
 
@@ -237,19 +232,7 @@ export class FeedService {
   }
 
   loadSyncPostStatusMap(){
-    return new Promise((resolve, reject) =>{
-      let syncPostStatus = this.syncPostStatusMap || "";
-      if( syncPostStatus == ""){
-        this.storeService.get(FeedsData.PersistenceKey.syncPostStatusMap).then((mSyncPostStatusMap)=>{
-          this.syncPostStatusMap = mSyncPostStatusMap || {};
-          resolve(mSyncPostStatusMap);
-        }).catch((error)=>{
-          reject(error);
-        });
-      }else{
-          resolve(syncPostStatus);
-      }
-    });
+    return this.dataHelper.loadSyncPostStatusMap();
   }
 
   loadServerVersions(){
@@ -279,12 +262,6 @@ export class FeedService {
       this.loadSyncPostStatusMap(),
       this.loadLastMultiLikesAndCommentsCountUpdateMap()
     ]);
-  }
-
-  initData(){
-    this.storeService.get(FeedsData.PersistenceKey.syncPostStatusMap).then((mSyncPostStatusMap)=>{
-      this.syncPostStatusMap = mSyncPostStatusMap;
-    });
   }
 
   initCallback(){
@@ -5130,35 +5107,19 @@ export class FeedService {
   }
 
   getSyncPostLastUpdate(nodeId:string, feedsId: number): number{
-    if (this.syncPostStatusMap == null || this.syncPostStatusMap == undefined)
-      return 0;
     let ncId = this.getChannelId(nodeId, feedsId);
-    if (this.syncPostStatusMap[ncId] == null || this.syncPostStatusMap[ncId] == undefined)
-      return 0;
-    return this.syncPostStatusMap[ncId].lastUpdate;
+    return this.dataHelper.getSyncPostStatusLastUpdateTime(ncId);
   }
 
   generateSyncPostStatus(nodeId: string, feedsId: number, isSyncFinish: boolean, lastUpdate:  number){
-    if (this.syncPostStatusMap == null || this.syncPostStatusMap == undefined)
-      this.syncPostStatusMap = {};
     let ncId = this.getChannelId(nodeId, feedsId);
-    this.syncPostStatusMap[ncId] = {
-      nodeId        : nodeId,
-      feedsId       : feedsId,
-      isSyncFinish  : isSyncFinish,
-      lastUpdate    : lastUpdate
-    }
-
-    this.storeService.set(FeedsData.PersistenceKey.syncPostStatusMap, this.syncPostStatusMap);
+    let syncPostStatus = this.dataHelper.generateSyncPostStatus(nodeId, feedsId, isSyncFinish, lastUpdate);
+    this.dataHelper.updateSyncPostStatus(ncId, syncPostStatus);
   }
 
-  checkSyncPostStatus(nodeId: string, feedsId: number){
-    if (this.syncPostStatusMap == null || this.syncPostStatusMap  == undefined)
-      return false;
+  checkSyncPostStatus(nodeId: string, feedsId: number): boolean{
     let ncId = this.getChannelId(nodeId, feedsId);
-    if (this.syncPostStatusMap[ncId] == null || this.syncPostStatusMap[ncId] == undefined)
-      return false;
-    return this.syncPostStatusMap[ncId].isSyncFinish;
+    return this.dataHelper.isSyncPostFinish(ncId);
   }
 
   getSyncCommentLastUpdate(nodeId:string, feedsId: number, postId: number): number{
