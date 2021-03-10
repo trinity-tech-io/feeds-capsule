@@ -675,10 +675,10 @@ export class DataHelper {
         this.saveData(FeedsData.PersistenceKey.lastCommentUpdateMap, this.lastCommentUpdateMap);
     }
 
-    getLastCommentUpdateMap(): Promise<{[key: string]: FeedsData.CommentUpdateTime}>{
+    loadLastCommentUpdateMap(): Promise<{[key: string]: FeedsData.CommentUpdateTime}>{
         return new Promise(async (resolve, reject) =>{
             try {
-                if (this.lastCommentUpdateMap == {}){
+                if (JSON.stringify(this.lastCommentUpdateMap) == "{}"){
                     this.lastCommentUpdateMap = await this.loadData(FeedsData.PersistenceKey.lastCommentUpdateMap) || {};
                     resolve(this.lastCommentUpdateMap);
                     return ;
@@ -688,6 +688,46 @@ export class DataHelper {
                 reject(error);
             }
         });
+    }
+
+    generateLastCommentUpdate(nodeId: string, feedId: number, postId: number, updateTime: number): FeedsData.CommentUpdateTime{
+        return {
+            nodeId: nodeId,
+            channelId: feedId,
+            postId: postId,
+            time: updateTime
+        }
+    }
+
+    getLastCommentUpdate(key: string): FeedsData.CommentUpdateTime{
+        if (this.lastCommentUpdateMap == null || this.lastCommentUpdateMap == undefined)
+            this.lastCommentUpdateMap = {};
+        return this.lastCommentUpdateMap[key];
+    }
+
+    getLastCommentUpdateTime(key: string): number{
+        let lasCommentUpdate = this.getLastCommentUpdate(key) || null
+        let lastCommentTime = lasCommentUpdate.time || 0;
+        return lastCommentTime;
+    }
+
+    updateLastComment(key: string, lastCommentUpdate: FeedsData.CommentUpdateTime){
+        if (this.lastCommentUpdateMap == null || this.lastCommentUpdateMap == undefined)
+            this.lastCommentUpdateMap = {};
+        this.lastCommentUpdateMap[key] = lastCommentUpdate;
+        this.saveData(FeedsData.PersistenceKey.lastCommentUpdateMap, this.lastCommentUpdateMap);
+    }
+
+    deleteLastComment(key: string){
+        if (this.lastCommentUpdateMap == null || this.lastCommentUpdateMap == undefined)
+            this.lastCommentUpdateMap = {};
+        this.lastCommentUpdateMap[key] = null;
+        delete this.lastCommentUpdateMap[key];
+        this.saveData(FeedsData.PersistenceKey.lastCommentUpdateMap, this.lastCommentUpdateMap);
+    }
+
+    initLastCommentUpdateMap(){
+        this.lastCommentUpdateMap = {};
     }
 
     ////lastMultiLikesAndCommentsCountUpdateMap
@@ -742,6 +782,14 @@ export class DataHelper {
         });
     }
 
+    generateLastPostUpdate(nodeId: string, feedId: number, updateTime: number): FeedsData.PostUpdateTime{
+        return {
+            nodeId: nodeId,
+            channelId: feedId,
+            time:updateTime
+        }
+    }
+
     getLastPostUpdate(key: string): FeedsData.PostUpdateTime{
         if (this.lastPostUpdateMap == null || this.lastPostUpdateMap == undefined)
             this.lastPostUpdateMap = {};
@@ -754,8 +802,12 @@ export class DataHelper {
         return lastPostTime;
     }
 
-    updateLastPostUpdate(){
+    updateLastPostUpdate(key: string, lastPostUpdate: FeedsData.PostUpdateTime){
+        if (this.lastPostUpdateMap == null || this.lastPostUpdateMap == undefined)
+            this.lastPostUpdateMap = {};
 
+        this.lastPostUpdateMap[key] = lastPostUpdate;
+        this.saveData(FeedsData.PersistenceKey.lastPostUpdateMap, this.lastPostUpdateMap);
     }
 
     deleteLastPostUpdate(key: string){
