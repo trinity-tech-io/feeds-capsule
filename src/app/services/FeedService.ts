@@ -29,12 +29,9 @@ let newAuthVersion: number = 10400;
 let newCommentVersion: number = 10400;
 let newMultiPropCountVersion: number = 10500
 
-let lastPostUpdateMap:{[nodeChannelId:string]: FeedsData.PostUpdateTime};
-
 let bindingServerCache: FeedsData.Server;
 
 let cacheBindingAddress: string = "";
-// let localCredential: string = "";
 
 let cachedPost:{[key:string]:FeedsData.Post} = {};
 
@@ -199,19 +196,7 @@ export class FeedService {
   }
 
   loadLastPostUpdate(){
-    return new Promise((resolve, reject) =>{
-      let lastPostUpdate = lastPostUpdateMap || "";
-      if( lastPostUpdate == ""){
-        this.storeService.get(FeedsData.PersistenceKey.lastPostUpdateMap).then((mLastPostUpdateMap)=>{
-          lastPostUpdateMap = mLastPostUpdateMap || {};
-          resolve(mLastPostUpdateMap);
-        }).catch((error)=>{
-          reject(error);
-        });
-      }else{
-          resolve(lastPostUpdate);
-      }
-    });
+    return this.dataHelper.loadLastPostUpdateMap();
   }
 
   loadServersStatus(){
@@ -343,12 +328,6 @@ export class FeedService {
   }
 
   initData(){
-    this.storeService.get(FeedsData.PersistenceKey.lastPostUpdateMap).then((mLastPostUpdateMap)=>{
-      lastPostUpdateMap = mLastPostUpdateMap;
-      if(lastPostUpdateMap == null || lastPostUpdateMap == undefined)
-        lastPostUpdateMap = {}
-    });
-
     this.storeService.get(FeedsData.PersistenceKey.lastCommentUpdateMap).then((mLastCommentUpdateMap) => {
       this.lastCommentUpdateMap = mLastCommentUpdateMap || {};
     });
@@ -2640,9 +2619,7 @@ export class FeedService {
 
   updatePost(nodeId: string, feedsId:number){
     let nodeChannelId = this.getChannelId(nodeId, feedsId);
-    let mlastPostUpdateMap = lastPostUpdateMap || "";
-    let postUpdate = mlastPostUpdateMap[nodeChannelId]||"";
-    let lastPostTime = postUpdate["time"] || 0;
+    let lastPostTime = this.dataHelper.getLastPostUpdateTime(nodeChannelId);
     this.updatePostWithTime(nodeId, feedsId, 0, lastPostTime, 0);
   }
 
@@ -3619,11 +3596,9 @@ export class FeedService {
     });
   }
 
-  removeLastPostUpdate(nodeId:string, channelId: number): Promise<any>{
+  removeLastPostUpdate(nodeId:string, channelId: number){
     let nodeChannelId = this.getChannelId(nodeId, channelId);
-    lastPostUpdateMap[nodeChannelId] = undefined;
-    delete lastPostUpdateMap[nodeChannelId];
-    return this.storeService.set(FeedsData.PersistenceKey.lastPostUpdateMap, lastPostUpdateMap);
+    this.dataHelper.deleteLastPostUpdate(nodeChannelId);
   }
 
   removeLastCommentUpdate(nodeId: string, channelId: number, postId: number): Promise<any>{
@@ -4612,29 +4587,29 @@ export class FeedService {
   }
 
   updatePostUpdateKey(){
-    let keys: string[] = Object.keys(lastPostUpdateMap) || [];
+    // let keys: string[] = Object.keys(lastPostUpdateMap) || [];
 
-    for (let index = 0; index < keys.length; index++) {
-      let key = keys[index];
-      if(lastPostUpdateMap[key] == undefined){
-        delete lastPostUpdateMap[key];
-        continue;
-      }
+    // for (let index = 0; index < keys.length; index++) {
+    //   let key = keys[index];
+    //   if(lastPostUpdateMap[key] == undefined){
+    //     delete lastPostUpdateMap[key];
+    //     continue;
+    //   }
 
-      let lastPostUpdate = lastPostUpdateMap[key];
-      let nodeId = lastPostUpdate.nodeId;
-      let channelId = lastPostUpdate.channelId;
+    //   let lastPostUpdate = lastPostUpdateMap[key];
+    //   let nodeId = lastPostUpdate.nodeId;
+    //   let channelId = lastPostUpdate.channelId;
 
-      let newKey = this.getChannelId(nodeId, channelId);
+    //   let newKey = this.getChannelId(nodeId, channelId);
 
-      if(key == newKey)
-        continue;
+    //   if(key == newKey)
+    //     continue;
 
-      lastPostUpdateMap[newKey] = lastPostUpdate;
-      delete lastPostUpdateMap[key];
-    }
+    //   lastPostUpdateMap[newKey] = lastPostUpdate;
+    //   delete lastPostUpdateMap[key];
+    // }
 
-    this.storeService.set(FeedsData.PersistenceKey.lastPostUpdateMap, lastPostUpdateMap);
+    // this.storeService.set(FeedsData.PersistenceKey.lastPostUpdateMap, lastPostUpdateMap);
   }
 
   updateLastCommentUpdateKey(){
@@ -4665,22 +4640,22 @@ export class FeedService {
   }
 
   updateLastPostUpdate(key: string, nodeId: string, channelId: number, updatedAt: number){
-    if (lastPostUpdateMap[key] == undefined){
-      lastPostUpdateMap[key] = {
-        nodeId: nodeId,
-        channelId: channelId,
-        time:updatedAt + 1
-      }
-    }else{
-      let oldTime = lastPostUpdateMap[key].time || 0;
-      if (oldTime > updatedAt){
-        return ;
-      }
+    // if (lastPostUpdateMap[key] == undefined){
+    //   lastPostUpdateMap[key] = {
+    //     nodeId: nodeId,
+    //     channelId: channelId,
+    //     time:updatedAt + 1
+    //   }
+    // }else{
+    //   let oldTime = lastPostUpdateMap[key].time || 0;
+    //   if (oldTime > updatedAt){
+    //     return ;
+    //   }
 
-      lastPostUpdateMap[key].time = updatedAt + 1;
-    }
+    //   lastPostUpdateMap[key].time = updatedAt + 1;
+    // }
 
-    this.storeService.set(FeedsData.PersistenceKey.lastPostUpdateMap, lastPostUpdateMap);
+    // this.storeService.set(FeedsData.PersistenceKey.lastPostUpdateMap, lastPostUpdateMap);
   }
 
   updateLastSubscribedFeedsUpdate(nodeId: string, updatedAt: number){
@@ -5222,7 +5197,7 @@ export class FeedService {
     this.dataHelper.initServersConnectionStatus()
     this.dataHelper.initLikeMap();
     this.dataHelper.initLikedCommentMap();
-    lastPostUpdateMap = {};
+    this.dataHelper.initLastPostUpdateMap();
 
     this.dataHelper.initBindingServer();
     bindingServerCache = null;

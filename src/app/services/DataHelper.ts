@@ -727,10 +727,10 @@ export class DataHelper {
         this.saveData(FeedsData.PersistenceKey.lastPostUpdateMap, this.lastPostUpdateMap);
     }
 
-    getLastPostUpdateMap(): Promise<{[nodeChannelId:string]: FeedsData.PostUpdateTime}>{
+    loadLastPostUpdateMap(): Promise<{[nodeChannelId:string]: FeedsData.PostUpdateTime}>{
         return new Promise(async (resolve, reject) =>{
             try {
-                if (this.lastPostUpdateMap == {}){
+                if (JSON.stringify(this.lastPostUpdateMap) == "{}"){
                     this.lastPostUpdateMap = await this.loadData(FeedsData.PersistenceKey.lastPostUpdateMap) || {};
                     resolve(this.lastPostUpdateMap);
                     return ;
@@ -740,6 +740,34 @@ export class DataHelper {
                 reject(error);
             }
         });
+    }
+
+    getLastPostUpdate(key: string): FeedsData.PostUpdateTime{
+        if (this.lastPostUpdateMap == null || this.lastPostUpdateMap == undefined)
+            this.lastPostUpdateMap = {};
+        return this.lastPostUpdateMap[key];
+    }
+
+    getLastPostUpdateTime(key: string): number{
+        let lastPostUpdate = this.getLastPostUpdate(key) || null;
+        let lastPostTime = lastPostUpdate["time"] || 0;
+        return lastPostTime;
+    }
+
+    updateLastPostUpdate(){
+
+    }
+
+    deleteLastPostUpdate(key: string){
+        if (this.lastPostUpdateMap == null || this.lastPostUpdateMap == undefined)
+            this.lastPostUpdateMap = {};
+        this.lastPostUpdateMap[key] = null;
+        delete this.lastPostUpdateMap[key];
+        this.saveData(FeedsData.PersistenceKey.lastPostUpdateMap, this.lastPostUpdateMap);
+    }
+
+    initLastPostUpdateMap(){
+        this.lastPostUpdateMap = {};
     }
 
     ////unreadMap
@@ -1090,7 +1118,7 @@ export class DataHelper {
     initLocalCredential(){
         this.localCredential = "";
     }
-    
+
     ////cachedPost
     setCachedPost(cachedPost: {[key:string]:FeedsData.Post}){
         this.cachedPost = cachedPost;
