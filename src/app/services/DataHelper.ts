@@ -1277,12 +1277,16 @@ export class DataHelper {
         }
     }
 
-    getSyncCommentLastUpdateTime(key: string): number{
+    getSyncCommentStatus(key: string):FeedsData.SyncCommentStatus{
         if (this.syncCommentStatusMap == null || this.syncCommentStatusMap == undefined)
             this.syncCommentStatusMap = {};
-        if (this.syncCommentStatusMap[key] == null || this.syncCommentStatusMap[key] == undefined)
+        return this.syncCommentStatusMap[key];
+    }
+    getSyncCommentLastUpdateTime(key: string): number{
+        let syncCommentStatus = this.getSyncCommentStatus(key);
+        if (syncCommentStatus == null || syncCommentStatus == undefined)
             return 0;
-        return this.syncCommentStatusMap[key].lastUpdate || 0;
+        return syncCommentStatus.lastUpdate || 0;
     }
 
     updateSyncCommentStatus(key: string, syncCommentStatus: FeedsData.SyncCommentStatus){
@@ -1298,6 +1302,65 @@ export class DataHelper {
         if (this.syncCommentStatusMap[key] == null || this.syncCommentStatusMap[key] == undefined)
             return false;
         return this.syncCommentStatusMap[key].isSyncFinish || false;
+    }
+
+    ////syncPostStatusMap
+    setSyncPostStatusMap(syncPostStatusMap: {[nodeChannelId: string]: FeedsData.SyncPostStatus}){
+        this.syncPostStatusMap = syncPostStatusMap;
+        this.saveData(FeedsData.PersistenceKey.syncPostStatusMap, this.syncPostStatusMap);
+    }
+
+    loadSyncPostStatusMap(): Promise<{[nodeChannelId: string]: FeedsData.SyncPostStatus}>{
+        return new Promise(async (resolve, reject) =>{
+            try {
+                if (JSON.stringify(this.syncPostStatusMap) == "{}"){
+                    this.syncPostStatusMap = await this.loadData(FeedsData.PersistenceKey.syncPostStatusMap) || {};
+                    resolve(this.syncPostStatusMap);
+                    return ;
+                }
+                resolve(this.syncPostStatusMap);
+            } catch (error) {
+                reject(error);
+            }
+        });
+    }
+
+    generateSyncPostStatus(nodeId: string, feedId: number, isSyncFinish: boolean, lastUpdate: number): FeedsData.SyncPostStatus{
+        return {
+            nodeId        : nodeId,
+            feedsId       : feedId,
+            isSyncFinish  : isSyncFinish,
+            lastUpdate    : lastUpdate
+        }
+    }
+
+    getSyncPostStatus(key: string): FeedsData.SyncPostStatus{
+        if (this.syncPostStatusMap == null || this.syncPostStatusMap == undefined)
+            this.syncPostStatusMap = {};
+        return this.syncPostStatusMap[key];
+    }
+
+    getSyncPostStatusLastUpdateTime(key: string): number{
+        let syncPostStatus = this.getSyncPostStatus(key) || null;
+        if (syncPostStatus == null || syncPostStatus == undefined){
+            return 0;
+        }
+        return syncPostStatus.lastUpdate || 0;
+    }
+
+    updateSyncPostStatus(key: string, syncPostStatus: FeedsData.SyncPostStatus){
+        if (this.syncPostStatusMap == null || this.syncPostStatusMap == undefined)
+            this.syncPostStatusMap = {};
+        this.syncPostStatusMap[key] = syncPostStatus ;
+        this.saveData(FeedsData.PersistenceKey.syncPostStatusMap, this.syncPostStatusMap);
+    }
+
+    isSyncPostFinish(key: string){
+        if (this.syncPostStatusMap == null || this.syncPostStatusMap == undefined)
+            this.syncPostStatusMap = {};
+        if (this.syncPostStatusMap[key] == null || this.syncPostStatusMap[key] == undefined)
+            return false;
+        return this.syncPostStatusMap[key].isSyncFinish || false;
     }
 
     ////cachedPost
