@@ -325,8 +325,8 @@ export class SearchPage implements OnInit {
       this.popover.dismiss();
       let nodeId = that.curAddingItem["nodeId"];
       let feedId = that.curAddingItem["feedId"];
-      that.feedService.continueAddFeeds(nodeId, feedId);
-      //that.feedService.promptpublishdid();
+      let carrierAddress: string = that.curAddingItem["carrierAddress"];
+      that.feedService.continueAddFeeds(nodeId, feedId, carrierAddress);
     }
   }
 

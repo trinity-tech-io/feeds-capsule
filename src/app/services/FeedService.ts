@@ -4892,8 +4892,8 @@ export class FeedService {
     return this.addFeedService.removeTobeAddedFeedStatusByNodeFeedId(nodeId, feedId);
   }
 
-  continueAddFeeds(nodeId: string, feedId: number){
-    //TODO
+  continueAddFeeds(nodeId: string, feedId: number, carrierAddress: string){
+    this.addFeedService.addFriends(nodeId, carrierAddress);
   }
 
   checkValueValid(value: string): boolean{
