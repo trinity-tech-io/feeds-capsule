@@ -101,6 +101,12 @@ export class FeedsPage implements OnInit {
       return ;
     }
 
+    let nodeId = bindingServer["nodeId"];
+    if(this.checkServerStatus(nodeId) != 0){
+      this.native.toastWarn('common.connectionError1');
+      return;
+    }
+
 
     if (!this.feedService.checkBindingServerVersion(()=>{
       this.feedService.hideAlertPopover();
@@ -121,11 +127,6 @@ export class FeedsPage implements OnInit {
       }
       this.feedService.setCurrentFeed(currentFeed);
       this.storageService.set("feeds.currentFeed",JSON.stringify(currentFeed));
-    }
-    let nodeId = this.feedService.getMyChannelList()[0]["nodeId"];
-    if(this.checkServerStatus(nodeId) != 0){
-      this.native.toastWarn('common.connectionError1');
-      return;
     }
     this.native.navigateForward(["createnewpost"],"");
   }
