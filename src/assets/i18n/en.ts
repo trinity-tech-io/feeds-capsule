@@ -305,7 +305,6 @@ export const en = {
         "feedsSourceQRCode": "Publisher Account QRCode",
         // "error": "Resolve DID document error",
         "public": "Private",
-        "unpublic": "Unpublic",
         "des": "Add my Feeds Publisher Account!",
         "replyingto": "Replying to",
         "containedfeeds": "Contained Feeds",
