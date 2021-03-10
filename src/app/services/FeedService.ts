@@ -30,9 +30,7 @@ let newCommentVersion: number = 10400;
 let newMultiPropCountVersion: number = 10500
 
 let bindingServerCache: FeedsData.Server;
-
 let cacheBindingAddress: string = "";
-
 let cachedPost:{[key:string]:FeedsData.Post} = {};
 
 export class DidData{
@@ -79,7 +77,6 @@ export class FeedService {
   public currentLang:string ="";
   public curtab:string ="home";
   public channelInfo:any ={};
-  // public postMap: {[ncpId: string]: FeedsData.Post};
   private nonce = "";
   private realm = "";
   private serviceNonce = "";
@@ -98,7 +95,6 @@ export class FeedService {
   private declareOwnerTimeout: NodeJS.Timer;
   private declareOwnerInterval: NodeJS.Timer;
   private isDeclareFinish: boolean = false;
-  private lastSubscribedFeedsUpdateMap:{[nodeId:string]: FeedsData.FeedUpdateTime};
   private lastMultiLikesAndCommentsCountUpdateMap:{[key: string]: FeedsData.LikesAndCommentsCountUpdateTime};
   private lastMultiLikesAndCommentsCountUpdateMapCache:{[key: string]: FeedsData.LikesAndCommentsCountUpdateTime};
 
@@ -232,19 +228,7 @@ export class FeedService {
   }
 
   loadLastSubscribedFeedUpdateMap(){
-    return new Promise((resolve, reject) =>{
-      let lastSubscribedFeedUpdate = this.lastSubscribedFeedsUpdateMap || "";
-      if( lastSubscribedFeedUpdate == ""){
-        this.storeService.get(FeedsData.PersistenceKey.lastSubscribedFeedsUpdateMap).then((mLastSubscribedFeedsUpdate)=>{
-          this.lastSubscribedFeedsUpdateMap = mLastSubscribedFeedsUpdate || {};
-          resolve(mLastSubscribedFeedsUpdate);
-        }).catch((error)=>{
-          reject(error);
-        });
-      }else{
-          resolve(lastSubscribedFeedUpdate);
-      }
-    });
+    return this.dataHelper.loadLastSubscribedFeedsUpdateMap();
   }
 
   loadSyncCommentStatusMap(){
@@ -305,10 +289,6 @@ export class FeedService {
   initData(){
     this.storeService.get(FeedsData.PersistenceKey.lastMultiLikesAndCommentsCountUpdateMap).then((mLastMultiLikesAndCommentsCountUpdateMap) =>{
       this.lastMultiLikesAndCommentsCountUpdateMap = mLastMultiLikesAndCommentsCountUpdateMap || {};
-    });
-
-    this.storeService.get(FeedsData.PersistenceKey.lastSubscribedFeedsUpdateMap).then((mLastSubscribedFeedsUpdateMap)=>{
-      this.lastSubscribedFeedsUpdateMap = mLastSubscribedFeedsUpdateMap;
     });
 
     this.storeService.get(FeedsData.PersistenceKey.syncCommentStatusMap).then((mSyncCommentStatusMap)=>{
@@ -2625,11 +2605,7 @@ export class FeedService {
 
   updateSubscribedFeedsWithTime(nodeId: string){
     let lastSubscribedFeedsTime: number = 0;
-
-    let mLastSubscribedFeedUpdateMap = this.lastSubscribedFeedsUpdateMap || "";
-    let update = mLastSubscribedFeedUpdateMap[nodeId] || "";
-    lastSubscribedFeedsTime = update["time"] || 0;
-
+    lastSubscribedFeedsTime = this.dataHelper.getLastSubscribedFeedsUpdateTime(nodeId);
     this.getSubscribedChannels(nodeId,Communication.field.last_update, 0, lastSubscribedFeedsTime,0);
   }
 
@@ -4619,20 +4595,20 @@ export class FeedService {
   }
 
   updateLastSubscribedFeedsUpdate(nodeId: string, updatedAt: number){
-    if (this.lastSubscribedFeedsUpdateMap[nodeId] == undefined){
-      this.lastSubscribedFeedsUpdateMap[nodeId] = {
+    let lastSubscribedFeedUpdate = this.dataHelper.getLastSubscribedFeedsUpdate(nodeId);
+    if (lastSubscribedFeedUpdate == null || lastSubscribedFeedUpdate == undefined){
+      lastSubscribedFeedUpdate = {
         nodeId: nodeId,
         time: updatedAt + 1
       }
     } else{
-      let oldTime = this.lastSubscribedFeedsUpdateMap[nodeId].time || 0;
+      let oldTime = this.dataHelper.getLastSubscribedFeedsUpdateTime(nodeId) || 0;
       if (oldTime > updatedAt){
         return ;
       }
-      this.lastSubscribedFeedsUpdateMap[nodeId].time = updatedAt + 1;
+      lastSubscribedFeedUpdate.time = updatedAt + 1;
     }
-
-    this.storeService.set(FeedsData.PersistenceKey.lastSubscribedFeedsUpdateMap, this.lastSubscribedFeedsUpdateMap);
+    this.dataHelper.updateLastSubscribedFeedsUpdate(nodeId, lastSubscribedFeedUpdate);
   }
 
   updateLastCommentUpdate(key: string, nodeId: string, channelId: number, postId: number, updatedAt: number){
@@ -5186,7 +5162,7 @@ export class FeedService {
     this.declareOwnerInterval = null;
     this.isDeclareFinish = false;
 
-    this.lastSubscribedFeedsUpdateMap = {};
+    this.dataHelper.initLastSubscribedFeedsUpdateMap();
     this.dataHelper.initLastCommentUpdateMap();
     this.lastMultiLikesAndCommentsCountUpdateMap = {};
     this.lastMultiLikesAndCommentsCountUpdateMapCache = {};
