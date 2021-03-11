@@ -191,9 +191,9 @@ export class ProfilePage implements OnInit {
     this.description = signInData["description"] || "";
 
 
-    this.events.subscribe(FeedsEvent.PublishType.refreshSubscribedChannels, list => {
+    this.events.subscribe(FeedsEvent.PublishType.refreshSubscribedChannels, () => {
       this.zone.run(() => {
-        this.followingList = list;
+        this.followingList = this.feedService.getFollowedChannelList();
         this.initnodeStatus(this.followingList);
       });
     });
