@@ -257,6 +257,8 @@ export class DataHelper {
     
           let nodeChannelId = this.getKey(this.postMap[keys[index]].nodeId, this.postMap[keys[index]].channel_id, 0, 0);
           let feed = this.getChannel(nodeChannelId);
+          if (feed == null || feed == undefined)
+            continue;
           if (feed.isSubscribed)
             list.push(this.postMap[keys[index]]);
         }
@@ -330,13 +332,27 @@ export class DataHelper {
     }
 
     deleteComment(nodeId: string, feedId: number, postId: number, commentId: number){
-        this.commentsMap[nodeId][feedId][postId][commentId] = undefined;
+        if (this.commentsMap == null || this.commentsMap == undefined)
+            this.commentsMap = {};
+        if (this.commentsMap[nodeId] == null || this.commentsMap[nodeId] == undefined)
+            this.commentsMap[nodeId] = {};
+        if (this.commentsMap[nodeId][feedId] == null || this.commentsMap[nodeId][feedId] == undefined)
+            this.commentsMap[nodeId][feedId] = {};
+        if (this.commentsMap[nodeId][feedId][postId] == null || this.commentsMap[nodeId][feedId][postId] == undefined)
+            this.commentsMap[nodeId][feedId][postId] = {};
+        this.commentsMap[nodeId][feedId][postId][commentId] = null;
         delete this.commentsMap[nodeId][feedId][postId][commentId];
         this.saveData(FeedsData.PersistenceKey.commentsMap, this.commentsMap);
     }
 
     deleteCommentFromPost(nodeId: string, feedId: number, postId: number){
-        this.commentsMap[nodeId][feedId][postId] = undefined;
+        if (this.commentsMap == null || this.commentsMap == undefined)
+            this.commentsMap = {};
+        if (this.commentsMap[nodeId] == null || this.commentsMap[nodeId] == undefined)
+            this.commentsMap[nodeId] = {};
+        if (this.commentsMap[nodeId][feedId] == null || this.commentsMap[nodeId][feedId] == undefined)
+            this.commentsMap[nodeId][feedId] = {};
+        this.commentsMap[nodeId][feedId][postId] = null;
         delete this.commentsMap[nodeId][feedId][postId];
         this.saveData(FeedsData.PersistenceKey.commentsMap, this.commentsMap);
     }
@@ -1107,7 +1123,7 @@ export class DataHelper {
         return new Promise(async (resolve, reject) =>{
             try {
                 if (this.bindingServer == null){
-                    this.bindingServer = await this.loadData(FeedsData.PersistenceKey.bindingServer) || {};
+                    this.bindingServer = await this.loadData(FeedsData.PersistenceKey.bindingServer) || null;
                     resolve(this.bindingServer);
                     return ;
                 }
