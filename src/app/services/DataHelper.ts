@@ -82,7 +82,6 @@ export class DataHelper {
         let list: FeedsData.Channels[] = [];
         let map = this.getChannelsMap();
         let keys: string[] = Object.keys(map) || [];
-    
         for (let index = 0; index < keys.length; index++) {
             const feed = this.getChannel(keys[index]);
             if (feed == null || feed == undefined)

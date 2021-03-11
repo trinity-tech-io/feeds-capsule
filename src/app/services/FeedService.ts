@@ -322,7 +322,6 @@ export class FeedService {
 
   getFollowedChannelList():FeedsData.Channels[]{
     let list = this.dataHelper.getSubscribedFeedsList();
-
     let sortArr = [];
 
     sortArr = _.sortBy(list,(item:any)=> {
