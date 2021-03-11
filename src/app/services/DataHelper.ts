@@ -448,7 +448,7 @@ export class DataHelper {
         if (this.serverMap == null || this.serverMap == undefined)
             this.serverMap = {};
         this.serverMap[nodeId] = server;
-        this.saveData(nodeId, server);
+        this.saveData(FeedsData.PersistenceKey.serverMap, this.serverMap);
     }
 
     getServer(nodeId: string): FeedsData.Server{

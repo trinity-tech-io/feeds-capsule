@@ -432,15 +432,15 @@ export class FeedService {
   }
 
   resolveServer(server: FeedsData.Server, status: FeedsData.ConnState){
-    if(status == null){
-      status = FeedsData.ConnState.disconnected;
-    }
-    let originServerStatus = this.dataHelper.getServerStatus(server.nodeId);
-    originServerStatus.status = status;
-    this.dataHelper.updateServerStatus(server.nodeId, originServerStatus);    
+    // if(status == null){
+    //   status = FeedsData.ConnState.disconnected;
+    // }
+    // let originServerStatus = this.dataHelper.getServerStatus(server.nodeId);
+    // originServerStatus.status = status;
+    // this.dataHelper.updateServerStatus(server.nodeId, originServerStatus);    
 
-    this.dataHelper.generateEmptyStatistics(server.nodeId)
-
+    let serverStatistic = this.dataHelper.generateEmptyStatistics(server.did);
+    this.dataHelper.updateServerStatistics(server.nodeId, serverStatistic);
     this.dataHelper.updateServer(server.nodeId, server)
     eventBus.publish(FeedsEvent.PublishType.updateServerList, this.getServerList(), Date.now());
   }

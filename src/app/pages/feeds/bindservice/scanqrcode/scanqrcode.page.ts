@@ -119,20 +119,17 @@ export class ScanqrcodePage implements OnInit {
         this.native.toast(errMsg);
         return;
       }
-
       this.carrier.addFriend(address, "hi",
         () => {
           this.zone.run(() => {
               let feedUrl = "-1";
               if (nonce == undefined) nonce = "";
               if (nonce == "0") feedUrl = this.scanContent;
-
               this.native.navigateForward(['/bindservice/startbinding/',nodeId, nonce, address, did, feedUrl],{
                 replaceUrl: true
               });
           });
         }, (err) => {
-
         });
       },
       (error) => {
