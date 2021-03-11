@@ -121,7 +121,6 @@ export class DataHelper {
         if (!this.channelsMap){
             return null;
         }
-        
         return this.channelsMap[key]||null;
     }
 
@@ -150,20 +149,17 @@ export class DataHelper {
     getChannelsList():FeedsData.Channels[]{
         let list: FeedsData.Channels[] = [];
         let keys: string[] = Object.keys(this.channelsMap);
-    
         for (let index in keys) {
-          let item = this.getChannel[keys[index]] || "";
-          if (item == "")
+          let item = this.getChannel(keys[index]);
+          if (item == null || item == undefined)
             continue;
-          list.push(this.getChannel[keys[index]]);
+          list.push(item);
         }
-    
         let sortArr = [];
     
         sortArr = _.sortBy(list,(item:any)=> {
           return - Number(item.last_update);
         });
-    
         return sortArr;
     }
 
