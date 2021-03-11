@@ -382,9 +382,9 @@ checkValid(result: string){
       if(result["code"] === 200){
          this.totalNum = result["data"]["total"];
          let arr = result["data"]["result"] || [];
-         let discoverSquareList = this.discoverSquareList.concat(arr);
-         this.httpAllData = _.cloneDeep(discoverSquareList);
          this.handleCache(arr);
+         let discoverSquareList = this.feedService.getDiscoverfeeds();
+         this.httpAllData = _.cloneDeep(discoverSquareList);
          this.discoverSquareList = this.filterdiscoverSquareList(discoverSquareList);
       }
       if(this.pageNum*this.pageSize>=this.totalNum){
@@ -412,6 +412,7 @@ checkValid(result: string){
          this.totalNum = result["data"]["total"];
          let discoverSquareList = result["data"]["result"] || [];
          this.handleCache(discoverSquareList);
+         discoverSquareList = this.feedService.getDiscoverfeeds();
          this.httpAllData = _.cloneDeep(discoverSquareList);
          this.discoverSquareList = this.filterdiscoverSquareList(discoverSquareList);
          this.searchSquareList =_.cloneDeep(this.discoverSquareList);
