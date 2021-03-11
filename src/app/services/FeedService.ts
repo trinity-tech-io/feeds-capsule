@@ -3029,6 +3029,8 @@ export class FeedService {
   checkLikesAndCommentsCount(nodeId: string, channelId: number, postId: number, likesCount: number, commentsCount: number){
     let key = this.getPostId(nodeId, channelId, postId);
     let originPost = this.dataHelper.getPost(key);
+    if (originPost == null || originPost == undefined)
+      return;
     let isChanged = false ;
     if (originPost.likes != likesCount){
       originPost.likes = likesCount;

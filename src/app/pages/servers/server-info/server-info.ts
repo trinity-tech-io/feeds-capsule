@@ -86,12 +86,12 @@ export class ServerInfoPage implements OnInit {
     this.developerMode = this.feedService.getDeveloperMode();
       let server: any;
       this.bindingServer = this.feedService.getBindingServer() || null;
-
       if (this.bindingServer !== null) {
         this.nodeId = this.bindingServer.nodeId;
         server = this.feedService.getServerbyNodeId(this.nodeId) || null;
         this.isBindServer = true;
         this.isShowQrcode = false;
+
         this.feedService.checkDIDOnSideChain(server.did,(isOnSideChain)=>{
           this.zone.run(() => {
             this.isShowQrcode = isOnSideChain;
@@ -101,7 +101,6 @@ export class ServerInfoPage implements OnInit {
           });
         });
       }
-
       this.serverStatus = this.feedService.getServerStatusFromId(this.nodeId);
       this.clientNumber = this.feedService.getServerStatisticsNumber(this.nodeId);
 
