@@ -15,7 +15,7 @@ export class FileService {
                     resolve(dirEntry);
                 },
                 (error: CordovaFilePlugin.FileError)=>{
-                    this.logUtils.loge("resolveLocalFileSystemURL error "+JSON.stringify(error),TAG);
+                    this.logUtils.loge("Rresolve localFileSystemURL error "+JSON.stringify(error),TAG);
                     reject(error);
                 }
             );
@@ -30,7 +30,7 @@ export class FileService {
                     resolve(entries);
                 },
                 (error: CordovaFilePlugin.FileError)=>{
-                this.logUtils.loge("listFiles error "+JSON.stringify(error),TAG);
+                this.logUtils.loge("List files error "+JSON.stringify(error),TAG);
                     reject(error);
                 }
             );
@@ -48,7 +48,7 @@ export class FileService {
                     resolve(subDirEntry);
                 },
                 (error)=>{
-                    this.logUtils.loge("getDirectory error "+JSON.stringify(error),TAG);
+                    this.logUtils.logd("Get directory error "+JSON.stringify(error),TAG);
                     reject(error);
                 }
             );
@@ -66,7 +66,7 @@ export class FileService {
                     resolve(fileEntry);
                 },
                 (error)=>{
-                    this.logUtils.loge("getFile error "+JSON.stringify(error),TAG);
+                    this.logUtils.loge("Get file error "+JSON.stringify(error),TAG);
                     reject(error);
                 }
             );
@@ -81,7 +81,7 @@ export class FileService {
                     resolve(entry);
                 },
                 (error)=>{
-                    this.logUtils.loge("moveTo error "+JSON.stringify(error),TAG);
+                    this.logUtils.loge("Moving file error "+JSON.stringify(error),TAG);
                     reject(error);
                 }
             );

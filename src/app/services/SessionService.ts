@@ -108,12 +108,12 @@ export class SessionService {
                 {
                     onStateChanged: function(event: any) {
                         if (workedSessions[nodeId] == undefined){
-                            mLogUtils.logd(nodeId + "> current session is closed",TAG);
+                            mLogUtils.logd("Session was closed, nodeId is "+nodeId,TAG);
                             return ;
                         }
 
                         if (event == undefined){
-                            mLogUtils.logd(nodeId + "> onStateChanged event undefine",TAG);
+                            mLogUtils.logd("Session state change to unknow, nodeId is "+nodeId,TAG);
                             workedSessions[nodeId].StreamState = FeedsData.StreamState.UNKNOW
                         }else{
                             workedSessions[nodeId].StreamState = event.state
@@ -130,7 +130,7 @@ export class SessionService {
                             "failed",
                             "unknow"
                         ];
-                        mLogUtils.logd(nodeId + "> stream [" + event.stream.id + "] state change to "+state_name[workedSessions[nodeId].StreamState],TAG);
+                        mLogUtils.logd("Session stream [" + event.stream.id + "] state change to "+state_name[workedSessions[nodeId].StreamState]+" nodeId is "+nodeId,TAG);
                         eventBus.publish(FeedsEvent.PublishType.streamOnStateChangedCallback, nodeId, workedSessions[nodeId].StreamState);
 
                         if (workedSessions[nodeId] != undefined && FeedsData.StreamState.INITIALIZED == workedSessions[nodeId].StreamState){
@@ -144,29 +144,29 @@ export class SessionService {
 
                             }, sessionConnectionTimeOut);
 
-                            mLogUtils.logd(nodeId + "> start session request",TAG);
+                            mLogUtils.logd("Prepare send session request to the friend, nodeId is "+nodeId,TAG);
                             mCarrierService.sessionRequest(
                                 mSession,
                                 function (event:any){
                                     let sdp = event.sdp;
                                     workedSessions[nodeId].sdp = sdp;
-                                    mLogUtils.logd(nodeId + "> sessionRequest sdp = "+sdp,TAG);
+                                    mLogUtils.logd("Receive the session response, nodeId is "+ nodeId +", sdp is "+sdp,TAG);
                                     if (workedSessions[nodeId] != undefined && workedSessions[nodeId].StreamState == FeedsData.StreamState.TRANSPORT_READY){
                                         sessionStart(nodeId, mSession, sdp);
                                     }
                                 },
                                 ()=>{
-                                    mLogUtils.logd(nodeId + "> sessionRequest success",TAG);
+                                    mLogUtils.logd("Session request success, nodeId is "+nodeId,TAG);
                                 },(err)=>{
                                     publishError(nodeId, createSessionRequestError());
-                                    mLogUtils.loge(nodeId + "> sessionRequest error "+JSON.stringify(err),TAG);
+                                    mLogUtils.loge("Session request error, nodeId is "+ nodeId + " error msg is "+JSON.stringify(err),TAG);
                                 }
                               );
                         }
 
                         if (workedSessions[nodeId] != undefined && FeedsData.StreamState.TRANSPORT_READY == workedSessions[nodeId].StreamState){
                             let sdp = workedSessions[nodeId].sdp;
-                            mLogUtils.logd(nodeId + "> transport ready sdp = "+sdp,TAG);
+                            mLogUtils.logd("Get ready to execute 'start session', nodeId is "+nodeId + " transport ready, sdp is "+sdp,TAG);
                             if (sdp != ""){
                               sessionStart(nodeId, mSession, sdp);
                             }
@@ -187,7 +187,7 @@ export class SessionService {
 
                     onStreamData: function(event: any) {
                         let tmpData: Uint8Array = event.data;
-                        mLogUtils.logd(nodeId + "> onStreamData length "+tmpData.length,TAG);
+                        mLogUtils.logd("Receive stream data callback, nodeId is"+nodeId + "data length is"+tmpData.length,TAG);
                         if (cacheData[nodeId] == undefined){
                             cacheData[nodeId] = {
                                 nodeId          : nodeId,
@@ -220,17 +220,17 @@ export class SessionService {
                     workedSessions[nodeId].stream = mStream;
                     workedSessions[nodeId].session = mSession;
                     onSuccess(mSession,mStream);
-                    mLogUtils.logd(nodeId + "> addStream success ",TAG);
+                    mLogUtils.logd("Excute 'addStream' success, nodeId is "+nodeId, TAG);
                 },(err) => {
                     onError(err);
                     publishError(nodeId, createAddStreamError());
-                    mLogUtils.loge(nodeId + "> addStream error "+JSON.stringify(err),TAG);
+                    mLogUtils.loge("Excute 'addStream' error, nodeId is "+nodeId + " error msg is "+JSON.stringify(err),TAG);
                 }
             );
             },(err)=>{
                 onError(err);
                 publishError(nodeId, createNewSessionError());
-                mLogUtils.loge(nodeId + "> newSession error "+JSON.stringify(err),TAG);
+                mLogUtils.loge("Excute 'newSession' error, nodeId is"+ nodeId + " error msg is"+JSON.stringify(err),TAG);
             }
         );
     }
@@ -282,7 +282,7 @@ export class SessionService {
             memo: ""
         };
         requestQueue.push(requestBean);
-        mLogUtils.logd(nodeId + "> session request param = "+JSON.stringify(request),TAG);
+        mLogUtils.logd("Generate request params, nodeId is"+nodeId + " params is "+JSON.stringify(request),TAG);
         cacheData[nodeId] = {
             nodeId          : nodeId,
             data            : new Uint8Array(0),
@@ -341,7 +341,7 @@ export class SessionService {
         if (workedSessions == null ||
             workedSessions == undefined ||
             workedSessions[nodeId] == undefined){
-            mLogUtils.logd(nodeId + "> stream null = ",TAG);
+            mLogUtils.loge("Excute 'add data' error , session changed to null , nodeId is"+ nodeId, TAG);
             return ;
         }
 
@@ -355,10 +355,10 @@ export class SessionService {
         }
 
         stream.write(base64,(bytesSent)=>{
-            mLogUtils.logd(nodeId + "> stream write "+base64.length,TAG);
+            mLogUtils.logd("Write data to "+nodeId + ", data length is "+base64.length,TAG);
         },(err)=>{
             publishError(nodeId, createWriteDataError());
-            mLogUtils.logd(nodeId + "> stream write error "+JSON.stringify(err),TAG);
+            mLogUtils.loge("Write date to "+ nodeId + " error "+JSON.stringify(err),TAG);
         });
     }
 
@@ -375,7 +375,7 @@ export class SessionService {
         if(session === ""){
             return;
         }
-        mLogUtils.logd(nodeId + "> close session",TAG);
+        mLogUtils.logd("Close session , nodeId is "+ nodeId,TAG);
         this.carrierService.sessionClose(workedSessions[nodeId].session,
             ()=>{
                 workedSessions[nodeId] = undefined;
@@ -386,7 +386,7 @@ export class SessionService {
 
                 cacheData[nodeId] = undefined;
                 delete cacheData[nodeId];
-                mLogUtils.logd(nodeId + "> close session success",TAG);
+                mLogUtils.logd("Close session success, nodeId is "+ nodeId, TAG);
             }
         );
     }
@@ -463,7 +463,7 @@ function encodeNum(data: number, size: number): Uint8Array{
     }else if (size === 8){
         return parseInt64(data);
     }else {
-        mLogUtils.loge("Size error.",TAG);
+        mLogUtils.loge("Encode number size error, data size is "+size,TAG);
         return null;
     }
 }
@@ -581,7 +581,7 @@ function decodeBodyData(nodeId: string): boolean{
     let key = cacheData[nodeId].key;
     if (cacheData[nodeId].method == "get_binary" ){
         mStorageService.set(key,value).then(()=>{
-            mLogUtils.logd(nodeId +" > getBinarySuccess key ="+key, TAG);
+            mLogUtils.logd("Decode body data and save to storage success, nodeId is "+ nodeId +", data key is "+key, TAG);
             eventBus.publish(FeedsEvent.PublishType.streamGetBinarySuccess, nodeId, key, value);
         });
     }
@@ -615,13 +615,13 @@ function parseResponse(response: any){
     // {"version":"1.0","id":1,"result":{"key":"8afJxa7RTamSrXWxUCcZt8jnAAjAGfx4gmN5ECwq2XSi230"}}
     let version: string = response.version || "";
     if (version == "" || version != "1.0"){
-        mLogUtils.logd("version err", TAG);
+        mLogUtils.loge("Parse response version err, version is"+version, TAG);
         return ;
     }
 
     let id = response.id || "";
     if (id == ""){
-        mLogUtils.logd("id err", TAG);
+        mLogUtils.loge("Parse response id err, id is"+id, TAG);
         return ;
     }
 
@@ -636,7 +636,7 @@ function parseResponse(response: any){
     if (error != ""){
         let code = error.code;
         let message = error.message;
-        mLogUtils.logd(nodeId+"> Error :: code :"+code+", message : "+message, TAG);
+        mLogUtils.loge("Receive error form response, nodeId is "+nodeId+", error code is "+code+", error message is "+message, TAG);
         publishError(nodeId, response.error);
         // return error;
         return ;
@@ -644,19 +644,18 @@ function parseResponse(response: any){
 
     let key = response.result.key || "";
     if (key == ""){
-        mLogUtils.logd("id err", TAG);
+        mLogUtils.logd("Receive error form response, but data key is null", TAG);
         return ;
     }
 
     cacheData[nodeId].key = key;
     if (method == "set_binary"){
-        mLogUtils.logd(nodeId+"> publish streamSetBinaryResponse", TAG);
-        mLogUtils.logd(nodeId+"> publish streamSetBinarySuccess", TAG);
+        mLogUtils.logd("Parse 'set_binary' data finish and publish events, nodeId is "+nodeId, TAG);
         eventBus.publish(FeedsEvent.PublishType.streamSetBinaryResponse, nodeId);
         eventBus.publish(FeedsEvent.PublishType.streamSetBinarySuccess, nodeId);
 
     } else if (method == "get_binary"){
-        mLogUtils.logd(nodeId+"> publish streamGetBinaryResponse", TAG);
+        mLogUtils.logd("Parse 'get_binary' data finish and publish events, nodeId is "+nodeId, TAG);
         eventBus.publish(FeedsEvent.PublishType.streamGetBinaryResponse, nodeId);
     }
 }
@@ -776,7 +775,7 @@ function calculateProgress(nodeId: string){
 }
 
 function publishProgress(nodeId: string, progress: number, method: string, key: string){
-    mLogUtils.logd(nodeId+"> publish progress "+progress, TAG);
+    mLogUtils.logd("Publish stream process progress, nodeId is "+nodeId+", progress is "+progress, TAG);
     eventBus.publish(FeedsEvent.PublishType.streamProgress, nodeId, progress, method, key);
 }
 
@@ -839,7 +838,7 @@ function decodeData(nodeId: string){
 
 function checkBody(nodeId: string, data: Uint8Array){
     if (cacheData[nodeId].bodySize == 0){
-        mLogUtils.logd("no body",TAG);
+        mLogUtils.logd("Body size is 0",TAG);
         return ;
     }
 
@@ -868,7 +867,7 @@ function checkBody(nodeId: string, data: Uint8Array){
         let key = cacheData[nodeId].key;
         if (cacheData[nodeId].method == "get_binary" ){
             mStorageService.set(key,value).then(()=>{
-                mLogUtils.logd(nodeId+"> publish streamGetBinarySuccess", TAG);
+                mLogUtils.logd("Publish 'streamGetBinarySuccess' event, nodeId is "+nodeId, TAG);
                 eventBus.publish(FeedsEvent.PublishType.streamGetBinarySuccess, nodeId, key, value);
             });
         }
@@ -881,11 +880,11 @@ function checkBody(nodeId: string, data: Uint8Array){
 }
 
 function sessionStart(nodeId: string, mSession:CarrierPlugin.Session, sdp: string){
-    mLogUtils.logd(nodeId + "> start session",TAG);
+    mLogUtils.logd("Start session , nodeId is "+ nodeId,TAG);
     mCarrierService.sessionStart(mSession, sdp, ()=>{
-            mLogUtils.logd(nodeId + "> start session success",TAG);
+            mLogUtils.logd("Start session success, nodeId is "+nodeId,TAG);
         },(err)=>{
-            mLogUtils.loge(nodeId + "> start session error "+err,TAG);
+            mLogUtils.loge("Start session error , nodeId is "+ nodeId+" error is "+err,TAG);
             publishError(nodeId, createSessionStartError());
         }
     );

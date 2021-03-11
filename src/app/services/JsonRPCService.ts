@@ -49,7 +49,7 @@ export class JsonRPCService {
         eventBus = events;
         this.events.subscribe(FeedsEvent.PublishType.transportReceiveMessage, event => {
             let data = serializeDataService.decodeData(event.message);
-            this.logUtils.logd("receive msg > nodeId = " +event.from +" msg = "+JSON.stringify(data), TAG);
+            this.logUtils.logd("Receive RPC msg , nodeId is " +event.from +" msg is "+JSON.stringify(data), TAG);
             eventBus.publish(FeedsEvent.PublishType.jrpcReceiveMessage, this.response(event.from, data));
         });
     }
@@ -66,7 +66,7 @@ export class JsonRPCService {
         let requestBean = new RequestBean(id,method,params,memo);
         requestQueue.push(requestBean);
         let request = this.assembleJson(id, method, params, memo);
-        this.logUtils.logd("send msg > nodeId = " +nodeId +" request = "+JSON.stringify(request), TAG);
+        this.logUtils.logd("Send RPC msg , nodeId is " +nodeId +" msg is "+JSON.stringify(request), TAG);
         let encodeData = this.serializeDataService.encodeData(request);
         
         this.transportService.sendArrayMessage(

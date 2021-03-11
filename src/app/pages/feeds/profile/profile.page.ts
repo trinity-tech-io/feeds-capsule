@@ -739,7 +739,7 @@ export class ProfilePage implements OnInit {
             }
           }).catch((reason)=>{
             rpostImage.style.display = 'none';
-            this.logUtils.loge("getImageData error:"+JSON.stringify(reason),TAG);
+            this.logUtils.loge("Excute 'handlePsotImg' in profile page is error , get data error, error msg is "+JSON.stringify(reason),TAG);
           })
         }
       }else{
@@ -751,7 +751,7 @@ export class ProfilePage implements OnInit {
       }
     } catch (error) {
       this.isLoadimage[id] = "";
-      this.logUtils.loge("getImageData error:"+JSON.stringify(error),TAG);
+      this.logUtils.loge("Excute 'handlePsotImg' in profile page is error , get image data error, error msg is "+JSON.stringify(error),TAG);
     }
   }
 
@@ -790,7 +790,7 @@ export class ProfilePage implements OnInit {
               }
             }).catch((reason)=>{
               vgplayer.style.display = 'none';
-              this.logUtils.loge("getVideoData error:"+JSON.stringify(reason),TAG);
+              this.logUtils.loge("Excute 'hanldVideo' in profile page is error , get video data error, error msg is "+JSON.stringify(reason),TAG);
             });
         }
       }else{
@@ -806,7 +806,7 @@ export class ProfilePage implements OnInit {
         }
       }
     } catch (error) {
-      this.logUtils.loge("getVideoData error:"+JSON.stringify(error),TAG);
+      this.logUtils.loge("Excute 'hanldVideo' in profile page is error , get data error, error msg is "+JSON.stringify(error),TAG);
     }
   }
 

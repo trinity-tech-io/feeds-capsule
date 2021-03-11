@@ -32,7 +32,6 @@ export class StandardAuthService {
     }
     
     generateAuthPresentationJWT(authChallengeJwttoken: string): Promise<FeedsData.StandardAuthResult> {
-        this.logUtils.logd("Start pro")
         return new Promise(async (resolve, reject)=>{
             this.logUtils.logd("Starting process to generate auth presentation JWT, authChallengeJwttoken is "+authChallengeJwttoken,TAG);
             if (authChallengeJwttoken == null || authChallengeJwttoken == undefined || authChallengeJwttoken == ""){
@@ -41,7 +40,7 @@ export class StandardAuthService {
             
             // Parse, but verify on chain that this JWT is valid first
             let parseResult = await didManager.parseJWT(true, authChallengeJwttoken);
-            this.logUtils.logd("parseJWTResult is"+JSON.stringify(parseResult),TAG);
+            this.logUtils.logd("ParseJWTResult is"+JSON.stringify(parseResult),TAG);
             if (!parseResult.signatureIsValid) {
                 // Could not verify the received JWT as valid - reject the authentication request by returning a null token
                 reject("The received authentication JWT token signature cannot be verified or failed to verify: "+parseResult.errorReason+". Is the back-end DID published? Are you on the right network?");
@@ -71,7 +70,7 @@ export class StandardAuthService {
             this.appIdCredential = await this.getAppIdCredentialFromStorage(this.appIdCredential);
             this.appIdCredential = await this.checkAppIdCredentialStatus(this.appIdCredential);
 
-            this.logUtils.logd("appIdCredential is "+JSON.stringify(this.appIdCredential),TAG);
+            this.logUtils.logd("AppIdCredential is "+JSON.stringify(this.appIdCredential),TAG);
             if (!this.appIdCredential) {
                 this.logUtils.logw("Empty app id credential",TAG);
                 resolve(null);
@@ -113,7 +112,7 @@ export class StandardAuthService {
                     reject("No presentation generated");
                 }
             },(err)=>{
-                this.logUtils.logd("createVerifiablePresentation error:"+JSON.stringify(err),TAG);
+                this.logUtils.logd("CreateVerifiablePresentation error:"+JSON.stringify(err),TAG);
 
             });
         });
@@ -134,14 +133,14 @@ export class StandardAuthService {
                 return "";
             return credential.credentialSubject.name;
         } catch (error) {
-            this.logUtils.loge("Parse local credential error:"+error,TAG);
+            this.logUtils.loge("Parse local credential error "+error,TAG);
         }
     }
 
     appendNameToCredential(vc: DIDPlugin.VerifiableCredential, name: string): Promise<DIDPlugin.VerifiableCredential>{
         return new Promise(async (resolve, reject)=>{
             let vcstring = await vc.toString();
-            this.logUtils.logd("Start append name "+vcstring);
+            this.logUtils.logd("Start append name, vc is "+vcstring);
 
             try {
                 let vcJSON = JSON.parse(vcstring);
@@ -154,7 +153,7 @@ export class StandardAuthService {
                 this.logUtils.logd("Append name to credential "+JSON.stringify(vcJSON));
                 resolve(didManager.VerifiableCredentialBuilder.fromJson(JSON.stringify(vcJSON)));
             } catch (error) {
-                this.logUtils.loge("Append name to credential error:"+error,TAG);
+                this.logUtils.loge("Append name to credential error "+error,TAG);
                 resolve(null);
             }
         });

@@ -815,7 +815,7 @@ export class ChannelsPage implements OnInit {
               }
             }).catch((reason)=>{
               rpostImage.style.display = 'none';
-              this.logUtils.loge("getImageData error:"+JSON.stringify(reason),TAG);
+              this.logUtils.loge("Excute 'handlePsotImg' in feeds page is error , get image data error, error msg is "+JSON.stringify(reason),TAG);
             })
         }
       }else{
@@ -826,7 +826,7 @@ export class ChannelsPage implements OnInit {
         }
       }
     } catch (error) {
-      this.logUtils.loge("getImageData error:"+JSON.stringify(error),TAG);
+      this.logUtils.loge("Excute 'handlePsotImg' in feeds page is error , get image data error, error msg is "+JSON.stringify(error),TAG);
     }
   }
 
@@ -865,7 +865,7 @@ export class ChannelsPage implements OnInit {
               }
             }).catch((reason)=>{
               vgplayer.style.display = 'none';
-              this.logUtils.loge("getVideoData error:"+JSON.stringify(reason),TAG);
+              this.logUtils.loge("Excute 'hanldVideo' in feeds page is error , get video data error, error msg is"+JSON.stringify(reason),TAG);
             });
         }
       }else{
