@@ -219,43 +219,40 @@ export class PostdetailPage implements OnInit {
 
     //if (this.connectionStatus == 0)
       //this.feedService.updateComment(this.nodeId, Number(this.channelId) ,Number(this.postId));
-
     this.events.subscribe(FeedsEvent.PublishType.connectionChanged,(status)=>{
       this.zone.run(() => {
-        this.logUtils.logd(FeedsEvent.PublishType.connectionChanged,TAG);
+        this.logUtils.logd("Received connectionChanged event, Connection change to "+ status,TAG);
         this.connectionStatus = status;
       });
     });
 
-
     this.events.subscribe(FeedsEvent.PublishType.commentDataUpdate,()=>{
       this.zone.run(() => {
-        this.logUtils.logd("received commentDataUpdate event",TAG);
+        this.logUtils.logd("Received commentDataUpdate event",TAG);
         this.startIndex = 0;
         this.initData(true);
       });
     });
 
     this.events.subscribe(FeedsEvent.PublishType.getCommentFinish,(nodeId, channelId, postId)=>{
-      this.logUtils.logd("received getCommentFinish event",TAG);
       this.zone.run(() => {
+        this.logUtils.logd("Received getCommentFinish event, nodeId is "+ nodeId + " channelId is"+channelId+" postId is "+postId,TAG);
         if (nodeId == this.nodeId && channelId == this.channelId && postId == this.postId){
           this.startIndex = 0;
           this.initData(true);
-          //titleBarManager.hideActivityIndicator(TitleBarPlugin.TitleBarActivityType.OTHER);
         }
       });
     });
 
     this.events.subscribe(FeedsEvent.PublishType.friendConnectionChanged, (nodeId, status)=>{
       this.zone.run(()=>{
-        this.logUtils.logd("received friendConnectionChanged event",TAG);
+        this.logUtils.logd("Received friendConnectionChanged event, nodeId is "+nodeId+" friend connetion status is "+status,TAG);
         this.nodeStatus[nodeId] = status;
       });
     });
 
     this.events.subscribe(FeedsEvent.PublishType.updateTitle,()=>{
-      this.logUtils.logd("feeds:updateTitle",TAG);
+      this.logUtils.logd("Received updateTitle event",TAG);
       if(this.menuService.postDetail!=null){
         this.menuService.hideActionSheet();
         this.menuMore();
@@ -265,7 +262,7 @@ export class PostdetailPage implements OnInit {
 
     this.events.subscribe(FeedsEvent.PublishType.refreshPostDetail, ()=>{
       this.zone.run(() => {
-        this.logUtils.logd("receive refreshPostDetail event",TAG);
+        this.logUtils.logd("Received refreshPostDetail event",TAG);
         let post = this.feedService.getPostFromId(this.nodeId, this.channelId, this.postId);
         this.postContent = post.content;
         this.updatedTime = post.updated_at;
@@ -275,47 +272,45 @@ export class PostdetailPage implements OnInit {
     });
 
     this.events.subscribe(FeedsEvent.PublishType.editPostFinish, () => {
-      this.logUtils.logd("receive editPostFinish event",TAG);
+      this.logUtils.logd("Received editPostFinish event",TAG);
       this.initData(true);
     });
 
     this.events.subscribe(FeedsEvent.PublishType.deletePostFinish, () => {
-      this.logUtils.logd("receive deletePostFinish event",TAG);
+      this.logUtils.logd("Received deletePostFinish event",TAG);
       this.events.publish(FeedsEvent.PublishType.updateTab);
       this.native.hideLoading();
       this.initData(true);
     });
 
     this.events.subscribe(FeedsEvent.PublishType.editCommentFinish, () => {
-      this.logUtils.logd("receive editCommentFinish event",TAG);
+      this.logUtils.logd("Received editCommentFinish event",TAG);
       this.initData(false);
     });
 
     this.events.subscribe(FeedsEvent.PublishType.deleteCommentFinish, () => {
-      this.logUtils.logd("receive deleteCommentFinish event",TAG);
+      this.logUtils.logd("Received deleteCommentFinish event",TAG);
       this.native.hideLoading();
       this.initData(false);
     });
 
     this.events.subscribe(FeedsEvent.PublishType.rpcRequestError, () => {
       this.zone.run(() => {
-        this.logUtils.logd("rpcRequest:error",TAG);
-        //this.pauseVideo();
+        this.logUtils.logd("Received rpcRequest error event",TAG);      
         this.native.hideLoading();
       });
     });
 
     this.events.subscribe(FeedsEvent.PublishType.rpcResponseError, () => {
       this.zone.run(() => {
-        this.logUtils.logd("rpcResponse:error",TAG);
-        //this.pauseVideo();
+        this.logUtils.logd("Received rpcResponse error event",TAG);
         this.native.hideLoading();
       });
     });
 
    this.events.subscribe(FeedsEvent.PublishType.rpcRequestSuccess, () => {
     this.zone.run(() => {
-      this.logUtils.logd("rpcRequest:success",TAG);
+      this.logUtils.logd("Received rpcRequest success event",TAG);
       this.startIndex = 0;
       this.initRefresh();
       this.native.hideLoading();
@@ -326,14 +321,14 @@ export class PostdetailPage implements OnInit {
 
     this.events.subscribe(FeedsEvent.PublishType.streamGetBinaryResponse, () => {
       this.zone.run(() => {
-        this.logUtils.logd("received streamGetBinaryResponse",TAG);
+        this.logUtils.logd("Received streamGetBinaryResponse event",TAG);
 
       });
     });
 
     this.events.subscribe(FeedsEvent.PublishType.getBinaryFinish, (nodeId, key: string, value, mediaType) => {
       this.zone.run(() => {
-        this.logUtils.logd("receive getBinaryFinish",TAG);
+        this.logUtils.logd("Received getBinaryFinish event, nodeId is "+nodeId+", key is "+key, TAG);
         if(this.nodeId != nodeId){
            return;
         }
@@ -343,7 +338,7 @@ export class PostdetailPage implements OnInit {
 
     this.events.subscribe(FeedsEvent.PublishType.streamGetBinarySuccess, (nodeId, key: string, value) => {
       this.zone.run(() => {
-        this.logUtils.logd("receive streamGetBinarySuccess",TAG);
+        this.logUtils.logd("Received streamGetBinarySuccess event, nodeId is "+nodeId+", key is "+key, TAG);
         if(this.nodeId != nodeId){
           return;
         }
@@ -354,7 +349,7 @@ export class PostdetailPage implements OnInit {
 
     this.events.subscribe(FeedsEvent.PublishType.streamError, (nodeId, error) => {
       this.zone.run(() => {
-        this.logUtils.logd("reveive streamError",TAG);
+        this.logUtils.logd("Received streamError event, nodeId is "+nodeId, TAG);
         if(this.nodeId != nodeId){
           return;
         }
@@ -371,7 +366,7 @@ export class PostdetailPage implements OnInit {
 
     this.events.subscribe(FeedsEvent.PublishType.streamOnStateChangedCallback, (nodeId, state) => {
       this.zone.run(() => {
-        this.logUtils.logd("receive streamOnStateChangedCallback",TAG);
+        this.logUtils.logd("Received streamOnStateChangedCallback event, nodeId is "+nodeId, TAG);
         if(this.nodeId!=nodeId){
            return;
         }
@@ -386,7 +381,7 @@ export class PostdetailPage implements OnInit {
 
     this.events.subscribe(FeedsEvent.PublishType.streamProgress,(nodeId,progress)=>{
         this.zone.run(() => {
-          this.logUtils.logd("receive streamProgress",TAG);
+          this.logUtils.logd("Received streamProgress event, nodeId is "+nodeId, TAG);
           if(this.nodeId!=nodeId){
             return;
           }
@@ -418,7 +413,7 @@ export class PostdetailPage implements OnInit {
     })
 
     this.events.subscribe(FeedsEvent.PublishType.openRightMenu,()=>{
-      this.logUtils.logd("receive openRightMenu event",TAG);
+      this.logUtils.logd("Received openRightMenu event",TAG);
       this.isImgLoading = false;
       this.isImgPercentageLoading = false;
       this.imgDownStatus = "";
@@ -432,7 +427,7 @@ export class PostdetailPage implements OnInit {
      });
 
      this.events.subscribe(FeedsEvent.PublishType.streamClosed,(nodeId)=>{
-      this.logUtils.logd("receive streamClosed event",TAG);
+      this.logUtils.logd("Received streamClosed event, nodeId is "+nodeId,TAG);
       if(this.nodeId!=nodeId){
         return;
       }
@@ -671,7 +666,7 @@ export class PostdetailPage implements OnInit {
       this.feedService.getData(key).then((image)=>{
         this.postImage = image || "";
       }).catch((reason)=>{
-        this.logUtils.loge("getImageData error:"+JSON.stringify(reason),TAG);
+        this.logUtils.loge("Excute 'getImage' in post page is error , get image data error, error msg is "+JSON.stringify(reason),TAG);
       })
     }
 

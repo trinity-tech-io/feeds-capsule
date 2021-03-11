@@ -877,10 +877,6 @@ clearData(){
     let postImage = document.getElementById(id+"postimg");
     try {
       if(id!=''&&postImage.getBoundingClientRect().top>=-100&&postImage.getBoundingClientRect().top<=this.clientHeight){
-        // if(rowindex === 2){
-        //  this.logUtils.logd("entry "+rowindex+"-"+JSON.stringify(postImage.getBoundingClientRect()),TAG);
-        // }
-
         if(isload === ""){
           //rpostimg.style.display = "none";
           this.isLoadimage[id] = "11";
@@ -901,14 +897,13 @@ clearData(){
               }
             }).catch((reason)=>{
               rpostimg.style.display = 'none';
-              this.logUtils.loge("getImageData error:"+JSON.stringify(reason),TAG);
+              this.logUtils.loge("Excute 'handlePsotImg' in home page is error , get image data error, error msg is "+JSON.stringify(reason),TAG);
             })
         }
 
       }else{
         let postImageSrc = postImage.getAttribute("src") || "";
          if(postImage.getBoundingClientRect().top<-100&&this.isLoadimage[id]==="13"&&postImageSrc!=""){
-          // this.logUtils.logd("remove error:"+rowindex+"-"+postImage.getBoundingClientRect().top,TAG);
           this.isLoadimage[id] = "";
           postImage.setAttribute("src","assets/images/loading.png");
       }
@@ -934,7 +929,6 @@ clearData(){
     }
     try {
       if(id!=''&&video.getBoundingClientRect().top>=-100&&video.getBoundingClientRect().top<=this.clientHeight){
-        // this.logUtils.logd("entry "+rowindex+"==="+video.getBoundingClientRect().top,TAG);
         if(isloadVideoImg===""){
           this.isLoadVideoiamge[id] = "11";
           //vgplayer.style.display = "none";
@@ -953,7 +947,6 @@ clearData(){
                 this.setFullScreen(id);
                 this.setOverPlay(id,srcId);
               }else{
-                //this.logUtils.logd("rowindex "+rowindex, TAG);
                 this.isLoadVideoiamge[id] = "12";
                 video.style.display='none';
                 vgplayer.style.display = 'none';
@@ -962,12 +955,11 @@ clearData(){
               video.style.display='none';
               vgplayer.style.display = 'none';
               this.isLoadVideoiamge[id] = "";
-              this.logUtils.loge("getImageData error:"+JSON.stringify(reason),TAG);
+              this.logUtils.loge("Excute 'hanldVideo' in home page is error , get image data error, error msg is "+JSON.stringify(reason),TAG);
             });
         }
 
       }else{
-        // this.logUtils.logd("remove: index = "+rowindex+" top = "+video.getBoundingClientRect().top+" bottom = "+video.getBoundingClientRect().bottom,TAG);
         let postSrc =  video.getAttribute("poster") || "";
         if(video.getBoundingClientRect().top<-100&&this.isLoadVideoiamge[id]==="13"&&postSrc!="assets/images/loading.png"){
           video.setAttribute("poster","assets/images/loading.png");

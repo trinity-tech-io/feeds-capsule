@@ -418,7 +418,7 @@ export class CreatenewpostPage implements OnInit {
         this.getVideoInfo(videodata['fullPath']);
      });
   }, (error)=>{
-       this.logUtils.loge("captureVideo error:"+JSON.stringify(error),TAG);
+       this.logUtils.loge("Excute 'videocam' in createpost page is error , captureVideo error, error msg is "+JSON.stringify(error),TAG);
   }, {limit:1,duration:15});
   }
 
@@ -431,7 +431,7 @@ selectvideo(){
       let path = flieUri.startsWith('file://') ? flieUri : `file://${flieUri}`;
       this.getVideoInfo(path);
     }).catch((err)=>{
-      this.logUtils.loge("getVideo error:"+JSON.stringify(err),TAG);
+      this.logUtils.loge("Excute 'selectvideo' in createpost page is error , getVideo error, error msg is "+JSON.stringify(err),TAG);
      })
   }
   async getVideoInfo(fileUri:string){
@@ -496,15 +496,15 @@ selectvideo(){
               fileReader.readAsDataURL(file);
 
            },(err)=>{
-            this.logUtils.loge("readVideo error:"+JSON.stringify(err),TAG);
+            this.logUtils.loge("Excute 'readFile' in createpost page is error , readVideo error, error msg is "+JSON.stringify(err),TAG);
            });
           },
           (err)=>{
-            this.logUtils.loge("getFile error:"+JSON.stringify(err),TAG);
+            this.logUtils.loge("Excute 'readFile' in createpost page is error , getFile error, error msg is "+JSON.stringify(err),TAG);
           });
       },
       (err:any)=>{
-        this.logUtils.loge("path error:"+JSON.stringify(err),TAG);
+        this.logUtils.loge("Excute 'readFile' in createpost page is error , path error, error msg is "+JSON.stringify(err),TAG);
       });
   }
 
@@ -736,15 +736,15 @@ readThumbnail(fileName:string,filepath:string){
             fileReader.readAsDataURL(file);
 
          },(err)=>{
-            this.logUtils.loge("readFile error:"+JSON.stringify(err),TAG);
+            this.logUtils.loge("Excute 'readThumbnail' in createpost page is error , readFile error, error msg is "+JSON.stringify(err),TAG);
          });
         },
         (err)=>{
-          this.logUtils.loge("getFile error:"+JSON.stringify(err),TAG);
+          this.logUtils.loge("Excute 'readThumbnail' in createpost page is error , getFile error, error msg is "+JSON.stringify(err),TAG);
         });
     },
     (err:any)=>{
-      this.logUtils.loge("path error:"+JSON.stringify(err),TAG);
+      this.logUtils.loge("Excute 'readThumbnail' in createpost page is error , path error, error msg is "+JSON.stringify(err),TAG);
     });
 }
 

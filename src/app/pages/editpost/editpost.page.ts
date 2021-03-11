@@ -367,7 +367,7 @@ export class EditPostPage implements OnInit {
     this.feedService.getData(thumbkey).then((image)=>{
       this.imgUrl = image || "";
     }).catch((reason)=>{
-      this.logUtils.loge("getImageData error:"+JSON.stringify(reason),TAG);
+      this.logUtils.loge("Excute 'getImage' in editpost page is error,error msg is "+JSON.stringify(reason),TAG);
     })
   }
 
@@ -422,12 +422,11 @@ export class EditPostPage implements OnInit {
       let path = flieUri.startsWith('file://') ? flieUri : `file://${flieUri}`;
       this.getVideoInfo(path);
     }).catch((reason)=>{
-      this.logUtils.loge("getVideoData error:"+JSON.stringify(reason),TAG);
+      this.logUtils.loge("Excute 'selectvideo' in editpost page is error, error is "+JSON.stringify(reason),TAG);
      })
   }
 
   readFile(fileName:string,filepath:string){
-
     window.resolveLocalFileSystemURL(filepath,
       (dirEntry: CordovaFilePlugin.DirectoryEntry)=>{
         dirEntry.getFile(fileName,
@@ -487,15 +486,15 @@ export class EditPostPage implements OnInit {
               fileReader.readAsDataURL(file);
 
            },(err)=>{
-              this.logUtils.loge("readFileData error:"+JSON.stringify(err),TAG);
+              this.logUtils.loge("Excute 'readFile' in editpost page is error ,readFileData error, error msg is "+JSON.stringify(err),TAG);
            });
           },
           (err)=>{
-            this.logUtils.loge("getFileData error:"+JSON.stringify(err),TAG);
+            this.logUtils.loge("Excute 'readFile' in editpost page is error ,getFileData error, error msg is "+JSON.stringify(err),TAG);
           });
       },
       (err:any)=>{
-        this.logUtils.loge("path error:"+JSON.stringify(err),TAG);
+        this.logUtils.loge("Excute 'readFile' in editpost page is error ,path error, error msg is "+JSON.stringify(err),TAG);
       });
   }
 
@@ -736,15 +735,15 @@ readThumbnail(fileName:string,filepath:string){
             fileReader.readAsDataURL(file);
 
          },(err)=>{
-          this.logUtils.loge("readFileData error:"+JSON.stringify(err),TAG);
+          this.logUtils.loge("Excute 'readThumbnail' in editpost page, readFileData error, error msg is "+JSON.stringify(err),TAG);
          });
         },
         (err)=>{
-          this.logUtils.loge("getFileData error:"+JSON.stringify(err),TAG);
+          this.logUtils.loge("Excute 'readThumbnail' in editpost page, getFileData error, error msg is "+JSON.stringify(err),TAG);
         });
     },
     (err:any)=>{
-      this.logUtils.loge("path error:"+JSON.stringify(err),TAG);
+      this.logUtils.loge("Excute 'readThumbnail' in editpost page, path error, error msg is "+JSON.stringify(err),TAG);
     });
   }
 

@@ -404,13 +404,12 @@ export class FeedService {
   }
 
   doFriendConnection(friendId: string){
-    this.logUtils.logd("doFriendConnection");
     let accessToken = this.dataHelper.getAccessToken(friendId) || null;
     if (this.checkExp(accessToken)){
-      this.logUtils.logd("Prepare signinChallengeRequest");
+      this.logUtils.logd("Prepare signin server, access token expired, server nodeId is "+friendId);
       this.signinChallengeRequest(friendId,true);
     }else{
-      this.logUtils.logd("Prepare prepare");
+      this.logUtils.logd("Prepare connect, nodeId is "+ friendId+" access token is "+JSON.stringify(accessToken));;
       this.prepare(friendId);
     }
 
@@ -914,8 +913,8 @@ export class FeedService {
       this.localSignInData = this.generateSignInData(did, name, avatar, email,
         telephone, location, nickname, description);
       this.checkSignInDataChange(this.localSignInData).then(async (isChange)=>{
-        this.logUtils.logd("checkSignInDataChange isChange is "+isChange, TAG);
         if (isChange){
+          this.logUtils.logd("Signin data is changed,did is"+did, TAG);
           await this.cleanAllData();
           this.storeService.set(FeedsData.PersistenceKey.signInData, this.localSignInData);
           this.storeService.set(FeedsData.PersistenceKey.lastSignInData, this.localSignInData);
@@ -2676,7 +2675,7 @@ export class FeedService {
   }
 
   signinChallengeRequest(nodeId: string , requiredCredential: boolean){
-    this.logUtils.logd("Start signinChallengeRequest");
+    this.logUtils.logd("Start signin server, nodeId is"+nodeId);
     if(this.isLogging[nodeId] == undefined)
       this.isLogging[nodeId] = false;
     if (this.isLogging[nodeId])
@@ -2696,7 +2695,7 @@ export class FeedService {
     didSessionManager.authenticate(nonce, realm).then((presentation)=>{
       this.connectionService.signinConfirmRequest(this.getServerNameByNodeId(nodeId), nodeId, nonce, realm, requiredCredential,presentation,this.getLocalCredential());
     }).catch((err)=>{
-      this.logUtils.loge("authenticate error:"+JSON.stringify(err),TAG);
+      this.logUtils.loge("Authenticate presentation from didSessionManager is error, nodeId is "+nodeId+" error is "+JSON.stringify(err),TAG);
     });
   }
 
@@ -2773,6 +2772,7 @@ export class FeedService {
   }
 
   doParseJWS(nodeId: string, jws: string, credential: any, requiredCredential: boolean, onSuccess:()=>void, onError: () => void){
+    this.logUtils.loge("Parse JWT from didManager, nodeId is "+ nodeId +" JWS is "+ jws,TAG);
     this.parseJWS(false,jws,
       (res)=>{
         let server = this.dataHelper.getServer(nodeId);
@@ -2789,7 +2789,7 @@ export class FeedService {
         onSuccess();
       },
       (err)=>{
-        this.logUtils.loge("parseJWS error:"+JSON.stringify(err),TAG);
+        this.logUtils.loge("Parse JWT error, "+JSON.stringify(err), TAG);
         onError();
       }
       );
@@ -2800,12 +2800,12 @@ export class FeedService {
       if (result){
         onSuccess(result);
       }else{
-        this.logUtils.loge("parseJWT error: result = "+JSON.stringify(result),TAG);
+        this.logUtils.loge("Parse JWT error, result is "+JSON.stringify(result),TAG);
       }
 
     }).catch((err)=>{
       onError(err);
-      this.logUtils.loge("parseJWT error: "+JSON.stringify(err),TAG);
+      this.logUtils.loge("Parse JWT error, error is "+JSON.stringify(err),TAG);
     });
   }
 
@@ -2917,7 +2917,7 @@ export class FeedService {
 
     let challenge = result.jwt_challenge;
     this.standardAuth.generateAuthPresentationJWT(challenge).then((standAuthResult)=>{
-      this.logUtils.logd("generateAuthPresentationJWT presentation is "+standAuthResult.jwtToken,TAG);
+      this.logUtils.logd("Generate auth presentation JWT, presentation is "+standAuthResult.jwtToken,TAG);
       let server = this.dataHelper.getServer(nodeId);
       if (server != null && server != undefined){
         server.name = standAuthResult.serverName;
@@ -3113,7 +3113,7 @@ export class FeedService {
       }
     }, (err)=>{
       onError();
-      this.logUtils.loge("Failed to issue a credential: "+JSON.stringify(err), TAG);
+      this.logUtils.loge("Failed to issue a credential, err msg is "+JSON.stringify(err), TAG);
       return ;
     })
   }
@@ -3201,7 +3201,6 @@ export class FeedService {
   }
 
   checkExp(mAccessToken: FeedsData.AccessToken): boolean{
-    this.logUtils.logd("checkExp");
     let accessToken = mAccessToken || null;
     if(accessToken == null || accessToken == undefined){
       return true;
@@ -3547,7 +3546,7 @@ export class FeedService {
       const server = list[index];
       this.carrierService.removeFriend(server.nodeId,()=>{
       },(err)=>{
-        this.logUtils.loge("Remove Friend error: "+JSON.stringify(err), TAG);
+        this.logUtils.loge("Remove Friend error, error msg is"+JSON.stringify(err), TAG);
       });
     }
   }
@@ -4788,9 +4787,9 @@ export class FeedService {
   }
 
   standardSignIn(nodeId: string){
-    this.logUtils.logd("Start getInstanceDIDDoc nodeId: "+nodeId,TAG);
+    this.logUtils.logd("Start getting instance did, nodeId: "+nodeId,TAG);
     this.standardAuth.getInstanceDIDDoc().then((didDocument)=>{
-      this.logUtils.logd("getInstanceDIDDoc didDocument is "+didDocument,TAG);
+      this.logUtils.logd("Standard sign in, nodeId is "+ nodeId + " didDocument is "+didDocument,TAG);
       this.connectionService.standardSignIn(this.getServerNameByNodeId(nodeId),nodeId, didDocument);
     })
   }
@@ -4808,7 +4807,6 @@ export class FeedService {
   }
 
   afterFriendConnection(friendId: string){
-    this.logUtils.logd("afterFriendConnection");
     let server = this.dataHelper.getServer(friendId)||null
     if (server != null)
       this.doFriendConnection(friendId);
@@ -4846,7 +4844,7 @@ export class FeedService {
 
       this.addFeedService.addFeed(decodeResult, nodeId, avatar, follower, feedName).then((toBeAddedFeed:FeedsData.ToBeAddedFeed)=>{
         if (toBeAddedFeed.friendState == FeedsData.FriendState.IS_FRIEND){
-          this.logUtils.logd("addFeed: server is friend");
+          this.logUtils.logd("The service is already a friend, nodeId is "+nodeId);
           let isSubscribed = this.checkFeedsIsSubscribed(toBeAddedFeed.nodeId, toBeAddedFeed.feedId);
           if (!isSubscribed){
             this.subscribeChannel(toBeAddedFeed.nodeId, toBeAddedFeed.feedId);
@@ -4860,7 +4858,7 @@ export class FeedService {
         this.saveServer("Unknow",toBeAddedFeed.did, "Unknow",toBeAddedFeed.did, toBeAddedFeed.carrierAddress,toBeAddedFeed.serverUrl,toBeAddedFeed.nodeId);
         resolve("success");
       }).catch((reason)=>{
-        this.logUtils.loge("AddFeed error "+reason, TAG);
+        this.logUtils.loge("AddFeed error, "+reason, TAG);
         reject("fail")
       });
     });
@@ -4921,18 +4919,18 @@ export class FeedService {
     return new Promise(async (resolve, reject) =>{
       let res = await this.credaccess();
       if (!res){
-        this.logUtils.loge("credaccess error")
+        this.logUtils.loge("SignIn error, credaccess result is "+JSON.stringify(res));
         reject("credaccess error");
         return;
       }
 
       let did = await this.decodeSignInData(res);
       if(!did){
-        this.logUtils.loge("decodeSignInData error");
+        this.logUtils.loge("Use didManager VerifiablePresentationBuilder error, did result is "+did);
         return;
       }
       resolve(did);
-      this.carrierService.init(did, );
+      this.carrierService.init(did);
     });
   }
 
@@ -4966,7 +4964,7 @@ export class FeedService {
           this.events.publish(FeedsEvent.PublishType.signinSuccess);
           resolve(signInData.did);
         }).catch((err)=>{
-          this.logUtils.loge("saveSignInData error");
+          this.logUtils.loge("Save signin data error, error msg is "+JSON.stringify(err));
           reject(err);
         });
       },(err)=>{
