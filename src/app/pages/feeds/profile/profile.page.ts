@@ -102,7 +102,7 @@ export class ProfilePage implements OnInit {
   }
 
   async initFolling(){
-    this.followingList = await this.feedService.getFollowedChannelList();
+    this.followingList = this.feedService.getFollowedChannelList();
     this.initnodeStatus(this.followingList);
     this.feedService.updateSubscribedFeed();
   }
