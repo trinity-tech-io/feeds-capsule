@@ -1,5 +1,5 @@
-import { Component, OnInit, NgZone,ElementRef} from '@angular/core';
-import { NavController,Events,ModalController} from '@ionic/angular';
+import { Component, OnInit, NgZone,ElementRef,ViewChild} from '@angular/core';
+import { NavController,Events,ModalController,IonTextarea} from '@ionic/angular';
 import { FeedService } from 'src/app/services/FeedService';
 import { ActivatedRoute } from '@angular/router';
 import { NativeService } from '../../services/NativeService';
@@ -20,6 +20,7 @@ let TAG: string = "Feeds-editpost";
 })
 
 export class EditPostPage implements OnInit {
+  @ViewChild('newPostIonTextarea', {static: false}) newPostIonTextarea:IonTextarea;
   public connectionStatus = 1;
   public nodeStatus = {};
   public channelAvatar = "";
@@ -195,6 +196,10 @@ export class EditPostPage implements OnInit {
     this.events.publish(FeedsEvent.PublishType.addBinaryEvevnt);
     this.feedService.closeSession(this.nodeId);
 
+  }
+
+  newPostTextArea(){
+    this.newPostIonTextarea.setFocus();
   }
 
   pauseVideo(){
