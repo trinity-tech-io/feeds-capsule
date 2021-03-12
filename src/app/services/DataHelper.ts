@@ -210,10 +210,14 @@ export class DataHelper {
     }
 
     updatePost(key: string, post: FeedsData.Post){
+        this.updatePostWithoutSave(key, post);
+        this.saveData(FeedsData.PersistenceKey.postMap, this.postMap);
+    }
+
+    updatePostWithoutSave(key: string, post: FeedsData.Post){
         if (this.postMap == null || this.postMap == undefined)
             this.postMap = {};
         this.postMap[key] = post;
-        this.saveData(FeedsData.PersistenceKey.postMap, this.postMap);
     }
 
     getPost(key: string): FeedsData.Post{
@@ -573,9 +577,7 @@ export class DataHelper {
     }
 
     updateLikes(key: string, likes: FeedsData.Likes){
-        if (this.likeMap == null || this.likeMap == undefined)
-            this.likeMap = {};
-        this.likeMap[key] = likes;
+        this.updateLikesWithoutSave(key, likes);
         this.saveData(FeedsData.PersistenceKey.likeMap, this.likeMap);
     }
 
