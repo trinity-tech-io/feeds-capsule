@@ -71,6 +71,7 @@ export class DataHelper {
     
     private feedPublicStatus:any = {};
     private channelInfo: any = {};
+    private cachedUpdateServer: {[nodeId: string]: FeedsData.Server} = {};
 
     constructor(
         private logUtils: LogUtils,
@@ -442,10 +443,14 @@ export class DataHelper {
     }
 
     updateServer(nodeId: string, server: FeedsData.Server){
+        this.updateServerWithoutSave(nodeId, server);
+        this.saveData(FeedsData.PersistenceKey.serverMap, this.serverMap);
+    }
+
+    updateServerWithoutSave(nodeId: string, server: FeedsData.Server){
         if (this.serverMap == null || this.serverMap == undefined)
             this.serverMap = {};
         this.serverMap[nodeId] = server;
-        this.saveData(FeedsData.PersistenceKey.serverMap, this.serverMap);
     }
 
     getServer(nodeId: string): FeedsData.Server{
@@ -1639,5 +1644,17 @@ export class DataHelper {
 
     loadData(key: string): Promise<any>{
         return this.storageService.get(key);
+    }
+
+    updateCachedUpdateServer(nodeId: string, cachedServer: FeedsData.Server){
+        if (this.cachedUpdateServer == null || this.cachedUpdateServer == undefined)
+            this.cachedUpdateServer = {};
+        this.cachedUpdateServer[nodeId] = cachedServer;
+    }
+
+    getCachedUpdateServer(nodeId: string): FeedsData.Server{
+        if (this.cachedUpdateServer == null || this.cachedUpdateServer == undefined)
+            this.cachedUpdateServer = {};
+        return this.cachedUpdateServer[nodeId];
     }
 }

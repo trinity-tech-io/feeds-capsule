@@ -2881,6 +2881,11 @@ export class FeedService {
       return;
     }
 
+    let cachedServer = this.dataHelper.getCachedUpdateServer(nodeId);
+    if (cachedServer != null && cachedServer!= undefined){
+      this.dataHelper.updateServerWithoutSave(nodeId, cachedServer);
+    }
+
     eventBus.publish(FeedsEvent.PublishType.updateCredentialFinish);
     this.signinChallengeRequest(nodeId, true);
   }
@@ -3052,6 +3057,12 @@ export class FeedService {
   doUpdateCredential(nodeId: string, did: string, serverName: string, serverDesc: string,elaAddress:string, onSuccess:()=> void, onError:()=>void){
     this.issueCredential(nodeId,did, serverName,serverDesc,elaAddress,
       (credential)=>{
+        let cachedServer = this.dataHelper.getServer(nodeId);
+        cachedServer.did = did;
+        cachedServer.name = serverName;
+        cachedServer.introduction = serverDesc;
+        cachedServer.elaAddress = elaAddress;
+        this.dataHelper.updateCachedUpdateServer(nodeId, cachedServer);
         this.updateCredential(nodeId, credential);
       },
       ()=>{}
