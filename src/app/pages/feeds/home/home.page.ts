@@ -96,7 +96,7 @@ export class HomePage implements OnInit {
 
     }
 
-  initPostListData(){
+  initPostListData(scrollToTop:boolean){
         this.infiniteScroll.disabled =false;
         this.startIndex = 0;
         this.totalData = this.sortPostList();
@@ -108,7 +108,9 @@ export class HomePage implements OnInit {
           this.postList =  this.totalData;
           this.infiniteScroll.disabled =true;
         }
-        this.scrollToTop(1);
+        if(scrollToTop){
+          this.scrollToTop(1);
+        }
         this.isLoadimage ={};
         this.isLoadVideoiamge ={};
         this.refreshImage(0);
@@ -126,7 +128,7 @@ export class HomePage implements OnInit {
 
   refreshPostList(){
     if(this.startIndex === 0){
-      this.initPostListData();
+      this.initPostListData(false);
       return;
     }
     this.totalData = this.sortPostList();
@@ -147,7 +149,7 @@ export class HomePage implements OnInit {
     this.connectionStatus = this.feedService.getConnectionStatus();
     this.styleObj.width = (screen.width - 105)+'px';
     this.clientHeight =screen.availHeight;
-    this.initPostListData();
+    this.initPostListData(true);
     this.refreshImage(0);
     this.initnodeStatus(this.postList);
 
@@ -172,7 +174,7 @@ export class HomePage implements OnInit {
     this.zone.run(()=>{
       this.hideDeletedPosts = this.feedService.getHideDeletedPosts();
       if(isInit){
-        this.initPostListData();
+        this.initPostListData(true);
         return;
       }
       this.refreshPostList();
@@ -393,7 +395,7 @@ clearData(){
    this.events.unsubscribe(FeedsEvent.PublishType.rpcRequestSuccess);
    this.events.unsubscribe(FeedsEvent.PublishType.openRightMenu);
    this.events.unsubscribe(FeedsEvent.PublishType.tabSendPost);
-   
+
    this.removeImages();
    this.removeAllVideo();
    this.isLoadimage ={};
