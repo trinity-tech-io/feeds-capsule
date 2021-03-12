@@ -393,6 +393,7 @@ clearData(){
    this.events.unsubscribe(FeedsEvent.PublishType.rpcRequestSuccess);
    this.events.unsubscribe(FeedsEvent.PublishType.openRightMenu);
    this.events.unsubscribe(FeedsEvent.PublishType.tabSendPost);
+   
    this.removeImages();
    this.removeAllVideo();
    this.isLoadimage ={};
