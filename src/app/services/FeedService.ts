@@ -1479,8 +1479,6 @@ export class FeedService {
       }
       this.dataHelper.updatePost(key, originPost);
 
-      let likes = this.dataHelper.generateLikes(nodeId, channel_id, post_id, 0);
-      this.dataHelper.updateLikes(key, likes);
       eventBus.publish(FeedsEvent.PublishType.updateLikeList, this.getLikeList());
       eventBus.publish(FeedsEvent.PublishType.postDataUpdate);
     }else {
@@ -1587,9 +1585,6 @@ export class FeedService {
       post_status : status
     }
     this.dataHelper.updatePost(key, post);
-
-    let likesObj = this.dataHelper.generateLikes(nodeId, channelId, postId, 0);
-    this.dataHelper.updateLikes(key, likesObj);
     
     eventBus.publish(FeedsEvent.PublishType.editPostFinish);
     eventBus.publish(FeedsEvent.PublishType.editPostSuccess);
@@ -2091,9 +2086,6 @@ export class FeedService {
 
       this.dataHelper.updatePost(key, post);
 
-      let likesObj = this.dataHelper.generateLikes(nodeId, channel_id, id, 0);
-      this.dataHelper.updateLikes(key, likesObj);
-
       if (requestAction == FeedsData.RequestAction.defaultAction){
         let key = this.getChannelId(nodeId, channel_id);
         this.updateLastPostUpdate(key,nodeId, channel_id, updatedAt);
@@ -2319,7 +2311,7 @@ export class FeedService {
     let key = this.getPostId(nodeId, channel_id, post_id);
     if (comment_id == 0){
       let likesObj = this.dataHelper.generateLikes(nodeId, channel_id, post_id, 0);
-      this.dataHelper.updateLikes(key, likesObj);
+      this.dataHelper.updateLikesWithoutSave(key, likesObj);
 
       let originPost = this.dataHelper.getPost(key);
       originPost.likes = originPost.likes+1;
