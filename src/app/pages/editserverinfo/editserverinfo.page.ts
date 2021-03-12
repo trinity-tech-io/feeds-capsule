@@ -64,13 +64,6 @@ export class EditserverinfoPage implements OnInit {
       this.initTitle();
     });
 
-    this.events.subscribe(FeedsEvent.PublishType.bindServerFinish,()=>{
-      this.zone.run(() => {
-        this.native.hideLoading();
-        this.native.pop();
-      });
-    });
-
     this.events.subscribe(FeedsEvent.PublishType.updateCredentialFinish,()=>{
       this.zone.run(() => {
         this.native.hideLoading();
@@ -86,7 +79,6 @@ export class EditserverinfoPage implements OnInit {
     this.native.hideLoading();
     this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
     this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
-    this.events.unsubscribe(FeedsEvent.PublishType.bindServerFinish);
     this.events.unsubscribe(FeedsEvent.PublishType.updateCredentialFinish);
   }
 
