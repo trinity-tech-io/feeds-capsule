@@ -97,6 +97,7 @@ export class SettingsPage implements OnInit {
     this.developerMode = !this.developerMode;
     this.feedService.setDeveloperMode(this.developerMode);
     this.feedService.setData("feeds.developerMode",this.developerMode);
+    this.events.publish(FeedsEvent.PublishType.search);
     if(this.developerMode){
       this.logUtils.setLogLevel(LogLevel.DEBUG);
     }else{

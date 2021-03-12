@@ -43,6 +43,7 @@ export class SearchPage implements OnInit {
   public unfollowedFeed = [];
   public searchUnfollowedFeed = [];
   public scanServiceStyle ={"right":""};
+  public curtotalNum:number = 0;
   // {
   //   "nodeId": "8Dsp9jkTg8TEfCkwMoXimwjLeaRidMczLZYNWbKGj1SF",
   //   "did": "did:elastos:ibfZa4jQ1QgDRP9rpfbUbZWpXgbd9z7oKF",
@@ -104,6 +105,12 @@ export class SearchPage implements OnInit {
       this.zone.run(() => {
         this.addingChanneList = this.feedService.getToBeAddedFeedsList() || [];
         this.searchAddingChanneList = _.cloneDeep(this.addingChanneList);
+        this.discoverSquareList = this.filterdiscoverSquareList(this.discoverSquareList);
+      });
+    });
+
+    this.events.subscribe(FeedsEvent.PublishType.addFeedStatusChanged,()=>{
+      this.zone.run(() => {
         this.discoverSquareList = this.filterdiscoverSquareList(this.discoverSquareList);
       });
     });
@@ -235,6 +242,9 @@ export class SearchPage implements OnInit {
   doRefresh(event) {
     let sid = setTimeout(() => {
       this.feedService.updateSubscribedFeed();
+      //this.discoverSquareList = [];
+      this.feedService.setDiscoverfeeds([]);
+      this.curtotalNum = 0;
       this.pageNum = 1;
       this.initData(event,false);
       event.target.complete();
@@ -389,16 +399,17 @@ checkValid(result: string){
       if(result["code"] === 200){
          this.totalNum = result["data"]["total"];
          let arr = result["data"]["result"] || [];
+         this.curtotalNum = this.curtotalNum+arr.length;
          this.handleCache(arr);
          let discoverSquareList = this.feedService.getDiscoverfeeds();
          this.httpAllData = _.cloneDeep(discoverSquareList);
          this.discoverSquareList = this.filterdiscoverSquareList(discoverSquareList);
       }
-      if(this.pageNum*this.pageSize>=this.totalNum){
+      if(this.curtotalNum>=this.totalNum){
         this.infiniteScroll.disabled =true;
       }else{
         this.infiniteScroll.disabled =false;
-        if(this.discoverSquareList.length<=13){
+        if(this.curtotalNum<this.totalNum){
            this.loadData(null);
         }
       }
@@ -418,13 +429,15 @@ checkValid(result: string){
         this.isLoading =false;
          this.totalNum = result["data"]["total"];
          let discoverSquareList = result["data"]["result"] || [];
+         this.curtotalNum = discoverSquareList.length;
          this.handleCache(discoverSquareList);
          discoverSquareList = this.feedService.getDiscoverfeeds();
          this.httpAllData = _.cloneDeep(discoverSquareList);
+
          this.discoverSquareList = this.filterdiscoverSquareList(discoverSquareList);
          this.searchSquareList =_.cloneDeep(this.discoverSquareList);
          this.infiniteScroll.disabled =false;
-         if(this.discoverSquareList.length<=13){
+         if(this.curtotalNum<=this.totalNum){
              this.loadData(null);
          }
 
@@ -466,8 +479,8 @@ checkValid(result: string){
     }
 
     let purpose = feed["purpose"] || "";
-    if(purpose == "" || this.developerMode){
-        return true;
+    if(purpose != "" && !this.developerMode){
+        return false;
      }
 
     return true;
