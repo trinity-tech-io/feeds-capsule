@@ -102,9 +102,10 @@ export class SearchPage implements OnInit {
 
     this.events.subscribe(FeedsEvent.PublishType.addFeedStatusChanged,()=>{
       this.zone.run(() => {
+        console.log("=======discoverSubscribe3=======");
         this.addingChanneList = this.feedService.getToBeAddedFeedsList() || [];
         this.searchAddingChanneList = _.cloneDeep(this.addingChanneList);
-        this.handleSearch();
+        this.discoverSquareList = this.filterdiscoverSquareList(this.discoverSquareList);
       });
     });
   }
@@ -166,6 +167,7 @@ export class SearchPage implements OnInit {
   }
 
   getItems(events:any){
+
     this.isSearch = events.target.value || "";
    if((events && (events.keyCode === 13) || (events.keyCode===8&&this.isSearch===""))){
     if(this.checkFeedUrl(this.isSearch)){
@@ -177,7 +179,10 @@ export class SearchPage implements OnInit {
       this.infiniteScroll.disabled = false;
       this.addingChanneList = this.feedService.getToBeAddedFeedsList() || [];
       this.unfollowedFeed = this.getUnfollowedFeed() || [];
-      this.discoverSquareList = _.cloneDeep(this.searchSquareList);
+      let discoverfeeds = this.feedService.getDiscoverfeeds() || [];
+      if(discoverfeeds.length>0){
+        this.discoverSquareList = this.filterdiscoverSquareList(discoverfeeds);
+      }
       this.searchAddingChanneList = _.cloneDeep(this.addingChanneList);
       return;
     }
@@ -198,7 +203,10 @@ export class SearchPage implements OnInit {
       this.infiniteScroll.disabled = false;
       this.addingChanneList = this.feedService.getToBeAddedFeedsList() || [];
       this.unfollowedFeed = this.getUnfollowedFeed() || [];
-      this.discoverSquareList = _.cloneDeep(this.searchSquareList);
+      let discoverfeeds = this.feedService.getDiscoverfeeds() || [];
+      if(discoverfeeds.length>0){
+        this.discoverSquareList = this.filterdiscoverSquareList(discoverfeeds);
+      }
       this.searchAddingChanneList = _.cloneDeep(this.addingChanneList);
       return;
     }
@@ -476,7 +484,8 @@ checkValid(result: string){
     discoverSquareList =  _.filter(discoverSquare,(feed:any)=>{
       return this.handleShow(feed);
     });
-    this.searchSquareList =_.cloneDeep(this.discoverSquareList);
+    console.log("======discoverSquareList===len======"+discoverSquareList.length);
+    this.searchSquareList =_.cloneDeep(discoverSquareList);
     return discoverSquareList;
   }
 
@@ -498,7 +507,7 @@ checkValid(result: string){
   }
 
   discoverSubscribe(feedInfo:any){
-
+    console.log("=======discoverSubscribe1=======");
     let feedUrl = feedInfo["url"];
     let avatar =  feedInfo["feedsAvatar"];
     let followers = feedInfo["followers"];
@@ -507,7 +516,9 @@ checkValid(result: string){
     this.feedService.addFeed(feedUrl, avatar, followers, feedName).then((isSuccess)=>{
       if(isSuccess){
         this.zone.run(()=>{
-          this.init();
+        console.log("=======discoverSubscribe2=======");
+
+          //this.init();
         });
       }
     }).catch((err)=>{
