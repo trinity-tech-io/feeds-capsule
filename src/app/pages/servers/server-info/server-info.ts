@@ -89,6 +89,9 @@ export class ServerInfoPage implements OnInit {
       if (this.bindingServer !== null) {
         this.nodeId = this.bindingServer.nodeId;
         server = this.feedService.getServerbyNodeId(this.nodeId) || null;
+        if (server == null || server == undefined)
+          server = this.bindingServer;
+
         this.isBindServer = true;
         this.isShowQrcode = false;
 
