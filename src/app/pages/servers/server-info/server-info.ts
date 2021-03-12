@@ -331,6 +331,7 @@ export class ServerInfoPage implements OnInit {
             this.storageService.remove("feeds.currentFeed");
             this.native.hideLoading();
             this.navigateBackPage();
+            this.events.publish(FeedsEvent.PublishType.updateTab);
           });
         }
       }, {

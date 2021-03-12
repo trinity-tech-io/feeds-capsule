@@ -3432,14 +3432,14 @@ export class FeedService {
     return avatar;
   }
 
-  async deleteFeedSource(nodeId: string): Promise<any>{
+  deleteFeedSource(nodeId: string): Promise<any>{
     return this.removeFeedSource(nodeId).then(()=>{
       this.removeNotification();
       this.removeBindingServer();
     });
   }
 
-  async removeFeedSource(nodeId: string): Promise<any>{
+  removeFeedSource(nodeId: string): Promise<any>{
     let channelList = this.getChannelsListFromNodeId(nodeId)||[];
     for (let channelIndex = 0; channelIndex < channelList.length; channelIndex++) {
       const channel = channelList[channelIndex];
