@@ -1,5 +1,5 @@
-import { Component, OnInit, NgZone,ElementRef} from '@angular/core';
-import {  NavController, Events,ModalController,Platform } from '@ionic/angular';
+import { Component, OnInit, NgZone,ElementRef,ViewChild} from '@angular/core';
+import {  NavController, Events,ModalController,Platform,IonTextarea} from '@ionic/angular';
 import { FeedService } from '../../../services/FeedService';
 import { NativeService } from '../../../services/NativeService';
 import { CameraService } from '../../../services/CameraService';
@@ -18,7 +18,7 @@ let TAG: string = "Feeds-createpost";
   styleUrls: ['./createnewpost.page.scss'],
 })
 export class CreatenewpostPage implements OnInit {
-
+  @ViewChild('newPostIonTextarea', {static: false}) newPostIonTextarea:IonTextarea;
   public connectionStatus = 1;
   public nodeStatus = {};
   public channelAvatar = "";
@@ -67,6 +67,10 @@ export class CreatenewpostPage implements OnInit {
 
   ngOnInit() {
 
+  }
+
+  newPostTextArea(){
+    this.newPostIonTextarea.setFocus();
   }
 
   initFeed(){
