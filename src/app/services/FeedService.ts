@@ -196,7 +196,7 @@ export class FeedService {
   }
 
   loadLikeMap(){
-    return this.dataHelper.loadPostMap();
+    return this.dataHelper.loadLikeMap();
   }
 
   loadAccessTokenMap(){
@@ -1798,57 +1798,51 @@ export class FeedService {
   }
 
   handlePostLikeResult(nodeId:string, request: any, error: any){
-    let channel_id: number = request.channel_id;
-    let post_id: number = request.post_id;
-    let comment_id: number = request.comment_id;
+    let channel_id: number = request.requestParams.channel_id;
+    let post_id: number = request.requestParams.post_id;
+    let comment_id: number = request.requestParams.comment_id;
 
-    let key = this.getPostId(nodeId, channel_id, post_id);
-
-    if (error != null && error != undefined && error.code == -4){
-      if (comment_id == 0){
-        let likesObj = this.dataHelper.generateLikes(nodeId, channel_id, post_id, 0);
-        this.dataHelper.updateLikes(key, likesObj);
-        eventBus.publish(FeedsEvent.PublishType.postDataUpdate);
-
-      }else{
-        let commentKey = this.getLikeCommentId(nodeId, channel_id, post_id, comment_id);
-        let likedComment = this.dataHelper.generatedLikedComment(nodeId, channel_id, post_id, comment_id);
-        this.dataHelper.updateLikedComment(commentKey, likedComment);
-        eventBus.publish(FeedsEvent.PublishType.commentDataUpdate)
-      }
-      return ;
-    }
-
-    if (error != null && error != undefined && error.code != undefined){
+    if (error != null && error != undefined && error.code != undefined && error.code != -4){
       this.doPostLikeError(nodeId, channel_id, post_id, comment_id);
       this.handleError(nodeId, error);
       return;
     }
+
+    let key = this.getPostId(nodeId, channel_id, post_id);
+    if (comment_id == 0){
+      let likesObj = this.dataHelper.generateLikes(nodeId, channel_id, post_id, 0);
+      this.dataHelper.updateLikes(key, likesObj);
+      eventBus.publish(FeedsEvent.PublishType.postDataUpdate);
+    }else{
+      let commentKey = this.getLikeCommentId(nodeId, channel_id, post_id, comment_id);
+      let likedComment = this.dataHelper.generatedLikedComment(nodeId, channel_id, post_id, comment_id);
+      this.dataHelper.updateLikedComment(commentKey, likedComment);
+      eventBus.publish(FeedsEvent.PublishType.commentDataUpdate)
+    }
+    let originPost = this.dataHelper.getPost(key);
+    this.dataHelper.updatePost(key, originPost);
   }
 
   handlePostUnLikeResult(nodeId:string, request: any, error: any){
-    let channel_id: number = request.channel_id;
-    let post_id: number = request.post_id;
-    let comment_id: number = request.comment_id;
-
-    let key = this.getPostId(nodeId, channel_id, post_id);
-    if (error != null && error != undefined && error.code == -4){
-      if(comment_id == 0){
-        this.dataHelper.deleteLikes(key);
-        eventBus.publish(FeedsEvent.PublishType.postDataUpdate);
-      }else{
-        let commentKey = this.getLikeCommentId(nodeId, channel_id, post_id, comment_id);
-        this.dataHelper.deleteLikedComment(commentKey);
-        eventBus.publish(FeedsEvent.PublishType.commentDataUpdate);
-      }
-      return ;
-    }
-
-    if (error != null && error != undefined && error.code != undefined){
+    let channel_id: number = request.requestParams.channel_id;
+    let post_id: number = request.requestParams.post_id;
+    let comment_id: number = request.requestParams.comment_id;
+    if (error != null && error != undefined && error.code != undefined && error.code != -4){
       this.doPostUnLikeError(nodeId,channel_id, post_id, comment_id);
       this.handleError(nodeId, error);
       return;
     }
+    let key = this.getPostId(nodeId, channel_id, post_id);
+    if(comment_id == 0){
+      this.dataHelper.deleteLikes(key);
+      eventBus.publish(FeedsEvent.PublishType.postDataUpdate);
+    }else{
+      let commentKey = this.getLikeCommentId(nodeId, channel_id, post_id, comment_id);
+      this.dataHelper.deleteLikedComment(commentKey);
+      eventBus.publish(FeedsEvent.PublishType.commentDataUpdate);
+    }
+    let originPost = this.dataHelper.getPost(key);
+    this.dataHelper.updatePost(key, originPost);
   }
 
   handleGetMyChannelsResult(nodeId: string, responseResult: any, error: any){
@@ -2318,7 +2312,7 @@ export class FeedService {
 
       let originPost = this.dataHelper.getPost(key);
       originPost.likes = originPost.likes+1;
-      this.dataHelper.updatePost(key, originPost);
+      this.dataHelper.updatePostWithoutSave(key, originPost);
 
       eventBus.publish(FeedsEvent.PublishType.updateLikeList, this.getLikeList());
       eventBus.publish(FeedsEvent.PublishType.postDataUpdate);
@@ -2372,7 +2366,7 @@ export class FeedService {
       let likeNum = originPost.likes;
       if (likeNum > 0){
         originPost.likes = likeNum -1;
-        this.dataHelper.updatePost(key, originPost);
+        this.dataHelper.updatePostWithoutSave(key, originPost);
       }
       eventBus.publish(FeedsEvent.PublishType.updateLikeList, this.getLikeList());
       eventBus.publish(FeedsEvent.PublishType.postDataUpdate);
