@@ -1307,7 +1307,10 @@ export class FeedService {
     let postId = request.post_id;
     let commentId = request.id
 
-    this.dataHelper.deleteComment(nodeId, channelId, postId, commentId);
+    let comment = this.dataHelper.getComment(nodeId, channelId, postId, commentId);
+    comment.status = FeedsData.PostCommentStatus.deleted;
+    this.dataHelper.updateComment(nodeId, channelId, postId, commentId, comment);
+
     eventBus.publish(FeedsEvent.PublishType.deleteCommentFinish);
   }
 
