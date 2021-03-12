@@ -228,7 +228,7 @@ export const en = {
         "name": "Name",
         "did": "DID",
         // "gender": "Gender",
-        "telephone": "PHONE NUMBER",
+        "telephone": "Phone Number",
         "email": "Email",
         "location": "Location",
         "carrieruserid": "Carrier UserId"
