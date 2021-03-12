@@ -102,7 +102,6 @@ export class SearchPage implements OnInit {
 
     this.events.subscribe(FeedsEvent.PublishType.addFeedStatusChanged,()=>{
       this.zone.run(() => {
-        console.log("=======discoverSubscribe=======");
         this.addingChanneList = this.feedService.getToBeAddedFeedsList() || [];
         this.searchAddingChanneList = _.cloneDeep(this.addingChanneList);
         this.discoverSquareList = this.filterdiscoverSquareList(this.discoverSquareList);
@@ -206,8 +205,6 @@ export class SearchPage implements OnInit {
       let discoverfeeds = this.feedService.getDiscoverfeeds() || [];
       if(discoverfeeds.length>0){
         this.discoverSquareList = this.filterdiscoverSquareList(discoverfeeds);
-      }else{
-
       }
       this.searchAddingChanneList = _.cloneDeep(this.addingChanneList);
       return;
