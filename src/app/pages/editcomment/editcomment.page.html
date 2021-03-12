@@ -18,10 +18,10 @@
         </ion-col>
       </ion-row>
     </ion-item>
-
-    <ion-textarea autoGrow="true"  autofocus="true" [(ngModel)]="newComment"  placeholder="{{'CommentPage.inputComment'|translate}}">
+    <div (click)="newPostTextArea()">
+    <ion-textarea  #newPostIonTextarea autoGrow="true"  autofocus="true" [(ngModel)]="newComment"  placeholder="{{'CommentPage.inputComment'|translate}}">
     </ion-textarea>
-
+    </div>
     <!-- <div *ngIf="imgUrl !== ''" class="img-container">
       <img src="{{imgUrl}}" (click)="showBigImage(imgUrl)" />
       <img class="remove" src="/assets/icons/remove.svg" (click)="imgUrl = ''"/>

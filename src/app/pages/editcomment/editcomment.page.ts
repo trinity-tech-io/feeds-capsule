@@ -1,5 +1,5 @@
-import { Component, OnInit, NgZone } from '@angular/core';
-import { NavController, Events } from '@ionic/angular';
+import { Component, OnInit, NgZone,ViewChild } from '@angular/core';
+import { NavController, Events,IonTextarea} from '@ionic/angular';
 import { FeedService } from 'src/app/services/FeedService';
 import { ActivatedRoute } from '@angular/router';
 import { NativeService } from '../../services/NativeService';
@@ -13,6 +13,7 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
   styleUrls: ['./editcomment.page.scss'],
 })
 export class EditCommentPage implements OnInit {
+  @ViewChild('newPostIonTextarea', {static: false}) newPostIonTextarea:IonTextarea;
   public connectionStatus = 1;
   public nodeStatus:any={};
   public channelAvatar = "";
@@ -110,6 +111,10 @@ export class EditCommentPage implements OnInit {
     this.events.unsubscribe(FeedsEvent.PublishType.rpcResponseError);
     this.events.unsubscribe(FeedsEvent.PublishType.editCommentFinish);
     this.events.unsubscribe(FeedsEvent.PublishType.friendConnectionChanged);
+  }
+
+  newPostTextArea(){
+    this.newPostIonTextarea.setFocus();
   }
 
   initTitle(){
