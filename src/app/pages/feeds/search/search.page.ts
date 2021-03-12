@@ -102,7 +102,7 @@ export class SearchPage implements OnInit {
 
     this.events.subscribe(FeedsEvent.PublishType.addFeedStatusChanged,()=>{
       this.zone.run(() => {
-        console.log("=======discoverSubscribe3=======");
+        console.log("=======discoverSubscribe=======");
         this.addingChanneList = this.feedService.getToBeAddedFeedsList() || [];
         this.searchAddingChanneList = _.cloneDeep(this.addingChanneList);
         this.discoverSquareList = this.filterdiscoverSquareList(this.discoverSquareList);
@@ -206,6 +206,8 @@ export class SearchPage implements OnInit {
       let discoverfeeds = this.feedService.getDiscoverfeeds() || [];
       if(discoverfeeds.length>0){
         this.discoverSquareList = this.filterdiscoverSquareList(discoverfeeds);
+      }else{
+
       }
       this.searchAddingChanneList = _.cloneDeep(this.addingChanneList);
       return;
@@ -484,7 +486,6 @@ checkValid(result: string){
     discoverSquareList =  _.filter(discoverSquare,(feed:any)=>{
       return this.handleShow(feed);
     });
-    console.log("======discoverSquareList===len======"+discoverSquareList.length);
     this.searchSquareList =_.cloneDeep(discoverSquareList);
     return discoverSquareList;
   }
@@ -507,7 +508,6 @@ checkValid(result: string){
   }
 
   discoverSubscribe(feedInfo:any){
-    console.log("=======discoverSubscribe1=======");
     let feedUrl = feedInfo["url"];
     let avatar =  feedInfo["feedsAvatar"];
     let followers = feedInfo["followers"];
@@ -516,8 +516,6 @@ checkValid(result: string){
     this.feedService.addFeed(feedUrl, avatar, followers, feedName).then((isSuccess)=>{
       if(isSuccess){
         this.zone.run(()=>{
-        console.log("=======discoverSubscribe2=======");
-
           //this.init();
         });
       }
