@@ -46,6 +46,20 @@
   </ion-infinite-scroll>
 </ion-content>
 
+<!---------------- ADD share menu---------------->
+<app-sharemenu
+ *ngIf="hideSharMenuComponent"
+ [nodeId] = "shareNodeId"
+ [feedId] = "shareFeedId"
+ [isShowTitle] = "isShowTitle"
+ [isShowQrcode] = "isShowQrcode"
+ [isShowUnfollow] = "isShowUnfollow"
+ [feedName] = "feedName"
+ [qrCodeString]="qrCodeString"
+ (hideShareMenu)="hideShareMenu($event)"
+>
+</app-sharemenu>
+
 <!---------------- ADD COMMENT FOOTER ---------------->
 <app-comment
   *ngIf="!hideComment"

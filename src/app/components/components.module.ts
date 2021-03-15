@@ -20,6 +20,8 @@ import { LikesComponent} from './likes/likes.component';
 import { CommentComponent } from './comment/comment.component';
 import { SwitchfeedComponent } from './switchfeed/switchfeed.component';
 import { PreviewqrcodeComponent } from './previewqrcode/previewqrcode.component';
+import { SharemenuComponent } from './sharemenu/sharemenu.component';
+
 
 import { VideofullscreenComponent } from './videofullscreen/videofullscreen.component';
 
@@ -58,6 +60,7 @@ import { ShareModule } from 'src/app/share/share.module';
     LikesComponent,
     CommentComponent,
     SwitchfeedComponent,
+    SharemenuComponent,
     VideofullscreenComponent
   ],
   exports: [
@@ -74,6 +77,7 @@ import { ShareModule } from 'src/app/share/share.module';
     LikesComponent,
     CommentComponent,
     SwitchfeedComponent,
+    SharemenuComponent,
     VideofullscreenComponent
   ],
 

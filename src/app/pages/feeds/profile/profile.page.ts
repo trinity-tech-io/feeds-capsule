@@ -45,13 +45,6 @@ export class ProfilePage implements OnInit {
   public channelAvatar = null;
   public channelName = null;
 
-
-  slideOpts = {
-    initialSlide: 0,
-    speed: 100,
-    slidesPerView: 3,
-  };
-
   public curItem:any = {};
 
   public clientHeight:number = 0;
@@ -77,6 +70,22 @@ export class ProfilePage implements OnInit {
   public curImgPostId:string = "";
 
   public hideDeletedPosts:boolean = false;
+
+  public hideSharMenuComponent:boolean = false;
+
+  public qrCodeString:string = null;
+
+  public feedName:string = null;
+
+  public isShowUnfollow:boolean = false;
+
+  public isShowQrcode:boolean = false;
+
+  public isShowTitle:boolean = false;
+
+  public shareNodeId:string = "";
+
+  public shareFeedId:string = "";
 
   constructor(
     private feedService: FeedService,
@@ -358,8 +367,9 @@ export class ProfilePage implements OnInit {
 
 
  this.events.subscribe(FeedsEvent.PublishType.tabSendPost,()=>{
+   this.hideSharMenuComponent = false;
    this.downProgressObj = {};
-  this.pauseAllVideo();
+   this.pauseAllVideo();
  });
 
     this.events.subscribe(FeedsEvent.PublishType.streamClosed,(nodeId)=>{
@@ -376,6 +386,7 @@ export class ProfilePage implements OnInit {
   }
 
   ionViewWillLeave(){
+    this.hideSharMenuComponent = false;
     this.events.unsubscribe(FeedsEvent.PublishType.refreshSubscribedChannels);
     this.events.unsubscribe(FeedsEvent.PublishType.updateLikeList);
     this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
@@ -422,6 +433,7 @@ export class ProfilePage implements OnInit {
 
   changeType(type:string){
     this.selectType = type;
+    this.hideSharMenuComponent = false;
     switch(type){
       case 'ProfilePage.myFeeds':
           this.initMyFeeds();
@@ -534,13 +546,29 @@ export class ProfilePage implements OnInit {
     this.curItem = item;
     switch(item['tabType']){
       case 'myfeeds':
-        this.menuService.showShareMenu(item.nodeId,item.channelId,item.channelName,item.postId);
+        //this.menuService.showShareMenu(item.nodeId,item.channelId,item.channelName,item.postId);
+        this.isShowTitle = true;
+        this.isShowQrcode = true;
+        this.isShowUnfollow = false;
+        this.feedName = item.channelName;
+        this.qrCodeString = this.getQrCodeString(item);
+        this.hideSharMenuComponent = true;
         break;
       case 'myfollow':
-        this.menuService.showChannelMenu(item.nodeId, item.channelId,item.channelName);
+        //this.menuService.showChannelMenu(item.nodeId, item.channelId,item.channelName);
+        this.isShowTitle = true;
+        this.isShowQrcode = true;
+        this.isShowUnfollow = true;
+        this.feedName = item.channelName;
+        this.qrCodeString = this.getQrCodeString(item);
+        this.hideSharMenuComponent = true;
         break;
       case 'mylike':
-          this.menuService.showChannelMenu(item.nodeId, item.channelId,item.channelName);
+        //this.menuService.showChannelMenu(item.nodeId, item.channelId,item.channelName);
+        this.isShowTitle = false;
+        this.isShowQrcode = false;
+        this.isShowUnfollow = true;
+        this.hideSharMenuComponent = true;
           break;
     }
   }
@@ -996,5 +1024,45 @@ export class ProfilePage implements OnInit {
     this.native.navigateForward('/menu/profiledetail',"");
   }
 
+  hideShareMenu(objParm:any){
+    let buttonType = objParm["buttonType"];
+     switch(buttonType){
+       case "unfollow":
+        let nodeId = objParm["nodeId"];
+        let feedId = objParm["feedId"];
+        if(this.feedService.getConnectionStatus() != 0){
+          this.native.toastWarn('common.connectionError');
+          return;
+        }
+        if(this.checkServerStatus(nodeId) != 0){
+          this.native.toastWarn('common.connectionError1');
+          return;
+        }
+
+      this.feedService.unsubscribeChannel(nodeId,feedId);
+        this.qrCodeString = null;
+        this.hideSharMenuComponent = false;
+         break;
+       case "share":
+        this.native.toast("common.comingSoon");
+         break;
+       case "cancel":
+        this.qrCodeString = null;
+        this.hideSharMenuComponent = false;
+         break;
+     }
+  }
+
+  getQrCodeString(feed:any){
+    let nodeId = feed["nodeId"];
+    this.shareNodeId = nodeId;
+    let serverInfo = this.feedService.getServerbyNodeId(nodeId);
+    let feedsUrl = serverInfo['feedsUrl'] || null;
+    let feedId = feed["channelId"] || "";
+    this.shareFeedId = feedId;
+    feedsUrl = feedsUrl+"/"+feedId;
+    let feedsName = feed["channelName"] || "";
+    return feedsUrl +"#"+encodeURIComponent(feedsName);
+  }
 
 }

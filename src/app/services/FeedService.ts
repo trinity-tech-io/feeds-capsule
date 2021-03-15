@@ -394,7 +394,7 @@ export class FeedService {
         this.connectionService.friendConnectionMap = {};
 
       this.connectionService.friendConnectionMap[friendId] = friendStatus;
-      
+
       let serverStatus = this.dataHelper.generateServerStatus(friendId, "", friendStatus);
       this.dataHelper.updateServerStatus(friendId, serverStatus);
 
@@ -436,7 +436,7 @@ export class FeedService {
     // }
     // let originServerStatus = this.dataHelper.getServerStatus(server.nodeId);
     // originServerStatus.status = status;
-    // this.dataHelper.updateServerStatus(server.nodeId, originServerStatus);    
+    // this.dataHelper.updateServerStatus(server.nodeId, originServerStatus);
 
     let serverStatistic = this.dataHelper.generateEmptyStatistics(server.did);
     this.dataHelper.updateServerStatistics(server.nodeId, serverStatistic);
@@ -1588,7 +1588,7 @@ export class FeedService {
       post_status : status
     }
     this.dataHelper.updatePost(key, post);
-    
+
     eventBus.publish(FeedsEvent.PublishType.editPostFinish);
     eventBus.publish(FeedsEvent.PublishType.editPostSuccess);
   }
@@ -2074,7 +2074,7 @@ export class FeedService {
         this.generateSyncPostStatus(nodeId, channel_id, false, updatedAt);
       }
 
-      
+
       if(this.dataHelper.isExistPost(key)){
         let nodeChannelId = this.getChannelId(nodeId, channel_id);
         if (!this.checkChannelIsMine(nodeId, channel_id))
@@ -3291,7 +3291,7 @@ export class FeedService {
       if (this.getMyChannelList().length == 0)
         this.getMyChannels(friendId,Communication.field.last_update,0,0,0);
     }
-    
+
     let list = this.getSubscribedChannelsFromNodeId(friendId);
 
     if (list.length>0){
@@ -3600,7 +3600,7 @@ export class FeedService {
 
     if (this.dataHelper.isBindingServer(nodeId)){
       this.getMyChannels(nodeId,Communication.field.last_update,0,0,0);
-    } 
+    }
   }
 
   parseBindServerUrl(content: string): FeedsData.BindURLData{
