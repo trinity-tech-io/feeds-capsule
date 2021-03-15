@@ -1,0 +1,40 @@
+<div class="backdrop" (click)="clickItem('cancel')" [class.darkbackdrop]="theme.darkMode" [class.lightbackdrop]="!theme.darkMode">
+</div>
+<div class="feedlist" [class.darkfeedlist]="theme.darkMode" [class.lightfeedlist]="!theme.darkMode">
+    <ion-grid style="padding:0px;">
+      <ion-row class="shareTitle" *ngIf="isShowTitle">
+        <ion-col size="12">
+          {{feedName}}
+        </ion-col>
+      </ion-row>
+
+      <div class="qr-container" *ngIf="isShowQrcode">
+            <div class="qrcode">
+                <qrcode [qrdata]="qrCodeString" [size]="200" [level]="'M'"></qrcode>
+            </div>
+      </div>
+
+      <ion-row (click)="clickItem('share')" class="share">
+        <ion-col
+        size="12">
+        <ion-icon name="share"></ion-icon><span>{{"common.share"|translate}}</span>
+      </ion-col>
+      </ion-row>
+      <ion-row (click)="clickItem('unfollow')" class="share bordertop" *ngIf="isShowUnfollow">
+        <ion-col
+        size="12">
+        <ion-icon name="person-remove" class="unfollowColor"></ion-icon><span class="unfollowColor">{{"common.unsubscribe"|translate}}</span>
+      </ion-col>
+      </ion-row>
+    </ion-grid>
+</div>
+<div [class.feedcancel]="!theme.darkMode" [class.darkfeedcancel]="theme.darkMode">
+  <ion-grid>
+  <ion-row (click)="clickItem('cancel')">
+    <ion-col
+    size="12">
+    <ion-icon name="close-circle"></ion-icon><span>{{"common.cancel"|translate}}</span>
+  </ion-col>
+  </ion-row>
+</ion-grid>
+</div>
