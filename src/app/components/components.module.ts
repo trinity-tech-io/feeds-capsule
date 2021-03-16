@@ -21,7 +21,8 @@ import { CommentComponent } from './comment/comment.component';
 import { SwitchfeedComponent } from './switchfeed/switchfeed.component';
 import { PreviewqrcodeComponent } from './previewqrcode/previewqrcode.component';
 import { SharemenuComponent } from './sharemenu/sharemenu.component';
-
+import { RoundloadingComponent } from './roundloading/roundloading.component';
+import { PercentageloadingComponent } from './percentageloading/percentageloading.component';
 
 import { VideofullscreenComponent } from './videofullscreen/videofullscreen.component';
 
@@ -61,7 +62,9 @@ import { ShareModule } from 'src/app/share/share.module';
     CommentComponent,
     SwitchfeedComponent,
     SharemenuComponent,
-    VideofullscreenComponent
+    VideofullscreenComponent,
+    RoundloadingComponent,
+    PercentageloadingComponent
   ],
   exports: [
     AlertdialogComponent,
@@ -78,7 +81,9 @@ import { ShareModule } from 'src/app/share/share.module';
     CommentComponent,
     SwitchfeedComponent,
     SharemenuComponent,
-    VideofullscreenComponent
+    VideofullscreenComponent,
+    RoundloadingComponent,
+    PercentageloadingComponent
   ],
 
   providers: [

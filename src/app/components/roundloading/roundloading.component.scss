@@ -1,0 +1,33 @@
+@keyframes roundAni {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+
+.round-loading-wrap {
+    position: relative;
+    width:40px;
+    height:40px;
+    animation: roundAni 1s linear infinite;
+}
+
+.round-loading {
+    position: absolute;
+    width:40px;
+    height:40px;
+    z-index: 2;
+    border-radius: 100%;
+    background-color: transparent;
+    border: 2px solid #D7D7D7;
+    border-bottom-color: transparent;
+    border-left-color: transparent;
+    box-sizing: border-box;
+}
+
+.round-loading-1 {
+    transform: rotate(140deg);
+}
