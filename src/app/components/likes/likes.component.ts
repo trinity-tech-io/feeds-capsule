@@ -19,12 +19,25 @@ export class LikesComponent implements OnInit {
   @Input() likeList:any =[];
   @Input() nodeStatus:any = {};
   @Input() isLoadVideoiamge:any ={};
-  @Input() downProgressObj:any ={};
-  @Input() downStatusObj:any={};
+
+  @Input() isImgLoading:any ={};
+  @Input() isImgPercentageLoading:any={};
+  @Input() imgloadingStyleObj:any={};
+  @Input() imgPercent:number = 0;
+  @Input() imgRotateNum:any = {};
+
+  @Input() isVideoPercentageLoading:any = {};
+  @Input() videoPercent:number = 0;
+  @Input() videoRotateNum:any = {};
+  @Input() isVideoLoading:any = {};
+  @Input() videoloadingStyleObj:any = {};
+
+
   @Input() hideDeletedPosts:boolean = false;
   @Output() fromChild = new EventEmitter();
   @Output() commentParams = new EventEmitter();
   @Output() clickImage = new EventEmitter();
+  @Output() toPage = new EventEmitter();
 
   public styleObj:any = {width:""};
   public maxTextSize = 240;
@@ -114,8 +127,8 @@ export class LikesComponent implements OnInit {
 
 
   navTo(nodeId:string, channelId:number, postId:number){
-    this.pauseVideo(nodeId+channelId+postId);
-    this.native.getNavCtrl().navigateForward(['/channels', nodeId, channelId]);
+    this.pauseVideo(nodeId+"-"+channelId+"-"+postId);
+    this.toPage.emit({"nodeId":nodeId,"channelId":channelId,"page":"/channels"});
   }
 
   navToPostDetail(nodeId:string, channelId:number, postId:number,event?:any){
@@ -133,8 +146,8 @@ export class LikesComponent implements OnInit {
       return;
      }
     }
-    this.pauseVideo(nodeId+channelId+postId);
-    this.native.getNavCtrl().navigateForward(['/postdetail',nodeId, channelId,postId]);
+    this.pauseVideo(nodeId+"-"+channelId+"-"+postId);
+    this.toPage.emit({"nodeId":nodeId,"channelId":channelId,"postId":postId,"page":"/postdetail"});
   }
 
   checkMyLike(nodeId: string, channelId: number, postId: number){

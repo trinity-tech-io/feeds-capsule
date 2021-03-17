@@ -13,6 +13,7 @@ export class MyfeedsComponent implements OnInit {
   @Output() fromChild=new EventEmitter();
   @Input() channels:any = [];
   @Input() nodeStatus:any = {};
+  @Output () toFeedPage = new EventEmitter();
   public popover:any = "";
   constructor(
     private feedService: FeedService,
@@ -35,8 +36,9 @@ export class MyfeedsComponent implements OnInit {
   }
 
 
-  navTo(nodeId, channelId){
-    this.native.getNavCtrl().navigateForward(['/channels', nodeId, channelId]);
+  navTo(nodeId:string, channelId:number){
+    this.toFeedPage.emit({"nodeId":nodeId,"channelId":channelId,"page":"/channels"});
+    //this.native.getNavCtrl().navigateForward(['/channels', nodeId, channelId]);
   }
 
 

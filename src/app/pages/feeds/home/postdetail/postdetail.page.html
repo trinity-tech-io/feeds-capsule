@@ -47,19 +47,49 @@
           <h2 *ngIf="postStatus!=1" (press)="pressContent(postContent)" (click)="clickUrl($event)">
             <pre [ngStyle]="styleObj" [innerHTML]="getContentText(postContent) | html"></pre>
           </h2>
-          <img
+
+          <div style="position:relative;">
+            <app-percentageloading
+            *ngIf="isImgPercentageLoading"
+            [ngStyle]="imgloadingStyleObj"
+            [percent]="imgPercent"
+            [rotateNum]="imgRotateNum"
+            >
+            </app-percentageloading>
+
+          <app-roundloading
+          *ngIf="isImgLoading"
+          [ngStyle]="imgloadingStyleObj"
+          >
+          </app-roundloading>
+            <img
+            id=postdetail-img-{{nodeId}}-{{channelId}}-{{postId}}
             *ngIf="postStatus != 1&&mediaType===1&&postImage!= ''"
             [src]="postImage"
             class="post-img"
             (click)="showBigImage()"
-          >
+            />
+          </div>
 
           <!---video-->
-        <div *ngIf="postStatus != 1&&mediaType===2&&posterImg!=''" style="width:100%;height:200px;margin-top:10px;">
+        <div *ngIf="postStatus != 1&&mediaType===2&&posterImg!=''" style="width:100%;height:200px;margin-top:10px;position: relative;" id=postdetail-video-{{nodeId}}-{{channelId}}-{{postId}}>
+
+          <app-roundloading
+          *ngIf="isVideoLoading"
+          [ngStyle]="videoloadingStyleObj"
+          >
+          </app-roundloading>
+
+          <app-percentageloading
+          *ngIf="isVideoPercentageLoading"
+          [ngStyle]="videoloadingStyleObj"
+          [percent]="videoPercent"
+          [rotateNum]="videoRotateNum"
+          >
+          </app-percentageloading>
+
           <vg-player>
             <vg-overlay-play id={{nodeId+channelId+postId}}vgoverlayplaypostdetail></vg-overlay-play>
-            <vg-buffering  id={{nodeId+channelId+postId}}vgbufferingpostdetail></vg-buffering>
-
             <vg-controls id={{nodeId+channelId+postId}}vgcontrolspostdetail style="display:none;">
                 <img class="vgfullscreen" id={{nodeId+channelId+postId}}vgfullscreenpostdetail src="assets/images/fullscreen.svg"/>
             </vg-controls>
@@ -71,7 +101,6 @@
         <source  type="video/mp4" id={{nodeId+channelId+postId}}postdetailsource>
         </video>
         </vg-player>
-        <ion-progress-bar *ngIf="downStatus!=''&&downProgress>=0&&downProgress!=100" [value]="downProgress/100" style="margin-top: -9px;"></ion-progress-bar>
       </div>
         </ion-col>
       </ion-row>

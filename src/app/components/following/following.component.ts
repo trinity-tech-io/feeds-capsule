@@ -16,27 +16,28 @@ export class FollowingComponent implements OnInit {
   @Output() fromChild=new EventEmitter();
   @Input() followingList:any =[];
   @Input() nodeStatus:any = {};
+  @Output() toFollowPage = new EventEmitter();
   constructor(
     private feedspage: FeedsPage,
     private tabs: IonTabs,
     private feedService:FeedService,
     public theme:ThemeService,
-    private native:NativeService) { 
+    private native:NativeService) {
 
   }
 
   ngOnInit() {
-  
+
   }
 
   moreName(name:string){
     return UtilService.moreNanme(name);
    }
 
-  navTo(nodeId, channelId){
+  navTo(nodeId:string, channelId:number){
     this.read(nodeId, channelId);
-    this.native.getNavCtrl().navigateForward(['/channels', nodeId, channelId]);
-
+    this.toFollowPage.emit({"nodeId":nodeId,"channelId":channelId,"page":"/channels"});
+    //this.native.getNavCtrl().navigateForward(['/channels', nodeId, channelId]);
   }
 
   exploreFeeds(){

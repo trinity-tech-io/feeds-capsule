@@ -32,9 +32,30 @@
       </div>
     </div>
 
-    <app-myfeeds *ngIf="selectType == 'ProfilePage.myFeeds'"  [channels] = "channels" [nodeStatus]="nodeStatus" (fromChild)="showMenuMore($event)"></app-myfeeds>
-    <app-following *ngIf="selectType == 'ProfilePage.following'"  [followingList] = "followingList" [nodeStatus]="nodeStatus" (fromChild)="showMenuMore($event)"></app-following>
-    <app-likes  *ngIf="selectType == 'ProfilePage.myLikes'" [hideDeletedPosts] = "hideDeletedPosts"  [downStatusObj]="downStatusObj"  [downProgressObj]="downProgressObj"  [likeList] = "likeList" [nodeStatus]="nodeStatus" [isLoadVideoiamge]="isLoadVideoiamge"  (fromChild)="showMenuMore($event)" (commentParams)="showComment($event)" (clickImage)="showBigImage($event)"></app-likes>
+    <app-myfeeds *ngIf="selectType == 'ProfilePage.myFeeds'" (toFeedPage)="toPage($event)"  [channels] = "channels" [nodeStatus]="nodeStatus" (fromChild)="showMenuMore($event)"></app-myfeeds>
+    <app-following *ngIf="selectType == 'ProfilePage.following'"  [followingList] = "followingList" [nodeStatus]="nodeStatus" (fromChild)="showMenuMore($event)" (toFollowPage)="toPage($event)"></app-following>
+    <app-likes
+       *ngIf="selectType == 'ProfilePage.myLikes'"
+       [hideDeletedPosts] = "hideDeletedPosts"
+       [isImgPercentageLoading]="isImgPercentageLoading"
+       [isImgLoading]="isImgLoading"
+       [imgloadingStyleObj]="imgloadingStyleObj"
+       [imgPercent]="imgPercent"
+       [imgRotateNum]="imgRotateNum"
+       [isVideoLoading]="isVideoLoading"
+       [isVideoPercentageLoading]="isVideoPercentageLoading"
+       [videoloadingStyleObj]="videoloadingStyleObj"
+       [videoPercent]="videoPercent"
+       [videoRotateNum]="videoRotateNum"
+       [likeList] = "likeList"
+       [nodeStatus]="nodeStatus"
+       [isLoadVideoiamge]="isLoadVideoiamge"
+       (fromChild)="showMenuMore($event)"
+       (commentParams)="showComment($event)"
+       (clickImage)="showBigImage($event)"
+       (toPage)="toPage($event)"
+       >
+    </app-likes>
 
   </ion-grid>
   <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event)">
