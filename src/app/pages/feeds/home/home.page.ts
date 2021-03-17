@@ -243,7 +243,7 @@ export class HomePage implements OnInit {
 
  this.addBinaryEvevnt();
  this.events.subscribe(FeedsEvent.PublishType.addBinaryEvevnt, ()=>{
-    if(this.isAddBinaryEvevnt){
+    if(!this.isAddBinaryEvevnt){
       this.addCommonEvents();
       this.addBinaryEvevnt();
       this.isAddBinaryEvevnt = true;
