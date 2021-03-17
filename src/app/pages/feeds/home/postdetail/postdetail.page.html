@@ -28,7 +28,6 @@
         <ion-col class="mid-col" size="8" (press)="pressName()" (click)="navTo(nodeId, channelId)">
           <ion-label>
             {{ channelName }}
-            <span> {{ handleDisplayTime(postTS) }}</span>
           </ion-label>
           <p>@{{ channelOwner }}</p>
         </ion-col>
@@ -103,6 +102,9 @@
         </vg-player>
       </div>
         </ion-col>
+      <ion-col size="12">
+        <span style="font-size: 10px;font-weight: 500;color: #8888b0;">{{ handleDisplayTime() }}</span>
+      </ion-col>
       </ion-row>
       <ion-row class="bottom-row">
         <ion-col size="1.75" (click)="like()">
