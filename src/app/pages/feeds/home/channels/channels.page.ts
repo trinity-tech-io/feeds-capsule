@@ -68,18 +68,45 @@ export class ChannelsPage implements OnInit {
 
   public fullScreenmodal:any = "";
 
-  public downProgressObj ={};
-  public curPostId:string = "";
-
-  public downStatusObj = {};
-
   public curNodeId:string = "";
-
-  public curImgPostId:string = "";
 
   public hideDeletedPosts:boolean = false;
 
   public isPress:boolean = false;
+
+
+   /**
+   * imgPercentageLoading
+   */
+    public isImgPercentageLoading:any = {};
+    public imgPercent:number = 0;
+    public imgRotateNum:any = {};
+    /**
+     * imgloading
+     */
+    public isImgLoading:any = {};
+    public imgloadingStyleObj:any = {};
+    public imgDownStatus:any = {};
+    public imgDownStatusKey:string ="";
+    public imgCurKey:string = "";
+
+
+      /**
+   * videoPercentageLoading
+   */
+    public isVideoPercentageLoading:any = {};
+    public videoPercent:number = 0;
+    public videoRotateNum:any = {};
+       /**
+        * videoloading
+        */
+    public isVideoLoading:any = {};
+    public videoloadingStyleObj:any = {};
+    public videoDownStatus:any = {};
+    public videoDownStatusKey:string ="";
+    public videoCurKey:string = "";
+
+    public roundWidth:number = 40;
 
   constructor(
     private platform: Platform,
@@ -307,27 +334,45 @@ export class ChannelsPage implements OnInit {
 
     this.events.subscribe(FeedsEvent.PublishType.streamProgress,(nodeId,progress)=>{
       this.zone.run(() => {
-        if(this.curPostId === ""){
+        if(this.cachedMediaType ==='video'&&this.videoDownStatus[this.videoDownStatusKey]==="1"){
+          this.videoPercent = progress;
+          if(progress<100){
+            this.videoRotateNum["transform"] = "rotate("+(18/5)*progress+"deg)";
+           }else{
+           if(progress === 100){
+            this.videoRotateNum["transform"] = "rotate("+(18/5)*progress+"deg)";
+           }
+          }
           return;
         }
-        this.downProgressObj[this.curPostId] = progress;
-        if(this.curImgPostId=== ""){
-          return;
-        }
-        if(this.downStatusObj[this.curImgPostId]!=''){
-            this.native.updateLoadingMsg(this.translate.instant("common.downloading")+" "+progress+"%");
+
+        if(this.cachedMediaType ==='img'&&this.imgDownStatus[this.imgDownStatusKey]==="1"){
+          this.imgPercent = progress;
+          if(progress<100){
+            this.imgRotateNum["transform"] = "rotate("+(18/5)*progress+"deg)";
+           }else{
+           if(progress === 100){
+            this.imgRotateNum["transform"] = "rotate("+(18/5)*progress+"deg)";
+           }
+          }
         }
       });
     });
 
     this.events.subscribe(FeedsEvent.PublishType.streamError, (nodeId, error) => {
       this.zone.run(() => {
+
+        this.isImgPercentageLoading[this.imgDownStatusKey] = false;
+        this.isImgLoading[this.imgDownStatusKey] = false;
+        this.imgDownStatus[this.imgDownStatusKey] ="";
+
+        this.isVideoPercentageLoading[this.videoDownStatusKey] = false;
+        this.isVideoLoading[this.videoDownStatusKey] = false;
+        this.videoDownStatus[this.videoDownStatusKey] = "";
+
         this.feedService.handleSessionError(nodeId, error);
         this.pauseAllVideo();
-        this.downProgressObj[this.curPostId] = 0;
-        this.downStatusObj[this.curPostId] = "";
         this.curNodeId = "";
-        this.native.hideLoading();
       });
     });
 
@@ -338,11 +383,7 @@ export class ChannelsPage implements OnInit {
           return;
 
         if (state === FeedsData.StreamState.CONNECTED){
-          this.downStatusObj[this.curPostId] = "2";
           this.feedService.getBinary(nodeId, this.cacheGetBinaryRequestKey,this.cachedMediaType);
-          if(this.downStatusObj[this.curImgPostId]!=''){
-            this.native.updateLoadingMsg(this.translate.instant("common.downloading"));
-          }
         }
       });
     });
@@ -373,26 +414,36 @@ export class ChannelsPage implements OnInit {
    });
 
    this.events.subscribe(FeedsEvent.PublishType.openRightMenu,()=>{
-    this.curPostId = "";
-    this.curImgPostId = "";
+    this.isImgPercentageLoading[this.imgDownStatusKey] = false;
+    this.isImgLoading[this.imgDownStatusKey] = false;
+    this.imgDownStatus[this.imgDownStatusKey] ="";
+
+    this.isVideoPercentageLoading[this.videoDownStatusKey] = false;
+    this.isVideoLoading[this.videoDownStatusKey] = false;
+    this.videoDownStatus[this.videoDownStatusKey] = "";
+
     this.feedService.closeSession(this.curNodeId);
     this.curNodeId = "";
-    this.downProgressObj ={};
-    this.downStatusObj ={};
     this.pauseAllVideo();
     this.hideFullScreen();
    });
 
    this.events.subscribe(FeedsEvent.PublishType.streamClosed,(nodeId)=>{
+
+    this.isImgPercentageLoading[this.imgDownStatusKey] = false;
+    this.isImgLoading[this.imgDownStatusKey] = false;
+    this.imgDownStatus[this.imgDownStatusKey] ="";
+
+    this.isVideoPercentageLoading[this.videoDownStatusKey] = false;
+    this.isVideoLoading[this.videoDownStatusKey] = false;
+    this.videoDownStatus[this.videoDownStatusKey] = "";
+
       let mNodeId = nodeId || "";
       if (mNodeId != ""){
         this.feedService.closeSession(mNodeId);
       }
       this.pauseAllVideo();
-      this.native.hideLoading();
-      this.downStatusObj[this.curPostId] = "";
       this.curNodeId = "";
-      this.downProgressObj[this.curPostId] = 0;
     });
 
     this.events.subscribe(FeedsEvent.PublishType.friendConnectionChanged, (nodeId, status)=>{
@@ -403,6 +454,18 @@ export class ChannelsPage implements OnInit {
   }
 
   ionViewWillLeave(){
+
+    this.isImgPercentageLoading[this.imgDownStatusKey] = false;
+    this.isImgLoading[this.imgDownStatusKey] = false;
+    this.imgDownStatus[this.imgDownStatusKey] ="";
+    this.imgPercent = 0;
+    this.imgRotateNum["transform"] = "rotate(0deg)";
+
+    this.isVideoPercentageLoading[this.videoDownStatusKey] = false;
+    this.isVideoLoading[this.videoDownStatusKey] = false;
+    this.videoDownStatus[this.videoDownStatusKey] = "";
+    this.videoPercent = 0;
+    this.videoRotateNum["transform"] = "rotate(0deg)";
 
     this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
     this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
@@ -430,16 +493,13 @@ export class ChannelsPage implements OnInit {
     this.isLoadimage ={};
     this.isLoadVideoiamge ={};
     this.curPost={};
-    this.downProgressObj = {};
-    this.downStatusObj = {};
     if(this.curNodeId !=""){
       this.feedService.closeSession(this.curNodeId);
     }
     this.curNodeId ="";
-    this.curPostId ="";
-    this.curImgPostId = "";
     this.events.publish(FeedsEvent.PublishType.updateTab);
     this.events.publish(FeedsEvent.PublishType.addBinaryEvevnt);
+    this.events.publish(FeedsEvent.PublishType.addProflieEvent);
     this.native.hideLoading();
     this.hideFullScreen();
   }
@@ -527,7 +587,7 @@ export class ChannelsPage implements OnInit {
       return;
      }
     }
-    this.pauseVideo(nodeId+channelId+postId);
+    this.pauseVideo(nodeId+"-"+channelId+"-"+postId);
     this.native.getNavCtrl().navigateForward(['/postdetail',nodeId, channelId,postId]);
   }
 
@@ -677,7 +737,7 @@ export class ChannelsPage implements OnInit {
       return;
     }
 
-    this.pauseVideo(nodeId+channelId+postId);
+    this.pauseVideo(nodeId+"-"+channelId+"-"+postId);
     this.postId = postId;
     this.onlineStatus = this.nodeStatus[nodeId];
     this.hideComment = false;
@@ -705,7 +765,7 @@ export class ChannelsPage implements OnInit {
         let channelId = arr[1];
         let postId = arr[2];
         let mediaType = arr[3];
-        let id = nodeId+channelId+postId;
+        let id = nodeId+"-"+channelId+"-"+postId;
         //postImg
         if(mediaType === '1'){
           this.handlePsotImg(id,srcId,postgridindex);
@@ -776,7 +836,7 @@ export class ChannelsPage implements OnInit {
     let  vgplayer = document.getElementById(id+"vgplayerchannel");
     let  video:any = document.getElementById(id+"videochannel");
     let  source:any = document.getElementById(id+"sourcechannel");
-    let  downStatus = this.downStatusObj[id] || "";
+    let  downStatus = this.videoDownStatus[id] || "";
     if(id!=""&&source!=""&&downStatus===''){
        this.pauseVideo(id);
     }
@@ -837,7 +897,17 @@ export class ChannelsPage implements OnInit {
   showBigImage(nodeId:string,channelId:number,postId:number){
     this.pauseAllVideo();
     this.zone.run(()=>{
-      this.native.showLoading("common.waitMoment", 5*60*1000).then(()=>{
+
+        let imagesId = nodeId+"-"+channelId+"-"+postId+"postimgchannel";
+        let imagesObj = document.getElementById(imagesId);
+        let  imagesWidth = imagesObj.clientWidth;
+        let  imagesHeight = imagesObj.clientHeight;
+        this.imgloadingStyleObj["position"] = "absolute";
+        this.imgloadingStyleObj["left"] = (imagesWidth-this.roundWidth)/2+"px";
+        this.imgloadingStyleObj["top"] = (imagesHeight-this.roundWidth)/2+"px";
+        this.imgCurKey = nodeId+"-"+channelId+"-"+postId;
+        this.isImgLoading[this.imgCurKey] = true;
+
         let contentVersion = this.feedService.getContentVersion(nodeId,channelId,postId,0);
         let thumbkey= this.feedService.getImgThumbKeyStrFromId(nodeId,channelId,postId,0,0);
         let key = this.feedService.getImageKey(nodeId,channelId,postId,0,0);
@@ -847,41 +917,46 @@ export class ChannelsPage implements OnInit {
         this.feedService.getData(key).then((realImg)=>{
           let img = realImg || "";
           if(img!=""){
-            //this.curNodeId = "";
-            //this.curImgPostId = nodeId+channelId+postId;
-            this.downStatusObj[nodeId+channelId+postId] = "";
-            this.native.hideLoading();
+            this.isImgLoading[this.imgCurKey] = false;
             this.native.openViewer(realImg,"common.image","ChannelsPage.feeds",this.appService);
           }else{
+
+            if(this.checkServerStatus(nodeId) != 0){
+              this.isImgLoading[this.imgCurKey] = false;
+              this.native.toastWarn('common.connectionError1');
+              return;
+            }
+
             if(this.isExitDown()){
-              this.native.hideLoading();
+              this.isImgLoading[this.imgCurKey] = false;
               this.openAlert();
               return;
             }
-            this.curImgPostId = nodeId+channelId+postId;
+            this.imgDownStatusKey = nodeId+"-"+channelId+"-"+postId;
             this.cacheGetBinaryRequestKey = key;
             this.cachedMediaType = "img";
             this.feedService.processGetBinary(nodeId, channelId, postId, 0, 0, FeedsData.MediaType.containsImg, key,
               (transDataChannel)=>{
                 if (transDataChannel == FeedsData.TransDataChannel.SESSION){
-                  this.downStatusObj[nodeId+channelId+postId] = "1";
-                  this.curNodeId = nodeId;
+                  this.imgDownStatus[this.imgDownStatusKey] = "1";
+                  this.isImgLoading[this.imgDownStatusKey] = false;
+                  this.isImgPercentageLoading[this.imgDownStatusKey] = true;
                   return;
                 }
 
                 if (transDataChannel == FeedsData.TransDataChannel.MESSAGE){
-                  this.downStatusObj[nodeId+channelId+postId] = "1";
+                  this.imgDownStatus[this.imgDownStatusKey] = "0";
                   this.curNodeId = "";
                   return;
                 }
               },(err)=>{
-                this.native.hideLoading();
+                this.isImgLoading[this.imgDownStatusKey] = false;
+                this.isImgPercentageLoading[this.imgDownStatusKey] = false;
+                this.imgDownStatus[this.imgDownStatusKey] = "";
+                this.curNodeId = "";
               });
           }
         });
-      }).catch(()=>{
-        this.native.hideLoading();
-      });
     });
   }
 
@@ -901,7 +976,7 @@ export class ChannelsPage implements OnInit {
     for(let id  in videoids){
       let value = videoids[id] || "";
       if(value === "13"){
-        let  downStatus = this.downStatusObj[id] || "";
+        let  downStatus = this.videoDownStatus[id] || "";
         if(downStatus === ""){
           this.pauseVideo(id);
         }
@@ -986,46 +1061,65 @@ export class ChannelsPage implements OnInit {
       let channelId:any = arr[1];
       let postId:any = arr[2];
 
-      // this.curPostId = id;
-      // this.downProgressObj = {};
-      // this.downStatusObj = {};
+      let videoId = nodeId+"-"+channelId+"-"+postId+"vgplayerchannel";
+      let videoObj = document.getElementById(videoId);
+      let  videoWidth = videoObj.clientWidth;
+      let  videoHeight = videoObj.clientHeight;
+      this.videoloadingStyleObj["z-index"] = 999;
+      this.videoloadingStyleObj["position"] = "absolute";
+      this.videoloadingStyleObj["left"] = (videoWidth-this.roundWidth)/2+"px";
+      this.videoloadingStyleObj["top"] = (videoHeight-this.roundWidth)/2+"px";
+      this.videoCurKey = nodeId+"-"+channelId+"-"+postId;
+      this.isVideoLoading[this.videoCurKey] = true;
 
       let key = this.feedService.getVideoKey(nodeId,channelId,postId,0,0);
           this.feedService.getData(key).then((videoResult:string)=>{
             this.zone.run(()=>{
               let videodata = videoResult || "";
               if (videodata == ""){
+
+                if(this.checkServerStatus(nodeId) != 0){
+                  this.isVideoLoading[this.videoCurKey] = false;
+                  this.pauseVideo(id);
+                  this.native.toastWarn('common.connectionError1');
+                  return;
+                }
+
                 if(this.isExitDown()){
+                  this.isVideoLoading[this.videoCurKey] = false;
                   this.pauseVideo(id);
                   this.openAlert();
                   return;
                 }
-                this.curPostId = id;
+
+                this.videoDownStatusKey = nodeId+"-"+channelId+"-"+postId;
                 this.cacheGetBinaryRequestKey = key;
                 this.cachedMediaType = "video";
 
                 this.feedService.processGetBinary(nodeId, channelId, postId, 0, 0, FeedsData.MediaType.containsVideo, key,
                   (transDataChannel)=>{
                     if (transDataChannel == FeedsData.TransDataChannel.SESSION){
-                      this.downProgressObj[id] = 0;
-                      this.downStatusObj[id] = "1";
+                      this.videoDownStatus[this.videoDownStatusKey] = "1";
+                      this.isVideoLoading[this.videoDownStatus] = false;
+                      this.isVideoPercentageLoading[this.videoDownStatusKey] = true;
                       this.curNodeId = nodeId;
                       return;
                     }
 
                     if (transDataChannel == FeedsData.TransDataChannel.MESSAGE){
-                      this.downProgressObj[id] = 0;
-                      this.downStatusObj[id] = "1";
+                      this.videoDownStatus[this.videoDownStatusKey] = "0";
                       this.curNodeId = "";
                       return;
                     }
                   },(err)=>{
+                    this.videoDownStatus[this.videoDownStatusKey] = "";
+                    this.isVideoLoading[this.videoDownStatus] = false;
+                    this.isVideoPercentageLoading[this.videoDownStatusKey] = false;
                     this.pauseVideo(id);
-                    this.native.hideLoading();
                   });
                 return;
               }
-              this.downStatusObj[id] = "";
+              this.isVideoLoading[this.videoCurKey] = false;
               this.loadVideo(id,videodata);
             })
           });
@@ -1038,18 +1132,15 @@ export class ChannelsPage implements OnInit {
         return;
       }
       source.setAttribute("src",videodata);
-      let vgbuffering:any = document.getElementById(id+"vgbufferingchannel") || "";
       let vgoverlayplay:any = document.getElementById(id+"vgoverlayplaychannel");
       let video:any = document.getElementById(id+"videochannel");
       let vgcontrol:any = document.getElementById(id+"vgcontrolschannel");
       video.addEventListener('ended',()=>{
-          vgbuffering.style.display ="none";
           vgoverlayplay.style.display = "block";
           vgcontrol.style.display = "none";
       });
 
       video.addEventListener('pause',()=>{
-        vgbuffering.style.display ="none";
         vgoverlayplay.style.display = "block";
         vgcontrol.style.display = "none";
        });
@@ -1060,7 +1151,6 @@ export class ChannelsPage implements OnInit {
 
 
        video.addEventListener('canplay',()=>{
-            vgbuffering.style.display ="none";
             video.play();
        });
 
@@ -1079,20 +1169,25 @@ export class ChannelsPage implements OnInit {
   processGetBinaryResult(key: string, value: string){
     this.native.hideLoading();
     if (key.indexOf("img")>-1){
-      this.downStatusObj[this.curImgPostId] = "";
-      this.curImgPostId = "";
+      this.imgDownStatus[this.imgDownStatusKey] = "";
+      this.isImgLoading[this.imgDownStatusKey] = false;
+      this.isImgPercentageLoading[this.imgDownStatusKey] = false;
+      this.imgPercent = 0;
+      this.imgRotateNum["transform"] = "rotate(0deg)";
       this.cacheGetBinaryRequestKey = "";
-      this.native.hideLoading();
       this.native.openViewer(value,"common.image","ChannelsPage.feeds",this.appService);
     } else if (key.indexOf("video")>-1){
-      this.downProgressObj[this.curPostId] = 0;
-      this.downStatusObj[this.curPostId] = "";
-      this.curPostId ="";
+
+      this.videoDownStatus[this.videoDownStatusKey] = "";
+      this.isVideoLoading[this.videoDownStatusKey] = false;
+      this.isVideoPercentageLoading[this.videoDownStatusKey] = false;
+      this.videoPercent = 0;
+      this.videoRotateNum["transform"] = "rotate(0deg)";
       let arr = this.cacheGetBinaryRequestKey.split("-");
       let nodeId =arr[0];
       let channelId:any = arr[1];
       let postId:any = arr[2];
-      let id = nodeId+channelId+postId;
+      let id = nodeId+"-"+channelId+"-"+postId;
       this.cacheGetBinaryRequestKey = "";
       this.loadVideo(id,value);
     }
@@ -1100,18 +1195,23 @@ export class ChannelsPage implements OnInit {
 
   isExitDown(){
 
-    if((JSON.stringify(this.downStatusObj) == "{}")){
+    if((JSON.stringify(this.videoDownStatus) == "{}")&&(JSON.stringify(this.imgDownStatus) == "{}")){
           return false;
     }
 
-    for(var key in this.downStatusObj) {
-      if(this.downStatusObj[key] != ""){
+    for(let key in this.imgDownStatus) {
+      if(this.imgDownStatus[key] != ""){
+            return true;
+      }
+    }
+
+    for(let key in this.videoDownStatus) {
+      if(this.videoDownStatus[key] != ""){
             return true;
       }
     }
 
     return false;
-
   }
 
   openAlert(){

@@ -135,5 +135,8 @@ declare namespace FeedsEvent{
 
         publishPostFinish = "feeds:publishPostFinish",
         postDataUpdate = "feeds:postDataUpdate",
+
+        addProflieEvent = "feeds:addProflieEvent",
+
     }
 }

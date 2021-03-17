@@ -11,7 +11,6 @@ import { ComponentsModule } from 'src/app/components/components.module';
 import { VgCoreModule } from 'ngx-videogular';
 import { VgControlsModule } from 'ngx-videogular';
 import { VgOverlayPlayModule } from 'ngx-videogular';
-import { VgBufferingModule } from 'ngx-videogular';
 
 import { ShareModule } from 'src/app/share/share.module';
 
@@ -28,7 +27,6 @@ const routes: Routes = [
     VgCoreModule,
     VgControlsModule,
     VgOverlayPlayModule,
-    VgBufferingModule,
     FormsModule,
     TranslateModule,
     IonicModule,

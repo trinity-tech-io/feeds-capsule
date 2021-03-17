@@ -62,10 +62,6 @@ export class PostdetailPage implements OnInit {
   public cacheGetBinaryRequestKey = "";
   public cachedMediaType = "";
 
-  public downProgress:number = 0;
-
-  public downStatus:string = "";
-
   public mediaType:any;
 
   public fullScreenmodal:any="";
@@ -79,6 +75,32 @@ export class PostdetailPage implements OnInit {
   public isOwnComment = {};
 
   public isPress:boolean = false;
+  public roundWidth:number = 40;
+  /**
+   * imgPercentageLoading
+   */
+  public isImgPercentageLoading:boolean = false;
+  public imgPercent:number = 0;
+  public imgRotateNum:any = {};
+  /**
+   * imgloading
+   */
+  public isImgLoading:boolean = false
+  public imgloadingStyleObj:any = {};
+  public imgDownStatus:string = "";
+
+    /**
+   * videoPercentageLoading
+   */
+     public isVideoPercentageLoading:boolean = false;
+     public videoPercent:number = 0;
+     public videoRotateNum:any = {};
+     /**
+      * videoloading
+      */
+     public isVideoLoading:boolean = false
+     public videoloadingStyleObj:any = {};
+     public videoDownStatus:string = "";
 
   constructor(
     private platform: Platform,
@@ -313,9 +335,9 @@ export class PostdetailPage implements OnInit {
     this.events.subscribe(FeedsEvent.PublishType.getBinaryFinish, (nodeId, key: string, value, mediaType) => {
       this.zone.run(() => {
         this.logUtils.logd("receive getBinaryFinish",TAG);
-        this.downProgress = 0;
-        this.downStatus = "";
-        this.native.hideLoading();
+        if(this.nodeId != nodeId){
+           return;
+        }
         this.processGetBinaryResult(key, value);
       });
     });
@@ -323,9 +345,9 @@ export class PostdetailPage implements OnInit {
     this.events.subscribe(FeedsEvent.PublishType.streamGetBinarySuccess, (nodeId, key: string, value) => {
       this.zone.run(() => {
         this.logUtils.logd("receive streamGetBinarySuccess",TAG);
-        this.native.hideLoading();
-        this.downStatus = "";
-        this.downProgress = 0;
+        if(this.nodeId != nodeId){
+          return;
+        }
         this.feedService.closeSession(nodeId);
         this.processGetBinaryResult(key, value);
       });
@@ -334,26 +356,31 @@ export class PostdetailPage implements OnInit {
     this.events.subscribe(FeedsEvent.PublishType.streamError, (nodeId, error) => {
       this.zone.run(() => {
         this.logUtils.logd("reveive streamError",TAG);
+        if(this.nodeId != nodeId){
+          return;
+        }
+        this.isImgLoading = false;
+        this.isImgPercentageLoading = false;
+        this.imgDownStatus = "";
+        this.isVideoLoading = false;
+        this.isVideoPercentageLoading = false;
+        this.videoDownStatus = "";
         this.feedService.handleSessionError(nodeId, error);
         this.pauseVideo();
-        this.native.hideLoading();
-        this.downProgress = 0;
-        this.downStatus = "";
       });
     });
 
     this.events.subscribe(FeedsEvent.PublishType.streamOnStateChangedCallback, (nodeId, state) => {
       this.zone.run(() => {
         this.logUtils.logd("receive streamOnStateChangedCallback",TAG);
+        if(this.nodeId!=nodeId){
+           return;
+        }
         if (this.cacheGetBinaryRequestKey == "")
           return;
 
         if (state === FeedsData.StreamState.CONNECTED){
-          this.downStatus = '2';
           this.feedService.getBinary(this.nodeId, this.cacheGetBinaryRequestKey, this.cachedMediaType);
-          if(this.cachedMediaType === 'img'&&this.downStatus!=""){
-            this.native.updateLoadingMsg(this.translate.instant("common.downloading"));
-          }
         }
       });
     });
@@ -361,17 +388,44 @@ export class PostdetailPage implements OnInit {
     this.events.subscribe(FeedsEvent.PublishType.streamProgress,(nodeId,progress)=>{
         this.zone.run(() => {
           this.logUtils.logd("receive streamProgress",TAG);
-          this.downProgress = progress;
-          if(this.cachedMediaType === 'img'&&this.downStatus!=""){
-            this.native.updateLoadingMsg(this.translate.instant("common.downloading")+" "+progress+"%");
+          if(this.nodeId!=nodeId){
+            return;
+          }
+
+          if(this.cachedMediaType === 'img'&&this.imgDownStatus==="1"){
+            this.imgPercent = progress;
+            if(progress<100){
+              this.imgRotateNum["transform"] = "rotate("+(18/5)*progress+"deg)";
+             }else{
+             if(progress === 100){
+              this.imgRotateNum["transform"] = "rotate("+(18/5)*progress+"deg)";
+             }
+            }
+            return;
+          }
+
+          if(this.cachedMediaType ==='video'&&this.videoDownStatus==="1"){
+            this.videoPercent = progress;
+            if(progress<100){
+              this.videoRotateNum["transform"] = "rotate("+(18/5)*progress+"deg)";
+             }else{
+             if(progress === 100){
+              this.videoRotateNum["transform"] = "rotate("+(18/5)*progress+"deg)";
+             }
+            }
+            return;
           }
         });
     })
 
     this.events.subscribe(FeedsEvent.PublishType.openRightMenu,()=>{
       this.logUtils.logd("receive openRightMenu event",TAG);
-      this.downStatus ="";
-      this.downProgress = 0;
+      this.isImgLoading = false;
+      this.isImgPercentageLoading = false;
+      this.imgDownStatus = "";
+      this.isVideoPercentageLoading =false;
+      this.isVideoLoading = false;
+      this.videoDownStatus = "";
       this.feedService.closeSession(this.nodeId);
       this.native.hideLoading();
       this.pauseVideo();
@@ -380,18 +434,19 @@ export class PostdetailPage implements OnInit {
 
      this.events.subscribe(FeedsEvent.PublishType.streamClosed,(nodeId)=>{
       this.logUtils.logd("receive streamClosed event",TAG);
-      let mNodeId = nodeId || "";
-      if (mNodeId != ""){
-        this.feedService.closeSession(mNodeId);
+      if(this.nodeId!=nodeId){
+        return;
       }
-      this.downStatus ="";
-      this.downProgress = 0;
-      this.native.hideLoading();
+      this.isImgLoading = false;
+      this.isImgPercentageLoading = false;
+      this.imgDownStatus = "";
+      this.isVideoPercentageLoading =false;
+      this.isVideoLoading = false;
+      this.videoDownStatus = "";
+      this.feedService.closeSession(this.nodeId);
       this.pauseVideo();
       this.hideFullScreen();
     });
-
-    // titleBarManager.showActivityIndicator(TitleBarPlugin.TitleBarActivityType.OTHER, this.translate.instant("common.loadingLastestComment"));
   }
 
 
@@ -424,9 +479,8 @@ export class PostdetailPage implements OnInit {
      this.events.unsubscribe(FeedsEvent.PublishType.streamClosed);
      this.events.publish(FeedsEvent.PublishType.updateTab);
      this.events.publish(FeedsEvent.PublishType.addBinaryEvevnt);
+     this.events.publish(FeedsEvent.PublishType.addProflieEvent);
      this.events.unsubscribe(FeedsEvent.PublishType.getCommentFinish);
-
-     //titleBarManager.hideActivityIndicator(TitleBarPlugin.TitleBarActivityType.OTHER);
   }
 
 
@@ -436,14 +490,18 @@ export class PostdetailPage implements OnInit {
       this.popover.dismiss();
     }
 
+    this.imgDownStatus ="";
+    this.isImgPercentageLoading = false;
+    this.isImgLoading = false;
+    this.isVideoPercentageLoading =false;
+    this.isVideoLoading = false;
+    this.videoDownStatus = "";
     this.hideComment = true;
     this.postImage = "";
     this.isFullContent = {};
     this.isOwnComment = {};
-    this.downProgress = 0;
     this.feedService.closeSession(this.nodeId);
     this.clearVideo();
-    this.native.hideLoading();
     this.hideFullScreen();
   }
 
@@ -569,42 +627,55 @@ export class PostdetailPage implements OnInit {
 
   showBigImage(){
     this.zone.run(()=>{
-      this.native.showLoading("common.waitMoment", 5*60*1000).then(()=>{
+        if(this.imgDownStatus != ""){
+          return;
+        }
+        let imagesId = UtilService.gethtmlId("postdetail","img",this.nodeId,this.channelId,this.postId);
+        let imagesObj = document.getElementById(imagesId);
+        let  imagesWidth = imagesObj.clientWidth;
+        let  imagesHeight = imagesObj.clientHeight;
+        this.imgloadingStyleObj["position"] = "absolute";
+        this.imgloadingStyleObj["left"] = (imagesWidth-this.roundWidth)/2+"px";
+        this.imgloadingStyleObj["top"] = (imagesHeight-this.roundWidth)/2+8+"px";
+        this.isImgLoading = true;
         let contentVersion = this.feedService.getContentVersion(this.nodeId,this.channelId,this.postId,0);
         let thumbkey= this.feedService.getImgThumbKeyStrFromId(this.nodeId,this.channelId,this.postId,0,0);
         let key = this.feedService.getImageKey(this.nodeId,this.channelId,this.postId,0,0);
         if(contentVersion == "0"){
              key = thumbkey;
         }
+
         this.feedService.getData(key).then((realImg)=>{
           let img = realImg || "";
           if(img!=""){
-            this.downStatus = "";
-            this.native.hideLoading();
+            this.imgDownStatus = "";
+            this.isImgLoading = false;
             this.native.openViewer(realImg,"common.image","PostdetailPage.postview",this.appService);
           }else{
+
             this.cacheGetBinaryRequestKey = key;
             this.cachedMediaType = "img";
             this.feedService.processGetBinary(this.nodeId, this.channelId, this.postId, 0, 0, FeedsData.MediaType.containsImg, key,
               (transDataChannel)=>{
                 if (transDataChannel == FeedsData.TransDataChannel.SESSION){
-                  this.downStatus = '1';
+                  this.imgDownStatus = "1";//session down
+                  this.isImgLoading = false;
+                  this.isImgPercentageLoading =true;
                   return;
                 }
 
                 if (transDataChannel == FeedsData.TransDataChannel.MESSAGE){
-                  this.downStatus = '';
+                    this.imgDownStatus = "0";//message down
                   return;
                 }
               },
               (err)=>{
-                this.native.hideLoading();
+                this.imgDownStatus = "";
+                this.isImgLoading = false;
+                this.isImgPercentageLoading = false;
               });
           }
         });
-      }).catch(()=>{
-        this.native.hideLoading();
-      });
     });
   }
 
@@ -762,6 +833,15 @@ export class PostdetailPage implements OnInit {
   }
 
   getVideo(key:string){
+    let videoId = UtilService.gethtmlId("postdetail","video",this.nodeId,this.channelId,this.postId);
+    let videoObj = document.getElementById(videoId);
+    let  videoWidth = videoObj.clientWidth;
+    let  videoHeight = videoObj.clientHeight;
+    this.videoloadingStyleObj["z-index"] = 999;
+    this.videoloadingStyleObj["position"] = "absolute";
+    this.videoloadingStyleObj["left"] = (videoWidth-this.roundWidth)/2+"px";
+    this.videoloadingStyleObj["top"] = (videoHeight-this.roundWidth)/2+"px";
+    this.isVideoLoading = true;
 
     this.feedService.getData(key).then((videodata:string)=>{
       this.zone.run(()=>{
@@ -773,11 +853,13 @@ export class PostdetailPage implements OnInit {
           this.feedService.processGetBinary(this.nodeId, this.channelId, this.postId, 0, 0, FeedsData.MediaType.containsVideo, key,
             (transDataChannel)=>{
               if (transDataChannel == FeedsData.TransDataChannel.SESSION){
-                this.downStatus = '1';
+                this.videoDownStatus = '1';
+                this.isVideoLoading = false;
+                this.isVideoPercentageLoading =true;
                 return;
               }
               if (transDataChannel == FeedsData.TransDataChannel.MESSAGE){
-                this.downStatus = '';
+                this.videoDownStatus = '0';
                 return;
               }
             },
@@ -786,7 +868,6 @@ export class PostdetailPage implements OnInit {
             });
         return;
         }
-        this.downStatus = "";
         this.videoObj = videoData;
         this.loadVideo(videoData);
       });
@@ -794,23 +875,23 @@ export class PostdetailPage implements OnInit {
   }
 
   loadVideo(videodata:any){
+    this.isVideoLoading = false;
+    this.isVideoPercentageLoading = false;
+    this.videoDownStatus = "";
     let id = this.nodeId+this.channelId+this.postId;
     let source:any = document.getElementById(id+"postdetailsource") || "";
     source.setAttribute("src",videodata);
     let  video:any = document.getElementById(id+"postdetailvideo") || "";
-    let vgbuffering:any = document.getElementById(id+"vgbufferingpostdetail");
     let vgoverlayplay:any = document.getElementById(id+"vgoverlayplaypostdetail");
     let vgcontrol:any = document.getElementById(id+"vgcontrolspostdetail");
     video.addEventListener('ended',()=>{
 
         vgoverlayplay.style.display = "block";
-        vgbuffering.style.display ="none";
         vgcontrol.style.display = "none";
     });
 
     video.addEventListener('pause',()=>{
       vgoverlayplay.style.display = "block";
-      vgbuffering.style.display ="none";
       vgcontrol.style.display = "none";
     });
 
@@ -820,7 +901,6 @@ export class PostdetailPage implements OnInit {
 
 
      video.addEventListener('canplay',()=>{
-          vgbuffering.style.display ="none";
           video.play();
      });
      video.load();
@@ -886,6 +966,13 @@ export class PostdetailPage implements OnInit {
     if(vgoverlayplay!=""){
      vgoverlayplay.onclick = ()=>{
       this.zone.run(()=>{
+
+        if(this.checkServerStatus(this.nodeId) != 0){
+          this.pauseVideo();
+          this.native.toastWarn('common.connectionError1');
+          return;
+        }
+
         let source:any = document.getElementById(id+"postdetailsource") || "";
         let sourceSrc = source.getAttribute("src") || "";
         if (sourceSrc != "")
@@ -911,9 +998,14 @@ export class PostdetailPage implements OnInit {
   processGetBinaryResult(key: string, value: string){
     this.cacheGetBinaryRequestKey = "";
     if (key.indexOf("img")>-1){
-      this.native.hideLoading();
+      this.imgDownStatus = "";
+      this.isImgPercentageLoading = false;
+      this.isImgLoading = false;
       this.native.openViewer(value,"common.image","PostdetailPage.postview",this.appService);
     } else if (key.indexOf("video")>-1){
+      this.videoDownStatus = "";
+      this.isVideoPercentageLoading = false;
+      this.isVideoLoading = false;
       this.videoObj = value;
       this.loadVideo(value);
     }

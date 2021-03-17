@@ -51,41 +51,67 @@
           </div>
         </h2>
 
-        <div *ngIf="post.post_status != 1&&post.content.mediaType==1"  id ={{post.nodeId+post.channel_id+post.id}}likerow style="width: 100%">
+        <div *ngIf="post.post_status != 1&&post.content.mediaType==1"  id ={{post.nodeId}}-{{post.channel_id}}-{{post.id}}likerow style="width: 100%">
           <span class="lefttopostdetailimg" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)"></span>
+            <div style="position:relative;">
+
+              <app-percentageloading
+              *ngIf="isImgPercentageLoading[post.nodeId+'-'+post.channel_id+'-'+post.id]"
+              [ngStyle]="imgloadingStyleObj"
+              [percent]="imgPercent"
+              [rotateNum]="imgRotateNum"
+              >
+              </app-percentageloading>
+
+             <app-roundloading
+              *ngIf="isImgLoading[post.nodeId+'-'+post.channel_id+'-'+post.id]"
+              [ngStyle]="imgloadingStyleObj"
+             >
+             </app-roundloading>
+
              <img
-             id ={{post.nodeId+post.channel_id+post.id}}postimglike
+             id ={{post.nodeId}}-{{post.channel_id}}-{{post.id}}postimglike
              src="assets/images/loading.png"
              class="post-img"
              style="width: 100%;"
               (click)="showBigImage(post.nodeId,post.channel_id,post.id)"
              />
-             <span class="topostdetailimg" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)"></span>
+            </div>
+            <span class="topostdetailimg" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)"></span>
          </div>
 
              <!--video-->
 
-             <div *ngIf="post.post_status!=1&&post.content.mediaType==2" id={{post.nodeId+post.channel_id+post.id}}vgplayerlike style="width:100%;">
+             <div *ngIf="post.post_status!=1&&post.content.mediaType==2" id={{post.nodeId}}-{{post.channel_id}}-{{post.id}}vgplayerlike style="width:100%;position:relative;">
+              <app-roundloading
+              *ngIf="isVideoLoading[post.nodeId+'-'+post.channel_id+'-'+post.id]"
+              [ngStyle]="videoloadingStyleObj"
+              >
+              </app-roundloading>
+
+              <app-percentageloading
+              *ngIf="isVideoPercentageLoading[post.nodeId+'-'+post.channel_id+'-'+post.id]"
+              [ngStyle]="videoloadingStyleObj"
+              [percent]="videoPercent"
+              [rotateNum]="videoRotateNum"
+              >
+              </app-percentageloading>
                  <div style="width: 100%;display:inline-block;height:200px;">
                 <span  class="lefttopostdetailvideo" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)"></span>
                  <vg-player>
-                   <vg-overlay-play id={{post.nodeId+post.channel_id+post.id}}vgoverlayplaylike></vg-overlay-play>
-                   <vg-buffering id={{post.nodeId+post.channel_id+post.id}}vgbufferinglike></vg-buffering>
-
-                   <vg-controls id={{post.nodeId+post.channel_id+post.id}}vgcontrolslike style="display: none;">
-                       <!-- <vg-fullscreen id={{post.nodeId+post.channel_id+post.id}}vgfullscreelike></vg-fullscreen> -->
-                       <img class="vgfullscreen" id={{post.nodeId+post.channel_id+post.id}}vgfullscreelike src="assets/images/fullscreen.svg"/>
+                   <vg-overlay-play id={{post.nodeId}}-{{post.channel_id}}-{{post.id}}vgoverlayplaylike></vg-overlay-play>
+                   <vg-controls id={{post.nodeId}}-{{post.channel_id}}-{{post.id}}vgcontrolslike style="display: none;">
+                       <img class="vgfullscreen" id={{post.nodeId}}-{{post.channel_id}}-{{post.id}}vgfullscreelike src="assets/images/fullscreen.svg"/>
                    </vg-controls>
 
-               <video #media [vgMedia]="media" id ={{post.nodeId+post.channel_id+post.id}}videolike
+               <video #media [vgMedia]="media" id ={{post.nodeId}}-{{post.channel_id}}-{{post.id}}videolike
                poster="assets/images/loading.png"
                playsinline webkit-playsinline>
-               <source  type="video/mp4" id={{post.nodeId+post.channel_id+post.id}}sourcelike>
+               <source  type="video/mp4" id={{post.nodeId}}-{{post.channel_id}}-{{post.id}}sourcelike>
                </video>
                </vg-player>
                </div>
               <span  class="topostdetailvideo" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)"></span>
-              <ion-progress-bar *ngIf="downStatusObj[post.nodeId+post.channel_id++post.id]!=''&&downProgressObj[post.nodeId+post.channel_id++post.id]>=0&&downProgressObj[post.nodeId+post.channel_id++post.id]!=100" [value]="downProgressObj[post.nodeId+post.channel_id++post.id]/100" style="margin-top: -13px;"></ion-progress-bar>
             </div>
 
 

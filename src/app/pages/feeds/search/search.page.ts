@@ -9,6 +9,7 @@ import { HttpService } from '../../../services/HttpService';
 import { ApiUrl } from '../../../services/ApiUrl';
 import { StorageService } from '../../../services/StorageService';
 import * as _ from 'lodash';
+import { copyFileSync } from 'fs';
 declare let appManager: AppManagerPlugin.AppManager;
 @Component({
   selector: 'app-search',
@@ -399,19 +400,26 @@ checkValid(result: string){
       if(result["code"] === 200){
          this.totalNum = result["data"]["total"];
          let arr = result["data"]["result"] || [];
+         if(arr.length === 0){
+          this.infiniteScroll.disabled =true;
+          this.infiniteScroll.complete();
+          return;
+         }
          this.curtotalNum = this.curtotalNum+arr.length;
          this.handleCache(arr);
          let discoverSquareList = this.feedService.getDiscoverfeeds();
          this.httpAllData = _.cloneDeep(discoverSquareList);
          this.discoverSquareList = this.filterdiscoverSquareList(discoverSquareList);
       }
+
       if(this.curtotalNum>=this.totalNum){
         this.infiniteScroll.disabled =true;
-      }else{
+        this.infiniteScroll.complete();
+        return;
+      }
         this.infiniteScroll.disabled =false;
         if(this.curtotalNum<this.totalNum){
            this.loadData(null);
-        }
       }
       this.infiniteScroll.complete();
     }).catch((err)=>{

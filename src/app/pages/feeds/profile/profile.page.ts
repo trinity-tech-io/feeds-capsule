@@ -6,7 +6,6 @@ import { IonInfiniteScroll} from '@ionic/angular';
 import { MenuService } from 'src/app/services/MenuService';
 import { NativeService } from 'src/app/services/NativeService';
 import { AppService } from 'src/app/services/AppService';
-import { TranslateService } from "@ngx-translate/core";
 import { PopupProvider } from 'src/app/services/popup';
 import { LogUtils } from 'src/app/services/LogUtils';
 import * as _ from 'lodash';
@@ -57,17 +56,11 @@ export class ProfilePage implements OnInit {
 
   public fullScreenmodal:any = "";
 
-  public downProgressObj ={};
-
   public curPostId:string = "";
-
-  public downStatusObj = {};
 
   public popover:any = "";
 
   public curNodeId:string = "";
-
-  public curImgPostId:string = "";
 
   public hideDeletedPosts:boolean = false;
 
@@ -87,6 +80,41 @@ export class ProfilePage implements OnInit {
 
   public shareFeedId:string = "";
 
+   /**
+   * imgPercentageLoading
+   */
+    public isImgPercentageLoading:any = {};
+    public imgPercent:number = 0;
+    public imgRotateNum:any = {};
+    /**
+     * imgloading
+     */
+    public isImgLoading:any = {};
+    public imgloadingStyleObj:any = {};
+    public imgDownStatus:any = {};
+    public imgDownStatusKey:string ="";
+    public imgCurKey:string = "";
+
+
+      /**
+   * videoPercentageLoading
+   */
+    public isVideoPercentageLoading:any = {};
+    public videoPercent:number = 0;
+    public videoRotateNum:any = {};
+       /**
+        * videoloading
+        */
+    public isVideoLoading:any = {};
+    public videoloadingStyleObj:any = {};
+    public videoDownStatus:any = {};
+    public videoDownStatusKey:string ="";
+    public videoCurKey:string = "";
+
+    public roundWidth:number = 40;
+
+    public isAddProfile:boolean = false;
+
   constructor(
     private feedService: FeedService,
     public theme:ThemeService,
@@ -95,7 +123,6 @@ export class ProfilePage implements OnInit {
     public menuService:MenuService,
     public native:NativeService,
     public appService:AppService,
-    private translate:TranslateService,
     public modalController:ModalController,
     private logUtils: LogUtils,
     public  popupProvider:PopupProvider
@@ -171,10 +198,8 @@ export class ProfilePage implements OnInit {
    return likeList;
   }
 
-  ionViewWillEnter() {
-
+  addProflieEvent(){
     this.hideDeletedPosts = this.feedService.getHideDeletedPosts();
-
     this.clientHeight =screen.availHeight;
     this.curItem = {};
     this.changeType(this.selectType);
@@ -210,10 +235,7 @@ export class ProfilePage implements OnInit {
 
     this.events.subscribe(FeedsEvent.PublishType.updateLikeList, (list) => {
       this.zone.run(() => {
-        // this.totalLikeList = list;
-        // this.initLike();
         this.refreshLikeList();
-        //this.initnodeStatus(this.likeList);
       });
      });
 
@@ -282,28 +304,38 @@ export class ProfilePage implements OnInit {
 
   this.events.subscribe(FeedsEvent.PublishType.streamError, (nodeId, error) => {
     this.zone.run(() => {
-      this.feedService.handleSessionError(nodeId, error);
-      this.pauseAllVideo();
-      this.native.hideLoading();
-      this.curPostId="";
-      this.curImgPostId ="";
-      this.curNodeId="";
-      this.downProgressObj ={};
-      this.downStatusObj= {};
+        this.clearDownStatus();
+        this.feedService.handleSessionError(nodeId, error);
+        this.pauseAllVideo();
+        this.native.hideLoading();
+        this.curPostId="";
+        this.curNodeId="";
     });
   });
 
   this.events.subscribe(FeedsEvent.PublishType.streamProgress,(nodeId,progress)=>{
     this.zone.run(() => {
-      if(this.curPostId === ""){
+      if(this.cachedMediaType ==='video'&&this.videoDownStatus[this.videoDownStatusKey]==="1"){
+        this.videoPercent = progress;
+        if(progress<100){
+          this.videoRotateNum["transform"] = "rotate("+(18/5)*progress+"deg)";
+         }else{
+         if(progress === 100){
+          this.videoRotateNum["transform"] = "rotate("+(18/5)*progress+"deg)";
+         }
+        }
         return;
       }
-      this.downProgressObj[this.curPostId] = progress;
-      if(this.curImgPostId=== ""){
-        return;
-      }
-      if(this.downStatusObj[this.curImgPostId]!=''){
-        this.native.updateLoadingMsg(this.translate.instant("common.downloading")+" "+progress+"%");
+
+      if(this.cachedMediaType ==='img'&&this.imgDownStatus[this.imgDownStatusKey]==="1"){
+        this.imgPercent = progress;
+        if(progress<100){
+          this.imgRotateNum["transform"] = "rotate("+(18/5)*progress+"deg)";
+         }else{
+         if(progress === 100){
+          this.imgRotateNum["transform"] = "rotate("+(18/5)*progress+"deg)";
+         }
+        }
       }
     });
   });
@@ -315,12 +347,7 @@ export class ProfilePage implements OnInit {
         return;
 
       if (state === FeedsData.StreamState.CONNECTED){
-        this.downStatusObj[this.curPostId] = "2";
         this.feedService.getBinary(nodeId, this.cacheGetBinaryRequestKey,this.cachedMediaType);
-        if(this.downStatusObj[this.curImgPostId]!=''){
-          this.native.updateLoadingMsg(this.translate.instant("common.downloading"));
-        }
-        //this.native.updateLoadingMsg(this.translate.instant("common.downloading"));
       }
     });
   });
@@ -353,14 +380,20 @@ export class ProfilePage implements OnInit {
  });
 
  this.events.subscribe(FeedsEvent.PublishType.openRightMenu,()=>{
+
+  this.isImgPercentageLoading[this.imgDownStatusKey] = false;
+  this.isImgLoading[this.imgDownStatusKey] = false;
+  this.imgDownStatus[this.imgDownStatusKey] ="";
+
+  this.isVideoPercentageLoading[this.videoDownStatusKey] = false;
+  this.isVideoLoading[this.videoDownStatusKey] = false;
+  this.videoDownStatus[this.videoDownStatusKey] = "";
+
      this.curPostId = "";
-     this.curImgPostId ="";
      if(this.curNodeId != ""){
       this.feedService.closeSession(this.curNodeId);
      }
      this.curNodeId="";
-     this.downProgressObj ={};
-     this.downStatusObj ={};
      this.pauseAllVideo();
      this.hideFullScreen();
  });
@@ -368,24 +401,55 @@ export class ProfilePage implements OnInit {
 
  this.events.subscribe(FeedsEvent.PublishType.tabSendPost,()=>{
    this.hideSharMenuComponent = false;
-   this.downProgressObj = {};
+   this.isImgPercentageLoading[this.imgDownStatusKey] = false;
+   this.isImgLoading[this.imgDownStatusKey] = false;
+   this.imgDownStatus[this.imgDownStatusKey] ="";
+
+   this.isVideoPercentageLoading[this.videoDownStatusKey] = false;
+   this.isVideoLoading[this.videoDownStatusKey] = false;
+   this.videoDownStatus[this.videoDownStatusKey] = "";
    this.pauseAllVideo();
  });
 
-    this.events.subscribe(FeedsEvent.PublishType.streamClosed,(nodeId)=>{
+      this.events.subscribe(FeedsEvent.PublishType.streamClosed,(nodeId)=>{
+
+      this.isImgPercentageLoading[this.imgDownStatusKey] = false;
+      this.isImgLoading[this.imgDownStatusKey] = false;
+      this.imgDownStatus[this.imgDownStatusKey] ="";
+
+      this.isVideoPercentageLoading[this.videoDownStatusKey] = false;
+      this.isVideoLoading[this.videoDownStatusKey] = false;
+      this.videoDownStatus[this.videoDownStatusKey] = "";
+
       let mNodeId = nodeId || "";
       if (mNodeId != ""){
         this.feedService.closeSession(mNodeId);
       }
       this.pauseAllVideo();
       this.native.hideLoading();
-      this.downStatusObj[this.curPostId] = "";
       this.curNodeId = "";
-      this.downProgressObj[this.curPostId] = 0;
     });
   }
 
+  ionViewWillEnter(){
+
+    this.events.subscribe(FeedsEvent.PublishType.addProflieEvent,()=>{
+        if(!this.isAddProfile){
+          this.addProflieEvent();
+          this.isAddProfile = true;
+        }
+    });
+
+    this.addProflieEvent();
+  }
+
   ionViewWillLeave(){
+    this.events.unsubscribe(FeedsEvent.PublishType.addProflieEvent);
+    this.clearData();
+  }
+
+  clearData(){
+    this.isAddProfile = false;
     this.hideSharMenuComponent = false;
     this.events.unsubscribe(FeedsEvent.PublishType.refreshSubscribedChannels);
     this.events.unsubscribe(FeedsEvent.PublishType.updateLikeList);
@@ -414,7 +478,7 @@ export class ProfilePage implements OnInit {
     this.events.unsubscribe(FeedsEvent.PublishType.streamProgress);
     this.events.unsubscribe(FeedsEvent.PublishType.streamClosed);
     this.events.unsubscribe(FeedsEvent.PublishType.hideDeletedPosts);
-
+    this.clearDownStatus();
     this.native.hideLoading();
     this.hideFullScreen();
     this.removeImages();
@@ -423,12 +487,24 @@ export class ProfilePage implements OnInit {
     this.isLoadVideoiamge ={};
     this.curItem = {};
     this.curPostId = "";
-    this.curImgPostId ="";
     if(this.curNodeId!=""){
       this.feedService.closeSession(this.curNodeId);
     }
-    this.downProgressObj ={};
-    this.downStatusObj ={};
+  }
+
+  clearDownStatus(){
+
+    this.isImgPercentageLoading[this.imgDownStatusKey] = false;
+    this.isImgLoading[this.imgDownStatusKey] = false;
+    this.imgDownStatus[this.imgDownStatusKey] ="";
+    this.imgPercent = 0;
+    this.imgRotateNum["transform"] = "rotate(0deg)";
+
+    this.isVideoPercentageLoading[this.videoDownStatusKey] = false;
+    this.isVideoLoading[this.videoDownStatusKey] = false;
+    this.videoDownStatus[this.videoDownStatusKey] = "";
+    this.videoPercent = 0;
+    this.videoRotateNum = "rotate(0deg)";
   }
 
   changeType(type:string){
@@ -612,7 +688,7 @@ export class ProfilePage implements OnInit {
         let channelId = arr[1];
         let postId = arr[2];
         let mediaType = arr[3];
-        let id = nodeId+channelId+postId;
+        let id = nodeId+"-"+channelId+"-"+postId;
         //postImg
         if(mediaType === '1'){
           this.handlePsotImg(id,srcId,postgridindex);
@@ -685,7 +761,7 @@ export class ProfilePage implements OnInit {
     let  vgplayer = document.getElementById(id+"vgplayerlike");
     let  video:any = document.getElementById(id+"videolike");
     let  source:any = document.getElementById(id+"sourcelike") || "";
-    let  downStatus = this.downStatusObj[id] || "";
+    let  downStatus = this.videoDownStatus[id] || "";
     if(id!=""&&source!=""&&downStatus===''){
        this.pauseVideo(id);
     }
@@ -760,7 +836,7 @@ export class ProfilePage implements OnInit {
     for(let id  in videoids){
       let value = videoids[id] || "";
       if(value === "13"){
-        let  downStatus = this.downStatusObj[id] || "";
+        let  downStatus = this.videoDownStatus[id] || "";
         if(downStatus === ""){
           this.pauseVideo(id);
         }
@@ -845,42 +921,62 @@ export class ProfilePage implements OnInit {
     let nodeId =arr[0];
     let channelId:any = arr[1];
     let postId:any = arr[2];
-    // this.curPostId = id;
-    // this.downProgressObj ={};
-    // this.downStatusObj ={};
+
+    let videoId = nodeId+"-"+channelId+"-"+postId+"vgplayerlike";
+    let videoObj = document.getElementById(videoId);
+    let  videoWidth = videoObj.clientWidth;
+    let  videoHeight = videoObj.clientHeight;
+    this.videoloadingStyleObj["z-index"] = 999;
+    this.videoloadingStyleObj["position"] = "absolute";
+    this.videoloadingStyleObj["left"] = (videoWidth-this.roundWidth)/2+"px";
+    this.videoloadingStyleObj["top"] = (videoHeight-this.roundWidth)/2+"px";
+    this.videoCurKey = nodeId+"-"+channelId+"-"+postId;
+    this.isVideoLoading[this.videoCurKey] = true;
+
     let key = this.feedService.getVideoKey(nodeId,channelId,postId,0,0);
     this.feedService.getData(key).then((videoResult:string)=>{
           this.zone.run(()=>{
             let videodata = videoResult || "";
             if (videodata == ""){
-              if(this.isExitDown()){
-                this.openAlert();
+              if(this.checkServerStatus(nodeId) != 0){
+                this.isVideoLoading[this.videoCurKey] = false;
                 this.pauseVideo(id);
+                this.native.toastWarn('common.connectionError1');
                 return;
               }
-              this.curPostId = id;
 
+              if(this.isExitDown()){
+                this.isVideoLoading[this.videoCurKey] = false;
+                this.pauseVideo(id);
+                this.openAlert();
+                return;
+              }
+
+              this.videoDownStatusKey = nodeId+"-"+channelId+"-"+postId;
               this.cacheGetBinaryRequestKey = key;
               this.cachedMediaType = "video";
               this.feedService.processGetBinary(nodeId, channelId, postId, 0, 0, FeedsData.MediaType.containsVideo, key,
                 (transDataChannel)=>{
                   if (transDataChannel == FeedsData.TransDataChannel.SESSION){
-                    this.downProgressObj[id] = 0;
-                    this.downStatusObj[id] = "1";
-                    this.curNodeId=nodeId;
+                      this.videoDownStatus[this.videoDownStatusKey] = "1";
+                      this.isVideoLoading[this.videoDownStatus] = false;
+                      this.isVideoPercentageLoading[this.videoDownStatusKey] = true;
+                      this.curNodeId=nodeId;
                   }else{
-                    this.downProgressObj[id] = 0;
-                    this.downStatusObj[id] = "1";
+                    this.videoDownStatus[this.videoDownStatusKey] = "0";
                     this.curNodeId="";
                   }
                 },(err)=>{
-                  this.native.hideLoading();
+                  this.videoDownStatus[this.videoDownStatusKey] = "";
+                  this.isVideoLoading[this.videoDownStatus] = false;
+                  this.isVideoPercentageLoading[this.videoDownStatusKey] = false;
+                  this.videoRotateNum ={};
+                  this.videoPercent = 0;
                   this.pauseVideo(id);
                 });
               return;
             }
-            this.downStatusObj[id] = "";
-            this.curNodeId="";
+            this.isVideoLoading[this.videoCurKey] = false;
             this.loadVideo(id,videodata);
           })
         });
@@ -892,19 +988,16 @@ export class ProfilePage implements OnInit {
       return;
     }
     source.setAttribute("src",videodata);
-    let vgbuffering:any = document.getElementById(id+"vgbufferinglike") || "";
     let vgoverlayplay:any = document.getElementById(id+"vgoverlayplaylike");
     let video:any = document.getElementById(id+"videolike");
     let vgcontrol:any = document.getElementById(id+"vgcontrolslike");
     video.addEventListener('ended',()=>{
        vgoverlayplay.style.display = "block";
-       vgbuffering.style.display ="none";
        vgcontrol.style.display = "none";
     });
 
     video.addEventListener('pause',()=>{
       vgoverlayplay.style.display = "block";
-      vgbuffering.style.display ="none";
       vgcontrol.style.display = "none";
   });
 
@@ -914,7 +1007,6 @@ export class ProfilePage implements OnInit {
 
 
    video.addEventListener('canplay',()=>{
-        vgbuffering.style.display ="none";
         video.play();
    });
     video.load();
@@ -923,7 +1015,17 @@ export class ProfilePage implements OnInit {
   showBigImage(item:any){
     this.pauseAllVideo();
     this.zone.run(()=>{
-      this.native.showLoading("common.waitMoment",5*60*1000).then(()=>{
+
+        let imagesId = item.nodeId+"-"+item.channelId+"-"+item.postId+"postimglike";
+        let imagesObj = document.getElementById(imagesId);
+        let  imagesWidth = imagesObj.clientWidth;
+        let  imagesHeight = imagesObj.clientHeight;
+        this.imgloadingStyleObj["position"] = "absolute";
+        this.imgloadingStyleObj["left"] = (imagesWidth-this.roundWidth)/2+"px";
+        this.imgloadingStyleObj["top"] = (imagesHeight-this.roundWidth)/2+"px";
+        this.imgCurKey = item.nodeId+"-"+item.channelId+"-"+item.postId;
+        this.isImgLoading[this.imgCurKey] = true;
+
         let contentVersion = this.feedService.getContentVersion(item.nodeId,item.channelId,item.postId,0);
         let thumbkey= this.feedService.getImgThumbKeyStrFromId(item.nodeId,item.channelId,item.postId,0,0);
         let key = this.feedService.getImageKey(item.nodeId,item.channelId,item.postId,0,0);
@@ -933,55 +1035,69 @@ export class ProfilePage implements OnInit {
         this.feedService.getData(key).then((realImg)=>{
           let img = realImg || "";
           if(img!=""){
-            //this.curNodeId = "";
-            this.downStatusObj[item.nodeId+item.channelId+item.postId] = "";
-            this.native.hideLoading();
+            this.isImgLoading[this.imgCurKey] = false;
             this.native.openViewer(realImg,"common.image","FeedsPage.tabTitle2",this.appService);
           }else{
+
+            if(this.checkServerStatus(item.nodeId) != 0){
+              this.isImgLoading[this.imgCurKey] = false;
+              this.native.toastWarn('common.connectionError1');
+              return;
+            }
+
             if(this.isExitDown()){
-              this.native.hideLoading();
+              this.isImgLoading[this.imgCurKey] = false;
               this.openAlert();
               return;
             }
-            this.curImgPostId = item.nodeId+item.channelId+item.postId;
+            this.imgDownStatusKey = item.nodeId+"-"+item.channelId+"-"+item.postId;
             this.cacheGetBinaryRequestKey = key;
             this.cachedMediaType ="img";
             this.feedService.processGetBinary(item.nodeId,item.channelId,item.postId, 0, 0, FeedsData.MediaType.containsImg, key,
               (transDataChannel)=>{
                 if (transDataChannel == FeedsData.TransDataChannel.SESSION){
-                  this.downStatusObj[item.nodeId+item.channelId+item.postId] = "1";
-                  this.curNodeId = item.nodeId;
+                  this.imgDownStatus[this.imgDownStatusKey] = "1";
+                  this.isImgLoading[this.imgDownStatusKey] = false;
+                  this.isImgPercentageLoading[this.imgDownStatusKey] = true;
                 }else{
-                  this.downStatusObj[item.nodeId+item.channelId+item.postId] = "1";
+                  this.imgDownStatus[this.imgDownStatusKey] = "0";
                   this.curNodeId = "";
                 }
               },(err)=>{
-                this.native.hideLoading();
+                this.isImgLoading[this.imgDownStatusKey] = false;
+                this.isImgPercentageLoading[this.imgDownStatusKey] = false;
+                this.imgDownStatus[this.imgDownStatusKey] = "";
+                this.imgPercent = 0;
+                this.imgRotateNum = {};
+                this.curNodeId = "";
               });
           }
         });
-      }).catch(()=>{
-        this.native.hideLoading();
-      });
     });
   }
 
   processGetBinaryResult(key: string, value: string){
     this.native.hideLoading();
     if (key.indexOf("img")>-1){
-      this.downStatusObj[this.curImgPostId] = "";
-      this.curImgPostId = "";
+      this.imgDownStatus[this.imgDownStatusKey] = "";
+      this.isImgLoading[this.imgDownStatusKey] = false;
+      this.isImgPercentageLoading[this.imgDownStatusKey] = false;
+      this.imgPercent = 0;
+      this.imgRotateNum["transform"] = "rotate(0deg)";
       this.cacheGetBinaryRequestKey = "";
       this.native.openViewer(value,"common.image","FeedsPage.tabTitle1",this.appService);
     } else if (key.indexOf("video")>-1){
-      this.downProgressObj[this.curPostId] = 0;
-      this.downStatusObj[this.curPostId] = "";
+      this.videoDownStatus[this.videoDownStatusKey] = "";
+      this.isVideoLoading[this.videoDownStatusKey] = false;
+      this.isVideoPercentageLoading[this.videoDownStatusKey] = false;
+      this.videoPercent = 0;
+      this.videoRotateNum["transform"] = "rotate(0deg)";
       this.curPostId = "";
       let arr = this.cacheGetBinaryRequestKey.split("-");
       let nodeId =arr[0];
       let channelId:any = arr[1];
       let postId:any = arr[2];
-      let id = nodeId+channelId+postId;
+      let id = nodeId+"-"+channelId+"-"+postId;
       this.cacheGetBinaryRequestKey = "";
       this.loadVideo(id,value);
     }
@@ -989,18 +1105,23 @@ export class ProfilePage implements OnInit {
 
   isExitDown(){
 
-    if((JSON.stringify(this.downStatusObj) == "{}")){
+    if((JSON.stringify(this.videoDownStatus) == "{}")&&(JSON.stringify(this.imgDownStatus) == "{}")){
           return false;
     }
 
-    for(var key in this.downStatusObj) {
-      if(this.downStatusObj[key] != ""){
+    for(let key in this.imgDownStatus) {
+      if(this.imgDownStatus[key] != ""){
+            return true;
+      }
+    }
+
+    for(let key in this.videoDownStatus) {
+      if(this.videoDownStatus[key] != ""){
             return true;
       }
     }
 
     return false;
-
   }
 
   openAlert(){
@@ -1063,6 +1184,19 @@ export class ProfilePage implements OnInit {
     feedsUrl = feedsUrl+"/"+feedId;
     let feedsName = feed["channelName"] || "";
     return feedsUrl +"#"+encodeURIComponent(feedsName);
+  }
+
+  toPage(eventParm:any){
+    let nodeId = eventParm["nodeId"];
+    let channelId = eventParm["channelId"];
+    let postId = eventParm["postId"] || "";
+    let page = eventParm["page"];
+    this.clearData();
+    if(postId!=""){
+      this.native.getNavCtrl().navigateForward([page,nodeId,channelId,postId]);
+    }else{
+      this.native.getNavCtrl().navigateForward([page,nodeId,channelId]);
+    }
   }
 
 }
