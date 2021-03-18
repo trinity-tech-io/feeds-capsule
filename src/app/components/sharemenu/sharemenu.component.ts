@@ -13,6 +13,7 @@ export class SharemenuComponent implements OnInit {
   @Input() isShowTitle:boolean = false;
   @Input() isShowQrcode:boolean = false;
   @Input() isShowUnfollow:boolean = false;
+  @Input() isShowInfo:boolean = false;
   @Input() feedName:string = null;
   @Input() qrCodeString:string = null;
   @Output() hideShareMenu = new EventEmitter();

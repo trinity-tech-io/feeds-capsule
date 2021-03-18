@@ -10,7 +10,6 @@ import { ProfilePage } from './profile.page';
 import { VgCoreModule } from 'ngx-videogular';
 import { VgControlsModule } from 'ngx-videogular';
 import { VgOverlayPlayModule } from 'ngx-videogular';
-import { VgBufferingModule } from 'ngx-videogular';
 
 import {ComponentsModule} from '../../../components/components.module'
 const routes: Routes = [
@@ -27,7 +26,6 @@ const routes: Routes = [
     VgCoreModule,
     VgControlsModule,
     VgOverlayPlayModule,
-    VgBufferingModule,
     ComponentsModule,
     CommonModule,
     FormsModule,

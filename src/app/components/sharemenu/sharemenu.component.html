@@ -20,6 +20,14 @@
         <ion-icon name="share"></ion-icon><span>{{"common.share"|translate}}</span>
       </ion-col>
       </ion-row>
+
+      <ion-row (click)="clickItem('info')" class="share bordertop" *ngIf="isShowInfo">
+        <ion-col
+        size="12">
+        <ion-icon name="information-circle-outline"></ion-icon><span>{{"common.details"|translate}}</span>
+      </ion-col>
+      </ion-row>
+
       <ion-row (click)="clickItem('unfollow')" class="share bordertop" *ngIf="isShowUnfollow">
         <ion-col
         size="12">
