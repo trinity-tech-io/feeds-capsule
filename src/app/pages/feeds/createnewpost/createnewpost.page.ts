@@ -777,7 +777,7 @@ hideComponent(feed:any){
 }
 
 moreName(name:string){
-  return UtilService.moreNanme(name,20);
+  return UtilService.moreNanme(name,15);
 }
 
 }
