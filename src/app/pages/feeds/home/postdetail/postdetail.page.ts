@@ -587,7 +587,7 @@ export class PostdetailPage implements OnInit {
     this.feedService.postLike(this.nodeId,Number(this.channelId),Number(this.postId),commentId);
   }
 
-  handleDisplayTime(){
+  handleUpdateDate(){
     let updateDate = new Date(this.updatedTime*1000);
     return UtilService.dateFormat(updateDate,'yyyy-MM-dd HH:mm:ss')
   }
@@ -1032,4 +1032,32 @@ export class PostdetailPage implements OnInit {
      }
     }
   }
+
+  handleDisplayTime(createTime:number){
+    let obj = UtilService.handleDisplayTime(createTime);
+    if(obj.type === 's'){
+      return this.translate.instant('common.just');
+    }
+    if(obj.type==='m'){
+      if(obj.content === 1){
+        return obj.content+this.translate.instant('HomePage.oneminuteAgo');
+      }
+      return obj.content+this.translate.instant('HomePage.minutesAgo');
+    }
+    if(obj.type==='h'){
+      if(obj.content === 1){
+        return obj.content+this.translate.instant('HomePage.onehourAgo');
+      }
+      return obj.content+this.translate.instant('HomePage.hoursAgo');
+    }
+    if(obj.type === 'day'){
+
+      if(obj.content === 1){
+        return this.translate.instant('common.yesterday');
+      }
+      return obj.content +this.translate.instant('HomePage.daysAgo');
+    }
+    return  obj.content;
+  }
+
 }
