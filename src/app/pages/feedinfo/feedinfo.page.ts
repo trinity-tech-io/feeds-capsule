@@ -140,6 +140,7 @@ export class FeedinfoPage implements OnInit {
   }
 
   initTitle(){
+    this.native.setTitleBarBackKeyShown(true);
     titleBarManager.setTitle(this.translate.instant('FeedinfoPage.title'));
     if (this.feedService.checkChannelIsMine(this.nodeId, this.channelId)) {
       titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, {
@@ -163,6 +164,7 @@ export class FeedinfoPage implements OnInit {
     this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
     this.events.unsubscribe(FeedsEvent.PublishType.editFeedInfoFinish);
     this.events.unsubscribe(FeedsEvent.PublishType.rpcRequestError);
+    this.events.publish(FeedsEvent.PublishType.addProflieEvent);
   }
 
   profileimage(){
