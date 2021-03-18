@@ -1153,10 +1153,10 @@ export class ProfilePage implements OnInit {
 
   hideShareMenu(objParm:any){
     let buttonType = objParm["buttonType"];
+    let nodeId = objParm["nodeId"];
+    let feedId = objParm["feedId"];
      switch(buttonType){
        case "unfollow":
-        let nodeId = objParm["nodeId"];
-        let feedId = objParm["feedId"];
         if(this.feedService.getConnectionStatus() != 0){
           this.native.toastWarn('common.connectionError');
           return;
@@ -1175,7 +1175,7 @@ export class ProfilePage implements OnInit {
          break;
        case "info":
          this.clearData();
-         this.native.navigateForward('/menu/profiledetail',"");
+         this.clickAvatar(nodeId,feedId);
          break;
        case "cancel":
         this.qrCodeString = null;
@@ -1206,6 +1206,45 @@ export class ProfilePage implements OnInit {
       this.native.getNavCtrl().navigateForward([page,nodeId,channelId,postId]);
     }else{
       this.native.getNavCtrl().navigateForward([page,nodeId,channelId]);
+    }
+  }
+
+  clickAvatar(nodeId:string,feedId:number){
+    let feed = this.feedService.getChannelFromId(nodeId,feedId);
+    let followStatus = this.checkFollowStatus(nodeId,feedId);
+    let feedName = feed.name;
+    let feedDesc = feed.introduction;
+    let feedSubscribes = feed.subscribers;
+    let feedAvatar = this.feedService.parseChannelAvatar(feed.avatar);
+    if(feedAvatar.indexOf("data:image")>-1){
+     this.feedService.setSelsectIndex(0);
+     this.feedService.setProfileIamge(feedAvatar);
+    }else if(feedAvatar.indexOf("assets/images")>-1){
+     let index = feedAvatar.substring(feedAvatar.length-5,feedAvatar.length-4);
+     this.feedService.setSelsectIndex(index);
+     this.feedService.setProfileIamge(feedAvatar);
+    }
+
+   this.feedService.setChannelInfo(
+     {
+       "nodeId":nodeId,
+       "channelId":feedId,
+       "name":feedName,
+       "des":feedDesc,
+       "followStatus":followStatus,
+       "channelSubscribes":feedSubscribes
+     });
+    this.native.navigateForward(['/feedinfo'],"");
+   }
+
+   checkFollowStatus(nodeId: string, channelId: number){
+    let channelsMap = this.feedService.getChannelsMap();
+    let nodeChannelId = this.feedService.getChannelId(nodeId,channelId);
+    if (channelsMap[nodeChannelId] == undefined || !channelsMap[nodeChannelId].isSubscribed){
+          return false;
+    }
+    else{
+           return true;
     }
   }
 
