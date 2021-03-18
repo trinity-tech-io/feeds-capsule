@@ -29,7 +29,7 @@ export class SwitchfeedComponent implements OnInit {
 
 
   moreName(name:string){
-    return UtilService.moreNanme(name);
+    return UtilService.moreNanme(name,25);
   }
 
   clickItem(feed:any){
