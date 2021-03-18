@@ -40,7 +40,7 @@
             size="6.5"
             class="middle-col"
           >
-            <ion-label>{{ moreName(addingchannel.feedName) }}</ion-label>
+            <ion-label style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ addingchannel.feedName }}</ion-label>
             <ion-row>
               <img src="./assets/images/bubble2.svg"> <br>
               <p><span>{{ addingchannel.follower }}</span> {{ 'common.followers' | translate }}</p>
@@ -76,7 +76,7 @@
         class="middle-col"
         (click)="navTo(feed.nodeId,feed.id)"
       >
-        <ion-label>{{ moreName(feed.name) }}</ion-label>
+        <ion-label style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ feed.name }}</ion-label>
         <ion-row>
           <img src="./assets/images/bubble2.svg"> <br>
           <p><span>{{ feed.subscribers }}</span> {{ 'common.followers' | translate }}</p>
@@ -111,7 +111,7 @@
           class="middle-col"
           (click)="clickItem(feed)"
         >
-          <ion-label>{{ moreName(feed.name) }}</ion-label>
+          <ion-label style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ feed.name }}</ion-label>
           <ion-row>
             <img src="./assets/images/bubble2.svg"> <br>
             <p><span>{{ feed.followers}}</span> {{ 'common.followers' | translate }}</p>
