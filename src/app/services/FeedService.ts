@@ -239,8 +239,13 @@ export class FeedService {
     return this.dataHelper.loadServerVersion();
   }
 
+  loadTempIdData(){
+    return this.dataHelper.loadTempIdData();
+  }
+
   async loadData(){
     await Promise.all([
+      this.loadTempIdData(),
       this.loadServerVersions(),
       this.loadPostData(),
       this.loadChannelData(),
@@ -5161,5 +5166,30 @@ export class FeedService {
 
   setDiscoverfeeds(discoverfeeds:any){
     return this.discoverfeeds = discoverfeeds;
+  }
+
+  prepareTempPost(nodeId: string, feedId: number, postId: number, content: string){
+    let post: FeedsData.Post = {
+      nodeId      : nodeId,
+      channel_id  : feedId,
+      id          : postId,
+      content     : content,
+      comments    : 0,
+      likes       : 0,
+      created_at  : this.getCurrentTimeNum(),
+      updated_at  : this.getCurrentTimeNum(),
+      post_status : FeedsData.PostCommentStatus.sending
+    }
+
+    let key = this.getPostId(nodeId, feedId, postId);
+    this.dataHelper.updatePost(key, post);
+  }
+
+  generateTempPostId(){
+    return this.dataHelper.generateLastTempIdData();
+  }
+
+  deleteTempPostId(id: number){
+    this.dataHelper.deleteTempIdData(id);
   }
 }
