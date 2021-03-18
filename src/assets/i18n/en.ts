@@ -96,7 +96,8 @@ export const en = {
         "textcopied": "Text copied",
         "connectionError1": "The feed is being offline now, try it again when it becomes online",
         "emptyElaAddressDes": "Not set yet",
-        "qRcodePreview": "QR code Preview"
+        "qRcodePreview": "QR code Preview",
+        "details":"Details"
     },
     "app": {
         "profileDetails": "Profile Details",

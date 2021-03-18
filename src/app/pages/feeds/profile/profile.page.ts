@@ -76,6 +76,8 @@ export class ProfilePage implements OnInit {
 
   public isShowTitle:boolean = false;
 
+  public isShowInfo:boolean = false;
+
   public shareNodeId:string = "";
 
   public shareFeedId:string = "";
@@ -624,6 +626,7 @@ export class ProfilePage implements OnInit {
       case 'myfeeds':
         //this.menuService.showShareMenu(item.nodeId,item.channelId,item.channelName,item.postId);
         this.isShowTitle = true;
+        this.isShowInfo = true;
         this.isShowQrcode = true;
         this.isShowUnfollow = false;
         this.feedName = item.channelName;
@@ -633,6 +636,7 @@ export class ProfilePage implements OnInit {
       case 'myfollow':
         //this.menuService.showChannelMenu(item.nodeId, item.channelId,item.channelName);
         this.isShowTitle = true;
+        this.isShowInfo = false;
         this.isShowQrcode = true;
         this.isShowUnfollow = true;
         this.feedName = item.channelName;
@@ -642,6 +646,7 @@ export class ProfilePage implements OnInit {
       case 'mylike':
         //this.menuService.showChannelMenu(item.nodeId, item.channelId,item.channelName);
         this.isShowTitle = false;
+        this.isShowInfo = false;
         this.isShowQrcode = false;
         this.isShowUnfollow = true;
         this.hideSharMenuComponent = true;
@@ -1142,6 +1147,7 @@ export class ProfilePage implements OnInit {
   }
 
   profiledetail(){
+    this.clearData();
     this.native.navigateForward('/menu/profiledetail',"");
   }
 
@@ -1166,6 +1172,10 @@ export class ProfilePage implements OnInit {
          break;
        case "share":
         this.native.toast("common.comingSoon");
+         break;
+       case "info":
+         this.clearData();
+         this.native.navigateForward('/menu/profiledetail',"");
          break;
        case "cancel":
         this.qrCodeString = null;
