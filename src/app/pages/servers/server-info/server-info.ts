@@ -229,26 +229,26 @@ export class ServerInfoPage implements OnInit {
     this.serverDetails = [];
 
     this.serverDetails.push({
-      type: this.translate.instant('ServerInfoPage.name'),
+      type:'ServerInfoPage.name',
       details: server.name ||  this.translate.instant('DIDdata.NotprovidedfromDIDDocument')
     });
 
     if (this.isOwner == 'true'){
       this.serverDetails.push({
-        type: this.translate.instant('ServerInfoPage.owner'),
+        type:'ServerInfoPage.owner',
         details: server.owner || ""
       });
     }
 
     if (this.developerMode){
       this.serverDetails.push({
-        type: this.translate.instant('ServerInfoPage.UserId'),
+        type:"NodeId",
         details: server.nodeId || ""
       });
     }
 
     this.serverDetails.push({
-      type: this.translate.instant('ServerInfoPage.introduction'),
+      type:'ServerInfoPage.introduction',
       details: server.introduction || ""
     });
 
@@ -256,27 +256,27 @@ export class ServerInfoPage implements OnInit {
       let version = this.feedService.getServerVersionByNodeId(server.nodeId)
       if (version != ""){
         this.serverDetails.push({
-          type: this.translate.instant('ServerInfoPage.version'),
+          type:'ServerInfoPage.version',
           details: version || "<1.3.0(Outdated)",
         });
       }
     }
     // if (server.elaAddress != "") {
     this.serverDetails.push({
-      type: this.translate.instant('IssuecredentialPage.elaaddress'),
+      type:'IssuecredentialPage.elaaddress',
       details: server.elaAddress || this.translate.instant('DIDdata.Notprovided')
     });
     // }
     if(this.developerMode){
       this.serverDetails.push({
-        type: this.translate.instant('ServerInfoPage.did'),
+        type:'ServerInfoPage.did',
         details: this.feedService.rmDIDPrefix(server.did)
       });
     }
 
 
     this.serverDetails.push({
-      type: this.translate.instant('ServerInfoPage.feedsSourceQRCode'),
+      type:'ServerInfoPage.feedsSourceQRCode',
       details: server.feedsUrl || "",
       qrcode: true
     });

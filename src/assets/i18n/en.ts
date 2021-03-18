@@ -231,8 +231,7 @@ export const en = {
         // "gender": "Gender",
         "telephone": "Phone Number",
         "email": "Email",
-        "location": "Location",
-        "carrieruserid": "Carrier UserId"
+        "location": "Location"
     },
     "DevelopPage": {
         "develop": "Develop",
@@ -310,7 +309,6 @@ export const en = {
         "replyingto": "Replying to",
         "containedfeeds": "Contained Feeds",
         "version": "version",
-        "UserId": "UserId",
         "beingPublic": "Public",
         "des1": "When developer mode is opened, you can choose public or public test Feeds",
         "des2": "Test Feeds",

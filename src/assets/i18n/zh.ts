@@ -232,8 +232,7 @@ export const zh = {
         // "gender": "性别",
         "telephone": "号码",
         "email": "邮箱",
-        "location": "国家/地区",
-        "carrieruserid": "Carrier UserId"
+        "location": "国家/地区"
     },
     "DevelopPage":{
         "develop": "开发",
@@ -311,7 +310,6 @@ export const zh = {
         "replyingto": "回复给",
         "containedfeeds": "包含的Feeds列表",
         "version": "版本",
-        "UserId": "UserId",
         "beingPublic": "公开",
         "des1": "开启开发者模式后，可以选择公开Feeds或公开测试Feeds",
         "des2": "测试Feeds",

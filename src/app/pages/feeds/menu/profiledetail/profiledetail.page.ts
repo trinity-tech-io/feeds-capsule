@@ -1,9 +1,9 @@
 import { Component, OnInit, NgZone } from '@angular/core';
-import { Events } from '@ionic/angular';
-import { FeedService, Avatar } from 'src/app/services/FeedService';
-import { NativeService } from 'src/app/services/NativeService';
-import { ThemeService } from 'src/app/services/theme.service';
 import { TranslateService } from "@ngx-translate/core";
+import { Events } from '@ionic/angular';
+import { FeedService, Avatar } from '../../../../services/FeedService';
+import { NativeService } from '../../../../services/NativeService';
+import { ThemeService } from '../../../../services/theme.service';
 import { CarrierService } from '../../../../services/CarrierService';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
@@ -36,8 +36,8 @@ export class ProfiledetailPage implements OnInit {
     private zone: NgZone,
     private native: NativeService,
     private feedService:FeedService,
-    public  theme:ThemeService,
     private translate:TranslateService,
+    public  theme:ThemeService,
     private events: Events,
     private carrierService:CarrierService
   ) {
@@ -51,40 +51,40 @@ export class ProfiledetailPage implements OnInit {
   collectData() {
     this.profileDetails = [];
     this.profileDetails.push({
-      type: this.translate.instant('ProfiledetailPage.name'),
+      type:'ProfiledetailPage.name',
       details:this.name
     })
 
     this.profileDetails.push({
-      type: this.translate.instant('ProfiledetailPage.did'),
+      type:'ProfiledetailPage.did',
       details:this.did
     })
 
     if(this.developerMode){
       let carrierUserId = this.carrierService.getNodeId();
       this.profileDetails.push({
-        type: this.translate.instant('ProfiledetailPage.carrieruserid'),
+        type:"NodeId",
         details:carrierUserId
       })
     }
 
     if(this.telephone!="还未设置"&&this.telephone!="Not set yet"&&this.telephone!=""){
       this.profileDetails.push({
-        type: this.translate.instant('ProfiledetailPage.telephone'),
+        type:'ProfiledetailPage.telephone',
         details:this.telephone
       })
     }
 
     if(this.email!="还未设置"&&this.email!="Not set yet"&&this.email!=""){
       this.profileDetails.push({
-        type: this.translate.instant('ProfiledetailPage.email'),
+        type:'ProfiledetailPage.email',
         details: this.email
       })
     }
 
     if(this.location!="还未设置"&&this.location!="Not set yet"&&this.location!=""){
       this.profileDetails.push({
-        type: this.translate.instant('ProfiledetailPage.location'),
+        type:'ProfiledetailPage.location',
         details: this.location
       })
     }

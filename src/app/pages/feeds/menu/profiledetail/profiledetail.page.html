@@ -11,7 +11,7 @@
     <div *ngFor="let profile of profileDetails" >
       <ion-row *ngIf="profile.details" class="detail-row">
         <ion-col size="12" class="left-col">
-            <h1>{{ profile.type }}</h1>
+            <h1>{{ profile.type | translate}}</h1>
             <h2 (click)="copytext(profile.details)">{{ profile.details }}</h2>
         </ion-col>
       </ion-row>
