@@ -35,7 +35,7 @@
         class="middle-col"
         (click)="navTo(channel.nodeId, channel.id)"
       >
-        <ion-label (press)="pressName(channel.name)">{{ moreName(channel.name) }}</ion-label>
+        <ion-label style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ channel.name}}</ion-label>
         <ion-row>
           <img src="./assets/images/bubble2.svg"> <br>
           <p><span>{{ channel.subscribers }}</span> {{ 'common.followers' | translate }}</p>

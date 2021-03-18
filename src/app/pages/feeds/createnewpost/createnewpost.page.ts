@@ -88,6 +88,7 @@ export class CreatenewpostPage implements OnInit {
   }
 
   ionViewWillEnter() {
+
     this.feedList = this.feedService.getMyChannelList() || [];
     this.initTitle();
     this.native.setTitleBarBackKeyShown(true);
@@ -773,6 +774,10 @@ hideComponent(feed:any){
   this.storageService.set("feeds.currentFeed",JSON.stringify(currentFeed));
   this.initFeed();
   this.hideSwitchFeed = false;
+}
+
+moreName(name:string){
+  return UtilService.moreNanme(name,20);
 }
 
 }

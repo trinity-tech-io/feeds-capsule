@@ -107,7 +107,11 @@ public static dateFormat(date: Date, sFormat: String = 'yyyy-MM-dd'): string {
 
   public static moreNanme(name:string,num:number = 15){
      let feedsName = name || "";
-     if(feedsName != "" && feedsName.length>num){
+     if(feedsName === ""){
+       return feedsName;
+     }
+     let sizeNum = this.getSize(feedsName);
+     if(sizeNum>num){
           return feedsName.substring(0,num)+'...'
      }else{
           return feedsName;

@@ -14,8 +14,11 @@
           </div>
         </ion-col>
         <ion-col size="9" class="middle-col" (click)="clickFeedAvatar()">
-          <ion-label style="white-space:normal;">{{ channelName }} <ion-icon name="chevron-down-outline" style="width:19px;height:19px;vertical-align:middle;" *ngIf="feedList.length>1"></ion-icon></ion-label>
+           <ion-label>{{ moreName(channelName) }} <ion-icon name="chevron-down-outline" style="width:19px;height:19px;vertical-align:middle;" *ngIf="feedList.length>1"></ion-icon></ion-label>
         </ion-col>
+        <!-- <ion-col size="0.5" class="middle-col" (click)="clickFeedAvatar()">
+         <ion-icon name="chevron-down-outline" style="width:19px;height:19px;vertical-align:middle;" *ngIf="feedList.length>1"></ion-icon>
+        </ion-col> -->
       </ion-row>
     </ion-item>
     <div (click)="newPostTextArea()">
