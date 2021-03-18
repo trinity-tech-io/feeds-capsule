@@ -1,3 +1,4 @@
+<div class="switchfeed">
 <div class="backdrop" (click)="clickItem(null)" [class.darkbackdrop]="theme.darkMode" [class.lightbackdrop]="!theme.darkMode">
 </div>
 <div class="feedlist" [class.darkfeedlist]="theme.darkMode" [class.lightfeedlist]="!theme.darkMode">
@@ -18,7 +19,7 @@
           size="8"
           class="middle-col"
         >
-          <ion-label [class.drakfeedname]="theme.darkMode" [class.lightfeedname]="!theme.darkMode">{{ moreName(feed.name) }}</ion-label>
+          <ion-label [class.drakfeedname]="theme.darkMode" [class.lightfeedname]="!theme.darkMode">{{feed.name}}</ion-label>
           <ion-row>
             <img src="./assets/images/bubble2.svg"> <br>
             <p><span>{{ feed.subscribers }}</span> {{ 'common.followers' | translate }}</p>
@@ -42,6 +43,7 @@
   </ion-col>
   </ion-row>
 </ion-grid>
+</div>
 </div>
 
 

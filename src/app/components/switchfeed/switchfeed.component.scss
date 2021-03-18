@@ -1,3 +1,15 @@
+.switchfeed{
+
+  background: transparent;
+  animation: animate;
+  animation-duration: 150ms;
+  animation-fill-mode: forwards;
+
+  @keyframes animate {
+    0% { bottom: -1000px }
+    100% { bottom: 0px }
+  }
+
 .darkbackdrop{
   background-color:#fff;
 }
@@ -24,7 +36,7 @@
 }
 .feedlist {
  width: calc(100vw - 16px);
- max-height:254px;
+ max-height: 315px;
  position:absolute;
  bottom:80px;
  left:8px;
@@ -232,4 +244,4 @@
        display: inline-block;
    }
    }
-
+  }
