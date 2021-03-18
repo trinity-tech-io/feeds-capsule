@@ -309,7 +309,14 @@ export class CreatenewpostPage implements OnInit {
     });
   }
 
+  prepareTempPost(){
+
+  }
+
   sendPost(){
+    let tempPostId = this.feedService.generateTempPostId();
+    console.log('tempPostId = '+tempPostId);
+
     if (this.imgUrl == ""&& this.flieUri == ""){
       let content = this.feedService.createContent(this.newPost,null,null);
       this.feedService.publishPost(
@@ -317,10 +324,15 @@ export class CreatenewpostPage implements OnInit {
         this.channelId,
         content
       );
+      this.feedService.prepareTempPost(
+        this.nodeId,this.channelId, tempPostId, content
+      )
       return ;
     }
 
     this.publishPostThrowMsg();
+
+    
   }
 
   publishPostThrowMsg(){

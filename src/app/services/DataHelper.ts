@@ -72,7 +72,7 @@ export class DataHelper {
     private feedPublicStatus:any = {};
     private channelInfo: any = {};
     private cachedUpdateServer: {[nodeId: string]: FeedsData.Server} = {};
-
+    private tempIdDataList: number[] = [];
     constructor(
         private logUtils: LogUtils,
         private storageService: StorageService) {
@@ -1651,11 +1651,67 @@ export class DataHelper {
         return this.isLogging;
     }
 
+    //// tempIdData
+    setTempIdData(tempIdDataList: number[]){
+        this.tempIdDataList = tempIdDataList;
+    }
+
+    loadTempIdData(): Promise<number[]>{
+        return new Promise(async (resolve, reject) =>{
+            try {
+                if (this.tempIdDataList==null ||this.tempIdDataList ==undefined|| this.tempIdDataList.length == 0){
+                    this.tempIdDataList = await this.loadData(FeedsData.PersistenceKey.tempIdDataList) || [];
+                    resolve(this.tempIdDataList);
+                    return ;
+                }
+                resolve(this.tempIdDataList);
+            } catch (error) {
+                reject(error);
+            }
+        });
+    }
+
+    listTempIdData(): number[]{
+        if(this.tempIdDataList == null || this.tempIdDataList == undefined || this.tempIdDataList.length == 0)
+            return [];
+        let list: number[] = this.tempIdDataList.sort((a, b) => a - b);
+        return list;
+    }
+
+    deleteTempIdData(id: number){
+        if (this.tempIdDataList == null || this.tempIdDataList == undefined)
+            this.tempIdDataList = [];
+        let index = this.tempIdDataList.indexOf(id);
+        this.tempIdDataList.splice(index, 1);
+        this.saveData(FeedsData.PersistenceKey.tempIdDataList, this.tempIdDataList);
+    }
+
+    appendTempIdData(id: number){
+        if (this.tempIdDataList == null || this.tempIdDataList == undefined)
+            this.tempIdDataList = [];
+        this.tempIdDataList.push(id);
+        this.saveData(FeedsData.PersistenceKey.tempIdDataList, this.tempIdDataList);
+    }
+
+    getLastTempIdData(): number{
+        let list = this.listTempIdData();
+        if(list == null || list == undefined || list.length == 0)
+            return 0;
+        return list[0];
+    }
+
+    generateLastTempIdData(): number{
+        let tempId = this.getLastTempIdData();
+        let id = tempId-1;
+        this.appendTempIdData(id);
+        return id;
+    }
+
+    //// 
     getKey(nodeId: string, channelId: number, postId: number, commentId: number): string{
         return nodeId + "-" + channelId + "-"+ postId + "-" + commentId;
     }
 
-    ////
     saveData(key: string, value: any): Promise<any>{
         return this.storageService.set(key, value);
     }

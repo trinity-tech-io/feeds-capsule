@@ -13,6 +13,7 @@ declare namespace FeedsData{
         available = 0,
         deleted = 1,
         edited = 2,
+        sending = 11
     }
 
     const enum ConnState {
@@ -300,6 +301,8 @@ declare namespace FeedsData{
       
         syncPostStatusMap = "syncPostStatusMap",
         syncCommentStatusMap = "syncCommentStatusMap",
+
+        tempIdDataList = "tempIdDataList"
     }
 
 
