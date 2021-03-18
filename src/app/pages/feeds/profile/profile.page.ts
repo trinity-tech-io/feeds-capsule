@@ -636,7 +636,7 @@ export class ProfilePage implements OnInit {
       case 'myfollow':
         //this.menuService.showChannelMenu(item.nodeId, item.channelId,item.channelName);
         this.isShowTitle = true;
-        this.isShowInfo = false;
+        this.isShowInfo = true;
         this.isShowQrcode = true;
         this.isShowUnfollow = true;
         this.feedName = item.channelName;
