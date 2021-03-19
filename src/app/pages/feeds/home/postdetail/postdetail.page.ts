@@ -102,6 +102,8 @@ export class PostdetailPage implements OnInit {
      public videoloadingStyleObj:any = {};
      public videoDownStatus:string = "";
 
+     public isAndroid:boolean = true;
+
   constructor(
     private platform: Platform,
     private popoverController:PopoverController,
@@ -208,6 +210,11 @@ export class PostdetailPage implements OnInit {
   }
 
   ionViewWillEnter() {
+
+    if(this.platform.is("ios")){
+      this.isAndroid = false;
+    }
+
     this.hideDeletedComments = this.feedService.getHideDeletedComments();
     this.initTitle();
     this.native.setTitleBarBackKeyShown(true);
@@ -296,7 +303,7 @@ export class PostdetailPage implements OnInit {
 
     this.events.subscribe(FeedsEvent.PublishType.rpcRequestError, () => {
       this.zone.run(() => {
-        this.logUtils.logd("Received rpcRequest error event",TAG);      
+        this.logUtils.logd("Received rpcRequest error event",TAG);
         this.native.hideLoading();
       });
     });
@@ -445,6 +452,13 @@ export class PostdetailPage implements OnInit {
 
 
   ionViewWillLeave(){//清楚订阅事件代码
+
+    let value =  this.popoverController.getTop()["__zone_symbol__value"] || "";
+    if(value!=""){
+      this.popoverController.dismiss();
+      this.popover = null;
+    }
+
      this.events.unsubscribe(FeedsEvent.PublishType.editCommentFinish);
      this.events.unsubscribe(FeedsEvent.PublishType.editPostFinish);
 
@@ -1053,6 +1067,24 @@ export class PostdetailPage implements OnInit {
       return obj.content +this.translate.instant('HomePage.daysAgo');
     }
     return  obj.content;
+  }
+
+  clickDashang(){
+
+    if(this.feedService.getConnectionStatus() != 0){
+      this.native.toastWarn('common.connectionError');
+      return;
+    }
+
+    let server = this.feedService.getServerbyNodeId(this.nodeId)|| {};
+    let elaAddress = server["elaAddress"] || null;
+
+    if (elaAddress == null){
+      this.native.toast('common.noElaAddress');
+      return;
+    }
+    this.pauseVideo();
+    this.native.showPayPrompt(elaAddress);
   }
 
 }

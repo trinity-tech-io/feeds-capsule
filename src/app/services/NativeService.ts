@@ -9,6 +9,8 @@ import { ViewerModalComponent } from 'ngx-ionic-image-viewer';
 import { MorenameComponent} from './../components/morename/morename.component';
 import { VideofullscreenComponent } from './../components/videofullscreen/videofullscreen.component';
 import { PreviewqrcodeComponent }  from './../components/previewqrcode/previewqrcode.component';
+import { PaypromptComponent } from './../components/payprompt/payprompt.component'
+
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 @Injectable()
@@ -342,6 +344,25 @@ async showPreviewQrcode(qrCodeString:string,newNameKey:string,oldNameKey:string,
         appService.addright();
     })
     return await modal.present();
+  }
+
+  async showPayPrompt(elaAddress:string) {
+
+    let popover = await this.popoverController.create({
+      mode: 'ios',
+      cssClass: 'PaypromptComponent',
+      component: PaypromptComponent,
+      backdropDismiss: false,
+      componentProps: {
+        "title": this.translate.instant("ChannelsPage.tip"),
+        "elaAddress": elaAddress,
+        "defalutMemo": ""
+      }
+    });
+    popover.onWillDismiss().then(() => {
+      popover = null;
+    });
+    return await popover.present();
   }
 
 }

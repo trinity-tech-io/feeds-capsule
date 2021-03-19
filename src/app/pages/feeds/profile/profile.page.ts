@@ -1,5 +1,5 @@
 import { Component, OnInit, NgZone ,ViewChild} from '@angular/core';
-import { Events,ModalController} from '@ionic/angular';
+import { Events,ModalController,PopoverController} from '@ionic/angular';
 import { FeedService, Avatar } from 'src/app/services/FeedService';
 import { ThemeService } from 'src/app/services/theme.service';
 import { IonInfiniteScroll} from '@ionic/angular';
@@ -127,7 +127,8 @@ export class ProfilePage implements OnInit {
     public appService:AppService,
     public modalController:ModalController,
     private logUtils: LogUtils,
-    public  popupProvider:PopupProvider
+    public  popupProvider:PopupProvider,
+    public  popoverController:PopoverController
   ) {
   }
 
@@ -451,6 +452,11 @@ export class ProfilePage implements OnInit {
   }
 
   clearData(){
+    let value =  this.popoverController.getTop()["__zone_symbol__value"] || "";
+    if(value!=""){
+      this.popoverController.dismiss();
+      this.popover = null;
+    }
     this.isAddProfile = false;
     this.hideSharMenuComponent = false;
     this.events.unsubscribe(FeedsEvent.PublishType.refreshSubscribedChannels);

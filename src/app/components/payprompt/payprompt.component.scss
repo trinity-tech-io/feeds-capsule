@@ -7,13 +7,13 @@
     justify-content: center;
     align-items: center;
     padding: 25px 5px;
-  
-    ion-img {
+
+    img {
         width: 67.2px;
         height: 67.2px;
         object-fit: contain;
     }
-  
+
     h2, h3, h4, ion-input {
         color: #161740;
         margin: 0;
@@ -21,7 +21,7 @@
         font-size: 13px;
         width: 100%;
     }
-  
+
     h4, ion-input {
         padding-top: 5px;
         padding-bottom: 20px;
@@ -37,7 +37,7 @@
         font-weight: 700;
         text-align: center;
     }
-    
+
     h3 {
         padding-top: 5px;
         font-weight: 700;
@@ -48,14 +48,14 @@
         color: #8888b0;
     }
 }
-  
+
 .darkContainer {
     background: #2b2c49;
-  
+
     h2, h3, h4 {
       color: #ffffff;
     }
-  
+
     ion-input {
       color: #8888b0;
     }
