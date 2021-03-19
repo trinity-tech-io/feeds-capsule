@@ -1,5 +1,5 @@
 import { Component, OnInit, NgZone } from '@angular/core';
-import { Events,PopoverController} from '@ionic/angular';
+import { Events,PopoverController,Platform} from '@ionic/angular';
 import { NativeService } from '../../../services/NativeService';
 import { FeedService } from '../../../services/FeedService';
 import { ThemeService } from '../../../services/theme.service';
@@ -57,11 +57,12 @@ export class ServerInfoPage implements OnInit {
   public actionSheet:any = null;
   public  ownerChannelList:any = [];
   public channel:any =null;
-  public clickbutton:string ="";
+  //public clickbutton:string ="";
   public feedPublicStatus:any = {};
   public popover:any = "";
   public bindingServer:any = null;
   public curChannel:any = null;
+  public isPress:boolean = false;
   constructor(
     private actionSheetController:ActionSheetController,
     private events: Events,
@@ -75,7 +76,8 @@ export class ServerInfoPage implements OnInit {
     private storageService:StorageService,
     private popoverController:PopoverController,
     public popupProvider:PopupProvider,
-    private appService:AppService
+    private appService:AppService,
+    private platform:Platform
   ) {}
 
   ngOnInit() {
@@ -144,12 +146,6 @@ export class ServerInfoPage implements OnInit {
     this.events.subscribe(FeedsEvent.PublishType.updateTitle, () => {
       if(this.menuService.postDetail!=null){
         this.menuService.hideActionSheet();
-
-        if(this.clickbutton === "unsubscribe"){
-           this.unsubscribe(this.channel);
-           return;
-        }
-        //this.menuMore();
       }
       this.initTitle();
     });
@@ -166,20 +162,6 @@ export class ServerInfoPage implements OnInit {
       this.native.hideLoading();
     });
 
-    this.events.subscribe(FeedsEvent.PublishType.subscribeFinish, (nodeId, channelId)=> {
-      // this.native.toast(name + " subscribed");
-      this.zone.run(() => {
-        this.initMyFeeds();
-      });
-    });
-
-    this.events.subscribe(FeedsEvent.PublishType.unsubscribeFinish, (nodeId, channelId, name) => {
-      // this.native.toast(name + " unsubscribed");
-      this.zone.run(() => {
-        this.clickbutton ="";
-        this.initMyFeeds();
-      });
-    });
   }
 
   ionViewDidEnter(){
@@ -200,9 +182,6 @@ export class ServerInfoPage implements OnInit {
     this.events.unsubscribe(FeedsEvent.PublishType.removeFeedSourceFinish);
     this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
     this.events.unsubscribe(FeedsEvent.PublishType.editServer);
-    this.events.unsubscribe(FeedsEvent.PublishType.subscribeFinish);
-    this.events.unsubscribe(FeedsEvent.PublishType.unsubscribeFinish);
-    this.clickbutton = "";
     this.curChannel = null;
     if(this.actionSheet!=null)
       this.actionSheet.dismiss();
@@ -282,10 +261,11 @@ export class ServerInfoPage implements OnInit {
     });
   }
 
-  menuMore() {
-    this.clickbutton ="";
-    const shareableUrl = "https://scheme.elastos.org/addsource?source="+encodeURIComponent(this.feedsUrl);
-    this.menuService.showQRShareMenu(this.translate.instant('ServerInfoPage.des'),shareableUrl);
+  menuMore(feedsUrl:string) {
+    if(this.platform.is('ios')){
+      this.isPress = true;
+    }
+    this.native.getShare(feedsUrl);
   }
 
   /* getShareableUrl(qrcode: string) {
@@ -539,21 +519,6 @@ export class ServerInfoPage implements OnInit {
     this.native.createTip(name);
   }
  }
-//channel.nodeId, channel.name, channel.id
-  unsubscribe(channel:any){
-    this.clickbutton = "unsubscribe";
-    this.channel = channel;
-    this.menuService.showUnsubscribeMenu(channel.nodeId, channel.id,channel.name);
-  }
-//channel.nodeId, channel.id
-  subscribe(channel:any){
-    if(this.feedService.getConnectionStatus() != 0){
-      this.native.toastWarn('common.connectionError');
-      return;
-    }
-
-    this.feedService.subscribeChannel(channel.nodeId, channel.id);
-  }
 
  checkServerStatus(nodeId: string){
   return this.feedService.getServerStatusFromId(nodeId);
@@ -650,6 +615,10 @@ confirm(that:any){
 }
 
 showPreviewQrcode(feedsUrl:string){
+  if(this.isPress){
+    this.isPress =false;
+   return;
+  }
    titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, null);
    this.native.showPreviewQrcode(feedsUrl,"common.qRcodePreview","ServerInfoPage.title","serverinfo",this.appService);
 }
