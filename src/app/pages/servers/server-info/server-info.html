@@ -29,7 +29,7 @@
             <h2 *ngIf="!server.qrcode" (click)="copytext(server.details)">{{ server.details }}</h2>
             <div *ngIf="server.qrcode" class="qr-container">
               <h2 *ngIf="!isShowQrcode" >{{'common.waitOnChain'|translate}}</h2>
-              <div *ngIf="isShowQrcode" class="qrcode" (click)="showPreviewQrcode(feedsUrl)">
+              <div *ngIf="isShowQrcode" class="qrcode" (click)="showPreviewQrcode(feedsUrl)" (press)="menuMore(feedsUrl)">
                 <qrcode [qrdata]="feedsUrl" [size]="150" [level]="'M'"></qrcode>
               </div>
             </div>

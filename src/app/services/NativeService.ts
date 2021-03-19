@@ -12,7 +12,7 @@ import { PreviewqrcodeComponent }  from './../components/previewqrcode/previewqr
 import { PaypromptComponent } from './../components/payprompt/payprompt.component'
 
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
-
+declare let appManager: AppManagerPlugin.AppManager;
 @Injectable()
 export class NativeService {
     public loading:any = null;
@@ -363,6 +363,14 @@ async showPreviewQrcode(qrCodeString:string,newNameKey:string,oldNameKey:string,
       popover = null;
     });
     return await popover.present();
+  }
+
+  getShare(qrCodeString:string){
+    appManager.sendIntent("share", {
+        title:"",
+        url: qrCodeString
+      }, {}, () => {
+      });
   }
 
 }
