@@ -131,18 +131,18 @@ export class EditPostPage implements OnInit {
           return;
 
         if (this.editState == FeedsData.EditState.TextImageChange || this.editState == FeedsData.EditState.TextVideoChange){
-          this.feedService.sendData(this.nodeId,this.channelId,this.postId, 0 ,0, this.flieUri,this.imgUrl);
+          this.feedService.sendData(this.nodeId,this.channelId,this.postId, 0 ,0, this.flieUri,this.imgUrl,0);
         }
       });
     });
 
-    this.events.subscribe(FeedsEvent.PublishType.setBinaryFinish, (nodeId, key) => {
+    this.events.subscribe(FeedsEvent.PublishType.setBinaryFinish, (nodeId, tempId) => {
       this.zone.run(() => {
         this.processSetBinaryResult();
       });
     });
 
-    this.events.subscribe(FeedsEvent.PublishType.streamSetBinarySuccess, (nodeId, key) => {
+    this.events.subscribe(FeedsEvent.PublishType.streamSetBinarySuccess, (nodeId, tempId) => {
       this.zone.run(() => {
         this.feedService.closeSession(nodeId);
         this.processSetBinaryResult();

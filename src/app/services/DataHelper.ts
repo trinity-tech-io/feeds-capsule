@@ -3,6 +3,7 @@ import { LogUtils } from 'src/app/services/LogUtils';
 import { StorageService } from 'src/app/services/StorageService';
 
 import * as _ from 'lodash';
+import { UtilService } from './utilService';
 let TAG: string = "DataHelper";
 
 @Injectable()
@@ -73,6 +74,7 @@ export class DataHelper {
     private channelInfo: any = {};
     private cachedUpdateServer: {[nodeId: string]: FeedsData.Server} = {};
     private tempIdDataList: number[] = [];
+    private tempDataMap: {[key: string]: FeedsData.TempData} = {};
     constructor(
         private logUtils: LogUtils,
         private storageService: StorageService) {
@@ -1717,6 +1719,82 @@ export class DataHelper {
         return id;
     }
 
+    ////tempDataMap
+    setTempDataMap(tempDataMap: {[key: string]: FeedsData.TempData}){
+        this.tempDataMap = tempDataMap;
+        this.saveData(FeedsData.PersistenceKey.tempDataMap, this.tempDataMap);
+    }
+
+    loadTempData(): Promise<{[key: string]: FeedsData.TempData}>{
+        return new Promise(async (resolve, reject) =>{
+            try {
+                if (JSON.stringify(this.tempDataMap) == "{}"){
+                    this.tempDataMap = await this.loadData(FeedsData.PersistenceKey.tempDataMap) || {};
+                    resolve(this.tempDataMap);
+                    return ;
+                }
+                resolve(this.tempDataMap);
+            } catch (error) {
+                reject(error);
+            }
+        });
+    }
+
+    generateTempData(nodeId: string, feedId: number, postId: number, commentId: number, dataHash: string , 
+        sendingType: FeedsData.SendingStatus, transDataChannel: FeedsData.TransDataChannel, videoData: string, imageData: string, tempPostId: number, tempCommentId: number): FeedsData.TempData{
+        return {
+            nodeId          :   nodeId,
+            feedId          :   feedId,
+            tempPostId      :   tempPostId,
+            tempCommentId   :   tempCommentId,
+            dataHash        :   dataHash,
+            status          :   sendingType,
+            transDataChannel:   transDataChannel,
+            videoData       :   videoData,
+            imageData       :   imageData,
+            postId          :   postId,
+            commentId       :   commentId 
+        }
+    }
+
+    updateTempData(key: string, tempData: FeedsData.TempData){
+        if (this.tempDataMap == null || this.tempDataMap == undefined)
+            this.tempDataMap = {};
+        this.tempDataMap[key] = tempData;
+        this.saveData(FeedsData.PersistenceKey.tempDataMap, this.tempDataMap);
+    }
+
+    getTempData(key: string){
+        if (this.tempDataMap == null || this.tempDataMap == undefined)
+            this.tempDataMap = {};
+        return this.tempDataMap[key];
+    }
+    
+    deleteTempData(key: string){
+        if (this.tempDataMap == null || this.tempDataMap == undefined)
+            this.tempDataMap = {};
+        this.tempDataMap[key] = null;
+        delete this.tempDataMap[key];
+        this.saveData(FeedsData.PersistenceKey.tempDataMap, this.tempDataMap);
+    }
+
+    listTempData(nodeId: string): FeedsData.TempData[]{
+        if (this.tempDataMap == null || this.tempDataMap == undefined)
+            return [];
+
+        let list: FeedsData.TempData[] = [];
+        let map = this.tempDataMap;
+        let keys: string[] = Object.keys(map) || [];
+        for (let index = 0; index < keys.length; index++) {
+            const tempData = this.getTempData(keys[index]);
+            if (tempData == null || tempData == undefined)
+                continue;
+            if (tempData.nodeId == nodeId)
+                list.push(tempData);
+        }
+        return list;
+    }
+
     //// 
     getKey(nodeId: string, channelId: number, postId: number, commentId: number): string{
         return nodeId + "-" + channelId + "-"+ postId + "-" + commentId;
@@ -1740,5 +1818,10 @@ export class DataHelper {
         if (this.cachedUpdateServer == null || this.cachedUpdateServer == undefined)
             this.cachedUpdateServer = {};
         return this.cachedUpdateServer[nodeId];
+    }
+
+    getContentHash(content: string){
+        let contentHash = UtilService.SHA256(content);
+        return contentHash;
     }
 }

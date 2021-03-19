@@ -259,7 +259,7 @@ export class SessionService {
         this.streamAddData(nodeId, request);
     }
 
-    addHeader(nodeId: string, requestSize: number, bodySize: number, request: any, mediaType: string, method: string, key: string){
+    addHeader(nodeId: string, requestSize: number, bodySize: number, request: any, mediaType: string, method: string, key: string, memo: any){
         this.streamAddMagicNum(nodeId);
         this.streamAddVersion(nodeId);
         this.streamAddRequestHeadSize(nodeId, requestSize);
@@ -279,7 +279,7 @@ export class SessionService {
             nodeId: nodeId,
             method: request.method,
             requestParams: request.params,
-            memo: ""
+            memo: memo
         };
         requestQueue.push(requestBean);
         mLogUtils.logd("Generate request params, nodeId is"+nodeId + " params is "+JSON.stringify(request),TAG);
@@ -626,11 +626,26 @@ function parseResponse(response: any){
     }
 
     let request = queryRequest(response.id, response.result);
+    mLogUtils.logd("Receive Session Response, Request is "+JSON.stringify(request), TAG);
+
     let method = request.method;
     
     let nodeId = request.nodeId;
+    request.
     cacheData[nodeId].method = method;
     
+    let memo = request.memo;
+    let tempId = 0;
+    let feedId = 0;
+    let postId = 0;
+    let commentId = 0;
+    if (memo != null || memo != undefined){
+        feedId = memo.feedId;
+        postId = memo.postId;
+        commentId = memo.commentId;
+        tempId = memo.tempId;
+    }
+
     // {"version":"1.0","id":1,"error":{"code":-154,"message":"MassDataUnsupportedAlgo"}}
     let error = response.error||"";
     if (error != ""){
@@ -651,8 +666,7 @@ function parseResponse(response: any){
     cacheData[nodeId].key = key;
     if (method == "set_binary"){
         mLogUtils.logd("Parse 'set_binary' data finish and publish events, nodeId is "+nodeId, TAG);
-        eventBus.publish(FeedsEvent.PublishType.streamSetBinaryResponse, nodeId);
-        eventBus.publish(FeedsEvent.PublishType.streamSetBinarySuccess, nodeId);
+        eventBus.publish(FeedsEvent.PublishType.streamSetBinarySuccess, nodeId, feedId, postId, commentId, tempId);
 
     } else if (method == "get_binary"){
         mLogUtils.logd("Parse 'get_binary' data finish and publish events, nodeId is "+nodeId, TAG);

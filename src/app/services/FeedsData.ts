@@ -151,6 +151,27 @@ declare namespace FeedsData{
         isExpire: boolean;
     }
 
+    type TempData = {
+        nodeId          :   string,
+        feedId          :   number,
+        tempPostId      :   number,
+        tempCommentId   :   number,
+        dataHash        :   string,
+        status          :   SendingStatus,
+        transDataChannel:   TransDataChannel,
+        videoData       :   string,
+        imageData       :   string,
+        postId          :   number,
+        commentId       :   number 
+    }
+
+    const enum SendingStatus{
+        normal,
+        needDeclearPost,
+        needPushData,
+        needNotifyPost,
+    }
+
     const enum MethodType {
         declare_post = "declare_post",
         notify_post = "notify_post",
@@ -302,7 +323,8 @@ declare namespace FeedsData{
         syncPostStatusMap = "syncPostStatusMap",
         syncCommentStatusMap = "syncCommentStatusMap",
 
-        tempIdDataList = "tempIdDataList"
+        tempIdDataList = "tempIdDataList",
+        tempDataMap = "tempDataMap"
     }
 
 
@@ -408,7 +430,7 @@ declare namespace FeedsData{
         avatar: any,
         isSubscribed: boolean
     }
-    
+
     type Comment = {
         nodeId      : string,
         channel_id  : number,
