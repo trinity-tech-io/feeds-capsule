@@ -18,6 +18,7 @@ import { AddFeedService } from 'src/app/services/AddFeedService';
 
 import * as _ from 'lodash';
 import { DataHelper } from "./DataHelper";
+import { UtilService } from "./utilService";
 
 declare let didManager: DIDPlugin.DIDManager;
 declare let appManager: AppManagerPlugin.AppManager;
@@ -243,6 +244,10 @@ export class FeedService {
     return this.dataHelper.loadTempIdData();
   }
 
+  loadTempData(){
+    return this.dataHelper.loadTempData();
+  }
+
   async loadData(){
     await Promise.all([
       this.loadTempIdData(),
@@ -276,6 +281,8 @@ export class FeedService {
     this.friendConnectionCallback();
     this.friendMessageCallback();
     this.connectionChangedCallback();
+    this.onReceivedStreamStateChanged();
+    this.onReceivedSetBinaryFinish();
   }
 
   getConnectionStatus(): FeedsData.ConnState{
@@ -539,11 +546,11 @@ export class FeedService {
         break;
 
       case FeedsData.MethodType.declare_post:
-        this.handleDeclarePostResult(nodeId, result, requestParams, error);
+        this.handleDeclarePostResult(nodeId, result, requestParams, error, request.memo);
         break;
 
       case FeedsData.MethodType.notify_post:
-        this.handleNotifyPostResult(nodeId, result, requestParams, error);
+        this.handleNotifyPostResult(nodeId, result, requestParams, error, request.memo);
         break;
 
       case "update_feedinfo":
@@ -593,7 +600,7 @@ export class FeedService {
         break;
 
       case FeedsData.MethodType.setBinary:
-        this.handleSetBinaryResponse(nodeId, result, requestParams, error);
+        this.handleSetBinaryResponse(nodeId, result, requestParams, error, request.memo);
         break;
 
       case FeedsData.MethodType.getBinary:
@@ -1086,22 +1093,29 @@ export class FeedService {
   publishPost(nodeId: string, channelId: number, content: any, tempId: number){
     if(!this.hasAccessToken(nodeId))
       return;
+
+    this.prepareTempPost(nodeId,channelId, tempId, content);
     let accessToken: FeedsData.AccessToken = this.dataHelper.getAccessToken(nodeId) || null;
+    let contentHash = UtilService.SHA256(content);
     this.connectionService.publishPost(this.getServerNameByNodeId(nodeId),nodeId, channelId,content,accessToken, tempId);
   }
 
-  declarePost(nodeId: string, channelId: number, content: any, withNotify: boolean){
+  declarePost(nodeId: string, channelId: number, content: any, withNotify: boolean, tempId: number, 
+            transDataChannel:FeedsData.TransDataChannel, imageData: string, videoData: string){
     if(!this.hasAccessToken(nodeId))
       return;
+    this.prepareTempMediaPost(nodeId, channelId, tempId, 0, content, transDataChannel, videoData, imageData);
     let accessToken: FeedsData.AccessToken = this.dataHelper.getAccessToken(nodeId) || null;
-    this.connectionService.declarePost(this.getServerNameByNodeId(nodeId),nodeId, channelId,content,withNotify,accessToken);
+    this.connectionService.declarePost(this.getServerNameByNodeId(nodeId),nodeId, channelId,content,withNotify,accessToken,tempId);
+
+    eventBus.publish(FeedsEvent.PublishType.updateTab,true);
   }
 
-  notifyPost(nodeId: string, channelId: number, postId: number){
+  notifyPost(nodeId: string, channelId: number, postId: number, tempId: number){
     if(!this.hasAccessToken(nodeId))
       return;
     let accessToken: FeedsData.AccessToken = this.dataHelper.getAccessToken(nodeId) || null;
-    this.connectionService.notifyPost(this.getServerNameByNodeId(nodeId),nodeId, channelId, postId,accessToken);
+    this.connectionService.notifyPost(this.getServerNameByNodeId(nodeId),nodeId, channelId, postId,accessToken, tempId);
   }
 
   postComment(nodeId: string, channelId: number, postId: number,
@@ -1347,6 +1361,7 @@ export class FeedService {
     let updateAt: number = params.updated_at||created_at;
 
     let contentStr = this.serializeDataService.decodeData(contentBin);
+    let contentHash = UtilService.SHA256(contentStr);
 
     let content = this.parseContent(nodeId,channel_id,id,0,contentStr);
 
@@ -1734,9 +1749,12 @@ export class FeedService {
 
     let key = this.getPostId(nodeId, channelId, postId);
     this.dataHelper.updatePost(key, post);
+
+    this.dataHelper.deleteTempIdData(tempId);
+    
     let tempKey = this.getPostId(nodeId, channelId, tempId);
     this.dataHelper.deletePostDeeply(tempKey);
-    this.dataHelper.deleteTempIdData(tempId);
+    this.dataHelper.deleteTempData(tempKey);
 
     eventBus.publish(FeedsEvent.PublishType.updateTab,true);
     eventBus.publish(FeedsEvent.PublishType.postEventSuccess);
@@ -1745,16 +1763,25 @@ export class FeedService {
     eventBus.publish(FeedsEvent.PublishType.publishPostFinish);
   }
 
-  handleDeclarePostResult(nodeId: string, result: any, request: any, error: any){
+  handleDeclarePostResult(nodeId: string, result: any, request: any, error: any, memo: any){
     if (error != null && error != undefined && error.code != undefined){
       this.handleError(nodeId, error);
       return;
     }
 
-    this.cachePost(nodeId, request.channel_id, result.id, request.content);
+    let tempId = memo.tempId;
+    this.cachePost(nodeId, request.channel_id, result.id, request.content, tempId);
+
+    let tempDataKey = this.getPostId(nodeId, request.channel_id, tempId);
+    let tempData = this.dataHelper.getTempData(tempDataKey);
+    tempData.postId = result.id;
+    tempData.status = FeedsData.SendingStatus.needPushData;
+
+    this.dataHelper.updateTempData(tempDataKey, tempData);
+    this.sendMediaData(nodeId,request.channel_id, tempId);
   }
 
-  cachePost(nodeId: string, channelId: number, postId: number, contentBin: any){
+  cachePost(nodeId: string, channelId: number, postId: number, contentBin: any, tempId: number){
     let contentStr = this.serializeDataService.decodeData(contentBin);
     let content = this.parseContent(nodeId,channelId,postId,0,contentStr);
 
@@ -1773,15 +1800,16 @@ export class FeedService {
     let cacheKey = this.getCachePostKey(nodeId,channelId,postId,0);
     cachedPost[cacheKey] = post;
     // this.storeService.set(cacheKey, post);
-    eventBus.publish(FeedsEvent.PublishType.declarePostSuccess, postId);
+    eventBus.publish(FeedsEvent.PublishType.declarePostSuccess, postId, tempId);
   }
 
-  handleNotifyPostResult(nodeId: string, result: any, request: any, error: any){
+  handleNotifyPostResult(nodeId: string, result: any, request: any, error: any, memo: any){
     if (error != null && error != undefined && error.code != undefined){
       this.handleError(nodeId, error);
       return;
     }
 
+    let tempId = memo.tempId;
     let channelId = request.channel_id;
     let postId = request.post_id;
 
@@ -1791,12 +1819,18 @@ export class FeedService {
       return ;
     }
 
+    this.dataHelper.deleteTempIdData(tempId);
+    let tempKey = this.getPostId(nodeId, channelId, tempId);
+    this.dataHelper.deletePostDeeply(tempKey);
+    this.dataHelper.deleteTempData(tempKey);
+
     let key = this.getPostId(nodeId, channelId, postId);
-
     this.dataHelper.updatePost(key, post);
-    eventBus.publish(FeedsEvent.PublishType.notifyPostSuccess);
 
+    eventBus.publish(FeedsEvent.PublishType.notifyPostSuccess);
     this.storeService.remove(cacheKey);
+
+    eventBus.publish(FeedsEvent.PublishType.updateTab,true);
   }
 
   handlePostCommentResult(nodeId:string, result: any, request: any, error: any){
@@ -2061,6 +2095,7 @@ export class FeedService {
       let contentStr = this.serializeDataService.decodeData(contentBin);
       let content = this.parseContent(nodeId,channel_id,id,0,contentStr);
 
+      let contentHash = UtilService.SHA256(contentStr);
       let updatedAt = result[index].updated_at||createAt;
       let status = result[index].status||FeedsData.PostCommentStatus.available;
 
@@ -2905,13 +2940,16 @@ export class FeedService {
   }
 
 
-  handleSetBinaryResponse(nodeId, result, requestParams, error){
+  handleSetBinaryResponse(nodeId, result, requestParams, error, memo: any){
     if (error != null && error != undefined && error.code != undefined){
       this.handleError(nodeId, error);
       return;
     }
-
-    eventBus.publish(FeedsEvent.PublishType.setBinaryFinish, nodeId);
+    let tempId = memo.tempId;
+    let feedId = memo.feedId;
+    let postId = memo.postId;
+    let commentId = memo.commentId;
+    eventBus.publish(FeedsEvent.PublishType.setBinaryFinish, nodeId, feedId, postId, commentId, tempId);
   }
 
   handleGetBinaryResponse(nodeId, result, requestParams, error){
@@ -3315,7 +3353,6 @@ export class FeedService {
 
     if (list.length>0){
       this.updateSubscribedFeedsWithTime(friendId);
-
       for (let index = 0; index < list.length; index++) {
         const feeds: FeedsData.Channels = list[index];
         let feedsId = feeds.id;
@@ -3327,6 +3364,11 @@ export class FeedService {
     if (this.getServerVersionCodeByNodeId(friendId) >= newMultiPropCountVersion){
       this.getMultiSubscribersCount(friendId, 0);
       this.updateMultiLikesAndCommentsCount(friendId);
+    }
+
+    let tempDataList = this.dataHelper.listTempData(friendId);
+    for (let index = 0; index < tempDataList.length; index++) {
+      const element = tempDataList[index];
     }
   }
 
@@ -3869,29 +3911,36 @@ export class FeedService {
     return result;
   }
 
-  setBinary(nodeId: string, key: string, value: any, mediaType: string){
+  setBinary(nodeId: string, key: string, value: any, mediaType: string, feedId: number, postId: number, commentId: number, tempId: number){
     let accessToken: FeedsData.AccessToken = this.dataHelper.getAccessToken(nodeId) || null;
     let requestData = this.sessionService.buildSetBinaryRequest(accessToken, key);
     this.storeService.set(key, value);
-    this.transportData(nodeId, key, requestData, mediaType, value);
+    let memo = {
+      feedId    : feedId,
+      postId    : postId,
+      commentId : commentId,
+      tempId    : tempId
+    }
+    this.transportData(nodeId, key, requestData, mediaType, memo, value);
   }
 
   getBinary(nodeId: string, key: string, mediaType: string){
     let accessToken: FeedsData.AccessToken = this.dataHelper.getAccessToken(nodeId) || null;
     let requestData = this.sessionService.buildGetBinaryRequest(accessToken, key);
-    this.transportData(nodeId, key, requestData, mediaType);
+    let memo = "";
+    this.transportData(nodeId, key, requestData, mediaType, memo);
   }
 
-  transportData(nodeId: string, key: string, request: any, mediaType: string, value: any = ""){
+  transportData(nodeId: string, key: string, request: any, mediaType: string, memo: any, value: any = "",){
     let requestData = this.serializeDataService.encodeData(request);
 
     if (value != ""){
       let valueData = this.serializeDataService.encodeData(value);
-      this.sessionService.addHeader(nodeId, requestData.length, valueData.length, request, mediaType, request.method, key);
+      this.sessionService.addHeader(nodeId, requestData.length, valueData.length, request, mediaType, request.method, key, memo);
       this.sessionService.streamAddData(nodeId, requestData);
       this.transportValueData(nodeId, valueData);
     }else{
-      this.sessionService.addHeader(nodeId, requestData.length, 0, request, mediaType,  request.method, key);
+      this.sessionService.addHeader(nodeId, requestData.length, 0, request, mediaType,  request.method, key, memo);
       this.sessionService.streamAddData(nodeId, requestData);
     }
   }
@@ -3997,37 +4046,43 @@ export class FeedService {
 
   sendData(nodeId: string, channelId: number, postId: number,
     commentId: number, index: number,
-    videoData: any, imgData: any){
+    videoData: any, imgData: any, tempId: number){
     if (this.restoreSession(nodeId)){
       if (videoData != ""){
         let key = this.getVideoKey(nodeId,channelId,postId,commentId,index);
-        this.setBinary(nodeId,key,videoData,"video");
+        this.setBinary(nodeId,key,videoData,"video", channelId, postId, commentId, tempId);
       }else if(imgData != ""){
         let key = this.getImageKey(nodeId,channelId,postId,commentId,index);
-        this.setBinary(nodeId,key,imgData,"img");
+        this.setBinary(nodeId,key,imgData,"img", channelId, postId, commentId, tempId);
       }
     }
   }
 
   sendDataFromMsg(nodeId: string, channelId: number, postId: number,
     commentId: number, index: number,
-    videoData: any, imgData: any){
+    videoData: any, imgData: any, tempId: number){
       if (videoData != ""){
         let key = this.getVideoKey(nodeId,channelId,postId,commentId,index);
-        this.setBinaryFromMsg(nodeId,key,videoData);
+        this.setBinaryFromMsg(nodeId,key,videoData, channelId, postId, commentId, tempId);
       }else if(imgData != ""){
         let key = this.getImageKey(nodeId,channelId,postId,commentId,index);
-        this.setBinaryFromMsg(nodeId,key,imgData);
+        this.setBinaryFromMsg(nodeId,key,imgData, channelId, postId, commentId, tempId);
       }
   }
 
-  setBinaryFromMsg(nodeId: string, key: string, content: any){
+  setBinaryFromMsg(nodeId: string, key: string, content: any, feedId: number, postId: number, commentId: number, tempId: number){
     if(!this.hasAccessToken(nodeId))
       return;
 
     this.storeService.set(key, content);
+    let memo = {
+      feedId    : feedId,
+      postId    : postId,
+      commentId : commentId,
+      tempId    : tempId
+    }
     let accessToken: FeedsData.AccessToken = this.dataHelper.getAccessToken(nodeId) || null;
-    this.connectionService.setBinary(this.getServerNameByNodeId(nodeId),nodeId,key,content,accessToken);
+    this.connectionService.setBinary(this.getServerNameByNodeId(nodeId),nodeId,key,content,accessToken, memo);
   }
 
   getBinaryFromMsg(nodeId: string, key: string){
@@ -5175,11 +5230,11 @@ export class FeedService {
     return this.discoverfeeds = discoverfeeds;
   }
 
-  prepareTempPost(nodeId: string, feedId: number, postId: number, content: string){
+  prepareTempPost(nodeId: string, feedId: number, tempId: number, content: string){
     let post: FeedsData.Post = {
       nodeId      : nodeId,
       channel_id  : feedId,
-      id          : postId,
+      id          : tempId,
       content     : content,
       comments    : 0,
       likes       : 0,
@@ -5188,8 +5243,37 @@ export class FeedService {
       post_status : FeedsData.PostCommentStatus.sending
     }
 
-    let key = this.getPostId(nodeId, feedId, postId);
+    let key = this.getPostId(nodeId, feedId, tempId);
     this.dataHelper.updatePost(key, post);
+
+    let contentHash = UtilService.SHA256(content);
+    let tempData = this.dataHelper.generateTempData(nodeId, feedId, 0, 0, contentHash, 
+      FeedsData.SendingStatus.normal, FeedsData.TransDataChannel.MESSAGE, "", "", tempId , 0);
+    this.dataHelper.updateTempData(key, tempData);
+  }
+
+  prepareTempMediaPost(nodeId: string, feedId: number, tempId: number, commentId: number, 
+    contentReal: any, transDataChannel: FeedsData.TransDataChannel, videoData: string, imageData: string){
+    let content = this.parseContent(nodeId,feedId,tempId,0,contentReal);
+    let post: FeedsData.Post = {
+      nodeId      : nodeId,
+      channel_id  : feedId,
+      id          : tempId,
+      content     : content,
+      comments    : 0,
+      likes       : 0,
+      created_at  : this.getCurrentTimeNum(),
+      updated_at  : this.getCurrentTimeNum(),
+      post_status : FeedsData.PostCommentStatus.sending
+    }
+
+    let key = this.getPostId(nodeId, feedId, tempId);
+    this.dataHelper.updatePost(key, post);
+
+    let contentHash = UtilService.SHA256(contentReal);
+    let tempData = this.dataHelper.generateTempData(nodeId, feedId, 0, 0, contentHash, 
+      FeedsData.SendingStatus.normal, transDataChannel, videoData,imageData, tempId,0);
+    this.dataHelper.updateTempData(key, tempData);
   }
 
   generateTempPostId(){
@@ -5198,5 +5282,84 @@ export class FeedService {
 
   deleteTempPostId(id: number){
     this.dataHelper.deleteTempIdData(id);
+  }
+
+  listTempData(nodeId: string){
+    this.dataHelper.listTempData(nodeId);
+  }
+
+  onReceivedStreamStateChanged(){
+    this.events.subscribe(FeedsEvent.PublishType.streamOnStateChangedCallback, (nodeId, state) => {
+        if (state != FeedsData.StreamState.CONNECTED)
+          return;
+
+        this.sendPostDataWithSession(nodeId);
+      });
+  }
+
+  sendMediaData(nodeId: string, feedId: number, tempId: number){
+    let key = this.getPostId(nodeId, feedId, tempId);
+    let tempData = this.dataHelper.getTempData(key);
+    let transDataChannel = tempData.transDataChannel;
+    let postId = tempData.postId;
+    let videoData = tempData.videoData;
+    let imageData = tempData.imageData;
+
+    if (transDataChannel == FeedsData.TransDataChannel.MESSAGE){
+      this.sendDataFromMsg(nodeId, feedId, postId, 0 ,0, videoData, imageData, tempId);
+      return;
+    }
+
+    let sessionState = this.sessionService.getSessionState(nodeId);
+    if (sessionState != FeedsData.StreamState.CONNECTED)
+      return ;
+    this.sendData(nodeId, feedId, postId, 0 ,0, videoData, imageData, tempId);
+  }
+
+  sendPostDataWithSession(nodeId: string){
+    let list = this.dataHelper.listTempData(nodeId);
+    for (let index = 0; index < list.length; index++) {
+      const tempData = list[index];
+      if (tempData == null || tempData == undefined)
+        continue;
+      if (tempData.status == FeedsData.SendingStatus.needPushData && tempData.transDataChannel == FeedsData.TransDataChannel.SESSION){
+        this.sendData(tempData.nodeId, tempData.feedId, tempData.postId, 0, 0, tempData.videoData, tempData.imageData, tempData.tempPostId);
+        return ;
+      }
+    }
+    this.closeSession(nodeId);
+  }
+
+  sendPostDataWithMsg(nodeId: string){
+    let list = this.dataHelper.listTempData(nodeId);
+    for (let index = 0; index < list.length; index++) {
+      const tempData = list[index];
+      if (tempData == null || tempData == undefined)
+        continue;
+      if (tempData.status == FeedsData.SendingStatus.needPushData && tempData.transDataChannel == FeedsData.TransDataChannel.MESSAGE){
+        this.sendData(tempData.nodeId, tempData.feedId, tempData.postId, 0, 0, tempData.videoData, tempData.imageData, tempData.tempPostId);
+        return ;
+      }
+    }
+  }
+
+  onReceivedSetBinaryFinish(){
+    this.events.subscribe(FeedsEvent.PublishType.setBinaryFinish, (nodeId, feedId, postId, commentId, tempId)=>{
+      this.setBinaryFinish(nodeId, feedId, tempId);
+      this.sendPostDataWithMsg(nodeId);
+    });
+
+    this.events.subscribe(FeedsEvent.PublishType.streamSetBinarySuccess, (nodeId, feedId, postId, commentId, tempId)=>{
+      this.setBinaryFinish(nodeId, feedId, tempId);
+      this.sendPostDataWithSession(nodeId);
+    });
+  }
+
+  setBinaryFinish(nodeId: string, feedId: number, tempId: number){
+    let key = this.getPostId(nodeId, feedId, tempId);
+    let tempData = this.dataHelper.getTempData(key);
+    tempData.status = FeedsData.SendingStatus.needNotifyPost;
+    this.dataHelper.updateTempData(key, tempData);
+    this.notifyPost(tempData.nodeId, tempData.feedId, tempData.postId, tempData.tempPostId);
   }
 }

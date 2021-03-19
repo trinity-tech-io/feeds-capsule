@@ -65,7 +65,6 @@ declare namespace FeedsEvent{
         streamError = "stream:error",
         streamGetBinarySuccess = "stream:getBinarySuccess",
         streamGetBinaryResponse = "stream:getBinaryResponse",
-        streamSetBinaryResponse = "stream:setBinaryResponse",
         streamSetBinarySuccess = "stream:setBinarySuccess",
         streamProgress = "stream:progress",
         streamClosed = "stream:closed",

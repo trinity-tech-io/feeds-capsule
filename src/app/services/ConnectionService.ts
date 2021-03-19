@@ -68,7 +68,7 @@ export class ConnectionService {
 
     //added v1.3.0 server
     declarePost(serverName: string, nodeId: string, channelId: number, content: any,
-        withNotify: boolean ,accessToken: FeedsData.AccessToken){
+        withNotify: boolean ,accessToken: FeedsData.AccessToken,tempId: number){
         if (accessToken == null || accessToken == undefined)
             return ;
 
@@ -85,13 +85,19 @@ export class ConnectionService {
                 with_notify : withNotify
             }
         }
-        this.sendRPCMessage(serverName, nodeId, request.method, request.params, "");
+        let memo = {
+            tempId: tempId
+        }
+        this.sendRPCMessage(serverName, nodeId, request.method, request.params, memo);
     }
 
     //added v1.3.0 server
-    notifyPost(serverName: string, nodeId: string, channelId: number, postId: number,accessToken: FeedsData.AccessToken){
+    notifyPost(serverName: string, nodeId: string, channelId: number, postId: number,accessToken: FeedsData.AccessToken, tempId: number){
         if (accessToken == null || accessToken == undefined)
             return ;
+        let memo = {
+            tempId: tempId
+        }
 
         let request: Communication.notify_post_request = {
             version: "1.0",
@@ -103,7 +109,7 @@ export class ConnectionService {
                 post_id         : Number(postId)
             }
         }
-        this.sendRPCMessage(serverName, nodeId, request.method, request.params, "");
+        this.sendRPCMessage(serverName, nodeId, request.method, request.params, memo);
     }
 
     postComment(serverName: string, nodeId: string, channelId: number, postId: number,
@@ -584,10 +590,10 @@ export class ConnectionService {
         this.sendRPCMessage(serverName, nodeId, request.method, request.params, "");
     }
 
-    setBinary(serverName: string, nodeId: string, key: string,  content: any, accessToken: FeedsData.AccessToken){
+    setBinary(serverName: string, nodeId: string, key: string,  content: any, accessToken: FeedsData.AccessToken, memo: any){
         if (accessToken == null || accessToken == undefined)
             return ;
-
+        
         let contentBin = this.serializeDataService.encodeData(content);
         let request: Communication.set_binary_request = {
             version: "1.0",
@@ -602,7 +608,7 @@ export class ConnectionService {
             }
         }
 
-        this.sendRPCMessage(serverName, nodeId, request.method, request.params, "");
+        this.sendRPCMessage(serverName, nodeId, request.method, request.params, memo);
     }
 
     getBinary(serverName: string, nodeId: string, key: string, accessToken: FeedsData.AccessToken){
