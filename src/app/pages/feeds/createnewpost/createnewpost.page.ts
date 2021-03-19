@@ -118,7 +118,6 @@ export class CreatenewpostPage implements OnInit {
           this.zone.run(() => {
             this.navCtrl.pop().then(()=>{
               this.events.publish(FeedsEvent.PublishType.updateTab, true);
-              this.native.hideLoading();
               this.native.toast_trans("CreatenewpostPage.tipMsg1");
             });
           });
@@ -150,13 +149,11 @@ export class CreatenewpostPage implements OnInit {
 
     this.events.subscribe(FeedsEvent.PublishType.rpcRequestError, () => {
       //this.pauseVideo();
-      this.native.hideLoading();
     });
 
     this.events.subscribe(FeedsEvent.PublishType.rpcResponseError, () => {
       this.zone.run(() => {
         //this.pauseVideo();
-        this.native.hideLoading();
       });
     });
 
@@ -189,7 +186,6 @@ export class CreatenewpostPage implements OnInit {
           this.imgUrl ='';
           this.posterImg ='';
           this.flieUri ='';
-          this.native.hideLoading();
           this.native.toast_trans("CreatenewpostPage.tipMsg1");
         });
       });
@@ -199,7 +195,6 @@ export class CreatenewpostPage implements OnInit {
     this.events.subscribe(FeedsEvent.PublishType.streamError, (nodeId, response) => {
       this.zone.run(() => {
         //response.code
-        this.native.hideLoading();
         this.feedService.closeSession(this.nodeId);
       });
     });
@@ -260,7 +255,6 @@ export class CreatenewpostPage implements OnInit {
     this.events.unsubscribe(FeedsEvent.PublishType.declarePostSuccess);
     this.events.unsubscribe(FeedsEvent.PublishType.notifyPostSuccess);
 
-    this.native.hideLoading();
     this.hideFullScreen();
 
     this.imgUrl="";
@@ -302,11 +296,7 @@ export class CreatenewpostPage implements OnInit {
          return false;
     }
 
-    this.native.showLoading("common.waitMoment", 5*60*1000).then(()=>{
-      this.sendPost();
-    }).catch(()=>{
-      this.native.hideLoading();
-    });
+    this.sendPost();
   }
 
   prepareTempPost(){
