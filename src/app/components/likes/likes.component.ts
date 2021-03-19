@@ -42,6 +42,7 @@ export class LikesComponent implements OnInit {
   public styleObj:any = {width:""};
   public maxTextSize = 240;
   public isPress:boolean = false;
+  public isAndroid:boolean = true;
   constructor(
     private platform: Platform,
     private feedspage: FeedsPage,
@@ -55,6 +56,9 @@ export class LikesComponent implements OnInit {
   }
 
   ngOnInit() {
+    if(this.platform.is('ios')){
+      this.isAndroid = true;
+    }
     this.styleObj.width = (screen.width - 105)+'px';
   }
 
@@ -289,6 +293,22 @@ export class LikesComponent implements OnInit {
     }).catch(()=>{
 
     });
+  }
+
+  clickDashang(nodeId:string,channelId:number,postId:number){
+    if(this.feedService.getConnectionStatus() != 0){
+      this.native.toastWarn('common.connectionError');
+      return;
+    }
+
+    let server = this.feedService.getServerbyNodeId(nodeId)|| {};
+    let elaAddress = server["elaAddress"] || null;
+    if (elaAddress == null){
+      this.native.toast('common.noElaAddress');
+      return;
+    }
+    this.pauseVideo(nodeId+"-"+channelId+"-"+postId);
+    this.native.showPayPrompt(elaAddress);
   }
 
 }

@@ -7,7 +7,6 @@ import { ThemeService } from 'src/app/services/theme.service';
 import { UtilService } from 'src/app/services/utilService';
 import { MenuService } from 'src/app/services/MenuService';
 import { TranslateService } from "@ngx-translate/core";
-import { PaypromptComponent } from 'src/app/components/payprompt/payprompt.component'
 import { PopoverController,IonInfiniteScroll,IonContent} from '@ionic/angular';
 import { AppService } from 'src/app/services/AppService';
 import { PopupProvider } from 'src/app/services/popup';
@@ -107,6 +106,7 @@ export class ChannelsPage implements OnInit {
     public videoCurKey:string = "";
 
     public roundWidth:number = 40;
+    public isAndroid:boolean = true;
 
   constructor(
     private platform: Platform,
@@ -149,20 +149,15 @@ export class ChannelsPage implements OnInit {
       return;
     }
 
-    if(this.checkServerStatus(this.nodeId) != 0){
-      this.native.toastWarn('common.connectionError1');
-      return;
-    }
-
-    let server = this.feedService.getServerbyNodeId(this.nodeId)||undefined;
-
-    if (server == undefined ||server.elaAddress == undefined || server.elaAddress == ""){
+    let server = this.feedService.getServerbyNodeId(this.nodeId)||{};
+    let elaAddress = server["elaAddress"] || null;
+    if (elaAddress == null){
       this.native.toast('common.noElaAddress');
       return;
     }
 
     this.pauseAllVideo();
-    this.showPayPrompt(server.elaAddress);
+    this.native.showPayPrompt(elaAddress);
   }
 
   async unsubscribe(){
@@ -264,6 +259,10 @@ export class ChannelsPage implements OnInit {
 
   }
   ionViewWillEnter() {
+
+    if(this.platform.is("ios")){
+      this.isAndroid = false;
+    }
 
     this.hideDeletedPosts = this.feedService.getHideDeletedPosts();
     this.clientHeight =screen.availHeight;
@@ -454,6 +453,12 @@ export class ChannelsPage implements OnInit {
   }
 
   ionViewWillLeave(){
+
+    let value =  this.popoverController.getTop()["__zone_symbol__value"] || "";
+    if(value!=""){
+      this.popoverController.dismiss();
+      this.popover = null;
+    }
 
     this.isImgPercentageLoading[this.imgDownStatusKey] = false;
     this.isImgLoading[this.imgDownStatusKey] = false;
@@ -649,27 +654,6 @@ export class ChannelsPage implements OnInit {
   initnodeStatus(nodeId:string) {
     let status = this.checkServerStatus(nodeId);
     this.nodeStatus[nodeId] = status;
-  }
-
-  async showPayPrompt(elaAddress:string) {
-    this.pauseAllVideo();
-    this.isShowPrompt = true;
-    this.popover = await this.popoverController.create({
-      mode: 'ios',
-      cssClass: 'PaypromptComponent',
-      component: PaypromptComponent,
-      backdropDismiss: false,
-      componentProps: {
-        "title": this.translate.instant("ChannelsPage.tip"),
-        "elaAddress": elaAddress,
-        "defalutMemo": ""
-      }
-    });
-    this.popover.onWillDismiss().then(() => {
-      this.isShowPrompt = false;
-      this.popover = null;
-    });
-    return await this.popover.present();
   }
 
   doRefresh(event:any){
@@ -1263,6 +1247,22 @@ export class ChannelsPage implements OnInit {
     }).catch(()=>{
 
     });
+  }
+
+  clickDashang(nodeId:string,channelId:number,postId:number){
+    if(this.feedService.getConnectionStatus() != 0){
+      this.native.toastWarn('common.connectionError');
+      return;
+    }
+
+    let server = this.feedService.getServerbyNodeId(nodeId)|| {};
+    let elaAddress = server["elaAddress"] || null;
+    if (elaAddress == null){
+      this.native.toast('common.noElaAddress');
+      return;
+    }
+    this.pauseVideo(nodeId+"-"+channelId+"-"+postId);
+    this.native.showPayPrompt(elaAddress);
   }
 
 }

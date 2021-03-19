@@ -1,5 +1,5 @@
 import { Component, OnInit, NgZone, ViewChild,ElementRef} from '@angular/core';
-import { IonContent,ModalController,Platform } from '@ionic/angular';
+import { IonContent,ModalController,Platform,PopoverController} from '@ionic/angular';
 import { Events,IonTabs} from '@ionic/angular';
 import { FeedService } from 'src/app/services/FeedService';
 import { MenuService } from 'src/app/services/MenuService';
@@ -109,6 +109,8 @@ export class HomePage implements OnInit {
 
     public isAddBinaryEvevnt:boolean = false;
 
+    public isAndroid:boolean = true;
+
   constructor(
     private platform: Platform,
     private elmRef: ElementRef,
@@ -124,7 +126,8 @@ export class HomePage implements OnInit {
     public appService:AppService,
     public modalController: ModalController,
     private logUtils: LogUtils,
-    public popupProvider:PopupProvider) {
+    public popupProvider:PopupProvider,
+    public popoverController:PopoverController) {
 
     }
 
@@ -178,6 +181,11 @@ export class HomePage implements OnInit {
   }
 
   ionViewWillEnter() {
+
+    if(this.platform.is("ios")){
+        this.isAndroid = false;
+    }
+
     this.connectionStatus = this.feedService.getConnectionStatus();
     this.styleObj.width = (screen.width - 105)+'px';
     this.clientHeight =screen.availHeight;
@@ -424,6 +432,7 @@ addBinaryEvevnt(){
 }
 
  ionViewWillLeave(){
+
    this.events.unsubscribe(FeedsEvent.PublishType.hideDeletedPosts);
    this.events.unsubscribe(FeedsEvent.PublishType.createpost);
    this.events.unsubscribe(FeedsEvent.PublishType.unfollowFeedsFinish);
@@ -431,6 +440,13 @@ addBinaryEvevnt(){
 }
 
 clearData(){
+
+  let value =  this.popoverController.getTop()["__zone_symbol__value"] || "";
+  if(value!=""){
+    this.popoverController.dismiss();
+    this.popover = null;
+  }
+
   this.isAddBinaryEvevnt = false;
   if(this.curNodeId!=""){
     this.feedService.closeSession(this.curNodeId);
@@ -1277,5 +1293,21 @@ clearData(){
       this.native.toast_trans("common.textcopied");
     }).catch(()=>{
     });
+  }
+
+  clickDashang(nodeId:string,channelId:number,postId:number){
+    if(this.feedService.getConnectionStatus() != 0){
+      this.native.toastWarn('common.connectionError');
+      return;
+    }
+
+    let server = this.feedService.getServerbyNodeId(nodeId)|| {};
+    let elaAddress = server["elaAddress"] || null;
+    if (elaAddress == null){
+      this.native.toast('common.noElaAddress');
+      return;
+    }
+    this.pauseVideo(nodeId+"-"+channelId+"-"+postId);
+    this.native.showPayPrompt(elaAddress);
   }
 }

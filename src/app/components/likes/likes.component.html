@@ -124,7 +124,9 @@
             <img src="/assets/images/bubble-line.svg">
             <ion-label>{{ post.comments }}</ion-label>
           </ion-col>
-
+          <ion-col (click)="clickDashang(post.nodeId, post.channel_id, post.id)" *ngIf="isAndroid">
+            <img src="/assets/images/dashang.svg">
+          </ion-col>
           <ion-col>
             <ion-label class="status" *ngIf="post.post_status === 2" style="right: -5px;">{{ 'common.edit' | translate}} </ion-label>
           </ion-col>
