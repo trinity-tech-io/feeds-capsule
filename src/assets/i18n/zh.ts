@@ -97,7 +97,8 @@ export const zh = {
         "connectionError1":"此Feed当前不在线，待上线后请重试",
         "emptyElaAddressDes":"还未设置",
         "qRcodePreview":"二维码预览图",
-        "details":"详情"
+        "details":"详情",
+        "sending":"(发送中)"
     },
     "app":{
         "profileDetails": "档案详情",

@@ -181,13 +181,7 @@ export class CreatenewpostPage implements OnInit {
 
     this.events.subscribe(FeedsEvent.PublishType.notifyPostSuccess, () => {
       this.zone.run(() => {
-        this.navCtrl.pop().then(()=>{
-          this.events.publish(FeedsEvent.PublishType.updateTab,true);
-          this.imgUrl ='';
-          this.posterImg ='';
-          this.flieUri ='';
-          this.native.toast_trans("CreatenewpostPage.tipMsg1");
-        });
+          this.backHome();
       });
     });
 
@@ -297,6 +291,7 @@ export class CreatenewpostPage implements OnInit {
     }
 
     this.sendPost();
+    this.backHome();
   }
 
   prepareTempPost(){
@@ -312,8 +307,10 @@ export class CreatenewpostPage implements OnInit {
       this.feedService.publishPost(
         this.nodeId,
         this.channelId,
-        content
+        content,
+        tempPostId
       );
+      
       this.feedService.prepareTempPost(
         this.nodeId,this.channelId, tempPostId, content
       )
@@ -781,6 +778,15 @@ hideComponent(feed:any){
 moreName(name:string){
   return UtilService.moreNanme(name,15);
 }
+    backHome(){
+        this.navCtrl.pop().then(()=>{
+          this.events.publish(FeedsEvent.PublishType.updateTab,true);
+          this.imgUrl ='';
+          this.posterImg ='';
+          this.flieUri ='';
+          this.native.toast_trans("CreatenewpostPage.tipMsg1");
+        });
+    }
 
 }
 function ab2str(u,f) {

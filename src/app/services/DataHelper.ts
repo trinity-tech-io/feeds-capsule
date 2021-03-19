@@ -205,7 +205,17 @@ export class DataHelper {
     }
 
     deletePost(key: string){
+        if(this.postMap == null || this.postMap == undefined)
+            return;
         this.postMap[key].post_status = FeedsData.PostCommentStatus.deleted;
+        this.saveData(FeedsData.PersistenceKey.postMap, this.postMap);
+    }
+
+    deletePostDeeply(key: string){
+        if(this.postMap == null || this.postMap == undefined)
+            return;
+        this.postMap[key] = null;
+        delete this.postMap[key];
         this.saveData(FeedsData.PersistenceKey.postMap, this.postMap);
     }
 
@@ -1674,7 +1684,7 @@ export class DataHelper {
     listTempIdData(): number[]{
         if(this.tempIdDataList == null || this.tempIdDataList == undefined || this.tempIdDataList.length == 0)
             return [];
-        let list: number[] = this.tempIdDataList.sort((a, b) => a - b);
+        let list: number[] = this.tempIdDataList.sort((a, b) => b - a);
         return list;
     }
 
@@ -1696,13 +1706,13 @@ export class DataHelper {
     getLastTempIdData(): number{
         let list = this.listTempIdData();
         if(list == null || list == undefined || list.length == 0)
-            return 0;
+            return 100*1000;
         return list[0];
     }
 
     generateLastTempIdData(): number{
         let tempId = this.getLastTempIdData();
-        let id = tempId-1;
+        let id = tempId+1;
         this.appendTempIdData(id);
         return id;
     }
