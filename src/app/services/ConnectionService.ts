@@ -44,12 +44,15 @@ export class ConnectionService {
     }
 
     publishPost(serverName: string, nodeId: string, channelId: number, content: any,
-                accessToken: FeedsData.AccessToken){
+                accessToken: FeedsData.AccessToken, tempId: number){
         if (accessToken == null || accessToken == undefined)
             return ;
 
         let contentBin = this.serializeDataService.encodeData(content);
 
+        let memo = {
+            tempId: tempId
+        }
         let request: Communication.publish_post_request = {
             version: "1.0",
             method : "publish_post",
@@ -60,7 +63,7 @@ export class ConnectionService {
                 content       : contentBin,
             }
         }
-        this.sendRPCMessage(serverName, nodeId, request.method, request.params, "");
+        this.sendRPCMessage(serverName, nodeId, request.method, request.params, memo);
     }
 
     //added v1.3.0 server

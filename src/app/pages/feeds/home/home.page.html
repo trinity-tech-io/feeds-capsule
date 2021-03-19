@@ -142,6 +142,7 @@
               <img src="/assets/images/dashang.svg">
             </ion-col>
             <ion-col>
+              <ion-label class="status" *ngIf="post.post_status === 11" style="right: -5px;">{{ 'common.sending' | translate}} </ion-label>
               <ion-label class="status" *ngIf="post.post_status === 2" style="right: -5px;">{{ 'common.edit' | translate}} </ion-label>
             </ion-col>
           </ion-row>

@@ -496,7 +496,7 @@ export class FeedService {
         this.handleCreateChannelResult(nodeId, result, requestParams, error);
         break;
       case FeedsData.MethodType.publish_post:
-        this.handlePublishPostResult(nodeId, result, requestParams, error);
+        this.handlePublishPostResult(nodeId, result, requestParams, error,request.memo);
         break;
       case FeedsData.MethodType.post_comment:
         this.handlePostCommentResult(nodeId, result, requestParams, error);
@@ -1083,11 +1083,11 @@ export class FeedService {
     this.connectionService.createChannel(this.getServerNameByNodeId(nodeId),nodeId,name,introduction,avatar,accessToken);
   }
 
-  publishPost(nodeId: string, channelId: number, content: any){
+  publishPost(nodeId: string, channelId: number, content: any, tempId: number){
     if(!this.hasAccessToken(nodeId))
       return;
     let accessToken: FeedsData.AccessToken = this.dataHelper.getAccessToken(nodeId) || null;
-    this.connectionService.publishPost(this.getServerNameByNodeId(nodeId),nodeId, channelId,content,accessToken);
+    this.connectionService.publishPost(this.getServerNameByNodeId(nodeId),nodeId, channelId,content,accessToken, tempId);
   }
 
   declarePost(nodeId: string, channelId: number, content: any, withNotify: boolean){
@@ -1704,16 +1704,19 @@ export class FeedService {
     this.subscribeChannel(nodeId,channelId);
   }
 
-  handlePublishPostResult(nodeId: string, result: any, request: any, error: any){
+  handlePublishPostResult(nodeId: string, result: any, request: any, error: any, memo: any){
     if (error != null && error != undefined && error.code != undefined){
       this.handleError(nodeId, error);
       return;
     }
 
-    this.processPublishPostSuccess(nodeId, request.channel_id, result.id, request.content);
+    let tempId = 0;
+    if (memo != null && memo != undefined)
+      tempId = memo.tempId;
+    this.processPublishPostSuccess(nodeId, request.channel_id, result.id, request.content, tempId);
   }
 
-  processPublishPostSuccess(nodeId: string, channelId: number, postId: number, contentBin: any){
+  processPublishPostSuccess(nodeId: string, channelId: number, postId: number, contentBin: any, tempId: number){
     let contentStr = this.serializeDataService.decodeData(contentBin);
     let content = this.parseContent(nodeId,channelId,postId,0,contentStr);
 
@@ -1731,7 +1734,11 @@ export class FeedService {
 
     let key = this.getPostId(nodeId, channelId, postId);
     this.dataHelper.updatePost(key, post);
+    let tempKey = this.getPostId(nodeId, channelId, tempId);
+    this.dataHelper.deletePostDeeply(tempKey);
+    this.dataHelper.deleteTempIdData(tempId);
 
+    eventBus.publish(FeedsEvent.PublishType.updateTab,true);
     eventBus.publish(FeedsEvent.PublishType.postEventSuccess);
     eventBus.publish(FeedsEvent.PublishType.postDataUpdate);
     eventBus.publish(FeedsEvent.PublishType.publishPostSuccess, postId);
