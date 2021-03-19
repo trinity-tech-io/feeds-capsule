@@ -112,7 +112,7 @@ public static dateFormat(date: Date, sFormat: String = 'yyyy-MM-dd'): string {
      }
      let sizeNum = this.getSize(feedsName);
      if(sizeNum>num){
-          return feedsName.substring(0,num)+'...'
+          return this.sb_substr(feedsName,0,num)+'...'
      }else{
           return feedsName;
      }
@@ -142,24 +142,24 @@ public static dateFormat(date: Date, sFormat: String = 'yyyy-MM-dd'): string {
     return result
   }
 
-
   public static getSize(dataName:string) {
-    let totalLength = 0;
-    let charCode:number = 0;
-    for (var i = 0; i < dataName.length; i++) {
-    charCode = dataName.charCodeAt(i);
-    if (charCode < 0x007f) {
-    totalLength++;
-    } else if ((0x0080 <= charCode) && (charCode <= 0x07ff)) {
-    totalLength += 2;
-    } else if ((0x0800 <= charCode) && (charCode <= 0xffff)) {
-    totalLength += 3;
-    } else {
-    totalLength += 4;
+    let i = 0;
+    let c = 0.0;
+    let unicode = 0;
+    let len = 0;
+    if (dataName == null || dataName == "") {
+     return 0;
     }
+    len = dataName.length;
+    for(i = 0; i < len; i++) {
+      unicode = dataName.charCodeAt(i);
+     if (unicode < 127) { //判断是单字符还是双字符
+      c += 1;
+     } else {  //chinese
+      c += 2;
+     }
     }
-    var totalLengthMax=Number(totalLength);
-    return totalLengthMax;
+    return c;
     }
 
   //  public static async getSha256Hash(text:string){
@@ -279,5 +279,48 @@ public static dateFormat(date: Date, sFormat: String = 'yyyy-MM-dd'): string {
   public static gethtmlId(page:string,type:string,nodeId:string,feedId:number,postId:number){
         return page+"-"+type+"-"+nodeId+"-"+feedId+"-"+postId;
   }
+
+  //截取字符
+  public static sb_substr(str:string, startp:number, endp:number) {
+    let i=0;
+    let c = 0;
+    let rstr = '';
+    var len = str.length;
+    var sblen = this.getSize(str);
+    if (startp < 0) {
+        startp = sblen + startp;
+    }
+    if (endp < 1) {
+        endp = sblen + endp;// - ((str.charCodeAt(len-1) < 127) ? 1 : 2);
+    }
+    // 寻找起点
+    for(i = 0; i < len; i++) {
+        if (c >= startp) {
+            break;
+        }
+     let unicode = str.charCodeAt(i);
+  if (unicode < 127) {
+   c += 1;
+  } else {
+   c += 2;
+  }
+ }
+ // 开始取
+ for(i = i; i < len; i++) {
+     let unicode = str.charCodeAt(i);
+  if (unicode < 127) {
+   c += 1;
+  } else {
+   c += 2;
+  }
+  rstr += str.charAt(i);
+  if (c >= endp) {
+      break;
+  }
+ }
+ return rstr;
+}
+
+
 }
 
