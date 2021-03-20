@@ -8,6 +8,7 @@ import { NativeService } from 'src/app/services/NativeService';
 import { AppService } from 'src/app/services/AppService';
 import { PopupProvider } from 'src/app/services/popup';
 import { LogUtils } from 'src/app/services/LogUtils';
+declare let appManager: AppManagerPlugin.AppManager;
 import * as _ from 'lodash';
 let TAG: string = "Feeds-profile";
 @Component({
@@ -1177,6 +1178,34 @@ export class ProfilePage implements OnInit {
         this.hideSharMenuComponent = false;
          break;
        case "share":
+        if(this.selectType === "ProfilePage.myFeeds" || this.selectType === "ProfilePage.following"){
+          let content = this.getQrCodeString(this.curItem);
+          appManager.sendIntent("share", {
+            title:"",
+            url: content
+          }, {}, () => {
+
+          });
+          this.hideSharMenuComponent = false;
+          return;
+        }
+        if(this.selectType === "ProfilePage.myLikes"){
+            nodeId = this.curItem["nodeId"]
+            feedId = this.curItem["channelId"];
+          let postId = this.curItem["postId"];
+          let post = this.feedService.getPostFromId(nodeId,feedId,postId) || null;
+          let postContent = ""
+          if(post!=null){
+             postContent = this.feedService.parsePostContentText(post.content);
+          }
+          appManager.sendIntent("share", {
+              title:"",
+              url: postContent
+            }, {}, () => {
+          });
+          this.hideSharMenuComponent = false;
+          return;
+        }
         this.native.toast("common.comingSoon");
          break;
        case "info":
