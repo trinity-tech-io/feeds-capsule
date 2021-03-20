@@ -3731,7 +3731,9 @@ export class FeedService {
           " #"+this.getServerNameByNodeId(nodeId) +
           this.translate.instant("ErrorInfo.needUpdateServerVersion"));
         return;
-
+      case -12:
+        this.native.toastWarn("CreatenewfeedPage.feedMaxNumber");
+        return;
       default:
         errorMessage = this.translateBinaryError(nodeId, errorCode);
         return;
