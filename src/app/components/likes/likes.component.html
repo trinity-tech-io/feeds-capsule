@@ -32,7 +32,7 @@
           <img class="moremenuclick"
             *ngIf="post.post_status != 1"
             [src]="!theme.darkMode ? './assets/images/dots-three-vertical.svg' : './assets/images/dots-three-vertical-dark.svg'"
-            (click)="menuMore(post.nodeId, post.channel_id)"
+            (click)="menuMore(post.nodeId, post.channel_id, post.id)"
           >
         </ion-row>
         <p (press)="pressOwerName(post.nodeId, post.channel_id)">@{{ channelOwnerName(post.nodeId, post.channel_id) }}</p>
@@ -45,7 +45,7 @@
           <div *ngIf="getPostContentTextSize(post.content)<=maxTextSize" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id,$event)">
             <pre [ngStyle]="styleObj" [innerHTML]="getContentText(post.content) | html"></pre>
           </div>
-          <div *ngIf="getPostContentTextSize(post.content)>maxTextSize" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id,$event)">
+          <div *ngIf="getPostContentTextSize(post.content)>maxTextSize" (click)="navToPostDetail(post.nodeId, post.channel_id,post.id,$event)">
             <pre [ngStyle]="styleObj" [innerHTML]="getContentShortText(post) | html">{{ getContentShortText(post) }}</pre>
             <pre [ngStyle]="styleObj" style="color:#368bff;">{{"common.fulltext" | translate }}</pre>
           </div>

@@ -194,9 +194,9 @@ export class LikesComponent implements OnInit {
     return  obj.content;
   }
 
-  menuMore(nodeId: string , channelId: number){
+  menuMore(nodeId: string , channelId: number,postId:number){
     let channelName = this.getChannel(nodeId, channelId).name;
-    this.fromChild.emit({"nodeId":nodeId,"channelId":channelId,"channelName":channelName,"postId":0,"tabType":"mylike"});
+    this.fromChild.emit({"nodeId":nodeId,"channelId":channelId,"channelName":channelName,"postId":postId,"tabType":"mylike"});
   }
 
   pressName(nodeId:string,channelId:string){

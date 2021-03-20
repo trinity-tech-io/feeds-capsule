@@ -24,7 +24,7 @@ export class MenuService {
     ) {
     }
 
-    async showChannelMenu(nodeId: string, channelId: number, channelName: string){
+    async showChannelMenu(nodeId: string, channelId: number, channelName: string,postId:number){
         this.postDetail = await this.actionSheetController.create({
             cssClass: 'editPost',
             buttons: [
@@ -32,7 +32,17 @@ export class MenuService {
                 text: this.translate.instant("common.share"),
                 icon: 'share',
                 handler: () => {
-                    this.native.toast("common.comingSoon");
+                    let post = this.feedService.getPostFromId(nodeId,channelId,postId) || null;
+                    let postContent = ""
+                    if(post!=null){
+                       postContent = this.feedService.parsePostContentText(post.content);
+                    }
+                    appManager.sendIntent("share", {
+                        title:"",
+                        url: postContent
+                      }, {}, () => {
+                        this.postDetail.dismiss();
+                    });
                 }
             },{
                 text: this.translate.instant("common.unsubscribe"),
@@ -74,7 +84,17 @@ export class MenuService {
                 text: this.translate.instant("common.share"),
                 icon: 'share',
                 handler: () => {
-                    this.native.toast("common.comingSoon");
+                    let post = this.feedService.getPostFromId(nodeId,channelId,postId) || null;
+                    let postContent = ""
+                    if(post!=null){
+                       postContent = this.feedService.parsePostContentText(post.content);
+                    }
+                    appManager.sendIntent("share", {
+                        title:"",
+                        url: postContent
+                      }, {}, () => {
+                        this.postDetail.dismiss();
+                    });
                 }
             },
             {
@@ -342,7 +362,17 @@ export class MenuService {
                 );
                 break;
             case "sharepost":
-                this.native.toast("common.comingSoon");
+                let post = this.feedService.getPostFromId(nodeId,channelId,postId) || null;
+                let postContent = ""
+                if(post!=null){
+                   postContent = this.feedService.parsePostContentText(post.content);
+                }
+                appManager.sendIntent("share", {
+                    title:"",
+                    url: postContent
+                  }, {}, () => {
+                    this.postDetail.dismiss();
+                });
                 break;
             case "removePost":
                 if (!this.feedService.checkBindingServerVersion(()=>{
