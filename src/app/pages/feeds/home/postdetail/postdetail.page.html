@@ -103,7 +103,7 @@
       </div>
         </ion-col>
       <ion-col size="12">
-        <span style="font-size: 10px;font-weight: 500;color: #8888b0;">{{ handleUpdateDate() }}</span>
+        <span style="font-size: 10px;font-weight: 500;color: #8888b0;">{{ handleUpdateDate(updatedTime) }}</span>
       </ion-col>
       </ion-row>
       <ion-row class="bottom-row">
@@ -141,7 +141,6 @@
             <ion-col class="left-col" size="10.5" (press)="userName(comment.user_name)">
               <ion-label >
                 @{{ indexText(comment.user_name) }}
-                <span> {{ handleDisplayTime(comment.created_at) }}</span>
               </ion-label>
             </ion-col>
           </ion-row>
@@ -163,6 +162,7 @@
             <pre [ngStyle]="dstyleObj">{{ comment.content }}</pre>
             <pre [ngStyle]="styleObj" style="color:#368bff;">{{"common.showless" | translate }}</pre>
           </h2>
+          <span style="font-size: 10px;font-weight: 500;color: #8888b0;"> {{ handleUpdateDate(comment.updated_at)}}</span>
           <ion-row class="bottom-row">
             <ion-col size="2.25" (click)="likeComment(comment.id)">
               <img [src]="checkLikedComment(comment.id) ? '/assets/images/like-s.svg' : '/assets/images/like.svg'">

@@ -596,8 +596,8 @@ export class PostdetailPage implements OnInit {
     this.feedService.postLike(this.nodeId,Number(this.channelId),Number(this.postId),commentId);
   }
 
-  handleUpdateDate(){
-    let updateDate = new Date(this.updatedTime*1000);
+  handleUpdateDate(updatedTime:number){
+    let updateDate = new Date(updatedTime*1000);
     return UtilService.dateFormat(updateDate,'yyyy-MM-dd HH:mm:ss')
   }
 
