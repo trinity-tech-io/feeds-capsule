@@ -82,7 +82,7 @@ export const fr = {
         // "downstatus1": "Connecting",
         // "downstatus2": "Connected",
         // "downstatus3": "Downloading",
-        "downDes": "There is an instant video being downloaded, please wait for that download to complete and try again",
+        "downDes": "There is an instant file being downloaded, please wait for that download to complete and try again",
         "loadingLastestComment": "Loading latest comments",
         "showless": "show less",
         "showmore": "show more",

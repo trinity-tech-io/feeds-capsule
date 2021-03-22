@@ -82,7 +82,7 @@ export const zh = {
         // "downstatus1": "连接中",
         // "downstatus2": "连接成功",
         // "downstatus3": "开始下载",
-        "downDes": "已有视频文件正下载中，请等待下载完成后再试。",
+        "downDes": "已有文件正下载中，请等待下载完成后再试。",
         "loadingLastestComment": "正在加载最新评论",
         "showless": "显示更少",
         "showmore": "显示更多",
