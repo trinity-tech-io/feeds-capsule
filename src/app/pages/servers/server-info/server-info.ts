@@ -381,16 +381,15 @@ export class ServerInfoPage implements OnInit {
       return;
     }
 
-    this.native.go(
-      "/editserverinfo",
-      {
-        "address":"",
+    this.native.navigateForward(
+      ["editserverinfo"],
+      {queryParams:{
         "name": this.name,
         "introduction": this.introduction,
         "elaAddress": this.elaAddress,
         "nodeId": this.nodeId,
         "did": this.didString,
-      }
+      }}
     )
   }
 

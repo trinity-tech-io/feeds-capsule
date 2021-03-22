@@ -18,7 +18,6 @@ declare let appManager: AppManagerPlugin.AppManager;
 
 export class EditserverinfoPage implements OnInit {
   public connectionStatus = 1;
-  public address:string = "";
   public name:string = "";
   public introduction:string = "";
   public elaAddress: string = "";
@@ -41,7 +40,6 @@ export class EditserverinfoPage implements OnInit {
     this.activatedRoute.queryParams.subscribe((data) => {
       this.oldServerInfo = data;
       let item = _.cloneDeep(data);
-      this.address = item ["address"] || "";
       this.name = item["name"] || "";
       this.introduction = item["introduction"] || "";
       this.elaAddress =  item["elaAddress"] || "";
