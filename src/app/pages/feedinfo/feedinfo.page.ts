@@ -1,6 +1,6 @@
 import { Component, OnInit,NgZone} from '@angular/core';
 import { TranslateService } from "@ngx-translate/core";
-import { Events} from '@ionic/angular';
+import { Events,Platform} from '@ionic/angular';
 import { ThemeService } from '../../services/theme.service';
 import { FeedService } from '../../services/FeedService';
 import { NativeService } from '../../services/NativeService';
@@ -48,6 +48,7 @@ export class FeedinfoPage implements OnInit {
   public followStatus: boolean = false;
   public isShowPrompt: boolean = false;
   public popover:any;
+  public isPress:boolean = false;
   constructor(
     private popoverController:PopoverController,
     private feedService: FeedService,
@@ -57,7 +58,8 @@ export class FeedinfoPage implements OnInit {
     private native: NativeService,
     private zone:NgZone,
     private menuService: MenuService,
-    private appService:AppService
+    private appService:AppService,
+    private platform:Platform
   ) {
     }
 
@@ -315,10 +317,21 @@ export class FeedinfoPage implements OnInit {
   }
 
   showPreviewQrcode(feedsUrl:string){
+    if(this.isPress){
+      this.isPress =false;
+     return;
+    }
     let isOwner = this.feedService.checkChannelIsMine(this.nodeId, this.channelId);
     if(isOwner){
       titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, null);
     }
     this.native.showPreviewQrcode(feedsUrl,"common.qRcodePreview","FeedinfoPage.title","feedinfo",this.appService,isOwner);
+  }
+
+  menuMore(feedsUrl:string) {
+    if(this.platform.is('ios')){
+      this.isPress = true;
+    }
+    this.native.getShare(feedsUrl);
   }
 }
