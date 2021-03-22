@@ -7,7 +7,6 @@ import { TranslateService } from "@ngx-translate/core";
 import { Events,PopoverController} from '@ionic/angular';
 import { CameraService } from '../../../../services/CameraService';
 import { PopupProvider } from '../../../../services/popup';
-import jsQR from "jsqr";
 
 declare let appManager: AppManagerPlugin.AppManager;
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
@@ -150,40 +149,6 @@ export class ScanqrcodePage implements OnInit {
     this.checkDid("scanImage");
   }
 
-  addImg(type: number) {
-    this.camera.openCamera(
-      80, 0, type,
-      (imageUrl: any) => {
-        this.zone.run(() => {
-           this.base64ToqR(imageUrl);
-        });
-      },
-      (err: any) => {
-        console.error('Add img err', err);
-      }
-    );
-  }
-
- base64ToqR(data:string) {
-  let qrcanvas:any = document.getElementById("qrcanvas1");
-  let ctx = qrcanvas.getContext("2d");
-    let img = new Image();
-    img.src = data;
-    img.onload = ()=>{
-       ctx.drawImage(img, 0, 0,500,500);
-       let imageData = ctx.getImageData(0, 0,500,500);
-       const code = jsQR(imageData.data,500,500, {
-            inversionAttempts: "dontInvert",
-        });
-        if(code){
-          this.scanContent = code.data;
-          this.handleAddress();
-        }else{
-          this.native.toastWarn("AddServerPage.tipMsg1");
-        }
-    };
-  }
-
   checkDid(clickType:string){
     let signInData = this.feedService.getSignInData() || {};
     let did = signInData["did"];
@@ -221,10 +186,6 @@ export class ScanqrcodePage implements OnInit {
       if(clickType === "scanService"){
            this.scanAddress();
            return;
-      }
-      if(clickType === "scanImage"){
-        this.addImg(0);
-        return;
       }
   }
 }
