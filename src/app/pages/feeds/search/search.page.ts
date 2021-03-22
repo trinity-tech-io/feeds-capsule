@@ -1,6 +1,6 @@
 import { Component, OnInit,ViewChild,NgZone} from '@angular/core';
 import { FeedService } from '../../../services/FeedService';
-import { Events,PopoverController,IonRefresher,IonInfiniteScroll, IonSearchbar} from '@ionic/angular';
+import { Events,PopoverController,IonRefresher,IonSearchbar} from '@ionic/angular';
 import { NativeService } from '../../../services/NativeService';
 import { ThemeService } from '../../../services/theme.service';
 import { UtilService } from '../../../services/utilService';
@@ -9,7 +9,6 @@ import { HttpService } from '../../../services/HttpService';
 import { ApiUrl } from '../../../services/ApiUrl';
 import { StorageService } from '../../../services/StorageService';
 import * as _ from 'lodash';
-import { copyFileSync } from 'fs';
 declare let appManager: AppManagerPlugin.AppManager;
 @Component({
   selector: 'app-search',
@@ -20,7 +19,6 @@ declare let appManager: AppManagerPlugin.AppManager;
 
 export class SearchPage implements OnInit {
 
-  @ViewChild(IonInfiniteScroll,{static:true}) infiniteScroll: IonInfiniteScroll;
   @ViewChild(IonRefresher,{static:true}) ionRefresher:IonRefresher;
   @ViewChild('searchbar', {static: false}) searchbar:IonSearchbar;
 
@@ -183,7 +181,6 @@ export class SearchPage implements OnInit {
     }
     if(this.isSearch == ""){
       this.ionRefresher.disabled = false;
-      this.infiniteScroll.disabled = false;
       this.addingChanneList = this.feedService.getToBeAddedFeedsList() || [];
       this.unfollowedFeed = this.getUnfollowedFeed() || [];
       let discoverfeeds = this.feedService.getDiscoverfeeds() || [];
@@ -194,7 +191,6 @@ export class SearchPage implements OnInit {
       return;
     }
     this.ionRefresher.disabled = true;
-    this.infiniteScroll.disabled = true;
       this.handleSearch();
     }
   }
@@ -207,7 +203,6 @@ export class SearchPage implements OnInit {
     }
     if(this.isSearch == ""){
       this.ionRefresher.disabled = false;
-      this.infiniteScroll.disabled = false;
       this.addingChanneList = this.feedService.getToBeAddedFeedsList() || [];
       this.unfollowedFeed = this.getUnfollowedFeed() || [];
       let discoverfeeds = this.feedService.getDiscoverfeeds() || [];
@@ -218,7 +213,6 @@ export class SearchPage implements OnInit {
       return;
     }
     this.ionRefresher.disabled = true;
-    this.infiniteScroll.disabled = true;
     this.handleSearch();
   }
   handleSearch(){
@@ -401,8 +395,6 @@ checkValid(result: string){
          this.totalNum = result["data"]["total"];
          let arr = result["data"]["result"] || [];
          if(arr.length === 0){
-          this.infiniteScroll.disabled =true;
-          this.infiniteScroll.complete();
           return;
          }
          this.curtotalNum = this.curtotalNum+arr.length;
@@ -413,17 +405,12 @@ checkValid(result: string){
       }
 
       if(this.curtotalNum>=this.totalNum){
-        this.infiniteScroll.disabled =true;
-        this.infiniteScroll.complete();
         return;
       }
-        this.infiniteScroll.disabled =false;
         if(this.curtotalNum<this.totalNum){
            this.loadData(null);
       }
-      this.infiniteScroll.complete();
     }).catch((err)=>{
-      this.infiniteScroll.complete();
     });
    }
 
@@ -444,7 +431,6 @@ checkValid(result: string){
 
          this.discoverSquareList = this.filterdiscoverSquareList(discoverSquareList);
          this.searchSquareList =_.cloneDeep(this.discoverSquareList);
-         this.infiniteScroll.disabled =false;
          if(this.curtotalNum<=this.totalNum){
              this.loadData(null);
          }
@@ -452,7 +438,6 @@ checkValid(result: string){
       }
     }).catch((err)=>{
       this.isLoading =false;
-      this.infiniteScroll.disabled =false;
       if(events!=""){
         events.target.complete();
       }
