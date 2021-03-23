@@ -2458,6 +2458,14 @@ export class FeedService {
   getCommentList(nodeId: string, channelId: number, postId: number): FeedsData.Comment[]{
     return this.dataHelper.getCommentList(nodeId, channelId, postId);
   }
+  
+  getCaptainCommentList(nodeId: string, feedId: number, postId: number): FeedsData.Comment[]{
+    return this.dataHelper.getCaptainCommentList(nodeId, feedId, postId);
+  }
+
+  getReplayCommentList(nodeId: string, feedId: number, postId: number, commentId: number): FeedsData.Comment[]{
+    return this.dataHelper.getReplayCommentList(nodeId, feedId, postId, commentId);
+  }
 
   getPostList(): FeedsData.Post[]{
     return this.dataHelper.getPostList();

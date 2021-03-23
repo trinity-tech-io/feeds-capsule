@@ -375,12 +375,29 @@ export class DataHelper {
             continue;
     
           list.push(comment);
-          // if (commentById == 0)
-          //   list.push(comment); //post comment list
-          // else if (comment.comment_id == commentById)
-          //   list.push(comment); //comment comment list
         }
     
+        list.sort((a, b) => Number(b.created_at) - Number(a.created_at));
+        return list;
+    }
+
+    getCaptainCommentList(nodeId: string, feedId: number, postId: number): FeedsData.Comment[]{
+        return this.getSpecifiedCommentList(nodeId, feedId, postId, 0);
+    }
+
+    getReplayCommentList(nodeId: string, feedId: number, postId: number, commentId: number): FeedsData.Comment[]{
+        return this.getSpecifiedCommentList(nodeId, feedId, postId, commentId);
+    }
+
+    getSpecifiedCommentList(nodeId: string, feedId: number, postId: number, commentId: number): FeedsData.Comment[]{
+        let list: FeedsData.Comment[] = [];
+        let commentList = this.getCommentList(nodeId, feedId, postId);
+        for (let index = 0; index < commentList.length; index++) {
+            const comment = commentList[index];
+            if (comment.comment_id == commentId)
+                list.push(comment);
+        }
+
         list.sort((a, b) => Number(b.created_at) - Number(a.created_at));
         return list;
     }
