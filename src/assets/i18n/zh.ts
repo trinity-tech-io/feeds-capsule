@@ -524,5 +524,8 @@ export const zh = {
     "FeedinfoPage":{
        "title": "Feed详情",
        "feeds": "Feed"
+    },
+    "CommentlistPage":{
+        "title": "评论详情",
     }
 };

@@ -26,7 +26,7 @@ export class DataHelper {
 
     private unreadMap: {[nodeChannelId: string]: number} = {};
     private serverStatisticsMap: {[nodeId: string]: FeedsData.ServerStatistics} = {};
-    
+
     private serversStatus: {[nodeId: string]: FeedsData.ServerStatus} = {};
 
     private bindingServer: FeedsData.Server = null;
@@ -37,7 +37,7 @@ export class DataHelper {
     private localCredential: string = "";
     private cachedPost:{[key:string]:FeedsData.Post} = {};
 
-    
+
     private localSignInData = null; //TODO
 
     private developerMode = false;
@@ -45,7 +45,7 @@ export class DataHelper {
     private hideDeletedComments = false;
     private hideOfflineFeeds = false;
     private currentLang ="";
-    
+
     private serverVersions: {[nodeId: string]: FeedsData.ServerVersion} = {};
 
     private curtab: string = "home";
@@ -68,7 +68,7 @@ export class DataHelper {
     private declareOwnerTimeout = null;
     private declareOwnerInterval = null;
     private isDeclareFinish: boolean = false;
-    
+
     private feedPublicStatus:any = {};
     private channelInfo: any = {};
     private cachedUpdateServer: {[nodeId: string]: FeedsData.Server} = {};
@@ -157,7 +157,7 @@ export class DataHelper {
           list.push(item);
         }
         let sortArr = [];
-    
+
         sortArr = _.sortBy(list,(item:any)=> {
           return - Number(item.last_update);
         });
@@ -171,7 +171,7 @@ export class DataHelper {
             let feed = this.getChannel(keys[index])
             if (feed == null)
                 continue;
-            
+
             if (feed.nodeId == nodeId)
                 list.push(feed);
         }
@@ -226,8 +226,8 @@ export class DataHelper {
         return this.postMap[key];
     }
 
-    generatePost(nodeId: string, feedId: number, postId: number, content: any, 
-                comments: number, likes: number, createdAt: number, updatedAt: number, 
+    generatePost(nodeId: string, feedId: number, postId: number, content: any,
+                comments: number, likes: number, createdAt: number, updatedAt: number,
                 postStatus: FeedsData.PostCommentStatus){
         let post: FeedsData.Post = {
             nodeId: nodeId,
@@ -256,7 +256,7 @@ export class DataHelper {
         for (let index in keys) {
           if (this.postMap[keys[index]] == null || this.postMap[keys[index]] == undefined)
             continue;
-    
+
           let nodeChannelId = this.getKey(this.postMap[keys[index]].nodeId, this.postMap[keys[index]].channel_id, 0, 0);
           let feed = this.getChannel(nodeChannelId);
           if (feed == null || feed == undefined)
@@ -264,7 +264,7 @@ export class DataHelper {
           if (feed.isSubscribed)
             list.push(this.postMap[keys[index]]);
         }
-    
+
         list.sort((a, b) => Number(b.created_at) - Number(a.created_at));
         return list;
     }
@@ -276,11 +276,11 @@ export class DataHelper {
         for (const index in keys) {
           if (this.postMap[keys[index]] == null || this.postMap[keys[index]] == undefined)
             continue;
-    
+
           if (this.postMap[keys[index]].nodeId == nodeId && this.postMap[keys[index]].channel_id == channelId)
             list.push(this.postMap[keys[index]]);
         }
-    
+
         list.sort((a, b) => Number(b.created_at) - Number(a.created_at));
         return list;
     }
@@ -366,17 +366,17 @@ export class DataHelper {
            this.commentsMap[nodeId][channelId][postId] == null || this.commentsMap[nodeId][channelId][postId] == undefined){
              return [];
         }
-    
+
         let list: FeedsData.Comment[] =[];
         let keys: string[] = Object.keys(this.commentsMap[nodeId][channelId][postId]);
         for (const index in keys) {
           let comment: FeedsData.Comment = this.commentsMap[nodeId][channelId][postId][keys[index]];
           if (comment == undefined)
             continue;
-    
+
           list.push(comment);
         }
-    
+
         list.sort((a, b) => Number(b.created_at) - Number(a.created_at));
         return list;
     }
@@ -397,7 +397,6 @@ export class DataHelper {
             if (comment.comment_id == commentId)
                 list.push(comment);
         }
-
         list.sort((a, b) => Number(b.created_at) - Number(a.created_at));
         return list;
     }
@@ -435,7 +434,7 @@ export class DataHelper {
             let server = this.serverMap[nodeIdArray[index]];
             if (server == null || server == undefined)
                 continue;
-    
+
             list.push(this.serverMap[nodeIdArray[index]]);
         }
         return list;
@@ -484,7 +483,7 @@ export class DataHelper {
                 nodeId: string, feedsUrl: string, elaAddress: string): FeedsData.Server{
         return {
             name              : name,
-            owner             : owner, 
+            owner             : owner,
             introduction      : introduction,
             did               : did,
             carrierAddress    : carrierAddress,
@@ -587,7 +586,7 @@ export class DataHelper {
     }
 
     getLikes(key: string): FeedsData.Likes{
-        if (this.likeMap == null || this.likeMap == undefined || 
+        if (this.likeMap == null || this.likeMap == undefined ||
             this.likeMap[key] == null || this.likeMap[key] == undefined)
                 return null;
         return this.likeMap[key];
@@ -612,11 +611,11 @@ export class DataHelper {
 
     getLikedPostList(): FeedsData.Post[]{
         let list: FeedsData.Post[] = [];
-    
+
         let keys: string[] = [];
         if (this.likeMap != null && this.likeMap != undefined)
             keys = Object.keys(this.likeMap);
-    
+
         for (const index in keys) {
             let like = this.likeMap[keys[index]];
             if (like == null || like == undefined)
@@ -627,7 +626,7 @@ export class DataHelper {
                 continue;
             list.push(post);
         }
-    
+
         list.sort((a, b) => Number(b.created_at) - Number(a.created_at));
         return list;
     }
@@ -1070,7 +1069,7 @@ export class DataHelper {
                         continue;
                         this.serversStatus[keys[index]].status = FeedsData.ConnState.disconnected;
                     }
-          
+
                     resolve(this.serversStatus);
                     return ;
                 }
@@ -1160,7 +1159,7 @@ export class DataHelper {
             }
         });
     }
-    
+
     getBindingServer(): FeedsData.Server{
         return this.bindingServer;
     }
