@@ -132,6 +132,7 @@ export class SessionService {
                         ];
                         mLogUtils.logd("Session stream [" + event.stream.id + "] state change to "+state_name[workedSessions[nodeId].StreamState]+" nodeId is "+nodeId,TAG);
                         eventBus.publish(FeedsEvent.PublishType.streamOnStateChangedCallback, nodeId, workedSessions[nodeId].StreamState);
+                        eventBus.publish(FeedsEvent.PublishType.innerStreamStateChanged, nodeId, workedSessions[nodeId].StreamState);
 
                         if (workedSessions[nodeId] != undefined && FeedsData.StreamState.INITIALIZED == workedSessions[nodeId].StreamState){
                             workedSessions[nodeId].sessionTimeout = setTimeout(() => {
@@ -629,9 +630,7 @@ function parseResponse(response: any){
     mLogUtils.logd("Receive Session Response, Request is "+JSON.stringify(request), TAG);
 
     let method = request.method;
-    
     let nodeId = request.nodeId;
-    request.
     cacheData[nodeId].method = method;
     
     let memo = request.memo;
@@ -667,7 +666,7 @@ function parseResponse(response: any){
     if (method == "set_binary"){
         mLogUtils.logd("Parse 'set_binary' data finish and publish events, nodeId is "+nodeId, TAG);
         eventBus.publish(FeedsEvent.PublishType.streamSetBinarySuccess, nodeId, feedId, postId, commentId, tempId);
-
+        eventBus.publish(FeedsEvent.PublishType.innerStreamSetBinaryFinish, nodeId, feedId, postId, commentId, tempId);
     } else if (method == "get_binary"){
         mLogUtils.logd("Parse 'get_binary' data finish and publish events, nodeId is "+nodeId, TAG);
         eventBus.publish(FeedsEvent.PublishType.streamGetBinaryResponse, nodeId);

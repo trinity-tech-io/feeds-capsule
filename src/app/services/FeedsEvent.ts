@@ -137,5 +137,7 @@ declare namespace FeedsEvent{
 
         addProflieEvent = "feeds:addProflieEvent",
 
+        innerStreamSetBinaryFinish = "feeds:innerStreamSetBinaryFinish",
+        innerStreamStateChanged = "feeds:innerStreamStateChanged"
     }
 }
