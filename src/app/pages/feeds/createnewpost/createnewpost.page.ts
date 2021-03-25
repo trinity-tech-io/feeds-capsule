@@ -222,22 +222,22 @@ export class CreatenewpostPage implements OnInit {
         });
       });
 
-      this.events.subscribe(FeedsEvent.PublishType.declarePostSuccess, (postId, tempId) => {
-        this.zone.run(()=>{
-          this.postId = postId;
-          if (this.transDataChannel == FeedsData.TransDataChannel.MESSAGE){
-            this.feedService.sendDataFromMsg(this.nodeId,this.channelId,postId, 0 ,0, this.flieUri,this.imgUrl, tempId);
-            return;
-          }
+      // this.events.subscribe(FeedsEvent.PublishType.declarePostSuccess, (postId, tempId) => {
+      //   this.zone.run(()=>{
+      //     this.postId = postId;
+      //     if (this.transDataChannel == FeedsData.TransDataChannel.MESSAGE){
+      //       this.feedService.sendDataFromMsg(this.nodeId,this.channelId,postId, 0 ,0, this.flieUri,this.imgUrl, tempId);
+      //       return;
+      //     }
 
-          if (this.transDataChannel == FeedsData.TransDataChannel.SESSION){
-            if (this.sessionState === FeedsData.StreamState.CONNECTED)
-              this.feedService.sendData(this.nodeId,this.channelId,this.postId, 0 ,0, this.flieUri,this.imgUrl, tempId);
-              this.native.updateLoadingMsg(this.translate.instant("common.uploading"));
-            return;
-          }
-        });
-      });
+      //     if (this.transDataChannel == FeedsData.TransDataChannel.SESSION){
+      //       if (this.sessionState === FeedsData.StreamState.CONNECTED)
+      //         this.feedService.sendData(this.nodeId,this.channelId,this.postId, 0 ,0, this.flieUri,this.imgUrl, tempId);
+      //         this.native.updateLoadingMsg(this.translate.instant("common.uploading"));
+      //       return;
+      //     }
+      //   });
+      // });
 
 
 
@@ -335,13 +335,13 @@ export class CreatenewpostPage implements OnInit {
 
       // this.events.unsubscribe(FeedsEvent.PublishType.streamSetBinarySuccess);
       this.events.unsubscribe(FeedsEvent.PublishType.streamError);
-      this.events.unsubscribe(FeedsEvent.PublishType.streamOnStateChangedCallback);
-      this.events.unsubscribe(FeedsEvent.PublishType.streamGetBinarySuccess);
+      // this.events.unsubscribe(FeedsEvent.PublishType.streamOnStateChangedCallback);
+      // this.events.unsubscribe(FeedsEvent.PublishType.streamGetBinarySuccess);
       this.events.unsubscribe(FeedsEvent.PublishType.openRightMenu);
       this.events.unsubscribe(FeedsEvent.PublishType.streamProgress);
 
-      this.events.unsubscribe(FeedsEvent.PublishType.declarePostSuccess);
-      this.events.unsubscribe(FeedsEvent.PublishType.notifyPostSuccess);
+      // this.events.unsubscribe(FeedsEvent.PublishType.declarePostSuccess);
+      // this.events.unsubscribe(FeedsEvent.PublishType.notifyPostSuccess);
 
       this.hideFullScreen();
 

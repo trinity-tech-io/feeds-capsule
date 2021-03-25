@@ -5295,13 +5295,6 @@ export class FeedService {
 
         this.sendPostDataWithSession(nodeId);
     });
-
-    eventBus.subscribe(FeedsEvent.PublishType.streamOnStateChangedCallback, (nodeId, state) => {
-        if (state != FeedsData.StreamState.CONNECTED)
-          return;
-
-        this.sendPostDataWithSession(nodeId);
-    });
   }
 
   sendMediaData(nodeId: string, feedId: number, tempId: number){
@@ -5344,7 +5337,7 @@ export class FeedService {
       if (tempData == null || tempData == undefined)
         continue;
       if (tempData.status == FeedsData.SendingStatus.needPushData && tempData.transDataChannel == FeedsData.TransDataChannel.MESSAGE){
-        this.sendData(tempData.nodeId, tempData.feedId, tempData.postId, 0, 0, tempData.videoData, tempData.imageData, tempData.tempPostId);
+        this.sendDataFromMsg(tempData.nodeId, tempData.feedId, tempData.postId, 0, 0, tempData.videoData, tempData.imageData, tempData.tempPostId);
         return ;
       }
     }
