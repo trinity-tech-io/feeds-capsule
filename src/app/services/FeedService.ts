@@ -5289,12 +5289,19 @@ export class FeedService {
   }
 
   onReceivedStreamStateChanged(){
-    this.events.subscribe(FeedsEvent.PublishType.streamOnStateChangedCallback, (nodeId, state) => {
+    eventBus.subscribe(FeedsEvent.PublishType.innerStreamStateChanged, (nodeId, state) => {
         if (state != FeedsData.StreamState.CONNECTED)
           return;
 
         this.sendPostDataWithSession(nodeId);
-      });
+    });
+
+    eventBus.subscribe(FeedsEvent.PublishType.streamOnStateChangedCallback, (nodeId, state) => {
+        if (state != FeedsData.StreamState.CONNECTED)
+          return;
+
+        this.sendPostDataWithSession(nodeId);
+    });
   }
 
   sendMediaData(nodeId: string, feedId: number, tempId: number){
@@ -5349,7 +5356,7 @@ export class FeedService {
       this.sendPostDataWithMsg(nodeId);
     });
 
-    this.events.subscribe(FeedsEvent.PublishType.streamSetBinarySuccess, (nodeId, feedId, postId, commentId, tempId)=>{
+    this.events.subscribe(FeedsEvent.PublishType.innerStreamSetBinaryFinish, (nodeId, feedId, postId, commentId, tempId)=>{
       this.setBinaryFinish(nodeId, feedId, tempId);
       this.sendPostDataWithSession(nodeId);
     });

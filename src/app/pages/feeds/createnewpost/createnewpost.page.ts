@@ -333,7 +333,7 @@ export class CreatenewpostPage implements OnInit {
 
       // this.events.unsubscribe(FeedsEvent.PublishType.setBinaryFinish);
 
-      this.events.unsubscribe(FeedsEvent.PublishType.streamSetBinarySuccess);
+      // this.events.unsubscribe(FeedsEvent.PublishType.streamSetBinarySuccess);
       this.events.unsubscribe(FeedsEvent.PublishType.streamError);
       this.events.unsubscribe(FeedsEvent.PublishType.streamOnStateChangedCallback);
       this.events.unsubscribe(FeedsEvent.PublishType.streamGetBinarySuccess);
