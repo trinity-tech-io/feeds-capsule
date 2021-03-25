@@ -19,6 +19,7 @@ export class CommentComponent implements OnInit {
   @Input() public nodeId = "";
   @Input() public channelId = 0;
   @Input() public postId = 0;
+  @Input() public commentId = 0;
   @Input() public onlineStatus = 0;
 
   @Output() hideComment: EventEmitter<boolean> = new EventEmitter<boolean>();
@@ -68,7 +69,7 @@ export class CommentComponent implements OnInit {
 
 
   publishComment(){
-    this.feedService.postComment(this.nodeId,Number(this.channelId),Number(this.postId),0,this.newComment);
+    this.feedService.postComment(this.nodeId,Number(this.channelId),Number(this.postId),this.commentId,this.newComment);
   }
 
   hideComponent() {

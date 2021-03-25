@@ -36,7 +36,7 @@ export class PostdetailPage implements OnInit {
   public likesNum:number = 0;
   public commentsNum:number = 0;
 
-  public commentList:any = [];
+  public captainCommentList:any =[];
 
   public nodeId:string = "";
   public channelId:number = 0;
@@ -74,6 +74,8 @@ export class PostdetailPage implements OnInit {
 
   public isOwnComment = {};
 
+  public userNameList:any = {};
+
   public isPress:boolean = false;
   public roundWidth:number = 40;
   /**
@@ -104,6 +106,8 @@ export class PostdetailPage implements OnInit {
 
      public isAndroid:boolean = true;
 
+     public commentId:number = 0;
+
   constructor(
     private platform: Platform,
     private popoverController:PopoverController,
@@ -132,9 +136,9 @@ export class PostdetailPage implements OnInit {
     this.initPostContent();
     this.initnodeStatus();
     if(isInit){
-      this.initRefresh();
+       this.initRefresh();
     }else{
-      this.refreshCommentList();
+       this.refreshCommentList();
     }
   }
 
@@ -142,43 +146,53 @@ export class PostdetailPage implements OnInit {
     this.startIndex = 0;
     this.totalData = this.sortCommentList();
     if(this.totalData.length-this.pageNumber > 0){
-      this.commentList = this.totalData.slice(0,this.pageNumber);
+      this.captainCommentList = this.totalData.slice(0,this.pageNumber);
+
       this.startIndex++;
       this.infiniteScroll.disabled =false;
     }else{
-      this.commentList = this.totalData;
+      this.captainCommentList = this.totalData;
       this.infiniteScroll.disabled =true;
     }
     this.initOwnCommentObj();
   }
 
+
+
   initOwnCommentObj(){
-    let len = this.commentList.length;
-    for(let index = 0;index<len;index++){
-        let comment = this.commentList[index];
-        this.checkCommentIsMine(comment);
-    }
+   let captainCommentList =  _.cloneDeep(this.captainCommentList);
+
+    _.each(captainCommentList ,(item:any)=>{
+        let key = item.id;
+        this.userNameList[key] = item["user_name"];
+        this.checkCommentIsMine(item);
+        let commentId = item.id;
+        let replayCommentList = this.feedService.getReplayCommentList(this.nodeId,this.channelId,this.postId,commentId) || [];
+        item["replayCommentSum"] = replayCommentList.length;
+    });
+
+    this.captainCommentList = _.cloneDeep(captainCommentList);
   }
 
   refreshCommentList(){
     this.totalData = this.sortCommentList();
     if (this.startIndex!=0&&this.totalData.length - this.pageNumber*this.startIndex > 0){
-      this.commentList = this.totalData.slice(0,(this.startIndex)*this.pageNumber);
+      this.captainCommentList = this.totalData.slice(0,(this.startIndex)*this.pageNumber);
       this.infiniteScroll.disabled =false;
      } else {
-      this.commentList =  this.totalData;
+      this.captainCommentList =  this.totalData;
       this.infiniteScroll.disabled =true;
     }
     this.initOwnCommentObj();
   }
 
   sortCommentList(){
-   let commentList = this.feedService.getCommentList(this.nodeId, this.channelId, this.postId) || [];
+   let captainCommentList = this.feedService.getCaptainCommentList(this.nodeId, this.channelId, this.postId) || [];
    this.hideDeletedComments = this.feedService.getHideDeletedComments();
    if(!this.hideDeletedComments){
-      commentList = _.filter(commentList ,(item:any)=> { return item.status != 1; });
+    captainCommentList = _.filter(captainCommentList ,(item:any)=> { return item.status != 1; });
    }
-   return commentList;
+   return captainCommentList;
   }
 
   ngOnInit() {
@@ -533,8 +547,8 @@ export class PostdetailPage implements OnInit {
     return this.feedService.indexText(text,20,20);
   }
 
-  showComment() {
-
+  showComment(commentId:number) {
+    this.commentId = commentId;
     if(this.checkServerStatus(this.nodeId) != 0){
       this.native.toastWarn('common.connectionError1');
       return;
@@ -702,7 +716,7 @@ export class PostdetailPage implements OnInit {
        arr = this.totalData.slice(this.startIndex*this.pageNumber,(this.startIndex+1)*this.pageNumber);
        this.startIndex++;
        this.zone.run(()=>{
-       this.commentList = this.commentList.concat(arr);
+       this.captainCommentList = this.captainCommentList.concat(arr);
        });
        this.initnodeStatus();
        this.initOwnCommentObj();
@@ -710,7 +724,7 @@ export class PostdetailPage implements OnInit {
       }else{
        arr = this.totalData.slice(this.startIndex*this.pageNumber,this.totalData.length);
        this.zone.run(()=>{
-           this.commentList = this.commentList.concat(arr);
+           this.captainCommentList = this.captainCommentList.concat(arr);
        });
        this.infiniteScroll.disabled =true;
        this.initnodeStatus();
@@ -1085,6 +1099,23 @@ export class PostdetailPage implements OnInit {
     }
     this.pauseVideo();
     this.native.showPayPrompt(elaAddress);
+  }
+
+  clickComment(comment:any){
+    let commentId:number = comment.id;
+    let replayCommentSum:number = comment.replayCommentSum;
+    if(replayCommentSum === 0){
+      return;
+    }
+    this.native.navigateForward(['commentlist'],{
+      queryParams: {
+        nodeId:this.nodeId,
+        channelId:this.channelId,
+        postId:this.postId,
+        commentId: commentId,
+        username:comment["user_name"]
+      }
+  })
   }
 
 }

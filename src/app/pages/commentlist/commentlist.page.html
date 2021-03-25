@@ -1,0 +1,97 @@
+<ion-header *ngIf="connectionStatus == 1">
+  <div class="offline-header"></div>
+</ion-header>
+
+<ion-content>
+
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" pullFactor="0.5">
+    <ion-refresher-content
+      class="refresh"
+      pullingText="{{'common.releaseToRefresh'|translate}}"
+      pullingIcon="arrow-dropdown"
+      refreshingSpinner="crescent"
+      refreshingText="{{'common.beingRefresh'|translate}}" >
+    </ion-refresher-content>
+  </ion-refresher>
+
+  <div class="container" [class.blur]="!hideComment">
+
+    <!---------------- COMMENTS ---------------->
+    <div *ngIf="replayCommentList.length>0">
+      <div *ngFor="let replayComment of replayCommentList">
+        <ion-grid  class="post-grid" [class.darkPostGrid]="theme.darkMode">
+          <ion-row class="post-row">
+            <ion-col class="right-col" size="1.5"  *ngIf="replayComment.status != 1 && isOwnComment[replayComment.id]">
+              <img (click)="openEditTool($event,replayComment)"
+                [src]="!theme.darkMode ? './assets/images/dots-three-vertical.svg' : './assets/images/dots-three-vertical-dark.svg'"
+              >
+            </ion-col>
+            <ion-col class="img-col" size="2.5">
+                <img class="comment-avatar" [src]="avatar ? avatar : './assets/images/default-contact.svg'">
+            </ion-col>
+            <ion-col class="content-col" size="8">
+              <ion-row class="top-row">
+                <ion-col class="left-col" size="10.5" (press)="userName(replayComment.user_name)">
+                  <ion-label >
+                    @{{ indexText(replayComment.user_name) }}
+                  </ion-label>
+                </ion-col>
+              </ion-row>
+
+              <ion-label>
+                <p (press)="userNameList[replayComment.comment_id]">{{'ServerInfoPage.replyingto'|translate}} @{{ indexText(userNameList[replayComment.comment_id])}}</p>
+              </ion-label>
+              <h2 *ngIf="replayComment.status === 1">
+                <pre>{{'common.cdeleted' | translate}}</pre>
+              </h2>
+              <h2 *ngIf="replayComment.status != 1&&getPostContentTextSize(replayComment.content)<=maxTextSize">
+                <pre [ngStyle]="dstyleObj">{{ replayComment.content }}</pre>
+              </h2>
+              <h2 *ngIf="replayComment.status != 1&&getPostContentTextSize(replayComment.content)>maxTextSize&&!isFullContent[replayComment.id]" (click)="showFullContent(replayComment.id)">
+                <pre [ngStyle]="dstyleObj">{{ handleCommentContent(replayComment.content) }}</pre>
+                <pre [ngStyle]="styleObj" style="color:#368bff;">{{"common.showmore" | translate }}</pre>
+              </h2>
+              <h2 *ngIf="replayComment.status != 1&&getPostContentTextSize(replayComment.content)>maxTextSize&&isFullContent[replayComment.id]" (click)="hideFullContent(replayComment.id)">
+                <pre [ngStyle]="dstyleObj">{{ replayComment.content }}</pre>
+                <pre [ngStyle]="styleObj" style="color:#368bff;">{{"common.showless" | translate }}</pre>
+              </h2>
+              <span style="font-size: 10px;font-weight: 500;color: #8888b0;"> {{ handleUpdateDate(replayComment.updated_at)}}</span>
+              <ion-row class="bottom-row">
+                <ion-col size="2.25" (click)="likeComment(replayComment.id)">
+                  <img [src]="checkLikedComment(replayComment.id) ? '/assets/images/like-s.svg' : '/assets/images/like.svg'">
+                  <ion-label [class.liked]="checkLikedComment(replayComment.id)">{{ replayComment.likes }}</ion-label>
+                </ion-col>
+                <ion-col size="2.25" (click)="showComment(replayComment.comment_id)">
+                  <img src="/assets/images/bubble-line.svg">
+                </ion-col>
+                <ion-col>
+                  <ion-label class="status" style="right:-7px;" *ngIf="replayComment.status === 2">{{ 'common.edit' | translate}}</ion-label>
+                </ion-col>
+              </ion-row>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+        </div>
+    </div>
+
+    <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event)">
+      <ion-infinite-scroll-content
+      class="ion-padding-top"
+      loadingSpinner="crescent">
+      </ion-infinite-scroll-content>
+    </ion-infinite-scroll>
+  </div>
+</ion-content>
+
+<!---------------- ADD COMMENT FOOTER ---------------->
+<app-comment
+  *ngIf="!hideComment"
+  [postId]="postId"
+  [nodeId]="nodeId "
+  [channelId]="channelId"
+  [commentId]="commentId"
+  [channelAvatar]="channelAvatar"
+  [channelName]="channelName"
+  (hideComment)="hideComponent($event)"
+></app-comment>
+

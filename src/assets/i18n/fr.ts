@@ -523,5 +523,8 @@ export const fr = {
     "FeedinfoPage": {
         "title": "Feed details",
         "feeds": "Feed"
+    },
+    "CommentlistPage":{
+        "title": "Comment details",
     }
 };
