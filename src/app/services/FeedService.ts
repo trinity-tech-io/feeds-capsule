@@ -4012,8 +4012,8 @@ export class FeedService {
     }
   }
 
-  closeSession(nodeId: string){
-    this.sessionService.sessionClose(nodeId);
+  closeSession(nodeId: string): Promise<string>{
+    return this.sessionService.sessionClose(nodeId);
   }
 
   getTextKey(nodeId: string, channelId: number, postId: number, commentId: number, index: number){
@@ -5313,7 +5313,12 @@ export class FeedService {
     let sessionState = this.sessionService.getSessionState(nodeId);
     if (sessionState != FeedsData.StreamState.CONNECTED)
       return ;
-    this.sendData(nodeId, feedId, postId, 0 ,0, videoData, imageData, tempId);
+
+    let isBusy = this.sessionService.checkSessionIsBusy();
+    if (!isBusy){
+      this.sendData(nodeId, feedId, postId, 0 ,0, videoData, imageData, tempId);
+    }
+      
   }
 
   sendPostDataWithSession(nodeId: string){
@@ -5327,7 +5332,6 @@ export class FeedService {
         return ;
       }
     }
-    this.closeSession(nodeId);
   }
 
   sendPostDataWithMsg(nodeId: string){
@@ -5349,8 +5353,9 @@ export class FeedService {
       this.sendPostDataWithMsg(nodeId);
     });
 
-    this.events.subscribe(FeedsEvent.PublishType.innerStreamSetBinaryFinish, (nodeId, feedId, postId, commentId, tempId)=>{
+    this.events.subscribe(FeedsEvent.PublishType.innerStreamSetBinaryFinish, async (nodeId, feedId, postId, commentId, tempId)=>{
       this.setBinaryFinish(nodeId, feedId, tempId);
+      await this.closeSession(nodeId);
       this.sendPostDataWithSession(nodeId);
     });
   }

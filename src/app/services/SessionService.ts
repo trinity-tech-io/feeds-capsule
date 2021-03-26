@@ -71,7 +71,7 @@ let mCarrierService: CarrierService;
 let mSerializeDataService:SerializeDataService;
 let mStorageService: StorageService;
 let sessionConnectionTimeOut = 1*60*1000;
-
+let isBusy = false;
 @Injectable()
 export class SessionService {
     public friendConnectionMap: {[nodeId:string]: FeedsData.ConnState};
@@ -92,6 +92,7 @@ export class SessionService {
   
     createSession(nodeId: string, onSuccess:(session: CarrierPlugin.Session, stream: CarrierPlugin.Stream)=>void, onError?:(err: string)=>void){
         this.carrierService.newSession(nodeId,(mSession)=>{
+            isBusy = true;
             workedSessions[nodeId] = {
                 nodeId          : nodeId,
                 session         : mSession,
@@ -108,6 +109,7 @@ export class SessionService {
                 {
                     onStateChanged: function(event: any) {
                         if (workedSessions[nodeId] == undefined){
+                            isBusy = false;
                             mLogUtils.logd("Session was closed, nodeId is "+nodeId,TAG);
                             return ;
                         }
@@ -356,44 +358,58 @@ export class SessionService {
         }
 
         stream.write(base64,(bytesSent)=>{
-            mLogUtils.logd("Write data to "+nodeId + ", data length is "+base64.length,TAG);
+            // mLogUtils.logd("Write data to "+nodeId + ", data length is "+base64.length,TAG);
         },(err)=>{
             publishError(nodeId, createWriteDataError());
             mLogUtils.loge("Write date to "+ nodeId + " error "+JSON.stringify(err),TAG);
         });
     }
 
-    sessionClose(nodeId: string){
-        let obj = workedSessions || "";
-        if(obj === ""){
-            return;
-        }
-        let item =  workedSessions[nodeId] || "";
-        if(item === ""){
-            return;
-        }
-        let session = workedSessions[nodeId].session || "";
-        if(session === ""){
-            return;
-        }
-        mLogUtils.logd("Close session , nodeId is "+ nodeId,TAG);
-        this.carrierService.sessionClose(workedSessions[nodeId].session,
-            ()=>{
-                workedSessions[nodeId] = undefined;
-                delete workedSessions[nodeId];
-                
-                progress[nodeId] = undefined;
-                delete progress[nodeId];
-
-                cacheData[nodeId] = undefined;
-                delete cacheData[nodeId];
-                mLogUtils.logd("Close session success, nodeId is "+ nodeId, TAG);
+    sessionClose(nodeId: string): Promise<string>{
+        return new Promise((resolve, reject) =>{
+            let obj = workedSessions || "";
+            if(obj === ""){
+                return;
             }
-        );
+            let item =  workedSessions[nodeId] || "";
+            if(item === ""){
+                return;
+            }
+            let session = workedSessions[nodeId].session || "";
+            if(session === ""){
+                return;
+            }
+            mLogUtils.logd("Close session , nodeId is "+ nodeId,TAG);
+            this.carrierService.sessionClose(workedSessions[nodeId].session,
+                ()=>{
+                    workedSessions[nodeId] = undefined;
+                    delete workedSessions[nodeId];
+                    
+                    progress[nodeId] = undefined;
+                    delete progress[nodeId];
+    
+                    cacheData[nodeId] = undefined;
+                    delete cacheData[nodeId];
+                    mLogUtils.logd("Close session success, nodeId is "+ nodeId, TAG);
+                    isBusy = false;
+                    resolve("success");
+                },
+                (error)=>{
+                    reject("error");
+                }
+            );
+        });
+        
     }
 
-    getSession(nodeId: string): WorkedSession{        
+    getSession(nodeId: string): WorkedSession{
+        if (workedSessions == null || workedSessions == undefined)
+            workedSessions = {};
         return workedSessions[nodeId];
+    }
+
+    checkSessionIsBusy(): boolean{
+        return isBusy;
     }
   
     stringToUint8Array(str: string): Uint8Array{
@@ -407,7 +423,8 @@ export class SessionService {
     }
 
     getSessionState(nodeId: string): FeedsData.StreamState{
-        if (workedSessions[nodeId] == undefined)
+        if (workedSessions == null || workedSessions == undefined ||
+            workedSessions[nodeId] == null || workedSessions[nodeId] == undefined)
             return -1 ;
         return workedSessions[nodeId].StreamState;
     }
@@ -662,6 +679,7 @@ function parseResponse(response: any){
         return ;
     }
 
+    isBusy = false;
     cacheData[nodeId].key = key;
     if (method == "set_binary"){
         mLogUtils.logd("Parse 'set_binary' data finish and publish events, nodeId is "+nodeId, TAG);
@@ -674,6 +692,7 @@ function parseResponse(response: any){
 }
 
 function publishCloseSession(nodeId: string){
+    isBusy = false;
     eventBus.publish(FeedsEvent.PublishType.streamClosed, nodeId);
 }
 
@@ -758,6 +777,7 @@ function createCreateSessionTimeout(){
 }
 
 function publishError(nodeId: string, error: any){
+    isBusy = false;
     eventBus.publish(FeedsEvent.PublishType.streamError, nodeId,error);
     if (cacheData == null || cacheData == undefined || cacheData[nodeId] == undefined)
         return;
