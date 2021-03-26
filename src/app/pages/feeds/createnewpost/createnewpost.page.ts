@@ -855,7 +855,6 @@ moreName(name:string){
           this.imgUrl ='';
           this.posterImg ='';
           this.flieUri ='';
-          this.native.toast_trans("CreatenewpostPage.tipMsg1");
         });
     }
 }
