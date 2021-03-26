@@ -7,6 +7,7 @@ import { IonicModule } from '@ionic/angular';
 
 import { CommentlistPage } from './commentlist.page';
 import { ComponentsModule } from 'src/app/components/components.module';
+import { ShareModule } from 'src/app/share/share.module';
 
 const routes: Routes = [
   {
@@ -22,6 +23,7 @@ const routes: Routes = [
     IonicModule,
     TranslateModule,
     ComponentsModule,
+    ShareModule,
     RouterModule.forChild(routes)
   ],
   declarations: [CommentlistPage]

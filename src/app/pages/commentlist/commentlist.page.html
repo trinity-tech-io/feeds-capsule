@@ -16,6 +16,55 @@
 
   <div class="container" [class.blur]="!hideComment">
 
+     <!---------------- Comment DETAILS ---------------->
+     <ion-grid class="postDetail-grid" [class.dark-postDetail-grid]="theme.darkMode">
+      <ion-row class="top-row">
+        <ion-col class="left-col" size="2.25">
+          <div class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode">
+            <img style="border: 1.25px solid #368bff;" class="comment-avatar" [src]="avatar ? avatar : './assets/images/default-contact.svg'">
+          </div>
+        </ion-col>
+        <ion-col class="mid-col" size="8">
+          <ion-label>
+            {{ captainComment.user_name }}
+          </ion-label>
+            <p>{{'ServerInfoPage.replyingto'|translate}} @{{ userNameList[captainComment.id] }}</p>
+        </ion-col>
+       <ion-col class="right-col" size="1.5"  *ngIf="captainComment.status != 1 && isOwnComment[captainComment.id]">
+          <img (click)="openEditTool($event,captainComment)"
+                [src]="!theme.darkMode ? './assets/images/dots-three-vertical.svg' : './assets/images/dots-three-vertical-dark.svg'"
+          >
+        </ion-col>
+      </ion-row>
+      <ion-row class="mid-row">
+        <ion-col>
+          <h2 *ngIf="captainComment.status===1">
+            <pre>{{'common.deleted' | translate}}</pre>
+          </h2>
+          <h2 *ngIf="captainComment.status!=1">
+            <pre [ngStyle]="styleObj">{{captainComment.content}}</pre>
+          </h2>
+        </ion-col>
+      <ion-col size="12">
+          <span style="font-size: 10px;font-weight: 500;color: #8888b0;">{{ handleUpdateDate(updatedAt) }}</span>
+      </ion-col>
+      </ion-row>
+     <ion-row class="bottom-row">
+        <ion-col size="1.75" (click)="likeComment(captainComment.id)">
+          <img [src]="checkLikedComment(captainComment.id) ? '/assets/images/like-s.svg' : '/assets/images/like.svg'">
+              <ion-label [class.liked]="checkLikedComment(captainComment.id)">{{ captainComment.likes }}</ion-label>
+        </ion-col>
+        <ion-col size="1.75" (click)="showComment(captainComment.id)">
+          <img src="/assets/images/bubble-line.svg">
+          <ion-label>{{ commentsNum }}</ion-label>
+        </ion-col>
+        <ion-col>
+          <ion-label class="status" *ngIf="captainComment.status === 2">{{ 'common.edit' | translate}} </ion-label>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+
+
     <!---------------- COMMENTS ---------------->
     <div *ngIf="replayCommentList.length>0">
       <div *ngFor="let replayComment of replayCommentList">
@@ -33,13 +82,14 @@
               <ion-row class="top-row">
                 <ion-col class="left-col" size="10.5" (press)="userName(replayComment.user_name)">
                   <ion-label >
-                    @{{ indexText(replayComment.user_name) }}
+                    @{{ indexText(replayComment.user_name,10,10) }}
+                    <span> {{handleDisplayTime(replayComment.created_at) }}</span>
                   </ion-label>
                 </ion-col>
               </ion-row>
 
               <ion-label>
-                <p (press)="userNameList[replayComment.comment_id]">{{'ServerInfoPage.replyingto'|translate}} @{{ indexText(userNameList[replayComment.comment_id])}}</p>
+                <p (press)="userNameList[replayComment.comment_id]">{{'ServerInfoPage.replyingto'|translate}} @{{ indexText(userNameList[replayComment.comment_id],20,20)}}</p>
               </ion-label>
               <h2 *ngIf="replayComment.status === 1">
                 <pre>{{'common.cdeleted' | translate}}</pre>
@@ -55,15 +105,14 @@
                 <pre [ngStyle]="dstyleObj">{{ replayComment.content }}</pre>
                 <pre [ngStyle]="styleObj" style="color:#368bff;">{{"common.showless" | translate }}</pre>
               </h2>
-              <span style="font-size: 10px;font-weight: 500;color: #8888b0;"> {{ handleUpdateDate(replayComment.updated_at)}}</span>
               <ion-row class="bottom-row">
-                <ion-col size="2.25" (click)="likeComment(replayComment.id)">
+                <!-- <ion-col size="2.25" (click)="likeComment(replayComment.id)">
                   <img [src]="checkLikedComment(replayComment.id) ? '/assets/images/like-s.svg' : '/assets/images/like.svg'">
                   <ion-label [class.liked]="checkLikedComment(replayComment.id)">{{ replayComment.likes }}</ion-label>
-                </ion-col>
-                <ion-col size="2.25" (click)="showComment(replayComment.comment_id)">
+                </ion-col> -->
+                <!-- <ion-col size="2.25" (click)="showComment(replayComment.comment_id)">
                   <img src="/assets/images/bubble-line.svg">
-                </ion-col>
+                </ion-col> -->
                 <ion-col>
                   <ion-label class="status" style="right:-7px;" *ngIf="replayComment.status === 2">{{ 'common.edit' | translate}}</ion-label>
                 </ion-col>
