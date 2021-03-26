@@ -1729,6 +1729,7 @@ export class FeedService {
     if (memo != null && memo != undefined)
       tempId = memo.tempId;
     this.processPublishPostSuccess(nodeId, request.channel_id, result.id, request.content, tempId);
+    this.native.toast_trans("CreatenewpostPage.tipMsg1");
   }
 
   processPublishPostSuccess(nodeId: string, channelId: number, postId: number, contentBin: any, tempId: number){
@@ -1831,6 +1832,7 @@ export class FeedService {
     this.storeService.remove(cacheKey);
 
     eventBus.publish(FeedsEvent.PublishType.updateTab,true);
+    this.native.toast_trans("CreatenewpostPage.tipMsg1");
   }
 
   handlePostCommentResult(nodeId:string, result: any, request: any, error: any){
@@ -5318,7 +5320,6 @@ export class FeedService {
     if (!isBusy){
       this.sendData(nodeId, feedId, postId, 0 ,0, videoData, imageData, tempId);
     }
-      
   }
 
   sendPostDataWithSession(nodeId: string){
