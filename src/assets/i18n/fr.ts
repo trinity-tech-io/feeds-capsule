@@ -525,6 +525,6 @@ export const fr = {
         "feeds": "Feed"
     },
     "CommentlistPage":{
-        "title": "Comment details",
+        "title": "Comment View",
     }
 };

@@ -52,6 +52,10 @@ export class CommentlistPage implements OnInit {
   public popover: any = null;
   public channelAvatar:string = "";
   public channelName:string ="";
+  public commentsNum:number = 0;
+  public captainComment:any ={};
+  public avatar: string = "";
+  public updatedAt:number = 0;
   constructor(
     private platform: Platform,
     private popoverController:PopoverController,
@@ -116,6 +120,7 @@ export class CommentlistPage implements OnInit {
 
   sortCommentList(){
    let replayCommentList = this.feedService.getReplayCommentList(this.nodeId, this.channelId, this.postId,this.commentId) || [];
+   this.commentsNum = replayCommentList.length;
    this.hideDeletedComments = this.feedService.getHideDeletedComments();
    if(!this.hideDeletedComments){
     replayCommentList = _.filter(replayCommentList ,(item:any)=> { return item.status != 1; });
@@ -134,7 +139,7 @@ export class CommentlistPage implements OnInit {
   }
 
   ionViewWillEnter() {
-
+    this.getCaptainComment();
     if(this.platform.is("ios")){
       this.isAndroid = false;
     }
@@ -281,16 +286,16 @@ export class CommentlistPage implements OnInit {
     titleBarManager.setTitle(this.translate.instant("CommentlistPage.title"));
   }
 
-  getContentText(content: string): string{
-    return this.feedService.parsePostContentText(content);
+  getContentText(): string{
+     return this.captainComment.content;
   }
 
   getContentImg(content: any): string{
     return this.feedService.parsePostContentImg(content);
   }
 
-  indexText(text: string):string{
-    return this.feedService.indexText(text,20,20);
+  indexText(text: string,limit: number, indexLength: number):string{
+    return this.feedService.indexText(text,limit,indexLength);
   }
 
   showComment(commentId:number) {
@@ -364,6 +369,7 @@ export class CommentlistPage implements OnInit {
 
   doRefresh(event:any){
     let sId =  setTimeout(() => {
+      this.getCaptainComment();
       this.initData(true);
       event.target.complete();
       clearTimeout(sId);
@@ -528,5 +534,14 @@ export class CommentlistPage implements OnInit {
 
   checkServerStatus(nodeId: string){
     return this.feedService.getServerStatusFromId(nodeId);
+  }
+
+  getCaptainComment(){
+    let captainCommentList = this.feedService.getCaptainCommentList(this.nodeId, this.channelId, this.postId) || [];
+    this.captainComment = _.find(captainCommentList,(item)=>{
+        return item.id == this.commentId;
+    });
+    this.updatedAt = this.captainComment["updated_at"];
+    this.checkCommentIsMine(this.captainComment);
   }
 }

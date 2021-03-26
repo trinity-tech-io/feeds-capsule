@@ -543,8 +543,8 @@ export class PostdetailPage implements OnInit {
     return this.feedService.parsePostContentImg(content);
   }
 
-  indexText(text: string):string{
-    return this.feedService.indexText(text,20,20);
+  indexText(text: string,limit: number, indexLength: number):string{
+    return this.feedService.indexText(text,limit,indexLength);
   }
 
   showComment(commentId:number) {
@@ -1103,10 +1103,6 @@ export class PostdetailPage implements OnInit {
 
   clickComment(comment:any){
     let commentId:number = comment.id;
-    let replayCommentSum:number = comment.replayCommentSum;
-    if(replayCommentSum === 0){
-      return;
-    }
     this.native.navigateForward(['commentlist'],{
       queryParams: {
         nodeId:this.nodeId,
