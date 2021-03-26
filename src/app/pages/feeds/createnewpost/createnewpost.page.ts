@@ -351,7 +351,6 @@ export class CreatenewpostPage implements OnInit {
       this.totalProgress = 0;
       this.removeVideo();
       this.events.publish(FeedsEvent.PublishType.addBinaryEvevnt);
-      this.feedService.closeSession(this.nodeId);
     }
 
     ionViewDidEnter() {}
