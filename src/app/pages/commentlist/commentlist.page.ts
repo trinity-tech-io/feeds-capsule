@@ -184,21 +184,11 @@ export class CommentlistPage implements OnInit {
       this.logUtils.logd("Received updateTitle event",TAG);
       if(this.menuService.postDetail!=null){
         this.menuService.hideActionSheet();
+        this.menuMore();
       }
       this.initTitle();
     });
 
-    this.events.subscribe(FeedsEvent.PublishType.editPostFinish, () => {
-      this.logUtils.logd("Received editPostFinish event",TAG);
-      this.initData(true);
-    });
-
-    this.events.subscribe(FeedsEvent.PublishType.deletePostFinish, () => {
-      this.logUtils.logd("Received deletePostFinish event",TAG);
-      this.events.publish(FeedsEvent.PublishType.updateTab);
-      this.native.hideLoading();
-      this.initData(true);
-    });
 
     this.events.subscribe(FeedsEvent.PublishType.editCommentFinish, () => {
       this.logUtils.logd("Received editCommentFinish event",TAG);
@@ -207,6 +197,7 @@ export class CommentlistPage implements OnInit {
 
     this.events.subscribe(FeedsEvent.PublishType.deleteCommentFinish, () => {
       this.logUtils.logd("Received deleteCommentFinish event",TAG);
+      this.getCaptainComment();
       this.native.hideLoading();
       this.initData(false);
     });
@@ -251,14 +242,11 @@ export class CommentlistPage implements OnInit {
     }
 
      this.events.unsubscribe(FeedsEvent.PublishType.editCommentFinish);
-     this.events.unsubscribe(FeedsEvent.PublishType.editPostFinish);
 
      this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
      this.events.unsubscribe(FeedsEvent.PublishType.commentDataUpdate);
      this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
 
-
-     this.events.unsubscribe(FeedsEvent.PublishType.deletePostFinish);
      this.events.unsubscribe(FeedsEvent.PublishType.deleteCommentFinish);
 
 
@@ -543,5 +531,9 @@ export class CommentlistPage implements OnInit {
     });
     this.updatedAt = this.captainComment["updated_at"];
     this.checkCommentIsMine(this.captainComment);
+  }
+
+  menuMore(){
+    this.menuService.showCommentDetailMenu(this.captainComment);
   }
 }

@@ -31,7 +31,7 @@
             <p>{{'ServerInfoPage.replyingto'|translate}} @{{ userNameList[captainComment.id] }}</p>
         </ion-col>
        <ion-col class="right-col" size="1.5"  *ngIf="captainComment.status != 1 && isOwnComment[captainComment.id]">
-          <img (click)="openEditTool($event,captainComment)"
+          <img (click)="menuMore()"
                 [src]="!theme.darkMode ? './assets/images/dots-three-vertical.svg' : './assets/images/dots-three-vertical-dark.svg'"
           >
         </ion-col>
@@ -39,7 +39,7 @@
       <ion-row class="mid-row">
         <ion-col>
           <h2 *ngIf="captainComment.status===1">
-            <pre>{{'common.deleted' | translate}}</pre>
+            <pre>{{'common.cdeleted' | translate}}</pre>
           </h2>
           <h2 *ngIf="captainComment.status!=1">
             <pre [ngStyle]="styleObj">{{captainComment.content}}</pre>
@@ -92,7 +92,7 @@
                 <p (press)="userNameList[replayComment.comment_id]">{{'ServerInfoPage.replyingto'|translate}} @{{ indexText(userNameList[replayComment.comment_id],20,20)}}</p>
               </ion-label>
               <h2 *ngIf="replayComment.status === 1">
-                <pre>{{'common.cdeleted' | translate}}</pre>
+                <pre>{{'CommentlistPage.replydeleted' | translate}}</pre>
               </h2>
               <h2 *ngIf="replayComment.status != 1&&getPostContentTextSize(replayComment.content)<=maxTextSize">
                 <pre [ngStyle]="dstyleObj">{{ replayComment.content }}</pre>

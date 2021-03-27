@@ -57,7 +57,7 @@ export const zh = {
         "deleted": "(微说已删除)",
         "promptPublishDidError": "发布DID出错",
         "resolveDidDocumentError": "解析DID文档出错",
-        "cdeleted": "(回复已删除)",
+        "cdeleted": "(评论已删除)",
         "sharepost": "分享微说",
         "error400": "参数错误",
         "error500": "服务器错误",
@@ -527,5 +527,6 @@ export const zh = {
     },
     "CommentlistPage":{
         "title": "评论详情",
+        "replydeleted":"(回复已删除)"
     }
 };
