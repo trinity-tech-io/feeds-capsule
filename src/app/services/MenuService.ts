@@ -443,4 +443,64 @@ export class MenuService {
 
         return this.postDetail;
     }
+
+  async showCommentDetailMenu(comment:any){
+
+        let nodeId = comment["nodeId"];
+        let feedId = comment["channel_id"];
+        let postId = comment["post_id"];
+        let commentById = comment["comment_id"]
+        let commentId = comment["id"];
+        let content = comment["content"];
+        this.postDetail = await this.actionSheetController.create({
+            cssClass: 'editPost',
+            buttons: [
+            {
+                    text: this.translate.instant("common.editcomment"),
+                    icon: 'create',
+                    handler: () => {
+                       //this.handlePostDetailMenun(nodeId,channelId,channelName,postId,"editPost");
+                       this.native.go("editcomment",{
+                        nodeId:nodeId,
+                        channelId:feedId,
+                        postId:postId,
+                        commentById:commentById,
+                        commentId:commentId,
+                        content:content
+                      });
+                    }
+            },
+            {
+                text: this.translate.instant("common.removecomment"),
+                role: 'destructive',
+                icon: 'trash',
+                handler: () => {
+                    this.native.showLoading("common.waitMoment",50000).then(()=>{
+                        this.feedService.deleteComment(nodeId,Number(feedId),Number(postId),Number(commentId));
+                      }).catch(()=>{
+
+                      })
+                }
+            },
+            {
+                text: this.translate.instant("common.cancel"),
+                role: 'cancel',
+                icon: 'close-circle',
+                handler: () => {
+                    if(this.postDetail !=null){
+                       this.postDetail.dismiss();
+                    }
+                }
+            }
+        ]
+        });
+
+        this.postDetail.onWillDismiss().then(()=>{
+            if(this.postDetail !=null){
+                this.postDetail  = null;
+            }
+
+        })
+        await this.postDetail.present();
+    }
 }
