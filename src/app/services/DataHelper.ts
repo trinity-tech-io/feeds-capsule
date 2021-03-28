@@ -1781,6 +1781,7 @@ export class DataHelper {
     }
 
     listTempData(nodeId: string): FeedsData.TempData[]{
+        console.log("tempData = "+JSON.stringify(this.tempDataMap));
         if (this.tempDataMap == null || this.tempDataMap == undefined)
             return [];
 

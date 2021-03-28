@@ -32,7 +32,6 @@ let newMultiPropCountVersion: number = 10500
 
 let bindingServerCache: FeedsData.Server;
 let cacheBindingAddress: string = "";
-let cachedPost:{[key:string]:FeedsData.Post} = {};
 
 export class DidData{
   constructor(
@@ -251,6 +250,7 @@ export class FeedService {
   async loadData(){
     await Promise.all([
       this.loadTempIdData(),
+      this.loadTempData(),
       this.loadServerVersions(),
       this.loadPostData(),
       this.loadChannelData(),
@@ -283,6 +283,7 @@ export class FeedService {
     this.connectionChangedCallback();
     this.onReceivedStreamStateChanged();
     this.onReceivedSetBinaryFinish();
+    this.onReceivedSessionErrorCallback();
   }
 
   getConnectionStatus(): FeedsData.ConnState{
@@ -1771,7 +1772,6 @@ export class FeedService {
     }
 
     let tempId = memo.tempId;
-    this.cachePost(nodeId, request.channel_id, result.id, request.content, tempId);
 
     let tempDataKey = this.getPostId(nodeId, request.channel_id, tempId);
     let tempData = this.dataHelper.getTempData(tempDataKey);
@@ -1798,8 +1798,6 @@ export class FeedService {
       post_status : FeedsData.PostCommentStatus.available
     }
 
-    let cacheKey = this.getCachePostKey(nodeId,channelId,postId,0);
-    cachedPost[cacheKey] = post;
     // this.storeService.set(cacheKey, post);
     eventBus.publish(FeedsEvent.PublishType.declarePostSuccess, postId, tempId);
   }
@@ -1814,22 +1812,17 @@ export class FeedService {
     let channelId = request.channel_id;
     let postId = request.post_id;
 
-    let cacheKey = this.getCachePostKey(nodeId, channelId, postId, 0);
-    let post = cachedPost[cacheKey];
-    if (post == null || post == undefined){
-      return ;
-    }
+    let key = this.getPostId(nodeId, channelId, postId);
+    let post = this.dataHelper.getPost(key);
 
     this.dataHelper.deleteTempIdData(tempId);
     let tempKey = this.getPostId(nodeId, channelId, tempId);
     this.dataHelper.deletePostDeeply(tempKey);
     this.dataHelper.deleteTempData(tempKey);
 
-    let key = this.getPostId(nodeId, channelId, postId);
     this.dataHelper.updatePost(key, post);
 
     eventBus.publish(FeedsEvent.PublishType.notifyPostSuccess);
-    this.storeService.remove(cacheKey);
 
     eventBus.publish(FeedsEvent.PublishType.updateTab,true);
     this.native.toast_trans("CreatenewpostPage.tipMsg1");
@@ -4029,10 +4022,6 @@ export class FeedService {
     return this.getKey(nodeId, channelId, postId, commentId)+"-video-thumbnail-"+index;
   }
 
-  getCachePostKey(nodeId: string, channelId: number, postId: number, commentId: number){
-    return this.getKey(nodeId, channelId, postId, commentId)+"-cached";
-  }
-
   getKey(nodeId: string, channelId: number, postId: number, commentId: number): string{
     return this.dataHelper.getKey(nodeId, channelId, postId, commentId);
   }
@@ -5144,7 +5133,6 @@ export class FeedService {
     this.dataHelper.initNotificationList();
     cacheBindingAddress = "";
     this.dataHelper.initLocalCredential();
-    cachedPost = {};
 
     this.feedPublicStatus = {};
 
@@ -5393,24 +5381,29 @@ export class FeedService {
 
   republishPost(nodeId: string){
     let list: FeedsData.TempData[] = this.dataHelper.listTempData(nodeId);
+    console.log("====----tempdata = "+JSON.stringify(list));
     for (let index = 0; index < list.length; index++) {
       const tempData = list[index];
       this.processRepublishPost(tempData);
     }
   }
+
   processRepublishPost(tempData: FeedsData.TempData){
     if (tempData == null || tempData == undefined)
       return;
 
     switch(tempData.status){
       case FeedsData.SendingStatus.normal:
+        console.log("====----normal");
         this.publishPost(tempData.nodeId, tempData.feedId, tempData.content, tempData.tempPostId);
         return;
       case FeedsData.SendingStatus.needDeclearPost:
+        console.log("====----needDeclearPost");
         this.declarePost(tempData.nodeId, tempData.feedId, tempData.content, false, tempData.tempPostId, 
           tempData.transDataChannel, tempData.imageData, tempData.videoData);
         return;
       case FeedsData.SendingStatus.needPushData:
+        console.log("====----needPushData");
         if (tempData.transDataChannel == FeedsData.TransDataChannel.MESSAGE){
           this.sendDataFromMsg(tempData.nodeId, tempData.feedId, tempData.postId, tempData.commentId, 0, 
             tempData.videoData, tempData.imageData, tempData.tempPostId);
@@ -5424,6 +5417,7 @@ export class FeedService {
           return ;
         }
       case FeedsData.SendingStatus.needNotifyPost:
+        console.log("====----needPushData"+tempData.tempPostId);
         this.notifyPost(tempData.nodeId, tempData.feedId, tempData.postId, tempData.tempPostId);
         return;
     }
