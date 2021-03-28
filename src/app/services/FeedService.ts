@@ -3368,10 +3368,7 @@ export class FeedService {
       this.updateMultiLikesAndCommentsCount(friendId);
     }
 
-    let tempDataList = this.dataHelper.listTempData(friendId);
-    for (let index = 0; index < tempDataList.length; index++) {
-      const element = tempDataList[index];
-    }
+    this.republishPost(friendId);
   }
 
   updateMultiLikesAndCommentsCount(nodeId: string){
@@ -5250,12 +5247,13 @@ export class FeedService {
 
     let contentHash = UtilService.SHA256(content);
     let tempData = this.dataHelper.generateTempData(nodeId, feedId, 0, 0, contentHash, 
-      FeedsData.SendingStatus.normal, FeedsData.TransDataChannel.MESSAGE, "", "", tempId , 0);
+      FeedsData.SendingStatus.normal, FeedsData.TransDataChannel.MESSAGE, "", "", tempId , 0, content);
     this.dataHelper.updateTempData(key, tempData);
   }
 
   prepareTempMediaPost(nodeId: string, feedId: number, tempId: number, commentId: number, 
-    contentReal: any, transDataChannel: FeedsData.TransDataChannel, videoData: string, imageData: string){
+    contentReal: any, transDataChannel: FeedsData.TransDataChannel, videoData: string, 
+    imageData: string){
     let content = this.parseContent(nodeId,feedId,tempId,0,contentReal);
     let post: FeedsData.Post = {
       nodeId      : nodeId,
@@ -5274,7 +5272,7 @@ export class FeedService {
 
     let contentHash = UtilService.SHA256(contentReal);
     let tempData = this.dataHelper.generateTempData(nodeId, feedId, 0, 0, contentHash, 
-      FeedsData.SendingStatus.normal, transDataChannel, videoData,imageData, tempId,0);
+      FeedsData.SendingStatus.needDeclearPost, transDataChannel, videoData,imageData, tempId, 0, contentReal);
     this.dataHelper.updateTempData(key, tempData);
   }
 
@@ -5317,9 +5315,8 @@ export class FeedService {
       return ;
 
     let isBusy = this.sessionService.checkSessionIsBusy();
-    if (!isBusy){
+    if (!isBusy)
       this.sendData(nodeId, feedId, postId, 0 ,0, videoData, imageData, tempId);
-    }
   }
 
   sendPostDataWithSession(nodeId: string){
@@ -5381,8 +5378,55 @@ export class FeedService {
   setBinaryFinish(nodeId: string, feedId: number, tempId: number){
     let key = this.getPostId(nodeId, feedId, tempId);
     let tempData = this.dataHelper.getTempData(key);
+    if (tempData == null || tempData == undefined)
+      return;
     tempData.status = FeedsData.SendingStatus.needNotifyPost;
     this.dataHelper.updateTempData(key, tempData);
     this.notifyPost(tempData.nodeId, tempData.feedId, tempData.postId, tempData.tempPostId);
+  }
+
+  republishOnePost(nodeId: string, feedId: number, tempId: number){
+    let key = this.getPostId(nodeId, feedId, tempId);
+    let tempData = this.dataHelper.getTempData(key);
+    this.processRepublishPost(tempData);
+  }
+
+  republishPost(nodeId: string){
+    let list: FeedsData.TempData[] = this.dataHelper.listTempData(nodeId);
+    for (let index = 0; index < list.length; index++) {
+      const tempData = list[index];
+      this.processRepublishPost(tempData);
+    }
+  }
+  processRepublishPost(tempData: FeedsData.TempData){
+    if (tempData == null || tempData == undefined)
+      return;
+
+    switch(tempData.status){
+      case FeedsData.SendingStatus.normal:
+        this.publishPost(tempData.nodeId, tempData.feedId, tempData.content, tempData.tempPostId);
+        return;
+      case FeedsData.SendingStatus.needDeclearPost:
+        this.declarePost(tempData.nodeId, tempData.feedId, tempData.content, false, tempData.tempPostId, 
+          tempData.transDataChannel, tempData.imageData, tempData.videoData);
+        return;
+      case FeedsData.SendingStatus.needPushData:
+        if (tempData.transDataChannel == FeedsData.TransDataChannel.MESSAGE){
+          this.sendDataFromMsg(tempData.nodeId, tempData.feedId, tempData.postId, tempData.commentId, 0, 
+            tempData.videoData, tempData.imageData, tempData.tempPostId);
+          return;
+        }
+        if (tempData.transDataChannel == FeedsData.TransDataChannel.SESSION){
+          let isBusy = this.sessionService.checkSessionIsBusy();
+          if (!isBusy)
+            this.sendData(tempData.nodeId, tempData.feedId, tempData.postId, tempData.commentId, 0, 
+              tempData.videoData, tempData.imageData, tempData.tempPostId);
+          return ;
+        }
+      case FeedsData.SendingStatus.needNotifyPost:
+        this.notifyPost(tempData.nodeId, tempData.feedId, tempData.postId, tempData.tempPostId);
+        return;
+    }
+    
   }
 }

@@ -1741,7 +1741,8 @@ export class DataHelper {
     }
 
     generateTempData(nodeId: string, feedId: number, postId: number, commentId: number, dataHash: string , 
-        sendingType: FeedsData.SendingStatus, transDataChannel: FeedsData.TransDataChannel, videoData: string, imageData: string, tempPostId: number, tempCommentId: number): FeedsData.TempData{
+        sendingType: FeedsData.SendingStatus, transDataChannel: FeedsData.TransDataChannel, videoData: string, 
+        imageData: string, tempPostId: number, tempCommentId: number, content: any): FeedsData.TempData{
         return {
             nodeId          :   nodeId,
             feedId          :   feedId,
@@ -1753,7 +1754,8 @@ export class DataHelper {
             videoData       :   videoData,
             imageData       :   imageData,
             postId          :   postId,
-            commentId       :   commentId 
+            commentId       :   commentId,
+            content         :   content
         }
     }
 

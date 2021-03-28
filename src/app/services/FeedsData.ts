@@ -170,7 +170,8 @@ declare namespace FeedsData{
         videoData       :   string,
         imageData       :   string,
         postId          :   number,
-        commentId       :   number 
+        commentId       :   number,
+        content         :   any
     }
 
     const enum SendingStatus{
