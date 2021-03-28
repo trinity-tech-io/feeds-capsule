@@ -15,13 +15,15 @@ export class EdittoolComponent implements OnInit {
   public postId:number = 0;
   public commentById:Number = 0;
   public commentId:number = 0;
-  public  content:string = "";
+  public content:string = "";
+  public editKey:string = "";
+  public deleteKey:string = "";
   constructor(
     public theme:ThemeService,
     private navParams: NavParams,
-    private popover: PopoverController, 
+    private popover: PopoverController,
     private native:NativeService,
-    private feedService: FeedService,
+    public feedService: FeedService,
     public  popupProvider:PopupProvider
   ) { }
 
@@ -32,6 +34,8 @@ export class EdittoolComponent implements OnInit {
     this.commentById = this.navParams.get('commentById')|| 0;
     this.commentId = this.navParams.get('commentId')|| 0;
     this.content = this.navParams.get('content')|| "";
+    this.editKey = this.navParams.get('editKey')|| "";
+    this.deleteKey = this.navParams.get('deleteKey')|| "";
   }
 
   edit(){
@@ -42,7 +46,8 @@ export class EdittoolComponent implements OnInit {
       postId:this.postId,
       commentById:this.commentById,
       commentId:this.commentId,
-      content:this.content
+      content:this.content,
+      titleKey:this.editKey
     });
   }
 
@@ -67,6 +72,14 @@ confirm(that:any){
     }).catch(()=>{
 
     })
+}
+
+getEditKey(){
+  return this.editKey;
+}
+
+getdeleteKey(){
+  return this.deleteKey;
 }
 
 }

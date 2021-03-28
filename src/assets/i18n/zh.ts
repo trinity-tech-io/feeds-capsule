@@ -527,6 +527,8 @@ export const zh = {
     },
     "CommentlistPage":{
         "title": "评论详情",
-        "replydeleted":"(回复已删除)"
+        "replydeleted":"(回复已删除)",
+        "editreply":"编辑回复",
+        "deletereply":"删除回复",
     }
 };
