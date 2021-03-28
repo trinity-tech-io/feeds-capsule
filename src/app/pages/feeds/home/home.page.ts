@@ -1311,7 +1311,7 @@ clearData(){
     this.native.showPayPrompt(elaAddress);
   }
 
-  retry(){
-    this.native.toast("retry");
+  retry(nodeId: string, feedId: number, postId: number){
+    this.feedService.republishOnePost(nodeId, feedId, postId);
   }
 }
