@@ -319,7 +319,13 @@ export class CreatenewpostPage implements OnInit {
 
       if (videoSize > this.throwMsgTransDataLimit || imgSize > this.throwMsgTransDataLimit){
         this.transDataChannel = FeedsData.TransDataChannel.SESSION
-        this.feedService.restoreSession(this.nodeId);
+        let memo: FeedsData.SessionMemoData = {
+          feedId    : this.channelId,
+          postId    : 0,
+          commentId : 0,
+          tempId    : tempPostId
+        }
+        this.feedService.restoreSession(this.nodeId, memo);
       }else{
         this.transDataChannel = FeedsData.TransDataChannel.MESSAGE
       }

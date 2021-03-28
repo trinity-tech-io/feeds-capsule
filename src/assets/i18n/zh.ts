@@ -53,7 +53,7 @@ export const zh = {
         "removepost": "删除微说",
         "editcomment": "编辑微评",
         "removecomment": "删除微评",
-        "edit": "(已编辑)",
+        "edit": "( 已编辑 )",
         "deleted": "(微说已删除)",
         "promptPublishDidError": "发布DID出错",
         "resolveDidDocumentError": "解析DID文档出错",
@@ -98,7 +98,9 @@ export const zh = {
         "emptyElaAddressDes":"还未设置",
         "qRcodePreview":"二维码预览图",
         "details":"详情",
-        "sending":"(发送中)"
+        "sending":"( 发送中 )",
+        "sendFail":"( 发送失败 )",
+        "retry":"重试"
     },
     "app":{
         "profileDetails": "档案详情",
