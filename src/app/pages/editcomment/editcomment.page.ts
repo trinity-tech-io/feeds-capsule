@@ -27,7 +27,7 @@ export class EditCommentPage implements OnInit {
   public commentById:Number = 0;
   public commentId:Number = 0;
   public imgUrl: string = "";
-
+  public titleKey:string = "";
   constructor(
     private events: Events,
     private native: NativeService,
@@ -47,6 +47,7 @@ export class EditCommentPage implements OnInit {
       this.commentById = item.commentById;
       this.commentId = item.commentId;
       let content = item.content || "";
+      this.titleKey = item.titleKey;
       this.getContent(content);
     });
   }
@@ -118,7 +119,7 @@ export class EditCommentPage implements OnInit {
   }
 
   initTitle(){
-    titleBarManager.setTitle(this.translate.instant("EditCommentPage.title"));
+    titleBarManager.setTitle(this.translate.instant(this.titleKey));
   }
 
   publishComment(){

@@ -526,6 +526,8 @@ export const en = {
     },
     "CommentlistPage":{
         "title": "Comment View",
-        "replydeleted":"reply deleted"
+        "replydeleted":"(reply deleted)",
+        "editreply":"Edit Reply",
+        "deletereply":"Delete Reply",
     }
 };

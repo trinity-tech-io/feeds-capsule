@@ -767,7 +767,9 @@ export class PostdetailPage implements OnInit {
                         postId:Number(comment.post_id),
                         commentById:Number(comment.comment_id),
                         commentId:Number(comment.id),
-                        content:comment.content
+                        content:comment.content,
+                        editKey:"common.editcomment",
+                        deleteKey:"common.removecomment",
                       },
       event: ev,
       translucent: true

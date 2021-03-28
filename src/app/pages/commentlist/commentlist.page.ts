@@ -408,7 +408,9 @@ export class CommentlistPage implements OnInit {
                         postId:Number(comment.post_id),
                         commentById:Number(comment.comment_id),
                         commentId:Number(comment.id),
-                        content:comment.content
+                        content:comment.content,
+                        editKey:"CommentlistPage.editreply",
+                        deleteKey:"CommentlistPage.deletereply"
                       },
       event: ev,
       translucent: true
