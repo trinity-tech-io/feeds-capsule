@@ -142,8 +142,29 @@
               <img src="/assets/images/dashang.svg">
             </ion-col>
             <ion-col>
-              <ion-label class="status" *ngIf="post.post_status === 11" style="right: -5px;">{{ 'common.sending' | translate}} </ion-label>
               <ion-label class="status" *ngIf="post.post_status === 2" style="right: -5px;">{{ 'common.edit' | translate}} </ion-label>
+              <ion-label class="status" *ngIf="post.post_status === 11" style="right: -5px;">{{ 'common.sending' | translate}} </ion-label>
+              <ion-label class="status" *ngIf="post.post_status === 12" style="right: -5px;">{{ 'common.sendFail' | translate}} </ion-label>
+            </ion-col>
+          </ion-row>
+
+          <ion-row *ngIf="post.post_status === 12" class="bottom-row">
+            <ion-col size="2.25">
+            </ion-col>
+            <ion-col size="2.25">
+            </ion-col>
+            <ion-col>
+            </ion-col>
+            <ion-col>
+              <!-- <ion-button style="position:absolute; width: 70%;" color="secondary" > -->
+                <ion-icon  style="right: 35px; position:absolute; color: #7171bd;" name="refresh"></ion-icon>
+                <ion-label style="
+                position:absolute;
+                right: 1px;
+                font-size: 13px;
+                font-weight: 500;
+                color: #7171bd;" (click)="retry()">{{ "common.retry" | translate }} </ion-label> 
+              <!-- </ion-button> -->
             </ion-col>
           </ion-row>
         </ion-col>

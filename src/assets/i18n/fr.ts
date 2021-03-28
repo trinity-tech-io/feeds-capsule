@@ -98,7 +98,9 @@ export const fr = {
         "emptyElaAddressDes": "Not set yet",
         "qRcodePreview": "QR code Preview",
         "details":"Details",
-        "sending":"( sending )"
+        "sending":"( sending )",
+        "sendFail":"( send fail )",
+        "retry":"retry"
     },
     "app": {
         "profileDetails": "Profile Details",

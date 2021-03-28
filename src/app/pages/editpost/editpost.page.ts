@@ -297,7 +297,7 @@ export class EditPostPage implements OnInit {
 
     if (videoSize > this.throwMsgTransDataLimit || imgSize > this.throwMsgTransDataLimit){
       this.transDataChannel = FeedsData.TransDataChannel.SESSION
-      this.feedService.restoreSession(this.nodeId);
+      // this.feedService.restoreSession(this.nodeId);
     }else{
       this.transDataChannel = FeedsData.TransDataChannel.MESSAGE
     }

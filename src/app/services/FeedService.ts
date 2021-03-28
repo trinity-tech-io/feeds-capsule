@@ -3913,42 +3913,36 @@ export class FeedService {
     return result;
   }
 
-  setBinary(nodeId: string, key: string, value: any, mediaType: string, feedId: number, postId: number, commentId: number, tempId: number){
+  setBinary(nodeId: string, key: string, value: any, mediaType: string, feedId: number, postId: number, commentId: number, memo: FeedsData.SessionMemoData){
     let accessToken: FeedsData.AccessToken = this.dataHelper.getAccessToken(nodeId) || null;
     let requestData = this.sessionService.buildSetBinaryRequest(accessToken, key);
     this.storeService.set(key, value);
-    let memo = {
-      feedId    : feedId,
-      postId    : postId,
-      commentId : commentId,
-      tempId    : tempId
-    }
     this.transportData(nodeId, key, requestData, mediaType, memo, value);
   }
 
   getBinary(nodeId: string, key: string, mediaType: string){
     let accessToken: FeedsData.AccessToken = this.dataHelper.getAccessToken(nodeId) || null;
     let requestData = this.sessionService.buildGetBinaryRequest(accessToken, key);
-    let memo = "";
+    let memo = null;
     this.transportData(nodeId, key, requestData, mediaType, memo);
   }
 
-  transportData(nodeId: string, key: string, request: any, mediaType: string, memo: any, value: any = "",){
+  transportData(nodeId: string, key: string, request: any, mediaType: string, memo: FeedsData.SessionMemoData, value: any = ""){
     let requestData = this.serializeDataService.encodeData(request);
 
     if (value != ""){
       let valueData = this.serializeDataService.encodeData(value);
       this.sessionService.addHeader(nodeId, requestData.length, valueData.length, request, mediaType, request.method, key, memo);
-      this.sessionService.streamAddData(nodeId, requestData);
-      this.transportValueData(nodeId, valueData);
+      this.sessionService.streamAddData(nodeId, requestData, memo);
+      this.transportValueData(nodeId, valueData, memo);
     }else{
       this.sessionService.addHeader(nodeId, requestData.length, 0, request, mediaType,  request.method, key, memo);
-      this.sessionService.streamAddData(nodeId, requestData);
+      this.sessionService.streamAddData(nodeId, requestData, memo);
     }
   }
 
 
-  transportValueData(nodeId: string, valueData: Uint8Array){
+  transportValueData(nodeId: string, valueData: Uint8Array, memo: FeedsData.SessionMemoData){
     let step = 2048 ;
     let currentSlice = 0;
     let sumSlice = 0;
@@ -3957,13 +3951,13 @@ export class FeedService {
 
     let transDataInter = setInterval(()=>{
       if (currentSlice >= sumSlice){
-        this.sessionService.streamAddData(nodeId, valueData.subarray(currentSlice*step, valueData.length));
+        this.sessionService.streamAddData(nodeId, valueData.subarray(currentSlice*step, valueData.length), memo);
         clearInterval(transDataInter);
         return;
       }
 
       let sentData = valueData.subarray(currentSlice*step, (currentSlice+1)*step);
-      this.sessionService.streamAddData(nodeId, sentData);
+      this.sessionService.streamAddData(nodeId, sentData, memo);
       currentSlice++;
 
     },1);
@@ -3985,7 +3979,7 @@ export class FeedService {
     return response;
   }
 
-  restoreSession(nodeId: string): boolean{
+  restoreSession(nodeId: string, memo: FeedsData.SessionMemoData): boolean{
     if(this.getServerStatusFromId(nodeId) == 1){
       eventBus.publish(FeedsEvent.PublishType.streamError,nodeId,this.createOfflineError());
       // eventBus.publish("sessionRequest:error", nodeId,this.createCreateOfflineError());
@@ -4008,7 +4002,7 @@ export class FeedService {
       case 6:
       case 7:
       case -1:
-        this.sessionService.createSession(nodeId,(session, stream)=>{
+        this.sessionService.createSession(nodeId, memo,(session, stream)=>{
         });
         return false;
     }
@@ -4049,13 +4043,19 @@ export class FeedService {
   sendData(nodeId: string, channelId: number, postId: number,
     commentId: number, index: number,
     videoData: any, imgData: any, tempId: number){
-    if (this.restoreSession(nodeId)){
+    let memo: FeedsData.SessionMemoData = {
+      feedId    : channelId,
+      postId    : postId,
+      commentId : commentId,
+      tempId    : tempId
+    }
+    if (this.restoreSession(nodeId, memo)){
       if (videoData != ""){
         let key = this.getVideoKey(nodeId,channelId,postId,commentId,index);
-        this.setBinary(nodeId,key,videoData,"video", channelId, postId, commentId, tempId);
+        this.setBinary(nodeId,key,videoData,"video", channelId, postId, commentId, memo);
       }else if(imgData != ""){
         let key = this.getImageKey(nodeId,channelId,postId,commentId,index);
-        this.setBinary(nodeId,key,imgData,"img", channelId, postId, commentId, tempId);
+        this.setBinary(nodeId,key,imgData,"img", channelId, postId, commentId, memo);
       }
     }
   }
@@ -4683,7 +4683,7 @@ export class FeedService {
 
     let size = this.getContentDataSize(nodeId, channelId, postId, commentId, index, mediaType);
     if (size > this.throwMsgTransDataLimit){
-      this.restoreSession(nodeId);
+      this.restoreSession(nodeId, null);
       onSuccess(FeedsData.TransDataChannel.SESSION);
       return;
     }
@@ -5358,6 +5358,23 @@ export class FeedService {
       this.setBinaryFinish(nodeId, feedId, tempId);
       await this.closeSession(nodeId);
       this.sendPostDataWithSession(nodeId);
+    });
+  }
+
+  onReceivedSessionErrorCallback(){
+    this.events.subscribe(FeedsEvent.PublishType.innerStreamError, (nodeId: string, error: any, memo: FeedsData.SessionMemoData)=>{
+      if (memo == null || memo == undefined)
+        return;
+      let feedId = memo.feedId || 0;
+      let tempId = memo.tempId || 0;
+
+      let tempKey = this.getPostId(nodeId, feedId, tempId);
+      let post: FeedsData.Post = this.dataHelper.getPost(tempKey);
+      if (post == null || post == undefined)
+        return;
+
+      post.post_status = FeedsData.PostCommentStatus.error;
+      this.dataHelper.updatePost(tempKey, post);
     });
   }
 

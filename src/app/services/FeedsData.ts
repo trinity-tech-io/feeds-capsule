@@ -13,7 +13,8 @@ declare namespace FeedsData{
         available = 0,
         deleted = 1,
         edited = 2,
-        sending = 11
+        sending = 11,
+        error = 12
     }
 
     const enum ConnState {
@@ -149,6 +150,13 @@ declare namespace FeedsData{
     type AccessToken = {
         token: string ;
         isExpire: boolean;
+    }
+
+    type SessionMemoData = {
+        feedId    : number,
+        postId    : number,
+        commentId : number,
+        tempId    : number
     }
 
     type TempData = {
