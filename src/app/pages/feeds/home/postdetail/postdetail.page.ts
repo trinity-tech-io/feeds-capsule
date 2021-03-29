@@ -1113,7 +1113,9 @@ export class PostdetailPage implements OnInit {
         commentId: commentId,
         username:comment["user_name"]
       }
-  })
+    });
   }
-
+  retry(nodeId: string, feedId: number, postId: number){
+    this.feedService.republishOnePost(nodeId, feedId, postId);
+  }
 }
