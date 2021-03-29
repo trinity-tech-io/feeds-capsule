@@ -120,8 +120,8 @@
         </ion-col>
         <ion-col>
           <ion-label class="status" *ngIf="postStatus === 2">{{ 'common.edit' | translate}} </ion-label>
-          <ion-label class="status" *ngIf="postStatus === 11" style="right: -5px;">{{ 'common.sending' | translate}} </ion-label>
-          <ion-label class="status" *ngIf="postStatus === 12" style="right: -5px;">{{ 'common.sendFail' | translate}} </ion-label>
+          <ion-label class="status" *ngIf="postStatus === 11">{{ 'common.sending' | translate}} </ion-label>
+          <ion-label class="status" *ngIf="postStatus === 12">{{ 'common.sendFail' | translate}} </ion-label>
         </ion-col>
       </ion-row>
       <ion-row *ngIf="postStatus === 12" class="bottom-row">
