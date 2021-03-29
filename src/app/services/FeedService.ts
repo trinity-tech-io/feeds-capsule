@@ -1101,7 +1101,7 @@ export class FeedService {
     this.connectionService.publishPost(this.getServerNameByNodeId(nodeId),nodeId, channelId,content,accessToken, tempId);
   }
 
-  declarePost(nodeId: string, channelId: number, content: any, withNotify: boolean, tempId: number, 
+  declarePost(nodeId: string, channelId: number, content: any, withNotify: boolean, tempId: number,
             transDataChannel:FeedsData.TransDataChannel, imageData: string, videoData: string){
     if(!this.hasAccessToken(nodeId))
       return;
@@ -1753,7 +1753,7 @@ export class FeedService {
     this.dataHelper.updatePost(key, post);
 
     this.dataHelper.deleteTempIdData(tempId);
-    
+
     let tempKey = this.getPostId(nodeId, channelId, tempId);
     this.dataHelper.deletePostDeeply(tempKey);
     this.dataHelper.deleteTempData(tempKey);
@@ -2500,7 +2500,7 @@ export class FeedService {
   getCommentList(nodeId: string, channelId: number, postId: number): FeedsData.Comment[]{
     return this.dataHelper.getCommentList(nodeId, channelId, postId);
   }
-  
+
   getCaptainCommentList(nodeId: string, feedId: number, postId: number): FeedsData.Comment[]{
     return this.dataHelper.getCaptainCommentList(nodeId, feedId, postId);
   }
@@ -5234,13 +5234,13 @@ export class FeedService {
     this.dataHelper.updatePost(key, post);
 
     let contentHash = UtilService.SHA256(content);
-    let tempData = this.dataHelper.generateTempData(nodeId, feedId, 0, 0, contentHash, 
+    let tempData = this.dataHelper.generateTempData(nodeId, feedId, 0, 0, contentHash,
       FeedsData.SendingStatus.normal, FeedsData.TransDataChannel.MESSAGE, "", "", tempId , 0, content);
     this.dataHelper.updateTempData(key, tempData);
   }
 
-  prepareTempMediaPost(nodeId: string, feedId: number, tempId: number, commentId: number, 
-    contentReal: any, transDataChannel: FeedsData.TransDataChannel, videoData: string, 
+  prepareTempMediaPost(nodeId: string, feedId: number, tempId: number, commentId: number,
+    contentReal: any, transDataChannel: FeedsData.TransDataChannel, videoData: string,
     imageData: string){
     let content = this.parseContent(nodeId,feedId,tempId,0,contentReal);
     let post: FeedsData.Post = {
@@ -5259,7 +5259,7 @@ export class FeedService {
     this.dataHelper.updatePost(key, post);
 
     let contentHash = UtilService.SHA256(contentReal);
-    let tempData = this.dataHelper.generateTempData(nodeId, feedId, 0, 0, contentHash, 
+    let tempData = this.dataHelper.generateTempData(nodeId, feedId, 0, 0, contentHash,
       FeedsData.SendingStatus.needDeclearPost, transDataChannel, videoData,imageData, tempId, 0, contentReal);
     this.dataHelper.updateTempData(key, tempData);
   }
@@ -5381,7 +5381,6 @@ export class FeedService {
 
   republishPost(nodeId: string){
     let list: FeedsData.TempData[] = this.dataHelper.listTempData(nodeId);
-    console.log("====----tempdata = "+JSON.stringify(list));
     for (let index = 0; index < list.length; index++) {
       const tempData = list[index];
       this.processRepublishPost(tempData);
@@ -5399,20 +5398,20 @@ export class FeedService {
         return;
       case FeedsData.SendingStatus.needDeclearPost:
         console.log("====----needDeclearPost");
-        this.declarePost(tempData.nodeId, tempData.feedId, tempData.content, false, tempData.tempPostId, 
+        this.declarePost(tempData.nodeId, tempData.feedId, tempData.content, false, tempData.tempPostId,
           tempData.transDataChannel, tempData.imageData, tempData.videoData);
         return;
       case FeedsData.SendingStatus.needPushData:
         console.log("====----needPushData");
         if (tempData.transDataChannel == FeedsData.TransDataChannel.MESSAGE){
-          this.sendDataFromMsg(tempData.nodeId, tempData.feedId, tempData.postId, tempData.commentId, 0, 
+          this.sendDataFromMsg(tempData.nodeId, tempData.feedId, tempData.postId, tempData.commentId, 0,
             tempData.videoData, tempData.imageData, tempData.tempPostId);
           return;
         }
         if (tempData.transDataChannel == FeedsData.TransDataChannel.SESSION){
           let isBusy = this.sessionService.checkSessionIsBusy();
           if (!isBusy)
-            this.sendData(tempData.nodeId, tempData.feedId, tempData.postId, tempData.commentId, 0, 
+            this.sendData(tempData.nodeId, tempData.feedId, tempData.postId, tempData.commentId, 0,
               tempData.videoData, tempData.imageData, tempData.tempPostId);
           return ;
         }
@@ -5421,6 +5420,6 @@ export class FeedService {
         this.notifyPost(tempData.nodeId, tempData.feedId, tempData.postId, tempData.tempPostId);
         return;
     }
-    
+
   }
 }
