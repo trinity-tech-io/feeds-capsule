@@ -5393,16 +5393,13 @@ export class FeedService {
 
     switch(tempData.status){
       case FeedsData.SendingStatus.normal:
-        console.log("====----normal");
         this.publishPost(tempData.nodeId, tempData.feedId, tempData.content, tempData.tempPostId);
         return;
       case FeedsData.SendingStatus.needDeclearPost:
-        console.log("====----needDeclearPost");
         this.declarePost(tempData.nodeId, tempData.feedId, tempData.content, false, tempData.tempPostId,
           tempData.transDataChannel, tempData.imageData, tempData.videoData);
         return;
       case FeedsData.SendingStatus.needPushData:
-        console.log("====----needPushData");
         if (tempData.transDataChannel == FeedsData.TransDataChannel.MESSAGE){
           this.sendDataFromMsg(tempData.nodeId, tempData.feedId, tempData.postId, tempData.commentId, 0,
             tempData.videoData, tempData.imageData, tempData.tempPostId);
@@ -5416,7 +5413,6 @@ export class FeedService {
           return ;
         }
       case FeedsData.SendingStatus.needNotifyPost:
-        console.log("====----needPushData"+tempData.tempPostId);
         this.notifyPost(tempData.nodeId, tempData.feedId, tempData.postId, tempData.tempPostId);
         return;
     }

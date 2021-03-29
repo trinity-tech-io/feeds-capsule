@@ -1740,8 +1740,8 @@ export class DataHelper {
         });
     }
 
-    generateTempData(nodeId: string, feedId: number, postId: number, commentId: number, dataHash: string , 
-        sendingType: FeedsData.SendingStatus, transDataChannel: FeedsData.TransDataChannel, videoData: string, 
+    generateTempData(nodeId: string, feedId: number, postId: number, commentId: number, dataHash: string ,
+        sendingType: FeedsData.SendingStatus, transDataChannel: FeedsData.TransDataChannel, videoData: string,
         imageData: string, tempPostId: number, tempCommentId: number, content: any): FeedsData.TempData{
         return {
             nodeId          :   nodeId,
@@ -1771,7 +1771,7 @@ export class DataHelper {
             this.tempDataMap = {};
         return this.tempDataMap[key];
     }
-    
+
     deleteTempData(key: string){
         if (this.tempDataMap == null || this.tempDataMap == undefined)
             this.tempDataMap = {};
@@ -1781,7 +1781,6 @@ export class DataHelper {
     }
 
     listTempData(nodeId: string): FeedsData.TempData[]{
-        console.log("tempData = "+JSON.stringify(this.tempDataMap));
         if (this.tempDataMap == null || this.tempDataMap == undefined)
             return [];
 
@@ -1798,7 +1797,7 @@ export class DataHelper {
         return list;
     }
 
-    //// 
+    ////
     getKey(nodeId: string, channelId: number, postId: number, commentId: number): string{
         return nodeId + "-" + channelId + "-"+ postId + "-" + commentId;
     }
