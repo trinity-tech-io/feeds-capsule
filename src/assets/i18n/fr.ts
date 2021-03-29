@@ -16,7 +16,7 @@ export const fr = {
         // "pleaseInput": "Please input ",
         "feeds": "Feeds",
         "just": "Just now",
-        "yesterday": "Yesterday",
+        "yesterday": "1d",
         "unsubscribe": "Unfollow",
         "share": "Share",
         // "sending": "Sending...",
@@ -133,12 +133,12 @@ export const fr = {
         "allempty": "All Empty",
         "emptyDes": "Not following any Feeds yet",
         "exploreFeeds": "Explore Feeds",
-        "minutesAgo": " minutes ago",
-        "hoursAgo": " hours ago",
-        "daysAgo": " days ago",
-        // "onedayAgo": " day ago",
-        "onehourAgo": " hour ago",
-        "oneminuteAgo": " minute ago"
+        "minutesAgo": "m",
+        "hoursAgo": "h",
+        "daysAgo": "d",
+        // "onedayAgo": "d",
+        "onehourAgo": "h",
+        "oneminuteAgo": "m"
     },
     "ProfilePage": {
         "myFeeds": "My Feeds",
