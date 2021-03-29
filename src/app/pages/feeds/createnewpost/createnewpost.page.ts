@@ -48,6 +48,7 @@ export class CreatenewpostPage implements OnInit {
 
     public feedList = [];
     public hideSwitchFeed:boolean = false;
+    private isPublishing: boolean = false;
     constructor(
       private platform: Platform,
       private events: Events,
@@ -75,7 +76,6 @@ export class CreatenewpostPage implements OnInit {
     }
 
     initFeed(){
-
       let currentFeed = this.feedService.getCurrentFeed();
 
       this.nodeId = currentFeed["nodeId"];
@@ -287,9 +287,11 @@ export class CreatenewpostPage implements OnInit {
             this.native.toast_trans("CreatenewpostPage.tipMsg2");
             return false;
         }
-  
-        await this.sendPost();
-        this.backHome();
+        if (!this.isPublishing){
+          this.isPublishing = true;
+          await this.sendPost();
+          this.backHome();
+        }
       });
     }
 
@@ -764,9 +766,11 @@ moreName(name:string){
     backHome(){
         this.navCtrl.pop().then(()=>{
           this.events.publish(FeedsEvent.PublishType.updateTab,true);
+          this.newPost = "";
           this.imgUrl ='';
           this.posterImg ='';
           this.flieUri ='';
+          this.isPublishing = false;
         });
     }
 }
