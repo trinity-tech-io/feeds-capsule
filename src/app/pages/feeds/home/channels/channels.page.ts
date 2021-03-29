@@ -1264,5 +1264,8 @@ export class ChannelsPage implements OnInit {
     this.pauseVideo(nodeId+"-"+channelId+"-"+postId);
     this.native.showPayPrompt(elaAddress);
   }
-
+  
+  retry(nodeId: string, feedId: number, postId: number){
+    this.feedService.republishOnePost(nodeId, feedId, postId);
+  }
 }

@@ -760,19 +760,20 @@ export class CreatenewpostPage implements OnInit {
       this.hideSwitchFeed = false;
     }
 
-moreName(name:string){
-  return UtilService.moreNanme(name,15);
-}
-    backHome(){
-        this.navCtrl.pop().then(()=>{
-          this.events.publish(FeedsEvent.PublishType.updateTab,true);
-          this.newPost = "";
-          this.imgUrl ='';
-          this.posterImg ='';
-          this.flieUri ='';
-          this.isPublishing = false;
-        });
-    }
+  moreName(name:string){
+    return UtilService.moreNanme(name,15);
+  }
+  
+  backHome(){
+      this.navCtrl.pop().then(()=>{
+        this.events.publish(FeedsEvent.PublishType.updateTab,true);
+        this.newPost = "";
+        this.imgUrl ='';
+        this.posterImg ='';
+        this.flieUri ='';
+        this.isPublishing = false;
+      });
+  }
 }
 
 function ab2str(u,f) {
