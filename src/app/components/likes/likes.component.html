@@ -2,13 +2,6 @@
   <img src="./assets/images/empty-like-icon.svg">
   <h1>{{ 'common.allempty' | translate }}</h1>
   <p>{{ 'LikesComponent.emptyLikeDes' | translate }}</p>
-  <ion-row class="btn-row">
-    <ion-button (click)="exploreFeeds()">
-      <ion-label>
-        {{ 'LikesComponent.exploreFeeds' | translate }}
-      </ion-label>
-    </ion-button>
-  </ion-row>
 </div>
 
 <div *ngIf="likeList.length > 0">

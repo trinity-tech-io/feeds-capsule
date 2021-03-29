@@ -209,6 +209,12 @@ export class ProfilePage implements OnInit {
     this.changeType(this.selectType);
     this.connectionStatus = this.feedService.getConnectionStatus();
 
+    this.events.subscribe(FeedsEvent.PublishType.unfollowFeedsFinish, (nodeId, channelId, name) => {
+      this.zone.run(() => {
+        this.initFolling();
+      });
+    });
+
     this.events.subscribe(FeedsEvent.PublishType.hideDeletedPosts,()=>{
       this.zone.run(()=>{
        this.hideDeletedPosts = this.feedService.getHideDeletedPosts();
@@ -487,6 +493,7 @@ export class ProfilePage implements OnInit {
     this.events.unsubscribe(FeedsEvent.PublishType.streamProgress);
     this.events.unsubscribe(FeedsEvent.PublishType.streamClosed);
     this.events.unsubscribe(FeedsEvent.PublishType.hideDeletedPosts);
+    this.events.unsubscribe(FeedsEvent.PublishType.unfollowFeedsFinish);
     this.clearDownStatus();
     this.native.hideLoading();
     this.hideFullScreen();
@@ -652,6 +659,7 @@ export class ProfilePage implements OnInit {
         break;
       case 'mylike':
         //this.menuService.showChannelMenu(item.nodeId, item.channelId,item.channelName);
+        this.qrCodeString = this.getQrCodeString(item);
         this.isShowTitle = false;
         this.isShowInfo = false;
         this.isShowQrcode = false;
