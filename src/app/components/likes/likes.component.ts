@@ -108,10 +108,6 @@ export class LikesComponent implements OnInit {
     this.feedService.postLike(nodeId,Number(channelId),Number(postId),0);
   }
 
-  comment(){
-    alert("TODO")
-  }
-
   getContentText(content: string): string{
     return this.feedService.parsePostContentText(content);
   }
