@@ -56,6 +56,7 @@ export class CommentlistPage implements OnInit {
   public captainComment:any ={};
   public avatar: string = "";
   public updatedAt:number = 0;
+  public channelOwner:string ="";
   constructor(
     private platform: Platform,
     private popoverController:PopoverController,
@@ -134,6 +135,10 @@ export class CommentlistPage implements OnInit {
       this.channelId = data.channelId;
       this.postId = data.postId;
       this.commentId = data.commentId;
+      let feed = this.feedService.getChannelFromId(this.nodeId, this.channelId) || "";
+      if(feed!=""){
+        this.channelOwner = UtilService.moreNanme(feed["owner_name"],40);
+      }
       this.userNameList[this.commentId] = data.username;
     });
   }
@@ -531,6 +536,8 @@ export class CommentlistPage implements OnInit {
     this.captainComment = _.find(captainCommentList,(item)=>{
         return item.id == this.commentId;
     });
+    let id = this.captainComment.id;
+    this.userNameList[id] = this.captainComment["user_name"]
     this.updatedAt = this.captainComment["updated_at"];
     this.checkCommentIsMine(this.captainComment);
   }

@@ -28,7 +28,7 @@
           <ion-label>
             {{ captainComment.user_name }}
           </ion-label>
-            <p>{{'ServerInfoPage.replyingto'|translate}} @{{ userNameList[captainComment.id] }}</p>
+            <p>{{'ServerInfoPage.replyingto'|translate}} @{{ channelOwner }}</p>
         </ion-col>
        <ion-col class="right-col" size="1.5"  *ngIf="captainComment.status != 1 && isOwnComment[captainComment.id]">
           <img (click)="menuMore()"
