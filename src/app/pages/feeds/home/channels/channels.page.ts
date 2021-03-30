@@ -528,6 +528,10 @@ export class ChannelsPage implements OnInit {
       return;
     }
 
+    let post = this.feedService.getPostFromId(nodeId, channelId, postId);
+    if (!this.feedService.checkPostIsAvalible(post))
+      return;
+
     if (this.checkMyLike(nodeId,channelId,postId)){
       this.feedService.postUnlike(nodeId,Number(channelId),Number(postId),0);
       return ;
@@ -727,6 +731,10 @@ export class ChannelsPage implements OnInit {
       this.native.toastWarn('common.connectionError1');
       return;
     }
+
+    let post = this.feedService.getPostFromId(nodeId, channelId, postId);
+    if (!this.feedService.checkPostIsAvalible(post))
+      return;
 
     this.pauseVideo(nodeId+"-"+channelId+"-"+postId);
     this.postId = postId;
