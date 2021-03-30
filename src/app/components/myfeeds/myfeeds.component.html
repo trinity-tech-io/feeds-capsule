@@ -14,7 +14,6 @@
 <ion-list *ngIf="channels.length > 0" class="channel-list" [class.darkChannelList]="theme.darkMode">
   <ion-item
     *ngFor="let channel of channels"
-    [class.removeBorder]="channel === channels[channels.length - 1]"
     lines="none"
   >
     <ion-row class="channel-row ion-activatable ripple">
@@ -47,8 +46,21 @@
       <ion-ripple-effect></ion-ripple-effect>
     </ion-row>
   </ion-item>
-
-  <div class="new-feed-div">
-    <div class="new-feed" (click)="createNewFeed()">{{ 'MyfeedsComponent.createNewFeed'|translate }}</div>
-  </div>
+  <ion-item  lines="none" (click)="createNewFeed()" class="removeBorder">
+    <ion-row class="channel-row ion-activatable ripple">
+      <ion-col
+        size="2.5"
+        class="left-col"
+      >
+      <div class="radius_50">
+        <img src="assets/images/plus.svg"/>
+      </div>
+      </ion-col>
+      <ion-col>
+        <div class="new-feed-div" style="padding-left:0px;">
+          <div class="new-feed">{{ 'MyfeedsComponent.createNewFeed'|translate }}</div>
+        </div>
+      </ion-col>
+    </ion-row>
+  </ion-item>
 </ion-list>
