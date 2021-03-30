@@ -150,7 +150,7 @@ export const en = {
     "MyfeedsComponent": {
         "emptyDes": "You have no Feeds",
         "createFeed": "Create Feed",
-        "createNewFeed": "Create Feed"
+        "createNewFeed": "Add Feed"
     },
     "FollowingComponent": {
         "emptyDes": "Not following any Feeds yet",
@@ -201,7 +201,7 @@ export const en = {
         "likedComment": "Liked your comment"
     },
     "CreatenewfeedPage": {
-        "createNewFeed": "Create Feed",
+        "createNewFeed": "Create New Feed",
         "profileImage": "Avatar",
         "des": "PICK AN IMAGE FOR YOUR FEED",
         // "des1": "Avatar selected",

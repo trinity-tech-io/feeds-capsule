@@ -151,7 +151,7 @@ export const zh = {
     "MyfeedsComponent":{
         "emptyDes": "您还没有Feeds",
         "createFeed": "创建Feed",
-        "createNewFeed": "创建Feed"
+        "createNewFeed": "新建Feed"
     },
     "FollowingComponent":{
         "emptyDes": "尚未关注过任何Feeds",
@@ -202,7 +202,7 @@ export const zh = {
         "likedComment": "赞了微评"
     },
     "CreatenewfeedPage":{
-        "createNewFeed": "创建Feed",
+        "createNewFeed": "创建新的Feed",
         "profileImage": "Feed头像",
         "des": "为Feed选择一张头像",
         // "des1": "头像已选择",
