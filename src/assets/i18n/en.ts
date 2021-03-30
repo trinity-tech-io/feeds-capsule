@@ -100,7 +100,9 @@ export const en = {
         "details":"Details",
         "sending":"( sending )",
         "sendFail":"( send fail )",
-        "retry":"retry"
+        "retry":"retry",
+        "sendingTip":"This post is being sent, try again later",
+        "currentPostError": "Current post is error"
     },
     "app": {
         "profileDetails": "Profile Details",
