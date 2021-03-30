@@ -973,10 +973,10 @@ export class ProfilePage implements OnInit {
               }
 
               this.videoDownStatusKey = nodeId+"-"+channelId+"-"+postId;
-              this.cacheGetBinaryRequestKey = key;
               this.cachedMediaType = "video";
               this.feedService.processGetBinary(nodeId, channelId, postId, 0, 0, FeedsData.MediaType.containsVideo, key,
                 (transDataChannel)=>{
+                  this.cacheGetBinaryRequestKey = key;
                   if (transDataChannel == FeedsData.TransDataChannel.SESSION){
                       this.videoDownStatus[this.videoDownStatusKey] = "1";
                       this.isVideoLoading[this.videoDownStatus] = false;
@@ -1071,10 +1071,10 @@ export class ProfilePage implements OnInit {
               return;
             }
             this.imgDownStatusKey = item.nodeId+"-"+item.channelId+"-"+item.postId;
-            this.cacheGetBinaryRequestKey = key;
             this.cachedMediaType ="img";
             this.feedService.processGetBinary(item.nodeId,item.channelId,item.postId, 0, 0, FeedsData.MediaType.containsImg, key,
               (transDataChannel)=>{
+                this.cacheGetBinaryRequestKey = key;
                 if (transDataChannel == FeedsData.TransDataChannel.SESSION){
                   this.imgDownStatus[this.imgDownStatusKey] = "1";
                   this.isImgLoading[this.imgDownStatusKey] = false;
