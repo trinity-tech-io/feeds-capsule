@@ -5420,6 +5420,37 @@ export class FeedService {
         this.notifyPost(tempData.nodeId, tempData.feedId, tempData.postId, tempData.tempPostId);
         return;
     }
+  }
 
+  checkPostIsAvalible(post: FeedsData.Post): boolean{
+    if (post == null || post == undefined){
+      this.native.toastWarn('common.currentPostError');
+      return false;
+    }
+
+    if(this.getConnectionStatus() == FeedsData.ConnState.disconnected &&
+    (post.post_status == FeedsData.PostCommentStatus.sending || post.post_status == FeedsData.PostCommentStatus.error)){
+      this.native.toastWarn('common.connectionError');
+      return false;
+    }
+    
+    let serverStatus = this.getServerStatusFromId(post.nodeId);
+    if(serverStatus == FeedsData.ConnState.disconnected &&
+      (post.post_status == FeedsData.PostCommentStatus.sending || post.post_status == FeedsData.PostCommentStatus.error)){
+      this.native.toastWarn('common.connectionError1');
+      return false;
+    }
+    
+    if (post.post_status == FeedsData.PostCommentStatus.sending){
+      this.native.toastWarn('common.sendingTip');
+      return false;
+    }
+
+    if (post.post_status == FeedsData.PostCommentStatus.error){
+      this.native.toastWarn('common.sendingErrorTip');
+      return false
+    }
+
+    return true;
   }
 }
