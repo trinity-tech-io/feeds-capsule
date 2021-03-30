@@ -147,7 +147,7 @@ export const fr = {
     },
     "MyfeedsComponent": {
         "emptyDes": "You have no Feeds",
-        "createFeed": "Create Feeds",
+        "createFeed": "Create Feed",
         "createNewFeed": "Create Feed"
     },
     "FollowingComponent": {

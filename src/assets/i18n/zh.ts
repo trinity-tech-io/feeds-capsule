@@ -148,7 +148,7 @@ export const zh = {
     },
     "MyfeedsComponent":{
         "emptyDes": "您还没有Feeds",
-        "createFeed": "创建Feeds",
+        "createFeed": "创建Feed",
         "createNewFeed": "创建Feed"
     },
     "FollowingComponent":{
