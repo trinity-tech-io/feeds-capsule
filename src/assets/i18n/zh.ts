@@ -101,8 +101,8 @@ export const zh = {
         "sending":"( 发送中 )",
         "sendFail":"( 发送失败 )",
         "retry":"重试",
-        "sendingTip":"这条post正在发送，请稍后再试",
-        "currentPostError": "该Post出现异常",
+        "sendingTip":"这条微说正在发送，请稍后再试",
+        "currentPostError": "该微说出现异常",
         "sendingErrorTip": "待发送成功后，请重试",
     },
     "app":{
