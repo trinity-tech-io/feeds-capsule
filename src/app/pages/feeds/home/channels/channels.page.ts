@@ -579,16 +579,8 @@ export class ChannelsPage implements OnInit {
 
   navToPostDetail(nodeId:string, channelId:number, postId:number,event?:any){
     let post = this.feedService.getPostFromId(nodeId, channelId, postId);
-    if (post == null || post == undefined){
-      this.native.toastWarn('common.currentPostError');
+    if (!this.feedService.checkPostIsAvalible(post))
       return;
-    }
-    
-    if (post.post_status == FeedsData.PostCommentStatus.sending||
-      post.post_status == FeedsData.PostCommentStatus.error){
-      this.native.toastWarn('common.sendingTip');
-      return;
-    }
 
     if(this.isPress){
       this.isPress = false;
@@ -649,16 +641,8 @@ export class ChannelsPage implements OnInit {
   }
 
   menuMore(post:FeedsData.Post){
-    if (post == null || post == undefined){
-      this.native.toastWarn('common.currentPostError');
+    if (!this.feedService.checkPostIsAvalible(post))
       return;
-    }
-    
-    if (post.post_status == FeedsData.PostCommentStatus.sending||
-      post.post_status == FeedsData.PostCommentStatus.error){
-      this.native.toastWarn('common.sendingTip');
-      return;
-    }
 
     this.pauseAllVideo();
     this.curPost = post;
