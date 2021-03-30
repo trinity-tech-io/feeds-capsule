@@ -125,8 +125,8 @@ export const zh = {
         "des6": "加入谈话吧。",
     },
     "FeedsPage":{
-        "tabTitle1": "我的时间线",
-        "tabTitle2": "我的档案",
+        "tabTitle1": "时间线",
+        "tabTitle2": "档案",
         "tabTitle3": "消息通知",
         "tabTitle4": "探索Feeds"
     },
@@ -142,7 +142,7 @@ export const zh = {
         "oneminuteAgo": "分钟前"
     },
     "ProfilePage":{
-        "myFeeds": "我的Feeds",
+        "myFeeds": "Feeds",
         "following": "关注",
         "myLikes": "赞/收藏"
     },
@@ -309,7 +309,7 @@ export const zh = {
         "feedsSourceQRCode": "出版号二维码",
         // "error": "解析DID文档错误",
         "public": "私密",
-        "des": "添加我的Feeds出版号!",
+        // "des": "添加我的Feeds出版号!",
         "replyingto": "回复给",
         "containedfeeds": "包含的Feeds列表",
         "version": "版本",
