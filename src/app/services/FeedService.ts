@@ -4669,8 +4669,12 @@ export class FeedService {
 
     let size = this.getContentDataSize(nodeId, channelId, postId, commentId, index, mediaType);
     if (size > this.throwMsgTransDataLimit){
-      this.restoreSession(nodeId, null);
-      onSuccess(FeedsData.TransDataChannel.SESSION);
+      if (!this.sessionService.checkSessionIsBusy()){
+        this.restoreSession(nodeId, null);
+        onSuccess(FeedsData.TransDataChannel.SESSION);
+      }else{
+        onError("");
+      }
       return;
     }
 

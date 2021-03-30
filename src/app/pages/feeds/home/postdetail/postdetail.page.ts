@@ -652,20 +652,18 @@ export class PostdetailPage implements OnInit {
             this.isImgLoading = false;
             this.native.openViewer(realImg,"common.image","PostdetailPage.postview",this.appService);
           }else{
-
-            this.cacheGetBinaryRequestKey = key;
             this.cachedMediaType = "img";
             this.feedService.processGetBinary(this.nodeId, this.channelId, this.postId, 0, 0, FeedsData.MediaType.containsImg, key,
               (transDataChannel)=>{
+                this.cacheGetBinaryRequestKey = key;
                 if (transDataChannel == FeedsData.TransDataChannel.SESSION){
                   this.imgDownStatus = "1";//session down
                   this.isImgLoading = false;
                   this.isImgPercentageLoading =true;
                   return;
                 }
-
                 if (transDataChannel == FeedsData.TransDataChannel.MESSAGE){
-                    this.imgDownStatus = "0";//message down
+                  this.imgDownStatus = "0";//message down
                   return;
                 }
               },
@@ -849,11 +847,10 @@ export class PostdetailPage implements OnInit {
       this.zone.run(()=>{
         let videoData = videodata || "";
         if (videoData == ""){
-          this.cacheGetBinaryRequestKey = key;
           this.cachedMediaType = "video";
-
           this.feedService.processGetBinary(this.nodeId, this.channelId, this.postId, 0, 0, FeedsData.MediaType.containsVideo, key,
             (transDataChannel)=>{
+              this.cacheGetBinaryRequestKey = key;
               if (transDataChannel == FeedsData.TransDataChannel.SESSION){
                 this.videoDownStatus = '1';
                 this.isVideoLoading = false;
