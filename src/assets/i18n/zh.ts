@@ -100,7 +100,9 @@ export const zh = {
         "details":"详情",
         "sending":"( 发送中 )",
         "sendFail":"( 发送失败 )",
-        "retry":"重试"
+        "retry":"重试",
+        "sendingTip":"这条post正在发送，请稍后再试",
+        "currentPostError": "该Post出现异常"
     },
     "app":{
         "profileDetails": "档案详情",

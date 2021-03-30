@@ -569,6 +569,18 @@ clearData(){
   }
 
   navToPostDetail(nodeId:string, channelId:number, postId:number,event?:any){
+    let post = this.feedService.getPostFromId(nodeId, channelId, postId);
+    if (post == null || post == undefined){
+      this.native.toastWarn('common.currentPostError');
+      return;
+    }
+    
+    if (post.post_status == FeedsData.PostCommentStatus.sending||
+      post.post_status == FeedsData.PostCommentStatus.error){
+      this.native.toastWarn('common.sendingTip');
+      return;
+    }
+
     if(this.isPress){
        this.isPress =false;
       return;
@@ -631,7 +643,18 @@ clearData(){
     return  obj.content;
   }
 
-  menuMore(post:any){
+  menuMore(post:FeedsData.Post){
+    if (post == null || post == undefined){
+      this.native.toastWarn('common.currentPostError');
+      return;
+    }
+    
+    if (post.post_status == FeedsData.PostCommentStatus.sending||
+      post.post_status == FeedsData.PostCommentStatus.error){
+      this.native.toastWarn('common.sendingTip');
+      return;
+    }
+
     this.curPost = post;
     let channel = this.getChannel(post.nodeId, post.channel_id);
     if (channel == null || channel == undefined)
