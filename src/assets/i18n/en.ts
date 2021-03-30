@@ -148,7 +148,7 @@ export const en = {
     "MyfeedsComponent": {
         "emptyDes": "You have no Feeds",
         "createFeed": "Create Feeds",
-        "createNewFeed": "Create New Feed"
+        "createNewFeed": "Create Feed"
     },
     "FollowingComponent": {
         "emptyDes": "Not following any Feeds yet",
@@ -199,7 +199,7 @@ export const en = {
         "likedComment": "Liked your comment"
     },
     "CreatenewfeedPage": {
-        "createNewFeed": "Create New Feed",
+        "createNewFeed": "Create Feed",
         "profileImage": "Avatar",
         "des": "PICK AN IMAGE FOR YOUR FEED",
         // "des1": "Avatar selected",
@@ -379,7 +379,7 @@ export const en = {
     },
     "FinishPage": {
         "introduce": "Completed binding for the Feeds Publisher Account. Congratulations, you have your own Feeds Publisher Account now, and you can create a Feed on this Feeds Publisher Account with your desire.",
-        "introduce1": "Create new Feed",
+        "introduce1": "Create Feed",
         "introduce2": "Return to main screen",
     },
     "CreatenewpostPage": {
