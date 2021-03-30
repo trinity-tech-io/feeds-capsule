@@ -124,8 +124,8 @@ export const fr = {
         "des6": "Join the conversation.",
     },
     "FeedsPage": {
-        "tabTitle1": "My Feeds Timeline",
-        "tabTitle2": "My Profile",
+        "tabTitle1": "Feeds Timeline",
+        "tabTitle2": "Profile",
         "tabTitle3": "Notifications",
         "tabTitle4": "Explore Feeds"
     },
@@ -141,9 +141,9 @@ export const fr = {
         "oneminuteAgo": "m"
     },
     "ProfilePage": {
-        "myFeeds": "My Feeds",
+        "myFeeds": "Feeds",
         "following": "Following",
-        "myLikes": "My Likes"
+        "myLikes": "Likes"
     },
     "MyfeedsComponent": {
         "emptyDes": "You have no Feeds",
@@ -308,7 +308,7 @@ export const fr = {
         "feedsSourceQRCode": "Publisher Account QRCode",
         // "error": "Resolve DID document error",
         "public": "Private",
-        "des": "Add my Feeds Publisher Account!",
+        // "des": "Add my Feeds Publisher Account!",
         "replyingto": "Replying to",
         "containedfeeds": "Contained Feeds",
         "version": "version",
