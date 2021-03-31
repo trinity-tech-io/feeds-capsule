@@ -8,6 +8,7 @@ import { MenuService } from '../../services/MenuService';
 import { PopoverController} from '@ionic/angular';
 import { PaypromptComponent } from '../../components/payprompt/payprompt.component'
 import { AppService } from '../../services/AppService';
+import { UtilService } from '../../services/utilService';
 
 import * as _ from 'lodash';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
@@ -49,6 +50,7 @@ export class FeedinfoPage implements OnInit {
   public isShowPrompt: boolean = false;
   public popover:any;
   public isPress:boolean = false;
+  public updatedTime:number = 0;
   constructor(
     private popoverController:PopoverController,
     private feedService: FeedService,
@@ -67,6 +69,7 @@ export class FeedinfoPage implements OnInit {
       let item = this.feedService.getChannelInfo();
       this.oldChannelInfo = item;
       let channelInfo  = _.cloneDeep(item);
+      this.updatedTime = channelInfo["updatedTime"] || 0;
       this.nodeId = channelInfo["nodeId"] || "";
       this.serverInfo = this.feedService.getServerbyNodeId(this.nodeId);
       this.severVersion = this.feedService.getServerVersionByNodeId(this.nodeId) || '<1.3.0(Outdated)';
@@ -333,5 +336,10 @@ export class FeedinfoPage implements OnInit {
       this.isPress = true;
     }
     this.native.getShare(feedsUrl);
+  }
+
+  handleTime(updatedTime:number){
+    let updateDate = new Date(updatedTime);
+    return UtilService.dateFormat(updateDate,'yyyy-MM-dd HH:mm:ss')
   }
 }

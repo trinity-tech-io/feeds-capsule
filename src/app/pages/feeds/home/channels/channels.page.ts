@@ -30,6 +30,7 @@ export class ChannelsPage implements OnInit {
   public connectionStatus:number = 1;
   public channelAvatar:string = "";
   public channelName:string = "";
+  public updatedTime:number = 0;
   public channelOwner:string = "";
   public channelDesc:string = "";
   public channelSubscribes:number = 0;
@@ -252,6 +253,7 @@ export class ChannelsPage implements OnInit {
       return ;
 
     this.channelName = channel.name;
+    this.updatedTime = channel.last_update || 0;
     this.channelOwner = this.feedService.indexText(channel.owner_name,25,25);
     this.channelDesc = channel.introduction;
     this.channelSubscribes = channel.subscribers;
@@ -1246,7 +1248,8 @@ export class ChannelsPage implements OnInit {
       "name":this.channelName,
       "des":this.channelDesc,
       "followStatus":this.followStatus,
-      "channelSubscribes":this.channelSubscribes
+      "channelSubscribes":this.channelSubscribes,
+      "updatedTime":this.updatedTime
     });
    this.native.navigateForward(['/feedinfo'],"");
   }
@@ -1278,7 +1281,7 @@ export class ChannelsPage implements OnInit {
     this.pauseVideo(nodeId+"-"+channelId+"-"+postId);
     this.native.showPayPrompt(elaAddress);
   }
-  
+
   retry(nodeId: string, feedId: number, postId: number){
     this.feedService.republishOnePost(nodeId, feedId, postId);
   }

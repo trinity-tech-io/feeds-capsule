@@ -531,7 +531,8 @@ export const fr = {
     },
     "FeedinfoPage": {
         "title": "Feed details",
-        "feeds": "Feed"
+        "feeds": "Feed",
+        "updatetime":"Update time"
     },
     "CommentlistPage":{
         "title": "Comment View",

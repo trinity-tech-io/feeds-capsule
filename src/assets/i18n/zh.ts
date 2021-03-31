@@ -532,7 +532,8 @@ export const zh = {
     },
     "FeedinfoPage":{
        "title": "Feed详情",
-       "feeds": "Feed"
+       "feeds": "Feed",
+       "updatetime":"更新时间"
     },
     "CommentlistPage":{
         "title": "评论详情",
