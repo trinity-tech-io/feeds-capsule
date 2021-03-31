@@ -466,7 +466,9 @@ export class MenuService {
                         postId:postId,
                         commentById:commentById,
                         commentId:commentId,
-                        content:content
+                        content:content,
+                        titleKey:'common.editcomment',
+
                       });
                     }
             },
