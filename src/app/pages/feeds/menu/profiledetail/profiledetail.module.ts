@@ -5,6 +5,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { IonicModule } from '@ionic/angular';
 import { ProfiledetailPage } from './profiledetail.page';
+import { QRCodeModule } from 'angularx-qrcode';
 
 const routes: Routes = [
   {
@@ -19,6 +20,7 @@ const routes: Routes = [
     FormsModule,
     TranslateModule,
     IonicModule,
+    QRCodeModule,
     RouterModule.forChild(routes)
   ],
   declarations: [ProfiledetailPage]

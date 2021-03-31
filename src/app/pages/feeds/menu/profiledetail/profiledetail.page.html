@@ -6,15 +6,82 @@
     <div class="profile-header">
       <ion-img  [src]="handleImages()"></ion-img>
       <h1>{{ name }}</h1>
-      <p>{{ description }}</p>
     </div>
-    <div *ngFor="let profile of profileDetails" >
-      <ion-row *ngIf="profile.details" class="detail-row">
+    <!-- Did Info -->
+    <ion-row>
+      <ion-col size="12" style="padding:0px;">
+        <ion-button class="btn-row1" style="border-radius:17px;">
+          <ion-label>
+            {{ 'ProfiledetailPage.didinfo' | translate }}
+          </ion-label>
+        </ion-button>
+      </ion-col>
+    </ion-row>
+    <div *ngFor="let profile of profileDetails">
+      <ion-row *ngIf="profile.details" class="detail-row removeBorder">
         <ion-col size="12" class="left-col">
             <h1>{{ profile.type | translate}}</h1>
             <h2 (click)="copytext(profile.details)">{{ profile.details }}</h2>
         </ion-col>
       </ion-row>
+    </div>
+
+    <!-- Publisher Account -->
+    <div *ngIf="isShowPublisherAccount" style="margin-top:20px;margin-bottom:10px;">
+
+      <ion-row (click)="clickEdit()">
+        <ion-col size="12" style="padding:0px;">
+          <ion-button class="btn-row1" style="border-radius:17px;">
+            <ion-label>
+              {{ 'ProfiledetailPage.publisheraccount' | translate }}
+            </ion-label>
+            <ion-icon name="create-outline" style="color:#ffffff;position:absolute;right:10px;width:25px;height:25px;top:5px;"></ion-icon>
+          </ion-button>
+        </ion-col>
+       </ion-row>
+
+    <!--- SERVER HEADER --->
+    <div class="server-header">
+      <ion-img class="headerImg" src="./assets/images/profile-2.svg"></ion-img>
+      <h1>{{ serverName }}</h1>
+      <p *ngIf="introduction">{{ introduction }}</p>
+      <ion-row class="status-row" [class.online]="serverStatus === 0">
+        <span class="online-circle" *ngIf="serverStatus === 0"></span>
+        <span class="users" *ngIf="serverStatus === 0" style="margin-left: 4px; margin-right: 8px;">{{ 'ServerInfoPage.online' | translate }}</span>
+        <span class="offline-circle"  *ngIf="serverStatus === 1"></span>
+        <span class="users" *ngIf="serverStatus === 1" style="margin-left: 4px; margin-right: 8px;">{{ 'ServerInfoPage.offline' | translate }}</span>
+        <ion-img [src]="serverStatus === 0 ? 'assets/images/users-online.svg' : 'assets/images/users-offline.svg'"></ion-img>
+        <span class="clientNumber">{{ clientNumber }}</span>
+        <span class="users">{{'ServerInfoPage.users' | translate}}</span>
+      </ion-row>
+    </div>
+
+    <!--- SERVER DETAILS --->
+    <div *ngFor="let server of serverDetails">
+        <ion-row *ngIf="server.details" class="detail-row removeBorder">
+          <ion-col size="12" class="left-col">
+              <h1>{{ server.type | translate }}</h1>
+              <h2 *ngIf="!server.qrcode" (click)="copytext(server.details)">{{ server.details }}</h2>
+              <div *ngIf="server.qrcode" class="qr-container">
+                <h2 *ngIf="!isShowQrcode" >{{'common.waitOnChain'|translate}}</h2>
+                <div *ngIf="isShowQrcode" class="qrcode" (click)="showPreviewQrcode(feedsUrl)" (press)="menuMore(feedsUrl)">
+                  <qrcode [qrdata]="feedsUrl" [size]="150" [level]="'M'"></qrcode>
+                </div>
+              </div>
+            <h2 *ngIf="feedsUrl!=null&&server.qrcode&&isShowQrcode" style="margin-top:10px;font-size: 9px!important;color:#8888b0">{{'ServerInfoPage.feedsSourceQRCodeDes'|translate}}</h2>
+          </ion-col>
+        </ion-row>
+    </div>
+
+       <!--- BUTTONS --->
+       <div class="btns">
+        <ion-row class="btn-row delete-row">
+          <ion-button (click)="deleteFeedSource()" color="danger">
+            <ion-label>{{'ServerInfoPage.deleteFeedSource' | translate}}</ion-label>
+          </ion-button>
+        </ion-row>
+      </div>
+
     </div>
   </ion-grid>
 </ion-content>

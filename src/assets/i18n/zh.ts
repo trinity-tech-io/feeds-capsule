@@ -147,7 +147,8 @@ export const zh = {
     "ProfilePage":{
         "myFeeds": "Feeds",
         "following": "关注",
-        "myLikes": "赞/收藏"
+        "myLikes": "赞/收藏",
+        "moreinfo":"更多信息"
     },
     "MyfeedsComponent":{
         "emptyDes": "您还没有Feeds",
@@ -238,7 +239,9 @@ export const zh = {
         // "gender": "性别",
         "telephone": "号码",
         "email": "邮箱",
-        "location": "国家/地区"
+        "location": "国家/地区",
+        "didinfo":"Did信息",
+        "publisheraccount": "出版号"
     },
     "DevelopPage":{
         "develop": "开发",

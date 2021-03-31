@@ -146,7 +146,8 @@ export const en = {
     "ProfilePage": {
         "myFeeds": "Feeds",
         "following": "Following",
-        "myLikes": "Likes"
+        "myLikes": "Likes",
+        "moreinfo":"More Info"
     },
     "MyfeedsComponent": {
         "emptyDes": "You have no Feeds",
@@ -237,7 +238,9 @@ export const en = {
         // "gender": "Gender",
         "telephone": "Phone Number",
         "email": "Email",
-        "location": "Location"
+        "location": "Location",
+        "didinfo":"Did Info",
+        "publisheraccount": "Publisher Account"
     },
     "DevelopPage": {
         "develop": "Develop",

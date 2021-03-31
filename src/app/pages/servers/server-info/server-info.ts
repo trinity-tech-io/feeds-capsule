@@ -34,8 +34,6 @@ export class ServerInfoPage implements OnInit {
   public developerMode:boolean =  false;
   public connectionStatus = 1;
   public buttonDisabled: boolean = true;
-  public friendRequest = 'Feeds/0.1';
-  public carrierAddress: string;
 
   public isOwner: string = "false";
   public serverStatus:number = 1;
@@ -272,27 +270,6 @@ export class ServerInfoPage implements OnInit {
     let url = "https://scheme.elastos.org/addsource?source="+encodeURIComponent(qrcode);
   } */
 
-  addFeedSource() {
-    if(this.connectionStatus !== 0){
-      this.native.toastWarn('common.connectionError');
-      return;
-    }
-
-    this.feedService.addServer(
-      this.carrierAddress,
-      this.friendRequest,
-      this.name,
-      this.owner,
-      this.introduction,
-      this.didString,
-      this.feedsUrl,
-      () => {
-        this.native.navigateForward('/menu/servers',"");
-      }, (err) => {
-        this.native.pop();
-    });
-  }
-
   async deleteFeedSource(){
     if(this.connectionStatus != 0){
       this.native.toastWarn('common.connectionError');
@@ -332,41 +309,6 @@ export class ServerInfoPage implements OnInit {
       }
   });
 
-    await this.actionSheet.present();
-  }
-
-  async removeFeedSource(){
-    if(this.connectionStatus !== 0){
-      this.native.toastWarn('common.connectionError');
-      return;
-    }
-
-    this.actionSheet = await this.actionSheetController.create({
-      cssClass:'editPost',
-      buttons: [{
-        text: this.translate.instant("ServerInfoPage.RemovethisFeedSource"),
-        role: 'destructive',
-        icon: 'trash',
-        handler: () => {
-          this.native.showLoading('common.waitMoment');
-          this.feedService.removeFeedSource(this.nodeId).then(() => {
-            this.native.toast("ServerInfoPage.removeserver");
-            this.native.hideLoading();
-            this.navigateBackPage();
-          });
-        }
-      },{
-        text: this.translate.instant("ServerInfoPage.cancel"),
-        icon: 'close',
-        handler: () => {
-        }
-      }]
-    });
-    this.actionSheet.onWillDismiss().then(()=>{
-      if(this.actionSheet !=null){
-        this.actionSheet  = null;
-      }
-  });
     await this.actionSheet.present();
   }
 
