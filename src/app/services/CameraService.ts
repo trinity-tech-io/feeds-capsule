@@ -25,7 +25,7 @@ export class CameraService {
             destinationType: destType,
             sourceType: type
         });
-    
+
         function onSuccess(imageURL) {
             //将选择的控件放到要显示的控件上
             let imgUrl = "";
@@ -34,10 +34,10 @@ export class CameraService {
             } else {
                 imgUrl = imageURL;
             }
-            
+
             success(imgUrl);
         };
-    
+
         function onFail(message) {
             error(message);
         };

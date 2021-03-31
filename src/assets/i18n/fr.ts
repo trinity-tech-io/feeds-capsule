@@ -146,7 +146,8 @@ export const fr = {
     "ProfilePage": {
         "myFeeds": "Feeds",
         "following": "Following",
-        "myLikes": "Likes"
+        "myLikes": "Likes",
+        "moreinfo":"More Info"
     },
     "MyfeedsComponent": {
         "emptyDes": "You have no Feeds",
@@ -238,6 +239,8 @@ export const fr = {
         "telephone": "Phone Number",
         "email": "Email",
         "location": "Location",
+        "didinfo":"Did Info",
+        "publisheraccount": "Publisher Account"
     },
     "DevelopPage": {
         "develop": "Develop",

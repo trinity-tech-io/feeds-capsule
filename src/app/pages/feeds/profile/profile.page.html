@@ -17,10 +17,10 @@
     <div class="profile-header" (click)="profiledetail()">
       <ion-img [src]="handleImages()"></ion-img>
       <h1>{{ name }}</h1>
-      <p>{{ description }}</p>
+      <p><ion-icon name="information-circle-outline" style="width:24px;height:24px;vertical-align: middle;"></ion-icon>{{'ProfilePage.moreinfo'|translate}}</p>
     </div>
 
-    <div class="tab-container" [class.removeMargin]="selectType === 'ProfilePage.myLikes'">
+    <div class="tab-container" [class.removeMargin]="selectType === 'ProfilePage.myLikes'" style="margin-top:5px;">
       <div class="left-tab" [class.tab-active]="selectType === 'ProfilePage.myFeeds'" (click)="changeType('ProfilePage.myFeeds')">
         <span>{{ 'ProfilePage.myFeeds' | translate }}</span>
       </div>

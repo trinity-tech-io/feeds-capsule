@@ -1,10 +1,12 @@
 import { Component, OnInit, NgZone } from '@angular/core';
 import { TranslateService } from "@ngx-translate/core";
-import { Events } from '@ionic/angular';
+import { Events,Platform,ActionSheetController } from '@ionic/angular';
 import { FeedService, Avatar } from '../../../../services/FeedService';
 import { NativeService } from '../../../../services/NativeService';
 import { ThemeService } from '../../../../services/theme.service';
 import { CarrierService } from '../../../../services/CarrierService';
+import { AppService } from '../../../../services/AppService';
+import { StorageService } from '../../../../services/StorageService';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 type ProfileDetail = {
@@ -28,24 +30,39 @@ export class ProfiledetailPage implements OnInit {
   public telephone = "";
   public email = "";
   public location = "";
-
-
   public profileDetails: ProfileDetail[] = [];
 
+  public isShowPublisherAccount:boolean = false;
+  public isShowQrcode: boolean = true;
+  public serverStatus:number = 1;
+  public clientNumber:number = 0;
+  public nodeId:string ="";
+  public serverDetails: any[] = [];
+  public isPress:boolean = false;
+  public didString: string = "";
+  public serverName: string = "";
+  public owner: string = "";
+  public introduction: string = null;
+  public feedsUrl: string = null;
+  public elaAddress: string = "";
+  public actionSheet:any = null;
   constructor(
+    private actionSheetController:ActionSheetController,
     private zone: NgZone,
     private native: NativeService,
     private feedService:FeedService,
     private translate:TranslateService,
     public  theme:ThemeService,
     private events: Events,
-    private carrierService:CarrierService
+    private carrierService:CarrierService,
+    private appService:AppService,
+    private platform:Platform,
+    private storageService:StorageService
   ) {
 
     }
 
   ngOnInit() {
-    this.connectionStatus = this.feedService.getConnectionStatus();
   }
 
   collectData() {
@@ -92,6 +109,7 @@ export class ProfiledetailPage implements OnInit {
   }
 
   ionViewWillEnter() {
+    this.connectionStatus = this.feedService.getConnectionStatus();
     this.developerMode = this.feedService.getDeveloperMode();
     this.initTitle();
     this.native.setTitleBarBackKeyShown(true);
@@ -108,6 +126,8 @@ export class ProfiledetailPage implements OnInit {
 
     this.collectData();
 
+    this.initData();
+
     this.events.subscribe(FeedsEvent.PublishType.connectionChanged,(status)=>{
       this.zone.run(() => {
         this.connectionStatus = status;
@@ -115,6 +135,16 @@ export class ProfiledetailPage implements OnInit {
     });
     this.events.subscribe(FeedsEvent.PublishType.updateTitle,()=>{
       this.initTitle();
+    });
+
+    this.events.subscribe(FeedsEvent.PublishType.serverConnectionChanged, () => {
+      this.zone.run(() => {
+            this.serverStatus = this.feedService.getServerStatusFromId(this.nodeId);
+      });
+    });
+
+    this.events.subscribe(FeedsEvent.PublishType.removeFeedSourceFinish, () => {
+      this.native.hideLoading();
     });
   }
 
@@ -131,6 +161,9 @@ export class ProfiledetailPage implements OnInit {
   ionViewWillLeave(){
     this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
     this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
+    this.events.unsubscribe(FeedsEvent.PublishType.serverConnectionChanged);
+    this.events.unsubscribe(FeedsEvent.PublishType.removeFeedSourceFinish);
+    this.events.publish(FeedsEvent.PublishType.addProflieEvent);
   }
 
   handleImages(){
@@ -155,8 +188,182 @@ export class ProfiledetailPage implements OnInit {
 
     });;
     }
-
   }
 
+  initData(){
+      let bindingServer = this.feedService.getBindingServer() || null;
+      if(bindingServer === null){
+        this.isShowPublisherAccount = false;
+      }
+      this.isShowPublisherAccount = true;
+      let nodeId = bindingServer.nodeId;
+      this.nodeId =  bindingServer.nodeId;
+      let did = bindingServer.did;
+      this.isShowQrcode = false;
 
+      this.feedService.checkDIDOnSideChain(did,(isOnSideChain)=>{
+          this.zone.run(() => {
+            this.isShowQrcode = isOnSideChain;
+            if (!this.isShowQrcode ){
+              this.native.toastWarn('common.waitOnChain');
+            }
+          });
+      });
+
+      this.serverStatus = this.feedService.getServerStatusFromId(nodeId);
+      this.clientNumber = this.feedService.getServerStatisticsNumber(nodeId);
+      let server = this.feedService.getServerbyNodeId(this.nodeId) || null;
+      this.didString = server.did;
+      this.serverName = server.name ||  this.translate.instant('DIDdata.NotprovidedfromDIDDocument');
+      this.owner = server.owner;
+      this.introduction = server.introduction;
+      this.feedsUrl = server.feedsUrl || null;
+      this.elaAddress = server.elaAddress || "";
+
+      this.collectServerData(server);
+  }
+
+  collectServerData(bindingServer:any) {
+    this.serverDetails = [];
+
+    this.serverDetails.push({
+      type:'ServerInfoPage.name',
+      details: bindingServer.name ||  this.translate.instant('DIDdata.NotprovidedfromDIDDocument')
+    });
+
+    this.serverDetails.push({
+        type:'ServerInfoPage.owner',
+        details: bindingServer.owner || ""
+    });
+
+
+    if (this.developerMode){
+      this.serverDetails.push({
+        type:"NodeId",
+        details:bindingServer.nodeId || ""
+      });
+    }
+
+    this.serverDetails.push({
+      type:'ServerInfoPage.introduction',
+      details:bindingServer.introduction || ""
+    });
+
+    if(this.developerMode){
+      let version = this.feedService.getServerVersionByNodeId(bindingServer.nodeId)
+      if (version != ""){
+        this.serverDetails.push({
+          type:'ServerInfoPage.version',
+          details: version || "<1.3.0(Outdated)",
+        });
+      }
+    }
+    // if (server.elaAddress != "") {
+    this.serverDetails.push({
+      type:'IssuecredentialPage.elaaddress',
+      details: bindingServer.elaAddress || this.translate.instant('DIDdata.Notprovided')
+    });
+    // }
+    if(this.developerMode){
+      this.serverDetails.push({
+        type:'ServerInfoPage.did',
+        details: this.feedService.rmDIDPrefix(bindingServer.did)
+      });
+    }
+
+
+    this.serverDetails.push({
+      type:'ServerInfoPage.feedsSourceQRCode',
+      details: bindingServer.feedsUrl || "",
+      qrcode: true
+    });
+  }
+
+  showPreviewQrcode(feedsUrl:string){
+    if(this.isPress){
+      this.isPress =false;
+     return;
+    }
+    this.native.showPreviewQrcode(feedsUrl,"common.qRcodePreview","ProfiledetailPage.profileDetails","profileDetails",this.appService);
+  }
+
+  menuMore(feedsUrl:string) {
+    if(this.platform.is('ios')){
+      this.isPress = true;
+    }
+    this.native.getShare(feedsUrl);
+  }
+
+  async deleteFeedSource(){
+    if(this.connectionStatus != 0){
+      this.native.toastWarn('common.connectionError');
+      return;
+    }
+
+    this.actionSheet = await this.actionSheetController.create({
+      cssClass:'editPost',
+      buttons: [{
+        text: this.translate.instant("ServerInfoPage.DeletethisFeedSource"),
+        role: 'destructive',
+        icon: 'trash',
+        handler: () => {
+          this.native.showLoading("common.waitMoment").then(()=>{
+            this.feedService.deleteFeedSource(this.nodeId).then(() => {
+              this.native.toast("ServerInfoPage.removeserver");
+              this.native.hideLoading();
+              this.feedService.setCurrentFeed(null);
+              this.storageService.remove("feeds.currentFeed");
+              this.native.hideLoading();
+              this.events.publish(FeedsEvent.PublishType.updateTab);
+            });
+          }).catch(()=>{
+          this.native.hideLoading();
+          });
+        }
+      }, {
+        text: this.translate.instant("ServerInfoPage.cancel"),
+        role: 'cancel',
+        icon: 'close-circle',
+        handler: () => {
+        }
+      }]
+    });
+
+    this.actionSheet.onWillDismiss().then(()=>{
+      if(this.actionSheet !=null){
+        this.actionSheet  = null;
+      }
+  });
+
+    await this.actionSheet.present();
+  }
+
+  clickEdit(){
+
+    if(!this.isShowQrcode){
+      this.native.toastWarn('common.waitOnChain');
+      return;
+    }
+
+    if(this.feedService.getConnectionStatus() !== 0){
+      this.native.toastWarn('common.connectionError');
+      return;
+    }
+
+    if(this.feedService.getServerStatusFromId(this.nodeId) !== 0){
+      this.native.toastWarn('common.connectionError');
+      return;
+    }
+
+    this.native.navigateForward(
+      ["editserverinfo"],
+      {queryParams:{
+        "name": this.name,
+        "introduction": this.introduction,
+        "elaAddress": this.elaAddress,
+        "nodeId": this.nodeId,
+        "did": this.didString,
+      }}
+    )
+  }
 }
