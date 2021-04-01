@@ -1,6 +1,5 @@
 import { Component, OnInit, NgZone } from '@angular/core';
 import { NavController, Events, PopoverController } from '@ionic/angular';
-import { ServerlistcomponentComponent } from '../../../components/serverlistcomponent/serverlistcomponent.component';
 import { FeedService } from 'src/app/services/FeedService';
 import { NativeService } from 'src/app/services/NativeService';
 import { ThemeService } from 'src/app/services/theme.service';
@@ -118,31 +117,6 @@ export class CreatenewfeedPage implements OnInit {
 
   initTitle(){
     titleBarManager.setTitle(this.translate.instant("CreatenewfeedPage.createNewFeed"));
-  }
-
-  async selectChannelSource(event){
-    // alert("selectChannelSource");
-
-    const popover = await this.popoverController.create({
-      component: ServerlistcomponentComponent,
-      componentProps: {serverList:this.feedService.getCreationServerList()},
-      event:event,
-      translucent: true
-    });
-
-    popover.onDidDismiss().then((result)=>{
-      if(result.data == undefined){
-        return;
-      }
-
-      this.zone.run(() => {
-        this.selectedServer = result.data;
-
-        this.selectedChannelSource = this.selectedServer.did;
-      })
-
-    });
-    return await popover.present();
   }
 
   createChannel(name: HTMLInputElement, desc: HTMLInputElement){

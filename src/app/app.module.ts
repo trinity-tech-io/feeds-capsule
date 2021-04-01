@@ -41,7 +41,6 @@ import { HttpService } from './services/HttpService';
 
 import { PopupProvider } from './services/popup';
 import { CameraService } from './services/CameraService';
-import { ServerlistComponentModule } from './components/serverlistcomponent/serverlistcomponent.module';
 import { QRCodeModule } from 'angularx-qrcode';
 import { SplashscreenPageModule } from './pages/splashscreen/splashscreen.module';
 import { JWTMessageService } from './services/JWTMessageService';
@@ -159,7 +158,6 @@ export function anim(AnimationC: Animation, baseEl: any, position?: any): Promis
     HttpClientModule,
     AppRoutingModule,
     ComponentsModule,
-    ServerlistComponentModule,
     SplashscreenPageModule,
     IonicModule.forRoot({
       rippleEffect: true,

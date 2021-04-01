@@ -14,6 +14,7 @@ export class SharemenuComponent implements OnInit {
   @Input() isShowQrcode:boolean = false;
   @Input() isShowUnfollow:boolean = false;
   @Input() isShowInfo:boolean = false;
+  @Input() isPreferences:boolean = false;
   @Input() feedName:string = null;
   @Input() qrCodeString:string = null;
   @Output() hideShareMenu = new EventEmitter();
@@ -21,7 +22,7 @@ export class SharemenuComponent implements OnInit {
   constructor(
     public theme: ThemeService){ }
 
-  ngOnInit() {
+  ngOnInit(){
 
   }
 

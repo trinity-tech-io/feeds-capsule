@@ -1,22 +1,22 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ServerlistcomponentComponent } from './serverlistcomponent.component';
+import { FeedspreferencesPage } from './feedspreferences.page';
 
-describe('ServerlistcomponentComponent', () => {
-  let component: ServerlistcomponentComponent;
-  let fixture: ComponentFixture<ServerlistcomponentComponent>;
+describe('FeedspreferencesPage', () => {
+  let component: FeedspreferencesPage;
+  let fixture: ComponentFixture<FeedspreferencesPage>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ServerlistcomponentComponent ],
+      declarations: [ FeedspreferencesPage ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ServerlistcomponentComponent);
+    fixture = TestBed.createComponent(FeedspreferencesPage);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -124,7 +124,7 @@ export class ServerInfoPage implements OnInit {
     this.initTitle();
     this.initData();
     this.initMyFeeds();
-    this.initPublicStatus();
+    //this.initPublicStatus();
     this.feedPublicStatus = this.feedService.getFeedPublicStatus();
 
     this.native.setTitleBarBackKeyShown(true);

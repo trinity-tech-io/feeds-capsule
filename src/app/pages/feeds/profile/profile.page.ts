@@ -79,6 +79,8 @@ export class ProfilePage implements OnInit {
 
   public isShowInfo:boolean = false;
 
+  public isPreferences:boolean = false;
+
   public shareNodeId:string = "";
 
   public shareFeedId:string = "";
@@ -641,6 +643,7 @@ export class ProfilePage implements OnInit {
         this.isShowTitle = true;
         this.isShowInfo = true;
         this.isShowQrcode = true;
+        this.isPreferences = true;
         this.isShowUnfollow = false;
         this.feedName = item.channelName;
         this.qrCodeString = this.getQrCodeString(item);
@@ -651,6 +654,7 @@ export class ProfilePage implements OnInit {
         this.isShowTitle = true;
         this.isShowInfo = true;
         this.isShowQrcode = true;
+        this.isPreferences = false;
         this.isShowUnfollow = true;
         this.feedName = item.channelName;
         this.qrCodeString = this.getQrCodeString(item);
@@ -661,6 +665,7 @@ export class ProfilePage implements OnInit {
         this.qrCodeString = this.getQrCodeString(item);
         this.isShowTitle = false;
         this.isShowInfo = false;
+        this.isPreferences = false;
         this.isShowQrcode = false;
         this.isShowUnfollow = true;
         this.hideSharMenuComponent = true;
@@ -1218,6 +1223,20 @@ export class ProfilePage implements OnInit {
        case "info":
          this.clearData();
          this.clickAvatar(nodeId,feedId);
+         break;
+       case "preferences":
+
+        if(this.feedService.getConnectionStatus() != 0){
+          this.native.toastWarn('common.connectionError');
+          return;
+        }
+         this.clearData();
+         this.native.navigateForward(['feedspreferences'],{
+           queryParams:{
+              nodeId:this.shareNodeId,
+              feedId:this.shareFeedId
+           }});
+        this.hideSharMenuComponent = false;
          break;
        case "cancel":
         this.qrCodeString = null;
