@@ -9,7 +9,7 @@ export const zh = {
         "confirm": "确认",
         "des": "清空 <strong>所有缓存数据</strong>!!!",
         // "prompt": "提示",
-        "des1": "确认Feed",
+        "des1": "确认Channel",
         "server": "Feeds出版号:",
         // "channel": "Feeds:",
         "description": "描述:",
@@ -78,7 +78,7 @@ export const zh = {
         "fulltext": "更多",
         "uploading": "正在上传",
         "downloading": "正在下载",
-        "mustUpdate": "您的Feeds 服务版本需要升级到最新版本，否则您将无法发布内容。",
+        "mustUpdate": "您的Feeds服务版本需要升级到最新版本，否则您将无法发布内容。",
         // "downstatus1": "连接中",
         // "downstatus2": "连接成功",
         // "downstatus3": "开始下载",
@@ -86,15 +86,15 @@ export const zh = {
         "loadingLastestComment": "正在加载最新评论",
         "showless": "显示更少",
         "showmore": "显示更多",
-        "didnotrelease": "DID发布上链后，Feeds 才能正常运行",
+        "didnotrelease": "DID发布上链后，Feeds才能正常运行",
         "unknown": "未知",
         // "unfollow": "未关注",
         // "adding": "添加中",
-        "feedsAlreadyAdded": "该Feed已经关注过了",
+        "feedsAlreadyAdded": "该Channel已经关注过了",
         "notFollowYet": "未关注",
         "httperror": "服务异常，稍后再试",
         "textcopied": "文本已拷贝",
-        "connectionError1":"此Feed当前不在线，待上线后请重试",
+        "connectionError1":"此Channel当前不在线，待上线后请重试",
         "emptyElaAddressDes":"还未设置",
         "qRcodePreview":"二维码预览图",
         "details":"详情",
@@ -136,7 +136,7 @@ export const zh = {
     },
     "HomePage":{
         "allempty": "空空如也",
-        "emptyDes": "尚未关注过任何Feeds",
+        "emptyDes": "尚未关注过任何Channel",
         "exploreFeeds": "探索Feeds",
         "minutesAgo": "分钟前",
         "hoursAgo": "小时前",
@@ -146,18 +146,18 @@ export const zh = {
         "oneminuteAgo": "分钟前"
     },
     "ProfilePage":{
-        "myFeeds": "Feeds",
+        "myFeeds": "Channels",
         "following": "关注",
         "myLikes": "赞/收藏",
         "moreinfo":"更多信息"
     },
     "MyfeedsComponent":{
-        "emptyDes": "您还没有Feeds",
-        "createFeed": "创建Feed",
-        "createNewFeed": "新建Feed"
+        "emptyDes": "您还没有Channel",
+        "createFeed": "创建Channel",
+        "createNewFeed": "新建Channel"
     },
     "FollowingComponent":{
-        "emptyDes": "尚未关注过任何Feeds",
+        "emptyDes": "尚未关注过任何Channel",
         "exploreFeeds": "探索Feeds"
     },
     "LikesComponent":{
@@ -169,11 +169,11 @@ export const zh = {
         "signoutMessage": '确认要登出吗？'
     },
     "SearchPage":{
-        "emptyDes": "没有可关注的Feeds",
+        "emptyDes": "没有可关注的Channel",
         "follow": "关注",
         "following": "正在关注",
         "searchFeeds": "搜索",
-        "addfeedssource": "扫描二维码关注Feeds",
+        // "addfeedssource": "扫描二维码关注Channel",
         "status0": "连接中",
         "status1": "连接中",
         "status2": "连接中",
@@ -185,34 +185,34 @@ export const zh = {
         "status8": "登录出错",
         "status9": "等待",
         "status10": "等待",
-        "status11": "关注Feeds出错",
+        "status11": "关注Channel出错",
         "status12": "等待",
         "status14": "无法连接",
         "discover": "进入广场探索Feeds",
-        "des1": "您关注此Feed的请求正被确认中，请耐心等待30秒左右。确认需要取消请求关注该Feed？",
+        "des1": "您关注此Channel的请求正被确认中，请耐心等待30秒左右。确认需要取消请求关注该Channel？",
     },
     "ChannelsPage":{
-        "feeds": "Feed",
+        "feeds": "Channel",
         // "follow": "关注",
         // "following": "已关注",
         "tip": "打赏"
     },
     "NotificationPage":{
         "emptyDes": "还未收到通知",
-        "followedFeed": "关注了您的Feeds",
+        "followedFeed": "关注了您的Channel",
         "likedPost": "赞了微说",
         "commentPost": "在微说留了言",
         "likedComment": "赞了微评"
     },
     "CreatenewfeedPage":{
-        "createNewFeed": "创建新的Feed",
-        "profileImage": "Feed头像",
-        "des": "为Feed选择一张头像",
+        "createNewFeed": "新建Channel",
+        "profileImage": "Channel头像",
+        "des": "为Channel选择一张头像",
         // "des1": "头像已选择",
         "channelSource": "Feeds出版号",
-        "name": "Feed名称",
-        "description": "Feed描述",
-        "createFeed": "创建Feed",
+        "name": "Channel名称",
+        "description": "Channel描述",
+        "createFeed": "创建",
         "tipMsg": "请选择一个头像",
         "tipMsg1": "请输入名称",
         "tipMsg2": "请输入描述信息",
@@ -221,15 +221,15 @@ export const zh = {
         "inputName": "输入名称",
         "inputFeedDesc": "输入描述",
         // "channelSourceDes": "在哪里保存您的FeedS",
-        "createfeedsuccess": "创建Feed成功!",
+        "createfeedsuccess": "创建Channel成功!",
         "tipMsgLength1": "描述信息长度最大为32",
-        "alreadyExist": "Feed已经存在，请更换名称后重试",
-        "nameContainInvalidChars": "Feed名称 不能包含除字母a-z，A-Z，数字0-9， 连字符- 以及 下划线_ 之外的所有其他字符。",
-        "feedMaxNumber":"最多可以创建5个Feed",
-        "feedNum":"您最多可以创建5个Feed"
+        "alreadyExist": "Channel已经存在，请更换名称后重试",
+        "nameContainInvalidChars": "Channel名称 不能包含除字母a-z，A-Z，数字0-9， 连字符- 以及 下划线_ 之外的所有其他字符。",
+        "feedMaxNumber":"最多可以创建5个Channel",
+        "feedNum":"您最多可以创建5个Channel"
     },
     "ProfileimagePage":{
-        "title": "Feed头像",
+        "title": "Channel头像",
         "confirm": "确认"
     },
     "ProfiledetailPage":{
@@ -274,13 +274,13 @@ export const zh = {
     //   },
     "AddServerPage":{
         "scanOrEnterAddress": "扫描或请直接输入",
-        "sourceAddress": "Feed地址",
+        "sourceAddress": "Channel地址",
         "openQRScanner": "扫描二维码",
         "confirm": "确认",
-        "sourceaddresshere": "输入Feed地址",
+        "sourceaddresshere": "输入Channel地址",
         "tipMsg": "URL地址可能错误",
         // "exploreFeedSources": "探索Feeds出版号",
-        "title": "添加Feeds",
+        // "title": "添加Feeds",
         "feedsSource": "Feeds出版号: ",
         "serverWentOffline": " 已变成离线",
         "serverAlreadyAdded": "该Feeds出版号已经在您的关注列表中了",
@@ -318,12 +318,12 @@ export const zh = {
         "public": "私密",
         // "des": "添加我的Feeds出版号!",
         "replyingto": "回复给",
-        "containedfeeds": "包含的Feeds列表",
+        "containedfeeds": "包含的Channel列表",
         "version": "版本",
         "beingPublic": "公开",
-        "des1": "开启开发者模式后，可以选择公开Feeds或公开测试Feeds",
-        "des2": "测试Feeds",
-        "des3": "公开Feeds",
+        "des1": "开启开发者模式后，可以选择公开Channel或公开测试Channel",
+        "des2": "测试Channel",
+        "des3": "公开Channel",
         "feedsSourceQRCodeDes":"该二维码仅限于发布者自己使用，可用于在其他设备上绑定出版号",
     },
     "ScanqrcodePage":{
@@ -386,8 +386,8 @@ export const zh = {
         "inputElaAddress": "请输入ELA地址",
     },
     "FinishPage": {
-        "introduce": "Feeds出版号绑定成功。恭喜您有了属于自己的Feeds出版号服务，现在您可以开始创建Feed。",
-        "introduce1": "新建Feed",
+        "introduce": "Feeds出版号绑定成功。恭喜您有了属于自己的Feeds出版号服务，现在您可以开始创建Channel。",
+        "introduce1": "新建Channel",
         "introduce2": "返回主页面",
     },
     "CreatenewpostPage":{
@@ -488,7 +488,7 @@ export const zh = {
         "title": "编辑出版号",
     },
     "EidtchannelPage":{
-       "title": "编辑Feed信息",
+        "title": "编辑Channel信息",
     },
     "EditPostPage":{
         "title": "编辑微说",
@@ -513,28 +513,28 @@ export const zh = {
         "des1": "清空数据成功",
         "hidedeletepost":'显示标记“删除”的微说',
         "hidedeletecomment":'显示标记“删除”的评论',
-        "hideOfflinefeed": "仅显示在线状态的Feeds",
+        "hideOfflinefeed": "仅显示在线状态的Channels",
         "on": "开",
         "off": "关",
     },
     "DiscoverfeedPage":{
-       "title": "探索广场",
-       "emptyDes": "还没有公开的Feeds"
+        "title": "探索广场",
+        "emptyDes": "还没有公开的Channel"
     },
     "DiscoverfeedinfoPage":{
-        "title": "Feed详情",
-        // "addFeed": "添加Feeds",
+        "title": "Channel详情",
+        // "addFeed": "添加Channel",
         "feeds": "名称",
         "follow": "关注",
         "unfollow": "关注中",
         "processing": "关注确认中",
         // "beingProcessing": "关注确认中",
-        "feedsQrcode": "Feed二维码"
+        "feedsQrcode": "Channel二维码"
     },
     "FeedinfoPage":{
-       "title": "Feed详情",
-       "feeds": "Feed",
-       "updatetime":"更新时间"
+        "title": "Channel详情",
+        "feeds": "Channel",
+        "updatetime":"更新时间"
     },
     "CommentlistPage":{
         "title": "评论详情",
