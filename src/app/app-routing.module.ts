@@ -40,7 +40,8 @@ const routes: Routes = [
   { path: 'editimage', loadChildren: './pages/editimage/editimage.module#EditimagePageModule' },
   { path: 'discoverfeedinfo', loadChildren: './pages/discoverfeedinfo/discoverfeedinfo.module#DiscoverfeedinfoPageModule' },
   { path: 'feedinfo', loadChildren: './pages/feedinfo/feedinfo.module#FeedinfoPageModule' },
-  { path: 'commentlist', loadChildren: './pages/commentlist/commentlist.module#CommentlistPageModule' }
+  { path: 'commentlist', loadChildren: './pages/commentlist/commentlist.module#CommentlistPageModule' },
+  { path: 'feedspreferences', loadChildren: './pages/feedspreferences/feedspreferences.module#FeedspreferencesPageModule' }
 ];
 
 @NgModule({

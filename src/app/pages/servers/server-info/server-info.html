@@ -58,21 +58,21 @@
           </div>
         </ion-col>
         <ion-col
-          size="5.5"
+          size="9.5"
           class="middle-col"
           (click)="navTo(channel.nodeId, channel.id)"
         >
-          <ion-label (press)="pressName(channel.name)">
-            {{ moreName(channel.name) }}
+          <ion-label>
+            {{ channel.name }}
           </ion-label>
         </ion-col>
 
-        <ion-col size="4" class="arrow-col">
+        <!-- <ion-col size="4" class="arrow-col">
           <div class="theme-toggle light-toggled">
               <div [ngClass]="{'light-mode':handlePublic(channel.id)=='','dark-mode':handlePublic(channel.id)!=''}" (click)="clickPublicFeeds(channel)"><p>{{ 'ServerInfoPage.public' | translate }}</p></div>
               <div [ngClass]="{'dark-mode':handlePublic(channel.id)=='','light-mode':handlePublic(channel.id)!=''}" (click)="unPublicFeeds(channel)"><p>{{ 'ServerInfoPage.beingPublic' | translate }}</p></div>
           </div>
-      </ion-col>
+      </ion-col> -->
         <ion-ripple-effect></ion-ripple-effect>
     </ion-row>
   </ion-item>

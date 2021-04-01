@@ -104,6 +104,7 @@ export const en = {
         "sendingTip":"This post is being sent, try again later",
         "currentPostError": "Current post is error",
         "sendingErrorTip": "After the post is sent successfully, please try again.",
+        "preferences":"Preferences"
     },
     "app": {
         "profileDetails": "Profile Details",
@@ -539,5 +540,9 @@ export const en = {
         "replydeleted":"(reply deleted)",
         "editreply":"Edit Reply",
         "deletereply":"Delete Reply",
+    },
+    "FeedspreferencesPage":{
+        "title": "Feeds Preferences",
+        "des":"Show in Explore Feeds"
     }
 };

@@ -28,6 +28,13 @@
       </ion-col>
       </ion-row>
 
+      <ion-row (click)="clickItem('preferences')" class="share bordertop" *ngIf="isPreferences">
+        <ion-col
+        size="12">
+        <ion-icon name="settings-outline"></ion-icon><span>{{"common.preferences"|translate}}</span>
+      </ion-col>
+      </ion-row>
+
       <ion-row (click)="clickItem('unfollow')" class="share bordertop" *ngIf="isShowUnfollow">
         <ion-col
         size="12">

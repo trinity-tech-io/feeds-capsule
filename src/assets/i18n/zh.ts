@@ -104,6 +104,7 @@ export const zh = {
         "sendingTip":"这条微说正在发送，请稍后再试",
         "currentPostError": "该微说出现异常",
         "sendingErrorTip": "待发送成功后，请重试",
+        "preferences":"设置"
     },
     "app":{
         "profileDetails": "档案详情",
@@ -540,5 +541,9 @@ export const zh = {
         "replydeleted":"(回复已删除)",
         "editreply":"编辑回复",
         "deletereply":"删除回复",
+    },
+    "FeedspreferencesPage":{
+       "title": "Feeds 设置",
+       "des":"在探索Feeds中显示"
     }
 };
