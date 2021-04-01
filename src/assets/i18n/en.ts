@@ -1,6 +1,6 @@
 export const en = {
     "common": {
-        "followers": "Followers",
+        "followers": "Subscribers",
         "allempty": "All Empty",
         "releaseToRefresh": "Release to refresh",
         "beingRefresh": "Refreshing...",
@@ -9,7 +9,7 @@ export const en = {
         "confirm": "Confirm",
         "des": "Clear <strong>all cached data</strong>!!!",
         // "prompt": "Prompt",
-        "des1": "Confirm New Feed",
+        "des1": "Confirm New Channel",
         "server": "Feeds Publisher Account:",
         // "channel": "Feeds:",
         "description": "Bio:",
@@ -17,7 +17,7 @@ export const en = {
         "feeds": "Feeds",
         "just": "Just now",
         "yesterday": "1d",
-        "unsubscribe": "Unfollow",
+        "unsubscribe": "Unsubscribe",
         "share": "Share",
         // "sending": "Sending...",
         "addressinvalid": "Address invalid",
@@ -67,8 +67,8 @@ export const en = {
         "photolibary": "Photo Library",
         "signedInto": "Signed In",
         "successfully": "Successfully",
-        "followed": "Followed",
-        "unfollowed": "Unfollowed",
+        "followed": "Subscribed",
+        "unfollowed": "Unsubscribed",
         // "infoObtaining": "Information is being obtained",
         "filevideodes": "The playback length of this video exceeds the limit of 15 seconds",
         "videoloading": "Uploading...",
@@ -90,11 +90,11 @@ export const en = {
         "unknown": "Unknown",
         // "unfollow": "Unfollow",
         // "adding": "Adding",
-        "feedsAlreadyAdded": "This feed has already been following",
-        "notFollowYet": "Follow",
+        "feedsAlreadyAdded": "This channel has already been subscribing",
+        "notFollowYet": "Subscribe",
         "httperror": "Service exception, try again later",
         "textcopied": "Text copied",
-        "connectionError1": "The feed is being offline now, try it again when it becomes online",
+        "connectionError1": "The channel is being offline now, try it again when it becomes online",
         "emptyElaAddressDes": "Not set yet",
         "qRcodePreview": "QR code Preview",
         "details":"Details",
@@ -135,7 +135,7 @@ export const en = {
     },
     "HomePage": {
         "allempty": "All Empty",
-        "emptyDes": "Not following any Feeds yet",
+        "emptyDes": "Not subscribing any Channels yet",
         "exploreFeeds": "Explore Feeds",
         "minutesAgo": "m",
         "hoursAgo": "h",
@@ -145,18 +145,18 @@ export const en = {
         "oneminuteAgo": "m"
     },
     "ProfilePage": {
-        "myFeeds": "Feeds",
-        "following": "Following",
+        "myFeeds": "Channels",
+        "following": "Subscriptions",
         "myLikes": "Likes",
         "moreinfo":"More Info"
     },
     "MyfeedsComponent": {
-        "emptyDes": "You have no Feeds",
-        "createFeed": "Create Feed",
-        "createNewFeed": "Add Feed"
+        "emptyDes": "You have no Channels",
+        "createFeed": "Create Channel",
+        "createNewFeed": "Add Channel"
     },
     "FollowingComponent": {
-        "emptyDes": "Not following any Feeds yet",
+        "emptyDes": "Not subscribing any Channels yet",
         "exploreFeeds": "Explore Feeds"
     },
     "LikesComponent": {
@@ -168,11 +168,11 @@ export const en = {
         "signoutMessage": 'Are you sure you want to sign out?'
     },
     "SearchPage": {
-        "emptyDes": "No Feeds yet",
-        "follow": "Follow",
-        "following": "Following",
-        "searchFeeds": "Search Feeds",
-        'addfeedssource': 'Add a Feed via QRCode',
+        "emptyDes": "No channels yet",
+        "follow": "Subscribe",
+        "following": "Subscribing",
+        "searchFeeds": "Search Channels",
+        // 'addfeedssource': 'Add a channel via QRCode',
         "status0": "Connecting",
         "status1": "Connecting",
         "status2": "Connecting",
@@ -188,30 +188,30 @@ export const en = {
         "status12": "Pending",
         "status14": "Disconnected",
         "discover": "Explore on Discovery Square",
-        "des1": "Your subscription request to this feed is ongoing; this takes a few seconds. Would you like to cancel this subscription？",
+        "des1": "Your subscription request to this channel is ongoing; this takes a few seconds. Would you like to cancel this subscription？",
     },
     "ChannelsPage": {
-        "feeds": "Feed",
+        "feeds": "Channel",
         // "follow": "Follow",
         // "following": "Following",
         "tip": "Tip"
     },
     "NotificationPage": {
         "emptyDes": "You have no notifications",
-        "followedFeed": "Followed your Feeds",
+        "followedFeed": "Subscribed your Channel",
         "likedPost": "Liked your post",
         "commentPost": "Commented on your post",
         "likedComment": "Liked your comment"
     },
     "CreatenewfeedPage": {
-        "createNewFeed": "Create New Feed",
+        "createNewFeed": "Add Channel",
         "profileImage": "Avatar",
-        "des": "PICK AN IMAGE FOR YOUR FEED",
+        "des": "PICK AN IMAGE FOR YOUR CHANNEL",
         // "des1": "Avatar selected",
         "channelSource": "Feeds Publisher Account",
         "name": "Name",
         "description": "Bio",
-        "createFeed": "Create Feed",
+        "createFeed": "Create",
         "tipMsg": "Select an avatar",
         "tipMsg1": "Add name",
         "tipMsg2": "Add Bio",
@@ -220,15 +220,15 @@ export const en = {
         "inputName": "ADD NAME",
         "inputFeedDesc": "ADD BIO",
         // "channelSourceDes": "WHERE TO STORE YOUR FEEDS?",
-        "createfeedsuccess": "Feed created successfully!",
+        "createfeedsuccess": "Channel created successfully!",
         "tipMsgLength1": "The maximum length of the name message is 32 characters",
-        "alreadyExist": "Feed already exists. Please change the name and try again",
-        "nameContainInvalidChars": "Feed Name can not include characters except alphabet letters A-Z, a-z, digits 0-9, the hyphen “-”, and the underscore “_”.",
-        "feedMaxNumber": "The maximum number of feeds can be created is 5",
-        "feedNum": "You can create up to 5 Feeds"
+        "alreadyExist": "Channel already exists. Please change the name and try again",
+        "nameContainInvalidChars": "Channel Name can not include characters except alphabet letters A-Z, a-z, digits 0-9, the hyphen “-”, and the underscore “_”.",
+        "feedMaxNumber": "The maximum number of channels can be created is 5",
+        "feedNum": "You can create up to 5 channels"
     },
     "ProfileimagePage": {
-        "title": "Profile Image",
+        "title": "Channel Image",
         "confirm": "Confirm"
     },
     "ProfiledetailPage": {
@@ -273,13 +273,13 @@ export const en = {
     // },
     "AddServerPage": {
         "scanOrEnterAddress": "Scan or Manually Enter",
-        "sourceAddress": "Feed Address",
+        "sourceAddress": "Channel Address",
         "openQRScanner": "Open QR Scanner",
         "confirm": "Confirm",
-        "sourceaddresshere": "Enter Feed address here",
+        "sourceaddresshere": "Enter Channel address here",
         "tipMsg": "Possible URL error",
         // "exploreFeedSources": "Explore Feeds Publisher Account",
-        "title": "Add a New Feed",
+        // "title": "Add a New Feed",
         "feedsSource": "Feeds Publisher Account : ",
         "serverWentOffline": " went offline.",
         "serverAlreadyAdded": "This Feeds Publisher Account has already been added.",
@@ -317,12 +317,12 @@ export const en = {
         "public": "Private",
         // "des": "Add my Feeds Publisher Account!",
         "replyingto": "Replying to",
-        "containedfeeds": "Contained Feeds",
+        "containedfeeds": "Contained Channels",
         "version": "version",
         "beingPublic": "Public",
-        "des1": "When developer mode is opened, you can choose public or public test Feeds",
-        "des2": "Test Feeds",
-        "des3": "Public Feeds",
+        "des1": "When developer mode is opened, you can choose public or public test Channel",
+        "des2": "Test Channel",
+        "des3": "Public Channel",
         "feedsSourceQRCodeDes": "This QRCode is only limited to your personal use, used to bind your publisher account on other devices",
     },
     "ScanqrcodePage": {
@@ -385,8 +385,8 @@ export const en = {
         "inputElaAddress": "Enter ELA Address",
     },
     "FinishPage": {
-        "introduce": "Completed binding for the Feeds Publisher Account. Congratulations, you have your own Feeds Publisher Account now, and you can create a Feed on this Feeds Publisher Account with your desire.",
-        "introduce1": "Create Feed",
+        "introduce": "Completed binding for the Feeds Publisher Account. Congratulations, you have your own Feeds Publisher Account now, and you can create a Channel on this Feeds Publisher Account with your desire.",
+        "introduce1": "Create Channel",
         "introduce2": "Return to main screen",
     },
     "CreatenewpostPage": {
@@ -487,7 +487,7 @@ export const en = {
         "title": "Edit Account",
     },
     "EidtchannelPage": {
-        "title": "Edit Feed Info",
+        "title": "Edit Channel Info",
     },
     "EditPostPage": {
         "title": "Edit Post",
@@ -512,27 +512,27 @@ export const en = {
         "des1": "Data cleared successfully",
         "hidedeletepost": 'Display posts labeled with (deleted)',
         "hidedeletecomment": 'Display comments labeled with (deleted)',
-        "hideOfflinefeed": "Display online Feeds only",
+        "hideOfflinefeed": "Display online Channels only",
         "on": "ON",
         "off": "OFF",
     },
     "DiscoverfeedPage": {
         "title": "Discovery Square",
-        "emptyDes": "There are no public Feeds"
+        "emptyDes": "There are no public Channels"
     },
     "DiscoverfeedinfoPage": {
-        "title": "Feed details",
-        // "addFeed": "Add Feeds",
+        "title": "Channel Details",
+        // "addFeed": "Add Channel",
         "feeds": "Name",
-        "follow": "Follow",
-        "unfollow": "Following",
+        "follow": "Subscribe",
+        "unfollow": "Subscribing",
         "processing": "Processing",
         // "beingProcessing": "Currently processing for confirmation",
-        "feedsQrcode": "Feed QR Code"
+        "feedsQrcode": "Channel QR Code"
     },
     "FeedinfoPage": {
-        "title": "Feed details",
-        "feeds": "Feed",
+        "title": "Channel Details",
+        "feeds": "Channel",
         "updatetime":"Update time"
     },
     "CommentlistPage":{
