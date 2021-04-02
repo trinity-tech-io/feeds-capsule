@@ -8,7 +8,7 @@
         </ion-col>
       </ion-row>
 
-      <div class="qr-container" *ngIf="isShowQrcode">
+      <div   [class.qr-container]="theme.darkMode" [class.light-qr-container]="!theme.darkMode" class="" *ngIf="isShowQrcode">
             <div class="qrcode">
                 <qrcode [qrdata]="qrCodeString" [size]="200" [level]="'M'"></qrcode>
             </div>
@@ -30,14 +30,14 @@
 
       <ion-row (click)="clickItem('preferences')" class="share bordertop" *ngIf="isPreferences">
         <ion-col
-        size="12">
+        size="12" style="margin-top: -2px;">
         <ion-icon name="settings-outline"></ion-icon><span>{{"common.preferences"|translate}}</span>
       </ion-col>
       </ion-row>
 
       <ion-row (click)="clickItem('unfollow')" class="share bordertop" *ngIf="isShowUnfollow">
         <ion-col
-        size="12">
+        size="12" style="margin-top: -2px;">
         <ion-icon name="person-remove" class="unfollowColor"></ion-icon><span class="unfollowColor">{{"common.unsubscribe"|translate}}</span>
       </ion-col>
       </ion-row>

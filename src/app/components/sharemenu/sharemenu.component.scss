@@ -77,12 +77,12 @@
     }
 
    .lightfeedlist{
-    background-color:#fff!important;
+    background-color:#ffffff !important;
     .shareTitle{
         font-size: 16px;
         font-weight: 700;
         margin: 5px 0px;
-        margin-bottom: -10px;
+        //margin-bottom: -10px;
         text-align: center;
     }
 
@@ -187,7 +187,19 @@
 
     .qrcode {
       padding: 15px;
-      background: #ffffff;
+      background:#fff;
+      border-radius: 17px;
+    }
+}
+
+.light-qr-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .qrcode {
+      padding: 15px;
+      background:#F8F9FF;
       border-radius: 17px;
     }
 }
