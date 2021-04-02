@@ -28,6 +28,8 @@ export class PostdetailPage implements OnInit {
 
   public channelAvatar:string = "";
   public channelName:string = "";
+  public commentAvatar:string = "";
+  public commentName:string = "";
   public channelWName:string ="";
   public channelOwner:string = "";
   public channelWOwner:string = "";
@@ -547,8 +549,16 @@ export class PostdetailPage implements OnInit {
     return this.feedService.indexText(text,limit,indexLength);
   }
 
-  showComment(commentId:number) {
-    this.commentId = commentId;
+  showComment(comment:any) {
+    if(comment === null){
+      this.commentId = 0;
+      this.commentName = this.channelName;
+      this.commentAvatar = this.channelAvatar;
+    }else{
+      this.commentId = comment.id;
+      this.commentName = comment.user_name;
+      this.commentAvatar = "./assets/images/default-contact.svg";
+    }
     if(this.checkServerStatus(this.nodeId) != 0){
       this.native.toastWarn('common.connectionError1');
       return;

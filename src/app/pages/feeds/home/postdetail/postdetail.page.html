@@ -111,7 +111,7 @@
           <img [src]="checkMyLike() ? '/assets/images/like-s.svg' : '/assets/images/like.svg'">
           <ion-label [class.liked]="checkMyLike()">{{ likesNum }}</ion-label>
         </ion-col>
-        <ion-col size="1.75" (click)="showComment(0)">
+        <ion-col size="1.75" (click)="showComment(null)">
           <img src="/assets/images/bubble-line.svg">
           <ion-label>{{ commentsNum }}</ion-label>
         </ion-col>
@@ -187,7 +187,7 @@
               <img [src]="checkLikedComment(comment.id) ? '/assets/images/like-s.svg' : '/assets/images/like.svg'">
               <ion-label [class.liked]="checkLikedComment(comment.id)">{{ comment.likes }}</ion-label>
             </ion-col>
-            <ion-col size="2.25" (click)="showComment(comment.id)">
+            <ion-col size="2.25" (click)="showComment(comment)">
               <img src="/assets/images/bubble-line.svg"> <ion-label>{{ comment.replayCommentSum }}</ion-label>
             </ion-col>
             <ion-col (click)="clickComment(comment)">
@@ -215,7 +215,7 @@
   [nodeId]="nodeId "
   [channelId]="channelId"
   [commentId]="commentId"
-  [channelAvatar]="channelAvatar"
-  [channelName]="channelName"
+  [channelAvatar]="commentAvatar"
+  [channelName]="commentName"
   (hideComment)="hideComponent($event)"
 ></app-comment>
