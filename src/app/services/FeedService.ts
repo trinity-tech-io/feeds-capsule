@@ -1714,7 +1714,7 @@ export class FeedService {
 
     this.dataHelper.updateChannel(nodeChannelId, channel);
 
-    eventBus.publish(FeedsEvent.PublishType.createTopicSuccess);
+    eventBus.publish(FeedsEvent.PublishType.createTopicSuccess,nodeId,channelId);
     eventBus.publish(FeedsEvent.PublishType.channelsDataUpdate);
 
     this.subscribeChannel(nodeId,channelId);
@@ -5433,14 +5433,14 @@ export class FeedService {
       this.native.toastWarn('common.connectionError');
       return false;
     }
-    
+
     let serverStatus = this.getServerStatusFromId(post.nodeId);
     if(serverStatus == FeedsData.ConnState.disconnected &&
       (post.post_status == FeedsData.PostCommentStatus.sending || post.post_status == FeedsData.PostCommentStatus.error)){
       this.native.toastWarn('common.connectionError1');
       return false;
     }
-    
+
     if (post.post_status == FeedsData.PostCommentStatus.sending){
       this.native.toastWarn('common.sendingTip');
       return false;

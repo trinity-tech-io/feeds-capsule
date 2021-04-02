@@ -11,6 +11,7 @@ export class TipdialogComponent implements OnInit {
   public did:string = "";
   public feedName:string = "";
   public feedDesc:string = "";
+  public feedPublicStatus:string ="";
   constructor(
     public theme: ThemeService,
     private navParams: NavParams,
@@ -20,6 +21,7 @@ export class TipdialogComponent implements OnInit {
     this.did = this.navParams.get('did');
     this.feedName = this.navParams.get('name');
     this.feedDesc = this.navParams.get('des');
+    this.feedPublicStatus =  this.navParams.get('feedPublicStatus') || "";
   }
 
   cancel(){
