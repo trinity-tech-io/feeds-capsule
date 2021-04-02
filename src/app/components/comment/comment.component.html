@@ -4,7 +4,15 @@
     <ion-item class="removeBorder" lines="none">
       <ion-row class="channel-row ion-activatable ripple">
         <ion-col size="2.5" class="left-col">
-          <div class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode">
+
+          <div class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode" *ngIf="commentId!=0">
+            <img style="border: 1.25px solid #368bff;" class="comment-avatar" src={{channelAvatar}}>
+            <div class="feed-source-card-status circlePosition">
+              <div class="offline" [class.online]="onlineStatus == 0"></div>
+            </div>
+          </div>
+
+          <div class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode" *ngIf="commentId===0">
             <img src={{channelAvatar}}>
             <div class="feed-source-card-status circlePosition">
               <div class="offline" [class.online]="onlineStatus == 0"></div>
@@ -12,7 +20,7 @@
           </div>
         </ion-col>
         <ion-col size="8" class="middle-col">
-          <ion-label style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ channelName }}</ion-label>
+          <ion-label style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{'ServerInfoPage.replyingto'|translate}} @{{ channelName }}</ion-label>
           <!-- <p>Comments</p> -->
         </ion-col>
         <ion-col size="1.5" class="right-col" (click)="hideComponent()">

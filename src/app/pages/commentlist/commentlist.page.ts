@@ -291,11 +291,12 @@ export class CommentlistPage implements OnInit {
     return this.feedService.indexText(text,limit,indexLength);
   }
 
-  showComment(commentId:number) {
-    let channel = this.feedService.getChannelFromId(this.nodeId, this.channelId) || "";
-    this.channelName = channel["name"];
-    this.channelAvatar = this.feedService.parseChannelAvatar(channel["avatar"]);
-    this.commentId = commentId;
+  showComment(comment:any) {
+
+    this.channelName = comment.user_name;
+    this.channelAvatar = "./assets/images/default-contact.svg";
+    this.commentId = comment.id;
+
     if(this.checkServerStatus(this.nodeId) != 0){
       this.native.toastWarn('common.connectionError1');
       return;
