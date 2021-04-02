@@ -1,7 +1,7 @@
 export const zh = {
     "common":{
         "followers": "订阅",
-        "allempty": "空空如也",
+        // "allempty": "空空如也",
         "releaseToRefresh": "释放刷新内容",
         "beingRefresh": "刷新中...",
         "cancel": "取消",
@@ -28,7 +28,7 @@ export const zh = {
         "loggingIn": "正在登录",
         "des2": "确认要返回主页面吗？",
         "connectionError": "当前无网络，请稍后再试",
-        "nopostyet": "还未发布微说",
+        // "nopostyet": "还未发布微说",
         // "nodescriptionyet": "暂时没有描述",
         // "moreThen0": "请输入大于0的数额",
         "success": "成功",
@@ -136,7 +136,7 @@ export const zh = {
     },
     "HomePage":{
         "allempty": "空空如也",
-        "emptyDes": "尚未订阅过任何频道",
+        "emptyDes": "去订阅有趣的频道吧",
         "exploreFeeds": "探索Feeds",
         "minutesAgo": "分钟前",
         "hoursAgo": "小时前",
@@ -152,16 +152,19 @@ export const zh = {
         "moreinfo":"更多信息"
     },
     "MyfeedsComponent":{
-        "emptyDes": "您还没有频道",
+        "allempty": "空空如也",
+        "emptyDes": "创建频道以开始使用",
         "createFeed": "创建频道",
         "createNewFeed": "新建频道"
     },
     "FollowingComponent":{
-        "emptyDes": "尚未订阅过任何频道",
+        "allempty": "空空如也",
+        "emptyDes": "去订阅有趣的频道吧",
         "exploreFeeds": "探索Feeds"
     },
     "LikesComponent":{
-        "emptyLikeDes": "您还没有任何收藏",
+        "allempty": "空空如也",
+        "emptyLikeDes": "给有趣的微说点个赞",
         "exploreFeeds": "探索Feeds"
     },
     "ConfirmdialogComponent": {
@@ -195,10 +198,13 @@ export const zh = {
         "feeds": "频道",
         // "follow": "订阅",
         // "following": "已订阅",
-        "tip": "打赏"
+        "tip": "打赏",
+        "allempty": "空空如也",
+        "emptyDes": "该频道尚未发布任何微说",
     },
     "NotificationPage":{
-        "emptyDes": "还未收到通知",
+        "allempty": "空空如也",
+        "emptyDes": "您现在没有任何通知",
         "followedFeed": "订阅了您的频道",
         "likedPost": "赞了微说",
         "commentPost": "在微说留了言",
@@ -544,6 +550,6 @@ export const zh = {
     },
     "FeedspreferencesPage":{
        "title": "Feeds 设置",
-       "des":"在探索Feeds中显示"
+       "des": "在探索Feeds中显示"
     }
 };

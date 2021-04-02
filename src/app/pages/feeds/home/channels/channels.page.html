@@ -46,8 +46,8 @@
   <!-- EMPTY CONTAINER -->
   <div *ngIf="postList.length === 0" class="empty-container">
     <img src="./assets/images/empty-feeds-icon.svg">
-    <h1>{{ 'HomePage.allempty' | translate }}</h1>
-    <p>{{ 'common.nopostyet' | translate }}</p>
+    <h1>{{ 'ChannelsPage.allempty' | translate }}</h1>
+    <p>{{ 'ChannelsPage.emptyDes' | translate }}</p>
   </div>
 
   <!-- POSTS -->
@@ -185,7 +185,7 @@
                 right: 1px;
                 font-size: 13px;
                 font-weight: 500;
-                color: #7171bd;" (click)="retry(post.nodeId, post.channel_id, post.id)">{{ "common.retry" | translate }} </ion-label> 
+                color: #7171bd;" (click)="retry(post.nodeId, post.channel_id, post.id)">{{ "common.retry" | translate }} </ion-label>
             </ion-col>
           </ion-row>
         </ion-col>
