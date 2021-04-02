@@ -548,7 +548,7 @@ export const fr = {
         "deletereply": "Delete Reply",
     },
     "FeedspreferencesPage": {
-        "title": "Feeds Preferences",
+        "title": "Channel Preferences",
         "des": "Show in Explore Feeds"
     }
 };

@@ -549,7 +549,7 @@ export const zh = {
         "deletereply": "删除回复",
     },
     "FeedspreferencesPage":{
-       "title": "Feeds 设置",
+       "title": "频道设置",
        "des": "在探索Feeds中显示"
     }
 };
