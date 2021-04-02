@@ -1,7 +1,7 @@
 export const en = {
     "common": {
         "followers": "Subscribers",
-        "allempty": "All Empty",
+        // "allempty": "All Empty",
         "releaseToRefresh": "Release to refresh",
         "beingRefresh": "Refreshing...",
         "cancel": "Cancel",
@@ -28,7 +28,7 @@ export const en = {
         "loggingIn": "Signing in",
         "des2": "Are you sure you want to return to the main page？",
         "connectionError": "Network error, please try again later",
-        "nopostyet": "No posts yet",
+        // "nopostyet": "No posts yet",
         // "nodescriptionyet": "No bio added",
         // "moreThen0": "Enter a number greater than 0",
         "success": "Success",
@@ -134,8 +134,8 @@ export const en = {
         "tabTitle4": "Explore Feeds"
     },
     "HomePage": {
-        "allempty": "All Empty",
-        "emptyDes": "Not subscribing any Channels yet",
+        "allempty": "No Subscriptions Yet",
+        "emptyDes": "Go and subscribe to channels you find exciting",
         "exploreFeeds": "Explore Feeds",
         "minutesAgo": "m",
         "hoursAgo": "h",
@@ -151,16 +151,19 @@ export const en = {
         "moreinfo":"More Info"
     },
     "MyfeedsComponent": {
-        "emptyDes": "You have no Channels",
+        "allempty": "No Channels Yet",
+        "emptyDes": "Create a channel to get started",
         "createFeed": "Create Channel",
         "createNewFeed": "Add Channel"
     },
     "FollowingComponent": {
-        "emptyDes": "Not subscribing any Channels yet",
+        "allempty": "No Subscriptions Yet",
+        "emptyDes": "Go and subscribe to channels you find exciting",
         "exploreFeeds": "Explore Feeds"
     },
     "LikesComponent": {
-        "emptyLikeDes": "You haven't liked anything yet",
+        "allempty": "No Likes Yet",
+        "emptyLikeDes": "Give a like to posts you find interesting",
         "exploreFeeds": "Explore Feeds"
     },
     "ConfirmdialogComponent": {
@@ -194,11 +197,14 @@ export const en = {
         "feeds": "Channel",
         // "follow": "Follow",
         // "following": "Following",
-        "tip": "Tip"
+        "tip": "Tip",
+        "allempty": "No Posts Yet",
+        "emptyDes": "This channel hasn't published any posts",
     },
     "NotificationPage": {
-        "emptyDes": "You have no notifications",
-        "followedFeed": "Subscribed your Channel",
+        "allempty": "No Notifications",
+        "emptyDes": "You don't have any notifications right now",
+        "followedFeed": "Subscribed to your channel",
         "likedPost": "Liked your post",
         "commentPost": "Commented on your post",
         "likedComment": "Liked your comment"
@@ -533,16 +539,16 @@ export const en = {
     "FeedinfoPage": {
         "title": "Channel Details",
         "feeds": "Channel",
-        "updatetime":"Update time"
+        "updatetime": "Update time"
     },
     "CommentlistPage":{
         "title": "Comment View",
-        "replydeleted":"(reply deleted)",
-        "editreply":"Edit Reply",
-        "deletereply":"Delete Reply",
+        "replydeleted": "(reply deleted)",
+        "editreply": "Edit Reply",
+        "deletereply": "Delete Reply",
     },
     "FeedspreferencesPage":{
         "title": "Feeds Preferences",
-        "des":"Show in Explore Feeds"
+        "des": "Show in Explore Feeds"
     }
 };
