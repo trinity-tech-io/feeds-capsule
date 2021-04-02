@@ -1,4 +1,4 @@
-export const fr = {
+export const en = {
     "common": {
         "followers": "Subscribers",
         "allempty": "All Empty",
@@ -26,8 +26,8 @@ export const fr = {
         // "unFollowSuccess": "Unfollowed",
         "noImageSelected": "No Image Selected",
         "loggingIn": "Signing in",
-        "des2": 'Are you sure you want to return to the main page？',
-        "connectionError": 'Network error, please try again later',
+        "des2": "Are you sure you want to return to the main page？",
+        "connectionError": "Network error, please try again later",
         "nopostyet": "No posts yet",
         // "nodescriptionyet": "No bio added",
         // "moreThen0": "Enter a number greater than 0",
@@ -118,7 +118,7 @@ export const fr = {
     "SigninPage": {
         "signIn": "Sign In to Feeds",
         // "Pleasewait": "Please wait...",
-        "feeds": 'Feeds',
+        "feeds": "Feeds",
         "des": "Where meaningful",
         "des1": "conversations happen",
         "des2": "Learn more about Feeds?",
@@ -164,15 +164,15 @@ export const fr = {
         "exploreFeeds": "Explore Feeds"
     },
     "ConfirmdialogComponent": {
-        // "signoutTitle": 'Sign Out',
-        "signoutMessage": 'Are you sure you want to sign out?'
+        // "signoutTitle": "Sign Out",
+        "signoutMessage": "Are you sure you want to sign out?"
     },
     "SearchPage": {
         "emptyDes": "No channels yet",
         "follow": "Subscribe",
         "following": "Subscribing",
         "searchFeeds": "Search Channels",
-        // 'addfeedssource': 'Add a channel via QRCode',
+        // "addfeedssource": "Add a channel via QRCode",
         "status0": "Connecting",
         "status1": "Connecting",
         "status2": "Connecting",
@@ -253,8 +253,8 @@ export const fr = {
         "website": "Website",
         "disclaimer": "Disclaimer",
         "help": "Feeds dApp manual",
-        'email': 'Email',
-        'telegram': 'Telegram',
+        "email": "Email",
+        "telegram": "Telegram",
     },
     "PostdetailPage": {
         "postview": "Post View"
@@ -330,7 +330,7 @@ export const fr = {
         "introtitle2": "Feeds Publisher Account",
         "introduce1": "Be sure you have a new Feeds Publisher Account set up on your device and a QR code address displayed on the browser.",
         "introduce2": "Scan the QR code to bind your current DID with the Feeds Publisher Account.",
-        // "introduce3":"to proceed",
+        // "introduce3": "to proceed",
         "introduce4": "Scan your QR code"
     },
     "StartbindingPage": {
@@ -368,17 +368,17 @@ export const fr = {
         "introduce1": "Publish the payload of a new DID Document sent from selected Feeds Publisher Account",
         "payload": "Payload",
         "publishonDIDsidechain": "Publish on DID Sidechain",
-        // "abort":"Abort",
+        // "abort": "Abort",
     },
     "IssuecredentialPage": {
         "introduce": "Create your Feeds Publisher Account",
         "introduce1": "DID Document of selected Feeds Publisher Account published to sidechain successfully.",
         "introduce2": "To claim the ownership, a new credential will be issued to the selected Feeds Publisher Account.",
         "issueacredential": "Issue credentials",
-        // "abort":"Abort",
+        // "abort": "Abort",
         "serverInfo": "Feeds Publisher Account Info",
         "serverName": "Name",
-        "serverDes": 'Description',
+        "serverDes": "Description",
         "elaaddress": "ELA Address",
         "inputName": "Enter Publisher Name",
         "inputServerDes": "Enter Publisher Bio",
@@ -510,8 +510,8 @@ export const fr = {
         "cleandata": "Clear Data",
         "des": "Are you sure you want to clear the data?",
         "des1": "Data cleared successfully",
-        "hidedeletepost": 'Display posts labeled with (deleted)',
-        "hidedeletecomment": 'Display comments labeled with (deleted)',
+        "hidedeletepost": "Display posts labeled with (deleted)",
+        "hidedeletecomment": "Display comments labeled with (deleted)",
         "hideOfflinefeed": "Display online Channels only",
         "on": "ON",
         "off": "OFF",
