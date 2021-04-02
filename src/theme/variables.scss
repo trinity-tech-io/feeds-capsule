@@ -219,7 +219,7 @@ ion-row {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-
+  padding: 0 10px;
   ion-img {
       width: 82.5px;
       height: 54.9px;
@@ -239,9 +239,9 @@ ion-row {
 
   p {
       margin-top: 5px;
-      font-size: 15px;
+      font-size: 13px;
       font-weight: 500;
-      letter-spacing: 1.6px;
+      // letter-spacing: 1.6px;
   }
 }
 
