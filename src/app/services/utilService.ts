@@ -101,7 +101,7 @@ public static dateFormat(date: Date, sFormat: String = 'yyyy-MM-dd'): string {
         disPlayStr = this.dateFormat(new Date(createTime),"MM-dd");
         return  {content:disPlayStr,type:"d"};
       }
-      disPlayStr = this.dateFormat(new Date(createTime),"MM-dd-yyyy");
+      disPlayStr = this.dateFormat(new Date(createTime),"yyyy-MM-dd");
       return  {content:disPlayStr,type:"y"};
   }
 
