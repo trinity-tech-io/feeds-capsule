@@ -5,6 +5,10 @@ import { NativeService } from 'src/app/services/NativeService';
 import { ThemeService } from 'src/app/services/theme.service';
 import { TranslateService } from "@ngx-translate/core";
 import { TipdialogComponent} from '../../../components/tipdialog/tipdialog.component';
+import { ApiUrl } from '../../../services/ApiUrl';
+import { StorageService } from '../../../services/StorageService';
+import { UtilService } from '../../../services/utilService';
+import { HttpService } from '../../../services/HttpService';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 @Component({
@@ -21,7 +25,7 @@ export class CreatenewfeedPage implements OnInit {
   public avatar = "";
   public selectedServer: any = null;
   public selectedChannelSource:string = 'Select channel source';
-
+  public curFeedPublicStatus:string = "1";
   constructor(
     private popover: PopoverController ,
     private navCtrl: NavController,
@@ -32,6 +36,8 @@ export class CreatenewfeedPage implements OnInit {
     private native: NativeService,
     public theme:ThemeService,
     private translate:TranslateService,
+    private storageService:StorageService,
+    private httpService:HttpService
   ) {
   }
 
@@ -79,8 +85,9 @@ export class CreatenewfeedPage implements OnInit {
         this.connectionStatus = status;
       });
     });
-    this.events.subscribe(FeedsEvent.PublishType.createTopicSuccess, () => {
+    this.events.subscribe(FeedsEvent.PublishType.createTopicSuccess, (nodeId:string,feedId:number) => {
       this.zone.run(() => {
+        this.publicFeeds(nodeId,feedId);
         this.native.hideLoading();
         this.navCtrl.pop().then(()=>{
           this.native.toast(this.translate.instant("CreatenewfeedPage.createfeedsuccess"));
@@ -131,7 +138,7 @@ export class CreatenewfeedPage implements OnInit {
    if(feedList.length>=5){
      this.native.toastWarn("CreatenewfeedPage.feedMaxNumber");
      return;
-   }
+    }
 
    this.feedService.checkDIDOnSideChain(this.selectedServer.did,(isOnSideChain)=>{
       this.zone.run(() => {
@@ -212,7 +219,8 @@ export class CreatenewfeedPage implements OnInit {
       componentProps: {
         "did":this.selectedServer.did,
         "name":name,
-        "des":des
+        "des":des,
+        "feedPublicStatus":this.curFeedPublicStatus
       }
     });
     popover.onWillDismiss().then(() => {
@@ -220,5 +228,50 @@ export class CreatenewfeedPage implements OnInit {
     });
 
     return await popover.present();
+  }
+
+  clickPublicFeeds(){
+    if(this.curFeedPublicStatus!=""){
+      this.curFeedPublicStatus = "";
+    }else{
+      this.curFeedPublicStatus = "1";
+    }
+  }
+
+  publicFeeds(nodeId:string,feedId:number){
+
+    if(this.curFeedPublicStatus===""){
+         return;
+    }
+
+    let server = this.feedService.getServerbyNodeId(nodeId) || null;
+    if(server===null){
+       return;
+    }
+    let feed = this.feedService.getChannelFromId(nodeId,feedId);
+    let feedsUrl = server.feedsUrl+"/"+feed["id"];
+    let channelAvatar = this.feedService.parseChannelAvatar(feed["avatar"]);
+    let feedsUrlHash = UtilService.SHA256(feedsUrl);
+    let obj = {
+      "did":server['did'],
+      "name":feed["name"],
+      "description":feed["introduction"],
+      "url":feedsUrl,
+      "feedsUrlHash":feedsUrlHash,
+      "feedsAvatar":channelAvatar,
+      "followers":feed["subscribers"],
+      "ownerName":feed["owner_name"],
+      "nodeId":nodeId,
+      "ownerDid":feed["owner_did"]
+    };
+    this.httpService.ajaxPost(ApiUrl.register,obj).then((result)=>{
+      if(result["code"] === 200){
+          this.curFeedPublicStatus = "1";
+         let feedPublicStatus = this.feedService.getFeedPublicStatus() || {};
+          feedPublicStatus[feedsUrlHash] = "1";
+          this.feedService.setFeedPublicStatus(feedPublicStatus);
+          this.storageService.set("feeds.feedPublicStatus",JSON.stringify(feedPublicStatus));
+      }
+    });
   }
 }

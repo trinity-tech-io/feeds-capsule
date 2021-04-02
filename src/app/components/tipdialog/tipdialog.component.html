@@ -28,6 +28,17 @@
     {{feedDesc}}
    </ion-col>
 
+   <ion-col size="4" class="left key">
+    {{'FeedspreferencesPage.des' | translate}}
+   </ion-col>
+
+   <ion-col size="8"  class="left value" *ngIf="feedPublicStatus===''">
+    {{ 'SettingsPage.off' | translate }}
+   </ion-col>
+
+   <ion-col size="8"  class="left value" *ngIf="feedPublicStatus!=''">
+    {{ 'SettingsPage.on' | translate }}
+   </ion-col>
   </ion-row>
 
 
@@ -40,4 +51,4 @@
       <span class="confirm">{{ 'common.confirm' | translate }}</span>
     </ion-col>
   </ion-row>
-</ion-grid>  
+</ion-grid>

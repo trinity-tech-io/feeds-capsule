@@ -232,5 +232,21 @@ getPublicStatus(){
   }else{
      this.curFeedPublicStatus = "1";
   }
+ }
+
+ toggleFeeds(){
+
+  if(this.curFeedPublicStatus === ""){
+      this.clickPublicFeeds();
+      return;
+  }
+  if(this.curFeedPublicStatus!=""){
+      this.unPublicFeeds();
+      return;
+  }
+  // this.hideDeletedPosts = !this.hideDeletedPosts;
+  // this.feedService.setHideDeletedPosts(this.hideDeletedPosts);
+  // this.events.publish(FeedsEvent.PublishType.hideDeletedPosts);
+  // this.feedService.setData("feeds.hideDeletedPosts",this.hideDeletedPosts);
 }
 }

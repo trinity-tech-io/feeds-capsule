@@ -158,14 +158,14 @@ ion-input {
 
 /****************** donate Component ******************/
 .PaypromptComponent {
-  animation: animate;
-  animation-duration: 300ms;
-  animation-fill-mode: forwards;
+  // animation: animate;
+  // animation-duration: 300ms;
+  // animation-fill-mode: forwards;
 
-  @keyframes animate {
-    0% { bottom: -1000px }
-    100% { bottom: 0px }
-  }
+  // @keyframes animate {
+  //   0% { bottom: -1000px }
+  //   100% { bottom: 0px }
+  // }
 
   .popover-wrapper{
     .popover-content {
@@ -176,6 +176,19 @@ ion-input {
       width: 85vw !important;
     }
   }
+}
+
+.dark .PaypromptComponent{
+
+  .popover-wrapper{
+    .popover-content {
+       background: #191a2f !important;
+    }
+
+    .popover-arrow.sc-ion-popover-ios:after{
+       background: #191a2f !important;
+    }
+}
 }
 
 /****************** confirmdialog Component ******************/
@@ -191,6 +204,19 @@ ion-input {
       width:85vw  !important;
     }
   }
+}
+
+.dark .ConfirmdialogComponent{
+
+  .popover-wrapper{
+    .popover-content {
+       background: #191a2f !important;
+    }
+
+    .popover-arrow.sc-ion-popover-ios:after{
+       background: #191a2f !important;
+    }
+}
 }
 
 /********* OLD *********/
