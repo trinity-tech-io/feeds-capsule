@@ -100,11 +100,6 @@ export class FeedspreferencesPage implements OnInit {
 
   unPublicFeeds(){
 
-    if(this.feedService.getConnectionStatus() !== 0){
-      this.native.toastWarn('common.connectionError');
-      return;
-    }
-
     let server = this.feedService.getServerbyNodeId(this.nodeId) || null;
     if(server===null){
        return;
@@ -126,21 +121,6 @@ export class FeedspreferencesPage implements OnInit {
   }
 
   publicFeeds(){
-
-    if(this.feedService.getConnectionStatus() !== 0){
-      this.native.toastWarn('common.connectionError');
-      return;
-    }
-
-    if(!this.isShowQrcode){
-      this.native.toastWarn('common.waitOnChain');
-      return;
-    }
-
-    if(this.developerMode){
-      this.developerModeConfirm();
-      return;
-    }
 
     let server = this.feedService.getServerbyNodeId(this.nodeId) || null;
     if(server===null){
@@ -248,11 +228,29 @@ getPublicStatus(){
  toggle(){
 
   if(!this.curFeedPublicStatus){
+    if(this.feedService.getConnectionStatus() !== 0){
+      this.native.toastWarn('common.connectionError');
+      return;
+    }
+
+    if(!this.isShowQrcode){
+      this.native.toastWarn('common.waitOnChain');
+      return;
+    }
+
+    if(this.developerMode){
+      this.developerModeConfirm();
+      return;
+    }
     this.publicFeeds();
     return;
   }
 
   if(this.curFeedPublicStatus){
+    if(this.feedService.getConnectionStatus() !== 0){
+      this.native.toastWarn('common.connectionError');
+      return;
+    }
     this.unPublicFeeds();
     return;
   }

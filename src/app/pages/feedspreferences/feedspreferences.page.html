@@ -3,13 +3,13 @@
 </ion-header>
 <ion-content>
   <ion-grid class="ios-container" [class.ios-dark-container]="theme.darkMode">
-    <ion-row class="section" (click)="toggle()" (swipe)="toggle()">
-      <ion-col size="9" class="title-col">
+    <ion-row class="section" (click)="toggle()">
+      <ion-col size="9" class="title-col" (swipe)="toggle()">
           <h1>{{"FeedspreferencesPage.des" | translate }}</h1>
           <h2 *ngIf="curFeedPublicStatus">{{ 'SettingsPage.on' | translate }}</h2>
           <h2 *ngIf="!curFeedPublicStatus">{{ 'SettingsPage.off' | translate }}</h2>
       </ion-col>
-      <ion-col size="3" class="arrow-col">
+      <ion-col size="3" class="arrow-col" (swipe)="toggle()">
         <ion-toggle style="pointer-events: none;"  mode="ios" color="success" [(ngModel)]="curFeedPublicStatus"></ion-toggle>
       </ion-col>
   </ion-row>
