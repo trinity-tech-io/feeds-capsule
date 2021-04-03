@@ -210,12 +210,12 @@ export class ServerInfoPage implements OnInit {
       details: server.name ||  this.translate.instant('DIDdata.NotprovidedfromDIDDocument')
     });
 
-    if (this.isOwner == 'true'){
+    //if (this.isOwner == 'true'){
       this.serverDetails.push({
         type:'ServerInfoPage.owner',
         details: server.owner || ""
       });
-    }
+    //}
 
     if (this.developerMode){
       this.serverDetails.push({
