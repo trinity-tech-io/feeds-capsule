@@ -25,7 +25,7 @@ export class CreatenewfeedPage implements OnInit {
   public avatar = "";
   public selectedServer: any = null;
   public selectedChannelSource:string = 'Select channel source';
-  public curFeedPublicStatus:string = "1";
+  public curFeedPublicStatus:boolean = true;
   constructor(
     private popover: PopoverController ,
     private navCtrl: NavController,
@@ -231,16 +231,14 @@ export class CreatenewfeedPage implements OnInit {
   }
 
   clickPublicFeeds(){
-    if(this.curFeedPublicStatus!=""){
-      this.curFeedPublicStatus = "";
-    }else{
-      this.curFeedPublicStatus = "1";
-    }
+    this.zone.run(()=>{
+      this.curFeedPublicStatus = !this.curFeedPublicStatus;
+    });
   }
 
   publicFeeds(nodeId:string,feedId:number){
 
-    if(this.curFeedPublicStatus===""){
+    if(!this.curFeedPublicStatus){
          return;
     }
 
@@ -266,7 +264,6 @@ export class CreatenewfeedPage implements OnInit {
     };
     this.httpService.ajaxPost(ApiUrl.register,obj).then((result)=>{
       if(result["code"] === 200){
-          this.curFeedPublicStatus = "1";
          let feedPublicStatus = this.feedService.getFeedPublicStatus() || {};
           feedPublicStatus[feedsUrlHash] = "1";
           this.feedService.setFeedPublicStatus(feedPublicStatus);
