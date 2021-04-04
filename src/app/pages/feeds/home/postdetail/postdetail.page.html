@@ -148,7 +148,7 @@
     <ion-grid  class="post-grid" [class.darkPostGrid]="theme.darkMode">
       <ion-row class="post-row">
         <ion-col class="right-col" size="1.5"  *ngIf="comment.status != 1 && isOwnComment[comment.id]">
-          <img (click)="openEditTool($event,comment)"
+          <img (click)="openEditTool(comment)"
             [src]="!theme.darkMode ? './assets/images/dots-three-vertical.svg' : './assets/images/dots-three-vertical-dark.svg'"
           >
         </ion-col>

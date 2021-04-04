@@ -8,7 +8,6 @@ import { ThemeService } from 'src/app/services/theme.service';
 import { TranslateService } from "@ngx-translate/core";
 import { UtilService } from 'src/app/services/utilService';
 import { IonInfiniteScroll,PopoverController} from '@ionic/angular';
-import { EdittoolComponent } from '../../components/edittool/edittool.component';
 import { AppService } from 'src/app/services/AppService';
 import { LogUtils } from 'src/app/services/LogUtils';
 import * as _ from 'lodash';
@@ -57,6 +56,7 @@ export class CommentlistPage implements OnInit {
   public avatar: string = "";
   public updatedAt:number = 0;
   public channelOwner:string ="";
+  public curComment:any = {};
   constructor(
     private platform: Platform,
     private popoverController:PopoverController,
@@ -190,6 +190,11 @@ export class CommentlistPage implements OnInit {
       if(this.menuService.postDetail!=null){
         this.menuService.hideActionSheet();
         this.menuMore();
+      }
+
+      if(this.menuService.replyDetail!=null){
+        this.menuService.hideReplyActionSheet();
+        this.openEditTool(this.curComment);
       }
       this.initTitle();
     });
@@ -404,30 +409,9 @@ export class CommentlistPage implements OnInit {
 
   }
 
-  async openEditTool(ev:any,comment:any) {
-    this.popover = await this.popoverController.create({
-      mode: 'ios',
-      cssClass:'editToolPopup',
-      component: EdittoolComponent,
-      componentProps: { nodeId:comment.nodeId,
-                        channelId:Number(comment.channel_id),
-                        postId:Number(comment.post_id),
-                        commentById:Number(comment.comment_id),
-                        commentId:Number(comment.id),
-                        content:comment.content,
-                        editKey:"CommentlistPage.editreply",
-                        deleteKey:"CommentlistPage.deletereply"
-                      },
-      event: ev,
-      translucent: true
-    });
-
-    this.popover.onWillDismiss().then(()=>{
-         if(this.popover!=null){
-           this.popover = null;
-         }
-    })
-    return await this.popover.present();
+  async openEditTool(comment:any) {
+    this.curComment = comment;
+    this.menuService.showReplyDetailMenu(comment);
   }
 
   handleCommentStatus(){

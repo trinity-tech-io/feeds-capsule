@@ -15,6 +15,8 @@ export class MenuService {
 
     public postDetail:any = null;
     public popover:any = null;
+    public commentPostDetail:any = null;
+    public replyDetail:any = null;
     constructor(
         private feedService: FeedService,
         private actionSheetController: ActionSheetController,
@@ -225,6 +227,19 @@ export class MenuService {
     hideActionSheet(){
         if(this.postDetail!=null){
           this.postDetail.dismiss();
+        }
+    }
+
+    hideCommetActionSheet(){
+        if(this.commentPostDetail!=null){
+            this.commentPostDetail.dismiss();
+        }
+    }
+
+
+    hideReplyActionSheet(){
+        if(this.replyDetail!=null){
+            this.replyDetail.dismiss();
         }
     }
 
@@ -452,7 +467,7 @@ export class MenuService {
         let commentById = comment["comment_id"]
         let commentId = comment["id"];
         let content = comment["content"];
-        this.postDetail = await this.actionSheetController.create({
+        this.commentPostDetail = await this.actionSheetController.create({
             cssClass: 'editPost',
             buttons: [
             {
@@ -489,20 +504,81 @@ export class MenuService {
                 role: 'cancel',
                 icon: 'close-circle',
                 handler: () => {
-                    if(this.postDetail !=null){
-                       this.postDetail.dismiss();
+                    if(this.commentPostDetail !=null){
+                       this.commentPostDetail.dismiss();
                     }
                 }
             }
         ]
         });
 
-        this.postDetail.onWillDismiss().then(()=>{
-            if(this.postDetail !=null){
-                this.postDetail  = null;
+        this.commentPostDetail.onWillDismiss().then(()=>{
+            if(this.commentPostDetail!=null){
+                this.commentPostDetail  = null;
             }
 
         })
-        await this.postDetail.present();
+        await this.commentPostDetail.present();
+    }
+
+    async showReplyDetailMenu(reply:any){
+
+        let nodeId = reply["nodeId"];
+        let feedId = reply["channel_id"];
+        let postId = reply["post_id"];
+        let commentById = reply["comment_id"]
+        let commentId = reply["id"];
+        let content = reply["content"];
+        this.replyDetail = await this.actionSheetController.create({
+            cssClass: 'editPost',
+            buttons: [
+            {
+                    text: this.translate.instant("CommentlistPage.editreply"),
+                    icon: 'create',
+                    handler: () => {
+                       //this.handlePostDetailMenun(nodeId,channelId,channelName,postId,"editPost");
+                       this.native.go("editcomment",{
+                        nodeId:nodeId,
+                        channelId:feedId,
+                        postId:postId,
+                        commentById:commentById,
+                        commentId:commentId,
+                        content:content,
+                        titleKey:'CommentlistPage.editreply',
+                      });
+                    }
+            },
+            {
+                text: this.translate.instant("CommentlistPage.deletereply"),
+                role: 'destructive',
+                icon: 'trash',
+                handler: () => {
+                    this.native.showLoading("common.waitMoment",50000).then(()=>{
+                        this.feedService.deleteComment(nodeId,Number(feedId),Number(postId),Number(commentId));
+                      }).catch(()=>{
+
+                      })
+                }
+            },
+            {
+                text: this.translate.instant("common.cancel"),
+                role: 'cancel',
+                icon: 'close-circle',
+                handler: () => {
+                    if(this.replyDetail!=null){
+                       this.replyDetail.dismiss();
+                    }
+                }
+            }
+        ]
+        });
+
+        this.replyDetail.onWillDismiss().then(()=>{
+            if(this.replyDetail!=null){
+                this.replyDetail  = null;
+            }
+
+        })
+        await this.replyDetail.present();
     }
 }

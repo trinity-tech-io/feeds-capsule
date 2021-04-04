@@ -9,7 +9,6 @@ import { ServerpromptComponent} from './serverprompt/serverprompt.component';
 import { PaypromptComponent } from './payprompt/payprompt.component';
 import { TipdialogComponent} from './tipdialog/tipdialog.component';
 import { MorenameComponent} from './morename/morename.component';
-import { EdittoolComponent} from './edittool/edittool.component';
 
 import {ConfirmdialogComponent} from './confirmdialog/confirmdialog.component';
 import {AlertdialogComponent} from './alertdialog/alertdialog.component';
@@ -50,7 +49,6 @@ import { ShareModule } from 'src/app/share/share.module';
   declarations: [
     AlertdialogComponent,
     ConfirmdialogComponent,
-    EdittoolComponent,
     MorenameComponent,
     TipdialogComponent,
     PaypromptComponent,
@@ -69,7 +67,6 @@ import { ShareModule } from 'src/app/share/share.module';
   exports: [
     AlertdialogComponent,
     ConfirmdialogComponent,
-    EdittoolComponent,
     MorenameComponent,
     TipdialogComponent,
     PaypromptComponent,
@@ -88,7 +85,7 @@ import { ShareModule } from 'src/app/share/share.module';
 
   providers: [
   ],
-  entryComponents: [VideofullscreenComponent,AlertdialogComponent,ConfirmdialogComponent,EdittoolComponent,MorenameComponent,TipdialogComponent,ServerpromptComponent,
+  entryComponents: [VideofullscreenComponent,AlertdialogComponent,ConfirmdialogComponent,MorenameComponent,TipdialogComponent,ServerpromptComponent,
     PaypromptComponent,PreviewqrcodeComponent],
 })
 export class ComponentsModule { }
