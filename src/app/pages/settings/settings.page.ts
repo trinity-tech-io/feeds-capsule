@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit,NgZone} from '@angular/core';
 import { Events,PopoverController} from '@ionic/angular';
 import { TranslateService } from "@ngx-translate/core";
 import { ThemeService } from '../../services/theme.service';
@@ -38,7 +38,8 @@ export class SettingsPage implements OnInit {
     public popupProvider:PopupProvider,
     public storageService:StorageService,
     private popoverController:PopoverController,
-    private logUtils: LogUtils
+    private logUtils: LogUtils,
+    private zone:NgZone
     ) {
 
   }
@@ -74,14 +75,18 @@ export class SettingsPage implements OnInit {
   }
 
   toggleHideDeletedPosts(){
-    this.hideDeletedPosts = !this.hideDeletedPosts;
+    this.zone.run(()=>{
+      this.hideDeletedPosts = !this.hideDeletedPosts;
+    });
     this.feedService.setHideDeletedPosts(this.hideDeletedPosts);
     this.events.publish(FeedsEvent.PublishType.hideDeletedPosts);
     this.feedService.setData("feeds.hideDeletedPosts",this.hideDeletedPosts);
   }
 
   toggleHideDeletedComments(){
-    this.hideDeletedComments = !this.hideDeletedComments;
+    this.zone.run(()=>{
+      this.hideDeletedComments = !this.hideDeletedComments;
+    });
     this.feedService.setHideDeletedComments(this.hideDeletedComments);
     this.feedService.setData("feeds.hideDeletedComments",this.hideDeletedComments);
   }
@@ -94,7 +99,9 @@ export class SettingsPage implements OnInit {
   }
 
   toggleDeveloperMode(){
-    this.developerMode = !this.developerMode;
+    this.zone.run(()=>{
+      this.developerMode = !this.developerMode;
+    });
     this.feedService.setDeveloperMode(this.developerMode);
     this.feedService.setData("feeds.developerMode",this.developerMode);
     this.events.publish(FeedsEvent.PublishType.search);
