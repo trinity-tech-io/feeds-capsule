@@ -2,26 +2,24 @@
 <ion-grid class="ios-container" [class.ios-dark-container]="theme.darkMode">
 
     <ion-row class="section" (click)="toggleHideDeletedPosts()">
-        <ion-col size="9" class="title-col">
+        <ion-col size="9" class="title-col" (swipe)="toggleHideDeletedPosts()">
             <h1>{{"SettingsPage.hidedeletepost" | translate }}</h1>
             <h2 *ngIf="hideDeletedPosts">{{ 'SettingsPage.on' | translate }}</h2>
             <h2 *ngIf="!hideDeletedPosts">{{ 'SettingsPage.off' | translate }}</h2>
         </ion-col>
-        <ion-col size="3" class="arrow-col">
-            <ion-toggle *ngIf="hideDeletedPosts" checked mode="ios" color="success"></ion-toggle>
-            <ion-toggle *ngIf="!hideDeletedPosts" mode="ios"></ion-toggle>
+        <ion-col size="3" class="arrow-col" (swipe)="toggleHideDeletedPosts()">
+            <ion-toggle mode="ios" color="success" [(ngModel)]="hideDeletedPosts" style="pointer-events:none;"></ion-toggle>
         </ion-col>
     </ion-row>
 
     <ion-row class="section" (click)="toggleHideDeletedComments()">
-        <ion-col size="9" class="title-col">
+        <ion-col size="9" class="title-col" (swipe)="toggleHideDeletedComments()">
             <h1>{{"SettingsPage.hidedeletecomment" | translate }}</h1>
             <h2 *ngIf="hideDeletedComments">{{ 'SettingsPage.on' | translate }}</h2>
             <h2 *ngIf="!hideDeletedComments">{{ 'SettingsPage.off' | translate }}</h2>
         </ion-col>
-        <ion-col size="3" class="arrow-col">
-            <ion-toggle *ngIf="hideDeletedComments" checked mode="ios" color="success"></ion-toggle>
-            <ion-toggle *ngIf="!hideDeletedComments" mode="ios"></ion-toggle>
+        <ion-col size="3" class="arrow-col" (swipe)="toggleHideDeletedComments()">
+            <ion-toggle mode="ios" color="success" [(ngModel)]="hideDeletedComments" style="pointer-events:none;"></ion-toggle>
         </ion-col>
     </ion-row>
 
@@ -36,14 +34,13 @@
     </ion-row> -->
 
    <ion-row class="section dev-mode" (click)="toggleDeveloperMode()">
-        <ion-col size="9" class="title-col">
+        <ion-col size="9" class="title-col" (swipe)="toggleDeveloperMode()">
             <h1>{{"SettingsPage.devmode" | translate }}</h1>
             <h2 *ngIf="developerMode">{{ 'SettingsPage.on' | translate }}</h2>
             <h2 *ngIf="!developerMode">{{ 'SettingsPage.off' | translate }}</h2>
         </ion-col>
-        <ion-col size="3" class="arrow-col">
-            <ion-toggle *ngIf="developerMode" checked mode="ios" color="success"></ion-toggle>
-            <ion-toggle *ngIf="!developerMode" mode="ios"></ion-toggle>
+        <ion-col size="3" class="arrow-col" (swipe)="toggleDeveloperMode()">
+            <ion-toggle  mode="ios" color="success" [(ngModel)]="developerMode" style="pointer-events:none;"></ion-toggle>
         </ion-col>
     </ion-row>
 
