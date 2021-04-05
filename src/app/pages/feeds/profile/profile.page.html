@@ -14,11 +14,18 @@
   </ion-refresher>
   <ion-grid class="container" [class.darkContainer]="theme.darkMode" [class.blur]="!hideComment">
 
-    <div class="profile-header" (click)="profiledetail()">
+    <!-- <div class="profile-header" (click)="profiledetail()">
       <ion-img [src]="handleImages()"></ion-img>
       <h1>{{ name }}</h1>
       <p><ion-icon name="information-circle-outline" style="width:24px;height:24px;vertical-align: middle;"></ion-icon>{{'ProfilePage.moreinfo'|translate}}</p>
-    </div>
+    </div> -->
+
+    <ion-card (click)="profiledetail()">
+      <img class="moremenu"
+      [src]="!theme.darkMode ? './assets/images/dots-three-vertical.svg' : './assets/images/dots-three-vertical-dark.svg'">
+      <img [src]="handleImages()">
+      <ion-card-title>{{name}}</ion-card-title>
+    </ion-card>
 
     <div class="tab-container" [class.removeMargin]="selectType === 'ProfilePage.myLikes'" style="margin-top:5px;">
       <div class="left-tab" [class.tab-active]="selectType === 'ProfilePage.myFeeds'" (click)="changeType('ProfilePage.myFeeds')">

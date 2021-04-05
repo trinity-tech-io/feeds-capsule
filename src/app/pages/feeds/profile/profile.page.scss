@@ -1,5 +1,5 @@
 .container {
-    padding: 40px 0;
+    padding: 20px 0;
     min-height: 100%;
 
     /********** Tabs *********/
@@ -54,6 +54,47 @@
     .removeMargin {
         margin-bottom: 0;
     }
+
+    ion-card {
+        position: relative;
+        margin: 0px 20px 20px 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        box-shadow: 0 3px 15px 0 #ededf0;
+        background-color: #ffffff;
+        border-radius: 17px;
+        padding: 15px 30px;
+
+        img {
+          width: 58px;
+          height: 58px;
+          object-fit: cover;
+          overflow: hidden;
+          border-radius: 50%;
+          border: 2px solid #368bff;
+        }
+
+        ion-card-title {
+          font-size: 20px;
+          font-weight: 600;
+          line-height: 1.29;
+          color: #2e2f4e;
+          padding: 5px;
+        }
+
+        .moremenu{
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 20px;
+            height: 20px;
+            -o-object-fit: contain;
+            object-fit: contain;
+            border: none;
+        }
+      }
 }
 .darkContainer{
     .tab-container {
@@ -65,4 +106,17 @@
             }
         }
     }
+
+    ion-card {
+        box-shadow: 0 3px 15px 0 #151626;
+        background-color: #2e2f4e;
+
+        ion-card-title {
+          color: #ffffff;
+        }
+
+        ion-card-subtitle {
+          color: #ffffff;
+        }
+      }
 }
