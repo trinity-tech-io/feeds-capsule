@@ -247,7 +247,7 @@ export const zh = {
         "telephone": "号码",
         "email": "邮箱",
         "location": "国家/地区",
-        "didinfo":"Did信息",
+        "didinfo":"DID信息",
         "publisheraccount": "出版号"
     },
     "DevelopPage":{
@@ -459,7 +459,7 @@ export const zh = {
         "SizeOverflowError": "大小溢出错误",
         "StdSystemError": "StdSystem出错",
         "OutOfMemoryError": "服务端内存溢出",
-        "DidNotReady": "Did未准备好",
+        "DidNotReady": "DID未准备好",
         "InvalidAccessToken": "无效的访问Token",
         "NotAuthorizedError": "未授权",
         "CarrierSessionInitFailed": "Carrier Session: 初始化失败",
