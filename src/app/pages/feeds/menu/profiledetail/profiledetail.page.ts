@@ -194,8 +194,9 @@ export class ProfiledetailPage implements OnInit {
       let bindingServer = this.feedService.getBindingServer() || null;
       if(bindingServer === null){
         this.isShowPublisherAccount = false;
+      }else{
+        this.isShowPublisherAccount = true;
       }
-      this.isShowPublisherAccount = true;
       let nodeId = bindingServer.nodeId;
       this.nodeId =  bindingServer.nodeId;
       let did = bindingServer.did;
@@ -310,6 +311,7 @@ export class ProfiledetailPage implements OnInit {
           this.native.showLoading("common.waitMoment").then(()=>{
             this.feedService.deleteFeedSource(this.nodeId).then(() => {
               this.native.toast("ServerInfoPage.removeserver");
+              this.isShowPublisherAccount = false;
               this.native.hideLoading();
               this.feedService.setCurrentFeed(null);
               this.storageService.remove("feeds.currentFeed");
