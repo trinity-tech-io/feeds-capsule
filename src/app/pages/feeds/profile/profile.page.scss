@@ -1,7 +1,10 @@
 .container {
     padding: 20px 0;
     min-height: 100%;
-
+    .ripple {
+        position: relative;
+        overflow: hidden;
+    }
     /********** Tabs *********/
     .tab-container {
         height: 41.3px;

@@ -20,12 +20,13 @@
       <p><ion-icon name="information-circle-outline" style="width:24px;height:24px;vertical-align: middle;"></ion-icon>{{'ProfilePage.moreinfo'|translate}}</p>
     </div> -->
 
-    <ion-card (click)="profiledetail()">
+    <ion-card (click)="profiledetail()" class="ion-activatable ripple">
       <img class="moremenu"
       [src]="!theme.darkMode ? './assets/images/dots-three-vertical.svg' : './assets/images/dots-three-vertical-dark.svg'">
       <img [src]="handleImages()">
       <ion-card-title>{{name}}</ion-card-title>
     </ion-card>
+    <ion-ripple-effect></ion-ripple-effect>
 
     <div class="tab-container" [class.removeMargin]="selectType === 'ProfilePage.myLikes'" style="margin-top:5px;">
       <div class="left-tab" [class.tab-active]="selectType === 'ProfilePage.myFeeds'" (click)="changeType('ProfilePage.myFeeds')">

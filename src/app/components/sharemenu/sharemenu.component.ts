@@ -1,5 +1,4 @@
 import { Component,OnInit,Input,Output,EventEmitter} from '@angular/core';
-import { QRCodeComponent } from 'angularx-qrcode';
 import { ThemeService } from '../../services/theme.service';
 
 @Component({
