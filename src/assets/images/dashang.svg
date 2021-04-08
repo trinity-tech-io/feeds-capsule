@@ -12,7 +12,7 @@
    viewBox="0 0 16 14"
    version="1.1"
    id="svg3"
-   sodipodi:docname="tip10.svg"
+   sodipodi:docname="tip13.svg"
    inkscape:version="0.92.4 (5da689c313, 2019-01-14)">
   <metadata
      id="metadata9">
@@ -22,7 +22,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -42,32 +42,26 @@
      id="namedview5"
      showgrid="false"
      inkscape:zoom="33.714286"
-     inkscape:cx="3.1836678"
-     inkscape:cy="11.60041"
+     inkscape:cx="3.7208145"
+     inkscape:cy="8.1648304"
      inkscape:window-x="-8"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
-     inkscape:current-layer="svg3" />
+     inkscape:current-layer="Group_13395" />
   <g
      id="Group_13395"
      data-name="Group 13395"
      transform="matrix(0.87263168,0,0,0.87263168,0.13920889,0.61969329)"
      style="fill:#a0a2c4;fill-opacity:1">
     <path
-       inkscape:connector-curvature="0"
-       id="Path_639"
-       d="m 3055.069,1680.056 4.522,-2.611 4.522,-2.626 -4.522,-2.611 -4.522,2.611 -4.522,-2.611 -4.522,2.611 4.522,2.626 z"
-       class="cls-2"
-       data-name="Path 639"
-       transform="translate(-3046.025,-1665.122)"
-       style="fill:#a0a2c4;fill-opacity:1" />
+       style="fill:#a0a2c4;fill-opacity:1;stroke-width:0.87263167"
+       d="M 4.0859375 6.8027344 L 0.13867188 9.0820312 L 4.0859375 11.373047 L 8.03125 13.652344 L 11.976562 11.373047 L 15.923828 9.0820312 L 11.976562 6.8027344 L 8.03125 9.0820312 L 4.0859375 6.8027344 z M 11.947266 7.6816406 L 14.560547 9.1230469 L 10.248047 11.347656 L 7.96875 12.664062 L 5.6914062 11.347656 L 1.6308594 8.9765625 L 3.9492188 7.703125 L 7.96875 10.025391 L 11.947266 7.6816406 z "
+       transform="matrix(1.1459589,0,0,1.1459589,-0.15952766,-0.71014301)"
+       id="Path_639" />
     <path
-       inkscape:connector-curvature="0"
-       id="Path_640"
-       d="m 3055.069,1560.848 4.522,-2.611 4.522,-2.626 -4.522,-2.611 -4.522,2.611 -4.522,-2.611 -4.522,2.611 4.522,2.626 z"
-       class="cls-2"
-       data-name="Path 640"
-       transform="translate(-3046.025,-1553)"
-       style="fill:#a0a2c4;fill-opacity:1" />
+       style="fill:#a0a2c4;fill-opacity:1;stroke-width:0.87263167"
+       d="M 4.0859375 0.61914062 L 0.13867188 2.8984375 L 4.0859375 5.1894531 L 8.03125 7.46875 L 11.976562 5.1894531 L 15.923828 2.8984375 L 11.976562 0.61914062 L 8.03125 2.8984375 L 4.0859375 0.61914062 z M 11.941406 1.5097656 L 14.302734 2.9277344 L 10.369141 5.1679688 L 8.0292969 6.5195312 L 5.6894531 5.1679688 L 1.8769531 2.8671875 L 4.0078125 1.6660156 L 8.0292969 3.8085938 L 11.941406 1.5097656 z "
+       transform="matrix(1.1459589,0,0,1.1459589,-0.15952766,-0.71014301)"
+       id="Path_640" />
   </g>
 </svg>
