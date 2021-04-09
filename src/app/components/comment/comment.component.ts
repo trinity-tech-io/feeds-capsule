@@ -36,7 +36,7 @@ export class CommentComponent implements OnInit {
     let sid = setTimeout(() => {
       this.comment.setFocus();
       clearTimeout(sid);
-    }, 300);
+    }, 500);
   }
 
   ionViewDidEnter() {
