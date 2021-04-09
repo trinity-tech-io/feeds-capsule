@@ -90,7 +90,7 @@ export const en = {
         "unknown": "Unknown",
         // "unfollow": "Unfollow",
         // "adding": "Adding",
-        "feedsAlreadyAdded": "This channel has already been subscribing",
+        "feedsAlreadyAdded": "This channel has already been subscribed",
         "notFollowYet": "Subscribe",
         "httperror": "Service exception, try again later",
         "textcopied": "Text copied",
@@ -173,7 +173,7 @@ export const en = {
     "SearchPage": {
         "emptyDes": "No channels yet",
         "follow": "Subscribe",
-        "following": "Subscribing",
+        "following": "Subscribed",
         "searchFeeds": "Search Channels",
         // "addfeedssource": "Add a channel via QR Code",
         "status0": "Connecting",
@@ -531,7 +531,7 @@ export const en = {
         // "addFeed": "Add Channel",
         "feeds": "Name",
         "follow": "Subscribe",
-        "unfollow": "Subscribing",
+        "unfollow": "Subscribed",
         "processing": "Processing",
         // "beingProcessing": "Currently processing for confirmation",
         "feedsQrcode": "Channel QR Code"
