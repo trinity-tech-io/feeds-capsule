@@ -1,5 +1,5 @@
-import { Component, OnInit,NgZone} from '@angular/core';
-import { PopoverController,NavParams} from '@ionic/angular';
+import { Component, OnInit,NgZone,ViewChild} from '@angular/core';
+import { PopoverController,NavParams, IonInput} from '@ionic/angular';
 import { ThemeService } from 'src/app/services/theme.service';
 import { FeedService } from 'src/app/services/FeedService';
 import { NativeService } from 'src/app/services/NativeService';
@@ -10,6 +10,7 @@ import { NativeService } from 'src/app/services/NativeService';
   styleUrls: ['./payprompt.component.scss'],
 })
 export class PaypromptComponent implements OnInit {
+  @ViewChild('elaAmount', {static: false}) elaAmount:IonInput;
   public elaAddress:string ="";
   public amount:any = "";
   public memo: string = "";
@@ -27,6 +28,7 @@ export class PaypromptComponent implements OnInit {
   }
 
   ngOnInit() {
+
     this.elaAddress = this.navParams.get('elaAddress');
     this.memo = this.defalutMemo = this.navParams.get('defalutMemo');
     this.title = this.navParams.get('title');
@@ -34,6 +36,11 @@ export class PaypromptComponent implements OnInit {
     if (this.defalutMemo != ""){
       this.disableMemo = true;
     }
+
+    let sid = setTimeout(() => {
+      this.elaAmount.setFocus();
+      clearTimeout(sid);
+    }, 300);
   }
 
   cancel(){

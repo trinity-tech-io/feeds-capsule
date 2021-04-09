@@ -33,12 +33,14 @@ export class CommentComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    let sid = setTimeout(() => {
+      this.comment.setFocus();
+      clearTimeout(sid);
+    }, 300);
   }
 
   ionViewDidEnter() {
-    setTimeout(() => {
-      this.comment.setFocus();
-    }, 300);
+
   }
 
   addImg() {

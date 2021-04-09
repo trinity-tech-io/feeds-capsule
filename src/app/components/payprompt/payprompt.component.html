@@ -4,7 +4,7 @@
   <h3>{{ 'DonationPage.receiver' | translate }}</h3>
   <h4>{{ elaAddress }}</h4>
   <h3>{{ 'DonationPage.amount' | translate }}</h3>
-  <ion-input type="number" clearInput autofocus [placeholder]="'DonationPage.enterAmount' | translate" [(ngModel)]="amount" class="nameValue"></ion-input>
+  <ion-input type="number" clearInput autofocus [placeholder]="'DonationPage.enterAmount' | translate" [(ngModel)]="amount" class="nameValue" #elaAmount></ion-input>
   <h3>{{ 'DonationPage.memo' | translate }}</h3>
   <ion-input clearInput autofocus [placeholder]="'DonationPage.memo' | translate" [(ngModel)]="memo" [disabled]='disableMemo'></ion-input>
   <ion-row class="btns-row" [class.dark-btns-row]="theme.darkMode">

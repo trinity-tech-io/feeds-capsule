@@ -103,6 +103,7 @@ export class EditCommentPage implements OnInit {
   }
 
   ionViewDidEnter(){
+      document.getElementById("editComment").click();
   }
 
   ionViewWillLeave(){

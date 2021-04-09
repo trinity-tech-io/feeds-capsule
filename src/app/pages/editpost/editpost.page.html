@@ -18,7 +18,7 @@
         </ion-col>
       </ion-row>
     </ion-item>
-    <div (click)="newPostTextArea()">
+    <div (click)="newPostTextArea()" id="editPost">
     <ion-textarea  #newPostIonTextarea  autoGrow="true"  autofocus="true" placeholder="{{'CreatenewpostPage.des'|translate}}" [(ngModel)]="newPost">
     </ion-textarea>
     </div>

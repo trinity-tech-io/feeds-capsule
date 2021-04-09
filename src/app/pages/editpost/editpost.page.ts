@@ -213,7 +213,7 @@ export class EditPostPage implements OnInit {
    }
 
   ionViewDidEnter() {
-
+      document.getElementById("editPost").click();
   }
 
   initTitle(){

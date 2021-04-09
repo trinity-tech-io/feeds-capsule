@@ -68,7 +68,10 @@ export class CreatenewpostPage implements OnInit {
     ) {}
 
     ngOnInit() {
-
+     let sid = setTimeout(()=>{
+      this.newPostIonTextarea.setFocus();
+      clearTimeout(sid);
+      },300)
     }
 
     newPostTextArea(){
@@ -273,12 +276,12 @@ export class CreatenewpostPage implements OnInit {
           this.native.toastWarn('common.connectionError');
           return;
         }
-  
+
         if(this.checkServerStatus(this.nodeId) != 0){
           this.native.toastWarn('common.connectionError1');
           return;
         }
-  
+
         if (newPost === "" && this.imgUrl === ""&&this.flieUri === ""){
           this.native.toast_trans("CreatenewpostPage.tipMsg");
           return false;
@@ -354,14 +357,14 @@ export class CreatenewpostPage implements OnInit {
 
           content = this.feedService.createContent(this.newPost,imgThumbs,null);
         // this.feedService.compress(this.imgUrl).then((imageThumb)=>{
-          
+
         // });
       }
 
       this.feedService.declarePost(this.nodeId,this.channelId,content,false,tempPostId,
             this.transDataChannel,this.imgUrl,this.flieUri)
     }
-    
+
     addImg(type: number) {
       this.camera.openCamera(
         30, 0, type,
@@ -763,7 +766,7 @@ export class CreatenewpostPage implements OnInit {
   moreName(name:string){
     return UtilService.moreNanme(name,15);
   }
-  
+
   backHome(){
       this.navCtrl.pop().then(()=>{
         this.events.publish(FeedsEvent.PublishType.updateTab,true);
