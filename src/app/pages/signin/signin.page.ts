@@ -6,7 +6,6 @@ import { NativeService } from 'src/app/services/NativeService';
 import { TranslateService } from "@ngx-translate/core";
 import { ThemeService } from 'src/app/services/theme.service';
 import { AppService } from '../../services/AppService';
-declare let appManager: AppManagerPlugin.AppManager;
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 @Component({
@@ -42,7 +41,7 @@ export class SigninPage implements OnInit {
   ionViewWillEnter() {
     this.initTile();
     this.native.setTitleBarBackKeyShown(false);
-    appManager.setVisible("show");
+    // appManager.setVisible("show");
 
     this.event.subscribe(FeedsEvent.PublishType.updateTitle,()=>{
       this.initTile();

@@ -10,7 +10,6 @@ import { IntentService } from 'src/app/services/IntentService';
 import * as _ from 'lodash';
 
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
-declare let appManager: AppManagerPlugin.AppManager;
 
 @Component({
   selector: 'app-editserverinfo',
