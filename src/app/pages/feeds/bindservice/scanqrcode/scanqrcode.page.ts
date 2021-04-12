@@ -7,8 +7,8 @@ import { TranslateService } from "@ngx-translate/core";
 import { Events,PopoverController} from '@ionic/angular';
 import { CameraService } from '../../../../services/CameraService';
 import { PopupProvider } from '../../../../services/popup';
+import { IntentService } from 'src/app/services/IntentService';
 
-declare let appManager: AppManagerPlugin.AppManager;
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 @Component({
@@ -22,7 +22,6 @@ export class ScanqrcodePage implements OnInit {
   public title = "01/06";
   public waitFriendsOnline = false;
   public carrierAddress: string;
-  public scanContent: string;
   public nonce: string = "0";
   public popover:any = null;
   constructor(
@@ -35,7 +34,8 @@ export class ScanqrcodePage implements OnInit {
     public  theme:ThemeService,
     private camera: CameraService,
     public popupProvider:PopupProvider,
-    private popoverController:PopoverController
+    private popoverController:PopoverController,
+    private intentService:IntentService,
     ) {
   }
 
@@ -78,40 +78,36 @@ export class ScanqrcodePage implements OnInit {
     this.checkDid("scanService");
   }
 
-  scanAddress() {
-    this.waitFriendsOnline = false;
-
-    appManager.sendIntent("https://scanner.elastos.net/scanqrcode", {}, {}, (res) => {
-      let content = res.result.scannedContent;
-      let contentStr = String(content);
-      this.scanContent = contentStr;
-      this.handleAddress();
-      }, (err: any) => {
-          console.error(err);
-      });
+  async scanAddress() {
+    try {
+      let res = await this.intentService.scanAddress();
+      this.handleAddress(res);
+    } catch (error) {
+      
+    }
   }
 
-  handleAddress(){
-    if (!this.scanContent.startsWith('feeds://') &&
-    !this.scanContent.startsWith('feeds_raw://')){
-      this.scanContent = "";
+  handleAddress(scanResult: string){
+    if (!scanResult.startsWith('feeds://') &&
+        !scanResult.startsWith('feeds_raw://')){
       alert(this.translate.instant("AddServerPage.tipMsg"));
       return ;
+    }
+
+    let result = this.feedService.parseBindServerUrl(scanResult);
+    this.carrierAddress = result.carrierAddress;
+    this.nonce = result.nonce;
+    let did = result.did;
+    this.carrier.getIdFromAddress(this.carrierAddress,
+      (userId)=>{
+          this.addFriends(this.carrierAddress, userId, this.nonce, did, scanResult);
+      },
+      (err)=>{
+      }
+    );
   }
 
-  let result = this.feedService.parseBindServerUrl(this.scanContent);
-  this.carrierAddress = result.carrierAddress;
-  this.nonce = result.nonce;
-  let did = result.did;
-  this.carrier.getIdFromAddress(this.carrierAddress,
-    (userId)=>{
-        this.addFriends(this.carrierAddress, userId, this.nonce, did);
-    },
-    (err)=>{
-    });
-  }
-
-  addFriends(address: string, nodeId: string, nonce: string, did: string){
+  addFriends(address: string, nodeId: string, nonce: string, did: string, scanResult: string){
     this.carrier.isValidAddress(address, (isValid:boolean) => {
       if (!isValid){
         let errMsg= this.translate.instant('common.addressinvalid')+": "+address;
@@ -123,7 +119,7 @@ export class ScanqrcodePage implements OnInit {
           this.zone.run(() => {
               let feedUrl = "-1";
               if (nonce == undefined) nonce = "";
-              if (nonce == "0") feedUrl = this.scanContent;
+              if (nonce == "0") feedUrl = scanResult;
               this.native.navigateForward(['/bindservice/startbinding/',nodeId, nonce, address, did, feedUrl],{
                 replaceUrl: true
               });
