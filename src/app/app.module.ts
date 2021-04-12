@@ -38,6 +38,7 @@ import { AppService } from './services/AppService';
 import { ThemeService } from './services/theme.service';
 import { ConnectionService } from './services/ConnectionService';
 import { HttpService } from './services/HttpService';
+import { IntentService } from './services/IntentService';
 
 import { PopupProvider } from './services/popup';
 import { CameraService } from './services/CameraService';
@@ -212,6 +213,7 @@ export function anim(AnimationC: Animation, baseEl: any, position?: any): Promis
     StandardAuthService,
     FileService,
     FileHelperService,
+    IntentService,
     DataHelper,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     {provide: ErrorHandler, useClass: ErrorHandler}

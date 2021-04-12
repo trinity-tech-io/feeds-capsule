@@ -14,13 +14,13 @@
     "target": "es5",
     "baseUrl": "./",
     "typeRoots": [
-      "node_modules/@types",
-      "node_modules/@elastosfoundation"
+      "node_modules/@types"
     ],
     "types": [
       "node",
       "cordova",
-      "trinity-types"
+      "@elastosfoundation/elastos-cordova-plugin-did",
+      "@elastosfoundation/elastos-cordova-plugin-intent"
     ]
   },
   "include": [

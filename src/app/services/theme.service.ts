@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Platform } from '@ionic/angular';
 
-declare let appManager: AppManagerPlugin.AppManager;
+declare let intentManager: IntentPlugin.Intent;
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 @Injectable({
