@@ -13,168 +13,231 @@ export class IntentService {
         return new Promise(async (resolve, reject) =>{
             try {
                 let res = await intentManager.sendIntent("https://scanner.elastos.net/scanqrcode");
-                if (!res){
-                    let error: string = "Scan QR code error, result is "+JSON.stringify(res);
-                    this.logUtils.loge(error,TAG);
-                    reject(error);
+                if (res){
+                    let content = res.result.scannedContent;
+                    let contentStr = String(content);
+                    resolve(contentStr);
                     return;
                 }
-                let content = res.result.scannedContent;
-                let contentStr = String(content);
-                resolve(contentStr);
+
+                let error: string = "Scan QR code error, result is "+JSON.stringify(res);
+                this.logUtils.loge(error,TAG);
+                reject(error);
+
               } catch (error) {
-                let catchError = "Scan QR code error, error is "+JSON.stringify(error);
-                this.logUtils.loge(catchError,TAG);
-                reject(catchError);
+                this.logUtils.loge(error,TAG);
+                reject(error);
               }
         });
     }
 
-    share(title: string, content: string){
-        // appManager.sendIntent("share", {
-        //     title:"",
-        //     url: content
-        //   }, {}, () => {
+    share(title: string, content: string): Promise<string>{
+        return new Promise(async (resolve, reject) =>{
+            let params = {
+                title: title,
+                url: content
+            };
 
-        //   });
+            try {
+                let res = await intentManager.sendIntent("share", params);
+            
+                if (res){
+                    resolve(res);
+                    return;
+                }
+                let error: string = "Share error, result is "+JSON.stringify(res);
+                this.logUtils.loge(error, TAG);
+                reject(error);
+            } catch (error) {
+                this.logUtils.loge(error, TAG);
+                reject(error);
+            }
+        });
+        
     }
 
-    credaccess(): Promise<string>{
+    private credaccess(params: any): Promise<any>{
+        return intentManager.sendIntent("https://did.elastos.net/credaccess", params);
+    }
+
+    credaccessWithParams(): Promise<string>{
         return new Promise(async (resolve, reject) =>{
-        // appManager.sendIntent("https://did.elastos.net/credaccess", {}, {}, (response: any) => {
-        //     if (response && response.result && response.result.presentation)
-        //       onSuccess(response.result.presentation);
-        //   },
-        //   (err)=>{});
+            let params = {
+                claims: {
+                    name: true,
+                    avatar: {
+                        required: false,
+                        reason: "For profile picture"
+                    },
+                    email: {
+                        required: false,
+                        reason: "Maybe Feeds dapp need"
+                    },
+                    gender: {
+                        required: false,
+                        reason: "Maybe Feeds dapp need"
+                    },
+                    telephone: {
+                        required: false,
+                        reason: "Maybe Feeds dapp need"
+                    },
+                    nation: {
+                        required: false,
+                        reason: "Maybe Feeds dapp need"
+                    },
+                    nickname:{
+                        required: false,
+                        reason: "Maybe Feeds dapp need"
+                    },
+                    description:{
+                        required: false,
+                        reason: "Maybe Feeds dapp need"
+                    },
+                    interests:{
+                        required: false,
+                        reason: "Maybe Feeds dapp need"
+                    }
+                }
+            }
 
-
-        //     appManager.sendIntent("https://did.elastos.net/credaccess", {
-        //   claims: {
-        //     name: true,
-        //     avatar: {
-        //       required: false,
-        //       reason: "For profile picture"
-        //     },
-        //     email: {
-        //       required: false,
-        //       reason: "Maybe Feeds dapp need"
-        //     },
-        //     gender: {
-        //       required: false,
-        //       reason: "Maybe Feeds dapp need"
-        //     },
-        //     telephone: {
-        //       required: false,
-        //       reason: "Maybe Feeds dapp need"
-        //     },
-        //     nation: {
-        //       required: false,
-        //       reason: "Maybe Feeds dapp need"
-        //     },
-        //     nickname:{
-        //       required: false,
-        //       reason: "Maybe Feeds dapp need"
-        //     },
-        //     description:{
-        //       required: false,
-        //       reason: "Maybe Feeds dapp need"
-        //     },
-        //     interests:{
-        //       required: false,
-        //       reason: "Maybe Feeds dapp need"
-        //     }
-        //   }
-        // }, {}, (response: any) => {
-        //     if (response && response.result && response.result.presentation) {
-        //       let data = response.result;
-        //       resolve(data);
-        //       return;
-        //     }
-        //     reject("credaccess error response is "+JSON.stringify(response));
-        //   },(err)=>{
-        //     reject(err);
-        //   });
-        // });
+            try {
+                let response = await this.credaccess(params);
+                if (response && response.result && response.result.presentation) {
+                    let data = response.result;
+                    resolve(data);
+                    return;
+                }
+                let error = "Credaccess error response is "+JSON.stringify(response)
+                this.logUtils.loge(error);
+                reject(error);
+            } catch (error) {
+                this.logUtils.loge(error);
+                reject(error);
+            }
         });
     }
 
-    didtransaction(): Promise<string> {
+    credaccessWithoutParams(): Promise<string>{
         return new Promise(async (resolve, reject) =>{
-            // appManager.sendIntent("https://wallet.elastos.net/didtransaction", request, {}, onSuccess, onError);
+            let params = {};
+
+            try {
+                let response = await this.credaccess(params);
+                if (response && response.result && response.result.presentation) {
+                    let data = response.result;
+                    resolve(data);
+                    return;
+                }
+                let error = "Credaccess error response is "+JSON.stringify(response)
+                this.logUtils.loge(error);
+                reject(error);
+            } catch (error) {
+                this.logUtils.loge(error);
+                reject(error);
+            }
         });
     }
 
-    credissue(params: any): Promise<string>{
+    didtransaction(payload: string): Promise<string> {
         return new Promise(async (resolve, reject) =>{
-            // /**
-            //  * Ask the DID app to generate a VerifiableCredential with some data, and use current DID
-            //  * as the signing issuer for this credential, so that others can permanently verifiy who
-            //  * issued the credential.
-            //  * This credential can then be delivered to a third party who can import it (credimport) to
-            //  * his DID profile.
-            //  *
-            //  * For this demo, the subject DID is ourself, so we will be able to import the credential we issued
-            //  * to our own DID profile (which is a useless use case, as usually DIDs are issued for others).
-            //  */
-            // appManager.sendIntent("https://did.elastos.net/credissue", {
-            // identifier: "credential", // unique identifier for this credential
-            // types: ["BasicProfileCredential"], // Additional credential types (strings) such as BasicProfileCredential.
-            // subjectdid: did, // DID targeted by the created credential. Only that did will be able to import the credential.
-            // properties: {
-            //     // customData: "test data.",
-            //     name: serverName,
-            //     description: serverDesc,
-            //     elaAddress: elaAddress
-            //     // moreComplexData: {
-            //     //   info: "A sub-info"
-            //     // }
-            // },
+            let params = {
+                didrequest: JSON.parse(payload)
+            }
 
-            // expirationdate: new Date(2024, 10, 10).toISOString() // Credential will expire on 2024-11-10 - Note the month's 0-index...
-            // }, {}, (response) => {
-            // if (response.result == null){
-            //     onError();
-            //     return;
-            // }
-            // if (response.result.credential) {
-            //     bindingServerCache.name = serverName;
-            //     bindingServerCache.introduction = serverDesc;
-            //     onSuccess(response.result.credential);
-            // }
-            // else {
-            //     onError();
-            //     this.logUtils.loge("Failed to issue a credential - empty credential returned" ,TAG);
-            //     return;
-            // }
-            // }, (err)=>{
-            // onError();
-            // this.logUtils.loge("Failed to issue a credential, err msg is "+JSON.stringify(err), TAG);
-            // return ;
-            // })
+            try {
+                let response = await intentManager.sendIntent("https://wallet.elastos.net/didtransaction", params);
+                if (response){
+                    resolve(response);
+                    return ;
+                }
+
+                let error = "DIDtransaction error response is "+JSON.stringify(response);
+                this.logUtils.loge(error);
+                reject(error);
+            } catch (error) {
+                this.logUtils.loge(error);
+                reject(error);
+            }
+        });
+    }
+
+    credissue(did: string, serverName: string, serverDesc: string, elaAddress: string): Promise<string>{
+        return new Promise(async (resolve, reject) =>{
+            let params = {
+                identifier: "credential", // unique identifier for this credential
+                types: ["BasicProfileCredential"], // Additional credential types (strings) such as BasicProfileCredential.
+                subjectdid: did, // DID targeted by the created credential. Only that did will be able to import the credential.
+                properties: {
+                    name: serverName,
+                    description: serverDesc,
+                    elaAddress: elaAddress
+                },
+                expirationdate: new Date(2024, 10, 10).toISOString()
+            }
+
+
+            try {
+                let response = await intentManager.sendIntent("https://did.elastos.net/credissue", params);
+                if (response||response.result||response.result.credential){
+                    let credential =  response.result.credential;
+                    resolve(credential);
+                    return ;
+                }
+
+                let error = "Credissue error response is "+JSON.stringify(response);
+                this.logUtils.loge(error);
+                reject(error);
+            } catch (error) {
+                this.logUtils.loge(error);
+                reject(error);
+            }
         }); 
     }
     
-    pay(param: any): Promise<string>{
+    pay(receiver: string, amount: number, memo: string): Promise<string>{
         return new Promise(async (resolve, reject) =>{
-            //     appManager.sendIntent("https://wallet.elastos.net/pay", param, {},
-            //     (response: any) => {
-            //       onSuccess(response);
-            //     },
-            //     (err)=>{
-            //       onError(err);
-            //     }
-            //   );
+            let params = {
+                receiver: receiver,
+                amount: amount,
+                memo: memo
+            }
+
+            try {
+                let response = await intentManager.sendIntent("https://wallet.elastos.net/pay", params);
+                if (response){
+                    resolve(response);
+                    return ;
+                }
+
+                let error = "Pay error response is "+JSON.stringify(response);
+                this.logUtils.loge(error);
+                reject(error);
+            } catch (error) {
+                this.logUtils.loge(error);
+                reject(error);
+            }
         });
     }
 
 
     promptpublishdid(): Promise<string>{
         return new Promise(async (resolve, reject) =>{
-            // appManager.sendIntent("https://did.elastos.net/promptpublishdid", {}, {}, (response: any) => {
-            // },
-            // (err)=>{
-            //   this.native.toastdanger('common.promptPublishDidError');
-            // });
+            let params = {};
+            
+            try{
+                let response = await intentManager.sendIntent("https://did.elastos.net/promptpublishdid", params);
+                if (response){
+                    resolve(response);
+                    return ;
+                }
+
+                let error = "Pay error response is "+JSON.stringify(response);
+                this.logUtils.loge(error);
+                reject(error);
+            } catch (error) {
+                this.logUtils.loge(error);
+                reject(error);
+            }
         });
     }
 
