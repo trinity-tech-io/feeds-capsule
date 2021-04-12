@@ -10,8 +10,8 @@ import { CarrierService } from '../services/CarrierService';
 import { MenuController,PopoverController } from '@ionic/angular';
 import { MenuService } from 'src/app/services/MenuService';
 import { PopupProvider } from 'src/app/services/popup';
+import { IntentService } from 'src/app/services/IntentService';
 
-declare let appManager: AppManagerPlugin.AppManager;
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 let managerService: any;
@@ -36,12 +36,13 @@ export class AppService {
       public popupProvider:PopupProvider,
       private popoverController: PopoverController,
       private menuService: MenuService,
-      private events: Events
+      private events: Events,
+      private intentService: IntentService
     ) {
     }
 
     init() {
-      appManager.setListener((msg) => {
+      this.intentService.addIntentListener((msg: IntentPlugin.ReceivedIntent) => {
         this.onMessageReceived(msg);
       });
 
@@ -67,7 +68,7 @@ export class AppService {
       });
     }
 
-    onReceiveIntent = (ret) => {
+    onReceiveIntent = (ret: IntentPlugin.ReceivedIntent) => {
       //console.log("Intent received", ret, JSON.stringify(ret));
 
       switch (ret.action) {
@@ -120,38 +121,38 @@ export class AppService {
       titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.OUTER_RIGHT,null);
     }
 
-    onMessageReceived(msg: AppManagerPlugin.ReceivedMessage) {
-        var params: any = msg.message;
-        if (typeof (params) == "string") {
-          try {
-              params = JSON.parse(params);
-          } catch (e) {
-              //console.log('Params are not JSON format: ', params);
-          }
-        }
-        switch (msg.type) {
-          case AppManagerPlugin.MessageType.IN_REFRESH:
-            if (params.action === "currentLocaleChanged") {
-                this.zone.run(()=>{
-                   this.setCurLang(params.data);
-                });
-            }
-            if(params.action === 'preferenceChanged' && params.data.key === "ui.darkmode") {
-              this.zone.run(() => {
-                this.theme.setTheme(params.data.value);
-              });
-            }
-            break;
+    onMessageReceived(msg: IntentPlugin.ReceivedIntent) {
+      var params: any = msg.params;
+      if (typeof (params) == "string") {
+        try {
+            params = JSON.parse(params);
+        } catch (e) {
+            //console.log('Params are not JSON format: ', params);
         }
       }
+
+      if (msg.action === "currentLocaleChanged") {
+        this.zone.run(()=>{
+            this.setCurLang(params.data);
+        });
+      }
+
+      //TO be check
+      if(msg.action === 'preferenceChanged' && params.data.key === "ui.darkmode") {
+        this.zone.run(() => {
+          this.theme.setTheme(params.data.value);
+        });
+      }        
+    }
 
     initTranslateConfig() {
       // 参数类型为数组，数组元素为本地语言json配置文件名
       this.translate.addLangs(["zh", "en", "fr"]);
       // 设置默认语言
-      appManager.getLocale((defaultLang: string, currentLang: string, systemLang: string)=>{
-        this.setCurLang(currentLang);
-      });
+      // TODO
+      // appManager.getLocale((defaultLang: string, currentLang: string, systemLang: string)=>{
+      //   this.setCurLang(currentLang);
+      // });
     }
 
     setCurLang(currentLang: string) {
@@ -181,10 +182,10 @@ export class AppService {
         return ;
       }
 
-      appManager.setIntentListener((intent: AppManagerPlugin.ReceivedIntent) => {
-        //console.log('Incoming intent', intent);
-        this.onReceiveIntent(intent);
+      this.intentService.addIntentListener((msg: IntentPlugin.ReceivedIntent) =>{
+        this.onReceiveIntent(msg);
       });
+
       this.addright();
       this.carrierService.init(signInData.did);
       this.native.setRootRouter(['/tabs/home']);
