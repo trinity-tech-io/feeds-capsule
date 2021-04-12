@@ -3,7 +3,8 @@ import { PopoverController,NavParams} from '@ionic/angular';
 import { ThemeService } from 'src/app/services/theme.service';
 import { FeedService } from 'src/app/services/FeedService';
 import { NativeService } from 'src/app/services/NativeService';
-declare let appManager: AppManagerPlugin.AppManager;
+import { IntentService } from 'src/app/services/IntentService';
+
 @Component({
   selector: 'app-serverprompt',
   templateUrl: './serverprompt.component.html',
@@ -20,6 +21,7 @@ export class ServerpromptComponent implements OnInit {
     private feedService:FeedService,
     private navParams: NavParams,
     private popover: PopoverController,  
+    private intentService: IntentService,
     public theme: ThemeService,
     public  zone:NgZone) { 
 
@@ -36,19 +38,13 @@ export class ServerpromptComponent implements OnInit {
      }
   }
 
-  clickScan(){
-    appManager.sendIntent('https://scanner.elastos.net/scanqrcode', {}, {}, (res) => {
-      this.zone.run(()=>{
-        let scannedContent = res.result.scannedContent || "";
-        if(scannedContent != ""&& scannedContent.indexOf("elastos:")>-1){
-          this.elaAddress = scannedContent.replace("elastos:","");
-        }else{
-          this.elaAddress = scannedContent;
-        }
-      });
-    }, (err: any) => {
-      console.error(err);
-    });
+  async clickScan(){
+    let scannedContent = await this.intentService.scanQRCode() || "";
+    if(scannedContent != ""&& scannedContent.indexOf("elastos:")>-1){
+      this.elaAddress = scannedContent.replace("elastos:","");
+    }else{
+      this.elaAddress = scannedContent;
+    }
   }
 
   confirm(){

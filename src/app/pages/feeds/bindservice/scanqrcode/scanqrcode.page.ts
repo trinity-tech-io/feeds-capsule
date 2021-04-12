@@ -80,7 +80,7 @@ export class ScanqrcodePage implements OnInit {
 
   async scanAddress() {
     try {
-      let res = await this.intentService.scanAddress();
+      let res = await this.intentService.scanQRCode();
       this.handleAddress(res);
     } catch (error) {
       
