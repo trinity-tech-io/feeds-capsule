@@ -9,7 +9,9 @@ import { ViewerModalComponent } from 'ngx-ionic-image-viewer';
 import { MorenameComponent} from './../components/morename/morename.component';
 import { VideofullscreenComponent } from './../components/videofullscreen/videofullscreen.component';
 import { PreviewqrcodeComponent }  from './../components/previewqrcode/previewqrcode.component';
-import { PaypromptComponent } from './../components/payprompt/payprompt.component'
+import { PaypromptComponent } from './../components/payprompt/payprompt.component';
+import { IntentService } from 'src/app/services/IntentService';
+
 
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 declare let appManager: AppManagerPlugin.AppManager;
@@ -25,7 +27,8 @@ export class NativeService {
         private loadingCtrl: LoadingController,
         private navCtrl: NavController,
         private router: Router,
-        private translate: TranslateService) {
+        private translate: TranslateService,
+        private intentService: IntentService) {
     }
 
     public toast(message: string = 'Operation completed', duration: number = 3000): void {
@@ -366,11 +369,12 @@ async showPreviewQrcode(qrCodeString:string,newNameKey:string,oldNameKey:string,
   }
 
   getShare(qrCodeString:string){
-    appManager.sendIntent("share", {
-        title:"",
-        url: qrCodeString
-      }, {}, () => {
-      });
+    this.intentService.share("", qrCodeString);
+    // appManager.sendIntent("share", {
+    //     title:"",
+    //     url: qrCodeString
+    //   }, {}, () => {
+    //   });
   }
 
 }

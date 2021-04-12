@@ -5,6 +5,8 @@ import { ThemeService } from 'src/app/services/theme.service';
 import { FeedService } from 'src/app/services/FeedService';
 import { ActivatedRoute } from '@angular/router';
 import { NativeService } from 'src/app/services/NativeService';
+import { IntentService } from 'src/app/services/IntentService';
+
 import * as _ from 'lodash';
 
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
@@ -32,7 +34,8 @@ export class EditserverinfoPage implements OnInit {
     private translate:TranslateService,
     private events: Events,
     private native: NativeService,
-    private zone:NgZone
+    private zone:NgZone,
+    private intentService: IntentService
   ) {
   }
 
@@ -84,19 +87,13 @@ export class EditserverinfoPage implements OnInit {
     titleBarManager.setTitle(this.translate.instant('EditserverinfoPage.title'));
   }
 
-  clickScan(){
-    appManager.sendIntent('https://scanner.elastos.net/scanqrcode', {}, {}, (res) => {
-      this.zone.run(()=>{
-        let scannedContent = res.result.scannedContent || "";
-        if(scannedContent != ""&& scannedContent.indexOf("elastos:")>-1){
-          this.elaAddress = scannedContent.replace("elastos:","");
-        }else{
-          this.elaAddress = scannedContent;
-        }
-      });
-    }, (err: any) => {
-      console.error(err);
-    });
+  async clickScan(){
+    let scannedContent = await this.intentService.scanQRCode() || "";
+    if(scannedContent != ""&& scannedContent.indexOf("elastos:")>-1){
+      this.elaAddress = scannedContent.replace("elastos:","");
+    }else{
+      this.elaAddress = scannedContent;
+    }
   }
 
   cancel(){

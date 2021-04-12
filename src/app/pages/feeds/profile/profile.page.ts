@@ -8,6 +8,7 @@ import { NativeService } from 'src/app/services/NativeService';
 import { AppService } from 'src/app/services/AppService';
 import { PopupProvider } from 'src/app/services/popup';
 import { LogUtils } from 'src/app/services/LogUtils';
+import { IntentService } from 'src/app/services/IntentService';
 declare let appManager: AppManagerPlugin.AppManager;
 import * as _ from 'lodash';
 let TAG: string = "Feeds-profile";
@@ -131,7 +132,8 @@ export class ProfilePage implements OnInit {
     public modalController:ModalController,
     private logUtils: LogUtils,
     public  popupProvider:PopupProvider,
-    public  popoverController:PopoverController
+    public  popoverController:PopoverController,
+    private intentService: IntentService
   ) {
   }
 
@@ -1192,12 +1194,13 @@ export class ProfilePage implements OnInit {
        case "share":
         if(this.selectType === "ProfilePage.myFeeds" || this.selectType === "ProfilePage.following"){
           let content = this.getQrCodeString(this.curItem);
-          appManager.sendIntent("share", {
-            title:"",
-            url: content
-          }, {}, () => {
+          this.intentService.share("", content);
+          // appManager.sendIntent("share", {
+          //   title:"",
+          //   url: content
+          // }, {}, () => {
 
-          });
+          // });
           this.hideSharMenuComponent = false;
           return;
         }
@@ -1210,11 +1213,12 @@ export class ProfilePage implements OnInit {
           if(post!=null){
              postContent = this.feedService.parsePostContentText(post.content);
           }
-          appManager.sendIntent("share", {
-              title:"",
-              url: postContent
-            }, {}, () => {
-          });
+          this.intentService.share("", postContent);
+          // appManager.sendIntent("share", {
+          //     title:"",
+          //     url: postContent
+          //   }, {}, () => {
+          // });
           this.hideSharMenuComponent = false;
           return;
         }
