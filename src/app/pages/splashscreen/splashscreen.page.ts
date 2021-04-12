@@ -3,7 +3,6 @@ import { ModalController } from '@ionic/angular';
 import { TranslateService } from "@ngx-translate/core";
 import { ThemeService } from 'src/app/services/theme.service';
 import { AppService } from '../../services/AppService';
-declare let appManager: AppManagerPlugin.AppManager;
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 @Component({
   selector: 'app-splashscreen',
@@ -28,7 +27,7 @@ export class SplashscreenPage implements OnInit {
   }
 
   ionViewDidEnter() {
-    appManager.setVisible('show');
+    // appManager.setVisible('show');
     this.hanldSplashEnd();
   }
 

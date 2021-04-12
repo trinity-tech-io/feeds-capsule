@@ -60,7 +60,7 @@ export class IntentService {
         return intentManager.sendIntent("https://did.elastos.net/credaccess", params);
     }
 
-    credaccessWithParams(): Promise<string>{
+    credaccessWithParams(): Promise<any>{
         return new Promise(async (resolve, reject) =>{
             let params = {
                 claims: {
@@ -124,8 +124,8 @@ export class IntentService {
             try {
                 let response = await this.credaccess(params);
                 if (response && response.result && response.result.presentation) {
-                    let data = response.result;
-                    resolve(data);
+                    let presentation = response.result.presentation;
+                    resolve(presentation);
                     return;
                 }
                 let error = "Credaccess error response is "+JSON.stringify(response)
@@ -178,7 +178,7 @@ export class IntentService {
 
             try {
                 let response = await intentManager.sendIntent("https://did.elastos.net/credissue", params);
-                if (response||response.result||response.result.credential){
+                if (response && response.result && response.result.credential){
                     let credential =  response.result.credential;
                     resolve(credential);
                     return ;
@@ -219,7 +219,6 @@ export class IntentService {
         });
     }
 
-
     promptpublishdid(): Promise<string>{
         return new Promise(async (resolve, reject) =>{
             let params = {};
@@ -241,5 +240,8 @@ export class IntentService {
         });
     }
 
-
+    addIntentListener(callback: (msg: IntentPlugin.ReceivedIntent)=>void){
+        intentManager.addIntentListener(callback);
+    }
+    
 }

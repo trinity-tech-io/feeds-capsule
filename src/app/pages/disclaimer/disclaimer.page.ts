@@ -7,7 +7,6 @@ import { SplashscreenPage } from './../../pages/splashscreen/splashscreen.page';
 import { ThemeService } from 'src/app/services/theme.service';
 
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
-declare let appManager: AppManagerPlugin.AppManager;
 
 @Component({
   selector: 'app-disclaimer',
@@ -33,7 +32,7 @@ export class DisclaimerPage implements OnInit {
   ionViewWillEnter() {
     this.initTitle();
     this.native.setTitleBarBackKeyShown(false);
-    appManager.setVisible('show');
+    // appManager.setVisible('show');
     this.styleObj["height"] = (screen.height - 245) +"px";
 
     this.events.subscribe(FeedsEvent.PublishType.updateTitle,()=>{
@@ -54,7 +53,8 @@ export class DisclaimerPage implements OnInit {
 
   // deny the disclaimer
   deny(){
-    appManager.close();
+    // appManager.close();
+    // TODO close app
   }
 
   // accept the disclaimer

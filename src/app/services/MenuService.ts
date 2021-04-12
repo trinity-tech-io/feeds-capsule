@@ -6,8 +6,6 @@ import { NativeService } from './NativeService';
 import { PopupProvider } from 'src/app/services/popup';
 import { IntentService } from 'src/app/services/IntentService';
 
-declare let appManager: AppManagerPlugin.AppManager;
-
 @Injectable()
 
 export class MenuService {
@@ -42,13 +40,7 @@ export class MenuService {
                     if(post!=null){
                        postContent = this.feedService.parsePostContentText(post.content);
                     }
-                    this.intentService.share();
-                    // appManager.sendIntent("share", {
-                    //     title:"",
-                    //     url: postContent
-                    //   }, {}, () => {
-                    //     this.postDetail.dismiss();
-                    // });
+                    this.intentService.share("", postContent).then(()=>this.postDetail.dismiss());
                 }
             },{
                 text: this.translate.instant("common.unsubscribe"),
@@ -95,13 +87,7 @@ export class MenuService {
                     if(post!=null){
                        postContent = this.feedService.parsePostContentText(post.content);
                     }
-                    this.intentService.share("", postContent);
-                    // appManager.sendIntent("share", {
-                    //     title:"",
-                    //     url: postContent
-                    //   }, {}, () => {
-                    //     this.postDetail.dismiss();
-                    // });
+                    this.intentService.share("", postContent).then(()=>this.postDetail.dismiss());
                 }
             },
             {
@@ -135,13 +121,7 @@ export class MenuService {
                     text: this.translate.instant("common.share"),
                     icon: 'share',
                     handler: () => {
-                        this.intentService.share(title, qrCodeString);
-                        // appManager.sendIntent("share", {
-                        //     title:title,
-                        //     url: qrCodeString
-                        //   }, {}, () => {
-                        //     this.postDetail.dismiss();
-                        // });
+                        this.intentService.share(title, qrCodeString).then(()=>this.postDetail.dismiss());
                     }
                 },
                 {
@@ -388,13 +368,8 @@ export class MenuService {
                 if(post!=null){
                    postContent = this.feedService.parsePostContentText(post.content);
                 }
-                this.intentService.share("", postContent);
-                // appManager.sendIntent("share", {
-                //     title:"",
-                //     url: postContent
-                //   }, {}, () => {
-                //     this.postDetail.dismiss();
-                // });
+
+                this.intentService.share("", postContent).then(()=>this.postDetail.dismiss());
                 break;
             case "removePost":
                 if (!this.feedService.checkBindingServerVersion(()=>{

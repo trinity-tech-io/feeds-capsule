@@ -11,7 +11,6 @@ import { StorageService } from '../../../services/StorageService';
 import { IntentService } from '../../../services/IntentService';
 
 import * as _ from 'lodash';
-declare let appManager: AppManagerPlugin.AppManager;
 @Component({
   selector: 'app-search',
   templateUrl: './search.page.html',

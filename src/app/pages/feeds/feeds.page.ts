@@ -8,7 +8,6 @@ import { PopupProvider } from '../../services/popup';
 import { StorageService } from '../../services/StorageService';
 import * as _ from 'lodash';
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
-declare let appManager: AppManagerPlugin.AppManager;
 
 @Component({
   selector: 'app-feeds',
@@ -85,7 +84,7 @@ export class FeedsPage implements OnInit {
     this.initTab();
     this.initTile();
     this.native.setTitleBarBackKeyShown(false);
-    appManager.setVisible("show");
+    // appManager.setVisible("show");
   }
 
   create(){

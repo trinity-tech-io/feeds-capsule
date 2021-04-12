@@ -9,7 +9,7 @@ import { AppService } from 'src/app/services/AppService';
 import { PopupProvider } from 'src/app/services/popup';
 import { LogUtils } from 'src/app/services/LogUtils';
 import { IntentService } from 'src/app/services/IntentService';
-declare let appManager: AppManagerPlugin.AppManager;
+
 import * as _ from 'lodash';
 let TAG: string = "Feeds-profile";
 @Component({
@@ -1195,12 +1195,6 @@ export class ProfilePage implements OnInit {
         if(this.selectType === "ProfilePage.myFeeds" || this.selectType === "ProfilePage.following"){
           let content = this.getQrCodeString(this.curItem);
           this.intentService.share("", content);
-          // appManager.sendIntent("share", {
-          //   title:"",
-          //   url: content
-          // }, {}, () => {
-
-          // });
           this.hideSharMenuComponent = false;
           return;
         }
@@ -1214,11 +1208,6 @@ export class ProfilePage implements OnInit {
              postContent = this.feedService.parsePostContentText(post.content);
           }
           this.intentService.share("", postContent);
-          // appManager.sendIntent("share", {
-          //     title:"",
-          //     url: postContent
-          //   }, {}, () => {
-          // });
           this.hideSharMenuComponent = false;
           return;
         }

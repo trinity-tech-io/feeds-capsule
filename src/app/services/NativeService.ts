@@ -14,7 +14,6 @@ import { IntentService } from 'src/app/services/IntentService';
 
 
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
-declare let appManager: AppManagerPlugin.AppManager;
 @Injectable()
 export class NativeService {
     public loading:any = null;
@@ -370,11 +369,6 @@ async showPreviewQrcode(qrCodeString:string,newNameKey:string,oldNameKey:string,
 
   getShare(qrCodeString:string){
     this.intentService.share("", qrCodeString);
-    // appManager.sendIntent("share", {
-    //     title:"",
-    //     url: qrCodeString
-    //   }, {}, () => {
-    //   });
   }
 
 }

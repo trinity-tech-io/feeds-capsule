@@ -22,7 +22,6 @@ import { DataHelper } from "./DataHelper";
 import { UtilService } from "./utilService";
 
 declare let didManager: DIDPlugin.DIDManager;
-declare let appManager: AppManagerPlugin.AppManager;
 declare let didSessionManager: DIDSessionManagerPlugin.DIDSessionManager;
 
 const TAG: string = "Feeds-service";
@@ -769,13 +768,20 @@ export class FeedService {
     });
   }
 
-  createPresentation(nonce, realm, onSuccess: (presentation: any)=>void, onError?: (err:any)=>void){
-    let presentation = await this.intentService.credaccess();
-    // appManager.sendIntent("https://did.elastos.net/credaccess", {}, {}, (response: any) => {
-    //   if (response && response.result && response.result.presentation)
-    //     onSuccess(response.result.presentation);
-    // },
-    // (err)=>{});
+  async createPresentation(nonce, realm, onSuccess: (presentation: any)=>void, onError?: (err:any)=>void){
+    try {
+      let presentation = await this.intentService.credaccessWithoutParams();
+      if (presentation){
+        onSuccess(presentation);
+        return;
+      }
+      let error = "Create presentation error, response is "+ JSON.stringify;
+      this.logUtils.loge(error);
+      onError(error);
+    } catch (error) {
+      this.logUtils.loge(error);
+      onError(error);
+    }
   }
 
   verifyPresentation(presentationstr: string, onSuccess?: (isValid: boolean)=>void, onError?: (err:any)=>void){
@@ -2689,15 +2695,21 @@ export class FeedService {
     return contentObj;
   }
 
-  publishDid(payload: string, onSuccess?: (ret: any)=>void, onError?: (err:any)=>void) {
-    let params = {
-        didrequest: JSON.parse(payload)
-    }
-    let requestStr = JSON.stringify(params);
-    let request =  JSON.parse(requestStr);
+  async publishDid(payload: string, onSuccess?: (ret: any)=>void, onError?: (err:any)=>void) {
+    try {
+      let result = await this.intentService.didtransaction(payload);
+      if (result){
+        onSuccess(result);
+        return ;
+      }
 
-    this.intentService.didtransaction();
-    // appManager.sendIntent("https://wallet.elastos.net/didtransaction", request, {}, onSuccess, onError);
+      let error = "Publish did error, response is "+JSON.stringify(result);
+      this.logUtils.loge(error, TAG);
+      onError(error);
+    } catch (error) {
+      this.logUtils.loge(error, TAG);
+      onError(error);
+    }
   }
 
   setSigninTimeout(nodeId: string){
@@ -3121,7 +3133,7 @@ export class FeedService {
       );
   }
 
-  issueCredential(nodeId: string, did: string, serverName: string, serverDesc: string,elaAddress:string, onSuccess:(credential: string)=> void, onError:()=>void) {
+  async issueCredential(nodeId: string, did: string, serverName: string, serverDesc: string,elaAddress:string, onSuccess:(credential: string)=> void, onError:()=>void) {
     if (did == "" || nodeId == ""){
       onError();
       return;
@@ -3130,68 +3142,22 @@ export class FeedService {
     if (bindingServerCache == null || bindingServerCache == undefined)
       this.resolveServerDid(did, nodeId,"",()=>{},()=>{});
 
-    let params = {
-        identifier: "credential", // unique identifier for this credential
-        types: ["BasicProfileCredential"], // Additional credential types (strings) such as BasicProfileCredential.
-        subjectdid: did, // DID targeted by the created credential. Only that did will be able to import the credential.
-        properties: {
-            // customData: "test data.",
-            name: serverName,
-            description: serverDesc,
-            elaAddress: elaAddress
-            // moreComplexData: {
-            //   info: "A sub-info"
-            // }
-        },
-  
-        expirationdate: new Date(2024, 10, 10).toISOString() // Credential will expire on 2024-11-10 - Note the month's 0-index...
+    try {
+      let credential = await this.intentService.credissue(did, serverName, serverDesc, elaAddress);
+      if (credential){
+        bindingServerCache.name = serverName;
+        bindingServerCache.introduction = serverDesc;
+        onSuccess(credential);
+        return;
+      }
+      
+      let error = "Issue credential error, response is "+JSON.stringify(credential);
+      this.logUtils.loge(error);
+      onError();
+    } catch (error) {
+      this.logUtils.loge(error);
+      onError();
     }
-    let credential = this.intentService.credissue(params);
-    // /**
-    //  * Ask the DID app to generate a VerifiableCredential with some data, and use current DID
-    //  * as the signing issuer for this credential, so that others can permanently verifiy who
-    //  * issued the credential.
-    //  * This credential can then be delivered to a third party who can import it (credimport) to
-    //  * his DID profile.
-    //  *
-    //  * For this demo, the subject DID is ourself, so we will be able to import the credential we issued
-    //  * to our own DID profile (which is a useless use case, as usually DIDs are issued for others).
-    //  */
-    // appManager.sendIntent("https://did.elastos.net/credissue", {
-    //   identifier: "credential", // unique identifier for this credential
-    //   types: ["BasicProfileCredential"], // Additional credential types (strings) such as BasicProfileCredential.
-    //   subjectdid: did, // DID targeted by the created credential. Only that did will be able to import the credential.
-    //   properties: {
-    //       // customData: "test data.",
-    //       name: serverName,
-    //       description: serverDesc,
-    //       elaAddress: elaAddress
-    //       // moreComplexData: {
-    //       //   info: "A sub-info"
-    //       // }
-    //   },
-
-    //   expirationdate: new Date(2024, 10, 10).toISOString() // Credential will expire on 2024-11-10 - Note the month's 0-index...
-    // }, {}, (response) => {
-    //   if (response.result == null){
-    //     onError();
-    //     return;
-    //   }
-    //   if (response.result.credential) {
-    //     bindingServerCache.name = serverName;
-    //     bindingServerCache.introduction = serverDesc;
-    //     onSuccess(response.result.credential);
-    //   }
-    //   else {
-    //     onError();
-    //     this.logUtils.loge("Failed to issue a credential - empty credential returned" ,TAG);
-    //     return;
-    //   }
-    // }, (err)=>{
-    //   onError();
-    //   this.logUtils.loge("Failed to issue a credential, err msg is "+JSON.stringify(err), TAG);
-    //   return ;
-    // })
   }
 
   restoreBindingServerCache(did: string, nodeId: string, onSuccess: ()=>void, onError: ()=>void){
@@ -3739,16 +3705,21 @@ export class FeedService {
       });
   }
 
-  pay(receiver: string, amount: number, memo: string, onSuccess: (res:any)=>void, onError: (err: any)=>void){
-    this.intentService.pay(receiver, amount, memo);
-    // appManager.sendIntent("https://wallet.elastos.net/pay", param, {},
-    //   (response: any) => {
-    //     onSuccess(response);
-    //   },
-    //   (err)=>{
-    //     onError(err);
-    //   }
-    // );
+  async pay(receiver: string, amount: number, memo: string, onSuccess: (res:any)=>void, onError: (err: any)=>void){
+    try {
+      let result = await this.intentService.pay(receiver, amount, memo);  
+      if (result){
+        onSuccess(result);
+        return;
+      }
+
+      let error = "Pay error, response is "+JSON.stringify(result);
+      this.logUtils.loge(error);
+      onError(error);
+    } catch (error) {
+      this.logUtils.loge(error);
+      onError(error);
+    }
   }
 
   reSavePostMap(){
@@ -3863,16 +3834,23 @@ export class FeedService {
   }
 
   close(){
-    appManager.close();
+    //TODO
+    // appManager.close();
   }
 
-  promptpublishdid(){
-    this.intentService.promptpublishdid();
-    // appManager.sendIntent("https://did.elastos.net/promptpublishdid", {}, {}, (response: any) => {
-    // },
-    // (err)=>{
-    //   this.native.toastdanger('common.promptPublishDidError');
-    // });
+  async promptpublishdid(){
+    try {
+      let result = await this.intentService.promptpublishdid();  
+      if (result){
+        // success
+        return;
+      }
+
+      this.logUtils.loge("Prompt publish did error, response is "+JSON.stringify(result));
+      this.native.toastdanger('common.promptPublishDidError');  
+    } catch (error) {
+      this.native.toastdanger('common.promptPublishDidError');
+    }
   }
 
   checkDIDDocument(did: string): Promise<boolean>{
@@ -5083,55 +5061,23 @@ export class FeedService {
   }
 
   credaccess(): Promise<any>{
-    return new Promise((resolve, reject) =>{
-      this.intentService.credaccess(params);
-    //   appManager.sendIntent("https://did.elastos.net/credaccess", {
-    //   claims: {
-    //     name: true,
-    //     avatar: {
-    //       required: false,
-    //       reason: "For profile picture"
-    //     },
-    //     email: {
-    //       required: false,
-    //       reason: "Maybe Feeds dapp need"
-    //     },
-    //     gender: {
-    //       required: false,
-    //       reason: "Maybe Feeds dapp need"
-    //     },
-    //     telephone: {
-    //       required: false,
-    //       reason: "Maybe Feeds dapp need"
-    //     },
-    //     nation: {
-    //       required: false,
-    //       reason: "Maybe Feeds dapp need"
-    //     },
-    //     nickname:{
-    //       required: false,
-    //       reason: "Maybe Feeds dapp need"
-    //     },
-    //     description:{
-    //       required: false,
-    //       reason: "Maybe Feeds dapp need"
-    //     },
-    //     interests:{
-    //       required: false,
-    //       reason: "Maybe Feeds dapp need"
-    //     }
-    //   }
-    // }, {}, (response: any) => {
-    //     if (response && response.result && response.result.presentation) {
-    //       let data = response.result;
-    //       resolve(data);
-    //       return;
-    //     }
-    //     reject("credaccess error response is "+JSON.stringify(response));
-    //   },(err)=>{
-    //     reject(err);
-    //   });
-    // });
+    return new Promise(async (resolve, reject) =>{
+      try {
+        let response = await this.intentService.credaccessWithParams();
+        if (response && response.result && response.result.presentation) {
+          let data = response.result;
+          resolve(data);
+          return;
+        }
+  
+        let error = "Credaccess error, response is "+JSON.stringify(response);
+        this.logUtils.loge(error, TAG);
+        reject(error);  
+      } catch (error) {
+        this.logUtils.loge(error, TAG);
+        reject(error);
+      }
+    });
   }
 
   async cleanAllData(){
