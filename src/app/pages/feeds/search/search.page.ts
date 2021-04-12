@@ -8,6 +8,8 @@ import { PopupProvider } from '../../../services/popup';
 import { HttpService } from '../../../services/HttpService';
 import { ApiUrl } from '../../../services/ApiUrl';
 import { StorageService } from '../../../services/StorageService';
+import { IntentService } from '../../../services/IntentService';
+
 import * as _ from 'lodash';
 declare let appManager: AppManagerPlugin.AppManager;
 @Component({
@@ -63,9 +65,10 @@ export class SearchPage implements OnInit {
     private native: NativeService,
     public theme:ThemeService,
     private popoverController: PopoverController,
-    private popupProvider:PopupProvider,
-    private httpService:HttpService,
-    public  storageService:StorageService,
+    private popupProvider: PopupProvider,
+    private httpService: HttpService,
+    private intentService: IntentService,
+    public  storageService: StorageService,
   ) {
   }
 
@@ -348,24 +351,18 @@ export class SearchPage implements OnInit {
       this.native.toastWarn('common.connectionError');
       return;
     }
-
     this.handleJump("scanService")
   }
 
-
-  handleJump(clickType:string){
+  async handleJump(clickType:string){
     if(clickType === "scanService"){
-      appManager.sendIntent("https://scanner.elastos.net/scanqrcode", {}, {}, (res) => {
-        let result: string = res.result.scannedContent;
-        this.checkValid(result);
-      }, (err: any) => {
-          console.error(err);
-      });
-         return;
+      let scannedContent = await this.intentService.scanQRCode() || "";
+      this.checkValid(scannedContent);
+      return;
     }
   }
 
-checkValid(result: string){
+  checkValid(result: string){
     if (result.length < 54 ||
         !result.startsWith('feeds://')||
         !result.indexOf("did:elastos:")){

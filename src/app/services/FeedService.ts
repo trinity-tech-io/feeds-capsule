@@ -15,6 +15,7 @@ import { PopupProvider } from 'src/app/services/popup';
 import { LogUtils } from 'src/app/services/LogUtils';
 import { StandardAuthService } from 'src/app/services/StandardAuthService';
 import { AddFeedService } from 'src/app/services/AddFeedService';
+import { IntentService } from 'src/app/services/IntentService';
 
 import * as _ from 'lodash';
 import { DataHelper } from "./DataHelper";
@@ -117,7 +118,8 @@ export class FeedService {
     private logUtils: LogUtils,
     private standardAuth: StandardAuthService,
     private addFeedService: AddFeedService,
-    private dataHelper: DataHelper
+    private dataHelper: DataHelper,
+    private intentService: IntentService
   ) {
     eventBus = events;
     this.init();
@@ -768,11 +770,12 @@ export class FeedService {
   }
 
   createPresentation(nonce, realm, onSuccess: (presentation: any)=>void, onError?: (err:any)=>void){
-    appManager.sendIntent("https://did.elastos.net/credaccess", {}, {}, (response: any) => {
-      if (response && response.result && response.result.presentation)
-        onSuccess(response.result.presentation);
-    },
-    (err)=>{});
+    let presentation = await this.intentService.credaccess();
+    // appManager.sendIntent("https://did.elastos.net/credaccess", {}, {}, (response: any) => {
+    //   if (response && response.result && response.result.presentation)
+    //     onSuccess(response.result.presentation);
+    // },
+    // (err)=>{});
   }
 
   verifyPresentation(presentationstr: string, onSuccess?: (isValid: boolean)=>void, onError?: (err:any)=>void){
@@ -2692,7 +2695,9 @@ export class FeedService {
     }
     let requestStr = JSON.stringify(params);
     let request =  JSON.parse(requestStr);
-    appManager.sendIntent("https://wallet.elastos.net/didtransaction", request, {}, onSuccess, onError);
+
+    this.intentService.didtransaction();
+    // appManager.sendIntent("https://wallet.elastos.net/didtransaction", request, {}, onSuccess, onError);
   }
 
   setSigninTimeout(nodeId: string){
@@ -3124,51 +3129,69 @@ export class FeedService {
 
     if (bindingServerCache == null || bindingServerCache == undefined)
       this.resolveServerDid(did, nodeId,"",()=>{},()=>{});
-    /**
-     * Ask the DID app to generate a VerifiableCredential with some data, and use current DID
-     * as the signing issuer for this credential, so that others can permanently verifiy who
-     * issued the credential.
-     * This credential can then be delivered to a third party who can import it (credimport) to
-     * his DID profile.
-     *
-     * For this demo, the subject DID is ourself, so we will be able to import the credential we issued
-     * to our own DID profile (which is a useless use case, as usually DIDs are issued for others).
-     */
-    appManager.sendIntent("https://did.elastos.net/credissue", {
-      identifier: "credential", // unique identifier for this credential
-      types: ["BasicProfileCredential"], // Additional credential types (strings) such as BasicProfileCredential.
-      subjectdid: did, // DID targeted by the created credential. Only that did will be able to import the credential.
-      properties: {
-          // customData: "test data.",
-          name: serverName,
-          description: serverDesc,
-          elaAddress: elaAddress
-          // moreComplexData: {
-          //   info: "A sub-info"
-          // }
-      },
 
-      expirationdate: new Date(2024, 10, 10).toISOString() // Credential will expire on 2024-11-10 - Note the month's 0-index...
-    }, {}, (response) => {
-      if (response.result == null){
-        onError();
-        return;
-      }
-      if (response.result.credential) {
-        bindingServerCache.name = serverName;
-        bindingServerCache.introduction = serverDesc;
-        onSuccess(response.result.credential);
-      }
-      else {
-        onError();
-        this.logUtils.loge("Failed to issue a credential - empty credential returned" ,TAG);
-        return;
-      }
-    }, (err)=>{
-      onError();
-      this.logUtils.loge("Failed to issue a credential, err msg is "+JSON.stringify(err), TAG);
-      return ;
-    })
+    let params = {
+        identifier: "credential", // unique identifier for this credential
+        types: ["BasicProfileCredential"], // Additional credential types (strings) such as BasicProfileCredential.
+        subjectdid: did, // DID targeted by the created credential. Only that did will be able to import the credential.
+        properties: {
+            // customData: "test data.",
+            name: serverName,
+            description: serverDesc,
+            elaAddress: elaAddress
+            // moreComplexData: {
+            //   info: "A sub-info"
+            // }
+        },
+  
+        expirationdate: new Date(2024, 10, 10).toISOString() // Credential will expire on 2024-11-10 - Note the month's 0-index...
+    }
+    let credential = this.intentService.credissue(params);
+    // /**
+    //  * Ask the DID app to generate a VerifiableCredential with some data, and use current DID
+    //  * as the signing issuer for this credential, so that others can permanently verifiy who
+    //  * issued the credential.
+    //  * This credential can then be delivered to a third party who can import it (credimport) to
+    //  * his DID profile.
+    //  *
+    //  * For this demo, the subject DID is ourself, so we will be able to import the credential we issued
+    //  * to our own DID profile (which is a useless use case, as usually DIDs are issued for others).
+    //  */
+    // appManager.sendIntent("https://did.elastos.net/credissue", {
+    //   identifier: "credential", // unique identifier for this credential
+    //   types: ["BasicProfileCredential"], // Additional credential types (strings) such as BasicProfileCredential.
+    //   subjectdid: did, // DID targeted by the created credential. Only that did will be able to import the credential.
+    //   properties: {
+    //       // customData: "test data.",
+    //       name: serverName,
+    //       description: serverDesc,
+    //       elaAddress: elaAddress
+    //       // moreComplexData: {
+    //       //   info: "A sub-info"
+    //       // }
+    //   },
+
+    //   expirationdate: new Date(2024, 10, 10).toISOString() // Credential will expire on 2024-11-10 - Note the month's 0-index...
+    // }, {}, (response) => {
+    //   if (response.result == null){
+    //     onError();
+    //     return;
+    //   }
+    //   if (response.result.credential) {
+    //     bindingServerCache.name = serverName;
+    //     bindingServerCache.introduction = serverDesc;
+    //     onSuccess(response.result.credential);
+    //   }
+    //   else {
+    //     onError();
+    //     this.logUtils.loge("Failed to issue a credential - empty credential returned" ,TAG);
+    //     return;
+    //   }
+    // }, (err)=>{
+    //   onError();
+    //   this.logUtils.loge("Failed to issue a credential, err msg is "+JSON.stringify(err), TAG);
+    //   return ;
+    // })
   }
 
   restoreBindingServerCache(did: string, nodeId: string, onSuccess: ()=>void, onError: ()=>void){
@@ -3723,14 +3746,15 @@ export class FeedService {
       memo: memo
     }
 
-    appManager.sendIntent("https://wallet.elastos.net/pay", param, {},
-      (response: any) => {
-        onSuccess(response);
-      },
-      (err)=>{
-        onError(err);
-      }
-    );
+    this.intentService.pay(param);
+    // appManager.sendIntent("https://wallet.elastos.net/pay", param, {},
+    //   (response: any) => {
+    //     onSuccess(response);
+    //   },
+    //   (err)=>{
+    //     onError(err);
+    //   }
+    // );
   }
 
   reSavePostMap(){
@@ -3849,11 +3873,12 @@ export class FeedService {
   }
 
   promptpublishdid(){
-    appManager.sendIntent("https://did.elastos.net/promptpublishdid", {}, {}, (response: any) => {
-    },
-    (err)=>{
-      this.native.toastdanger('common.promptPublishDidError');
-    });
+    this.intentService.promptpublishdid();
+    // appManager.sendIntent("https://did.elastos.net/promptpublishdid", {}, {}, (response: any) => {
+    // },
+    // (err)=>{
+    //   this.native.toastdanger('common.promptPublishDidError');
+    // });
   }
 
   checkDIDDocument(did: string): Promise<boolean>{
@@ -5065,53 +5090,54 @@ export class FeedService {
 
   credaccess(): Promise<any>{
     return new Promise((resolve, reject) =>{
-      appManager.sendIntent("https://did.elastos.net/credaccess", {
-      claims: {
-        name: true,
-        avatar: {
-          required: false,
-          reason: "For profile picture"
-        },
-        email: {
-          required: false,
-          reason: "Maybe Feeds dapp need"
-        },
-        gender: {
-          required: false,
-          reason: "Maybe Feeds dapp need"
-        },
-        telephone: {
-          required: false,
-          reason: "Maybe Feeds dapp need"
-        },
-        nation: {
-          required: false,
-          reason: "Maybe Feeds dapp need"
-        },
-        nickname:{
-          required: false,
-          reason: "Maybe Feeds dapp need"
-        },
-        description:{
-          required: false,
-          reason: "Maybe Feeds dapp need"
-        },
-        interests:{
-          required: false,
-          reason: "Maybe Feeds dapp need"
-        }
-      }
-    }, {}, (response: any) => {
-        if (response && response.result && response.result.presentation) {
-          let data = response.result;
-          resolve(data);
-          return;
-        }
-        reject("credaccess error response is "+JSON.stringify(response));
-      },(err)=>{
-        reject(err);
-      });
-    });
+      this.intentService.credaccess(params);
+    //   appManager.sendIntent("https://did.elastos.net/credaccess", {
+    //   claims: {
+    //     name: true,
+    //     avatar: {
+    //       required: false,
+    //       reason: "For profile picture"
+    //     },
+    //     email: {
+    //       required: false,
+    //       reason: "Maybe Feeds dapp need"
+    //     },
+    //     gender: {
+    //       required: false,
+    //       reason: "Maybe Feeds dapp need"
+    //     },
+    //     telephone: {
+    //       required: false,
+    //       reason: "Maybe Feeds dapp need"
+    //     },
+    //     nation: {
+    //       required: false,
+    //       reason: "Maybe Feeds dapp need"
+    //     },
+    //     nickname:{
+    //       required: false,
+    //       reason: "Maybe Feeds dapp need"
+    //     },
+    //     description:{
+    //       required: false,
+    //       reason: "Maybe Feeds dapp need"
+    //     },
+    //     interests:{
+    //       required: false,
+    //       reason: "Maybe Feeds dapp need"
+    //     }
+    //   }
+    // }, {}, (response: any) => {
+    //     if (response && response.result && response.result.presentation) {
+    //       let data = response.result;
+    //       resolve(data);
+    //       return;
+    //     }
+    //     reject("credaccess error response is "+JSON.stringify(response));
+    //   },(err)=>{
+    //     reject(err);
+    //   });
+    // });
   }
 
   async cleanAllData(){
