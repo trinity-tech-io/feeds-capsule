@@ -3740,13 +3740,7 @@ export class FeedService {
   }
 
   pay(receiver: string, amount: number, memo: string, onSuccess: (res:any)=>void, onError: (err: any)=>void){
-    let param = {
-      receiver: receiver,
-      amount: amount,
-      memo: memo
-    }
-
-    this.intentService.pay(param);
+    this.intentService.pay(receiver, amount, memo);
     // appManager.sendIntent("https://wallet.elastos.net/pay", param, {},
     //   (response: any) => {
     //     onSuccess(response);
