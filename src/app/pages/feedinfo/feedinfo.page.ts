@@ -11,7 +11,7 @@ import { AppService } from '../../services/AppService';
 import { UtilService } from '../../services/utilService';
 
 import * as _ from 'lodash';
-declare let titleBarManager: TitleBarPlugin.TitleBarManager;
+// declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 @Component({
   selector: 'app-feedinfo',
@@ -146,22 +146,22 @@ export class FeedinfoPage implements OnInit {
 
   initTitle(){
     this.native.setTitleBarBackKeyShown(true);
-    titleBarManager.setTitle(this.translate.instant('FeedinfoPage.title'));
-    if (this.feedService.checkChannelIsMine(this.nodeId, this.channelId)) {
-      titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, {
-        key: "editChannel",
-        iconPath: TitleBarPlugin.BuiltInIcon.EDIT
-      });
-    } else {
-      titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, null);
-    }
+    // titleBarManager.setTitle(this.translate.instant('FeedinfoPage.title'));
+    // if (this.feedService.checkChannelIsMine(this.nodeId, this.channelId)) {
+    //   titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, {
+    //     key: "editChannel",
+    //     iconPath: TitleBarPlugin.BuiltInIcon.EDIT
+    //   });
+    // } else {
+    //   titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, null);
+    // }
   }
 
   ionViewDidEnter(){
   }
 
   ionViewWillLeave(){
-    titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, null);
+    // titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, null);
     this.events.unsubscribe(FeedsEvent.PublishType.unsubscribeFinish);
     this.events.unsubscribe(FeedsEvent.PublishType.subscribeFinish);
     this.events.unsubscribe(FeedsEvent.PublishType.editChannel);
@@ -325,9 +325,9 @@ export class FeedinfoPage implements OnInit {
      return;
     }
     let isOwner = this.feedService.checkChannelIsMine(this.nodeId, this.channelId);
-    if(isOwner){
-      titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, null);
-    }
+    // if(isOwner){
+    //   titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, null);
+    // }
     this.native.showPreviewQrcode(feedsUrl,"common.qRcodePreview","FeedinfoPage.title","feedinfo",this.appService,isOwner);
   }
 

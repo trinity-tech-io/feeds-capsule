@@ -6,7 +6,7 @@ import { AppService } from './../../services/AppService';
 import { SplashscreenPage } from './../../pages/splashscreen/splashscreen.page';
 import { ThemeService } from 'src/app/services/theme.service';
 
-declare let titleBarManager: TitleBarPlugin.TitleBarManager;
+// declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 @Component({
   selector: 'app-disclaimer',
@@ -44,7 +44,7 @@ export class DisclaimerPage implements OnInit {
   }
 
   private initTitle(){
-    titleBarManager.setTitle(this.translate.instant("DisclaimerPage.title"));
+    // titleBarManager.setTitle(this.translate.instant("DisclaimerPage.title"));
   }
 
   ionViewWillLeave(){

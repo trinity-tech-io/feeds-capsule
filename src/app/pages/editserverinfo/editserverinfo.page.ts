@@ -9,7 +9,7 @@ import { IntentService } from 'src/app/services/IntentService';
 
 import * as _ from 'lodash';
 
-declare let titleBarManager: TitleBarPlugin.TitleBarManager;
+// declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 @Component({
   selector: 'app-editserverinfo',
@@ -83,7 +83,7 @@ export class EditserverinfoPage implements OnInit {
   }
 
   initTitle(){
-    titleBarManager.setTitle(this.translate.instant('EditserverinfoPage.title'));
+    // titleBarManager.setTitle(this.translate.instant('EditserverinfoPage.title'));
   }
 
   async clickScan(){

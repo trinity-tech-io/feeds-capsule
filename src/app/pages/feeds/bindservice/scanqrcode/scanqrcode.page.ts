@@ -9,7 +9,7 @@ import { CameraService } from '../../../../services/CameraService';
 import { PopupProvider } from '../../../../services/popup';
 import { IntentService } from 'src/app/services/IntentService';
 
-declare let titleBarManager: TitleBarPlugin.TitleBarManager;
+// declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 @Component({
   selector: 'app-scanqrcode',
@@ -55,7 +55,7 @@ export class ScanqrcodePage implements OnInit {
   }
 
   initTitle(){
-    titleBarManager.setTitle(this.title);
+    // titleBarManager.setTitle(this.title);
   }
 
   ionViewDidEnter() {

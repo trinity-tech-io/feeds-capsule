@@ -4,7 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Events } from '@ionic/angular';
 import { NativeService } from 'src/app/services/NativeService';
 import { ThemeService } from 'src/app/services/theme.service';
-declare let titleBarManager: TitleBarPlugin.TitleBarManager;
+// declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 @Component({
   selector: 'app-importdid',
@@ -83,7 +83,7 @@ export class ImportdidPage implements OnInit {
 
 
     initTitle(){
-      titleBarManager.setTitle(this.title);
+      // titleBarManager.setTitle(this.title);
     }
 
   createNewDid(){

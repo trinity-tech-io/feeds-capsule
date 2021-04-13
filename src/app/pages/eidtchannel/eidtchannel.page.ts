@@ -9,7 +9,7 @@ import { HttpService } from 'src/app/services/HttpService';
 import { ApiUrl } from 'src/app/services/ApiUrl';
 import { UtilService } from 'src/app/services/utilService';
 import * as _ from 'lodash';
-declare let titleBarManager: TitleBarPlugin.TitleBarManager;
+// declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 @Component({
   selector: 'app-eidtchannel',
@@ -83,7 +83,7 @@ ionViewWillEnter() {
 }
 
 initTitle(){
-  titleBarManager.setTitle(this.translate.instant('EidtchannelPage.title'));
+  // titleBarManager.setTitle(this.translate.instant('EidtchannelPage.title'));
 }
 
 ionViewDidEnter(){

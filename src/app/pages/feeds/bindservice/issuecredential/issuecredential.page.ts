@@ -7,7 +7,7 @@ import { NativeService } from 'src/app/services/NativeService';
 import { TranslateService } from "@ngx-translate/core";
 import { ThemeService } from 'src/app/services/theme.service';
 import { ServerpromptComponent } from 'src/app/components/serverprompt/serverprompt.component';
-declare let titleBarManager: TitleBarPlugin.TitleBarManager;
+// declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 @Component({
   selector: 'app-issuecredential',
@@ -86,7 +86,7 @@ export class IssuecredentialPage implements OnInit {
   
   
     initTitle(){
-      titleBarManager.setTitle(this.translate.instant(this.title));
+      // titleBarManager.setTitle(this.translate.instant(this.title));
     }
   
   issueCredential(){

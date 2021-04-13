@@ -11,7 +11,7 @@ import { AppService } from 'src/app/services/AppService';
 import { UtilService } from 'src/app/services/utilService';
 import { LogUtils } from 'src/app/services/LogUtils';
 import * as _ from 'lodash';
-declare let titleBarManager: TitleBarPlugin.TitleBarManager;
+// declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 let TAG: string = "Feeds-editpost";
 @Component({
   selector: 'app-editpost',
@@ -217,7 +217,7 @@ export class EditPostPage implements OnInit {
   }
 
   initTitle(){
-    titleBarManager.setTitle(this.translate.instant("EditPostPage.title"));
+    // titleBarManager.setTitle(this.translate.instant("EditPostPage.title"));
   }
 
   post(){

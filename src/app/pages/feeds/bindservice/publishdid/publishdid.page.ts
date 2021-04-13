@@ -6,7 +6,7 @@ import { FeedService } from 'src/app/services/FeedService';
 import { NativeService } from 'src/app/services/NativeService';
 import { TranslateService } from "@ngx-translate/core";
 import { ThemeService } from 'src/app/services/theme.service';
-declare let titleBarManager: TitleBarPlugin.TitleBarManager;
+// declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 @Component({
   selector: 'app-publishdid',
@@ -60,7 +60,7 @@ export class PublishdidPage implements OnInit {
 
 
     initTitle(){
-      titleBarManager.setTitle(this.translate.instant(this.title));
+      // titleBarManager.setTitle(this.translate.instant(this.title));
     }
 
     publishDid(){

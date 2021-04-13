@@ -14,7 +14,7 @@ import { PopupProvider } from '../../../services/popup';
 import { AppService } from '../../../services/AppService';
 
 import * as _ from 'lodash';
-declare let titleBarManager: TitleBarPlugin.TitleBarManager;
+// declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 class Attribute {
   constructor(
@@ -166,7 +166,7 @@ export class ServerInfoPage implements OnInit {
   }
 
   ionViewWillLeave(){
-    titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, null);
+    // titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, null);
     let value =  this.popoverController.getTop()["__zone_symbol__value"] || "";
     if(value!=""){
       this.popoverController.dismiss();
@@ -186,16 +186,16 @@ export class ServerInfoPage implements OnInit {
   }
 
   initTitle(){
-    titleBarManager.setTitle(this.translate.instant('ServerInfoPage.title'));
+    // titleBarManager.setTitle(this.translate.instant('ServerInfoPage.title'));
 
-    if (this.checkIsMine() == 0) {
-      titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, {
-        key: "editServer",
-        iconPath: TitleBarPlugin.BuiltInIcon.EDIT
-      });
-    } else {
-      titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, null);
-    }
+    // if (this.checkIsMine() == 0) {
+    //   titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, {
+    //     key: "editServer",
+    //     iconPath: TitleBarPlugin.BuiltInIcon.EDIT
+    //   });
+    // } else {
+    //   titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, null);
+    // }
   }
 
   navigateBackPage() {
@@ -560,7 +560,7 @@ showPreviewQrcode(feedsUrl:string){
     this.isPress =false;
    return;
   }
-   titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, null);
+  //  titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, null);
    this.native.showPreviewQrcode(feedsUrl,"common.qRcodePreview","ServerInfoPage.title","serverinfo",this.appService);
 }
 

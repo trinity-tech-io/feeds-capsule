@@ -13,7 +13,7 @@ import { PaypromptComponent } from './../components/payprompt/payprompt.componen
 import { IntentService } from 'src/app/services/IntentService';
 
 
-declare let titleBarManager: TitleBarPlugin.TitleBarManager;
+// declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 @Injectable()
 export class NativeService {
     public loading:any = null;
@@ -130,15 +130,15 @@ export class NativeService {
     }
 
     setTitleBarBackKeyShown(show: boolean) {
-        if (show) {
-            titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_LEFT, {
-                key: "back",
-                iconPath: TitleBarPlugin.BuiltInIcon.BACK
-            });
-        }
-        else {
-            titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_LEFT, null);
-        }
+        // if (show) {
+        //     titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_LEFT, {
+        //         key: "back",
+        //         iconPath: TitleBarPlugin.BuiltInIcon.BACK
+        //     });
+        // }
+        // else {
+        //     titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_LEFT, null);
+        // }
     }
 
     getNavCtrl(){
@@ -181,7 +181,7 @@ export class NativeService {
 
     async openViewer(imgPath:string,newNameKey:string,oldNameKey:string,appService?:any,isOwer?:boolean) {
 
-         titleBarManager.setTitle(this.translate.instant(newNameKey));
+        //  titleBarManager.setTitle(this.translate.instant(newNameKey));
          this.setTitleBarBackKeyShown(false);
          appService.hideright();
          const modal = await this.modalController.create({
@@ -198,16 +198,16 @@ export class NativeService {
 
         modal.onWillDismiss().then(()=>{
              document.removeEventListener('click',(event)=> this.hide(modal),false);
-            titleBarManager.setTitle(this.translate.instant(oldNameKey));
+            // titleBarManager.setTitle(this.translate.instant(oldNameKey));
             if(oldNameKey!='FeedsPage.tabTitle2'&&oldNameKey!='FeedsPage.tabTitle1'){
                 this.setTitleBarBackKeyShown(true);
             }
-            if(isOwer){
-                titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, {
-                    key: "editChannel",
-                    iconPath: TitleBarPlugin.BuiltInIcon.EDIT
-                  });
-            }
+            // if(isOwer){
+            //     titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, {
+            //         key: "editChannel",
+            //         iconPath: TitleBarPlugin.BuiltInIcon.EDIT
+            //       });
+            // }
             appService.addright();
 
         })
@@ -316,7 +316,7 @@ public clickUrl(url:string,event:any){
 
 async showPreviewQrcode(qrCodeString:string,newNameKey:string,oldNameKey:string,page:string,appService:any,isOwner?:boolean) {
 
-    titleBarManager.setTitle(this.translate.instant(newNameKey));
+    // titleBarManager.setTitle(this.translate.instant(newNameKey));
     this.setTitleBarBackKeyShown(false);
     appService.hideright();
     const modal = await this.modalController.create({
@@ -327,22 +327,22 @@ async showPreviewQrcode(qrCodeString:string,newNameKey:string,oldNameKey:string,
       }
     });
     modal.onWillDismiss().then(()=>{
-        titleBarManager.setTitle(this.translate.instant(oldNameKey));
+        // titleBarManager.setTitle(this.translate.instant(oldNameKey));
         this.setTitleBarBackKeyShown(true);
-        if(page === "serverinfo"){
-            titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, {
-                key: "editServer",
-                iconPath: TitleBarPlugin.BuiltInIcon.EDIT
-            });
-        }
-        if(page === "feedinfo"){
-            if(isOwner){
-                titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, {
-                    key: "editChannel",
-                    iconPath: TitleBarPlugin.BuiltInIcon.EDIT
-             });
-            }
-        }
+        // if(page === "serverinfo"){
+        //     titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, {
+        //         key: "editServer",
+        //         iconPath: TitleBarPlugin.BuiltInIcon.EDIT
+        //     });
+        // }
+        // if(page === "feedinfo"){
+        //     if(isOwner){
+        //         titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, {
+        //             key: "editChannel",
+        //             iconPath: TitleBarPlugin.BuiltInIcon.EDIT
+        //      });
+        //     }
+        // }
         appService.addright();
     })
     return await modal.present();

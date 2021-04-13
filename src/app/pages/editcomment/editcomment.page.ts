@@ -6,7 +6,7 @@ import { NativeService } from '../../services/NativeService';
 import { ThemeService } from '../../services/theme.service';
 import { TranslateService } from "@ngx-translate/core";
 import * as _ from 'lodash';
-declare let titleBarManager: TitleBarPlugin.TitleBarManager;
+// declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 @Component({
   selector: 'app-editcomment',
   templateUrl: './editcomment.page.html',
@@ -120,7 +120,7 @@ export class EditCommentPage implements OnInit {
   }
 
   initTitle(){
-    titleBarManager.setTitle(this.translate.instant(this.titleKey));
+    // titleBarManager.setTitle(this.translate.instant(this.titleKey));
   }
 
   publishComment(){

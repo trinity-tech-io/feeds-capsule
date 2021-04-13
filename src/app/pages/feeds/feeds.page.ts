@@ -7,7 +7,7 @@ import { ThemeService } from '../../services/theme.service';
 import { PopupProvider } from '../../services/popup';
 import { StorageService } from '../../services/StorageService';
 import * as _ from 'lodash';
-declare let titleBarManager: TitleBarPlugin.TitleBarManager;
+// declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 @Component({
   selector: 'app-feeds',
@@ -77,7 +77,7 @@ export class FeedsPage implements OnInit {
   }
 
   initTile(){
-   titleBarManager.setTitle(this.translate.instant(this.title));
+  //  titleBarManager.setTitle(this.translate.instant(this.title));
   }
 
   ionViewDidEnter() {

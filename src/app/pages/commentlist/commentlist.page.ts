@@ -11,7 +11,7 @@ import { IonInfiniteScroll,PopoverController} from '@ionic/angular';
 import { AppService } from 'src/app/services/AppService';
 import { LogUtils } from 'src/app/services/LogUtils';
 import * as _ from 'lodash';
-declare let titleBarManager: TitleBarPlugin.TitleBarManager;
+// declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 let TAG: string = "Feeds-commentlist";
 
 @Component({
@@ -281,7 +281,7 @@ export class CommentlistPage implements OnInit {
   }
 
   initTitle(){
-    titleBarManager.setTitle(this.translate.instant("CommentlistPage.title"));
+    // titleBarManager.setTitle(this.translate.instant("CommentlistPage.title"));
   }
 
   getContentText(): string{
