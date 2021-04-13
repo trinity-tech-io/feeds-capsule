@@ -9,7 +9,7 @@ import { ApiUrl } from '../../../services/ApiUrl';
 import { StorageService } from '../../../services/StorageService';
 import { UtilService } from '../../../services/utilService';
 import { HttpService } from '../../../services/HttpService';
-declare let titleBarManager: TitleBarPlugin.TitleBarManager;
+// declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 @Component({
   selector: 'app-createnewfeed',
@@ -123,7 +123,7 @@ export class CreatenewfeedPage implements OnInit {
   }
 
   initTitle(){
-    titleBarManager.setTitle(this.translate.instant("CreatenewfeedPage.createNewFeed"));
+    // titleBarManager.setTitle(this.translate.instant("CreatenewfeedPage.createNewFeed"));
   }
 
   createChannel(name: HTMLInputElement, desc: HTMLInputElement){

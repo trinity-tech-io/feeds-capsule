@@ -5,7 +5,7 @@ import { Events } from '@ionic/angular';
 import { NativeService } from 'src/app/services/NativeService';
 import { ThemeService } from 'src/app/services/theme.service';
 import { TranslateService } from "@ngx-translate/core";
-declare let titleBarManager: TitleBarPlugin.TitleBarManager;
+// declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 @Component({
   selector: 'app-startbinding',
@@ -136,7 +136,7 @@ export class StartbindingPage implements OnInit {
   }
 
   initTitle(){
-    titleBarManager.setTitle(this.title);
+    // titleBarManager.setTitle(this.title);
   }
 
   ionViewDidEnter() {

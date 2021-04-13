@@ -11,7 +11,7 @@ import { StorageService } from '../../services/StorageService';
 import { UtilService } from '../../services/utilService';
 import { PopupProvider } from '../../services/popup';
 import * as _ from 'lodash';
-declare let titleBarManager: TitleBarPlugin.TitleBarManager;
+// declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 @Component({
   selector: 'app-feedspreferences',
   templateUrl: './feedspreferences.page.html',
@@ -53,7 +53,7 @@ export class FeedspreferencesPage implements OnInit {
   }
 
   initTitle(){
-    titleBarManager.setTitle(this.translate.instant('FeedspreferencesPage.title'));
+    // titleBarManager.setTitle(this.translate.instant('FeedspreferencesPage.title'));
   }
 
   ionViewWillEnter(){

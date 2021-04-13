@@ -12,7 +12,7 @@ import { MenuService } from 'src/app/services/MenuService';
 import { PopupProvider } from 'src/app/services/popup';
 import { IntentService } from 'src/app/services/IntentService';
 
-declare let titleBarManager: TitleBarPlugin.TitleBarManager;
+// declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 let managerService: any;
 
@@ -46,26 +46,26 @@ export class AppService {
         this.onMessageReceived(msg);
       });
 
-      titleBarManager.addOnItemClickedListener((menuIcon)=>{
-        this.native.hideLoading();
-        if (menuIcon.key == "back") {
-            this.handleBack();
-        } else if (menuIcon.key == "more"){
-            this.events.publish(FeedsEvent.PublishType.openRightMenu);
-            this.menuService.hideActionSheet();
-            let value =  this.popoverController.getTop()["__zone_symbol__value"] || "";
-            if(value!=""){
-              this.popoverController.dismiss();
-            }
-            this.menu.open("menu");
-        } else if (menuIcon.key === 'editChannel') {
-          this.event.publish(FeedsEvent.PublishType.editChannel);
-        } else if (menuIcon.key === 'editServer') {
-          this.event.publish(FeedsEvent.PublishType.editServer);
-        }else if(menuIcon.key === 'editImages'){
-          this.events.publish(FeedsEvent.PublishType.editImages);
-        }
-      });
+      // titleBarManager.addOnItemClickedListener((menuIcon)=>{
+      //   this.native.hideLoading();
+      //   if (menuIcon.key == "back") {
+      //       this.handleBack();
+      //   } else if (menuIcon.key == "more"){
+      //       this.events.publish(FeedsEvent.PublishType.openRightMenu);
+      //       this.menuService.hideActionSheet();
+      //       let value =  this.popoverController.getTop()["__zone_symbol__value"] || "";
+      //       if(value!=""){
+      //         this.popoverController.dismiss();
+      //       }
+      //       this.menu.open("menu");
+      //   } else if (menuIcon.key === 'editChannel') {
+      //     this.event.publish(FeedsEvent.PublishType.editChannel);
+      //   } else if (menuIcon.key === 'editServer') {
+      //     this.event.publish(FeedsEvent.PublishType.editServer);
+      //   }else if(menuIcon.key === 'editImages'){
+      //     this.events.publish(FeedsEvent.PublishType.editImages);
+      //   }
+      // });
     }
 
     onReceiveIntent = (ret: IntentPlugin.ReceivedIntent) => {
@@ -111,14 +111,14 @@ export class AppService {
     }
 
     addright(){
-      titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.OUTER_RIGHT, {
-        key: "more",
-        iconPath: "assets/icon/more_menu.ico"
-      });
+      // titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.OUTER_RIGHT, {
+      //   key: "more",
+      //   iconPath: "assets/icon/more_menu.ico"
+      // });
     }
 
     hideright(){
-      titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.OUTER_RIGHT,null);
+      // titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.OUTER_RIGHT,null);
     }
 
     onMessageReceived(msg: IntentPlugin.ReceivedIntent) {

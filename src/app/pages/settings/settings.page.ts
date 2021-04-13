@@ -16,7 +16,7 @@ enum LogLevel {
   DEBUG,
 }
 
-declare let titleBarManager: TitleBarPlugin.TitleBarManager;
+// declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 @Component({
   selector: 'app-settings',
   templateUrl: './settings.page.html',
@@ -48,7 +48,7 @@ export class SettingsPage implements OnInit {
   }
 
   initTitle(){
-    titleBarManager.setTitle(this.translate.instant("app.settings"));
+    // titleBarManager.setTitle(this.translate.instant("app.settings"));
   }
 
   ionViewWillEnter() {

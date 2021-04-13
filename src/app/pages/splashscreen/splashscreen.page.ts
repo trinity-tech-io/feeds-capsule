@@ -3,7 +3,7 @@ import { ModalController } from '@ionic/angular';
 import { TranslateService } from "@ngx-translate/core";
 import { ThemeService } from 'src/app/services/theme.service';
 import { AppService } from '../../services/AppService';
-declare let titleBarManager: TitleBarPlugin.TitleBarManager;
+// declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 @Component({
   selector: 'app-splashscreen',
   templateUrl: './splashscreen.page.html',
@@ -23,7 +23,7 @@ export class SplashscreenPage implements OnInit {
 
   ionViewWillEnter() {
     this.styleObj["margin-top"]= (screen.height - 300)/2 +"px";   
-    titleBarManager.setTitle(this.translate.instant('common.feeds'));
+    // titleBarManager.setTitle(this.translate.instant('common.feeds'));
   }
 
   ionViewDidEnter() {

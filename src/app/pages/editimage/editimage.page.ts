@@ -4,7 +4,7 @@ import { FeedService } from '../../services/FeedService';
 import { NativeService } from '../../services/NativeService';
 import { Events} from '@ionic/angular';
 import { AppService } from '../../services/AppService';
-declare let titleBarManager: TitleBarPlugin.TitleBarManager;
+// declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 @Component({
   selector: 'app-editimage',
   templateUrl: './editimage.page.html',
@@ -27,11 +27,11 @@ export class EditimagePage implements OnInit {
       this.finish();
     });
     this.appService.hideright();
-    titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, {
-      key: "editImages",
-      iconPath:"assets/icon/yes.ico"
-      //iconPath:TitleBarPlugin.BuiltInIcon.ADD
-    });
+    // titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, {
+    //   key: "editImages",
+    //   iconPath:"assets/icon/yes.ico"
+    //   //iconPath:TitleBarPlugin.BuiltInIcon.ADD
+    // });
 
     this.headPortrait = this.feedService.getClipProfileIamge();
   }
@@ -39,7 +39,7 @@ export class EditimagePage implements OnInit {
   ionViewWillLeave(){
     this.events.unsubscribe(FeedsEvent.PublishType.editImages);
     this.appService.addright();
-    titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, null);
+    // titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, null);
     let croppedImage = this.feedService.getClipProfileIamge();
     if(this.headPortrait === croppedImage){
       this.feedService.setClipProfileIamge("");

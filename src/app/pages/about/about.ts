@@ -4,7 +4,7 @@ import { NativeService } from 'src/app/services/NativeService';
 import { TranslateService } from "@ngx-translate/core";
 import { FeedService } from 'src/app/services/FeedService';
 import { ThemeService } from 'src/app/services/theme.service';
-declare let titleBarManager: TitleBarPlugin.TitleBarManager;
+// declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 @Component({
   selector: 'page-about',
@@ -50,7 +50,7 @@ export class AboutPage implements OnInit {
 
     initTitle(){
       this.currentLanguage = this.feedService.getCurrentLang();
-      titleBarManager.setTitle(this.translate.instant("AboutPage.about"));
+      // titleBarManager.setTitle(this.translate.instant("AboutPage.about"));
     }
 
 
