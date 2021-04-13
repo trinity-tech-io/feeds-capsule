@@ -20,7 +20,8 @@
       "node",
       "cordova",
       "@elastosfoundation/elastos-cordova-plugin-did",
-      "@elastosfoundation/elastos-cordova-plugin-intent"
+      "@elastosfoundation/elastos-cordova-plugin-intent",
+      "cordova-plugin-file"
     ]
   },
   "include": [
