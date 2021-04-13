@@ -32,6 +32,9 @@ import { VgBufferingModule } from 'ngx-videogular';
 
 import { ShareModule } from 'src/app/share/share.module';
 
+import { TitleBarComponent } from './titlebar/titlebar.component';
+import { TitlebarmenuitemComponent } from './titlebarmenuitem/titlebarmenuitem.component';
+
 @NgModule({
   imports: [
     CommonModule,
@@ -62,7 +65,9 @@ import { ShareModule } from 'src/app/share/share.module';
     SharemenuComponent,
     VideofullscreenComponent,
     RoundloadingComponent,
-    PercentageloadingComponent
+    PercentageloadingComponent,
+    TitleBarComponent,
+    TitlebarmenuitemComponent
   ],
   exports: [
     AlertdialogComponent,
@@ -80,7 +85,8 @@ import { ShareModule } from 'src/app/share/share.module';
     SharemenuComponent,
     VideofullscreenComponent,
     RoundloadingComponent,
-    PercentageloadingComponent
+    PercentageloadingComponent,
+    TitleBarComponent
   ],
 
   providers: [
