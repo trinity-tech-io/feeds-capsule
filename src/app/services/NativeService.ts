@@ -167,7 +167,7 @@ export class NativeService {
     }
 
     networkInfoInit() {
-        navigator.connection.Initialize();
+        // navigator.connection.Initialize();
     }
 
     addNetworkListener(offline:()=>void, online:()=>void){

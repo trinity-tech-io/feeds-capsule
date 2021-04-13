@@ -22,7 +22,7 @@ import { DataHelper } from "./DataHelper";
 import { UtilService } from "./utilService";
 
 declare let didManager: DIDPlugin.DIDManager;
-declare let didSessionManager: DIDSessionManagerPlugin.DIDSessionManager;
+// declare let didSessionManager: DIDSessionManagerPlugin.DIDSessionManager;
 
 const TAG: string = "Feeds-service";
 let versionCode: number = 10500;
@@ -2759,11 +2759,12 @@ export class FeedService {
   }
 
   signinConfirmRequest(nodeId: string, nonce: string, realm: string, requiredCredential: boolean){
-    didSessionManager.authenticate(nonce, realm).then((presentation)=>{
-      this.connectionService.signinConfirmRequest(this.getServerNameByNodeId(nodeId), nodeId, nonce, realm, requiredCredential,presentation,this.getLocalCredential());
-    }).catch((err)=>{
-      this.logUtils.loge("Authenticate presentation from didSessionManager is error, nodeId is "+nodeId+" error is "+JSON.stringify(err),TAG);
-    });
+    // deprecated
+    // didSessionManager.authenticate(nonce, realm).then((presentation)=>{
+    //   this.connectionService.signinConfirmRequest(this.getServerNameByNodeId(nodeId), nodeId, nonce, realm, requiredCredential,presentation,this.getLocalCredential());
+    // }).catch((err)=>{
+    //   this.logUtils.loge("Authenticate presentation from didSessionManager is error, nodeId is "+nodeId+" error is "+JSON.stringify(err),TAG);
+    // });
   }
 
   handleSigninChallenge(nodeId:string, result: any, error: any){
