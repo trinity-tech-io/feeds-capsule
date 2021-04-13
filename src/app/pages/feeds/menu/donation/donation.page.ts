@@ -7,7 +7,7 @@ import { FeedService } from 'src/app/services/FeedService';
 import { ThemeService } from 'src/app/services/theme.service';
 import { PaypromptComponent } from 'src/app/components/payprompt/payprompt.component'
 
-declare let titleBarManager: TitleBarPlugin.TitleBarManager;
+// declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 @Component({
   selector: 'app-donation',
@@ -52,7 +52,7 @@ export class DonationPage implements OnInit {
   }
 
   initTitle(){
-    titleBarManager.setTitle(this.translate.instant("DonationPage.donation"));
+    // titleBarManager.setTitle(this.translate.instant("DonationPage.donation"));
   }
 
   ionViewWillLeave(){

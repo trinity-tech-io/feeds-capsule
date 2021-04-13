@@ -10,7 +10,7 @@ import { TranslateService } from "@ngx-translate/core";
 import { PopoverController,IonInfiniteScroll,IonContent} from '@ionic/angular';
 import { AppService } from 'src/app/services/AppService';
 import { PopupProvider } from 'src/app/services/popup';
-declare let titleBarManager: TitleBarPlugin.TitleBarManager;
+// declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 import { LogUtils } from 'src/app/services/LogUtils';
 import * as _ from 'lodash';
 let TAG: string = "Feeds-feeds";
@@ -516,7 +516,7 @@ export class ChannelsPage implements OnInit {
   }
 
   initTitle(){
-    titleBarManager.setTitle(this.translate.instant("ChannelsPage.feeds"));
+    // titleBarManager.setTitle(this.translate.instant("ChannelsPage.feeds"));
   }
 
   like(nodeId:string, channelId:number, postId:number){

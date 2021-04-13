@@ -6,7 +6,7 @@ import { NativeService } from 'src/app/services/NativeService';
 import { TranslateService } from "@ngx-translate/core";
 import { ThemeService } from 'src/app/services/theme.service';
 import { AppService } from '../../services/AppService';
-declare let titleBarManager: TitleBarPlugin.TitleBarManager;
+// declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 @Component({
   selector: 'app-signin',
@@ -35,7 +35,7 @@ export class SigninPage implements OnInit {
   }
 
   initTile(){
-    titleBarManager.setTitle(this.translate.instant("SigninPage.signIn"));
+    // titleBarManager.setTitle(this.translate.instant("SigninPage.signIn"));
   }
 
   ionViewWillEnter() {

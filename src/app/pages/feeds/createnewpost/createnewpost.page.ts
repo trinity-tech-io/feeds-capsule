@@ -10,7 +10,7 @@ import { AppService } from '../../../services/AppService';
 import { UtilService } from '../../../services/utilService';
 import { LogUtils } from '../../../services/LogUtils';
 import { StorageService } from '../../../services/StorageService';
-declare let titleBarManager: TitleBarPlugin.TitleBarManager;
+// declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 let TAG: string = "Feeds-createpost";
 
 @Component({
@@ -265,7 +265,7 @@ export class CreatenewpostPage implements OnInit {
     ionViewDidEnter() {}
 
     initTitle(){
-      titleBarManager.setTitle(this.translate.instant("CreatenewpostPage.addingPost"));
+      // titleBarManager.setTitle(this.translate.instant("CreatenewpostPage.addingPost"));
     }
 
     post(){

@@ -7,7 +7,7 @@ import { ThemeService } from '../../../../services/theme.service';
 import { CarrierService } from '../../../../services/CarrierService';
 import { AppService } from '../../../../services/AppService';
 import { StorageService } from '../../../../services/StorageService';
-declare let titleBarManager: TitleBarPlugin.TitleBarManager;
+// declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 type ProfileDetail = {
   type: string,
@@ -152,7 +152,7 @@ export class ProfiledetailPage implements OnInit {
   }
 
   initTitle(){
-    titleBarManager.setTitle(this.translate.instant('ProfiledetailPage.profileDetails'));
+    // titleBarManager.setTitle(this.translate.instant('ProfiledetailPage.profileDetails'));
   }
 
   ionViewWillUnload(){

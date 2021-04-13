@@ -4,7 +4,7 @@ import { NativeService } from 'src/app/services/NativeService';
 import { FeedService } from 'src/app/services/FeedService';
 import { TranslateService } from "@ngx-translate/core";
 import { AlertController } from '@ionic/angular';
-declare let titleBarManager: TitleBarPlugin.TitleBarManager;
+// declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 @Component({
   selector: 'app-develop',
   templateUrl: './develop.page.html',
@@ -38,7 +38,7 @@ export class DevelopPage implements OnInit {
   }
 
   initTitle(){
-    titleBarManager.setTitle(this.translate.instant("DevelopPage.develop"));
+    // titleBarManager.setTitle(this.translate.instant("DevelopPage.develop"));
   }
 
   clearAll(){

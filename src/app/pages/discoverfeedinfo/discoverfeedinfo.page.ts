@@ -10,7 +10,7 @@ import { TranslateService } from "@ngx-translate/core";
 import { PopupProvider } from '../../services/popup';
 import { AppService } from '../../services/AppService';
 import * as _ from 'lodash';
-declare let titleBarManager: TitleBarPlugin.TitleBarManager;
+// declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 @Component({
   selector: 'app-discoverfeedinfo',
@@ -132,7 +132,7 @@ export class DiscoverfeedinfoPage implements OnInit {
   }
 
   initTitle(){
-    titleBarManager.setTitle(this.translate.instant('DiscoverfeedinfoPage.title'));
+    // titleBarManager.setTitle(this.translate.instant('DiscoverfeedinfoPage.title'));
   }
 
   checkDid(type:string){

@@ -6,7 +6,7 @@ import { TranslateService } from "@ngx-translate/core";
 import { ThemeService } from '../../../services/theme.service';
 import { FeedService } from 'src/app/services/FeedService';
 import { MenuService } from 'src/app/services/MenuService';
-declare let titleBarManager: TitleBarPlugin.TitleBarManager;
+// declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 @Component({
   selector: 'app-profileimage',
@@ -128,7 +128,7 @@ export class ProfileimagePage implements OnInit {
   }
 
   initTitle(){
-    titleBarManager.setTitle(this.translate.instant("ProfileimagePage.title"));
+    // titleBarManager.setTitle(this.translate.instant("ProfileimagePage.title"));
   }
 
   selectIndex(index: number, avatar?: string){

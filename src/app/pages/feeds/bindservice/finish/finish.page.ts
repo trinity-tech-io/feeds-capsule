@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Events } from '@ionic/angular';
 import { NativeService } from 'src/app/services/NativeService';
 import { FeedService } from 'src/app/services/FeedService';
-declare let titleBarManager: TitleBarPlugin.TitleBarManager;
+// declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 @Component({
   selector: 'app-finish',
@@ -48,7 +48,7 @@ export class FinishPage implements OnInit {
 
 
     initTitle(){
-      titleBarManager.setTitle(this.title);
+      // titleBarManager.setTitle(this.title);
     }
 
   createChannel(){

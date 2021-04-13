@@ -11,7 +11,7 @@ import { IonInfiniteScroll,PopoverController} from '@ionic/angular';
 import { AppService } from 'src/app/services/AppService';
 import { LogUtils } from 'src/app/services/LogUtils';
 import * as _ from 'lodash';
-declare let titleBarManager: TitleBarPlugin.TitleBarManager;
+// declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 let TAG: string = "Feeds-postview";
 @Component({
   selector: 'app-postdetail',
@@ -540,7 +540,7 @@ export class PostdetailPage implements OnInit {
   }
 
   initTitle(){
-    titleBarManager.setTitle(this.translate.instant("PostdetailPage.postview"));
+    // titleBarManager.setTitle(this.translate.instant("PostdetailPage.postview"));
   }
 
   getContentText(content: string): string{
