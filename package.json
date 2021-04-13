@@ -97,7 +97,8 @@
       },
       "cordova-plugin-ionic-keyboard": {},
       "cordova-sqlite-storage": {},
-      "@elastosfoundation/elastos-cordova-plugin-intent": {}
+      "@elastosfoundation/elastos-cordova-plugin-intent": {},
+      "cordova-plugin-file": {}
     },
     "platforms": [
       "android"
