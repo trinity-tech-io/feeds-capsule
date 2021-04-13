@@ -347,7 +347,7 @@ export class CarrierService {
         session.close(onSuccess, onError);
     }
 
-    sessionAddStream(session: CarrierPlugin.Session,type: CarrierPlugin.StreamType, options: Number, callbacks: CarrierPlugin.StreamCallbacks, onSuccess:(stream: CarrierPlugin.Stream)=>void, onError?:(err: string)=>void){
+    sessionAddStream(session: CarrierPlugin.Session,type: CarrierPlugin.StreamType, options: number, callbacks: CarrierPlugin.StreamCallbacks, onSuccess:(stream: CarrierPlugin.Stream)=>void, onError?:(err: string)=>void){
         session.addStream(type,options,callbacks,onSuccess,onError);    
     }
 
@@ -355,7 +355,7 @@ export class CarrierService {
         session.removeStream(stream, onSuccess, onError);
     }
 
-    sessionReplyRequest(session: CarrierPlugin.Session, status: Number, reason: string, onSuccess:()=>void, onError?:(err: string)=>void){
+    sessionReplyRequest(session: CarrierPlugin.Session, status: number, reason: string, onSuccess:()=>void, onError?:(err: string)=>void){
         session.replyRequest(status, reason, onSuccess, onError);
     }
 
