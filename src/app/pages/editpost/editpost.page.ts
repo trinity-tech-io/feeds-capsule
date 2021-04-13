@@ -428,7 +428,7 @@ export class EditPostPage implements OnInit {
 
   readFile(fileName:string,filepath:string){
     window.resolveLocalFileSystemURL(filepath,
-      (dirEntry: CordovaFilePlugin.DirectoryEntry)=>{
+      (dirEntry: DirectoryEntry)=>{
         dirEntry.getFile(fileName,
           { create: true, exclusive: false },
           (fileEntry) => {
@@ -706,7 +706,7 @@ createThumbnail(path:string){
 
 readThumbnail(fileName:string,filepath:string){
   window.resolveLocalFileSystemURL(filepath,
-    (dirEntry: CordovaFilePlugin.DirectoryEntry)=>{
+    (dirEntry: DirectoryEntry)=>{
       dirEntry.getFile(fileName,
         { create: true, exclusive: false },
         (fileEntry) => {

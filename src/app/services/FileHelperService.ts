@@ -11,7 +11,7 @@ export class FileHelperService {
         private fileService: FileService) {
     }
 
-    moveCarrierData(oldName: string, newName: string): Promise<CordovaFilePlugin.Entry>{
+    moveCarrierData(oldName: string, newName: string): Promise<Entry>{
         return new Promise(async (resolve, reject) =>{
             try{
                 let carrierDirEntry = await this.getCarrierDirEntry();
@@ -24,7 +24,7 @@ export class FileHelperService {
         });
     }
 
-    getCarrierDirEntry(): Promise<CordovaFilePlugin.DirectoryEntry>{
+    getCarrierDirEntry(): Promise<DirectoryEntry>{
         return new Promise(async (resolve, reject) =>{
             try{
                 let rootDirEntry = await this.fileService.resolveLocalFileSystemURL();
