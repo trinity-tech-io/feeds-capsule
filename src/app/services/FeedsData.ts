@@ -1,4 +1,15 @@
 declare namespace FeedsData{
+    const enum TitleBarIconSlot {
+        /** Icon on title bar's left edge. */
+        OUTER_LEFT = 0,
+        /** Icon between the outer left icon and the title. */
+        INNER_LEFT = 1,
+        /** Icon between the title and the outer right icon. */
+        INNER_RIGHT = 2,
+        /** Icon on title bar's right edge. */
+        OUTER_RIGHT = 3
+    }
+    
     const enum SortType{
         lastUpdateRevert = 0
     }
