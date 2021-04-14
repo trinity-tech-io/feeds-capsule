@@ -11,7 +11,8 @@ import { VideofullscreenComponent } from './../components/videofullscreen/videof
 import { PreviewqrcodeComponent }  from './../components/previewqrcode/previewqrcode.component';
 import { PaypromptComponent } from './../components/payprompt/payprompt.component';
 import { IntentService } from 'src/app/services/IntentService';
-
+import { TitleBarService } from 'src/app/services/TitleBarService';
+import { TitleBarComponent }  from './../components/titlebar/titlebar.component';
 
 // declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 @Injectable()
@@ -27,7 +28,8 @@ export class NativeService {
         private navCtrl: NavController,
         private router: Router,
         private translate: TranslateService,
-        private intentService: IntentService) {
+        private intentService: IntentService,
+        private titleBarService: TitleBarService) {
     }
 
     public toast(message: string = 'Operation completed', duration: number = 3000): void {
@@ -129,7 +131,7 @@ export class NativeService {
         this.inappBrowser.create(url, target, options);
     }
 
-    setTitleBarBackKeyShown(show: boolean) {
+    // setTitleBarBackKeyShown(show: boolean) {
         // if (show) {
         //     titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_LEFT, {
         //         key: "back",
@@ -139,7 +141,7 @@ export class NativeService {
         // else {
         //     titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_LEFT, null);
         // }
-    }
+    // }
 
     getNavCtrl(){
         return this.navCtrl;
@@ -179,12 +181,11 @@ export class NativeService {
         }, false);
     }
 
-    async openViewer(imgPath:string,newNameKey:string,oldNameKey:string,appService?:any,isOwer?:boolean) {
-
-        //  titleBarManager.setTitle(this.translate.instant(newNameKey));
-         this.setTitleBarBackKeyShown(false);
-         appService.hideright();
-         const modal = await this.modalController.create({
+    async openViewer(titleBar: TitleBarComponent, imgPath:string,newNameKey:string,oldNameKey:string,appService?:any,isOwer?:boolean) {
+        this.titleBarService.setTitle(titleBar, this.translate.instant(newNameKey));
+        this.titleBarService.setTitleBarBackKeyShown(titleBar, false);
+        appService.hideright();
+        const modal = await this.modalController.create({
           component: ViewerModalComponent,
           componentProps: {
             src: imgPath,
@@ -195,12 +196,12 @@ export class NativeService {
           showBackdrop:true,
         });
 
-
         modal.onWillDismiss().then(()=>{
-             document.removeEventListener('click',(event)=> this.hide(modal),false);
-            // titleBarManager.setTitle(this.translate.instant(oldNameKey));
+            document.removeEventListener('click',(event)=> this.hide(modal),false);
+            this.titleBarService.setTitle(titleBar, this.translate.instant(oldNameKey));
+
             if(oldNameKey!='FeedsPage.tabTitle2'&&oldNameKey!='FeedsPage.tabTitle1'){
-                this.setTitleBarBackKeyShown(true);
+                this.titleBarService.setTitleBarBackKeyShown(titleBar, true);
             }
             // if(isOwer){
             //     titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, {
@@ -371,4 +372,10 @@ async showPreviewQrcode(qrCodeString:string,newNameKey:string,oldNameKey:string,
     this.intentService.share("", qrCodeString);
   }
 
+    public registerBackKey(titleBar: TitleBarComponent) {
+        titleBar.addOnItemClickedListener((icon)=>{
+            if (icon.key == "back")
+                this.navCtrl.back();
+        });
+    }
 }
