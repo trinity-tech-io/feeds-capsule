@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { LogUtils } from 'src/app/services/LogUtils';
 
 let TAG: string = "IntentService";
-declare let intentManager: IntentPlugin.Intent;
+declare let intentManager: IntentPlugin.IntentManager;
 
 @Injectable()
 export class IntentService {
