@@ -10,8 +10,11 @@ import { VideoEditor } from '@ionic-native/video-editor/ngx';
 import { AppService } from 'src/app/services/AppService';
 import { UtilService } from 'src/app/services/utilService';
 import { LogUtils } from 'src/app/services/LogUtils';
+import { TitleBarService } from 'src/app/services/TitleBarService';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+
 import * as _ from 'lodash';
-// declare let titleBarManager: TitleBarPlugin.TitleBarManager;
+
 let TAG: string = "Feeds-editpost";
 @Component({
   selector: 'app-editpost',
@@ -20,6 +23,7 @@ let TAG: string = "Feeds-editpost";
 })
 
 export class EditPostPage implements OnInit {
+  @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   @ViewChild('newPostIonTextarea', {static: false}) newPostIonTextarea:IonTextarea;
   public connectionStatus = 1;
   public nodeStatus = {};
@@ -63,7 +67,8 @@ export class EditPostPage implements OnInit {
     public videoEditor:VideoEditor,
     public appService:AppService,
     public el:ElementRef,
-    private logUtils: LogUtils
+    private logUtils: LogUtils,
+    private titleBarService: TitleBarService
   ) {
   }
 
@@ -78,7 +83,7 @@ export class EditPostPage implements OnInit {
 
   ionViewWillEnter() {
     this.initTitle();
-    this.native.setTitleBarBackKeyShown(true);
+    this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
     this.initData();
 
     this.events.subscribe(FeedsEvent.PublishType.connectionChanged,(status)=>{
@@ -217,7 +222,7 @@ export class EditPostPage implements OnInit {
   }
 
   initTitle(){
-    // titleBarManager.setTitle(this.translate.instant("EditPostPage.title"));
+    this.titleBarService.setTitle(this.titleBar, this.translate.instant("EditPostPage.title"));
   }
 
   post(){

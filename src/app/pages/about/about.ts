@@ -1,10 +1,11 @@
-import { Component, OnInit, NgZone } from '@angular/core';
+import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
 import { Events } from '@ionic/angular';
 import { NativeService } from 'src/app/services/NativeService';
 import { TranslateService } from "@ngx-translate/core";
 import { FeedService } from 'src/app/services/FeedService';
 import { ThemeService } from 'src/app/services/theme.service';
-// declare let titleBarManager: TitleBarPlugin.TitleBarManager;
+import { TitleBarService } from 'src/app/services/TitleBarService';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 
 @Component({
   selector: 'page-about',
@@ -13,6 +14,7 @@ import { ThemeService } from 'src/app/services/theme.service';
 })
 
 export class AboutPage implements OnInit {
+  @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   public connectionStatus = 1;
   public version = "v1.5.5";
   public currentLanguage = "";
@@ -23,7 +25,8 @@ export class AboutPage implements OnInit {
     private translate: TranslateService,
     private events: Events,
     private feedService: FeedService,
-    public theme: ThemeService
+    public theme: ThemeService,
+    private titleBarService: TitleBarService
   ) {}
 
     ngOnInit() {
@@ -31,7 +34,7 @@ export class AboutPage implements OnInit {
 
     ionViewWillEnter() {
       this.initTitle();
-      this.native.setTitleBarBackKeyShown(true);
+      this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
 
       this.connectionStatus = this.feedService.getConnectionStatus();
       this.events.subscribe(FeedsEvent.PublishType.connectionChanged,(status)=>{
@@ -50,7 +53,7 @@ export class AboutPage implements OnInit {
 
     initTitle(){
       this.currentLanguage = this.feedService.getCurrentLang();
-      // titleBarManager.setTitle(this.translate.instant("AboutPage.about"));
+      this.titleBarService.setTitle(this.titleBar, this.translate.instant("AboutPage.about"));
     }
 
 

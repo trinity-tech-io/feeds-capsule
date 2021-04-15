@@ -10,7 +10,9 @@ import { TranslateService } from "@ngx-translate/core";
 import { PopoverController,IonInfiniteScroll,IonContent} from '@ionic/angular';
 import { AppService } from 'src/app/services/AppService';
 import { PopupProvider } from 'src/app/services/popup';
-// declare let titleBarManager: TitleBarPlugin.TitleBarManager;
+import { TitleBarService } from 'src/app/services/TitleBarService';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+
 import { LogUtils } from 'src/app/services/LogUtils';
 import * as _ from 'lodash';
 let TAG: string = "Feeds-feeds";
@@ -20,6 +22,7 @@ let TAG: string = "Feeds-feeds";
   styleUrls: ['./channels.page.scss'],
 })
 export class ChannelsPage implements OnInit {
+  @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   @ViewChild(IonContent,{static:true}) content: IonContent;
   @ViewChild(IonInfiniteScroll,{static:true}) infiniteScroll: IonInfiniteScroll;
 
@@ -123,9 +126,8 @@ export class ChannelsPage implements OnInit {
     public appService:AppService,
     public modalController:ModalController,
     private logUtils: LogUtils,
-    public popupProvider:PopupProvider) {
-
-
+    public popupProvider:PopupProvider,
+    private titleBarService: TitleBarService) {
   }
 
   subscribe(){
@@ -268,7 +270,7 @@ export class ChannelsPage implements OnInit {
 
     this.hideDeletedPosts = this.feedService.getHideDeletedPosts();
     this.clientHeight =screen.availHeight;
-    this.native.setTitleBarBackKeyShown(true);
+    this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
     this.styleObj.width = (screen.width - 105)+'px';
     this.initTitle();
     this.init();
@@ -516,7 +518,7 @@ export class ChannelsPage implements OnInit {
   }
 
   initTitle(){
-    // titleBarManager.setTitle(this.translate.instant("ChannelsPage.feeds"));
+    this.titleBarService.setTitle(this.titleBar, this.translate.instant("ChannelsPage.feeds"));
   }
 
   like(nodeId:string, channelId:number, postId:number){

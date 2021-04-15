@@ -1,4 +1,4 @@
-import { Component, OnInit, NgZone } from '@angular/core';
+import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
 import { FeedService } from '../../../../services/FeedService';
 import { CarrierService } from '../../../../services/CarrierService';
 import { NativeService } from '../../../../services/NativeService';
@@ -8,8 +8,8 @@ import { Events,PopoverController} from '@ionic/angular';
 import { CameraService } from '../../../../services/CameraService';
 import { PopupProvider } from '../../../../services/popup';
 import { IntentService } from 'src/app/services/IntentService';
-
-// declare let titleBarManager: TitleBarPlugin.TitleBarManager;
+import { TitleBarService } from 'src/app/services/TitleBarService';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 
 @Component({
   selector: 'app-scanqrcode',
@@ -17,7 +17,7 @@ import { IntentService } from 'src/app/services/IntentService';
   styleUrls: ['./scanqrcode.page.scss'],
 })
 export class ScanqrcodePage implements OnInit {
-
+  @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   public connectionStatus = 1;
   public title = "01/06";
   public waitFriendsOnline = false;
@@ -36,6 +36,7 @@ export class ScanqrcodePage implements OnInit {
     public popupProvider:PopupProvider,
     private popoverController:PopoverController,
     private intentService:IntentService,
+    private titleBarService: TitleBarService
     ) {
   }
 
@@ -44,7 +45,7 @@ export class ScanqrcodePage implements OnInit {
 
   ionViewWillEnter() {
     this.initTitle();
-    this.native.setTitleBarBackKeyShown(true);
+    this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
 
     this.connectionStatus = this.feedService.getConnectionStatus();
     this.events.subscribe(FeedsEvent.PublishType.connectionChanged,(status)=>{
@@ -55,7 +56,7 @@ export class ScanqrcodePage implements OnInit {
   }
 
   initTitle(){
-    // titleBarManager.setTitle(this.title);
+    this.titleBarService.setTitle(this.titleBar, this.title);
   }
 
   ionViewDidEnter() {

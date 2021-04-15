@@ -1,4 +1,4 @@
-import { Component, OnInit,NgZone } from '@angular/core';
+import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
 import { TranslateService } from "@ngx-translate/core";
 import { Events,PopoverController} from '@ionic/angular';
 import { ThemeService } from 'src/app/services/theme.service';
@@ -8,8 +8,9 @@ import { NativeService } from 'src/app/services/NativeService';
 import { HttpService } from 'src/app/services/HttpService';
 import { ApiUrl } from 'src/app/services/ApiUrl';
 import { UtilService } from 'src/app/services/utilService';
+import { TitleBarService } from 'src/app/services/TitleBarService';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import * as _ from 'lodash';
-// declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 @Component({
   selector: 'app-eidtchannel',
@@ -17,6 +18,7 @@ import * as _ from 'lodash';
   styleUrls: ['./eidtchannel.page.scss'],
 })
 export class EidtchannelPage implements OnInit {
+  @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 public connectionStatus = 1;
 public nodeId:string ="";
 public channelId:number = 0;
@@ -36,12 +38,12 @@ constructor(
   private native: NativeService,
   private zone:NgZone,
   private httpService:HttpService,
-  private popoverController:PopoverController
+  private popoverController:PopoverController,
+  private titleBarService: TitleBarService
 ) {
   }
 
 ngOnInit() {
-
     let item = this.feedService.getChannelInfo();
     this.oldChannelInfo = item;
     let channelInfo  = _.cloneDeep(item);
@@ -83,7 +85,7 @@ ionViewWillEnter() {
 }
 
 initTitle(){
-  // titleBarManager.setTitle(this.translate.instant('EidtchannelPage.title'));
+  this.titleBarService.setTitle(this.titleBar, this.translate.instant('EidtchannelPage.title'));
 }
 
 ionViewDidEnter(){

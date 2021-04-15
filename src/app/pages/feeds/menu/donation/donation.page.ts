@@ -1,4 +1,4 @@
-import { Component, OnInit, NgZone } from '@angular/core';
+import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
 import { PopoverController } from '@ionic/angular';
 import { Events } from '@ionic/angular';
 import { NativeService } from 'src/app/services/NativeService';
@@ -6,8 +6,8 @@ import { TranslateService } from "@ngx-translate/core";
 import { FeedService } from 'src/app/services/FeedService';
 import { ThemeService } from 'src/app/services/theme.service';
 import { PaypromptComponent } from 'src/app/components/payprompt/payprompt.component'
-
-// declare let titleBarManager: TitleBarPlugin.TitleBarManager;
+import { TitleBarService } from 'src/app/services/TitleBarService';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 
 @Component({
   selector: 'app-donation',
@@ -15,6 +15,7 @@ import { PaypromptComponent } from 'src/app/components/payprompt/payprompt.compo
   styleUrls: ['./donation.page.scss'],
 })
 export class DonationPage implements OnInit {
+  @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   public isShowPrompt: boolean = false;
   public connectionStatus = 1;
   public elaAddress = "EYWDcCyp6czaqAKGiq4b7exhWJfVpbG2D9";
@@ -27,6 +28,7 @@ export class DonationPage implements OnInit {
     private translate:TranslateService,
     private events: Events,
     private feedService:FeedService,
+    private titleBarService: TitleBarService
     ) {}
 
   ngOnInit() {
@@ -34,7 +36,7 @@ export class DonationPage implements OnInit {
 
   ionViewWillEnter() {
     this.initTitle();
-    this.native.setTitleBarBackKeyShown(true);
+    this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
 
     this.connectionStatus = this.feedService.getConnectionStatus();
     this.events.subscribe(FeedsEvent.PublishType.connectionChanged,(status)=>{
@@ -52,7 +54,7 @@ export class DonationPage implements OnInit {
   }
 
   initTitle(){
-    // titleBarManager.setTitle(this.translate.instant("DonationPage.donation"));
+    this.titleBarService.setTitle(this.titleBar, this.translate.instant("DonationPage.donation"));
   }
 
   ionViewWillLeave(){

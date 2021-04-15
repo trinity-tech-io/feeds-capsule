@@ -1,4 +1,4 @@
-import { Component, OnInit, NgZone } from '@angular/core';
+import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
 import { TranslateService } from "@ngx-translate/core";
 import { Events,Platform,ActionSheetController } from '@ionic/angular';
 import { FeedService, Avatar } from '../../../../services/FeedService';
@@ -7,7 +7,8 @@ import { ThemeService } from '../../../../services/theme.service';
 import { CarrierService } from '../../../../services/CarrierService';
 import { AppService } from '../../../../services/AppService';
 import { StorageService } from '../../../../services/StorageService';
-// declare let titleBarManager: TitleBarPlugin.TitleBarManager;
+import { TitleBarService } from 'src/app/services/TitleBarService';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 
 type ProfileDetail = {
   type: string,
@@ -20,6 +21,7 @@ type ProfileDetail = {
   styleUrls: ['./profiledetail.page.scss'],
 })
 export class ProfiledetailPage implements OnInit {
+  @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   public developerMode:boolean =  false;
   public connectionStatus = 1;
   public avatar: Avatar = null;
@@ -57,7 +59,8 @@ export class ProfiledetailPage implements OnInit {
     private carrierService:CarrierService,
     private appService:AppService,
     private platform:Platform,
-    private storageService:StorageService
+    private storageService:StorageService,
+    private titleBarService: TitleBarService
   ) {
 
     }
@@ -112,8 +115,7 @@ export class ProfiledetailPage implements OnInit {
     this.connectionStatus = this.feedService.getConnectionStatus();
     this.developerMode = this.feedService.getDeveloperMode();
     this.initTitle();
-    this.native.setTitleBarBackKeyShown(true);
-
+    this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
     let signInData = this.feedService.getSignInData() || {};
     this.name = signInData["nickname"] || signInData["name"] || "";
     this.avatar = signInData["avatar"] || null;
@@ -152,7 +154,7 @@ export class ProfiledetailPage implements OnInit {
   }
 
   initTitle(){
-    // titleBarManager.setTitle(this.translate.instant('ProfiledetailPage.profileDetails'));
+    this.titleBarService.setTitle(this.titleBar, this.translate.instant('ProfiledetailPage.profileDetails'));
   }
 
   ionViewWillUnload(){

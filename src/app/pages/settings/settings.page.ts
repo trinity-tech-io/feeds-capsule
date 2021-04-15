@@ -1,4 +1,4 @@
-import { Component, OnInit,NgZone} from '@angular/core';
+import { Component, OnInit, NgZone, ViewChild} from '@angular/core';
 import { Events,PopoverController} from '@ionic/angular';
 import { TranslateService } from "@ngx-translate/core";
 import { ThemeService } from '../../services/theme.service';
@@ -8,6 +8,9 @@ import { PopupProvider } from '../../services/popup';
 import { StorageService } from '../../services/StorageService';
 import { AppService } from '../../services/AppService';
 import { LogUtils } from 'src/app/services/LogUtils';
+import { TitleBarService } from 'src/app/services/TitleBarService';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+
 enum LogLevel {
   NONE,
   ERROR,
@@ -16,13 +19,13 @@ enum LogLevel {
   DEBUG,
 }
 
-// declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 @Component({
   selector: 'app-settings',
   templateUrl: './settings.page.html',
   styleUrls: ['./settings.page.scss'],
 })
 export class SettingsPage implements OnInit {
+  @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   public developerMode:boolean =  false;
   public hideDeletedPosts:boolean = false;;
   public hideDeletedComments:boolean = false;
@@ -39,7 +42,8 @@ export class SettingsPage implements OnInit {
     public storageService:StorageService,
     private popoverController:PopoverController,
     private logUtils: LogUtils,
-    private zone:NgZone
+    private zone:NgZone,
+    private titleBarService: TitleBarService
     ) {
 
   }
@@ -48,7 +52,7 @@ export class SettingsPage implements OnInit {
   }
 
   initTitle(){
-    // titleBarManager.setTitle(this.translate.instant("app.settings"));
+    this.titleBarService.setTitle(this.titleBar, this.translate.instant("app.settings"));
   }
 
   ionViewWillEnter() {
@@ -57,7 +61,7 @@ export class SettingsPage implements OnInit {
     this.hideOfflineFeeds = this.feedService.getHideOfflineFeeds();
     this.developerMode = this.feedService.getDeveloperMode();
     this.initTitle();
-    this.native.setTitleBarBackKeyShown(true);
+    this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
 
     this.events.subscribe(FeedsEvent.PublishType.updateTitle,()=>{
       this.initTitle();

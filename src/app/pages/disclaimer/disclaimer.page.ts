@@ -1,12 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Events,ModalController, } from '@ionic/angular';
 import { TranslateService } from "@ngx-translate/core";
 import { NativeService } from 'src/app/services/NativeService';
 import { AppService } from './../../services/AppService';
 import { SplashscreenPage } from './../../pages/splashscreen/splashscreen.page';
 import { ThemeService } from 'src/app/services/theme.service';
-
-// declare let titleBarManager: TitleBarPlugin.TitleBarManager;
+import { TitleBarService } from 'src/app/services/TitleBarService';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 
 @Component({
   selector: 'app-disclaimer',
@@ -14,6 +14,7 @@ import { ThemeService } from 'src/app/services/theme.service';
   styleUrls: ['./disclaimer.page.scss'],
 })
 export class DisclaimerPage implements OnInit {
+  @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   public styleObj:any={"margin-top":""};
 
   constructor(
@@ -22,7 +23,8 @@ export class DisclaimerPage implements OnInit {
     private events: Events,
     private native: NativeService,
     private translate: TranslateService,
-    public theme: ThemeService
+    public theme: ThemeService,
+    private titleBarService: TitleBarService
   ){
   }
 
@@ -31,7 +33,8 @@ export class DisclaimerPage implements OnInit {
 
   ionViewWillEnter() {
     this.initTitle();
-    this.native.setTitleBarBackKeyShown(false);
+    this.titleBarService.setTitleBarBackKeyShown(this.titleBar, false);
+
     // appManager.setVisible('show');
     this.styleObj["height"] = (screen.height - 245) +"px";
 
@@ -44,7 +47,7 @@ export class DisclaimerPage implements OnInit {
   }
 
   private initTitle(){
-    // titleBarManager.setTitle(this.translate.instant("DisclaimerPage.title"));
+    this.titleBarService.setTitle(this.titleBar, this.translate.instant("DisclaimerPage.title"));
   }
 
   ionViewWillLeave(){

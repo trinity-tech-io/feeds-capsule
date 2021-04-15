@@ -1,10 +1,11 @@
-import { Component, OnInit, NgZone } from '@angular/core';
+import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
 import { FeedService } from 'src/app/services/FeedService';
 import { ActivatedRoute } from '@angular/router';
 import { Events } from '@ionic/angular';
 import { NativeService } from 'src/app/services/NativeService';
 import { ThemeService } from 'src/app/services/theme.service';
-// declare let titleBarManager: TitleBarPlugin.TitleBarManager;
+import { TitleBarService } from 'src/app/services/TitleBarService';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 
 @Component({
   selector: 'app-importdid',
@@ -12,6 +13,7 @@ import { ThemeService } from 'src/app/services/theme.service';
   styleUrls: ['./importdid.page.scss'],
 })
 export class ImportdidPage implements OnInit {
+  @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   public connectionStatus = 1;
   public title = "03/06";
   public nodeId = "";
@@ -21,7 +23,8 @@ export class ImportdidPage implements OnInit {
     private events: Events,
     private acRoute: ActivatedRoute,
     private feedService:FeedService,
-    public  theme:ThemeService
+    public  theme:ThemeService,
+    private titleBarService: TitleBarService
     ) {
     }
 
@@ -33,7 +36,7 @@ export class ImportdidPage implements OnInit {
 
     ionViewWillEnter() {
       this.initTitle();
-      this.native.setTitleBarBackKeyShown(true);
+      this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
 
       this.connectionStatus = this.feedService.getConnectionStatus();
       this.events.subscribe(FeedsEvent.PublishType.connectionChanged,(status)=>{
@@ -83,7 +86,7 @@ export class ImportdidPage implements OnInit {
 
 
     initTitle(){
-      // titleBarManager.setTitle(this.title);
+      this.titleBarService.setTitle(this.titleBar, this.title);
     }
 
   createNewDid(){

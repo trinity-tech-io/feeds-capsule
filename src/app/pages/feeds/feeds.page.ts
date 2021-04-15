@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { PopoverController,Events} from '@ionic/angular';
 import { FeedService } from '../../services/FeedService';
 import { NativeService } from '../../services/NativeService';
@@ -6,8 +6,10 @@ import { TranslateService } from "@ngx-translate/core";
 import { ThemeService } from '../../services/theme.service';
 import { PopupProvider } from '../../services/popup';
 import { StorageService } from '../../services/StorageService';
+import { TitleBarService } from 'src/app/services/TitleBarService';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+
 import * as _ from 'lodash';
-// declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 @Component({
   selector: 'app-feeds',
@@ -15,6 +17,7 @@ import * as _ from 'lodash';
   styleUrls: ['./feeds.page.scss'],
 })
 export class FeedsPage implements OnInit {
+  @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   public totalunread:number = 0;
   public title = "";
   public currentTab = "";
@@ -27,7 +30,8 @@ export class FeedsPage implements OnInit {
     public theme:ThemeService,
     private event:Events,
     public popupProvider:PopupProvider,
-    private storageService:StorageService
+    private storageService:StorageService,
+    private titleBarService: TitleBarService
   ) {
   }
 
@@ -77,7 +81,7 @@ export class FeedsPage implements OnInit {
   }
 
   initTile(){
-  //  titleBarManager.setTitle(this.translate.instant(this.title));
+    this.titleBarService.setTitle(this.titleBar, this.translate.instant(this.title));
   }
 
   ionViewDidEnter() {

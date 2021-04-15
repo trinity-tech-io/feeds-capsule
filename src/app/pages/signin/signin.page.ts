@@ -1,4 +1,4 @@
-import { Component, OnInit, NgZone } from '@angular/core';
+import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
 import { FeedService, Avatar } from 'src/app/services/FeedService';
 import { CarrierService } from 'src/app/services/CarrierService';
 import { Events, LoadingController } from '@ionic/angular';
@@ -6,7 +6,8 @@ import { NativeService } from 'src/app/services/NativeService';
 import { TranslateService } from "@ngx-translate/core";
 import { ThemeService } from 'src/app/services/theme.service';
 import { AppService } from '../../services/AppService';
-// declare let titleBarManager: TitleBarPlugin.TitleBarManager;
+import { TitleBarService } from 'src/app/services/TitleBarService';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 
 @Component({
   selector: 'app-signin',
@@ -14,6 +15,7 @@ import { AppService } from '../../services/AppService';
   styleUrls: ['./signin.page.scss'],
 })
 export class SigninPage implements OnInit {
+  @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   public signedIn: boolean = false;
   public did: string = "";
   public userName: string = "";
@@ -28,19 +30,20 @@ export class SigninPage implements OnInit {
     private translate:TranslateService,
     private event:Events,
     public theme:ThemeService,
-    public appService:AppService) { }
+    public appService:AppService,
+    private titleBarService: TitleBarService) { }
 
   ngOnInit() {
 
   }
 
   initTile(){
-    // titleBarManager.setTitle(this.translate.instant("SigninPage.signIn"));
+    this.titleBarService.setTitle(this.titleBar, this.translate.instant("SigninPage.signIn"));
   }
 
   ionViewWillEnter() {
     this.initTile();
-    this.native.setTitleBarBackKeyShown(false);
+    this.titleBarService.setTitleBarBackKeyShown(this.titleBar, false);
     // appManager.setVisible("show");
 
     this.event.subscribe(FeedsEvent.PublishType.updateTitle,()=>{

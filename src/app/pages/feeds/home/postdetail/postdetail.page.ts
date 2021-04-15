@@ -10,8 +10,10 @@ import { UtilService } from 'src/app/services/utilService';
 import { IonInfiniteScroll,PopoverController} from '@ionic/angular';
 import { AppService } from 'src/app/services/AppService';
 import { LogUtils } from 'src/app/services/LogUtils';
+import { TitleBarService } from 'src/app/services/TitleBarService';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import * as _ from 'lodash';
-// declare let titleBarManager: TitleBarPlugin.TitleBarManager;
+
 let TAG: string = "Feeds-postview";
 @Component({
   selector: 'app-postdetail',
@@ -19,6 +21,7 @@ let TAG: string = "Feeds-postview";
   styleUrls: ['./postdetail.page.scss'],
 })
 export class PostdetailPage implements OnInit {
+  @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   @ViewChild(IonInfiniteScroll,{static:true}) infiniteScroll: IonInfiniteScroll;
   public postImage:string = "assets/images/loading.png";
   public connectionStatus:number = 1;
@@ -124,7 +127,8 @@ export class PostdetailPage implements OnInit {
     public menuService: MenuService,
     public appService:AppService,
     public modalController: ModalController,
-    private logUtils: LogUtils) {
+    private logUtils: LogUtils,
+    private titleBarService: TitleBarService) {
   }
 
   initData(isInit:boolean){
@@ -234,7 +238,7 @@ export class PostdetailPage implements OnInit {
 
     this.hideDeletedComments = this.feedService.getHideDeletedComments();
     this.initTitle();
-    this.native.setTitleBarBackKeyShown(true);
+    this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
     this.styleObj.width = (screen.width - 55)+'px';
     this.dstyleObj.width= (screen.width - 105)+'px';
     this.initData(true);
@@ -540,7 +544,7 @@ export class PostdetailPage implements OnInit {
   }
 
   initTitle(){
-    // titleBarManager.setTitle(this.translate.instant("PostdetailPage.postview"));
+    this.titleBarService.setTitle(this.titleBar, this.translate.instant("PostdetailPage.postview"));
   }
 
   getContentText(content: string): string{
