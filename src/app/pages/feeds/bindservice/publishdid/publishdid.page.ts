@@ -1,4 +1,4 @@
-import { Component, OnInit, NgZone } from '@angular/core';
+import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { Events } from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
@@ -6,7 +6,8 @@ import { FeedService } from 'src/app/services/FeedService';
 import { NativeService } from 'src/app/services/NativeService';
 import { TranslateService } from "@ngx-translate/core";
 import { ThemeService } from 'src/app/services/theme.service';
-// declare let titleBarManager: TitleBarPlugin.TitleBarManager;
+import { TitleBarService } from 'src/app/services/TitleBarService';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 
 @Component({
   selector: 'app-publishdid',
@@ -14,6 +15,7 @@ import { ThemeService } from 'src/app/services/theme.service';
   styleUrls: ['./publishdid.page.scss'],
 })
 export class PublishdidPage implements OnInit {
+  @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   public connectionStatus = 1;
   public title = "04/06";
   public payload: string="";
@@ -27,6 +29,7 @@ export class PublishdidPage implements OnInit {
     private feedService:FeedService,
     private translate:TranslateService,
     public theme:ThemeService,
+    private titleBarService: TitleBarService
     ) {
 
     }
@@ -41,7 +44,7 @@ export class PublishdidPage implements OnInit {
 
     ionViewWillEnter() {
       this.initTitle();
-      this.native.setTitleBarBackKeyShown(true);
+      this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
 
       this.connectionStatus = this.feedService.getConnectionStatus();
       this.events.subscribe(FeedsEvent.PublishType.connectionChanged,(status)=>{
@@ -60,7 +63,7 @@ export class PublishdidPage implements OnInit {
 
 
     initTitle(){
-      // titleBarManager.setTitle(this.translate.instant(this.title));
+      this.titleBarService.setTitle(this.titleBar, this.translate.instant(this.title));
     }
 
     publishDid(){

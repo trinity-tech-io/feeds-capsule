@@ -1,11 +1,12 @@
-import { Component, OnInit, NgZone } from '@angular/core';
+import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { FeedService } from 'src/app/services/FeedService';
 import { Events } from '@ionic/angular';
 import { NativeService } from 'src/app/services/NativeService';
 import { ThemeService } from 'src/app/services/theme.service';
 import { TranslateService } from "@ngx-translate/core";
-// declare let titleBarManager: TitleBarPlugin.TitleBarManager;
+import { TitleBarService } from 'src/app/services/TitleBarService';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 
 @Component({
   selector: 'app-startbinding',
@@ -13,6 +14,7 @@ import { TranslateService } from "@ngx-translate/core";
   styleUrls: ['./startbinding.page.scss'],
 })
 export class StartbindingPage implements OnInit {
+  @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   public connectionStatus = 1;
   public title = "02/06";
   public nonce = "";
@@ -28,7 +30,8 @@ export class StartbindingPage implements OnInit {
     private acRoute: ActivatedRoute,
     private feedService:FeedService,
     public  theme:ThemeService,
-    private translate:TranslateService) {
+    private translate:TranslateService,
+    private titleBarService: TitleBarService) {
   
   
   }
@@ -57,7 +60,7 @@ export class StartbindingPage implements OnInit {
 
   ionViewWillEnter() {
     this.initTitle();
-    this.native.setTitleBarBackKeyShown(true);
+    this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
     
     this.connectionStatus = this.feedService.getConnectionStatus();
     this.events.subscribe(FeedsEvent.PublishType.connectionChanged,(status)=>{
@@ -136,7 +139,7 @@ export class StartbindingPage implements OnInit {
   }
 
   initTitle(){
-    // titleBarManager.setTitle(this.title);
+    this.titleBarService.setTitle(this.titleBar, this.title);
   }
 
   ionViewDidEnter() {

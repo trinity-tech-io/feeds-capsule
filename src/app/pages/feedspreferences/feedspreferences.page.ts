@@ -1,4 +1,4 @@
-import { Component, OnInit,NgZone } from '@angular/core';
+import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
 import { Events,PopoverController} from '@ionic/angular';
 import { ActivatedRoute, Params } from '@angular/router';
 import { TranslateService } from "@ngx-translate/core";
@@ -10,14 +10,17 @@ import { ApiUrl } from '../../services/ApiUrl';
 import { StorageService } from '../../services/StorageService';
 import { UtilService } from '../../services/utilService';
 import { PopupProvider } from '../../services/popup';
+import { TitleBarService } from 'src/app/services/TitleBarService';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import * as _ from 'lodash';
-// declare let titleBarManager: TitleBarPlugin.TitleBarManager;
+
 @Component({
   selector: 'app-feedspreferences',
   templateUrl: './feedspreferences.page.html',
   styleUrls: ['./feedspreferences.page.scss'],
 })
 export class FeedspreferencesPage implements OnInit {
+  @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   public connectionStatus = 1;
   public hideDeletedPosts:boolean = true;
   public nodeId:string = "";
@@ -41,7 +44,8 @@ export class FeedspreferencesPage implements OnInit {
     private storageService:StorageService,
     public popupProvider:PopupProvider,
     private popoverController:PopoverController,
-    private zone:NgZone
+    private zone:NgZone,
+    private titleBarService: TitleBarService
   ) { }
 
   ngOnInit() {
@@ -53,7 +57,7 @@ export class FeedspreferencesPage implements OnInit {
   }
 
   initTitle(){
-    // titleBarManager.setTitle(this.translate.instant('FeedspreferencesPage.title'));
+    this.titleBarService.setTitle(this.titleBar, this.translate.instant('FeedspreferencesPage.title'));
   }
 
   ionViewWillEnter(){
@@ -68,7 +72,7 @@ export class FeedspreferencesPage implements OnInit {
     }
     this.developerMode = this.feedService.getDeveloperMode();
     this.initTitle();
-    this.native.setTitleBarBackKeyShown(true);
+    this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
     this.addEvent();
   }
 

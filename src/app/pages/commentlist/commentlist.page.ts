@@ -10,8 +10,10 @@ import { UtilService } from 'src/app/services/utilService';
 import { IonInfiniteScroll,PopoverController} from '@ionic/angular';
 import { AppService } from 'src/app/services/AppService';
 import { LogUtils } from 'src/app/services/LogUtils';
+import { TitleBarService } from 'src/app/services/TitleBarService';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import * as _ from 'lodash';
-// declare let titleBarManager: TitleBarPlugin.TitleBarManager;
+
 let TAG: string = "Feeds-commentlist";
 
 @Component({
@@ -20,7 +22,7 @@ let TAG: string = "Feeds-commentlist";
   styleUrls: ['./commentlist.page.scss'],
 })
 export class CommentlistPage implements OnInit {
-
+  @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   @ViewChild(IonInfiniteScroll,{static:true}) infiniteScroll: IonInfiniteScroll;
   public connectionStatus:number = 1;
 
@@ -70,7 +72,8 @@ export class CommentlistPage implements OnInit {
     public menuService: MenuService,
     public appService:AppService,
     public modalController: ModalController,
-    private logUtils: LogUtils) {
+    private logUtils: LogUtils,
+    private titleBarService: TitleBarService) {
   }
 
   initData(isInit:boolean){
@@ -281,7 +284,7 @@ export class CommentlistPage implements OnInit {
   }
 
   initTitle(){
-    // titleBarManager.setTitle(this.translate.instant("CommentlistPage.title"));
+    this.titleBarService.setTitle(this.titleBar, this.translate.instant("CommentlistPage.title"));
   }
 
   getContentText(): string{

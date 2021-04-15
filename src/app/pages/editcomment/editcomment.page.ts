@@ -5,14 +5,18 @@ import { ActivatedRoute } from '@angular/router';
 import { NativeService } from '../../services/NativeService';
 import { ThemeService } from '../../services/theme.service';
 import { TranslateService } from "@ngx-translate/core";
+import { TitleBarService } from 'src/app/services/TitleBarService';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+
 import * as _ from 'lodash';
-// declare let titleBarManager: TitleBarPlugin.TitleBarManager;
+
 @Component({
   selector: 'app-editcomment',
   templateUrl: './editcomment.page.html',
   styleUrls: ['./editcomment.page.scss'],
 })
 export class EditCommentPage implements OnInit {
+  @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   @ViewChild('newPostIonTextarea', {static: false}) newPostIonTextarea:IonTextarea;
   public connectionStatus = 1;
   public nodeStatus:any={};
@@ -36,7 +40,8 @@ export class EditCommentPage implements OnInit {
     private zone: NgZone,
     private feedService: FeedService,
     public theme:ThemeService,
-    private translate:TranslateService) { }
+    private translate:TranslateService,
+    private titleBarService: TitleBarService) { }
 
   ngOnInit() {
     this.acRoute.queryParams.subscribe((data)=>{
@@ -120,7 +125,7 @@ export class EditCommentPage implements OnInit {
   }
 
   initTitle(){
-    // titleBarManager.setTitle(this.translate.instant(this.titleKey));
+    this.titleBarService.setTitle(this.titleBar, this.translate.instant(this.titleKey));
   }
 
   publishComment(){

@@ -1,4 +1,11 @@
 declare namespace FeedsData{
+    const enum TitleBarForegroundMode {
+        /** Title bar title and icons use a light (white) color. Use this on a dark background color. */
+        LIGHT = 0,
+        /** Title bar title and icons use a dark (dark gray) color. Use this on a light background color. */
+        DARK = 1
+    }
+    
     const enum TitleBarIconSlot {
         /** Icon on title bar's left edge. */
         OUTER_LEFT = 0,

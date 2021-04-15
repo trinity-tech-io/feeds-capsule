@@ -1,4 +1,4 @@
-import { Component, OnInit, NgZone } from '@angular/core';
+import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
 import { PopoverController } from '@ionic/angular';
 import { FeedService } from 'src/app/services/FeedService';
 import { Events } from '@ionic/angular';
@@ -7,7 +7,8 @@ import { NativeService } from 'src/app/services/NativeService';
 import { TranslateService } from "@ngx-translate/core";
 import { ThemeService } from 'src/app/services/theme.service';
 import { ServerpromptComponent } from 'src/app/components/serverprompt/serverprompt.component';
-// declare let titleBarManager: TitleBarPlugin.TitleBarManager;
+import { TitleBarService } from 'src/app/services/TitleBarService';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 
 @Component({
   selector: 'app-issuecredential',
@@ -15,6 +16,7 @@ import { ServerpromptComponent } from 'src/app/components/serverprompt/serverpro
   styleUrls: ['./issuecredential.page.scss'],
 })
 export class IssuecredentialPage implements OnInit {
+  @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   public isShowPrompt:boolean = false;
   public connectionStatus = 1;
   public title = "05/06";
@@ -30,6 +32,7 @@ export class IssuecredentialPage implements OnInit {
     private feedService:FeedService,
     private translate:TranslateService,
     public  theme:ThemeService,
+    private titleBarService: TitleBarService
     ) {
      
     }
@@ -43,7 +46,7 @@ export class IssuecredentialPage implements OnInit {
 
     ionViewWillEnter(){
       this.initTitle();
-      this.native.setTitleBarBackKeyShown(true);
+      this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
       
       this.connectionStatus = this.feedService.getConnectionStatus();
       this.events.subscribe(FeedsEvent.PublishType.connectionChanged,(status)=>{
@@ -86,7 +89,7 @@ export class IssuecredentialPage implements OnInit {
   
   
     initTitle(){
-      // titleBarManager.setTitle(this.translate.instant(this.title));
+      this.titleBarService.setTitle(this.titleBar, this.translate.instant(this.title));
     }
   
   issueCredential(){
