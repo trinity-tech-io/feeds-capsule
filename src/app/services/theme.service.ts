@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { theme } from "@elastosfoundation/elastos-connectivity-sdk-cordova";
 
-declare let intentManager: IntentPlugin.Intent;
+declare let intentManager: IntentPlugin.IntentManager;
 // declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 @Injectable({
