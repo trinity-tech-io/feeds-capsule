@@ -1,4 +1,4 @@
-import { Component, OnInit, NgZone } from '@angular/core';
+import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
 import { NavController, Events, PopoverController } from '@ionic/angular';
 import { FeedService } from 'src/app/services/FeedService';
 import { NativeService } from 'src/app/services/NativeService';
@@ -9,7 +9,8 @@ import { ApiUrl } from '../../../services/ApiUrl';
 import { StorageService } from '../../../services/StorageService';
 import { UtilService } from '../../../services/utilService';
 import { HttpService } from '../../../services/HttpService';
-// declare let titleBarManager: TitleBarPlugin.TitleBarManager;
+import { TitleBarService } from 'src/app/services/TitleBarService';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 
 @Component({
   selector: 'app-createnewfeed',
@@ -17,7 +18,7 @@ import { HttpService } from '../../../services/HttpService';
   styleUrls: ['./createnewfeed.page.scss'],
 })
 export class CreatenewfeedPage implements OnInit {
-
+  @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   public namelen = 0;
   public len = 0;
   public connectionStatus = 1;
@@ -37,7 +38,8 @@ export class CreatenewfeedPage implements OnInit {
     public theme:ThemeService,
     private translate:TranslateService,
     private storageService:StorageService,
-    private httpService:HttpService
+    private httpService:HttpService,
+    private titleBarService: TitleBarService
   ) {
   }
 
@@ -46,7 +48,7 @@ export class CreatenewfeedPage implements OnInit {
 
   ionViewWillEnter() {
     this.initTitle();
-    this.native.setTitleBarBackKeyShown(true);
+    this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
 
     this.selectedServer = this.feedService.getBindingServer();
     this.selectedChannelSource = this.selectedServer.did;
@@ -123,7 +125,7 @@ export class CreatenewfeedPage implements OnInit {
   }
 
   initTitle(){
-    // titleBarManager.setTitle(this.translate.instant("CreatenewfeedPage.createNewFeed"));
+    this.titleBarService.setTitle(this.titleBar, this.translate.instant("CreatenewfeedPage.createNewFeed"));
   }
 
   createChannel(name: HTMLInputElement, desc: HTMLInputElement){

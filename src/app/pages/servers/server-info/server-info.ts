@@ -1,4 +1,4 @@
-import { Component, OnInit, NgZone } from '@angular/core';
+import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
 import { Events,PopoverController,Platform} from '@ionic/angular';
 import { NativeService } from '../../../services/NativeService';
 import { FeedService } from '../../../services/FeedService';
@@ -12,9 +12,10 @@ import { UtilService } from '../../../services/utilService';
 import { StorageService } from '../../../services/StorageService';
 import { PopupProvider } from '../../../services/popup';
 import { AppService } from '../../../services/AppService';
+import { TitleBarService } from 'src/app/services/TitleBarService';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 
 import * as _ from 'lodash';
-// declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 class Attribute {
   constructor(
@@ -31,6 +32,7 @@ class Attribute {
 })
 
 export class ServerInfoPage implements OnInit {
+  @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   public developerMode:boolean =  false;
   public connectionStatus = 1;
   public buttonDisabled: boolean = true;
@@ -75,7 +77,8 @@ export class ServerInfoPage implements OnInit {
     private popoverController:PopoverController,
     public popupProvider:PopupProvider,
     private appService:AppService,
-    private platform:Platform
+    private platform:Platform,
+    private titleBarService: TitleBarService
   ) {}
 
   ngOnInit() {
@@ -127,7 +130,7 @@ export class ServerInfoPage implements OnInit {
     //this.initPublicStatus();
     this.feedPublicStatus = this.feedService.getFeedPublicStatus();
 
-    this.native.setTitleBarBackKeyShown(true);
+    this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
     this.connectionStatus = this.feedService.getConnectionStatus();
     this.events.subscribe(FeedsEvent.PublishType.connectionChanged, (status) => {
       this.zone.run(() => {
@@ -166,7 +169,7 @@ export class ServerInfoPage implements OnInit {
   }
 
   ionViewWillLeave(){
-    // titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, null);
+    this.titleBarService.setIcon(this.titleBar, FeedsData.TitleBarIconSlot.INNER_RIGHT, null, null);
     let value =  this.popoverController.getTop()["__zone_symbol__value"] || "";
     if(value!=""){
       this.popoverController.dismiss();
@@ -186,16 +189,18 @@ export class ServerInfoPage implements OnInit {
   }
 
   initTitle(){
-    // titleBarManager.setTitle(this.translate.instant('ServerInfoPage.title'));
+    this.titleBarService.setTitle(this.titleBar, this.translate.instant('ServerInfoPage.title'));
 
-    // if (this.checkIsMine() == 0) {
-    //   titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, {
-    //     key: "editServer",
-    //     iconPath: TitleBarPlugin.BuiltInIcon.EDIT
-    //   });
-    // } else {
-    //   titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, null);
-    // }
+    if (this.checkIsMine() == 0) {
+      //TODO
+      this.titleBarService.setIcon(this.titleBar, FeedsData.TitleBarIconSlot.INNER_RIGHT, "editServer", "");
+      // titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, {
+      //   key: "editServer",
+      //   iconPath: TitleBarPlugin.BuiltInIcon.EDIT
+      // });
+    } else {
+      this.titleBarService.setIcon(this.titleBar, FeedsData.TitleBarIconSlot.INNER_RIGHT, null, null);
+    }
   }
 
   navigateBackPage() {
@@ -560,8 +565,9 @@ showPreviewQrcode(feedsUrl:string){
     this.isPress =false;
    return;
   }
-  //  titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, null);
-   this.native.showPreviewQrcode(feedsUrl,"common.qRcodePreview","ServerInfoPage.title","serverinfo",this.appService);
+
+  this.titleBarService.setIcon(this.titleBar, FeedsData.TitleBarIconSlot.INNER_RIGHT, null, null);
+  this.native.showPreviewQrcode(feedsUrl,"common.qRcodePreview","ServerInfoPage.title","serverinfo",this.appService);
 }
 
 }

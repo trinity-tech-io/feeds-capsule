@@ -1,4 +1,4 @@
-import { Component, OnInit, NgZone } from '@angular/core';
+import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
 import { CameraService } from 'src/app/services/CameraService';
 import { NavController, Events } from '@ionic/angular';
 import { NativeService } from 'src/app/services/NativeService';
@@ -6,7 +6,9 @@ import { TranslateService } from "@ngx-translate/core";
 import { ThemeService } from '../../../services/theme.service';
 import { FeedService } from 'src/app/services/FeedService';
 import { MenuService } from 'src/app/services/MenuService';
-// declare let titleBarManager: TitleBarPlugin.TitleBarManager;
+import { TitleBarService } from 'src/app/services/TitleBarService';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+
 
 @Component({
   selector: 'app-profileimage',
@@ -14,7 +16,7 @@ import { MenuService } from 'src/app/services/MenuService';
   styleUrls: ['./profileimage.page.scss'],
 })
 export class ProfileimagePage implements OnInit {
-
+  @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   public connectionStatus = 1;
 
   public uploadedAvatar: string = null;
@@ -71,6 +73,7 @@ export class ProfileimagePage implements OnInit {
     private feedService:FeedService,
     private camera: CameraService,
     private menuService: MenuService,
+    private titleBarService: TitleBarService
   ) { }
 
   ngOnInit() {
@@ -79,7 +82,7 @@ export class ProfileimagePage implements OnInit {
 
   ionViewWillEnter() {
     this.initTitle();
-    this.native.setTitleBarBackKeyShown(true);
+    this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
     this.select = this.feedService.getSelsectIndex();
     let clipProfileIamge = this.feedService.getClipProfileIamge();
     if(clipProfileIamge!=""){
@@ -128,7 +131,7 @@ export class ProfileimagePage implements OnInit {
   }
 
   initTitle(){
-    // titleBarManager.setTitle(this.translate.instant("ProfileimagePage.title"));
+    this.titleBarService.setTitle(this.titleBar, this.translate.instant("ProfileimagePage.title"));
   }
 
   selectIndex(index: number, avatar?: string){

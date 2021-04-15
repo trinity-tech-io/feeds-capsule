@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { LogUtils } from 'src/app/services/LogUtils';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TitleBarIconSlot, TitleBarIcon } from 'src/app/components/titlebar/titlebar.types';
+import { TitleBarIconSlot, TitleBarIcon, TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
 import { NativeService } from 'src/app/services/NativeService';
 
 let TAG: string = "TitleBarService";
@@ -44,5 +44,13 @@ export class TitleBarService {
         });
     }
     
+    setBackgroundColor(titleBar: TitleBarComponent, hexColor: string){
+        titleBar.setBackgroundColor(hexColor);
+    }
+
+    setForegroundMode(titleBar: TitleBarComponent, mode: FeedsData.TitleBarForegroundMode){
+        let foregroundMode: TitleBarForegroundMode = mode.valueOf();
+        titleBar.setForegroundMode(foregroundMode);
+    }
     
 }

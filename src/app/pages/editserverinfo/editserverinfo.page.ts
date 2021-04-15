@@ -1,4 +1,4 @@
-import { Component, OnInit,NgZone } from '@angular/core';
+import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
 import { TranslateService } from "@ngx-translate/core";
 import { Events} from '@ionic/angular';
 import { ThemeService } from 'src/app/services/theme.service';
@@ -6,10 +6,10 @@ import { FeedService } from 'src/app/services/FeedService';
 import { ActivatedRoute } from '@angular/router';
 import { NativeService } from 'src/app/services/NativeService';
 import { IntentService } from 'src/app/services/IntentService';
+import { TitleBarService } from 'src/app/services/TitleBarService';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 
 import * as _ from 'lodash';
-
-// declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 @Component({
   selector: 'app-editserverinfo',
@@ -18,6 +18,7 @@ import * as _ from 'lodash';
 })
 
 export class EditserverinfoPage implements OnInit {
+  @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   public connectionStatus = 1;
   public name:string = "";
   public introduction:string = "";
@@ -34,7 +35,8 @@ export class EditserverinfoPage implements OnInit {
     private events: Events,
     private native: NativeService,
     private zone:NgZone,
-    private intentService: IntentService
+    private intentService: IntentService,
+    private titleBarService: TitleBarService
   ) {
   }
 
@@ -52,7 +54,7 @@ export class EditserverinfoPage implements OnInit {
 
   ionViewWillEnter() {
     this.initTitle();
-    this.native.setTitleBarBackKeyShown(true);
+    this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
 
     this.connectionStatus = this.feedService.getConnectionStatus();
     this.events.subscribe(FeedsEvent.PublishType.connectionChanged,(status)=>{
@@ -83,7 +85,7 @@ export class EditserverinfoPage implements OnInit {
   }
 
   initTitle(){
-    // titleBarManager.setTitle(this.translate.instant('EditserverinfoPage.title'));
+    this.titleBarService.setTitle(this.titleBar, this.translate.instant('EditserverinfoPage.title'));
   }
 
   async clickScan(){

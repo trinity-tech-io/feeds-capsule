@@ -1,4 +1,4 @@
-import { Component, OnInit,NgZone} from '@angular/core';
+import { Component, OnInit, NgZone, ViewChild} from '@angular/core';
 import { TranslateService } from "@ngx-translate/core";
 import { Events,Platform} from '@ionic/angular';
 import { ThemeService } from '../../services/theme.service';
@@ -9,9 +9,10 @@ import { PopoverController} from '@ionic/angular';
 import { PaypromptComponent } from '../../components/payprompt/payprompt.component'
 import { AppService } from '../../services/AppService';
 import { UtilService } from '../../services/utilService';
+import { TitleBarService } from 'src/app/services/TitleBarService';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 
 import * as _ from 'lodash';
-// declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 @Component({
   selector: 'app-feedinfo',
@@ -30,6 +31,7 @@ import * as _ from 'lodash';
 // 	"version": ""
 // }
 export class FeedinfoPage implements OnInit {
+  @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   public connectionStatus = 1;
   public nodeId:string ="";
   public channelId:number = 0;
@@ -61,7 +63,8 @@ export class FeedinfoPage implements OnInit {
     private zone:NgZone,
     private menuService: MenuService,
     private appService:AppService,
-    private platform:Platform
+    private platform:Platform,
+    private titleBarService: TitleBarService
   ) {
     }
 
@@ -145,23 +148,25 @@ export class FeedinfoPage implements OnInit {
   }
 
   initTitle(){
-    this.native.setTitleBarBackKeyShown(true);
-    // titleBarManager.setTitle(this.translate.instant('FeedinfoPage.title'));
-    // if (this.feedService.checkChannelIsMine(this.nodeId, this.channelId)) {
-    //   titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, {
-    //     key: "editChannel",
-    //     iconPath: TitleBarPlugin.BuiltInIcon.EDIT
-    //   });
-    // } else {
-    //   titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, null);
-    // }
+    this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
+    this.titleBarService.setTitle(this.titleBar, this.translate.instant('FeedinfoPage.title'));
+    if (this.feedService.checkChannelIsMine(this.nodeId, this.channelId)) {
+      //TODO
+      this.titleBarService.setIcon(this.titleBar, FeedsData.TitleBarIconSlot.INNER_RIGHT, "editChannel", "");
+      // titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, {
+      //   key: "editChannel",
+      //   iconPath: TitleBarPlugin.BuiltInIcon.EDIT
+      // });
+    } else {
+      this.titleBarService.setIcon(this.titleBar, FeedsData.TitleBarIconSlot.INNER_RIGHT, null, null);
+    }
   }
 
   ionViewDidEnter(){
   }
 
   ionViewWillLeave(){
-    // titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, null);
+    this.titleBarService.setIcon(this.titleBar, FeedsData.TitleBarIconSlot.INNER_RIGHT, null, null);
     this.events.unsubscribe(FeedsEvent.PublishType.unsubscribeFinish);
     this.events.unsubscribe(FeedsEvent.PublishType.subscribeFinish);
     this.events.unsubscribe(FeedsEvent.PublishType.editChannel);
@@ -325,9 +330,9 @@ export class FeedinfoPage implements OnInit {
      return;
     }
     let isOwner = this.feedService.checkChannelIsMine(this.nodeId, this.channelId);
-    // if(isOwner){
-    //   titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, null);
-    // }
+    if(isOwner){
+      this.titleBarService.setIcon(this.titleBar, FeedsData.TitleBarIconSlot.INNER_RIGHT, null, null);
+    }
     this.native.showPreviewQrcode(feedsUrl,"common.qRcodePreview","FeedinfoPage.title","feedinfo",this.appService,isOwner);
   }
 

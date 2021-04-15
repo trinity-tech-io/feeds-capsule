@@ -10,7 +10,9 @@ import { AppService } from '../../../services/AppService';
 import { UtilService } from '../../../services/utilService';
 import { LogUtils } from '../../../services/LogUtils';
 import { StorageService } from '../../../services/StorageService';
-// declare let titleBarManager: TitleBarPlugin.TitleBarManager;
+import { TitleBarService } from 'src/app/services/TitleBarService';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+
 let TAG: string = "Feeds-createpost";
 
 @Component({
@@ -20,6 +22,7 @@ let TAG: string = "Feeds-createpost";
 })
 
 export class CreatenewpostPage implements OnInit {
+    @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
     @ViewChild('newPostIonTextarea', {static: false}) newPostIonTextarea:IonTextarea;
     public connectionStatus = 1;
     public nodeStatus = {};
@@ -65,6 +68,7 @@ export class CreatenewpostPage implements OnInit {
       public modalController:ModalController,
       private logUtils: LogUtils,
       private storageService: StorageService,
+      private titleBarService: TitleBarService
     ) {}
 
     ngOnInit() {
@@ -94,7 +98,7 @@ export class CreatenewpostPage implements OnInit {
     ionViewWillEnter() {
       this.feedList = this.feedService.getMyChannelList() || [];
       this.initTitle();
-      this.native.setTitleBarBackKeyShown(true);
+      this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
 
       this.connectionStatus = this.feedService.getConnectionStatus();
       this.initFeed();
@@ -265,7 +269,7 @@ export class CreatenewpostPage implements OnInit {
     ionViewDidEnter() {}
 
     initTitle(){
-      // titleBarManager.setTitle(this.translate.instant("CreatenewpostPage.addingPost"));
+      this.titleBarService.setTitle(this.titleBar, this.translate.instant("CreatenewpostPage.addingPost"));
     }
 
     post(){

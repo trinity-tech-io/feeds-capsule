@@ -1,17 +1,19 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import {Events} from '@ionic/angular';
 import { NativeService } from 'src/app/services/NativeService';
 import { FeedService } from 'src/app/services/FeedService';
 import { TranslateService } from "@ngx-translate/core";
 import { AlertController } from '@ionic/angular';
-// declare let titleBarManager: TitleBarPlugin.TitleBarManager;
+import { TitleBarService } from 'src/app/services/TitleBarService';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+
 @Component({
   selector: 'app-develop',
   templateUrl: './develop.page.html',
   styleUrls: ['./develop.page.scss'],
 })
 export class DevelopPage implements OnInit {
-
+  @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   public alert = null;
   
   constructor(
@@ -19,14 +21,15 @@ export class DevelopPage implements OnInit {
     public native: NativeService,
     public alertController: AlertController,
     public translate:TranslateService,
-    public events: Events) { }
+    public events: Events,
+    private titleBarService: TitleBarService) { }
 
   ngOnInit() {
   }
 
   ionViewWillEnter() {
     this.initTitle();
-    this.native.setTitleBarBackKeyShown(true);
+    this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
 
     this.events.subscribe(FeedsEvent.PublishType.updateTitle,()=>{
       this.initTitle();
@@ -38,7 +41,7 @@ export class DevelopPage implements OnInit {
   }
 
   initTitle(){
-    // titleBarManager.setTitle(this.translate.instant("DevelopPage.develop"));
+    this.titleBarService.setTitle(this.titleBar, this.translate.instant("DevelopPage.develop"));
   }
 
   clearAll(){

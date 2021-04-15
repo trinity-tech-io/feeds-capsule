@@ -1,17 +1,20 @@
-import { Injectable } from '@angular/core';
+import { Injectable, ViewChild } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { theme } from "@elastosfoundation/elastos-connectivity-sdk-cordova";
+import { TitleBarService } from 'src/app/services/TitleBarService';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 
 declare let intentManager: IntentPlugin.IntentManager;
-// declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 @Injectable({
   providedIn: 'root'
 })
 export class ThemeService {
+  @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   public darkMode = false;
 
-  constructor(private platform: Platform) {
+  constructor(private platform: Platform,
+    private titleBarService: TitleBarService) {
     this.platform.ready().then(() => {
       this.getTheme();
     });
@@ -32,16 +35,15 @@ export class ThemeService {
       document.body.classList.add("dark");
 
       // Set dark mode to native header
-      // titleBarManager.setBackgroundColor("#191a2f");
-      // titleBarManager.setForegroundMode(TitleBarPlugin.TitleBarForegroundMode.LIGHT);
-
+      this.titleBarService.setBackgroundColor(this.titleBar, "#191a2f");
+      this.titleBarService.setForegroundMode(this.titleBar, FeedsData.TitleBarForegroundMode.LIGHT);
     } else {
       // Remove dark mode globally
       document.body.classList.remove("dark");
 
       // Remove dark mode to native header
-      // titleBarManager.setBackgroundColor("#f8f8ff");
-      // titleBarManager.setForegroundMode(TitleBarPlugin.TitleBarForegroundMode.DARK);
+      this.titleBarService.setBackgroundColor(this.titleBar, "#f8f8ff");
+      this.titleBarService.setForegroundMode(this.titleBar, FeedsData.TitleBarForegroundMode.DARK);
     }
   }
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit, NgZone } from '@angular/core';
+import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
 import { Events,PopoverController} from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
 import { NativeService } from '../../services/NativeService';
@@ -9,8 +9,10 @@ import { MenuService } from '../../services/MenuService';
 import { TranslateService } from "@ngx-translate/core";
 import { PopupProvider } from '../../services/popup';
 import { AppService } from '../../services/AppService';
+import { TitleBarService } from 'src/app/services/TitleBarService';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+
 import * as _ from 'lodash';
-// declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 @Component({
   selector: 'app-discoverfeedinfo',
@@ -30,6 +32,7 @@ import * as _ from 'lodash';
 // };
 
 export class DiscoverfeedinfoPage implements OnInit {
+  @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   public developerMode:boolean =  false;
   public  connectionStatus = 1;
   public feedInfo:any = {};
@@ -51,11 +54,11 @@ export class DiscoverfeedinfoPage implements OnInit {
     private popoverController: PopoverController,
     public popupProvider:PopupProvider,
     private menuService: MenuService,
-    private appService:AppService
+    private appService:AppService,
+    private titleBarService: TitleBarService
     ) {}
 
   ngOnInit() {
-
     this.acRoute.queryParams.subscribe((data) => {
       this.feedInfo = _.cloneDeep(data)["params"];
     });
@@ -69,7 +72,7 @@ export class DiscoverfeedinfoPage implements OnInit {
     this.qrcodeString = this.feedsUrl+"#"+encodeURIComponent(this.feedInfo["name"]) || null;
     this.status = this.getChannelStatus(this.feedInfo);
     this.initTitle();
-    this.native.setTitleBarBackKeyShown(true);
+    this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
 
     this.connectionStatus = this.feedService.getConnectionStatus();
     this.events.subscribe(FeedsEvent.PublishType.connectionChanged,(status)=>{
@@ -132,7 +135,7 @@ export class DiscoverfeedinfoPage implements OnInit {
   }
 
   initTitle(){
-    // titleBarManager.setTitle(this.translate.instant('DiscoverfeedinfoPage.title'));
+    this.titleBarService.setTitle(this.titleBar, this.translate.instant('DiscoverfeedinfoPage.title'));
   }
 
   checkDid(type:string){

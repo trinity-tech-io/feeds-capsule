@@ -1,7 +1,7 @@
 import { Injectable} from '@angular/core';
 import { Router} from '@angular/router';
 import { ThemeService } from "./../services/theme.service";
-import { NgZone} from '@angular/core';
+import { NgZone, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Events } from '@ionic/angular';
 import { NativeService } from '../services/NativeService';
@@ -11,8 +11,8 @@ import { MenuController,PopoverController } from '@ionic/angular';
 import { MenuService } from 'src/app/services/MenuService';
 import { PopupProvider } from 'src/app/services/popup';
 import { IntentService } from 'src/app/services/IntentService';
-
-// declare let titleBarManager: TitleBarPlugin.TitleBarManager;
+import { TitleBarService } from 'src/app/services/TitleBarService';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 
 let managerService: any;
 
@@ -20,7 +20,7 @@ let managerService: any;
     providedIn: 'root'
 })
 export class AppService {
-
+    @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
     // @ViewChild(IonRouterOutlet,{static:true}) ionRouterOutlet: IonRouterOutlet;
     public popover:any = null;
     constructor(
@@ -37,7 +37,8 @@ export class AppService {
       private popoverController: PopoverController,
       private menuService: MenuService,
       private events: Events,
-      private intentService: IntentService
+      private intentService: IntentService,
+      private titleBarService: TitleBarService
     ) {
     }
 
@@ -111,14 +112,11 @@ export class AppService {
     }
 
     addright(){
-      // titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.OUTER_RIGHT, {
-      //   key: "more",
-      //   iconPath: "assets/icon/more_menu.ico"
-      // });
+      this.titleBarService.setIcon(this.titleBar, FeedsData.TitleBarIconSlot.OUTER_RIGHT, "more", "assets/icon/more_menu.ico");
     }
 
     hideright(){
-      // titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.OUTER_RIGHT,null);
+      this.titleBarService.setIcon(this.titleBar, FeedsData.TitleBarIconSlot.OUTER_RIGHT, null, null);
     }
 
     onMessageReceived(msg: IntentPlugin.ReceivedIntent) {
