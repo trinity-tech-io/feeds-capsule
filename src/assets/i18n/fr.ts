@@ -36,7 +36,7 @@ export const fr = {
         "unknownError": "Unknown error",
         "loadingText": "Loading additional data…",
         // "des3": "No more data",
-        "noElaAddress": "The owner of the server did not set an ELA address",
+        "noElaAddress": "The channel owner has not set up an ELA address yet",
         "copysucceeded": "Copied",
         "des4": "Your donation will be sent to this ELA address:",
         // "pictureviewer": "Picture Viewer",
