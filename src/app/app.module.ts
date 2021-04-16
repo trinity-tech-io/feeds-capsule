@@ -56,6 +56,7 @@ import { AddFeedService } from 'src/app/services/AddFeedService';
 import { FileService } from 'src/app/services/FileService';
 import { FileHelperService } from 'src/app/services/FileHelperService';
 import { DataHelper } from 'src/app/services/DataHelper';
+import { ViewHelper } from 'src/app/services/viewhelper.service';
 
 import { IonicStorageModule } from '@ionic/storage';
 
@@ -215,6 +216,7 @@ export function anim(AnimationC: Animation, baseEl: any, position?: any): Promis
     FileHelperService,
     IntentService,
     DataHelper,
+    ViewHelper,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     {provide: ErrorHandler, useClass: ErrorHandler}
   ]

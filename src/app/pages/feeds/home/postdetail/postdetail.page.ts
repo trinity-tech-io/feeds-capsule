@@ -1,6 +1,7 @@
 import { Component, OnInit, NgZone,ViewChild} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Events,ModalController,Platform} from '@ionic/angular';
+import { ModalController,Platform} from '@ionic/angular';
+import { Events } from 'src/app/services/events.service';
 import { FeedService } from 'src/app/services/FeedService';
 import { NativeService } from 'src/app/services/NativeService';
 import { MenuService } from 'src/app/services/MenuService';
@@ -10,6 +11,7 @@ import { UtilService } from 'src/app/services/utilService';
 import { IonInfiniteScroll,PopoverController} from '@ionic/angular';
 import { AppService } from 'src/app/services/AppService';
 import { LogUtils } from 'src/app/services/LogUtils';
+import { ViewHelper } from 'src/app/services/viewhelper.service';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import * as _ from 'lodash';
@@ -128,7 +130,8 @@ export class PostdetailPage implements OnInit {
     public appService:AppService,
     public modalController: ModalController,
     private logUtils: LogUtils,
-    private titleBarService: TitleBarService) {
+    private titleBarService: TitleBarService,
+    private viewHelper: ViewHelper) {
   }
 
   initData(isInit:boolean){
@@ -670,7 +673,7 @@ export class PostdetailPage implements OnInit {
           if(img!=""){
             this.imgDownStatus = "";
             this.isImgLoading = false;
-            this.native.openViewer(realImg,"common.image","PostdetailPage.postview",this.appService);
+            this.viewHelper.openViewer(this.titleBar, realImg,"common.image","PostdetailPage.postview",this.appService);
           }else{
             this.cachedMediaType = "img";
             this.feedService.processGetBinary(this.nodeId, this.channelId, this.postId, 0, 0, FeedsData.MediaType.containsImg, key,
@@ -999,7 +1002,7 @@ export class PostdetailPage implements OnInit {
       this.imgDownStatus = "";
       this.isImgPercentageLoading = false;
       this.isImgLoading = false;
-      this.native.openViewer(value,"common.image","PostdetailPage.postview",this.appService);
+      this.viewHelper.openViewer(this.titleBar, value,"common.image","PostdetailPage.postview",this.appService);
     } else if (key.indexOf("video")>-1){
       this.videoDownStatus = "";
       this.isVideoPercentageLoading = false;

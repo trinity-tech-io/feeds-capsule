@@ -12,6 +12,7 @@ import { UtilService } from '../../../services/utilService';
 import { StorageService } from '../../../services/StorageService';
 import { PopupProvider } from '../../../services/popup';
 import { AppService } from '../../../services/AppService';
+import { ViewHelper } from 'src/app/services/viewhelper.service';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 
@@ -78,7 +79,8 @@ export class ServerInfoPage implements OnInit {
     public popupProvider:PopupProvider,
     private appService:AppService,
     private platform:Platform,
-    private titleBarService: TitleBarService
+    private titleBarService: TitleBarService,
+    private viewHelper: ViewHelper
   ) {}
 
   ngOnInit() {
@@ -567,7 +569,7 @@ showPreviewQrcode(feedsUrl:string){
   }
 
   this.titleBarService.setIcon(this.titleBar, FeedsData.TitleBarIconSlot.INNER_RIGHT, null, null);
-  this.native.showPreviewQrcode(feedsUrl,"common.qRcodePreview","ServerInfoPage.title","serverinfo",this.appService);
+  this.viewHelper.showPreviewQrcode(this.titleBar, feedsUrl,"common.qRcodePreview","ServerInfoPage.title","serverinfo",this.appService);
 }
 
 }
