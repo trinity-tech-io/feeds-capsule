@@ -1,11 +1,12 @@
 import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
 import { FeedService, Avatar } from 'src/app/services/FeedService';
 import { CarrierService } from 'src/app/services/CarrierService';
-import { Events, LoadingController } from '@ionic/angular';
+import { LoadingController } from '@ionic/angular';
 import { NativeService } from 'src/app/services/NativeService';
 import { TranslateService } from "@ngx-translate/core";
 import { ThemeService } from 'src/app/services/theme.service';
 import { AppService } from '../../services/AppService';
+import { Events } from 'src/app/services/events.service';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 

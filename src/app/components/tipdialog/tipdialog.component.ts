@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ThemeService } from 'src/app/services/theme.service';
-import { NavParams,Events} from '@ionic/angular';
+import { NavParams} from '@ionic/angular';
+import { Events } from 'src/app/services/events.service';
 
 @Component({
   selector: 'app-tipdialog',
@@ -29,7 +30,8 @@ export class TipdialogComponent implements OnInit {
   }
 
   confirm(){
-    this.events.publish(FeedsEvent.PublishType.tipdialogConfirm,this.feedName,this.feedDesc);
+    //TODO event
+    // this.events.publish(FeedsEvent.PublishType.tipdialogConfirm,this.feedName,this.feedDesc);
   }
 
 }

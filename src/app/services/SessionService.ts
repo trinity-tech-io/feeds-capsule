@@ -133,8 +133,9 @@ export class SessionService {
                             "unknow"
                         ];
                         mLogUtils.logd("Session stream [" + event.stream.id + "] state change to "+state_name[workedSessions[nodeId].StreamState]+" nodeId is "+nodeId,TAG);
-                        eventBus.publish(FeedsEvent.PublishType.streamOnStateChangedCallback, nodeId, workedSessions[nodeId].StreamState);
-                        eventBus.publish(FeedsEvent.PublishType.innerStreamStateChanged, nodeId, workedSessions[nodeId].StreamState);
+                        //TODO event
+                        // eventBus.publish(FeedsEvent.PublishType.streamOnStateChangedCallback, nodeId, workedSessions[nodeId].StreamState);
+                        // eventBus.publish(FeedsEvent.PublishType.innerStreamStateChanged, nodeId, workedSessions[nodeId].StreamState);
 
                         if (workedSessions[nodeId] != undefined && FeedsData.StreamState.INITIALIZED == workedSessions[nodeId].StreamState){
                             workedSessions[nodeId].sessionTimeout = setTimeout(() => {
@@ -600,7 +601,8 @@ function decodeBodyData(nodeId: string): boolean{
     if (cacheData[nodeId].method == "get_binary" ){
         mStorageService.set(key,value).then(()=>{
             mLogUtils.logd("Decode body data and save to storage success, nodeId is "+ nodeId +", data key is "+key, TAG);
-            eventBus.publish(FeedsEvent.PublishType.streamGetBinarySuccess, nodeId, key, value);
+            //TODO event
+            // eventBus.publish(FeedsEvent.PublishType.streamGetBinarySuccess, nodeId, key, value);
         });
     }
     
@@ -683,8 +685,10 @@ function parseResponse(response: any){
     cacheData[nodeId].key = key;
     if (method == "set_binary"){
         mLogUtils.logd("Parse 'set_binary' data finish and publish events, nodeId is "+nodeId, TAG);
-        eventBus.publish(FeedsEvent.PublishType.streamSetBinarySuccess, nodeId, feedId, postId, commentId, tempId);
-        eventBus.publish(FeedsEvent.PublishType.innerStreamSetBinaryFinish, nodeId, feedId, postId, commentId, tempId);
+        //TODO event
+        // eventBus.publish(FeedsEvent.PublishType.streamSetBinarySuccess, nodeId, feedId, postId, commentId, tempId);
+        //TODO event
+        // eventBus.publish(FeedsEvent.PublishType.innerStreamSetBinaryFinish, nodeId, feedId, postId, commentId, tempId);
     } else if (method == "get_binary"){
         mLogUtils.logd("Parse 'get_binary' data finish and publish events, nodeId is "+nodeId, TAG);
         eventBus.publish(FeedsEvent.PublishType.streamGetBinaryResponse, nodeId);
@@ -778,18 +782,23 @@ function createCreateSessionTimeout(){
 
 function publishError(nodeId: string, error: any, memo: FeedsData.SessionMemoData=null){
     isBusy = false;
-    eventBus.publish(FeedsEvent.PublishType.streamError, nodeId,error);
-    eventBus.publish(FeedsEvent.PublishType.innerStreamError, nodeId,error, memo);
+    //TODO event
+    // eventBus.publish(FeedsEvent.PublishType.streamError, nodeId,error);
+
+    //TODO event
+    // eventBus.publish(FeedsEvent.PublishType.innerStreamError, nodeId,error, memo);
     if (cacheData == null || cacheData == undefined || cacheData[nodeId] == undefined)
         return;
 
     if (cacheData[nodeId].method == "set_binary"){
-        eventBus.publish(FeedsEvent.PublishType.streamSetBinaryError, nodeId,error);
+        //TODO event
+        // eventBus.publish(FeedsEvent.PublishType.streamSetBinaryError, nodeId,error);
         return ;
     }
 
     if (cacheData[nodeId].method == "get_binary"){
-        eventBus.publish(FeedsEvent.PublishType.streamGetBinaryError, nodeId,error);
+        //TODO event
+        // eventBus.publish(FeedsEvent.PublishType.streamGetBinaryError, nodeId,error);
         return ;
     }
 }
@@ -810,7 +819,8 @@ function calculateProgress(nodeId: string){
 
 function publishProgress(nodeId: string, progress: number, method: string, key: string){
     mLogUtils.logd("Publish stream process progress, nodeId is "+nodeId+", progress is "+progress, TAG);
-    eventBus.publish(FeedsEvent.PublishType.streamProgress, nodeId, progress, method, key);
+    //TODO event
+    // eventBus.publish(FeedsEvent.PublishType.streamProgress, nodeId, progress, method, key);
 }
 
 function decodeHeader(nodeId: string){
@@ -902,7 +912,8 @@ function checkBody(nodeId: string, data: Uint8Array){
         if (cacheData[nodeId].method == "get_binary" ){
             mStorageService.set(key,value).then(()=>{
                 mLogUtils.logd("Publish 'streamGetBinarySuccess' event, nodeId is "+nodeId, TAG);
-                eventBus.publish(FeedsEvent.PublishType.streamGetBinarySuccess, nodeId, key, value);
+                //TODO event
+                // eventBus.publish(FeedsEvent.PublishType.streamGetBinarySuccess, nodeId, key, value);
             });
         }
         
