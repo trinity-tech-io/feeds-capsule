@@ -1,5 +1,5 @@
 import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
-import { Events,PopoverController} from '@ionic/angular';
+import { PopoverController} from '@ionic/angular';
 import { ActivatedRoute, Params } from '@angular/router';
 import { TranslateService } from "@ngx-translate/core";
 import { ThemeService } from '../../services/theme.service';
@@ -10,6 +10,7 @@ import { ApiUrl } from '../../services/ApiUrl';
 import { StorageService } from '../../services/StorageService';
 import { UtilService } from '../../services/utilService';
 import { PopupProvider } from '../../services/popup';
+import { Events } from 'src/app/services/events.service';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import * as _ from 'lodash';

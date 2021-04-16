@@ -95,11 +95,12 @@ export class EditPostPage implements OnInit {
       });
     });
 
-    this.events.subscribe(FeedsEvent.PublishType.friendConnectionChanged, (nodeId, status)=>{
-      this.zone.run(()=>{
-        this.nodeStatus[nodeId] = status;
-      });
-     });
+    //TODO event
+    // this.events.subscribe(FeedsEvent.PublishType.friendConnectionChanged, (nodeId, status)=>{
+    //   this.zone.run(()=>{
+    //     this.nodeStatus[nodeId] = status;
+    //   });
+    //  });
 
     this.events.subscribe(FeedsEvent.PublishType.rpcRequestError, () => {
       this.pauseVideo();
@@ -125,44 +126,49 @@ export class EditPostPage implements OnInit {
       });
     });
 
-    this.events.subscribe(FeedsEvent.PublishType.streamError, (nodeId, error) => {
-      this.zone.run(() => {
-        this.feedService.handleSessionError(nodeId, error);
-        this.pauseVideo();
-        this.native.hideLoading();
-      });
-    });
+    //TODO event
+    // this.events.subscribe(FeedsEvent.PublishType.streamError, (nodeId, error) => {
+    //   this.zone.run(() => {
+    //     this.feedService.handleSessionError(nodeId, error);
+    //     this.pauseVideo();
+    //     this.native.hideLoading();
+    //   });
+    // });
 
-    this.events.subscribe(FeedsEvent.PublishType.streamOnStateChangedCallback, (nodeId, state) => {
-      this.zone.run(() => {
-        if (state != FeedsData.StreamState.CONNECTED)
-          return;
+    //TODO event
+    // this.events.subscribe(FeedsEvent.PublishType.streamOnStateChangedCallback, (nodeId, state) => {
+    //   this.zone.run(() => {
+    //     if (state != FeedsData.StreamState.CONNECTED)
+    //       return;
 
-        if (this.editState == FeedsData.EditState.TextImageChange || this.editState == FeedsData.EditState.TextVideoChange){
-          this.feedService.sendData(this.nodeId,this.channelId,this.postId, 0 ,0, this.flieUri,this.imgUrl,0);
-        }
-      });
-    });
+    //     if (this.editState == FeedsData.EditState.TextImageChange || this.editState == FeedsData.EditState.TextVideoChange){
+    //       this.feedService.sendData(this.nodeId,this.channelId,this.postId, 0 ,0, this.flieUri,this.imgUrl,0);
+    //     }
+    //   });
+    // });
 
-    this.events.subscribe(FeedsEvent.PublishType.setBinaryFinish, (nodeId, tempId) => {
-      this.zone.run(() => {
-        this.processSetBinaryResult();
-      });
-    });
+    //TODO event
+    // this.events.subscribe(FeedsEvent.PublishType.setBinaryFinish, (nodeId, tempId) => {
+    //   this.zone.run(() => {
+    //     this.processSetBinaryResult();
+    //   });
+    // });
 
-    this.events.subscribe(FeedsEvent.PublishType.streamSetBinarySuccess, (nodeId, tempId) => {
-      this.zone.run(() => {
-        this.feedService.closeSession(nodeId);
-        this.processSetBinaryResult();
-      });
-    });
+    //TODO event
+    // this.events.subscribe(FeedsEvent.PublishType.streamSetBinarySuccess, (nodeId, tempId) => {
+    //   this.zone.run(() => {
+    //     this.feedService.closeSession(nodeId);
+    //     this.processSetBinaryResult();
+    //   });
+    // });
 
-    this.events.subscribe(FeedsEvent.PublishType.streamSetBinaryError, (nodeId, response) => {
-      this.zone.run(() => {
-        this.feedService.closeSession(nodeId);
-        this.native.hideLoading();
-      });
-    });
+    //TODO event
+    // this.events.subscribe(FeedsEvent.PublishType.streamSetBinaryError, (nodeId, response) => {
+    //   this.zone.run(() => {
+    //     this.feedService.closeSession(nodeId);
+    //     this.native.hideLoading();
+    //   });
+    // });
 
     this.events.subscribe(FeedsEvent.PublishType.openRightMenu,()=>{
       //this.clVideo();
