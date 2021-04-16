@@ -6,12 +6,12 @@
     "experimentalDecorators": true,
     "lib": [
       "dom",
-      "es2015"
+      "es2020"
     ],
-    "module": "es2015",
+    "module": "es2020",
     "moduleResolution": "node",
     "sourceMap": true,
-    "target": "es5",
+    "target": "es2015",
     "baseUrl": "./",
     "typeRoots": [
       "node_modules/@types"

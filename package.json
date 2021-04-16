@@ -23,7 +23,6 @@
     "@elastosfoundation/elastos-cordova-plugin-carrier": "^1.0.1",
     "@elastosfoundation/elastos-cordova-plugin-did": "^1.0.2",
     "@elastosfoundation/elastos-cordova-plugin-hive": "^1.0.2",
-    "@elastosfoundation/trinity-dapp-sdk": "^1.0.24",
     "@ionic-native/clipboard": "^5.18.0",
     "@ionic-native/core": "^5.0.0",
     "@ionic-native/in-app-browser": "^5.10.0",
@@ -86,6 +85,7 @@
     "karma-jasmine": "~2.0.1",
     "karma-jasmine-html-reporter": "^1.4.0",
     "protractor": "~5.4.0",
+    "svelte": "^3.37.0",
     "ts-node": "^9.1.1",
     "tslint": "~5.15.0",
     "typescript": "4.0.5"
