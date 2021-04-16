@@ -9,6 +9,7 @@ import { MenuService } from '../../services/MenuService';
 import { TranslateService } from "@ngx-translate/core";
 import { PopupProvider } from '../../services/popup';
 import { AppService } from '../../services/AppService';
+import { ViewHelper } from 'src/app/services/viewhelper.service';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 
@@ -55,7 +56,8 @@ export class DiscoverfeedinfoPage implements OnInit {
     public popupProvider:PopupProvider,
     private menuService: MenuService,
     private appService:AppService,
-    private titleBarService: TitleBarService
+    private titleBarService: TitleBarService,
+    private viewHelper: ViewHelper
     ) {}
 
   ngOnInit() {
@@ -245,6 +247,6 @@ export class DiscoverfeedinfoPage implements OnInit {
   }
 
   showPreviewQrcode(feedsUrl:string){
-    this.native.showPreviewQrcode(feedsUrl,"common.qRcodePreview","DiscoverfeedinfoPage.title","discoverfeedinfo",this.appService);
+    this.viewHelper.showPreviewQrcode(this.titleBar, feedsUrl,"common.qRcodePreview","DiscoverfeedinfoPage.title","discoverfeedinfo",this.appService);
   }
 }

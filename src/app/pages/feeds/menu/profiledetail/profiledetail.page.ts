@@ -7,6 +7,7 @@ import { ThemeService } from '../../../../services/theme.service';
 import { CarrierService } from '../../../../services/CarrierService';
 import { AppService } from '../../../../services/AppService';
 import { StorageService } from '../../../../services/StorageService';
+import { ViewHelper } from 'src/app/services/viewhelper.service';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 
@@ -60,7 +61,8 @@ export class ProfiledetailPage implements OnInit {
     private appService:AppService,
     private platform:Platform,
     private storageService:StorageService,
-    private titleBarService: TitleBarService
+    private titleBarService: TitleBarService,
+    private viewHelper: ViewHelper
   ) {
 
     }
@@ -287,7 +289,7 @@ export class ProfiledetailPage implements OnInit {
       this.isPress =false;
      return;
     }
-    this.native.showPreviewQrcode(feedsUrl,"common.qRcodePreview","ProfiledetailPage.profileDetails","profileDetails",this.appService);
+    this.viewHelper.showPreviewQrcode(this.titleBar, feedsUrl,"common.qRcodePreview","ProfiledetailPage.profileDetails","profileDetails",this.appService);
   }
 
   menuMore(feedsUrl:string) {
