@@ -1,5 +1,5 @@
 import { Component, NgZone,ViewChild} from '@angular/core';
-import { Events } from '@ionic/angular';
+import { Events } from 'src/app/services/events.service';
 import { FeedService, Avatar } from 'src/app/services/FeedService';
 import { ThemeService } from 'src/app/services/theme.service';
 import { UtilService } from 'src/app/services/utilService';

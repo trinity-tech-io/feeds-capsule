@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { Platform } from '@ionic/angular';
 import { CarrierService } from 'src/app/services/CarrierService';
-import { Events } from '@ionic/angular';
+import { Events } from 'src/app/services/events.service';
 import { JsonRPCService } from 'src/app/services/JsonRPCService';
 import { StorageService } from 'src/app/services/StorageService';
 import { TranslateService } from '@ngx-translate/core';

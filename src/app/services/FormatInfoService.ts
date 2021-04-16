@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Events } from '@ionic/angular';
+import { Events } from 'src/app/services/events.service';
 import { NativeService } from 'src/app/services/NativeService';
 import { TranslateService } from '@ngx-translate/core';
 
