@@ -25,17 +25,18 @@ export class AddFeedService {
     }
 
     subscribeEvent(){
-        this.events.subscribe(FeedsEvent.PublishType.friendConnectionChanged,(friendId, friendStatus)=>{
-            if (friendStatus == FeedsData.ConnState.connected){
-                this.changeTobeAddedFeedStatusByNodeId(friendId, FeedsData.FollowFeedStatus.FRIEND_ONLINE);
-                return ;
-            }
+        //TODO event
+        // this.events.subscribe(FeedsEvent.PublishType.friendConnectionChanged,(friendId, friendStatus)=>{
+        //     if (friendStatus == FeedsData.ConnState.connected){
+        //         this.changeTobeAddedFeedStatusByNodeId(friendId, FeedsData.FollowFeedStatus.FRIEND_ONLINE);
+        //         return ;
+        //     }
 
-            if (friendStatus == FeedsData.ConnState.disconnected){
-                this.changeTobeAddedFeedStatusByNodeId(friendId, FeedsData.FollowFeedStatus.FRIEND_OFFLINE);
-                return;
-            }
-        });
+        //     if (friendStatus == FeedsData.ConnState.disconnected){
+        //         this.changeTobeAddedFeedStatusByNodeId(friendId, FeedsData.FollowFeedStatus.FRIEND_OFFLINE);
+        //         return;
+        //     }
+        // });
 
         this.events.subscribe(FeedsEvent.PublishType.login_finish,(nodeId)=>{
             this.changeTobeAddedFeedStatusByNodeId(nodeId, FeedsData.FollowFeedStatus.SIGNIN_FINISH);
@@ -266,7 +267,8 @@ export class AddFeedService {
 
         await this.saveData();
 
-        this.events.publish(FeedsEvent.PublishType.addFeedStatusChanged, nodeId, feedId, status);
+        //TODO event
+        // this.events.publish(FeedsEvent.PublishType.addFeedStatusChanged, nodeId, feedId, status);
     }
 
     async removeTobeAddedFeedStatusByNodeFeedId(nodeId: string, feedId: number): Promise<void>{

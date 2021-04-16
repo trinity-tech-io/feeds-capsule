@@ -197,12 +197,13 @@ export class HomePage implements OnInit {
     this.refreshImage(0);
     this.initnodeStatus(this.postList);
 
-    this.events.subscribe(FeedsEvent.PublishType.unfollowFeedsFinish, (nodeId, channelId, name) => {
-      this.zone.run(() => {
-          this.hideDeletedPosts = this.feedService.getHideDeletedPosts();
-          this.refreshPostList();
-      });
-    });
+    //TODO event
+    // this.events.subscribe(FeedsEvent.PublishType.unfollowFeedsFinish, (nodeId, channelId, name) => {
+    //   this.zone.run(() => {
+    //       this.hideDeletedPosts = this.feedService.getHideDeletedPosts();
+    //       this.refreshPostList();
+    //   });
+    // });
 
     this.events.subscribe(FeedsEvent.PublishType.clearHomeEvent,()=>{
             this.events.unsubscribe(FeedsEvent.PublishType.hideDeletedPosts);
@@ -278,11 +279,12 @@ addCommonEvents(){
     });
   });
 
-  this.events.subscribe(FeedsEvent.PublishType.friendConnectionChanged, (nodeId, status)=>{
-    this.zone.run(()=>{
-      this.nodeStatus[nodeId] = status;
-    });
-  });
+  //TODO event
+  // this.events.subscribe(FeedsEvent.PublishType.friendConnectionChanged, (nodeId, status)=>{
+  //   this.zone.run(()=>{
+  //     this.nodeStatus[nodeId] = status;
+  //   });
+  // });
 
  this.events.subscribe(FeedsEvent.PublishType.editPostFinish,()=>{
   this.zone.run(()=>{
@@ -323,80 +325,79 @@ addBinaryEvevnt(){
     });
   });
 
-  this.events.subscribe(FeedsEvent.PublishType.getBinaryFinish, (nodeId, key: string, value:string) => {
-    this.zone.run(() => {
+  //TODO event
+  // this.events.subscribe(FeedsEvent.PublishType.getBinaryFinish, (nodeId, key: string, value:string) => {
+  //   this.zone.run(() => {
+  //     this.processGetBinaryResult(key, value);
+  //   });
+  // });
 
-      this.processGetBinaryResult(key, value);
+  //TODO event
+  // this.events.subscribe(FeedsEvent.PublishType.streamGetBinarySuccess, (nodeId, key: string, value:string) => {
+  //   this.zone.run(() => {
+  //     this.curNodeId = "";
+  //     this.feedService.closeSession(nodeId);
+  //     this.processGetBinaryResult(key, value);
+  //   });
+  // });
 
-    });
-  });
+  //TODO event
+  // this.events.subscribe(FeedsEvent.PublishType.streamError, (nodeId, error) => {
+  //   this.zone.run(() => {
+  //     this.isImgPercentageLoading[this.imgDownStatusKey] = false;
+  //     this.isImgLoading[this.imgDownStatusKey] = false;
+  //     this.imgDownStatus[this.imgDownStatusKey] ="";
 
+  //     this.isVideoPercentageLoading[this.videoDownStatusKey] = false;
+  //     this.isVideoLoading[this.videoDownStatusKey] = false;
+  //     this.videoDownStatus[this.videoDownStatusKey] = "";
 
-  this.events.subscribe(FeedsEvent.PublishType.streamGetBinarySuccess, (nodeId, key: string, value:string) => {
-    this.zone.run(() => {
+  //     this.pauseAllVideo();
+  //     this.feedService.handleSessionError(nodeId, error);
+  //     this.curNodeId = "";
+  //   });
+  // });
 
-      this.curNodeId = "";
-      this.feedService.closeSession(nodeId);
-      this.processGetBinaryResult(key, value);
+  //TODO event
+  // this.events.subscribe(FeedsEvent.PublishType.streamProgress,(nodeId,progress)=>{
+  //   this.zone.run(() => {
 
-    });
-  });
+  //     if(this.cachedMediaType ==='video'&&this.videoDownStatus[this.videoDownStatusKey]==="1"){
+  //       this.videoPercent = progress;
+  //       if(progress<100){
+  //         this.videoRotateNum["transform"] = "rotate("+(18/5)*progress+"deg)";
+  //        }else{
+  //        if(progress === 100){
+  //         this.videoRotateNum["transform"] = "rotate("+(18/5)*progress+"deg)";
+  //        }
+  //       }
+  //       return;
+  //     }
 
-  this.events.subscribe(FeedsEvent.PublishType.streamError, (nodeId, error) => {
-    this.zone.run(() => {
-      this.isImgPercentageLoading[this.imgDownStatusKey] = false;
-      this.isImgLoading[this.imgDownStatusKey] = false;
-      this.imgDownStatus[this.imgDownStatusKey] ="";
+  //     if(this.cachedMediaType ==='img'&&this.imgDownStatus[this.imgDownStatusKey]==="1"){
+  //       this.imgPercent = progress;
+  //       if(progress<100){
+  //         this.imgRotateNum["transform"] = "rotate("+(18/5)*progress+"deg)";
+  //        }else{
+  //        if(progress === 100){
+  //         this.imgRotateNum["transform"] = "rotate("+(18/5)*progress+"deg)";
+  //        }
+  //       }
+  //     }
+  //   });
+  // })
 
-      this.isVideoPercentageLoading[this.videoDownStatusKey] = false;
-      this.isVideoLoading[this.videoDownStatusKey] = false;
-      this.videoDownStatus[this.videoDownStatusKey] = "";
+  //TODO event
+  // this.events.subscribe(FeedsEvent.PublishType.streamOnStateChangedCallback, (nodeId, state) => {
+  //   this.zone.run(() => {
+  //     if (this.cacheGetBinaryRequestKey == "")
+  //       return;
 
-      this.pauseAllVideo();
-      this.feedService.handleSessionError(nodeId, error);
-      this.curNodeId = "";
-
-    });
-  });
-
-  this.events.subscribe(FeedsEvent.PublishType.streamProgress,(nodeId,progress)=>{
-    this.zone.run(() => {
-
-      if(this.cachedMediaType ==='video'&&this.videoDownStatus[this.videoDownStatusKey]==="1"){
-        this.videoPercent = progress;
-        if(progress<100){
-          this.videoRotateNum["transform"] = "rotate("+(18/5)*progress+"deg)";
-         }else{
-         if(progress === 100){
-          this.videoRotateNum["transform"] = "rotate("+(18/5)*progress+"deg)";
-         }
-        }
-        return;
-      }
-
-      if(this.cachedMediaType ==='img'&&this.imgDownStatus[this.imgDownStatusKey]==="1"){
-        this.imgPercent = progress;
-        if(progress<100){
-          this.imgRotateNum["transform"] = "rotate("+(18/5)*progress+"deg)";
-         }else{
-         if(progress === 100){
-          this.imgRotateNum["transform"] = "rotate("+(18/5)*progress+"deg)";
-         }
-        }
-      }
-    });
-  })
-
-  this.events.subscribe(FeedsEvent.PublishType.streamOnStateChangedCallback, (nodeId, state) => {
-    this.zone.run(() => {
-      if (this.cacheGetBinaryRequestKey == "")
-        return;
-
-      if (state === FeedsData.StreamState.CONNECTED){
-        this.feedService.getBinary(nodeId, this.cacheGetBinaryRequestKey,this.cachedMediaType);
-      }
-    });
-  });
+  //     if (state === FeedsData.StreamState.CONNECTED){
+  //       this.feedService.getBinary(nodeId, this.cacheGetBinaryRequestKey,this.cachedMediaType);
+  //     }
+  //   });
+  // });
 
   this.events.subscribe(FeedsEvent.PublishType.openRightMenu,()=>{
 

@@ -1,5 +1,5 @@
 import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
-import { Events,PopoverController,Platform} from '@ionic/angular';
+import { PopoverController,Platform} from '@ionic/angular';
 import { NativeService } from '../../../services/NativeService';
 import { FeedService } from '../../../services/FeedService';
 import { ThemeService } from '../../../services/theme.service';
@@ -13,6 +13,7 @@ import { StorageService } from '../../../services/StorageService';
 import { PopupProvider } from '../../../services/popup';
 import { AppService } from '../../../services/AppService';
 import { ViewHelper } from 'src/app/services/viewhelper.service';
+import { Events } from 'src/app/services/events.service';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 

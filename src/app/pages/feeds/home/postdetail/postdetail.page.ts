@@ -265,22 +265,24 @@ export class PostdetailPage implements OnInit {
       });
     });
 
-    this.events.subscribe(FeedsEvent.PublishType.getCommentFinish,(nodeId, channelId, postId)=>{
-      this.zone.run(() => {
-        this.logUtils.logd("Received getCommentFinish event, nodeId is "+ nodeId + " channelId is"+channelId+" postId is "+postId,TAG);
-        if (nodeId == this.nodeId && channelId == this.channelId && postId == this.postId){
-          this.startIndex = 0;
-          this.initData(true);
-        }
-      });
-    });
+    //TODO event
+    // this.events.subscribe(FeedsEvent.PublishType.getCommentFinish,(nodeId, channelId, postId)=>{
+    //   this.zone.run(() => {
+    //     this.logUtils.logd("Received getCommentFinish event, nodeId is "+ nodeId + " channelId is"+channelId+" postId is "+postId,TAG);
+    //     if (nodeId == this.nodeId && channelId == this.channelId && postId == this.postId){
+    //       this.startIndex = 0;
+    //       this.initData(true);
+    //     }
+    //   });
+    // });
 
-    this.events.subscribe(FeedsEvent.PublishType.friendConnectionChanged, (nodeId, status)=>{
-      this.zone.run(()=>{
-        this.logUtils.logd("Received friendConnectionChanged event, nodeId is "+nodeId+" friend connetion status is "+status,TAG);
-        this.nodeStatus[nodeId] = status;
-      });
-    });
+    //TODO event
+    // this.events.subscribe(FeedsEvent.PublishType.friendConnectionChanged, (nodeId, status)=>{
+    //   this.zone.run(()=>{
+    //     this.logUtils.logd("Received friendConnectionChanged event, nodeId is "+nodeId+" friend connetion status is "+status,TAG);
+    //     this.nodeStatus[nodeId] = status;
+    //   });
+    // });
 
     this.events.subscribe(FeedsEvent.PublishType.updateTitle,()=>{
       this.logUtils.logd("Received updateTitle event",TAG);
@@ -362,91 +364,96 @@ export class PostdetailPage implements OnInit {
       });
     });
 
-    this.events.subscribe(FeedsEvent.PublishType.getBinaryFinish, (nodeId, key: string, value, mediaType) => {
-      this.zone.run(() => {
-        this.logUtils.logd("Received getBinaryFinish event, nodeId is "+nodeId+", key is "+key, TAG);
-        if(this.nodeId != nodeId){
-           return;
-        }
-        this.processGetBinaryResult(key, value);
-      });
-    });
+    //TODO event
+    // this.events.subscribe(FeedsEvent.PublishType.getBinaryFinish, (nodeId, key: string, value, mediaType) => {
+    //   this.zone.run(() => {
+    //     this.logUtils.logd("Received getBinaryFinish event, nodeId is "+nodeId+", key is "+key, TAG);
+    //     if(this.nodeId != nodeId){
+    //        return;
+    //     }
+    //     this.processGetBinaryResult(key, value);
+    //   });
+    // });
 
-    this.events.subscribe(FeedsEvent.PublishType.streamGetBinarySuccess, (nodeId, key: string, value) => {
-      this.zone.run(() => {
-        this.logUtils.logd("Received streamGetBinarySuccess event, nodeId is "+nodeId+", key is "+key, TAG);
-        if(this.nodeId != nodeId){
-          return;
-        }
-        this.feedService.closeSession(nodeId);
-        this.processGetBinaryResult(key, value);
-      });
-    });
+    //TODO event
+    // this.events.subscribe(FeedsEvent.PublishType.streamGetBinarySuccess, (nodeId, key: string, value) => {
+    //   this.zone.run(() => {
+    //     this.logUtils.logd("Received streamGetBinarySuccess event, nodeId is "+nodeId+", key is "+key, TAG);
+    //     if(this.nodeId != nodeId){
+    //       return;
+    //     }
+    //     this.feedService.closeSession(nodeId);
+    //     this.processGetBinaryResult(key, value);
+    //   });
+    // });
 
-    this.events.subscribe(FeedsEvent.PublishType.streamError, (nodeId, error) => {
-      this.zone.run(() => {
-        this.logUtils.logd("Received streamError event, nodeId is "+nodeId, TAG);
-        if(this.nodeId != nodeId){
-          return;
-        }
-        this.isImgLoading = false;
-        this.isImgPercentageLoading = false;
-        this.imgDownStatus = "";
-        this.isVideoLoading = false;
-        this.isVideoPercentageLoading = false;
-        this.videoDownStatus = "";
-        this.feedService.handleSessionError(nodeId, error);
-        this.pauseVideo();
-      });
-    });
+    //TODO event
+    // this.events.subscribe(FeedsEvent.PublishType.streamError, (nodeId, error) => {
+    //   this.zone.run(() => {
+    //     this.logUtils.logd("Received streamError event, nodeId is "+nodeId, TAG);
+    //     if(this.nodeId != nodeId){
+    //       return;
+    //     }
+    //     this.isImgLoading = false;
+    //     this.isImgPercentageLoading = false;
+    //     this.imgDownStatus = "";
+    //     this.isVideoLoading = false;
+    //     this.isVideoPercentageLoading = false;
+    //     this.videoDownStatus = "";
+    //     this.feedService.handleSessionError(nodeId, error);
+    //     this.pauseVideo();
+    //   });
+    // });
 
-    this.events.subscribe(FeedsEvent.PublishType.streamOnStateChangedCallback, (nodeId, state) => {
-      this.zone.run(() => {
-        this.logUtils.logd("Received streamOnStateChangedCallback event, nodeId is "+nodeId, TAG);
-        if(this.nodeId!=nodeId){
-           return;
-        }
-        if (this.cacheGetBinaryRequestKey == "")
-          return;
+    //TODO event
+    // this.events.subscribe(FeedsEvent.PublishType.streamOnStateChangedCallback, (nodeId, state) => {
+    //   this.zone.run(() => {
+    //     this.logUtils.logd("Received streamOnStateChangedCallback event, nodeId is "+nodeId, TAG);
+    //     if(this.nodeId!=nodeId){
+    //        return;
+    //     }
+    //     if (this.cacheGetBinaryRequestKey == "")
+    //       return;
 
-        if (state === FeedsData.StreamState.CONNECTED){
-          this.feedService.getBinary(this.nodeId, this.cacheGetBinaryRequestKey, this.cachedMediaType);
-        }
-      });
-    });
+    //     if (state === FeedsData.StreamState.CONNECTED){
+    //       this.feedService.getBinary(this.nodeId, this.cacheGetBinaryRequestKey, this.cachedMediaType);
+    //     }
+    //   });
+    // });
 
-    this.events.subscribe(FeedsEvent.PublishType.streamProgress,(nodeId,progress)=>{
-        this.zone.run(() => {
-          this.logUtils.logd("Received streamProgress event, nodeId is "+nodeId, TAG);
-          if(this.nodeId!=nodeId){
-            return;
-          }
+    //TODO event
+    // this.events.subscribe(FeedsEvent.PublishType.streamProgress,(nodeId,progress)=>{
+    //     this.zone.run(() => {
+    //       this.logUtils.logd("Received streamProgress event, nodeId is "+nodeId, TAG);
+    //       if(this.nodeId!=nodeId){
+    //         return;
+    //       }
 
-          if(this.cachedMediaType === 'img'&&this.imgDownStatus==="1"){
-            this.imgPercent = progress;
-            if(progress<100){
-              this.imgRotateNum["transform"] = "rotate("+(18/5)*progress+"deg)";
-             }else{
-             if(progress === 100){
-              this.imgRotateNum["transform"] = "rotate("+(18/5)*progress+"deg)";
-             }
-            }
-            return;
-          }
+    //       if(this.cachedMediaType === 'img'&&this.imgDownStatus==="1"){
+    //         this.imgPercent = progress;
+    //         if(progress<100){
+    //           this.imgRotateNum["transform"] = "rotate("+(18/5)*progress+"deg)";
+    //          }else{
+    //          if(progress === 100){
+    //           this.imgRotateNum["transform"] = "rotate("+(18/5)*progress+"deg)";
+    //          }
+    //         }
+    //         return;
+    //       }
 
-          if(this.cachedMediaType ==='video'&&this.videoDownStatus==="1"){
-            this.videoPercent = progress;
-            if(progress<100){
-              this.videoRotateNum["transform"] = "rotate("+(18/5)*progress+"deg)";
-             }else{
-             if(progress === 100){
-              this.videoRotateNum["transform"] = "rotate("+(18/5)*progress+"deg)";
-             }
-            }
-            return;
-          }
-        });
-    })
+    //       if(this.cachedMediaType ==='video'&&this.videoDownStatus==="1"){
+    //         this.videoPercent = progress;
+    //         if(progress<100){
+    //           this.videoRotateNum["transform"] = "rotate("+(18/5)*progress+"deg)";
+    //          }else{
+    //          if(progress === 100){
+    //           this.videoRotateNum["transform"] = "rotate("+(18/5)*progress+"deg)";
+    //          }
+    //         }
+    //         return;
+    //       }
+    //     });
+    // })
 
     this.events.subscribe(FeedsEvent.PublishType.openRightMenu,()=>{
       this.logUtils.logd("Received openRightMenu event",TAG);

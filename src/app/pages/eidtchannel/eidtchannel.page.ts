@@ -1,6 +1,6 @@
 import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
 import { TranslateService } from "@ngx-translate/core";
-import { Events,PopoverController} from '@ionic/angular';
+import { PopoverController} from '@ionic/angular';
 import { ThemeService } from 'src/app/services/theme.service';
 import { FeedService } from 'src/app/services/FeedService';
 import { ActivatedRoute } from '@angular/router';
@@ -8,6 +8,7 @@ import { NativeService } from 'src/app/services/NativeService';
 import { HttpService } from 'src/app/services/HttpService';
 import { ApiUrl } from 'src/app/services/ApiUrl';
 import { UtilService } from 'src/app/services/utilService';
+import { Events } from 'src/app/services/events.service';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import * as _ from 'lodash';

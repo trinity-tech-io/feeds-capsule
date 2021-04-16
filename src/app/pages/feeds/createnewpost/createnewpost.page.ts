@@ -112,14 +112,12 @@ export class CreatenewpostPage implements OnInit {
         });
       });
 
-      this.events.subscribe(FeedsEvent.PublishType.friendConnectionChanged, (nodeId, status)=>{
-        this.zone.run(()=>{
-          this.nodeStatus[nodeId] = status;
-          // if (this.connectionStatus == 0 && this.nodeId == nodeId && status == 0){
-          //   this.feedService.restoreSession(this.nodeId);
-          // }
-        });
-      });
+      //TODO event
+      // this.events.subscribe(FeedsEvent.PublishType.friendConnectionChanged, (nodeId, status)=>{
+      //   this.zone.run(()=>{
+      //     this.nodeStatus[nodeId] = status;
+      //   });
+      // });
 
       this.events.subscribe(FeedsEvent.PublishType.publishPostSuccess, (postId) => {
         this.postId = postId;
@@ -195,13 +193,13 @@ export class CreatenewpostPage implements OnInit {
       //   });
       // });
 
-
-      this.events.subscribe(FeedsEvent.PublishType.streamError, (nodeId, response) => {
-        this.zone.run(() => {
-          //response.code
-          this.feedService.closeSession(this.nodeId);
-        });
-      });
+      //TODO event
+      // this.events.subscribe(FeedsEvent.PublishType.streamError, (nodeId, response) => {
+      //   this.zone.run(() => {
+      //     //response.code
+      //     this.feedService.closeSession(this.nodeId);
+      //   });
+      // });
 
       this.events.subscribe(FeedsEvent.PublishType.streamProgress,(nodeId,progress)=>{
         this.zone.run(() => {

@@ -1,5 +1,5 @@
 import { Component} from '@angular/core';
-import { Platform, ModalController, Events,PopoverController,MenuController} from '@ionic/angular';
+import { Platform, ModalController, PopoverController, MenuController} from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { FeedService, Avatar } from './services/FeedService';
@@ -11,6 +11,7 @@ import { UtilService } from 'src/app/services/utilService';
 import { StorageService } from './services/StorageService';
 import { PopupProvider } from 'src/app/services/popup';
 import { LogUtils } from 'src/app/services/LogUtils';
+import { Events} from 'src/app/services/events.service';
 enum LogLevel {
   NONE,
   ERROR,

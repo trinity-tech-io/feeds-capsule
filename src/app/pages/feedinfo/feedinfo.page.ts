@@ -1,6 +1,6 @@
 import { Component, OnInit, NgZone, ViewChild} from '@angular/core';
 import { TranslateService } from "@ngx-translate/core";
-import { Events,Platform} from '@ionic/angular';
+import { Platform} from '@ionic/angular';
 import { ThemeService } from '../../services/theme.service';
 import { FeedService } from '../../services/FeedService';
 import { NativeService } from '../../services/NativeService';
@@ -10,6 +10,7 @@ import { PaypromptComponent } from '../../components/payprompt/payprompt.compone
 import { AppService } from '../../services/AppService';
 import { UtilService } from '../../services/utilService';
 import { ViewHelper } from 'src/app/services/viewhelper.service';
+import { Events } from 'src/app/services/events.service';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 
@@ -125,17 +126,19 @@ export class FeedinfoPage implements OnInit {
       this.clickEdit();
     });
 
-    this.events.subscribe(FeedsEvent.PublishType.subscribeFinish, (nodeId, channelId)=> {
-      this.zone.run(() => {
-        this.checkFollowStatus(this.nodeId,this.channelId);
-      });
-    });
+    //TODO event
+    // this.events.subscribe(FeedsEvent.PublishType.subscribeFinish, (nodeId, channelId)=> {
+    //   this.zone.run(() => {
+    //     this.checkFollowStatus(this.nodeId,this.channelId);
+    //   });
+    // });
 
-    this.events.subscribe(FeedsEvent.PublishType.unsubscribeFinish, (nodeId, channelId, name) => {
-      this.zone.run(() => {
-        this.native.setRootRouter(['/tabs/home']);
-      });
-    });
+    //TODO event
+    // this.events.subscribe(FeedsEvent.PublishType.unsubscribeFinish, (nodeId, channelId, name) => {
+    //   this.zone.run(() => {
+    //     this.native.setRootRouter(['/tabs/home']);
+    //   });
+    // });
   }
 
   checkFollowStatus(nodeId: string, channelId: number){

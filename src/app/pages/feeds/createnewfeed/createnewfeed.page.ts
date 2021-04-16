@@ -1,5 +1,5 @@
 import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
-import { NavController, Events, PopoverController } from '@ionic/angular';
+import { NavController, PopoverController } from '@ionic/angular';
 import { FeedService } from 'src/app/services/FeedService';
 import { NativeService } from 'src/app/services/NativeService';
 import { ThemeService } from 'src/app/services/theme.service';
@@ -9,6 +9,7 @@ import { ApiUrl } from '../../../services/ApiUrl';
 import { StorageService } from '../../../services/StorageService';
 import { UtilService } from '../../../services/utilService';
 import { HttpService } from '../../../services/HttpService';
+import { Events } from 'src/app/services/events.service';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 
@@ -72,30 +73,32 @@ export class CreatenewfeedPage implements OnInit {
        this.popover.dismiss();
     });
 
-    this.events.subscribe(FeedsEvent.PublishType.tipdialogConfirm, (name,des)=>{
-       this.popover.dismiss();
-       this.native.showLoading("common.waitMoment").then(()=>{
-        this.feedService.createTopic(this.selectedServer.nodeId, name, des, this.channelAvatar);
-       }).catch(()=>{
-        this.native.hideLoading();
-       });
-
-
-    });
+    //TODO event
+    // this.events.subscribe(FeedsEvent.PublishType.tipdialogConfirm, (name,des)=>{
+    //    this.popover.dismiss();
+    //    this.native.showLoading("common.waitMoment").then(()=>{
+    //     this.feedService.createTopic(this.selectedServer.nodeId, name, des, this.channelAvatar);
+    //    }).catch(()=>{
+    //     this.native.hideLoading();
+    //    });
+    // });
+    
     this.events.subscribe(FeedsEvent.PublishType.connectionChanged,(status)=>{
       this.zone.run(() => {
         this.connectionStatus = status;
       });
     });
-    this.events.subscribe(FeedsEvent.PublishType.createTopicSuccess, (nodeId:string,feedId:number) => {
-      this.zone.run(() => {
-        this.publicFeeds(nodeId,feedId);
-        this.native.hideLoading();
-        this.navCtrl.pop().then(()=>{
-          this.native.toast(this.translate.instant("CreatenewfeedPage.createfeedsuccess"));
-        });
-      });
-    });
+
+    //TODO event
+    // this.events.subscribe(FeedsEvent.PublishType.createTopicSuccess, (nodeId:string,feedId:number) => {
+    //   this.zone.run(() => {
+    //     this.publicFeeds(nodeId,feedId);
+    //     this.native.hideLoading();
+    //     this.navCtrl.pop().then(()=>{
+    //       this.native.toast(this.translate.instant("CreatenewfeedPage.createfeedsuccess"));
+    //     });
+    //   });
+    // });
 
     this.events.subscribe(FeedsEvent.PublishType.updateTitle,()=>{
       this.initTitle();
