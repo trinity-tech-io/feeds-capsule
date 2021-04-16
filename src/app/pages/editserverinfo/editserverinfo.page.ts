@@ -1,6 +1,6 @@
 import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
 import { TranslateService } from "@ngx-translate/core";
-import { Events} from '@ionic/angular';
+import { Events } from 'src/app/services/events.service';
 import { ThemeService } from 'src/app/services/theme.service';
 import { FeedService } from 'src/app/services/FeedService';
 import { ActivatedRoute } from '@angular/router';

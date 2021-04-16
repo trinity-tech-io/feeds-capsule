@@ -1,6 +1,6 @@
 import { Component, OnInit,ViewChild,NgZone} from '@angular/core';
 import { FeedService } from '../../../services/FeedService';
-import { Events,PopoverController,IonRefresher,IonSearchbar} from '@ionic/angular';
+import { PopoverController,IonRefresher,IonSearchbar} from '@ionic/angular';
 import { NativeService } from '../../../services/NativeService';
 import { ThemeService } from '../../../services/theme.service';
 import { UtilService } from '../../../services/utilService';
@@ -9,6 +9,8 @@ import { HttpService } from '../../../services/HttpService';
 import { ApiUrl } from '../../../services/ApiUrl';
 import { StorageService } from '../../../services/StorageService';
 import { IntentService } from '../../../services/IntentService';
+import { Events } from 'src/app/services/events.service';
+
 
 import * as _ from 'lodash';
 @Component({
@@ -82,25 +84,25 @@ export class SearchPage implements OnInit {
       });
     });
 
-    this.events.subscribe(FeedsEvent.PublishType.friendConnectionChanged, (nodeId, status)=>{
-      this.zone.run(()=>{
-        this.nodeStatus[nodeId] = status;
-      });
-    });
+    //TODO event
+    // this.events.subscribe(FeedsEvent.PublishType.friendConnectionChanged, (nodeId, status)=>{
+    //   this.zone.run(()=>{
+    //     this.nodeStatus[nodeId] = status;
+    //   });
+    // });
 
-    this.events.subscribe(FeedsEvent.PublishType.subscribeFinish, (nodeId, channelId)=> {
-      // this.native.toast(name + " subscribed");
-      this.zone.run(() => {
-        this.unfollowedFeed = this.getUnfollowedFeed() || [];
-        this.searchUnfollowedFeed = _.cloneDeep(this.unfollowedFeed);
-        let status = this.checkServerStatus(nodeId);
-        this.nodeStatus[nodeId] = status;
-        this.addingChanneList = this.feedService.getToBeAddedFeedsList() || [];
-        this.searchAddingChanneList = _.cloneDeep(this.addingChanneList);
-        this.handleSearch();
-      });
-    });
-
+    //TODO event
+    // this.events.subscribe(FeedsEvent.PublishType.subscribeFinish, (nodeId, channelId)=> {
+    //   this.zone.run(() => {
+    //     this.unfollowedFeed = this.getUnfollowedFeed() || [];
+    //     this.searchUnfollowedFeed = _.cloneDeep(this.unfollowedFeed);
+    //     let status = this.checkServerStatus(nodeId);
+    //     this.nodeStatus[nodeId] = status;
+    //     this.addingChanneList = this.feedService.getToBeAddedFeedsList() || [];
+    //     this.searchAddingChanneList = _.cloneDeep(this.addingChanneList);
+    //     this.handleSearch();
+    //   });
+    // });
 
     this.events.subscribe(FeedsEvent.PublishType.addFeedStatusChanged,()=>{
       this.zone.run(() => {

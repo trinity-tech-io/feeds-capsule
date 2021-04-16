@@ -1,10 +1,11 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { Events,ModalController, } from '@ionic/angular';
+import { ModalController } from '@ionic/angular';
 import { TranslateService } from "@ngx-translate/core";
 import { NativeService } from 'src/app/services/NativeService';
 import { AppService } from './../../services/AppService';
 import { SplashscreenPage } from './../../pages/splashscreen/splashscreen.page';
 import { ThemeService } from 'src/app/services/theme.service';
+import { Events } from 'src/app/services/events.service';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 

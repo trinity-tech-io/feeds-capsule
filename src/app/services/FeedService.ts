@@ -5305,33 +5305,36 @@ export class FeedService {
   }
 
   onReceivedSetBinaryFinish(){
-    this.events.subscribe(FeedsEvent.PublishType.setBinaryFinish, (nodeId, feedId, postId, commentId, tempId)=>{
-      this.setBinaryFinish(nodeId, feedId, tempId);
-      this.sendPostDataWithMsg(nodeId);
-    });
+    //TODO event
+    // this.events.subscribe(FeedsEvent.PublishType.setBinaryFinish, (nodeId, feedId, postId, commentId, tempId)=>{
+    //   this.setBinaryFinish(nodeId, feedId, tempId);
+    //   this.sendPostDataWithMsg(nodeId);
+    // });
 
-    this.events.subscribe(FeedsEvent.PublishType.innerStreamSetBinaryFinish, async (nodeId, feedId, postId, commentId, tempId)=>{
-      this.setBinaryFinish(nodeId, feedId, tempId);
-      await this.closeSession(nodeId);
-      this.sendPostDataWithSession(nodeId);
-    });
+    //TODO event
+    // this.events.subscribe(FeedsEvent.PublishType.innerStreamSetBinaryFinish, async (nodeId, feedId, postId, commentId, tempId)=>{
+    //   this.setBinaryFinish(nodeId, feedId, tempId);
+    //   await this.closeSession(nodeId);
+    //   this.sendPostDataWithSession(nodeId);
+    // });
   }
 
   onReceivedSessionErrorCallback(){
-    this.events.subscribe(FeedsEvent.PublishType.innerStreamError, (nodeId: string, error: any, memo: FeedsData.SessionMemoData)=>{
-      if (memo == null || memo == undefined)
-        return;
-      let feedId = memo.feedId || 0;
-      let tempId = memo.tempId || 0;
+    //TODO event
+    // this.events.subscribe(FeedsEvent.PublishType.innerStreamError, (nodeId: string, error: any, memo: FeedsData.SessionMemoData)=>{
+    //   if (memo == null || memo == undefined)
+    //     return;
+    //   let feedId = memo.feedId || 0;
+    //   let tempId = memo.tempId || 0;
 
-      let tempKey = this.getPostId(nodeId, feedId, tempId);
-      let post: FeedsData.Post = this.dataHelper.getPost(tempKey);
-      if (post == null || post == undefined)
-        return;
+    //   let tempKey = this.getPostId(nodeId, feedId, tempId);
+    //   let post: FeedsData.Post = this.dataHelper.getPost(tempKey);
+    //   if (post == null || post == undefined)
+    //     return;
 
-      post.post_status = FeedsData.PostCommentStatus.error;
-      this.dataHelper.updatePost(tempKey, post);
-    });
+    //   post.post_status = FeedsData.PostCommentStatus.error;
+    //   this.dataHelper.updatePost(tempKey, post);
+    // });
   }
 
   setBinaryFinish(nodeId: string, feedId: number, tempId: number){

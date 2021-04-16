@@ -1,5 +1,5 @@
 import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
-import { Events,PopoverController} from '@ionic/angular';
+import { PopoverController} from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
 import { NativeService } from '../../services/NativeService';
 import { FeedService } from '../../services/FeedService';
@@ -9,6 +9,7 @@ import { MenuService } from '../../services/MenuService';
 import { TranslateService } from "@ngx-translate/core";
 import { PopupProvider } from '../../services/popup';
 import { AppService } from '../../services/AppService';
+import { Events } from 'src/app/services/events.service';
 import { ViewHelper } from 'src/app/services/viewhelper.service';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
@@ -94,27 +95,29 @@ export class DiscoverfeedinfoPage implements OnInit {
       this.initTitle();
     });
 
-    this.events.subscribe(FeedsEvent.PublishType.unsubscribeFinish,(nodeId:string,channelId:number)=>{
-      this.zone.run(() => {
-        let  feedNodeId = this.feedInfo["nodeId"]
-        let feedUrl = this.feedInfo["url"];
-        let feedId = feedUrl.split("/")[4];
-        if(feedNodeId === nodeId && feedId == channelId){
-           this.status = '1';
-        }
-      });
-    });
+    //TODO event
+    // this.events.subscribe(FeedsEvent.PublishType.unsubscribeFinish,(nodeId:string,channelId:number)=>{
+    //   this.zone.run(() => {
+    //     let  feedNodeId = this.feedInfo["nodeId"]
+    //     let feedUrl = this.feedInfo["url"];
+    //     let feedId = feedUrl.split("/")[4];
+    //     if(feedNodeId === nodeId && feedId == channelId){
+    //        this.status = '1';
+    //     }
+    //   });
+    // });
 
-    this.events.subscribe(FeedsEvent.PublishType.subscribeFinish,(nodeId:string,channelId:number)=>{
-      this.zone.run(() => {
-        let  feedNodeId = this.feedInfo["nodeId"]
-        let feedUrl = this.feedInfo["url"];
-        let feedId = feedUrl.split("/")[4];
-        if(feedNodeId === nodeId && feedId == channelId){
-          this.status = '2';
-        }
-      });
-    });
+    //TODO event
+    // this.events.subscribe(FeedsEvent.PublishType.subscribeFinish,(nodeId:string,channelId:number)=>{
+    //   this.zone.run(() => {
+    //     let  feedNodeId = this.feedInfo["nodeId"]
+    //     let feedUrl = this.feedInfo["url"];
+    //     let feedId = feedUrl.split("/")[4];
+    //     if(feedNodeId === nodeId && feedId == channelId){
+    //       this.status = '2';
+    //     }
+    //   });
+    // });
 
   }
 

@@ -48,23 +48,25 @@ export class ImportdidPage implements OnInit {
         });
       });
 
-      this.events.subscribe(FeedsEvent.PublishType.resolveDidError, (nodeId, did, payload) => {
-        this.zone.run(() => {
-            this.native.navigateForward(['/bindservice/publishdid/',nodeId, did, payload],{
-              replaceUrl: true
-            });
-            this.native.hideLoading();
-        });
-      });
+      //TODO event
+      // this.events.subscribe(FeedsEvent.PublishType.resolveDidError, (nodeId, did, payload) => {
+      //   this.zone.run(() => {
+      //       this.native.navigateForward(['/bindservice/publishdid/',nodeId, did, payload],{
+      //         replaceUrl: true
+      //       });
+      //       this.native.hideLoading();
+      //   });
+      // });
 
-      this.events.subscribe(FeedsEvent.PublishType.resolveDidSucess, (nodeId, did) => {
-        this.zone.run(() => {
-            this.native.getNavCtrl().navigateForward(['/bindservice/issuecredential', nodeId, did],{
-              replaceUrl: true
-            });
-            this.native.hideLoading();
-        });
-      });
+      //TODO event
+      // this.events.subscribe(FeedsEvent.PublishType.resolveDidSucess, (nodeId, did) => {
+      //   this.zone.run(() => {
+      //       this.native.getNavCtrl().navigateForward(['/bindservice/issuecredential', nodeId, did],{
+      //         replaceUrl: true
+      //       });
+      //       this.native.hideLoading();
+      //   });
+      // });
 
       this.events.subscribe(FeedsEvent.PublishType.rpcResponseError,()=>{
         this.zone.run(() => {

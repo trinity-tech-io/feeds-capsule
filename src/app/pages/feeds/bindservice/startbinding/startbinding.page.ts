@@ -71,30 +71,31 @@ export class StartbindingPage implements OnInit {
         }
       });
     });
-    
-    this.events.subscribe(FeedsEvent.PublishType.owner_declared, (nodeId, phase, did, payload) => {
-      switch(phase){
-        case "owner_declared":
-          this.zone.run(() => {
-              this.native.navigateForward(['/bindservice/importdid/',nodeId],{
-                replaceUrl: true
-              });
-          });
-          break;
 
-        case "credential_issued":
-          this.zone.run(() => {
-              this.feedService.restoreBindingServerCache(this.did, nodeId, ()=>{
-                this.feedService.finishBinding(nodeId);
-              },()=>{  
-                this.feedService.finishBinding(nodeId);
-              });
-          });
-          break;
-      }
+    //TODO event
+    // this.events.subscribe(FeedsEvent.PublishType.owner_declared, (nodeId, phase, did, payload) => {
+    //   switch(phase){
+    //     case "owner_declared":
+    //       this.zone.run(() => {
+    //           this.native.navigateForward(['/bindservice/importdid/',nodeId],{
+    //             replaceUrl: true
+    //           });
+    //       });
+    //       break;
 
-      this.native.hideLoading();
-    });
+    //     case "credential_issued":
+    //       this.zone.run(() => {
+    //           this.feedService.restoreBindingServerCache(this.did, nodeId, ()=>{
+    //             this.feedService.finishBinding(nodeId);
+    //           },()=>{  
+    //             this.feedService.finishBinding(nodeId);
+    //           });
+    //       });
+    //       break;
+    //   }
+
+    //   this.native.hideLoading();
+    // });
     
     this.events.subscribe(FeedsEvent.PublishType.issue_credential, () => {
       this.zone.run(() => {
@@ -103,33 +104,35 @@ export class StartbindingPage implements OnInit {
           });
       });
     });
-    
-    this.events.subscribe(FeedsEvent.PublishType.friendConnectionChanged, (nodeId, status)=>{
-      if(this.nodeId == nodeId && status == 0)
-      this.native.hideLoading();
-    });
+
+    //TODO event
+    // this.events.subscribe(FeedsEvent.PublishType.friendConnectionChanged, (nodeId, status)=>{
+    //   if(this.nodeId == nodeId && status == 0)
+    //   this.native.hideLoading();
+    // });
 
     // this.native.showLoading("Connecting server").then(() => {
     // });
 
-    this.events.subscribe(FeedsEvent.PublishType.resolveDidError, (nodeId, did, payload) => {
-      this.zone.run(() => {
-          this.native.navigateForward(['/bindservice/publishdid/',nodeId, did, payload],{
-            replaceUrl: true
-          });
-          this.native.hideLoading();
-      });
-    });
+    //TODO event
+    // this.events.subscribe(FeedsEvent.PublishType.resolveDidError, (nodeId, did, payload) => {
+    //   this.zone.run(() => {
+    //       this.native.navigateForward(['/bindservice/publishdid/',nodeId, did, payload],{
+    //         replaceUrl: true
+    //       });
+    //       this.native.hideLoading();
+    //   });
+    // });
 
-    
-    this.events.subscribe(FeedsEvent.PublishType.resolveDidSucess, (nodeId, did) => {
-      this.zone.run(() => {
-          this.native.navigateForward(['/bindservice/issuecredential', nodeId, did],{
-            replaceUrl: true
-          });
-          this.native.hideLoading();
-      });
-    });
+    //TODO event    
+    // this.events.subscribe(FeedsEvent.PublishType.resolveDidSucess, (nodeId, did) => {
+    //   this.zone.run(() => {
+    //       this.native.navigateForward(['/bindservice/issuecredential', nodeId, did],{
+    //         replaceUrl: true
+    //       });
+    //       this.native.hideLoading();
+    //   });
+    // });
 
     this.events.subscribe(FeedsEvent.PublishType.rpcResponseError,()=>{
       this.zone.run(() => {

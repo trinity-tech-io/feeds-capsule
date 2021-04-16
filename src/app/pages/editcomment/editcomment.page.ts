@@ -101,11 +101,12 @@ export class EditCommentPage implements OnInit {
       });
     });
 
-    this.events.subscribe(FeedsEvent.PublishType.friendConnectionChanged, (nodeId, status)=>{
-      this.zone.run(()=>{
-        this.nodeStatus[nodeId] = status;
-      });
-    });
+    //TODO event
+    // this.events.subscribe(FeedsEvent.PublishType.friendConnectionChanged, (nodeId, status)=>{
+    //   this.zone.run(()=>{
+    //     this.nodeStatus[nodeId] = status;
+    //   });
+    // });
 
     this.initnodeStatus();
   }

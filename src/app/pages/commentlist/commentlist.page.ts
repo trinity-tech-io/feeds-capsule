@@ -1,6 +1,6 @@
 import { Component, OnInit, NgZone,ViewChild} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Events,ModalController,Platform} from '@ionic/angular';
+import { ModalController,Platform} from '@ionic/angular';
 import { FeedService } from 'src/app/services/FeedService';
 import { NativeService } from 'src/app/services/NativeService';
 import { MenuService } from 'src/app/services/MenuService';
@@ -10,6 +10,7 @@ import { UtilService } from 'src/app/services/utilService';
 import { IonInfiniteScroll,PopoverController} from '@ionic/angular';
 import { AppService } from 'src/app/services/AppService';
 import { LogUtils } from 'src/app/services/LogUtils';
+import { Events } from 'src/app/services/events.service';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import * as _ from 'lodash';
@@ -154,7 +155,7 @@ export class CommentlistPage implements OnInit {
 
     this.hideDeletedComments = this.feedService.getHideDeletedComments();
     this.initTitle();
-    this.native.setTitleBarBackKeyShown(true);
+    this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
     this.styleObj.width = (screen.width - 55)+'px';
     this.dstyleObj.width= (screen.width - 105)+'px';
     this.initData(true);
@@ -178,15 +179,16 @@ export class CommentlistPage implements OnInit {
       });
     });
 
-    this.events.subscribe(FeedsEvent.PublishType.getCommentFinish,(nodeId, channelId, postId)=>{
-      this.zone.run(() => {
-        this.logUtils.logd("Received getCommentFinish event, nodeId is "+ nodeId + " channelId is"+channelId+" postId is "+postId,TAG);
-        if (nodeId == this.nodeId && channelId == this.channelId && postId == this.postId){
-          this.startIndex = 0;
-          this.initData(true);
-        }
-      });
-    });
+    //TODO event
+    // this.events.subscribe(FeedsEvent.PublishType.getCommentFinish,(nodeId, channelId, postId)=>{
+    //   this.zone.run(() => {
+    //     this.logUtils.logd("Received getCommentFinish event, nodeId is "+ nodeId + " channelId is"+channelId+" postId is "+postId,TAG);
+    //     if (nodeId == this.nodeId && channelId == this.channelId && postId == this.postId){
+    //       this.startIndex = 0;
+    //       this.initData(true);
+    //     }
+    //   });
+    // });
 
     this.events.subscribe(FeedsEvent.PublishType.updateTitle,()=>{
       this.logUtils.logd("Received updateTitle event",TAG);
