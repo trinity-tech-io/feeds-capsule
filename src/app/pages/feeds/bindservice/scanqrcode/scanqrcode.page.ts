@@ -4,10 +4,11 @@ import { CarrierService } from '../../../../services/CarrierService';
 import { NativeService } from '../../../../services/NativeService';
 import { ThemeService } from '../../../../services/theme.service';
 import { TranslateService } from "@ngx-translate/core";
-import { Events,PopoverController} from '@ionic/angular';
+import { PopoverController } from '@ionic/angular';
 import { CameraService } from '../../../../services/CameraService';
 import { PopupProvider } from '../../../../services/popup';
 import { IntentService } from 'src/app/services/IntentService';
+import { Events } from 'src/app/services/events.service';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 
