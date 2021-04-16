@@ -1,6 +1,6 @@
 import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { Events } from '@ionic/angular';
+import { Events } from 'src/app/services/events.service';
 import { ActivatedRoute } from '@angular/router';
 import { FeedService } from 'src/app/services/FeedService';
 import { NativeService } from 'src/app/services/NativeService';

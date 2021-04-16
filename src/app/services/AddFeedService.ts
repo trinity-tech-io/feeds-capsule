@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Events } from '@ionic/angular';
+import { Events } from 'src/app/services/events.service';
 
 import { LogUtils } from 'src/app/services/LogUtils';
 import { CarrierService } from 'src/app/services/CarrierService';

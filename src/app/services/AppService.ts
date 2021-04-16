@@ -3,7 +3,7 @@ import { Router} from '@angular/router';
 import { ThemeService } from "./../services/theme.service";
 import { NgZone, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { Events } from '@ionic/angular';
+import { Events } from 'src/app/services/events.service';
 import { NativeService } from '../services/NativeService';
 import { FeedService, SignInData } from '../services/FeedService';
 import { CarrierService } from '../services/CarrierService';
