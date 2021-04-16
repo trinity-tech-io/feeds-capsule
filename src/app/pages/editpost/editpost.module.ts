@@ -6,10 +6,10 @@ import { TranslateModule } from '@ngx-translate/core';
 import { IonicModule } from '@ionic/angular';
 
 import { EditPostPage } from './editpost.page';
-import { VgCoreModule } from 'ngx-videogular';
-import { VgControlsModule } from 'ngx-videogular';
-import { VgOverlayPlayModule } from 'ngx-videogular';
-import { VgBufferingModule } from 'ngx-videogular';
+import { VgCoreModule } from '@videogular/ngx-videogular/core';
+import { VgControlsModule } from '@videogular/ngx-videogular/controls';
+import { VgOverlayPlayModule } from '@videogular/ngx-videogular/overlay-play';
+import { VgBufferingModule } from '@videogular/ngx-videogular/buffering';
 
 const routes: Routes = [
   {
