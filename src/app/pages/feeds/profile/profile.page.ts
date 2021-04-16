@@ -1,5 +1,6 @@
 import { Component, OnInit, NgZone ,ViewChild} from '@angular/core';
-import { Events,ModalController,PopoverController} from '@ionic/angular';
+import { ModalController,PopoverController} from '@ionic/angular';
+import { Events } from 'src/app/services/events.service';
 import { FeedService, Avatar } from 'src/app/services/FeedService';
 import { ThemeService } from 'src/app/services/theme.service';
 import { IonInfiniteScroll} from '@ionic/angular';
@@ -9,8 +10,10 @@ import { AppService } from 'src/app/services/AppService';
 import { PopupProvider } from 'src/app/services/popup';
 import { LogUtils } from 'src/app/services/LogUtils';
 import { IntentService } from 'src/app/services/IntentService';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 
 import * as _ from 'lodash';
+import { ViewHelper } from 'src/app/services/viewhelper.service';
 let TAG: string = "Feeds-profile";
 @Component({
   selector: 'app-profile',
@@ -18,6 +21,7 @@ let TAG: string = "Feeds-profile";
   styleUrls: ['./profile.page.scss'],
 })
 export class ProfilePage implements OnInit {
+  @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   @ViewChild(IonInfiniteScroll,{static:true}) infiniteScroll: IonInfiniteScroll;
 
   public nodeStatus = {}; //friends status;
@@ -133,7 +137,8 @@ export class ProfilePage implements OnInit {
     private logUtils: LogUtils,
     public  popupProvider:PopupProvider,
     public  popoverController:PopoverController,
-    private intentService: IntentService
+    private intentService: IntentService,
+    private viewHelper: ViewHelper
   ) {
   }
 
@@ -1062,7 +1067,7 @@ export class ProfilePage implements OnInit {
           let img = realImg || "";
           if(img!=""){
             this.isImgLoading[this.imgCurKey] = false;
-            this.native.openViewer(realImg,"common.image","FeedsPage.tabTitle2",this.appService);
+            this.viewHelper.openViewer(this.titleBar, realImg,"common.image","FeedsPage.tabTitle2",this.appService);
           }else{
 
             if(this.checkServerStatus(item.nodeId) != 0){
@@ -1111,7 +1116,7 @@ export class ProfilePage implements OnInit {
       this.imgPercent = 0;
       this.imgRotateNum["transform"] = "rotate(0deg)";
       this.cacheGetBinaryRequestKey = "";
-      this.native.openViewer(value,"common.image","FeedsPage.tabTitle1",this.appService);
+      this.viewHelper.openViewer(this.titleBar, value,"common.image","FeedsPage.tabTitle1",this.appService);
     } else if (key.indexOf("video")>-1){
       this.videoDownStatus[this.videoDownStatusKey] = "";
       this.isVideoLoading[this.videoDownStatusKey] = false;

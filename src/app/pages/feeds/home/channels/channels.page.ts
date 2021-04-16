@@ -1,6 +1,7 @@
-import { Component, OnInit, NgZone,ViewChild} from '@angular/core';
-import { Events,ModalController,Platform} from '@ionic/angular';
+import { Component, OnInit, NgZone,ViewChild } from '@angular/core';
+import { ModalController,Platform } from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
+import { Events } from 'src/app/services/events.service';
 import { FeedService } from 'src/app/services/FeedService';
 import { NativeService } from 'src/app/services/NativeService';
 import { ThemeService } from 'src/app/services/theme.service';
@@ -10,6 +11,7 @@ import { TranslateService } from "@ngx-translate/core";
 import { PopoverController,IonInfiniteScroll,IonContent} from '@ionic/angular';
 import { AppService } from 'src/app/services/AppService';
 import { PopupProvider } from 'src/app/services/popup';
+import { ViewHelper } from 'src/app/services/viewhelper.service';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 
@@ -127,7 +129,8 @@ export class ChannelsPage implements OnInit {
     public modalController:ModalController,
     private logUtils: LogUtils,
     public popupProvider:PopupProvider,
-    private titleBarService: TitleBarService) {
+    private titleBarService: TitleBarService,
+    private viewHelper: ViewHelper) {
   }
 
   subscribe(){
@@ -921,7 +924,7 @@ export class ChannelsPage implements OnInit {
           let img = realImg || "";
           if(img!=""){
             this.isImgLoading[this.imgCurKey] = false;
-            this.native.openViewer(realImg,"common.image","ChannelsPage.feeds",this.appService);
+            this.viewHelper.openViewer(this.titleBar, realImg,"common.image","ChannelsPage.feeds",this.appService);
           }else{
 
             if(this.checkServerStatus(nodeId) != 0){
@@ -1177,7 +1180,7 @@ export class ChannelsPage implements OnInit {
       this.imgPercent = 0;
       this.imgRotateNum["transform"] = "rotate(0deg)";
       this.cacheGetBinaryRequestKey = "";
-      this.native.openViewer(value,"common.image","ChannelsPage.feeds",this.appService);
+      this.viewHelper.openViewer(this.titleBar, value,"common.image","ChannelsPage.feeds",this.appService);
     } else if (key.indexOf("video")>-1){
 
       this.videoDownStatus[this.videoDownStatusKey] = "";

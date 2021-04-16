@@ -1,5 +1,6 @@
 import { Component, OnInit, NgZone,ElementRef,ViewChild} from '@angular/core';
-import {  NavController, Events,ModalController,Platform,IonTextarea} from '@ionic/angular';
+import {  NavController, ModalController,Platform,IonTextarea} from '@ionic/angular';
+import { Events } from 'src/app/services/events.service';
 import { FeedService } from '../../../services/FeedService';
 import { NativeService } from '../../../services/NativeService';
 import { CameraService } from '../../../services/CameraService';
@@ -10,6 +11,7 @@ import { AppService } from '../../../services/AppService';
 import { UtilService } from '../../../services/utilService';
 import { LogUtils } from '../../../services/LogUtils';
 import { StorageService } from '../../../services/StorageService';
+import { ViewHelper } from 'src/app/services/viewhelper.service';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 
@@ -68,7 +70,8 @@ export class CreatenewpostPage implements OnInit {
       public modalController:ModalController,
       private logUtils: LogUtils,
       private storageService: StorageService,
-      private titleBarService: TitleBarService
+      private titleBarService: TitleBarService,
+      private viewHelper: ViewHelper
     ) {}
 
     ngOnInit() {
@@ -388,7 +391,7 @@ export class CreatenewpostPage implements OnInit {
     }
 
     showBigImage(content: any){
-      this.native.openViewer(content,"common.image","CreatenewpostPage.addingPost",this.appService);
+      this.viewHelper.openViewer(this.titleBar, content,"common.image","CreatenewpostPage.addingPost",this.appService);
     }
 
     checkServerStatus(nodeId: string){

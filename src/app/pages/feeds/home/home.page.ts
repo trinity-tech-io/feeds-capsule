@@ -1,6 +1,7 @@
 import { Component, OnInit, NgZone, ViewChild,ElementRef} from '@angular/core';
 import { IonContent,ModalController,Platform,PopoverController} from '@ionic/angular';
-import { Events,IonTabs} from '@ionic/angular';
+import { IonTabs } from '@ionic/angular';
+import { Events } from 'src/app/services/events.service';
 import { FeedService } from 'src/app/services/FeedService';
 import { MenuService } from 'src/app/services/MenuService';
 import { FeedsPage } from '../feeds.page'
@@ -11,7 +12,10 @@ import { NativeService } from 'src/app/services/NativeService';
 import { IonInfiniteScroll } from '@ionic/angular';
 import { AppService } from 'src/app/services/AppService';
 import { LogUtils } from 'src/app/services/LogUtils';
+import { ViewHelper } from 'src/app/services/viewhelper.service';
 import { PopupProvider } from 'src/app/services/popup';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+
 import * as _ from 'lodash';
 let TAG: string = "Feeds-home";
 @Component({
@@ -21,7 +25,7 @@ let TAG: string = "Feeds-home";
 })
 
 export class HomePage implements OnInit {
-
+  @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   @ViewChild(IonContent,{static:true}) content: IonContent;
   @ViewChild(IonInfiniteScroll,{static:true}) infiniteScroll: IonInfiniteScroll;
 
@@ -38,7 +42,6 @@ export class HomePage implements OnInit {
   public styleObj:any = {width:""};
 
   public hideComment = true;
-
 
   // For comment component
   public postId = null;
@@ -127,7 +130,8 @@ export class HomePage implements OnInit {
     public modalController: ModalController,
     private logUtils: LogUtils,
     public popupProvider:PopupProvider,
-    public popoverController:PopoverController) {
+    public popoverController:PopoverController,
+    private viewHelper: ViewHelper) {
 
     }
 
@@ -855,7 +859,7 @@ clearData(){
           let img = realImg || "";
           if(img!=""){
             this.isImgLoading[this.imgCurKey] = false;
-            this.native.openViewer(realImg,"common.image","FeedsPage.tabTitle1",this.appService);
+            this.viewHelper.openViewer(this.titleBar, realImg,"common.image","FeedsPage.tabTitle1",this.appService);
           }else{
 
             if(this.checkServerStatus(nodeId) != 0){
@@ -1243,7 +1247,7 @@ clearData(){
       this.imgPercent = 0;
       this.imgRotateNum["transform"] = "rotate(0deg)";
       this.cacheGetBinaryRequestKey = "";
-      this.native.openViewer(value,"common.image","FeedsPage.tabTitle1",this.appService);
+      this.viewHelper.openViewer(this.titleBar, value, "common.image","FeedsPage.tabTitle1",this.appService);
     } else if (key.indexOf("video")>-1){
          this.videoDownStatus[this.videoDownStatusKey] = "";
          this.isVideoLoading[this.videoDownStatusKey] = false;

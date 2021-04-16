@@ -1,10 +1,12 @@
 import { Component, OnInit, NgZone,ViewChild } from '@angular/core';
-import { NavController, Events,IonTextarea} from '@ionic/angular';
+import { NavController, IonTextarea } from '@ionic/angular';
+import { Events } from 'src/app/services/events.service';
 import { FeedService } from 'src/app/services/FeedService';
 import { ActivatedRoute } from '@angular/router';
 import { NativeService } from '../../services/NativeService';
 import { ThemeService } from '../../services/theme.service';
 import { TranslateService } from "@ngx-translate/core";
+import { ViewHelper } from 'src/app/services/viewhelper.service';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 
@@ -41,7 +43,8 @@ export class EditCommentPage implements OnInit {
     private feedService: FeedService,
     public theme:ThemeService,
     private translate:TranslateService,
-    private titleBarService: TitleBarService) { }
+    private titleBarService: TitleBarService,
+    private viewHelper: ViewHelper) { }
 
   ngOnInit() {
     this.acRoute.queryParams.subscribe((data)=>{
@@ -59,7 +62,7 @@ export class EditCommentPage implements OnInit {
 
   ionViewWillEnter() {
     this.initTitle();
-    this.native.setTitleBarBackKeyShown(true);
+    this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
 
     this.connectionStatus = this.feedService.getConnectionStatus();
     let channel = this.feedService.getChannelFromId(this.nodeId,this.channelId) || {};
@@ -185,6 +188,6 @@ export class EditCommentPage implements OnInit {
   }
 
   showBigImage(content: any){
-    this.native.openViewer(content,"common.image","CreatenewpostPage.addingPost");
+    this.viewHelper.openViewer(this.titleBar, content,"common.image","CreatenewpostPage.addingPost");
   }
 }

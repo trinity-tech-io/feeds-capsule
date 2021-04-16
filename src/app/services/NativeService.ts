@@ -181,46 +181,46 @@ export class NativeService {
         }, false);
     }
 
-    async openViewer(titleBar: TitleBarComponent, imgPath:string,newNameKey:string,oldNameKey:string,appService?:any,isOwer?:boolean) {
-        this.titleBarService.setTitle(titleBar, this.translate.instant(newNameKey));
-        this.titleBarService.setTitleBarBackKeyShown(titleBar, false);
-        appService.hideright();
-        const modal = await this.modalController.create({
-          component: ViewerModalComponent,
-          componentProps: {
-            src: imgPath,
-            slideOptions:{ centeredSlides: true, passiveListeners:true, zoom: { enabled: true } }
-          },
-          cssClass: 'ion-img-viewer',
-          keyboardClose:true,
-          showBackdrop:true,
-        });
+    // async openViewer(titleBar: TitleBarComponent, imgPath:string,newNameKey:string,oldNameKey:string,appService?:any,isOwer?:boolean) {
+    //     this.titleBarService.setTitle(titleBar, this.translate.instant(newNameKey));
+    //     this.titleBarService.setTitleBarBackKeyShown(titleBar, false);
+    //     appService.hideright();
+    //     const modal = await this.modalController.create({
+    //       component: ViewerModalComponent,
+    //       componentProps: {
+    //         src: imgPath,
+    //         slideOptions:{ centeredSlides: true, passiveListeners:true, zoom: { enabled: true } }
+    //       },
+    //       cssClass: 'ion-img-viewer',
+    //       keyboardClose:true,
+    //       showBackdrop:true,
+    //     });
 
-        modal.onWillDismiss().then(()=>{
-            document.removeEventListener('click',(event)=> this.hide(modal),false);
-            this.titleBarService.setTitle(titleBar, this.translate.instant(oldNameKey));
+    //     modal.onWillDismiss().then(()=>{
+    //         document.removeEventListener('click',(event)=> this.hide(modal),false);
+    //         this.titleBarService.setTitle(titleBar, this.translate.instant(oldNameKey));
 
-            if(oldNameKey!='FeedsPage.tabTitle2'&&oldNameKey!='FeedsPage.tabTitle1'){
-                this.titleBarService.setTitleBarBackKeyShown(titleBar, true);
-            }
-            // if(isOwer){
-            //     titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, {
-            //         key: "editChannel",
-            //         iconPath: TitleBarPlugin.BuiltInIcon.EDIT
-            //       });
-            // }
-            appService.addright();
+    //         if(oldNameKey!='FeedsPage.tabTitle2'&&oldNameKey!='FeedsPage.tabTitle1'){
+    //             this.titleBarService.setTitleBarBackKeyShown(titleBar, true);
+    //         }
+    //         // if(isOwer){
+    //         //     titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, {
+    //         //         key: "editChannel",
+    //         //         iconPath: TitleBarPlugin.BuiltInIcon.EDIT
+    //         //       });
+    //         // }
+    //         appService.addright();
 
-        })
+    //     })
 
-        return await modal.present().then(()=>{
+    //     return await modal.present().then(()=>{
 
-                const el:any = document.querySelector('ion-modal') || "";
-                el.addEventListener('click', (event) => this.hide(modal), true);
+    //             const el:any = document.querySelector('ion-modal') || "";
+    //             el.addEventListener('click', (event) => this.hide(modal), true);
 
-        });
+    //     });
 
-      }
+    //   }
 
       hide(modal:any){
          modal.dismiss();
@@ -314,40 +314,6 @@ public clickUrl(url:string,event:any){
         this.openUrl(url);
         event.stopPropagation();
 }
-
-async showPreviewQrcode(qrCodeString:string,newNameKey:string,oldNameKey:string,page:string,appService:any,isOwner?:boolean) {
-
-    // titleBarManager.setTitle(this.translate.instant(newNameKey));
-    this.setTitleBarBackKeyShown(false);
-    appService.hideright();
-    const modal = await this.modalController.create({
-      component:PreviewqrcodeComponent,
-      backdropDismiss:true,
-      componentProps: {
-        'qrCodeString':qrCodeString
-      }
-    });
-    modal.onWillDismiss().then(()=>{
-        // titleBarManager.setTitle(this.translate.instant(oldNameKey));
-        this.setTitleBarBackKeyShown(true);
-        // if(page === "serverinfo"){
-        //     titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, {
-        //         key: "editServer",
-        //         iconPath: TitleBarPlugin.BuiltInIcon.EDIT
-        //     });
-        // }
-        // if(page === "feedinfo"){
-        //     if(isOwner){
-        //         titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, {
-        //             key: "editChannel",
-        //             iconPath: TitleBarPlugin.BuiltInIcon.EDIT
-        //      });
-        //     }
-        // }
-        appService.addright();
-    })
-    return await modal.present();
-  }
 
   async showPayPrompt(elaAddress:string) {
 

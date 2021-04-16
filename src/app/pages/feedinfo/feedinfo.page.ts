@@ -9,6 +9,7 @@ import { PopoverController} from '@ionic/angular';
 import { PaypromptComponent } from '../../components/payprompt/payprompt.component'
 import { AppService } from '../../services/AppService';
 import { UtilService } from '../../services/utilService';
+import { ViewHelper } from 'src/app/services/viewhelper.service';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 
@@ -64,7 +65,8 @@ export class FeedinfoPage implements OnInit {
     private menuService: MenuService,
     private appService:AppService,
     private platform:Platform,
-    private titleBarService: TitleBarService
+    private titleBarService: TitleBarService,
+    private viewHelper: ViewHelper
   ) {
     }
 
@@ -333,7 +335,7 @@ export class FeedinfoPage implements OnInit {
     if(isOwner){
       this.titleBarService.setIcon(this.titleBar, FeedsData.TitleBarIconSlot.INNER_RIGHT, null, null);
     }
-    this.native.showPreviewQrcode(feedsUrl,"common.qRcodePreview","FeedinfoPage.title","feedinfo",this.appService,isOwner);
+    this.viewHelper.showPreviewQrcode(this.titleBar, feedsUrl,"common.qRcodePreview","FeedinfoPage.title","feedinfo",this.appService,isOwner);
   }
 
   menuMore(feedsUrl:string) {

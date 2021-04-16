@@ -1,5 +1,6 @@
 import { Component, OnInit, NgZone,ElementRef,ViewChild} from '@angular/core';
-import { NavController,Events,ModalController,IonTextarea} from '@ionic/angular';
+import { NavController,ModalController,IonTextarea} from '@ionic/angular';
+import { Events } from 'src/app/services/events.service';
 import { FeedService } from 'src/app/services/FeedService';
 import { ActivatedRoute } from '@angular/router';
 import { NativeService } from '../../services/NativeService';
@@ -10,6 +11,7 @@ import { VideoEditor } from '@ionic-native/video-editor/ngx';
 import { AppService } from 'src/app/services/AppService';
 import { UtilService } from 'src/app/services/utilService';
 import { LogUtils } from 'src/app/services/LogUtils';
+import { ViewHelper } from 'src/app/services/viewhelper.service';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 
@@ -68,7 +70,8 @@ export class EditPostPage implements OnInit {
     public appService:AppService,
     public el:ElementRef,
     private logUtils: LogUtils,
-    private titleBarService: TitleBarService
+    private titleBarService: TitleBarService,
+    private viewHelper: ViewHelper
   ) {
   }
 
@@ -351,7 +354,7 @@ export class EditPostPage implements OnInit {
   }
 
   showBigImage(content: any){
-     this.native.openViewer(content,"common.image","EditPostPage.title",this.appService);
+    this.viewHelper.openViewer(this.titleBar, content,"common.image","EditPostPage.title",this.appService);
   }
 
   checkServerStatus(nodeId: string){
