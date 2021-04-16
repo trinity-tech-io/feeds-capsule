@@ -36,6 +36,7 @@
     "@sentry/browser": "~5.11.0",
     "@sentry/integrations": "~5.11.1",
     "@types/node": "^8.9.5",
+    "@videogular/ngx-videogular": "^3.0.1",
     "@ygoe/msgpack": "^1.0.2",
     "angularx-qrcode": "^1.6.4",
     "cordova-android": "9.0.0",

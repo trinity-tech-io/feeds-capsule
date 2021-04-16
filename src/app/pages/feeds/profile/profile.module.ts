@@ -7,9 +7,9 @@ import { IonicModule } from '@ionic/angular';
 
 import { ProfilePage } from './profile.page';
 
-import { VgCoreModule } from 'ngx-videogular';
-import { VgControlsModule } from 'ngx-videogular';
-import { VgOverlayPlayModule } from 'ngx-videogular';
+import { VgCoreModule } from '@videogular/ngx-videogular/core';
+import { VgControlsModule } from '@videogular/ngx-videogular/controls';
+import { VgOverlayPlayModule } from '@videogular/ngx-videogular/overlay-play';
 
 import {ComponentsModule} from '../../../components/components.module'
 const routes: Routes = [
