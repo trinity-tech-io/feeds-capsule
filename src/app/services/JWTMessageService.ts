@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Events } from '@ionic/angular';
+import { Events } from 'src/app/services/events.service';
 import { TransportService } from 'src/app/services/TransportService';
 let eventBus = null;
 

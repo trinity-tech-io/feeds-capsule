@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Events } from '@ionic/angular';
+import { Events } from 'src/app/services/events.service';
 import { SerializeDataService } from 'src/app/services/SerializeDataService'
 import { TransportService } from 'src/app/services/TransportService'
 import { LogUtils } from 'src/app/services/LogUtils';
