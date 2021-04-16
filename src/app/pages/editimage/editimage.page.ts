@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { ImageCroppedEvent } from 'ngx-image-cropper';
 import { FeedService } from '../../services/FeedService';
 import { NativeService } from '../../services/NativeService';
-import { Events} from '@ionic/angular';
+import { Events } from 'src/app/services/events.service';
 import { AppService } from '../../services/AppService';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';

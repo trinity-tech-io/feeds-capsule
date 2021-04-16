@@ -21,8 +21,9 @@
  */
 
 import { Injectable } from '@angular/core';
-import { Events, Platform } from '@ionic/angular';
+import { Platform } from '@ionic/angular';
 import { FileHelperService } from 'src/app/services/FileHelperService';
+import { Events } from 'src/app/services/events.service';
 
 declare let carrierManager: CarrierPlugin.CarrierManager;
 

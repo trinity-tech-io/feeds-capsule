@@ -201,11 +201,12 @@ export class CreatenewpostPage implements OnInit {
       //   });
       // });
 
-      this.events.subscribe(FeedsEvent.PublishType.streamProgress,(nodeId,progress)=>{
-        this.zone.run(() => {
-          this.native.updateLoadingMsg(this.translate.instant("common.uploading")+" "+progress+"%");
-        });
-      })
+      //TODO event
+      // this.events.subscribe(FeedsEvent.PublishType.streamProgress,(nodeId,progress)=>{
+      //   this.zone.run(() => {
+      //     this.native.updateLoadingMsg(this.translate.instant("common.uploading")+" "+progress+"%");
+      //   });
+      // })
 
       // this.events.subscribe(FeedsEvent.PublishType.streamOnStateChangedCallback, (nodeId, state) => {
       //   this.zone.run(() => {

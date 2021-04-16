@@ -1,6 +1,6 @@
 import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
 import { TranslateService } from "@ngx-translate/core";
-import { Events,Platform,ActionSheetController } from '@ionic/angular';
+import { Platform,ActionSheetController } from '@ionic/angular';
 import { FeedService, Avatar } from '../../../../services/FeedService';
 import { NativeService } from '../../../../services/NativeService';
 import { ThemeService } from '../../../../services/theme.service';
@@ -8,6 +8,7 @@ import { CarrierService } from '../../../../services/CarrierService';
 import { AppService } from '../../../../services/AppService';
 import { StorageService } from '../../../../services/StorageService';
 import { ViewHelper } from 'src/app/services/viewhelper.service';
+import { Events } from 'src/app/services/events.service';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 

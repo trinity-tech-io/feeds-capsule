@@ -1,11 +1,13 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { PopoverController,Events} from '@ionic/angular';
+import { PopoverController } from '@ionic/angular';
 import { FeedService } from '../../services/FeedService';
 import { NativeService } from '../../services/NativeService';
 import { TranslateService } from "@ngx-translate/core";
 import { ThemeService } from '../../services/theme.service';
 import { PopupProvider } from '../../services/popup';
 import { StorageService } from '../../services/StorageService';
+import { Events } from 'src/app/services/events.service';
+
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 
@@ -87,7 +89,7 @@ export class FeedsPage implements OnInit {
   ionViewDidEnter() {
     this.initTab();
     this.initTile();
-    this.native.setTitleBarBackKeyShown(false);
+    this.titleBarService.setTitleBarBackKeyShown(this.titleBar, false);
     // appManager.setVisible("show");
   }
 
@@ -139,7 +141,7 @@ export class FeedsPage implements OnInit {
       // this.feedService.currentTab = "home";
       this.title = "FeedsPage.tabTitle1";
       this.initTile();
-      this.native.setTitleBarBackKeyShown(false);
+      this.titleBarService.setTitleBarBackKeyShown(this.titleBar, false);
       this.feedService.setCurTab(this.currentTab);
     }
 
@@ -147,7 +149,7 @@ export class FeedsPage implements OnInit {
       this.currentTab = "profile";
       this.title = "FeedsPage.tabTitle2"
       this.initTile();
-      this.native.setTitleBarBackKeyShown(false);
+      this.titleBarService.setTitleBarBackKeyShown(this.titleBar, false);
       this.feedService.setCurTab(this.currentTab);
     }
 
@@ -155,7 +157,7 @@ export class FeedsPage implements OnInit {
       this.currentTab = "notification";
       this.title = "FeedsPage.tabTitle3";
       this.initTile();
-      this.native.setTitleBarBackKeyShown(false);
+      this.titleBarService.setTitleBarBackKeyShown(this.titleBar, false);
       this.feedService.setCurTab(this.currentTab);
     }
 
@@ -163,7 +165,7 @@ export class FeedsPage implements OnInit {
       this.currentTab = "search";
       this.title = "FeedsPage.tabTitle4";
       this.initTile();
-      this.native.setTitleBarBackKeyShown(false);
+      this.titleBarService.setTitleBarBackKeyShown(this.titleBar, false);
       this.feedService.setCurTab(this.currentTab);
     }
 
