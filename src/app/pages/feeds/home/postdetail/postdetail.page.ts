@@ -1106,7 +1106,7 @@ export class PostdetailPage implements OnInit {
       return;
     }
     this.pauseVideo();
-    this.native.showPayPrompt(elaAddress);
+    this.viewHelper.showPayPrompt(elaAddress);
   }
 
   clickComment(comment:any){

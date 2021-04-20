@@ -1,19 +1,13 @@
 import { Injectable } from '@angular/core';
 import { PopoverController} from '@ionic/angular';
-// import { Clipboard } from '@ionic-native/clipboard/ngx';
-// import { Router } from '@angular/router';
-// import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 import { TranslateService} from '@ngx-translate/core';
 import { ModalController } from '@ionic/angular';
 import { ViewerModalComponent } from 'ngx-ionic-image-viewer';
-// import { MorenameComponent} from './../components/morename/morename.component';
-// import { VideofullscreenComponent } from './../components/videofullscreen/videofullscreen.component';
 import { PreviewqrcodeComponent }  from './../components/previewqrcode/previewqrcode.component';
-// import { PaypromptComponent } from './../components/payprompt/payprompt.component';
-// import { IntentService } from 'src/app/services/IntentService';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent }  from './../components/titlebar/titlebar.component';
 import { MorenameComponent} from './../components/morename/morename.component';
+import { PaypromptComponent } from './../components/payprompt/payprompt.component';
 
 @Injectable()
 export class ViewHelper {
@@ -129,4 +123,21 @@ export class ViewHelper {
         return await popover.present();
     }
 
+    async showPayPrompt(elaAddress:string) {
+        let popover = await this.popoverController.create({
+            mode: 'ios',
+            cssClass: 'PaypromptComponent',
+            component: PaypromptComponent,
+            backdropDismiss: false,
+            componentProps: {
+            "title": this.translate.instant("ChannelsPage.tip"),
+            "elaAddress": elaAddress,
+            "defalutMemo": ""
+            }
+        });
+        popover.onWillDismiss().then(() => {
+            popover = null;
+        });
+        return await popover.present();
+    }
 }

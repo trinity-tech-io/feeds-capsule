@@ -5,15 +5,9 @@ import { Router } from '@angular/router';
 import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 import { TranslateService} from '@ngx-translate/core';
 import { ModalController } from '@ionic/angular';
-import { ViewerModalComponent } from 'ngx-ionic-image-viewer';
 import { VideofullscreenComponent } from './../components/videofullscreen/videofullscreen.component';
-import { PreviewqrcodeComponent }  from './../components/previewqrcode/previewqrcode.component';
-import { PaypromptComponent } from './../components/payprompt/payprompt.component';
 import { IntentService } from 'src/app/services/IntentService';
-import { TitleBarService } from 'src/app/services/TitleBarService';
-import { TitleBarComponent }  from './../components/titlebar/titlebar.component';
 
-// declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 @Injectable()
 export class NativeService {
     public loading:any = null;
@@ -27,8 +21,7 @@ export class NativeService {
         private navCtrl: NavController,
         private router: Router,
         private translate: TranslateService,
-        private intentService: IntentService,
-        private titleBarService: TitleBarService) {
+        private intentService: IntentService) {
     }
 
     public toast(message: string = 'Operation completed', duration: number = 3000): void {
@@ -314,33 +307,26 @@ public clickUrl(url:string,event:any){
         event.stopPropagation();
 }
 
-  async showPayPrompt(elaAddress:string) {
+//   async showPayPrompt(elaAddress:string) {
 
-    let popover = await this.popoverController.create({
-      mode: 'ios',
-      cssClass: 'PaypromptComponent',
-      component: PaypromptComponent,
-      backdropDismiss: false,
-      componentProps: {
-        "title": this.translate.instant("ChannelsPage.tip"),
-        "elaAddress": elaAddress,
-        "defalutMemo": ""
-      }
-    });
-    popover.onWillDismiss().then(() => {
-      popover = null;
-    });
-    return await popover.present();
-  }
+//     let popover = await this.popoverController.create({
+//       mode: 'ios',
+//       cssClass: 'PaypromptComponent',
+//       component: PaypromptComponent,
+//       backdropDismiss: false,
+//       componentProps: {
+//         "title": this.translate.instant("ChannelsPage.tip"),
+//         "elaAddress": elaAddress,
+//         "defalutMemo": ""
+//       }
+//     });
+//     popover.onWillDismiss().then(() => {
+//       popover = null;
+//     });
+//     return await popover.present();
+//   }
 
   getShare(qrCodeString:string){
     this.intentService.share("", qrCodeString);
   }
-
-    public registerBackKey(titleBar: TitleBarComponent) {
-        titleBar.addOnItemClickedListener((icon)=>{
-            if (icon.key == "back")
-                this.navCtrl.back();
-        });
-    }
 }
