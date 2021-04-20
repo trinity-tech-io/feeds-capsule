@@ -163,7 +163,7 @@ export class ChannelsPage implements OnInit {
     }
 
     this.pauseAllVideo();
-    this.native.showPayPrompt(elaAddress);
+    this.viewHelper.showPayPrompt(elaAddress);
   }
 
   async unsubscribe(){
@@ -1292,7 +1292,7 @@ export class ChannelsPage implements OnInit {
       return;
     }
     this.pauseVideo(nodeId+"-"+channelId+"-"+postId);
-    this.native.showPayPrompt(elaAddress);
+    this.viewHelper.showPayPrompt(elaAddress);
   }
 
   retry(nodeId: string, feedId: number, postId: number){
