@@ -305,7 +305,7 @@ export class LikesComponent implements OnInit {
       return;
     }
     this.pauseVideo(nodeId+"-"+channelId+"-"+postId);
-    this.native.showPayPrompt(elaAddress);
+    this.viewHelper.showPayPrompt(elaAddress);
   }
 
 }
