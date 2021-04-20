@@ -465,7 +465,7 @@ export class ServerInfoPage implements OnInit {
  pressName(channelName:string){
   let name =channelName || "";
   if(name != "" && name.length>15){
-    this.native.createTip(name);
+    this.viewHelper.createTip(name);
   }
  }
 

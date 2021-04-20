@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-// import { ToastController, LoadingController, NavController,PopoverController} from '@ionic/angular';
+import { PopoverController} from '@ionic/angular';
 // import { Clipboard } from '@ionic-native/clipboard/ngx';
 // import { Router } from '@angular/router';
 // import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
@@ -13,6 +13,7 @@ import { PreviewqrcodeComponent }  from './../components/previewqrcode/previewqr
 // import { IntentService } from 'src/app/services/IntentService';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent }  from './../components/titlebar/titlebar.component';
+import { MorenameComponent} from './../components/morename/morename.component';
 
 @Injectable()
 export class ViewHelper {
@@ -28,7 +29,8 @@ export class ViewHelper {
         // private router: Router,
         private translate: TranslateService,
         // private intentService: IntentService,
-        private titleBarService: TitleBarService
+        private titleBarService: TitleBarService,
+        private popoverController:PopoverController,
         ) {
     }
 
@@ -111,4 +113,20 @@ export class ViewHelper {
         });
         return await modal.present();
     }
+
+    async createTip(name:string){
+        let popover = await this.popoverController.create({
+          mode:'ios',
+          component:MorenameComponent,
+          cssClass: 'genericPopup',
+          componentProps: {
+            "name":name
+          }
+        });
+        popover.onWillDismiss().then(() => {
+            popover = null;
+        });
+        return await popover.present();
+    }
+
 }

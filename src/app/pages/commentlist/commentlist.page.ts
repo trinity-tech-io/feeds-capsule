@@ -13,6 +13,8 @@ import { LogUtils } from 'src/app/services/LogUtils';
 import { Events } from 'src/app/services/events.service';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { ViewHelper } from 'src/app/services/viewhelper.service';
+
 import * as _ from 'lodash';
 
 let TAG: string = "Feeds-commentlist";
@@ -74,7 +76,8 @@ export class CommentlistPage implements OnInit {
     public appService:AppService,
     public modalController: ModalController,
     private logUtils: LogUtils,
-    private titleBarService: TitleBarService) {
+    private titleBarService: TitleBarService,
+    private viewHelper: ViewHelper) {
   }
 
   initData(isInit:boolean){
@@ -409,7 +412,7 @@ export class CommentlistPage implements OnInit {
     let name = userName || "";
 
     if(name!=""){
-      this.native.createTip(name);
+      this.viewHelper.createTip(name);
     }
 
   }

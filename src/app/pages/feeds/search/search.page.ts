@@ -10,7 +10,7 @@ import { ApiUrl } from '../../../services/ApiUrl';
 import { StorageService } from '../../../services/StorageService';
 import { IntentService } from '../../../services/IntentService';
 import { Events } from 'src/app/services/events.service';
-
+import { ViewHelper } from 'src/app/services/viewhelper.service';
 
 import * as _ from 'lodash';
 @Component({
@@ -70,6 +70,7 @@ export class SearchPage implements OnInit {
     private httpService: HttpService,
     private intentService: IntentService,
     public  storageService: StorageService,
+    private viewHelper: ViewHelper
   ) {
   }
 
@@ -279,7 +280,7 @@ export class SearchPage implements OnInit {
  pressName(channelName:string){
   let name =channelName || "";
   if(name != "" && name.length>15){
-    this.native.createTip(name);
+    this.viewHelper.createTip(name);
   }
  }
 

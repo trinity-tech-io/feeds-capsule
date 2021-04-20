@@ -403,7 +403,7 @@ export class CreatenewpostPage implements OnInit {
     }
 
     pressName(channelName:string){
-      this.native.createTip(channelName);
+      this.viewHelper.createTip(channelName);
     }
 
     videocam(){
