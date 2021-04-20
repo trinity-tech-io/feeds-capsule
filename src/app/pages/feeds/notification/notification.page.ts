@@ -6,6 +6,7 @@ import { UtilService } from 'src/app/services/utilService';
 import { TranslateService } from "@ngx-translate/core";
 import { NativeService } from 'src/app/services/NativeService';
 import { IonInfiniteScroll,IonContent} from '@ionic/angular';
+import { ViewHelper } from 'src/app/services/viewhelper.service';
 
 @Component({
   selector: 'slides-example',
@@ -37,9 +38,10 @@ export class NotificationPage {
     private native:NativeService,
     private zone: NgZone,
     private events: Events,
-    public theme:ThemeService,
-    private translate:TranslateService,
-    private feedService :FeedService) {
+    public theme: ThemeService,
+    private translate: TranslateService,
+    private feedService: FeedService,
+    private viewHelper: ViewHelper) {
     //this.notificationList = this.feedService.getNotificationList();
   }
 
@@ -224,7 +226,7 @@ export class NotificationPage {
   pressName(channelName:string){
     let name =channelName || "";
     if(name != "" && name.length>15){
-      this.native.createTip(name);
+      this.viewHelper.createTip(name);
     }
    }
 }
