@@ -176,7 +176,7 @@ export class EditCommentPage implements OnInit {
   }
 
   pressName(channelName:string){
-    this.native.createTip(channelName);
+    this.viewHelper.createTip(channelName);
   }
 
   getContent(content:string){

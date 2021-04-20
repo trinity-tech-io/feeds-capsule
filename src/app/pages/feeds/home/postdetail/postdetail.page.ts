@@ -765,13 +765,13 @@ export class PostdetailPage implements OnInit {
 
   pressName(){
     if(this.channelWName!= "" && this.channelWName.length>15){
-      this.native.createTip(this.channelWName);
+      this.viewHelper.createTip(this.channelWName);
     }
   }
 
   pressOwnerName(){
     if(this.channelWOwner!= "" && this.channelWOwner.length>40){
-      this.native.createTip(this.channelWOwner);
+      this.viewHelper.createTip(this.channelWOwner);
     }
   }
 
@@ -780,7 +780,7 @@ export class PostdetailPage implements OnInit {
     let name = userName || "";
 
     if(name!=""){
-      this.native.createTip(name);
+      this.viewHelper.createTip(name);
     }
 
   }

@@ -4,6 +4,8 @@ import { NativeService } from 'src/app/services/NativeService';
 import { ThemeService } from 'src/app/services/theme.service';
 import { UtilService } from 'src/app/services/utilService';
 import { PopupProvider } from 'src/app/services/popup';
+import { ViewHelper } from 'src/app/services/viewhelper.service';
+
 @Component({
   selector: 'app-myfeeds',
   templateUrl: './myfeeds.component.html',
@@ -19,7 +21,8 @@ export class MyfeedsComponent implements OnInit {
     private feedService: FeedService,
     public theme:ThemeService,
     private native:NativeService,
-    public popupProvider:PopupProvider) {
+    public popupProvider:PopupProvider,
+    private viewHelper: ViewHelper) {
 
   }
 
@@ -57,7 +60,7 @@ export class MyfeedsComponent implements OnInit {
   pressName(channelName:string){
     let name =channelName || "";
     if(name != "" && name.length>15){
-      this.native.createTip(name);
+      this.viewHelper.createTip(name);
     }
   }
 

@@ -7,7 +7,7 @@ import { NativeService } from 'src/app/services/NativeService';
 import { TranslateService } from "@ngx-translate/core";
 import { FeedsPage } from 'src/app/pages/feeds/feeds.page'
 import { AppService } from 'src/app/services/AppService';
-
+import { ViewHelper } from 'src/app/services/viewhelper.service';
 
 @Component({
   selector: 'app-likes',
@@ -51,7 +51,8 @@ export class LikesComponent implements OnInit {
     public theme:ThemeService,
     private translate:TranslateService,
     private native:NativeService,
-    public appService:AppService
+    public appService:AppService,
+    private viewHelper: ViewHelper
   ) {
   }
 
@@ -201,7 +202,7 @@ export class LikesComponent implements OnInit {
     if(channel != ""){
       let name =channel["name"] || "";
       if(name != "" && name.length>15){
-        this.native.createTip(name);
+        this.viewHelper.createTip(name);
       }
     }
   }
@@ -212,7 +213,7 @@ export class LikesComponent implements OnInit {
     if(channel != ""){
       let name =channel["owner_name"] || "";
       if(name != "" && name.length>15){
-        this.native.createTip(name);
+        this.viewHelper.createTip(name);
       }
     }
   }

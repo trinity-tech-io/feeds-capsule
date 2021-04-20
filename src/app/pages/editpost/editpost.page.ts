@@ -373,7 +373,7 @@ export class EditPostPage implements OnInit {
   }
 
   pressName(channelName:string){
-    this.native.createTip(channelName);
+    this.viewHelper.createTip(channelName);
   }
 
   getImage(){

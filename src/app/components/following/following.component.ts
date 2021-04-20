@@ -5,6 +5,7 @@ import { FeedsPage } from 'src/app/pages/feeds/feeds.page'
 import { ThemeService } from 'src/app/services/theme.service';
 import { NativeService } from 'src/app/services/NativeService';
 import { UtilService } from 'src/app/services/utilService';
+import { ViewHelper } from 'src/app/services/viewhelper.service';
 
 
 @Component({
@@ -20,9 +21,10 @@ export class FollowingComponent implements OnInit {
   constructor(
     private feedspage: FeedsPage,
     private tabs: IonTabs,
-    private feedService:FeedService,
-    public theme:ThemeService,
-    private native:NativeService) {
+    private feedService: FeedService,
+    public theme: ThemeService,
+    private native: NativeService,
+    private viewHelper: ViewHelper) {
 
   }
 
@@ -66,7 +68,7 @@ export class FollowingComponent implements OnInit {
   pressName(channelName:string){
     let name =channelName || "";
     if(name != "" && name.length>15){
-      this.native.createTip(name);
+      this.viewHelper.createTip(name);
     }
   }
 }

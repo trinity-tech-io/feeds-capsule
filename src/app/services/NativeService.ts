@@ -6,7 +6,6 @@ import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 import { TranslateService} from '@ngx-translate/core';
 import { ModalController } from '@ionic/angular';
 import { ViewerModalComponent } from 'ngx-ionic-image-viewer';
-import { MorenameComponent} from './../components/morename/morename.component';
 import { VideofullscreenComponent } from './../components/videofullscreen/videofullscreen.component';
 import { PreviewqrcodeComponent }  from './../components/previewqrcode/previewqrcode.component';
 import { PaypromptComponent } from './../components/payprompt/payprompt.component';
@@ -243,20 +242,20 @@ export class NativeService {
         }
     }
 
-    async createTip(name:string){
-        let popover = await this.popoverController.create({
-          mode:'ios',
-          component:MorenameComponent,
-          cssClass: 'genericPopup',
-          componentProps: {
-            "name":name
-          }
-        });
-        popover.onWillDismiss().then(() => {
-            popover = null;
-        });
-        return await popover.present();
-    }
+    // async createTip(name:string){
+    //     let popover = await this.popoverController.create({
+    //       mode:'ios',
+    //       component:MorenameComponent,
+    //       cssClass: 'genericPopup',
+    //       componentProps: {
+    //         "name":name
+    //       }
+    //     });
+    //     popover.onWillDismiss().then(() => {
+    //         popover = null;
+    //     });
+    //     return await popover.present();
+    // }
 
       /**
  * 防抖节流
