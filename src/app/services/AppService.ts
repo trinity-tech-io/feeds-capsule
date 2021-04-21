@@ -146,6 +146,8 @@ export class AppService {
     initTranslateConfig() {
       // 参数类型为数组，数组元素为本地语言json配置文件名
       this.translate.addLangs(["zh", "en", "fr"]);
+      this.setCurLang("zh");
+
       // 设置默认语言
       // TODO
       // appManager.getLocale((defaultLang: string, currentLang: string, systemLang: string)=>{
