@@ -135,7 +135,7 @@ export class CreatenewfeedPage implements OnInit {
 
    let feedList = this.feedService.getMyChannelList() || [];
 
-   if(feedList.length>=5){
+   if(feedList.length>=25){
      this.native.toastWarn("CreatenewfeedPage.feedMaxNumber");
      return;
     }
