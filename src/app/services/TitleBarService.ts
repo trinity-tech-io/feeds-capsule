@@ -22,6 +22,12 @@ export class TitleBarService {
     }
 
     setTitle(titleBar: TitleBarComponent, title: string){
+        if (titleBar == null || titleBar == undefined){
+            console.log("titlebar null");
+        }
+        else{
+            console.log("not null");
+        }
         titleBar.setTitle(title);
     }
 

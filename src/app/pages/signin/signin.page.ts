@@ -39,6 +39,10 @@ export class SigninPage implements OnInit {
   }
 
   initTile(){
+    if (this.titleBar == null || this.titleBar == undefined)
+      console.log("111111111111111");
+    else 
+      console.log("222222222");
     this.titleBarService.setTitle(this.titleBar, this.translate.instant("SigninPage.signIn"));
   }
 

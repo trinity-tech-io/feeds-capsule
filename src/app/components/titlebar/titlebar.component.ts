@@ -41,6 +41,7 @@ export class TitleBarComponent {
   constructor(
     private popoverCtrl: PopoverController,
   ) {
+    console.log("000000000");
   }
 
   private static makeDefaultIcon(): TitleBarSlotItem {
