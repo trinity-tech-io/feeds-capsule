@@ -21,7 +21,7 @@ export class TipdialogComponent implements OnInit {
     this.did = this.navParams.get('did');
     this.feedName = this.navParams.get('name');
     this.feedDesc = this.navParams.get('des');
-    this.feedPublicStatus =  this.navParams.get('feedPublicStatus') || true;
+    this.feedPublicStatus =  this.navParams.get('feedPublicStatus');
   }
 
   cancel(){
