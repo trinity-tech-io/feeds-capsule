@@ -172,12 +172,12 @@ export class MyApp {
        return;
     }
 
-    let isFirst = localStorage.getItem('org.elastos.dapp.feeds.first') || "";
-    if(isFirst === ""){
+    // let isFirst = localStorage.getItem('org.elastos.dapp.feeds.first') || "";
+    // if(isFirst === ""){
       localStorage.setItem('org.elastos.dapp.feeds.first',"11");
-      this.splash();
-      return;
-    }
+      // this.splash();
+      // return;
+    // }
     this.appService.initializeApp();
   }
 

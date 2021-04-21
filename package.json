@@ -21,7 +21,7 @@
     "@angular/router": "^11.0.7",
     "@elastosfoundation/elastos-connectivity-sdk-cordova": "^1.0.20",
     "@elastosfoundation/elastos-cordova-plugin-carrier": "^1.0.1",
-    "@elastosfoundation/elastos-cordova-plugin-did": "^1.0.2",
+    "@elastosfoundation/elastos-cordova-plugin-did": "^1.0.3",
     "@elastosfoundation/elastos-cordova-plugin-hive": "^1.0.2",
     "@ionic-native/clipboard": "^5.18.0",
     "@ionic-native/core": "^5.0.0",
@@ -104,8 +104,8 @@
       "cordova-plugin-ionic-keyboard": {},
       "cordova-sqlite-storage": {},
       "@elastosfoundation/elastos-cordova-plugin-intent": {},
-      "cordova-plugin-file": {},
-      "@elastosfoundation/elastos-cordova-plugin-did": {}
+      "@elastosfoundation/elastos-cordova-plugin-did": {},
+      "cordova-plugin-file": {}
     },
     "platforms": [
       "android"

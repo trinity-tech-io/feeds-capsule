@@ -57,7 +57,7 @@ import { FileService } from 'src/app/services/FileService';
 import { FileHelperService } from 'src/app/services/FileHelperService';
 import { DataHelper } from 'src/app/services/DataHelper';
 import { ViewHelper } from 'src/app/services/viewhelper.service';
-
+import { TitleBarService } from 'src/app/services/TitleBarService';
 import { IonicStorageModule } from '@ionic/storage';
 
 import { VideoEditor } from '@ionic-native/video-editor/ngx';
@@ -219,6 +219,7 @@ export function TranslateLoaderFactory() {
     IntentService,
     DataHelper,
     ViewHelper,
+    TitleBarService,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     {provide: ErrorHandler, useClass: ErrorHandler}
   ]
