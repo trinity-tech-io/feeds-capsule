@@ -10,6 +10,7 @@ import { VgCoreModule } from '@videogular/ngx-videogular/core';
 import { VgControlsModule } from '@videogular/ngx-videogular/controls';
 import { VgOverlayPlayModule } from '@videogular/ngx-videogular/overlay-play';
 import { VgBufferingModule } from '@videogular/ngx-videogular/buffering';
+import { ComponentsModule } from 'src/app/components/components.module';
 
 const routes: Routes = [
   {
@@ -28,6 +29,7 @@ const routes: Routes = [
     FormsModule,
     IonicModule,
     TranslateModule,
+    ComponentsModule,
     RouterModule.forChild(routes)
   ],
   declarations: [EditPostPage]

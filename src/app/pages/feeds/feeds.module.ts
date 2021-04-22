@@ -4,12 +4,14 @@ import { IonicModule } from '@ionic/angular';
 
 import { FeedsPage } from './feeds.page';
 import { FeedsRoutingModule } from './feeds-routing.module';
+import { ComponentsModule } from 'src/app/components/components.module';
 
 @NgModule({
   imports: [
     CommonModule,
     IonicModule,
-    FeedsRoutingModule
+    FeedsRoutingModule,
+    ComponentsModule
   ],
   declarations: [
     FeedsPage

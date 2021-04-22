@@ -6,6 +6,7 @@ import { QRCodeModule } from 'angularx-qrcode';
 import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { ServerInfoPage } from './server-info';
+import { ComponentsModule } from 'src/app/components/components.module';
 
 const routes: Routes = [
   {
@@ -21,6 +22,7 @@ const routes: Routes = [
     TranslateModule,
     IonicModule,
     QRCodeModule,
+    ComponentsModule,
     RouterModule.forChild(routes)
   ],
 

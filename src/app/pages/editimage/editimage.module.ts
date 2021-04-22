@@ -7,6 +7,8 @@ import { IonicModule } from '@ionic/angular';
 
 import { EditimagePage } from './editimage.page';
 import { ImageCropperModule } from 'ngx-image-cropper';
+import { ComponentsModule } from 'src/app/components/components.module';
+
 const routes: Routes = [
   {
     path: '',
@@ -21,6 +23,7 @@ const routes: Routes = [
     IonicModule,
     TranslateModule,
     ImageCropperModule,
+    ComponentsModule,
     RouterModule.forChild(routes)
   ],
   declarations: [EditimagePage]
