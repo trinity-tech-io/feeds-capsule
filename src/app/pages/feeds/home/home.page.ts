@@ -277,6 +277,7 @@ addCommonEvents(){
 
   this.events.subscribe(FeedsEvent.PublishType.connectionChanged,(status)=>{
     this.zone.run(() => {
+      console.log("Home connectionChanged "+status);
       this.connectionStatus = status;
     });
   });

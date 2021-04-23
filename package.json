@@ -106,7 +106,8 @@
       "@elastosfoundation/elastos-cordova-plugin-carrier": {},
       "@elastosfoundation/elastos-cordova-plugin-intent": {},
       "@elastosfoundation/elastos-cordova-plugin-did": {},
-      "cordova-plugin-file": {}
+      "cordova-plugin-file": {},
+      "cordova-plugin-network-information": {}
     },
     "platforms": [
       "android"
