@@ -88,8 +88,7 @@ export class CarrierService {
 
     readyCallback(ret) {
         this.mIsReady = true;
-        console.log("carrier Ready");
-        eventBus.publish(FeedsEvent.PublishType.carrierReady, ret);
+        eventBus.publish(FeedsEvent.PublishType.carrierReady);
     }
 
     createCarrierInstanceSuccess(ret: any) {
