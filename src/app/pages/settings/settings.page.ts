@@ -150,7 +150,7 @@ export class SettingsPage implements OnInit {
       localStorage.clear();
       this.feedService.resetConnectionStatus();
       this.feedService.destroyCarrier();
-      this.appService.hideright();
+      this.titleBarService.hideRight(this.titleBar);
       this.native.setRootRouter('disclaimer');
       this.native.toast("SettingsPage.des1");
     }).catch((err)=>{

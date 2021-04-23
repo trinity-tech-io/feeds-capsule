@@ -39,10 +39,6 @@ export class SigninPage implements OnInit {
   }
 
   initTile(){
-    if (this.titleBar == null || this.titleBar == undefined)
-      console.log("111111111111111");
-    else 
-      console.log("222222222");
     this.titleBarService.setTitle(this.titleBar, this.translate.instant("SigninPage.signIn"));
   }
 
@@ -73,7 +69,6 @@ export class SigninPage implements OnInit {
     });
     this.feedService.signIn().then((isSuccess)=>{
       if (isSuccess){
-        this.appService.addright();
         this.native.hideLoading();
         this.native.setRootRouter('/tabs/home');
         return;

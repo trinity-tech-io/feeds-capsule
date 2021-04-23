@@ -4984,6 +4984,7 @@ export class FeedService {
 
   signIn(): Promise<string>{
     return new Promise(async (resolve, reject) =>{
+      console.log("1111111111111");
       let res = await this.credaccess();
       if (!res){
         this.logUtils.loge("SignIn error, credaccess result is "+JSON.stringify(res));
@@ -5001,14 +5002,15 @@ export class FeedService {
     });
   }
 
-  decodeSignInData(data: any): Promise<string>{
+  decodeSignInData(result: any): Promise<string>{
     return new Promise((resolve, reject) =>{
-      didManager.VerifiablePresentationBuilder.fromJson(JSON.stringify(data.presentation), async (presentation) => {
+      didManager.VerifiablePresentationBuilder.fromJson(JSON.stringify(result.presentation), async (presentation) => {
         let credentials = presentation.getCredentials();
-        this.saveCredentialById(data.did,credentials, "name");
+        let did = result.did;
+        this.saveCredentialById(did,credentials, "name");
 
-        let interests = this.findCredentialValueById(data.did, credentials, "interests", "");
-        let desc = this.findCredentialValueById(data.did, credentials, "description", "");
+        let interests = this.findCredentialValueById(did, credentials, "interests", "");
+        let desc = this.findCredentialValueById(did, credentials, "description", "");
 
         let description = this.translate.instant("DIDdata.NoDescription");
 
@@ -5019,13 +5021,13 @@ export class FeedService {
         }
 
         this.saveSignInData(
-          data.did,
-          this.findCredentialValueById(data.did, credentials, "name", this.translate.instant("DIDdata.Notprovided")),
-          this.findCredentialValueById(data.did, credentials, "avatar", this.translate.instant("DIDdata.Notprovided")),
-          this.findCredentialValueById(data.did, credentials, "email", this.translate.instant("DIDdata.Notprovided")),
-          this.findCredentialValueById(data.did, credentials, "telephone", this.translate.instant("DIDdata.Notprovided")),
-          this.findCredentialValueById(data.did, credentials, "nation", this.translate.instant("DIDdata.Notprovided")),
-          this.findCredentialValueById(data.did, credentials, "nickname",""),
+          did,
+          this.findCredentialValueById(did, credentials, "name", this.translate.instant("DIDdata.Notprovided")),
+          this.findCredentialValueById(did, credentials, "avatar", this.translate.instant("DIDdata.Notprovided")),
+          this.findCredentialValueById(did, credentials, "email", this.translate.instant("DIDdata.Notprovided")),
+          this.findCredentialValueById(did, credentials, "telephone", this.translate.instant("DIDdata.Notprovided")),
+          this.findCredentialValueById(did, credentials, "nation", this.translate.instant("DIDdata.Notprovided")),
+          this.findCredentialValueById(did, credentials, "nickname",""),
           description
         ).then((signInData)=>{
           this.events.publish(FeedsEvent.PublishType.signinSuccess);
@@ -5064,10 +5066,14 @@ export class FeedService {
   credaccess(): Promise<any>{
     return new Promise(async (resolve, reject) =>{
       try {
+        console.log("222222222");
         let response = await this.intentService.credaccessWithParams();
-        if (response && response.result && response.result.presentation) {
-          let data = response.result;
-          resolve(data);
+        console.log("ttt response = "+JSON.stringify(response));
+        console.log("ttt response.presentation = "+JSON.stringify(response.presentation));
+        console.log("ttt response && response.result = "+JSON.stringify(response && response.presentation));
+
+        if (response && response.presentation) {
+          resolve(response);
           return;
         }
   

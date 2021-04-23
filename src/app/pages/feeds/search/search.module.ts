@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Routes, RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { IonicModule } from '@ionic/angular';
-
+import { ComponentsModule } from 'src/app/components/components.module';
 import { SearchPage } from './search.page';
 
 const routes: Routes = [
@@ -20,6 +20,7 @@ const routes: Routes = [
     FormsModule,
     TranslateModule,
     IonicModule,
+    ComponentsModule,
     RouterModule.forChild(routes)
   ],
   declarations: [SearchPage]

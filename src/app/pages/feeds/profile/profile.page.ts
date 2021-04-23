@@ -11,6 +11,8 @@ import { PopupProvider } from 'src/app/services/popup';
 import { LogUtils } from 'src/app/services/LogUtils';
 import { IntentService } from 'src/app/services/IntentService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { TitleBarService } from 'src/app/services/TitleBarService';
+import { TranslateService } from "@ngx-translate/core";
 
 import * as _ from 'lodash';
 import { ViewHelper } from 'src/app/services/viewhelper.service';
@@ -138,7 +140,9 @@ export class ProfilePage implements OnInit {
     public  popupProvider:PopupProvider,
     public  popoverController:PopoverController,
     private intentService: IntentService,
-    private viewHelper: ViewHelper
+    private viewHelper: ViewHelper,
+    private translate:TranslateService,
+    private titleBarService: TitleBarService
   ) {
   }
 
@@ -458,6 +462,7 @@ export class ProfilePage implements OnInit {
   }
 
   ionViewWillEnter(){
+    this.initTitleBar();
     this.events.subscribe(FeedsEvent.PublishType.addProflieEvent,()=>{
         if(!this.isAddProfile){
           this.addProflieEvent();
@@ -471,6 +476,12 @@ export class ProfilePage implements OnInit {
   ionViewWillLeave(){
     this.events.unsubscribe(FeedsEvent.PublishType.addProflieEvent);
     this.clearData();
+  }
+
+  initTitleBar(){
+    let title = this.translate.instant("FeedsPage.tabTitle2");
+    this.titleBarService.setTitle(this.titleBar, title);
+    this.titleBarService.setTitleBarMoreMemu(this.titleBar);
   }
 
   clearData(){

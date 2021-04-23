@@ -8,8 +8,8 @@ import { PopupProvider } from '../../services/popup';
 import { StorageService } from '../../services/StorageService';
 import { Events } from 'src/app/services/events.service';
 
-import { TitleBarService } from 'src/app/services/TitleBarService';
-import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+// import { TitleBarService } from 'src/app/services/TitleBarService';
+// import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 
 import * as _ from 'lodash';
 
@@ -19,7 +19,7 @@ import * as _ from 'lodash';
   styleUrls: ['./feeds.page.scss'],
 })
 export class FeedsPage implements OnInit {
-  @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
+  // @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   public totalunread:number = 0;
   public title = "";
   public currentTab = "";
@@ -33,7 +33,7 @@ export class FeedsPage implements OnInit {
     private event:Events,
     public popupProvider:PopupProvider,
     private storageService:StorageService,
-    private titleBarService: TitleBarService
+    // private titleBarService: TitleBarService
   ) {
   }
 
@@ -83,13 +83,13 @@ export class FeedsPage implements OnInit {
   }
 
   initTile(){
-    this.titleBarService.setTitle(this.titleBar, this.translate.instant(this.title));
+    // this.titleBarService.setTitle(this.titleBar, this.translate.instant(this.title));
   }
 
   ionViewDidEnter() {
     this.initTab();
     this.initTile();
-    this.titleBarService.setTitleBarBackKeyShown(this.titleBar, false);
+    // this.titleBarService.setTitleBarBackKeyShown(this.titleBar, false);
     // appManager.setVisible("show");
   }
 
@@ -141,7 +141,7 @@ export class FeedsPage implements OnInit {
       // this.feedService.currentTab = "home";
       this.title = "FeedsPage.tabTitle1";
       this.initTile();
-      this.titleBarService.setTitleBarBackKeyShown(this.titleBar, false);
+      // this.titleBarService.setTitleBarBackKeyShown(this.titleBar, false);
       this.feedService.setCurTab(this.currentTab);
     }
 
@@ -149,7 +149,7 @@ export class FeedsPage implements OnInit {
       this.currentTab = "profile";
       this.title = "FeedsPage.tabTitle2"
       this.initTile();
-      this.titleBarService.setTitleBarBackKeyShown(this.titleBar, false);
+      // this.titleBarService.setTitleBarBackKeyShown(this.titleBar, false);
       this.feedService.setCurTab(this.currentTab);
     }
 
@@ -157,7 +157,7 @@ export class FeedsPage implements OnInit {
       this.currentTab = "notification";
       this.title = "FeedsPage.tabTitle3";
       this.initTile();
-      this.titleBarService.setTitleBarBackKeyShown(this.titleBar, false);
+      // this.titleBarService.setTitleBarBackKeyShown(this.titleBar, false);
       this.feedService.setCurTab(this.currentTab);
     }
 
@@ -165,7 +165,7 @@ export class FeedsPage implements OnInit {
       this.currentTab = "search";
       this.title = "FeedsPage.tabTitle4";
       this.initTile();
-      this.titleBarService.setTitleBarBackKeyShown(this.titleBar, false);
+      // this.titleBarService.setTitleBarBackKeyShown(this.titleBar, false);
       this.feedService.setCurTab(this.currentTab);
     }
 

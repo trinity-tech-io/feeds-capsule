@@ -11,6 +11,9 @@ import { StorageService } from '../../../services/StorageService';
 import { IntentService } from '../../../services/IntentService';
 import { Events } from 'src/app/services/events.service';
 import { ViewHelper } from 'src/app/services/viewhelper.service';
+import { TranslateService } from "@ngx-translate/core";
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { TitleBarService } from 'src/app/services/TitleBarService';
 
 import * as _ from 'lodash';
 @Component({
@@ -21,7 +24,7 @@ import * as _ from 'lodash';
 
 
 export class SearchPage implements OnInit {
-
+  @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   @ViewChild(IonRefresher,{static:true}) ionRefresher:IonRefresher;
   @ViewChild('searchbar', {static: false}) searchbar:IonSearchbar;
 
@@ -70,7 +73,9 @@ export class SearchPage implements OnInit {
     private httpService: HttpService,
     private intentService: IntentService,
     public  storageService: StorageService,
-    private viewHelper: ViewHelper
+    private translate: TranslateService,
+    private viewHelper: ViewHelper,
+    private titleBarService: TitleBarService
   ) {
   }
 
@@ -133,10 +138,17 @@ export class SearchPage implements OnInit {
   }
 
   ionViewWillEnter() {
+    this.initTitleBar();
     this.events.subscribe(FeedsEvent.PublishType.search, ()=>{
          this.init();
     });
     this.init();
+  }
+
+  initTitleBar(){
+    let title = this.translate.instant("FeedsPage.tabTitle4");
+    this.titleBarService.setTitle(this.titleBar, title);
+    this.titleBarService.setTitleBarMoreMemu(this.titleBar);
   }
 
   init(){

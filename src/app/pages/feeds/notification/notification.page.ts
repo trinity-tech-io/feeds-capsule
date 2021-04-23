@@ -7,6 +7,8 @@ import { TranslateService } from "@ngx-translate/core";
 import { NativeService } from 'src/app/services/NativeService';
 import { IonInfiniteScroll,IonContent} from '@ionic/angular';
 import { ViewHelper } from 'src/app/services/viewhelper.service';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { TitleBarService } from 'src/app/services/TitleBarService';
 
 @Component({
   selector: 'slides-example',
@@ -14,7 +16,7 @@ import { ViewHelper } from 'src/app/services/viewhelper.service';
   styleUrls: ['./notification.page.scss'],
 })
 export class NotificationPage {
-
+  @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   @ViewChild(IonContent,{static:true}) content: IonContent;
   @ViewChild(IonInfiniteScroll,{static:true}) infiniteScroll: IonInfiniteScroll;
 
@@ -41,7 +43,8 @@ export class NotificationPage {
     public theme: ThemeService,
     private translate: TranslateService,
     private feedService: FeedService,
-    private viewHelper: ViewHelper) {
+    private viewHelper: ViewHelper,
+    private titleBarService: TitleBarService) {
     //this.notificationList = this.feedService.getNotificationList();
   }
 
@@ -49,7 +52,7 @@ export class NotificationPage {
     
   }
   ionViewWillEnter() {
-    
+    this.initTitleBar();
     this.connectionStatus = this.feedService.getConnectionStatus();
     this.events.subscribe(FeedsEvent.PublishType.connectionChanged,(status)=>{
       this.zone.run(() => {
@@ -59,6 +62,12 @@ export class NotificationPage {
   
     this.initRefresh();
     this.scrollToTop(1);
+  }
+
+  initTitleBar(){
+    let title = this.translate.instant("FeedsPage.tabTitle3");
+    this.titleBarService.setTitle(this.titleBar, title);
+    this.titleBarService.setTitleBarMoreMemu(this.titleBar);
   }
 
   initRefresh(){
