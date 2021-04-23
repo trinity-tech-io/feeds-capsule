@@ -1,4 +1,4 @@
-import { Component} from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { Platform, ModalController, PopoverController, MenuController} from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
@@ -12,6 +12,7 @@ import { StorageService } from './services/StorageService';
 import { PopupProvider } from 'src/app/services/popup';
 import { LogUtils } from 'src/app/services/LogUtils';
 import { Events} from 'src/app/services/events.service';
+
 enum LogLevel {
   NONE,
   ERROR,
@@ -230,7 +231,6 @@ export class MyApp {
   clearData(){
     this.feedService.signOut().then(()=>{
       this.events.publish(FeedsEvent.PublishType.clearHomeEvent);
-      this.appService.hideright();
       this.native.setRootRouter('signin');
       this.native.toast("app.des");
     }).catch((err)=>{

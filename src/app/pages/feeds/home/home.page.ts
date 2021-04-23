@@ -15,6 +15,7 @@ import { LogUtils } from 'src/app/services/LogUtils';
 import { ViewHelper } from 'src/app/services/viewhelper.service';
 import { PopupProvider } from 'src/app/services/popup';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { TitleBarService } from 'src/app/services/TitleBarService';
 
 import * as _ from 'lodash';
 let TAG: string = "Feeds-home";
@@ -131,10 +132,11 @@ export class HomePage implements OnInit {
     private logUtils: LogUtils,
     public popupProvider:PopupProvider,
     public popoverController:PopoverController,
-    private viewHelper: ViewHelper) {
-
+    private viewHelper: ViewHelper,
+    private titleBarService: TitleBarService) {
+      
     }
-
+  
   initPostListData(scrollToTop:boolean){
         this.infiniteScroll.disabled =false;
         this.startIndex = 0;
@@ -833,9 +835,14 @@ clearData(){
   }
 
   ionViewDidEnter() {
-
+    this.initTitleBar();
   }
 
+  initTitleBar(){
+    let title = this.translate.instant("FeedsPage.tabTitle1");
+    this.titleBarService.setTitle(this.titleBar, title);
+    this.titleBarService.setTitleBarMoreMemu(this.titleBar);
+  }
 
   showBigImage(nodeId:string,channelId:number,postId:number){
     this.pauseAllVideo();

@@ -11,8 +11,8 @@ import { MenuController,PopoverController } from '@ionic/angular';
 import { MenuService } from 'src/app/services/MenuService';
 import { PopupProvider } from 'src/app/services/popup';
 import { IntentService } from 'src/app/services/IntentService';
-import { TitleBarService } from 'src/app/services/TitleBarService';
-import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+// import { TitleBarService } from 'src/app/services/TitleBarService';
+// import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 
 let managerService: any;
 
@@ -20,7 +20,7 @@ let managerService: any;
     providedIn: 'root'
 })
 export class AppService {
-    @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
+    // @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
     // @ViewChild(IonRouterOutlet,{static:true}) ionRouterOutlet: IonRouterOutlet;
     public popover:any = null;
     constructor(
@@ -38,7 +38,7 @@ export class AppService {
       private menuService: MenuService,
       private events: Events,
       private intentService: IntentService,
-      private titleBarService: TitleBarService
+      // private titleBarService: TitleBarService
     ) {
     }
 
@@ -52,13 +52,13 @@ export class AppService {
       //   if (menuIcon.key == "back") {
       //       this.handleBack();
       //   } else if (menuIcon.key == "more"){
-      //       this.events.publish(FeedsEvent.PublishType.openRightMenu);
-      //       this.menuService.hideActionSheet();
-      //       let value =  this.popoverController.getTop()["__zone_symbol__value"] || "";
-      //       if(value!=""){
-      //         this.popoverController.dismiss();
-      //       }
-      //       this.menu.open("menu");
+            // this.events.publish(FeedsEvent.PublishType.openRightMenu);
+            // this.menuService.hideActionSheet();
+            // let value =  this.popoverController.getTop()["__zone_symbol__value"] || "";
+            // if(value!=""){
+            //   this.popoverController.dismiss();
+            // }
+            // this.menu.open("menu");
       //   } else if (menuIcon.key === 'editChannel') {
       //     this.event.publish(FeedsEvent.PublishType.editChannel);
       //   } else if (menuIcon.key === 'editServer') {
@@ -111,13 +111,7 @@ export class AppService {
       }
     }
 
-    addright(){
-      this.titleBarService.setIcon(this.titleBar, FeedsData.TitleBarIconSlot.OUTER_RIGHT, "more", "assets/icon/more_menu.ico");
-    }
 
-    hideright(){
-      this.titleBarService.setIcon(this.titleBar, FeedsData.TitleBarIconSlot.OUTER_RIGHT, null, null);
-    }
 
     onMessageReceived(msg: IntentPlugin.ReceivedIntent) {
       var params: any = msg.params;
@@ -174,7 +168,7 @@ export class AppService {
       });
     }
 
-    initData(signInData: SignInData){
+    initData(signInData: SignInData, ){
       if (signInData == null ||
         signInData == undefined ||
         this.feedService.getCurrentTimeNum() > signInData.expiresTS ){
@@ -186,7 +180,6 @@ export class AppService {
         this.onReceiveIntent(msg);
       });
 
-      this.addright();
       this.carrierService.init(signInData.did);
       this.native.setRootRouter(['/tabs/home']);
       this.feedService.updateSignInDataExpTime(signInData);
