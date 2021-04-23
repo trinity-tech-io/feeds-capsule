@@ -30,14 +30,15 @@ export class EditimagePage implements OnInit {
     this.events.subscribe(FeedsEvent.PublishType.editImages,()=>{
       this.finish();
     });
-    this.appService.hideright();
+    // this.appService.hideright();
+    this.titleBarService.hideRight(this.titleBar);
     this.titleBarService.setIcon(this.titleBar, FeedsData.TitleBarIconSlot.INNER_RIGHT, "editImages", "assets/icon/yes.ico");
     this.headPortrait = this.feedService.getClipProfileIamge();
   }
 
   ionViewWillLeave(){
     this.events.unsubscribe(FeedsEvent.PublishType.editImages);
-    this.appService.addright();
+    this.titleBarService.addRight(this.titleBar);
     this.titleBarService.setIcon(this.titleBar, FeedsData.TitleBarIconSlot.INNER_RIGHT, null, null);
     let croppedImage = this.feedService.getClipProfileIamge();
     if(this.headPortrait === croppedImage){

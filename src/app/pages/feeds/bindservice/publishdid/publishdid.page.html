@@ -1,7 +1,6 @@
-<ion-header *ngIf="connectionStatus == 1">
-  <div class="offline-header"></div>
-</ion-header>
 <ion-content ion-padding [class.darkContainer]="theme.darkMode">
+  <app-titlebar></app-titlebar>
+  <div *ngIf="connectionStatus == 1" class="offline-header"></div>
   <div class="first white">
      {{'PublishdidPage.introduce'|translate}}
   </div>

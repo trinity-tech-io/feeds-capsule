@@ -1,7 +1,6 @@
-<ion-header *ngIf="connectionStatus == 1">
-   <div class="offline-header"></div>
- </ion-header>
  <ion-content>
+   <app-titlebar></app-titlebar>
+   <div *ngIf="connectionStatus == 1" class="offline-header"></div>
     <ion-grid class="container" [class.darkContainer]="theme.darkMode">
        <h1>
          {{ 'ScanqrcodePage.introtitle' | translate }} <br>

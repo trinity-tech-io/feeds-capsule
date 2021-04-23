@@ -1,7 +1,6 @@
-<ion-header *ngIf="connectionStatus == 1">
-  <div class="offline-header"></div>
-</ion-header>
 <ion-content>
+  <app-titlebar></app-titlebar>
+  <div *ngIf="connectionStatus == 1" class="offline-header"></div>
   <ion-grid class="ios-container" [class.ios-dark-container]="theme.darkMode">
     <ion-row class="section" (click)="toggle()">
       <ion-col size="9" class="title-col" (swipe)="toggle()">

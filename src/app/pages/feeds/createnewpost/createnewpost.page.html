@@ -1,8 +1,6 @@
-<ion-header *ngIf="connectionStatus == 1">
-  <div class="offline-header"></div>
-</ion-header>
-
 <ion-content>
+  <app-titlebar></app-titlebar>
+  <div *ngIf="connectionStatus == 1" class="offline-header"></div>
   <!-- <ion-list class="channel-list" [class.darkChannelList]="theme.darkMode"> -->
     <div class="channel-list" [class.darkChannelList]="theme.darkMode">
     <ion-item class="removeBorder" lines="none">
