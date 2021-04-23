@@ -30,7 +30,7 @@ declare let carrierManager: CarrierPlugin.CarrierManager;
 let FriendInfo: CarrierPlugin.FriendInfo;
 let UserInfo: CarrierPlugin.UserInfo;
 let carrierInst: CarrierPlugin.Carrier;
-let eventBus = null;
+let eventBus: Events = null;
 // var connectStatus ;
 
 // const bootstrapsOpts = [
@@ -88,7 +88,8 @@ export class CarrierService {
 
     readyCallback(ret) {
         this.mIsReady = true;
-        eventBus.publish(FeedsEvent.PublishType.carrierReady, ret, Date.now());
+        console.log("carrier Ready");
+        eventBus.publish(FeedsEvent.PublishType.carrierReady, ret);
     }
 
     createCarrierInstanceSuccess(ret: any) {
@@ -101,39 +102,39 @@ export class CarrierService {
     }
 
     conectionCallback(event) {
-        eventBus.publish(FeedsEvent.PublishType.carrierConnectionChanged, event.status, Date.now());
+        eventBus.publish(FeedsEvent.PublishType.carrierConnectionChanged, event.status);
     }
 
     friendConnectionCallback(ret) {
-        eventBus.publish(FeedsEvent.PublishType.carrierFriendConnection, ret, Date.now());
+        eventBus.publish(FeedsEvent.PublishType.carrierFriendConnection, ret);
     }
 
     friendInfoCallback(ret) {
-        eventBus.publish(FeedsEvent.PublishType.carrierFriendInfo, ret, Date.now());
+        eventBus.publish(FeedsEvent.PublishType.carrierFriendInfo, ret);
     }
 
     friendListCallback(event) {
-        eventBus.publish(FeedsEvent.PublishType.carrierFriendList, event.friends.length, Date.now());
+        eventBus.publish(FeedsEvent.PublishType.carrierFriendList, event.friends.length);
     }
 
     friendAddedCallback(ret) {
-        eventBus.publish(FeedsEvent.PublishType.carrierFriendAdded, ret, Date.now());
+        eventBus.publish(FeedsEvent.PublishType.carrierFriendAdded, ret);
     }
 
     friendRemovedCallback(ret) {
-        eventBus.publish(FeedsEvent.PublishType.carrierFriendRemoved, ret, Date.now());
+        eventBus.publish(FeedsEvent.PublishType.carrierFriendRemoved, ret);
     }
 
     friendMessageCallback(event)  {
-        eventBus.publish(FeedsEvent.PublishType.carrierFriendMessage, event, Date.now());
+        eventBus.publish(FeedsEvent.PublishType.carrierFriendMessage, event);
     }
 
     friendBinaryMessageCallback(event) {
-        eventBus.publish(FeedsEvent.PublishType.carrierFriendBinaryMessage, event, Date.now());
+        eventBus.publish(FeedsEvent.PublishType.carrierFriendBinaryMessage, event);
     }
 
     sessionRequestCallback(event) {
-        eventBus.publish(FeedsEvent.PublishType.carrierSessionRequest, event, Date.now());
+        eventBus.publish(FeedsEvent.PublishType.carrierSessionRequest, event);
     }
 
     destroyCarrier() {

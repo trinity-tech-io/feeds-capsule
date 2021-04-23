@@ -103,6 +103,7 @@
       },
       "cordova-plugin-ionic-keyboard": {},
       "cordova-sqlite-storage": {},
+      "@elastosfoundation/elastos-cordova-plugin-carrier": {},
       "@elastosfoundation/elastos-cordova-plugin-intent": {},
       "@elastosfoundation/elastos-cordova-plugin-did": {},
       "cordova-plugin-file": {}
