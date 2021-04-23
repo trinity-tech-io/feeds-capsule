@@ -62,7 +62,7 @@ export class Avatar {
 }
 
 let expDay = 10;
-let eventBus = null;
+let eventBus: Events = null;
 
 @Injectable()
 export class FeedService {
@@ -402,7 +402,8 @@ export class FeedService {
       let friendId = ret.friendId;
       let friendStatus = ret.status;
       this.logUtils.logd("Friend:"+friendId+" connection changed to "+friendStatus,TAG);
-      eventBus.publish(FeedsEvent.PublishType.friendConnectionChanged, friendId, friendStatus);
+      //TODO event
+      // eventBus.publish(FeedsEvent.PublishType.friendConnectionChanged, friendId, friendStatus);
 
       if (this.connectionService.friendConnectionMap == null || this.connectionService.friendConnectionMap == undefined)
         this.connectionService.friendConnectionMap = {};
@@ -454,7 +455,7 @@ export class FeedService {
     let serverStatistic = this.dataHelper.generateEmptyStatistics(server.did);
     this.dataHelper.updateServerStatistics(server.nodeId, serverStatistic);
     this.dataHelper.updateServer(server.nodeId, server)
-    eventBus.publish(FeedsEvent.PublishType.updateServerList, this.getServerList(), Date.now());
+    eventBus.publish(FeedsEvent.PublishType.updateServerList, this.getServerList());
   }
 
   connectionChangedCallback(){
@@ -479,11 +480,11 @@ export class FeedService {
     }else if(networkStatus == FeedsData.ConnState.disconnected || carrierStatus == FeedsData.ConnState.disconnected){
       this.dataHelper.setConnectionStatus(FeedsData.ConnState.disconnected);
     }
-
     let connectionStatus = this.dataHelper.getConnectionStatus();
+
     if (this.lastConnectionStatus != connectionStatus){
       this.lastConnectionStatus = connectionStatus;
-      eventBus.publish(FeedsEvent.PublishType.connectionChanged, connectionStatus, Date.now());
+      eventBus.publish(FeedsEvent.PublishType.connectionChanged, connectionStatus);
     }
   }
 
@@ -495,7 +496,6 @@ export class FeedService {
         this.processGeneralError(nodeId,error.code);
         return;
     }
-
   }
 
   handleResult(method:string, nodeId: string ,result: any , request: any, error: any){
@@ -1723,7 +1723,8 @@ export class FeedService {
 
     this.dataHelper.updateChannel(nodeChannelId, channel);
 
-    eventBus.publish(FeedsEvent.PublishType.createTopicSuccess,nodeId,channelId);
+    //TODO event
+    // eventBus.publish(FeedsEvent.PublishType.createTopicSuccess,nodeId,channelId);
     eventBus.publish(FeedsEvent.PublishType.channelsDataUpdate);
 
     this.subscribeChannel(nodeId,channelId);
@@ -1808,7 +1809,8 @@ export class FeedService {
     }
 
     // this.storeService.set(cacheKey, post);
-    eventBus.publish(FeedsEvent.PublishType.declarePostSuccess, postId, tempId);
+    //TODO event
+    // eventBus.publish(FeedsEvent.PublishType.declarePostSuccess, postId, tempId);
   }
 
   handleNotifyPostResult(nodeId: string, result: any, request: any, error: any, memo: any){
@@ -2063,7 +2065,8 @@ export class FeedService {
       if (request.max_count == 1){
         isAddFeeds = true;
         await this.processTobeAddedFeedsFinish(nodeId, channelId);
-        eventBus.publish(FeedsEvent.PublishType.subscribeFinish, nodeId,channelId);
+        //TODO event
+        // eventBus.publish(FeedsEvent.PublishType.subscribeFinish, nodeId,channelId);
         this.native.toast(this.formatInfoService.formatFollowSuccessMsg(this.getFeedNameById(nodeId, channelId)));
         // this.getMultiComments(nodeId, channelId, 0, Communication.field.last_update, 0, 0, 0);
 
@@ -2207,7 +2210,8 @@ export class FeedService {
     }
 
     let reqParams = requestParams.requestParams;
-    eventBus.publish(FeedsEvent.PublishType.getCommentFinish,nodeId,reqParams.channel_id,reqParams.post_id);
+    //TODO event
+    // eventBus.publish(FeedsEvent.PublishType.getCommentFinish,nodeId,reqParams.channel_id,reqParams.post_id);
   }
 
   handleGetStatisticsResult(nodeId: string, result: any, error: any){
@@ -2248,7 +2252,8 @@ export class FeedService {
         originChannel.isSubscribed = false;
         this.dataHelper.updateChannel(nodeChannelId, originChannel);
       }
-      eventBus.publish(FeedsEvent.PublishType.unsubscribeFinish, nodeId,request.id, originChannel.name);
+      //TODO event
+      // eventBus.publish(FeedsEvent.PublishType.unsubscribeFinish, nodeId,request.id, originChannel.name);
       return;
     }
 
@@ -2314,7 +2319,8 @@ export class FeedService {
     originChannel.subscribers = subscribeNum + 1;
 
     this.dataHelper.updateChannel(nodeChannelId, originChannel);
-    eventBus.publish(FeedsEvent.PublishType.subscribeFinish, nodeId, channelId);
+    //TODO event
+    // eventBus.publish(FeedsEvent.PublishType.subscribeFinish, nodeId, channelId);
   }
 
   doSubscribeChannelError(nodeId: string, channelId: number){
@@ -2327,7 +2333,8 @@ export class FeedService {
     if (subscribeNum > 0 )
       originChannel.subscribers = subscribeNum - 1;
     this.dataHelper.updateChannel(nodeChannelId, originChannel);
-    eventBus.publish(FeedsEvent.PublishType.subscribeFinish, nodeId,channelId);
+    //TODO event
+    // eventBus.publish(FeedsEvent.PublishType.subscribeFinish, nodeId,channelId);
   }
 
   doUnsubscribeChannelFinish(nodeId: string, channelId: number){
@@ -2339,7 +2346,8 @@ export class FeedService {
     if (subscribeNum > 0 )
       originChannel.subscribers = subscribeNum - 1;
     this.dataHelper.updateChannel(nodeChannelId, originChannel);
-    eventBus.publish(FeedsEvent.PublishType.unsubscribeFinish, nodeId, channelId, originChannel.name);
+    //TODO event
+    // eventBus.publish(FeedsEvent.PublishType.unsubscribeFinish, nodeId, channelId, originChannel.name);
   }
 
   doUnsubscribeChannelError(nodeId: string, channelId: number){
@@ -2351,7 +2359,8 @@ export class FeedService {
     originChannel.subscribers = subscribeNum + 1;
 
     this.dataHelper.updateChannel(nodeChannelId, originChannel);
-    eventBus.publish(FeedsEvent.PublishType.unsubscribeFinish, nodeId, channelId, originChannel.name);
+    //TODO event
+    // eventBus.publish(FeedsEvent.PublishType.unsubscribeFinish, nodeId, channelId, originChannel.name);
   }
 
   doPostLikeFinish(nodeId: string, channel_id: number, post_id: number, comment_id: number){
@@ -2897,7 +2906,8 @@ export class FeedService {
     }
     // this.isDeclareFinish = true;
     this.clearDeclareOwnerTimeout();
-    eventBus.publish(FeedsEvent.PublishType.owner_declared, nodeId, phase, did, payload);
+    //TODO event
+    // eventBus.publish(FeedsEvent.PublishType.owner_declared, nodeId, phase, did, payload);
   }
 
   // {
@@ -2918,7 +2928,8 @@ export class FeedService {
     let transaction_payload = result.transaction_payload;
 
     this.resolveServerDid(did, nodeId, transaction_payload,()=>{
-      eventBus.publish(FeedsEvent.PublishType.did_imported, nodeId, did, transaction_payload);
+      //TODO event
+      // eventBus.publish(FeedsEvent.PublishType.did_imported, nodeId, did, transaction_payload);
     },()=>{
 
     });
@@ -2962,7 +2973,8 @@ export class FeedService {
     let feedId = memo.feedId;
     let postId = memo.postId;
     let commentId = memo.commentId;
-    eventBus.publish(FeedsEvent.PublishType.setBinaryFinish, nodeId, feedId, postId, commentId, tempId);
+    //TODO event
+    // eventBus.publish(FeedsEvent.PublishType.setBinaryFinish, nodeId, feedId, postId, commentId, tempId);
   }
 
   handleGetBinaryResponse(nodeId, result, requestParams, error){
@@ -2976,7 +2988,8 @@ export class FeedService {
 
     let value = this.serializeDataService.decodeData(contentBin);
     this.storeService.set(key, value).then(()=>{
-        eventBus.publish(FeedsEvent.PublishType.getBinaryFinish, nodeId, key, value);
+      //TODO event
+      // eventBus.publish(FeedsEvent.PublishType.getBinaryFinish, nodeId, key, value);
     });
   }
 
@@ -3217,11 +3230,13 @@ export class FeedService {
           elaAddress        : "",
         }
         onSuccess();
-        eventBus.publish(FeedsEvent.PublishType.resolveDidSucess, nodeId, did);
+        //TODO event
+        // eventBus.publish(FeedsEvent.PublishType.resolveDidSucess, nodeId, did);
     },(err)=>{
       bindingServerCache = defaultServer;
       onError(err);
-      eventBus.publish(FeedsEvent.PublishType.resolveDidError, nodeId, did, payload);
+      //TODO event
+      // eventBus.publish(FeedsEvent.PublishType.resolveDidError, nodeId, did, payload);
     });
   }
 
@@ -3969,9 +3984,8 @@ export class FeedService {
 
   restoreSession(nodeId: string, memo: FeedsData.SessionMemoData): boolean{
     if(this.getServerStatusFromId(nodeId) == 1){
-      eventBus.publish(FeedsEvent.PublishType.streamError,nodeId,this.createOfflineError());
-      // eventBus.publish("sessionRequest:error", nodeId,this.createCreateOfflineError());
-      // this.native.toast(this.formatInfoService.formatOfflineMsg(this.getServerNameByNodeId(nodeId)));
+      //TODO event
+      // eventBus.publish(FeedsEvent.PublishType.streamError,nodeId,this.createOfflineError());
       return false;
     }
 
@@ -4984,7 +4998,6 @@ export class FeedService {
 
   signIn(): Promise<string>{
     return new Promise(async (resolve, reject) =>{
-      console.log("1111111111111");
       let res = await this.credaccess();
       if (!res){
         this.logUtils.loge("SignIn error, credaccess result is "+JSON.stringify(res));
@@ -5066,12 +5079,7 @@ export class FeedService {
   credaccess(): Promise<any>{
     return new Promise(async (resolve, reject) =>{
       try {
-        console.log("222222222");
         let response = await this.intentService.credaccessWithParams();
-        console.log("ttt response = "+JSON.stringify(response));
-        console.log("ttt response.presentation = "+JSON.stringify(response.presentation));
-        console.log("ttt response && response.result = "+JSON.stringify(response && response.presentation));
-
         if (response && response.presentation) {
           resolve(response);
           return;
@@ -5254,12 +5262,12 @@ export class FeedService {
   }
 
   onReceivedStreamStateChanged(){
-    eventBus.subscribe(FeedsEvent.PublishType.innerStreamStateChanged, (nodeId, state) => {
-        if (state != FeedsData.StreamState.CONNECTED)
-          return;
-
-        this.sendPostDataWithSession(nodeId);
-    });
+    //TODO event
+    // eventBus.subscribe(FeedsEvent.PublishType.innerStreamStateChanged, (nodeId, state) => {
+    //     if (state != FeedsData.StreamState.CONNECTED)
+    //       return;
+    //     this.sendPostDataWithSession(nodeId);
+    // });
   }
 
   sendMediaData(nodeId: string, feedId: number, tempId: number){

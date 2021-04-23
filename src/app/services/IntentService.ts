@@ -57,7 +57,6 @@ export class IntentService {
     }
 
     private credaccess(params: any): Promise<any>{
-        console.log("send params = "+JSON.stringify(params));
         return intentManager.sendIntent("https://did.elastos.net/credaccess", params);
     }
 
@@ -103,7 +102,6 @@ export class IntentService {
 
             try {
                 let response = await this.credaccess(params);
-                console.log("response params = "+JSON.stringify(response));
                 if (response && response.result && response.result.presentation) {
                     let data = response.result;
                     resolve(data);
