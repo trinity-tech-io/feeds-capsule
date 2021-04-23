@@ -85,7 +85,7 @@ export class FeedService {
   private clipProfileIamge = "";
   private selsectIndex = 1;
   private carrierStatus:FeedsData.ConnState = FeedsData.ConnState.disconnected;
-  private networkStatus:FeedsData.ConnState = FeedsData.ConnState.disconnected;
+  private networkStatus:FeedsData.ConnState = FeedsData.ConnState.connected;
 
   private lastConnectionStatus = FeedsData.ConnState.disconnected ;
   private isLogging: {[nodeId: string]: boolean} = {};
