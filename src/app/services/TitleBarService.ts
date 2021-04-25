@@ -25,7 +25,7 @@ export class TitleBarService {
 
     setTitleBarBackKeyShown(titleBar: TitleBarComponent, show: boolean) {
         if (show) {
-            this.setIcon(titleBar, FeedsData.TitleBarIconSlot.OUTER_LEFT, "back", "assets/icons/back.svg");
+            this.setIcon(titleBar, FeedsData.TitleBarIconSlot.OUTER_LEFT, "back", "assets/icon/back.svg");
             this.registerBackKey(titleBar);
             return;
         }
