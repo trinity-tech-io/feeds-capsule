@@ -6,7 +6,7 @@ import { RouteReuseStrategy } from '@angular/router';
 import { IonicModule, IonicRouteStrategy, Platform } from '@ionic/angular';
 import { AppRoutingModule } from './app-routing.module';
 import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
-import { Animation } from '@ionic/core';
+import { Animation, AnimationBuilder } from '@ionic/core';
 
 import { Clipboard } from '@ionic-native/clipboard/ngx';
 
@@ -62,6 +62,7 @@ import { IonicStorageModule } from '@ionic/storage';
 
 import { VideoEditor } from '@ionic-native/video-editor/ngx';
 import { RewriteFrames } from '@sentry/integrations';
+import { customAnimation } from 'src/app/services/nav_anamition';
 
 import * as Sentry from "@sentry/browser";
 
@@ -120,35 +121,6 @@ export function TranslateLoaderFactory() {
   return new WebpackTranslateLoader();
 }
 
-//TODO animation
-// export function anim(AnimationC: Animation, baseEl: any, position?: any): Promise<Animation> {
-//   const baseAnimation = new AnimationC();
-//   const hostEl = (baseEl.host || baseEl) as HTMLElement;
-//   const wrapperAnimation = new AnimationC();
-//   const wrapperAnimation2 = new AnimationC();
-//   if (position.direction == "forward") {
-//   wrapperAnimation.addElement(position.enteringEl);
-//   wrapperAnimation.fromTo('transform', `translateX(100%)`, 'translateX(0px)');
-//   wrapperAnimation.fromTo('opacity', 1, 1);
-//   }
-
-//   if (position.direction == "back") {
-//   wrapperAnimation.addElement(position.leavingEl);
-//   wrapperAnimation.fromTo('transform', `translateX(0)`, 'translateX(100%)');
-//   wrapperAnimation.fromTo('opacity', 1, 0.3);
-
-//   wrapperAnimation2.addElement(position.enteringEl);
-//   wrapperAnimation2.fromTo('transform', `translateX(0)`, 'translateX(0)');
-//   wrapperAnimation2.fromTo('opacity', 1, 1);
-//   }
-//   return Promise.resolve(baseAnimation
-//   .addElement(hostEl)
-//   .easing('cubic-bezier(.36,.66,.04,1)')
-//   .duration(800)
-//   .add(wrapperAnimation)
-//   .add(wrapperAnimation2));
-// }
-
 @NgModule({
   declarations: [
     MyApp,
@@ -165,8 +137,7 @@ export function TranslateLoaderFactory() {
     IonicModule.forRoot({
       rippleEffect: true,
       mode: 'ios',
-      //TODO animation
-      // navAnimation: anim,
+      navAnimation: customAnimation
     }),
     TranslateModule.forRoot({
       loader: {
