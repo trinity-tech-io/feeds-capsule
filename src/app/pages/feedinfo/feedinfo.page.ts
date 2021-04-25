@@ -126,19 +126,19 @@ export class FeedinfoPage implements OnInit {
       this.clickEdit();
     });
 
-    //TODO event
-    // this.events.subscribe(FeedsEvent.PublishType.subscribeFinish, (nodeId, channelId)=> {
-    //   this.zone.run(() => {
-    //     this.checkFollowStatus(this.nodeId,this.channelId);
-    //   });
-    // });
+    this.events.subscribe(FeedsEvent.PublishType.subscribeFinish, (subscribeFinishData: FeedsEvent.SubscribeFinishData)=> {
+      this.zone.run(() => {
+        let nodeId = subscribeFinishData.nodeId;
+        let channelId = subscribeFinishData.channelId;
+        this.checkFollowStatus(this.nodeId,this.channelId);
+      });
+    });
 
-    //TODO event
-    // this.events.subscribe(FeedsEvent.PublishType.unsubscribeFinish, (nodeId, channelId, name) => {
-    //   this.zone.run(() => {
-    //     this.native.setRootRouter(['/tabs/home']);
-    //   });
-    // });
+    this.events.subscribe(FeedsEvent.PublishType.unsubscribeFinish, (unsubscribeData: FeedsEvent.unsubscribeData) => {
+      this.zone.run(() => {
+        this.native.setRootRouter(['/tabs/home']);
+      });
+    });
   }
 
   checkFollowStatus(nodeId: string, channelId: number){

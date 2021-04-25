@@ -112,12 +112,13 @@ export class CreatenewpostPage implements OnInit {
         });
       });
 
-      //TODO event
-      // this.events.subscribe(FeedsEvent.PublishType.friendConnectionChanged, (nodeId, status)=>{
-      //   this.zone.run(()=>{
-      //     this.nodeStatus[nodeId] = status;
-      //   });
-      // });
+      this.events.subscribe(FeedsEvent.PublishType.friendConnectionChanged, (friendConnectionChangedData: FeedsEvent.FriendConnectionChangedData)=>{
+        this.zone.run(()=>{
+          let nodeId = friendConnectionChangedData.nodeId;
+          let connectionStatus = friendConnectionChangedData.connectionStatus;
+          this.nodeStatus[nodeId] = connectionStatus;
+        });
+      });
 
       this.events.subscribe(FeedsEvent.PublishType.publishPostSuccess, (postId) => {
         this.postId = postId;
@@ -136,25 +137,6 @@ export class CreatenewpostPage implements OnInit {
         });
       });
 
-      // this.events.subscribe(FeedsEvent.PublishType.declarePostSuccess, (postId, tempId) => {
-      //   this.zone.run(()=>{
-      //     this.postId = postId;
-      //     if (this.transDataChannel == FeedsData.TransDataChannel.MESSAGE){
-      //       this.feedService.sendDataFromMsg(this.nodeId,this.channelId,postId, 0 ,0, this.flieUri,this.imgUrl, tempId);
-      //       return;
-      //     }
-
-      //     if (this.transDataChannel == FeedsData.TransDataChannel.SESSION){
-      //       if (this.sessionState === FeedsData.StreamState.CONNECTED)
-      //         this.feedService.sendData(this.nodeId,this.channelId,this.postId, 0 ,0, this.flieUri,this.imgUrl, tempId);
-      //         this.native.updateLoadingMsg(this.translate.instant("common.uploading"));
-      //       return;
-      //     }
-      //   });
-      // });
-
-
-
       this.events.subscribe(FeedsEvent.PublishType.rpcRequestError, () => {
         //this.pauseVideo();
       });
@@ -169,54 +151,27 @@ export class CreatenewpostPage implements OnInit {
         this.initTitle();
       });
 
-      // this.events.subscribe(FeedsEvent.PublishType.setBinaryFinish, (nodeId, tempId) => {
-      //   this.zone.run(() => {
-      //     if (this.postId != 0){
-      //       this.feedService.closeSession(this.nodeId);
-      //       this.feedService.notifyPost(this.nodeId, this.channelId, this.postId, tempId);
-      //     }
-      //   });
-      // });
-
-      // this.events.subscribe(FeedsEvent.PublishType.streamSetBinarySuccess, (nodeId, tempId) => {
-      //   this.zone.run(() => {
-      //     if (this.postId != 0){
-      //       this.feedService.closeSession(this.nodeId);
-      //       this.feedService.notifyPost(this.nodeId, this.channelId, this.postId, tempId);
-      //     }
-      //   });
-      // });
-
       // this.events.subscribe(FeedsEvent.PublishType.notifyPostSuccess, () => {
       //   this.zone.run(() => {
       //       this.backHome();
       //   });
       // });
 
-      //TODO event
-      // this.events.subscribe(FeedsEvent.PublishType.streamError, (nodeId, response) => {
-      //   this.zone.run(() => {
-      //     //response.code
-      //     this.feedService.closeSession(this.nodeId);
-      //   });
-      // });
+      this.events.subscribe(FeedsEvent.PublishType.streamError, (streamErrorData: FeedsEvent.StreamErrorData) => {
+        this.zone.run(() => {
+          let nodeId = streamErrorData.nodeId;
+          let error = streamErrorData.error;
+          this.feedService.closeSession(this.nodeId);
+        });
+      });
 
-      //TODO event
-      // this.events.subscribe(FeedsEvent.PublishType.streamProgress,(nodeId,progress)=>{
-      //   this.zone.run(() => {
-      //     this.native.updateLoadingMsg(this.translate.instant("common.uploading")+" "+progress+"%");
-      //   });
-      // })
-
-      // this.events.subscribe(FeedsEvent.PublishType.streamOnStateChangedCallback, (nodeId, state) => {
-      //   this.zone.run(() => {
-      //     this.sessionState = state;
-      //     if (state === 4 && this.postId != 0){
-      //       this.feedService.sendData(this.nodeId,this.channelId,this.postId, 0 ,0, this.flieUri,this.imgUrl);
-      //       this.native.updateLoadingMsg(this.translate.instant("common.uploading"));
-      //     }
-      //   });
-      // });
+      this.events.subscribe(FeedsEvent.PublishType.streamProgress,(streamProgressData: FeedsEvent.StreamProgressData)=>{
+        this.zone.run(() => {
+          let nodeId = streamProgressData.nodeId;
+          let progress = streamProgressData.progress
+          this.native.updateLoadingMsg(this.translate.instant("common.uploading")+" "+progress+"%");
+        });
+      })
 
       this.events.subscribe(FeedsEvent.PublishType.openRightMenu,()=>{
         //this.clVideo();
@@ -246,17 +201,10 @@ export class CreatenewpostPage implements OnInit {
       this.events.unsubscribe(FeedsEvent.PublishType.rpcRequestError);
       this.events.unsubscribe(FeedsEvent.PublishType.rpcResponseError);
 
-      // this.events.unsubscribe(FeedsEvent.PublishType.setBinaryFinish);
-
-      // this.events.unsubscribe(FeedsEvent.PublishType.streamSetBinarySuccess);
       this.events.unsubscribe(FeedsEvent.PublishType.streamError);
-      // this.events.unsubscribe(FeedsEvent.PublishType.streamOnStateChangedCallback);
-      // this.events.unsubscribe(FeedsEvent.PublishType.streamGetBinarySuccess);
+
       this.events.unsubscribe(FeedsEvent.PublishType.openRightMenu);
       this.events.unsubscribe(FeedsEvent.PublishType.streamProgress);
-
-      // this.events.unsubscribe(FeedsEvent.PublishType.declarePostSuccess);
-      // this.events.unsubscribe(FeedsEvent.PublishType.notifyPostSuccess);
 
       this.hideFullScreen();
 

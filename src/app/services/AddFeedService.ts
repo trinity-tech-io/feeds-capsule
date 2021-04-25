@@ -25,18 +25,19 @@ export class AddFeedService {
     }
 
     subscribeEvent(){
-        //TODO event
-        // this.events.subscribe(FeedsEvent.PublishType.friendConnectionChanged,(friendId, friendStatus)=>{
-        //     if (friendStatus == FeedsData.ConnState.connected){
-        //         this.changeTobeAddedFeedStatusByNodeId(friendId, FeedsData.FollowFeedStatus.FRIEND_ONLINE);
-        //         return ;
-        //     }
+        this.events.subscribe(FeedsEvent.PublishType.friendConnectionChanged,(friendConnectionChangedData: FeedsEvent.FriendConnectionChangedData)=>{
+            let connectionStatus = friendConnectionChangedData.connectionStatus;
+            let nodeId = friendConnectionChangedData.nodeId;
+            if (connectionStatus == FeedsData.ConnState.connected){
+                this.changeTobeAddedFeedStatusByNodeId(nodeId, FeedsData.FollowFeedStatus.FRIEND_ONLINE);
+                return ;
+            }
 
-        //     if (friendStatus == FeedsData.ConnState.disconnected){
-        //         this.changeTobeAddedFeedStatusByNodeId(friendId, FeedsData.FollowFeedStatus.FRIEND_OFFLINE);
-        //         return;
-        //     }
-        // });
+            if (connectionStatus == FeedsData.ConnState.disconnected){
+                this.changeTobeAddedFeedStatusByNodeId(nodeId, FeedsData.FollowFeedStatus.FRIEND_OFFLINE);
+                return;
+            }
+        });
 
         this.events.subscribe(FeedsEvent.PublishType.login_finish,(nodeId)=>{
             this.changeTobeAddedFeedStatusByNodeId(nodeId, FeedsData.FollowFeedStatus.SIGNIN_FINISH);
@@ -267,8 +268,12 @@ export class AddFeedService {
 
         await this.saveData();
 
-        //TODO event
-        // this.events.publish(FeedsEvent.PublishType.addFeedStatusChanged, nodeId, feedId, status);
+        let addFeedStatusChangedData: FeedsEvent.AddFeedStatusChangedData = {
+            nodeId: nodeId, 
+            feedId: feedId, 
+            status: status
+        }
+        this.events.publish(FeedsEvent.PublishType.addFeedStatusChanged, addFeedStatusChangedData);
     }
 
     async removeTobeAddedFeedStatusByNodeFeedId(nodeId: string, feedId: number): Promise<void>{

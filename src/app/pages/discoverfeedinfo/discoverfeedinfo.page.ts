@@ -95,29 +95,31 @@ export class DiscoverfeedinfoPage implements OnInit {
       this.initTitle();
     });
 
-    //TODO event
-    // this.events.subscribe(FeedsEvent.PublishType.unsubscribeFinish,(nodeId:string,channelId:number)=>{
-    //   this.zone.run(() => {
-    //     let  feedNodeId = this.feedInfo["nodeId"]
-    //     let feedUrl = this.feedInfo["url"];
-    //     let feedId = feedUrl.split("/")[4];
-    //     if(feedNodeId === nodeId && feedId == channelId){
-    //        this.status = '1';
-    //     }
-    //   });
-    // });
+    this.events.subscribe(FeedsEvent.PublishType.unsubscribeFinish,(unsubscribeData: FeedsEvent.unsubscribeData)=>{
+      this.zone.run(() => {
+        let nodeId = unsubscribeData.nodeId;
+        let channelId = unsubscribeData.channelId;
+        let feedNodeId = this.feedInfo["nodeId"]
+        let feedUrl = this.feedInfo["url"];
+        let feedId = feedUrl.split("/")[4];
+        if(feedNodeId === nodeId && feedId == channelId){
+           this.status = '1';
+        }
+      });
+    });
 
-    //TODO event
-    // this.events.subscribe(FeedsEvent.PublishType.subscribeFinish,(nodeId:string,channelId:number)=>{
-    //   this.zone.run(() => {
-    //     let  feedNodeId = this.feedInfo["nodeId"]
-    //     let feedUrl = this.feedInfo["url"];
-    //     let feedId = feedUrl.split("/")[4];
-    //     if(feedNodeId === nodeId && feedId == channelId){
-    //       this.status = '2';
-    //     }
-    //   });
-    // });
+    this.events.subscribe(FeedsEvent.PublishType.subscribeFinish,(subscribeFinishData: FeedsEvent.SubscribeFinishData)=>{
+      this.zone.run(() => {
+        let nodeId = subscribeFinishData.nodeId;
+        let channelId = subscribeFinishData.channelId;
+        let feedNodeId = this.feedInfo["nodeId"]
+        let feedUrl = this.feedInfo["url"];
+        let feedId = feedUrl.split("/")[4];
+        if(feedNodeId === nodeId && feedId == channelId){
+          this.status = '2';
+        }
+      });
+    });
 
   }
 
