@@ -133,9 +133,12 @@ export class SessionService {
                             "unknow"
                         ];
                         mLogUtils.logd("Session stream [" + event.stream.id + "] state change to "+state_name[workedSessions[nodeId].StreamState]+" nodeId is "+nodeId,TAG);
-                        //TODO event
-                        // eventBus.publish(FeedsEvent.PublishType.streamOnStateChangedCallback, nodeId, workedSessions[nodeId].StreamState);
-                        // eventBus.publish(FeedsEvent.PublishType.innerStreamStateChanged, nodeId, workedSessions[nodeId].StreamState);
+                        let streamStateChangedData: FeedsEvent.StreamStateChangedData = {
+                            nodeId: nodeId,
+                            streamState: workedSessions[nodeId].StreamState
+                        }
+                        eventBus.publish(FeedsEvent.PublishType.streamOnStateChangedCallback, streamStateChangedData);
+                        eventBus.publish(FeedsEvent.PublishType.innerStreamStateChanged, streamStateChangedData);
 
                         if (workedSessions[nodeId] != undefined && FeedsData.StreamState.INITIALIZED == workedSessions[nodeId].StreamState){
                             workedSessions[nodeId].sessionTimeout = setTimeout(() => {
@@ -601,8 +604,12 @@ function decodeBodyData(nodeId: string): boolean{
     if (cacheData[nodeId].method == "get_binary" ){
         mStorageService.set(key,value).then(()=>{
             mLogUtils.logd("Decode body data and save to storage success, nodeId is "+ nodeId +", data key is "+key, TAG);
-            //TODO event
-            // eventBus.publish(FeedsEvent.PublishType.streamGetBinarySuccess, nodeId, key, value);
+            let getBinaryData: FeedsEvent.GetBinaryData = {
+                nodeId: nodeId,
+                key: key,
+                value: value
+            }
+            eventBus.publish(FeedsEvent.PublishType.streamGetBinarySuccess, getBinaryData);
         });
     }
     
@@ -685,10 +692,22 @@ function parseResponse(response: any){
     cacheData[nodeId].key = key;
     if (method == "set_binary"){
         mLogUtils.logd("Parse 'set_binary' data finish and publish events, nodeId is "+nodeId, TAG);
-        //TODO event
-        // eventBus.publish(FeedsEvent.PublishType.streamSetBinarySuccess, nodeId, feedId, postId, commentId, tempId);
-        //TODO event
-        // eventBus.publish(FeedsEvent.PublishType.innerStreamSetBinaryFinish, nodeId, feedId, postId, commentId, tempId);
+        let setBinaryFinishData: FeedsEvent.setBinaryFinishData = {
+            nodeId: nodeId,
+            feedId: feedId,
+            postId: postId,
+            commentId: commentId,
+            tempId: tempId
+        }
+        eventBus.publish(FeedsEvent.PublishType.streamSetBinarySuccess, setBinaryFinishData);
+        let setBinaryData: FeedsEvent.setBinaryFinishData = {
+            nodeId      :   nodeId,
+            feedId      :   feedId,
+            postId      :   postId,
+            commentId   :   commentId,
+            tempId      :   tempId
+        }
+        eventBus.publish(FeedsEvent.PublishType.innerStreamSetBinaryFinish, setBinaryData);
     } else if (method == "get_binary"){
         mLogUtils.logd("Parse 'get_binary' data finish and publish events, nodeId is "+nodeId, TAG);
         eventBus.publish(FeedsEvent.PublishType.streamGetBinaryResponse, nodeId);
@@ -782,23 +801,37 @@ function createCreateSessionTimeout(){
 
 function publishError(nodeId: string, error: any, memo: FeedsData.SessionMemoData=null){
     isBusy = false;
-    //TODO event
-    // eventBus.publish(FeedsEvent.PublishType.streamError, nodeId,error);
+    let streamErrorData: FeedsEvent.StreamErrorData = {
+        nodeId: nodeId,
+        error: error
+    }
+    eventBus.publish(FeedsEvent.PublishType.streamError, streamErrorData);
 
-    //TODO event
-    // eventBus.publish(FeedsEvent.PublishType.innerStreamError, nodeId,error, memo);
+    let innerStreamErrorData: FeedsEvent.InnerStreamErrorData = {
+        nodeId: nodeId,
+        error: error,
+        memo: memo
+    }
+    eventBus.publish(FeedsEvent.PublishType.innerStreamError, innerStreamErrorData);
+    
     if (cacheData == null || cacheData == undefined || cacheData[nodeId] == undefined)
         return;
 
     if (cacheData[nodeId].method == "set_binary"){
-        //TODO event
-        // eventBus.publish(FeedsEvent.PublishType.streamSetBinaryError, nodeId,error);
+        let streamErrorData: FeedsEvent.StreamErrorData = {
+            nodeId: nodeId,
+            error: error
+        }
+        eventBus.publish(FeedsEvent.PublishType.streamSetBinaryError, streamErrorData);
         return ;
     }
 
     if (cacheData[nodeId].method == "get_binary"){
-        //TODO event
-        // eventBus.publish(FeedsEvent.PublishType.streamGetBinaryError, nodeId,error);
+        let streamErrorData: FeedsEvent.StreamErrorData = {
+            nodeId: nodeId,
+            error: error
+        }
+        eventBus.publish(FeedsEvent.PublishType.streamGetBinaryError, streamErrorData);
         return ;
     }
 }
@@ -819,8 +852,14 @@ function calculateProgress(nodeId: string){
 
 function publishProgress(nodeId: string, progress: number, method: string, key: string){
     mLogUtils.logd("Publish stream process progress, nodeId is "+nodeId+", progress is "+progress, TAG);
-    //TODO event
-    // eventBus.publish(FeedsEvent.PublishType.streamProgress, nodeId, progress, method, key);
+
+    let streamProgressData: FeedsEvent.StreamProgressData = {
+        nodeId: nodeId, 
+        progress: progress, 
+        method: method, 
+        key: key
+    }
+    eventBus.publish(FeedsEvent.PublishType.streamProgress, streamProgressData);
 }
 
 function decodeHeader(nodeId: string){
@@ -912,8 +951,12 @@ function checkBody(nodeId: string, data: Uint8Array){
         if (cacheData[nodeId].method == "get_binary" ){
             mStorageService.set(key,value).then(()=>{
                 mLogUtils.logd("Publish 'streamGetBinarySuccess' event, nodeId is "+nodeId, TAG);
-                //TODO event
-                // eventBus.publish(FeedsEvent.PublishType.streamGetBinarySuccess, nodeId, key, value);
+                let getBinaryData: FeedsEvent.GetBinaryData = {
+                    nodeId: nodeId,
+                    key: key,
+                    value: value
+                }
+                eventBus.publish(FeedsEvent.PublishType.streamGetBinarySuccess, getBinaryData);
             });
         }
         

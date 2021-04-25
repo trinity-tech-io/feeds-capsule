@@ -30,8 +30,11 @@ export class TipdialogComponent implements OnInit {
   }
 
   confirm(){
-    //TODO event
-    // this.events.publish(FeedsEvent.PublishType.tipdialogConfirm,this.feedName,this.feedDesc);
+    let tipDialogData: FeedsEvent.TipDialogData = {
+      name: this.feedName,
+      desc: this.feedDesc
+    }
+    this.events.publish(FeedsEvent.PublishType.tipdialogConfirm, tipDialogData);
   }
 
 }

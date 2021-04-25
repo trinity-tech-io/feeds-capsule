@@ -48,25 +48,29 @@ export class ImportdidPage implements OnInit {
         });
       });
 
-      //TODO event
-      // this.events.subscribe(FeedsEvent.PublishType.resolveDidError, (nodeId, did, payload) => {
-      //   this.zone.run(() => {
-      //       this.native.navigateForward(['/bindservice/publishdid/',nodeId, did, payload],{
-      //         replaceUrl: true
-      //       });
-      //       this.native.hideLoading();
-      //   });
-      // });
+      this.events.subscribe(FeedsEvent.PublishType.resolveDidError, (resolveDidErrorData: FeedsEvent.ResolveDidErrorData) => {
+        this.zone.run(() => {
+            let nodeId = resolveDidErrorData.nodeId;
+            let did = resolveDidErrorData.did;
+            let payload = resolveDidErrorData.payload;
 
-      //TODO event
-      // this.events.subscribe(FeedsEvent.PublishType.resolveDidSucess, (nodeId, did) => {
-      //   this.zone.run(() => {
-      //       this.native.getNavCtrl().navigateForward(['/bindservice/issuecredential', nodeId, did],{
-      //         replaceUrl: true
-      //       });
-      //       this.native.hideLoading();
-      //   });
-      // });
+            this.native.navigateForward(['/bindservice/publishdid/',nodeId, did, payload],{
+              replaceUrl: true
+            });
+            this.native.hideLoading();
+        });
+      });
+
+      this.events.subscribe(FeedsEvent.PublishType.resolveDidSucess, (resolveDidSucessData: FeedsEvent.ResolveDidSucessData) => {
+        this.zone.run(() => {
+            let nodeId = resolveDidSucessData.nodeId;
+            let did = resolveDidSucessData.did;
+            this.native.getNavCtrl().navigateForward(['/bindservice/issuecredential', nodeId, did],{
+              replaceUrl: true
+            });
+            this.native.hideLoading();
+        });
+      });
 
       this.events.subscribe(FeedsEvent.PublishType.rpcResponseError,()=>{
         this.zone.run(() => {

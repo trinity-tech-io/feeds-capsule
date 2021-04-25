@@ -90,27 +90,29 @@ export class SearchPage implements OnInit {
       });
     });
 
-    //TODO event
-    // this.events.subscribe(FeedsEvent.PublishType.friendConnectionChanged, (nodeId, status)=>{
-    //   this.zone.run(()=>{
-    //     this.nodeStatus[nodeId] = status;
-    //   });
-    // });
+    this.events.subscribe(FeedsEvent.PublishType.friendConnectionChanged, (friendConnectionChangedData: FeedsEvent.FriendConnectionChangedData)=>{
+      this.zone.run(()=>{
+        let nodeId = friendConnectionChangedData.nodeId;
+        let connectionStatus = friendConnectionChangedData.connectionStatus;
+        this.nodeStatus[nodeId] = connectionStatus;
+      });
+    });
 
-    //TODO event
-    // this.events.subscribe(FeedsEvent.PublishType.subscribeFinish, (nodeId, channelId)=> {
-    //   this.zone.run(() => {
-    //     this.unfollowedFeed = this.getUnfollowedFeed() || [];
-    //     this.searchUnfollowedFeed = _.cloneDeep(this.unfollowedFeed);
-    //     let status = this.checkServerStatus(nodeId);
-    //     this.nodeStatus[nodeId] = status;
-    //     this.addingChanneList = this.feedService.getToBeAddedFeedsList() || [];
-    //     this.searchAddingChanneList = _.cloneDeep(this.addingChanneList);
-    //     this.handleSearch();
-    //   });
-    // });
+    this.events.subscribe(FeedsEvent.PublishType.subscribeFinish, (subscribeFinishData: FeedsEvent.SubscribeFinishData)=> {
+      this.zone.run(() => {
+        let nodeId = subscribeFinishData.nodeId;
+        let channelId = subscribeFinishData.channelId;
+        this.unfollowedFeed = this.getUnfollowedFeed() || [];
+        this.searchUnfollowedFeed = _.cloneDeep(this.unfollowedFeed);
+        let status = this.checkServerStatus(nodeId);
+        this.nodeStatus[nodeId] = status;
+        this.addingChanneList = this.feedService.getToBeAddedFeedsList() || [];
+        this.searchAddingChanneList = _.cloneDeep(this.addingChanneList);
+        this.handleSearch();
+      });
+    });
 
-    this.events.subscribe(FeedsEvent.PublishType.addFeedStatusChanged,()=>{
+    this.events.subscribe(FeedsEvent.PublishType.addFeedStatusChanged,(addFeedStatusChangedData: FeedsEvent.AddFeedStatusChangedData)=>{
       this.zone.run(() => {
         this.addingChanneList = this.feedService.getToBeAddedFeedsList() || [];
         this.searchAddingChanneList = _.cloneDeep(this.addingChanneList);
@@ -118,7 +120,7 @@ export class SearchPage implements OnInit {
       });
     });
 
-    this.events.subscribe(FeedsEvent.PublishType.addFeedStatusChanged,()=>{
+    this.events.subscribe(FeedsEvent.PublishType.addFeedStatusChanged,(addFeedStatusChangedData: FeedsEvent.AddFeedStatusChangedData)=>{
       this.zone.run(() => {
         this.discoverSquareList = this.filterdiscoverSquareList(this.discoverSquareList);
       });

@@ -52,7 +52,7 @@ declare namespace FeedsEvent{
         login_finish = "feeds:login_finish",
         owner_declared = "feeds:owner_declared",
         updateCredentialFinish = "feeds:updateCredentialFinish",
-        did_imported = "feeds:did_imported",
+
         setBinaryFinish = "feeds:setBinaryFinish",
         getBinaryFinish = "feeds:getBinaryFinish",
         resolveDidSucess = "feeds:resolveDidSucess",
@@ -140,5 +140,110 @@ declare namespace FeedsEvent{
         innerStreamSetBinaryFinish = "feeds:innerStreamSetBinaryFinish",
         innerStreamStateChanged = "feeds:innerStreamStateChanged",
         innerStreamError = "stream:innerError",
+    }
+
+    type TipDialogData = {
+        name: string,
+        desc: string
+    }
+
+    type getCommentData = {
+        nodeId      :   string,
+        channelId   :   number,
+        postId      :   number
+    }
+
+    type unsubscribeData = {
+        nodeId      :   string,
+        channelId   :   number,
+        channelName :   string
+    }
+
+    type SubscribeFinishData = {
+        nodeId      :   string,
+        channelId   :   number
+    }
+
+    type FriendConnectionChangedData = {
+        nodeId          :   string,
+        connectionStatus: FeedsData.ConnState
+    }
+    
+    type StreamErrorData = {
+        nodeId  :   string,
+        error   :   any
+    }
+ 
+    type StreamStateChangedData = {
+        nodeId      :   string
+        streamState :   FeedsData.StreamState
+    }
+    type setBinaryFinishData = {
+        nodeId      :   string,
+        feedId      :   number,
+        postId      :   number,
+        commentId   :   number,
+        tempId      :   number
+    }
+
+    type InnerStreamErrorData = {
+        nodeId  :   string,
+        error   :   any,
+        memo    :   FeedsData.SessionMemoData
+    }
+
+    type ResolveDidErrorData = {
+        nodeId  :   string,
+        did     :   string, 
+        payload :   string
+    }
+
+    type ResolveDidSucessData = {
+        nodeId: string,
+        did: string
+    }
+
+    type OwnerDeclareData = {
+        nodeId: string,
+        phase: string, 
+        did: string, 
+        payload: string
+    }
+
+    type CreateTopicSuccessData = {
+        nodeId: string,
+        channelId: number
+    }
+
+    type StreamProgressData = {
+        nodeId: string,
+        progress: number, 
+        method: string, 
+        key: string
+    }
+
+    type UnFollowFinishData = {
+        nodeId: string,
+        channelId: number,
+        channelName: string
+    }
+    
+    type GetBinaryData = {
+        nodeId: string, 
+        key: string, 
+        value: string
+    }
+
+    type AddFeedStatusChangedData = {
+        nodeId: string, 
+        feedId: string, 
+        status: FeedsData.FollowFeedStatus
+    }
+
+    type DeclarePostData = {
+        nodeId: string,
+        channelId: number,
+        postId: number,
+        tempId: number
     }
 }
