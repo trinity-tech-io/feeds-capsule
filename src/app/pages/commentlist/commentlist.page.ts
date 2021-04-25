@@ -182,16 +182,18 @@ export class CommentlistPage implements OnInit {
       });
     });
 
-    //TODO event
-    // this.events.subscribe(FeedsEvent.PublishType.getCommentFinish,(nodeId, channelId, postId)=>{
-    //   this.zone.run(() => {
-    //     this.logUtils.logd("Received getCommentFinish event, nodeId is "+ nodeId + " channelId is"+channelId+" postId is "+postId,TAG);
-    //     if (nodeId == this.nodeId && channelId == this.channelId && postId == this.postId){
-    //       this.startIndex = 0;
-    //       this.initData(true);
-    //     }
-    //   });
-    // });
+    this.events.subscribe(FeedsEvent.PublishType.getCommentFinish,(getCommentData: FeedsEvent.getCommentData)=>{
+      this.zone.run(() => {
+        let nodeId = getCommentData.nodeId;
+        let channelId = getCommentData.channelId;
+        let postId = getCommentData.postId;
+        this.logUtils.logd("Received getCommentFinish event, nodeId is "+ nodeId + " channelId is"+channelId+" postId is "+postId,TAG);
+        if (nodeId == this.nodeId && channelId == this.channelId && postId == this.postId){
+          this.startIndex = 0;
+          this.initData(true);
+        }
+      });
+    });
 
     this.events.subscribe(FeedsEvent.PublishType.updateTitle,()=>{
       this.logUtils.logd("Received updateTitle event",TAG);

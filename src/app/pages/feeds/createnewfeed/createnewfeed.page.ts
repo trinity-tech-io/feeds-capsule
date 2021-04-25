@@ -73,15 +73,16 @@ export class CreatenewfeedPage implements OnInit {
        this.popover.dismiss();
     });
 
-    //TODO event
-    // this.events.subscribe(FeedsEvent.PublishType.tipdialogConfirm, (name,des)=>{
-    //    this.popover.dismiss();
-    //    this.native.showLoading("common.waitMoment").then(()=>{
-    //     this.feedService.createTopic(this.selectedServer.nodeId, name, des, this.channelAvatar);
-    //    }).catch(()=>{
-    //     this.native.hideLoading();
-    //    });
-    // });
+    this.events.subscribe(FeedsEvent.PublishType.tipdialogConfirm, (tipdialogData: FeedsEvent.TipDialogData)=>{
+      let name = tipdialogData.name;
+      let desc = tipdialogData.desc;
+      this.popover.dismiss();
+      this.native.showLoading("common.waitMoment").then(()=>{
+        this.feedService.createTopic(this.selectedServer.nodeId, name, desc, this.channelAvatar);
+      }).catch(()=>{
+        this.native.hideLoading();
+      });
+    });
     
     this.events.subscribe(FeedsEvent.PublishType.connectionChanged,(status)=>{
       this.zone.run(() => {
@@ -89,16 +90,17 @@ export class CreatenewfeedPage implements OnInit {
       });
     });
 
-    //TODO event
-    // this.events.subscribe(FeedsEvent.PublishType.createTopicSuccess, (nodeId:string,feedId:number) => {
-    //   this.zone.run(() => {
-    //     this.publicFeeds(nodeId,feedId);
-    //     this.native.hideLoading();
-    //     this.navCtrl.pop().then(()=>{
-    //       this.native.toast(this.translate.instant("CreatenewfeedPage.createfeedsuccess"));
-    //     });
-    //   });
-    // });
+    this.events.subscribe(FeedsEvent.PublishType.createTopicSuccess, (createTopicSuccessData: FeedsEvent.CreateTopicSuccessData) => {
+      this.zone.run(() => {
+        let nodeId = createTopicSuccessData.nodeId;
+        let channelId = createTopicSuccessData.channelId;
+        this.publicFeeds(nodeId, channelId);
+        this.native.hideLoading();
+        this.navCtrl.pop().then(()=>{
+          this.native.toast(this.translate.instant("CreatenewfeedPage.createfeedsuccess"));
+        });
+      });
+    });
 
     this.events.subscribe(FeedsEvent.PublishType.updateTitle,()=>{
       this.initTitle();

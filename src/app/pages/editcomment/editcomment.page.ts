@@ -101,12 +101,13 @@ export class EditCommentPage implements OnInit {
       });
     });
 
-    //TODO event
-    // this.events.subscribe(FeedsEvent.PublishType.friendConnectionChanged, (nodeId, status)=>{
-    //   this.zone.run(()=>{
-    //     this.nodeStatus[nodeId] = status;
-    //   });
-    // });
+    this.events.subscribe(FeedsEvent.PublishType.friendConnectionChanged, (friendConnectionChangedData: FeedsEvent.FriendConnectionChangedData)=>{
+      this.zone.run(()=>{
+        let nodeId = friendConnectionChangedData.nodeId;
+        let connectionStatus = friendConnectionChangedData.connectionStatus;
+        this.nodeStatus[nodeId] = connectionStatus;
+      });
+    });
 
     this.initnodeStatus();
   }

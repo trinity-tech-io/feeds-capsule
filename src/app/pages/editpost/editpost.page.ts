@@ -95,12 +95,13 @@ export class EditPostPage implements OnInit {
       });
     });
 
-    //TODO event
-    // this.events.subscribe(FeedsEvent.PublishType.friendConnectionChanged, (nodeId, status)=>{
-    //   this.zone.run(()=>{
-    //     this.nodeStatus[nodeId] = status;
-    //   });
-    //  });
+    this.events.subscribe(FeedsEvent.PublishType.friendConnectionChanged, (friendConnectionChangedData: FeedsEvent.FriendConnectionChangedData)=>{
+      this.zone.run(()=>{
+        let nodeId = friendConnectionChangedData.nodeId;
+        let connectionStatus = friendConnectionChangedData.connectionStatus;
+        this.nodeStatus[nodeId] = connectionStatus;
+      });
+     });
 
     this.events.subscribe(FeedsEvent.PublishType.rpcRequestError, () => {
       this.pauseVideo();
@@ -126,49 +127,51 @@ export class EditPostPage implements OnInit {
       });
     });
 
-    //TODO event
-    // this.events.subscribe(FeedsEvent.PublishType.streamError, (nodeId, error) => {
-    //   this.zone.run(() => {
-    //     this.feedService.handleSessionError(nodeId, error);
-    //     this.pauseVideo();
-    //     this.native.hideLoading();
-    //   });
-    // });
+    this.events.subscribe(FeedsEvent.PublishType.streamError, (streamErrorData: FeedsEvent.StreamErrorData) => {
+      this.zone.run(() => {
+        let nodeId = streamErrorData.nodeId;
+        let error = streamErrorData.error;
+        this.feedService.handleSessionError(nodeId, error);
+        this.pauseVideo();
+        this.native.hideLoading();
+      });
+    });
 
-    //TODO event
-    // this.events.subscribe(FeedsEvent.PublishType.streamOnStateChangedCallback, (nodeId, state) => {
-    //   this.zone.run(() => {
-    //     if (state != FeedsData.StreamState.CONNECTED)
-    //       return;
+    this.events.subscribe(FeedsEvent.PublishType.streamOnStateChangedCallback, (streamStateChangedData: FeedsEvent.StreamStateChangedData) => {
+      this.zone.run(() => {
+        let state = streamStateChangedData.streamState;
+        let nodeId = streamStateChangedData.nodeId;
+        if (state != FeedsData.StreamState.CONNECTED)
+          return;
 
-    //     if (this.editState == FeedsData.EditState.TextImageChange || this.editState == FeedsData.EditState.TextVideoChange){
-    //       this.feedService.sendData(this.nodeId,this.channelId,this.postId, 0 ,0, this.flieUri,this.imgUrl,0);
-    //     }
-    //   });
-    // });
+        if (this.editState == FeedsData.EditState.TextImageChange || this.editState == FeedsData.EditState.TextVideoChange){
+          this.feedService.sendData(this.nodeId,this.channelId,this.postId, 0 ,0, this.flieUri,this.imgUrl,0);
+        }
+      });
+    });
 
-    //TODO event
-    // this.events.subscribe(FeedsEvent.PublishType.setBinaryFinish, (nodeId, tempId) => {
-    //   this.zone.run(() => {
-    //     this.processSetBinaryResult();
-    //   });
-    // });
+    this.events.subscribe(FeedsEvent.PublishType.setBinaryFinish, (setBinaryFinishData: FeedsEvent.setBinaryFinishData) => {
+      this.zone.run(() => {
+        this.processSetBinaryResult();
+      });
+    });
 
-    //TODO event
-    // this.events.subscribe(FeedsEvent.PublishType.streamSetBinarySuccess, (nodeId, tempId) => {
-    //   this.zone.run(() => {
-    //     this.feedService.closeSession(nodeId);
-    //     this.processSetBinaryResult();
-    //   });
-    // });
+    this.events.subscribe(FeedsEvent.PublishType.streamSetBinarySuccess, (setBinaryFinishData: FeedsEvent.setBinaryFinishData) => {
+      this.zone.run(() => {
+        let nodeId = setBinaryFinishData.nodeId;
+        this.feedService.closeSession(nodeId);
+        this.processSetBinaryResult();
+      });
+    });
 
-    //TODO event
-    // this.events.subscribe(FeedsEvent.PublishType.streamSetBinaryError, (nodeId, response) => {
-    //   this.zone.run(() => {
-    //     this.feedService.closeSession(nodeId);
-    //     this.native.hideLoading();
-    //   });
-    // });
+    this.events.subscribe(FeedsEvent.PublishType.streamSetBinaryError, (streamErrorData: FeedsEvent.StreamErrorData) => {
+      this.zone.run(() => {
+        let nodeId = streamErrorData.nodeId;
+        let error = streamErrorData.error;
+        this.feedService.closeSession(nodeId);
+        this.native.hideLoading();
+      });
+    });
 
     this.events.subscribe(FeedsEvent.PublishType.openRightMenu,()=>{
       //this.clVideo();
@@ -202,7 +205,7 @@ export class EditPostPage implements OnInit {
     this.events.unsubscribe(FeedsEvent.PublishType.streamSetBinaryError);
     this.events.unsubscribe(FeedsEvent.PublishType.streamOnStateChangedCallback);
     this.events.unsubscribe(FeedsEvent.PublishType.openRightMenu);
-    this.events.unsubscribe(FeedsEvent.PublishType.streamGetBinarySuccess);
+
     this.imgUrl="";
     this.native.hideLoading();
     this.hideFullScreen();

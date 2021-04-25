@@ -293,20 +293,20 @@ export class ChannelsPage implements OnInit {
       this.initTitle();
     });
 
-    //TODO event
-    // this.events.subscribe(FeedsEvent.PublishType.subscribeFinish, (nodeId, channelId)=> {
-    //   this.zone.run(() => {
-    //     this.checkFollowStatus(this.nodeId,this.channelId);
-    //   });
-    // });
+    this.events.subscribe(FeedsEvent.PublishType.subscribeFinish, (subscribeFinishData: FeedsEvent.SubscribeFinishData)=> {
+      this.zone.run(() => {
+        let nodeId = subscribeFinishData.nodeId;
+        let channelId = subscribeFinishData.channelId;
+        this.checkFollowStatus(this.nodeId,this.channelId);
+      });
+    });
 
-    //TODO event
-    // this.events.subscribe(FeedsEvent.PublishType.unsubscribeFinish, (nodeId, channelId, name) => {
-    //   this.zone.run(() => {
-    //     this.checkFollowStatus(this.nodeId,this.channelId);
-    //     this.native.setRootRouter(['/tabs/home']);
-    //   });
-    // });
+    this.events.subscribe(FeedsEvent.PublishType.unsubscribeFinish, (unsubscribeData: FeedsEvent.unsubscribeData) => {
+      this.zone.run(() => {
+        this.checkFollowStatus(this.nodeId,this.channelId);
+        this.native.setRootRouter(['/tabs/home']);
+      });
+    });
 
     this.events.subscribe(FeedsEvent.PublishType.editPostFinish,()=>{
         this.zone.run(() => {
@@ -327,79 +327,82 @@ export class ChannelsPage implements OnInit {
       });
     });
 
-    //TODO event
-    // this.events.subscribe(FeedsEvent.PublishType.getBinaryFinish, (nodeId, key: string, value:string) => {
-    //   this.zone.run(() => {
-    //     this.processGetBinaryResult(key, value);
-    //   });
-    // });
+    this.events.subscribe(FeedsEvent.PublishType.getBinaryFinish, (getBinaryData: FeedsEvent.GetBinaryData) => {
+      this.zone.run(() => {
+        let key = getBinaryData.key;
+        let value = getBinaryData.value;
+        this.processGetBinaryResult(key, value);
+      });
+    });
 
-    //TODO event
-    // this.events.subscribe(FeedsEvent.PublishType.streamGetBinarySuccess, (nodeId, key: string, value:string) => {
-    //   this.zone.run(() => {
-    //     this.processGetBinaryResult(key, value);
-    //     this.feedService.closeSession(nodeId);
-    //   });
-    // });
+    this.events.subscribe(FeedsEvent.PublishType.streamGetBinarySuccess, (getBinaryData: FeedsEvent.GetBinaryData) => {
+      this.zone.run(() => {
+        let nodeId = getBinaryData.nodeId;
+        let key = getBinaryData.key;
+        let value = getBinaryData.value;
+        this.processGetBinaryResult(key, value);
+        this.feedService.closeSession(nodeId);
+      });
+    });
 
-    //TODO event
-    // this.events.subscribe(FeedsEvent.PublishType.streamProgress,(nodeId,progress)=>{
-    //   this.zone.run(() => {
-    //     if(this.cachedMediaType ==='video'&&this.videoDownStatus[this.videoDownStatusKey]==="1"){
-    //       this.videoPercent = progress;
-    //       if(progress<100){
-    //         this.videoRotateNum["transform"] = "rotate("+(18/5)*progress+"deg)";
-    //        }else{
-    //        if(progress === 100){
-    //         this.videoRotateNum["transform"] = "rotate("+(18/5)*progress+"deg)";
-    //        }
-    //       }
-    //       return;
-    //     }
+    this.events.subscribe(FeedsEvent.PublishType.streamProgress,(streamProgressData: FeedsEvent.StreamProgressData)=>{
+      this.zone.run(() => {
+        let progress = streamProgressData.progress;
+        if(this.cachedMediaType ==='video'&&this.videoDownStatus[this.videoDownStatusKey]==="1"){
+          this.videoPercent = progress;
+          if(progress<100){
+            this.videoRotateNum["transform"] = "rotate("+(18/5)*progress+"deg)";
+           }else{
+           if(progress === 100){
+            this.videoRotateNum["transform"] = "rotate("+(18/5)*progress+"deg)";
+           }
+          }
+          return;
+        }
 
-    //     if(this.cachedMediaType ==='img'&&this.imgDownStatus[this.imgDownStatusKey]==="1"){
-    //       this.imgPercent = progress;
-    //       if(progress<100){
-    //         this.imgRotateNum["transform"] = "rotate("+(18/5)*progress+"deg)";
-    //        }else{
-    //        if(progress === 100){
-    //         this.imgRotateNum["transform"] = "rotate("+(18/5)*progress+"deg)";
-    //        }
-    //       }
-    //     }
-    //   });
-    // });
+        if(this.cachedMediaType ==='img'&&this.imgDownStatus[this.imgDownStatusKey]==="1"){
+          this.imgPercent = progress;
+          if(progress<100){
+            this.imgRotateNum["transform"] = "rotate("+(18/5)*progress+"deg)";
+           }else{
+           if(progress === 100){
+            this.imgRotateNum["transform"] = "rotate("+(18/5)*progress+"deg)";
+           }
+          }
+        }
+      });
+    });
 
-    //TODO event
-    // this.events.subscribe(FeedsEvent.PublishType.streamError, (nodeId, error) => {
-    //   this.zone.run(() => {
+    this.events.subscribe(FeedsEvent.PublishType.streamError, (streamErrorData: FeedsEvent.StreamErrorData) => {
+      this.zone.run(() => {
+        let nodeId = streamErrorData.nodeId;
+        let error = streamErrorData.error;
+        this.isImgPercentageLoading[this.imgDownStatusKey] = false;
+        this.isImgLoading[this.imgDownStatusKey] = false;
+        this.imgDownStatus[this.imgDownStatusKey] ="";
 
-    //     this.isImgPercentageLoading[this.imgDownStatusKey] = false;
-    //     this.isImgLoading[this.imgDownStatusKey] = false;
-    //     this.imgDownStatus[this.imgDownStatusKey] ="";
+        this.isVideoPercentageLoading[this.videoDownStatusKey] = false;
+        this.isVideoLoading[this.videoDownStatusKey] = false;
+        this.videoDownStatus[this.videoDownStatusKey] = "";
 
-    //     this.isVideoPercentageLoading[this.videoDownStatusKey] = false;
-    //     this.isVideoLoading[this.videoDownStatusKey] = false;
-    //     this.videoDownStatus[this.videoDownStatusKey] = "";
+        this.feedService.handleSessionError(nodeId, error);
+        this.pauseAllVideo();
+        this.curNodeId = "";
+      });
+    });
 
-    //     this.feedService.handleSessionError(nodeId, error);
-    //     this.pauseAllVideo();
-    //     this.curNodeId = "";
-    //   });
-    // });
+    this.events.subscribe(FeedsEvent.PublishType.streamOnStateChangedCallback, (streamStateChangedData: FeedsEvent.StreamStateChangedData) => {
+      this.zone.run(() => {
+        let nodeId = streamStateChangedData.nodeId;
+        let state = streamStateChangedData.streamState;
+        if (this.cacheGetBinaryRequestKey == "")
+          return;
 
-    //TODO event
-    // this.events.subscribe(FeedsEvent.PublishType.streamOnStateChangedCallback, (nodeId, state) => {
-    //   this.zone.run(() => {
-
-    //     if (this.cacheGetBinaryRequestKey == "")
-    //       return;
-
-    //     if (state === FeedsData.StreamState.CONNECTED){
-    //       this.feedService.getBinary(nodeId, this.cacheGetBinaryRequestKey,this.cachedMediaType);
-    //     }
-    //   });
-    // });
+        if (state === FeedsData.StreamState.CONNECTED){
+          this.feedService.getBinary(nodeId, this.cacheGetBinaryRequestKey,this.cachedMediaType);
+        }
+      });
+    });
 
     this.events.subscribe(FeedsEvent.PublishType.rpcRequestError, () => {
       this.zone.run(() => {
@@ -459,12 +462,13 @@ export class ChannelsPage implements OnInit {
       this.curNodeId = "";
     });
 
-    //TODO event
-    // this.events.subscribe(FeedsEvent.PublishType.friendConnectionChanged, (nodeId, status)=>{
-    //   this.zone.run(()=>{
-    //     this.nodeStatus[nodeId] = status;
-    //   });
-    // });
+    this.events.subscribe(FeedsEvent.PublishType.friendConnectionChanged, (friendConnectionChangedData: FeedsEvent.FriendConnectionChangedData)=>{
+      this.zone.run(()=>{
+        let nodeId = friendConnectionChangedData.nodeId;
+        let connectionStatus = friendConnectionChangedData.connectionStatus;
+        this.nodeStatus[nodeId] = connectionStatus;
+      });
+    });
   }
 
   ionViewWillLeave(){
