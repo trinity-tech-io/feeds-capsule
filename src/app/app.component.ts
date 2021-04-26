@@ -12,6 +12,9 @@ import { StorageService } from './services/StorageService';
 import { PopupProvider } from 'src/app/services/popup';
 import { LogUtils } from 'src/app/services/LogUtils';
 import { Events} from 'src/app/services/events.service';
+import { Hive , connectivity, DID, Wallet, localization, theme } from "@elastosfoundation/elastos-connectivity-sdk-cordova";
+import { EssentialsConnector } from "@elastosfoundation/essentials-connector-cordova";
+import { LocalIdentityConnector, localIdentity } from "@elastosfoundation/elastos-connector-localidentity-cordova";
 
 enum LogLevel {
   NONE,
@@ -57,6 +60,12 @@ export class MyApp {
 
   initializeApp() {
     this.platform.ready().then(() => {
+      // To be able to let users build a temporary identity in the app, without depending on a third party app:
+      connectivity.registerConnector(new LocalIdentityConnector());
+      // To let users use Essentials for his operations:
+      connectivity.registerConnector(new EssentialsConnector());
+      connectivity.setActiveConnector(null);
+
       this.initSetting();
       this.initFeedPublicStatus();
       this.initCurrentFeed();
@@ -67,7 +76,7 @@ export class MyApp {
       },()=>{
         this.events.publish(FeedsEvent.PublishType.networkStatusChanged, 0);
       });
-        this.initDisclaimer();
+      this.initDisclaimer();
     });
   }
 
