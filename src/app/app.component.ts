@@ -64,7 +64,6 @@ export class MyApp {
       connectivity.registerConnector(new LocalIdentityConnector());
       // To let users use Essentials for his operations:
       connectivity.registerConnector(new EssentialsConnector());
-      connectivity.setActiveConnector(null);
 
       this.initSetting();
       this.initFeedPublicStatus();

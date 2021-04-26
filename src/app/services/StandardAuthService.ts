@@ -8,28 +8,27 @@ let TAG: string = "StandardAuthService";
 
 @Injectable()
 export class StandardAuthService {
-    // private didHelper:TrinitySDK.DID.DIDHelper;
-    private didAccess: DID.DIDAccess;
+    // private didAccess: DID.DIDAccess;
     private appIdCredential:DIDPlugin.VerifiableCredential = null;
     constructor(private logUtils: LogUtils,
                 private storeService: StorageService) {
-        this.didAccess = new DID.DIDAccess();
-        // this.didHelper = new TrinitySDK.DID.DIDHelper();
     }
 
     getInstanceDID(): Promise<DIDPlugin.DID>{
         return new Promise(async (resolve, reject)=>{
-            let instanceDIDInfo = await this.didAccess.getOrCreateAppInstanceDID();
+            let didAccess = new DID.DIDAccess();
+            let instanceDIDInfo = await didAccess.getOrCreateAppInstanceDID();
             resolve(instanceDIDInfo.did);
         });
     }
 
     getInstanceDIDDoc(): Promise<string>{
         return new Promise(async (resolve, reject)=>{
-            let instanceDIDInfo = await this.didAccess.getOrCreateAppInstanceDID();
+            let didAccess = new DID.DIDAccess();
+            let instanceDIDInfo = await didAccess.getOrCreateAppInstanceDID();
             instanceDIDInfo.didStore.loadDidDocument(instanceDIDInfo.did.getDIDString(),(didDocument)=>{
                 resolve(didDocument.toJson());
-            })
+            });
         });
     }
     
@@ -65,9 +64,9 @@ export class StandardAuthService {
 
 
             this.logUtils.logd("Getting app instance DID",TAG);
-            let appInstanceDID = (await this.didAccess.getOrCreateAppInstanceDID()).did;
-            let appInstanceDIDInfo = await this.didAccess.getExistingAppInstanceDIDInfo();
-            
+            let didAccess = new DID.DIDAccess();
+            let appInstanceDID = (await didAccess.getOrCreateAppInstanceDID()).did;
+            let appInstanceDIDInfo = await didAccess.getExistingAppInstanceDIDInfo();
             //work around
             this.appIdCredential = await this.getAppIdCredentialFromStorage(this.appIdCredential);
             this.appIdCredential = await this.checkAppIdCredentialStatus(this.appIdCredential);
@@ -185,15 +184,16 @@ export class StandardAuthService {
 
             this.logUtils.logd("Credential invalid",TAG);
             this.logUtils.logd("Getting app identity credential",TAG);
+            let didAccess = new DID.DIDAccess();
             try {
-                let mAppIdCredential = await this.didAccess.getExistingAppIdentityCredential();
+                let mAppIdCredential = await didAccess.getExistingAppIdentityCredential();
                 if (mAppIdCredential){
                     this.logUtils.logd("Get app identity credential, credential is "+JSON.stringify(mAppIdCredential),TAG);
                     resolve(mAppIdCredential);
                     return;
                 }
 
-                mAppIdCredential = await this.didAccess.generateAppIdCredential();
+                mAppIdCredential = await didAccess.generateAppIdCredential();
                 if (mAppIdCredential){
                     this.logUtils.logd("Generate app identity credential, credential is "+JSON.stringify(mAppIdCredential),TAG);
                     resolve(mAppIdCredential);
