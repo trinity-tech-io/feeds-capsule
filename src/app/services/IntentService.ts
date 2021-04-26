@@ -12,7 +12,8 @@ export class IntentService {
     scanQRCode(): Promise<string>{
         return new Promise(async (resolve, reject) =>{
             try {
-                let res = await intentManager.sendIntent("https://scanner.elastos.net/scanqrcode");
+                let res = await intentManager.sendIntent("https://scanner.elastos.net/scanqrcode",{});
+                this.logUtils.logd("Call scanqrcode result is "+JSON.stringify(res));
                 if (res){
                     let content = res.result.scannedContent;
                     let contentStr = String(content);
@@ -146,6 +147,7 @@ export class IntentService {
 
             try {
                 let response = await intentManager.sendIntent("https://wallet.elastos.net/didtransaction", params);
+                this.logUtils.logd("Call intent didtransaction result is "+JSON.stringify(response));
                 if (response){
                     resolve(response);
                     return ;
