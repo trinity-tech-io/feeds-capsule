@@ -16,7 +16,6 @@ import { ComponentsModule } from './components/components.module';
 import { TranslateLoader, TranslateModule,TranslateService} from '@ngx-translate/core';
 import { ScanService } from 'src/app/services/scan.service';
 
-
 import { Observable } from 'rxjs';
 import {zh} from './../assets/i18n/zh';
 import {en} from './../assets/i18n/en';
@@ -66,6 +65,7 @@ import { IonicStorageModule } from '@ionic/storage';
 import { VideoEditor } from '@ionic-native/video-editor/ngx';
 import { RewriteFrames } from '@sentry/integrations';
 import { customAnimation } from 'src/app/services/nav_anamition';
+import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
 
 import * as Sentry from "@sentry/browser";
 
@@ -195,6 +195,7 @@ export function TranslateLoaderFactory() {
     ViewHelper,
     TitleBarService,
     ScanService,
+    BarcodeScanner,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     {provide: ErrorHandler, useClass: ErrorHandler}
   ]
