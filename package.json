@@ -21,10 +21,11 @@
     "@angular/router": "^11.0.7",
     "@elastosfoundation/elastos-connectivity-sdk-cordova": "^1.0.23",
     "@elastosfoundation/elastos-connector-localidentity-cordova": "^1.0.6",
-    "@elastosfoundation/essentials-connector-cordova": "^1.0.14",
     "@elastosfoundation/elastos-cordova-plugin-carrier": "^1.0.1",
     "@elastosfoundation/elastos-cordova-plugin-did": "^1.0.3",
     "@elastosfoundation/elastos-cordova-plugin-hive": "^1.0.2",
+    "@elastosfoundation/essentials-connector-cordova": "^1.0.14",
+    "@ionic-native/barcode-scanner": "^5.32.1",
     "@ionic-native/clipboard": "^5.18.0",
     "@ionic-native/core": "^5.0.0",
     "@ionic-native/in-app-browser": "^5.10.0",
@@ -109,7 +110,8 @@
       "@elastosfoundation/elastos-cordova-plugin-intent": {},
       "@elastosfoundation/elastos-cordova-plugin-did": {},
       "cordova-plugin-file": {},
-      "cordova-plugin-network-information": {}
+      "cordova-plugin-network-information": {},
+      "phonegap-plugin-barcodescanner": {}
     },
     "platforms": [
       "android"
