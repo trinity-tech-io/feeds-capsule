@@ -14,6 +14,9 @@ import { MyApp } from './app.component';
 import { ComponentsModule } from './components/components.module';
 
 import { TranslateLoader, TranslateModule,TranslateService} from '@ngx-translate/core';
+import { ScanService } from 'src/app/services/scan.service';
+
+
 import { Observable } from 'rxjs';
 import {zh} from './../assets/i18n/zh';
 import {en} from './../assets/i18n/en';
@@ -191,6 +194,7 @@ export function TranslateLoaderFactory() {
     DataHelper,
     ViewHelper,
     TitleBarService,
+    ScanService,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     {provide: ErrorHandler, useClass: ErrorHandler}
   ]
