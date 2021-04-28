@@ -64,9 +64,9 @@ export class MyApp {
       connectivity.registerConnector(new LocalIdentityConnector());
       // To let users use Essentials for his operations:
       connectivity.registerConnector(new EssentialsConnector());
-      connectivity.setApplicationDID("did:elastos:iqtWRVjz7gsYhyuQEb1hYNNmWQt1Z9geX");
+      connectivity.setApplicationDID("did:elastos:iqtWRVjz7gsYhyuQEb1hYNNmWQt1Z9geXg");
       connectivity.setActiveConnector("essentials");
-      
+
       this.initSetting();
       this.initFeedPublicStatus();
       this.initCurrentFeed();
