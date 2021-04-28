@@ -1,5 +1,7 @@
-<ion-content (click)="finish()">
+<ion-header>
   <app-titlebar></app-titlebar>
+</ion-header>
+<ion-content (click)="finish()">
   <image-cropper
         [imageURL]="headPortrait"
         [maintainAspectRatio]="true"
