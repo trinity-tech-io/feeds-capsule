@@ -41,7 +41,7 @@
     "@types/node": "^8.9.5",
     "@videogular/ngx-videogular": "^3.0.1",
     "@ygoe/msgpack": "^1.0.2",
-    "angularx-qrcode": "^1.6.4",
+    "angularx-qrcode": "11.0.0",
     "cordova-android": "9.0.0",
     "cordova-plugin-camera": "^5.0.1",
     "cordova-plugin-file": "^6.0.2",
