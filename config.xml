@@ -22,6 +22,7 @@
     <preference name="SplashScreenDelay" value="3000" />
     <preference name="KeyboardDisplayRequiresUserAction" value="false" />
     <platform name="android">
+        <preference name="AndroidLaunchMode" value="singleTask" />
         <preference name="IntentRedirecturlFilter" value="feeds://" />
         <config-file parent="/manifest/application/activity" target="AndroidManifest.xml">
             <intent-filter>
