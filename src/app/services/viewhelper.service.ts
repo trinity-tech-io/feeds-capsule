@@ -31,7 +31,7 @@ export class ViewHelper {
     async openViewer(titleBar: TitleBarComponent, imgPath:string,newNameKey:string,oldNameKey:string,appService?:any,isOwer?:boolean) {
         this.titleBarService.setTitle(titleBar, this.translate.instant(newNameKey));
         this.titleBarService.setTitleBarBackKeyShown(titleBar, false);
-        appService.hideright();
+        this.titleBarService.hideRight(titleBar);
         const modal = await this.modalController.create({
           component: ViewerModalComponent,
           componentProps: {
@@ -57,7 +57,7 @@ export class ViewHelper {
                 //     iconPath: TitleBarPlugin.BuiltInIcon.EDIT
                 // });
             }
-            appService.addright();
+            this.titleBarService.addRight(titleBar);
         })
 
         return await modal.present().then(()=>{
@@ -74,7 +74,7 @@ export class ViewHelper {
         this.titleBarService.setTitle(titleBar, this.translate.instant(newNameKey));
         this.titleBarService.setTitleBarBackKeyShown(titleBar, false);
 
-        appService.hideright();
+        this.titleBarService.hideRight(titleBar);
         const modal = await this.modalController.create({
         component:PreviewqrcodeComponent,
         backdropDismiss:true,
@@ -103,7 +103,7 @@ export class ViewHelper {
                     // });
                 }
             }
-            appService.addright();
+            this.titleBarService.addRight(titleBar);
         });
         return await modal.present();
     }
