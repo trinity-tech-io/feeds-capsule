@@ -1,6 +1,8 @@
-<ion-content [class.darkContainer]="theme.darkMode" [class.blur]="!hideComment" [ngClass]="{'translucent-mask': isShowPrompt}" (ionScroll)="ionScroll()" [scrollEvents]="true">
+<ion-header>
   <app-titlebar></app-titlebar>
   <div *ngIf="connectionStatus == 1" class="offline-header"></div>
+</ion-header>
+<ion-content [class.darkContainer]="theme.darkMode" [class.blur]="!hideComment" [ngClass]="{'translucent-mask': isShowPrompt}" (ionScroll)="ionScroll()" [scrollEvents]="true">
   <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" pullFactor="0.5">
     <ion-refresher-content
       class="refresh"

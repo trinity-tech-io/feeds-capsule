@@ -1,6 +1,8 @@
-<ion-content>
+<ion-header>
   <app-titlebar></app-titlebar>
   <div *ngIf="connectionStatus == 1" class="offline-header"></div>
+</ion-header>
+<ion-content>
   <ion-grid class="container">
       <ion-img src="./assets/images/finsh.svg"></ion-img>
       <p>{{ 'FinishPage.introduce' | translate }}</p>
