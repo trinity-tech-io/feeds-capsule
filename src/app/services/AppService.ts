@@ -43,9 +43,9 @@ export class AppService {
     }
 
     init() {
-      this.intentService.addIntentListener((msg: IntentPlugin.ReceivedIntent) => {
-        this.onMessageReceived(msg);
-      });
+      // this.intentService.addIntentListener((msg: IntentPlugin.ReceivedIntent) => {
+      //   this.onMessageReceived(msg);
+      // });
 
       // titleBarManager.addOnItemClickedListener((menuIcon)=>{
       //   this.native.hideLoading();
@@ -176,8 +176,10 @@ export class AppService {
         return ;
       }
 
-      this.intentService.addIntentListener((msg: IntentPlugin.ReceivedIntent) =>{
-        this.onReceiveIntent(msg);
+      this.intentService.addIntentListener((intent: IntentPlugin.ReceivedIntent) =>{
+        console.log("Receive intent ",intent)
+        this.onMessageReceived(intent);
+        this.onReceiveIntent(intent);
       });
 
       this.carrierService.init(signInData.did);
