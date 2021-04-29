@@ -195,12 +195,7 @@ export class ServerInfoPage implements OnInit {
     this.titleBarService.setTitle(this.titleBar, this.translate.instant('ServerInfoPage.title'));
 
     if (this.checkIsMine() == 0) {
-      //TODO
-      this.titleBarService.setIcon(this.titleBar, FeedsData.TitleBarIconSlot.INNER_RIGHT, "editServer", "assets/icon/edit.svg");
-      // titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, {
-      //   key: "editServer",
-      //   iconPath: TitleBarPlugin.BuiltInIcon.EDIT
-      // });
+      this.titleBarService.setTitleBarEditServer(this.titleBar);
     } else {
       this.titleBarService.setIcon(this.titleBar, FeedsData.TitleBarIconSlot.INNER_RIGHT, null, null);
     }

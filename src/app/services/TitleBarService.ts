@@ -3,7 +3,6 @@ import { LogUtils } from 'src/app/services/LogUtils';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarIconSlot, TitleBarIcon, TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
 import { NativeService } from 'src/app/services/NativeService';
-// import { MenuService } from 'src/app/services/MenuService';
 import { MenuController,PopoverController } from '@ionic/angular';
 import { Events } from 'src/app/services/events.service';
 
@@ -30,6 +29,21 @@ export class TitleBarService {
             return;
         }
         this.setIcon(titleBar, FeedsData.TitleBarIconSlot.OUTER_LEFT, null , null);
+    }
+
+    setTitleBarEditChannel(titleBar: TitleBarComponent){
+        this.setIcon(titleBar, FeedsData.TitleBarIconSlot.INNER_RIGHT, "editChannel", "assets/icon/edit.svg");
+        this.registEditChannel(titleBar);
+    }
+
+    setTitleBarEditServer(titleBar: TitleBarComponent){
+        this.setIcon(titleBar, FeedsData.TitleBarIconSlot.INNER_RIGHT, "editServer", "assets/icon/edit.svg");
+        this.registEditServer(titleBar);
+    }
+
+    setTitleBarEditImage(titleBar: TitleBarComponent){
+        this.setIcon(titleBar, FeedsData.TitleBarIconSlot.INNER_RIGHT, "editImages", "assets/icon/yes.ico");
+        this.regitstEditImages(titleBar);
     }
 
     setTitle(titleBar: TitleBarComponent, title: string){
@@ -84,5 +98,27 @@ export class TitleBarService {
     hideRight(titleBar: TitleBarComponent){
         this.setIcon(titleBar, FeedsData.TitleBarIconSlot.OUTER_RIGHT, null, null);
     }
+
+
+    registEditChannel(titleBar: TitleBarComponent){
+        titleBar.addOnItemClickedListener((icon)=>{
+            if (icon.key == "editChannel")
+                this.event.publish(FeedsEvent.PublishType.editChannel)
+        });
+    }
+
+    registEditServer(titleBar: TitleBarComponent){
+        titleBar.addOnItemClickedListener((icon)=>{
+            if (icon.key == "editServer")
+                this.event.publish(FeedsEvent.PublishType.editServer);
+        });
+
+    }
     
+    regitstEditImages(titleBar: TitleBarComponent){
+        titleBar.addOnItemClickedListener((icon)=>{
+            if (icon.key == "editImages")
+                this.event.publish(FeedsEvent.PublishType.editImages);
+        });
+    }
 }

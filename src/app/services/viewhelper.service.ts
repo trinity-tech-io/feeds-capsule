@@ -51,11 +51,7 @@ export class ViewHelper {
                 this.titleBarService.setTitleBarBackKeyShown(titleBar, true);
             }
             if(isOwer){
-                this.titleBarService.setIcon(titleBar, FeedsData.TitleBarIconSlot.INNER_RIGHT, "editChannel", "assets/icon/edit.svg");
-                // titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, {
-                //     key: "editChannel",
-                //     iconPath: TitleBarPlugin.BuiltInIcon.EDIT
-                // });
+                this.titleBarService.setTitleBarEditChannel(titleBar);
             }
             this.titleBarService.addRight(titleBar);
         })
@@ -86,21 +82,11 @@ export class ViewHelper {
             this.titleBarService.setTitle(titleBar, this.translate.instant(oldNameKey));
             this.titleBarService.setTitleBarBackKeyShown(titleBar, true);
             if(page === "serverinfo"){
-                //TODO
-                this.titleBarService.setIcon(titleBar, FeedsData.TitleBarIconSlot.INNER_RIGHT, "editServer", "assets/icon/edit.svg");
-                // titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, {
-                //     key: "editServer",
-                //     iconPath: TitleBarPlugin.BuiltInIcon.EDIT
-                // });
+                this.titleBarService.setTitleBarEditServer(titleBar);
             }
             if(page === "feedinfo"){
                 if(isOwner){
-                    //TODO
-                    this.titleBarService.setIcon(titleBar, FeedsData.TitleBarIconSlot.INNER_RIGHT, "editChannel", "assets/icon/edit.svg");
-                    // titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, {
-                    //     key: "editChannel",
-                    //     iconPath: TitleBarPlugin.BuiltInIcon.EDIT
-                    // });
+                    this.titleBarService.setTitleBarEditChannel(titleBar);
                 }
             }
             this.titleBarService.addRight(titleBar);

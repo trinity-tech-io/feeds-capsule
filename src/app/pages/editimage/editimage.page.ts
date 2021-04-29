@@ -30,9 +30,9 @@ export class EditimagePage implements OnInit {
     this.events.subscribe(FeedsEvent.PublishType.editImages,()=>{
       this.finish();
     });
-    // this.appService.hideright();
+
     this.titleBarService.hideRight(this.titleBar);
-    this.titleBarService.setIcon(this.titleBar, FeedsData.TitleBarIconSlot.INNER_RIGHT, "editImages", "assets/icon/yes.ico");
+    this.titleBarService.setTitleBarEditImage(this.titleBar);
     this.headPortrait = this.feedService.getClipProfileIamge();
   }
 
