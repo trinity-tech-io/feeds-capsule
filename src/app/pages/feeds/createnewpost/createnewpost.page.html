@@ -52,7 +52,7 @@
       <ion-col class="left-col">
         <ion-icon id="image" mode="ios" name="image" (click)="addImg(0)" *ngIf="posterImg ===''"></ion-icon>
         <ion-icon id="camera" mode="ios" name="camera" (click)="addImg(1)"  *ngIf="posterImg ===''"></ion-icon>
-        <ion-icon id="selectvideo" mode="ios" name="selectvideo" (click)="selectvideo()" *ngIf="imgUrl === ''" ></ion-icon>
+        <ion-icon id="selectvideo" mode="ios" src="assets/icon/selectvideo.svg" (click)="selectvideo()" *ngIf="imgUrl === ''" ></ion-icon>
         <ion-icon id="videocam" name="videocam" (click)="videocam()"*ngIf="imgUrl === ''"  ></ion-icon>
       </ion-col>
       <ion-col class="right-col" size="4.5">
