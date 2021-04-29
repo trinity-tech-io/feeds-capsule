@@ -157,7 +157,7 @@ export class FeedinfoPage implements OnInit {
     this.titleBarService.setTitle(this.titleBar, this.translate.instant('FeedinfoPage.title'));
     if (this.feedService.checkChannelIsMine(this.nodeId, this.channelId)) {
       //TODO
-      this.titleBarService.setIcon(this.titleBar, FeedsData.TitleBarIconSlot.INNER_RIGHT, "editChannel", "");
+      this.titleBarService.setIcon(this.titleBar, FeedsData.TitleBarIconSlot.INNER_RIGHT, "editChannel", "assets/icon/edit.svg");
       // titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, {
       //   key: "editChannel",
       //   iconPath: TitleBarPlugin.BuiltInIcon.EDIT
