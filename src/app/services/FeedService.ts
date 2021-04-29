@@ -1374,7 +1374,6 @@ export class FeedService {
     let updateAt: number = params.updated_at||created_at;
 
     let contentStr = this.serializeDataService.decodeData(contentBin);
-    let contentHash = UtilService.SHA256(contentStr);
 
     let content = this.parseContent(nodeId,channel_id,id,0,contentStr);
 
@@ -2116,7 +2115,6 @@ export class FeedService {
       let contentStr = this.serializeDataService.decodeData(contentBin);
       let content = this.parseContent(nodeId,channel_id,id,0,contentStr);
 
-      let contentHash = UtilService.SHA256(contentStr);
       let updatedAt = result[index].updated_at||createAt;
       let status = result[index].status||FeedsData.PostCommentStatus.available;
 
