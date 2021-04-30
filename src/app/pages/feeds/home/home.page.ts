@@ -268,6 +268,7 @@ export class HomePage implements OnInit {
 
 addCommonEvents(){
   this.events.subscribe(FeedsEvent.PublishType.updateTitle,()=>{
+    this.initTitleBar();
     if(this.menuService.postDetail!=null){
       this.menuService.hideActionSheet();
       this.menuMore(this.curPost);

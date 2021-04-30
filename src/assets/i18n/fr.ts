@@ -521,6 +521,8 @@ export const fr = {
         "hideOfflinefeed": "Display online Channels only",
         "on": "ON",
         "off": "OFF",
+        'language-setting': 'Sélection de la langue',
+        'change-lang': 'MODIFIER LA LANGUE',
     },
     "DiscoverfeedPage": {
         "title": "Discovery Square",
