@@ -30,10 +30,14 @@ export class EditimagePage implements OnInit {
     this.events.subscribe(FeedsEvent.PublishType.editImages,()=>{
       this.finish();
     });
+    this.initTitle();
+    this.headPortrait = this.feedService.getClipProfileIamge();
+  }
 
+  initTitle(){
     this.titleBarService.hideRight(this.titleBar);
     this.titleBarService.setTitleBarEditImage(this.titleBar);
-    this.headPortrait = this.feedService.getClipProfileIamge();
+    this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
   }
 
   ionViewWillLeave(){
