@@ -89,6 +89,7 @@
     "karma-coverage-istanbul-reporter": "~2.0.1",
     "karma-jasmine": "~2.0.1",
     "karma-jasmine-html-reporter": "^1.4.0",
+    "phonegap-plugin-barcodescanner": "^8.1.0",
     "protractor": "~5.4.0",
     "svelte": "^3.37.0",
     "ts-node": "^9.1.1",
