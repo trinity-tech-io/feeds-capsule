@@ -66,6 +66,7 @@ import { VideoEditor } from '@ionic-native/video-editor/ngx';
 import { RewriteFrames } from '@sentry/integrations';
 import { customAnimation } from 'src/app/services/nav_anamition';
 import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
+import { LanguageService } from 'src/app/services/language.service';
 
 import * as Sentry from "@sentry/browser";
 
@@ -195,6 +196,7 @@ export function TranslateLoaderFactory() {
     ViewHelper,
     TitleBarService,
     ScanService,
+    LanguageService,
     BarcodeScanner,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     {provide: ErrorHandler, useClass: ErrorHandler}

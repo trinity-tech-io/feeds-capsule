@@ -157,4 +157,8 @@ export class SettingsPage implements OnInit {
 
     })
   }
+
+  navToSelectLanguage(){
+    this.native.getNavCtrl().navigateForward(['/language']);
+  }
 }

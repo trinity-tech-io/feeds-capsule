@@ -65,7 +65,7 @@ export class TitleBarService {
     registerBackKey(titleBar: TitleBarComponent) {
         titleBar.addOnItemClickedListener((icon)=>{
             if (icon.key == "back")
-                this.native.getNavCtrl().back();
+                this.native.getNavCtrl().pop();
         });
     }
 
