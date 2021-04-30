@@ -1,0 +1,16 @@
+<ion-header>
+  <app-titlebar></app-titlebar>
+  <div *ngIf="connectionStatus == 1" class="offline-header"></div>
+</ion-header>
+<ion-content>
+  <ion-grid class="ios-container" [class.ios-dark-container]="theme.darkMode">
+    <ion-row *ngFor="let language of languageList" class="section" (click)="selectLanguage(language)">
+        <ion-col size="9" class="title-col">
+            <h2>{{ language.name }}</h2>
+        </ion-col>
+        <ion-col size="3" class="arrow-col">
+          <ion-icon *ngIf="currentLang == language.code" name="checkmark"></ion-icon>
+        </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

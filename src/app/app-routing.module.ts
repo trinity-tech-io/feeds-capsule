@@ -41,7 +41,8 @@ const routes: Routes = [
   { path: 'discoverfeedinfo', loadChildren: './pages/discoverfeedinfo/discoverfeedinfo.module#DiscoverfeedinfoPageModule' },
   { path: 'feedinfo', loadChildren: './pages/feedinfo/feedinfo.module#FeedinfoPageModule' },
   { path: 'commentlist', loadChildren: './pages/commentlist/commentlist.module#CommentlistPageModule' },
-  { path: 'feedspreferences', loadChildren: './pages/feedspreferences/feedspreferences.module#FeedspreferencesPageModule' }
+  { path: 'feedspreferences', loadChildren: './pages/feedspreferences/feedspreferences.module#FeedspreferencesPageModule' },
+  { path: 'language', loadChildren: './pages/settings/language/language.module#LanguagePageModule' }
 ];
 
 @NgModule({
