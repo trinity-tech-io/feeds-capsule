@@ -34,9 +34,16 @@ export class LanguageService {
     }
 
     initTranslateConfig(){
+        let defaltLang = this.getSystemLanguage()||"";
         this.translate.addLangs(["zh", "en", "fr"]);
         this.curLang = localStorage.getItem('io.trinity.feeds.language') || "";
-        this.setCurLang(this.curLang);
+
+        if (this.curLang != "") {
+            this.setCurLang(this.curLang);
+            return 
+        }
+
+        this.setCurLang(defaltLang);
         // TODO
         // appManager.getLocale((defaultLang: string, currentLang: string, systemLang: string)=>{
         //   this.setCurLang(currentLang);
@@ -60,5 +67,9 @@ export class LanguageService {
             this.curLang = "en";
         }
         return this.curLang;
+    }
+
+    getSystemLanguage(): string{
+        return this.translate.getBrowserLang();
     }
 }
