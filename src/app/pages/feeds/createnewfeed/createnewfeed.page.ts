@@ -49,7 +49,6 @@ export class CreatenewfeedPage implements OnInit {
 
   ionViewWillEnter() {
     this.initTitle();
-    this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
 
     this.selectedServer = this.feedService.getBindingServer();
     this.selectedChannelSource = this.selectedServer.did;
@@ -131,6 +130,8 @@ export class CreatenewfeedPage implements OnInit {
 
   initTitle(){
     this.titleBarService.setTitle(this.titleBar, this.translate.instant("CreatenewfeedPage.createNewFeed"));
+    this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
+    this.titleBarService.setTitleBarMoreMemu(this.titleBar);
   }
 
   createChannel(name: HTMLInputElement, desc: HTMLInputElement){

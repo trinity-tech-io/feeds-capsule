@@ -62,7 +62,6 @@ export class EditCommentPage implements OnInit {
 
   ionViewWillEnter() {
     this.initTitle();
-    this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
 
     this.connectionStatus = this.feedService.getConnectionStatus();
     let channel = this.feedService.getChannelFromId(this.nodeId,this.channelId) || {};
@@ -131,6 +130,8 @@ export class EditCommentPage implements OnInit {
 
   initTitle(){
     this.titleBarService.setTitle(this.titleBar, this.translate.instant(this.titleKey));
+    this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
+    this.titleBarService.setTitleBarMoreMemu(this.titleBar);
   }
 
   publishComment(){

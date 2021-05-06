@@ -273,7 +273,6 @@ export class ChannelsPage implements OnInit {
 
     this.hideDeletedPosts = this.feedService.getHideDeletedPosts();
     this.clientHeight =screen.availHeight;
-    this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
     this.styleObj.width = (screen.width - 105)+'px';
     this.initTitle();
     this.init();
@@ -534,6 +533,8 @@ export class ChannelsPage implements OnInit {
 
   initTitle(){
     this.titleBarService.setTitle(this.titleBar, this.translate.instant("ChannelsPage.feeds"));
+    this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
+    this.titleBarService.setTitleBarMoreMemu(this.titleBar);
   }
 
   like(nodeId:string, channelId:number, postId:number){

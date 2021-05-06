@@ -154,6 +154,7 @@ export class FeedinfoPage implements OnInit {
 
   initTitle(){
     this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
+    this.titleBarService.setTitleBarMoreMemu(this.titleBar);
     this.titleBarService.setTitle(this.titleBar, this.translate.instant('FeedinfoPage.title'));
     if (this.feedService.checkChannelIsMine(this.nodeId, this.channelId)) {
       this.titleBarService.setTitleBarEditChannel(this.titleBar);

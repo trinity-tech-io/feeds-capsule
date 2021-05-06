@@ -46,7 +46,6 @@ export class IssuecredentialPage implements OnInit {
 
     ionViewWillEnter(){
       this.initTitle();
-      this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
       
       this.connectionStatus = this.feedService.getConnectionStatus();
       this.events.subscribe(FeedsEvent.PublishType.connectionChanged,(status)=>{
@@ -90,6 +89,8 @@ export class IssuecredentialPage implements OnInit {
   
     initTitle(){
       this.titleBarService.setTitle(this.titleBar, this.translate.instant(this.title));
+      this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
+      this.titleBarService.setTitleBarMoreMemu(this.titleBar);
     }
   
   issueCredential(){

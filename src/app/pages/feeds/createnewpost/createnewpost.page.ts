@@ -101,7 +101,6 @@ export class CreatenewpostPage implements OnInit {
     ionViewWillEnter() {
       this.feedList = this.feedService.getMyChannelList() || [];
       this.initTitle();
-      this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
 
       this.connectionStatus = this.feedService.getConnectionStatus();
       this.initFeed();
@@ -220,6 +219,8 @@ export class CreatenewpostPage implements OnInit {
 
     initTitle(){
       this.titleBarService.setTitle(this.titleBar, this.translate.instant("CreatenewpostPage.addingPost"));
+      this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
+      this.titleBarService.setTitleBarMoreMemu(this.titleBar);
     }
 
     post(){
