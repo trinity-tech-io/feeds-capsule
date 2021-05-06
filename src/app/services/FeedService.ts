@@ -1101,7 +1101,11 @@ export class FeedService {
     if(!this.hasAccessToken(nodeId))
       return;
     let accessToken: FeedsData.AccessToken = this.dataHelper.getAccessToken(nodeId) || null;
-    this.connectionService.createChannel(this.getServerNameByNodeId(nodeId),nodeId,name,introduction,avatar,accessToken);
+    //TODO 2.0
+    let tipMethods = "";
+    //TODO 2.0
+    let proof = "";
+    this.connectionService.createChannel(this.getServerNameByNodeId(nodeId),nodeId,name,introduction,avatar,accessToken,tipMethods,proof);
   }
 
   publishPost(nodeId: string, channelId: number, content: any, tempId: number){

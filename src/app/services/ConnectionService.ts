@@ -23,21 +23,23 @@ export class ConnectionService {
     }
 
     createChannel(serverName: string, nodeId: string, name: string, introduction: string,
-                 avatar: any, accessToken: FeedsData.AccessToken){
+                 avatar: any, accessToken: FeedsData.AccessToken, tipMethods: string, proof: string){
         if (accessToken == null || accessToken == undefined)
             return ;
 
         let avatarBin = this.serializeDataService.encodeData(avatar);
 
         let request: Communication.create_channel_request = {
-            version: "1.0",
+            version: "2.0",
             method : "create_channel",
             id     : -1,
             params : {
                 access_token  : accessToken.token,
                 name          : name,
                 introduction  : introduction,
-                avatar        : avatarBin
+                avatar        : avatarBin,
+                tip_methods   : tipMethods,
+                proof         : proof
             }
         }
         this.sendRPCMessage(serverName, nodeId, request.method, request.params, "");
@@ -407,30 +409,30 @@ export class ConnectionService {
         this.sendRPCMessage(serverName, nodeId, request.method, request.params,"");
     }
 
-    signinConfirmRequest(serverName: string, nodeId: string, nonce: string, realm: string, requiredCredential: boolean, presentation: string , credential: string){
-        let request: any;
-        if (requiredCredential){
-            request = {
-                ver: "1.0",
-                method : "signin_confirm_challenge",
-                id     : -1,
-                params : {
-                    jws           : presentation,
-                    credential    : credential
-                }
-            }
-        }else {
-            request = {
-                ver: "1.0",
-                method : "signin_confirm_challenge",
-                id     : -1,
-                params : {
-                    jws: presentation,
-                }
-            }
-        }
-        this.sendRPCMessage(serverName, nodeId, request.method, request.params,"");
-    }
+    // signinConfirmRequest(serverName: string, nodeId: string, nonce: string, realm: string, requiredCredential: boolean, presentation: string , credential: string){
+    //     let request: any;
+    //     if (requiredCredential){
+    //         request = {
+    //             ver: "1.0",
+    //             method : "signin_confirm_challenge",
+    //             id     : -1,
+    //             params : {
+    //                 jws           : presentation,
+    //                 credential    : credential
+    //             }
+    //         }
+    //     }else {
+    //         request = {
+    //             ver: "1.0",
+    //             method : "signin_confirm_challenge",
+    //             id     : -1,
+    //             params : {
+    //                 jws: presentation,
+    //             }
+    //         }
+    //     }
+    //     this.sendRPCMessage(serverName, nodeId, request.method, request.params,"");
+    // }
 
     declareOwnerRequest(serverName: string, nodeId: string, nonce: string, did: string){
         let request: Communication.declare_owner_request = {
