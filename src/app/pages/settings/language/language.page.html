@@ -1,7 +1,7 @@
-<ion-header>
+<!-- <ion-header> -->
   <app-titlebar></app-titlebar>
   <div *ngIf="connectionStatus == 1" class="offline-header"></div>
-</ion-header>
+<!-- </ion-header> -->
 <ion-content>
   <ion-grid class="ios-container" [class.ios-dark-container]="theme.darkMode">
     <ion-row *ngFor="let language of languageList" class="section" (click)="selectLanguage(language)">
