@@ -122,15 +122,20 @@ declare module Communication{
         }
     }
 
+    //Update to 2.0
+    //Add tip_methods string
+    //Add proof string
     type create_channel_request = {
-        version: "1.0"
+        version: "2.0"
         method : "create_channel"
         id     : jsonrpc_id
         params : {
             access_token    : string
-            name        : string
-            introduction: string  
-            avatar      : any
+            name            : string
+            introduction    : string  
+            avatar          : any
+            tip_methods     : string
+            proof           : string
         } 
     }
 
