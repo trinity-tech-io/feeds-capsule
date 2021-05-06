@@ -133,7 +133,6 @@ export class ServerInfoPage implements OnInit {
     //this.initPublicStatus();
     this.feedPublicStatus = this.feedService.getFeedPublicStatus();
 
-    this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
     this.connectionStatus = this.feedService.getConnectionStatus();
     this.events.subscribe(FeedsEvent.PublishType.connectionChanged, (status) => {
       this.zone.run(() => {
@@ -193,7 +192,8 @@ export class ServerInfoPage implements OnInit {
 
   initTitle(){
     this.titleBarService.setTitle(this.titleBar, this.translate.instant('ServerInfoPage.title'));
-
+    this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
+    this.titleBarService.setTitleBarMoreMemu(this.titleBar);
     if (this.checkIsMine() == 0) {
       this.titleBarService.setTitleBarEditServer(this.titleBar);
     } else {

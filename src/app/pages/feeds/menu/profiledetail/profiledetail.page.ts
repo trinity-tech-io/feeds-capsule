@@ -118,7 +118,7 @@ export class ProfiledetailPage implements OnInit {
     this.connectionStatus = this.feedService.getConnectionStatus();
     this.developerMode = this.feedService.getDeveloperMode();
     this.initTitle();
-    this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
+    
     let signInData = this.feedService.getSignInData() || {};
     this.name = signInData["nickname"] || signInData["name"] || "";
     this.avatar = signInData["avatar"] || null;
@@ -158,6 +158,8 @@ export class ProfiledetailPage implements OnInit {
 
   initTitle(){
     this.titleBarService.setTitle(this.titleBar, this.translate.instant('ProfiledetailPage.profileDetails'));
+    this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
+    this.titleBarService.setTitleBarMoreMemu(this.titleBar);
   }
 
   ionViewWillUnload(){

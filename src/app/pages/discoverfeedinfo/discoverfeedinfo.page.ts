@@ -75,7 +75,6 @@ export class DiscoverfeedinfoPage implements OnInit {
     this.qrcodeString = this.feedsUrl+"#"+encodeURIComponent(this.feedInfo["name"]) || null;
     this.status = this.getChannelStatus(this.feedInfo);
     this.initTitle();
-    this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
 
     this.connectionStatus = this.feedService.getConnectionStatus();
     this.events.subscribe(FeedsEvent.PublishType.connectionChanged,(status)=>{
@@ -143,6 +142,8 @@ export class DiscoverfeedinfoPage implements OnInit {
 
   initTitle(){
     this.titleBarService.setTitle(this.titleBar, this.translate.instant('DiscoverfeedinfoPage.title'));
+    this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
+    this.titleBarService.setTitleBarMoreMemu(this.titleBar);
   }
 
   checkDid(type:string){

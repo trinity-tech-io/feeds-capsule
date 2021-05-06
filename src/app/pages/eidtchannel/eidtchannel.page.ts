@@ -88,6 +88,7 @@ ionViewWillEnter() {
 initTitle(){
   this.titleBarService.setTitle(this.titleBar, this.translate.instant('EidtchannelPage.title'));
   this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
+  this.titleBarService.setTitleBarMoreMemu(this.titleBar);
 }
 
 ionViewDidEnter(){

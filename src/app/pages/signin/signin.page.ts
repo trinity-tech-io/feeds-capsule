@@ -40,11 +40,11 @@ export class SigninPage implements OnInit {
 
   initTile(){
     this.titleBarService.setTitle(this.titleBar, this.translate.instant("SigninPage.signIn"));
+    this.titleBarService.setTitleBarBackKeyShown(this.titleBar, false);
   }
 
   ionViewWillEnter() {
     this.initTile();
-    this.titleBarService.setTitleBarBackKeyShown(this.titleBar, false);
     // appManager.setVisible("show");
 
     this.event.subscribe(FeedsEvent.PublishType.updateTitle,()=>{

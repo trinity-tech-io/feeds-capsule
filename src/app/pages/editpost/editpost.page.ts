@@ -86,7 +86,6 @@ export class EditPostPage implements OnInit {
 
   ionViewWillEnter() {
     this.initTitle();
-    this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
     this.initData();
 
     this.events.subscribe(FeedsEvent.PublishType.connectionChanged,(status)=>{
@@ -235,6 +234,8 @@ export class EditPostPage implements OnInit {
 
   initTitle(){
     this.titleBarService.setTitle(this.titleBar, this.translate.instant("EditPostPage.title"));
+    this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
+    this.titleBarService.setTitleBarMoreMemu(this.titleBar);
   }
 
   post(){

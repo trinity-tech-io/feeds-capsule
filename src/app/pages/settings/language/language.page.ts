@@ -28,6 +28,7 @@ export class LanguagePage implements OnInit {
   initTitle(){
     this.titleBarService.setTitle(this.titleBar, this.translate.instant("SettingsPage.language-setting"));
     this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
+    this.titleBarService.setTitleBarMoreMemu(this.titleBar);
   }
 
   ionViewWillEnter() {

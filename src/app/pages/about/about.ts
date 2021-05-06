@@ -34,7 +34,6 @@ export class AboutPage implements OnInit {
 
     ionViewWillEnter() {
       this.initTitle();
-      this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
 
       this.connectionStatus = this.feedService.getConnectionStatus();
       this.events.subscribe(FeedsEvent.PublishType.connectionChanged,(status)=>{
@@ -54,6 +53,8 @@ export class AboutPage implements OnInit {
     initTitle(){
       this.currentLanguage = this.feedService.getCurrentLang();
       this.titleBarService.setTitle(this.titleBar, this.translate.instant("AboutPage.about"));
+      this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
+      this.titleBarService.setTitleBarMoreMemu(this.titleBar);
     }
 
 

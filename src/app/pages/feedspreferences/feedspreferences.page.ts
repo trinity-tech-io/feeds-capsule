@@ -59,6 +59,8 @@ export class FeedspreferencesPage implements OnInit {
 
   initTitle(){
     this.titleBarService.setTitle(this.titleBar, this.translate.instant('FeedspreferencesPage.title'));
+    this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
+    this.titleBarService.setTitleBarMoreMemu(this.titleBar);
   }
 
   ionViewWillEnter(){
@@ -73,7 +75,7 @@ export class FeedspreferencesPage implements OnInit {
     }
     this.developerMode = this.feedService.getDeveloperMode();
     this.initTitle();
-    this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
+
     this.addEvent();
   }
 
