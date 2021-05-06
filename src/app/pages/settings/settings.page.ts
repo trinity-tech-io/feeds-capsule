@@ -54,6 +54,8 @@ export class SettingsPage implements OnInit {
 
   initTitle(){
     this.titleBarService.setTitle(this.titleBar, this.translate.instant("app.settings"));
+    this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
+    this.titleBarService.setTitleBarMoreMemu(this.titleBar);
   }
 
   ionViewWillEnter() {
@@ -62,7 +64,6 @@ export class SettingsPage implements OnInit {
     this.hideOfflineFeeds = this.feedService.getHideOfflineFeeds();
     this.developerMode = this.feedService.getDeveloperMode();
     this.initTitle();
-    this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
 
     this.events.subscribe(FeedsEvent.PublishType.updateTitle,()=>{
       this.initTitle();

@@ -158,7 +158,6 @@ export class CommentlistPage implements OnInit {
 
     this.hideDeletedComments = this.feedService.getHideDeletedComments();
     this.initTitle();
-    this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
     this.styleObj.width = (screen.width - 55)+'px';
     this.dstyleObj.width= (screen.width - 105)+'px';
     this.initData(true);
@@ -292,6 +291,8 @@ export class CommentlistPage implements OnInit {
 
   initTitle(){
     this.titleBarService.setTitle(this.titleBar, this.translate.instant("CommentlistPage.title"));
+    this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
+    this.titleBarService.setTitleBarMoreMemu(this.titleBar);
   }
 
   getContentText(): string{

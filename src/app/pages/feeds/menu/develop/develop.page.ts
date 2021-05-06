@@ -29,7 +29,6 @@ export class DevelopPage implements OnInit {
 
   ionViewWillEnter() {
     this.initTitle();
-    this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
 
     this.events.subscribe(FeedsEvent.PublishType.updateTitle,()=>{
       this.initTitle();
@@ -42,6 +41,8 @@ export class DevelopPage implements OnInit {
 
   initTitle(){
     this.titleBarService.setTitle(this.titleBar, this.translate.instant("DevelopPage.develop"));
+    this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
+    this.titleBarService.setTitleBarMoreMemu(this.titleBar);
   }
 
   clearAll(){

@@ -34,6 +34,7 @@ export class FinishPage implements OnInit {
     ionViewWillEnter() {
       this.initTitle();
       this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
+      this.titleBarService.setTitleBarMoreMemu(this.titleBar);
     }
 
     ionViewDidEnter() {

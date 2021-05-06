@@ -83,7 +83,6 @@ export class ProfileimagePage implements OnInit {
 
   ionViewWillEnter() {
     this.initTitle();
-    this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
     this.select = this.feedService.getSelsectIndex();
     let clipProfileIamge = this.feedService.getClipProfileIamge();
     if(clipProfileIamge!=""){
@@ -133,6 +132,8 @@ export class ProfileimagePage implements OnInit {
 
   initTitle(){
     this.titleBarService.setTitle(this.titleBar, this.translate.instant("ProfileimagePage.title"));
+    this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
+    this.titleBarService.setTitleBarMoreMemu(this.titleBar);
   }
 
   selectIndex(index: number, avatar?: string){
