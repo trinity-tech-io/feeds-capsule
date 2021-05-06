@@ -55,14 +55,26 @@ export class ConnectionService {
         let memo = {
             tempId: tempId
         }
+        //TODO 2.0
+        let thumbnails = "";
+        //TODO 2.0
+        let hashId = "";
+        //TODO 2.0
+        let proof = "";
+        //TODO 2.0
+        let originPostUrl = "";
         let request: Communication.publish_post_request = {
-            version: "1.0",
+            version: "2.0",
             method : "publish_post",
             id     : -1,
             params : {
-                access_token  : accessToken.token,
-                channel_id    : Number(channelId),
-                content       : contentBin,
+                access_token    : accessToken.token,
+                channel_id      : Number(channelId),
+                content         : contentBin,
+                thumbnails      : thumbnails,
+                hash_id         : hashId,
+                proof           : proof,
+                origin_post_url : originPostUrl
             }
         }
         this.sendRPCMessage(serverName, nodeId, request.method, request.params, memo);

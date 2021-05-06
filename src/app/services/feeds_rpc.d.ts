@@ -171,14 +171,23 @@ declare module Communication{
         result : null
     }
     
+    //Update to 2.0
+    //Add thumbnails      : any
+    //Add hash_id         : string
+    //Add proof           : string
+    //Add origin_post_url : string
     type publish_post_request = {
-        version: "1.0"
+        version: "2.0"
         method : "publish_post"
         id     : jsonrpc_id
         params : {
             access_token    : string
-            channel_id  : number
-            content     : any
+            channel_id      : number
+            content         : any
+            thumbnails      : any
+            hash_id         : string
+            proof           : string
+            origin_post_url : string
         } 
     }
 
