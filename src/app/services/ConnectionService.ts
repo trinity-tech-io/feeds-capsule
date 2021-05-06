@@ -362,20 +362,23 @@ export class ConnectionService {
         this.sendRPCMessage(serverName, nodeId, request.method, request.params,"");
     }
 
-    editFeedInfo(serverName: string, nodeId: string, channelId: number, name: string , desc: string, avatarBin: any, accessToken: FeedsData.AccessToken){
+    editFeedInfo(serverName: string, nodeId: string, channelId: number, name: string , desc: string, avatarBin: any, 
+        accessToken: FeedsData.AccessToken, tipMethods: string, proof: string){
         if (accessToken == null || accessToken == undefined)
             return ;
 
         let request: Communication.update_feedinfo_request = {
-            version: "1.0",
+            version: "2.0",
             method : "update_feedinfo",
             id     : -1,
             params : {
-                access_token  : accessToken.token,
-                id            : channelId, //channelId
-                name          : name,
-                introduction  : desc,
-                avatar        : avatarBin
+                access_token    : accessToken.token,
+                id              : channelId, //channelId
+                name            : name,
+                introduction    : desc,
+                avatar          : avatarBin,
+                tip_methods     : tipMethods,
+                proof           : proof
             }
         }
         this.sendRPCMessage(serverName, nodeId, request.method, request.params,"");

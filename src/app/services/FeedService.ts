@@ -1254,7 +1254,11 @@ export class FeedService {
 
     let avatarBin = this.serializeDataService.encodeData(avatar);
     let accessToken: FeedsData.AccessToken = this.dataHelper.getAccessToken(nodeId) || null;
-    this.connectionService.editFeedInfo(this.getServerNameByNodeId(nodeId),nodeId, channelId, name, desc, avatarBin, accessToken);
+    //TODO 2.0
+    let tipMethods = "";
+    //TODO 2.0
+    let proof = "";
+    this.connectionService.editFeedInfo(this.getServerNameByNodeId(nodeId),nodeId, channelId, name, desc, avatarBin, accessToken, tipMethods, proof);
   }
 
   editPost(nodeId: string, channelId: number, postId: number, content: any){

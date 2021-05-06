@@ -147,8 +147,11 @@ declare module Communication{
         }
     }
 
+    //Update to 2.0
+    //Add tip_methods string
+    //Add proof string
     type update_feedinfo_request = {
-        version: "1.0"
+        version: "2.0"
         method : "update_feedinfo"
         id     : jsonrpc_id
         params : {
@@ -157,6 +160,8 @@ declare module Communication{
             name        : string
             introduction: string  
             avatar      : any
+            tip_methods : string
+            proof       : string
         } 
     }
 
