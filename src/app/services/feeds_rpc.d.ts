@@ -323,8 +323,10 @@ declare module Communication{
         result : null
     }
 
+    //Update to 2.0
+    //Add proof : string
     type post_like_request = {
-        version: "1.0"
+        version: "2.0"
         method : "post_like"
         id     : jsonrpc_id
         params : {
@@ -332,6 +334,7 @@ declare module Communication{
             channel_id: number
             post_id   : number
             comment_id: number | null
+            proof : string
         } 
     }
     

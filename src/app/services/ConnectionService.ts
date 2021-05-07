@@ -161,8 +161,10 @@ export class ConnectionService {
         if (accessToken == null || accessToken == undefined)
             return ;
 
+        //TODO 2.0
+        let proof = "";
         let request: Communication.post_like_request = {
-            version: "1.0",
+            version: "2.0",
             method : "post_like",
             id     : -1,
             params : {
@@ -170,6 +172,7 @@ export class ConnectionService {
                 channel_id    : channelId,
                 post_id       : postId,
                 comment_id    : commentId,
+                proof         : proof
             }
         }
         this.sendRPCMessage(serverName, nodeId, request.method, request.params, "");
