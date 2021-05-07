@@ -132,9 +132,14 @@ export class ConnectionService {
             return ;
 
         let contentBin = this.serializeDataService.encodeData(content);
-
+        //TODO 2.0
+        let thumbnails = "";
+        //TODO 2.0
+        let hashId = "";
+        //TODO 2.0
+        let proof = "";
         let request: Communication.post_comment_request = {
-            version: "1.0",
+            version: "2.0",
             method : "post_comment",
             id     : -1,
             params : {
@@ -143,6 +148,9 @@ export class ConnectionService {
                 post_id         : postId,
                 comment_id      : commentId,
                 content         : contentBin,
+                thumbnails      : thumbnails,
+                hash_id         : hashId,
+                proof           : proof
             }
         }
         this.sendRPCMessage(serverName, nodeId, request.method, request.params, "");

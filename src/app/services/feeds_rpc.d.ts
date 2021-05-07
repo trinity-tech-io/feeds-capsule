@@ -247,18 +247,26 @@ declare module Communication{
         result : null
     }
     
+    //Update to 2.0
+    //Add thumbnails : any
+    //Add hash_id : string
+    //Add proof : string
     type post_comment_request = {
-        version: "1.0"
+        version: "2.0"
         method : "post_comment"
         id     : jsonrpc_id
         params : {
-            access_token  : string
-            channel_id: number
-            post_id   : number
-            comment_id: number | null
-            content   : any
+            access_token    : string
+            channel_id      : number
+            post_id         : number
+            comment_id      : number | null
+            content         : any
+            thumbnails      : any
+            hash_id         : string
+            proof           : string
         } 
     }
+    
     type post_comment_response = {
         version: "1.0"
         id     : jsonrpc_id
