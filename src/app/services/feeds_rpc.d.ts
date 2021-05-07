@@ -275,9 +275,12 @@ declare module Communication{
         }
     }
     
-    // new api
+    //Update to 2.0
+    //Add thumbnails : any
+    //Add hash_id : string
+    //Add proof : string
     type edit_comment_request = {
-        version: "1.0"
+        version: "2.0"
         method : "edit_comment"
         id     : jsonrpc_id
         params : {
@@ -287,6 +290,9 @@ declare module Communication{
             id          : number        //comment_id
             comment_id  : number | 0    //comment_id | 0
             content     : any           //bin
+            thumbnails  : any
+            hash_id     : string
+            proof       : string
         } 
     }
 

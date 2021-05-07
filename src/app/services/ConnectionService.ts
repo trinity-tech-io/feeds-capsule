@@ -561,8 +561,14 @@ export class ConnectionService {
 
         let contentBin = this.serializeDataService.encodeData(content);
 
+        //TODO 2.0
+        let thumbnails = "";
+        //TODO 2.0
+        let hashId = "";
+        //TODO 2.0
+        let proof = "";
         let request: Communication.edit_comment_request = {
-            version: "1.0",
+            version: "2.0",
             method : "edit_comment",
             id     : -1,
             params : {
@@ -571,7 +577,10 @@ export class ConnectionService {
                 post_id     : postId,        //post_id
                 id          : commentId,        //comment_id
                 comment_id  : commentById,   //comment_id | 0
-                content     : contentBin           //bin
+                content     : contentBin,           //bin
+                thumbnails  : thumbnails,
+                hash_id     : hashId,
+                proof       : proof
             }
         }
 
