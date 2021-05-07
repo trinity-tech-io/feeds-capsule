@@ -199,16 +199,25 @@ declare module Communication{
         }
     }
 
-    // new api
+
+    //Update to 2.0
+    //Add thumbnails : any
+    //Add hash_id : string
+    //Add proof : string
+    //Add origin_post_url : string
     type edit_post_request = {
-        version: "1.0"
+        version: "2.0"
         method : "edit_post"
         id     : jsonrpc_id
         params : {
-            access_token: string
-            channel_id  : number    //channel_id
-            id          : number    //post_id
-            content     : Uint8Array//bin
+            access_token    : string
+            channel_id      : number    //channel_id
+            id              : number    //post_id
+            content         : Uint8Array//bin
+            thumbnails      : any
+            hash_id         : string
+            proof           : string
+            origin_post_url : string
         } 
     }
 

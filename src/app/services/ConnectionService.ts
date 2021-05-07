@@ -500,16 +500,29 @@ export class ConnectionService {
     editPost(serverName: string, nodeId: string, channelId: number, postId: number, content: any, accessToken: FeedsData.AccessToken){
         if (accessToken == null || accessToken == undefined)
             return ;
+        //TODO 2.0
+        let thumbnails = "";
+        //TODO 2.0
+        let hashId = ""
+        //TODO 2.0
+        let proof = "";
+        //TODO 2.0
+        let originPostUrl = "";
+
         let contentBin = this.serializeDataService.encodeData(content);
         let request: Communication.edit_post_request = {
-            version: "1.0",
+            version: "2.0",
             method : "edit_post",
             id     : -1,
             params : {
-                access_token: accessToken.token,
-                channel_id  : Number(channelId),
-                id          : Number(postId),
-                content     : contentBin
+                access_token    : accessToken.token,
+                channel_id      : Number(channelId),
+                id              : Number(postId),
+                content         : contentBin,
+                thumbnails      : thumbnails,
+                hash_id         : hashId,
+                proof           : proof,
+                origin_post_url : originPostUrl
             }
         }
         this.sendRPCMessage(serverName, nodeId, request.method, request.params,"");
