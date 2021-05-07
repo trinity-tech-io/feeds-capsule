@@ -243,7 +243,7 @@ export class ConnectionService {
             return ;
 
         let request: Communication.get_channels_request = {
-            version: "1.0",
+            version: "2.0",
             method : "get_channels",
             id     : -1,
             params : {

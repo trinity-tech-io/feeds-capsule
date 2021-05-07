@@ -1977,6 +1977,17 @@ export class FeedService {
       let avatarBin = result[index].avatar;
       let avatar = this.serializeDataService.decodeData(avatarBin);
       let update = result[index].last_update;
+
+      //TODO 2.0
+      let tipMethods = result[index].tip_methods;
+      this.logUtils.logd("Receive result from get_channels RPC,tipMethods is "+tipMethods);
+      //TODO 2.0
+      let proof = result[index].proof;
+      this.logUtils.logd("Receive result from get_channels RPC,proof is "+proof);
+      //TODO 2.0
+      let status = result[index].status;
+      this.logUtils.logd("Receive result from get_channels RPC,status is "+status);
+
       if (originChannel == null){
         originChannel = {
           nodeId      : nodeId,

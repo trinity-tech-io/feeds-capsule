@@ -412,8 +412,9 @@ declare module Communication{
     //     }[]
     // }
     
+    //Update to 2.0
     type get_channels_request = {
-        version: "1.0"
+        version: "2.0"
         method : "get_channels"
         id     : jsonrpc_id
         params : {
@@ -425,8 +426,12 @@ declare module Communication{
         }
     }
 
+    //Update to 2.0
+    //Add tip_methods :string
+    //Add proof       : string
+    //Add status      : number
     type get_channels_response = {
-        version: "1.0"
+        version: "2.0"
         id     : jsonrpc_id
         result : {
             is_last : boolean
@@ -439,6 +444,9 @@ declare module Communication{
                 subscribers : number
                 last_update : number
                 avatar      : any
+                tip_methods :string
+                proof       : string
+                status      : number
             }[]
         }
     }
