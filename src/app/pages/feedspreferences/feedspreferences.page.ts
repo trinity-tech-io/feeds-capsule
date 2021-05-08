@@ -127,7 +127,7 @@ export class FeedspreferencesPage implements OnInit {
     });
   }
 
-  publicFeeds(){
+  publicFeeds(buttonType:string){
 
     let server = this.feedService.getServerbyNodeId(this.nodeId) || null;
     if(server===null){
@@ -150,7 +150,7 @@ export class FeedspreferencesPage implements OnInit {
       "ownerDid":feed["owner_did"]
     };
 
-    if(this.developerMode){
+    if(this.developerMode&&buttonType==="confirm"){
       obj["purpose"] = "1";
     }
 
@@ -186,14 +186,14 @@ cancel(that:any){
   if(this.popover!=null){
     this.popover.dismiss();
   }
-  that.publicFeeds();
+  that.publicFeeds("cancel");
 }
 
 confirm(that:any){
   if(this.popover!=null){
     this.popover.dismiss();
   }
-  that.publicFeeds();
+  that.publicFeeds("confirm");
 }
 
 getPublicStatus(){
@@ -249,7 +249,7 @@ getPublicStatus(){
       this.developerModeConfirm();
       return;
     }
-    this.publicFeeds();
+    this.publicFeeds("cancel");
     return;
   }
 
