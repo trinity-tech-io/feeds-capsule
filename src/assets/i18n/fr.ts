@@ -189,7 +189,7 @@ export const fr = {
         "status10": "Pending",
         "status11": "Pending",
         "status12": "Pending",
-        "status14": "Disconnected",
+        "status14": "Requested",
         "discover": "Explore on Discovery Square",
         "des1": "Your subscription request to this channel is ongoing; this takes a few seconds. Would you like to cancel this subscription？",
     },

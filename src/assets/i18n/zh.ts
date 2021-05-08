@@ -174,7 +174,7 @@ export const zh = {
     "SearchPage":{
         "emptyDes": "没有可订阅的频道",
         "follow": "订阅",
-        "following": "正在订阅",
+        "following": "已订阅",
         "searchFeeds": "搜索",
         // "addfeedssource": "扫描二维码订阅频道",
         "status0": "连接中",
@@ -190,7 +190,7 @@ export const zh = {
         "status10": "等待",
         "status11": "订阅频道出错",
         "status12": "等待",
-        "status14": "无法连接",
+        "status14": "已请求",
         "discover": "进入广场探索Feeds",
         "des1": "您订阅此频道的请求正被确认中，请耐心等待30秒左右。确认需要取消请求订阅该频道？",
     },
