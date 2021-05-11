@@ -71,6 +71,7 @@ export class FinishPage implements OnInit {
   }
 
   returnMain(){
-    this.native.pop();
+    // this.native.pop();
+    this.native.setRootRouter(['/tabs/home']);
   }
 }
