@@ -1,5 +1,5 @@
 import { NgModule, ErrorHandler,Injectable } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
+import { BrowserModule, HammerModule } from '@angular/platform-browser';
 import { HttpClientModule } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { RouteReuseStrategy } from '@angular/router';
@@ -67,7 +67,6 @@ import { RewriteFrames } from '@sentry/integrations';
 import { customAnimation } from 'src/app/services/nav_anamition';
 import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
 import { LanguageService } from 'src/app/services/language.service';
-
 import * as Sentry from "@sentry/browser";
 
 Sentry.init({
@@ -134,6 +133,7 @@ export function TranslateLoaderFactory() {
     QRCodeModule,
     CommonModule,
     BrowserModule,
+    HammerModule,
     HttpClientModule,
     AppRoutingModule,
     ComponentsModule,
