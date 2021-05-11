@@ -60,6 +60,6 @@ export class Events {
     }
 
     unsubscribe(topic: string){
-        //TODO
+        this.destroy(topic);
     }
 }
