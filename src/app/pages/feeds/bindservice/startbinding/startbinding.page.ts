@@ -7,6 +7,7 @@ import { ThemeService } from 'src/app/services/theme.service';
 import { TranslateService } from "@ngx-translate/core";
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { PopupProvider } from 'src/app/services/popup';
 
 @Component({
   selector: 'app-startbinding',
@@ -31,7 +32,8 @@ export class StartbindingPage implements OnInit {
     private feedService:FeedService,
     public  theme:ThemeService,
     private translate:TranslateService,
-    private titleBarService: TitleBarService) {
+    private titleBarService: TitleBarService,
+    private popup: PopupProvider) {
   
   
   }
@@ -154,7 +156,7 @@ export class StartbindingPage implements OnInit {
 
   ionViewWillLeave(){
     this.native.hideLoading();
-    this.feedService.cleanDeclareOwner();
+    // this.feedService.cleanDeclareOwner();
     this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
     this.events.unsubscribe(FeedsEvent.PublishType.owner_declared);
     this.events.unsubscribe(FeedsEvent.PublishType.issue_credential);
@@ -170,11 +172,24 @@ export class StartbindingPage implements OnInit {
       return;
     }
     
-    this.native.showLoading("common.waitMoment",5*60*1000).then(()=>{
+    this.native.showLoading("common.waitMoment",5*60*1000, 
+      (isDissmiss)=>{
+        if (isDissmiss){
+          this.showTimeOutErrorAlert();
+        }
+      }
+    ).then(()=>{
       this.feedService.startDeclareOwner(this.nodeId, this.carrierAddress, this.nonce);
     });
   }
 
+  showTimeOutErrorAlert(){
+    this.popup.ionicAlert1(
+      'common.error',
+      "common.transMsgTimeout",
+      "common.ok"
+    );
+  }
   abort(){
     this.native.pop();
     this.native.hideLoading();

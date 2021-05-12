@@ -104,7 +104,9 @@ export const en = {
         "sendingTip": "This post is being sent, try again later",
         "currentPostError": "Current post is error",
         "sendingErrorTip": "After the post is sent successfully, please try again.",
-        "preferences":"Preferences"
+        "preferences":"Preferences",
+        "error":"Error",
+        "transMsgTimeout":"The server is not responding. Please try again later."
     },
     "app": {
         "profileDetails": "Profile Details",
