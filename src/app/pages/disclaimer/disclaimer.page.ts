@@ -57,8 +57,7 @@ export class DisclaimerPage implements OnInit {
 
   // deny the disclaimer
   deny(){
-    // appManager.close();
-    // TODO close app
+    navigator['app'].exitApp();
   }
 
   // accept the disclaimer
