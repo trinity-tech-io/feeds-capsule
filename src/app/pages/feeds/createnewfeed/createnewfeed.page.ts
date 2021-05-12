@@ -12,6 +12,7 @@ import { HttpService } from '../../../services/HttpService';
 import { Events } from 'src/app/services/events.service';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { PopupProvider } from 'src/app/services/popup';
 
 @Component({
   selector: 'app-createnewfeed',
@@ -40,7 +41,8 @@ export class CreatenewfeedPage implements OnInit {
     private translate:TranslateService,
     private storageService:StorageService,
     private httpService:HttpService,
-    private titleBarService: TitleBarService
+    private titleBarService: TitleBarService,
+    private popup: PopupProvider
   ) {
   }
 
@@ -77,6 +79,9 @@ export class CreatenewfeedPage implements OnInit {
       let desc = tipdialogData.desc;
       this.popover.dismiss();
       this.native.showLoading("common.waitMoment",(isDismiss)=>{
+        if(isDismiss){
+          this.showTimeOutErrorAlert();
+        }
       }).then(()=>{
         this.feedService.createTopic(this.selectedServer.nodeId, name, desc, this.channelAvatar);
       }).catch(()=>{
@@ -113,6 +118,14 @@ export class CreatenewfeedPage implements OnInit {
         });
       });
     });
+  }
+
+  showTimeOutErrorAlert(){
+    this.popup.ionicAlert1(
+      'common.error',
+      "common.transMsgTimeout",
+      "common.ok"
+    );
   }
 
   ionViewDidEnter() {
