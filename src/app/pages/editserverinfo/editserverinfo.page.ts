@@ -114,7 +114,8 @@ export class EditserverinfoPage implements OnInit {
     }
 
     if(this.checkParms()){
-        this.native.showLoading('common.waitMoment').then(()=>{
+        this.native.showLoading('common.waitMoment',(isDismiss)=>{
+        }).then(()=>{
           this.feedService.doUpdateCredential(this.nodeId,this.did, this.name, this.introduction,this.elaAddress,()=>{
             this.native.hideLoading();
           },()=>{

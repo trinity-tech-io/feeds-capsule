@@ -86,7 +86,7 @@ export class NativeService {
     }
 
 
-    public async showLoading(content: string = '', durationTime: number = 30000, dismissCallback?: (isDissmiss: boolean) => void) {
+    public async showLoading(content: string = '', dismissCallback?: (isDissmiss: boolean) => void, durationTime: number = 30000) {
         content = this.translate.instant(content);
         let isTimeout = false;
         setTimeout(()=>{

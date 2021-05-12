@@ -261,7 +261,8 @@ export class EditPostPage implements OnInit {
     }
 
 
-    this.native.showLoading("common.waitMoment").then(()=>{
+    this.native.showLoading("common.waitMoment",(isDismiss)=>{
+    }).then(()=>{
           this.editPost();
     }).catch(()=>{
           this.native.hideLoading();

@@ -474,7 +474,8 @@ export class MenuService {
                 role: 'destructive',
                 icon: 'trash',
                 handler: () => {
-                    this.native.showLoading("common.waitMoment",50000).then(()=>{
+                    this.native.showLoading("common.waitMoment",(isDismiss)=>{
+                    },50000).then(()=>{
                         this.feedService.deleteComment(nodeId,Number(feedId),Number(postId),Number(commentId));
                       }).catch(()=>{
 
@@ -535,7 +536,8 @@ export class MenuService {
                 role: 'destructive',
                 icon: 'trash',
                 handler: () => {
-                    this.native.showLoading("common.waitMoment",50000).then(()=>{
+                    this.native.showLoading("common.waitMoment",(isDismiss)=>{
+                    },50000).then(()=>{
                         this.feedService.deleteComment(nodeId,Number(feedId),Number(postId),Number(commentId));
                       }).catch(()=>{
 
