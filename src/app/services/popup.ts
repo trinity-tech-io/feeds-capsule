@@ -25,7 +25,7 @@ export class PopupProvider {
                 subHeader: subTitle ? this.translate.instant(subTitle) : '',
                 backdropDismiss: false,
                 buttons: [{
-                    text: okText ? okText : this.translate.instant('confirm'),
+                    text: okText ? this.translate.instant(okText) : this.translate.instant('confirm'),
                     handler: () => {
                         resolve(null);
                     }

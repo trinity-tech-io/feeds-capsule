@@ -91,10 +91,10 @@ export class FeedService {
   private isLogging: {[nodeId: string]: boolean} = {};
   private signinChallengeTimeout: NodeJS.Timer;
   private isSavingChannel:boolean = false;
-  private isDeclearing = false;
-  private declareOwnerTimeout: NodeJS.Timer;
-  private declareOwnerInterval: NodeJS.Timer;
-  private isDeclareFinish: boolean = false;
+  // private isDeclearing = false;
+  // private declareOwnerTimeout: NodeJS.Timer;
+  // private declareOwnerInterval: NodeJS.Timer;
+  // private isDeclareFinish: boolean = false;
   private lastMultiLikesAndCommentsCountUpdateMapCache:{[key: string]: FeedsData.LikesAndCommentsCountUpdateTime};
 
   private throwMsgTransDataLimit = 4*1000*1000;
@@ -2771,20 +2771,20 @@ export class FeedService {
     clearTimeout(this.signinChallengeTimeout);
   }
 
-  setDeclareOwnerTimeout(){
-    this.isDeclearing = true;
-    clearTimeout(this.declareOwnerTimeout);
+  // setDeclareOwnerTimeout(){
+  //   this.isDeclearing = true;
+  //   clearTimeout(this.declareOwnerTimeout);
 
-    this.declareOwnerTimeout = setTimeout(()=>{
-      this.clearDeclareOwnerTimeout();
-    },30000);
-  }
+  //   this.declareOwnerTimeout = setTimeout(()=>{
+  //     this.clearDeclareOwnerTimeout();
+  //   },30000);
+  // }
 
-  clearDeclareOwnerTimeout(){
-    this.isDeclearing = false;
-    clearTimeout(this.declareOwnerTimeout);
-    this.cleanDeclareOwner();
-  }
+  // clearDeclareOwnerTimeout(){
+  //   this.isDeclearing = false;
+  //   clearTimeout(this.declareOwnerTimeout);
+  //   this.cleanDeclareOwner();
+  // }
 
   signinChallengeRequest(nodeId: string , requiredCredential: boolean){
     this.logUtils.logd("Start signin server, nodeId is"+nodeId);
@@ -2844,28 +2844,26 @@ export class FeedService {
   }
 
   startDeclareOwner(nodeId: string, carrierAddress: string, nonce: string){
-    this.isDeclareFinish = false;
-    this.declareOwnerInterval = setInterval(() => {
-      if (this.isDeclareFinish){
-        clearInterval(this.declareOwnerInterval);
-      }
-
-      if(!this.connectionService.checkServerConnection(nodeId))
-       return;
-
-      this.declareOwnerRequest(nodeId, carrierAddress, nonce);
-    }, 5000);
+    // this.isDeclareFinish = false;
+    // this.declareOwnerInterval = setInterval(() => {
+    //   if (this.isDeclareFinish){
+    //     clearInterval(this.declareOwnerInterval);
+    //   }
+    // }, 5000);
+    if(!this.connectionService.checkServerConnection(nodeId))
+      return;
+    this.declareOwnerRequest(nodeId, carrierAddress, nonce);
   }
 
-  cleanDeclareOwner(){
-    this.isDeclareFinish = true;
-    clearInterval(this.declareOwnerInterval);
-  }
+  // cleanDeclareOwner(){
+  //   this.isDeclareFinish = true;
+  //   clearInterval(this.declareOwnerInterval);
+  // }
 
   declareOwnerRequest(nodeId: string, carrierAddress: string, nonce: string){
-    if (this.isDeclearing)
-      return;
-    this.setDeclareOwnerTimeout();
+    // if (this.isDeclearing)
+    //   return;
+    // this.setDeclareOwnerTimeout();
     // isBindServer = true;
     this.connectionService.declareOwnerRequest(this.getServerNameByNodeId(nodeId), nodeId, nonce, this.getSignInData().did);
     cacheBindingAddress = carrierAddress;
@@ -2925,7 +2923,7 @@ export class FeedService {
   handleDeclareOwnerResponse(nodeId: string, result: any, error: any){
     if (error != null && error != undefined && error.code != undefined){
       // this.isDeclareFinish = true;
-      this.clearDeclareOwnerTimeout();
+      // this.clearDeclareOwnerTimeout();
       this.handleError(nodeId, error);
       return;
     }
@@ -2941,7 +2939,7 @@ export class FeedService {
       this.resolveServerDid(did, nodeId, payload,()=>{},()=>{});
     }
     // this.isDeclareFinish = true;
-    this.clearDeclareOwnerTimeout();
+    // this.clearDeclareOwnerTimeout();
     let ownerDeclaredData: FeedsEvent.OwnerDeclareData = {
       nodeId  : nodeId,
       phase   : phase, 
@@ -5196,10 +5194,10 @@ export class FeedService {
     this.isLogging = {};
     this.signinChallengeTimeout = null;
     this.isSavingChannel = false;
-    this.isDeclearing = false;
-    this.declareOwnerTimeout = null;
-    this.declareOwnerInterval = null;
-    this.isDeclareFinish = false;
+    // this.isDeclearing = false;
+    // this.declareOwnerTimeout = null;
+    // this.declareOwnerInterval = null;
+    // this.isDeclareFinish = false;
 
     this.dataHelper.initLastSubscribedFeedsUpdateMap();
     this.dataHelper.initLastCommentUpdateMap();

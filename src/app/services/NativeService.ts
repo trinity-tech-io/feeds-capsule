@@ -86,20 +86,27 @@ export class NativeService {
     }
 
 
-    public async showLoading(content: string = '', durationTime: number = 30000) {
+    public async showLoading(content: string = '', durationTime: number = 30000, dismissCallback?: (isDissmiss: boolean) => void) {
         content = this.translate.instant(content);
+        let isTimeout = false;
+        setTimeout(()=>{
+            isTimeout = true;
+        },durationTime);
+        
+        this.loading = await this.loadingCtrl.create({
+            cssClass: 'loading-class',
+            message: content,
+            duration: durationTime
+        });
 
-            this.loading = await this.loadingCtrl.create({
-                cssClass: 'loading-class',
-                message: content,
-                duration: durationTime
-            });
+        this.loading.onWillDismiss().then(()=>{
+            this.loading = null;
+            dismissCallback(isTimeout);
+        });
 
-            this.loading.onWillDismiss().then(()=>{
-                this.loading = null;
-            })
 
-            return await this.loading.present();
+
+        return await this.loading.present();
     };
 
     public updateLoadingMsg(msg: string){

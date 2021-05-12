@@ -104,7 +104,9 @@ export const zh = {
         "sendingTip": "这条微说正在发送，请稍后再试",
         "currentPostError": "该微说出现异常",
         "sendingErrorTip": "待发送成功后，请重试",
-        "preferences":"设置"
+        "preferences":"设置",
+        "error":"错误",
+        "transMsgTimeout":"服务未响应，请稍候再试"
     },
     "app":{
         "profileDetails": "档案详情",
