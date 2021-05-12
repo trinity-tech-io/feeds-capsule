@@ -157,7 +157,8 @@ export class EditCommentPage implements OnInit {
       return false;
     }
 
-    this.native.showLoading("common.waitMoment").then(()=>{
+    this.native.showLoading("common.waitMoment",(isDismiss)=>{
+    }).then(()=>{
       this.editComment();
     }).catch(()=>{
       this.native.hideLoading();

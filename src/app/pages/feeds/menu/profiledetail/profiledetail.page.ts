@@ -315,7 +315,8 @@ export class ProfiledetailPage implements OnInit {
         role: 'destructive',
         icon: 'trash',
         handler: () => {
-          this.native.showLoading("common.waitMoment").then(()=>{
+          this.native.showLoading("common.waitMoment",(isDismiss)=>{
+          }).then(()=>{
             this.feedService.deleteFeedSource(this.nodeId).then(() => {
               this.native.toast("ServerInfoPage.removeserver");
               this.isShowPublisherAccount = false;

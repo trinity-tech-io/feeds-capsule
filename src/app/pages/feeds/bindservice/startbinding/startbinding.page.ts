@@ -172,12 +172,11 @@ export class StartbindingPage implements OnInit {
       return;
     }
     
-    this.native.showLoading("common.waitMoment",5*60*1000, 
-      (isDissmiss)=>{
-        if (isDissmiss){
-          this.showTimeOutErrorAlert();
-        }
+    this.native.showLoading("common.waitMoment",(isDissmiss)=>{
+      if (isDissmiss){
+        this.showTimeOutErrorAlert();
       }
+    },5*60*1000 
     ).then(()=>{
       this.feedService.startDeclareOwner(this.nodeId, this.carrierAddress, this.nonce);
     });

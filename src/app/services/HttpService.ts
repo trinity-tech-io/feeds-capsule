@@ -22,7 +22,8 @@ export class HttpService{
 
   ajaxGet(url:string,isLoading:boolean=true) {
     if(isLoading){
-      this.native.showLoading("common.waitMoment");
+      this.native.showLoading("common.waitMoment",(isDismiss)=>{
+      });
     }
     return new Promise((resove, reject) => {
       this.httpClient.get(url).subscribe((response) => {
@@ -48,7 +49,8 @@ export class HttpService{
 
   ajaxPost(url:string, json:Object,isLoading:boolean=true) {
     if(isLoading){
-      this.native.showLoading("common.waitMoment");
+      this.native.showLoading("common.waitMoment",(isDismiss)=>{
+      });
     }
     return new Promise((resove, reject) => {
       this.httpClient.post(url,JSON.stringify(json),this.httpOptions).subscribe((response) => {

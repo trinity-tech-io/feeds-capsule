@@ -76,7 +76,8 @@ export class CreatenewfeedPage implements OnInit {
       let name = tipdialogData.name;
       let desc = tipdialogData.desc;
       this.popover.dismiss();
-      this.native.showLoading("common.waitMoment").then(()=>{
+      this.native.showLoading("common.waitMoment",(isDismiss)=>{
+      }).then(()=>{
         this.feedService.createTopic(this.selectedServer.nodeId, name, desc, this.channelAvatar);
       }).catch(()=>{
         this.native.hideLoading();

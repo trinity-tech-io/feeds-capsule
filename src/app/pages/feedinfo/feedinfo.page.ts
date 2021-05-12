@@ -205,7 +205,8 @@ export class FeedinfoPage implements OnInit {
     }
 
     if(this.checkparms()){
-      this.native.showLoading("common.waitMoment").then(()=>{
+      this.native.showLoading("common.waitMoment",(isDismiss)=>{
+      }).then(()=>{
         this.feedService.editFeedInfo(this.nodeId,Number(this.channelId),this.name, this.des,this.avatar);
       })
     }
