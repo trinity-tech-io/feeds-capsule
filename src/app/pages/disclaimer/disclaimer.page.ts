@@ -34,7 +34,6 @@ export class DisclaimerPage implements OnInit {
 
   ionViewWillEnter() {
     this.initTitle();
-    this.titleBarService.setTitleBarBackKeyShown(this.titleBar, false);
 
     // appManager.setVisible('show');
     this.styleObj["height"] = (screen.height - 245) +"px";
@@ -49,6 +48,7 @@ export class DisclaimerPage implements OnInit {
 
   private initTitle(){
     this.titleBarService.setTitle(this.titleBar, this.translate.instant("DisclaimerPage.title"));
+    this.titleBarService.setTitleBarBlankButton(this.titleBar);
   }
 
   ionViewWillLeave(){
