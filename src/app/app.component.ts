@@ -60,6 +60,7 @@ export class MyApp {
 
   initializeApp() {
     this.platform.ready().then(() => {
+      this.statusBar.show();
       // To be able to let users build a temporary identity in the app, without depending on a third party app:
       connectivity.registerConnector(new LocalIdentityConnector());
       // To let users use Essentials for his operations:
@@ -173,7 +174,7 @@ export class MyApp {
     //localStorage.setItem('org.elastos.dapp.feeds.disclaimer',"");
     //localStorage.setItem('org.elastos.dapp.feeds.first',"");
 
-    this.statusBar.styleDefault();
+    
     this.splashScreen.hide();
     this.appService.initTranslateConfig();
     this.appService.init();
