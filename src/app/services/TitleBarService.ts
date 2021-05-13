@@ -50,6 +50,10 @@ export class TitleBarService {
         titleBar.setTitle(title);
     }
 
+    setTitleBarBlankButton(titleBar: TitleBarComponent){
+        this.setIcon(titleBar, FeedsData.TitleBarIconSlot.OUTER_LEFT, "blank", "assets/icon/blank.svg");
+    }
+
     setIcon(titleBar: TitleBarComponent, iconSlot: FeedsData.TitleBarIconSlot, key: string, iconPath: string){
         let titleBarIconSlot: TitleBarIconSlot = iconSlot.valueOf();
         let titleBarIcon: TitleBarIcon = null;

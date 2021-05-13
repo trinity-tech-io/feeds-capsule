@@ -33,8 +33,6 @@ export class FinishPage implements OnInit {
 
     ionViewWillEnter() {
       this.initTitle();
-      this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
-      this.titleBarService.setTitleBarMoreMemu(this.titleBar);
     }
 
     ionViewDidEnter() {
@@ -53,6 +51,8 @@ export class FinishPage implements OnInit {
 
     initTitle(){
       this.titleBarService.setTitle(this.titleBar, this.title);
+      this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
+      this.titleBarService.setTitleBarMoreMemu(this.titleBar);
     }
 
   createChannel(){
