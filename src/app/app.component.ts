@@ -72,7 +72,7 @@ export class MyApp {
       this.initFeedPublicStatus();
       this.initCurrentFeed();
       this.initDiscoverfeeds();
-      this.native.networkInfoInit();
+      // this.native.networkInfoInit();
       this.native.addNetworkListener(()=>{
         this.events.publish(FeedsEvent.PublishType.networkStatusChanged, 1);
       },()=>{

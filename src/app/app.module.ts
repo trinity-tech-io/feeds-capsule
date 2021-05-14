@@ -9,6 +9,7 @@ import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 import { Animation, AnimationBuilder } from '@ionic/core';
 
 import { Clipboard } from '@ionic-native/clipboard/ngx';
+import { Network } from '@ionic-native/network/ngx';
 
 import { MyApp } from './app.component';
 import { ComponentsModule } from './components/components.module';
@@ -166,6 +167,7 @@ export function TranslateLoaderFactory() {
     SplashScreen,
     Platform,
     Clipboard,
+    Network,
     CarrierService,
     NativeService,
     SessionService,

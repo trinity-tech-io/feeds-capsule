@@ -7,6 +7,7 @@ import { TranslateService} from '@ngx-translate/core';
 import { ModalController } from '@ionic/angular';
 import { VideofullscreenComponent } from './../components/videofullscreen/videofullscreen.component';
 import { IntentService } from 'src/app/services/IntentService';
+import { Network } from '@ionic-native/network/ngx';
 
 @Injectable()
 export class NativeService {
@@ -21,7 +22,8 @@ export class NativeService {
         private navCtrl: NavController,
         private router: Router,
         private translate: TranslateService,
-        private intentService: IntentService) {
+        private intentService: IntentService,
+        private network: Network) {
     }
 
     public toast(message: string = 'Operation completed', duration: number = 3000): void {
@@ -172,13 +174,23 @@ export class NativeService {
     }
 
     addNetworkListener(offline:()=>void, online:()=>void){
-        this.checkConnection();
-        document.addEventListener("offline", ()=>{
+        // watch network for a disconnection
+        let disconnectSubscription = this.network.onDisconnect().subscribe(() => {
+            console.log('network was disconnected :-(');
             offline();
-        }, false);
-        document.addEventListener("online", ()=>{
+        });
+        
+        // stop disconnect watch
+        // disconnectSubscription.unsubscribe();
+        
+        // watch network for a connection
+        let connectSubscription = this.network.onConnect().subscribe(() => {
+            console.log('network connected!');
             online();
-        }, false);
+        });
+  
+        // stop connect watch
+        // connectSubscription.unsubscribe();
     }
 
     checkConnection() {
