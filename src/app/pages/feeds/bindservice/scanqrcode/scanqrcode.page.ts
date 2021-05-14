@@ -25,6 +25,7 @@ export class ScanqrcodePage implements OnInit {
   public carrierAddress: string;
   public nonce: string = "0";
   public popover:any = null;
+  public scanContent = "";
   constructor(
     private events: Events,
     private native: NativeService,
@@ -46,7 +47,6 @@ export class ScanqrcodePage implements OnInit {
 
   ionViewWillEnter() {
     this.initTitle();
-
     this.connectionStatus = this.feedService.getConnectionStatus();
     this.events.subscribe(FeedsEvent.PublishType.connectionChanged,(status)=>{
       this.zone.run(() => {
