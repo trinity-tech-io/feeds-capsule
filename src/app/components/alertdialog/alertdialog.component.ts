@@ -14,13 +14,13 @@ export class AlertdialogComponent implements OnInit {
   public confirm:any;
   public imgageName:string ="";
   public imgagePath:string = "";
-  public darkimgagePath:string = "";
+  public imgageDarkPath:string = "";
   public that:any;
 
   constructor(
     public theme: ThemeService,
     private navParams: NavParams
-  ) { 
+  ) {
       this.that = this.navParams.get('that');
       this.title = this.navParams.get('title');
       this.message = this.navParams.get('message');
@@ -28,7 +28,7 @@ export class AlertdialogComponent implements OnInit {
       this.confirm = this.navParams.get('okFunction');
       this.imgageName = this.navParams.get("imgageName");
       this.imgagePath = '/assets/images/'+this.imgageName;
-      this.darkimgagePath = '/assets/images/darkmode/'+this.imgageName;
+      this.imgageDarkPath = '/assets/images/darkmode/'+this.imgageName;
     }
 
   ngOnInit() {}

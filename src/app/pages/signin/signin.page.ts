@@ -1,6 +1,5 @@
 import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
-import { FeedService, Avatar } from 'src/app/services/FeedService';
-import { CarrierService } from 'src/app/services/CarrierService';
+import { FeedService} from 'src/app/services/FeedService';
 import { LoadingController } from '@ionic/angular';
 import { NativeService } from 'src/app/services/NativeService';
 import { TranslateService } from "@ngx-translate/core";
@@ -27,12 +26,10 @@ export class SigninPage implements OnInit {
   public userName: string = "";
   public emailAddress: string = "";
   constructor(
-    private events: Events,
     private native: NativeService,
     private zone: NgZone,
     private feedService: FeedService,
     public loadingController: LoadingController,
-    private carrierService:CarrierService,
     private translate:TranslateService,
     private event:Events,
     public theme:ThemeService,
@@ -57,8 +54,6 @@ export class SigninPage implements OnInit {
   ionViewWillEnter() {
     localization.setLanguage(this.languageService.getCurLang());
     this.initTile();
-    // appManager.setVisible("show");
-
     this.event.subscribe(FeedsEvent.PublishType.updateTitle,()=>{
       this.initTile();
     });
@@ -71,8 +66,9 @@ export class SigninPage implements OnInit {
     this.event.unsubscribe(FeedsEvent.PublishType.updateTitle);
   }
 
-  learnMore(slide) {
-    slide.slideNext();
+  learnMore() {
+    this.native.navigateForward("learnmore",{queryParams:{"showBack":"back"}});
+
   }
 
   signIn(){
@@ -90,7 +86,14 @@ export class SigninPage implements OnInit {
     });
     this.feedService.signIn().then((isSuccess)=>{
       if (isSuccess){
+        //add first bind FeedService logic
         this.native.hideLoading();
+        let isFirstBindFeedService = localStorage.getItem('org.elastos.dapp.feeds.isFirstBindFeedService') || "";
+        let bindingServer = this.feedService.getBindingServer() || null;
+        if(isFirstBindFeedService === "" && bindingServer === null){
+          this.native.navigateForward("bindservice/learnpublisheraccount",{});
+           return;
+        }
         this.native.setRootRouter('/tabs/home');
         return;
       }

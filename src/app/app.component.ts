@@ -6,7 +6,6 @@ import { FeedService, Avatar } from './services/FeedService';
 import { AppService } from './services/AppService';
 import { ThemeService } from 'src/app/services/theme.service';
 import { NativeService} from 'src/app/services/NativeService';
-import { SplashscreenPage } from './pages/splashscreen/splashscreen.page';
 import { UtilService } from 'src/app/services/utilService';
 import { StorageService } from './services/StorageService';
 import { PopupProvider } from 'src/app/services/popup';
@@ -70,6 +69,9 @@ export class MyApp {
         this.statusBar.styleDefault();
       }
       
+      this.platform.backButton.subscribeWithPriority(9999, () => {
+          this.appService.handleBack();
+      });
       this.statusBar.show();
 
       this.initSetting();
@@ -186,8 +188,8 @@ export class MyApp {
     //localStorage.setItem('org.elastos.dapp.feeds.disclaimer',"");
     //localStorage.setItem('org.elastos.dapp.feeds.first',"");
 
-    
-    
+
+    this.splashScreen.hide();
     this.appService.initTranslateConfig();
     this.appService.init();
     let isDisclaimer = localStorage.getItem('org.elastos.dapp.feeds.disclaimer') || "";
@@ -196,19 +198,13 @@ export class MyApp {
        return;
     }
 
-    let isFirst = localStorage.getItem('org.elastos.dapp.feeds.first') || "";
-    if(isFirst === ""){
-      localStorage.setItem('org.elastos.dapp.feeds.first',"11");
-      this.splash();
+    let isLearnMore = localStorage.getItem('org.elastos.dapp.feeds.isLearnMore') || "";
+    if(isLearnMore === ""){
+      this.native.navigateForward("learnmore",{});
       return;
     }
-    
-    this.appService.initializeApp();
-  }
 
-  async splash() {
-    const splash = await this.modalCtrl.create({component: SplashscreenPage});
-    return await splash.present();
+    this.appService.initializeApp();
   }
 
   goToFeedSource(){

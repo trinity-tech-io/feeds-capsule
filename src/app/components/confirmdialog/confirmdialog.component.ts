@@ -14,17 +14,14 @@ export class ConfirmdialogComponent implements OnInit {
   public cancelText:string ="";
   public cancel:any;
   public confirm:any;
-  public imgageName:string ="";
-  public imgagePath:string = "";
-  public darkimgagePath:string = "";
   public that:any;
-
+  public imgPath:string = "";
   constructor(
     public theme: ThemeService,
     private navParams: NavParams
-  ) { 
+  ) {
       this.that = this.navParams.get('that');
-      this.title = this.navParams.get('title');
+      this.title = this.navParams.get('title') || "common.confirmDialog";
       this.message = this.navParams.get('message');
       this.okText = this.navParams.get('okText');
 
@@ -32,9 +29,7 @@ export class ConfirmdialogComponent implements OnInit {
 
       this.cancel = this.navParams.get('cancelFunction');
       this.confirm = this.navParams.get('okFunction');
-      this.imgageName = this.navParams.get("imgageName");
-      this.imgagePath = '/assets/images/'+this.imgageName;
-      this.darkimgagePath = '/assets/images/darkmode/'+this.imgageName;
+      this.imgPath = this.navParams.get('imgPath') || "./assets/images/tskth.svg";
     }
 
   ngOnInit() {}

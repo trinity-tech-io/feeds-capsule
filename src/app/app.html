@@ -3,48 +3,45 @@
         <ion-content>
             <div style="height: 40px;" *ngIf="isIOSPlatform()"></div>
 
-            <ion-row class="profile-card" (click)="profiledetail()">
+            <ion-row class="profile-card profileCardBg0" (click)="profiledetail()">
                 <ion-col size="12" class="left-col">
                     <img [src]="handleImages()"/>
                     <h1>{{ name }}</h1>
                 </ion-col>
             </ion-row>
 
-            <ion-menu-toggle>
+            <!-- <ion-menu-toggle>
                 <div (click)="goToFeedSource()">
                     <img src="./assets/images/menu-feeds.svg" *ngIf="!theme.darkMode">
                     <img src="./assets/images/darkmode/menu-feeds.svg" *ngIf="theme.darkMode">
                     <h1>{{ 'app.feedSources' | translate }}</h1>
                 </div>
-            </ion-menu-toggle>
+            </ion-menu-toggle> -->
 
             <ion-menu-toggle *ngIf="checkIsShowDonation()">
                 <div (click)="donation()">
-                    <img src="./assets/images/menu-donation.svg" *ngIf="!theme.darkMode">
-                    <img src="./assets/images/darkmode/menu-donation.svg" *ngIf="theme.darkMode">
+                    <img src="./assets/images/menu-donation.svg">
                     <h1>{{ 'app.donation' | translate }}</h1>
                 </div>
             </ion-menu-toggle>
 
             <ion-menu-toggle>
                 <div (click)="settings()">
-                    <ion-icon name="settings" style="width: 30px;height: 30px;"></ion-icon>
+                    <img src="./assets/images/settings.svg">
                     <h1>{{ 'app.settings' | translate }}</h1>
                 </div>
             </ion-menu-toggle>
 
             <ion-menu-toggle>
                 <div (click)="about()">
-                    <img src="./assets/images/menu-about.svg" *ngIf="!theme.darkMode">
-                    <img src="./assets/images/darkmode/menu-about.svg" *ngIf="theme.darkMode">
+                    <img src="./assets/images/about.svg">
                     <h1>{{ 'app.about' | translate }}</h1>
                 </div>
             </ion-menu-toggle>
 
             <ion-menu-toggle>
                 <div (click)="signout()">
-                    <img src="./assets/images/logout.svg" *ngIf="!theme.darkMode">
-                    <img src="./assets/images/darkmode/logout.svg" *ngIf="theme.darkMode">
+                    <img src="./assets/images/signout.svg">
                     <h1>{{ 'app.signout' | translate }}</h1>
                 </div>
             </ion-menu-toggle>

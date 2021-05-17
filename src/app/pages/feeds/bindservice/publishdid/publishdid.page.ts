@@ -1,5 +1,4 @@
 import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
-import { Router } from '@angular/router';
 import { Events } from 'src/app/services/events.service';
 import { ActivatedRoute } from '@angular/router';
 import { FeedService } from 'src/app/services/FeedService';
@@ -44,8 +43,10 @@ export class PublishdidPage implements OnInit {
 
     ionViewWillEnter() {
       this.initTitle();
-
       this.connectionStatus = this.feedService.getConnectionStatus();
+      this.events.subscribe(FeedsEvent.PublishType.updateTitle,()=>{
+            this.initTitle();
+      });
       this.events.subscribe(FeedsEvent.PublishType.connectionChanged,(status)=>{
         this.zone.run(() => {
           this.connectionStatus = status;
@@ -57,12 +58,13 @@ export class PublishdidPage implements OnInit {
     }
 
     ionViewWillLeave(){
+      this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
       this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
     }
 
 
     initTitle(){
-      this.titleBarService.setTitle(this.titleBar, this.translate.instant(this.title));
+      this.titleBarService.setTitle(this.titleBar, this.translate.instant('PublishdidPage.title'));
       this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
       this.titleBarService.setTitleBarMoreMemu(this.titleBar);
     }

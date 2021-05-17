@@ -9,6 +9,7 @@ import { ThemeService } from 'src/app/services/theme.service';
 import { ServerpromptComponent } from 'src/app/components/serverprompt/serverprompt.component';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { PopupProvider } from '../../../../services/popup';
 
 @Component({
   selector: 'app-issuecredential',
@@ -32,9 +33,10 @@ export class IssuecredentialPage implements OnInit {
     private feedService:FeedService,
     private translate:TranslateService,
     public  theme:ThemeService,
-    private titleBarService: TitleBarService
+    private titleBarService: TitleBarService,
+    private popupProvider:PopupProvider,
     ) {
-     
+
     }
 
     ngOnInit() {
@@ -46,8 +48,10 @@ export class IssuecredentialPage implements OnInit {
 
     ionViewWillEnter(){
       this.initTitle();
-      
       this.connectionStatus = this.feedService.getConnectionStatus();
+      this.events.subscribe(FeedsEvent.PublishType.updateTitle,()=>{
+          this.initTitle();
+      });
       this.events.subscribe(FeedsEvent.PublishType.connectionChanged,(status)=>{
         this.zone.run(() => {
           this.connectionStatus = status;
@@ -59,9 +63,7 @@ export class IssuecredentialPage implements OnInit {
 
       this.events.subscribe(FeedsEvent.PublishType.issue_credential, () => {
         this.zone.run(() => {
-          this.native.navigateForward(['/bindservice/finish/',this.nodeId],{
-            replaceUrl: true
-          });
+          this.popover = this.popupProvider.showalertdialog(this,"common.bindingCompleted","IssuecredentialPage.des",this.bindingCompleted,"check-circle-no-loop.gif","common.ok");
           this.native.hideLoading();
         });
       });
@@ -78,6 +80,7 @@ export class IssuecredentialPage implements OnInit {
 
     ionViewWillLeave(){
       this.native.hideLoading();
+      this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
       this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
       this.events.unsubscribe(FeedsEvent.PublishType.issue_credential);
       this.events.unsubscribe(FeedsEvent.PublishType.rpcResponseError);
@@ -85,14 +88,14 @@ export class IssuecredentialPage implements OnInit {
          this.popover.dismiss();
       }
     }
-  
-  
+
+
     initTitle(){
-      this.titleBarService.setTitle(this.titleBar, this.translate.instant(this.title));
+      this.titleBarService.setTitle(this.titleBar, this.translate.instant(this.translate.instant("IssuecredentialPage.title")));
       this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
       this.titleBarService.setTitleBarMoreMemu(this.titleBar);
     }
-  
+
   issueCredential(){
     if(this.feedService.getConnectionStatus() != 0){
       this.native.toastWarn('common.connectionError');
@@ -117,8 +120,22 @@ export class IssuecredentialPage implements OnInit {
       this.isShowPrompt = false;
       this.popover = null;
     });
-    
+
     return await this.popover.present();
+  }
+
+  bindingCompleted(that:any){
+    let isFirstBindFeedService = localStorage.getItem('org.elastos.dapp.feeds.isFirstBindFeedService') || "";
+    if(isFirstBindFeedService === ""){
+       if(this.popover!=null){
+         this.popover.dismiss();
+         this.popover = null;
+       }
+        localStorage.setItem('org.elastos.dapp.feeds.isFirstBindFeedService',"1");
+        that.native.setRootRouter(['/tabs/home']);
+        return;
+    }
+    that.native.pop();
   }
 
 }

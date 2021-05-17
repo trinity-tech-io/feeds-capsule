@@ -1,0 +1,73 @@
+ion-slides{
+    --bullet-background:#7624fe;
+    --bullet-background-active:#7624fe;
+
+    .swiper-slide{
+      padding:0px;
+    }
+  }
+
+  .content{
+    --ion-background-color: #F1E9FF;
+  }
+
+  .slide {
+    ion-grid {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 0 30px;
+
+      p {
+        // margin: 5px 0 0;
+        font-size: 20px;
+        font-weight: normal;
+        font-stretch: normal;
+        font-style: normal;
+        color:#7624fe;
+      }
+
+      .header-row {
+        margin-top: 20px;
+        ion-col {
+          img {
+            width: 301px;
+            height: 266px;
+            margin: 0 auto;
+          }
+
+          h1 {
+            font-size: 20px;
+            font-weight: bold;
+            font-stretch: normal;
+            font-style: normal;
+            text-align: center;
+            color:#7624fe;
+          }
+        }
+      }
+
+      .intro-row {
+        margin-top: 30px;
+      }
+
+      .btn-row {
+        margin-top: 100px;
+        width: 100%;
+      }
+    }
+  }
+
+  .skip{
+    font-size: 14px;
+    font-weight: bold;
+    font-stretch: normal;
+    font-style: normal;
+    color:#7624fe;
+  }
+
+  .darkSlides {
+    p, h1 {
+      color:#7624fe !important;
+    }
+  }

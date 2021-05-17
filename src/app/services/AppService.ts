@@ -96,12 +96,16 @@ export class AppService {
     }
 
     handleBack(){
+      let isFirstBindFeedService = localStorage.getItem('org.elastos.dapp.feeds.isFirstBindFeedService') || "";
+      let bindingServer = this.feedService.getBindingServer() || null;
       if(
-        this.router.url.indexOf('/bindservice/importdid/') >-1 ||
-        this.router.url.indexOf('/bindservice/publishdid/') >-1 ||
-        this.router.url.indexOf('/bindservice/issuecredential/') >-1 ||
-        this.router.url.indexOf('/bindservice/importdid/') >-1
-      ) {
+        (this.router.url.indexOf('/bindservice/scanqrcode') > -1 && isFirstBindFeedService==="" && bindingServer===null )||
+        (this.router.url.indexOf('/bindservice/learnpublisheraccount') > -1 && isFirstBindFeedService==="" && bindingServer===null) ||
+        (this.router.url.indexOf('/bindservice/startbinding') > -1 && isFirstBindFeedService==="" && bindingServer===null )||
+        this.router.url.indexOf('/bindservice/importdid') > -1 ||
+        this.router.url.indexOf('/bindservice/publishdid') > -1 ||
+        this.router.url.indexOf('/bindservice/issuecredential') > -1
+      ){
         this.createDialog();
       } else if (this.router.url === '/menu/servers') {
          this.initTab();
@@ -134,7 +138,7 @@ export class AppService {
         this.zone.run(() => {
           this.theme.setTheme(params.data.value);
         });
-      }        
+      }
     }
 
     initTranslateConfig() {
@@ -174,15 +178,17 @@ export class AppService {
     }
 
     async createDialog(){
-
+      console.log()
+      if(this.popover != null){
+           return;
+      }
       this.popover = this.popupProvider.ionicConfirm(
         this,
-        // "ConfirmdialogComponent.signoutTitle",
-        "",
+        "SearchPage.confirmTitle",
         "common.des2",
         this.cancel,
         this.confirm,
-        'tskth.svg'
+        "./assets/images/tskth.svg"
       );
     }
 
@@ -190,11 +196,19 @@ export class AppService {
     cancel(that:any){
       if(this.popover!=null){
          this.popover.dismiss();
+         that.popover = null;
       }
     }
 
     confirm(that:any){
-      this.popover.dismiss();
+      if(this.popover!=null){
+        this.popover.dismiss();
+        that.popover = null;
+      }
+      let isFirstBindFeedService = localStorage.getItem('org.elastos.dapp.feeds.isFirstBindFeedService') || "";
+      if(isFirstBindFeedService === ""){
+          localStorage.setItem('org.elastos.dapp.feeds.isFirstBindFeedService',"1");
+      }
       that.native.setRootRouter(['/tabs/home']);
     }
 

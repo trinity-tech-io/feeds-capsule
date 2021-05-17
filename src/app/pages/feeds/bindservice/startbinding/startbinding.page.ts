@@ -16,6 +16,7 @@ import { PopupProvider } from 'src/app/services/popup';
 })
 export class StartbindingPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
+  public bindPublisherAccountType:string = "";
   public connectionStatus = 1;
   public title = "02/06";
   public nonce = "";
@@ -34,8 +35,8 @@ export class StartbindingPage implements OnInit {
     private translate:TranslateService,
     private titleBarService: TitleBarService,
     private popup: PopupProvider) {
-  
-  
+
+
   }
 
   ngOnInit() {
@@ -51,7 +52,7 @@ export class StartbindingPage implements OnInit {
       }else{
         this.nonce = this.feedService.generateNonce();
       }
-      
+
       if(did!=""){
         this.did = did;
       }
@@ -61,8 +62,13 @@ export class StartbindingPage implements OnInit {
   }
 
   ionViewWillEnter() {
+    this.bindPublisherAccountType = this.feedService.getBindPublisherAccountType();
     this.initTitle();
-    
+
+    this.events.subscribe(FeedsEvent.PublishType.updateTitle,()=>{
+      this.initTitle();
+    });
+
     this.connectionStatus = this.feedService.getConnectionStatus();
     this.events.subscribe(FeedsEvent.PublishType.connectionChanged,(status)=>{
       this.zone.run(() => {
@@ -91,7 +97,7 @@ export class StartbindingPage implements OnInit {
           this.zone.run(() => {
               this.feedService.restoreBindingServerCache(this.did, nodeId, ()=>{
                 this.feedService.finishBinding(nodeId);
-              },()=>{  
+              },()=>{
                 this.feedService.finishBinding(nodeId);
               });
           });
@@ -99,7 +105,7 @@ export class StartbindingPage implements OnInit {
       }
       this.native.hideLoading();
     });
-    
+
     this.events.subscribe(FeedsEvent.PublishType.issue_credential, () => {
       this.zone.run(() => {
           this.native.getNavCtrl().navigateForward(['/bindservice/finish/',this.nodeId],{
@@ -126,7 +132,7 @@ export class StartbindingPage implements OnInit {
           this.native.hideLoading();
       });
     });
-  
+
     this.events.subscribe(FeedsEvent.PublishType.resolveDidSucess, (resolveDidSucessData: FeedsEvent.ResolveDidSucessData) => {
       this.zone.run(() => {
           let nodeId = resolveDidSucessData.nodeId;
@@ -146,7 +152,7 @@ export class StartbindingPage implements OnInit {
   }
 
   initTitle(){
-    this.titleBarService.setTitle(this.titleBar, this.title);
+    this.titleBarService.setTitle(this.titleBar,this.translate.instant('StartbindingPage.title'));
     this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
     this.titleBarService.setTitleBarMoreMemu(this.titleBar);
   }
@@ -157,6 +163,7 @@ export class StartbindingPage implements OnInit {
   ionViewWillLeave(){
     this.native.hideLoading();
     // this.feedService.cleanDeclareOwner();
+    this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
     this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
     this.events.unsubscribe(FeedsEvent.PublishType.owner_declared);
     this.events.unsubscribe(FeedsEvent.PublishType.issue_credential);
@@ -171,12 +178,12 @@ export class StartbindingPage implements OnInit {
       this.native.toastWarn('common.connectionError');
       return;
     }
-    
+
     this.native.showLoading("common.waitMoment",(isDissmiss)=>{
       if (isDissmiss){
         this.showTimeOutErrorAlert();
       }
-    },5*60*1000 
+    },5*60*1000
     ).then(()=>{
       this.feedService.startDeclareOwner(this.nodeId, this.carrierAddress, this.nonce);
     });

@@ -146,13 +146,6 @@ ion-input {
   --ion-backdrop-color:#000000;
 }
 
-/** ion-slides pagination **/
-.swiper-pagination {
-  position: fixed;
-  bottom: 25px;
-  color: #ffffff;
-}
-
 /** Swipe notification **/
 .notification-swipe {
   --background: transparent;
@@ -386,7 +379,7 @@ ion-input {
       left: auto !important;
       top: auto !important;
       width:85vw  !important;
-      background:#2e2f4e  !important;
+      background:#191a2f  !important;
     }
   }
 }
@@ -451,5 +444,67 @@ ion-input {
   font-family: SourceSansPro!important;
   font-weight: 500;
   font-size: 16px;
+}
+
+
+.profileCardBg0{
+  background-image: linear-gradient(to right, rgb(132, 9, 227), rgb(121, 21, 228), rgb(111, 32, 229), rgb(100, 44, 230), rgb(89, 56, 231), rgb(78, 67, 232), rgb(68, 79, 232), rgb(57, 90, 233), rgb(46, 102, 234), rgb(35, 114, 235), rgb(25, 125, 236), rgb(14, 137, 237));
+}
+
+.bidLogoImg{
+  position: absolute;
+  z-index: 999;
+  top:55.5px;
+  display:none;
+}
+
+.buyContainer{
+  height: 52.5px;
+  opacity:0.92;
+  background-color: #efefef;
+  position: absolute;
+  z-index: 999;
+  bottom: 4px;
+  left: 0px;
+  width:100%;
+  display:none;
+
+  ion-button{
+    --background:#7624fe;
+    --background-activated:#7624fe;
+    height:36px;
+  }
+
+  .pricecol{
+    text-align:center;
+
+
+  .price{
+    font-size:30px;
+    margin-top:7px;
+    font-weight: bold;
+    font-stretch: normal;
+    font-style: normal;
+    color: #000000;
+    display: inline-block;
+  }
+
+  .darkPrice{
+    color: #000;
+  }
+  }
+
+  .buyLabel{
+    font-weight:bold;
+    font-stretch:normal;
+    font-style:normal;
+    color:#ffffff;
+  }
+}
+
+.swiper-container-horizontal>.swiper-pagination-bullets{
+  bottom: 0px;
+  left: 0;
+  width: 100%;
 }
 

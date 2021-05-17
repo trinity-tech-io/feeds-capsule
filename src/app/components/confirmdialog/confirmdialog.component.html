@@ -1,14 +1,20 @@
 <div class="container" [class.darkContainer]="theme.darkMode">
   <ion-row class="header">
-    <img [src]="!theme.darkMode ? imgagePath : darkimgagePath">
     <h1>{{ title | translate }}</h1>
+    <ion-col size="12">
+      <div class="bigCircle">
+          <div class="smallCircle">
+             <img [src]="imgPath"/>
+          </div>
+      </div>
+    </ion-col>
   </ion-row>
   <ion-row>
     <ion-col class="message">
       <p>{{ message | translate }}</p>
     </ion-col>
   </ion-row>
-  <ion-row class="btns-row">
+  <ion-row class="btns-row" [class.dark-btns-row]="theme.darkMode">
     <ion-col class="btn cancel ion-activatable ripple" size="5.5" (click)="cancel(that)">
         <ion-label>{{ cancelText | translate }}</ion-label>
         <ion-ripple-effect></ion-ripple-effect>

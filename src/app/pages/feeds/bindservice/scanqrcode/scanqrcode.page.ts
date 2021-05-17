@@ -11,6 +11,7 @@ import { IntentService } from 'src/app/services/IntentService';
 import { Events } from 'src/app/services/events.service';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { AppService } from '../../../../services/AppService';
 
 @Component({
   selector: 'app-scanqrcode',
@@ -19,6 +20,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 })
 export class ScanqrcodePage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
+  public bindPublisherAccountType:string = "";
   public connectionStatus = 1;
   public title = "01/06";
   public waitFriendsOnline = false;
@@ -38,7 +40,8 @@ export class ScanqrcodePage implements OnInit {
     public popupProvider:PopupProvider,
     private popoverController:PopoverController,
     private intentService:IntentService,
-    private titleBarService: TitleBarService
+    private titleBarService: TitleBarService,
+    private appService:AppService
     ) {
   }
 
@@ -46,7 +49,11 @@ export class ScanqrcodePage implements OnInit {
   }
 
   ionViewWillEnter() {
+    this.bindPublisherAccountType = this.feedService.getBindPublisherAccountType();
     this.initTitle();
+    this.events.subscribe(FeedsEvent.PublishType.updateTitle,()=>{
+      this.initTitle();
+    });
     this.connectionStatus = this.feedService.getConnectionStatus();
     this.events.subscribe(FeedsEvent.PublishType.connectionChanged,(status)=>{
       this.zone.run(() => {
@@ -56,7 +63,7 @@ export class ScanqrcodePage implements OnInit {
   }
 
   initTitle(){
-    this.titleBarService.setTitle(this.titleBar, this.title);
+    this.titleBarService.setTitle(this.titleBar,this.translate.instant('ScanqrcodePage.title'));
     this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
     this.titleBarService.setTitleBarMoreMemu(this.titleBar);
   }
@@ -65,6 +72,7 @@ export class ScanqrcodePage implements OnInit {
   }
 
   ionViewWillLeave(){
+    this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
     this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
     let value =  this.popoverController.getTop()["__zone_symbol__value"] || "";
     if(value!=""){
@@ -86,7 +94,7 @@ export class ScanqrcodePage implements OnInit {
       let res = await this.intentService.scanQRCode();
       this.handleAddress(res);
     } catch (error) {
-      
+
     }
   }
 
@@ -186,5 +194,15 @@ export class ScanqrcodePage implements OnInit {
            this.scanAddress();
            return;
       }
+  }
+
+  createLater(){
+    let isFirstBindFeedService = localStorage.getItem('org.elastos.dapp.feeds.isFirstBindFeedService') || "";
+    let bindingServer = this.feedService.getBindingServer() || null;
+    if(isFirstBindFeedService === "" && bindingServer === null){
+          this.appService.createDialog();
+           return;
+    }
+    this.native.pop();
   }
 }

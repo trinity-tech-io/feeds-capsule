@@ -67,6 +67,7 @@ let eventBus: Events = null;
 
 @Injectable()
 export class FeedService {
+  public bindPublisherAccountType:string = "";
   public discoverfeeds:any = [];
   public currentFeed:any = null;
   public feedPublicStatus:any = {};
@@ -3151,8 +3152,8 @@ export class FeedService {
     // this.clearDeclareOwnerTimeout();
     let ownerDeclaredData: FeedsEvent.OwnerDeclareData = {
       nodeId  : nodeId,
-      phase   : phase, 
-      did     : did, 
+      phase   : phase,
+      did     : did,
       payload : payload
     }
     eventBus.publish(FeedsEvent.PublishType.owner_declared, ownerDeclaredData);
@@ -3241,8 +3242,8 @@ export class FeedService {
     let value = this.serializeDataService.decodeData(contentBin);
     this.storeService.set(key, value).then(()=>{
       let getBinaryData: FeedsEvent.GetBinaryData = {
-        nodeId: nodeId, 
-        key: key, 
+        nodeId: nodeId,
+        key: key,
         value: value
       }
       eventBus.publish(FeedsEvent.PublishType.getBinaryFinish, getBinaryData);
@@ -3432,7 +3433,7 @@ export class FeedService {
         onSuccess(credential);
         return;
       }
-      
+
       let error = "Issue credential error, response is "+JSON.stringify(credential);
       this.logUtils.loge(error);
       onError();
@@ -3999,7 +4000,7 @@ export class FeedService {
 
   async pay(receiver: string, amount: number, memo: string, onSuccess: (res:any)=>void, onError: (err: any)=>void){
     try {
-      let result = await this.intentService.pay(receiver, amount, memo);  
+      let result = await this.intentService.pay(receiver, amount, memo);
       if (result){
         onSuccess(result);
         return;
@@ -4132,14 +4133,14 @@ export class FeedService {
 
   async promptpublishdid(){
     try {
-      let result = await this.intentService.promptpublishdid();  
+      let result = await this.intentService.promptpublishdid();
       if (result){
         // success
         return;
       }
 
       this.logUtils.loge("Prompt publish did error, response is "+JSON.stringify(result));
-      this.native.toastdanger('common.promptPublishDidError');  
+      this.native.toastdanger('common.promptPublishDidError');
     } catch (error) {
       this.native.toastdanger('common.promptPublishDidError');
     }
@@ -5372,10 +5373,10 @@ export class FeedService {
           resolve(response);
           return;
         }
-  
+
         let error = "Credaccess error, response is "+JSON.stringify(response);
         this.logUtils.loge(error, TAG);
-        reject(error);  
+        reject(error);
       } catch (error) {
         this.logUtils.loge(error, TAG);
         reject(error);
@@ -5736,7 +5737,11 @@ export class FeedService {
     return true;
   }
 
-  test(){
-    this.notifyPost("FQdppj44Y8fuTNRvZBJZTrm8UMWYqU592YdNUZdMSWJJ", 3, 2, 0);
+  getBindPublisherAccountType(){
+    return this.bindPublisherAccountType;
+  }
+
+  setBindPublisherAccountType(publisherAccountType:string){
+    this.bindPublisherAccountType = publisherAccountType;
   }
 }

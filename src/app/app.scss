@@ -1,17 +1,17 @@
 .my-custom-menu {
-    --width:245px;
+    --width:226px;
 }
 
 ion-menu {
     ion-content {
         .profile-card {
+            margin:0 auto;
+            width: 189px;
             margin: 10px;
-            padding: 20px;
-            border-radius: 20px;
-            background-image: url('/assets/images/profile-card.png');
-            // box-shadow: 0 3px 15px 0 #ededf0;
-            background-repeat: no-repeat;
-            background-size: cover;
+            border-radius: 10px;
+            height: 104px;
+            margin: 0 auto;
+            margin-top: 45px;
 
             .left-col, .right-col {
                 display: flex;
@@ -20,20 +20,27 @@ ion-menu {
                 align-items: flex-start;
 
                 img {
-                    width: 70px;
-                    height: 70px;
+                    margin:0 auto;
+                    width: 53px;
+                    height: 53px;
                     object-fit: cover;
                     overflow: hidden;
                     border-radius: 50%;
-                    border: 2px solid #368bff;
+                    border: 1px solid rgba(255, 255, 255, 0.3);
+                    margin-top: 13px;
+                    margin-bottom: 5px;
                 }
 
                 h1 {
-                    margin: 5px 0 0;
-                    font-size: 15px;
-                    font-weight: 600;
+                    text-align: center;
+                    font-size: 12px;
+                    font-weight: 700;
+                    font-stretch: normal;
+                    font-style: normal;
+                    color: #fff;
                     overflow: auto;
                     width: 100%;
+                    margin-top:0px;
                 }
             }
 
@@ -51,15 +58,18 @@ ion-menu {
                 width: 100%;
 
                 img {
-                    height: 30px;
-                    width: 30px;
+                    height:16px;
+                    width:16px;
                 }
 
                 h1 {
                     margin: 0;
                     margin-left: 12px;
-                    font-size: 14px;
-                    font-weight: 600;
+                    font-size: 20px;
+                    font-weight: bold;
+                    font-stretch: normal;
+                    font-style: normal;
+                    color: #000000;
                 }
             }
         }
@@ -69,8 +79,18 @@ ion-menu {
 .darkMenu {
     ion-content {
         .profile-card {
-            background-image: url('/assets/images/darkmode/profile-card.png');
-            // box-shadow: 0 3px 15px 0 #151626;
+
+        }
+
+        ion-menu-toggle {
+            div {
+               h1{
+                color:#ffffff;
+               }
+
+            }
         }
     }
+
+
 }

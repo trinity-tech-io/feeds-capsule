@@ -1,0 +1,88 @@
+<app-titlebar></app-titlebar>
+<ion-content [class.content]="!theme.darkMode">
+  <ion-slides #slide pager="true" (ionSlideDidChange)="onSlideDidChange()">
+
+    <ion-slide class="slide">
+      <ion-grid>
+        <ion-row class="header-row">
+          <ion-col size="12"><h1>{{'SigninPage.ownyourdata'|translate}}</h1></ion-col>
+          <ion-col size="12">
+            <img src="./assets/onboard/slide1.svg"/>
+          </ion-col>
+        </ion-row>
+
+        <ion-row class="intro-row">
+            <ion-col size="12">
+              <p class="desktop white" style="margin-bottom:-12px;">{{ "SigninPage.des2" | translate }}</p>
+              <p class="desktop white">{{ "SigninPage.des3" | translate }}</p>
+            </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-slide>
+
+    <ion-slide class="slide">
+      <ion-grid>
+        <ion-row class="header-row">
+          <ion-col size="12"><h1>{{'SigninPage.decentralized'|translate}}</h1></ion-col>
+          <ion-col size="12">
+            <img src="./assets/onboard/slide2.svg"/>
+          </ion-col>
+        </ion-row>
+
+        <ion-row class="intro-row">
+            <ion-col size="12">
+              <p class="desktop white" style="margin-bottom:-12px;">{{ "SigninPage.des4" | translate }}</p>
+              <p class="desktop white">{{ "SigninPage.des5" | translate }}</p>
+            </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-slide>
+
+    <ion-slide class="slide">
+      <ion-grid>
+        <ion-row class="header-row">
+          <ion-col size="12"><h1>{{'SigninPage.secure'|translate}}</h1></ion-col>
+          <ion-col size="12">
+            <img src="./assets/onboard/slide3.svg"/>
+          </ion-col>
+        </ion-row>
+
+        <ion-row class="intro-row">
+            <ion-col size="12">
+              <p class="desktop white" style="margin-bottom:-12px;">{{ "SigninPage.des6" | translate }}</p>
+              <p class="desktop white">{{ "SigninPage.des7" | translate }}</p>
+            </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-slide>
+
+    <ion-slide class="slide">
+      <ion-grid>
+        <ion-row class="header-row">
+          <ion-col size="12"><h1>{{'SigninPage.freemarket'|translate}}</h1></ion-col>
+          <ion-col size="12">
+            <img src="./assets/onboard/slide4.svg"/>
+          </ion-col>
+        </ion-row>
+
+        <ion-row class="intro-row">
+            <ion-col size="12">
+              <p class="desktop white" style="margin-bottom:-12px;">{{ "SigninPage.des8" | translate }}</p>
+              <p class="desktop white">{{ "SigninPage.des9" | translate }}</p>
+            </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-slide>
+  </ion-slides>
+  <ion-grid class="slide">
+    <ion-row class="btn-row" (click)="next()">
+     <ion-button>
+       <ion-label>
+          {{ "LearnmorePage.next"| translate }}
+       </ion-label>
+     </ion-button>
+     <p (click)="skip()" class="skip">{{"LearnmorePage.skip" | translate}}</p>
+   </ion-row>
+  </ion-grid>
+</ion-content>
+

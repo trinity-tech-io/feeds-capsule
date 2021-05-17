@@ -1,11 +1,11 @@
 <svg xmlns="http://www.w3.org/2000/svg" id="prefix__Component_872_1" width="74" height="74" data-name="Component 872 – 1" viewBox="0 0 74 74">
     <defs>
         <style>
-            .prefix__cls-2{fill:none;stroke:#161740;stroke-linecap:round;stroke-width:2px}
+            .prefix__cls-2{fill:none;stroke:#7624fe;stroke-linecap:round;stroke-width:2px}
         </style>
     </defs>
     <g id="prefix__Component_307_357" data-name="Component 307 – 357">
-        <g id="prefix__Rectangle_406" fill="none" stroke="#191a2f" stroke-dasharray="7" data-name="Rectangle 406">
+        <g id="prefix__Rectangle_406" fill="none" stroke="#7624fe" stroke-dasharray="7" data-name="Rectangle 406">
             <rect width="74" height="74" stroke="none" rx="37"/>
             <rect width="73" height="73" x=".5" y=".5" rx="36.5"/>
         </g>

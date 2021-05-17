@@ -1,7 +1,6 @@
 .container {
     background: #ffffff;
-    border: 1.2px solid #368bff;
-    border-radius: 12px;
+    border-radius: 10px;
     padding: 0;
 
     .header {
@@ -11,32 +10,37 @@
         align-items: center;
         padding: 15px;
 
-        img {
-            width: 68px;
-            height:68px;
-        }
-
         h1 {
             margin: 5px 0 0;
-            font-size: 24px;
-            font-weight: 700;
-            color: #161740;
+            font-size: 20px;
+            font-weight: bold;
+            font-stretch: normal;
+            font-style: normal;
+            text-align: center;
+            color: #7624fe;
         }
+    }
+
+
+    .imgagePath{
+        width: 131px;
+        height: 125px;
     }
 
     .message {
         display: flex;
         justify-content: center;
         align-items: center;
-        background: #f8f8ff;
         padding: 30px 15px;
 
         p {
             margin: 0px;
-            font-size: 14px;
-            font-weight: 500;
+            font-size: 16px;
+            font-weight: normal;
+            font-stretch: normal;
+            font-style: normal;
             text-align: center;
-            color: #161740;
+            color: #000000;
         }
     }
 
@@ -46,21 +50,12 @@
     }
 }
 
-  
+
 .darkContainer {
-    background: #47495a;
-
-    .header {
-        h1 {
-            color: #fdfeff;
-        }
-    }
-
+    background:#191a2f;
     .message {
-        background: #393A48;
-    
         p {
-          color: #fdfeff;
+          color: #fff;
         }
     }
 
@@ -68,5 +63,14 @@
         .confirm {
             box-shadow: none;
         }
+    }
+
+    .btns-row .btn ion-label {
+        font-size: 14px;
+        font-weight: bold;
+        font-stretch: normal;
+        font-style: normal;
+        text-align: center;
+        color: #ffffff;
     }
 }

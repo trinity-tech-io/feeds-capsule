@@ -5,7 +5,6 @@ const routes: Routes = [
 
   { path: '', loadChildren: './pages/feeds/feeds.module#FeedsPageModule' },
   { path: 'tabs', loadChildren: './pages/feeds/feeds.module#FeedsPageModule' },
-  { path: 'splashscreen', loadChildren: './pages/splashscreen/splashscreen.module#SplashscreenPageModule' },
 
   { path: 'menu/servers/server-info', loadChildren: './pages/servers/server-info/server-info.module#ServerInfoPageModule'},
 
@@ -15,11 +14,12 @@ const routes: Routes = [
   { path: 'createnewpost', loadChildren: './pages/feeds/createnewpost/createnewpost.module#CreatenewpostPageModule' },
   { path: 'profileimage', loadChildren: './pages/feeds/profileimage/profileimage.module#ProfileimagePageModule' },
 
+  { path: 'bindservice/learnpublisheraccount', loadChildren: './pages/feeds/bindservice/learnpublisheraccount/learnpublisheraccount.module#LearnpublisheraccountPageModule'},
+  { path: 'bindservice/introduce', loadChildren: './pages/feeds/bindservice/introduce/introduce.module#IntroducePageModule' },
   { path: 'bindservice/scanqrcode', loadChildren: './pages/feeds/bindservice/scanqrcode/scanqrcode.module#ScanqrcodePageModule'},
   { path: 'bindservice/importdid/:nodeId', loadChildren: './pages/feeds/bindservice/importdid/importdid.module#ImportdidPageModule' },
   { path: 'bindservice/publishdid/:nodeId/:did/:payload', loadChildren: './pages/feeds/bindservice/publishdid/publishdid.module#PublishdidPageModule' },
   { path: 'bindservice/issuecredential/:nodeId/:did', loadChildren: './pages/feeds/bindservice/issuecredential/issuecredential.module#IssuecredentialPageModule' },
-  { path: 'bindservice/finish/:nodeId', loadChildren: './pages/feeds/bindservice/finish/finish.module#FinishPageModule' },
   { path: 'bindservice/startbinding/:nodeId/:nonce/:address/:did/:feedsUrl', loadChildren: './pages/feeds/bindservice/startbinding/startbinding.module#StartbindingPageModule' },
 
   { path: 'channels/:nodeId/:channelId', loadChildren: './pages/feeds/home/channels/channels.module#ChannelsPageModule' },
@@ -42,7 +42,8 @@ const routes: Routes = [
   { path: 'feedinfo', loadChildren: './pages/feedinfo/feedinfo.module#FeedinfoPageModule' },
   { path: 'commentlist', loadChildren: './pages/commentlist/commentlist.module#CommentlistPageModule' },
   { path: 'feedspreferences', loadChildren: './pages/feedspreferences/feedspreferences.module#FeedspreferencesPageModule' },
-  { path: 'language', loadChildren: './pages/settings/language/language.module#LanguagePageModule' }
+  { path: 'language', loadChildren: './pages/settings/language/language.module#LanguagePageModule' },
+  { path: 'learnmore', loadChildren: './pages/learnmore/learnmore.module#LearnmorePageModule' }
 ];
 
 @NgModule({

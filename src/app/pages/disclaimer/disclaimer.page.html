@@ -1,25 +1,24 @@
-<!-- <ion-header> -->
-  <app-titlebar></app-titlebar>
-<!-- </ion-header> -->
-<ion-content>
-    <ion-grid [class.darkContainer]="theme.darkMode" >
-      <ion-row class="bg" [ngStyle]="styleObj">
-        <ion-col size="12">
-          <p class="des">{{ 'DisclaimerPage.declaration' | translate }}</p>
-          <p class="des">{{ 'DisclaimerPage.copyright'   | translate }}</p>
-          <p class="des">{{ 'DisclaimerPage.bodyText'    | translate }}</p>
-        </ion-col>
-      </ion-row>
 
-      <ion-row class="btns-row" [class.dark-btns-row]="theme.darkMode" style="margin-top: 10px;">
-        <ion-col class="btn cancel ion-activatable ripple" size="5.6" (click)="deny()">
-            <ion-label>{{ 'DisclaimerPage.denyText' | translate }}</ion-label>
-            <ion-ripple-effect></ion-ripple-effect>
-        </ion-col>
-        <ion-col class="btn confirm ion-activatable ripple" size="5.6" (click)="accept()">
-            <ion-label>{{ 'DisclaimerPage.acceptText' | translate }}</ion-label>
-            <ion-ripple-effect></ion-ripple-effect>
-        </ion-col>
-      </ion-row>
-    </ion-grid>
+<app-titlebar></app-titlebar>
+<ion-content class="container" [class.darkContainer]="theme.darkMode">
+  <ion-grid >
+    <ion-row class="bg" [ngStyle]="styleObj">
+      <ion-col size="12">
+        <p class="des">{{ 'DisclaimerPage.declaration' | translate }}</p>
+        <p class="des">{{ 'DisclaimerPage.copyright'   | translate }}</p>
+        <p class="des">{{ 'DisclaimerPage.bodyText'    | translate }}</p>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="btns-row" [class.dark-btns-row]="theme.darkMode" style="margin-top: 10px;">
+      <ion-col class="btn cancel ion-activatable ripple" size="5.6" (click)="deny()">
+          <ion-label>{{ 'DisclaimerPage.denyText' | translate }}</ion-label>
+          <ion-ripple-effect></ion-ripple-effect>
+      </ion-col>
+      <ion-col class="btn confirm ion-activatable ripple" size="5.6" (click)="accept()">
+          <ion-label>{{ 'DisclaimerPage.acceptText' | translate }}</ion-label>
+          <ion-ripple-effect></ion-ripple-effect>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
 </ion-content>

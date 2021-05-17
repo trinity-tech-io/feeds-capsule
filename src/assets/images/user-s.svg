@@ -1,3 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" id="prefix__user" width="21.708" height="22.694" viewBox="0 0 21.708 22.694">
-    <path id="prefix__user-2" d="M12.187 15.147s-7.894 0-10.854 6.907a32.64 32.64 0 0 0 10.854 1.974 32.64 32.64 0 0 0 10.854-1.974c-2.96-6.907-10.854-6.907-10.854-6.907zm0-.986c2.96 0 4.934-2.96 4.934-7.894s-4.934-4.934-4.934-4.934-4.934 0-4.934 4.934 1.974 7.894 4.934 7.894z" data-name="user" transform="translate(-1.333 -1.333)" style="fill:#368bff"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+  <g id="Profile" transform="translate(0 0)">
+    <g id="Union_1" data-name="Union 1" transform="translate(0 -354)">
+      <circle id="Ellipse_3" data-name="Ellipse 3" cx="4" cy="4" r="4" transform="translate(4 354)" fill="#7624fe"/>
+      <path id="Path_6" data-name="Path 6" d="M8,10c-4.4,0-8,1.8-8,4v2H16V14C16,11.8,12.4,10,8,10Z" transform="translate(0 354)" fill="#7624fe"/>
+    </g>
+  </g>
 </svg>
