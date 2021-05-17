@@ -63,6 +63,8 @@
     </platform>
     <platform name="ios">
         <preference name="IntentRedirecturlFilter" value="https://feeds.trinity-tech.io" />
+        <preference name="SwiftVersion" value="5.2" />
+        <preference name="UseSwiftLanguageVersion" value="5.2" />
         <allow-intent href="itms:*" />
         <allow-intent href="itms-apps:*" />
         <icon height="57" src="resources/ios/icon/icon.png" width="57" />
@@ -154,4 +156,5 @@
     <plugin name="cordova-plugin-splashscreen" spec="5.0.2" />
     <plugin name="cordova-plugin-ionic-webview" spec="^5.0.0" />
     <plugin name="cordova-plugin-ionic-keyboard" spec="^2.0.5" />
+    <hook src="scripts/modify_xcode_project.js" type="after_platform_add" />
 </widget>
