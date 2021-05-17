@@ -1,117 +1,130 @@
-// ion-tab-bar {
-//   height: 9%;
-
-//   ion-icon {
-//     color: #989aa2;
-//     font-size: 36px;
-//   }
-
-//   ion-label {
-//     font-size: 9px;
-//     font-weight: bold;
-//     color: #989aa2;
-//   }
-// }
 .totalunread{
   font-size: 13px;
 }
 
-ion-tab-button.center-tab{
-  position: absolute;;
-  overflow: visible;
-  text-align: center;
-  height: 96px;
-  width: 96px;
-  left: 0;
-  right: 0;
-  margin: auto;
-  bottom: 0px;
-  z-index: 99999;
-  ion-icon{
-      padding: 6px;
-      width: 40px;
-      height: 40px;
-      line-height: 40px;
-      color: var(--ion-color-white, #fff);
-      background-color: var(--ion-color-primary, #9b7af3);
-      // background-color: #1b0a93;
-      border-radius:50%;
-      border:5px solid #fff;
-      // box-shadow:0 -2px 3px rgba(100,100,100,.4);
-  }.selected{
-    color: var(--ion-color-white, #fff);
-
-  }
-}
-
 .home-tab{
-  width: 23px;
-  height: 19.8px;
+  width: 20.7px;
+  height: 18.2px;
   content: url("../../../assets/images/home.svg");
 }
 
 .home-tab-selected{
-  width: 23px;
-  height: 19.8px;
+  width: 20.7px;
+  height: 18.2px;
   content: url('../../../assets/images/home-s.svg');
 }
 
 .profile-tab{
-  width: 24.4px;
-  height: 22.7px;
+  width: 16px;
+  height: 16px;
+  content: url('../../../assets/images/user.svg');
+}
+
+.profile-tab{
+  width: 16px;
+  height: 16px;
   content: url('../../../assets/images/user.svg');
 }
 
 .profile-tab-selected{
-  width: 24.4px;
-  height: 22.7px;
+  width: 16px;
+  height: 16px;
   content: url('../../../assets/images/user-s.svg');
 }
 
 .add-tab{
-  width: 46px;
-  height: 46px;
+  width: 40px;
+  height: 40px;
   background-image: url('../../../assets/images/add.svg');
 }
 
 .notification-tab{
-  width: 20.2px;
-  height: 22.4px;
+  width:15.9px;
+  height:16px;
   content: url('../../../assets/images/notification.svg');
 }
 
 .notification-tab-selected{
-  width: 20.2px;
-  height: 22.4px;
+  width:15.9px;
+  height:16px;
   content: url('../../../assets/images/notification-s.svg');
 }
 
 .search-tab{
-  width: 20.7px;
-  height: 20.7px;
+  width: 16px;
+  height: 16px;
   content: url('../../../assets/images/search.svg');
 }
 
 .search-tab-selected{
-  width: 20.7px;
-  width: 20.7px;
+  width: 16px;
+  height: 16px;
   content: url('../../../assets/images/search-s.svg');
 }
 
 .tabs-line{
-  width: 100%; 
-  height: 2px; 
-  background-image: url(../../../assets/images/line.svg); 
+  width: 100%;
+  height: 2px;
+  background-image: url('../../../assets/images/line.svg');
   bottom: 0px;
 }
 
 .tabs-div{
-  height: 58.5px; 
+  height: 58.5px;
   width: 100%;
 }
 
 .darkContainer{
   .drak-line{
-    background-image: url(../../../assets/images/drak-line.svg); 
+    background-image: url('../../../assets/images/drak-line.svg');
+  }
+
+  .home-tab{
+    width: 20.7px;
+    height: 18.2px;
+    content: url("../../../assets/images/darkmode/home.svg");
+  }
+
+  .home-tab-selected{
+    width: 20.7px;
+    height: 18.2px;
+    content: url('../../../assets/images/home-s.svg');
+  }
+
+  .profile-tab{
+    width: 16px;
+    height: 16px;
+    content: url('../../../assets/images/darkmode/user.svg');
+  }
+
+  .profile-tab-selected{
+    width: 16px;
+    height: 16px;
+    content: url('../../../assets/images/user-s.svg');
+  }
+
+
+  .notification-tab{
+    width:15.9px;
+    height:16px;
+    content: url('../../../assets/images/darkmode/notification.svg');
+  }
+
+  .notification-tab-selected{
+    width:15.9px;
+    height:16px;
+    content: url('../../../assets/images/notification-s.svg');
+  }
+
+  .search-tab{
+    width: 16px;
+    height: 16px;
+    content: url('../../../assets/images/darkmode/search.svg');
+  }
+
+  .search-tab-selected{
+    width: 16px;
+    height: 16px;
+    content: url('../../../assets/images/search-s.svg');
   }
 }

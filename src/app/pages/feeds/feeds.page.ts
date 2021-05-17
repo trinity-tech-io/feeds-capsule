@@ -102,7 +102,7 @@ export class FeedsPage implements OnInit {
 
     let bindingServer = this.feedService.getBindingServer();
     if (bindingServer == null || bindingServer == undefined){
-      this.native.navigateForward(['/bindservice/scanqrcode'],"");
+      this.native.navigateForward(['bindservice/learnpublisheraccount'],"");
       return ;
     }
 

@@ -1,3 +1,6 @@
+.content{
+  --ion-background-color: #F1E9FF;
+}
 .container {
   display: flex;
   flex-direction: column;
@@ -5,45 +8,61 @@
   align-items: center;
   padding: 60px 30px 15px;
   min-height: 100%;
+  text-align:center;
 
   h1, p, h2, h3 {
     text-align: center;
   }
 
   h1 {
-    font-size: 21px;
-    font-weight: 700;
-    color: #000000;
-    margin: 0 10px;
+    margin: 0;
+    padding: 0 10px;
+    width: 100%;
+    font-size: 40px;
+    font-weight: bold;
+    font-stretch: normal;
+    font-style: normal;
+    color: #7624fe;
   }
 
   p {
-    font-size: 17px;
-    font-weight: 500;
-    line-height: 1.22;
-    color: #8888b0;
-    margin: 25px 10px 50px;
+      padding: 0 10px;
+      width: 100%;
+      font-size: 14px;
+      font-weight:normal;
+      font-stretch: normal;
+      font-style: normal;
+      color: #7624fe;
+      line-height:1.3;
   }
 
   h2 {
-    font-size: 17px;
-    font-weight: 400;
-    line-height: 1.22;
-    color: #afb1cb;
     margin: 0;
+    margin-top:16px;
+    padding: 0 10px;
+    width: 100%;
+    font-size: 20px;
+    font-weight: bold;
+    font-stretch: normal;
+    font-style: normal;
+    color: #000000;
   }
 
   h3 {
-    width: 100%;
-    font-size: 17px;
-    font-weight: 500;
+    width:80%;
+    font-size: 14px;
+    font-weight: normal;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: 1.71;
     text-align: left;
+    color: #000000;
     word-break: break-all;
     border-radius: 10px;
-    background-color: #f0f1ff;
+    background-color: #f6f5f6;
     padding: 15px;
-    color: #535677;
-    margin: 10px 0 0;
+    margin: 0 auto;
+    margin-top: 10px;
   }
 
   .btn-row {
@@ -60,14 +79,17 @@
 }
 
 .darkContainer {
-  h1 {
+
+  h2{
     color: #ffffff;
   }
 
   h3 {
-    color: #cfd1f7;
-    font-weight: 400;
-    background: #2e2f4e;
-    box-shadow: 0 3px 15px 0 #151626;
+    color: #ffffff;
+    background: #6c6e92;
+  }
+
+  p{
+    color:#9ca0a4;
   }
 }

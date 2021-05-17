@@ -1,0 +1,45 @@
+<app-titlebar></app-titlebar>
+<ion-content [class.content]="!theme.darkMode">
+  <div class="slide">
+   <ion-grid>
+     <ion-row class="header-row">
+       <ion-col size="12"><h1>{{'LearnpublisheraccountPage.hello'|translate}}</h1></ion-col>
+       <ion-col size="12">
+         <img src="./assets/images/hello.svg"/>
+       </ion-col>
+     </ion-row>
+
+     <ion-row class="intro-row">
+         <ion-col size="12" (click)="learnMore()">
+           <p class="desktop white">{{ "LearnpublisheraccountPage.des" | translate }}</p>
+         </ion-col>
+     </ion-row>
+</ion-grid>
+</div>
+<ion-grid class="slide">
+
+ <ion-row class="btn-row" (click)="createNewPublisherAccount()" style="margin-top:8px;">
+  <ion-button>
+    <ion-label>
+       {{ "LearnpublisheraccountPage.createNewPublisherAccount"| translate }}
+    </ion-label>
+  </ion-button>
+</ion-row>
+
+<ion-row class="btn-row" (click)="bindExistingPublisherAccount()" style="margin-top:8px;">
+  <ion-button>
+    <ion-label>
+       {{ "LearnpublisheraccountPage.bindExistingPublisherAccount"| translate }}
+    </ion-label>
+  </ion-button>
+</ion-row>
+
+<ion-row class="btn-row" (click)="continueWithoutPublisherAccount()" style="margin-top:8px;">
+  <ion-button>
+    <ion-label>
+       {{ "LearnpublisheraccountPage.continueWithoutPublisherAccount"| translate }}
+    </ion-label>
+  </ion-button>
+</ion-row>
+</ion-grid>
+</ion-content>

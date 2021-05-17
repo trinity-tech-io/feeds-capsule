@@ -1,23 +1,43 @@
 
-ion-grid {
-    background:#494A49;
+.container{
+  ion-grid {
     height: 100%;
     .bg{
+      background:#f6f5f6;
       height:540px;
-      background:#ffffff;
       border-radius: 17px;
       overflow:auto;
       padding:0px 10px;
     }
 
+    .bg::-webkit-scrollbar {
+      /*隐藏滚动条*/
+      display: none;
+     }
+
     padding:10px 30px;
 
     .des {
         padding:0px;
-        font-size: 16px;
-        font-weight: 500;
-        line-height: 1.7;
-        font-size: 16px;
-        color: #161740;
+        font-size: 14px;
+        font-weight: normal;
+        font-stretch: normal;
+        font-style: normal;
+        line-height: 1.4;
+        text-align: left;
+        color: #9ca0a4;
     }
+}
+}
+
+.darkContainer{
+  ion-grid{
+  .bg{
+    background:#6c6e92;
+  }
+
+  .des{
+    color:#ffffff;
+  }
+}
 }

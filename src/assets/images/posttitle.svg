@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="20" viewBox="0 0 16 20">
+  <g id="Navigation_Bar" data-name="Navigation Bar" transform="translate(0.969 5.731)">
+    <rect id="Rectangle_68" data-name="Rectangle 68" width="13.877" height="20" transform="translate(0 -5.731)" fill="none"/>
+    <path id="Rectangle_69" data-name="Rectangle 69" d="M0,0H0Z" transform="translate(0 8.538)" fill="none"/>
+    <path id="Icon_awesome-book-open" data-name="Icon awesome-book-open" d="M15.062,2.252c-1.522.111-4.548.515-6.416,1.985a.6.6,0,0,0-.2.47v13c0,.413.351.673.647.482a13.786,13.786,0,0,1,6.075-1.676A1.023,1.023,0,0,0,16,15.414V3.348a.992.992,0,0,0-.938-1.1ZM7.354,4.237C5.486,2.767,2.461,2.363.938,2.252A.992.992,0,0,0,0,3.348V15.414a1.023,1.023,0,0,0,.834,1.095,13.785,13.785,0,0,1,6.077,1.677c.3.191.645-.069.645-.481V4.7A.585.585,0,0,0,7.354,4.237Z" transform="translate(-0.969 -5.981)" fill="#7624fe"/>
+  </g>
+</svg>

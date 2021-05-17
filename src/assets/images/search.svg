@@ -1,3 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" id="prefix__bx-search" width="20.686" height="20.688" viewBox="0 0 20.686 20.688">
-    <path id="prefix__bx-search-2" d="M10.846 19.693a8.793 8.793 0 0 0 5.415-1.867l4.861 4.861 1.564-1.564-4.861-4.861a8.836 8.836 0 1 0-6.979 3.43zm0-15.481a6.635 6.635 0 1 1-6.635 6.635 6.642 6.642 0 0 1 6.635-6.635z" data-name="bx-search" transform="translate(-2 -2)" style="fill:#afb1cb"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+  <g id="Explore" opacity="0.3">
+    <path id="Path_103" data-name="Path 103" d="M138,16a8,8,0,1,1,8-8A8.024,8.024,0,0,1,138,16Zm4-12-3.9,1.8a5.12,5.12,0,0,0-2.3,2.3L134,12l3.9-1.8a5.12,5.12,0,0,0,2.3-2.3Z" transform="translate(-130)" fill="#0e0909"/>
+  </g>
 </svg>

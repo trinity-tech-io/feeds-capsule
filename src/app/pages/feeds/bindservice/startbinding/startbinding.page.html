@@ -1,18 +1,19 @@
-<!-- <ion-header> -->
-  <app-titlebar></app-titlebar>
-  <div *ngIf="connectionStatus == 1" class="offline-header"></div>
-<!-- </ion-header> -->
-<ion-content>
-  <ion-grid class="container" [class.darkContainer]="theme.darkMode">
-    <h1>{{'StartbindingPage.introduce'|translate}}</h1>
+<app-titlebar></app-titlebar>
+<div *ngIf="connectionStatus == 1" class="offline-header"></div>
+<ion-content class="container" [class.darkContainer]="theme.darkMode" [class.content]="!theme.darkMode">
+  <ion-grid >
     <div *ngIf="feedsUrl === '-1'">
-      <p>{{ 'StartbindingPage.introduce1' | translate }}</p>
-      <h2>{{ 'StartbindingPage.introduce2' | translate }}</h2>
+      <h1>{{'StartbindingPage.introduce4'|translate}}</h1>
+      <h2>{{ 'StartbindingPage.introduce1' | translate }}</h2>
+      <p>{{ 'StartbindingPage.introduce2' | translate }}</p>
+      <h2>{{ 'StartbindingPage.introduce5' | translate }}</h2>
       <h3 (click)="scanService()">{{ nonce }}</h3>
     </div>
     <div *ngIf="feedsUrl !== '-1'">
+      <h1>{{'StartbindingPage.introduce9'|translate}}</h1>
+      <h2>{{'StartbindingPage.introduce6'|translate}}</h2>
       <p>{{ 'StartbindingPage.linkServer' | translate }}</p>
-      <h2>{{ 'StartbindingPage.introduce3' | translate }}</h2>
+      <h2>{{ 'StartbindingPage.introduce8' | translate }}</h2>
       <h3 (click)="scanService()">{{ feedsUrl }}</h3>
     </div>
     <ion-row class="btn-row">
@@ -20,13 +21,10 @@
         <ion-label>{{'StartbindingPage.confirm'|translate}}</ion-label>
       </ion-button>
     </ion-row>
-    <ion-row class="btns-row">
-      <ion-col class="btn cancel ion-activatable ripple" size="8.5" (click)="abort()">
+    <ion-row class="btn-row" style="margin-top:10px;">
+      <ion-button class="confirm" (click)="abort()">
         <ion-label>{{'StartbindingPage.abort'|translate}}</ion-label>
-        <ion-ripple-effect></ion-ripple-effect>
-      </ion-col>
+      </ion-button>
     </ion-row>
   </ion-grid>
 </ion-content>
-
-

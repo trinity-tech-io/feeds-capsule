@@ -1,38 +1,49 @@
+ion-slides{
+  --bullet-background:#7624fe;
+  --bullet-background-active:#7624fe;
+}
+
+.content{
+  --ion-background-color: #F1E9FF;
+}
+
 .slide {
   ion-grid {
     display: flex;
     flex-direction: column;
     justify-content: center;
     padding: 0 30px;
-    
+
     p {
-      margin: 5px 0 0;
+      // margin: 5px 0 0;
       font-size: 20px;
-      font-weight: 600;
+      font-weight: normal;
+      font-stretch: normal;
+      font-style: normal;
       text-align: center;
-      color: #000000;
+      color:#7624fe;
     }
 
     .header-row {
-      margin-top: 125px;
-
+      margin-top: 20px;
       ion-col {
         img {
-          width: 100px;
-          height: 100px;
+          width: 301px;
+          height: 266px;
           margin: 0 auto;
         }
-  
+
         h1 {
-          margin: 0px;
-          font-size: 48px;
-          font-weight: 900;
-          text-align:center;
-          color: #000000;
+          font-size: 20px;
+          font-weight: bold;
+          font-stretch: normal;
+          font-style: normal;
+          text-align: center;
+          color:#7624fe;
         }
       }
     }
-  
+
     .intro-row {
       margin-top: 30px;
     }
@@ -41,137 +52,28 @@
       margin-top: 100px;
       width: 100%;
     }
-
-    .learnmore-row {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      width: 100%;
-      margin-top: 15px;
-    
-      ion-label {
-        font-size: 16px;
-        font-weight: 500;
-        color: #368bff;
-      }
-    }    
   }
-}
 
-.slide2 {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 40px 30px;
-
-  .onboard-card {
+  .learnmore-row{
     display: flex;
-    flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: 60px 15px;
-    border-radius: 17px;
-    background: #ffffff;
-    box-shadow: 0 3px 15px 0 #ededf0;
-    margin: 0;
     width: 100%;
+    margin-top: 15px;
 
-    img {
-      width: 168.3px;
-      height: 190.1px;
-      object-fit: contain;
-    }
-  
-    ion-card-title {
-      font-size: 21px;
-      font-weight: 700;
-      color: #000000;
-      padding: 60px 0 15px;
-    }
-  
-    ion-card-subtitle {
+    ion-label {
       font-size: 14px;
-      font-weight: 500;
-      color: #161740;
-      text-transform: none;
+      font-weight: bold;
+      font-stretch: normal;
+      font-style: normal;
+      color: #7624fe;
     }
   }
-}
 
+}
 
 .darkSlides {
   p, h1 {
-    color: #ffffff !important;
-  }
-
-  .slide2 {
-    .onboard-card {
-      box-shadow: 0 3px 15px 0 #151626;
-      background-color: #2e2f4e;
-  
-      ion-card-title {
-        color: #ffffff;
-      }
-    
-      ion-card-subtitle {
-        color: #ffffff;
-      }
-    }
+    color:#7624fe !important;
   }
 }
-
-/* .signbtn {
-    position: absolute;
-    width: 80%;
-    height: 45px;
-    left: 10%;
-    top:calc(50% - 22.5px) !important;
-    font-weight: 500;
-    font-size: 16px;
-}
-
-.top-110{
-  margin-top:100.9px;
-}
-
-.top-25{
-  margin-top:35.6px;
-}
-
-.feeds{
-  padding:0px;
-  margin: 0px;
-  font-size: 40px;
-  font-weight: 900;
-  font-stretch: normal;
-  font-style: normal;
-  text-align:center;
-  color: #000000;
-}
-
-.feedslogo{
-  width: 97.7px;
-  height: 92px;
-  margin: 0 auto;
-  margin-top:67.9px;
-}
-
-.desktop {
-  padding:0px;
-  margin: 0px;
-  margin-top:5px;
-  font-size: 21px;
-  font-weight: 600;
-  font-stretch: normal;
-  font-style: normal;
-  text-align: center;
-  color: #000000;
-}
-
-.darkContainer{
-  .white{
-   color:#ffffff;
-  }
-}
- */

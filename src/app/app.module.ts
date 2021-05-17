@@ -46,7 +46,6 @@ import { IntentService } from './services/IntentService';
 import { PopupProvider } from './services/popup';
 import { CameraService } from './services/CameraService';
 import { QRCodeModule } from 'angularx-qrcode';
-import { SplashscreenPageModule } from './pages/splashscreen/splashscreen.module';
 import { JWTMessageService } from './services/JWTMessageService';
 import { TransportService } from './services/TransportService';
 import { SerializeDataService } from './services/SerializeDataService';
@@ -138,7 +137,6 @@ export function TranslateLoaderFactory() {
     HttpClientModule,
     AppRoutingModule,
     ComponentsModule,
-    SplashscreenPageModule,
     IonicModule.forRoot({
       rippleEffect: true,
       mode: 'ios',

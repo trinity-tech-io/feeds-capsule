@@ -1,9 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="28.125" height="28" viewBox="0 0 28.125 28">
-    <g id="icon-About" transform="translate(-105.813 -347.98)">
-        <path id="Rectangle_5692" fill="none" d="M0 0H28V28H0z" data-name="Rectangle 5692" transform="translate(105.813 347.98)"/>
-        <g id="icon-About-2" stroke="#fff" data-name="icon-About" transform="translate(106.813 352.98)">
-            <path id="Path_21689" d="M1679.02 8192.4c-1.049-.517-1.677-1.868-1.68-3.613v-.831c.012-.141.019-.282.018-.42l-.007-4.716a4.679 4.679 0 0 0-4.673-4.666h-.007l-9 .014a4.678 4.678 0 0 0-4.666 4.68l.007 4.716a4.678 4.678 0 0 0 4.673 4.666h.007l9-.014a4.63 4.63 0 0 0 2.649-.83 7.078 7.078 0 0 0 3.659 1.114h.214z" data-name="Path 21689" transform="translate(-1659.005 -8174.627)" />
-            <path id="Path_21690" stroke-width="1.4px" d="M1777.654 8141.251c-1.06-.526-1.693-1.889-1.693-3.646v-.834q.018-.206.019-.417v-4.716a4.644 4.644 0 0 0-4.638-4.638h-9a4.644 4.644 0 0 0-4.638 4.638v4.716a4.643 4.643 0 0 0 4.638 4.639h9a4.611 4.611 0 0 0 2.649-.833 7.014 7.014 0 0 0 3.658 1.116h.059z" data-name="Path 21690" transform="translate(-1750.892 -8127)" />
-        </g>
-    </g>
-</svg>

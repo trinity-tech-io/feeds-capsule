@@ -1,4 +1,5 @@
 import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
+import { TranslateService } from "@ngx-translate/core";
 import { FeedService } from 'src/app/services/FeedService';
 import { ActivatedRoute } from '@angular/router';
 import { Events } from 'src/app/services/events.service';
@@ -23,6 +24,7 @@ export class ImportdidPage implements OnInit {
     private events: Events,
     private acRoute: ActivatedRoute,
     private feedService:FeedService,
+    private translate:TranslateService,
     public  theme:ThemeService,
     private titleBarService: TitleBarService
     ) {
@@ -38,6 +40,9 @@ export class ImportdidPage implements OnInit {
       this.initTitle();
 
       this.connectionStatus = this.feedService.getConnectionStatus();
+      this.events.subscribe(FeedsEvent.PublishType.updateTitle,()=>{
+        this.initTitle();
+      });
       this.events.subscribe(FeedsEvent.PublishType.connectionChanged,(status)=>{
         this.zone.run(() => {
           this.connectionStatus = status;
@@ -83,6 +88,7 @@ export class ImportdidPage implements OnInit {
 
     ionViewWillLeave(){
       this.native.hideLoading();
+      this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
       this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
       this.events.unsubscribe(FeedsEvent.PublishType.resolveDidError);
       this.events.unsubscribe(FeedsEvent.PublishType.resolveDidSucess);
@@ -91,7 +97,7 @@ export class ImportdidPage implements OnInit {
 
 
     initTitle(){
-      this.titleBarService.setTitle(this.titleBar, this.title);
+      this.titleBarService.setTitle(this.titleBar,this.translate.instant("ImportdidPage.title"));
       this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
       this.titleBarService.setTitleBarMoreMemu(this.titleBar);
     }
