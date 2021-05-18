@@ -2147,8 +2147,25 @@ export class FeedService {
       let contentStr = this.serializeDataService.decodeData(contentBin);
       let content = this.parseContent(nodeId,channel_id,id,0,contentStr);
 
+
       let updatedAt = result[index].updated_at||createAt;
       let status = result[index].status||FeedsData.PostCommentStatus.available;
+
+      //TODO 2.0
+      let thumbnails = result[index].thumbnails;
+      this.logUtils.logd("Receive result from get_post RPC,thumbnails is "+thumbnails);
+
+      //TODO 2.0
+      let hash_id = result[index].hash_id;
+      this.logUtils.logd("Receive result from get_post RPC,hash_id is "+hash_id);
+      
+      //TODO 2.0
+      let proof = result[index].proof;
+      this.logUtils.logd("Receive result from get_post RPC,proof is "+proof);
+
+      //TODO 2.0
+      let origin_post_url = result[index].origin_post_url;
+      this.logUtils.logd("Receive result from get_post RPC,origin_post_url is "+origin_post_url);
 
       if (updatedAt > createAt && status == FeedsData.PostCommentStatus.available)
         status = FeedsData.PostCommentStatus.edited

@@ -300,7 +300,7 @@ export class ConnectionService {
             return ;
 
         let request: Communication.get_posts_request = {
-            version: "1.0",
+            version: "2.0",
             method : "get_posts",
             id     : -1,
             params : {
