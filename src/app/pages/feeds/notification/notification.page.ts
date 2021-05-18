@@ -30,7 +30,7 @@ export class NotificationPage {
   public totalData:any = [];
   public notificationMenu:any = null;
   public notification:any = {};
-
+  private isAddNotification:boolean = false;
   constructor(
     private native:NativeService,
     private zone: NgZone,
@@ -47,10 +47,10 @@ export class NotificationPage {
   ngOnInit(): void {
 
   }
-  ionViewWillEnter() {
-    this.initTitleBar();
-    this.connectionStatus = this.feedService.getConnectionStatus();
+
+  addEvent(){
     this.events.subscribe(FeedsEvent.PublishType.updateTitle,()=>{
+      this.initTitleBar();
       if(this.notificationMenu!=null){
           this.notificationMenu.dismiss();
           this.showNotificationMenu(this.notification);
@@ -61,7 +61,23 @@ export class NotificationPage {
         this.connectionStatus = status;
       });
     });
+  }
 
+  removeEvent(){
+    this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
+    this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
+  }
+
+  ionViewWillEnter() {
+    this.initTitleBar();
+    this.connectionStatus = this.feedService.getConnectionStatus();
+    this.events.subscribe(FeedsEvent.PublishType.notification, ()=>{
+      if(!this.isAddNotification){
+        this.addEvent();
+        this.isAddNotification = true;
+      }
+    });
+    this.addEvent();
     this.initRefresh();
     this.scrollToTop(1);
   }
@@ -86,8 +102,8 @@ export class NotificationPage {
   }
 
   ionViewWillLeave(){
-    this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
-    this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
+    this.events.unsubscribe(FeedsEvent.PublishType.notification);
+    this.removeEvent();
   }
 
   handleDisplayTime(createTime:number){
@@ -172,11 +188,13 @@ export class NotificationPage {
     }
 
   }
-  navToChannel(nodeId, channelId){
+  navToChannel(nodeId:string, channelId:number){
+    this.removeEvent();
     this.native.navigateForward(['/channels', nodeId, channelId],"");
   }
 
-  navToPostDetail(nodeId, channelId, postId){
+  navToPostDetail(nodeId:string, channelId:number, postId:number){
+    this.removeEvent();
     this.native.navigateForward(['/postdetail',nodeId, channelId,postId],"");
   }
 

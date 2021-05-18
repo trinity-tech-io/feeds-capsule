@@ -532,6 +532,7 @@ export class PostdetailPage implements OnInit {
      this.events.publish(FeedsEvent.PublishType.updateTab);
      this.events.publish(FeedsEvent.PublishType.addBinaryEvevnt);
      this.events.publish(FeedsEvent.PublishType.addProflieEvent);
+     this.events.publish(FeedsEvent.PublishType.notification);
      this.events.unsubscribe(FeedsEvent.PublishType.getCommentFinish);
   }
 

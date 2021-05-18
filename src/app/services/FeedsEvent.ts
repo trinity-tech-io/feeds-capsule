@@ -35,6 +35,7 @@ declare namespace FeedsEvent{
         tipdialogConfirm = "tipdialog-confirm",
 
         search = "feeds:search",
+        notification = "feeds:notification",
 
         updateTab = "update:tab",
         addBinaryEvevnt = "addBinaryEvevnt",
@@ -168,12 +169,12 @@ declare namespace FeedsEvent{
         nodeId          :   string,
         connectionStatus: FeedsData.ConnState
     }
-    
+
     type StreamErrorData = {
         nodeId  :   string,
         error   :   any
     }
- 
+
     type StreamStateChangedData = {
         nodeId      :   string
         streamState :   FeedsData.StreamState
@@ -194,7 +195,7 @@ declare namespace FeedsEvent{
 
     type ResolveDidErrorData = {
         nodeId  :   string,
-        did     :   string, 
+        did     :   string,
         payload :   string
     }
 
@@ -205,8 +206,8 @@ declare namespace FeedsEvent{
 
     type OwnerDeclareData = {
         nodeId: string,
-        phase: string, 
-        did: string, 
+        phase: string,
+        did: string,
         payload: string
     }
 
@@ -217,8 +218,8 @@ declare namespace FeedsEvent{
 
     type StreamProgressData = {
         nodeId: string,
-        progress: number, 
-        method: string, 
+        progress: number,
+        method: string,
         key: string
     }
 
@@ -227,16 +228,16 @@ declare namespace FeedsEvent{
         channelId: number,
         channelName: string
     }
-    
+
     type GetBinaryData = {
-        nodeId: string, 
-        key: string, 
+        nodeId: string,
+        key: string,
         value: string
     }
 
     type AddFeedStatusChangedData = {
-        nodeId: string, 
-        feedId: string, 
+        nodeId: string,
+        feedId: string,
         status: FeedsData.FollowFeedStatus
     }
 
