@@ -475,8 +475,9 @@ declare module Communication{
         }[]  
     }
     
+    //Update to 2.0
     type get_subscribed_channels_request = {
-        version: "1.0"
+        version: "2.0"
         method : "get_subscribed_channels"
         id     : jsonrpc_id
         params : {
@@ -488,20 +489,27 @@ declare module Communication{
         }
     }
 
+    //Update to 2.0
+    //Add create_at:number
+    //Add subscribed_time : number
+    //Add proof : string
     type get_subscribed_channels_response = {
-        version: "1.0"
+        version: "2.0"
         id     : jsonrpc_id
         result : {
             is_last : boolean
             channels: {
-                id          : number
-                name        : string
-                introduction: string
-                owner_name  : string
-                owner_did   : string
-                subscribers : number
-                last_update : number
-                avatar      : any
+                id              : number
+                name            : string
+                introduction    : string
+                owner_name      : string
+                owner_did       : string
+                subscribers     : number
+                last_update     : number
+                avatar          : any
+                create_at       : number
+                subscribed_time : number
+                proof           : string
             }[]
         }
     }

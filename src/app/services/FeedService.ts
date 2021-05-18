@@ -2069,6 +2069,18 @@ export class FeedService {
       let last_update = result[index].last_update;
       let avatarBin = result[index].avatar;
 
+      //TODO 2.0
+      let create_at = result[index].create_at;
+      this.logUtils.logd("Receive result from get_subscribed_channels RPC,create_at is "+create_at);
+
+      //TODO 2.0
+      let subscribed_time = result[index].subscribed_time;
+      this.logUtils.logd("Receive result from get_subscribed_channels RPC,subscribed_time is "+subscribed_time);
+
+      //TODO 2.0
+      let proof = result[index].proof;
+      this.logUtils.logd("Receive result from get_subscribed_channels RPC,proof is "+proof);
+
       let avatar = this.serializeDataService.decodeData(avatarBin);
       let nodeChannelId = this.getChannelId(nodeId, channelId);
       let originChannel = this.dataHelper.getChannel(nodeChannelId);
