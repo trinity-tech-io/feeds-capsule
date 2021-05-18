@@ -48,7 +48,7 @@ const routes: Routes = [
   { path: 'bid', loadChildren: './pages/nft/bid/bid.module#BidPageModule' },
   { path: 'collections', loadChildren: './pages/nft/collections/collections.module#CollectionsPageModule' },
   { path: 'confirmation', loadChildren: './pages/nft/confirmation/confirmation.module#ConfirmationPageModule' },
-  { path:'channelsviewall',loadChildren: './pages/search/search.module#SearchPageModule'},
+  { path:'channelsviewall',loadChildren: './pages/feeds/search/search.module#SearchPageModule'},
   { path: 'currencyviewall', loadChildren: './pages/nft/currencyviewall/currencyviewall.module#CurrencyviewallPageModule' },
   { path: 'learnmore', loadChildren: './pages/learnmore/learnmore.module#LearnmorePageModule' }
 ];

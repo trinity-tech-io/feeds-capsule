@@ -157,11 +157,13 @@ export class ProfilePage implements OnInit {
 
   initMyFeeds(){
     this.channels = this.feedService.getMyChannelList();
+    this.myFeedsSum = this.channels.length;
     this.initnodeStatus(this.channels);
   }
 
   async initFolling(){
     this.followingList = this.feedService.getFollowedChannelList();
+    this.followSum = this.followingList.length;
     this.initnodeStatus(this.followingList);
     this.feedService.updateSubscribedFeed();
   }
@@ -174,6 +176,7 @@ export class ProfilePage implements OnInit {
 
   initRefresh(){
     this.totalLikeList = this.sortLikeList();
+    this.likeSum = this.totalLikeList.length;
     this.startIndex = 0;
     if(this.totalLikeList.length-this.pageNumber > 0){
 
@@ -481,6 +484,16 @@ export class ProfilePage implements OnInit {
     });
 
     this.addProflieEvent();
+
+    this.channels = this.feedService.getMyChannelList() || [];
+    this.myFeedsSum = this.channels.length;
+
+    this.followingList = this.feedService.getFollowedChannelList() || [];
+    this.followSum = this.followingList.length;
+
+    this.totalLikeList = this.sortLikeList() || [];
+    this.likeSum = this.totalLikeList.length;
+
   }
 
   ionViewWillLeave(){
