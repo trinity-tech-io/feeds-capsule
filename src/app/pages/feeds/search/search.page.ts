@@ -152,15 +152,12 @@ export class SearchPage implements OnInit {
   }
 
   ionViewWillEnter() {
-    this.initTitleBar();
-    this.events.subscribe(FeedsEvent.PublishType.search, ()=>{
-         this.init();
-    });
+    this.initTile();
     this.init();
   }
 
   initTitleBar(){
-    let title = this.translate.instant("FeedsPage.tabTitle4");
+    let title = this.translate.instant("SearchPage.title");
     this.titleBarService.setTitle(this.titleBar, title);
     this.titleBarService.setTitleBarMoreMemu(this.titleBar);
   }
@@ -183,9 +180,9 @@ export class SearchPage implements OnInit {
   }
 
   ionViewWillLeave(){
-    this.events.unsubscribe(FeedsEvent.PublishType.search);
     this.removeSubscribe();
     this.curAddingItem="";
+    this.events.publish(FeedsEvent.PublishType.search);
   }
 
   subscribe(nodeId: string, id: number){
@@ -286,15 +283,6 @@ export class SearchPage implements OnInit {
     return this.feedService.parseChannelAvatar(avatar);
   }
 
-  addfeedssource(){
-    if(this.feedService.getConnectionStatus() !== 0){
-      this.native.toastWarn('common.connectionError');
-      return;
-    }
-    this.removeSubscribe();
-    this.native.navigateForward(['/menu/servers/add-server'],"");
-  }
-
   checkServerStatus(nodeId: string){
     return this.feedService.getServerStatusFromId(nodeId);
   }
@@ -315,7 +303,6 @@ export class SearchPage implements OnInit {
       this.native.toastWarn('common.connectionError');
       return;
     }
-    this.removeSubscribe();
     this.native.go("discoverfeed");
   }
 
