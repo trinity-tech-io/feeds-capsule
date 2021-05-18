@@ -1,7 +1,6 @@
-<!-- <ion-header> -->
-  <app-titlebar></app-titlebar>
-  <div *ngIf="connectionStatus == 1" class="offline-header"></div>
-<!-- </ion-header> -->
+
+<app-titlebar></app-titlebar>
+<div *ngIf="connectionStatus == 1" class="offline-header"></div>
 <ion-content>
   <ion-list class="channel-list" [class.darkChannelList]="theme.darkMode">
 
@@ -18,7 +17,7 @@
         </ion-col>
       </ion-row>
     </ion-item>
-    <div (click)="newPostTextArea()" id="editComment">
+    <div (click)="newPostTextArea()">
     <ion-textarea  #newPostIonTextarea autoGrow="true"  autofocus="true" [(ngModel)]="newComment"  placeholder="{{'CommentPage.inputComment'|translate}}">
     </ion-textarea>
     </div>

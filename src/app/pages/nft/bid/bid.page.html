@@ -1,0 +1,88 @@
+<ion-content>
+
+  <ion-grid class="container" [class.darkContainer]="theme.darkMode">
+    <!--- contract Details -->
+    <ion-row>
+      <ion-col size="12" style="padding:0px;">
+        <ion-button class="btn-row1" style="border-radius:17px;">
+          <ion-label>
+            {{ 'AssetdetailsPage.contractDetails' | translate }}
+          </ion-label>
+        </ion-button>
+      </ion-col>
+    </ion-row>
+
+    <div *ngFor="let contractDetail of contractDetails">
+      <ion-row *ngIf="contractDetail.details" class="detail-row removeBorder">
+        <ion-col size="12" class="left-col">
+            <h1>{{ contractDetail.type | translate}}</h1>
+            <h2 (click)="copytext(contractDetail.details)">{{ contractDetail.details }}</h2>
+        </ion-col>
+      </ion-row>
+    </div>
+
+    <ion-row class="detail-row removeBorder">
+      <ion-col size="12" class="left-col">
+        <h2 style="text-align:center;font-size:18px;font-weight:bold;font-stretch:normal;font-style:normal;color:#fff;background-color:#49b12a;border-radius:10px;height:36px;line-height:7px;">{{ "AssetdetailsPage.price" | translate }}</h2>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="detail-row removeBorder">
+      <ion-col size="12" class="left-col">
+        <h1>{{ "AssetdetailsPage.asset" | translate}}</h1>
+        <img src="./assets/images/bidfeedslogo.svg" class="bidfeedslogo">
+        <img src="./assets/images/test.png" class="assetsImg"/>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="detail-row removeBorder" *ngIf="showType==='burn'">
+      <ion-col size="12" class="left-col">
+          <h1>{{ "BidPage.minimumBid" | translate}}</h1>
+          <h2>{{ minimumBid }} ELA/ETHSC</h2>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="detail-row removeBorder" *ngIf="showType==='burn'">
+      <ion-col size="12" class="left-col">
+          <h1>{{ "BidPage.currentBid" | translate}}</h1>
+          <h2>{{ currentBid }} ELA/ETHSC</h2>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="detail-row removeBorder" *ngIf="showType==='buy'">
+      <ion-col size="12" class="left-col">
+        <h1>{{ "MintnftPage.nftfixedPrice" | translate}}</h1>
+        <h2>{{ fixedPrice }} ELA/ETHSC</h2>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="detail-row removeBorder" *ngIf="showType==='burn'">
+      <ion-col size="12" class="left-col bottomBorder">
+        <h1>{{ "BidPage.myBid" | translate}}</h1>
+        <ion-input type="text" placeholder="{{'BidPage.bidPlaceholder'|translate}}" [(ngModel)]="bibAmount"></ion-input>
+        <span class="tip1">ELA/ETHSC</span>
+        <img class="tip" src="/assets/images/dashang.svg" *ngIf="!theme.darkMode">
+        <img class="tip" src="/assets/images/darkmode/tip.svg" *ngIf="theme.darkMode">
+      </ion-col>
+    </ion-row>
+
+      <!--- buy BUTTONS --->
+      <div class="btns" *ngIf="showType==='burn'">
+        <ion-row class="btn-row">
+          <ion-button (click)="bid()" style="height:48px;">
+            <ion-label style="font-weight:bold;font-stretch:normal;font-style:normal;color:#ffffff;">{{'BidPage.bid' | translate}}</ion-label>
+          </ion-button>
+        </ion-row>
+      </div>
+
+     <!--- buy BUTTONS --->
+     <div class="btns" *ngIf="showType==='buy'">
+      <ion-row class="btn-row">
+        <ion-button (click)="buy()" style="height:48px;">
+          <ion-label style="font-weight:bold;font-stretch:normal;font-style:normal;color:#ffffff;">{{'BidPage.buy' | translate}}</ion-label>
+        </ion-button>
+      </ion-row>
+    </div>
+</ion-grid>
+
+</ion-content>

@@ -22,6 +22,9 @@ import { PreviewqrcodeComponent } from './previewqrcode/previewqrcode.component'
 import { SharemenuComponent } from './sharemenu/sharemenu.component';
 import { RoundloadingComponent } from './roundloading/roundloading.component';
 import { PercentageloadingComponent } from './percentageloading/percentageloading.component';
+import { AddassetComponent } from './addasset/addasset.component';
+import { AssetitemComponent } from './assetitem/assetitem.component';
+import { ChannelcardComponent } from './channelcard/channelcard.component';
 
 import { VideofullscreenComponent } from './videofullscreen/videofullscreen.component';
 
@@ -67,7 +70,10 @@ import { TitlebarmenuitemComponent } from './titlebarmenuitem/titlebarmenuitem.c
     RoundloadingComponent,
     PercentageloadingComponent,
     TitleBarComponent,
-    TitlebarmenuitemComponent
+    TitlebarmenuitemComponent,
+    AddassetComponent,
+    AssetitemComponent,
+    ChannelcardComponent
   ],
   exports: [
     AlertdialogComponent,
@@ -86,7 +92,10 @@ import { TitlebarmenuitemComponent } from './titlebarmenuitem/titlebarmenuitem.c
     VideofullscreenComponent,
     RoundloadingComponent,
     PercentageloadingComponent,
-    TitleBarComponent
+    TitleBarComponent,
+    AddassetComponent,
+    AssetitemComponent,
+    ChannelcardComponent
   ],
 
   providers: [

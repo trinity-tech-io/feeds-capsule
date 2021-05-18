@@ -1,7 +1,5 @@
-<!-- <ion-header> -->
-    <app-titlebar></app-titlebar>
-    <div *ngIf="connectionStatus == 1" class="offline-header"></div>
-<!-- </ion-header> -->
+<app-titlebar></app-titlebar>
+<div *ngIf="connectionStatus == 1" class="offline-header"></div>
 <ion-content>
     <ion-grid class="container" [class.darkContainer]="theme.darkMode">
         <ion-list>
@@ -19,7 +17,8 @@
                         <ion-label position="stacked">{{ 'IssuecredentialPage.elaaddress' | translate }}</ion-label>
                         <ion-input clearInput autofocus [placeholder]="'IssuecredentialPage.inputElaAddress' | translate" [(ngModel)] ="elaAddress"></ion-input>
                     </ion-col>
-                    <img [src]="!theme.darkMode ? './assets/images/scan.svg' : './assets/images/scan-dark.svg'" (click)="clickScan()">
+                    <img src="./assets/images/scan-light.svg" *ngIf="!theme.darkMode&&elaAddress===''" (click)="clickScan()">
+                    <img src="./assets/images/scan-dark.svg" *ngIf="theme.darkMode&&elaAddress===''" (click)="clickScan()">
                 </ion-row>
             </ion-item>
         </ion-list>

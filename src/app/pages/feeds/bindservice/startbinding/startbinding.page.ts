@@ -24,6 +24,7 @@ export class StartbindingPage implements OnInit {
   public carrierAddress: string="";
   public did:string = "";
   public feedsUrl: string ="";
+  public popover:any = null;
   // private isProcess = false;
   constructor(
     private zone: NgZone,
@@ -108,9 +109,10 @@ export class StartbindingPage implements OnInit {
 
     this.events.subscribe(FeedsEvent.PublishType.issue_credential, () => {
       this.zone.run(() => {
-          this.native.getNavCtrl().navigateForward(['/bindservice/finish/',this.nodeId],{
-            replaceUrl: true
-          });
+          // this.native.getNavCtrl().navigateForward(['/bindservice/finish/',this.nodeId],{
+          //   replaceUrl: true
+          // });
+          this.popover = this.popup.showalertdialog(this,"common.bindingCompleted","IssuecredentialPage.des",this.bindingCompleted,"check-circle-no-loop.gif","common.ok");
       });
     });
 
@@ -203,5 +205,19 @@ export class StartbindingPage implements OnInit {
 
   scanService() {
 
+  }
+
+  bindingCompleted(that:any){
+    let isFirstBindFeedService = localStorage.getItem('org.elastos.dapp.feeds.isFirstBindFeedService') || "";
+    if(isFirstBindFeedService === ""){
+       if(this.popover!=null){
+         this.popover.dismiss();
+         this.popover = null;
+       }
+        localStorage.setItem('org.elastos.dapp.feeds.isFirstBindFeedService',"1");
+        that.native.setRootRouter(['/tabs/home']);
+        return;
+    }
+    that.native.pop();
   }
 }

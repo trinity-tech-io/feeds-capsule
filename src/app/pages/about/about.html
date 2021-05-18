@@ -1,34 +1,47 @@
-<!-- <ion-header> -->
-    <app-titlebar></app-titlebar>
-    <div *ngIf="connectionStatus == 1" class="offline-header"></div>
-<!-- </ion-header> -->
+<app-titlebar></app-titlebar>
+<div *ngIf="connectionStatus == 1" class="offline-header"></div>
 <ion-content>
     <ion-grid [class.dark-container]="theme.darkMode">
-        <ion-card>
+        <!-- <ion-card>
             <img src="assets/images/feeds-logo.svg">
             <ion-card-title>{{version}}</ion-card-title>
-        </ion-card>
+        </ion-card> -->
 
         <ion-list>
             <ion-row class="details" (click)="gotoWebsite()">
                 <h4>{{'AboutPage.website'|translate}}</h4>
+                <div class="des">
                 <p>trinity-feeds.app</p>
+                </div>
             </ion-row>
 
             <ion-row class="details" (click)="copyEmailAddress()">
                 <h4>{{'AboutPage.email'|translate}}</h4>
+                <div class="des">
                 <p>feeds@trinity-tech.io</p>
+                </div>
             </ion-row>
 
 
             <ion-row class="details" (click)="gotoTelegram()">
                 <h4>{{'AboutPage.telegram'|translate}}</h4>
+                <div class="des">
                 <p>https://t.me/feedscapsule</p>
+                </div>
             </ion-row>
 
             <ion-row class="details" (click)="showDisclaimer()">
                 <h4>{{'AboutPage.disclaimer'|translate}}</h4>
+                <div class="des">
                 <p>https://trinity-feeds.app/disclaimer</p>
+                </div>
+            </ion-row>
+
+            <ion-row class="details" (click)="showDisclaimer()">
+                <h4>{{'AboutPage.version'|translate}}</h4>
+                <div class="des">
+                <p>{{version}}</p>
+                </div>
             </ion-row>
 
             <!-- <ion-row class="details" (click)="showHelp()">

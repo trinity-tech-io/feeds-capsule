@@ -12,14 +12,15 @@
 
     ion-textarea {
         margin: 10px 0 15px;
-        min-height: 192px;
-        background-color: #f0f1ff;
-        color: #000000;
+        min-height:172.4px;
+        background-color: #f6f5f6;
         border-radius: 9px;
         --padding-start: 10px;
-        font-family: 'SourceSansPro';
         font-size: 14px;
-        font-weight: 500;
+        font-weight: bold;
+        font-stretch: normal;
+        font-style: normal;
+        color: #a1a1a1;
         line-height: 1.25;
     }
 
@@ -33,8 +34,8 @@
             height: 100%;
             object-fit: cover;
             border-radius: 9px;
-            overflow-x: auto; 
-            overflow-y: auto; 
+            overflow-x: auto;
+            overflow-y: auto;
         }
 
         .remove {
@@ -66,7 +67,7 @@
                 height: 28px;
                 margin-right: 5px;
             }
-            
+
             #camera {
                 width: 35px;
                 height: 35px;
@@ -88,16 +89,22 @@
 
         .right-col {
             ion-button {
+                --background:#7624fe;
+                --background-activated:#7624fe;
                 width: 100%;
                 height: 36px;
                 --border-radius: 30px;
                 --box-shadow: none;
-            
+
                 ion-label {
-                  font-size: 13px !important;
-                  font-weight: 700;
-                  padding: 1px;
-                  overflow: hidden;
+                    font-size: 14px;
+                    font-weight: bold;
+                    font-stretch: normal;
+                    font-style: normal;
+                    text-align: center;
+                    color: #ffffff;
+                    padding:1px;
+                    overflow: hidden;
                 }
             }
         }

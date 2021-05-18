@@ -9,32 +9,38 @@
 
                 .feedAvatar {
                     img {
-                        width: 55px;
-                        height: 55px;
+                        width: 40px;
+                        height: 40px;
                     }
                 }
             }
 
-            //.middle-col {
-                ion-label {
+            ion-label{
                     margin-left:10px;
                     font-size: 14px;
-                }
-            //}
+                    font-weight: bold;
+                    font-stretch: normal;
+                    font-style: normal;
+                    color: #000000;
+            }
         }
     }
 
     ion-textarea {
         margin: 10px 0 15px;
         min-height: 192px;
-        background-color: #f0f1ff;
+        background-color: #f6f5f6;
         color: #000000;
         border-radius: 9px;
         --padding-start: 10px;
-        font-family: 'SourceSansPro';
+        font-family: Arial;
         font-size: 14px;
-        font-weight: 500;
-        line-height: 1.25;
+        font-weight: normal;
+        font-stretch: normal;
+        font-style: normal;
+        line-height: 1.71;
+        text-align: left;
+        color: #a1a1a1;
     }
 
     .img-container {
@@ -47,8 +53,8 @@
             height: 100%;
             object-fit: cover;
             border-radius: 9px;
-            overflow-x: auto; 
-            overflow-y: auto; 
+            overflow-x: auto;
+            overflow-y: auto;
         }
 
         .remove {
@@ -80,7 +86,7 @@
                 height: 28px;
                 margin-right: 5px;
             }
-            
+
             #camera {
                 width: 35px;
                 height: 35px;
@@ -91,12 +97,18 @@
             ion-button {
                 width: 100%;
                 height: 36px;
-                --border-radius: 30px;
+                --border-radius: 10px;
                 --box-shadow: none;
-            
+                --background:#7624fe;
+                --background-activated:#7624fe;
+
                 ion-label {
-                  font-size: 13px !important;
-                  font-weight: 700;
+                  font-size: 14px;
+                  font-weight: bold;
+                  font-stretch: normal;
+                  font-style: normal;
+                  text-align: center;
+                  color: #ffffff;
                   padding: 1px;
                   overflow: hidden;
                 }
@@ -111,28 +123,3 @@
         color: #ffffff;
     }
 }
-
-/* .rightContent{
-    position:absolute;
-    left:100px;
-    top:13px;
-}
-
-.ellipsis{
-    width:150px;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    display:inline-block;
-}
-
-.darkContainer{
- .rightContent .white{
-    color: #ffffff;
-}
-
-.white{
-    --placeholder-color:#cfd1f7;
-    --color:#cfd1f7;
-}
-} */

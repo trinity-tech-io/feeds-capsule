@@ -55,6 +55,7 @@ export class FeedinfoPage implements OnInit {
   public popover:any;
   public isPress:boolean = false;
   public updatedTime:number = 0;
+  public isMine:boolean = null;
   constructor(
     private popoverController:PopoverController,
     private feedService: FeedService,
@@ -156,18 +157,13 @@ export class FeedinfoPage implements OnInit {
     this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
     this.titleBarService.setTitleBarMoreMemu(this.titleBar);
     this.titleBarService.setTitle(this.titleBar, this.translate.instant('FeedinfoPage.title'));
-    if (this.feedService.checkChannelIsMine(this.nodeId, this.channelId)) {
-      this.titleBarService.setTitleBarEditChannel(this.titleBar);
-    } else {
-      this.titleBarService.setIcon(this.titleBar, FeedsData.TitleBarIconSlot.INNER_RIGHT, null, null);
-    }
+    this.isMine = this.feedService.checkChannelIsMine(this.nodeId, this.channelId);
   }
 
   ionViewDidEnter(){
   }
 
   ionViewWillLeave(){
-    this.titleBarService.setIcon(this.titleBar, FeedsData.TitleBarIconSlot.INNER_RIGHT, null, null);
     this.events.unsubscribe(FeedsEvent.PublishType.unsubscribeFinish);
     this.events.unsubscribe(FeedsEvent.PublishType.subscribeFinish);
     this.events.unsubscribe(FeedsEvent.PublishType.editChannel);
@@ -348,5 +344,9 @@ export class FeedinfoPage implements OnInit {
   handleTime(updatedTime:number){
     let updateDate = new Date(updatedTime);
     return UtilService.dateFormat(updateDate,'yyyy-MM-dd HH:mm:ss')
+  }
+
+  editChannel(){
+    this.clickEdit();
   }
 }

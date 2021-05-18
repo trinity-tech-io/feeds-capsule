@@ -1,0 +1,83 @@
+
+<ion-content>
+  <ion-grid class="container" [class.darkContainer]="theme.darkMode">
+     <div class="tab-container">
+      <div class="left-tab" [class.tab-active]="selectType === 'CollectionsPage.created'" (click)="changeType('CollectionsPage.created')">
+        <span [class.tab-active-bottom-border]="selectType === 'CollectionsPage.created'">{{ 'CollectionsPage.created' | translate }}</span>
+      </div>
+      <div class="middle-tab" [class.tab-active]="selectType === 'CollectionsPage.purchased'" (click)="changeType('CollectionsPage.purchased')">
+        <span [class.tab-active-bottom-border]="selectType === 'CollectionsPage.purchased'">{{ 'CollectionsPage.purchased' | translate }}</span>
+      </div>
+      <div class="right-tab" [class.tab-active]="selectType === 'CollectionsPage.likes'" (click)="changeType('CollectionsPage.likes')">
+        <span [class.tab-active-bottom-border]="selectType === 'CollectionsPage.likes'">{{'CollectionsPage.likes' | translate }}</span>
+      </div>
+     </div>
+     <!---Created-->
+     <ion-row *ngIf="selectType === 'CollectionsPage.created'&&createdList.length===0">
+       <ion-col size="6" *ngIf="isMine===0">
+        <app-addasset
+        (addAsset)="addAsset()"
+        ></app-addasset>
+       </ion-col>
+     </ion-row>
+
+     <ion-row *ngIf="selectType === 'CollectionsPage.created'&&createdList.length>0" class="leftrightrow">
+      <ion-col size="6" *ngFor="let item of createdList">
+        <app-assetitem
+        [assetItem] = "item"
+        (clickAssetItem) = "clickAssetItem($event)"
+        >
+        </app-assetitem>
+      </ion-col>
+     </ion-row>
+
+    <!---Purchased-->
+    <ion-row *ngIf="selectType === 'CollectionsPage.purchased'&&purchasedList.length===0">
+        <ion-col size="12">
+         <div class="bigCircle">
+             <div class="smallCircle">
+                <img src="./assets/images/lock.svg"/>
+             </div>
+         </div>
+      </ion-col>
+      <ion-col size="12" class="subscribeChannel">
+        {{"CollectionsPage.emptypurchased"|translate}}
+      </ion-col>
+    </ion-row>
+
+    <ion-row *ngIf="selectType === 'CollectionsPage.purchased'&&purchasedList.length>0" class="leftrightrow">
+     <ion-col size="6"  *ngFor="let item of purchasedList">
+       <app-assetitem
+       [assetItem] = "item"
+       (clickAssetItem) = "clickAssetItem($event)"
+       >
+       </app-assetitem>
+     </ion-col>
+    </ion-row>
+
+
+      <!---Likes-->
+      <ion-row *ngIf="selectType === 'CollectionsPage.likes'&&likesList.length===0">
+        <ion-col size="12">
+          <div class="bigCircle">
+              <div class="smallCircle">
+                 <img src="./assets/images/lock.svg"/>
+              </div>
+          </div>
+        </ion-col>
+        <ion-col size="12" class="subscribeChannel">
+          {{"CollectionsPage.emptylikes"|translate}}
+        </ion-col>
+      </ion-row>
+
+      <ion-row *ngIf="selectType === 'CollectionsPage.likes'&&likesList.length>0" class="leftrightrow">
+       <ion-col size="6"  *ngFor="let item of likesList">
+         <app-assetitem
+         [assetItem] = "item"
+         (clickAssetItem) = "clickAssetItem($event)"
+         >
+         </app-assetitem>
+       </ion-col>
+      </ion-row>
+  </ion-grid>
+</ion-content>

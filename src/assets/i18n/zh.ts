@@ -546,6 +546,8 @@ export const zh = {
         "hideOfflinefeed": "仅显示在线状态的频道",
         "on": "开",
         "off": "关",
+        'language-setting': '选择语言',
+        'change-lang': '更改语言',
     },
     "DiscoverfeedPage":{
         "title": "探索广场",
