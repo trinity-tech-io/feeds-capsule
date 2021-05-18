@@ -66,7 +66,6 @@
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
-              "extractCss": true,
               "namedChunks": false,
               "aot": true,
               "extractLicenses": true,
@@ -188,6 +187,7 @@
     }
   },
   "cli": {
+    "analytics": "82e32780-c93b-42f0-b95b-8be89a49578f",
     "defaultCollection": "@ionic/angular-toolkit"
   },
   "schematics": {

@@ -88,7 +88,7 @@ export class CreatenewfeedPage implements OnInit {
         this.native.hideLoading();
       });
     });
-    
+
     this.events.subscribe(FeedsEvent.PublishType.connectionChanged,(status)=>{
       this.zone.run(() => {
         this.connectionStatus = status;
@@ -157,7 +157,7 @@ export class CreatenewfeedPage implements OnInit {
 
    let feedList = this.feedService.getMyChannelList() || [];
 
-   if(feedList.length>=5){
+   if(feedList.length>=95){
      this.native.toastWarn("CreatenewfeedPage.feedMaxNumber");
      return;
     }

@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ThemeService } from 'src/app/services/theme.service';
 import { NavParams} from '@ionic/angular';
-import { Events } from 'src/app/services/events.service';
+import { FeedService } from '../../services/FeedService';
+import { Events } from '../../services/events.service';
 
 @Component({
   selector: 'app-tipdialog',
@@ -13,7 +14,9 @@ export class TipdialogComponent implements OnInit {
   public feedName:string = "";
   public feedDesc:string = "";
   public feedPublicStatus:boolean = true;
+  public developerMode:boolean =  false;
   constructor(
+    private feedService:FeedService,
     public theme: ThemeService,
     private navParams: NavParams,
     private events:Events){ }
@@ -23,6 +26,7 @@ export class TipdialogComponent implements OnInit {
     this.feedName = this.navParams.get('name');
     this.feedDesc = this.navParams.get('des');
     this.feedPublicStatus =  this.navParams.get('feedPublicStatus');
+    this.developerMode = this.navParams.get("developerMode");
   }
 
   cancel(){

@@ -104,12 +104,14 @@ ion-footer {
               ion-button {
                   width: 100%;
                   height: 36px;
-                  --border-radius: 30px;
+                  --border-radius: 10px;
                   --box-shadow: none;
+                  --background:#7624fe;
+                  --background-activated:#7624fe;
 
                   ion-label {
-                    font-size: 13px !important;
-                    font-weight: 700;
+                    font-size: 14px !important;
+                    font-weight:bold;
                     padding: 1px;
                     overflow: hidden;
                   }

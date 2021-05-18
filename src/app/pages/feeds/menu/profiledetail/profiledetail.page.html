@@ -1,23 +1,17 @@
-<!-- <ion-header> -->
-  <app-titlebar></app-titlebar>
-  <div *ngIf="connectionStatus == 1" class="offline-header"></div>
-<!-- </ion-header> -->
+<app-titlebar></app-titlebar>
+<div *ngIf="connectionStatus == 1" class="offline-header"></div>
 <ion-content>
   <ion-grid class="container" [class.darkContainer]="theme.darkMode">
-    <div class="profile-header">
-      <ion-img  [src]="handleImages()"></ion-img>
-      <h1>{{ name }}</h1>
-    </div>
     <!-- Did Info -->
     <ion-row>
-      <ion-col size="12" style="padding:0px;">
-        <ion-button class="btn-row1" style="border-radius:17px;">
-          <ion-label>
-            {{ 'ProfiledetailPage.didinfo' | translate }}
-          </ion-label>
-        </ion-button>
+      <ion-col size="12" style="padding:0px;" class="profile-header-title">
+          {{ 'ProfiledetailPage.didinfo' | translate }}
       </ion-col>
     </ion-row>
+    <div class="profile-header">
+      <ion-img  [src]="handleImages()"></ion-img>
+      <!-- <h1>{{ name }}</h1> -->
+    </div>
     <div *ngFor="let profile of profileDetails">
       <ion-row *ngIf="profile.details" class="detail-row removeBorder">
         <ion-col size="12" class="left-col">
@@ -31,13 +25,9 @@
     <div *ngIf="isShowPublisherAccount" style="margin-top:20px;margin-bottom:10px;">
 
       <ion-row (click)="clickEdit()">
-        <ion-col size="12" style="padding:0px;">
-          <ion-button class="btn-row1" style="border-radius:17px;">
-            <ion-label>
+        <ion-col size="12" style="padding:0px;" class="profile-header-title">
               {{ 'ProfiledetailPage.publisheraccount' | translate }}
-            </ion-label>
-            <ion-icon name="create-outline" style="color:#ffffff;position:absolute;right:10px;width:25px;height:25px;top:5px;"></ion-icon>
-          </ion-button>
+            <img src="./assets/images/edit.svg"/>
         </ion-col>
        </ion-row>
 
@@ -78,11 +68,10 @@
        <div class="btns">
         <ion-row class="btn-row delete-row">
           <ion-button (click)="deleteFeedSource()" color="danger">
-            <ion-label>{{'ServerInfoPage.deleteFeedSource' | translate}}</ion-label>
+            <ion-label style="font-weight:bold;font-stretch:normal;font-style:normal;color:#ffffff;">{{'ServerInfoPage.deleteFeedSource' | translate}}</ion-label>
           </ion-button>
         </ion-row>
       </div>
-
     </div>
   </ion-grid>
 </ion-content>

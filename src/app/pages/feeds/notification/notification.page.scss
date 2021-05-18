@@ -6,25 +6,23 @@
         --padding-top: 0px;
         --padding-start: 0px;
         --inner-padding-end: 0px;
-        margin: 0 20px;
+        // margin: 0 20px;
 
         ion-row {
             width: 100%;
-            padding: 10px;
-            border-bottom: 2px solid #f0f1ff;
-
+            padding:10px 0px;
             .left-col {
                 display: flex;
                 justify-content: center;
-                align-items: flex-start; 
-                
+                align-items: flex-start;
+
                 img {
-                    // width: 50px;
-                    // height: 50px;
+                    width: 40px;
+                    height: 40px;
                     object-fit: cover;
                     overflow: hidden;
                     border-radius: 50%;
-                    border: 1.25px solid #368bff;            
+                    border: 1.25px solid #368bff;
                 }
             }
 
@@ -37,41 +35,85 @@
                 }
 
                 h1 {
-                    font-size: 16px;
-                    font-weight: 700;
+                    font-size: 14px;
+                    font-weight: bold;
+                    font-stretch: normal;
+                    font-style: normal;
+                    color: #000000;
+                    margin-top: 4px;
+                    margin-left: -11px;
 
-                    span {
+                    .notificationTime {
                         position: relative;
-                        bottom: 1.5px;
-                        font-size: 10px;
-                        font-weight: 600;
-                        color: #a0a2c4;
+                        bottom: -0.5px;
+                        font-weight: normal;
+                        font-stretch: normal;
+                        font-style: normal;
+                        color: #000000;
                     }
                 }
 
-                p {
-                    font-size: 13px;
-                    font-weight: 600;
-                    margin: 5px 0;
-                    color: #008cff;
+                .behaviorText{
+                    font-size: 12px;
+                    font-weight: bold;
+                    font-stretch: normal;
+                    font-style: normal;
+                    color: #7624fe;
+                    margin-left: -10px;
                 }
 
                 h2 {
                     font-size: 12px;
-                    font-weight: 600;
+                    font-weight: bold;
+                    font-stretch: normal;
+                    font-style: normal;
+                    color: #111111;
                     overflow: hidden;
                     text-overflow: ellipsis;
                     white-space: nowrap;
+                    margin-top: 2px;
+                    margin-left: -11px;
+                    img{
+                       vertical-align:middle;
+                    }
                 }
             }
         }
+
+        .moremenuclick{
+            width:20px;
+            height:20px;
+            overflow: visible;
+            position: absolute;
+            right: 12px;
+            top: 28px;
+            z-index:999;
+        }
+
     }
 }
 
 .darkContainer {
     ion-item {
         ion-row {
-            border-bottom: 2px solid #2e2f4e;
+            .right-col {
+                h1 {
+                    font-size: 14px;
+                    font-weight: bold;
+                    font-stretch: normal;
+                    font-style: normal;
+                    color: #fff;
+
+
+                    .notificationTime {
+                        color: #fff;
+                    }
+                }
+
+                h2 {
+                    color:#fff;
+                }
+            }
         }
     }
 }

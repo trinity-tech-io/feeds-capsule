@@ -78,6 +78,7 @@ export class SettingsPage implements OnInit {
     if(this.popover!=null){
       this.popoverController.dismiss();
     }
+    this.events.publish(FeedsEvent.PublishType.search);
   }
 
   toggleHideDeletedPosts(){

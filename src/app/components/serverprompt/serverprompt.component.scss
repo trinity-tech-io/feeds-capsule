@@ -1,66 +1,99 @@
+ion-item{
+    --background:#ffffff;
+    --background-activated:#ffffff;
+}
+
+ion-avatar{
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    right: 10px;
+    --border-radius: 0px;
+    top: 43px;
+    z-index: 999;
+}
+
+.borderbottom{
+   border-bottom: 1px solid #000000;
+}
+
 .dTitle{
-  font-size: 20px;
-  font-weight: bold;
-  font-stretch: normal;
-  font-style: normal;
-  line-height: 1.27;
-  letter-spacing: normal;
-  text-align: center;
-  color: #000000;
+    font-size: 20px;
+    font-weight: bold;
+    font-stretch: normal;
+    font-style: normal;
+    text-align: center;
+    color: #000000;
 }
 
 .serverNameLabel{
-    font-size: 18px;
-    font-weight: normal;
-    font-stretch: normal;
-    font-style: normal;
-    text-align: left;
-    color: #000000;
+  font-size: 16px;
+  font-weight: bold;
+  font-stretch: normal;
+  font-style: normal;
+  text-align:left;
+  color: #000000;
 }
 
 .serverNameValue{
     width: 100%;
-    font-size: 12px;
-    font-weight: bold;
+    font-size: 14px;
+    font-weight: normal;
     font-stretch: normal;
     font-style: normal;
     text-align: left;
-    color: #8888b0;
+    color: #9ca0a4;
+    --padding-start: 26px;
 }
 
 .cancel{
     display:inline-block;
     width: 120px;
-    font-size: 18px;
-    font-weight: normal;
+    font-size: 14px;
+    font-weight: bold;
     font-stretch: normal;
     font-style: normal;
     text-align: center;
-    color: #ffffff;
+    color: #7624fe;
     height: 41px;
     line-height: 41px;
-    background-color:#8888b0;
-    border-radius:8px;
+    background-color:#ffffff;
+    border: 1px solid #7624fe;
+    border-radius:10px;
 }
 
 .confirm{
     display:inline-block;
     width: 120px;
-    font-size: 18px;
-    font-weight: normal;
+    font-size: 14px;
+    font-weight: bold;
     font-stretch: normal;
     font-style: normal;
     text-align: center;
     color: #ffffff;
     height: 41px;
     line-height: 41px;
-    background-color:#368bff;
-    border-radius:8px;
+    background-color:#7624fe;
+    border-radius:10px;
 }
 
 .darkContainer{
+    .dTitle{
+        color: #ffffff;
+    }
+    .borderbottom{
+        border-bottom: 1px solid #ffffff;
+    }
+    ion-item{
+        --background:#191a2f;
+        --background-activated:#191a2f;
+    }
     .white{
         color: #ffffff;
+    }
+
+    .cancel{
+        background-color: #191a2f;
     }
 }
 

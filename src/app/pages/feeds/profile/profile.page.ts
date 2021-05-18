@@ -127,6 +127,12 @@ export class ProfilePage implements OnInit {
 
     public isAddProfile:boolean = false;
 
+    public likeSum:number = 0;
+
+    public followSum:number = 0;
+
+    public myFeedsSum:number = 0;
+
   constructor(
     private feedService: FeedService,
     public theme:ThemeService,

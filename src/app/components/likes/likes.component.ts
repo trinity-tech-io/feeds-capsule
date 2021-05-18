@@ -1,13 +1,13 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { IonTabs,Platform} from '@ionic/angular';
-import { FeedService } from 'src/app/services/FeedService';
-import { ThemeService } from 'src/app/services/theme.service';
-import { UtilService } from 'src/app/services/utilService';
-import { NativeService } from 'src/app/services/NativeService';
+import { FeedService } from '../../services/FeedService';
+import { ThemeService } from '../../services/theme.service';
+import { UtilService } from '../../services/utilService';
+import { NativeService } from '../../services/NativeService';
 import { TranslateService } from "@ngx-translate/core";
-import { FeedsPage } from 'src/app/pages/feeds/feeds.page'
-import { AppService } from 'src/app/services/AppService';
-import { ViewHelper } from 'src/app/services/viewhelper.service';
+import { FeedsPage } from '../../pages/feeds/feeds.page'
+import { AppService } from '../../services/AppService';
+import { ViewHelper } from '../../services/viewhelper.service';
 
 @Component({
   selector: 'app-likes',
@@ -51,8 +51,8 @@ export class LikesComponent implements OnInit {
     public theme:ThemeService,
     private translate:TranslateService,
     private native:NativeService,
+    private viewHelper:ViewHelper,
     public appService:AppService,
-    private viewHelper: ViewHelper
   ) {
   }
 
@@ -305,7 +305,7 @@ export class LikesComponent implements OnInit {
       return;
     }
     this.pauseVideo(nodeId+"-"+channelId+"-"+postId);
-    this.viewHelper.showPayPrompt(elaAddress);
+    this.viewHelper.showPayPrompt(nodeId,channelId,elaAddress);
   }
 
 }

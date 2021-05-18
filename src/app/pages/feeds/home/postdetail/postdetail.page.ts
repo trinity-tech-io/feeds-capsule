@@ -1116,7 +1116,7 @@ export class PostdetailPage implements OnInit {
       return;
     }
     this.pauseVideo();
-    this.viewHelper.showPayPrompt(elaAddress);
+    this.viewHelper.showPayPrompt(this.nodeId,this.channelId,elaAddress);
   }
 
   clickComment(comment:any){

@@ -153,8 +153,8 @@ ion-card {
   .sub-row {
       padding: 0;
       display: flex;
-      justify-content: start;
-      align-items: start;
+      justify-content: flex-start;
+      align-items: flex-start;
       img {
           width: 18.1px;
           height: 14.7px;

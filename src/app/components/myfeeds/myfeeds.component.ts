@@ -1,10 +1,10 @@
 import { Component, OnInit ,Input,Output,EventEmitter} from '@angular/core';
-import { FeedService } from 'src/app/services/FeedService';
-import { NativeService } from 'src/app/services/NativeService';
-import { ThemeService } from 'src/app/services/theme.service';
-import { UtilService } from 'src/app/services/utilService';
-import { PopupProvider } from 'src/app/services/popup';
-import { ViewHelper } from 'src/app/services/viewhelper.service';
+import { FeedService } from '../../services/FeedService';
+import { NativeService } from '../../services/NativeService';
+import { ThemeService } from '../../services/theme.service';
+import { UtilService } from '../../services/utilService';
+import { PopupProvider } from '../../services/popup';
+import { ViewHelper } from '../../services/viewhelper.service';
 
 @Component({
   selector: 'app-myfeeds',
@@ -21,8 +21,8 @@ export class MyfeedsComponent implements OnInit {
     private feedService: FeedService,
     public theme:ThemeService,
     private native:NativeService,
-    public popupProvider:PopupProvider,
-    private viewHelper: ViewHelper) {
+    private viewHelper:ViewHelper,
+    public popupProvider:PopupProvider) {
 
   }
 
@@ -86,7 +86,7 @@ export class MyfeedsComponent implements OnInit {
 
         this.native.navigateForward(['/createnewfeed'],"");
       }else{
-        this.native.getNavCtrl().navigateForward(['/bindservice/scanqrcode']);
+        this.native.navigateForward(['bindservice/learnpublisheraccount'],"");
       }
   }
 }

@@ -1,7 +1,5 @@
-<!-- <ion-header> -->
-  <app-titlebar></app-titlebar>
-  <div *ngIf="connectionStatus == 1" class="offline-header"></div>
-<!-- </ion-header> -->
+<app-titlebar></app-titlebar>
+<div *ngIf="connectionStatus == 1" class="offline-header"></div>
 <ion-content (ionScroll)="ionScroll()" [scrollEvents]="true">
   <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" pullFactor="0.5">
     <ion-refresher-content
@@ -13,30 +11,47 @@
     </ion-refresher-content>
   </ion-refresher>
   <ion-grid class="container" [class.darkContainer]="theme.darkMode" [class.blur]="!hideComment">
-
-    <!-- <div class="profile-header" (click)="profiledetail()">
-      <ion-img [src]="handleImages()"></ion-img>
-      <h1>{{ name }}</h1>
-      <p><ion-icon name="information-circle-outline" style="width:24px;height:24px;vertical-align: middle;"></ion-icon>{{'ProfilePage.moreinfo'|translate}}</p>
-    </div> -->
-
-    <ion-card (click)="profiledetail()" class="ion-activatable ripple">
+    <ion-card (click)="profiledetail()" class="ion-activatable ripple profileCardBg0">
+      <img class="profileFeeds"
+         src="./assets/images/profile-feeds-logo.svg"
+      />
       <img class="moremenu"
-      [src]="!theme.darkMode ? './assets/images/dots-three-vertical.svg' : './assets/images/dots-three-vertical-dark.svg'">
-      <img [src]="handleImages()">
-      <ion-card-title>{{name}}</ion-card-title>
+      [src]="!theme.darkMode ? './assets/images/dots-three-vertical-dark.svg' : './assets/images/dots-three-vertical-dark.svg'">
+      <ion-row>
+        <ion-col size=1>
+
+        </ion-col>
+        <ion-col size="3">
+          <img [src]="handleImages()">
+        </ion-col>
+        <ion-col size="8">
+          <ion-card-title>{{name}}</ion-card-title>
+          <ion-card-subtitle>{{description}}</ion-card-subtitle>
+        </ion-col>
+      </ion-row>
     </ion-card>
     <ion-ripple-effect></ion-ripple-effect>
 
-    <div class="tab-container" [class.removeMargin]="selectType === 'ProfilePage.myLikes'" style="margin-top:5px;">
-      <div class="left-tab" [class.tab-active]="selectType === 'ProfilePage.myFeeds'" (click)="changeType('ProfilePage.myFeeds')">
-        <span>{{ 'ProfilePage.myFeeds' | translate }}</span>
+    <div class="number-container" [class.removeMargin]="selectType === 'ProfilePage.myLikes'" style="margin-bottom:0px;">
+      <div class="left-tab" [class.tab-active]="selectType === 'ProfilePage.myFeeds'" (click)="changeType('ProfilePage.myFeeds')" style="padding:5px 6px;">
+        <span>{{myFeedsSum}}</span>
       </div>
       <div class="middle-tab" [class.tab-active]="selectType === 'ProfilePage.following'" (click)="changeType('ProfilePage.following')">
-        <span>{{ 'ProfilePage.following' | translate }}</span>
+        <span>{{followSum}}</span>
       </div>
       <div class="right-tab" [class.tab-active]="selectType === 'ProfilePage.myLikes'" (click)="changeType('ProfilePage.myLikes')">
-        <span>{{'ProfilePage.myLikes' | translate }}</span>
+        <span>{{likeSum}}</span>
+      </div>
+    </div>
+    <div class="tab-container" [class.removeMargin]="selectType === 'ProfilePage.myLikes'" style="margin-top:5px;">
+      <div class="left-tab" [class.tab-active]="selectType === 'ProfilePage.myFeeds'" (click)="changeType('ProfilePage.myFeeds')">
+        <span [class.tab-active-bottom-border]="selectType === 'ProfilePage.myFeeds'">{{ 'ProfilePage.myFeeds' | translate }}</span>
+      </div>
+      <div class="middle-tab" [class.tab-active]="selectType === 'ProfilePage.following'" (click)="changeType('ProfilePage.following')">
+        <span [class.tab-active-bottom-border]="selectType === 'ProfilePage.following'">{{ 'ProfilePage.following' | translate }}</span>
+      </div>
+      <div class="right-tab" [class.tab-active]="selectType === 'ProfilePage.myLikes'" (click)="changeType('ProfilePage.myLikes')">
+        <span [class.tab-active-bottom-border]="selectType === 'ProfilePage.myLikes'">{{'ProfilePage.myLikes' | translate }}</span>
       </div>
     </div>
 

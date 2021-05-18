@@ -83,7 +83,18 @@ export class SearchPage implements OnInit {
     this.scanServiceStyle["right"] = screen.width*7.5/100+5+"px";
   }
 
+  initTile(){
+     this.titleBarService.setTitle(this.titleBar,this.translate.instant('SearchPage.title'));
+     this.titleBarService.setTitleBarBackKeyShown(this.titleBar,true);
+
+  }
+
   initSubscribe(){
+
+    this.events.subscribe(FeedsEvent.PublishType.updateTitle,()=>{
+      this.initTile();
+    });
+
     this.events.subscribe(FeedsEvent.PublishType.connectionChanged,(status)=>{
       this.zone.run(() => {
         this.connectionStatus = status;
@@ -133,6 +144,7 @@ export class SearchPage implements OnInit {
       this.popoverController.dismiss();
       this.popover = "";
     }
+    this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
     this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
     this.events.unsubscribe(FeedsEvent.PublishType.friendConnectionChanged);
     this.events.unsubscribe(FeedsEvent.PublishType.subscribeFinish);

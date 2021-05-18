@@ -1351,7 +1351,7 @@ clearData(){
       return;
     }
     this.pauseVideo(nodeId+"-"+channelId+"-"+postId);
-    this.viewHelper.showPayPrompt(elaAddress);
+    this.viewHelper.showPayPrompt(nodeId,channelId,elaAddress);
   }
 
   retry(nodeId: string, feedId: number, postId: number){
