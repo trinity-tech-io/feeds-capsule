@@ -178,7 +178,7 @@ export class AppService {
     }
 
     async createDialog(){
-      console.log()
+
       if(this.popover != null){
            return;
       }

@@ -1,0 +1,67 @@
+<ion-content>
+  <ion-grid class="container" [class.darkContainer]="theme.darkMode">
+    <!--- contract Details -->
+    <ion-row>
+      <ion-col size="12" style="padding:0px;">
+        <ion-button class="btn-row1" style="border-radius:17px;">
+          <ion-label>
+            {{ 'AssetdetailsPage.contractDetails' | translate }}
+          </ion-label>
+        </ion-button>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="detail-row removeBorder">
+      <ion-col size="12" class="left-col">
+        <h1>{{ "AssetdetailsPage.asset" | translate}}</h1>
+        <img src="./assets/images/test.png" class="assetsImg"/>
+      </ion-col>
+    </ion-row>
+
+    <div *ngFor="let contractDetail of contractDetails">
+      <ion-row *ngIf="contractDetail.details" class="detail-row removeBorder">
+        <ion-col size="12" class="left-col">
+            <h1>{{ contractDetail.type | translate}}</h1>
+            <h2 (click)="copytext(contractDetail.details)">{{ contractDetail.details }}</h2>
+        </ion-col>
+      </ion-row>
+    </div>
+
+    <!--- purchase Info -->
+    <div style="margin-top:20px;margin-bottom:10px;">
+      <ion-row (click)="clickArrow()">
+        <ion-col size="12" style="padding:0px;">
+          <ion-button class="btn-row1" style="border-radius:17px;">
+            <ion-label>
+              {{ 'AssetdetailsPage.purchaseInfo' | translate }}
+            </ion-label>
+            <img src="./assets/images/arrowBack.svg" style="position:absolute;right:10px;width:25px;height:25px;top:5px;"/>
+          </ion-button>
+        </ion-col>
+       </ion-row>
+       <div *ngIf="isShowPurchaseInfo">
+       <div *ngFor="let purchaseInfo of purchaseInfos">
+        <ion-row *ngIf="purchaseInfo.details" class="detail-row removeBorder">
+          <ion-col size="12" class="left-col">
+              <h1>{{ purchaseInfo.type | translate}}</h1>
+              <h2 (click)="copytext(purchaseInfo.details)">{{ purchaseInfo.details }}</h2>
+          </ion-col>
+        </ion-row>
+       </div>
+
+        <!--- BUTTONS --->
+        <div class="btns">
+          <ion-row class="btn-row delete-row">
+            <ion-button (click)="purchaseInfoBurn()" color="danger">
+              <ion-label style="font-weight:bold;font-stretch:normal;font-style:normal;color:#ffffff;">{{'AssetdetailsPage.burn' | translate}}</ion-label>
+            </ion-button>
+          </ion-row>
+        </div>
+      </div>
+
+      </div>
+
+
+
+  </ion-grid>
+</ion-content>

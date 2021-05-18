@@ -1,0 +1,130 @@
+.container {
+
+    .leftrightrow{
+        padding-left: 25px;
+        padding-right: 25px;
+    }
+
+    .subscribeChannel{
+        margin-top: 5px;
+        font-size: 16px;
+        font-weight: bold;
+        font-stretch: normal;
+        font-style: normal;
+        text-align: center;
+        color:#7624fe;
+    }
+
+    .bigCircle{
+        margin:0 auto;
+        width: 203px;
+        height: 203px;
+        background-color:#F0E8FF;
+        border-radius:50%;
+        position: relative;
+       }
+
+       .smallCircle{
+         position:absolute;
+         left:50px;
+         top:50px;
+         width: 103px;
+         height: 103px;
+         background-color:#D8C1FF;
+         border-radius:50%;
+
+         img{
+           position: absolute;
+           top: 14px;
+           left: 22px;
+           }
+       }
+   /********** Tabs *********/
+   .tab-container {
+    height: 36.3px;
+    margin: 0px 31px 5px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+
+    .left-tab, .middle-tab, .right-tab {
+        padding: 12px 6px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        .numberText{
+            font-size: 14px;
+            font-weight: bold;
+            font-stretch: normal;
+            font-style: normal;
+            text-align:center;
+            color: #000000;
+            margin-bottom:6px;
+        }
+
+        span {
+            font-size: 14px;
+            font-weight: bold;
+            font-stretch: normal;
+            font-style: normal;
+            text-align:center;
+            color: #000000;
+            padding-bottom: 5.5px;
+        }
+    }
+
+    .left-tab {
+        width: 30%;
+    }
+
+    .middle-tab {
+        width: 30%;
+    }
+
+    .right-tab {
+        width: 30%;
+    }
+
+    .tab-active {
+        transform: scale(1.1);
+        span {
+            transform: scale(0.9);
+            color: #7624fe;
+        }
+
+        .numberText{
+            transform: scale(0.9);
+            color: #7624fe;
+        }
+    }
+
+    .tab-active-bottom-border{
+        border-bottom:solid 2px #7624fe;
+    }
+}
+}
+
+.darkContainer{
+
+    .tab-container {
+        .left-tab, .middle-tab, .right-tab {
+            span{
+               color:#cfd1f7;
+            }
+        }
+
+        .tab-active {
+            transform: scale(1.1);
+            span {
+                transform: scale(0.9);
+                color: #7624fe;
+            }
+
+            .numberText{
+                transform: scale(0.9);
+                color: #7624fe;
+            }
+        }
+    }
+}

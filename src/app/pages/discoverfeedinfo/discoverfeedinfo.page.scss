@@ -1,182 +1,240 @@
 .container {
+  padding: 20px;
+
+  .server-header {
     padding: 20px;
-
-    .server-header {
-      padding: 20px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
-      border-radius: 17px;
-      box-shadow: 0 3px 15px 0 #ededf0;
-      background-color: #ffffff;
-      margin-bottom: 25px;
-
-
-      img{
-        width: 84px;
-        height: 84px;
-        border-radius: 50%;
-        object-fit: cover;
-      }
-
-      h1 {
-        margin: 0;
-        padding: 15px 0px 7.5px;
-        font-size: 16px;
-        font-weight: 600;
-        text-align: center;
-      }
-
-      p {
-        margin: 0;
-        padding-bottom: 15px;
-        font-size: 15px;
-        font-weight: 500;
-        letter-spacing: 0.8px;
-        text-align: center;
-        overflow: hidden;
-      }
-    }
-
-    .detail-row {
-      margin-left: 5px;
-      margin-right: 5px;
-
-      .qr-container {
-        margin-top: 10px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-
-        .qrcode {
-          padding: 15px;
-          background: #ffffff;
-          border-radius: 17px;
-        }
-      }
-    }
-
-    .removeBorder {
-      border-bottom: none;
-    }
-  }
-
-  .edit{
-    position:absolute;
-    right:15px;
-    top:15px;
-    width:32px;
-    height:32px;
-  }
-
-  .channel-header {
     display: flex;
-    flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: 20px 40px 0;
+    flex-direction: column;
+    border-radius: 17px;
+    box-shadow: 0 3px 15px 0 #ededf0;
+    background-color: #ffffff;
+    margin-bottom: 25px;
 
-    .feedAvatar {
-        img {
-            width: 84px;
-            height: 84px;
-        }
-      
-        .offline {
-            width: 17px;
-            height: 17px;
-            border-width: 3px;
-            bottom: 3px;
-            right: 3px;
-        }
+
+    img{
+      width: 84px;
+      height: 84px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .offline{
+      position: absolute;
+      border: 2px solid #f8f8ff;
+      border-radius: 100%;
+      background-color: #cdcde6;
+      width: 17px;
+      height: 17px;
+      border-width: 3px;
+      bottom: 10px;
+      right: 3px;
+    }
+
+    .online {
+      background: #2dd36f;
     }
 
     h1 {
-        margin: 10px;
-        font-size: 25px;
-        font-weight: 700;
-        white-space: pre-wrap;
-        word-wrap: break-word;
-        width: 100%;
-        text-align: center;
+      margin: 0;
+      padding: 15px 0px 7.5px;
+      font-size: 16px;
+      font-weight: 600;
+      text-align: center;
     }
 
-    .sub-row {
-        padding: 0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-
-        img {
-            width: 18.1px;
-            height: 14.7px;
-            object-fit: contain;
-            margin-right: 3px;
-        }
-
-        ion-label {
-            margin: 0;
-            font-size: 10px;
-            font-weight: 600;
-            color: #8888b0;
-
-            span {
-                font-size: 13px;
-                font-weight: 700;
-            }
-        }
-    }
-    
     p {
-        margin: 5px 0 10px;
-        font-size: 13px;
-        font-weight: 500;
-        line-height: 1.43;
-        letter-spacing: 0.7px;
-        text-align: center;
-    }
-
-    .channel-btns-row {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        width: 100%;
-
-        ion-button {
-            width: 100%;
-            height: 30px;
-            --border-radius: 30px;
-            --box-shadow: none;
-        
-            ion-label {
-              font-size: 9px !important;
-              font-weight: 700;
-              padding: 0;
-              overflow: visible;
-            }
-        }
-
-        .unsubscribed {
-            --border-width: 1.5px;
-            --border-style: solid;
-            --border-color: #8888b0;
-            --background: transparent;
-            --background-activated: transparent;
-            --background-activated-opacity: none;
-            --background-focused: transparent;
-            --background-focused-opacity: none;
-  
-            ion-label {
-                color:#8888b0 !important;
-            }
-        }
-
-        .tip {
-            --background: #a067ff;
-        }
+      margin: 0;
+      padding-bottom: 15px;
+      font-size: 15px;
+      font-weight: 500;
+      letter-spacing: 0.8px;
+      text-align: center;
+      overflow: hidden;
     }
   }
+
+  .detail-row {
+    margin-left: 5px;
+    margin-right: 5px;
+
+    .qr-container {
+      margin-top: 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      .qrcode {
+        padding: 15px;
+        background: #ffffff;
+        border-radius: 17px;
+      }
+    }
+  }
+
+  .removeBorder {
+    border-bottom: none;
+  }
+}
+
+.edit{
+  position:absolute;
+  right:15px;
+  top:15px;
+  width:32px;
+  height:32px;
+}
+
+
+ion-card {
+  position: relative;
+  width:100%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 3px 15px 0 #ededf0;
+  background-color: #ffffff;
+  border-radius: 10px;
+  height: 148px;
+
+  .feedAvatar{
+    img{
+      width: 50px;
+      height: 50px;
+    }
+  }
+
+  ion-card-title {
+      font-size: 20px;
+      font-weight: bold;
+      font-stretch: normal;
+      font-style: normal;
+      color: #ffffff;
+      line-height: 1.5;
+  }
+
+  ion-card-subtitle{
+      font-size: 10px;
+      font-weight: bold;
+      font-stretch: normal;
+      font-style: normal;
+      line-height: 1.4;
+      color: #ffffff;
+      height:35px;
+      overflow:auto;
+      text-transform:capitalize;
+  }
+
+  .profileFeeds{
+      position: absolute;
+      top: 12px;
+      left: 10px;
+      width: 24px;
+      height: 22px;
+      -o-object-fit: contain;
+      object-fit: contain;
+      border: none;
+  }
+
+  .moremenu{
+      position: absolute;
+      top: 12px;
+      right: 10px;
+      width: 20px;
+      height: 20px;
+      -o-object-fit: contain;
+      object-fit: contain;
+      border: none;
+  }
+
+  .sub-row {
+      padding: 0;
+      display: flex;
+      justify-content: start;
+      align-items: start;
+      img {
+          width: 18.1px;
+          height: 14.7px;
+          object-fit: contain;
+          margin-right: 3px;
+      }
+
+      ion-label {
+          margin: 0;
+          font-size: 10px;
+          font-size: 10px;
+          font-weight: bold;
+          font-stretch: normal;
+          font-style: normal;
+          color: #ffffff;
+          margin-top: 4px;
+
+          span {
+              font-size: 10px;
+              font-weight: bold;
+              font-stretch: normal;
+              font-style: normal;
+              color: #ffffff;
+          }
+      }
+  }
+}
+
+.channel-btns-row {
+display: flex;
+justify-content:flex-end;
+align-items: center;
+width: 100%;
+text-align: right;
+
+ion-button {
+    width: 94px;
+    height: 30px;
+    --border-radius: 10px;
+    --box-shadow: none;
+    --background:#7624fe;
+    --background-activated:#7624fe;
+
+    ion-label {
+      font-size: 14px;
+      font-weight: bold;
+      font-stretch: normal;
+      font-style: normal;
+      color:#7624fe;
+      padding: 0;
+      overflow: visible;
+    }
+}
+
+.unsubscribed {
+
+    --border-width: 1.5px;
+    --border-style: solid;
+    --border-color: #7624fe;
+    --background: transparent;
+    --background-activated: transparent;
+    --background-activated-opacity: none;
+    --background-focused: transparent;
+    --background-focused-opacity: none;
+
+    ion-label {
+        color:#7624fe !important;
+    }
+}
+
+.subscribed{
+    ion-label {
+    color:#fff !important;
+    }
+}
+
+.tip {
+    --background: #a067ff;
+}
+}
 
   .darkContainer {
     .server-header {
@@ -184,11 +242,16 @@
       background-color: #2e2f4e;
     }
 
-    .detail-row {
-      border-bottom: 2px solid #2e2f4e;
+    h1{
+      color: #fff;
+    }
+
+    h2{
+      background-color:#7624fe;
+      opacity: 0.2;
     }
 
     .removeBorder {
       border-bottom: none;
     }
-  }
+}

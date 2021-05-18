@@ -134,9 +134,9 @@ export class HomePage implements OnInit {
     public popoverController:PopoverController,
     private viewHelper: ViewHelper,
     private titleBarService: TitleBarService) {
-      
+
     }
-  
+
   initPostListData(scrollToTop:boolean){
         this.infiniteScroll.disabled =false;
         this.startIndex = 0;
@@ -796,7 +796,7 @@ clearData(){
 
     this.pauseVideo(nodeId+"-"+channelId+"-"+postId);
 
-    
+
     this.postId = postId;
     this.channelId = channelId;
     this.nodeId = nodeId;
@@ -939,6 +939,15 @@ clearData(){
               if(image!=""){
                 this.isLoadimage[id] ="13";
                 postImage.setAttribute("src",image);
+
+                let  imagesWidth = postImage.clientWidth;
+                let  homebidfeedslogo = document.getElementById(id+"homebidfeedslogo");
+                homebidfeedslogo.style.left=(imagesWidth-90)/2+"px";
+                homebidfeedslogo.style.display="block";
+
+                let homebuy =  document.getElementById(id+"homebuy");
+                homebuy.style.display="block";
+
                 //rpostimg.style.display = "block";
               }else{
                 this.isLoadimage[id] ="12";
@@ -1177,7 +1186,7 @@ clearData(){
             return;
           }
           this.videoDownStatusKey = nodeId+"-"+channelId+"-"+postId;
-          
+
           this.cachedMediaType = "video";
           this.feedService.processGetBinary(nodeId, channelId, postId, 0, 0, FeedsData.MediaType.containsVideo, key,
             (transDataChannel)=>{
@@ -1347,5 +1356,9 @@ clearData(){
 
   retry(nodeId: string, feedId: number, postId: number){
     this.feedService.republishOnePost(nodeId, feedId, postId);
+  }
+
+  buy(){
+    this.native.navigateForward(['bid'],{queryParams:{"showType":"buy"}});
   }
 }

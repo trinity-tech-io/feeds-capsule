@@ -1,0 +1,50 @@
+.channelCard{
+  margin-left: 5px;
+  margin-right:5px;
+  width: 150px;
+  height: 85px;
+  border-radius: 10px;
+  position: relative;
+
+  .channelImg{
+    position:absolute;
+    left:8px;
+    top:27px;
+    width:45px;
+    height:45px;
+    border-radius: 50%;
+  }
+
+  .channelName{
+    position:absolute;
+    left: 65px;
+    top:12px;
+    font-size: 10px !important;
+    font-weight: bold;
+    font-stretch: normal;
+    font-style: normal;
+    color: #ffffff;
+    overflow: hidden;
+    width: 80px;
+    text-overflow: ellipsis;
+  }
+
+  .channelDes{
+    position: absolute;
+    left: 65px;
+    top: 35px;
+    width: 56px;
+    height: 33px;
+    white-space: normal;
+    word-wrap: break-word;
+    overflow: auto;
+    font-size: 6px!important;
+    font-weight:bold;
+    font-stretch: normal;
+    font-style: normal;
+    color: #fff;
+    line-height: 1.4;
+    word-wrap: break-word;
+    word-break: break-all;
+ }
+}

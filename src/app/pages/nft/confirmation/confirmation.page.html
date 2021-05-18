@@ -1,0 +1,49 @@
+<ion-content [class.bidBg]="!theme.darkMode&&showType==='burn'" [class.buyBg]="!theme.darkMode&&showType==='buy'">
+   <ion-grid>
+     <ion-row>
+      <ion-col size="12" *ngIf="showType==='burn'" style="text-align: center;margin-top: 50px;margin-bottom: 30px;">
+        <span class="bidPlaced"> {{'ConfirmationPage.bidPlaced'|translate}} </span>
+      </ion-col>
+     <ion-col size="12" *ngIf="showType==='burn'">
+        <img src="./assets/images/bid.svg"/>
+     </ion-col>
+
+     <ion-col size="12" *ngIf="showType==='buy'" style="text-align: center;margin-top: 50px;margin-bottom: 30px;">
+      <span class="congratulations"> {{'ConfirmationPage.congratulations'|translate}} </span>
+    </ion-col>
+   <ion-col size="12" *ngIf="showType==='buy'">
+      <img src="./assets/images/buynft.svg"/>
+   </ion-col>
+    </ion-row>
+    <ion-row *ngIf="showType==='burn'">
+      <ion-col size="12" style="text-align: center;margin-top:20px;margin-bottom: 30px;">
+       <span class="des"> {{'ConfirmationPage.bidDes'|translate}} </span>
+      </ion-col>
+    </ion-row>
+
+    <ion-row *ngIf="showType==='buy'">
+      <ion-col size="12" style="text-align: center;margin-top: 10px;">
+       <span class="buyDes"> {{'ConfirmationPage.purchaseDes'|translate}} </span>
+      </ion-col>
+    </ion-row>
+
+
+         <!--- BUTTONS --->
+         <div class="btns bid" *ngIf="showType==='burn'">
+          <ion-row class="btn-row">
+            <ion-button (click)="clickOk()" style="height:48px;">
+              <ion-label style="font-weight:bold;font-stretch:normal;font-style:normal;color:#ffffff;">{{'ConfirmationPage.ok' | translate}}</ion-label>
+            </ion-button>
+          </ion-row>
+        </div>
+
+         <!--- BUTTONS --->
+         <div class="btns buy" *ngIf="showType==='buy'">
+          <ion-row class="btn-row">
+            <ion-button (click)="clickOk()" style="height:48px;">
+              <ion-label style="font-weight:bold;font-stretch:normal;font-style:normal;color:#ffffff;">{{'ConfirmationPage.ok' | translate}}</ion-label>
+            </ion-button>
+          </ion-row>
+        </div>
+   </ion-grid>
+</ion-content>

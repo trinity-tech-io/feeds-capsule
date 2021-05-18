@@ -1,10 +1,7 @@
-<!-- <ion-header> -->
-  <app-titlebar></app-titlebar>
-  <div *ngIf="connectionStatus == 1" class="offline-header"></div>
-<!-- </ion-header> -->
+<app-titlebar></app-titlebar>
+<div *ngIf="connectionStatus == 1" class="offline-header"></div>
 <ion-content>
   <div class="channel-list" [class.darkChannelList]="theme.darkMode">
-
     <ion-item class="removeBorder" lines="none">
       <ion-row class="channel-row ion-activatable ripple">
         <ion-col size="2.5" class="left-col">
@@ -14,12 +11,12 @@
           </div>
         </ion-col>
         <ion-col size="9" class="middle-col">
-          <ion-label>{{ channelName }}</ion-label>
+          <ion-label style="margin-left:-20px;margin-top:0px;">{{ channelName }}</ion-label>
         </ion-col>
       </ion-row>
     </ion-item>
-    <div (click)="newPostTextArea()" id="editPost">
-    <ion-textarea  #newPostIonTextarea  autoGrow="true"  autofocus placeholder="{{'CreatenewpostPage.des'|translate}}" [(ngModel)]="newPost">
+    <div (click)="newPostTextArea()">
+    <ion-textarea  #newPostIonTextarea  autoGrow="true"  autofocus="true" placeholder="{{'CreatenewpostPage.des'|translate}}" [(ngModel)]="newPost">
     </ion-textarea>
     </div>
     <div *ngIf="imgUrl !== ''" class="img-container">
@@ -54,7 +51,7 @@
         <ion-icon id="selectvideo" mode="ios" name="selectvideo" (click)="selectvideo()" *ngIf="imgUrl === ''" ></ion-icon>
         <ion-icon id="videocam" name="videocam" (click)="videocam()"*ngIf="imgUrl === ''"  ></ion-icon> -->
       </ion-col>
-      <ion-col class="right-col" size="4.5">
+      <ion-col class="right-col" size="6">
         <ion-button (click)="post()">
           <ion-label>{{ 'CreatenewpostPage.post' | translate }}</ion-label>
         </ion-button>

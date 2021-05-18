@@ -1,0 +1,55 @@
+<app-titlebar></app-titlebar>
+<ion-content class="container" [class.darkContainer]="theme.darkMode">
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" pullFactor="0.5">
+    <ion-refresher-content
+      class="refresh"
+      pullingText="{{'common.releaseToRefresh'|translate}}"
+      pullingIcon="arrow-dropdown"
+      refreshingSpinner="crescent"
+      refreshingText="{{'common.beingRefresh'|translate}}">
+    </ion-refresher-content>
+  </ion-refresher>
+
+  <ion-grid class="iongrid">
+    <ion-row>
+      <ion-col size="1">
+
+      </ion-col>
+      <ion-col size="10">
+  <div class="search-container" [class.dark-search-container]="theme.darkMode">
+    <img *ngIf="isSearch===''" src="./assets/images/scan.svg" class="scanService" [ngStyle]="scanServiceStyle" (click)="scanService()"/>
+    <form action="javascript:return true;" style="display: flex;justify-content: center;width: 100%;">
+      <ion-searchbar #searchbar  [(ngModel)]="isSearch" inputmode=""  enterkeyhint="search" placeholder="{{ 'SearchPage.searchFeeds' | translate }}" (keyup)="getItems($event)" mode="ios" [ngModelOptions]="{standalone: true}" (ionClear)="ionClear()"></ion-searchbar>
+    </form>
+  </div>
+</ion-col>
+<ion-col size="1">
+
+</ion-col>
+</ion-row>
+  </ion-grid>
+
+  <ion-grid class="iongrid">
+    <ion-row>
+      <ion-col size="1">
+
+      </ion-col>
+      <ion-col size="11">
+        <img src="./assets/images/store.svg"/> <span class="pasar">{{'ExplorefeedsPage.pasar'|translate}}</span>
+        <div style="margin-top:3px;">
+        <img src="./assets/images/metro-fire.svg"/> <span class="hotBids">{{'ExplorefeedsPage.hotBids'|translate}}</span>
+        </div>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="hotBidsList">
+      <ion-col size="6" *ngFor="let item of hotBidsList">
+        <app-assetitem
+        [assetItem] = "item"
+        (clickAssetItem) = "clickAssetItem($event)"
+        >
+        </app-assetitem>
+      </ion-col>
+  </ion-row>
+  </ion-grid>
+</ion-content>

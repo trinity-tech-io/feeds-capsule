@@ -5,17 +5,25 @@ import { TitleBarIconSlot, TitleBarIcon, TitleBarForegroundMode } from 'src/app/
 import { NativeService } from 'src/app/services/NativeService';
 import { MenuController,PopoverController } from '@ionic/angular';
 import { Events } from 'src/app/services/events.service';
+import { Router} from '@angular/router';
+import { FeedService } from '../services/FeedService';
+import { PopupProvider } from '../services/popup';
 
 let TAG: string = "TitleBarService";
 
 @Injectable()
 export class TitleBarService {
+    public popover:any = null;
     constructor(private logUtils: LogUtils,
         private native: NativeService,
         private popoverController: PopoverController,
         // private menuService: MenuService,
         private menu: MenuController,
-        private event: Events,) {
+        private router:Router,
+        private event: Events,
+        private feedService:FeedService,
+        public popupProvider:PopupProvider,
+        ) {
     }
     setTitleBarMoreMemu(titleBar: TitleBarComponent){
         this.setIcon(titleBar,FeedsData.TitleBarIconSlot.OUTER_RIGHT, "more", "assets/icon/more_menu.ico");
@@ -68,8 +76,10 @@ export class TitleBarService {
 
     registerBackKey(titleBar: TitleBarComponent) {
         titleBar.addOnItemClickedListener((icon)=>{
-            if (icon.key == "back")
-                this.native.getNavCtrl().pop();
+            if (icon.key == "back"){
+               this.handleBack();
+            }
+            //this.native.getNavCtrl().pop();
         });
     }
 
@@ -85,7 +95,7 @@ export class TitleBarService {
                 this.menu.open("menu");
         });
     }
-    
+
     setBackgroundColor(titleBar: TitleBarComponent, hexColor: string){
         titleBar.setBackgroundColor(hexColor);
     }
@@ -98,7 +108,7 @@ export class TitleBarService {
     addRight(titleBar: TitleBarComponent){
         this.setIcon(titleBar, FeedsData.TitleBarIconSlot.OUTER_RIGHT, "more", "assets/icon/more_menu.ico");
       }
-  
+
     hideRight(titleBar: TitleBarComponent){
         this.setIcon(titleBar, FeedsData.TitleBarIconSlot.OUTER_RIGHT, null, null);
     }
@@ -118,11 +128,63 @@ export class TitleBarService {
         });
 
     }
-    
+
     regitstEditImages(titleBar: TitleBarComponent){
         titleBar.addOnItemClickedListener((icon)=>{
             if (icon.key == "editImages")
                 this.event.publish(FeedsEvent.PublishType.editImages);
         });
     }
+
+    handleBack(){
+        let isFirstBindFeedService = localStorage.getItem('org.elastos.dapp.feeds.isFirstBindFeedService') || "";
+        let bindingServer = this.feedService.getBindingServer() || null;
+        if(
+          (this.router.url.indexOf('/bindservice/scanqrcode') > -1 && isFirstBindFeedService==="" && bindingServer===null )||
+          (this.router.url.indexOf('/bindservice/learnpublisheraccount') > -1 && isFirstBindFeedService==="" && bindingServer===null) ||
+          (this.router.url.indexOf('/bindservice/startbinding') > -1 && isFirstBindFeedService==="" && bindingServer===null )||
+          this.router.url.indexOf('/bindservice/importdid') > -1 ||
+          this.router.url.indexOf('/bindservice/publishdid') > -1 ||
+          this.router.url.indexOf('/bindservice/issuecredential') > -1
+        ){
+          this.createDialog();
+        }else {
+          this.native.pop();
+        }
+      }
+
+      async createDialog(){
+
+        if(this.popover != null){
+             return;
+        }
+        this.popover = this.popupProvider.ionicConfirm(
+          this,
+          "SearchPage.confirmTitle",
+          "common.des2",
+          this.cancel,
+          this.confirm,
+          "./assets/images/tskth.svg"
+        );
+      }
+
+
+      cancel(that:any){
+        if(this.popover!=null){
+           this.popover.dismiss();
+           that.popover = null;
+        }
+      }
+
+      confirm(that:any){
+        if(this.popover!=null){
+          this.popover.dismiss();
+          that.popover = null;
+        }
+        let isFirstBindFeedService = localStorage.getItem('org.elastos.dapp.feeds.isFirstBindFeedService') || "";
+        if(isFirstBindFeedService === ""){
+            localStorage.setItem('org.elastos.dapp.feeds.isFirstBindFeedService',"1");
+        }
+        that.native.setRootRouter(['/tabs/home']);
+      }
 }
