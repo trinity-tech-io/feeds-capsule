@@ -117,7 +117,6 @@ export class ExplorefeedsPage implements OnInit {
         this.initData();
         this.isAddSearch = true;
       }
-
     });
     this.addEvent();
     this.initData();

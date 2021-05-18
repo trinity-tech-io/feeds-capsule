@@ -65,14 +65,14 @@
 
     <ion-ripple-effect></ion-ripple-effect>
 
-    <ion-row class="detail-row">
+    <ion-row class="detail-row" *ngIf="followStatus">
       <ion-col size="12" class="left-col">
           <h1>{{'FeedinfoPage.feeds'|translate}}</h1>
           <h2>{{name}}</h2>
       </ion-col>
     </ion-row>
 
-    <ion-row class="detail-row">
+    <ion-row class="detail-row" *ngIf="followStatus">
       <ion-col size="12" class="left-col">
           <h1>{{'CreatenewfeedPage.description'|translate}}</h1>
           <h2>{{des}}</h2>
@@ -86,35 +86,35 @@
       </ion-col>
     </ion-row> -->
 
-    <ion-row class="detail-row">
+    <ion-row class="detail-row" *ngIf="followStatus">
       <ion-col size="12" class="left-col">
           <h1>{{'IssuecredentialPage.elaaddress'|translate}}</h1>
           <h2>{{elaAddress|translate}}</h2>
       </ion-col>
     </ion-row>
 
-    <ion-row class="detail-row" *ngIf="developerMode">
+    <ion-row class="detail-row" *ngIf="developerMode&&followStatus">
       <ion-col size="12" class="left-col">
           <h1>NodeId</h1>
           <h2>{{nodeId}}</h2>
       </ion-col>
     </ion-row>
 
-    <ion-row class="detail-row" *ngIf="developerMode">
+    <ion-row class="detail-row" *ngIf="developerMode&&followStatus">
       <ion-col size="12" class="left-col">
           <h1>{{'ServerInfoPage.version'|translate}}</h1>
           <h2>{{severVersion}}</h2>
       </ion-col>
     </ion-row>
 
-    <ion-row class="detail-row" *ngIf="developerMode">
+    <ion-row class="detail-row" *ngIf="developerMode&&followStatus">
       <ion-col size="12" class="left-col">
           <h1>{{'ServerInfoPage.did'|translate}}</h1>
           <h2>{{serverInfo['did']}}</h2>
       </ion-col>
     </ion-row>
 
-    <ion-row class="detail-row removeBorder">
+    <ion-row class="detail-row removeBorder" *ngIf="followStatus">
       <ion-col size="12" class="left-col">
           <h1>{{'DiscoverfeedinfoPage.feedsQrcode'|translate}}</h1>
           <div class="qr-container" (click)="showPreviewQrcode(qrcodeString)" (press)="menuMore(qrcodeString)">

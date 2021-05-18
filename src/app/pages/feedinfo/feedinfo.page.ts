@@ -171,6 +171,7 @@ export class FeedinfoPage implements OnInit {
     this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
     this.events.unsubscribe(FeedsEvent.PublishType.editFeedInfoFinish);
     this.events.unsubscribe(FeedsEvent.PublishType.rpcRequestError);
+    this.events.publish(FeedsEvent.PublishType.notification);
     this.events.publish(FeedsEvent.PublishType.addProflieEvent);
   }
 
