@@ -109,7 +109,7 @@ export class ViewHelper {
         return await popover.present();
     }
 
-    async showPayPrompt(elaAddress:string) {
+    async showPayPrompt(nodeId:string,channelId:number,elaAddress:string) {
         let popover = await this.popoverController.create({
             mode: 'ios',
             cssClass: 'PaypromptComponent',
@@ -118,7 +118,9 @@ export class ViewHelper {
             componentProps: {
             "title": this.translate.instant("ChannelsPage.tip"),
             "elaAddress": elaAddress,
-            "defalutMemo": ""
+            "defalutMemo": "",
+            "nodeId":nodeId,
+            "channelId":channelId
             }
         });
         popover.onWillDismiss().then(() => {

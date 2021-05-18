@@ -2,10 +2,9 @@ import { Component, OnInit ,Input,Output,EventEmitter} from '@angular/core';
 import { FeedService } from '../../services/FeedService'
 import { IonTabs } from '@ionic/angular';
 import { FeedsPage } from 'src/app/pages/feeds/feeds.page'
-import { ThemeService } from 'src/app/services/theme.service';
-import { NativeService } from 'src/app/services/NativeService';
-import { UtilService } from 'src/app/services/utilService';
-import { ViewHelper } from 'src/app/services/viewhelper.service';
+import { ThemeService } from '../../services/theme.service';
+import { UtilService } from '../../services/utilService';
+import { ViewHelper } from '../../services/viewhelper.service';
 
 
 @Component({
@@ -21,10 +20,9 @@ export class FollowingComponent implements OnInit {
   constructor(
     private feedspage: FeedsPage,
     private tabs: IonTabs,
-    private feedService: FeedService,
-    public theme: ThemeService,
-    private native: NativeService,
-    private viewHelper: ViewHelper) {
+    private feedService:FeedService,
+    public theme:ThemeService,
+    private viewHelper:ViewHelper) {
 
   }
 

@@ -468,6 +468,8 @@ ion-input {
   left: 0px;
   width:100%;
   display:none;
+  border-bottom-left-radius:11px;
+  border-bottom-right-radius:11px;
 
   ion-button{
     --background:#7624fe;

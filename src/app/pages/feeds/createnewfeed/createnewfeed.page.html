@@ -1,7 +1,5 @@
-<!-- <ion-header> -->
-  <app-titlebar></app-titlebar>
-  <div *ngIf="connectionStatus == 1" class="offline-header"></div>
-<!-- </ion-header> -->
+<app-titlebar></app-titlebar>
+<div *ngIf="connectionStatus == 1" class="offline-header"></div>
 <ion-content>
   <ion-grid class="container" [class.darkContainer]="theme.darkMode">
     <ion-list>
@@ -42,12 +40,11 @@
         </ion-item>
     </ion-list>
 
-    <ion-row class="btn-row" style="justify-content:flex-start;">
-        <p style="font-size: 9px!important;color:#8888b0;margin-top: -20px;">※ {{"CreatenewfeedPage.feedNum"|translate}}</p>
-        <ion-button (click)="createChannel(name,desc)" >
-            <ion-label> {{'CreatenewfeedPage.createFeed'|translate}}</ion-label>
-        </ion-button>
-
-    </ion-row>
-  </ion-grid>
+      <ion-row class="btn-row" style="justify-content:flex-start;">
+          <p style="font-size: 9px!important;color:#8888b0;margin-top: -20px;">※ {{"CreatenewfeedPage.feedNum"|translate}}</p>
+          <ion-button (click)="createChannel(name,desc)" >
+              <ion-label> {{'CreatenewfeedPage.createFeed'|translate}}</ion-label>
+          </ion-button>
+      </ion-row>
+    </ion-grid>
 </ion-content>

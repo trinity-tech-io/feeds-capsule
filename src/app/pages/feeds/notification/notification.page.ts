@@ -1,4 +1,5 @@
 import { Component, NgZone,ViewChild} from '@angular/core';
+import { ActionSheetController} from '@ionic/angular';
 import { Events } from 'src/app/services/events.service';
 import { FeedService, Avatar } from 'src/app/services/FeedService';
 import { ThemeService } from 'src/app/services/theme.service';
@@ -21,20 +22,14 @@ export class NotificationPage {
   @ViewChild(IonInfiniteScroll,{static:true}) infiniteScroll: IonInfiniteScroll;
 
   public connectionStatus = 1;
-  public avatar: Avatar; 
+  public avatar: Avatar;
   public notificationList = [];
-
-  // Optional parameters to pass to the swiper instance. See http://idangero.us/swiper/api/ for valid options.
-  slideOpts = {
-    initialSlide: 2,
-    speed: 400,
-    slidesPerView: 3,
-  };
 
   public startIndex = 0;
   public pageNumber = 8;
   public totalData:any = [];
-
+  public notificationMenu:any = null;
+  public notification:any = {};
 
   constructor(
     private native:NativeService,
@@ -44,22 +39,29 @@ export class NotificationPage {
     private translate: TranslateService,
     private feedService: FeedService,
     private viewHelper: ViewHelper,
-    private titleBarService: TitleBarService) {
+    private titleBarService: TitleBarService,
+    private actionSheetController:ActionSheetController) {
     //this.notificationList = this.feedService.getNotificationList();
   }
 
   ngOnInit(): void {
-    
+
   }
   ionViewWillEnter() {
     this.initTitleBar();
     this.connectionStatus = this.feedService.getConnectionStatus();
+    this.events.subscribe(FeedsEvent.PublishType.updateTitle,()=>{
+      if(this.notificationMenu!=null){
+          this.notificationMenu.dismiss();
+          this.showNotificationMenu(this.notification);
+      }
+    });
     this.events.subscribe(FeedsEvent.PublishType.connectionChanged,(status)=>{
       this.zone.run(() => {
         this.connectionStatus = status;
       });
     });
-  
+
     this.initRefresh();
     this.scrollToTop(1);
   }
@@ -84,11 +86,8 @@ export class NotificationPage {
   }
 
   ionViewWillLeave(){
+    this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
     this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
-  }
-
-  goToServer(){
-    this.native.navigateForward(['/menu/servers'],"");
   }
 
   handleDisplayTime(createTime:number){
@@ -135,7 +134,7 @@ export class NotificationPage {
     let channel = this.feedService.getChannelFromId(nodeId, channelId);
 
     switch(notification.behavior){
-      case 0: 
+      case 0:
       case 2:
         if (comment == undefined) return "";
         return this.getContentText(comment.content);
@@ -156,14 +155,14 @@ export class NotificationPage {
       this.native.toastWarn('common.connectionError');
       return;
     }
-    
+
     let nodeId = notification.details.nodeId;
     let channelId = notification.details.channelId;
     let postId = notification.details.postId;
     this.feedService.setNotificationReadStatus(notification, 0);
     notification.readStatus = 0;
     switch(notification.behavior){
-      case 0: 
+      case 0:
       case 1:
       case 2:
         this.navToPostDetail(nodeId, channelId, postId);
@@ -205,7 +204,7 @@ export class NotificationPage {
 
   loadData(event:any){
     let sId = setTimeout(() => {
-      let arr = [];        
+      let arr = [];
        if(this.totalData.length - this.pageNumber*this.startIndex>this.pageNumber){
         arr = this.totalData.slice(this.startIndex*this.pageNumber,(this.startIndex+1)*this.pageNumber);
         this.startIndex++;
@@ -237,5 +236,44 @@ export class NotificationPage {
     if(name != "" && name.length>15){
       this.viewHelper.createTip(name);
     }
-   }
+  }
+
+  moremenu(notification:any){
+    this.showNotificationMenu(notification);
+  }
+
+  async showNotificationMenu(notification:any){
+    this.notification = notification;
+    this.notificationMenu = await this.actionSheetController.create({
+      cssClass: 'editPost',
+      buttons: [
+      {
+          text: this.translate.instant("NotificationPage.deleteNotification"),
+          role: 'destructive',
+          icon: 'trash',
+          handler: () => {
+            this.delete(notification);
+          }
+      },
+      {
+          text: this.translate.instant("common.cancel"),
+          role: 'cancel',
+          icon: 'close-circle',
+          handler: () => {
+              if(this.notificationMenu!=null){
+                  this.notificationMenu.dismiss();
+              }
+          }
+      }
+  ]
+    });
+
+    this.notificationMenu.onWillDismiss().then(()=>{
+      if(this.notificationMenu!=null){
+          this.notificationMenu  = null;
+      }
+
+   });
+  await this.notificationMenu.present();
+  }
 }

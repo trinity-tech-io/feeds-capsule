@@ -1,51 +1,56 @@
-<!-- <ion-header> -->
-  <app-titlebar></app-titlebar>
-  <div *ngIf="connectionStatus == 1" class="offline-header"></div>
-<!-- </ion-header> -->
-<ion-content>
-  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" pullFactor="0.5">
-    <ion-refresher-content
-      class="refresh"
-      pullingText="{{'common.releaseToRefresh'|translate}}"
-      pullingIcon="arrow-dropdown"
-      refreshingSpinner="crescent"
-      refreshingText="{{'common.beingRefresh'|translate}}">
-    </ion-refresher-content>
-  </ion-refresher>
+<app-titlebar></app-titlebar>
+<div *ngIf="connectionStatus == 1" class="offline-header"></div>
+  <ion-content>
+    <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" pullFactor="0.5">
+      <ion-refresher-content
+        class="refresh"
+        pullingText="{{'common.releaseToRefresh'|translate}}"
+        pullingIcon="arrow-dropdown"
+        refreshingSpinner="crescent"
+        refreshingText="{{'common.beingRefresh'|translate}}">
+      </ion-refresher-content>
+    </ion-refresher>
 
-  <div *ngIf="notificationList.length == 0" class="empty-container">
-    <h1>{{ 'NotificationPage.allempty' | translate }}</h1>
-    <p>{{ 'NotificationPage.emptyDes' | translate }}</p>
-  </div>
+    <div *ngIf="notificationList.length == 0" class="empty-container">
+      <h1>{{ 'NotificationPage.allempty' | translate }}</h1>
+      <p>{{ 'NotificationPage.emptyDes' | translate }}</p>
+    </div>
 
-  <div class="notificationContainer" [class.darkContainer]="theme.darkMode">
-    <ion-item-sliding *ngFor="let notification of notificationList let i=index">
-      <ion-item lines="none" (click)="navTo(notification)">
-        <ion-row>
-          <ion-col size="2.25" class="left-col">
-            <img [src]="avatar ? 'data:'+avatar.contentType+';base64,'+avatar.data : './assets/images/default-contact.svg'">
-          </ion-col>
-          <ion-col size="9.75" class="right-col">
-            <h1 (press)="pressName(notification.userName)">{{ moreName(notification.userName) }} <span> {{ handleDisplayTime(notification.time) }}</span></h1>
-            <p>{{ notification.behaviorText }}
-            <h2>{{ getNotificationContent(notification) }}</h2>
-          </ion-col>
-        </ion-row>
+    <div class="notificationContainer" [class.darkContainer]="theme.darkMode">
+      <!-- <ion-item-sliding> -->
+        <ion-item lines="none"  *ngFor="let notification of notificationList let i=index">
+          <ion-row>
+            <ion-col size="2.25" class="left-col" (click)="navTo(notification)">
+              <img [src]="avatar ? 'data:'+avatar.contentType+';base64,'+avatar.data : './assets/images/default-contact.svg'">
+            </ion-col>
+            <img class="moremenuclick" (click)="moremenu(notification)"
+            [src]="!theme.darkMode ? './assets/images/dots-three-vertical.svg' : './assets/images/dots-three-vertical-dark.svg'"
+            >
+            <ion-col size="9.75" class="right-col" (click)="navTo(notification)">
+              <h1 (press)="pressName(notification.userName)">{{ moreName(notification.userName) }} <span class="notificationTime"> {{ handleDisplayTime(notification.time) }}</span></h1>
+              <p class="behaviorText">{{ notification.behaviorText }}</p>
+              <h2>
+                <img *ngIf="notification.behavior===0 || notification.behavior===2" [src]="!theme.darkMode ? './assets/images/bubble-line.svg' : './assets/images/darkmode/comment.svg'" style="margin-top:-2px;">
+                <img *ngIf="notification.behavior===1" [src]="!theme.darkMode ? './assets/images/like-s.svg' : './assets/images/like-s.svg'">
+                <img *ngIf="notification.behavior===3" [src]="!theme.darkMode ? './assets/images/bubble2.svg' : './assets/images/darkmode/bubble2.svg'" style="margin-top:-3px;">
+                <span *ngIf="notification.behavior===0 || notification.behavior===2" style="margin-left:2px;display: inline-block;margin-top: 2px;">{{ getNotificationContent(notification)}}</span>
+                <span *ngIf="notification.behavior===1" style="margin-left: 2px;">{{ getNotificationContent(notification)}}</span>
+                <span *ngIf="notification.behavior===3" style="margin-left: 2px;margin-top:3px;display: inline-block;">{{ getNotificationContent(notification)}}</span>
+              </h2>
+            </ion-col>
+          </ion-row>
+          <span *ngIf="notification['readStatus']===1" class="online-circle-blue" style="position: absolute;top:37px;right:46px;"></span>
+        </ion-item>
+         <!-- <ion-item-options side="end">
+            <ion-item-option color="danger" (click)="delete(notification)">  <ion-icon slot="icon-only" name="trash"></ion-icon> </ion-item-option>
+        </ion-item-options>
+      </ion-item-sliding> -->
+    </div>
 
-      </ion-item>
-      <span *ngIf="notification['readStatus']===1" class="online-circle-blue" style="position: absolute;top:37px;right:29px;"></span>
-       <!-- <ion-item-options side="end" (ionSwipe)="delete(notification)">
-       <ion-item-option class="notification-swipe" expandable>&nbsp;</ion-item-option> -->
-       <ion-item-options side="end">
-          <ion-item-option color="danger" (click)="delete(notification)">  <ion-icon slot="icon-only" name="trash"></ion-icon> </ion-item-option>
-      </ion-item-options>
-    </ion-item-sliding>
-  </div>
-
-  <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event)">
-    <ion-infinite-scroll-content
-      loadingSpinner="bubbles"
-      loadingText="{{'common.loadingText'|translate}}">
-    </ion-infinite-scroll-content>
-  </ion-infinite-scroll>
-</ion-content>
+    <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event)">
+      <ion-infinite-scroll-content
+        loadingSpinner="bubbles"
+        loadingText="{{'common.loadingText'|translate}}">
+      </ion-infinite-scroll-content>
+    </ion-infinite-scroll>
+  </ion-content>

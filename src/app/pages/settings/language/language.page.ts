@@ -4,6 +4,7 @@ import { ThemeService } from 'src/app/services/theme.service';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { LanguageService } from 'src/app/services/language.service';
+import { Events } from 'src/app/services/events.service';
 
 @Component({
   selector: 'app-language',
@@ -17,7 +18,8 @@ export class LanguagePage implements OnInit {
   constructor(public translate: TranslateService,
     public theme:ThemeService,
     private titleBarService: TitleBarService,
-    private languageService: LanguageService) { 
+    private languageService: LanguageService,
+    private events:Events) {
       this.currentLang = this.languageService.getCurLang();
       this.languageList = this.languageService.languages;
     }
@@ -33,12 +35,18 @@ export class LanguagePage implements OnInit {
 
   ionViewWillEnter() {
     this.initTitle();
+    this.events.subscribe(FeedsEvent.PublishType.updateTitle,()=>{
+    this.initTitle();
+    })
   }
-
+  ionViewWillLeave(){
+    this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
+    this.events.publish(FeedsEvent.PublishType.search);
+  }
   selectLanguage(language) {
     this.languageService.setCurLang(language.code);
     this.currentLang = language.code;
-
+    this.events.publish(FeedsEvent.PublishType.updateTitle);
     this.initTitle();
   }
 

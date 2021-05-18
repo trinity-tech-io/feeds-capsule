@@ -33,14 +33,12 @@ export class CommentComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    let sid = setTimeout(() => {
-      this.comment.setFocus();
-      clearTimeout(sid);
-    }, 500);
   }
 
   ionViewDidEnter() {
-
+    setTimeout(() => {
+      this.comment.setFocus();
+    }, 300);
   }
 
   addImg() {
@@ -62,8 +60,7 @@ export class CommentComponent implements OnInit {
       return false;
     }
 
-    this.native.showLoading("common.waitMoment",(isDismiss)=>{
-    }).then(()=>{
+    this.native.showLoading("common.waitMoment").then(()=>{
            this.publishComment();
     }).catch(()=>{
          this.native.hideLoading();

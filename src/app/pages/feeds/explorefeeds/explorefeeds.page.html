@@ -1,0 +1,123 @@
+
+<app-titlebar></app-titlebar>
+<div *ngIf="connectionStatus == 1" class="offline-header"></div>
+<ion-content class="container" [class.darkContainer]="theme.darkMode">
+
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" pullFactor="0.5">
+    <ion-refresher-content
+      class="refresh"
+      pullingText="{{'common.releaseToRefresh'|translate}}"
+      pullingIcon="arrow-dropdown"
+      refreshingSpinner="crescent"
+      refreshingText="{{'common.beingRefresh'|translate}}">
+    </ion-refresher-content>
+  </ion-refresher>
+
+  <ion-grid class="iongrid">
+    <ion-row>
+      <ion-col size="1">
+
+      </ion-col>
+      <ion-col size="10">
+  <div class="search-container" [class.dark-search-container]="theme.darkMode">
+    <img *ngIf="isSearch===''" src="./assets/images/scan.svg" class="scanService" [ngStyle]="scanServiceStyle" (click)="scanService()"/>
+    <form action="javascript:return true;" style="display: flex;justify-content: center;width: 100%;">
+      <ion-searchbar #searchbar  [(ngModel)]="isSearch" inputmode=""  enterkeyhint="search" placeholder="{{ 'SearchPage.searchFeeds' | translate }}" (keyup)="getItems($event)" mode="ios" [ngModelOptions]="{standalone: true}" (ionClear)="ionClear()"></ion-searchbar>
+    </form>
+  </div>
+</ion-col>
+<ion-col size="1">
+
+</ion-col>
+</ion-row>
+  </ion-grid>
+
+  <ion-grid class="iongrid">
+
+       <!--Channels-->
+       <ion-row>
+        <ion-col size="1">
+
+        </ion-col>
+        <ion-col size="11">
+          <span class="pasar">{{'ExplorefeedsPage.channels'|translate}}</span>
+          <div style="margin-top:3px;">
+          <img src="./assets/images/new-releases.svg" style="vertical-align:middle;"/> <span class="hotBids">{{'ExplorefeedsPage.new'|translate}}</span>
+          </div>
+        </ion-col>
+      </ion-row>
+
+      <ion-row class="hotBidsList">
+          <app-channelcard *ngFor="let channelItem of channelNewList"
+           [channelItem] ="channelItem"
+           (clickChannelItem) = "clickChannelItem($event)"
+          >
+          </app-channelcard>
+      </ion-row>
+
+      <ion-row (click)="clickChannelViewAll()">
+        <ion-col size="1">
+
+        </ion-col>
+        <ion-col size="10" style="text-align:right;" class="viewall">
+          {{'ExplorefeedsPage.viewall'|translate}}
+        </ion-col>
+        <ion-col size="1">
+
+        </ion-col>
+      </ion-row>
+
+     <!--Pasar (NFT Marketplace)-->
+    <ion-row>
+      <ion-col size="1">
+
+      </ion-col>
+      <ion-col size="11">
+        <span class="pasar">{{'ExplorefeedsPage.pasar'|translate}}</span>
+        <div style="margin-top:3px;">
+        <img src="./assets/images/metro-fire.svg"/> <span class="hotBids">{{'ExplorefeedsPage.hotBids'|translate}}</span>
+        </div>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="hotBidsList">
+        <app-assetitem *ngFor="let item of hotBidsList" style="margin-right:5px;"
+        [assetItem] = "item"
+        (clickAssetItem) = "clickAssetItem($event)"
+        >
+        </app-assetitem>
+    </ion-row>
+
+    <ion-row (click)="clickHotNft()">
+      <ion-col size="1">
+
+      </ion-col>
+      <ion-col size="10" style="text-align:right;" class="viewall">
+        {{'ExplorefeedsPage.viewall'|translate}}
+      </ion-col>
+      <ion-col size="1">
+
+      </ion-col>
+    </ion-row>
+
+    <!--Latest-->
+    <ion-row>
+      <ion-col size="1">
+
+      </ion-col>
+      <ion-col size="11">
+        <img src="./assets/images/art-gallery.svg" style="vertical-align: middle"/> <span class="hotBids">{{'ExplorefeedsPage.latest'|translate}}</span>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="latestList">
+        <ion-col size="6" *ngFor="let item of hotBidsList">
+          <app-assetitem
+          [assetItem] = "item"
+          (clickAssetItem) = "clickAssetItem($event)"
+          >
+          </app-assetitem>
+        </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

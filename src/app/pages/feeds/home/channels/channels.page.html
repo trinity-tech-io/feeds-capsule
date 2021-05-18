@@ -1,8 +1,7 @@
-<!-- <ion-header> -->
-  <app-titlebar></app-titlebar>
-  <div *ngIf="connectionStatus == 1" class="offline-header"></div>
-<!-- </ion-header> -->
-<ion-content [class.darkContainer]="theme.darkMode" [class.blur]="!hideComment" [ngClass]="{'translucent-mask': isShowPrompt}" (ionScroll)="ionScroll()" [scrollEvents]="true">
+<app-titlebar></app-titlebar>
+<div *ngIf="connectionStatus == 1" class="offline-header"></div>
+<ion-content class="container" [class.darkContainer]="theme.darkMode" [class.blur]="!hideComment" [ngClass]="{'translucent-mask': isShowPrompt}" (ionScroll)="ionScroll()" [scrollEvents]="true">
+
   <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" pullFactor="0.5">
     <ion-refresher-content
       class="refresh"
@@ -15,17 +14,66 @@
 
   <!-- CHANNEL HEADER -->
   <ion-grid class="channel-header">
-    <div class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode" (click)="clickAvatar()">
-      <img src={{channelAvatar}}>
-      <div class="offline" [class.online]="nodeStatus[nodeId] == 0"></div>
-    </div>
-    <h1>{{ channelName }}</h1>
-    <ion-row class="sub-row">
-      <img src="./assets/images/bubble2.svg"> <br>
-      <ion-label><span>{{ channelSubscribes }}</span> {{ 'common.followers' | translate }}</ion-label>
+    <ion-card class="ion-activatable ripple profileCardBg0">
+      <img class="profileFeeds"
+         src="./assets/images/profile-feeds-logo.svg"
+      />
+      <img class="moremenu" (click)="clickAvatar()"
+      [src]="!theme.darkMode ? './assets/images/dots-three-vertical-dark.svg' : './assets/images/dots-three-vertical-dark.svg'">
+      <ion-row style="margin-top:20px;">
+        <ion-col size=1>
+
+        </ion-col>
+        <ion-col size="2.5">
+          <div class="feedAvatar" (click)="clickAvatar()">
+            <img src={{channelAvatar}}>
+            <div class="offline" [class.online]="nodeStatus[nodeId] == 0"></div>
+          </div>
+        </ion-col>
+        <ion-col size="8.5">
+          <ion-card-title>{{channelName}}</ion-card-title>
+          <ion-card-subtitle>{{channelDesc}}</ion-card-subtitle>
+        </ion-col>
+        <ion-col size=1></ion-col>
+        <ion-col size=11>
+          <ion-row class="sub-row">
+            <img  [src]="!theme.darkMode ? './assets/images/darkmode/bubble2.svg' : './assets/images/darkmode/bubble2.svg'"> <br>
+            <ion-label><span>{{ channelSubscribes }}</span> {{ 'common.followers' | translate }}</ion-label>
+          </ion-row>
+        </ion-col>
+      </ion-row>
+    </ion-card>
+    <ion-row>
+       <ion-col size="12" class="channel-btns-row">
+        <ion-button *ngIf="!followStatus" class="unsubscribed" fill="outline" (click)="subscribe()">
+          <ion-label>{{'SearchPage.follow' | translate}}</ion-label>
+          <ion-ripple-effect></ion-ripple-effect>
+        </ion-button>
+
+        <ion-button *ngIf="followStatus" class="subscribed" (click)="unsubscribe()">
+          <ion-label>{{ 'SearchPage.following' | translate }}</ion-label>
+          <ion-ripple-effect></ion-ripple-effect>
+        </ion-button>
+
+       </ion-col>
     </ion-row>
-    <p>{{ channelDesc }}</p>
-    <ion-row class="channel-btns-row">
+
+    <ion-row *ngIf="!followStatus">
+      <ion-col size="12">
+       <div class="bigCircle">
+           <div class="smallCircle">
+              <img src="./assets/images/lock.svg"/>
+           </div>
+       </div>
+      </ion-col>
+
+      <ion-col size="12" class="subscribeChannel">
+        {{"ChannelsPage.subscribeChannel"|translate}}
+      </ion-col>
+    </ion-row>
+
+    <ion-ripple-effect></ion-ripple-effect>
+    <!-- <ion-row class="channel-btns-row">
       <ion-col size="3.5">
         <ion-button *ngIf="!followStatus" class="unsubscribed" fill="outline" (click)="subscribe()">
           <ion-label>{{'SearchPage.follow' | translate}}</ion-label>
@@ -39,20 +87,64 @@
           <ion-label>{{ 'ChannelsPage.tip' | translate }}</ion-label>
         </ion-button>
       </ion-col>
+    </ion-row> -->
+  </ion-grid>
+
+
+
+
+  <ion-grid class="channel-title" *ngIf="followStatus">
+    <ion-row>
+      <ion-col size="12" class="sub-row" *ngIf="nftAssetList.length>0 || isMine === 0">
+        <img src="./assets/images/nftAssets.svg"/><span class="posttitle">{{"common.assets" | translate }}</span>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+
+      <ion-col size="6" *ngIf="isMine === 0">
+        <app-addasset
+        (addAsset)="addAsset()"
+        ></app-addasset>
+      </ion-col>
+
+      <ion-col size="6" *ngFor="let assetItem of nftAssetList let assetIndex=index">
+        <app-assetitem
+        [assetItem] = "assetItem"
+        (clickAssetItem) = "clickAssetItem($event)"
+        >
+        </app-assetitem>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <ion-grid style="padding-right:20px;" *ngIf="followStatus&&nftAssetList.length>0" (click)="viewall()">
+    <ion-row>
+      <ion-col size="12" class="viewall">{{'ChannelsPage.viewall'|translate}}</ion-col>
+    </ion-row>
+  </ion-grid>
+
+
+
+
+  <ion-grid class="channel-title" style="padding-top: 0px;" *ngIf="followStatus">
+    <ion-row>
+      <ion-col size="12" class="sub-row">
+        <img src="./assets/images/posttitle.svg"/><span class="posttitle">{{"common.posts" | translate }}</span>
+      </ion-col>
     </ion-row>
   </ion-grid>
 
   <!-- EMPTY CONTAINER -->
-  <div *ngIf="postList.length === 0" class="empty-container">
+  <div *ngIf="followStatus&&postList.length === 0" class="empty-container">
     <img src="./assets/images/empty-feeds-icon.svg">
     <h1>{{ 'ChannelsPage.allempty' | translate }}</h1>
     <p>{{ 'ChannelsPage.emptyDes' | translate }}</p>
   </div>
 
   <!-- POSTS -->
-  <div *ngIf="postList.length > 0">
+  <div *ngIf="followStatus&&postList.length > 0">
     <div  *ngFor="let post of postList let i=index" >
-    <ion-grid class="post-grid ion-activatable ripple channelgird" [class.darkPostGrid]="theme.darkMode" id={{post.nodeId}}-{{post.channel_id}}-{{post.id}}-{{post.content.mediaType}}>
+    <ion-grid style="padding-top:5px" class="post-grid ion-activatable ripple channelgird" [class.darkPostGrid]="theme.darkMode" id={{post.nodeId}}-{{post.channel_id}}-{{post.id}}-{{post.content.mediaType}}>
       <ion-row class="post-row">
         <ion-col class="img-col" size="2.5">
           <div class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode">
@@ -153,15 +245,18 @@
 
           <ion-row class="bottom-row">
             <ion-col size="2.25" (click)="like(post.nodeId, post.channel_id, post.id)">
-              <img [src]="checkMyLike(post.nodeId, post.channel_id, post.id) ? '/assets/images/like-s.svg' : '/assets/images/like.svg'">
+              <img [src]="checkMyLike(post.nodeId, post.channel_id, post.id) ? '/assets/images/like-s.svg' : '/assets/images/darkmode/like.svg'" *ngIf="theme.darkMode">
+              <img [src]="checkMyLike(post.nodeId, post.channel_id, post.id) ? '/assets/images/like-s.svg' : '/assets/images/like.svg'" *ngIf="!theme.darkMode">
               <ion-label [class.liked]="checkMyLike(post.nodeId, post.channel_id, post.id)">{{ post.likes }}</ion-label>
             </ion-col>
             <ion-col size="2.25" (click)="showComment(post.nodeId, post.channel_id, post.id)">
-              <img src="/assets/images/bubble-line.svg">
+              <img src="/assets/images/bubble-line.svg" *ngIf="!theme.darkMode">
+              <img src="/assets/images/darkmode/comment.svg" *ngIf="theme.darkMode">
               <ion-label>{{ post.comments }}</ion-label>
             </ion-col>
             <ion-col  (click)="clickDashang(post.nodeId,post.channel_id, post.id)" *ngIf="isAndroid">
-              <img src="/assets/images/dashang.svg">
+              <img src="/assets/images/dashang.svg" *ngIf="!theme.darkMode">
+              <img src="/assets/images/darkmode/tip.svg" *ngIf="theme.darkMode">
             </ion-col>
             <ion-col>
               <ion-label class="status" *ngIf="post.post_status === 2" style="right: -5px;">{{ 'common.edit' | translate}} </ion-label>

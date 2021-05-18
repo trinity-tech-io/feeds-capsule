@@ -1,5 +1,5 @@
-import { Component, OnInit,NgZone,ViewChild} from '@angular/core';
-import { PopoverController,NavParams, IonInput} from '@ionic/angular';
+import { Component, OnInit,NgZone} from '@angular/core';
+import { PopoverController,NavParams} from '@ionic/angular';
 import { ThemeService } from 'src/app/services/theme.service';
 import { FeedService } from 'src/app/services/FeedService';
 import { NativeService } from 'src/app/services/NativeService';
@@ -10,13 +10,17 @@ import { NativeService } from 'src/app/services/NativeService';
   styleUrls: ['./payprompt.component.scss'],
 })
 export class PaypromptComponent implements OnInit {
-  @ViewChild('elaAmount', {static: false}) elaAmount:IonInput;
   public elaAddress:string ="";
   public amount:any = "";
   public memo: string = "";
   public defalutMemo: string = "";
   public title: string = "";
   public disableMemo:boolean = false;
+  public isAdvancedSetting:boolean = false;
+  public nodeId:string = "";
+  public channelId:number = null;
+  public channelAvatar:string = "";
+  public channelName:string = "";
   constructor(
     private native:NativeService,
     private feedService:FeedService,
@@ -28,7 +32,13 @@ export class PaypromptComponent implements OnInit {
   }
 
   ngOnInit() {
-
+    this.nodeId = this.navParams.get('nodeId') || "";
+    if(this.nodeId!=""){
+      this.channelId = this.navParams.get('channelId') || 0;
+      let channel = this.feedService.getChannelFromId(this.nodeId, this.channelId);
+      this.channelName = channel.name || "";
+      this.channelAvatar = this.feedService.parseChannelAvatar(channel.avatar) || "";
+    }
     this.elaAddress = this.navParams.get('elaAddress');
     this.memo = this.defalutMemo = this.navParams.get('defalutMemo');
     this.title = this.navParams.get('title');
@@ -36,11 +46,6 @@ export class PaypromptComponent implements OnInit {
     if (this.defalutMemo != ""){
       this.disableMemo = true;
     }
-
-    let sid = setTimeout(() => {
-      this.elaAmount.setFocus();
-      clearTimeout(sid);
-    }, 300);
   }
 
   cancel(){
@@ -83,5 +88,9 @@ export class PaypromptComponent implements OnInit {
   number(text) {
     var numPattern = /^(([1-9]\d*)|\d)(.\d{1,9})?$/;
     return numPattern.test(text);
+  }
+
+  advancedSettings(){
+    this.isAdvancedSetting = !this.isAdvancedSetting;
   }
 }

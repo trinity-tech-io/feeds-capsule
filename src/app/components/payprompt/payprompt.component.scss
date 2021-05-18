@@ -1,58 +1,130 @@
 .container {
     background: #ffffff;
-    border-radius: 12px;
+    border-radius: 10px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: 25px 5px;
-
-    img {
-        width: 104.2px;
-        height: 83.2px;
-        object-fit: contain;
-    }
-
-    h2, h3, h4, ion-input {
-        color: #161740;
-        margin: 0;
-        padding: 0 15px;
-        font-size: 13px;
-        width: 100%;
-    }
-
-    h4, ion-input {
-        padding-top: 5px;
-        padding-bottom: 20px;
-        --padding-top: 5px;
-        --padding-bottom: 20px;
-        --padding-start: 15px;
-        font-weight: 400;
-    }
-
-    h2 {
-        padding-bottom: 20px;
+    padding: 0px 5px;
+    padding-bottom: 15px;
+    .paytitle{
         font-size: 20px;
-        font-weight: 700;
+        font-weight: bold;
+        font-stretch: normal;
+        font-style: normal;
         text-align: center;
+        color: #7624fe;
+        text-align:center;
+        margin: 0px;
+        margin-top: 10px;
     }
 
-    h3 {
-        padding-top: 5px;
-        font-weight: 700;
-        text-align: left;
+    .big{
+        width: 150px;
+        height: 150px;
+        background-color: #F0E8FF;
+        border-radius:50%;
+        position: relative;
+
+        img{
+            position: absolute;
+            width:125px;
+            height:125px;
+            left: 13px;
+            top: 13px;
+            border: 10px solid #D8C1FF;
+            border-radius: 50%;
+        }
+    }
+
+    .key{
+        font-size: 16px;
+        font-weight: bold;
+        font-stretch: normal;
+        font-style: normal;
+        color: #000000;
+        margin: 0px;
+    }
+
+    .value{
+        font-size: 14px;
+        font-weight: normal;
+        font-stretch: normal;
+        font-style: normal;
+        border-radius:10px;
+        background-color:#f6f5f6;
+        color: #9ca0a4;
+        padding-left:20px;
+        padding-top: 10px;
+        padding-bottom:10px;
+        margin: 0px;
+    }
+
+    .borderbottom{
+        border-bottom:1px solid #000;
+    }
+
+    .Advancedsettings{
+        font-size: 14px;
+        font-weight: bold;
+        font-stretch: normal;
+        font-style: normal;
+        text-align:center;
+        color:#7624fe;
+        margin:0px;
+        margin-top: 20px;
+    }
+
+    .logo{
+       display:flex;
+       align-items: center;
+
+       span{
+        font-size: 14px;
+        font-weight: normal;
+        font-stretch: normal;
+        font-style: normal;
+        color: #000000;
+        margin-right:2px;
+       }
+
+       img{
+        margin-top: 2px;
+       }
     }
 
     ion-input {
-        color: #8888b0;
+      font-size: 14px;
+      font-weight: normal;
+      font-stretch: normal;
+      font-style: normal;
+      text-align: left;
+      color: #9ca0a4;
+      margin: 0;
+      width: 100%;
+      --padding-start: 15px;
+      --padding-top: 0px;
     }
 }
 
 .darkContainer {
     background: #191a2f;
 
-    h2, h3, h4 {
+    .key{
       color: #ffffff;
+    }
+
+    .borderbottom{
+        border-bottom:1px solid #fff;
+    }
+
+    .logo{
+        display:flex;
+        align-items: center;
+
+        span{
+         color: #fff;
+        }
     }
 
     ion-input {

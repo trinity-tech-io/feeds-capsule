@@ -114,6 +114,10 @@ export class ChannelsPage implements OnInit {
     public roundWidth:number = 40;
     public isAndroid:boolean = true;
 
+    public isMine:number = null;
+
+    public nftAssetList:any = [];
+
   constructor(
     private platform: Platform,
     private popoverController:PopoverController,
@@ -163,7 +167,7 @@ export class ChannelsPage implements OnInit {
     }
 
     this.pauseAllVideo();
-    this.viewHelper.showPayPrompt(elaAddress);
+    this.viewHelper.showPayPrompt(this.nodeId,this.channelId,elaAddress);
   }
 
   async unsubscribe(){
@@ -266,6 +270,18 @@ export class ChannelsPage implements OnInit {
 
   }
   ionViewWillEnter() {
+
+    this.isMine = this.checkChannelIsMine();
+    let nftAssetList = this.feedService.getNftAssetList();
+    if(nftAssetList.length>1){
+       if(this.isMine===0){
+          this.nftAssetList =_.cloneDeep(nftAssetList).slice(0,1);
+       }else{
+        this.nftAssetList =_.cloneDeep(nftAssetList).slice(0,2);
+       }
+    }else{
+      this.nftAssetList =_.cloneDeep(nftAssetList);
+    }
 
     if(this.platform.is("ios")){
       this.isAndroid = false;
@@ -1297,10 +1313,22 @@ export class ChannelsPage implements OnInit {
       return;
     }
     this.pauseVideo(nodeId+"-"+channelId+"-"+postId);
-    this.viewHelper.showPayPrompt(elaAddress);
+    this.viewHelper.showPayPrompt(nodeId,channelId,elaAddress);
   }
 
   retry(nodeId: string, feedId: number, postId: number){
     this.feedService.republishOnePost(nodeId, feedId, postId);
+  }
+
+   addAsset(){
+    this.native.navigateForward(['mintnft'],{});
+  }
+
+  clickAssetItem(parms:any){
+    this.native.navigateForward(['assetdetails'],{});
+  }
+
+  viewall(){
+    this.native.navigateForward(['collections'],{queryParams:{"nodeId":this.nodeId,"channelId":this.channelId}});
   }
 }

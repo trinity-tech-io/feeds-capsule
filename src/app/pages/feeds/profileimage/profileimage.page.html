@@ -1,75 +1,74 @@
-<!-- <ion-header> -->
-  <app-titlebar></app-titlebar>
-  <div *ngIf="connectionStatus == 1" class="offline-header"></div>
-<!-- </ion-header> -->
-<ion-content>
-  <ion-grid>
-    <ion-row>
 
-      <!-- DEFAULT AVATARS -->
-      <ion-col 
-        *ngFor="let avatar of avatars"
-        size="3"
-      >
-        <div
-          class="avatar"
-          [ngStyle]="{ 'background-image': 'url(' + avatar.image + ')' }"
-          (click)="selectIndex(avatar.index, avatar.image)"
+<app-titlebar></app-titlebar>
+<div *ngIf="connectionStatus == 1" class="offline-header"></div>
+  <ion-content>
+    <ion-grid>
+      <ion-row>
+
+        <!-- DEFAULT AVATARS -->
+        <ion-col
+          *ngFor="let avatar of avatars"
+          size="4"
         >
-        <div 
-          *ngIf="select === avatar.index"
-          class="check" 
-          [ngStyle]="{ 'border': theme.darkMode ? '3px solid #191a2f' : '4px solid #f8f8ff' }"
+          <div
+            class="avatar"
+            [ngStyle]="{ 'background-image': 'url(' + avatar.image + ')' }"
+            (click)="selectIndex(avatar.index, avatar.image)"
           >
-          <ion-icon 
-            name="checkmark"
-            [ngStyle]="{ 'color': theme.darkMode ? '#191a2f' : '#f8f8ff' }"
+          <div
+            *ngIf="select === avatar.index"
+            class="check"
+            [ngStyle]="{ 'border': theme.darkMode ? '3px solid #191a2f' : '4px solid #f8f8ff' }"
+            >
+            <ion-icon
+              name="checkmark"
+              [ngStyle]="{ 'color': theme.darkMode ? '#191a2f' : '#f8f8ff' }"
+            >
+            </ion-icon>
+            </div>
+          </div>
+        </ion-col>
+
+        <!-- HAS UPLOADED AVATAR -->
+        <ion-col
+          *ngIf="uploadedAvatar"
+          size="4"
+        >
+        <div
+          [ngStyle]="{ 'background-image': 'url(' + uploadedAvatar + ')' }"
+          size="4"
+          (click)="selectIndex(0, uploadedAvatar)"
+          class="avatar uploadedAvatar"
+        >
+          <div
+            *ngIf="select === 0"
+            class="check"
+            [ngStyle]="{ 'border': theme.darkMode ? '3px solid #191a2f' : '4px solid #f8f8ff' }"
           >
-          </ion-icon>
+            <ion-icon
+              name="checkmark"
+              [ngStyle]="{ 'color': theme.darkMode ? '#191a2f' : '#f8f8ff' }"
+            >
+            </ion-icon>
           </div>
         </div>
-      </ion-col>
-      
-      <!-- HAS UPLOADED AVATAR -->
-      <ion-col 
-        *ngIf="uploadedAvatar"
-        size="3"
-      >
-      <div
-        [ngStyle]="{ 'background-image': 'url(' + uploadedAvatar + ')' }"
-        size="3"
-        (click)="selectIndex(0, uploadedAvatar)"
-        class="avatar uploadedAvatar"
-      >
-        <div 
-          *ngIf="select === 0"
-          class="check" 
-          [ngStyle]="{ 'border': theme.darkMode ? '3px solid #191a2f' : '4px solid #f8f8ff' }"
-        >
-          <ion-icon 
-            name="checkmark"
-            [ngStyle]="{ 'color': theme.darkMode ? '#191a2f' : '#f8f8ff' }"
-          >
-          </ion-icon>
-        </div>
-      </div>
-      </ion-col>
+        </ion-col>
 
-      <!-- UPLOAD AVATAR -->
-      <ion-col size="3">
-        <div 
-          class="avatar" 
-          [ngStyle]="{ 'background-image': theme.darkMode ? 'url(/assets/images/profile-add-dark.svg)' : 'url(/assets/images/profile-add.svg)' }" 
-          (click)="selectIndex(0)"
-        >
-        </div>
-      </ion-col>
-    </ion-row>
-  
-    <ion-row class="btn-row">
-      <ion-button color="primary" (click)="confirm()">
-        <ion-label>{{ 'ProfileimagePage.confirm' | translate }}</ion-label>
-      </ion-button>
-    </ion-row>
-  </ion-grid>
-</ion-content>
+        <!-- UPLOAD AVATAR -->
+        <ion-col size="4">
+          <div
+            class="avatar"
+            [ngStyle]="{ 'background-image': theme.darkMode ? 'url(/assets/images/profile-add-dark.svg)' : 'url(/assets/images/profile-add.svg)' }"
+            (click)="selectIndex(0)"
+          >
+          </div>
+        </ion-col>
+      </ion-row>
+
+      <ion-row class="btn-row">
+        <ion-button (click)="confirm()">
+          <ion-label>{{ 'ProfileimagePage.confirm' | translate }}</ion-label>
+        </ion-button>
+      </ion-row>
+    </ion-grid>
+  </ion-content>

@@ -36,7 +36,7 @@
       >
         <ion-label style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ channel.name}}</ion-label>
         <ion-row>
-          <img src="./assets/images/bubble2.svg"> <br>
+          <img [src]="!theme.darkMode ? './assets/images/bubble2.svg' : './assets/images/darkmode/bubble2.svg'"> <br>
           <p><span>{{ channel.subscribers }}</span> {{ 'common.followers' | translate }}</p>
         </ion-row>
       </ion-col>

@@ -1,42 +1,42 @@
 <ion-grid [class.darkContainer]="theme.darkMode">
-  <ion-row style="margin:20px 0px">
+  <ion-row style="margin:20px 0px;padding:0px 10px;">
     <ion-col size="12" class="dTitle white">
       {{'common.des1' | translate}}
     </ion-col>
 
-   <ion-col size="4" class="left  key">
+   <ion-col size="12" class="key white" *ngIf="developerMode">
     {{'common.server' | translate}}
    </ion-col>
 
-   <ion-col size="8"  class="left value">
+   <ion-col size="12"  class="value" *ngIf="developerMode">
     {{did}}
    </ion-col>
 
-   <ion-col size="4" class="left key">
-    {{'common.feed' | translate}}
+   <ion-col size="12" class="key white">
+    {{'common.channel' | translate}}
    </ion-col>
 
-   <ion-col size="8"  class="left value">
+   <ion-col size="12"  class="value">
     {{feedName}}
    </ion-col>
 
-   <ion-col size="4" class="left key">
+   <ion-col size="12" class="key white">
     {{'common.description' | translate}}
    </ion-col>
 
-   <ion-col size="8"  class="left value">
+   <ion-col size="12"  class="value">
     {{feedDesc}}
    </ion-col>
 
-   <ion-col size="4" class="left key">
+   <ion-col size="12" class="key white">
     {{'FeedspreferencesPage.des' | translate}}
    </ion-col>
 
-   <ion-col size="8"  class="left value" *ngIf="!feedPublicStatus">
+   <ion-col size="12"  class="value" *ngIf="!feedPublicStatus">
     {{ 'SettingsPage.off' | translate }}
    </ion-col>
 
-   <ion-col size="8"  class="left value" *ngIf="feedPublicStatus">
+   <ion-col size="12"  class="value" *ngIf="feedPublicStatus">
     {{ 'SettingsPage.on' | translate }}
    </ion-col>
   </ion-row>

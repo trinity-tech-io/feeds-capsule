@@ -1,9 +1,9 @@
 import { Component, OnInit, ViewChild,NgZone} from '@angular/core';
 import { PopoverController,NavParams} from '@ionic/angular';
-import { ThemeService } from 'src/app/services/theme.service';
-import { FeedService } from 'src/app/services/FeedService';
-import { NativeService } from 'src/app/services/NativeService';
-import { IntentService } from 'src/app/services/IntentService';
+import { ThemeService } from '../../services/theme.service';
+import { FeedService } from '../../services/FeedService';
+import { NativeService } from '../../services/NativeService';
+import { IntentService } from '../../services/IntentService';
 
 @Component({
   selector: 'app-serverprompt',
@@ -16,14 +16,14 @@ export class ServerpromptComponent implements OnInit {
   public serverName:string = "";
   public serverDes:string ="";
   public elaAddress:string ="";
-  constructor( 
-    private native:NativeService, 
+  constructor(
+    private native:NativeService,
     private feedService:FeedService,
     private navParams: NavParams,
-    private popover: PopoverController,  
+    private popover: PopoverController,
     private intentService: IntentService,
     public theme: ThemeService,
-    public  zone:NgZone) { 
+    public  zone:NgZone) {
 
   }
 
@@ -52,21 +52,17 @@ export class ServerpromptComponent implements OnInit {
       this.native.toastWarn('common.connectionError');
       return;
     }
-    
+
     if (this.serverName == ""){
       this.native.toast_trans('IssuecredentialPage.inputName');
       return;
     }
-      
+
     if (this.serverDes == ""){
       this.native.toast_trans('IssuecredentialPage.inputServerDes');
       return;
     }
 
-    // if (this.elaAddress == ""){
-    //   this.native.toast_trans('IssuecredentialPage.inputElaAddress');
-    //   return;
-    // }
 
     this.popover.dismiss();
     this.native.showLoading("common.waitMoment",(isDismiss)=>{
@@ -77,7 +73,6 @@ export class ServerpromptComponent implements OnInit {
         this.native.hideLoading();
       });
     });
-    
   }
 
 }
