@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { ThemeService } from 'src/app/services/theme.service';
 import { NavParams} from '@ionic/angular';
 @Component({
   selector: 'app-alertdialog',
@@ -18,7 +17,6 @@ export class AlertdialogComponent implements OnInit {
   public that:any;
 
   constructor(
-    public theme: ThemeService,
     private navParams: NavParams
   ) {
       this.that = this.navParams.get('that');

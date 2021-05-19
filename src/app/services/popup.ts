@@ -38,7 +38,7 @@ export class PopupProvider {
         that: any,
         title: string,
         message: string,
-        okFunction: any, 
+        okFunction: any,
         imgageName: string,
         okText?: string) {
         let ok = okText || "common.confirm";
@@ -52,7 +52,7 @@ export class PopupProvider {
             component:AlertdialogComponent,
             backdropDismiss: false,
             componentProps: {
-                "that":that, 
+                "that":that,
                 "title":title,
                 "message":message,
                 "okText":okText,
@@ -60,12 +60,12 @@ export class PopupProvider {
                 "imgageName":imgageName
             },
           });
-      
+
           this.popover.onWillDismiss().then(()=>{
                if(this.popover!=null){
                  this.popover = null;
                }
-                
+
           })
          await this.popover.present();
 
@@ -83,10 +83,10 @@ export class PopupProvider {
         that: any,
         title: string,
         message: string,
-        cancelFunction: any, 
-        okFunction: any, 
+        cancelFunction: any,
+        okFunction: any,
         imgageName: string,
-        okText?: string, 
+        okText?: string,
         cancelText?: string
     ){
         let ok = okText || "common.confirm";
@@ -100,7 +100,7 @@ export class PopupProvider {
             cssClass: 'ConfirmdialogComponent',
             component:ConfirmdialogComponent,
             componentProps: {
-                "that":that, 
+                "that":that,
                 "title":title,
                 "message":message,
                 "okText":okText,
@@ -110,12 +110,12 @@ export class PopupProvider {
                 "imgageName":imgageName
             },
           });
-      
+
           this.popover.onWillDismiss().then(()=>{
                if(this.popover!=null){
                  this.popover = null;
                }
-                
+
           })
          await this.popover.present();
 
