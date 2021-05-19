@@ -54,6 +54,7 @@ export class MintnftPage implements OnInit {
   ionViewWillLeave(){
     this.removeEvent();
     this.event.publish(FeedsEvent.PublishType.notification);
+    this.event.publish(FeedsEvent.PublishType.addProflieEvent);
   }
 
   initTile(){

@@ -231,6 +231,10 @@ export class ProfilePage implements OnInit {
     this.changeType(this.selectType);
     this.connectionStatus = this.feedService.getConnectionStatus();
 
+    this.events.subscribe(FeedsEvent.PublishType.updateTitle,()=>{
+        this.initTitleBar();
+    });
+
     this.events.subscribe(FeedsEvent.PublishType.unfollowFeedsFinish, () => {
       this.zone.run(() => {
         this.initFolling();
@@ -515,6 +519,7 @@ export class ProfilePage implements OnInit {
     }
     this.isAddProfile = false;
     this.hideSharMenuComponent = false;
+    this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
     this.events.unsubscribe(FeedsEvent.PublishType.refreshSubscribedChannels);
     this.events.unsubscribe(FeedsEvent.PublishType.updateLikeList);
     this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);

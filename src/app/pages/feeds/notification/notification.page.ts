@@ -64,6 +64,7 @@ export class NotificationPage {
   }
 
   removeEvent(){
+    this.isAddNotification = false;
     this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
     this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
   }

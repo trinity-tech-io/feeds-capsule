@@ -86,6 +86,8 @@ export class CurrencyviewallPage implements OnInit {
   ionViewWillLeave(){
     this.removeEvent();
     this.event.publish(FeedsEvent.PublishType.search);
+    this.event.publish(FeedsEvent.PublishType.notification);
+    this.event.publish(FeedsEvent.PublishType.addProflieEvent);
   }
 
   initTile(){

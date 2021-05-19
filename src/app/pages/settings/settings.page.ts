@@ -6,7 +6,6 @@ import { NativeService } from '../../services/NativeService';
 import { FeedService } from '../../services/FeedService';
 import { PopupProvider } from '../../services/popup';
 import { StorageService } from '../../services/StorageService';
-import { AppService } from '../../services/AppService';
 import { LogUtils } from 'src/app/services/LogUtils';
 import { Events } from 'src/app/services/events.service';
 import { TitleBarService } from 'src/app/services/TitleBarService';
@@ -37,7 +36,6 @@ export class SettingsPage implements OnInit {
     private events: Events,
     private native: NativeService,
     private translate:TranslateService,
-    private appService: AppService,
     public theme:ThemeService,
     public popupProvider:PopupProvider,
     public storageService:StorageService,

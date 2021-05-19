@@ -139,6 +139,7 @@ export class ExplorefeedsPage implements OnInit {
   }
 
   removeEvent(){
+    this.isAddSearch = false;
     this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
     this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
   }
