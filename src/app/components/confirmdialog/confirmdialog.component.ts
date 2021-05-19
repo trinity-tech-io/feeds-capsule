@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { ThemeService } from 'src/app/services/theme.service';
 import { NavParams} from '@ionic/angular';
 @Component({
   selector: 'app-confirmdialog',
@@ -17,7 +16,6 @@ export class ConfirmdialogComponent implements OnInit {
   public that:any;
   public imgPath:string = "";
   constructor(
-    public theme: ThemeService,
     private navParams: NavParams
   ) {
       this.that = this.navParams.get('that');
