@@ -112,6 +112,8 @@ export const zh = {
         "deleteComment": "删除微频",
         "confirmdeletion1": "确认删除这条微评?",
         "bindingCompleted":"绑定成功!",
+        "error":"错误",
+        "transMsgTimeout":"服务未响应，请稍候再试"
     },
     "app":{
         "profileDetails": "档案详情",

@@ -111,7 +111,9 @@ export const en = {
         "deletePost":"Delete Post",
         "deleteComment":"Delete Comment",
         "confirmdeletion1":"Are you sure you want to delete this comment?",
-        "bindingCompleted":"Binding Completed!"
+        "bindingCompleted":"Binding Completed!",
+        "error":"Error",
+        "transMsgTimeout":"The server is not responding. Please try again later."
     },
     "app": {
         "profileDetails": "Profile Details",
