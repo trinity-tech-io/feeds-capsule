@@ -118,7 +118,7 @@ export class ProfiledetailPage implements OnInit {
     this.connectionStatus = this.feedService.getConnectionStatus();
     this.developerMode = this.feedService.getDeveloperMode();
     this.initTitle();
-    
+
     let signInData = this.feedService.getSignInData() || {};
     this.name = signInData["nickname"] || signInData["name"] || "";
     this.avatar = signInData["avatar"] || null;

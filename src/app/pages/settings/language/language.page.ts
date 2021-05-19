@@ -42,6 +42,8 @@ export class LanguagePage implements OnInit {
   ionViewWillLeave(){
     this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
     this.events.publish(FeedsEvent.PublishType.search);
+    this.events.publish(FeedsEvent.PublishType.notification);
+    this.events.publish(FeedsEvent.PublishType.addProflieEvent);
   }
   selectLanguage(language) {
     this.languageService.setCurLang(language.code);
