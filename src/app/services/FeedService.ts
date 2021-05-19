@@ -121,7 +121,8 @@ export class FeedService {
     private standardAuth: StandardAuthService,
     private addFeedService: AddFeedService,
     private dataHelper: DataHelper,
-    private intentService: IntentService
+    private intentService: IntentService,
+    //public  theme:ThemeService
   ) {
     eventBus = events;
     this.init();

@@ -316,12 +316,11 @@ export class SearchPage implements OnInit {
     this.curAddingItem = addingchannel;
     this.popover = this.popupProvider.ionicConfirm(
       this,
-      // "ConfirmdialogComponent.signoutTitle",
-      "",
+      "SearchPage.confirmTitle",
       "SearchPage.des1",
       this.cancel,
       this.confirm1,
-      'tskth.svg',
+      './assets/images/signout.svg',
     );
   }
 

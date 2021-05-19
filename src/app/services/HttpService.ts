@@ -85,7 +85,8 @@ export class HttpService{
       "",
       "common.httperror",
       this.confirm,
-      'tskth.svg'
+      'tskth.svg',
+      "common.ok"
     );
   }
 

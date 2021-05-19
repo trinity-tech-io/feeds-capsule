@@ -120,12 +120,11 @@ export class SettingsPage implements OnInit {
   cleanData(){
     this.popover = this.popupProvider.ionicConfirm(
       this,
-      // "ConfirmdialogComponent.signoutTitle",
-      "",
+      "SearchPage.confirmTitle",
       "SettingsPage.des",
       this.cancel,
       this.confirm,
-      'tskth.svg'
+      ''
     );
   }
 

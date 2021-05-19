@@ -171,12 +171,11 @@ export class FeedspreferencesPage implements OnInit {
 developerModeConfirm(){
   this.popover = this.popupProvider.ionicConfirm(
     this,
-    // "ConfirmdialogComponent.signoutTitle",
-    "",
+    "SearchPage.confirmTitle",
     "ServerInfoPage.des1",
     this.cancel,
     this.confirm,
-    'tskth.svg',
+    "./assets/images/tskth.svg",
     "ServerInfoPage.des2",
     "ServerInfoPage.des3",
   );
