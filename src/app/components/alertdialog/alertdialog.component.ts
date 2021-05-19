@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { NavParams} from '@ionic/angular';
+import { ThemeService } from 'src/app/services/theme.service';
 @Component({
   selector: 'app-alertdialog',
   templateUrl: './alertdialog.component.html',
@@ -17,10 +18,11 @@ export class AlertdialogComponent implements OnInit {
   public that:any;
 
   constructor(
+    public  theme:ThemeService,
     private navParams: NavParams
   ) {
       this.that = this.navParams.get('that');
-      this.title = this.navParams.get('title');
+      this.title = this.navParams.get('title') ||  "common.confirmDialog";
       this.message = this.navParams.get('message');
       this.okText = this.navParams.get('okText');
       this.confirm = this.navParams.get('okFunction');

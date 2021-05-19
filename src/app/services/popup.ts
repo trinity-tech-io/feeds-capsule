@@ -4,7 +4,6 @@ import { AlertController} from '@ionic/angular';
 import {ConfirmdialogComponent} from '../components/confirmdialog/confirmdialog.component';
 import {AlertdialogComponent} from '../components/alertdialog/alertdialog.component';
 import { PopoverController} from '@ionic/angular';
-
 @Injectable()
 
 export class PopupProvider {
@@ -14,7 +13,7 @@ export class PopupProvider {
     constructor(
         private alertCtrl: AlertController,
         private translate: TranslateService,
-        private popoverController:PopoverController
+        private popoverController:PopoverController,
     ) {}
 
 

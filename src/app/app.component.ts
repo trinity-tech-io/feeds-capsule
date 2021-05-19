@@ -261,12 +261,11 @@ export class MyApp {
   signout(){
     this.popover = this.popupProvider.ionicConfirm(
       this,
-      // "ConfirmdialogComponent.signoutTitle",
-      "",
+      "ConfirmdialogComponent.signoutTitle",
       "ConfirmdialogComponent.signoutMessage",
       this.cancel,
       this.confirm,
-      'tskth.svg'
+      './assets/images/signout.svg'
     );
   }
 

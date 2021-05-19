@@ -12,11 +12,13 @@ export class MenuService {
     public nodeId:string ="";
     public channelId:number =0;
     public postId:number =0;
+    public commentId:number = 0;
 
     public postDetail:any = null;
     public popover:any = null;
     public commentPostDetail:any = null;
     public replyDetail:any = null;
+
     constructor(
         private feedService: FeedService,
         private actionSheetController: ActionSheetController,
@@ -376,7 +378,7 @@ export class MenuService {
                     this.feedService.hideAlertPopover();
                 })) return;
 
-                this.popover = this.popupProvider.ionicConfirm(this,"","common.confirmdeletion",this.cancel,this.confirm,'tskth.svg');
+                this.popover = this.popupProvider.ionicConfirm(this,"common.deletePost","common.confirmdeletion",this.cancel,this.confirm,'./assets/images/shanchu.svg');
                 break;
         }
     }
@@ -391,7 +393,7 @@ export class MenuService {
         if(this.popover!=null){
             this.popover.dismiss();
         }
-        that.native.showLoading("common.waitMoment",50000).then(()=>{
+        that.native.showLoading("common.waitMoment",()=>{},50000).then(()=>{
             that.feedService.deletePost(that.nodeId, Number(that.channelId), Number(that.postId));
         }).catch(()=>{
             that.native.hideLoading();
@@ -441,8 +443,11 @@ export class MenuService {
         return this.postDetail;
     }
 
-  async showCommentDetailMenu(comment:any){
-
+    async showCommentDetailMenu(comment:any){
+        this.nodeId = comment["nodeId"];
+        this.channelId=comment["channel_id"];
+        this.postId = comment["post_id"];
+        this.commentId = comment["id"];
         let nodeId = comment["nodeId"];
         let feedId = comment["channel_id"];
         let postId = comment["post_id"];
@@ -474,12 +479,7 @@ export class MenuService {
                 role: 'destructive',
                 icon: 'trash',
                 handler: () => {
-                    this.native.showLoading("common.waitMoment",(isDismiss)=>{
-                    },50000).then(()=>{
-                        this.feedService.deleteComment(nodeId,Number(feedId),Number(postId),Number(commentId));
-                      }).catch(()=>{
-
-                      })
+                    this.popover = this.popupProvider.ionicConfirm(this,"common.deleteComment","common.confirmdeletion",this.cancel1,this.confirm1,'./assets/images/shanchu.svg');
                 }
             },
             {
@@ -502,6 +502,23 @@ export class MenuService {
 
         })
         await this.commentPostDetail.present();
+    }
+
+    cancel1(){
+       if(this.popover!=null){
+            this.popover.dismiss();
+       }
+    }
+
+    confirm1(that:any){
+        if(this.popover!=null){
+            this.popover.dismiss();
+        }
+        that.native.showLoading("common.waitMoment",()=>{},50000).then(()=>{
+            that.feedService.deleteComment(that.nodeId,Number(that.channelId),Number(that.postId),Number(that.commentId));
+          }).catch(()=>{
+            that.native.hideLoading();
+          })
     }
 
     async showReplyDetailMenu(reply:any){

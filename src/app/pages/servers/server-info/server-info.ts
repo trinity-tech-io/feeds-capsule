@@ -534,12 +534,11 @@ getPublicStatus(channelId:string){
 developerModeConfirm(){
   this.popover = this.popupProvider.ionicConfirm(
     this,
-    // "ConfirmdialogComponent.signoutTitle",
     "",
     "ServerInfoPage.des1",
     this.cancel,
     this.confirm,
-    'tskth.svg',
+    "./assets/images/signout.svg",
     "ServerInfoPage.des2",
     "ServerInfoPage.des3",
   );
