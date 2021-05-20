@@ -109,10 +109,7 @@ export class StartbindingPage implements OnInit {
 
     this.events.subscribe(FeedsEvent.PublishType.issue_credential, () => {
       this.zone.run(() => {
-          // this.native.getNavCtrl().navigateForward(['/bindservice/finish/',this.nodeId],{
-          //   replaceUrl: true
-          // });
-          this.popover = this.popup.showalertdialog(this,"common.bindingCompleted","IssuecredentialPage.des",this.bindingCompleted,"check-circle-no-loop.gif","common.ok");
+        this.popover = this.popup.showalertdialog(this,"common.bindingCompleted","IssuecredentialPage.des",this.bindingCompleted,"check-circle-no-loop.gif","common.ok");
       });
     });
 
@@ -218,6 +215,11 @@ export class StartbindingPage implements OnInit {
         that.native.setRootRouter(['/tabs/home']);
         return;
     }
-    that.native.pop();
+    if(this.popover!=null){
+      this.popover.dismiss();
+      this.popover = null;
+      that.native.pop();
+    }
+
   }
 }

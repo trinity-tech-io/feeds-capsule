@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit} from '@angular/core';
 import { PopoverController } from '@ionic/angular';
 import { FeedService } from '../../services/FeedService';
 import { NativeService } from '../../services/NativeService';
@@ -19,7 +19,6 @@ import * as _ from 'lodash';
   styleUrls: ['./feeds.page.scss'],
 })
 export class FeedsPage implements OnInit {
-  // @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   public totalunread:number = 0;
   public title = "";
   public currentTab = "";
@@ -60,13 +59,7 @@ export class FeedsPage implements OnInit {
   }
 
   ionViewWillEnter() {
-
     this.getUnReadNum();
-
-    this.event.subscribe(FeedsEvent.PublishType.updateTitle,()=>{
-      this.initTile();
-    });
-
     this.event.subscribe(FeedsEvent.PublishType.UpdateNotification,()=>{
        this.getUnReadNum();
     });
@@ -78,19 +71,12 @@ export class FeedsPage implements OnInit {
       this.popoverController.dismiss();
       this.popover = "";
     }
-    this.event.unsubscribe(FeedsEvent.PublishType.updateTitle);
     this.event.unsubscribe(FeedsEvent.PublishType.UpdateNotification);
   }
 
-  initTile(){
-    // this.titleBarService.setTitle(this.titleBar, this.translate.instant(this.title));
-  }
 
   ionViewDidEnter() {
     this.initTab();
-    this.initTile();
-    // this.titleBarService.setTitleBarBackKeyShown(this.titleBar, false);
-    // appManager.setVisible("show");
   }
 
   create(){
@@ -138,34 +124,25 @@ export class FeedsPage implements OnInit {
 
     home(){
       this.currentTab = "home";
-      // this.feedService.currentTab = "home";
       this.title = "FeedsPage.tabTitle1";
-      this.initTile();
-      // this.titleBarService.setTitleBarBackKeyShown(this.titleBar, false);
       this.feedService.setCurTab(this.currentTab);
     }
 
     profile(){
       this.currentTab = "profile";
       this.title = "FeedsPage.tabTitle2"
-      this.initTile();
-      // this.titleBarService.setTitleBarBackKeyShown(this.titleBar, false);
       this.feedService.setCurTab(this.currentTab);
     }
 
     notification(){
       this.currentTab = "notification";
       this.title = "FeedsPage.tabTitle3";
-      this.initTile();
-      // this.titleBarService.setTitleBarBackKeyShown(this.titleBar, false);
       this.feedService.setCurTab(this.currentTab);
     }
 
     search(){
       this.currentTab = "search";
       this.title = "FeedsPage.tabTitle4";
-      this.initTile();
-      // this.titleBarService.setTitleBarBackKeyShown(this.titleBar, false);
       this.feedService.setCurTab(this.currentTab);
     }
 
