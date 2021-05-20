@@ -138,9 +138,6 @@ export class ProfiledetailPage implements OnInit {
         this.connectionStatus = status;
       });
     });
-    this.events.subscribe(FeedsEvent.PublishType.updateTitle,()=>{
-      this.initTitle();
-    });
 
     this.events.subscribe(FeedsEvent.PublishType.serverConnectionChanged, () => {
       this.zone.run(() => {
@@ -167,9 +164,9 @@ export class ProfiledetailPage implements OnInit {
 
   ionViewWillLeave(){
     this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
-    this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
     this.events.unsubscribe(FeedsEvent.PublishType.serverConnectionChanged);
     this.events.unsubscribe(FeedsEvent.PublishType.removeFeedSourceFinish);
+    this.events.publish(FeedsEvent.PublishType.addConnectionChanged);
     this.events.publish(FeedsEvent.PublishType.addProflieEvent);
   }
 

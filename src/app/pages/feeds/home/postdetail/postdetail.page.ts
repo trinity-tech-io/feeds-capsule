@@ -285,20 +285,6 @@ export class PostdetailPage implements OnInit {
       });
     });
 
-    this.events.subscribe(FeedsEvent.PublishType.updateTitle,()=>{
-      this.logUtils.logd("Received updateTitle event",TAG);
-      if(this.menuService.postDetail!=null){
-        this.menuService.hideActionSheet();
-        this.menuMore();
-      }
-
-      if(this.menuService.commentPostDetail!=null){
-         this.menuService.hideCommetActionSheet();
-          this.openEditTool(this.curComment);
-      }
-      this.initTitle();
-    });
-
     this.events.subscribe(FeedsEvent.PublishType.refreshPostDetail, ()=>{
       this.zone.run(() => {
         this.logUtils.logd("Received refreshPostDetail event",TAG);
@@ -509,7 +495,6 @@ export class PostdetailPage implements OnInit {
      this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
      this.events.unsubscribe(FeedsEvent.PublishType.commentDataUpdate);
      this.events.unsubscribe(FeedsEvent.PublishType.friendConnectionChanged);
-     this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
      this.events.unsubscribe(FeedsEvent.PublishType.refreshPostDetail);
 
 

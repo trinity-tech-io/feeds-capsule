@@ -141,6 +141,10 @@ declare namespace FeedsEvent{
         innerStreamSetBinaryFinish = "feeds:innerStreamSetBinaryFinish",
         innerStreamStateChanged = "feeds:innerStreamStateChanged",
         innerStreamError = "stream:innerError",
+
+        addConnectionChanged = "feeds:addConnectionChanged",
+        addRpcRequestError = "feeds:addRpcRequestError",
+        addRpcResponseError = "feeds:addRpcResponseError",
     }
 
     type TipDialogData = {

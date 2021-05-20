@@ -68,10 +68,6 @@ ionViewWillEnter() {
     });
   });
 
-  this.events.subscribe(FeedsEvent.PublishType.updateTitle,()=>{
-    this.initTitle();
-  });
-
   this.events.subscribe(FeedsEvent.PublishType.editFeedInfoFinish,()=>{
     this.zone.run(() => {
       this.updatePublicData();
@@ -99,7 +95,6 @@ ionViewWillLeave(){
   if(value!=""){
     this.popoverController.dismiss();
   }
-  this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
   this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
   this.events.unsubscribe(FeedsEvent.PublishType.editFeedInfoFinish);
   this.events.unsubscribe(FeedsEvent.PublishType.rpcRequestError);

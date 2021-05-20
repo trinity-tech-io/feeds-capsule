@@ -107,10 +107,6 @@ export class CreatenewfeedPage implements OnInit {
       });
     });
 
-    this.events.subscribe(FeedsEvent.PublishType.updateTitle,()=>{
-      this.initTitle();
-    });
-
     this.feedService.checkBindingServerVersion(()=>{
       this.zone.run(() => {
         this.navCtrl.pop().then(()=>{
@@ -136,9 +132,11 @@ export class CreatenewfeedPage implements OnInit {
     this.events.unsubscribe(FeedsEvent.PublishType.tipdialogConfirm);
     this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
     this.events.unsubscribe(FeedsEvent.PublishType.createTopicSuccess);
-    this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
     this.events.unsubscribe(FeedsEvent.PublishType.rpcRequestError);
     this.events.unsubscribe(FeedsEvent.PublishType.rpcResponseError);
+    this.events.publish(FeedsEvent.PublishType.addRpcRequestError)
+    this.events.publish(FeedsEvent.PublishType.addRpcResponseError)
+    this.events.publish(FeedsEvent.PublishType.addConnectionChanged);
     this.native.hideLoading();
   }
 
