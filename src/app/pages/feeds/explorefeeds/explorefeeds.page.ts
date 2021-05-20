@@ -111,11 +111,8 @@ export class ExplorefeedsPage implements OnInit {
 
   ionViewWillEnter() {
     this.events.subscribe(FeedsEvent.PublishType.search, ()=>{
-      if(!this.isAddSearch){
         this.addEvent();
         this.initData();
-        this.isAddSearch = true;
-      }
     });
     this.addEvent();
     this.initData();

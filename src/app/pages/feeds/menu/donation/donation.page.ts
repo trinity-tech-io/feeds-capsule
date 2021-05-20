@@ -43,10 +43,6 @@ export class DonationPage implements OnInit {
         this.connectionStatus = status;
       });
     });
-
-    this.events.subscribe(FeedsEvent.PublishType.updateTitle,()=>{
-      this.initTitle();
-    });
   }
 
   ionViewDidEnter(){
@@ -60,7 +56,7 @@ export class DonationPage implements OnInit {
 
   ionViewWillLeave(){
     this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
-    this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
+    this.events.publish(FeedsEvent.PublishType.addConnectionChanged);
   }
 
   donation(){

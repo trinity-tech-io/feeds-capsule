@@ -481,10 +481,10 @@ export class ProfilePage implements OnInit {
   ionViewWillEnter(){
     this.initTitleBar();
     this.events.subscribe(FeedsEvent.PublishType.addProflieEvent,()=>{
-        if(!this.isAddProfile){
+        //if(!this.isAddProfile){
           this.addProflieEvent();
           this.isAddProfile = true;
-        }
+        //}
     });
 
     this.addProflieEvent();

@@ -73,10 +73,8 @@ export class NotificationPage {
     this.initTitleBar();
     this.connectionStatus = this.feedService.getConnectionStatus();
     this.events.subscribe(FeedsEvent.PublishType.notification, ()=>{
-      if(!this.isAddNotification){
         this.addEvent();
         this.isAddNotification = true;
-      }
     });
     this.addEvent();
     this.initRefresh();

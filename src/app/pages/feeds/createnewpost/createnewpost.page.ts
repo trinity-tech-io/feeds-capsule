@@ -146,10 +146,6 @@ export class CreatenewpostPage implements OnInit {
         });
       });
 
-      this.events.subscribe(FeedsEvent.PublishType.updateTitle,()=>{
-        this.initTitle();
-      });
-
       // this.events.subscribe(FeedsEvent.PublishType.notifyPostSuccess, () => {
       //   this.zone.run(() => {
       //       this.backHome();
@@ -195,7 +191,6 @@ export class CreatenewpostPage implements OnInit {
       this.hideSwitchFeed = false;
       this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
       this.events.unsubscribe(FeedsEvent.PublishType.friendConnectionChanged);
-      this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
       this.events.unsubscribe(FeedsEvent.PublishType.publishPostSuccess);
       this.events.unsubscribe(FeedsEvent.PublishType.rpcRequestError);
       this.events.unsubscribe(FeedsEvent.PublishType.rpcResponseError);

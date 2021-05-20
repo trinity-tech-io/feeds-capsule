@@ -39,7 +39,7 @@ export class HomePage implements OnInit {
   public pageNumber = 8;
   public totalData = [];
   public images = {};
-  public curPost:any = {};
+  //public curPost:any = {};
   public styleObj:any = {width:""};
 
   public hideComment = true;
@@ -110,8 +110,6 @@ export class HomePage implements OnInit {
     public videoCurKey:string = "";
 
     public roundWidth:number = 40;
-
-    public isAddBinaryEvevnt:boolean = false;
 
     public isAndroid:boolean = true;
 
@@ -186,8 +184,15 @@ export class HomePage implements OnInit {
     this.initnodeStatus(this.postList);
   }
 
-  ionViewWillEnter() {
+  addConnectionChangedEvent(){
+    this.events.subscribe(FeedsEvent.PublishType.connectionChanged,(status)=>{
+      this.zone.run(() => {
+        this.connectionStatus = status;
+      });
+    });
+  }
 
+  ionViewWillEnter() {
     if(this.platform.is("ios")){
         this.isAndroid = false;
     }
@@ -198,6 +203,23 @@ export class HomePage implements OnInit {
     this.initPostListData(true);
     this.refreshImage(0);
     this.initnodeStatus(this.postList);
+
+    this.events.subscribe(FeedsEvent.PublishType.addConnectionChanged,()=>{
+           this.addConnectionChangedEvent();
+    });
+
+    this.events.subscribe(FeedsEvent.PublishType.addRpcRequestError,()=>{
+          this.events.subscribe(FeedsEvent.PublishType.rpcRequestError,()=>{
+            this.native.hideLoading();
+          })
+    });
+
+
+    this.events.subscribe(FeedsEvent.PublishType.addRpcResponseError,()=>{
+      this.events.subscribe(FeedsEvent.PublishType.rpcResponseError,()=>{
+        this.native.hideLoading();
+      })
+});
 
     this.events.subscribe(FeedsEvent.PublishType.unfollowFeedsFinish, () => {
       this.zone.run(() => {
@@ -214,6 +236,9 @@ export class HomePage implements OnInit {
             this.events.unsubscribe(FeedsEvent.PublishType.unfollowFeedsFinish);
             this.clearData();
             this.events.unsubscribe(FeedsEvent.PublishType.clearHomeEvent);
+            this.events.unsubscribe(FeedsEvent.PublishType.addConnectionChanged);
+            this.events.unsubscribe(FeedsEvent.PublishType.addRpcRequestError);
+            this.events.unsubscribe(FeedsEvent.PublishType.addRpcResponseError);
     });
 
    this.events.subscribe(FeedsEvent.PublishType.updateTab,(isInit)=>{
@@ -257,29 +282,17 @@ export class HomePage implements OnInit {
 
  this.addBinaryEvevnt();
  this.events.subscribe(FeedsEvent.PublishType.addBinaryEvevnt, ()=>{
-    if(!this.isAddBinaryEvevnt){
       this.addCommonEvents();
       this.addBinaryEvevnt();
-      this.isAddBinaryEvevnt = true;
-    }
-
  });
 }
 
 addCommonEvents(){
   this.events.subscribe(FeedsEvent.PublishType.updateTitle,()=>{
     this.initTitleBar();
-    if(this.menuService.postDetail!=null){
-      this.menuService.hideActionSheet();
-      this.menuMore(this.curPost);
-    }
   });
 
-  this.events.subscribe(FeedsEvent.PublishType.connectionChanged,(status)=>{
-    this.zone.run(() => {
-      this.connectionStatus = status;
-    });
-  });
+  this.addConnectionChangedEvent();
 
   this.events.subscribe(FeedsEvent.PublishType.friendConnectionChanged, (friendConnectionChangedData: FeedsEvent.FriendConnectionChangedData)=>{
     this.zone.run(()=>{
@@ -445,7 +458,9 @@ addBinaryEvevnt(){
 }
 
  ionViewWillLeave(){
-
+   this.events.unsubscribe(FeedsEvent.PublishType.addConnectionChanged);
+   this.events.unsubscribe(FeedsEvent.PublishType.addRpcRequestError);
+   this.events.unsubscribe(FeedsEvent.PublishType.addRpcResponseError);
    this.events.unsubscribe(FeedsEvent.PublishType.hideDeletedPosts);
    this.events.unsubscribe(FeedsEvent.PublishType.createpost);
    this.events.unsubscribe(FeedsEvent.PublishType.unfollowFeedsFinish);
@@ -460,7 +475,6 @@ clearData(){
     this.popover = null;
   }
 
-  this.isAddBinaryEvevnt = false;
   if(this.curNodeId!=""){
     this.feedService.closeSession(this.curNodeId);
   }
@@ -491,7 +505,6 @@ clearData(){
    this.removeAllVideo();
    this.isLoadimage ={};
    this.isLoadVideoiamge ={};
-   this.curPost={};
    this.curNodeId = "";
    this.isImgPercentageLoading[this.imgDownStatusKey] = false;
    this.isImgLoading[this.imgDownStatusKey] = false;
@@ -655,8 +668,6 @@ clearData(){
   menuMore(post:FeedsData.Post){
     if (!this.feedService.checkPostIsAvalible(post))
       return;
-
-    this.curPost = post;
     let channel = this.getChannel(post.nodeId, post.channel_id);
     if (channel == null || channel == undefined)
       return ;

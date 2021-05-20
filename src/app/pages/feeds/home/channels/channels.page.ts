@@ -50,7 +50,6 @@ export class ChannelsPage implements OnInit {
   public pageNumber:number = 5;
   public totalData:any = [];
 
-  public curPost:any = {};
   public styleObj:any = {width:""};
 
 
@@ -299,15 +298,6 @@ export class ChannelsPage implements OnInit {
       });
     });
 
-    this.events.subscribe(FeedsEvent.PublishType.updateTitle,()=>{
-      if(this.menuService.postDetail!=null){
-        this.menuService.hideActionSheet();
-        this.menuMore(this.curPost);
-      }
-
-      this.initTitle();
-    });
-
     this.events.subscribe(FeedsEvent.PublishType.subscribeFinish, (subscribeFinishData: FeedsEvent.SubscribeFinishData)=> {
       this.zone.run(() => {
         let nodeId = subscribeFinishData.nodeId;
@@ -507,7 +497,6 @@ export class ChannelsPage implements OnInit {
     this.videoRotateNum["transform"] = "rotate(0deg)";
 
     this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
-    this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
     this.events.unsubscribe(FeedsEvent.PublishType.subscribeFinish);
     this.events.unsubscribe(FeedsEvent.PublishType.unsubscribeFinish);
     this.events.unsubscribe(FeedsEvent.PublishType.editPostFinish);
@@ -531,7 +520,6 @@ export class ChannelsPage implements OnInit {
     this.removeAllVideo();
     this.isLoadimage ={};
     this.isLoadVideoiamge ={};
-    this.curPost={};
     if(this.curNodeId !=""){
       this.feedService.closeSession(this.curNodeId);
     }
@@ -686,7 +674,6 @@ export class ChannelsPage implements OnInit {
       return;
 
     this.pauseAllVideo();
-    this.curPost = post;
     let isMine = this.checkChannelIsMine();
     if (isMine === 0 && post.post_status != 1) {
       this.menuService.showPostDetailMenu(post.nodeId, Number(post.channel_id), this.channelName,post.id);
