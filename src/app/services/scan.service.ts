@@ -24,13 +24,13 @@ export class ScanService {
         // this.barcodeScanner.scan(options).then(barcodeData => {
         //   console.log('Barcode data', barcodeData);
         // //   this.scannedData = barcodeData;
-    
+
         // }).catch(err => {
         //   console.log('Error', err);
         // });
         });
     }
-    
+
     createBarcode(input: string) {
         this.barcodeScanner.encode(this.barcodeScanner.Encode.TEXT_TYPE, input).then((encodedData) => {
             // console.log(encodedData);

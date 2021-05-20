@@ -110,7 +110,6 @@ export class ExplorefeedsPage implements OnInit {
   }
 
   ionViewWillEnter() {
-    this.initTitleBar();
     this.events.subscribe(FeedsEvent.PublishType.search, ()=>{
       if(!this.isAddSearch){
         this.addEvent();
@@ -125,6 +124,10 @@ export class ExplorefeedsPage implements OnInit {
   ionViewWillLeave(){
     this.events.unsubscribe(FeedsEvent.PublishType.search);
     this.removeEvent();
+  }
+
+  ionViewDidEnter() {
+    this.initTitleBar();
   }
 
   addEvent(){

@@ -62,17 +62,12 @@ export class SettingsPage implements OnInit {
     this.hideOfflineFeeds = this.feedService.getHideOfflineFeeds();
     this.developerMode = this.feedService.getDeveloperMode();
     this.initTitle();
-
-    this.events.subscribe(FeedsEvent.PublishType.updateTitle,()=>{
-      this.initTitle();
-    });
   }
 
   ionViewDidEnter(){
   }
 
   ionViewWillLeave(){
-    this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
     if(this.popover!=null){
       this.popoverController.dismiss();
     }

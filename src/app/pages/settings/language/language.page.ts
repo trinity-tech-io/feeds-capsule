@@ -35,21 +35,17 @@ export class LanguagePage implements OnInit {
 
   ionViewWillEnter() {
     this.initTitle();
-    this.events.subscribe(FeedsEvent.PublishType.updateTitle,()=>{
-    this.initTitle();
-    })
   }
   ionViewWillLeave(){
-    this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
     this.events.publish(FeedsEvent.PublishType.search);
     this.events.publish(FeedsEvent.PublishType.notification);
     this.events.publish(FeedsEvent.PublishType.addProflieEvent);
   }
-  selectLanguage(language) {
+  selectLanguage(language:any) {
     this.languageService.setCurLang(language.code);
     this.currentLang = language.code;
-    this.events.publish(FeedsEvent.PublishType.updateTitle);
     this.initTitle();
+    this.events.publish(FeedsEvent.PublishType.updateTitle);
   }
 
 }

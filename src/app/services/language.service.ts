@@ -40,7 +40,7 @@ export class LanguageService {
 
         if (this.curLang != "") {
             this.setCurLang(this.curLang);
-            return 
+            return
         }
 
         this.setCurLang(defaltLang);
@@ -59,7 +59,6 @@ export class LanguageService {
         this.feedService.setCurrentLang(currentLang);
         this.translate.setDefaultLang(currentLang);
         this.translate.use(currentLang);
-        this.events.publish(FeedsEvent.PublishType.updateTitle);
     }
 
     getCurLang(){

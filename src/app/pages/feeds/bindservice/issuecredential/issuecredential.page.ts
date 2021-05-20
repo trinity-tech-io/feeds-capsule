@@ -135,7 +135,12 @@ export class IssuecredentialPage implements OnInit {
         that.native.setRootRouter(['/tabs/home']);
         return;
     }
-    that.native.pop();
+    if(this.popover!=null){
+      this.popover.dismiss();
+      this.popover = null;
+      that.native.pop();
+    }
+
   }
 
 }
