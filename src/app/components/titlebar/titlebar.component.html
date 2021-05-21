@@ -3,13 +3,14 @@
 
   <ion-row [ngStyle]="{ 'background': theme.backgroundColor }">
     <ion-col size="1.25">
-      <img *ngIf="icons[0].visible" [src]="getIconPath(0)" (click)="outerLeftIconClicked()">
+      <img *ngIf="icons[0].visible&&!theme.darkMode" [src]="getIconPath(0)" (click)="outerLeftIconClicked()">
+      <img *ngIf="icons[0].visible&&theme.darkMode"  src="/assets/images/wback.svg" (click)="outerLeftIconClicked()">
     </ion-col>
     <ion-col size="1.25">
       <img *ngIf="icons[1].visible" [src]="getIconPath(1)" (click)="innerLeftIconClicked()">
     </ion-col>
     <ion-col size="7">
-      <ion-title [ngStyle]="{ 'color': theme.color }">{{ _title }}</ion-title>
+      <ion-title>{{ _title }}</ion-title>
     </ion-col>
     <ion-col size="1.25" [class.hidden]="!icons[2].visible" >
       <img *ngIf="icons[2].visible" [src]="getIconPath(2)" (click)="innerRightIconClicked()">
