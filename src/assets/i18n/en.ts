@@ -478,7 +478,8 @@ export const en = {
         "on": "ON",
         "off": "OFF",
         'language-setting': 'Select Your Language',
-        "change-lang":"CHANGE LANGUAGE"
+        "change-lang":"CHANGE LANGUAGE",
+        "darkMode":"Dark Mode"
     },
     "DiscoverfeedPage": {
         "title": "Discovery Square",

@@ -155,4 +155,11 @@ export class SettingsPage implements OnInit {
   navToSelectLanguage(){
     this.native.getNavCtrl().navigateForward(['/language']);
   }
+
+  setDarkMode(){
+    this.zone.run(()=>{
+      this.theme.darkMode = !this.theme.darkMode;
+      this.theme.setTheme(this.theme.darkMode);
+    });
+  }
 }

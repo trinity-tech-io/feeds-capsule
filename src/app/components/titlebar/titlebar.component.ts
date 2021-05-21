@@ -2,6 +2,7 @@ import { Component, Input } from '@angular/core';
 import { PopoverController, Platform } from '@ionic/angular';
 import { TitlebarmenuitemComponent } from '../titlebarmenuitem/titlebarmenuitem.component';
 import { TitleBarTheme, TitleBarSlotItem, TitleBarMenuItem, TitleBarIconSlot, TitleBarIcon, TitleBarNavigationMode, TitleBarForegroundMode } from './titlebar.types';
+import { ThemeService } from 'src/app/services/theme.service';
 
 @Component({
   selector: 'app-titlebar',
@@ -24,7 +25,7 @@ export class TitleBarComponent {
   public newNotifications: boolean = false;
   private navigationMode: TitleBarNavigationMode;
 
-  public theme: TitleBarTheme = { backgroundColor: "#FFFFFF", color: "000000" };
+  //public theme: TitleBarTheme = { backgroundColor: "#FFFFFF", color: "000000" };
   public foregroundMode: TitleBarForegroundMode;
 
   public icons: TitleBarSlotItem[] = [
@@ -87,7 +88,7 @@ export class TitleBarComponent {
    * @param hexColor Hex color code with format "#RRGGBB"
    */
   public setBackgroundColor(hexColor: string){
-    this.theme.backgroundColor = hexColor;
+    //this.theme.backgroundColor = hexColor;
   }
 
   /**
@@ -99,10 +100,10 @@ export class TitleBarComponent {
   public setForegroundMode(foregroundMode: TitleBarForegroundMode) {
     this.foregroundMode = foregroundMode;
 
-    if (foregroundMode == TitleBarForegroundMode.LIGHT)
-      this.theme.color = "#FFFFFF";
-    else
-      this.theme.color = "#000000";
+    // if (foregroundMode == TitleBarForegroundMode.LIGHT)
+    //   this.theme.color = "#FFFFFF";
+    // else
+    //   this.theme.color = "#000000";
   }
 
   /**
@@ -246,9 +247,9 @@ export class TitleBarComponent {
   }
 
   public setTitleBarTheme() {
-    document.body.classList.remove("dark");
-    this.theme.backgroundColor = '#f8f8ff';
-    this.theme.color = '#000000'
-    this.foregroundMode = TitleBarForegroundMode.DARK;
+    // document.body.classList.remove("dark");
+    // this.theme.backgroundColor = '#f8f8ff';
+    // this.theme.color = '#000000'
+    // this.foregroundMode = TitleBarForegroundMode.DARK;
   }
 }

@@ -480,6 +480,7 @@ export const zh = {
         "off": "关",
         'language-setting': '选择语言',
         'change-lang': '更改语言',
+        "darkMode":"深色模式"
     },
     "DiscoverfeedPage":{
         "title": "探索广场",
