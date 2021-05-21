@@ -2,7 +2,6 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { TranslateService } from "@ngx-translate/core";
 import { NativeService } from 'src/app/services/NativeService';
 import { ThemeService } from 'src/app/services/theme.service';
-import { Events } from 'src/app/services/events.service';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 
@@ -16,7 +15,6 @@ export class DisclaimerPage implements OnInit {
   public styleObj:any={"margin-top":""};
 
   constructor(
-    private events: Events,
     private native: NativeService,
     private translate: TranslateService,
     public theme: ThemeService,
@@ -30,10 +28,7 @@ export class DisclaimerPage implements OnInit {
   ionViewWillEnter() {
     this.initTitle();
     this.styleObj["height"] = (screen.height - 245) +"px";
-
-    this.events.subscribe(FeedsEvent.PublishType.updateTitle,()=>{
-      this.initTitle();
-    });
+    this.initTitle();
   }
 
   ionViewDidEnter(){
@@ -45,7 +40,6 @@ export class DisclaimerPage implements OnInit {
   }
 
   ionViewWillLeave(){
-    this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
   }
 
   // deny the disclaimer
