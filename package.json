@@ -28,6 +28,7 @@
     "@ionic-native/barcode-scanner": "^5.32.1",
     "@ionic-native/clipboard": "^5.18.0",
     "@ionic-native/core": "^5.0.0",
+    "@ionic-native/file": "^5.33.0",
     "@ionic-native/in-app-browser": "^5.10.0",
     "@ionic-native/network": "^5.33.0",
     "@ionic-native/qr-scanner": "^5.18.0",
