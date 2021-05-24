@@ -8,6 +8,10 @@ import { FeedService } from '../../../services/FeedService';
 import { Events } from '../../../services/events.service';
 import { TitleBarService } from '../../../services/TitleBarService';
 import { TitleBarComponent } from '../../..//components/titlebar/titlebar.component';
+import { File,DirectoryEntry} from '@ionic-native/file/ngx';
+import { HttpService } from '../../../services/HttpService';
+import { ApiUrl } from '../../../services/ApiUrl';
+
 @Component({
   selector: 'app-mintnft',
   templateUrl: './mintnft.page.html',
@@ -38,6 +42,8 @@ export class MintnftPage implements OnInit {
     private native: NativeService,
     private feedService:FeedService,
     private titleBarService: TitleBarService,
+    private httpService:HttpService,
+    private file:File,
     public theme:ThemeService) { }
 
   ngOnInit() {
@@ -102,12 +108,71 @@ export class MintnftPage implements OnInit {
     }
   }
 
+  getFlieObj(fileName:string,filepath:string){
+
+    this.file.resolveLocalFilesystemUrl(filepath)
+    .then((dirEntry: DirectoryEntry)=>{
+      dirEntry.getFile(fileName,{ create: true, exclusive: false},
+      (fileEntry)=>{
+        fileEntry.file(
+        (file)=>{
+          let fileReader = new FileReader();
+          fileReader.onloadend =(event:any)=>{
+            this.zone.run(()=>{
+              this.assetBase64 = fileReader.result.toString();
+              this.sendIpfs(fileName,this.assetBase64);
+            });
+          };
+
+          fileReader.onprogress = (event:any)=>{
+            this.zone.run(()=>{
+              console.log("====event.loaded==="+event.loaded);
+            })
+          };
+
+          fileReader.readAsDataURL(file);
+        },
+        ()=>{
+
+        })
+      },()=>{
+
+      });
+    }).catch((dirEntryErr)=>{
+      console.log("====dirEntryErr===="+JSON.stringify(dirEntryErr))
+    });
+  }
+
+  sendIpfs(fileName:string,file:any){
+    let blob = this.dataURLtoBlob(file);
+    var formData = new FormData();
+    formData.append("",blob);
+    this.httpService.ajaxNftPost(ApiUrl.nftAdd,formData).then((res)=>{
+         console.log("========"+JSON.stringify(res));
+    }).catch((err)=>{
+      console.log("========"+JSON.stringify(err));
+    });
+  }
+
+  dataURLtoBlob(dataurl:string) {
+    let arr = dataurl.split(','),
+        mime = arr[0].match(/:(.*?);/)[1],
+        bstr = atob(arr[1]),
+        n = bstr.length,
+        u8arr = new Uint8Array(n);
+    while (n--) {
+        u8arr[n] = bstr.charCodeAt(n);
+    }
+    return new Blob([u8arr], { type: mime });
+ }
+
   addImg(type: number) {
     this.camera.openCamera(
-      30, 0, type,
-      (assetBase64: any) => {
+      30,1, type,
+      (imgPath: any) => {
         this.zone.run(() => {
-          this.assetBase64 = assetBase64;
+          let pathObj =this.handlePath(imgPath);
+          this.getFlieObj(pathObj["fileName"],pathObj["filepath"])
         });
       },
       (err: any) => {
@@ -168,5 +233,16 @@ export class MintnftPage implements OnInit {
     }else{
         this.nftQuantity = "";
     }
+  }
+
+  handlePath(fileUri:string){
+    let pathObj = {};
+    fileUri =  fileUri.replace("/storage/emulated/0/","/sdcard/");
+    let path = fileUri.split("?")[0];
+    let lastIndex = path.lastIndexOf("/");
+    pathObj["fileName"] =  path.substring(lastIndex+1,fileUri.length);
+    pathObj["filepath"] =  path.substring(0,lastIndex);
+    pathObj["filepath"] = pathObj["filepath"].startsWith('file://') ? pathObj["filepath"] : `file://${pathObj["filepath"]}`;
+    return pathObj;
   }
 }

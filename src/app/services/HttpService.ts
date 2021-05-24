@@ -7,7 +7,7 @@ import { PopoverController} from '@ionic/angular';
 export class HttpService{
   public httpOptions = {
     headers: new HttpHeaders({
-        "Content-Type": "application/json"
+        "Content-Type": "application/json;"
       })
   };
   public popover:any = null;
@@ -54,6 +54,33 @@ export class HttpService{
     }
     return new Promise((resove, reject) => {
       this.httpClient.post(url,JSON.stringify(json),this.httpOptions).subscribe((response) => {
+        this.native.hideLoading();
+        if(response["code"] === 400){
+          this.native.toast('common.error400');
+        }else if(response["code"] === 500){
+          this.native.toast('common.error500');
+        }
+        resove(response);
+      }, (error) => {
+        let sid = setTimeout(()=>{
+          if(isLoading){
+          this.native.hideLoading();
+          }
+          this.openAlert();
+          clearTimeout(sid);
+        },500);
+        reject(error);
+      })
+    })
+  }
+
+  ajaxNftPost(url:string, json:Object,isLoading:boolean=true) {
+    if(isLoading){
+      this.native.showLoading("common.waitMoment",(isDismiss)=>{
+      });
+    }
+    return new Promise((resove, reject) => {
+      this.httpClient.post(url,json).subscribe((response) => {
         this.native.hideLoading();
         if(response["code"] === 400){
           this.native.toast('common.error400');
