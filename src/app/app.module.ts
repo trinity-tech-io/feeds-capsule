@@ -6,6 +6,7 @@ import { RouteReuseStrategy } from '@angular/router';
 import { IonicModule, IonicRouteStrategy, Platform } from '@ionic/angular';
 import { AppRoutingModule } from './app-routing.module';
 import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
+import { File} from '@ionic-native/file/ngx';
 import { Animation, AnimationBuilder } from '@ionic/core';
 
 import { Clipboard } from '@ionic-native/clipboard/ngx';
@@ -161,6 +162,7 @@ export function TranslateLoaderFactory() {
     MyApp,
   ],
   providers: [
+    File,
     VideoEditor,
     StatusBar,
     SplashScreen,
