@@ -265,6 +265,9 @@ export class FeedinfoPage implements OnInit {
   }
 
   clickEdit(){
+    if(!this.isMine){
+        return;
+    }
     if(this.feedService.getConnectionStatus() != 0){
       this.native.toastWarn('common.connectionError');
       return;
