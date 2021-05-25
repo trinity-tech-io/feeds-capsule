@@ -1,5 +1,5 @@
-import { Component, ViewChild } from '@angular/core';
-import { Platform, ModalController, PopoverController, MenuController} from '@ionic/angular';
+import { Component} from '@angular/core';
+import { Platform,PopoverController, MenuController} from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { FeedService, Avatar } from './services/FeedService';
@@ -38,7 +38,6 @@ export class MyApp {
   private essentialsConnector = new EssentialsConnector();
   
   constructor(
-    private modalCtrl: ModalController,
     private events: Events,
     private platform: Platform,
     private statusBar: StatusBar,

@@ -21,7 +21,6 @@ import { ScanService } from 'src/app/services/scan.service';
 import { Observable } from 'rxjs';
 import {zh} from './../assets/i18n/zh';
 import {en} from './../assets/i18n/en';
-import {fr} from './../assets/i18n/fr';
 
 /*
 import { AboutPage } from './pages/about/about';
@@ -106,9 +105,6 @@ export class WebpackTranslateLoader implements TranslateLoader {
       switch (lang) {
         case 'zh':
           observer.next(zh);
-          break;
-        case 'fr':
-          observer.next(fr);
           break;
         case 'en':
           observer.next(en);

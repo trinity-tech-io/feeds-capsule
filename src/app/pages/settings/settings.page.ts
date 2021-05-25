@@ -10,6 +10,8 @@ import { LogUtils } from 'src/app/services/LogUtils';
 import { Events } from 'src/app/services/events.service';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { LanguageService } from 'src/app/services/language.service';
+import _ from 'lodash';
 
 enum LogLevel {
   NONE,
@@ -31,7 +33,9 @@ export class SettingsPage implements OnInit {
   public hideDeletedComments:boolean = false;
   public hideOfflineFeeds:boolean = true;
   public popover:any = null;
+  public languageName:string = null;
   constructor(
+    private languageService:LanguageService,
     private feedService:FeedService,
     private events: Events,
     private native: NativeService,
@@ -57,11 +61,21 @@ export class SettingsPage implements OnInit {
   }
 
   ionViewWillEnter() {
+    this.languageName = this.getCurlanguageName();
     this.hideDeletedPosts = this.feedService.getHideDeletedPosts();
     this.hideDeletedComments = this.feedService.getHideDeletedComments();
     this.hideOfflineFeeds = this.feedService.getHideOfflineFeeds();
     this.developerMode = this.feedService.getDeveloperMode();
     this.initTitle();
+  }
+
+  getCurlanguageName(){
+    let curCode = this.languageService.getCurLang();
+    let languageList = this.languageService.languages;
+    let curlanguage =_.find(languageList,(item)=>{
+      return item.code === curCode;
+    })
+    return curlanguage["name"];
   }
 
   ionViewDidEnter(){
