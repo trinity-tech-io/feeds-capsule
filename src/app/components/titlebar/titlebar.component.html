@@ -1,7 +1,6 @@
 <!-- <ion-header class="ion-no-border"> -->
   <div style="height: 40px; background-color: #fff; color: #fff;" *ngIf="isIOSPlatform()"></div>
-
-  <ion-row [ngStyle]="{ 'background': theme.backgroundColor }">
+  <ion-row  [class.dark-header]="theme.darkMode" [class.light-header]="!theme.darkMode&&lightThemeType===1" [class.light-header1]="!theme.darkMode&&lightThemeType===2">
     <ion-col size="1.25">
       <img *ngIf="icons[0].visible&&!theme.darkMode" [src]="getIconPath(0)" (click)="outerLeftIconClicked()">
       <img *ngIf="icons[0].visible&&icons[0].key==='back'&&theme.darkMode"  src="/assets/images/wback.svg" (click)="outerLeftIconClicked()">

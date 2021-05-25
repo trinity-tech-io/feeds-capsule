@@ -14,6 +14,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 })
 export class LearnpublisheraccountPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
+  public lightThemeType:number = 2;
   constructor(
     private native: NativeService,
     private events: Events,
@@ -41,13 +42,10 @@ export class LearnpublisheraccountPage implements OnInit {
    }
 
    addEvent(){
-    this.events.subscribe(FeedsEvent.PublishType.updateTitle,()=>{
-      this.initTile();
-    });
+
    }
 
    removeEvent(){
-    this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
    }
 
 

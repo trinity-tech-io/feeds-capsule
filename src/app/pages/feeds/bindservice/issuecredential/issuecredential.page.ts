@@ -24,6 +24,7 @@ export class IssuecredentialPage implements OnInit {
   public nodeId = "";
   public did = "";
   public popover:any;
+  public lightThemeType:number = 2;
   constructor(
     public popoverController:PopoverController,
     private native: NativeService,
@@ -49,9 +50,6 @@ export class IssuecredentialPage implements OnInit {
     ionViewWillEnter(){
       this.initTitle();
       this.connectionStatus = this.feedService.getConnectionStatus();
-      this.events.subscribe(FeedsEvent.PublishType.updateTitle,()=>{
-          this.initTitle();
-      });
       this.events.subscribe(FeedsEvent.PublishType.connectionChanged,(status)=>{
         this.zone.run(() => {
           this.connectionStatus = status;
@@ -80,7 +78,6 @@ export class IssuecredentialPage implements OnInit {
 
     ionViewWillLeave(){
       this.native.hideLoading();
-      this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
       this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
       this.events.unsubscribe(FeedsEvent.PublishType.issue_credential);
       this.events.unsubscribe(FeedsEvent.PublishType.rpcResponseError);

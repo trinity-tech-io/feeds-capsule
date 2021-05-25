@@ -28,6 +28,8 @@ export class ScanqrcodePage implements OnInit {
   public nonce: string = "0";
   public popover:any = null;
   public scanContent = "";
+  public lightThemeType:number = 2;
+
   constructor(
     private events: Events,
     private native: NativeService,
@@ -51,9 +53,6 @@ export class ScanqrcodePage implements OnInit {
   ionViewWillEnter() {
     this.bindPublisherAccountType = this.feedService.getBindPublisherAccountType();
     this.initTitle();
-    this.events.subscribe(FeedsEvent.PublishType.updateTitle,()=>{
-      this.initTitle();
-    });
     this.connectionStatus = this.feedService.getConnectionStatus();
     this.events.subscribe(FeedsEvent.PublishType.connectionChanged,(status)=>{
       this.zone.run(() => {
@@ -72,7 +71,6 @@ export class ScanqrcodePage implements OnInit {
   }
 
   ionViewWillLeave(){
-    this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
     this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
     let value =  this.popoverController.getTop()["__zone_symbol__value"] || "";
     if(value!=""){

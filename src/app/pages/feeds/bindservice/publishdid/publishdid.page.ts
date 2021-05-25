@@ -20,6 +20,7 @@ export class PublishdidPage implements OnInit {
   public payload: string="";
   public nodeId = "";
   public did = "";
+  public lightThemeType:number = 2;
   constructor(
     private events: Events,
     private zone: NgZone,
@@ -44,9 +45,6 @@ export class PublishdidPage implements OnInit {
     ionViewWillEnter() {
       this.initTitle();
       this.connectionStatus = this.feedService.getConnectionStatus();
-      this.events.subscribe(FeedsEvent.PublishType.updateTitle,()=>{
-            this.initTitle();
-      });
       this.events.subscribe(FeedsEvent.PublishType.connectionChanged,(status)=>{
         this.zone.run(() => {
           this.connectionStatus = status;
@@ -58,7 +56,6 @@ export class PublishdidPage implements OnInit {
     }
 
     ionViewWillLeave(){
-      this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
       this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
     }
 

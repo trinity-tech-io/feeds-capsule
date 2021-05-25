@@ -25,7 +25,7 @@ export class StartbindingPage implements OnInit {
   public did:string = "";
   public feedsUrl: string ="";
   public popover:any = null;
-  // private isProcess = false;
+  public lightThemeType:number = 2;
   constructor(
     private zone: NgZone,
     private native: NativeService,
@@ -65,11 +65,6 @@ export class StartbindingPage implements OnInit {
   ionViewWillEnter() {
     this.bindPublisherAccountType = this.feedService.getBindPublisherAccountType();
     this.initTitle();
-
-    this.events.subscribe(FeedsEvent.PublishType.updateTitle,()=>{
-      this.initTitle();
-    });
-
     this.connectionStatus = this.feedService.getConnectionStatus();
     this.events.subscribe(FeedsEvent.PublishType.connectionChanged,(status)=>{
       this.zone.run(() => {
@@ -162,7 +157,6 @@ export class StartbindingPage implements OnInit {
   ionViewWillLeave(){
     this.native.hideLoading();
     // this.feedService.cleanDeclareOwner();
-    this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
     this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
     this.events.unsubscribe(FeedsEvent.PublishType.owner_declared);
     this.events.unsubscribe(FeedsEvent.PublishType.issue_credential);

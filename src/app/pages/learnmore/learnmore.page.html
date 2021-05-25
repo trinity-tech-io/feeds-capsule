@@ -1,4 +1,4 @@
-<app-titlebar></app-titlebar>
+<app-titlebar [lightThemeType]="lightThemeType"></app-titlebar>
 <ion-content [class.content]="!theme.darkMode">
   <ion-slides #slide pager="true" (ionSlideDidChange)="onSlideDidChange()">
 

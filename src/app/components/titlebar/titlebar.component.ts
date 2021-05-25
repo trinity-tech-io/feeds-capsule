@@ -12,7 +12,7 @@ import { ThemeService } from 'src/app/services/theme.service';
 export class TitleBarComponent {
 
   public menu: any = null;
-
+  @Input() lightThemeType:number = 1;
   @Input()
   set title(title: string) {
       this._title = title;
