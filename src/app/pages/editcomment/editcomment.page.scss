@@ -122,4 +122,12 @@
         background-color: #2e2f4e;
         color: #ffffff;
     }
+
+    ion-item {
+        .channel-row {
+            ion-label{
+            color: #fff;
+         }
+      }
+   }
 }

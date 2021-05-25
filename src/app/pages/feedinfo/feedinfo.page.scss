@@ -36,60 +36,6 @@
     }
 }
 
-  .server-header {
-    padding: 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    border-radius: 17px;
-    box-shadow: 0 3px 15px 0 #ededf0;
-    background-color: #ffffff;
-    margin-bottom: 25px;
-
-
-    img{
-      width: 84px;
-      height: 84px;
-      border-radius: 50%;
-      object-fit: cover;
-    }
-
-    .offline{
-      position: absolute;
-      border: 2px solid #f8f8ff;
-      border-radius: 100%;
-      background-color: #cdcde6;
-      width: 17px;
-      height: 17px;
-      border-width: 3px;
-      bottom: 10px;
-      right: 3px;
-    }
-
-    .online {
-      background: #2dd36f;
-    }
-
-    h1 {
-      margin: 0;
-      padding: 15px 0px 7.5px;
-      font-size: 16px;
-      font-weight: 600;
-      text-align: center;
-    }
-
-    p {
-      margin: 0;
-      padding-bottom: 15px;
-      font-size: 15px;
-      font-weight: 500;
-      letter-spacing: 0.8px;
-      text-align: center;
-      overflow: hidden;
-    }
-  }
-
   .detail-row {
     margin-left: 5px;
     margin-right: 5px;
@@ -130,7 +76,6 @@ ion-card {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  box-shadow: 0 3px 15px 0 #ededf0;
   background-color: #ffffff;
   border-radius: 10px;
   height: 148px;
@@ -271,18 +216,13 @@ ion-button {
 }
 
 .darkContainer {
-  .server-header {
-    box-shadow: 0 3px 15px 0 #151626;
-    background-color: #2e2f4e;
-  }
 
   h1{
     color: #fff;
   }
 
   h2{
-    background-color:#7624fe;
-    opacity: 0.2;
+    background-color: #2b2c49;
   }
 
   .removeBorder {
