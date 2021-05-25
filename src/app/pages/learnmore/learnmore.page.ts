@@ -22,7 +22,7 @@ export class LearnmorePage implements OnInit {
   public did: string = "";
   public userName: string = "";
   public emailAddress: string = "";
-
+  public lightThemeType:number= 2;
   constructor(
     private native: NativeService,
     private activatedRoute:ActivatedRoute,
@@ -51,16 +51,12 @@ export class LearnmorePage implements OnInit {
 
   ionViewWillEnter() {
     this.initTile();
-    this.event.subscribe(FeedsEvent.PublishType.updateTitle,()=>{
-      this.initTile();
-    });
   }
 
   ionViewDidEnter(){
   }
 
   ionViewWillLeave(){
-    this.event.unsubscribe(FeedsEvent.PublishType.updateTitle);
   }
 
   next(){

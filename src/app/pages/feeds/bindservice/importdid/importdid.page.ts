@@ -18,6 +18,7 @@ export class ImportdidPage implements OnInit {
   public connectionStatus = 1;
   public title = "03/06";
   public nodeId = "";
+  public lightThemeType:number = 2;
   constructor(
     private native: NativeService,
     private zone: NgZone,
@@ -38,11 +39,7 @@ export class ImportdidPage implements OnInit {
 
     ionViewWillEnter() {
       this.initTitle();
-
       this.connectionStatus = this.feedService.getConnectionStatus();
-      this.events.subscribe(FeedsEvent.PublishType.updateTitle,()=>{
-        this.initTitle();
-      });
       this.events.subscribe(FeedsEvent.PublishType.connectionChanged,(status)=>{
         this.zone.run(() => {
           this.connectionStatus = status;
@@ -88,7 +85,6 @@ export class ImportdidPage implements OnInit {
 
     ionViewWillLeave(){
       this.native.hideLoading();
-      this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
       this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
       this.events.unsubscribe(FeedsEvent.PublishType.resolveDidError);
       this.events.unsubscribe(FeedsEvent.PublishType.resolveDidSucess);

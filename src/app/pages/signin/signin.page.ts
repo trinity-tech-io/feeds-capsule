@@ -25,6 +25,7 @@ export class SigninPage implements OnInit {
   public did: string = "";
   public userName: string = "";
   public emailAddress: string = "";
+  public lightThemeType:number= 2;
   constructor(
     private native: NativeService,
     private zone: NgZone,
@@ -54,16 +55,12 @@ export class SigninPage implements OnInit {
   ionViewWillEnter() {
     localization.setLanguage(this.languageService.getCurLang());
     this.initTile();
-    this.event.subscribe(FeedsEvent.PublishType.updateTitle,()=>{
-      this.initTile();
-    });
   }
 
   ionViewDidEnter(){
   }
 
   ionViewWillLeave(){
-    this.event.unsubscribe(FeedsEvent.PublishType.updateTitle);
   }
 
   learnMore() {

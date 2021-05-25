@@ -16,6 +16,7 @@ export class IntroducePage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   public connectionStatus = 1;
   public bindPublisherAccountType:string = "";
+  public lightThemeType:number = 2;
   constructor(
     private feedService: FeedService,
     private translate:TranslateService,
@@ -48,10 +49,6 @@ export class IntroducePage implements OnInit {
    }
 
    addEvent(){
-    this.events.subscribe(FeedsEvent.PublishType.updateTitle,()=>{
-      this.initTile();
-    });
-
     this.events.subscribe(FeedsEvent.PublishType.connectionChanged,(status)=>{
       this.zone.run(() => {
         this.connectionStatus = status;
@@ -61,7 +58,6 @@ export class IntroducePage implements OnInit {
 
    removeEvent(){
     this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
-    this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
    }
 
    next(){
