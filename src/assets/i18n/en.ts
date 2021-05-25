@@ -91,7 +91,9 @@ export const en = {
         "confirmdeletion1":"Are you sure you want to delete this comment?",
         "bindingCompleted":"Binding Completed!",
         "error":"Error",
-        "transMsgTimeout":"The server is not responding. Please try again later."
+        "transMsgTimeout":"The server is not responding. Please try again later.",
+        "advancedSettings":"Advanced settings",
+        "normalSettings":"Normal Settings"
     },
     "app": {
         "profileDetails": "Profile Details",
@@ -479,7 +481,9 @@ export const en = {
         "off": "OFF",
         'language-setting': 'Select Your Language',
         "change-lang":"CHANGE LANGUAGE",
-        "darkMode":"Dark Mode"
+        "darkMode":"Appearance",
+        "drak":"Dark",
+        "light":"Light"
     },
     "DiscoverfeedPage": {
         "title": "Discovery Square",

@@ -45,8 +45,8 @@
 
   <ion-row (click)="advancedSettings()" >
     <ion-col size="12" style="text-align:center;">
-         <p class="Advancedsettings" *ngIf="!isAdvancedSetting">Advanced settings</p>
-         <p class="Advancedsettings" *ngIf="isAdvancedSetting">Normal settings</p>
+         <p class="Advancedsettings" *ngIf="!isAdvancedSetting">{{'common.advancedSettings'|translate}}</p>
+         <p class="Advancedsettings" *ngIf="isAdvancedSetting">{{'common.normalSettings'|translate}}</p>
     </ion-col>
   </ion-row>
 

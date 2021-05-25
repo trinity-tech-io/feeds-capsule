@@ -7,10 +7,21 @@
     <ion-row class="section" (click)="navToSelectLanguage()">
         <ion-col size="9" class="title-col">
             <h1>{{"SettingsPage.language-setting" | translate }}</h1>
-            <h2>{{'SettingsPage.change-lang' | translate }}</h2>
+            <h2>{{ languageName }}</h2>
         </ion-col>
         <ion-col size="3" class="arrow-col">
             <ion-img src="assets/icons/right-arrow.svg"></ion-img>
+        </ion-col>
+    </ion-row>
+
+    <ion-row class="section" (click)="setDarkMode()">
+        <ion-col size="9" class="title-col" (swipe)="setDarkMode()">
+            <h1>{{"SettingsPage.darkMode" | translate }}</h1>
+            <h2 *ngIf="theme.darkMode">{{ 'SettingsPage.drak' | translate }}</h2>
+            <h2 *ngIf="!theme.darkMode">{{ 'SettingsPage.light' | translate }}</h2>
+        </ion-col>
+        <ion-col size="3" class="arrow-col" (swipe)="setDarkMode()">
+            <ion-toggle mode="ios" color="success" [(ngModel)]="theme.darkMode" style="pointer-events:none;"></ion-toggle>
         </ion-col>
     </ion-row>
 
@@ -24,18 +35,6 @@
             <ion-toggle mode="ios" color="success" [(ngModel)]="hideDeletedPosts" style="pointer-events:none;"></ion-toggle>
         </ion-col>
     </ion-row>
-
-    <ion-row class="section" (click)="setDarkMode()">
-        <ion-col size="9" class="title-col" (swipe)="setDarkMode()">
-            <h1>{{"SettingsPage.darkMode" | translate }}</h1>
-            <h2 *ngIf="theme.darkMode">{{ 'SettingsPage.on' | translate }}</h2>
-            <h2 *ngIf="!theme.darkMode">{{ 'SettingsPage.off' | translate }}</h2>
-        </ion-col>
-        <ion-col size="3" class="arrow-col" (swipe)="setDarkMode()">
-            <ion-toggle mode="ios" color="success" [(ngModel)]="theme.darkMode" style="pointer-events:none;"></ion-toggle>
-        </ion-col>
-    </ion-row>
-
 
     <ion-row class="section" (click)="toggleHideDeletedComments()">
         <ion-col size="9" class="title-col" (swipe)="toggleHideDeletedComments()">

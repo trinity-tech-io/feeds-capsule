@@ -91,7 +91,9 @@ export const zh = {
         "confirmdeletion1": "确认删除这条微评?",
         "bindingCompleted":"绑定成功!",
         "error":"错误",
-        "transMsgTimeout":"服务未响应，请稍候再试"
+        "transMsgTimeout":"服务未响应，请稍候再试",
+        "advancedSettings":"Advanced settings",
+        "normalSettings":"Normal settings"
     },
     "app":{
         "profileDetails": "档案详情",
@@ -480,7 +482,9 @@ export const zh = {
         "off": "关",
         'language-setting': '选择语言',
         'change-lang': '更改语言',
-        "darkMode":"深色模式"
+        "darkMode":"外观",
+        "drak":"深色",
+        "light":"浅色"
     },
     "DiscoverfeedPage":{
         "title": "探索广场",

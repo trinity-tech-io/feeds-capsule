@@ -12,11 +12,6 @@ export class LanguageService {
         //   icon: '/assets/icon/english.jpg',
         },
         {
-          name: 'Français',
-          code: 'fr',
-        //   icon: '/assets/icon/french.jpg',
-        },
-        {
           name: '中文（简体）',
           code: 'zh',
         //   icon: '/assets/icon/chinese.png',
@@ -35,7 +30,7 @@ export class LanguageService {
 
     initTranslateConfig(){
         let defaltLang = this.getSystemLanguage()||"";
-        this.translate.addLangs(["zh", "en", "fr"]);
+        this.translate.addLangs(["zh","en"]);
         this.curLang = localStorage.getItem('io.trinity.feeds.language') || "";
 
         if (this.curLang != "") {
@@ -51,7 +46,7 @@ export class LanguageService {
     }
 
     setCurLang(currentLang: string) {
-        if (currentLang != 'zh' && currentLang != 'fr') {
+        if (currentLang != 'zh') {
           currentLang = "en";
         }
         localStorage.setItem('io.trinity.feeds.language',currentLang);
@@ -62,7 +57,7 @@ export class LanguageService {
     }
 
     getCurLang(){
-        if (this.curLang != 'zh' && this.curLang != 'fr') {
+        if (this.curLang != 'zh') {
             this.curLang = "en";
         }
         return this.curLang;
