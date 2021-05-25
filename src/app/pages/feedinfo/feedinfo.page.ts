@@ -108,10 +108,6 @@ export class FeedinfoPage implements OnInit {
       });
     });
 
-    this.events.subscribe(FeedsEvent.PublishType.updateTitle,()=>{
-      this.initTitle();
-    });
-
     this.events.subscribe(FeedsEvent.PublishType.editFeedInfoFinish,()=>{
       this.zone.run(() => {
         this.native.hideLoading();
@@ -167,7 +163,6 @@ export class FeedinfoPage implements OnInit {
     this.events.unsubscribe(FeedsEvent.PublishType.unsubscribeFinish);
     this.events.unsubscribe(FeedsEvent.PublishType.subscribeFinish);
     this.events.unsubscribe(FeedsEvent.PublishType.editChannel);
-    this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
     this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
     this.events.unsubscribe(FeedsEvent.PublishType.editFeedInfoFinish);
     this.events.unsubscribe(FeedsEvent.PublishType.rpcRequestError);

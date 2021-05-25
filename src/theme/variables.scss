@@ -708,11 +708,9 @@ ion-row {
 
           ion-label {
             margin-left: 5px;
-            font-size: 14px;
-            font-weight: bold;
-            font-stretch: normal;
-            font-style: normal;
-            color: #000000;
+            font-size: 11px;
+            font-weight: 600;
+            color: #a0a2c4;
           }
 
           .liked {
@@ -772,15 +770,6 @@ ion-row {
           display: flex;
           justify-content: flex-start;
           align-items: center;
-
-          ion-label {
-            margin-left: 5px;
-            font-size: 14px;
-            font-weight: bold;
-            font-stretch: normal;
-            font-style: normal;
-            color: #ffffff;
-          }
 
           .liked {
             color: rgb(209, 81, 81);
