@@ -1,10 +1,7 @@
 import { Injectable, ViewChild } from '@angular/core';
 import { Platform } from '@ionic/angular';
-import { theme } from "@elastosfoundation/elastos-connectivity-sdk-cordova";
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-
-declare let intentManager: IntentPlugin.IntentManager;
 
 @Injectable({
   providedIn: 'root'

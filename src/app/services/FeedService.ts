@@ -957,6 +957,15 @@ export class FeedService {
 
   generateSignInData(did: string, name: string, avatar: Avatar, email: string,
     telephone: string, location: string, nickname:string, description: string){
+      console.log("did is",did);
+      console.log("name is",name);
+      console.log("avatar is",avatar);
+      console.log("email is",email);
+      console.log("telephone is",telephone);
+      console.log("location is",location);
+      console.log("nickname is",nickname);
+      console.log("description is",description);
+
     return new SignInData(
       did,
       name,
@@ -5075,15 +5084,26 @@ export class FeedService {
 
   decodeSignInData(result: any): Promise<string>{
     return new Promise((resolve, reject) =>{
-      didManager.VerifiablePresentationBuilder.fromJson(JSON.stringify(result.presentation), async (presentation) => {
+      didManager.VerifiablePresentationBuilder.fromJson(JSON.stringify(result), async (presentation) => {
+        console.log("result = "+JSON.stringify(result));
+        console.log("presentation = "+JSON.stringify(presentation));
         let credentials = presentation.getCredentials();
-        let did = result.did;
+        console.log("credentials = "+JSON.stringify(credentials));
+        // let did = result.did;
+        let verificationMethod: string = result.proof.verificationMethod;
+
+        console.log("verificationMethod = "+JSON.stringify(verificationMethod));
+
+        let did: string = verificationMethod.split("#")[0];
+
         this.saveCredentialById(did,credentials, "name");
 
         let interests = this.findCredentialValueById(did, credentials, "interests", "");
+        console.log("interests = "+JSON.stringify(interests));
         let desc = this.findCredentialValueById(did, credentials, "description", "");
-
+        console.log("desc = "+JSON.stringify(desc));
         let description = this.translate.instant("DIDdata.NoDescription");
+        console.log("description = "+JSON.stringify(desc));
 
         if (desc !== "") {
           description = desc;
@@ -5137,8 +5157,10 @@ export class FeedService {
   credaccess(): Promise<any>{
     return new Promise(async (resolve, reject) =>{
       try {
-        let response = await this.intentService.credaccessWithParams();
-        if (response && response.presentation) {
+        let response = await this.standardAuth.getCredentials();
+        console.log('response, ', response);
+        // let response = await this.intentService.credaccessWithParams();
+        if (response) {
           resolve(response);
           return;
         }

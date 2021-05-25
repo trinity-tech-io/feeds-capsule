@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { DID, connectivity } from "@elastosfoundation/elastos-connectivity-sdk-cordova";
+import { DID } from "@elastosfoundation/elastos-connectivity-sdk-cordova";
 import { LogUtils } from 'src/app/services/LogUtils';
 import { StorageService } from 'src/app/services/StorageService';
 
@@ -12,6 +12,66 @@ export class StandardAuthService {
     private appIdCredential:DIDPlugin.VerifiableCredential = null;
     constructor(private logUtils: LogUtils,
                 private storeService: StorageService) {
+    }
+
+    getCredentials(): Promise<any>{
+        return new Promise(async (resolve, reject) =>{
+            let didAccess = new DID.DIDAccess();
+            console.log("Trying to get credentials");
+            let params = {
+                claims: {
+                    name: true,
+                    avatar: {
+                        required: false,
+                        reason: "For profile picture"
+                    },
+                    email: {
+                        required: false,
+                        reason: "Maybe Feeds dapp need"
+                    },
+                    gender: {
+                        required: false,
+                        reason: "Maybe Feeds dapp need"
+                    },
+                    telephone: {
+                        required: false,
+                        reason: "Maybe Feeds dapp need"
+                    },
+                    nation: {
+                        required: false,
+                        reason: "Maybe Feeds dapp need"
+                    },
+                    nickname:{
+                        required: false,
+                        reason: "Maybe Feeds dapp need"
+                    },
+                    description:{
+                        required: false,
+                        reason: "Maybe Feeds dapp need"
+                    },
+                    interests:{
+                        required: false,
+                        reason: "Maybe Feeds dapp need"
+                    }
+                }
+            }
+            try {
+                let presentation = await didAccess.getCredentials(params);
+                console.log("Got credentials result");
+                console.log(presentation);
+                if (presentation) {
+                    resolve(presentation);
+                    console.log("Got credentials:", presentation);
+                    // alert(JSON.stringify(presentation));
+                } else {
+                    alert("Empty presentation returned, something wrong happened, or operation was cancelled");
+                    console.log("Empty ....",presentation);
+                }
+            } catch (error) {
+                alert("error "+JSON.stringify(error));
+                console.log("error",error);
+            }
+        });
     }
 
     getInstanceDID(): Promise<DIDPlugin.DID>{
