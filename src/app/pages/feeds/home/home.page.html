@@ -54,11 +54,7 @@
             >
           </ion-row>
           <p>@{{ getChannelOwnerName(post.nodeId, post.channel_id) }}</p>
-        </ion-col>
-        <ion-col size="1.3" style="padding-top:0px;">
 
-        </ion-col>
-        <ion-col class="content-col" size="10.7" style="padding-top:0px;">
           <h2 *ngIf="post.post_status!=1" (press)="pressContent(post.content)">
             <div *ngIf="getPostContentTextSize(post.content)<=maxTextSize" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id,$event)">
               <pre [ngStyle]="styleObj" [innerHTML]="getContentText(post.content) | html"></pre>
@@ -108,8 +104,8 @@
                  </ion-col>
               </ion-row>
             </div>
-          </div>
             <span class="topostdetailimg" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)"></span>
+          </div>
           </div>
 
           <div *ngIf="post.post_status!=1&&post.content.mediaType ===2" id={{post.nodeId}}-{{post.channel_id}}-{{post.id}}vgplayer style="width: 100%;position:relative;">
