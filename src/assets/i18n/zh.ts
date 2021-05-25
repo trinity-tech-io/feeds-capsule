@@ -89,11 +89,11 @@ export const zh = {
         "deletePost": "删除微说",
         "deleteComment": "删除微频",
         "confirmdeletion1": "确认删除这条微评?",
-        "bindingCompleted":"绑定成功!",
-        "error":"错误",
-        "transMsgTimeout":"服务未响应，请稍候再试",
-        "advancedSettings":"Advanced settings",
-        "normalSettings":"Normal settings"
+        "bindingCompleted": "绑定成功!",
+        "error": "错误",
+        "transMsgTimeout": "服务未响应，请稍候再试",
+        "advancedSettings": "高级设置",
+        "normalSettings": "普通设置"
     },
     "app":{
         "profileDetails": "档案详情",
@@ -353,7 +353,7 @@ export const zh = {
         "inputName": "请输入Feeds出版号名称",
         "inputServerDes": "请输入Feeds出版号描述",
         "inputElaAddress": "请输入ELA地址",
-        "des":"您已完成出版号的绑定！"
+        "des": "您已完成出版号的绑定！"
     },
     "FinishPage": {
         "title": "绑定服务",
@@ -475,16 +475,15 @@ export const zh = {
         "cleandata": "清空数据",
         "des": "确认要清空数据吗？",
         "des1": "清空数据成功",
-        "hidedeletepost": "显示标记“删除”的微说",
-        "hidedeletecomment": "显示标记“删除”的评论",
+        "hidedeletepost": "显示已删除的微说",
+        "hidedeletecomment": "显示已删除的评论",
         "hideOfflinefeed": "仅显示在线状态的频道",
         "on": "开",
         "off": "关",
-        'language-setting': '选择语言',
-        'change-lang': '更改语言',
-        "darkMode":"外观",
-        "drak":"深色",
-        "light":"浅色"
+        "language-setting": "语言",
+        "darkMode": "主题",
+        "drak": "深色",
+        "light": "浅色"
     },
     "DiscoverfeedPage":{
         "title": "探索广场",
