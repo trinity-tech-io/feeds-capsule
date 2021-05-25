@@ -1,9 +1,12 @@
 import { Injectable } from '@angular/core';
+import { TranslateService } from "@ngx-translate/core";
 import { BarcodeScanner, BarcodeScannerOptions,BarcodeScanResult } from '@ionic-native/barcode-scanner/ngx';
 
 @Injectable()
 export class ScanService {
-    constructor(private barcodeScanner: BarcodeScanner){
+    constructor(
+        private barcodeScanner: BarcodeScanner,
+        private translate: TranslateService){
     }
 
     scanBarcode():Promise<string> {
@@ -13,7 +16,7 @@ export class ScanService {
             showFlipCameraButton: false,
             showTorchButton: false,
             torchOn: false,
-            prompt: 'Place a qrCode inside the scan area',
+            prompt: this.translate.instant('common.scannerPrompt'),
             resultDisplayDuration: 0,
             formats: 'EAN_13,EAN_8,QR_CODE,PDF_417 ',
             orientation: 'portrait',
