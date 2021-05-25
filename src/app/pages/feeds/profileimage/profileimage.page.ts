@@ -1,5 +1,4 @@
 import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
-import { CameraService } from 'src/app/services/CameraService';
 import { NavController } from '@ionic/angular';
 import { NativeService } from 'src/app/services/NativeService';
 import { TranslateService } from "@ngx-translate/core";
@@ -72,7 +71,6 @@ export class ProfileimagePage implements OnInit {
     private translate: TranslateService,
     public theme: ThemeService,
     private feedService:FeedService,
-    private camera: CameraService,
     private menuService: MenuService,
     private titleBarService: TitleBarService
   ) { }
@@ -108,20 +106,11 @@ export class ProfileimagePage implements OnInit {
         this.connectionStatus = status;
       });
     });
-
-    this.events.subscribe(FeedsEvent.PublishType.updateTitle,()=>{
-      if(this.menuService.postDetail!=null){
-        this.menuService.hideActionSheet();
-        this.addPic();
-      }
-      this.initTitle();
-    });
   }
 
   ionViewWillLeave(){
     //this.camera = null;
     this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
-    this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
     if(this.pictureMenu!=null){
       this.menuService.hideActionSheet();
     }

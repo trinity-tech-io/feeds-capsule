@@ -16,7 +16,7 @@
             (click)="selectIndex(avatar.index, avatar.image)"
           >
           <div
-            *ngIf="select === avatar.index"
+            *ngIf="select == avatar.index"
             class="check"
             [ngStyle]="{ 'border': theme.darkMode ? '3px solid #191a2f' : '4px solid #f8f8ff' }"
             >

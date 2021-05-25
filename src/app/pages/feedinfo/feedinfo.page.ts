@@ -183,6 +183,14 @@ export class FeedinfoPage implements OnInit {
         "name":this.name,
         "des":this.des,
       });
+    if(this.channelAvatar.indexOf("data:image")>-1){
+        this.feedService.setSelsectIndex(0);
+        this.feedService.setProfileIamge(this.channelAvatar);
+     }else if(this.channelAvatar.indexOf("assets/images")>-1){
+        let index = this.channelAvatar.substring(this.channelAvatar.length-5,this.channelAvatar.length-4);
+        this.feedService.setSelsectIndex(index);
+        this.feedService.setProfileIamge(this.channelAvatar);
+    }
   this.native.navigateForward(['/profileimage'],"");
   }
 
