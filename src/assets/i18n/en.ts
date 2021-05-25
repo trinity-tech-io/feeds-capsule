@@ -85,15 +85,15 @@ export const en = {
         "preferences": "Preferences",
         "posts": "Posts",
         "assets": "Assets",
-        "confirmDialog":"Confirm Dialog",
-        "deletePost":"Delete Post",
-        "deleteComment":"Delete Comment",
-        "confirmdeletion1":"Are you sure you want to delete this comment?",
-        "bindingCompleted":"Binding Completed!",
-        "error":"Error",
-        "transMsgTimeout":"The server is not responding. Please try again later.",
-        "advancedSettings":"Advanced settings",
-        "normalSettings":"Normal Settings"
+        "confirmDialog": "Confirm Dialog",
+        "deletePost": "Delete Post",
+        "deleteComment": "Delete Comment",
+        "confirmdeletion1": "Are you sure you want to delete this comment?",
+        "bindingCompleted": "Binding Completed!",
+        "error": "Error",
+        "transMsgTimeout": "The server is not responding. Please try again later.",
+        "advancedSettings": "Advanced settings",
+        "normalSettings": "Normal Settings"
     },
     "app": {
         "profileDetails": "Profile Details",
@@ -186,7 +186,7 @@ export const en = {
         "status14": "Requested",
         "discover": "Explore on Discovery Square",
         "des1": "Your subscription request to this channel is ongoing; this takes a few seconds. Would you like to cancel this subscription？",
-        "confirmTitle":"Cancel Subscription"
+        "confirmTitle": "Cancel Subscription"
     },
     "ChannelsPage": {
         "feeds": "Channel",
@@ -226,7 +226,7 @@ export const en = {
         "nameContainInvalidChars": "Channel Name can not include characters except alphabet letters A-Z, a-z, digits 0-9, the hyphen “-”, and the underscore “_”.",
         "feedMaxNumber": "The maximum number of channels can be created is 5",
         "feedNum": "You can create up to 5 channels",
-        "des1":"Show channel in the Explore Pasar screen for users to discover."
+        "des1": "Show channel in the Explore Pasar screen for users to discover."
     },
     "ProfileimagePage": {
         "title": "Channel Image",
@@ -352,7 +352,7 @@ export const en = {
         "inputName": "Enter Publisher Name",
         "inputServerDes": "Enter Publisher Description",
         "inputElaAddress": "Enter ELA Address",
-        "des":"You have completed the binding of the Publisher Account!"
+        "des": "You have completed the binding of the Publisher Account!"
     },
     "FinishPage": {
         "title": "Bind service",
@@ -398,8 +398,8 @@ export const en = {
         "memo": "Memo",
         "defaultMemo": "Donate to Feeds project",
         "supportFeeds": "Support Feeds",
-        "elaAddress":"ELA Address",
-        "channelName":"Channel Name"
+        "elaAddress": "ELA Address",
+        "channelName": "Channel Name"
     },
     "ErrorInfo": {
         "alreadyExists": "Entity Already Exists",
@@ -474,16 +474,15 @@ export const en = {
         "cleandata": "Clear Data",
         "des": "Are you sure you want to clear the data?",
         "des1": "Data cleared successfully",
-        "hidedeletepost": "Display posts labeled with (deleted)",
-        "hidedeletecomment": "Display comments labeled with (deleted)",
+        "hidedeletepost": "Display Deleted Posts",
+        "hidedeletecomment": "Display Deleted Comments",
         "hideOfflinefeed": "Display online Channels only",
         "on": "ON",
         "off": "OFF",
-        'language-setting': 'Select Your Language',
-        "change-lang":"CHANGE LANGUAGE",
-        "darkMode":"Appearance",
-        "drak":"Dark",
-        "light":"Light"
+        "language-setting": "Language",
+        "darkMode": "Theme",
+        "drak": "Dark",
+        "light": "Light"
     },
     "DiscoverfeedPage": {
         "title": "Discovery Square",
@@ -595,7 +594,7 @@ export const en = {
         "title": "Pasar (NFT Marketplace)"
     },
     "LearnmorePage":{
-        "title":"Learn more",
+        "title": "Learn more",
         "next": "Next",
         "skip": "Skip"
      },
@@ -616,7 +615,7 @@ export const en = {
      },
      "LearnpublisheraccountPage":{
         "title": "Bind service",
-        "hello":"#hello",
+        "hello": "#hello",
         "des": "Learn about Publisher Account",
         "createNewPublisherAccount": "Create New Publisher Account",
         "bindExistingPublisherAccount": "Bind Existing Publisher Account",
