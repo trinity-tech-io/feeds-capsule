@@ -93,7 +93,8 @@ export const zh = {
         "error": "错误",
         "transMsgTimeout": "服务未响应，请稍候再试",
         "advancedSettings": "高级设置",
-        "normalSettings": "普通设置"
+        "normalSettings": "普通设置",
+        "scannerPrompt": "将二维码放在扫描区域内"
     },
     "app":{
         "profileDetails": "档案详情",
@@ -509,8 +510,8 @@ export const zh = {
         "deletereply": "删除回复",
     },
     "FeedspreferencesPage":{
-       "title": "频道设置",
-       "des": "在探索中显示Pasar"
+        "title": "频道设置",
+        "des": "在探索Pasar中显示"
     },/***NFT*/
     "MintnftPage":{
         "title": "创建收藏品",
