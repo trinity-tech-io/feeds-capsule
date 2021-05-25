@@ -23,7 +23,7 @@
     "@elastosfoundation/elastos-connector-localidentity-cordova": "^1.0.6",
     "@elastosfoundation/elastos-cordova-plugin-carrier": "1.0.6",
     "@elastosfoundation/elastos-cordova-plugin-did": "^1.0.3",
-    "@elastosfoundation/elastos-cordova-plugin-hive": "^1.0.2",
+    "@elastosfoundation/elastos-cordova-plugin-hive": "^1.0.8",
     "@elastosfoundation/essentials-connector-cordova": "^1.0.14",
     "@ionic-native/barcode-scanner": "^5.32.1",
     "@ionic-native/clipboard": "^5.18.0",
@@ -118,6 +118,7 @@
       "@elastosfoundation/elastos-cordova-plugin-carrier": {},
       "@elastosfoundation/elastos-cordova-plugin-intent": {},
       "@elastosfoundation/elastos-cordova-plugin-did": {},
+      "@elastosfoundation/elastos-cordova-plugin-hive": {},
       "cordova-plugin-file": {},
       "cordova-plugin-network-information": {},
       "phonegap-plugin-barcodescanner": {
