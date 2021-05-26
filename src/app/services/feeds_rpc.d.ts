@@ -1000,8 +1000,9 @@ declare module Communication{
         }
     }
 
+    //Update to 2.0
     type get_multi_comments_request = {
-        version: "1.0"
+        version: "2.0"
         method : "get_multi_comments"
         id     : jsonrpc_id
         params : {
@@ -1015,8 +1016,12 @@ declare module Communication{
         }
     }
 
+    //Update to 2.0
+    //Add thumbnails : any
+    //Add hash_id : string
+    //Add proof : string
     type get_multi_comments_response = {
-        version: "1.0"
+        version: "2.0"
         id     : jsonrpc_id
         result : {
             is_last : boolean
@@ -1032,6 +1037,9 @@ declare module Communication{
                 likes           : number
                 created_at      : number
                 updated_at      : number
+                thumbnails      : any
+                hash_id         : string
+                proof           : string
             }[]
         }
     }
