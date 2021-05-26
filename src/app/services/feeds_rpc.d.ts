@@ -741,6 +741,11 @@ declare module Communication{
         result : null
     }
 
+    //Update to 2.0
+    //Add thumbnails : any
+    //Add hash_id : string
+    //Add proof : string
+    //Add origin_post_url : string
     type new_post_notification = {
         version: "1.0"
         method : "new_post"
@@ -749,6 +754,10 @@ declare module Communication{
             id   : number
             content   : any
             created_at: number
+            thumbnails : any
+            hash_id : string
+            proof : string
+            origin_post_url : string
         }
     }
 
