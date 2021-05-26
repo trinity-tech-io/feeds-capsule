@@ -921,8 +921,13 @@ declare module Communication{
         result : null
     }
 
+    //Update to 2.0
+    //Add thumbnails : any
+    //Add hash_id : string
+    //Add proof : string
+    //Add origin_post_url : string
     type declare_post_request = {
-        version: "1.0"
+        version: "2.0"
         method : "declare_post"
         id     : jsonrpc_id
         params : {
@@ -930,11 +935,16 @@ declare module Communication{
             channel_id  : number
             content     : any
             with_notify : boolean
+            thumbnails : any
+            hash_id : string
+            proof : string
+            origin_post_url : string
         } 
     }
 
+    //Update to 2.0
     type declare_post_response = {
-        version: "1.0"
+        version: "2.0"
         id     : jsonrpc_id
         result : {
             id: number
