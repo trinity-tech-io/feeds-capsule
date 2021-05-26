@@ -1122,9 +1122,23 @@ export class FeedService {
             transDataChannel:FeedsData.TransDataChannel, imageData: string, videoData: string){
     if(!this.hasAccessToken(nodeId))
       return;
+
+    //TODO 2.0
+    let thumbnails = "";
+
+    //TODO 2.0
+    let hashId = "";
+
+    //TODO 2.0
+    let proof = "";
+
+    //TODO 2.0
+    let originPostUrl = "";
+
     this.prepareTempMediaPost(nodeId, channelId, tempId, 0, content, transDataChannel, videoData, imageData);
     let accessToken: FeedsData.AccessToken = this.dataHelper.getAccessToken(nodeId) || null;
-    this.connectionService.declarePost(this.getServerNameByNodeId(nodeId),nodeId, channelId,content,withNotify,accessToken,tempId);
+    this.connectionService.declarePost(this.getServerNameByNodeId(nodeId),nodeId, channelId,content,withNotify,accessToken,
+                                      tempId, thumbnails, hashId, proof, originPostUrl);
 
     eventBus.publish(FeedsEvent.PublishType.updateTab,true);
   }

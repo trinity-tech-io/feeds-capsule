@@ -82,21 +82,26 @@ export class ConnectionService {
 
     //added v1.3.0 server
     declarePost(serverName: string, nodeId: string, channelId: number, content: any,
-        withNotify: boolean ,accessToken: FeedsData.AccessToken,tempId: number){
+        withNotify: boolean ,accessToken: FeedsData.AccessToken,tempId: number,
+        thumbnails: any, hashId: string, proof: string, originPostUrl: string){
         if (accessToken == null || accessToken == undefined)
             return ;
 
         let contentBin = this.serializeDataService.encodeData(content);
 
         let request: Communication.declare_post_request = {
-            version: "1.0",
+            version: "2.0",
             method : "declare_post",
             id     : -1,
             params : {
                 access_token    : accessToken.token,
-                channel_id  : Number(channelId),
-                content     : contentBin,
-                with_notify : withNotify
+                channel_id      : Number(channelId),
+                content         : contentBin,
+                with_notify     : withNotify,
+                thumbnails      : thumbnails,
+                hash_id         : hashId,
+                proof           : proof,
+                origin_post_url : originPostUrl
             }
         }
         let memo = {
