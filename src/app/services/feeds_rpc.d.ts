@@ -676,9 +676,9 @@ declare module Communication{
         }
     }
     
-    // access control write rpc
+    //Update to 2.0
     type subscribe_channel_request = {
-        version: "1.0"
+        version: "2.0"
         method : "subscribe_channel"
         id     : jsonrpc_id
         params : {
@@ -686,10 +686,27 @@ declare module Communication{
             id: number
         }
     }
+
+    //Update to 2.0
+    //Add channel object to result
     type subscribe_channel_response = {
-        version: "1.0"
+        version: "2.0"
         id     : jsonrpc_id
-        result : null
+        result : {
+            channel: {
+                id : number
+                name : string
+                introduction : string
+                owner_name : string
+                owner_did : string
+                subscribers : number
+                last_update : number
+                avatar : any
+                tip_methods : string
+                proof : string
+                status : number
+            }
+        }
     }
     
     type unsubscribe_channel_request = {

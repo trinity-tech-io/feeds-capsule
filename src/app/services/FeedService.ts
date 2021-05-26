@@ -545,7 +545,7 @@ export class FeedService {
         this.handleGetStatisticsResult(nodeId, result, error);
         break;
       case FeedsData.MethodType.subscribe_channel:
-        this.handleSubscribeChannelResult(nodeId, requestParams, error);
+        this.handleSubscribeChannelResult(nodeId, result, requestParams, error);
         break;
       case FeedsData.MethodType.unsubscribe_channel:
         this.handleUnsubscribeChannelResult(nodeId, requestParams, error);
@@ -2307,7 +2307,7 @@ export class FeedService {
     eventBus.publish(FeedsEvent.PublishType.serverStatisticsChanged);
   }
 
-  handleSubscribeChannelResult(nodeId: string, request: any, error: any){
+  handleSubscribeChannelResult(nodeId: string, result: any, request: any, error: any){
     if (error != null && error != undefined && error.code == -4){
       this.getSubscribedChannels(nodeId, Communication.field.id,request.id,request.id,1);
       return;
@@ -2318,6 +2318,58 @@ export class FeedService {
       this.handleError(nodeId, error);
       return;
     }
+
+
+    this.logUtils.logd("Receive result from subscribe_channel, result is "+JSON.stringify(result));
+
+    //TODO 2.0
+    let channel = result.channel;
+    this.logUtils.logd("Receive result from subscribe_channel, channel is "+JSON.stringify(channel));
+
+    //TODO 2.0
+    let channelId = channel.id;
+    this.logUtils.logd("Receive result from subscribe_channel, channelId is "+JSON.stringify(channelId));
+
+    //TODO 2.0
+    let name = channel.name;
+    this.logUtils.logd("Receive result from subscribe_channel, name is "+JSON.stringify(name));
+
+    //TODO 2.0
+    let introduction = channel.introduction;
+    this.logUtils.logd("Receive result from subscribe_channel, introduction is "+JSON.stringify(introduction));
+
+    //TODO 2.0
+    let owner_name = channel.owner_name;
+    this.logUtils.logd("Receive result from subscribe_channel, owner_name is "+JSON.stringify(owner_name));
+
+    //TODO 2.0
+    let owner_did = channel.owner_did;
+    this.logUtils.logd("Receive result from subscribe_channel, owner_did is "+JSON.stringify(owner_did));
+
+    //TODO 2.0
+    let subscribers = channel.subscribers;
+    this.logUtils.logd("Receive result from subscribe_channel, subscribers is "+JSON.stringify(subscribers));
+
+    //TODO 2.0
+    let last_update = channel.last_update;
+    this.logUtils.logd("Receive result from subscribe_channel, last_update is "+JSON.stringify(last_update));
+
+    //TODO 2.0
+    let avatar = channel.avatar;
+    this.logUtils.logd("Receive result from subscribe_channel, avatar is "+JSON.stringify(avatar));
+
+    //TODO 2.0
+    let tip_methods = channel.tip_methods;
+    this.logUtils.logd("Receive result from subscribe_channel, tip_methods is "+JSON.stringify(tip_methods));
+
+    //TODO 2.0
+    let proof = channel.proof;
+    this.logUtils.logd("Receive result from subscribe_channel, proof is "+JSON.stringify(proof));
+
+    //TODO 2.0
+    let status = channel.status;
+    this.logUtils.logd("Receive result from subscribe_channel, status is "+JSON.stringify(status));
+
 
     this.getSubscribedChannels(nodeId, Communication.field.id,request.id,request.id,1);
   }

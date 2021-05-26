@@ -358,7 +358,7 @@ export class ConnectionService {
             return ;
 
         let request: Communication.subscribe_channel_request = {
-            version: "1.0",
+            version: "2.0",
             method : "subscribe_channel",
             id     : -1,
             params : {
