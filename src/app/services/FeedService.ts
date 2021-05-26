@@ -1396,6 +1396,22 @@ export class FeedService {
     let created_at: number = params.created_at;
     let updateAt: number = params.updated_at||created_at;
 
+    //TODO 2.0
+    let thumbnails: any = params.thumbnails;
+    this.logUtils.logd("Receive result from new_post, thumbnails is "+JSON.stringify(thumbnails));
+
+    //TODO 2.0
+    let hashId: string = params.hash_id;
+    this.logUtils.logd("Receive result from new_post, hashId is "+JSON.stringify(hashId));
+
+    //TODO 2.0
+    let proof: string = params.proof;
+    this.logUtils.logd("Receive result from new_post, proof is "+JSON.stringify(proof));
+
+    //TODO 2.0
+    let originPostUrl: string = params.origin_post_url;
+    this.logUtils.logd("Receive result from new_post, originPostUrl is "+JSON.stringify(originPostUrl));
+
     let contentStr = this.serializeDataService.decodeData(contentBin);
 
     let content = this.parseContent(nodeId,channel_id,id,0,contentStr);
