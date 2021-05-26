@@ -614,8 +614,10 @@ declare module Communication{
         }
     }
 
+
+    //Update to 2.0
     type get_comments_request = {
-        version: "1.0"
+        version: "2.0"
         method : "get_comments"
         id     : jsonrpc_id
         params : {
@@ -629,23 +631,29 @@ declare module Communication{
         }
     }
 
-    // api update
+    //Update to 2.0
+    //Add thumbnails : any
+    //Add hash_id : string
+    //Add proof : string
     type get_comments_response = {
-        version: "1.0"
+        version: "2.0"
         id     : jsonrpc_id
         result : {
             is_last : boolean
             comments: {
-                channel_id: number          //channel_id
-                post_id   : number          //post_id
-                id        : number          //comment_id
-                status    : FeedsData.PostCommentStatus
-                comment_id: number|0        //comment_id | 0
-                user_name : string  
-                content   : any | null      //bin | null
-                likes     : number
-                created_at: number
-                updated_at: number
+                channel_id  : number          //channel_id
+                post_id     : number          //post_id
+                id          : number          //comment_id
+                status      : FeedsData.PostCommentStatus
+                comment_id  : number|0        //comment_id | 0
+                user_name   : string  
+                content     : any | null      //bin | null
+                likes       : number
+                created_at  : number
+                updated_at  : number
+                thumbnails  : any
+                hash_id     : string
+                proof       : string
             }[]
         }
     }

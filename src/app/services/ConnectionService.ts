@@ -322,7 +322,7 @@ export class ConnectionService {
             return ;
 
         let request:Communication.get_comments_request = {
-            version: "1.0",
+            version: "2.0",
             method : "get_comments",
             id     : -1,
             params : {
