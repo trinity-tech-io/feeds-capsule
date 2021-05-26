@@ -2247,6 +2247,19 @@ export class FeedService {
       let status          = result[index].status;
       let userDid         = result[index].user_did;
 
+      //TODO 2.0
+      let thumbnails = result[index].thumbnails;
+      this.logUtils.logd("Receive result from get_comment RPC,thumbnails is "+thumbnails);
+
+      //TODO 2.0
+      let hash_id = result[index].hash_id;
+      this.logUtils.logd("Receive result from get_comment RPC,hash_id is "+hash_id);
+
+      //TODO 2.0
+      let proof = result[index].proof;
+      this.logUtils.logd("Receive result from get_comment RPC,proof is "+proof);
+
+
       await this.processNewComment(nodeId,channelId,postId,commentId,referCommentId,
         userName,likes,createdAt,updatedAt,status,userDid,contentBin);
 
