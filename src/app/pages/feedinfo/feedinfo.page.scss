@@ -40,6 +40,9 @@
     margin-left: 5px;
     margin-right: 5px;
 
+    padding-top: 10px;
+    padding-bottom: 0px;
+
     .qr-container {
       margin-top: 10px;
       display: flex;
@@ -70,7 +73,7 @@
 
 ion-card {
   position: relative;
-  width:100%;
+  width: 292px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
@@ -94,6 +97,10 @@ ion-card {
       font-style: normal;
       color: #ffffff;
       line-height: 1.5;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      width: 100%;
+      white-space: nowrap;
   }
 
   ion-card-subtitle{
