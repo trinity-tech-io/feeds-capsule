@@ -1,4 +1,5 @@
 import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
+import { CameraService } from 'src/app/services/CameraService';
 import { NavController } from '@ionic/angular';
 import { NativeService } from 'src/app/services/NativeService';
 import { TranslateService } from "@ngx-translate/core";
@@ -71,6 +72,7 @@ export class ProfileimagePage implements OnInit {
     private translate: TranslateService,
     public theme: ThemeService,
     private feedService:FeedService,
+    private camera: CameraService,
     private menuService: MenuService,
     private titleBarService: TitleBarService
   ) { }
