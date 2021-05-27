@@ -12,6 +12,9 @@ import { StorageService } from './services/StorageService';
 import { PopupProvider } from 'src/app/services/popup';
 import { LogUtils } from 'src/app/services/LogUtils';
 import { Events} from 'src/app/services/events.service';
+import { LocalIdentityConnector } from "@elastosfoundation/elastos-connector-localidentity-cordova";
+import { EssentialsConnector } from "@elastosfoundation/essentials-connector-cordova";
+import { connectivity } from "@elastosfoundation/elastos-connectivity-sdk-cordova";
 
 enum LogLevel {
   NONE,
@@ -32,6 +35,9 @@ export class MyApp {
   public wName: string = "";
   public popover:any = null;
   public sService:any =null;
+  private localIdentityConnector = new LocalIdentityConnector();
+  private essentialsConnector = new EssentialsConnector();
+  
   constructor(
     private modalCtrl: ModalController,
     private events: Events,
@@ -74,7 +80,15 @@ export class MyApp {
         this.events.publish(FeedsEvent.PublishType.networkStatusChanged, 0);
       });
       this.initDisclaimer();
+      this.initConnector();
     });
+  }
+
+  initConnector(){
+    connectivity.registerConnector(this.localIdentityConnector);
+    // To let users use Essentials for his operations:
+    connectivity.registerConnector(this.essentialsConnector);
+    connectivity.setApplicationDID("did:elastos:iqtWRVjz7gsYhyuQEb1hYNNmWQt1Z9geXg");
   }
 
   initDiscoverfeeds(){
