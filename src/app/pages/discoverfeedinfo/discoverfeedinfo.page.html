@@ -31,24 +31,25 @@
             </ion-col>
           </ion-row>
         </ion-card>
+        <ion-row class="channel-btns-row">
+          <ion-col size="12">
+            <ion-button *ngIf="status ==='0'" class="subscribed" fill="outline" [disabled]="true">
+              <ion-label>{{ handleStatus() | translate}}</ion-label>
+            </ion-button>
+            <ion-button *ngIf="status ==='1'" class="unsubscribed" fill="outline" (click)="checkDid('subscribe')">
+              <ion-label>{{'DiscoverfeedinfoPage.follow' | translate}}</ion-label>
+              <ion-ripple-effect></ion-ripple-effect>
+            </ion-button>
+            <ion-button *ngIf="status ==='2'" class="subscribed" (click)="unsubscribe()">
+              <ion-label>{{ 'DiscoverfeedinfoPage.unfollow' | translate }}</ion-label>
+              <ion-ripple-effect></ion-ripple-effect>
+            </ion-button>
+          </ion-col>
+        </ion-row>
       </ion-col>
     </ion-row>
 
-    <ion-row class="channel-btns-row">
-      <ion-col size="12">
-        <ion-button *ngIf="status ==='0'" class="subscribed" fill="outline" [disabled]="true">
-          <ion-label>{{ handleStatus() | translate}}</ion-label>
-        </ion-button>
-        <ion-button *ngIf="status ==='1'" class="unsubscribed" fill="outline" (click)="checkDid('subscribe')">
-          <ion-label>{{'DiscoverfeedinfoPage.follow' | translate}}</ion-label>
-          <ion-ripple-effect></ion-ripple-effect>
-        </ion-button>
-        <ion-button *ngIf="status ==='2'" class="subscribed" (click)="unsubscribe()">
-          <ion-label>{{ 'DiscoverfeedinfoPage.unfollow' | translate }}</ion-label>
-          <ion-ripple-effect></ion-ripple-effect>
-        </ion-button>
-      </ion-col>
-    </ion-row>
+
 
       <!--- SERVER DETAILS --->
         <ion-row class="detail-row">

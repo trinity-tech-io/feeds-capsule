@@ -1,12 +1,5 @@
 .container {
   padding: 40px 25px;
-  .removeBorder {
-    border-bottom: none;
-  }
-  .bottomBorder{
-    border-bottom: 2px solid rgba(34, 34, 34, 0.07);
-  }
-
   .profile-header-title{
     font-size: 20px;
     font-weight: bold;
@@ -14,14 +7,6 @@
     font-style: normal;
     text-align: center;
     color:#7624fe;
-
-    img{
-      color:#7624fe;
-      position:absolute;
-      right:10px;
-      width:25px;
-      height:25px;
-    }
   }
 
 
@@ -38,8 +23,8 @@
         border-radius: 17px;
       }
     }
-      padding-top: 20px;
-      padding-bottom: 5px;
+      padding-top: 10px;
+      padding-bottom:0px;
       ion-col {
         padding: 0;
       }
@@ -93,10 +78,20 @@
     margin-bottom: 10px;
     margin-top: 20px;
 
-    ion-img {
+    .serverImg {
       width: 56px;
       height: 56px;
       object-fit: cover;
+    }
+
+    .didImg{
+      width: 56px;
+      height: 56px;
+      border: 1px solid #f8f2ff;
+      -o-object-fit: cover;
+      object-fit: cover;
+      overflow: hidden;
+      border-radius: 50%;
     }
 
     h1 {

@@ -31,24 +31,22 @@
             </ion-col>
           </ion-row>
         </ion-card>
+        <ion-row>
+          <ion-col size="12" class="channel-btns-row">
+            <ion-button *ngIf="!followStatus" class="unsubscribed" fill="outline" (click)="subscribe()">
+              <ion-label>{{'SearchPage.follow' | translate}}</ion-label>
+              <ion-ripple-effect></ion-ripple-effect>
+            </ion-button>
+
+            <ion-button *ngIf="followStatus" class="subscribed" (click)="unsubscribe()">
+              <ion-label>{{ 'SearchPage.following' | translate }}</ion-label>
+              <ion-ripple-effect></ion-ripple-effect>
+            </ion-button>
+
+           </ion-col>
+        </ion-row>
       </ion-col>
     </ion-row>
-
-    <ion-row>
-       <ion-col size="12" class="channel-btns-row">
-        <ion-button *ngIf="!followStatus" class="unsubscribed" fill="outline" (click)="subscribe()">
-          <ion-label>{{'SearchPage.follow' | translate}}</ion-label>
-          <ion-ripple-effect></ion-ripple-effect>
-        </ion-button>
-
-        <ion-button *ngIf="followStatus" class="subscribed" (click)="unsubscribe()">
-          <ion-label>{{ 'SearchPage.following' | translate }}</ion-label>
-          <ion-ripple-effect></ion-ripple-effect>
-        </ion-button>
-
-       </ion-col>
-    </ion-row>
-
     <ion-row *ngIf="!followStatus">
       <ion-col size="12">
        <div class="bigCircle">
