@@ -16,6 +16,7 @@ import { LogUtils } from 'src/app/services/LogUtils';
 import { StandardAuthService } from 'src/app/services/StandardAuthService';
 import { AddFeedService } from 'src/app/services/AddFeedService';
 import { IntentService } from 'src/app/services/IntentService';
+import { connectivity } from "@elastosfoundation/elastos-connectivity-sdk-cordova";
 
 import * as _ from 'lodash';
 import { DataHelper } from "./DataHelper";
@@ -4936,6 +4937,10 @@ export class FeedService {
 
   standardSignIn(nodeId: string){
     this.logUtils.logd("Start getting instance did, nodeId: "+nodeId,TAG);
+
+    let connectors = connectivity.getAvailableConnectors();
+    console.log("GetAvailableConnectors", connectors);
+
     this.standardAuth.getInstanceDIDDoc().then((didDocument)=>{
       this.logUtils.logd("Standard sign in, nodeId is "+ nodeId + " didDocument is "+didDocument,TAG);
       this.connectionService.standardSignIn(this.getServerNameByNodeId(nodeId),nodeId, didDocument);

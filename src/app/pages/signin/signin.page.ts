@@ -11,8 +11,6 @@ import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 
 import { connectivity, DID } from "@elastosfoundation/elastos-connectivity-sdk-cordova";
-import { EssentialsConnector } from "@elastosfoundation/essentials-connector-cordova";
-import { LocalIdentityConnector, localIdentity } from "@elastosfoundation/elastos-connector-localidentity-cordova";
 
 @Component({
   selector: 'app-signin',
@@ -20,8 +18,6 @@ import { LocalIdentityConnector, localIdentity } from "@elastosfoundation/elasto
   styleUrls: ['./signin.page.scss'],
 })
 export class SigninPage implements OnInit {
-  private localIdentityConnector = new LocalIdentityConnector();
-  private essentialsConnector = new EssentialsConnector();
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   public signedIn: boolean = false;
   public did: string = "";
@@ -39,15 +35,6 @@ export class SigninPage implements OnInit {
     public theme:ThemeService,
     public appService:AppService,
     private titleBarService: TitleBarService) { 
-      // connectivity.setActiveConnector(null);
-      // To be able to let users build a temporary identity in the app, without depending on a third party app:
-
-      let connectors = connectivity.getAvailableConnectors();
-      console.log("connectors",connectors);
-      connectivity.registerConnector(this.localIdentityConnector);
-      // To let users use Essentials for his operations:
-      connectivity.registerConnector(this.essentialsConnector);
-      connectivity.setApplicationDID("did:elastos:iqtWRVjz7gsYhyuQEb1hYNNmWQt1Z9geXg");
     }
 
   ngOnInit() {
@@ -88,15 +75,6 @@ export class SigninPage implements OnInit {
       // this.testGetCredentials();
       this.doSignin();
     });
-
-
-
-    // this.testGetCredentials().then(()=>{
-    // }).finally(()=>{
-      
-    // });
-
-
   }
 
   doSignin(){

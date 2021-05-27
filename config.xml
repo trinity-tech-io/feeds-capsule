@@ -144,6 +144,9 @@
         <edit-config file="*-Info.plist" mode="merge" target="NSPhotoLibraryAddUsageDescription">
             <string>need photo library access to save pictures there</string>
         </edit-config>
+        <edit-config file="*-Info.plist" mode="merge" target="NSMicrophoneUsageDescription">
+            <string>need microphone access to take video</string>
+        </edit-config>
         <config-file parent="CFBundleDocumentTypes" target="*-Info.plist">
             <array>
                 <dict>
