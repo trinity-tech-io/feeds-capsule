@@ -110,7 +110,7 @@
             --padding-bottom: 10px;
             --padding-start: 0px;
             margin: 0px 10px;
-            border-bottom: 1px solid #000000;
+            border-bottom: 1px solid #f5f4f8;
 
             .tip{
               position:absolute;
@@ -170,6 +170,7 @@
                 font-stretch: normal;
                 font-style: normal;
                 color: #000000;
+                opacity: 1;
             }
 
             ion-input{
@@ -214,7 +215,7 @@
     }
 
     .btn-row {
-        margin-top: 25px;
+        margin-top: 45px;
         width: 95%;
     }
 }

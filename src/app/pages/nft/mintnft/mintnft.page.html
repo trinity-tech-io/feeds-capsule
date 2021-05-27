@@ -67,7 +67,7 @@
         <img class="tip" src="/assets/images/darkmode/tip.svg" *ngIf="theme.darkMode">
       </ion-item>
 
-      <ion-item lines="none" *ngIf="curPublishtoPasar">
+      <ion-item lines="none" *ngIf="curPublishtoPasar&&sellMethod==='highestBid'">
         <ion-label position="stacked">{{ 'MintnftPage.nftExpirationDate' | translate }}</ion-label>
         <ion-datetime displayFormat="YYYY-MM-DD" [(ngModel)]="expirationDate" [min]="minExpirationDate" [max]="maxExpirationDate"></ion-datetime>
         <img class="tip" src="./assets/images/calendarAlt.svg">

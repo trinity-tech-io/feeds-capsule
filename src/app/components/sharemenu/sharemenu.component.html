@@ -11,7 +11,7 @@
 
       <div   [class.qr-container]="theme.darkMode" [class.light-qr-container]="!theme.darkMode" class="" *ngIf="isShowQrcode">
             <div class="qrcode">
-                <qrcode [qrdata]="qrCodeString" [size]="200" [level]="'M'"></qrcode>
+                <qrcode [qrdata]="qrCodeString" [size]="200" [level]="'M'" allowEmptyString="true"></qrcode>
             </div>
       </div>
 
