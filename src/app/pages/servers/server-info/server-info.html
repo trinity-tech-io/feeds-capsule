@@ -27,7 +27,7 @@
             <div *ngIf="server.qrcode" class="qr-container">
               <h2 *ngIf="!isShowQrcode" >{{'common.waitOnChain'|translate}}</h2>
               <div *ngIf="isShowQrcode" class="qrcode" (click)="showPreviewQrcode(feedsUrl)" (press)="menuMore(feedsUrl)">
-                <qrcode [qrdata]="feedsUrl" [size]="150" [level]="'M'"></qrcode>
+                <qrcode [qrdata]="feedsUrl" [size]="150" [level]="'M'" allowEmptyString="true"></qrcode>
               </div>
             </div>
           <h2 *ngIf="feedsUrl!=null&&server.qrcode&&isShowQrcode" style="margin-top:10px;font-size: 9px!important;color:#8888b0">{{'ServerInfoPage.feedsSourceQRCodeDes'|translate}}</h2>
