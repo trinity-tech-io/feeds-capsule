@@ -556,7 +556,9 @@ export const zh = {
         "price": "价格",
         "currency": "货币",
         "type": "类型",
-        "burn": "销毁"
+        "burn": "销毁",
+        "history":"历史",
+        "contract": "合约"
     },
     "BidPage":{
         "title": "竞价",

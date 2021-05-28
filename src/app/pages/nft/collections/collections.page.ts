@@ -54,6 +54,7 @@ export class CollectionsPage implements OnInit {
   initTile(){
     this.titleBarService.setTitle(this.titleBar,this.translate.instant('CollectionsPage.title'));
     this.titleBarService.setTitleBarBackKeyShown(this.titleBar,true);
+    this.titleBarService.setTitleBarMoreMemu(this.titleBar);
    }
 
    addEvent(){

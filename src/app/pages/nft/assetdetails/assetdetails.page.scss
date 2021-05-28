@@ -1,11 +1,100 @@
+    /********** Tabs *********/
+.tab-container {
+      height: 36.3px;
+      margin: 25px 31px 5px;
+      display: flex;
+      justify-content:center;
+      align-items: center;
+
+      .left-tab,.right-tab {
+          padding: 12px 6px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          span {
+              font-size: 14px;
+              font-weight: bold;
+              font-stretch: normal;
+              font-style: normal;
+              text-align:center;
+              color: #000000;
+              padding-bottom: 5.5px;
+          }
+      }
+
+      .left-tab {
+        margin-right:5px;
+      }
+
+      .right-tab {
+        margin-left:5px;
+
+      }
+
+      .tab-active {
+          transform: scale(1.1);
+          span {
+              transform: scale(0.9);
+              color: #7624fe;
+          }
+
+          .numberText{
+              transform: scale(0.9);
+              color: #7624fe;
+          }
+      }
+
+      .tab-active-bottom-border{
+          border-bottom:solid 2px #7624fe;
+      }
+}
+
+.dark-tab-container {
+  height: 36.3px;
+  margin: 25px 31px 5px;
+  display: flex;
+  justify-content:center;
+  align-items: center;
+
+  .left-tab,.right-tab {
+      padding: 12px 6px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      span {
+          font-size: 14px;
+          font-weight: bold;
+          font-stretch: normal;
+          font-style: normal;
+          text-align:center;
+          color: #fff;
+          padding-bottom: 5.5px;
+      }
+  }
+
+  .left-tab {
+    margin-right:5px;
+  }
+
+  .right-tab {
+    margin-left:5px;
+
+  }
+
+  .tab-active {
+      transform: scale(1.1);
+      span {
+          transform: scale(0.9);
+          color: #7624fe;
+      }
+  }
+
+  .tab-active-bottom-border{
+      border-bottom:solid 2px #7624fe;
+  }
+}
 .container {
-    padding: 40px 25px;
-    .removeBorder {
-      border-bottom: none;
-    }
-    .bottomBorder{
-      border-bottom: 2px solid rgba(34, 34, 34, 0.07);
-    }
+    padding: 0px 25px;
     .btn-row1 {
       margin-top: 0px;
       width: 100%;
@@ -24,9 +113,8 @@
     }
 
     .detail-row {
-
-        padding-top: 20px;
-        padding-bottom: 5px;
+      padding-top: 10px;
+      padding-bottom: 0px;
         ion-col {
           padding: 0;
         }
@@ -189,9 +277,6 @@
 }
 
 .darkContainer {
-  .bottomBorder {
-    border-bottom: 2px solid #2e2f4e;
-  }
 
   .detail-row .removeBorder {
     border-bottom: none;

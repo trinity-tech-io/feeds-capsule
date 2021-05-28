@@ -1,24 +1,21 @@
 <app-titlebar></app-titlebar>
 <ion-content>
+  <div [class.tab-container]="!theme.darkMode" [class.dark-tab-container]="theme.darkMode" [class.removeMargin]="selectType === 'AssetdetailsPage.history'" style="margin-top:5px;">
+    <div class="left-tab" [class.tab-active]="selectType === 'AssetdetailsPage.contract'" (click)="changeType('AssetdetailsPage.contract')">
+      <span [class.tab-active-bottom-border]="selectType === 'AssetdetailsPage.contract'">{{ 'AssetdetailsPage.contract' | translate }}</span>
+    </div>
+    <div class="right-tab" [class.tab-active]="selectType === 'AssetdetailsPage.history'" (click)="changeType('AssetdetailsPage.history')">
+      <span [class.tab-active-bottom-border]="selectType === 'AssetdetailsPage.history'">{{'AssetdetailsPage.history' | translate }}</span>
+    </div>
+  </div>
   <ion-grid class="container" [class.darkContainer]="theme.darkMode">
-    <!--- contract Details -->
-    <ion-row>
-      <ion-col size="12" style="padding:0px;">
-        <ion-button class="btn-row1" style="border-radius:17px;">
-          <ion-label>
-            {{ 'AssetdetailsPage.contractDetails' | translate }}
-          </ion-label>
-        </ion-button>
-      </ion-col>
-    </ion-row>
-
-    <ion-row class="detail-row removeBorder">
+    <ion-row class="detail-row removeBorder" *ngIf="selectType === 'AssetdetailsPage.contract'">
       <ion-col size="12" class="left-col">
         <h1>{{ "AssetdetailsPage.asset" | translate}}</h1>
         <img src="./assets/images/test.png" class="assetsImg"/>
       </ion-col>
     </ion-row>
-
+    <div *ngIf="selectType === 'AssetdetailsPage.contract'" style="margin-bottom:10px;">
     <div *ngFor="let contractDetail of contractDetails">
       <ion-row *ngIf="contractDetail.details" class="detail-row removeBorder">
         <ion-col size="12" class="left-col">
@@ -27,20 +24,9 @@
         </ion-col>
       </ion-row>
     </div>
-
+   </div>
     <!--- purchase Info -->
-    <div style="margin-top:20px;margin-bottom:10px;">
-      <ion-row (click)="clickArrow()">
-        <ion-col size="12" style="padding:0px;">
-          <ion-button class="btn-row1" style="border-radius:17px;">
-            <ion-label>
-              {{ 'AssetdetailsPage.purchaseInfo' | translate }}
-            </ion-label>
-            <img src="./assets/images/arrowBack.svg" style="position:absolute;right:10px;width:25px;height:25px;top:5px;"/>
-          </ion-button>
-        </ion-col>
-       </ion-row>
-       <div *ngIf="isShowPurchaseInfo">
+    <div style="margin-bottom:10px;"  *ngIf="selectType === 'AssetdetailsPage.history'">
        <div *ngFor="let purchaseInfo of purchaseInfos">
         <ion-row *ngIf="purchaseInfo.details" class="detail-row removeBorder">
           <ion-col size="12" class="left-col">
@@ -49,7 +35,6 @@
           </ion-col>
         </ion-row>
        </div>
-
         <!--- BUTTONS --->
         <div class="btns">
           <ion-row class="btn-row delete-row">
@@ -59,10 +44,5 @@
           </ion-row>
         </div>
       </div>
-
-      </div>
-
-
-
   </ion-grid>
 </ion-content>
