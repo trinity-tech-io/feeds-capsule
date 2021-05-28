@@ -34,15 +34,18 @@
                 "glob": "**/*.svg",
                 "input": "src/assets/fonts/icons",
                 "output": "./svg"
+              },
+              {
+                "glob": "**/*",
+                "input": "./node_modules/@elastosfoundation/elastos-connector-localidentity-cordova/dist.esm/assets",
+                "output": "assets"
               }
             ],
             "styles": [
-              {
-                "input": "src/theme/variables.scss"
-              },
-              {
-                "input": "src/global.scss"
-              }
+                "src/theme/variables.scss",
+                "src/global.scss",
+                "node_modules/@elastosfoundation/elastos-connectivity-sdk-cordova/dist.esm/bundle.css",
+                "node_modules/@elastosfoundation/elastos-connector-localidentity-cordova/dist.esm/bundle.css"
             ],
             "scripts": [],
             "allowedCommonJsDependencies": [
