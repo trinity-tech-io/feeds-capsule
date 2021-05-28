@@ -120,40 +120,6 @@ export class PopupProvider {
 
          return this.popover;
     }
-
-    public ionicPrompt(title: string, message: string, opts?: any, okText?: string, cancelText?: string): Promise<any> {
-        return new Promise((resolve, reject) => {
-        let defaultText = opts && opts.defaultText ? opts.defaultText : null;
-        let placeholder = opts && opts.placeholder ? opts.placeholder : null;
-        let inputType = opts && opts.type ? opts.type : 'text';
-        let cssClass = opts.useDanger ? "alertDanger" : null;
-        let backdropDismiss = !!opts.backdropDismiss;
-
-        this.alertCtrl.create({
-            header:title,
-            message,
-            cssClass,
-            backdropDismiss,
-            inputs: [{
-                value: defaultText,
-                placeholder,
-                type: inputType
-            }],
-            buttons: [{
-                text: cancelText ? cancelText : this.translate.instant('Cancel'),
-                handler: data => {
-                    resolve(null);
-                }
-            },
-            {
-                text: okText ? okText : this.translate.instant('Ok'),
-                handler: data => {
-                    resolve(data[0]);
-                }
-            }]
-            }).then(prompt => prompt.present());
-        });
-    }
 }
 
 
