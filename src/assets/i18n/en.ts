@@ -555,7 +555,9 @@ export const en = {
         "price": "Price",
         "currency": "Currency",
         "type": "Type",
-        "burn": "Burn"
+        "burn": "Burn",
+        "history":"History",
+        "contract": "Contract"
     },
     "BidPage":{
         "title": "Bid",

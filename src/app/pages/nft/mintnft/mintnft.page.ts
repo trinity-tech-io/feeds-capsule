@@ -66,6 +66,7 @@ export class MintnftPage implements OnInit {
   initTile(){
     this.titleBarService.setTitle(this.titleBar,this.translate.instant('MintnftPage.title'));
     this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
+    this.titleBarService.setTitleBarMoreMemu(this.titleBar);
    }
 
    addEvent(){
@@ -144,14 +145,14 @@ export class MintnftPage implements OnInit {
   }
 
   sendIpfs(fileName:string,file:any){
-    let blob = this.dataURLtoBlob(file);
-    var formData = new FormData();
-    formData.append("",blob);
-    this.httpService.ajaxNftPost(ApiUrl.nftAdd,formData).then((res)=>{
-         console.log("========"+JSON.stringify(res));
-    }).catch((err)=>{
-      console.log("========"+JSON.stringify(err));
-    });
+    // let blob = this.dataURLtoBlob(file);
+    // var formData = new FormData();
+    // formData.append("",blob);
+    // this.httpService.ajaxNftPost(ApiUrl.nftAdd,formData).then((res)=>{
+    //      console.log("========"+JSON.stringify(res));
+    // }).catch((err)=>{
+    //   console.log("========"+JSON.stringify(err));
+    // });
   }
 
   dataURLtoBlob(dataurl:string) {

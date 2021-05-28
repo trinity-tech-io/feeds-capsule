@@ -32,7 +32,7 @@ export class AssetdetailsPage implements OnInit {
   public currency:string = "ELASC";
   public type:string = "Bid"
   public purchaseInfoQuantity:string = "1";
-  public isShowPurchaseInfo:boolean = true;
+  public selectType:string = "AssetdetailsPage.contract";
   constructor(
     private translate:TranslateService,
     private event:Events,
@@ -46,8 +46,7 @@ export class AssetdetailsPage implements OnInit {
 
   ionViewWillEnter() {
     this.initTile();
-    this.collectContractData();
-    this.collectPurchaseInfos();
+    this.changeType(this.selectType);
     this.addEvent();
   }
 
@@ -61,6 +60,7 @@ export class AssetdetailsPage implements OnInit {
   initTile(){
     this.titleBarService.setTitle(this.titleBar,this.translate.instant('AssetdetailsPage.title'));
     this.titleBarService.setTitleBarBackKeyShown(this.titleBar,true);
+    this.titleBarService.setTitleBarMoreMemu(this.titleBar);
    }
 
    addEvent(){
@@ -147,11 +147,21 @@ export class AssetdetailsPage implements OnInit {
 
    }
 
-   clickArrow(){
-     this.isShowPurchaseInfo = !this.isShowPurchaseInfo;
-   }
-
    purchaseInfoBurn(){
      this.native.navigateForward(['bid'],{queryParams:{"showType":"burn"}});
    }
+
+   changeType(type:string){
+    this.selectType = type;
+    switch(type){
+      case "AssetdetailsPage.contract":
+        this.collectContractData();
+      break;
+      case "AssetdetailsPage.history":
+        this.collectPurchaseInfos();
+      break;
+    }
+
+   }
+
 }

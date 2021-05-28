@@ -93,6 +93,7 @@ export class CurrencyviewallPage implements OnInit {
   initTile(){
     this.titleBarService.setTitle(this.titleBar,this.translate.instant('CurrencyviewallPage.title'));
     this.titleBarService.setTitleBarBackKeyShown(this.titleBar,true);
+    this.titleBarService.setTitleBarMoreMemu(this.titleBar);
    }
 
    addEvent(){
