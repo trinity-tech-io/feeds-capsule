@@ -11,40 +11,45 @@
             <ion-label position="stacked">{{ 'CreatenewfeedPage.description' | translate }}</ion-label>
             <ion-input clearInput required type="text" placeholder="{{'CreatenewfeedPage.inputFeedDesc'|translate}}" #desc (ionChange)="onChangeText(desc)"></ion-input>
         </ion-item>
-        <ion-item lines="none" (click)="profileimage()">
+        <ion-item lines="none" (click)="profileimage()" class="removeBorder">
           <ion-row>
             <ion-col>
               <ion-label position="stacked">{{ 'CreatenewfeedPage.profileImage'|translate }}</ion-label>
-              <ion-avatar *ngIf="avatar != ''" style="margin-top: 5px;">
-                <img [src]="avatar">
+              <ion-avatar *ngIf="avatar != ''" style="margin-top: 5px;margin-left:20px;">
+                <img [src]="avatar" style="width:40px;height:40px">
               </ion-avatar>
             </ion-col>
-            <ion-img src="assets/icons/right-arrow.svg"></ion-img>
+            <img [src]="!theme.darkMode ? './assets/images/right-arrow.svg' : './assets/images/darkmode/right-arrow.svg'"> <br>
           </ion-row>
         </ion-item>
-        <ion-item lines="none" (click)="clickPublicFeeds()">
+
+        <ion-item lines="none">
           <ion-row class="section dev-mode">
             <ion-col size="9" class="title-col" (swipe)="clickPublicFeeds()">
-                <h1>{{"FeedspreferencesPage.des" | translate }}</h1>
-                <h2 *ngIf="curFeedPublicStatus">{{ 'SettingsPage.on' | translate }}</h2>
-                 <h2 *ngIf="!curFeedPublicStatus">{{ 'SettingsPage.off' | translate }}</h2>
+                <h1 (click)="help($event)" >{{"FeedspreferencesPage.des" | translate }} <img [src]="!theme.darkMode ? './assets/images/question-circle.svg' : './assets/images/darkmode/question-circle.svg'" id="help"></h1>
+                <img *ngIf="isHelp&&curLang=='en'" src="./assets/images/icontop.svg" style="z-index: 9999;position: absolute;top: 26px;left:185px;">
+                <img *ngIf="isHelp&&curLang=='zh'" src="./assets/images/icontop.svg" style="z-index: 9999;position: absolute;top: 26px;left:140px;">
+                <h2 *ngIf="curFeedPublicStatus" (click)="clickPublicFeeds()">{{ 'SettingsPage.on' | translate }}</h2>
+                 <h2 *ngIf="!curFeedPublicStatus" (click)="clickPublicFeeds()">{{ 'SettingsPage.off' | translate }}</h2>
             </ion-col>
-            <ion-col size="3" class="arrow-col" (swipe)="clickPublicFeeds()">
+            <ion-col size="3" class="arrow-col" (swipe)="clickPublicFeeds()" (click)="clickPublicFeeds()">
               <ion-toggle [(ngModel)]="curFeedPublicStatus"  mode="ios" color="success" style="pointer-events:none;"></ion-toggle>
             </ion-col>
            </ion-row>
         </ion-item>
-        <ion-item lines="none" class="removeBorder">
+        <ion-item lines="none" class="removeBorder" *ngIf="developerMode">
           <ion-label position="stacked">{{ 'CreatenewfeedPage.channelSource'|translate }}</ion-label>
-          <h2>{{ selectedChannelSource }}</h2>
+          <h2 style=" background-color: #f6f5f6;border-radius:10px;padding-left: 20px;margin-top:10px;">{{ selectedChannelSource }}</h2>
         </ion-item>
     </ion-list>
-
-      <ion-row class="btn-row" style="justify-content:flex-start;">
-          <p style="font-size: 9px!important;color:#8888b0;margin-top: -20px;">※ {{"CreatenewfeedPage.feedNum"|translate}}</p>
-          <ion-button (click)="createChannel(name,desc)" >
-              <ion-label> {{'CreatenewfeedPage.createFeed'|translate}}</ion-label>
-          </ion-button>
-      </ion-row>
-    </ion-grid>
+    <div class="arrow_box" *ngIf="isHelp" [ngStyle]="arrowBoxStyle">
+      {{'CreatenewfeedPage.des1'|translate}}
+     </div>
+    <ion-row class="btn-row" style="justify-content:flex-start;">
+        <p style="font-size: 9px!important;color:#9ca0a4;margin-top: -20px;">※ {{"CreatenewfeedPage.feedNum"|translate}}</p>
+        <ion-button (click)="createChannel(name,desc)">
+            <ion-label> {{'CreatenewfeedPage.createFeed'|translate}}</ion-label>
+        </ion-button>
+    </ion-row>
+  </ion-grid>
 </ion-content>

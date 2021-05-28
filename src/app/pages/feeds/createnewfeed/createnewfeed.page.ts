@@ -29,6 +29,10 @@ export class CreatenewfeedPage implements OnInit {
   public selectedServer: any = null;
   public selectedChannelSource:string = 'Select channel source';
   public curFeedPublicStatus:boolean = true;
+  public developerMode:boolean =  false;
+  public isHelp:boolean = false;
+  public arrowBoxStyle:any = {"top":"0px"};
+  public curLang:string = "";
   constructor(
     private popover: PopoverController ,
     private navCtrl: NavController,
@@ -51,7 +55,8 @@ export class CreatenewfeedPage implements OnInit {
 
   ionViewWillEnter() {
     this.initTitle();
-
+    this.curLang = this.feedService.getCurrentLang();
+    this.developerMode = this.feedService.getDeveloperMode();
     this.selectedServer = this.feedService.getBindingServer();
     this.selectedChannelSource = this.selectedServer.did;
     this.connectionStatus = this.feedService.getConnectionStatus();
@@ -240,7 +245,8 @@ export class CreatenewfeedPage implements OnInit {
         "did":this.selectedServer.did,
         "name":name,
         "des":des,
-        "feedPublicStatus":this.curFeedPublicStatus
+        "feedPublicStatus":this.curFeedPublicStatus,
+        "developerMode":this.developerMode
       }
     });
     popover.onWillDismiss().then(() => {
@@ -290,5 +296,14 @@ export class CreatenewfeedPage implements OnInit {
           this.storageService.set("feeds.feedPublicStatus",JSON.stringify(feedPublicStatus));
       }
     });
+  }
+
+
+  help(event:any){
+    let e = event||window.event; //兼容IE8
+    let target = e.target||e.srcElement;  //判断目标事件
+    let boundingClientRect = target.getBoundingClientRect();
+    this.arrowBoxStyle["top"] = boundingClientRect.top-15.5+"px";
+    this.isHelp = !this.isHelp;
   }
 }

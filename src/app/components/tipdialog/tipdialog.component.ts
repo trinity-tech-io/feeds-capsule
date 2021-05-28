@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ThemeService } from 'src/app/services/theme.service';
 import { NavParams} from '@ionic/angular';
-import { FeedService } from '../../services/FeedService';
 import { Events } from '../../services/events.service';
 
 @Component({
@@ -16,7 +15,6 @@ export class TipdialogComponent implements OnInit {
   public feedPublicStatus:boolean = true;
   public developerMode:boolean =  false;
   constructor(
-    private feedService:FeedService,
     public theme: ThemeService,
     private navParams: NavParams,
     private events:Events){ }
