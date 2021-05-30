@@ -40,13 +40,15 @@
             >
               <ion-label style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ addingchannel.feedName }}</ion-label>
               <ion-row>
-                <img [src]="!theme.darkMode ? './assets/images/bubble2.svg' : './assets/images/darkmode/bubble2.svg'"> <br>
-                <p><span>{{ addingchannel.follower }}</span> {{ 'common.followers' | translate }}</p>
+                <p class="ownerName">{{getChannelOwner(addingchannel.nodeId,addingchannel.feedId) | translate }}</p>
+              </ion-row>
+              <ion-row>
+                <p  class="des">{{getChannelDes(addingchannel.nodeId,addingchannel.feedId)}}</p>
               </ion-row>
             </ion-col>
             <ion-col size="3" class="right-col">
               <ion-button class="unsubscribed" fill="outline" (click)="handeleStatus(addingchannel)">
-                <ion-label >{{ handleStatus(addingchannel) | translate }}</ion-label>
+                <ion-label>{{ handleStatus(addingchannel) | translate }}</ion-label>
               </ion-button>
             </ion-col>
             <ion-ripple-effect></ion-ripple-effect>
@@ -76,9 +78,12 @@
         >
           <ion-label style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ feed.name }}</ion-label>
           <ion-row>
-            <img [src]="!theme.darkMode ? './assets/images/bubble2.svg' : './assets/images/darkmode/bubble2.svg'"> <br>
-            <p><span>{{ feed.subscribers }}</span> {{ 'common.followers' | translate }}</p>
+            <p class="ownerName">{{getChannelOwner(feed.nodeId,feed.id)}}</p>
           </ion-row>
+          <ion-row>
+            <p  class="des">{{getChannelDes(feed.nodeId,feed.id)}}</p>
+          </ion-row>
+
         </ion-col>
         <ion-col size="3" class="right-col">
           <ion-button  class="unsubscribed" fill="outline" (click)="subscribe(feed.nodeId,feed.id)">
@@ -111,8 +116,12 @@
           >
             <ion-label style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ feed.name }}</ion-label>
             <ion-row>
-              <img [src]="!theme.darkMode ? './assets/images/bubble2.svg' : './assets/images/darkmode/bubble2.svg'"> <br>
-              <p><span>{{ feed.followers}}</span> {{ 'common.followers' | translate }}</p>
+              <!-- <img [src]="!theme.darkMode ? './assets/images/bubble2.svg' : './assets/images/darkmode/bubble2.svg'"> <br>
+              <p><span>{{ feed.followers}}</span> {{ 'common.followers' | translate }}</p> -->
+              <p class="ownerName">@{{feed.ownerName}}</p>
+            </ion-row>
+            <ion-row>
+              <p class="des">{{feed.description}}</p>
             </ion-row>
           </ion-col>
           <ion-col size="3" class="right-col">
