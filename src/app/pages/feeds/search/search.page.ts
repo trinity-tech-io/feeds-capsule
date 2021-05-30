@@ -583,4 +583,22 @@ export class SearchPage implements OnInit {
    return _.find(discoverfeeds,feed) || "";
   }
 
+  getChannelOwner(nodeId:string,channelId:number){
+   let channel = this.feedService.getChannelFromId(nodeId,channelId) || {};
+   let ownerName:string = channel["owner_name"] || "";
+   if(ownerName === ""){
+       return "common.obtain";
+   }
+   return "@"+ownerName;
+  }
+
+  getChannelDes(nodeId:string,channelId:number){
+    let channel = this.feedService.getChannelFromId(nodeId,channelId) || {};
+    let channelDes:string = channel["introduction"] || "";
+    if(channelDes === ""){
+        return "";
+    }
+    return channelDes;
+  }
+
 }

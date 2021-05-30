@@ -24,3 +24,25 @@ ion-searchbar {
   top: 31px;
   z-index: 2;
 }
+
+.channel-list ion-item .channel-row .middle-col p, .channel-list ion-item .channel-row .middle-col .des{
+  font-size: 12px;
+  font-stretch: normal;
+  font-style: normal;
+  color: #9ca0a4;
+  font-weight: normal;
+  margin-top: 5px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.channel-list ion-item .channel-row .middle-col p, .channel-list ion-item .channel-row .middle-col .ownerName{
+  font-size: 12px;
+  font-stretch: normal;
+  font-style: normal;
+  color: #9ca0a4;
+  font-weight:bold;
+  margin-top: 5px;
+  font-weight:bold;
+}

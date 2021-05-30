@@ -94,7 +94,8 @@ export const en = {
         "transMsgTimeout": "The server is not responding. Please try again later.",
         "advancedSettings": "Advanced settings",
         "normalSettings": "Normal Settings",
-        "scannerPrompt": "Place a QR code inside the scan area"
+        "scannerPrompt": "Place a QR code inside the scan area",
+        "obtain":"Obtain"
     },
     "app": {
         "profileDetails": "Profile Details",

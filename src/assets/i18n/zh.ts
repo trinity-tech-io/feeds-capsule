@@ -94,7 +94,8 @@ export const zh = {
         "transMsgTimeout": "服务未响应，请稍候再试",
         "advancedSettings": "高级设置",
         "normalSettings": "普通设置",
-        "scannerPrompt": "将二维码放在扫描区域内"
+        "scannerPrompt": "将二维码放在扫描区域内",
+        "obtain":"正在获取"
     },
     "app":{
         "profileDetails": "档案详情",
