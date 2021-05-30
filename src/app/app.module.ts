@@ -135,6 +135,7 @@ export function TranslateLoaderFactory() {
     AppRoutingModule,
     ComponentsModule,
     IonicModule.forRoot({
+      swipeBackEnabled:false,
       rippleEffect: true,
       mode: 'ios',
       // navAnimation: customAnimation,

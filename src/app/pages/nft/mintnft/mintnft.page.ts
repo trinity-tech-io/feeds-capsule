@@ -34,6 +34,8 @@ export class MintnftPage implements OnInit {
   public expirationDate:string = "";
   public maxExpirationDate:string = "";
   public minExpirationDate:string = "";
+  public fileName:string = "";
+  private imageObj:any = {};
   constructor(
     private translate:TranslateService,
     private event:Events,
@@ -121,7 +123,7 @@ export class MintnftPage implements OnInit {
           fileReader.onloadend =(event:any)=>{
             this.zone.run(()=>{
               this.assetBase64 = fileReader.result.toString();
-              this.sendIpfs(fileName,this.assetBase64);
+              this.sendIpfsImage(fileName,this.assetBase64);
             });
           };
 
@@ -144,15 +146,32 @@ export class MintnftPage implements OnInit {
     });
   }
 
-  sendIpfs(fileName:string,file:any){
-    // let blob = this.dataURLtoBlob(file);
-    // var formData = new FormData();
-    // formData.append("",blob);
-    // this.httpService.ajaxNftPost(ApiUrl.nftAdd,formData).then((res)=>{
-    //      console.log("========"+JSON.stringify(res));
-    // }).catch((err)=>{
-    //   console.log("========"+JSON.stringify(err));
-    // });
+  sendIpfsImage(fileName:string,file:any){
+    let blob = this.dataURLtoBlob(file);
+    let formData = new FormData();
+    formData.append("",blob);
+    this.httpService.ajaxNftPost(ApiUrl.nftAdd,formData).then((result)=>{
+        //{"Name":"blob","Hash":"QmaxWgjheueDc1XW2bzDPQ6qnGi9UKNf23EBQSUAu4GHGF","Size":"17797"};
+        let hash = result["Hash"] || null;
+        let imgFormat = fileName.split(".")[1];
+        if(hash != null){
+          this.imageObj["imgSize"] = result["Size"];
+          this.imageObj["imgHash"] = "feeds:imgage:"+hash;
+          this.imageObj["imgFormat"] = imgFormat;
+        }
+        console.log("========"+JSON.stringify(this.imageObj));
+        //feeds:imgage:
+        //feeds:json:
+    }).catch((err)=>{
+         console.log("========"+JSON.stringify(err));
+    });
+  }
+
+  sendIpfsJSON(){
+   let ipfsJSON = {
+      "version":"1",
+      "type": "image",
+   }
   }
 
   dataURLtoBlob(dataurl:string) {
@@ -242,6 +261,7 @@ export class MintnftPage implements OnInit {
     let path = fileUri.split("?")[0];
     let lastIndex = path.lastIndexOf("/");
     pathObj["fileName"] =  path.substring(lastIndex+1,fileUri.length);
+    this.fileName = pathObj["fileName"];
     pathObj["filepath"] =  path.substring(0,lastIndex);
     pathObj["filepath"] = pathObj["filepath"].startsWith('file://') ? pathObj["filepath"] : `file://${pathObj["filepath"]}`;
     return pathObj;
