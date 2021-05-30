@@ -337,7 +337,7 @@ export const zh = {
     "ScanqrcodePage":{
         "introtitle": "创建新的",
         "introtitle2": "Feeds出版号",
-        "introduce1": "请确保您已启动Feeds出版号节点新服务，且通过浏览器已显示Feeds出版号二维码。",
+        "introduce1": "请确保您已启动Feeds出版号节点服务，且通过浏览器已显示Feeds出版号二维码。",
         "introduce2": "请直接扫描此Feeds出版号二维码，开始Feeds出版号绑定过程。",
         // "introduce3": "继续",
         "introduce4": "扫描二维码"
