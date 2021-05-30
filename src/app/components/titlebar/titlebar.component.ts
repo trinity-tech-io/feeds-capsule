@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { PopoverController } from '@ionic/angular';
+import { PopoverController, Platform } from '@ionic/angular';
 import { TitlebarmenuitemComponent } from '../titlebarmenuitem/titlebarmenuitem.component';
 import { TitleBarTheme, TitleBarSlotItem, TitleBarMenuItem, TitleBarIconSlot, TitleBarIcon, TitleBarNavigationMode, TitleBarForegroundMode } from './titlebar.types';
 
@@ -40,7 +40,16 @@ export class TitleBarComponent {
 
   constructor(
     private popoverCtrl: PopoverController,
+    private platform: Platform
   ) {
+  }
+
+  public isIOSPlatform(): boolean{
+    if (this.platform.is('ios')){
+      return true;
+    }
+
+    return false;
   }
 
   private static makeDefaultIcon(): TitleBarSlotItem {
