@@ -11,6 +11,9 @@ import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 
 import { connectivity, DID } from "@elastosfoundation/elastos-connectivity-sdk-cordova";
+import { localization } from "@elastosfoundation/elastos-connectivity-sdk-cordova";
+import { LanguageService } from 'src/app/services/language.service';
+
 
 @Component({
   selector: 'app-signin',
@@ -34,7 +37,8 @@ export class SigninPage implements OnInit {
     private event:Events,
     public theme:ThemeService,
     public appService:AppService,
-    private titleBarService: TitleBarService) { 
+    private titleBarService: TitleBarService,
+    private languageService: LanguageService) { 
     }
 
   ngOnInit() {
@@ -51,6 +55,7 @@ export class SigninPage implements OnInit {
   }
 
   ionViewWillEnter() {
+    localization.setLanguage(this.languageService.getCurLang());
     this.initTile();
     // appManager.setVisible("show");
 
@@ -71,6 +76,7 @@ export class SigninPage implements OnInit {
   }
 
   signIn(){
+    
     connectivity.setActiveConnector(null).then(()=>{
       // this.testGetCredentials();
       this.doSignin();
