@@ -142,7 +142,8 @@ export function TranslateLoaderFactory() {
     IonicModule.forRoot({
       rippleEffect: true,
       mode: 'ios',
-      navAnimation: customAnimation
+      // navAnimation: customAnimation,
+      // swipeBackEnabled: true
     }),
     TranslateModule.forRoot({
       loader: {
