@@ -3000,11 +3000,11 @@ export class FeedService {
 
   signinChallengeRequest(nodeId: string , requiredCredential: boolean){
     this.logUtils.logd("Start signin server, nodeId is"+nodeId);
-    if(this.isLogging[nodeId] == undefined)
-      this.isLogging[nodeId] = false;
-    if (this.isLogging[nodeId])
-      return ;
-    this.setSigninTimeout(nodeId);
+    // if(this.isLogging[nodeId] == undefined)
+    //   this.isLogging[nodeId] = false;
+    // if (this.isLogging[nodeId])
+    //   return ;
+    // this.setSigninTimeout(nodeId);
 
     // this.native.toast(this.formatInfoService.formatSigninMsg(this.getServerNameByNodeId(nodeId)));
     if (this.getServerVersionCodeByNodeId(nodeId) < newAuthVersion){
