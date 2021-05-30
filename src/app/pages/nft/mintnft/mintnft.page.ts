@@ -11,6 +11,7 @@ import { TitleBarComponent } from '../../..//components/titlebar/titlebar.compon
 import { File,DirectoryEntry} from '@ionic-native/file/ngx';
 import { HttpService } from '../../../services/HttpService';
 import { ApiUrl } from '../../../services/ApiUrl';
+import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 
 @Component({
   selector: 'app-mintnft',
@@ -107,6 +108,7 @@ export class MintnftPage implements OnInit {
         let nftAssetList = this.feedService.getNftAssetList();
         nftAssetList.push(parms);
         this.feedService.setNftAssetList(nftAssetList);
+        this.sendIpfsJSON();
         this.native.pop();
     }
   }
@@ -171,7 +173,29 @@ export class MintnftPage implements OnInit {
    let ipfsJSON = {
       "version":"1",
       "type": "image",
+      "name":this.nftName,
+      "description":this.nftDescription,
+      "image":this.imageObj['imgHash'],
+      "kind":this.imageObj['imgFormat'],
+      "size":this.imageObj["imgSize"]
    }
+
+   let formData = new FormData();
+   formData.append("",JSON.stringify(ipfsJSON));
+
+   this.httpService.ajaxNftPost(ApiUrl.nftAdd,formData).then((result)=>{
+    //{"Name":"blob","Hash":"QmaxWgjheueDc1XW2bzDPQ6qnGi9UKNf23EBQSUAu4GHGF","Size":"17797"};
+    let hash = result["Hash"] || null;
+    if(hash != null){
+       let jsonHash = "feeds:json:"+hash;
+       console.log("====jsonHash===="+jsonHash);
+    }
+    //feeds:imgage:
+    //feeds:json:
+}).catch((err)=>{
+     console.log("========"+JSON.stringify(err));
+});
+
   }
 
   dataURLtoBlob(dataurl:string) {
