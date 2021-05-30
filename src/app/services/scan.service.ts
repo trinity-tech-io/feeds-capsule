@@ -33,7 +33,7 @@ export class ScanService {
     
     createBarcode(input: string) {
         this.barcodeScanner.encode(this.barcodeScanner.Encode.TEXT_TYPE, input).then((encodedData) => {
-            console.log(encodedData);
+            // console.log(encodedData);
         //   this.encodedData = encodedData;
         }, (err) => {
             console.log('Error occured : ' + err);

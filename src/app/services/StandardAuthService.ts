@@ -17,7 +17,6 @@ export class StandardAuthService {
     getCredentials(): Promise<any>{
         return new Promise(async (resolve, reject) =>{
             let didAccess = new DID.DIDAccess();
-            console.log("Trying to get credentials");
             let params = {
                 claims: {
                     name: true,
@@ -57,8 +56,7 @@ export class StandardAuthService {
             }
             try {
                 let presentation = await didAccess.getCredentials(params);
-                console.log("Got credentials result");
-                console.log(presentation);
+                console.log("Got credentials result, presentation is",presentation);
                 if (presentation) {
                     resolve(presentation);
                     console.log("Got credentials:", presentation);
