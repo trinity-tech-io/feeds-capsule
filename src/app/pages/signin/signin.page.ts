@@ -93,7 +93,6 @@ export class SigninPage implements OnInit {
 
   public async testGetCredentials() {
     let didAccess = new DID.DIDAccess();
-    console.log("Trying to get credentials");
     try {
         let presentation = await didAccess.getCredentials({claims: {
           name: true,

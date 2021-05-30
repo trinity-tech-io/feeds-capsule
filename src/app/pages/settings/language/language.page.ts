@@ -36,7 +36,6 @@ export class LanguagePage implements OnInit {
   }
 
   selectLanguage(language) {
-    console.log("language is", language);
     this.languageService.setCurLang(language.code);
     this.currentLang = language.code;
 
