@@ -1,6 +1,7 @@
 <ion-app>
     <ion-menu side="end" type="overlay" menuId="menu" [class.darkMenu]="theme.darkMode" contentId="my-content" class="my-custom-menu">
         <ion-content>
+            <div style="height: 40px;" *ngIf="isIOSPlatform()"></div>
 
             <ion-row class="profile-card" (click)="profiledetail()">
                 <ion-col size="12" class="left-col">
@@ -50,7 +51,7 @@
         </ion-content>
     </ion-menu>
 
+    <!-- <ion-router-outlet  [swipeGesture]="true" id="my-content"></ion-router-outlet> -->
     <ion-router-outlet  id="my-content"></ion-router-outlet>
-
   </ion-app>
 

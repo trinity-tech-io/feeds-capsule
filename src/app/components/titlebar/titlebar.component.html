@@ -1,4 +1,6 @@
 <!-- <ion-header class="ion-no-border"> -->
+  <div style="height: 40px; background-color: #fff; color: #fff;" *ngIf="isIOSPlatform()"></div>
+
   <ion-row [ngStyle]="{ 'background': theme.backgroundColor }">
     <ion-col size="1.25">
       <img *ngIf="icons[0].visible" [src]="getIconPath(0)" (click)="outerLeftIconClicked()">

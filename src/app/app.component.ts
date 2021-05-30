@@ -64,9 +64,12 @@ export class MyApp {
   initializeApp() {
     this.platform.ready().then(() => {
       this.splashScreen.hide();
-
-      this.statusBar.overlaysWebView(false);
-      this.statusBar.styleDefault();
+      //for ios
+      if (this.isIOSPlatform()){
+        this.statusBar.backgroundColorByHexString('#f8f8ff');
+        this.statusBar.styleDefault();
+      }
+      
       this.statusBar.show();
 
       this.initSetting();
@@ -325,4 +328,10 @@ export class MyApp {
     this.native.navigateForward('/menu/profiledetail',"");
   }
 
+  public isIOSPlatform(): boolean{
+    if (this.platform.is('ios')){
+      return true;
+    }
+    return false;
+  }
 }
