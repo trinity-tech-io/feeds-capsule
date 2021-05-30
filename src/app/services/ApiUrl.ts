@@ -1,7 +1,7 @@
 export  class ApiUrl {
   /**后台服务*/
   public static SERVER:string = 'https://www.trinity-tech.io/feeds/api/v2';
-  public static NFTSERVER:string =  'https://ipfs.elastoscarrier.org/api/v0';
+  public static NFTSERVER:string =  'https://ipfs-test.trinity-feeds.app/api/v0';
   /**register*/
   public static register:string = ApiUrl.SERVER +'/register';
 
