@@ -729,6 +729,10 @@ export class CreatenewpostPage implements OnInit {
         this.isPublishing = false;
       });
   }
+
+  createNft(){
+    this.native.navigateForward(['mintnft'],{});
+  }
 }
 
 function ab2str(u,f) {

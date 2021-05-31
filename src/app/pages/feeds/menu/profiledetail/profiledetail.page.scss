@@ -1,4 +1,75 @@
 .container {
+
+  .profilePeople{
+    position: absolute;
+    top: 12px;
+    left:10px;
+    width:16px;
+    height:12px;
+    -o-object-fit: contain;
+    object-fit: contain;
+    border: none;
+  }
+
+  .editInfo{
+    position: absolute;
+    top: 11px;
+    right: 10px;
+    width: 14px;
+    height: 14px;
+    -o-object-fit: contain;
+    object-fit: contain;
+    border: none;
+  }
+
+  .rightArrow{
+    position: absolute;
+    top:41px;
+    right:10px;
+    width:10px;
+    height: 16px;
+    -o-object-fit: contain;
+    object-fit: contain;
+    border: none;
+  }
+
+  .profileFeeds{
+    position: absolute;
+    top: 12px;
+    left: 10px;
+    width: 24px;
+    height: 22px;
+    -o-object-fit: contain;
+    object-fit: contain;
+    border: none;
+  }
+
+  .elaLogo{
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 25px;
+    height: 25px;
+    -o-object-fit: contain;
+    object-fit: contain;
+    border: none;
+  }
+
+  .roundNft{
+    width: 40px;
+    height: 40px;
+    background-color: #7624fe;
+    border-radius:50%;
+    font-size: 12px;
+    font-weight: bold;
+    font-stretch: normal;
+    font-style: normal;
+    text-align:center;
+    color: #ffffff;
+    line-height: 43px;
+    margin-left: 10px;
+  }
+
   padding: 40px 25px;
   .profile-header-title{
     font-size: 20px;
@@ -67,6 +138,17 @@
       }
   }
   .server-header {
+
+    .clientNumber {
+      display:inline-block;
+      position: absolute;
+      left: 30px;
+      top: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #7624fe;
+    }
+    position: relative;
     padding: 20px;
     display: flex;
     justify-content: center;
@@ -118,7 +200,9 @@
       justify-content: center;
       width: 100%;
       padding: 0;
-
+      position:absolute;
+      right: -19px;
+      top: 43px;
       .indicator {
         background-color: #cdcde6;
         border-radius: 100%;
@@ -141,7 +225,7 @@
         height: 14.7px;
       }
 
-      .users, .clientNumber {
+      .users{
         color: #a0a2c4;
       }
 
@@ -150,14 +234,6 @@
         font-size: 11px;
         font-weight: 500;
       }
-
-      .clientNumber {
-        display:inline-block;
-        margin-left: 3.6px;
-        margin-right: 3px;
-        font-size: 14px;
-        font-weight: 600;
-      }
     }
 
     .online {
@@ -165,8 +241,8 @@
         background-color: #368bff;
       }
 
-      .status, .users, .clientNumber {
-        color: #368bff;
+      .status, .users {
+        color: #7624fe;
       }
     }
   }

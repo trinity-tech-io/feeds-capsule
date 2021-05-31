@@ -242,7 +242,8 @@ export const en = {
         "email": "Email",
         "location": "Location",
         "didinfo": "DID Info",
-        "publisheraccount": "Publisher Account"
+        "publisheraccount": "Publisher Account",
+        "collections":"Collections"
     },
     "DevelopPage": {
         "develop": "Develop",
