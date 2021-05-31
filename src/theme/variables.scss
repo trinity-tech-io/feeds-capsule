@@ -883,7 +883,8 @@ ion-header {
     width: 10px;
     height: 10px;
     background-color: #cdcde6;
-    border-radius: 6px;
+    border:2px solid #cdcde6;
+    border-radius:100%;
   }
 
   .online-circle-blue{
@@ -897,7 +898,8 @@ ion-header {
     width: 10px;
     height: 10px;
     background-color:#2dd36f;
-    border-radius: 6px;
+    border:2px solid #2dd36f;
+    border-radius:100%;
   }
 
 .offline-header{

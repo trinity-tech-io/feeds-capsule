@@ -373,4 +373,8 @@ export class ProfiledetailPage implements OnInit {
       }}
     )
   }
+
+  clickCollections(){
+    this.native.navigateForward(['collections'],{queryParams:{"nodeId":this.nodeId,"channelId":12}});
+  }
 }

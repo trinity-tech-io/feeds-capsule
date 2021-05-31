@@ -9,6 +9,8 @@
       </ion-col>
     </ion-row>
     <div class="server-header">
+      <img class="profileFeeds" src="./assets/images/profile-feeds-logo.svg"/>
+      <img class="elaLogo" src="./assets/images/elaLogo.svg"/>
       <img  [src]="handleImages()" class="didImg"/>
       <h1>{{ name }}</h1>
       <p>{{ description }}</p>
@@ -24,30 +26,35 @@
 
     <!-- Publisher Account -->
     <div *ngIf="isShowPublisherAccount" style="margin-top:20px;margin-bottom:10px;">
-
-      <ion-row (click)="clickEdit()">
+      <ion-row>
         <ion-col size="12" style="padding:0px;" class="profile-header-title">
               {{ 'ProfiledetailPage.publisheraccount' | translate }}
-            <img src="./assets/images/edit.svg"/>
         </ion-col>
        </ion-row>
 
     <!--- SERVER HEADER --->
     <div class="server-header">
+      <img class="profilePeople" src="./assets/images/profile-people.svg"/>
+      <span class="clientNumber">{{ clientNumber }} {{'ServerInfoPage.users' | translate}}</span>
+      <img class="editInfo" src="./assets/images/edit.svg" (click)="clickEdit()"/>
+      <div style="position:relative;">
       <ion-img class="serverImg" src="./assets/images/profile-2.svg"></ion-img>
-      <h1>{{ serverName }}</h1>
       <ion-row class="status-row" [class.online]="serverStatus === 0">
         <span class="online-circle" *ngIf="serverStatus === 0"></span>
-        <span class="users" *ngIf="serverStatus === 0" style="margin-left: 4px; margin-right: 8px;">{{ 'ServerInfoPage.online' | translate }}</span>
         <span class="offline-circle"  *ngIf="serverStatus === 1"></span>
-        <span class="users" *ngIf="serverStatus === 1" style="margin-left: 4px; margin-right: 8px;">{{ 'ServerInfoPage.offline' | translate }}</span>
-        <ion-img [src]="serverStatus === 0 ? 'assets/images/users-online.svg' : 'assets/images/users-offline.svg'"></ion-img>
-        <span class="clientNumber">{{ clientNumber }}</span>
-        <span class="users">{{'ServerInfoPage.users' | translate}}</span>
       </ion-row>
+      </div>
+      <h1>{{ serverName }}</h1>
     </div>
 
     <!--- SERVER DETAILS --->
+    <ion-row class="detail-row">
+      <ion-col size="12" class="left-col" (click)="clickCollections()">
+          <h1>{{'ProfiledetailPage.collections'|translate}}</h1>
+          <div class="roundNft">NFT</div>
+          <img class="rightArrow" src="./assets/images/left-arrow.svg"/>
+      </ion-col>
+    </ion-row>
     <div *ngFor="let server of serverDetails">
         <ion-row *ngIf="server.details" class="detail-row">
           <ion-col size="12" class="left-col">

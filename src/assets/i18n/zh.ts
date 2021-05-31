@@ -243,7 +243,8 @@ export const zh = {
         "email": "邮箱",
         "location": "国家/地区",
         "didinfo": "DID信息",
-        "publisheraccount": "出版号"
+        "publisheraccount": "出版号",
+        "collections":"收藏"
     },
     "DevelopPage":{
         "develop": "开发",

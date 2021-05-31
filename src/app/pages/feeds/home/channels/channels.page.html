@@ -91,41 +91,6 @@
   </ion-grid>
 
 
-
-
-  <ion-grid class="channel-title" *ngIf="followStatus">
-    <ion-row>
-      <ion-col size="12" class="sub-row" *ngIf="nftAssetList.length>0 || isMine === 0">
-        <img src="./assets/images/nftAssets.svg"/><span class="posttitle">{{"common.assets" | translate }}</span>
-      </ion-col>
-    </ion-row>
-    <ion-row>
-
-      <ion-col size="6" *ngIf="isMine === 0">
-        <app-addasset
-        (addAsset)="addAsset()"
-        ></app-addasset>
-      </ion-col>
-
-      <ion-col size="6" *ngFor="let assetItem of nftAssetList let assetIndex=index">
-        <app-assetitem
-        [assetItem] = "assetItem"
-        (clickAssetItem) = "clickAssetItem($event)"
-        >
-        </app-assetitem>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
-
-  <ion-grid style="padding-right:20px;" *ngIf="followStatus&&nftAssetList.length>0" (click)="viewall()">
-    <ion-row>
-      <ion-col size="12" class="viewall">{{'ChannelsPage.viewall'|translate}}</ion-col>
-    </ion-row>
-  </ion-grid>
-
-
-
-
   <ion-grid class="channel-title" style="padding-top: 0px;" *ngIf="followStatus">
     <ion-row>
       <ion-col size="12" class="sub-row">

@@ -1308,15 +1308,4 @@ export class ChannelsPage implements OnInit {
     this.feedService.republishOnePost(nodeId, feedId, postId);
   }
 
-   addAsset(){
-    this.native.navigateForward(['mintnft'],{});
-  }
-
-  clickAssetItem(parms:any){
-    this.native.navigateForward(['assetdetails'],{});
-  }
-
-  viewall(){
-    this.native.navigateForward(['collections'],{queryParams:{"nodeId":this.nodeId,"channelId":this.channelId}});
-  }
 }
