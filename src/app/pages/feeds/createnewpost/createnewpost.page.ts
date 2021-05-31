@@ -481,8 +481,10 @@ export class CreatenewpostPage implements OnInit {
         videoBitrate:videoBitrate,
         progress:(info:number)=>{
           this.zone.run(()=>{
-            this.transcode = parseInt(info*100/2+'');
-            this.totalProgress = this.transcode;
+            if(info>0&&info<1){
+              this.transcode = parseInt(info*100/2+'');
+              this.totalProgress = this.transcode;
+            }
           })
         }
       });
