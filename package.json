@@ -20,7 +20,7 @@
     "@angular/platform-browser-dynamic": "^11.0.7",
     "@angular/router": "^11.0.7",
     "@elastosfoundation/elastos-connectivity-sdk-cordova": "^1.0.23",
-    "@elastosfoundation/elastos-connector-localidentity-cordova": "^1.0.7",
+    "@elastosfoundation/elastos-connector-localidentity-cordova": "^1.0.8",
     "@elastosfoundation/elastos-cordova-plugin-carrier": "1.0.6",
     "@elastosfoundation/elastos-cordova-plugin-did": "^1.0.3",
     "@elastosfoundation/elastos-cordova-plugin-hive": "^1.0.8",
