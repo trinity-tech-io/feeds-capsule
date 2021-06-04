@@ -19,6 +19,7 @@ export class CollectionsPage implements OnInit {
   public selectType:string = "CollectionsPage.created";
   public createdList:any = [];
   public purchasedList:any = [];
+  public onSaleList:any = [];
   public likesList:any = [];
   public isMine:number = null;
   constructor(
@@ -75,6 +76,9 @@ export class CollectionsPage implements OnInit {
         break;
       case 'CollectionsPage.purchased':
         this.purchasedList = this.feedService.getNftAssetList();
+        break;
+      case 'CollectionsPage.onSale':
+        this.onSaleList = this.feedService.getNftAssetList();
         break;
       case 'CollectionsPage.likes':
           this.likesList = this.feedService.getNftAssetList();

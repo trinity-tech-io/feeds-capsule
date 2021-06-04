@@ -8,6 +8,9 @@
       <div class="middle-tab" [class.tab-active]="selectType === 'CollectionsPage.purchased'" (click)="changeType('CollectionsPage.purchased')">
         <span [class.tab-active-bottom-border]="selectType === 'CollectionsPage.purchased'">{{ 'CollectionsPage.purchased' | translate }}</span>
       </div>
+      <div class="left-tab" [class.tab-active]="selectType === 'CollectionsPage.onSale'" (click)="changeType('CollectionsPage.onSale')">
+        <span [class.tab-active-bottom-border]="selectType === 'CollectionsPage.onSale'">{{ 'CollectionsPage.onSale' | translate }}</span>
+      </div>
       <div class="right-tab" [class.tab-active]="selectType === 'CollectionsPage.likes'" (click)="changeType('CollectionsPage.likes')">
         <span [class.tab-active-bottom-border]="selectType === 'CollectionsPage.likes'">{{'CollectionsPage.likes' | translate }}</span>
       </div>
@@ -55,6 +58,29 @@
      </ion-col>
     </ion-row>
 
+    <!--onSale-->
+    <ion-row *ngIf="selectType === 'CollectionsPage.onSale'&&onSaleList.length===0">
+      <ion-col size="12">
+       <div class="bigCircle">
+           <div class="smallCircle">
+              <img src="./assets/images/lock.svg"/>
+           </div>
+       </div>
+    </ion-col>
+    <ion-col size="12" class="subscribeChannel">
+      {{"CollectionsPage.emptypurchased"|translate}}
+    </ion-col>
+  </ion-row>
+
+  <ion-row *ngIf="selectType === 'CollectionsPage.onSale'&&onSaleList.length>0" class="leftrightrow">
+   <ion-col size="6"  *ngFor="let item of onSaleList">
+     <app-assetitem
+     [assetItem] = "item"
+     (clickAssetItem) = "clickAssetItem($event)"
+     >
+     </app-assetitem>
+   </ion-col>
+  </ion-row>
 
       <!---Likes-->
       <ion-row *ngIf="selectType === 'CollectionsPage.likes'&&likesList.length===0">
