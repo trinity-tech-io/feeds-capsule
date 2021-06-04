@@ -577,7 +577,8 @@ export const en = {
         "purchased": "Purchased",
         "likes": "Likes",
         "emptylikes": "Give a like to collectible you like",
-        "emptypurchased": "Go to buy collectibles"
+        "emptypurchased": "Go to buy collectibles",
+        "onSale":"On Sale"
     },
     "ConfirmationPage":{
         "title": "Confirmation",
