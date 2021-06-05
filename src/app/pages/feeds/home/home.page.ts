@@ -781,7 +781,11 @@ clearData(){
         },500);
         break;
       case "pasar":
-        this.pasarList = this.feedService.getNftAssetList() || [];
+        let sId1 = setTimeout(()=>{
+          this.pasarList = this.feedService.getNftAssetList() || [];
+          event.target.complete();
+          clearTimeout(sId1);
+        },500)
         break;
     }
 
