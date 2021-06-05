@@ -128,10 +128,11 @@ export const zh = {
         "learnMore": "了解更多"
     },
     "FeedsPage":{
-        "tabTitle1": "时间线",
+        "tabTitle1": "主页",
         "tabTitle2": "档案",
         "tabTitle3": "消息通知",
-        "tabTitle4": "探索Feeds"
+        "tabTitle4": "探索Feeds",
+        "tabTitle5": "时间线",
     },
     "HomePage":{
         "allempty": "空空如也",
