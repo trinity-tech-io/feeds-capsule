@@ -127,10 +127,11 @@ export const en = {
         "learnMore": "Learn more"
     },
     "FeedsPage": {
-        "tabTitle1": "Feeds Timeline",
+        "tabTitle1": "Home",
         "tabTitle2": "Profile",
         "tabTitle3": "Notifications",
-        "tabTitle4": "Explore Feeds"
+        "tabTitle4": "Explore Feeds",
+        "tabTitle5": "Timeline",
     },
     "HomePage": {
         "allempty": "No Subscriptions Yet",
