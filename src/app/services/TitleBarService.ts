@@ -50,7 +50,7 @@ export class TitleBarService {
     }
 
     setTitleBarEditImage(titleBar: TitleBarComponent){
-        this.setIcon(titleBar, FeedsData.TitleBarIconSlot.INNER_RIGHT, "editImages", "assets/icon/yes.ico");
+        this.setIcon(titleBar, FeedsData.TitleBarIconSlot.INNER_RIGHT, "editImages", "assets/images/ok.svg");
         this.regitstEditImages(titleBar);
     }
 
