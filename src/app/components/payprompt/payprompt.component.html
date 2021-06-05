@@ -29,8 +29,8 @@
       <ion-input type="number" clearInput autofocus [placeholder]="'DonationPage.enterAmount' | translate" [(ngModel)]="amount" class="nameValue"></ion-input>
     </ion-col>
     <ion-col size="4" class="logo">
-          <span>ELA</span> <img src="/assets/images/dashang.svg" *ngIf="!theme.darkMode">
-              <img src="/assets/images/darkmode/tip.svg" *ngIf="theme.darkMode">
+          <span>ELA</span> <img src="/assets/images/solidEla.svg" *ngIf="!theme.darkMode">
+              <img src="/assets/images/darkmode/solidEla.svg" *ngIf="theme.darkMode">
     </ion-col>
   </ion-row>
 
@@ -45,8 +45,8 @@
 
   <ion-row (click)="advancedSettings()" >
     <ion-col size="12" style="text-align:center;">
-         <p class="Advancedsettings" *ngIf="!isAdvancedSetting">{{'common.advancedSettings'|translate}}</p>
-         <p class="Advancedsettings" *ngIf="isAdvancedSetting">{{'common.normalSettings'|translate}}</p>
+         <p class="Advancedsettings" *ngIf="!isAdvancedSetting">{{'common.advancedSettings'|translate}} <img src="./assets/images/bottom-arrow.svg" *ngIf="!isAdvancedSetting"/></p>
+         <p class="Advancedsettings" *ngIf="isAdvancedSetting">{{'common.normalSettings'|translate}} <img src="./assets/images/top-arrow.svg" *ngIf="isAdvancedSetting"/></p>
     </ion-col>
   </ion-row>
 
