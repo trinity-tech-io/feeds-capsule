@@ -84,9 +84,9 @@ export class SearchPage implements OnInit {
   }
 
   initTile(){
-     this.titleBarService.setTitle(this.titleBar,this.translate.instant('SearchPage.title'));
-     this.titleBarService.setTitleBarBackKeyShown(this.titleBar,true);
-
+    let title = this.translate.instant("FeedsPage.tabTitle4");
+    this.titleBarService.setTitle(this.titleBar, title);
+    this.titleBarService.setTitleBarMoreMemu(this.titleBar);
   }
 
   initSubscribe(){
@@ -152,6 +152,10 @@ export class SearchPage implements OnInit {
   }
 
   ionViewWillEnter() {
+    this.events.subscribe(FeedsEvent.PublishType.search, ()=>{
+      this.initTile();
+      this.init();
+  });
     this.initTile();
     this.init();
   }
@@ -182,7 +186,7 @@ export class SearchPage implements OnInit {
   ionViewWillLeave(){
     this.removeSubscribe();
     this.curAddingItem="";
-    this.events.publish(FeedsEvent.PublishType.search);
+    this.events.unsubscribe(FeedsEvent.PublishType.search);
   }
 
   subscribe(nodeId: string, id: number){
@@ -276,6 +280,7 @@ export class SearchPage implements OnInit {
   }
 
   navTo(nodeId:string, channelId:number){
+    this.removeSubscribe();
     this.native.navigateForward(['/channels', nodeId, channelId],"");
   }
 
@@ -456,6 +461,7 @@ export class SearchPage implements OnInit {
   }
 
   clickItem(feed:any){
+    this.removeSubscribe();
     this.native.go("discoverfeedinfo",{
       params:feed
      });

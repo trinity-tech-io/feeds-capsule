@@ -15,7 +15,7 @@
     position: absolute;
     z-index: 999;
     width: 198px;
-    height: 68px;
+    //height: 68px;
     background: #f6f5f6;
     border: 1px solid #f6f5f6;
     font-size: 14px;
@@ -24,6 +24,25 @@
     font-style: normal;
     line-height: 1.4;
     color: #a1a1a1;
+    border-radius: 10px;
+    padding: 0px 10px;
+  }
+
+
+  .dark-arrow_box {
+    font-family:Arial !important;
+    position: absolute;
+    z-index: 999;
+    width: 198px;
+    // height: 68px;
+    background: #2e2f4e;
+    border: 1px solid #2e2f4e;
+    font-size: 14px;
+    font-weight: 400;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: 1.4;
+    color: #fff;
     border-radius: 10px;
     padding: 0px 10px;
   }

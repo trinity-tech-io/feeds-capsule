@@ -303,7 +303,7 @@ export class CreatenewfeedPage implements OnInit {
     let e = event||window.event; //兼容IE8
     let target = e.target||e.srcElement;  //判断目标事件
     let boundingClientRect = target.getBoundingClientRect();
-    this.arrowBoxStyle["top"] = boundingClientRect.top-15.5+"px";
+    this.arrowBoxStyle["top"] = boundingClientRect.top-16.5+"px";
     this.isHelp = !this.isHelp;
   }
 }

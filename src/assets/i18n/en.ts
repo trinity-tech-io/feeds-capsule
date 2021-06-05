@@ -589,7 +589,8 @@ export const en = {
         "congratulations": "Congratulations!"
     },
     "ExplorefeedsPage":{
-        "pasar": "Pasar (NFT Marketplace)",
+        "pasar": "Pasar",
+        "explorefeeds":"Explore feeds",
         "hotBids": "Hot Bids",
         "latest": "Latest",
         "new": "New",

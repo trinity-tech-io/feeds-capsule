@@ -1,5 +1,28 @@
 .container{
 
+   .exploreTabs{
+
+     .select-bottom{
+        border-bottom:2px solid #7624fe;
+     }
+
+     .select-color{
+        color:#7624fe;
+     }
+
+     .no-select-color{
+       color:#000000;
+     }
+
+     .des{
+      font-size: 14px;
+      font-weight: bold;
+      font-stretch: normal;
+      font-style: normal;
+      text-align:center;
+     }
+   }
+
    .latestList{
       padding-left: 25px;
       padding-right:25px;
