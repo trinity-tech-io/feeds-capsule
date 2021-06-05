@@ -29,7 +29,7 @@ export class ConfirmdialogComponent implements OnInit {
 
       this.cancel = this.navParams.get('cancelFunction');
       this.confirm = this.navParams.get('okFunction');
-      this.imgPath = this.navParams.get('imgPath') || "./assets/images/tskth.svg";
+      this.imgPath = this.navParams.get('imgageName') || "./assets/images/tskth.svg";
     }
 
   ngOnInit() {}

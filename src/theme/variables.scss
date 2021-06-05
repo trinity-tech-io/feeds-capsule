@@ -407,6 +407,9 @@ ion-row {
 .dark-btns-row {
   .cancel {
     background-color:#191a2f;
+    ion-label {
+      color: #7624fe;
+    }
   }
 
   // Cancel Option #2 - Dark button, white label
