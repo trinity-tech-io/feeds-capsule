@@ -231,7 +231,7 @@ export const en = {
         "des1": "Show channel in the Explore Pasar screen for users to discover."
     },
     "ProfileimagePage": {
-        "title": "Channel Image",
+        "title": "Choose Avatar",
         "confirm": "Confirm"
     },
     "ProfiledetailPage": {
