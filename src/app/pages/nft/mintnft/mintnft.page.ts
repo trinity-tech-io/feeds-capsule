@@ -11,7 +11,6 @@ import { TitleBarComponent } from '../../..//components/titlebar/titlebar.compon
 import { File,DirectoryEntry} from '@ionic-native/file/ngx';
 import { HttpService } from '../../../services/HttpService';
 import { ApiUrl } from '../../../services/ApiUrl';
-import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 
 @Component({
   selector: 'app-mintnft',
@@ -37,6 +36,7 @@ export class MintnftPage implements OnInit {
   public minExpirationDate:string = "";
   public fileName:string = "";
   private imageObj:any = {};
+  private tokenId:any = null;
   constructor(
     private translate:TranslateService,
     private event:Events,
@@ -187,6 +187,8 @@ export class MintnftPage implements OnInit {
     //{"Name":"blob","Hash":"QmaxWgjheueDc1XW2bzDPQ6qnGi9UKNf23EBQSUAu4GHGF","Size":"17797"};
     let hash = result["Hash"] || null;
     if(hash != null){
+       this.tokenId = "0x"+UtilService.SHA256(hash);
+       console.log("====this.tokenId====="+this.tokenId);
        let jsonHash = "feeds:json:"+hash;
        console.log("====jsonHash===="+jsonHash);
     }

@@ -479,7 +479,7 @@ export class MenuService {
                 role: 'destructive',
                 icon: 'trash',
                 handler: () => {
-                    this.popover = this.popupProvider.ionicConfirm(this,"common.deleteComment","common.confirmdeletion",this.cancel1,this.confirm1,'./assets/images/shanchu.svg');
+                    this.popover = this.popupProvider.ionicConfirm(this,"common.deleteComment","common.confirmdeletion1",this.cancel1,this.confirm1,'./assets/images/shanchu.svg');
                 }
             },
             {
