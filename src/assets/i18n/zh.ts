@@ -84,7 +84,7 @@ export const zh = {
         "sendingErrorTip": "待发送成功后，请重试",
         "preferences": "设置",
         "posts": "微说",
-        "assets": "资产",
+        // "assets": "资产",
         "confirmDialog": "确认框",
         "deletePost": "删除微说",
         "deleteComment": "删除微频",
@@ -244,7 +244,7 @@ export const zh = {
         "location": "国家/地区",
         "didinfo": "DID信息",
         "publisheraccount": "出版号",
-        "collections":"收藏"
+        "collections": "收藏品"
     },
     "DevelopPage":{
         "develop": "开发",
@@ -542,7 +542,7 @@ export const zh = {
         "nftExpirationDateDes": "选择截止日期",
     },
     "AssetdetailsPage":{
-        "title": "资产明细",
+        "title": "收藏品明细",
         "asset": "资产",
         "contractDetails": "合约明细",
         "owner": "所有者",

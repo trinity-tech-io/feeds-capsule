@@ -84,7 +84,7 @@ export const en = {
         "sendingErrorTip": "After the post is sent successfully, please try again.",
         "preferences": "Preferences",
         "posts": "Posts",
-        "assets": "Assets",
+        // "assets": "Assets",
         "confirmDialog": "Confirm Dialog",
         "deletePost": "Delete Post",
         "deleteComment": "Delete Comment",
@@ -243,7 +243,7 @@ export const en = {
         "location": "Location",
         "didinfo": "DID Info",
         "publisheraccount": "Publisher Account",
-        "collections":"Collections"
+        "collections": "Collectibles"
     },
     "DevelopPage": {
         "develop": "Develop",
@@ -541,7 +541,7 @@ export const en = {
         "nftExpirationDateDes": "Choose expiration date",
     },
     "AssetdetailsPage":{
-        "title": "Asset Details",
+        "title": "Collectible Details",
         "asset": "Asset",
         "contractDetails": "Contract Details",
         "owner": "Owner",
@@ -572,7 +572,7 @@ export const en = {
         "currentBid": "Current Bid",
     },
     "CollectionsPage":{
-        "title": "Collections",
+        "title": "Collectibles",
         "created": "Created",
         "purchased": "Purchased",
         "likes": "Likes",
