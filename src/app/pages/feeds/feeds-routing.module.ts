@@ -44,7 +44,7 @@ const routes: Routes = [
         children: [
           {
             path: '',
-            loadChildren:'./explorefeeds/explorefeeds.module#ExplorefeedsPageModule'
+            loadChildren:'./pages/feeds/search/search.module#SearchPageModule'
           },
         ]
       },

@@ -12,6 +12,14 @@
       refreshingText="{{'common.beingRefresh'|translate}}" >
     </ion-refresher-content>
   </ion-refresher>
+
+  <ion-row [class.darkExploreTabs]="theme.darkMode" [class.exploreTabs]="!theme.darkMode">
+    <ion-col size="6" class="des" [ngClass]="{'select-bottom':tabType==='feeds','select-color':tabType==='feeds','no-select-color':tabType!='feeds'}"
+     (click)="clickTab('feeds')">{{'FeedsPage.tabTitle1'|translate}}</ion-col>
+    <ion-col size="6" class="des"  [ngClass]="{'select-bottom':tabType==='pasar','select-color':tabType==='pasar','no-select-color':tabType!='pasar'}" (click)="clickTab('pasar')">{{'ExplorefeedsPage.pasar'|translate}}</ion-col>
+  </ion-row>
+ <!-- feeds timeTime-->
+ <div *ngIf="tabType==='feeds'">
   <!-- NO POSTS -->
   <div *ngIf="postList.length === 0" class="empty-container">
     <img src="./assets/images/empty-feeds-icon.svg">
@@ -188,6 +196,21 @@
     </ion-grid>
   </div>
   </div>
+ </div>
+
+ <!--Pasar-->
+ <div *ngIf="tabType==='pasar'">
+  <ion-row>
+    <ion-col size="6"  *ngFor="let item of pasarList">
+      <app-assetitem
+      [assetItem] = "item"
+      (clickAssetItem) = "clickAssetItem($event)"
+      >
+      </app-assetitem>
+    </ion-col>
+   </ion-row>
+ </div>
+
 
   <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event)">
     <ion-infinite-scroll-content
@@ -199,6 +222,8 @@
   </ion-infinite-scroll>
 
 </ion-content>
+
+
 
 <!---------------- ADD COMMENT FOOTER ---------------->
 <app-comment

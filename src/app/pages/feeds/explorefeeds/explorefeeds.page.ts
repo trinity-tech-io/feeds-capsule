@@ -85,6 +85,7 @@ export class ExplorefeedsPage implements OnInit {
   public isSearch:string ="";
   public scanServiceStyle ={"right":""};
   private isAddSearch:boolean = false;
+  public tabType:string = "feeds";
   constructor(
     private feedService: FeedService,
     private events: Events,
@@ -387,5 +388,10 @@ export class ExplorefeedsPage implements OnInit {
   clickHotNft(){
     this.removeEvent();
     this.native.navigateForward('currencyviewall',{});
+  }
+
+  clickTab(type:string){
+    console.log("====type====="+type);
+    this.tabType = type;
   }
 }

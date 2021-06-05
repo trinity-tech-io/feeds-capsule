@@ -590,12 +590,13 @@ export const zh = {
         "congratulations": "恭喜！"
     },
     "ExplorefeedsPage":{
-        "pasar": "Pasar (NFT市场)",
+        "pasar":"Pasar",
+        "explorefeeds":"探索 feeds",
         "hotBids": "热门竞标",
         "latest": "最近",
         "new": "最新",
         "channels": "频道",
-        "viewall": "查看全部"
+        "viewall": "查看全部",
     },
     "CurrencyviewallPage":{
         "title": "Pasar (NFT市场)"

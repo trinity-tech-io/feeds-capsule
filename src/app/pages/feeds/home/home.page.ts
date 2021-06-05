@@ -113,6 +113,10 @@ export class HomePage implements OnInit {
 
     public isAndroid:boolean = true;
 
+    public tabType:string ="feeds";
+
+    public pasarList:any = [];
+
   constructor(
     private platform: Platform,
     private elmRef: ElementRef,
@@ -196,7 +200,7 @@ export class HomePage implements OnInit {
     if(this.platform.is("ios")){
         this.isAndroid = false;
     }
-
+    this.pasarList = this.feedService.getNftAssetList();
     this.connectionStatus = this.feedService.getConnectionStatus();
     this.styleObj.width = (screen.width - 105)+'px';
     this.clientHeight =screen.availHeight;
@@ -740,39 +744,47 @@ clearData(){
   }
 
   doRefresh(event){
-    let sId =  setTimeout(() => {
-      this.images = {};
-      this.infiniteScroll.disabled =false;
-      this.startIndex = 0;
-      this.totalData = this.sortPostList();
-      if(this.totalData.length - this.pageNumber > 0){
-        this.zone.run(()=>{
-          this.postList = this.totalData.slice(0,this.pageNumber);
-          this.startIndex++;
+    switch(this.tabType){
+      case "feeds":
+        let sId =  setTimeout(() => {
+          this.images = {};
           this.infiniteScroll.disabled =false;
-          this.isLoadimage ={};
-          this.isLoadVideoiamge ={};
-          this.refreshImage(0);
-          this.initnodeStatus(this.postList);
-          if(event!=null)
-          event.target.complete();
-        })
+          this.startIndex = 0;
+          this.totalData = this.sortPostList();
+          if(this.totalData.length - this.pageNumber > 0){
+            this.zone.run(()=>{
+              this.postList = this.totalData.slice(0,this.pageNumber);
+              this.startIndex++;
+              this.infiniteScroll.disabled =false;
+              this.isLoadimage ={};
+              this.isLoadVideoiamge ={};
+              this.refreshImage(0);
+              this.initnodeStatus(this.postList);
+              if(event!=null)
+              event.target.complete();
+            })
 
-       }else{
-         this.zone.run(()=>{
-          this.postList = this.totalData;
-          this.infiniteScroll.disabled =true;
-          this.isLoadimage ={};
-          this.isLoadVideoiamge ={};
-          this.refreshImage(0);
-          this.initnodeStatus(this.postList);
-          if(event!=null)
-          event.target.complete();
-         })
+           }else{
+             this.zone.run(()=>{
+              this.postList = this.totalData;
+              this.infiniteScroll.disabled =true;
+              this.isLoadimage ={};
+              this.isLoadVideoiamge ={};
+              this.refreshImage(0);
+              this.initnodeStatus(this.postList);
+              if(event!=null)
+              event.target.complete();
+             })
 
-      }
-      clearTimeout(sId);
-    },500);
+          }
+          clearTimeout(sId);
+        },500);
+        break;
+      case "pasar":
+        this.pasarList = this.feedService.getNftAssetList() || [];
+        break;
+    }
+
   }
 
   scrollToTop(int) {
@@ -1371,5 +1383,48 @@ clearData(){
 
   buy(){
     this.native.navigateForward(['bid'],{queryParams:{"showType":"buy"}});
+  }
+
+  clickTab(type:string){
+    this.tabType = type;
+    switch(type){
+     case "feeds":
+      this.infiniteScroll.disabled = false;
+      this.refreshPostList();
+       break;
+     case "pasar":
+      this.infiniteScroll.disabled = true;
+      let value =  this.popoverController.getTop()["__zone_symbol__value"] || "";
+      if(value!=""){
+        this.popoverController.dismiss();
+        this.popover = null;
+      }
+
+      if(this.curNodeId!=""){
+        this.feedService.closeSession(this.curNodeId);
+      }
+
+      this.removeImages();
+      this.removeAllVideo();
+      this.isLoadimage ={};
+      this.isLoadVideoiamge ={};
+      this.curNodeId = "";
+      this.isImgPercentageLoading[this.imgDownStatusKey] = false;
+      this.isImgLoading[this.imgDownStatusKey] = false;
+      this.imgDownStatus[this.imgDownStatusKey] ="";
+      this.imgPercent = 0;
+      this.imgRotateNum["transform"] = "rotate(0deg)";
+
+      this.isVideoPercentageLoading[this.videoDownStatusKey] = false;
+      this.isVideoLoading[this.videoDownStatusKey] = false;
+      this.videoDownStatus[this.videoDownStatusKey] = "";
+      this.videoPercent = 0;
+      this.videoRotateNum["transform"] = "rotate(0deg)";
+
+      this.hideFullScreen();
+      this.native.hideLoading();
+       this.pasarList = this.feedService.getNftAssetList() || [];
+     break;
+    }
   }
 }

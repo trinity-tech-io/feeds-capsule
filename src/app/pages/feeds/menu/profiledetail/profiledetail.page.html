@@ -23,6 +23,13 @@
         </ion-col>
       </ion-row>
     </div>
+    <ion-row class="detail-row">
+      <ion-col size="12" class="left-col" (click)="clickCollections()">
+          <h1>{{'ProfiledetailPage.collections'|translate}}</h1>
+          <div class="roundNft">NFT</div>
+          <img class="rightArrow" src="./assets/images/left-arrow.svg"/>
+      </ion-col>
+    </ion-row>
 
     <!-- Publisher Account -->
     <div *ngIf="isShowPublisherAccount" style="margin-top:20px;margin-bottom:10px;">
@@ -48,13 +55,6 @@
     </div>
 
     <!--- SERVER DETAILS --->
-    <ion-row class="detail-row">
-      <ion-col size="12" class="left-col" (click)="clickCollections()">
-          <h1>{{'ProfiledetailPage.collections'|translate}}</h1>
-          <div class="roundNft">NFT</div>
-          <img class="rightArrow" src="./assets/images/left-arrow.svg"/>
-      </ion-col>
-    </ion-row>
     <div *ngFor="let server of serverDetails">
         <ion-row *ngIf="server.details" class="detail-row">
           <ion-col size="12" class="left-col">
