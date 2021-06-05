@@ -232,7 +232,7 @@ export const zh = {
         "des1": "在 探索Pasar 中显示频道，以供用户发现和订阅。"
     },
     "ProfileimagePage":{
-        "title": "频道头像",
+        "title": "选择头像",
         "confirm": "确认"
     },
     "ProfiledetailPage":{
