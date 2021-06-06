@@ -191,7 +191,7 @@ export const en = {
         "status14": "Requested",
         "discover": "Explore on Discovery Square",
         "des1": "Your subscription request to this channel is ongoing; this takes a few seconds. Would you like to cancel this subscription？",
-        "confirmTitle": "Cancel Subscription"
+        "confirmTitle": "Cancel Request"
     },
     "ChannelsPage": {
         "feeds": "Channel",
