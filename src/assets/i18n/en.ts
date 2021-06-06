@@ -95,7 +95,9 @@ export const en = {
         "advancedSettings": "Advanced settings",
         "normalSettings": "Normal Settings",
         "scannerPrompt": "Place a QR code inside the scan area",
-        "obtain":"Obtain"
+        "obtain":"Obtain",
+        "deleteReply":"Delete Reply",
+        "confirmdeletion2":"Are you sure you want to delete this Reply?"
     },
     "app": {
         "profileDetails": "Profile Details",
