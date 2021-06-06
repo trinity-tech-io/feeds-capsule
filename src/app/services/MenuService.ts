@@ -522,7 +522,10 @@ export class MenuService {
     }
 
     async showReplyDetailMenu(reply:any){
-
+        this.nodeId = reply["nodeId"];
+        this.channelId=reply["channel_id"];
+        this.postId = reply["post_id"];
+        this.commentId = reply["id"];
         let nodeId = reply["nodeId"];
         let feedId = reply["channel_id"];
         let postId = reply["post_id"];
@@ -553,12 +556,7 @@ export class MenuService {
                 role: 'destructive',
                 icon: 'trash',
                 handler: () => {
-                    this.native.showLoading("common.waitMoment",(isDismiss)=>{
-                    },50000).then(()=>{
-                        this.feedService.deleteComment(nodeId,Number(feedId),Number(postId),Number(commentId));
-                      }).catch(()=>{
-
-                      })
+                    this.popover = this.popupProvider.ionicConfirm(this,"common.deleteReply","common.confirmdeletion2",this.cancel1,this.confirm1,'./assets/images/shanchu.svg');
                 }
             },
             {
