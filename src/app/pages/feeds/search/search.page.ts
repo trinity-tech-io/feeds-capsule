@@ -325,7 +325,7 @@ export class SearchPage implements OnInit {
       "SearchPage.des1",
       this.cancel,
       this.confirm1,
-      './assets/images/signout.svg',
+      './assets/images/tskth.svg',
     );
   }
 
