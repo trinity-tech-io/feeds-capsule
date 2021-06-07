@@ -130,6 +130,7 @@ export class ProfileimagePage implements OnInit {
   selectIndex(index: number, avatar?: string){
     //this.select = index;
     if (index === 0) {
+      this.select = 0;
       // If uploaded avatar exists and is selected, use it. Otherwise open camera
       avatar ? this.selectedAvatar = avatar :this.addPic();
     } else {
