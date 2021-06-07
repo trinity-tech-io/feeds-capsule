@@ -85,14 +85,10 @@ export class TitleBarService {
 
     registerMoreMenu(titleBar: TitleBarComponent) {
         titleBar.addOnItemClickedListener((icon)=>{
-            if (icon.key == "more")
-                // this.event.publish(FeedsEvent.PublishType.openRightMenu);
-                // this.menuService.hideActionSheet();
-                // let value =  this.popoverController.getTop()["__zone_symbol__value"] || "";
-                // if(value!=""){
-                //   this.popoverController.dismiss();
-                // }
+            if (icon.key == "more"){
+                this.event.publish(FeedsEvent.PublishType.openRightMenu);
                 this.menu.open("menu");
+            }
         });
     }
 

@@ -18,11 +18,11 @@
           <div
             *ngIf="select == avatar.index"
             class="check"
-            [ngStyle]="{ 'border': theme.darkMode ? '3px solid #191a2f' : '4px solid #f8f8ff' }"
+            [ngStyle]="{ 'border': theme.darkMode ? '1px solid #fff' : '1px solid #f8f8ff' }"
             >
             <ion-icon
               name="checkmark"
-              [ngStyle]="{ 'color': theme.darkMode ? '#191a2f' : '#f8f8ff' }"
+              [ngStyle]="{ 'color': theme.darkMode ? '#fff' : '#f8f8ff' }"
             >
             </ion-icon>
             </div>
@@ -43,11 +43,11 @@
           <div
             *ngIf="select === 0"
             class="check"
-            [ngStyle]="{ 'border': theme.darkMode ? '3px solid #191a2f' : '4px solid #f8f8ff' }"
+            [ngStyle]="{ 'border': theme.darkMode ? '1px solid #fff' : '1px solid #f8f8ff' }"
           >
             <ion-icon
               name="checkmark"
-              [ngStyle]="{ 'color': theme.darkMode ? '#191a2f' : '#f8f8ff' }"
+              [ngStyle]="{ 'color': theme.darkMode ? '#fff' : '#f8f8ff' }"
             >
             </ion-icon>
           </div>
@@ -58,7 +58,7 @@
         <ion-col size="4">
           <div
             class="avatar"
-            [ngStyle]="{ 'background-image': theme.darkMode ? 'url(/assets/images/profile-add-dark.svg)' : 'url(/assets/images/profile-add.svg)' }"
+            [ngStyle]="{ 'background-image':'url(/assets/images/profile-add.svg)'}"
             (click)="selectIndex(0)"
           >
           </div>
