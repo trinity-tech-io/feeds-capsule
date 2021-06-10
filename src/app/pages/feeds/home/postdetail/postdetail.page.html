@@ -172,7 +172,7 @@
           </ion-row>
 
           <ion-label>
-            <p (click)="clickComment(comment)">{{'ServerInfoPage.replyingto'|translate}} @{{ indexText(channelOwner,20,20) }}</p>
+            <p (click)="clickComment(comment)"><span style="color:#7624fe;">{{'ServerInfoPage.replyingto'|translate}}</span> @{{ indexText(channelOwner,20,20) }}</p>
           </ion-label>
           <h2 *ngIf="comment.status === 1" (click)="clickComment(comment)">
             <pre>{{'common.cdeleted' | translate}}</pre>

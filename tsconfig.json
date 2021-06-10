@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
     "declaration": false,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
@@ -29,7 +30,15 @@
       "cordova-plugin-device",
       "cordova-plugin-media-capture",
       "cordova-plugin-network-information"
-    ]
+    ],
+    "paths": {
+      "crypto": [
+        "node_modules/crypto-browserify"
+      ],
+      "stream": [
+        "node_modules/stream-browserify"
+      ]
+    }
   },
   "include": [
     "src/**/*.ts"

@@ -52,7 +52,8 @@
               "lodash",
               "hammerjs",
               "qrcode",
-              "src/app/services/SerializeDataService"
+              "src/app/services/SerializeDataService",
+              "web3"
             ]
           },
           "configurations": {
