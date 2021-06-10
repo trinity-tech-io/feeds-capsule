@@ -11,7 +11,7 @@ import { TitleBarComponent } from '../../..//components/titlebar/titlebar.compon
 import { File,DirectoryEntry} from '@ionic-native/file/ngx';
 import { HttpService } from '../../../services/HttpService';
 import { ApiUrl } from '../../../services/ApiUrl';
-
+import Web3 from "web3";
 @Component({
   selector: 'app-mintnft',
   templateUrl: './mintnft.page.html',
@@ -37,6 +37,7 @@ export class MintnftPage implements OnInit {
   public fileName:string = "";
   private imageObj:any = {};
   private tokenId:any = null;
+  private web3:any;
   constructor(
     private translate:TranslateService,
     private event:Events,
@@ -53,6 +54,7 @@ export class MintnftPage implements OnInit {
   }
 
   ionViewWillEnter() {
+    this.testWeb3();
     this.minExpirationDate = UtilService.dateFormat(new Date());
     this.expirationDate = UtilService.dateFormat(new Date(new Date().getTime()+24*60*60*1000));
     this.maxExpirationDate = UtilService.dateFormat(new Date(new Date().getTime()+10*365*24*60*60*1000));
@@ -292,4 +294,28 @@ export class MintnftPage implements OnInit {
     pathObj["filepath"] = pathObj["filepath"].startsWith('file://') ? pathObj["filepath"] : `file://${pathObj["filepath"]}`;
     return pathObj;
   }
+
+  async getWeb3(){
+
+    if (typeof this.web3 !== 'undefined') {
+       this.web3 = new Web3(this.web3.currentProvider);
+    } else {
+      let options = {
+        agent: {
+
+        }
+    };
+    this.web3 = new Web3(new Web3.providers.HttpProvider("https://api-testnet.elastos.io/eth",options));
+    }
+    return this.web3;
+  }
+
+  async testWeb3(){
+    await this.getWeb3();
+    let account = await this.web3.eth.accounts.privateKeyToAccount('04868f294d8ef6e1079752cd2e1f027a126b44ee27040d949a88f89bddc15f31');
+    console.log("===account=="+JSON.stringify(account));
+    let gasPrice = await this.web3.eth.getGasPrice();
+    console.log("===gasPrice=="+gasPrice);
+  }
+
 }

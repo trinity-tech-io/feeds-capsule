@@ -26,7 +26,7 @@
           <ion-label>
             {{ captainComment.user_name }}
           </ion-label>
-            <p>{{'ServerInfoPage.replyingto'|translate}} @{{ channelOwner }}</p>
+            <p><span style="color:#7624fe;">{{'ServerInfoPage.replyingto'|translate}}</span> @{{ channelOwner }}</p>
         </ion-col>
        <ion-col class="right-col" size="1.5"  *ngIf="captainComment.status != 1 && isOwnComment[captainComment.id]">
           <img (click)="menuMore()"
@@ -90,7 +90,7 @@
               </ion-row>
 
               <ion-label>
-                <p (press)="userNameList[replayComment.comment_id]">{{'ServerInfoPage.replyingto'|translate}} @{{ indexText(userNameList[replayComment.comment_id],20,20)}}</p>
+                <p (press)="userNameList[replayComment.comment_id]"><span style="color:#7624fe;">{{'ServerInfoPage.replyingto'|translate}}</span> @{{ indexText(userNameList[replayComment.comment_id],20,20)}}</p>
               </ion-label>
               <h2 *ngIf="replayComment.status === 1">
                 <pre>{{'CommentlistPage.replydeleted' | translate}}</pre>
