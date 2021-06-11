@@ -5,6 +5,7 @@ import { ThemeService } from '../../../services/theme.service';
 import { Events } from 'src/app/services/events.service';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { ApiUrl } from '../../../services/ApiUrl';
 type detail = {
   type: string,
   details: string
@@ -162,6 +163,13 @@ export class AssetdetailsPage implements OnInit {
       break;
     }
 
+   }
+
+   handleImg(imgUri:string){
+    if(imgUri.indexOf("feeds:imgage:")>-1){
+      imgUri = imgUri.replace("feeds:imgage:","");
+      imgUri = ApiUrl.nftGet+imgUri;
+    }
    }
 
 }

@@ -100,6 +100,7 @@ export class HttpService{
     })
   }
 
+
   openAlert(){
     let value =  this.popoverController.getTop()["__zone_symbol__value"] || "";
     if(value!=""){

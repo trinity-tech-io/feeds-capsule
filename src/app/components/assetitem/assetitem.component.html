@@ -1,5 +1,5 @@
 <div class="addAssets" (click)="clickItem()">
-  <img [src]="assetItem['asset']"/>
+  <img src="{{hanldeImg(assetItem['asset'])}}"/>
   <div class="des">{{assetItem['name']}}</div>
   <div class="des1">{{assetItem['description']}}</div>
   <div class="des2">Edition 1 of 1</div>
