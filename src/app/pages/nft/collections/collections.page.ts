@@ -7,6 +7,9 @@ import { NativeService } from '../../../services/NativeService';
 import { Events } from '../../../services/events.service';
 import { TitleBarService } from '../../../services/TitleBarService';
 import { TitleBarComponent } from '../../..//components/titlebar/titlebar.component';
+import { Web3Service } from '../../../services/Web3Service';
+import { HttpService } from '../../../services/HttpService';
+import { ApiUrl } from '../../../services/ApiUrl';
 @Component({
   selector: 'app-collections',
   templateUrl: './collections.page.html',
@@ -17,11 +20,12 @@ export class CollectionsPage implements OnInit {
   public nodeId:string = "";
   public channelId:number = null;
   public selectType:string = "CollectionsPage.created";
-  public createdList:any = [];
+  public createdList = [];
   public purchasedList:any = [];
   public onSaleList:any = [];
   public likesList:any = [];
   public isMine:number = null;
+  public isLoading:boolean =true;
   constructor(
     private translate:TranslateService,
     private event:Events,
@@ -29,6 +33,8 @@ export class CollectionsPage implements OnInit {
     private activatedRoute:ActivatedRoute,
     private feedService: FeedService,
     private titleBarService:TitleBarService,
+    private web3Service:Web3Service,
+    private httpService:HttpService,
     public theme:ThemeService,) { }
 
   ngOnInit(){
@@ -40,7 +46,7 @@ export class CollectionsPage implements OnInit {
 
   ionViewWillEnter() {
     this.isMine = this.checkChannelIsMine();
-    this.createdList = this.feedService.getNftAssetList();
+    this.getNftCreated();
     this.initTile();
     this.addEvent();
   }
@@ -72,16 +78,23 @@ export class CollectionsPage implements OnInit {
     this.selectType = type;
     switch(type){
       case 'CollectionsPage.created':
-        this.createdList = this.feedService.getNftAssetList();
+        this.isLoading = true;
+         this.getNftCreated();
         break;
       case 'CollectionsPage.purchased':
+        this.isLoading = true;
         this.purchasedList = this.feedService.getNftAssetList();
+        this.isLoading = false;
         break;
       case 'CollectionsPage.onSale':
+        this.isLoading = true;
         this.onSaleList = this.feedService.getNftAssetList();
+        this.isLoading = false;
         break;
       case 'CollectionsPage.likes':
+          this.isLoading = true;
           this.likesList = this.feedService.getNftAssetList();
+          this.isLoading = false;
           break;
     }
   }
@@ -100,5 +113,60 @@ export class CollectionsPage implements OnInit {
 
     return 1;
   }
+
+ async getNftCreated(){
+    this.createdList = [];
+    let web3 = await this.web3Service.getWeb3Js();
+    this.getTotalSupply(web3);
+ }
+
+ async getTotalSupply(web3:any){
+  let stickerAbi = require("../../../../assets/contracts/stickerABI.json");
+  let stickerAddr = "0x3B85195cBE835926357D759e9eA0b0829eda0e38";
+  const stickerContract = new web3.eth.Contract(stickerAbi,stickerAddr);
+  let totalSupply =  await stickerContract.methods.totalSupply().call();
+  for(let index =0; index<totalSupply;index++){
+      this.tokenIdByIndex(stickerContract,index);
+  }
+}
+
+async tokenIdByIndex(stickerContract:any,index:any){
+   let tokenId =  await stickerContract.methods.tokenIdByIndex(index).call();
+   this.getUri(stickerContract,tokenId);
+}
+
+async getUri(stickerContract:any,tokenId:any){
+  let feedsUri =  await stickerContract.methods.uri(tokenId).call();
+  this.handleFeedsUrl(feedsUri);
+}
+
+handleFeedsUrl(feedsUri:string){
+  feedsUri  = feedsUri.replace("feeds:json:","");
+  console.log(feedsUri);
+  this.httpService.ajaxGet(ApiUrl.nftGet+feedsUri,false).then((result)=>{
+  let type = result["type"] || "single";
+  let royalties = result["royalties"] || "1";
+  let quantity = result["quantity"] || "1";
+  let item = {
+      "asset":result["image"],
+      "name":result["name"],
+      "description":result["description"],
+      "fixedAmount":1,
+      "minimumAmount":1,
+      "kind":result["kind"],
+      "type":type,
+      "royalties":royalties,
+      "quantity":quantity
+  }
+  try{
+    this.createdList.push(item);
+    this.isLoading = false;
+  }catch(err){
+   console.log("====err===="+JSON.stringify(err));
+  }
+  }).catch(()=>{
+
+  });
+}
 
 }

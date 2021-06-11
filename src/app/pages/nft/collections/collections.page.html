@@ -16,7 +16,7 @@
       </div>
      </div>
      <!---Created-->
-     <ion-row *ngIf="selectType === 'CollectionsPage.created'&&createdList.length===0">
+     <ion-row *ngIf="selectType === 'CollectionsPage.created'&&createdList.length===0&&!isLoading">
        <ion-col size="6" *ngIf="isMine===0">
         <app-addasset
         (addAsset)="addAsset()"
@@ -35,7 +35,7 @@
      </ion-row>
 
     <!---Purchased-->
-    <ion-row *ngIf="selectType === 'CollectionsPage.purchased'&&purchasedList.length===0">
+    <ion-row *ngIf="selectType === 'CollectionsPage.purchased'&&purchasedList.length===0&&!isLoading">
         <ion-col size="12">
          <div class="bigCircle">
              <div class="smallCircle">
@@ -59,7 +59,7 @@
     </ion-row>
 
     <!--onSale-->
-    <ion-row *ngIf="selectType === 'CollectionsPage.onSale'&&onSaleList.length===0">
+    <ion-row *ngIf="selectType === 'CollectionsPage.onSale'&&onSaleList.length===0&&!isLoading">
       <ion-col size="12">
        <div class="bigCircle">
            <div class="smallCircle">
@@ -83,7 +83,7 @@
   </ion-row>
 
       <!---Likes-->
-      <ion-row *ngIf="selectType === 'CollectionsPage.likes'&&likesList.length===0">
+      <ion-row *ngIf="selectType === 'CollectionsPage.likes'&&likesList.length===0&&!isLoading">
         <ion-col size="12">
           <div class="bigCircle">
               <div class="smallCircle">

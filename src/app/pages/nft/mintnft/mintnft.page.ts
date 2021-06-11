@@ -12,7 +12,6 @@ import { TitleBarComponent } from '../../..//components/titlebar/titlebar.compon
 import { File,DirectoryEntry} from '@ionic-native/file/ngx';
 import { HttpService } from '../../../services/HttpService';
 import { ApiUrl } from '../../../services/ApiUrl';
-import Web3 from "web3";
 @Component({
   selector: 'app-mintnft',
   templateUrl: './mintnft.page.html',
@@ -155,6 +154,7 @@ export class MintnftPage implements OnInit {
     formData.append("",blob);
     this.httpService.ajaxNftPost(ApiUrl.nftAdd,formData).then((result)=>{
         //{"Name":"blob","Hash":"QmaxWgjheueDc1XW2bzDPQ6qnGi9UKNf23EBQSUAu4GHGF","Size":"17797"};
+        this.native.hideLoading();
         let hash = result["Hash"] || null;
         let imgFormat = fileName.split(".")[1];
         if(hash != null){
