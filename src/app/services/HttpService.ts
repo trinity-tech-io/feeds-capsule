@@ -81,7 +81,6 @@ export class HttpService{
     }
     return new Promise((resove, reject) => {
       this.httpClient.post(url,json).subscribe((response) => {
-        this.native.hideLoading();
         if(response["code"] === 400){
           this.native.toast('common.error400');
         }else if(response["code"] === 500){

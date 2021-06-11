@@ -5,6 +5,7 @@ import { CameraService } from '../../../services/CameraService';
 import { NativeService } from '../../../services/NativeService';
 import { UtilService } from '../../../services/utilService';
 import { FeedService } from '../../../services/FeedService';
+import { Web3Service } from '../../../services/Web3Service';
 import { Events } from '../../../services/events.service';
 import { TitleBarService } from '../../../services/TitleBarService';
 import { TitleBarComponent } from '../../..//components/titlebar/titlebar.component';
@@ -37,7 +38,6 @@ export class MintnftPage implements OnInit {
   public fileName:string = "";
   private imageObj:any = {};
   private tokenId:any = null;
-  private web3:any;
   constructor(
     private translate:TranslateService,
     private event:Events,
@@ -48,13 +48,13 @@ export class MintnftPage implements OnInit {
     private titleBarService: TitleBarService,
     private httpService:HttpService,
     private file:File,
+    private web3Service:Web3Service,
     public theme:ThemeService) { }
 
   ngOnInit() {
   }
 
   ionViewWillEnter() {
-    this.testWeb3();
     this.minExpirationDate = UtilService.dateFormat(new Date());
     this.expirationDate = UtilService.dateFormat(new Date(new Date().getTime()+24*60*60*1000));
     this.maxExpirationDate = UtilService.dateFormat(new Date(new Date().getTime()+10*365*24*60*60*1000));
@@ -111,7 +111,6 @@ export class MintnftPage implements OnInit {
         nftAssetList.push(parms);
         this.feedService.setNftAssetList(nftAssetList);
         this.sendIpfsJSON();
-        this.native.pop();
     }
   }
 
@@ -189,10 +188,9 @@ export class MintnftPage implements OnInit {
     //{"Name":"blob","Hash":"QmaxWgjheueDc1XW2bzDPQ6qnGi9UKNf23EBQSUAu4GHGF","Size":"17797"};
     let hash = result["Hash"] || null;
     if(hash != null){
-       this.tokenId = "0x"+UtilService.SHA256(hash);
-       console.log("====this.tokenId====="+this.tokenId);
+       let tokenId = "0x"+UtilService.SHA256(hash);
        let jsonHash = "feeds:json:"+hash;
-       console.log("====jsonHash===="+jsonHash);
+       this.mintContract(tokenId,jsonHash,this.nftQuantity,this.nftRoyalties);
     }
     //feeds:imgage:
     //feeds:json:
@@ -295,27 +293,30 @@ export class MintnftPage implements OnInit {
     return pathObj;
   }
 
-  async getWeb3(){
-
-    if (typeof this.web3 !== 'undefined') {
-       this.web3 = new Web3(this.web3.currentProvider);
-    } else {
-      let options = {
-        agent: {
-
-        }
+  async mintContract(tokenId:any,uri:any,supply:any,royalty:any){
+    let web3 = await this.web3Service.getWeb3Js();
+    let stickerAbi = require("../../../../assets/contracts/stickerABI.json");
+    let stickerAddr = "0x3B85195cBE835926357D759e9eA0b0829eda0e38";
+    let stickerContract = this.web3Service.initContract(web3,stickerAbi,stickerAddr);
+    const accCreator = await this.web3Service.getAccount(web3,"04868f294d8ef6e1079752cd2e1f027a126b44ee27040d949a88f89bddc15f31");
+    let parm = {"tokenId:":tokenId,"supply":supply,"uri":uri,"royalty":royalty}
+    console.log("===parm=="+JSON.stringify(parm));
+    const mintData = stickerContract.methods.mint(tokenId, supply, uri, royalty).encodeABI();
+    let mintTx = {
+      from: accCreator.address,
+      to: stickerAddr,
+      value: 0,
+      data:mintData
     };
-    this.web3 = new Web3(new Web3.providers.HttpProvider("https://api-testnet.elastos.io/eth",options));
-    }
-    return this.web3;
-  }
-
-  async testWeb3(){
-    await this.getWeb3();
-    let account = await this.web3.eth.accounts.privateKeyToAccount('04868f294d8ef6e1079752cd2e1f027a126b44ee27040d949a88f89bddc15f31');
-    console.log("===account=="+JSON.stringify(account));
-    let gasPrice = await this.web3.eth.getGasPrice();
-    console.log("===gasPrice=="+gasPrice);
+   let receipt = await this.web3Service.sendTxWaitForReceipt(web3,mintTx,accCreator,tokenId) || "";
+   console.log("=====receipt====="+JSON.stringify(receipt));
+   this.native.hideLoading();
+   if(receipt=== ""){
+    alert("nft创建失败");
+   return;
+   }
+   this.native.pop();
+   this.native.toast("sucess");
   }
 
 }
