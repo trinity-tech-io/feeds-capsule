@@ -1440,6 +1440,19 @@ export class FeedService {
     let status: FeedsData.PostCommentStatus = params.status || FeedsData.PostCommentStatus.available;
     let userDid: string = params.user_did || "";
 
+
+    //TODO 2.0
+    let thumbnails: any = params.thumbnails;
+    this.logUtils.logd("Receive result from new_comment RPC,thumbnails is "+JSON.stringify(thumbnails));
+
+    //TODO 2.0
+    let hash_id: any = params.hash_id;
+    this.logUtils.logd("Receive result from new_comment RPC,hash_id is "+JSON.stringify(hash_id));
+
+    //TODO 2.0
+    let proof: any = params.proof;
+    this.logUtils.logd("Receive result from new_comment RPC,proof is "+JSON.stringify(proof));
+
     await this.processNewComment(nodeId,channelId,postId,commentId,referCommentId,
       userName,0,createdAt,updatedAt,status,userDid,contentBin);
 
