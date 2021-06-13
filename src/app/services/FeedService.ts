@@ -1638,6 +1638,22 @@ export class FeedService {
     let createdAt: number = params.created_at||0;
     let updatedAt: number = params.updated_at||createdAt;
 
+    //TODO 2.0
+    let thumbnails: any = params.thumbnails;
+    this.logUtils.logd("Receive result from post_update, thumbnails is "+JSON.stringify(thumbnails));
+
+    //TODO 2.0
+    let hashId: string = params.hash_id;
+    this.logUtils.logd("Receive result from post_update, hash_id is "+JSON.stringify(hashId));
+
+    //TODO 2.0
+    let proof: string = params.proof;
+    this.logUtils.logd("Receive result from post_update, proof is "+JSON.stringify(proof));
+
+    //TODO 2.0
+    let originPostUrl: string = params.origin_post_url;
+    this.logUtils.logd("Receive result from post_update, thumbnails is "+JSON.stringify(originPostUrl));
+
     if (updatedAt > createdAt && status == FeedsData.PostCommentStatus.available)
       status = FeedsData.PostCommentStatus.edited
 
