@@ -1553,6 +1553,11 @@ export class FeedService {
     let totalCount: number = params.total_count;
     let user_name: string = params.user_name;
 
+    //TODO 2.0
+    let proof: string = params.proof;
+    this.logUtils.logd("Receive result from new_like, proof is "+JSON.stringify(proof));
+    
+
     if (comment_id == 0){
       let key = this.getPostId(nodeId,channel_id,post_id);
       let originPost = this.dataHelper.getPost(key);
