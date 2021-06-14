@@ -1612,6 +1612,18 @@ export class FeedService {
     let nodeChannelId = this.getChannelId(nodeId, channelId) || "";
     let originChannel = this.dataHelper.getChannel(nodeChannelId);
 
+    //TODO 2.0
+    let tipMethods: string = params.tip_methods 
+    this.logUtils.logd("Receive result from feedinfo_update, tipMethods is "+JSON.stringify(tipMethods));
+
+    //TODO 2.0    
+    let proof: string = params.proof;
+    this.logUtils.logd("Receive result from feedinfo_update, proof is "+JSON.stringify(proof));
+
+    //TODO 2.0    
+    let status: number = params.status;
+    this.logUtils.logd("Receive result from feedinfo_update, status is "+JSON.stringify(status));
+
     if (originChannel == null){
       let channel = {
         nodeId:nodeId,
