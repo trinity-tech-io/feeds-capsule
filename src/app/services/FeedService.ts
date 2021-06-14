@@ -1705,6 +1705,21 @@ export class FeedService {
     let updatedAt = params.updated_at||createdAt;
     let userDid = params.user_did||"";
 
+    //TODO 2.0
+    let thumbnails = params.thumbnails;
+    this.logUtils.logd("Receive result from subscribe_channel, thumbnails is "+JSON.stringify(thumbnails));
+
+
+    //TODO 2.0
+    let hash_id = params.hash_id;
+    this.logUtils.logd("Receive result from subscribe_channel, hash_id is "+JSON.stringify(hash_id));
+
+
+    //TODO 2.0
+    let proof = params.proof;
+    this.logUtils.logd("Receive result from subscribe_channel, proof is "+JSON.stringify(proof));
+
+
     if (updatedAt > createdAt && status == FeedsData.PostCommentStatus.available)
       status = FeedsData.PostCommentStatus.edited
 
@@ -5698,5 +5713,9 @@ export class FeedService {
     }
 
     return true;
+  }
+
+  test(){
+    this.notifyPost("FQdppj44Y8fuTNRvZBJZTrm8UMWYqU592YdNUZdMSWJJ", 3, 152, 0);
   }
 }
