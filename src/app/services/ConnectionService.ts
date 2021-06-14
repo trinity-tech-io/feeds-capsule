@@ -42,7 +42,7 @@ export class ConnectionService {
                 proof         : proof
             }
         }
-        this.sendRPCMessage(serverName, nodeId, request.method, request.params, "");
+        this.sendRPCMessage(serverName, nodeId, request.method, request.params, "", request.version);
     }
 
     publishPost(serverName: string, nodeId: string, channelId: number, content: any,
@@ -56,13 +56,13 @@ export class ConnectionService {
             tempId: tempId
         }
         //TODO 2.0
-        let thumbnails = "";
+        let thumbnails = "NA";
         //TODO 2.0
-        let hashId = "";
+        let hashId = "NA";
         //TODO 2.0
-        let proof = "";
+        let proof = "NA";
         //TODO 2.0
-        let originPostUrl = "";
+        let originPostUrl = "NA";
         let request: Communication.publish_post_request = {
             version: "2.0",
             method : "publish_post",
@@ -77,7 +77,7 @@ export class ConnectionService {
                 origin_post_url : originPostUrl
             }
         }
-        this.sendRPCMessage(serverName, nodeId, request.method, request.params, memo);
+        this.sendRPCMessage(serverName, nodeId, request.method, request.params, memo, request.version);
     }
 
     //added v1.3.0 server
@@ -96,18 +96,18 @@ export class ConnectionService {
             params : {
                 access_token    : accessToken.token,
                 channel_id      : Number(channelId),
-                content         : contentBin,
                 with_notify     : withNotify,
                 thumbnails      : thumbnails,
                 hash_id         : hashId,
                 proof           : proof,
-                origin_post_url : originPostUrl
+                origin_post_url : originPostUrl,
+                content         : contentBin
             }
         }
         let memo = {
             tempId: tempId
         }
-        this.sendRPCMessage(serverName, nodeId, request.method, request.params, memo);
+        this.sendRPCMessage(serverName, nodeId, request.method, request.params, memo, request.version);
     }
 
     //added v1.3.0 server
@@ -128,7 +128,7 @@ export class ConnectionService {
                 post_id         : Number(postId)
             }
         }
-        this.sendRPCMessage(serverName, nodeId, request.method, request.params, memo);
+        this.sendRPCMessage(serverName, nodeId, request.method, request.params, memo, request.version);
     }
 
     postComment(serverName: string, nodeId: string, channelId: number, postId: number,
@@ -138,11 +138,11 @@ export class ConnectionService {
 
         let contentBin = this.serializeDataService.encodeData(content);
         //TODO 2.0
-        let thumbnails = "";
+        let thumbnails = "NA";
         //TODO 2.0
-        let hashId = "";
+        let hashId = "NA";
         //TODO 2.0
-        let proof = "";
+        let proof = "NA";
         let request: Communication.post_comment_request = {
             version: "2.0",
             method : "post_comment",
@@ -158,7 +158,7 @@ export class ConnectionService {
                 proof           : proof
             }
         }
-        this.sendRPCMessage(serverName, nodeId, request.method, request.params, "");
+        this.sendRPCMessage(serverName, nodeId, request.method, request.params, "", request.version);
     }
 
     postLike(serverName: string, nodeId: string, channelId: number, postId: number,
@@ -167,7 +167,7 @@ export class ConnectionService {
             return ;
 
         //TODO 2.0
-        let proof = "";
+        let proof = "NA";
         let request: Communication.post_like_request = {
             version: "2.0",
             method : "post_like",
@@ -180,7 +180,7 @@ export class ConnectionService {
                 proof         : proof
             }
         }
-        this.sendRPCMessage(serverName, nodeId, request.method, request.params, "");
+        this.sendRPCMessage(serverName, nodeId, request.method, request.params, "", request.version);
     }
 
     postUnlike(serverName: string, nodeId:string, channelId: number, postId: number,
@@ -199,7 +199,7 @@ export class ConnectionService {
                 comment_id    : commentId,
             }
         }
-        this.sendRPCMessage(serverName, nodeId, request.method, request.params, "");
+        this.sendRPCMessage(serverName, nodeId, request.method, request.params, "", request.version);
     }
 
    getMyChannels(serverName: string, nodeId: string, field: Communication.field, upper_bound: number,
@@ -219,7 +219,7 @@ export class ConnectionService {
                 max_count       : max_counts,
             }
         }
-        this.sendRPCMessage(serverName, nodeId, request.method, request.params,"", false);
+        this.sendRPCMessage(serverName, nodeId, request.method, request.params,"", request.version, false);
     }
 
     // getMyChannelsMetaData(serverName: string, nodeId: string, field: Communication.field, upper_bound: number,
@@ -259,7 +259,7 @@ export class ConnectionService {
                 max_count       : max_counts,
             }
         }
-        this.sendRPCMessage(serverName, nodeId, request.method, request.params, "",false);
+        this.sendRPCMessage(serverName, nodeId, request.method, request.params, "", request.version, false);
     }
 
     getChannelDetail(serverName: string, nodeId: string, id: number, accessToken: FeedsData.AccessToken){
@@ -275,7 +275,7 @@ export class ConnectionService {
                 id            : id,
             },
         }
-        this.sendRPCMessage(serverName, nodeId, request.method, request.params, "", false);
+        this.sendRPCMessage(serverName, nodeId, request.method, request.params, "", request.version, false);
     }
 
     getSubscribedChannels(serverName: string, nodeId: string, field: Communication.field, upper_bound: number,
@@ -295,7 +295,7 @@ export class ConnectionService {
                 max_count       : max_counts,
             },
         }
-        this.sendRPCMessage(serverName, nodeId, request.method, request.params, "", false);
+        this.sendRPCMessage(serverName, nodeId, request.method, request.params, "", request.version, false);
     }
 
     getPost(serverName: string, nodeId: string, channel_id: number, by: Communication.field,
@@ -317,7 +317,7 @@ export class ConnectionService {
                 max_count       : max_counts,
             },
         }
-        this.sendRPCMessage(serverName, nodeId, request.method, request.params, memo, false);
+        this.sendRPCMessage(serverName, nodeId, request.method, request.params, memo, request.version, false);
     }
 
     getComments(serverName: string, nodeId: string, channel_id: number, post_id: number,
@@ -340,7 +340,7 @@ export class ConnectionService {
                 max_count       : max_counts,
             },
         }
-        this.sendRPCMessage(serverName, nodeId, request.method, request.params, "", isShowOfflineToast);
+        this.sendRPCMessage(serverName, nodeId, request.method, request.params, "", request.version, isShowOfflineToast);
     }
 
     getStatistics(serverName: string, nodeId: string, accessToken: FeedsData.AccessToken){
@@ -355,7 +355,7 @@ export class ConnectionService {
                 access_token    : accessToken.token
             },
         }
-        this.sendRPCMessage(serverName, nodeId, request.method, request.params, "", false);
+        this.sendRPCMessage(serverName, nodeId, request.method, request.params, "", request.version, false);
     }
 
     subscribeChannel(serverName: string, nodeId: string, id: number, accessToken: FeedsData.AccessToken){
@@ -371,7 +371,7 @@ export class ConnectionService {
                 id            : id,
             },
         }
-        this.sendRPCMessage(serverName, nodeId, request.method, request.params,"");
+        this.sendRPCMessage(serverName, nodeId, request.method, request.params,"", request.version);
     }
 
     unsubscribeChannel(serverName: string, nodeId: string, id: number, accessToken: FeedsData.AccessToken){
@@ -387,7 +387,7 @@ export class ConnectionService {
                 id            : id
             },
         }
-        this.sendRPCMessage(serverName, nodeId, request.method, request.params,"");
+        this.sendRPCMessage(serverName, nodeId, request.method, request.params,"", request.version);
     }
 
     editFeedInfo(serverName: string, nodeId: string, channelId: number, name: string , desc: string, avatarBin: any, 
@@ -409,7 +409,7 @@ export class ConnectionService {
                 proof           : proof
             }
         }
-        this.sendRPCMessage(serverName, nodeId, request.method, request.params,"");
+        this.sendRPCMessage(serverName, nodeId, request.method, request.params,"", request.version);
     }
 
     enableNotification(serverName: string, nodeId: string, accessToken: FeedsData.AccessToken){
@@ -424,7 +424,7 @@ export class ConnectionService {
                 access_token   : accessToken.token
             },
         }
-        this.sendRPCMessage(serverName, nodeId, request.method, request.params,"");
+        this.sendRPCMessage(serverName, nodeId, request.method, request.params,"", request.version);
     }
 
     signinChallengeRequest(serverName: string, nodeId: string , requiredCredential: boolean, did: string){
@@ -437,7 +437,7 @@ export class ConnectionService {
               credential_required   : requiredCredential,
           }
         }
-        this.sendRPCMessage(serverName, nodeId, request.method, request.params,"");
+        this.sendRPCMessage(serverName, nodeId, request.method, request.params,"", request.version);
     }
 
     // signinConfirmRequest(serverName: string, nodeId: string, nonce: string, realm: string, requiredCredential: boolean, presentation: string , credential: string){
@@ -475,7 +475,7 @@ export class ConnectionService {
               owner_did: did
           }
         }
-        this.sendRPCMessage(serverName, nodeId, request.method, request.params,"", false);
+        this.sendRPCMessage(serverName, nodeId, request.method, request.params,"", request.version, false);
     }
 
     importDidRequest(serverName: string, nodeId: string, mnemonic: string, passphrase: string, index: number){
@@ -489,7 +489,7 @@ export class ConnectionService {
             index       : index
           }
         }
-        this.sendRPCMessage(serverName, nodeId, request.method, request.params,"");
+        this.sendRPCMessage(serverName, nodeId, request.method, request.params,"", request.version);
     }
 
     createDidRequest(serverName: string, nodeId: string){
@@ -498,7 +498,7 @@ export class ConnectionService {
           method  : "import_did",
           id      : -1,
         }
-        this.sendRPCMessage(serverName, nodeId, request.method, null, "");
+        this.sendRPCMessage(serverName, nodeId, request.method, null, "", request.version);
     }
 
     issueCredentialRequest(serverName: string, nodeId: string, credential: string){
@@ -510,20 +510,20 @@ export class ConnectionService {
               credential: credential,
           }
         }
-        this.sendRPCMessage(serverName, nodeId, request.method, request.params,"");
+        this.sendRPCMessage(serverName, nodeId, request.method, request.params,"", request.version);
     }
 
     editPost(serverName: string, nodeId: string, channelId: number, postId: number, content: any, accessToken: FeedsData.AccessToken){
         if (accessToken == null || accessToken == undefined)
             return ;
         //TODO 2.0
-        let thumbnails = "";
+        let thumbnails = "NA";
         //TODO 2.0
-        let hashId = ""
+        let hashId = "NA"
         //TODO 2.0
-        let proof = "";
+        let proof = "NA";
         //TODO 2.0
-        let originPostUrl = "";
+        let originPostUrl = "NA";
 
         let contentBin = this.serializeDataService.encodeData(content);
         let request: Communication.edit_post_request = {
@@ -541,7 +541,7 @@ export class ConnectionService {
                 origin_post_url : originPostUrl
             }
         }
-        this.sendRPCMessage(serverName, nodeId, request.method, request.params,"");
+        this.sendRPCMessage(serverName, nodeId, request.method, request.params,"", request.version);
     }
 
     deletePost(serverName: string, nodeId: string, channelId: number, postId: number, accessToken: FeedsData.AccessToken){
@@ -559,7 +559,7 @@ export class ConnectionService {
             }
         }
 
-        this.sendRPCMessage(serverName, nodeId, request.method, request.params,"");
+        this.sendRPCMessage(serverName, nodeId, request.method, request.params,"", request.version);
     }
 
     editComment(serverName: string, nodeId: string, channelId: number, postId: number, commentId: number,
@@ -570,11 +570,11 @@ export class ConnectionService {
         let contentBin = this.serializeDataService.encodeData(content);
 
         //TODO 2.0
-        let thumbnails = "";
+        let thumbnails = "NA";
         //TODO 2.0
-        let hashId = "";
+        let hashId = "NA";
         //TODO 2.0
-        let proof = "";
+        let proof = "NA";
         let request: Communication.edit_comment_request = {
             version: "2.0",
             method : "edit_comment",
@@ -592,7 +592,7 @@ export class ConnectionService {
             }
         }
 
-        this.sendRPCMessage(serverName, nodeId, request.method, request.params,"");
+        this.sendRPCMessage(serverName, nodeId, request.method, request.params,"", request.version);
     }
 
     deleteComment(serverName: string, nodeId: string, channelId: number, postId: number,
@@ -612,7 +612,7 @@ export class ConnectionService {
             }
         }
 
-        this.sendRPCMessage(serverName, nodeId, request.method, request.params, "");
+        this.sendRPCMessage(serverName, nodeId, request.method, request.params, "", request.version);
     }
 
     getServerVersion(serverName: string, nodeId: string){
@@ -625,7 +625,7 @@ export class ConnectionService {
             }
         }
 
-        this.sendRPCMessage(serverName, nodeId, request.method, request.params, "");
+        this.sendRPCMessage(serverName, nodeId, request.method, request.params, "", request.version);
     }
 
     updateCredential(serverName: string, nodeId: string, credential: string, accessToken: FeedsData.AccessToken){
@@ -642,7 +642,7 @@ export class ConnectionService {
             }
         }
 
-        this.sendRPCMessage(serverName, nodeId, request.method, request.params, "");
+        this.sendRPCMessage(serverName, nodeId, request.method, request.params, "", request.version);
     }
 
     setBinary(serverName: string, nodeId: string, key: string,  content: any, accessToken: FeedsData.AccessToken, memo: any){
@@ -663,7 +663,7 @@ export class ConnectionService {
             }
         }
 
-        this.sendRPCMessage(serverName, nodeId, request.method, request.params, memo);
+        this.sendRPCMessage(serverName, nodeId, request.method, request.params, memo, request.version);
     }
 
     getBinary(serverName: string, nodeId: string, key: string, accessToken: FeedsData.AccessToken){
@@ -680,7 +680,7 @@ export class ConnectionService {
             }
         }
 
-        this.sendRPCMessage(serverName, nodeId, request.method, request.params, "");
+        this.sendRPCMessage(serverName, nodeId, request.method, request.params, "", request.version);
     }
 
 
@@ -694,7 +694,7 @@ export class ConnectionService {
             }
         }
 
-        this.sendRPCMessage(serverName, nodeId, request.method, request.params, ""); 
+        this.sendRPCMessage(serverName, nodeId, request.method, request.params, "", request.version); 
     }
 
     standardDidAuth(serverName: string, nodeId: string, verifiablePresentation: string, name: string){
@@ -708,7 +708,7 @@ export class ConnectionService {
             }
         }
 
-        this.sendRPCMessage(serverName, nodeId, request.method, request.params, ""); 
+        this.sendRPCMessage(serverName, nodeId, request.method, request.params, "", request.version); 
     }
 
     getMultiComments(serverName: string, nodeId: string, channelId: number, postId: number,
@@ -731,7 +731,7 @@ export class ConnectionService {
                 max_count   : maxCounts
             }
         }
-        this.sendRPCMessage(serverName, nodeId, request.method, request.params, "", false); 
+        this.sendRPCMessage(serverName, nodeId, request.method, request.params, "",request.version, false); 
     }
 
     getMultiSubscribers(serverName: string,nodeId: string, channelId: number, accessToken: FeedsData.AccessToken){
@@ -747,7 +747,7 @@ export class ConnectionService {
                 channel_id      : channelId // 0
             }
         }
-        this.sendRPCMessage(serverName, nodeId, request.method, request.params, "", false); 
+        this.sendRPCMessage(serverName, nodeId, request.method, request.params, "", request.version, false); 
     }
 
     getMultiLikesAndCommentsCount(serverName: string,nodeId: string, channelId: number,
@@ -770,10 +770,10 @@ export class ConnectionService {
                 max_count   : maxCount
             }
         }
-        this.sendRPCMessage(serverName, nodeId, request.method, request.params, "", false); 
+        this.sendRPCMessage(serverName, nodeId, request.method, request.params, "", request.version, false); 
     }
 
-    sendRPCMessage(serverName: string, nodeId: string, method: string, params: any, memo: any, isShowOfflineToast: boolean = true){
+    sendRPCMessage(serverName: string, nodeId: string, method: string, params: any, memo: any, version: string, isShowOfflineToast: boolean = true, ){
         if(!this.checkServerConnection(nodeId)){
           this.events.publish(FeedsEvent.PublishType.rpcRequestError);
           return;
@@ -783,6 +783,7 @@ export class ConnectionService {
             nodeId,
             params,
             memo,
+            version,
             ()=>{
 
             },

@@ -61,11 +61,11 @@ export class JsonRPCService {
         return new LoginResult(nodeId,data.payload,data.signature);
     }
 
-    request(method: string, nodeId: string,params: any, memo: any, onSuccess:()=>void, onError?:(err: string)=>void){
+    request(method: string, nodeId: string,params: any, memo: any, version: string, onSuccess:()=>void, onError?:(err: string)=>void){
         let id = autoIncreaseId++;
         let requestBean = new RequestBean(id,method,params,memo);
         requestQueue.push(requestBean);
-        let request = this.assembleJson(id, method, params, memo);
+        let request = this.assembleJson(id, method, params, memo, version);
         this.logUtils.logd("Send RPC msg , nodeId is " +nodeId +" msg is "+JSON.stringify(request), TAG);
         let encodeData = this.serializeDataService.encodeData(request);
         
@@ -83,9 +83,9 @@ export class JsonRPCService {
         return res;
     }
 
-    assembleJson(id: number, method: string, params: any, memo: any): any{
+    assembleJson(id: number, method: string, params: any, memo: any, version: string): any{
         let data = {
-            version:"1.0",
+            version:version,
             method:method,
             id:id
         }
