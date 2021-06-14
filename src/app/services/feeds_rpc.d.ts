@@ -140,7 +140,7 @@ declare module Communication{
     }
 
     type create_channel_response = {
-        version: "1.0"
+        version: "2.0"
         id     : jsonrpc_id
         result : {
             id: number 
@@ -166,7 +166,7 @@ declare module Communication{
     }
 
     type update_feedinfo_response = {
-        version: "1.0"
+        version: "2.0"
         id     : jsonrpc_id
         result : null
     }
@@ -192,7 +192,7 @@ declare module Communication{
     }
 
     type publish_post_response = {
-        version: "1.0"
+        version: "2.0"
         id     : jsonrpc_id
         result : {
             id: number
@@ -223,7 +223,7 @@ declare module Communication{
 
     // new api
     type edit_post_response = {
-        version: "1.0"
+        version: "2.0"
         id     : jsonrpc_id
         result : null
     }
@@ -268,7 +268,7 @@ declare module Communication{
     }
     
     type post_comment_response = {
-        version: "1.0"
+        version: "2.0"
         id     : jsonrpc_id
         result : {
             id: number
@@ -298,7 +298,7 @@ declare module Communication{
 
     // new api
     type edit_comment_response = {
-        version: "1.0"
+        version: "2.0"
         id     : jsonrpc_id
         result : null
     }
@@ -339,7 +339,7 @@ declare module Communication{
     }
     
     type post_like_response = {
-        version: "1.0"
+        version: "2.0"
         result : null
         id     : jsonrpc_id
     }

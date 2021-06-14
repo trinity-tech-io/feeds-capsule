@@ -1102,9 +1102,9 @@ export class FeedService {
       return;
     let accessToken: FeedsData.AccessToken = this.dataHelper.getAccessToken(nodeId) || null;
     //TODO 2.0
-    let tipMethods = "";
+    let tipMethods = "NA";
     //TODO 2.0
-    let proof = "";
+    let proof = "NA";
     this.connectionService.createChannel(this.getServerNameByNodeId(nodeId),nodeId,name,introduction,avatar,accessToken,tipMethods,proof);
   }
 
@@ -1124,16 +1124,16 @@ export class FeedService {
       return;
 
     //TODO 2.0
-    let thumbnails = "";
+    let thumbnails = "N2A";
 
     //TODO 2.0
-    let hashId = "";
+    let hashId = "N2A";
 
     //TODO 2.0
-    let proof = "";
+    let proof = "N2A";
 
     //TODO 2.0
-    let originPostUrl = "";
+    let originPostUrl = "N2A";
 
     this.prepareTempMediaPost(nodeId, channelId, tempId, 0, content, transDataChannel, videoData, imageData);
     let accessToken: FeedsData.AccessToken = this.dataHelper.getAccessToken(nodeId) || null;
@@ -1269,9 +1269,9 @@ export class FeedService {
     let avatarBin = this.serializeDataService.encodeData(avatar);
     let accessToken: FeedsData.AccessToken = this.dataHelper.getAccessToken(nodeId) || null;
     //TODO 2.0
-    let tipMethods = "";
+    let tipMethods = "NA";
     //TODO 2.0
-    let proof = "";
+    let proof = "NA";
     this.connectionService.editFeedInfo(this.getServerNameByNodeId(nodeId),nodeId, channelId, name, desc, avatarBin, accessToken, tipMethods, proof);
   }
 
@@ -1621,11 +1621,11 @@ export class FeedService {
     this.logUtils.logd("Receive result from feedinfo_update, proof is "+JSON.stringify(proof));
 
     //TODO 2.0    
-    let status: number = params.status;
+    let status: number = params.status || 0;
     this.logUtils.logd("Receive result from feedinfo_update, status is "+JSON.stringify(status));
 
     if (originChannel == null){
-      let channel = {
+      let channel: FeedsData.Channels = {
         nodeId:nodeId,
         id: channelId,
         name: name,
@@ -1636,7 +1636,12 @@ export class FeedService {
         last_update : last_update,
         last_post: "",
         avatar: "",
-        isSubscribed: true
+        isSubscribed: true,
+
+        // status      :   0,  //Added 2.0
+        // iid         :   "", //Added 2.0
+        // tip_methods :   "", //Added 2.0
+        // memo        :   "", //Added 2.0
       }
       this.dataHelper.updateChannel(nodeChannelId, channel);
       eventBus.publish(FeedsEvent.PublishType.editFeedInfoFinish, nodeChannelId);
@@ -3547,7 +3552,7 @@ export class FeedService {
   prepare(friendId: string){
     this.getStatistics(friendId);
     this.enableNotification(friendId);
-    this.updateData(friendId);
+    // this.updateData(friendId);
     // if (!this.addFeedService.checkIsTobeAddedFeeds(friendId, 0)){
     //   this.updateData(friendId);
     // }
@@ -5733,6 +5738,6 @@ export class FeedService {
   }
 
   test(){
-    this.notifyPost("FQdppj44Y8fuTNRvZBJZTrm8UMWYqU592YdNUZdMSWJJ", 3, 152, 0);
+    this.notifyPost("FQdppj44Y8fuTNRvZBJZTrm8UMWYqU592YdNUZdMSWJJ", 3, 2, 0);
   }
 }
