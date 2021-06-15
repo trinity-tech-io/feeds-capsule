@@ -132,6 +132,7 @@ export class CollectionsPage implements OnInit {
 
 async tokenIdByIndex(stickerContract:any,index:any){
    let tokenId =  await stickerContract.methods.tokenIdByIndex(index).call();
+   console.log("===tokenId==="+index+"===="+tokenId);
    this.getUri(stickerContract,tokenId);
 }
 
