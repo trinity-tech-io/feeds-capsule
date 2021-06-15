@@ -16,7 +16,10 @@ import { ViewHelper } from 'src/app/services/viewhelper.service';
 import { PopupProvider } from 'src/app/services/popup';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarService } from 'src/app/services/TitleBarService';
-
+import { StorageService } from 'src/app/services/StorageService';
+import { Web3Service } from '../../../services/Web3Service';
+import { HttpService } from '../../../services/HttpService';
+import { ApiUrl } from '../../../services/ApiUrl';
 import * as _ from 'lodash';
 let TAG: string = "Feeds-home";
 @Component({
@@ -135,7 +138,10 @@ export class HomePage implements OnInit {
     public popupProvider:PopupProvider,
     public popoverController:PopoverController,
     private viewHelper: ViewHelper,
-    private titleBarService: TitleBarService) {
+    private titleBarService: TitleBarService,
+    private storageService:StorageService,
+    private web3Service:Web3Service,
+    private httpService:HttpService) {
 
     }
 
@@ -200,7 +206,7 @@ export class HomePage implements OnInit {
     if(this.platform.is("ios")){
         this.isAndroid = false;
     }
-    this.pasarList = this.feedService.getNftAssetList();
+    //this.pasarList = this.getPaserList();
     this.connectionStatus = this.feedService.getConnectionStatus();
     this.styleObj.width = (screen.width - 105)+'px';
     this.clientHeight =screen.availHeight;
@@ -255,21 +261,6 @@ export class HomePage implements OnInit {
       this.refreshPostList();
      });
     });
-
-
- this.events.subscribe(FeedsEvent.PublishType.tabSendPost,()=>{
-
-  this.isImgPercentageLoading[this.imgDownStatusKey] = false;
-  this.isImgLoading[this.imgDownStatusKey] = false;
-  this.imgDownStatus[this.imgDownStatusKey] ="";
-
-  this.isVideoPercentageLoading[this.videoDownStatusKey] = false;
-  this.isVideoLoading[this.videoDownStatusKey] = false;
-  this.videoDownStatus[this.videoDownStatusKey] = "";
-
-  this.pauseAllVideo();
-
- });
 
  this.events.subscribe(FeedsEvent.PublishType.createpost,()=>{
           this.clearData();
@@ -484,9 +475,7 @@ clearData(){
   }
    this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
    this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
-  //  this.events.unsubscribe("feeds:postDataUpdate");
    this.events.unsubscribe(FeedsEvent.PublishType.friendConnectionChanged);
-  //  this.events.unsubscribe("feeds:publishPostFinish");
    this.events.unsubscribe(FeedsEvent.PublishType.editPostFinish);
    this.events.unsubscribe(FeedsEvent.PublishType.deletePostFinish);
 
@@ -503,7 +492,6 @@ clearData(){
    this.events.unsubscribe(FeedsEvent.PublishType.rpcResponseError);
    this.events.unsubscribe(FeedsEvent.PublishType.rpcRequestSuccess);
    this.events.unsubscribe(FeedsEvent.PublishType.openRightMenu);
-   this.events.unsubscribe(FeedsEvent.PublishType.tabSendPost);
 
    this.removeImages();
    this.removeAllVideo();
@@ -782,7 +770,7 @@ clearData(){
         break;
       case "pasar":
         let sId1 = setTimeout(()=>{
-          this.pasarList = this.feedService.getNftAssetList() || [];
+           this.getPaserList();
           event.target.complete();
           clearTimeout(sId1);
         },500)
@@ -1427,8 +1415,111 @@ clearData(){
 
       this.hideFullScreen();
       this.native.hideLoading();
-       this.pasarList = this.feedService.getNftAssetList() || [];
+      this.getPaserList();
      break;
     }
   }
+
+  create(){
+
+   if(this.feedService.getConnectionStatus() != 0){
+      this.native.toastWarn('common.connectionError');
+      return;
+    }
+
+    let bindingServer = this.feedService.getBindingServer();
+    if (bindingServer == null || bindingServer == undefined){
+      this.native.navigateForward(['bindservice/learnpublisheraccount'],"");
+      return ;
+    }
+
+    let nodeId = bindingServer["nodeId"];
+    if(this.checkServerStatus(nodeId) != 0){
+      this.native.toastWarn('common.connectionError1');
+      return;
+    }
+
+
+    if (!this.feedService.checkBindingServerVersion(()=>{
+      this.feedService.hideAlertPopover();
+    })) return;
+
+    this.pauseAllVideo();
+    this.clearData();
+
+    if(this.feedService.getMyChannelList().length === 0){
+      this.native.navigateForward(['/createnewfeed'],"");
+      return;
+    }
+
+    let currentFeed = this.feedService.getCurrentFeed();
+    if(currentFeed === null){
+      let myFeed = this.feedService.getMyChannelList()[0];
+      let currentFeed = {
+        "nodeId": myFeed.nodeId,
+        "feedId": myFeed.id
+      }
+      this.feedService.setCurrentFeed(currentFeed);
+      this.storageService.set("feeds.currentFeed",JSON.stringify(currentFeed));
+    }
+    this.native.navigateForward(["createnewpost"],"");
+  }
+
+  createNft(){
+    this.native.navigateForward(['mintnft'],{});
+  }
+
+ async getPaserList(){
+  this.pasarList = [];
+  let web3 = await this.web3Service.getWeb3Js();
+  let pasarAbi = this.web3Service.getPasarAbi();
+  let pasarAddr = this.web3Service.getPasarAddr();
+  let stickerABI = this.web3Service.getStickerAbi();
+  let stickerAddr = this.web3Service.getStickerAddr();
+  let pasarContract = new web3.eth.Contract(pasarAbi,pasarAddr);
+  let openOrderCount =  await pasarContract.methods.getOpenOrderCount().call();
+  for(let index = 0;index<openOrderCount;index++){
+     this.getOpenOrderByIndex(web3,index,pasarContract,stickerABI,stickerAddr);
+  }
+}
+
+async getOpenOrderByIndex(web3:any,index:any,pasarContract:any,stickerABI:any,stickerAddr:any){
+  let  openOrder =  await pasarContract.methods.getOpenOrderByIndex(index).call();
+  let tokenId = openOrder[3];
+  console.log("====tokenId===="+tokenId);
+  const stickerContract = new web3.eth.Contract(stickerABI,stickerAddr);
+  let feedsUri =  await stickerContract.methods.uri(tokenId).call();
+  console.log("===feedsUri==="+feedsUri);
+  this.handleFeedsUrl(feedsUri);
+}
+
+handleFeedsUrl(feedsUri:string){
+  feedsUri  = feedsUri.replace("feeds:json:","");
+  console.log(feedsUri);
+  this.httpService.ajaxGet(ApiUrl.nftGet+feedsUri,false).then((result)=>{
+  let type = result["type"] || "single";
+  let royalties = result["royalties"] || "1";
+  let quantity = result["quantity"] || "1";
+  let item = {
+      "asset":result["image"],
+      "name":result["name"],
+      "description":result["description"],
+      "fixedAmount":1,
+      "minimumAmount":1,
+      "kind":result["kind"],
+      "type":type,
+      "royalties":royalties,
+      "quantity":quantity
+  }
+  console.log("====item===="+JSON.stringify(item));
+
+  try{
+    this.pasarList.push(item);
+  }catch(err){
+   console.log("====err===="+JSON.stringify(err));
+  }
+  }).catch(()=>{
+
+  });
+}
 }

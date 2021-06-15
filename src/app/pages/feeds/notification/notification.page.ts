@@ -10,7 +10,7 @@ import { IonInfiniteScroll,IonContent} from '@ionic/angular';
 import { ViewHelper } from 'src/app/services/viewhelper.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarService } from 'src/app/services/TitleBarService';
-
+import { StorageService } from 'src/app/services/StorageService';
 @Component({
   selector: 'slides-example',
   templateUrl: './notification.page.html',
@@ -40,7 +40,8 @@ export class NotificationPage {
     private feedService: FeedService,
     private viewHelper: ViewHelper,
     private titleBarService: TitleBarService,
-    private actionSheetController:ActionSheetController) {
+    private actionSheetController:ActionSheetController,
+    private storageService:StorageService) {
     //this.notificationList = this.feedService.getNotificationList();
   }
 
@@ -292,5 +293,52 @@ export class NotificationPage {
 
    });
   await this.notificationMenu.present();
+  }
+
+  createPost(){
+    if(this.feedService.getConnectionStatus() != 0){
+      this.native.toastWarn('common.connectionError');
+      return;
+    }
+
+    let bindingServer = this.feedService.getBindingServer();
+    if (bindingServer == null || bindingServer == undefined){
+      this.native.navigateForward(['bindservice/learnpublisheraccount'],"");
+      return ;
+    }
+
+    let nodeId = bindingServer["nodeId"];
+    if(this.checkServerStatus(nodeId) != 0){
+      this.native.toastWarn('common.connectionError1');
+      return;
+    }
+
+
+    if (!this.feedService.checkBindingServerVersion(()=>{
+      this.feedService.hideAlertPopover();
+    })) return;
+
+    this.removeEvent();
+
+    if(this.feedService.getMyChannelList().length === 0){
+      this.native.navigateForward(['/createnewfeed'],"");
+      return;
+    }
+
+    let currentFeed = this.feedService.getCurrentFeed();
+    if(currentFeed === null){
+      let myFeed = this.feedService.getMyChannelList()[0];
+      let currentFeed = {
+        "nodeId": myFeed.nodeId,
+        "feedId": myFeed.id
+      }
+      this.feedService.setCurrentFeed(currentFeed);
+      this.storageService.set("feeds.currentFeed",JSON.stringify(currentFeed));
+    }
+    this.native.navigateForward(["createnewpost"],"");
+  }
+
+  checkServerStatus(nodeId: string){
+    return this.feedService.getServerStatusFromId(nodeId);
   }
 }
