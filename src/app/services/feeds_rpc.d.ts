@@ -677,6 +677,7 @@ declare module Communication{
     }
     
     //Update to 2.0
+    //Add proof
     type subscribe_channel_request = {
         version: "2.0"
         method : "subscribe_channel"
@@ -684,6 +685,7 @@ declare module Communication{
         params : {
             access_token   : string
             id: number
+            proof:  string
         }
     }
 

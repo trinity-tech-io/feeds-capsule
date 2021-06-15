@@ -56,7 +56,7 @@ export class ConnectionService {
             tempId: tempId
         }
         //TODO 2.0
-        let thumbnails = "NA";
+        let thumbnails = this.serializeDataService.encodeData("");
         //TODO 2.0
         let hashId = "NA";
         //TODO 2.0
@@ -96,17 +96,19 @@ export class ConnectionService {
             params : {
                 access_token    : accessToken.token,
                 channel_id      : Number(channelId),
+                content         : contentBin,
                 with_notify     : withNotify,
                 thumbnails      : thumbnails,
                 hash_id         : hashId,
                 proof           : proof,
                 origin_post_url : originPostUrl,
-                content         : contentBin
             }
         }
+
         let memo = {
             tempId: tempId
         }
+
         this.sendRPCMessage(serverName, nodeId, request.method, request.params, memo, request.version);
     }
 
@@ -138,7 +140,7 @@ export class ConnectionService {
 
         let contentBin = this.serializeDataService.encodeData(content);
         //TODO 2.0
-        let thumbnails = "NA";
+        let thumbnails = this.serializeDataService.encodeData("");
         //TODO 2.0
         let hashId = "NA";
         //TODO 2.0
@@ -358,7 +360,7 @@ export class ConnectionService {
         this.sendRPCMessage(serverName, nodeId, request.method, request.params, "", request.version, false);
     }
 
-    subscribeChannel(serverName: string, nodeId: string, id: number, accessToken: FeedsData.AccessToken){
+    subscribeChannel(serverName: string, nodeId: string, id: number, proof: string, accessToken: FeedsData.AccessToken){
         if (accessToken == null || accessToken == undefined)
             return ;
 
@@ -369,6 +371,7 @@ export class ConnectionService {
             params : {
                 access_token  : accessToken.token,
                 id            : id,
+                proof         : proof
             },
         }
         this.sendRPCMessage(serverName, nodeId, request.method, request.params,"", request.version);
@@ -517,7 +520,7 @@ export class ConnectionService {
         if (accessToken == null || accessToken == undefined)
             return ;
         //TODO 2.0
-        let thumbnails = "NA";
+        let thumbnails = this.serializeDataService.encodeData("");
         //TODO 2.0
         let hashId = "NA"
         //TODO 2.0
@@ -570,7 +573,7 @@ export class ConnectionService {
         let contentBin = this.serializeDataService.encodeData(content);
 
         //TODO 2.0
-        let thumbnails = "NA";
+        let thumbnails = this.serializeDataService.encodeData("");
         //TODO 2.0
         let hashId = "NA";
         //TODO 2.0
