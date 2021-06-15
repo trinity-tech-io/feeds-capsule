@@ -222,9 +222,8 @@
   </ion-infinite-scroll>
 
 </ion-content>
-
-
-
+<div class="add-tab" *ngIf="tabType==='feeds'" (click)="create()"></div>
+<div class="add-nft" *ngIf="tabType==='pasar'" (click)="createNft()"><span>NFT</span></div>
 <!---------------- ADD COMMENT FOOTER ---------------->
 <app-comment
   *ngIf="!hideComment"

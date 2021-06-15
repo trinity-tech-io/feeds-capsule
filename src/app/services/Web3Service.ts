@@ -3,8 +3,28 @@ import Web3 from "web3";
 @Injectable()
 export class Web3Service{
     private web3:any;
+    private stickerAddr:string = "0x694EBA9AF996b9daB7E4B601faDa8B70b85FBb35";
+    private pasarAddr:string = "0x4E5fe6d2ec4EC0e07e48D7C652aefE04dAE23214"
     constructor(){
        this.initWeb3Js();
+    }
+
+    getStickerAddr(){
+      return this.stickerAddr;
+    }
+
+    getStickerAbi(){
+     let stickerAbi = require("../../assets/contracts/stickerABI.json");
+     return stickerAbi;
+    }
+
+    getPasarAbi(){
+      let pasarAbi = require("../../assets/contracts/pasarABI.json");
+      return pasarAbi;
+    }
+
+    getPasarAddr(){
+      return this.pasarAddr;
     }
 
    async initWeb3Js(){

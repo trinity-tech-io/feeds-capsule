@@ -510,3 +510,31 @@ ion-input {
   width: 100%;
 }
 
+.add-tab{
+  position:fixed;
+  bottom: 100px;
+  right:10px;
+  width: 40px;
+  height: 40px;
+  background-image: url('./assets/images/add.svg');
+}
+
+.add-nft{
+  position:fixed;
+  bottom: 100px;
+  right:10px;
+  width: 40px;
+  height: 40px;
+  background: #7624fe;
+  border-radius: 50%;
+  font-size: 16px;
+  font-weight: bold;
+  text-align:center;
+  color:#fff;
+
+  span{
+    display:inline-block;
+    margin-top: 12px;
+  }
+}
+

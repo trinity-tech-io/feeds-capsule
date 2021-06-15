@@ -121,8 +121,8 @@ export class CollectionsPage implements OnInit {
  }
 
  async getTotalSupply(web3:any){
-  let stickerAbi = require("../../../../assets/contracts/stickerABI.json");
-  let stickerAddr = "0x3B85195cBE835926357D759e9eA0b0829eda0e38";
+  let stickerAbi = this.web3Service.getStickerAbi();
+  let stickerAddr = this.web3Service.getStickerAddr();
   const stickerContract = new web3.eth.Contract(stickerAbi,stickerAddr);
   let totalSupply =  await stickerContract.methods.totalSupply().call();
   for(let index =0; index<totalSupply;index++){

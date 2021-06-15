@@ -36,7 +36,6 @@ export class MintnftPage implements OnInit {
   public minExpirationDate:string = "";
   public fileName:string = "";
   private imageObj:any = {};
-  private tokenId:any = null;
   constructor(
     private translate:TranslateService,
     private event:Events,
@@ -63,8 +62,7 @@ export class MintnftPage implements OnInit {
 
   ionViewWillLeave(){
     this.removeEvent();
-    this.event.publish(FeedsEvent.PublishType.notification);
-    this.event.publish(FeedsEvent.PublishType.addProflieEvent);
+    this.event.publish(FeedsEvent.PublishType.addBinaryEvevnt);
   }
 
   initTile(){
@@ -295,8 +293,8 @@ export class MintnftPage implements OnInit {
 
   async mintContract(tokenId:any,uri:any,supply:any,royalty:any){
     let web3 = await this.web3Service.getWeb3Js();
-    let stickerAbi = require("../../../../assets/contracts/stickerABI.json");
-    let stickerAddr = "0x3B85195cBE835926357D759e9eA0b0829eda0e38";
+    let stickerAbi = this.web3Service.getStickerAbi();
+    let stickerAddr = this.web3Service.getStickerAddr();
     let stickerContract = this.web3Service.initContract(web3,stickerAbi,stickerAddr);
     const accCreator = await this.web3Service.getAccount(web3,"04868f294d8ef6e1079752cd2e1f027a126b44ee27040d949a88f89bddc15f31");
     let parm = {"tokenId:":tokenId,"supply":supply,"uri":uri,"royalty":royalty}

@@ -2,14 +2,10 @@ import { Component, OnInit} from '@angular/core';
 import { PopoverController } from '@ionic/angular';
 import { FeedService } from '../../services/FeedService';
 import { NativeService } from '../../services/NativeService';
-import { TranslateService } from "@ngx-translate/core";
 import { ThemeService } from '../../services/theme.service';
 import { PopupProvider } from '../../services/popup';
 import { StorageService } from '../../services/StorageService';
 import { Events } from 'src/app/services/events.service';
-
-// import { TitleBarService } from 'src/app/services/TitleBarService';
-// import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 
 import * as _ from 'lodash';
 
@@ -27,12 +23,10 @@ export class FeedsPage implements OnInit {
     private native: NativeService,
     private feedService: FeedService,
     private popoverController: PopoverController,
-    private translate:TranslateService,
     public theme:ThemeService,
     private event:Events,
     public popupProvider:PopupProvider,
-    private storageService:StorageService,
-    // private titleBarService: TitleBarService
+    private storageService:StorageService
   ) {
   }
 
