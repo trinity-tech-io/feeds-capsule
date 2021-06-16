@@ -65,7 +65,7 @@ export class Web3Service{
     }
   }
 
-  async sendTxWaitForReceipt(web3:any,tx:any,acc:any,tokenId:any){
+  async sendTxWaitForReceipt(web3:any,tx:any,acc:any){
     try {
       if (!web3) {
         console.error("Web3 not initialized");
