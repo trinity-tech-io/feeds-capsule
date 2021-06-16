@@ -28,7 +28,7 @@
       <ion-col size="6" *ngFor="let item of createdList">
         <app-assetitem
         [assetItem] = "item"
-        (clickAssetItem) = "clickAssetItem($event)"
+        (clickAssetItem) = "clickAssetItem(item)"
         >
         </app-assetitem>
       </ion-col>

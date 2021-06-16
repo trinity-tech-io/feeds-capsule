@@ -6,6 +6,8 @@ import { NativeService } from '../../../services/NativeService';
 import { Events } from '../../../services/events.service';
 import { TitleBarService } from '../../../services/TitleBarService';
 import { TitleBarComponent } from '../../..//components/titlebar/titlebar.component';
+import { ApiUrl } from '../../../services/ApiUrl';
+import { Web3Service } from '../../../services/Web3Service';
 type detail = {
   type: string,
   details: string
@@ -22,16 +24,18 @@ export class BidPage implements OnInit {
   public name:string = "test";
   public description:string = "test";
   public quantity:string = "1";
-  public dateCreated:string = "2020-04-22";
-  public expirationDate:string = "2020-05-22";
-  public contractAddress:string = "0x127b53641289999999";
-  public tokenID:string = "0dklnhk678chjjkllkmnk1";
+  public dateCreated:string = "";
+  public expirationDate:string = "";
+  public contractAddress:string = "";
+  public tokenID:string = "";
   public blockchain:string = "Ethereum Sidechain (Elastos)";
   public fixedPrice:string = "17";
   public bibAmount:string = "";
   public minimumBid:string ="10";
-  public currentBid:string ="17";
+  public currentBid:string ="";
   public showType:string = null;
+  public assetUri:string = null;
+  public royalties:string = null;
   constructor(
     private translate:TranslateService,
     private event:Events,
@@ -39,11 +43,22 @@ export class BidPage implements OnInit {
     private titleBarService:TitleBarService,
     public theme:ThemeService,
     private activatedRoute:ActivatedRoute,
+    private web3Service:Web3Service
   ) { }
 
   ngOnInit() {
     this.activatedRoute.queryParams.subscribe(queryParams => {
+      let asset = queryParams.asset || {};
       this.showType = queryParams.showType;
+      this.owner = queryParams.name || "";
+      this.name = queryParams.name || "";
+      this.description = queryParams.description || "";
+      this.quantity = queryParams.quantity || "1";
+      this.tokenID = queryParams.tokenId || "";
+      this.contractAddress = this.web3Service.getStickerAddr();
+      this.assetUri = this.handleImg(asset);
+      this.fixedPrice = queryParams.fixedAmount || "";
+      this.royalties = queryParams.royalties || "";
     });
   }
 
@@ -98,15 +113,19 @@ export class BidPage implements OnInit {
       details:this.quantity
     });
 
-    this.contractDetails.push({
-      type:'AssetdetailsPage.dateCreated',
-      details:this.dateCreated
-    });
+    if(this.dateCreated!=""){
+      this.contractDetails.push({
+        type:'AssetdetailsPage.dateCreated',
+        details:this.dateCreated
+      });
+    }
 
-    this.contractDetails.push({
-      type:'MintnftPage.nftExpirationDate',
-      details:this.expirationDate
-    });
+     if(this.expirationDate!=""){
+      this.contractDetails.push({
+        type:'MintnftPage.nftExpirationDate',
+        details:this.expirationDate
+      });
+     }
 
     this.contractDetails.push({
       type:'AssetdetailsPage.contractAddress',
@@ -130,6 +149,14 @@ export class BidPage implements OnInit {
 
    bid(){
     this.native.navigateForward(['confirmation'],{queryParams:{"showType":"burn"}});
+   }
+
+   handleImg(imgUri:string){
+    if(imgUri.indexOf("feeds:imgage:")>-1){
+      imgUri = imgUri.replace("feeds:imgage:","");
+      imgUri = ApiUrl.nftGet+imgUri;
+    }
+    return imgUri;
    }
 
 }
