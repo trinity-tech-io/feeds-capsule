@@ -306,8 +306,11 @@ export class MintnftPage implements OnInit {
       value: 0,
       data:mintData
     };
-   let receipt = await this.web3Service.sendTxWaitForReceipt(web3,mintTx,accCreator,tokenId) || "";
-   console.log("=====receipt====="+JSON.stringify(receipt));
+   let receipt = await this.web3Service.sendTxWaitForReceipt(web3,mintTx,accCreator) || "";
+   if(receipt!=""&&this.curPublishtoPasar){
+       this.handlePasar(web3,accCreator,tokenId,stickerAbi);
+       return;
+   }
    this.native.hideLoading();
    if(receipt=== ""){
     alert("nft创建失败");
@@ -315,6 +318,52 @@ export class MintnftPage implements OnInit {
    }
    this.native.pop();
    this.native.toast("sucess");
+  }
+
+ async handlePasar(web3:any,accCreator:any,tokenId:any,stickerAbi:any){
+    let pasarABI = this.web3Service.getPasarAbi();
+    let pasarAddr = this.web3Service.getPasarAddr();
+    let pasarContract = new web3.eth.Contract(pasarABI,pasarAddr);
+
+    let stickerAddr = await pasarContract.methods.getTokenAddress().call();
+    let stickerContract = new web3.eth.Contract(stickerAbi, stickerAddr);
+    let accSeller =  await web3.eth.accounts.privateKeyToAccount('04868f294d8ef6e1079752cd2e1f027a126b44ee27040d949a88f89bddc15f31');
+
+    // Seller approve pasar
+   const approveData = stickerContract.methods.setApprovalForAll(pasarAddr,true).encodeABI();
+   const approveTx = {
+     from: accSeller.address,
+     to: stickerAddr,
+     value: 0,
+     data: approveData
+   };
+
+  let receipt = await this.web3Service.sendTxWaitForReceipt(web3,approveTx,accCreator);
+  if(receipt===""){
+    this.native.hideLoading();
+    alert("public pasar失败");
+    return;
+  }
+
+  const saleData = pasarContract.methods.createOrderForSale(tokenId,this.nftQuantity,this.nftFixedAmount).encodeABI();
+  const saleTx = {
+    from: accSeller.address,
+    to: pasarAddr,
+    value: 0,
+    data: saleData,
+  };
+
+  receipt = await this.web3Service.sendTxWaitForReceipt(web3,saleTx,accCreator);
+
+  if(receipt === ""){
+    this.native.hideLoading();
+    alert("public pasar失败");
+    return;
+   }
+   this.native.hideLoading();
+   this.native.pop();
+   this.native.toast("public pasar sucess");
+
   }
 
 }

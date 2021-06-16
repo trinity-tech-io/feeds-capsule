@@ -277,6 +277,9 @@ export class HomePage implements OnInit {
 
  this.addBinaryEvevnt();
  this.events.subscribe(FeedsEvent.PublishType.addBinaryEvevnt, ()=>{
+      if(this.tabType === "pasar"){
+        this.getPaserList();
+      }
       this.addCommonEvents();
       this.addBinaryEvevnt();
  });
@@ -1522,4 +1525,10 @@ handleFeedsUrl(feedsUri:string){
 
   });
 }
+
+clickAssetItem(assetitem:any){
+  console.log("====assetitem====="+JSON.stringify(assetitem));
+  this.native.navigateForward(['assetdetails'],{});
+}
+
 }
