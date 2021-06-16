@@ -271,17 +271,6 @@ export class ChannelsPage implements OnInit {
   ionViewWillEnter() {
 
     this.isMine = this.checkChannelIsMine();
-    let nftAssetList = this.feedService.getNftAssetList();
-    if(nftAssetList.length>1){
-       if(this.isMine===0){
-          this.nftAssetList =_.cloneDeep(nftAssetList).slice(0,1);
-       }else{
-        this.nftAssetList =_.cloneDeep(nftAssetList).slice(0,2);
-       }
-    }else{
-      this.nftAssetList =_.cloneDeep(nftAssetList);
-    }
-
     if(this.platform.is("ios")){
       this.isAndroid = false;
     }

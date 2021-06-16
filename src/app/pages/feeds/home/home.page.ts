@@ -1493,22 +1493,25 @@ async getOpenOrderByIndex(web3:any,index:any,pasarContract:any,stickerABI:any,st
   const stickerContract = new web3.eth.Contract(stickerABI,stickerAddr);
   let feedsUri =  await stickerContract.methods.uri(tokenId).call();
   console.log("===feedsUri==="+feedsUri);
-  this.handleFeedsUrl(feedsUri);
+  this.handleFeedsUrl(feedsUri,tokenId);
 }
 
-handleFeedsUrl(feedsUri:string){
+handleFeedsUrl(feedsUri:string,tokenId:any){
   feedsUri  = feedsUri.replace("feeds:json:","");
   console.log(feedsUri);
   this.httpService.ajaxGet(ApiUrl.nftGet+feedsUri,false).then((result)=>{
   let type = result["type"] || "single";
   let royalties = result["royalties"] || "1";
   let quantity = result["quantity"] || "1";
+  let fixedAmount = result["fixedAmount"] || "1";
+  let minimumAmount = result["minimumAmount"] || "";
   let item = {
+      "tokenId":tokenId,
       "asset":result["image"],
       "name":result["name"],
       "description":result["description"],
-      "fixedAmount":1,
-      "minimumAmount":1,
+      "fixedAmount":fixedAmount,
+      "minimumAmount":minimumAmount,
       "kind":result["kind"],
       "type":type,
       "royalties":royalties,
@@ -1527,8 +1530,8 @@ handleFeedsUrl(feedsUri:string){
 }
 
 clickAssetItem(assetitem:any){
-  console.log("====assetitem====="+JSON.stringify(assetitem));
-  this.native.navigateForward(['assetdetails'],{});
+  assetitem["showType"] = "buy";
+  this.native.navigateForward(['bid'],{queryParams:assetitem});
 }
 
 }

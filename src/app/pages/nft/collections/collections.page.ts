@@ -83,17 +83,17 @@ export class CollectionsPage implements OnInit {
         break;
       case 'CollectionsPage.purchased':
         this.isLoading = true;
-        this.purchasedList = this.feedService.getNftAssetList();
+        this.purchasedList = [];
         this.isLoading = false;
         break;
       case 'CollectionsPage.onSale':
         this.isLoading = true;
-        this.onSaleList = this.feedService.getNftAssetList();
+        this.onSaleList = [];
         this.isLoading = false;
         break;
       case 'CollectionsPage.likes':
           this.isLoading = true;
-          this.likesList = this.feedService.getNftAssetList();
+          this.likesList = [];
           this.isLoading = false;
           break;
     }
@@ -103,8 +103,8 @@ export class CollectionsPage implements OnInit {
     this.native.navigateForward(['mintnft'],{});
   }
 
-  clickAssetItem(){
-    this.native.navigateForward(['assetdetails'],{});
+  clickAssetItem(assetitem:any){
+    this.native.navigateForward(['assetdetails'],{queryParams:assetitem});
   }
 
   checkChannelIsMine(){
@@ -136,24 +136,27 @@ async tokenIdByIndex(stickerContract:any,index:any){
    this.getUri(stickerContract,tokenId);
 }
 
-async getUri(stickerContract:any,tokenId:any){
+async getUri(stickerContract:any,tokenId:string){
   let feedsUri =  await stickerContract.methods.uri(tokenId).call();
-  this.handleFeedsUrl(feedsUri);
+  this.handleFeedsUrl(feedsUri,tokenId);
 }
 
-handleFeedsUrl(feedsUri:string){
+handleFeedsUrl(feedsUri:string,tokenId:string){
   feedsUri  = feedsUri.replace("feeds:json:","");
   console.log(feedsUri);
   this.httpService.ajaxGet(ApiUrl.nftGet+feedsUri,false).then((result)=>{
   let type = result["type"] || "single";
   let royalties = result["royalties"] || "1";
   let quantity = result["quantity"] || "1";
+  let fixedAmount = result["fixedAmount"] || "1";
+  let minimumAmount = result["minimumAmount"] || "";
   let item = {
+      "tokenId":tokenId,
       "asset":result["image"],
       "name":result["name"],
       "description":result["description"],
-      "fixedAmount":1,
-      "minimumAmount":1,
+      "fixedAmount":fixedAmount,
+      "minimumAmount":minimumAmount,
       "kind":result["kind"],
       "type":type,
       "royalties":royalties,

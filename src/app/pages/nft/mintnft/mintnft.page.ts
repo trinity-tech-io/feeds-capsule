@@ -93,20 +93,6 @@ export class MintnftPage implements OnInit {
 
   mint(){
     if(this.checkParms()){
-       let parms = {
-            "asset":this.assetBase64,
-            "name":this.nftName,
-            "description":this.nftDescription,
-            "fixedAmount":this.nftFixedAmount,
-            "minimumAmount":this.nftMinimumAmount,
-            "expirationDate":this.expirationDate,
-            "type":this.issueRadionType,
-            "royalties":this.nftRoyalties,
-            "quantity":this.nftQuantity
-        }
-        let nftAssetList = this.feedService.getNftAssetList();
-        nftAssetList.push(parms);
-        this.feedService.setNftAssetList(nftAssetList);
         this.sendIpfsJSON();
     }
   }
@@ -176,7 +162,9 @@ export class MintnftPage implements OnInit {
       "description":this.nftDescription,
       "image":this.imageObj['imgHash'],
       "kind":this.imageObj['imgFormat'],
-      "size":this.imageObj["imgSize"]
+      "size":this.imageObj["imgSize"],
+      "fixedAmount":this.nftFixedAmount,
+      "minimumAmount":this.nftMinimumAmount,
    }
 
    let formData = new FormData();

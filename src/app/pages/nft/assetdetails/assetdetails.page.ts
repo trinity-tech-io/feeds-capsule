@@ -1,11 +1,13 @@
 import { Component, OnInit,ViewChild} from '@angular/core';
 import { TranslateService } from "@ngx-translate/core";
+import { ActivatedRoute } from '@angular/router';
 import { NativeService } from '../../../services/NativeService';
 import { ThemeService } from '../../../services/theme.service';
 import { Events } from 'src/app/services/events.service';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { ApiUrl } from '../../../services/ApiUrl';
+import { Web3Service } from '../../../services/Web3Service';
 type detail = {
   type: string,
   details: string
@@ -22,7 +24,7 @@ export class AssetdetailsPage implements OnInit {
   public name:string = "test";
   public description:string = "test";
   public quantity:string = "1";
-  public dateCreated:string = "2020-04-22";
+  public dateCreated:string = "";
   public contractAddress:string = "0x127b53641289999999";
   public tokenID:string = "0dklnhk678chjjkllkmnk1";
 
@@ -34,15 +36,30 @@ export class AssetdetailsPage implements OnInit {
   public type:string = "Bid"
   public purchaseInfoQuantity:string = "1";
   public selectType:string = "AssetdetailsPage.contract";
+  public assetUri:string = null;
   constructor(
     private translate:TranslateService,
     private event:Events,
     private native:NativeService,
     private titleBarService:TitleBarService,
-    public theme:ThemeService) { }
+    private activatedRoute:ActivatedRoute,
+    private web3Service:Web3Service,
+    public theme:ThemeService,
+    ) {
+
+    }
 
   ngOnInit() {
-
+    this.activatedRoute.queryParams.subscribe(queryParams => {
+      let asset = queryParams.asset || {};
+      this.owner = queryParams.name || "";
+      this.name = queryParams.name || "";
+      this.description = queryParams.description || "";
+      this.quantity = queryParams.quantity || "1";
+      this.tokenID = queryParams.tokenId || "";
+      this.contractAddress = this.web3Service.getStickerAddr();
+      this.assetUri = this.handleImg(asset);
+    });
   }
 
   ionViewWillEnter() {
@@ -96,11 +113,12 @@ export class AssetdetailsPage implements OnInit {
       details:this.quantity
     });
 
-    this.contractDetails.push({
-      type:'AssetdetailsPage.dateCreated',
-      details:this.dateCreated
-    });
-
+    if(this.dateCreated != ""){
+      this.contractDetails.push({
+        type:'AssetdetailsPage.dateCreated',
+        details:this.dateCreated
+      });
+    }
     this.contractDetails.push({
       type:'AssetdetailsPage.contractAddress',
       details:this.contractAddress
@@ -148,8 +166,25 @@ export class AssetdetailsPage implements OnInit {
 
    }
 
-   purchaseInfoBurn(){
-     this.native.navigateForward(['bid'],{queryParams:{"showType":"burn"}});
+  async purchaseInfoBurn(){
+    this.native.navigateForward(['bid'],{queryParams:{"showType":"burn"}});
+    //  let web3 = await this.web3Service.getWeb3Js();
+    //  let stickerAddr = this.web3Service.getStickerAddr();
+    //  let stickerAbi = this.web3Service.getStickerAbi();
+    //  const stickerContract = new web3.eth.Contract(stickerAbi,stickerAddr);
+    // const transferData = stickerContract.methods.safeTransferFrom("0xf36dA13891027Fd074bCE86E1669E5364F85613A","0xbA1ddcB94B3F8FE5d1C0b2623cF221e099f485d1",this.tokenID,"1").encodeABI();
+    // const transferTx = {
+    //   from: "0xf36dA13891027Fd074bCE86E1669E5364F85613A",
+    //   to: stickerAddr,
+    //   value: 0,
+    //   data: transferData,
+    // };
+    // const accCreator = await this.web3Service.getAccount(web3,"04868f294d8ef6e1079752cd2e1f027a126b44ee27040d949a88f89bddc15f31");
+    // const { status: transferStatus } = await this.web3Service.sendTxWaitForReceipt(web3,transferTx, accCreator);
+
+    // if(transferStatus!=""){
+    //   alert("transfer sucess");
+    // }
    }
 
    changeType(type:string){
@@ -170,6 +205,7 @@ export class AssetdetailsPage implements OnInit {
       imgUri = imgUri.replace("feeds:imgage:","");
       imgUri = ApiUrl.nftGet+imgUri;
     }
+    return imgUri;
    }
 
 }
