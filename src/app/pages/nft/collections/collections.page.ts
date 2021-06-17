@@ -21,8 +21,8 @@ export class CollectionsPage implements OnInit {
   public channelId:number = null;
   public selectType:string = "CollectionsPage.created";
   public createdList = [];
-  public purchasedList:any = [];
-  public onSaleList:any = [];
+  public purchasedList = [];
+  public onSaleList = [];
   public likesList:any = [];
   public isMine:number = null;
   public isLoading:boolean =true;
@@ -83,13 +83,11 @@ export class CollectionsPage implements OnInit {
         break;
       case 'CollectionsPage.purchased':
         this.isLoading = true;
-        this.purchasedList = [];
-        this.isLoading = false;
+        this.getPurchased();
         break;
       case 'CollectionsPage.onSale':
         this.isLoading = true;
-        this.onSaleList = [];
-        this.isLoading = false;
+        this.getOnSale();
         break;
       case 'CollectionsPage.likes':
           this.isLoading = true;
@@ -173,4 +171,104 @@ handleFeedsUrl(feedsUri:string,tokenId:string){
   });
 }
 
+async getPurchased(){
+  this.purchasedList = [];
+  let web3 = await this.web3Service.getWeb3Js();
+  let pasarAbi = this.web3Service.getPasarAbi();
+  let pasarAddr = this.web3Service.getPasarAddr();
+  const pasarContract = new web3.eth.Contract(pasarAbi,pasarAddr);
+  let purchasedCount = await pasarContract.methods.getBuyerCount().call();
+  for(let index = 0;index<purchasedCount;index++){
+     let purchased = await pasarContract.methods.getBuyerByIndex(index).call();
+     let buyerAddr = purchased[1];
+     let purchasedOrder =  await pasarContract.methods.getBuyerOrderByIndex(buyerAddr,index).call();
+     let tokenId = purchasedOrder[3];
+     let saleOrderId = purchasedOrder[0];
+     let stickerAbi = this.web3Service.getStickerAbi();
+     let stickerAddr = this.web3Service.getStickerAddr();
+     const stickerContract = new web3.eth.Contract(stickerAbi,stickerAddr);
+     let feedsUri =  await stickerContract.methods.uri(tokenId).call();
+     feedsUri  = feedsUri.replace("feeds:json:","");
+     console.log(feedsUri);
+     this.httpService.ajaxGet(ApiUrl.nftGet+feedsUri,false).then((result)=>{
+      let type = result["type"] || "single";
+      let royalties = result["royalties"] || "1";
+      let quantity = result["quantity"] || "1";
+      let fixedAmount = result["fixedAmount"] || "1";
+      let minimumAmount = result["minimumAmount"] || "";
+      let item = {
+          "saleOrderId":saleOrderId,
+          "tokenId":tokenId,
+          "asset":result["image"],
+          "name":result["name"],
+          "description":result["description"],
+          "fixedAmount":fixedAmount,
+          "minimumAmount":minimumAmount,
+          "kind":result["kind"],
+          "type":type,
+          "royalties":royalties,
+          "quantity":quantity
+      }
+      try{
+        this.purchasedList.push(item);
+        this.isLoading = false;
+      }catch(err){
+      console.log("====err===="+JSON.stringify(err));
+      }
+      }).catch(()=>{
+
+      });
+      }
+}
+
+async getOnSale(){
+  this.onSaleList = [];
+  let web3 = await this.web3Service.getWeb3Js();
+  let pasarAbi = this.web3Service.getPasarAbi();
+  let pasarAddr = this.web3Service.getPasarAddr();
+  const pasarContract = new web3.eth.Contract(pasarAbi,pasarAddr);
+  let sellerCountCount = await pasarContract.methods.getSellerCount().call();
+  console.log("=====sellerCountCount======"+sellerCountCount);
+  for(let index = 0;index<sellerCountCount;index++){
+     let seller = await pasarContract.methods.getSellerByIndex(index).call();
+     let sellerAddr = seller[1];
+     let sellerOrder =  await pasarContract.methods.getSellerOpenByIndex(sellerAddr,index).call();
+     let tokenId = sellerOrder[3];
+     let saleOrderId = sellerOrder[0];
+     let stickerAbi = this.web3Service.getStickerAbi();
+     let stickerAddr = this.web3Service.getStickerAddr();
+     const stickerContract = new web3.eth.Contract(stickerAbi,stickerAddr);
+     let feedsUri =  await stickerContract.methods.uri(tokenId).call();
+     feedsUri  = feedsUri.replace("feeds:json:","");
+     console.log(feedsUri);
+     this.httpService.ajaxGet(ApiUrl.nftGet+feedsUri,false).then((result)=>{
+      let type = result["type"] || "single";
+      let royalties = result["royalties"] || "1";
+      let quantity = result["quantity"] || "1";
+      let fixedAmount = result["fixedAmount"] || "1";
+      let minimumAmount = result["minimumAmount"] || "";
+      let item = {
+          "saleOrderId":saleOrderId,
+          "tokenId":tokenId,
+          "asset":result["image"],
+          "name":result["name"],
+          "description":result["description"],
+          "fixedAmount":fixedAmount,
+          "minimumAmount":minimumAmount,
+          "kind":result["kind"],
+          "type":type,
+          "royalties":royalties,
+          "quantity":quantity
+      }
+      try{
+        this.onSaleList.push(item);
+        this.isLoading = false;
+      }catch(err){
+      console.log("====err===="+JSON.stringify(err));
+      }
+      }).catch(()=>{
+
+      });
+      }
+}
 }

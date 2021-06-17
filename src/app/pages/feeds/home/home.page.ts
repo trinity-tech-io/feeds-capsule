@@ -958,13 +958,13 @@ clearData(){
                 this.isLoadimage[id] ="13";
                 postImage.setAttribute("src",image);
 
-                let  imagesWidth = postImage.clientWidth;
-                let  homebidfeedslogo = document.getElementById(id+"homebidfeedslogo");
-                homebidfeedslogo.style.left=(imagesWidth-90)/2+"px";
-                homebidfeedslogo.style.display="block";
+                // let  imagesWidth = postImage.clientWidth;
+                // let  homebidfeedslogo = document.getElementById(id+"homebidfeedslogo");
+                // homebidfeedslogo.style.left=(imagesWidth-90)/2+"px";
+                // homebidfeedslogo.style.display="block";
 
-                let homebuy =  document.getElementById(id+"homebuy");
-                homebuy.style.display="block";
+                // let homebuy =  document.getElementById(id+"homebuy");
+                // homebuy.style.display="block";
 
                 //rpostimg.style.display = "block";
               }else{
@@ -1488,15 +1488,17 @@ clearData(){
 
 async getOpenOrderByIndex(web3:any,index:any,pasarContract:any,stickerABI:any,stickerAddr:any){
   let  openOrder =  await pasarContract.methods.getOpenOrderByIndex(index).call();
+  console.log("=====openOrder====="+JSON.stringify(openOrder));
   let tokenId = openOrder[3];
+  let saleOrderId = openOrder[0];
   console.log("====tokenId===="+tokenId);
   const stickerContract = new web3.eth.Contract(stickerABI,stickerAddr);
   let feedsUri =  await stickerContract.methods.uri(tokenId).call();
   console.log("===feedsUri==="+feedsUri);
-  this.handleFeedsUrl(feedsUri,tokenId);
+  this.handleFeedsUrl(feedsUri,tokenId,saleOrderId);
 }
 
-handleFeedsUrl(feedsUri:string,tokenId:any){
+handleFeedsUrl(feedsUri:string,tokenId:any,saleOrderId:string){
   feedsUri  = feedsUri.replace("feeds:json:","");
   console.log(feedsUri);
   this.httpService.ajaxGet(ApiUrl.nftGet+feedsUri,false).then((result)=>{
@@ -1506,6 +1508,7 @@ handleFeedsUrl(feedsUri:string,tokenId:any){
   let fixedAmount = result["fixedAmount"] || "1";
   let minimumAmount = result["minimumAmount"] || "";
   let item = {
+      "saleOrderId":saleOrderId,
       "tokenId":tokenId,
       "asset":result["image"],
       "name":result["name"],
