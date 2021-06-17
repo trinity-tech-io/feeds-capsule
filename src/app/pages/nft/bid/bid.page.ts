@@ -36,6 +36,7 @@ export class BidPage implements OnInit {
   public showType:string = null;
   public assetUri:string = null;
   public royalties:string = null;
+  public saleOrderId:string = null;
   constructor(
     private translate:TranslateService,
     private event:Events,
@@ -59,6 +60,7 @@ export class BidPage implements OnInit {
       this.assetUri = this.handleImg(asset);
       this.fixedPrice = queryParams.fixedAmount || "";
       this.royalties = queryParams.royalties || "";
+      this.saleOrderId = queryParams.saleOrderId || "";
     });
   }
 
@@ -143,8 +145,32 @@ export class BidPage implements OnInit {
     });
    }
 
-   buy(){
-    this.native.navigateForward(['confirmation'],{queryParams:{"showType":"buy"}});
+  async buy(){
+    let web3 = await this.web3Service.getWeb3Js();
+    let pasarAbi = this.web3Service.getPasarAbi();
+    let pasarAddr = this.web3Service.getPasarAddr();
+    const accBuyer = await this.web3Service.getAccount(web3,"04868f294d8ef6e1079752cd2e1f027a126b44ee27040d949a88f89bddc15f31");
+    let pasarContract = new web3.eth.Contract(pasarAbi,pasarAddr);
+    console.log("===this.saleOrderId==="+this.saleOrderId);
+    const purchaseData = pasarContract.methods.buyOrder(this.saleOrderId).encodeABI();
+
+    const purchaseTx = {
+      from: accBuyer.address,
+      to: pasarAddr,
+      value:"1",
+      data: purchaseData
+    };
+
+    const {
+      status: purchaseStatus,
+    } = await this.web3Service.sendTxWaitForReceipt(web3,purchaseTx, accBuyer);
+    console.log("=====purchaseStatus======"+purchaseStatus);
+    undefined
+    if(purchaseStatus!=""&&purchaseStatus!=undefined){
+        alert("=====purchase sucess====");
+        this.native.pop();
+        //this.native.navigateForward(['confirmation'],{queryParams:{"showType":"buy"}});
+    }
    }
 
    bid(){
