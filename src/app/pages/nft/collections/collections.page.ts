@@ -178,12 +178,15 @@ async getPurchased(){
   let pasarAddr = this.web3Service.getPasarAddr();
   const pasarContract = new web3.eth.Contract(pasarAbi,pasarAddr);
   let purchasedCount = await pasarContract.methods.getBuyerCount().call();
+  console.log("======purchasedCount======="+purchasedCount);
   for(let index = 0;index<purchasedCount;index++){
      let purchased = await pasarContract.methods.getBuyerByIndex(index).call();
      let buyerAddr = purchased[1];
      let purchasedOrder =  await pasarContract.methods.getBuyerOrderByIndex(buyerAddr,index).call();
      let tokenId = purchasedOrder[3];
      let saleOrderId = purchasedOrder[0];
+     let price = purchasedOrder[5];
+
      let stickerAbi = this.web3Service.getStickerAbi();
      let stickerAddr = this.web3Service.getStickerAddr();
      const stickerContract = new web3.eth.Contract(stickerAbi,stickerAddr);
@@ -194,7 +197,7 @@ async getPurchased(){
       let type = result["type"] || "single";
       let royalties = result["royalties"] || "1";
       let quantity = result["quantity"] || "1";
-      let fixedAmount = result["fixedAmount"] || "1";
+      let fixedAmount = price || "1";
       let minimumAmount = result["minimumAmount"] || "";
       let item = {
           "saleOrderId":saleOrderId,
@@ -232,6 +235,7 @@ async getOnSale(){
   for(let index = 0;index<sellerCountCount;index++){
      let seller = await pasarContract.methods.getSellerByIndex(index).call();
      let sellerAddr = seller[1];
+     let price = seller[5];
      let sellerOrder =  await pasarContract.methods.getSellerOpenByIndex(sellerAddr,index).call();
      let tokenId = sellerOrder[3];
      let saleOrderId = sellerOrder[0];

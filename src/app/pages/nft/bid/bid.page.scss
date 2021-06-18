@@ -1,5 +1,9 @@
 .container {
 
+   .my-custom-class {
+    --background: #e5e5e5;
+   }
+
     padding: 40px 25px;
     .removeBorder {
       border-bottom: none;
@@ -236,6 +240,7 @@
 }
 
 .darkContainer {
+
   .bottomBorder {
     border-bottom: 1px solid #2e2f4e;
   }

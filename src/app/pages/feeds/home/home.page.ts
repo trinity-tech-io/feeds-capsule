@@ -1491,21 +1491,22 @@ async getOpenOrderByIndex(web3:any,index:any,pasarContract:any,stickerABI:any,st
   console.log("=====openOrder====="+JSON.stringify(openOrder));
   let tokenId = openOrder[3];
   let saleOrderId = openOrder[0];
+  let price = openOrder[5];
   console.log("====tokenId===="+tokenId);
   const stickerContract = new web3.eth.Contract(stickerABI,stickerAddr);
   let feedsUri =  await stickerContract.methods.uri(tokenId).call();
   console.log("===feedsUri==="+feedsUri);
-  this.handleFeedsUrl(feedsUri,tokenId,saleOrderId);
+  this.handleFeedsUrl(feedsUri,tokenId,saleOrderId,price);
 }
 
-handleFeedsUrl(feedsUri:string,tokenId:any,saleOrderId:string){
+handleFeedsUrl(feedsUri:string,tokenId:any,saleOrderId:string,price:any){
   feedsUri  = feedsUri.replace("feeds:json:","");
   console.log(feedsUri);
   this.httpService.ajaxGet(ApiUrl.nftGet+feedsUri,false).then((result)=>{
   let type = result["type"] || "single";
   let royalties = result["royalties"] || "1";
   let quantity = result["quantity"] || "1";
-  let fixedAmount = result["fixedAmount"] || "1";
+  //let fixedAmount = result["fixedAmount"] || "1";
   let minimumAmount = result["minimumAmount"] || "";
   let item = {
       "saleOrderId":saleOrderId,
@@ -1513,7 +1514,7 @@ handleFeedsUrl(feedsUri:string,tokenId:any,saleOrderId:string){
       "asset":result["image"],
       "name":result["name"],
       "description":result["description"],
-      "fixedAmount":fixedAmount,
+      "fixedAmount":price,
       "minimumAmount":minimumAmount,
       "kind":result["kind"],
       "type":type,

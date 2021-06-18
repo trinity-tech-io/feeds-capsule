@@ -573,6 +573,8 @@ export const en = {
         "bidPlaceholder": "Enter bid amount",
         "minimumBid": "Minimum Bid",
         "currentBid": "Current Bid",
+        "changePrice":"Change Price",
+        "cancelOrder":"Cancel Order"
     },
     "CollectionsPage":{
         "title": "Collectibles",
