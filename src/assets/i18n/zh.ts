@@ -574,6 +574,8 @@ export const zh = {
         "bidPlaceholder": "输入出价金额",
         "minimumBid": "最小出价",
         "currentBid": "当前出价",
+        "changePrice":"修改价格",
+        "cancelOrder":"取消订单"
     },
     "CollectionsPage":{
         "title": "收藏品",

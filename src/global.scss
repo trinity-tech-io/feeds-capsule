@@ -538,3 +538,9 @@ ion-input {
   }
 }
 
+.dark{
+  .my-custom-class .alert-wrapper{
+    --background: #2e2f4e;
+   }
+}
+
