@@ -41,7 +41,8 @@ export class TitleBarComponent {
 
   constructor(
     private popoverCtrl: PopoverController,
-    private platform: Platform
+    private platform: Platform,
+    public theme:ThemeService
   ) {
   }
 
