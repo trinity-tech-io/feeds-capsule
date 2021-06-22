@@ -119,34 +119,40 @@ export class CollectionsPage implements OnInit {
  }
 
  async getTotalSupply(web3:any){
-  let stickerAbi = this.web3Service.getStickerAbi();
-  let stickerAddr = this.web3Service.getStickerAddr();
-  const stickerContract = new web3.eth.Contract(stickerAbi,stickerAddr);
-  let totalSupply =  await stickerContract.methods.totalSupply().call();
-  for(let index =0; index<totalSupply;index++){
-      this.tokenIdByIndex(stickerContract,index);
+  let pasarAbi = this.web3Service.getPasarAbi();
+  let pasarAddr = this.web3Service.getPasarAddr();
+  const pasarContract = new web3.eth.Contract(pasarAbi,pasarAddr);
+  let openOrderCount =  await pasarContract.methods.getOpenOrderCount().call();
+  for(let index =0; index<openOrderCount;index++){
+      this.tokenIdByIndex(pasarContract,index);
   }
 }
 
-async tokenIdByIndex(stickerContract:any,index:any){
-   let tokenId =  await stickerContract.methods.tokenIdByIndex(index).call();
-   console.log("===tokenId==="+index+"===="+tokenId);
-   this.getUri(stickerContract,tokenId);
+async tokenIdByIndex(pasarContract:any,index:any){
+   let openOrder =  await pasarContract.methods.getOpenOrderByIndex(index).call();
+   let tokenId = openOrder[3];
+   //let saleOrderId = openOrder[0];
+   let price = openOrder[5];
+   this.getUri(tokenId,price);
 }
 
-async getUri(stickerContract:any,tokenId:string){
+async getUri(tokenId:string,price:any){
+  let web3 = await this.web3Service.getWeb3Js();
+  let stickerAbi = this.web3Service.getStickerAbi();
+  let stickerAddr = this.web3Service.getStickerAddr();
+  const stickerContract = new web3.eth.Contract(stickerAbi,stickerAddr);
   let feedsUri =  await stickerContract.methods.uri(tokenId).call();
-  this.handleFeedsUrl(feedsUri,tokenId);
+  this.handleFeedsUrl(feedsUri,tokenId,price);
 }
 
-handleFeedsUrl(feedsUri:string,tokenId:string){
+handleFeedsUrl(feedsUri:string,tokenId:string,price:any){
   feedsUri  = feedsUri.replace("feeds:json:","");
   console.log(feedsUri);
   this.httpService.ajaxGet(ApiUrl.nftGet+feedsUri,false).then((result)=>{
   let type = result["type"] || "single";
   let royalties = result["royalties"] || "1";
   let quantity = result["quantity"] || "1";
-  let fixedAmount = result["fixedAmount"] || "1";
+  let fixedAmount = price || "1";
   let minimumAmount = result["minimumAmount"] || "";
   let item = {
       "tokenId":tokenId,
@@ -182,45 +188,8 @@ async getPurchased(){
   for(let index = 0;index<purchasedCount;index++){
      let purchased = await pasarContract.methods.getBuyerByIndex(index).call();
      let buyerAddr = purchased[1];
-     let purchasedOrder =  await pasarContract.methods.getBuyerOrderByIndex(buyerAddr,index).call();
-     let tokenId = purchasedOrder[3];
-     let saleOrderId = purchasedOrder[0];
-     let price = purchasedOrder[5];
-
-     let stickerAbi = this.web3Service.getStickerAbi();
-     let stickerAddr = this.web3Service.getStickerAddr();
-     const stickerContract = new web3.eth.Contract(stickerAbi,stickerAddr);
-     let feedsUri =  await stickerContract.methods.uri(tokenId).call();
-     feedsUri  = feedsUri.replace("feeds:json:","");
-     console.log(feedsUri);
-     this.httpService.ajaxGet(ApiUrl.nftGet+feedsUri,false).then((result)=>{
-      let type = result["type"] || "single";
-      let royalties = result["royalties"] || "1";
-      let quantity = result["quantity"] || "1";
-      let fixedAmount = price || "1";
-      let minimumAmount = result["minimumAmount"] || "";
-      let item = {
-          "saleOrderId":saleOrderId,
-          "tokenId":tokenId,
-          "asset":result["image"],
-          "name":result["name"],
-          "description":result["description"],
-          "fixedAmount":fixedAmount,
-          "minimumAmount":minimumAmount,
-          "kind":result["kind"],
-          "type":type,
-          "royalties":royalties,
-          "quantity":quantity
-      }
-      try{
-        this.purchasedList.push(item);
-        this.isLoading = false;
-      }catch(err){
-      console.log("====err===="+JSON.stringify(err));
-      }
-      }).catch(()=>{
-
-      });
+     let orderCount = purchased[2];
+    this.handleBuyOrder(web3,pasarContract,buyerAddr,orderCount);
       }
 }
 
@@ -235,44 +204,95 @@ async getOnSale(){
   for(let index = 0;index<sellerCountCount;index++){
      let seller = await pasarContract.methods.getSellerByIndex(index).call();
      let sellerAddr = seller[1];
-     let price = seller[5];
-     let sellerOrder =  await pasarContract.methods.getSellerOpenByIndex(sellerAddr,index).call();
-     let tokenId = sellerOrder[3];
-     let saleOrderId = sellerOrder[0];
-     let stickerAbi = this.web3Service.getStickerAbi();
-     let stickerAddr = this.web3Service.getStickerAddr();
-     const stickerContract = new web3.eth.Contract(stickerAbi,stickerAddr);
-     let feedsUri =  await stickerContract.methods.uri(tokenId).call();
-     feedsUri  = feedsUri.replace("feeds:json:","");
-     console.log(feedsUri);
-     this.httpService.ajaxGet(ApiUrl.nftGet+feedsUri,false).then((result)=>{
-      let type = result["type"] || "single";
-      let royalties = result["royalties"] || "1";
-      let quantity = result["quantity"] || "1";
-      let fixedAmount = result["fixedAmount"] || "1";
-      let minimumAmount = result["minimumAmount"] || "";
-      let item = {
-          "saleOrderId":saleOrderId,
-          "tokenId":tokenId,
-          "asset":result["image"],
-          "name":result["name"],
-          "description":result["description"],
-          "fixedAmount":fixedAmount,
-          "minimumAmount":minimumAmount,
-          "kind":result["kind"],
-          "type":type,
-          "royalties":royalties,
-          "quantity":quantity
-      }
-      try{
-        this.onSaleList.push(item);
-        this.isLoading = false;
-      }catch(err){
-      console.log("====err===="+JSON.stringify(err));
-      }
-      }).catch(()=>{
+     let orderCount = seller[2];
+     this.handleOrder(web3,pasarContract,sellerAddr,orderCount);
+    }
+}
 
-      });
-      }
+async handleOrder(web3:any,pasarContract:any,sellerAddr:any,orderCount:any){
+   for(let index=0;index<orderCount;index++){
+    let sellerOrder =  await pasarContract.methods.getSellerOpenByIndex(sellerAddr,index).call();
+    let tokenId = sellerOrder[3];
+    let saleOrderId = sellerOrder[0];
+    let price = sellerOrder[5];
+    let stickerAbi = this.web3Service.getStickerAbi();
+    let stickerAddr = this.web3Service.getStickerAddr();
+    const stickerContract = new web3.eth.Contract(stickerAbi,stickerAddr);
+    let feedsUri =  await stickerContract.methods.uri(tokenId).call();
+    feedsUri  = feedsUri.replace("feeds:json:","");
+    console.log(feedsUri);
+    this.httpService.ajaxGet(ApiUrl.nftGet+feedsUri,false).then((result)=>{
+     let type = result["type"] || "single";
+     let royalties = result["royalties"] || "1";
+     let quantity = result["quantity"] || "1";
+     let fixedAmount = price || "1";
+     //let minimumAmount = result["minimumAmount"] || "";
+     let item = {
+         "saleOrderId":saleOrderId,
+         "tokenId":tokenId,
+         "asset":result["image"],
+         "name":result["name"],
+         "description":result["description"],
+         "fixedAmount":fixedAmount,
+         "kind":result["kind"],
+         "type":type,
+         "royalties":royalties,
+         "quantity":quantity
+     }
+     try{
+       this.onSaleList.push(item);
+       this.isLoading = false;
+     }catch(err){
+     console.log("====err===="+JSON.stringify(err));
+     }
+     }).catch(()=>{
+
+     });
+
+   }
+}
+
+async handleBuyOrder(web3:any,pasarContract:any,buyerAddr:any,orderCount:any){
+  for(let index=0;index<orderCount;index++){
+    let purchasedOrder =  await pasarContract.methods.getBuyerOrderByIndex(buyerAddr,index).call();
+    let tokenId = purchasedOrder[3];
+    let saleOrderId = purchasedOrder[0];
+    let price = purchasedOrder[5];
+
+    let stickerAbi = this.web3Service.getStickerAbi();
+    let stickerAddr = this.web3Service.getStickerAddr();
+    const stickerContract = new web3.eth.Contract(stickerAbi,stickerAddr);
+    let feedsUri =  await stickerContract.methods.uri(tokenId).call();
+    feedsUri  = feedsUri.replace("feeds:json:","");
+    console.log(feedsUri);
+    this.httpService.ajaxGet(ApiUrl.nftGet+feedsUri,false).then((result)=>{
+     let type = result["type"] || "single";
+     let royalties = result["royalties"] || "1";
+     let quantity = result["quantity"] || "1";
+     let fixedAmount = price || "1";
+     let minimumAmount = result["minimumAmount"] || "";
+     let item = {
+         "saleOrderId":saleOrderId,
+         "tokenId":tokenId,
+         "asset":result["image"],
+         "name":result["name"],
+         "description":result["description"],
+         "fixedAmount":fixedAmount,
+         "minimumAmount":minimumAmount,
+         "kind":result["kind"],
+         "type":type,
+         "royalties":royalties,
+         "quantity":quantity
+     }
+     try{
+       this.purchasedList.push(item);
+       this.isLoading = false;
+     }catch(err){
+     console.log("====err===="+JSON.stringify(err));
+     }
+     }).catch(()=>{
+
+     });
+  }
 }
 }
