@@ -1,13 +1,13 @@
 <app-titlebar></app-titlebar>
 <ion-content>
-  <div [class.tab-container]="!theme.darkMode" [class.dark-tab-container]="theme.darkMode" [class.removeMargin]="selectType === 'AssetdetailsPage.history'" style="margin-top:5px;">
+  <!-- <div [class.tab-container]="!theme.darkMode" [class.dark-tab-container]="theme.darkMode" [class.removeMargin]="selectType === 'AssetdetailsPage.history'" style="margin-top:5px;">
     <div class="left-tab" [class.tab-active]="selectType === 'AssetdetailsPage.contract'" (click)="changeType('AssetdetailsPage.contract')">
       <span [class.tab-active-bottom-border]="selectType === 'AssetdetailsPage.contract'">{{ 'AssetdetailsPage.contract' | translate }}</span>
     </div>
     <div class="right-tab" [class.tab-active]="selectType === 'AssetdetailsPage.history'" (click)="changeType('AssetdetailsPage.history')">
       <span [class.tab-active-bottom-border]="selectType === 'AssetdetailsPage.history'">{{'AssetdetailsPage.history' | translate }}</span>
     </div>
-  </div>
+  </div> -->
   <ion-grid class="container" [class.darkContainer]="theme.darkMode">
     <ion-row class="detail-row removeBorder" *ngIf="selectType === 'AssetdetailsPage.contract'">
       <ion-col size="12" class="left-col">

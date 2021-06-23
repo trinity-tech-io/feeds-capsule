@@ -114,14 +114,11 @@ export class CollectionsPage implements OnInit {
 
  async getNftCreated(){
     this.createdList = [];
-    let web3 = await this.web3Service.getWeb3Js();
-    this.getTotalSupply(web3);
+    this.getTotalSupply();
  }
 
- async getTotalSupply(web3:any){
-  let pasarAbi = this.web3Service.getPasarAbi();
-  let pasarAddr = this.web3Service.getPasarAddr();
-  const pasarContract = new web3.eth.Contract(pasarAbi,pasarAddr);
+ async getTotalSupply(){
+  const pasarContract = this.web3Service.getPasar();
   let openOrderCount =  await pasarContract.methods.getOpenOrderCount().call();
   for(let index =0; index<openOrderCount;index++){
       this.tokenIdByIndex(pasarContract,index);
@@ -137,10 +134,7 @@ async tokenIdByIndex(pasarContract:any,index:any){
 }
 
 async getUri(tokenId:string,price:any){
-  let web3 = await this.web3Service.getWeb3Js();
-  let stickerAbi = this.web3Service.getStickerAbi();
-  let stickerAddr = this.web3Service.getStickerAddr();
-  const stickerContract = new web3.eth.Contract(stickerAbi,stickerAddr);
+  const stickerContract = this.web3Service.getSticker();
   let feedsUri =  await stickerContract.methods.uri(tokenId).call();
   this.handleFeedsUrl(feedsUri,tokenId,price);
 }
@@ -153,18 +147,21 @@ handleFeedsUrl(feedsUri:string,tokenId:string,price:any){
   let royalties = result["royalties"] || "1";
   let quantity = result["quantity"] || "1";
   let fixedAmount = price || "1";
-  let minimumAmount = result["minimumAmount"] || "";
+  let thumbnail = result["thumbnail"] || "";
+  if(thumbnail === ""){
+    thumbnail = result["image"];
+  }
   let item = {
       "tokenId":tokenId,
       "asset":result["image"],
       "name":result["name"],
       "description":result["description"],
       "fixedAmount":fixedAmount,
-      "minimumAmount":minimumAmount,
       "kind":result["kind"],
       "type":type,
       "royalties":royalties,
-      "quantity":quantity
+      "quantity":quantity,
+      "thumbnail":thumbnail
   }
   try{
     this.createdList.push(item);
@@ -179,45 +176,35 @@ handleFeedsUrl(feedsUri:string,tokenId:string,price:any){
 
 async getPurchased(){
   this.purchasedList = [];
-  let web3 = await this.web3Service.getWeb3Js();
-  let pasarAbi = this.web3Service.getPasarAbi();
-  let pasarAddr = this.web3Service.getPasarAddr();
-  const pasarContract = new web3.eth.Contract(pasarAbi,pasarAddr);
+  const pasarContract = this.web3Service.getPasar();
   let purchasedCount = await pasarContract.methods.getBuyerCount().call();
-  console.log("======purchasedCount======="+purchasedCount);
   for(let index = 0;index<purchasedCount;index++){
      let purchased = await pasarContract.methods.getBuyerByIndex(index).call();
      let buyerAddr = purchased[1];
      let orderCount = purchased[2];
-    this.handleBuyOrder(web3,pasarContract,buyerAddr,orderCount);
+    this.handleBuyOrder(pasarContract,buyerAddr,orderCount);
       }
 }
 
 async getOnSale(){
   this.onSaleList = [];
-  let web3 = await this.web3Service.getWeb3Js();
-  let pasarAbi = this.web3Service.getPasarAbi();
-  let pasarAddr = this.web3Service.getPasarAddr();
-  const pasarContract = new web3.eth.Contract(pasarAbi,pasarAddr);
+  const pasarContract = this.web3Service.getPasar();
   let sellerCountCount = await pasarContract.methods.getSellerCount().call();
-  console.log("=====sellerCountCount======"+sellerCountCount);
   for(let index = 0;index<sellerCountCount;index++){
      let seller = await pasarContract.methods.getSellerByIndex(index).call();
      let sellerAddr = seller[1];
      let orderCount = seller[2];
-     this.handleOrder(web3,pasarContract,sellerAddr,orderCount);
+     this.handleOrder(pasarContract,sellerAddr,orderCount);
     }
 }
 
-async handleOrder(web3:any,pasarContract:any,sellerAddr:any,orderCount:any){
+async handleOrder(pasarContract:any,sellerAddr:any,orderCount:any){
    for(let index=0;index<orderCount;index++){
     let sellerOrder =  await pasarContract.methods.getSellerOpenByIndex(sellerAddr,index).call();
     let tokenId = sellerOrder[3];
     let saleOrderId = sellerOrder[0];
     let price = sellerOrder[5];
-    let stickerAbi = this.web3Service.getStickerAbi();
-    let stickerAddr = this.web3Service.getStickerAddr();
-    const stickerContract = new web3.eth.Contract(stickerAbi,stickerAddr);
+    const stickerContract = this.web3Service.getSticker();
     let feedsUri =  await stickerContract.methods.uri(tokenId).call();
     feedsUri  = feedsUri.replace("feeds:json:","");
     console.log(feedsUri);
@@ -226,7 +213,10 @@ async handleOrder(web3:any,pasarContract:any,sellerAddr:any,orderCount:any){
      let royalties = result["royalties"] || "1";
      let quantity = result["quantity"] || "1";
      let fixedAmount = price || "1";
-     //let minimumAmount = result["minimumAmount"] || "";
+     let thumbnail = result["thumbnail"] || "";
+     if(thumbnail === ""){
+       thumbnail = result["image"];
+     }
      let item = {
          "saleOrderId":saleOrderId,
          "tokenId":tokenId,
@@ -237,7 +227,8 @@ async handleOrder(web3:any,pasarContract:any,sellerAddr:any,orderCount:any){
          "kind":result["kind"],
          "type":type,
          "royalties":royalties,
-         "quantity":quantity
+         "quantity":quantity,
+         "thumbnail":thumbnail
      }
      try{
        this.onSaleList.push(item);
@@ -252,16 +243,14 @@ async handleOrder(web3:any,pasarContract:any,sellerAddr:any,orderCount:any){
    }
 }
 
-async handleBuyOrder(web3:any,pasarContract:any,buyerAddr:any,orderCount:any){
+async handleBuyOrder(pasarContract:any,buyerAddr:any,orderCount:any){
   for(let index=0;index<orderCount;index++){
     let purchasedOrder =  await pasarContract.methods.getBuyerOrderByIndex(buyerAddr,index).call();
     let tokenId = purchasedOrder[3];
     let saleOrderId = purchasedOrder[0];
     let price = purchasedOrder[5];
 
-    let stickerAbi = this.web3Service.getStickerAbi();
-    let stickerAddr = this.web3Service.getStickerAddr();
-    const stickerContract = new web3.eth.Contract(stickerAbi,stickerAddr);
+    const stickerContract = this.web3Service.getSticker();
     let feedsUri =  await stickerContract.methods.uri(tokenId).call();
     feedsUri  = feedsUri.replace("feeds:json:","");
     console.log(feedsUri);
@@ -270,7 +259,10 @@ async handleBuyOrder(web3:any,pasarContract:any,buyerAddr:any,orderCount:any){
      let royalties = result["royalties"] || "1";
      let quantity = result["quantity"] || "1";
      let fixedAmount = price || "1";
-     let minimumAmount = result["minimumAmount"] || "";
+     let thumbnail = result["thumbnail"] || "";
+     if(thumbnail === ""){
+       thumbnail = result["image"];
+     }
      let item = {
          "saleOrderId":saleOrderId,
          "tokenId":tokenId,
@@ -278,11 +270,11 @@ async handleBuyOrder(web3:any,pasarContract:any,buyerAddr:any,orderCount:any){
          "name":result["name"],
          "description":result["description"],
          "fixedAmount":fixedAmount,
-         "minimumAmount":minimumAmount,
          "kind":result["kind"],
          "type":type,
          "royalties":royalties,
-         "quantity":quantity
+         "quantity":quantity,
+         "thumbnail":thumbnail
      }
      try{
        this.purchasedList.push(item);

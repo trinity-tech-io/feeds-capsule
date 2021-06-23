@@ -11,6 +11,16 @@
       --background-activated:#7624fe;
     }
 
+    .tipCoin{
+      position: absolute;
+      right: 36px;
+      top: 39px;
+      font-size: 13px;
+      font-weight: 700;
+      font-stretch: normal;
+      font-style: normal;
+    }
+
     ion-radio{
         --color-checked:#7624fe;
         display:inline-block;

@@ -2,7 +2,7 @@
 <ion-content>
   <ion-grid class="container" [class.darkContainer]="theme.darkMode">
     <!--- contract Details -->
-    <ion-row>
+    <!-- <ion-row>
       <ion-col size="12" style="padding:0px;">
         <ion-button class="btn-row1" style="border-radius:17px;">
           <ion-label>
@@ -10,7 +10,7 @@
           </ion-label>
         </ion-button>
       </ion-col>
-    </ion-row>
+    </ion-row> -->
 
     <div *ngFor="let contractDetail of contractDetails">
       <ion-row *ngIf="contractDetail.details" class="detail-row removeBorder">
@@ -52,7 +52,7 @@
     <ion-row class="detail-row removeBorder" *ngIf="showType==='buy'">
       <ion-col size="12" class="left-col">
         <h1>{{ "MintnftPage.nftfixedPrice" | translate}}</h1>
-        <h2>{{ fixedPrice }} ELA/ETHSC</h2>
+        <h2>{{ hanldePrice(fixedPrice) }} ELA/ETHSC</h2>
       </ion-col>
     </ion-row>
 

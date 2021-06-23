@@ -11,9 +11,9 @@
       <div class="left-tab" [class.tab-active]="selectType === 'CollectionsPage.onSale'" (click)="changeType('CollectionsPage.onSale')">
         <span [class.tab-active-bottom-border]="selectType === 'CollectionsPage.onSale'">{{ 'CollectionsPage.onSale' | translate }}</span>
       </div>
-      <div class="right-tab" [class.tab-active]="selectType === 'CollectionsPage.likes'" (click)="changeType('CollectionsPage.likes')">
+      <!-- <div class="right-tab" [class.tab-active]="selectType === 'CollectionsPage.likes'" (click)="changeType('CollectionsPage.likes')">
         <span [class.tab-active-bottom-border]="selectType === 'CollectionsPage.likes'">{{'CollectionsPage.likes' | translate }}</span>
-      </div>
+      </div> -->
      </div>
      <!---Created-->
      <ion-row *ngIf="selectType === 'CollectionsPage.created'&&createdList.length===0&&!isLoading">

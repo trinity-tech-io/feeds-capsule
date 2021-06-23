@@ -158,12 +158,9 @@ export class BidPage implements OnInit {
    }
 
   async buy(){
-    let web3 = await this.web3Service.getWeb3Js();
-    let pasarAbi = this.web3Service.getPasarAbi();
     let pasarAddr = this.web3Service.getPasarAddr();
-    const accBuyer = await this.web3Service.getAccount(web3,"04868f294d8ef6e1079752cd2e1f027a126b44ee27040d949a88f89bddc15f31");
-    let pasarContract = new web3.eth.Contract(pasarAbi,pasarAddr);
-    console.log("===this.saleOrderId==="+this.saleOrderId);
+    const accBuyer = await this.web3Service.getAccount("04868f294d8ef6e1079752cd2e1f027a126b44ee27040d949a88f89bddc15f31");
+    let pasarContract = this.web3Service.getPasar();
     const purchaseData = pasarContract.methods.buyOrder(this.saleOrderId).encodeABI();
 
     const purchaseTx = {
@@ -175,11 +172,9 @@ export class BidPage implements OnInit {
 
     const {
       status: purchaseStatus,
-    } = await this.web3Service.sendTxWaitForReceipt(web3,purchaseTx, accBuyer);
-    console.log("=====purchaseStatus======"+purchaseStatus);
+    } = await this.web3Service.sendTxWaitForReceipt(purchaseTx, accBuyer);
     this.native.hideLoading();
     if(purchaseStatus!=""&&purchaseStatus!=undefined){
-        alert("=====purchase sucess====");
         this.native.pop();
         //this.native.navigateForward(['confirmation'],{queryParams:{"showType":"buy"}});
     }else{
@@ -205,11 +200,9 @@ export class BidPage implements OnInit {
 
  async changePrice(price:any){
 
-    let web3 = await this.web3Service.getWeb3Js();
-    let pasarAbi = this.web3Service.getPasarAbi();
     let pasarAddr = this.web3Service.getPasarAddr();
-    let pasarContract = new web3.eth.Contract(pasarAbi,pasarAddr);
-    const accSeller = await this.web3Service.getAccount(web3,"04868f294d8ef6e1079752cd2e1f027a126b44ee27040d949a88f89bddc15f31");
+    let pasarContract = this.web3Service.getPasar();
+    const accSeller = await this.web3Service.getAccount("04868f294d8ef6e1079752cd2e1f027a126b44ee27040d949a88f89bddc15f31");
     const changeData = pasarContract.methods.changeOrderPrice(this.saleOrderId,price).encodeABI();
     const changeTx = {
       from:accSeller.address,
@@ -217,7 +210,7 @@ export class BidPage implements OnInit {
       value: 0,
       data: changeData,
     };
-    const { status: changeStatus } = await this.web3Service.sendTxWaitForReceipt(web3,changeTx, accSeller);
+    const { status: changeStatus } = await this.web3Service.sendTxWaitForReceipt(changeTx, accSeller);
     this.native.hideLoading();
     if(changeStatus!=""&&changeStatus!=undefined){
       alert("=====change Order Price sucess====");
@@ -237,11 +230,10 @@ export class BidPage implements OnInit {
   }
 
   async cancelOrder(){
-    let web3 = await this.web3Service.getWeb3Js();
-    let pasarAbi = this.web3Service.getPasarAbi();
+
     let pasarAddr = this.web3Service.getPasarAddr();
-    let pasarContract = new web3.eth.Contract(pasarAbi,pasarAddr);
-    const accSeller = await this.web3Service.getAccount(web3,"04868f294d8ef6e1079752cd2e1f027a126b44ee27040d949a88f89bddc15f31");
+    let pasarContract = this.web3Service.getPasar();
+    const accSeller = await this.web3Service.getAccount("04868f294d8ef6e1079752cd2e1f027a126b44ee27040d949a88f89bddc15f31");
 
     const cancelData = pasarContract.methods.cancelOrder(this.saleOrderId).encodeABI();
     const cancelTx = {
@@ -250,7 +242,7 @@ export class BidPage implements OnInit {
       value: 0,
       data: cancelData,
     };
-    const { status: cancelStatus } = await this.web3Service.sendTxWaitForReceipt(web3,cancelTx, accSeller);
+    const { status: cancelStatus } = await this.web3Service.sendTxWaitForReceipt(cancelTx, accSeller);
     this.native.hideLoading();
     if(cancelStatus!=""&&cancelStatus!=undefined){
       alert("=====cancel Order sucess====");
@@ -284,7 +276,6 @@ export class BidPage implements OnInit {
         }, {
           text: 'Ok',
           handler: (result) => {
-            console.log("====result===="+JSON.stringify(result));
             let price = result["price"] || "";
             if(price === ""){
               this.native.toast("input change price")
@@ -304,5 +295,19 @@ export class BidPage implements OnInit {
     await alert.present();
   }
 
+  hanldePrice(price:string){
+    return this.web3Service.getFromWei(price);
+  }
+
+  copytext(text:any){
+    let textdata = text || "";
+    if(textdata!=""){
+      this.native.copyClipboard(text).then(()=>{
+        this.native.toast_trans("common.copysucceeded");
+    }).catch(()=>{
+
+    });;
+    }
+  }
 
 }

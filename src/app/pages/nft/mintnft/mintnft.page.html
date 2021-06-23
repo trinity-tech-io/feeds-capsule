@@ -5,14 +5,14 @@
 
       <ion-item lines="none" style="border:none;">
         <ion-label position="stacked">{{ 'MintnftPage.nftAsset' | translate }}</ion-label>
-        <div class="rectangle1" *ngIf="assetBase64===''" (click)="addAsset()">
+        <div class="rectangle1" *ngIf="thumbnail===''" (click)="addAsset()">
           <div class="rectangle2">
                <img src="./assets/images/add.svg">
           </div>
         </div>
-        <div class="rectangle1" *ngIf="assetBase64!=''" style="border:none;position:relative;">
+        <div class="rectangle1" *ngIf="thumbnail!=''" style="border:none;position:relative;">
          <img class="remove" src="/assets/icons/remove.svg" (click)="removeImg()"/>
-         <img [src]="assetBase64">
+         <img [src]="thumbnail">
         </div>
       </ion-item>
 
@@ -39,7 +39,7 @@
          </ion-row>
       </ion-item>
 
-      <ion-item lines="none" *ngIf="curPublishtoPasar">
+      <!-- <ion-item lines="none" *ngIf="curPublishtoPasar">
         <ion-label position="stacked">{{ 'MintnftPage.nftSellMethod' | translate }}</ion-label>
         <ion-radio-group [(ngModel)]="sellMethod" class="ionradiogroup">
           <ion-row style="padding:0px;">
@@ -57,12 +57,13 @@
             </ion-col>
           </ion-row>
         </ion-radio-group>
-      </ion-item>
+      </ion-item> -->
 
       <ion-item lines="none" *ngIf="curPublishtoPasar">
         <ion-label position="stacked">{{ 'MintnftPage.nftAmount' | translate }}</ion-label>
         <ion-input *ngIf="sellMethod==='fixedPrice'" type="text" placeholder="{{'MintnftPage.nftFixedAmount'|translate}}" [(ngModel)]="nftFixedAmount"></ion-input>
         <ion-input *ngIf="sellMethod==='highestBid'" type="text" placeholder="{{'MintnftPage.nftMinimumAmount'|translate}}" [(ngModel)]="nftMinimumAmount"></ion-input>
+        <span class="tipCoin">ELA/ETH</span>
         <img class="tip" src="/assets/images/dashang.svg" *ngIf="!theme.darkMode">
         <img class="tip" src="/assets/images/darkmode/tip.svg" *ngIf="theme.darkMode">
       </ion-item>
