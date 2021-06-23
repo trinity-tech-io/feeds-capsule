@@ -4,7 +4,6 @@ import { ThemeService } from '../../../services/theme.service';
 import { CameraService } from '../../../services/CameraService';
 import { NativeService } from '../../../services/NativeService';
 import { UtilService } from '../../../services/utilService';
-import { FeedService } from '../../../services/FeedService';
 import { Web3Service } from '../../../services/Web3Service';
 import { Events } from '../../../services/events.service';
 import { TitleBarService } from '../../../services/TitleBarService';
@@ -12,6 +11,7 @@ import { TitleBarComponent } from '../../..//components/titlebar/titlebar.compon
 import { File,DirectoryEntry} from '@ionic-native/file/ngx';
 import { HttpService } from '../../../services/HttpService';
 import { ApiUrl } from '../../../services/ApiUrl';
+import { takeRightWhile } from 'lodash';
 @Component({
   selector: 'app-mintnft',
   templateUrl: './mintnft.page.html',
@@ -35,6 +35,7 @@ export class MintnftPage implements OnInit {
   public maxExpirationDate:string = "";
   public minExpirationDate:string = "";
   public fileName:string = "";
+  public thumbnail:string = "";
   private imageObj:any = {};
   constructor(
     private translate:TranslateService,
@@ -42,7 +43,6 @@ export class MintnftPage implements OnInit {
     private zone: NgZone,
     private camera: CameraService,
     private native: NativeService,
-    private feedService:FeedService,
     private titleBarService: TitleBarService,
     private httpService:HttpService,
     private file:File,
@@ -108,14 +108,13 @@ export class MintnftPage implements OnInit {
           let fileReader = new FileReader();
           fileReader.onloadend =(event:any)=>{
             this.zone.run(()=>{
-              this.assetBase64 = fileReader.result.toString();
-              this.sendIpfsImage(fileName,this.assetBase64);
+              let assetBase64 = fileReader.result.toString();
+              this.sendIpfsImage(fileName,assetBase64);
             });
           };
 
           fileReader.onprogress = (event:any)=>{
             this.zone.run(()=>{
-              console.log("====event.loaded==="+event.loaded);
             })
           };
 
@@ -132,25 +131,40 @@ export class MintnftPage implements OnInit {
     });
   }
 
-  sendIpfsImage(fileName:string,file:any){
+  async sendIpfsImage(fileName:string,file:any){
+    let thumbnailBase64 = await this.compressImage(file);
     let blob = this.dataURLtoBlob(file);
     let formData = new FormData();
     formData.append("",blob);
     this.httpService.ajaxNftPost(ApiUrl.nftAdd,formData).then((result)=>{
-        //{"Name":"blob","Hash":"QmaxWgjheueDc1XW2bzDPQ6qnGi9UKNf23EBQSUAu4GHGF","Size":"17797"};
-        this.native.hideLoading();
         let hash = result["Hash"] || null;
         let imgFormat = fileName.split(".")[1];
         if(hash != null){
+          this.assetBase64 = file;
           this.imageObj["imgSize"] = result["Size"];
           this.imageObj["imgHash"] = "feeds:imgage:"+hash;
           this.imageObj["imgFormat"] = imgFormat;
+          this.sendIpfsThumbnail(thumbnailBase64);
         }
-        console.log("========"+JSON.stringify(this.imageObj));
-        //feeds:imgage:
-        //feeds:json:
     }).catch((err)=>{
-         console.log("========"+JSON.stringify(err));
+      this.native.hideLoading();
+    });
+  }
+
+  sendIpfsThumbnail(thumbnailBase64:any){
+    let thumbnailBlob  = this.dataURLtoBlob(thumbnailBase64);
+    let formData = new FormData();
+    formData.append("",thumbnailBlob);
+    this.httpService.ajaxNftPost(ApiUrl.nftAdd,formData,false).then((result)=>{
+      let hash = result["Hash"] || null;
+      if(hash != null){
+        this.native.hideLoading();
+        this.thumbnail = thumbnailBase64;
+        this.imageObj["thumbnail"] = "feeds:imgage:"+hash;
+      }
+
+    }).catch((err)=>{
+      this.native.hideLoading();
     });
   }
 
@@ -163,8 +177,7 @@ export class MintnftPage implements OnInit {
       "image":this.imageObj['imgHash'],
       "kind":this.imageObj['imgFormat'],
       "size":this.imageObj["imgSize"],
-      "fixedAmount":this.nftFixedAmount,
-      "minimumAmount":this.nftMinimumAmount,
+      "thumbnail":this.imageObj["thumbnail"]
    }
 
    let formData = new FormData();
@@ -172,14 +185,13 @@ export class MintnftPage implements OnInit {
 
    this.httpService.ajaxNftPost(ApiUrl.nftAdd,formData).then((result)=>{
     //{"Name":"blob","Hash":"QmaxWgjheueDc1XW2bzDPQ6qnGi9UKNf23EBQSUAu4GHGF","Size":"17797"};
+    console.log("====json Data====="+JSON.stringify(result));
     let hash = result["Hash"] || null;
     if(hash != null){
        let tokenId = "0x"+UtilService.SHA256(hash);
        let jsonHash = "feeds:json:"+hash;
        this.mintContract(tokenId,jsonHash,this.nftQuantity,this.nftRoyalties);
     }
-    //feeds:imgage:
-    //feeds:json:
 }).catch((err)=>{
      console.log("========"+JSON.stringify(err));
 });
@@ -200,7 +212,7 @@ export class MintnftPage implements OnInit {
 
   addImg(type: number) {
     this.camera.openCamera(
-      30,1, type,
+      100,1, type,
       (imgPath: any) => {
         this.zone.run(() => {
           let pathObj =this.handlePath(imgPath);
@@ -218,11 +230,12 @@ export class MintnftPage implements OnInit {
   }
 
   removeImg(){
+    this.thumbnail = "";
     this.assetBase64 = "";
   }
 
   checkParms(){
-    if(this.assetBase64 === ""){
+    if(this.thumbnail === ""){
       this.native.toastWarn("MintnftPage.nftAssetPlaceholder");
       return false;
     }
@@ -280,13 +293,12 @@ export class MintnftPage implements OnInit {
   }
 
   async mintContract(tokenId:any,uri:any,supply:any,royalty:any){
-    let web3 = await this.web3Service.getWeb3Js();
-    let stickerAbi = this.web3Service.getStickerAbi();
+
     let stickerAddr = this.web3Service.getStickerAddr();
-    let stickerContract = this.web3Service.initContract(web3,stickerAbi,stickerAddr);
-    const accCreator = await this.web3Service.getAccount(web3,"04868f294d8ef6e1079752cd2e1f027a126b44ee27040d949a88f89bddc15f31");
+    let stickerContract = this.web3Service.getSticker();
+    const accCreator = await this.web3Service.getAccount("04868f294d8ef6e1079752cd2e1f027a126b44ee27040d949a88f89bddc15f31");
     let parm = {"tokenId:":tokenId,"supply":supply,"uri":uri,"royalty":royalty}
-    console.log("===parm=="+JSON.stringify(parm));
+    console.log("==mintData parm=="+JSON.stringify(parm));
     const mintData = stickerContract.methods.mint(tokenId, supply, uri, royalty).encodeABI();
     let mintTx = {
       from: accCreator.address,
@@ -294,28 +306,30 @@ export class MintnftPage implements OnInit {
       value: 0,
       data:mintData
     };
-   let receipt = await this.web3Service.sendTxWaitForReceipt(web3,mintTx,accCreator) || "";
-   if(receipt!=""&&this.curPublishtoPasar){
-       this.handlePasar(web3,accCreator,tokenId,stickerAbi);
-       return;
-   }
-   this.native.hideLoading();
+   let receipt = await this.web3Service.sendTxWaitForReceipt(mintTx,accCreator) || "";
+   receipt = receipt || "";
    if(receipt=== ""){
+    this.native.hideLoading();
     alert("nft创建失败");
    return;
    }
+   if(receipt!=""&&this.curPublishtoPasar){
+    this.handlePasar(accCreator,tokenId);
+    return;
+   }
+   this.native.hideLoading();
    this.native.pop();
    this.native.toast("sucess");
   }
 
- async handlePasar(web3:any,accCreator:any,tokenId:any,stickerAbi:any){
-    let pasarABI = this.web3Service.getPasarAbi();
+ async handlePasar(accCreator:any,tokenId:any){
+    //let pasarABI = this.web3Service.getPasarAbi();
     let pasarAddr = this.web3Service.getPasarAddr();
-    let pasarContract = new web3.eth.Contract(pasarABI,pasarAddr);
+    let pasarContract = this.web3Service.getPasar();
 
     let stickerAddr = await pasarContract.methods.getTokenAddress().call();
-    let stickerContract = new web3.eth.Contract(stickerAbi, stickerAddr);
-    let accSeller =  await web3.eth.accounts.privateKeyToAccount('04868f294d8ef6e1079752cd2e1f027a126b44ee27040d949a88f89bddc15f31');
+    let stickerContract = this.web3Service.getSticker();
+    let accSeller =  await this.web3Service.getAccount('04868f294d8ef6e1079752cd2e1f027a126b44ee27040d949a88f89bddc15f31');
 
     // Seller approve pasar
    const approveData = stickerContract.methods.setApprovalForAll(pasarAddr,true).encodeABI();
@@ -326,14 +340,18 @@ export class MintnftPage implements OnInit {
      data: approveData
    };
 
-  let receipt = await this.web3Service.sendTxWaitForReceipt(web3,approveTx,accCreator);
+  let receipt = await this.web3Service.sendTxWaitForReceipt(approveTx,accCreator);
+  receipt = receipt || "";
   if(receipt===""){
     this.native.hideLoading();
     alert("public pasar失败");
     return;
   }
 
-  const saleData = pasarContract.methods.createOrderForSale(tokenId,this.nftQuantity,this.nftFixedAmount).encodeABI();
+ let salePrice = this.web3Service.getToWei(this.nftFixedAmount.toString());
+ console.log("=======salePrice======="+salePrice);
+
+  const saleData = pasarContract.methods.createOrderForSale(tokenId,this.nftQuantity,salePrice).encodeABI();
   const saleTx = {
     from: accSeller.address,
     to: pasarAddr,
@@ -341,8 +359,8 @@ export class MintnftPage implements OnInit {
     data: saleData,
   };
 
-  receipt = await this.web3Service.sendTxWaitForReceipt(web3,saleTx,accCreator);
-
+  receipt = await this.web3Service.sendTxWaitForReceipt(saleTx,accCreator);
+  receipt = receipt || "";
   if(receipt === ""){
     this.native.hideLoading();
     alert("public pasar失败");
@@ -352,6 +370,59 @@ export class MintnftPage implements OnInit {
    this.native.pop();
    this.native.toast("public pasar sucess");
 
+  }
+
+
+  // 压缩图片
+compressImage(path:any):Promise<string>{
+  //最大高度
+  const maxHeight = 600;
+  //最大宽度
+  const maxWidth = 600;
+  return new Promise((resolve, reject) => {
+      let img = new Image();
+      img.src = path;
+
+      img.onload = ()=> {
+        const originHeight = img.height;
+        const originWidth = img.width;
+        let compressedWidth = img.height;
+        let compressedHeight = img.width;
+        if ((originWidth > maxWidth) && (originHeight > maxHeight)) {
+          // 更宽更高，
+          if ((originHeight / originWidth) > (maxHeight / maxWidth)) {
+            // 更加严重的高窄型，确定最大高，压缩宽度
+            compressedHeight = maxHeight
+            compressedWidth = maxHeight * (originWidth / originHeight)
+          } else {
+            //更加严重的矮宽型, 确定最大宽，压缩高度
+            compressedWidth = maxWidth
+            compressedHeight = maxWidth * (originHeight / originWidth)
+          }
+        } else if (originWidth > maxWidth && originHeight <= maxHeight) {
+          // 更宽，但比较矮，以maxWidth作为基准
+          compressedWidth = maxWidth
+          compressedHeight = maxWidth * (originHeight / originWidth)
+        } else if (originWidth <= maxWidth && originHeight > maxHeight) {
+          // 比较窄，但很高，取maxHight为基准
+          compressedHeight = maxHeight
+          compressedWidth = maxHeight * (originWidth / originHeight)
+        } else {
+          // 符合宽高限制，不做压缩
+        }
+        // 生成canvas
+        let canvas = document.createElement('canvas');
+        let context = canvas.getContext('2d');
+        canvas.height = compressedHeight;
+        canvas.width = compressedWidth;
+        // context.globalAlpha = 0.2;
+        context.clearRect(0, 0, compressedWidth, compressedHeight);
+        context.drawImage(img, 0, 0, compressedWidth, compressedHeight);
+        let base64 = canvas.toDataURL('image/*',0.7);
+        resolve(base64);
+      }
+
+    });
   }
 
 }

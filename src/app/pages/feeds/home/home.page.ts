@@ -1474,28 +1474,20 @@ clearData(){
 
  async getPaserList(){
   this.pasarList = [];
-  let web3 = await this.web3Service.getWeb3Js();
-  let pasarAbi = this.web3Service.getPasarAbi();
-  let pasarAddr = this.web3Service.getPasarAddr();
-  let stickerABI = this.web3Service.getStickerAbi();
-  let stickerAddr = this.web3Service.getStickerAddr();
-  let pasarContract = new web3.eth.Contract(pasarAbi,pasarAddr);
+  let stickerContract = this.web3Service.getSticker();
+  let pasarContract = this.web3Service.getPasar();
   let openOrderCount =  await pasarContract.methods.getOpenOrderCount().call();
   for(let index = 0;index<openOrderCount;index++){
-     this.getOpenOrderByIndex(web3,index,pasarContract,stickerABI,stickerAddr);
+     this.getOpenOrderByIndex(index,pasarContract,stickerContract);
   }
 }
 
-async getOpenOrderByIndex(web3:any,index:any,pasarContract:any,stickerABI:any,stickerAddr:any){
+async getOpenOrderByIndex(index:any,pasarContract:any,stickerContract:any){
   let  openOrder =  await pasarContract.methods.getOpenOrderByIndex(index).call();
-  console.log("=====openOrder====="+JSON.stringify(openOrder));
   let tokenId = openOrder[3];
   let saleOrderId = openOrder[0];
   let price = openOrder[5];
-  console.log("====tokenId===="+tokenId);
-  const stickerContract = new web3.eth.Contract(stickerABI,stickerAddr);
   let feedsUri =  await stickerContract.methods.uri(tokenId).call();
-  console.log("===feedsUri==="+feedsUri);
   this.handleFeedsUrl(feedsUri,tokenId,saleOrderId,price);
 }
 
@@ -1508,6 +1500,10 @@ handleFeedsUrl(feedsUri:string,tokenId:any,saleOrderId:string,price:any){
   let quantity = result["quantity"] || "1";
   //let fixedAmount = result["fixedAmount"] || "1";
   let minimumAmount = result["minimumAmount"] || "";
+  let thumbnail = result["thumbnail"] || "";
+  if(thumbnail === ""){
+    thumbnail = result["image"];
+  }
   let item = {
       "saleOrderId":saleOrderId,
       "tokenId":tokenId,
@@ -1519,10 +1515,9 @@ handleFeedsUrl(feedsUri:string,tokenId:any,saleOrderId:string,price:any){
       "kind":result["kind"],
       "type":type,
       "royalties":royalties,
-      "quantity":quantity
+      "quantity":quantity,
+      "thumbnail":thumbnail
   }
-  console.log("====item===="+JSON.stringify(item));
-
   try{
     this.pasarList.push(item);
   }catch(err){

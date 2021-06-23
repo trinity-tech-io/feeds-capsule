@@ -77,7 +77,7 @@ export class HttpService{
   ajaxNftPost(url:string, json:Object,isLoading:boolean=true) {
     if(isLoading){
       this.native.showLoading("common.waitMoment",(isDismiss)=>{
-      });
+      },60000);
     }
     return new Promise((resove, reject) => {
       this.httpClient.post(url,json).subscribe((response) => {

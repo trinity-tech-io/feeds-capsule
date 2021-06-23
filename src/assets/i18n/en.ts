@@ -565,7 +565,7 @@ export const en = {
         "contract": "Contract"
     },
     "BidPage":{
-        "title": "Bid",
+        "title": "Collectible Details",
         "blockchain": "Blockchain",
         "buy": "Buy",
         "myBid": "My Bid",

@@ -208,4 +208,14 @@ export class AssetdetailsPage implements OnInit {
     return imgUri;
    }
 
+   copytext(text:any){
+    let textdata = text || "";
+    if(textdata!=""){
+      this.native.copyClipboard(text).then(()=>{
+        this.native.toast_trans("common.copysucceeded");
+    }).catch(()=>{
+
+    });;
+    }
+  }
 }

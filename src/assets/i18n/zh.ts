@@ -566,7 +566,7 @@ export const zh = {
         "contract": "合约"
     },
     "BidPage":{
-        "title": "竞价",
+        "title": "收藏品明细",
         "blockchain": "区块链",
         "buy": "购买",
         "myBid": "我的出价",

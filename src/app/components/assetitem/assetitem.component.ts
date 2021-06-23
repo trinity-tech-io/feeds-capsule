@@ -1,5 +1,6 @@
 import { Component, OnInit,Input,Output,EventEmitter} from '@angular/core';
 import { ApiUrl } from '../../services/ApiUrl';
+import { Web3Service } from '../../services/Web3Service';
 @Component({
   selector: 'app-assetitem',
   templateUrl: './assetitem.component.html',
@@ -8,7 +9,9 @@ import { ApiUrl } from '../../services/ApiUrl';
 export class AssetitemComponent implements OnInit {
   @Input () assetItem:any = null;
   @Output() clickAssetItem = new EventEmitter();
-  constructor() { }
+  constructor(
+    private web3Service:Web3Service
+  ) { }
 
   ngOnInit() {}
 
@@ -22,6 +25,10 @@ export class AssetitemComponent implements OnInit {
       imgUri = ApiUrl.nftGet+imgUri;
     }
     return imgUri;
+  }
+
+  hanldePrice(price:string){
+     return this.web3Service.getFromWei(price);
   }
 
 }
