@@ -130,22 +130,24 @@ async tokenIdByIndex(pasarContract:any,index:any){
    let tokenId = openOrder[3];
    //let saleOrderId = openOrder[0];
    let price = openOrder[5];
-   this.getUri(tokenId,price);
+   let stickerContract = this.web3Service.getSticker();
+   let tokenInfo = await stickerContract.methods.tokenInfo(tokenId).call();
+   let tokenUri = tokenInfo[3];
+   let tokenNum = tokenInfo[2];
+   this.getUri(tokenId,price,tokenUri,tokenNum);
 }
 
-async getUri(tokenId:string,price:any){
-  const stickerContract = this.web3Service.getSticker();
-  let feedsUri =  await stickerContract.methods.uri(tokenId).call();
-  this.handleFeedsUrl(feedsUri,tokenId,price);
+async getUri(tokenId:string,price:any,tokenUri:any,tokenNum:any){
+  this.handleFeedsUrl(tokenUri,tokenId,price,tokenNum);
 }
 
-handleFeedsUrl(feedsUri:string,tokenId:string,price:any){
+handleFeedsUrl(feedsUri:string,tokenId:string,price:any,tokenNum:any){
   feedsUri  = feedsUri.replace("feeds:json:","");
   console.log(feedsUri);
   this.httpService.ajaxGet(ApiUrl.nftGet+feedsUri,false).then((result)=>{
   let type = result["type"] || "single";
   let royalties = result["royalties"] || "1";
-  let quantity = result["quantity"] || "1";
+  let quantity = tokenNum;
   let fixedAmount = price || "1";
   let thumbnail = result["thumbnail"] || "";
   if(thumbnail === ""){
@@ -205,13 +207,14 @@ async handleOrder(pasarContract:any,sellerAddr:any,orderCount:any){
     let saleOrderId = sellerOrder[0];
     let price = sellerOrder[5];
     const stickerContract = this.web3Service.getSticker();
-    let feedsUri =  await stickerContract.methods.uri(tokenId).call();
+    let tokenInfo = await stickerContract.methods.tokenInfo(tokenId).call();
+    let feedsUri= tokenInfo[3];
     feedsUri  = feedsUri.replace("feeds:json:","");
-    console.log(feedsUri);
+    let tokenNum = tokenInfo[2];
     this.httpService.ajaxGet(ApiUrl.nftGet+feedsUri,false).then((result)=>{
      let type = result["type"] || "single";
      let royalties = result["royalties"] || "1";
-     let quantity = result["quantity"] || "1";
+     let quantity = tokenNum;
      let fixedAmount = price || "1";
      let thumbnail = result["thumbnail"] || "";
      if(thumbnail === ""){
@@ -251,13 +254,14 @@ async handleBuyOrder(pasarContract:any,buyerAddr:any,orderCount:any){
     let price = purchasedOrder[5];
 
     const stickerContract = this.web3Service.getSticker();
-    let feedsUri =  await stickerContract.methods.uri(tokenId).call();
+    let tokenInfo = await stickerContract.methods.tokenInfo(tokenId).call();
+    let feedsUri= tokenInfo[3];
     feedsUri  = feedsUri.replace("feeds:json:","");
-    console.log(feedsUri);
+    let tokenNum = tokenInfo[2];
     this.httpService.ajaxGet(ApiUrl.nftGet+feedsUri,false).then((result)=>{
      let type = result["type"] || "single";
      let royalties = result["royalties"] || "1";
-     let quantity = result["quantity"] || "1";
+     let quantity = tokenNum;
      let fixedAmount = price || "1";
      let thumbnail = result["thumbnail"] || "";
      if(thumbnail === ""){

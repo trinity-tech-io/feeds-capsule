@@ -67,6 +67,7 @@ let eventBus: Events = null;
 
 @Injectable()
 export class FeedService {
+  private collectibleStatus:any = {};
   public bindPublisherAccountType:string = "";
   public discoverfeeds:any = [];
   public currentFeed:any = null;
@@ -4443,8 +4444,11 @@ export class FeedService {
     // {"version":"1.0","text":"testText","imageThumbnail":[{"index":0,"imgThumb":"this.imgUrl"}],"videoThumbnail":"this.posterImg"}
     let mVersion = contentObj.version || "";
     let mText = contentObj.text || "";
-    let videoThumb = contentObj.videoThumbnail || ""
+    let videoThumb = contentObj.videoThumbnail || "";
     let mMediaType = FeedsData.MediaType.noMeida;
+    let nftTokenId =  contentObj.nftTokenId || "";
+
+
 
     let videoThumbKeyObj:FeedsData.VideoThumbKey = undefined;
     if (videoThumb != ""){
@@ -4486,8 +4490,10 @@ export class FeedService {
       text            :   mText,
       mediaType       :   mMediaType,
       videoThumbKey   :   videoThumbKeyObj,
-      imgThumbKeys    :   imgThumbKeys
+      imgThumbKeys    :   imgThumbKeys,
+      nftTokenId      :   nftTokenId
     }
+
     return content;
   }
 
@@ -4515,7 +4521,8 @@ export class FeedService {
       text            :   text,
       mediaType       :   mMediaType,
       videoThumbKey   :   undefined,
-      imgThumbKeys    :   imgThumbKeys
+      imgThumbKeys    :   imgThumbKeys,
+      nftTokenId      :   null
     }
 
     return content;
@@ -5744,5 +5751,13 @@ export class FeedService {
 
   setBindPublisherAccountType(publisherAccountType:string){
     this.bindPublisherAccountType = publisherAccountType;
+  }
+
+  getCollectibleStatus(){
+   return this.collectibleStatus;
+  }
+
+  setCollectibleStatus(collectibleStatus:any){
+    this.collectibleStatus = collectibleStatus;
   }
 }

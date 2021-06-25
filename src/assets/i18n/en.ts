@@ -515,7 +515,8 @@ export const en = {
     },
     "FeedspreferencesPage":{
         "title": "Channel Preferences",
-        "des": "Show in Explore Pasar"
+        "des": "Show in Explore Pasar",
+        "des1":"Publish Collectible to Channel"
     },/***NFT*/
     "MintnftPage":{
         "title": "Create Collectible",

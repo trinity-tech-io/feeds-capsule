@@ -34,6 +34,11 @@ export class FeedspreferencesPage implements OnInit {
 
   public isFirst:boolean = false;
 
+  public curCollectibleStatus:boolean = false;
+
+  public collectibleStatus = {};
+
+
   constructor(
     private translate:TranslateService,
     private events: Events,
@@ -64,6 +69,10 @@ export class FeedspreferencesPage implements OnInit {
   }
 
   ionViewWillEnter(){
+
+    let collectibleStatus = this.feedService.getCollectibleStatus();
+    let key = this.nodeId+"_"+this.feedId;
+    this.curCollectibleStatus = collectibleStatus[key] || false;
     this.connectionStatus = this.feedService.getConnectionStatus();
     this.feedPublicStatus =this.feedService.getFeedPublicStatus() || {};
     this.getPublicStatus();
@@ -260,6 +269,17 @@ getPublicStatus(){
     this.unPublicFeeds();
     return;
   }
+ }
+
+
+ setCollectible(){
+  this.zone.run(()=>{
+    this.curCollectibleStatus = !this.curCollectibleStatus;
+    let key = this.nodeId+"_"+this.feedId;
+    this.collectibleStatus[key] = this.curCollectibleStatus;
+    this.feedService.setCollectibleStatus(this.collectibleStatus);
+    this.storageService.set("feeds.collectible.setting",JSON.stringify(this.collectibleStatus));
+  });
  }
 
 }

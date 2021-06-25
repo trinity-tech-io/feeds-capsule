@@ -203,6 +203,7 @@ export class BidPage implements OnInit {
     let pasarAddr = this.web3Service.getPasarAddr();
     let pasarContract = this.web3Service.getPasar();
     const accSeller = await this.web3Service.getAccount("04868f294d8ef6e1079752cd2e1f027a126b44ee27040d949a88f89bddc15f31");
+    price = this.web3Service.getToWei(price).toString();
     const changeData = pasarContract.methods.changeOrderPrice(this.saleOrderId,price).encodeABI();
     const changeTx = {
       from:accSeller.address,
@@ -261,7 +262,7 @@ export class BidPage implements OnInit {
         {
           name: 'price',
           type: 'text',
-          value:this.fixedPrice,
+          value:this.hanldePrice(this.fixedPrice),
           placeholder: 'input change price'
         }
       ],

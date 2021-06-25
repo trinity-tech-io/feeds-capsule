@@ -36,7 +36,7 @@ export class MyApp {
   public sService:any =null;
   private localIdentityConnector = new LocalIdentityConnector();
   private essentialsConnector = new EssentialsConnector();
-  
+
   constructor(
     private events: Events,
     private platform: Platform,
@@ -67,7 +67,7 @@ export class MyApp {
         this.statusBar.backgroundColorByHexString('#f8f8ff');
         this.statusBar.styleDefault();
       }
-      
+
       this.platform.backButton.subscribeWithPriority(9999, () => {
           this.appService.handleBack();
       });
@@ -77,6 +77,7 @@ export class MyApp {
       this.initFeedPublicStatus();
       this.initCurrentFeed();
       this.initDiscoverfeeds();
+      this.initCollectibleSetting();
       // this.native.networkInfoInit();
       this.native.addNetworkListener(()=>{
         this.events.publish(FeedsEvent.PublishType.networkStatusChanged, 1);
@@ -327,5 +328,17 @@ export class MyApp {
       return true;
     }
     return false;
+  }
+
+  initCollectibleSetting(){
+    this.feedService.getData("feeds.collectible.setting").then((collectibleSetting)=>{
+      if(collectibleSetting === null){
+        this.feedService.setCollectibleStatus({});
+        return;
+      }
+      this.feedService.setCollectibleStatus(JSON.parse(collectibleSetting));
+    }).catch(()=>{
+
+    })
   }
 }
