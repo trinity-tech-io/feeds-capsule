@@ -99,19 +99,19 @@
             src="assets/images/loading.png"
             style="width: 100%;"
             (click)="showBigImage(post.nodeId,post.channel_id,post.id)">
-            <!-- <img src="./assets/images/bidfeedslogo.svg" class="bidLogoImg" id={{post.nodeId}}-{{post.channel_id}}-{{post.id}}homebidfeedslogo/>
+            <img src="./assets/images/bidfeedslogo.svg" class="bidLogoImg" id={{post.nodeId}}-{{post.channel_id}}-{{post.id}}homebidfeedslogo/>
             <div class="buyContainer" id={{post.nodeId}}-{{post.channel_id}}-{{post.id}}homebuy>
                <ion-row>
                  <ion-col size="8" class="pricecol">
-                  <span class="price" [class.darkPrice]="theme.darkMode">10 ELA</span>
+                  <span class="price" [class.darkPrice]="theme.darkMode" id={{post.nodeId}}-{{post.channel_id}}-{{post.id}}homeNftPrice> ELA/ETH</span>
                  </ion-col>
                  <ion-col size="4">
-                  <ion-button (click)="buy()">
+                  <ion-button (click)="buy(post)">
                     <ion-label class="buyLabel">{{'BidPage.buy' | translate}}</ion-label>
                   </ion-button>
                  </ion-col>
               </ion-row>
-            </div> -->
+            </div>
             <span class="topostdetailimg" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)"></span>
           </div>
           </div>

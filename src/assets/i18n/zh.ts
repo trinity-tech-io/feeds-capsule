@@ -516,7 +516,8 @@ export const zh = {
     },
     "FeedspreferencesPage":{
         "title": "频道设置",
-        "des": "在探索Pasar中显示"
+        "des": "在探索Pasar中显示",
+        "des1":"发布收藏品到频道"
     },/***NFT*/
     "MintnftPage":{
         "title": "创建收藏品",

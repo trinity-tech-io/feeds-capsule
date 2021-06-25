@@ -11,7 +11,7 @@ import { TitleBarComponent } from '../../..//components/titlebar/titlebar.compon
 import { File,DirectoryEntry} from '@ionic-native/file/ngx';
 import { HttpService } from '../../../services/HttpService';
 import { ApiUrl } from '../../../services/ApiUrl';
-import { takeRightWhile } from 'lodash';
+import { FeedService } from '../../../services/FeedService';
 @Component({
   selector: 'app-mintnft',
   templateUrl: './mintnft.page.html',
@@ -19,6 +19,8 @@ import { takeRightWhile } from 'lodash';
 })
 export class MintnftPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
+  private throwMsgTransDataLimit = 4 * 1000 * 1000;
+  private transDataChannel:FeedsData.TransDataChannel = FeedsData.TransDataChannel.MESSAGE;
   public assetBase64:string = "";
   public nftName:string = "";
   public nftDescription:string = "";
@@ -47,6 +49,7 @@ export class MintnftPage implements OnInit {
     private httpService:HttpService,
     private file:File,
     private web3Service:Web3Service,
+    private feedService:FeedService,
     public theme:ThemeService) { }
 
   ngOnInit() {
@@ -348,7 +351,9 @@ export class MintnftPage implements OnInit {
     return;
   }
 
- let salePrice = this.web3Service.getToWei(this.nftFixedAmount.toString());
+ let price = UtilService.accMul(this.nftFixedAmount,this.nftQuantity);
+ console.log("=======price======="+price);
+ let salePrice = this.web3Service.getToWei(price.toString());
  console.log("=======salePrice======="+salePrice);
 
   const saleData = pasarContract.methods.createOrderForSale(tokenId,this.nftQuantity,salePrice).encodeABI();
@@ -366,6 +371,7 @@ export class MintnftPage implements OnInit {
     alert("public pasar失败");
     return;
    }
+   await this.getSetChannel(tokenId)
    this.native.hideLoading();
    this.native.pop();
    this.native.toast("public pasar sucess");
@@ -423,6 +429,57 @@ compressImage(path:any):Promise<string>{
       }
 
     });
+  }
+
+ async getSetChannel(tokenId:any){
+   let setChannel = this.feedService.getCollectibleStatus();
+   for(let key in setChannel){
+       key = key || "";
+       if(key!=""){
+       let nodeId = key.split("_")[0];
+       let channelId =parseInt(key.split("_")[1]) ;
+       await this.sendPost(tokenId,nodeId,channelId);
+       }
+   }
+  }
+
+  async sendPost(tokenId:any,nodeId:string,channelId:number){
+    let tempPostId = this.feedService.generateTempPostId();
+    this.publishPostThrowMsg(tokenId,nodeId,channelId,tempPostId);
+  }
+
+  async publishPostThrowMsg(tokenId:any,nodeId:string,channelId:number,tempPostId: number){
+
+        let imgSize = this.assetBase64.length;
+        if (imgSize > this.throwMsgTransDataLimit){
+          this.transDataChannel = FeedsData.TransDataChannel.SESSION
+          let memo: FeedsData.SessionMemoData = {
+            feedId    : channelId,
+            postId    : 0,
+            commentId : 0,
+            tempId    : tempPostId
+          }
+          this.feedService.restoreSession(nodeId, memo);
+        }else{
+          this.transDataChannel = FeedsData.TransDataChannel.MESSAGE
+        }
+
+        let imgThumbs: FeedsData.ImgThumb[] = [];
+          let imgThumb: FeedsData.ImgThumb = {
+            index   : 0,
+            imgThumb: this.thumbnail,
+            imgSize : imgSize
+          }
+        imgThumbs.push(imgThumb);
+
+        let nftContent = {};
+        nftContent["version"]="1.0";
+        nftContent["imageThumbnail"] = imgThumbs;
+        nftContent["text"] = this.nftDescription;
+        nftContent["nftTokenId"] = tokenId;
+        //let content = this.feedService.createContent(this.nftDescription,imgThumbs,null);
+        this.feedService.declarePost(nodeId,channelId,JSON.stringify(nftContent),false,tempPostId,
+        this.transDataChannel,this.assetBase64,"");
   }
 
 }

@@ -5,7 +5,7 @@ declare namespace FeedsData{
         /** Title bar title and icons use a dark (dark gray) color. Use this on a light background color. */
         DARK = 1
     }
-    
+
     const enum TitleBarIconSlot {
         /** Icon on title bar's left edge. */
         OUTER_LEFT = 0,
@@ -16,7 +16,7 @@ declare namespace FeedsData{
         /** Icon on title bar's right edge. */
         OUTER_RIGHT = 3
     }
-    
+
     const enum SortType{
         lastUpdateRevert = 0
     }
@@ -84,7 +84,7 @@ declare namespace FeedsData{
         STREAM_STATE_DEACTIVATED         = -205,
         STREAM_STATE_CLOSED              = -206,
         STREAM_STATE_ERROR               = -207,
-        
+
         WRITE_DATA_ERROR                 = -301,
 
         SESSION_CREATE_TIMEOUT           = -300,
@@ -92,7 +92,7 @@ declare namespace FeedsData{
         SESSION_ADD_STREAM_ERROR         = -312,
         SESSION_REQUEST_ERROR            = -313,
         SESSION_START_ERROR              = -314,
-        
+
     }
     const enum TransDataChannel {
         MESSAGE,
@@ -131,7 +131,8 @@ declare namespace FeedsData{
         text            :   string,
         mediaType       :   MediaType,
         videoThumbKey   :   VideoThumbKey,
-        imgThumbKeys    :   ImageThumbKey[]
+        imgThumbKeys    :   ImageThumbKey[],
+        nftTokenId      :   number
     }
 
     type ImgThumb = {
@@ -202,7 +203,7 @@ declare namespace FeedsData{
     const enum MethodType {
         declare_post = "declare_post",
         notify_post = "notify_post",
-        
+
         create_channel = "create_channel",
         publish_post = "publish_post",
         post_comment = "post_comment",
@@ -217,20 +218,20 @@ declare namespace FeedsData{
         get_statistics = "get_statistics",
         subscribe_channel = "subscribe_channel",
         unsubscribe_channel = "unsubscribe_channel",
-      
+
         // add_node_publisher = "add_node_publisher",
         // remove_node_publisher = "remove_node_publisher",
-      
+
         query_channel_creation_permission = "query_channel_creation_permission",
-      
-      
+
+
         negotiateLogin = "negotiate_login",
         confirmLogin = "confirm_login",
 
         post_unlike = "post_unlike",
 
         updateFeedInfo = "update_feedinfo",
-      
+
         editPost = "edit_post",
         deletePost = "delete_post",
 
@@ -251,7 +252,7 @@ declare namespace FeedsData{
 
         get_multi_subscribers_count = "get_multi_subscribers_count",
         get_multi_likes_and_comments_count = "get_multi_likes_and_comments_count",
-        
+
         //PUSH Notification
         newPostNotification = "new_post",
         newCommentNotification = "new_comment",
@@ -285,7 +286,7 @@ declare namespace FeedsData{
         ERROR,
         DISCONNECTED
     }
-    
+
     type FeedUrl = {
         did             : string,
         carrierAddress  : string,
@@ -294,7 +295,7 @@ declare namespace FeedsData{
         feedUrl         : string,
         serverUrl       : string
     }
-    
+
     type ToBeAddedFeed = {
         nodeId          : string
         did             : string
@@ -313,9 +314,9 @@ declare namespace FeedsData{
         ///////////////////////////////
         signInData = "signInData",
         lastSignInData = "lastSignInData",
-      
+
         signInRawData = "signInRawData",
-      
+
         subscribedChannelsMap = "subscribedChannelsMap",
         channelsMap = "channelsMap",
         myChannelsMap = "myChannelsMap",
@@ -327,26 +328,26 @@ declare namespace FeedsData{
         serversStatus = "serversStatus",
         subscribeStatusMap = "subscribeStatusMap",
         likeMap = "likeMap",
-      
+
         // bindingServerMap = "bindingServerMap",
         accessTokenMap = "accessTokenMap",
         credential = "credential",
-      
+
         bindingServer = "bindingServer",
-      
+
         serverMap = "serverMap",
-      
+
         notificationList = "notificationList",
-      
+
         likeCommentMap = "likeCommentMap",
         // lastFeedUpdateMap = "lastFeedUpdateMap",
         lastCommentUpdateMap = "lastCommentUpdateMap",
-      
+
         lastMultiLikesAndCommentsCountUpdateMap = "lastMultiLikesAndCommentsCountUpdateMap",
         lastSubscribedFeedsUpdateMap = "lastSubscribedFeedsUpdateMap",
         serverVersions = "serverVersions",
         isSignOut = "isSignOut",
-      
+
         syncPostStatusMap = "syncPostStatusMap",
         syncCommentStatusMap = "syncCommentStatusMap",
 
@@ -360,20 +361,20 @@ declare namespace FeedsData{
         versionName   : string,
         versionCode   : number
     }
-    
+
     type Likes = {
         nodeId    : string,
         channelId : number,
         postId    : number,
         commentId : number
     }
-    
+
     type BindURLData = {
         did: string;
         carrierAddress: string;
         nonce: string;
     }
-    
+
     type Notification = {
         id: string;
         userName: string;
@@ -383,47 +384,47 @@ declare namespace FeedsData{
         time: number;
         readStatus: number;
     }
-    
+
     type Details = {
         nodeId: string;
         channelId: number;
         postId: number;
         commentId: number;
     }
-    
+
     type SignResult = {
         signingdid: string,
         publickey: string,
         signature: string
     }
-    
+
     type SignIntentResponse = {
         result: SignResult
     }
-    
+
     type PostUpdateTime = {
         nodeId: string,
         channelId: number,
         time:number
     }
-    
+
     type FeedUpdateTime = {
         nodeId: string,
         time:number
     }
-    
+
     type CommentUpdateTime = {
         nodeId: string,
         channelId: number,
         postId: number,
         time: number
     }
-    
+
     type LikesAndCommentsCountUpdateTime = {
         nodeId: string,
         time: number
     }
-    
+
     type ServerStatus = {
         nodeId: string,
         did: string,
@@ -438,12 +439,12 @@ declare namespace FeedsData{
     type PostComment = {
         [commentId: number]: Comment
     }
-    
+
     type MyChannel = {
         nodeId: string,
         channelId: number
     }
-    
+
     type Channels = {
         nodeId:string,
         id: number,
@@ -472,18 +473,18 @@ declare namespace FeedsData{
         status      : FeedsData.PostCommentStatus,
         user_did    : string
     }
-    
+
     type LikedComment = {
         nodeId     : string,
         channel_id : number,
         post_id    : number,
         id         : number,
     }
-    
+
     type ChannelPost = {
         [postId: number]: Post
     }
-    
+
     type Post = {
         nodeId      : string,
         channel_id  : number,
@@ -495,17 +496,17 @@ declare namespace FeedsData{
         updated_at  : number,
         post_status : FeedsData.PostCommentStatus
     }
-    
+
     type PostKey = {
         created_at: number;
     }
-    
+
     type ServerStatistics = {
         did               : string
         connecting_clients: number
         total_clients     : number
     }
-    
+
     type Server = {
         name              : string
         owner             : string
@@ -516,14 +517,14 @@ declare namespace FeedsData{
         feedsUrl          : string
         elaAddress        : string
     }
-    
+
     type SyncPostStatus = {
         nodeId        : string,
         feedsId       : number,
         isSyncFinish  : boolean,
         lastUpdate    : number
     }
-    
+
     type SyncCommentStatus = {
         nodeId        : string,
         feedsId       : number,

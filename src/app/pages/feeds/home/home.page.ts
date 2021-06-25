@@ -937,7 +937,7 @@ clearData(){
   }
 
 
-  handlePsotImg(id:string,srcId:string,rowindex:number){
+ async handlePsotImg(id:string,srcId:string,rowindex:number){
     // 13 存在 12不存在
     let isload = this.isLoadimage[id] || "";
     let rpostimg = document.getElementById(id+"rpostimg");
@@ -952,21 +952,32 @@ clearData(){
           let channelId:any = arr[1];
           let postId:any = arr[2];
          let key = this.feedService.getImgThumbKeyStrFromId(nodeId,channelId,postId,0,0);
+         let nftTokenId = this.isNftTokenId(nodeId, parseInt(channelId),parseInt(postId));
+         let priceDes = "";
+         if(nftTokenId!=""){
+          let price = await this.handlePrice(nftTokenId);
+          priceDes = this.web3Service.getFromWei(price.toString())+" ELA/ETH";
+         }
+
          this.feedService.getData(key).then((imagedata)=>{
               let image = imagedata || "";
               if(image!=""){
                 this.isLoadimage[id] ="13";
                 postImage.setAttribute("src",image);
+                if(nftTokenId != ""){
+                  let  imagesWidth = postImage.clientWidth;
+                  let  homebidfeedslogo = document.getElementById(id+"homebidfeedslogo");
+                  homebidfeedslogo.style.left=(imagesWidth-90)/2+"px";
+                  homebidfeedslogo.style.display="block";
 
-                // let  imagesWidth = postImage.clientWidth;
-                // let  homebidfeedslogo = document.getElementById(id+"homebidfeedslogo");
-                // homebidfeedslogo.style.left=(imagesWidth-90)/2+"px";
-                // homebidfeedslogo.style.display="block";
+                  let homebuy =  document.getElementById(id+"homebuy");
+                  let  homeNftPrice  = document.getElementById(id+"homeNftPrice");
+                  homeNftPrice.innerText = priceDes;
+                  homebuy.style.display="block";
+                }
 
-                // let homebuy =  document.getElementById(id+"homebuy");
-                // homebuy.style.display="block";
+                rpostimg.style.display = "block";
 
-                //rpostimg.style.display = "block";
               }else{
                 this.isLoadimage[id] ="12";
                 rpostimg.style.display = 'none';
@@ -1376,8 +1387,37 @@ clearData(){
     this.feedService.republishOnePost(nodeId, feedId, postId);
   }
 
-  buy(){
-    this.native.navigateForward(['bid'],{queryParams:{"showType":"buy"}});
+ async buy(post:any){
+     let nftTokenId = post.content.nftTokenId || "";
+     if(nftTokenId != ""){
+      let stickerContract = this.web3Service.getSticker();
+      let tokenInfo = await stickerContract.methods.tokenInfo(nftTokenId).call();
+      let tokenId = tokenInfo[0];
+      let tokenIndex = tokenInfo[1];
+      let tokenUri = tokenInfo[3];
+      let tokenNum = tokenInfo[2];
+      let pasarContract = this.web3Service.getPasar();
+      let order = await pasarContract.methods.getOrderById(tokenIndex).call();
+      let price = order[5];
+      let saleOrderId = order[0];
+      let orderState = order[2];
+      console.log("=====orderState======"+orderState);
+      if(orderState==="1"){
+        this.handleBuyNft(tokenUri,tokenId,saleOrderId,price,tokenNum)
+        return;
+      }
+
+      if(orderState==="2"){
+        alert("已出售");
+        return;
+      }
+
+      if(orderState==="3"){
+        alert("已下架");
+        return;
+      }
+
+     }
   }
 
   clickTab(type:string){
@@ -1487,19 +1527,20 @@ async getOpenOrderByIndex(index:any,pasarContract:any,stickerContract:any){
   let tokenId = openOrder[3];
   let saleOrderId = openOrder[0];
   let price = openOrder[5];
-  let feedsUri =  await stickerContract.methods.uri(tokenId).call();
-  this.handleFeedsUrl(feedsUri,tokenId,saleOrderId,price);
+  let tokenInfo = await stickerContract.methods.tokenInfo(tokenId).call();
+  let tokenUri = tokenInfo[3];
+  let tokenNum = tokenInfo[2];
+  this.handleFeedsUrl(tokenUri,tokenId,saleOrderId,price,tokenNum);
 }
 
-handleFeedsUrl(feedsUri:string,tokenId:any,saleOrderId:string,price:any){
+handleBuyNft(feedsUri:string,tokenId:any,saleOrderId:string,price:any,tokenNum:any){
   feedsUri  = feedsUri.replace("feeds:json:","");
-  console.log(feedsUri);
   this.httpService.ajaxGet(ApiUrl.nftGet+feedsUri,false).then((result)=>{
   let type = result["type"] || "single";
   let royalties = result["royalties"] || "1";
-  let quantity = result["quantity"] || "1";
+  let quantity = tokenNum;
   //let fixedAmount = result["fixedAmount"] || "1";
-  let minimumAmount = result["minimumAmount"] || "";
+  //let minimumAmount = result["minimumAmount"] || "";
   let thumbnail = result["thumbnail"] || "";
   if(thumbnail === ""){
     thumbnail = result["image"];
@@ -1511,7 +1552,40 @@ handleFeedsUrl(feedsUri:string,tokenId:any,saleOrderId:string,price:any){
       "name":result["name"],
       "description":result["description"],
       "fixedAmount":price,
-      "minimumAmount":minimumAmount,
+      //"minimumAmount":minimumAmount,
+      "kind":result["kind"],
+      "type":type,
+      "royalties":royalties,
+      "quantity":quantity,
+      "thumbnail":thumbnail
+  }
+  item["showType"] = "buy";
+  this.native.navigateForward(['bid'],{queryParams:item});
+  }).catch(()=>{
+
+  });
+}
+
+handleFeedsUrl(feedsUri:string,tokenId:any,saleOrderId:string,price:any,tokenNum:any){
+  feedsUri  = feedsUri.replace("feeds:json:","");
+  this.httpService.ajaxGet(ApiUrl.nftGet+feedsUri,false).then((result)=>{
+  let type = result["type"] || "single";
+  let royalties = result["royalties"] || "1";
+  let quantity = tokenNum;
+  //let fixedAmount = result["fixedAmount"] || "1";
+  //let minimumAmount = result["minimumAmount"] || "";
+  let thumbnail = result["thumbnail"] || "";
+  if(thumbnail === ""){
+    thumbnail = result["image"];
+  }
+  let item = {
+      "saleOrderId":saleOrderId,
+      "tokenId":tokenId,
+      "asset":result["image"],
+      "name":result["name"],
+      "description":result["description"],
+      "fixedAmount":price,
+      //"minimumAmount":minimumAmount,
       "kind":result["kind"],
       "type":type,
       "royalties":royalties,
@@ -1532,5 +1606,33 @@ clickAssetItem(assetitem:any){
   assetitem["showType"] = "buy";
   this.native.navigateForward(['bid'],{queryParams:assetitem});
 }
+
+isNftTokenId(nodeId:string,channelId:number,postId:number){
+
+ let post =   _.find(this.postList,(item)=>{
+     return (item.nodeId===nodeId&&item.channel_id === channelId && item.id === postId )
+  }) || {};
+
+  let nftTokenId = post.content.nftTokenId || "";
+  if(nftTokenId != ""){
+    return nftTokenId;
+  }
+  return "";
+}
+
+async handlePrice(nftTokenId:any){
+  let price = 1;
+  if(nftTokenId != ""){
+  let stickerContract = this.web3Service.getSticker();
+  let tokenInfo = await stickerContract.methods.tokenInfo(nftTokenId).call();
+  let tokenIndex = tokenInfo[1];
+  let pasarContract = this.web3Service.getPasar();
+  let order = await pasarContract.methods.getOrderById(tokenIndex).call();
+  price = order[5];
+  }
+  return price;
+}
+
+
 
 }
