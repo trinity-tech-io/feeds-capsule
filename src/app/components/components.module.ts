@@ -7,6 +7,7 @@ import { QRCodeModule } from 'angularx-qrcode';
 
 import { ServerpromptComponent} from './serverprompt/serverprompt.component';
 import { PaypromptComponent } from './payprompt/payprompt.component';
+import { NftdialogComponent } from './../components/nftdialog/nftdialog.component';
 import { TipdialogComponent} from './tipdialog/tipdialog.component';
 import { MorenameComponent} from './morename/morename.component';
 
@@ -58,6 +59,7 @@ import { TitlebarmenuitemComponent } from './titlebarmenuitem/titlebarmenuitem.c
     MorenameComponent,
     TipdialogComponent,
     PaypromptComponent,
+    NftdialogComponent,
     PreviewqrcodeComponent,
     ServerpromptComponent,
     MyfeedsComponent,
@@ -81,6 +83,7 @@ import { TitlebarmenuitemComponent } from './titlebarmenuitem/titlebarmenuitem.c
     MorenameComponent,
     TipdialogComponent,
     PaypromptComponent,
+    NftdialogComponent,
     PreviewqrcodeComponent,
     ServerpromptComponent,
     MyfeedsComponent,
@@ -101,6 +104,6 @@ import { TitlebarmenuitemComponent } from './titlebarmenuitem/titlebarmenuitem.c
   providers: [
   ],
   entryComponents: [VideofullscreenComponent,AlertdialogComponent,ConfirmdialogComponent,MorenameComponent,TipdialogComponent,ServerpromptComponent,
-    PaypromptComponent,PreviewqrcodeComponent],
+    PaypromptComponent,NftdialogComponent,PreviewqrcodeComponent],
 })
 export class ComponentsModule { }

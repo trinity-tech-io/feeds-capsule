@@ -1397,7 +1397,7 @@ clearData(){
       let tokenUri = tokenInfo[3];
       let tokenNum = tokenInfo[2];
       let pasarContract = this.web3Service.getPasar();
-      let order = await pasarContract.methods.getOrderById(tokenIndex).call();
+      let order = await pasarContract.methods.getOrderById(tokenIndex-1).call();
       let price = order[5];
       let saleOrderId = order[0];
       let orderState = order[2];
@@ -1627,8 +1627,13 @@ async handlePrice(nftTokenId:any){
   let tokenInfo = await stickerContract.methods.tokenInfo(nftTokenId).call();
   let tokenIndex = tokenInfo[1];
   let pasarContract = this.web3Service.getPasar();
-  let order = await pasarContract.methods.getOrderById(tokenIndex).call();
-  price = order[5];
+  try{
+    let order = await pasarContract.methods.getOrderById(tokenIndex-1).call();
+     price = order[5];
+  }catch(err){
+
+  }
+
   }
   return price;
 }

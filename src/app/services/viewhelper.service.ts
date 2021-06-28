@@ -8,6 +8,7 @@ import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent }  from './../components/titlebar/titlebar.component';
 import { MorenameComponent} from './../components/morename/morename.component';
 import { PaypromptComponent } from './../components/payprompt/payprompt.component';
+import { NftdialogComponent } from './../components/nftdialog/nftdialog.component';
 
 @Injectable()
 export class ViewHelper {
@@ -121,6 +122,22 @@ export class ViewHelper {
             "defalutMemo": "",
             "nodeId":nodeId,
             "channelId":channelId
+            }
+        });
+        popover.onWillDismiss().then(() => {
+            popover = null;
+        });
+        return await popover.present();
+    }
+
+    async showNftPrompt(assItem:any,title:any){
+        let popover = await this.popoverController.create({
+            mode: 'ios',
+            cssClass: 'PaypromptComponent',
+            component: NftdialogComponent ,
+            componentProps: {
+            "title": this.translate.instant(title),
+            "assItem":assItem,
             }
         });
         popover.onWillDismiss().then(() => {

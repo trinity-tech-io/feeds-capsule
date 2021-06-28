@@ -1,0 +1,33 @@
+<ion-grid class="container" [class.darkContainer]="theme.darkMode">
+  <ion-row>
+    <ion-col size="12" class="paytitle">
+       <p class="paytitle">{{ title }}</p>
+    </ion-col>
+    <ion-col size="12" style="display:flex;justify-content: center;">
+           <img src={{hanldeImg()}} style="width:100%;height:170px;border-radius:10px;"/>
+    </ion-col>
+  </ion-row>
+  <ion-row class="borderbottom">
+    <ion-col size="12">
+      <p class="key">{{ 'DonationPage.amount' | translate }}</p>
+    </ion-col>
+    <ion-col size="8">
+      <ion-input type="number" clearInput autofocus [placeholder]="'DonationPage.enterAmount' | translate" [(ngModel)]="amount" class="nameValue"></ion-input>
+    </ion-col>
+    <ion-col size="4" class="logo">
+          <span>ELA/ETH</span> <img src="/assets/images/solidEla.svg" *ngIf="!theme.darkMode">
+              <img src="/assets/images/darkmode/solidEla.svg" *ngIf="theme.darkMode">
+    </ion-col>
+  </ion-row>
+
+  <ion-row class="btns-row" [class.dark-btns-row]="theme.darkMode" style="margin-top:20px;">
+    <ion-col class="btn cancel2 ion-activatable ripple" size="5.6" (click)="cancel()">
+      <ion-label>{{ 'common.cancel' | translate }}</ion-label>
+      <ion-ripple-effect></ion-ripple-effect>
+    </ion-col>
+    <ion-col class="btn confirm ion-activatable ripple" size="5.6" (click)="confirm()">
+      <ion-label>{{ 'common.confirm' | translate }}</ion-label>
+      <ion-ripple-effect></ion-ripple-effect>
+    </ion-col>
+  </ion-row>
+</ion-grid>

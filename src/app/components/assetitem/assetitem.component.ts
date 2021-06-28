@@ -7,8 +7,10 @@ import { Web3Service } from '../../services/Web3Service';
   styleUrls: ['./assetitem.component.scss'],
 })
 export class AssetitemComponent implements OnInit {
+  @Input () type = "";
   @Input () assetItem:any = null;
   @Output() clickAssetItem = new EventEmitter();
+  @Output() clickMore = new EventEmitter();
   constructor(
     private web3Service:Web3Service
   ) { }
@@ -17,6 +19,11 @@ export class AssetitemComponent implements OnInit {
 
   clickItem(){
     this.clickAssetItem.emit(this.assetItem);
+  }
+
+  more(){
+    let obj = {"type":this.type,"assetItem":this.assetItem}
+    this.clickMore.emit(obj);
   }
 
   hanldeImg(imgUri:string){
