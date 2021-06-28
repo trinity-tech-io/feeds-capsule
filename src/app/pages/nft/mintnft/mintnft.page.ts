@@ -371,7 +371,8 @@ export class MintnftPage implements OnInit {
     alert("public pasar失败");
     return;
    }
-   await this.getSetChannel(tokenId)
+   //console.log("======receipt======"+JSON.stringify(receipt))
+   await this.getSetChannel(tokenId);
    this.native.hideLoading();
    this.native.pop();
    this.native.toast("public pasar sucess");
@@ -434,8 +435,8 @@ compressImage(path:any):Promise<string>{
  async getSetChannel(tokenId:any){
    let setChannel = this.feedService.getCollectibleStatus();
    for(let key in setChannel){
-       key = key || "";
-       if(key!=""){
+       let value = setChannel[key] || "";
+       if(value){
        let nodeId = key.split("_")[0];
        let channelId =parseInt(key.split("_")[1]) ;
        await this.sendPost(tokenId,nodeId,channelId);

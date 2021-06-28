@@ -9,7 +9,10 @@ import { TitleBarService } from '../../../services/TitleBarService';
 import { TitleBarComponent } from '../../..//components/titlebar/titlebar.component';
 import { Web3Service } from '../../../services/Web3Service';
 import { HttpService } from '../../../services/HttpService';
+import { MenuService } from 'src/app/services/MenuService';
 import { ApiUrl } from '../../../services/ApiUrl';
+import _ from 'lodash';
+
 @Component({
   selector: 'app-collections',
   templateUrl: './collections.page.html',
@@ -35,7 +38,8 @@ export class CollectionsPage implements OnInit {
     private titleBarService:TitleBarService,
     private web3Service:Web3Service,
     private httpService:HttpService,
-    public theme:ThemeService,) { }
+    private menuService: MenuService,
+    public theme:ThemeService) { }
 
   ngOnInit(){
     this.activatedRoute.queryParams.subscribe(queryParams => {
@@ -68,10 +72,17 @@ export class CollectionsPage implements OnInit {
     this.event.subscribe(FeedsEvent.PublishType.updateTitle,()=>{
       this.initTile();
     });
+
+    this.event.subscribe(FeedsEvent.PublishType.nftCancelOrder,(saleOrderId)=>{
+        this.onSaleList =  _.filter(this.onSaleList,(item)=>{
+          return item.saleOrderId!=saleOrderId; }
+        );
+    });
    }
 
    removeEvent(){
     this.event.unsubscribe(FeedsEvent.PublishType.updateTitle);
+    this.event.unsubscribe(FeedsEvent.PublishType.nftCancelOrder);
    }
 
    changeType(type:string){
@@ -119,11 +130,29 @@ export class CollectionsPage implements OnInit {
 
  async getTotalSupply(){
   const pasarContract = this.web3Service.getPasar();
-  let openOrderCount =  await pasarContract.methods.getOpenOrderCount().call();
-  for(let index =0; index<openOrderCount;index++){
-      this.tokenIdByIndex(pasarContract,index);
+  //let openOrderCount =  await pasarContract.methods.getOpenOrderCount().call();
+  let stickerContract = this.web3Service.getSticker();
+  let countOfOwner =  await stickerContract.methods.tokenCountOfOwner('0xf36dA13891027Fd074bCE86E1669E5364F85613A').call();
+  for(let index =0; index<countOfOwner;index++){
+      //this.tokenIdByIndex(pasarContract,index);
+     let tokenId =  await stickerContract.methods.tokenIdOfOwnerByIndex('0xf36dA13891027Fd074bCE86E1669E5364F85613A',index).call();
+     let tokenInfo =  await stickerContract.methods.tokenInfo(tokenId).call();
+     let tokenIndex = tokenInfo[1];
+     let price = "0";
+     try{
+      let order =  await pasarContract.methods.getOrderById(tokenIndex-1).call();
+          price = order[5];
+          console.log("=====price===="+price);
+     }catch{
+
+     }
+     let tokenNum =  tokenInfo[1];
+     let tokenUri = tokenInfo[3];
+     this.getUri(tokenId,price,tokenUri,tokenNum);
   }
 }
+
+
 
 async tokenIdByIndex(pasarContract:any,index:any){
    let openOrder =  await pasarContract.methods.getOpenOrderByIndex(index).call();
@@ -291,4 +320,19 @@ async handleBuyOrder(pasarContract:any,buyerAddr:any,orderCount:any){
      });
   }
 }
+
+clickMore(parm:any){
+  let type = parm["type"];
+  let asstItem = parm["assetItem"];
+  switch(type){
+     case "CollectionsPage.onSale":
+       this.handleOnSale(asstItem);
+       break;
+  }
+}
+
+handleOnSale(asstItem:any){
+ this.menuService.showOnSaleMenu(asstItem);
+}
+
 }

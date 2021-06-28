@@ -5,6 +5,9 @@ import { FeedService } from './FeedService';
 import { NativeService } from './NativeService';
 import { PopupProvider } from 'src/app/services/popup';
 import { IntentService } from 'src/app/services/IntentService';
+import { ViewHelper } from 'src/app/services/viewhelper.service';
+import { Web3Service } from 'src/app/services/Web3Service';
+import { Events } from 'src/app/services/events.service';
 
 @Injectable()
 
@@ -13,11 +16,13 @@ export class MenuService {
     public channelId:number =0;
     public postId:number =0;
     public commentId:number = 0;
+    public saleOrderId:any = "";
 
     public postDetail:any = null;
     public popover:any = null;
     public commentPostDetail:any = null;
     public replyDetail:any = null;
+    public onSaleMenu:any = null;
 
     constructor(
         private feedService: FeedService,
@@ -25,7 +30,10 @@ export class MenuService {
         private translate: TranslateService,
         private native: NativeService,
         public popupProvider:PopupProvider,
-        private intentService: IntentService
+        private intentService: IntentService,
+        private viewHelper:ViewHelper,
+        private web3Service:Web3Service,
+        private events:Events,
     ) {
     }
 
@@ -580,4 +588,86 @@ export class MenuService {
         })
         await this.replyDetail.present();
     }
+
+   async showOnSaleMenu(assItem:any){
+        this.saleOrderId = assItem.saleOrderId || "";;
+        this.onSaleMenu = await this.actionSheetController.create({
+            cssClass: 'editPost',
+            buttons: [
+            {
+                    text: this.translate.instant("BidPage.changePrice"),
+                    icon: 'create',
+                    handler: () => {
+                       this.viewHelper.showNftPrompt(assItem,"BidPage.changePrice");
+                    }
+            },
+            {
+                text: this.translate.instant("BidPage.cancelOrder"),
+                role: 'destructive',
+                icon: 'trash',
+                handler: () => {
+                    this.popover = this.popupProvider.ionicConfirm(this,"BidPage.cancelOrder","BidPage.cancelOrder",this.cancelOnSaleMenu,this.confirmOnSaleMenu,'./assets/images/shanchu.svg');
+                }
+            },
+            {
+                text: this.translate.instant("common.cancel"),
+                role: 'cancel',
+                icon: 'close-circle',
+                handler: () => {
+                    if(this.onSaleMenu!=null){
+                       this.onSaleMenu.dismiss();
+                    }
+                }
+            }
+        ]
+        });
+
+        this.onSaleMenu.onWillDismiss().then(()=>{
+            if(this.onSaleMenu!=null){
+                this.onSaleMenu  = null;
+            }
+
+        })
+        await this.onSaleMenu.present();
+    }
+
+    cancelOnSaleMenu(){
+      if(this.popover!=null){
+         this.popover.dismiss();
+      }
+    }
+
+    confirmOnSaleMenu(that:any){
+        if(this.popover!=null){
+            this.popover.dismiss();
+        }
+        that.native.showLoading("common.waitMoment",()=>{},50000).then(()=>{
+            that.cancelOrder(that);
+          }).catch(()=>{
+            that.native.hideLoading();
+          })
+    }
+
+    async cancelOrder(that:any){
+        let pasarAddr = that.web3Service.getPasarAddr();
+        let pasarContract = that.web3Service.getPasar();
+        const accSeller = await that.web3Service.getAccount("04868f294d8ef6e1079752cd2e1f027a126b44ee27040d949a88f89bddc15f31");
+
+        const cancelData = pasarContract.methods.cancelOrder(this.saleOrderId).encodeABI();
+        const cancelTx = {
+          from: accSeller.address,
+          to: pasarAddr,
+          value: 0,
+          data: cancelData,
+        };
+        const { status: cancelStatus } = await that.web3Service.sendTxWaitForReceipt(cancelTx, accSeller);
+        that.native.hideLoading();
+        if(cancelStatus!=""&&cancelStatus!=undefined){
+         that.events.publish(FeedsEvent.PublishType.nftCancelOrder,this.saleOrderId);
+         alert("=====cancel Order sucess====");
+          //this.native.navigateForward(['confirmation'],{queryParams:{"showType":"buy"}});
+        }else{
+          alert("=====cancel Order fail====");
+        }
+       }
 }

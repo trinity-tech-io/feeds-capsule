@@ -220,7 +220,7 @@ export class BidPage implements OnInit {
     }else{
       alert("=====change Order Price fail====");
     }
-   }
+ }
 
   clickCancelOrder(){
     this.native.showLoading("common.waitMoment").then(()=>{
