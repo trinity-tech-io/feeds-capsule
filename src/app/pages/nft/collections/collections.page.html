@@ -27,8 +27,10 @@
      <ion-row *ngIf="selectType === 'CollectionsPage.created'&&createdList.length>0" class="leftrightrow">
       <ion-col size="6" *ngFor="let item of createdList">
         <app-assetitem
+        [type] = "selectType"
         [assetItem] = "item"
-        (clickAssetItem) = "clickAssetItem(item)"
+        (clickAssetItem) = "clickAssetItem($event)"
+        (clickMore) = "clickMore($event)"
         >
         </app-assetitem>
       </ion-col>
@@ -51,8 +53,10 @@
     <ion-row *ngIf="selectType === 'CollectionsPage.purchased'&&purchasedList.length>0" class="leftrightrow">
      <ion-col size="6"  *ngFor="let item of purchasedList">
        <app-assetitem
+       [type] = "selectType"
        [assetItem] = "item"
-       (clickAssetItem) = "clickAssetItem(item)"
+       (clickAssetItem) = "clickAssetItem($event)"
+       (clickMore) = "clickMore($event)"
        >
        </app-assetitem>
      </ion-col>

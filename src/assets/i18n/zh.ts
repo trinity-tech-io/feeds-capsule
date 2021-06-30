@@ -585,7 +585,9 @@ export const zh = {
         "likes": "喜欢",
         "emptylikes": "给喜欢的收藏品点个赞",
         "emptypurchased": "去购买收藏品吧",
-        "onSale":"拍卖"
+        "onSale":"拍卖",
+        "putOnSale":"出售",
+        "price":"价格"
     },
     "ConfirmationPage":{
         "title": "确认",

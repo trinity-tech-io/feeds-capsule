@@ -952,10 +952,10 @@ clearData(){
           let channelId:any = arr[1];
           let postId:any = arr[2];
          let key = this.feedService.getImgThumbKeyStrFromId(nodeId,channelId,postId,0,0);
-         let nftTokenId = this.isNftTokenId(nodeId, parseInt(channelId),parseInt(postId));
+         let nftOrdeId = this.isNftOrderId(nodeId, parseInt(channelId),parseInt(postId));
          let priceDes = "";
-         if(nftTokenId!=""){
-          let price = await this.handlePrice(nftTokenId);
+         if(nftOrdeId!=""){
+          let price = await this.handlePrice(nftOrdeId);
           priceDes = this.web3Service.getFromWei(price.toString())+" ELA/ETH";
          }
 
@@ -964,7 +964,7 @@ clearData(){
               if(image!=""){
                 this.isLoadimage[id] ="13";
                 postImage.setAttribute("src",image);
-                if(nftTokenId != ""){
+                if(nftOrdeId != ""){
                   let  imagesWidth = postImage.clientWidth;
                   let  homebidfeedslogo = document.getElementById(id+"homebidfeedslogo");
                   homebidfeedslogo.style.left=(imagesWidth-90)/2+"px";
@@ -1388,22 +1388,21 @@ clearData(){
   }
 
  async buy(post:any){
-     let nftTokenId = post.content.nftTokenId || "";
-     if(nftTokenId != ""){
+     let nftOrderId = post.content.nftOrderId || "";
+     if(nftOrderId != ""){
       let stickerContract = this.web3Service.getSticker();
-      let tokenInfo = await stickerContract.methods.tokenInfo(nftTokenId).call();
-      let tokenId = tokenInfo[0];
-      let tokenIndex = tokenInfo[1];
-      let tokenUri = tokenInfo[3];
-      let tokenNum = tokenInfo[2];
       let pasarContract = this.web3Service.getPasar();
-      let order = await pasarContract.methods.getOrderById(tokenIndex-1).call();
+      let order = await pasarContract.methods.getOrderById(nftOrderId).call();
+      let tokenId = order[3];
+      let tokenNum = order[4];
+      let tokenInfo = await stickerContract.methods.tokenInfo(tokenId).call();
+      let tokenUri = tokenInfo[3];
       let price = order[5];
       let saleOrderId = order[0];
       let orderState = order[2];
-      console.log("=====orderState======"+orderState);
+      let sellerAddr = order[7] || "";
       if(orderState==="1"){
-        this.handleBuyNft(tokenUri,tokenId,saleOrderId,price,tokenNum)
+        this.handleBuyNft(tokenUri,tokenId,saleOrderId,price,tokenNum,sellerAddr);
         return;
       }
 
@@ -1533,7 +1532,7 @@ async getOpenOrderByIndex(index:any,pasarContract:any,stickerContract:any){
   this.handleFeedsUrl(tokenUri,tokenId,saleOrderId,price,tokenNum);
 }
 
-handleBuyNft(feedsUri:string,tokenId:any,saleOrderId:string,price:any,tokenNum:any){
+handleBuyNft(feedsUri:string,tokenId:any,saleOrderId:string,price:any,tokenNum:any,sellerAddr:any){
   feedsUri  = feedsUri.replace("feeds:json:","");
   this.httpService.ajaxGet(ApiUrl.nftGet+feedsUri,false).then((result)=>{
   let type = result["type"] || "single";
@@ -1552,12 +1551,12 @@ handleBuyNft(feedsUri:string,tokenId:any,saleOrderId:string,price:any,tokenNum:a
       "name":result["name"],
       "description":result["description"],
       "fixedAmount":price,
-      //"minimumAmount":minimumAmount,
       "kind":result["kind"],
       "type":type,
       "royalties":royalties,
       "quantity":quantity,
-      "thumbnail":thumbnail
+      "thumbnail":thumbnail,
+      "sellerAddr":sellerAddr
   }
   item["showType"] = "buy";
   this.native.navigateForward(['bid'],{queryParams:item});
@@ -1604,31 +1603,29 @@ handleFeedsUrl(feedsUri:string,tokenId:any,saleOrderId:string,price:any,tokenNum
 
 clickAssetItem(assetitem:any){
   assetitem["showType"] = "buy";
+  console.log("====assItem===="+JSON.stringify(assetitem));
   this.native.navigateForward(['bid'],{queryParams:assetitem});
 }
 
-isNftTokenId(nodeId:string,channelId:number,postId:number){
+isNftOrderId(nodeId:string,channelId:number,postId:number){
 
  let post =   _.find(this.postList,(item)=>{
      return (item.nodeId===nodeId&&item.channel_id === channelId && item.id === postId )
   }) || {};
 
-  let nftTokenId = post.content.nftTokenId || "";
-  if(nftTokenId != ""){
-    return nftTokenId;
+  let nftOrderId = post.content.nftOrderId || "";
+  if(nftOrderId != ""){
+    return nftOrderId;
   }
   return "";
 }
 
-async handlePrice(nftTokenId:any){
+async handlePrice(nftOrdeId:any){
   let price = 1;
-  if(nftTokenId != ""){
-  let stickerContract = this.web3Service.getSticker();
-  let tokenInfo = await stickerContract.methods.tokenInfo(nftTokenId).call();
-  let tokenIndex = tokenInfo[1];
+  if(nftOrdeId != ""){
   let pasarContract = this.web3Service.getPasar();
   try{
-    let order = await pasarContract.methods.getOrderById(tokenIndex-1).call();
+    let order = await pasarContract.methods.getOrderById(nftOrdeId).call();
      price = order[5];
   }catch(err){
 

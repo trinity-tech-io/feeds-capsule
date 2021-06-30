@@ -77,19 +77,6 @@
 
      <!--- buy BUTTONS --->
      <div class="btns" *ngIf="showType==='buy'">
-
-      <ion-row class="btn-row">
-        <ion-button (click)="clickCancelOrder()" style="height:48px;">
-          <ion-label style="font-weight:bold;font-stretch:normal;font-style:normal;color:#ffffff;">{{'BidPage.cancelOrder' | translate}}</ion-label>
-        </ion-button>
-      </ion-row>
-
-      <ion-row class="btn-row">
-        <ion-button (click)="clickChangePrice()" style="height:48px;">
-          <ion-label style="font-weight:bold;font-stretch:normal;font-style:normal;color:#ffffff;">{{'BidPage.changePrice' | translate}}</ion-label>
-        </ion-button>
-      </ion-row>
-
       <ion-row class="btn-row">
         <ion-button (click)="clickBuy()" style="height:48px;">
           <ion-label style="font-weight:bold;font-stretch:normal;font-style:normal;color:#ffffff;">{{'BidPage.buy' | translate}}</ion-label>

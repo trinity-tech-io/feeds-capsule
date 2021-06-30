@@ -1,5 +1,4 @@
 import { Component,OnInit,ViewChild} from '@angular/core';
-import { AlertController} from '@ionic/angular';
 import { TranslateService } from "@ngx-translate/core";
 import { ActivatedRoute } from '@angular/router';
 import { ThemeService } from '../../../services/theme.service';
@@ -40,7 +39,6 @@ export class BidPage implements OnInit {
   public saleOrderId:string = null;
   public sellerAddress:string = null;
   constructor(
-    private alertController:AlertController,
     private translate:TranslateService,
     private event:Events,
     private native:NativeService,
@@ -150,7 +148,8 @@ export class BidPage implements OnInit {
    }
 
    clickBuy(){
-    this.native.showLoading("common.waitMoment").then(()=>{
+    this.native.showLoading("common.waitMoment",(isDismiss)=>{
+    },60000).then(()=>{
        this.buy();
    }).catch(()=>{
     this.native.hideLoading();
@@ -158,6 +157,8 @@ export class BidPage implements OnInit {
    }
 
   async buy(){
+    //let price = UtilService.accMul(this.fixedPrice,this.quantity).toString();
+    //console.log("=====price====="+price);
     let pasarAddr = this.web3Service.getPasarAddr();
     const accBuyer = await this.web3Service.getAccount("04868f294d8ef6e1079752cd2e1f027a126b44ee27040d949a88f89bddc15f31");
     let pasarContract = this.web3Service.getPasar();
@@ -175,8 +176,8 @@ export class BidPage implements OnInit {
     } = await this.web3Service.sendTxWaitForReceipt(purchaseTx, accBuyer);
     this.native.hideLoading();
     if(purchaseStatus!=""&&purchaseStatus!=undefined){
+        alert("buy sucess")
         this.native.pop();
-        //this.native.navigateForward(['confirmation'],{queryParams:{"showType":"buy"}});
     }else{
       alert("=====purchase fail====");
     }
@@ -193,108 +194,6 @@ export class BidPage implements OnInit {
     }
     return imgUri;
    }
-
-  clickChangePrice(){
-    this.presentAlertPrompt();
-  }
-
- async changePrice(price:any){
-
-    let pasarAddr = this.web3Service.getPasarAddr();
-    let pasarContract = this.web3Service.getPasar();
-    const accSeller = await this.web3Service.getAccount("04868f294d8ef6e1079752cd2e1f027a126b44ee27040d949a88f89bddc15f31");
-    price = this.web3Service.getToWei(price).toString();
-    const changeData = pasarContract.methods.changeOrderPrice(this.saleOrderId,price).encodeABI();
-    const changeTx = {
-      from:accSeller.address,
-      to: pasarAddr,
-      value: 0,
-      data: changeData,
-    };
-    const { status: changeStatus } = await this.web3Service.sendTxWaitForReceipt(changeTx, accSeller);
-    this.native.hideLoading();
-    if(changeStatus!=""&&changeStatus!=undefined){
-      alert("=====change Order Price sucess====");
-      this.native.pop();
-      //this.native.navigateForward(['confirmation'],{queryParams:{"showType":"buy"}});
-    }else{
-      alert("=====change Order Price fail====");
-    }
- }
-
-  clickCancelOrder(){
-    this.native.showLoading("common.waitMoment").then(()=>{
-      this.cancelOrder();
-   }).catch(()=>{
-    this.native.hideLoading();
-   });
-  }
-
-  async cancelOrder(){
-
-    let pasarAddr = this.web3Service.getPasarAddr();
-    let pasarContract = this.web3Service.getPasar();
-    const accSeller = await this.web3Service.getAccount("04868f294d8ef6e1079752cd2e1f027a126b44ee27040d949a88f89bddc15f31");
-
-    const cancelData = pasarContract.methods.cancelOrder(this.saleOrderId).encodeABI();
-    const cancelTx = {
-      from: accSeller.address,
-      to: pasarAddr,
-      value: 0,
-      data: cancelData,
-    };
-    const { status: cancelStatus } = await this.web3Service.sendTxWaitForReceipt(cancelTx, accSeller);
-    this.native.hideLoading();
-    if(cancelStatus!=""&&cancelStatus!=undefined){
-      alert("=====cancel Order sucess====");
-      this.native.pop();
-      //this.native.navigateForward(['confirmation'],{queryParams:{"showType":"buy"}});
-    }else{
-      alert("=====cancel Order fail====");
-    }
-   }
-
-   async presentAlertPrompt() {
-    const alert = await this.alertController.create({
-      cssClass: 'my-custom-class',
-      header: 'Prompt!',
-      inputs: [
-        {
-          name: 'price',
-          type: 'text',
-          value:this.hanldePrice(this.fixedPrice),
-          placeholder: 'input change price'
-        }
-      ],
-      buttons: [
-        {
-          text: 'Cancel',
-          role: 'cancel',
-          cssClass: 'secondary',
-          handler: () => {
-
-          }
-        }, {
-          text: 'Ok',
-          handler: (result) => {
-            let price = result["price"] || "";
-            if(price === ""){
-              this.native.toast("input change price")
-              return false;
-            }
-            this.native.showLoading("common.waitMoment").then(()=>{
-              this.changePrice(price);
-           }).catch(()=>{
-            this.native.hideLoading();
-           });
-
-          }
-        }
-      ]
-    });
-
-    await alert.present();
-  }
 
   hanldePrice(price:string){
     return this.web3Service.getFromWei(price);

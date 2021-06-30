@@ -584,7 +584,9 @@ export const en = {
         "likes": "Likes",
         "emptylikes": "Give a like to collectible you like",
         "emptypurchased": "Go to buy collectibles",
-        "onSale":"On Sale"
+        "onSale":"On Sale",
+        "putOnSale":"Put On Sale",
+        "price":"Price"
     },
     "ConfirmationPage":{
         "title": "Confirmation",

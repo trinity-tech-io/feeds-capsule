@@ -78,11 +78,41 @@ export class CollectionsPage implements OnInit {
           return item.saleOrderId!=saleOrderId; }
         );
     });
+
+    this.event.subscribe(FeedsEvent.PublishType.nftUpdateList,(obj)=>{
+      let type = obj["type"];
+      switch(type){
+        case "buy":
+          let assItem = obj["assItem"];
+          let saleOrderId = assItem["saleOrderId"];
+          this.purchasedList =  _.filter(this.purchasedList,(item)=>{
+            return item.saleOrderId!=saleOrderId; }
+          );
+          break;
+        case "created":
+          let cAssItem = obj["assItem"];
+          let cSaleOrderId = cAssItem["saleOrderId"] || "";
+          if(cSaleOrderId!=""){
+            this.createdList =  _.filter(this.createdList,(item)=>{
+              return item.saleOrderId!=cSaleOrderId; }
+            );
+          }else{
+            let tokenId = cAssItem["tokenId"] || "";
+            this.createdList =  _.filter(this.createdList,(item)=>{
+              return item.tokenId!=tokenId; }
+            );
+          }
+          break;
+      }
+
+  });
+
    }
 
    removeEvent(){
     this.event.unsubscribe(FeedsEvent.PublishType.updateTitle);
     this.event.unsubscribe(FeedsEvent.PublishType.nftCancelOrder);
+    this.event.unsubscribe(FeedsEvent.PublishType.nftUpdateList);
    }
 
    changeType(type:string){
@@ -323,16 +353,31 @@ async handleBuyOrder(pasarContract:any,buyerAddr:any,orderCount:any){
 
 clickMore(parm:any){
   let type = parm["type"];
+  console.log("===type==="+type);
   let asstItem = parm["assetItem"];
   switch(type){
      case "CollectionsPage.onSale":
        this.handleOnSale(asstItem);
        break;
+      case "CollectionsPage.purchased":
+       this.handleBuy(asstItem);
+       break;
+      case "CollectionsPage.created":
+        this.handleCreated(asstItem);
+        break;
   }
 }
 
 handleOnSale(asstItem:any){
  this.menuService.showOnSaleMenu(asstItem);
+}
+
+handleBuy(asstItem:any){
+  this.menuService.showBuyMenu(asstItem);
+}
+
+handleCreated(asstItem:any){
+  this.menuService.showCreatedMenu(asstItem);
 }
 
 }
