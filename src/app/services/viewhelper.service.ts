@@ -130,7 +130,7 @@ export class ViewHelper {
         return await popover.present();
     }
 
-    async showNftPrompt(assItem:any,title:any){
+    async showNftPrompt(assItem:any,title:any,type:any){
         let popover = await this.popoverController.create({
             mode: 'ios',
             cssClass: 'PaypromptComponent',
@@ -138,6 +138,7 @@ export class ViewHelper {
             componentProps: {
             "title": this.translate.instant(title),
             "assItem":assItem,
+            "menuType":type
             }
         });
         popover.onWillDismiss().then(() => {

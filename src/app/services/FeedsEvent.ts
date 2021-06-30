@@ -145,7 +145,8 @@ declare namespace FeedsEvent{
         addConnectionChanged = "feeds:addConnectionChanged",
         addRpcRequestError = "feeds:addRpcRequestError",
         addRpcResponseError = "feeds:addRpcResponseError",
-        nftCancelOrder ="feeds:nftCancelOrder"
+        nftCancelOrder ="feeds:nftCancelOrder",
+        nftUpdateList = "feeds:nftUpdateList"
     }
 
     type TipDialogData = {

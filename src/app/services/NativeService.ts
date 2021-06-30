@@ -91,10 +91,11 @@ export class NativeService {
     public async showLoading(content: string = '', dismissCallback?: (isDissmiss: boolean) => void, durationTime: number = 30000) {
         content = this.translate.instant(content);
         let isTimeout = false;
-        setTimeout(()=>{
+        let sid =setTimeout(()=>{
             isTimeout = true;
+            clearTimeout(sid);
         },durationTime);
-        
+
         this.loading = await this.loadingCtrl.create({
             cssClass: 'loading-class',
             message: content,
@@ -103,6 +104,8 @@ export class NativeService {
 
         this.loading.onWillDismiss().then(()=>{
             this.loading = null;
+            let temp = dismissCallback || "";
+            if(temp!="")
             dismissCallback(isTimeout);
         });
 
@@ -118,7 +121,7 @@ export class NativeService {
 
     public hideLoading(): void {
             if(this.loading !=null){
-                this.loading.dismiss();
+               this.loading.dismiss();
             }
     };
 
@@ -179,16 +182,16 @@ export class NativeService {
             console.log('network was disconnected :-(');
             offline();
         });
-        
+
         // stop disconnect watch
         // disconnectSubscription.unsubscribe();
-        
+
         // watch network for a connection
         let connectSubscription = this.network.onConnect().subscribe(() => {
             console.log('network connected!');
             online();
         });
-  
+
         // stop connect watch
         // connectSubscription.unsubscribe();
     }
@@ -206,7 +209,7 @@ export class NativeService {
         states[Connection.NONE]     = 'No network connection';
         // console.log('Connection type: ' + states[networkState]);
     }
-    
+
 
     // async openViewer(titleBar: TitleBarComponent, imgPath:string,newNameKey:string,oldNameKey:string,appService?:any,isOwer?:boolean) {
     //     this.titleBarService.setTitle(titleBar, this.translate.instant(newNameKey));

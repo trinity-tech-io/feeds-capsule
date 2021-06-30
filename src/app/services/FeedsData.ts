@@ -132,7 +132,8 @@ declare namespace FeedsData{
         mediaType       :   MediaType,
         videoThumbKey   :   VideoThumbKey,
         imgThumbKeys    :   ImageThumbKey[],
-        nftTokenId      :   number
+        nftTokenId      :   number,
+        nftOrderId      :   number
     }
 
     type ImgThumb = {

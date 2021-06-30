@@ -12,6 +12,8 @@ import { File,DirectoryEntry} from '@ionic-native/file/ngx';
 import { HttpService } from '../../../services/HttpService';
 import { ApiUrl } from '../../../services/ApiUrl';
 import { FeedService } from '../../../services/FeedService';
+import BigNumber from 'bignumber.js';
+
 @Component({
   selector: 'app-mintnft',
   templateUrl: './mintnft.page.html',
@@ -39,6 +41,7 @@ export class MintnftPage implements OnInit {
   public fileName:string = "";
   public thumbnail:string = "";
   private imageObj:any = {};
+  private orderId:any = "";
   constructor(
     private translate:TranslateService,
     private event:Events,
@@ -193,6 +196,8 @@ export class MintnftPage implements OnInit {
     if(hash != null){
        let tokenId = "0x"+UtilService.SHA256(hash);
        let jsonHash = "feeds:json:"+hash;
+
+
        this.mintContract(tokenId,jsonHash,this.nftQuantity,this.nftRoyalties);
     }
 }).catch((err)=>{
@@ -299,6 +304,10 @@ export class MintnftPage implements OnInit {
 
     let stickerAddr = this.web3Service.getStickerAddr();
     let stickerContract = this.web3Service.getSticker();
+    let pasarContract = this.web3Service.getPasar();
+    let sellerAddress = this.web3Service.getSellerAddress();
+    const sellerInfo = await pasarContract.methods.getSellerByAddr(sellerAddress).call();
+    this.orderId  =  sellerInfo[2];
     const accCreator = await this.web3Service.getAccount("04868f294d8ef6e1079752cd2e1f027a126b44ee27040d949a88f89bddc15f31");
     let parm = {"tokenId:":tokenId,"supply":supply,"uri":uri,"royalty":royalty}
     console.log("==mintData parm=="+JSON.stringify(parm));
@@ -478,6 +487,7 @@ compressImage(path:any):Promise<string>{
         nftContent["imageThumbnail"] = imgThumbs;
         nftContent["text"] = this.nftDescription;
         nftContent["nftTokenId"] = tokenId;
+        nftContent["nftOrderId"] = this.orderId;
         //let content = this.feedService.createContent(this.nftDescription,imgThumbs,null);
         this.feedService.declarePost(nodeId,channelId,JSON.stringify(nftContent),false,tempPostId,
         this.transDataChannel,this.assetBase64,"");

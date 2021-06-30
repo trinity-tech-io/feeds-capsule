@@ -23,7 +23,8 @@ export class MenuService {
     public commentPostDetail:any = null;
     public replyDetail:any = null;
     public onSaleMenu:any = null;
-
+    public buyMenu:any = null;
+    public createdMenu:any = null;
     constructor(
         private feedService: FeedService,
         private actionSheetController: ActionSheetController,
@@ -598,7 +599,7 @@ export class MenuService {
                     text: this.translate.instant("BidPage.changePrice"),
                     icon: 'create',
                     handler: () => {
-                       this.viewHelper.showNftPrompt(assItem,"BidPage.changePrice");
+                       this.viewHelper.showNftPrompt(assItem,"BidPage.changePrice","sale");
                     }
             },
             {
@@ -629,7 +630,7 @@ export class MenuService {
 
         })
         await this.onSaleMenu.present();
-    }
+   }
 
     cancelOnSaleMenu(){
       if(this.popover!=null){
@@ -669,5 +670,71 @@ export class MenuService {
         }else{
           alert("=====cancel Order fail====");
         }
-       }
+    }
+
+   async showBuyMenu(assItem:any){
+        this.buyMenu = await this.actionSheetController.create({
+            cssClass: 'editPost',
+            buttons: [
+            {
+                    text: this.translate.instant("CollectionsPage.onSale"),
+                    icon: 'create',
+                    handler: () => {
+                       this.viewHelper.showNftPrompt(assItem,"CollectionsPage.putOnSale","buy");
+                    }
+            },
+            {
+                text: this.translate.instant("common.cancel"),
+                role: 'cancel',
+                icon: 'close-circle',
+                handler: () => {
+                    if(this.buyMenu!=null){
+                       this.buyMenu.dismiss();
+                    }
+                }
+            }
+        ]
+        });
+
+        this.buyMenu.onWillDismiss().then(()=>{
+            if(this.buyMenu!=null){
+                this.buyMenu  = null;
+            }
+
+        })
+        await this.buyMenu.present();
+    }
+
+  async showCreatedMenu(assItem:any){
+    this.createdMenu = await this.actionSheetController.create({
+        cssClass: 'editPost',
+        buttons: [
+        {
+                text: this.translate.instant("CollectionsPage.onSale"),
+                icon: 'create',
+                handler: () => {
+                   this.viewHelper.showNftPrompt(assItem,"CollectionsPage.putOnSale","created");
+                }
+        },
+        {
+            text: this.translate.instant("common.cancel"),
+            role: 'cancel',
+            icon: 'close-circle',
+            handler: () => {
+                if(this.createdMenu!=null){
+                   this.createdMenu.dismiss();
+                }
+            }
+        }
+    ]
+    });
+
+    this.createdMenu.onWillDismiss().then(()=>{
+        if(this.createdMenu!=null){
+            this.createdMenu = null;
+        }
+
+    })
+    await this.createdMenu.present();
+    }
 }

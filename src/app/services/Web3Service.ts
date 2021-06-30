@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import Web3 from "web3";
 @Injectable()
 export class Web3Service{
+    private sellerAddress = "0xf36dA13891027Fd074bCE86E1669E5364F85613A";
     private web3:any;
     private stickerContract:any;
     private pasarContract:any;
@@ -122,6 +123,10 @@ export class Web3Service{
  async getBalance(address:any){
    let balance =  await this.web3.eth.getBalance(address)
    return balance;
+ }
+
+ getSellerAddress(){
+   return this.sellerAddress;
  }
 
 }
