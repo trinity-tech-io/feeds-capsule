@@ -251,6 +251,8 @@ export class NftdialogComponent implements OnInit {
     this.native.hideLoading();
     alert("=====change Order Price sucess====");
     this.curAssItem.fixedAmount = price;
+    let list = this.feedService.getPasarList();
+    this.feedService.setData("feed.nft.pasarList",JSON.stringify(list));
     this.popover.dismiss();
   }else{
     this.native.hideLoading();

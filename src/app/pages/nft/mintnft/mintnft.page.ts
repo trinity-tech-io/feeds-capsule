@@ -12,7 +12,6 @@ import { File,DirectoryEntry} from '@ionic-native/file/ngx';
 import { HttpService } from '../../../services/HttpService';
 import { ApiUrl } from '../../../services/ApiUrl';
 import { FeedService } from '../../../services/FeedService';
-import BigNumber from 'bignumber.js';
 
 @Component({
   selector: 'app-mintnft',
@@ -196,8 +195,6 @@ export class MintnftPage implements OnInit {
     if(hash != null){
        let tokenId = "0x"+UtilService.SHA256(hash);
        let jsonHash = "feeds:json:"+hash;
-
-
        this.mintContract(tokenId,jsonHash,this.nftQuantity,this.nftRoyalties);
     }
 }).catch((err)=>{
@@ -311,7 +308,7 @@ export class MintnftPage implements OnInit {
     const accCreator = await this.web3Service.getAccount("04868f294d8ef6e1079752cd2e1f027a126b44ee27040d949a88f89bddc15f31");
     let parm = {"tokenId:":tokenId,"supply":supply,"uri":uri,"royalty":royalty}
     console.log("==mintData parm=="+JSON.stringify(parm));
-    const mintData = stickerContract.methods.mint(tokenId, supply, uri, royalty).encodeABI();
+    const mintData = stickerContract.methods.mint(tokenId,supply,uri,royalty).encodeABI();
     let mintTx = {
       from: accCreator.address,
       to: stickerAddr,
@@ -362,9 +359,8 @@ export class MintnftPage implements OnInit {
 
  let price = UtilService.accMul(this.nftFixedAmount,this.nftQuantity);
  console.log("=======price======="+price);
- let salePrice = this.web3Service.getToWei(price.toString());
+ let salePrice = this.web3Service.getToWei(price.toString()).toString();
  console.log("=======salePrice======="+salePrice);
-
   const saleData = pasarContract.methods.createOrderForSale(tokenId,this.nftQuantity,salePrice).encodeABI();
   const saleTx = {
     from: accSeller.address,
@@ -381,6 +377,28 @@ export class MintnftPage implements OnInit {
     return;
    }
    //console.log("======receipt======"+JSON.stringify(receipt))
+   let order = await pasarContract.methods.getOrderById(this.orderId).call();
+       tokenId = order[3];
+   let sellerAddr = order[7] || "";
+   let saleOrderId = order[0];
+   let item = {
+    "saleOrderId":saleOrderId,
+    "tokenId":tokenId,
+    "asset":this.imageObj["imgHash"],
+    "name":this.nftName,
+    "description":this.nftDescription,
+    "fixedAmount":order[5],
+    "kind":this.imageObj['imgFormat'],
+    "type":this.issueRadionType,
+    "royalties":this.nftRoyalties,
+    "quantity":this.nftQuantity,
+    "thumbnail":this.imageObj["thumbnail"],
+    "sellerAddr":sellerAddr
+   }
+   let list = this.feedService.getPasarList();
+       list.push(item)
+   this.feedService.setPasarList(list);
+   this.feedService.setData("feed.nft.pasarList",JSON.stringify(list));
    await this.getSetChannel(tokenId);
    this.native.hideLoading();
    this.native.pop();
@@ -460,7 +478,7 @@ compressImage(path:any):Promise<string>{
 
   async publishPostThrowMsg(tokenId:any,nodeId:string,channelId:number,tempPostId: number){
 
-        let imgSize = this.assetBase64.length;
+        let imgSize = this.thumbnail.length;
         if (imgSize > this.throwMsgTransDataLimit){
           this.transDataChannel = FeedsData.TransDataChannel.SESSION
           let memo: FeedsData.SessionMemoData = {
@@ -490,7 +508,7 @@ compressImage(path:any):Promise<string>{
         nftContent["nftOrderId"] = this.orderId;
         //let content = this.feedService.createContent(this.nftDescription,imgThumbs,null);
         this.feedService.declarePost(nodeId,channelId,JSON.stringify(nftContent),false,tempPostId,
-        this.transDataChannel,this.assetBase64,"");
+        this.transDataChannel,this.thumbnail,"");
   }
 
 }

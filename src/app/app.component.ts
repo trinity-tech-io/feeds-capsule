@@ -78,6 +78,7 @@ export class MyApp {
       this.initCurrentFeed();
       this.initDiscoverfeeds();
       this.initCollectibleSetting();
+      this.initFeedNftPasarList();
       // this.native.networkInfoInit();
       this.native.addNetworkListener(()=>{
         this.events.publish(FeedsEvent.PublishType.networkStatusChanged, 1);
@@ -341,4 +342,17 @@ export class MyApp {
 
     })
   }
+
+  initFeedNftPasarList(){
+    this.feedService.getData("feed.nft.pasarList").then((nftPasarList)=>{
+      if(nftPasarList === null){
+        this.feedService.setPasarList([]);
+        return;
+      }
+      this.feedService.setPasarList(JSON.parse(nftPasarList));
+    }).catch(()=>{
+
+    });
+  }
+
 }

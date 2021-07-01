@@ -21,6 +21,7 @@ import { connectivity } from "@elastosfoundation/elastos-connectivity-sdk-cordov
 import * as _ from 'lodash';
 import { DataHelper } from "./DataHelper";
 import { UtilService } from "./utilService";
+import { rendererTypeName } from "@angular/compiler";
 
 declare let didManager: DIDPlugin.DIDManager;
 // declare let didSessionManager: DIDSessionManagerPlugin.DIDSessionManager;
@@ -67,6 +68,7 @@ let eventBus: Events = null;
 
 @Injectable()
 export class FeedService {
+  private pasarList:any = [];
   private collectibleStatus:any = {};
   public bindPublisherAccountType:string = "";
   public discoverfeeds:any = [];
@@ -5761,5 +5763,13 @@ export class FeedService {
 
   setCollectibleStatus(collectibleStatus:any){
     this.collectibleStatus = collectibleStatus;
+  }
+
+  getPasarList(){
+    return this.pasarList;
+  }
+
+  setPasarList(pasarList:any){
+    this.pasarList = pasarList;
   }
 }

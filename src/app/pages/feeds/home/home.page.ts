@@ -120,6 +120,8 @@ export class HomePage implements OnInit {
 
     public pasarList:any = [];
 
+    public menuType:string = "CollectionsPage.onSale";
+
   constructor(
     private platform: Platform,
     private elmRef: ElementRef,
@@ -278,7 +280,7 @@ export class HomePage implements OnInit {
  this.addBinaryEvevnt();
  this.events.subscribe(FeedsEvent.PublishType.addBinaryEvevnt, ()=>{
       if(this.tabType === "pasar"){
-        this.getPaserList();
+        this.pasarList = this.feedService.getPasarList();
       }
       this.addCommonEvents();
       this.addBinaryEvevnt();
@@ -286,6 +288,14 @@ export class HomePage implements OnInit {
 }
 
 addCommonEvents(){
+
+  this.events.subscribe(FeedsEvent.PublishType.nftCancelOrder,(saleOrderId)=>{
+    this.pasarList =  _.filter(this.pasarList,(item)=>{
+      return item.saleOrderId!=saleOrderId; }
+    );
+    this.feedService.setPasarList(this.pasarList);
+    this.feedService.setData("feed.nft.pasarList",JSON.stringify(this.pasarList))
+  });
   this.events.subscribe(FeedsEvent.PublishType.updateTitle,()=>{
     this.initTitleBar();
   });
@@ -476,6 +486,7 @@ clearData(){
   if(this.curNodeId!=""){
     this.feedService.closeSession(this.curNodeId);
   }
+   this.events.unsubscribe(FeedsEvent.PublishType.nftCancelOrder);
    this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
    this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
    this.events.unsubscribe(FeedsEvent.PublishType.friendConnectionChanged);
@@ -773,6 +784,7 @@ clearData(){
         break;
       case "pasar":
         let sId1 = setTimeout(()=>{
+          //let paserList = this.feedService.getPasarList();
            this.getPaserList();
           event.target.complete();
           clearTimeout(sId1);
@@ -955,8 +967,10 @@ clearData(){
          let nftOrdeId = this.isNftOrderId(nodeId, parseInt(channelId),parseInt(postId));
          let priceDes = "";
          if(nftOrdeId!=""){
-          let price = await this.handlePrice(nftOrdeId);
-          priceDes = this.web3Service.getFromWei(price.toString())+" ELA/ETH";
+          let price = await this.handlePrice(nftOrdeId) || "";
+          if(price!=""){
+            priceDes = this.web3Service.getFromWei(price.toString())+" ELA/ETH";
+          }
          }
 
          this.feedService.getData(key).then((imagedata)=>{
@@ -964,7 +978,7 @@ clearData(){
               if(image!=""){
                 this.isLoadimage[id] ="13";
                 postImage.setAttribute("src",image);
-                if(nftOrdeId != ""){
+                if(nftOrdeId != ""&&priceDes!=""){
                   let  imagesWidth = postImage.clientWidth;
                   let  homebidfeedslogo = document.getElementById(id+"homebidfeedslogo");
                   homebidfeedslogo.style.left=(imagesWidth-90)/2+"px";
@@ -1457,7 +1471,12 @@ clearData(){
 
       this.hideFullScreen();
       this.native.hideLoading();
-      this.getPaserList();
+      let plist = this.feedService.getPasarList();
+      if(plist.length===0){
+        this.getPaserList();
+        return;
+      }
+      this.pasarList = plist;
      break;
     }
   }
@@ -1513,6 +1532,7 @@ clearData(){
 
  async getPaserList(){
   this.pasarList = [];
+  this.feedService.setPasarList([]);
   let stickerContract = this.web3Service.getSticker();
   let pasarContract = this.web3Service.getPasar();
   let openOrderCount =  await pasarContract.methods.getOpenOrderCount().call();
@@ -1525,10 +1545,10 @@ async getOpenOrderByIndex(index:any,pasarContract:any,stickerContract:any){
   let  openOrder =  await pasarContract.methods.getOpenOrderByIndex(index).call();
   let tokenId = openOrder[3];
   let saleOrderId = openOrder[0];
+  let tokenNum = openOrder[4];
   let price = openOrder[5];
   let tokenInfo = await stickerContract.methods.tokenInfo(tokenId).call();
   let tokenUri = tokenInfo[3];
-  let tokenNum = tokenInfo[2];
   this.handleFeedsUrl(tokenUri,tokenId,saleOrderId,price,tokenNum);
 }
 
@@ -1538,8 +1558,6 @@ handleBuyNft(feedsUri:string,tokenId:any,saleOrderId:string,price:any,tokenNum:a
   let type = result["type"] || "single";
   let royalties = result["royalties"] || "1";
   let quantity = tokenNum;
-  //let fixedAmount = result["fixedAmount"] || "1";
-  //let minimumAmount = result["minimumAmount"] || "";
   let thumbnail = result["thumbnail"] || "";
   if(thumbnail === ""){
     thumbnail = result["image"];
@@ -1559,6 +1577,7 @@ handleBuyNft(feedsUri:string,tokenId:any,saleOrderId:string,price:any,tokenNum:a
       "sellerAddr":sellerAddr
   }
   item["showType"] = "buy";
+  console.log("==home==buy==="+JSON.stringify(item));
   this.native.navigateForward(['bid'],{queryParams:item});
   }).catch(()=>{
 
@@ -1571,8 +1590,6 @@ handleFeedsUrl(feedsUri:string,tokenId:any,saleOrderId:string,price:any,tokenNum
   let type = result["type"] || "single";
   let royalties = result["royalties"] || "1";
   let quantity = tokenNum;
-  //let fixedAmount = result["fixedAmount"] || "1";
-  //let minimumAmount = result["minimumAmount"] || "";
   let thumbnail = result["thumbnail"] || "";
   if(thumbnail === ""){
     thumbnail = result["image"];
@@ -1584,7 +1601,6 @@ handleFeedsUrl(feedsUri:string,tokenId:any,saleOrderId:string,price:any,tokenNum
       "name":result["name"],
       "description":result["description"],
       "fixedAmount":price,
-      //"minimumAmount":minimumAmount,
       "kind":result["kind"],
       "type":type,
       "royalties":royalties,
@@ -1593,6 +1609,8 @@ handleFeedsUrl(feedsUri:string,tokenId:any,saleOrderId:string,price:any,tokenNum
   }
   try{
     this.pasarList.push(item);
+    this.feedService.setPasarList(this.pasarList);
+    this.feedService.setData("feed.nft.pasarList",JSON.stringify(this.pasarList));
   }catch(err){
    console.log("====err===="+JSON.stringify(err));
   }
@@ -1621,7 +1639,7 @@ isNftOrderId(nodeId:string,channelId:number,postId:number){
 }
 
 async handlePrice(nftOrdeId:any){
-  let price = 1;
+  let price = "";
   if(nftOrdeId != ""){
   let pasarContract = this.web3Service.getPasar();
   try{
@@ -1635,6 +1653,15 @@ async handlePrice(nftOrdeId:any){
   return price;
 }
 
+clickMore(parm:any){
+  let type = parm["type"];
+  console.log("===type==="+type);
+  let asstItem = parm["assetItem"];
+  this.handleOnSale(asstItem);
+}
 
+handleOnSale(asstItem:any){
+  this.menuService.showOnSaleMenu(asstItem);
+}
 
 }

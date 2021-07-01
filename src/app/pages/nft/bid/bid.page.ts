@@ -7,7 +7,9 @@ import { Events } from '../../../services/events.service';
 import { TitleBarService } from '../../../services/TitleBarService';
 import { TitleBarComponent } from '../../..//components/titlebar/titlebar.component';
 import { ApiUrl } from '../../../services/ApiUrl';
+import { FeedService } from 'src/app/services/FeedService';
 import { Web3Service } from '../../../services/Web3Service';
+import _ from 'lodash';
 type detail = {
   type: string,
   details: string
@@ -45,7 +47,8 @@ export class BidPage implements OnInit {
     private titleBarService:TitleBarService,
     public theme:ThemeService,
     private activatedRoute:ActivatedRoute,
-    private web3Service:Web3Service
+    private web3Service:Web3Service,
+    private feedService:FeedService
   ) { }
 
   ngOnInit() {
@@ -176,6 +179,12 @@ export class BidPage implements OnInit {
     } = await this.web3Service.sendTxWaitForReceipt(purchaseTx, accBuyer);
     this.native.hideLoading();
     if(purchaseStatus!=""&&purchaseStatus!=undefined){
+     let plist = this.feedService.getPasarList();
+      plist  = _.filter(plist,(item)=>{
+        return item.saleOrderId != this.saleOrderId;
+      });
+      this.feedService.setPasarList(plist);
+      this.feedService.setData("feed.nft.pasarList",JSON.stringify(plist))
         alert("buy sucess")
         this.native.pop();
     }else{
