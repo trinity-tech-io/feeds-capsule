@@ -2,12 +2,13 @@ import {Injectable} from '@angular/core';
 import Web3 from "web3";
 @Injectable()
 export class Web3Service{
+    private createAddress = "0xf36dA13891027Fd074bCE86E1669E5364F85613A";
     private sellerAddress = "0xf36dA13891027Fd074bCE86E1669E5364F85613A";
     private web3:any;
     private stickerContract:any;
     private pasarContract:any;
-    private stickerAddr:string = "0x60b29d37EB441B414cE12Fd6E5f36726044f03eE";
-    private pasarAddr:string = "0x87d5C14ee88aaD9aE65f0aeea70e470e98739096"
+    private stickerAddr:string = "0xa6D767c2236701814F71056389fE176ca41E54C8";
+    private pasarAddr:string = "0x04872cc7AdB394EC9573D44FD52b7CdDe41BE0F2"
     constructor(){
        this.init();
     }
@@ -127,6 +128,10 @@ export class Web3Service{
 
  getSellerAddress(){
    return this.sellerAddress;
+ }
+
+ getCreateAddress(){
+   return this.createAddress;
  }
 
 }

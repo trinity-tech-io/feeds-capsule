@@ -35,7 +35,10 @@ export class AssetitemComponent implements OnInit {
   }
 
   hanldePrice(price:string){
+     if(price!="")
      return this.web3Service.getFromWei(price);
+
+     return price;
   }
 
 }

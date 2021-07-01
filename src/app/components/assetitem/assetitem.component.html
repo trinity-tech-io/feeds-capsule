@@ -3,7 +3,7 @@
   <div class="des" (click)="clickItem()">{{assetItem['name']}}</div>
   <div class="des1" (click)="clickItem()">{{assetItem['description']}}</div>
   <div class="des2" (click)="clickItem()">Edition 1 of 1</div>
-  <div class="like" (click)="clickItem()">
+  <div class="like" (click)="clickItem()" *ngIf="assetItem['fixedAmount']!=''">
     <span>{{hanldePrice(assetItem['fixedAmount'])}} ELA/ETH</span>
     <!-- <img src="./assets/images/like.svg"/> -->
   </div>

@@ -203,8 +203,10 @@
   <ion-row style="padding: 10px 20px;">
     <ion-col size="6"  *ngFor="let item of pasarList">
       <app-assetitem
+      [type] = "menuType"
       [assetItem] = "item"
-      (clickAssetItem) = "clickAssetItem(item)"
+      (clickAssetItem) = "clickAssetItem($event)"
+      (clickMore) = "clickMore($event)"
       >
       </app-assetitem>
     </ion-col>
