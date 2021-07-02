@@ -20,7 +20,7 @@ import { StorageService } from 'src/app/services/StorageService';
 import { Web3Service } from '../../../services/Web3Service';
 import { HttpService } from '../../../services/HttpService';
 import { ApiUrl } from '../../../services/ApiUrl';
-import * as _ from 'lodash';
+import _ from 'lodash';
 let TAG: string = "Feeds-home";
 @Component({
   selector: 'app-home',
@@ -208,7 +208,7 @@ export class HomePage implements OnInit {
     if(this.platform.is("ios")){
         this.isAndroid = false;
     }
-    //this.pasarList = this.getPaserList();
+    this.pasarList = this.feedService.getPasarList();
     this.connectionStatus = this.feedService.getConnectionStatus();
     this.styleObj.width = (screen.width - 105)+'px';
     this.clientHeight =screen.availHeight;
@@ -289,12 +289,40 @@ export class HomePage implements OnInit {
 
 addCommonEvents(){
 
-  this.events.subscribe(FeedsEvent.PublishType.nftCancelOrder,(saleOrderId)=>{
+  this.events.subscribe(FeedsEvent.PublishType.nftCancelOrder,(assetItem)=>{
+    let saleOrderId = assetItem.saleOrderId;
+    let sellerAddr = assetItem.sellerAddr;
+    console.log("=======sellerAddr======"+sellerAddr);
+    console.log("=======typeof(sellerAddr)====="+typeof(sellerAddr));
     this.pasarList =  _.filter(this.pasarList,(item)=>{
-      return item.saleOrderId!=saleOrderId; }
+      console.log("=======item.sellerAddr=value====="+item.sellerAddr);
+      console.log("=======item.sellerAddr======"+typeof(item.sellerAddr));
+
+      return !(item.saleOrderId===saleOrderId&&item.sellerAddr===sellerAddr)}
     );
     this.feedService.setPasarList(this.pasarList);
-    this.feedService.setData("feed.nft.pasarList",JSON.stringify(this.pasarList))
+    this.feedService.setData("feed.nft.pasarList",JSON.stringify(this.pasarList));
+
+
+    let createAddr = this.web3Service.getCreateAddress();
+    if(sellerAddr === createAddr){
+      //add created
+      assetItem["fixedAmount"] = "";
+      let clist = this.feedService.getOwnCreatedList();
+          clist.push(assetItem)
+      this.feedService.setOwnCreatedList(clist);
+      this.feedService.setData("feed.nft.own.created.list",JSON.stringify(clist));
+
+      let oList = this.feedService.getOwnOnSaleList();
+      oList =  _.filter(oList,(item)=>{
+        return item.saleOrderId!=saleOrderId; }
+      );
+      this.feedService.setOwnOnSaleList(oList);
+      this.feedService.setData("feed.nft.own.onSale.list",JSON.stringify(oList));
+    }
+
+
+
   });
   this.events.subscribe(FeedsEvent.PublishType.updateTitle,()=>{
     this.initTitleBar();
@@ -1549,7 +1577,8 @@ async getOpenOrderByIndex(index:any,pasarContract:any,stickerContract:any){
   let price = openOrder[5];
   let tokenInfo = await stickerContract.methods.tokenInfo(tokenId).call();
   let tokenUri = tokenInfo[3];
-  this.handleFeedsUrl(tokenUri,tokenId,saleOrderId,price,tokenNum);
+  let sellerAddr = openOrder[7];
+  this.handleFeedsUrl(tokenUri,tokenId,saleOrderId,price,tokenNum,sellerAddr);
 }
 
 handleBuyNft(feedsUri:string,tokenId:any,saleOrderId:string,price:any,tokenNum:any,sellerAddr:any){
@@ -1584,7 +1613,7 @@ handleBuyNft(feedsUri:string,tokenId:any,saleOrderId:string,price:any,tokenNum:a
   });
 }
 
-handleFeedsUrl(feedsUri:string,tokenId:any,saleOrderId:string,price:any,tokenNum:any){
+handleFeedsUrl(feedsUri:string,tokenId:any,saleOrderId:string,price:any,tokenNum:any,sellerAddr:any){
   feedsUri  = feedsUri.replace("feeds:json:","");
   this.httpService.ajaxGet(ApiUrl.nftGet+feedsUri,false).then((result)=>{
   let type = result["type"] || "single";
@@ -1605,7 +1634,8 @@ handleFeedsUrl(feedsUri:string,tokenId:any,saleOrderId:string,price:any,tokenNum
       "type":type,
       "royalties":royalties,
       "quantity":quantity,
-      "thumbnail":thumbnail
+      "thumbnail":thumbnail,
+      "sellerAddr":sellerAddr
   }
   try{
     this.pasarList.push(item);

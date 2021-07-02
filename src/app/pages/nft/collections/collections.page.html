@@ -1,5 +1,14 @@
 <app-titlebar></app-titlebar>
 <ion-content>
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" pullFactor="0.5">
+    <ion-refresher-content
+      class="refresh"
+      pullingText="{{'common.releaseToRefresh'|translate}}"
+      pullingIcon="arrow-dropdown"
+      refreshingSpinner="crescent"
+      refreshingText="{{'common.beingRefresh'|translate}}" >
+    </ion-refresher-content>
+  </ion-refresher>
   <ion-grid class="container" [class.darkContainer]="theme.darkMode">
      <div class="tab-container">
       <div class="left-tab" [class.tab-active]="selectType === 'CollectionsPage.created'" (click)="changeType('CollectionsPage.created')">

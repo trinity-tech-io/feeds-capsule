@@ -18,10 +18,9 @@ import { AddFeedService } from 'src/app/services/AddFeedService';
 import { IntentService } from 'src/app/services/IntentService';
 import { connectivity } from "@elastosfoundation/elastos-connectivity-sdk-cordova";
 
-import * as _ from 'lodash';
+import _ from 'lodash';
 import { DataHelper } from "./DataHelper";
 import { UtilService } from "./utilService";
-import { rendererTypeName } from "@angular/compiler";
 
 declare let didManager: DIDPlugin.DIDManager;
 // declare let didSessionManager: DIDSessionManagerPlugin.DIDSessionManager;
@@ -68,6 +67,9 @@ let eventBus: Events = null;
 
 @Injectable()
 export class FeedService {
+  private ownOnSaleList:any = [];
+  private ownPurchasedList:any = [];
+  private ownCreatedList:any = []
   private pasarList:any = [];
   private collectibleStatus:any = {};
   public bindPublisherAccountType:string = "";
@@ -5772,4 +5774,28 @@ export class FeedService {
   setPasarList(pasarList:any){
     this.pasarList = pasarList;
   }
+
+  getOwnOnSaleList(){
+    return this.ownOnSaleList;
+  }
+
+  setOwnOnSaleList(ownOnSaleList:any){
+      this.ownOnSaleList = ownOnSaleList;
+  }
+
+  getOwnPurchasedList(){
+   return this.ownPurchasedList;
+  }
+
+  setOwnPurchasedList(ownPurchasedList:any){
+    this.ownPurchasedList = ownPurchasedList;
+  }
+
+  getOwnCreatedList(){
+     return this.ownCreatedList;
+  }
+
+  setOwnCreatedList(ownCreatedList:any){
+     this.ownCreatedList = ownCreatedList;
+ }
 }

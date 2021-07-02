@@ -17,6 +17,7 @@ export class MenuService {
     public postId:number =0;
     public commentId:number = 0;
     public saleOrderId:any = "";
+    public assItem:any = {};
 
     public postDetail:any = null;
     public popover:any = null;
@@ -591,7 +592,7 @@ export class MenuService {
     }
 
    async showOnSaleMenu(assItem:any){
-        this.saleOrderId = assItem.saleOrderId || "";;
+        this.assItem = assItem || "";
         this.onSaleMenu = await this.actionSheetController.create({
             cssClass: 'editPost',
             buttons: [
@@ -650,11 +651,12 @@ export class MenuService {
     }
 
     async cancelOrder(that:any){
+        let saleOrderId  =  this.assItem["saleOrderId"] || ""
         let pasarAddr = that.web3Service.getPasarAddr();
         let pasarContract = that.web3Service.getPasar();
         const accSeller = await that.web3Service.getAccount("04868f294d8ef6e1079752cd2e1f027a126b44ee27040d949a88f89bddc15f31");
 
-        const cancelData = pasarContract.methods.cancelOrder(this.saleOrderId).encodeABI();
+        const cancelData = pasarContract.methods.cancelOrder(saleOrderId).encodeABI();
         const cancelTx = {
           from: accSeller.address,
           to: pasarAddr,
@@ -664,7 +666,7 @@ export class MenuService {
         const { status: cancelStatus } = await that.web3Service.sendTxWaitForReceipt(cancelTx, accSeller);
         that.native.hideLoading();
         if(cancelStatus!=""&&cancelStatus!=undefined){
-         that.events.publish(FeedsEvent.PublishType.nftCancelOrder,this.saleOrderId);
+         that.events.publish(FeedsEvent.PublishType.nftCancelOrder,this.assItem);
          alert("=====cancel Order sucess====");
           //this.native.navigateForward(['confirmation'],{queryParams:{"showType":"buy"}});
         }else{
