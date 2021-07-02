@@ -40,6 +40,7 @@ export class BidPage implements OnInit {
   public royalties:string = null;
   public saleOrderId:string = null;
   public sellerAddress:string = null;
+  private curAssetItem = {};
   constructor(
     private translate:TranslateService,
     private event:Events,
@@ -53,6 +54,7 @@ export class BidPage implements OnInit {
 
   ngOnInit() {
     this.activatedRoute.queryParams.subscribe(queryParams => {
+      this.curAssetItem = _.cloneDeep(queryParams);
       let asset = queryParams.asset || {};
       this.showType = queryParams.showType;
       this.owner = queryParams.name || "";
@@ -65,6 +67,7 @@ export class BidPage implements OnInit {
       this.fixedPrice = queryParams.fixedAmount || "";
       this.royalties = queryParams.royalties || "";
       this.saleOrderId = queryParams.saleOrderId || "";
+      this.sellerAddress = queryParams.sellerAddr || "";
     });
   }
 
@@ -160,8 +163,7 @@ export class BidPage implements OnInit {
    }
 
   async buy(){
-    //let price = UtilService.accMul(this.fixedPrice,this.quantity).toString();
-    //console.log("=====price====="+price);
+
     let pasarAddr = this.web3Service.getPasarAddr();
     const accBuyer = await this.web3Service.getAccount("04868f294d8ef6e1079752cd2e1f027a126b44ee27040d949a88f89bddc15f31");
     let pasarContract = this.web3Service.getPasar();
@@ -184,7 +186,30 @@ export class BidPage implements OnInit {
         return item.saleOrderId != this.saleOrderId;
       });
       this.feedService.setPasarList(plist);
-      this.feedService.setData("feed.nft.pasarList",JSON.stringify(plist))
+      this.feedService.setData("feed.nft.pasarList",JSON.stringify(plist));
+      let createAddress = this.web3Service.getCreateAddress();
+      if(this.sellerAddress === createAddress){
+
+        let olist = this.feedService.getOwnOnSaleList();
+         olist  = _.filter(olist,(item)=>{
+          return item.saleOrderId != this.saleOrderId;
+        });
+        this.feedService.setOwnOnSaleList(olist);
+        this.feedService.setData("feed.nft.own.onSale.list",JSON.stringify(olist));
+        //add created
+        let cItem:any = _.cloneDeep(this.curAssetItem);
+            cItem.fixedAmount = "";
+        let clist = this.feedService.getOwnCreatedList();
+            clist.push(cItem);
+        this.feedService.setOwnCreatedList(clist);
+        this.feedService.setData("feed.nft.own.created.list",JSON.stringify(clist));
+        //add buy
+        let plist = this.feedService.getOwnPurchasedList();
+        let pItem:any = _.cloneDeep(this.curAssetItem);
+            plist.push(pItem);
+        this.feedService.setOwnPurchasedList(plist);
+        this.feedService.setData("feed.nft.own.purchased.list",JSON.stringify(plist));
+      }
         alert("buy sucess")
         this.native.pop();
     }else{

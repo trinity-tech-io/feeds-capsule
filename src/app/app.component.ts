@@ -14,6 +14,7 @@ import { Events} from 'src/app/services/events.service';
 import { LocalIdentityConnector } from "@elastosfoundation/elastos-connector-localidentity-cordova";
 import { EssentialsConnector } from "@elastosfoundation/essentials-connector-cordova";
 import { connectivity } from "@elastosfoundation/elastos-connectivity-sdk-cordova";
+import { Console } from 'console';
 
 enum LogLevel {
   NONE,
@@ -79,6 +80,9 @@ export class MyApp {
       this.initDiscoverfeeds();
       this.initCollectibleSetting();
       this.initFeedNftPasarList();
+      this.initNftOwnCreatedList();
+      this.initNftOwnPurchasedList();
+      this.initNftOwnOnSalelist();
       // this.native.networkInfoInit();
       this.native.addNetworkListener(()=>{
         this.events.publish(FeedsEvent.PublishType.networkStatusChanged, 1);
@@ -350,6 +354,42 @@ export class MyApp {
         return;
       }
       this.feedService.setPasarList(JSON.parse(nftPasarList));
+    }).catch(()=>{
+
+    });
+  }
+
+  initNftOwnCreatedList(){
+    this.feedService.getData("feed.nft.own.created.list").then((nftOwnCreatedList)=>{
+      if(nftOwnCreatedList === null){
+        this.feedService.setOwnCreatedList([]);
+        return;
+      }
+      this.feedService.setOwnCreatedList(JSON.parse(nftOwnCreatedList));
+    }).catch(()=>{
+
+    });
+  }
+
+  initNftOwnPurchasedList(){
+    this.feedService.getData("feed.nft.own.purchased.list").then((nftOwnPurchasedList)=>{
+      if(nftOwnPurchasedList === null){
+        this.feedService.setOwnPurchasedList([]);
+        return;
+      }
+      this.feedService.setOwnPurchasedList(JSON.parse(nftOwnPurchasedList));
+    }).catch(()=>{
+
+    });
+  }
+
+  initNftOwnOnSalelist(){
+    this.feedService.getData("feed.nft.own.onSale.list").then((nftOwnOnSalelist)=>{
+      if(nftOwnOnSalelist === null){
+        this.feedService.setOwnOnSaleList([]);
+        return;
+      }
+      this.feedService.setOwnOnSaleList(JSON.parse(nftOwnOnSalelist));
     }).catch(()=>{
 
     });

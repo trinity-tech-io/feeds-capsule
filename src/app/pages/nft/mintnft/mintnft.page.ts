@@ -395,10 +395,16 @@ export class MintnftPage implements OnInit {
     "thumbnail":this.imageObj["thumbnail"],
     "sellerAddr":sellerAddr
    }
+
    let list = this.feedService.getPasarList();
        list.push(item)
    this.feedService.setPasarList(list);
    this.feedService.setData("feed.nft.pasarList",JSON.stringify(list));
+
+   let slist = this.feedService.getOwnOnSaleList();
+       slist.push(item);
+   this.feedService.setData("feed.nft.own.onSale.list",JSON.stringify(slist));
+
    await this.getSetChannel(tokenId);
    this.native.hideLoading();
    this.native.pop();

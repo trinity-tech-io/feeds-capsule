@@ -7,8 +7,8 @@ export class Web3Service{
     private web3:any;
     private stickerContract:any;
     private pasarContract:any;
-    private stickerAddr:string = "0xa6D767c2236701814F71056389fE176ca41E54C8";
-    private pasarAddr:string = "0x04872cc7AdB394EC9573D44FD52b7CdDe41BE0F2"
+    private stickerAddr:string = "0x6F2477C1439676337b02D51C3b0c327942751C9d";
+    private pasarAddr:string = "0xBF362056dE83F2449180929a736a8cD02367b7c2";
     constructor(){
        this.init();
     }

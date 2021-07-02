@@ -224,7 +224,9 @@ export class NftdialogComponent implements OnInit {
    }
    //console.log("======receipt======"+JSON.stringify(receipt))
    await this.getSetChannel(tokenId);
-   let obj = {"type":type,"assItem":this.curAssItem}
+   let sAssItem =_.cloneDeep(this.curAssItem);
+       sAssItem["sellerAddr"] = accSeller.address;
+   let obj = {"type":type,"assItem":sAssItem}
    this.events.publish(FeedsEvent.PublishType.nftUpdateList,obj);
    this.native.hideLoading();
    this.popover.dismiss();
