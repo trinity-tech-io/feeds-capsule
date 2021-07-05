@@ -98,7 +98,8 @@ export const en = {
         "obtain":"Obtain",
         "deleteReply":"Delete Reply",
         "confirmdeletion2":"Are you sure you want to delete this Reply?",
-        "quantity":"Quantity"
+        "quantity":"Quantity",
+        "connectWallet":"connect wallet"
     },
     "app": {
         "profileDetails": "Profile Details",

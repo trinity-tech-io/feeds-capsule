@@ -194,6 +194,17 @@
       overflow: hidden;
     }
 
+    .connectWallet{
+      padding: 6px 10px;
+      border-radius: 10px;
+      border: solid 1px #f8f2ff;
+      font-size: 8px !important;
+      font-weight: normal;
+      font-stretch: normal;
+      color: #000;
+      margin: 0 auto;
+  }
+
     .status-row {
       display: flex;
       align-items: center;
@@ -305,5 +316,9 @@
 .server-header {
   box-shadow: 0 3px 15px 0 #151626;
   background-color: #2e2f4e;
+
+  .connectWallet{
+    color: #fff;
+  }
 }
 }

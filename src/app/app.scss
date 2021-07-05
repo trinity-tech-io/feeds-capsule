@@ -9,7 +9,7 @@ ion-menu {
             width: 189px;
             margin: 10px;
             border-radius: 10px;
-            height: 104px;
+            height: 116px;
             margin: 0 auto;
             margin-top: 45px;
 
@@ -21,8 +21,8 @@ ion-menu {
 
                 img {
                     margin:0 auto;
-                    width: 53px;
-                    height: 53px;
+                    width: 43px;
+                    height: 43px;
                     object-fit: cover;
                     overflow: hidden;
                     border-radius: 50%;
@@ -41,6 +41,17 @@ ion-menu {
                     overflow: auto;
                     width: 100%;
                     margin-top:0px;
+                }
+
+                .connectWallet{
+                    padding: 6px 10px;
+                    border-radius: 10px;
+                    border: solid 1px #ffffff;
+                    font-size: 8px !important;
+                    font-weight: normal;
+                    font-stretch: normal;
+                    color: #fff;
+                    margin: 0 auto;
                 }
             }
 
