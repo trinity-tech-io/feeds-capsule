@@ -16,11 +16,11 @@ export class WalletConnectControllerService {
     constructor(private logUtils: LogUtils) {
     }
 
-    public async connect(){
-        this.setupWalletConnectProvider();
+    public async connect(): Promise<Web3>{
+        return this.setupWalletConnectProvider();
     }
 
-  private async setupWalletConnectProvider() {
+  private async setupWalletConnectProvider(): Promise<Web3>{
     //  Create WalletConnect Provider
     this.walletConnectProvider = new WalletConnectProvider({
       rpc: this.rpc,
@@ -63,7 +63,12 @@ export class WalletConnectControllerService {
     this.accountAddress = await this.parseAccountAddress();
 
     console.log("account address is "+this.accountAddress);
-    this.walletConnectWeb3 = new Web3(this.walletConnectProvider as any); // HACK
+    this.walletConnectWeb3 = new Web3(this.walletConnectProvider as any); 
+    return this.walletConnectWeb3;
+  }
+
+  public getWeb3(){
+    return this.walletConnectWeb3;
   }
 
   private async parseAccountAddress(){
