@@ -12,7 +12,7 @@
       <p class="key">{{ 'CollectionsPage.price' | translate }}</p>
     </ion-col>
     <ion-col size="8">
-      <ion-input type="number" clearInput autofocus [placeholder]="'CollectionsPage.price' | translate" [(ngModel)]="amount" class="nameValue"></ion-input>
+      <ion-input type="number" clearInput [placeholder]="'CollectionsPage.price' | translate" [(ngModel)]="amount" class="nameValue"></ion-input>
     </ion-col>
     <ion-col size="4" class="logo">
           <span>ELA/ETH</span> <img src="/assets/images/solidEla.svg" *ngIf="!theme.darkMode">
@@ -22,7 +22,7 @@
       <p class="key">{{ 'DonationPage.amount' | translate }}</p>
     </ion-col>
     <ion-col size="12" *ngIf="menuType==='created' || menuType==='buy'">
-      <ion-input type="number" clearInput autofocus [placeholder]="'DonationPage.enterAmount' | translate" [(ngModel)]="quantity" class="nameValue"></ion-input>
+      <ion-input type="number" clearInput [placeholder]="'DonationPage.enterAmount' | translate" [(ngModel)]="quantity" class="nameValue"></ion-input>
     </ion-col>
   </ion-row>
 

@@ -26,7 +26,7 @@
       <p class="key">{{ 'DonationPage.amount' | translate }}</p>
     </ion-col>
     <ion-col size="8">
-      <ion-input type="number" clearInput autofocus [placeholder]="'DonationPage.enterAmount' | translate" [(ngModel)]="amount" class="nameValue"></ion-input>
+      <ion-input type="number" clearInput [placeholder]="'DonationPage.enterAmount' | translate" [(ngModel)]="amount" class="nameValue"></ion-input>
     </ion-col>
     <ion-col size="4" class="logo">
           <span>ELA</span> <img src="/assets/images/solidEla.svg" *ngIf="!theme.darkMode">
@@ -39,7 +39,7 @@
       <p class="key">{{ 'DonationPage.memo' | translate }}</p>
     </ion-col>
     <ion-col size="12">
-      <ion-input clearInput autofocus [placeholder]="'DonationPage.memo' | translate" [(ngModel)]="memo" [disabled]='disableMemo'></ion-input>
+      <ion-input clearInput [placeholder]="'DonationPage.memo' | translate" [(ngModel)]="memo" [disabled]='disableMemo'></ion-input>
     </ion-col>
   </ion-row>
 
