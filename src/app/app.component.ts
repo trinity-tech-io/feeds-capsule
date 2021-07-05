@@ -395,4 +395,8 @@ export class MyApp {
     });
   }
 
+  connectWallet(){
+    alert("connect Wallet");
+  }
+
 }

@@ -98,7 +98,8 @@ export const zh = {
         "obtain":"正在获取",
         "deleteReply":"删除回复",
         "confirmdeletion2":"确认删除这条回复?",
-        "quantity":"数量"
+        "quantity":"数量",
+        "connectWallet":"连接钱包"
     },
     "app":{
         "profileDetails": "档案详情",

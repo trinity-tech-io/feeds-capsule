@@ -3,10 +3,11 @@
         <ion-content>
             <div style="height: 40px;" *ngIf="isIOSPlatform()"></div>
 
-            <ion-row class="profile-card profileCardBg0" (click)="profiledetail()">
+            <ion-row class="profile-card profileCardBg0" >
                 <ion-col size="12" class="left-col">
-                    <img [src]="handleImages()"/>
-                    <h1>{{ name }}</h1>
+                    <img [src]="handleImages()" (click)="profiledetail()"/>
+                    <h1 (click)="profiledetail()">{{ name }}</h1>
+                    <h2 class="connectWallet" (click)="connectWallet()">{{"common.connectWallet" | translate}}</h2>
                 </ion-col>
             </ion-row>
 
