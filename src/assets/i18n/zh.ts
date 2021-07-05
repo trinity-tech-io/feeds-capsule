@@ -97,7 +97,8 @@ export const zh = {
         "scannerPrompt": "将二维码放在扫描区域内",
         "obtain":"正在获取",
         "deleteReply":"删除回复",
-        "confirmdeletion2":"确认删除这条回复?"
+        "confirmdeletion2":"确认删除这条回复?",
+        "quantity":"数量"
     },
     "app":{
         "profileDetails": "档案详情",
