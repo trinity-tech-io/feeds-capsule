@@ -68,6 +68,10 @@ import { RewriteFrames } from '@sentry/integrations';
 import { customAnimation } from 'src/app/services/nav_anamition';
 import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
 import { LanguageService } from 'src/app/services/language.service';
+import { WalletConnectControllerService } from 'src/app/services/walletconnect_controller.service';
+import { NFTContractParsarService } from 'src/app/services/nftcontract_parsar.service';
+import { NFTContractStickerService } from 'src/app/services/nftcontract_sticker.service';
+
 import * as Sentry from "@sentry/browser";
 
 Sentry.init({
@@ -200,6 +204,9 @@ export function TranslateLoaderFactory() {
     ScanService,
     LanguageService,
     BarcodeScanner,
+    NFTContractParsarService,
+    NFTContractStickerService,
+    WalletConnectControllerService,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     {provide: ErrorHandler, useClass: ErrorHandler}
   ]

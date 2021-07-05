@@ -43,6 +43,7 @@
     "@sentry/integrations": "~5.11.1",
     "@types/node": "^8.9.5",
     "@videogular/ngx-videogular": "^3.0.1",
+    "@walletconnect/web3-provider": "^1.4.1",
     "@ygoe/msgpack": "^1.0.2",
     "angularx-qrcode": "11.0.0",
     "cordova-android": "9.0.0",
