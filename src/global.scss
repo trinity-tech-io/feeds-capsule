@@ -478,17 +478,27 @@ ion-input {
   }
 
   .pricecol{
-    text-align:center;
-
-
+    text-align:left;
   .price{
-    font-size: 18px;
-    margin-top: 14px;
-    font-weight: bold;
+    font-size: 14px;
+    margin-top: 5px;
+    font-weight: 700;
     font-stretch: normal;
     font-style: normal;
-    color: #000000;
+    color: #000;
     display: inline-block;
+  }
+
+  .quantity{
+    font-size: 14px;
+    font-weight: 700;
+    font-stretch: normal;
+    font-style: normal;
+    color: #000;
+  }
+
+  .darkQuantity{
+    color: #000;
   }
 
   .darkPrice{

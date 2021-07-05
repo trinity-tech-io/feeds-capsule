@@ -97,7 +97,8 @@ export const en = {
         "scannerPrompt": "Place a QR code inside the scan area",
         "obtain":"Obtain",
         "deleteReply":"Delete Reply",
-        "confirmdeletion2":"Are you sure you want to delete this Reply?"
+        "confirmdeletion2":"Are you sure you want to delete this Reply?",
+        "quantity":"Quantity"
     },
     "app": {
         "profileDetails": "Profile Details",

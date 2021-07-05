@@ -994,10 +994,16 @@ clearData(){
          let key = this.feedService.getImgThumbKeyStrFromId(nodeId,channelId,postId,0,0);
          let nftOrdeId = this.isNftOrderId(nodeId, parseInt(channelId),parseInt(postId));
          let priceDes = "";
+         let nftQuantity = "";
          if(nftOrdeId!=""){
-          let price = await this.handlePrice(nftOrdeId) || "";
+          let nftOrder = await this.handlePrice(nftOrdeId);
+          let price = "";
+          if(nftOrder != null){
+            nftQuantity = nftOrder[4];
+            price = nftOrder[5];
+          }
           if(price!=""){
-            priceDes = this.web3Service.getFromWei(price.toString())+" ELA/ETH";
+            priceDes = this.web3Service.getFromWei(price.toString())+" ELA/ETHSC";
           }
          }
 
@@ -1014,7 +1020,9 @@ clearData(){
 
                   let homebuy =  document.getElementById(id+"homebuy");
                   let  homeNftPrice  = document.getElementById(id+"homeNftPrice");
+                  let  homeNftQuantity  = document.getElementById(id+"homeNftQuantity");
                   homeNftPrice.innerText = priceDes;
+                  homeNftQuantity.innerText = nftQuantity;
                   homebuy.style.display="block";
                 }
 
@@ -1430,35 +1438,48 @@ clearData(){
   }
 
  async buy(post:any){
-     let nftOrderId = post.content.nftOrderId || "";
-     if(nftOrderId != ""){
-      let stickerContract = this.web3Service.getSticker();
-      let pasarContract = this.web3Service.getPasar();
-      let order = await pasarContract.methods.getOrderById(nftOrderId).call();
-      let tokenId = order[3];
-      let tokenNum = order[4];
-      let tokenInfo = await stickerContract.methods.tokenInfo(tokenId).call();
-      let tokenUri = tokenInfo[3];
-      let price = order[5];
-      let saleOrderId = order[0];
-      let orderState = order[2];
-      let sellerAddr = order[7] || "";
-      if(orderState==="1"){
-        this.handleBuyNft(tokenUri,tokenId,saleOrderId,price,tokenNum,sellerAddr);
-        return;
-      }
+     this.native.showLoading("common.waitMoment").then(()=>{
+          this.handleBuy(post);
+     }).catch(()=>{
+       this.native.hideLoading();
+     })
+  }
 
-      if(orderState==="2"){
-        alert("已出售");
-        return;
-      }
-
-      if(orderState==="3"){
-        alert("已下架");
-        return;
-      }
-
+ async handleBuy(post:any){
+    let nftOrderId = post.content.nftOrderId || "";
+    if(nftOrderId != ""){
+     let stickerContract = this.web3Service.getSticker();
+     let pasarContract = this.web3Service.getPasar();
+     let order = await pasarContract.methods.getOrderById(nftOrderId).call();
+     let tokenId = order[3];
+     let tokenNum = order[4];
+     let tokenInfo = await stickerContract.methods.tokenInfo(tokenId).call();
+     let tokenUri = tokenInfo[3];
+     let price = order[5];
+     let saleOrderId = order[0];
+     let orderState = order[2];
+     let sellerAddr = order[7] || "";
+     if(orderState==="1"){
+       this.native.hideLoading();
+       this.handleBuyNft(tokenUri,tokenId,saleOrderId,price,tokenNum,sellerAddr);
+       return;
      }
+
+     if(orderState==="2"){
+       this.native.hideLoading();
+       alert("已出售");
+       return;
+     }
+
+     if(orderState==="3"){
+      this.native.hideLoading();
+       alert("已下架");
+       return;
+     }else{
+      this.native.hideLoading();
+     }
+
+    }
   }
 
   clickTab(type:string){
@@ -1669,18 +1690,18 @@ isNftOrderId(nodeId:string,channelId:number,postId:number){
 }
 
 async handlePrice(nftOrdeId:any){
-  let price = "";
+  let nftOrder = null;
   if(nftOrdeId != ""){
   let pasarContract = this.web3Service.getPasar();
   try{
     let order = await pasarContract.methods.getOrderById(nftOrdeId).call();
-     price = order[5];
+     nftOrder = order;
   }catch(err){
 
   }
 
   }
-  return price;
+  return nftOrder;
 }
 
 clickMore(parm:any){
