@@ -7,21 +7,21 @@
   <ion-col size="12">
     <ion-item lines="none" class="borderbottom">
      <ion-label position="stacked" class="serverNameLabel white">{{ 'IssuecredentialPage.serverName' | translate }}</ion-label>
-     <ion-input clearInput autofocus [placeholder]="'IssuecredentialPage.serverName' | translate" [(ngModel)]="serverName" class="serverNameValue"></ion-input>
+     <ion-input clearInput [placeholder]="'IssuecredentialPage.serverName' | translate" [(ngModel)]="serverName" class="serverNameValue"></ion-input>
     </ion-item>
    </ion-col>
 
    <ion-col size="12">
      <ion-item lines="none" class="borderbottom">
        <ion-label position="stacked" class="serverNameLabel white">{{'IssuecredentialPage.serverDes' | translate }}</ion-label>
-       <ion-input clearInput autofocus [placeholder]="'IssuecredentialPage.serverDes' | translate" [(ngModel)]="serverDes" class="serverNameValue"></ion-input>
+       <ion-input clearInput [placeholder]="'IssuecredentialPage.serverDes' | translate" [(ngModel)]="serverDes" class="serverNameValue"></ion-input>
    </ion-item>
    </ion-col>
 
    <ion-col size="12">
     <ion-item lines="none" class="borderbottom">
      <ion-label position="stacked" class="serverNameLabel white" (click)="clickScan()">{{ 'IssuecredentialPage.elaaddress' | translate }}</ion-label>
-     <ion-input clearInput autofocus [placeholder]="'IssuecredentialPage.elaaddress' | translate" [(ngModel)]="elaAddress" class="serverNameValue"></ion-input>
+     <ion-input clearInput [placeholder]="'IssuecredentialPage.elaaddress' | translate" [(ngModel)]="elaAddress" class="serverNameValue"></ion-input>
      <ion-avatar slot="end" (click)="clickScan()">
       <img src="./assets/images/scan-light.svg" *ngIf="!theme.darkMode&&elaAddress===''">
       <img src="./assets/images/scan-dark.svg" *ngIf="theme.darkMode&&elaAddress===''">

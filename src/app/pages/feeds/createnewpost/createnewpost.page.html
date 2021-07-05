@@ -15,7 +15,7 @@
     </ion-row>
   </ion-item>
   <div (click)="newPostTextArea()" style="margin-left:15px;">
-  <ion-textarea #newPostIonTextarea  autoGrow="true"  autofocus="true" placeholder="{{'CreatenewpostPage.des'|translate}}" [(ngModel)]="newPost">
+  <ion-textarea #newPostIonTextarea  autoGrow="true"  placeholder="{{'CreatenewpostPage.des'|translate}}" [(ngModel)]="newPost">
   </ion-textarea>
   </div>
   <div *ngIf="imgUrl !== ''" class="img-container">
