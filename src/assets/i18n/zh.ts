@@ -638,5 +638,13 @@ export const zh = {
         "createNewPublisherAccount": "创建新的出版号",
         "bindExistingPublisherAccount": "绑定现有的出版号",
         "continueWithoutPublisherAccount": "跳过出版号，请继续"
+    },
+    "WalletteachPage":{
+        "title":"钱包",
+        "wallet":"#钱包",
+        "connectWallet":"连接钱包",
+        "introduce1":"连接钱包可在订阅源上充分享受Elastos智能合约链（ESC）功能。用户现在也可以在市场（也称为Pasar）上交易不可替代代币（nft）。",
+        "introduce2":"连接钱包",
+        "skip":"跳过"
     }
 };

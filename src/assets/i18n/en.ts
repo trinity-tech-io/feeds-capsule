@@ -637,5 +637,13 @@ export const en = {
         "createNewPublisherAccount": "Create New Publisher Account",
         "bindExistingPublisherAccount": "Bind Existing Publisher Account",
         "continueWithoutPublisherAccount": "Continue without Publisher Account"
+    },
+    "WalletteachPage":{
+        "title":"Wallet",
+        "wallet":"#Wallet",
+        "connectWallet":"Connect Wallet",
+        "introduce1":"Connect wallet to fully enjoy the Elastos Smart Contract chain (ESC) features on Feeds. Users now can also trade non-fungible tokens (NFTs) at the marketplace also known as Pasar.",
+        "introduce2":"Connect Wallet",
+        "skip":"Skip"
     }
 };

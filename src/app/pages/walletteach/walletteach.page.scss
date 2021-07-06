@@ -1,0 +1,106 @@
+.content{
+    --ion-background-color: #F1E9FF;
+}
+.container {
+
+    .skip{
+        font-size: 14px;
+        font-weight: bold;
+        font-stretch: normal;
+        font-style: normal;
+        color:#7624fe;
+    }
+
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content:center;
+    align-items: center;
+    text-align: center;
+    padding: 20px;
+
+    h1 {
+        margin: 0;
+        padding: 0 10px;
+        width: 100%;
+        font-size: 40px;
+        font-weight: bold;
+        font-stretch: normal;
+        font-style: normal;
+        color: #7624fe;
+    }
+
+    h2{
+        margin: 0;
+        margin-top:16px;
+        padding: 0 10px;
+        width: 100%;
+        font-size: 20px;
+        font-weight: bold;
+        font-stretch: normal;
+        font-style: normal;
+        color: #000000;
+    }
+
+    p {
+        padding: 0 10px;
+        width: 100%;
+        font-size: 14px;
+        font-weight:normal;
+        font-stretch: normal;
+        font-style: normal;
+        color: #7624fe;
+        line-height:1.3;
+    }
+
+    .displayUrl{
+        border-radius:10px;
+        text-align:center;
+        padding: 0 10px;
+        width:80%;
+        height:34px;
+        line-height:34px;
+        background-color:#f6f5f6;
+        font-size: 14px;
+        font-weight:normal;
+        font-stretch: normal;
+        font-style: normal;
+        color: #000000;
+        margin: 0 auto;
+    }
+
+    img{
+        margin:0 auto;
+    }
+
+    .btn-row {
+        margin-top: 20px;
+        .confirm {
+          width: 85%;
+          --background:#7624fe;
+          --background-activated:#7624fe;
+        }
+
+        .createLater {
+            width: 85%;
+            --background:#7624fe;
+            --background-activated:#7624fe;
+          }
+    }
+
+}
+
+.darkContainer {
+    h2{
+       color:#ffffff;
+    }
+
+    .displayUrl{
+        color:#ffffff;
+        background-color:#6c6e92;
+    }
+
+    p{
+        color:#9ca0a4;
+    }
+}
