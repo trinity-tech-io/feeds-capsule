@@ -55,6 +55,7 @@
               "bignumber.js",
               "lodash",
               "hammerjs",
+              "hash.js",
               "qrcode",
               "src/app/services/SerializeDataService"
             ]

@@ -78,6 +78,9 @@ export class LearnpublisheraccountPage implements OnInit {
         this.native.setRootRouter(['/tabs/home']);
         return;
     }
-    this.native.pop();
+
+    this.native.navigateForward(["walletteach"],{
+      replaceUrl: true
+    });
   }
 }

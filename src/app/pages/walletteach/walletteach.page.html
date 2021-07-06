@@ -1,0 +1,21 @@
+<app-titlebar [lightThemeType]="lightThemeType"></app-titlebar>
+<ion-content class="container" [class.darkContainer]="theme.darkMode" [class.content]="!theme.darkMode">
+      <ion-grid>
+        <h1>
+           {{ 'WalletteachPage.wallet' | translate }}
+        </h1>
+        <h2>
+           {{ 'WalletteachPage.connectWallet' | translate }}
+        </h2>
+         <p>
+           {{'WalletteachPage.introduce1'|translate}}
+        </p>
+        <img src="./assets/images/walletTeach.svg">
+        <ion-row class="btn-row">
+           <ion-button class="confirm" (click)="connectWallet()">
+             <ion-label>{{'WalletteachPage.introduce2'|translate}}</ion-label>
+           </ion-button>
+           <p (click)="skip()" class="skip">{{"WalletteachPage.skip" | translate}}</p>
+        </ion-row>
+      </ion-grid>
+</ion-content>

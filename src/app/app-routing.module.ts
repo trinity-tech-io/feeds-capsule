@@ -49,7 +49,8 @@ const routes: Routes = [
   { path: 'confirmation', loadChildren: './pages/nft/confirmation/confirmation.module#ConfirmationPageModule' },
   { path:'channelsviewall',loadChildren: './pages/feeds/search/search.module#SearchPageModule'},
   { path: 'currencyviewall', loadChildren: './pages/nft/currencyviewall/currencyviewall.module#CurrencyviewallPageModule' },
-  { path: 'learnmore', loadChildren: './pages/learnmore/learnmore.module#LearnmorePageModule' }
+  { path: 'learnmore', loadChildren: './pages/learnmore/learnmore.module#LearnmorePageModule' },
+  { path: 'walletteach', loadChildren:'./pages/walletteach/walletteach.module#WalletteachPageModule'}
 ];
 
 @NgModule({
