@@ -1586,7 +1586,10 @@ clearData(){
   let pasarContract = this.web3Service.getPasar();
   let openOrderCount =  await pasarContract.methods.getOpenOrderCount().call();
   for(let index = 0;index<openOrderCount;index++){
-     this.getOpenOrderByIndex(index,pasarContract,stickerContract);
+    this.pasarList.push(null);
+  }
+  for(let pIndex = 0;pIndex<openOrderCount;pIndex++){
+    this.getOpenOrderByIndex(pIndex,pasarContract,stickerContract);
   }
 }
 
@@ -1599,7 +1602,7 @@ async getOpenOrderByIndex(index:any,pasarContract:any,stickerContract:any){
   let tokenInfo = await stickerContract.methods.tokenInfo(tokenId).call();
   let tokenUri = tokenInfo[3];
   let sellerAddr = openOrder[7];
-  this.handleFeedsUrl(tokenUri,tokenId,saleOrderId,price,tokenNum,sellerAddr);
+  this.handleFeedsUrl(tokenUri,tokenId,saleOrderId,price,tokenNum,sellerAddr,index);
 }
 
 handleBuyNft(feedsUri:string,tokenId:any,saleOrderId:string,price:any,tokenNum:any,sellerAddr:any){
@@ -1634,7 +1637,7 @@ handleBuyNft(feedsUri:string,tokenId:any,saleOrderId:string,price:any,tokenNum:a
   });
 }
 
-handleFeedsUrl(feedsUri:string,tokenId:any,saleOrderId:string,price:any,tokenNum:any,sellerAddr:any){
+handleFeedsUrl(feedsUri:string,tokenId:any,saleOrderId:string,price:any,tokenNum:any,sellerAddr:any,pIndex:any){
   feedsUri  = feedsUri.replace("feeds:json:","");
   this.httpService.ajaxGet(ApiUrl.nftGet+feedsUri,false).then((result)=>{
   let type = result["type"] || "single";
@@ -1659,7 +1662,7 @@ handleFeedsUrl(feedsUri:string,tokenId:any,saleOrderId:string,price:any,tokenNum
       "sellerAddr":sellerAddr
   }
   try{
-    this.pasarList.push(item);
+    this.pasarList.splice(pIndex,1,item);
     this.feedService.setPasarList(this.pasarList);
     this.feedService.setData("feed.nft.pasarList",JSON.stringify(this.pasarList));
   }catch(err){
