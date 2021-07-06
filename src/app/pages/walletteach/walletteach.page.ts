@@ -4,6 +4,7 @@ import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TranslateService } from "@ngx-translate/core";
 import { NativeService } from 'src/app/services/NativeService';
+import { WalletConnectControllerService } from 'src/app/services/walletconnect_controller.service';
 
 @Component({
   selector: 'app-walletteach',
@@ -17,7 +18,8 @@ export class WalletteachPage implements OnInit {
     private native:NativeService,
     private titleBarService: TitleBarService,
     private translate:TranslateService,
-    public theme:ThemeService,) { }
+    public theme:ThemeService,
+    private walletConnectControllerService: WalletConnectControllerService) { }
 
   ngOnInit() {
   }
@@ -32,7 +34,7 @@ export class WalletteachPage implements OnInit {
   }
 
   connectWallet(){
-     alert("connect Wallet");
+      this.walletConnectControllerService.connect();
   }
 
   skip(){
