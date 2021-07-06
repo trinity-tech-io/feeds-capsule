@@ -49,11 +49,14 @@
             ],
             "scripts": [],
             "allowedCommonJsDependencies": [
+              "easyqrcodejs",
+              "hash.js",
+              "web3",
+              "bignumber.js",
               "lodash",
               "hammerjs",
               "qrcode",
-              "src/app/services/SerializeDataService",
-              "web3"
+              "src/app/services/SerializeDataService"
             ]
           },
           "configurations": {

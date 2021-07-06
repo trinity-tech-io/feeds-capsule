@@ -75,6 +75,8 @@ export class DataHelper {
     private cachedUpdateServer: {[nodeId: string]: FeedsData.Server} = {};
     private tempIdDataList: number[] = [];
     private tempDataMap: {[key: string]: FeedsData.TempData} = {};
+
+    private walletAccountAddress: string = "";
     constructor(
         private logUtils: LogUtils,
         private storageService: StorageService) {
@@ -1825,5 +1827,27 @@ export class DataHelper {
     getContentHash(content: string){
         let contentHash = UtilService.SHA256(content);
         return contentHash;
+    }
+
+    ////
+    //walletAccountAddress
+    saveWalletAccountAddress(walletAccountAddress: string){
+        this.walletAccountAddress = walletAccountAddress;
+        this.saveData(FeedsData.PersistenceKey.walletAccountAddress, this.walletAccountAddress);
+    }
+
+    async loadWalletAccountAddress(): Promise<string>{
+        return new Promise(async (resolve, reject) =>{
+            try {
+                if (this.walletAccountAddress == ""){
+                    this.walletAccountAddress = await this.loadData(FeedsData.PersistenceKey.walletAccountAddress) || "";
+                    resolve(this.walletAccountAddress);
+                    return ;
+                }
+                resolve(this.walletAccountAddress);
+            } catch (error) {
+                reject(error);
+            }
+        });
     }
 }

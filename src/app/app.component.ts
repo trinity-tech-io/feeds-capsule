@@ -14,7 +14,7 @@ import { Events} from 'src/app/services/events.service';
 import { LocalIdentityConnector } from "@elastosfoundation/elastos-connector-localidentity-cordova";
 import { EssentialsConnector } from "@elastosfoundation/essentials-connector-cordova";
 import { connectivity } from "@elastosfoundation/elastos-connectivity-sdk-cordova";
-import { Console } from 'console';
+import { WalletConnectControllerService } from 'src/app/services/walletconnect_controller.service';
 
 enum LogLevel {
   NONE,
@@ -52,7 +52,8 @@ export class MyApp {
     public popupProvider:PopupProvider,
     private popoverController:PopoverController,
     private logUtils: LogUtils,
-    private menuController:MenuController
+    private menuController:MenuController,
+    private walletConnectControllerService: WalletConnectControllerService
   ) {
       this.initializeApp();
       this.initProfileData();
@@ -396,8 +397,8 @@ export class MyApp {
     });
   }
 
-  connectWallet(){
-    alert("connect wallet");
+  async connectWallet(){
+    await this.walletConnectControllerService.connect();
     let len = this.walletAddress.length;
     this.walletAddressStr = this.walletAddress.substring(0,6)+"..."+this.walletAddress.substring(len-4,len);
   }
@@ -409,5 +410,4 @@ export class MyApp {
 
     });;
   }
-
 }
