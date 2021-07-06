@@ -1,5 +1,5 @@
 <app-titlebar></app-titlebar>
-<div *ngIf="connectionStatus == 1" class="offline-header"></div>
+<!-- <div *ngIf="connectionStatus == 1" class="offline-header"></div> -->
 <ion-content (ionScroll)="ionScroll()" [scrollEvents]="true">
   <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" pullFactor="0.5">
     <ion-refresher-content
