@@ -1,6 +1,6 @@
 <div class="addAssets">
   <div *ngIf="assetItem === null">
-    <img src="assets/images/loading.png"/>
+    <img src="assets/images/loading.png" style="height:148px;"/>
   </div>
   <div *ngIf="assetItem != null ">
     <img src="{{hanldeImg(assetItem['thumbnail'])}}" (click)="clickItem()"/>
