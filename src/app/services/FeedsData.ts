@@ -353,7 +353,9 @@ declare namespace FeedsData{
         syncCommentStatusMap = "syncCommentStatusMap",
 
         tempIdDataList = "tempIdDataList",
-        tempDataMap = "tempDataMap"
+        tempDataMap = "tempDataMap",
+
+        walletAccountAddress = "walletAccountAddress"
     }
 
 
