@@ -15,6 +15,7 @@ import { LocalIdentityConnector } from "@elastosfoundation/elastos-connector-loc
 import { EssentialsConnector } from "@elastosfoundation/essentials-connector-cordova";
 import { connectivity } from "@elastosfoundation/elastos-connectivity-sdk-cordova";
 import { WalletConnectControllerService } from 'src/app/services/walletconnect_controller.service';
+import { DataHelper } from 'src/app/services/DataHelper';
 
 enum LogLevel {
   NONE,
@@ -37,7 +38,7 @@ export class MyApp {
   public sService:any =null;
   private localIdentityConnector = new LocalIdentityConnector();
   private essentialsConnector = new EssentialsConnector();
-  public walletAddress:string = "0xf36dA13891027Fd074bCE86E1669E5364F85613A"
+  public walletAddress:string = ""
   public walletAddressStr:string = "";
   constructor(
     private events: Events,
@@ -53,13 +54,19 @@ export class MyApp {
     private popoverController:PopoverController,
     private logUtils: LogUtils,
     private menuController:MenuController,
-    private walletConnectControllerService: WalletConnectControllerService
+    private walletConnectControllerService: WalletConnectControllerService,
+    private dataHelper: DataHelper
   ) {
       this.initializeApp();
       this.initProfileData();
       this.events.subscribe(FeedsEvent.PublishType.signinSuccess,()=>{
         this.initProfileData();
-      })
+      });
+
+      this.dataHelper.loadWalletAccountAddress().then((address)=>{
+        console.log("accountAddress",address);
+        this.walletAddressStr = UtilService.resolveAddress(address);
+      });
   }
 
   initializeApp() {
@@ -399,10 +406,11 @@ export class MyApp {
 
   async connectWallet(){
     await this.walletConnectControllerService.connect();
-    let len = this.walletAddress.length;
-    this.walletAddressStr = this.walletAddress.substring(0,6)+"..."+this.walletAddress.substring(len-4,len);
+    this.walletAddress = this.walletConnectControllerService.getAccountAddress();
+    this.walletAddressStr = UtilService.resolveAddress(this.walletAddress);
   }
 
+  
   copyWalletAddr(){
     this.native.copyClipboard(this.walletAddress).then(()=>{
       this.native.toast_trans("common.textcopied");

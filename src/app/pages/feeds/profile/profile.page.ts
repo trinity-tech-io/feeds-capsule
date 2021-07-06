@@ -16,7 +16,12 @@ import { TranslateService } from "@ngx-translate/core";
 import { StorageService } from 'src/app/services/StorageService';
 import * as _ from 'lodash';
 import { ViewHelper } from 'src/app/services/viewhelper.service';
+import { WalletConnectControllerService } from 'src/app/services/walletconnect_controller.service';
+import { DataHelper } from 'src/app/services/DataHelper';
+import { UtilService } from 'src/app/services/utilService';
+
 let TAG: string = "Feeds-profile";
+
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.page.html',
@@ -133,7 +138,7 @@ export class ProfilePage implements OnInit {
 
     public myFeedsSum:number = 0;
 
-    public walletAddress:string = "0xf36dA13891027Fd074bCE86E1669E5364F85613A"
+    public walletAddress:string = ""
     public walletAddressStr:string = "";
   constructor(
     private feedService: FeedService,
@@ -151,8 +156,15 @@ export class ProfilePage implements OnInit {
     private viewHelper: ViewHelper,
     private translate:TranslateService,
     private titleBarService: TitleBarService,
-    private storageService:StorageService
+    private storageService:StorageService,
+    private walletConnectControllerService: WalletConnectControllerService,
+    private dataHelper: DataHelper
   ) {
+
+    this.dataHelper.loadWalletAccountAddress().then((address)=>{
+      console.log("accountAddress",address);
+      this.walletAddressStr = UtilService.resolveAddress(address);
+    });
   }
 
   ngOnInit() {
@@ -1400,10 +1412,10 @@ export class ProfilePage implements OnInit {
     this.native.navigateForward(["createnewpost"],"");
   }
 
-  connectWallet(){
-    alert("connect wallet");
-    let len = this.walletAddress.length;
-    this.walletAddressStr = this.walletAddress.substring(0,6)+"..."+this.walletAddress.substring(len-4,len);
+  async connectWallet(){
+    await this.walletConnectControllerService.connect();
+    this.walletAddress = this.walletConnectControllerService.getAccountAddress();
+    this.walletAddressStr = UtilService.resolveAddress(this.walletAddress);
   }
 
   copyWalletAddr(){
