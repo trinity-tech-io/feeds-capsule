@@ -37,7 +37,8 @@ export class MyApp {
   public sService:any =null;
   private localIdentityConnector = new LocalIdentityConnector();
   private essentialsConnector = new EssentialsConnector();
-
+  public walletAddress:string = "0xf36dA13891027Fd074bCE86E1669E5364F85613A"
+  public walletAddressStr:string = "";
   constructor(
     private events: Events,
     private platform: Platform,
@@ -396,7 +397,17 @@ export class MyApp {
   }
 
   connectWallet(){
-    alert("connect Wallet");
+    alert("connect wallet");
+    let len = this.walletAddress.length;
+    this.walletAddressStr = this.walletAddress.substring(0,6)+"..."+this.walletAddress.substring(len-4,len);
+  }
+
+  copyWalletAddr(){
+    this.native.copyClipboard(this.walletAddress).then(()=>{
+      this.native.toast_trans("common.textcopied");
+    }).catch(()=>{
+
+    });;
   }
 
 }
