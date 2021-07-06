@@ -133,6 +133,8 @@ export class ProfilePage implements OnInit {
 
     public myFeedsSum:number = 0;
 
+    public walletAddress:string = "0xf36dA13891027Fd074bCE86E1669E5364F85613A"
+    public walletAddressStr:string = "";
   constructor(
     private feedService: FeedService,
     public theme:ThemeService,
@@ -480,6 +482,7 @@ export class ProfilePage implements OnInit {
   }
 
   ionViewWillEnter(){
+
     this.initTitleBar();
     this.events.subscribe(FeedsEvent.PublishType.addProflieEvent,()=>{
         //if(!this.isAddProfile){
@@ -1397,4 +1400,17 @@ export class ProfilePage implements OnInit {
     this.native.navigateForward(["createnewpost"],"");
   }
 
+  connectWallet(){
+    alert("connect wallet");
+    let len = this.walletAddress.length;
+    this.walletAddressStr = this.walletAddress.substring(0,6)+"..."+this.walletAddress.substring(len-4,len);
+  }
+
+  copyWalletAddr(){
+    this.native.copyClipboard(this.walletAddress).then(()=>{
+      this.native.toast_trans("common.textcopied");
+    }).catch(()=>{
+
+    });;
+  }
 }

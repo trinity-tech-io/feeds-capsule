@@ -378,7 +378,7 @@ export class ProfiledetailPage implements OnInit {
     this.native.navigateForward(['collections'],{queryParams:{"nodeId":this.nodeId,"channelId":12}});
   }
 
-  connectWallet(){
-    alert("connect Wallet");
-  }
+  // connectWallet(){
+  //   alert("connect Wallet");
+  // }
 }
