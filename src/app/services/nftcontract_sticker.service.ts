@@ -10,6 +10,7 @@ export class NFTContractStickerService {
     private stickerContract: any;
 
     constructor(private walletConnectControllerService: WalletConnectControllerService) {
+      this.init();
     }
 
     init(){
