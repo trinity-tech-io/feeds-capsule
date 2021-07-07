@@ -258,36 +258,24 @@ export class CollectionsPage implements OnInit {
    this.hanleListCace("buy");
    const stickerContract = this.web3Service.getSticker();
    let createAddress = this.web3Service.getCreateAddress();
-   this.nftCreatedCount = await this.countOfOwner(stickerContract,createAddress);
-   console.log("======this.nftCreatedCount======="+this.nftCreatedCount);
-   console.log("======typeof(this.nftCreatedCount)======="+typeof(this.nftCreatedCount));
-   if(this.nftCreatedCount===0){
-     return;
+   let nftCreatedCount = await this.countOfOwner(stickerContract,createAddress);
+   for(let index = 0 ;index<nftCreatedCount;index++){
+      this.createdList.push(null);
+   }
+   for(let cIndex=0;cIndex<nftCreatedCount;cIndex++){
+    this.handleOwnCreatedData(stickerContract,createAddress,cIndex)
    }
 
-   for(let index=0;index<this.nftCreatedCount;index++){
-    this.handleOwnCreatedData(stickerContract,createAddress,index)
-   }
-  //  let index = 0;
-  //  let sid = setInterval(()=>{
-  //      if(index === this.nftCreatedCount -1 ){
-  //       this.handleOwnCreatedData(stickerContract,createAddress,index)
-  //       clearInterval(sid);
-  //      }else{
-  //       this.handleOwnCreatedData(stickerContract,createAddress,index)
-  //       index = index + 1;
-  //      }
-  //  },100);
  }
 
-async handleOwnCreatedData(stickerContract:any,createAddress:any,index:any){
-  let tokenId =  await stickerContract.methods.tokenIdOfOwnerByIndex(createAddress,index).call();
+async handleOwnCreatedData(stickerContract:any,createAddress:any,cIndex:any){
+  let tokenId =  await stickerContract.methods.tokenIdOfOwnerByIndex(createAddress,cIndex).call();
   let tokenInfo =  await stickerContract.methods.tokenInfo(tokenId).call();
   let price = "";
   let tokenNum =  tokenInfo[2];
   let tokenUri = tokenInfo[3];
   let royaltyOwner = tokenInfo[4];
-  this.getUri(tokenId,price,tokenUri,tokenNum,royaltyOwner,"created");
+  this.handleFeedsUrl(tokenUri,tokenId,price,tokenNum,royaltyOwner,"created",cIndex);
  }
 
  async countOfOwner(stickerContract:any,createAddress:any){
@@ -295,26 +283,7 @@ async handleOwnCreatedData(stickerContract:any,createAddress:any,index:any){
   return nftCreatedCount;
 }
 
-
-
-async tokenIdByIndex(pasarContract:any,index:any,listType:any){
-   let openOrder =  await pasarContract.methods.getOpenOrderByIndex(index).call();
-   let tokenId = openOrder[3];
-   //let saleOrderId = openOrder[0];
-   let price = openOrder[5];
-   let stickerContract = this.web3Service.getSticker();
-   let tokenInfo = await stickerContract.methods.tokenInfo(tokenId).call();
-   let tokenUri = tokenInfo[3];
-   let tokenNum = tokenInfo[2];
-   let royaltyOwner = tokenInfo[4];
-   this.getUri(tokenId,price,tokenUri,tokenNum,royaltyOwner,listType);
-}
-
-async getUri(tokenId:string,price:any,tokenUri:any,tokenNum:any,royaltyOwner:any,listType:any){
-  this.handleFeedsUrl(tokenUri,tokenId,price,tokenNum,royaltyOwner,listType);
-}
-
-handleFeedsUrl(feedsUri:string,tokenId:string,price:any,tokenNum:any,royaltyOwner:any,listType:any){
+handleFeedsUrl(feedsUri:string,tokenId:string,price:any,tokenNum:any,royaltyOwner:any,listType:any,cIndex:any){
   feedsUri  = feedsUri.replace("feeds:json:","");
   this.httpService.ajaxGet(ApiUrl.nftGet+feedsUri,false).then((result)=>{
   let type = result["type"] || "single";
@@ -338,7 +307,7 @@ handleFeedsUrl(feedsUri:string,tokenId:string,price:any,tokenNum:any,royaltyOwne
       "thumbnail":thumbnail
   }
   try{
-    this.createdList.push(item);
+    this.createdList.splice(cIndex,1,item);
     this.hanleListCace(listType);
     this.isLoading = false;
   }catch(err){
@@ -353,78 +322,85 @@ async getPurchased(){
   this.purchasedList = [];
   this.hanleListCace("buy");
   const pasarContract = this.web3Service.getPasar();
-  let purchasedCount = await pasarContract.methods.getBuyerCount().call();
-  for(let index = 0;index<purchasedCount;index++){
-     let purchased = await pasarContract.methods.getBuyerByIndex(index).call();
-     let buyerAddr = purchased[1];
-     let orderCount = purchased[2];
-    this.handleBuyOrder(pasarContract,buyerAddr,orderCount);
+  let createAddress = this.web3Service.getCreateAddress();
+  let buyerInfo = await pasarContract.methods.getBuyerByAddr(createAddress).call();
+  let buyerAddr = buyerInfo[1];
+  let buyOrderCount = buyerInfo[2];
+  for(let index = 0;index<buyOrderCount;index++){
+    this.purchasedList.push(null);
   }
+  this.handleBuyOrder(pasarContract,buyerAddr,buyOrderCount);
 }
 
 async getOnSale(){
   this.onSaleList = [];
   this.hanleListCace("sale");
   const pasarContract = this.web3Service.getPasar();
-  let sellerCountCount = await pasarContract.methods.getSellerCount().call();
-  for(let index = 0;index<sellerCountCount;index++){
-     let seller = await pasarContract.methods.getSellerByIndex(index).call();
-     let sellerAddr = seller[1];
-     let orderCount = seller[2];
-     await this.handleOrder(pasarContract,sellerAddr,orderCount,"sale");
-    }
+  let createAddress = this.web3Service.getCreateAddress();
+  let sellerInfo = await pasarContract.methods.getSellerByAddr(createAddress).call();
+  let sellerAddr = sellerInfo[1];
+  let orderCount = sellerInfo[2];
+  for(let index = 0;index<orderCount;index++){
+      this.onSaleList.push(null);
+  }
+  await this.handleOrder(pasarContract,sellerAddr,orderCount,"sale");
 }
 
 async handleOrder(pasarContract:any,sellerAddr:any,orderCount:any,listType:any){
    for(let index=0;index<orderCount;index++){
-    let sellerOrder =  await pasarContract.methods.getSellerOpenByIndex(sellerAddr,index).call();
-    let tokenId = sellerOrder[3];
-    let saleOrderId = sellerOrder[0];
-    let price = sellerOrder[5];
-    const stickerContract = this.web3Service.getSticker();
-    let tokenInfo = await stickerContract.methods.tokenInfo(tokenId).call();
-    let feedsUri= tokenInfo[3];
-    feedsUri  = feedsUri.replace("feeds:json:","");
-    let tokenNum = tokenInfo[2];
-    this.httpService.ajaxGet(ApiUrl.nftGet+feedsUri,false).then((result)=>{
-     let type = result["type"] || "single";
-     let royalties = result["royalties"] || "1";
-     let quantity = tokenNum;
-     let fixedAmount = price || "1";
-     let thumbnail = result["thumbnail"] || "";
-     if(thumbnail === ""){
-       thumbnail = result["image"];
-     }
-     let item = {
-         "saleOrderId":saleOrderId,
-         "tokenId":tokenId,
-         "asset":result["image"],
-         "name":result["name"],
-         "description":result["description"],
-         "fixedAmount":fixedAmount,
-         "kind":result["kind"],
-         "type":type,
-         "royalties":royalties,
-         "quantity":quantity,
-         "thumbnail":thumbnail,
-         "sellerAddr":sellerAddr
-     }
-     try{
-       this.onSaleList.push(item);
+    try {
+      let sellerOrder =  await pasarContract.methods.getSellerOpenByIndex(sellerAddr,index).call();
+      let tokenId = sellerOrder[3];
+      let saleOrderId = sellerOrder[0];
+      let price = sellerOrder[5];
+      const stickerContract = this.web3Service.getSticker();
+      let tokenInfo = await stickerContract.methods.tokenInfo(tokenId).call();
+      let feedsUri= tokenInfo[3];
+      feedsUri  = feedsUri.replace("feeds:json:","");
+      let tokenNum = tokenInfo[2];
+      this.httpService.ajaxGet(ApiUrl.nftGet+feedsUri,false).then((result)=>{
+       let type = result["type"] || "single";
+       let royalties = result["royalties"] || "1";
+       let quantity = tokenNum;
+       let fixedAmount = price || "1";
+       let thumbnail = result["thumbnail"] || "";
+       if(thumbnail === ""){
+         thumbnail = result["image"];
+       }
+       let item = {
+           "saleOrderId":saleOrderId,
+           "tokenId":tokenId,
+           "asset":result["image"],
+           "name":result["name"],
+           "description":result["description"],
+           "fixedAmount":fixedAmount,
+           "kind":result["kind"],
+           "type":type,
+           "royalties":royalties,
+           "quantity":quantity,
+           "thumbnail":thumbnail,
+           "sellerAddr":sellerAddr
+       }
+       this.onSaleList.splice(index,1,item);
        this.hanleListCace(listType);
        this.isLoading = false;
-     }catch(err){
-     console.log("====err===="+JSON.stringify(err));
-     }
-     }).catch(()=>{
+       }).catch(()=>{
 
-     });
+       });
+    } catch (error) {
+      this.onSaleList =_.filter(this.onSaleList,(item)=>{
+           return item!=null;
+      });
+     this.hanleListCace(listType);
+     this.isLoading = false;
+    }
 
    }
 }
 
 async handleBuyOrder(pasarContract:any,buyerAddr:any,orderCount:any){
   for(let index=0;index<orderCount;index++){
+    try {
     let purchasedOrder =  await pasarContract.methods.getBuyerOrderByIndex(buyerAddr,index).call();
     let tokenId = purchasedOrder[3];
     let saleOrderId = purchasedOrder[0];
@@ -457,16 +433,20 @@ async handleBuyOrder(pasarContract:any,buyerAddr:any,orderCount:any){
          "quantity":quantity,
          "thumbnail":thumbnail
      }
-     try{
-       this.purchasedList.push(item);
+      this.purchasedList.splice(index,1,item);
        this.hanleListCace("buy");
        this.isLoading = false;
-     }catch(err){
-     console.log("====err===="+JSON.stringify(err));
-     }
      }).catch(()=>{
 
      });
+    } catch (error) {
+      this.purchasedList =_.filter(this.purchasedList,(item)=>{
+        return item!=null;
+      });
+     this.hanleListCace("buy");
+     this.isLoading = false;
+    }
+
   }
 }
 
