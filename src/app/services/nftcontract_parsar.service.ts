@@ -10,6 +10,7 @@ export class NFTContractParsarService {
     private pasarContract: any;
     private web3: Web3;
     constructor(private walletConnectControllerService: WalletConnectControllerService) {
+      this.init();
     }
 
     init(){
