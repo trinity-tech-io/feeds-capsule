@@ -85,4 +85,7 @@ export class NFTContractParsarService {
       return this.pasarContract.methods.cancelOrder(orderId).encodeABI();
     }
 
+    async getBuyerByAddr(address){
+      return await this.pasarContract.methods.getBuyerByAddr(address).call()
+    }
 }
