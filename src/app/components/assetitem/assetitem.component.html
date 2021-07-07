@@ -1,6 +1,6 @@
 <div class="addAssets ion-activatable ripple">
   <div *ngIf="assetItem === null">
-    <img src="assets/images/loading.png" style="height:148px;object-fit:cover;"/>
+    <img src="assets/images/loading.png" style="height:210px;object-fit:cover;"/>
   </div>
   <div *ngIf="assetItem != null ">
     <img src="{{hanldeImg(assetItem['thumbnail'])}}" (click)="clickItem()" style="object-fit:cover;"/>
