@@ -71,7 +71,7 @@ export const en = {
         "channelAlreadyAdded": "This channel has already been subscribing",
         "notFollowYet": "Subscribe",
         "httperror": "Service exception, try again later",
-        "textcopied": "Text copied",
+        "textcopied": "Copied to clipboard",
         "connectionError1": "This channel is currently offline. Try again later.",
         "emptyElaAddressDes": "Not set yet",
         "qRcodePreview": "QR code Preview",
