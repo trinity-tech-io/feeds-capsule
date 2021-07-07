@@ -4,6 +4,7 @@
 
     ion-row {
         width: 100%;
+        margin-top: 5px;
         padding: 7.5px 2.5px;
 
         ion-col {
@@ -24,9 +25,10 @@
             }
 
             ion-title {
-                font-size: 15px;
-                font-weight: 600;
-                text-align: center;
+                font-family: 'Montserrat';
+                font-size: 20px;
+                font-weight: 700;
+                text-align: left;
                 padding: 0;
             }
 
