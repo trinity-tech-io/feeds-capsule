@@ -15,19 +15,25 @@ export class NFTContractStickerService {
 
     init(){
       this.web3 = this.walletConnectControllerService.getWeb3();
+      if (!this.web3)
+        return ;
       this.stickerContract = new this.web3.eth.Contract(this.stickerAbi,this.stickerAddr);
     }
 
     setApprovalForAll(address: string, approved: boolean){
-      //TODO
+      //TODO write
       return this.stickerContract.methods.setApprovalForAll(address, approved).encodeABI();
     }
 
     async tokenInfo(tokenId){
+      if (!this.stickerContract)
+        return [];
       return await this.stickerContract.methods.tokenInfo(tokenId).call();
     }
 
     async mint(tokenId, supply, uri, royalty){
+      //TODO write
+
       let accountAddress = this.walletConnectControllerService.getAccountAddress();
       // this.stickerContract.methods.mint(tokenId,supply,uri,royalty).encodeABI();
 

@@ -7,8 +7,9 @@ import Web3 from 'web3';
 
 @Injectable()
 export class WalletConnectControllerService {
+    private uri = "https://api-testnet.elastos.io/eth";
     private rpc = {
-      21: "https://api-testnet.elastos.io/eth",
+      21: this.uri,
     }
     private infuraId: "0dd3ab5ca24946938c6d411a1637cc59";
     private accountAddress = "";
@@ -60,13 +61,15 @@ export class WalletConnectControllerService {
       });
 
       if (this.accountAddress != ""){
+        await this.walletConnectProvider.enable();
         const connect = await this.walletConnectProvider.getWalletConnector()
         this.accountAddress = connect.accounts[0]
         this.dataHelper.saveWalletAccountAddress(this.accountAddress);
         await this.initWeb3();
+      }else{
+        this.anonymousInitWeb3();
       }
     }
-
 
     private async setupWalletConnectProvider(){
       if (this.walletConnectProvider == null || this.walletConnectProvider == undefined){
@@ -128,5 +131,14 @@ export class WalletConnectControllerService {
       this.walletConnectProvider = null;
       this.accountAddress = "";
       this.dataHelper.saveWalletAccountAddress(this.accountAddress);
+    }
+
+    anonymousInitWeb3(){
+      if (typeof this.walletConnectWeb3 !== 'undefined') {
+        this.walletConnectWeb3 = new Web3(this.walletConnectWeb3.currentProvider);
+      } else {
+        this.walletConnectWeb3 = new Web3(new Web3.providers.HttpProvider(this.uri,{agent:{}}));
+        console.log("Web3 version is "+this.walletConnectWeb3.version);
+      }
     }
 }
