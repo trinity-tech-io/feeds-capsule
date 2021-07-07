@@ -257,9 +257,12 @@ export class MyApp {
     if(this.popover!=null){
        this.popover.dismiss();
     }
-
     that.clearData();
+    that.disconnectWallet();
+  }
 
+  disconnectWallet(){
+    this.walletConnectControllerService.disconnect();
   }
 
   clearData(){
