@@ -101,7 +101,14 @@ export const zh = {
         "quantity":"数量",
         "connectWallet":"连接钱包",
         "disconnect":"断开",
-        "buyNftError":"购买NFT失败"
+        "buyNftError":"购买NFT失败",
+        "sold":"已出售",
+        "offTheShelf":"已下架",
+        "cancelSuccessfully":"取消成功",
+        "cancellationFailed":"取消失败",
+        "priceChangeFailed":"改变价格失败",
+        "publicPasarFailed":"Public pasar失败",
+        "nftCreationFailed":"NFT创建失败"
     },
     "app":{
         "profileDetails": "档案详情",

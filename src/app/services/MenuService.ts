@@ -667,10 +667,10 @@ export class MenuService {
         that.native.hideLoading();
         if(cancelStatus!=""&&cancelStatus!=undefined){
          that.events.publish(FeedsEvent.PublishType.nftCancelOrder,this.assItem);
-         alert("=====cancel Order sucess====");
+         this.native.toast_trans("common.cancelSuccessfully");
           //this.native.navigateForward(['confirmation'],{queryParams:{"showType":"buy"}});
         }else{
-          alert("=====cancel Order fail====");
+          this.native.toast_trans("common.cancellationFailed");
         }
     }
 

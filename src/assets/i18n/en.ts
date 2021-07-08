@@ -101,7 +101,14 @@ export const en = {
         "quantity":"Quantity",
         "connectWallet":"connect wallet",
         "disconnect":"disconnect",
-        "buyNftError":"NFT purchase failed"
+        "buyNftError":"NFT purchase failed",
+        "sold":"Sold",
+        "offTheShelf":"Off the shelf",
+        "cancelSuccessfully":"Cancel Successfully",
+        "cancellationFailed":"Cancellation failed",
+        "priceChangeFailed":"Price change failed",
+        "publicPasarFailed":"Public pasar failed",
+        "nftCreationFailed":"NFT creation failed"
     },
     "app": {
         "profileDetails": "Profile Details",

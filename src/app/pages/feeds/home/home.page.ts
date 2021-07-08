@@ -1473,13 +1473,13 @@ clearData(){
 
       if(orderState==="2"){
         this.native.hideLoading();
-        alert("已出售");
+        this.native.toast_trans("common.sold");
         return;
       }
 
       if(orderState==="3"){
         this.native.hideLoading();
-        alert("已下架");
+        this.native.toast_trans("common.offTheShelf");
         return;
       }else{
         this.native.hideLoading();

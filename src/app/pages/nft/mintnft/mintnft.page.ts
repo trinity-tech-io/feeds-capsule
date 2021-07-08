@@ -320,6 +320,7 @@ export class MintnftPage implements OnInit {
    if(receipt=== ""){
     this.native.hideLoading();
     alert("nft创建失败");
+    this.native.toast_trans("common.nftCreationFailed")
    return;
    }
    if(receipt!=""&&this.curPublishtoPasar){
