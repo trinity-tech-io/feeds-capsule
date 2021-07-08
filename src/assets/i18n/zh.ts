@@ -100,7 +100,8 @@ export const zh = {
         "confirmdeletion2":"确认删除这条回复?",
         "quantity":"数量",
         "connectWallet":"连接钱包",
-        "disconnect":"断开"
+        "disconnect":"断开",
+        "buyNftError":"购买NFT失败"
     },
     "app":{
         "profileDetails": "档案详情",

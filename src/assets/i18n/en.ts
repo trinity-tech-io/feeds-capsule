@@ -100,7 +100,8 @@ export const en = {
         "confirmdeletion2":"Are you sure you want to delete this Reply?",
         "quantity":"Quantity",
         "connectWallet":"connect wallet",
-        "disconnect":"disconnect"
+        "disconnect":"disconnect",
+        "buyNftError":"NFT purchase failed"
     },
     "app": {
         "profileDetails": "Profile Details",
