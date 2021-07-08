@@ -38,6 +38,7 @@
             [src]="!theme.darkMode ? './assets/images/dots-three-vertical.svg' : './assets/images/dots-three-vertical-dark.svg'"
             (click)="menuMore()"
           >
+        <ion-ripple-effect></ion-ripple-effect>
         </ion-col>
       </ion-row>
       <ion-row class="mid-row">
@@ -146,7 +147,6 @@
               color: #7171bd;" (click)="retry(nodeId, channelId, postId)">{{ "common.retry" | translate }} </ion-label>
           </ion-col>
       </ion-row>
-      <ion-ripple-effect></ion-ripple-effect>
     </ion-grid>
 
     <!---------------- COMMENTS ---------------->
