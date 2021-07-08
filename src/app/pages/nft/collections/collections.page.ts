@@ -351,7 +351,7 @@ async getOnSale(){
   let createAddress = this.web3Service.getCreateAddress();
   let sellerInfo = await this.nftContractParsarService.getSellerByAddr(createAddress);
   let sellerAddr = sellerInfo[1];
-  let orderCount = sellerInfo[2];
+  let orderCount = sellerInfo[3];
   for(let index = 0;index<orderCount;index++){
       this.onSaleList.push(null);
   }
