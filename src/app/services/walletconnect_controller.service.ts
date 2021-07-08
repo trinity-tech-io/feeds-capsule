@@ -31,7 +31,7 @@ export class WalletConnectControllerService {
       this.walletConnectProvider = new WalletConnectProvider({
         rpc: this.rpc,
         infuraId: "0dd3ab5ca24946938c6d411a1637cc59",
-        
+
         qrcodeModalOptions: {
           mobileLinks: [
             "metamask",
@@ -83,14 +83,14 @@ export class WalletConnectControllerService {
         console.log("CONNECTED to wallet connect", enabled, this.walletConnectProvider);
         this.initWeb3();
       }catch(err){
-        //Work around 
+        //Work around
         this.destroyWalletConnect();
         console.log("CONNECT error to wallet connect", err);
       }
     }
 
     async initWeb3(){
-      this.walletConnectWeb3 = new Web3(this.walletConnectProvider as any); 
+      this.walletConnectWeb3 = new Web3(this.walletConnectProvider as any);
       this.accountAddress = await this.parseAccountAddress();
       this.dataHelper.saveWalletAccountAddress(this.accountAddress);
       return this.walletConnectWeb3;
