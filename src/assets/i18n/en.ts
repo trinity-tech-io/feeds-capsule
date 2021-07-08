@@ -99,7 +99,8 @@ export const en = {
         "deleteReply":"Delete Reply",
         "confirmdeletion2":"Are you sure you want to delete this Reply?",
         "quantity":"Quantity",
-        "connectWallet":"connect wallet"
+        "connectWallet":"connect wallet",
+        "disconnect":"disconnect"
     },
     "app": {
         "profileDetails": "Profile Details",

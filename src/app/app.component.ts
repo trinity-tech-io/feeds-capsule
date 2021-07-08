@@ -65,6 +65,7 @@ export class MyApp {
 
       this.dataHelper.loadWalletAccountAddress().then((address)=>{
         console.log("accountAddress",address);
+        this.walletAddress = address;
         this.walletAddressStr = UtilService.resolveAddress(address);
       });
   }
@@ -413,12 +414,37 @@ export class MyApp {
     this.walletAddressStr = UtilService.resolveAddress(this.walletAddress);
   }
 
-  
+
   copyWalletAddr(){
     this.native.copyClipboard(this.walletAddress).then(()=>{
       this.native.toast_trans("common.textcopied");
     }).catch(()=>{
 
     });;
+  }
+
+  clickWalletAddr(){
+    this.walletDialog();
+  }
+
+  walletDialog(){
+    this.popover = this.popupProvider.ionicConfirm(
+      this,
+      "common.confirm",
+      this.walletAddress,
+      this.cancel,
+      this.disconnect,
+      './assets/images/tskth.svg',
+      "common.disconnect"
+    );
+  }
+
+  async disconnect(that:any){
+    if(this.popover!=null){
+      this.popover.dismiss();
+      await that.walletConnectControllerService.disconnect();
+      this.walletAddress = "";
+      this.walletAddressStr = "";
+    }
   }
 }

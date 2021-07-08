@@ -163,6 +163,7 @@ export class ProfilePage implements OnInit {
 
     this.dataHelper.loadWalletAccountAddress().then((address)=>{
       console.log("accountAddress",address);
+      this.walletAddress = address;
       this.walletAddressStr = UtilService.resolveAddress(address);
     });
   }
@@ -1224,7 +1225,7 @@ export class ProfilePage implements OnInit {
       "",
       "common.downDes",
       this.cancel,
-      'tskth.svg'
+      './assets/images/tskth.svg'
     );
   }
 
@@ -1424,5 +1425,30 @@ export class ProfilePage implements OnInit {
     }).catch(()=>{
 
     });;
+  }
+
+  clickWalletAddr(){
+    this.walletDialog();
+  }
+
+  walletDialog(){
+    this.popover = this.popupProvider.ionicConfirm(
+      this,
+      "common.confirm",
+      this.walletAddress,
+      this.cancel,
+      this.disconnect,
+      './assets/images/tskth.svg',
+      "common.disconnect"
+    );
+  }
+
+async disconnect(that:any){
+    if(this.popover!=null){
+      this.popover.dismiss();
+      await that.walletConnectControllerService.disconnect();
+      this.walletAddress = "";
+      this.walletAddressStr = "";
+    }
   }
 }
