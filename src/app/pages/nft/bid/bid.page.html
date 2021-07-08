@@ -2,15 +2,13 @@
 <ion-content>
   <ion-grid class="container" [class.darkContainer]="theme.darkMode">
     <!--- contract Details -->
-    <!-- <ion-row>
-      <ion-col size="12" style="padding:0px;">
-        <ion-button class="btn-row1" style="border-radius:17px;">
-          <ion-label>
-            {{ 'AssetdetailsPage.contractDetails' | translate }}
-          </ion-label>
-        </ion-button>
+    <ion-row class="detail-row removeBorder">
+      <ion-col size="12" class="left-col">
+        <h1>{{ "AssetdetailsPage.asset" | translate}}</h1>
+        <img src="./assets/images/profile-feeds-logo.svg" class="bidfeedslogo">
+        <img src="{{assetUri}}" class="assetsImg"/>
       </ion-col>
-    </ion-row> -->
+    </ion-row>
 
     <div *ngFor="let contractDetail of contractDetails">
       <ion-row *ngIf="contractDetail.details" class="detail-row removeBorder">
@@ -20,20 +18,6 @@
         </ion-col>
       </ion-row>
     </div>
-
-    <ion-row class="detail-row removeBorder">
-      <ion-col size="12" class="left-col">
-        <h2 style="text-align:center;font-size:18px;font-weight:bold;font-stretch:normal;font-style:normal;color:#fff;background-color:#49b12a;border-radius:10px;height:36px;line-height:7px;">{{ "AssetdetailsPage.price" | translate }}</h2>
-      </ion-col>
-    </ion-row>
-
-    <ion-row class="detail-row removeBorder">
-      <ion-col size="12" class="left-col">
-        <h1>{{ "AssetdetailsPage.asset" | translate}}</h1>
-        <img src="./assets/images/bidfeedslogo.svg" class="bidfeedslogo">
-        <img src="{{assetUri}}" class="assetsImg"/>
-      </ion-col>
-    </ion-row>
 
     <ion-row class="detail-row removeBorder" *ngIf="showType==='burn'">
       <ion-col size="12" class="left-col">
@@ -52,7 +36,7 @@
     <ion-row class="detail-row removeBorder" *ngIf="showType==='buy'">
       <ion-col size="12" class="left-col">
         <h1>{{ "MintnftPage.nftfixedPrice" | translate}}</h1>
-        <h2>{{ hanldePrice(fixedPrice) }} ELA/ETHSC</h2>
+        <div style="text-align: center;color: #7624fe;font-size: 18px;font-weight: bold;margin-top: 13px;">{{ hanldePrice(fixedPrice) }} ELA/ETHSC</div>
       </ion-col>
     </ion-row>
 

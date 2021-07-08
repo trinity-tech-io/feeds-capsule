@@ -4,7 +4,7 @@
     --background: #e5e5e5;
    }
 
-    padding: 40px 25px;
+    padding:0px 25px;
     .removeBorder {
       border-bottom: none;
     }
@@ -47,8 +47,8 @@
 
           .bidfeedslogo{
             position: absolute;
-            left: calc(50% - 45px);
-            top: 80px;
+            bottom:10px;
+            left:10px;
           }
 
           .tip{
