@@ -9,6 +9,9 @@ import { TitleBarComponent } from '../../..//components/titlebar/titlebar.compon
 import { ApiUrl } from '../../../services/ApiUrl';
 import { FeedService } from 'src/app/services/FeedService';
 import { Web3Service } from '../../../services/Web3Service';
+import { PopupProvider } from 'src/app/services/popup';
+import { PopoverController} from '@ionic/angular';
+
 import _ from 'lodash';
 type detail = {
   type: string,
@@ -41,6 +44,7 @@ export class BidPage implements OnInit {
   public saleOrderId:string = null;
   public sellerAddress:string = null;
   private curAssetItem = {};
+  public popover:any = null;
   constructor(
     private translate:TranslateService,
     private event:Events,
@@ -49,7 +53,9 @@ export class BidPage implements OnInit {
     public theme:ThemeService,
     private activatedRoute:ActivatedRoute,
     private web3Service:Web3Service,
-    private feedService:FeedService
+    private feedService:FeedService,
+    private popoverController: PopoverController,
+    public popupProvider:PopupProvider,
   ) { }
 
   ngOnInit() {
@@ -78,6 +84,11 @@ export class BidPage implements OnInit {
   }
 
   ionViewWillLeave(){
+    let value =  this.popoverController.getTop()["__zone_symbol__value"] || "";
+    if(value!=""){
+      this.popoverController.dismiss();
+      this.popover = null;
+    }
     this.removeEvent();
     this.event.publish(FeedsEvent.PublishType.search);
     this.event.publish(FeedsEvent.PublishType.notification);
@@ -210,12 +221,30 @@ export class BidPage implements OnInit {
         this.feedService.setOwnPurchasedList(plist);
         this.feedService.setData("feed.nft.own.purchased.list",JSON.stringify(plist));
       }
-        alert("buy sucess")
-        this.native.pop();
+      this.native.pop();
     }else{
-      alert("=====purchase fail====");
+      this.buyFail();
     }
    }
+
+   buyFail(){
+    this.popover = this.popupProvider.ionicAlert(
+      this,
+      // "ConfirmdialogComponent.signoutTitle",
+      "",
+      "common.buyNftError",
+      this.confirm,
+      'tskth.svg',
+      "common.ok"
+    );
+   }
+
+   confirm(that:any){
+    if(this.popover!=null){
+       this.popover.dismiss();
+       this.popover = null;
+    }
+}
 
    bid(){
     this.native.navigateForward(['confirmation'],{queryParams:{"showType":"burn"}});
