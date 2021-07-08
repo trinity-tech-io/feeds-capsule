@@ -200,7 +200,7 @@ export class NftdialogComponent implements OnInit {
   receipt = receipt || "";
   if(receipt===""){
     this.native.hideLoading();
-    alert("public pasar失败");
+    this.native.toast_trans("common.publicPasarFailed");
     return;
   }
 
@@ -225,7 +225,7 @@ export class NftdialogComponent implements OnInit {
   receipt = receipt || "";
   if(receipt === ""){
     this.native.hideLoading();
-    alert("public pasar失败");
+    this.native.toast_trans("common.publicPasarFailed");
     return;
    }
    //console.log("======receipt======"+JSON.stringify(receipt))
@@ -237,7 +237,6 @@ export class NftdialogComponent implements OnInit {
    this.native.hideLoading();
    this.popover.dismiss();
    this.native.toast("public pasar sucess");
-
   }
 
 
@@ -257,14 +256,13 @@ export class NftdialogComponent implements OnInit {
   const { status: changeStatus } = await this.web3Service.sendTxWaitForReceipt(changeTx, accSeller);
   if(changeStatus!=""&&changeStatus!=undefined){
     this.native.hideLoading();
-    alert("=====change Order Price sucess====");
     this.curAssItem.fixedAmount = price;
     let list = this.feedService.getPasarList();
     this.feedService.setData("feed.nft.pasarList",JSON.stringify(list));
     this.popover.dismiss();
   }else{
     this.native.hideLoading();
-    alert("=====change Order Price fail====");
+    this.native.toast_trans("common.priceChangeFailed")
   }
 }
 
