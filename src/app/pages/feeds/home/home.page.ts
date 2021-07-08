@@ -17,7 +17,7 @@ import { PopupProvider } from 'src/app/services/popup';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { StorageService } from 'src/app/services/StorageService';
-import { Web3Service } from '../../../services/Web3Service';
+// import { Web3Service } from '../../../services/Web3Service';
 import { HttpService } from '../../../services/HttpService';
 import { ApiUrl } from '../../../services/ApiUrl';
 import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
@@ -144,7 +144,7 @@ export class HomePage implements OnInit {
     private viewHelper: ViewHelper,
     private titleBarService: TitleBarService,
     private storageService:StorageService,
-    private web3Service:Web3Service,
+    // private web3Service:Web3Service,
     private httpService:HttpService,
     private nftContractControllerService: NFTContractControllerService) {
     }
@@ -306,7 +306,7 @@ addCommonEvents(){
     this.feedService.setData("feed.nft.pasarList",JSON.stringify(this.pasarList));
 
 
-    let createAddr = this.web3Service.getCreateAddress();
+    let createAddr = this.nftContractControllerService.getAccountAddress();
     if(sellerAddr === createAddr){
       //add created
       assetItem["fixedAmount"] = "";
@@ -1005,7 +1005,7 @@ clearData(){
             price = nftOrder[5];
           }
           if(price!=""){
-            priceDes = this.web3Service.getFromWei(price.toString())+" ELA/ETHSC";
+            priceDes = this.nftContractControllerService.transFromWei(price.toString())+" ELA/ETHSC";
           }
          }
 
@@ -1604,7 +1604,7 @@ async getOpenOrderByIndex(index:any){
   let saleOrderId = openOrder[0];
   let tokenNum = openOrder[4];
   let price = openOrder[5];
-  let tokenInfo = await this.nftContractControllerService.getPasar().tokenInfo(tokenId);
+  let tokenInfo = await this.nftContractControllerService.getSticker().tokenInfo(tokenId);
   let tokenUri = tokenInfo[3];
   let sellerAddr = openOrder[7];
   this.handleFeedsUrl(tokenUri,tokenId,saleOrderId,price,tokenNum,sellerAddr,index);

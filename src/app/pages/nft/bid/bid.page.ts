@@ -8,9 +8,10 @@ import { TitleBarService } from '../../../services/TitleBarService';
 import { TitleBarComponent } from '../../..//components/titlebar/titlebar.component';
 import { ApiUrl } from '../../../services/ApiUrl';
 import { FeedService } from 'src/app/services/FeedService';
-import { Web3Service } from '../../../services/Web3Service';
+// import { Web3Service } from '../../../services/Web3Service';
 import { PopupProvider } from 'src/app/services/popup';
 import { PopoverController} from '@ionic/angular';
+import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
 
 import _ from 'lodash';
 type detail = {
@@ -52,10 +53,11 @@ export class BidPage implements OnInit {
     private titleBarService:TitleBarService,
     public theme:ThemeService,
     private activatedRoute:ActivatedRoute,
-    private web3Service:Web3Service,
+    // private web3Service:Web3Service,
     private feedService:FeedService,
     private popoverController: PopoverController,
     public popupProvider:PopupProvider,
+    private nftContractControllerService: NFTContractControllerService
   ) { }
 
   ngOnInit() {
@@ -68,7 +70,7 @@ export class BidPage implements OnInit {
       this.description = queryParams.description || "";
       this.quantity = queryParams.quantity || "1";
       this.tokenID = queryParams.tokenId || "";
-      this.contractAddress = this.web3Service.getStickerAddr();
+      this.contractAddress = this.nftContractControllerService.getSticker().getStickerAddress();
       this.assetUri = this.handleImg(asset);
       this.fixedPrice = queryParams.fixedAmount || "";
       this.royalties = queryParams.royalties || "";
@@ -174,35 +176,28 @@ export class BidPage implements OnInit {
    }
 
   async buy(){
+    let accountAddress = this.nftContractControllerService.getAccountAddress();
+    let purchaseStatus = "";
+    try{
+      purchaseStatus = await this.nftContractControllerService.getPasar().buyOrder(accountAddress, this.saleOrderId);
+    }catch(error){
+    }
 
-    let pasarAddr = this.web3Service.getPasarAddr();
-    const accBuyer = await this.web3Service.getAccount("04868f294d8ef6e1079752cd2e1f027a126b44ee27040d949a88f89bddc15f31");
-    let pasarContract = this.web3Service.getPasar();
-    const purchaseData = pasarContract.methods.buyOrder(this.saleOrderId).encodeABI();
+    purchaseStatus = purchaseStatus || "";
 
-    const purchaseTx = {
-      from: accBuyer.address,
-      to: pasarAddr,
-      value:this.fixedPrice,
-      data: purchaseData
-    };
-
-    const {
-      status: purchaseStatus,
-    } = await this.web3Service.sendTxWaitForReceipt(purchaseTx, accBuyer);
     this.native.hideLoading();
     if(purchaseStatus!=""&&purchaseStatus!=undefined){
-     let plist = this.feedService.getPasarList();
+    let plist = this.feedService.getPasarList();
       plist  = _.filter(plist,(item)=>{
         return item.saleOrderId != this.saleOrderId;
       });
       this.feedService.setPasarList(plist);
       this.feedService.setData("feed.nft.pasarList",JSON.stringify(plist));
-      let createAddress = this.web3Service.getCreateAddress();
+      let createAddress = this.nftContractControllerService.getAccountAddress();
       if(this.sellerAddress === createAddress){
 
         let olist = this.feedService.getOwnOnSaleList();
-         olist  = _.filter(olist,(item)=>{
+        olist  = _.filter(olist,(item)=>{
           return item.saleOrderId != this.saleOrderId;
         });
         this.feedService.setOwnOnSaleList(olist);
@@ -259,7 +254,7 @@ export class BidPage implements OnInit {
    }
 
   hanldePrice(price:string){
-    return this.web3Service.getFromWei(price);
+    return this.nftContractControllerService.transFromWei(price);
   }
 
   copytext(text:any){

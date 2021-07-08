@@ -6,7 +6,7 @@ import { NativeService } from './NativeService';
 import { PopupProvider } from 'src/app/services/popup';
 import { IntentService } from 'src/app/services/IntentService';
 import { ViewHelper } from 'src/app/services/viewhelper.service';
-import { Web3Service } from 'src/app/services/Web3Service';
+// import { Web3Service } from 'src/app/services/Web3Service';
 import { Events } from 'src/app/services/events.service';
 
 @Injectable()
@@ -34,7 +34,7 @@ export class MenuService {
         public popupProvider:PopupProvider,
         private intentService: IntentService,
         private viewHelper:ViewHelper,
-        private web3Service:Web3Service,
+        // private web3Service:Web3Service,
         private events:Events,
     ) {
     }

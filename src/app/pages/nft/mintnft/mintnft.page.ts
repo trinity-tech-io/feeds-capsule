@@ -4,7 +4,7 @@ import { ThemeService } from '../../../services/theme.service';
 import { CameraService } from '../../../services/CameraService';
 import { NativeService } from '../../../services/NativeService';
 import { UtilService } from '../../../services/utilService';
-import { Web3Service } from '../../../services/Web3Service';
+// import { Web3Service } from '../../../services/Web3Service';
 import { Events } from '../../../services/events.service';
 import { TitleBarService } from '../../../services/TitleBarService';
 import { TitleBarComponent } from '../../..//components/titlebar/titlebar.component';
@@ -12,6 +12,7 @@ import { File,DirectoryEntry} from '@ionic-native/file/ngx';
 import { HttpService } from '../../../services/HttpService';
 import { ApiUrl } from '../../../services/ApiUrl';
 import { FeedService } from '../../../services/FeedService';
+import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
 
 @Component({
   selector: 'app-mintnft',
@@ -50,9 +51,10 @@ export class MintnftPage implements OnInit {
     private titleBarService: TitleBarService,
     private httpService:HttpService,
     private file:File,
-    private web3Service:Web3Service,
+    // private web3Service:Web3Service,
     private feedService:FeedService,
-    public theme:ThemeService) { }
+    public theme:ThemeService,
+    private nftContractControllerService: NFTContractControllerService) { }
 
   ngOnInit() {
   }
@@ -298,119 +300,96 @@ export class MintnftPage implements OnInit {
   }
 
   async mintContract(tokenId:any,uri:any,supply:any,royalty:any){
-
-    let stickerAddr = this.web3Service.getStickerAddr();
-    let stickerContract = this.web3Service.getSticker();
-    let pasarContract = this.web3Service.getPasar();
-    let sellerAddress = this.web3Service.getSellerAddress();
-    const sellerInfo = await pasarContract.methods.getSellerByAddr(sellerAddress).call();
-    this.orderId  =  sellerInfo[2];
-    const accCreator = await this.web3Service.getAccount("04868f294d8ef6e1079752cd2e1f027a126b44ee27040d949a88f89bddc15f31");
-    let parm = {"tokenId:":tokenId,"supply":supply,"uri":uri,"royalty":royalty}
-    console.log("==mintData parm=="+JSON.stringify(parm));
-    const mintData = stickerContract.methods.mint(tokenId,supply,uri,royalty).encodeABI();
-    let mintTx = {
-      from: accCreator.address,
-      to: stickerAddr,
-      value: 0,
-      data:mintData
-    };
-   let receipt = await this.web3Service.sendTxWaitForReceipt(mintTx,accCreator) || "";
-   receipt = receipt || "";
-   if(receipt=== ""){
-    this.native.hideLoading();
-    alert("nft创建失败");
-    this.native.toast_trans("common.nftCreationFailed")
-   return;
-   }
-   if(receipt!=""&&this.curPublishtoPasar){
-    this.handlePasar(accCreator,tokenId);
+    let result = "";
+    try{
+      result = await this.nftContractControllerService.getSticker().mint(tokenId, supply, uri, royalty);
+    }catch(error){
+    }
+    
+    result = result || "";
+    if(result=== ""){
+      this.native.hideLoading();
+      alert("nft创建失败");
+      this.native.toast_trans("common.nftCreationFailed")
     return;
-   }
-   this.native.hideLoading();
-   this.native.pop();
-   this.native.toast("sucess");
+    }
+    if(result!=""&&this.curPublishtoPasar){
+      this.handlePasar(tokenId);
+      return;
+    }
+    this.native.hideLoading();
+    this.native.pop();
+    this.native.toast("sucess");
   }
 
- async handlePasar(accCreator:any,tokenId:any){
-    //let pasarABI = this.web3Service.getPasarAbi();
-    let pasarAddr = this.web3Service.getPasarAddr();
-    let pasarContract = this.web3Service.getPasar();
-
-    let stickerAddr = await pasarContract.methods.getTokenAddress().call();
-    let stickerContract = this.web3Service.getSticker();
-    let accSeller =  await this.web3Service.getAccount('04868f294d8ef6e1079752cd2e1f027a126b44ee27040d949a88f89bddc15f31');
-
+ async handlePasar(tokenId:any){
     // Seller approve pasar
-   const approveData = stickerContract.methods.setApprovalForAll(pasarAddr,true).encodeABI();
-   const approveTx = {
-     from: accSeller.address,
-     to: stickerAddr,
-     value: 0,
-     data: approveData
-   };
+    let pasarAddress = this.nftContractControllerService.getPasar().getAddress();
+    let result = "";
+    let accountAddress = this.nftContractControllerService.getAccountAddress();
+    try{
+      result = await this.nftContractControllerService.getSticker().setApprovalForAll(accountAddress, pasarAddress, true);
+    }catch(error){
+    }
+    
+    result = result || "";
+    if(result===""){
+      this.native.hideLoading();
+      alert("public pasar失败");
+      return;
+    }
 
-  let receipt = await this.web3Service.sendTxWaitForReceipt(approveTx,accCreator);
-  receipt = receipt || "";
-  if(receipt===""){
-    this.native.hideLoading();
-    alert("public pasar失败");
-    return;
-  }
+    let price = UtilService.accMul(this.nftFixedAmount,this.nftQuantity);
+    console.log("=======price======="+price);
+    let salePrice = this.nftContractControllerService.transToWei(price.toString()).toString();
+    console.log("=======salePrice======="+salePrice);
+    let createOrderresult = "";
+    try{
+      createOrderresult = await this.nftContractControllerService.getPasar().createOrderForSale(accountAddress, tokenId,this.nftQuantity,salePrice);
+    }catch(error){
+    }
 
- let price = UtilService.accMul(this.nftFixedAmount,this.nftQuantity);
- console.log("=======price======="+price);
- let salePrice = this.web3Service.getToWei(price.toString()).toString();
- console.log("=======salePrice======="+salePrice);
-  const saleData = pasarContract.methods.createOrderForSale(tokenId,this.nftQuantity,salePrice).encodeABI();
-  const saleTx = {
-    from: accSeller.address,
-    to: pasarAddr,
-    value: 0,
-    data: saleData,
-  };
-
-  receipt = await this.web3Service.sendTxWaitForReceipt(saleTx,accCreator);
-  receipt = receipt || "";
-  if(receipt === ""){
-    this.native.hideLoading();
-    alert("public pasar失败");
-    return;
-   }
+    createOrderresult = createOrderresult || "";
+    if(createOrderresult === ""){
+      this.native.hideLoading();
+      alert("public pasar失败");
+      return;
+    }
    //console.log("======receipt======"+JSON.stringify(receipt))
-   let order = await pasarContract.methods.getOrderById(this.orderId).call();
-       tokenId = order[3];
-   let sellerAddr = order[7] || "";
-   let saleOrderId = order[0];
-   let item = {
-    "saleOrderId":saleOrderId,
-    "tokenId":tokenId,
-    "asset":this.imageObj["imgHash"],
-    "name":this.nftName,
-    "description":this.nftDescription,
-    "fixedAmount":order[5],
-    "kind":this.imageObj['imgFormat'],
-    "type":this.issueRadionType,
-    "royalties":this.nftRoyalties,
-    "quantity":this.nftQuantity,
-    "thumbnail":this.imageObj["thumbnail"],
-    "sellerAddr":sellerAddr
-   }
 
-   let list = this.feedService.getPasarList();
-       list.push(item)
-   this.feedService.setPasarList(list);
-   this.feedService.setData("feed.nft.pasarList",JSON.stringify(list));
+    let order = await this.nftContractControllerService.getPasar().getOrderById(this.orderId);
 
-   let slist = this.feedService.getOwnOnSaleList();
-       slist.push(item);
-   this.feedService.setData("feed.nft.own.onSale.list",JSON.stringify(slist));
+    tokenId = order[3];
+    let sellerAddr = order[7] || "";
+    let saleOrderId = order[0];
+    let item = {
+      "saleOrderId":saleOrderId,
+      "tokenId":tokenId,
+      "asset":this.imageObj["imgHash"],
+      "name":this.nftName,
+      "description":this.nftDescription,
+      "fixedAmount":order[5],
+      "kind":this.imageObj['imgFormat'],
+      "type":this.issueRadionType,
+      "royalties":this.nftRoyalties,
+      "quantity":this.nftQuantity,
+      "thumbnail":this.imageObj["thumbnail"],
+      "sellerAddr":sellerAddr
+    }
 
-   await this.getSetChannel(tokenId);
-   this.native.hideLoading();
-   this.native.pop();
-   this.native.toast("public pasar sucess");
+    let list = this.feedService.getPasarList();
+        list.push(item)
+    this.feedService.setPasarList(list);
+    this.feedService.setData("feed.nft.pasarList",JSON.stringify(list));
 
+    let slist = this.feedService.getOwnOnSaleList();
+        slist.push(item);
+    this.feedService.setData("feed.nft.own.onSale.list",JSON.stringify(slist));
+
+    await this.getSetChannel(tokenId);
+    this.native.hideLoading();
+    this.native.pop();
+    this.native.toast("public pasar sucess");
   }
 
 

@@ -12,7 +12,7 @@ export class WalletConnectControllerService {
     private rpc = {
       21: this.uri,
     }
-    private infuraId: "0dd3ab5ca24946938c6d411a1637cc59";
+    // private infuraId: "0dd3ab5ca24946938c6d411a1637cc59";
     private accountAddress = "";
     private walletConnectProvider: WalletConnectProvider;
     private walletConnectWeb3: Web3;

@@ -7,7 +7,7 @@ import { Events } from 'src/app/services/events.service';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { ApiUrl } from '../../../services/ApiUrl';
-import { Web3Service } from '../../../services/Web3Service';
+// import { Web3Service } from '../../../services/Web3Service';
 type detail = {
   type: string,
   details: string
@@ -43,7 +43,7 @@ export class AssetdetailsPage implements OnInit {
     private native:NativeService,
     private titleBarService:TitleBarService,
     private activatedRoute:ActivatedRoute,
-    private web3Service:Web3Service,
+    // private web3Service:Web3Service,
     public theme:ThemeService,
     ) {
 
@@ -57,7 +57,7 @@ export class AssetdetailsPage implements OnInit {
       this.description = queryParams.description || "";
       this.quantity = queryParams.quantity || "1";
       this.tokenID = queryParams.tokenId || "";
-      this.contractAddress = this.web3Service.getStickerAddr();
+      // this.contractAddress = this.web3Service.getStickerAddr();
       this.assetUri = this.handleImg(asset);
     });
   }
