@@ -31,15 +31,25 @@ export class NFTContractControllerService {
       });
     }
 
-    getSticker(){
+    getSticker(): NFTContractStickerService{
       return this.nftContractStickerService.getSticker();
     }
 
-    getPasar(){
-      return this.nftContractParsarService.getPasarContract();
+    getPasar(): NFTContractParsarService{
+      return this.nftContractParsarService.getPasar();
     }
 
     getAccountAddress(){
       return this.walletConnectControllerService.getAccountAddress();
+    }
+
+    transFromWei(price:string){
+      let eth = this.walletConnectControllerService.getWeb3().utils.fromWei(price, 'ether');
+      return eth;
+    }
+
+    transToWei(price: string){
+      let wei  = this.walletConnectControllerService.getWeb3().utils.toWei(price, 'ether');
+      return wei;
     }
 }

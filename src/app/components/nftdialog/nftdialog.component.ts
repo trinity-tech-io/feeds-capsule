@@ -3,7 +3,7 @@ import { ThemeService } from 'src/app/services/theme.service';
 import { PopoverController,NavParams} from '@ionic/angular';
 import { ApiUrl } from '../../services/ApiUrl';
 import { FeedService } from '../../services/FeedService';
-import { Web3Service } from '../../services/Web3Service';
+// import { Web3Service } from '../../services/Web3Service';
 import { NativeService } from 'src/app/services/NativeService';
 import { Events } from '../../services/events.service';
 import _ from 'lodash';
@@ -32,7 +32,7 @@ export class NftdialogComponent implements OnInit {
   constructor(
     private navParams: NavParams,
     private popover: PopoverController,
-    private web3Service:Web3Service,
+    // private web3Service:Web3Service,
     private native:NativeService,
     private feedService:FeedService,
     private events:Events,
@@ -47,10 +47,10 @@ export class NftdialogComponent implements OnInit {
     this.menuType = this.navParams.get('menuType');
     let assItem = this.navParams.get('assItem');
     this.curAssItem = assItem;
-    this.curAmount =this.web3Service.getFromWei(this.assItem.fixedAmount);
+    this.curAmount =this.nftContractControllerService.transFromWei(this.assItem.fixedAmount);
     this.assItem =  _.cloneDeep(assItem);
     let price = this.assItem.fixedAmount || "";
-    this.amount =this.web3Service.getFromWei(price);
+    this.amount =this.nftContractControllerService.transFromWei(price);
     this.quantity = this.assItem.quantity;
     this.Maxquantity = this.assItem.quantity;
     this.saleOrderId = this.assItem.saleOrderId || "";
@@ -173,96 +173,82 @@ export class NftdialogComponent implements OnInit {
   }
 
   async handlePasar(tokenId:any,type:any){
-
-    const accCreator = await this.web3Service.getAccount("04868f294d8ef6e1079752cd2e1f027a126b44ee27040d949a88f89bddc15f31");
-    let pasarAddr = this.web3Service.getPasarAddr();
-    let pasarContract = this.web3Service.getPasar();
-    let sellerAddress = this.web3Service.getSellerAddress();
+    let sellerAddress = this.nftContractControllerService.getAccountAddress();
     const sellerInfo = await this.nftContractControllerService.getPasar().getSellerByAddr(sellerAddress);
     this.orderId  =  sellerInfo[2];
 
-    let stickerAddr = await this.nftContractControllerService.getPasar().getTokenAddress();
-    let stickerContract = this.web3Service.getSticker();
-    let accSeller =  await this.web3Service.getAccount('04868f294d8ef6e1079752cd2e1f027a126b44ee27040d949a88f89bddc15f31');
-
     // Seller approve pasar
-   const approveData = stickerContract.methods.setApprovalForAll(pasarAddr,true).encodeABI();
-   const approveTx = {
-     from: accSeller.address,
-     to: stickerAddr,
-     value: 0,
-     data: approveData
-   };
+    let pasarAddr = this.nftContractControllerService.getPasar().getAddress();
+    let result = "";
+    try{
+      result = await this.nftContractControllerService.getSticker().setApprovalForAll(sellerAddress, pasarAddr,true);
+    }catch(error){
+    }
 
-  let receipt = await this.web3Service.sendTxWaitForReceipt(approveTx,accCreator);
-  receipt = receipt || "";
-  if(receipt===""){
-    this.native.hideLoading();
-    this.native.toast_trans("common.publicPasarFailed");
-    return;
-  }
+    result = result || "";
+    if(result===""){
+      this.native.hideLoading();
+      this.native.toast_trans("common.publicPasarFailed");
+      return;
+    }
 
- let price = UtilService.accMul(this.amount,this.quantity);
- console.log("=======price======="+price);
- let salePrice = this.web3Service.getToWei(price.toString());
- console.log("=======salePrice======="+salePrice);
-  console.log("=====this.quantity======"+typeof(this.quantity));
-  if(typeof(this.quantity)=== "number"){
-    this.quantity = this.quantity.toString();
-  }
-  console.log("=====this.quantity======"+typeof(this.quantity));
-  const saleData = pasarContract.methods.createOrderForSale(tokenId,this.quantity,salePrice).encodeABI();
-  const saleTx = {
-    from: accSeller.address,
-    to: pasarAddr,
-    value: 0,
-    data: saleData,
-  };
-
-  receipt = await this.web3Service.sendTxWaitForReceipt(saleTx,accCreator);
-  receipt = receipt || "";
-  if(receipt === ""){
-    this.native.hideLoading();
-    this.native.toast_trans("common.publicPasarFailed");
-    return;
-   }
-   //console.log("======receipt======"+JSON.stringify(receipt))
-   await this.getSetChannel(tokenId);
-   let sAssItem =_.cloneDeep(this.curAssItem);
-       sAssItem["sellerAddr"] = accSeller.address;
-   let obj = {"type":type,"assItem":sAssItem}
-   this.events.publish(FeedsEvent.PublishType.nftUpdateList,obj);
-   this.native.hideLoading();
-   this.popover.dismiss();
-   this.native.toast("public pasar sucess");
+    let accountAddress = this.nftContractControllerService.getAccountAddress();
+    let price = UtilService.accMul(this.amount,this.quantity);
+    console.log("=======price======="+price);
+    let salePrice = this.nftContractControllerService.transToWei(price.toString());
+    console.log("=======salePrice======="+salePrice);
+      console.log("=====this.quantity======"+typeof(this.quantity));
+      if(typeof(this.quantity)=== "number"){
+        this.quantity = this.quantity.toString();
+      }
+      console.log("=====this.quantity======"+typeof(this.quantity));
+      let orderResult = "";
+      try{
+        orderResult = await this.nftContractControllerService.getPasar().createOrderForSale(accountAddress, tokenId,this.quantity,salePrice);
+      }catch(error){
+      }
+       
+      
+      orderResult = orderResult || "";
+      if(orderResult === ""){
+        this.native.hideLoading();
+        this.native.toast_trans("common.publicPasarFailed");
+        return;
+      }
+      //console.log("======receipt======"+JSON.stringify(receipt))
+      await this.getSetChannel(tokenId);
+      let sAssItem =_.cloneDeep(this.curAssItem);
+          sAssItem["sellerAddr"] = sellerAddress;
+      let obj = {"type":type,"assItem":sAssItem}
+      this.events.publish(FeedsEvent.PublishType.nftUpdateList,obj);
+      this.native.hideLoading();
+      this.popover.dismiss();
+      this.native.toast("public pasar sucess");
   }
 
 
- async changePrice(){
+  async changePrice(){
+    let accountAddress = this.nftContractControllerService.getAccountAddress();
+    let price = this.nftContractControllerService.transToWei(this.amount.toString()).toString();
+    let changeStatus = "";
+    try{
+      changeStatus = await this.nftContractControllerService.getPasar().changeOrderPrice(accountAddress, this.saleOrderId, price);
+    }catch(error){
+    }
 
-  let pasarAddr = this.web3Service.getPasarAddr();
-  let pasarContract = this.web3Service.getPasar();
-  const accSeller = await this.web3Service.getAccount("04868f294d8ef6e1079752cd2e1f027a126b44ee27040d949a88f89bddc15f31");
-  let price = this.web3Service.getToWei(this.amount.toString()).toString();
-  const changeData = pasarContract.methods.changeOrderPrice(this.saleOrderId,price).encodeABI();
-  const changeTx = {
-    from:accSeller.address,
-    to: pasarAddr,
-    value: 0,
-    data: changeData,
-  };
-  const { status: changeStatus } = await this.web3Service.sendTxWaitForReceipt(changeTx, accSeller);
-  if(changeStatus!=""&&changeStatus!=undefined){
-    this.native.hideLoading();
-    this.curAssItem.fixedAmount = price;
-    let list = this.feedService.getPasarList();
-    this.feedService.setData("feed.nft.pasarList",JSON.stringify(list));
-    this.popover.dismiss();
-  }else{
-    this.native.hideLoading();
-    this.native.toast_trans("common.priceChangeFailed")
+    changeStatus = changeStatus || "";
+    
+    if(changeStatus!=""&&changeStatus!=undefined){
+      this.native.hideLoading();
+      this.curAssItem.fixedAmount = price;
+      let list = this.feedService.getPasarList();
+      this.feedService.setData("feed.nft.pasarList",JSON.stringify(list));
+      this.popover.dismiss();
+    }else{
+      this.native.hideLoading();
+      this.native.toast_trans("common.priceChangeFailed")
+    }
   }
-}
 
   number(text:any) {
     var numPattern = /^(([1-9]\d*)|\d)(.\d{1,9})?$/;

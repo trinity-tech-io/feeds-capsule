@@ -7,7 +7,7 @@ import { NativeService } from '../../../services/NativeService';
 import { Events } from '../../../services/events.service';
 import { TitleBarService } from '../../../services/TitleBarService';
 import { TitleBarComponent } from '../../..//components/titlebar/titlebar.component';
-import { Web3Service } from '../../../services/Web3Service';
+// import { Web3Service } from '../../../services/Web3Service';
 import { HttpService } from '../../../services/HttpService';
 import { MenuService } from 'src/app/services/MenuService';
 import { ApiUrl } from '../../../services/ApiUrl';
@@ -39,7 +39,7 @@ export class CollectionsPage implements OnInit {
     private activatedRoute:ActivatedRoute,
     private feedService: FeedService,
     private titleBarService:TitleBarService,
-    private web3Service:Web3Service,
+    // private web3Service:Web3Service,
     private httpService:HttpService,
     private menuService: MenuService,
     public theme:ThemeService,
@@ -261,7 +261,7 @@ export class CollectionsPage implements OnInit {
    this.createdList = [];
    this.hanleListCace("buy");
   //  const stickerContract = this.web3Service.getSticker();
-   let createAddress = this.web3Service.getCreateAddress();
+   let createAddress = this.nftContractControllerService.getAccountAddress();
    let nftCreatedCount = await this.countOfOwner(createAddress);
    for(let index = 0 ;index<nftCreatedCount;index++){
       this.createdList.push(null);
@@ -345,7 +345,7 @@ async getOnSale(){
   this.onSaleList = [];
   this.hanleListCace("sale");
   // const pasarContract = this.web3Service.getPasar();
-  let createAddress = this.web3Service.getCreateAddress();
+  let createAddress = this.nftContractControllerService.getAccountAddress();
   let sellerInfo = await this.nftContractControllerService.getPasar().getSellerByAddr(createAddress);
   let sellerAddr = sellerInfo[1];
   let orderCount = sellerInfo[3];
@@ -362,8 +362,8 @@ async handleOrder(sellerAddr:any,orderCount:any,listType:any){
       let tokenId = sellerOrder[3];
       let saleOrderId = sellerOrder[0];
       let price = sellerOrder[5];
-      const stickerContract = this.web3Service.getSticker();
-      let tokenInfo = await stickerContract.methods.tokenInfo(tokenId).call();
+      // const stickerContract = this.web3Service.getSticker();
+      let tokenInfo = await this.nftContractControllerService.getSticker().tokenInfo(tokenId);
       let feedsUri= tokenInfo[3];
       feedsUri  = feedsUri.replace("feeds:json:","");
       let tokenNum = tokenInfo[2];

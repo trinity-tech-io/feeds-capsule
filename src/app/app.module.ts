@@ -34,7 +34,7 @@ import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { CarrierService } from './services/CarrierService';
 import { NativeService } from './services/NativeService';
 import { FeedService } from './services/FeedService';
-import { Web3Service } from './services/Web3Service'
+// import { Web3Service } from './services/Web3Service'
 import { StorageService } from './services/StorageService';
 import { JsonRPCService } from './services/JsonRPCService';
 // import { TransportService } from './services/TransportService';
@@ -176,7 +176,7 @@ export function TranslateLoaderFactory() {
     NativeService,
     SessionService,
     FeedService,
-    Web3Service,
+    // Web3Service,
     TranslateService,
     ThemeService,
     JsonRPCService,
