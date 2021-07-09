@@ -11,11 +11,16 @@ export class AssetitemComponent implements OnInit {
   @Input () assetItem:any = null;
   @Output() clickAssetItem = new EventEmitter();
   @Output() clickMore = new EventEmitter();
+  public styleObj:any = {width:""};
   constructor(
     private web3Service:Web3Service
   ) { }
 
-  ngOnInit() {}
+  ngOnInit() {
+
+    this.styleObj.width = (screen.width-20-10)/2 +"px";
+    console.log("======width======="+this.styleObj.width);
+  }
 
   clickItem(){
     this.clickAssetItem.emit(this.assetItem);
