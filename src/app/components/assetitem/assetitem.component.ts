@@ -17,9 +17,7 @@ export class AssetitemComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-
     this.styleObj.width = (screen.width-20-10)/2 +"px";
-    console.log("======width======="+this.styleObj.width);
   }
 
   clickItem(){
