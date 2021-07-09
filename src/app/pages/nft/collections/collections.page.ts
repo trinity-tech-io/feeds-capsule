@@ -332,9 +332,9 @@ async getPurchased(){
   this.purchasedList = [];
   this.hanleListCace("buy");
   // const pasarContract = this.web3Service.getPasar();
-  // let createAddress = this.web3Service.getCreateAddress();
+  let createAddress = this.web3Service.getCreateAddress();
   // let buyerInfo = await pasarContract.methods.getBuyerByAddr(createAddress).call();
-  let createAddress = this.walletConnectControllerService.getAccountAddress();
+  //let createAddress = this.walletConnectControllerService.getAccountAddress();
   let buyerInfo = await this.nftContractParsarService.getBuyerByAddr(createAddress);
   let buyerAddr = buyerInfo[1];
   let buyOrderCount = buyerInfo[2];
