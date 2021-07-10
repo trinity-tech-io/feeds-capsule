@@ -161,11 +161,11 @@ export class ProfilePage implements OnInit {
     private dataHelper: DataHelper
   ) {
 
-    this.dataHelper.loadWalletAccountAddress().then((address)=>{
-      console.log("accountAddress",address);
-      this.walletAddress = address;
-      this.walletAddressStr = UtilService.resolveAddress(address);
-    });
+    // this.dataHelper.loadWalletAccountAddress().then((address)=>{
+    //   console.log("accountAddress",address);
+    //   this.walletAddress = address;
+    //   this.walletAddressStr = UtilService.resolveAddress(address);
+    // });
   }
 
   ngOnInit() {

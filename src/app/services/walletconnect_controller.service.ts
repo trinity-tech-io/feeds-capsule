@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import { LogUtils } from "src/app/services/LogUtils";
 import { DataHelper } from "src/app/services/DataHelper";
+import { Events} from 'src/app/services/events.service';
 
 import Web3 from 'web3';
 
@@ -17,7 +18,8 @@ export class WalletConnectControllerService {
     private walletConnectWeb3: Web3;
     constructor(
       private logUtils: LogUtils,
-      private dataHelper: DataHelper) {
+      private dataHelper: DataHelper,
+      private events: Events) {
       this.initWalletConnectProvider();
     }
 
@@ -93,6 +95,10 @@ export class WalletConnectControllerService {
       this.walletConnectWeb3 = new Web3(this.walletConnectProvider as any);
       this.accountAddress = await this.parseAccountAddress();
       this.dataHelper.saveWalletAccountAddress(this.accountAddress);
+
+      this.events.publish(FeedsEvent.PublishType.walletConnected);
+      this.events.publish(FeedsEvent.PublishType.walletConnectedRefreshPage);
+
       return this.walletConnectWeb3;
     }
 
@@ -118,9 +124,10 @@ export class WalletConnectControllerService {
           // await (await this.walletConnectProvider.getWalletConnector()).killSession();
         }catch(error){
           console.log("Disconnect wallet error", error);
+        }finally{
+          console.log("Disconnected from wallet connect");
+          this.destroyWalletConnect();
         }
-        console.log("Disconnected from wallet connect");
-        this.destroyWalletConnect();
       }
       else {
         console.log("Not connected to wallet connect");
@@ -131,6 +138,8 @@ export class WalletConnectControllerService {
       this.walletConnectProvider = null;
       this.accountAddress = "";
       this.dataHelper.saveWalletAccountAddress(this.accountAddress);
+      this.events.publish(FeedsEvent.PublishType.walletDisconnected);
+      this.events.publish(FeedsEvent.PublishType.walletDisconnectedRefreshPage);
     }
 
     anonymousInitWeb3(){

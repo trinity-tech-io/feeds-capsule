@@ -71,6 +71,7 @@ import { LanguageService } from 'src/app/services/language.service';
 import { WalletConnectControllerService } from 'src/app/services/walletconnect_controller.service';
 import { NFTContractParsarService } from 'src/app/services/nftcontract_parsar.service';
 import { NFTContractStickerService } from 'src/app/services/nftcontract_sticker.service';
+import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
 
 import * as Sentry from "@sentry/browser";
 
@@ -206,6 +207,7 @@ export function TranslateLoaderFactory() {
     BarcodeScanner,
     NFTContractParsarService,
     NFTContractStickerService,
+    NFTContractControllerService,
     WalletConnectControllerService,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     {provide: ErrorHandler, useClass: ErrorHandler}

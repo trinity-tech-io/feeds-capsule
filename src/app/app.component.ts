@@ -63,11 +63,11 @@ export class MyApp {
         this.initProfileData();
       });
 
-      this.dataHelper.loadWalletAccountAddress().then((address)=>{
-        console.log("accountAddress",address);
-        this.walletAddress = address;
-        this.walletAddressStr = UtilService.resolveAddress(address);
-      });
+      // this.dataHelper.loadWalletAccountAddress().then((address)=>{
+      //   console.log("accountAddress",address);
+      //   this.walletAddress = address;
+      //   this.walletAddressStr = UtilService.resolveAddress(address);
+      // });
   }
 
   initializeApp() {

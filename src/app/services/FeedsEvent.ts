@@ -146,7 +146,12 @@ declare namespace FeedsEvent{
         addRpcRequestError = "feeds:addRpcRequestError",
         addRpcResponseError = "feeds:addRpcResponseError",
         nftCancelOrder ="feeds:nftCancelOrder",
-        nftUpdateList = "feeds:nftUpdateList"
+        nftUpdateList = "feeds:nftUpdateList",
+
+        walletConnected = "feeds:walletConnected",
+        walletConnectedRefreshPage = "feeds:walletConnectedRefreshPage",
+        walletDisconnected = "feeds:walletDisconnected",
+        walletDisconnectedRefreshPage = "feeds:walletDisconnected",
     }
 
     type TipDialogData = {

@@ -20,7 +20,11 @@ export class NFTContractParsarService {
       this.pasarContract = new this.web3.eth.Contract(this.pasarAbi,this.pasarAddr);
     }
 
-    async getSellerByAddr(sellerAddress){
+    getPasarContract(){
+      return this.pasarContract;
+    }
+
+    protected async getSellerByAddr(sellerAddress){
       if(!this.pasarContract)
         return [];
       //return seller info
