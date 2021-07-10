@@ -20,12 +20,16 @@ export class NFTContractStickerService {
       this.stickerContract = new this.web3.eth.Contract(this.stickerAbi,this.stickerAddr);
     }
 
+    getSticker(){
+      return this.getSticker();
+    }
+    
     setApprovalForAll(address: string, approved: boolean){
       //TODO write
       return this.stickerContract.methods.setApprovalForAll(address, approved).encodeABI();
     }
 
-    async tokenInfo(tokenId){
+    protected async tokenInfo(tokenId){
       if (!this.stickerContract)
         return [];
       return await this.stickerContract.methods.tokenInfo(tokenId).call();
