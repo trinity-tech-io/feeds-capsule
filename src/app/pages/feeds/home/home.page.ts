@@ -20,9 +20,8 @@ import { StorageService } from 'src/app/services/StorageService';
 import { Web3Service } from '../../../services/Web3Service';
 import { HttpService } from '../../../services/HttpService';
 import { ApiUrl } from '../../../services/ApiUrl';
-import { WalletConnectControllerService } from 'src/app/services/walletconnect_controller.service';
-import { NFTContractParsarService } from 'src/app/services/nftcontract_parsar.service';
-import { NFTContractStickerService } from 'src/app/services/nftcontract_sticker.service';
+import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
+
 import _ from 'lodash';
 let TAG: string = "Feeds-home";
 @Component({
@@ -147,8 +146,7 @@ export class HomePage implements OnInit {
     private storageService:StorageService,
     private web3Service:Web3Service,
     private httpService:HttpService,
-    private nftContractParsarService: NFTContractParsarService,
-    private nftContractStickerService: NFTContractStickerService) {
+    private nftContractControllerService: NFTContractControllerService) {
     }
 
   initPostListData(scrollToTop:boolean){
@@ -1455,11 +1453,11 @@ clearData(){
     //  let stickerContract = this.web3Service.getSticker();
     //  let pasarContract = this.web3Service.getPasar();
     //  let order = await pasarContract.methods.getOrderById(nftOrderId).call();
-      let order = await this.nftContractParsarService.getOrderById(nftOrderId);
+      let order = await this.nftContractControllerService.getPasar().getOrderById(nftOrderId);
       let tokenId = order[3];
       let tokenNum = order[4];
       // let tokenInfo = await stickerContract.methods.tokenInfo(tokenId).call();
-      let tokenInfo = await this.nftContractStickerService.tokenInfo(tokenId);
+      let tokenInfo = await this.nftContractControllerService.getSticker().tokenInfo(tokenId);
       let tokenUri = tokenInfo[3];
       let price = order[5];
       let saleOrderId = order[0];
@@ -1590,7 +1588,7 @@ clearData(){
   // let stickerContract = this.web3Service.getSticker();
   // let pasarContract = this.web3Service.getPasar();
   // let openOrderCount =  await pasarContract.methods.getOpenOrderCount().call();
-  let openOrderCount =  await this.nftContractParsarService.getOpenOrderCount();
+  let openOrderCount =  await this.nftContractControllerService.getPasar().getOpenOrderCount();
   for(let index = 0;index<openOrderCount;index++){
     this.pasarList.push(null);
   }
@@ -1601,12 +1599,12 @@ clearData(){
 
 async getOpenOrderByIndex(index:any){
   // let  openOrder =  await pasarContract.methods.getOpenOrderByIndex(index).call();
-  let openOrder =  await this.nftContractParsarService.getOpenOrderByIndex(index);
+  let openOrder =  await this.nftContractControllerService.getPasar().getOpenOrderByIndex(index);
   let tokenId = openOrder[3];
   let saleOrderId = openOrder[0];
   let tokenNum = openOrder[4];
   let price = openOrder[5];
-  let tokenInfo = await this.nftContractStickerService.tokenInfo(tokenId);
+  let tokenInfo = await this.nftContractControllerService.getPasar().tokenInfo(tokenId);
   let tokenUri = tokenInfo[3];
   let sellerAddr = openOrder[7];
   this.handleFeedsUrl(tokenUri,tokenId,saleOrderId,price,tokenNum,sellerAddr,index);
@@ -1705,7 +1703,7 @@ async handlePrice(nftOrdeId:any){
     // let pasarContract = this.web3Service.getPasar();
     try{
       // let order = await pasarContract.methods.getOrderById(nftOrdeId).call();
-      let order = await this.nftContractParsarService.getOrderById(nftOrdeId);
+      let order = await this.nftContractControllerService.getPasar().getOrderById(nftOrdeId);
       nftOrder = order;
     }catch(err){
     }

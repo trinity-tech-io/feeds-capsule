@@ -38,4 +38,8 @@ export class NFTContractControllerService {
     getPasar(){
       return this.nftContractParsarService.getPasarContract();
     }
+
+    getAccountAddress(){
+      return this.walletConnectControllerService.getAccountAddress();
+    }
 }

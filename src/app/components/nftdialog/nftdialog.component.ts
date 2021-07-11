@@ -8,8 +8,7 @@ import { NativeService } from 'src/app/services/NativeService';
 import { Events } from '../../services/events.service';
 import _ from 'lodash';
 import { UtilService } from 'src/app/services/utilService';
-import { NFTContractParsarService } from 'src/app/services/nftcontract_parsar.service';
-import { NFTContractStickerService } from 'src/app/services/nftcontract_sticker.service';
+import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
 
 @Component({
   selector: 'app-nftdialog',
@@ -38,8 +37,7 @@ export class NftdialogComponent implements OnInit {
     private feedService:FeedService,
     private events:Events,
     public theme: ThemeService,
-    private nftContractStickerService: NFTContractStickerService,
-    private nftContractParsarService: NFTContractParsarService
+    private nftContractControllerService: NFTContractControllerService
     ){
 
     }
@@ -180,10 +178,10 @@ export class NftdialogComponent implements OnInit {
     let pasarAddr = this.web3Service.getPasarAddr();
     let pasarContract = this.web3Service.getPasar();
     let sellerAddress = this.web3Service.getSellerAddress();
-    const sellerInfo = await this.nftContractParsarService.getSellerByAddr(sellerAddress);
+    const sellerInfo = await this.nftContractControllerService.getPasar().getSellerByAddr(sellerAddress);
     this.orderId  =  sellerInfo[2];
 
-    let stickerAddr = await this.nftContractParsarService.getTokenAddress();
+    let stickerAddr = await this.nftContractControllerService.getPasar().getTokenAddress();
     let stickerContract = this.web3Service.getSticker();
     let accSeller =  await this.web3Service.getAccount('04868f294d8ef6e1079752cd2e1f027a126b44ee27040d949a88f89bddc15f31');
 
