@@ -241,15 +241,28 @@ export class ProfilePage implements OnInit {
   }
 
   addProflieEvent(){
+    this.updateWalletAddress();
+    this.events.subscribe(FeedsEvent.PublishType.walletConnectedRefreshPage,()=>{
+      this.zone.run(() => {
+        this.updateWalletAddress();
+      })
+    });
+
+    this.events.subscribe(FeedsEvent.PublishType.walletDisconnectedRefreshPage,()=>{
+      this.zone.run(() => {
+        this.updateWalletAddress();
+      })
+    });
+
     this.hideDeletedPosts = this.feedService.getHideDeletedPosts();
     this.clientHeight =screen.availHeight;
     this.curItem = {};
     this.changeType(this.selectType);
     this.connectionStatus = this.feedService.getConnectionStatus();
 
-    this.events.subscribe(FeedsEvent.PublishType.updateTitle,()=>{
-        this.initTitleBar();
-    });
+    // this.events.subscribe(FeedsEvent.PublishType.updateTitle,()=>{
+    //     this.initTitleBar();
+    // });
 
     this.events.subscribe(FeedsEvent.PublishType.unfollowFeedsFinish, () => {
       this.zone.run(() => {
@@ -372,6 +385,9 @@ export class ProfilePage implements OnInit {
         this.curPostId="";
         this.curNodeId="";
     });
+
+    
+    
   });
 
   this.events.subscribe(FeedsEvent.PublishType.streamProgress,(streamProgressData: FeedsEvent.StreamProgressData)=>{
@@ -536,7 +552,7 @@ export class ProfilePage implements OnInit {
     }
     this.isAddProfile = false;
     this.hideSharMenuComponent = false;
-    this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
+
     this.events.unsubscribe(FeedsEvent.PublishType.refreshSubscribedChannels);
     this.events.unsubscribe(FeedsEvent.PublishType.updateLikeList);
     this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
@@ -565,6 +581,10 @@ export class ProfilePage implements OnInit {
     this.events.unsubscribe(FeedsEvent.PublishType.streamClosed);
     this.events.unsubscribe(FeedsEvent.PublishType.hideDeletedPosts);
     this.events.unsubscribe(FeedsEvent.PublishType.unfollowFeedsFinish);
+
+    this.events.unsubscribe(FeedsEvent.PublishType.walletDisconnectedRefreshPage);
+    this.events.unsubscribe(FeedsEvent.PublishType.walletConnectedRefreshPage);
+
     this.clearDownStatus();
     this.native.hideLoading();
     this.hideFullScreen();
@@ -1415,8 +1435,7 @@ export class ProfilePage implements OnInit {
 
   async connectWallet(){
     await this.walletConnectControllerService.connect();
-    this.walletAddress = this.walletConnectControllerService.getAccountAddress();
-    this.walletAddressStr = UtilService.resolveAddress(this.walletAddress);
+    this.updateWalletAddress();
   }
 
   copyWalletAddr(){
@@ -1450,5 +1469,12 @@ async disconnect(that:any){
       this.walletAddress = "";
       this.walletAddressStr = "";
     }
+  }
+
+  updateWalletAddress(){
+    
+    this.walletAddress = this.walletConnectControllerService.getAccountAddress();
+    console.log("updateWalletAddress" , this.walletAddress);
+    this.walletAddressStr = UtilService.resolveAddress(this.walletAddress);
   }
 }

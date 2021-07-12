@@ -63,6 +63,14 @@ export class MyApp {
         this.initProfileData();
       });
 
+      this.events.subscribe(FeedsEvent.PublishType.walletConnectedRefreshSM,()=>{
+        this.updateWalletAddress();
+      });
+
+      this.events.subscribe(FeedsEvent.PublishType.walletDisconnectedRefreshSM,()=>{
+        this.updateWalletAddress();
+      });
+
       // this.dataHelper.loadWalletAccountAddress().then((address)=>{
       //   console.log("accountAddress",address);
       //   this.walletAddress = address;
@@ -410,10 +418,13 @@ export class MyApp {
 
   async connectWallet(){
     await this.walletConnectControllerService.connect();
+    this.updateWalletAddress();
+  }
+
+  updateWalletAddress(){
     this.walletAddress = this.walletConnectControllerService.getAccountAddress();
     this.walletAddressStr = UtilService.resolveAddress(this.walletAddress);
   }
-
 
   copyWalletAddr(){
     this.native.copyClipboard(this.walletAddress).then(()=>{
