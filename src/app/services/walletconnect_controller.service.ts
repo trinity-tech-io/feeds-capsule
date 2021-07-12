@@ -33,7 +33,7 @@ export class WalletConnectControllerService {
       this.walletConnectProvider = new WalletConnectProvider({
         rpc: this.rpc,
         infuraId: "0dd3ab5ca24946938c6d411a1637cc59",
-
+        // bridge: "https://walletconnect.elastos.net/v1",
         qrcodeModalOptions: {
           mobileLinks: [
             "metamask",
@@ -98,7 +98,8 @@ export class WalletConnectControllerService {
 
       this.events.publish(FeedsEvent.PublishType.walletConnected);
       this.events.publish(FeedsEvent.PublishType.walletConnectedRefreshPage);
-
+      this.events.publish(FeedsEvent.PublishType.walletConnectedRefreshSM);
+      
       return this.walletConnectWeb3;
     }
 
@@ -139,7 +140,8 @@ export class WalletConnectControllerService {
       this.accountAddress = "";
       this.dataHelper.saveWalletAccountAddress(this.accountAddress);
       this.events.publish(FeedsEvent.PublishType.walletDisconnected);
-      this.events.publish(FeedsEvent.PublishType.walletDisconnectedRefreshPage);
+      this.events.publish(FeedsEvent.PublishType.walletDisconnectedRefreshSM);
+      this.events.publish(FeedsEvent.PublishType.walletDisconnectedRefreshPage);  
     }
 
     anonymousInitWeb3(){

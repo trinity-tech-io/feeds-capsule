@@ -149,9 +149,11 @@ declare namespace FeedsEvent{
         nftUpdateList = "feeds:nftUpdateList",
 
         walletConnected = "feeds:walletConnected",
+        walletConnectedRefreshSM = "feeds:walletConnectedRefreshSandwichMenu",
         walletConnectedRefreshPage = "feeds:walletConnectedRefreshPage",
         walletDisconnected = "feeds:walletDisconnected",
-        walletDisconnectedRefreshPage = "feeds:walletDisconnected",
+        walletDisconnectedRefreshSM = "feeds:walletConnectedRefreshSandwichMenu",
+        walletDisconnectedRefreshPage = "feeds:walletConnectedRefreshPage",
     }
 
     type TipDialogData = {
