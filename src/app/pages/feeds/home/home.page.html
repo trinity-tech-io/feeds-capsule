@@ -201,15 +201,15 @@
 
  <!--Pasar-->
  <div *ngIf="tabType==='pasar'">
-  <ion-row style="padding: 10px 10px;" >
-    <ion-col size="6"  *ngFor="let item of pasarList">
-      <app-assetitem
+  <ion-row>
+    <ion-col size="12"  *ngFor="let item of pasarList" [class.darkBorderBottom]="theme.darkMode" [class.borderBottom]="!theme.darkMode">
+      <app-newassetitem
       [type] = "menuType"
       [assetItem] = "item"
       (clickAssetItem) = "clickAssetItem($event)"
       (clickMore) = "clickMore($event)"
       >
-      </app-assetitem>
+      </app-newassetitem>
     </ion-col>
    </ion-row>
  </div>
