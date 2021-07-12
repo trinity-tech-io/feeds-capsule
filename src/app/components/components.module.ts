@@ -25,6 +25,7 @@ import { RoundloadingComponent } from './roundloading/roundloading.component';
 import { PercentageloadingComponent } from './percentageloading/percentageloading.component';
 import { AddassetComponent } from './addasset/addasset.component';
 import { AssetitemComponent } from './assetitem/assetitem.component';
+import { NewassetitemComponent } from './newassetitem/newassetitem.component';
 import { ChannelcardComponent } from './channelcard/channelcard.component';
 
 import { VideofullscreenComponent } from './videofullscreen/videofullscreen.component';
@@ -75,6 +76,7 @@ import { TitlebarmenuitemComponent } from './titlebarmenuitem/titlebarmenuitem.c
     TitlebarmenuitemComponent,
     AddassetComponent,
     AssetitemComponent,
+    NewassetitemComponent,
     ChannelcardComponent
   ],
   exports: [
@@ -98,6 +100,7 @@ import { TitlebarmenuitemComponent } from './titlebarmenuitem/titlebarmenuitem.c
     TitleBarComponent,
     AddassetComponent,
     AssetitemComponent,
+    NewassetitemComponent,
     ChannelcardComponent
   ],
 
