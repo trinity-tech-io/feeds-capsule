@@ -63,7 +63,7 @@
           </ion-row>
           <p>@{{ getChannelOwnerName(post.nodeId, post.channel_id) }}</p>
 
-          <h2 *ngIf="post.post_status!=1" (press)="pressContent(post.content)">
+          <h2 *ngIf="post.post_status!=1">
             <div *ngIf="getPostContentTextSize(post.content)<=maxTextSize" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id,$event)">
               <pre [ngStyle]="styleObj" [innerHTML]="getContentText(post.content) | html"></pre>
             </div>
