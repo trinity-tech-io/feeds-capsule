@@ -64,6 +64,8 @@ export class DiscoverfeedinfoPage implements OnInit {
   ngOnInit() {
     this.acRoute.queryParams.subscribe((data) => {
       this.feedInfo = _.cloneDeep(data)["params"];
+      this.feedsUrl = this.feedInfo['url'] || "";
+      this.qrcodeString = this.feedsUrl+"#"+encodeURIComponent(this.feedInfo["name"]) || null;
     });
 
   }
@@ -71,8 +73,6 @@ export class DiscoverfeedinfoPage implements OnInit {
   ionViewWillEnter() {
     this.developerMode = this.feedService.getDeveloperMode();
     this.channelSubscribes = this.feedInfo["followers"];
-    this.feedsUrl = this.feedInfo['url'] || "";
-    this.qrcodeString = this.feedsUrl+"#"+encodeURIComponent(this.feedInfo["name"]) || null;
     this.status = this.getChannelStatus(this.feedInfo);
     this.initTitle();
 
