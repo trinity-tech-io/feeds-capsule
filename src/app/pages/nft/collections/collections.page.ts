@@ -409,7 +409,7 @@ async handleOrder(sellerAddr:any,orderCount:any,listType:any){
 
 async handleBuyOrder(buyerAddr:any,orderCount:any){
   for(let index=0;index<orderCount;index++){
-    try {
+    //try {
     let purchasedOrder =  await this.nftContractControllerService.getPasar().getBuyerOrderByIndex(buyerAddr,index);
     let tokenId = purchasedOrder[3];
     let saleOrderId = purchasedOrder[0];
@@ -448,13 +448,13 @@ async handleBuyOrder(buyerAddr:any,orderCount:any){
      }).catch(()=>{
 
      });
-    } catch (error) {
-      this.purchasedList =_.filter(this.purchasedList,(item)=>{
-        return item!=null;
-      });
-     this.hanleListCace("buy");
-     this.isLoading = false;
-    }
+    // } catch (error) {
+    //   this.purchasedList =_.filter(this.purchasedList,(item)=>{
+    //     return item!=null;
+    //   });
+    //  this.hanleListCace("buy");
+    //  this.isLoading = false;
+    // }
 
   }
 }
