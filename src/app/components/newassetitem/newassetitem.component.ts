@@ -3,6 +3,7 @@ import { ApiUrl } from '../../services/ApiUrl';
 // import { Web3Service } from '../../services/Web3Service';
 import { ThemeService } from 'src/app/services/theme.service';
 import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
+import { UtilService } from 'src/app/services/utilService';
 
 @Component({
   selector: 'app-newassetitem',
@@ -47,5 +48,10 @@ export class NewassetitemComponent implements OnInit {
      return this.nftContractControllerService.transFromWei(price);
 
      return price;
+  }
+
+  handleAddr(sellerAddr:string){
+    let walletAddressStr = UtilService.resolveAddress(sellerAddr);
+    return  walletAddressStr;
   }
 }
