@@ -1715,11 +1715,20 @@ clickMore(parm:any){
   let type = parm["type"];
   console.log("===type==="+type);
   let asstItem = parm["assetItem"];
-  this.handleOnSale(asstItem);
+  let accountAddress = this.nftContractControllerService.getAccountAddress();
+  if(asstItem["sellerAddr"] === accountAddress){
+     this.handleOnSale(asstItem);
+  }else{
+     this.handleShareOnShare(asstItem);
+  }
 }
 
 handleOnSale(asstItem:any){
   this.menuService.showOnSaleMenu(asstItem);
+}
+
+handleShareOnShare(asstItem:any){
+  this.menuService.showShareOnSaleMenu(asstItem);
 }
 
 }

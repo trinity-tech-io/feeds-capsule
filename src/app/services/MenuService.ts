@@ -26,6 +26,7 @@ export class MenuService {
     public onSaleMenu:any = null;
     public buyMenu:any = null;
     public createdMenu:any = null;
+    public shareOnSaleMenu:any = null;
     constructor(
         private feedService: FeedService,
         private actionSheetController: ActionSheetController,
@@ -738,5 +739,32 @@ export class MenuService {
 
     })
     await this.createdMenu.present();
+    }
+
+    async showShareOnSaleMenu(assItem:any){
+
+        this.shareOnSaleMenu = await this.actionSheetController.create({
+            cssClass: 'editPost',
+            buttons: [
+            {
+                text: this.translate.instant("common.cancel"),
+                role: 'cancel',
+                icon: 'close-circle',
+                handler: () => {
+                    if(this.shareOnSaleMenu!=null){
+                       this.shareOnSaleMenu.dismiss();
+                    }
+                }
+            }
+        ]
+        });
+
+        this.shareOnSaleMenu.onWillDismiss().then(()=>{
+            if(this.shareOnSaleMenu!=null){
+                this.shareOnSaleMenu = null;
+            }
+
+        })
+        await this.shareOnSaleMenu.present();
     }
 }
