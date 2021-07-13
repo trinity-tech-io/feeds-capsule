@@ -28,7 +28,7 @@ export class WalletConnectControllerService {
     }
 
     private async initWalletConnectProvider(){
-      this.accountAddress = await this.dataHelper.loadWalletAccountAddress();
+      // this.accountAddress = await this.dataHelper.loadWalletAccountAddress();
       //  Create WalletConnect Provider
       this.walletConnectProvider = new WalletConnectProvider({
         rpc: this.rpc,
@@ -63,11 +63,11 @@ export class WalletConnectControllerService {
       });
 
       if (this.accountAddress != ""){
-        await this.walletConnectProvider.enable();
-        const connect = await this.walletConnectProvider.getWalletConnector()
-        this.accountAddress = connect.accounts[0]
-        this.dataHelper.saveWalletAccountAddress(this.accountAddress);
-        await this.initWeb3();
+        // await this.walletConnectProvider.enable();
+        // const connect = await this.walletConnectProvider.getWalletConnector()
+        // this.accountAddress = connect.accounts[0]
+        // this.dataHelper.saveWalletAccountAddress(this.accountAddress);
+        // await this.initWeb3();
       }else{
         this.anonymousInitWeb3();
       }

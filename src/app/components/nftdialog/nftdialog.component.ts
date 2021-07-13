@@ -202,15 +202,15 @@ export class NftdialogComponent implements OnInit {
         this.quantity = this.quantity.toString();
       }
       console.log("=====this.quantity======"+typeof(this.quantity));
-      let orderResult = "";
+      let orderIndex = -1;
       try{
-        orderResult = await this.nftContractControllerService.getPasar().createOrderForSale(accountAddress, tokenId,this.quantity,salePrice);
+        orderIndex = await this.nftContractControllerService.getPasar().createOrderForSale(accountAddress, tokenId,this.quantity,salePrice);
       }catch(error){
       }
        
       
-      orderResult = orderResult || "";
-      if(orderResult === ""){
+      orderIndex = orderIndex || -1;
+      if(orderIndex == -1){
         this.native.hideLoading();
         this.native.toast_trans("common.publicPasarFailed");
         return;

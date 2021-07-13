@@ -333,6 +333,7 @@ async getPurchased(){
   // let buyerInfo = await pasarContract.methods.getBuyerByAddr(createAddress).call();
   let createAddress = this.nftContractControllerService.getAccountAddress();
   let buyerInfo = await this.nftContractControllerService.getPasar().getBuyerByAddr(createAddress);
+  console.log("BuyerInfo", buyerInfo);
   let buyerAddr = buyerInfo[1];
   let buyOrderCount = buyerInfo[2];
   for(let index = 0;index<buyOrderCount;index++){

@@ -1833,7 +1833,7 @@ export class DataHelper {
     //walletAccountAddress
     saveWalletAccountAddress(walletAccountAddress: string){
         this.walletAccountAddress = walletAccountAddress;
-        this.saveData(FeedsData.PersistenceKey.walletAccountAddress, this.walletAccountAddress);
+        // this.saveData(FeedsData.PersistenceKey.walletAccountAddress, this.walletAccountAddress);
     }
 
     async loadWalletAccountAddress(): Promise<string>{
