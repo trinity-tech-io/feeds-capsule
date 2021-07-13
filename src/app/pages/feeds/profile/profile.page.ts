@@ -386,8 +386,8 @@ export class ProfilePage implements OnInit {
         this.curNodeId="";
     });
 
-    
-    
+
+
   });
 
   this.events.subscribe(FeedsEvent.PublishType.streamProgress,(streamProgressData: FeedsEvent.StreamProgressData)=>{
@@ -1472,7 +1472,7 @@ async disconnect(that:any){
   }
 
   updateWalletAddress(){
-    
+
     this.walletAddress = this.walletConnectControllerService.getAccountAddress();
     console.log("updateWalletAddress" , this.walletAddress);
     this.walletAddressStr = UtilService.resolveAddress(this.walletAddress);
