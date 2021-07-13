@@ -1,7 +1,9 @@
 import { Component, OnInit,Input,Output,EventEmitter} from '@angular/core';
 import { ApiUrl } from '../../services/ApiUrl';
-import { Web3Service } from '../../services/Web3Service';
+// import { Web3Service } from '../../services/Web3Service';
 import { ThemeService } from 'src/app/services/theme.service';
+import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
+
 @Component({
   selector: 'app-newassetitem',
   templateUrl: './newassetitem.component.html',
@@ -14,8 +16,9 @@ export class NewassetitemComponent implements OnInit {
   @Output() clickMore = new EventEmitter();
   public styleObj:any = {width:""};
   constructor(
-    private web3Service:Web3Service,
-    public theme: ThemeService
+    // private web3Service:Web3Service,
+    public theme: ThemeService,
+    private nftContractControllerService: NFTContractControllerService
   ) { }
 
   ngOnInit() {
@@ -41,7 +44,7 @@ export class NewassetitemComponent implements OnInit {
 
   hanldePrice(price:string){
      if(price!="")
-     return this.web3Service.getFromWei(price);
+     return this.nftContractControllerService.transFromWei(price);
 
      return price;
   }

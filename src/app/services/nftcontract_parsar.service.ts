@@ -139,10 +139,10 @@ export class NFTContractParsarService {
         if (!this.checkSellerOrderStateInterval)
           return ;
         let seller = await this.getSellerByAddr(accountAddress);
-        console.log("Seller info is", seller);
+        console.log("CheckSellerOrderState seller info is", seller);
 
         let newIndex = seller[2]-1;
-        if ( newIndex > lastOrderIndex){
+        if ( newIndex != lastOrderIndex){
           clearInterval(this.checkSellerOrderStateInterval);
           callback(newIndex);
           this.checkSellerOrderStateInterval = null;
@@ -267,7 +267,7 @@ export class NFTContractParsarService {
         console.log("Buyer info is", buyer);
 
         let newIndex = buyer[2]-1;
-        if ( newIndex > lastOrderIndex){
+        if ( newIndex != lastOrderIndex){
           clearInterval(this.checkBuyerOrderStateInterval);
           callback(newIndex);
           this.checkBuyerOrderStateInterval = null;
