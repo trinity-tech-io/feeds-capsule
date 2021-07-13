@@ -177,9 +177,10 @@ export class BidPage implements OnInit {
 
   async buy(){
     let accountAddress = this.nftContractControllerService.getAccountAddress();
+    let price = this.fixedPrice;
     let purchaseStatus = "";
     try{
-      purchaseStatus = await this.nftContractControllerService.getPasar().buyOrder(accountAddress, this.saleOrderId);
+      purchaseStatus = await this.nftContractControllerService.getPasar().buyOrder(accountAddress, this.saleOrderId, price);
     }catch(error){
     }
 

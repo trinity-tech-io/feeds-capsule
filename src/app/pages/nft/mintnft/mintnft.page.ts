@@ -343,23 +343,27 @@ export class MintnftPage implements OnInit {
     console.log("=======price======="+price);
     let salePrice = this.nftContractControllerService.transToWei(price.toString()).toString();
     console.log("=======salePrice======="+salePrice);
-    let createOrderresult = "";
+    let orderIndex = -1;
     try{
-      createOrderresult = await this.nftContractControllerService.getPasar().createOrderForSale(accountAddress, tokenId,this.nftQuantity,salePrice);
+      orderIndex = await this.nftContractControllerService.getPasar().createOrderForSale(accountAddress, tokenId,this.nftQuantity,salePrice);
     }catch(error){
     }
-
-    createOrderresult = createOrderresult || "";
-    if(createOrderresult === ""){
+    console.log("-----------");
+    orderIndex = orderIndex || -1;
+    console.log("----1111111111-------");
+    console.log("----createOrderresult-------", orderIndex);
+    if(orderIndex == -1){
+      console.log("----222222-------");
       this.native.hideLoading();
       alert("public pasar失败");
       return;
     }
    //console.log("======receipt======"+JSON.stringify(receipt))
 
-    let order = await this.nftContractControllerService.getPasar().getOrderById(this.orderId);
+    let order = await this.nftContractControllerService.getPasar().getSellerOrderByIndex(accountAddress, orderIndex);
+    console.log("======order======", order);
 
-    tokenId = order[3];
+    this.orderId = tokenId = order[3];
     let sellerAddr = order[7] || "";
     let saleOrderId = order[0];
     let item = {

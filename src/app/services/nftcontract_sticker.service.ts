@@ -87,21 +87,21 @@ export class NFTContractStickerService {
         console.log("Calling smart contract through wallet connect", mintdata, transactionParams);
         this.stickerContract.methods.mint(tokenId, supply, uri, royalty)
           .send(transactionParams)
-            .on('transactionHash', (hash) => {
+            .on('Mint process, transactionHash is', (hash) => {
               console.log("transactionHash", hash);
-              resolve(hash);
+              // resolve(hash);
             })
             .on('receipt', (receipt) => {
-              console.log("receipt", receipt);
-              resolve(receipt);
+              console.log("Mint process, receipt is", receipt);
+              // resolve(receipt);
             })
             .on('confirmation', (confirmationNumber, receipt) => {
-              console.log("confirmation", confirmationNumber, receipt);
-              resolve(receipt);
+              console.log("Mint process, confirmation is", confirmationNumber, receipt);
+              // resolve(receipt);
             })
             .on('error', (error, receipt) => {
-              console.error("error", error, receipt);
-              reject(error);
+              console.error("Mint process, error is", error, receipt);
+              // reject(error);
             });
 
         this.checkTokenState(tokenId, (info)=>{

@@ -8,6 +8,7 @@ import { IntentService } from 'src/app/services/IntentService';
 import { ViewHelper } from 'src/app/services/viewhelper.service';
 // import { Web3Service } from 'src/app/services/Web3Service';
 import { Events } from 'src/app/services/events.service';
+import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
 
 @Injectable()
 
@@ -37,6 +38,7 @@ export class MenuService {
         private viewHelper:ViewHelper,
         // private web3Service:Web3Service,
         private events:Events,
+        private nftContractControllerService: NFTContractControllerService
     ) {
     }
 
@@ -653,18 +655,20 @@ export class MenuService {
 
     async cancelOrder(that:any){
         let saleOrderId  =  this.assItem["saleOrderId"] || ""
-        let pasarAddr = that.web3Service.getPasarAddr();
-        let pasarContract = that.web3Service.getPasar();
-        const accSeller = await that.web3Service.getAccount("04868f294d8ef6e1079752cd2e1f027a126b44ee27040d949a88f89bddc15f31");
+        // let pasarAddr = that.web3Service.getPasarAddr();
+        // let pasarContract = that.web3Service.getPasar();
+        let accountAddress = that.nftContractControllerService.getAccountAddress();
+        let pasarAddr = that.nftContractControllerService.getPasar().getAddress();
 
-        const cancelData = pasarContract.methods.cancelOrder(saleOrderId).encodeABI();
-        const cancelTx = {
-          from: accSeller.address,
-          to: pasarAddr,
-          value: 0,
-          data: cancelData,
-        };
-        const { status: cancelStatus } = await that.web3Service.sendTxWaitForReceipt(cancelTx, accSeller);
+        const cancelData = this.nftContractControllerService.getPasar().cancelOrder(saleOrderId);
+        // const cancelTx = {
+        //   from: accountAddress,
+        //   to: pasarAddr,
+        //   value: 0,
+        //   data: cancelData,
+        // };
+        // const { status: cancelStatus } = await that.web3Service.sendTxWaitForReceipt(cancelTx, accSeller);
+        let cancelStatus = "";//TODO
         that.native.hideLoading();
         if(cancelStatus!=""&&cancelStatus!=undefined){
          that.events.publish(FeedsEvent.PublishType.nftCancelOrder,this.assItem);
