@@ -8,7 +8,6 @@ import { NFTContractControllerService } from 'src/app/services/nftcontract_contr
   styleUrls: ['./assetitem.component.scss'],
 })
 export class AssetitemComponent implements OnInit {
-  @Input () type = "";
   @Input () assetItem:any = null;
   @Output() clickAssetItem = new EventEmitter();
   @Output() clickMore = new EventEmitter();
@@ -26,7 +25,7 @@ export class AssetitemComponent implements OnInit {
   }
 
   more(){
-    let obj = {"type":this.type,"assetItem":this.assetItem}
+    let obj = {"assetItem":this.assetItem}
     this.clickMore.emit(obj);
   }
 
@@ -39,10 +38,14 @@ export class AssetitemComponent implements OnInit {
   }
 
   hanldePrice(price:string){
-     if(price!="")
+     if(price!=null)
      return this.nftContractControllerService.transFromWei(price);
 
      return price;
+  }
+
+  onSale(){
+
   }
 
 }

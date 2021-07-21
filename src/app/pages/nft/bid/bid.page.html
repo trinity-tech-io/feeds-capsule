@@ -63,7 +63,7 @@
       </div>
 
      <!--- buy BUTTONS --->
-     <div class="btns" *ngIf="showType==='buy'" style="margin-bottom:20px;">
+     <div class="btns" *ngIf="showType==='buy'&&accAddress!=sellerAddress" style="margin-bottom:20px;">
       <ion-row class="btn-row">
         <ion-button (click)="clickBuy()" style="height:48px;">
           <ion-label style="font-weight:bold;font-stretch:normal;font-style:normal;color:#ffffff;">{{'BidPage.buy' | translate}}</ion-label>

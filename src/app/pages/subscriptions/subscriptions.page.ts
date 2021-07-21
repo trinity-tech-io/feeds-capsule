@@ -68,16 +68,21 @@ export class SubscriptionsPage implements OnInit {
       });
     });
 
+    this.events.subscribe(FeedsEvent.PublishType.refreshSubscribedChannels, () => {
+      this.zone.run(() => {
+        this.followingList = this.feedService.getFollowedChannelList();
+        this.initnodeStatus(this.followingList);
+      });
+    });
 
   }
 
   removeEvents(){
-
     this.events.unsubscribe(FeedsEvent.PublishType.friendConnectionChanged);
     this.events.unsubscribe(FeedsEvent.PublishType.unfollowFeedsFinish);
     this.events.unsubscribe(FeedsEvent.PublishType.refreshPage);
     this.events.unsubscribe(FeedsEvent.PublishType.friendConnectionChanged);
-
+    this.events.unsubscribe(FeedsEvent.PublishType.refreshSubscribedChannels);
   }
 
   initTitle(){

@@ -101,6 +101,7 @@ export class MyApp {
       this.initNftOwnCreatedList();
       this.initNftOwnPurchasedList();
       this.initNftOwnOnSalelist();
+      this.initNftOwnCollectiblesList();
       // this.native.networkInfoInit();
       this.native.addNetworkListener(()=>{
         this.events.publish(FeedsEvent.PublishType.networkStatusChanged, 1);
@@ -414,6 +415,19 @@ export class MyApp {
         return;
       }
       this.feedService.setOwnOnSaleList(JSON.parse(nftOwnOnSalelist));
+    }).catch(()=>{
+
+    });
+  }
+
+  initNftOwnCollectiblesList(){
+    this.feedService.getData("feed.nft.own.collectibles.list").then((nftOwnCollectiblesList)=>{
+      console.log("=======NftOwnCollectiblesList======"+nftOwnCollectiblesList);
+      if(nftOwnCollectiblesList === null || nftOwnCollectiblesList === "[]"){
+        this.feedService.setOwnNftCollectiblesList({});
+        return;
+      }
+      this.feedService.setOwnNftCollectiblesList(JSON.parse(nftOwnCollectiblesList));
     }).catch(()=>{
 
     });

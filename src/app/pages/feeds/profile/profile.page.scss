@@ -1,5 +1,45 @@
 .container {
 
+    .leftrightrow{
+        padding-left: 5px;
+        padding-right: 5px;
+    }
+
+    .subscribeChannel{
+        margin-top: 5px;
+        font-size: 16px;
+        font-weight: bold;
+        font-stretch: normal;
+        font-style: normal;
+        text-align: center;
+        color:#7624fe;
+    }
+
+    .bigCircle{
+        margin:0 auto;
+        width: 203px;
+        height: 203px;
+        background-color:#F0E8FF;
+        border-radius:50%;
+        position: relative;
+       }
+
+       .smallCircle{
+         position:absolute;
+         left:50px;
+         top:50px;
+         width: 103px;
+         height: 103px;
+         background-color:#D8C1FF;
+         border-radius:50%;
+
+         img{
+           position: absolute;
+           top: 14px;
+           left: 22px;
+           }
+       }
+
     .connectWallet{
         padding: 6px 10px;
         border-radius: 10px;

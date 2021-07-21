@@ -47,10 +47,15 @@ export class NftdialogComponent implements OnInit {
     this.menuType = this.navParams.get('menuType');
     let assItem = this.navParams.get('assItem');
     this.curAssItem = assItem;
-    this.curAmount =this.nftContractControllerService.transFromWei(this.assItem.fixedAmount);
+    let curAmount = this.assItem.fixedAmount || null;
+    if(curAmount!=null){
+      this.curAmount =this.nftContractControllerService.transFromWei(this.assItem.fixedAmount);
+    }
     this.assItem =  _.cloneDeep(assItem);
-    let price = this.assItem.fixedAmount || "";
-    this.amount =this.nftContractControllerService.transFromWei(price);
+    let price = this.assItem.fixedAmount || null;
+    if(price!=null){
+      this.amount =this.nftContractControllerService.transFromWei(price);
+    }
     this.quantity = this.assItem.quantity;
     this.Maxquantity = this.assItem.quantity;
     this.saleOrderId = this.assItem.saleOrderId || "";
@@ -207,8 +212,8 @@ export class NftdialogComponent implements OnInit {
         orderIndex = await this.nftContractControllerService.getPasar().createOrderForSale(tokenId,this.quantity,salePrice);
       }catch(error){
       }
-       
-      
+
+
       orderIndex = orderIndex || -1;
       if(orderIndex == -1){
         this.native.hideLoading();
@@ -219,6 +224,7 @@ export class NftdialogComponent implements OnInit {
       await this.getSetChannel(tokenId);
       let sAssItem =_.cloneDeep(this.curAssItem);
           sAssItem["sellerAddr"] = sellerAddress;
+          sAssItem["fixedAmount"] = salePrice;
       let obj = {"type":type,"assItem":sAssItem}
       this.events.publish(FeedsEvent.PublishType.nftUpdateList,obj);
       this.native.hideLoading();
@@ -237,7 +243,7 @@ export class NftdialogComponent implements OnInit {
     }
 
     changeStatus = changeStatus || "";
-    
+
     if(changeStatus!=""&&changeStatus!=undefined){
       this.native.hideLoading();
       this.curAssItem.fixedAmount = price;

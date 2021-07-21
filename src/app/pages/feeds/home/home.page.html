@@ -204,7 +204,6 @@
   <ion-row>
     <ion-col size="12"  *ngFor="let item of pasarList" [class.darkBorderBottom]="theme.darkMode" [class.borderBottom]="!theme.darkMode">
       <app-newassetitem
-      [type] = "menuType"
       [assetItem] = "item"
       (clickAssetItem) = "clickAssetItem($event)"
       (clickMore) = "clickMore($event)"

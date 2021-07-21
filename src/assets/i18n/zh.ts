@@ -108,7 +108,8 @@ export const zh = {
         "cancellationFailed":"取消失败",
         "priceChangeFailed":"改变价格失败",
         "publicPasarFailed":"Public pasar失败",
-        "nftCreationFailed":"NFT创建失败"
+        "nftCreationFailed":"NFT创建失败",
+        "onsale":"出售中",
     },
     "app":{
         "profileDetails": "档案详情",
@@ -161,7 +162,8 @@ export const zh = {
         "myFeeds": "频道",
         "following": "订阅",
         "myLikes": "赞/收藏",
-        "moreinfo": "更多信息"
+        "moreinfo": "更多信息",
+        "collectibles":"收藏品"
     },
     "MyfeedsComponent":{
         "allempty": "空空如也",
@@ -565,7 +567,7 @@ export const zh = {
         "description": "描述",
         "quantity": "数量",
         "dateCreated": "创建日期",
-        "stickerContractAddress": "Sticker代理合约地址",
+        "stickerContractAddress": "NFT合约地址",
         "pasarContractAddress": "Pasar代理合约地址",
         "tokenID": "Token ID",
         "purchaseInfo": "购买信息",
@@ -576,7 +578,8 @@ export const zh = {
         "type": "类型",
         "burn": "销毁",
         "history":"历史",
-        "contract": "合约"
+        "contract": "合约",
+        "state":"状态"
     },
     "BidPage":{
         "title": "收藏品明细",

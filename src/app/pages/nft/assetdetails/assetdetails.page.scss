@@ -94,6 +94,32 @@
   }
 }
 .container {
+    .footer{
+      position:fixed;
+      bottom:0px;
+      left:0px;
+      width:100%;
+    }
+
+    .btns {
+      margin-top: 20px;
+      ion-button{
+        --background:#7624fe;
+        --background-activated:#7624fe;
+      }
+      .btn-row {
+        width: 100%;
+        margin-top: 0px;
+
+        ion-button {
+          width: 95%;
+        }
+      }
+
+      .delete-row {
+        margin-top:0px;
+      }
+    }
     padding: 0px 25px;
     .btn-row1 {
       margin-top: 0px;
