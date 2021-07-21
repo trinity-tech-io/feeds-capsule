@@ -28,8 +28,41 @@
       </ion-row>
     </div>
    </div>
+   <div style="height:78px"></div>
+   <div class="footer" *ngIf="price===null">
+    <div class="btns">
+      <ion-row class="btn-row">
+        <ion-button style="height:48px;">
+          <ion-label style="font-weight:bold;font-stretch:normal;font-style:normal;color:#ffffff;">{{'CollectionsPage.onSale' | translate}}</ion-label>
+        </ion-button>
+      </ion-row>
+    </div>
+   </div>
+   <div class="footer" *ngIf="price!=null">
+    <div class="btns">
+      <ion-row class="btn-row">
+        <ion-col size="0.5">
+
+        </ion-col>
+        <ion-col size="5.5">
+          <ion-button style="height:48px;">
+            <ion-label style="font-weight:bold;font-stretch:normal;font-style:normal;color:#ffffff;">{{'BidPage.changePrice' | translate}}</ion-label>
+          </ion-button>
+        </ion-col>
+
+        <ion-col size="5.5">
+          <ion-button style="height:48px;">
+            <ion-label style="font-weight:bold;font-stretch:normal;font-style:normal;color:#ffffff;">{{ 'CollectionsPage.onSale' | translate}}</ion-label>
+          </ion-button>
+        </ion-col>
+        <ion-col size="0.5">
+
+        </ion-col>
+      </ion-row>
+    </div>
+   </div>
     <!--- purchase Info -->
-    <div style="margin-bottom:10px;"  *ngIf="selectType === 'AssetdetailsPage.history'">
+    <!-- <div style="margin-bottom:10px;"  *ngIf="selectType === 'AssetdetailsPage.history'">
        <div *ngFor="let purchaseInfo of purchaseInfos">
         <ion-row *ngIf="purchaseInfo.details" class="detail-row removeBorder">
           <ion-col size="12" class="left-col">
@@ -38,7 +71,6 @@
           </ion-col>
         </ion-row>
        </div>
-        <!--- BUTTONS --->
         <div class="btns">
           <ion-row class="btn-row delete-row">
             <ion-button (click)="purchaseInfoBurn()" color="danger">
@@ -46,6 +78,6 @@
             </ion-button>
           </ion-row>
         </div>
-      </div>
+    </div> -->
   </ion-grid>
 </ion-content>

@@ -49,7 +49,8 @@ export class BidPage implements OnInit {
   private curAssetItem = {};
   public popover:any = null;
   public developerMode:boolean =  false;
-
+  public nftStatus:string = null;
+  public accAddress:string = null;
   constructor(
     private translate:TranslateService,
     private event:Events,
@@ -90,6 +91,7 @@ export class BidPage implements OnInit {
   }
 
   ionViewWillEnter() {
+    this.accAddress = this.nftContractControllerService.getAccountAddress() || null;
     this.developerMode = this.feedService.getDeveloperMode();
     this.initTile();
     this.collectContractData();
@@ -147,6 +149,13 @@ export class BidPage implements OnInit {
       details:this.quantity
     });
 
+    //if(this.nftStatus!=null){
+      this.contractDetails.push({
+        type:'common.state',
+        details:'common.onsale'
+      });
+    //}
+
     if(this.dateCreated!=""){
       this.contractDetails.push({
         type:'AssetdetailsPage.dateCreated',
@@ -160,6 +169,11 @@ export class BidPage implements OnInit {
         details:this.expirationDate
       });
      }
+
+     this.contractDetails.push({
+      type:'AssetdetailsPage.stickerContractAddress',
+      details:this.stickerContractAddress
+    });
 
     if(this.developerMode){
       this.contractDetails.push({

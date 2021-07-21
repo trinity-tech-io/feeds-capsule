@@ -122,8 +122,6 @@ export class HomePage implements OnInit {
 
     public pasarList:any = [];
 
-    public menuType:string = "CollectionsPage.onSale";
-
   constructor(
     private platform: Platform,
     private elmRef: ElementRef,
@@ -300,12 +298,7 @@ addCommonEvents(){
   this.events.subscribe(FeedsEvent.PublishType.nftCancelOrder,(assetItem)=>{
     let saleOrderId = assetItem.saleOrderId;
     let sellerAddr = assetItem.sellerAddr;
-    console.log("=======sellerAddr======"+sellerAddr);
-    console.log("=======typeof(sellerAddr)====="+typeof(sellerAddr));
     this.pasarList =  _.filter(this.pasarList,(item)=>{
-      console.log("=======item.sellerAddr=value====="+item.sellerAddr);
-      console.log("=======item.sellerAddr======"+typeof(item.sellerAddr));
-
       return !(item.saleOrderId===saleOrderId&&item.sellerAddr===sellerAddr)}
     );
     this.feedService.setPasarList(this.pasarList);
@@ -315,20 +308,18 @@ addCommonEvents(){
     let createAddr = this.nftContractControllerService.getAccountAddress();
     if(sellerAddr === createAddr){
       //add created
-      assetItem["fixedAmount"] = "";
-      let allCreatedList = this.feedService.getOwnCreatedList();
-      let clist = allCreatedList[createAddr] || [];
-          clist.push(assetItem)
-      this.feedService.setOwnCreatedList(allCreatedList);
-      this.feedService.setData("feed.nft.own.created.list",JSON.stringify(allCreatedList));
-
-      let allOnSaleList = this.feedService.getOwnOnSaleList();
-      let oList = allOnSaleList[createAddr] || [];
-      oList =  _.filter(oList,(item)=>{
-        return item.saleOrderId!=saleOrderId; }
-      );
-      this.feedService.setOwnOnSaleList(allOnSaleList);
-      this.feedService.setData("feed.nft.own.onSale.list",JSON.stringify(allOnSaleList));
+      assetItem["fixedAmount"] = null;
+      assetItem["moreMenuType"] = "created";
+         //add OwnNftCollectiblesList
+      let createAddr = this.nftContractControllerService.getAccountAddress();
+      let allList  = this.feedService.getOwnNftCollectiblesList();
+      let clist = allList[createAddr]  || [];
+          clist =  _.filter(clist,(item)=>{
+        return item.saleOrderId!=saleOrderId;
+      });
+          clist.push(assetItem);
+      this.feedService.setOwnCreatedList(allList);
+      this.feedService.setData("feed.nft.own.collectibles.list",JSON.stringify(allList));
     }
 
 
@@ -1685,6 +1676,7 @@ handleFeedsUrl(feedsUri:string,tokenId:any,saleOrderId:string,price:any,tokenNum
       "thumbnail":thumbnail,
       "sellerAddr":sellerAddr,
       "createTime":createTime*1000,
+      "moreMenuType":"onSale"
   }
   try{
      this.pasarList.splice(pIndex,1,item);
@@ -1735,8 +1727,6 @@ async handlePrice(nftOrdeId:any){
 }
 
 clickMore(parm:any){
-  let type = parm["type"];
-  console.log("===type==="+type);
   let asstItem = parm["assetItem"];
   let accountAddress = this.nftContractControllerService.getAccountAddress();
   if(asstItem["sellerAddr"] === accountAddress){

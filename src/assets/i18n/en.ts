@@ -108,7 +108,8 @@ export const en = {
         "cancellationFailed":"Cancellation failed",
         "priceChangeFailed":"Price change failed",
         "publicPasarFailed":"Public pasar failed",
-        "nftCreationFailed":"NFT creation failed"
+        "nftCreationFailed":"NFT creation failed",
+        "onsale":"On sale",
     },
     "app": {
         "profileDetails": "Profile Details",
@@ -160,7 +161,8 @@ export const en = {
         "myFeeds": "Channels",
         "following": "Subscriptions",
         "myLikes": "Likes",
-        "moreinfo": "More Info"
+        "moreinfo": "More Info",
+        "collectibles":"Collectibles"
     },
     "MyfeedsComponent": {
         "allempty": "No Channels Yet",
@@ -564,7 +566,7 @@ export const en = {
         "description": "Description",
         "quantity": "Quantity",
         "dateCreated": "Date Created",
-        "stickerContractAddress": "Sticker Proxy Contract Address",
+        "stickerContractAddress": "NFT Contract Address",
         "pasarContractAddress": "Pasar Proxy Contract Address",
         "tokenID": "Token ID",
         "purchaseInfo": "Purchase Info",
@@ -575,7 +577,8 @@ export const en = {
         "type": "Type",
         "burn": "Burn",
         "history":"History",
-        "contract": "Contract"
+        "contract": "Contract",
+        "state":"State"
     },
     "BidPage":{
         "title": "Collectible Details",

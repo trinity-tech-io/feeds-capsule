@@ -35,14 +35,14 @@ export class AssetdetailsPage implements OnInit {
   public purchaseInfos:detail[] = [];
   public creator:string = "";
   public datePurchased:string = "2020-05-06";
-  public price:number = 100;
-  public currency:string = "ELASC";
+  public price:number = null;
+  public currency:string = "ELA/ETHSC";
   public type:string = "Bid"
   public purchaseInfoQuantity:string = "1";
   public selectType:string = "AssetdetailsPage.contract";
   public assetUri:string = null;
   public developerMode:boolean =  false;
-
+  public nftStatus:string = null;
   constructor(
     private translate:TranslateService,
     private event:Events,
@@ -64,7 +64,6 @@ export class AssetdetailsPage implements OnInit {
       this.description = queryParams.description || "";
       this.quantity = queryParams.quantity || "1";
       this.tokenID = queryParams.tokenId || "";
-      // this.contractAddress = this.web3Service.getStickerAddr();
       this.stickerContractAddress = this.nftContractControllerService.getSticker().getStickerAddress();
       this.parsarContractAddress = this.nftContractControllerService.getPasar().getPasarAddress();
       this.assetUri = this.handleImg(asset);
@@ -73,7 +72,11 @@ export class AssetdetailsPage implements OnInit {
         let createDate = new Date(parseInt(createTime));
         this.dateCreated = UtilService.dateFormat(createDate,'yyyy-MM-dd HH:mm:ss');
       }
-      this.creator = queryParams.royalties || "";
+      this.creator = queryParams.creator || "";
+      this.price = queryParams.fixedAmount || null;
+      if(this.price != null){
+          this.nftStatus = "common.onsale";
+      }
     });
   }
 
@@ -130,6 +133,19 @@ export class AssetdetailsPage implements OnInit {
       type:'AssetdetailsPage.quantity',
       details:this.quantity
     });
+    if(this.nftStatus!=null){
+      this.contractDetails.push({
+        type:'common.state',
+        details:this.nftStatus
+      });
+    }
+
+    if(this.price!=null){
+      this.contractDetails.push({
+        type:'AssetdetailsPage.price',
+        details:this.hanldePrice(this.price.toString()).toString()+" "+this.currency
+      });
+    }
 
     if(this.dateCreated != ""){
       this.contractDetails.push({
@@ -177,7 +193,7 @@ export class AssetdetailsPage implements OnInit {
 
     this.purchaseInfos.push({
       type:'AssetdetailsPage.price',
-      details:this.price.toString()
+      details:this.hanldePrice(this.price.toString()).toString()
     });
 
     this.purchaseInfos.push({
@@ -248,5 +264,9 @@ export class AssetdetailsPage implements OnInit {
 
     });;
     }
+  }
+
+  hanldePrice(price:string){
+    return this.nftContractControllerService.transFromWei(price);
   }
 }

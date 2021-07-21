@@ -100,7 +100,7 @@ export class CollectionsPage implements OnInit {
         this.feedService.setData("feed.nft.own.onSale.list",JSON.stringify(allOnSaleList));
 
         //add created
-         assetItem["fixedAmount"] = "";
+         assetItem["fixedAmount"] = null;
          let allCreatedList = this.feedService.getOwnCreatedList();
         let clist = allCreatedList[createAddr] || [];
             clist.push(assetItem);
@@ -210,7 +210,7 @@ export class CollectionsPage implements OnInit {
           break;
       }
 
-  });
+    });
 
    }
 
@@ -296,7 +296,7 @@ export class CollectionsPage implements OnInit {
       this.createdList.push(null);
     }
     for(let cIndex=0;cIndex<nftCreatedCount;cIndex++){
-    this.handleOwnCreatedData(createAddress,cIndex)
+    this.handleOwnCreatedData(createAddress,cIndex);
     }
   }
  }

@@ -14,12 +14,13 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TranslateService } from "@ngx-translate/core";
 import { StorageService } from 'src/app/services/StorageService';
-import * as _ from 'lodash';
+import _ from 'lodash';
 import { ViewHelper } from 'src/app/services/viewhelper.service';
 import { WalletConnectControllerService } from 'src/app/services/walletconnect_controller.service';
-import { DataHelper } from 'src/app/services/DataHelper';
 import { UtilService } from 'src/app/services/utilService';
-
+import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
+import { ApiUrl } from '../../../services/ApiUrl';
+import { HttpService } from '../../../services/HttpService';
 let TAG: string = "Feeds-profile";
 
 @Component({
@@ -33,7 +34,8 @@ export class ProfilePage implements OnInit {
 
   public nodeStatus = {}; //friends status;
   public channels = []; //myFeeds page
-  public followingList = []; // following page
+  //public followingList = []; // following page
+  public collectiblesList:any = [];//NFT列表
   public totalLikeList = [];
   public startIndex:number = 0;
   public pageNumber:number = 5;
@@ -134,7 +136,7 @@ export class ProfilePage implements OnInit {
 
     public likeSum:number = 0;
 
-    public followSum:number = 0;
+    public ownNftSum:number = 0;
 
     public myFeedsSum:number = 0;
 
@@ -158,7 +160,8 @@ export class ProfilePage implements OnInit {
     private titleBarService: TitleBarService,
     private storageService:StorageService,
     private walletConnectControllerService: WalletConnectControllerService,
-    private dataHelper: DataHelper
+    private nftContractControllerService: NFTContractControllerService,
+    private httpService:HttpService
   ) {
 
     // this.dataHelper.loadWalletAccountAddress().then((address)=>{
@@ -175,13 +178,6 @@ export class ProfilePage implements OnInit {
     this.channels = this.feedService.getMyChannelList();
     this.myFeedsSum = this.channels.length;
     this.initnodeStatus(this.channels);
-  }
-
-  async initFolling(){
-    this.followingList = this.feedService.getFollowedChannelList();
-    this.followSum = this.followingList.length;
-    this.initnodeStatus(this.followingList);
-    this.feedService.updateSubscribedFeed();
   }
 
   initLike(){
@@ -242,15 +238,82 @@ export class ProfilePage implements OnInit {
 
   addProflieEvent(){
     this.updateWalletAddress();
+
+    this.events.subscribe(FeedsEvent.PublishType.nftUpdateList,(obj)=>{
+      let type = obj["type"];
+      let createAddr = this.nftContractControllerService.getAccountAddress();
+      let assItem = obj["assItem"];
+      console.log("===assItem==="+JSON.stringify(assItem));
+      let saleOrderId = assItem["saleOrderId"];
+      let tokenId = assItem["tokenId"];
+      switch(type){
+        case "buy":
+
+          break;
+        case "created":
+            let allList = this.feedService.getOwnNftCollectiblesList();
+            let list = allList[createAddr] || [];
+            let cpItem = _.cloneDeep(assItem);
+                cpItem["moreMenuType"] = "created";
+            console.log("=====list======"+list.length);
+            list =  _.filter(list,(item)=>{
+              return item.tokenId!=tokenId;}
+            );
+            console.log("=====list1======"+list.length);
+            list.push(cpItem);
+            allList[createAddr] = list;
+            this.collectiblesList = allList[createAddr];
+            this.feedService.setOwnNftCollectiblesList(allList);
+            this.feedService.setData("feed.nft.own.collectibles.list",JSON.stringify(allList));
+
+          let cpList = this.feedService.getPasarList();
+              cpList.push(cpItem);
+          this.feedService.setPasarList(cpList);
+          this.feedService.setData("feed.nft.pasarList",JSON.stringify(cpList));
+          break;
+      }
+
+    });
+
+    this.events.subscribe(FeedsEvent.PublishType.nftCancelOrder,(assetItem)=>{
+      let saleOrderId = assetItem.saleOrderId;
+      let sellerAddr = assetItem.sellerAddr;
+      //add OwnNftCollectiblesList
+      let createAddr = this.nftContractControllerService.getAccountAddress();
+       assetItem["fixedAmount"] = null;
+       assetItem["moreMenuType"] = "created";
+       let allList  = this.feedService.getOwnNftCollectiblesList();
+       let clist = allList[createAddr]  || [];
+           clist =  _.filter(clist,(item)=>{
+           return item.saleOrderId!=saleOrderId;
+       });
+      clist.push(assetItem);
+      this.feedService.setOwnCreatedList(allList);
+      this.feedService.setData("feed.nft.own.collectibles.list",JSON.stringify(allList));
+
+     //remove pasr
+     let pList = this.feedService.getPasarList();
+         pList =  _.filter(pList,(item)=>{
+         return !(item.saleOrderId===saleOrderId&&item.sellerAddr===sellerAddr)
+        }
+     );
+    this.feedService.setPasarList(pList);
+    this.feedService.setData("feed.nft.pasarList",JSON.stringify(pList));
+    });
+
+
     this.events.subscribe(FeedsEvent.PublishType.walletConnectedRefreshPage,()=>{
       this.zone.run(() => {
         this.updateWalletAddress();
+        this.getCollectiblesList();
+        this.getOwnNftSum();
       })
     });
 
     this.events.subscribe(FeedsEvent.PublishType.walletDisconnectedRefreshPage,()=>{
       this.zone.run(() => {
         this.updateWalletAddress();
+        this.getOwnNftSum();
       })
     });
 
@@ -263,12 +326,6 @@ export class ProfilePage implements OnInit {
     // this.events.subscribe(FeedsEvent.PublishType.updateTitle,()=>{
     //     this.initTitleBar();
     // });
-
-    this.events.subscribe(FeedsEvent.PublishType.unfollowFeedsFinish, () => {
-      this.zone.run(() => {
-        this.initFolling();
-      });
-    });
 
     this.events.subscribe(FeedsEvent.PublishType.hideDeletedPosts,()=>{
       this.zone.run(()=>{
@@ -288,15 +345,6 @@ export class ProfilePage implements OnInit {
     this.name =  signInData["nickname"] || signInData["name"] || "";
     this.avatar = signInData["avatar"] || null;
     this.description = signInData["description"] || "";
-
-
-    this.events.subscribe(FeedsEvent.PublishType.refreshSubscribedChannels, () => {
-      this.zone.run(() => {
-        this.followingList = this.feedService.getFollowedChannelList();
-        this.initnodeStatus(this.followingList);
-      });
-    });
-
 
     this.events.subscribe(FeedsEvent.PublishType.updateLikeList, (list) => {
       this.zone.run(() => {
@@ -322,7 +370,6 @@ export class ProfilePage implements OnInit {
     this.events.subscribe(FeedsEvent.PublishType.refreshPage,()=>{
       this.zone.run(() => {
           this.initMyFeeds();
-          this.initFolling();
           this.initLike();
       });
     });
@@ -524,9 +571,8 @@ export class ProfilePage implements OnInit {
 
     this.channels = this.feedService.getMyChannelList() || [];
     this.myFeedsSum = this.channels.length;
+    this.getOwnNftSum();
 
-    this.followingList = this.feedService.getFollowedChannelList() || [];
-    this.followSum = this.followingList.length;
 
     this.totalLikeList = this.sortLikeList() || [];
     this.likeSum = this.totalLikeList.length;
@@ -553,7 +599,6 @@ export class ProfilePage implements OnInit {
     this.isAddProfile = false;
     this.hideSharMenuComponent = false;
 
-    this.events.unsubscribe(FeedsEvent.PublishType.refreshSubscribedChannels);
     this.events.unsubscribe(FeedsEvent.PublishType.updateLikeList);
     this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
     this.events.unsubscribe(FeedsEvent.PublishType.friendConnectionChanged);
@@ -580,11 +625,11 @@ export class ProfilePage implements OnInit {
     this.events.unsubscribe(FeedsEvent.PublishType.streamProgress);
     this.events.unsubscribe(FeedsEvent.PublishType.streamClosed);
     this.events.unsubscribe(FeedsEvent.PublishType.hideDeletedPosts);
-    this.events.unsubscribe(FeedsEvent.PublishType.unfollowFeedsFinish);
 
     this.events.unsubscribe(FeedsEvent.PublishType.walletDisconnectedRefreshPage);
     this.events.unsubscribe(FeedsEvent.PublishType.walletConnectedRefreshPage);
-
+    this.events.unsubscribe(FeedsEvent.PublishType.nftCancelOrder);
+    this.events.unsubscribe(FeedsEvent.PublishType.nftUpdateList);
     this.clearDownStatus();
     this.native.hideLoading();
     this.hideFullScreen();
@@ -621,8 +666,9 @@ export class ProfilePage implements OnInit {
       case 'ProfilePage.myFeeds':
           this.initMyFeeds();
         break;
-      case 'ProfilePage.following':
-        this.initFolling();
+      case 'ProfilePage.collectibles':
+        this.getOwnNftSum();
+        this.getCollectiblesList();
         break;
       case 'ProfilePage.myLikes':
          this.startIndex = 0;
@@ -653,9 +699,17 @@ export class ProfilePage implements OnInit {
           clearTimeout(sId1);
         },500);
         break;
-      case 'ProfilePage.following':
+      case 'ProfilePage.collectibles':
+        let accAddress = this.nftContractControllerService.getAccountAddress() || "";
+        this.collectiblesList = [];
         let sId2 =  setTimeout(() => {
-          this.initFolling();
+          if(accAddress === ""){
+            event.target.complete();
+            clearTimeout(sId2);
+            return;
+          }
+          this.notOnSale(accAddress);
+          this.OnSale(accAddress);
           event.target.complete();
           clearTimeout(sId2);
         },500);
@@ -677,7 +731,7 @@ export class ProfilePage implements OnInit {
     case 'ProfilePage.myFeeds':
         event.target.complete();
       break;
-    case 'ProfilePage.following':
+    case 'ProfilePage.collectibles':
       event.target.complete();
       break;
       case 'ProfilePage.myLikes':
@@ -1280,7 +1334,7 @@ export class ProfilePage implements OnInit {
         this.hideSharMenuComponent = false;
          break;
        case "share":
-        if(this.selectType === "ProfilePage.myFeeds" || this.selectType === "ProfilePage.following"){
+        if(this.selectType === "ProfilePage.myFeeds"){
           let content = this.getQrCodeString(this.curItem);
           this.intentService.share("", content);
           this.hideSharMenuComponent = false;
@@ -1482,4 +1536,199 @@ async disconnect(that:any){
   this.clearData();
   this.native.navigateForward(["subscriptions"],"");
   }
+
+ async getOwnNftSum(){
+   let accAddress = this.nftContractControllerService.getAccountAddress() || "";
+   if(accAddress === ""){
+     this.ownNftSum = 0;
+     return;
+   }
+   try {
+    let nftCreatedCount =  await this.nftContractControllerService.getSticker().tokenCountOfOwner(accAddress);
+    let sellerInfo = await this.nftContractControllerService.getPasar().getSellerByAddr(accAddress);
+    let orderCount = sellerInfo[3];
+    this.ownNftSum = parseInt(nftCreatedCount)+parseInt(orderCount);
+   } catch (error) {
+    this.ownNftSum = 0;
+   }
+  }
+
+  getCollectiblesList(){
+
+    let accAddress = this.nftContractControllerService.getAccountAddress() || "";
+    if(accAddress === ""){
+      this.collectiblesList = [];
+      return;
+    }
+    let ownNftCollectiblesList= this.feedService.getOwnNftCollectiblesList();
+    let list = ownNftCollectiblesList[accAddress] || [];
+    if(list.length === 0){
+      this.notOnSale(accAddress);
+      this.OnSale(accAddress);
+    }else{
+      this.collectiblesList = list;
+    }
+
+  }
+
+ async notOnSale(accAddress:string){
+    this.collectiblesList = []
+    let nftCreatedCount =  await this.nftContractControllerService.getSticker().tokenCountOfOwner(accAddress);
+    if(nftCreatedCount === "0"){
+      this.collectiblesList = [];
+      this.hanleListCace(accAddress);
+    }else{
+      for(let index = 0 ;index<nftCreatedCount;index++){
+        this.collectiblesList.push(null);
+      }
+      for(let cIndex=0;cIndex<nftCreatedCount;cIndex++){
+         let tokenId =  await this.nftContractControllerService.getSticker().tokenIdOfOwnerByIndex(accAddress,cIndex);
+         let tokenInfo =  await this.nftContractControllerService.getSticker().tokenInfo(tokenId);
+         let price = "";
+         let tokenNum =  tokenInfo[2];
+         let tokenUri = tokenInfo[3];
+         let createTime  = tokenInfo[7];
+         let royaltyOwner = tokenInfo[4];
+         this.handleFeedsUrl(tokenUri,tokenId,price,tokenNum,royaltyOwner,"created",cIndex,accAddress,createTime);
+      }
+    }
+  }
+
+  handleFeedsUrl(feedsUri:string,tokenId:string,price:any,tokenNum:any,royaltyOwner:any,listType:any,cIndex:any,createAddress:any,createTime:any){
+    feedsUri  = feedsUri.replace("feeds:json:","");
+    this.httpService.ajaxGet(ApiUrl.nftGet+feedsUri,false).then((result)=>{
+    let type = result["type"] || "single";
+    let royalties = royaltyOwner;
+    let quantity = tokenNum;
+    let fixedAmount = price || null;
+    let thumbnail = result["thumbnail"] || "";
+    if(thumbnail === ""){
+      thumbnail = result["image"];
+    }
+    let item = {
+        "creator":createAddress,
+        "tokenId":tokenId,
+        "asset":result["image"],
+        "name":result["name"],
+        "description":result["description"],
+        "fixedAmount":fixedAmount,
+        "kind":result["kind"],
+        "type":type,
+        "royalties":royalties,
+        "quantity":quantity,
+        "thumbnail":thumbnail,
+        "createTime":createTime*1000,
+        "moreMenuType":"created"
+    }
+    try{
+      this.collectiblesList.splice(cIndex,1,item);
+      this.hanleListCace(createAddress);
+      // this.isLoading = false;
+    }catch(err){
+     console.log("====err===="+JSON.stringify(err));
+    }
+    }).catch(()=>{
+
+    });
+  }
+
+  async OnSale(accAddress:string){
+    let sellerInfo = await this.nftContractControllerService.getPasar().getSellerByAddr(accAddress);
+    let sellerAddr =  sellerInfo[1];
+    let orderCount = sellerInfo[3];
+    if(orderCount === "0"){
+
+    }else{
+      for(let index = 0;index<orderCount;index++){
+        this.collectiblesList.push(null);
+      }
+     await this.handleOrder(sellerAddr,orderCount,"sale",accAddress);
+    }
+  }
+
+  async handleOrder(sellerAddr:any,orderCount:any,listType:any,createAddress:any){
+    for(let index=0;index<orderCount;index++){
+     try {
+       let sellerOrder =  await this.nftContractControllerService.getPasar().getSellerOpenByIndex(sellerAddr,index);
+       let tokenId = sellerOrder[3];
+       let saleOrderId = sellerOrder[0];
+       let price = sellerOrder[5];
+       // const stickerContract = this.web3Service.getSticker();
+       let tokenInfo = await this.nftContractControllerService.getSticker().tokenInfo(tokenId);
+       let feedsUri= tokenInfo[3];
+       let createTime = tokenInfo[7];
+       feedsUri  = feedsUri.replace("feeds:json:","");
+       let tokenNum = tokenInfo[2];
+       this.httpService.ajaxGet(ApiUrl.nftGet+feedsUri,false).then((result)=>{
+        let type = result["type"] || "single";
+        let royalties = result["royalties"] || "";
+        let quantity = tokenNum;
+        let fixedAmount = price || null;
+        let thumbnail = result["thumbnail"] || "";
+        if(thumbnail === ""){
+          thumbnail = result["image"];
+        }
+        let item = {
+            "creator":createAddress,
+            "saleOrderId":saleOrderId,
+            "tokenId":tokenId,
+            "asset":result["image"],
+            "name":result["name"],
+            "description":result["description"],
+            "fixedAmount":fixedAmount,
+            "kind":result["kind"],
+            "type":type,
+            "royalties":royalties,
+            "quantity":quantity,
+            "thumbnail":thumbnail,
+            "sellerAddr":sellerAddr,
+            "createTime":createTime*1000,
+            "moreMenuType":"onSale"
+        }
+        let len =this.collectiblesList.length-1+index;
+        this.collectiblesList.splice(len,1,item);
+        this.hanleListCace(createAddress);
+        //this.isLoading = false;
+        }).catch(()=>{
+
+        });
+     } catch (error) {
+
+     }
+
+    }
+ }
+
+ hanleListCace(createAddress?:any){
+  let ownNftCollectiblesList = this.feedService.getOwnNftCollectiblesList();
+      ownNftCollectiblesList[createAddress] = this.collectiblesList;
+      this.feedService.setOwnNftCollectiblesList(ownNftCollectiblesList);
+      this.feedService.setData("feed.nft.own.collectibles.list",JSON.stringify(ownNftCollectiblesList));
+ }
+
+ clickAssetItem(assetitem:any){
+  this.native.navigateForward(['assetdetails'],{queryParams:assetitem});
+ }
+
+ clickMore(parm:any){
+  let asstItem = parm["assetItem"];
+  let type= asstItem['moreMenuType'];
+  console.log("===type==="+type);
+  switch(type){
+     case "onSale":
+       this.handleOnSale(asstItem);
+       break;
+     case "created":
+        this.handleCreated(asstItem);
+       break;
+  }
+}
+
+handleOnSale(asstItem:any){
+  this.menuService.showOnSaleMenu(asstItem);
+}
+
+handleCreated(asstItem:any){
+  this.menuService.showCreatedMenu(asstItem);
+}
 }

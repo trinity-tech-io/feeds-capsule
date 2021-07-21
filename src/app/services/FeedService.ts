@@ -67,6 +67,7 @@ let eventBus: Events = null;
 
 @Injectable()
 export class FeedService {
+  private ownNftCollectiblesList:any = {};
   private ownOnSaleList:any = {};
   private ownPurchasedList:any = {};
   private ownCreatedList:any = {};
@@ -5797,5 +5798,13 @@ export class FeedService {
 
   setOwnCreatedList(ownCreatedList:any){
      this.ownCreatedList = ownCreatedList;
- }
+  }
+
+  getOwnNftCollectiblesList(){
+     return this.ownNftCollectiblesList;
+  }
+
+  setOwnNftCollectiblesList(ownNftCollectiblesList:any){
+    this.ownNftCollectiblesList = ownNftCollectiblesList;
+  }
 }

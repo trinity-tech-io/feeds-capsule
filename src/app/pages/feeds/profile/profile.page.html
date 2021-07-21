@@ -28,8 +28,8 @@
       <div class="left-tab" [class.tab-active]="selectType === 'ProfilePage.myFeeds'" (click)="changeType('ProfilePage.myFeeds')" style="padding:5px 6px;">
         <span>{{myFeedsSum}}</span>
       </div>
-      <div class="middle-tab" [class.tab-active]="selectType === 'ProfilePage.following'" (click)="changeType('ProfilePage.following')">
-        <span>{{followSum}}</span>
+      <div class="middle-tab" [class.tab-active]="selectType === 'ProfilePage.collectibles'" (click)="changeType('ProfilePage.collectibles')">
+        <span>{{ownNftSum}}</span>
       </div>
       <div class="right-tab" [class.tab-active]="selectType === 'ProfilePage.myLikes'" (click)="changeType('ProfilePage.myLikes')">
         <span>{{likeSum}}</span>
@@ -39,8 +39,8 @@
       <div class="left-tab" [class.tab-active]="selectType === 'ProfilePage.myFeeds'" (click)="changeType('ProfilePage.myFeeds')">
         <span [class.tab-active-bottom-border]="selectType === 'ProfilePage.myFeeds'">{{ 'ProfilePage.myFeeds' | translate }}</span>
       </div>
-      <div class="middle-tab" [class.tab-active]="selectType === 'ProfilePage.following'" (click)="changeType('ProfilePage.following')">
-        <span [class.tab-active-bottom-border]="selectType === 'ProfilePage.following'">{{ 'ProfilePage.following' | translate }}</span>
+      <div class="middle-tab" [class.tab-active]="selectType === 'ProfilePage.collectibles'" (click)="changeType('ProfilePage.collectibles')">
+        <span [class.tab-active-bottom-border]="selectType === 'ProfilePage.collectibles'">{{ 'ProfilePage.collectibles' | translate }}</span>
       </div>
       <div class="right-tab" [class.tab-active]="selectType === 'ProfilePage.myLikes'" (click)="changeType('ProfilePage.myLikes')">
         <span [class.tab-active-bottom-border]="selectType === 'ProfilePage.myLikes'">{{'ProfilePage.myLikes' | translate }}</span>
@@ -48,7 +48,28 @@
     </div>
 
     <app-myfeeds *ngIf="selectType == 'ProfilePage.myFeeds'" (toFeedPage)="toPage($event)" (subsciptions)="subsciptions()"  [channels] = "channels" [nodeStatus]="nodeStatus" (fromChild)="showMenuMore($event)"></app-myfeeds>
-    <!-- <app-following *ngIf="selectType == 'ProfilePage.following'"  [followingList] = "followingList" [nodeStatus]="nodeStatus" (fromChild)="showMenuMore($event)" (toFollowPage)="toPage($event)"></app-following> -->
+    <ion-row *ngIf="selectType === 'ProfilePage.collectibles'&&ownNftSum===0">
+      <ion-col size="12">
+       <div class="bigCircle">
+           <div class="smallCircle">
+              <img src="./assets/images/lock.svg"/>
+           </div>
+       </div>
+    </ion-col>
+    <ion-col size="12" class="subscribeChannel">
+      {{"CollectionsPage.emptypurchased"|translate}}
+    </ion-col>
+    </ion-row>
+    <ion-row *ngIf="selectType === 'ProfilePage.collectibles'&&ownNftSum>0" class="leftrightrow">
+      <ion-col size="6" *ngFor="let item of collectiblesList">
+        <app-assetitem
+        [assetItem] = "item"
+        (clickAssetItem) = "clickAssetItem($event)"
+        (clickMore) = "clickMore($event)"
+        >
+        </app-assetitem>
+      </ion-col>
+     </ion-row>
     <app-likes
        *ngIf="selectType == 'ProfilePage.myLikes'"
        [hideDeletedPosts] = "hideDeletedPosts"
