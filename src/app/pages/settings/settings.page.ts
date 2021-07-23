@@ -176,4 +176,8 @@ export class SettingsPage implements OnInit {
       this.theme.setTheme(this.theme.darkMode);
     });
   }
+
+  navElastosApiProvider(){
+    this.native.getNavCtrl().navigateForward(['/elastosapiprovider']);
+  }
 }
