@@ -44,7 +44,8 @@ export class EditserverinfoPage implements OnInit {
     this.activatedRoute.queryParams.subscribe((data) => {
       this.oldServerInfo = data;
       let item = _.cloneDeep(data);
-      this.name = item["name"] || "";
+      let signInData = this.feedService.getSignInData() || {};
+      this.name = signInData["name"] || "";
       this.introduction = item["introduction"] || "";
       this.elaAddress =  item["elaAddress"] || "";
       this.nodeId = item["nodeId"] || "";
