@@ -26,7 +26,7 @@ declare let didManager: DIDPlugin.DIDManager;
 // declare let didSessionManager: DIDSessionManagerPlugin.DIDSessionManager;
 
 const TAG: string = "Feeds-service";
-let versionCode: number = 10500;
+let versionCode: number = 10600;
 let newAuthVersion: number = 10400;
 let newCommentVersion: number = 10400;
 let newMultiPropCountVersion: number = 10500
@@ -131,6 +131,7 @@ export class FeedService {
   }
 
   init(){
+    didManager.initDidStore("anything", null);
     this.initCallback();
   }
 
@@ -1197,7 +1198,6 @@ export class FeedService {
               lower_bound: number, max_counts: number){
     if(!this.hasAccessToken(nodeId))
       return;
-
     let accessToken: FeedsData.AccessToken = this.dataHelper.getAccessToken(nodeId) || null;
     this.connectionService.getChannels(this.getServerNameByNodeId(nodeId), nodeId, field, upper_bound, lower_bound, max_counts, accessToken);
   }
