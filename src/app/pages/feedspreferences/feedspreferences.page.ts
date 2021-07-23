@@ -13,7 +13,7 @@ import { PopupProvider } from '../../services/popup';
 import { Events } from 'src/app/services/events.service';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import * as _ from 'lodash';
+import  _ from 'lodash';
 
 @Component({
   selector: 'app-feedspreferences',

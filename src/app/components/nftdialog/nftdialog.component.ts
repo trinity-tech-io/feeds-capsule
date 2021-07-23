@@ -225,6 +225,7 @@ export class NftdialogComponent implements OnInit {
       let sAssItem =_.cloneDeep(this.curAssItem);
           sAssItem["sellerAddr"] = sellerAddress;
           sAssItem["fixedAmount"] = salePrice;
+          sAssItem["saleOrderId"] = this.orderId;
       let obj = {"type":type,"assItem":sAssItem}
       this.events.publish(FeedsEvent.PublishType.nftUpdateList,obj);
       this.native.hideLoading();
