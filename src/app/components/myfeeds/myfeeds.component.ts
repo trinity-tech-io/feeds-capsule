@@ -18,6 +18,7 @@ export class MyfeedsComponent implements OnInit {
   @Output () toFeedPage = new EventEmitter();
   @Output () subsciptions = new EventEmitter();
   public popover:any = "";
+  public followingList:any = [];
   constructor(
     private feedService: FeedService,
     public theme:ThemeService,
@@ -28,7 +29,7 @@ export class MyfeedsComponent implements OnInit {
   }
 
   ngOnInit() {
-
+    this.followingList = this.feedService.getFollowedChannelList() || [];
   }
 
   moreName(name:string){

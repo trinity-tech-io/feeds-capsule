@@ -1,4 +1,4 @@
-<div *ngIf="channels.length === 0" class="empty-container">
+<div *ngIf="channels.length === 0 && followingList.length === 0" class="empty-container">
   <img src="./assets/images/empty-feeds-icon.svg">
   <h1>{{ 'MyfeedsComponent.allempty' | translate }}</h1>
   <p>{{'MyfeedsComponent.emptyDes' | translate }}</p>
@@ -11,7 +11,7 @@
   </ion-row>
 </div>
 
-<ion-list *ngIf="channels.length > 0" class="channel-list" [class.darkChannelList]="theme.darkMode">
+<ion-list *ngIf="channels.length > 0 || followingList.length > 0" class="channel-list" [class.darkChannelList]="theme.darkMode">
   <ion-item
     *ngFor="let channel of channels"
     lines="none"
