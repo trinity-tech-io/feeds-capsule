@@ -534,7 +534,6 @@ export class SearchPage implements OnInit {
     let feedName = feedInfo["name"];
     let desc = feedInfo["description"];
     let ownerName = feedInfo["ownerName"];
-    console.log("discoverSubscribe ", feedInfo);
 
     this.feedService.addFeed(feedUrl, avatar, followers, feedName, ownerName, desc).then((isSuccess)=>{
       if(isSuccess){
@@ -610,11 +609,12 @@ export class SearchPage implements OnInit {
   }
 
   getAddingFeedOwner(addingchannel){
-    console.log("getAddingFeedOwner addingchannel",addingchannel);
-    let ownerName = "common.obtain";
+    let ownerName = "";
     let feed = addingchannel||"";
     if (feed != "")
       ownerName = addingchannel["ownerName"]
+    if (ownerName == "")
+      return this.translate.instant("common.obtain")
     return "@"+ownerName;
   }
 

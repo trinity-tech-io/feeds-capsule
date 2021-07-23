@@ -200,8 +200,10 @@ export class DiscoverfeedinfoPage implements OnInit {
     let avatar = this.feedInfo["feedsAvatar"];
     let followers = this.feedInfo["followers"];
     let feedName = this.feedInfo["name"];
+    let desc = this.feedInfo["description"];
+    let ownerName = this.feedInfo["ownerName"];
 
-    this.feedService.addFeed(feedUrl, avatar, followers, feedName, "","").then((isSuccess)=>{
+    this.feedService.addFeed(feedUrl, avatar, followers, feedName, ownerName,desc).then((isSuccess)=>{
       if (isSuccess){
         this.native.pop();
         return;
