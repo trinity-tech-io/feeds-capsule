@@ -502,7 +502,14 @@ export const en = {
         "language-setting": "Language",
         "darkMode": "Theme",
         "drak": "Dark",
-        "light": "Light"
+        "light": "Light",
+        'elastos-api-provider': 'Elastos API Provider',
+        'elastos-api-provider-des': 'Select your preferred provider for all Elastos related services',
+        'elastos-io-des': 'Set of Elastos APIs deployed and maintained by the Elastos Foundation\'s Elastos Fusion sub-team, also known as the product team.',
+        'trinity-tech-cn-des': 'Set of Elastos APIs deployed and maintained by the Elastos Foundation\'s Trinity Tech team, responsible for Elastos SDKs development.',
+
+        /*********** Elastos API provider page ***********/
+        'elastosapiprovider': 'Elastos API'
     },
     "DiscoverfeedPage": {
         "title": "Discovery Square",

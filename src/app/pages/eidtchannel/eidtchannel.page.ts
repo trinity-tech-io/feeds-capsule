@@ -11,7 +11,7 @@ import { UtilService } from 'src/app/services/utilService';
 import { Events } from 'src/app/services/events.service';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import * as _ from 'lodash';
+import _ from 'lodash';
 
 @Component({
   selector: 'app-eidtchannel',
@@ -19,7 +19,7 @@ import * as _ from 'lodash';
   styleUrls: ['./eidtchannel.page.scss'],
 })
 export class EidtchannelPage implements OnInit {
-  @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
+@ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 public connectionStatus = 1;
 public nodeId:string ="";
 public channelId:number = 0;
