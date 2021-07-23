@@ -306,6 +306,16 @@ export class MintnftPage implements OnInit {
       return false;
     }
 
+    if(this.curPublishtoPasar&&this.issueRadionType=== "oneTimeIssue"&&!this.number(this.nftFixedAmount)) {
+      this.native.toastWarn('common.amountError');
+      return false;
+    }
+
+   if(this.curPublishtoPasar&&this.issueRadionType=== "oneTimeIssue"&&this.nftFixedAmount <= 0) {
+      this.native.toast_trans('common.amountError');
+      return;
+    }
+
     if(this.curPublishtoPasar&&this.issueRadionType=== "reIssueable" && this.nftMinimumAmount === null){
       this.native.toastWarn("MintnftPage.nftMinimumAmount");
       return false;
@@ -318,6 +328,12 @@ export class MintnftPage implements OnInit {
 
     if(this.nftQuantity === ""){
       this.native.toastWarn("MintnftPage.nftQuantityPlaceholder");
+      return false;
+    }
+
+    let regNumber = /^\+?[1-9][0-9]*$/;
+    if(regNumber.test(this.nftQuantity) == false) {
+      this.native.toast_trans('input quantity');
       return false;
     }
     return true;
@@ -554,6 +570,11 @@ export class MintnftPage implements OnInit {
         //let content = this.feedService.createContent(this.nftDescription,imgThumbs,null);
         this.feedService.declarePost(nodeId,channelId,JSON.stringify(nftContent),false,tempPostId,
         this.transDataChannel,this.thumbnail,"");
+  }
+
+  number(text:any) {
+    var numPattern = /^(([1-9]\d*)|\d)(.\d{1,9})?$/;
+    return numPattern.test(text);
   }
 
 }
