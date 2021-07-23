@@ -98,9 +98,6 @@ export class MyApp {
       this.initDiscoverfeeds();
       this.initCollectibleSetting();
       this.initFeedNftPasarList();
-      this.initNftOwnCreatedList();
-      this.initNftOwnPurchasedList();
-      this.initNftOwnOnSalelist();
       this.initNftOwnCollectiblesList();
       // this.native.networkInfoInit();
       this.native.addNetworkListener(()=>{
@@ -376,45 +373,6 @@ export class MyApp {
         return;
       }
       this.feedService.setPasarList(JSON.parse(nftPasarList));
-    }).catch(()=>{
-
-    });
-  }
-
-  initNftOwnCreatedList(){
-    this.feedService.getData("feed.nft.own.created.list").then((nftOwnCreatedList)=>{
-      console.log("=======nftOwnCreatedList======"+nftOwnCreatedList);
-      if(nftOwnCreatedList === null || nftOwnCreatedList === "[]"){
-        this.feedService.setOwnCreatedList({});
-        return;
-      }
-      this.feedService.setOwnCreatedList(JSON.parse(nftOwnCreatedList));
-    }).catch(()=>{
-
-    });
-  }
-
-  initNftOwnPurchasedList(){
-    this.feedService.getData("feed.nft.own.purchased.list").then((nftOwnPurchasedList)=>{
-      console.log("=======nftOwnPurchasedList======"+nftOwnPurchasedList);
-      if(nftOwnPurchasedList === null || nftOwnPurchasedList === "[]"){
-        this.feedService.setOwnPurchasedList({});
-        return;
-      }
-      this.feedService.setOwnPurchasedList(JSON.parse(nftOwnPurchasedList));
-    }).catch(()=>{
-
-    });
-  }
-
-  initNftOwnOnSalelist(){
-    this.feedService.getData("feed.nft.own.onSale.list").then((nftOwnOnSalelist)=>{
-      console.log("=======nftOwnOnSalelist======"+nftOwnOnSalelist);
-      if(nftOwnOnSalelist === null || nftOwnOnSalelist === "[]"){
-        this.feedService.setOwnOnSaleList({});
-        return;
-      }
-      this.feedService.setOwnOnSaleList(JSON.parse(nftOwnOnSalelist));
     }).catch(()=>{
 
     });

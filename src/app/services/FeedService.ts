@@ -68,9 +68,6 @@ let eventBus: Events = null;
 @Injectable()
 export class FeedService {
   private ownNftCollectiblesList:any = {};
-  private ownOnSaleList:any = {};
-  private ownPurchasedList:any = {};
-  private ownCreatedList:any = {};
   private pasarList:any = [];
   private collectibleStatus:any = {};
   public bindPublisherAccountType:string = "";
@@ -1567,7 +1564,7 @@ export class FeedService {
     //TODO 2.0
     let proof: string = params.proof;
     this.logUtils.logd("Receive result from new_like, proof is "+JSON.stringify(proof));
-    
+
 
     if (comment_id == 0){
       let key = this.getPostId(nodeId,channel_id,post_id);
@@ -1624,14 +1621,14 @@ export class FeedService {
     let originChannel = this.dataHelper.getChannel(nodeChannelId);
 
     //TODO 2.0
-    let tipMethods: string = params.tip_methods 
+    let tipMethods: string = params.tip_methods
     this.logUtils.logd("Receive result from feedinfo_update, tipMethods is "+JSON.stringify(tipMethods));
 
-    //TODO 2.0    
+    //TODO 2.0
     let proof: string = params.proof;
     this.logUtils.logd("Receive result from feedinfo_update, proof is "+JSON.stringify(proof));
 
-    //TODO 2.0    
+    //TODO 2.0
     let status: number = params.status || 0;
     this.logUtils.logd("Receive result from feedinfo_update, status is "+JSON.stringify(status));
 
@@ -2265,7 +2262,7 @@ export class FeedService {
       //TODO 2.0
       let hash_id = result[index].hash_id;
       this.logUtils.logd("Receive result from get_post RPC,hash_id is "+hash_id);
-      
+
       //TODO 2.0
       let proof = result[index].proof;
       this.logUtils.logd("Receive result from get_post RPC,proof is "+proof);
@@ -5774,30 +5771,6 @@ export class FeedService {
 
   setPasarList(pasarList:any){
     this.pasarList = pasarList;
-  }
-
-  getOwnOnSaleList(){
-    return this.ownOnSaleList;
-  }
-
-  setOwnOnSaleList(ownOnSaleList:any){
-      this.ownOnSaleList = ownOnSaleList;
-  }
-
-  getOwnPurchasedList(){
-   return this.ownPurchasedList;
-  }
-
-  setOwnPurchasedList(ownPurchasedList:any){
-    this.ownPurchasedList = ownPurchasedList;
-  }
-
-  getOwnCreatedList(){
-     return this.ownCreatedList;
-  }
-
-  setOwnCreatedList(ownCreatedList:any){
-     this.ownCreatedList = ownCreatedList;
   }
 
   getOwnNftCollectiblesList(){

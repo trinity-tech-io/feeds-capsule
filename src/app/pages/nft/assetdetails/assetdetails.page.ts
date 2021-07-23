@@ -124,7 +124,7 @@ export class AssetdetailsPage implements OnInit {
            return item.saleOrderId!=saleOrderId;
        });
       clist.push(assetItem);
-      this.feedService.setOwnCreatedList(allList);
+      this.feedService.setOwnNftCollectiblesList(allList);
       this.feedService.setData("feed.nft.own.collectibles.list",JSON.stringify(allList));
 
      //remove pasr

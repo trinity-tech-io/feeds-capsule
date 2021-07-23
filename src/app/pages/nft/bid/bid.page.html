@@ -36,12 +36,7 @@
       </ion-col>
     </ion-row>
 
-    <ion-row class="detail-row removeBorder" *ngIf="showType==='buy'">
-      <ion-col size="12" class="left-col">
-        <h1>{{ "MintnftPage.nftfixedPrice" | translate}}</h1>
-        <div style="text-align: center;color: #7624fe;font-size: 18px;font-weight: bold;margin-top: 13px;">{{ hanldePrice(fixedPrice) }} ELA/ETHSC</div>
-      </ion-col>
-    </ion-row>
+
 
     <ion-row class="detail-row removeBorder" *ngIf="showType==='burn'">
       <ion-col size="12" class="left-col bottomBorder">
@@ -63,13 +58,23 @@
       </div>
 
      <!--- buy BUTTONS --->
-     <div class="btns" *ngIf="showType==='buy'&&accAddress!=sellerAddress" style="margin-bottom:20px;">
+     <div *ngIf="showType==='buy'&&accAddress!=sellerAddress" style="height:160px"></div>
+     <!-- <div class="footer" *ngIf="showType==='buy'&&accAddress!=sellerAddress"> -->
+     <div class="footer" *ngIf="showType==='buy'&&accAddress!=sellerAddress">
+      <ion-row class="detail-row removeBorder" *ngIf="showType==='buy'">
+        <ion-col size="12" class="left-col">
+          <h1 style="text-align: center;">{{ "MintnftPage.nftfixedPrice" | translate}}</h1>
+          <div style="text-align: center;color: #7624fe;font-size: 18px;font-weight: bold;margin-top: 13px;">{{ hanldePrice(fixedPrice) }} ELA/ETHSC</div>
+      </ion-col>
+      </ion-row>
+     <div class="btns" style="margin-bottom:0px;">
       <ion-row class="btn-row">
         <ion-button (click)="clickBuy()" style="height:48px;">
           <ion-label style="font-weight:bold;font-stretch:normal;font-style:normal;color:#ffffff;">{{'BidPage.buy' | translate}}</ion-label>
         </ion-button>
       </ion-row>
     </div>
+  </div>
 </ion-grid>
 
 </ion-content>

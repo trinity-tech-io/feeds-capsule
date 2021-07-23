@@ -197,13 +197,13 @@ export class MintnftPage implements OnInit {
     let formData = new FormData();
     formData.append("",JSON.stringify(ipfsJSON));
 
-    //Start send ipfs data loading and 
+    //Start send ipfs data loading and
     this.native.showLoading("common.waitMoment",(isDismiss)=>{
       if(isDismiss){
         alert("common.publicPasarFailed");
       }
     },3*60000);
-  
+
     this.httpService.ajaxNftPost(ApiUrl.nftAdd,formData).then((result)=>{
       //{"Name":"blob","Hash":"QmaxWgjheueDc1XW2bzDPQ6qnGi9UKNf23EBQSUAu4GHGF","Size":"17797"};
       console.log("====json Data====="+JSON.stringify(result));
@@ -211,7 +211,7 @@ export class MintnftPage implements OnInit {
       if(hash != null){
         let tokenId = "0x"+UtilService.SHA256(hash);
         let jsonHash = "feeds:json:"+hash;
-        
+
         this.mintContract(tokenId,jsonHash,this.nftQuantity,this.nftRoyalties).then((mintResult)=>{
           if(mintResult!=""&&this.curPublishtoPasar)
             return this.handleSetApproval();
@@ -232,7 +232,7 @@ export class MintnftPage implements OnInit {
           this.nftContractControllerService.getSticker().cancelMintProcess();
           this.nftContractControllerService.getSticker().cancelSetApprovedProcess();
           this.nftContractControllerService.getPasar().cancelCreateOrderProcess();
-          
+
           this.native.hideLoading();
           this.native.toast_trans("common.publicPasarFailed");
         });
@@ -359,7 +359,7 @@ export class MintnftPage implements OnInit {
         reject(MINT_ERROR);
         return;
       }
-      
+
       resolve(SUCCESS);
     });
   }
@@ -431,7 +431,8 @@ export class MintnftPage implements OnInit {
           "quantity":this.nftQuantity,
           "thumbnail":this.imageObj["thumbnail"],
           "sellerAddr":sellerAddr,
-          "createTime":createTime*1000
+          "createTime":createTime*1000,
+          "moreMenuType":"onSale"
         }
 
         let list = this.feedService.getPasarList();
@@ -440,13 +441,13 @@ export class MintnftPage implements OnInit {
         this.feedService.setData("feed.nft.pasarList",JSON.stringify(list));
 
         let accAddress = this.nftContractControllerService.getAccountAddress();
-        let allOnSaleList = this.feedService.getOwnOnSaleList();
-        let slist = allOnSaleList[accAddress] || [];
+        let allList = this.feedService.getOwnNftCollectiblesList();
+        let slist = allList[accAddress] || [];
             slist.push(item);
-        this.feedService.setData("feed.nft.own.onSale.list",JSON.stringify(allOnSaleList));
+        this.feedService.setData("feed.nft.own.collectibles.list",JSON.stringify(allList));
 
         await this.getSetChannel(tokenId);
-        
+
         resolve(SUCCESS);
       });
   }
