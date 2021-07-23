@@ -615,6 +615,13 @@ export class MenuService {
                 }
             },
             {
+                text: this.translate.instant("CollectionsPage.details"),
+                icon: 'information-circle',
+                handler: () => {
+                  this.native.navigateForward(['assetdetails'],{queryParams:assItem});
+                }
+            },
+            {
                 text: this.translate.instant("common.cancel"),
                 role: 'cancel',
                 icon: 'close-circle',
@@ -654,7 +661,12 @@ export class MenuService {
     }
 
     async cancelOrder(that:any){
-        let saleOrderId  =  this.assItem["saleOrderId"] || ""
+        let saleOrderId  =  this.assItem["saleOrderId"] || "";
+        if(saleOrderId === ""){
+            this.native.hideLoading();
+            this.native.toast_trans("common.cancellationFailed");
+            return;
+        }
         const cancelStatus = await this.nftContractControllerService.getPasar().cancelOrder(saleOrderId);
         that.native.hideLoading();
         if(cancelStatus!=""&&cancelStatus!=undefined){
@@ -709,6 +721,13 @@ export class MenuService {
                 handler: () => {
                    this.viewHelper.showNftPrompt(assItem,"CollectionsPage.putOnSale","created");
                 }
+        },
+        {
+            text: this.translate.instant("CollectionsPage.details"),
+            icon: 'information-circle',
+            handler: () => {
+              this.native.navigateForward(['assetdetails'],{queryParams:assItem});
+            }
         },
         {
             text: this.translate.instant("common.cancel"),

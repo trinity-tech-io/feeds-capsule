@@ -110,6 +110,7 @@ export const en = {
         "publicPasarFailed":"Public pasar failed",
         "nftCreationFailed":"NFT creation failed",
         "onsale":"On sale",
+        "state":"State"
     },
     "app": {
         "profileDetails": "Profile Details",
@@ -601,7 +602,8 @@ export const en = {
         "emptypurchased": "Go to buy collectibles",
         "onSale":"Sell",
         "putOnSale":"Put On Sale",
-        "price":"Price"
+        "price":"Price",
+        "details":"Details"
     },
     "ConfirmationPage":{
         "title": "Confirmation",

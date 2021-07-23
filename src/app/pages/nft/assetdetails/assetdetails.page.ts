@@ -10,6 +10,9 @@ import { ApiUrl } from '../../../services/ApiUrl';
 import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
 import { FeedService} from '../../../services/FeedService';
 import { UtilService } from 'src/app/services/utilService';
+import { ViewHelper } from 'src/app/services/viewhelper.service';
+import { PopupProvider } from 'src/app/services/popup';
+import  _ from 'lodash';
 type detail = {
   type: string,
   details: string
@@ -21,6 +24,8 @@ type detail = {
 })
 export class AssetdetailsPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
+  private popover:any = null;
+  private assItem:any = {};
   public contractDetails:detail[]= [];
   public owner:string = "";
   public name:string = "";
@@ -45,19 +50,22 @@ export class AssetdetailsPage implements OnInit {
   public nftStatus:string = null;
   constructor(
     private translate:TranslateService,
-    private event:Events,
+    private events:Events,
     private native:NativeService,
     private titleBarService:TitleBarService,
     private activatedRoute:ActivatedRoute,
     private nftContractControllerService: NFTContractControllerService,
     private feedService:FeedService,
+    private viewHelper:ViewHelper,
     public theme:ThemeService,
+    public popupProvider:PopupProvider,
     ) {
 
     }
 
   ngOnInit() {
     this.activatedRoute.queryParams.subscribe(queryParams => {
+      this.assItem = _.cloneDeep(queryParams);
       let asset = queryParams.asset || {};
       this.owner = queryParams.name || "";
       this.name = queryParams.name || "";
@@ -73,14 +81,16 @@ export class AssetdetailsPage implements OnInit {
         this.dateCreated = UtilService.dateFormat(createDate,'yyyy-MM-dd HH:mm:ss');
       }
       this.creator = queryParams.creator || "";
-      this.price = queryParams.fixedAmount || null;
-      if(this.price != null){
-          this.nftStatus = "common.onsale";
-      }
+
+
     });
   }
 
   ionViewWillEnter() {
+    this.price =  this.assItem.fixedAmount || null;
+    if(this.price != null){
+      this.nftStatus = this.translate.instant("common.onsale");
+     }
     this.developerMode = this.feedService.getDeveloperMode();
     this.initTile();
     this.changeType(this.selectType);
@@ -89,9 +99,9 @@ export class AssetdetailsPage implements OnInit {
 
   ionViewWillLeave(){
     this.removeEvent();
-    this.event.publish(FeedsEvent.PublishType.search);
-    this.event.publish(FeedsEvent.PublishType.notification);
-    this.event.publish(FeedsEvent.PublishType.addProflieEvent);
+    this.events.publish(FeedsEvent.PublishType.search);
+    this.events.publish(FeedsEvent.PublishType.notification);
+    this.events.publish(FeedsEvent.PublishType.addProflieEvent);
   }
 
   initTile(){
@@ -101,13 +111,73 @@ export class AssetdetailsPage implements OnInit {
    }
 
    addEvent(){
-    this.event.subscribe(FeedsEvent.PublishType.updateTitle,()=>{
-      this.initTile();
+    this.events.subscribe(FeedsEvent.PublishType.nftCancelOrder,(assetItem)=>{
+      let saleOrderId = assetItem.saleOrderId;
+      let sellerAddr = assetItem.sellerAddr;
+      //add OwnNftCollectiblesList
+      let createAddr = this.nftContractControllerService.getAccountAddress();
+       assetItem["fixedAmount"] = null;
+       assetItem["moreMenuType"] = "created";
+       let allList  = this.feedService.getOwnNftCollectiblesList();
+       let clist = allList[createAddr]  || [];
+           clist =  _.filter(clist,(item)=>{
+           return item.saleOrderId!=saleOrderId;
+       });
+      clist.push(assetItem);
+      this.feedService.setOwnCreatedList(allList);
+      this.feedService.setData("feed.nft.own.collectibles.list",JSON.stringify(allList));
+
+     //remove pasr
+     let pList = this.feedService.getPasarList();
+         pList =  _.filter(pList,(item)=>{
+         return !(item.saleOrderId===saleOrderId&&item.sellerAddr===sellerAddr)
+        }
+     );
+    this.feedService.setPasarList(pList);
+    this.feedService.setData("feed.nft.pasarList",JSON.stringify(pList));
+    this.native.pop();
+    });
+
+    this.events.subscribe(FeedsEvent.PublishType.nftUpdateList,(obj)=>{
+      let type = obj["type"];
+      let createAddr = this.nftContractControllerService.getAccountAddress();
+      let assItem = obj["assItem"];
+      console.log("===assItem==="+JSON.stringify(assItem));
+      let saleOrderId = assItem["saleOrderId"];
+      let tokenId = assItem["tokenId"];
+      switch(type){
+        case "buy":
+
+          break;
+        case "created":
+            let allList = this.feedService.getOwnNftCollectiblesList();
+            let list = allList[createAddr] || [];
+            let cpItem = _.cloneDeep(assItem);
+                cpItem["moreMenuType"] = "created";
+            console.log("=====list======"+list.length);
+            list =  _.filter(list,(item)=>{
+              return item.tokenId!=tokenId;}
+            );
+            console.log("=====list1======"+list.length);
+            list.push(cpItem);
+            allList[createAddr] = list;
+            this.feedService.setOwnNftCollectiblesList(allList);
+            this.feedService.setData("feed.nft.own.collectibles.list",JSON.stringify(allList));
+
+          let cpList = this.feedService.getPasarList();
+              cpList.push(cpItem);
+          this.feedService.setPasarList(cpList);
+          this.feedService.setData("feed.nft.pasarList",JSON.stringify(cpList));
+          this.native.pop();
+          break;
+      }
+
     });
    }
 
    removeEvent(){
-    this.event.unsubscribe(FeedsEvent.PublishType.updateTitle);
+    this.events.unsubscribe(FeedsEvent.PublishType.nftCancelOrder);
+    this.events.unsubscribe(FeedsEvent.PublishType.nftUpdateList);
    }
 
    collectContractData(){
@@ -269,4 +339,52 @@ export class AssetdetailsPage implements OnInit {
   hanldePrice(price:string){
     return this.nftContractControllerService.transFromWei(price);
   }
+
+  clickCancelOrder(){
+    this.popover = this.popupProvider.ionicConfirm(this,"BidPage.cancelOrder","BidPage.cancelOrder",this.cancelOnSaleMenu,this.confirmOnSaleMenu,'./assets/images/shanchu.svg');
+  }
+
+  changePrice(){
+    this.viewHelper.showNftPrompt(this.assItem,"BidPage.changePrice","sale");
+  }
+
+  onSale(){
+    this.viewHelper.showNftPrompt(this.assItem,"CollectionsPage.putOnSale","created");
+  }
+
+  cancelOnSaleMenu(){
+    if(this.popover!=null){
+       this.popover.dismiss();
+    }
+  }
+
+  confirmOnSaleMenu(that:any){
+      if(this.popover!=null){
+          this.popover.dismiss();
+      }
+      that.native.showLoading("common.waitMoment",()=>{},50000).then(()=>{
+          that.cancelOrder(that);
+        }).catch(()=>{
+          that.native.hideLoading();
+        })
+  }
+
+  async cancelOrder(that:any){
+    let saleOrderId  =  this.assItem["saleOrderId"] || "";
+    console.log("=======saleOrderId========="+saleOrderId);
+    if(saleOrderId === ""){
+      this.native.hideLoading();
+      this.native.toast_trans("common.cancellationFailed");
+      return;
+    }
+    const cancelStatus = await this.nftContractControllerService.getPasar().cancelOrder(saleOrderId);
+    that.native.hideLoading();
+    if(cancelStatus!=""&&cancelStatus!=undefined){
+     that.events.publish(FeedsEvent.PublishType.nftCancelOrder,this.assItem);
+     this.native.toast_trans("common.cancelSuccessfully");
+      //this.native.navigateForward(['confirmation'],{queryParams:{"showType":"buy"}});
+    }else{
+      this.native.toast_trans("common.cancellationFailed");
+    }
+}
 }

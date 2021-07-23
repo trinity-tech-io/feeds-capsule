@@ -152,7 +152,7 @@ export class BidPage implements OnInit {
     //if(this.nftStatus!=null){
       this.contractDetails.push({
         type:'common.state',
-        details:'common.onsale'
+        details:this.translate.instant("common.onsale")
       });
     //}
 
