@@ -1,5 +1,14 @@
 .container {
 
+  .footer{
+    position:fixed;
+    bottom:0px;
+    left:0px;
+    width:100%;
+    opacity: 0.9;
+    background-color: #fff;
+  }
+
    .my-custom-class {
     --background: #e5e5e5;
    }
@@ -242,6 +251,11 @@
 }
 
 .darkContainer {
+
+  .footer{
+    background-color: #000;
+    opacity: 0.9;
+  }
 
   .bottomBorder {
     border-bottom: 1px solid #2e2f4e;

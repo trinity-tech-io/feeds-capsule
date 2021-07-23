@@ -234,29 +234,19 @@ export class BidPage implements OnInit {
 
       let createAddress = this.nftContractControllerService.getAccountAddress();
       if(this.sellerAddress === createAddress){
-        let allOnSalelist = this.feedService.getOwnOnSaleList();
-        let olist = allOnSalelist[createAddress] || [];
+        let alllist = this.feedService.getOwnNftCollectiblesList();
+        let olist = alllist[createAddress] || [];
         olist  = _.filter(olist,(item)=>{
           return item.saleOrderId != this.saleOrderId;
         });
-        this.feedService.setOwnOnSaleList(allOnSalelist);
-        this.feedService.setData("feed.nft.own.onSale.list",JSON.stringify(allOnSalelist));
         //add created
         let cItem:any = _.cloneDeep(this.curAssetItem);
             cItem.fixedAmount = "";
-
-        let allCreatedListlist = this.feedService.getOwnCreatedList();
-        let clist = allCreatedListlist[createAddress] || [];
-            clist.push(cItem);
-        this.feedService.setOwnCreatedList(allCreatedListlist);
-        this.feedService.setData("feed.nft.own.created.list",JSON.stringify(allCreatedListlist));
-        //add buy
-        let allPurchasedList = this.feedService.getOwnPurchasedList();
-        let plist = allPurchasedList[createAddress] || [];
-        let pItem:any = _.cloneDeep(this.curAssetItem);
-            plist.push(pItem);
-        this.feedService.setOwnPurchasedList(allPurchasedList);
-        this.feedService.setData("feed.nft.own.purchased.list",JSON.stringify(allPurchasedList));
+            cItem["moreMenuType"] = "created";
+            olist.push(cItem);
+        alllist[createAddress] = olist;
+        this.feedService.setOwnNftCollectiblesList(alllist);
+        this.feedService.setData("feed.nft.own.collectibles.list",JSON.stringify(alllist));
       }
       this.native.pop();
     }else{

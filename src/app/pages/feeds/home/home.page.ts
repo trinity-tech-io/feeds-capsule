@@ -318,7 +318,7 @@ addCommonEvents(){
         return item.saleOrderId!=saleOrderId;
       });
           clist.push(assetItem);
-      this.feedService.setOwnCreatedList(allList);
+      this.feedService.setCollectibleStatus(allList);
       this.feedService.setData("feed.nft.own.collectibles.list",JSON.stringify(allList));
     }
 
