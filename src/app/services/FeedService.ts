@@ -131,8 +131,17 @@ export class FeedService {
   }
 
   init(){
-    didManager.initDidStore("anything", null);
+    this.initDidManager();
     this.initCallback();
+  }
+
+  initDidManager(){
+    didManager.initDidStore("anything", null);
+    const apiprovidername = localStorage.getItem("feeds:apiprovidername") || ""
+    console.log("apiprovidername",apiprovidername);
+    if (apiprovidername){
+      this.setEidURL(this.getEidProviderURL(apiprovidername));
+    }
   }
 
   getNetworkStatus(): FeedsData.ConnState{
@@ -4162,13 +4171,16 @@ export class FeedService {
   }
 
   checkDIDOnSideChain(did: string, onSuccess: (isOnSideChain: boolean)=>void, onError?: (err: any)=>void){
-    didManager.resolveDidDocument(did, false,(didDocument)=>{
+    console.log("DidManager resolve did is", did);
+    didManager.resolveDidDocument(did, true,(didDocument)=>{
+      console.log("DidManager resolve finish, didDocument is", didDocument);
       if (didDocument == null){
         onSuccess(false);
       }else{
         onSuccess(true);
       }
     },(err)=>{
+      console.log("DidManager resolve error,",err);
       onError(err);
     });
   }
@@ -5779,5 +5791,21 @@ export class FeedService {
 
   setOwnNftCollectiblesList(ownNftCollectiblesList:any){
     this.ownNftCollectiblesList = ownNftCollectiblesList;
+  }
+
+  setEidURL(url: string){
+    didManager.setResolverUrl(url, ()=>{
+      console.log("Set resolve url success, url is",url);
+    },(error)=>{
+      console.log("Set resolve url error, error is",error);
+    });
+  }
+
+  getEidProviderURL(name: string){
+    if (name == "trinity-tech.cn")
+      return "https://api.trinity-tech.cn/eid";
+    if (name == "elastos.io")
+      return "https://api.elastos.io/eid"
+    return "https://api.elastos.io/eid"
   }
 }
