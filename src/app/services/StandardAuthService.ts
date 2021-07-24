@@ -96,10 +96,19 @@ export class StandardAuthService {
             if (authChallengeJwttoken == null || authChallengeJwttoken == undefined || authChallengeJwttoken == ""){
                 reject("Params error");
             }
-            
+
             // Parse, but verify on chain that this JWT is valid first
-            let parseResult = await didManager.parseJWT(true, authChallengeJwttoken);
-            this.logUtils.logd("ParseJWTResult is"+JSON.stringify(parseResult),TAG);
+            let parseResult: DIDPlugin.ParseJWTResult = null;
+            try{
+                parseResult = await didManager.parseJWT(true, authChallengeJwttoken);
+            }catch(error){
+                this.logUtils.loge("Parse JWT error,"+JSON.stringify(error),TAG);
+            }
+            this.logUtils.logd("Parse JWT Result is"+JSON.stringify(parseResult),TAG);
+            if (!parseResult){
+                reject("Parse jwt error, parse result null");
+                return;
+            }
             if (!parseResult.signatureIsValid) {
                 // Could not verify the received JWT as valid - reject the authentication request by returning a null token
                 reject("The received authentication JWT token signature cannot be verified or failed to verify: "+parseResult.errorReason+". Is the back-end DID published? Are you on the right network?");
