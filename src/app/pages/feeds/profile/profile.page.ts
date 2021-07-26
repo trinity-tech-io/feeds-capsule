@@ -278,6 +278,7 @@ export class ProfilePage implements OnInit {
     this.events.subscribe(FeedsEvent.PublishType.nftCancelOrder,(assetItem)=>{
       let saleOrderId = assetItem.saleOrderId;
       let sellerAddr = assetItem.sellerAddr;
+      let tokenId = assetItem.tokenId;
       //add OwnNftCollectiblesList
       let createAddr = this.nftContractControllerService.getAccountAddress();
        assetItem["fixedAmount"] = null;
@@ -285,9 +286,10 @@ export class ProfilePage implements OnInit {
        let allList  = this.feedService.getOwnNftCollectiblesList();
        let clist = allList[createAddr]  || [];
            clist =  _.filter(clist,(item)=>{
-           return item.saleOrderId!=saleOrderId;
+           return item.tokenId!=tokenId!;
        });
       clist.push(assetItem);
+      allList[createAddr] = clist;
       this.feedService.setOwnNftCollectiblesList(allList);
       this.feedService.setData("feed.nft.own.collectibles.list",JSON.stringify(allList));
 

@@ -1,6 +1,13 @@
 <div class="addAssets ion-activatable ripple"  [class.darkAddAssets]="theme.darkMode" [ngStyle]="styleObj">
   <div *ngIf="assetItem === null">
-    <img src="assets/images/loading.png" style="height:340px;object-fit:cover;"/>
+    <!-- <div class="des"><img src="./assets/images/nft-user-circle.svg" style="vertical-align: middle;margin-right: 2px;"/>{{handleAddr(assetItem['sellerAddr'])}} <span class="createTime">{{ handleDisplayTime(assetItem["createTime"]) }}</span></div> -->
+    <img src="assets/images/loading.png" style="object-fit:contain;" class="assetsImg"/>
+    <div class="des1">&nbsp;</div>
+    <div class="des2">&nbsp;</div>
+    <div class="like">
+      <span>&nbsp;</span>
+    </div>
+    <ion-ripple-effect></ion-ripple-effect>
   </div>
   <div *ngIf="assetItem != null">
     <img

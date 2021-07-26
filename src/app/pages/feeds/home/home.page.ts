@@ -298,6 +298,7 @@ addCommonEvents(){
   this.events.subscribe(FeedsEvent.PublishType.nftCancelOrder,(assetItem)=>{
     let saleOrderId = assetItem.saleOrderId;
     let sellerAddr = assetItem.sellerAddr;
+    let tokenId = assetItem.tokenId;
     this.pasarList =  _.filter(this.pasarList,(item)=>{
       return !(item.saleOrderId===saleOrderId&&item.sellerAddr===sellerAddr)}
     );
@@ -315,15 +316,12 @@ addCommonEvents(){
       let allList  = this.feedService.getOwnNftCollectiblesList();
       let clist = allList[createAddr]  || [];
           clist =  _.filter(clist,(item)=>{
-        return item.saleOrderId!=saleOrderId;
+        return item.tokenId!=tokenId;
       });
-          clist.push(assetItem);
-      this.feedService.setCollectibleStatus(allList);
+      clist.push(assetItem);
+      this.feedService.setOwnNftCollectiblesList(allList);
       this.feedService.setData("feed.nft.own.collectibles.list",JSON.stringify(allList));
     }
-
-
-
   });
   this.events.subscribe(FeedsEvent.PublishType.updateTitle,()=>{
     this.initTitleBar();
