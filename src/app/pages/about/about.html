@@ -15,7 +15,7 @@
                 </div>
             </ion-row>
 
-            <ion-row class="details" (click)="copyEmailAddress()">
+            <ion-row class="details" (press)="copyEmailAddress()">
                 <h4>{{'AboutPage.email'|translate}}</h4>
                 <div class="des">
                 <p>feeds@trinity-tech.io</p>
@@ -37,7 +37,7 @@
                 </div>
             </ion-row>
 
-            <ion-row class="details" (click)="showDisclaimer()">
+            <ion-row class="details">
                 <h4>{{'AboutPage.version'|translate}}</h4>
                 <div class="des">
                 <p>{{version}}</p>

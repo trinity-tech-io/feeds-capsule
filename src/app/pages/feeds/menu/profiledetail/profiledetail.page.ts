@@ -191,7 +191,7 @@ export class ProfiledetailPage implements OnInit {
     let textdata = text || "";
     if(textdata!=""){
       this.native.copyClipboard(text).then(()=>{
-        this.native.toast_trans("common.copysucceeded");
+        this.native.toast_trans("common.textcopied");
     }).catch(()=>{
 
     });;

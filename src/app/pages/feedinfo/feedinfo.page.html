@@ -91,7 +91,7 @@
       </ion-col>
     </ion-row>
 
-    <ion-row class="detail-row" *ngIf="developerMode&&followStatus">
+    <ion-row class="detail-row" *ngIf="developerMode&&followStatus" (press)="copyText(nodeId)">
       <ion-col size="12" class="left-col">
           <h1>NodeId</h1>
           <h2>{{nodeId}}</h2>
@@ -105,7 +105,7 @@
       </ion-col>
     </ion-row>
 
-    <ion-row class="detail-row" *ngIf="developerMode&&followStatus">
+    <ion-row class="detail-row" *ngIf="developerMode&&followStatus" (press)="copyText(serverInfo['did'])">
       <ion-col size="12" class="left-col">
           <h1>{{'ServerInfoPage.did'|translate}}</h1>
           <h2>{{serverInfo['did']}}</h2>

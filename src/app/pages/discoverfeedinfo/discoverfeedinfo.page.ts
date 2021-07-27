@@ -257,4 +257,12 @@ export class DiscoverfeedinfoPage implements OnInit {
   showPreviewQrcode(feedsUrl:string){
     this.viewHelper.showPreviewQrcode(this.titleBar, feedsUrl,"common.qRcodePreview","DiscoverfeedinfoPage.title","discoverfeedinfo",this.appService);
   }
+
+  copyText(text:any){
+    this.native.copyClipboard(text).then(()=>{
+      this.native.toast_trans("common.textcopied");
+  }).catch(()=>{
+
+  });
+  }
 }
