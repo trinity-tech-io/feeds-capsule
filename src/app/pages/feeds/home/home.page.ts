@@ -23,6 +23,7 @@ import { ApiUrl } from '../../../services/ApiUrl';
 import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
 
 import _ from 'lodash';
+import { isNgTemplate } from '@angular/compiler';
 let TAG: string = "Feeds-home";
 @Component({
   selector: 'app-home',
@@ -932,7 +933,13 @@ clearData(){
             this.isImgLoading[this.imgCurKey] = false;
             this.viewHelper.openViewer(this.titleBar, realImg,"common.image","FeedsPage.tabTitle1",this.appService);
           }else{
-
+            let post = _.find(this.postList,(post)=>{
+              return (post.nodeId === nodeId && post.channel_id == channelId &&  post.id == postId);
+            })
+            if (!this.feedService.checkPostIsAvalible(post)){
+              this.isImgLoading[this.imgCurKey] = false;
+              return;
+            }
             if(this.checkServerStatus(nodeId) != 0){
               this.isImgLoading[this.imgCurKey] = false;
               this.native.toastWarn('common.connectionError1');
@@ -1249,6 +1256,14 @@ clearData(){
       this.zone.run(()=>{
         let videodata = videoResult || "";
         if (videodata == ""){
+          let post = _.find(this.postList,(post)=>{
+              return (post.nodeId === nodeId && post.channel_id == channelId &&  post.id == postId);
+          })
+          if (!this.feedService.checkPostIsAvalible(post)){
+            this.isVideoLoading[this.videoCurKey] = false;
+            this.pauseVideo(id);
+            return;
+          }
 
           if(this.checkServerStatus(nodeId) != 0){
             this.isVideoLoading[this.videoCurKey] = false;
@@ -1271,7 +1286,7 @@ clearData(){
               this.cacheGetBinaryRequestKey = key;
               if (transDataChannel == FeedsData.TransDataChannel.SESSION){
                 this.videoDownStatus[this.videoDownStatusKey] = "1";
-                this.isVideoLoading[this.videoDownStatus] = false;
+                this.isVideoLoading[this.videoDownStatusKey] = false;
                 this.isVideoPercentageLoading[this.videoDownStatusKey] = true;
                 this.curNodeId = nodeId;
                 return;
@@ -1287,7 +1302,7 @@ clearData(){
             },
             (err)=>{
               this.videoDownStatus[this.videoDownStatusKey] = "";
-              this.isVideoLoading[this.videoDownStatus] = false;
+              this.isVideoLoading[this.videoDownStatusKey] = false;
               this.isVideoPercentageLoading[this.videoDownStatusKey] = false;
               this.pauseVideo(id);
             });
