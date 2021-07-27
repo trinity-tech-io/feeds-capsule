@@ -306,4 +306,12 @@ export class CreatenewfeedPage implements OnInit {
     this.arrowBoxStyle["top"] = boundingClientRect.top-16.5+"px";
     this.isHelp = !this.isHelp;
   }
+
+  copyChannelSource(){
+    this.native.copyClipboard(this.selectedChannelSource).then(()=>{
+        this.native.toast_trans("common.textcopied");
+    }).catch(()=>{
+
+    });
+  }
 }

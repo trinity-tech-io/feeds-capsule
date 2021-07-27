@@ -356,4 +356,12 @@ export class FeedinfoPage implements OnInit {
   editChannel(){
     this.clickEdit();
   }
+
+  copyText(text:any){
+    this.native.copyClipboard(text).then(()=>{
+      this.native.toast_trans("common.textcopied");
+  }).catch(()=>{
+
+  });
+  }
 }

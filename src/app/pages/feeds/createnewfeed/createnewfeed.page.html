@@ -39,7 +39,7 @@
             </ion-col>
            </ion-row>
         </ion-item>
-        <ion-item lines="none" class="removeBorder" *ngIf="developerMode">
+        <ion-item lines="none" class="removeBorder" *ngIf="developerMode" (press)="copyChannelSource()">
           <ion-label position="stacked">{{ 'CreatenewfeedPage.channelSource'|translate }}</ion-label>
           <h2 *ngIf="!theme.darkMode" style="background-color: #f6f5f6;border-radius:10px;padding-left: 20px;margin-top:10px;">{{ selectedChannelSource }}</h2>
           <h2 *ngIf="theme.darkMode" style="background-color: #2e2f4e;border-radius:10px;padding-left: 20px;margin-top:10px;">{{ selectedChannelSource }}</h2>
