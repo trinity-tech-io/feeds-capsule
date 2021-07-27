@@ -662,6 +662,7 @@ export class ProfilePage implements OnInit {
   }
 
   changeType(type:string){
+    this.pauseAllVideo();
     this.selectType = type;
     this.hideSharMenuComponent = false;
     switch(type){
@@ -1129,7 +1130,7 @@ export class ProfilePage implements OnInit {
                   this.cacheGetBinaryRequestKey = key;
                   if (transDataChannel == FeedsData.TransDataChannel.SESSION){
                       this.videoDownStatus[this.videoDownStatusKey] = "1";
-                      this.isVideoLoading[this.videoDownStatus] = false;
+                      this.isVideoLoading[this.videoDownStatusKey] = false;
                       this.isVideoPercentageLoading[this.videoDownStatusKey] = true;
                       this.curNodeId=nodeId;
                   }else{
@@ -1138,7 +1139,7 @@ export class ProfilePage implements OnInit {
                   }
                 },(err)=>{
                   this.videoDownStatus[this.videoDownStatusKey] = "";
-                  this.isVideoLoading[this.videoDownStatus] = false;
+                  this.isVideoLoading[this.videoDownStatusKey] = false;
                   this.isVideoPercentageLoading[this.videoDownStatusKey] = false;
                   this.videoRotateNum ={};
                   this.videoPercent = 0;

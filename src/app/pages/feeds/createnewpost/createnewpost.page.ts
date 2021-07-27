@@ -126,7 +126,7 @@ export class CreatenewpostPage implements OnInit {
             this.zone.run(() => {
               this.navCtrl.pop().then(()=>{
                 this.events.publish(FeedsEvent.PublishType.updateTab, true);
-                this.native.toast_trans("CreatenewpostPage.tipMsg1");
+                //this.native.toast_trans("CreatenewpostPage.tipMsg1");
               });
             });
             return;
@@ -381,7 +381,7 @@ export class CreatenewpostPage implements OnInit {
     async getVideoInfo(fileUri:string){
       let videoInfo = await this.videoEditor.getVideoInfo({ fileUri:fileUri });
       this.duration = videoInfo["duration"];
-      if(parseInt(this.duration) >15){
+      if(parseInt(this.duration) >151515){
         this.flieUri ="";
         this.posterImg ="";
         this.imgUrl="";

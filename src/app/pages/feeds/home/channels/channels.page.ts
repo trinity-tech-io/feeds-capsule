@@ -1111,7 +1111,7 @@ export class ChannelsPage implements OnInit {
                     this.cacheGetBinaryRequestKey = key;
                     if (transDataChannel == FeedsData.TransDataChannel.SESSION){
                       this.videoDownStatus[this.videoDownStatusKey] = "1";
-                      this.isVideoLoading[this.videoDownStatus] = false;
+                      this.isVideoLoading[this.videoDownStatusKey] = false;
                       this.isVideoPercentageLoading[this.videoDownStatusKey] = true;
                       this.curNodeId = nodeId;
                       return;
@@ -1124,7 +1124,7 @@ export class ChannelsPage implements OnInit {
                     }
                   },(err)=>{
                     this.videoDownStatus[this.videoDownStatusKey] = "";
-                    this.isVideoLoading[this.videoDownStatus] = false;
+                    this.isVideoLoading[this.videoDownStatusKey] = false;
                     this.isVideoPercentageLoading[this.videoDownStatusKey] = false;
                     this.pauseVideo(id);
                   });
