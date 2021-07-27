@@ -104,7 +104,7 @@ export class StartbindingPage implements OnInit {
 
     this.events.subscribe(FeedsEvent.PublishType.issue_credential, () => {
       this.zone.run(() => {
-        this.popover = this.popup.showalertdialog(this,"common.bindingCompleted","IssuecredentialPage.des",this.bindingCompleted,"check-circle-no-loop.gif","common.ok");
+        this.popover = this.popup.showalertdialog(this,"common.bindingCompleted","IssuecredentialPage.des",this.bindingCompleted,"finish.svg","common.ok");
       });
     });
 

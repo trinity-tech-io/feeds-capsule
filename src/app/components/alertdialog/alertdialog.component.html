@@ -1,11 +1,13 @@
 <ion-grid class="container" [class.darkContainer]="theme.darkMode">
   <ion-row class="header">
     <h1>{{ title | translate }}</h1>
-  </ion-row>
-  <ion-row>
-    <ion-col style="display:flex;justify-content:center;">
-      <img [src]="imgagePath" class="imgagePath" *ngIf="!theme.darkMode" style="width:150px;height:150px;object-fit:contain;"/>
-      <img [src]="imgageDarkPath" class="imgagePath" *ngIf="theme.darkMode" style="width:150px;height:150px;object-fit:contain;"/>
+    <ion-col size="12">
+      <div class="bigCircle">
+          <div class="smallCircle">
+            <img [src]="imgagePath" class="imgagePath" *ngIf="!theme.darkMode"/>
+            <img [src]="imgageDarkPath" class="imgagePath" *ngIf="theme.darkMode"/>
+          </div>
+      </div>
     </ion-col>
   </ion-row>
   <ion-row>
