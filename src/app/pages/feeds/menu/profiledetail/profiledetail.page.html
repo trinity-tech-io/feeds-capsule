@@ -9,8 +9,8 @@
       </ion-col>
     </ion-row>
     <div class="server-header">
-      <img class="profileFeeds" src="./assets/images/profile-feeds-logo.svg"/>
-      <img class="elaLogo" src="./assets/images/elaLogo.svg"/>
+      <img class="profileFeeds" src="./assets/images/profile-feeds-logo.svg" />
+      <img class="elaLogo" src="./assets/images/elaLogo.svg" (click)="editProfile()"/>
       <img  [src]="handleImages()" class="didImg"/>
       <h1>{{ name }}</h1>
       <p>{{ description }}</p>
