@@ -110,7 +110,8 @@ export const zh = {
         "publicPasarFailed":"Public pasar失败",
         "nftCreationFailed":"NFT创建失败",
         "onsale":"出售中",
-        "state":"状态"
+        "state":"状态",
+        "collectibles":"收藏品（NFT）"
     },
     "app":{
         "profileDetails": "档案详情",

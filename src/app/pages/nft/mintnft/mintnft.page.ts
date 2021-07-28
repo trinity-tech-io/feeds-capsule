@@ -7,7 +7,7 @@ import { UtilService } from '../../../services/utilService';
 // import { Web3Service } from '../../../services/Web3Service';
 import { Events } from '../../../services/events.service';
 import { TitleBarService } from '../../../services/TitleBarService';
-import { TitleBarComponent } from '../../..//components/titlebar/titlebar.component';
+import { TitleBarComponent } from '../../../components/titlebar/titlebar.component';
 import { File,DirectoryEntry} from '@ionic-native/file/ngx';
 import { HttpService } from '../../../services/HttpService';
 import { ApiUrl } from '../../../services/ApiUrl';

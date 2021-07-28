@@ -1,0 +1,24 @@
+<app-titlebar></app-titlebar>
+<ion-content>
+    <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" pullFactor="0.5">
+        <ion-refresher-content
+          class="refresh"
+          pullingText="{{'common.releaseToRefresh'|translate}}"
+          pullingIcon="arrow-dropdown"
+          refreshingSpinner="crescent"
+          refreshingText="{{'common.beingRefresh'|translate}}">
+        </ion-refresher-content>
+      </ion-refresher>
+      <ion-grid>
+        <ion-row class="leftrightrow">
+            <ion-col size="6" *ngFor="let item of nftImageList">
+               <div *ngIf="item==null">
+                    <img src="assets/images/loading.png" style="object-fit:cover;"/>
+               </div>
+              <div *ngIf="item!=null">
+              <img src="{{hanldeImg(item['thumbnail'])}}" (click)="clickItem(item)" style="object-fit:cover;"/>
+              </div>
+            </ion-col>
+           </ion-row>
+      </ion-grid>
+</ion-content>
