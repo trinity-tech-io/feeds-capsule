@@ -154,7 +154,11 @@ export class ProfileimagePage implements OnInit {
 
   addPic(){
     //this.openCamera(0);
-   this.pictureMenu = this.menuService.showPictureMenu(this,this.openCamera,this.openGallery);
+   this.pictureMenu = this.menuService.showPictureMenu(this,this.openCamera,this.openGallery,this.openNft);
+  }
+
+  openNft(that:any){
+    that.native.navigateForward(['profilenftimage'],"");
   }
 
   openGallery(that:any){

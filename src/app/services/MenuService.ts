@@ -413,7 +413,7 @@ export class MenuService {
        });
     }
 
-   async showPictureMenu(that:any,openCamera:any,openGallery:any){
+   async showPictureMenu(that:any,openCamera:any,openGallery:any,openNft:any){
         this.postDetail = await this.actionSheetController.create({
             cssClass: 'editPost',
             buttons: [
@@ -429,6 +429,13 @@ export class MenuService {
                 icon: 'images',
                 handler:()=>{
                 openGallery(that)
+                },
+            },
+            {
+                text:this.translate.instant("common.collectibles"),
+                icon: 'list-circle',
+                handler:()=>{
+                 openNft(that);
                 },
             },
             {

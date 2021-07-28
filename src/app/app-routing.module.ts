@@ -52,6 +52,7 @@ const routes: Routes = [
   { path: 'walletteach', loadChildren:'./pages/walletteach/walletteach.module#WalletteachPageModule'},
   { path: 'subscriptions',loadChildren:'./pages/subscriptions/subscriptions.module#SubscriptionsPageModule'},
   { path: 'elastosapiprovider',loadChildren:'./pages/elastosapiprovider/elastosapiprovider.module#ElastosapiproviderPageModule'},
+  { path: 'profilenftimage',loadChildren: './pages/profilenftimage/profilenftimage.module#ProfilenftimagePageModule'}
 ];
 
 @NgModule({
