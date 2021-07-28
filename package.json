@@ -9,7 +9,8 @@
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+    "format": "prettier --write \"src/**/*.ts\""
   },
   "private": true,
   "dependencies": {
@@ -70,9 +71,9 @@
     "@angular/compiler-cli": "^11.0.7",
     "@angular/language-service": "^11.0.7",
     "@elastosfoundation/elastos-cordova-plugin-carrier": "^1.0.6",
+    "@elastosfoundation/elastos-cordova-plugin-did": "^1.0.11",
     "@elastosfoundation/elastos-cordova-plugin-hive": "^1.0.8",
     "@elastosfoundation/elastos-cordova-plugin-intent": "^2.0.0",
-    "@elastosfoundation/elastos-cordova-plugin-did": "^1.0.11",
     "@ionic/angular-toolkit": "^3.0.0",
     "@types/jasmine": "~3.3.8",
     "@types/jasminewd2": "~2.0.3",
@@ -104,6 +105,7 @@
     "karma-jasmine": "~2.0.1",
     "karma-jasmine-html-reporter": "^1.4.0",
     "phonegap-plugin-barcodescanner": "^8.1.0",
+    "prettier": "1.19.1",
     "protractor": "~5.4.0",
     "stream-browserify": "^3.0.0",
     "svelte": "^3.37.0",
