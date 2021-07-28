@@ -6,7 +6,7 @@ const routes: Routes = [
   { path: '', loadChildren: './pages/feeds/feeds.module#FeedsPageModule' },
   { path: 'tabs', loadChildren: './pages/feeds/feeds.module#FeedsPageModule' },
 
-  { path: 'menu/servers/server-info', loadChildren: './pages/servers/server-info/server-info.module#ServerInfoPageModule'},
+  { path: 'menu/servers/server-info', loadChildren: './pages/servers/server-info/server-info.module#ServerInfoPageModule' },
 
   { path: 'signin', loadChildren: './pages/signin/signin.module#SigninPageModule' },
 
@@ -14,9 +14,9 @@ const routes: Routes = [
   { path: 'createnewpost', loadChildren: './pages/feeds/createnewpost/createnewpost.module#CreatenewpostPageModule' },
   { path: 'profileimage', loadChildren: './pages/feeds/profileimage/profileimage.module#ProfileimagePageModule' },
 
-  { path: 'bindservice/learnpublisheraccount', loadChildren: './pages/feeds/bindservice/learnpublisheraccount/learnpublisheraccount.module#LearnpublisheraccountPageModule'},
+  { path: 'bindservice/learnpublisheraccount', loadChildren: './pages/feeds/bindservice/learnpublisheraccount/learnpublisheraccount.module#LearnpublisheraccountPageModule' },
   { path: 'bindservice/introduce', loadChildren: './pages/feeds/bindservice/introduce/introduce.module#IntroducePageModule' },
-  { path: 'bindservice/scanqrcode', loadChildren: './pages/feeds/bindservice/scanqrcode/scanqrcode.module#ScanqrcodePageModule'},
+  { path: 'bindservice/scanqrcode', loadChildren: './pages/feeds/bindservice/scanqrcode/scanqrcode.module#ScanqrcodePageModule' },
   { path: 'bindservice/importdid/:nodeId', loadChildren: './pages/feeds/bindservice/importdid/importdid.module#ImportdidPageModule' },
   { path: 'bindservice/publishdid/:nodeId/:did/:payload', loadChildren: './pages/feeds/bindservice/publishdid/publishdid.module#PublishdidPageModule' },
   { path: 'bindservice/issuecredential/:nodeId/:did', loadChildren: './pages/feeds/bindservice/issuecredential/issuecredential.module#IssuecredentialPageModule' },
@@ -46,13 +46,17 @@ const routes: Routes = [
   { path: 'assetdetails', loadChildren: './pages/nft/assetdetails/assetdetails.module#AssetdetailsPageModule' },
   { path: 'bid', loadChildren: './pages/nft/bid/bid.module#BidPageModule' },
   { path: 'confirmation', loadChildren: './pages/nft/confirmation/confirmation.module#ConfirmationPageModule' },
-  { path:'channelsviewall',loadChildren: './pages/feeds/search/search.module#SearchPageModule'},
+  { path: 'channelsviewall', loadChildren: './pages/feeds/search/search.module#SearchPageModule' },
   { path: 'currencyviewall', loadChildren: './pages/nft/currencyviewall/currencyviewall.module#CurrencyviewallPageModule' },
   { path: 'learnmore', loadChildren: './pages/learnmore/learnmore.module#LearnmorePageModule' },
-  { path: 'walletteach', loadChildren:'./pages/walletteach/walletteach.module#WalletteachPageModule'},
-  { path: 'subscriptions',loadChildren:'./pages/subscriptions/subscriptions.module#SubscriptionsPageModule'},
-  { path: 'elastosapiprovider',loadChildren:'./pages/elastosapiprovider/elastosapiprovider.module#ElastosapiproviderPageModule'},
-  { path: 'profilenftimage',loadChildren: './pages/profilenftimage/profilenftimage.module#ProfilenftimagePageModule'}
+  { path: 'walletteach', loadChildren: './pages/walletteach/walletteach.module#WalletteachPageModule' },
+  { path: 'subscriptions', loadChildren: './pages/subscriptions/subscriptions.module#SubscriptionsPageModule' },
+  { path: 'elastosapiprovider', loadChildren: './pages/elastosapiprovider/elastosapiprovider.module#ElastosapiproviderPageModule' },
+  { path: 'profilenftimage', loadChildren: './pages/profilenftimage/profilenftimage.module#ProfilenftimagePageModule' },
+  {
+    path: 'editprofileimage',
+    loadChildren: () => import('./pages/editprofileimage/editprofileimage.module').then(m => m.EditprofileimagePageModule)
+  },
 ];
 
 @NgModule({
@@ -61,4 +65,4 @@ const routes: Routes = [
   ],
   exports: [RouterModule]
 })
-export class AppRoutingModule {}
+export class AppRoutingModule { }
