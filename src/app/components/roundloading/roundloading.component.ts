@@ -1,4 +1,4 @@
-import { Component,OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ThemeService } from '../../services/theme.service';
 
 @Component({
@@ -7,12 +7,7 @@ import { ThemeService } from '../../services/theme.service';
   styleUrls: ['./roundloading.component.scss'],
 })
 export class RoundloadingComponent implements OnInit {
-  constructor(
-    public theme: ThemeService,
-    ) { }
+  constructor(public theme: ThemeService) {}
 
-  ngOnInit() {
-
-  }
-
+  ngOnInit() {}
 }

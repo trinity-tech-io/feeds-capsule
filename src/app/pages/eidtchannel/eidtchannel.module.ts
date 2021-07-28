@@ -11,8 +11,8 @@ import { ComponentsModule } from 'src/app/components/components.module';
 const routes: Routes = [
   {
     path: '',
-    component: EidtchannelPage
-  }
+    component: EidtchannelPage,
+  },
 ];
 
 @NgModule({
@@ -22,8 +22,8 @@ const routes: Routes = [
     IonicModule,
     TranslateModule,
     ComponentsModule,
-    RouterModule.forChild(routes)
+    RouterModule.forChild(routes),
   ],
-  declarations: [EidtchannelPage]
+  declarations: [EidtchannelPage],
 })
 export class EidtchannelPageModule {}

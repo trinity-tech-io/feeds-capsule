@@ -1,7 +1,15 @@
 import { Component, Input } from '@angular/core';
 import { PopoverController, Platform } from '@ionic/angular';
 import { TitlebarmenuitemComponent } from '../titlebarmenuitem/titlebarmenuitem.component';
-import { TitleBarTheme, TitleBarSlotItem, TitleBarMenuItem, TitleBarIconSlot, TitleBarIcon, TitleBarNavigationMode, TitleBarForegroundMode } from './titlebar.types';
+import {
+  TitleBarTheme,
+  TitleBarSlotItem,
+  TitleBarMenuItem,
+  TitleBarIconSlot,
+  TitleBarIcon,
+  TitleBarNavigationMode,
+  TitleBarForegroundMode,
+} from './titlebar.types';
 import { ThemeService } from 'src/app/services/theme.service';
 
 @Component({
@@ -10,15 +18,14 @@ import { ThemeService } from 'src/app/services/theme.service';
   styleUrls: ['./titlebar.component.scss'],
 })
 export class TitleBarComponent {
-
   public menu: any = null;
-  @Input() lightThemeType:number = 1;
+  @Input() lightThemeType: number = 1;
   @Input()
   set title(title: string) {
-      this._title = title;
+    this._title = title;
   }
 
-  public _title: string = "";
+  public _title: string = '';
 
   public visibile: boolean = true;
   public menuVisible: boolean = false;
@@ -32,22 +39,23 @@ export class TitleBarComponent {
     TitleBarComponent.makeDefaultIcon(), // outer left
     TitleBarComponent.makeDefaultIcon(), // inner left
     TitleBarComponent.makeDefaultIcon(), // inner right
-    TitleBarComponent.makeDefaultIcon()  // outer right
+    TitleBarComponent.makeDefaultIcon(), // outer right
   ];
 
-  private itemClickedListeners: ((icon: TitleBarSlotItem | TitleBarMenuItem) => void)[] = [];
+  private itemClickedListeners: ((
+    icon: TitleBarSlotItem | TitleBarMenuItem,
+  ) => void)[] = [];
 
   public menuItems: TitleBarMenuItem[] = [];
 
   constructor(
     private popoverCtrl: PopoverController,
     private platform: Platform,
-    public theme:ThemeService
-  ) {
-  }
+    public theme: ThemeService,
+  ) {}
 
-  public isIOSPlatform(): boolean{
-    if (this.platform.is('ios')){
+  public isIOSPlatform(): boolean {
+    if (this.platform.is('ios')) {
       return true;
     }
 
@@ -59,7 +67,7 @@ export class TitleBarComponent {
       visible: false,
       key: null,
       iconPath: null,
-      badgeCount: 0
+      badgeCount: 0,
     };
   }
 
@@ -78,7 +86,10 @@ export class TitleBarComponent {
    *
    * @param hexColor Hex color code with format "#RRGGBB"
    */
-  public setTheme(backgroundColor: string, foregroundMode: TitleBarForegroundMode) {
+  public setTheme(
+    backgroundColor: string,
+    foregroundMode: TitleBarForegroundMode,
+  ) {
     this.setBackgroundColor(backgroundColor);
     this.setForegroundMode(foregroundMode);
   }
@@ -88,7 +99,7 @@ export class TitleBarComponent {
    *
    * @param hexColor Hex color code with format "#RRGGBB"
    */
-  public setBackgroundColor(hexColor: string){
+  public setBackgroundColor(hexColor: string) {
     //this.theme.backgroundColor = hexColor;
   }
 
@@ -114,7 +125,9 @@ export class TitleBarComponent {
    *
    * @param onItemClicked Callback called when an item is clicked.
    */
-  public addOnItemClickedListener(onItemClicked: (icon: TitleBarSlotItem | TitleBarMenuItem) => void) {
+  public addOnItemClickedListener(
+    onItemClicked: (icon: TitleBarSlotItem | TitleBarMenuItem) => void,
+  ) {
     this.itemClickedListeners.push(onItemClicked);
   }
 
@@ -123,8 +136,13 @@ export class TitleBarComponent {
    *
    * @param onItemClicked Callback called when an item is clicked.
    */
-  public removeOnItemClickedListener(onItemClicked: (icon: TitleBarSlotItem | TitleBarMenuItem) => void) {
-    this.itemClickedListeners.splice(this.itemClickedListeners.indexOf(onItemClicked), 1);
+  public removeOnItemClickedListener(
+    onItemClicked: (icon: TitleBarSlotItem | TitleBarMenuItem) => void,
+  ) {
+    this.itemClickedListeners.splice(
+      this.itemClickedListeners.indexOf(onItemClicked),
+      1,
+    );
   }
 
   /**
@@ -136,7 +154,7 @@ export class TitleBarComponent {
    * @param icon Icon and action to be used at this slot. Use null to clear any existing configuration.
    */
   public setIcon(iconSlot: TitleBarIconSlot, icon: TitleBarIcon) {
-    if(icon) {
+    if (icon) {
       this.icons[iconSlot].visible = true;
       this.icons[iconSlot].key = icon.key;
       this.icons[iconSlot].iconPath = icon.iconPath;
@@ -193,9 +211,9 @@ export class TitleBarComponent {
 
   /**
    * Setting this to true will automatically add the icon to TitleBarIconSlot.OUTER_RIGHT slot with key 'menu' to be listened to
-  */
+   */
   public setMenuVisibility(visible: boolean) {
-    if(visible) {
+    if (visible) {
       this.menuVisible = visible;
     } else {
       this.setIcon(TitleBarIconSlot.OUTER_RIGHT, null);
@@ -204,7 +222,7 @@ export class TitleBarComponent {
 
   private listenableIconClicked(icon: TitleBarSlotItem | TitleBarMenuItem) {
     // Custom icon, call the icon listener
-    this.itemClickedListeners.forEach((listener)=>{
+    this.itemClickedListeners.forEach(listener => {
       listener(icon);
     });
   }
@@ -222,9 +240,9 @@ export class TitleBarComponent {
   }
 
   outerRightIconClicked(ev) {
-    this.menuVisible ?
-      this.openMenu(ev) :
-      this.listenableIconClicked(this.icons[TitleBarIconSlot.OUTER_RIGHT]);
+    this.menuVisible
+      ? this.openMenu(ev)
+      : this.listenableIconClicked(this.icons[TitleBarIconSlot.OUTER_RIGHT]);
   }
 
   async openMenu(ev) {
@@ -232,14 +250,14 @@ export class TitleBarComponent {
       mode: 'ios',
       component: TitlebarmenuitemComponent,
       componentProps: {
-        items: this.menuItems
+        items: this.menuItems,
       },
       cssClass: 'titlebarmenu-component',
       backdropDismiss: true,
-      event: ev
+      event: ev,
     });
-    this.menu.onWillDismiss().then((res) => {
-      if(res.data) {
+    this.menu.onWillDismiss().then(res => {
+      if (res.data) {
         this.listenableIconClicked(res.data.item);
       }
       this.menu = null;

@@ -11,8 +11,8 @@ import { BidPage } from './bid.page';
 const routes: Routes = [
   {
     path: '',
-    component: BidPage
-  }
+    component: BidPage,
+  },
 ];
 
 @NgModule({
@@ -22,8 +22,8 @@ const routes: Routes = [
     TranslateModule,
     ComponentsModule,
     IonicModule,
-    RouterModule.forChild(routes)
+    RouterModule.forChild(routes),
   ],
-  declarations: [BidPage]
+  declarations: [BidPage],
 })
 export class BidPageModule {}

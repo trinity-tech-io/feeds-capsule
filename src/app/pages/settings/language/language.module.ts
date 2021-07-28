@@ -17,8 +17,8 @@ import { ComponentsModule } from 'src/app/components/components.module';
     IonicModule,
     TranslateModule,
     ComponentsModule,
-    LanguagePageRoutingModule
+    LanguagePageRoutingModule,
   ],
-  declarations: [LanguagePage]
+  declarations: [LanguagePage],
 })
 export class LanguagePageModule {}

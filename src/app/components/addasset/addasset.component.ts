@@ -1,4 +1,4 @@
-import { Component, OnInit,Output, EventEmitter} from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'app-addasset',
@@ -7,14 +7,11 @@ import { Component, OnInit,Output, EventEmitter} from '@angular/core';
 })
 export class AddassetComponent implements OnInit {
   @Output() addAsset = new EventEmitter();
-  constructor() { }
+  constructor() {}
 
-  ngOnInit() {
+  ngOnInit() {}
 
-  }
-
-  add(){
+  add() {
     this.addAsset.emit();
   }
-
 }

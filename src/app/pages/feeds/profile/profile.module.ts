@@ -11,14 +11,13 @@ import { VgCoreModule } from '@videogular/ngx-videogular/core';
 import { VgControlsModule } from '@videogular/ngx-videogular/controls';
 import { VgOverlayPlayModule } from '@videogular/ngx-videogular/overlay-play';
 
-import {ComponentsModule} from '../../../components/components.module'
+import { ComponentsModule } from '../../../components/components.module';
 const routes: Routes = [
   {
     path: '',
-    component: ProfilePage
-  }
+    component: ProfilePage,
+  },
 ];
-
 
 @NgModule({
   declarations: [ProfilePage],
@@ -31,7 +30,7 @@ const routes: Routes = [
     FormsModule,
     TranslateModule,
     IonicModule,
-    RouterModule.forChild(routes)
+    RouterModule.forChild(routes),
   ],
 })
 export class ProfilePageModule {}

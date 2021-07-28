@@ -1,5 +1,5 @@
-import { Component, OnInit,NgZone} from '@angular/core';
-import { PopoverController,NavParams} from '@ionic/angular';
+import { Component, OnInit, NgZone } from '@angular/core';
+import { PopoverController, NavParams } from '@ionic/angular';
 import { ThemeService } from 'src/app/services/theme.service';
 import { FeedService } from 'src/app/services/FeedService';
 import { NativeService } from 'src/app/services/NativeService';
@@ -10,79 +10,87 @@ import { NativeService } from 'src/app/services/NativeService';
   styleUrls: ['./payprompt.component.scss'],
 })
 export class PaypromptComponent implements OnInit {
-  public elaAddress:string ="";
-  public amount:any = "";
-  public memo: string = "";
-  public defalutMemo: string = "";
-  public title: string = "";
-  public disableMemo:boolean = false;
-  public isAdvancedSetting:boolean = false;
-  public nodeId:string = "";
-  public channelId:number = null;
-  public channelAvatar:string = "";
-  public channelName:string = "";
+  public elaAddress: string = '';
+  public amount: any = '';
+  public memo: string = '';
+  public defalutMemo: string = '';
+  public title: string = '';
+  public disableMemo: boolean = false;
+  public isAdvancedSetting: boolean = false;
+  public nodeId: string = '';
+  public channelId: number = null;
+  public channelAvatar: string = '';
+  public channelName: string = '';
   constructor(
-    private native:NativeService,
-    private feedService:FeedService,
+    private native: NativeService,
+    private feedService: FeedService,
     private navParams: NavParams,
     private popover: PopoverController,
     public theme: ThemeService,
-    public  zone:NgZone) {
-
-  }
+    public zone: NgZone,
+  ) {}
 
   ngOnInit() {
-    this.nodeId = this.navParams.get('nodeId') || "";
-    if(this.nodeId!=""){
+    this.nodeId = this.navParams.get('nodeId') || '';
+    if (this.nodeId != '') {
       this.channelId = this.navParams.get('channelId') || 0;
-      let channel = this.feedService.getChannelFromId(this.nodeId, this.channelId);
-      this.channelName = channel.name || "";
-      this.channelAvatar = this.feedService.parseChannelAvatar(channel.avatar) || "";
+      let channel = this.feedService.getChannelFromId(
+        this.nodeId,
+        this.channelId,
+      );
+      this.channelName = channel.name || '';
+      this.channelAvatar =
+        this.feedService.parseChannelAvatar(channel.avatar) || '';
     }
     this.elaAddress = this.navParams.get('elaAddress');
     this.memo = this.defalutMemo = this.navParams.get('defalutMemo');
     this.title = this.navParams.get('title');
 
-    if (this.defalutMemo != ""){
+    if (this.defalutMemo != '') {
       this.disableMemo = true;
     }
   }
 
-  cancel(){
-     if(this.popover!=null){
-       this.popover.dismiss();
-     }
+  cancel() {
+    if (this.popover != null) {
+      this.popover.dismiss();
+    }
   }
 
-  confirm(){
+  confirm() {
     let count = this.amount;
     if (!this.number(count)) {
-        this.native.toastWarn('common.amountError');
-        return;
+      this.native.toastWarn('common.amountError');
+      return;
     }
 
     if (count <= 0) {
-        this.native.toast_trans('common.amountError');
-        return;
+      this.native.toast_trans('common.amountError');
+      return;
     }
 
-    if (this.memo == "")
-      this.memo = this.defalutMemo;
+    if (this.memo == '') this.memo = this.defalutMemo;
 
-    this.feedService.pay(this.elaAddress, count, this.memo, (res)=>{
-      let result = res["result"];
-      let txId = result["txid"] || "";
-      if(txId===''){
-        this.native.toastWarn('common.fail');
-        return;
-      }
+    this.feedService.pay(
+      this.elaAddress,
+      count,
+      this.memo,
+      res => {
+        let result = res['result'];
+        let txId = result['txid'] || '';
+        if (txId === '') {
+          this.native.toastWarn('common.fail');
+          return;
+        }
 
-      this.native.toast('common.success');
-      this.popover.dismiss();
-    },(err)=>{
-      this.native.toastWarn("common.unknownError");
-      this.popover.dismiss();
-    });
+        this.native.toast('common.success');
+        this.popover.dismiss();
+      },
+      err => {
+        this.native.toastWarn('common.unknownError');
+        this.popover.dismiss();
+      },
+    );
   }
 
   number(text) {
@@ -90,7 +98,7 @@ export class PaypromptComponent implements OnInit {
     return numPattern.test(text);
   }
 
-  advancedSettings(){
+  advancedSettings() {
     this.isAdvancedSetting = !this.isAdvancedSetting;
   }
 }

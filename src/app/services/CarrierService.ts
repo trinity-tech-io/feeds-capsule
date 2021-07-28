@@ -41,109 +41,116 @@ let eventBus: Events = null;
 //     { ipv4: "52.83.191.228", port: "33445", publicKey: "3khtxZo89SBScAMaHhTvD68pPHiKxgZT6hTCSZZVgNEm" }
 // ];
 
-
-
 @Injectable()
 export class CarrierService {
-    private mIsReady = false;
-    private myInterval: any;
-    
+  private mIsReady = false;
+  private myInterval: any;
 
-    private callbacks = {
-        onConnection: this.conectionCallback,
-        onReady: this.readyCallback,
-        onFriends: this.friendListCallback,
-        onFriendConnection: this.friendConnectionCallback,
-        onFriendInfoChanged: this.friendInfoCallback,
-        onFriendAdded: this.friendAddedCallback,
-        onFriendRemoved: this.friendRemovedCallback,
-        onFriendMessage: this.friendMessageCallback,
-        onFriendBinaryMessage: this.friendBinaryMessageCallback,
-        onSessionRequest: this.sessionRequestCallback
+  private callbacks = {
+    onConnection: this.conectionCallback,
+    onReady: this.readyCallback,
+    onFriends: this.friendListCallback,
+    onFriendConnection: this.friendConnectionCallback,
+    onFriendInfoChanged: this.friendInfoCallback,
+    onFriendAdded: this.friendAddedCallback,
+    onFriendRemoved: this.friendRemovedCallback,
+    onFriendMessage: this.friendMessageCallback,
+    onFriendBinaryMessage: this.friendBinaryMessageCallback,
+    onSessionRequest: this.sessionRequestCallback,
+  };
+
+  constructor(
+    public events: Events,
+    public platform: Platform,
+    private fileHelperService: FileHelperService,
+  ) {
+    eventBus = events;
+  }
+
+  init(did: string) {
+    if (this.platform.platforms().indexOf('cordova') < 0) {
+      this.myInterval = setInterval(() => {
+        this.readyCallback(null);
+        clearInterval(this.myInterval);
+      }, 2000);
+    } else {
+      if (!this.mIsReady)
+        this.createObject(
+          did,
+          this.createCarrierInstanceSuccess,
+          this.createCarrierInstanceError,
+        );
     }
+  }
 
-    constructor(
-        public events: Events, 
-        public platform: Platform,
-        private fileHelperService: FileHelperService) {
-        eventBus = events;
-        
+  isReady(): boolean {
+    return this.mIsReady;
+  }
+
+  readyCallback(ret) {
+    this.mIsReady = true;
+    eventBus.publish(FeedsEvent.PublishType.carrierReady);
+  }
+
+  createCarrierInstanceSuccess(ret: any) {
+    carrierInst = ret;
+    carrierInst.start(50, null, null);
+  }
+
+  createCarrierInstanceError(err: string) {
+    alert('createCarrierInstanceError' + err);
+  }
+
+  conectionCallback(event) {
+    eventBus.publish(
+      FeedsEvent.PublishType.carrierConnectionChanged,
+      event.status,
+    );
+  }
+
+  friendConnectionCallback(ret) {
+    eventBus.publish(FeedsEvent.PublishType.carrierFriendConnection, ret);
+  }
+
+  friendInfoCallback(ret) {
+    eventBus.publish(FeedsEvent.PublishType.carrierFriendInfo, ret);
+  }
+
+  friendListCallback(event) {
+    eventBus.publish(
+      FeedsEvent.PublishType.carrierFriendList,
+      event.friends.length,
+    );
+  }
+
+  friendAddedCallback(ret) {
+    eventBus.publish(FeedsEvent.PublishType.carrierFriendAdded, ret);
+  }
+
+  friendRemovedCallback(ret) {
+    eventBus.publish(FeedsEvent.PublishType.carrierFriendRemoved, ret);
+  }
+
+  friendMessageCallback(event) {
+    eventBus.publish(FeedsEvent.PublishType.carrierFriendMessage, event);
+  }
+
+  friendBinaryMessageCallback(event) {
+    eventBus.publish(FeedsEvent.PublishType.carrierFriendBinaryMessage, event);
+  }
+
+  sessionRequestCallback(event) {
+    eventBus.publish(FeedsEvent.PublishType.carrierSessionRequest, event);
+  }
+
+  destroyCarrier() {
+    if (carrierInst != null) {
+      carrierInst.destroy();
+      carrierInst = null;
     }
+  }
 
-    init(did: string) {
-        if (this.platform.platforms().indexOf("cordova") < 0){
-            this.myInterval = setInterval(() => {
-                this.readyCallback(null);
-                clearInterval(this.myInterval);
-            }, 2000);
-        } else {
-            if (!this.mIsReady)
-                this.createObject(did, this.createCarrierInstanceSuccess, this.createCarrierInstanceError);
-        }
-    }
-
-    isReady():boolean{
-        return this.mIsReady;
-    }
-
-    readyCallback(ret) {
-        this.mIsReady = true;
-        eventBus.publish(FeedsEvent.PublishType.carrierReady);
-    }
-
-    createCarrierInstanceSuccess(ret: any) {
-        carrierInst = ret;
-        carrierInst.start(50, null, null);
-    }
-
-    createCarrierInstanceError(err: string) {
-        alert("createCarrierInstanceError"+err);
-    }
-
-    conectionCallback(event) {
-        eventBus.publish(FeedsEvent.PublishType.carrierConnectionChanged, event.status);
-    }
-
-    friendConnectionCallback(ret) {
-        eventBus.publish(FeedsEvent.PublishType.carrierFriendConnection, ret);
-    }
-
-    friendInfoCallback(ret) {
-        eventBus.publish(FeedsEvent.PublishType.carrierFriendInfo, ret);
-    }
-
-    friendListCallback(event) {
-        eventBus.publish(FeedsEvent.PublishType.carrierFriendList, event.friends.length);
-    }
-
-    friendAddedCallback(ret) {
-        eventBus.publish(FeedsEvent.PublishType.carrierFriendAdded, ret);
-    }
-
-    friendRemovedCallback(ret) {
-        eventBus.publish(FeedsEvent.PublishType.carrierFriendRemoved, ret);
-    }
-
-    friendMessageCallback(event)  {
-        eventBus.publish(FeedsEvent.PublishType.carrierFriendMessage, event);
-    }
-
-    friendBinaryMessageCallback(event) {
-        eventBus.publish(FeedsEvent.PublishType.carrierFriendBinaryMessage, event);
-    }
-
-    sessionRequestCallback(event) {
-        eventBus.publish(FeedsEvent.PublishType.carrierSessionRequest, event);
-    }
-
-    destroyCarrier() {
-        if (carrierInst != null) {
-            carrierInst.destroy();
-            carrierInst = null;
-        }
-    }
-
-    /* getMessageByUserId(userId) {
+  /* getMessageByUserId(userId) {
         return messageList.filter(x => (x.toUserId == userId) || (x.userId == userId));
     }
 
@@ -151,225 +158,326 @@ export class CarrierService {
         return messageList.findIndex(e => e.messageId === id)
     } */
 
-    // ------------------------------------------------------------
+  // ------------------------------------------------------------
 
-    private processDid(did: string): string{
-        let checkStr = "did:elastos:";
-        return "."+did.replace(checkStr,"");
+  private processDid(did: string): string {
+    let checkStr = 'did:elastos:';
+    return '.' + did.replace(checkStr, '');
+  }
+
+  async createObject(did: string, success, error) {
+    let newName = this.processDid(did);
+    try {
+      await this.fileHelperService.moveCarrierData('.data', newName);
+    } catch (error) {}
+
+    let createOption = this.generateCreateOption(newName);
+    carrierManager.createObject(
+      this.callbacks,
+      createOption,
+      (ret: any) => {
+        success(ret);
+      },
+      (err: string) => {
+        error(err);
+      },
+    );
+  }
+
+  isValidAddress(address, success, error) {
+    carrierManager.isValidAddress(
+      address,
+      (isValid: boolean) => {
+        success(isValid);
+      },
+      (err: string) => {
+        alert(err);
+      },
+    );
+  }
+
+  getUserId(): string {
+    if (this.platform.platforms().indexOf('cordova') < 0) {
+      return 'deafultUserId';
+    }
+    return carrierInst.userId;
+  }
+
+  getNodeId(): string {
+    if (this.platform.platforms().indexOf('cordova') < 0) {
+      return 'deafultNodeId';
+    }
+    return carrierInst.nodeId;
+  }
+
+  getAddress(): string {
+    if (this.platform.platforms().indexOf('cordova') < 0) {
+      return 'EXfdeeeeeeeeeeeeeeeeeee';
+    }
+    return carrierInst.address;
+  }
+
+  getSelfInfo(success: any, error: any) {
+    if (this.platform.platforms().indexOf('cordova') < 0) {
+      success(null);
+      return;
     }
 
-    async createObject(did: string, success, error) {
-        let newName = this.processDid(did);
-        try{
-            await this.fileHelperService.moveCarrierData(".data", newName);
-        }catch(error){
-        }
-        
-        let createOption = this.generateCreateOption(newName);
-        carrierManager.createObject(
-            this.callbacks, createOption,
-            (ret: any) => {success(ret); },
-            (err: string) => {error(err); });
+    carrierInst.getSelfInfo(
+      // (userInfo) =>{
+      //     userInfo.userId,
+      //     userInfo.name,
+      //     userInfo.description,
+      //     userInfo.hasAvatar,
+      //     userInfo.gender,
+      //     userInfo.phone,
+      //     userInfo.email,
+      //     userInfo.region
+      // },
+      ret => {
+        success(ret);
+      },
+      err => {
+        this.errorFun(err, error);
+      },
+    );
+  }
+
+  setSelfInfo(key: string, value: string) {
+    carrierInst.setSelfInfo(
+      key,
+      value,
+      () => {},
+      err => {
+        this.errorFun(err, null);
+      },
+    );
+  }
+
+  getFriends(
+    onSuccess: (friends: CarrierPlugin.FriendInfo[]) => void,
+    onError?: (err: string) => void,
+  ) {
+    if (this.platform.platforms().indexOf('cordova') < 0) {
+      onSuccess(null);
+      return;
     }
 
-    isValidAddress(address, success, error) {
-        carrierManager.isValidAddress(
-            address,
-            (isValid: boolean) => {success(isValid);},
-            (err: string) => {alert(err)});
+    carrierInst.getFriends(onSuccess, onError);
+  }
+
+  isFriends(
+    userId: string,
+    onSuccess: (res: any) => void,
+    onError?: (err: string) => void,
+  ) {
+    if (this.platform.platforms().indexOf('cordova') < 0) {
+      onSuccess(null);
+      return;
     }
 
-    getUserId(): string {
-        if (this.platform.platforms().indexOf("cordova") < 0){
-            return 'deafultUserId';
-        }
-        return carrierInst.userId;
+    carrierInst.isFriend(userId, onSuccess, onError);
+  }
+
+  addFriend(address, hello: string, success, error: (err: string) => void) {
+    if (this.platform.platforms().indexOf('cordova') < 0) {
+      success();
+      this.myInterval = setInterval(() => {
+        this.friendAddedCallback(null);
+        clearInterval(this.myInterval);
+      }, 1000);
+      return;
     }
 
-    getNodeId(): string {
-        if (this.platform.platforms().indexOf("cordova") < 0){
-            return 'deafultNodeId';
-        }
-        return carrierInst.nodeId;
+    carrierInst.addFriend(
+      address,
+      hello,
+      () => {
+        success();
+      },
+      err => {
+        this.errorFun(err, error);
+      },
+    );
+  }
+
+  removeFriend(
+    userId: string,
+    onSuccess: () => void,
+    onError?: (err: string) => void,
+  ) {
+    if (this.platform.platforms().indexOf('cordova') < 0) {
+      return onSuccess();
     }
 
-    getAddress(): string {
-        if (this.platform.platforms().indexOf("cordova") < 0){
-            return 'EXfdeeeeeeeeeeeeeeeeeee';
-        }
-        return carrierInst.address;
+    carrierInst.removeFriend(
+      userId,
+      () => {
+        onSuccess();
+      },
+      err => {
+        onError(err);
+      },
+    );
+  }
+
+  sendMessage(nodeId: string, message: string, success: any, error: any) {
+    if (this.platform.platforms().indexOf('cordova') < 0) {
+      success();
+      return;
     }
 
-    getSelfInfo(success: any, error: any) {
-        if (this.platform.platforms().indexOf("cordova") < 0){
-            success(null);
-            return ;
-        }
+    carrierInst.sendFriendMessage(
+      nodeId,
+      message,
+      () => {
+        success();
+      },
+      err => {
+        this.errorFun(err, error);
+      },
+    );
+  }
 
-        carrierInst.getSelfInfo(
-            // (userInfo) =>{
-            //     userInfo.userId,
-            //     userInfo.name,
-            //     userInfo.description,
-            //     userInfo.hasAvatar,
-            //     userInfo.gender,
-            //     userInfo.phone,
-            //     userInfo.email,
-            //     userInfo.region
-            // },
-            (ret) => {success(ret);},
-            (err) => {this.errorFun(err, error);}
-        );
-        
+  sendBinaryMessage(
+    nodeId: string,
+    message: Uint8Array,
+    onSuccess: () => void,
+    onError?: (err: string) => void,
+  ) {
+    if (this.platform.platforms().indexOf('cordova') < 0) {
+      onSuccess();
+      return;
     }
 
-    setSelfInfo(key: string, value: string){
-        carrierInst.setSelfInfo(key, value,
-            () => { },
-            (err) => {this.errorFun(err, null);}
-        );
+    carrierInst.sendFriendBinaryMessage(
+      nodeId,
+      message,
+      () => {
+        onSuccess();
+      },
+      err => {
+        onError(err);
+      },
+    );
+  }
+
+  sendFriendBinaryMessageWithReceipt(
+    nodeId: string,
+    message: Uint8Array,
+    onSuccess: () => void,
+    onError?: (err: string) => void,
+  ) {
+    if (this.platform.platforms().indexOf('cordova') < 0) {
+      onSuccess();
+      return;
     }
 
-    getFriends(onSuccess:(friends: CarrierPlugin.FriendInfo[])=>void, onError?:(err: string)=>void) {
-        if (this.platform.platforms().indexOf("cordova") < 0){
-            onSuccess(null);
-            return ;
-        }
-       
-       carrierInst.getFriends(onSuccess,onError);
-    }
+    carrierInst.sendFriendBinaryMessageWithReceipt(
+      nodeId,
+      message,
+      (messageId: number, state: Number) => {},
+      () => {
+        onSuccess();
+      },
+      err => {
+        onError(err);
+      },
+    );
+  }
 
-    isFriends(userId: string, onSuccess:(res: any)=>void, onError?:(err: string)=>void){
-        if (this.platform.platforms().indexOf("cordova") < 0){
-            onSuccess(null);
-            return ;
-        }
-       
-       carrierInst.isFriend(userId, onSuccess, onError);
-    }
+  errorFun(err, errorFun = null) {
+    alert('error=>' + err);
+    alert('errorFun' + JSON.stringify(errorFun));
+  }
 
-    addFriend(address, hello: string, success, error: (err: string) => void) {
-        if (this.platform.platforms().indexOf("cordova") < 0){
-            success();
-            this.myInterval = setInterval(() => {
-                this.friendAddedCallback(null);
-                clearInterval(this.myInterval);
-            }, 1000);
-            return;
-        }
-        
-        carrierInst.addFriend(
-            address, hello,
-            () => {success(); },
-            (err) => {this.errorFun(err, error); });
-    }
+  getIdFromAddress(
+    address: string,
+    onSuccess: (userId: string) => void,
+    onError?: (err: string) => void,
+  ) {
+    carrierManager.getIdFromAddress(address, onSuccess, onError);
+  }
 
-    removeFriend(userId: string, onSuccess:()=>void, onError?:(err: string)=>void) {
-        if (this.platform.platforms().indexOf("cordova") < 0){
-            return onSuccess();
-        }
-        
-        carrierInst.removeFriend(
-            userId,
-            () => {onSuccess();},
-            (err) => {onError(err)});
-    }
+  newSession(
+    to: string,
+    onSuccess: (session: CarrierPlugin.Session) => void,
+    onError?: (err: string) => void,
+  ) {
+    carrierInst.newSession(to, onSuccess, onError);
+  }
 
-    sendMessage(nodeId: string, message: string, success: any, error: any) {
+  sessionRequest(
+    session: CarrierPlugin.Session,
+    handler: CarrierPlugin.OnSessionRequestComplete,
+    onSuccess: () => void,
+    onError?: (err: string) => void,
+  ) {
+    session.request(handler, onSuccess, onError);
+  }
 
-        if (this.platform.platforms().indexOf("cordova") < 0){
-            success();
-            return;
-        }
-        
-        carrierInst.sendFriendMessage(
-            nodeId, message,
-            () => {success();},
-            (err) => {this.errorFun(err, error);});
-    }
+  sessionStart(
+    session: CarrierPlugin.Session,
+    sdp: string,
+    onSuccess: () => void,
+    onError?: (err: string) => void,
+  ) {
+    session.start(sdp, onSuccess, onError);
+  }
 
-    sendBinaryMessage(nodeId: string, message: Uint8Array, onSuccess:()=>void, onError?:(err: string)=>void) {
-        if (this.platform.platforms().indexOf("cordova") < 0){
-            onSuccess();
-            return;
-        }
-        
-        carrierInst.sendFriendBinaryMessage(
-            nodeId, message,
-            () => {
-                onSuccess();
-            },
-            (err) => {
-                onError(err);
-            });
-    }
+  sessionClose(
+    session: CarrierPlugin.Session,
+    onSuccess?: () => void,
+    onError?: (err: string) => void,
+  ) {
+    session.close(onSuccess, onError);
+  }
 
+  sessionAddStream(
+    session: CarrierPlugin.Session,
+    type: CarrierPlugin.StreamType,
+    options: number,
+    callbacks: CarrierPlugin.StreamCallbacks,
+    onSuccess: (stream: CarrierPlugin.Stream) => void,
+    onError?: (err: string) => void,
+  ) {
+    session.addStream(type, options, callbacks, onSuccess, onError);
+  }
 
-    sendFriendBinaryMessageWithReceipt(nodeId: string, message: Uint8Array, onSuccess:()=>void, onError?:(err: string)=>void) {
-        if (this.platform.platforms().indexOf("cordova") < 0){
-            onSuccess();
-            return;
-        }
-        
-        carrierInst.sendFriendBinaryMessageWithReceipt(
-            nodeId, message,
-            (messageId: number, state: Number)=>{
-            },
-            () => {
-                onSuccess();
-            },
-            (err) => {
-                onError(err);
-            });
-    }
+  sessionRemoveStream(
+    session: CarrierPlugin.Session,
+    stream: CarrierPlugin.Stream,
+    onSuccess: (stream: CarrierPlugin.Stream) => void,
+    onError?: (err: string) => void,
+  ) {
+    session.removeStream(stream, onSuccess, onError);
+  }
 
-    errorFun(err, errorFun = null) {
-        alert("error=>"+err);
-        alert("errorFun"+JSON.stringify(errorFun));
-    }
+  sessionReplyRequest(
+    session: CarrierPlugin.Session,
+    status: number,
+    reason: string,
+    onSuccess: () => void,
+    onError?: (err: string) => void,
+  ) {
+    session.replyRequest(status, reason, onSuccess, onError);
+  }
 
-    getIdFromAddress(address: string, onSuccess:(userId: string)=>void, onError?:(err: string)=>void){
-        carrierManager.getIdFromAddress(address, onSuccess,onError);
-    }
+  streamWrite(
+    stream: CarrierPlugin.Stream,
+    data: Uint8Array,
+    onSuccess: (bytesSent: Number) => void,
+    onError?: (err: string) => void,
+  ) {
+    stream.write(data, onSuccess, onError);
+  }
 
-    newSession(to: string, onSuccess:(session: CarrierPlugin.Session)=>void, onError?:(err: string)=>void){
-        carrierInst.newSession(to,onSuccess,onError);
-    }
-
-    sessionRequest(session: CarrierPlugin.Session, handler: CarrierPlugin.OnSessionRequestComplete, onSuccess:()=>void, onError?:(err: string)=>void){
-        session.request(handler, onSuccess, onError);
-    }
-
-    sessionStart(session: CarrierPlugin.Session, sdp: string, onSuccess:()=>void, onError?:(err: string)=>void){
-        session.start(sdp,onSuccess, onError);
-    }
-
-    sessionClose(session: CarrierPlugin.Session, onSuccess?:()=>void, onError?:(err: string)=>void){
-        session.close(onSuccess, onError);
-    }
-
-    sessionAddStream(session: CarrierPlugin.Session,type: CarrierPlugin.StreamType, options: number, callbacks: CarrierPlugin.StreamCallbacks, onSuccess:(stream: CarrierPlugin.Stream)=>void, onError?:(err: string)=>void){
-        session.addStream(type,options,callbacks,onSuccess,onError);    
-    }
-
-    sessionRemoveStream(session: CarrierPlugin.Session, stream: CarrierPlugin.Stream, onSuccess:(stream: CarrierPlugin.Stream)=>void, onError?:(err: string)=>void){
-        session.removeStream(stream, onSuccess, onError);
-    }
-
-    sessionReplyRequest(session: CarrierPlugin.Session, status: number, reason: string, onSuccess:()=>void, onError?:(err: string)=>void){
-        session.replyRequest(status, reason, onSuccess, onError);
-    }
-
-    streamWrite(stream: CarrierPlugin.Stream, data: Uint8Array, onSuccess:(bytesSent: Number)=>void, onError?:(err: string)=>void){
-        stream.write(data, onSuccess, onError);
-    }
-
-    generateCreateOption(path: string){
-        return {
-            udpEnabled: true,
-            persistentLocation: path,
-            binaryUsed: true,
-            expressEnabled: false
-        };
-    }
+  generateCreateOption(path: string) {
+    return {
+      udpEnabled: true,
+      persistentLocation: path,
+      binaryUsed: true,
+      expressEnabled: false,
+    };
+  }
 }

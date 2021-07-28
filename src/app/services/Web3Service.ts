@@ -70,7 +70,6 @@
 //      return this.web3;
 //   }
 
-
 //   async getAccount(privateKey:any){
 //     try {
 //       if (!this.web3) {

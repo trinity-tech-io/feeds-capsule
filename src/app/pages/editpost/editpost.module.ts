@@ -15,8 +15,8 @@ import { ComponentsModule } from 'src/app/components/components.module';
 const routes: Routes = [
   {
     path: '',
-    component: EditPostPage
-  }
+    component: EditPostPage,
+  },
 ];
 
 @NgModule({
@@ -30,8 +30,8 @@ const routes: Routes = [
     IonicModule,
     TranslateModule,
     ComponentsModule,
-    RouterModule.forChild(routes)
+    RouterModule.forChild(routes),
   ],
-  declarations: [EditPostPage]
+  declarations: [EditPostPage],
 })
-export class EditPostPageModule{}
+export class EditPostPageModule {}

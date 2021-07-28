@@ -8,13 +8,12 @@ import { TitleBarMenuItem } from '../titlebar/titlebar.types';
   styleUrls: ['./titlebarmenuitem.component.scss'],
 })
 export class TitlebarmenuitemComponent implements OnInit {
-
   public menuItems: TitleBarMenuItem[] = [];
 
   constructor(
     private navParams: NavParams,
-    private popoverCtrl: PopoverController
-  ) { }
+    private popoverCtrl: PopoverController,
+  ) {}
 
   ngOnInit() {
     this.menuItems = this.navParams.get('items');
@@ -22,12 +21,11 @@ export class TitlebarmenuitemComponent implements OnInit {
 
   onTitlebarMenuItemClicked(item: TitleBarMenuItem) {
     this.popoverCtrl.dismiss({
-      item: item
+      item: item,
     });
   }
 
   getIconPath(icon) {
     return icon;
   }
-
 }

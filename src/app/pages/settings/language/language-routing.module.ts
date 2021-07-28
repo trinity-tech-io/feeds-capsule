@@ -6,8 +6,8 @@ import { LanguagePage } from './language.page';
 const routes: Routes = [
   {
     path: '',
-    component: LanguagePage
-  }
+    component: LanguagePage,
+  },
 ];
 
 @NgModule({

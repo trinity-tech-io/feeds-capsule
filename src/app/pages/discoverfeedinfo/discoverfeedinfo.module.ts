@@ -11,8 +11,8 @@ import { ComponentsModule } from 'src/app/components/components.module';
 const routes: Routes = [
   {
     path: '',
-    component: DiscoverfeedinfoPage
-  }
+    component: DiscoverfeedinfoPage,
+  },
 ];
 
 @NgModule({
@@ -23,8 +23,8 @@ const routes: Routes = [
     QRCodeModule,
     IonicModule,
     ComponentsModule,
-    RouterModule.forChild(routes)
+    RouterModule.forChild(routes),
   ],
-  declarations: [DiscoverfeedinfoPage]
+  declarations: [DiscoverfeedinfoPage],
 })
 export class DiscoverfeedinfoPageModule {}

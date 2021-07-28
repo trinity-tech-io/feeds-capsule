@@ -1,5 +1,5 @@
-import { Component, OnInit , NgZone,ViewChild} from '@angular/core';
-import { TranslateService } from "@ngx-translate/core";
+import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 import { FeedService } from '../../../../services/FeedService';
 import { ThemeService } from '../../../../services/theme.service';
 import { NativeService } from '../../../../services/NativeService';
@@ -15,21 +15,19 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 export class IntroducePage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   public connectionStatus = 1;
-  public bindPublisherAccountType:string = "";
-  public lightThemeType:number = 2;
+  public bindPublisherAccountType: string = '';
+  public lightThemeType: number = 2;
   constructor(
     private feedService: FeedService,
-    private translate:TranslateService,
-    private zone:NgZone,
-    private events:Events,
-    private native:NativeService,
+    private translate: TranslateService,
+    private zone: NgZone,
+    private events: Events,
+    private native: NativeService,
     private titleBarService: TitleBarService,
-    public theme:ThemeService,
-  ) { }
+    public theme: ThemeService,
+  ) {}
 
-  ngOnInit() {
-  }
-
+  ngOnInit() {}
 
   ionViewWillEnter() {
     this.bindPublisherAccountType = this.feedService.getBindPublisherAccountType();
@@ -38,41 +36,43 @@ export class IntroducePage implements OnInit {
     this.addEvent();
   }
 
-  ionViewWillLeave(){
+  ionViewWillLeave() {
     this.removeEvent();
     this.events.publish(FeedsEvent.PublishType.search);
   }
 
-  initTile(){
-    this.titleBarService.setTitle(this.titleBar, this.translate.instant("IntroducePage.title"));
+  initTile() {
+    this.titleBarService.setTitle(
+      this.titleBar,
+      this.translate.instant('IntroducePage.title'),
+    );
     this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
-   }
+  }
 
-   addEvent(){
-    this.events.subscribe(FeedsEvent.PublishType.connectionChanged,(status)=>{
+  addEvent() {
+    this.events.subscribe(FeedsEvent.PublishType.connectionChanged, status => {
       this.zone.run(() => {
         this.connectionStatus = status;
       });
     });
-   }
+  }
 
-   removeEvent(){
+  removeEvent() {
     this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
-   }
+  }
 
-   next(){
+  next() {
     // this.native.navigateForward(['bindservice/scanqrcode'],{
     //   replaceUrl: true
     //  });
     this.native.pop();
-   }
+  }
 
-   back(){
+  back() {
     this.native.pop();
-   }
+  }
 
-   gotoWebsite(){
-    this.native.openUrl("https://trinity-feeds.app");
-   }
-
+  gotoWebsite() {
+    this.native.openUrl('https://trinity-feeds.app');
+  }
 }

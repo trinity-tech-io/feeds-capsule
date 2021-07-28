@@ -9,8 +9,8 @@ import { ComponentsModule } from 'src/app/components/components.module';
 const routes: Routes = [
   {
     path: '',
-    component: ElastosapiproviderPage
-  }
+    component: ElastosapiproviderPage,
+  },
 ];
 @NgModule({
   imports: [
@@ -19,8 +19,8 @@ const routes: Routes = [
     IonicModule,
     TranslateModule,
     ComponentsModule,
-    RouterModule.forChild(routes)
+    RouterModule.forChild(routes),
   ],
-  declarations: [ElastosapiproviderPage]
+  declarations: [ElastosapiproviderPage],
 })
 export class ElastosapiproviderPageModule {}

@@ -1,5 +1,5 @@
-import { Component, OnInit, ViewChild} from '@angular/core';
-import { TranslateService } from "@ngx-translate/core";
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 import { NativeService } from '../../../../services/NativeService';
 import { FeedService } from '../../../../services/FeedService';
 import { ThemeService } from '../../../../services/theme.service';
@@ -14,73 +14,74 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 })
 export class LearnpublisheraccountPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
-  public lightThemeType:number = 2;
+  public lightThemeType: number = 2;
   constructor(
     private native: NativeService,
     private events: Events,
-    private translate:TranslateService,
-    private feedService:FeedService,
+    private translate: TranslateService,
+    private feedService: FeedService,
     private titleBarService: TitleBarService,
-    public  theme:ThemeService
-  ) { }
+    public theme: ThemeService,
+  ) {}
 
-  ngOnInit() {
-  }
+  ngOnInit() {}
 
   ionViewWillEnter() {
     this.initTile();
     this.addEvent();
   }
 
-  ionViewWillLeave(){
+  ionViewWillLeave() {
     this.removeEvent();
   }
 
-  initTile(){
-    this.titleBarService.setTitle(this.titleBar, this.translate.instant("LearnmorePage.title"));
+  initTile() {
+    this.titleBarService.setTitle(
+      this.titleBar,
+      this.translate.instant('LearnmorePage.title'),
+    );
     this.titleBarService.setTitleBarBlankButton(this.titleBar);
-   }
-
-   addEvent(){
-
-   }
-
-   removeEvent(){
-   }
-
-
-
-
-  learnMore(){
-    this.feedService.setBindPublisherAccountType("new");
-    this.native.navigateForward(['bindservice/introduce'],"");
   }
 
-  createNewPublisherAccount(){
-      this.feedService.setBindPublisherAccountType("new");
-      this.native.navigateForward(['bindservice/scanqrcode'],{
-        replaceUrl: true
-      });
+  addEvent() {}
+
+  removeEvent() {}
+
+  learnMore() {
+    this.feedService.setBindPublisherAccountType('new');
+    this.native.navigateForward(['bindservice/introduce'], '');
   }
 
-  bindExistingPublisherAccount(){
-    this.feedService.setBindPublisherAccountType("exit");
-    this.native.navigateForward(['bindservice/scanqrcode'],{
-      replaceUrl: true
+  createNewPublisherAccount() {
+    this.feedService.setBindPublisherAccountType('new');
+    this.native.navigateForward(['bindservice/scanqrcode'], {
+      replaceUrl: true,
     });
   }
 
-  continueWithoutPublisherAccount(){
-    let isFirstBindFeedService = localStorage.getItem('org.elastos.dapp.feeds.isFirstBindFeedService') || "";
-    if(isFirstBindFeedService === ""){
-        localStorage.setItem('org.elastos.dapp.feeds.isFirstBindFeedService',"1");
-        //this.appService.addright();
-        this.native.setRootRouter(['/tabs/home']);
-        return;
+  bindExistingPublisherAccount() {
+    this.feedService.setBindPublisherAccountType('exit');
+    this.native.navigateForward(['bindservice/scanqrcode'], {
+      replaceUrl: true,
+    });
+  }
+
+  continueWithoutPublisherAccount() {
+    let isFirstBindFeedService =
+      localStorage.getItem('org.elastos.dapp.feeds.isFirstBindFeedService') ||
+      '';
+    if (isFirstBindFeedService === '') {
+      localStorage.setItem(
+        'org.elastos.dapp.feeds.isFirstBindFeedService',
+        '1',
+      );
+      //this.appService.addright();
+      this.native.setRootRouter(['/tabs/home']);
+      return;
     }
 
-    this.native.navigateForward(["walletteach"],{
-      replaceUrl: true
+    this.native.navigateForward(['walletteach'], {
+      replaceUrl: true,
     });
   }
 }

@@ -6,48 +6,53 @@ import { Events } from 'src/app/services/events.service';
 
 @Injectable()
 export class NFTContractControllerService {
-    constructor(
-      private event: Events,
-      private walletConnectControllerService: WalletConnectControllerService,
-      private nftContractParsarService: NFTContractParsarService,
-      private nftContractStickerService: NFTContractStickerService) {
+  constructor(
+    private event: Events,
+    private walletConnectControllerService: WalletConnectControllerService,
+    private nftContractParsarService: NFTContractParsarService,
+    private nftContractStickerService: NFTContractStickerService,
+  ) {
+    this.init();
+    this.initSubscribeEvent();
+  }
+
+  init() {
+    this.nftContractStickerService.init();
+    this.nftContractParsarService.init();
+  }
+
+  initSubscribeEvent() {
+    this.event.subscribe(FeedsEvent.PublishType.walletConnected, () => {
       this.init();
-      this.initSubscribeEvent();
-    }
+    });
+    this.event.subscribe(FeedsEvent.PublishType.walletDisconnected, () => {
+      this.init();
+    });
+  }
 
-    init(){
-      this.nftContractStickerService.init();
-      this.nftContractParsarService.init();
-    }
+  getSticker(): NFTContractStickerService {
+    return this.nftContractStickerService.getSticker();
+  }
 
-    initSubscribeEvent(){
-      this.event.subscribe(FeedsEvent.PublishType.walletConnected,()=>{
-        this.init();
-      });
-      this.event.subscribe(FeedsEvent.PublishType.walletDisconnected,()=>{
-        this.init();
-      });
-    }
+  getPasar(): NFTContractParsarService {
+    return this.nftContractParsarService.getPasar();
+  }
 
-    getSticker(): NFTContractStickerService{
-      return this.nftContractStickerService.getSticker();
-    }
+  getAccountAddress() {
+    return this.walletConnectControllerService.getAccountAddress();
+  }
 
-    getPasar(): NFTContractParsarService{
-      return this.nftContractParsarService.getPasar();
-    }
+  transFromWei(price: string) {
+    let eth = this.walletConnectControllerService
+      .getWeb3()
+      .utils.fromWei(price, 'ether');
+    return eth;
+  }
 
-    getAccountAddress(){
-      return this.walletConnectControllerService.getAccountAddress();
-    }
-
-    transFromWei(price:string){
-      let eth = this.walletConnectControllerService.getWeb3().utils.fromWei(price, 'ether');
-      return eth;
-    }
-
-    transToWei(price: string){
-      let wei  = this.walletConnectControllerService.getWeb3().utils.toWei(price, 'ether');
-      return wei;
-    }
+  transToWei(price: string) {
+    let wei = this.walletConnectControllerService
+      .getWeb3()
+      .utils.toWei(price, 'ether');
+    return wei;
+  }
 }

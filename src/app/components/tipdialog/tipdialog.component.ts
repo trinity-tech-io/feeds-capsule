@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ThemeService } from 'src/app/services/theme.service';
-import { NavParams} from '@ionic/angular';
+import { NavParams } from '@ionic/angular';
 import { Events } from '../../services/events.service';
 
 @Component({
@@ -9,34 +9,34 @@ import { Events } from '../../services/events.service';
   styleUrls: ['./tipdialog.component.scss'],
 })
 export class TipdialogComponent implements OnInit {
-  public did:string = "";
-  public feedName:string = "";
-  public feedDesc:string = "";
-  public feedPublicStatus:boolean = true;
-  public developerMode:boolean =  false;
+  public did: string = '';
+  public feedName: string = '';
+  public feedDesc: string = '';
+  public feedPublicStatus: boolean = true;
+  public developerMode: boolean = false;
   constructor(
     public theme: ThemeService,
     private navParams: NavParams,
-    private events:Events){ }
+    private events: Events,
+  ) {}
 
   ngOnInit() {
     this.did = this.navParams.get('did');
     this.feedName = this.navParams.get('name');
     this.feedDesc = this.navParams.get('des');
-    this.feedPublicStatus =  this.navParams.get('feedPublicStatus');
-    this.developerMode = this.navParams.get("developerMode");
+    this.feedPublicStatus = this.navParams.get('feedPublicStatus');
+    this.developerMode = this.navParams.get('developerMode');
   }
 
-  cancel(){
+  cancel() {
     this.events.publish(FeedsEvent.PublishType.tipdialogCancel);
   }
 
-  confirm(){
+  confirm() {
     let tipDialogData: FeedsEvent.TipDialogData = {
       name: this.feedName,
-      desc: this.feedDesc
-    }
+      desc: this.feedDesc,
+    };
     this.events.publish(FeedsEvent.PublishType.tipdialogConfirm, tipDialogData);
   }
-
 }

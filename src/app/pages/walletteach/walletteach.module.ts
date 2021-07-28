@@ -9,8 +9,8 @@ import { ComponentsModule } from 'src/app/components/components.module';
 const routes: Routes = [
   {
     path: '',
-    component:WalletteachPage
-  }
+    component: WalletteachPage,
+  },
 ];
 
 @NgModule({
@@ -20,8 +20,8 @@ const routes: Routes = [
     TranslateModule,
     ComponentsModule,
     IonicModule,
-    RouterModule.forChild(routes)
+    RouterModule.forChild(routes),
   ],
-  declarations: [WalletteachPage]
+  declarations: [WalletteachPage],
 })
 export class WalletteachPageModule {}

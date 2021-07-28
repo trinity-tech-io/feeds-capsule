@@ -10,8 +10,8 @@ import { ConfirmationPage } from './confirmation.page';
 const routes: Routes = [
   {
     path: '',
-    component: ConfirmationPage
-  }
+    component: ConfirmationPage,
+  },
 ];
 
 @NgModule({
@@ -21,8 +21,8 @@ const routes: Routes = [
     TranslateModule,
     ComponentsModule,
     IonicModule,
-    RouterModule.forChild(routes)
+    RouterModule.forChild(routes),
   ],
-  declarations: [ConfirmationPage]
+  declarations: [ConfirmationPage],
 })
 export class ConfirmationPageModule {}

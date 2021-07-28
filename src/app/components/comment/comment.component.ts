@@ -1,8 +1,15 @@
-import { Component, OnInit, Input, Output, EventEmitter, ViewChild } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  Input,
+  Output,
+  EventEmitter,
+  ViewChild,
+} from '@angular/core';
 import { ThemeService } from 'src/app/services/theme.service';
 import { NativeService } from 'src/app/services/NativeService';
 import { FeedService } from 'src/app/services/FeedService';
-import { IonTextarea} from '@ionic/angular';
+import { IonTextarea } from '@ionic/angular';
 
 @Component({
   selector: 'app-comment',
@@ -10,13 +17,12 @@ import { IonTextarea} from '@ionic/angular';
   styleUrls: ['./comment.component.scss'],
 })
 export class CommentComponent implements OnInit {
+  @ViewChild('comment', { static: false }) comment: IonTextarea;
 
-  @ViewChild('comment', {static: false}) comment: IonTextarea;
+  @Input() public channelAvatar = '';
+  @Input() public channelName = '';
 
-  @Input() public channelAvatar = "";
-  @Input() public channelName = "";
-
-  @Input() public nodeId = "";
+  @Input() public nodeId = '';
   @Input() public channelId = 0;
   @Input() public postId = 0;
   @Input() public commentId = 0;
@@ -24,16 +30,15 @@ export class CommentComponent implements OnInit {
 
   @Output() hideComment: EventEmitter<boolean> = new EventEmitter<boolean>();
 
-  public newComment = "";
+  public newComment = '';
 
   constructor(
     public theme: ThemeService,
     public native: NativeService,
-    private feedService: FeedService
-  ) { }
+    private feedService: FeedService,
+  ) {}
 
-  ngOnInit() {
-  }
+  ngOnInit() {}
 
   ionViewDidEnter() {
     setTimeout(() => {
@@ -42,10 +47,10 @@ export class CommentComponent implements OnInit {
   }
 
   addImg() {
-    this.native.toast("common.comingSoon");
+    this.native.toast('common.comingSoon');
   }
 
-  sendComment(){
+  sendComment() {
     // this.feedService.postComment(
     //   this.nodeId,
     //   Number(this.channelId),
@@ -54,22 +59,30 @@ export class CommentComponent implements OnInit {
     //   this.newComment
     // );
 
-    let newComment = this.native.iGetInnerText(this.newComment) || "";
-    if(newComment===""){
+    let newComment = this.native.iGetInnerText(this.newComment) || '';
+    if (newComment === '') {
       this.native.toast_trans('CommentPage.inputComment');
       return false;
     }
 
-    this.native.showLoading("common.waitMoment").then(()=>{
-           this.publishComment();
-    }).catch(()=>{
-         this.native.hideLoading();
-    });
+    this.native
+      .showLoading('common.waitMoment')
+      .then(() => {
+        this.publishComment();
+      })
+      .catch(() => {
+        this.native.hideLoading();
+      });
   }
 
-
-  publishComment(){
-    this.feedService.postComment(this.nodeId,Number(this.channelId),Number(this.postId),this.commentId,this.newComment);
+  publishComment() {
+    this.feedService.postComment(
+      this.nodeId,
+      Number(this.channelId),
+      Number(this.postId),
+      this.commentId,
+      this.newComment,
+    );
   }
 
   hideComponent() {

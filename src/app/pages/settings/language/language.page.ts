@@ -14,21 +14,25 @@ import { Events } from 'src/app/services/events.service';
 export class LanguagePage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   public languageList = [];
-  public currentLang = "";
-  constructor(public translate: TranslateService,
-    public theme:ThemeService,
+  public currentLang = '';
+  constructor(
+    public translate: TranslateService,
+    public theme: ThemeService,
     private titleBarService: TitleBarService,
     private languageService: LanguageService,
-    private events:Events) {
-      this.currentLang = this.languageService.getCurLang();
-      this.languageList = this.languageService.languages;
-    }
-
-  ngOnInit() {
+    private events: Events,
+  ) {
+    this.currentLang = this.languageService.getCurLang();
+    this.languageList = this.languageService.languages;
   }
 
-  initTitle(){
-    this.titleBarService.setTitle(this.titleBar, this.translate.instant("SettingsPage.language-setting"));
+  ngOnInit() {}
+
+  initTitle() {
+    this.titleBarService.setTitle(
+      this.titleBar,
+      this.translate.instant('SettingsPage.language-setting'),
+    );
     this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
     this.titleBarService.setTitleBarMoreMemu(this.titleBar);
   }
@@ -36,16 +40,15 @@ export class LanguagePage implements OnInit {
   ionViewWillEnter() {
     this.initTitle();
   }
-  ionViewWillLeave(){
+  ionViewWillLeave() {
     this.events.publish(FeedsEvent.PublishType.search);
     this.events.publish(FeedsEvent.PublishType.notification);
     this.events.publish(FeedsEvent.PublishType.addProflieEvent);
   }
-  selectLanguage(language:any) {
+  selectLanguage(language: any) {
     this.languageService.setCurLang(language.code);
     this.currentLang = language.code;
     this.initTitle();
     this.events.publish(FeedsEvent.PublishType.updateTitle);
   }
-
 }
