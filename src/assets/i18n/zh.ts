@@ -113,6 +113,8 @@ export const zh = {
     onsale: '出售中',
     state: '状态',
     collectibles: '收藏品（NFT）',
+    setPropfileAvatar: '设置你喜欢的头像',
+    setAvatar: '设置头像',
   },
   app: {
     profileDetails: '档案详情',

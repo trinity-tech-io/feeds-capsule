@@ -2,14 +2,16 @@
 <!-- <div *ngIf="connectionStatus == 1" class="offline-header"></div> -->
 <ion-content>
   <ion-grid class="container" [class.darkContainer]="theme.darkMode">
-    <!-- Did Info -->
     <ion-row style="align-content: center;">
       <ion-col size="12" style="align-content: center; padding:0px;" class="profile-header-title">
-          设置你喜欢的头像
+        {{ 'common.setPropfileAvatar' | translate }}
       </ion-col>
     </ion-row>
-    <div style="min-width: 80%;  min-height: 80%;" (click)="editImage()">
-      <img  [src]="handleImages()" style="align-content: center;"/>
-    </div>
+    <ion-avatar (click)="editImage()">
+      <img [src]="handleImages()" style="align-content: center;" />
+    </ion-avatar>
   </ion-grid>
+  <ion-button (click)="saveAvatar()">
+    <ion-label> {{'common.save'|translate}}</ion-label>
+  </ion-button>
 </ion-content>

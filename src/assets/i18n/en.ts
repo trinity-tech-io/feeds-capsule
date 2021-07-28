@@ -117,6 +117,8 @@ export const en = {
     onsale: 'On sale',
     state: 'State',
     collectibles: 'Collectibles（NFT）',
+    setPropfileAvatar: 'Set your preferred avatar',
+    setAvatar: 'Set avatar',
   },
   app: {
     profileDetails: 'Profile Details',
