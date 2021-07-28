@@ -1,4 +1,4 @@
-import { Component, OnInit, Input , Output, EventEmitter} from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { FeedService } from 'src/app/services/FeedService';
 
 @Component({
@@ -7,20 +7,17 @@ import { FeedService } from 'src/app/services/FeedService';
   styleUrls: ['./channelcard.component.scss'],
 })
 export class ChannelcardComponent implements OnInit {
-  @Input () channelItem:any = null;
+  @Input() channelItem: any = null;
   @Output() clickChannelItem = new EventEmitter();
-  constructor(
-    private feedService:FeedService
-  ) { }
+  constructor(private feedService: FeedService) {}
 
   ngOnInit() {}
 
-  parseChannelAvatar(avatar: string): string{
+  parseChannelAvatar(avatar: string): string {
     return this.feedService.parseChannelAvatar(avatar);
   }
 
-  clickChannel(){
+  clickChannel() {
     this.clickChannelItem.emit(this.channelItem);
   }
-
 }

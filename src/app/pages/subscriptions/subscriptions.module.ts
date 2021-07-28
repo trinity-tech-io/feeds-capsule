@@ -9,8 +9,8 @@ import { ComponentsModule } from 'src/app/components/components.module';
 const routes: Routes = [
   {
     path: '',
-    component: SubscriptionsPage
-  }
+    component: SubscriptionsPage,
+  },
 ];
 
 @NgModule({
@@ -20,8 +20,8 @@ const routes: Routes = [
     IonicModule,
     TranslateModule,
     ComponentsModule,
-    RouterModule.forChild(routes)
+    RouterModule.forChild(routes),
   ],
-  declarations: [SubscriptionsPage]
+  declarations: [SubscriptionsPage],
 })
 export class SubscriptionsPageModule {}

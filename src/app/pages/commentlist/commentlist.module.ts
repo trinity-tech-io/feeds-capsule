@@ -12,8 +12,8 @@ import { ShareModule } from 'src/app/share/share.module';
 const routes: Routes = [
   {
     path: '',
-    component: CommentlistPage
-  }
+    component: CommentlistPage,
+  },
 ];
 
 @NgModule({
@@ -24,8 +24,8 @@ const routes: Routes = [
     TranslateModule,
     ComponentsModule,
     ShareModule,
-    RouterModule.forChild(routes)
+    RouterModule.forChild(routes),
   ],
-  declarations: [CommentlistPage]
+  declarations: [CommentlistPage],
 })
 export class CommentlistPageModule {}

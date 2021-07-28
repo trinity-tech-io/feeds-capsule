@@ -11,8 +11,8 @@ import { ComponentsModule } from 'src/app/components/components.module';
 const routes: Routes = [
   {
     path: '',
-    component: PublishdidPage
-  }
+    component: PublishdidPage,
+  },
 ];
 
 @NgModule({
@@ -22,8 +22,8 @@ const routes: Routes = [
     TranslateModule,
     IonicModule,
     ComponentsModule,
-    RouterModule.forChild(routes)
+    RouterModule.forChild(routes),
   ],
-  declarations: [PublishdidPage]
+  declarations: [PublishdidPage],
 })
 export class PublishdidPageModule {}

@@ -1,5 +1,5 @@
-import { Component, OnInit,ViewChild} from '@angular/core';
-import { TranslateService } from "@ngx-translate/core";
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 import { ActivatedRoute } from '@angular/router';
 import { ThemeService } from '../../../services/theme.service';
 import { NativeService } from '../../../services/NativeService';
@@ -13,15 +13,15 @@ import { TitleBarComponent } from '../../..//components/titlebar/titlebar.compon
 })
 export class ConfirmationPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
-  public showType:string = null;
+  public showType: string = null;
   constructor(
-    private translate:TranslateService,
-    private event:Events,
-    private native:NativeService,
+    private translate: TranslateService,
+    private event: Events,
+    private native: NativeService,
     private titleBarService: TitleBarService,
-    public theme:ThemeService,
-    private activatedRoute:ActivatedRoute,
-  ) { }
+    public theme: ThemeService,
+    private activatedRoute: ActivatedRoute,
+  ) {}
 
   ngOnInit() {
     this.activatedRoute.queryParams.subscribe(queryParams => {
@@ -34,32 +34,33 @@ export class ConfirmationPage implements OnInit {
     this.addEvent();
   }
 
-  ionViewWillLeave(){
+  ionViewWillLeave() {
     this.removeEvent();
     this.event.publish(FeedsEvent.PublishType.search);
   }
 
-  initTile(){
-      this.titleBarService.setTitle(this.titleBar,this.translate.instant('ConfirmationPage.title'));
-      this.titleBarService.setTitleBarBackKeyShown(this.titleBar,true);
-      this.titleBarService.setTitleBarMoreMemu(this.titleBar);
+  initTile() {
+    this.titleBarService.setTitle(
+      this.titleBar,
+      this.translate.instant('ConfirmationPage.title'),
+    );
+    this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
+    this.titleBarService.setTitleBarMoreMemu(this.titleBar);
   }
 
-   addEvent(){
-    this.event.subscribe(FeedsEvent.PublishType.updateTitle,()=>{
+  addEvent() {
+    this.event.subscribe(FeedsEvent.PublishType.updateTitle, () => {
       this.initTile();
     });
-   }
+  }
 
-   removeEvent(){
+  removeEvent() {
     this.event.unsubscribe(FeedsEvent.PublishType.updateTitle);
-   }
+  }
 
-   clickOk(){
+  clickOk() {
     // if(this.showType === "buy"){
     //   this.native.setRootRouter(['/tabs/home']);
     // }
-   }
-
-
+  }
 }

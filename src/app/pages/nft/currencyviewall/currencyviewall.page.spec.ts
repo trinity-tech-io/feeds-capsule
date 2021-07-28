@@ -9,10 +9,9 @@ describe('CurrencyviewallPage', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ CurrencyviewallPage ],
+      declarations: [CurrencyviewallPage],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
-    })
-    .compileComponents();
+    }).compileComponents();
   }));
 
   beforeEach(() => {

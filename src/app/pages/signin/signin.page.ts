@@ -1,18 +1,20 @@
 import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
-import { FeedService} from 'src/app/services/FeedService';
+import { FeedService } from 'src/app/services/FeedService';
 import { LoadingController } from '@ionic/angular';
 import { NativeService } from 'src/app/services/NativeService';
-import { TranslateService } from "@ngx-translate/core";
+import { TranslateService } from '@ngx-translate/core';
 import { ThemeService } from 'src/app/services/theme.service';
 import { AppService } from '../../services/AppService';
 import { Events } from 'src/app/services/events.service';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 
-import { connectivity, DID } from "@elastosfoundation/elastos-connectivity-sdk-cordova";
-import { localization } from "@elastosfoundation/elastos-connectivity-sdk-cordova";
+import {
+  connectivity,
+  DID,
+} from '@elastosfoundation/elastos-connectivity-sdk-cordova';
+import { localization } from '@elastosfoundation/elastos-connectivity-sdk-cordova';
 import { LanguageService } from 'src/app/services/language.service';
-
 
 @Component({
   selector: 'app-signin',
@@ -22,33 +24,32 @@ import { LanguageService } from 'src/app/services/language.service';
 export class SigninPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   public signedIn: boolean = false;
-  public did: string = "";
-  public userName: string = "";
-  public emailAddress: string = "";
-  public lightThemeType:number= 2;
+  public did: string = '';
+  public userName: string = '';
+  public emailAddress: string = '';
+  public lightThemeType: number = 2;
   constructor(
     private native: NativeService,
     private zone: NgZone,
     private feedService: FeedService,
     public loadingController: LoadingController,
-    private translate:TranslateService,
-    private event:Events,
-    public theme:ThemeService,
-    public appService:AppService,
+    private translate: TranslateService,
+    private event: Events,
+    public theme: ThemeService,
+    public appService: AppService,
     private titleBarService: TitleBarService,
-    private languageService: LanguageService) { 
-    }
+    private languageService: LanguageService,
+  ) {}
 
-  ngOnInit() {
+  ngOnInit() {}
 
-  }
+  init() {}
 
-  init(){
-    
-  }
-
-  initTile(){
-    this.titleBarService.setTitle(this.titleBar, this.translate.instant("SigninPage.signIn"));
+  initTile() {
+    this.titleBarService.setTitle(
+      this.titleBar,
+      this.translate.instant('SigninPage.signIn'),
+    );
     this.titleBarService.setTitleBarBlankButton(this.titleBar);
   }
 
@@ -57,39 +58,39 @@ export class SigninPage implements OnInit {
     this.initTile();
   }
 
-  ionViewDidEnter(){
-  }
+  ionViewDidEnter() {}
 
-  ionViewWillLeave(){
-  }
+  ionViewWillLeave() {}
 
   learnMore() {
-    this.native.navigateForward("learnmore",{queryParams:{"showBack":"back"}});
-
+    this.native.navigateForward('learnmore', {
+      queryParams: { showBack: 'back' },
+    });
   }
 
-  signIn(){
-    
-    connectivity.setActiveConnector(null).then(()=>{
+  signIn() {
+    connectivity.setActiveConnector(null).then(() => {
       // this.testGetCredentials();
       this.doSignin();
     });
   }
 
-  doSignin(){
-    this.zone.run(()=>{
-      this.native.showLoading('common.waitMoment',(isDismiss)=>{
-      },2000);
+  doSignin() {
+    this.zone.run(() => {
+      this.native.showLoading('common.waitMoment', isDismiss => {}, 2000);
     });
-    this.feedService.signIn().then((isSuccess)=>{
-      if (isSuccess){
+    this.feedService.signIn().then(isSuccess => {
+      if (isSuccess) {
         //add first bind FeedService logic
         this.native.hideLoading();
-        let isFirstBindFeedService = localStorage.getItem('org.elastos.dapp.feeds.isFirstBindFeedService') || "";
+        let isFirstBindFeedService =
+          localStorage.getItem(
+            'org.elastos.dapp.feeds.isFirstBindFeedService',
+          ) || '';
         let bindingServer = this.feedService.getBindingServer() || null;
-        if(isFirstBindFeedService === "" && bindingServer === null){
-          this.native.navigateForward("bindservice/learnpublisheraccount",{});
-           return;
+        if (isFirstBindFeedService === '' && bindingServer === null) {
+          this.native.navigateForward('bindservice/learnpublisheraccount', {});
+          return;
         }
         this.native.setRootRouter('/tabs/home');
         return;
@@ -97,59 +98,57 @@ export class SigninPage implements OnInit {
     });
   }
 
-  public async testGetCredentials() {
+  public async testGetCredentials() {
     let didAccess = new DID.DIDAccess();
     try {
-        let presentation = await didAccess.getCredentials({claims: {
+      let presentation = await didAccess.getCredentials({
+        claims: {
           name: true,
           avatar: {
             required: false,
-            reason: "For test"
+            reason: 'For test',
           },
           email: {
             required: false,
-            reason: "For test"
+            reason: 'For test',
           },
           gender: {
             required: false,
-            reason: "For test"
+            reason: 'For test',
           },
           telephone: {
             required: false,
-            reason: "For test"
+            reason: 'For test',
           },
           nation: {
             required: false,
-            reason: "For test"
+            reason: 'For test',
           },
-          nickname:{
+          nickname: {
             required: false,
-            reason: "For test"
+            reason: 'For test',
           },
-          description:{
+          description: {
             required: false,
-            reason: "For test"
+            reason: 'For test',
           },
-          interests:{
+          interests: {
             required: false,
-            reason: "For test"
-          }
-        }}
-        );
+            reason: 'For test',
+          },
+        },
+      });
 
       if (presentation) {
-        console.log("Got credentials:", presentation);
+        console.log('Got credentials:', presentation);
         alert(JSON.stringify(presentation));
-      }
-      else {
-        alert("Empty presentation returned, something wrong happened, or operation was cancelled");
+      } else {
+        alert(
+          'Empty presentation returned, something wrong happened, or operation was cancelled',
+        );
       }
     } catch (error) {
-      alert("error "+JSON.stringify(error));
+      alert('error ' + JSON.stringify(error));
     }
-    
   }
-
-
-  
 }

@@ -12,8 +12,8 @@ import { ComponentsModule } from 'src/app/components/components.module';
 const routes: Routes = [
   {
     path: '',
-    component: EditimagePage
-  }
+    component: EditimagePage,
+  },
 ];
 
 @NgModule({
@@ -24,8 +24,8 @@ const routes: Routes = [
     TranslateModule,
     ImageCropperModule,
     ComponentsModule,
-    RouterModule.forChild(routes)
+    RouterModule.forChild(routes),
   ],
-  declarations: [EditimagePage]
+  declarations: [EditimagePage],
 })
 export class EditimagePageModule {}

@@ -37,7 +37,7 @@
 //         let list: Channels[] = [];
 //         let map = this.subscribedChannelsMap|| {};
 //         let keys: string[] = Object.keys(map) || [];
-    
+
 //         for (let index = 0; index < keys.length; index++) {
 //             const subscribedFeed = this.subscribedChannelsMap[keys[index]] || null;
 //             if (subscribedFeed == null)
@@ -70,36 +70,35 @@
 //         likeMap = {};
 //         likeCommentMap = {};
 //         lastPostUpdateMap = {};
-    
-    
+
 //         localSubscribedList = [];
 //         localMyChannelList = [];
 //         localChannelsList = [];
-    
+
 //         bindingServer = null;
 //         bindingServerCache = null;
 //         serverMap = {};
-    
+
 //         accessTokenMap = {};
 //         signInServerList = [];
-    
+
 //         notificationList = [];
 //         cacheBindingAddress = "";
 //         localCredential = "";
 //         cachedPost = {};
-    
+
 //         this.feedPublicStatus = {};
 //         // this.localSignInData = null;
-    
+
 //         // this.developerMode = false;
 //         // this.hideDeletedPosts = false;
 //         // this.hideDeletedComments = false;
 //         // this.hideOfflineFeeds = false;
 //         // this.currentLang ="";
-    
+
 //         this.channelInfo = {};
 //         this.postMap = {};
-    
+
 //         this.curtab = "home";
 //         this.nonce = "";
 //         this.realm = "";
@@ -108,7 +107,7 @@
 //         this.profileIamge = "assets/images/profile-1.svg";
 //         this.clipProfileIamge = "";
 //         this.selsectIndex = 1;
-    
+
 //         // this.carrierStatus = FeedsData.ConnState.disconnected;
 //         // this.networkStatus = FeedsData.ConnState.disconnected;
 //         // this.connectionStatus = FeedsData.ConnState.disconnected ;
@@ -120,12 +119,12 @@
 //         this.declareOwnerTimeout = null;
 //         this.declareOwnerInterval = null;
 //         this.isDeclareFinish = false;
-    
+
 //         this.lastSubscribedFeedsUpdateMap = {};
 //         this.lastCommentUpdateMap = {};
 //         this.lastMultiLikesAndCommentsCountUpdateMap = {};
 //         this.lastMultiLikesAndCommentsCountUpdateMapCache = {};
-    
+
 //         this.alertPopover = null;
 //         this.serverVersions = {};
 //       }

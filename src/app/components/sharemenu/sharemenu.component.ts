@@ -1,4 +1,4 @@
-import { Component,OnInit,Input,Output,EventEmitter} from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { ThemeService } from '../../services/theme.service';
 
 @Component({
@@ -7,26 +7,26 @@ import { ThemeService } from '../../services/theme.service';
   styleUrls: ['./sharemenu.component.scss'],
 })
 export class SharemenuComponent implements OnInit {
-  @Input() nodeId:string = "";
-  @Input() feedId:string = "";
-  @Input() isShowTitle:boolean = false;
-  @Input() isShowQrcode:boolean = false;
-  @Input() isShowUnfollow:boolean = false;
-  @Input() isShowInfo:boolean = false;
-  @Input() isPreferences:boolean = false;
-  @Input() feedName:string = null;
-  @Input() qrCodeString:string = null;
+  @Input() nodeId: string = '';
+  @Input() feedId: string = '';
+  @Input() isShowTitle: boolean = false;
+  @Input() isShowQrcode: boolean = false;
+  @Input() isShowUnfollow: boolean = false;
+  @Input() isShowInfo: boolean = false;
+  @Input() isPreferences: boolean = false;
+  @Input() feedName: string = null;
+  @Input() qrCodeString: string = null;
   @Output() hideShareMenu = new EventEmitter();
 
-  constructor(
-    public theme: ThemeService){ }
+  constructor(public theme: ThemeService) {}
 
-  ngOnInit(){
+  ngOnInit() {}
 
+  clickItem(buttonType: string) {
+    this.hideShareMenu.emit({
+      buttonType: buttonType,
+      nodeId: this.nodeId,
+      feedId: this.feedId,
+    });
   }
-
-  clickItem(buttonType:string){
-    this.hideShareMenu.emit({"buttonType":buttonType,"nodeId":this.nodeId,"feedId":this.feedId});
-  }
-
 }

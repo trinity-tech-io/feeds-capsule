@@ -11,8 +11,8 @@ import { ComponentsModule } from 'src/app/components/components.module';
 const routes: Routes = [
   {
     path: '',
-    component: LearnmorePage
-  }
+    component: LearnmorePage,
+  },
 ];
 
 @NgModule({
@@ -22,8 +22,8 @@ const routes: Routes = [
     TranslateModule,
     IonicModule,
     ComponentsModule,
-    RouterModule.forChild(routes)
+    RouterModule.forChild(routes),
   ],
-  declarations: [LearnmorePage]
+  declarations: [LearnmorePage],
 })
 export class LearnmorePageModule {}

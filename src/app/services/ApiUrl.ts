@@ -1,26 +1,26 @@
-export  class ApiUrl {
+export class ApiUrl {
   /**后台服务*/
-  public static SERVER:string = 'https://www.trinity-tech.io/feeds/api/v2';
-  public static NFTSERVER:string =  'https://ipfs-test.trinity-feeds.app/';
+  public static SERVER: string = 'https://www.trinity-tech.io/feeds/api/v2';
+  public static NFTSERVER: string = 'https://ipfs-test.trinity-feeds.app/';
   /**register*/
-  public static register:string = ApiUrl.SERVER +'/register';
+  public static register: string = ApiUrl.SERVER + '/register';
 
-   /**listAll*/
-  public static listAll:string = ApiUrl.SERVER +'/listAll';
+  /**listAll*/
+  public static listAll: string = ApiUrl.SERVER + '/listAll';
 
   /**get*/
-  public static get:string = ApiUrl.SERVER +'/get';
+  public static get: string = ApiUrl.SERVER + '/get';
 
-   /**remove*/
-  public static remove:string = ApiUrl.SERVER +'/remove';
+  /**remove*/
+  public static remove: string = ApiUrl.SERVER + '/remove';
 
   /**listPage*/
-  public static listPage:string = ApiUrl.SERVER +'/listPage';
+  public static listPage: string = ApiUrl.SERVER + '/listPage';
 
   /**update*/
-  public static update:string = ApiUrl.SERVER +'/update';
+  public static update: string = ApiUrl.SERVER + '/update';
 
   /**NFT*/
-  public static nftAdd:string = ApiUrl.NFTSERVER +"api/v0/add";
-  public static nftGet:string = ApiUrl.NFTSERVER+"ipfs/";
+  public static nftAdd: string = ApiUrl.NFTSERVER + 'api/v0/add';
+  public static nftGet: string = ApiUrl.NFTSERVER + 'ipfs/';
 }

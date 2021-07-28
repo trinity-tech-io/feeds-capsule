@@ -11,8 +11,8 @@ import { ComponentsModule } from 'src/app/components/components.module';
 const routes: Routes = [
   {
     path: '',
-    component: FeedspreferencesPage
-  }
+    component: FeedspreferencesPage,
+  },
 ];
 
 @NgModule({
@@ -22,8 +22,8 @@ const routes: Routes = [
     IonicModule,
     TranslateModule,
     ComponentsModule,
-    RouterModule.forChild(routes)
+    RouterModule.forChild(routes),
   ],
-  declarations: [FeedspreferencesPage]
+  declarations: [FeedspreferencesPage],
 })
 export class FeedspreferencesPageModule {}

@@ -9,10 +9,9 @@ describe('LearnpublisheraccountPage', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ LearnpublisheraccountPage ],
+      declarations: [LearnpublisheraccountPage],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
-    })
-    .compileComponents();
+    }).compileComponents();
   }));
 
   beforeEach(() => {

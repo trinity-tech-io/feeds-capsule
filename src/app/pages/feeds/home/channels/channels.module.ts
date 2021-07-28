@@ -17,8 +17,8 @@ import { ShareModule } from 'src/app/share/share.module';
 const routes: Routes = [
   {
     path: '',
-    component: ChannelsPage
-  }
+    component: ChannelsPage,
+  },
 ];
 
 @NgModule({
@@ -32,8 +32,8 @@ const routes: Routes = [
     IonicModule,
     ComponentsModule,
     ShareModule,
-    RouterModule.forChild(routes)
+    RouterModule.forChild(routes),
   ],
-  declarations: [ChannelsPage]
+  declarations: [ChannelsPage],
 })
 export class ChannelsPageModule {}

@@ -9,10 +9,9 @@ describe('LearnmorePage', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ LearnmorePage ],
+      declarations: [LearnmorePage],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
-    })
-    .compileComponents();
+    }).compileComponents();
   }));
 
   beforeEach(() => {

@@ -11,8 +11,8 @@ import { AssetdetailsPage } from './assetdetails.page';
 const routes: Routes = [
   {
     path: '',
-    component: AssetdetailsPage
-  }
+    component: AssetdetailsPage,
+  },
 ];
 
 @NgModule({
@@ -22,8 +22,8 @@ const routes: Routes = [
     ComponentsModule,
     IonicModule,
     TranslateModule,
-    RouterModule.forChild(routes)
+    RouterModule.forChild(routes),
   ],
-  declarations: [AssetdetailsPage]
+  declarations: [AssetdetailsPage],
 })
 export class AssetdetailsPageModule {}

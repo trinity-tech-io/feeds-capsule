@@ -10,8 +10,8 @@ import { ComponentsModule } from 'src/app/components/components.module';
 const routes: Routes = [
   {
     path: '',
-    component:ProfilenftimagePage
-  }
+    component: ProfilenftimagePage,
+  },
 ];
 
 @NgModule({
@@ -21,8 +21,8 @@ const routes: Routes = [
     TranslateModule,
     IonicModule,
     ComponentsModule,
-    RouterModule.forChild(routes)
+    RouterModule.forChild(routes),
   ],
-  declarations: [ProfilenftimagePage]
+  declarations: [ProfilenftimagePage],
 })
 export class ProfilenftimagePageModule {}

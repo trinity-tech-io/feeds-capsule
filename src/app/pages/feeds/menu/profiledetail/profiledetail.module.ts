@@ -11,8 +11,8 @@ import { ComponentsModule } from 'src/app/components/components.module';
 const routes: Routes = [
   {
     path: '',
-    component: ProfiledetailPage
-  }
+    component: ProfiledetailPage,
+  },
 ];
 
 @NgModule({
@@ -23,8 +23,8 @@ const routes: Routes = [
     IonicModule,
     QRCodeModule,
     ComponentsModule,
-    RouterModule.forChild(routes)
+    RouterModule.forChild(routes),
   ],
-  declarations: [ProfiledetailPage]
+  declarations: [ProfiledetailPage],
 })
 export class ProfiledetailPageModule {}

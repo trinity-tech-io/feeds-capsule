@@ -10,8 +10,8 @@ import { ExplorefeedsPage } from './explorefeeds.page';
 const routes: Routes = [
   {
     path: '',
-    component: ExplorefeedsPage
-  }
+    component: ExplorefeedsPage,
+  },
 ];
 
 @NgModule({
@@ -21,8 +21,8 @@ const routes: Routes = [
     ComponentsModule,
     TranslateModule,
     IonicModule,
-    RouterModule.forChild(routes)
+    RouterModule.forChild(routes),
   ],
-  declarations: [ExplorefeedsPage]
+  declarations: [ExplorefeedsPage],
 })
 export class ExplorefeedsPageModule {}

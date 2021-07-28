@@ -1,4 +1,4 @@
-import { NgModule, ErrorHandler,Injectable } from '@angular/core';
+import { NgModule, ErrorHandler, Injectable } from '@angular/core';
 import { BrowserModule, HammerModule } from '@angular/platform-browser';
 import { HttpClientModule } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
@@ -6,7 +6,7 @@ import { RouteReuseStrategy } from '@angular/router';
 import { IonicModule, IonicRouteStrategy, Platform } from '@ionic/angular';
 import { AppRoutingModule } from './app-routing.module';
 import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
-import { File} from '@ionic-native/file/ngx';
+import { File } from '@ionic-native/file/ngx';
 import { Animation, AnimationBuilder } from '@ionic/core';
 
 import { Clipboard } from '@ionic-native/clipboard/ngx';
@@ -15,12 +15,16 @@ import { Network } from '@ionic-native/network/ngx';
 import { MyApp } from './app.component';
 import { ComponentsModule } from './components/components.module';
 
-import { TranslateLoader, TranslateModule,TranslateService} from '@ngx-translate/core';
+import {
+  TranslateLoader,
+  TranslateModule,
+  TranslateService,
+} from '@ngx-translate/core';
 import { ScanService } from 'src/app/services/scan.service';
 
 import { Observable } from 'rxjs';
-import {zh} from './../assets/i18n/zh';
-import {en} from './../assets/i18n/en';
+import { zh } from './../assets/i18n/zh';
+import { en } from './../assets/i18n/en';
 
 /*
 import { AboutPage } from './pages/about/about';
@@ -73,36 +77,36 @@ import { NFTContractParsarService } from 'src/app/services/nftcontract_parsar.se
 import { NFTContractStickerService } from 'src/app/services/nftcontract_sticker.service';
 import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
 
-import * as Sentry from "@sentry/browser";
+import * as Sentry from '@sentry/browser';
 
 Sentry.init({
-  dsn: "https://4196003a1c864f5798dd2be18be5cb48@o339076.ingest.sentry.io/5524842",
-  release: "1.6.0",
-  integrations: [
-    new RewriteFrames(),
-  ]
+  dsn:
+    'https://4196003a1c864f5798dd2be18be5cb48@o339076.ingest.sentry.io/5524842',
+  release: '1.6.0',
+  integrations: [new RewriteFrames()],
 });
 
 @Injectable()
 export class SentryErrorHandler implements ErrorHandler {
-  constructor(private popup: PopupProvider) { }
+  constructor(private popup: PopupProvider) {}
 
   handleError(error) {
-
     // Only send reports to sentry if we are not debugging.
-    if (document.URL.includes('io.trinity-tech.dapp.feeds')) { // Prod builds or --nodebug CLI builds use the app package id instead of a local IP
-        /*const eventId = */ Sentry.captureException(error.originalError || error);
+    if (document.URL.includes('io.trinity-tech.dapp.feeds')) {
+      // Prod builds or --nodebug CLI builds use the app package id instead of a local IP
+      /*const eventId = */ Sentry.captureException(
+        error.originalError || error,
+      );
       //Sentry.showReportDialog({ eventId });
     }
 
     this.popup.ionicAlert1(
-      "Error",
-      "Sorry, the application encountered an error. This has been reported to the team.",
-      "Close"
+      'Error',
+      'Sorry, the application encountered an error. This has been reported to the team.',
+      'Close',
     );
   }
 }
-
 
 export class WebpackTranslateLoader implements TranslateLoader {
   public getTranslation(lang: string): Observable<any> {
@@ -128,9 +132,7 @@ export function TranslateLoaderFactory() {
 }
 
 @NgModule({
-  declarations: [
-    MyApp,
-  ],
+  declarations: [MyApp],
   imports: [
     NgxIonicImageViewerModule,
     QRCodeModule,
@@ -141,7 +143,7 @@ export function TranslateLoaderFactory() {
     AppRoutingModule,
     ComponentsModule,
     IonicModule.forRoot({
-      swipeBackEnabled:false,
+      swipeBackEnabled: false,
       rippleEffect: true,
       mode: 'ios',
       // navAnimation: customAnimation,
@@ -150,20 +152,16 @@ export function TranslateLoaderFactory() {
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,
-        useFactory:(TranslateLoaderFactory)
-      }
+        useFactory: TranslateLoaderFactory,
+      },
     }),
-    IonicStorageModule.forRoot(
-      {
-        name: 'feedsdb',
-        driverOrder: ['indexeddb', 'sqlite', 'websql']
-      }
-    )
+    IonicStorageModule.forRoot({
+      name: 'feedsdb',
+      driverOrder: ['indexeddb', 'sqlite', 'websql'],
+    }),
   ],
   bootstrap: [MyApp],
-  entryComponents: [
-    MyApp,
-  ],
+  entryComponents: [MyApp],
   providers: [
     File,
     VideoEditor,
@@ -210,7 +208,7 @@ export function TranslateLoaderFactory() {
     NFTContractControllerService,
     WalletConnectControllerService,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
-    {provide: ErrorHandler, useClass: ErrorHandler}
-  ]
+    { provide: ErrorHandler, useClass: ErrorHandler },
+  ],
 })
 export class AppModule {}

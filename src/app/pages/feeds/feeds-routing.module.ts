@@ -14,9 +14,9 @@ const routes: Routes = [
         children: [
           {
             path: '',
-            loadChildren: './home/home.module#HomePageModule'
+            loadChildren: './home/home.module#HomePageModule',
           },
-        ]
+        ],
       },
       // 2nd Tab
       {
@@ -24,9 +24,9 @@ const routes: Routes = [
         children: [
           {
             path: '',
-            loadChildren: './profile/profile.module#ProfilePageModule'
+            loadChildren: './profile/profile.module#ProfilePageModule',
           },
-        ]
+        ],
       },
       // 3rd Tab
       {
@@ -34,9 +34,10 @@ const routes: Routes = [
         children: [
           {
             path: '',
-            loadChildren: './notification/notification.module#NotificationPageModule'
+            loadChildren:
+              './notification/notification.module#NotificationPageModule',
           },
-        ]
+        ],
       },
       // 4th Tab
       {
@@ -44,24 +45,21 @@ const routes: Routes = [
         children: [
           {
             path: '',
-            loadChildren:'./pages/feeds/search/search.module#SearchPageModule'
+            loadChildren: './pages/feeds/search/search.module#SearchPageModule',
           },
-        ]
+        ],
       },
       {
         path: '',
         redirectTo: '/tabs/home',
-        pathMatch: 'full'
+        pathMatch: 'full',
       },
-    ]
-  }
+    ],
+  },
 ];
 
 @NgModule({
-  imports: [TranslateModule,
-            RouterModule.forChild(routes)
-           ],
-  exports: [RouterModule]
+  imports: [TranslateModule, RouterModule.forChild(routes)],
+  exports: [RouterModule],
 })
-
 export class FeedsRoutingModule {}

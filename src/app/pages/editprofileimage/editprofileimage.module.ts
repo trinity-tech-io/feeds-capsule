@@ -16,8 +16,8 @@ import { TranslateModule } from '@ngx-translate/core';
     IonicModule,
     ComponentsModule,
     TranslateModule,
-    EditprofileimagePageRoutingModule
+    EditprofileimagePageRoutingModule,
   ],
-  declarations: [EditprofileimagePage]
+  declarations: [EditprofileimagePage],
 })
 export class EditprofileimagePageModule {}

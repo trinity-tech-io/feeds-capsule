@@ -9,10 +9,9 @@ describe('DiscoverfeedinfoPage', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ DiscoverfeedinfoPage ],
+      declarations: [DiscoverfeedinfoPage],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
-    })
-    .compileComponents();
+    }).compileComponents();
   }));
 
   beforeEach(() => {

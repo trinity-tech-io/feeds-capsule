@@ -1,4 +1,4 @@
-import { Component, OnInit,Input} from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 
 @Component({
   selector: 'app-percentageloading',
@@ -6,8 +6,7 @@ import { Component, OnInit,Input} from '@angular/core';
   styleUrls: ['./percentageloading.component.scss'],
 })
 export class PercentageloadingComponent implements OnInit {
-
-  public max:number = 100;
+  public max: number = 100;
   public stroke: number = 4;
   public radius: number = 25;
   public color: string = '#7624fe';
@@ -17,12 +16,11 @@ export class PercentageloadingComponent implements OnInit {
   public animation: string = 'easeOutCubic';
   public animationDelay: number = 0;
   public gradient: boolean = false;
-  public rounded:boolean = false;
+  public rounded: boolean = false;
   public semicircle: boolean = false;
-  @Input() public percent:number = 0;
-  @Input() public rotateNum:any ={};
-  constructor() { }
+  @Input() public percent: number = 0;
+  @Input() public rotateNum: any = {};
+  constructor() {}
 
   ngOnInit() {}
-
 }

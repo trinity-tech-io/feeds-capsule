@@ -11,8 +11,8 @@ import { CurrencyviewallPage } from './currencyviewall.page';
 const routes: Routes = [
   {
     path: '',
-    component: CurrencyviewallPage
-  }
+    component: CurrencyviewallPage,
+  },
 ];
 
 @NgModule({
@@ -22,8 +22,8 @@ const routes: Routes = [
     TranslateModule,
     ComponentsModule,
     IonicModule,
-    RouterModule.forChild(routes)
+    RouterModule.forChild(routes),
   ],
-  declarations: [CurrencyviewallPage]
+  declarations: [CurrencyviewallPage],
 })
 export class CurrencyviewallPageModule {}

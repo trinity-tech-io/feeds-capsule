@@ -11,19 +11,19 @@ import { ComponentsModule } from 'src/app/components/components.module';
 const routes: Routes = [
   {
     path: '',
-    component: NotificationPage
-  }
+    component: NotificationPage,
+  },
 ];
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
-    TranslateModule, 
+    TranslateModule,
     IonicModule,
     ComponentsModule,
-    RouterModule.forChild(routes)
+    RouterModule.forChild(routes),
   ],
-  declarations: [NotificationPage]
+  declarations: [NotificationPage],
 })
 export class NotificationPageModule {}

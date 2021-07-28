@@ -9,10 +9,9 @@ describe('ScanqrcodePage', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ScanqrcodePage ],
+      declarations: [ScanqrcodePage],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
-    })
-    .compileComponents();
+    }).compileComponents();
   }));
 
   beforeEach(() => {

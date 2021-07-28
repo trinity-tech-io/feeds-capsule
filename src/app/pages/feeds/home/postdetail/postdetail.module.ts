@@ -17,8 +17,8 @@ import { ShareModule } from 'src/app/share/share.module';
 const routes: Routes = [
   {
     path: '',
-    component: PostdetailPage
-  }
+    component: PostdetailPage,
+  },
 ];
 
 @NgModule({
@@ -35,6 +35,6 @@ const routes: Routes = [
     ComponentsModule,
     RouterModule.forChild(routes),
   ],
-  declarations: [PostdetailPage]
+  declarations: [PostdetailPage],
 })
 export class PostdetailPageModule {}

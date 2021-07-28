@@ -5,18 +5,18 @@ import { TranslateModule } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
 import { QRCodeModule } from 'angularx-qrcode';
 
-import { ServerpromptComponent} from './serverprompt/serverprompt.component';
+import { ServerpromptComponent } from './serverprompt/serverprompt.component';
 import { PaypromptComponent } from './payprompt/payprompt.component';
 import { NftdialogComponent } from './../components/nftdialog/nftdialog.component';
-import { TipdialogComponent} from './tipdialog/tipdialog.component';
-import { MorenameComponent} from './morename/morename.component';
+import { TipdialogComponent } from './tipdialog/tipdialog.component';
+import { MorenameComponent } from './morename/morename.component';
 
-import {ConfirmdialogComponent} from './confirmdialog/confirmdialog.component';
-import {AlertdialogComponent} from './alertdialog/alertdialog.component';
+import { ConfirmdialogComponent } from './confirmdialog/confirmdialog.component';
+import { AlertdialogComponent } from './alertdialog/alertdialog.component';
 
-import { MyfeedsComponent} from './myfeeds/myfeeds.component';
-import { FollowingComponent} from './following/following.component';
-import { LikesComponent} from './likes/likes.component';
+import { MyfeedsComponent } from './myfeeds/myfeeds.component';
+import { FollowingComponent } from './following/following.component';
+import { LikesComponent } from './likes/likes.component';
 import { CommentComponent } from './comment/comment.component';
 import { SwitchfeedComponent } from './switchfeed/switchfeed.component';
 import { PreviewqrcodeComponent } from './previewqrcode/previewqrcode.component';
@@ -39,8 +39,7 @@ import { ShareModule } from 'src/app/share/share.module';
 
 import { TitleBarComponent } from './titlebar/titlebar.component';
 import { TitlebarmenuitemComponent } from './titlebarmenuitem/titlebarmenuitem.component';
-import {RoundProgressModule} from 'angular-svg-round-progressbar';
-
+import { RoundProgressModule } from 'angular-svg-round-progressbar';
 
 @NgModule({
   imports: [
@@ -54,7 +53,7 @@ import {RoundProgressModule} from 'angular-svg-round-progressbar';
     IonicModule,
     ShareModule,
     QRCodeModule,
-    RoundProgressModule
+    RoundProgressModule,
   ],
 
   declarations: [
@@ -80,7 +79,7 @@ import {RoundProgressModule} from 'angular-svg-round-progressbar';
     AddassetComponent,
     AssetitemComponent,
     NewassetitemComponent,
-    ChannelcardComponent
+    ChannelcardComponent,
   ],
   exports: [
     AlertdialogComponent,
@@ -104,12 +103,20 @@ import {RoundProgressModule} from 'angular-svg-round-progressbar';
     AddassetComponent,
     AssetitemComponent,
     NewassetitemComponent,
-    ChannelcardComponent
+    ChannelcardComponent,
   ],
 
-  providers: [
+  providers: [],
+  entryComponents: [
+    VideofullscreenComponent,
+    AlertdialogComponent,
+    ConfirmdialogComponent,
+    MorenameComponent,
+    TipdialogComponent,
+    ServerpromptComponent,
+    PaypromptComponent,
+    NftdialogComponent,
+    PreviewqrcodeComponent,
   ],
-  entryComponents: [VideofullscreenComponent,AlertdialogComponent,ConfirmdialogComponent,MorenameComponent,TipdialogComponent,ServerpromptComponent,
-    PaypromptComponent,NftdialogComponent,PreviewqrcodeComponent],
 })
-export class ComponentsModule { }
+export class ComponentsModule {}

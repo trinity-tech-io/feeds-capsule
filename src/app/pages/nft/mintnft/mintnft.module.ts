@@ -7,12 +7,11 @@ import { IonicModule } from '@ionic/angular';
 import { ComponentsModule } from '../../../components/components.module';
 import { MintnftPage } from './mintnft.page';
 
-
 const routes: Routes = [
   {
     path: '',
-    component: MintnftPage
-  }
+    component: MintnftPage,
+  },
 ];
 
 @NgModule({
@@ -22,8 +21,8 @@ const routes: Routes = [
     IonicModule,
     ComponentsModule,
     TranslateModule,
-    RouterModule.forChild(routes)
+    RouterModule.forChild(routes),
   ],
-  declarations: [MintnftPage]
+  declarations: [MintnftPage],
 })
 export class MintnftPageModule {}

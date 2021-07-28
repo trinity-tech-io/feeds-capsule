@@ -1,7 +1,7 @@
 import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
 import { Events } from 'src/app/services/events.service';
 import { NativeService } from 'src/app/services/NativeService';
-import { TranslateService } from "@ngx-translate/core";
+import { TranslateService } from '@ngx-translate/core';
 import { FeedService } from 'src/app/services/FeedService';
 import { ThemeService } from 'src/app/services/theme.service';
 import { TitleBarService } from 'src/app/services/TitleBarService';
@@ -12,12 +12,11 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
   templateUrl: './about.html',
   styleUrls: ['./about.scss'],
 })
-
 export class AboutPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   public connectionStatus = 1;
-  public version = "v1.6.0";
-  public currentLanguage = "";
+  public version = 'v1.6.0';
+  public currentLanguage = '';
 
   constructor(
     private zone: NgZone,
@@ -26,63 +25,68 @@ export class AboutPage implements OnInit {
     private events: Events,
     private feedService: FeedService,
     public theme: ThemeService,
-    private titleBarService: TitleBarService
+    private titleBarService: TitleBarService,
   ) {}
 
-    ngOnInit() {
-    }
+  ngOnInit() {}
 
-    ionViewWillEnter() {
-      this.initTitle();
+  ionViewWillEnter() {
+    this.initTitle();
 
-      this.connectionStatus = this.feedService.getConnectionStatus();
-      this.events.subscribe(FeedsEvent.PublishType.connectionChanged,(status)=>{
-        this.zone.run(() => {
-          this.connectionStatus = status;
-        });
+    this.connectionStatus = this.feedService.getConnectionStatus();
+    this.events.subscribe(FeedsEvent.PublishType.connectionChanged, status => {
+      this.zone.run(() => {
+        this.connectionStatus = status;
       });
-    }
+    });
+  }
 
-    ionViewDidEnter(){
-    }
+  ionViewDidEnter() {}
 
-    initTitle(){
-      this.currentLanguage = this.feedService.getCurrentLang();
-      this.titleBarService.setTitle(this.titleBar, this.translate.instant("AboutPage.about"));
-      this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
-      this.titleBarService.setTitleBarMoreMemu(this.titleBar);
-    }
-
+  initTitle() {
+    this.currentLanguage = this.feedService.getCurrentLang();
+    this.titleBarService.setTitle(
+      this.titleBar,
+      this.translate.instant('AboutPage.about'),
+    );
+    this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
+    this.titleBarService.setTitleBarMoreMemu(this.titleBar);
+  }
 
   gotoWebsite() {
-    this.native.openUrl("https://trinity-feeds.app");
+    this.native.openUrl('https://trinity-feeds.app');
   }
 
-  showDisclaimer(){
-    this.native.openUrl(" https://trinity-feeds.app/disclaimer");
+  showDisclaimer() {
+    this.native.openUrl(' https://trinity-feeds.app/disclaimer');
   }
 
-  showHelp(){
-     if(this.currentLanguage === 'zh'){
-      this.native.openUrl("https://github.com/elastos-trinity/feeds-manual-docs/blob/master/Feeds_Manual_zh.md");
-     }else{
-      this.native.openUrl("https://github.com/elastos-trinity/feeds-manual-docs/blob/master/Feeds_Manual_en.md");
-     }
+  showHelp() {
+    if (this.currentLanguage === 'zh') {
+      this.native.openUrl(
+        'https://github.com/elastos-trinity/feeds-manual-docs/blob/master/Feeds_Manual_zh.md',
+      );
+    } else {
+      this.native.openUrl(
+        'https://github.com/elastos-trinity/feeds-manual-docs/blob/master/Feeds_Manual_en.md',
+      );
+    }
   }
 
-  gotoTelegram(){
-    this.native.openUrl("https://t.me/feedscapsule");
+  gotoTelegram() {
+    this.native.openUrl('https://t.me/feedscapsule');
   }
 
-  copyEmailAddress(){
-    this.native.copyClipboard("feeds@trinity-tech.io").then(()=>{
-      this.native.toast_trans("common.copysucceeded");
-  }).catch(()=>{
-
-  });;
+  copyEmailAddress() {
+    this.native
+      .copyClipboard('feeds@trinity-tech.io')
+      .then(() => {
+        this.native.toast_trans('common.copysucceeded');
+      })
+      .catch(() => {});
   }
 
-  ionViewWillLeave(){
+  ionViewWillLeave() {
     this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
     this.events.publish(FeedsEvent.PublishType.addConnectionChanged);
   }

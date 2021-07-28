@@ -3,7 +3,7 @@ import { FeedService } from '../../../../services/FeedService';
 import { CarrierService } from '../../../../services/CarrierService';
 import { NativeService } from '../../../../services/NativeService';
 import { ThemeService } from '../../../../services/theme.service';
-import { TranslateService } from "@ngx-translate/core";
+import { TranslateService } from '@ngx-translate/core';
 import { PopoverController } from '@ionic/angular';
 import { CameraService } from '../../../../services/CameraService';
 import { PopupProvider } from '../../../../services/popup';
@@ -20,145 +20,177 @@ import { AppService } from '../../../../services/AppService';
 })
 export class ScanqrcodePage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
-  public bindPublisherAccountType:string = "";
+  public bindPublisherAccountType: string = '';
   public connectionStatus = 1;
-  public title = "01/06";
+  public title = '01/06';
   public waitFriendsOnline = false;
   public carrierAddress: string;
-  public nonce: string = "0";
-  public popover:any = null;
-  public scanContent = "";
-  public lightThemeType:number = 2;
+  public nonce: string = '0';
+  public popover: any = null;
+  public scanContent = '';
+  public lightThemeType: number = 2;
 
   constructor(
     private events: Events,
     private native: NativeService,
     private zone: NgZone,
-    private feedService:FeedService,
+    private feedService: FeedService,
     private carrier: CarrierService,
-    private translate:TranslateService,
-    public  theme:ThemeService,
+    private translate: TranslateService,
+    public theme: ThemeService,
     private camera: CameraService,
-    public popupProvider:PopupProvider,
-    private popoverController:PopoverController,
-    private intentService:IntentService,
+    public popupProvider: PopupProvider,
+    private popoverController: PopoverController,
+    private intentService: IntentService,
     private titleBarService: TitleBarService,
-    private appService:AppService
-    ) {
-  }
+    private appService: AppService,
+  ) {}
 
-  ngOnInit() {
-  }
+  ngOnInit() {}
 
   ionViewWillEnter() {
     this.bindPublisherAccountType = this.feedService.getBindPublisherAccountType();
     this.initTitle();
     this.connectionStatus = this.feedService.getConnectionStatus();
-    this.events.subscribe(FeedsEvent.PublishType.connectionChanged,(status)=>{
+    this.events.subscribe(FeedsEvent.PublishType.connectionChanged, status => {
       this.zone.run(() => {
         this.connectionStatus = status;
       });
     });
   }
 
-  initTitle(){
-    this.titleBarService.setTitle(this.titleBar,this.translate.instant('ScanqrcodePage.title'));
+  initTitle() {
+    this.titleBarService.setTitle(
+      this.titleBar,
+      this.translate.instant('ScanqrcodePage.title'),
+    );
     this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
     this.titleBarService.setTitleBarMoreMemu(this.titleBar);
   }
 
-  ionViewDidEnter() {
-  }
+  ionViewDidEnter() {}
 
-  ionViewWillLeave(){
+  ionViewWillLeave() {
     this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
-    let value =  this.popoverController.getTop()["__zone_symbol__value"] || "";
-    if(value!=""){
+    let value = this.popoverController.getTop()['__zone_symbol__value'] || '';
+    if (value != '') {
       this.popoverController.dismiss();
       this.popover = null;
     }
   }
 
-  scanService(){
-    if(this.feedService.getConnectionStatus() != 0){
+  scanService() {
+    if (this.feedService.getConnectionStatus() != 0) {
       this.native.toastWarn('common.connectionError');
       return;
     }
-    this.checkDid("scanService");
+    this.checkDid('scanService');
   }
 
   async scanAddress() {
     try {
       let res = await this.intentService.scanQRCode();
       this.handleAddress(res);
-    } catch (error) {
-
-    }
+    } catch (error) {}
   }
 
-  handleAddress(scanResult: string){
-    if (!scanResult.startsWith('feeds://') &&
-        !scanResult.startsWith('feeds_raw://')){
-      alert(this.translate.instant("AddServerPage.tipMsg"));
-      return ;
+  handleAddress(scanResult: string) {
+    if (
+      !scanResult.startsWith('feeds://') &&
+      !scanResult.startsWith('feeds_raw://')
+    ) {
+      alert(this.translate.instant('AddServerPage.tipMsg'));
+      return;
     }
 
     let result = this.feedService.parseBindServerUrl(scanResult);
     this.carrierAddress = result.carrierAddress;
     this.nonce = result.nonce;
     let did = result.did;
-    this.carrier.getIdFromAddress(this.carrierAddress,
-      (userId)=>{
-          this.addFriends(this.carrierAddress, userId, this.nonce, did, scanResult);
+    this.carrier.getIdFromAddress(
+      this.carrierAddress,
+      userId => {
+        this.addFriends(
+          this.carrierAddress,
+          userId,
+          this.nonce,
+          did,
+          scanResult,
+        );
       },
-      (err)=>{
-      }
+      err => {},
     );
   }
 
-  addFriends(address: string, nodeId: string, nonce: string, did: string, scanResult: string){
-    this.carrier.isValidAddress(address, (isValid:boolean) => {
-      if (!isValid){
-        let errMsg= this.translate.instant('common.addressinvalid')+": "+address;
-        this.native.toast(errMsg);
-        return;
-      }
-      this.carrier.addFriend(address, "hi",
-        () => {
-          this.zone.run(() => {
-              let feedUrl = "-1";
-              if (nonce == undefined) nonce = "";
-              if (nonce == "0") feedUrl = scanResult;
-              this.native.navigateForward(['/bindservice/startbinding/',nodeId, nonce, address, did, feedUrl],{
-                replaceUrl: true
-              });
-          });
-        }, (err) => {
-        });
+  addFriends(
+    address: string,
+    nodeId: string,
+    nonce: string,
+    did: string,
+    scanResult: string,
+  ) {
+    this.carrier.isValidAddress(
+      address,
+      (isValid: boolean) => {
+        if (!isValid) {
+          let errMsg =
+            this.translate.instant('common.addressinvalid') + ': ' + address;
+          this.native.toast(errMsg);
+          return;
+        }
+        this.carrier.addFriend(
+          address,
+          'hi',
+          () => {
+            this.zone.run(() => {
+              let feedUrl = '-1';
+              if (nonce == undefined) nonce = '';
+              if (nonce == '0') feedUrl = scanResult;
+              this.native.navigateForward(
+                [
+                  '/bindservice/startbinding/',
+                  nodeId,
+                  nonce,
+                  address,
+                  did,
+                  feedUrl,
+                ],
+                {
+                  replaceUrl: true,
+                },
+              );
+            });
+          },
+          err => {},
+        );
       },
-      (error) => {
+      error => {
         // this.native.toast("address error: " + error);
-      });
+      },
+    );
   }
 
-  declareOwner(nodeId: string){
-    this.feedService.declareOwnerRequest(nodeId, this.carrierAddress, this.nonce);
+  declareOwner(nodeId: string) {
+    this.feedService.declareOwnerRequest(
+      nodeId,
+      this.carrierAddress,
+      this.nonce,
+    );
   }
 
-
-  scanImage(){
-    if(this.feedService.getConnectionStatus() != 0){
+  scanImage() {
+    if (this.feedService.getConnectionStatus() != 0) {
       this.native.toastWarn('common.connectionError');
       return;
     }
-    this.checkDid("scanImage");
+    this.checkDid('scanImage');
   }
 
-  checkDid(clickType:string){
+  checkDid(clickType: string) {
     let signInData = this.feedService.getSignInData() || {};
-    let did = signInData["did"];
-    this.feedService.checkDIDDocument(did).then((isOnSideChain)=>{
-      if (!isOnSideChain){
+    let did = signInData['did'];
+    this.feedService.checkDIDDocument(did).then(isOnSideChain => {
+      if (!isOnSideChain) {
         //show one button dialog
         //if click this button
         //call feedService.promptpublishdid() function
@@ -169,37 +201,39 @@ export class ScanqrcodePage implements OnInit {
     });
   }
 
-  openAlert(){
+  openAlert() {
     this.popover = this.popupProvider.ionicAlert(
       this,
       // "ConfirmdialogComponent.signoutTitle",
-      "",
-      "common.didnotrelease",
+      '',
+      'common.didnotrelease',
       this.confirm,
-      'tskth.svg'
+      'tskth.svg',
     );
   }
 
-  confirm(that:any){
-      if(this.popover!=null){
-         this.popover.dismiss();
-         that.feedService.promptpublishdid();
-      }
+  confirm(that: any) {
+    if (this.popover != null) {
+      this.popover.dismiss();
+      that.feedService.promptpublishdid();
+    }
   }
 
-  handleJump(clickType:string){
-      if(clickType === "scanService"){
-           this.scanAddress();
-           return;
-      }
+  handleJump(clickType: string) {
+    if (clickType === 'scanService') {
+      this.scanAddress();
+      return;
+    }
   }
 
-  createLater(){
-    let isFirstBindFeedService = localStorage.getItem('org.elastos.dapp.feeds.isFirstBindFeedService') || "";
+  createLater() {
+    let isFirstBindFeedService =
+      localStorage.getItem('org.elastos.dapp.feeds.isFirstBindFeedService') ||
+      '';
     let bindingServer = this.feedService.getBindingServer() || null;
-    if(isFirstBindFeedService === "" && bindingServer === null){
-          this.appService.createDialog();
-           return;
+    if (isFirstBindFeedService === '' && bindingServer === null) {
+      this.appService.createDialog();
+      return;
     }
     this.native.pop();
   }

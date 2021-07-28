@@ -10,11 +10,11 @@
  */
 
 declare namespace Intl {
-    /*type RelativeTimeFormatUnit = any;
+  /*type RelativeTimeFormatUnit = any;
     type RelativeTimeFormat = any;
     type RelativeTimeFormatPart = any;
     type RelativeTimeFormatOptions = any;
     type ResolvedRelativeTimeFormatOptions = any;*/
-    type NumberFormatPart = any;
-    type NumberFormatPartTypes = any;
+  type NumberFormatPart = any;
+  type NumberFormatPartTypes = any;
 }

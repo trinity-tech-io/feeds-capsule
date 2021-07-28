@@ -5,11 +5,7 @@ import { HtmlPipe } from 'src/app/pipes/html.pipe';
 
 @NgModule({
   declarations: [HtmlPipe],
-  imports: [
-    CommonModule
-  ],
-  exports: [
-      HtmlPipe
-  ]
+  imports: [CommonModule],
+  exports: [HtmlPipe],
 })
-export class ShareModule { }
+export class ShareModule {}

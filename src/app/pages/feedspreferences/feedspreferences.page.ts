@@ -1,7 +1,7 @@
 import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
-import { PopoverController} from '@ionic/angular';
+import { PopoverController } from '@ionic/angular';
 import { ActivatedRoute, Params } from '@angular/router';
-import { TranslateService } from "@ngx-translate/core";
+import { TranslateService } from '@ngx-translate/core';
 import { ThemeService } from '../../services/theme.service';
 import { FeedService } from '../../services/FeedService';
 import { NativeService } from '../../services/NativeService';
@@ -13,7 +13,7 @@ import { PopupProvider } from '../../services/popup';
 import { Events } from 'src/app/services/events.service';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import  _ from 'lodash';
+import _ from 'lodash';
 
 @Component({
   selector: 'app-feedspreferences',
@@ -23,63 +23,63 @@ import  _ from 'lodash';
 export class FeedspreferencesPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   public connectionStatus = 1;
-  public hideDeletedPosts:boolean = true;
-  public nodeId:string = "";
-  public feedId:number = 0;
+  public hideDeletedPosts: boolean = true;
+  public nodeId: string = '';
+  public feedId: number = 0;
   public feedPublicStatus = {};
-  public curFeedPublicStatus:boolean = false;
-  public popover:any = null;
-  public developerMode:boolean =  false;
+  public curFeedPublicStatus: boolean = false;
+  public popover: any = null;
+  public developerMode: boolean = false;
   public isShowQrcode: boolean = true;
 
-  public isFirst:boolean = false;
+  public isFirst: boolean = false;
 
-  public curCollectibleStatus:boolean = false;
+  public curCollectibleStatus: boolean = false;
 
   public collectibleStatus = {};
 
-
   constructor(
-    private translate:TranslateService,
+    private translate: TranslateService,
     private events: Events,
-    public theme:ThemeService,
+    public theme: ThemeService,
     public activeRoute: ActivatedRoute,
     private feedService: FeedService,
     private native: NativeService,
     public httpService: HttpService,
-    private storageService:StorageService,
-    public popupProvider:PopupProvider,
-    private popoverController:PopoverController,
-    private zone:NgZone,
-    private titleBarService: TitleBarService
-  ) { }
+    private storageService: StorageService,
+    public popupProvider: PopupProvider,
+    private popoverController: PopoverController,
+    private zone: NgZone,
+    private titleBarService: TitleBarService,
+  ) {}
 
   ngOnInit() {
-
     this.activeRoute.queryParams.subscribe((params: Params) => {
       this.nodeId = params.nodeId;
       this.feedId = params.feedId;
     });
   }
 
-  initTitle(){
-    this.titleBarService.setTitle(this.titleBar, this.translate.instant('FeedspreferencesPage.title'));
+  initTitle() {
+    this.titleBarService.setTitle(
+      this.titleBar,
+      this.translate.instant('FeedspreferencesPage.title'),
+    );
     this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
     this.titleBarService.setTitleBarMoreMemu(this.titleBar);
   }
 
-  ionViewWillEnter(){
-
+  ionViewWillEnter() {
     let collectibleStatus = this.feedService.getCollectibleStatus();
-    let key = this.nodeId+"_"+this.feedId;
+    let key = this.nodeId + '_' + this.feedId;
     this.curCollectibleStatus = collectibleStatus[key] || false;
     this.connectionStatus = this.feedService.getConnectionStatus();
-    this.feedPublicStatus =this.feedService.getFeedPublicStatus() || {};
+    this.feedPublicStatus = this.feedService.getFeedPublicStatus() || {};
     this.getPublicStatus();
     let server = this.feedService.getServerbyNodeId(this.nodeId) || null;
-    if(server!=null){
-      this.feedService.checkDIDOnSideChain(server.did,(isOnSideChain)=>{
-          this.isShowQrcode = isOnSideChain;
+    if (server != null) {
+      this.feedService.checkDIDOnSideChain(server.did, isOnSideChain => {
+        this.isShowQrcode = isOnSideChain;
       });
     }
     this.developerMode = this.feedService.getDeveloperMode();
@@ -88,9 +88,9 @@ export class FeedspreferencesPage implements OnInit {
     this.addEvent();
   }
 
-  ionViewWillLeave(){
-    let value =  this.popoverController.getTop()["__zone_symbol__value"] || "";
-    if(value!=""){
+  ionViewWillLeave() {
+    let value = this.popoverController.getTop()['__zone_symbol__value'] || '';
+    if (value != '') {
       this.popoverController.dismiss();
       this.popover = null;
     }
@@ -98,188 +98,197 @@ export class FeedspreferencesPage implements OnInit {
     this.events.publish(FeedsEvent.PublishType.addProflieEvent);
   }
 
-  clearEvent(){
+  clearEvent() {
     this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
     this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
   }
 
-  addEvent(){
-    this.events.subscribe(FeedsEvent.PublishType.connectionChanged,(status)=>{
+  addEvent() {
+    this.events.subscribe(FeedsEvent.PublishType.connectionChanged, status => {
       this.zone.run(() => {
         this.connectionStatus = status;
       });
     });
-    this.events.subscribe(FeedsEvent.PublishType.updateTitle,()=>{
+    this.events.subscribe(FeedsEvent.PublishType.updateTitle, () => {
       this.initTitle();
     });
   }
 
-  unPublicFeeds(){
-
+  unPublicFeeds() {
     let server = this.feedService.getServerbyNodeId(this.nodeId) || null;
-    if(server===null){
-       return;
+    if (server === null) {
+      return;
     }
-    let feed = this.feedService.getChannelFromId(this.nodeId,this.feedId);
-    let feedsUrl = server.feedsUrl+"/"+feed["id"];
+    let feed = this.feedService.getChannelFromId(this.nodeId, this.feedId);
+    let feedsUrl = server.feedsUrl + '/' + feed['id'];
     let feedsUrlHash = UtilService.SHA256(feedsUrl);
-    this.httpService.ajaxGet(ApiUrl.remove+"?feedsUrlHash="+feedsUrlHash).then((result)=>{
-      if(result["code"] === 200){
-          this.zone.run(()=>{
+    this.httpService
+      .ajaxGet(ApiUrl.remove + '?feedsUrlHash=' + feedsUrlHash)
+      .then(result => {
+        if (result['code'] === 200) {
+          this.zone.run(() => {
             this.curFeedPublicStatus = false;
             this.isFirst = true;
           });
-          this.feedPublicStatus =_.omit(this.feedPublicStatus,[feedsUrlHash]);
+          this.feedPublicStatus = _.omit(this.feedPublicStatus, [feedsUrlHash]);
           this.feedService.setFeedPublicStatus(this.feedPublicStatus);
-          this.storageService.set("feeds.feedPublicStatus",JSON.stringify(this.feedPublicStatus));
-      }
-    });
+          this.storageService.set(
+            'feeds.feedPublicStatus',
+            JSON.stringify(this.feedPublicStatus),
+          );
+        }
+      });
   }
 
-  publicFeeds(buttonType:string){
-
+  publicFeeds(buttonType: string) {
     let server = this.feedService.getServerbyNodeId(this.nodeId) || null;
-    if(server===null){
-       return;
+    if (server === null) {
+      return;
     }
-    let feed = this.feedService.getChannelFromId(this.nodeId,this.feedId);
-    let feedsUrl = server.feedsUrl+"/"+feed["id"];
-    let channelAvatar = this.feedService.parseChannelAvatar(feed["avatar"]);
+    let feed = this.feedService.getChannelFromId(this.nodeId, this.feedId);
+    let feedsUrl = server.feedsUrl + '/' + feed['id'];
+    let channelAvatar = this.feedService.parseChannelAvatar(feed['avatar']);
     let feedsUrlHash = UtilService.SHA256(feedsUrl);
     let obj = {
-      "did":server['did'],
-      "name":feed["name"],
-      "description":feed["introduction"],
-      "url":feedsUrl,
-      "feedsUrlHash":feedsUrlHash,
-      "feedsAvatar":channelAvatar,
-      "followers":feed["subscribers"],
-      "ownerName":feed["owner_name"],
-      "nodeId":this.nodeId,
-      "ownerDid":feed["owner_did"]
+      did: server['did'],
+      name: feed['name'],
+      description: feed['introduction'],
+      url: feedsUrl,
+      feedsUrlHash: feedsUrlHash,
+      feedsAvatar: channelAvatar,
+      followers: feed['subscribers'],
+      ownerName: feed['owner_name'],
+      nodeId: this.nodeId,
+      ownerDid: feed['owner_did'],
     };
 
-    if(this.developerMode&&buttonType==="confirm"){
-      obj["purpose"] = "1";
+    if (this.developerMode && buttonType === 'confirm') {
+      obj['purpose'] = '1';
     }
 
-    this.httpService.ajaxPost(ApiUrl.register,obj).then((result)=>{
-      if(result["code"] === 200){
-          this.zone.run(()=>{
+    this.httpService.ajaxPost(ApiUrl.register, obj).then(result => {
+      if (result['code'] === 200) {
+        this.zone.run(() => {
           this.isFirst = true;
           this.curFeedPublicStatus = true;
-          });
-          this.feedPublicStatus[feedsUrlHash] = "1";
-          this.feedService.setFeedPublicStatus(this.feedPublicStatus);
-          this.storageService.set("feeds.feedPublicStatus",JSON.stringify(this.feedPublicStatus));
+        });
+        this.feedPublicStatus[feedsUrlHash] = '1';
+        this.feedService.setFeedPublicStatus(this.feedPublicStatus);
+        this.storageService.set(
+          'feeds.feedPublicStatus',
+          JSON.stringify(this.feedPublicStatus),
+        );
       }
     });
   }
 
-
-developerModeConfirm(){
-  this.popover = this.popupProvider.ionicConfirm(
-    this,
-    "SearchPage.confirmTitle",
-    "ServerInfoPage.des1",
-    this.cancel,
-    this.confirm,
-    "./assets/images/tskth.svg",
-    "ServerInfoPage.des2",
-    "ServerInfoPage.des3",
-  );
-}
-
-cancel(that:any){
-  if(this.popover!=null){
-    this.popover.dismiss();
+  developerModeConfirm() {
+    this.popover = this.popupProvider.ionicConfirm(
+      this,
+      'SearchPage.confirmTitle',
+      'ServerInfoPage.des1',
+      this.cancel,
+      this.confirm,
+      './assets/images/tskth.svg',
+      'ServerInfoPage.des2',
+      'ServerInfoPage.des3',
+    );
   }
-  that.publicFeeds("cancel");
-}
 
-confirm(that:any){
-  if(this.popover!=null){
-    this.popover.dismiss();
+  cancel(that: any) {
+    if (this.popover != null) {
+      this.popover.dismiss();
+    }
+    that.publicFeeds('cancel');
   }
-  that.publicFeeds("confirm");
-}
 
-getPublicStatus(){
-  let server = this.feedService.getServerbyNodeId(this.nodeId) || null;
-  if(server===null){
-     return;
+  confirm(that: any) {
+    if (this.popover != null) {
+      this.popover.dismiss();
+    }
+    that.publicFeeds('confirm');
   }
-  let feedsUrl = server.feedsUrl+"/"+this.feedId;
-  let feedsUrlHash = UtilService.SHA256(feedsUrl);
-  let curFeedPublicStatus = this.feedPublicStatus[feedsUrlHash] || "";
-  if(curFeedPublicStatus === ""){
-    this.httpService.ajaxGet(ApiUrl.get+"?feedsUrlHash="+feedsUrlHash,false).then(
-      (result)=>{
-      if(result["code"] === 200){
-         let resultData = result["data"] || "";
-         if(resultData!=""){
-          this.zone.run(()=>{
-            this.curFeedPublicStatus = true;
-            this.isFirst = true;
-          });
-          this.feedPublicStatus[feedsUrlHash] = "1";
-          this.feedService.setFeedPublicStatus(this.feedPublicStatus);
-          this.storageService.set("feeds.feedPublicStatus",JSON.stringify(this.feedPublicStatus));
-         }else{
-          this.zone.run(()=>{
-            this.curFeedPublicStatus = false;
-          });
-         }
+
+  getPublicStatus() {
+    let server = this.feedService.getServerbyNodeId(this.nodeId) || null;
+    if (server === null) {
+      return;
+    }
+    let feedsUrl = server.feedsUrl + '/' + this.feedId;
+    let feedsUrlHash = UtilService.SHA256(feedsUrl);
+    let curFeedPublicStatus = this.feedPublicStatus[feedsUrlHash] || '';
+    if (curFeedPublicStatus === '') {
+      this.httpService
+        .ajaxGet(ApiUrl.get + '?feedsUrlHash=' + feedsUrlHash, false)
+        .then(result => {
+          if (result['code'] === 200) {
+            let resultData = result['data'] || '';
+            if (resultData != '') {
+              this.zone.run(() => {
+                this.curFeedPublicStatus = true;
+                this.isFirst = true;
+              });
+              this.feedPublicStatus[feedsUrlHash] = '1';
+              this.feedService.setFeedPublicStatus(this.feedPublicStatus);
+              this.storageService.set(
+                'feeds.feedPublicStatus',
+                JSON.stringify(this.feedPublicStatus),
+              );
+            } else {
+              this.zone.run(() => {
+                this.curFeedPublicStatus = false;
+              });
+            }
+          }
+        });
+    } else {
+      this.zone.run(() => {
+        this.curFeedPublicStatus = true;
+        this.isFirst = true;
+      });
+    }
+  }
+
+  toggle() {
+    if (!this.curFeedPublicStatus) {
+      if (this.feedService.getConnectionStatus() !== 0) {
+        this.native.toastWarn('common.connectionError');
+        return;
       }
-    })
-  }else{
-    this.zone.run(()=>{
-      this.curFeedPublicStatus = true;
-      this.isFirst = true;
+
+      if (!this.isShowQrcode) {
+        this.native.toastWarn('common.waitOnChain');
+        return;
+      }
+
+      if (this.developerMode) {
+        this.developerModeConfirm();
+        return;
+      }
+      this.publicFeeds('cancel');
+      return;
+    }
+
+    if (this.curFeedPublicStatus) {
+      if (this.feedService.getConnectionStatus() !== 0) {
+        this.native.toastWarn('common.connectionError');
+        return;
+      }
+      this.unPublicFeeds();
+      return;
+    }
+  }
+
+  setCollectible() {
+    this.zone.run(() => {
+      this.curCollectibleStatus = !this.curCollectibleStatus;
+      let key = this.nodeId + '_' + this.feedId;
+      this.collectibleStatus[key] = this.curCollectibleStatus;
+      this.feedService.setCollectibleStatus(this.collectibleStatus);
+      this.storageService.set(
+        'feeds.collectible.setting',
+        JSON.stringify(this.collectibleStatus),
+      );
     });
   }
- }
-
- toggle(){
-
-  if(!this.curFeedPublicStatus){
-    if(this.feedService.getConnectionStatus() !== 0){
-      this.native.toastWarn('common.connectionError');
-      return;
-    }
-
-    if(!this.isShowQrcode){
-      this.native.toastWarn('common.waitOnChain');
-      return;
-    }
-
-    if(this.developerMode){
-      this.developerModeConfirm();
-      return;
-    }
-    this.publicFeeds("cancel");
-    return;
-  }
-
-  if(this.curFeedPublicStatus){
-    if(this.feedService.getConnectionStatus() !== 0){
-      this.native.toastWarn('common.connectionError');
-      return;
-    }
-    this.unPublicFeeds();
-    return;
-  }
- }
-
-
- setCollectible(){
-  this.zone.run(()=>{
-    this.curCollectibleStatus = !this.curCollectibleStatus;
-    let key = this.nodeId+"_"+this.feedId;
-    this.collectibleStatus[key] = this.curCollectibleStatus;
-    this.feedService.setCollectibleStatus(this.collectibleStatus);
-    this.storageService.set("feeds.collectible.setting",JSON.stringify(this.collectibleStatus));
-  });
- }
-
 }
