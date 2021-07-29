@@ -27,7 +27,7 @@ export class ProfiledetailPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   public developerMode: boolean = false;
   public connectionStatus = 1;
-  public avatar: Avatar = null;
+  public avatar: string = '';
   public name = '';
   public description = '';
   public did = '';
@@ -125,7 +125,7 @@ export class ProfiledetailPage implements OnInit {
     }
   }
 
-  ionViewWillEnter() {
+  async ionViewWillEnter() {
     this.walletAddress =
       this.nftContractControllerService.getAccountAddress() || '';
     this.connectionStatus = this.feedService.getConnectionStatus();
@@ -134,14 +134,14 @@ export class ProfiledetailPage implements OnInit {
 
     let signInData = this.feedService.getSignInData() || {};
     this.name = signInData['nickname'] || signInData['name'] || '';
-    this.avatar = signInData['avatar'] || null;
+    // this.avatar = signInData['avatar'] || null;
     this.description = signInData['description'] || '';
     // this.did = signInData["did"] || "";
     this.did = this.feedService.rmDIDPrefix(signInData['did'] || '');
     this.telephone = signInData['telephone'] || '';
     this.email = signInData['email'] || '';
     this.location = signInData['location'] || '';
-
+    this.avatar = await this.feedService.getUserAvatar(this.did);
     this.collectData();
 
     this.initData();
@@ -190,17 +190,7 @@ export class ProfiledetailPage implements OnInit {
   }
 
   handleImages() {
-    if (this.avatar === null) {
-      return 'assets/images/default-contact.svg';
-    }
-    let contentType =
-      this.avatar['contentType'] || this.avatar['content-type'] || '';
-    let cdata = this.avatar['data'] || '';
-    if (contentType === '' || cdata === '') {
-      return 'assets/images/default-contact.svg';
-    }
-
-    return 'data:' + contentType + ';base64,' + this.avatar.data;
+    return this.avatar;
   }
 
   copytext(text: any) {

@@ -126,6 +126,7 @@ export class TitleBarService {
     titleBar.addOnItemClickedListener(icon => {
       if (icon.key == 'more') {
         this.event.publish(FeedsEvent.PublishType.openRightMenu);
+        this.event.publish(FeedsEvent.PublishType.openRightMenuForSWM);
         this.menu.open('menu');
       }
     });

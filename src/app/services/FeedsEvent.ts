@@ -45,6 +45,7 @@ declare namespace FeedsEvent {
 
     addFeedStatusChanged = 'addFeed:statusChanged',
     openRightMenu = 'feeds:openRightMenu',
+    openRightMenuForSWM = 'feeds:openRightMenuForSWM',
     editChannel = 'feeds:editChannel',
     editServer = 'feeds:editServer',
     editImages = 'feeds:editImages',

@@ -11,7 +11,7 @@
       <img [src]="handleImages()" style="align-content: center;" />
     </ion-avatar>
   </ion-grid>
-  <ion-button (click)="saveAvatar()">
+  <ion-button (click)="saveAvatar()" *ngIf="croppedImage == avatar">
     <ion-label> {{'common.save'|translate}}</ion-label>
   </ion-button>
 </ion-content>

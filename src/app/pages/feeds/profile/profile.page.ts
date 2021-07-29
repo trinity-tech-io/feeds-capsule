@@ -47,7 +47,7 @@ export class ProfilePage implements OnInit {
 
   // Sign in data
   public name: string = '';
-  public avatar: Avatar = null;
+  public avatar: string = '';
   public description: string = '';
 
   public hideComment = true;
@@ -234,7 +234,7 @@ export class ProfilePage implements OnInit {
     return likeList;
   }
 
-  addProflieEvent() {
+  async addProflieEvent() {
     this.updateWalletAddress();
 
     this.events.subscribe(FeedsEvent.PublishType.nftUpdateList, obj => {
@@ -356,8 +356,11 @@ export class ProfilePage implements OnInit {
     let signInData = this.feedService.getSignInData() || {};
 
     this.name = signInData['nickname'] || signInData['name'] || '';
-    this.avatar = signInData['avatar'] || null;
+    // this.avatar = signInData['avatar'] || null;
     this.description = signInData['description'] || '';
+
+    let userDid = signInData['did'] || '';
+    this.avatar = await this.feedService.getUserAvatar(userDid);
 
     this.events.subscribe(FeedsEvent.PublishType.updateLikeList, list => {
       this.zone.run(() => {
@@ -817,17 +820,7 @@ export class ProfilePage implements OnInit {
   }
 
   handleImages() {
-    if (this.avatar === null) {
-      return 'assets/images/default-contact.svg';
-    }
-    let contentType =
-      this.avatar['contentType'] || this.avatar['content-type'] || '';
-    let cdata = this.avatar['data'] || '';
-    if (contentType === '' || cdata === '') {
-      return 'assets/images/default-contact.svg';
-    }
-
-    return 'data:' + contentType + ';base64,' + this.avatar.data;
+    return this.avatar;
   }
 
   showMenuMore(item: any) {

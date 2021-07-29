@@ -22,6 +22,7 @@ export class EditprofileimagePage implements OnInit {
   private pictureMenu: any = null;
   public headPortrait: string = '';
   public croppedImage: string = '';
+
   private isOPenRightMenu: boolean = false;
   private userDid: string = '';
   constructor(
@@ -44,6 +45,7 @@ export class EditprofileimagePage implements OnInit {
 
     this.userDid = signInData.did;
     this.avatar = await this.feedService.getUserAvatar(this.userDid);
+
   }
 
   ionViewWillEnter() {
@@ -54,14 +56,13 @@ export class EditprofileimagePage implements OnInit {
     this.initTitle();
     this.headPortrait = this.feedService.getClipProfileIamge();
 
-    const clipImage = this.feedService.getClipProfileIamge();
-    if (clipImage != '')
-      this.avatar = clipImage;
+    this.croppedImage = this.feedService.getClipProfileIamge();
+    if (this.croppedImage != '')
+      this.avatar = this.croppedImage;
   }
 
   ionViewWillLeave() {
     //TODO 显示确认退出对话框
-
     this.events.unsubscribe(FeedsEvent.PublishType.openRightMenu);
     this.titleBarService.addRight(this.titleBar);
     this.titleBarService.setIcon(
@@ -70,8 +71,8 @@ export class EditprofileimagePage implements OnInit {
       null,
       null,
     );
-    let croppedImage = this.feedService.getClipProfileIamge();
-    if (this.headPortrait === croppedImage && !this.isOPenRightMenu) {
+    this.croppedImage = this.feedService.getClipProfileIamge();
+    if (this.headPortrait === this.croppedImage && !this.isOPenRightMenu) {
       this.feedService.setClipProfileIamge('');
     }
 
@@ -132,7 +133,8 @@ export class EditprofileimagePage implements OnInit {
     );
   }
 
-  saveAvatar() {
-    this.dataHelper.saveUserAvatar(this.userDid, this.avatar);
+  async saveAvatar() {
+    await this.dataHelper.saveUserAvatar(this.userDid, this.avatar);
+    this.native.pop();
   }
 }
