@@ -31,10 +31,11 @@ enum LogLevel {
 })
 export class MyApp {
   public name: string = '';
-  public avatar: Avatar = null;
+  public avatar: string = '';
   public wName: string = '';
   public popover: any = null;
   public sService: any = null;
+  private userDid: string = '';
   private localIdentityConnector = new LocalIdentityConnector();
   private essentialsConnector = new EssentialsConnector();
   public walletAddress: string = '';
@@ -75,7 +76,6 @@ export class MyApp {
         this.updateWalletAddress();
       },
     );
-
     // this.dataHelper.loadWalletAccountAddress().then((address)=>{
     //   console.log("accountAddress",address);
     //   this.walletAddress = address;
@@ -311,25 +311,23 @@ export class MyApp {
       signInData => {
         if (signInData == null || signInData == undefined) return;
         this.wName = signInData.nickname || signInData.name || '';
-        this.avatar = signInData.avatar || null;
+        this.userDid = signInData.did || "";
         this.name = UtilService.moreNanme(this.wName, 15);
       },
       error => {},
     );
+
+    this.events.subscribe(FeedsEvent.PublishType.openRightMenuForSWM, () => {
+      this.getAvatar();
+    })
+  }
+
+  async getAvatar() {
+    this.avatar = await this.feedService.getUserAvatar(this.userDid);
   }
 
   handleImages() {
-    if (this.avatar === null) {
-      return 'assets/images/default-contact.svg';
-    }
-    let contentType =
-      this.avatar['contentType'] || this.avatar['content-type'] || '';
-    let cdata = this.avatar['data'] || '';
-    if (contentType === '' || cdata === '') {
-      return 'assets/images/default-contact.svg';
-    }
-
-    return 'data:' + contentType + ';base64,' + this.avatar.data;
+    return this.avatar;
   }
 
   settings() {
