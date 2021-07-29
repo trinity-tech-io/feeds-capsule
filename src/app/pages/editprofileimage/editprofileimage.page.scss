@@ -1,0 +1,44 @@
+.container {
+
+    ion-button{
+        --background:#7624fe;
+        --background-activated:#7624fe;
+    }
+
+    .profile-header-title{
+        font-size: 18px;
+        font-weight: bold;
+        font-stretch: normal;
+        font-style: normal;
+        text-align: left;
+        color:#000000;
+        font-size: 18px;
+        margin-left: 10px;
+        margin-top: 10px;
+    }
+
+    .profileImages{
+        width: 70px;
+        height: 70px;
+        border: 1px solid #f8f2ff;
+        -o-object-fit: contain;
+        object-fit: contain;
+        overflow: hidden;
+        border-radius: 50%;
+    }
+
+    .cameraImg{
+        position: absolute;
+        width: 24px;
+        height: 24px;
+        margin-left: 23px;
+        margin-top: 20px;
+    }
+}
+
+.darkContainer{
+    .profile-header-title{
+        color:#ffffff;
+    }
+}
+

@@ -2,16 +2,24 @@
 <!-- <div *ngIf="connectionStatus == 1" class="offline-header"></div> -->
 <ion-content>
   <ion-grid class="container" [class.darkContainer]="theme.darkMode">
-    <ion-row style="align-content: center;">
-      <ion-col size="12" style="align-content: center; padding:0px;" class="profile-header-title">
+    <ion-row>
+      <ion-col size="12" class="profile-header-title">
         {{ 'common.setPropfileAvatar' | translate }}
       </ion-col>
     </ion-row>
-    <ion-avatar (click)="editImage()">
-      <img [src]="handleImages()" style="align-content: center;" />
-    </ion-avatar>
+    <ion-row style="text-align:center;margin-top:30px;" (click)="editImage()">
+      <ion-col size="12" style="position:relative;">
+        <ion-icon name="camera" class="cameraImg"></ion-icon>
+        <img [src]="handleImages()" class="profileImages"/>
+      </ion-col>
+    </ion-row>
   </ion-grid>
-  <ion-button (click)="saveAvatar()" *ngIf="croppedImage == avatar">
+  <!-- <ion-button (click)="saveAvatar()" *ngIf="croppedImage == avatar">
     <ion-label> {{'common.save'|translate}}</ion-label>
-  </ion-button>
+  </ion-button> -->
+  <ion-row class="btn-row" style="justify-content:flex-start;" (click)="saveAvatar()" *ngIf="croppedImage == avatar">
+    <ion-button style="margin-top:40px;">
+        <ion-label>{{'common.save'|translate}}</ion-label>
+    </ion-button>
+</ion-row>
 </ion-content>
