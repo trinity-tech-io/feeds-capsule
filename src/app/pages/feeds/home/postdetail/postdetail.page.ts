@@ -392,7 +392,7 @@ export class PostdetailPage implements OnInit {
         this.initRefresh();
         this.native.hideLoading();
         this.hideComment = true;
-        this.native.toast_trans('CommentPage.tipMsg1');
+        //this.native.toast_trans('CommentPage.tipMsg1');
       });
     });
 

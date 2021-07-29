@@ -388,7 +388,7 @@ export class HomePage implements OnInit {
         this.refreshPostList();
         this.hideComponent(null);
         this.native.hideLoading();
-        this.native.toast_trans('CommentPage.tipMsg1');
+        //this.native.toast_trans('CommentPage.tipMsg1');
       });
     });
   }
