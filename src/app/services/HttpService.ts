@@ -8,7 +8,7 @@ import { PopoverController } from '@ionic/angular';
 export class HttpService {
   public httpOptions = {
     headers: new HttpHeaders({
-      'Content-Type': 'application/json;',
+      'Content-Type': 'application/json;charset=utf-8',
     }),
   };
   public popover: any = null;
@@ -54,7 +54,7 @@ export class HttpService {
     }
     return new Promise((resove, reject) => {
       this.httpClient
-        .post(url, JSON.stringify(json), this.httpOptions)
+        .post(url, JSON.stringify(json),this.httpOptions)
         .subscribe(
           response => {
             this.native.hideLoading();
