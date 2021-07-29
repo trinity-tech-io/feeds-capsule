@@ -462,7 +462,7 @@ export class ChannelsPage implements OnInit {
         this.initnodeStatus(this.postList);
         this.hideComponent(null);
         this.native.hideLoading();
-        this.native.toast_trans('CommentPage.tipMsg1');
+        //this.native.toast_trans('CommentPage.tipMsg1');
       });
     });
 
@@ -1223,6 +1223,20 @@ export class ChannelsPage implements OnInit {
       this.zone.run(() => {
         let videodata = videoResult || '';
         if (videodata == '') {
+
+          let post = _.find(this.postList, post => {
+            return (
+              post.nodeId === nodeId &&
+              post.channel_id == channelId &&
+              post.id == postId
+            );
+          });
+          if (!this.feedService.checkPostIsAvalible(post)) {
+            this.isVideoLoading[this.videoCurKey] = false;
+            this.pauseVideo(id);
+            return;
+          }
+
           if (this.checkServerStatus(nodeId) != 0) {
             this.isVideoLoading[this.videoCurKey] = false;
             this.pauseVideo(id);
