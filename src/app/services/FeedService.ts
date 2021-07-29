@@ -7961,4 +7961,39 @@ export class FeedService {
     if (name == 'elastos.io') return 'https://api.elastos.io/eid';
     return 'https://api.elastos.io/eid';
   }
+
+  async getUserAvatar(userDid: string): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      let signinData = this.getSignInData();
+      if (!signinData) {
+        resolve('assets/images/default-contact.svg');
+        return;
+      }
+
+      let userDid = signinData.did;
+      let avatar = await this.dataHelper.loadUserAvatar(userDid);
+
+      if (avatar) {
+        resolve(avatar);
+        return;
+      }
+
+      let didAvatar = signinData.avatar;
+      if (!didAvatar) {
+        resolve('assets/images/default-contact.svg');
+        return;
+      }
+
+      let contentType =
+        didAvatar['contentType'] || didAvatar['content-type'] || '';
+      let cdata = didAvatar['data'] || '';
+      if (contentType === '' || cdata === '') {
+        resolve('assets/images/default-contact.svg');
+        return;
+      }
+
+      resolve('data:' + contentType + ';base64,' + didAvatar.data)
+      return;
+    });
+  }
 }

@@ -2280,4 +2280,22 @@ export class DataHelper {
       }
     });
   }
+
+  ////
+  //save user avatar
+  saveUserAvatar(userDid: string, avatar: any) {
+    this.saveData(userDid, avatar);
+  }
+
+  loadUserAvatar(userDid: string): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let avatar = await this.loadData(userDid) || null;
+        resolve(avatar);
+        return;
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
 }

@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FeedService, Avatar } from 'src/app/services/FeedService';
+import { FeedService, Avatar, SignInData } from 'src/app/services/FeedService';
 import { ThemeService } from 'src/app/services/theme.service';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
@@ -8,6 +8,7 @@ import { MenuService } from 'src/app/services/MenuService';
 import { CameraService } from 'src/app/services/CameraService';
 import { NativeService } from 'src/app/services/NativeService';
 import { Events } from 'src/app/services/events.service';
+import { DataHelper } from 'src/app/services/DataHelper';
 
 @Component({
   selector: 'app-editprofileimage',
@@ -16,12 +17,13 @@ import { Events } from 'src/app/services/events.service';
 })
 export class EditprofileimagePage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
-  public avatar: Avatar = null;
+  public avatar: string = '';
   public actionSheet: any = null;
   private pictureMenu: any = null;
   public headPortrait: string = '';
   public croppedImage: string = '';
   private isOPenRightMenu: boolean = false;
+  private userDid: string = '';
   constructor(
     private feedService: FeedService,
     public theme: ThemeService,
@@ -31,12 +33,17 @@ export class EditprofileimagePage implements OnInit {
     private camera: CameraService,
     private native: NativeService,
     private events: Events,
+    private dataHelper: DataHelper
   ) {}
 
-  ngOnInit() {
+  async ngOnInit() {
     this.initTitle();
-    let signInData = this.feedService.getSignInData() || {};
-    this.avatar = signInData['avatar'] || null;
+    let signInData: SignInData = this.feedService.getSignInData();
+    if (!signInData)
+      return;
+
+    this.userDid = signInData.did;
+    this.avatar = await this.feedService.getUserAvatar(this.userDid);
   }
 
   ionViewWillEnter() {
@@ -46,6 +53,10 @@ export class EditprofileimagePage implements OnInit {
     });
     this.initTitle();
     this.headPortrait = this.feedService.getClipProfileIamge();
+
+    const clipImage = this.feedService.getClipProfileIamge();
+    if (clipImage != '')
+      this.avatar = clipImage;
   }
 
   ionViewWillLeave() {
@@ -79,21 +90,7 @@ export class EditprofileimagePage implements OnInit {
   }
 
   handleImages() {
-    console.log("getClipProfileIamge", this.feedService.getClipProfileIamge());
-    const clipImage = this.feedService.getClipProfileIamge();
-    if (clipImage != '')
-      return clipImage;
-
-    if (this.avatar === null) {
-      return 'assets/images/default-contact.svg';
-    }
-    let contentType =
-      this.avatar['contentType'] || this.avatar['content-type'] || '';
-    let cdata = this.avatar['data'] || '';
-    if (contentType === '' || cdata === '') {
-      return 'assets/images/default-contact.svg';
-    }
-    return 'data:' + contentType + ';base64,' + this.avatar.data;
+    return this.avatar;
   }
 
   editImage() {
@@ -115,13 +112,8 @@ export class EditprofileimagePage implements OnInit {
       0,
       0,
       (imageUrl: any) => {
-        //that.zone.run(() => {
         that.native.navigateForward(['editimage'], '');
         that.feedService.setClipProfileIamge(imageUrl);
-        //that.select = 0;
-        //that.uploadedAvatar = imageUrl;
-        //that.selectedAvatar = imageUrl;
-        //});
       },
       err => {},
     );
@@ -133,19 +125,14 @@ export class EditprofileimagePage implements OnInit {
       0,
       1,
       (imageUrl: any) => {
-        //that.zone.run(() => {
         that.native.navigateForward(['editimage'], '');
         that.feedService.setClipProfileIamge(imageUrl);
-        //that.select = 0;
-        //that.uploadedAvatar = imageUrl;
-        //that.selectedAvatar = imageUrl;
-        //});
       },
       err => {},
     );
   }
 
   saveAvatar() {
-    alert("saveAvatar");
+    this.dataHelper.saveUserAvatar(this.userDid, this.avatar);
   }
 }
