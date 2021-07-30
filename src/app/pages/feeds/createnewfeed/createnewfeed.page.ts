@@ -118,9 +118,9 @@ export class CreatenewfeedPage implements OnInit {
           this.publicFeeds(nodeId, channelId);
           this.native.hideLoading();
           this.navCtrl.pop().then(() => {
-            this.native.toast(
-              this.translate.instant('CreatenewfeedPage.createfeedsuccess'),
-            );
+            // this.native.toast(
+            //   this.translate.instant('CreatenewfeedPage.createfeedsuccess'),
+            // );
           });
         });
       },
@@ -175,7 +175,7 @@ export class CreatenewfeedPage implements OnInit {
 
     let feedList = this.feedService.getMyChannelList() || [];
 
-    if (feedList.length >= 95) {
+    if (feedList.length >= 5) {
       this.native.toastWarn('CreatenewfeedPage.feedMaxNumber');
       return;
     }
