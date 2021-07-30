@@ -312,6 +312,7 @@ ion-input {
 .dark .editPost .action-sheet-group-cancel .action-sheet-cancel.sc-ion-action-sheet-ios {
   background:#2e2f4e !important;
   font-weight: 600;
+  --button-background-selected-opacity:0;
 }
 
 .status{
