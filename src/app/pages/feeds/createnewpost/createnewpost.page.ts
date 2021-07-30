@@ -440,7 +440,7 @@ export class CreatenewpostPage implements OnInit {
   async getVideoInfo(fileUri: string) {
     let videoInfo = await this.videoEditor.getVideoInfo({ fileUri: fileUri });
     this.duration = videoInfo['duration'];
-    if (parseInt(this.duration) > 151515) {
+    if (parseInt(this.duration) > 15) {
       this.flieUri = '';
       this.posterImg = '';
       this.imgUrl = '';
