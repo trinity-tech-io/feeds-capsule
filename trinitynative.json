@@ -13,8 +13,8 @@
             "custom":"feeds"
         },
         "version": {
-            "code": 10600,
-            "name": "1.6.0"
+            "code": 20100,
+            "name": "alpha-v2.0.1"
         }
     }
 }
