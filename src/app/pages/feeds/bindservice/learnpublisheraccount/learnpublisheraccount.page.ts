@@ -38,7 +38,8 @@ export class LearnpublisheraccountPage implements OnInit {
   initTile() {
     this.titleBarService.setTitle(
       this.titleBar,
-      this.translate.instant('LearnmorePage.title'),
+      //this.translate.instant('LearnmorePage.title'),
+      null
     );
     this.titleBarService.setTitleBarBlankButton(this.titleBar);
   }

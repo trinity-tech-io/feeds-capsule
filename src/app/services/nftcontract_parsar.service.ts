@@ -8,7 +8,7 @@ const FAIL = '';
 @Injectable()
 export class NFTContractParsarService {
   private pasarAbi = require('../../assets/contracts/pasarABI.json');
-  private pasarAddr: string = '0xe0D47d8e4044C7ec29182dC9B3Be6bDa8e0d0536';
+  private pasarAddr: string = '0x2652d10A5e525959F7120b56f2D7a9cD0f6ee087';
   private pasarContract: any;
   private web3: Web3;
   private checkSellerOrderStateInterval: NodeJS.Timer;

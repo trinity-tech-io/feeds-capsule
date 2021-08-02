@@ -2,10 +2,8 @@ import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
 import { FeedService } from 'src/app/services/FeedService';
 import { LoadingController } from '@ionic/angular';
 import { NativeService } from 'src/app/services/NativeService';
-import { TranslateService } from '@ngx-translate/core';
 import { ThemeService } from 'src/app/services/theme.service';
 import { AppService } from '../../services/AppService';
-import { Events } from 'src/app/services/events.service';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 
@@ -33,8 +31,6 @@ export class SigninPage implements OnInit {
     private zone: NgZone,
     private feedService: FeedService,
     public loadingController: LoadingController,
-    private translate: TranslateService,
-    private event: Events,
     public theme: ThemeService,
     public appService: AppService,
     private titleBarService: TitleBarService,
@@ -48,7 +44,8 @@ export class SigninPage implements OnInit {
   initTile() {
     this.titleBarService.setTitle(
       this.titleBar,
-      this.translate.instant('SigninPage.signIn'),
+      //this.translate.instant('SigninPage.signIn'),
+      null
     );
     this.titleBarService.setTitleBarBlankButton(this.titleBar);
   }
