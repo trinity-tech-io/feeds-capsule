@@ -4,7 +4,7 @@ import Web3 from 'web3';
 
 @Injectable()
 export class NFTContractStickerService {
-  private stickerAddress: string = '0xF85153d9Dc43602d5f71b572eD7bffEC00060A2f';
+  private stickerAddress: string = '0xed1978c53731997f4DAfBA47C9b07957Ef6F3961';
   private stickerAbi = require('../../assets/contracts/stickerABI.json');
   private web3: Web3;
   private stickerContract: any;
