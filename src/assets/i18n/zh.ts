@@ -169,6 +169,9 @@ export const zh = {
     myLikes: '赞/收藏',
     moreinfo: '更多信息',
     collectibles: '收藏品',
+    createCollectible:"创建收藏品",
+    allempty:"还没有收藏品",
+    emptyDes:"开始创建一个收藏品"
   },
   MyfeedsComponent: {
     allempty: '空空如也',
@@ -372,8 +375,7 @@ export const zh = {
     title: '绑定服务',
     introduce: '5/5',
     introduce1: '颁发凭证',
-    introduce2: '您已将DID文档待交易内容成功发布到DID侧链',
-    introduce3: '为了声明所有权，您必须颁发凭证',
+    introduce2: '您已将DID文档待交易内容成功发布到DID侧链,为了声明所有权，您必须颁发凭证',
     issueacredential: '颁发新凭证',
     serverInfo: '出版号信息',
     serverName: 'Feeds出版号名称',

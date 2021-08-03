@@ -737,6 +737,7 @@ export class ProfilePage implements OnInit {
   }
 
   doRefresh(event: any) {
+    this.updateWalletAddress();
     switch (this.selectType) {
       case 'ProfilePage.myFeeds':
         let sId1 = setTimeout(() => {
@@ -1936,5 +1937,9 @@ export class ProfilePage implements OnInit {
 
   handleCreated(asstItem: any) {
     this.menuService.showCreatedMenu(asstItem);
+  }
+
+  clickMint(){
+    this.native.navigateForward(['mintnft'], {});
   }
 }
