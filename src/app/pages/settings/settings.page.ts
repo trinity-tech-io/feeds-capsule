@@ -34,6 +34,8 @@ export class SettingsPage implements OnInit {
   public hideOfflineFeeds: boolean = true;
   public popover: any = null;
   public languageName: string = null;
+  private defaltProviderName = 'elastos.io';
+  public curApiProviderName = 'elastos.io';
   constructor(
     private languageService: LanguageService,
     private feedService: FeedService,
@@ -61,6 +63,8 @@ export class SettingsPage implements OnInit {
   }
 
   ionViewWillEnter() {
+    this.curApiProviderName =
+    localStorage.getItem('feeds:apiprovidername') || this.defaltProviderName;
     this.languageName = this.getCurlanguageName();
     this.hideDeletedPosts = this.feedService.getHideDeletedPosts();
     this.hideDeletedComments = this.feedService.getHideDeletedComments();
