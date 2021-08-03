@@ -172,6 +172,9 @@ export const en = {
     myLikes: 'Likes',
     moreinfo: 'More Info',
     collectibles: 'Collectibles',
+    createCollectible:"Create Collectibles",
+    allempty:"No collectibles yet",
+    emptyDes:"Create a collectible to get started"
   },
   MyfeedsComponent: {
     allempty: 'No Channels Yet',
@@ -381,9 +384,7 @@ export const en = {
     introduce: '5/5',
     introduce1: 'Issue Credentials',
     introduce2:
-      'You have published the payload to the DID sidechain successfully.',
-    introduce3:
-      'In order to claim the ownership, you have to issue your credentials.',
+      'You have published the payload to the DID sidechain successfully.In order to claim the ownership, you have to issue your credentials.',
     issueacredential: 'Issue credentials',
     serverInfo: 'Publisher Account Info',
     serverName: 'Name',

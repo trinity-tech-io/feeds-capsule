@@ -43,11 +43,11 @@
                 <p class="ownerName">{{getAddingFeedOwner(addingchannel)}}</p>
               </ion-row>
               <ion-row>
-                <p  class="des">{{getAddingFeedDes(addingchannel)}}</p>
+                <p  class="des" [class.white]="theme.darkMode">{{getAddingFeedDes(addingchannel)}}</p>
               </ion-row>
             </ion-col>
             <ion-col size="3" class="right-col">
-              <ion-button class="unsubscribed" fill="outline" (click)="handeleStatus(addingchannel)">
+              <ion-button class="unsubscribed" fill="outline" (click)="handeleStatus(addingchannel)" [ngClass]="{'requested': addingchannel.status == 14 }">
                 <ion-label>{{ handleStatus(addingchannel) | translate }}</ion-label>
               </ion-button>
             </ion-col>
@@ -81,7 +81,7 @@
             <p class="ownerName">{{getChannelOwner(feed.nodeId,feed.id)}}</p>
           </ion-row>
           <ion-row>
-            <p  class="des">{{getChannelDes(feed.nodeId,feed.id)}}</p>
+            <p  class="des" [class.white]="theme.darkMode">{{getChannelDes(feed.nodeId,feed.id)}}</p>
           </ion-row>
 
         </ion-col>
@@ -121,7 +121,7 @@
               <p class="ownerName">@{{feed.ownerName}}</p>
             </ion-row>
             <ion-row>
-              <p class="des">{{feed.description}}</p>
+              <p class="des" [class.white]="theme.darkMode">{{feed.description}}</p>
             </ion-row>
           </ion-col>
           <ion-col size="3" class="right-col">
@@ -143,4 +143,4 @@
     </ion-infinite-scroll> -->
 
   </ion-content>
-  <div class="add-tab" (click)="createPost()"></div>
+  <!-- <div class="add-tab" (click)="createPost()"></div> -->

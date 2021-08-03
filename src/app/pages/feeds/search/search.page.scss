@@ -29,7 +29,7 @@ ion-searchbar {
   font-size: 12px;
   font-stretch: normal;
   font-style: normal;
-  color: #9ca0a4;
+  color: #000;
   font-weight: normal;
   margin-top: 5px;
   overflow:hidden;
@@ -52,4 +52,13 @@ ion-searchbar {
   align-items: center;
   justify-content: flex-end;
   margin-top: 7px;
+}
+
+.channel-list ion-item .channel-row .middle-col p, .channel-list ion-item .channel-row .middle-col .white{
+  color:#fff;
+}
+
+.channel-list ion-item .channel-row .right-col .requested{
+  --background:#f1e9ff;
+  --background-activated:#f1e9ff;
 }

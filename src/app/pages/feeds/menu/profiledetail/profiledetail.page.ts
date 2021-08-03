@@ -156,9 +156,11 @@ export class ProfiledetailPage implements OnInit {
       FeedsEvent.PublishType.serverConnectionChanged,
       () => {
         this.zone.run(() => {
-          this.serverStatus = this.feedService.getServerStatusFromId(
-            this.nodeId,
-          );
+          if(this.nodeId!=""){
+            this.serverStatus = this.feedService.getServerStatusFromId(
+              this.nodeId,
+            );
+          }
         });
       },
     );
@@ -207,38 +209,47 @@ export class ProfiledetailPage implements OnInit {
 
   initData() {
     let bindingServer = this.feedService.getBindingServer() || null;
+    let nodeId = "";
+    let did = "";
     if (bindingServer === null) {
       this.isShowPublisherAccount = false;
     } else {
       this.isShowPublisherAccount = true;
+      nodeId = bindingServer.nodeId || "";
+      this.nodeId = bindingServer.nodeId || "";
+      did = bindingServer.did || "";
     }
-    let nodeId = bindingServer.nodeId;
-    this.nodeId = bindingServer.nodeId;
-    let did = bindingServer.did;
+
     this.isShowQrcode = false;
 
-    this.feedService.checkDIDOnSideChain(did, isOnSideChain => {
-      this.zone.run(() => {
-        this.isShowQrcode = isOnSideChain;
-        if (!this.isShowQrcode) {
-          this.native.toastWarn('common.waitOnChain');
-        }
+    if(did!=""){
+      this.feedService.checkDIDOnSideChain(did, isOnSideChain => {
+        this.zone.run(() => {
+          this.isShowQrcode = isOnSideChain;
+          if (!this.isShowQrcode) {
+            this.native.toastWarn('common.waitOnChain');
+          }
+        });
       });
-    });
+    }
 
-    this.serverStatus = this.feedService.getServerStatusFromId(nodeId);
-    this.clientNumber = this.feedService.getServerStatisticsNumber(nodeId);
-    let server = this.feedService.getServerbyNodeId(this.nodeId) || null;
-    this.didString = server.did;
-    this.serverName =
-      server.name ||
-      this.translate.instant('DIDdata.NotprovidedfromDIDDocument');
-    this.owner = server.owner;
-    this.introduction = server.introduction;
-    this.feedsUrl = server.feedsUrl || null;
-    this.elaAddress = server.elaAddress || '';
+    if(nodeId!=""){
+      this.serverStatus = this.feedService.getServerStatusFromId(nodeId);
+      this.clientNumber = this.feedService.getServerStatisticsNumber(nodeId);
+      let server = this.feedService.getServerbyNodeId(nodeId) || null;
+      this.didString = server.did;
+      this.serverName =
+        server.name ||
+        this.translate.instant('DIDdata.NotprovidedfromDIDDocument');
+      this.owner = server.owner;
+      this.introduction = server.introduction;
+      this.feedsUrl = server.feedsUrl || null;
+      this.elaAddress = server.elaAddress || '';
+      this.collectServerData(server);
+    }
 
-    this.collectServerData(server);
+
+
   }
 
   collectServerData(bindingServer: any) {

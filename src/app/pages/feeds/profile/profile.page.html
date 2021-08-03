@@ -48,7 +48,7 @@
     </div>
 
     <app-myfeeds *ngIf="selectType == 'ProfilePage.myFeeds'" (toFeedPage)="toPage($event)" (subsciptions)="subsciptions()"  [channels] = "channels" [nodeStatus]="nodeStatus" (fromChild)="showMenuMore($event)"></app-myfeeds>
-    <ion-row *ngIf="selectType === 'ProfilePage.collectibles'&&ownNftSum===0">
+    <!-- <ion-row *ngIf="selectType === 'ProfilePage.collectibles'&&ownNftSum===0">
       <ion-col size="12">
        <div class="bigCircle">
            <div class="smallCircle">
@@ -59,7 +59,19 @@
     <ion-col size="12" class="subscribeChannel">
       {{"CollectionsPage.emptypurchased"|translate}}
     </ion-col>
-    </ion-row>
+    </ion-row> -->
+    <div *ngIf="selectType === 'ProfilePage.collectibles'&&ownNftSum===0" class="empty-container" style="margin-top:50px;">
+      <img src="./assets/images/no-Collectibles.svg">
+      <h1>{{'ProfilePage.allempty' | translate }}</h1>
+      <p>{{'ProfilePage.emptyDes' | translate }}</p>
+      <ion-row class="btn-row">
+        <ion-button (click)="clickMint()">
+          <ion-label>
+           {{"ProfilePage.createCollectible"|translate}}
+          </ion-label>
+        </ion-button>
+      </ion-row>
+    </div>
     <ion-row *ngIf="selectType === 'ProfilePage.collectibles'&&ownNftSum>0" class="leftrightrow">
       <ion-col size="6" *ngFor="let item of collectiblesList">
         <app-assetitem
