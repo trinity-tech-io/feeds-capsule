@@ -94,12 +94,15 @@
   }
 }
 .container {
-    .footer{
-      position:fixed;
-      bottom:0px;
-      left:0px;
-      width:100%;
-    }
+
+  .footer{
+    position:fixed;
+    bottom:0px;
+    left:0px;
+    width:100%;
+    opacity: 0.9;
+    background-color: #fff;
+  }
 
     .btns {
       margin-top: 20px;
@@ -304,7 +307,10 @@
 }
 
 .darkContainer {
-
+  .footer{
+    background-color: #000;
+    opacity: 0.9;
+  }
   .detail-row .removeBorder {
     border-bottom: none;
   }

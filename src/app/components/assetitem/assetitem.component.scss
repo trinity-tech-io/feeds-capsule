@@ -3,12 +3,28 @@
     margin: 0 auto;
     width: 160px;
     height: 233px;
-    background-color: #f6f5f6;
     border-radius: 10px;
     text-align: center;
 }
+.light{
+    background-color: #fff;
+    border: solid 1px #f5f4f8;
+}
+.dark{
+    background-color:#191a2f;
+    border: solid 1px #707070;
+}
 
 .addAssets{
+
+.white{
+  color:#fff;
+}
+
+.black{
+ color:#000;
+}
+
 img{
     margin-top:11px;
     // width:145px;
@@ -24,7 +40,6 @@ img{
     font-stretch: normal;
     font-style: normal;
     text-align: left;
-    color: #000000;
 }
 
 .des1{
@@ -34,7 +49,6 @@ img{
     font-stretch: normal;
     font-style: normal;
     text-align: left;
-    color: #000000;
 }
 
 .des2{
@@ -44,7 +58,7 @@ img{
     font-stretch: normal;
     font-style: normal;
     text-align: left;
-    color: #000000;
+    color: #9ca0a4;
 }
 
 .des3{

@@ -28,7 +28,7 @@
       </ion-row>
     </div>
    </div>
-   <div style="height:78px"></div>
+   <div style="height:78px" *ngIf="price===null"></div>
    <div class="footer" *ngIf="price===null">
     <div class="btns">
       <ion-row class="btn-row" (click)="onSale()">
@@ -38,7 +38,25 @@
       </ion-row>
     </div>
    </div>
+
+   <div *ngIf="price!=null" style="height:160px"></div>
+   <!-- <div class="footer" *ngIf="showType==='buy'&&accAddress!=sellerAddress"> -->
    <div class="footer" *ngIf="price!=null">
+    <ion-row class="detail-row removeBorder">
+      <ion-col size="12" class="left-col">
+        <h1 style="text-align: center;">{{ "MintnftPage.nftfixedPrice" | translate}}</h1>
+        <div style="text-align: center;color: #7624fe;font-size: 18px;font-weight: bold;margin-top: 13px;">{{ hanldePrice(price) }} ELA/ETHSC</div>
+    </ion-col>
+    </ion-row>
+   <div class="btns" style="margin-bottom:0px;">
+    <ion-row class="btn-row">
+      <ion-button (click)="changePrice()" style="height:48px;">
+        <ion-label style="font-weight:bold;font-stretch:normal;font-style:normal;color:#ffffff;">{{'BidPage.changePrice' | translate}}</ion-label>
+      </ion-button>
+    </ion-row>
+  </div>
+</div>
+   <!-- <div class="footer" *ngIf="price!=null">
     <div class="btns">
       <ion-row class="btn-row">
         <ion-col size="0.5">
@@ -60,7 +78,7 @@
         </ion-col>
       </ion-row>
     </div>
-   </div>
+   </div> -->
     <!--- purchase Info -->
     <!-- <div style="margin-bottom:10px;"  *ngIf="selectType === 'AssetdetailsPage.history'">
        <div *ngFor="let purchaseInfo of purchaseInfos">
