@@ -1,4 +1,4 @@
-<div class="addAssets ion-activatable ripple" [ngStyle]="styleObj">
+<div class="addAssets ion-activatable ripple" [ngStyle]="styleObj" [class.light]="!theme.darkMode" [class.dark]="theme.darkMode">
   <div *ngIf="assetItem === null">
     <img src="assets/images/loading.png" style="object-fit:contain;"/>
     <div class="des">&nbsp;</div>
@@ -11,8 +11,8 @@
   </div>
   <div *ngIf="assetItem != null ">
     <img src="{{hanldeImg(assetItem['thumbnail'])}}" (click)="clickItem()" style="object-fit:contain;"/>
-    <div class="des">{{assetItem['name']}}</div>
-    <div class="des1">{{assetItem['description']}}</div>
+    <div class="des" [class.black]="!theme.darkMode" [class.white]="theme.darkMode">{{assetItem['name']}}</div>
+    <div class="des1" [class.black]="!theme.darkMode" [class.white]="theme.darkMode">{{assetItem['description']}}</div>
     <div class="des2">{{"MintnftPage.nftQuantity"|translate}}: {{assetItem['quantity']}}</div>
     <div class="like" *ngIf="assetItem['fixedAmount'] != null">
       <span class="price">{{hanldePrice(assetItem['fixedAmount'])}} ELA/ETHSC</span>
@@ -21,7 +21,7 @@
       <span class="onSale">{{'CollectionsPage.onSale'|translate}}</span>
     </div>
     <div class="moremenu1">
-      <img src="./assets/images/dots-three-vertical.svg" (click)="more()"/>
+      <img [src]="!theme.darkMode ? './assets/images/dots-three-vertical.svg' : './assets/images/dots-three-vertical-dark.svg'" (click)="more()"/>
     </div>
     <ion-ripple-effect></ion-ripple-effect>
   </div>

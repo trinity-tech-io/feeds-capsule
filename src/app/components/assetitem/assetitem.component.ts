@@ -3,6 +3,7 @@ import { ApiUrl } from '../../services/ApiUrl';
 // import { Web3Service } from '../../services/Web3Service';
 import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
 import { ViewHelper } from 'src/app/services/viewhelper.service';
+import { ThemeService } from 'src/app/services/theme.service';
 @Component({
   selector: 'app-assetitem',
   templateUrl: './assetitem.component.html',
@@ -16,6 +17,7 @@ export class AssetitemComponent implements OnInit {
   constructor(
     private nftContractControllerService: NFTContractControllerService,
     private viewHelper: ViewHelper,
+    public  theme: ThemeService
   ) {}
 
   ngOnInit() {
