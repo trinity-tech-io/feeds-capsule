@@ -14,6 +14,7 @@ import { ApiUrl } from '../../../services/ApiUrl';
 import { FeedService } from '../../../services/FeedService';
 import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
 import { WalletConnectControllerService } from 'src/app/services/walletconnect_controller.service';
+import { PopupProvider } from 'src/app/services/popup';
 
 const SUCCESS = 'success';
 const SKIP = 'SKIP';
@@ -46,6 +47,9 @@ export class MintnftPage implements OnInit {
   public thumbnail: string = '';
   private imageObj: any = {};
   private orderId: any = '';
+  public popover: any;
+  private imagePath = "";
+
   constructor(
     private translate: TranslateService,
     private event: Events,
@@ -60,6 +64,7 @@ export class MintnftPage implements OnInit {
     public theme: ThemeService,
     private nftContractControllerService: NFTContractControllerService,
     private walletConnectControllerService: WalletConnectControllerService,
+    private popupProvider: PopupProvider,
   ) {}
 
   ngOnInit() {}
@@ -110,17 +115,105 @@ export class MintnftPage implements OnInit {
   }
 
   addAsset() {
-    this.addImg(0);
+    this.addImg(0)
+      .then((imagePath) => {
+        this.imagePath = imagePath;
+        let pathObj = this.handlePath(this.imagePath);
+        let fileName = pathObj['fileName'];
+        let filePath = pathObj['filepath'];
+        return this.getFlieObj(fileName, filePath);
+      }).then((fileBase64) => {
+        this.assetBase64 = fileBase64;
+        return this.compressImage(fileBase64);
+      }).then((compressBase64) => {
+        this.thumbnail = compressBase64;
+      });
   }
 
   mint() {
-    if (this.checkParms()) {
-      this.sendIpfsJSON();
+    if (!this.checkParms()) {
+      // show params error
+      return;
     }
+
+    this.doMint();
   }
 
-  getFlieObj(fileName: string, filepath: string) {
-    this.file
+  async doMint() {
+    //Start loading
+    await this.native.showLoading(
+      'common.waitMoment',
+      isDismiss => {
+        if (isDismiss) {
+          this.nftContractControllerService
+            .getSticker()
+            .cancelMintProcess();
+          this.nftContractControllerService
+            .getSticker()
+            .cancelSetApprovedProcess();
+          this.nftContractControllerService
+            .getPasar()
+            .cancelCreateOrderProcess();
+          this.showSelfCheckDialog();
+        }
+      },
+      3 * 60000,
+    );
+
+    let tokenId = '';
+    let jsonHash = '';
+    this.native.changeLoadingDesc("common.uploadingData");
+    this.uploadData()
+      .then((result) => {
+        console.log("Upload Result is", result);
+        this.native.changeLoadingDesc("common.uploadDataSuccess");
+        tokenId = result.tokenId;
+        jsonHash = result.jsonHash;
+        this.native.changeLoadingDesc("common.mintingData");
+        return this.mintContract(tokenId, jsonHash, this.nftQuantity, this.nftRoyalties);
+      })
+      .then(mintResult => {
+        if (mintResult != '' && this.curPublishtoPasar) {
+          this.native.changeLoadingDesc("common.settingApproval");
+          return this.handleSetApproval();
+        }
+        return SKIP;
+      })
+      .then(setApprovalResult => {
+        if (setApprovalResult == SKIP) return -1;
+        this.native.changeLoadingDesc("common.creatingOrder");
+        return this.handleCreateOrder(tokenId);
+      })
+      .then(orderIndex => {
+        if (orderIndex == -1) return SKIP;
+        this.native.changeLoadingDesc("common.checkingCollectibleResult");
+        return this.handleOrderResult(tokenId, orderIndex);
+      })
+      .then(() => {
+        //Finish
+        this.native.hideLoading();
+        this.showSuccessDialog();
+        // this.native.pop();
+      })
+      .catch(error => {
+        this.nftContractControllerService
+          .getSticker()
+          .cancelMintProcess();
+        this.nftContractControllerService
+          .getSticker()
+          .cancelSetApprovedProcess();
+        this.nftContractControllerService
+          .getPasar()
+          .cancelCreateOrderProcess();
+
+        this.native.hideLoading();
+        this.native.toast_trans('common.publicPasarFailed');
+      });
+  }
+
+  getFlieObj(fileName: string, filepath: string): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      this.file
       .resolveLocalFilesystemUrl(filepath)
       .then((dirEntry: DirectoryEntry) => {
         dirEntry.getFile(
@@ -133,148 +226,115 @@ export class MintnftPage implements OnInit {
                 fileReader.onloadend = (event: any) => {
                   this.zone.run(() => {
                     let assetBase64 = fileReader.result.toString();
-                    this.sendIpfsImage(fileName, assetBase64);
+                    resolve(assetBase64);
                   });
                 };
-
                 fileReader.onprogress = (event: any) => {
                   this.zone.run(() => {});
                 };
-
                 fileReader.readAsDataURL(file);
               },
               () => {},
             );
           },
-          () => {},
+          () => {
+            reject('error');
+          },
         );
       })
       .catch(dirEntryErr => {
+        reject(dirEntryErr);
         console.log('====dirEntryErr====' + JSON.stringify(dirEntryErr));
       });
+    });
   }
 
-  async sendIpfsImage(fileName: string, file: any) {
-    let thumbnailBase64 = await this.compressImage(file);
-    let blob = this.dataURLtoBlob(file);
-    let formData = new FormData();
-    formData.append('', blob);
-    this.httpService
-      .ajaxNftPost(ApiUrl.nftAdd, formData)
-      .then(result => {
-        let hash = result['Hash'] || null;
-        let imgFormat = fileName.split('.')[1];
-        if (hash != null) {
+  sendIpfsImage(fileName: string, file: any) {
+    return new Promise(async (resolve, reject) => {
+      let blob = this.dataURLtoBlob(file);
+      let formData = new FormData();
+      formData.append('', blob);
+      this.httpService
+        .ajaxNftPost(ApiUrl.nftAdd, formData)
+        .then(result => {
+          let hash = result['Hash'] || null;
+          let imgFormat = fileName.split('.')[1];
+          if (!hash) {
+            reject("Upload Image error, hash is null")
+            return;
+          }
+
           this.assetBase64 = file;
           this.imageObj['imgSize'] = result['Size'];
           this.imageObj['imgHash'] = 'feeds:imgage:' + hash;
           this.imageObj['imgFormat'] = imgFormat;
-          this.sendIpfsThumbnail(thumbnailBase64);
-        }
-      })
-      .catch(err => {
-        this.native.hideLoading();
-      });
+
+          resolve('');
+        })
+        .catch(err => {
+          reject('Upload image error, error is ' + JSON.stringify(err));
+        });
+    });
   }
 
-  sendIpfsThumbnail(thumbnailBase64: any) {
-    let thumbnailBlob = this.dataURLtoBlob(thumbnailBase64);
-    let formData = new FormData();
-    formData.append('', thumbnailBlob);
-    this.httpService
-      .ajaxNftPost(ApiUrl.nftAdd, formData)
-      .then(result => {
-        let hash = result['Hash'] || null;
-        if (hash != null) {
-          this.native.hideLoading();
+  sendIpfsThumbnail(thumbnailBase64: string) {
+    return new Promise(async (resolve, reject) => {
+      let thumbnailBlob = this.dataURLtoBlob(thumbnailBase64);
+      let formData = new FormData();
+      formData.append('', thumbnailBlob);
+      this.httpService
+        .ajaxNftPost(ApiUrl.nftAdd, formData)
+        .then(result => {
+          let hash = result['Hash'] || null;
+          if (!hash) {
+            reject("Send thumbnail error, hash is null");
+            return;
+          }
+
           this.thumbnail = thumbnailBase64;
           this.imageObj['thumbnail'] = 'feeds:imgage:' + hash;
-        }
-      })
-      .catch(err => {
-        this.native.hideLoading();
-      });
+          resolve('');
+        })
+        .catch(err => {
+          reject("Send thumbnail error, error is " + JSON.stringify(err));
+        });
+    });
   }
 
-  sendIpfsJSON() {
-    let ipfsJSON = {
-      version: '1',
-      type: 'image',
-      name: this.nftName,
-      description: this.nftDescription,
-      image: this.imageObj['imgHash'],
-      kind: this.imageObj['imgFormat'],
-      size: this.imageObj['imgSize'],
-      thumbnail: this.imageObj['thumbnail'],
-    };
+  sendIpfsJSON(): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      let ipfsJSON = {
+        version: '1',
+        type: 'image',
+        name: this.nftName,
+        description: this.nftDescription,
+        image: this.imageObj['imgHash'],
+        kind: this.imageObj['imgFormat'],
+        size: this.imageObj['imgSize'],
+        thumbnail: this.imageObj['thumbnail'],
+      };
 
-    let formData = new FormData();
-    formData.append('', JSON.stringify(ipfsJSON));
+      let formData = new FormData();
+      formData.append('', JSON.stringify(ipfsJSON));
 
-    //Start send ipfs data loading and
-    this.native.showLoading(
-      'common.waitMoment',
-      isDismiss => {
-        if (isDismiss) {
-          alert('common.publicPasarFailed');
-        }
-      },
-      3 * 60000,
-    );
+      this.httpService
+        .ajaxNftPost(ApiUrl.nftAdd, formData)
+        .then(result => {
+          //{"Name":"blob","Hash":"QmaxWgjheueDc1XW2bzDPQ6qnGi9UKNf23EBQSUAu4GHGF","Size":"17797"};
+          console.log('====json Data=====' + JSON.stringify(result));
+          let hash = result['Hash'] || null;
+          if (hash != null) {
+            let tokenId = '0x' + UtilService.SHA256(hash);
+            let jsonHash = 'feeds:json:' + hash;
 
-    this.httpService
-      .ajaxNftPost(ApiUrl.nftAdd, formData)
-      .then(result => {
-        //{"Name":"blob","Hash":"QmaxWgjheueDc1XW2bzDPQ6qnGi9UKNf23EBQSUAu4GHGF","Size":"17797"};
-        console.log('====json Data=====' + JSON.stringify(result));
-        let hash = result['Hash'] || null;
-        if (hash != null) {
-          let tokenId = '0x' + UtilService.SHA256(hash);
-          let jsonHash = 'feeds:json:' + hash;
-
-          this.mintContract(
-            tokenId,
-            jsonHash,
-            this.nftQuantity,
-            this.nftRoyalties,
-          )
-            .then(mintResult => {
-              if (mintResult != '' && this.curPublishtoPasar)
-                return this.handleSetApproval();
-              return SKIP;
-            })
-            .then(setApprovalResult => {
-              if (setApprovalResult == SKIP) return -1;
-              return this.handleCreateOrder(tokenId);
-            })
-            .then(orderIndex => {
-              if (orderIndex == -1) return SKIP;
-              return this.handleOrderResult(tokenId, orderIndex);
-            })
-            .then(() => {
-              //Finish
-              this.native.hideLoading();
-              this.native.pop();
-            })
-            .catch(error => {
-              this.nftContractControllerService
-                .getSticker()
-                .cancelMintProcess();
-              this.nftContractControllerService
-                .getSticker()
-                .cancelSetApprovedProcess();
-              this.nftContractControllerService
-                .getPasar()
-                .cancelCreateOrderProcess();
-
-              this.native.hideLoading();
-              this.native.toast_trans('common.publicPasarFailed');
-            });
-        }
-      })
-      .catch(err => {
-        console.log('========' + JSON.stringify(err));
-      });
+            resolve({ tokenId: tokenId, jsonHash: jsonHash })
+          }
+        })
+        .catch(err => {
+          console.log('========' + JSON.stringify(err));
+          reject('upload json error');
+        });
+    });
   }
 
   dataURLtoBlob(dataurl: string) {
@@ -289,25 +349,29 @@ export class MintnftPage implements OnInit {
     return new Blob([u8arr], { type: mime });
   }
 
-  addImg(type: number) {
-    this.camera.openCamera(
-      100,
-      1,
-      type,
-      (imgPath: any) => {
-        this.zone.run(() => {
-          let pathObj = this.handlePath(imgPath);
-          this.getFlieObj(pathObj['fileName'], pathObj['filepath']);
-        });
-      },
-      (err: any) => {
-        console.error('Add img err', err);
-        let imgUrl = this.assetBase64 || '';
-        if (imgUrl) {
-          this.native.toast_trans('common.noImageSelected');
+  addImg(type: number): Promise<any> {
+    return new Promise((resolve, reject) => {
+      this.camera.openCamera(
+        100,
+        1,
+        type,
+        (imgPath: any) => {
+          // this.zone.run(() => {
+          // this.imagePath = imgPath;
+          resolve(imgPath);
+          // });
+        },
+        (err: any) => {
+          console.error('Add img err', err);
+          let imgUrl = this.assetBase64 || '';
+          if (!imgUrl) {
+            this.native.toast_trans('common.noImageSelected');
+            reject(err);
+            return;
+          }
         }
-      },
-    );
+      );
+    });
   }
 
   removeImg() {
@@ -483,12 +547,12 @@ export class MintnftPage implements OnInit {
       } catch (error) {
         reject(orderIndex);
       }
-      orderIndex = orderIndex || -1;
-      if (orderIndex == -1) {
+
+      if (orderIndex == null || orderIndex == undefined || orderIndex == -1) {
+        orderIndex = -1;
         reject(orderIndex);
         return;
       }
-
       resolve(orderIndex);
     });
   }
@@ -505,7 +569,6 @@ export class MintnftPage implements OnInit {
       let order = await this.nftContractControllerService
         .getPasar()
         .getSellerOrderByIndex(orderIndex);
-      console.log('======order======', order);
 
       this.orderId = order[0];
       // tokenId = order[3];
@@ -555,47 +618,57 @@ export class MintnftPage implements OnInit {
     //最大宽度
     const maxWidth = 600;
     return new Promise((resolve, reject) => {
-      let img = new Image();
-      img.src = path;
+      try {
+        let img = new Image();
+        img.src = path;
 
-      img.onload = () => {
-        const originHeight = img.height;
-        const originWidth = img.width;
-        let compressedWidth = img.height;
-        let compressedHeight = img.width;
-        if (originWidth > maxWidth && originHeight > maxHeight) {
-          // 更宽更高，
-          if (originHeight / originWidth > maxHeight / maxWidth) {
-            // 更加严重的高窄型，确定最大高，压缩宽度
+        img.onload = () => {
+          const originHeight = img.height;
+          const originWidth = img.width;
+          let compressedWidth = img.height;
+          let compressedHeight = img.width;
+          if (originWidth > maxWidth && originHeight > maxHeight) {
+            // 更宽更高，
+            if (originHeight / originWidth > maxHeight / maxWidth) {
+              // 更加严重的高窄型，确定最大高，压缩宽度
+              compressedHeight = maxHeight;
+              compressedWidth = maxHeight * (originWidth / originHeight);
+            } else {
+              //更加严重的矮宽型, 确定最大宽，压缩高度
+              compressedWidth = maxWidth;
+              compressedHeight = maxWidth * (originHeight / originWidth);
+            }
+          } else if (originWidth > maxWidth && originHeight <= maxHeight) {
+            // 更宽，但比较矮，以maxWidth作为基准
+            compressedWidth = maxWidth;
+            compressedHeight = maxWidth * (originHeight / originWidth);
+          } else if (originWidth <= maxWidth && originHeight > maxHeight) {
+            // 比较窄，但很高，取maxHight为基准
             compressedHeight = maxHeight;
             compressedWidth = maxHeight * (originWidth / originHeight);
           } else {
-            //更加严重的矮宽型, 确定最大宽，压缩高度
-            compressedWidth = maxWidth;
-            compressedHeight = maxWidth * (originHeight / originWidth);
+            // 符合宽高限制，不做压缩
           }
-        } else if (originWidth > maxWidth && originHeight <= maxHeight) {
-          // 更宽，但比较矮，以maxWidth作为基准
-          compressedWidth = maxWidth;
-          compressedHeight = maxWidth * (originHeight / originWidth);
-        } else if (originWidth <= maxWidth && originHeight > maxHeight) {
-          // 比较窄，但很高，取maxHight为基准
-          compressedHeight = maxHeight;
-          compressedWidth = maxHeight * (originWidth / originHeight);
-        } else {
-          // 符合宽高限制，不做压缩
-        }
-        // 生成canvas
-        let canvas = document.createElement('canvas');
-        let context = canvas.getContext('2d');
-        canvas.height = compressedHeight;
-        canvas.width = compressedWidth;
-        // context.globalAlpha = 0.2;
-        context.clearRect(0, 0, compressedWidth, compressedHeight);
-        context.drawImage(img, 0, 0, compressedWidth, compressedHeight);
-        let base64 = canvas.toDataURL('image/*', 0.7);
-        resolve(base64);
-      };
+          // 生成canvas
+          let canvas = document.createElement('canvas');
+          let context = canvas.getContext('2d');
+          canvas.height = compressedHeight;
+          canvas.width = compressedWidth;
+          // context.globalAlpha = 0.2;
+          context.clearRect(0, 0, compressedWidth, compressedHeight);
+          context.drawImage(img, 0, 0, compressedWidth, compressedHeight);
+          let base64 = canvas.toDataURL('image/*', 0.7);
+          if (!base64) {
+            let error = "Compress image error, result is null";
+            console.log(error);
+            reject(error);
+          }
+          resolve(base64);
+        };
+      } catch (err) {
+        console.log("Compress image error", err);
+        reject("Compress image error" + JSON.stringify(err));
+      }
     });
   }
 
@@ -666,5 +739,70 @@ export class MintnftPage implements OnInit {
   number(text: any) {
     var numPattern = /^(([1-9]\d*)|\d)(.\d{1,9})?$/;
     return numPattern.test(text);
+  }
+
+  uploadData(): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      let pathObj = this.handlePath(this.imagePath);
+      let fileName = pathObj['fileName'];
+      let filePath = pathObj['filepath']
+      let file = null;
+
+      this.getFlieObj(fileName, filePath).then((fileBase64) => {
+        file = fileBase64;
+        return this.sendIpfsImage(fileName, file);
+      }).then(() => {
+        return this.sendIpfsThumbnail(this.thumbnail);
+      }).then(() => {
+        return this.sendIpfsJSON();
+      }).then((result) => {
+        resolve(result);
+      }).catch((error) => {
+        reject('upload file error');
+      });
+    });
+  }
+
+  showSuccessDialog() {
+    this.popover = this.popupProvider.showalertdialog(
+      this,
+      'common.mintSuccess',
+      'common.mintSuccessDesc',
+      this.bindingCompleted,
+      'finish.svg',
+      'common.ok',
+    );
+  }
+
+  showSelfCheckDialog() {
+    //TimeOut
+    this.openAlert();
+  }
+
+
+  openAlert() {
+    this.popover = this.popupProvider.ionicAlert(
+      this,
+      'common.timeout',
+      'common.mintTimeoutDesc',
+      this.confirm,
+      'tskth.svg',
+    );
+  }
+
+  confirm(that: any) {
+    if (this.popover != null) {
+      this.popover.dismiss();
+      this.popover = null;
+      that.native.pop();
+    }
+  }
+
+  bindingCompleted(that: any) {
+    if (this.popover != null) {
+      this.popover.dismiss();
+      this.popover = null;
+      that.native.pop();
+    }
   }
 }
