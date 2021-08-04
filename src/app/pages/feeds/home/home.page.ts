@@ -1645,6 +1645,7 @@ export class HomePage implements OnInit {
         .tokenInfo(tokenId);
       let tokenUri = tokenInfo[3];
       let createTime = tokenInfo[7];
+      let royalties = tokenInfo[5] || null;
       let price = order[5];
       let saleOrderId = order[0];
       let orderState = order[2];
@@ -1659,6 +1660,7 @@ export class HomePage implements OnInit {
           tokenNum,
           sellerAddr,
           createTime,
+          royalties
         );
         return;
       }
@@ -1818,6 +1820,7 @@ export class HomePage implements OnInit {
       .getSticker()
       .tokenInfo(tokenId);
     let tokenUri = tokenInfo[3];
+    let royalties = tokenInfo[5] || null;
     let createTime = tokenInfo[7];
     console.log('===createTime====' + createTime);
     let sellerAddr = openOrder[7];
@@ -1830,6 +1833,7 @@ export class HomePage implements OnInit {
       sellerAddr,
       index,
       createTime,
+      royalties
     );
   }
 
@@ -1841,13 +1845,13 @@ export class HomePage implements OnInit {
     tokenNum: any,
     sellerAddr: any,
     createTime: any,
+    royalties:any
   ) {
     feedsUri = feedsUri.replace('feeds:json:', '');
     this.httpService
       .ajaxGet(ApiUrl.nftGet + feedsUri, false)
       .then(result => {
         let type = result['type'] || 'single';
-        let royalties = result['royalties'] || '1';
         let quantity = tokenNum;
         let thumbnail = result['thumbnail'] || '';
         if (thumbnail === '') {
@@ -1884,13 +1888,13 @@ export class HomePage implements OnInit {
     sellerAddr: any,
     pIndex: any,
     createTime: any,
+    royalties:any
   ) {
     feedsUri = feedsUri.replace('feeds:json:', '');
     this.httpService
       .ajaxGet(ApiUrl.nftGet + feedsUri, false)
       .then(result => {
         let type = result['type'] || 'single';
-        let royalties = result['royalties'] || '1';
         let quantity = tokenNum;
         let thumbnail = result['thumbnail'] || '';
         if (thumbnail === '') {

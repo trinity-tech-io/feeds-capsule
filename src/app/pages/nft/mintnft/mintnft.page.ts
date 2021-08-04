@@ -49,7 +49,7 @@ export class MintnftPage implements OnInit {
   private orderId: any = '';
   public popover: any;
   private imagePath = "";
-
+  private tokenId:string = "";
   constructor(
     private translate: TranslateService,
     private event: Events,
@@ -249,7 +249,7 @@ export class MintnftPage implements OnInit {
     });
   }
 
-  sendIpfsImage(fileName: string, file: any) {
+  sendIpfsImage(fileName: string, file: any):Promise<string>{
     return new Promise(async (resolve, reject) => {
       let blob = this.dataURLtoBlob(file);
       let formData = new FormData();
@@ -266,10 +266,11 @@ export class MintnftPage implements OnInit {
 
           this.assetBase64 = file;
           this.imageObj['imgSize'] = result['Size'];
+          let tokenId = '0x' + UtilService.SHA256(hash);
           this.imageObj['imgHash'] = 'feeds:imgage:' + hash;
           this.imageObj['imgFormat'] = imgFormat;
 
-          resolve('');
+          resolve(tokenId);
         })
         .catch(err => {
           reject('Upload image error, error is ' + JSON.stringify(err));
@@ -301,7 +302,7 @@ export class MintnftPage implements OnInit {
     });
   }
 
-  sendIpfsJSON(): Promise<any> {
+  sendIpfsJSON(): Promise<string> {
     return new Promise(async (resolve, reject) => {
       let ipfsJSON = {
         version: '1',
@@ -324,10 +325,10 @@ export class MintnftPage implements OnInit {
           console.log('====json Data=====' + JSON.stringify(result));
           let hash = result['Hash'] || null;
           if (hash != null) {
-            let tokenId = '0x' + UtilService.SHA256(hash);
+            //let tokenId = '0x' + UtilService.SHA256(hash);
             let jsonHash = 'feeds:json:' + hash;
 
-            resolve({ tokenId: tokenId, jsonHash: jsonHash })
+            resolve(jsonHash);
           }
         })
         .catch(err => {
@@ -747,16 +748,17 @@ export class MintnftPage implements OnInit {
       let fileName = pathObj['fileName'];
       let filePath = pathObj['filepath']
       let file = null;
-
+      let tokenId = "";
       this.getFlieObj(fileName, filePath).then((fileBase64) => {
         file = fileBase64;
         return this.sendIpfsImage(fileName, file);
-      }).then(() => {
+      }).then((cid) => {
+        tokenId = cid;
         return this.sendIpfsThumbnail(this.thumbnail);
       }).then(() => {
         return this.sendIpfsJSON();
-      }).then((result) => {
-        resolve(result);
+      }).then((jsonHash) => {
+        resolve({ tokenId: tokenId, jsonHash: jsonHash });
       }).catch((error) => {
         reject('upload file error');
       });

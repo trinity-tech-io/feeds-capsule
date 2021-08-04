@@ -82,8 +82,8 @@ export class BidPage implements OnInit {
         .getPasar()
         .getPasarAddress();
       this.assetUri = this.handleImg(asset);
-      this.fixedPrice = queryParams.fixedAmount || '';
-      this.royalties = queryParams.royalties || '';
+      this.fixedPrice = queryParams.fixedAmount || null;
+      this.royalties = queryParams.royalties || null;
       this.saleOrderId = queryParams.saleOrderId || '';
       this.sellerAddress = queryParams.sellerAddr || '';
       let createTime = queryParams.createTime || '';
@@ -154,6 +154,13 @@ export class BidPage implements OnInit {
       type: 'AssetdetailsPage.description',
       details: this.description,
     });
+
+    if(this.royalties!=null){
+      this.contractDetails.push({
+        type: 'AssetdetailsPage.royalties',
+        details: this.royalties,
+      });
+    }
 
     this.contractDetails.push({
       type: 'AssetdetailsPage.quantity',

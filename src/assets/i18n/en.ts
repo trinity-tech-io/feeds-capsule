@@ -635,6 +635,7 @@ export const en = {
     history: 'History',
     contract: 'Contract',
     state: 'State',
+    royalties: 'Royalties',
   },
   BidPage: {
     title: 'Collectible Details',

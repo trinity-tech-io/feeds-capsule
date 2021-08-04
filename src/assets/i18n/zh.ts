@@ -622,6 +622,7 @@ export const zh = {
     history: '历史',
     contract: '合约',
     state: '状态',
+    royalties: '版税',
   },
   BidPage: {
     title: '收藏品明细',

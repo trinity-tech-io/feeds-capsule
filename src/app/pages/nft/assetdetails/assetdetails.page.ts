@@ -48,6 +48,7 @@ export class AssetdetailsPage implements OnInit {
   public assetUri: string = null;
   public developerMode: boolean = false;
   public nftStatus: string = null;
+  public royalties:string = null;
   constructor(
     private translate: TranslateService,
     private events: Events,
@@ -86,6 +87,7 @@ export class AssetdetailsPage implements OnInit {
         );
       }
       this.creator = queryParams.creator || '';
+      this.royalties = queryParams.royalties || null;
     });
   }
 
@@ -212,6 +214,13 @@ export class AssetdetailsPage implements OnInit {
       type: 'AssetdetailsPage.description',
       details: this.description,
     });
+
+    if(this.royalties!=null){
+      this.contractDetails.push({
+        type: 'AssetdetailsPage.royalties',
+        details: this.royalties,
+      });
+    }
 
     this.contractDetails.push({
       type: 'AssetdetailsPage.quantity',
