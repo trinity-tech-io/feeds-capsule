@@ -1763,13 +1763,13 @@ export class ProfilePage implements OnInit {
         let tokenNum = tokenInfo[2];
         let tokenUri = tokenInfo[3];
         let createTime = tokenInfo[7];
-        let royaltyOwner = tokenInfo[4];
+        let royalties = tokenInfo[5] || "";
         this.handleFeedsUrl(
           tokenUri,
           tokenId,
           price,
           tokenNum,
-          royaltyOwner,
+          royalties,
           'created',
           cIndex,
           accAddress,
@@ -1784,7 +1784,7 @@ export class ProfilePage implements OnInit {
     tokenId: string,
     price: any,
     tokenNum: any,
-    royaltyOwner: any,
+    royalties: any,
     listType: any,
     cIndex: any,
     createAddress: any,
@@ -1795,7 +1795,6 @@ export class ProfilePage implements OnInit {
       .ajaxGet(ApiUrl.nftGet + feedsUri, false)
       .then(result => {
         let type = result['type'] || 'single';
-        let royalties = royaltyOwner;
         let quantity = tokenNum;
         let fixedAmount = price || null;
         let thumbnail = result['thumbnail'] || '';
@@ -1865,11 +1864,11 @@ export class ProfilePage implements OnInit {
         let createTime = tokenInfo[7];
         feedsUri = feedsUri.replace('feeds:json:', '');
         let tokenNum = tokenInfo[2];
+        let royalties = tokenInfo[5] || null;
         this.httpService
           .ajaxGet(ApiUrl.nftGet + feedsUri, false)
           .then(result => {
             let type = result['type'] || 'single';
-            let royalties = result['royalties'] || '';
             let quantity = tokenNum;
             let fixedAmount = price || null;
             let thumbnail = result['thumbnail'] || '';
