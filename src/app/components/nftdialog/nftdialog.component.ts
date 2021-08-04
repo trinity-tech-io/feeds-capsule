@@ -30,6 +30,7 @@ export class NftdialogComponent implements OnInit {
   public imgBase64: string = '';
   public curAssItem: any = {};
   private orderId: any = '';
+  public imgUri:string = "";
   constructor(
     private navParams: NavParams,
     private popover: PopoverController,
@@ -289,7 +290,7 @@ export class NftdialogComponent implements OnInit {
       imgUri = imgUri.replace('feeds:imgage:', '');
       imgUri = ApiUrl.nftGet + imgUri;
     }
-    this.imgBase64 = await this.compressImage(imgUri);
+   this.imgUri = imgUri;
   }
 
   async getSetChannel(tokenId: any) {
@@ -306,6 +307,7 @@ export class NftdialogComponent implements OnInit {
 
   async sendPost(tokenId: any, nodeId: string, channelId: number) {
     let tempPostId = this.feedService.generateTempPostId();
+     this.imgBase64 = await this.compressImage(this.imgUri);
     this.publishPostThrowMsg(tokenId, nodeId, channelId, tempPostId);
   }
 

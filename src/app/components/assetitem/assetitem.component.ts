@@ -2,6 +2,7 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { ApiUrl } from '../../services/ApiUrl';
 // import { Web3Service } from '../../services/Web3Service';
 import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
+import { ViewHelper } from 'src/app/services/viewhelper.service';
 @Component({
   selector: 'app-assetitem',
   templateUrl: './assetitem.component.html',
@@ -14,6 +15,7 @@ export class AssetitemComponent implements OnInit {
   public styleObj: any = { width: '' };
   constructor(
     private nftContractControllerService: NFTContractControllerService,
+    private viewHelper: ViewHelper,
   ) {}
 
   ngOnInit() {
@@ -44,5 +46,11 @@ export class AssetitemComponent implements OnInit {
     return price;
   }
 
-  onSale() {}
+  onSale(){
+    this.viewHelper.showNftPrompt(
+      this.assetItem,
+      'CollectionsPage.putOnSale',
+      'created',
+    );
+  }
 }
