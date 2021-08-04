@@ -391,4 +391,10 @@ export class NativeService {
   getShare(qrCodeString: string) {
     this.intentService.share('', qrCodeString);
   }
+
+  changeLoadingDesc(message: string) {
+    message = this.translate.instant(message);
+    if (this.loading)
+      this.loading.message = message;
+  }
 }
