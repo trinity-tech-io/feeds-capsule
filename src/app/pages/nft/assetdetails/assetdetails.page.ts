@@ -6,12 +6,13 @@ import { ThemeService } from '../../../services/theme.service';
 import { Events } from 'src/app/services/events.service';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { ApiUrl } from '../../../services/ApiUrl';
 import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
 import { FeedService } from '../../../services/FeedService';
 import { UtilService } from 'src/app/services/utilService';
 import { ViewHelper } from 'src/app/services/viewhelper.service';
 import { PopupProvider } from 'src/app/services/popup';
+import { IPFSService } from 'src/app/services/ipfs.service';
+
 import _ from 'lodash';
 type detail = {
   type: string;
@@ -60,6 +61,7 @@ export class AssetdetailsPage implements OnInit {
     private viewHelper: ViewHelper,
     public theme: ThemeService,
     public popupProvider: PopupProvider,
+    private ipfsService: IPFSService
   ) {}
 
   ngOnInit() {
@@ -342,7 +344,8 @@ export class AssetdetailsPage implements OnInit {
   handleImg(imgUri: string) {
     if (imgUri.indexOf('feeds:imgage:') > -1) {
       imgUri = imgUri.replace('feeds:imgage:', '');
-      imgUri = ApiUrl.nftGet + imgUri;
+      imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
+      // imgUri = ApiUrl.nftGet + imgUri;
     }
     return imgUri;
   }

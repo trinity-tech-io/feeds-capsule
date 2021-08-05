@@ -76,6 +76,7 @@ import { WalletConnectControllerService } from 'src/app/services/walletconnect_c
 import { NFTContractParsarService } from 'src/app/services/nftcontract_parsar.service';
 import { NFTContractStickerService } from 'src/app/services/nftcontract_sticker.service';
 import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
+import { IPFSService } from 'src/app/services/ipfs.service';
 
 import * as Sentry from '@sentry/browser';
 
@@ -207,6 +208,7 @@ export function TranslateLoaderFactory() {
     NFTContractStickerService,
     NFTContractControllerService,
     WalletConnectControllerService,
+    IPFSService,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     { provide: ErrorHandler, useClass: ErrorHandler },
   ],

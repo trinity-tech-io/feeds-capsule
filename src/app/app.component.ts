@@ -16,6 +16,7 @@ import { EssentialsConnector } from '@elastosfoundation/essentials-connector-cor
 import { connectivity } from '@elastosfoundation/elastos-connectivity-sdk-cordova';
 import { WalletConnectControllerService } from 'src/app/services/walletconnect_controller.service';
 import { DataHelper } from 'src/app/services/DataHelper';
+import { IPFSService } from 'src/app/services/ipfs.service';
 
 enum LogLevel {
   NONE,
@@ -56,6 +57,7 @@ export class MyApp {
     private menuController: MenuController,
     private walletConnectControllerService: WalletConnectControllerService,
     private dataHelper: DataHelper,
+    private ipfsService: IPFSService
   ) {
     this.initializeApp();
     this.initProfileData();
@@ -172,12 +174,15 @@ export class MyApp {
       .then(status => {
         if (status === null) {
           this.feedService.setDeveloperMode(false);
+          this.ipfsService.setTESTMode(false);
           this.logUtils.setLogLevel(LogLevel.WARN);
           return;
         }
         if (status) {
+          this.ipfsService.setTESTMode(true);
           this.logUtils.setLogLevel(LogLevel.DEBUG);
         } else {
+          this.ipfsService.setTESTMode(false);
           this.logUtils.setLogLevel(LogLevel.WARN);
         }
         this.feedService.setDeveloperMode(status);

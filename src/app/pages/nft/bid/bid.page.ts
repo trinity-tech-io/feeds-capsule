@@ -6,12 +6,12 @@ import { NativeService } from '../../../services/NativeService';
 import { Events } from '../../../services/events.service';
 import { TitleBarService } from '../../../services/TitleBarService';
 import { TitleBarComponent } from '../../..//components/titlebar/titlebar.component';
-import { ApiUrl } from '../../../services/ApiUrl';
 import { FeedService } from 'src/app/services/FeedService';
 // import { Web3Service } from '../../../services/Web3Service';
 import { PopupProvider } from 'src/app/services/popup';
 import { PopoverController } from '@ionic/angular';
 import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
+import { IPFSService } from 'src/app/services/ipfs.service';
 
 import _ from 'lodash';
 import { UtilService } from 'src/app/services/utilService';
@@ -63,6 +63,7 @@ export class BidPage implements OnInit {
     private popoverController: PopoverController,
     public popupProvider: PopupProvider,
     private nftContractControllerService: NFTContractControllerService,
+    private ipfsService: IPFSService
   ) {}
 
   ngOnInit() {
@@ -307,7 +308,8 @@ export class BidPage implements OnInit {
   handleImg(imgUri: string) {
     if (imgUri.indexOf('feeds:imgage:') > -1) {
       imgUri = imgUri.replace('feeds:imgage:', '');
-      imgUri = ApiUrl.nftGet + imgUri;
+      imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
+      // imgUri = ApiUrl.nftGet + imgUri;
     }
     return imgUri;
   }

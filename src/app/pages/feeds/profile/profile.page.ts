@@ -19,8 +19,9 @@ import { ViewHelper } from 'src/app/services/viewhelper.service';
 import { WalletConnectControllerService } from 'src/app/services/walletconnect_controller.service';
 import { UtilService } from 'src/app/services/utilService';
 import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
-import { ApiUrl } from '../../../services/ApiUrl';
 import { HttpService } from '../../../services/HttpService';
+import { IPFSService } from 'src/app/services/ipfs.service';
+
 let TAG: string = 'Feeds-profile';
 
 @Component({
@@ -162,6 +163,7 @@ export class ProfilePage implements OnInit {
     private walletConnectControllerService: WalletConnectControllerService,
     private nftContractControllerService: NFTContractControllerService,
     private httpService: HttpService,
+    private ipfsService: IPFSService
   ) {
     // this.dataHelper.loadWalletAccountAddress().then((address)=>{
     //   console.log("accountAddress",address);
@@ -1790,8 +1792,8 @@ export class ProfilePage implements OnInit {
     createTime: any,
   ) {
     feedsUri = feedsUri.replace('feeds:json:', '');
-    this.httpService
-      .ajaxGet(ApiUrl.nftGet + feedsUri, false)
+    this.ipfsService
+      .nftGet(this.ipfsService.getNFTGetUrl() + feedsUri)
       .then(result => {
         let type = result['type'] || 'single';
         let quantity = tokenNum;
@@ -1824,6 +1826,40 @@ export class ProfilePage implements OnInit {
         }
       })
       .catch(() => {});
+    // this.httpService
+    //   .ajaxGet(ApiUrl.nftGet + feedsUri, false)
+    //   .then(result => {
+    //     let type = result['type'] || 'single';
+    //     let quantity = tokenNum;
+    //     let fixedAmount = price || null;
+    //     let thumbnail = result['thumbnail'] || '';
+    //     if (thumbnail === '') {
+    //       thumbnail = result['image'];
+    //     }
+    //     let item = {
+    //       creator: createAddress,
+    //       tokenId: tokenId,
+    //       asset: result['image'],
+    //       name: result['name'],
+    //       description: result['description'],
+    //       fixedAmount: fixedAmount,
+    //       kind: result['kind'],
+    //       type: type,
+    //       royalties: royalties,
+    //       quantity: quantity,
+    //       thumbnail: thumbnail,
+    //       createTime: createTime * 1000,
+    //       moreMenuType: 'created',
+    //     };
+    //     try {
+    //       this.collectiblesList.splice(cIndex, 1, item);
+    //       this.hanleListCace(createAddress);
+    //       // this.isLoading = false;
+    //     } catch (err) {
+    //       console.log('====err====' + JSON.stringify(err));
+    //     }
+    //   })
+    //   .catch(() => {});
   }
 
   async OnSale(accAddress: string) {
@@ -1864,8 +1900,8 @@ export class ProfilePage implements OnInit {
         feedsUri = feedsUri.replace('feeds:json:', '');
         let tokenNum = tokenInfo[2];
         let royalties = tokenInfo[5] || null;
-        this.httpService
-          .ajaxGet(ApiUrl.nftGet + feedsUri, false)
+        this.ipfsService
+          .nftGet(this.ipfsService.getNFTGetUrl() + feedsUri)
           .then(result => {
             let type = result['type'] || 'single';
             let quantity = tokenNum;
@@ -1897,6 +1933,39 @@ export class ProfilePage implements OnInit {
             //this.isLoading = false;
           })
           .catch(() => {});
+        // this.httpService
+        //   .ajaxGet(ApiUrl.nftGet + feedsUri, false)
+        //   .then(result => {
+        //     let type = result['type'] || 'single';
+        //     let quantity = tokenNum;
+        //     let fixedAmount = price || null;
+        //     let thumbnail = result['thumbnail'] || '';
+        //     if (thumbnail === '') {
+        //       thumbnail = result['image'];
+        //     }
+        //     let item = {
+        //       creator: createAddress,
+        //       saleOrderId: saleOrderId,
+        //       tokenId: tokenId,
+        //       asset: result['image'],
+        //       name: result['name'],
+        //       description: result['description'],
+        //       fixedAmount: fixedAmount,
+        //       kind: result['kind'],
+        //       type: type,
+        //       royalties: royalties,
+        //       quantity: quantity,
+        //       thumbnail: thumbnail,
+        //       sellerAddr: sellerAddr,
+        //       createTime: createTime * 1000,
+        //       moreMenuType: 'onSale',
+        //     };
+        //     let len = this.collectiblesList.length - 1 + index;
+        //     this.collectiblesList.splice(len, 1, item);
+        //     this.hanleListCace(createAddress);
+        //     //this.isLoading = false;
+        //   })
+        //   .catch(() => {});
       } catch (error) {}
     }
   }

@@ -10,11 +10,11 @@ import { TitleBarService } from '../../../services/TitleBarService';
 import { TitleBarComponent } from '../../../components/titlebar/titlebar.component';
 import { File, DirectoryEntry } from '@ionic-native/file/ngx';
 import { HttpService } from '../../../services/HttpService';
-import { ApiUrl } from '../../../services/ApiUrl';
 import { FeedService } from '../../../services/FeedService';
 import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
 import { WalletConnectControllerService } from 'src/app/services/walletconnect_controller.service';
 import { PopupProvider } from 'src/app/services/popup';
+import { IPFSService } from 'src/app/services/ipfs.service';
 
 const SUCCESS = 'success';
 const SKIP = 'SKIP';
@@ -65,6 +65,7 @@ export class MintnftPage implements OnInit {
     private nftContractControllerService: NFTContractControllerService,
     private walletConnectControllerService: WalletConnectControllerService,
     private popupProvider: PopupProvider,
+    private ipfsService: IPFSService
   ) {}
 
   ngOnInit() {}
@@ -254,8 +255,8 @@ export class MintnftPage implements OnInit {
       let blob = this.dataURLtoBlob(file);
       let formData = new FormData();
       formData.append('', blob);
-      this.httpService
-        .ajaxNftPost(ApiUrl.nftAdd, formData)
+      this.ipfsService
+        .nftPost(formData)
         .then(result => {
           let hash = result['Hash'] || null;
           let imgFormat = fileName.split('.')[1];
@@ -275,6 +276,27 @@ export class MintnftPage implements OnInit {
         .catch(err => {
           reject('Upload image error, error is ' + JSON.stringify(err));
         });
+      // this.httpService
+      //   .ajaxNftPost(ApiUrl.nftAdd, formData)
+      //   .then(result => {
+      //     let hash = result['Hash'] || null;
+      //     let imgFormat = fileName.split('.')[1];
+      //     if (!hash) {
+      //       reject("Upload Image error, hash is null")
+      //       return;
+      //     }
+
+      //     this.assetBase64 = file;
+      //     this.imageObj['imgSize'] = result['Size'];
+      //     let tokenId = '0x' + UtilService.SHA256(hash);
+      //     this.imageObj['imgHash'] = 'feeds:imgage:' + hash;
+      //     this.imageObj['imgFormat'] = imgFormat;
+
+      //     resolve(tokenId);
+      //   })
+      //   .catch(err => {
+      //     reject('Upload image error, error is ' + JSON.stringify(err));
+      //   });
     });
   }
 
@@ -283,8 +305,8 @@ export class MintnftPage implements OnInit {
       let thumbnailBlob = this.dataURLtoBlob(thumbnailBase64);
       let formData = new FormData();
       formData.append('', thumbnailBlob);
-      this.httpService
-        .ajaxNftPost(ApiUrl.nftAdd, formData)
+      this.ipfsService
+        .nftPost(formData)
         .then(result => {
           let hash = result['Hash'] || null;
           if (!hash) {
@@ -299,6 +321,22 @@ export class MintnftPage implements OnInit {
         .catch(err => {
           reject("Send thumbnail error, error is " + JSON.stringify(err));
         });
+      // this.httpService
+      //   .ajaxNftPost(ApiUrl.nftAdd, formData)
+      //   .then(result => {
+      //     let hash = result['Hash'] || null;
+      //     if (!hash) {
+      //       reject("Send thumbnail error, hash is null");
+      //       return;
+      //     }
+
+      //     this.thumbnail = thumbnailBase64;
+      //     this.imageObj['thumbnail'] = 'feeds:imgage:' + hash;
+      //     resolve('');
+      //   })
+      //   .catch(err => {
+      //     reject("Send thumbnail error, error is " + JSON.stringify(err));
+      //   });
     });
   }
 
@@ -318,8 +356,8 @@ export class MintnftPage implements OnInit {
       let formData = new FormData();
       formData.append('', JSON.stringify(ipfsJSON));
 
-      this.httpService
-        .ajaxNftPost(ApiUrl.nftAdd, formData)
+      this.ipfsService
+        .nftPost(formData)
         .then(result => {
           //{"Name":"blob","Hash":"QmaxWgjheueDc1XW2bzDPQ6qnGi9UKNf23EBQSUAu4GHGF","Size":"17797"};
           console.log('====json Data=====' + JSON.stringify(result));
@@ -335,6 +373,23 @@ export class MintnftPage implements OnInit {
           console.log('========' + JSON.stringify(err));
           reject('upload json error');
         });
+      // this.httpService
+      //   .ajaxNftPost(ApiUrl.nftAdd, formData)
+      //   .then(result => {
+      //     //{"Name":"blob","Hash":"QmaxWgjheueDc1XW2bzDPQ6qnGi9UKNf23EBQSUAu4GHGF","Size":"17797"};
+      //     console.log('====json Data=====' + JSON.stringify(result));
+      //     let hash = result['Hash'] || null;
+      //     if (hash != null) {
+      //       //let tokenId = '0x' + UtilService.SHA256(hash);
+      //       let jsonHash = 'feeds:json:' + hash;
+
+      //       resolve(jsonHash);
+      //     }
+      //   })
+      //   .catch(err => {
+      //     console.log('========' + JSON.stringify(err));
+      //     reject('upload json error');
+      //   });
     });
   }
 
