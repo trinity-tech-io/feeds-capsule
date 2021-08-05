@@ -384,7 +384,7 @@ export class MintnftPage implements OnInit {
     let accountAddress =
       this.nftContractControllerService.getAccountAddress() || '';
     if (accountAddress === '') {
-      this.native.toast_trans('common.connectWallet');
+      this.native.toastWarn('common.connectWallet');
       return;
     }
 
@@ -426,7 +426,7 @@ export class MintnftPage implements OnInit {
       this.issueRadionType === 'oneTimeIssue' &&
       this.nftFixedAmount <= 0
     ) {
-      this.native.toast_trans('common.amountError');
+      this.native.toastWarn('MintnftPage.priceErrorMsg');
       return;
     }
 
@@ -438,9 +438,19 @@ export class MintnftPage implements OnInit {
       this.native.toastWarn('MintnftPage.nftMinimumAmount');
       return false;
     }
-
+    let regNumber = /^\+?[1-9][0-9]*$/;
     if (this.nftRoyalties === '') {
       this.native.toastWarn('MintnftPage.nftRoyaltiesPlaceholder');
+      return false;
+    }
+
+    if (regNumber.test(this.nftRoyalties) == false) {
+      this.native.toastWarn('MintnftPage.royaltiesErrorMsg');
+      return false;
+    }
+
+    if(parseInt(this.nftRoyalties)<=0 || parseInt(this.nftRoyalties)>=15){
+      this.native.toastWarn('MintnftPage.royaltiesErrorMsg');
       return false;
     }
 
@@ -449,9 +459,8 @@ export class MintnftPage implements OnInit {
       return false;
     }
 
-    let regNumber = /^\+?[1-9][0-9]*$/;
     if (regNumber.test(this.nftQuantity) == false) {
-      this.native.toast_trans('input quantity');
+      this.native.toastWarn('MintnftPage.quantityErrorMsg');
       return false;
     }
     return true;
@@ -806,5 +815,18 @@ export class MintnftPage implements OnInit {
       this.popover = null;
       that.native.pop();
     }
+  }
+
+  handleRoyalties(events:any) {
+   let royalties = events.target.value || '';
+   let regNumber = /^\+?[1-9][0-9]*$/;
+   if (regNumber.test(royalties) == false) {
+    this.native.toastWarn('MintnftPage.royaltiesErrorMsg');
+    return false;
+  }
+  if(parseInt(royalties)<=0 || parseInt(royalties)>=15){
+    this.native.toastWarn('MintnftPage.royaltiesErrorMsg');
+    return false;
+  }
   }
 }

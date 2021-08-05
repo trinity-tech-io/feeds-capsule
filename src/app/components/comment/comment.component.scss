@@ -64,13 +64,14 @@ ion-footer {
                   margin: 10px 0 5px;
                   max-height: 192px;
                   background-color: #f0f1ff;
-                  color: #000000;
+                  --color: #000000;
                   border-radius: 9px;
                   --padding-start: 10px;
                   font-family: 'SourceSansPro';
                   font-size: 14px;
                   font-weight: 400;
                   line-height: 1.25;
+                  --placeholder-color:#a1a1a1;
               }
           }
       }
