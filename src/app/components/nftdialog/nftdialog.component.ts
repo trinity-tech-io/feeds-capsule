@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ThemeService } from 'src/app/services/theme.service';
 import { PopoverController, NavParams } from '@ionic/angular';
-import { ApiUrl } from '../../services/ApiUrl';
 import { FeedService } from '../../services/FeedService';
 // import { Web3Service } from '../../services/Web3Service';
 import { NativeService } from 'src/app/services/NativeService';
@@ -9,6 +8,7 @@ import { Events } from '../../services/events.service';
 import _ from 'lodash';
 import { UtilService } from 'src/app/services/utilService';
 import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
+import { IPFSService } from 'src/app/services/ipfs.service';
 
 @Component({
   selector: 'app-nftdialog',
@@ -40,6 +40,7 @@ export class NftdialogComponent implements OnInit {
     private events: Events,
     public theme: ThemeService,
     private nftContractControllerService: NFTContractControllerService,
+    private ipfsService: IPFSService
   ) {}
 
   ngOnInit() {
@@ -288,7 +289,8 @@ export class NftdialogComponent implements OnInit {
     let imgUri = this.assItem['thumbnail'];
     if (imgUri.indexOf('feeds:imgage:') > -1) {
       imgUri = imgUri.replace('feeds:imgage:', '');
-      imgUri = ApiUrl.nftGet + imgUri;
+      imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
+      // imgUri = ApiUrl.nftGet + imgUri;
     }
    this.imgUri = imgUri;
   }

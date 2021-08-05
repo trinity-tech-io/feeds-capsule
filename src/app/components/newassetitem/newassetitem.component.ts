@@ -1,9 +1,9 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { ApiUrl } from '../../services/ApiUrl';
 import { TranslateService } from '@ngx-translate/core';
 import { ThemeService } from 'src/app/services/theme.service';
 import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
 import { UtilService } from 'src/app/services/utilService';
+import { IPFSService } from 'src/app/services/ipfs.service';
 
 @Component({
   selector: 'app-newassetitem',
@@ -20,6 +20,7 @@ export class NewassetitemComponent implements OnInit {
     private translate: TranslateService,
     public theme: ThemeService,
     private nftContractControllerService: NFTContractControllerService,
+    private ipfsService: IPFSService
   ) {}
 
   ngOnInit() {
@@ -38,7 +39,8 @@ export class NewassetitemComponent implements OnInit {
   hanldeImg(imgUri: string) {
     if (imgUri.indexOf('feeds:imgage:') > -1) {
       imgUri = imgUri.replace('feeds:imgage:', '');
-      imgUri = ApiUrl.nftGet + imgUri;
+      imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
+      // imgUri = ApiUrl.nftGet + imgUri;
     }
     return imgUri;
   }

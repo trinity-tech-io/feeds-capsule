@@ -11,6 +11,8 @@ import { Events } from 'src/app/services/events.service';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { LanguageService } from 'src/app/services/language.service';
+import { IPFSService } from 'src/app/services/ipfs.service';
+
 import _ from 'lodash';
 
 enum LogLevel {
@@ -49,6 +51,7 @@ export class SettingsPage implements OnInit {
     private logUtils: LogUtils,
     private zone: NgZone,
     private titleBarService: TitleBarService,
+    private ipfsService: IPFSService
   ) {}
 
   ngOnInit() {}
@@ -127,8 +130,10 @@ export class SettingsPage implements OnInit {
     this.events.publish(FeedsEvent.PublishType.search);
     if (this.developerMode) {
       this.logUtils.setLogLevel(LogLevel.DEBUG);
+      this.ipfsService.setTESTMode(true);
     } else {
       this.logUtils.setLogLevel(LogLevel.WARN);
+      this.ipfsService.setTESTMode(false);
     }
   }
 

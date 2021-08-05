@@ -4,9 +4,8 @@ import { TitleBarService } from '../../services/TitleBarService';
 import { TitleBarComponent } from '../../components/titlebar/titlebar.component';
 import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
 import { FeedService, Avatar } from 'src/app/services/FeedService';
-import { ApiUrl } from '../../services/ApiUrl';
-import { HttpService } from '../../services/HttpService';
 import { NativeService } from '../../services/NativeService';
+import { IPFSService } from 'src/app/services/ipfs.service';
 
 @Component({
   selector: 'app-profilenftimage',
@@ -21,8 +20,8 @@ export class ProfilenftimagePage implements OnInit {
     private titleBarService: TitleBarService,
     private nftContractControllerService: NFTContractControllerService,
     private feedService: FeedService,
-    private httpService: HttpService,
     private native: NativeService,
+    private ipfsService: IPFSService
   ) {}
 
   ngOnInit() {}
@@ -127,8 +126,8 @@ export class ProfilenftimagePage implements OnInit {
     createTime: any,
   ) {
     feedsUri = feedsUri.replace('feeds:json:', '');
-    this.httpService
-      .ajaxGet(ApiUrl.nftGet + feedsUri, false)
+    this.ipfsService
+      .nftGet(this.ipfsService.getNFTGetUrl() + feedsUri)
       .then(result => {
         let type = result['type'] || 'single';
         let royalties = royaltyOwner;
@@ -162,6 +161,41 @@ export class ProfilenftimagePage implements OnInit {
         }
       })
       .catch(() => {});
+    // this.httpService
+    //   .ajaxGet(ApiUrl.nftGet + feedsUri, false)
+    //   .then(result => {
+    //     let type = result['type'] || 'single';
+    //     let royalties = royaltyOwner;
+    //     let quantity = tokenNum;
+    //     let fixedAmount = price || null;
+    //     let thumbnail = result['thumbnail'] || '';
+    //     if (thumbnail === '') {
+    //       thumbnail = result['image'];
+    //     }
+    //     let item = {
+    //       creator: createAddress,
+    //       tokenId: tokenId,
+    //       asset: result['image'],
+    //       name: result['name'],
+    //       description: result['description'],
+    //       fixedAmount: fixedAmount,
+    //       kind: result['kind'],
+    //       type: type,
+    //       royalties: royalties,
+    //       quantity: quantity,
+    //       thumbnail: thumbnail,
+    //       createTime: createTime * 1000,
+    //       moreMenuType: 'created',
+    //     };
+    //     try {
+    //       this.nftImageList.splice(cIndex, 1, item);
+    //       this.hanleListCace(createAddress);
+    //       // this.isLoading = false;
+    //     } catch (err) {
+    //       console.log('====err====' + JSON.stringify(err));
+    //     }
+    //   })
+    //   .catch(() => {});
   }
 
   async OnSale(accAddress: string) {
@@ -201,8 +235,8 @@ export class ProfilenftimagePage implements OnInit {
         let createTime = tokenInfo[7];
         feedsUri = feedsUri.replace('feeds:json:', '');
         let tokenNum = tokenInfo[2];
-        this.httpService
-          .ajaxGet(ApiUrl.nftGet + feedsUri, false)
+        this.ipfsService
+          .nftGet(this.ipfsService.getNFTGetUrl() + feedsUri)
           .then(result => {
             let type = result['type'] || 'single';
             let royalties = result['royalties'] || '';
@@ -235,6 +269,40 @@ export class ProfilenftimagePage implements OnInit {
             //this.isLoading = false;
           })
           .catch(() => {});
+        // this.httpService
+        //   .ajaxGet(ApiUrl.nftGet + feedsUri, false)
+        //   .then(result => {
+        //     let type = result['type'] || 'single';
+        //     let royalties = result['royalties'] || '';
+        //     let quantity = tokenNum;
+        //     let fixedAmount = price || null;
+        //     let thumbnail = result['thumbnail'] || '';
+        //     if (thumbnail === '') {
+        //       thumbnail = result['image'];
+        //     }
+        //     let item = {
+        //       creator: createAddress,
+        //       saleOrderId: saleOrderId,
+        //       tokenId: tokenId,
+        //       asset: result['image'],
+        //       name: result['name'],
+        //       description: result['description'],
+        //       fixedAmount: fixedAmount,
+        //       kind: result['kind'],
+        //       type: type,
+        //       royalties: royalties,
+        //       quantity: quantity,
+        //       thumbnail: thumbnail,
+        //       sellerAddr: sellerAddr,
+        //       createTime: createTime * 1000,
+        //       moreMenuType: 'onSale',
+        //     };
+        //     let len = this.nftImageList.length - 1 + index;
+        //     this.nftImageList.splice(len, 1, item);
+        //     this.hanleListCace(createAddress);
+        //     //this.isLoading = false;
+        //   })
+        //   .catch(() => {});
       } catch (error) {}
     }
   }
@@ -253,7 +321,8 @@ export class ProfilenftimagePage implements OnInit {
     let imgUri = item['asset'];
     if (imgUri.indexOf('feeds:imgage:') > -1) {
       imgUri = imgUri.replace('feeds:imgage:', '');
-      imgUri = ApiUrl.nftGet + imgUri;
+      imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
+      // imgUri = ApiUrl.nftGet + imgUri;
     }
     //let imgBase64 = await this.compressImage(imgUri);
     this.native.navigateForward(['editimage'], { replaceUrl: true });
@@ -263,7 +332,8 @@ export class ProfilenftimagePage implements OnInit {
   hanldeImg(imgUri: string) {
     if (imgUri.indexOf('feeds:imgage:') > -1) {
       imgUri = imgUri.replace('feeds:imgage:', '');
-      imgUri = ApiUrl.nftGet + imgUri;
+      imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
+      // imgUri = ApiUrl.nftGet + imgUri;
     }
     return imgUri;
   }

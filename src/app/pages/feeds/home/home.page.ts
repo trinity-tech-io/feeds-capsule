@@ -30,8 +30,8 @@ import { TitleBarService } from 'src/app/services/TitleBarService';
 import { StorageService } from 'src/app/services/StorageService';
 // import { Web3Service } from '../../../services/Web3Service';
 import { HttpService } from '../../../services/HttpService';
-import { ApiUrl } from '../../../services/ApiUrl';
 import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
+import { IPFSService } from 'src/app/services/ipfs.service';
 
 import _ from 'lodash';
 import { isNgTemplate } from '@angular/compiler';
@@ -155,6 +155,7 @@ export class HomePage implements OnInit {
     // private web3Service:Web3Service,
     private httpService: HttpService,
     private nftContractControllerService: NFTContractControllerService,
+    private ipfsService: IPFSService
   ) {}
 
   initPostListData(scrollToTop: boolean) {
@@ -1848,8 +1849,8 @@ export class HomePage implements OnInit {
     royalties:any
   ) {
     feedsUri = feedsUri.replace('feeds:json:', '');
-    this.httpService
-      .ajaxGet(ApiUrl.nftGet + feedsUri, false)
+    this.ipfsService
+      .nftGet(this.ipfsService.getNFTGetUrl() + feedsUri)
       .then(result => {
         let type = result['type'] || 'single';
         let quantity = tokenNum;
@@ -1877,6 +1878,35 @@ export class HomePage implements OnInit {
         this.native.navigateForward(['bid'], { queryParams: item });
       })
       .catch(() => {});
+    // this.httpService
+    //   .ajaxGet(ApiUrl.nftGet + feedsUri, false)
+    //   .then(result => {
+    //     let type = result['type'] || 'single';
+    //     let quantity = tokenNum;
+    //     let thumbnail = result['thumbnail'] || '';
+    //     if (thumbnail === '') {
+    //       thumbnail = result['image'];
+    //     }
+    //     let item = {
+    //       saleOrderId: saleOrderId,
+    //       tokenId: tokenId,
+    //       asset: result['image'],
+    //       name: result['name'],
+    //       description: result['description'],
+    //       fixedAmount: price,
+    //       kind: result['kind'],
+    //       type: type,
+    //       royalties: royalties,
+    //       quantity: quantity,
+    //       thumbnail: thumbnail,
+    //       sellerAddr: sellerAddr,
+    //       createTime: createTime * 1000,
+    //     };
+    //     item['showType'] = 'buy';
+    //     console.log('==home==buy===' + JSON.stringify(item));
+    //     this.native.navigateForward(['bid'], { queryParams: item });
+    //   })
+    //   .catch(() => {});
   }
 
   handleFeedsUrl(
@@ -1891,8 +1921,8 @@ export class HomePage implements OnInit {
     royalties:any
   ) {
     feedsUri = feedsUri.replace('feeds:json:', '');
-    this.httpService
-      .ajaxGet(ApiUrl.nftGet + feedsUri, false)
+    this.ipfsService
+      .nftGet(this.ipfsService.getNFTGetUrl() + feedsUri)
       .then(result => {
         let type = result['type'] || 'single';
         let quantity = tokenNum;
@@ -1931,6 +1961,46 @@ export class HomePage implements OnInit {
         }
       })
       .catch(() => {});
+    // this.httpService
+    //   .ajaxGet(ApiUrl.nftGet + feedsUri, false)
+    //   .then(result => {
+    //     let type = result['type'] || 'single';
+    //     let quantity = tokenNum;
+    //     let thumbnail = result['thumbnail'] || '';
+    //     if (thumbnail === '') {
+    //       thumbnail = result['image'];
+    //     }
+    //     let item = {
+    //       saleOrderId: saleOrderId,
+    //       tokenId: tokenId,
+    //       asset: result['image'],
+    //       name: result['name'],
+    //       description: result['description'],
+    //       fixedAmount: price,
+    //       kind: result['kind'],
+    //       type: type,
+    //       royalties: royalties,
+    //       quantity: quantity,
+    //       thumbnail: thumbnail,
+    //       sellerAddr: sellerAddr,
+    //       createTime: createTime * 1000,
+    //       moreMenuType: 'onSale',
+    //     };
+    //     try {
+    //       this.pasarList.splice(pIndex, 1, item);
+    //       this.pasarList = _.sortBy(this.pasarList, (item: any) => {
+    //         return -Number(item.createTime);
+    //       });
+    //       this.feedService.setPasarList(this.pasarList);
+    //       this.feedService.setData(
+    //         'feed.nft.pasarList',
+    //         JSON.stringify(this.pasarList),
+    //       );
+    //     } catch (err) {
+    //       console.log('====err====' + JSON.stringify(err));
+    //     }
+    //   })
+    //   .catch(() => {});
   }
 
   clickAssetItem(assetitem: any) {

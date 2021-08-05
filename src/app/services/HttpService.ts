@@ -1,12 +1,25 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { NativeService } from 'src/app/services/NativeService';
 import { PopupProvider } from 'src/app/services/popup';
 import { PopoverController } from '@ionic/angular';
 
+export type HttpOptions = {
+  headers?: HttpHeaders | {
+    [header: string]: string | string[];
+  };
+  observe?: "body";
+  params?: HttpParams | {
+    [param: string]: string | string[];
+  };
+  reportProgress?: boolean;
+  responseType?: "json";
+  withCredentials?: boolean;
+}
+
 @Injectable()
 export class HttpService {
-  public httpOptions = {
+  public httpOptions: HttpOptions = {
     headers: new HttpHeaders({
       'Content-Type': 'application/json;charset=utf-8',
     }),
@@ -18,6 +31,42 @@ export class HttpService {
     public popupProvider: PopupProvider,
     private popoverController: PopoverController,
   ) {}
+
+  /**
+   * Base http get function
+   * @param url 
+   */
+  httpGet(url: string): Promise<Object> {
+    return new Promise((resolve, reject) => {
+      this.httpClient.get(url).subscribe(
+        response => {
+          resolve(response);
+        },
+        error => {
+          reject(error);
+        }
+      );
+    });
+  }
+
+  /**
+   * Base http post function
+   * @param url 
+   */
+  httpPost(url: string, body: any, httpOptions: HttpOptions = this.httpOptions): Promise<Object> {
+    return new Promise((resolve, reject) => {
+      this.httpClient
+        .post(url, body, this.httpOptions)
+        .subscribe(
+          response => {
+            resolve(response);
+          },
+          error => {
+            reject(error);
+          },
+        );
+    });
+  }
 
   ajaxGet(url: string, isLoading: boolean = true) {
     if (isLoading) {

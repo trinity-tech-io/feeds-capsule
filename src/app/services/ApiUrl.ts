@@ -1,7 +1,12 @@
 export class ApiUrl {
   /**后台服务*/
   public static SERVER: string = 'https://www.trinity-tech.io/feeds/api/v2';
-  public static NFTSERVER: string = 'https://ipfs-test.trinity-feeds.app/';
+
+  /** IPFS 测试网络 */
+  public static IPFS_TEST_SERVER: string = 'https://ipfs-test.trinity-feeds.app/';
+  /** IPFS 正式网络 */
+  public static IPFS_SERVER: string = 'https://ipfs.trinity-feeds.app';
+
   /**register*/
   public static register: string = ApiUrl.SERVER + '/register';
 
@@ -20,7 +25,9 @@ export class ApiUrl {
   /**update*/
   public static update: string = ApiUrl.SERVER + '/update';
 
-  /**NFT*/
-  public static nftAdd: string = ApiUrl.NFTSERVER + 'api/v0/add';
-  public static nftGet: string = ApiUrl.NFTSERVER + 'ipfs/';
+  /**NFT IPFS*/
+  // public static nftAdd: string = ApiUrl.IPFS_TEST_SERVER + 'api/v0/add';
+  // public static nftGet: string = ApiUrl.IPFS_TEST_SERVER + 'ipfs/';
+  public static IPFS_NFT_ADD: string = 'api/v0/add';
+  public static IPFS_NFT_GET: string = 'ipfs/';
 }
