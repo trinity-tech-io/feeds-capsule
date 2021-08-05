@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
 import { WalletConnectControllerService } from 'src/app/services/walletconnect_controller.service';
 import Web3 from 'web3';
+import { ApiUrl } from './ApiUrl';
 
 @Injectable()
 export class NFTContractStickerService {
-  private stickerAddress: string = '0xed1978c53731997f4DAfBA47C9b07957Ef6F3961';
+  private stickerAddress: string = ApiUrl.STICKER_TEST_ADDRESS;
   private stickerAbi = require('../../assets/contracts/stickerABI.json');
   private web3: Web3;
   private stickerContract: any;
@@ -24,6 +25,14 @@ export class NFTContractStickerService {
       this.stickerAbi,
       this.stickerAddress,
     );
+  }
+
+  setTestMode(testMode: boolean) {
+    if (testMode) {
+      this.stickerAddress = ApiUrl.STICKER_TEST_ADDRESS;
+      return;
+    }
+    this.stickerAddress = ApiUrl.STICKER_ADDRESS;
   }
 
   getSticker() {

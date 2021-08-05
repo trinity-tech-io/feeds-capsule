@@ -17,6 +17,8 @@ import { connectivity } from '@elastosfoundation/elastos-connectivity-sdk-cordov
 import { WalletConnectControllerService } from 'src/app/services/walletconnect_controller.service';
 import { DataHelper } from 'src/app/services/DataHelper';
 import { IPFSService } from 'src/app/services/ipfs.service';
+import { NFTContractParsarService } from 'src/app/services/nftcontract_parsar.service';
+import { NFTContractStickerService } from 'src/app/services/nftcontract_sticker.service';
 
 enum LogLevel {
   NONE,
@@ -57,7 +59,9 @@ export class MyApp {
     private menuController: MenuController,
     private walletConnectControllerService: WalletConnectControllerService,
     private dataHelper: DataHelper,
-    private ipfsService: IPFSService
+    private ipfsService: IPFSService,
+    private nftContractParsarService: NFTContractParsarService,
+    private nftContractStickerService: NFTContractStickerService,
   ) {
     this.initializeApp();
     this.initProfileData();
@@ -175,14 +179,21 @@ export class MyApp {
         if (status === null) {
           this.feedService.setDeveloperMode(false);
           this.ipfsService.setTESTMode(false);
+          this.nftContractParsarService.setTestMode(false);
+          this.nftContractStickerService.setTestMode(false);
           this.logUtils.setLogLevel(LogLevel.WARN);
+          this.feedService.setDeveloperMode(false);
           return;
         }
         if (status) {
           this.ipfsService.setTESTMode(true);
+          this.nftContractParsarService.setTestMode(true);
+          this.nftContractStickerService.setTestMode(true);
           this.logUtils.setLogLevel(LogLevel.DEBUG);
         } else {
           this.ipfsService.setTESTMode(false);
+          this.nftContractParsarService.setTestMode(false);
+          this.nftContractStickerService.setTestMode(false);
           this.logUtils.setLogLevel(LogLevel.WARN);
         }
         this.feedService.setDeveloperMode(status);
