@@ -612,6 +612,10 @@ export const en = {
     nfthighestBid: 'Highest Bid',
     nftExpirationDate: 'Expiration Date',
     nftExpirationDateDes: 'Choose expiration date',
+    priceErrorMsg: 'The price to sell should be higher than 0',
+    priceErrorMsg1: 'Change price',
+    royaltiesErrorMsg: 'Royalties value should be between 0 and 15%',
+    quantityErrorMsg1: 'Quantity number should not be a negative value'
   },
   AssetdetailsPage: {
     title: 'Collectible Details',

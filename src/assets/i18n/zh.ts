@@ -599,6 +599,10 @@ export const zh = {
     nfthighestBid: '最高出价',
     nftExpirationDate: '截止日期',
     nftExpirationDateDes: '选择截止日期',
+    priceErrorMsg: '出售价格不能为负值',
+    priceErrorMsg1: '改变价格',
+    royaltiesErrorMsg: '版本税必须低于15%（大于0%）',
+    quantityErrorMsg: '数量值必须大于0'
   },
   AssetdetailsPage: {
     title: '收藏品明细',
@@ -623,6 +627,7 @@ export const zh = {
     contract: '合约',
     state: '状态',
     royalties: '版税',
+    priceErrorMsg: '出售价格不能为负值'
   },
   BidPage: {
     title: '收藏品明细',

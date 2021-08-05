@@ -11,6 +11,7 @@
     }
 
     ion-textarea {
+        --placeholder-color:#a1a1a1;
         margin: 10px 0 15px;
         min-height:172.4px;
         background-color: #f6f5f6;
@@ -20,7 +21,7 @@
         font-weight: bold;
         font-stretch: normal;
         font-style: normal;
-        color: #a1a1a1;
+        --color: #000;
         line-height: 1.25;
     }
 

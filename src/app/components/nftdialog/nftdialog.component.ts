@@ -85,17 +85,17 @@ export class NftdialogComponent implements OnInit {
     }
 
     if (this.amount <= 0) {
-      this.native.toast_trans('common.amountError');
+      this.native.toastWarn('MintnftPage.priceErrorMsg');
       return;
     }
 
     if (this.curAmount === this.amount) {
-      this.native.toast_trans('change price');
+      this.native.toastWarn('MintnftPage.priceErrorMsg1');
       return;
     }
     this.quantity = this.quantity || '';
     if (this.quantity === '') {
-      this.native.toast_trans('input quantity');
+      this.native.toastWarn('input quantity');
       return;
     }
     let regNumber = /^\+?[1-9][0-9]*$/;
@@ -167,12 +167,12 @@ export class NftdialogComponent implements OnInit {
     }
 
     if (this.amount <= 0) {
-      this.native.toast_trans('common.amountError');
+      this.native.toastWarn('MintnftPage.priceErrorMsg');
       return;
     }
 
     if (this.curAmount === this.amount) {
-      this.native.toast_trans('change price');
+      this.native.toastWarn('MintnftPage.priceErrorMsg1');
       return;
     }
 
