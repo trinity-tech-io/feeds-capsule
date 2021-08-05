@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { WalletConnectControllerService } from 'src/app/services/walletconnect_controller.service';
 import Web3 from 'web3';
+import { ApiUrl } from './ApiUrl';
 
 const SUCCESS = 'success';
 const FAIL = '';
@@ -8,7 +9,7 @@ const FAIL = '';
 @Injectable()
 export class NFTContractParsarService {
   private pasarAbi = require('../../assets/contracts/pasarABI.json');
-  private pasarAddr: string = '0x2652d10A5e525959F7120b56f2D7a9cD0f6ee087';
+  private pasarAddr: string = ApiUrl.PASAR_TEST_ADDRESS;
   private pasarContract: any;
   private web3: Web3;
   private checkSellerOrderStateInterval: NodeJS.Timer;
@@ -29,6 +30,15 @@ export class NFTContractParsarService {
       this.pasarAbi,
       this.pasarAddr,
     );
+  }
+
+  setTestMode(testMode: boolean) {
+    if (testMode) {
+      this.pasarAddr = ApiUrl.PASAR_TEST_ADDRESS;
+      return;
+    }
+
+    this.pasarAddr = ApiUrl.PASAR_ADDRESS;
   }
 
   getPasar() {

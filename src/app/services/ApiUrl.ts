@@ -30,4 +30,10 @@ export class ApiUrl {
   // public static nftGet: string = ApiUrl.IPFS_TEST_SERVER + 'ipfs/';
   public static IPFS_NFT_ADD: string = 'api/v0/add';
   public static IPFS_NFT_GET: string = 'ipfs/';
+
+  public static PASAR_ADDRESS: string = '0x2652d10A5e525959F7120b56f2D7a9cD0f6ee087';
+  public static PASAR_TEST_ADDRESS: string = '0x2652d10A5e525959F7120b56f2D7a9cD0f6ee087';
+
+  public static STICKER_ADDRESS: string = '0xed1978c53731997f4DAfBA47C9b07957Ef6F3961';
+  public static STICKER_TEST_ADDRESS: string = '0xed1978c53731997f4DAfBA47C9b07957Ef6F3961';
 }
