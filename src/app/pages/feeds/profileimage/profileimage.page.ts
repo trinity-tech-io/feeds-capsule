@@ -110,6 +110,7 @@ export class ProfileimagePage implements OnInit {
   ionViewWillLeave() {
     //this.camera = null;
     this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
+    this.events.publish(FeedsEvent.PublishType.addProflieEvent);
     if (this.pictureMenu != null) {
       this.menuService.hideActionSheet();
     }

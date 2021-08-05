@@ -381,8 +381,7 @@ export class ProfilePage implements OnInit {
 
     this.events.subscribe(FeedsEvent.PublishType.channelsDataUpdate, () => {
       this.zone.run(() => {
-        this.channels = this.feedService.getMyChannelList();
-        this.initnodeStatus(this.channels);
+        this.initMyFeeds();
       });
     });
 
