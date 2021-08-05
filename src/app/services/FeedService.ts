@@ -1374,13 +1374,13 @@ export class FeedService {
     let thumbnails = this.serializeDataService.encodeData('');
 
     //TODO 2.0
-    let hashId = 'N2A';
+    let hashId = 'NA';
 
     //TODO 2.0
-    let proof = 'N2A';
+    let proof = 'NA';
 
     //TODO 2.0
-    let originPostUrl = 'N2A';
+    let originPostUrl = 'NA';
 
     this.prepareTempMediaPost(
       nodeId,
@@ -3437,6 +3437,8 @@ export class FeedService {
       this.handleError(nodeId, error);
       return;
     }
+
+    this.updateData(nodeId);
   }
 
   doSubscribeChannelFinish(nodeId: string, channelId: number) {
