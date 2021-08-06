@@ -56,7 +56,7 @@ export class HttpService {
   httpPost(url: string, body: any, httpOptions: HttpOptions = this.httpOptions): Promise<Object> {
     return new Promise((resolve, reject) => {
       this.httpClient
-        .post(url, body, this.httpOptions)
+        .post(url, body, httpOptions)
         .subscribe(
           response => {
             resolve(response);
