@@ -171,7 +171,9 @@ export class MintnftPage implements OnInit {
         tokenId = result.tokenId;
         jsonHash = result.jsonHash;
         this.native.changeLoadingDesc("common.mintingData");
-        return this.mintContract(tokenId, jsonHash, this.nftQuantity, this.nftRoyalties);
+
+        let nftRoyalties = parseInt(this.nftRoyalties)*10000;
+        return this.mintContract(tokenId, jsonHash, this.nftQuantity,nftRoyalties.toString());
       })
       .then(mintResult => {
         if (mintResult != '' && this.curPublishtoPasar) {
