@@ -1,5 +1,6 @@
 .notificationContainer {
     padding: 5px 0;
+    padding-left: 15px;
 
     ion-item {
         --background: transparent;
@@ -13,9 +14,8 @@
             padding:10px 0px;
             .left-col {
                 display: flex;
-                justify-content: center;
+                justify-content:center;
                 align-items: flex-start;
-
                 img {
                     width: 40px;
                     height: 40px;
@@ -45,11 +45,12 @@
 
                     .notificationTime {
                         position: relative;
-                        bottom: -0.5px;
-                        font-weight: normal;
+                        bottom: 0px;
                         font-stretch: normal;
                         font-style: normal;
-                        color: #000000;
+                        font-size: 10px;
+                        font-weight: 500;
+                        color: #9ca0a4;
                     }
                 }
 
@@ -64,7 +65,7 @@
 
                 h2 {
                     font-size: 12px;
-                    font-weight: bold;
+                    font-weight:normal;
                     font-stretch: normal;
                     font-style: normal;
                     color: #111111;
