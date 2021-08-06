@@ -7980,22 +7980,22 @@ export class FeedService {
         return;
       }
 
-      let didAvatar = signinData.avatar;
-      if (!didAvatar) {
+      //let didAvatar = signinData.avatar;
+      //if (!didAvatar) {
         resolve('assets/images/default-contact.svg');
         return;
-      }
+      //}
 
-      let contentType =
-        didAvatar['contentType'] || didAvatar['content-type'] || '';
-      let cdata = didAvatar['data'] || '';
-      if (contentType === '' || cdata === '') {
-        resolve('assets/images/default-contact.svg');
-        return;
-      }
+      // let contentType =
+      //   didAvatar['contentType'] || didAvatar['content-type'] || '';
+      // let cdata = didAvatar['data'] || '';
+      // if (contentType === '' || cdata === '') {
+      //   resolve('assets/images/default-contact.svg');
+      //   return;
+      // }
 
-      resolve('data:' + contentType + ';base64,' + didAvatar.data)
-      return;
+      // resolve('data:' + contentType + ';base64,' + didAvatar.data)
+      //return;
     });
   }
 }
