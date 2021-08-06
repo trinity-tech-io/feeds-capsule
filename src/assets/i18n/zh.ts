@@ -273,7 +273,7 @@ export const zh = {
       '频道名称 不能包含除字母a-z，A-Z，数字0-9， 连字符- 以及 下划线_ 之外的所有其他字符。',
     feedMaxNumber: '最多可以创建5个频道',
     feedNum: '您最多可以创建5个频道',
-    des1: '在 探索Pasar 中显示频道，以供用户发现和订阅。',
+    des1: '在 探索Feeds 中显示频道，以供用户发现和订阅。',
   },
   ProfileimagePage: {
     title: '选择头像',
