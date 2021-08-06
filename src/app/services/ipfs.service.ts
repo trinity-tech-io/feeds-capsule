@@ -13,7 +13,7 @@ export class IPFSService {
   }
 
   nftPost(body: any): Promise<Object> {
-    return this.httpService.httpPost(this.getNFTAddUrl(), body);
+    return this.httpService.httpPost(this.getNFTAddUrl(), body, {});
   }
 
   setTESTMode(testMode: boolean) {
