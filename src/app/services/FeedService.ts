@@ -7938,13 +7938,13 @@ export class FeedService {
     this.pasarList = pasarList;
   }
 
-  getOwnNftCollectiblesList() {
-    return this.ownNftCollectiblesList;
-  }
+  // getOwnNftCollectiblesList() {
+  //   return this.ownNftCollectiblesList;
+  // }
 
-  setOwnNftCollectiblesList(ownNftCollectiblesList: any) {
-    this.ownNftCollectiblesList = ownNftCollectiblesList;
-  }
+  // setOwnNftCollectiblesList(ownNftCollectiblesList: any) {
+  //   this.ownNftCollectiblesList = ownNftCollectiblesList;
+  // }
 
   setEidURL(url: string) {
     didManager.setResolverUrl(

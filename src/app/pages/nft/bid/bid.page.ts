@@ -12,6 +12,7 @@ import { PopupProvider } from 'src/app/services/popup';
 import { PopoverController } from '@ionic/angular';
 import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
 import { IPFSService } from 'src/app/services/ipfs.service';
+import { NFTPersistenceHelper } from 'src/app/services/nft_persistence_helper.service';
 
 import _ from 'lodash';
 import { UtilService } from 'src/app/services/utilService';
@@ -63,7 +64,8 @@ export class BidPage implements OnInit {
     private popoverController: PopoverController,
     public popupProvider: PopupProvider,
     private nftContractControllerService: NFTContractControllerService,
-    private ipfsService: IPFSService
+    private ipfsService: IPFSService,
+    private nftPersistenceHelper: NFTPersistenceHelper
   ) {}
 
   ngOnInit() {
@@ -253,12 +255,15 @@ export class BidPage implements OnInit {
         return -Number(item.createTime);
       });
 
-      this.feedService.setPasarList(plist);
-      this.feedService.setData('feed.nft.pasarList', JSON.stringify(plist));
+      this.nftPersistenceHelper.setPasarList(plist);
+
+      // this.feedService.setPasarList(plist);
+      // this.feedService.setData('feed.nft.pasarList', JSON.stringify(plist));
 
       let createAddress = this.nftContractControllerService.getAccountAddress();
       if (this.sellerAddress === createAddress) {
-        let alllist = this.feedService.getOwnNftCollectiblesList();
+        // let alllist = this.feedService.getOwnNftCollectiblesList();
+        let alllist = this.nftPersistenceHelper.getCollectiblesMap();
         let olist = alllist[createAddress] || [];
         olist = _.filter(olist, item => {
           return item.saleOrderId != this.saleOrderId;
@@ -269,11 +274,13 @@ export class BidPage implements OnInit {
         cItem['moreMenuType'] = 'created';
         olist.push(cItem);
         alllist[createAddress] = olist;
-        this.feedService.setOwnNftCollectiblesList(alllist);
-        this.feedService.setData(
-          'feed.nft.own.collectibles.list',
-          JSON.stringify(alllist),
-        );
+
+        this.nftPersistenceHelper.setCollectiblesMap(alllist);
+        // this.feedService.setOwnNftCollectiblesList(alllist);
+        // this.feedService.setData(
+        //   'feed.nft.own.collectibles.list',
+        //   JSON.stringify(alllist),
+        // );
       }
       this.native.pop();
     } else {

@@ -21,6 +21,7 @@ import { UtilService } from 'src/app/services/utilService';
 import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
 import { HttpService } from '../../../services/HttpService';
 import { IPFSService } from 'src/app/services/ipfs.service';
+import { NFTPersistenceHelper } from 'src/app/services/nft_persistence_helper.service';
 
 let TAG: string = 'Feeds-profile';
 
@@ -164,7 +165,8 @@ export class ProfilePage implements OnInit {
     private walletConnectControllerService: WalletConnectControllerService,
     private nftContractControllerService: NFTContractControllerService,
     private httpService: HttpService,
-    private ipfsService: IPFSService
+    private ipfsService: IPFSService,
+    private nftPersistenceHelper: NFTPersistenceHelper
   ) {
     // this.dataHelper.loadWalletAccountAddress().then((address)=>{
     //   console.log("accountAddress",address);
@@ -251,7 +253,8 @@ export class ProfilePage implements OnInit {
         case 'buy':
           break;
         case 'created':
-          let allList = this.feedService.getOwnNftCollectiblesList();
+          // let allList = this.feedService.getOwnNftCollectiblesList();
+          let allList = this.nftPersistenceHelper.getCollectiblesMap();
           let list = allList[createAddr] || [];
           let cpItem = _.cloneDeep(assItem);
           cpItem['moreMenuType'] = 'created';
@@ -263,19 +266,23 @@ export class ProfilePage implements OnInit {
           list.push(cpItem);
           allList[createAddr] = list;
           this.collectiblesList = allList[createAddr];
-          this.feedService.setOwnNftCollectiblesList(allList);
-          this.feedService.setData(
-            'feed.nft.own.collectibles.list',
-            JSON.stringify(allList),
-          );
+          this.nftPersistenceHelper.setCollectiblesMap(allList);
+
+          // this.feedService.setOwnNftCollectiblesList(allList);
+          // this.feedService.setData(
+          //   'feed.nft.own.collectibles.list',
+          //   JSON.stringify(allList),
+          // );
 
           let cpList = this.feedService.getPasarList();
           cpList.push(cpItem);
-          this.feedService.setPasarList(cpList);
-          this.feedService.setData(
-            'feed.nft.pasarList',
-            JSON.stringify(cpList),
-          );
+
+          this.nftPersistenceHelper.setPasarList(cpList);
+          // this.feedService.setPasarList(cpList);
+          // this.feedService.setData(
+          //   'feed.nft.pasarList',
+          //   JSON.stringify(cpList),
+          // );
           break;
       }
     });
@@ -288,18 +295,21 @@ export class ProfilePage implements OnInit {
       let createAddr = this.nftContractControllerService.getAccountAddress();
       assetItem['fixedAmount'] = null;
       assetItem['moreMenuType'] = 'created';
-      let allList = this.feedService.getOwnNftCollectiblesList();
+      // let allList = this.feedService.getOwnNftCollectiblesList();
+      let allList = this.nftPersistenceHelper.getCollectiblesMap();
       let clist = allList[createAddr] || [];
       clist = _.filter(clist, item => {
         return item.tokenId != tokenId!;
       });
       clist.push(assetItem);
       allList[createAddr] = clist;
-      this.feedService.setOwnNftCollectiblesList(allList);
-      this.feedService.setData(
-        'feed.nft.own.collectibles.list',
-        JSON.stringify(allList),
-      );
+
+      this.nftPersistenceHelper.setCollectiblesMap(allList);
+      // this.feedService.setOwnNftCollectiblesList(allList);
+      // this.feedService.setData(
+      //   'feed.nft.own.collectibles.list',
+      //   JSON.stringify(allList),
+      // );
 
       //remove pasr
       let pList = this.feedService.getPasarList();
@@ -308,8 +318,9 @@ export class ProfilePage implements OnInit {
           item.saleOrderId === saleOrderId && item.sellerAddr === sellerAddr
         );
       });
-      this.feedService.setPasarList(pList);
-      this.feedService.setData('feed.nft.pasarList', JSON.stringify(pList));
+      this.nftPersistenceHelper.setPasarList(pList);
+      // this.feedService.setPasarList(pList);
+      // this.feedService.setData('feed.nft.pasarList', JSON.stringify(pList));
     });
 
     this.events.subscribe(
@@ -1733,7 +1744,8 @@ export class ProfilePage implements OnInit {
       this.collectiblesList = [];
       return;
     }
-    let ownNftCollectiblesList = this.feedService.getOwnNftCollectiblesList();
+    // let ownNftCollectiblesList = this.feedService.getOwnNftCollectiblesList();
+    let ownNftCollectiblesList = this.nftPersistenceHelper.getCollectiblesMap();
     let list = ownNftCollectiblesList[accAddress] || [];
     if (list.length === 0) {
       this.notOnSale(accAddress);
@@ -1977,14 +1989,17 @@ export class ProfilePage implements OnInit {
   }
 
   hanleListCace(createAddress?: any) {
-    let ownNftCollectiblesList = this.feedService.getOwnNftCollectiblesList();
+    // let ownNftCollectiblesList = this.feedService.getOwnNftCollectiblesList();
+    let ownNftCollectiblesList = this.nftPersistenceHelper.getCollectiblesMap();
     ownNftCollectiblesList[createAddress] = _.unionWith(this.collectiblesList,this.onSaleList);
     console.log("=====ownNftCollectiblesList[createAddress]======"+JSON.stringify(ownNftCollectiblesList[createAddress]));
-    this.feedService.setOwnNftCollectiblesList(ownNftCollectiblesList);
-    this.feedService.setData(
-      'feed.nft.own.collectibles.list',
-      JSON.stringify(ownNftCollectiblesList),
-    );
+
+    this.nftPersistenceHelper.setCollectiblesMap(ownNftCollectiblesList);
+    // this.feedService.setOwnNftCollectiblesList(ownNftCollectiblesList);
+    // this.feedService.setData(
+    //   'feed.nft.own.collectibles.list',
+    //   JSON.stringify(ownNftCollectiblesList),
+    // );
   }
 
   clickAssetItem(assetitem: any) {

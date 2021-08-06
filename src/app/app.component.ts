@@ -19,6 +19,7 @@ import { DataHelper } from 'src/app/services/DataHelper';
 import { IPFSService } from 'src/app/services/ipfs.service';
 import { NFTContractParsarService } from 'src/app/services/nftcontract_parsar.service';
 import { NFTContractStickerService } from 'src/app/services/nftcontract_sticker.service';
+import { NFTPersistenceHelper } from 'src/app/services/nft_persistence_helper.service';
 
 enum LogLevel {
   NONE,
@@ -62,6 +63,7 @@ export class MyApp {
     private ipfsService: IPFSService,
     private nftContractParsarService: NFTContractParsarService,
     private nftContractStickerService: NFTContractStickerService,
+    private nftPersistenceHelper: NFTPersistenceHelper
   ) {
     this.initializeApp();
     this.initProfileData();
@@ -108,8 +110,8 @@ export class MyApp {
       this.initCurrentFeed();
       this.initDiscoverfeeds();
       this.initCollectibleSetting();
-      this.initFeedNftPasarList();
-      this.initNftOwnCollectiblesList();
+      // this.initFeedNftPasarList();
+      // this.initNftOwnCollectiblesList();
       // this.native.networkInfoInit();
       this.native.addNetworkListener(
         () => {
@@ -181,19 +183,21 @@ export class MyApp {
           this.ipfsService.setTESTMode(false);
           this.nftContractParsarService.setTestMode(false);
           this.nftContractStickerService.setTestMode(false);
+          this.nftPersistenceHelper.setDevelopMode(false);
           this.logUtils.setLogLevel(LogLevel.WARN);
-          this.feedService.setDeveloperMode(false);
           return;
         }
         if (status) {
           this.ipfsService.setTESTMode(true);
           this.nftContractParsarService.setTestMode(true);
           this.nftContractStickerService.setTestMode(true);
+          this.nftPersistenceHelper.setDevelopMode(true);
           this.logUtils.setLogLevel(LogLevel.DEBUG);
         } else {
           this.ipfsService.setTESTMode(false);
           this.nftContractParsarService.setTestMode(false);
           this.nftContractStickerService.setTestMode(false);
+          this.nftPersistenceHelper.setDevelopMode(false);
           this.logUtils.setLogLevel(LogLevel.WARN);
         }
         this.feedService.setDeveloperMode(status);
@@ -396,39 +400,43 @@ export class MyApp {
       .catch(() => {});
   }
 
-  initFeedNftPasarList() {
-    this.feedService
-      .getData('feed.nft.pasarList')
-      .then(nftPasarList => {
-        if (nftPasarList === null) {
-          this.feedService.setPasarList([]);
-          return;
-        }
-        this.feedService.setPasarList(JSON.parse(nftPasarList));
-      })
-      .catch(() => {});
-  }
+  // initFeedNftPasarList() {
+  //   this.feedService
+  //     .getData('feed.nft.pasarList')
+  //     .then(nftPasarList => {
+  //       if (nftPasarList === null) {
+  //         this.feedService.setPasarList([]);
+  //         return;
+  //       }
 
-  initNftOwnCollectiblesList() {
-    this.feedService
-      .getData('feed.nft.own.collectibles.list')
-      .then(nftOwnCollectiblesList => {
-        console.log(
-          '=======NftOwnCollectiblesList======' + nftOwnCollectiblesList,
-        );
-        if (
-          nftOwnCollectiblesList === null ||
-          nftOwnCollectiblesList === '[]'
-        ) {
-          this.feedService.setOwnNftCollectiblesList({});
-          return;
-        }
-        this.feedService.setOwnNftCollectiblesList(
-          JSON.parse(nftOwnCollectiblesList),
-        );
-      })
-      .catch(() => {});
-  }
+  //       console.log(
+  //         '=======nftPasarList======' + nftPasarList,
+  //       );
+  //       this.feedService.setPasarList(JSON.parse(nftPasarList));
+  //     })
+  //     .catch(() => {});
+  // }
+
+  // initNftOwnCollectiblesList() {
+  //   this.feedService
+  //     .getData('feed.nft.own.collectibles.list')
+  //     .then(nftOwnCollectiblesList => {
+  //       console.log(
+  //         '=======NftOwnCollectiblesList======' + nftOwnCollectiblesList,
+  //       );
+  //       if (
+  //         nftOwnCollectiblesList === null ||
+  //         nftOwnCollectiblesList === '[]'
+  //       ) {
+  //         this.feedService.setOwnNftCollectiblesList({});
+  //         return;
+  //       }
+  //       this.feedService.setOwnNftCollectiblesList(
+  //         JSON.parse(nftOwnCollectiblesList),
+  //       );
+  //     })
+  //     .catch(() => {});
+  // }
 
   async connectWallet() {
     await this.walletConnectControllerService.connect();

@@ -12,6 +12,7 @@ import { UtilService } from 'src/app/services/utilService';
 import { ViewHelper } from 'src/app/services/viewhelper.service';
 import { PopupProvider } from 'src/app/services/popup';
 import { IPFSService } from 'src/app/services/ipfs.service';
+import { NFTPersistenceHelper } from 'src/app/services/nft_persistence_helper.service';
 
 import _ from 'lodash';
 type detail = {
@@ -61,7 +62,8 @@ export class AssetdetailsPage implements OnInit {
     private viewHelper: ViewHelper,
     public theme: ThemeService,
     public popupProvider: PopupProvider,
-    private ipfsService: IPFSService
+    private ipfsService: IPFSService,
+    private nftPersistenceHelper: NFTPersistenceHelper
   ) {}
 
   ngOnInit() {
@@ -128,17 +130,20 @@ export class AssetdetailsPage implements OnInit {
       let createAddr = this.nftContractControllerService.getAccountAddress();
       assetItem['fixedAmount'] = null;
       assetItem['moreMenuType'] = 'created';
-      let allList = this.feedService.getOwnNftCollectiblesList();
+      // let allList = this.feedService.getOwnNftCollectiblesList();
+      let allList = this.nftPersistenceHelper.getCollectiblesMap();
       let clist = allList[createAddr] || [];
       clist = _.filter(clist, item => {
         return item.saleOrderId != saleOrderId;
       });
       clist.push(assetItem);
-      this.feedService.setOwnNftCollectiblesList(allList);
-      this.feedService.setData(
-        'feed.nft.own.collectibles.list',
-        JSON.stringify(allList),
-      );
+
+      this.nftPersistenceHelper.setCollectiblesMap(allList);
+      // this.feedService.setOwnNftCollectiblesList(allList);
+      // this.feedService.setData(
+      //   'feed.nft.own.collectibles.list',
+      //   JSON.stringify(allList),
+      // );
 
       //remove pasr
       let pList = this.feedService.getPasarList();
@@ -147,8 +152,10 @@ export class AssetdetailsPage implements OnInit {
           item.saleOrderId === saleOrderId && item.sellerAddr === sellerAddr
         );
       });
-      this.feedService.setPasarList(pList);
-      this.feedService.setData('feed.nft.pasarList', JSON.stringify(pList));
+
+      this.nftPersistenceHelper.setPasarList(pList);
+      // this.feedService.setPasarList(pList);
+      // this.feedService.setData('feed.nft.pasarList', JSON.stringify(pList));
       this.native.pop();
     });
 
@@ -163,7 +170,8 @@ export class AssetdetailsPage implements OnInit {
         case 'buy':
           break;
         case 'created':
-          let allList = this.feedService.getOwnNftCollectiblesList();
+          // let allList = this.feedService.getOwnNftCollectiblesList();
+          let allList = this.nftPersistenceHelper.getCollectiblesMap();
           let list = allList[createAddr] || [];
           let cpItem = _.cloneDeep(assItem);
           cpItem['moreMenuType'] = 'created';
@@ -174,19 +182,23 @@ export class AssetdetailsPage implements OnInit {
           console.log('=====list1======' + list.length);
           list.push(cpItem);
           allList[createAddr] = list;
-          this.feedService.setOwnNftCollectiblesList(allList);
-          this.feedService.setData(
-            'feed.nft.own.collectibles.list',
-            JSON.stringify(allList),
-          );
+
+          this.nftPersistenceHelper.setCollectiblesMap(allList);
+          // this.feedService.setOwnNftCollectiblesList(allList);
+          // this.feedService.setData(
+          //   'feed.nft.own.collectibles.list',
+          //   JSON.stringify(allList),
+          // );
 
           let cpList = this.feedService.getPasarList();
           cpList.push(cpItem);
-          this.feedService.setPasarList(cpList);
-          this.feedService.setData(
-            'feed.nft.pasarList',
-            JSON.stringify(cpList),
-          );
+
+          this.nftPersistenceHelper.setPasarList(cpList);
+          // this.feedService.setPasarList(cpList);
+          // this.feedService.setData(
+          //   'feed.nft.pasarList',
+          //   JSON.stringify(cpList),
+          // );
           this.native.pop();
           break;
       }
