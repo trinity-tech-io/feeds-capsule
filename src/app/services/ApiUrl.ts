@@ -5,7 +5,8 @@ export class ApiUrl {
   /** IPFS 测试网络 */
   public static IPFS_TEST_SERVER: string = 'https://ipfs-test.trinity-feeds.app/';
   /** IPFS 正式网络 */
-  public static IPFS_SERVER: string = 'https://ipfs.trinity-feeds.app/';
+  //public static IPFS_SERVER: string = 'https://ipfs.trinity-feeds.app/';
+  public static IPFS_SERVER: string = 'https://ipfs-test.trinity-feeds.app/';
 
   /**register*/
   public static register: string = ApiUrl.SERVER + '/register';

@@ -171,8 +171,7 @@ export class MintnftPage implements OnInit {
         tokenId = result.tokenId;
         jsonHash = result.jsonHash;
         this.native.changeLoadingDesc("common.mintingData");
-
-        let nftRoyalties = parseInt(this.nftRoyalties)*10000;
+        let nftRoyalties = UtilService.accMul(parseInt(this.nftRoyalties),10000);
         return this.mintContract(tokenId, jsonHash, this.nftQuantity,nftRoyalties.toString());
       })
       .then(mintResult => {
@@ -667,6 +666,8 @@ export class MintnftPage implements OnInit {
       let allList = this.feedService.getOwnNftCollectiblesList();
       let slist = allList[accAddress] || [];
       slist.push(item);
+      allList[accAddress] = slist;
+      this.feedService.setOwnNftCollectiblesList(allList);
       this.feedService.setData(
         'feed.nft.own.collectibles.list',
         JSON.stringify(allList),

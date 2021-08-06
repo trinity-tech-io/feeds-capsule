@@ -218,9 +218,10 @@ export class AssetdetailsPage implements OnInit {
     });
 
     if(this.royalties!=null){
+     let royalties = UtilService.accDiv(this.royalties,10000);
       this.contractDetails.push({
         type: 'AssetdetailsPage.royalties',
-        details: this.royalties +"%",
+        details: royalties +"%",
       });
     }
 

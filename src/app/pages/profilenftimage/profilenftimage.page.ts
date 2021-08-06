@@ -6,7 +6,7 @@ import { NFTContractControllerService } from 'src/app/services/nftcontract_contr
 import { FeedService, Avatar } from 'src/app/services/FeedService';
 import { NativeService } from '../../services/NativeService';
 import { IPFSService } from 'src/app/services/ipfs.service';
-
+import _ from 'lodash';
 @Component({
   selector: 'app-profilenftimage',
   templateUrl: './profilenftimage.page.html',
@@ -15,6 +15,7 @@ import { IPFSService } from 'src/app/services/ipfs.service';
 export class ProfilenftimagePage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   public nftImageList: any = [];
+  public onSaleList: any = [];
   constructor(
     private translate: TranslateService,
     private titleBarService: TitleBarService,
@@ -199,6 +200,7 @@ export class ProfilenftimagePage implements OnInit {
   }
 
   async OnSale(accAddress: string) {
+    this.onSaleList = [];
     let sellerInfo = await this.nftContractControllerService
       .getPasar()
       .getSellerByAddr(accAddress);
@@ -207,7 +209,7 @@ export class ProfilenftimagePage implements OnInit {
     if (orderCount === '0') {
     } else {
       for (let index = 0; index < orderCount; index++) {
-        this.nftImageList.push(null);
+        this.onSaleList.push(null);
       }
       await this.handleOrder(sellerAddr, orderCount, 'sale', accAddress);
     }
@@ -263,8 +265,8 @@ export class ProfilenftimagePage implements OnInit {
               createTime: createTime * 1000,
               moreMenuType: 'onSale',
             };
-            let len = this.nftImageList.length - 1 + index;
-            this.nftImageList.splice(len, 1, item);
+            this.onSaleList.splice(index,1,item);
+            this.nftImageList = _.unionWith(this.nftImageList,this.onSaleList);
             this.hanleListCace(createAddress);
             //this.isLoading = false;
           })
@@ -309,7 +311,7 @@ export class ProfilenftimagePage implements OnInit {
 
   hanleListCace(createAddress?: any) {
     let ownNftCollectiblesList = this.feedService.getOwnNftCollectiblesList();
-    ownNftCollectiblesList[createAddress] = this.nftImageList;
+    ownNftCollectiblesList[createAddress] =  _.unionWith(this.nftImageList,this.onSaleList);
     this.feedService.setOwnNftCollectiblesList(ownNftCollectiblesList);
     this.feedService.setData(
       'feed.nft.own.collectibles.list',
