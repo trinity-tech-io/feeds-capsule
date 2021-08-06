@@ -193,6 +193,7 @@ export class MintnftPage implements OnInit {
       })
       .then(() => {
         //Finish
+        this.handleCace('created',tokenId);
         this.native.hideLoading();
         this.showSuccessDialog();
         // this.native.pop();
@@ -260,7 +261,8 @@ export class MintnftPage implements OnInit {
         .nftPost(formData)
         .then(result => {
           let hash = result['Hash'] || null;
-          let imgFormat = fileName.split('.')[1];
+          let index = fileName.lastIndexOf(".");
+          let imgFormat = fileName.substr(index+1);
           if (!hash) {
             reject("Upload Image error, hash is null")
             return;
@@ -505,7 +507,7 @@ export class MintnftPage implements OnInit {
       return false;
     }
 
-    if(parseInt(this.nftRoyalties)<=0 || parseInt(this.nftRoyalties)>=15){
+    if(parseInt(this.nftRoyalties)<=0 || parseInt(this.nftRoyalties)>15){
       this.native.toastWarn('MintnftPage.royaltiesErrorMsg');
       return false;
     }
@@ -628,53 +630,8 @@ export class MintnftPage implements OnInit {
     orderIndex: number,
   ): Promise<string> {
     return new Promise(async (resolve, reject) => {
-      let tokenInfo = await this.nftContractControllerService
-        .getSticker()
-        .tokenInfo(tokenId);
-      let createTime = tokenInfo[7];
-      let order = await this.nftContractControllerService
-        .getPasar()
-        .getSellerOrderByIndex(orderIndex);
-
-      this.orderId = order[0];
-      // tokenId = order[3];
-      let sellerAddr = order[7] || '';
-      let saleOrderId = order[0];
-      let item = {
-        saleOrderId: saleOrderId,
-        tokenId: tokenId,
-        asset: this.imageObj['imgHash'],
-        name: this.nftName,
-        description: this.nftDescription,
-        fixedAmount: order[5],
-        kind: this.imageObj['imgFormat'],
-        type: this.issueRadionType,
-        royalties: this.nftRoyalties,
-        quantity: this.nftQuantity,
-        thumbnail: this.imageObj['thumbnail'],
-        sellerAddr: sellerAddr,
-        createTime: createTime * 1000,
-        moreMenuType: 'onSale',
-      };
-
-      let list = this.feedService.getPasarList();
-      list.push(item);
-      this.feedService.setPasarList(list);
-      this.feedService.setData('feed.nft.pasarList', JSON.stringify(list));
-
-      let accAddress = this.nftContractControllerService.getAccountAddress();
-      let allList = this.feedService.getOwnNftCollectiblesList();
-      let slist = allList[accAddress] || [];
-      slist.push(item);
-      allList[accAddress] = slist;
-      this.feedService.setOwnNftCollectiblesList(allList);
-      this.feedService.setData(
-        'feed.nft.own.collectibles.list',
-        JSON.stringify(allList),
-      );
-
+      this.handleCace('onSale',tokenId,orderIndex);
       await this.getSetChannel(tokenId);
-
       resolve(SUCCESS);
     });
   }
@@ -882,9 +839,78 @@ export class MintnftPage implements OnInit {
     this.native.toastWarn('MintnftPage.royaltiesErrorMsg');
     return false;
   }
-  if(parseInt(royalties)<=0 || parseInt(royalties)>=15){
+  if(parseInt(royalties)<=0 || parseInt(royalties)>15){
     this.native.toastWarn('MintnftPage.royaltiesErrorMsg');
     return false;
   }
+  }
+
+  async handleCace(type:string,tokenId:any,orderIndex?: number){
+    let tokenInfo = await this.nftContractControllerService
+    .getSticker()
+    .tokenInfo(tokenId);
+    let createTime = tokenInfo[7];
+    let royalties = UtilService.accMul(this.nftRoyalties,10000);
+    let accAddress =
+    this.nftContractControllerService.getAccountAddress() || '';
+    let allList = this.feedService.getOwnNftCollectiblesList();
+    let slist = allList[accAddress] || [];
+    let item:any = {};
+       switch(type){
+         case 'created':
+          item = {
+            creator:accAddress,
+            tokenId: tokenId,
+            asset: this.imageObj['imgHash'],
+            name: this.nftName,
+            description: this.nftDescription,
+            fixedAmount:null,
+            kind: this.imageObj['imgFormat'],
+            type: this.issueRadionType,
+            royalties: royalties,
+            quantity: this.nftQuantity,
+            thumbnail: this.imageObj['thumbnail'],
+            createTime: createTime * 1000,
+            moreMenuType: 'created',
+          };
+          slist.push(item);
+           break;
+         case 'onSale':
+          let order = await this.nftContractControllerService
+          .getPasar()
+          .getSellerOrderByIndex(orderIndex);
+
+        this.orderId = order[0];
+        // tokenId = order[3];
+        let sellerAddr = order[7] || '';
+        let saleOrderId = order[0];
+        item = {
+          creator:accAddress,
+          saleOrderId: saleOrderId,
+          tokenId: tokenId,
+          asset: this.imageObj['imgHash'],
+          name: this.nftName,
+          description: this.nftDescription,
+          fixedAmount: order[5],
+          kind: this.imageObj['imgFormat'],
+          type: this.issueRadionType,
+          royalties: royalties,
+          quantity: this.nftQuantity,
+          thumbnail: this.imageObj['thumbnail'],
+          sellerAddr: sellerAddr,
+          createTime: createTime * 1000,
+          moreMenuType: 'onSale',
+        };
+        let list = this.feedService.getPasarList();
+        list.push(item);
+        this.feedService.setPasarList(list);
+        this.feedService.setData('feed.nft.pasarList', JSON.stringify(list));
+           break;
+       }
+      this.feedService.setOwnNftCollectiblesList(allList);
+      this.feedService.setData(
+         'feed.nft.own.collectibles.list',
+         JSON.stringify(allList),
+      );
   }
 }
