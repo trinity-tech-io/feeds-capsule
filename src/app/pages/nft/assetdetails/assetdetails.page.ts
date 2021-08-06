@@ -220,7 +220,7 @@ export class AssetdetailsPage implements OnInit {
     if(this.royalties!=null){
       this.contractDetails.push({
         type: 'AssetdetailsPage.royalties',
-        details: this.royalties,
+        details: this.royalties +"%",
       });
     }
 

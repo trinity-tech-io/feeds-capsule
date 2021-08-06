@@ -143,6 +143,7 @@ export class ProfilePage implements OnInit {
 
   public walletAddress: string = '';
   public walletAddressStr: string = '';
+  public onSaleList:any = [];
   constructor(
     private feedService: FeedService,
     public theme: ThemeService,
@@ -757,6 +758,7 @@ export class ProfilePage implements OnInit {
             clearTimeout(sId2);
             return;
           }
+          this.getOwnNftSum();
           this.notOnSale(accAddress);
           this.OnSale(accAddress);
           event.target.complete();
@@ -1863,16 +1865,19 @@ export class ProfilePage implements OnInit {
   }
 
   async OnSale(accAddress: string) {
+    this.onSaleList = [];
     let sellerInfo = await this.nftContractControllerService
       .getPasar()
       .getSellerByAddr(accAddress);
     let sellerAddr = sellerInfo[1];
     let orderCount = sellerInfo[3];
+    console.log("====orderCount====="+orderCount);
     if (orderCount === '0') {
     } else {
       for (let index = 0; index < orderCount; index++) {
-        this.collectiblesList.push(null);
+        this.onSaleList.push(null);
       }
+      console.log("====this.collectiblesList====="+JSON.stringify(this.collectiblesList));
       await this.handleOrder(sellerAddr, orderCount, 'sale', accAddress);
     }
   }
@@ -1881,8 +1886,9 @@ export class ProfilePage implements OnInit {
     sellerAddr: any,
     orderCount: any,
     listType: any,
-    createAddress: any,
+    createAddress: any
   ) {
+
     for (let index = 0; index < orderCount; index++) {
       try {
         let sellerOrder = await this.nftContractControllerService
@@ -1927,8 +1933,8 @@ export class ProfilePage implements OnInit {
               createTime: createTime * 1000,
               moreMenuType: 'onSale',
             };
-            let len = this.collectiblesList.length - 1 + index;
-            this.collectiblesList.splice(len, 1, item);
+            this.onSaleList.splice(index,1,item);
+            this.collectiblesList = _.unionWith(this.collectiblesList,this.onSaleList);
             this.hanleListCace(createAddress);
             //this.isLoading = false;
           })
@@ -1972,7 +1978,8 @@ export class ProfilePage implements OnInit {
 
   hanleListCace(createAddress?: any) {
     let ownNftCollectiblesList = this.feedService.getOwnNftCollectiblesList();
-    ownNftCollectiblesList[createAddress] = this.collectiblesList;
+    ownNftCollectiblesList[createAddress] = _.unionWith(this.collectiblesList,this.onSaleList);
+    console.log("=====ownNftCollectiblesList[createAddress]======"+JSON.stringify(ownNftCollectiblesList[createAddress]));
     this.feedService.setOwnNftCollectiblesList(ownNftCollectiblesList);
     this.feedService.setData(
       'feed.nft.own.collectibles.list',
