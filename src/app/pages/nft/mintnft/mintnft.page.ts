@@ -15,6 +15,7 @@ import { NFTContractControllerService } from 'src/app/services/nftcontract_contr
 import { WalletConnectControllerService } from 'src/app/services/walletconnect_controller.service';
 import { PopupProvider } from 'src/app/services/popup';
 import { IPFSService } from 'src/app/services/ipfs.service';
+import { NFTPersistenceHelper } from 'src/app/services/nft_persistence_helper.service';
 
 const SUCCESS = 'success';
 const SKIP = 'SKIP';
@@ -65,7 +66,8 @@ export class MintnftPage implements OnInit {
     private nftContractControllerService: NFTContractControllerService,
     private walletConnectControllerService: WalletConnectControllerService,
     private popupProvider: PopupProvider,
-    private ipfsService: IPFSService
+    private ipfsService: IPFSService,
+    private nftPersistenceHelper: NFTPersistenceHelper
   ) {}
 
   ngOnInit() {}
@@ -257,6 +259,7 @@ export class MintnftPage implements OnInit {
       let blob = this.dataURLtoBlob(file);
       let formData = new FormData();
       formData.append('', blob);
+      console.log("Formdata length is " + formData.getAll('').length);
       this.ipfsService
         .nftPost(formData)
         .then(result => {
@@ -308,6 +311,7 @@ export class MintnftPage implements OnInit {
       let thumbnailBlob = this.dataURLtoBlob(thumbnailBase64);
       let formData = new FormData();
       formData.append('', thumbnailBlob);
+      console.log("Formdata length is " + formData.getAll('').length);
       this.ipfsService
         .nftPost(formData)
         .then(result => {
@@ -358,7 +362,7 @@ export class MintnftPage implements OnInit {
 
       let formData = new FormData();
       formData.append('', JSON.stringify(ipfsJSON));
-
+      console.log("Formdata length is " + formData.getAll('').length);
       this.ipfsService
         .nftPost(formData)
         .then(result => {
@@ -631,6 +635,53 @@ export class MintnftPage implements OnInit {
   ): Promise<string> {
     return new Promise(async (resolve, reject) => {
       this.handleCace('onSale',tokenId,orderIndex);
+      // let tokenInfo = await this.nftContractControllerService
+      //   .getSticker()
+      //   .tokenInfo(tokenId);
+      // let createTime = tokenInfo[7];
+      // let order = await this.nftContractControllerService
+      //   .getPasar()
+      //   .getSellerOrderByIndex(orderIndex);
+
+      // this.orderId = order[0];
+      // // tokenId = order[3];
+      // let sellerAddr = order[7] || '';
+      // let saleOrderId = order[0];
+      // let item = {
+      //   saleOrderId: saleOrderId,
+      //   tokenId: tokenId,
+      //   asset: this.imageObj['imgHash'],
+      //   name: this.nftName,
+      //   description: this.nftDescription,
+      //   fixedAmount: order[5],
+      //   kind: this.imageObj['imgFormat'],
+      //   type: this.issueRadionType,
+      //   royalties: this.nftRoyalties,
+      //   quantity: this.nftQuantity,
+      //   thumbnail: this.imageObj['thumbnail'],
+      //   sellerAddr: sellerAddr,
+      //   createTime: createTime * 1000,
+      //   moreMenuType: 'onSale',
+      // };
+
+      // // let list = this.feedService.getPasarList();
+      // let list = this.nftPersistenceHelper.getPasarList();
+      // list.push(item);
+      // this.nftPersistenceHelper.setPasarList(list);
+      // // this.feedService.setPasarList(list);
+      // // this.feedService.setData('feed.nft.pasarList', JSON.stringify(list));
+
+      // let accAddress = this.nftContractControllerService.getAccountAddress();
+      // // let allListMap = this.nftPersistenceHelper.getCollectiblesMap();
+      // // let allList = this.feedService.getOwnNftCollectiblesList();
+      // this.nftPersistenceHelper.addItemToCollectible(accAddress, item);
+
+      // // let slist = allListMap[accAddress] || [];
+      // // slist.push(item);
+      // // this.feedService.setData(
+      // //   'feed.nft.own.collectibles.list',
+      // //   JSON.stringify(allList),
+      // // );
       await this.getSetChannel(tokenId);
       resolve(SUCCESS);
     });
@@ -853,7 +904,8 @@ export class MintnftPage implements OnInit {
     let royalties = UtilService.accMul(this.nftRoyalties,10000);
     let accAddress =
     this.nftContractControllerService.getAccountAddress() || '';
-    let allList = this.feedService.getOwnNftCollectiblesList();
+    // let allList = this.feedService.getOwnNftCollectiblesList();
+    let allList = this.nftPersistenceHelper.getCollectiblesMap();
     let slist = allList[accAddress] || [];
     let item:any = {};
        switch(type){
@@ -907,10 +959,11 @@ export class MintnftPage implements OnInit {
         this.feedService.setData('feed.nft.pasarList', JSON.stringify(list));
            break;
        }
-      this.feedService.setOwnNftCollectiblesList(allList);
-      this.feedService.setData(
-         'feed.nft.own.collectibles.list',
-         JSON.stringify(allList),
-      );
+       this.nftPersistenceHelper.setCollectiblesMap(allList);
+      // this.feedService.setOwnNftCollectiblesList(allList);
+      // this.feedService.setData(
+      //    'feed.nft.own.collectibles.list',
+      //    JSON.stringify(allList),
+      // );
   }
 }

@@ -2298,4 +2298,25 @@ export class DataHelper {
       }
     });
   }
+
+  ////
+  //save pasar list
+  saveNFTPasarList(key: string, pasarList: any) {
+    return this.saveData(key, pasarList);
+  }
+
+  loadNFTPasarList(key: string) {
+    return this.loadData(key);
+  }
+
+  ////
+  //save collectible list
+  saveNFTCollectibleList(key: string, collectiblesList: any) {
+    return this.saveData(key, collectiblesList)
+  }
+
+  loadNFTCollectibleMap(key: string) {
+    return this.loadData(key);
+  }
+
 }

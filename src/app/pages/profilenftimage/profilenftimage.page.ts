@@ -7,6 +7,8 @@ import { FeedService, Avatar } from 'src/app/services/FeedService';
 import { NativeService } from '../../services/NativeService';
 import { IPFSService } from 'src/app/services/ipfs.service';
 import _ from 'lodash';
+import { NFTPersistenceHelper } from 'src/app/services/nft_persistence_helper.service';
+
 @Component({
   selector: 'app-profilenftimage',
   templateUrl: './profilenftimage.page.html',
@@ -22,7 +24,8 @@ export class ProfilenftimagePage implements OnInit {
     private nftContractControllerService: NFTContractControllerService,
     private feedService: FeedService,
     private native: NativeService,
-    private ipfsService: IPFSService
+    private ipfsService: IPFSService,
+    private nftPersistenceHelper: NFTPersistenceHelper
   ) {}
 
   ngOnInit() {}
@@ -49,7 +52,8 @@ export class ProfilenftimagePage implements OnInit {
     if (createAddr === '') {
       this.nftImageList = [];
     }
-    let allList = this.feedService.getOwnNftCollectiblesList();
+    // let allList = this.feedService.getOwnNftCollectiblesList();
+    let allList = this.nftPersistenceHelper.getCollectiblesMap();
     let clist = allList[createAddr] || [];
     if (clist.length === 0) {
       this.notOnSale(createAddr);
@@ -310,13 +314,16 @@ export class ProfilenftimagePage implements OnInit {
   }
 
   hanleListCace(createAddress?: any) {
-    let ownNftCollectiblesList = this.feedService.getOwnNftCollectiblesList();
-    ownNftCollectiblesList[createAddress] =  _.unionWith(this.nftImageList,this.onSaleList);
-    this.feedService.setOwnNftCollectiblesList(ownNftCollectiblesList);
-    this.feedService.setData(
-      'feed.nft.own.collectibles.list',
-      JSON.stringify(ownNftCollectiblesList),
-    );
+    // let ownNftCollectiblesList = this.feedService.getOwnNftCollectiblesList();
+    let ownNftCollectiblesListMap = this.nftPersistenceHelper.getCollectiblesMap();
+    ownNftCollectiblesListMap[createAddress] = _.unionWith(this.nftImageList,this.onSaleList);
+    this.nftPersistenceHelper.setCollectiblesMap(ownNftCollectiblesListMap);
+
+    // this.feedService.setOwnNftCollectiblesList(ownNftCollectiblesList);
+    // this.feedService.setData(
+    //   'feed.nft.own.collectibles.list',
+    //   JSON.stringify(ownNftCollectiblesList),
+    // );
   }
 
   async clickItem(item: any) {

@@ -9,6 +9,7 @@ import _ from 'lodash';
 import { UtilService } from 'src/app/services/utilService';
 import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
 import { IPFSService } from 'src/app/services/ipfs.service';
+import { NFTPersistenceHelper } from 'src/app/services/nft_persistence_helper.service';
 
 @Component({
   selector: 'app-nftdialog',
@@ -40,7 +41,8 @@ export class NftdialogComponent implements OnInit {
     private events: Events,
     public theme: ThemeService,
     private nftContractControllerService: NFTContractControllerService,
-    private ipfsService: IPFSService
+    private ipfsService: IPFSService,
+    private nftPersistenceHelper: NFTPersistenceHelper
   ) {}
 
   ngOnInit() {
@@ -265,8 +267,9 @@ export class NftdialogComponent implements OnInit {
     if (changeStatus != '' && changeStatus != undefined) {
       this.native.hideLoading();
       this.curAssItem.fixedAmount = price;
-      let list = this.feedService.getPasarList();
-      this.feedService.setData('feed.nft.pasarList', JSON.stringify(list));
+      this.nftPersistenceHelper.setPasarList(this.nftPersistenceHelper.getPasarList());
+      // let list = this.feedService.getPasarList();
+      // this.feedService.setData('feed.nft.pasarList', JSON.stringify(list));
       this.popover.dismiss();
     } else {
       this.native.hideLoading();

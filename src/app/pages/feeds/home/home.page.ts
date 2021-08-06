@@ -29,9 +29,9 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { StorageService } from 'src/app/services/StorageService';
 // import { Web3Service } from '../../../services/Web3Service';
-import { HttpService } from '../../../services/HttpService';
 import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
 import { IPFSService } from 'src/app/services/ipfs.service';
+import { NFTPersistenceHelper } from 'src/app/services/nft_persistence_helper.service';
 
 import _ from 'lodash';
 import { isNgTemplate } from '@angular/compiler';
@@ -153,9 +153,9 @@ export class HomePage implements OnInit {
     private titleBarService: TitleBarService,
     private storageService: StorageService,
     // private web3Service:Web3Service,
-    private httpService: HttpService,
     private nftContractControllerService: NFTContractControllerService,
-    private ipfsService: IPFSService
+    private ipfsService: IPFSService,
+    private nftPersistenceHelper: NFTPersistenceHelper
   ) {}
 
   initPostListData(scrollToTop: boolean) {
@@ -318,11 +318,12 @@ export class HomePage implements OnInit {
           item.saleOrderId === saleOrderId && item.sellerAddr === sellerAddr
         );
       });
-      this.feedService.setPasarList(this.pasarList);
-      this.feedService.setData(
-        'feed.nft.pasarList',
-        JSON.stringify(this.pasarList),
-      );
+      this.nftPersistenceHelper.setPasarList(this.pasarList);
+      // this.feedService.setPasarList(this.pasarList);
+      // this.feedService.setData(
+      //   'feed.nft.pasarList',
+      //   JSON.stringify(this.pasarList),
+      // );
 
       let createAddr = this.nftContractControllerService.getAccountAddress();
       if (sellerAddr === createAddr) {
@@ -331,17 +332,19 @@ export class HomePage implements OnInit {
         assetItem['moreMenuType'] = 'created';
         //add OwnNftCollectiblesList
         let createAddr = this.nftContractControllerService.getAccountAddress();
-        let allList = this.feedService.getOwnNftCollectiblesList();
+        // let allList = this.feedService.getOwnNftCollectiblesList();
+        let allList = this.nftPersistenceHelper.getCollectiblesMap();
         let clist = allList[createAddr] || [];
         clist = _.filter(clist, item => {
           return item.tokenId != tokenId;
         });
         clist.push(assetItem);
-        this.feedService.setOwnNftCollectiblesList(allList);
-        this.feedService.setData(
-          'feed.nft.own.collectibles.list',
-          JSON.stringify(allList),
-        );
+        this.nftPersistenceHelper.setCollectiblesMap(allList);
+        // this.feedService.setOwnNftCollectiblesList(allList);
+        // this.feedService.setData(
+        //   'feed.nft.own.collectibles.list',
+        //   JSON.stringify(allList),
+        // );
       }
     });
     this.events.subscribe(FeedsEvent.PublishType.updateTitle, () => {
@@ -1785,8 +1788,9 @@ export class HomePage implements OnInit {
   }
 
   async getPaserList() {
-    this.feedService.setPasarList([]);
+    // this.feedService.setPasarList([]);
     this.pasarList = [];
+    this.nftPersistenceHelper.setPasarList(this.pasarList);
     // let stickerContract = this.web3Service.getSticker();
     // let pasarContract = this.web3Service.getPasar();
     // let openOrderCount =  await pasarContract.methods.getOpenOrderCount().call();
@@ -1794,10 +1798,10 @@ export class HomePage implements OnInit {
       .getPasar()
       .getOpenOrderCount();
     if (openOrderCount === '0') {
-      this.feedService.setData(
-        'feed.nft.pasarList',
-        JSON.stringify(this.pasarList),
-      );
+      // this.feedService.setData(
+      //   'feed.nft.pasarList',
+      //   JSON.stringify(this.pasarList),
+      // );
     } else {
       for (let index = 0; index < openOrderCount; index++) {
         this.pasarList.push(null);
@@ -1951,11 +1955,13 @@ export class HomePage implements OnInit {
           this.pasarList = _.sortBy(this.pasarList, (item: any) => {
             return -Number(item.createTime);
           });
-          this.feedService.setPasarList(this.pasarList);
-          this.feedService.setData(
-            'feed.nft.pasarList',
-            JSON.stringify(this.pasarList),
-          );
+
+          this.nftPersistenceHelper.setPasarList(this.pasarList);
+          // this.feedService.setPasarList(this.pasarList);
+          // this.feedService.setData(
+          //   'feed.nft.pasarList',
+          //   JSON.stringify(this.pasarList),
+          // );
         } catch (err) {
           console.log('====err====' + JSON.stringify(err));
         }
