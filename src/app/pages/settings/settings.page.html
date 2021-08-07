@@ -24,6 +24,16 @@
         </ion-col>
     </ion-row>
 
+    <ion-row class="section" (click)="navDeveloper()" *ngIf="developerMode">
+        <ion-col size="9" class="title-col">
+            <h1>{{ "SettingsPage.developer-setting" | translate }}</h1>
+            <h2>{{ "SettingsPage.advanced-setting" | translate }}</h2>
+        </ion-col>
+        <ion-col size="3" class="arrow-col">
+            <ion-img src="assets/icons/right-arrow.svg"></ion-img>
+        </ion-col>
+    </ion-row>
+
     <ion-row class="section" (click)="setDarkMode()">
         <ion-col size="9" class="title-col" (swipe)="setDarkMode()">
             <h1>{{"SettingsPage.darkMode" | translate }}</h1>

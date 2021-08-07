@@ -165,7 +165,7 @@ export const en = {
     decentralized: '#decentralized',
     secure: '#secure',
     freemarket: '#freemarket',
-    learnMore: 'Learn more',
+    learnMore: 'Learn more'
   },
   FeedsPage: {
     tabTitle1: 'Home',
@@ -558,6 +558,10 @@ export const en = {
 
     /*********** Elastos API provider page ***********/
     elastosapiprovider: 'Elastos API',
+    'developer-setting': 'Developer Options',
+    'advanced-setting': 'ADVANCED SETTINGS',
+    'configure-network': 'Configure Network',
+    'choose-network': 'Choose Network',
   },
   DiscoverfeedPage: {
     title: 'Discovery Square',

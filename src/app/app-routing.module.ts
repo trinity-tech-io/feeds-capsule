@@ -205,6 +205,14 @@ const routes: Routes = [
         m => m.EditprofileimagePageModule,
       ),
   },
+  {
+    path: 'developer',
+    loadChildren: () => import('./pages/developer/developer.module').then( m => m.DeveloperPageModule)
+  },
+  {
+    path: 'select-net',
+    loadChildren: () => import('./pages/select-net/select-net.module').then( m => m.SelectNetPageModule)
+  },
 ];
 
 @NgModule({
