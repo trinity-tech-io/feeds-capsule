@@ -191,4 +191,8 @@ export class SettingsPage implements OnInit {
   navElastosApiProvider() {
     this.native.getNavCtrl().navigateForward(['/elastosapiprovider']);
   }
+
+  navDeveloper(){
+    this.native.getNavCtrl().navigateForward(['/developer']);
+  }
 }

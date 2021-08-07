@@ -545,6 +545,10 @@ export const zh = {
       '亦来云基金会的 Trinity Tech 团队部署和维护的一组 Elastos API，负责亦来云 SDK 的开发。',
     /*********** Elastos API provider page ***********/
     elastosapiprovider: 'Elastos API',
+    'developer-setting': '开发者选项',
+    'advanced-setting': '高级设置',
+    'configure-network': '配置网络',
+    'choose-network': '选择网络'
   },
   DiscoverfeedPage: {
     title: '探索广场',
