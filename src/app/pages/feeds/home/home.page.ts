@@ -224,7 +224,8 @@ export class HomePage implements OnInit {
     if (this.platform.is('ios')) {
       this.isAndroid = false;
     }
-    this.pasarList = this.feedService.getPasarList();
+    // this.pasarList = this.feedService.getPasarList();
+    this.pasarList = this.nftPersistenceHelper.getPasarList();
     this.pasarList = _.sortBy(this.pasarList, (item: any) => {
       return -Number(item.createTime);
     });
@@ -298,7 +299,8 @@ export class HomePage implements OnInit {
     this.addBinaryEvevnt();
     this.events.subscribe(FeedsEvent.PublishType.addBinaryEvevnt, () => {
       if (this.tabType === 'pasar') {
-        this.pasarList = this.feedService.getPasarList();
+        // this.pasarList = this.feedService.getPasarList();
+        this.pasarList = this.nftPersistenceHelper.getPasarList();
         this.pasarList = _.sortBy(this.pasarList, (item: any) => {
           return -Number(item.createTime);
         });
@@ -1724,7 +1726,8 @@ export class HomePage implements OnInit {
 
         this.hideFullScreen();
         this.native.hideLoading();
-        let plist = this.feedService.getPasarList();
+        // let plist = this.feedService.getPasarList();
+        let plist = this.nftPersistenceHelper.getPasarList();
         if (plist.length === 0) {
           this.getPaserList();
           return;

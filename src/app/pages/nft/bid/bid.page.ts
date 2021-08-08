@@ -246,7 +246,8 @@ export class BidPage implements OnInit {
 
     this.native.hideLoading();
     if (purchaseStatus != '' && purchaseStatus != undefined) {
-      let plist = this.feedService.getPasarList();
+      // let plist = this.feedService.getPasarList();
+      let plist = this.nftPersistenceHelper.getPasarList();
       plist = _.filter(plist, item => {
         return item.saleOrderId != this.saleOrderId;
       });
