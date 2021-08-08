@@ -953,11 +953,13 @@ export class MintnftPage implements OnInit {
           createTime: createTime * 1000,
           moreMenuType: 'onSale',
         };
-        let list = this.feedService.getPasarList();
-        list.push(item);
-        this.feedService.setPasarList(list);
-        this.feedService.setData('feed.nft.pasarList', JSON.stringify(list));
-           break;
+           // let list = this.feedService.getPasarList();
+           let list = this.nftPersistenceHelper.getPasarList();
+           list.push(item);
+           this.nftPersistenceHelper.setPasarList(list);
+        // this.feedService.setPasarList(list);
+        // this.feedService.setData('feed.nft.pasarList', JSON.stringify(list));
+        //    break;
        }
        this.nftPersistenceHelper.setCollectiblesMap(allList);
       // this.feedService.setOwnNftCollectiblesList(allList);

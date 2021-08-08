@@ -7930,13 +7930,13 @@ export class FeedService {
     this.collectibleStatus = collectibleStatus;
   }
 
-  getPasarList() {
-    return this.pasarList;
-  }
+  // getPasarList() {
+  //   return this.pasarList;
+  // }
 
-  setPasarList(pasarList: any) {
-    this.pasarList = pasarList;
-  }
+  // setPasarList(pasarList: any) {
+  //   this.pasarList = pasarList;
+  // }
 
   // getOwnNftCollectiblesList() {
   //   return this.ownNftCollectiblesList;

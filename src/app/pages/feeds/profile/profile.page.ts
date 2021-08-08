@@ -274,7 +274,8 @@ export class ProfilePage implements OnInit {
           //   JSON.stringify(allList),
           // );
 
-          let cpList = this.feedService.getPasarList();
+          // let cpList = this.feedService.getPasarList();
+          let cpList = this.nftPersistenceHelper.getPasarList();
           cpList.push(cpItem);
 
           this.nftPersistenceHelper.setPasarList(cpList);
@@ -312,7 +313,8 @@ export class ProfilePage implements OnInit {
       // );
 
       //remove pasr
-      let pList = this.feedService.getPasarList();
+      // let pList = this.feedService.getPasarList();
+      let pList = this.nftPersistenceHelper.getPasarList();
       pList = _.filter(pList, item => {
         return !(
           item.saleOrderId === saleOrderId && item.sellerAddr === sellerAddr
