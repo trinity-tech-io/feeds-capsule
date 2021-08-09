@@ -90,4 +90,8 @@ export class AboutPage implements OnInit {
     this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
     this.events.publish(FeedsEvent.PublishType.addConnectionChanged);
   }
+
+  showNftDisclaimer(){
+    this.native.openUrl(' https://trinity-feeds.app/disclaimer');
+  }
 }

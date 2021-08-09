@@ -23,7 +23,7 @@ export class IssuecredentialPage implements OnInit {
   public title = '05/06';
   public nodeId = '';
   public did = '';
-  public popover: any;
+  public popover: any = null;
   public lightThemeType: number = 2;
   constructor(
     public popoverController: PopoverController,
@@ -86,7 +86,7 @@ export class IssuecredentialPage implements OnInit {
     this.events.unsubscribe(FeedsEvent.PublishType.issue_credential);
     this.events.unsubscribe(FeedsEvent.PublishType.rpcResponseError);
     if (this.popover != null) {
-      this.popover.dismiss();
+      this.popoverController.dismiss();
     }
   }
 
