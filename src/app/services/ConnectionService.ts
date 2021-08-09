@@ -329,26 +329,6 @@ export class ConnectionService {
     );
   }
 
-  // getMyChannelsMetaData(serverName: string, nodeId: string, field: Communication.field, upper_bound: number,
-  //                     lower_bound: number, max_counts: number, accessToken: FeedsData.AccessToken){
-  //     if (accessToken == undefined)
-  //         return ;
-
-  //     let request: Communication.get_my_channels_metadata_request = {
-  //         version: "1.0",
-  //         method : "get_my_channels_metadata",
-  //         id     : -1,
-  //         params : {
-  //             access_token    : accessToken.token,
-  //             by              : field,
-  //             upper_bound     : upper_bound,
-  //             lower_bound     : lower_bound,
-  //             max_count       : max_counts,
-  //         }
-  //     }
-  //     this.sendRPCMessage(serverName, nodeId, request.method, request.params,"" ,false);
-  // }
-
   getChannels(
     serverName: string,
     nodeId: string,
@@ -689,31 +669,6 @@ export class ConnectionService {
       request.version,
     );
   }
-
-  // signinConfirmRequest(serverName: string, nodeId: string, nonce: string, realm: string, requiredCredential: boolean, presentation: string , credential: string){
-  //     let request: any;
-  //     if (requiredCredential){
-  //         request = {
-  //             ver: "1.0",
-  //             method : "signin_confirm_challenge",
-  //             id     : -1,
-  //             params : {
-  //                 jws           : presentation,
-  //                 credential    : credential
-  //             }
-  //         }
-  //     }else {
-  //         request = {
-  //             ver: "1.0",
-  //             method : "signin_confirm_challenge",
-  //             id     : -1,
-  //             params : {
-  //                 jws: presentation,
-  //             }
-  //         }
-  //     }
-  //     this.sendRPCMessage(serverName, nodeId, request.method, request.params,"");
-  // }
 
   declareOwnerRequest(
     serverName: string,

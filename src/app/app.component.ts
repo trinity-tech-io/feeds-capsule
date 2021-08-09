@@ -16,10 +16,6 @@ import { EssentialsConnector } from '@elastosfoundation/essentials-connector-cor
 import { connectivity } from '@elastosfoundation/elastos-connectivity-sdk-cordova';
 import { WalletConnectControllerService } from 'src/app/services/walletconnect_controller.service';
 import { DataHelper } from 'src/app/services/DataHelper';
-import { IPFSService } from 'src/app/services/ipfs.service';
-import { NFTContractParsarService } from 'src/app/services/nftcontract_parsar.service';
-import { NFTContractStickerService } from 'src/app/services/nftcontract_sticker.service';
-import { NFTPersistenceHelper } from 'src/app/services/nft_persistence_helper.service';
 import { GlobalService } from 'src/app/services/global.service';
 import { Config } from './services/config';
 
@@ -62,10 +58,6 @@ export class MyApp {
     private menuController: MenuController,
     private walletConnectControllerService: WalletConnectControllerService,
     private dataHelper: DataHelper,
-    private ipfsService: IPFSService,
-    private nftContractParsarService: NFTContractParsarService,
-    private nftContractStickerService: NFTContractStickerService,
-    private nftPersistenceHelper: NFTPersistenceHelper,
     private globalService: GlobalService
   ) {
     this.initializeApp();
@@ -87,11 +79,6 @@ export class MyApp {
         this.updateWalletAddress();
       },
     );
-    // this.dataHelper.loadWalletAccountAddress().then((address)=>{
-    //   console.log("accountAddress",address);
-    //   this.walletAddress = address;
-    //   this.walletAddressStr = UtilService.resolveAddress(address);
-    // });
   }
 
   initializeApp() {
@@ -119,9 +106,6 @@ export class MyApp {
         this.initCurrentFeed();
         this.initDiscoverfeeds();
         this.initCollectibleSetting();
-        // this.initFeedNftPasarList();
-        // this.initNftOwnCollectiblesList();
-        // this.native.networkInfoInit();
         this.native.addNetworkListener(
           () => {
             this.events.publish(FeedsEvent.PublishType.networkStatusChanged, 1);
@@ -139,9 +123,7 @@ export class MyApp {
     connectivity.registerConnector(this.localIdentityConnector);
     // To let users use Essentials for his operations:
     connectivity.registerConnector(this.essentialsConnector);
-    connectivity.setApplicationDID(
-      'did:elastos:iqtWRVjz7gsYhyuQEb1hYNNmWQt1Z9geXg',
-    );
+    connectivity.setApplicationDID(Config.APPLICATION_DID);
   }
 
   initDiscoverfeeds() {
@@ -227,23 +209,10 @@ export class MyApp {
         }
         this.feedService.setHideDeletedComments(status);
       })
-      .catch(err => {});
-
-    // this.feedService.getData("feeds.hideOfflineFeeds").then((status)=>{
-    //   if(status === null){
-    //     this.feedService.setHideOfflineFeeds(true);
-    //     return;
-    //   }
-    //   this.feedService.setHideOfflineFeeds(status);
-    // }).catch((err)=>{
-
-    // });
+      .catch(err => { });
   }
 
   initDisclaimer() {
-    //localStorage.setItem('org.elastos.dapp.feeds.disclaimer',"");
-    //localStorage.setItem('org.elastos.dapp.feeds.first',"");
-
     this.splashScreen.hide();
     this.appService.initTranslateConfig();
     this.appService.init();
@@ -267,10 +236,6 @@ export class MyApp {
   goToFeedSource() {
     this.handleJump();
   }
-
-  // goToDev(){
-  //   this.native.navigateForward('menu/develop',"");
-  // }
 
   about() {
     this.native.navigateForward('/menu/about', '');
@@ -402,44 +367,6 @@ export class MyApp {
       })
       .catch(() => {});
   }
-
-  // initFeedNftPasarList() {
-  //   this.feedService
-  //     .getData('feed.nft.pasarList')
-  //     .then(nftPasarList => {
-  //       if (nftPasarList === null) {
-  //         this.feedService.setPasarList([]);
-  //         return;
-  //       }
-
-  //       console.log(
-  //         '=======nftPasarList======' + nftPasarList,
-  //       );
-  //       this.feedService.setPasarList(JSON.parse(nftPasarList));
-  //     })
-  //     .catch(() => {});
-  // }
-
-  // initNftOwnCollectiblesList() {
-  //   this.feedService
-  //     .getData('feed.nft.own.collectibles.list')
-  //     .then(nftOwnCollectiblesList => {
-  //       console.log(
-  //         '=======NftOwnCollectiblesList======' + nftOwnCollectiblesList,
-  //       );
-  //       if (
-  //         nftOwnCollectiblesList === null ||
-  //         nftOwnCollectiblesList === '[]'
-  //       ) {
-  //         this.feedService.setOwnNftCollectiblesList({});
-  //         return;
-  //       }
-  //       this.feedService.setOwnNftCollectiblesList(
-  //         JSON.parse(nftOwnCollectiblesList),
-  //       );
-  //     })
-  //     .catch(() => {});
-  // }
 
   async connectWallet() {
     await this.walletConnectControllerService.connect();

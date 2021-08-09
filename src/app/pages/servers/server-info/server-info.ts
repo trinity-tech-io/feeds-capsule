@@ -58,7 +58,6 @@ export class ServerInfoPage implements OnInit {
   public actionSheet: any = null;
   public ownerChannelList: any = [];
   public channel: any = null;
-  //public clickbutton:string ="";
   public feedPublicStatus: any = {};
   public popover: any = '';
   public bindingServer: any = null;
@@ -128,7 +127,7 @@ export class ServerInfoPage implements OnInit {
     this.initTitle();
     this.initData();
     this.initMyFeeds();
-    //this.initPublicStatus();
+
     this.feedPublicStatus = this.feedService.getFeedPublicStatus();
 
     this.connectionStatus = this.feedService.getConnectionStatus();
@@ -228,12 +227,10 @@ export class ServerInfoPage implements OnInit {
         this.translate.instant('DIDdata.NotprovidedfromDIDDocument'),
     });
 
-    //if (this.isOwner == 'true'){
     this.serverDetails.push({
       type: 'ServerInfoPage.owner',
       details: server.owner || '',
     });
-    //}
 
     if (this.developerMode) {
       this.serverDetails.push({
@@ -256,13 +253,13 @@ export class ServerInfoPage implements OnInit {
         });
       }
     }
-    // if (server.elaAddress != "") {
+
     this.serverDetails.push({
       type: 'IssuecredentialPage.elaaddress',
       details:
         server.elaAddress || this.translate.instant('DIDdata.Notprovided'),
     });
-    // }
+
     if (this.developerMode) {
       this.serverDetails.push({
         type: 'ServerInfoPage.did',
@@ -359,8 +356,6 @@ export class ServerInfoPage implements OnInit {
     if (bindingServer === null) {
       return 1;
     }
-    // let bindServerDid = bindingServer.did || '';
-    // if (this.didString === bindServerDid)
     return 0;
   }
 
@@ -462,13 +457,11 @@ export class ServerInfoPage implements OnInit {
     };
     this.httpService.ajaxPost(ApiUrl.update, obj).then(result => {
       if (result['code'] === 200) {
-        //this.native.toast("test update");
       }
     });
   }
 
   initMyFeeds() {
-    //this.ownerChannelList = this.feedService.getMyChannelList();
     this.ownerChannelList =
       this.feedService.getChannelsListFromNodeId(this.nodeId) || [];
   }

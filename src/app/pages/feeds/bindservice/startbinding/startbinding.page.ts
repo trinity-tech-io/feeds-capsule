@@ -186,7 +186,6 @@ export class StartbindingPage implements OnInit {
 
   ionViewWillLeave() {
     this.native.hideLoading();
-    // this.feedService.cleanDeclareOwner();
     this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
     this.events.unsubscribe(FeedsEvent.PublishType.owner_declared);
     this.events.unsubscribe(FeedsEvent.PublishType.issue_credential);

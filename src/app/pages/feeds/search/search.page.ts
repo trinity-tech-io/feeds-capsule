@@ -289,7 +289,6 @@ export class SearchPage implements OnInit {
   doRefresh(event) {
     let sid = setTimeout(() => {
       this.feedService.updateSubscribedFeed();
-      //this.discoverSquareList = [];
       this.feedService.setDiscoverfeeds([]);
       this.curtotalNum = 0;
       this.pageNum = 1;
@@ -582,7 +581,6 @@ export class SearchPage implements OnInit {
       .then(isSuccess => {
         if (isSuccess) {
           this.zone.run(() => {
-            //this.init();
           });
         }
       })

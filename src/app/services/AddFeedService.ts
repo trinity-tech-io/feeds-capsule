@@ -57,9 +57,6 @@ export class AddFeedService {
         FeedsData.FollowFeedStatus.SIGNIN_FINISH,
       );
     });
-
-    // this.events.subscribe(FeedsEvent.PublishType.addFeedFinish,async (nodeId, feedId, feedName)=>{
-    // });
   }
 
   async processTobeAddedFeedsFinish(nodeId: string, feedId: number) {

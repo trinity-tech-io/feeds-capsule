@@ -11,17 +11,11 @@ import { MenuService } from 'src/app/services/MenuService';
 import { PopupProvider } from 'src/app/services/popup';
 import { IntentService } from 'src/app/services/IntentService';
 import { LanguageService } from 'src/app/services/language.service';
-// import { TitleBarService } from 'src/app/services/TitleBarService';
-// import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-
-let managerService: any;
 
 @Injectable({
   providedIn: 'root',
 })
 export class AppService {
-  // @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
-  // @ViewChild(IonRouterOutlet,{static:true}) ionRouterOutlet: IonRouterOutlet;
   public popover: any = null;
   constructor(
     private router: Router,
@@ -40,37 +34,11 @@ export class AppService {
   ) {}
 
   init() {
-    // this.intentService.addIntentListener((msg: IntentPlugin.ReceivedIntent) => {
-    //   this.onMessageReceived(msg);
-    // });
-    // titleBarManager.addOnItemClickedListener((menuIcon)=>{
-    //   this.native.hideLoading();
-    //   if (menuIcon.key == "back") {
-    //       this.handleBack();
-    //   } else if (menuIcon.key == "more"){
-    // this.events.publish(FeedsEvent.PublishType.openRightMenu);
-    // this.menuService.hideActionSheet();
-    // let value =  this.popoverController.getTop()["__zone_symbol__value"] || "";
-    // if(value!=""){
-    //   this.popoverController.dismiss();
-    // }
-    // this.menu.open("menu");
-    //   } else if (menuIcon.key === 'editChannel') {
-    //     this.event.publish(FeedsEvent.PublishType.editChannel);
-    //   } else if (menuIcon.key === 'editServer') {
-    //     this.event.publish(FeedsEvent.PublishType.editServer);
-    //   }else if(menuIcon.key === 'editImages'){
-    //     this.events.publish(FeedsEvent.PublishType.editImages);
-    //   }
-    // });
   }
 
   onReceiveIntent = (ret: IntentPlugin.ReceivedIntent) => {
-    //console.log("Intent received", ret, JSON.stringify(ret));
-
     switch (ret.action) {
       case 'addsource':
-        //console.log('addsource intent', ret);
         this.zone.run(async () => {
           this.native
             .getNavCtrl()
@@ -80,18 +48,6 @@ export class AppService {
               '0',
               false,
             ]);
-
-          /*    this.events.publish("intent:addsource", ret.params.source);
-            this.native.navigateForward(['menu/servers/add-server'], ""); */
-
-          /*  let props: NavigationExtras = {
-              queryParams: {
-                source: ret.params.source
-              }
-            }
-
-            this.router.navigate(['menu/servers/add-server'], props);
-          */
         });
         break;
     }
@@ -131,7 +87,6 @@ export class AppService {
       try {
         params = JSON.parse(params);
       } catch (e) {
-        //console.log('Params are not JSON format: ', params);
       }
     }
 

@@ -24,7 +24,6 @@ import { UtilService } from './utilService';
 import { Config } from './config';
 
 declare let didManager: DIDPlugin.DIDManager;
-// declare let didSessionManager: DIDSessionManagerPlugin.DIDSessionManager;
 
 const TAG: string = 'Feeds-service';
 let versionCode: number = 10600;
@@ -97,10 +96,6 @@ export class FeedService {
   private isLogging: { [nodeId: string]: boolean } = {};
   private signinChallengeTimeout: NodeJS.Timer;
   private isSavingChannel: boolean = false;
-  // private isDeclearing = false;
-  // private declareOwnerTimeout: NodeJS.Timer;
-  // private declareOwnerInterval: NodeJS.Timer;
-  // private isDeclareFinish: boolean = false;
   private lastMultiLikesAndCommentsCountUpdateMapCache: {
     [key: string]: FeedsData.LikesAndCommentsCountUpdateTime;
   };
@@ -140,12 +135,6 @@ export class FeedService {
     didManager.initDidStore('anything', null);
     this.setEidURL(Config.EID_RPC);
     console.log('Eid RPC is', Config.EID_RPC);
-    // const apiprovidername = this.dataHelper.getApiProvider();
-
-    // console.log('apiprovidername', apiprovidername);
-    // if (apiprovidername) {
-    //   this.setEidURL(this.getEidProviderURL(apiprovidername));
-    // }
   }
 
   getNetworkStatus(): FeedsData.ConnState {
@@ -497,13 +486,6 @@ export class FeedService {
   }
 
   resolveServer(server: FeedsData.Server, status: FeedsData.ConnState) {
-    // if(status == null){
-    //   status = FeedsData.ConnState.disconnected;
-    // }
-    // let originServerStatus = this.dataHelper.getServerStatus(server.nodeId);
-    // originServerStatus.status = status;
-    // this.dataHelper.updateServerStatus(server.nodeId, originServerStatus);
-
     let serverStatistic = this.dataHelper.generateEmptyStatistics(server.did);
     this.dataHelper.updateServerStatistics(server.nodeId, serverStatistic);
     this.dataHelper.updateServer(server.nodeId, server);
@@ -603,9 +585,6 @@ export class FeedService {
       case FeedsData.MethodType.get_my_channels:
         this.handleGetMyChannelsResult(nodeId, result, error);
         break;
-      // case FeedsData.MethodType.get_my_channels_metadata:
-      //   this.handleGetMyChannelsMetaDataResult(nodeId, result, error);
-      //   break;
       case FeedsData.MethodType.get_channels:
         this.handleGetChannelsResult(nodeId, result, requestParams, error);
         break;
@@ -833,7 +812,6 @@ export class FeedService {
 
     // feeds://did:elastos:ixxxxxxx#serviceid
     let did = this.getDid(feedUrl, startIndex, hashPos);
-    // let serviceId = this.getServiceId(feedUrl, hashPos+1, feedUrl.length);
     let serviceId = this.getServiceId(feedUrl, startIndex, feedUrl.length);
     return new DidData(did, null, serviceId);
   }
@@ -892,7 +870,6 @@ export class FeedService {
               nodeId: '',
               feedsUrl: feedsUrl,
               elaAddress: '',
-              // status            : ConnState.disconnected
             });
             return;
           } else {
@@ -918,7 +895,6 @@ export class FeedService {
             nodeId: '',
             feedsUrl: feedsUrl,
             elaAddress: '',
-            // status            : ConnState.disconnected
           });
         } else {
           onError('The carrier node could not be found');
@@ -961,8 +937,6 @@ export class FeedService {
       presentation => {
         presentation.isValid(
           isValid => {
-            // if isValid && nonce == this.nonce && realm == this.realm onSuccess(true)
-            // else onSuccess(false)
             onSuccess(isValid);
           },
           err => {},
@@ -2548,7 +2522,6 @@ export class FeedService {
       request.content,
       tempId,
     );
-    //this.native.toast_trans("CreatenewpostPage.tipMsg1");
   }
 
   processPublishPostSuccess(
@@ -2634,7 +2607,6 @@ export class FeedService {
       post_status: FeedsData.PostCommentStatus.available,
     };
 
-    // this.storeService.set(cacheKey, post);
     let declarePostData: FeedsEvent.DeclarePostData = {
       nodeId: nodeId,
       channelId: channelId,
@@ -2676,7 +2648,6 @@ export class FeedService {
     eventBus.publish(FeedsEvent.PublishType.notifyPostSuccess);
 
     eventBus.publish(FeedsEvent.PublishType.updateTab, true);
-    //this.native.toast_trans("CreatenewpostPage.tipMsg1");
   }
 
   handlePostCommentResult(
@@ -2999,10 +2970,7 @@ export class FeedService {
             this.getFeedNameById(nodeId, channelId),
           ),
         );
-        // this.getMultiComments(nodeId, channelId, 0, Communication.field.last_update, 0, 0, 0);
 
-        // this.updatePostFromLatest(nodeId,channelId);
-        // this.updateData(nodeId);
         this.syncPost(nodeId, channelId);
         this.syncComment(nodeId, channelId);
       } else {
@@ -3202,7 +3170,6 @@ export class FeedService {
         );
       }
 
-      // if(this.checkChannelIsMine(nodeId,channelId)){
       let lastCommentUpdateKey = this.getPostId(nodeId, channelId, postId);
       this.updateLastCommentUpdate(
         lastCommentUpdateKey,
@@ -3211,7 +3178,6 @@ export class FeedService {
         postId,
         updatedAt,
       );
-      // }
     }
 
     let reqFeedsId = requestParams.requestParams.channel_id;
@@ -3402,7 +3368,6 @@ export class FeedService {
       originChannel.isSubscribed = false;
       this.dataHelper.updateChannel(nodeChannelId, originChannel);
     }
-    // this.refreshLocalSubscribedChannels();
     this.deletePostFromChannel(nodeId, request.id);
 
     this.native.toast(
@@ -4128,30 +4093,8 @@ export class FeedService {
     clearTimeout(this.signinChallengeTimeout);
   }
 
-  // setDeclareOwnerTimeout(){
-  //   this.isDeclearing = true;
-  //   clearTimeout(this.declareOwnerTimeout);
-
-  //   this.declareOwnerTimeout = setTimeout(()=>{
-  //     this.clearDeclareOwnerTimeout();
-  //   },30000);
-  // }
-
-  // clearDeclareOwnerTimeout(){
-  //   this.isDeclearing = false;
-  //   clearTimeout(this.declareOwnerTimeout);
-  //   this.cleanDeclareOwner();
-  // }
-
   signinChallengeRequest(nodeId: string, requiredCredential: boolean) {
     this.logUtils.logd('Start signin server, nodeId is' + nodeId);
-    // if(this.isLogging[nodeId] == undefined)
-    //   this.isLogging[nodeId] = false;
-    // if (this.isLogging[nodeId])
-    //   return ;
-    // this.setSigninTimeout(nodeId);
-
-    // this.native.toast(this.formatInfoService.formatSigninMsg(this.getServerNameByNodeId(nodeId)));
     if (this.getServerVersionCodeByNodeId(nodeId) < newAuthVersion) {
       this.connectionService.signinChallengeRequest(
         this.getServerNameByNodeId(nodeId),
@@ -4171,12 +4114,6 @@ export class FeedService {
     realm: string,
     requiredCredential: boolean,
   ) {
-    // deprecated
-    // didSessionManager.authenticate(nonce, realm).then((presentation)=>{
-    //   this.connectionService.signinConfirmRequest(this.getServerNameByNodeId(nodeId), nodeId, nonce, realm, requiredCredential,presentation,this.getLocalCredential());
-    // }).catch((err)=>{
-    //   this.logUtils.loge("Authenticate presentation from didSessionManager is error, nodeId is "+nodeId+" error is "+JSON.stringify(err),TAG);
-    // });
   }
 
   handleSigninChallenge(nodeId: string, result: any, error: any) {
@@ -4221,26 +4158,11 @@ export class FeedService {
   }
 
   startDeclareOwner(nodeId: string, carrierAddress: string, nonce: string) {
-    // this.isDeclareFinish = false;
-    // this.declareOwnerInterval = setInterval(() => {
-    //   if (this.isDeclareFinish){
-    //     clearInterval(this.declareOwnerInterval);
-    //   }
-    // }, 5000);
     if (!this.connectionService.checkServerConnection(nodeId)) return;
     this.declareOwnerRequest(nodeId, carrierAddress, nonce);
   }
 
-  // cleanDeclareOwner(){
-  //   this.isDeclareFinish = true;
-  //   clearInterval(this.declareOwnerInterval);
-  // }
-
   declareOwnerRequest(nodeId: string, carrierAddress: string, nonce: string) {
-    // if (this.isDeclearing)
-    //   return;
-    // this.setDeclareOwnerTimeout();
-    // isBindServer = true;
     this.connectionService.declareOwnerRequest(
       this.getServerNameByNodeId(nodeId),
       nodeId,
@@ -4612,7 +4534,6 @@ export class FeedService {
     error: any,
   ) {
     if (error != null && error != undefined && error.code != undefined) {
-      // this.handleError(nodeId, error);
       return;
     }
 
@@ -4644,7 +4565,6 @@ export class FeedService {
     error: any,
   ) {
     if (error != null && error != undefined && error.code != undefined) {
-      // this.handleError(nodeId, error);
       return;
     }
 
@@ -5793,13 +5713,6 @@ export class FeedService {
       this.sessionService.streamAddData(nodeId, sentData, memo);
       currentSlice++;
     }, 1);
-
-    // for (let index = 0; index < sumSlice; index++) {
-    //   let sentData = valueData.subarray(currentSlice*step, (currentSlice+1)*step);
-    //   this.sessionService.streamAddData(nodeId, sentData).then();
-    //   setTimeout
-    //   currentSlice++;
-    // }
   }
 
   createOfflineError() {
@@ -7933,22 +7846,6 @@ export class FeedService {
     this.collectibleStatus = collectibleStatus;
   }
 
-  // getPasarList() {
-  //   return this.pasarList;
-  // }
-
-  // setPasarList(pasarList: any) {
-  //   this.pasarList = pasarList;
-  // }
-
-  // getOwnNftCollectiblesList() {
-  //   return this.ownNftCollectiblesList;
-  // }
-
-  // setOwnNftCollectiblesList(ownNftCollectiblesList: any) {
-  //   this.ownNftCollectiblesList = ownNftCollectiblesList;
-  // }
-
   setEidURL(url: string) {
     didManager.setResolverUrl(
       url,
@@ -7960,12 +7857,6 @@ export class FeedService {
       },
     );
   }
-
-  // getEidProviderURL(name: string) {
-  //   if (name == 'trinity-tech.cn') return 'https://api.trinity-tech.cn/eid';
-  //   if (name == 'elastos.io') return 'https://api.elastos.io/eid';
-  //   return 'https://api.elastos.io/eid';
-  // }
 
   async getUserAvatar(userDid: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
@@ -7983,22 +7874,8 @@ export class FeedService {
         return;
       }
 
-      //let didAvatar = signinData.avatar;
-      //if (!didAvatar) {
-        resolve('assets/images/default-contact.svg');
-        return;
-      //}
-
-      // let contentType =
-      //   didAvatar['contentType'] || didAvatar['content-type'] || '';
-      // let cdata = didAvatar['data'] || '';
-      // if (contentType === '' || cdata === '') {
-      //   resolve('assets/images/default-contact.svg');
-      //   return;
-      // }
-
-      // resolve('data:' + contentType + ';base64,' + didAvatar.data)
-      //return;
+      resolve('assets/images/default-contact.svg');
+      return;
     });
   }
 }

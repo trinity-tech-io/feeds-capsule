@@ -209,7 +209,6 @@ declare namespace FeedsData {
     post_comment = 'post_comment',
     post_like = 'post_like',
     get_my_channels = 'get_my_channels',
-    // get_my_channels_metadata = "get_my_channels_metadata",
     get_channels = 'get_channels',
     get_channel_detail = 'get_channel_detail',
     get_subscribed_channels = 'get_subscribed_channels',
@@ -218,9 +217,6 @@ declare namespace FeedsData {
     get_statistics = 'get_statistics',
     subscribe_channel = 'subscribe_channel',
     unsubscribe_channel = 'unsubscribe_channel',
-
-    // add_node_publisher = "add_node_publisher",
-    // remove_node_publisher = "remove_node_publisher",
 
     query_channel_creation_permission = 'query_channel_creation_permission',
 
@@ -330,7 +326,6 @@ declare namespace FeedsData {
     subscribeStatusMap = 'subscribeStatusMap',
     likeMap = 'likeMap',
 
-    // bindingServerMap = "bindingServerMap",
     accessTokenMap = 'accessTokenMap',
     credential = 'credential',
 
@@ -341,7 +336,7 @@ declare namespace FeedsData {
     notificationList = 'notificationList',
 
     likeCommentMap = 'likeCommentMap',
-    // lastFeedUpdateMap = "lastFeedUpdateMap",
+
     lastCommentUpdateMap = 'lastCommentUpdateMap',
 
     lastMultiLikesAndCommentsCountUpdateMap = 'lastMultiLikesAndCommentsCountUpdateMap',

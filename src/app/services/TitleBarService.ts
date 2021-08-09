@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { LogUtils } from 'src/app/services/LogUtils';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import {
   TitleBarIconSlot,
@@ -19,10 +18,8 @@ let TAG: string = 'TitleBarService';
 export class TitleBarService {
   public popover: any = null;
   constructor(
-    private logUtils: LogUtils,
     private native: NativeService,
     private popoverController: PopoverController,
-    // private menuService: MenuService,
     private menu: MenuController,
     private router: Router,
     private event: Events,

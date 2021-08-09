@@ -150,16 +150,6 @@ export class CarrierService {
     }
   }
 
-  /* getMessageByUserId(userId) {
-        return messageList.filter(x => (x.toUserId == userId) || (x.userId == userId));
-    }
-
-    getMsgIndexById(id: string) {
-        return messageList.findIndex(e => e.messageId === id)
-    } */
-
-  // ------------------------------------------------------------
-
   private processDid(did: string): string {
     let checkStr = 'did:elastos:';
     return '.' + did.replace(checkStr, '');

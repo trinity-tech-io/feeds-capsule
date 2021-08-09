@@ -85,7 +85,6 @@ export const zh = {
     sendingErrorTip: '待发送成功后，请重试',
     preferences: '设置',
     posts: '微说',
-    // "assets": "资产",
     confirmDialog: '确认框',
     deletePost: '删除微说',
     deleteComment: '删除微频',
@@ -148,7 +147,6 @@ export const zh = {
   },
   SigninPage: {
     signIn: '登录',
-    // "Pleasewait": "请稍等...",
     feeds: 'Feeds',
     des: '进行',
     des1: '有意义的对话',
@@ -520,7 +518,6 @@ export const zh = {
   },
   EditPostPage: {
     title: '编辑微说',
-    // "saveChanges": "保存修改"
   },
   EditCommentPage: {
     title: '编辑微评',

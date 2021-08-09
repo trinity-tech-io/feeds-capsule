@@ -202,7 +202,6 @@ export class EidtchannelPage implements OnInit {
     };
     this.httpService.ajaxPost(ApiUrl.update, obj, false).then(result => {
       if (result['code'] === 200) {
-        //this.native.toast("test update");
       }
     });
   }

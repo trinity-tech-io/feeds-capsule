@@ -497,7 +497,6 @@ export class SessionService {
     stream.write(
       base64,
       bytesSent => {
-        // mLogUtils.logd("Write data to "+nodeId + ", data length is "+base64.length,TAG);
       },
       err => {
         publishError(nodeId, createWriteDataError(), memo);
@@ -853,7 +852,6 @@ function parseResponse(response: any) {
       TAG,
     );
     publishError(nodeId, response.error, memo);
-    // return error;
     return;
   }
 

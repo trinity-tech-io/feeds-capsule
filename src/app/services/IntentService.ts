@@ -11,26 +11,6 @@ export class IntentService {
 
   scanQRCode(): Promise<string> {
     return this.scanService.scanBarcode();
-    // return new Promise(async (resolve, reject) =>{
-    //     try {
-    //         let res = await intentManager.sendIntent("https://scanner.elastos.net/scanqrcode",{});
-    //         this.logUtils.logd("Call scanqrcode result is "+JSON.stringify(res));
-    //         if (res){
-    //             let content = res.result.scannedContent;
-    //             let contentStr = String(content);
-    //             resolve(contentStr);
-    //             return;
-    //         }
-
-    //         let error: string = "Scan QR code error, result is "+JSON.stringify(res);
-    //         this.logUtils.loge(error,TAG);
-    //         reject(error);
-
-    //       } catch (error) {
-    //         this.logUtils.loge(error,TAG);
-    //         reject(error);
-    //       }
-    // });
   }
 
   share(title: string, content: string): Promise<string> {

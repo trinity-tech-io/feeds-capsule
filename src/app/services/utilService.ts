@@ -164,13 +164,6 @@ export class UtilService {
     return c;
   }
 
-  //  public static async getSha256Hash(text:string){
-  //     const hash = new Sha256();
-  //     hash.update(text);
-  //     let result = await hash.digest();
-  //     return result;
-  //  }
-
   /**
    *
    * Secure Hash Algorithm (SHA256)

@@ -300,8 +300,6 @@ export class ExplorefeedsPage implements OnInit {
   filterdiscoverSquareList(discoverSquare: any) {
     this.developerMode = this.feedService.getDeveloperMode();
     this.feedList = this.feedService.getChannelsList() || [];
-    //this.addingChanneList = this.feedService.getToBeAddedFeedsList() || [];
-    //this.searchAddingChanneList = _.cloneDeep(this.addingChanneList);
     let discoverSquareList = [];
     discoverSquareList = _.filter(discoverSquare, (feed: any) => {
       return this.handleShow(feed);
@@ -320,14 +318,6 @@ export class ExplorefeedsPage implements OnInit {
     if (followFeed.length > 0) {
       return false;
     }
-
-    // let addingFeed = _.filter(this.addingChanneList,(item:any)=>{
-    //   return (feedNodeId==item["nodeId"]&&feedId==item["feedId"]);
-    // });
-
-    // if(addingFeed.length>0){
-    //   return false;
-    // }
 
     let purpose = feed['purpose'] || '';
     if (purpose != '' && !this.developerMode) {

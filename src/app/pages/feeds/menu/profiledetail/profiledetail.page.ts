@@ -134,9 +134,7 @@ export class ProfiledetailPage implements OnInit {
 
     let signInData = this.feedService.getSignInData() || {};
     this.name = signInData['nickname'] || signInData['name'] || '';
-    // this.avatar = signInData['avatar'] || null;
     this.description = signInData['description'] || '';
-    // this.did = signInData["did"] || "";
     this.did = this.feedService.rmDIDPrefix(signInData['did'] || '');
     this.telephone = signInData['telephone'] || '';
     this.email = signInData['email'] || '';
@@ -290,14 +288,14 @@ export class ProfiledetailPage implements OnInit {
         });
       }
     }
-    // if (server.elaAddress != "") {
+
     this.serverDetails.push({
       type: 'IssuecredentialPage.elaaddress',
       details:
         bindingServer.elaAddress ||
         this.translate.instant('DIDdata.Notprovided'),
     });
-    // }
+
     if (this.developerMode) {
       this.serverDetails.push({
         type: 'ServerInfoPage.did',

@@ -98,7 +98,6 @@ export class PopupProvider {
     }
   }
 
-  //tskth.svg
   ionicConfirm(
     that: any,
     title: string,
