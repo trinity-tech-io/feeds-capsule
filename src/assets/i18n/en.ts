@@ -137,6 +137,7 @@ export const en = {
     createOrderFail: 'Failed to create a sale order for the Collectible',
     checkingCollectibleResult: 'Waiting for the NFT Collectible to take effect in the contract',
     checkingOrderResult: 'Waiting for the NFT Collectible sale order to take effect in the contract',
+    developLog: 'Develop Log'
   },
   app: {
     profileDetails: 'Profile Details',

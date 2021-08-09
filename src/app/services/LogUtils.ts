@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-enum LogLevel {
+export enum LogLevel {
   NONE,
   ERROR,
   WARN,

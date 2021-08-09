@@ -95,6 +95,7 @@ export class DataHelper {
   private tempDataMap: { [key: string]: FeedsData.TempData } = {};
 
   private walletAccountAddress: string = '';
+  private developLogMode: boolean = false;
   constructor(
     private logUtils: LogUtils,
     private storageService: StorageService,
@@ -2319,4 +2320,24 @@ export class DataHelper {
     return this.loadData(key);
   }
 
+  setDevelopLogMode(developLogMode: boolean) {
+    this.developLogMode = developLogMode;
+    this.saveData('feeds.developerLogMode', this.developLogMode);
+  }
+
+  getDevelopLogMode() {
+    return this.developLogMode;
+  }
+
+  loadDevelopLogMode() {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let developLogMode = await this.loadData('feeds.developerLogMode') || false;
+        this.developLogMode = developLogMode;
+        resolve(this.developLogMode);
+      } catch (err) {
+        reject(err);
+      }
+    });
+  }
 }
