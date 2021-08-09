@@ -27,15 +27,6 @@ export class ApiUrl {
   /**update*/
   public static update: string = ApiUrl.SERVER + '/update';
 
-  /**NFT IPFS*/
-  // public static nftAdd: string = ApiUrl.IPFS_TEST_SERVER + 'api/v0/add';
-  // public static nftGet: string = ApiUrl.IPFS_TEST_SERVER + 'ipfs/';
   public static IPFS_NFT_ADD: string = 'api/v0/add';
   public static IPFS_NFT_GET: string = 'ipfs/';
-
-  // public static PASAR_ADDRESS: string = Config.PASAR_ADDRESS;
-  // public static PASAR_TEST_ADDRESS: string = Config.PASAR_TEST_ADDRESS;
-
-  // public static STICKER_ADDRESS: string = Config.STICKER_ADDRESS;
-  // public static STICKER_TEST_ADDRESS: string = Config.STICKER_TEST_ADDRESS;
 }

@@ -157,7 +157,6 @@ export class HttpService {
     }
     this.popover = this.popupProvider.ionicAlert(
       this,
-      // "ConfirmdialogComponent.signoutTitle",
       '',
       'common.httperror',
       this.confirm,

@@ -26,22 +26,14 @@ import { Observable } from 'rxjs';
 import { zh } from './../assets/i18n/zh';
 import { en } from './../assets/i18n/en';
 
-/*
-import { AboutPage } from './pages/about/about';
-import { ContactPage } from './pages/contact/contact';
-import { HomePage } from './pages/home/home';
-import { TabsPage } from './pages/tabs/tabs';
-*/
 import { NgxIonicImageViewerModule } from 'ngx-ionic-image-viewer';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { CarrierService } from './services/CarrierService';
 import { NativeService } from './services/NativeService';
 import { FeedService } from './services/FeedService';
-// import { Web3Service } from './services/Web3Service'
 import { StorageService } from './services/StorageService';
 import { JsonRPCService } from './services/JsonRPCService';
-// import { TransportService } from './services/TransportService';
 import { AppService } from './services/AppService';
 import { ThemeService } from './services/theme.service';
 import { ConnectionService } from './services/ConnectionService';
@@ -177,11 +169,9 @@ export function TranslateLoaderFactory() {
     NativeService,
     SessionService,
     FeedService,
-    // Web3Service,
     TranslateService,
     ThemeService,
     JsonRPCService,
-    // TransportService,
     InAppBrowser,
     StorageService,
     PopupProvider,

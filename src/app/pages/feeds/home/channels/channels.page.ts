@@ -462,7 +462,6 @@ export class ChannelsPage implements OnInit {
         this.initnodeStatus(this.postList);
         this.hideComponent(null);
         this.native.hideLoading();
-        //this.native.toast_trans('CommentPage.tipMsg1');
       });
     });
 
@@ -864,7 +863,6 @@ export class ChannelsPage implements OnInit {
         postImage.getBoundingClientRect().top <= this.clientHeight
       ) {
         if (isload === '') {
-          //rpostImage.style.display = "none";
           this.isLoadimage[id] = '11';
           let arr = srcId.split('-');
           let nodeId = arr[0];
@@ -883,14 +881,10 @@ export class ChannelsPage implements OnInit {
               let image = imagedata || '';
               if (image != '') {
                 this.isLoadimage[id] = '13';
-                //rpostImage.style.display = "block";
-                //this.images[id] = this.images;
                 this.zone.run(() => {
                   postImage.setAttribute('src', image);
-                  //this.images[id] = this.images;
                 });
 
-                //rpostImage.style.display = "none";
               } else {
                 this.zone.run(() => {
                   this.isLoadimage[id] = '12';
@@ -944,7 +938,6 @@ export class ChannelsPage implements OnInit {
       ) {
         if (isloadVideoImg === '') {
           this.isLoadVideoiamge[id] = '11';
-          //vgplayer.style.display = "none";
           let arr = srcId.split('-');
           let nodeId = arr[0];
           let channelId: any = arr[1];
@@ -961,7 +954,6 @@ export class ChannelsPage implements OnInit {
               let image = imagedata || '';
               if (image != '') {
                 this.isLoadVideoiamge[id] = '13';
-                //vgplayer.style.display = "block";
                 video.setAttribute('poster', image);
                 this.setFullScreen(id);
                 this.setOverPlay(id, srcId);
@@ -990,7 +982,6 @@ export class ChannelsPage implements OnInit {
           video.setAttribute('poster', 'assets/images/loading.png');
           let sourcesrc = source.getAttribute('src') || '';
           if (sourcesrc != '') {
-            //video.pause();
             source.removeAttribute('src');
           }
           this.isLoadVideoiamge[id] = '';
@@ -1001,8 +992,6 @@ export class ChannelsPage implements OnInit {
 
   refreshImage() {
     let sid = setTimeout(() => {
-      //this.isLoadimage ={};
-      //this.isLoadVideoiamge ={};
       this.setVisibleareaImage();
       clearTimeout(sid);
     }, 0);
@@ -1138,10 +1127,6 @@ export class ChannelsPage implements OnInit {
         let sourcesrc = source.getAttribute('src') || '';
         if (source != '' && sourcesrc != '') {
           source.removeAttribute('src'); // empty source
-          // let sid=setTimeout(()=>{
-          //   videoElement.load();
-          //   clearTimeout(sid);
-          // },10)
         }
       }
     }
@@ -1391,7 +1376,6 @@ export class ChannelsPage implements OnInit {
   openAlert() {
     this.popover = this.popupProvider.ionicAlert(
       this,
-      // "ConfirmdialogComponent.signoutTitle",
       '',
       'common.downDes',
       this.cancel,

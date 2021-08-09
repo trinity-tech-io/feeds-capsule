@@ -4,7 +4,6 @@ import { ThemeService } from '../../../services/theme.service';
 import { CameraService } from '../../../services/CameraService';
 import { NativeService } from '../../../services/NativeService';
 import { UtilService } from '../../../services/utilService';
-// import { Web3Service } from '../../../services/Web3Service';
 import { Events } from '../../../services/events.service';
 import { TitleBarService } from '../../../services/TitleBarService';
 import { TitleBarComponent } from '../../../components/titlebar/titlebar.component';
@@ -60,7 +59,6 @@ export class MintnftPage implements OnInit {
     private titleBarService: TitleBarService,
     private httpService: HttpService,
     private file: File,
-    // private web3Service:Web3Service,
     private feedService: FeedService,
     public theme: ThemeService,
     private nftContractControllerService: NFTContractControllerService,
@@ -198,7 +196,6 @@ export class MintnftPage implements OnInit {
         this.handleCace('created',tokenId);
         this.native.hideLoading();
         this.showSuccessDialog();
-        // this.native.pop();
       })
       .catch(error => {
         this.nftContractControllerService
@@ -282,27 +279,6 @@ export class MintnftPage implements OnInit {
         .catch(err => {
           reject('Upload image error, error is ' + JSON.stringify(err));
         });
-      // this.httpService
-      //   .ajaxNftPost(ApiUrl.nftAdd, formData)
-      //   .then(result => {
-      //     let hash = result['Hash'] || null;
-      //     let imgFormat = fileName.split('.')[1];
-      //     if (!hash) {
-      //       reject("Upload Image error, hash is null")
-      //       return;
-      //     }
-
-      //     this.assetBase64 = file;
-      //     this.imageObj['imgSize'] = result['Size'];
-      //     let tokenId = '0x' + UtilService.SHA256(hash);
-      //     this.imageObj['imgHash'] = 'feeds:imgage:' + hash;
-      //     this.imageObj['imgFormat'] = imgFormat;
-
-      //     resolve(tokenId);
-      //   })
-      //   .catch(err => {
-      //     reject('Upload image error, error is ' + JSON.stringify(err));
-      //   });
     });
   }
 
@@ -328,22 +304,6 @@ export class MintnftPage implements OnInit {
         .catch(err => {
           reject("Send thumbnail error, error is " + JSON.stringify(err));
         });
-      // this.httpService
-      //   .ajaxNftPost(ApiUrl.nftAdd, formData)
-      //   .then(result => {
-      //     let hash = result['Hash'] || null;
-      //     if (!hash) {
-      //       reject("Send thumbnail error, hash is null");
-      //       return;
-      //     }
-
-      //     this.thumbnail = thumbnailBase64;
-      //     this.imageObj['thumbnail'] = 'feeds:imgage:' + hash;
-      //     resolve('');
-      //   })
-      //   .catch(err => {
-      //     reject("Send thumbnail error, error is " + JSON.stringify(err));
-      //   });
     });
   }
 
@@ -370,9 +330,7 @@ export class MintnftPage implements OnInit {
           console.log('====json Data=====' + JSON.stringify(result));
           let hash = result['Hash'] || null;
           if (hash != null) {
-            //let tokenId = '0x' + UtilService.SHA256(hash);
             let jsonHash = 'feeds:json:' + hash;
-
             resolve(jsonHash);
           }
         })
@@ -380,23 +338,6 @@ export class MintnftPage implements OnInit {
           console.log('========' + JSON.stringify(err));
           reject('upload json error');
         });
-      // this.httpService
-      //   .ajaxNftPost(ApiUrl.nftAdd, formData)
-      //   .then(result => {
-      //     //{"Name":"blob","Hash":"QmaxWgjheueDc1XW2bzDPQ6qnGi9UKNf23EBQSUAu4GHGF","Size":"17797"};
-      //     console.log('====json Data=====' + JSON.stringify(result));
-      //     let hash = result['Hash'] || null;
-      //     if (hash != null) {
-      //       //let tokenId = '0x' + UtilService.SHA256(hash);
-      //       let jsonHash = 'feeds:json:' + hash;
-
-      //       resolve(jsonHash);
-      //     }
-      //   })
-      //   .catch(err => {
-      //     console.log('========' + JSON.stringify(err));
-      //     reject('upload json error');
-      //   });
     });
   }
 
@@ -419,10 +360,7 @@ export class MintnftPage implements OnInit {
         1,
         type,
         (imgPath: any) => {
-          // this.zone.run(() => {
-          // this.imagePath = imgPath;
           resolve(imgPath);
-          // });
         },
         (err: any) => {
           console.error('Add img err', err);
@@ -634,54 +572,7 @@ export class MintnftPage implements OnInit {
     orderIndex: number,
   ): Promise<string> {
     return new Promise(async (resolve, reject) => {
-      this.handleCace('onSale',tokenId,orderIndex);
-      // let tokenInfo = await this.nftContractControllerService
-      //   .getSticker()
-      //   .tokenInfo(tokenId);
-      // let createTime = tokenInfo[7];
-      // let order = await this.nftContractControllerService
-      //   .getPasar()
-      //   .getSellerOrderByIndex(orderIndex);
-
-      // this.orderId = order[0];
-      // // tokenId = order[3];
-      // let sellerAddr = order[7] || '';
-      // let saleOrderId = order[0];
-      // let item = {
-      //   saleOrderId: saleOrderId,
-      //   tokenId: tokenId,
-      //   asset: this.imageObj['imgHash'],
-      //   name: this.nftName,
-      //   description: this.nftDescription,
-      //   fixedAmount: order[5],
-      //   kind: this.imageObj['imgFormat'],
-      //   type: this.issueRadionType,
-      //   royalties: this.nftRoyalties,
-      //   quantity: this.nftQuantity,
-      //   thumbnail: this.imageObj['thumbnail'],
-      //   sellerAddr: sellerAddr,
-      //   createTime: createTime * 1000,
-      //   moreMenuType: 'onSale',
-      // };
-
-      // // let list = this.feedService.getPasarList();
-      // let list = this.nftPersistenceHelper.getPasarList();
-      // list.push(item);
-      // this.nftPersistenceHelper.setPasarList(list);
-      // // this.feedService.setPasarList(list);
-      // // this.feedService.setData('feed.nft.pasarList', JSON.stringify(list));
-
-      // let accAddress = this.nftContractControllerService.getAccountAddress();
-      // // let allListMap = this.nftPersistenceHelper.getCollectiblesMap();
-      // // let allList = this.feedService.getOwnNftCollectiblesList();
-      // this.nftPersistenceHelper.addItemToCollectible(accAddress, item);
-
-      // // let slist = allListMap[accAddress] || [];
-      // // slist.push(item);
-      // // this.feedService.setData(
-      // //   'feed.nft.own.collectibles.list',
-      // //   JSON.stringify(allList),
-      // // );
+      this.handleCace('onSale', tokenId, orderIndex);
       await this.getSetChannel(tokenId);
       resolve(SUCCESS);
     });
@@ -799,7 +690,7 @@ export class MintnftPage implements OnInit {
     nftContent['text'] = this.nftDescription;
     nftContent['nftTokenId'] = tokenId;
     nftContent['nftOrderId'] = this.orderId;
-    //let content = this.feedService.createContent(this.nftDescription,imgThumbs,null);
+
     this.feedService.declarePost(
       nodeId,
       channelId,
@@ -904,40 +795,40 @@ export class MintnftPage implements OnInit {
     let royalties = UtilService.accMul(this.nftRoyalties,10000);
     let accAddress =
     this.nftContractControllerService.getAccountAddress() || '';
-    // let allList = this.feedService.getOwnNftCollectiblesList();
+
     let allList = this.nftPersistenceHelper.getCollectiblesMap();
     let slist = allList[accAddress] || [];
     let item:any = {};
-       switch(type){
-         case 'created':
-          item = {
-            creator:accAddress,
-            tokenId: tokenId,
-            asset: this.imageObj['imgHash'],
-            name: this.nftName,
-            description: this.nftDescription,
-            fixedAmount:null,
-            kind: this.imageObj['imgFormat'],
-            type: this.issueRadionType,
-            royalties: royalties,
-            quantity: this.nftQuantity,
-            thumbnail: this.imageObj['thumbnail'],
-            createTime: createTime * 1000,
-            moreMenuType: 'created',
-          };
-          slist.push(item);
-           break;
-         case 'onSale':
-          let order = await this.nftContractControllerService
+    switch (type) {
+      case 'created':
+        item = {
+          creator: accAddress,
+          tokenId: tokenId,
+          asset: this.imageObj['imgHash'],
+          name: this.nftName,
+          description: this.nftDescription,
+          fixedAmount: null,
+          kind: this.imageObj['imgFormat'],
+          type: this.issueRadionType,
+          royalties: royalties,
+          quantity: this.nftQuantity,
+          thumbnail: this.imageObj['thumbnail'],
+          createTime: createTime * 1000,
+          moreMenuType: 'created',
+        };
+        slist.push(item);
+        break;
+      case 'onSale':
+        let order = await this.nftContractControllerService
           .getPasar()
           .getSellerOrderByIndex(orderIndex);
 
         this.orderId = order[0];
-        // tokenId = order[3];
+
         let sellerAddr = order[7] || '';
         let saleOrderId = order[0];
         item = {
-          creator:accAddress,
+          creator: accAddress,
           saleOrderId: saleOrderId,
           tokenId: tokenId,
           asset: this.imageObj['imgHash'],
@@ -953,19 +844,12 @@ export class MintnftPage implements OnInit {
           createTime: createTime * 1000,
           moreMenuType: 'onSale',
         };
-           // let list = this.feedService.getPasarList();
-           let list = this.nftPersistenceHelper.getPasarList();
-           list.push(item);
-           this.nftPersistenceHelper.setPasarList(list);
-        // this.feedService.setPasarList(list);
-        // this.feedService.setData('feed.nft.pasarList', JSON.stringify(list));
-        //    break;
-       }
-       this.nftPersistenceHelper.setCollectiblesMap(allList);
-      // this.feedService.setOwnNftCollectiblesList(allList);
-      // this.feedService.setData(
-      //    'feed.nft.own.collectibles.list',
-      //    JSON.stringify(allList),
-      // );
+
+        let list = this.nftPersistenceHelper.getPasarList();
+        list.push(item);
+        this.nftPersistenceHelper.setPasarList(list);
+        break;
+    }
+    this.nftPersistenceHelper.setCollectiblesMap(allList);
   }
 }

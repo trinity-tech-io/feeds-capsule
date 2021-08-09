@@ -124,11 +124,9 @@ export class NFTContractStickerService {
         .send(transactionParams)
         .on('Mint process, transactionHash is', hash => {
           console.log('transactionHash', hash);
-          // resolve(hash);
         })
         .on('receipt', receipt => {
           console.log('Mint process, receipt is', receipt);
-          // resolve(receipt);
         })
         .on('confirmation', (confirmationNumber, receipt) => {
           console.log(
@@ -136,11 +134,9 @@ export class NFTContractStickerService {
             confirmationNumber,
             receipt,
           );
-          // resolve(receipt);
         })
         .on('error', (error, receipt) => {
           console.error('Mint process, error is', error, receipt);
-          // reject(error);
         });
 
       this.checkTokenState(tokenId, info => {

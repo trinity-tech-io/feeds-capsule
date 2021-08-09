@@ -208,7 +208,6 @@ export class EditPostPage implements OnInit {
     );
 
     this.events.subscribe(FeedsEvent.PublishType.openRightMenu, () => {
-      //this.clVideo();
       this.pauseVideo();
       this.hideFullScreen();
     });
@@ -311,11 +310,6 @@ export class EditPostPage implements OnInit {
   }
 
   editPost() {
-    // if (this.feedService.getServerStatusFromId(this.nodeId) != 0){
-    //   this.native.toast_trans("common.connectionError");
-    //   return;
-    // }
-
     if (this.imgUrl == '' && this.posterImg == '' && this.flieUri == '') {
       this.editState = FeedsData.EditState.TextChange;
       let content = this.feedService.createContent(this.newPost, null, null);
@@ -334,14 +328,14 @@ export class EditPostPage implements OnInit {
         0,
         FeedsData.MediaType.containsImg,
       );
-      //this.feedService.compress(this.imgUrl).then((imageThumb)=>{
+
       let content = this.feedService.createOneImgContent(
         this.newPost,
         this.imgUrl,
         size,
       );
       this.publishEditedPost(content);
-      //});
+
       return;
     }
 
@@ -370,11 +364,6 @@ export class EditPostPage implements OnInit {
   }
 
   publishPostThrowMsg() {
-    // if (this.feedService.getServerStatusFromId(this.nodeId) != 0){
-    //   this.native.toast_trans("common.connectionError");
-    //   return;
-    // }
-
     let videoSize = this.flieUri.length;
     let imgSize = this.imgUrl.length;
 
@@ -383,7 +372,6 @@ export class EditPostPage implements OnInit {
       imgSize > this.throwMsgTransDataLimit
     ) {
       this.transDataChannel = FeedsData.TransDataChannel.SESSION;
-      // this.feedService.restoreSession(this.nodeId);
     } else {
       this.transDataChannel = FeedsData.TransDataChannel.MESSAGE;
     }
@@ -591,7 +579,6 @@ export class EditPostPage implements OnInit {
                 let fileReader = new FileReader();
                 fileReader.onloadend = (event: any) => {
                   this.zone.run(() => {
-                    //  this.flieUri = fileReader.result;
                     let result = fileReader.result;
                     if (typeof result == 'string') this.flieUri = result;
                     else {
@@ -601,7 +588,6 @@ export class EditPostPage implements OnInit {
                     }
                     this.isShowVideo = true;
                     let sid = setTimeout(() => {
-                      //let img = new Image;
                       let id = this.nodeId + this.channelId + this.nodeId;
                       this.setFullScreen(id);
                       clearInterval(sid);
@@ -901,14 +887,6 @@ export class EditPostPage implements OnInit {
                 };
 
                 fileReader.onprogress = (event: any) => {
-                  // this.zone.run(()=>{
-                  //   this.uploadProgress = parseInt((event.loaded/event.total)*100/2+'');
-                  //   if(this.uploadProgress === 50){
-                  //      this.totalProgress = 100;
-                  //   }else{
-                  //     this.totalProgress = 50+this.uploadProgress;
-                  //   }
-                  // })
                 };
 
                 fileReader.readAsDataURL(file);

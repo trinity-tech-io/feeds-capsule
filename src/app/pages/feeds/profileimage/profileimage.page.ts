@@ -108,7 +108,6 @@ export class ProfileimagePage implements OnInit {
   }
 
   ionViewWillLeave() {
-    //this.camera = null;
     this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
     this.events.publish(FeedsEvent.PublishType.addProflieEvent);
     if (this.pictureMenu != null) {
@@ -128,7 +127,6 @@ export class ProfileimagePage implements OnInit {
   }
 
   selectIndex(index: number, avatar?: string) {
-    //this.select = index;
     if (index === 0) {
       this.select = 0;
       // If uploaded avatar exists and is selected, use it. Otherwise open camera
@@ -153,7 +151,6 @@ export class ProfileimagePage implements OnInit {
   }
 
   addPic() {
-    //this.openCamera(0);
     this.pictureMenu = this.menuService.showPictureMenu(
       this,
       this.openCamera,
@@ -172,13 +169,8 @@ export class ProfileimagePage implements OnInit {
       0,
       0,
       (imageUrl: any) => {
-        //that.zone.run(() => {
         that.native.navigateForward(['editimage'], '');
         that.feedService.setClipProfileIamge(imageUrl);
-        //that.select = 0;
-        //that.uploadedAvatar = imageUrl;
-        //that.selectedAvatar = imageUrl;
-        //});
       },
       err => {},
     );
@@ -190,13 +182,8 @@ export class ProfileimagePage implements OnInit {
       0,
       1,
       (imageUrl: any) => {
-        //that.zone.run(() => {
         that.native.navigateForward(['editimage'], '');
         that.feedService.setClipProfileIamge(imageUrl);
-        //that.select = 0;
-        //that.uploadedAvatar = imageUrl;
-        //that.selectedAvatar = imageUrl;
-        //});
       },
       err => {},
     );

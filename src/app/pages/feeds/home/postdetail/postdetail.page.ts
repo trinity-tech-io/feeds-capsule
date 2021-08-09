@@ -274,8 +274,6 @@ export class PostdetailPage implements OnInit {
     this.connectionStatus = this.feedService.getConnectionStatus();
     this.feedService.refreshPostById(this.nodeId, this.channelId, this.postId);
 
-    //if (this.connectionStatus == 0)
-    //this.feedService.updateComment(this.nodeId, Number(this.channelId) ,Number(this.postId));
     this.events.subscribe(FeedsEvent.PublishType.connectionChanged, status => {
       this.zone.run(() => {
         this.logUtils.logd(
@@ -392,7 +390,6 @@ export class PostdetailPage implements OnInit {
         this.initRefresh();
         this.native.hideLoading();
         this.hideComment = true;
-        //this.native.toast_trans('CommentPage.tipMsg1');
       });
     });
 
@@ -1146,7 +1143,6 @@ export class PostdetailPage implements OnInit {
       let id = this.nodeId + this.channelId + this.postId;
       let video: any = document.getElementById(id + 'postdetailvideo') || '';
       if (video != '') {
-        //video.removeAttribute('poster');
       }
 
       let source: any = document.getElementById(id + 'postdetailsource') || '';
@@ -1154,10 +1150,6 @@ export class PostdetailPage implements OnInit {
         source.removeAttribute('src'); // empty source
       }
       if (video != '') {
-        // let sid=setTimeout(()=>{
-        //   video.load();
-        //   clearTimeout(sid);
-        // },10)
       }
     }
   }

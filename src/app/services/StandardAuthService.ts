@@ -8,7 +8,6 @@ let TAG: string = 'StandardAuthService';
 
 @Injectable()
 export class StandardAuthService {
-  // private didAccess: DID.DIDAccess;
   private appIdCredential: DIDPlugin.VerifiableCredential = null;
   constructor(
     private logUtils: LogUtils,
@@ -61,7 +60,6 @@ export class StandardAuthService {
         if (presentation) {
           resolve(presentation);
           console.log('Got credentials:', presentation);
-          // alert(JSON.stringify(presentation));
         } else {
           alert(
             'Empty presentation returned, something wrong happened, or operation was cancelled',

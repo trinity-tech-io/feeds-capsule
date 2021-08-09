@@ -45,7 +45,6 @@ export class MyfeedsComponent implements OnInit {
       channelId: channelId,
       page: '/channels',
     });
-    //this.native.getNavCtrl().navigateForward(['/channels', nodeId, channelId]);
   }
 
   parseAvatar(avatar: string): string {

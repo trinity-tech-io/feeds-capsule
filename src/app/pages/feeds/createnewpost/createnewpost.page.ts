@@ -142,31 +142,20 @@ export class CreatenewpostPage implements OnInit {
           this.zone.run(() => {
             this.navCtrl.pop().then(() => {
               this.events.publish(FeedsEvent.PublishType.updateTab, true);
-              //this.native.toast_trans("CreatenewpostPage.tipMsg1");
             });
           });
           return;
         }
-
-        // this.feedService.sendData(this.nodeId,this.channelId,postId, 0 ,0, this.flieUri,this.imgUrl);
       });
     });
 
     this.events.subscribe(FeedsEvent.PublishType.rpcRequestError, () => {
-      //this.pauseVideo();
     });
 
     this.events.subscribe(FeedsEvent.PublishType.rpcResponseError, () => {
       this.zone.run(() => {
-        //this.pauseVideo();
       });
     });
-
-    // this.events.subscribe(FeedsEvent.PublishType.notifyPostSuccess, () => {
-    //   this.zone.run(() => {
-    //       this.backHome();
-    //   });
-    // });
 
     this.events.subscribe(
       FeedsEvent.PublishType.streamError,
@@ -193,7 +182,6 @@ export class CreatenewpostPage implements OnInit {
     );
 
     this.events.subscribe(FeedsEvent.PublishType.openRightMenu, () => {
-      //this.clVideo();
       this.pauseVideo();
       this.hideFullScreen();
     });
@@ -335,9 +323,6 @@ export class CreatenewpostPage implements OnInit {
       imgThumbs.push(imgThumb);
 
       content = this.feedService.createContent(this.newPost, imgThumbs, null);
-      // this.feedService.compress(this.imgUrl).then((imageThumb)=>{
-
-      // });
     }
 
     this.feedService.declarePost(
@@ -475,7 +460,6 @@ export class CreatenewpostPage implements OnInit {
                     }
 
                     let sid = setTimeout(() => {
-                      //let img = new Image;
                       this.setFullScreen();
                       let video: any =
                         document.getElementById('videocreatepost') || '';
@@ -688,11 +672,6 @@ export class CreatenewpostPage implements OnInit {
         quality: 30,
       })
       .then(newfileUri => {
-        //newfileUri = "cdvfile://localhost"+newfileUri.replace("file//","");
-        //newfileUri = newfileUri.replace("/storage/emulated/0/","/sdcard/");
-        // let lastIndex = newfileUri.lastIndexOf("/");
-        // let fileName =  newfileUri.substring(lastIndex+1,newfileUri.length);
-        // let filepath =  newfileUri.substring(0,lastIndex);
         let pathObj = this.handlePath(newfileUri);
         let fileName = pathObj['fileName'];
         let filepath = pathObj['filepath'];
@@ -700,17 +679,11 @@ export class CreatenewpostPage implements OnInit {
 
         this.transcodeVideo(path).then(newfileUri => {
           this.transcode = 100;
-          //newfileUri = "cdvfile://localhost"+newfileUri.replace("file//","");
-          //newfileUri = newfileUri.replace("/storage/emulated/0/","/sdcard/");
-          // let lastIndex = newfileUri.lastIndexOf("/");
-          // let fileName =  newfileUri.substring(lastIndex+1,newfileUri.length);
-          // let filepath =  newfileUri.substring(0,lastIndex);
           let pathObj = this.handlePath(newfileUri);
           let fileName = pathObj['fileName'];
           let filepath = pathObj['filepath'];
           this.readFile(fileName, filepath);
         });
-        //this.iosReadFile(path);
       });
   }
 
@@ -753,14 +726,6 @@ export class CreatenewpostPage implements OnInit {
                 };
 
                 fileReader.onprogress = (event: any) => {
-                  // this.zone.run(()=>{
-                  //   this.uploadProgress = parseInt((event.loaded/event.total)*100/2+'');
-                  //   if(this.uploadProgress === 50){
-                  //      this.totalProgress = 100;
-                  //   }else{
-                  //     this.totalProgress = 50+this.uploadProgress;
-                  //   }
-                  // })
                 };
 
                 fileReader.readAsDataURL(file);

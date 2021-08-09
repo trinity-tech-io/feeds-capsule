@@ -28,13 +28,6 @@ export class ScanService {
 
       let result: BarcodeScanResult = await this.barcodeScanner.scan(options);
       resolve(result.text);
-      // this.barcodeScanner.scan(options).then(barcodeData => {
-      //   console.log('Barcode data', barcodeData);
-      // //   this.scannedData = barcodeData;
-
-      // }).catch(err => {
-      //   console.log('Error', err);
-      // });
     });
   }
 
@@ -43,8 +36,6 @@ export class ScanService {
       .encode(this.barcodeScanner.Encode.TEXT_TYPE, input)
       .then(
         encodedData => {
-          // console.log(encodedData);
-          //   this.encodedData = encodedData;
         },
         err => {
           console.log('Error occured : ' + err);

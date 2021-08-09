@@ -59,8 +59,5 @@ export class ConfirmationPage implements OnInit {
   }
 
   clickOk() {
-    // if(this.showType === "buy"){
-    //   this.native.setRootRouter(['/tabs/home']);
-    // }
   }
 }

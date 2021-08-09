@@ -51,14 +51,6 @@ export class CommentComponent implements OnInit {
   }
 
   sendComment() {
-    // this.feedService.postComment(
-    //   this.nodeId,
-    //   Number(this.channelId),
-    //   Number(this.postId),
-    //   0,
-    //   this.newComment
-    // );
-
     let newComment = this.native.iGetInnerText(this.newComment) || '';
     if (newComment === '') {
       this.native.toast_trans('CommentPage.inputComment');

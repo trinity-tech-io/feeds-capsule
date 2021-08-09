@@ -37,7 +37,7 @@ export class ProfilePage implements OnInit {
 
   public nodeStatus = {}; //friends status;
   public channels = []; //myFeeds page
-  //public followingList = []; // following page
+
   public collectiblesList: any = []; //NFT列表
   public totalLikeList = [];
   public startIndex: number = 0;
@@ -168,11 +168,6 @@ export class ProfilePage implements OnInit {
     private ipfsService: IPFSService,
     private nftPersistenceHelper: NFTPersistenceHelper
   ) {
-    // this.dataHelper.loadWalletAccountAddress().then((address)=>{
-    //   console.log("accountAddress",address);
-    //   this.walletAddress = address;
-    //   this.walletAddressStr = UtilService.resolveAddress(address);
-    // });
   }
 
   ngOnInit() {}
@@ -253,7 +248,6 @@ export class ProfilePage implements OnInit {
         case 'buy':
           break;
         case 'created':
-          // let allList = this.feedService.getOwnNftCollectiblesList();
           let allList = this.nftPersistenceHelper.getCollectiblesMap();
           let list = allList[createAddr] || [];
           let cpItem = _.cloneDeep(assItem);
@@ -268,22 +262,10 @@ export class ProfilePage implements OnInit {
           this.collectiblesList = allList[createAddr];
           this.nftPersistenceHelper.setCollectiblesMap(allList);
 
-          // this.feedService.setOwnNftCollectiblesList(allList);
-          // this.feedService.setData(
-          //   'feed.nft.own.collectibles.list',
-          //   JSON.stringify(allList),
-          // );
-
-          // let cpList = this.feedService.getPasarList();
           let cpList = this.nftPersistenceHelper.getPasarList();
           cpList.push(cpItem);
 
           this.nftPersistenceHelper.setPasarList(cpList);
-          // this.feedService.setPasarList(cpList);
-          // this.feedService.setData(
-          //   'feed.nft.pasarList',
-          //   JSON.stringify(cpList),
-          // );
           break;
       }
     });
@@ -296,7 +278,7 @@ export class ProfilePage implements OnInit {
       let createAddr = this.nftContractControllerService.getAccountAddress();
       assetItem['fixedAmount'] = null;
       assetItem['moreMenuType'] = 'created';
-      // let allList = this.feedService.getOwnNftCollectiblesList();
+
       let allList = this.nftPersistenceHelper.getCollectiblesMap();
       let clist = allList[createAddr] || [];
       clist = _.filter(clist, item => {
@@ -306,14 +288,6 @@ export class ProfilePage implements OnInit {
       allList[createAddr] = clist;
 
       this.nftPersistenceHelper.setCollectiblesMap(allList);
-      // this.feedService.setOwnNftCollectiblesList(allList);
-      // this.feedService.setData(
-      //   'feed.nft.own.collectibles.list',
-      //   JSON.stringify(allList),
-      // );
-
-      //remove pasr
-      // let pList = this.feedService.getPasarList();
       let pList = this.nftPersistenceHelper.getPasarList();
       pList = _.filter(pList, item => {
         return !(
@@ -321,8 +295,6 @@ export class ProfilePage implements OnInit {
         );
       });
       this.nftPersistenceHelper.setPasarList(pList);
-      // this.feedService.setPasarList(pList);
-      // this.feedService.setData('feed.nft.pasarList', JSON.stringify(pList));
     });
 
     this.events.subscribe(
@@ -352,10 +324,6 @@ export class ProfilePage implements OnInit {
     this.changeType(this.selectType);
     this.connectionStatus = this.feedService.getConnectionStatus();
 
-    // this.events.subscribe(FeedsEvent.PublishType.updateTitle,()=>{
-    //     this.initTitleBar();
-    // });
-
     this.events.subscribe(FeedsEvent.PublishType.hideDeletedPosts, () => {
       this.zone.run(() => {
         this.hideDeletedPosts = this.feedService.getHideDeletedPosts();
@@ -372,9 +340,7 @@ export class ProfilePage implements OnInit {
     let signInData = this.feedService.getSignInData() || {};
 
     this.name = signInData['nickname'] || signInData['name'] || '';
-    // this.avatar = signInData['avatar'] || null;
     this.description = signInData['description'] || '';
-
     let userDid = signInData['did'] || '';
     this.avatar = await this.feedService.getUserAvatar(userDid);
 
@@ -543,14 +509,12 @@ export class ProfilePage implements OnInit {
 
     this.events.subscribe(FeedsEvent.PublishType.rpcRequestError, () => {
       this.zone.run(() => {
-        //this.pauseAllVideo();
         this.native.hideLoading();
       });
     });
 
     this.events.subscribe(FeedsEvent.PublishType.rpcResponseError, () => {
       this.zone.run(() => {
-        //this.pauseAllVideo();
         this.native.hideLoading();
       });
     });
@@ -564,7 +528,6 @@ export class ProfilePage implements OnInit {
         this.initnodeStatus(this.likeList);
         this.hideComponent(null);
         this.native.hideLoading();
-        //this.native.toast_trans('CommentPage.tipMsg1');
       });
     });
 
@@ -620,10 +583,8 @@ export class ProfilePage implements OnInit {
   ionViewWillEnter() {
     this.initTitleBar();
     this.events.subscribe(FeedsEvent.PublishType.addProflieEvent, () => {
-      //if(!this.isAddProfile){
       this.addProflieEvent();
       this.isAddProfile = true;
-      //}
     });
 
     this.addProflieEvent();
@@ -845,7 +806,6 @@ export class ProfilePage implements OnInit {
     this.curItem = item;
     switch (item['tabType']) {
       case 'myfeeds':
-        //this.menuService.showShareMenu(item.nodeId,item.channelId,item.channelName,item.postId);
         this.isShowTitle = true;
         this.isShowInfo = true;
         this.isShowQrcode = true;
@@ -856,7 +816,6 @@ export class ProfilePage implements OnInit {
         this.hideSharMenuComponent = true;
         break;
       case 'myfollow':
-        //this.menuService.showChannelMenu(item.nodeId, item.channelId,item.channelName);
         this.isShowTitle = true;
         this.isShowInfo = true;
         this.isShowQrcode = true;
@@ -867,7 +826,6 @@ export class ProfilePage implements OnInit {
         this.hideSharMenuComponent = true;
         break;
       case 'mylike':
-        //this.menuService.showChannelMenu(item.nodeId, item.channelId,item.channelName);
         this.qrCodeString = this.getQrCodeString(item);
         this.isShowTitle = false;
         this.isShowInfo = false;
@@ -941,7 +899,6 @@ export class ProfilePage implements OnInit {
         postImage.getBoundingClientRect().top <= this.clientHeight
       ) {
         if (isload === '') {
-          //rpostImage.style.display = "none";
           this.isLoadimage[id] = '11';
           let arr = srcId.split('-');
           let nodeId = arr[0];
@@ -960,14 +917,10 @@ export class ProfilePage implements OnInit {
               let image = imagedata || '';
               if (image != '') {
                 this.isLoadimage[id] = '13';
-                //rpostImage.style.display = "block";
-                //this.images[id] = this.images;
                 this.zone.run(() => {
                   postImage.setAttribute('src', image);
-                  //this.images[id] = this.images;
                 });
 
-                //rpostImage.style.display = "none";
               } else {
                 this.zone.run(() => {
                   this.isLoadimage[id] = '12';
@@ -1022,7 +975,6 @@ export class ProfilePage implements OnInit {
       ) {
         if (isloadVideoImg === '') {
           this.isLoadVideoiamge[id] = '11';
-          //vgplayer.style.display = "none";
           let arr = srcId.split('-');
           let nodeId = arr[0];
           let channelId: any = arr[1];
@@ -1039,7 +991,6 @@ export class ProfilePage implements OnInit {
               let image = imagedata || '';
               if (image != '') {
                 this.isLoadVideoiamge[id] = '13';
-                //vgplayer.style.display = "block";
                 video.setAttribute('poster', image);
                 this.setFullScreen(id);
                 this.setOverPlay(id, srcId);
@@ -1068,7 +1019,6 @@ export class ProfilePage implements OnInit {
           video.setAttribute('poster', 'assets/images/loading.png');
           let sourcesrc = source.getAttribute('src') || '';
           if (sourcesrc != '') {
-            //video.pause();
             source.removeAttribute('src');
           }
           this.isLoadVideoiamge[id] = '';
@@ -1085,8 +1035,6 @@ export class ProfilePage implements OnInit {
 
   refreshImage() {
     let sid = setTimeout(() => {
-      //this.isLoadimage ={};
-      //this.isLoadVideoiamge ={};
       this.setVisibleareaImage();
       clearTimeout(sid);
     }, 0);
@@ -1132,10 +1080,6 @@ export class ProfilePage implements OnInit {
         }
         if (source != '' && sourcesrc != '') {
           source.removeAttribute('src'); // empty source
-          // let sid=setTimeout(()=>{
-          //   videoElement.load();
-          //   clearTimeout(sid);
-          // },10)
         }
       }
     }
@@ -1467,7 +1411,6 @@ export class ProfilePage implements OnInit {
   openAlert() {
     this.popover = this.popupProvider.ionicAlert(
       this,
-      // "ConfirmdialogComponent.signoutTitle",
       '',
       'common.downDes',
       this.cancel,
@@ -1746,7 +1689,7 @@ export class ProfilePage implements OnInit {
       this.collectiblesList = [];
       return;
     }
-    // let ownNftCollectiblesList = this.feedService.getOwnNftCollectiblesList();
+
     let ownNftCollectiblesList = this.nftPersistenceHelper.getCollectiblesMap();
     if (!ownNftCollectiblesList)
       ownNftCollectiblesList = [];
@@ -1838,46 +1781,11 @@ export class ProfilePage implements OnInit {
         try {
           this.collectiblesList.splice(cIndex, 1, item);
           this.hanleListCace(createAddress);
-          // this.isLoading = false;
         } catch (err) {
           console.log('====err====' + JSON.stringify(err));
         }
       })
-      .catch(() => {});
-    // this.httpService
-    //   .ajaxGet(ApiUrl.nftGet + feedsUri, false)
-    //   .then(result => {
-    //     let type = result['type'] || 'single';
-    //     let quantity = tokenNum;
-    //     let fixedAmount = price || null;
-    //     let thumbnail = result['thumbnail'] || '';
-    //     if (thumbnail === '') {
-    //       thumbnail = result['image'];
-    //     }
-    //     let item = {
-    //       creator: createAddress,
-    //       tokenId: tokenId,
-    //       asset: result['image'],
-    //       name: result['name'],
-    //       description: result['description'],
-    //       fixedAmount: fixedAmount,
-    //       kind: result['kind'],
-    //       type: type,
-    //       royalties: royalties,
-    //       quantity: quantity,
-    //       thumbnail: thumbnail,
-    //       createTime: createTime * 1000,
-    //       moreMenuType: 'created',
-    //     };
-    //     try {
-    //       this.collectiblesList.splice(cIndex, 1, item);
-    //       this.hanleListCace(createAddress);
-    //       // this.isLoading = false;
-    //     } catch (err) {
-    //       console.log('====err====' + JSON.stringify(err));
-    //     }
-    //   })
-    //   .catch(() => {});
+      .catch(() => { });
   }
 
   async OnSale(accAddress: string) {
@@ -1913,7 +1821,6 @@ export class ProfilePage implements OnInit {
         let tokenId = sellerOrder[3];
         let saleOrderId = sellerOrder[0];
         let price = sellerOrder[5];
-        // const stickerContract = this.web3Service.getSticker();
         let tokenInfo = await this.nftContractControllerService
           .getSticker()
           .tokenInfo(tokenId);
@@ -1952,58 +1859,18 @@ export class ProfilePage implements OnInit {
             this.onSaleList.splice(index,1,item);
             this.collectiblesList = _.unionWith(this.collectiblesList,this.onSaleList);
             this.hanleListCace(createAddress);
-            //this.isLoading = false;
           })
-          .catch(() => {});
-        // this.httpService
-        //   .ajaxGet(ApiUrl.nftGet + feedsUri, false)
-        //   .then(result => {
-        //     let type = result['type'] || 'single';
-        //     let quantity = tokenNum;
-        //     let fixedAmount = price || null;
-        //     let thumbnail = result['thumbnail'] || '';
-        //     if (thumbnail === '') {
-        //       thumbnail = result['image'];
-        //     }
-        //     let item = {
-        //       creator: createAddress,
-        //       saleOrderId: saleOrderId,
-        //       tokenId: tokenId,
-        //       asset: result['image'],
-        //       name: result['name'],
-        //       description: result['description'],
-        //       fixedAmount: fixedAmount,
-        //       kind: result['kind'],
-        //       type: type,
-        //       royalties: royalties,
-        //       quantity: quantity,
-        //       thumbnail: thumbnail,
-        //       sellerAddr: sellerAddr,
-        //       createTime: createTime * 1000,
-        //       moreMenuType: 'onSale',
-        //     };
-        //     let len = this.collectiblesList.length - 1 + index;
-        //     this.collectiblesList.splice(len, 1, item);
-        //     this.hanleListCace(createAddress);
-        //     //this.isLoading = false;
-        //   })
-        //   .catch(() => {});
+          .catch(() => { });
       } catch (error) {}
     }
   }
 
   hanleListCace(createAddress?: any) {
-    // let ownNftCollectiblesList = this.feedService.getOwnNftCollectiblesList();
     let ownNftCollectiblesList = this.nftPersistenceHelper.getCollectiblesMap();
     ownNftCollectiblesList[createAddress] = _.unionWith(this.collectiblesList,this.onSaleList);
     console.log("=====ownNftCollectiblesList[createAddress]======"+JSON.stringify(ownNftCollectiblesList[createAddress]));
 
     this.nftPersistenceHelper.setCollectiblesMap(ownNftCollectiblesList);
-    // this.feedService.setOwnNftCollectiblesList(ownNftCollectiblesList);
-    // this.feedService.setData(
-    //   'feed.nft.own.collectibles.list',
-    //   JSON.stringify(ownNftCollectiblesList),
-    // );
   }
 
   clickAssetItem(assetitem: any) {

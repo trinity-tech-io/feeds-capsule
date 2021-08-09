@@ -130,7 +130,6 @@ export class AssetdetailsPage implements OnInit {
       let createAddr = this.nftContractControllerService.getAccountAddress();
       assetItem['fixedAmount'] = null;
       assetItem['moreMenuType'] = 'created';
-      // let allList = this.feedService.getOwnNftCollectiblesList();
       let allList = this.nftPersistenceHelper.getCollectiblesMap();
       let clist = allList[createAddr] || [];
       clist = _.filter(clist, item => {
@@ -139,14 +138,8 @@ export class AssetdetailsPage implements OnInit {
       clist.push(assetItem);
 
       this.nftPersistenceHelper.setCollectiblesMap(allList);
-      // this.feedService.setOwnNftCollectiblesList(allList);
-      // this.feedService.setData(
-      //   'feed.nft.own.collectibles.list',
-      //   JSON.stringify(allList),
-      // );
 
       //remove pasr
-      // let pList = this.feedService.getPasarList();
       let pList = this.nftPersistenceHelper.getPasarList();
       pList = _.filter(pList, item => {
         return !(
@@ -155,8 +148,6 @@ export class AssetdetailsPage implements OnInit {
       });
 
       this.nftPersistenceHelper.setPasarList(pList);
-      // this.feedService.setPasarList(pList);
-      // this.feedService.setData('feed.nft.pasarList', JSON.stringify(pList));
       this.native.pop();
     });
 
@@ -171,7 +162,6 @@ export class AssetdetailsPage implements OnInit {
         case 'buy':
           break;
         case 'created':
-          // let allList = this.feedService.getOwnNftCollectiblesList();
           let allList = this.nftPersistenceHelper.getCollectiblesMap();
           let list = allList[createAddr] || [];
           let cpItem = _.cloneDeep(assItem);
@@ -185,22 +175,10 @@ export class AssetdetailsPage implements OnInit {
           allList[createAddr] = list;
 
           this.nftPersistenceHelper.setCollectiblesMap(allList);
-          // this.feedService.setOwnNftCollectiblesList(allList);
-          // this.feedService.setData(
-          //   'feed.nft.own.collectibles.list',
-          //   JSON.stringify(allList),
-          // );
-
-          // let cpList = this.feedService.getPasarList();
           let cpList = this.nftPersistenceHelper.getPasarList();
           cpList.push(cpItem);
 
           this.nftPersistenceHelper.setPasarList(cpList);
-          // this.feedService.setPasarList(cpList);
-          // this.feedService.setData(
-          //   'feed.nft.pasarList',
-          //   JSON.stringify(cpList),
-          // );
           this.native.pop();
           break;
       }
@@ -325,23 +303,6 @@ export class AssetdetailsPage implements OnInit {
 
   async purchaseInfoBurn() {
     this.native.navigateForward(['bid'], { queryParams: { showType: 'burn' } });
-    //  let web3 = await this.web3Service.getWeb3Js();
-    //  let stickerAddr = this.web3Service.getStickerAddr();
-    //  let stickerAbi = this.web3Service.getStickerAbi();
-    //  const stickerContract = new web3.eth.Contract(stickerAbi,stickerAddr);
-    // const transferData = stickerContract.methods.safeTransferFrom("0xf36dA13891027Fd074bCE86E1669E5364F85613A","0xbA1ddcB94B3F8FE5d1C0b2623cF221e099f485d1",this.tokenID,"1").encodeABI();
-    // const transferTx = {
-    //   from: "0xf36dA13891027Fd074bCE86E1669E5364F85613A",
-    //   to: stickerAddr,
-    //   value: 0,
-    //   data: transferData,
-    // };
-    // const accCreator = await this.web3Service.getAccount(web3,"04868f294d8ef6e1079752cd2e1f027a126b44ee27040d949a88f89bddc15f31");
-    // const { status: transferStatus } = await this.web3Service.sendTxWaitForReceipt(web3,transferTx, accCreator);
-
-    // if(transferStatus!=""){
-    //   alert("transfer sucess");
-    // }
   }
 
   changeType(type: string) {
@@ -360,7 +321,6 @@ export class AssetdetailsPage implements OnInit {
     if (imgUri.indexOf('feeds:imgage:') > -1) {
       imgUri = imgUri.replace('feeds:imgage:', '');
       imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
-      // imgUri = ApiUrl.nftGet + imgUri;
     }
     return imgUri;
   }
@@ -439,7 +399,6 @@ export class AssetdetailsPage implements OnInit {
     if (cancelStatus != '' && cancelStatus != undefined) {
       that.events.publish(FeedsEvent.PublishType.nftCancelOrder, this.assItem);
       this.native.toast_trans('common.cancelSuccessfully');
-      //this.native.navigateForward(['confirmation'],{queryParams:{"showType":"buy"}});
     } else {
       this.native.toast_trans('common.cancellationFailed');
     }

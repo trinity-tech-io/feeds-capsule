@@ -118,9 +118,6 @@ export class CreatenewfeedPage implements OnInit {
           this.publicFeeds(nodeId, channelId);
           this.native.hideLoading();
           this.navCtrl.pop().then(() => {
-            // this.native.toast(
-            //   this.translate.instant('CreatenewfeedPage.createfeedsuccess'),
-            // );
           });
         });
       },

@@ -14,16 +14,8 @@ import { NftdialogComponent } from './../components/nftdialog/nftdialog.componen
 export class ViewHelper {
   public loading: any = null;
   constructor(
-    // private popoverController:PopoverController,
     public modalController: ModalController,
-    // private toastCtrl: ToastController,
-    // private clipboard: Clipboard,
-    // private inappBrowser: InAppBrowser,
-    // private loadingCtrl: LoadingController,
-    // private navCtrl: NavController,
-    // private router: Router,
     private translate: TranslateService,
-    // private intentService: IntentService,
     private titleBarService: TitleBarService,
     private popoverController: PopoverController,
   ) {}

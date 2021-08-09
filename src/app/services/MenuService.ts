@@ -6,8 +6,6 @@ import { NativeService } from './NativeService';
 import { PopupProvider } from 'src/app/services/popup';
 import { IntentService } from 'src/app/services/IntentService';
 import { ViewHelper } from 'src/app/services/viewhelper.service';
-// import { Web3Service } from 'src/app/services/Web3Service';
-import { Events } from 'src/app/services/events.service';
 import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
 
 @Injectable()
@@ -35,8 +33,6 @@ export class MenuService {
     public popupProvider: PopupProvider,
     private intentService: IntentService,
     private viewHelper: ViewHelper,
-    // private web3Service:Web3Service,
-    private events: Events,
     private nftContractControllerService: NFTContractControllerService,
   ) {}
 
@@ -577,7 +573,6 @@ export class MenuService {
           text: this.translate.instant('common.editcomment'),
           icon: 'create',
           handler: () => {
-            //this.handlePostDetailMenun(nodeId,channelId,channelName,postId,"editPost");
             this.native.go('editcomment', {
               nodeId: nodeId,
               channelId: feedId,
@@ -668,7 +663,6 @@ export class MenuService {
           text: this.translate.instant('CommentlistPage.editreply'),
           icon: 'create',
           handler: () => {
-            //this.handlePostDetailMenun(nodeId,channelId,channelName,postId,"editPost");
             this.native.go('editcomment', {
               nodeId: nodeId,
               channelId: feedId,
@@ -811,7 +805,6 @@ export class MenuService {
     if (cancelStatus != '' && cancelStatus != undefined) {
       that.events.publish(FeedsEvent.PublishType.nftCancelOrder, this.assItem);
       this.native.toast_trans('common.cancelSuccessfully');
-      //this.native.navigateForward(['confirmation'],{queryParams:{"showType":"buy"}});
     } else {
       this.native.toast_trans('common.cancellationFailed');
     }

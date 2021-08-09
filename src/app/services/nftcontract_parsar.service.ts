@@ -143,15 +143,12 @@ export class NFTContractParsarService {
         .createOrderForSale(tokenId, quantity, price)
         .send(transactionParams)
         .on('transactionHash', hash => {
-          // resolve(hash);
           console.log('CreateOrderForSale, transactionHash is', hash);
         })
         .on('receipt', receipt => {
-          // resolve(receipt);
           console.log('CreateOrderForSale, receipt is', receipt);
         })
         .on('confirmation', (confirmationNumber, receipt) => {
-          // resolve(receipt);
           console.log(
             'CreateOrderForSale, confirmation is',
             confirmationNumber,
@@ -159,7 +156,6 @@ export class NFTContractParsarService {
           );
         })
         .on('error', (error, receipt) => {
-          // reject(error);
           resolve(-1);
           console.error('CreateOrderForSale, error is', error, receipt);
         });
@@ -238,15 +234,12 @@ export class NFTContractParsarService {
         .changeOrderPrice(orderId, price)
         .send(transactionParams)
         .on('transactionHash', hash => {
-          // resolve(hash);
           console.log('ChangeOrderPrice, transactionHash is', hash);
         })
         .on('receipt', receipt => {
-          // resolve(receipt);
           console.log('ChangeOrderPrice, receipt is', receipt);
         })
         .on('confirmation', (confirmationNumber, receipt) => {
-          // resolve(receipt);
           console.log(
             'ChangeOrderPrice, confirmation is',
             confirmationNumber,
@@ -254,7 +247,6 @@ export class NFTContractParsarService {
           );
         })
         .on('error', (error, receipt) => {
-          // reject(error);
           resolve(FAIL);
           console.error('ChangeOrderPrice, error is', error, receipt);
         });
@@ -308,19 +300,15 @@ export class NFTContractParsarService {
         .buyOrder(orderId)
         .send(transactionParams)
         .on('transactionHash', hash => {
-          // resolve(hash);
           console.log('BuyOrder, transactionHash is', hash);
         })
         .on('receipt', receipt => {
-          // resolve(receipt);
           console.log('BuyOrder, receipt is', receipt);
         })
         .on('confirmation', (confirmationNumber, receipt) => {
-          // resolve(receipt);
           console.log('BuyOrder, confirmation is', confirmationNumber, receipt);
         })
         .on('error', (error, receipt) => {
-          // reject(error);
           resolve(FAIL);
           console.error('BuyOrder, error is', error, receipt);
         });
@@ -379,19 +367,15 @@ export class NFTContractParsarService {
         .cancelOrder(orderId)
         .send(transactionParams)
         .on('transactionHash', hash => {
-          // resolve(hash);
           console.log('transactionHash', hash);
         })
         .on('receipt', receipt => {
-          // resolve(receipt);
           console.log('receipt', receipt);
         })
         .on('confirmation', (confirmationNumber, receipt) => {
-          // resolve(receipt);
           console.log('confirmation', confirmationNumber, receipt);
         })
         .on('error', (error, receipt) => {
-          // reject(error);
           resolve(FAIL);
           console.error('error', error, receipt);
         });

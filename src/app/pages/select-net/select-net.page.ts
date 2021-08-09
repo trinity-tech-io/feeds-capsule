@@ -63,7 +63,6 @@ export class SelectNetPage implements OnInit {
   openAlert() {
     this.popover = this.popupProvider.ionicAlert(
       this,
-      // "ConfirmdialogComponent.signoutTitle",
       'common.restartApp',
       'common.restartAppDesc',
       this.confirm,

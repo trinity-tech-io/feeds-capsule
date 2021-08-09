@@ -84,8 +84,7 @@ export class DiscoverfeedinfoPage implements OnInit {
 
     this.events.subscribe(FeedsEvent.PublishType.updateServerList, () => {
       this.zone.run(() => {
-        //this.native.navigateForward('discoverfeeds',"");
-        //this.getNodeId();
+
       });
     });
 
@@ -184,7 +183,6 @@ export class DiscoverfeedinfoPage implements OnInit {
   openAlert() {
     this.popover = this.popupProvider.ionicAlert(
       this,
-      // "ConfirmdialogComponent.signoutTitle",
       '',
       'common.didnotrelease',
       this.confirm,
@@ -200,7 +198,6 @@ export class DiscoverfeedinfoPage implements OnInit {
   }
 
   subscribe() {
-    //this.status = '0';
     let feedUrl = this.feedInfo['url'];
     let avatar = this.feedInfo['feedsAvatar'];
     let followers = this.feedInfo['followers'];

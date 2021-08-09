@@ -156,18 +156,6 @@ export class NativeService {
     this.inappBrowser.create(url, target, options);
   }
 
-  // setTitleBarBackKeyShown(show: boolean) {
-  // if (show) {
-  //     titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_LEFT, {
-  //         key: "back",
-  //         iconPath: TitleBarPlugin.BuiltInIcon.BACK
-  //     });
-  // }
-  // else {
-  //     titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_LEFT, null);
-  // }
-  // }
-
   getNavCtrl() {
     return this.navCtrl;
   }
@@ -194,7 +182,6 @@ export class NativeService {
   }
 
   networkInfoInit() {
-    // navigator.connection.Initialize();
   }
 
   addNetworkListener(offline: () => void, online: () => void) {
@@ -218,7 +205,6 @@ export class NativeService {
   }
 
   checkConnection() {
-    // var networkState = navigator.connection.type;
     var states = {};
     states[Connection.UNKNOWN] = 'Unknown connection';
     states[Connection.ETHERNET] = 'Ethernet connection';
@@ -228,49 +214,7 @@ export class NativeService {
     states[Connection.CELL_4G] = 'Cell 4G connection';
     states[Connection.CELL] = 'Cell generic connection';
     states[Connection.NONE] = 'No network connection';
-    // console.log('Connection type: ' + states[networkState]);
   }
-
-  // async openViewer(titleBar: TitleBarComponent, imgPath:string,newNameKey:string,oldNameKey:string,appService?:any,isOwer?:boolean) {
-  //     this.titleBarService.setTitle(titleBar, this.translate.instant(newNameKey));
-  //     this.titleBarService.setTitleBarBackKeyShown(titleBar, false);
-  //     appService.hideright();
-  //     const modal = await this.modalController.create({
-  //       component: ViewerModalComponent,
-  //       componentProps: {
-  //         src: imgPath,
-  //         slideOptions:{ centeredSlides: true, passiveListeners:true, zoom: { enabled: true } }
-  //       },
-  //       cssClass: 'ion-img-viewer',
-  //       keyboardClose:true,
-  //       showBackdrop:true,
-  //     });
-
-  //     modal.onWillDismiss().then(()=>{
-  //         document.removeEventListener('click',(event)=> this.hide(modal),false);
-  //         this.titleBarService.setTitle(titleBar, this.translate.instant(oldNameKey));
-
-  //         if(oldNameKey!='FeedsPage.tabTitle2'&&oldNameKey!='FeedsPage.tabTitle1'){
-  //             this.titleBarService.setTitleBarBackKeyShown(titleBar, true);
-  //         }
-  //         // if(isOwer){
-  //         //     titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_RIGHT, {
-  //         //         key: "editChannel",
-  //         //         iconPath: TitleBarPlugin.BuiltInIcon.EDIT
-  //         //       });
-  //         // }
-  //         appService.addright();
-
-  //     })
-
-  //     return await modal.present().then(()=>{
-
-  //             const el:any = document.querySelector('ion-modal') || "";
-  //             el.addEventListener('click', (event) => this.hide(modal), true);
-
-  //     });
-
-  //   }
 
   hide(modal: any) {
     modal.dismiss();
@@ -292,21 +236,6 @@ export class NativeService {
       return str;
     }
   }
-
-  // async createTip(name:string){
-  //     let popover = await this.popoverController.create({
-  //       mode:'ios',
-  //       component:MorenameComponent,
-  //       cssClass: 'genericPopup',
-  //       componentProps: {
-  //         "name":name
-  //       }
-  //     });
-  //     popover.onWillDismiss().then(() => {
-  //         popover = null;
-  //     });
-  //     return await popover.present();
-  // }
 
   /**
    * 防抖节流
@@ -368,25 +297,6 @@ export class NativeService {
     this.openUrl(url);
     event.stopPropagation();
   }
-
-  //   async showPayPrompt(elaAddress:string) {
-
-  //     let popover = await this.popoverController.create({
-  //       mode: 'ios',
-  //       cssClass: 'PaypromptComponent',
-  //       component: PaypromptComponent,
-  //       backdropDismiss: false,
-  //       componentProps: {
-  //         "title": this.translate.instant("ChannelsPage.tip"),
-  //         "elaAddress": elaAddress,
-  //         "defalutMemo": ""
-  //       }
-  //     });
-  //     popover.onWillDismiss().then(() => {
-  //       popover = null;
-  //     });
-  //     return await popover.present();
-  //   }
 
   getShare(qrCodeString: string) {
     this.intentService.share('', qrCodeString);

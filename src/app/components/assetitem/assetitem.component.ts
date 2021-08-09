@@ -1,5 +1,4 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-// import { Web3Service } from '../../services/Web3Service';
 import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
 import { ViewHelper } from 'src/app/services/viewhelper.service';
 import { ThemeService } from 'src/app/services/theme.service';
@@ -39,7 +38,6 @@ export class AssetitemComponent implements OnInit {
     if (imgUri.indexOf('feeds:imgage:') > -1) {
       imgUri = imgUri.replace('feeds:imgage:', '');
       imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
-      // imgUri = ApiUrl.nftGet + imgUri;
     }
     return imgUri;
   }

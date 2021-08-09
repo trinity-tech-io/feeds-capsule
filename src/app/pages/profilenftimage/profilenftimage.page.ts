@@ -54,7 +54,7 @@ export class ProfilenftimagePage implements OnInit {
     if (createAddr === '') {
       this.nftImageList = [];
     }
-    // let allList = this.feedService.getOwnNftCollectiblesList();
+
     let ownNftCollectiblesList = this.nftPersistenceHelper.getCollectiblesMap();
     if (!ownNftCollectiblesList)
       ownNftCollectiblesList = [];
@@ -164,47 +164,11 @@ export class ProfilenftimagePage implements OnInit {
         try {
           this.nftImageList.splice(cIndex, 1, item);
           this.hanleListCace(createAddress);
-          // this.isLoading = false;
         } catch (err) {
           console.log('====err====' + JSON.stringify(err));
         }
       })
-      .catch(() => {});
-    // this.httpService
-    //   .ajaxGet(ApiUrl.nftGet + feedsUri, false)
-    //   .then(result => {
-    //     let type = result['type'] || 'single';
-    //     let royalties = royaltyOwner;
-    //     let quantity = tokenNum;
-    //     let fixedAmount = price || null;
-    //     let thumbnail = result['thumbnail'] || '';
-    //     if (thumbnail === '') {
-    //       thumbnail = result['image'];
-    //     }
-    //     let item = {
-    //       creator: createAddress,
-    //       tokenId: tokenId,
-    //       asset: result['image'],
-    //       name: result['name'],
-    //       description: result['description'],
-    //       fixedAmount: fixedAmount,
-    //       kind: result['kind'],
-    //       type: type,
-    //       royalties: royalties,
-    //       quantity: quantity,
-    //       thumbnail: thumbnail,
-    //       createTime: createTime * 1000,
-    //       moreMenuType: 'created',
-    //     };
-    //     try {
-    //       this.nftImageList.splice(cIndex, 1, item);
-    //       this.hanleListCace(createAddress);
-    //       // this.isLoading = false;
-    //     } catch (err) {
-    //       console.log('====err====' + JSON.stringify(err));
-    //     }
-    //   })
-    //   .catch(() => {});
+      .catch(() => { });
   }
 
   async OnSale(accAddress: string) {
@@ -237,7 +201,7 @@ export class ProfilenftimagePage implements OnInit {
         let tokenId = sellerOrder[3];
         let saleOrderId = sellerOrder[0];
         let price = sellerOrder[5];
-        // const stickerContract = this.web3Service.getSticker();
+
         let tokenInfo = await this.nftContractControllerService
           .getSticker()
           .tokenInfo(tokenId);
@@ -276,58 +240,16 @@ export class ProfilenftimagePage implements OnInit {
             this.onSaleList.splice(index,1,item);
             this.nftImageList = _.unionWith(this.nftImageList,this.onSaleList);
             this.hanleListCace(createAddress);
-            //this.isLoading = false;
           })
-          .catch(() => {});
-        // this.httpService
-        //   .ajaxGet(ApiUrl.nftGet + feedsUri, false)
-        //   .then(result => {
-        //     let type = result['type'] || 'single';
-        //     let royalties = result['royalties'] || '';
-        //     let quantity = tokenNum;
-        //     let fixedAmount = price || null;
-        //     let thumbnail = result['thumbnail'] || '';
-        //     if (thumbnail === '') {
-        //       thumbnail = result['image'];
-        //     }
-        //     let item = {
-        //       creator: createAddress,
-        //       saleOrderId: saleOrderId,
-        //       tokenId: tokenId,
-        //       asset: result['image'],
-        //       name: result['name'],
-        //       description: result['description'],
-        //       fixedAmount: fixedAmount,
-        //       kind: result['kind'],
-        //       type: type,
-        //       royalties: royalties,
-        //       quantity: quantity,
-        //       thumbnail: thumbnail,
-        //       sellerAddr: sellerAddr,
-        //       createTime: createTime * 1000,
-        //       moreMenuType: 'onSale',
-        //     };
-        //     let len = this.nftImageList.length - 1 + index;
-        //     this.nftImageList.splice(len, 1, item);
-        //     this.hanleListCace(createAddress);
-        //     //this.isLoading = false;
-        //   })
-        //   .catch(() => {});
+          .catch(() => { });
       } catch (error) {}
     }
   }
 
   hanleListCace(createAddress?: any) {
-    // let ownNftCollectiblesList = this.feedService.getOwnNftCollectiblesList();
     let ownNftCollectiblesListMap = this.nftPersistenceHelper.getCollectiblesMap();
     ownNftCollectiblesListMap[createAddress] = _.unionWith(this.nftImageList,this.onSaleList);
     this.nftPersistenceHelper.setCollectiblesMap(ownNftCollectiblesListMap);
-
-    // this.feedService.setOwnNftCollectiblesList(ownNftCollectiblesList);
-    // this.feedService.setData(
-    //   'feed.nft.own.collectibles.list',
-    //   JSON.stringify(ownNftCollectiblesList),
-    // );
   }
 
   async clickItem(item: any) {
@@ -335,9 +257,7 @@ export class ProfilenftimagePage implements OnInit {
     if (imgUri.indexOf('feeds:imgage:') > -1) {
       imgUri = imgUri.replace('feeds:imgage:', '');
       imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
-      // imgUri = ApiUrl.nftGet + imgUri;
     }
-    //let imgBase64 = await this.compressImage(imgUri);
     this.native.navigateForward(['editimage'], { replaceUrl: true });
     this.feedService.setClipProfileIamge(imgUri);
   }

@@ -44,7 +44,6 @@ export class SigninPage implements OnInit {
   initTile() {
     this.titleBarService.setTitle(
       this.titleBar,
-      //this.translate.instant('SigninPage.signIn'),
       null
     );
     this.titleBarService.setTitleBarBlankButton(this.titleBar);
@@ -67,7 +66,6 @@ export class SigninPage implements OnInit {
 
   signIn() {
     connectivity.setActiveConnector(null).then(() => {
-      // this.testGetCredentials();
       this.doSignin();
     });
   }

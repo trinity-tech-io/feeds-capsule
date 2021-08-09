@@ -89,7 +89,6 @@ export const en = {
     sendingErrorTip: 'After the post is sent successfully, please try again.',
     preferences: 'Preferences',
     posts: 'Posts',
-    // "assets": "Assets",
     confirmDialog: 'Confirm Dialog',
     deletePost: 'Delete Post',
     deleteComment: 'Delete Comment',

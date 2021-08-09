@@ -7,7 +7,6 @@ import { Events } from '../../../services/events.service';
 import { TitleBarService } from '../../../services/TitleBarService';
 import { TitleBarComponent } from '../../..//components/titlebar/titlebar.component';
 import { FeedService } from 'src/app/services/FeedService';
-// import { Web3Service } from '../../../services/Web3Service';
 import { PopupProvider } from 'src/app/services/popup';
 import { PopoverController } from '@ionic/angular';
 import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
@@ -59,7 +58,6 @@ export class BidPage implements OnInit {
     private titleBarService: TitleBarService,
     public theme: ThemeService,
     private activatedRoute: ActivatedRoute,
-    // private web3Service:Web3Service,
     private feedService: FeedService,
     private popoverController: PopoverController,
     public popupProvider: PopupProvider,
@@ -171,12 +169,10 @@ export class BidPage implements OnInit {
       details: this.quantity,
     });
 
-    //if(this.nftStatus!=null){
     this.contractDetails.push({
       type: 'common.state',
       details: this.translate.instant('common.onsale'),
     });
-    //}
 
     if (this.dateCreated != '') {
       this.contractDetails.push({
@@ -246,7 +242,6 @@ export class BidPage implements OnInit {
 
     this.native.hideLoading();
     if (purchaseStatus != '' && purchaseStatus != undefined) {
-      // let plist = this.feedService.getPasarList();
       let plist = this.nftPersistenceHelper.getPasarList();
       plist = _.filter(plist, item => {
         return item.saleOrderId != this.saleOrderId;
@@ -258,12 +253,8 @@ export class BidPage implements OnInit {
 
       this.nftPersistenceHelper.setPasarList(plist);
 
-      // this.feedService.setPasarList(plist);
-      // this.feedService.setData('feed.nft.pasarList', JSON.stringify(plist));
-
       let createAddress = this.nftContractControllerService.getAccountAddress();
       if (this.sellerAddress === createAddress) {
-        // let alllist = this.feedService.getOwnNftCollectiblesList();
         let alllist = this.nftPersistenceHelper.getCollectiblesMap();
         let olist = alllist[createAddress] || [];
         olist = _.filter(olist, item => {
@@ -277,11 +268,6 @@ export class BidPage implements OnInit {
         alllist[createAddress] = olist;
 
         this.nftPersistenceHelper.setCollectiblesMap(alllist);
-        // this.feedService.setOwnNftCollectiblesList(alllist);
-        // this.feedService.setData(
-        //   'feed.nft.own.collectibles.list',
-        //   JSON.stringify(alllist),
-        // );
       }
       this.native.pop();
     } else {
@@ -292,7 +278,6 @@ export class BidPage implements OnInit {
   buyFail() {
     this.popover = this.popupProvider.ionicAlert(
       this,
-      // "ConfirmdialogComponent.signoutTitle",
       '',
       'common.buyNftError',
       this.confirm,
@@ -318,7 +303,6 @@ export class BidPage implements OnInit {
     if (imgUri.indexOf('feeds:imgage:') > -1) {
       imgUri = imgUri.replace('feeds:imgage:', '');
       imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
-      // imgUri = ApiUrl.nftGet + imgUri;
     }
     return imgUri;
   }

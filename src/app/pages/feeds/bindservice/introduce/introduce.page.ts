@@ -62,9 +62,6 @@ export class IntroducePage implements OnInit {
   }
 
   next() {
-    // this.native.navigateForward(['bindservice/scanqrcode'],{
-    //   replaceUrl: true
-    //  });
     this.native.pop();
   }
 

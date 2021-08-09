@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { ThemeService } from 'src/app/services/theme.service';
 import { PopoverController, NavParams } from '@ionic/angular';
 import { FeedService } from '../../services/FeedService';
-// import { Web3Service } from '../../services/Web3Service';
 import { NativeService } from 'src/app/services/NativeService';
 import { Events } from '../../services/events.service';
 import _ from 'lodash';
@@ -35,7 +34,6 @@ export class NftdialogComponent implements OnInit {
   constructor(
     private navParams: NavParams,
     private popover: PopoverController,
-    // private web3Service:Web3Service,
     private native: NativeService,
     private feedService: FeedService,
     private events: Events,
@@ -237,7 +235,7 @@ export class NftdialogComponent implements OnInit {
       this.native.toast_trans('common.publicPasarFailed');
       return;
     }
-    //console.log("======receipt======"+JSON.stringify(receipt))
+
     await this.getSetChannel(tokenId);
     let sAssItem = _.cloneDeep(this.curAssItem);
     sAssItem['sellerAddr'] = sellerAddress;
@@ -268,8 +266,7 @@ export class NftdialogComponent implements OnInit {
       this.native.hideLoading();
       this.curAssItem.fixedAmount = price;
       this.nftPersistenceHelper.setPasarList(this.nftPersistenceHelper.getPasarList());
-      // let list = this.feedService.getPasarList();
-      // this.feedService.setData('feed.nft.pasarList', JSON.stringify(list));
+
       this.popover.dismiss();
     } else {
       this.native.hideLoading();
@@ -293,7 +290,6 @@ export class NftdialogComponent implements OnInit {
     if (imgUri.indexOf('feeds:imgage:') > -1) {
       imgUri = imgUri.replace('feeds:imgage:', '');
       imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
-      // imgUri = ApiUrl.nftGet + imgUri;
     }
    this.imgUri = imgUri;
   }
@@ -350,7 +346,7 @@ export class NftdialogComponent implements OnInit {
     nftContent['text'] = this.assItem.description;
     nftContent['nftTokenId'] = tokenId;
     nftContent['nftOrderId'] = this.orderId;
-    //let content = this.feedService.createContent(this.nftDescription,imgThumbs,null);
+
     this.feedService.declarePost(
       nodeId,
       channelId,

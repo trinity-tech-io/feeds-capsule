@@ -44,7 +44,6 @@ export class NotificationPage {
     private actionSheetController: ActionSheetController,
     private storageService: StorageService,
   ) {
-    //this.notificationList = this.feedService.getNotificationList();
   }
 
   ngOnInit(): void {}

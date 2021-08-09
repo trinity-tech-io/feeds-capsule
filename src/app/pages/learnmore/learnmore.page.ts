@@ -43,14 +43,12 @@ export class LearnmorePage implements OnInit {
   initTile() {
     this.titleBarService.setTitle(
       this.titleBar,
-      //this.translate.instant('LearnmorePage.title'),
       null
     );
     if (this.showBack === '') {
       this.titleBarService.setTitleBarBlankButton(this.titleBar);
     } else {
       this.titleBarService.setTitleBarBlankButton(this.titleBar);
-      //this.titleBarService.setTitleBarBackKeyShown(this.titleBar);
     }
   }
 

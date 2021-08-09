@@ -148,17 +148,6 @@ export class FileService {
     });
   }
 
-  // readFileData(entry: CordovaFilePlugin.FileEntry): Promise<String>{
-  //     return new Promise(async (resolve, reject) =>{
-  //         let file = await this.getFileData(entry);
-  //         file.text().then((text)=>{
-  //             resolve(text);
-  //         }).catch((error)=>{
-  //             reject(error);
-  //         });
-  //     });
-  // }
-
   removeFile(entry: Entry): Promise<boolean> {
     return new Promise((resolve, reject) => {
       entry.remove(

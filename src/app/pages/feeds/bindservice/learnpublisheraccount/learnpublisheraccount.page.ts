@@ -38,7 +38,6 @@ export class LearnpublisheraccountPage implements OnInit {
   initTile() {
     this.titleBarService.setTitle(
       this.titleBar,
-      //this.translate.instant('LearnmorePage.title'),
       null
     );
     this.titleBarService.setTitleBarBlankButton(this.titleBar);
@@ -76,7 +75,7 @@ export class LearnpublisheraccountPage implements OnInit {
         'org.elastos.dapp.feeds.isFirstBindFeedService',
         '1',
       );
-      //this.appService.addright();
+
       this.native.setRootRouter(['/tabs/home']);
       return;
     }

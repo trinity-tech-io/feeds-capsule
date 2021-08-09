@@ -176,8 +176,6 @@ export class CommentlistPage implements OnInit {
     this.connectionStatus = this.feedService.getConnectionStatus();
     this.feedService.refreshPostById(this.nodeId, this.channelId, this.postId);
 
-    //if (this.connectionStatus == 0)
-    //this.feedService.updateComment(this.nodeId, Number(this.channelId) ,Number(this.postId));
     this.events.subscribe(FeedsEvent.PublishType.connectionChanged, status => {
       this.zone.run(() => {
         this.logUtils.logd(
@@ -271,7 +269,6 @@ export class CommentlistPage implements OnInit {
         this.initRefresh();
         this.native.hideLoading();
         this.hideComment = true;
-        //this.native.toast_trans('CommentPage.tipMsg1');
       });
     });
 
@@ -281,8 +278,6 @@ export class CommentlistPage implements OnInit {
   }
 
   ionViewWillLeave() {
-    //清楚订阅事件代码
-
     let value = this.popoverController.getTop()['__zone_symbol__value'] || '';
     if (value != '') {
       this.popoverController.dismiss();

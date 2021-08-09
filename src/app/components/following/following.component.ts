@@ -15,8 +15,6 @@ export class FollowingComponent implements OnInit {
   @Input() nodeStatus: any = {};
   @Output() toFollowPage = new EventEmitter();
   constructor(
-    //private feedspage: FeedsPage,
-    //private tabs: IonTabs,
     private feedService: FeedService,
     public theme: ThemeService,
     private viewHelper: ViewHelper,
@@ -35,7 +33,6 @@ export class FollowingComponent implements OnInit {
       channelId: channelId,
       page: '/channels',
     });
-    //this.native.getNavCtrl().navigateForward(['/channels', nodeId, channelId]);
   }
 
   parseAvatar(avatar: string): string {

@@ -165,7 +165,6 @@ export class ScanqrcodePage implements OnInit {
         );
       },
       error => {
-        // this.native.toast("address error: " + error);
       },
     );
   }
@@ -204,7 +203,6 @@ export class ScanqrcodePage implements OnInit {
   openAlert() {
     this.popover = this.popupProvider.ionicAlert(
       this,
-      // "ConfirmdialogComponent.signoutTitle",
       '',
       'common.didnotrelease',
       this.confirm,
