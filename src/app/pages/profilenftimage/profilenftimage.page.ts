@@ -18,6 +18,7 @@ export class ProfilenftimagePage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   public nftImageList: any = [];
   public onSaleList: any = [];
+  public styleObj: any = { width: '' };
   constructor(
     private translate: TranslateService,
     private titleBarService: TitleBarService,
@@ -32,6 +33,7 @@ export class ProfilenftimagePage implements OnInit {
 
   ionViewWillEnter() {
     this.initTile();
+    this.styleObj.width = (screen.width - 20 - 10) / 2 + 'px';
     this.getImageList();
   }
 
@@ -53,13 +55,15 @@ export class ProfilenftimagePage implements OnInit {
       this.nftImageList = [];
     }
     // let allList = this.feedService.getOwnNftCollectiblesList();
-    let allList = this.nftPersistenceHelper.getCollectiblesMap();
-    let clist = allList[createAddr] || [];
-    if (clist.length === 0) {
+    let ownNftCollectiblesList = this.nftPersistenceHelper.getCollectiblesMap();
+    if (!ownNftCollectiblesList)
+      ownNftCollectiblesList = [];
+    let list = ownNftCollectiblesList[createAddr] || [];
+    if (list.length === 0) {
       this.notOnSale(createAddr);
       this.OnSale(createAddr);
     } else {
-      this.nftImageList = clist;
+      this.nftImageList = list;
     }
   }
 
