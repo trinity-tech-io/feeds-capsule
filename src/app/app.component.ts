@@ -21,6 +21,7 @@ import { NFTContractParsarService } from 'src/app/services/nftcontract_parsar.se
 import { NFTContractStickerService } from 'src/app/services/nftcontract_sticker.service';
 import { NFTPersistenceHelper } from 'src/app/services/nft_persistence_helper.service';
 import { GlobalService } from 'src/app/services/global.service';
+import { Config } from './services/config';
 
 enum LogLevel {
   NONE,
@@ -94,37 +95,43 @@ export class MyApp {
   }
 
   initializeApp() {
-    this.platform.ready().then(() => {
-      this.splashScreen.hide();
-      //for ios
-      if (this.isIOSPlatform()) {
-        this.statusBar.backgroundColorByHexString('#f8f8ff');
-        this.statusBar.styleDefault();
-      }
+    this.platform.ready()
+      .then(() => {
+        return this.dataHelper.loadApiProvider()
+      })
+      .then((api) => {
+        Config.changeApi(api);
+        this.feedService.initDidManager();
+        this.splashScreen.hide();
+        //for ios
+        if (this.isIOSPlatform()) {
+          this.statusBar.backgroundColorByHexString('#f8f8ff');
+          this.statusBar.styleDefault();
+        }
 
-      this.platform.backButton.subscribeWithPriority(9999, () => {
-        this.appService.handleBack();
-      });
-      this.statusBar.show();
+        this.platform.backButton.subscribeWithPriority(9999, () => {
+          this.appService.handleBack();
+        });
+        this.statusBar.show();
 
-      this.initSetting();
-      this.initFeedPublicStatus();
-      this.initCurrentFeed();
-      this.initDiscoverfeeds();
-      this.initCollectibleSetting();
-      // this.initFeedNftPasarList();
-      // this.initNftOwnCollectiblesList();
-      // this.native.networkInfoInit();
-      this.native.addNetworkListener(
-        () => {
-          this.events.publish(FeedsEvent.PublishType.networkStatusChanged, 1);
-        },
-        () => {
-          this.events.publish(FeedsEvent.PublishType.networkStatusChanged, 0);
-        },
-      );
-      this.initDisclaimer();
-      this.initConnector();
+        this.initSetting();
+        this.initFeedPublicStatus();
+        this.initCurrentFeed();
+        this.initDiscoverfeeds();
+        this.initCollectibleSetting();
+        // this.initFeedNftPasarList();
+        // this.initNftOwnCollectiblesList();
+        // this.native.networkInfoInit();
+        this.native.addNetworkListener(
+          () => {
+            this.events.publish(FeedsEvent.PublishType.networkStatusChanged, 1);
+          },
+          () => {
+            this.events.publish(FeedsEvent.PublishType.networkStatusChanged, 0);
+          },
+        );
+        this.initDisclaimer();
+        this.initConnector();
     });
   }
 
@@ -177,6 +184,8 @@ export class MyApp {
   }
 
   initSetting() {
+
+
     this.dataHelper.loadDevelopLogMode().then((isOpenLog: boolean) => {
       if (isOpenLog)
         this.logUtils.setLogLevel(LogLevel.DEBUG);
@@ -186,6 +195,7 @@ export class MyApp {
     this.dataHelper.loadDevelopNet().then((net: string) => {
       this.globalService.changeNet(net);
     });
+
     this.feedService
       .getData('feeds.developerMode')
       .then(status => {

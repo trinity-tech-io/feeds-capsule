@@ -4,6 +4,7 @@ import { StorageService } from 'src/app/services/StorageService';
 
 import * as _ from 'lodash';
 import { UtilService } from './utilService';
+import { Config } from './config';
 let TAG: string = 'DataHelper';
 
 @Injectable()
@@ -97,6 +98,8 @@ export class DataHelper {
   private walletAccountAddress: string = '';
   private developLogMode: boolean = false;
   private developNet: string = 'MainNet';
+
+  private apiProvider: string = 'elastos.io';
 
   constructor(
     private logUtils: LogUtils,
@@ -2358,6 +2361,27 @@ export class DataHelper {
         let developNet = await this.loadData('feeds.developNet') || 'MainNet';
         this.developNet = developNet;
         resolve(this.developNet);
+      } catch (err) {
+        reject(err);
+      }
+    });
+  }
+
+  setApiProvider(apiProviderName: string) {
+    this.apiProvider = apiProviderName;
+    this.saveData('feeds:apiprovidername', this.apiProvider);
+  }
+
+  getApiProvider() {
+    return this.apiProvider;
+  }
+
+  loadApiProvider(): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let apiProvider = await this.loadData('feeds:apiprovidername') || Config.ELASTOS_API;
+        this.apiProvider = apiProvider;
+        resolve(this.apiProvider);
       } catch (err) {
         reject(err);
       }

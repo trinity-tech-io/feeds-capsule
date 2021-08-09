@@ -20,8 +20,8 @@ export class WalletConnectControllerService {
     private dataHelper: DataHelper,
     private events: Events,
   ) {
-    this.initWalletConnectProvider();
-    this.disconnect();
+    // this.initWalletConnectProvider();
+    // this.disconnect();
   }
 
   public async connect() {
@@ -155,7 +155,7 @@ export class WalletConnectControllerService {
       this.walletConnectWeb3 = new Web3(
         new Web3.providers.HttpProvider(this.uri, { agent: {} }),
       );
-      console.log('Web3 version is ' + this.walletConnectWeb3.version);
+      console.log('Web3 version is ' + this.walletConnectWeb3.version + ', uri is' + this.uri);
     }
   }
 

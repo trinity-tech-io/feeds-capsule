@@ -21,6 +21,7 @@ import { connectivity } from '@elastosfoundation/elastos-connectivity-sdk-cordov
 import _ from 'lodash';
 import { DataHelper } from './DataHelper';
 import { UtilService } from './utilService';
+import { Config } from './config';
 
 declare let didManager: DIDPlugin.DIDManager;
 // declare let didSessionManager: DIDSessionManagerPlugin.DIDSessionManager;
@@ -132,17 +133,19 @@ export class FeedService {
   }
 
   init() {
-    this.initDidManager();
     this.initCallback();
   }
 
   initDidManager() {
     didManager.initDidStore('anything', null);
-    const apiprovidername = localStorage.getItem('feeds:apiprovidername') || '';
-    console.log('apiprovidername', apiprovidername);
-    if (apiprovidername) {
-      this.setEidURL(this.getEidProviderURL(apiprovidername));
-    }
+    this.setEidURL(Config.EID_RPC);
+    console.log('Eid RPC is', Config.EID_RPC);
+    // const apiprovidername = this.dataHelper.getApiProvider();
+
+    // console.log('apiprovidername', apiprovidername);
+    // if (apiprovidername) {
+    //   this.setEidURL(this.getEidProviderURL(apiprovidername));
+    // }
   }
 
   getNetworkStatus(): FeedsData.ConnState {
@@ -7958,11 +7961,11 @@ export class FeedService {
     );
   }
 
-  getEidProviderURL(name: string) {
-    if (name == 'trinity-tech.cn') return 'https://api.trinity-tech.cn/eid';
-    if (name == 'elastos.io') return 'https://api.elastos.io/eid';
-    return 'https://api.elastos.io/eid';
-  }
+  // getEidProviderURL(name: string) {
+  //   if (name == 'trinity-tech.cn') return 'https://api.trinity-tech.cn/eid';
+  //   if (name == 'elastos.io') return 'https://api.elastos.io/eid';
+  //   return 'https://api.elastos.io/eid';
+  // }
 
   async getUserAvatar(userDid: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
