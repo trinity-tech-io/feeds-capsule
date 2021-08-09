@@ -11,6 +11,7 @@ import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { LanguageService } from 'src/app/services/language.service';
 import { IPFSService } from 'src/app/services/ipfs.service';
+import { DataHelper } from 'src/app/services/DataHelper';
 
 import _ from 'lodash';
 
@@ -43,7 +44,8 @@ export class SettingsPage implements OnInit {
     private popoverController: PopoverController,
     private zone: NgZone,
     private titleBarService: TitleBarService,
-    private ipfsService: IPFSService
+    private ipfsService: IPFSService,
+    private dataHelper: DataHelper
   ) {}
 
   ngOnInit() {}
@@ -58,8 +60,7 @@ export class SettingsPage implements OnInit {
   }
 
   ionViewWillEnter() {
-    this.curApiProviderName =
-    localStorage.getItem('feeds:apiprovidername') || this.defaltProviderName;
+    this.curApiProviderName = this.dataHelper.getApiProvider();
     this.languageName = this.getCurlanguageName();
     this.hideDeletedPosts = this.feedService.getHideDeletedPosts();
     this.hideDeletedComments = this.feedService.getHideDeletedComments();

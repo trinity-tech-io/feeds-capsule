@@ -54,9 +54,9 @@ export class SelectNetPage implements OnInit {
     if (this.selectedNetwork != selectedNetwork) {
       this.selectedNetwork = selectedNetwork;
       this.dataHelper.setDevelopNet(this.selectedNetwork);
-      this.openAlert();
 
       this.globalService.changeNet(this.selectedNetwork);
+      this.openAlert();
     }
   }
 

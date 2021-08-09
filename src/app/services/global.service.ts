@@ -44,6 +44,7 @@ export class GlobalService {
     await this.walletConnectControllerService.initWalletConnectProvider();
     this.nftContractControllerService.init();
   }
+
   restartApp() {
     this.splashScreen.show();
     window.location.href = "/";

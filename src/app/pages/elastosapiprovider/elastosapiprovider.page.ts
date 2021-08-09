@@ -4,6 +4,12 @@ import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { ThemeService } from 'src/app/services/theme.service';
 import { FeedService } from 'src/app/services/FeedService';
+import { DataHelper } from 'src/app/services/DataHelper';
+import { Config } from 'src/app/services/config';
+import { PopupProvider } from 'src/app/services/popup';
+import { PopoverController } from '@ionic/angular';
+import { SplashScreen } from '@ionic-native/splash-screen/ngx';
+import { GlobalService } from 'src/app/services/global.service';
 
 @Component({
   selector: 'app-elastosapiprovider',
@@ -12,133 +18,18 @@ import { FeedService } from 'src/app/services/FeedService';
 })
 export class ElastosapiproviderPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
-  private defaltProviderName = 'elastos.io';
+  public popover: any = null;
   public curApiProviderName = 'elastos.io';
   public apiProviders: any = [
     {
       key: 'elastosio',
-      name: 'elastos.io',
+      name: Config.ELASTOS_API,
       description: this.translate.instant('SettingsPage.elastos-io-des'),
-      endpoints: {
-        MainNet: {
-          eidChainRPC: 'https://api.elastos.io/eid',
-        },
-      },
-      // endpoints: {
-      //     "MainNet": {
-      //         mainChainRPC: 'https://api.elastos.io/ela',
-      //         idChainRPC: 'https://api.elastos.io/did',
-      //         eidChainRPC: 'https://api.elastos.io/eid',
-      //         eidMiscRPC: 'https://api.elastos.io/eid-misc',
-      //         eidOracleRPC: 'https://api.elastos.io/eid-oracle',
-      //         escRPC: 'https://api.elastos.io/eth',
-      //         escMiscRPC: 'https://api.elastos.io/misc',
-      //         escOracleRPC: 'https://api.elastos.io/oracle',
-      //         escBrowserRPC: 'https://eth.elastos.io',
-      //         crRPC: 'https://api.cyberrepublic.org'
-      //     },
-      //     "TestNet": {
-      //         // TODO - testnet endpoints
-      //         mainChainRPC: 'https://api.elastos.io/ela',
-      //         idChainRPC: 'https://api.elastos.io/did',
-      //         eidChainRPC: 'https://api.elastos.io/eid',
-      //         eidMiscRPC: 'https://api-testnet.elastos.io/eid-misc',
-      //         eidOracleRPC: 'https://api-testnet.elastos.io/eid-oracle',
-      //         escRPC: 'https://api.elastos.io/eth',
-      //         escOracleRPC: 'https://api.elastos.io/oracle',
-      //         escMiscRPC: 'https://api.elastos.io/misc',
-      //         escBrowserRPC: 'https://eth-testnet.elastos.io',
-      //         crRPC: 'https://api.cyberrepublic.org'
-      //     },
-      //     "LRW": {
-      //       mainChainRPC: 'http://crc1rpc.longrunweather.com:18080',
-      //       idChainRPC: 'http://did1rpc.longrunweather.com:18080',
-      //       eidChainRPC: 'http://eid02.longrunweather.com:18080',
-      //       eidMiscRPC:'',
-      //       eidOracleRPC: '',
-      //       escRPC:'',
-      //       escOracleRPC: '',
-      //       escMiscRPC: '',
-      //       escBrowserRPC: '',
-      //       crRPC: 'http://crapi.longrunweather.com:18080',
-      //   },
-      // }
     },
     {
       key: 'ttechcn',
-      name: 'trinity-tech.cn',
+      name: Config.TRINITY_API,
       description: this.translate.instant('SettingsPage.trinity-tech-cn-des'),
-      endpoints: {
-        MainNet: {
-          eidChainRPC: 'https://api.trinity-tech.cn/eid',
-        },
-      },
-      // endpoints: {
-      //     "MainNet": {
-      //         mainChainRPC: 'https://api.trinity-tech.cn/ela',
-      //         idChainRPC: 'https://api.trinity-tech.cn/did',
-      //         eidChainRPC: 'https://api.trinity-tech.cn/eid',
-      //         eidMiscRPC: 'https://api.trinity-tech.cn/eid-misc',
-      //         eidOracleRPC: 'https://api.trinity-tech.cn/eid-oracle',
-      //         escRPC: 'https://api.trinity-tech.cn/eth',
-      //         escOracleRPC: 'https://api.trinity-tech.cn/eth-oracle',
-      //         escMiscRPC: 'https://api.trinity-tech.cn/eth-misc',
-      //         escBrowserRPC: 'https://eth.elastos.io', // TODO
-      //         crRPC: 'https://api.cyberrepublic.org'
-      //     },
-      //     "TestNet": {
-      //         mainChainRPC: 'https://api-testnet.trinity-tech.cn/ela',
-      //         idChainRPC: 'https://api-testnet.trinity-tech.cn/did',
-      //         eidChainRPC: 'https://api-testnet.trinity-tech.cn/eid',
-      //         eidMiscRPC: 'https://api-testnet.trinity-tech.cn/eid-misc',
-      //         eidOracleRPC: 'https://api-testnet.trinity-tech.cn/eid-oracle',
-      //         escRPC: 'https://api-testnet.trinity-tech.cn/eth',
-      //         escOracleRPC: 'https://api-testnet.trinity-tech.cn/eth-oracle',
-      //         escMiscRPC: 'https://api-testnet.trinity-tech.cn/eth-misc',
-      //         escBrowserRPC: 'https://eth-testnet.elastos.io',
-      //         crRPC: 'https://api.cyberrepublic.org'
-      //     },
-      //     "LRW": {
-      //       mainChainRPC: 'http://crc1rpc.longrunweather.com:18080',
-      //       idChainRPC: 'http://did1rpc.longrunweather.com:18080',
-      //       eidChainRPC: 'http://eid02.longrunweather.com:18080',
-      //       eidMiscRPC:'',
-      //       eidOracleRPC: '',
-      //       escRPC:'',
-      //       escOracleRPC: '',
-      //       escMiscRPC: '',
-      //       escBrowserRPC: '',
-      //       crRPC: 'http://crapi.longrunweather.com:18080',
-      //   },
-      // }
-      /*
-        {
-            type: 'settings.lrw-net',
-            code: 'LrwNet',
-            mainChainRPCApi: 'http://crc1rpc.longrunweather.com:18080',
-            idChainRPCApi: 'http://did1rpc.longrunweather.com:18080',
-            eidRPCApi: 'http://eid02.longrunweather.com:18080',
-            ethscRPCApi: '',
-            ethscApiMisc: '',
-            ethscOracle: '',
-            ethscBrowserApiUrl: '',
-            crRPCApi: 'http://crapi.longrunweather.com:18080',
-            icon: '/assets/icon/priv.svg'
-        },
-        {
-            type: 'settings.priv-net',
-            code: 'PrvNet',
-            mainChainRPCApi: 'http://api.elastos.io:22336',
-            idChainRPCApi: 'http://api.elastos.io:22606',
-            eidRPCApi: 'https://api.elastos.io/eid',
-            ethscRPCApi: 'http://api.elastos.io:22636',
-            ethscApiMisc: 'http://api.elastos.io:22634',
-            ethscOracle: 'http://api.elastos.io:22632',
-            ethscBrowserApiUrl: 'https://eth.elastos.io',
-            crRPCApi: 'https://api.cyberrepublic.org',
-            icon: '/assets/icon/priv.svg'
-        }
-        */
     },
   ];
   constructor(
@@ -146,15 +37,19 @@ export class ElastosapiproviderPage implements OnInit {
     private translate: TranslateService,
     public theme: ThemeService,
     private feedsService: FeedService,
+    private dataHelper: DataHelper,
+    public popupProvider: PopupProvider,
+    private popoverController: PopoverController,
+    private splashScreen: SplashScreen,
+    private globalService: GlobalService
   ) {}
 
   ngOnInit() {
-    this.curApiProviderName =
-      localStorage.getItem('feeds:apiprovidername') || this.defaltProviderName;
   }
 
   ionViewWillEnter() {
     this.initTitle();
+    this.curApiProviderName = this.dataHelper.getApiProvider();
   }
 
   initTitle() {
@@ -167,11 +62,35 @@ export class ElastosapiproviderPage implements OnInit {
   }
 
   useProvider(provider: any) {
-    console.log(provider.endpoints.MainNet.eidChainRPC);
     if (this.curApiProviderName != provider.name) {
       this.curApiProviderName = provider.name;
-      localStorage.setItem('feeds:apiprovidername', provider.name);
-      this.feedsService.setEidURL(provider.endpoints.MainNet.eidChainRPC);
+      this.dataHelper.setApiProvider(this.curApiProviderName);
+      Config.changeApi(this.curApiProviderName);
+      this.feedsService.setEidURL(Config.EID_RPC);
+
+      this.globalService.changeNet(this.dataHelper.getDevelopNet());
+      this.openAlert();
+    }
+  }
+
+  openAlert() {
+    this.popover = this.popupProvider.ionicAlert(
+      this,
+      // "ConfirmdialogComponent.signoutTitle",
+      'common.restartApp',
+      'common.restartAppDesc',
+      this.confirm,
+      'tskth.svg',
+      'common.ok',
+    );
+  }
+
+  confirm(that: any) {
+    if (this.popover != null) {
+      this.popover.dismiss();
+      this.popover = null;
+
+      that.globalService.restartApp();
     }
   }
 }
