@@ -15,7 +15,7 @@ import { DataHelper } from 'src/app/services/DataHelper';
 })
 export class DeveloperPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
-  private openLog: boolean = false;
+  public openLog: boolean = false;
   constructor(
     private translate: TranslateService,
     public theme: ThemeService,
