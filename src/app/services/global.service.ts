@@ -5,6 +5,7 @@ import { NFTContractParsarService } from 'src/app/services/nftcontract_parsar.se
 import { NFTContractStickerService } from 'src/app/services/nftcontract_sticker.service';
 import { NFTPersistenceHelper } from 'src/app/services/nft_persistence_helper.service';
 import { DataHelper } from 'src/app/services/DataHelper';
+import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
 
 @Injectable()
 export class GlobalService {
@@ -14,7 +15,8 @@ export class GlobalService {
     private nftContractParsarService: NFTContractParsarService,
     private nftContractStickerService: NFTContractStickerService,
     private nftPersistenceHelper: NFTPersistenceHelper,
-    private dataHelper: DataHelper
+    private dataHelper: DataHelper,
+    private nftContractControllerService: NFTContractControllerService
   ) {
   }
 
@@ -32,6 +34,8 @@ export class GlobalService {
       this.nftPersistenceHelper.setDevelopMode(true);
       console.log('Change to testnet');
     }
+
+    this.nftContractControllerService.init();
   }
   restartApp() {
     this.splashScreen.show();
