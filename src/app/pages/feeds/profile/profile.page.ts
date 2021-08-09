@@ -1748,6 +1748,8 @@ export class ProfilePage implements OnInit {
     }
     // let ownNftCollectiblesList = this.feedService.getOwnNftCollectiblesList();
     let ownNftCollectiblesList = this.nftPersistenceHelper.getCollectiblesMap();
+    if (!ownNftCollectiblesList)
+      ownNftCollectiblesList = [];
     let list = ownNftCollectiblesList[accAddress] || [];
     if (list.length === 0) {
       this.notOnSale(accAddress);

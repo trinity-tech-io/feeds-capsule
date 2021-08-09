@@ -176,6 +176,7 @@ export class MyApp {
 
   initSetting() {
     this.dataHelper.loadDevelopLogMode();
+    this.dataHelper.loadDevelopNet();
     this.feedService
       .getData('feeds.developerMode')
       .then(status => {

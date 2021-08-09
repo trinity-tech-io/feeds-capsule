@@ -96,6 +96,8 @@ export class DataHelper {
 
   private walletAccountAddress: string = '';
   private developLogMode: boolean = false;
+  private developNet: string = 'MainNet';
+
   constructor(
     private logUtils: LogUtils,
     private storageService: StorageService,
@@ -2325,7 +2327,7 @@ export class DataHelper {
     this.saveData('feeds.developerLogMode', this.developLogMode);
   }
 
-  getDevelopLogMode() {
+  getDevelopLogMode(): boolean {
     return this.developLogMode;
   }
 
@@ -2335,6 +2337,27 @@ export class DataHelper {
         let developLogMode = await this.loadData('feeds.developerLogMode') || false;
         this.developLogMode = developLogMode;
         resolve(this.developLogMode);
+      } catch (err) {
+        reject(err);
+      }
+    });
+  }
+
+  setDevelopNet(developNet: string) {
+    this.developNet = developNet;
+    this.saveData('feeds.developNet', this.developNet);
+  }
+
+  getDevelopNet(): string {
+    return this.developNet;
+  }
+
+  loadDevelopNet() {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let developNet = await this.loadData('feeds.developNet') || 'MainNet';
+        this.developNet = developNet;
+        resolve(this.developNet);
       } catch (err) {
         reject(err);
       }
