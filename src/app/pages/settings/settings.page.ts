@@ -6,7 +6,6 @@ import { NativeService } from '../../services/NativeService';
 import { FeedService } from '../../services/FeedService';
 import { PopupProvider } from '../../services/popup';
 import { StorageService } from '../../services/StorageService';
-import { LogUtils } from 'src/app/services/LogUtils';
 import { Events } from 'src/app/services/events.service';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
@@ -15,13 +14,7 @@ import { IPFSService } from 'src/app/services/ipfs.service';
 
 import _ from 'lodash';
 
-enum LogLevel {
-  NONE,
-  ERROR,
-  WARN,
-  INFO,
-  DEBUG,
-}
+
 
 @Component({
   selector: 'app-settings',
@@ -48,7 +41,6 @@ export class SettingsPage implements OnInit {
     public popupProvider: PopupProvider,
     public storageService: StorageService,
     private popoverController: PopoverController,
-    private logUtils: LogUtils,
     private zone: NgZone,
     private titleBarService: TitleBarService,
     private ipfsService: IPFSService
@@ -129,10 +121,8 @@ export class SettingsPage implements OnInit {
     this.feedService.setData('feeds.developerMode', this.developerMode);
     this.events.publish(FeedsEvent.PublishType.search);
     if (this.developerMode) {
-      this.logUtils.setLogLevel(LogLevel.DEBUG);
       this.ipfsService.setTESTMode(true);
     } else {
-      this.logUtils.setLogLevel(LogLevel.WARN);
       this.ipfsService.setTESTMode(false);
     }
   }
