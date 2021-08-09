@@ -3,6 +3,11 @@ import { TranslateService } from '@ngx-translate/core';
 import { ThemeService } from 'src/app/services/theme.service';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { DataHelper } from 'src/app/services/DataHelper';
+import { PopupProvider } from 'src/app/services/popup';
+import { PopoverController } from '@ionic/angular';
+import { SplashScreen } from '@ionic-native/splash-screen/ngx';
+
 @Component({
   selector: 'app-select-net',
   templateUrl: './select-net.page.html',
@@ -14,11 +19,16 @@ export class SelectNetPage implements OnInit {
     "MainNet", // All operations use main nets for all chains
     "TestNet", // All operations use a test net for all chains
   ];
-  public selectedNetwork:any = "MainNet";
+  public selectedNetwork: any = "MainNet";
+  public popover: any = null;
   constructor(
     private translate: TranslateService,
     public theme: ThemeService,
     private titleBarService: TitleBarService,
+    private dataHelper: DataHelper,
+    public popupProvider: PopupProvider,
+    private popoverController: PopoverController,
+    private splashScreen: SplashScreen
   ) { }
 
   ngOnInit() {
@@ -26,10 +36,10 @@ export class SelectNetPage implements OnInit {
 
   ionViewWillEnter() {
     this.initTitle();
+    this.selectedNetwork = this.dataHelper.getDevelopNet();
   }
 
   initTitle() {
-
     this.titleBarService.setTitle(
       this.titleBar,
       this.translate.instant('SettingsPage.choose-network'),
@@ -39,6 +49,32 @@ export class SelectNetPage implements OnInit {
   }
 
   selectItem(selectedNetwork:string){
-    this.selectedNetwork = selectedNetwork
+    if (this.selectedNetwork != selectedNetwork) {
+      this.selectedNetwork = selectedNetwork;
+      this.dataHelper.setDevelopNet(this.selectedNetwork);
+      this.openAlert();
+    }
+  }
+
+  openAlert() {
+    this.popover = this.popupProvider.ionicAlert(
+      this,
+      // "ConfirmdialogComponent.signoutTitle",
+      'common.restartApp',
+      'common.restartAppDesc',
+      this.confirm,
+      'tskth.svg',
+      'common.ok',
+    );
+  }
+
+  confirm(that: any) {
+    if (this.popover != null) {
+      this.popover.dismiss();
+      this.popover = null;
+
+      that.splashScreen.show();
+      window.location.href = "/";
+    }
   }
 }

@@ -133,7 +133,9 @@ export const zh = {
     createOrderFail: '创建出售订单失败',
     checkingCollectibleResult: '等待创建的NFT Collectible在合约中生效',
     checkingOrderResult: '等待创建的NFT Collectible 订单在合约中生效',
-    developLog: '开发者日志'
+    developLog: '开发者日志',
+    restartApp: '重启应用',
+    restartAppDesc: '切换网络后需要重启应用'
   },
   app: {
     profileDetails: '档案详情',
