@@ -7,6 +7,7 @@ import { DataHelper } from 'src/app/services/DataHelper';
 import { PopupProvider } from 'src/app/services/popup';
 import { PopoverController } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
+import { GlobalService } from 'src/app/services/global.service';
 
 @Component({
   selector: 'app-select-net',
@@ -28,7 +29,8 @@ export class SelectNetPage implements OnInit {
     private dataHelper: DataHelper,
     public popupProvider: PopupProvider,
     private popoverController: PopoverController,
-    private splashScreen: SplashScreen
+    private splashScreen: SplashScreen,
+    private globalService: GlobalService
   ) { }
 
   ngOnInit() {
@@ -53,6 +55,8 @@ export class SelectNetPage implements OnInit {
       this.selectedNetwork = selectedNetwork;
       this.dataHelper.setDevelopNet(this.selectedNetwork);
       this.openAlert();
+
+      this.globalService.changeNet(this.selectedNetwork);
     }
   }
 
@@ -73,8 +77,7 @@ export class SelectNetPage implements OnInit {
       this.popover.dismiss();
       this.popover = null;
 
-      that.splashScreen.show();
-      window.location.href = "/";
+      that.globalService.restartApp();
     }
   }
 }
