@@ -20,6 +20,7 @@ import { IPFSService } from 'src/app/services/ipfs.service';
 import { NFTContractParsarService } from 'src/app/services/nftcontract_parsar.service';
 import { NFTContractStickerService } from 'src/app/services/nftcontract_sticker.service';
 import { NFTPersistenceHelper } from 'src/app/services/nft_persistence_helper.service';
+import { GlobalService } from 'src/app/services/global.service';
 
 enum LogLevel {
   NONE,
@@ -63,7 +64,8 @@ export class MyApp {
     private ipfsService: IPFSService,
     private nftContractParsarService: NFTContractParsarService,
     private nftContractStickerService: NFTContractStickerService,
-    private nftPersistenceHelper: NFTPersistenceHelper
+    private nftPersistenceHelper: NFTPersistenceHelper,
+    private globalService: GlobalService
   ) {
     this.initializeApp();
     this.initProfileData();
@@ -175,32 +177,21 @@ export class MyApp {
   }
 
   initSetting() {
-    this.dataHelper.loadDevelopLogMode();
-    this.dataHelper.loadDevelopNet();
+    this.dataHelper.loadDevelopLogMode().then((isOpenLog: boolean) => {
+      if (isOpenLog)
+        this.logUtils.setLogLevel(LogLevel.DEBUG);
+      else
+        this.logUtils.setLogLevel(LogLevel.WARN);
+    });
+    this.dataHelper.loadDevelopNet().then((net: string) => {
+      this.globalService.changeNet(net);
+    });
     this.feedService
       .getData('feeds.developerMode')
       .then(status => {
         if (status === null) {
           this.feedService.setDeveloperMode(false);
-          this.ipfsService.setTESTMode(false);
-          this.nftContractParsarService.setTestMode(false);
-          this.nftContractStickerService.setTestMode(false);
-          this.nftPersistenceHelper.setDevelopMode(false);
-          this.logUtils.setLogLevel(LogLevel.WARN);
           return;
-        }
-        if (status) {
-          this.ipfsService.setTESTMode(true);
-          this.nftContractParsarService.setTestMode(true);
-          this.nftContractStickerService.setTestMode(true);
-          this.nftPersistenceHelper.setDevelopMode(true);
-          this.logUtils.setLogLevel(LogLevel.DEBUG);
-        } else {
-          this.ipfsService.setTESTMode(false);
-          this.nftContractParsarService.setTestMode(false);
-          this.nftContractStickerService.setTestMode(false);
-          this.nftPersistenceHelper.setDevelopMode(false);
-          this.logUtils.setLogLevel(LogLevel.WARN);
         }
         this.feedService.setDeveloperMode(status);
       })
