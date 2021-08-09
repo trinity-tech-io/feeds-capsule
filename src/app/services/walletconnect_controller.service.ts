@@ -5,13 +5,12 @@ import { DataHelper } from 'src/app/services/DataHelper';
 import { Events } from 'src/app/services/events.service';
 
 import Web3 from 'web3';
+import { Config } from './config';
 
 @Injectable()
 export class WalletConnectControllerService {
-  private uri = 'https://api-testnet.elastos.io/eth';
-  private rpc = {
-    21: this.uri,
-  };
+  private uri = Config.CONTRACT_URI;
+  private rpc: any = Config.CONTRACT_RPC;
   // private infuraId: "0dd3ab5ca24946938c6d411a1637cc59";
   private accountAddress = '';
   private walletConnectProvider: WalletConnectProvider;
@@ -29,9 +28,9 @@ export class WalletConnectControllerService {
     return this.setupWalletConnectProvider();
   }
 
-  private async initWalletConnectProvider() {
-    // this.accountAddress = await this.dataHelper.loadWalletAccountAddress();
+  public async initWalletConnectProvider() {
     //  Create WalletConnect Provider
+    console.log("RPC", this.rpc);
     this.walletConnectProvider = new WalletConnectProvider({
       rpc: this.rpc,
       infuraId: '0dd3ab5ca24946938c6d411a1637cc59',
@@ -65,15 +64,9 @@ export class WalletConnectControllerService {
       console.error('error', code, reason);
     });
 
-    if (this.accountAddress != '') {
-      // await this.walletConnectProvider.enable();
-      // const connect = await this.walletConnectProvider.getWalletConnector()
-      // this.accountAddress = connect.accounts[0]
-      // this.dataHelper.saveWalletAccountAddress(this.accountAddress);
-      // await this.initWeb3();
-    } else {
+    console.log(this.accountAddress);
+    if (this.accountAddress == '')
       this.anonymousInitWeb3();
-    }
   }
 
   private async setupWalletConnectProvider() {
@@ -102,6 +95,7 @@ export class WalletConnectControllerService {
   }
 
   async initWeb3() {
+    console.log('initWeb3');
     this.walletConnectWeb3 = new Web3(this.walletConnectProvider as any);
     this.accountAddress = await this.parseAccountAddress();
     this.dataHelper.saveWalletAccountAddress(this.accountAddress);
@@ -147,6 +141,7 @@ export class WalletConnectControllerService {
   destroyWalletConnect() {
     this.walletConnectProvider = null;
     this.accountAddress = '';
+    this.walletConnectWeb3 = null;
     this.dataHelper.saveWalletAccountAddress(this.accountAddress);
     this.events.publish(FeedsEvent.PublishType.walletDisconnected);
     this.events.publish(FeedsEvent.PublishType.walletDisconnectedRefreshSM);
@@ -154,7 +149,7 @@ export class WalletConnectControllerService {
   }
 
   anonymousInitWeb3() {
-    if (typeof this.walletConnectWeb3 !== 'undefined') {
+    if (this.walletConnectWeb3 != null && typeof this.walletConnectWeb3 !== 'undefined') {
       this.walletConnectWeb3 = new Web3(this.walletConnectWeb3.currentProvider);
     } else {
       this.walletConnectWeb3 = new Web3(
@@ -162,5 +157,16 @@ export class WalletConnectControllerService {
       );
       console.log('Web3 version is ' + this.walletConnectWeb3.version);
     }
+  }
+
+  setTestMode(mode: boolean) {
+    if (mode) {
+      this.rpc = Config.CONTRACT_TEST_RPC;
+      this.uri = Config.CONTRACT_TEST_URI;
+      return;
+    }
+
+    this.uri = Config.CONTRACT_URI;
+    this.rpc = Config.CONTRACT_RPC;
   }
 }
