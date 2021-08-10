@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { DID } from '@elastosfoundation/elastos-connectivity-sdk-cordova';
-import { LogUtils } from 'src/app/services/LogUtils';
 import { StorageService } from 'src/app/services/StorageService';
+import { Logger } from './logger';
 
 declare let didManager: DIDPlugin.DIDManager;
 let TAG: string = 'StandardAuthService';
@@ -10,7 +10,6 @@ let TAG: string = 'StandardAuthService';
 export class StandardAuthService {
   private appIdCredential: DIDPlugin.VerifiableCredential = null;
   constructor(
-    private logUtils: LogUtils,
     private storeService: StorageService,
   ) {}
 
@@ -98,11 +97,7 @@ export class StandardAuthService {
     authChallengeJwttoken: string,
   ): Promise<FeedsData.StandardAuthResult> {
     return new Promise(async (resolve, reject) => {
-      this.logUtils.logd(
-        'Starting process to generate auth presentation JWT, authChallengeJwttoken is ' +
-          authChallengeJwttoken,
-        TAG,
-      );
+      Logger.log(TAG, 'Starting process to generate auth presentation JWT, authChallengeJwttoken is ', authChallengeJwttoken);
       if (
         authChallengeJwttoken == null ||
         authChallengeJwttoken == undefined ||
@@ -116,12 +111,9 @@ export class StandardAuthService {
       try {
         parseResult = await didManager.parseJWT(true, authChallengeJwttoken);
       } catch (error) {
-        this.logUtils.loge('Parse JWT error,' + JSON.stringify(error), TAG);
+        Logger.error(TAG, 'Parse JWT error,', error);
       }
-      this.logUtils.logd(
-        'Parse JWT Result is' + JSON.stringify(parseResult),
-        TAG,
-      );
+      Logger.log(TAG, 'Parse JWT Result is', parseResult);
       if (!parseResult) {
         reject('Parse jwt error, parse result null');
         return;
@@ -155,7 +147,7 @@ export class StandardAuthService {
       let description = (parseResult.payload['description'] as string) || '';
       let elaAddress = (parseResult.payload['elaAddress'] as string) || '';
 
-      this.logUtils.logd('Getting app instance DID', TAG);
+      Logger.log(TAG, 'Getting app instance DID');
       let didAccess = new DID.DIDAccess();
       let appInstanceDID = (await didAccess.getOrCreateAppInstanceDID()).did;
       let appInstanceDIDInfo = await didAccess.getExistingAppInstanceDIDInfo();
@@ -167,12 +159,9 @@ export class StandardAuthService {
         this.appIdCredential,
       );
 
-      this.logUtils.logd(
-        'AppIdCredential is ' + JSON.stringify(this.appIdCredential),
-        TAG,
-      );
+      Logger.log(TAG, 'AppIdCredential is ', this.appIdCredential);
       if (!this.appIdCredential) {
-        this.logUtils.logw('Empty app id credential', TAG);
+        Logger.warn(TAG, 'Empty app id credential');
         resolve(null);
         return;
       }
@@ -186,21 +175,20 @@ export class StandardAuthService {
         async presentation => {
           if (presentation) {
             // Generate the back end authentication JWT
-            this.logUtils.logd(
-              'Opening DID store to create a JWT for presentation:' +
-                presentation,
-              TAG,
+            Logger.log(TAG,
+              'Opening DID store to create a JWT for presentation:',
+              presentation
             );
             let didStore = await DID.DIDHelper.openDidStore(
               appInstanceDIDInfo.storeId,
             );
 
-            this.logUtils.logd('Loading DID document', TAG);
+            Logger.log(TAG, 'Loading DID document');
             didStore.loadDidDocument(
               appInstanceDIDInfo.didString,
               async didDocument => {
                 let validityDays = 2;
-                this.logUtils.logd('Creating JWT', TAG);
+                Logger.log(TAG, 'Creating JWT');
                 didDocument.createJWT(
                   {
                     presentation: JSON.parse(await presentation.toJson()),
@@ -208,10 +196,7 @@ export class StandardAuthService {
                   validityDays,
                   appInstanceDIDInfo.storePassword,
                   jwtToken => {
-                    this.logUtils.logd(
-                      'JWT created for presentation:' + jwtToken,
-                      TAG,
-                    );
+                    Logger.log(TAG, 'JWT created for presentation:', jwtToken);
                     let result: FeedsData.StandardAuthResult = {
                       jwtToken: jwtToken,
                       serverName: name,
@@ -234,10 +219,7 @@ export class StandardAuthService {
           }
         },
         err => {
-          this.logUtils.logd(
-            'CreateVerifiablePresentation error:' + JSON.stringify(err),
-            TAG,
-          );
+          Logger.error(TAG, 'Create Verifiable Presentation error', err);
         },
       );
     });
@@ -270,7 +252,7 @@ export class StandardAuthService {
         return '';
       return credential.credentialSubject.name;
     } catch (error) {
-      this.logUtils.loge('Parse local credential error ' + error, TAG);
+      Logger.error(TAG, 'Parse local credential error ', error);
     }
   }
 
@@ -280,7 +262,7 @@ export class StandardAuthService {
   ): Promise<DIDPlugin.VerifiableCredential> {
     return new Promise(async (resolve, reject) => {
       let vcstring = await vc.toString();
-      this.logUtils.logd('Start append name, vc is ' + vcstring);
+      Logger.log(TAG, 'Start append name, vc is ', vcstring);
 
       try {
         let vcJSON = JSON.parse(vcstring);
@@ -294,16 +276,14 @@ export class StandardAuthService {
           resolve(null);
         vcJSON.credentialSubject['name'] = name;
 
-        this.logUtils.logd(
-          'Append name to credential ' + JSON.stringify(vcJSON),
-        );
+        Logger.log(TAG, 'Append name to credential ', vcJSON);
         resolve(
           didManager.VerifiableCredentialBuilder.fromJson(
             JSON.stringify(vcJSON),
           ),
         );
       } catch (error) {
-        this.logUtils.loge('Append name to credential error ' + error, TAG);
+        Logger.error(TAG, 'Append name to credential error ', error);
         resolve(null);
       }
     });
@@ -314,21 +294,13 @@ export class StandardAuthService {
   ): Promise<DIDPlugin.VerifiableCredential> {
     return new Promise(async (resolve, reject) => {
       if (appIdCredential != null && appIdCredential != undefined) {
-        this.logUtils.logd(
-          'Get credential from memory , credential is ' +
-            JSON.stringify(appIdCredential),
-          TAG,
-        );
+        Logger.log(TAG, 'Get credential from memory , credential is ', appIdCredential);
         resolve(appIdCredential);
         return;
       }
 
       let mAppIdCredential = await this.storeService.get('appIdCredential');
-      this.logUtils.logd(
-        'Get credential from storage , credential is ' +
-          JSON.stringify(mAppIdCredential),
-        TAG,
-      );
+      Logger.log(TAG, 'Get credential from storage , credential is ', mAppIdCredential);
       resolve(mAppIdCredential);
     });
   }
@@ -338,36 +310,24 @@ export class StandardAuthService {
   ): Promise<DIDPlugin.VerifiableCredential> {
     return new Promise(async (resolve, reject) => {
       if (this.checkCredentialValid(appIdCredential)) {
-        this.logUtils.logd(
-          'Credential valid , credential is ' + JSON.stringify(appIdCredential),
-          TAG,
-        );
+        Logger.log(TAG, 'Credential valid , credential is ', appIdCredential);
         resolve(appIdCredential);
         return;
       }
 
-      this.logUtils.logd('Credential invalid', TAG);
-      this.logUtils.logd('Getting app identity credential', TAG);
+      Logger.warn(TAG, 'Credential invalid, Getting app identity credential');
       let didAccess = new DID.DIDAccess();
       try {
         let mAppIdCredential = await didAccess.getExistingAppIdentityCredential();
         if (mAppIdCredential) {
-          this.logUtils.logd(
-            'Get app identity credential, credential is ' +
-              JSON.stringify(mAppIdCredential),
-            TAG,
-          );
+          Logger.log(TAG, 'Get app identity credential', mAppIdCredential);
           resolve(mAppIdCredential);
           return;
         }
 
         mAppIdCredential = await didAccess.generateAppIdCredential();
         if (mAppIdCredential) {
-          this.logUtils.logd(
-            'Generate app identity credential, credential is ' +
-              JSON.stringify(mAppIdCredential),
-            TAG,
-          );
+          Logger.log(TAG, 'Generate app identity credential, credential is ', mAppIdCredential);
           resolve(mAppIdCredential);
           return;
         }
@@ -375,10 +335,11 @@ export class StandardAuthService {
         let error =
           'Get app identity credential error, credential is ' +
           JSON.stringify(mAppIdCredential);
-        this.logUtils.loge(error, TAG);
+        Logger.error(TAG, error);
         reject(error);
       } catch (error) {
         reject(error);
+        Logger.error(TAG, error);
       }
     });
   }

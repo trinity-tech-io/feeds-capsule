@@ -1,12 +1,11 @@
 import { Injectable } from '@angular/core';
-import { LogUtils } from 'src/app/services/LogUtils';
 import { FileService } from 'src/app/services/FileService';
 
 let TAG: string = 'Feeds-FileHelperService';
 let carrierPath: string = '/carrier/';
 @Injectable()
 export class FileHelperService {
-  constructor(private logUtils: LogUtils, private fileService: FileService) {}
+  constructor(private fileService: FileService) { }
 
   moveCarrierData(oldName: string, newName: string): Promise<Entry> {
     return new Promise(async (resolve, reject) => {

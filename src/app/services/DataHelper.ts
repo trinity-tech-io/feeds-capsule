@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { LogUtils } from 'src/app/services/LogUtils';
 import { StorageService } from 'src/app/services/StorageService';
 
 import * as _ from 'lodash';
@@ -102,7 +101,6 @@ export class DataHelper {
   private apiProvider: string = 'elastos.io';
 
   constructor(
-    private logUtils: LogUtils,
     private storageService: StorageService,
   ) {}
 

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Events } from 'src/app/services/events.service';
 import { SerializeDataService } from 'src/app/services/SerializeDataService';
 import { TransportService } from 'src/app/services/TransportService';
-import { LogUtils } from 'src/app/services/LogUtils';
+import { Logger } from './logger';
 
 let TAG: string = 'Feeds-JSONRpc';
 let eventBus = null;
@@ -45,21 +45,14 @@ export class JsonRPCService {
   constructor(
     private serializeDataService: SerializeDataService,
     private transportService: TransportService,
-    private events: Events,
-    private logUtils: LogUtils,
+    private events: Events
   ) {
     eventBus = events;
     this.events.subscribe(
       FeedsEvent.PublishType.transportReceiveMessage,
       event => {
         let data = serializeDataService.decodeData(event.message);
-        this.logUtils.logd(
-          'Receive RPC msg , nodeId is ' +
-            event.from +
-            ' msg is ' +
-            JSON.stringify(data),
-          TAG,
-        );
+        Logger.log(TAG, 'Receive RPC msg , nodeId is ', event.from, ' msg is ', data);
         eventBus.publish(
           FeedsEvent.PublishType.jrpcReceiveMessage,
           this.response(event.from, data),
@@ -88,13 +81,7 @@ export class JsonRPCService {
     let requestBean = new RequestBean(id, method, params, memo);
     requestQueue.push(requestBean);
     let request = this.assembleJson(id, method, params, memo, version);
-    this.logUtils.logd(
-      'Send RPC msg , nodeId is ' +
-        nodeId +
-        ' msg is ' +
-        JSON.stringify(request),
-      TAG,
-    );
+    Logger.log(TAG, 'Send RPC msg , nodeId is ', nodeId, ' msg is ', request);
     let encodeData = this.serializeDataService.encodeData(request);
 
     this.transportService.sendArrayMessage(

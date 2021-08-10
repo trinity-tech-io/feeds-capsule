@@ -5,8 +5,8 @@ import { ThemeService } from 'src/app/services/theme.service';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { FeedService } from 'src/app/services/FeedService';
-import { LogUtils, LogLevel } from 'src/app/services/LogUtils';
 import { DataHelper } from 'src/app/services/DataHelper';
+import { Logger, LogLevel } from 'src/app/services/logger';
 
 @Component({
   selector: 'app-developer',
@@ -24,7 +24,6 @@ export class DeveloperPage implements OnInit {
     private native: NativeService,
     private feedService: FeedService,
     private zone: NgZone,
-    private logUtils: LogUtils,
     private dataHelper: DataHelper
   ) { }
 
@@ -56,10 +55,9 @@ export class DeveloperPage implements OnInit {
       this.openLog = !this.openLog;
     });
     this.dataHelper.setDevelopLogMode(this.openLog);
-    if (this.openLog) {
-      this.logUtils.setLogLevel(LogLevel.DEBUG);
-    } else {
-      this.logUtils.setLogLevel(LogLevel.WARN);
-    }
+    if (this.openLog)
+      Logger.setLogLevel(LogLevel.DEBUG);
+    else
+      Logger.setLogLevel(LogLevel.WARN);
   }
 }

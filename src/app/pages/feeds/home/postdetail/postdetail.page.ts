@@ -10,11 +10,11 @@ import { TranslateService } from '@ngx-translate/core';
 import { UtilService } from 'src/app/services/utilService';
 import { IonInfiniteScroll, PopoverController } from '@ionic/angular';
 import { AppService } from 'src/app/services/AppService';
-import { LogUtils } from 'src/app/services/LogUtils';
 import { ViewHelper } from 'src/app/services/viewhelper.service';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import * as _ from 'lodash';
+import { Logger } from 'src/app/services/logger';
 
 let TAG: string = 'Feeds-postview';
 @Component({
@@ -129,7 +129,6 @@ export class PostdetailPage implements OnInit {
     public menuService: MenuService,
     public appService: AppService,
     public modalController: ModalController,
-    private logUtils: LogUtils,
     private titleBarService: TitleBarService,
     private viewHelper: ViewHelper,
   ) {}
@@ -276,17 +275,14 @@ export class PostdetailPage implements OnInit {
 
     this.events.subscribe(FeedsEvent.PublishType.connectionChanged, status => {
       this.zone.run(() => {
-        this.logUtils.logd(
-          'Received connectionChanged event, Connection change to ' + status,
-          TAG,
-        );
+        Logger.log(TAG, 'Received connectionChanged event, Connection change to ', status);
         this.connectionStatus = status;
       });
     });
 
     this.events.subscribe(FeedsEvent.PublishType.commentDataUpdate, () => {
       this.zone.run(() => {
-        this.logUtils.logd('Received commentDataUpdate event', TAG);
+        Logger.log(TAG, 'Received commentDataUpdate event');
         this.startIndex = 0;
         this.initData(true);
       });
@@ -299,14 +295,13 @@ export class PostdetailPage implements OnInit {
           let nodeId = getCommentData.nodeId;
           let channelId = getCommentData.channelId;
           let postId = getCommentData.postId;
-          this.logUtils.logd(
-            'Received getCommentFinish event, nodeId is ' +
-              nodeId +
-              ' channelId is' +
-              channelId +
-              ' postId is ' +
-              postId,
-            TAG,
+          Logger.log(TAG,
+            'Received getCommentFinish event, nodeId is ',
+            nodeId,
+            ' channelId is',
+            channelId,
+            ' postId is ',
+            postId
           );
           if (
             nodeId == this.nodeId &&
@@ -333,7 +328,7 @@ export class PostdetailPage implements OnInit {
 
     this.events.subscribe(FeedsEvent.PublishType.refreshPostDetail, () => {
       this.zone.run(() => {
-        this.logUtils.logd('Received refreshPostDetail event', TAG);
+        Logger.log(TAG, 'Received refreshPostDetail event');
         let post = this.feedService.getPostFromId(
           this.nodeId,
           this.channelId,
@@ -347,45 +342,45 @@ export class PostdetailPage implements OnInit {
     });
 
     this.events.subscribe(FeedsEvent.PublishType.editPostFinish, () => {
-      this.logUtils.logd('Received editPostFinish event', TAG);
+      Logger.log(TAG, 'Received editPostFinish event');
       this.initData(true);
     });
 
     this.events.subscribe(FeedsEvent.PublishType.deletePostFinish, () => {
-      this.logUtils.logd('Received deletePostFinish event', TAG);
+      Logger.log(TAG, 'Received deletePostFinish event');
       this.events.publish(FeedsEvent.PublishType.updateTab);
       this.native.hideLoading();
       this.initData(true);
     });
 
     this.events.subscribe(FeedsEvent.PublishType.editCommentFinish, () => {
-      this.logUtils.logd('Received editCommentFinish event', TAG);
+      Logger.log(TAG, 'Received editCommentFinish event');
       this.initData(false);
     });
 
     this.events.subscribe(FeedsEvent.PublishType.deleteCommentFinish, () => {
-      this.logUtils.logd('Received deleteCommentFinish event', TAG);
+      Logger.log(TAG, 'Received deleteCommentFinish event');
       this.native.hideLoading();
       this.initData(false);
     });
 
     this.events.subscribe(FeedsEvent.PublishType.rpcRequestError, () => {
       this.zone.run(() => {
-        this.logUtils.logd('Received rpcRequest error event', TAG);
+        Logger.log(TAG, 'Received rpcRequest error event');
         this.native.hideLoading();
       });
     });
 
     this.events.subscribe(FeedsEvent.PublishType.rpcResponseError, () => {
       this.zone.run(() => {
-        this.logUtils.logd('Received rpcResponse error event', TAG);
+        Logger.log(TAG, 'Received rpcResponse error event');
         this.native.hideLoading();
       });
     });
 
     this.events.subscribe(FeedsEvent.PublishType.rpcRequestSuccess, () => {
       this.zone.run(() => {
-        this.logUtils.logd('Received rpcRequest success event', TAG);
+        Logger.log(TAG, 'Received rpcRequest success event');
         this.startIndex = 0;
         this.initRefresh();
         this.native.hideLoading();
@@ -397,7 +392,7 @@ export class PostdetailPage implements OnInit {
       FeedsEvent.PublishType.streamGetBinaryResponse,
       () => {
         this.zone.run(() => {
-          this.logUtils.logd('Received streamGetBinaryResponse event', TAG);
+          Logger.log(TAG, 'Received streamGetBinaryResponse event');
         });
       },
     );
@@ -409,12 +404,11 @@ export class PostdetailPage implements OnInit {
           let nodeId = getBinaryData.nodeId;
           let key = getBinaryData.key;
           let value = getBinaryData.value;
-          this.logUtils.logd(
-            'Received getBinaryFinish event, nodeId is ' +
-              nodeId +
-              ', key is ' +
-              key,
-            TAG,
+          Logger.log(TAG,
+            'Received getBinaryFinish event, nodeId is ',
+            nodeId,
+            ', key is ',
+            key
           );
           if (this.nodeId != nodeId) {
             return;
@@ -431,7 +425,7 @@ export class PostdetailPage implements OnInit {
           let nodeId = getBinaryData.nodeId;
           let key = getBinaryData.key;
           let value = getBinaryData.value;
-          this.logUtils.logd(
+          Logger.log(TAG,
             'Received streamGetBinarySuccess event, nodeId is ' +
               nodeId +
               ', key is ' +
@@ -453,10 +447,7 @@ export class PostdetailPage implements OnInit {
         this.zone.run(() => {
           let nodeId = streamErrorData.nodeId;
           let error = streamErrorData.error;
-          this.logUtils.logd(
-            'Received streamError event, nodeId is ' + nodeId,
-            TAG,
-          );
+          Logger.log(TAG, 'Received streamError event, nodeId is ', nodeId);
           if (this.nodeId != nodeId) {
             return;
           }
@@ -478,10 +469,7 @@ export class PostdetailPage implements OnInit {
         this.zone.run(() => {
           let nodeId = streamStateChangedData.nodeId;
           let state = streamStateChangedData.streamState;
-          this.logUtils.logd(
-            'Received streamOnStateChangedCallback event, nodeId is ' + nodeId,
-            TAG,
-          );
+          Logger.log(TAG, 'Received streamOnStateChangedCallback event, nodeId is ', nodeId);
           if (this.nodeId != nodeId) {
             return;
           }
@@ -504,10 +492,7 @@ export class PostdetailPage implements OnInit {
         this.zone.run(() => {
           let nodeId = streamProgressData.nodeId;
           let progress = streamProgressData.progress;
-          this.logUtils.logd(
-            'Received streamProgress event, nodeId is ' + nodeId,
-            TAG,
-          );
+          Logger.log(TAG, 'Received streamProgress event, nodeId is ', nodeId);
           if (this.nodeId != nodeId) {
             return;
           }
@@ -547,7 +532,7 @@ export class PostdetailPage implements OnInit {
     );
 
     this.events.subscribe(FeedsEvent.PublishType.openRightMenu, () => {
-      this.logUtils.logd('Received openRightMenu event', TAG);
+      Logger.log(TAG, 'Received openRightMenu event');
       this.isImgLoading = false;
       this.isImgPercentageLoading = false;
       this.imgDownStatus = '';
@@ -561,10 +546,7 @@ export class PostdetailPage implements OnInit {
     });
 
     this.events.subscribe(FeedsEvent.PublishType.streamClosed, nodeId => {
-      this.logUtils.logd(
-        'Received streamClosed event, nodeId is ' + nodeId,
-        TAG,
-      );
+      Logger.log(TAG, 'Received streamClosed event, nodeId is ', nodeId);
       if (this.nodeId != nodeId) {
         return;
       }
@@ -904,10 +886,9 @@ export class PostdetailPage implements OnInit {
           this.postImage = image || '';
         })
         .catch(reason => {
-          this.logUtils.loge(
-            "Excute 'getImage' in post page is error , get image data error, error msg is " +
-              JSON.stringify(reason),
-            TAG,
+          Logger.log(TAG,
+            "Excute 'getImage' in post page is error , get image data error, error msg is ",
+            reason
           );
         });
     }

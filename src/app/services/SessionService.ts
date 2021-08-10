@@ -5,10 +5,10 @@ import { TranslateService } from '@ngx-translate/core';
 import { CarrierService } from 'src/app/services/CarrierService';
 import { SerializeDataService } from 'src/app/services/SerializeDataService';
 import { StorageService } from 'src/app/services/StorageService';
-import { LogUtils } from 'src/app/services/LogUtils';
+import { Logger } from './logger';
 
 let TAG: string = 'Feeds-session';
-let mLogUtils: LogUtils;
+
 let autoIncreaseId: number = 1;
 type WorkedSession = {
   nodeId: string;
@@ -81,14 +81,12 @@ export class SessionService {
     private translate: TranslateService,
     private carrierService: CarrierService,
     private serializeDataService: SerializeDataService,
-    private storageService: StorageService,
-    private logUtils: LogUtils,
+    private storageService: StorageService
   ) {
     eventBus = events;
     mStorageService = this.storageService;
     mCarrierService = this.carrierService;
     mSerializeDataService = this.serializeDataService;
-    mLogUtils = this.logUtils;
   }
 
   createSession(
@@ -121,15 +119,12 @@ export class SessionService {
             onStateChanged: function(event: any) {
               if (workedSessions[nodeId] == undefined) {
                 isBusy = false;
-                mLogUtils.logd('Session was closed, nodeId is ' + nodeId, TAG);
+                Logger.log(TAG, 'Session was closed, nodeId is ', nodeId);
                 return;
               }
 
               if (event == undefined) {
-                mLogUtils.logd(
-                  'Session state change to unknow, nodeId is ' + nodeId,
-                  TAG,
-                );
+                Logger.log(TAG, 'Session state change to unknow, nodeId is ', nodeId);
                 workedSessions[nodeId].StreamState =
                   FeedsData.StreamState.UNKNOW;
               } else {
@@ -147,15 +142,7 @@ export class SessionService {
                 'failed',
                 'unknow',
               ];
-              mLogUtils.logd(
-                'Session stream [' +
-                  event.stream.id +
-                  '] state change to ' +
-                  state_name[workedSessions[nodeId].StreamState] +
-                  ' nodeId is ' +
-                  nodeId,
-                TAG,
-              );
+              Logger.log(TAG, 'Session stream [', event.stream.id, '] state change to ', state_name[workedSessions[nodeId].StreamState], ' nodeId is ', nodeId);
               let streamStateChangedData: FeedsEvent.StreamStateChangedData = {
                 nodeId: nodeId,
                 streamState: workedSessions[nodeId].StreamState,
@@ -188,23 +175,13 @@ export class SessionService {
                     clearTimeout(workedSessions[nodeId].sessionTimeout);
                 }, sessionConnectionTimeOut);
 
-                mLogUtils.logd(
-                  'Prepare send session request to the friend, nodeId is ' +
-                    nodeId,
-                  TAG,
-                );
+                Logger.log(TAG, 'Prepare send session request to the friend, nodeId is ', nodeId);
                 mCarrierService.sessionRequest(
                   mSession,
                   function(event: any) {
                     let sdp = event.sdp;
                     workedSessions[nodeId].sdp = sdp;
-                    mLogUtils.logd(
-                      'Receive the session response, nodeId is ' +
-                        nodeId +
-                        ', sdp is ' +
-                        sdp,
-                      TAG,
-                    );
+                    Logger.log(TAG, 'Receive the session response, nodeId is ', nodeId, ', sdp is ', sdp);
                     if (
                       workedSessions[nodeId] != undefined &&
                       workedSessions[nodeId].StreamState ==
@@ -214,20 +191,11 @@ export class SessionService {
                     }
                   },
                   () => {
-                    mLogUtils.logd(
-                      'Session request success, nodeId is ' + nodeId,
-                      TAG,
-                    );
+                    Logger.log(TAG, 'Session request success, nodeId is ', nodeId);
                   },
                   err => {
                     publishError(nodeId, createSessionRequestError(), memo);
-                    mLogUtils.loge(
-                      'Session request error, nodeId is ' +
-                        nodeId +
-                        ' error msg is ' +
-                        JSON.stringify(err),
-                      TAG,
-                    );
+                    Logger.error(TAG, 'Session request error, nodeId is ', nodeId, ' error msg is ', err);
                   },
                 );
               }
@@ -238,13 +206,7 @@ export class SessionService {
                   workedSessions[nodeId].StreamState
               ) {
                 let sdp = workedSessions[nodeId].sdp;
-                mLogUtils.logd(
-                  "Get ready to execute 'start session', nodeId is " +
-                    nodeId +
-                    ' transport ready, sdp is ' +
-                    sdp,
-                  TAG,
-                );
+                Logger.log(TAG, "Get ready to execute 'start session', nodeId is ", nodeId, ' transport ready, sdp is ', sdp);
                 if (sdp != '') {
                   sessionStart(nodeId, mSession, sdp, memo);
                 }
@@ -277,13 +239,7 @@ export class SessionService {
 
             onStreamData: function(event: any) {
               let tmpData: Uint8Array = event.data;
-              mLogUtils.logd(
-                'Receive stream data callback, nodeId is' +
-                  nodeId +
-                  'data length is' +
-                  tmpData.length,
-                TAG,
-              );
+              Logger.log(TAG, 'Receive stream data callback, nodeId is', nodeId, 'data length is', tmpData.length);
               if (cacheData[nodeId] == undefined) {
                 cacheData[nodeId] = {
                   nodeId: nodeId,
@@ -318,34 +274,19 @@ export class SessionService {
             workedSessions[nodeId].stream = mStream;
             workedSessions[nodeId].session = mSession;
             onSuccess(mSession, mStream);
-            mLogUtils.logd(
-              "Excute 'addStream' success, nodeId is " + nodeId,
-              TAG,
-            );
+            Logger.log(TAG, "Excute 'addStream' success, nodeId is ", nodeId);
           },
           err => {
             onError(err);
             publishError(nodeId, createAddStreamError(), memo);
-            mLogUtils.loge(
-              "Excute 'addStream' error, nodeId is " +
-                nodeId +
-                ' error msg is ' +
-                JSON.stringify(err),
-              TAG,
-            );
+            Logger.error(TAG, "Excute 'addStream' error, nodeId is ", nodeId, ' error msg is ', err);
           },
         );
       },
       err => {
         onError(err);
         publishError(nodeId, createNewSessionError(), memo);
-        mLogUtils.loge(
-          "Excute 'newSession' error, nodeId is" +
-            nodeId +
-            ' error msg is' +
-            JSON.stringify(err),
-          TAG,
-        );
+        Logger.error(TAG, "Excute 'newSession' error, nodeId is", nodeId, ' error msg is', err);
       },
     );
   }
@@ -406,13 +347,7 @@ export class SessionService {
       memo: memo,
     };
     requestQueue.push(requestBean);
-    mLogUtils.logd(
-      'Generate request params, nodeId is' +
-        nodeId +
-        ' params is ' +
-        JSON.stringify(request),
-      TAG,
-    );
+    Logger.log(TAG, 'Generate request params, nodeId is', nodeId, ' params is ', request);
     cacheData[nodeId] = {
       nodeId: nodeId,
       data: new Uint8Array(0),
@@ -474,11 +409,7 @@ export class SessionService {
       workedSessions == undefined ||
       workedSessions[nodeId] == undefined
     ) {
-      mLogUtils.loge(
-        "Excute 'add data' error , session changed to null , nodeId is" +
-          nodeId,
-        TAG,
-      );
+      Logger.error(TAG, "Excute 'add data' error , session changed to null , nodeId is", nodeId);
       return;
     }
 
@@ -500,10 +431,7 @@ export class SessionService {
       },
       err => {
         publishError(nodeId, createWriteDataError(), memo);
-        mLogUtils.loge(
-          'Write date to ' + nodeId + ' error ' + JSON.stringify(err),
-          TAG,
-        );
+        Logger.error(TAG, 'Write date to ', nodeId, ' error ', err);
       },
     );
   }
@@ -522,7 +450,7 @@ export class SessionService {
       if (session === '') {
         return;
       }
-      mLogUtils.logd('Close session , nodeId is ' + nodeId, TAG);
+      Logger.log(TAG, 'Close session , nodeId is ', nodeId);
       this.carrierService.sessionClose(
         workedSessions[nodeId].session,
         () => {
@@ -534,7 +462,7 @@ export class SessionService {
 
           cacheData[nodeId] = undefined;
           delete cacheData[nodeId];
-          mLogUtils.logd('Close session success, nodeId is ' + nodeId, TAG);
+          Logger.log(TAG, 'Close session success, nodeId is ', nodeId);
           isBusy = false;
           resolve('success');
         },
@@ -627,7 +555,7 @@ function encodeNum(data: number, size: number): Uint8Array {
   } else if (size === 8) {
     return parseInt64(data);
   } else {
-    mLogUtils.loge('Encode number size error, data size is ' + size, TAG);
+    Logger.error(TAG, 'Encode number size error, data size is ', size);
     return null;
   }
 }
@@ -751,13 +679,7 @@ function decodeBodyData(nodeId: string): boolean {
   let key = cacheData[nodeId].key;
   if (cacheData[nodeId].method == 'get_binary') {
     mStorageService.set(key, value).then(() => {
-      mLogUtils.logd(
-        'Decode body data and save to storage success, nodeId is ' +
-          nodeId +
-          ', data key is ' +
-          key,
-        TAG,
-      );
+      Logger.log(TAG, 'Decode body data and save to storage success, nodeId is ', nodeId, ', data key is ', key);
       let getBinaryData: FeedsEvent.GetBinaryData = {
         nodeId: nodeId,
         key: key,
@@ -805,21 +727,18 @@ function parseResponse(response: any) {
   // {"version":"1.0","id":1,"result":{"key":"8afJxa7RTamSrXWxUCcZt8jnAAjAGfx4gmN5ECwq2XSi230"}}
   let version: string = response.version || '';
   if (version == '' || version != '1.0') {
-    mLogUtils.loge('Parse response version err, version is' + version, TAG);
+    Logger.error(TAG, 'Parse response version err, version is', version);
     return;
   }
 
   let id = response.id || '';
   if (id == '') {
-    mLogUtils.loge('Parse response id err, id is' + id, TAG);
+    Logger.error(TAG, 'Parse response id err, id is', id);
     return;
   }
 
   let request = queryRequest(response.id, response.result);
-  mLogUtils.logd(
-    'Receive Session Response, Request is ' + JSON.stringify(request),
-    TAG,
-  );
+  Logger.error(TAG, 'Receive Session Response, Request is ', request);
 
   let method = request.method;
   let nodeId = request.nodeId;
@@ -842,14 +761,13 @@ function parseResponse(response: any) {
   if (error != '') {
     let code = error.code;
     let message = error.message;
-    mLogUtils.loge(
-      'Receive error form response, nodeId is ' +
-        nodeId +
-        ', error code is ' +
-        code +
-        ', error message is ' +
-        message,
-      TAG,
+    Logger.error(TAG,
+      'Receive error form response, nodeId is ',
+      nodeId,
+      ', error code is ',
+      code,
+      ', error message is ',
+      message
     );
     publishError(nodeId, response.error, memo);
     return;
@@ -857,17 +775,14 @@ function parseResponse(response: any) {
 
   let key = response.result.key || '';
   if (key == '') {
-    mLogUtils.logd('Receive error form response, but data key is null', TAG);
+    Logger.error(TAG, 'Receive error form response, but data key is null');
     return;
   }
 
   isBusy = false;
   cacheData[nodeId].key = key;
   if (method == 'set_binary') {
-    mLogUtils.logd(
-      "Parse 'set_binary' data finish and publish events, nodeId is " + nodeId,
-      TAG,
-    );
+    Logger.log(TAG, "Parse 'set_binary' data finish and publish events, nodeId is ", nodeId);
     let setBinaryFinishData: FeedsEvent.setBinaryFinishData = {
       nodeId: nodeId,
       feedId: feedId,
@@ -891,10 +806,7 @@ function parseResponse(response: any) {
       setBinaryData,
     );
   } else if (method == 'get_binary') {
-    mLogUtils.logd(
-      "Parse 'get_binary' data finish and publish events, nodeId is " + nodeId,
-      TAG,
-    );
+    Logger.log(TAG, "Parse 'get_binary' data finish and publish events, nodeId is ", nodeId);
     eventBus.publish(FeedsEvent.PublishType.streamGetBinaryResponse, nodeId);
   }
 }
@@ -1065,12 +977,11 @@ function publishProgress(
   method: string,
   key: string,
 ) {
-  mLogUtils.logd(
-    'Publish stream process progress, nodeId is ' +
-      nodeId +
-      ', progress is ' +
-      progress,
-    TAG,
+  Logger.log(TAG,
+    'Publish stream process progress, nodeId is ',
+    nodeId,
+    ', progress is ',
+    progress
   );
 
   let streamProgressData: FeedsEvent.StreamProgressData = {
@@ -1148,7 +1059,7 @@ function decodeData(nodeId: string) {
 
 function checkBody(nodeId: string, data: Uint8Array) {
   if (cacheData[nodeId].bodySize == 0) {
-    mLogUtils.logd('Body size is 0', TAG);
+    Logger.log(TAG, 'Body size is 0');
     return;
   }
 
@@ -1177,10 +1088,7 @@ function checkBody(nodeId: string, data: Uint8Array) {
     let key = cacheData[nodeId].key;
     if (cacheData[nodeId].method == 'get_binary') {
       mStorageService.set(key, value).then(() => {
-        mLogUtils.logd(
-          "Publish 'streamGetBinarySuccess' event, nodeId is " + nodeId,
-          TAG,
-        );
+        Logger.log(TAG, "Publish 'streamGetBinarySuccess' event, nodeId is ", nodeId);
         let getBinaryData: FeedsEvent.GetBinaryData = {
           nodeId: nodeId,
           key: key,
@@ -1206,18 +1114,15 @@ function sessionStart(
   sdp: string,
   memo: FeedsData.SessionMemoData,
 ) {
-  mLogUtils.logd('Start session , nodeId is ' + nodeId, TAG);
+  Logger.log(TAG, 'Start session , nodeId is ', nodeId);
   mCarrierService.sessionStart(
     mSession,
     sdp,
     () => {
-      mLogUtils.logd('Start session success, nodeId is ' + nodeId, TAG);
+      Logger.log(TAG, 'Start session success, nodeId is ', nodeId);
     },
     err => {
-      mLogUtils.loge(
-        'Start session error , nodeId is ' + nodeId + ' error is ' + err,
-        TAG,
-      );
+      Logger.error(TAG, 'Start session error , nodeId is ', nodeId, ' error is ', err);
       publishError(nodeId, createSessionStartError(), memo);
     },
   );

@@ -20,11 +20,11 @@ import { TranslateService } from '@ngx-translate/core';
 import { VideoEditor } from '@ionic-native/video-editor/ngx';
 import { AppService } from '../../../services/AppService';
 import { UtilService } from '../../../services/utilService';
-import { LogUtils } from '../../../services/LogUtils';
 import { StorageService } from '../../../services/StorageService';
 import { ViewHelper } from 'src/app/services/viewhelper.service';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { Logger } from 'src/app/services/logger';
 
 let TAG: string = 'Feeds-createpost';
 
@@ -80,7 +80,6 @@ export class CreatenewpostPage implements OnInit {
     public appService: AppService,
     public el: ElementRef,
     public modalController: ModalController,
-    private logUtils: LogUtils,
     private storageService: StorageService,
     private titleBarService: TitleBarService,
     private viewHelper: ViewHelper,
@@ -390,10 +389,9 @@ export class CreatenewpostPage implements OnInit {
         });
       },
       error => {
-        this.logUtils.loge(
-          "Excute 'videocam' in createpost page is error , captureVideo error, error msg is " +
-            JSON.stringify(error),
-          TAG,
+        Logger.error(TAG,
+          "Excute 'videocam' in createpost page is error , captureVideo error, error msg is ",
+          error
         );
       },
       { limit: 1, duration: 15 },
@@ -414,10 +412,9 @@ export class CreatenewpostPage implements OnInit {
         this.getVideoInfo(path);
       })
       .catch(err => {
-        this.logUtils.loge(
-          "Excute 'selectvideo' in createpost page is error , getVideo error, error msg is " +
-            JSON.stringify(err),
-          TAG,
+        Logger.error(TAG,
+          "Excute 'selectvideo' in createpost page is error , getVideo error, error msg is ",
+          err
         );
       });
   }
@@ -486,28 +483,25 @@ export class CreatenewpostPage implements OnInit {
                 fileReader.readAsDataURL(file);
               },
               err => {
-                this.logUtils.loge(
-                  "Excute 'readFile' in createpost page is error , readVideo error, error msg is " +
-                    JSON.stringify(err),
-                  TAG,
+                Logger.error(TAG,
+                  "Excute 'readFile' in createpost page is error , readVideo error, error msg is ",
+                  err
                 );
               },
             );
           },
           err => {
-            this.logUtils.loge(
-              "Excute 'readFile' in createpost page is error , getFile error, error msg is " +
-                JSON.stringify(err),
-              TAG,
+            Logger.error(TAG,
+              "Excute 'readFile' in createpost page is error , getFile error, error msg is ",
+              err
             );
           },
         );
       },
       (err: any) => {
-        this.logUtils.loge(
-          "Excute 'readFile' in createpost page is error , path error, error msg is " +
-            JSON.stringify(err),
-          TAG,
+        Logger.error(TAG,
+          "Excute 'readFile' in createpost page is error , path error, error msg is ",
+          err
         );
       },
     );
@@ -731,28 +725,25 @@ export class CreatenewpostPage implements OnInit {
                 fileReader.readAsDataURL(file);
               },
               err => {
-                this.logUtils.loge(
-                  "Excute 'readThumbnail' in createpost page is error , readFile error, error msg is " +
-                    JSON.stringify(err),
-                  TAG,
+                Logger.error(TAG,
+                  "Excute 'readThumbnail' in createpost page is error , readFile error, error msg is ",
+                  err
                 );
               },
             );
           },
           err => {
-            this.logUtils.loge(
-              "Excute 'readThumbnail' in createpost page is error , getFile error, error msg is " +
-                JSON.stringify(err),
-              TAG,
+            Logger.error(TAG,
+              "Excute 'readThumbnail' in createpost page is error , getFile error, error msg is ",
+              err
             );
           },
         );
       },
       (err: any) => {
-        this.logUtils.loge(
-          "Excute 'readThumbnail' in createpost page is error , path error, error msg is " +
-            JSON.stringify(err),
-          TAG,
+        Logger.error(TAG,
+          "Excute 'readThumbnail' in createpost page is error , path error, error msg is ",
+          err
         );
       },
     );

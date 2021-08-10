@@ -49,7 +49,6 @@ import { SerializeDataService } from './services/SerializeDataService';
 import { MenuService } from './services/MenuService';
 import { FormatInfoService } from './services/FormatInfoService';
 import { SessionService } from './services/SessionService';
-import { LogUtils } from 'src/app/services/LogUtils';
 import { StandardAuthService } from 'src/app/services/StandardAuthService';
 import { AddFeedService } from 'src/app/services/AddFeedService';
 import { FileService } from 'src/app/services/FileService';
@@ -185,7 +184,6 @@ export function TranslateLoaderFactory() {
     ConnectionService,
     HttpService,
     AddFeedService,
-    LogUtils,
     StandardAuthService,
     FileService,
     FileHelperService,

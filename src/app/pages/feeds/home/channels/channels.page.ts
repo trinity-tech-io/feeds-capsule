@@ -18,9 +18,8 @@ import { PopupProvider } from 'src/app/services/popup';
 import { ViewHelper } from 'src/app/services/viewhelper.service';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-
-import { LogUtils } from 'src/app/services/LogUtils';
 import * as _ from 'lodash';
+import { Logger } from 'src/app/services/logger';
 let TAG: string = 'Feeds-feeds';
 @Component({
   selector: 'app-channels',
@@ -132,7 +131,6 @@ export class ChannelsPage implements OnInit {
     private menuService: MenuService,
     public appService: AppService,
     public modalController: ModalController,
-    private logUtils: LogUtils,
     public popupProvider: PopupProvider,
     private titleBarService: TitleBarService,
     private viewHelper: ViewHelper,
@@ -894,10 +892,9 @@ export class ChannelsPage implements OnInit {
             })
             .catch(reason => {
               rpostImage.style.display = 'none';
-              this.logUtils.loge(
-                "Excute 'handlePsotImg' in feeds page is error , get image data error, error msg is " +
-                  JSON.stringify(reason),
-                TAG,
+              Logger.error(TAG,
+                "Excute 'handlePsotImg' in feeds page is error , get image data error, error msg is ",
+                reason
               );
             });
         }
@@ -913,10 +910,9 @@ export class ChannelsPage implements OnInit {
         }
       }
     } catch (error) {
-      this.logUtils.loge(
-        "Excute 'handlePsotImg' in feeds page is error , get image data error, error msg is " +
-          JSON.stringify(error),
-        TAG,
+      Logger.error(TAG,
+        "Excute 'handlePsotImg' in feeds page is error , get image data error, error msg is ",
+        error
       );
     }
   }
@@ -965,10 +961,9 @@ export class ChannelsPage implements OnInit {
             })
             .catch(reason => {
               vgplayer.style.display = 'none';
-              this.logUtils.loge(
-                "Excute 'hanldVideo' in feeds page is error , get video data error, error msg is" +
-                  JSON.stringify(reason),
-                TAG,
+              Logger.error(TAG,
+                "Excute 'hanldVideo' in feeds page is error , get video data error, error msg is",
+                reason
               );
             });
         }

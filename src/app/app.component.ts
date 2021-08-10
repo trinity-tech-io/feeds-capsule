@@ -9,7 +9,6 @@ import { NativeService } from 'src/app/services/NativeService';
 import { UtilService } from 'src/app/services/utilService';
 import { StorageService } from './services/StorageService';
 import { PopupProvider } from 'src/app/services/popup';
-import { LogUtils } from 'src/app/services/LogUtils';
 import { Events } from 'src/app/services/events.service';
 import { LocalIdentityConnector } from '@elastosfoundation/elastos-connector-localidentity-cordova';
 import { EssentialsConnector } from '@elastosfoundation/essentials-connector-cordova';
@@ -18,14 +17,15 @@ import { WalletConnectControllerService } from 'src/app/services/walletconnect_c
 import { DataHelper } from 'src/app/services/DataHelper';
 import { GlobalService } from 'src/app/services/global.service';
 import { Config } from './services/config';
+import { Logger, LogLevel } from './services/logger';
 
-enum LogLevel {
-  NONE,
-  ERROR,
-  WARN,
-  INFO,
-  DEBUG,
-}
+// enum LogLevel {
+//   NONE,
+//   ERROR,
+//   WARN,
+//   INFO,
+//   DEBUG,
+// }
 @Component({
   selector: 'my-app',
   templateUrl: 'app.html',
@@ -54,7 +54,6 @@ export class MyApp {
     public storageService: StorageService,
     public popupProvider: PopupProvider,
     private popoverController: PopoverController,
-    private logUtils: LogUtils,
     private menuController: MenuController,
     private walletConnectControllerService: WalletConnectControllerService,
     private dataHelper: DataHelper,
@@ -84,6 +83,50 @@ export class MyApp {
   initializeApp() {
     this.platform.ready()
       .then(() => {
+        Logger.log("AAAAAAAAA");
+        Logger.warn("BBBBBBBBBBBBBBB");
+        Logger.error("CCCCCCCCCCCC");
+
+        Logger.log("DDDDDD", "DDDDDDDDDD");
+        Logger.warn("EEEEEEEEEEEE", "EEEEEEEE");
+        Logger.error("FFFFFFFF", "FFFFFFFFF");
+
+        Logger.log("GGGGGGGGG", "GGGGGGGG", "GGGGGGGG", 111111111);
+        Logger.warn("HHHHHHHHH", "HHHHHHHHH", "HHHHHHHHH", 222222222);
+        Logger.error("IIIIIIIII", "IIIIIIIIIII", "IIIIIIIII", 3333333333);
+
+        console.log("set warn");
+        Logger.setLogLevel(LogLevel.WARN);
+
+        Logger.log("AAAAAAAAA");
+        Logger.warn("BBBBBBBBBBBBBBB");
+        Logger.error("CCCCCCCCCCCC");
+
+        Logger.log("DDDDDD", "DDDDDDDDDD");
+        Logger.warn("EEEEEEEEEEEE", "EEEEEEEE");
+        Logger.error("FFFFFFFF", "FFFFFFFFF");
+
+        Logger.log("GGGGGGGGG", "GGGGGGGG", "GGGGGGGG", 111111111);
+        Logger.warn("HHHHHHHHH", "HHHHHHHHH", "HHHHHHHHH", 222222222);
+        Logger.error("IIIIIIIII", "IIIIIIIIIII", "IIIIIIIII", 3333333333);
+
+        console.log("set debug");
+        Logger.setLogLevel(LogLevel.DEBUG);
+
+        Logger.log("AAAAAAAAA");
+        Logger.warn("BBBBBBBBBBBBBBB");
+        Logger.error("CCCCCCCCCCCC");
+
+        Logger.log("DDDDDD", "DDDDDDDDDD");
+        Logger.warn("EEEEEEEEEEEE", "EEEEEEEE");
+        Logger.error("FFFFFFFF", "FFFFFFFFF");
+
+        Logger.log("GGGGGGGGG", "GGGGGGGG", "GGGGGGGG", 111111111);
+        Logger.warn("HHHHHHHHH", "HHHHHHHHH", "HHHHHHHHH", 222222222);
+        Logger.error("IIIIIIIII", "IIIIIIIIIII", "IIIIIIIII", 3333333333);
+
+
+
         return this.dataHelper.loadApiProvider()
       })
       .then((api) => {
@@ -170,9 +213,9 @@ export class MyApp {
 
     this.dataHelper.loadDevelopLogMode().then((isOpenLog: boolean) => {
       if (isOpenLog)
-        this.logUtils.setLogLevel(LogLevel.DEBUG);
+        Logger.setLogLevel(LogLevel.DEBUG);
       else
-        this.logUtils.setLogLevel(LogLevel.WARN);
+        Logger.setLogLevel(LogLevel.WARN);
     });
     this.dataHelper.loadDevelopNet().then((net: string) => {
       this.globalService.changeNet(net);
