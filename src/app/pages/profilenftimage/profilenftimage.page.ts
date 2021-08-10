@@ -235,7 +235,6 @@ export class ProfilenftimagePage implements OnInit {
               moreMenuType: 'onSale',
             };
             this.onSaleList.splice(index,1,item);
-            this.nftImageList = _.unionWith(this.nftImageList,this.onSaleList);
             this.hanleListCace(createAddress);
           })
           .catch(() => { });
@@ -246,6 +245,7 @@ export class ProfilenftimagePage implements OnInit {
   hanleListCace(createAddress?: any) {
     let ownNftCollectiblesList = this.nftPersistenceHelper.getCollectiblesList(createAddress);
     ownNftCollectiblesList = _.unionWith(this.nftImageList, this.onSaleList);
+    this.nftImageList = _.unionWith(this.nftImageList,this.onSaleList);
     this.nftPersistenceHelper.setCollectiblesMap(createAddress, ownNftCollectiblesList);
   }
 
