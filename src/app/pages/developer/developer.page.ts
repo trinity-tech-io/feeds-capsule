@@ -16,6 +16,7 @@ import { DataHelper } from 'src/app/services/DataHelper';
 export class DeveloperPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   public openLog: boolean = false;
+  public selectedNetwork: any = "MainNet";
   constructor(
     private translate: TranslateService,
     public theme: ThemeService,
@@ -32,6 +33,7 @@ export class DeveloperPage implements OnInit {
 
   ionViewWillEnter() {
     this.initTitle();
+    this.selectedNetwork = this.dataHelper.getDevelopNet();
     this.openLog = this.dataHelper.getDevelopLogMode();
   }
 
