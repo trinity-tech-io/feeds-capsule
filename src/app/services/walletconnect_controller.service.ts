@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import WalletConnectProvider from '@walletconnect/web3-provider';
-import { LogUtils } from 'src/app/services/LogUtils';
 import { DataHelper } from 'src/app/services/DataHelper';
 import { Events } from 'src/app/services/events.service';
 
@@ -16,7 +15,6 @@ export class WalletConnectControllerService {
   private walletConnectProvider: WalletConnectProvider;
   private walletConnectWeb3: Web3;
   constructor(
-    private logUtils: LogUtils,
     private dataHelper: DataHelper,
     private events: Events,
   ) {

@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Events } from 'src/app/services/events.service';
-
-import { LogUtils } from 'src/app/services/LogUtils';
 import { CarrierService } from 'src/app/services/CarrierService';
 import { StorageService } from 'src/app/services/StorageService';
+import { Logger } from './logger';
 
 let TAG: string = 'Feeds::AddFeedService';
 let tobeAddFeedsPersistenceKey = 'tobeAddedFeedMap';
@@ -18,8 +17,7 @@ export class AddFeedService {
   constructor(
     private carrierService: CarrierService,
     private storageService: StorageService,
-    private events: Events,
-    private logUtils: LogUtils,
+    private events: Events
   ) {
     this.loadData().then(map => {
       this.tobeAddedFeedMap = map || {};
@@ -84,12 +82,9 @@ export class AddFeedService {
     feedDes: string,
   ): Promise<FeedsData.ToBeAddedFeed> {
     return new Promise(async (resolve, reject) => {
-      this.logUtils.logd('Start addFeed process, nodeId is ' + nodeId, TAG);
+      Logger.log(TAG, 'Start addFeed process, nodeId is ', nodeId);
       try {
-        this.logUtils.logd(
-          'Decode result is ' + JSON.stringify(decodeResult),
-          TAG,
-        );
+        Logger.log(TAG, 'Decode result is ', decodeResult);
         let feedName = decodeResult.feedName;
         let avatar = './assets/images/profile-1.svg';
         let follower = 0;
@@ -116,8 +111,8 @@ export class AddFeedService {
           follower = inputFollower;
 
         if (decodeResult == null || decodeResult == undefined) {
-          let error = 'Feed Url decode error';
-          this.logUtils.loge(error, TAG);
+          let error = 'Feed Url decode error, decode result is null';
+          Logger.log(TAG, error);
           reject(error);
           return;
         }
@@ -163,7 +158,7 @@ export class AddFeedService {
 
   checkFeedUrl(feedUrl: string): boolean {
     if (feedUrl == null || feedUrl == undefined || feedUrl == '') {
-      this.logUtils.loge('Feed url is null', TAG);
+      Logger.error(TAG, 'Feed url is null');
       return false;
     }
 
@@ -172,7 +167,7 @@ export class AddFeedService {
       feedUrl.indexOf('/') < 4 ||
       feedUrl.length < 54
     ) {
-      this.logUtils.loge('Feed url formate error', TAG);
+      Logger.error(TAG, 'Feed url formate error');
       return false;
     }
   }
@@ -225,7 +220,7 @@ export class AddFeedService {
   decodeFeedUrl(feedUrl: string): FeedsData.FeedUrl {
     if (this.checkFeedUrl(feedUrl)) {
       let error = 'Feed url contains error';
-      this.logUtils.loge(error, TAG);
+      Logger.error(TAG, error);
       return null;
     }
 
@@ -252,7 +247,7 @@ export class AddFeedService {
         try {
           mFeedId = Number(feedField[0]);
         } catch (error) {
-          this.logUtils.loge('Type convert error ' + error, TAG);
+          Logger.error(TAG, 'Type convert error ', error);
         }
 
         mFeedName = decodeURIComponent(feedField[1]) || 'Unknow';
@@ -278,11 +273,12 @@ export class AddFeedService {
       this.carrierService.getIdFromAddress(
         carrierAddress,
         userId => {
-          this.logUtils.logd('CarriernodeId is ' + userId, TAG);
+          Logger.log(TAG, 'CarriernodeId is ', userId);
           resolve(userId);
         },
         error => {
-          let err = 'Get nodeId error ' + error;
+          let err = 'Get nodeId error ';
+          Logger.error(TAG, err, error);
           reject(err);
         },
       );
@@ -359,26 +355,24 @@ export class AddFeedService {
     feedId: string,
     status: FeedsData.FollowFeedStatus,
   ) {
-    this.logUtils.logd(
-      'Change status, nodeId is ' +
-        nodeId +
-        ' feedId is ' +
-        feedId +
-        ' status is ' +
-        status,
-      TAG,
+    Logger.log(TAG,
+      'Change status, nodeId is ',
+      nodeId,
+      ' feedId is ',
+      feedId,
+      ' status is ',
+      status
     );
     this.checkTobeAddedFeedMap(nodeId);
     if (
       this.tobeAddedFeedMap[nodeId][feedId] == null ||
       this.tobeAddedFeedMap[nodeId][feedId] == undefined
     ) {
-      this.logUtils.loge(
-        'To be added feed is null , nodeId is ' +
-          nodeId +
-          ' feedId is ' +
-          feedId,
-        TAG,
+      Logger.error(TAG,
+        'To be added feed is null , nodeId is ',
+        nodeId,
+        ' feedId is ',
+        feedId
       );
       return;
     }
@@ -409,12 +403,11 @@ export class AddFeedService {
         this.tobeAddedFeedMap[nodeId][feedIdStr] == null ||
         this.tobeAddedFeedMap[nodeId][feedIdStr] == undefined
       ) {
-        this.logUtils.loge(
-          'To be added feed is null , nodeId is ' +
-            nodeId +
-            ' feedId is ' +
-            feedId,
-          TAG,
+        Logger.error(TAG,
+          'To be added feed is null , nodeId is ',
+          nodeId,
+          ' feedId is ',
+          feedId
         );
         return;
       }
@@ -447,9 +440,8 @@ export class AddFeedService {
           resolve(res.isFriend);
         },
         err => {
-          let error = 'check friend error ' + err;
-          this.logUtils.logd('Check is Friend error, ' + error);
-          reject(error);
+          Logger.error(TAG, 'Check is Friend error', err);
+          reject('Check is Friend error');
         },
       );
     });
@@ -460,7 +452,7 @@ export class AddFeedService {
     carrierAddress: string,
   ): Promise<FeedsData.FriendState> {
     return new Promise(async (resolve, reject) => {
-      this.logUtils.logd('Start add Friend, friend nodeId is ' + nodeId);
+      Logger.log(TAG, 'Start add Friend, friend nodeId is ', nodeId);
       try {
         let isFriend = await this.checkIsFriends(nodeId);
         if (isFriend) {
@@ -480,10 +472,7 @@ export class AddFeedService {
         resolve(FeedsData.FriendState.IS_ADDED);
         return;
       } catch (err) {
-        this.logUtils.loge(
-          'Added friend exception, nodeId is ' + nodeId + ' error is ' + err,
-          TAG,
-        );
+        Logger.error(TAG, 'Added friend exception, nodeId is ', nodeId, ' error is ', err);
         this.changeTobeAddedFeedStatusByNodeId(
           nodeId,
           FeedsData.FollowFeedStatus.ADD_FRIEND_ERROR,
@@ -495,21 +484,17 @@ export class AddFeedService {
 
   addFriend(carrierAddress: string): Promise<void> {
     return new Promise(async (resolve, reject) => {
-      this.logUtils.logd(
-        'Prepare add friend, server carrierAddress is ' + carrierAddress,
-      );
+      Logger.error(TAG, 'Prepare add friend, server carrierAddress is ', carrierAddress);
       this.carrierService.addFriend(
         carrierAddress,
         'addFeed',
         () => {
-          this.logUtils.logd(
-            'Add friend success, carrier address is ' + carrierAddress,
-          );
+          Logger.log(TAG, 'Add friend success, carrier address is ', carrierAddress);
           resolve();
         },
         err => {
           let error = 'Add friends error, error is ' + JSON.stringify(err);
-          this.logUtils.logd(error);
+          Logger.error(TAG, error);
           reject(error);
         },
       );

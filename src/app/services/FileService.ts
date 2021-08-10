@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
-import { LogUtils } from 'src/app/services/LogUtils';
+import { Logger } from './logger';
 
 let TAG: string = 'Feeds-FileService';
 @Injectable()
 export class FileService {
-  constructor(private logUtils: LogUtils) {}
+  constructor() { }
 
   resolveLocalFileSystemURL(): Promise<DirectoryEntry> {
     return new Promise((resolve, reject) => {
@@ -14,10 +14,7 @@ export class FileService {
           resolve(dirEntry);
         },
         (error: FileError) => {
-          this.logUtils.loge(
-            'Rresolve localFileSystemURL error ' + JSON.stringify(error),
-            TAG,
-          );
+          Logger.error(TAG, 'Rresolve localFileSystemURL error ', error);
           reject(error);
         },
       );
@@ -32,7 +29,7 @@ export class FileService {
           resolve(entries);
         },
         (error: FileError) => {
-          this.logUtils.loge('List files error ' + JSON.stringify(error), TAG);
+          Logger.error(TAG, 'List files error ', error);
           reject(error);
         },
       );
@@ -56,10 +53,7 @@ export class FileService {
           resolve(subDirEntry);
         },
         error => {
-          this.logUtils.logd(
-            'Get directory error ' + JSON.stringify(error),
-            TAG,
-          );
+          Logger.error(TAG, 'Get directory error ', error);
           reject(error);
         },
       );
@@ -83,7 +77,7 @@ export class FileService {
           resolve(fileEntry);
         },
         error => {
-          this.logUtils.loge('Get file error ' + JSON.stringify(error), TAG);
+          Logger.error(TAG, 'Get file error ', error);
           reject(error);
         },
       );
@@ -104,7 +98,7 @@ export class FileService {
           resolve(entry);
         },
         error => {
-          this.logUtils.loge('Moving file error ' + JSON.stringify(error), TAG);
+          Logger.error(TAG, 'Moving file error ', error);
           reject(error);
         },
       );

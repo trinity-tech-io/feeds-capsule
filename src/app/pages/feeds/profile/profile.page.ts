@@ -8,7 +8,6 @@ import { MenuService } from 'src/app/services/MenuService';
 import { NativeService } from 'src/app/services/NativeService';
 import { AppService } from 'src/app/services/AppService';
 import { PopupProvider } from 'src/app/services/popup';
-import { LogUtils } from 'src/app/services/LogUtils';
 import { IntentService } from 'src/app/services/IntentService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarService } from 'src/app/services/TitleBarService';
@@ -22,6 +21,7 @@ import { NFTContractControllerService } from 'src/app/services/nftcontract_contr
 import { HttpService } from '../../../services/HttpService';
 import { IPFSService } from 'src/app/services/ipfs.service';
 import { NFTPersistenceHelper } from 'src/app/services/nft_persistence_helper.service';
+import { Logger } from 'src/app/services/logger';
 
 let TAG: string = 'Feeds-profile';
 
@@ -154,7 +154,6 @@ export class ProfilePage implements OnInit {
     public native: NativeService,
     public appService: AppService,
     public modalController: ModalController,
-    private logUtils: LogUtils,
     public popupProvider: PopupProvider,
     public popoverController: PopoverController,
     private intentService: IntentService,
@@ -930,10 +929,9 @@ export class ProfilePage implements OnInit {
             })
             .catch(reason => {
               rpostImage.style.display = 'none';
-              this.logUtils.loge(
-                "Excute 'handlePsotImg' in profile page is error , get data error, error msg is " +
-                  JSON.stringify(reason),
-                TAG,
+              Logger.error(TAG,
+                "Excute 'handlePsotImg' in profile page is error , get data error, error msg is ",
+                reason
               );
             });
         }
@@ -950,10 +948,9 @@ export class ProfilePage implements OnInit {
       }
     } catch (error) {
       this.isLoadimage[id] = '';
-      this.logUtils.loge(
-        "Excute 'handlePsotImg' in profile page is error , get image data error, error msg is " +
-          JSON.stringify(error),
-        TAG,
+      Logger.error(TAG,
+        "Excute 'handlePsotImg' in profile page is error , get image data error, error msg is ",
+        error
       );
     }
   }
@@ -1002,10 +999,9 @@ export class ProfilePage implements OnInit {
             })
             .catch(reason => {
               vgplayer.style.display = 'none';
-              this.logUtils.loge(
-                "Excute 'hanldVideo' in profile page is error , get video data error, error msg is " +
-                  JSON.stringify(reason),
-                TAG,
+              Logger.error(TAG,
+                "Excute 'hanldVideo' in profile page is error , get video data error, error msg is ",
+                reason
               );
             });
         }
@@ -1025,10 +1021,9 @@ export class ProfilePage implements OnInit {
         }
       }
     } catch (error) {
-      this.logUtils.loge(
-        "Excute 'hanldVideo' in profile page is error , get data error, error msg is " +
-          JSON.stringify(error),
-        TAG,
+      Logger.error(TAG,
+        "Excute 'hanldVideo' in profile page is error , get data error, error msg is ",
+        error
       );
     }
   }

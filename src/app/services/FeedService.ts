@@ -12,7 +12,6 @@ import { ConnectionService } from 'src/app/services/ConnectionService';
 import { FormatInfoService } from 'src/app/services/FormatInfoService';
 import { SessionService } from 'src/app/services/SessionService';
 import { PopupProvider } from 'src/app/services/popup';
-import { LogUtils } from 'src/app/services/LogUtils';
 import { StandardAuthService } from 'src/app/services/StandardAuthService';
 import { AddFeedService } from 'src/app/services/AddFeedService';
 import { IntentService } from 'src/app/services/IntentService';
@@ -22,6 +21,7 @@ import _ from 'lodash';
 import { DataHelper } from './DataHelper';
 import { UtilService } from './utilService';
 import { Config } from './config';
+import { Logger } from './logger';
 
 declare let didManager: DIDPlugin.DIDManager;
 
@@ -117,7 +117,6 @@ export class FeedService {
     private formatInfoService: FormatInfoService,
     private sessionService: SessionService,
     private popupProvider: PopupProvider,
-    private logUtils: LogUtils,
     private standardAuth: StandardAuthService,
     private addFeedService: AddFeedService,
     private dataHelper: DataHelper,
@@ -418,10 +417,7 @@ export class FeedService {
       ret => {
         let friendId = ret.friendId;
         let friendStatus = ret.status;
-        this.logUtils.logd(
-          'Friend:' + friendId + ' connection changed to ' + friendStatus,
-          TAG,
-        );
+        Logger.log(TAG, 'Friend is', friendId, ' connection changed to ', friendStatus);
         let friendConnectionChangedData: FeedsEvent.FriendConnectionChangedData = {
           nodeId: friendId,
           connectionStatus: friendStatus,
@@ -455,18 +451,10 @@ export class FeedService {
   doFriendConnection(friendId: string) {
     let accessToken = this.dataHelper.getAccessToken(friendId) || null;
     if (this.checkExp(accessToken)) {
-      this.logUtils.logd(
-        'Prepare signin server, access token expired, server nodeId is ' +
-          friendId,
-      );
+      Logger.log(TAG, 'Prepare signin server, access token expired, server nodeId is ', friendId);
       this.signinChallengeRequest(friendId, true);
     } else {
-      this.logUtils.logd(
-        'Prepare connect, nodeId is ' +
-          friendId +
-          ' access token is ' +
-          JSON.stringify(accessToken),
-      );
+      Logger.log(TAG, 'Prepare connect, nodeId is ', friendId, ' access token is ', accessToken);
       this.prepare(friendId);
     }
 
@@ -918,11 +906,11 @@ export class FeedService {
         onSuccess(presentation);
         return;
       }
-      let error = 'Create presentation error, response is ' + JSON.stringify;
-      this.logUtils.loge(error);
+      let error = 'Create presentation error';
+      Logger.error(TAG, error, presentation);
       onError(error);
     } catch (error) {
-      this.logUtils.loge(error);
+      Logger.error(TAG, error);
       onError(error);
     }
   }
@@ -1107,7 +1095,7 @@ export class FeedService {
       this.checkSignInDataChange(this.localSignInData)
         .then(async isChange => {
           if (isChange) {
-            this.logUtils.logd('Signin data is changed,did is' + did, TAG);
+            Logger.log(TAG, 'Signin data is changed, did is', did);
             await this.cleanAllData();
             this.storeService.set(
               FeedsData.PersistenceKey.signInData,
@@ -1871,29 +1859,19 @@ export class FeedService {
 
     //TODO 2.0
     let thumbnails: any = params.thumbnails;
-    this.logUtils.logd(
-      'Receive result from new_post, thumbnails is ' +
-        JSON.stringify(thumbnails),
-    );
+    Logger.log(TAG, 'Receive result from new_post, thumbnails is ', thumbnails);
 
     //TODO 2.0
     let hashId: string = params.hash_id;
-    this.logUtils.logd(
-      'Receive result from new_post, hashId is ' + JSON.stringify(hashId),
-    );
+    Logger.log(TAG, 'Receive result from new_post, hashId is ', hashId);
 
     //TODO 2.0
     let proof: string = params.proof;
-    this.logUtils.logd(
-      'Receive result from new_post, proof is ' + JSON.stringify(proof),
-    );
+    Logger.log(TAG, 'Receive result from new_post, proof is ', proof);
 
     //TODO 2.0
     let originPostUrl: string = params.origin_post_url;
-    this.logUtils.logd(
-      'Receive result from new_post, originPostUrl is ' +
-        JSON.stringify(originPostUrl),
-    );
+    Logger.log(TAG, 'Receive result from new_post, originPostUrl is ', originPostUrl);
 
     let contentStr = this.serializeDataService.decodeData(contentBin);
 
@@ -1936,23 +1914,15 @@ export class FeedService {
 
     //TODO 2.0
     let thumbnails: any = params.thumbnails;
-    this.logUtils.logd(
-      'Receive result from new_comment RPC,thumbnails is ' +
-        JSON.stringify(thumbnails),
-    );
+    Logger.log(TAG, 'Receive result from new_comment RPC,thumbnails is ', thumbnails);
 
     //TODO 2.0
     let hash_id: any = params.hash_id;
-    this.logUtils.logd(
-      'Receive result from new_comment RPC,hash_id is ' +
-        JSON.stringify(hash_id),
-    );
+    Logger.log(TAG, 'Receive result from new_comment RPC,hash_id is ', hash_id);
 
     //TODO 2.0
     let proof: any = params.proof;
-    this.logUtils.logd(
-      'Receive result from new_comment RPC,proof is ' + JSON.stringify(proof),
-    );
+    Logger.log(TAG, 'Receive result from new_comment RPC,proof is ', proof);
 
     await this.processNewComment(
       nodeId,
@@ -2140,9 +2110,7 @@ export class FeedService {
 
     //TODO 2.0
     let proof: string = params.proof;
-    this.logUtils.logd(
-      'Receive result from new_like, proof is ' + JSON.stringify(proof),
-    );
+    Logger.log(TAG, 'Receive result from new_like, proof is ', proof);
 
     if (comment_id == 0) {
       let key = this.getPostId(nodeId, channel_id, post_id);
@@ -2229,23 +2197,15 @@ export class FeedService {
 
     //TODO 2.0
     let tipMethods: string = params.tip_methods;
-    this.logUtils.logd(
-      'Receive result from feedinfo_update, tipMethods is ' +
-        JSON.stringify(tipMethods),
-    );
+    Logger.log(TAG, 'Receive result from feedinfo_update, tipMethods is ', tipMethods);
 
     //TODO 2.0
     let proof: string = params.proof;
-    this.logUtils.logd(
-      'Receive result from feedinfo_update, proof is ' + JSON.stringify(proof),
-    );
+    Logger.log(TAG, 'Receive result from feedinfo_update, proof is ', proof);
 
     //TODO 2.0
     let status: number = params.status || 0;
-    this.logUtils.logd(
-      'Receive result from feedinfo_update, status is ' +
-        JSON.stringify(status),
-    );
+    Logger.log(TAG, 'Receive result from feedinfo_update, status is ', status);
 
     if (originChannel == null) {
       let channel: FeedsData.Channels = {
@@ -2297,29 +2257,19 @@ export class FeedService {
 
     //TODO 2.0
     let thumbnails: any = params.thumbnails;
-    this.logUtils.logd(
-      'Receive result from post_update, thumbnails is ' +
-        JSON.stringify(thumbnails),
-    );
+    Logger.log(TAG, 'Receive result from post_update, thumbnails is ', thumbnails);
 
     //TODO 2.0
     let hashId: string = params.hash_id;
-    this.logUtils.logd(
-      'Receive result from post_update, hash_id is ' + JSON.stringify(hashId),
-    );
+    Logger.log(TAG, 'Receive result from post_update, hash_id is ', hashId);
 
     //TODO 2.0
     let proof: string = params.proof;
-    this.logUtils.logd(
-      'Receive result from post_update, proof is ' + JSON.stringify(proof),
-    );
+    Logger.log(TAG, 'Receive result from post_update, proof is ', proof);
 
     //TODO 2.0
     let originPostUrl: string = params.origin_post_url;
-    this.logUtils.logd(
-      'Receive result from post_update, thumbnails is ' +
-        JSON.stringify(originPostUrl),
-    );
+    Logger.log(TAG, 'Receive result from post_update, thumbnails is ', originPostUrl);
 
     if (
       updatedAt > createdAt &&
@@ -2364,24 +2314,15 @@ export class FeedService {
 
     //TODO 2.0
     let thumbnails = params.thumbnails;
-    this.logUtils.logd(
-      'Receive result from subscribe_channel, thumbnails is ' +
-        JSON.stringify(thumbnails),
-    );
+    Logger.log(TAG, 'Receive result from subscribe_channel, thumbnails is ', thumbnails);
 
     //TODO 2.0
     let hash_id = params.hash_id;
-    this.logUtils.logd(
-      'Receive result from subscribe_channel, hash_id is ' +
-        JSON.stringify(hash_id),
-    );
+    Logger.log(TAG, 'Receive result from subscribe_channel, hash_id is ', hash_id);
 
     //TODO 2.0
     let proof = params.proof;
-    this.logUtils.logd(
-      'Receive result from subscribe_channel, proof is ' +
-        JSON.stringify(proof),
-    );
+    Logger.log(TAG, 'Receive result from subscribe_channel, proof is ', proof);
 
     if (
       updatedAt > createdAt &&
@@ -2812,19 +2753,13 @@ export class FeedService {
 
       //TODO 2.0
       let tipMethods = result[index].tip_methods;
-      this.logUtils.logd(
-        'Receive result from get_channels RPC,tipMethods is ' + tipMethods,
-      );
+      Logger.log(TAG, 'Receive result from get_channels RPC,tipMethods is ', tipMethods);
       //TODO 2.0
       let proof = result[index].proof;
-      this.logUtils.logd(
-        'Receive result from get_channels RPC,proof is ' + proof,
-      );
+      Logger.log(TAG, 'Receive result from get_channels RPC,proof is ', proof);
       //TODO 2.0
       let status = result[index].status;
-      this.logUtils.logd(
-        'Receive result from get_channels RPC,status is ' + status,
-      );
+      Logger.log(TAG, 'Receive result from get_channels RPC,status is ', status);
 
       if (originChannel == null) {
         originChannel = {
@@ -2913,23 +2848,15 @@ export class FeedService {
 
       //TODO 2.0
       let create_at = result[index].create_at;
-      this.logUtils.logd(
-        'Receive result from get_subscribed_channels RPC,create_at is ' +
-          create_at,
-      );
+      Logger.log(TAG, 'Receive result from get_subscribed_channels RPC,create_at is ', create_at);
 
       //TODO 2.0
       let subscribed_time = result[index].subscribed_time;
-      this.logUtils.logd(
-        'Receive result from get_subscribed_channels RPC,subscribed_time is ' +
-          subscribed_time,
-      );
+      Logger.log(TAG, 'Receive result from get_subscribed_channels RPC,subscribed_time is ', subscribed_time);
 
       //TODO 2.0
       let proof = result[index].proof;
-      this.logUtils.logd(
-        'Receive result from get_subscribed_channels RPC,proof is ' + proof,
-      );
+      Logger.log(TAG, 'Receive result from get_subscribed_channels RPC,proof is ', proof);
 
       let avatar = this.serializeDataService.decodeData(avatarBin);
       let nodeChannelId = this.getChannelId(nodeId, channelId);
@@ -3013,26 +2940,19 @@ export class FeedService {
 
       //TODO 2.0
       let thumbnails = result[index].thumbnails;
-      this.logUtils.logd(
-        'Receive result from get_post RPC,thumbnails is ' + thumbnails,
-      );
+      Logger.log(TAG, 'Receive result from get_post RPC,thumbnails is ', thumbnails);
 
       //TODO 2.0
       let hash_id = result[index].hash_id;
-      this.logUtils.logd(
-        'Receive result from get_post RPC,hash_id is ' + hash_id,
-      );
+      Logger.log(TAG, 'Receive result from get_post RPC,hash_id is ', hash_id);
 
       //TODO 2.0
       let proof = result[index].proof;
-      this.logUtils.logd('Receive result from get_post RPC,proof is ' + proof);
+      Logger.log(TAG, 'Receive result from get_post RPC,proof is ', proof);
 
       //TODO 2.0
       let origin_post_url = result[index].origin_post_url;
-      this.logUtils.logd(
-        'Receive result from get_post RPC,origin_post_url is ' +
-          origin_post_url,
-      );
+      Logger.log(TAG, 'Receive result from get_post RPC,origin_post_url is ', origin_post_url);
 
       if (
         updatedAt > createAt &&
@@ -3129,21 +3049,15 @@ export class FeedService {
 
       //TODO 2.0
       let thumbnails = result[index].thumbnails;
-      this.logUtils.logd(
-        'Receive result from get_comment RPC,thumbnails is ' + thumbnails,
-      );
+      Logger.log(TAG, 'Receive result from get_comment RPC,thumbnails is ', thumbnails);
 
       //TODO 2.0
       let hash_id = result[index].hash_id;
-      this.logUtils.logd(
-        'Receive result from get_comment RPC,hash_id is ' + hash_id,
-      );
+      Logger.log(TAG, 'Receive result from get_comment RPC,hash_id is ', hash_id);
 
       //TODO 2.0
       let proof = result[index].proof;
-      this.logUtils.logd(
-        'Receive result from get_comment RPC,proof is ' + proof,
-      );
+      Logger.log(TAG, 'Receive result from get_comment RPC,proof is ', proof);
 
       await this.processNewComment(
         nodeId,
@@ -3248,86 +3162,51 @@ export class FeedService {
       return;
     }
 
-    this.logUtils.logd(
-      'Receive result from subscribe_channel, result is ' +
-        JSON.stringify(result),
-    );
+    Logger.log(TAG, 'Receive result from subscribe_channel, result is ', result);
 
     //TODO 2.0
     let channelId = result.id;
-    this.logUtils.logd(
-      'Receive result from subscribe_channel, channelId is ' +
-        JSON.stringify(channelId),
-    );
+    Logger.log(TAG, 'Receive result from subscribe_channel, channelId is ', channelId);
 
     //TODO 2.0
     let name = result.name;
-    this.logUtils.logd(
-      'Receive result from subscribe_channel, name is ' + JSON.stringify(name),
-    );
+    Logger.log(TAG, 'Receive result from subscribe_channel, name is ', name);
 
     //TODO 2.0
     let introduction = result.introduction;
-    this.logUtils.logd(
-      'Receive result from subscribe_channel, introduction is ' +
-        JSON.stringify(introduction),
-    );
+    Logger.log(TAG, 'Receive result from subscribe_channel, introduction is ', introduction);
 
     //TODO 2.0
     let owner_name = result.owner_name;
-    this.logUtils.logd(
-      'Receive result from subscribe_channel, owner_name is ' +
-        JSON.stringify(owner_name),
-    );
+    Logger.log(TAG, 'Receive result from subscribe_channel, owner_name is ', owner_name);
 
     //TODO 2.0
     let owner_did = result.owner_did;
-    this.logUtils.logd(
-      'Receive result from subscribe_channel, owner_did is ' +
-        JSON.stringify(owner_did),
-    );
+    Logger.log(TAG, 'Receive result from subscribe_channel, owner_did is ', owner_did);
 
     //TODO 2.0
     let subscribers = result.subscribers;
-    this.logUtils.logd(
-      'Receive result from subscribe_channel, subscribers is ' +
-        JSON.stringify(subscribers),
-    );
+    Logger.log(TAG, 'Receive result from subscribe_channel, subscribers is ', subscribers);
 
     //TODO 2.0
     let last_update = result.last_update;
-    this.logUtils.logd(
-      'Receive result from subscribe_channel, last_update is ' +
-        JSON.stringify(last_update),
-    );
+    Logger.log(TAG, 'Receive result from subscribe_channel, last_update is ', last_update);
 
     //TODO 2.0
     let avatar = result.avatar;
-    this.logUtils.logd(
-      'Receive result from subscribe_channel, avatar is ' +
-        JSON.stringify(avatar),
-    );
+    Logger.log(TAG, 'Receive result from subscribe_channel, avatar is ', avatar);
 
     //TODO 2.0
     let tip_methods = result.tip_methods;
-    this.logUtils.logd(
-      'Receive result from subscribe_channel, tip_methods is ' +
-        JSON.stringify(tip_methods),
-    );
+    Logger.log(TAG, 'Receive result from subscribe_channel, tip_methods is ', tip_methods);
 
     //TODO 2.0
     let proof = result.proof;
-    this.logUtils.logd(
-      'Receive result from subscribe_channel, proof is ' +
-        JSON.stringify(proof),
-    );
+    Logger.log(TAG, 'Receive result from subscribe_channel, proof is ', proof);
 
     //TODO 2.0
     let status = result.status;
-    this.logUtils.logd(
-      'Receive result from subscribe_channel, status is ' +
-        JSON.stringify(status),
-    );
+    Logger.log(TAG, 'Receive result from subscribe_channel, status is ', status);
 
     this.getSubscribedChannels(
       nodeId,
@@ -4071,10 +3950,10 @@ export class FeedService {
       }
 
       let error = 'Publish did error, response is ' + JSON.stringify(result);
-      this.logUtils.loge(error, TAG);
+      Logger.error(TAG, error);
       onError(error);
     } catch (error) {
-      this.logUtils.loge(error, TAG);
+      Logger.error(TAG, error);
       onError(error);
     }
   }
@@ -4094,7 +3973,7 @@ export class FeedService {
   }
 
   signinChallengeRequest(nodeId: string, requiredCredential: boolean) {
-    this.logUtils.logd('Start signin server, nodeId is' + nodeId);
+    Logger.log(TAG, 'Start signin server, nodeId is', nodeId);
     if (this.getServerVersionCodeByNodeId(nodeId) < newAuthVersion) {
       this.connectionService.signinChallengeRequest(
         this.getServerNameByNodeId(nodeId),
@@ -4210,10 +4089,7 @@ export class FeedService {
     onSuccess: () => void,
     onError: () => void,
   ) {
-    this.logUtils.loge(
-      'Parse JWT from didManager, nodeId is ' + nodeId + ' JWS is ' + jws,
-      TAG,
-    );
+    Logger.error(TAG, 'Parse JWT from didManager, nodeId is ', nodeId, ' JWS is ', jws);
     this.parseJWS(
       false,
       jws,
@@ -4232,7 +4108,7 @@ export class FeedService {
         onSuccess();
       },
       err => {
-        this.logUtils.loge('Parse JWT error, ' + JSON.stringify(err), TAG);
+        Logger.error(TAG, 'Parse JWT error, ', err);
         onError();
       },
     );
@@ -4250,18 +4126,12 @@ export class FeedService {
         if (result) {
           onSuccess(result);
         } else {
-          this.logUtils.loge(
-            'Parse JWT error, result is ' + JSON.stringify(result),
-            TAG,
-          );
+          Logger.error(TAG, 'Parse JWT error, result is ', result);
         }
       })
       .catch(err => {
         onError(err);
-        this.logUtils.loge(
-          'Parse JWT error, error is ' + JSON.stringify(err),
-          TAG,
-        );
+        Logger.error(TAG, 'Parse JWT error, error is ', err);
       });
   }
 
@@ -4415,11 +4285,7 @@ export class FeedService {
     this.standardAuth
       .generateAuthPresentationJWT(challenge)
       .then(standAuthResult => {
-        this.logUtils.logd(
-          'Generate auth presentation JWT, presentation is ' +
-            standAuthResult.jwtToken,
-          TAG,
-        );
+        Logger.log(TAG, 'Generate auth presentation JWT, presentation is ', standAuthResult.jwtToken);
         let server = this.dataHelper.getServer(nodeId);
         if (server != null && server != undefined) {
           server.name = standAuthResult.serverName;
@@ -4464,22 +4330,15 @@ export class FeedService {
 
       //TODO 2.0
       let thumbnails = result[index].thumbnails;
-      this.logUtils.logd(
-        'Receive result from get_multi_comments RPC,thumbnails is ' +
-          thumbnails,
-      );
+      Logger.log(TAG, 'Receive result from get_multi_comments RPC,thumbnails is ', thumbnails);
 
       //TODO 2.0
       let hash_id = result[index].hash_id;
-      this.logUtils.logd(
-        'Receive result from get_multi_comments RPC,hash_id is ' + hash_id,
-      );
+      Logger.log(TAG, 'Receive result from get_multi_comments RPC,hash_id is ', hash_id);
 
       //TODO 2.0
       let proof = result[index].proof;
-      this.logUtils.logd(
-        'Receive result from get_multi_comments RPC,proof is ' + proof,
-      );
+      Logger.log(TAG, 'Receive result from get_multi_comments RPC,proof is ', proof);
 
       await this.processNewComment(
         nodeId,
@@ -4702,10 +4561,10 @@ export class FeedService {
 
       let error =
         'Issue credential error, response is ' + JSON.stringify(credential);
-      this.logUtils.loge(error);
+      Logger.error(TAG, error);
       onError();
     } catch (error) {
-      this.logUtils.loge(error);
+      Logger.error(TAG, error);
       onError();
     }
   }
@@ -5236,10 +5095,7 @@ export class FeedService {
         server.nodeId,
         () => {},
         err => {
-          this.logUtils.loge(
-            'Remove Friend error, error msg is' + JSON.stringify(err),
-            TAG,
-          );
+          Logger.error(TAG, 'Remove Friend error, error msg is', err);
         },
       );
     }
@@ -5391,10 +5247,10 @@ export class FeedService {
       }
 
       let error = 'Pay error, response is ' + JSON.stringify(result);
-      this.logUtils.loge(error);
+      Logger.log(TAG, error);
       onError(error);
     } catch (error) {
-      this.logUtils.loge(error);
+      Logger.log(TAG, error);
       onError(error);
     }
   }
@@ -5543,9 +5399,7 @@ export class FeedService {
         return;
       }
 
-      this.logUtils.loge(
-        'Prompt publish did error, response is ' + JSON.stringify(result),
-      );
+      Logger.error(TAG, 'Prompt publish did error, response is ', result);
       this.native.toastdanger('common.promptPublishDidError');
     } catch (error) {
       this.native.toastdanger('common.promptPublishDidError');
@@ -6652,15 +6506,7 @@ export class FeedService {
     // eventBus.publish("sessionResponse:error",nodeId, error);
     this.translateBinaryError(nodeId, error.code);
     this.closeSession(nodeId);
-    this.logUtils.logd(
-      'Session error :: nodeId : ' +
-        nodeId +
-        ' errorCode: ' +
-        error.code +
-        ' errorMessage:' +
-        error.message,
-      TAG,
-    );
+    Logger.log(TAG, 'Session error :: nodeId : ', nodeId, ' errorCode: ', error.code, ' errorMessage:', error.message);
   }
 
   createVideoContent(
@@ -6898,7 +6744,7 @@ export class FeedService {
 
   checkBindingServerVersion(quit: any): boolean {
     let bindingServer = this.dataHelper.getBindingServer();
-    this.logUtils.logd('Binded server is ' + JSON.stringify(bindingServer));
+    Logger.log(TAG, 'Binded server is ', bindingServer);
     if (bindingServer == null || bindingServer == undefined) return;
 
     let serverVersion = this.dataHelper.getServerVersion(bindingServer.nodeId);
@@ -6933,19 +6779,13 @@ export class FeedService {
   }
 
   standardSignIn(nodeId: string) {
-    this.logUtils.logd('Start getting instance did, nodeId: ' + nodeId, TAG);
+    Logger.log(TAG, 'Start getting instance did, nodeId: ', nodeId);
 
     let connectors = connectivity.getAvailableConnectors();
-    console.log('GetAvailableConnectors', connectors);
+    Logger.log(TAG, 'Get available connectors', connectors);
 
     this.standardAuth.getInstanceDIDDoc().then(didDocument => {
-      this.logUtils.logd(
-        'Standard sign in, nodeId is ' +
-          nodeId +
-          ' didDocument is ' +
-          didDocument,
-        TAG,
-      );
+      Logger.log(TAG, 'Standard sign in, nodeId is ', nodeId, ' didDocument is ', didDocument);
       this.connectionService.standardSignIn(
         this.getServerNameByNodeId(nodeId),
         nodeId,
@@ -7066,9 +6906,7 @@ export class FeedService {
         )
         .then((toBeAddedFeed: FeedsData.ToBeAddedFeed) => {
           if (toBeAddedFeed.friendState == FeedsData.FriendState.IS_FRIEND) {
-            this.logUtils.logd(
-              'The service is already a friend, nodeId is ' + nodeId,
-            );
+            Logger.log(TAG, 'The service is already a friend, nodeId is ', nodeId);
             let isSubscribed = this.checkFeedsIsSubscribed(
               toBeAddedFeed.nodeId,
               toBeAddedFeed.feedId,
@@ -7102,7 +6940,7 @@ export class FeedService {
           resolve('success');
         })
         .catch(reason => {
-          this.logUtils.loge('AddFeed error, ' + reason, TAG);
+          Logger.error(TAG, 'AddFeed error, ', reason);
           reject('fail');
         });
     });
@@ -7171,19 +7009,14 @@ export class FeedService {
     return new Promise(async (resolve, reject) => {
       let res = await this.credaccess();
       if (!res) {
-        this.logUtils.loge(
-          'SignIn error, credaccess result is ' + JSON.stringify(res),
-        );
+        Logger.error(TAG, 'SignIn error, credaccess result is ', res);
         reject('credaccess error');
         return;
       }
 
       let did = await this.decodeSignInData(res);
       if (!did) {
-        this.logUtils.loge(
-          'Use didManager VerifiablePresentationBuilder error, did result is ' +
-            did,
-        );
+        Logger.log(TAG, 'Use didManager VerifiablePresentationBuilder error, did result is ', did);
         return;
       }
       resolve(did);
@@ -7264,9 +7097,7 @@ export class FeedService {
               resolve(signInData.did);
             })
             .catch(err => {
-              this.logUtils.loge(
-                'Save signin data error, error msg is ' + JSON.stringify(err),
-              );
+              Logger.error(TAG, 'Save signin data error, error msg is ', err);
               reject(err);
             });
         },
@@ -7317,10 +7148,10 @@ export class FeedService {
         }
 
         let error = 'Credaccess error, response is ' + JSON.stringify(response);
-        this.logUtils.loge(error, TAG);
+        Logger.error(TAG, error);
         reject(error);
       } catch (error) {
-        this.logUtils.loge(error, TAG);
+        Logger.error(TAG, error);
         reject(error);
       }
     });

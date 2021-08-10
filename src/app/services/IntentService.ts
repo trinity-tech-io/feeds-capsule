@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
-import { LogUtils } from 'src/app/services/LogUtils';
 import { ScanService } from 'src/app/services/scan.service';
+import { Logger } from './logger';
 
 let TAG: string = 'IntentService';
 declare let intentManager: IntentPlugin.IntentManager;
 
 @Injectable()
 export class IntentService {
-  constructor(private logUtils: LogUtils, private scanService: ScanService) {}
+  constructor(private scanService: ScanService) { }
 
   scanQRCode(): Promise<string> {
     return this.scanService.scanBarcode();
@@ -28,10 +28,10 @@ export class IntentService {
           return;
         }
         let error: string = 'Share error, result is ' + JSON.stringify(res);
-        this.logUtils.loge(error, TAG);
+        Logger.error(TAG, error);
         reject(error);
       } catch (error) {
-        this.logUtils.loge(error, TAG);
+        Logger.error(TAG, error);
         reject(error);
       }
     });
@@ -92,10 +92,10 @@ export class IntentService {
           return;
         }
         let error = 'Credaccess error response is ' + JSON.stringify(response);
-        this.logUtils.loge(error);
+        Logger.error(TAG, error);
         reject(error);
       } catch (error) {
-        this.logUtils.loge(error);
+        Logger.error(TAG, error);
         reject(error);
       }
     });
@@ -113,10 +113,10 @@ export class IntentService {
           return;
         }
         let error = 'Credaccess error response is ' + JSON.stringify(response);
-        this.logUtils.loge(error);
+        Logger.error(TAG, error);
         reject(error);
       } catch (error) {
-        this.logUtils.loge(error);
+        Logger.error(TAG, error);
         reject(error);
       }
     });
@@ -133,9 +133,7 @@ export class IntentService {
           'https://wallet.elastos.net/didtransaction',
           params,
         );
-        this.logUtils.logd(
-          'Call intent didtransaction result is ' + JSON.stringify(response),
-        );
+        Logger.log(TAG, 'Call intent didtransaction result is ', response);
         if (response) {
           resolve(response);
           return;
@@ -143,10 +141,10 @@ export class IntentService {
 
         let error =
           'DIDtransaction error response is ' + JSON.stringify(response);
-        this.logUtils.loge(error);
+        Logger.error(TAG, error);
         reject(error);
       } catch (error) {
-        this.logUtils.loge(error);
+        Logger.error(TAG, error);
         reject(error);
       }
     });
@@ -183,10 +181,10 @@ export class IntentService {
         }
 
         let error = 'Credissue error response is ' + JSON.stringify(response);
-        this.logUtils.loge(error);
+        Logger.error(TAG, error);
         reject(error);
       } catch (error) {
-        this.logUtils.loge(error);
+        Logger.error(TAG, error);
         reject(error);
       }
     });
@@ -211,10 +209,10 @@ export class IntentService {
         }
 
         let error = 'Pay error response is ' + JSON.stringify(response);
-        this.logUtils.loge(error);
+        Logger.error(TAG, error);
         reject(error);
       } catch (error) {
-        this.logUtils.loge(error);
+        Logger.error(TAG, error);
         reject(error);
       }
     });
@@ -235,10 +233,10 @@ export class IntentService {
         }
 
         let error = 'Pay error response is ' + JSON.stringify(response);
-        this.logUtils.loge(error);
+        Logger.error(TAG, error);
         reject(error);
       } catch (error) {
-        this.logUtils.loge(error);
+        Logger.error(TAG, error);
         reject(error);
       }
     });

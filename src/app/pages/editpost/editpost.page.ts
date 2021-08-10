@@ -16,12 +16,12 @@ import { TranslateService } from '@ngx-translate/core';
 import { VideoEditor } from '@ionic-native/video-editor/ngx';
 import { AppService } from 'src/app/services/AppService';
 import { UtilService } from 'src/app/services/utilService';
-import { LogUtils } from 'src/app/services/LogUtils';
 import { ViewHelper } from 'src/app/services/viewhelper.service';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 
 import * as _ from 'lodash';
+import { Logger } from 'src/app/services/logger';
 
 let TAG: string = 'Feeds-editpost';
 @Component({
@@ -76,7 +76,6 @@ export class EditPostPage implements OnInit {
     public videoEditor: VideoEditor,
     public appService: AppService,
     public el: ElementRef,
-    private logUtils: LogUtils,
     private titleBarService: TitleBarService,
     private viewHelper: ViewHelper,
   ) {}
@@ -467,11 +466,7 @@ export class EditPostPage implements OnInit {
         this.imgUrl = image || '';
       })
       .catch(reason => {
-        this.logUtils.loge(
-          "Excute 'getImage' in editpost page is error,error msg is " +
-            JSON.stringify(reason),
-          TAG,
-        );
+        Logger.error(TAG, "Excute 'getImage' in editpost page is error,error msg is ", reason);
       });
   }
 
@@ -542,11 +537,7 @@ export class EditPostPage implements OnInit {
         this.getVideoInfo(path);
       })
       .catch(reason => {
-        this.logUtils.loge(
-          "Excute 'selectvideo' in editpost page is error, error is " +
-            JSON.stringify(reason),
-          TAG,
-        );
+        Logger.error(TAG, "Excute 'selectvideo' in editpost page is error, error is ", reason);
       });
   }
 
@@ -611,28 +602,25 @@ export class EditPostPage implements OnInit {
                 fileReader.readAsDataURL(file);
               },
               err => {
-                this.logUtils.loge(
-                  "Excute 'readFile' in editpost page is error ,readFileData error, error msg is " +
-                    JSON.stringify(err),
-                  TAG,
+                Logger.error(TAG,
+                  "Excute 'readFile' in editpost page is error ,readFileData error, error msg is ",
+                  err
                 );
               },
             );
           },
           err => {
-            this.logUtils.loge(
-              "Excute 'readFile' in editpost page is error ,getFileData error, error msg is " +
-                JSON.stringify(err),
-              TAG,
+            Logger.error(TAG,
+              "Excute 'readFile' in editpost page is error ,getFileData error, error msg is ",
+              err
             );
           },
         );
       },
       (err: any) => {
-        this.logUtils.loge(
-          "Excute 'readFile' in editpost page is error ,path error, error msg is " +
-            JSON.stringify(err),
-          TAG,
+        Logger.error(TAG,
+          "Excute 'readFile' in editpost page is error ,path error, error msg is ",
+          err
         );
       },
     );
@@ -784,7 +772,7 @@ export class EditPostPage implements OnInit {
   }
 
   getVideo(key: string) {
-    this.logUtils.logi('getVideo >> key = ' + key, TAG);
+    Logger.log(TAG, 'Video key is', key);
     this.feedService.getData(key).then((videodata: string) => {
       this.zone.run(() => {
         let videoData = videodata || '';
@@ -892,28 +880,25 @@ export class EditPostPage implements OnInit {
                 fileReader.readAsDataURL(file);
               },
               err => {
-                this.logUtils.loge(
-                  "Excute 'readThumbnail' in editpost page, readFileData error, error msg is " +
-                    JSON.stringify(err),
-                  TAG,
+                Logger.error(TAG,
+                  "Excute 'readThumbnail' in editpost page, readFileData error, error msg is ",
+                  err
                 );
               },
             );
           },
           err => {
-            this.logUtils.loge(
-              "Excute 'readThumbnail' in editpost page, getFileData error, error msg is " +
-                JSON.stringify(err),
-              TAG,
+            Logger.error(TAG,
+              "Excute 'readThumbnail' in editpost page, getFileData error, error msg is ",
+              err
             );
           },
         );
       },
       (err: any) => {
-        this.logUtils.loge(
-          "Excute 'readThumbnail' in editpost page, path error, error msg is " +
-            JSON.stringify(err),
-          TAG,
+        Logger.error(TAG,
+          "Excute 'readThumbnail' in editpost page, path error, error msg is ",
+          err
         );
       },
     );

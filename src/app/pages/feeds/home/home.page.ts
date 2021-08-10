@@ -22,7 +22,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { NativeService } from 'src/app/services/NativeService';
 import { IonInfiniteScroll } from '@ionic/angular';
 import { AppService } from 'src/app/services/AppService';
-import { LogUtils } from 'src/app/services/LogUtils';
 import { ViewHelper } from 'src/app/services/viewhelper.service';
 import { PopupProvider } from 'src/app/services/popup';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
@@ -33,6 +32,7 @@ import { IPFSService } from 'src/app/services/ipfs.service';
 import { NFTPersistenceHelper } from 'src/app/services/nft_persistence_helper.service';
 
 import _ from 'lodash';
+import { Logger } from 'src/app/services/logger';
 let TAG: string = 'Feeds-home';
 @Component({
   selector: 'app-home',
@@ -142,7 +142,6 @@ export class HomePage implements OnInit {
     private menuService: MenuService,
     public appService: AppService,
     public modalController: ModalController,
-    private logUtils: LogUtils,
     public popupProvider: PopupProvider,
     public popoverController: PopoverController,
     private viewHelper: ViewHelper,
@@ -1136,10 +1135,9 @@ export class HomePage implements OnInit {
             })
             .catch(reason => {
               rpostimg.style.display = 'none';
-              this.logUtils.loge(
-                "Excute 'handlePsotImg' in home page is error , get image data error, error msg is " +
-                  JSON.stringify(reason),
-                TAG,
+              Logger.error(TAG,
+                "Excute 'handlePsotImg' in home page is error , get image data error, error msg is ",
+                reason
               );
             });
         }
@@ -1212,10 +1210,9 @@ export class HomePage implements OnInit {
               video.style.display = 'none';
               vgplayer.style.display = 'none';
               this.isLoadVideoiamge[id] = '';
-              this.logUtils.loge(
-                "Excute 'hanldVideo' in home page is error , get image data error, error msg is " +
-                  JSON.stringify(reason),
-                TAG,
+              Logger.error(TAG,
+                "Excute 'hanldVideo' in home page is error , get image data error, error msg is ",
+                reason
               );
             });
         }
