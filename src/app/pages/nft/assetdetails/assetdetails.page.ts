@@ -130,14 +130,13 @@ export class AssetdetailsPage implements OnInit {
       let createAddr = this.nftContractControllerService.getAccountAddress();
       assetItem['fixedAmount'] = null;
       assetItem['moreMenuType'] = 'created';
-      let allList = this.nftPersistenceHelper.getCollectiblesMap();
-      let clist = allList[createAddr] || [];
+      let clist = this.nftPersistenceHelper.getCollectiblesList(createAddr);
       clist = _.filter(clist, item => {
         return item.saleOrderId != saleOrderId;
       });
       clist.push(assetItem);
 
-      this.nftPersistenceHelper.setCollectiblesMap(allList);
+      this.nftPersistenceHelper.setCollectiblesMap(createAddr, clist);
 
       //remove pasr
       let pList = this.nftPersistenceHelper.getPasarList();
@@ -162,8 +161,7 @@ export class AssetdetailsPage implements OnInit {
         case 'buy':
           break;
         case 'created':
-          let allList = this.nftPersistenceHelper.getCollectiblesMap();
-          let list = allList[createAddr] || [];
+          let list = this.nftPersistenceHelper.getCollectiblesList(createAddr);
           let cpItem = _.cloneDeep(assItem);
           cpItem['moreMenuType'] = 'created';
           console.log('=====list======' + list.length);
@@ -172,9 +170,8 @@ export class AssetdetailsPage implements OnInit {
           });
           console.log('=====list1======' + list.length);
           list.push(cpItem);
-          allList[createAddr] = list;
 
-          this.nftPersistenceHelper.setCollectiblesMap(allList);
+          this.nftPersistenceHelper.setCollectiblesMap(createAddr, list);
           let cpList = this.nftPersistenceHelper.getPasarList();
           cpList.push(cpItem);
 

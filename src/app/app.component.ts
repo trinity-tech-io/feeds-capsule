@@ -83,50 +83,6 @@ export class MyApp {
   initializeApp() {
     this.platform.ready()
       .then(() => {
-        Logger.log("AAAAAAAAA");
-        Logger.warn("BBBBBBBBBBBBBBB");
-        Logger.error("CCCCCCCCCCCC");
-
-        Logger.log("DDDDDD", "DDDDDDDDDD");
-        Logger.warn("EEEEEEEEEEEE", "EEEEEEEE");
-        Logger.error("FFFFFFFF", "FFFFFFFFF");
-
-        Logger.log("GGGGGGGGG", "GGGGGGGG", "GGGGGGGG", 111111111);
-        Logger.warn("HHHHHHHHH", "HHHHHHHHH", "HHHHHHHHH", 222222222);
-        Logger.error("IIIIIIIII", "IIIIIIIIIII", "IIIIIIIII", 3333333333);
-
-        console.log("set warn");
-        Logger.setLogLevel(LogLevel.WARN);
-
-        Logger.log("AAAAAAAAA");
-        Logger.warn("BBBBBBBBBBBBBBB");
-        Logger.error("CCCCCCCCCCCC");
-
-        Logger.log("DDDDDD", "DDDDDDDDDD");
-        Logger.warn("EEEEEEEEEEEE", "EEEEEEEE");
-        Logger.error("FFFFFFFF", "FFFFFFFFF");
-
-        Logger.log("GGGGGGGGG", "GGGGGGGG", "GGGGGGGG", 111111111);
-        Logger.warn("HHHHHHHHH", "HHHHHHHHH", "HHHHHHHHH", 222222222);
-        Logger.error("IIIIIIIII", "IIIIIIIIIII", "IIIIIIIII", 3333333333);
-
-        console.log("set debug");
-        Logger.setLogLevel(LogLevel.DEBUG);
-
-        Logger.log("AAAAAAAAA");
-        Logger.warn("BBBBBBBBBBBBBBB");
-        Logger.error("CCCCCCCCCCCC");
-
-        Logger.log("DDDDDD", "DDDDDDDDDD");
-        Logger.warn("EEEEEEEEEEEE", "EEEEEEEE");
-        Logger.error("FFFFFFFF", "FFFFFFFFF");
-
-        Logger.log("GGGGGGGGG", "GGGGGGGG", "GGGGGGGG", 111111111);
-        Logger.warn("HHHHHHHHH", "HHHHHHHHH", "HHHHHHHHH", 222222222);
-        Logger.error("IIIIIIIII", "IIIIIIIIIII", "IIIIIIIII", 3333333333);
-
-
-
         return this.dataHelper.loadApiProvider()
       })
       .then((api) => {

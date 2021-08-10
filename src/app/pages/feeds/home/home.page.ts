@@ -322,13 +322,12 @@ export class HomePage implements OnInit {
         assetItem['moreMenuType'] = 'created';
         //add OwnNftCollectiblesList
         let createAddr = this.nftContractControllerService.getAccountAddress();
-        let allList = this.nftPersistenceHelper.getCollectiblesMap();
-        let clist = allList[createAddr] || [];
+        let clist = this.nftPersistenceHelper.getCollectiblesList(createAddr);
         clist = _.filter(clist, item => {
           return item.tokenId != tokenId;
         });
         clist.push(assetItem);
-        this.nftPersistenceHelper.setCollectiblesMap(allList);
+        this.nftPersistenceHelper.setCollectiblesMap(createAddr, clist);
       }
     });
     this.events.subscribe(FeedsEvent.PublishType.updateTitle, () => {

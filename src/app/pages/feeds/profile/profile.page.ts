@@ -247,8 +247,7 @@ export class ProfilePage implements OnInit {
         case 'buy':
           break;
         case 'created':
-          let allList = this.nftPersistenceHelper.getCollectiblesMap();
-          let list = allList[createAddr] || [];
+          let list = this.nftPersistenceHelper.getCollectiblesList(createAddr);
           let cpItem = _.cloneDeep(assItem);
           cpItem['moreMenuType'] = 'created';
           console.log('=====list======' + list.length);
@@ -257,9 +256,9 @@ export class ProfilePage implements OnInit {
           });
           console.log('=====list1======' + list.length);
           list.push(cpItem);
-          allList[createAddr] = list;
-          this.collectiblesList = allList[createAddr];
-          this.nftPersistenceHelper.setCollectiblesMap(allList);
+
+          this.collectiblesList = list;
+          this.nftPersistenceHelper.setCollectiblesMap(createAddr, list);
 
           let cpList = this.nftPersistenceHelper.getPasarList();
           cpList.push(cpItem);
@@ -278,15 +277,13 @@ export class ProfilePage implements OnInit {
       assetItem['fixedAmount'] = null;
       assetItem['moreMenuType'] = 'created';
 
-      let allList = this.nftPersistenceHelper.getCollectiblesMap();
-      let clist = allList[createAddr] || [];
+      let clist = this.nftPersistenceHelper.getCollectiblesList(createAddr);
       clist = _.filter(clist, item => {
         return item.tokenId != tokenId!;
       });
       clist.push(assetItem);
-      allList[createAddr] = clist;
 
-      this.nftPersistenceHelper.setCollectiblesMap(allList);
+      this.nftPersistenceHelper.setCollectiblesMap(createAddr, clist);
       let pList = this.nftPersistenceHelper.getPasarList();
       pList = _.filter(pList, item => {
         return !(
@@ -1685,10 +1682,7 @@ export class ProfilePage implements OnInit {
       return;
     }
 
-    let ownNftCollectiblesList = this.nftPersistenceHelper.getCollectiblesMap();
-    if (!ownNftCollectiblesList)
-      ownNftCollectiblesList = [];
-    let list = ownNftCollectiblesList[accAddress] || [];
+    let list = this.nftPersistenceHelper.getCollectiblesList(accAddress);
     if (list.length === 0) {
       this.notOnSale(accAddress);
       this.OnSale(accAddress);
@@ -1861,11 +1855,11 @@ export class ProfilePage implements OnInit {
   }
 
   hanleListCace(createAddress?: any) {
-    let ownNftCollectiblesList = this.nftPersistenceHelper.getCollectiblesMap();
-    ownNftCollectiblesList[createAddress] = _.unionWith(this.collectiblesList,this.onSaleList);
-    console.log("=====ownNftCollectiblesList[createAddress]======"+JSON.stringify(ownNftCollectiblesList[createAddress]));
+    let ownNftCollectiblesList = this.nftPersistenceHelper.getCollectiblesList(createAddress);
+    ownNftCollectiblesList = _.unionWith(this.collectiblesList, this.onSaleList);
+    console.log("=====ownNftCollectiblesList[createAddress]======" + JSON.stringify(ownNftCollectiblesList));
 
-    this.nftPersistenceHelper.setCollectiblesMap(ownNftCollectiblesList);
+    this.nftPersistenceHelper.setCollectiblesMap(createAddress, ownNftCollectiblesList);
   }
 
   clickAssetItem(assetitem: any) {

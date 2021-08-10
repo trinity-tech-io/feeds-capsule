@@ -55,10 +55,7 @@ export class ProfilenftimagePage implements OnInit {
       this.nftImageList = [];
     }
 
-    let ownNftCollectiblesList = this.nftPersistenceHelper.getCollectiblesMap();
-    if (!ownNftCollectiblesList)
-      ownNftCollectiblesList = [];
-    let list = ownNftCollectiblesList[createAddr] || [];
+    let list = this.nftPersistenceHelper.getCollectiblesList(createAddr);
     if (list.length === 0) {
       this.notOnSale(createAddr);
       this.OnSale(createAddr);
@@ -247,9 +244,9 @@ export class ProfilenftimagePage implements OnInit {
   }
 
   hanleListCace(createAddress?: any) {
-    let ownNftCollectiblesListMap = this.nftPersistenceHelper.getCollectiblesMap();
-    ownNftCollectiblesListMap[createAddress] = _.unionWith(this.nftImageList,this.onSaleList);
-    this.nftPersistenceHelper.setCollectiblesMap(ownNftCollectiblesListMap);
+    let ownNftCollectiblesList = this.nftPersistenceHelper.getCollectiblesList(createAddress);
+    ownNftCollectiblesList = _.unionWith(this.nftImageList, this.onSaleList);
+    this.nftPersistenceHelper.setCollectiblesMap(createAddress, ownNftCollectiblesList);
   }
 
   async clickItem(item: any) {
