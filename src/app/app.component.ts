@@ -394,7 +394,7 @@ export class MyApp {
   walletDialog() {
     this.popover = this.popupProvider.ionicConfirm(
       this,
-      'common.confirm',
+      'common.disconnectWallet',
       this.walletAddress,
       this.cancel,
       this.disconnect,

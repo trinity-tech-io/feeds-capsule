@@ -104,7 +104,7 @@ export const en = {
     confirmdeletion2: 'Are you sure you want to delete this Reply?',
     quantity: 'Quantity',
     connectWallet: 'Please connect to your wallet first.',
-    disconnect: 'disconnect',
+    disconnect: 'Disconnect',
     buyNftError: 'NFT purchase failed',
     sold: 'Sold',
     offTheShelf: 'Off the shelf',
@@ -138,7 +138,8 @@ export const en = {
     checkingOrderResult: 'Waiting for the NFT Collectible sale order to take effect in the contract',
     developLog: 'Develop Log',
     restartApp: 'Restart Application',
-    restartAppDesc: 'Need to restart app after switching network'
+    restartAppDesc: 'Need to restart app after switching network',
+    disconnectWallet: 'Disconnect Wallet'
   },
   app: {
     profileDetails: 'Profile Details',

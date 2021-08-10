@@ -134,7 +134,8 @@ export const zh = {
     checkingOrderResult: '等待创建的NFT Collectible 订单在合约中生效',
     developLog: '开发者日志',
     restartApp: '重启应用',
-    restartAppDesc: '切换网络后需要重启应用'
+    restartAppDesc: '切换网络后需要重启应用',
+    disconnectWallet: '断开钱包'
   },
   app: {
     profileDetails: '档案详情',
