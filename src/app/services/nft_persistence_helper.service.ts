@@ -38,20 +38,42 @@ export class NFTPersistenceHelper {
     this.collectiblesMap = await this.dataHelper.loadNFTCollectibleMap(key);
   }
 
-  setCollectiblesMap(collectiblesList: any) {
-    this.collectiblesMap = collectiblesList;
+  setCollectiblesMap(key: string, collectiblesList: any) {
+    if (!this.collectiblesMap)
+      this.collectiblesMap = {};
+
+    if (!this.collectiblesMap[key])
+      this.collectiblesMap[key] = [];
+
+    this.collectiblesMap[key] = collectiblesList;
     this.dataHelper.saveNFTCollectibleList(this.activeCollecitblesKey, this.collectiblesMap);
   }
 
-  getCollectiblesMap() {
-    return this.collectiblesMap;
+  // getCollectiblesMap() {
+  //   if (!this.collectiblesMap)
+  //     return {};
+  //   return this.collectiblesMap;
+  // }
+
+  getCollectiblesList(key: string) {
+    if (!this.collectiblesMap)
+      this.collectiblesMap = {};
+
+    if (!this.collectiblesMap[key])
+      this.collectiblesMap[key] = [];
+
+    return this.collectiblesMap[key];
   }
 
   addItemToCollectible(key: string, value: any) {
-    if (!this.collectiblesMap || !this.collectiblesMap[key] || this.collectiblesMap[key].length == 0)
+    if (!this.collectiblesMap)
+      this.collectiblesMap = {};
+
+    if (!this.collectiblesMap[key])
       this.collectiblesMap[key] = [];
+
     this.collectiblesMap[key].push(value);
-    this.setCollectiblesMap(this.collectiblesMap);
+    this.setCollectiblesMap(key, this.collectiblesMap);
   }
 
   async setDevelopMode(developMode: boolean) {

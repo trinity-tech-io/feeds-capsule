@@ -796,8 +796,7 @@ export class MintnftPage implements OnInit {
     let accAddress =
     this.nftContractControllerService.getAccountAddress() || '';
 
-    let allList = this.nftPersistenceHelper.getCollectiblesMap();
-    let slist = allList[accAddress] || [];
+    let slist = this.nftPersistenceHelper.getCollectiblesList(accAddress);
     let item:any = {};
     switch (type) {
       case 'created':
@@ -850,6 +849,6 @@ export class MintnftPage implements OnInit {
         this.nftPersistenceHelper.setPasarList(list);
         break;
     }
-    this.nftPersistenceHelper.setCollectiblesMap(allList);
+    this.nftPersistenceHelper.setCollectiblesMap(accAddress, slist);
   }
 }

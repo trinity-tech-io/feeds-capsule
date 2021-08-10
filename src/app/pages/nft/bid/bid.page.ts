@@ -255,8 +255,7 @@ export class BidPage implements OnInit {
 
       let createAddress = this.nftContractControllerService.getAccountAddress();
       if (this.sellerAddress === createAddress) {
-        let alllist = this.nftPersistenceHelper.getCollectiblesMap();
-        let olist = alllist[createAddress] || [];
+        let olist = this.nftPersistenceHelper.getCollectiblesList(createAddress);
         olist = _.filter(olist, item => {
           return item.saleOrderId != this.saleOrderId;
         });
@@ -265,9 +264,8 @@ export class BidPage implements OnInit {
         cItem.fixedAmount = '';
         cItem['moreMenuType'] = 'created';
         olist.push(cItem);
-        alllist[createAddress] = olist;
 
-        this.nftPersistenceHelper.setCollectiblesMap(alllist);
+        this.nftPersistenceHelper.setCollectiblesMap(createAddress, olist);
       }
       this.native.pop();
     } else {
