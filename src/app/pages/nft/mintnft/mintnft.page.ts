@@ -447,12 +447,12 @@ export class MintnftPage implements OnInit {
       return false;
     }
 
-    if (regNumber.test(this.nftRoyalties) == false) {
+    if (this.nftRoyalties!="0"&&regNumber.test(this.nftRoyalties) == false) {
       this.native.toastWarn('MintnftPage.royaltiesErrorMsg');
       return false;
     }
 
-    if(parseInt(this.nftRoyalties)<=0 || parseInt(this.nftRoyalties)>15){
+    if(parseInt(this.nftRoyalties)<0 || parseInt(this.nftRoyalties)>15){
       this.native.toastWarn('MintnftPage.royaltiesErrorMsg');
       return false;
     }
@@ -778,13 +778,17 @@ export class MintnftPage implements OnInit {
   }
 
   handleRoyalties(events:any) {
-   let royalties = events.target.value || '';
+
+    let royalties = events.target.value || '';
    let regNumber = /^\+?[1-9][0-9]*$/;
+   if(royalties == "" || royalties === "0"){
+     return true;
+   }
    if (regNumber.test(royalties) == false) {
     this.native.toastWarn('MintnftPage.royaltiesErrorMsg');
     return false;
   }
-  if(parseInt(royalties)<=0 || parseInt(royalties)>15){
+  if(parseInt(royalties)<0 || parseInt(royalties)>15){
     this.native.toastWarn('MintnftPage.royaltiesErrorMsg');
     return false;
   }

@@ -130,7 +130,8 @@
  (hideShareMenu)="hideShareMenu($event)"
 >
 </app-sharemenu>
-<div class="add-tab" (click)="createPost()"></div>
+<div class="add-tab" *ngIf="selectType!='ProfilePage.collectibles'" (click)="createPost()"></div>
+<div class="add-nft" *ngIf="selectType==='ProfilePage.collectibles'" (click)="createNft()"><span>NFT</span></div>
 <!---------------- ADD COMMENT FOOTER ---------------->
 <app-comment
   *ngIf="!hideComment"
