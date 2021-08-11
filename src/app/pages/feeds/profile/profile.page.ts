@@ -1890,4 +1890,8 @@ export class ProfilePage implements OnInit {
   clickMint(){
     this.native.navigateForward(['mintnft'], {});
   }
+
+  createNft() {
+    this.native.navigateForward(['mintnft'], {});
+  }
 }

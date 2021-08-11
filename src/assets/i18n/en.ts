@@ -136,7 +136,7 @@ export const en = {
     createOrderFail: 'Failed to create a sale order for the Collectible',
     checkingCollectibleResult: 'Waiting for the NFT Collectible to take effect in the contract',
     checkingOrderResult: 'Waiting for the NFT Collectible sale order to take effect in the contract',
-    developLog: 'Develop Log',
+    developLog: 'Output  Log',
     restartApp: 'Restart Application',
     restartAppDesc: 'Need to restart app after switching network',
     disconnectWallet: 'Disconnect Wallet'
@@ -563,8 +563,8 @@ export const en = {
     /*********** Elastos API provider page ***********/
     elastosapiprovider: 'Elastos API',
     'developer-setting': 'Developer Options',
-    'advanced-setting': 'ADVANCED SETTINGS',
-    'configure-network': 'Configure Network',
+    'advanced-setting': 'Advanced Settings',
+    'configure-network': 'Active Network',
     'choose-network': 'Choose Network',
   },
   DiscoverfeedPage: {

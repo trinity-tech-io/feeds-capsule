@@ -132,7 +132,7 @@ export const zh = {
     createOrderFail: '创建出售订单失败',
     checkingCollectibleResult: '等待创建的NFT Collectible在合约中生效',
     checkingOrderResult: '等待创建的NFT Collectible 订单在合约中生效',
-    developLog: '开发者日志',
+    developLog: '输出日志',
     restartApp: '重启应用',
     restartAppDesc: '切换网络后需要重启应用',
     disconnectWallet: '断开钱包'
@@ -549,7 +549,7 @@ export const zh = {
     elastosapiprovider: 'Elastos API',
     'developer-setting': '开发者选项',
     'advanced-setting': '高级设置',
-    'configure-network': '配置网络',
+    'configure-network': '启用中网络',
     'choose-network': '选择网络'
   },
   DiscoverfeedPage: {
