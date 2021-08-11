@@ -265,8 +265,9 @@ export class MyApp {
     that.disconnectWallet();
   }
 
-  disconnectWallet() {
-    this.walletConnectControllerService.disconnect();
+  async disconnectWallet() {
+    await this.walletConnectControllerService.disconnect();
+    this.walletConnectControllerService.destroyWalletConnect();
   }
 
   clearData() {
@@ -406,6 +407,7 @@ export class MyApp {
     if (this.popover != null) {
       this.popover.dismiss();
       await that.walletConnectControllerService.disconnect();
+      that.walletConnectControllerService.destroyWalletConnect();
       this.walletAddress = '';
       this.walletAddressStr = '';
     }

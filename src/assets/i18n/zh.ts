@@ -135,7 +135,8 @@ export const zh = {
     developLog: '输出日志',
     restartApp: '重启应用',
     restartAppDesc: '切换网络后需要重启应用',
-    disconnectWallet: '断开钱包'
+    disconnectWallet: '断开钱包',
+    restartAppDescForProvider: '切换提供商后需要重启应用',
   },
   app: {
     profileDetails: '档案详情',
