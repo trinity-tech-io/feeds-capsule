@@ -170,7 +170,8 @@ export class NFTContractStickerService {
     Logger.log(TAG, 'CreateTxParams is', txData);
     try {
       await this.web3.eth.estimateGas(txData, (error, gasResult) => {
-        gas = gasResult;
+        if (gasResult)
+          gas = gasResult;
         Logger.log(TAG, 'create Tx gas is', gas);
       });
     } catch (error) {

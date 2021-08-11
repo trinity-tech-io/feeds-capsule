@@ -415,7 +415,8 @@ export class NFTContractParsarService {
     Logger.log(TAG, 'Create Tx , Params ', txData);
     try {
       await this.web3.eth.estimateGas(txData, (error, gas) => {
-        txGas = gas;
+        if (gas)
+          txGas = gas;
         Logger.log(TAG, 'EstimateGas finish ,gas is', gas, ', error is', error);
       });
     } catch (error) {
