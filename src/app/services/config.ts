@@ -17,7 +17,7 @@ export class Config {
 
     /** MainNet contract */
     public static STICKER_ADDRESS: string = '0x020c7303664bc88ae92cE3D380BF361E03B78B81';
-    public static PASAR_ADDRESS: string = '0xa18667008b9869145a05efB25BADda40ADA7253e';
+    public static PASAR_ADDRESS: string = '0x02E8AD0687D583e2F6A7e5b82144025f30e26aA0';
     public static CONTRACT_URI = 'https://api.' + Config.BASE_API + '/eth';
     public static CONTRACT_CHAINID: number = 20;
     public static CONTRACT_RPC = {
