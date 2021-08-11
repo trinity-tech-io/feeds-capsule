@@ -15,7 +15,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 export class AboutPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   public connectionStatus = 1;
-  public version = 'alpha-v2.0.5';
+  public version = 'alpha-v2.0.6';
   public currentLanguage = '';
 
   constructor(
