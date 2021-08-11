@@ -7,6 +7,7 @@ import { PopupProvider } from 'src/app/services/popup';
 import { IntentService } from 'src/app/services/IntentService';
 import { ViewHelper } from 'src/app/services/viewhelper.service';
 import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
+import { Events } from 'src/app/services/events.service';
 
 @Injectable()
 export class MenuService {
@@ -34,6 +35,7 @@ export class MenuService {
     private intentService: IntentService,
     private viewHelper: ViewHelper,
     private nftContractControllerService: NFTContractControllerService,
+    private events: Events
   ) {}
 
   async showChannelMenu(
