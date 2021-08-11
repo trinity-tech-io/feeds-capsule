@@ -128,6 +128,8 @@ export class HomePage implements OnInit {
 
   public pasarList: any = [];
 
+  public isFinsh:any = {};
+
   constructor(
     private platform: Platform,
     private elmRef: ElementRef,
@@ -1879,11 +1881,17 @@ export class HomePage implements OnInit {
         };
         try {
           this.pasarList.splice(pIndex, 1, item);
-          this.pasarList = _.sortBy(this.pasarList, (item: any) => {
-            return -Number(item.createTime);
+          let pasarList = _.cloneDeep(this.pasarList);
+          let arr = _.filter(pasarList,(item)=>{
+               return item === null;
           });
+          if(arr.length === 0){
+            this.pasarList = _.sortBy(pasarList, (item: any) => {
+             return -Number(item.createTime);
+            });
+            this.nftPersistenceHelper.setPasarList(this.pasarList);
+          }
 
-          this.nftPersistenceHelper.setPasarList(this.pasarList);
         } catch (err) {
           Logger.error(TAG, 'Get data from ipfs error', err);
         }

@@ -1768,7 +1768,12 @@ export class ProfilePage implements OnInit {
         };
         try {
           this.collectiblesList.splice(cIndex, 1, item);
-          this.hanleListCace(createAddress);
+          let arr = _.filter(this.collectiblesList,(item)=>{
+            return item === null;
+          });
+          if(arr.length === 0){
+            this.hanleListCace(createAddress);
+          }
         } catch (err) {
           Logger.error(TAG, 'Handle data from ipfs error' + err);
         }
@@ -1847,7 +1852,12 @@ export class ProfilePage implements OnInit {
               moreMenuType: 'onSale',
             };
             this.onSaleList.splice(index,1,item);
-            this.hanleListCace(createAddress);
+            let arr = _.filter(this.onSaleList,(item)=>{
+              return item === null;
+            });
+            if(arr.length === 0){
+              this.hanleListCace(createAddress);
+            }
           })
           .catch(() => { });
       } catch (error) {}

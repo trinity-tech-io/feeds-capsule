@@ -162,7 +162,12 @@ export class ProfilenftimagePage implements OnInit {
         };
         try {
           this.nftImageList.splice(cIndex, 1, item);
-          this.hanleListCace(createAddress);
+          let arr = _.filter(this.nftImageList,(item)=>{
+                return item === null;
+          });
+          if(arr.length === 0){
+            this.hanleListCace(createAddress);
+          }
         } catch (err) {
           Logger.error(TAG, 'Handle feeds url error', err);
         }
@@ -237,7 +242,12 @@ export class ProfilenftimagePage implements OnInit {
               moreMenuType: 'onSale',
             };
             this.onSaleList.splice(index,1,item);
-            this.hanleListCace(createAddress);
+            let arr =  _.filter(this.onSaleList,(item)=>{
+                   return item === null;
+            });
+            if(arr.length === 0){
+              this.hanleListCace(createAddress);
+            }
           })
           .catch(() => { });
       } catch (error) {}
