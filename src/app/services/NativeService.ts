@@ -13,7 +13,9 @@ import { ModalController } from '@ionic/angular';
 import { VideofullscreenComponent } from './../components/videofullscreen/videofullscreen.component';
 import { IntentService } from 'src/app/services/IntentService';
 import { Network } from '@ionic-native/network/ngx';
+import { Logger } from './logger';
 
+const TAG: string = 'NativeService';
 @Injectable()
 export class NativeService {
   public loading: any = null;
@@ -187,7 +189,7 @@ export class NativeService {
   addNetworkListener(offline: () => void, online: () => void) {
     // watch network for a disconnection
     let disconnectSubscription = this.network.onDisconnect().subscribe(() => {
-      console.log('network was disconnected :-(');
+      Logger.log(TAG, 'network was disconnected :-(');
       offline();
     });
 
@@ -196,7 +198,7 @@ export class NativeService {
 
     // watch network for a connection
     let connectSubscription = this.network.onConnect().subscribe(() => {
-      console.log('network connected!');
+      Logger.log(TAG, 'network connected!');
       online();
     });
 

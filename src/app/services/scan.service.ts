@@ -5,7 +5,8 @@ import {
   BarcodeScannerOptions,
   BarcodeScanResult,
 } from '@ionic-native/barcode-scanner/ngx';
-
+import { Logger } from './logger';
+const TAG: string = 'ScanService';
 @Injectable()
 export class ScanService {
   constructor(
@@ -38,7 +39,7 @@ export class ScanService {
         encodedData => {
         },
         err => {
-          console.log('Error occured : ' + err);
+          Logger.error(TAG, 'Create barcode error' + err);
         },
       );
   }

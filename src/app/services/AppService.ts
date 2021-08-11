@@ -11,7 +11,9 @@ import { MenuService } from 'src/app/services/MenuService';
 import { PopupProvider } from 'src/app/services/popup';
 import { IntentService } from 'src/app/services/IntentService';
 import { LanguageService } from 'src/app/services/language.service';
+import { Logger } from './logger';
 
+const TAG: string = 'AppService';
 @Injectable({
   providedIn: 'root',
 })
@@ -81,7 +83,7 @@ export class AppService {
   }
 
   onMessageReceived(msg: IntentPlugin.ReceivedIntent) {
-    console.log('Received intent ', msg);
+    Logger.log(TAG, 'Received intent ', msg);
     var params: any = msg.params;
     if (typeof params == 'string') {
       try {
@@ -136,7 +138,7 @@ export class AppService {
 
     this.intentService.addIntentListener(
       (intent: IntentPlugin.ReceivedIntent) => {
-        console.log('Receive intent ', intent);
+        Logger.log(TAG, 'Receive intent ', intent);
         this.onMessageReceived(intent);
         this.onReceiveIntent(intent);
       },

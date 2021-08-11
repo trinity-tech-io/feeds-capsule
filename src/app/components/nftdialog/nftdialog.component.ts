@@ -9,7 +9,9 @@ import { UtilService } from 'src/app/services/utilService';
 import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
 import { IPFSService } from 'src/app/services/ipfs.service';
 import { NFTPersistenceHelper } from 'src/app/services/nft_persistence_helper.service';
+import { Logger } from 'src/app/services/logger';
 
+let TAG: string = 'NFTDialog';
 @Component({
   selector: 'app-nftdialog',
   templateUrl: './nftdialog.component.html',
@@ -212,16 +214,16 @@ export class NftdialogComponent implements OnInit {
 
     let accountAddress = this.nftContractControllerService.getAccountAddress();
     let price = UtilService.accMul(this.amount, this.quantity);
-    console.log('=======price=======' + price);
+    Logger.log(TAG, 'Sell price is', price);
     let salePrice = this.nftContractControllerService.transToWei(
       price.toString(),
     );
-    console.log('=======salePrice=======' + salePrice);
-    console.log('=====this.quantity======' + typeof this.quantity);
+    Logger.log(TAG, 'Trans price to wei', salePrice);
+    Logger.log(TAG, 'Quantity type is ', typeof this.quantity);
     if (typeof this.quantity === 'number') {
       this.quantity = this.quantity.toString();
     }
-    console.log('=====this.quantity======' + typeof this.quantity);
+    Logger.log(TAG, 'Quantity type is', typeof this.quantity);
     let orderIndex = -1;
     try {
       orderIndex = await this.nftContractControllerService

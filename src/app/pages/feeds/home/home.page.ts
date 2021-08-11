@@ -1783,7 +1783,7 @@ export class HomePage implements OnInit {
     let tokenUri = tokenInfo[3];
     let royalties = tokenInfo[5] || null;
     let createTime = tokenInfo[7];
-    console.log('===createTime====' + createTime);
+    Logger.log(TAG, 'Order createTime is ', createTime);
     let sellerAddr = openOrder[7];
     this.handleFeedsUrl(
       tokenUri,
@@ -1834,7 +1834,7 @@ export class HomePage implements OnInit {
           createTime: createTime * 1000,
         };
         item['showType'] = 'buy';
-        console.log('==home==buy===' + JSON.stringify(item));
+        Logger.log(TAG, 'Buy NFT ', item);
         this.native.navigateForward(['bid'], { queryParams: item });
       })
       .catch(() => { });
@@ -1885,15 +1885,17 @@ export class HomePage implements OnInit {
 
           this.nftPersistenceHelper.setPasarList(this.pasarList);
         } catch (err) {
-          console.log('====err====' + JSON.stringify(err));
+          Logger.error(TAG, 'Get data from ipfs error', err);
         }
       })
-      .catch(() => { });
+      .catch((err) => {
+        Logger.error(TAG, 'Get data from ipfs error', err);
+      });
   }
 
   clickAssetItem(assetitem: any) {
     assetitem['showType'] = 'buy';
-    console.log('====assItem====' + JSON.stringify(assetitem));
+    Logger.log(TAG, 'Click asset item', assetitem);
     this.native.navigateForward(['bid'], { queryParams: assetitem });
   }
 

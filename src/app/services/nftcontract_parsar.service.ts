@@ -2,7 +2,9 @@ import { Injectable } from '@angular/core';
 import { WalletConnectControllerService } from 'src/app/services/walletconnect_controller.service';
 import Web3 from 'web3';
 import { Config } from './config';
+import { Logger } from './logger';
 
+const TAG: string = 'NFTPasarService';
 const SUCCESS = 'success';
 const FAIL = '';
 
@@ -123,7 +125,7 @@ export class NFTContractParsarService {
 
   createOrderForSale(tokenId, quantity, price): Promise<number> {
     return new Promise(async (resolve, reject) => {
-      console.log('CreateOrderForSale params', tokenId, quantity, price);
+      Logger.log(TAG, 'Create order for sale, params', tokenId, quantity, price);
       let accountAddress = this.walletConnectControllerService.getAccountAddress();
       let seller = await this.getSellerByAddr(accountAddress);
       let lastOrderIndex = seller[2] - 1;
@@ -133,7 +135,7 @@ export class NFTContractParsarService {
         .encodeABI();
       let transactionParams = await this.createTxParams(orderdata, 0);
 
-      console.log(
+      Logger.log(TAG,
         'Calling createOrderForSale smart contract through wallet connect',
         orderdata,
         transactionParams,
@@ -143,13 +145,13 @@ export class NFTContractParsarService {
         .createOrderForSale(tokenId, quantity, price)
         .send(transactionParams)
         .on('transactionHash', hash => {
-          console.log('CreateOrderForSale, transactionHash is', hash);
+          Logger.log(TAG, 'CreateOrderForSale, transactionHash is', hash);
         })
         .on('receipt', receipt => {
-          console.log('CreateOrderForSale, receipt is', receipt);
+          Logger.log(TAG, 'CreateOrderForSale, receipt is', receipt);
         })
         .on('confirmation', (confirmationNumber, receipt) => {
-          console.log(
+          Logger.log(TAG,
             'CreateOrderForSale, confirmation is',
             confirmationNumber,
             receipt,
@@ -157,11 +159,11 @@ export class NFTContractParsarService {
         })
         .on('error', (error, receipt) => {
           resolve(-1);
-          console.error('CreateOrderForSale, error is', error, receipt);
+          Logger.error(TAG, 'CreateOrderForSale, error is', error, receipt);
         });
 
       this.checkSellerOrderState(accountAddress, lastOrderIndex, newIndex => {
-        console.log('checkSellerOrderState finish final');
+        Logger.log(TAG, 'checkSellerOrderState finish final');
         resolve(newIndex);
       });
     });
@@ -173,25 +175,14 @@ export class NFTContractParsarService {
     callback: (newIndex: number) => void,
   ) {
     this.checkSellerOrderStateInterval = setInterval(async () => {
-      console.log('checkSellerOrderState');
-
       if (!this.checkSellerOrderStateInterval) return;
       let seller = await this.getSellerByAddr(accountAddress);
-      console.log('CheckSellerOrderState seller info is', seller);
-
       let newIndex = seller[2] - 1;
-      console.log('Type lastOrderIndex is', typeof lastOrderIndex);
-      console.log('Type newIndex is', typeof newIndex);
-
-      console.log('lastOrderIndex is', lastOrderIndex);
-      console.log('newIndex is', newIndex);
-
       if (newIndex != lastOrderIndex) {
-        console.log('newIndex is diffrent');
         clearInterval(this.checkSellerOrderStateInterval);
         callback(newIndex);
         this.checkSellerOrderStateInterval = null;
-        console.log('checkSellerOrderState finish, new index is ', newIndex);
+        Logger.log(TAG, 'Check Seller Order State finish, new index is ', newIndex);
       }
     }, 5000);
   }
@@ -203,28 +194,19 @@ export class NFTContractParsarService {
 
   changeOrderPrice(accountAddress, orderId, price): Promise<string> {
     return new Promise(async (resolve, reject) => {
-      console.log('ChangeOrderPrice', orderId, price);
-
-      console.log('Type price', typeof price);
-      console.log('Type orderId', typeof orderId);
-
+      Logger.log(TAG, 'Change order price, params is', accountAddress, orderId, price);
       let seller = await this.getSellerByAddr(accountAddress);
-      console.log('Seller info ', seller);
-
       let lastOrderIndex = seller[2] - 1;
       let originOrder = await this.getSellerOrderByIndex(lastOrderIndex);
-
-      console.log('Origin order is ', originOrder);
-
       let oldPrice = originOrder[5];
-      console.log('Old price is', oldPrice);
 
+      Logger.log(TAG, 'Origin order is ', originOrder, 'price is', oldPrice);
       const orderdata = this.pasarContract.methods
         .changeOrderPrice(orderId, price)
         .encodeABI();
       let transactionParams = await this.createTxParams(orderdata, 0);
 
-      console.log(
+      Logger.log(
         'Calling changeOrderPrice smart contract through wallet connect',
         orderdata,
         transactionParams,
@@ -234,13 +216,13 @@ export class NFTContractParsarService {
         .changeOrderPrice(orderId, price)
         .send(transactionParams)
         .on('transactionHash', hash => {
-          console.log('ChangeOrderPrice, transactionHash is', hash);
+          Logger.log(TAG, 'ChangeOrderPrice, transactionHash is', hash);
         })
         .on('receipt', receipt => {
-          console.log('ChangeOrderPrice, receipt is', receipt);
+          Logger.log(TAG, 'ChangeOrderPrice, receipt is', receipt);
         })
         .on('confirmation', (confirmationNumber, receipt) => {
-          console.log(
+          Logger.log(TAG,
             'ChangeOrderPrice, confirmation is',
             confirmationNumber,
             receipt,
@@ -248,7 +230,7 @@ export class NFTContractParsarService {
         })
         .on('error', (error, receipt) => {
           resolve(FAIL);
-          console.error('ChangeOrderPrice, error is', error, receipt);
+          Logger.error(TAG, 'ChangeOrderPrice, error is', error, receipt);
         });
 
       this.checkPrice(lastOrderIndex, oldPrice, newPrice => {
@@ -261,10 +243,9 @@ export class NFTContractParsarService {
     this.checkPriceInterval = setInterval(async () => {
       if (!this.checkPriceInterval) return;
       let newOrder = await this.getSellerOrderByIndex(lastOrderIndex);
-      console.log('CheckPrice , neworder info is', newOrder);
       let newPrice = newOrder[5];
-      console.log('New price is', newPrice);
       if (newPrice != price) {
+        Logger.log(TAG, 'Check price finish, new price is', newPrice);
         clearInterval(this.checkPriceInterval);
         callback(newPrice);
         this.checkPriceInterval = null;
@@ -279,10 +260,8 @@ export class NFTContractParsarService {
 
   buyOrder(accountAddress, orderId, price): Promise<string> {
     return new Promise(async (resolve, reject) => {
-      console.log('BuyOrder params', orderId);
-
+      Logger.log(TAG, 'Buy Order params', accountAddress, orderId, price);
       let buyer = await this.getBuyerByAddr(accountAddress);
-      console.log('Buyer info ', buyer);
       let lastIndex = buyer[2] - 1;
 
       const orderdata = this.pasarContract.methods
@@ -290,7 +269,7 @@ export class NFTContractParsarService {
         .encodeABI();
       let transactionParams = await this.createTxParams(orderdata, price);
 
-      console.log(
+      Logger.log(TAG,
         'Calling buyOrder smart contract through wallet connect',
         orderdata,
         transactionParams,
@@ -300,17 +279,17 @@ export class NFTContractParsarService {
         .buyOrder(orderId)
         .send(transactionParams)
         .on('transactionHash', hash => {
-          console.log('BuyOrder, transactionHash is', hash);
+          Logger.log(TAG, 'BuyOrder, transactionHash is', hash);
         })
         .on('receipt', receipt => {
-          console.log('BuyOrder, receipt is', receipt);
+          Logger.log(TAG, 'BuyOrder, receipt is', receipt);
         })
         .on('confirmation', (confirmationNumber, receipt) => {
-          console.log('BuyOrder, confirmation is', confirmationNumber, receipt);
+          Logger.log(TAG, 'BuyOrder, confirmation is', confirmationNumber, receipt);
         })
         .on('error', (error, receipt) => {
           resolve(FAIL);
-          console.error('BuyOrder, error is', error, receipt);
+          Logger.error(TAG, 'BuyOrder, error is', error, receipt);
         });
 
       this.checkBuyerOrderState(accountAddress, lastIndex, newIndex => {
@@ -327,14 +306,14 @@ export class NFTContractParsarService {
     this.checkBuyerOrderStateInterval = setInterval(async () => {
       if (!this.checkBuyerOrderStateInterval) return;
       let buyer = await this.getBuyerByAddr(accountAddress);
-      console.log('Buyer info is', buyer);
+      Logger.log(TAG, 'Buyer info is', buyer);
 
       let newIndex = buyer[2] - 1;
       if (newIndex != lastOrderIndex) {
         clearInterval(this.checkBuyerOrderStateInterval);
         callback(newIndex);
         this.checkBuyerOrderStateInterval = null;
-        console.log('CheckBuyerOrderState , new index is ', newIndex);
+        Logger.log(TAG, 'CheckBuyerOrderState , new index is ', newIndex);
       }
     }, 5000);
   }
@@ -346,14 +325,14 @@ export class NFTContractParsarService {
 
   cancelOrder(orderId): Promise<string> {
     return new Promise(async (resolve, reject) => {
-      console.log('CancelOrder params', orderId);
+      Logger.log(TAG, 'Cancel order, params', orderId);
 
       const orderdata = this.pasarContract.methods
         .cancelOrder(orderId)
         .encodeABI();
       let transactionParams = await this.createTxParams(orderdata, 0);
 
-      console.log(
+      Logger.log(TAG,
         'Calling cancelOrder smart contract through wallet connect',
         orderdata,
         transactionParams,
@@ -361,23 +340,23 @@ export class NFTContractParsarService {
 
       let order = await this.getOrderById(orderId);
       let originOrderState = order[2];
-      console.log('order = ', order);
+      Logger.log(TAG, 'Origin order is', order);
 
       this.pasarContract.methods
         .cancelOrder(orderId)
         .send(transactionParams)
         .on('transactionHash', hash => {
-          console.log('transactionHash', hash);
+          Logger.log(TAG, 'transactionHash', hash);
         })
         .on('receipt', receipt => {
-          console.log('receipt', receipt);
+          Logger.log(TAG, 'receipt', receipt);
         })
         .on('confirmation', (confirmationNumber, receipt) => {
-          console.log('confirmation', confirmationNumber, receipt);
+          Logger.log(TAG, 'confirmation', confirmationNumber, receipt);
         })
         .on('error', (error, receipt) => {
           resolve(FAIL);
-          console.error('error', error, receipt);
+          Logger.error(TAG, 'Cancel order error', error, receipt);
         });
 
       this.checkOrderState(orderId, originOrderState, newOrderState => {
@@ -392,22 +371,17 @@ export class NFTContractParsarService {
     callback: (newOrderState: number) => void,
   ) {
     this.checkOrderStateInterval = setInterval(async () => {
-      console.log('checkSellerOrderState');
-
       if (!this.checkOrderStateInterval) return;
 
       let order = await this.getOrderById(orderId);
-
       let newOrderState = order[2];
-      console.log('CheckOrderState order info is', order);
 
       if (newOrderState != originOrderState) {
-        console.log('newIndex is diffrent');
         clearInterval(this.checkOrderStateInterval);
         callback(newOrderState);
         this.checkOrderStateInterval = null;
-        console.log(
-          'checkOrderState finish, new order state is ',
+        Logger.log(TAG,
+          'Check order state finish, new order state is ',
           newOrderState,
         );
       }
@@ -420,7 +394,7 @@ export class NFTContractParsarService {
   }
 
   async getBuyerByAddr(address) {
-    console.log('address is', address);
+    Logger.log(TAG, 'Get buyer address', address);
     return await this.pasarContract.methods.getBuyerByAddr(address).call();
   }
 
@@ -430,7 +404,7 @@ export class NFTContractParsarService {
 
   async createTxParams(data, price) {
     let accountAddress = this.walletConnectControllerService.getAccountAddress();
-    let gas = 500000;
+    let txGas = 500000;
 
     const txData = {
       from: this.walletConnectControllerService.getAccountAddress(),
@@ -438,23 +412,23 @@ export class NFTContractParsarService {
       value: price,
       data: data,
     };
-    console.log('CreateTxParams is ', txData);
+    Logger.log(TAG, 'Create Tx , Params ', txData);
     try {
-      let gas = await this.web3.eth.estimateGas(txData, (error, gas) => {
-        console.log('===gas error===', error);
-        console.log('===gas gas===', gas);
+      await this.web3.eth.estimateGas(txData, (error, gas) => {
+        txGas = gas;
+        Logger.log(TAG, 'EstimateGas finish ,gas is', gas, ', error is', error);
       });
     } catch (error) {
-      console.log('error', error);
+      Logger.error(TAG, 'EstimateGas error', error);
     }
 
-    console.log('===gas ===', gas);
+    Logger.log(TAG, 'Finnal gas is', txGas);
     let gasPrice = await this.web3.eth.getGasPrice();
     return {
       from: accountAddress,
       // to: stickerAddr,
       gasPrice: gasPrice,
-      gas: Math.round(gas * 3),
+      gas: Math.round(txGas * 3),
       value: price,
     };
   }

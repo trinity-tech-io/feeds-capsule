@@ -55,19 +55,19 @@ export class StandardAuthService {
       };
       try {
         let presentation = await didAccess.getCredentials(params);
-        console.log('Got credentials result, presentation is', presentation);
+        Logger.log(TAG, 'Got credentials result, presentation is', presentation);
         if (presentation) {
           resolve(presentation);
-          console.log('Got credentials:', presentation);
+          Logger.log(TAG, 'Got credentials:', presentation);
         } else {
           alert(
             'Empty presentation returned, something wrong happened, or operation was cancelled',
           );
-          console.log('Empty ....', presentation);
+          Logger.log(TAG, 'Empty ....', presentation);
         }
       } catch (error) {
         alert('error ' + JSON.stringify(error));
-        console.log('error', error);
+        Logger.log(TAG, 'error', error);
       }
     });
   }

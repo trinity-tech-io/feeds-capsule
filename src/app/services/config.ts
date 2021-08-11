@@ -32,13 +32,12 @@ export class Config {
     public static IPFS_TEST_SERVER: string = 'https://ipfs-test.trinity-feeds.app/';
 
     public static changeApi(api: string) {
-        console.log("api is", api);
         if (api == 'elastos.io')
             Config.BASE_API = Config.ELASTOS_API;
         else
             Config.BASE_API = Config.TRINITY_API;
 
-        console.log("Config.BASE_API is", Config.BASE_API);
+        console.log("Change api", api, ', Base api', Config.BASE_API);
         Config.reset();
     }
 

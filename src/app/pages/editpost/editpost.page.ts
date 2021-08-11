@@ -420,7 +420,7 @@ export class EditPostPage implements OnInit {
         });
       },
       (err: any) => {
-        console.error('Add img err', err);
+        Logger.error(TAG, 'Add img err', err);
         let imgUrl = this.imgUrl || '';
         if (imgUrl === '') {
           this.native.toast_trans('common.noImageSelected');

@@ -12,6 +12,9 @@ import { IntentService } from '../../../services/IntentService';
 import { TitleBarComponent } from '../../../components/titlebar/titlebar.component';
 import { TitleBarService } from '../../../services/TitleBarService';
 import * as _ from 'lodash';
+import { Logger } from 'src/app/services/logger';
+
+let TAG: string = 'ExploreFeeds';
 @Component({
   selector: 'app-explorefeeds',
   templateUrl: './explorefeeds.page.html',
@@ -399,7 +402,7 @@ export class ExplorefeedsPage implements OnInit {
   }
 
   clickTab(type: string) {
-    console.log('====type=====' + type);
+    Logger.log(TAG, 'ClickTab type is', type);
     this.tabType = type;
   }
 }

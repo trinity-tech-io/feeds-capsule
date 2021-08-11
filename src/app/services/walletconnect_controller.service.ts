@@ -5,7 +5,9 @@ import { Events } from 'src/app/services/events.service';
 
 import Web3 from 'web3';
 import { Config } from './config';
+import { Logger } from './logger';
 
+const TAG: string = 'WalletConnectController';
 @Injectable()
 export class WalletConnectControllerService {
   private uri = Config.CONTRACT_URI;
@@ -28,7 +30,7 @@ export class WalletConnectControllerService {
 
   public async initWalletConnectProvider() {
     //  Create WalletConnect Provider
-    console.log("RPC", this.rpc);
+    Logger.log(TAG, "RPC", this.rpc);
     this.walletConnectProvider = new WalletConnectProvider({
       rpc: this.rpc,
       infuraId: '0dd3ab5ca24946938c6d411a1637cc59',
@@ -38,31 +40,31 @@ export class WalletConnectControllerService {
       },
     });
 
-    console.log('Connected?', this.walletConnectProvider.connected);
+    Logger.log(TAG, 'Connected?', this.walletConnectProvider.connected);
     // Subscribe to accounts change
     this.walletConnectProvider.on('accountsChanged', (accounts: string[]) => {
-      console.log('accountsChanged', accounts);
+      Logger.log(TAG, 'accountsChanged', accounts);
     });
 
     // Subscribe to chainId change
     this.walletConnectProvider.on('chainChanged', (chainId: number) => {
-      console.log('chainChanged', chainId);
+      Logger.log(TAG, 'chainChanged', chainId);
     });
 
     // Subscribe to session disconnection
     this.walletConnectProvider.on(
       'disconnect',
       (code: number, reason: string) => {
-        console.log('disconnect', code, reason);
+        Logger.log(TAG, 'disconnect', code, reason);
       },
     );
 
     // Subscribe to session disconnection
     this.walletConnectProvider.on('error', (code: number, reason: string) => {
-      console.error('error', code, reason);
+      Logger.error(TAG, 'error', code, reason);
     });
 
-    console.log(this.accountAddress);
+    Logger.log(TAG, 'Current account address is', this.accountAddress);
     if (this.accountAddress == '')
       this.anonymousInitWeb3();
   }
@@ -76,10 +78,10 @@ export class WalletConnectControllerService {
     }
 
     //  Enable session (triggers QR Code modal)
-    console.log('Connecting to wallet connect');
+    Logger.log(TAG, 'Connecting to wallet connect');
     try {
       let enabled = await this.walletConnectProvider.enable();
-      console.log(
+      Logger.log(TAG,
         'CONNECTED to wallet connect',
         enabled,
         this.walletConnectProvider,
@@ -88,15 +90,16 @@ export class WalletConnectControllerService {
     } catch (err) {
       //Work around
       this.destroyWalletConnect();
-      console.log('CONNECT error to wallet connect', err);
+      Logger.log(TAG, 'CONNECT error to wallet connect', err);
     }
   }
 
   async initWeb3() {
-    console.log('initWeb3');
+    Logger.log(TAG, 'Init web3, walletConnet provider is', this.walletConnectProvider);
     this.walletConnectWeb3 = new Web3(this.walletConnectProvider as any);
-    this.accountAddress = await this.parseAccountAddress();
-    this.dataHelper.saveWalletAccountAddress(this.accountAddress);
+    // this.accountAddress = await this.parseAccountAddress();
+    // Logger.log(TAG, 'Account address', this.accountAddress);
+    // this.dataHelper.saveWalletAccountAddress(this.accountAddress);
 
     this.events.publish(FeedsEvent.PublishType.walletConnected);
     this.events.publish(FeedsEvent.PublishType.walletConnectedRefreshPage);
@@ -115,24 +118,23 @@ export class WalletConnectControllerService {
   }
 
   public getAccountAddress() {
-    console.log('this.accountAddress = ' + this.accountAddress);
     return this.accountAddress;
   }
 
   public async disconnect() {
     if (this.walletConnectProvider) {
-      console.log('Disconnecting from wallet connect');
+      Logger.log(TAG, 'Disconnecting from wallet connect');
       try {
         await this.walletConnectProvider.disconnect();
         // await (await this.walletConnectProvider.getWalletConnector()).killSession();
       } catch (error) {
-        console.log('Disconnect wallet error', error);
+        Logger.log(TAG, 'Disconnect wallet error', error);
       } finally {
-        console.log('Disconnected from wallet connect');
+        Logger.log(TAG, 'Disconnected from wallet connect');
         this.destroyWalletConnect();
       }
     } else {
-      console.log('Not connected to wallet connect');
+      Logger.log(TAG, 'Not connected to wallet connect');
     }
   }
 
@@ -153,7 +155,7 @@ export class WalletConnectControllerService {
       this.walletConnectWeb3 = new Web3(
         new Web3.providers.HttpProvider(this.uri, { agent: {} }),
       );
-      console.log('Web3 version is ' + this.walletConnectWeb3.version + ', uri is' + this.uri);
+      Logger.log(TAG, 'Web3 version is ', this.walletConnectWeb3.version, ', uri is', this.uri);
     }
   }
 

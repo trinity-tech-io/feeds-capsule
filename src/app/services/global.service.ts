@@ -7,8 +7,9 @@ import { NFTPersistenceHelper } from 'src/app/services/nft_persistence_helper.se
 import { DataHelper } from 'src/app/services/DataHelper';
 import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
 import { WalletConnectControllerService } from 'src/app/services/walletconnect_controller.service';
+import { Logger } from './logger';
 
-
+const TAG: string = 'GlobalService';
 @Injectable()
 export class GlobalService {
   constructor(
@@ -30,14 +31,14 @@ export class GlobalService {
       this.nftContractStickerService.setTestMode(false);
       this.nftPersistenceHelper.setDevelopMode(false);
       this.walletConnectControllerService.setTestMode(false);
-      console.log('Change to mainnet');
+      Logger.log(TAG, 'Change to mainnet');
     } else {
       this.ipfsService.setTESTMode(true);
       this.nftContractParsarService.setTestMode(true);
       this.nftContractStickerService.setTestMode(true);
       this.nftPersistenceHelper.setDevelopMode(true);
       this.walletConnectControllerService.setTestMode(true);
-      console.log('Change to testnet');
+      Logger.log(TAG, 'Change to testnet');
     }
 
     this.walletConnectControllerService.destroyWalletConnect();
