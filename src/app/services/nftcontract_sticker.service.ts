@@ -2,7 +2,9 @@ import { Injectable } from '@angular/core';
 import { WalletConnectControllerService } from 'src/app/services/walletconnect_controller.service';
 import Web3 from 'web3';
 import { Config } from './config';
+import { Logger } from './logger';
 
+const TAG: string = "NFTStickerService";
 @Injectable()
 export class NFTContractStickerService {
   private stickerAddress: string = Config.STICKER_ADDRESS;
@@ -53,7 +55,7 @@ export class NFTContractStickerService {
         accountAddress,
         contractAddress,
       );
-      console.log('Contract isApproved?', isApproved);
+      Logger.log(TAG, 'Contract isApproved?', isApproved);
       if (isApproved) {
         resolve(isApproved);
         return;
@@ -63,7 +65,7 @@ export class NFTContractStickerService {
         .setApprovalForAll(contractAddress, approved)
         .encodeABI();
       let transactionParams = await this.createTxParams(data);
-      console.log(
+      Logger.log(TAG,
         'Calling setApprovalForAll smart contract through wallet connect',
         data,
         transactionParams,
@@ -72,25 +74,24 @@ export class NFTContractStickerService {
         .setApprovalForAll(contractAddress, approved)
         .send(transactionParams)
         .on('transactionHash', hash => {
-          console.log('transactionHash', hash);
+          Logger.log(TAG, 'transactionHash', hash);
           resolve(hash);
         })
         .on('receipt', receipt => {
-          console.log('receipt', receipt);
+          Logger.log(TAG, 'receipt', receipt);
           resolve(receipt);
         })
         .on('confirmation', (confirmationNumber, receipt) => {
-          console.log('confirmation', confirmationNumber, receipt);
+          Logger.log(TAG, 'confirmation', confirmationNumber, receipt);
           resolve(receipt);
         })
         .on('error', (error, receipt) => {
-          console.error('mint error===');
-          console.error('error', error);
+          Logger.error(TAG, 'Mint error,', error, receipt);
           reject(receipt);
         });
 
       this.checkApprovedState(accountAddress, contractAddress, isApproved => {
-        console.log('Set approval success');
+        Logger.log(TAG, 'Set approval success', isApproved);
         resolve(isApproved);
       });
     });
@@ -108,13 +109,13 @@ export class NFTContractStickerService {
     royalty: string,
   ): Promise<any> {
     return new Promise(async (resolve, reject) => {
-      console.log('Mint params ', tokenId, supply, uri, royalty);
+      Logger.log(TAG, 'Mint params ', tokenId, supply, uri, royalty);
       const mintdata = this.stickerContract.methods
         .mint(tokenId, supply, uri, royalty)
         .encodeABI();
       let transactionParams = await this.createTxParams(mintdata);
 
-      console.log(
+      Logger.log(TAG,
         'Calling smart contract through wallet connect',
         mintdata,
         transactionParams,
@@ -122,25 +123,25 @@ export class NFTContractStickerService {
       this.stickerContract.methods
         .mint(tokenId, supply, uri, royalty)
         .send(transactionParams)
-        .on('Mint process, transactionHash is', hash => {
-          console.log('transactionHash', hash);
+        .on('transactionHash', hash => {
+          Logger.log(TAG, 'Mint process, transactionHash is', hash);
         })
         .on('receipt', receipt => {
-          console.log('Mint process, receipt is', receipt);
+          Logger.log(TAG, 'Mint process, receipt is', receipt);
         })
         .on('confirmation', (confirmationNumber, receipt) => {
-          console.log(
+          Logger.log(TAG,
             'Mint process, confirmation is',
             confirmationNumber,
             receipt,
           );
         })
         .on('error', (error, receipt) => {
-          console.error('Mint process, error is', error, receipt);
+          Logger.error(TAG, 'Mint process, error is', error, receipt);
         });
 
       this.checkTokenState(tokenId, info => {
-        console.log('Mint success, token info is', info);
+        Logger.log(TAG, 'Mint success, token info is', info);
         resolve(info);
       });
     });
@@ -166,14 +167,17 @@ export class NFTContractStickerService {
       value: 0,
       data: data,
     };
-    console.log('CreateTxParams is', txData);
+    Logger.log(TAG, 'CreateTxParams is', txData);
     try {
-      gas = await this.web3.eth.estimateGas(txData, (error, gasResult) => {
+      await this.web3.eth.estimateGas(txData, (error, gasResult) => {
         gas = gasResult;
+        Logger.log(TAG, 'create Tx gas is', gas);
       });
     } catch (error) {
-      console.log('error', error);
+      Logger.log(TAG, 'error', error);
     }
+
+    Logger.log(TAG, 'Finnal gas is', gas);
 
     let gasPrice = await this.web3.eth.getGasPrice();
     return {
@@ -188,10 +192,9 @@ export class NFTContractStickerService {
   checkTokenState(tokenId, callback: (tokenInfo: any) => void) {
     this.checkTokenInterval = setInterval(async () => {
       if (!this.checkTokenInterval) return;
-      console.log('tokenId = ' + tokenId);
       let info = await this.tokenInfo(tokenId);
-      console.log('Token info is', info);
       if (info[0] != '0') {
+        Logger.log(TAG, 'Check token state finish', info);
         clearInterval(this.checkTokenInterval);
         callback(info);
         this.checkTokenInterval = null;
@@ -220,6 +223,7 @@ export class NFTContractStickerService {
       if (!this.checkApprovedInterval) return;
       let isApproved = await this.isApprovedForAll(_owner, _operator);
       if (isApproved) {
+        Logger.log(TAG, 'Check Approved finish', isApproved);
         clearInterval(this.checkApprovedInterval);
         callback(isApproved);
         this.checkApprovedInterval = null;

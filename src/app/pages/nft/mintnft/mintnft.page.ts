@@ -15,9 +15,11 @@ import { WalletConnectControllerService } from 'src/app/services/walletconnect_c
 import { PopupProvider } from 'src/app/services/popup';
 import { IPFSService } from 'src/app/services/ipfs.service';
 import { NFTPersistenceHelper } from 'src/app/services/nft_persistence_helper.service';
+import { Logger } from 'src/app/services/logger';
 
 const SUCCESS = 'success';
 const SKIP = 'SKIP';
+const TAG: string = 'MintPage';
 @Component({
   selector: 'app-mintnft',
   templateUrl: './mintnft.page.html',
@@ -166,7 +168,7 @@ export class MintnftPage implements OnInit {
     this.native.changeLoadingDesc("common.uploadingData");
     this.uploadData()
       .then((result) => {
-        console.log("Upload Result is", result);
+        Logger.log(TAG, 'Upload Result', result);
         this.native.changeLoadingDesc("common.uploadDataSuccess");
         tokenId = result.tokenId;
         jsonHash = result.jsonHash;
@@ -246,7 +248,7 @@ export class MintnftPage implements OnInit {
       })
       .catch(dirEntryErr => {
         reject(dirEntryErr);
-        console.log('====dirEntryErr====' + JSON.stringify(dirEntryErr));
+        Logger.error(TAG, 'Get File object error', dirEntryErr)
       });
     });
   }
@@ -256,7 +258,7 @@ export class MintnftPage implements OnInit {
       let blob = this.dataURLtoBlob(file);
       let formData = new FormData();
       formData.append('', blob);
-      console.log("Formdata length is " + formData.getAll('').length);
+      Logger.log(TAG, 'Send img, formdata length is', formData.getAll('').length);
       this.ipfsService
         .nftPost(formData)
         .then(result => {
@@ -287,7 +289,8 @@ export class MintnftPage implements OnInit {
       let thumbnailBlob = this.dataURLtoBlob(thumbnailBase64);
       let formData = new FormData();
       formData.append('', thumbnailBlob);
-      console.log("Formdata length is " + formData.getAll('').length);
+      Logger.log(TAG, 'Send thumbnail, formdata length is', formData.getAll('').length);
+
       this.ipfsService
         .nftPost(formData)
         .then(result => {
@@ -322,12 +325,12 @@ export class MintnftPage implements OnInit {
 
       let formData = new FormData();
       formData.append('', JSON.stringify(ipfsJSON));
-      console.log("Formdata length is " + formData.getAll('').length);
+      Logger.log(TAG, 'Send json, formdata length is', formData.getAll('').length);
       this.ipfsService
         .nftPost(formData)
         .then(result => {
           //{"Name":"blob","Hash":"QmaxWgjheueDc1XW2bzDPQ6qnGi9UKNf23EBQSUAu4GHGF","Size":"17797"};
-          console.log('====json Data=====' + JSON.stringify(result));
+          Logger.log(TAG, 'Json data is', JSON.stringify(result));
           let hash = result['Hash'] || null;
           if (hash != null) {
             let jsonHash = 'feeds:json:' + hash;
@@ -335,7 +338,7 @@ export class MintnftPage implements OnInit {
           }
         })
         .catch(err => {
-          console.log('========' + JSON.stringify(err));
+          Logger.error(TAG, 'Send Json data error', err);
           reject('upload json error');
         });
     });
@@ -363,7 +366,7 @@ export class MintnftPage implements OnInit {
           resolve(imgPath);
         },
         (err: any) => {
-          console.error('Add img err', err);
+          Logger.error(TAG, 'Add img err', err);
           let imgUrl = this.assetBase64 || '';
           if (!imgUrl) {
             this.native.toast_trans('common.noImageSelected');
@@ -627,13 +630,13 @@ export class MintnftPage implements OnInit {
           let base64 = canvas.toDataURL('image/*', 0.7);
           if (!base64) {
             let error = "Compress image error, result is null";
-            console.log(error);
+            Logger.error(TAG, error);
             reject(error);
           }
           resolve(base64);
         };
       } catch (err) {
-        console.log("Compress image error", err);
+        Logger.error(TAG, "Compress image error", err);
         reject("Compress image error" + JSON.stringify(err));
       }
     });

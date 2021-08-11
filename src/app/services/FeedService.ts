@@ -133,7 +133,7 @@ export class FeedService {
   initDidManager() {
     didManager.initDidStore('anything', null);
     this.setEidURL(Config.EID_RPC);
-    console.log('Eid RPC is', Config.EID_RPC);
+    Logger.log(TAG, 'Eid RPC is', Config.EID_RPC);
   }
 
   getNetworkStatus(): FeedsData.ConnState {
@@ -5426,12 +5426,12 @@ export class FeedService {
     onSuccess: (isOnSideChain: boolean) => void,
     onError?: (err: any) => void,
   ) {
-    console.log('DidManager resolve did is', did);
+    Logger.log(TAG, 'DidManager resolve did is', did);
     didManager.resolveDidDocument(
       did,
       true,
       didDocument => {
-        console.log('DidManager resolve finish, didDocument is', didDocument);
+        Logger.log(TAG, 'DidManager resolve finish, didDocument is', didDocument);
         if (didDocument == null) {
           onSuccess(false);
         } else {
@@ -5439,7 +5439,7 @@ export class FeedService {
         }
       },
       err => {
-        console.log('DidManager resolve error,', err);
+        Logger.error(TAG, 'DidManager resolve error,', err);
         onError(err);
       },
     );
@@ -7140,7 +7140,7 @@ export class FeedService {
     return new Promise(async (resolve, reject) => {
       try {
         let response = await this.standardAuth.getCredentials();
-        console.log('response, ', response);
+        Logger.log(TAG, 'Cred access response', response);
         // let response = await this.intentService.credaccessWithParams();
         if (response) {
           resolve(response);
@@ -7681,10 +7681,10 @@ export class FeedService {
     didManager.setResolverUrl(
       url,
       () => {
-        console.log('Set resolve url success, url is', url);
+        Logger.log(TAG, 'Set resolve url success, url is', url);
       },
       error => {
-        console.log('Set resolve url error, error is', error);
+        Logger.log(TAG, 'Set resolve url error, error is', error);
       },
     );
   }

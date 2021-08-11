@@ -8,7 +8,9 @@ import { NativeService } from '../../services/NativeService';
 import { IPFSService } from 'src/app/services/ipfs.service';
 import _ from 'lodash';
 import { NFTPersistenceHelper } from 'src/app/services/nft_persistence_helper.service';
+import { Logger } from 'src/app/services/logger';
 
+const TAG: string = 'ProfileImagePage';
 @Component({
   selector: 'app-profilenftimage',
   templateUrl: './profilenftimage.page.html',
@@ -162,7 +164,7 @@ export class ProfilenftimagePage implements OnInit {
           this.nftImageList.splice(cIndex, 1, item);
           this.hanleListCace(createAddress);
         } catch (err) {
-          console.log('====err====' + JSON.stringify(err));
+          Logger.error(TAG, 'Handle feeds url error', err);
         }
       })
       .catch(() => { });

@@ -240,7 +240,7 @@ export class ProfilePage implements OnInit {
       let type = obj['type'];
       let createAddr = this.nftContractControllerService.getAccountAddress();
       let assItem = obj['assItem'];
-      console.log('===assItem===' + JSON.stringify(assItem));
+      Logger.log(TAG, 'Update asset item', assItem);
       let saleOrderId = assItem['saleOrderId'];
       let tokenId = assItem['tokenId'];
       switch (type) {
@@ -250,13 +250,11 @@ export class ProfilePage implements OnInit {
           let list = this.nftPersistenceHelper.getCollectiblesList(createAddr);
           let cpItem = _.cloneDeep(assItem);
           cpItem['moreMenuType'] = 'created';
-          console.log('=====list======' + list.length);
           list = _.filter(list, item => {
             return item.tokenId != tokenId;
           });
-          console.log('=====list1======' + list.length);
           list.push(cpItem);
-
+          Logger.log(TAG, 'Update list', list);
           this.collectiblesList = list;
           this.nftPersistenceHelper.setCollectiblesMap(createAddr, list);
 
@@ -1644,7 +1642,7 @@ export class ProfilePage implements OnInit {
 
   updateWalletAddress() {
     this.walletAddress = this.walletConnectControllerService.getAccountAddress();
-    console.log('updateWalletAddress', this.walletAddress);
+    Logger.log(TAG, 'Update WalletAddress', this.walletAddress);
     this.walletAddressStr = UtilService.resolveAddress(this.walletAddress);
   }
 
@@ -1771,10 +1769,12 @@ export class ProfilePage implements OnInit {
           this.collectiblesList.splice(cIndex, 1, item);
           this.hanleListCace(createAddress);
         } catch (err) {
-          console.log('====err====' + JSON.stringify(err));
+          Logger.error(TAG, 'Handle data from ipfs error' + err);
         }
       })
-      .catch(() => { });
+      .catch((err) => {
+        Logger.error(TAG, 'Get data from ipfs error' + err);
+      });
   }
 
   async OnSale(accAddress: string) {
@@ -1784,13 +1784,13 @@ export class ProfilePage implements OnInit {
       .getSellerByAddr(accAddress);
     let sellerAddr = sellerInfo[1];
     let orderCount = sellerInfo[3];
-    console.log("====orderCount====="+orderCount);
+    Logger.log(TAG, 'On Sale order count', orderCount);
     if (orderCount === '0') {
     } else {
       for (let index = 0; index < orderCount; index++) {
         this.onSaleList.push(null);
       }
-      console.log("====this.collectiblesList====="+JSON.stringify(this.collectiblesList));
+      Logger.log(TAG, 'On sale collectiblesList is', this.collectiblesList);
       await this.handleOrder(sellerAddr, orderCount, 'sale', accAddress);
     }
   }
@@ -1857,7 +1857,7 @@ export class ProfilePage implements OnInit {
     let ownNftCollectiblesList = this.nftPersistenceHelper.getCollectiblesList(createAddress);
     ownNftCollectiblesList = _.unionWith(this.collectiblesList, this.onSaleList);
     this.collectiblesList = _.unionWith(this.collectiblesList,this.onSaleList);
-    console.log("=====ownNftCollectiblesList[createAddress]======" + JSON.stringify(ownNftCollectiblesList));
+    Logger.log(TAG, 'CollectiblesList union', ownNftCollectiblesList);
     this.nftPersistenceHelper.setCollectiblesMap(createAddress, ownNftCollectiblesList);
   }
 
@@ -1868,7 +1868,7 @@ export class ProfilePage implements OnInit {
   clickMore(parm: any) {
     let asstItem = parm['assetItem'];
     let type = asstItem['moreMenuType'];
-    console.log('===type===' + type);
+    Logger.log(TAG, 'clickMore parm is', parm);
     switch (type) {
       case 'onSale':
         this.handleOnSale(asstItem);

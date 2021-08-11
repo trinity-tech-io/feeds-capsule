@@ -53,7 +53,7 @@ export class FileService {
           resolve(subDirEntry);
         },
         error => {
-          Logger.error(TAG, 'Get directory error ', error);
+          // Logger.error(TAG, 'Get directory error ', error);
           reject(error);
         },
       );

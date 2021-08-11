@@ -15,10 +15,12 @@ import { IPFSService } from 'src/app/services/ipfs.service';
 import { NFTPersistenceHelper } from 'src/app/services/nft_persistence_helper.service';
 
 import _ from 'lodash';
+import { Logger } from 'src/app/services/logger';
 type detail = {
   type: string;
   details: string;
 };
+let TAG: string = "AssetDetails";
 @Component({
   selector: 'app-assetdetails',
   templateUrl: './assetdetails.page.html',
@@ -154,7 +156,7 @@ export class AssetdetailsPage implements OnInit {
       let type = obj['type'];
       let createAddr = this.nftContractControllerService.getAccountAddress();
       let assItem = obj['assItem'];
-      console.log('===assItem===' + JSON.stringify(assItem));
+      Logger.log(TAG, 'Update nft list, asset item is', assItem);
       let saleOrderId = assItem['saleOrderId'];
       let tokenId = assItem['tokenId'];
       switch (type) {
@@ -164,11 +166,9 @@ export class AssetdetailsPage implements OnInit {
           let list = this.nftPersistenceHelper.getCollectiblesList(createAddr);
           let cpItem = _.cloneDeep(assItem);
           cpItem['moreMenuType'] = 'created';
-          console.log('=====list======' + list.length);
           list = _.filter(list, item => {
             return item.tokenId != tokenId;
           });
-          console.log('=====list1======' + list.length);
           list.push(cpItem);
 
           this.nftPersistenceHelper.setCollectiblesMap(createAddr, list);
@@ -383,7 +383,7 @@ export class AssetdetailsPage implements OnInit {
 
   async cancelOrder(that: any) {
     let saleOrderId = this.assItem['saleOrderId'] || '';
-    console.log('=======saleOrderId=========' + saleOrderId);
+    Logger.log(TAG, 'Cancel Order ,order id is ', saleOrderId);
     if (saleOrderId === '') {
       this.native.hideLoading();
       this.native.toast_trans('common.cancellationFailed');

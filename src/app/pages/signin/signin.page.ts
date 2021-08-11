@@ -6,14 +6,15 @@ import { ThemeService } from 'src/app/services/theme.service';
 import { AppService } from '../../services/AppService';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-
 import {
   connectivity,
   DID,
 } from '@elastosfoundation/elastos-connectivity-sdk-cordova';
 import { localization } from '@elastosfoundation/elastos-connectivity-sdk-cordova';
 import { LanguageService } from 'src/app/services/language.service';
+import { Logger } from 'src/app/services/logger';
 
+const TAG: string = 'SigninPage';
 @Component({
   selector: 'app-signin',
   templateUrl: './signin.page.html',
@@ -135,8 +136,7 @@ export class SigninPage implements OnInit {
       });
 
       if (presentation) {
-        console.log('Got credentials:', presentation);
-        alert(JSON.stringify(presentation));
+        Logger.log(TAG, 'Got credential', presentation);
       } else {
         alert(
           'Empty presentation returned, something wrong happened, or operation was cancelled',
