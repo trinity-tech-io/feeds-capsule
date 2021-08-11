@@ -139,7 +139,8 @@ export const en = {
     developLog: 'Output  Log',
     restartApp: 'Restart Application',
     restartAppDesc: 'Need to restart app after switching network',
-    disconnectWallet: 'Disconnect Wallet'
+    disconnectWallet: 'Disconnect Wallet',
+    restartAppDescForProvider: 'Need to restart app after switching provider',
   },
   app: {
     profileDetails: 'Profile Details',

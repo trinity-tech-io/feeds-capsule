@@ -77,7 +77,7 @@ export class ElastosapiproviderPage implements OnInit {
     this.popover = this.popupProvider.ionicAlert(
       this,
       'common.restartApp',
-      'common.restartAppDesc',
+      'common.restartAppDescForProvider',
       this.confirm,
       'tskth.svg',
       'common.ok',

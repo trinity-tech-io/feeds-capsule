@@ -8,6 +8,7 @@ import { DataHelper } from 'src/app/services/DataHelper';
 import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
 import { WalletConnectControllerService } from 'src/app/services/walletconnect_controller.service';
 import { Logger } from './logger';
+import { Config } from './config';
 
 const TAG: string = 'GlobalService';
 @Injectable()
@@ -41,6 +42,7 @@ export class GlobalService {
       Logger.log(TAG, 'Change to testnet');
     }
 
+    this.walletConnectControllerService.setBridge(Config.BRIDGE);
     this.walletConnectControllerService.destroyWalletConnect();
     await this.walletConnectControllerService.initWalletConnectProvider();
     this.nftContractControllerService.init();
