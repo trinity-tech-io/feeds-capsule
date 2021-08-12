@@ -14,8 +14,9 @@ import { PopupProvider } from 'src/app/services/popup';
 import { IPFSService } from 'src/app/services/ipfs.service';
 import { NFTPersistenceHelper } from 'src/app/services/nft_persistence_helper.service';
 
-import _ from 'lodash';
+import _, { reject } from 'lodash';
 import { Logger } from 'src/app/services/logger';
+import { Config } from 'src/app/services/config';
 type detail = {
   type: string;
   details: string;
@@ -378,32 +379,74 @@ export class AssetdetailsPage implements OnInit {
       this.popover.dismiss();
     }
     that.native
-      .showLoading('common.waitMoment', () => {}, 50000)
+      .showLoading('common.cancelingOrderDesc', (isDismiss) => {
+        if (isDismiss) {
+          that.nftContractControllerService.getPasar().cancelCancelOrderProcess();
+          that.native.hideLoading();
+          that.showSelfCheckDialog();
+        }
+      }, Config.WAIT_TIME_CANCEL_ORDER)
       .then(() => {
-        that.cancelOrder(that);
+        return that.cancelOrder(that);
       })
-      .catch(() => {
+      .then(() => {
         that.native.hideLoading();
+        that.native.toast_trans('common.cancelSuccessfully');
+      })
+      .catch((error) => {
+        that.native.hideLoading();
+        that.native.toast_trans('common.cancellationFailed');
+        //Show error msg
       });
   }
 
-  async cancelOrder(that: any) {
-    let saleOrderId = this.assItem['saleOrderId'] || '';
-    Logger.log(TAG, 'Cancel Order ,order id is ', saleOrderId);
-    if (saleOrderId === '') {
-      this.native.hideLoading();
-      this.native.toast_trans('common.cancellationFailed');
-      return;
-    }
-    const cancelStatus = await this.nftContractControllerService
-      .getPasar()
-      .cancelOrder(saleOrderId);
-    that.native.hideLoading();
-    if (cancelStatus != '' && cancelStatus != undefined) {
-      that.events.publish(FeedsEvent.PublishType.nftCancelOrder, this.assItem);
-      this.native.toast_trans('common.cancelSuccessfully');
-    } else {
-      this.native.toast_trans('common.cancellationFailed');
+  cancelOrder(that: any): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let saleOrderId = this.assItem['saleOrderId'] || '';
+        Logger.log(TAG, 'Cancel Order ,order id is ', saleOrderId);
+        if (!saleOrderId) {
+          reject('Order id is null');
+          return;
+        }
+
+        const cancelStatus = await this.nftContractControllerService
+          .getPasar()
+          .cancelOrder(saleOrderId);
+        if (!cancelStatus) {
+          reject('error');
+          that.events.publish(FeedsEvent.PublishType.nftCancelOrder, this.assItem);
+          return;
+        }
+
+        resolve('Success');
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
+  showSelfCheckDialog() {
+    //TimeOut
+    this.openAlert();
+  }
+
+
+  openAlert() {
+    this.popover = this.popupProvider.ionicAlert(
+      this,
+      'common.timeout',
+      'common.cancelOrderTimeoutDesc',
+      this.confirm,
+      'tskth.svg',
+    );
+  }
+
+  confirm(that: any) {
+    if (this.popover != null) {
+      this.popover.dismiss();
+      this.popover = null;
+      that.native.pop();
     }
   }
 }

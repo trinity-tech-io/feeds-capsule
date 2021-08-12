@@ -7,7 +7,7 @@ import { PopoverController } from '@ionic/angular';
 @Injectable()
 export class PopupProvider {
   public popover: any = null;
-
+  public popoverDialog: any = null;
   constructor(
     private alertCtrl: AlertController,
     private translate: TranslateService,
@@ -156,5 +156,24 @@ export class PopupProvider {
     await this.popover.present();
 
     return this.popover;
+  }
+
+
+  showSelfCheckDialog(desc: string) {
+    this.openAlert(desc);
+  }
+
+  openAlert(desc: string) {
+    this.popoverDialog = this.ionicAlert(
+      this,
+      'common.timeout',
+      desc,
+      this.timeOutconfirm,
+      'tskth.svg',
+    );
+  }
+
+  timeOutconfirm(that: any) {
+    that.popoverController.dismiss();
   }
 }

@@ -66,6 +66,8 @@ export class Config {
     }
 
 
-    public static WAIT_TIME_CANCEL_ORDER = 60000;
-    public static WAIT_TIME_CHANGE_PRICE = 60000;
+    public static WAIT_TIME_CANCEL_ORDER = 60 * 1000;
+    public static WAIT_TIME_CHANGE_PRICE = 60 * 1000;
+    public static WAIT_TIME_BUY_ORDER = 60 * 1000;
+    public static WAIT_TIME_SELL_ORDER = 60 * 1000;
 }

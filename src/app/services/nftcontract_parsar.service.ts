@@ -146,6 +146,7 @@ export class NFTContractParsarService {
         .send(transactionParams)
         .on('transactionHash', hash => {
           Logger.log(TAG, 'CreateOrderForSale, transactionHash is', hash);
+          //TODO
         })
         .on('receipt', receipt => {
           Logger.log(TAG, 'CreateOrderForSale, receipt is', receipt);
@@ -206,7 +207,7 @@ export class NFTContractParsarService {
         .encodeABI();
       let transactionParams = await this.createTxParams(orderdata, 0);
 
-      Logger.log(
+      Logger.log(TAG,
         'Calling changeOrderPrice smart contract through wallet connect',
         orderdata,
         transactionParams,
@@ -217,6 +218,7 @@ export class NFTContractParsarService {
         .send(transactionParams)
         .on('transactionHash', hash => {
           Logger.log(TAG, 'ChangeOrderPrice, transactionHash is', hash);
+          resolve(SUCCESS);
         })
         .on('receipt', receipt => {
           Logger.log(TAG, 'ChangeOrderPrice, receipt is', receipt);
@@ -280,6 +282,7 @@ export class NFTContractParsarService {
         .send(transactionParams)
         .on('transactionHash', hash => {
           Logger.log(TAG, 'BuyOrder, transactionHash is', hash);
+          resolve(SUCCESS);
         })
         .on('receipt', receipt => {
           Logger.log(TAG, 'BuyOrder, receipt is', receipt);
@@ -347,6 +350,7 @@ export class NFTContractParsarService {
         .send(transactionParams)
         .on('transactionHash', hash => {
           Logger.log(TAG, 'transactionHash', hash);
+          resolve(SUCCESS);
         })
         .on('receipt', receipt => {
           Logger.log(TAG, 'receipt', receipt);
