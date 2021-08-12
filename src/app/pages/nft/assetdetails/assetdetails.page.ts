@@ -125,6 +125,11 @@ export class AssetdetailsPage implements OnInit {
   }
 
   addEvent() {
+
+    this.events.subscribe(FeedsEvent.PublishType.nftUpdatePrice,(nftPrice)=>{
+      this.price = nftPrice;
+    });
+
     this.events.subscribe(FeedsEvent.PublishType.nftCancelOrder, assetItem => {
       let saleOrderId = assetItem.saleOrderId;
       let sellerAddr = assetItem.sellerAddr;
@@ -185,6 +190,7 @@ export class AssetdetailsPage implements OnInit {
   removeEvent() {
     this.events.unsubscribe(FeedsEvent.PublishType.nftCancelOrder);
     this.events.unsubscribe(FeedsEvent.PublishType.nftUpdateList);
+    this.events.unsubscribe(FeedsEvent.PublishType.nftUpdatePrice);
   }
 
   collectContractData() {

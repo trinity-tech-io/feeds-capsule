@@ -148,6 +148,7 @@ declare namespace FeedsEvent {
     addRpcResponseError = 'feeds:addRpcResponseError',
     nftCancelOrder = 'feeds:nftCancelOrder',
     nftUpdateList = 'feeds:nftUpdateList',
+    nftUpdatePrice = 'feeds:nftUpdatePrice',
 
     walletConnected = 'feeds:walletConnected',
     walletConnectedRefreshSM = 'feeds:walletConnectedRefreshSandwichMenu',
