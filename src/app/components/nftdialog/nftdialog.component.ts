@@ -292,7 +292,7 @@ export class NftdialogComponent implements OnInit {
         pItem.fixedAmount = price;
         this.nftPersistenceHelper.setPasarList(plist);
       }
-
+      this.events.publish(FeedsEvent.PublishType.nftUpdatePrice,price);
       this.popover.dismiss();
     } else {
       this.native.hideLoading();
