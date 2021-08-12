@@ -40,6 +40,10 @@ img{
     font-stretch: normal;
     font-style: normal;
     text-align: left;
+    width: 80%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .des1{
@@ -49,6 +53,10 @@ img{
     font-stretch: normal;
     font-style: normal;
     text-align: left;
+    width: 80%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .des2{

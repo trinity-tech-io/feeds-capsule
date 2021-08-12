@@ -249,7 +249,7 @@ export class ProfilePage implements OnInit {
         case 'created':
           let list = this.nftPersistenceHelper.getCollectiblesList(createAddr);
           let cpItem = _.cloneDeep(assItem);
-          cpItem['moreMenuType'] = 'created';
+          //cpItem['moreMenuType'] = 'created';
           list = _.filter(list, item => {
             return item.tokenId != tokenId;
           });
