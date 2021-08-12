@@ -67,6 +67,14 @@ export class ProfilenftimagePage implements OnInit {
   }
 
   doRefresh(event: any) {
+    let nftImageList = _.cloneDeep(this.nftImageList);
+    let arr = _.filter(nftImageList,(item)=>{
+      return item === null;
+    });
+    if(arr.length > 0){
+       event.target.complete();
+       return;
+    }
     let accAddress =
       this.nftContractControllerService.getAccountAddress() || '';
     this.nftImageList = [];

@@ -717,6 +717,14 @@ export class ProfilePage implements OnInit {
         }, 500);
         break;
       case 'ProfilePage.collectibles':
+        let collectiblesList = _.cloneDeep(this.collectiblesList);
+        let arr = _.filter(collectiblesList,(item)=>{
+          return item === null;
+        });
+        if(arr.length > 0){
+           event.target.complete();
+           return;
+        }
         let accAddress =
           this.nftContractControllerService.getAccountAddress() || '';
         this.collectiblesList = [];

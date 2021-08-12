@@ -859,6 +859,14 @@ export class HomePage implements OnInit {
         }, 500);
         break;
       case 'pasar':
+        let pasarList = _.cloneDeep(this.pasarList);
+        let arr = _.filter(pasarList,(item)=>{
+          return item === null;
+        });
+        if(arr.length > 0){
+           event.target.complete();
+           return;
+        }
         let sId1 = setTimeout(() => {
           this.getPaserList();
           event.target.complete();
