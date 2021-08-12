@@ -254,19 +254,19 @@ export class BidPage implements OnInit {
       this.nftPersistenceHelper.setPasarList(plist);
 
       let createAddress = this.nftContractControllerService.getAccountAddress();
-      if (this.sellerAddress === createAddress) {
+      //if (this.sellerAddress === createAddress) {
         let olist = this.nftPersistenceHelper.getCollectiblesList(createAddress);
         olist = _.filter(olist, item => {
           return item.saleOrderId != this.saleOrderId;
         });
         //add created
         let cItem: any = _.cloneDeep(this.curAssetItem);
-        cItem.fixedAmount = '';
+        cItem.fixedAmount = null;
         cItem['moreMenuType'] = 'created';
         olist.push(cItem);
 
         this.nftPersistenceHelper.setCollectiblesMap(createAddress, olist);
-      }
+      //}
       this.native.pop();
     } else {
       this.buyFail();
