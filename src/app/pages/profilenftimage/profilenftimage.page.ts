@@ -162,7 +162,8 @@ export class ProfilenftimagePage implements OnInit {
         };
         try {
           this.nftImageList[cIndex] = item;
-          let arr = _.filter(this.nftImageList,(item)=>{
+          let nftImageList = _.cloneDeep(this.nftImageList);
+          let arr = _.filter(nftImageList,(item)=>{
                 return item === null;
           });
           if(arr.length === 0){
@@ -176,7 +177,7 @@ export class ProfilenftimagePage implements OnInit {
   }
 
   async OnSale(accAddress: string) {
-    this.onSaleList = [];
+    //this.onSaleList = [];
     let sellerInfo = await this.nftContractControllerService
       .getPasar()
       .getSellerByAddr(accAddress);
@@ -184,10 +185,16 @@ export class ProfilenftimagePage implements OnInit {
     let orderCount = sellerInfo[3];
     if (orderCount === '0') {
     } else {
+
       for (let index = 0; index < orderCount; index++) {
-        this.onSaleList.push(null);
+           this.nftImageList.push(null);
       }
-      await this.handleOrder(sellerAddr, orderCount, 'sale', accAddress);
+
+      let nftCreatedCount = await this.nftContractControllerService
+      .getSticker()
+      .tokenCountOfOwner(accAddress);
+
+      await this.handleOrder(sellerAddr, orderCount, 'sale', accAddress,nftCreatedCount);
     }
   }
 
@@ -196,6 +203,7 @@ export class ProfilenftimagePage implements OnInit {
     orderCount: any,
     listType: any,
     createAddress: any,
+    nftCreatedCount:any
   ) {
     for (let index = 0; index < orderCount; index++) {
       try {
@@ -241,13 +249,16 @@ export class ProfilenftimagePage implements OnInit {
               createTime: createTime * 1000,
               moreMenuType: 'onSale',
             };
-            this.onSaleList[index] = item;
-            let arr =  _.filter(this.onSaleList,(item)=>{
-                   return item === null;
+            let nftIndex = parseInt(nftCreatedCount)+index;
+            console.log("=====nftIndex====="+nftIndex);
+            this.nftImageList[nftIndex] = item;
+            let nftImageList = _.cloneDeep(this.nftImageList);
+            let arr = _.filter(nftImageList,(item)=>{
+              return item === null;
             });
-            if(arr.length === 0){
-              this.hanleListCace(createAddress);
-            }
+           if(arr.length === 0){
+            this.hanleListCace(createAddress);
+           }
           })
           .catch(() => { });
       } catch (error) {}
@@ -256,8 +267,7 @@ export class ProfilenftimagePage implements OnInit {
 
   hanleListCace(createAddress?: any) {
     let ownNftCollectiblesList = this.nftPersistenceHelper.getCollectiblesList(createAddress);
-    ownNftCollectiblesList = _.unionWith(this.nftImageList, this.onSaleList);
-    this.nftImageList = _.unionWith(this.nftImageList,this.onSaleList);
+    ownNftCollectiblesList =  this.nftImageList;
     this.nftPersistenceHelper.setCollectiblesMap(createAddress, ownNftCollectiblesList);
   }
 

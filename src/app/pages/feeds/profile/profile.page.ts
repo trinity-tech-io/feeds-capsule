@@ -1769,7 +1769,8 @@ export class ProfilePage implements OnInit {
         try {
           //this.collectiblesList.splice(cIndex, 1, item);
           this.collectiblesList[cIndex] = item;
-          let arr = _.filter(this.collectiblesList,(item)=>{
+          let collectiblesList = _.cloneDeep(this.collectiblesList);
+          let arr = _.filter(collectiblesList,(item)=>{
             return item === null;
           });
           if(arr.length === 0){
@@ -1785,7 +1786,7 @@ export class ProfilePage implements OnInit {
   }
 
   async OnSale(accAddress: string) {
-    this.onSaleList = [];
+    //this.onSaleList = [];
     let sellerInfo = await this.nftContractControllerService
       .getPasar()
       .getSellerByAddr(accAddress);
@@ -1794,11 +1795,16 @@ export class ProfilePage implements OnInit {
     Logger.log(TAG, 'On Sale order count', orderCount);
     if (orderCount === '0') {
     } else {
+
       for (let index = 0; index < orderCount; index++) {
-        this.onSaleList.push(null);
+        this.collectiblesList.push(null);
       }
+
       Logger.log(TAG, 'On sale collectiblesList is', this.collectiblesList);
-      await this.handleOrder(sellerAddr, orderCount, 'sale', accAddress);
+      let nftCreatedCount = await this.nftContractControllerService
+        .getSticker()
+        .tokenCountOfOwner(accAddress);
+      await this.handleOrder(sellerAddr, orderCount, 'sale', accAddress,nftCreatedCount);
     }
   }
 
@@ -1806,7 +1812,8 @@ export class ProfilePage implements OnInit {
     sellerAddr: any,
     orderCount: any,
     listType: any,
-    createAddress: any
+    createAddress: any,
+    nftCreatedCount:any
   ) {
 
     for (let index = 0; index < orderCount; index++) {
@@ -1853,8 +1860,11 @@ export class ProfilePage implements OnInit {
               moreMenuType: 'onSale',
             };
             //this.onSaleList.splice(index,1,item);
-            this.onSaleList[index] = item;
-            let arr = _.filter(this.onSaleList,(item)=>{
+            let nftIndex = parseInt(nftCreatedCount)+index;
+            console.log("=====nftIndex====="+nftIndex);
+            this.collectiblesList[nftIndex] = item;
+            let collectiblesList = _.cloneDeep(this.collectiblesList);
+            let arr = _.filter(collectiblesList,(item)=>{
               return item === null;
             });
             if(arr.length === 0){
@@ -1868,8 +1878,8 @@ export class ProfilePage implements OnInit {
 
   hanleListCace(createAddress?: any) {
     let ownNftCollectiblesList = this.nftPersistenceHelper.getCollectiblesList(createAddress);
-    ownNftCollectiblesList = _.unionWith(this.collectiblesList, this.onSaleList);
-    this.collectiblesList = _.unionWith(this.collectiblesList,this.onSaleList);
+    ownNftCollectiblesList = this.collectiblesList;
+    //this.collectiblesList = _.unionWith(this.collectiblesList,this.onSaleList);
     Logger.log(TAG, 'CollectiblesList union', ownNftCollectiblesList);
     this.nftPersistenceHelper.setCollectiblesMap(createAddress, ownNftCollectiblesList);
   }
