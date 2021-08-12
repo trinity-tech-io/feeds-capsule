@@ -1880,7 +1880,8 @@ export class HomePage implements OnInit {
           moreMenuType: 'onSale',
         };
         try {
-          this.pasarList.splice(pIndex, 1, item);
+          //this.pasarList.splice(pIndex, 1, item);
+          this.pasarList[pIndex] = item;
           let pasarList = _.cloneDeep(this.pasarList);
           let arr = _.filter(pasarList,(item)=>{
                return item === null;
