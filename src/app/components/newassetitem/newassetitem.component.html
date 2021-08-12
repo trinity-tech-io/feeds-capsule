@@ -1,4 +1,5 @@
-<div class="addAssets ion-activatable ripple"  [class.darkAddAssets]="theme.darkMode" [ngStyle]="styleObj">
+<div class="addAssets ion-activatable ripple" style="margin-top: 5px;" [class.darkAddAssets]="theme.darkMode"
+  [ngStyle]="styleObj">
   <div *ngIf="assetItem === null">
     <!-- <div class="des"><img src="./assets/images/nft-user-circle.svg" style="vertical-align: middle;margin-right: 2px;"/>{{handleAddr(assetItem['sellerAddr'])}} <span class="createTime">{{ handleDisplayTime(assetItem["createTime"]) }}</span></div> -->
     <img src="assets/images/loading.png" style="object-fit:contain;" class="assetsImg"/>
@@ -14,13 +15,20 @@
     class="clickMore"
     [src]="!theme.darkMode ? './assets/images/dots-three-vertical.svg' : './assets/images/dots-three-vertical-dark.svg'"
     (click)="more()"/>
-    <div class="des" (click)="clickItem()"><img src="./assets/images/nft-user-circle.svg" style="vertical-align: middle;margin-right: 2px;"/>{{handleAddr(assetItem['sellerAddr'])}} <span class="createTime">{{ handleDisplayTime(assetItem["createTime"]) }}</span></div>
-    <img src="{{hanldeImg(assetItem['thumbnail'])}}" (click)="clickItem()" style="object-fit:contain;" class="assetsImg"/>
-    <div class="des1" (click)="clickItem()">{{assetItem['description']}}</div>
-    <div class="des2" (click)="clickItem()">{{"MintnftPage.nftQuantity"|translate}}: {{assetItem['quantity']}}/1</div>
-    <div class="like" (click)="clickItem()" *ngIf="assetItem['fixedAmount']!=''">
-      <span>{{hanldePrice(assetItem['fixedAmount'])}} ELA/ETHSC</span>
+    <div style="display: flex; align-items: center;" (click)="clickItem()">
+      <img src="./assets/images/nft-user-circle.svg" style="vertical-align: middle;margin-right: 2px;" />
+      <span class="des">{{handleAddr(assetItem['sellerAddr'])}}</span>
+      <span class="createTime"> {{ handleDisplayTime(assetItem["createTime"]) }}</span>
     </div>
+    <div (click)="clickItem()">
+      <img src="{{hanldeImg(assetItem['thumbnail'])}}" style="object-fit:contain; margin-top: 17px;" class="assetsImg" />
+      <div class="des1">{{assetItem['description']}}</div>
+      <div class="des2">{{"MintnftPage.nftQuantity"|translate}} : {{assetItem['quantity']}}/1</div>
+      <div class="like" *ngIf="assetItem['fixedAmount']!=''">
+        <span>{{hanldePrice(assetItem['fixedAmount'])}} ELA/ETHSC</span>
+      </div>
+    </div>
+
     <ion-ripple-effect></ion-ripple-effect>
   </div>
 </div>

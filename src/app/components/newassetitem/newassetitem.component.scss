@@ -20,14 +20,15 @@
 }
 .assetsImg{
     margin-top:10px;
-    width:60%;
-    // height:200px;
+    width:auto;
+    height:200px;
     border-radius: 10px;
     margin-bottom: 8px;
 }
 
 .des{
-    font-size: 14px;
+    margin-left: 4px;
+    font-size: 12px;
     font-weight: bold;
     font-stretch: normal;
     font-style: normal;
@@ -36,7 +37,7 @@
 }
 
 .des1{
-    font-size: 18px !important;
+    font-size: 20px !important;
     font-weight: bold;
     font-stretch: normal;
     font-style: normal;
@@ -49,12 +50,13 @@
 }
 
 .des2{
-    font-size: 14px;
+    font-size: 16px;
     font-weight: bold;
     font-stretch: normal;
     font-style: normal;
     text-align: left;
-    color: #000000;
+    color: #9ca0a4;
+    margin-top: 12px;
 }
 
 .des3{
@@ -69,8 +71,8 @@
 
 .like{
     span{
-        display:inline-block;
-        font-size: 20px;
+        // display:inline-block;
+        font-size: 16px;
         font-weight: bold;
         font-stretch: normal;
         font-style: normal;
@@ -79,7 +81,7 @@
         margin-top: 7px;
         margin-bottom:8px;
     }
-    text-align: center;
+    text-align: left;
     img{
         width:16px;
         height:16px;
@@ -102,8 +104,9 @@
 }
 
 .createTime{
+    margin-left: 2px;
+    margin-top: 1px;
     position: relative;
-    bottom: 1.5px;
     font-size: 10px;
     font-weight: 500;
    color: #9ca0a4;
@@ -119,10 +122,10 @@
         color: #fff;
     }
     .des2{
-        color: #fff;
+        color: #9ca0a4;
     }
 
     .createTime{
-        color:#cfd1f7;
+        color:#9ca0a4;
     }
 }
