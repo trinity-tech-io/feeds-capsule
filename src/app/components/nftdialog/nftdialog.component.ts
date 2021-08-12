@@ -4,12 +4,13 @@ import { PopoverController, NavParams } from '@ionic/angular';
 import { FeedService } from '../../services/FeedService';
 import { NativeService } from 'src/app/services/NativeService';
 import { Events } from '../../services/events.service';
-import _ from 'lodash';
+import _, { reject } from 'lodash';
 import { UtilService } from 'src/app/services/utilService';
 import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
 import { IPFSService } from 'src/app/services/ipfs.service';
 import { NFTPersistenceHelper } from 'src/app/services/nft_persistence_helper.service';
 import { Logger } from 'src/app/services/logger';
+import { Config } from 'src/app/services/config';
 
 let TAG: string = 'NFTDialog';
 @Component({
@@ -180,11 +181,19 @@ export class NftdialogComponent implements OnInit {
     }
 
     this.native
-      .showLoading('common.waitMoment',()=>{},60000)
+      .showLoading('common.changingPriceDesc', () => { }, Config.WAIT_TIME_CHANGE_PRICE)
       .then(() => {
-        this.changePrice();
+        return this.changePrice();
+      })
+      .then(() => {
+        this.nftContractControllerService.getPasar().cancelChangePriceProcess();
+        this.popover.dismiss();
+        this.native.hideLoading();
       })
       .catch(() => {
+        this.nftContractControllerService.getPasar().cancelChangePriceProcess();
+        this.native.toast_trans('common.priceChangeFailed');
+        this.popover.dismiss();
         this.native.hideLoading();
       });
   }
@@ -256,22 +265,35 @@ export class NftdialogComponent implements OnInit {
     this.native.toast('public pasar sucess');
   }
 
-  async changePrice() {
-    let accountAddress = this.nftContractControllerService.getAccountAddress();
-    let price = this.nftContractControllerService
-      .transToWei(this.amount.toString())
-      .toString();
-    let changeStatus = '';
-    try {
-      changeStatus = await this.nftContractControllerService
-        .getPasar()
-        .changeOrderPrice(accountAddress, this.saleOrderId, price);
-    } catch (error) {}
+  async changePrice(): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      let accountAddress = this.nftContractControllerService.getAccountAddress();
+      let price = this.nftContractControllerService
+        .transToWei(this.amount.toString())
+        .toString();
+      let changeStatus = '';
+      try {
+        changeStatus = await this.nftContractControllerService
+          .getPasar()
+          .changeOrderPrice(accountAddress, this.saleOrderId, price);
+        if (!this.handleChangePriceResult(changeStatus, price)) {
+          reject('Error');
+          return;
+        }
+        resolve('Success');
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
 
+  handleChangePriceResult(changeStatus: string, price: string): boolean {
     changeStatus = changeStatus || '';
+    if (!changeStatus) {
+      return false;
+    }
 
     if (changeStatus != '' && changeStatus != undefined) {
-      this.native.hideLoading();
       this.curAssItem.fixedAmount = price;
       let saleOrderId = this.curAssItem.saleOrderId;
 
@@ -293,11 +315,7 @@ export class NftdialogComponent implements OnInit {
         pItem.fixedAmount = price;
         this.nftPersistenceHelper.setPasarList(plist);
       }
-      this.events.publish(FeedsEvent.PublishType.nftUpdatePrice,price);
-      this.popover.dismiss();
-    } else {
-      this.native.hideLoading();
-      this.native.toast_trans('common.priceChangeFailed');
+      this.events.publish(FeedsEvent.PublishType.nftUpdatePrice, price);
     }
   }
 

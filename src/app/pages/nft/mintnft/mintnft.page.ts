@@ -92,6 +92,19 @@ export class MintnftPage implements OnInit {
     this.event.publish(FeedsEvent.PublishType.addBinaryEvevnt);
   }
 
+  ionViewDidLeave() {
+    Logger.log(TAG, 'Leave page');
+    this.nftContractControllerService
+      .getSticker()
+      .cancelMintProcess();
+    this.nftContractControllerService
+      .getSticker()
+      .cancelSetApprovedProcess();
+    this.nftContractControllerService
+      .getPasar()
+      .cancelCreateOrderProcess();
+  }
+
   initTile() {
     this.titleBarService.setTitle(
       this.titleBar,

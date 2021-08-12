@@ -64,4 +64,8 @@ export class Config {
             21: Config.CONTRACT_TEST_URI
         }
     }
+
+
+    public static WAIT_TIME_CANCEL_ORDER = 60000;
+    public static WAIT_TIME_CHANGE_PRICE = 60000;
 }

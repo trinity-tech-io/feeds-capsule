@@ -9,7 +9,9 @@ import { TitleBarComponent } from './../components/titlebar/titlebar.component';
 import { MorenameComponent } from './../components/morename/morename.component';
 import { PaypromptComponent } from './../components/payprompt/payprompt.component';
 import { NftdialogComponent } from './../components/nftdialog/nftdialog.component';
+import { Logger } from './logger';
 
+const TAG: string = 'ViewHelper';
 @Injectable()
 export class ViewHelper {
   public loading: any = null;
@@ -161,6 +163,7 @@ export class ViewHelper {
       },
     });
     popover.onWillDismiss().then(() => {
+      Logger.log(TAG, 'Promote dismiss');
       popover = null;
     });
     return await popover.present();

@@ -141,6 +141,8 @@ export const en = {
     restartAppDesc: 'Need to restart app after switching network',
     disconnectWallet: 'Disconnect Wallet',
     restartAppDescForProvider: 'Need to restart app after switching provider',
+    cancelingOrderDesc: 'Canceling order, please wait',
+    changingPriceDesc: 'Changing order price, please wait',
   },
   app: {
     profileDetails: 'Profile Details',
