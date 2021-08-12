@@ -180,7 +180,7 @@ export class NftdialogComponent implements OnInit {
     }
 
     this.native
-      .showLoading('common.waitMoment')
+      .showLoading('common.waitMoment',()=>{},60000)
       .then(() => {
         this.changePrice();
       })
@@ -239,10 +239,15 @@ export class NftdialogComponent implements OnInit {
     }
 
     await this.getSetChannel(tokenId);
+    let tokenInfo = await this.nftContractControllerService
+    .getSticker()
+    .tokenInfo(tokenId);
+    let createTime = tokenInfo[7];
     let sAssItem = _.cloneDeep(this.curAssItem);
     sAssItem['sellerAddr'] = sellerAddress;
     sAssItem['fixedAmount'] = salePrice;
     sAssItem['saleOrderId'] = this.orderId;
+    sAssItem['createTime'] = createTime*1000;
     let obj = { type: type, assItem: sAssItem };
     this.events.publish(FeedsEvent.PublishType.nftUpdateList, obj);
     this.native.hideLoading();
@@ -267,7 +272,26 @@ export class NftdialogComponent implements OnInit {
     if (changeStatus != '' && changeStatus != undefined) {
       this.native.hideLoading();
       this.curAssItem.fixedAmount = price;
-      this.nftPersistenceHelper.setPasarList(this.nftPersistenceHelper.getPasarList());
+      let saleOrderId = this.curAssItem.saleOrderId;
+
+      let createAddress = this.nftContractControllerService.getAccountAddress();
+      let olist = this.nftPersistenceHelper.getCollectiblesList(createAddress);
+      let curNftItem = _.find(olist, item => {
+        return item.saleOrderId === saleOrderId;
+      }) || null;
+      if(curNftItem!=null){
+         curNftItem.fixedAmount = price;
+         this.nftPersistenceHelper.setCollectiblesMap(createAddress, olist);
+      }
+
+      let plist = this.nftPersistenceHelper.getPasarList();
+      let pItem = _.find(plist, item => {
+        return item.saleOrderId === saleOrderId;
+      }) || null;
+      if(pItem!=null){
+        pItem.fixedAmount = price;
+        this.nftPersistenceHelper.setPasarList(plist);
+      }
 
       this.popover.dismiss();
     } else {
