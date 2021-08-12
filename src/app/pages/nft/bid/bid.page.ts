@@ -13,8 +13,9 @@ import { NFTContractControllerService } from 'src/app/services/nftcontract_contr
 import { IPFSService } from 'src/app/services/ipfs.service';
 import { NFTPersistenceHelper } from 'src/app/services/nft_persistence_helper.service';
 
-import _ from 'lodash';
+import _, { reject } from 'lodash';
 import { UtilService } from 'src/app/services/utilService';
+import { Config } from 'src/app/services/config';
 type detail = {
   type: string;
   details: string;
@@ -219,58 +220,75 @@ export class BidPage implements OnInit {
       return;
     }
     this.native
-      .showLoading('common.waitMoment', isDismiss => {}, 60000)
+      .showLoading('common.buyingOrderDesc', isDismiss => {
+        if (isDismiss) {
+          //Buy order Timeout
+          this.nftContractControllerService.getPasar().cancelBuyOrderProcess();
+          this.native.hideLoading();
+          this.showSelfCheckDialog();
+        }
+      }, Config.WAIT_TIME_BUY_ORDER)
       .then(() => {
-        this.buy();
+        return this.buy();
+      })
+      .then(() => {
+        //Finish buy order
+        this.native.hideLoading();
+        this.native.pop();
       })
       .catch(() => {
+        this.buyFail();
         this.native.hideLoading();
       });
   }
 
-  async buy() {
-    let accountAddress = this.nftContractControllerService.getAccountAddress();
-    let price = this.fixedPrice;
-    let purchaseStatus = '';
-    try {
-      purchaseStatus = await this.nftContractControllerService
-        .getPasar()
-        .buyOrder(accountAddress, this.saleOrderId, price);
-    } catch (error) {}
+  buy(): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      let accountAddress = this.nftContractControllerService.getAccountAddress();
+      let price = this.fixedPrice;
+      let purchaseStatus = '';
+      try {
+        purchaseStatus = await this.nftContractControllerService
+          .getPasar()
+          .buyOrder(accountAddress, this.saleOrderId, price);
 
-    purchaseStatus = purchaseStatus || '';
+        if (!purchaseStatus) {
+          reject('Error');
+          return;
+        }
+        this.handleBuyResult();
+        resolve('Success');
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
 
-    this.native.hideLoading();
-    if (purchaseStatus != '' && purchaseStatus != undefined) {
-      let plist = this.nftPersistenceHelper.getPasarList();
-      plist = _.filter(plist, item => {
-        return item.saleOrderId != this.saleOrderId;
-      });
+  handleBuyResult() {
+    let plist = this.nftPersistenceHelper.getPasarList();
+    plist = _.filter(plist, item => {
+      return item.saleOrderId != this.saleOrderId;
+    });
 
-      plist = _.sortBy(plist, (item: any) => {
-        return -Number(item.createTime);
-      });
+    plist = _.sortBy(plist, (item: any) => {
+      return -Number(item.createTime);
+    });
 
-      this.nftPersistenceHelper.setPasarList(plist);
+    this.nftPersistenceHelper.setPasarList(plist);
 
-      let createAddress = this.nftContractControllerService.getAccountAddress();
-      //if (this.sellerAddress === createAddress) {
-        let olist = this.nftPersistenceHelper.getCollectiblesList(createAddress);
-        olist = _.filter(olist, item => {
-          return item.saleOrderId != this.saleOrderId;
-        });
-        //add created
-        let cItem: any = _.cloneDeep(this.curAssetItem);
-        cItem.fixedAmount = null;
-        cItem['moreMenuType'] = 'created';
-        olist.push(cItem);
+    let createAddress = this.nftContractControllerService.getAccountAddress();
 
-        this.nftPersistenceHelper.setCollectiblesMap(createAddress, olist);
-      //}
-      this.native.pop();
-    } else {
-      this.buyFail();
-    }
+    let olist = this.nftPersistenceHelper.getCollectiblesList(createAddress);
+    olist = _.filter(olist, item => {
+      return item.saleOrderId != this.saleOrderId;
+    });
+
+    let cItem: any = _.cloneDeep(this.curAssetItem);
+    cItem.fixedAmount = null;
+    cItem['moreMenuType'] = 'created';
+    olist.push(cItem);
+
+    this.nftPersistenceHelper.setCollectiblesMap(createAddress, olist);
   }
 
   buyFail() {
@@ -318,6 +336,28 @@ export class BidPage implements OnInit {
           this.native.toast_trans('common.textcopied');
         })
         .catch(() => {});
+    }
+  }
+
+  showSelfCheckDialog() {
+    //TimeOut
+    this.openAlert();
+  }
+
+  openAlert() {
+    this.popover = this.popupProvider.ionicAlert(
+      this,
+      'common.timeout',
+      'common.buyOrderTimeoutDesc',
+      this.confirm,
+      'tskth.svg',
+    );
+  }
+
+  buyTimeOutconfirm(that: any) {
+    if (this.popover != null) {
+      this.popover.dismiss();
+      this.popover = null;
     }
   }
 }

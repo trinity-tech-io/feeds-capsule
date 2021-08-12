@@ -11,6 +11,7 @@ import { IPFSService } from 'src/app/services/ipfs.service';
 import { NFTPersistenceHelper } from 'src/app/services/nft_persistence_helper.service';
 import { Logger } from 'src/app/services/logger';
 import { Config } from 'src/app/services/config';
+import { PopupProvider } from 'src/app/services/popup';
 
 let TAG: string = 'NFTDialog';
 @Component({
@@ -34,6 +35,7 @@ export class NftdialogComponent implements OnInit {
   public curAssItem: any = {};
   private orderId: any = '';
   public imgUri:string = "";
+  private popoverDialog: any;
   constructor(
     private navParams: NavParams,
     private popover: PopoverController,
@@ -43,7 +45,8 @@ export class NftdialogComponent implements OnInit {
     public theme: ThemeService,
     private nftContractControllerService: NFTContractControllerService,
     private ipfsService: IPFSService,
-    private nftPersistenceHelper: NFTPersistenceHelper
+    private nftPersistenceHelper: NFTPersistenceHelper,
+    private popupProvider: PopupProvider
   ) {}
 
   ngOnInit() {
@@ -113,16 +116,42 @@ export class NftdialogComponent implements OnInit {
       return;
     }
     let tokenId = this.assItem.tokenId;
-    this.native
-      .showLoading('common.waitMoment')
-      .then(() => {
-        this.handlePasar(tokenId, 'created');
-      })
-      .catch(() => {
-        this.native.hideLoading();
-      });
+    this.sellCollectibles(tokenId, 'created');
   }
 
+  sellCollectibles(tokenId: any, type: string) {
+    this.native
+      .showLoading('common.sellingOrderDesc', async (isDismiss) => {
+        if (isDismiss) {
+          //Timeout
+          this.nftContractControllerService.getPasar().cancelCreateOrderProcess();
+          this.nftContractControllerService.getSticker().cancelSetApprovedProcess()
+          this.native.hideLoading();
+          await this.popover.dismiss();
+          this.popupProvider.showSelfCheckDialog('common.saleOrderTimeoutDesc');
+        }
+      }, Config.WAIT_TIME_SELL_ORDER)
+      .then(() => {
+        return this.doSetApproval();
+      })
+      .then(() => {
+        return this.doCreateOrder(tokenId, type);
+      })
+      .then(() => {
+        this.nftContractControllerService.getPasar().cancelCreateOrderProcess();
+        this.nftContractControllerService.getSticker().cancelSetApprovedProcess()
+        this.native.hideLoading();
+        this.popover.dismiss();
+        //show success
+      })
+      .catch(() => {
+        this.nftContractControllerService.getPasar().cancelCreateOrderProcess();
+        this.nftContractControllerService.getSticker().cancelSetApprovedProcess()
+        this.native.hideLoading();
+        this.popover.dismiss();
+        this.native.toast('public pasar sucess');
+      });
+  }
   handleBuyList() {
     if (!this.number(this.amount)) {
       this.native.toastWarn('common.amountError');
@@ -154,14 +183,7 @@ export class NftdialogComponent implements OnInit {
       return;
     }
     let tokenId = this.assItem.tokenId;
-    this.native
-      .showLoading('common.waitMoment')
-      .then(() => {
-        this.handlePasar(tokenId, 'buy');
-      })
-      .catch(() => {
-        this.native.hideLoading();
-      });
+    this.sellCollectibles(tokenId, 'buy');
   }
 
   handleSaleList() {
@@ -181,7 +203,14 @@ export class NftdialogComponent implements OnInit {
     }
 
     this.native
-      .showLoading('common.changingPriceDesc', () => { }, Config.WAIT_TIME_CHANGE_PRICE)
+      .showLoading('common.changingPriceDesc', async (isDismiss) => {
+        if (isDismiss) {
+          this.native.hideLoading();
+          this.nftContractControllerService.getPasar().cancelChangePriceProcess();
+          await this.popover.dismiss();
+          this.popupProvider.showSelfCheckDialog('common.changePriceTimeoutDesc');
+        }
+      }, Config.WAIT_TIME_CHANGE_PRICE)
       .then(() => {
         return this.changePrice();
       })
@@ -198,55 +227,70 @@ export class NftdialogComponent implements OnInit {
       });
   }
 
-  async handlePasar(tokenId: any, type: any) {
-    let sellerAddress = this.nftContractControllerService.getAccountAddress();
-    const sellerInfo = await this.nftContractControllerService
-      .getPasar()
-      .getSellerByAddr(sellerAddress);
-    this.orderId = sellerInfo[2];
+  doSetApproval(): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let sellerAddress = this.nftContractControllerService.getAccountAddress();
+        const sellerInfo = await this.nftContractControllerService
+          .getPasar()
+          .getSellerByAddr(sellerAddress);
+        this.orderId = sellerInfo[2];
 
-    // Seller approve pasar
-    let pasarAddr = this.nftContractControllerService.getPasar().getAddress();
-    let result = '';
-    try {
-      result = await this.nftContractControllerService
-        .getSticker()
-        .setApprovalForAll(sellerAddress, pasarAddr, true);
-    } catch (error) {}
+        // Seller approve pasar
+        let pasarAddr = this.nftContractControllerService.getPasar().getAddress();
+        let result = '';
 
-    result = result || '';
-    if (result === '') {
-      this.native.hideLoading();
-      this.native.toast_trans('common.publicPasarFailed');
-      return;
-    }
+        result = await this.nftContractControllerService
+          .getSticker()
+          .setApprovalForAll(sellerAddress, pasarAddr, true);
 
-    let accountAddress = this.nftContractControllerService.getAccountAddress();
-    let price = UtilService.accMul(this.amount, this.quantity);
-    Logger.log(TAG, 'Sell price is', price);
-    let salePrice = this.nftContractControllerService.transToWei(
-      price.toString(),
-    );
-    Logger.log(TAG, 'Trans price to wei', salePrice);
-    Logger.log(TAG, 'Quantity type is ', typeof this.quantity);
-    if (typeof this.quantity === 'number') {
-      this.quantity = this.quantity.toString();
-    }
-    Logger.log(TAG, 'Quantity type is', typeof this.quantity);
-    let orderIndex = -1;
-    try {
-      orderIndex = await this.nftContractControllerService
-        .getPasar()
-        .createOrderForSale(tokenId, this.quantity, salePrice);
-    } catch (error) {}
+        if (!result) {
+          reject('SetApprovalError');
+          return;
+        }
 
-    orderIndex = orderIndex || -1;
-    if (orderIndex == -1) {
-      this.native.hideLoading();
-      this.native.toast_trans('common.publicPasarFailed');
-      return;
-    }
+        resolve('Successs');
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
 
+  doCreateOrder(tokenId: any, type: any) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let sellerAddress = this.nftContractControllerService.getAccountAddress();
+        let price = UtilService.accMul(this.amount, this.quantity);
+        Logger.log(TAG, 'Sell price is', price);
+        let salePrice = this.nftContractControllerService.transToWei(
+          price.toString(),
+        );
+        Logger.log(TAG, 'Trans price to wei', salePrice);
+        Logger.log(TAG, 'Quantity type is ', typeof this.quantity);
+        if (typeof this.quantity === 'number') {
+          this.quantity = this.quantity.toString();
+        }
+        Logger.log(TAG, 'Quantity type is', typeof this.quantity);
+        let orderIndex = -1;
+
+        orderIndex = await this.nftContractControllerService
+          .getPasar()
+          .createOrderForSale(tokenId, this.quantity, salePrice);
+
+        if (!orderIndex || orderIndex == -1) {
+          reject('Create Order error');
+          return;
+        }
+
+        await this.handleCreteOrderResult(tokenId, sellerAddress, salePrice, type);
+        resolve('Success');
+      } catch (error) {
+        reject(error);
+      }
+    })
+  }
+
+  async handleCreteOrderResult(tokenId: string, sellerAddress: string, salePrice: string, type: any) {
     await this.getSetChannel(tokenId);
     let tokenInfo = await this.nftContractControllerService
     .getSticker()
@@ -260,6 +304,28 @@ export class NftdialogComponent implements OnInit {
     sAssItem['moreMenuType'] = 'onSale';
     let obj = { type: type, assItem: sAssItem };
     this.events.publish(FeedsEvent.PublishType.nftUpdateList, obj);
+  }
+
+  async handlePasar(tokenId: any, type: any) {
+
+
+    // result = result || '';
+    // if (result === '') {
+    //   this.native.hideLoading();
+    //   this.native.toast_trans('common.publicPasarFailed');
+    //   return;
+    // }
+
+
+
+    // orderIndex = orderIndex || -1;
+    // if (orderIndex == -1) {
+    //   this.native.hideLoading();
+    //   this.native.toast_trans('common.publicPasarFailed');
+    //   return;
+    // }
+
+
     this.native.hideLoading();
     this.popover.dismiss();
     this.native.toast('public pasar sucess');
@@ -276,10 +342,11 @@ export class NftdialogComponent implements OnInit {
         changeStatus = await this.nftContractControllerService
           .getPasar()
           .changeOrderPrice(accountAddress, this.saleOrderId, price);
-        if (!this.handleChangePriceResult(changeStatus, price)) {
+        if (!changeStatus) {
           reject('Error');
           return;
         }
+        this.handleChangePriceResult(price);
         resolve('Success');
       } catch (error) {
         reject(error);
@@ -287,36 +354,29 @@ export class NftdialogComponent implements OnInit {
     });
   }
 
-  handleChangePriceResult(changeStatus: string, price: string): boolean {
-    changeStatus = changeStatus || '';
-    if (!changeStatus) {
-      return false;
+  handleChangePriceResult(price: string) {
+    this.curAssItem.fixedAmount = price;
+    let saleOrderId = this.curAssItem.saleOrderId;
+
+    let createAddress = this.nftContractControllerService.getAccountAddress();
+    let olist = this.nftPersistenceHelper.getCollectiblesList(createAddress);
+    let curNftItem = _.find(olist, item => {
+      return item.saleOrderId === saleOrderId;
+    }) || null;
+    if (curNftItem != null) {
+      curNftItem.fixedAmount = price;
+      this.nftPersistenceHelper.setCollectiblesMap(createAddress, olist);
     }
 
-    if (changeStatus != '' && changeStatus != undefined) {
-      this.curAssItem.fixedAmount = price;
-      let saleOrderId = this.curAssItem.saleOrderId;
-
-      let createAddress = this.nftContractControllerService.getAccountAddress();
-      let olist = this.nftPersistenceHelper.getCollectiblesList(createAddress);
-      let curNftItem = _.find(olist, item => {
-        return item.saleOrderId === saleOrderId;
-      }) || null;
-      if(curNftItem!=null){
-         curNftItem.fixedAmount = price;
-         this.nftPersistenceHelper.setCollectiblesMap(createAddress, olist);
-      }
-
-      let plist = this.nftPersistenceHelper.getPasarList();
-      let pItem = _.find(plist, item => {
-        return item.saleOrderId === saleOrderId;
-      }) || null;
-      if(pItem!=null){
-        pItem.fixedAmount = price;
-        this.nftPersistenceHelper.setPasarList(plist);
-      }
-      this.events.publish(FeedsEvent.PublishType.nftUpdatePrice, price);
+    let plist = this.nftPersistenceHelper.getPasarList();
+    let pItem = _.find(plist, item => {
+      return item.saleOrderId === saleOrderId;
+    }) || null;
+    if (pItem != null) {
+      pItem.fixedAmount = price;
+      this.nftPersistenceHelper.setPasarList(plist);
     }
+    this.events.publish(FeedsEvent.PublishType.nftUpdatePrice, price);
   }
 
   number(text: any) {
@@ -454,4 +514,6 @@ export class NftdialogComponent implements OnInit {
       };
     });
   }
+
+
 }
