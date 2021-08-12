@@ -248,6 +248,7 @@ export class NftdialogComponent implements OnInit {
     sAssItem['fixedAmount'] = salePrice;
     sAssItem['saleOrderId'] = this.orderId;
     sAssItem['createTime'] = createTime*1000;
+    sAssItem['moreMenuType'] = 'onSale';
     let obj = { type: type, assItem: sAssItem };
     this.events.publish(FeedsEvent.PublishType.nftUpdateList, obj);
     this.native.hideLoading();
