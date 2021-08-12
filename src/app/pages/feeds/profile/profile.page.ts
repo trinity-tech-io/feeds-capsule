@@ -1767,7 +1767,8 @@ export class ProfilePage implements OnInit {
           moreMenuType: 'created',
         };
         try {
-          this.collectiblesList.splice(cIndex, 1, item);
+          //this.collectiblesList.splice(cIndex, 1, item);
+          this.collectiblesList[cIndex] = item;
           let arr = _.filter(this.collectiblesList,(item)=>{
             return item === null;
           });
@@ -1851,7 +1852,8 @@ export class ProfilePage implements OnInit {
               createTime: createTime * 1000,
               moreMenuType: 'onSale',
             };
-            this.onSaleList.splice(index,1,item);
+            //this.onSaleList.splice(index,1,item);
+            this.onSaleList[index] = item;
             let arr = _.filter(this.onSaleList,(item)=>{
               return item === null;
             });

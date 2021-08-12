@@ -161,7 +161,7 @@ export class ProfilenftimagePage implements OnInit {
           moreMenuType: 'created',
         };
         try {
-          this.nftImageList.splice(cIndex, 1, item);
+          this.nftImageList[cIndex] = item;
           let arr = _.filter(this.nftImageList,(item)=>{
                 return item === null;
           });
@@ -241,7 +241,7 @@ export class ProfilenftimagePage implements OnInit {
               createTime: createTime * 1000,
               moreMenuType: 'onSale',
             };
-            this.onSaleList.splice(index,1,item);
+            this.onSaleList[index] = item;
             let arr =  _.filter(this.onSaleList,(item)=>{
                    return item === null;
             });
