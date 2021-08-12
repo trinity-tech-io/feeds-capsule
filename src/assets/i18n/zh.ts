@@ -137,6 +137,8 @@ export const zh = {
     restartAppDesc: '切换网络后需要重启应用',
     disconnectWallet: '断开钱包',
     restartAppDescForProvider: '切换提供商后需要重启应用',
+    cancelingOrderDesc: '正在取消订单,请稍后...',
+    changingPriceDesc: '正在修改价格,请稍后...',
   },
   app: {
     profileDetails: '档案详情',

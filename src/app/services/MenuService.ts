@@ -8,6 +8,7 @@ import { IntentService } from 'src/app/services/IntentService';
 import { ViewHelper } from 'src/app/services/viewhelper.service';
 import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
 import { Events } from 'src/app/services/events.service';
+import { Config } from './config';
 
 @Injectable()
 export class MenuService {
@@ -779,30 +780,44 @@ export class MenuService {
     }
   }
 
-  confirmOnSaleMenu(that: any) {
+  async confirmOnSaleMenu(that: any) {
     if (this.popover != null) {
       this.popover.dismiss();
     }
     that.native
-      .showLoading('common.waitMoment', () => {}, 50000)
-      .then(() => {
-        that.cancelOrder(that);
+      .showLoading('common.cancelingOrderDesc', (isDismiss) => {
+        if (isDismiss) {
+          // cancel order timeout
+          this.nftContractControllerService.getPasar().cancelCancelOrderProcess();
+          this.showSelfCheckDialog();
+        }
+      }, Config.WAIT_TIME_CANCEL_ORDER)
+      .then(async () => {
+        await this.doCancelOrder(that);
       })
       .catch(() => {
+        // cancel order error
+        this.native.toast_trans('common.cancellationFailed');
+        this.nftContractControllerService.getPasar().cancelCancelOrderProcess();
         that.native.hideLoading();
       });
   }
 
-  async cancelOrder(that: any) {
+  async cancelOrder(that: any, saleOrderId: string) {
+    return await this.nftContractControllerService
+      .getPasar()
+      .cancelOrder(saleOrderId);
+
+  }
+
+  async doCancelOrder(that: any) {
     let saleOrderId = this.assItem['saleOrderId'] || '';
     if (saleOrderId === '') {
       this.native.hideLoading();
       this.native.toast_trans('common.cancellationFailed');
       return;
     }
-    const cancelStatus = await this.nftContractControllerService
-      .getPasar()
-      .cancelOrder(saleOrderId);
+    let cancelStatus = await that.cancelOrder(that, saleOrderId);
     that.native.hideLoading();
     if (cancelStatus != '' && cancelStatus != undefined) {
       that.events.publish(FeedsEvent.PublishType.nftCancelOrder, this.assItem);
@@ -916,5 +931,30 @@ export class MenuService {
       }
     });
     await this.shareOnSaleMenu.present();
+  }
+
+
+  showSelfCheckDialog() {
+    //TimeOut
+    this.openAlert();
+  }
+
+
+  openAlert() {
+    this.popover = this.popupProvider.ionicAlert(
+      this,
+      'common.timeout',
+      'common.mintTimeoutDesc',
+      this.confirmSelfCheck,
+      'tskth.svg',
+    );
+  }
+
+  confirmSelfCheck(that: any) {
+    if (this.popover != null) {
+      this.popover.dismiss();
+      this.popover = null;
+      that.native.pop();
+    }
   }
 }
