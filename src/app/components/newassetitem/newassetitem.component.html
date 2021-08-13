@@ -16,7 +16,7 @@
     [src]="!theme.darkMode ? './assets/images/dots-three-vertical.svg' : './assets/images/dots-three-vertical-dark.svg'"
     (click)="more()"/>
     <div style="display: flex; align-items: center;" (click)="clickItem()">
-      <img src="./assets/images/nft-user-circle.svg" style="vertical-align: middle;margin-right: 2px;" />
+      <img src="./assets/images/nft-user-circle.svg" style="vertical-align: middle;margin-right: 5px;" />
       <span class="des">{{handleAddr(assetItem['sellerAddr'])}}</span>
       <span class="createTime"> {{ handleDisplayTime(assetItem["createTime"]) }}</span>
     </div>
