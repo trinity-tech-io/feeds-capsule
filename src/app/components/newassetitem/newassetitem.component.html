@@ -22,7 +22,7 @@
     </div>
     <div (click)="clickItem()">
       <img src="{{hanldeImg(assetItem['thumbnail'])}}" style="object-fit:contain; margin-top: 17px;" class="assetsImg" />
-      <div class="des1">{{assetItem['description']}}</div>
+      <div class="des1">{{assetItem['name']}}</div>
       <div class="des2">{{"MintnftPage.nftQuantity"|translate}} : {{assetItem['quantity']}}/1</div>
       <div class="like" *ngIf="assetItem['fixedAmount']!=''">
         <span>{{hanldePrice(assetItem['fixedAmount'])}} ELA/ETHSC</span>
