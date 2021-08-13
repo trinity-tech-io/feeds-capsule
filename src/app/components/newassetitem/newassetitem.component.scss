@@ -19,10 +19,11 @@
     top: 8px;
 }
 .assetsImg{
-    margin-top: 10px;
-    width: auto;
+    
+    // width: auto;
+    max-height: 200px;
     border-radius: 10px;
-    margin-bottom: 8px;
+    
 }
 
 .des{
@@ -36,6 +37,7 @@
 }
 
 .des1{
+    margin-top: 8px;
     font-size: 20px !important;
     font-weight: bold;
     font-stretch: normal;
