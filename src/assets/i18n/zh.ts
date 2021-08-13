@@ -145,6 +145,7 @@ export const zh = {
     cancelOrderTimeoutDesc: '取消收藏品超时，后面您可自行确认取消收藏品是否成功',
     changePriceTimeoutDesc: '修改收藏品价格超时，后面您可自行确认修改收藏品价格是否成功',
     saleOrderTimeoutDesc: '出售收藏品超时，后面您可自行确认出售收藏品是否成功',
+    publishSameDataFailed: '失败 : NFT 中已经有相同的收藏品',
   },
   app: {
     profileDetails: '档案详情',

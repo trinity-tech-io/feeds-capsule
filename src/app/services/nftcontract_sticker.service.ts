@@ -5,6 +5,13 @@ import { Config } from './config';
 import { Logger } from './logger';
 
 const TAG: string = "NFTStickerService";
+const EstimateGasError = 'EstimateGasError';
+type TXData = {
+  from: string;
+  gasPrice: string;
+  gas: number;
+  value: any;
+}
 @Injectable()
 export class NFTContractStickerService {
   private stickerAddress: string = Config.STICKER_ADDRESS;
@@ -51,49 +58,54 @@ export class NFTContractStickerService {
     approved: boolean,
   ): Promise<any> {
     return new Promise(async (resolve, reject) => {
-      let isApproved = await this.isApprovedForAll(
-        accountAddress,
-        contractAddress,
-      );
-      Logger.log(TAG, 'Contract isApproved?', isApproved);
-      if (isApproved) {
-        resolve(isApproved);
-        return;
-      }
+      try {
+        let isApproved = await this.isApprovedForAll(
+          accountAddress,
+          contractAddress,
+        );
+        Logger.log(TAG, 'Contract isApproved?', isApproved);
+        if (isApproved) {
+          resolve(isApproved);
+          return;
+        }
 
-      const data = this.stickerContract.methods
-        .setApprovalForAll(contractAddress, approved)
-        .encodeABI();
-      let transactionParams = await this.createTxParams(data);
-      Logger.log(TAG,
-        'Calling setApprovalForAll smart contract through wallet connect',
-        data,
-        transactionParams,
-      );
-      this.stickerContract.methods
-        .setApprovalForAll(contractAddress, approved)
-        .send(transactionParams)
-        .on('transactionHash', hash => {
-          Logger.log(TAG, 'transactionHash', hash);
-          resolve(hash);
-        })
-        .on('receipt', receipt => {
-          Logger.log(TAG, 'receipt', receipt);
-          resolve(receipt);
-        })
-        .on('confirmation', (confirmationNumber, receipt) => {
-          Logger.log(TAG, 'confirmation', confirmationNumber, receipt);
-          resolve(receipt);
-        })
-        .on('error', (error, receipt) => {
-          Logger.error(TAG, 'Mint error,', error, receipt);
-          reject(receipt);
+        const data = this.stickerContract.methods
+          .setApprovalForAll(contractAddress, approved)
+          .encodeABI();
+        let transactionParams = await this.createTxParams(data);
+        Logger.log(TAG,
+          'Calling setApprovalForAll smart contract through wallet connect',
+          data,
+          transactionParams,
+        );
+        this.stickerContract.methods
+          .setApprovalForAll(contractAddress, approved)
+          .send(transactionParams)
+          .on('transactionHash', hash => {
+            Logger.log(TAG, 'transactionHash', hash);
+            resolve(hash);
+          })
+          .on('receipt', receipt => {
+            Logger.log(TAG, 'receipt', receipt);
+            resolve(receipt);
+          })
+          .on('confirmation', (confirmationNumber, receipt) => {
+            Logger.log(TAG, 'confirmation', confirmationNumber, receipt);
+            resolve(receipt);
+          })
+          .on('error', (error, receipt) => {
+            Logger.error(TAG, 'Mint error,', error, receipt);
+            reject(receipt);
+          });
+
+        this.checkApprovedState(accountAddress, contractAddress, isApproved => {
+          Logger.log(TAG, 'Set approval success', isApproved);
+          resolve(isApproved);
         });
-
-      this.checkApprovedState(accountAddress, contractAddress, isApproved => {
-        Logger.log(TAG, 'Set approval success', isApproved);
-        resolve(isApproved);
-      });
+      } catch (error) {
+        Logger.error(TAG, 'Set approval error', error);
+        reject(error);
+      }
     });
   }
 
@@ -109,41 +121,46 @@ export class NFTContractStickerService {
     royalty: string,
   ): Promise<any> {
     return new Promise(async (resolve, reject) => {
-      Logger.log(TAG, 'Mint params ', tokenId, supply, uri, royalty);
-      const mintdata = this.stickerContract.methods
-        .mint(tokenId, supply, uri, royalty)
-        .encodeABI();
-      let transactionParams = await this.createTxParams(mintdata);
+      try {
+        Logger.log(TAG, 'Mint params ', tokenId, supply, uri, royalty);
+        const mintdata = this.stickerContract.methods
+          .mint(tokenId, supply, uri, royalty)
+          .encodeABI();
+        let transactionParams = await this.createTxParams(mintdata);
 
-      Logger.log(TAG,
-        'Calling smart contract through wallet connect',
-        mintdata,
-        transactionParams,
-      );
-      this.stickerContract.methods
-        .mint(tokenId, supply, uri, royalty)
-        .send(transactionParams)
-        .on('transactionHash', hash => {
-          Logger.log(TAG, 'Mint process, transactionHash is', hash);
-        })
-        .on('receipt', receipt => {
-          Logger.log(TAG, 'Mint process, receipt is', receipt);
-        })
-        .on('confirmation', (confirmationNumber, receipt) => {
-          Logger.log(TAG,
-            'Mint process, confirmation is',
-            confirmationNumber,
-            receipt,
-          );
-        })
-        .on('error', (error, receipt) => {
-          Logger.error(TAG, 'Mint process, error is', error, receipt);
+        Logger.log(TAG,
+          'Calling smart contract through wallet connect',
+          mintdata,
+          transactionParams,
+        );
+        this.stickerContract.methods
+          .mint(tokenId, supply, uri, royalty)
+          .send(transactionParams)
+          .on('transactionHash', hash => {
+            Logger.log(TAG, 'Mint process, transactionHash is', hash);
+          })
+          .on('receipt', receipt => {
+            Logger.log(TAG, 'Mint process, receipt is', receipt);
+          })
+          .on('confirmation', (confirmationNumber, receipt) => {
+            Logger.log(TAG,
+              'Mint process, confirmation is',
+              confirmationNumber,
+              receipt,
+            );
+          })
+          .on('error', (error, receipt) => {
+            Logger.error(TAG, 'Mint process, error is', error, receipt);
+          });
+
+        this.checkTokenState(tokenId, info => {
+          Logger.log(TAG, 'Mint success, token info is', info);
+          resolve(info);
         });
-
-      this.checkTokenState(tokenId, info => {
-        Logger.log(TAG, 'Mint success, token info is', info);
-        resolve(info);
-      });
+      } catch (error) {
+        Logger.error(TAG, 'Mint error', error);
+        reject(error);
+      }
     });
   }
 
@@ -158,36 +175,45 @@ export class NFTContractStickerService {
   }
 
   async createTxParams(data) {
-    let accountAddress = this.walletConnectControllerService.getAccountAddress();
-    let gas = 500000;
+    return new Promise(async (resolve, reject) => {
+      try {
+        let accountAddress = this.walletConnectControllerService.getAccountAddress();
+        let txGas = 0;
 
-    const txData = {
-      from: this.walletConnectControllerService.getAccountAddress(),
-      to: this.stickerAddress,
-      value: 0,
-      data: data,
-    };
-    Logger.log(TAG, 'CreateTxParams is', txData);
-    try {
-      await this.web3.eth.estimateGas(txData, (error, gasResult) => {
-        if (gasResult)
-          gas = gasResult;
-        Logger.log(TAG, 'create Tx gas is', gas);
-      });
-    } catch (error) {
-      Logger.log(TAG, 'error', error);
-    }
+        const txData = {
+          from: this.walletConnectControllerService.getAccountAddress(),
+          to: this.stickerAddress,
+          value: 0,
+          data: data,
+        };
+        Logger.log(TAG, 'Create Tx Params is', txData);
 
-    Logger.log(TAG, 'Finnal gas is', gas);
+        await this.web3.eth.estimateGas(txData, (error, gasResult) => {
+          txGas = gasResult;
+          Logger.log(TAG, 'EstimateGas finish ,gas is', txGas, ', error is', error);
 
-    let gasPrice = await this.web3.eth.getGasPrice();
-    return {
-      from: accountAddress,
-      // to: stickerAddr,
-      gasPrice: gasPrice,
-      gas: Math.round(gas * 3),
-      value: 0,
-    };
+        });
+        if (!txGas || txGas == 0) {
+          Logger.error(TAG, EstimateGasError);
+          reject(EstimateGasError);
+          return;
+        }
+        Logger.log(TAG, 'Finnal gas is', txGas);
+
+        let gasPrice = await this.web3.eth.getGasPrice();
+        let txResult: TXData = {
+          from: accountAddress,
+          // to: stickerAddr,
+          gasPrice: gasPrice,
+          gas: Math.round(txGas * 3),
+          value: 0,
+        };
+        resolve(txResult);
+      } catch (error) {
+        Logger.log(TAG, 'error', error);
+        reject(EstimateGasError);
+      }
+    });
   }
 
   checkTokenState(tokenId, callback: (tokenInfo: any) => void) {
