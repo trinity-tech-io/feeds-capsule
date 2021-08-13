@@ -3,8 +3,8 @@ export class Config {
     public static TRINITY_API = 'trinity-tech.cn';
     public static ELASTOS_API = 'elastos.io';
 
-    public static ELASTOS_BRIDGE = 'https://walletconnect.elastos.net/v1';
-    public static TRINITY_BRIDGE = 'https://wallet-connect.trinity-tech.cn/v1';
+    public static ELASTOS_BRIDGE = 'https://walletconnect.elastos.net/v2';
+    public static TRINITY_BRIDGE = 'https://wallet-connect.trinity-tech.cn/v2';
 
     public static BRIDGE = Config.ELASTOS_BRIDGE;
 
