@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 50 50">
+  <g id="Group_76" data-name="Group 76" transform="translate(1234 -4286)">
+    <g id="_" data-name="+" transform="translate(-1234 4286)">
+      <circle id="Ellipse_226" data-name="Ellipse 226" cx="25" cy="25" r="25" fill="#7624fe"/>
+    </g>
+    <g id="_2" data-name="+" transform="translate(-1213 4309)">
+      <g id="Union_1" data-name="Union 1" transform="translate(-7 -10)">
+        <rect id="Rectangle_2" data-name="Rectangle 2" width="2" height="10" transform="translate(4)" fill="#fff"/>
+        <rect id="Rectangle_3" data-name="Rectangle 3" width="2" height="10" transform="translate(10 4) rotate(90)" fill="#fff"/>
+      </g>
+    </g>
+    <path id="Icon_awesome-paint-brush" data-name="Icon awesome-paint-brush" d="M7.021,12.251a4.242,4.242,0,0,0-4.086,2.863.642.642,0,0,1-.613.4A9.465,9.465,0,0,1,0,14.149c0,3.261,1.595,6.128,5.381,6.128,3.189,0,5.381-1.733,5.381-4.76a3.24,3.24,0,0,0-.041-.362l-3.7-2.9ZM19.248,0a2.652,2.652,0,0,0-1.69.651c-8.593,7.232-9.487,7.4-9.487,9.53a3.491,3.491,0,0,0,.367,1.533l2.683,2.106a4.092,4.092,0,0,0,.941.12c2.611,0,4.124-1.8,8.877-10.157a3.906,3.906,0,0,0,.584-1.821A2.141,2.141,0,0,0,19.248,0Z" transform="translate(-1217.648 4304)" fill="#fff"/>
+  </g>
+</svg>

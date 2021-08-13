@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 50 50">
+  <g id="Group_75" data-name="Group 75" transform="translate(1289 -4286)">
+    <g id="_" data-name="+" transform="translate(-1289 4286)">
+      <circle id="Ellipse_226" data-name="Ellipse 226" cx="25" cy="25" r="25" fill="#7624fe"/>
+    </g>
+    <g id="_2" data-name="+" transform="translate(-1268 4309)">
+      <g id="Union_1" data-name="Union 1" transform="translate(-7 -10)">
+        <rect id="Rectangle_2" data-name="Rectangle 2" width="2" height="10" transform="translate(4)" fill="#fff"/>
+        <rect id="Rectangle_3" data-name="Rectangle 3" width="2" height="10" transform="translate(10 4) rotate(90)" fill="#fff"/>
+      </g>
+    </g>
+    <path id="Icon_material-create" data-name="Icon material-create" d="M4.5,20.271v4.151H8.637l12.2-12.241L16.7,8.03Zm19.539-11.3a1.1,1.1,0,0,0,0-1.561L21.457,4.82a1.1,1.1,0,0,0-1.556,0L17.883,6.845,22.02,11l2.019-2.025Z" transform="translate(-1275.082 4298.934)" fill="#fff"/>
+  </g>
+</svg>
