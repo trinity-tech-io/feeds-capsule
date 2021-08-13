@@ -224,6 +224,11 @@ export class MintnftPage implements OnInit {
           .cancelCreateOrderProcess();
 
         this.native.hideLoading();
+        if (error == 'EstimateGasError') {
+          this.native.toast_trans('common.publishSameDataFailed');
+          return;
+        }
+
         this.native.toast_trans('common.publicPasarFailed');
       });
   }
@@ -518,7 +523,7 @@ export class MintnftPage implements OnInit {
           .getSticker()
           .mint(tokenId, supply, uri, royalty);
       } catch (error) {
-        reject(MINT_ERROR);
+        reject(error);
         return;
       }
 

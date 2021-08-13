@@ -149,6 +149,7 @@ export const en = {
     cancelOrderTimeoutDesc: 'Cancelling the Collectible timed out. You can confirm whether the Collectible was cancelled successfully later',
     changePriceTimeoutDesc: 'Changing the Collectible price timed out. You can confirm whether the Collectible was changed price successfully later',
     saleOrderTimeoutDesc: 'Selling the Collectible timed out. You can confirm whether the Collectible was sold successfully later',
+    publishSameDataFailed: 'Publish faile : The NFT has the same collectible',
   },
   app: {
     profileDetails: 'Profile Details',
