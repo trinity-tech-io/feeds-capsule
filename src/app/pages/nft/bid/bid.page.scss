@@ -5,8 +5,7 @@
     bottom:0px;
     left:0px;
     width:100%;
-    opacity: 0.9;
-    background-color: #fff;
+    background-color: rgba(255,255,255,0.9);
   }
 
    .my-custom-class {
@@ -252,8 +251,7 @@
 .darkContainer {
 
   .footer{
-    background-color: #000;
-    opacity: 0.9;
+    background-color: rgba(0,0,0,0.9);
   }
 
   .bottomBorder {
