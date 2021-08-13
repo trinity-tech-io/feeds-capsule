@@ -93,7 +93,7 @@ export class WalletConnectControllerService {
     } catch (err) {
       //Work around
       this.destroyWalletConnect();
-      Logger.log(TAG, 'CONNECT error to wallet connect', err);
+      // Logger.log(TAG, 'CONNECT error to wallet connect', err);
     }
   }
 
