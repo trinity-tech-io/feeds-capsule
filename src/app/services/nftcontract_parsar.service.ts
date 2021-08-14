@@ -27,6 +27,11 @@ export class NFTContractParsarService {
   private checkBuyerOrderStateInterval: NodeJS.Timer;
   private checkOrderStateInterval: NodeJS.Timer;
 
+  private checkSellOrderNum: number = 0;
+  private checkPriceNum: number = 0;
+  private checkBuyOrderStateNum: number = 0;
+  private checkOrderStateNum: number = 0;
+
   constructor(
     private walletConnectControllerService: WalletConnectControllerService,
   ) {
@@ -188,6 +193,7 @@ export class NFTContractParsarService {
     lastOrderIndex,
     callback: (newIndex: number) => void,
   ) {
+    this.checkSellOrderNum = 0;
     this.checkSellerOrderStateInterval = setInterval(async () => {
       if (!this.checkSellerOrderStateInterval) return;
       let seller = await this.getSellerByAddr(accountAddress);
@@ -198,7 +204,14 @@ export class NFTContractParsarService {
         this.checkSellerOrderStateInterval = null;
         Logger.log(TAG, 'Check Seller Order State finish, new index is ', newIndex);
       }
-    }, 5000);
+
+      this.checkSellOrderNum++;
+      if (this.checkSellOrderNum * Config.CHECK_STATUS_INTERVAL_TIME > Config.WAIT_TIME_SELL_ORDER) {
+        clearInterval(this.checkSellerOrderStateInterval);
+        this.checkSellerOrderStateInterval = null;
+        Logger.log(TAG, 'Exit check seller order state by self');
+      }
+    }, Config.CHECK_STATUS_INTERVAL_TIME);
   }
 
   cancelCreateOrderProcess() {
@@ -260,6 +273,7 @@ export class NFTContractParsarService {
   }
 
   checkPrice(lastOrderIndex, price, callback: (newPrice: number) => void) {
+    this.checkPriceNum = 0;
     this.checkPriceInterval = setInterval(async () => {
       if (!this.checkPriceInterval) return;
       let newOrder = await this.getSellerOrderByIndex(lastOrderIndex);
@@ -270,7 +284,14 @@ export class NFTContractParsarService {
         callback(newPrice);
         this.checkPriceInterval = null;
       }
-    }, 5000);
+
+      this.checkPriceNum++;
+      if (this.checkPriceNum * Config.CHECK_STATUS_INTERVAL_TIME > Config.WAIT_TIME_CHANGE_PRICE) {
+        clearInterval(this.checkPriceInterval);
+        this.checkPriceInterval = null;
+        Logger.log(TAG, 'Exit check order price by self');
+      }
+    }, Config.CHECK_STATUS_INTERVAL_TIME);
   }
 
   cancelChangePriceProcess() {
@@ -329,6 +350,7 @@ export class NFTContractParsarService {
     lastOrderIndex,
     callback: (newIndex: number) => void,
   ) {
+    this.checkBuyOrderStateNum = 0;
     this.checkBuyerOrderStateInterval = setInterval(async () => {
       if (!this.checkBuyerOrderStateInterval) return;
       let buyer = await this.getBuyerByAddr(accountAddress);
@@ -341,7 +363,14 @@ export class NFTContractParsarService {
         this.checkBuyerOrderStateInterval = null;
         Logger.log(TAG, 'CheckBuyerOrderState , new index is ', newIndex);
       }
-    }, 5000);
+
+      this.checkBuyOrderStateNum++;
+      if (this.checkBuyOrderStateNum * Config.CHECK_STATUS_INTERVAL_TIME > Config.WAIT_TIME_BUY_ORDER) {
+        clearInterval(this.checkBuyerOrderStateInterval);
+        this.checkBuyerOrderStateInterval = null;
+        Logger.log(TAG, 'Exit check buy order state by self');
+      }
+    }, Config.CHECK_STATUS_INTERVAL_TIME);
   }
 
   cancelBuyOrderProcess() {
@@ -402,6 +431,7 @@ export class NFTContractParsarService {
     originOrderState,
     callback: (newOrderState: number) => void,
   ) {
+    this.checkOrderStateNum = 0;
     this.checkOrderStateInterval = setInterval(async () => {
       if (!this.checkOrderStateInterval) return;
 
@@ -417,7 +447,14 @@ export class NFTContractParsarService {
           newOrderState,
         );
       }
-    }, 5000);
+
+      this.checkOrderStateNum++;
+      if (this.checkOrderStateNum * Config.CHECK_STATUS_INTERVAL_TIME > Config.WAIT_TIME_CANCEL_ORDER) {
+        clearInterval(this.checkOrderStateInterval);
+        this.checkOrderStateInterval = null;
+        Logger.log(TAG, 'Exit check order state by self');
+      }
+    }, Config.CHECK_STATUS_INTERVAL_TIME);
   }
 
   cancelCancelOrderProcess() {

@@ -21,6 +21,8 @@ export class NFTContractStickerService {
   private checkTokenInterval: NodeJS.Timer;
   private checkApprovedInterval: NodeJS.Timer;
 
+  private checkTokenNum: number = 0;
+  private checkApprovedNum: number = 0;
   constructor(
     private walletConnectControllerService: WalletConnectControllerService,
   ) {
@@ -217,6 +219,7 @@ export class NFTContractStickerService {
   }
 
   checkTokenState(tokenId, callback: (tokenInfo: any) => void) {
+    this.checkTokenNum = 0;
     this.checkTokenInterval = setInterval(async () => {
       if (!this.checkTokenInterval) return;
       let info = await this.tokenInfo(tokenId);
@@ -226,7 +229,14 @@ export class NFTContractStickerService {
         callback(info);
         this.checkTokenInterval = null;
       }
-    }, 5000);
+
+      this.checkTokenNum++;
+      if (this.checkTokenNum * Config.CHECK_STATUS_INTERVAL_TIME > Config.WAIT_TIME_MINT) {
+        clearInterval(this.checkTokenInterval);
+        this.checkTokenInterval = null;
+        Logger.log(TAG, 'Exit check token state by self');
+      }
+    }, Config.CHECK_STATUS_INTERVAL_TIME);
   }
 
   cancelMintProcess() {
@@ -246,6 +256,7 @@ export class NFTContractStickerService {
     _operator,
     callback: (isApproved: boolean) => void,
   ) {
+    this.checkApprovedNum = 0;
     this.checkApprovedInterval = setInterval(async () => {
       if (!this.checkApprovedInterval) return;
       let isApproved = await this.isApprovedForAll(_owner, _operator);
@@ -255,7 +266,14 @@ export class NFTContractStickerService {
         callback(isApproved);
         this.checkApprovedInterval = null;
       }
-    }, 5000);
+
+      this.checkApprovedNum++;
+      if (this.checkApprovedNum * Config.CHECK_STATUS_INTERVAL_TIME > Config.WAIT_TIME_MINT) {
+        clearInterval(this.checkApprovedInterval);
+        this.checkApprovedInterval = null;
+        Logger.log(TAG, 'Exit check Approved state by self');
+      }
+    }, Config.CHECK_STATUS_INTERVAL_TIME);
   }
 
   cancelSetApprovedProcess() {
