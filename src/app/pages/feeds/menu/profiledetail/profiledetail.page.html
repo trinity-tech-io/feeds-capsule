@@ -27,6 +27,31 @@
         </ion-col>
       </ion-row>
     </div>
+    <!-- Basic Account -->
+    <div *ngIf="!isShowPublisherAccount" style="margin-top:20px;margin-bottom:10px;">
+      <ion-row>
+        <ion-col size="12" style="padding:0px;" class="profile-header-title">
+              {{ 'ProfiledetailPage.basicAccount' | translate }}
+        </ion-col>
+       </ion-row>
+
+       <div class="basicAccount">
+          <p class="support">{{ 'ProfiledetailPage.features1' | translate }}</p>
+          <p class="support">{{ 'ProfiledetailPage.features2' | translate }}</p>
+          <p class="support">{{ 'ProfiledetailPage.features3' | translate }}</p>
+          <p class="notSupport">{{ 'ProfiledetailPage.features4' | translate }} <img src="assets/images/plock.svg" style="vertical-align:middle;"/></p>
+          <p class="notSupport">{{ 'ProfiledetailPage.features5' | translate }} <img src="assets/images/plock.svg" style="vertical-align:middle;"/></p>
+          <p class="notSupport">{{ 'ProfiledetailPage.features6' | translate }} <img src="assets/images/plock.svg" style="vertical-align:middle;"/></p>
+       </div>
+
+       <div class="btns">
+        <ion-row class="btn-row delete-row">
+          <ion-button (click)="upgradeToPublisherAccount()">
+            <ion-label style="font-weight:bold;font-stretch:normal;font-style:normal;color:#ffffff;">{{'ProfiledetailPage.upgradeToPublisherAccount' | translate}}</ion-label>
+          </ion-button>
+        </ion-row>
+      </div>
+    </div>
     <!-- Publisher Account -->
     <div *ngIf="isShowPublisherAccount" style="margin-top:20px;margin-bottom:10px;">
       <ion-row>

@@ -258,6 +258,42 @@
     }
   }
 
+  .basicAccount{
+    position: relative;
+    padding: 20px;
+    display: flex;
+    justify-content: start;
+    align-items: start;
+    flex-direction: column;
+    border-radius: 17px;
+    box-shadow: 0 3px 15px 0 #ededf0;
+    background-color: #ffffff;
+    margin-bottom: 5px;
+    margin-top: 10px;
+
+    .support{
+    font-size: 12px;
+    font-weight: normal;
+    font-stretch: normal;
+    font-style: normal;
+    text-align: left;
+    color: #000;
+    margin: 2px;
+    }
+
+    .notSupport{
+    font-size: 12px;
+    font-weight: normal;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: normal;
+    text-align: left;
+    color: #dbd8e1;
+    margin: 2px;
+    }
+
+  }
+
   .btns {
     margin-top: 20px;
 
@@ -319,6 +355,19 @@
 
   .connectWallet{
     color: #fff;
+  }
+}
+
+.basicAccount{
+  box-shadow: 0 3px 15px 0 #151626;
+  background-color: #2e2f4e;
+
+  .support{
+    color: #fff;
+  }
+
+  .notSupport{
+    color: #ddd;
   }
 }
 }

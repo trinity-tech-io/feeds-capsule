@@ -418,4 +418,8 @@ export class ProfiledetailPage implements OnInit {
   editProfile() {
     this.native.navigateForward(['editprofileimage'], {});
   }
+
+  upgradeToPublisherAccount(){
+    this.native.navigateForward(['bindservice/learnpublisheraccount'], '');
+  }
 }
