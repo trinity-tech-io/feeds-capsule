@@ -128,7 +128,7 @@ export class HomePage implements OnInit {
 
   public pasarList: any = [];
 
-  public isFinsh:any = {};
+  public isFinsh:any = [];
 
   constructor(
     private platform: Platform,
@@ -863,10 +863,11 @@ export class HomePage implements OnInit {
         let arr = _.filter(pasarList,(item)=>{
           return item === null;
         });
-        if(arr.length > 0){
+        if(arr.length > 0 && this.isFinsh.length<pasarList.length){
            event.target.complete();
            return;
         }
+        this.isFinsh = [];
         let sId1 = setTimeout(() => {
           this.getPaserList();
           event.target.complete();
@@ -1889,6 +1890,7 @@ export class HomePage implements OnInit {
         };
         try {
           //this.pasarList.splice(pIndex, 1, item);
+          this.isFinsh.push(pIndex);
           this.pasarList[pIndex] = item;
           let pasarList = _.cloneDeep(this.pasarList);
           let arr = _.filter(pasarList,(item)=>{
@@ -1907,6 +1909,7 @@ export class HomePage implements OnInit {
       })
       .catch((err) => {
         Logger.error(TAG, 'Get data from ipfs error', err);
+        this.isFinsh.push(pIndex);
       });
   }
 
