@@ -31,6 +31,7 @@ import { NFTContractControllerService } from 'src/app/services/nftcontract_contr
 import { IPFSService } from 'src/app/services/ipfs.service';
 import { NFTPersistenceHelper } from 'src/app/services/nft_persistence_helper.service';
 import { WalletConnectControllerService } from 'src/app/services/walletconnect_controller.service';
+import { NFTContractHelperService, SortType } from 'src/app/services/nftcontract_helper.service';
 import _ from 'lodash';
 import { Logger } from 'src/app/services/logger';
 let TAG: string = 'Feeds-home';
@@ -128,7 +129,7 @@ export class HomePage implements OnInit {
 
   public pasarList: any = [];
 
-  public isFinsh:any = [];
+  public isFinsh: any = [];
 
   constructor(
     private platform: Platform,
@@ -153,7 +154,8 @@ export class HomePage implements OnInit {
     private ipfsService: IPFSService,
     private nftPersistenceHelper: NFTPersistenceHelper,
     private walletConnectControllerService: WalletConnectControllerService,
-  ) {}
+    private nftContractHelperService: NFTContractHelperService
+  ) { }
 
   initPostListData(scrollToTop: boolean) {
     this.infiniteScroll.disabled = false;
@@ -386,7 +388,7 @@ export class HomePage implements OnInit {
     this.events.subscribe(
       FeedsEvent.PublishType.streamGetBinaryResponse,
       () => {
-        this.zone.run(() => {});
+        this.zone.run(() => { });
       },
     );
 
@@ -601,7 +603,7 @@ export class HomePage implements OnInit {
     this.events.unsubscribe(FeedsEvent.PublishType.updateTab);
   }
 
-  ionViewWillUnload() {}
+  ionViewWillUnload() { }
 
   getChannel(nodeId: string, channelId: number): any {
     return this.feedService.getChannelFromId(nodeId, channelId);
@@ -860,20 +862,16 @@ export class HomePage implements OnInit {
         }, 500);
         break;
       case 'pasar':
-        let pasarList = _.cloneDeep(this.pasarList);
-        let arr = _.filter(pasarList,(item)=>{
-          return item === null;
+        this.zone.run(async () => {
+          try {
+            this.pasarList = await this.nftContractHelperService.refreshPasarList('onSale', SortType.CREATE_TIME, () => { }, () => { });
+            console.log(this.pasarList);
+          } catch (err) {
+            Logger.error(TAG, err);
+          } finally {
+            event.target.complete();
+          }
         });
-        if(arr.length > 0 && this.isFinsh.length<pasarList.length){
-           event.target.complete();
-           return;
-        }
-        this.isFinsh = [];
-        let sId1 = setTimeout(() => {
-          this.getPaserList();
-          event.target.complete();
-          clearTimeout(sId1);
-        }, 500);
         break;
     }
   }
@@ -1577,7 +1575,7 @@ export class HomePage implements OnInit {
       .then(() => {
         this.native.toast_trans('common.textcopied');
       })
-      .catch(() => {});
+      .catch(() => { });
   }
 
   clickDashang(nodeId: string, channelId: number, postId: number) {
@@ -1762,14 +1760,14 @@ export class HomePage implements OnInit {
 
   createNft() {
     let accAdress = this.nftContractControllerService.getAccountAddress() || "";
-    if(accAdress === ""){
-        this.connectWallet();
-        return;
+    if (accAdress === "") {
+      this.connectWallet();
+      return;
     }
     this.native.navigateForward(['mintnft'], {});
   }
 
-  async connectWallet(){
+  async connectWallet() {
     await this.walletConnectControllerService.connect();
   }
 
@@ -1784,7 +1782,7 @@ export class HomePage implements OnInit {
       for (let index = 0; index < openOrderCount; index++) {
         this.pasarList.push(null);
       }
-      for (let pIndex = 0; pIndex < openOrderCount; pIndex++) {
+      for (let pIndex = openOrderCount - 1; pIndex >= 0; pIndex--) {
         this.getOpenOrderByIndex(pIndex);
       }
     }
@@ -1826,7 +1824,7 @@ export class HomePage implements OnInit {
     tokenNum: any,
     sellerAddr: any,
     createTime: any,
-    royalties:any
+    royalties: any
   ) {
     feedsUri = feedsUri.replace('feeds:json:', '');
     this.ipfsService
@@ -1869,7 +1867,7 @@ export class HomePage implements OnInit {
     sellerAddr: any,
     pIndex: any,
     createTime: any,
-    royalties:any
+    royalties: any
   ) {
     feedsUri = feedsUri.replace('feeds:json:', '');
     this.ipfsService
@@ -1902,12 +1900,12 @@ export class HomePage implements OnInit {
           this.isFinsh.push(pIndex);
           this.pasarList[pIndex] = item;
           let pasarList = _.cloneDeep(this.pasarList);
-          let arr = _.filter(pasarList,(item)=>{
-               return item === null;
+          let arr = _.filter(pasarList, (item) => {
+            return item === null;
           });
-          if(arr.length === 0){
+          if (arr.length === 0) {
             this.pasarList = _.sortBy(pasarList, (item: any) => {
-             return -Number(item.createTime);
+              return -Number(item.createTime);
             });
             this.nftPersistenceHelper.setPasarList(this.pasarList);
           }
@@ -1953,7 +1951,7 @@ export class HomePage implements OnInit {
           .getPasar()
           .getOrderById(nftOrdeId);
         nftOrder = order;
-      } catch (err) {}
+      } catch (err) { }
     }
     return nftOrder;
   }

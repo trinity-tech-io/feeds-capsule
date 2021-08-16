@@ -260,7 +260,14 @@ export class NFTContractParsarService {
           .on('error', (error, receipt) => {
             resolve(FAIL);
             Logger.error(TAG, 'ChangeOrderPrice, error is', error, receipt);
-          });
+          })
+          .on('OrderPriceChanged', (orderId, oldPrice, price) => {
+            Logger.log(TAG,
+              'ChangeOrderPrice, OrderPriceChanged',
+              orderId, oldPrice, price
+            );
+          })
+          ;
 
         this.checkPrice(lastOrderIndex, oldPrice, newPrice => {
           resolve(SUCCESS);

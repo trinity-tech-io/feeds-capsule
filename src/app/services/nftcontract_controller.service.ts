@@ -3,6 +3,7 @@ import { WalletConnectControllerService } from 'src/app/services/walletconnect_c
 import { NFTContractParsarService } from 'src/app/services/nftcontract_parsar.service';
 import { NFTContractStickerService } from 'src/app/services/nftcontract_sticker.service';
 import { Events } from 'src/app/services/events.service';
+import { DataHelper } from 'src/app/services/DataHelper';
 
 @Injectable()
 export class NFTContractControllerService {
@@ -11,6 +12,7 @@ export class NFTContractControllerService {
     private walletConnectControllerService: WalletConnectControllerService,
     private nftContractParsarService: NFTContractParsarService,
     private nftContractStickerService: NFTContractStickerService,
+    private dataHelper: DataHelper
   ) {
     this.init();
     this.initSubscribeEvent();
