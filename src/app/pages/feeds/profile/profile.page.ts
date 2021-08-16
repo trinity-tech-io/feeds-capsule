@@ -142,9 +142,11 @@ export class ProfilePage implements OnInit {
 
   public myFeedsSum: number = 0;
 
+
   public walletAddress: string = '';
   public walletAddressStr: string = '';
   public onSaleList:any = [];
+  public isFinsh:any = [];
   constructor(
     private feedService: FeedService,
     public theme: ThemeService,
@@ -721,10 +723,11 @@ export class ProfilePage implements OnInit {
         let arr = _.filter(collectiblesList,(item)=>{
           return item === null;
         });
-        if(arr.length > 0){
+        if(arr.length > 0 && this.isFinsh.length<collectiblesList.length){
            event.target.complete();
            return;
         }
+        this.isFinsh = [];
         let accAddress =
           this.nftContractControllerService.getAccountAddress() || '';
         this.collectiblesList = [];
@@ -1776,6 +1779,7 @@ export class ProfilePage implements OnInit {
         };
         try {
           //this.collectiblesList.splice(cIndex, 1, item);
+          this.isFinsh.push(cIndex);
           this.collectiblesList[cIndex] = item;
           let collectiblesList = _.cloneDeep(this.collectiblesList);
           let arr = _.filter(collectiblesList,(item)=>{
@@ -1790,6 +1794,7 @@ export class ProfilePage implements OnInit {
       })
       .catch((err) => {
         Logger.error(TAG, 'Get data from ipfs error' + err);
+        this.isFinsh.push(cIndex);
       });
   }
 
@@ -1869,6 +1874,7 @@ export class ProfilePage implements OnInit {
             };
             //this.onSaleList.splice(index,1,item);
             let nftIndex = parseInt(nftCreatedCount)+index;
+            this.isFinsh.push(nftIndex);
             console.log("=====nftIndex====="+nftIndex);
             this.collectiblesList[nftIndex] = item;
             let collectiblesList = _.cloneDeep(this.collectiblesList);
@@ -1879,7 +1885,9 @@ export class ProfilePage implements OnInit {
               this.hanleListCace(createAddress);
             }
           })
-          .catch(() => { });
+          .catch(() => {
+            this.isFinsh.push("1");
+          });
       } catch (error) {}
     }
   }

@@ -21,6 +21,7 @@ export class ProfilenftimagePage implements OnInit {
   public nftImageList: any = [];
   public onSaleList: any = [];
   public styleObj: any = { width: '' };
+  public isFinsh:any = [];
   constructor(
     private translate: TranslateService,
     private titleBarService: TitleBarService,
@@ -71,10 +72,11 @@ export class ProfilenftimagePage implements OnInit {
     let arr = _.filter(nftImageList,(item)=>{
       return item === null;
     });
-    if(arr.length > 0){
+    if(arr.length > 0 && this.isFinsh.length<nftImageList.length){
        event.target.complete();
        return;
     }
+    this.isFinsh = [];
     let accAddress =
       this.nftContractControllerService.getAccountAddress() || '';
     this.nftImageList = [];
@@ -169,6 +171,7 @@ export class ProfilenftimagePage implements OnInit {
           moreMenuType: 'created',
         };
         try {
+          this.isFinsh.push("1");
           this.nftImageList[cIndex] = item;
           let nftImageList = _.cloneDeep(this.nftImageList);
           let arr = _.filter(nftImageList,(item)=>{
@@ -181,7 +184,9 @@ export class ProfilenftimagePage implements OnInit {
           Logger.error(TAG, 'Handle feeds url error', err);
         }
       })
-      .catch(() => { });
+      .catch(() => {
+        this.isFinsh.push("1");
+       });
   }
 
   async OnSale(accAddress: string) {
@@ -257,6 +262,7 @@ export class ProfilenftimagePage implements OnInit {
               createTime: createTime * 1000,
               moreMenuType: 'onSale',
             };
+            this.isFinsh.push("1");
             let nftIndex = parseInt(nftCreatedCount)+index;
             console.log("=====nftIndex====="+nftIndex);
             this.nftImageList[nftIndex] = item;
@@ -268,7 +274,9 @@ export class ProfilenftimagePage implements OnInit {
             this.hanleListCace(createAddress);
            }
           })
-          .catch(() => { });
+          .catch(() => {
+            this.isFinsh.push("1");
+          });
       } catch (error) {}
     }
   }
