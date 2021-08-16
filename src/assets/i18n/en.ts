@@ -306,6 +306,15 @@ export const en = {
     didinfo: 'DID Info',
     publisheraccount: 'Publisher Account',
     collections: 'Collectibles',
+    basicAccount:'Basic Account',
+    features: 'Features',
+    features1: '● Buy and sell Collectible',
+    features2: '● Read posts from subscribed channels',
+    features3: '● Comment on posts',
+    features4: '● Create up to 5 channels',
+    features5: '● Publish unlimited posts',
+    features6: '● Publish NFT sale to subscribers',
+    upgradeToPublisherAccount: 'Upgrade to Publisher Account'
   },
   DevelopPage: {
     develop: 'Develop',
@@ -631,7 +640,7 @@ export const en = {
     nftExpirationDate: 'Expiration Date',
     nftExpirationDateDes: 'Choose expiration date',
     priceErrorMsg: 'The price to sell should be higher than 0',
-    priceErrorMsg1: 'Change price',
+    priceErrorMsg1: 'The new sale price should be different to the existing sale price',
     royaltiesErrorMsg: 'Royalties value should be between 0 and 15%',
     quantityErrorMsg1: 'Quantity number should not be a negative value'
   },

@@ -301,6 +301,15 @@ export const zh = {
     didinfo: 'DID信息',
     publisheraccount: '出版号',
     collections: '收藏品',
+    basicAccount: '基本帐户',
+    features: '特征',
+    features1: '● 买卖收藏品',
+    features2: '● 阅读订阅频道的帖子',
+    features3: '● 评论帖子',
+    features4: '● 创建最多5个频道',
+    features5: '● 发布无限量的帖子',
+    features6: '● 向订阅者发布NFT销售',
+    upgradeToPublisherAccount: '升级到发布者帐户'
   },
   DevelopPage: {
     develop: '开发',
@@ -616,7 +625,7 @@ export const zh = {
     nftExpirationDate: '截止日期',
     nftExpirationDateDes: '选择截止日期',
     priceErrorMsg: '出售价格不能为负值',
-    priceErrorMsg1: '改变价格',
+    priceErrorMsg1: '新出售价格不能与已出售价格一样',
     royaltiesErrorMsg: '版本税必须低于15%（大于0%）',
     quantityErrorMsg: '数量值必须大于0'
   },
