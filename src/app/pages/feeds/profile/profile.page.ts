@@ -1876,7 +1876,6 @@ export class ProfilePage implements OnInit {
             //this.onSaleList.splice(index,1,item);
             let nftIndex = parseInt(nftCreatedCount)+index;
             this.isFinsh.push(nftIndex);
-            console.log("=====nftIndex====="+nftIndex);
             this.collectiblesList[nftIndex] = item;
             let collectiblesList = _.cloneDeep(this.collectiblesList);
             let arr = _.filter(collectiblesList,(item)=>{

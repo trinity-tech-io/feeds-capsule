@@ -282,7 +282,7 @@ export class NftdialogComponent implements OnInit {
           return;
         }
 
-        await this.handleCreteOrderResult(tokenId, sellerAddress, salePrice, type);
+        await this.handleCreteOrderResult(tokenId, sellerAddress, salePrice, type, orderIndex);
         resolve('Success');
       } catch (error) {
         reject(error);
@@ -290,20 +290,37 @@ export class NftdialogComponent implements OnInit {
     })
   }
 
-  async handleCreteOrderResult(tokenId: string, sellerAddress: string, salePrice: string, type: any) {
-    await this.getSetChannel(tokenId);
-    let tokenInfo = await this.nftContractControllerService
-    .getSticker()
-    .tokenInfo(tokenId);
-    let createTime = tokenInfo[7];
-    let sAssItem = _.cloneDeep(this.curAssItem);
-    sAssItem['sellerAddr'] = sellerAddress;
-    sAssItem['fixedAmount'] = salePrice;
-    sAssItem['saleOrderId'] = this.orderId;
-    sAssItem['createTime'] = createTime*1000;
-    sAssItem['moreMenuType'] = 'onSale';
-    let obj = { type: type, assItem: sAssItem };
-    this.events.publish(FeedsEvent.PublishType.nftUpdateList, obj);
+  async handleCreteOrderResult(tokenId: string, sellerAddress: string, salePrice: string, type: any, index: number): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let tokenInfo = await this.nftContractControllerService
+          .getSticker()
+          .tokenInfo(tokenId);
+        let createTime = tokenInfo[7];
+        let sAssItem = _.cloneDeep(this.curAssItem);
+
+        let order = await this.nftContractControllerService
+          .getPasar()
+          .getSellerOrderByIndex(index);
+        let orderId = order[0];
+
+        this.orderId = orderId;
+        sAssItem['sellerAddr'] = sellerAddress;
+        sAssItem['fixedAmount'] = salePrice;
+        sAssItem['saleOrderId'] = orderId;
+        sAssItem['createTime'] = createTime * 1000;
+        sAssItem['moreMenuType'] = 'onSale';
+        let obj = { type: type, assItem: sAssItem };
+
+        this.events.publish(FeedsEvent.PublishType.nftUpdateList, obj);
+        await this.getSetChannel(tokenId);
+
+        resolve(obj);
+      } catch (err) {
+        Logger.error(err);
+        reject(err);
+      }
+    });
   }
 
   async handlePasar(tokenId: any, type: any) {
