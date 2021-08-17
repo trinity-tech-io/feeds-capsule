@@ -1804,7 +1804,6 @@ export class HomePage implements OnInit {
     let tokenUri = tokenInfo[3];
     let royalties = tokenInfo[5] || null;
     let createTime = tokenInfo[7];
-    Logger.log(TAG, 'Order createTime is ', createTime);
     let sellerAddr = openOrder[7];
     this.handleFeedsUrl(
       tokenUri,

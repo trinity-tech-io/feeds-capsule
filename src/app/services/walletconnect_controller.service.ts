@@ -22,8 +22,6 @@ export class WalletConnectControllerService {
     private dataHelper: DataHelper,
     private events: Events,
   ) {
-    // this.initWalletConnectProvider();
-    // this.disconnect();
   }
 
   public async connect() {
@@ -32,7 +30,6 @@ export class WalletConnectControllerService {
 
   public async initWalletConnectProvider() {
     Logger.log(TAG, "Init WalletConnect provider, params", this.rpc, this.bridge);
-
     //  Create WalletConnect Provider
     this.walletConnectProvider = new WalletConnectProvider({
       // infuraId: '0dd3ab5ca24946938c6d411a1637cc59',
@@ -129,20 +126,12 @@ export class WalletConnectControllerService {
       if (this.walletConnectProvider) {
         Logger.log(TAG, 'Disconnecting from wallet connect');
         try {
-          this.walletConnectProvider.on(
-            'disconnect',
-            (code: number, reason: string) => {
-              Logger.log(TAG, 'disconnect', code, reason);
-              if (code == 1000) {
-                resolve('');
-                return;
-              }
-            },
-          );
-
-          this.walletConnectProvider.close()
           // await (await this.walletConnectProvider.getWalletConnector()).killSession();
           await this.walletConnectProvider.disconnect();
+          // await this.walletConnectProvider.close()
+          this.walletConnectProvider.onDisconnect().then(() => {
+            resolve('');
+          })
         } catch (error) {
           Logger.log(TAG, 'Disconnect wallet error', error);
           reject(error);
@@ -165,8 +154,8 @@ export class WalletConnectControllerService {
     this.events.publish(FeedsEvent.PublishType.walletDisconnected);
     this.events.publish(FeedsEvent.PublishType.walletDisconnectedRefreshSM);
     this.events.publish(FeedsEvent.PublishType.walletDisconnectedRefreshPage);
-
-    await this.initWalletConnectProvider();
+    // await this.initWalletConnectProvider();
+    this.anonymousInitWeb3();
   }
 
   anonymousInitWeb3() {
@@ -201,5 +190,4 @@ export class WalletConnectControllerService {
     this.walletConnectProvider.updateRpcUrl(chainId, rpcUrl);
     Logger.log(TAG, "Update rpc, chainId is", chainId, 'url is', rpcUrl);
   }
-
 }
