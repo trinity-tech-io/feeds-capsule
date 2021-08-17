@@ -43,8 +43,8 @@ export class GlobalService {
     }
 
     this.walletConnectControllerService.setBridge(Config.BRIDGE);
-    this.walletConnectControllerService.destroyWalletConnect();
-    await this.walletConnectControllerService.initWalletConnectProvider();
+    await this.walletConnectControllerService.destroyWalletConnect();
+    // await this.walletConnectControllerService.initWalletConnectProvider();
     this.nftContractControllerService.init();
   }
 
