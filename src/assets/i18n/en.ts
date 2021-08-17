@@ -138,7 +138,7 @@ export const en = {
     checkingOrderResult: 'Waiting for the NFT Collectible sale order to take effect in the contract',
     developLog: 'Output  Log',
     restartApp: 'Restart Application',
-    restartAppDesc: 'Need to restart app after switching network',
+    restartAppDesc: 'The application needs to be restarted after switching provide',
     disconnectWallet: 'Disconnect Wallet',
     restartAppDescForProvider: 'Need to restart app after switching provider',
     cancelingOrderDesc: 'NFT Collectible is being cancelled, please wait...',
