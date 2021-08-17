@@ -30,7 +30,7 @@ import { StorageService } from 'src/app/services/StorageService';
 import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
 import { IPFSService } from 'src/app/services/ipfs.service';
 import { NFTPersistenceHelper } from 'src/app/services/nft_persistence_helper.service';
-
+import { WalletConnectControllerService } from 'src/app/services/walletconnect_controller.service';
 import _ from 'lodash';
 import { Logger } from 'src/app/services/logger';
 let TAG: string = 'Feeds-home';
@@ -151,7 +151,8 @@ export class HomePage implements OnInit {
     private storageService: StorageService,
     private nftContractControllerService: NFTContractControllerService,
     private ipfsService: IPFSService,
-    private nftPersistenceHelper: NFTPersistenceHelper
+    private nftPersistenceHelper: NFTPersistenceHelper,
+    private walletConnectControllerService: WalletConnectControllerService,
   ) {}
 
   initPostListData(scrollToTop: boolean) {
@@ -1760,7 +1761,16 @@ export class HomePage implements OnInit {
   }
 
   createNft() {
+    let accAdress = this.nftContractControllerService.getAccountAddress() || "";
+    if(accAdress === ""){
+        this.connectWallet();
+        return;
+    }
     this.native.navigateForward(['mintnft'], {});
+  }
+
+  async connectWallet(){
+    await this.walletConnectControllerService.connect();
   }
 
   async getPaserList() {
