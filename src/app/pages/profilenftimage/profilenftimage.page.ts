@@ -263,8 +263,7 @@ export class ProfilenftimagePage implements OnInit {
               moreMenuType: 'onSale',
             };
             this.isFinsh.push("1");
-            let nftIndex = parseInt(nftCreatedCount)+index;
-            console.log("=====nftIndex====="+nftIndex);
+            let nftIndex = parseInt(nftCreatedCount) + index;
             this.nftImageList[nftIndex] = item;
             let nftImageList = _.cloneDeep(this.nftImageList);
             let arr = _.filter(nftImageList,(item)=>{
