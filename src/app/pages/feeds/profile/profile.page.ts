@@ -1647,6 +1647,7 @@ export class ProfilePage implements OnInit {
       this.popover.dismiss();
       await that.walletConnectControllerService.disconnect();
       that.walletConnectControllerService.destroyWalletConnect();
+      that.nftContractControllerService.init();
       this.walletAddress = '';
       this.walletAddressStr = '';
     }

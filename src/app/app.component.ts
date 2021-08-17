@@ -18,7 +18,7 @@ import { DataHelper } from 'src/app/services/DataHelper';
 import { GlobalService } from 'src/app/services/global.service';
 import { Config } from './services/config';
 import { Logger, LogLevel } from './services/logger';
-
+import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
 // enum LogLevel {
 //   NONE,
 //   ERROR,
@@ -57,7 +57,8 @@ export class MyApp {
     private menuController: MenuController,
     private walletConnectControllerService: WalletConnectControllerService,
     private dataHelper: DataHelper,
-    private globalService: GlobalService
+    private globalService: GlobalService,
+    private nftContractControllerService: NFTContractControllerService
   ) {
     this.initializeApp();
     this.initProfileData();
@@ -268,6 +269,7 @@ export class MyApp {
   async disconnectWallet() {
     await this.walletConnectControllerService.disconnect();
     await this.walletConnectControllerService.destroyWalletConnect();
+    this.nftContractControllerService.init();
   }
 
   clearData() {
@@ -408,6 +410,7 @@ export class MyApp {
       this.popover.dismiss();
       await that.walletConnectControllerService.disconnect();
       that.walletConnectControllerService.destroyWalletConnect();
+      that.nftContractControllerService.init();
       this.walletAddress = '';
       this.walletAddressStr = '';
     }
