@@ -89,7 +89,7 @@ export class WalletConnectControllerService {
         'CONNECTED to wallet connect',
         this.walletConnectProvider,
       );
-      this.initWeb3();
+      await this.initWeb3();
     } catch (err) {
       //Work around
       this.destroyWalletConnect();
@@ -156,7 +156,7 @@ export class WalletConnectControllerService {
 
   }
 
-  destroyWalletConnect() {
+  async destroyWalletConnect() {
     Logger.log('Destroy WalletConnect');
     this.walletConnectProvider = null;
     this.accountAddress = '';
@@ -165,6 +165,8 @@ export class WalletConnectControllerService {
     this.events.publish(FeedsEvent.PublishType.walletDisconnected);
     this.events.publish(FeedsEvent.PublishType.walletDisconnectedRefreshSM);
     this.events.publish(FeedsEvent.PublishType.walletDisconnectedRefreshPage);
+
+    await this.initWalletConnectProvider();
   }
 
   anonymousInitWeb3() {

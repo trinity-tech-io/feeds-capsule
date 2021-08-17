@@ -267,7 +267,7 @@ export class MyApp {
 
   async disconnectWallet() {
     await this.walletConnectControllerService.disconnect();
-    this.walletConnectControllerService.destroyWalletConnect();
+    await this.walletConnectControllerService.destroyWalletConnect();
   }
 
   clearData() {
