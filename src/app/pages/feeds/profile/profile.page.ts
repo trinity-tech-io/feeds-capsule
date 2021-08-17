@@ -1930,7 +1930,12 @@ export class ProfilePage implements OnInit {
     this.native.navigateForward(['mintnft'], {});
   }
 
-  createNft() {
+ async createNft() {
+    let accAdress = this.nftContractControllerService.getAccountAddress() || "";
+    if(accAdress === ""){
+       this.connectWallet();
+       return;
+    }
     this.native.navigateForward(['mintnft'], {});
   }
 }
