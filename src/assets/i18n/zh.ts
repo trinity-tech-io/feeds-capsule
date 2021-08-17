@@ -138,7 +138,7 @@ export const zh = {
     disconnectWallet: '断开钱包',
     restartAppDescForProvider: '切换提供商后需要重启应用',
     cancelingOrderDesc: '正在取消收藏品订单,请稍候...',
-    changingPriceDesc: '正在修改收藏品价格,请稍候...',
+    changingPriceDesc: '正在更新收藏品价格,请稍候...',
     sellingOrderDesc: '正在出售收藏品,请稍候...',
     buyingOrderDesc: '正在购买收藏品,请稍候...',
     buyOrderTimeoutDesc: '购买收藏品超时，后面您可自行确认购买收藏品是否成功',
@@ -663,7 +663,7 @@ export const zh = {
     bidPlaceholder: '输入出价金额',
     minimumBid: '最小出价',
     currentBid: '当前出价',
-    changePrice: '修改价格',
+    changePrice: '更新价格',
     cancelOrder: '取消订单',
   },
   CollectionsPage: {

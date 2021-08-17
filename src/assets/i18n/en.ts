@@ -142,7 +142,7 @@ export const en = {
     disconnectWallet: 'Disconnect Wallet',
     restartAppDescForProvider: 'Need to restart app after switching provider',
     cancelingOrderDesc: 'NFT Collectible is being cancelled, please wait...',
-    changingPriceDesc: 'NFT Collectible is being changed price, please wait...',
+    changingPriceDesc: 'The NFT Collectible price is being updated, please wait...',
     sellingOrderDesc: 'NFT Collectible is being sold, please wait...',
     buyingOrderDesc: 'NFT Collectible is being bought, please wait...',
     buyOrderTimeoutDesc: 'Buying the Collectible timed out. You can confirm whether the Collectible was buying successfully later',
@@ -677,7 +677,7 @@ export const en = {
     bidPlaceholder: 'Enter bid amount',
     minimumBid: 'Minimum Bid',
     currentBid: 'Current Bid',
-    changePrice: 'Change Price',
+    changePrice: 'Update Price',
     cancelOrder: 'Cancel Order',
   },
   CollectionsPage: {
