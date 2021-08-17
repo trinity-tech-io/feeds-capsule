@@ -613,38 +613,42 @@ export class MintnftPage implements OnInit {
         img.onload = () => {
           const originHeight = img.height;
           const originWidth = img.width;
-          let compressedWidth = img.height;
-          let compressedHeight = img.width;
-          if (originWidth > maxWidth && originHeight > maxHeight) {
-            // 更宽更高，
-            if (originHeight / originWidth > maxHeight / maxWidth) {
-              // 更加严重的高窄型，确定最大高，压缩宽度
-              compressedHeight = maxHeight;
-              compressedWidth = maxHeight * (originWidth / originHeight);
-            } else {
-              //更加严重的矮宽型, 确定最大宽，压缩高度
-              compressedWidth = maxWidth;
-              compressedHeight = maxWidth * (originHeight / originWidth);
+          let tempWidth:any;
+          let tempHeight:any;
+          //let compressedWidth = img.height;
+          //let compressedHeight = img.width;
+          if(originWidth > 0 && originHeight > 0){
+            //原图片宽高比例 大于 指定的宽高比例，这就说明了原图片的宽度必然 > 高度
+            if (originWidth/originHeight >= maxWidth/maxHeight) {
+                if (originWidth > maxWidth) {
+                    tempWidth = maxWidth;
+                    // 按原图片的比例进行缩放
+                    tempHeight = (originHeight * maxWidth) / originWidth;
+                } else {
+                    // 按原图片的大小进行缩放
+                    tempWidth = originWidth;
+                    tempHeight = originHeight;
+                }
+            } else {// 原图片的高度必然 > 宽度
+                if (originHeight > maxHeight) {
+                    tempHeight = maxHeight;
+                    // 按原图片的比例进行缩放
+                    tempWidth = (originWidth * maxHeight) / originHeight;
+                } else {
+                    // 按原图片的大小进行缩放
+                    tempWidth = originWidth;
+                    tempHeight = originHeight;
+                }
             }
-          } else if (originWidth > maxWidth && originHeight <= maxHeight) {
-            // 更宽，但比较矮，以maxWidth作为基准
-            compressedWidth = maxWidth;
-            compressedHeight = maxWidth * (originHeight / originWidth);
-          } else if (originWidth <= maxWidth && originHeight > maxHeight) {
-            // 比较窄，但很高，取maxHight为基准
-            compressedHeight = maxHeight;
-            compressedWidth = maxHeight * (originWidth / originHeight);
-          } else {
-            // 符合宽高限制，不做压缩
           }
           // 生成canvas
           let canvas = document.createElement('canvas');
           let context = canvas.getContext('2d');
-          canvas.height = compressedHeight;
-          canvas.width = compressedWidth;
+          canvas.height = tempHeight;
+          canvas.width =  tempWidth;
           // context.globalAlpha = 0.2;
-          context.clearRect(0, 0, compressedWidth, compressedHeight);
-          context.drawImage(img, 0, 0, compressedWidth, compressedHeight);
+          context.clearRect(0, 0, tempWidth,tempHeight);
+          context.drawImage(img, 0, 0, tempWidth,tempHeight);
           let base64 = canvas.toDataURL('image/*', 0.7);
           if (!base64) {
             let error = "Compress image error, result is null";
