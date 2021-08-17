@@ -594,7 +594,7 @@ export class MintnftPage implements OnInit {
   ): Promise<string> {
     return new Promise(async (resolve, reject) => {
       this.handleCace('onSale', tokenId, orderIndex);
-      await this.getSetChannel(tokenId);
+      await this.getSetChannel(tokenId,orderIndex);
       resolve(SUCCESS);
     });
   }
@@ -660,7 +660,13 @@ export class MintnftPage implements OnInit {
     });
   }
 
-  async getSetChannel(tokenId: any) {
+  async getSetChannel(tokenId: any,orderIndex:any) {
+
+    let order = await this.nftContractControllerService
+    .getPasar()
+    .getSellerOrderByIndex(orderIndex);
+    this.orderId = order[0];
+
     let setChannel = this.feedService.getCollectibleStatus();
     for (let key in setChannel) {
       let value = setChannel[key] || '';
