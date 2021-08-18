@@ -76,7 +76,7 @@ import * as Sentry from '@sentry/browser';
 Sentry.init({
   dsn:
     'https://4196003a1c864f5798dd2be18be5cb48@o339076.ingest.sentry.io/5524842',
-  release: 'alpha-v2.0.1',
+  release: '2.0.1',
   integrations: [new RewriteFrames()],
 });
 

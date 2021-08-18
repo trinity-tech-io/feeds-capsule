@@ -26,7 +26,7 @@ import { Logger } from './logger';
 declare let didManager: DIDPlugin.DIDManager;
 
 const TAG: string = 'Feeds-service';
-let versionCode: number = 10600;
+let versionCode: number = 20001;
 let newAuthVersion: number = 10400;
 let newCommentVersion: number = 10400;
 let newMultiPropCountVersion: number = 10500;
