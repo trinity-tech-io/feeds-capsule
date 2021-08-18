@@ -38,8 +38,10 @@ export class IntentService {
   }
 
   private credaccess(params: any): Promise<any> {
+    let url = 'https://did.elastos.net/credaccess';
+    Logger.log(TAG, 'Call intent credaccess result is params', params, url);
     return intentManager.sendIntent(
-      'https://did.elastos.net/credaccess',
+      url,
       params,
     );
   }
@@ -127,10 +129,11 @@ export class IntentService {
       let params = {
         didrequest: JSON.parse(payload),
       };
-
+      let url = 'https://did.elastos.net/didtransaction';
       try {
+        Logger.log(TAG, 'Call intent didtransaction result is params', params, url);
         let response = await intentManager.sendIntent(
-          'https://wallet.elastos.net/didtransaction',
+          url,
           params,
         );
         Logger.log(TAG, 'Call intent didtransaction result is ', response);
