@@ -51,13 +51,18 @@
             "allowedCommonJsDependencies": [
               "easyqrcodejs",
               "hash.js",
+              "bn.js",
               "web3",
               "bignumber.js",
               "lodash",
               "hammerjs",
-              "hash.js",
               "qrcode",
-              "src/app/services/SerializeDataService"
+              "src/app/services/SerializeDataService",
+              "query-string",
+              "@walletconnect/encoding",
+              "@walletconnect/socket-transport",
+              "@walletconnect/window-metadata",
+              "@walletconnect/environment"
             ]
           },
           "configurations": {
