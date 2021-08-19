@@ -16,6 +16,7 @@ import { PopupProvider } from 'src/app/services/popup';
 import { IPFSService } from 'src/app/services/ipfs.service';
 import { NFTPersistenceHelper } from 'src/app/services/nft_persistence_helper.service';
 import { Logger } from 'src/app/services/logger';
+import { Config } from 'src/app/services/config';
 
 const SUCCESS = 'success';
 const SKIP = 'SKIP';
@@ -52,6 +53,11 @@ export class MintnftPage implements OnInit {
   public popover: any;
   private imagePath = "";
   private tokenId:string = "";
+  public isLoading:boolean = false;
+  public loadingTitle:string = "common.waitMoment";
+  public loadingText:string = "";
+  public loadingCurNumber:string = "";
+  public loadingMaxNumber:string = "";
   constructor(
     private translate: TranslateService,
     private event: Events,
@@ -157,59 +163,80 @@ export class MintnftPage implements OnInit {
 
   async doMint() {
     //Start loading
-    await this.native.showLoading(
-      'common.waitMoment',
-      isDismiss => {
-        if (isDismiss) {
-          this.nftContractControllerService
-            .getSticker()
-            .cancelMintProcess();
-          this.nftContractControllerService
-            .getSticker()
-            .cancelSetApprovedProcess();
-          this.nftContractControllerService
-            .getPasar()
-            .cancelCreateOrderProcess();
-          this.showSelfCheckDialog();
-        }
-      },
-      3 * 60000,
-    );
+    let sid = setTimeout(()=>{
+      this.isLoading = false;
+      this.nftContractControllerService
+        .getSticker()
+        .cancelMintProcess();
+      this.nftContractControllerService
+        .getSticker()
+        .cancelSetApprovedProcess();
+      this.nftContractControllerService
+        .getPasar()
+        .cancelCreateOrderProcess();
+      this.showSelfCheckDialog();
+      clearTimeout(sid);
+    },Config.WAIT_TIME_MINT);
+
+    this.loadingCurNumber = "1";
+    this.loadingMaxNumber = "3";
+    if(this.curPublishtoPasar){
+      this.loadingMaxNumber = "5";
+    }
+    this.loadingText = "common.uploadingData"
+    this.isLoading = true;
 
     let tokenId = '';
     let jsonHash = '';
-    this.native.changeLoadingDesc("common.uploadingData");
+    //this.native.changeLoadingDesc("common.uploadingData");
     this.uploadData()
       .then((result) => {
         Logger.log(TAG, 'Upload Result', result);
-        this.native.changeLoadingDesc("common.uploadDataSuccess");
+        //this.native.changeLoadingDesc("common.uploadDataSuccess");
+        this.loadingCurNumber = "1";
+        this.loadingText = "common.uploadDataSuccess";
+
         tokenId = result.tokenId;
         jsonHash = result.jsonHash;
-        this.native.changeLoadingDesc("common.mintingData");
+        //this.native.changeLoadingDesc("common.mintingData");
+        this.loadingCurNumber = "2";
+        this.loadingText = "common.mintingData";
+
         let nftRoyalties = UtilService.accMul(parseInt(this.nftRoyalties),10000);
         return this.mintContract(tokenId, jsonHash, this.nftQuantity,nftRoyalties.toString());
       })
       .then(mintResult => {
         if (mintResult != '' && this.curPublishtoPasar) {
-          this.native.changeLoadingDesc("common.settingApproval");
+          //this.native.changeLoadingDesc("common.settingApproval");
+          this.loadingCurNumber = "3";
+          this.loadingText = "common.settingApproval";
           return this.handleSetApproval();
         }
         return SKIP;
       })
       .then(setApprovalResult => {
         if (setApprovalResult == SKIP) return -1;
-        this.native.changeLoadingDesc("common.creatingOrder");
+        //this.native.changeLoadingDesc("common.creatingOrder");
+        this.loadingCurNumber = "4";
+        this.loadingText = "common.creatingOrder";
         return this.handleCreateOrder(tokenId);
       })
       .then(orderIndex => {
         if (orderIndex == -1) return SKIP;
-        this.native.changeLoadingDesc("common.checkingCollectibleResult");
+        //this.native.changeLoadingDesc("common.checkingCollectibleResult");
+        this.loadingCurNumber = "5";
+        this.loadingText = "common.checkingCollectibleResult";
         return this.handleOrderResult(tokenId, orderIndex);
       })
-      .then(() => {
+      .then((status) => {
+        if(status === SKIP){
+          this.loadingCurNumber = "3";
+          this.loadingText = "common.checkingCollectibleResult";
+        }
         //Finish
         this.handleCace('created',tokenId);
-        this.native.hideLoading();
+        //this.native.hideLoading();
+        this.isLoading = false;
         this.showSuccessDialog();
       })
       .catch(error => {
@@ -223,7 +250,8 @@ export class MintnftPage implements OnInit {
           .getPasar()
           .cancelCreateOrderProcess();
 
-        this.native.hideLoading();
+        //this.native.hideLoading();
+        this.isLoading = false;
         if (error == 'EstimateGasError') {
           this.native.toast_trans('common.publishSameDataFailed');
           return;

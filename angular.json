@@ -62,7 +62,8 @@
               "@walletconnect/encoding",
               "@walletconnect/socket-transport",
               "@walletconnect/window-metadata",
-              "@walletconnect/environment"
+              "@walletconnect/environment",
+              "js-sha3"
             ]
           },
           "configurations": {
