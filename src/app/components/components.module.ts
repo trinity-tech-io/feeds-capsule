@@ -13,6 +13,7 @@ import { MorenameComponent } from './morename/morename.component';
 
 import { ConfirmdialogComponent } from './confirmdialog/confirmdialog.component';
 import { AlertdialogComponent } from './alertdialog/alertdialog.component';
+import {  NftloadingComponent } from './nftloading/nftloading.component';
 
 import { MyfeedsComponent } from './myfeeds/myfeeds.component';
 import { FollowingComponent } from './following/following.component';
@@ -80,6 +81,7 @@ import { RoundProgressModule } from 'angular-svg-round-progressbar';
     AssetitemComponent,
     NewassetitemComponent,
     ChannelcardComponent,
+    NftloadingComponent
   ],
   exports: [
     AlertdialogComponent,
@@ -104,6 +106,7 @@ import { RoundProgressModule } from 'angular-svg-round-progressbar';
     AssetitemComponent,
     NewassetitemComponent,
     ChannelcardComponent,
+    NftloadingComponent
   ],
 
   providers: [],
@@ -117,6 +120,7 @@ import { RoundProgressModule } from 'angular-svg-round-progressbar';
     PaypromptComponent,
     NftdialogComponent,
     PreviewqrcodeComponent,
+    NftloadingComponent
   ],
 })
 export class ComponentsModule {}

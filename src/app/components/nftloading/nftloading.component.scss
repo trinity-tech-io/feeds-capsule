@@ -1,0 +1,112 @@
+.nftLoading{
+  .mask{
+    position:absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width:100%;
+    height:100%;
+    opacity: 0.92;
+    background-color: #efefef;
+    z-index:998;
+    -ms-touch-action: none;
+    touch-action: none;
+  }
+
+  .loadingContent{
+    width: calc(100vw - 38px);
+    height: 230px;
+    position: absolute;
+    top: calc(50vh - 115px);
+    left: 19px;
+    z-index: 999;
+    border-radius: 10px;
+    background-color: #fff;
+
+    .loadingTitle{
+        font-size: 20px;
+        font-weight: bold;
+        font-stretch: normal;
+        font-style: normal;
+        line-height: normal;
+        letter-spacing: normal;
+        text-align: center;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        color: #7624fe;
+        margin-top: 15px;
+        padding: 0px 15px;
+    }
+
+    .loadingIcon{
+      width: 32px;
+      height: 32px;
+      margin: 0 auto;
+      display: flex;
+      margin-top: 32px;
+      -webkit-animation: spin 5s linear infinite;
+      animation: spin 5s linear infinite;
+    }
+
+    @keyframes spin {
+      from {
+        transform: rotate(0deg);
+      }
+      to {
+        transform: rotate(360deg);
+        transition: all 5s;
+      }
+    }
+
+    .loadingText{
+      width: 226px;
+      height: 57px;
+      font-size: 16px;
+      font-weight: normal;
+      font-stretch: normal;
+      font-style: normal;
+      line-height: normal;
+      text-align: center;
+      color: #000;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      margin: 0 auto;
+      margin-top: 27.5px;
+      display:-webkit-box;
+    }
+
+    .loadingNum{
+      width: 28px;
+      height: 19px;
+      font-size: 16px;
+      font-weight: bold;
+      font-stretch: normal;
+      font-style: normal;
+      line-height: normal;
+      text-align: center;
+      color:#7624fe;
+      margin: 0 auto;
+      margin-top:5px;
+    }
+  }
+}
+
+.darkNftLoading{
+  .mask{
+    opacity:0.5;
+    background-color: #fff;
+  }
+
+  .loadingContent{
+    background-color:#191a2f !important;
+
+    .loadingText{
+      color:#fff;
+    }
+  }
+
+}
