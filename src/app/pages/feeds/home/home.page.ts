@@ -131,6 +131,7 @@ export class HomePage implements OnInit {
 
   public isFinsh: any = [];
 
+  public refreshEvent: any = null;
   constructor(
     private platform: Platform,
     private elmRef: ElementRef,
@@ -545,6 +546,7 @@ export class HomePage implements OnInit {
   }
 
   clearData() {
+    this.doRefreshCancel();
     let value = this.popoverController.getTop()['__zone_symbol__value'] || '';
     if (value != '') {
       this.popoverController.dismiss();
@@ -829,6 +831,8 @@ export class HomePage implements OnInit {
   }
 
   doRefresh(event) {
+    this.refreshEvent = event;
+    console.log('Refresh ', event);
     switch (this.tabType) {
       case 'feeds':
         let sId = setTimeout(() => {
@@ -846,6 +850,7 @@ export class HomePage implements OnInit {
               this.refreshImage(0);
               this.initnodeStatus(this.postList);
               if (event != null) event.target.complete();
+              this.refreshEvent = null;
             });
           } else {
             this.zone.run(() => {
@@ -856,6 +861,7 @@ export class HomePage implements OnInit {
               this.refreshImage(0);
               this.initnodeStatus(this.postList);
               if (event != null) event.target.complete();
+              this.refreshEvent = null;
             });
           }
           clearTimeout(sId);
@@ -870,6 +876,7 @@ export class HomePage implements OnInit {
             Logger.error(TAG, err);
           } finally {
             event.target.complete();
+            this.refreshEvent = null;
           }
         });
         break;
@@ -1661,6 +1668,7 @@ export class HomePage implements OnInit {
 
   clickTab(type: string) {
     this.tabType = type;
+    this.doRefreshCancel();
     switch (type) {
       case 'feeds':
         this.infiniteScroll.disabled = false;
@@ -1972,5 +1980,12 @@ export class HomePage implements OnInit {
 
   handleShareOnShare(asstItem: any) {
     this.menuService.showShareOnSaleMenu(asstItem);
+  }
+
+  doRefreshCancel() {
+    if (this.refreshEvent) {
+      this.refreshEvent.target.complete();
+      this.refreshEvent = null
+    }
   }
 }
