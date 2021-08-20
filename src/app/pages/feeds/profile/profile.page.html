@@ -147,3 +147,11 @@
   [channelName]="channelName"
   (hideComment)="hideComponent($event)"
 ></app-comment>
+<app-nftloading
+ *ngIf="isLoading"
+ [loadingTitle] = "loadingTitle"
+ [loadingText] = "loadingText"
+ [loadingCurNumber] = "loadingCurNumber"
+ [loadingMaxNumber] = "loadingMaxNumber"
+>
+</app-nftloading>

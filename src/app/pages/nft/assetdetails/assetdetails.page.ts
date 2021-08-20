@@ -14,9 +14,8 @@ import { PopupProvider } from 'src/app/services/popup';
 import { IPFSService } from 'src/app/services/ipfs.service';
 import { NFTPersistenceHelper } from 'src/app/services/nft_persistence_helper.service';
 
-import _, { reject } from 'lodash';
+import _ from 'lodash';
 import { Logger } from 'src/app/services/logger';
-import { Config } from 'src/app/services/config';
 type detail = {
   type: string;
   details: string;
@@ -54,6 +53,11 @@ export class AssetdetailsPage implements OnInit {
   public developerMode: boolean = false;
   public nftStatus: string = null;
   public royalties:string = null;
+  public isLoading:boolean = false;
+  public loadingTitle:string = "";
+  public loadingText:string = "";
+  public loadingCurNumber:string = "";
+  public loadingMaxNumber:string = "";
   constructor(
     private translate: TranslateService,
     private events: Events,
@@ -127,6 +131,22 @@ export class AssetdetailsPage implements OnInit {
 
   addEvent() {
 
+    this.events.subscribe(FeedsEvent.PublishType.startLoading,(obj)=>{
+                   let title = obj["title"];
+                   let des = obj["des"];
+                   let curNum = obj["curNum"];
+                   let maxNum = obj["maxNum"];
+                   this.loadingTitle = title;
+                   this.loadingText = des;
+                   this.loadingCurNumber = curNum;
+                   this.loadingMaxNumber = maxNum;
+                   this.isLoading = true;
+    });
+
+    this.events.subscribe(FeedsEvent.PublishType.endLoading,(obj)=>{
+      this.isLoading = false;
+    });
+
     this.events.subscribe(FeedsEvent.PublishType.nftUpdatePrice,(nftPrice)=>{
       this.price = nftPrice;
     });
@@ -189,9 +209,12 @@ export class AssetdetailsPage implements OnInit {
   }
 
   removeEvent() {
+    this.events.unsubscribe(FeedsEvent.PublishType.startLoading);
+    this.events.unsubscribe(FeedsEvent.PublishType.endLoading);
     this.events.unsubscribe(FeedsEvent.PublishType.nftCancelOrder);
     this.events.unsubscribe(FeedsEvent.PublishType.nftUpdateList);
     this.events.unsubscribe(FeedsEvent.PublishType.nftUpdatePrice);
+    this.events.publish(FeedsEvent.PublishType.addProflieEvent);
   }
 
   collectContractData() {
@@ -345,17 +368,6 @@ export class AssetdetailsPage implements OnInit {
     return this.nftContractControllerService.transFromWei(price);
   }
 
-  clickCancelOrder() {
-    this.popover = this.popupProvider.ionicConfirm(
-      this,
-      'BidPage.cancelOrder',
-      'BidPage.cancelOrder',
-      this.cancelOnSaleMenu,
-      this.confirmOnSaleMenu,
-      './assets/images/shanchu.svg',
-    );
-  }
-
   changePrice() {
     this.viewHelper.showNftPrompt(this.assItem, 'BidPage.changePrice', 'sale');
   }
@@ -366,87 +378,5 @@ export class AssetdetailsPage implements OnInit {
       'CollectionsPage.putOnSale',
       'created',
     );
-  }
-
-  cancelOnSaleMenu() {
-    if (this.popover != null) {
-      this.popover.dismiss();
-    }
-  }
-
-  confirmOnSaleMenu(that: any) {
-    if (this.popover != null) {
-      this.popover.dismiss();
-    }
-    that.native
-      .showLoading('common.cancelingOrderDesc', (isDismiss) => {
-        if (isDismiss) {
-          that.nftContractControllerService.getPasar().cancelCancelOrderProcess();
-          that.native.hideLoading();
-          that.showSelfCheckDialog();
-        }
-      }, Config.WAIT_TIME_CANCEL_ORDER)
-      .then(() => {
-        return that.cancelOrder(that);
-      })
-      .then(() => {
-        that.native.hideLoading();
-        that.native.toast_trans('common.cancelSuccessfully');
-      })
-      .catch((error) => {
-        that.native.hideLoading();
-        that.native.toast_trans('common.cancellationFailed');
-        //Show error msg
-      });
-  }
-
-  cancelOrder(that: any): Promise<string> {
-    return new Promise(async (resolve, reject) => {
-      try {
-        let saleOrderId = this.assItem['saleOrderId'] || '';
-        Logger.log(TAG, 'Cancel Order ,order id is ', saleOrderId);
-        if (!saleOrderId) {
-          reject('Order id is null');
-          return;
-        }
-
-        const cancelStatus = await this.nftContractControllerService
-          .getPasar()
-          .cancelOrder(saleOrderId);
-        if (!cancelStatus) {
-          reject('error');
-          that.events.publish(FeedsEvent.PublishType.nftCancelOrder, this.assItem);
-          return;
-        }
-
-        resolve('Success');
-      } catch (error) {
-        reject(error);
-      }
-    });
-  }
-
-  showSelfCheckDialog() {
-    //TimeOut
-    this.openAlert();
-  }
-
-
-  openAlert() {
-    this.popover = this.popupProvider.ionicAlert(
-      this,
-      'common.timeout',
-      'common.cancelOrderTimeoutDesc',
-      this.confirm,
-      'tskth.svg',
-    );
-  }
-
-  confirm(that: any) {
-    if (this.popover != null) {
-      this.popover.dismiss();
-      this.popover = null;
-      that.native.pop();
-    }
   }
 }

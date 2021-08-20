@@ -786,28 +786,27 @@ export class MenuService {
     if (this.popover != null) {
       this.popover.dismiss();
     }
-    that.native
-      .showLoading('common.cancelingOrderDesc', (isDismiss) => {
-        if (isDismiss) {
-          // cancel order timeout
-          that.nftContractControllerService.getPasar().cancelCancelOrderProcess();
-          that.native.hideLoading();
-          that.popupProvider.showSelfCheckDialog('common.cancelOrderTimeoutDesc');
-        }
-      }, Config.WAIT_TIME_CANCEL_ORDER)
-      .then(async () => {
-        return that.doCancelOrder(that);
-      })
+    that.events.publish(FeedsEvent.PublishType.startLoading,{des:"common.cancelingOrderDesc",title:"common.waitMoment",curNum:"1",maxNum:"1",type:"changePrice"});
+    let sId = setTimeout(()=>{
+      that.nftContractControllerService.getPasar().cancelCancelOrderProcess();
+      this.events.publish(FeedsEvent.PublishType.endLoading);
+      clearTimeout(sId);
+      that.popupProvider.showSelfCheckDialog('common.cancelOrderTimeoutDesc');
+    },Config.WAIT_TIME_CANCEL_ORDER)
+
+    that.doCancelOrder(that)
       .then(() => {
         that.nftContractControllerService.getPasar().cancelCancelOrderProcess();
-        that.native.hideLoading();
+        that.events.publish(FeedsEvent.PublishType.endLoading);
+        clearTimeout(sId);
         that.native.toast_trans('common.cancelSuccessfully');
       })
       .catch(() => {
         // cancel order error
+        that.events.publish(FeedsEvent.PublishType.endLoading);
+        clearTimeout(sId);
         that.native.toast_trans('common.cancellationFailed');
         that.nftContractControllerService.getPasar().cancelCancelOrderProcess();
-        that.native.hideLoading();
       });
   }
 

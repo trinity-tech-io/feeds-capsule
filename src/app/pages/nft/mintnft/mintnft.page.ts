@@ -237,6 +237,7 @@ export class MintnftPage implements OnInit {
         this.handleCace('created',tokenId);
         //this.native.hideLoading();
         this.isLoading = false;
+        clearTimeout(sid);
         this.showSuccessDialog();
       })
       .catch(error => {
@@ -252,6 +253,7 @@ export class MintnftPage implements OnInit {
 
         //this.native.hideLoading();
         this.isLoading = false;
+        clearTimeout(sid);
         if (error == 'EstimateGasError') {
           this.native.toast_trans('common.publishSameDataFailed');
           return;
