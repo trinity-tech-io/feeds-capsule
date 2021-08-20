@@ -160,7 +160,7 @@ export class ViewHelper {
         title: this.translate.instant(title),
         assItem: assItem,
         menuType: type,
-      },
+        },
     });
     popover.onWillDismiss().then(() => {
       Logger.log(TAG, 'Promote dismiss');

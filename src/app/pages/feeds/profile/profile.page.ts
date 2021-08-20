@@ -147,6 +147,13 @@ export class ProfilePage implements OnInit {
   public walletAddressStr: string = '';
   public onSaleList:any = [];
   public isFinsh:any = [];
+
+  public isLoading:boolean = false;
+  public loadingTitle:string = "";
+  public loadingText:string = "";
+  public loadingCurNumber:string = "";
+  public loadingMaxNumber:string = "";
+
   constructor(
     private feedService: FeedService,
     public theme: ThemeService,
@@ -237,6 +244,22 @@ export class ProfilePage implements OnInit {
 
   async addProflieEvent() {
     this.updateWalletAddress();
+
+    this.events.subscribe(FeedsEvent.PublishType.startLoading,(obj)=>{
+      let title = obj["title"];
+      let des = obj["des"];
+      let curNum = obj["curNum"];
+      let maxNum = obj["maxNum"];
+      this.loadingTitle = title;
+      this.loadingText = des;
+      this.loadingCurNumber = curNum;
+      this.loadingMaxNumber = maxNum;
+      this.isLoading = true;
+    });
+
+   this.events.subscribe(FeedsEvent.PublishType.endLoading,(obj)=>{
+   this.isLoading = false;
+  });
 
     this.events.subscribe(FeedsEvent.PublishType.nftUpdateList, obj => {
       let type = obj['type'];
@@ -612,7 +635,7 @@ export class ProfilePage implements OnInit {
     }
     this.isAddProfile = false;
     this.hideSharMenuComponent = false;
-
+    this.isLoading = false;
     this.events.unsubscribe(FeedsEvent.PublishType.updateLikeList);
     this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
     this.events.unsubscribe(FeedsEvent.PublishType.friendConnectionChanged);
@@ -641,7 +664,8 @@ export class ProfilePage implements OnInit {
     this.events.unsubscribe(FeedsEvent.PublishType.streamProgress);
     this.events.unsubscribe(FeedsEvent.PublishType.streamClosed);
     this.events.unsubscribe(FeedsEvent.PublishType.hideDeletedPosts);
-
+    this.events.unsubscribe(FeedsEvent.PublishType.startLoading);
+    this.events.unsubscribe(FeedsEvent.PublishType.endLoading);
     this.events.unsubscribe(
       FeedsEvent.PublishType.walletDisconnectedRefreshPage,
     );
@@ -1901,6 +1925,7 @@ export class ProfilePage implements OnInit {
   }
 
   clickAssetItem(assetitem: any) {
+    this.clearData();
     this.native.navigateForward(['assetdetails'], { queryParams: assetitem });
   }
 

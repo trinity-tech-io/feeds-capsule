@@ -9,7 +9,7 @@
     height:100%;
     opacity: 0.92;
     background-color: #efefef;
-    z-index:998;
+    z-index:99999998;
     -ms-touch-action: none;
     touch-action: none;
   }
@@ -20,7 +20,7 @@
     position: absolute;
     top: calc(50vh - 115px);
     left: 19px;
-    z-index: 999;
+    z-index: 99999999;
     border-radius: 10px;
     background-color: #fff;
 
@@ -46,8 +46,8 @@
       margin: 0 auto;
       display: flex;
       margin-top: 32px;
-      -webkit-animation: spin 5s linear infinite;
-      animation: spin 5s linear infinite;
+      // -webkit-animation: spin 5s linear infinite;
+      // animation: spin 5s linear infinite;
     }
 
     @keyframes spin {

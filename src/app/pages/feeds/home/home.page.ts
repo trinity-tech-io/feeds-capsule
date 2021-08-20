@@ -132,6 +132,13 @@ export class HomePage implements OnInit {
   public isFinsh: any = [];
 
   public refreshEvent: any = null;
+
+  public isLoading:boolean = false;
+  public loadingTitle:string = "";
+  public loadingText:string = "";
+  public loadingCurNumber:string = "";
+  public loadingMaxNumber:string = "";
+
   constructor(
     private platform: Platform,
     private elmRef: ElementRef,
@@ -310,6 +317,22 @@ export class HomePage implements OnInit {
   }
 
   addCommonEvents() {
+    this.events.subscribe(FeedsEvent.PublishType.startLoading,(obj)=>{
+      let title = obj["title"];
+      let des = obj["des"];
+      let curNum = obj["curNum"];
+      let maxNum = obj["maxNum"];
+      this.loadingTitle = title;
+      this.loadingText = des;
+      this.loadingCurNumber = curNum;
+      this.loadingMaxNumber = maxNum;
+      this.isLoading = true;
+    });
+
+   this.events.subscribe(FeedsEvent.PublishType.endLoading,(obj)=>{
+   this.isLoading = false;
+   });
+
     this.events.subscribe(FeedsEvent.PublishType.nftCancelOrder, assetItem => {
       let saleOrderId = assetItem.saleOrderId;
       let sellerAddr = assetItem.sellerAddr;
@@ -556,6 +579,9 @@ export class HomePage implements OnInit {
     if (this.curNodeId != '') {
       this.feedService.closeSession(this.curNodeId);
     }
+    this.isLoading = false;
+    this.events.unsubscribe(FeedsEvent.PublishType.startLoading);
+    this.events.unsubscribe(FeedsEvent.PublishType.endLoading);
     this.events.unsubscribe(FeedsEvent.PublishType.nftCancelOrder);
     this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
     this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);

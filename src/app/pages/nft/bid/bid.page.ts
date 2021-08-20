@@ -52,6 +52,11 @@ export class BidPage implements OnInit {
   public developerMode: boolean = false;
   public nftStatus: string = null;
   public accAddress: string = null;
+  public isLoading:boolean = false;
+  public loadingTitle:string = "common.waitMoment";
+  public loadingText:string = "common.buyingOrderDesc";
+  public loadingCurNumber:string = "1";
+  public loadingMaxNumber:string = "1";
   constructor(
     private translate: TranslateService,
     private event: Events,
@@ -219,26 +224,26 @@ export class BidPage implements OnInit {
       this.native.toast_trans('common.connectWallet');
       return;
     }
-    this.native
-      .showLoading('common.buyingOrderDesc', isDismiss => {
-        if (isDismiss) {
-          //Buy order Timeout
-          this.nftContractControllerService.getPasar().cancelBuyOrderProcess();
-          this.native.hideLoading();
-          this.showSelfCheckDialog();
-        }
-      }, Config.WAIT_TIME_BUY_ORDER)
-      .then(() => {
-        return this.buy();
-      })
-      .then(() => {
+    //start loading
+    this.isLoading = true;
+    let sId = setTimeout(()=>{
+       //Buy order Timeout
+       this.nftContractControllerService.getPasar().cancelBuyOrderProcess();
+       this.isLoading = false;
+       this.showSelfCheckDialog();
+       clearTimeout(sId);
+    },Config.WAIT_TIME_BUY_ORDER)
+
+      this.buy().then(() => {
         //Finish buy order
-        this.native.hideLoading();
+        this.isLoading = false;
+        clearTimeout(sId)
         this.native.pop();
       })
       .catch(() => {
         this.buyFail();
-        this.native.hideLoading();
+        this.isLoading = false;
+        clearTimeout(sId)
       });
   }
 
