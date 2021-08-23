@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Platform, PopoverController, MenuController } from '@ionic/angular';
+import { Platform, PopoverController, MenuController, ModalController } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { FeedService, Avatar } from './services/FeedService';
@@ -19,6 +19,7 @@ import { GlobalService } from 'src/app/services/global.service';
 import { Config } from './services/config';
 import { Logger, LogLevel } from './services/logger';
 import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
+import { async } from 'rxjs/internal/scheduler/async';
 // enum LogLevel {
 //   NONE,
 //   ERROR,
@@ -43,6 +44,7 @@ export class MyApp {
   public walletAddress: string = '';
   public walletAddressStr: string = '';
   constructor(
+    private modalController: ModalController,
     private events: Events,
     private platform: Platform,
     private statusBar: StatusBar,
@@ -96,7 +98,12 @@ export class MyApp {
           this.statusBar.styleDefault();
         }
 
-        this.platform.backButton.subscribeWithPriority(9999, () => {
+        this.platform.backButton.subscribeWithPriority(9999,async() => {
+          const modal = await this.modalController.getTop();
+          if (modal) {
+            modal.dismiss();
+            return;
+          }
           this.appService.handleBack();
         });
         this.statusBar.show();
