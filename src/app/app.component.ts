@@ -250,23 +250,8 @@ export class MyApp {
     this.appService.initializeApp();
   }
 
-  goToFeedSource() {
-    this.handleJump();
-  }
-
   about() {
     this.native.navigateForward('/menu/about', '');
-  }
-
-  checkIsShowDonation() {
-    let isShowButton = true;
-    if (this.platform.is('ios')) isShowButton = false;
-
-    return isShowButton;
-  }
-
-  donation() {
-    this.native.navigateForward('/menu/donation', '');
   }
 
   cancel(that: any) {
@@ -339,19 +324,6 @@ export class MyApp {
 
   settings() {
     this.native.navigateForward('settings', '');
-  }
-
-  handleJump() {
-    if (this.feedService.getConnectionStatus() != 0) {
-      this.native.toastWarn('common.connectionError');
-      return;
-    }
-    let bindingServer = this.feedService.getBindingServer() || null;
-    if (bindingServer === null) {
-      this.native.navigateForward(['/bindservice/scanqrcode'], '');
-    } else {
-      this.native.navigateForward(['/menu/servers/server-info'], '');
-    }
   }
 
   ionViewWillLeave() {
