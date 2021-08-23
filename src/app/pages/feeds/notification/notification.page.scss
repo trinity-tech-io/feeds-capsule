@@ -69,13 +69,18 @@
                     font-stretch: normal;
                     font-style: normal;
                     color: #111111;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                    white-space: nowrap;
                     margin-top: 2px;
                     margin-left: -11px;
                     img{
                        vertical-align:middle;
+                    }
+                    span{
+                        white-space: nowrap;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        width: 80%;
+                        vertical-align: middle;
+                        display: inline-block;
                     }
                 }
             }
@@ -113,6 +118,14 @@
 
                 h2 {
                     color:#fff;
+                    span{
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    width: 80%;
+                    vertical-align: middle;
+                    display: inline-block;
+                    }
                 }
             }
         }
