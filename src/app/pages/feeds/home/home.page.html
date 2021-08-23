@@ -199,8 +199,8 @@
   </div>
  </div>
 
- <!--Pasar-->
- <div *ngIf="tabType==='pasar'">
+ <!--Pasar list-->
+ <div *ngIf="tabType==='pasar'&&styleType==='list'">
   <ion-row>
     <ion-col size="12"  *ngFor="let item of pasarList let i=index" [class.darkBorderBottom]="theme.darkMode && item != pasarList[pasarList.length - 1]" [class.borderBottom]="!theme.darkMode  && item != pasarList[pasarList.length - 1]">
       <app-newassetitem
@@ -213,6 +213,19 @@
    </ion-row>
  </div>
 
+ <!--Pasar grid-->
+ <div *ngIf="tabType==='pasar'&&styleType==='grid'">
+  <ion-row class="leftrightrow">
+    <ion-col size="6" *ngFor="let item of pasarList">
+      <app-assetitem
+      [assetItem] = "item"
+      (clickAssetItem) = "clickAssetItem($event)"
+      (clickMore) = "clickMore($event)"
+      >
+      </app-assetitem>
+    </ion-col>
+   </ion-row>
+ </div>
 
   <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event)">
     <ion-infinite-scroll-content

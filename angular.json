@@ -63,7 +63,9 @@
               "@walletconnect/socket-transport",
               "@walletconnect/window-metadata",
               "@walletconnect/environment",
-              "js-sha3"
+              "js-sha3",
+              "src/app/services/nftcontract_sticker.service",
+              "src/app/services/nftcontract_parsar.service"
             ]
           },
           "configurations": {

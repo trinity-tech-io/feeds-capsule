@@ -158,7 +158,8 @@ declare namespace FeedsEvent {
     walletDisconnectedRefreshPage = 'feeds:walletConnectedRefreshPage',
 
     startLoading = "feeds:startLoading",
-    endLoading = "feeds:endLoading"
+    endLoading = "feeds:endLoading",
+    pasarListGrid = "feeds:pasarListGrid"
   }
 
   type TipDialogData = {

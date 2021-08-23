@@ -37,6 +37,17 @@
         </ion-col>
     </ion-row>
 
+    <ion-row class="section" (click)="setPasarListGrid()">
+        <ion-col size="9" class="title-col" (swipe)="setPasarListGrid()">
+            <h1>{{"SettingsPage.setPasarListGrid" | translate }}</h1>
+            <h2 *ngIf="pasarListGrid">{{ 'SettingsPage.on' | translate }}</h2>
+            <h2 *ngIf="!pasarListGrid">{{ 'SettingsPage.off' | translate }}</h2>
+        </ion-col>
+        <ion-col size="3" class="arrow-col" (swipe)="setPasarListGrid()">
+            <ion-toggle mode="ios" color="success" [(ngModel)]="pasarListGrid" style="pointer-events:none;"></ion-toggle>
+        </ion-col>
+    </ion-row>
+
     <ion-row class="section" (click)="toggleHideDeletedPosts()">
         <ion-col size="9" class="title-col" (swipe)="toggleHideDeletedPosts()">
             <h1>{{"SettingsPage.hidedeletepost" | translate }}</h1>

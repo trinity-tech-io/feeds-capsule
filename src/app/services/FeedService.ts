@@ -67,8 +67,7 @@ let eventBus: Events = null;
 
 @Injectable()
 export class FeedService {
-  private ownNftCollectiblesList: any = {};
-  private pasarList: any = [];
+  private pasarListGrid: boolean = false;
   private collectibleStatus: any = {};
   public bindPublisherAccountType: string = '';
   public discoverfeeds: any = [];
@@ -7709,4 +7708,13 @@ export class FeedService {
       return;
     });
   }
+
+  setPasarListGrid(pasarListGrid:boolean) {
+    this.pasarListGrid = pasarListGrid;
+  }
+
+  getPasarListGrid() {
+    return this.pasarListGrid;
+  }
+
 }
