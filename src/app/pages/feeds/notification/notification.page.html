@@ -31,7 +31,7 @@
               <h1 (press)="pressName(notification.userName)">{{ moreName(notification.userName) }} <span class="notificationTime"> {{ handleDisplayTime(notification.time) }}</span></h1>
               <p class="behaviorText">{{ notification.behaviorText }}</p>
               <h2>
-                <img *ngIf="notification.behavior===0 || notification.behavior===2" [src]="!theme.darkMode ? './assets/images/bubble-line.svg' : './assets/images/darkmode/comment.svg'" style="margin-top:0px;">
+                <img *ngIf="notification.behavior===0 || notification.behavior===2" [src]="!theme.darkMode ? './assets/images/bubble-line.svg' : './assets/images/darkmode/bubble-line.svg'" style="margin-top:0px;">
                 <img *ngIf="notification.behavior===1" [src]="!theme.darkMode ? './assets/images/like-s.svg' : './assets/images/like-s.svg'">
                 <img *ngIf="notification.behavior===3" [src]="!theme.darkMode ? './assets/images/bubble2.svg' : './assets/images/darkmode/bubble2.svg'" style="margin-top:-3px;">
                 <span *ngIf="notification.behavior===0 || notification.behavior===2" style="margin-left:7px;display: inline-block;margin-top: 2px;">{{ getNotificationContent(notification)}}</span>
