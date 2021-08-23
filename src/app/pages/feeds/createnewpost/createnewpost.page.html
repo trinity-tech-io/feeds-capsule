@@ -46,10 +46,10 @@ playsinline webkit-playsinline>
   <ion-row class="submit-row">
     <ion-col class="left-col">
       <!-- <ion-icon  mode="ios" name="image" (click)="addImg(0)" *ngIf="posterImg ===''"></ion-icon> -->
-      <img id="image" src="./assets/images/photo.svg" (click)="addImg(0)" *ngIf="posterImg ===''"/>
-      <img id="camera" src="./assets/images/photo-camera.svg" (click)="addImg(1)"  *ngIf="posterImg ===''"/>
-      <img id="selectvideo" src="./assets/images/file-video.svg" (click)="selectvideo()" *ngIf="imgUrl === ''" />
-      <img id="videocam" src="./assets/images/video.svg" (click)="videocam()"*ngIf="imgUrl === ''"  />
+      <img id="image" [src]="!theme.darkMode ? './assets/images/photo.svg' : './assets/images/darkmode/photo.svg'" (click)="addImg(0)" *ngIf="posterImg ===''"/>
+      <img id="camera" [src]="!theme.darkMode ? './assets/images/photo-camera.svg' : './assets/images/darkmode/photo-camera.svg'" (click)="addImg(1)"  *ngIf="posterImg ===''"/>
+      <img id="selectvideo" [src]="!theme.darkMode ? './assets/images/file-video.svg' : './assets/images/darkmode/file-video.svg'" (click)="selectvideo()" *ngIf="imgUrl === ''" />
+      <img id="videocam" [src]="!theme.darkMode ? './assets/images/video.svg' : './assets/images/darkmode/video.svg'" (click)="videocam()"*ngIf="imgUrl === ''"  />
       <!-- <span class="nftButton" (click)="createNft()">NFT</span> -->
     </ion-col>
     <ion-col class="right-col" size="3.5">
