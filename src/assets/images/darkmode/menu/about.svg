@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="21.333" height="15.999" viewBox="0 0 21.333 15.999">
+  <g id="details-line" transform="translate(-1.334 -4)">
+    <path id="Path_231" data-name="Path 231" d="M21.333,4H2.667A1.333,1.333,0,0,0,1.334,5.333V18.666A1.333,1.333,0,0,0,2.667,20H21.334a1.333,1.333,0,0,0,1.333-1.333V5.333A1.333,1.333,0,0,0,21.334,4Zm0,14.667H2.667V5.333H21.334Z" fill="#fff"/>
+    <path id="Path_232" data-name="Path 232" d="M6,9.333H18A.667.667,0,0,0,18,8H6A.667.667,0,0,0,6,9.333Z" fill="#fff"/>
+    <path id="Path_233" data-name="Path 233" d="M6,12H18a.667.667,0,0,0,0-1.333H6A.667.667,0,0,0,6,12Z" fill="#fff"/>
+    <path id="Path_234" data-name="Path 234" d="M6,14.667h6.667a.667.667,0,0,0,0-1.333H6a.667.667,0,0,0,0,1.333Z" fill="#fff"/>
+  </g>
+</svg>
