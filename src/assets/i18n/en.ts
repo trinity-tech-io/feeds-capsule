@@ -585,7 +585,7 @@ export const en = {
     'advanced-setting': 'Advanced Settings',
     'configure-network': 'Active Network',
     'choose-network': 'Choose Network',
-    "setPasarListGrid":"Pasar list supports grid display"
+    "setPasarListGrid":"Grid View - Pasar"
   },
   DiscoverfeedPage: {
     title: 'Discovery Square',
