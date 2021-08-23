@@ -570,7 +570,7 @@ export const zh = {
     'advanced-setting': '高级设置',
     'configure-network': '启用中网络',
     'choose-network': '选择网络',
-    "setPasarListGrid":"Pasar列表支持网格显示"
+    "setPasarListGrid":"网格视图-Pasar"
   },
   DiscoverfeedPage: {
     title: '探索广场',
