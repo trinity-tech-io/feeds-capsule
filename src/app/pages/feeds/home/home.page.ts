@@ -138,6 +138,8 @@ export class HomePage implements OnInit {
   public loadingText:string = "";
   public loadingCurNumber:string = "";
   public loadingMaxNumber:string = "";
+  /** grid  list*/
+  public styleType: string = "grid";
 
   constructor(
     private platform: Platform,
@@ -228,8 +230,16 @@ export class HomePage implements OnInit {
   }
 
   ionViewWillEnter() {
+
     if (this.platform.is('ios')) {
       this.isAndroid = false;
+    }
+
+    let pasarListGrid = this.feedService.getPasarListGrid();
+    if(pasarListGrid){
+       this.styleType = "grid";
+    }else{
+       this.styleType = "list";
     }
 
     this.pasarList = this.nftPersistenceHelper.getPasarList();
@@ -299,6 +309,15 @@ export class HomePage implements OnInit {
         this.hideDeletedPosts = this.feedService.getHideDeletedPosts();
         this.refreshPostList();
       });
+    });
+
+    this.events.subscribe(FeedsEvent.PublishType.pasarListGrid,()=>{
+       let pasarListGrid = this.feedService.getPasarListGrid();
+       if(pasarListGrid){
+          this.styleType = "grid";
+       }else{
+          this.styleType = "list";
+       }
     });
 
     this.addCommonEvents();
@@ -563,6 +582,7 @@ export class HomePage implements OnInit {
     this.events.unsubscribe(FeedsEvent.PublishType.addRpcRequestError);
     this.events.unsubscribe(FeedsEvent.PublishType.addRpcResponseError);
     this.events.unsubscribe(FeedsEvent.PublishType.hideDeletedPosts);
+    this.events.unsubscribe(FeedsEvent.PublishType.pasarListGrid);
     this.events.unsubscribe(FeedsEvent.PublishType.createpost);
     this.events.unsubscribe(FeedsEvent.PublishType.unfollowFeedsFinish);
     this.clearData();

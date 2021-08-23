@@ -167,7 +167,6 @@ export class MyApp {
 
   initSetting() {
 
-
     this.dataHelper.loadDevelopLogMode().then((isOpenLog: boolean) => {
       if (isOpenLog)
         Logger.setLogLevel(LogLevel.DEBUG);
@@ -210,6 +209,17 @@ export class MyApp {
         this.feedService.setHideDeletedComments(status);
       })
       .catch(err => { });
+
+      this.feedService
+        .getData("feeds.pasarListGrid")
+        .then((pasarListGrid)=>{
+          if(pasarListGrid === null){
+            this.feedService.setPasarListGrid(false);
+            return;
+          }
+          this.feedService.setPasarListGrid(pasarListGrid);
+        })
+        .catch(err => {});
   }
 
   initDisclaimer() {

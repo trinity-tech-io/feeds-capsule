@@ -32,6 +32,7 @@ export class SettingsPage implements OnInit {
   public languageName: string = null;
   private defaltProviderName = 'elastos.io';
   public curApiProviderName = 'elastos.io';
+  public pasarListGrid: boolean = false;
   constructor(
     private languageService: LanguageService,
     private feedService: FeedService,
@@ -60,6 +61,7 @@ export class SettingsPage implements OnInit {
   }
 
   ionViewWillEnter() {
+    this.pasarListGrid = this.feedService.getPasarListGrid();
     this.curApiProviderName = this.dataHelper.getApiProvider();
     this.languageName = this.getCurlanguageName();
     this.hideDeletedPosts = this.feedService.getHideDeletedPosts();
@@ -185,5 +187,14 @@ export class SettingsPage implements OnInit {
 
   navDeveloper(){
     this.native.getNavCtrl().navigateForward(['/developer']);
+  }
+
+  setPasarListGrid() {
+    this.zone.run(() => {
+      this.pasarListGrid = !this.pasarListGrid;
+    });
+    this.feedService.setPasarListGrid(this.pasarListGrid);
+    this.events.publish(FeedsEvent.PublishType.pasarListGrid);
+    this.feedService.setData('feeds.pasarListGrid', this.pasarListGrid);
   }
 }
