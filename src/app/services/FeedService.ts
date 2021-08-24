@@ -5812,24 +5812,12 @@ export class FeedService {
       }
       let image = new Image(); //新建一个img标签（不嵌入DOM节点，仅做canvas操作)
       image.src = imgData; //让该标签加载base64格式的原图
-      image.onload = function() {
-        //图片加载完毕后再通过canvas压缩图片，否则图片还没加载完就压缩，结果图片是全黑的
-        let canvas = document.createElement('canvas'), //创建一个canvas元素
-          context = canvas.getContext('2d'), //context相当于画笔，里面有各种可以进行绘图的API
-          imageWidth = image.width / 4, //压缩后图片的宽度，这里设置为缩小一半
-          imageHeight = image.height / 4, //压缩后图片的高度，这里设置为缩小一半
-          data = ''; //存储压缩后的图片
-        canvas.width = imageWidth; //设置绘图的宽度
-        canvas.height = imageHeight; //设置绘图的高度
-
-        //使用drawImage重新设置img标签中的图片大小，实现压缩。drawImage方法的参数可以自行查阅W3C
-        context.drawImage(image, 0, 0, imageWidth, imageHeight);
-
-        //使用toDataURL将canvas上的图片转换为base64格式
-        data = canvas.toDataURL('image/jpeg');
-
-        resolve(data);
-      };
+      image.onload = () =>{
+        let maxWidth = image.width / 4;
+        let maxHeight = image.height / 4;
+        let imgBase64 = UtilService.resizeImg(image,maxWidth,maxHeight,1);
+        resolve(imgBase64);
+       };
     });
   }
 

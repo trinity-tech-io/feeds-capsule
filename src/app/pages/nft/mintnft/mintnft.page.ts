@@ -631,61 +631,16 @@ export class MintnftPage implements OnInit {
 
   // 压缩图片
   compressImage(path: any): Promise<string> {
-    //最大高度
-    const maxHeight = 600;
-    //最大宽度
-    const maxWidth = 600;
+
     return new Promise((resolve, reject) => {
       try {
         let img = new Image();
         img.src = path;
-
-        img.onload = () => {
-          const originHeight = img.height;
-          const originWidth = img.width;
-          let tempWidth:any;
-          let tempHeight:any;
-          //let compressedWidth = img.height;
-          //let compressedHeight = img.width;
-          if(originWidth > 0 && originHeight > 0){
-            //原图片宽高比例 大于 指定的宽高比例，这就说明了原图片的宽度必然 > 高度
-            if (originWidth/originHeight >= maxWidth/maxHeight) {
-                if (originWidth > maxWidth) {
-                    tempWidth = maxWidth;
-                    // 按原图片的比例进行缩放
-                    tempHeight = (originHeight * maxWidth) / originWidth;
-                } else {
-                    // 按原图片的大小进行缩放
-                    tempWidth = originWidth;
-                    tempHeight = originHeight;
-                }
-            } else {// 原图片的高度必然 > 宽度
-                if (originHeight > maxHeight) {
-                    tempHeight = maxHeight;
-                    // 按原图片的比例进行缩放
-                    tempWidth = (originWidth * maxHeight) / originHeight;
-                } else {
-                    // 按原图片的大小进行缩放
-                    tempWidth = originWidth;
-                    tempHeight = originHeight;
-                }
-            }
-          }
-          // 生成canvas
-          let canvas = document.createElement('canvas');
-          let context = canvas.getContext('2d');
-          canvas.height = tempHeight;
-          canvas.width =  tempWidth;
-          // context.globalAlpha = 0.2;
-          context.clearRect(0, 0, tempWidth,tempHeight);
-          context.drawImage(img, 0, 0, tempWidth,tempHeight);
-          let base64 = canvas.toDataURL('image/*', 0.7);
-          if (!base64) {
-            let error = "Compress image error, result is null";
-            Logger.error(TAG, error);
-            reject(error);
-          }
-          resolve(base64);
+        img.onload = () =>{
+          let maxWidth = img.width / 4;
+          let maxHeight = img.height / 4;
+         let imgBase64 = UtilService.resizeImg(img,maxWidth,maxHeight,1);
+         resolve(imgBase64);
         };
       } catch (err) {
         Logger.error(TAG, "Compress image error", err);

@@ -500,4 +500,62 @@ export class UtilService {
     let len = address.length;
     return address.substring(0, 6) + '...' + address.substring(len - 4, len);
   }
+
+
+  /**
+ * 计算缩放宽高
+ * @param imgWidth 图片宽
+ * @param imgHeight 图片高
+ * @param maxWidth 期望的最大宽
+ * @param maxHeight 期望的最大高
+ * @returns [number,number] 宽高
+ */
+public static  zoomImgSize(imgWidth:any, imgHeight:any, maxWidth:any, maxHeight:any){
+  let newWidth = imgWidth,
+      newHeight = imgHeight;
+  if (imgWidth / imgHeight >= maxWidth / maxHeight) {
+      if (imgWidth > maxWidth) {
+          newWidth = maxWidth;
+          newHeight = (imgHeight * maxWidth) / imgWidth;
+      }
+  } else {
+      if (imgHeight > maxHeight) {
+          newHeight = maxHeight;
+          newWidth = (imgWidth * maxHeight) / imgHeight;
+      }
+  }
+  if (newWidth > maxWidth || newHeight > maxHeight) {
+      //不满足预期,递归再次计算
+      return this.zoomImgSize(newWidth, newHeight, maxWidth, maxHeight);
+  }
+  return [newWidth, newHeight];
+ };
+
+ /**
+ * 压缩图片
+ * @param img img对象
+ * @param maxWidth 最大宽
+ * @param maxHeight 最大高
+ * @param quality 压缩质量
+ * @returns {string|*} 返回base64
+ */
+ public static resizeImg(img:any, maxWidth:any, maxHeight:any, quality = 1):any{
+    const imageData = img.src;
+    if (imageData.length < maxWidth * maxHeight) {
+        return imageData;
+    }
+    const imgWidth = img.width;
+    const imgHeight = img.height;
+    if (imgWidth <= 0 || imgHeight <= 0) {
+        return imageData;
+    }
+    const canvasSize = this.zoomImgSize(imgWidth, imgHeight, maxWidth, maxHeight);
+    const canvas = document.createElement('canvas');
+    canvas.width = canvasSize[0];
+    canvas.height = canvasSize[1];
+    canvas.getContext('2d')
+        .drawImage(img, 0, 0, canvas.width,
+            canvas.height);
+    return canvas.toDataURL('image/*', quality);
+  };
 }
