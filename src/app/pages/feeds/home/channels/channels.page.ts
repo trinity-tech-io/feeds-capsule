@@ -572,7 +572,7 @@ export class ChannelsPage implements OnInit {
       this.translate.instant('ChannelsPage.feeds'),
     );
     this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
-    this.titleBarService.setTitleBarMoreMemu(this.titleBar);
+    //this.titleBarService.setTitleBarMoreMemu(this.titleBar);
   }
 
   like(nodeId: string, channelId: number, postId: number) {
