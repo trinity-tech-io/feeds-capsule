@@ -1,3 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
-  <path id="Icon_ionic-md-home" data-name="Icon ionic-md-home" d="M11.067,24.5V17.833h4.615V24.5h4.692v-10h3l-10-10-10,10h3v10Z" transform="translate(-3.375 -4.5)" fill="#0e0909" opacity="0.3"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="17.333" height="20.001" viewBox="0 0 17.333 20.001">
+  <g id="house-door" transform="translate(-1.875 -1.248)">
+    <path id="Path_279" data-name="Path 279" d="M10.069,1.458a.636.636,0,0,1,.944,0l8,8.571a.741.741,0,0,1,.194.506v10a.692.692,0,0,1-.667.714h-6a.692.692,0,0,1-.667-.714V14.821H9.209v5.714a.692.692,0,0,1-.667.714h-6a.692.692,0,0,1-.667-.714v-10a.741.741,0,0,1,.194-.506l8-8.571ZM3.208,10.832v8.989H7.875V14.107a.692.692,0,0,1,.667-.714h4a.692.692,0,0,1,.667.714v5.714h4.667V10.832L10.542,2.975Z" fill-rule="evenodd"/>
+  </g>
 </svg>
