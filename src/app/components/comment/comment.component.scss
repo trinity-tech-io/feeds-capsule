@@ -1,3 +1,18 @@
+.mask{
+    position:absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width:100%;
+    height:100%;
+    opacity: 0.92;
+    background-color: #efefef;
+    z-index:1;
+    -ms-touch-action: none;
+    touch-action: none;
+}
+
 ion-footer {
   background: transparent;
   animation: animate;
@@ -145,4 +160,19 @@ ion-footer {
       }
     }
   }
+}
+
+.darkMask{
+    opacity:0.5;
+    background-color: #fff;
+    position:absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width:100%;
+    height:100%;
+    z-index:1;
+    -ms-touch-action: none;
+    touch-action: none;
 }
