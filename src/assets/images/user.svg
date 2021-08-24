@@ -1,8 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
-  <g id="Profile" opacity="0.3">
-    <g id="Union_1" data-name="Union 1" transform="translate(0 -354)">
-      <circle id="Ellipse_3" data-name="Ellipse 3" cx="5" cy="5" r="5" transform="translate(5 354)" fill="#0e0909"/>
-      <path id="Path_6" data-name="Path 6" d="M10,10C4.5,10,0,11.8,0,14v2H20V14C20,11.8,15.5,10,10,10Z" transform="translate(0 358)" fill="#0e0909"/>
-    </g>
+<svg xmlns="http://www.w3.org/2000/svg" width="17.333" height="20.001" viewBox="0 0 17.333 20.001">
+  <g id="avatar-line" transform="translate(-3.333 -1.999)">
+    <path id="Path_206" data-name="Path 206" d="M12,11.333A4.667,4.667,0,1,0,7.333,6.666,4.667,4.667,0,0,0,12,11.333Zm0-8A3.333,3.333,0,1,1,8.667,6.666,3.333,3.333,0,0,1,12,3.333Z"/>
+    <path id="Path_207" data-name="Path 207" d="M20.313,16.247a11.44,11.44,0,0,0-16.62,0,1.333,1.333,0,0,0-.36.913v3.507A1.333,1.333,0,0,0,4.666,22H19.333a1.333,1.333,0,0,0,1.333-1.333V17.16A1.333,1.333,0,0,0,20.313,16.247Zm-.98,4.42H4.667V17.154a10.113,10.113,0,0,1,14.667,0Z"/>
   </g>
 </svg>
