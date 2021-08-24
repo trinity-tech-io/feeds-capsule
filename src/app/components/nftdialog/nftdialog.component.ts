@@ -395,7 +395,7 @@ async handleSaleList() {
     let nftContent = {};
     nftContent['version'] = '1.0';
     nftContent['imageThumbnail'] = imgThumbs;
-    nftContent['text'] = this.assItem.description;
+    nftContent['text'] = this.assItem.name+ "-" + this.assItem.description;
     nftContent['nftTokenId'] = tokenId;
     nftContent['nftOrderId'] = this.orderId;
 
