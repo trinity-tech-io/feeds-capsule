@@ -8,6 +8,7 @@ import { PopupProvider } from 'src/app/services/popup';
 import { PopoverController } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { GlobalService } from 'src/app/services/global.service';
+import { FeedService } from 'src/app/services/FeedService';
 
 @Component({
   selector: 'app-select-net',
@@ -30,7 +31,8 @@ export class SelectNetPage implements OnInit {
     public popupProvider: PopupProvider,
     private popoverController: PopoverController,
     private splashScreen: SplashScreen,
-    private globalService: GlobalService
+    private globalService: GlobalService,
+    private feedService: FeedService
   ) { }
 
   ngOnInit() {
@@ -76,6 +78,8 @@ export class SelectNetPage implements OnInit {
       this.popover.dismiss();
       this.popover = null;
 
+      that.feedService.resetConnectionStatus();
+      that.feedService.destroyCarrier();
       that.globalService.restartApp();
     }
   }

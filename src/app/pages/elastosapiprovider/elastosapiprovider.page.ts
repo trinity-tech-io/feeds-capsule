@@ -88,7 +88,8 @@ export class ElastosapiproviderPage implements OnInit {
     if (this.popover != null) {
       this.popover.dismiss();
       this.popover = null;
-
+      that.feedsService.resetConnectionStatus();
+      that.feedsService.destroyCarrier();
       that.globalService.restartApp();
     }
   }
