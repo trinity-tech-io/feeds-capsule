@@ -49,7 +49,7 @@
             <pre [ngStyle]="styleObj" [innerHTML]="getContentText(postContent) | html"></pre>
           </h2>
 
-          <div style="position:relative;">
+          <div style="position:relative;width: 100%;">
             <app-percentageloading
             *ngIf="isImgPercentageLoading"
             [ngStyle]="imgloadingStyleObj"

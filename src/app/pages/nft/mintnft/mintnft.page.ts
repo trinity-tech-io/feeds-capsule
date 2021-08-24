@@ -703,7 +703,7 @@ export class MintnftPage implements OnInit {
     let nftContent = {};
     nftContent['version'] = '1.0';
     nftContent['imageThumbnail'] = imgThumbs;
-    nftContent['text'] = this.nftName + "-" + this.nftDescription;
+    nftContent['text'] = this.nftName+" - "+ this.nftDescription;
     nftContent['nftTokenId'] = tokenId;
     nftContent['nftOrderId'] = this.orderId;
 
