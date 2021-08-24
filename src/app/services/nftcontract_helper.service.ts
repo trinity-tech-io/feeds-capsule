@@ -3,6 +3,7 @@ import { Events } from 'src/app/services/events.service';
 import { DataHelper } from 'src/app/services/DataHelper';
 import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
 import { IPFSService } from 'src/app/services/ipfs.service';
+import { NFTPersistenceHelper } from 'src/app/services/nft_persistence_helper.service';
 import { Logger } from './logger';
 import _ from 'lodash';
 
@@ -49,7 +50,8 @@ export class NFTContractHelperService {
     private nftContractControllerService: NFTContractControllerService,
     private event: Events,
     private dataHelper: DataHelper,
-    private ipfsService: IPFSService
+    private ipfsService: IPFSService,
+    private nftPersistenceHelper: NFTPersistenceHelper
   ) {
   }
 
@@ -70,6 +72,8 @@ export class NFTContractHelperService {
           let contractItem = await this.handleFeedsUrl(openOrderResult, saleStatus);
           list.push(contractItem);
         }
+
+        this.nftPersistenceHelper.setPasarList(list);
         resolve(this.sortData(list, sortType));
       } catch (error) {
         reject(error);
@@ -82,6 +86,7 @@ export class NFTContractHelperService {
       return -Number(item.createTime);
     });
   }
+
   getOpenOrderResultByIndex(index: any): Promise<OpenOrderResult> {
     return new Promise(async (resolve, reject) => {
       try {
