@@ -10,7 +10,8 @@ import _ from 'lodash';
 import { NFTPersistenceHelper } from 'src/app/services/nft_persistence_helper.service';
 import { Logger } from 'src/app/services/logger';
 import { UtilService } from 'src/app/services/utilService';
-
+import { ActivatedRoute } from '@angular/router';
+import { Events } from 'src/app/services/events.service';
 const TAG: string = 'ProfileImagePage';
 @Component({
   selector: 'app-profilenftimage',
@@ -23,6 +24,7 @@ export class ProfilenftimagePage implements OnInit {
   public onSaleList: any = [];
   public styleObj: any = { width: '' };
   public isFinsh:any = [];
+  public type:string = "";
   constructor(
     private translate: TranslateService,
     private titleBarService: TitleBarService,
@@ -30,10 +32,16 @@ export class ProfilenftimagePage implements OnInit {
     private feedService: FeedService,
     private native: NativeService,
     private ipfsService: IPFSService,
-    private nftPersistenceHelper: NFTPersistenceHelper
+    private nftPersistenceHelper: NFTPersistenceHelper,
+    private activatedRoute: ActivatedRoute,
+    private events: Events,
   ) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.activatedRoute.queryParams.subscribe(queryParams => {
+        this.type = queryParams.type || "";
+    });
+  }
 
   ionViewWillEnter() {
     this.initTile();
@@ -50,7 +58,9 @@ export class ProfilenftimagePage implements OnInit {
     this.titleBarService.setTitleBarMoreMemu(this.titleBar);
   }
 
-  ionViewWillLeave() {}
+  ionViewWillLeave() {
+
+  }
 
   getImageList() {
     let createAddr =
@@ -288,11 +298,19 @@ export class ProfilenftimagePage implements OnInit {
   }
 
   async clickItem(item: any) {
+
     let imgUri = item['asset'];
     if (imgUri.indexOf('feeds:imgage:') > -1) {
       imgUri = imgUri.replace('feeds:imgage:', '');
       imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
     }
+
+    if(this.type === "postImages"){
+      let imgBase64 = await this.compressImage(imgUri);
+      this.feedService.setSelsectNftImage(imgBase64);
+      this.native.pop();
+     return;
+  }
     this.native.navigateForward(['editimage'], { replaceUrl: true });
     this.feedService.setClipProfileIamge(imgUri);
   }
@@ -312,6 +330,8 @@ export class ProfilenftimagePage implements OnInit {
       try {
         let img = new Image();
         img.src = path;
+        img.crossOrigin='*';
+        img.crossOrigin = "Anonymous";
 
         img.onload = () =>{
           let maxWidth = img.width / 4;

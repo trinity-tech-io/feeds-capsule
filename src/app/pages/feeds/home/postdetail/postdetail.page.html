@@ -195,7 +195,7 @@
             </ion-col>
             <ion-col size="2.25" (click)="showComment(comment)">
               <img src="/assets/images/bubble-line.svg" *ngIf="!theme.darkMode">
-              <img src="/assets/images/darkmode/comment.svg" *ngIf="theme.darkMode"> <ion-label>{{ comment.replayCommentSum }}</ion-label>
+              <img src="/assets/images/darkmode/bubble-line.svg" *ngIf="theme.darkMode"> <ion-label>{{ comment.replayCommentSum }}</ion-label>
             </ion-col>
             <ion-col (click)="clickComment(comment)">
               <ion-label class="status" style="right:-7px;" *ngIf="comment.status === 2">{{ 'common.edit' | translate}}</ion-label>

@@ -351,6 +351,7 @@ export class NotificationPage {
       this.feedService.setCurrentFeed(currentFeed);
       this.storageService.set('feeds.currentFeed', JSON.stringify(currentFeed));
     }
+    this.feedService.setSelsectNftImage("");
     this.native.navigateForward(['createnewpost'], '');
   }
 

@@ -1831,6 +1831,7 @@ export class HomePage implements OnInit {
       this.feedService.setCurrentFeed(currentFeed);
       this.storageService.set('feeds.currentFeed', JSON.stringify(currentFeed));
     }
+    this.feedService.setSelsectNftImage("");
     this.native.navigateForward(['createnewpost'], '');
   }
 
