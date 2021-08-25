@@ -25,7 +25,7 @@ import { ViewHelper } from 'src/app/services/viewhelper.service';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Logger } from 'src/app/services/logger';
-
+import { MenuService } from 'src/app/services/MenuService';
 let TAG: string = 'Feeds-createpost';
 
 @Component({
@@ -66,6 +66,7 @@ export class CreatenewpostPage implements OnInit {
   public feedList = [];
   public hideSwitchFeed: boolean = false;
   private isPublishing: boolean = false;
+  public pictureMenu: any = null;
   constructor(
     private platform: Platform,
     private events: Events,
@@ -83,6 +84,7 @@ export class CreatenewpostPage implements OnInit {
     private storageService: StorageService,
     private titleBarService: TitleBarService,
     private viewHelper: ViewHelper,
+    private menuService: MenuService,
   ) {}
 
   ngOnInit() {
@@ -111,6 +113,8 @@ export class CreatenewpostPage implements OnInit {
   }
 
   ionViewWillEnter() {
+    this.imgUrl = this.feedService.getSelsectNftImage();
+    this.feedService.setSelsectNftImage(this.imgUrl);
     this.feedList = this.feedService.getMyChannelList() || [];
     this.initTitle();
 
@@ -198,6 +202,9 @@ export class CreatenewpostPage implements OnInit {
 
   ionViewWillLeave() {
     this.hideSwitchFeed = false;
+    if (this.pictureMenu != null) {
+      this.menuService.hideActionSheet();
+    }
     this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
     this.events.unsubscribe(FeedsEvent.PublishType.friendConnectionChanged);
     this.events.unsubscribe(FeedsEvent.PublishType.publishPostSuccess);
@@ -344,12 +351,13 @@ export class CreatenewpostPage implements OnInit {
       (imageUrl: any) => {
         this.zone.run(() => {
           this.imgUrl = imageUrl;
+          this.feedService.setSelsectNftImage(imageUrl);
         });
       },
       (err: any) => {
         Logger.error(TAG, 'Add img err', err);
         let imgUrl = this.imgUrl || '';
-        if (imgUrl) {
+        if (imgUrl==="") {
           this.native.toast_trans('common.noImageSelected');
         }
       },
@@ -793,6 +801,61 @@ export class CreatenewpostPage implements OnInit {
 
   createNft() {
     this.native.navigateForward(['mintnft'], {});
+  }
+
+  clickImageMenu(){
+    this.pictureMenu = this.menuService.showPictureMenu(
+      this,
+      this.openCamera,
+      this.openGallery,
+      this.openNft,
+    );
+  }
+
+  openNft(that: any) {
+    that.native.navigateForward(['profilenftimage'], {queryParams: { type: 'postImages' }});
+  }
+
+  openGallery(that: any) {
+    that.camera.openCamera(
+      30,
+      0,
+      0,
+      (imageUrl: any) => {
+        that.zone.run(() => {
+          that.imgUrl = imageUrl;
+          that.feedService.setSelsectNftImage(imageUrl);
+        });
+      },
+      (err: any) => {
+        Logger.error(TAG, 'Add img err', err);
+        let imgUrl = that.imgUrl || '';
+        if (imgUrl==="") {
+          that.native.toast_trans('common.noImageSelected');
+        }
+      },
+    );
+  }
+
+  openCamera(that: any) {
+    that.camera.openCamera(
+      30,
+      0,
+      1,
+      (imageUrl: any) => {
+        that.zone.run(() => {
+          that.imgUrl = imageUrl;
+          that.feedService.setSelsectNftImage(imageUrl);
+        });
+      },
+      (err: any) => {
+        //Logger.error(TAG, 'Add img err', err);
+        let imgUrl = that.imgUrl || '';
+        if (imgUrl==="") {
+          that.native.toast_trans('common.noImageSelected');
+        }
+      },
+    );
   }
 }
 

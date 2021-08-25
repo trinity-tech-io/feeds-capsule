@@ -534,6 +534,12 @@ export class MenuService {
           text: this.translate.instant('common.collectibles'),
           icon: 'list-circle',
           handler: () => {
+            let accountAddress =
+            this.nftContractControllerService.getAccountAddress() || '';
+          if (accountAddress === '') {
+            this.native.toastWarn('common.connectWallet');
+            return false;
+          }
             openNft(that);
           },
         },

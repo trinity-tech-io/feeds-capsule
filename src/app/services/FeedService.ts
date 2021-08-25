@@ -67,6 +67,7 @@ let eventBus: Events = null;
 
 @Injectable()
 export class FeedService {
+  public  selsectNftImage: string = "";
   private pasarListGrid: boolean = false;
   private collectibleStatus: any = {};
   public bindPublisherAccountType: string = '';
@@ -7703,6 +7704,14 @@ export class FeedService {
 
   getPasarListGrid() {
     return this.pasarListGrid;
+  }
+
+  setSelsectNftImage(selsectNftImage:any){
+      this.selsectNftImage = selsectNftImage;
+  }
+
+  getSelsectNftImage(){
+    return this.selsectNftImage;
   }
 
 }
