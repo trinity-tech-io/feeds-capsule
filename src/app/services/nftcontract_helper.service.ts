@@ -46,6 +46,7 @@ export type ChangedItem = {
 }
 @Injectable()
 export class NFTContractHelperService {
+  private refreshCount = 8;
   constructor(
     private nftContractControllerService: NFTContractControllerService,
     private event: Events,
@@ -55,9 +56,37 @@ export class NFTContractHelperService {
   ) {
   }
 
+  loadMoreData(saleStatus: string, sortType: SortType, count: number, startPage: number): Promise<ContractItem[]> {
+    return new Promise(async (resolve, reject) => {
+      if (startPage * this.refreshCount >= count) {
+        resolve([]);
+        return;
+      }
+
+      let start = count - 1 - (startPage * this.refreshCount);
+      let end = count - 1 - ((startPage + 1) * this.refreshCount);
+      if (end < 0)
+        end = 0;
+      try {
+        let list = [];
+        for (let index = start - 1; index >= end; index--) {
+          let openOrderResult = await this.getOpenOrderResultByIndex(index);
+          let contractItem = await this.handleFeedsUrl(openOrderResult, saleStatus);
+
+          list.push(contractItem);
+        }
+        // this.nftPersistenceHelper.setPasarList(list);
+        resolve(this.sortData(list, sortType));
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
   refreshPasarList(saleStatus: string, sortType: SortType, openOrderCountCallback: (openOrderCount: number) => void, callback: (changedItem: ChangedItem) => void): Promise<ContractItem[]> {
     return new Promise(async (resolve, reject) => {
       try {
+
         let count = await this.nftContractControllerService.getPasar().getOpenOrderCount() || 0;
         openOrderCountCallback(count);
 
@@ -67,13 +96,14 @@ export class NFTContractHelperService {
         }
 
         let list = [];
-        for (let index = count - 1; index >= 0; index--) {
+        for (let index = count - 1; index >= count - 1 - this.refreshCount; index--) {
           let openOrderResult = await this.getOpenOrderResultByIndex(index);
           let contractItem = await this.handleFeedsUrl(openOrderResult, saleStatus);
+
           list.push(contractItem);
         }
 
-        this.nftPersistenceHelper.setPasarList(list);
+        // this.nftPersistenceHelper.setPasarList(list);
         resolve(this.sortData(list, sortType));
       } catch (error) {
         reject(error);
