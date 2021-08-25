@@ -4,7 +4,11 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class HtmlPipe implements PipeTransform {
   transform(str: string): string {
-    let text = this.replaceSrc(str);
+    str = str || "";
+    let text = "";
+    if(str!=""){
+      text = this.replaceSrc(str)
+    }
     return text;
   }
 

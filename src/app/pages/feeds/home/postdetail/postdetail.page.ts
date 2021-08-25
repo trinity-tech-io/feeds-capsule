@@ -1319,7 +1319,21 @@ export class PostdetailPage implements OnInit {
     this.viewHelper.showPayPrompt(this.nodeId, this.channelId, elaAddress);
   }
 
-  clickComment(comment: any) {
+  clickComment(comment: any,event?:any) {
+    if (this.isPress) {
+      this.isPress = false;
+      return;
+    }
+    event = event || '';
+    if (event != '') {
+      let e = event || window.event; //兼容IE8
+      let target = e.target || e.srcElement; //判断目标事件
+      if (target.tagName.toLowerCase() == 'span') {
+        let url = target.textContent || target.innerText;
+        this.native.clickUrl(url, event);
+        return;
+      }
+    }
     let commentId: number = comment.id;
     this.native.navigateForward(['commentlist'], {
       queryParams: {
