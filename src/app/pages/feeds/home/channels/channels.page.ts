@@ -505,6 +505,10 @@ export class ChannelsPage implements OnInit {
         });
       },
     );
+
+    this.events.subscribe(FeedsEvent.PublishType.channelRightMenu,()=>{
+         this.clickAvatar();
+    });
   }
 
   ionViewWillLeave() {
@@ -548,6 +552,7 @@ export class ChannelsPage implements OnInit {
     this.events.unsubscribe(FeedsEvent.PublishType.streamProgress);
     this.events.unsubscribe(FeedsEvent.PublishType.streamClosed);
     this.events.unsubscribe(FeedsEvent.PublishType.friendConnectionChanged);
+    this.events.unsubscribe(FeedsEvent.PublishType.channelRightMenu);
     this.removeImages();
     this.removeAllVideo();
     this.isLoadimage = {};
@@ -572,7 +577,11 @@ export class ChannelsPage implements OnInit {
       this.translate.instant('ChannelsPage.feeds'),
     );
     this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
-    //this.titleBarService.setTitleBarMoreMemu(this.titleBar);
+    if(!this.theme.darkMode){
+      this.titleBarService.setTitleBarMoreMemu(this.titleBar,"channelRightMenu","assets/icon/dot.ico");
+    }else{
+      this.titleBarService.setTitleBarMoreMemu(this.titleBar,"channelRightMenu","assets/icon/dark/dot.ico");
+    }
   }
 
   like(nodeId: string, channelId: number, postId: number) {

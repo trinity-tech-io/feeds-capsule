@@ -26,12 +26,14 @@ export class TitleBarService {
     private feedService: FeedService,
     public popupProvider: PopupProvider,
   ) {}
-  setTitleBarMoreMemu(titleBar: TitleBarComponent) {
+  setTitleBarMoreMemu(titleBar: TitleBarComponent,type?:string,imgPath?:string) {
+    let clickType = type || "more";
+    let rightImgName = imgPath || "assets/icon/more_menu.ico";
     this.setIcon(
       titleBar,
       FeedsData.TitleBarIconSlot.OUTER_RIGHT,
-      'more',
-      'assets/icon/more_menu.ico',
+      clickType,
+      rightImgName,
     );
     this.registerMoreMenu(titleBar);
   }
@@ -125,6 +127,11 @@ export class TitleBarService {
         this.event.publish(FeedsEvent.PublishType.openRightMenu);
         this.event.publish(FeedsEvent.PublishType.openRightMenuForSWM);
         this.menu.open('menu');
+        return;
+      }
+      if(icon.key === "channelRightMenu"){
+        this.event.publish(FeedsEvent.PublishType.channelRightMenu);
+        return;
       }
     });
   }

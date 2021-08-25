@@ -14,37 +14,27 @@
 
   <!-- CHANNEL HEADER -->
   <ion-grid class="channel-header">
-    <ion-card class="ion-activatable ripple profileCardBg0">
-      <img class="profileFeeds"
-         src="./assets/images/profile-feeds-logo.svg"
-      />
-      <img class="moremenu" (click)="clickAvatar()"
-      [src]="!theme.darkMode ? './assets/images/dots-three-vertical-dark.svg' : './assets/images/dots-three-vertical-dark.svg'">
-      <ion-row style="margin-top:20px;">
-        <ion-col size=1>
-
-        </ion-col>
-        <ion-col size="2.5">
-          <div class="feedAvatar" (click)="clickAvatar()">
-            <img src={{channelAvatar}}>
-            <div class="offline" [class.online]="nodeStatus[nodeId] == 0"></div>
-          </div>
-        </ion-col>
-        <ion-col size="8.5">
-          <ion-card-title>{{channelName}}</ion-card-title>
-          <ion-card-subtitle>{{channelDesc}}</ion-card-subtitle>
-        </ion-col>
-        <ion-col size=1></ion-col>
-        <ion-col size=11>
-          <ion-row class="sub-row">
-            <img  [src]="!theme.darkMode ? './assets/images/darkmode/bubble2.svg' : './assets/images/darkmode/bubble2.svg'"> <br>
-            <ion-label><span>{{ channelSubscribes }}</span> {{ 'common.followers' | translate }}</ion-label>
-          </ion-row>
-        </ion-col>
-      </ion-row>
-    </ion-card>
     <ion-row>
-       <ion-col size="12" class="channel-btns-row">
+      <ion-col size="12" style="padding:0px;">
+        <div class="feedAvatar">
+          <img src={{channelAvatar}}>
+        </div>
+        <div class="feedName">
+          <span>{{channelName}}</span>
+        </div>
+        <div class="channelOwner">
+          <span>@{{channelOwner}}</span>
+        </div>
+
+        <div class="channeldes">
+          <span>{{channelDesc}}</span>
+        </div>
+      </ion-col>
+
+      <ion-col size="12" class="channel-btns-row" style="padding: 0px;">
+        <span class="channelSubscribes">
+          <img [src]="!theme.darkMode ? './assets/images/bubble2.svg' : './assets/images/darkmode/bubble2.svg'">
+          {{ channelSubscribes }} {{ 'common.followers' | translate }} </span>
         <ion-button *ngIf="!followStatus" class="unsubscribed" fill="outline" (click)="subscribe()">
           <ion-label>{{'SearchPage.follow' | translate}}</ion-label>
           <ion-ripple-effect></ion-ripple-effect>
@@ -54,10 +44,8 @@
           <ion-label>{{ 'SearchPage.following' | translate }}</ion-label>
           <ion-ripple-effect></ion-ripple-effect>
         </ion-button>
-
-       </ion-col>
+      </ion-col>
     </ion-row>
-
     <ion-row *ngIf="!followStatus">
       <ion-col size="12">
        <div class="bigCircle">
@@ -91,13 +79,13 @@
   </ion-grid>
 
 
-  <ion-grid class="channel-title" style="padding-top: 0px;" *ngIf="followStatus">
+  <!-- <ion-grid class="channel-title" style="padding-top: 0px;" *ngIf="followStatus">
     <ion-row>
       <ion-col size="12" class="sub-row">
         <img src="./assets/images/posttitle.svg"/><span class="posttitle">{{"common.posts" | translate }}</span>
       </ion-col>
     </ion-row>
-  </ion-grid>
+  </ion-grid> -->
 
   <!-- EMPTY CONTAINER -->
   <div *ngIf="followStatus&&postList.length === 0" class="empty-container">
