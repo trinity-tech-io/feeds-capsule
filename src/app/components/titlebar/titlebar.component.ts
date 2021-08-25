@@ -167,10 +167,6 @@ export class TitleBarComponent {
 
   getIconPath(iconSlot: TitleBarIconSlot) {
     // Special case for the outer right icon in case a menu is configured
-    if (iconSlot == TitleBarIconSlot.OUTER_RIGHT && this.menuVisible) {
-      return '/assets/components/titlebar/horizontal_menu.svg';
-    }
-
     return this.icons[iconSlot].iconPath;
   }
 
