@@ -141,6 +141,8 @@ export class HomePage implements OnInit {
   /** grid  list*/
   public styleType: string = "grid";
 
+  private pasarListCount: number = 0
+  private pasarListPage: number = 0
   constructor(
     private platform: Platform,
     private elmRef: ElementRef,
@@ -164,7 +166,7 @@ export class HomePage implements OnInit {
     private ipfsService: IPFSService,
     private nftPersistenceHelper: NFTPersistenceHelper,
     private walletConnectControllerService: WalletConnectControllerService,
-    private nftContractHelperService: NFTContractHelperService
+    private nftContractHelperService: NFTContractHelperService,
   ) { }
 
   initPostListData(scrollToTop: boolean) {
@@ -210,10 +212,10 @@ export class HomePage implements OnInit {
         0,
         this.startIndex * this.pageNumber,
       );
-      this.infiniteScroll.disabled = false;
+      // this.infiniteScroll.disabled = false;
     } else {
       this.postList = this.totalData;
-      this.infiniteScroll.disabled = true;
+      // this.infiniteScroll.disabled = true;
     }
     this.isLoadimage = {};
     this.isLoadVideoiamge = {};
@@ -843,54 +845,71 @@ export class HomePage implements OnInit {
   }
 
   loadData(event) {
-    let sId = setTimeout(() => {
-      let arr = [];
-      if (this.totalData.length - this.pageNumber * this.startIndex > 0) {
-        arr = this.totalData.slice(
-          this.startIndex * this.pageNumber,
-          (this.startIndex + 1) * this.pageNumber,
-        );
-        this.startIndex++;
-        this.zone.run(() => {
-          let len = this.postList.length - 1;
-          this.postList = this.postList.concat(arr);
-          this.refreshImage(len);
-          this.initnodeStatus(arr);
+    this.refreshEvent = event;
+    switch (this.tabType) {
+      case 'feeds':
+        let sId = setTimeout(() => {
+          let arr = [];
+          if (this.totalData.length - this.pageNumber * this.startIndex > 0) {
+            arr = this.totalData.slice(
+              this.startIndex * this.pageNumber,
+              (this.startIndex + 1) * this.pageNumber,
+            );
+            this.startIndex++;
+            this.zone.run(() => {
+              let len = this.postList.length - 1;
+              this.postList = this.postList.concat(arr);
+              this.refreshImage(len);
+              this.initnodeStatus(arr);
+              event.target.complete();
+            });
+          } else {
+            arr = this.totalData.slice(
+              this.startIndex * this.pageNumber,
+              this.totalData.length,
+            );
+            this.zone.run(() => {
+              let len = this.postList.length - 1;
+              this.postList = this.postList.concat(arr);
+              this.refreshImage(len - 1);
+              // this.infiniteScroll.disabled = true;
+              this.initnodeStatus(arr);
+              event.target.complete();
+            });
+          }
+          clearTimeout(sId);
+        }, 500);
+        break;
+      case 'pasar':
+        this.loadMoreData().then((list) => {
+          this.pasarList = _.concat(this.pasarList, list);
+          this.pasarList = this.nftContractHelperService.sortData(this.pasarList, SortType.CREATE_TIME);
+          this.nftPersistenceHelper.setPasarList(this.pasarList);
           event.target.complete();
-        });
-      } else {
-        arr = this.totalData.slice(
-          this.startIndex * this.pageNumber,
-          this.totalData.length,
-        );
-        this.zone.run(() => {
-          let len = this.postList.length - 1;
-          this.postList = this.postList.concat(arr);
-          this.refreshImage(len - 1);
-          this.infiniteScroll.disabled = true;
-          this.initnodeStatus(arr);
-          event.target.complete();
-        });
-      }
-      clearTimeout(sId);
-    }, 500);
+        })
+        break;
+    }
+  }
+
+  loadMoreData() {
+    this.pasarListPage++;
+    return this.nftContractHelperService.loadMoreData('onSale', SortType.CREATE_TIME, this.pasarListCount, this.pasarListPage);
   }
 
   doRefresh(event) {
     this.refreshEvent = event;
-    console.log('Refresh ', event);
     switch (this.tabType) {
       case 'feeds':
         let sId = setTimeout(() => {
           this.images = {};
-          this.infiniteScroll.disabled = false;
+          // this.infiniteScroll.disabled = false;
           this.startIndex = 0;
           this.totalData = this.sortPostList();
           if (this.totalData.length - this.pageNumber > 0) {
             this.zone.run(() => {
               this.postList = this.totalData.slice(0, this.pageNumber);
               this.startIndex++;
-              this.infiniteScroll.disabled = false;
+              // this.infiniteScroll.disabled = false;
               this.isLoadimage = {};
               this.isLoadVideoiamge = {};
               this.refreshImage(0);
@@ -901,7 +920,7 @@ export class HomePage implements OnInit {
           } else {
             this.zone.run(() => {
               this.postList = this.totalData;
-              this.infiniteScroll.disabled = true;
+              // this.infiniteScroll.disabled = true;
               this.isLoadimage = {};
               this.isLoadVideoiamge = {};
               this.refreshImage(0);
@@ -916,8 +935,11 @@ export class HomePage implements OnInit {
       case 'pasar':
         this.zone.run(async () => {
           try {
-            this.pasarList = await this.nftContractHelperService.refreshPasarList('onSale', SortType.CREATE_TIME, () => { }, () => { });
-            console.log(this.pasarList);
+            this.pasarListPage = 0;
+            this.pasarList = await this.nftContractHelperService.refreshPasarList('onSale', SortType.CREATE_TIME, (orderCount: number) => {
+              this.pasarListCount = orderCount;
+            }, () => { });
+            this.nftPersistenceHelper.setPasarList(this.pasarList);
           } catch (err) {
             Logger.error(TAG, err);
           } finally {
@@ -1721,7 +1743,7 @@ export class HomePage implements OnInit {
         this.refreshPostList();
         break;
       case 'pasar':
-        this.infiniteScroll.disabled = true;
+        this.infiniteScroll.disabled = false;
         let value =
           this.popoverController.getTop()['__zone_symbol__value'] || '';
         if (value != '') {
