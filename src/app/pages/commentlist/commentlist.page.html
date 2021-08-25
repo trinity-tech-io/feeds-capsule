@@ -40,7 +40,7 @@
             <pre>{{'common.cdeleted' | translate}}</pre>
           </h2>
           <h2 *ngIf="captainComment.status!=1">
-            <pre [ngStyle]="styleObj">{{captainComment.content}}</pre>
+            <pre [ngStyle]="styleObj" [innerHTML]="captainComment.content | html" (click)="clickUrl($event)"></pre>
           </h2>
         </ion-col>
       <ion-col size="12">
@@ -96,15 +96,15 @@
                 <pre>{{'CommentlistPage.replydeleted' | translate}}</pre>
               </h2>
               <h2 *ngIf="replayComment.status != 1&&getPostContentTextSize(replayComment.content)<=maxTextSize">
-                <pre [ngStyle]="dstyleObj">{{ replayComment.content }}</pre>
+                <pre [ngStyle]="dstyleObj" [innerHTML]="replayComment.content | html" (click)="clickUrl($event)"></pre>
               </h2>
-              <h2 *ngIf="replayComment.status != 1&&getPostContentTextSize(replayComment.content)>maxTextSize&&!isFullContent[replayComment.id]" (click)="showFullContent(replayComment.id)">
-                <pre [ngStyle]="dstyleObj">{{ handleCommentContent(replayComment.content) }}</pre>
-                <pre [ngStyle]="styleObj" style="color:#368bff;">{{"common.showmore" | translate }}</pre>
+              <h2 *ngIf="replayComment.status != 1&&getPostContentTextSize(replayComment.content)>maxTextSize&&!isFullContent[replayComment.id]">
+                <pre [ngStyle]="dstyleObj" [innerHTML]="handleCommentContent(replayComment.content) | html" (click)="clickUrl($event)"></pre>
+                <pre [ngStyle]="styleObj" style="color:#368bff;" (click)="showFullContent(replayComment.id)">{{"common.showmore" | translate }}</pre>
               </h2>
-              <h2 *ngIf="replayComment.status != 1&&getPostContentTextSize(replayComment.content)>maxTextSize&&isFullContent[replayComment.id]" (click)="hideFullContent(replayComment.id)">
-                <pre [ngStyle]="dstyleObj">{{ replayComment.content }}</pre>
-                <pre [ngStyle]="styleObj" style="color:#368bff;">{{"common.showless" | translate }}</pre>
+              <h2 *ngIf="replayComment.status != 1&&getPostContentTextSize(replayComment.content)>maxTextSize&&isFullContent[replayComment.id]">
+                <pre [ngStyle]="dstyleObj" [innerHTML]="replayComment.content | html" (click)="clickUrl($event)"></pre>
+                <pre [ngStyle]="styleObj" style="color:#368bff;" (click)="hideFullContent(replayComment.id)">{{"common.showless" | translate }}</pre>
               </h2>
               <ion-row class="bottom-row">
                 <!-- <ion-col size="2.25" (click)="likeComment(replayComment.id)">

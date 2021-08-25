@@ -20,7 +20,7 @@
   </div>
   <div *ngIf="imgUrl !== ''" class="img-container">
     <img src="{{imgUrl}}" (click)="showBigImage(imgUrl)" />
-    <img class="remove" src="/assets/icons/remove.svg" (click)="imgUrl = ''"/>
+    <img class="remove" src="/assets/icons/remove.svg" (click)="removeImg()"/>
   </div>
 
   <div *ngIf="flieUri" style="width:295px;height: 200px;margin:0 auto;margin-left: 15px;">

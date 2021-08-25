@@ -857,6 +857,11 @@ export class CreatenewpostPage implements OnInit {
       },
     );
   }
+
+  removeImg(){
+    this.imgUrl = "";
+    this.feedService.setSelsectNftImage("");
+  }
 }
 
 function ab2str(u, f) {
