@@ -29,6 +29,7 @@ export class MenuService {
   public buyMenu: any = null;
   public createdMenu: any = null;
   public shareOnSaleMenu: any = null;
+  public saveImageMenu:any = null;
   constructor(
     private feedService: FeedService,
     private actionSheetController: ActionSheetController,
@@ -946,5 +947,42 @@ export class MenuService {
       }
     });
     await this.shareOnSaleMenu.present();
+  }
+
+  async showSaveImageMenu(
+    that: any,
+    saveImage: any,
+  ) {
+    this.saveImageMenu = await this.actionSheetController.create({
+      cssClass: 'editPost',
+      buttons: [
+        {
+          text: this.translate.instant('common.savePicture'),
+          icon: 'camera',
+          handler: () => {
+            saveImage(that);
+          },
+        },
+        {
+          text: this.translate.instant('common.cancel'),
+          role: 'cancel',
+          icon: 'close-circle',
+          handler: () => {
+            if (this.postDetail != null) {
+              this.postDetail.dismiss();
+            }
+          },
+        },
+      ],
+    });
+
+    this.saveImageMenu.onWillDismiss().then(() => {
+      if (this.saveImageMenu != null) {
+        this.saveImageMenu = null;
+      }
+    });
+    await this.saveImageMenu.present();
+
+    return this.saveImageMenu;
   }
 }

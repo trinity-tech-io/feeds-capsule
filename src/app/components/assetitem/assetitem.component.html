@@ -10,7 +10,7 @@
     <ion-ripple-effect></ion-ripple-effect>
   </div>
   <div *ngIf="assetItem != null ">
-    <div style="height:132px;">
+    <div style="height:132px;padding: 0px 5px;">
     <img src="{{hanldeImg(assetItem['thumbnail'])}}" (click)="clickItem()" style="object-fit:contain;"/>
     </div>
     <div class="des" [class.black]="!theme.darkMode" [class.white]="theme.darkMode">{{assetItem['name']}}</div>

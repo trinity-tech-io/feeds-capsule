@@ -13,7 +13,8 @@ import { ViewHelper } from 'src/app/services/viewhelper.service';
 import { PopupProvider } from 'src/app/services/popup';
 import { IPFSService } from 'src/app/services/ipfs.service';
 import { NFTPersistenceHelper } from 'src/app/services/nft_persistence_helper.service';
-
+import { PhotoLibrary } from '@ionic-native/photo-library/ngx';
+import { MenuService } from 'src/app/services/MenuService';
 import _ from 'lodash';
 import { Logger } from 'src/app/services/logger';
 type detail = {
@@ -70,7 +71,9 @@ export class AssetdetailsPage implements OnInit {
     public theme: ThemeService,
     public popupProvider: PopupProvider,
     private ipfsService: IPFSService,
-    private nftPersistenceHelper: NFTPersistenceHelper
+    private nftPersistenceHelper: NFTPersistenceHelper,
+    private photoLibrary: PhotoLibrary,
+    private menuService: MenuService
   ) {}
 
   ngOnInit() {
@@ -379,4 +382,57 @@ export class AssetdetailsPage implements OnInit {
       'created',
     );
   }
+
+  clickImages(){
+    this.menuService.showSaveImageMenu(this,this.saveImage);
+  }
+
+ async saveImage(that: any){
+  that.native.showLoading('common.savedDes', isDismiss => {}, 2000).then(()=>{
+    that.photoLibrary.requestAuthorization().then(() => {
+      that.photoLibrary.getLibrary().subscribe(
+                  {
+                  next: async library => {
+                   let base64 = await that.getImageBase64(that.assetUri);
+                   let fileName = "nft-"+new Date().getTime().toString();
+                   that.photoLibrary.saveImage(base64,fileName).then(()=>{
+                          that.native.hideLoading();
+                          that.native.toast("common.savedSuccessfully");
+
+                    })
+                  },
+                  error: err => {
+                    that.native.hideLoading();
+                    that.native.toastWarn("common.saveFailed");
+
+                 },
+                  complete: () => { console.log('done getting photos'); }
+                });
+              })
+              .catch(err =>{
+                that.native.hideLoading();
+              });
+  })
+
+  }
+
+  getImageBase64(uri:string):Promise<string> {
+   return new Promise((resolve, reject) => {
+    let img = new Image();
+    img.crossOrigin='*';
+    img.crossOrigin = "Anonymous";
+    img.src=uri;
+
+    img.onload = () =>{
+      let canvas = document.createElement("canvas");
+      canvas.width = img.width;
+      canvas.height = img.height;
+      var ctx = canvas.getContext("2d");
+      ctx.drawImage(img, 0, 0, img.width, img.height);
+      let dataURL = canvas.toDataURL("image/*");
+      resolve(dataURL);
+    };
+    });
+  }
+
 }

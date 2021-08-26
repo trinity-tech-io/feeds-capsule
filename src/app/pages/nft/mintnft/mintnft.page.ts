@@ -635,9 +635,9 @@ export class MintnftPage implements OnInit {
     return new Promise((resolve, reject) => {
       try {
         let img = new Image();
-        img.src = path;
         img.crossOrigin='*';
         img.crossOrigin = "Anonymous";
+        img.src = path;
         img.onload = () =>{
           let maxWidth = img.width / 4;
           let maxHeight = img.height / 4;
