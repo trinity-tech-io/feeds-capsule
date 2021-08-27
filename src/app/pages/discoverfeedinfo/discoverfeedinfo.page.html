@@ -66,14 +66,14 @@
           </ion-col>
         </ion-row>
 
-        <ion-row class="detail-row" *ngIf="developerMode" (press)="copyText(feedInfo['nodeId'])">
+        <ion-row class="detail-row" *ngIf="developerMode" (press)="copyText(feedInfo['nodeId'])" [style.touch-action]="'pan-y'">
           <ion-col size="12" class="left-col">
               <h1>NodeId</h1>
               <h2>{{feedInfo["nodeId"]}}</h2>
           </ion-col>
         </ion-row>
 
-        <ion-row class="detail-row" *ngIf="developerMode" (press)="copyText(feedInfo['did'])">
+        <ion-row class="detail-row" *ngIf="developerMode" (press)="copyText(feedInfo['did'])" [style.touch-action]="'pan-y'">
           <ion-col size="12" class="left-col">
               <h1>{{'ServerInfoPage.did'|translate}}</h1>
               <h2>{{feedInfo['did']}}</h2>

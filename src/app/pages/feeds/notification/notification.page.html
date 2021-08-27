@@ -28,7 +28,7 @@
             [src]="!theme.darkMode ? './assets/images/dots-three-vertical.svg' : './assets/images/dots-three-vertical-dark.svg'"
             >
             <ion-col size="9.75" class="right-col" (click)="navTo(notification)">
-              <h1 (press)="pressName(notification.userName)">{{ moreName(notification.userName) }} <span class="notificationTime"> {{ handleDisplayTime(notification.time) }}</span></h1>
+              <h1 (press)="pressName(notification.userName)" [style.touch-action]="'pan-y'">{{ moreName(notification.userName) }} <span class="notificationTime"> {{ handleDisplayTime(notification.time) }}</span></h1>
               <p class="behaviorText">{{ notification.behaviorText }}</p>
               <h2>
                 <img *ngIf="notification.behavior===0 || notification.behavior===2" [src]="!theme.darkMode ? './assets/images/bubble-line.svg' : './assets/images/darkmode/bubble-line.svg'" style="margin-top:0px;">

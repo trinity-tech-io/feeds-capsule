@@ -20,7 +20,7 @@
       <ion-row *ngIf="profile.details" class="detail-row">
         <ion-col size="12" class="left-col">
             <h1>{{ profile.type | translate}}</h1>
-            <h2 *ngIf="profile.type === 'ProfiledetailPage.did' || profile.type === 'NodeId'; else inputid" (press)="copytext(profile.details)">{{ profile.details }}</h2>
+            <h2 *ngIf="profile.type === 'ProfiledetailPage.did' || profile.type === 'NodeId'; else inputid" (press)="copytext(profile.details)" [style.touch-action]="'pan-y'">{{ profile.details }}</h2>
             <ng-template #inputid>
               <h2>{{ profile.details }}</h2>
             </ng-template>
@@ -80,13 +80,13 @@
         <ion-row *ngIf="server.details" class="detail-row">
           <ion-col size="12" class="left-col">
               <h1>{{ server.type | translate }}</h1>
-              <h2 *ngIf="server.type === 'ServerInfoPage.did' || server.type === 'NodeId'; else inputid1" (press)="copytext(server.details)">{{ server.details }}</h2>
+              <h2 *ngIf="server.type === 'ServerInfoPage.did' || server.type === 'NodeId'; else inputid1" (press)="copytext(server.details)" [style.touch-action]="'pan-y'">{{ server.details }}</h2>
               <ng-template #inputid1>
                 <h2  *ngIf="!server.qrcode">{{ server.details }}</h2>
               </ng-template>
               <div *ngIf="server.qrcode" class="qr-container">
                 <h2 *ngIf="!isShowQrcode" >{{'common.waitOnChain'|translate}}</h2>
-                <div *ngIf="isShowQrcode" class="qrcode" (click)="showPreviewQrcode(feedsUrl)" (press)="menuMore(feedsUrl)">
+                <div *ngIf="isShowQrcode" class="qrcode" (click)="showPreviewQrcode(feedsUrl)" (press)="menuMore(feedsUrl)" [style.touch-action]="'pan-y'">
                   <qrcode [qrdata]="feedsUrl" [size]="150" [level]="'M'" allowEmptyString="true"></qrcode>
                 </div>
               </div>

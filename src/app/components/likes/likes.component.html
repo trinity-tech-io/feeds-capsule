@@ -16,7 +16,7 @@
       </ion-col>
       <ion-col class="content-col" size="9.5">
         <ion-row class="top-row">
-          <ion-col class="left-col" size="11" (press)="pressName(post.nodeId, post.channel_id)" (click)="navTo(post.nodeId, post.channel_id,post.id)">
+          <ion-col class="left-col" size="11" (press)="pressName(post.nodeId, post.channel_id)" (click)="navTo(post.nodeId, post.channel_id,post.id)" [style.touch-action]="'pan-y'">
             <ion-label>
               {{ channelName(post.nodeId, post.channel_id) }}
               <span> {{ handleDisplayTime(post.created_at) }}</span>
@@ -28,13 +28,13 @@
             (click)="menuMore(post.nodeId, post.channel_id, post.id)"
           >
         </ion-row>
-        <p (press)="pressOwerName(post.nodeId, post.channel_id)">@{{ channelOwnerName(post.nodeId, post.channel_id) }}</p>
+        <p (press)="pressOwerName(post.nodeId, post.channel_id)" [style.touch-action]="'pan-y'">@{{ channelOwnerName(post.nodeId, post.channel_id) }}</p>
 
         <h2 (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)" *ngIf="post.post_status === 1">
           <pre [ngStyle]="styleObj">{{'common.deleted' | translate}}</pre>
         </h2>
 
-        <h2  (press)="pressContent(post.content)" *ngIf="post.post_status !=1">
+        <h2  (press)="pressContent(post.content)" *ngIf="post.post_status !=1" [style.touch-action]="'pan-y'">
           <div *ngIf="getPostContentTextSize(post.content)<=maxTextSize" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id,$event)">
             <pre [ngStyle]="styleObj" [innerHTML]="getContentText(post.content) | html"></pre>
           </div>
