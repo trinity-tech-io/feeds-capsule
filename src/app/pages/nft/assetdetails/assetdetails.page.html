@@ -10,7 +10,7 @@
   </div> -->
   <ion-grid class="container" [class.darkContainer]="theme.darkMode">
     <ion-row class="detail-row removeBorder" *ngIf="selectType === 'AssetdetailsPage.contract'">
-      <ion-col size="12" class="left-col" (press)="clickImages()">
+      <ion-col size="12" class="left-col" (press)="clickImages()" [style.touch-action]="'pan-y'">
         <h1>{{ "AssetdetailsPage.asset" | translate}}</h1>
         <img src="{{assetUri}}" class="assetsImg"/>
       </ion-col>

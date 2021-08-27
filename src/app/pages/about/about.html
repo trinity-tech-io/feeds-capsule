@@ -15,7 +15,7 @@
                 </div>
             </ion-row>
 
-            <ion-row class="details" (press)="copyEmailAddress()">
+            <ion-row class="details" (press)="copyEmailAddress()" [style.touch-action]="'pan-y'">
                 <h4>{{'AboutPage.email'|translate}}</h4>
                 <div class="des">
                 <p>feeds@trinity-tech.io</p>

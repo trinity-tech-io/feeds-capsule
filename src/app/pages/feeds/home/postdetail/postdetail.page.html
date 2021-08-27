@@ -27,7 +27,7 @@
             <div class="offline" [class.online]="nodeStatus[nodeId] === 0"></div>
           </div>
         </ion-col>
-        <ion-col class="mid-col" size="8" (press)="pressName()" (click)="navTo(nodeId, channelId)">
+        <ion-col class="mid-col" size="8" (press)="pressName()" (click)="navTo(nodeId, channelId)" [style.touch-action]="'pan-y'">
           <ion-label>
             {{ channelName }}
           </ion-label>
@@ -45,7 +45,7 @@
           <h2 *ngIf="postStatus===1">
             <pre>{{'common.deleted' | translate}}</pre>
           </h2>
-          <h2 *ngIf="postStatus!=1" (press)="pressContent(postContent)" (click)="clickUrl($event)">
+          <h2 *ngIf="postStatus!=1" (press)="pressContent(postContent)" (click)="clickUrl($event)" [style.touch-action]="'pan-y'">
             <pre [ngStyle]="styleObj" [innerHTML]="getContentText(postContent) | html"></pre>
           </h2>
 

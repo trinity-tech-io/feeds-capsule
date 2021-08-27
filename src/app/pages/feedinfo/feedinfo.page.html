@@ -91,7 +91,7 @@
       </ion-col>
     </ion-row>
 
-    <ion-row class="detail-row" *ngIf="developerMode&&followStatus" (press)="copyText(nodeId)">
+    <ion-row class="detail-row" *ngIf="developerMode&&followStatus" (press)="copyText(nodeId)" [style.touch-action]="'pan-y'">
       <ion-col size="12" class="left-col">
           <h1>NodeId</h1>
           <h2>{{nodeId}}</h2>
@@ -105,7 +105,7 @@
       </ion-col>
     </ion-row>
 
-    <ion-row class="detail-row" *ngIf="developerMode&&followStatus" (press)="copyText(serverInfo['did'])">
+    <ion-row class="detail-row" *ngIf="developerMode&&followStatus" (press)="copyText(serverInfo['did'])" [style.touch-action]="'pan-y'">
       <ion-col size="12" class="left-col">
           <h1>{{'ServerInfoPage.did'|translate}}</h1>
           <h2>{{serverInfo['did']}}</h2>
@@ -115,7 +115,7 @@
     <ion-row class="detail-row removeBorder" *ngIf="followStatus">
       <ion-col size="12" class="left-col">
           <h1>{{'DiscoverfeedinfoPage.feedsQrcode'|translate}}</h1>
-          <div class="qr-container" (click)="showPreviewQrcode(qrcodeString)" (press)="menuMore(qrcodeString)">
+          <div class="qr-container" (click)="showPreviewQrcode(qrcodeString)" (press)="menuMore(qrcodeString)" [style.touch-action]="'pan-y'">
             <div class="qrcode">
               <qrcode [qrdata]="qrcodeString" [size]="150" [level]="'M'" allowEmptyString="true"></qrcode>
             </div>

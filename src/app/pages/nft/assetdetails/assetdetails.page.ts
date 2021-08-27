@@ -389,7 +389,10 @@ export class AssetdetailsPage implements OnInit {
 
  async saveImage(that: any){
   that.native.showLoading('common.savedDes', isDismiss => {}, 2000).then(()=>{
-    that.photoLibrary.requestAuthorization().then(() => {
+    that.photoLibrary.requestAuthorization({
+      read: true,
+      write: true
+    }).then(() => {
       that.photoLibrary.getLibrary().subscribe(
                   {
                   next: async library => {
@@ -411,6 +414,7 @@ export class AssetdetailsPage implements OnInit {
               })
               .catch(err =>{
                 that.native.hideLoading();
+                that.native.toastWarn("common.saveFailed");
               });
   })
 
