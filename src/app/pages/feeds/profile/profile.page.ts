@@ -1953,7 +1953,7 @@ export class ProfilePage implements OnInit {
   }
 
   clickMint(){
-    this.native.navigateForward(['mintnft'], {});
+    this.createNft();
   }
 
  async createNft() {
