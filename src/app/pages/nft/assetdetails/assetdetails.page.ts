@@ -397,8 +397,8 @@ export class AssetdetailsPage implements OnInit {
                   {
                   next: async library => {
                    let base64 = await that.getImageBase64(that.assetUri);
-                   let fileName = "nft-"+new Date().getTime().toString();
-                   that.photoLibrary.saveImage(base64,fileName).then(()=>{
+                      let album = "Feeds";
+                      that.photoLibrary.saveImage(base64, album).then(() => {
                           that.native.hideLoading();
                           that.native.toast("common.savedSuccessfully");
 
