@@ -270,7 +270,7 @@ export class ChannelsPage implements OnInit {
 
     this.channelName = channel.name;
     this.updatedTime = channel.last_update || 0;
-    this.channelOwner = this.feedService.indexText(channel.owner_name, 25, 25);
+    this.channelOwner = channel.owner_name;
     this.channelDesc = channel.introduction;
     this.channelSubscribes = channel.subscribers;
     this.channelAvatar = this.feedService.parseChannelAvatar(channel.avatar);
@@ -565,6 +565,7 @@ export class ChannelsPage implements OnInit {
     this.events.publish(FeedsEvent.PublishType.addBinaryEvevnt);
     this.events.publish(FeedsEvent.PublishType.addProflieEvent);
     this.events.publish(FeedsEvent.PublishType.notification);
+    this.events.publish(FeedsEvent.PublishType.search);
     this.native.hideLoading();
     this.hideFullScreen();
   }
@@ -1414,6 +1415,7 @@ export class ChannelsPage implements OnInit {
       followStatus: this.followStatus,
       channelSubscribes: this.channelSubscribes,
       updatedTime: this.updatedTime,
+      channelOwner:this.channelOwner
     });
     this.native.navigateForward(['/feedinfo'], '');
   }

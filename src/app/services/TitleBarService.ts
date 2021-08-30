@@ -133,6 +133,12 @@ export class TitleBarService {
         this.event.publish(FeedsEvent.PublishType.channelRightMenu);
         return;
       }
+
+      if(icon.key === "channelInfoRightMenu"){
+        this.event.publish(FeedsEvent.PublishType.channelInfoRightMenu);
+        return;
+      }
+
     });
   }
 
