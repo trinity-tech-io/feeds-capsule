@@ -76,15 +76,14 @@ export class DiscoverfeedinfoPage implements OnInit {
     this.initTitle();
 
     this.connectionStatus = this.feedService.getConnectionStatus();
+
+    this.events.subscribe(FeedsEvent.PublishType.channelInfoRightMenu,()=>{
+      this.clickAvatar();
+    });
+
     this.events.subscribe(FeedsEvent.PublishType.connectionChanged, status => {
       this.zone.run(() => {
         this.connectionStatus = status;
-      });
-    });
-
-    this.events.subscribe(FeedsEvent.PublishType.updateServerList, () => {
-      this.zone.run(() => {
-
       });
     });
 
@@ -125,8 +124,6 @@ export class DiscoverfeedinfoPage implements OnInit {
     );
   }
 
-  ionViewDidEnter() {}
-
   ionViewWillLeave() {
     let value = this.popoverController.getTop()['__zone_symbol__value'] || '';
     if (value != '') {
@@ -134,66 +131,24 @@ export class DiscoverfeedinfoPage implements OnInit {
       this.popover = '';
     }
     this.native.hideLoading();
-    this.events.unsubscribe(FeedsEvent.PublishType.updateServerList);
     this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
     this.events.unsubscribe(FeedsEvent.PublishType.unsubscribeFinish);
     this.events.unsubscribe(FeedsEvent.PublishType.subscribeFinish);
     this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
+    this.events.unsubscribe(FeedsEvent.PublishType.channelInfoRightMenu);
     this.events.publish(FeedsEvent.PublishType.search);
   }
 
   initTitle() {
     this.titleBarService.setTitle(
       this.titleBar,
-      this.translate.instant('DiscoverfeedinfoPage.title'),
+      this.translate.instant('ChannelsPage.feeds'),
     );
     this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
-    this.titleBarService.setTitleBarMoreMemu(this.titleBar);
-  }
-
-  checkDid(type: string) {
-    let signInData = this.feedService.getSignInData() || {};
-    let did = signInData['did'];
-    this.feedService.checkDIDDocument(did).then(isOnSideChain => {
-      if (!isOnSideChain) {
-        //show one button dialog
-        //if click this button
-        //call feedService.promptpublishdid() function
-        this.openAlert();
-        return;
-      }
-
-      if (this.feedService.getConnectionStatus() != 0) {
-        this.native.toastWarn('common.connectionError');
-        return;
-      }
-
-      if (type === 'subscribe') {
-        this.subscribe();
-        return;
-      }
-
-      if (type === 'unsubscribe') {
-        this.unsubscribe();
-        return;
-      }
-    });
-  }
-
-  openAlert() {
-    this.popover = this.popupProvider.ionicAlert(
-      this,
-      '',
-      'common.didnotrelease',
-      this.confirm,
-      'tskth.svg',
-    );
-  }
-
-  confirm(that: any) {
-    if (this.popover != null) {
-      this.popover.dismiss();
-      that.feedService.promptpublishdid();
+    if(!this.theme.darkMode){
+      this.titleBarService.setTitleBarMoreMemu(this.titleBar,"channelInfoRightMenu","assets/icon/dot.ico");
+    }else{
+      this.titleBarService.setTitleBarMoreMemu(this.titleBar,"channelInfoRightMenu","assets/icon/dark/dot.ico");
     }
   }
 
@@ -241,10 +196,6 @@ export class DiscoverfeedinfoPage implements OnInit {
     if (feeds.isSubscribed) return '2';
   }
 
-  tip() {
-    this.native.toast('tip');
-  }
-
   handleStatus() {
     let nodeId = this.feedInfo['nodeId'];
     let feedUrl = this.feedInfo['url'];
@@ -278,5 +229,36 @@ export class DiscoverfeedinfoPage implements OnInit {
         this.native.toast_trans('common.textcopied');
       })
       .catch(() => {});
+  }
+
+  clickAvatar() {
+    let channelAvatar = this.feedInfo['feedsAvatar'];
+    if (channelAvatar.indexOf('data:image') > -1) {
+      this.feedService.setSelsectIndex(0);
+      this.feedService.setProfileIamge(channelAvatar);
+    } else if (channelAvatar.indexOf('assets/images') > -1) {
+      let index = channelAvatar.substring(
+        channelAvatar.length - 5,
+        channelAvatar.length - 4,
+      );
+      this.feedService.setSelsectIndex(index);
+      this.feedService.setProfileIamge(channelAvatar);
+    }
+    let nodeId = this.feedInfo['nodeId'];
+    let feedUrl = this.feedInfo['url'];
+    let channelId = feedUrl.split('/')[4];
+    this.feedService.setChannelInfo({
+      nodeId:nodeId,
+      channelId:channelId,
+      name: this.feedInfo['name'],
+      des: this.feedInfo['description'],
+      followStatus:false,
+      channelSubscribes: this.channelSubscribes,
+      updatedTime:0,
+      channelOwner:this.feedInfo["ownerName"],
+      feedUrl:this.feedInfo["url"],
+      type:"discover"
+    });
+    this.native.navigateForward(['/feedinfo'],"");
   }
 }

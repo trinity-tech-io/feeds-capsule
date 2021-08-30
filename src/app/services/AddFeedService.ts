@@ -368,7 +368,7 @@ export class AddFeedService {
       this.tobeAddedFeedMap[nodeId][feedId] == null ||
       this.tobeAddedFeedMap[nodeId][feedId] == undefined
     ) {
-      Logger.error(TAG,
+      Logger.log(TAG,
         'To be added feed is null , nodeId is ',
         nodeId,
         ' feedId is ',
@@ -403,7 +403,7 @@ export class AddFeedService {
         this.tobeAddedFeedMap[nodeId][feedIdStr] == null ||
         this.tobeAddedFeedMap[nodeId][feedIdStr] == undefined
       ) {
-        Logger.error(TAG,
+        Logger.log(TAG,
           'To be added feed is null , nodeId is ',
           nodeId,
           ' feedId is ',
@@ -484,7 +484,7 @@ export class AddFeedService {
 
   addFriend(carrierAddress: string): Promise<void> {
     return new Promise(async (resolve, reject) => {
-      Logger.error(TAG, 'Prepare add friend, server carrierAddress is ', carrierAddress);
+      Logger.log(TAG, 'Prepare add friend, server carrierAddress is ', carrierAddress);
       this.carrierService.addFriend(
         carrierAddress,
         'addFeed',

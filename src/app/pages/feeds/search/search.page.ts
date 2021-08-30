@@ -15,7 +15,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 
-import * as _ from 'lodash';
+import _ from 'lodash';
 @Component({
   selector: 'app-search',
   templateUrl: './search.page.html',

@@ -14,24 +14,14 @@ import { Events } from 'src/app/services/events.service';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 
-import * as _ from 'lodash';
+import  _ from 'lodash';
 
 @Component({
   selector: 'app-feedinfo',
   templateUrl: './feedinfo.page.html',
   styleUrls: ['./feedinfo.page.scss'],
 })
-// {
-// 	"name": "testv1.3.0",
-// 	"owner": "test",
-// 	"introduction": "v1.3.0",
-// 	"did": "did:elastos:iqJwsnRBe6WRQEaMTJwSaqMbvb952X8VBS",
-// 	"carrierAddress": "T1yjRds4iCmEC2WLZVsajoEXdr2xge8RwEiSWfU4ASun6LB514zC",
-// 	"nodeId": "CqYSEtXU21KsQQMx9D8y3Rpoe6559NE384Qj6j95V1pJ",
-// 	"feedsUrl": "feeds://did:elastos:iqJwsnRBe6WRQEaMTJwSaqMbvb952X8VBS/T1yjRds4iCmEC2WLZVsajoEXdr2xge8RwEiSWfU4ASun6LB514zC",
-// 	"elaAddress": "",
-// 	"version": ""
-// }
+
 export class FeedinfoPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   public connectionStatus = 1;
@@ -56,6 +46,8 @@ export class FeedinfoPage implements OnInit {
   public isPress: boolean = false;
   public updatedTime: number = 0;
   public isMine: boolean = null;
+  public channelOwner: string = '';
+  public type: string = '';
   constructor(
     private popoverController: PopoverController,
     private feedService: FeedService,
@@ -72,56 +64,70 @@ export class FeedinfoPage implements OnInit {
   ) {}
 
   ngOnInit() {
+
+  }
+
+  initChannelInfo(){
     let item = this.feedService.getChannelInfo();
     this.oldChannelInfo = item;
     let channelInfo = _.cloneDeep(item);
+    this.type = channelInfo['type'] || "";
     this.updatedTime = channelInfo['updatedTime'] || 0;
     this.nodeId = channelInfo['nodeId'] || '';
-    this.serverInfo = this.feedService.getServerbyNodeId(this.nodeId);
+    this.channelId = channelInfo['channelId'] || '';
+    this.name = channelInfo['name'] || '';
+    this.des = channelInfo['des'] || '';
+    this.serverInfo = this.feedService.getServerbyNodeId(this.nodeId) || null;
+    let feedsUrl = "";
+    if(this.serverInfo != null){
+      this.elaAddress =
+      this.serverInfo['elaAddress'] || 'common.emptyElaAddressDes';
+      feedsUrl = this.serverInfo['feedsUrl'] || null;
+      this.feedsUrl = feedsUrl + '/' + this.channelId;
+      this.qrcodeString = this.feedsUrl + '#' + encodeURIComponent(this.name);
+    }else{
+      this.elaAddress = "common.emptyElaAddressDes";
+      this.feedsUrl = channelInfo["feedUrl"];
+      this.qrcodeString = this.feedsUrl + '#' + encodeURIComponent(this.name);
+    }
+
     this.severVersion =
       this.feedService.getServerVersionByNodeId(this.nodeId) ||
       '<1.3.0(Outdated)';
-    this.elaAddress =
-      this.serverInfo['elaAddress'] || 'common.emptyElaAddressDes';
-    let feedsUrl = this.serverInfo['feedsUrl'] || null;
-    this.channelId = channelInfo['channelId'] || '';
-    this.feedsUrl = feedsUrl + '/' + this.channelId;
-    this.name = channelInfo['name'] || '';
-    this.qrcodeString = this.feedsUrl + '#' + encodeURIComponent(this.name);
-    this.des = channelInfo['des'] || '';
+
     this.oldChannelAvatar = this.feedService.getProfileIamge();
 
     this.followStatus = channelInfo['followStatus'] || null;
     if (this.followStatus == null) this.followStatus = false;
 
     this.channelSubscribes = channelInfo['channelSubscribes'] || 0;
+    this.channelOwner = channelInfo.channelOwner || "";
   }
 
   ionViewWillEnter() {
     this.developerMode = this.feedService.getDeveloperMode();
+    this.initChannelInfo();
     this.initTitle();
     this.connectionStatus = this.feedService.getConnectionStatus();
     this.channelAvatar = this.feedService.getProfileIamge();
     this.avatar = this.feedService.parseChannelAvatar(this.channelAvatar);
+    this.addEvents();
+  }
+
+  addEvents() {
+
+    this.events.subscribe(FeedsEvent.PublishType.channelInfoRightMenu,()=>{
+      this.clickEdit();
+    });
+
     this.events.subscribe(FeedsEvent.PublishType.connectionChanged, status => {
       this.zone.run(() => {
         this.connectionStatus = status;
       });
     });
 
-    this.events.subscribe(FeedsEvent.PublishType.editFeedInfoFinish, () => {
-      this.zone.run(() => {
-        this.native.hideLoading();
-        this.native.pop();
-      });
-    });
-
     this.events.subscribe(FeedsEvent.PublishType.rpcRequestError, () => {
       this.native.hideLoading();
-    });
-
-    this.events.subscribe(FeedsEvent.PublishType.editChannel, () => {
-      this.clickEdit();
     });
 
     this.events.subscribe(
@@ -130,7 +136,7 @@ export class FeedinfoPage implements OnInit {
         this.zone.run(() => {
           let nodeId = subscribeFinishData.nodeId;
           let channelId = subscribeFinishData.channelId;
-          this.checkFollowStatus(this.nodeId, this.channelId);
+          this.checkFollowStatus(nodeId,channelId);
         });
       },
     );
@@ -143,6 +149,17 @@ export class FeedinfoPage implements OnInit {
         });
       },
     );
+  }
+
+  removeEvents() {
+    this.events.unsubscribe(FeedsEvent.PublishType.channelInfoRightMenu);
+    this.events.unsubscribe(FeedsEvent.PublishType.unsubscribeFinish);
+    this.events.unsubscribe(FeedsEvent.PublishType.subscribeFinish);
+    this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
+    this.events.unsubscribe(FeedsEvent.PublishType.rpcRequestError);
+    this.events.publish(FeedsEvent.PublishType.notification);
+    this.events.publish(FeedsEvent.PublishType.addProflieEvent);
+    this.events.publish(FeedsEvent.PublishType.search);
   }
 
   checkFollowStatus(nodeId: string, channelId: number) {
@@ -160,7 +177,7 @@ export class FeedinfoPage implements OnInit {
 
   initTitle() {
     this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
-    this.titleBarService.setTitleBarMoreMemu(this.titleBar);
+   //this.titleBarService.setTitleBarMoreMemu(this.titleBar);
     this.titleBarService.setTitle(
       this.titleBar,
       this.translate.instant('FeedinfoPage.title'),
@@ -169,125 +186,19 @@ export class FeedinfoPage implements OnInit {
       this.nodeId,
       this.channelId,
     );
-  }
 
-  ionViewDidEnter() {}
+    if(this.isMine&&this.type===""){
+      if(!this.theme.darkMode){
+        this.titleBarService.setTitleBarMoreMemu(this.titleBar,"channelInfoRightMenu","assets/icon/dot.ico");
+      }else{
+        this.titleBarService.setTitleBarMoreMemu(this.titleBar,"channelInfoRightMenu","assets/icon/dark/dot.ico");
+      }
+    }
+
+  }
 
   ionViewWillLeave() {
-    this.events.unsubscribe(FeedsEvent.PublishType.unsubscribeFinish);
-    this.events.unsubscribe(FeedsEvent.PublishType.subscribeFinish);
-    this.events.unsubscribe(FeedsEvent.PublishType.editChannel);
-    this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
-    this.events.unsubscribe(FeedsEvent.PublishType.editFeedInfoFinish);
-    this.events.unsubscribe(FeedsEvent.PublishType.rpcRequestError);
-    this.events.publish(FeedsEvent.PublishType.notification);
-    this.events.publish(FeedsEvent.PublishType.addProflieEvent);
-  }
-
-  profileimage() {
-    this.feedService.setChannelInfo({
-      nodeId: this.nodeId,
-      channelId: this.channelId,
-      name: this.name,
-      des: this.des,
-    });
-    if (this.channelAvatar.indexOf('data:image') > -1) {
-      this.feedService.setSelsectIndex(0);
-      this.feedService.setProfileIamge(this.channelAvatar);
-    } else if (this.channelAvatar.indexOf('assets/images') > -1) {
-      let index = this.channelAvatar.substring(
-        this.channelAvatar.length - 5,
-        this.channelAvatar.length - 4,
-      );
-      this.feedService.setSelsectIndex(index);
-      this.feedService.setProfileIamge(this.channelAvatar);
-    }
-    this.native.navigateForward(['/profileimage'], '');
-  }
-
-  cancel() {
-    this.native.pop();
-  }
-
-  confirm() {
-    if (this.feedService.getConnectionStatus() != 0) {
-      this.native.toastWarn('common.connectionError');
-      return;
-    }
-
-    if (this.feedService.getServerStatusFromId(this.nodeId) != 0) {
-      this.native.toastWarn('common.connectionError');
-      return;
-    }
-
-    if (this.checkparms()) {
-      this.native
-        .showLoading('common.waitMoment', isDismiss => {})
-        .then(() => {
-          this.feedService.editFeedInfo(
-            this.nodeId,
-            Number(this.channelId),
-            this.name,
-            this.des,
-            this.avatar,
-          );
-        });
-    }
-  }
-
-  checkparms() {
-    let nameValue = this.name || '';
-    nameValue = this.native.iGetInnerText(nameValue);
-    if (nameValue === '') {
-      this.native.toast_trans('CreatenewfeedPage.inputName');
-      return false;
-    }
-
-    if (this.name.length > 32) {
-      this.native.toast_trans('CreatenewfeedPage.tipMsgLength1');
-      return;
-    }
-
-    let descValue = this.des || '';
-    descValue = this.native.iGetInnerText(descValue);
-
-    if (descValue === '') {
-      this.native.toast_trans('CreatenewfeedPage.inputFeedDesc');
-      return false;
-    }
-
-    if (this.des.length > 128) {
-      this.native.toast_trans('CreatenewfeedPage.tipMsgLength');
-      return;
-    }
-
-    if (this.channelAvatar === '') {
-      this.native.toast_trans('CreatenewfeedPage.des');
-      return false;
-    }
-
-    if (
-      this.oldChannelInfo['name'] === this.name &&
-      this.oldChannelInfo['des'] === this.des &&
-      this.oldChannelAvatar === this.channelAvatar
-    ) {
-      this.native.toast_trans('common.nochanges');
-      return false;
-    }
-
-    return true;
-  }
-
-  checkIsMine(didString: string) {
-    let bindingServer = this.feedService.getBindingServer();
-    if (bindingServer === null || bindingServer === undefined) {
-      return 1;
-    }
-
-    let bindServerDid = bindingServer.did || '';
-    if (didString === bindServerDid) return 0;
-
-    return 1;
+    this.removeEvents();
   }
 
   clickEdit() {
@@ -305,21 +216,6 @@ export class FeedinfoPage implements OnInit {
     }
 
     this.native.go('/eidtchannel');
-  }
-
-  tip() {
-    let server = this.feedService.getServerbyNodeId(this.nodeId) || undefined;
-
-    if (
-      server == undefined ||
-      server.elaAddress == undefined ||
-      server.elaAddress == ''
-    ) {
-      this.native.toast('common.noElaAddress');
-      return;
-    }
-
-    this.showPayPrompt(server.elaAddress);
   }
 
   subscribe() {
@@ -396,10 +292,6 @@ export class FeedinfoPage implements OnInit {
   handleTime(updatedTime: number) {
     let updateDate = new Date(updatedTime);
     return UtilService.dateFormat(updateDate, 'yyyy-MM-dd HH:mm:ss');
-  }
-
-  editChannel() {
-    this.clickEdit();
   }
 
   copyText(text: any) {

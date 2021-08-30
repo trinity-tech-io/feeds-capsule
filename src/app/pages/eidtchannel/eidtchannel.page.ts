@@ -69,6 +69,10 @@ export class EidtchannelPage implements OnInit {
 
     this.events.subscribe(FeedsEvent.PublishType.editFeedInfoFinish, () => {
       this.zone.run(() => {
+        let channelInfo = this.feedService.getChannelInfo();
+        channelInfo["name"] = this.name;
+        channelInfo["des"] = this.des;
+        this.feedService.setChannelInfo(channelInfo);
         this.updatePublicData();
         this.native.hideLoading();
         this.native.pop();

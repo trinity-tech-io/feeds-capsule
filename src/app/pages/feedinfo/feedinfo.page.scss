@@ -1,8 +1,24 @@
 .container {
   padding: 20px;
-
-
-  .subscribeChannel{
+  .elaAdressRow{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid #f5f4f8;
+    border-radius: 10px;
+    margin: 15px 0px;
+  }
+  .elaAdress{
+    font-size: 14px;
+    font-weight: 700;
+    font-stretch: normal;
+    font-style: normal;
+    letter-spacing: normal;
+    text-align: center;
+    color: #9ca0a4;
+    display: inline-block;
+}
+.subscribeChannel{
     margin-top: 5px;
     font-size: 16px;
     font-weight: bold;
@@ -20,7 +36,7 @@
  position: relative;
 }
 
-.smallCircle{
+.smallCircle {
   position:absolute;
   left:50px;
   top:50px;
@@ -34,9 +50,9 @@
     top: 14px;
     left: 22px;
     }
-}
+ }
 
-  .detail-row {
+.detail-row {
     margin-left: 5px;
     margin-right: 5px;
 
@@ -51,15 +67,153 @@
 
       .qrcode {
         padding: 15px;
-        background: #ffffff;
+        background: #f0f0f0;
         border-radius: 17px;
       }
     }
-  }
+ }
 
-  .removeBorder {
+.removeBorder {
     border-bottom: none;
-  }
+ }
+
+.channel-header {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px 20px 0;
+    padding-right:20px;
+
+    .feedAvatar {
+        display: flex;
+        align-items: center;
+        position: relative;
+        border-radius: 50%;
+        width: 110px;
+        height: 110px;
+        background-color: rgba(255, 255, 255, 0);
+        margin: 0 auto;
+        border: 3px solid #a067ff;
+
+        img {
+            width:100px;
+            height:100px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 0 auto;
+        }
+
+        .offline {
+            width: 10px;
+            height: 10px;
+            bottom: 3px;
+            right: 4px;
+            border: 2px solid #f8f8ff;
+            border-radius: 100%;
+        }
+    }
+
+    .feedName{
+    font-size: 20px;
+    font-weight: bold;
+    font-stretch: normal;
+    font-style: normal;
+    text-align:center;
+    color: #000;
+    margin-top: 5px;
+    }
+
+    .channelOwner{
+    font-size: 12px;
+    font-weight: bold;
+    font-stretch: normal;
+    font-style: normal;
+    text-align:center;
+    color: #9ca0a4;
+    }
+
+    .channeldes{
+        font-size: 12px;
+        font-weight: normal;
+        font-stretch: normal;
+        font-style: normal;
+        line-height:1.5;
+        text-align: center;
+        color: #000;
+        width: 240px;
+        margin: 0 auto;
+        margin-top:4px;
+        margin-bottom:21px;
+    }
+
+    .channelSubscribes{
+        font-size: 14px;
+        font-weight: 700;
+        font-stretch: normal;
+        font-style: normal;
+        letter-spacing: normal;
+        text-align: center;
+        color: #9ca0a4;
+        border-radius: 10px;
+        border: 1px solid #f5f4f8;
+        display: inline-block;
+        padding: 6px 10px 6px 10px;
+        margin-right: 15px;
+    }
+
+    .channel-btns-row {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+
+        ion-button {
+            width: 94px;
+            height: 30px;
+            --border-radius: 10px;
+            --box-shadow: none;
+            --background:#7624fe;
+            --background-activated:#7624fe;
+
+            ion-label {
+              font-size: 14px;
+              font-weight: bold;
+              font-stretch: normal;
+              font-style: normal;
+              color:#7624fe;
+              padding: 0;
+              overflow: visible;
+            }
+        }
+
+        .unsubscribed {
+
+            --border-width: 1.5px;
+            --border-style: solid;
+            --border-color: #7624fe;
+            --background: transparent;
+            --background-activated: transparent;
+            --background-activated-opacity: none;
+            --background-focused: transparent;
+            --background-focused-opacity: none;
+
+            ion-label {
+                color:#7624fe !important;
+            }
+        }
+
+        .subscribed{
+            ion-label {
+            color:#fff !important;
+            }
+        }
+
+        .tip {
+            --background: #a067ff;
+        }
+    }
+ }
 }
 
 .edit{
@@ -70,105 +224,6 @@
   height:32px;
 }
 
-
-ion-card {
-  position: relative;
-  width: 292px;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  background-color: #ffffff;
-  border-radius: 10px;
-  height: 148px;
-
-  .feedAvatar{
-    img{
-      width: 50px;
-      height: 50px;
-    }
-  }
-
-  ion-card-title {
-      font-size: 20px;
-      font-weight: bold;
-      font-stretch: normal;
-      font-style: normal;
-      color: #ffffff;
-      line-height: 1.5;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      width: 100%;
-      white-space: nowrap;
-  }
-
-  ion-card-subtitle{
-      font-size: 10px;
-      font-weight: bold;
-      font-stretch: normal;
-      font-style: normal;
-      line-height: 1.4;
-      color: #ffffff;
-      height:35px;
-      overflow:auto;
-      text-transform:capitalize;
-  }
-
-  .profileFeeds{
-      position: absolute;
-      top: 12px;
-      left: 10px;
-      width: 24px;
-      height: 22px;
-      -o-object-fit: contain;
-      object-fit: contain;
-      border: none;
-  }
-
-  .moremenu{
-      position: absolute;
-      top: 12px;
-      right: 10px;
-      width: 20px;
-      height: 20px;
-      -o-object-fit: contain;
-      object-fit: contain;
-      border: none;
-  }
-
-  .sub-row {
-      padding: 0;
-      display: flex;
-      justify-content: flex-start;
-      align-items: flex-start;
-      img {
-          width: 18.1px;
-          height: 14.7px;
-          object-fit: contain;
-          margin-right: 3px;
-      }
-
-      ion-label {
-          margin: 0;
-          font-size: 10px;
-          font-size: 10px;
-          font-weight: bold;
-          font-stretch: normal;
-          font-style: normal;
-          color: #ffffff;
-          margin-top: 4px;
-
-          span {
-              font-size: 10px;
-              font-weight: bold;
-              font-stretch: normal;
-              font-style: normal;
-              color: #ffffff;
-          }
-      }
-  }
-}
 
 .channel-btns-row {
 display: flex;
@@ -223,14 +278,30 @@ ion-button {
 }
 
 .darkContainer {
+    .elaAdressRow{
+        border: 1px solid #2e2f4e;
+    }
 
-  h1{
-    color: #fff;
-  }
+    h1{
+        color: #fff;
+    }
 
-  h2{
-    background-color: #2b2c49;
-  }
+    h2{
+        background-color: #2b2c49;
+    }
+
+  .channel-header{
+    .feedName{
+        color:#fff;
+    }
+    .channeldes{
+        color:#fff;
+    }
+
+    .channelSubscribes{
+        border: 1px solid #2e2f4e;
+    }
+   }
 
   .removeBorder {
     border-bottom: none;

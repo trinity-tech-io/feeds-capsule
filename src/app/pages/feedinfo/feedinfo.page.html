@@ -1,53 +1,47 @@
 <app-titlebar></app-titlebar>
 <ion-content>
   <ion-grid class="container" [class.darkContainer]="theme.darkMode">
-    <ion-row>
-      <ion-col size="12">
-        <ion-card class="ion-activatable ripple profileCardBg0" (click)="editChannel()">
-          <img class="profileFeeds"
-             src="./assets/images/profile-feeds-logo.svg"
-          />
-          <img class="moremenu" *ngIf="isMine"
-          src="./assets/images/editwhite.svg">
-          <ion-row style="margin-top:20px;">
-            <ion-col size=1>
+    <ion-row class="channel-header">
+        <ion-col size="12" style="padding:0px;">
+          <div class="feedAvatar">
+            <img src={{avatar}}>
+          </div>
+          <div class="feedName">
+            <span>{{name}}</span>
+          </div>
+          <div class="channelOwner">
+            <span>@{{channelOwner}}</span>
+          </div>
 
-            </ion-col>
-            <ion-col size="2.5">
-              <div class="feedAvatar">
-                <img src={{avatar}}>
-              </div>
-            </ion-col>
-            <ion-col size="8.5">
-              <ion-card-title>{{name}}</ion-card-title>
-              <ion-card-subtitle>{{des}}</ion-card-subtitle>
-            </ion-col>
-            <ion-col size=1></ion-col>
-            <ion-col size=11>
-              <ion-row class="sub-row">
-                <img  [src]="!theme.darkMode ? './assets/images/darkmode/bubble2.svg' : './assets/images/darkmode/bubble2.svg'"> <br>
-                <ion-label><span>{{ channelSubscribes }}</span> {{ 'common.followers' | translate }}</ion-label>
-              </ion-row>
-            </ion-col>
-          </ion-row>
-        </ion-card>
-        <ion-row>
-          <ion-col size="12" class="channel-btns-row">
-            <ion-button *ngIf="!followStatus" class="unsubscribed" fill="outline" (click)="subscribe()">
-              <ion-label>{{'SearchPage.follow' | translate}}</ion-label>
-              <ion-ripple-effect></ion-ripple-effect>
-            </ion-button>
+          <div class="channeldes">
+            <span>{{des}}</span>
+          </div>
+        </ion-col>
 
-            <ion-button *ngIf="followStatus" class="subscribed" (click)="unsubscribe()">
-              <ion-label>{{ 'SearchPage.following' | translate }}</ion-label>
-              <ion-ripple-effect></ion-ripple-effect>
-            </ion-button>
+        <ion-col size="12" class="channel-btns-row" style="padding: 0px;" *ngIf="type===''">
+          <span class="channelSubscribes">
+            <img [src]="!theme.darkMode ? './assets/images/bubble2.svg' : './assets/images/darkmode/bubble2.svg'">
+            {{ channelSubscribes }} {{ 'common.followers' | translate }} </span>
+          <ion-button *ngIf="!followStatus" class="unsubscribed" fill="outline" (click)="subscribe()">
+            <ion-label>{{'SearchPage.follow' | translate}}</ion-label>
+            <ion-ripple-effect></ion-ripple-effect>
+          </ion-button>
 
-           </ion-col>
-        </ion-row>
+          <ion-button *ngIf="followStatus" class="subscribed" (click)="unsubscribe()">
+            <ion-label>{{ 'SearchPage.following' | translate }}</ion-label>
+            <ion-ripple-effect></ion-ripple-effect>
+          </ion-button>
+        </ion-col>
+    </ion-row>
+    <ion-row *ngIf="elaAddress!='common.emptyElaAddressDes'" class="elaAdressRow">
+      <ion-col size="1.5" style="text-align: right;">
+        <img [src]="!theme.darkMode ? './assets/images/dashang.svg' : './assets/images/darkmode/tip.svg'">
+      </ion-col>
+      <ion-col size="10.5" class="elaAdress" style="text-align: left;">
+        {{elaAddress}}
       </ion-col>
     </ion-row>
-    <ion-row *ngIf="!followStatus">
+    <!-- <ion-row *ngIf="!followStatus&&type===''">
       <ion-col size="12">
        <div class="bigCircle">
            <div class="smallCircle">
@@ -59,67 +53,47 @@
       <ion-col size="12" class="subscribeChannel">
         {{"ChannelsPage.subscribeChannel"|translate}}
       </ion-col>
-    </ion-row>
+    </ion-row> -->
 
     <ion-ripple-effect></ion-ripple-effect>
 
-    <ion-row class="detail-row" *ngIf="followStatus">
-      <ion-col size="12" class="left-col">
-          <h1>{{'FeedinfoPage.feeds'|translate}}</h1>
-          <h2>{{name}}</h2>
-      </ion-col>
-    </ion-row>
-
-    <ion-row class="detail-row" *ngIf="followStatus">
-      <ion-col size="12" class="left-col">
-          <h1>{{'CreatenewfeedPage.description'|translate}}</h1>
-          <h2>{{des}}</h2>
-      </ion-col>
-    </ion-row>
-
-    <!-- <ion-row class="detail-row">
-      <ion-col size="12" class="left-col">
-          <h1>{{'FeedinfoPage.updatetime'|translate}}</h1>
-          <h2>{{handleTime(updatedTime)}}</h2>
-      </ion-col>
-    </ion-row> -->
-
-    <ion-row class="detail-row" *ngIf="followStatus">
+    <!-- <ion-row class="detail-row" *ngIf="followStatus">
       <ion-col size="12" class="left-col">
           <h1>{{'IssuecredentialPage.elaaddress'|translate}}</h1>
           <h2>{{elaAddress|translate}}</h2>
       </ion-col>
-    </ion-row>
+    </ion-row> -->
 
-    <ion-row class="detail-row" *ngIf="developerMode&&followStatus" (press)="copyText(nodeId)" [style.touch-action]="'pan-y'">
+    <ion-row class="detail-row" *ngIf="developerMode" (press)="copyText(nodeId)" [style.touch-action]="'pan-y'">
       <ion-col size="12" class="left-col">
           <h1>NodeId</h1>
           <h2>{{nodeId}}</h2>
       </ion-col>
     </ion-row>
 
-    <ion-row class="detail-row" *ngIf="developerMode&&followStatus">
+    <ion-row class="detail-row" *ngIf="developerMode">
       <ion-col size="12" class="left-col">
           <h1>{{'ServerInfoPage.version'|translate}}</h1>
           <h2>{{severVersion}}</h2>
       </ion-col>
     </ion-row>
 
-    <ion-row class="detail-row" *ngIf="developerMode&&followStatus" (press)="copyText(serverInfo['did'])" [style.touch-action]="'pan-y'">
+    <ion-row class="detail-row" *ngIf="developerMode" (press)="copyText(serverInfo['did'])" [style.touch-action]="'pan-y'">
       <ion-col size="12" class="left-col">
           <h1>{{'ServerInfoPage.did'|translate}}</h1>
           <h2>{{serverInfo['did']}}</h2>
       </ion-col>
     </ion-row>
 
-    <ion-row class="detail-row removeBorder" *ngIf="followStatus">
+    <ion-row class="detail-row removeBorder" *ngIf="qrcodeString!=null">
       <ion-col size="12" class="left-col">
-          <h1>{{'DiscoverfeedinfoPage.feedsQrcode'|translate}}</h1>
-          <div class="qr-container" (click)="showPreviewQrcode(qrcodeString)" (press)="menuMore(qrcodeString)" [style.touch-action]="'pan-y'">
+          <h1  style="text-align:center">{{'DiscoverfeedinfoPage.feedsQrcode'|translate}}</h1>
+          <div class="qr-container" style="margin-top:10px;" (click)="showPreviewQrcode(qrcodeString)" (press)="menuMore(qrcodeString)" [style.touch-action]="'pan-y'">
             <div class="qrcode">
               <qrcode [qrdata]="qrcodeString" [size]="150" [level]="'M'" allowEmptyString="true"></qrcode>
             </div>
           </div>
+          <h1 style="text-align:center;margin-top: 15px;">{{name}}</h1>
       </ion-col>
     </ion-row>
 </ion-grid>
