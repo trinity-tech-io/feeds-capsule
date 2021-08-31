@@ -7,21 +7,21 @@
            <img src={{imgUri}} style="max-height:200px;border-radius:10px;object-fit:contain;width:auto;" id="nftThumbnail"/>
     </ion-col>
   </ion-row>
-  <ion-row class="borderbottom">
-    <ion-col size="12">
+  <ion-row class="borderbottom" >
+    <ion-col size="12" *ngIf="menuType!='burn'">
       <p class="key">{{ 'CollectionsPage.price' | translate }}</p>
     </ion-col>
-    <ion-col size="8">
+    <ion-col size="8" *ngIf="menuType!='burn'">
       <ion-input type="number" clearInput [placeholder]="'CollectionsPage.price' | translate" [(ngModel)]="amount" class="nameValue"></ion-input>
     </ion-col>
-    <ion-col size="4" class="logo">
+    <ion-col size="4" class="logo" *ngIf="menuType!='burn'">
           <span>ELA/ETH</span> <img src="/assets/images/solidEla.svg" *ngIf="!theme.darkMode">
               <img src="/assets/images/darkmode/solidEla.svg" *ngIf="theme.darkMode">
     </ion-col>
-    <ion-col size="12" *ngIf="menuType==='created' || menuType==='buy'">
+    <ion-col size="12" *ngIf="menuType==='created' || menuType==='buy' || menuType==='burn'">
       <p class="key">{{ 'DonationPage.amount' | translate }}</p>
     </ion-col>
-    <ion-col size="12" *ngIf="menuType==='created' || menuType==='buy'">
+    <ion-col size="12" *ngIf="menuType==='created' || menuType==='buy' || menuType==='burn'">
       <ion-input type="number" clearInput [placeholder]="'DonationPage.enterAmount' | translate" [(ngModel)]="quantity" class="nameValue" [readonly]=true></ion-input>
     </ion-col>
   </ion-row>

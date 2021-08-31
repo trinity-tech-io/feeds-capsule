@@ -20,9 +20,11 @@ export class NFTContractStickerService {
   private stickerContract: any;
   private checkTokenInterval: NodeJS.Timer;
   private checkApprovedInterval: NodeJS.Timer;
+  private checkBurnInterval: NodeJS.Timer;
 
   private checkTokenNum: number = 0;
   private checkApprovedNum: number = 0;
+  private checkBurnNum: number = 0;
   constructor(
     private walletConnectControllerService: WalletConnectControllerService,
   ) {
@@ -279,5 +281,81 @@ export class NFTContractStickerService {
   cancelSetApprovedProcess() {
     if (!this.checkApprovedInterval) return;
     clearInterval(this.checkApprovedInterval);
+  }
+
+  async burnNfs(
+    tokenId: string,
+    burnValue: string
+  ): Promise<any>{
+    return new Promise(async (resolve, reject) => {
+          try {
+            Logger.log(TAG, 'burn params ', tokenId,burnValue);
+            const burndata = this.stickerContract.methods
+              .burn(tokenId,burnValue)
+              .encodeABI();
+            let beforeBurnBalance = parseInt(await this.balanceOf(tokenId));
+            let transactionParams = await this.createTxParams(burndata);
+            Logger.log(TAG,
+              'Calling smart contract through wallet connect',
+              burndata,
+              transactionParams,
+            );
+            this.stickerContract.methods
+              .burn(tokenId,burnValue)
+              .send(transactionParams)
+              .on('transactionHash', hash => {
+              Logger.log(TAG, 'Burn process, transactionHash is', hash);
+              })
+              .on('receipt', receipt => {
+                Logger.log(TAG, 'Burn process, receipt is', receipt);
+              })
+              .on('confirmation', (confirmationNumber, receipt) => {
+                Logger.log(TAG,
+                  'Burn process, confirmation is',
+                  confirmationNumber,
+                  receipt,
+                );
+              })
+              .on('error', (error, receipt) => {
+                Logger.error(TAG, 'Burn process, error is', error, receipt);
+              });
+              this.checkBurnState(beforeBurnBalance,parseInt(burnValue),tokenId,()=>{
+                 resolve(null);
+              });
+          } catch (error) {
+            Logger.error(TAG, 'burn error', error);
+            reject(error);
+          }
+    });
+  }
+
+  cancelBurnProcess(){
+    if (!this.checkBurnInterval) return;
+    clearInterval(this.checkBurnInterval);
+  }
+
+  checkBurnState(beforeBurnBalance:number,burnValue:number,tokenId:string,callback: (tokenInfo: any) => void){
+     this.checkBurnInterval = setInterval(async () => {
+      this.checkBurnNum=0;
+      if (!this.checkBurnInterval) return;
+      let afterBurnBalance = parseInt(await this.balanceOf(tokenId));
+      if(beforeBurnBalance - afterBurnBalance === burnValue){
+        clearInterval(this.checkBurnInterval);
+        callback("sucess");
+        this.checkBurnInterval = null;
+        return;
+      }
+
+      this.checkBurnNum++;
+      if (this.checkBurnNum * Config.CHECK_STATUS_INTERVAL_TIME > Config.WAIT_TIME_MINT) {
+        clearInterval(this.checkBurnInterval);
+        this.checkBurnInterval = null;
+      }
+     },Config.CHECK_STATUS_INTERVAL_TIME);
+  }
+
+ async balanceOf(tokenId:string){
+  let accountAddress = this.walletConnectControllerService.getAccountAddress();
+  return await this.stickerContract.methods.balanceOf(accountAddress, tokenId).call();
   }
 }
