@@ -895,6 +895,17 @@ export class MenuService {
           },
         },
         {
+          text: this.translate.instant('common.burnNFTs'),
+          icon: 'trash',
+          handler: () => {
+            this.viewHelper.showNftPrompt(
+              assItem,
+              'common.burnNFTs',
+              'burn',
+            );
+          },
+        },
+        {
           text: this.translate.instant('CollectionsPage.details'),
           icon: 'information-circle',
           handler: () => {

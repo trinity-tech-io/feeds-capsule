@@ -4,7 +4,7 @@ import { PopoverController, NavParams } from '@ionic/angular';
 import { FeedService } from '../../services/FeedService';
 import { NativeService } from 'src/app/services/NativeService';
 import { Events } from '../../services/events.service';
-import _, { reject } from 'lodash';
+import _ from 'lodash';
 import { UtilService } from 'src/app/services/utilService';
 import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
 import { IPFSService } from 'src/app/services/ipfs.service';
@@ -54,7 +54,7 @@ export class NftdialogComponent implements OnInit {
     this.menuType = this.navParams.get('menuType');
     let assItem = this.navParams.get('assItem');
     this.curAssItem = assItem;
-    let curAmount = this.assItem.fixedAmount || null;
+    let curAmount = assItem.fixedAmount || null;
     if (curAmount != null) {
       this.curAmount = this.nftContractControllerService.transFromWei(
         this.assItem.fixedAmount,
@@ -79,7 +79,39 @@ export class NftdialogComponent implements OnInit {
       case 'created':
         this.handleCreatedList();
         break;
+      case 'burn':
+        this.handleBurnNfts();
+        break;
     }
+  }
+
+  async handleBurnNfts(){
+    await this.popover.dismiss();
+    this.events.publish(FeedsEvent.PublishType.startLoading,{des:"common.burningNFTSDesc",title:"common.waitMoment",curNum:"1",maxNum:"1",type:"changePrice"});
+    let sId =setTimeout(()=>{
+      this.nftContractControllerService.getSticker().cancelBurnProcess();
+      this.events.publish(FeedsEvent.PublishType.endLoading);
+      clearTimeout(sId);
+      this.popupProvider.showSelfCheckDialog('common.burningNFTSTimeoutDesc');
+    }, Config.WAIT_TIME_BURN_NFTS);
+
+    let tokenId = this.assItem["tokenId"];
+    let tokenNum = this.assItem["quantity"];
+
+    this.nftContractControllerService.getSticker()
+    .burnNfs(tokenId,tokenNum)
+    .then(()=>{
+      this.nftContractControllerService.getSticker().cancelBurnProcess();
+      this.events.publish(FeedsEvent.PublishType.endLoading);
+      this.events.publish(FeedsEvent.PublishType.nftUpdateList,{type:"burn",assItem:this.assItem});
+      clearTimeout(sId);
+      this.native.toast("common.burnNFTSSuccess");
+    }).catch(()=>{
+      this.nftContractControllerService.getSticker().cancelBurnProcess();
+      this.events.publish(FeedsEvent.PublishType.endLoading);
+      clearTimeout(sId);
+      this.native.toastWarn("common.burnNFTSFailed");
+    });
   }
 
   handleCreatedList() {

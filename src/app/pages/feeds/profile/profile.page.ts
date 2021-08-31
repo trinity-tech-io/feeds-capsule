@@ -262,14 +262,22 @@ export class ProfilePage implements OnInit {
     });
 
     this.events.subscribe(FeedsEvent.PublishType.nftUpdateList, obj => {
+
       let type = obj['type'];
       let createAddr = this.nftContractControllerService.getAccountAddress();
       let assItem = obj['assItem'];
       Logger.log(TAG, 'Update asset item', assItem);
-      let saleOrderId = assItem['saleOrderId'];
+      //let saleOrderId = assItem['saleOrderId'];
       let tokenId = assItem['tokenId'];
       switch (type) {
-        case 'buy':
+        case 'burn':
+          let bList = this.nftPersistenceHelper.getCollectiblesList(createAddr);
+          bList = _.filter(bList, item => {
+            return item.tokenId != tokenId;
+          });
+          this.collectiblesList = bList;
+          this.ownNftSum = this.collectiblesList.length;
+          this.nftPersistenceHelper.setCollectiblesMap(createAddr, bList);
           break;
         case 'created':
           let list = this.nftPersistenceHelper.getCollectiblesList(createAddr);

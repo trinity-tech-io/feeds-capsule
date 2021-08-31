@@ -150,10 +150,15 @@ export const en = {
     changePriceTimeoutDesc: 'Update price timeout. You can confirm whether the Collectible price was successfully updated later',
     saleOrderTimeoutDesc: 'Sell order timeout. You can confirm whether the Collectible was successfully sold later',
     publishSameDataFailed: 'Publish to Pasar failed : The NFT has the same collectible data',
-    savePicture:"Save picture",
+    savePicture:"Download Collectible",
     savedSuccessfully:"Saved successfully",
     saveFailed:"Save failed",
-    savedDes:"Please wait. The picture is being saved"
+    savedDes:"Please wait. The picture is being saved",
+    burnNFTs:"Burn NFTs",
+    burningNFTSDesc:"Burning NFTs, please wait",
+    burningNFTSTimeoutDesc:"Burn NFTs timeout, you can confirm later",
+    burnNFTSFailed:"Burn NFTS Failed",
+    burnNFTSSuccess:"Burn NFTS successfully"
   },
   app: {
     profileDetails: 'Profile Details',
