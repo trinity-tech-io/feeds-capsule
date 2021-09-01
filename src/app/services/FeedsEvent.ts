@@ -162,7 +162,9 @@ declare namespace FeedsEvent {
     pasarListGrid = "feeds:pasarListGrid",
 
     channelRightMenu = "feeds:channelRightMenu",
-    channelInfoRightMenu = "feeds:channelInfoRightMenu"
+    channelInfoRightMenu = "feeds:channelInfoRightMenu",
+
+    savePicture = "feeds:savePicture"
   }
 
   type TipDialogData = {
