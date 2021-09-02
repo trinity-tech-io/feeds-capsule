@@ -145,14 +145,14 @@ export class ProfilePage implements OnInit {
 
   public walletAddress: string = '';
   public walletAddressStr: string = '';
-  public onSaleList:any = [];
-  public isFinsh:any = [];
+  public onSaleList: any = [];
+  public isFinsh: any = [];
 
-  public isLoading:boolean = false;
-  public loadingTitle:string = "";
-  public loadingText:string = "";
-  public loadingCurNumber:string = "";
-  public loadingMaxNumber:string = "";
+  public isLoading: boolean = false;
+  public loadingTitle: string = "";
+  public loadingText: string = "";
+  public loadingCurNumber: string = "";
+  public loadingMaxNumber: string = "";
 
   constructor(
     private feedService: FeedService,
@@ -178,7 +178,7 @@ export class ProfilePage implements OnInit {
   ) {
   }
 
-  ngOnInit() {}
+  ngOnInit() { }
 
   initMyFeeds() {
     this.channels = this.feedService.getMyChannelList();
@@ -245,7 +245,7 @@ export class ProfilePage implements OnInit {
   async addProflieEvent() {
     this.updateWalletAddress();
 
-    this.events.subscribe(FeedsEvent.PublishType.startLoading,(obj)=>{
+    this.events.subscribe(FeedsEvent.PublishType.startLoading, (obj) => {
       let title = obj["title"];
       let des = obj["des"];
       let curNum = obj["curNum"];
@@ -257,9 +257,9 @@ export class ProfilePage implements OnInit {
       this.isLoading = true;
     });
 
-   this.events.subscribe(FeedsEvent.PublishType.endLoading,(obj)=>{
-   this.isLoading = false;
-  });
+    this.events.subscribe(FeedsEvent.PublishType.endLoading, (obj) => {
+      this.isLoading = false;
+    });
 
     this.events.subscribe(FeedsEvent.PublishType.nftUpdateList, obj => {
       let type = obj['type'];
@@ -415,7 +415,7 @@ export class ProfilePage implements OnInit {
     this.events.subscribe(
       FeedsEvent.PublishType.streamGetBinaryResponse,
       () => {
-        this.zone.run(() => {});
+        this.zone.run(() => { });
       },
     );
 
@@ -446,7 +446,7 @@ export class ProfilePage implements OnInit {
     this.events.subscribe(
       FeedsEvent.PublishType.streamGetBinaryResponse,
       () => {
-        this.zone.run(() => {});
+        this.zone.run(() => { });
       },
     );
 
@@ -744,12 +744,12 @@ export class ProfilePage implements OnInit {
         break;
       case 'ProfilePage.collectibles':
         let collectiblesList = _.cloneDeep(this.collectiblesList);
-        let arr = _.filter(collectiblesList,(item)=>{
+        let arr = _.filter(collectiblesList, (item) => {
           return item === null;
         });
-        if(arr.length > 0 && this.isFinsh.length<collectiblesList.length){
-           event.target.complete();
-           return;
+        if (arr.length > 0 && this.isFinsh.length < collectiblesList.length) {
+          event.target.complete();
+          return;
         }
         this.isFinsh = [];
         let accAddress =
@@ -1648,7 +1648,7 @@ export class ProfilePage implements OnInit {
       .then(() => {
         this.native.toast_trans('common.textcopied');
       })
-      .catch(() => {});
+      .catch(() => { });
   }
 
   clickWalletAddr() {
@@ -1808,10 +1808,10 @@ export class ProfilePage implements OnInit {
           this.isFinsh.push(cIndex);
           this.collectiblesList[cIndex] = item;
           let collectiblesList = _.cloneDeep(this.collectiblesList);
-          let arr = _.filter(collectiblesList,(item)=>{
+          let arr = _.filter(collectiblesList, (item) => {
             return item === null;
           });
-          if(arr.length === 0){
+          if (arr.length === 0) {
             this.hanleListCace(createAddress);
           }
         } catch (err) {
@@ -1843,7 +1843,7 @@ export class ProfilePage implements OnInit {
       let nftCreatedCount = await this.nftContractControllerService
         .getSticker()
         .tokenCountOfOwner(accAddress);
-      await this.handleOrder(sellerAddr, orderCount, 'sale', accAddress,nftCreatedCount);
+      await this.handleOrder(sellerAddr, orderCount, 'sale', accAddress, nftCreatedCount);
     }
   }
 
@@ -1852,7 +1852,7 @@ export class ProfilePage implements OnInit {
     orderCount: any,
     listType: any,
     createAddress: any,
-    nftCreatedCount:any
+    nftCreatedCount: any
   ) {
 
     for (let index = 0; index < orderCount; index++) {
@@ -1899,21 +1899,21 @@ export class ProfilePage implements OnInit {
               moreMenuType: 'onSale',
             };
             //this.onSaleList.splice(index,1,item);
-            let nftIndex = parseInt(nftCreatedCount)+index;
+            let nftIndex = parseInt(nftCreatedCount) + index;
             this.isFinsh.push(nftIndex);
             this.collectiblesList[nftIndex] = item;
             let collectiblesList = _.cloneDeep(this.collectiblesList);
-            let arr = _.filter(collectiblesList,(item)=>{
+            let arr = _.filter(collectiblesList, (item) => {
               return item === null;
             });
-            if(arr.length === 0){
+            if (arr.length === 0) {
               this.hanleListCace(createAddress);
             }
           })
           .catch(() => {
             this.isFinsh.push("1");
           });
-      } catch (error) {}
+      } catch (error) { }
     }
   }
 
@@ -1952,15 +1952,15 @@ export class ProfilePage implements OnInit {
     this.menuService.showCreatedMenu(asstItem);
   }
 
-  clickMint(){
+  clickMint() {
     this.createNft();
   }
 
- async createNft() {
+  async createNft() {
     let accAdress = this.nftContractControllerService.getAccountAddress() || "";
-    if(accAdress === ""){
-       this.connectWallet();
-       return;
+    if (accAdress === "") {
+      this.connectWallet();
+      return;
     }
     this.native.navigateForward(['mintnft'], {});
   }
