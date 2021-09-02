@@ -747,4 +747,15 @@ export const zh = {
     introduce2: '连接钱包',
     skip: '跳过',
   },
+  GuidedialogComponent: {
+    upgradeto: "升级到",
+    publisherAccount: "出版号",
+    step1: "第一步",
+    des: "下载 Feeds Service",
+    des1: "软件/程序来自",
+    step2: "第二步",
+    des2: "选择您喜欢的平台",
+    des3: "Windows、Mac、Raspberry Pi或Linux",
+    installationGuide: "安装指南"
+  }
 };
