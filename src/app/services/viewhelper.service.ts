@@ -9,6 +9,7 @@ import { TitleBarComponent } from './../components/titlebar/titlebar.component';
 import { MorenameComponent } from './../components/morename/morename.component';
 import { PaypromptComponent } from './../components/payprompt/payprompt.component';
 import { NftdialogComponent } from './../components/nftdialog/nftdialog.component';
+import { GuidedialogComponent } from './../components/guidedialog/guidedialog.component';
 import { Logger } from './logger';
 
 const TAG: string = 'ViewHelper';
@@ -134,7 +135,7 @@ export class ViewHelper {
   async showPayPrompt(nodeId: string, channelId: number, elaAddress: string) {
     let popover = await this.popoverController.create({
       mode: 'ios',
-      cssClass: 'PaypromptComponent',
+      cssClass: 'genericPopup',
       component: PaypromptComponent,
       backdropDismiss: false,
       componentProps: {
@@ -161,6 +162,22 @@ export class ViewHelper {
         assItem: assItem,
         menuType: type,
         },
+    });
+    popover.onWillDismiss().then(() => {
+      Logger.log(TAG, 'Promote dismiss');
+      popover = null;
+    });
+    return await popover.present();
+  }
+
+  async showGuideDialog(){
+    let popover = await this.popoverController.create({
+      mode: 'ios',
+      cssClass: 'PaypromptComponent',
+      component: GuidedialogComponent,
+      componentProps: {
+
+      },
     });
     popover.onWillDismiss().then(() => {
       Logger.log(TAG, 'Promote dismiss');

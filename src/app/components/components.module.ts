@@ -28,6 +28,7 @@ import { AddassetComponent } from './addasset/addasset.component';
 import { AssetitemComponent } from './assetitem/assetitem.component';
 import { NewassetitemComponent } from './newassetitem/newassetitem.component';
 import { ChannelcardComponent } from './channelcard/channelcard.component';
+import { GuidedialogComponent } from './guidedialog/guidedialog.component'
 
 import { VideofullscreenComponent } from './videofullscreen/videofullscreen.component';
 
@@ -81,7 +82,8 @@ import { RoundProgressModule } from 'angular-svg-round-progressbar';
     AssetitemComponent,
     NewassetitemComponent,
     ChannelcardComponent,
-    NftloadingComponent
+    NftloadingComponent,
+    GuidedialogComponent
   ],
   exports: [
     AlertdialogComponent,
@@ -106,7 +108,8 @@ import { RoundProgressModule } from 'angular-svg-round-progressbar';
     AssetitemComponent,
     NewassetitemComponent,
     ChannelcardComponent,
-    NftloadingComponent
+    NftloadingComponent,
+    GuidedialogComponent
   ],
 
   providers: [],

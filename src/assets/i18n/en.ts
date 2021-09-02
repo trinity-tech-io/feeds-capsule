@@ -764,4 +764,15 @@ export const en = {
     introduce2: 'Connect Wallet',
     skip: 'Skip',
   },
+  GuidedialogComponent: {
+    upgradeto: "Upgrade to",
+    publisherAccount: "Publisher Account",
+    step1: "Step 1",
+    des: "DownLoad Feeds Service",
+    des1: "software/program from",
+    step2: "Step 2",
+    des2: "Choose your preferred platform",
+    des3: "Windows, Mac, Raspberry Pi or Linux",
+    installationGuide: "Installation Guide"
+  }
 };
