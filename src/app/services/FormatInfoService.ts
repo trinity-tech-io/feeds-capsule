@@ -43,10 +43,8 @@ export class FormatInfoService {
   formatFollowSuccessMsg(feedsName: string): string {
     return (
       this.translate.instant('common.followed') +
-      ' ' +
-      feedsName +
-      ' ' +
-      this.translate.instant('common.successfully')
+      ' ' +'-'+' '+
+      feedsName
     );
   }
 
