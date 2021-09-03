@@ -9,8 +9,7 @@ import { ViewHelper } from 'src/app/services/viewhelper.service';
 import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
 import { Events } from 'src/app/services/events.service';
 import { Config } from './config';
-import { resolve } from 'url';
-import { reject } from 'lodash';
+
 
 @Injectable()
 export class MenuService {
@@ -909,7 +908,17 @@ export class MenuService {
           },
         },
         {
+          text: this.translate.instant('CollectionsPage.details'),
+          icon: 'information-circle',
+          handler: () => {
+            this.native.navigateForward(['assetdetails'], {
+              queryParams: assItem,
+            });
+          },
+        },
+        {
           text: this.translate.instant('common.burnNFTs'),
+          role: 'destructive',
           icon: 'trash',
           handler: () => {
             this.viewHelper.showNftPrompt(
@@ -917,15 +926,6 @@ export class MenuService {
               'common.burnNFTs',
               'burn',
             );
-          },
-        },
-        {
-          text: this.translate.instant('CollectionsPage.details'),
-          icon: 'information-circle',
-          handler: () => {
-            this.native.navigateForward(['assetdetails'], {
-              queryParams: assItem,
-            });
           },
         },
         {

@@ -146,15 +146,15 @@ export const zh = {
     changePriceTimeoutDesc: '修改收藏品价格超时，后面您可自行确认修改收藏品价格是否成功',
     saleOrderTimeoutDesc: '出售收藏品超时，后面您可自行确认出售收藏品是否成功',
     publishSameDataFailed: '失败 : NFT 中已经有相同的收藏品',
-    savePicture:"下载收藏品",
+    savePicture:"保存收藏品",
     savedSuccessfully:"保存成功",
     saveFailed:"保存失败",
     savedDes:"请稍等,图片保存中",
-    burnNFTs:"销毁NFT",
-    burningNFTSDesc:"正在销毁NFTs，请稍后",
-    burningNFTSTimeoutDesc:"销毁NFTs超时，后面您可自行确认",
-    burnNFTSFailed:"销毁NFTs失败",
-    burnNFTSSuccess:"销毁NFTs成功"
+    burnNFTs:"销毁收藏品",
+    burningNFTSDesc:"正在销毁收藏品，请稍后",
+    burningNFTSTimeoutDesc:"销毁收藏品超时，后面您可自行确认",
+    burnNFTSFailed:"销毁收藏品失败",
+    burnNFTSSuccess:"销毁收藏品成功"
   },
   app: {
     profileDetails: '档案详情',
@@ -260,7 +260,8 @@ export const zh = {
     tip: '打赏',
     allempty: '空空如也',
     emptyDes: '该频道尚未发布任何微说',
-    subscribeChannel: '订阅频道以获取更多详细信息',
+    noSubscription:"没有订阅",
+    subscribeChannel: '订阅此频道的查看帖子',
     viewall: '查看全部',
   },
   NotificationPage: {
@@ -683,10 +684,11 @@ export const zh = {
     likes: '喜欢',
     emptylikes: '给喜欢的收藏品点个赞',
     emptypurchased: '去购买收藏品吧',
-    onSale: '出售',
+    onSale: '出售收藏品',
     putOnSale: '出售',
     price: '价格',
     details: '详情',
+    sale: "出售"
   },
   ConfirmationPage: {
     title: '确认',
@@ -756,6 +758,41 @@ export const zh = {
     step2: "第二步",
     des2: "选择您喜欢的平台",
     des3: "Windows、Mac、Raspberry Pi或Linux",
-    installationGuide: "安装指南"
+    installationGuide: "安装指南",
+    skip: "跳过"
+  },
+  GuidemacPage: {
+    title: "安装指南",
+    des: "Windows/Mac",
+    step1: "第一步",
+    des1: "安装Feeds Service",
+    step2: "第二步",
+    des2: "切换开关以生成二维码",
+    step3: "第三步",
+    des3: "扫描二维码以创建发布者帐户",
+    des4: "扫描二维码"
+  },
+  GuideubuntuPage: {
+    title: "安装指南",
+    des: "Raspberry Pi/Linux Ubuntu",
+    step1: "第一步",
+    des1: "将deb包下载到桌面",
+    step2: "第二步",
+    des2: "开放式终端和类型：",
+    exatDes21: "cd Desktop",
+    exatDes22: "sudo dpkg -i [filename].deb",
+    step3: "第三步",
+    des30: "阅读条款和条件",
+    des31: "请在下面键入以接受",
+    exatDes3: "y",
+    step4: "第四步",
+    des4: "要确认服务状态，请键入：",
+    exatDes4: "sudo systemctl status feedsd",
+    step5: "第五步",
+    des5: "打开浏览器并键入：",
+    exatDes5: "http://localhost:10018",
+    step6: "第六步",
+    des6: "扫描二维码以创建发布者帐户",
+    des7: "扫描二维码"
   }
 };

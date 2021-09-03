@@ -1,5 +1,5 @@
 .container{
-
+  padding: 15px 0px;
   .guideTitle{
     font-size: 20px;
     font-weight: bold;
@@ -31,7 +31,7 @@
   }
 
   .guideUrl{
-    width:calc(100vw - 20px);
+    width: 90%;
     margin:0 auto;
     background-color: #f6f5f6;
     border-radius: 10px;
@@ -47,6 +47,7 @@
   }
 
   .installationGuide{
+    margin-top:11px;
     font-size: 20px;
     font-weight: bold;
     font-stretch: normal;
@@ -54,6 +55,45 @@
     line-height: normal;
     text-align: center;
     color: #000;
+  }
+
+  .guideGrid{
+    border-bottom:1px solid #f5f4f8;
+    width: 90%;
+    display:flex;
+    align-items: center;
+    margin: 0 auto;
+    padding-bottom: 16px;
+    .left{
+      text-align: left;
+      width: 70%;
+    }
+
+    .right{
+      text-align: right;
+      width: 30%;
+      margin-top: 5px;
+    }
+  }
+
+}
+
+.darkContainer{
+  .guideDes{
+    color:#ffffff;
+  }
+
+  .guideUrl{
+    background-color: #2e2f4e;
+    color:#ffffff;
+  }
+
+  .installationGuide{
+    color:#ffffff;
+  }
+
+  .guideGrid{
+    border-bottom:1px solid#707070;
   }
 
 }

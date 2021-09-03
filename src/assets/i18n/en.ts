@@ -150,15 +150,15 @@ export const en = {
     changePriceTimeoutDesc: 'Update price timeout. You can confirm whether the Collectible price was successfully updated later',
     saleOrderTimeoutDesc: 'Sell order timeout. You can confirm whether the Collectible was successfully sold later',
     publishSameDataFailed: 'Publish to Pasar failed : The NFT has the same collectible data',
-    savePicture:"Download Collectible",
+    savePicture:"Save Collectibles",
     savedSuccessfully:"Saved successfully",
     saveFailed:"Save failed",
     savedDes:"Please wait. The picture is being saved",
-    burnNFTs:"Burn NFTs",
-    burningNFTSDesc:"Burning NFTs, please wait",
-    burningNFTSTimeoutDesc:"Burn NFTs timeout, you can confirm later",
-    burnNFTSFailed:"Burn NFTS Failed",
-    burnNFTSSuccess:"Burn NFTS successfully"
+    burnNFTs:"Delete Collectibles",
+    burningNFTSDesc:"Delete Collectibles, please wait",
+    burningNFTSTimeoutDesc:"Delete Collectibles timeout, you can confirm later",
+    burnNFTSFailed:"Delete Collectibles Failed",
+    burnNFTSSuccess:"Delete Collectibles successfully"
   },
   app: {
     profileDetails: 'Profile Details',
@@ -264,7 +264,8 @@ export const en = {
     tip: 'Tip',
     allempty: 'No Posts Yet',
     emptyDes: "This channel hasn't published any posts",
-    subscribeChannel: ' Subscribe to channel for more details',
+    noSubscription:"No subscription",
+    subscribeChannel: ' Subscribe to view posts from this channel',
     viewall: 'View all',
   },
   NotificationPage: {
@@ -697,10 +698,11 @@ export const en = {
     likes: 'Likes',
     emptylikes: 'Give a like to collectible you like',
     emptypurchased: 'Go to buy collectibles',
-    onSale: 'Sell',
+    onSale: 'Sell Collectibles',
     putOnSale: 'Put On Sale',
     price: 'Price',
     details: 'Details',
+    sale: "Sell"
   },
   ConfirmationPage: {
     title: 'Confirmation',
@@ -773,6 +775,41 @@ export const en = {
     step2: "Step 2",
     des2: "Choose your preferred platform",
     des3: "Windows, Mac, Raspberry Pi or Linux",
-    installationGuide: "Installation Guide"
+    installationGuide: "Installation Guide",
+    skip: "Skip"
+  },
+  GuidemacPage: {
+    title: "Installation Guide",
+    des: "Windows/Mac",
+    step1: "Step 1",
+    des1: "Install Feeds Service",
+    step2: "Step 2",
+    des2: "Toggle switch to generate QR code",
+    step3: "Step 3",
+    des3: "Scan QR code to create a Publisher Account",
+    des4: "Scan QR Code"
+  },
+  GuideubuntuPage: {
+    title: "Installation Guide",
+    des: "Raspberry Pi/Linux Ubuntu",
+    step1: "Step 1",
+    des1: "Download deb package to Desktop",
+    step2: "Step 2",
+    des2: "Open terminal and type :",
+    exatDes21: "cd Desktop",
+    exatDes22: "sudo dpkg -i [filename].deb",
+    step3: "Step 3",
+    des30: "Read terms and conditions",
+    des31: "Type below to accept",
+    exatDes3: "y",
+    step4: "Step 4",
+    des4: "To confirm service status, type :",
+    exatDes4: "sudo systemctl status feedsd",
+    step5: "Step 5",
+    des5: "Open browser and type :",
+    exatDes5: "http://localhost:10018",
+    step6: "Step 6",
+    des6: "Scan QR code to create a Publisher Account",
+    des7: "Scan QR Code"
   }
 };

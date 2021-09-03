@@ -1,0 +1,47 @@
+<app-titlebar></app-titlebar>
+<ion-content>
+  <ion-grid class="container" [class.darkContainer]="theme.darkMode">
+       <ion-row>
+         <ion-col size="12" class="guideTitle">
+            {{"GuidemacPage.des" | translate}}
+         </ion-col>
+
+         <ion-col size="12" class="guideStep">
+          {{"GuidemacPage.step1" | translate}}
+         </ion-col>
+
+         <ion-col size="12" class="guideDes">
+          {{"GuidemacPage.des1" | translate}}
+         </ion-col>
+
+         <ion-col size="12" class="guideStep">
+          {{"GuidemacPage.step2" | translate}}
+         </ion-col>
+
+         <ion-col size="12" class="guideDes">
+          {{"GuidemacPage.des2" | translate}}
+         </ion-col>
+
+         <ion-col size="12" class="guideImg">
+           <img src="./assets/images/guidemac.png"/>
+         </ion-col>
+
+         <ion-col size="12" class="guideStep">
+          {{"GuidemacPage.step3" | translate}}
+         </ion-col>
+
+         <ion-col size="12" class="guideDes">
+          {{"GuidemacPage.des3" | translate}}
+         </ion-col>
+       </ion-row>
+       <div class="footer">
+       <ion-row class="btn-row">
+        <ion-button>
+          <ion-label>
+             {{ "GuidemacPage.des4"| translate }}
+          </ion-label>
+        </ion-button>
+      </ion-row>
+      </div>
+  </ion-grid>
+</ion-content>
