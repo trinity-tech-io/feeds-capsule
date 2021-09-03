@@ -1,0 +1,76 @@
+.container{
+    padding: 0px 30px;
+    .guideTitle {
+        display:flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 20px;
+        font-weight: bold;
+        font-stretch: normal;
+        font-style: normal;
+        line-height: normal;
+        text-align: center;
+        color:#7624fe;
+      }
+
+      .guideStep {
+        display:flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 14px;
+        font-weight: bold;
+        font-stretch: normal;
+        font-style: normal;
+        line-height: normal;
+        text-align: center;
+        color:#7624fe;
+      }
+
+      .guideDes {
+        display:flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 14px;
+        font-stretch: normal;
+        font-style: normal;
+        line-height: normal;
+        letter-spacing: normal;
+        text-align: center;
+        color: #000;
+      }
+
+    .extatDes{
+        display:flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 14px;
+        font-weight: normal;
+        font-stretch: normal;
+        font-style: italic;
+        color: #000;
+        border-radius: 10px;
+        background-color:#f6f5f6;
+        height:36px;
+        line-height: 36px;
+    }
+
+    .footer{
+        position:fixed;
+        bottom: 10px;
+        width:100%;
+        display:flex;
+        justify-content: center;
+        left: 0;
+    }
+}
+
+.darkContainer{
+    .guideDes{
+      color:#ffffff;
+    }
+
+    .extatDes{
+      background-color: #2e2f4e;
+      color: #fff;
+    }
+}

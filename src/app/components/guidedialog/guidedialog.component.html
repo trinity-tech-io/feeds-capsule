@@ -5,36 +5,53 @@
     <div class="guideTitle">
       {{'GuidedialogComponent.publisherAccount' | translate}}
     </div>
-    <div class="guideStep">
+    <div class="guideStep" style="margin-top:9px;">
       {{'GuidedialogComponent.step1' | translate}}
     </div>
 
-    <div class="guideDes">
+    <div class="guideDes" style="margin-top:9px;">
       {{'GuidedialogComponent.des' | translate}}
     </div>
 
-    <div class="guideDes">
-      {{'GuidedialogComponent.des' | translate}}
-    </div>
-
-    <div class="guideUrl">
-      https://trinity-feeds.app
-    </div>
-
-    <div class="guideStep">
-      {{'GuidedialogComponent.step2' | translate}}
-    </div>
-
-    <div class="guideDes">
+    <div class="guideDes" style="margin-top:2px;">
       {{'GuidedialogComponent.des1' | translate}}
     </div>
 
-    <div class="guideDes" style="color: #7624fe;">
+    <div class="guideUrl" style="margin-top:7px;">
+      https://trinity-feeds.app
+    </div>
+
+    <div class="guideStep" style="margin-top:7px;">
+      {{'GuidedialogComponent.step2' | translate}}
+    </div>
+
+    <div class="guideDes" style="margin-top:9px;">
       {{'GuidedialogComponent.des2' | translate}}
+    </div>
+
+    <div class="guideDes" style="color: #7624fe;">
+      {{'GuidedialogComponent.des3' | translate}}
     </div>
 
     <div class="installationGuide">
       {{'GuidedialogComponent.installationGuide' | translate}}
     </div>
+
+    <div class="guideGrid" style="margin-top: 19px;" (click)="goMac()">
+      <span class="left"><img src="assets/images/mac.svg"/></span>
+      <span class="right"><img src="assets/icons/right-arrow.svg"/></span>
+    </div>
+
+    <div class="guideGrid" style="margin-top: 12px;" (click)="goUbuntu()">
+      <span class="left" style="margin-top:8px;"><img src="assets/images/ubuntu.svg"/></span>
+      <span class="right"><img src="assets/icons/right-arrow.svg"/></span>
+    </div>
+
+    <ion-row class="btns-row" style="margin: 0 auto;width:90%;margin-top:51px;margin-bottom: 30px;">
+      <ion-col class="btn confirm ion-activatable ripple" size="12">
+          <ion-label>{{ "GuidedialogComponent.skip" | translate }}</ion-label>
+          <ion-ripple-effect></ion-ripple-effect>
+      </ion-col>
+    </ion-row>
 
 </div>

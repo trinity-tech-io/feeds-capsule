@@ -155,7 +155,7 @@ export class ViewHelper {
   async showNftPrompt(assItem: any, title: any, type: any) {
     let popover = await this.popoverController.create({
       mode: 'ios',
-      cssClass: 'PaypromptComponent',
+      cssClass: 'genericPopup',
       component: NftdialogComponent,
       componentProps: {
         title: this.translate.instant(title),

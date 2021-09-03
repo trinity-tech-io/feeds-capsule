@@ -20,7 +20,7 @@
       <span class="price">{{hanldePrice(assetItem['fixedAmount'])}} ELA/ETHSC</span>
     </div>
     <div class="like" (click)="onSale()" *ngIf="assetItem['fixedAmount'] === null">
-      <span class="onSale">{{'CollectionsPage.onSale'|translate}}</span>
+      <span class="onSale">{{'CollectionsPage.sale'|translate}}</span>
     </div>
     <div class="moremenu1">
       <img [src]="!theme.darkMode ? './assets/images/dots-three-vertical.svg' : './assets/images/dots-three-vertical-dark.svg'" (click)="more()"/>

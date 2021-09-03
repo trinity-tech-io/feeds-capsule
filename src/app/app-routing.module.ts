@@ -213,6 +213,14 @@ const routes: Routes = [
     path: 'select-net',
     loadChildren: () => import('./pages/select-net/select-net.module').then( m => m.SelectNetPageModule)
   },
+  {
+    path: 'guidemac',
+    loadChildren: () => import('./pages/guidemac/guidemac.module').then( m => m.GuidemacPageModule)
+  },
+  {
+    path: 'guideubuntu',
+    loadChildren: () => import('./pages/guideubuntu/guideubuntu.module').then( m => m.GuideubuntuPageModule)
+  },
 ];
 
 @NgModule({

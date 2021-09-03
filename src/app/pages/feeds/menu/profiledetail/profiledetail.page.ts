@@ -420,6 +420,7 @@ export class ProfiledetailPage implements OnInit {
   }
 
   upgradeToPublisherAccount(){
+    //this.viewHelper.showGuideDialog();
     this.native.navigateForward(['bindservice/learnpublisheraccount'], '');
   }
 }
