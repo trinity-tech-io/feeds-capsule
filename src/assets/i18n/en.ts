@@ -811,5 +811,21 @@ export const en = {
     step6: "Step 6",
     des6: "Scan QR code to create a Publisher Account",
     des7: "Scan QR Code"
+  },
+  PublisherdialogComponent: {
+    publisheraccount: 'Publisher Account',
+    des: 'You are currently using',
+    des1: "Basic Account",
+    des2: ' on Feeds',
+    des3: 'Upgrade to ',
+    des4: 'Publisher Account',
+    des5: 'to unlock more features below',
+    des6: '● Create up to 5 channels',
+    des7: '● Publish unlimited posts',
+    des8: '● Publish NFT sale to subscribers',
+    des9: 'Learn more about Publisher Account',
+    createNewPublisherAccount: 'Create New Publisher Account',
+    bindExistingPublisherAccount: 'Bind Existing Publisher Account',
+    cancel: 'Cancel'
   }
 };

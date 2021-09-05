@@ -10,6 +10,8 @@ import { MorenameComponent } from './../components/morename/morename.component';
 import { PaypromptComponent } from './../components/payprompt/payprompt.component';
 import { NftdialogComponent } from './../components/nftdialog/nftdialog.component';
 import { GuidedialogComponent } from './../components/guidedialog/guidedialog.component';
+import { PublisherdialogComponent } from './../components/publisherdialog/publisherdialog.component';
+
 import { Logger } from './logger';
 
 const TAG: string = 'ViewHelper';
@@ -175,6 +177,23 @@ export class ViewHelper {
       mode: 'ios',
       cssClass: 'PaypromptComponent',
       component: GuidedialogComponent,
+      componentProps: {
+
+      },
+    });
+    popover.onWillDismiss().then(() => {
+      Logger.log(TAG, 'Promote dismiss');
+      popover = null;
+    });
+    return await popover.present();
+  }
+
+  async showPublisherDialog(){
+
+    let popover = await this.popoverController.create({
+      mode: 'ios',
+      cssClass: 'genericPopup',
+      component: PublisherdialogComponent,
       componentProps: {
 
       },

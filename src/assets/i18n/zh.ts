@@ -769,7 +769,7 @@ export const zh = {
     step2: "第二步",
     des2: "切换开关以生成二维码",
     step3: "第三步",
-    des3: "扫描二维码以创建发布者帐户",
+    des3: "扫描二维码以创建出版号",
     des4: "扫描二维码"
   },
   GuideubuntuPage: {
@@ -792,7 +792,23 @@ export const zh = {
     des5: "打开浏览器并键入：",
     exatDes5: "http://localhost:10018",
     step6: "第六步",
-    des6: "扫描二维码以创建发布者帐户",
+    des6: "扫描二维码以创建出版号",
     des7: "扫描二维码"
+  },
+  PublisherdialogComponent: {
+    publisheraccount: '出版号',
+    des: "您当前正在使用",
+    des1: "订阅Feeds",
+    des2: "基本帐户",
+    des3: "升级到",
+    des4: "出版号",
+    des5: "要解锁下面的更多功能",
+    des6: '● 创建最多5个频道',
+    des7: '● 发布无限量的帖子',
+    des8: '● 向订阅者发布NFT销售',
+    des9: '了解更多出版号',
+    createNewPublisherAccount: '创建新的出版号',
+    bindExistingPublisherAccount: '绑定现有的出版号',
+    cancel: '取消'
   }
 };

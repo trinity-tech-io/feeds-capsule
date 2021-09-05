@@ -184,8 +184,10 @@ export class ProfilePage implements OnInit {
   ngOnInit() { }
 
   initMyFeeds() {
-    this.channels = this.feedService.getMyChannelList();
+    this.channels = this.feedService.getMyChannelList() || [];
     this.myFeedsSum = this.channels.length;
+    let followedList = this.feedService.getFollowedChannelList() || [];
+    this.followers = followedList.length;
     this.initnodeStatus(this.channels);
   }
 
