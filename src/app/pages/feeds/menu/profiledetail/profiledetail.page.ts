@@ -421,6 +421,7 @@ export class ProfiledetailPage implements OnInit {
 
   upgradeToPublisherAccount(){
     //this.viewHelper.showGuideDialog();
-    this.native.navigateForward(['bindservice/learnpublisheraccount'], '');
+    //this.viewHelper.showPublisherDialog()
+      this.native.navigateForward(['bindservice/learnpublisheraccount'], '');
   }
 }
