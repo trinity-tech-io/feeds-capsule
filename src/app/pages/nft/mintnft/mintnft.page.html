@@ -78,7 +78,7 @@
         <img class="tip" src="./assets/images/calendarAlt.svg">
     </ion-item>
 
-      <!-- <ion-item lines="none">
+      <ion-item lines="none">
         <ion-label position="stacked">{{ 'MintnftPage.nftType' | translate }}</ion-label>
         <ion-radio-group [(ngModel)]="issueRadionType" class="ionradiogroup" (ionChange)="radioChange()">
           <ion-row style="padding:0px;">
@@ -96,7 +96,7 @@
             </ion-col>
           </ion-row>
         </ion-radio-group>
-      </ion-item> -->
+      </ion-item>
 
       <ion-item lines="none">
         <ion-label position="stacked">{{ 'MintnftPage.nftRoyalties' | translate }}</ion-label>
@@ -105,8 +105,7 @@
 
       <ion-item lines="none">
         <ion-label position="stacked">{{ 'MintnftPage.nftQuantity' | translate }}</ion-label>
-        <ion-input type="number" placeholder="{{'MintnftPage.nftQuantityPlaceholder'|translate}}" [(ngModel)]="nftQuantity"
-          [readonly]="issueRadionType==='single'"></ion-input>
+        <ion-input clearInput  required type="number" placeholder="{{'MintnftPage.nftQuantityPlaceholder'|translate}}" [(ngModel)]="nftQuantity" [readonly]="issueRadionType==='single'" (ionInput)="handleQuantity($event)"></ion-input>
       </ion-item>
       </ion-list>
 

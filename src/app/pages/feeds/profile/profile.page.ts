@@ -274,10 +274,10 @@ export class ProfilePage implements OnInit {
     });
 
     this.events.subscribe(FeedsEvent.PublishType.nftUpdateList, obj => {
-
       let type = obj['type'];
-      let createAddr = this.nftContractControllerService.getAccountAddress();
+      let sellQuantity = obj["sellQuantity"] || "0";
       let assItem = obj['assItem'];
+      let createAddr = this.nftContractControllerService.getAccountAddress();
       Logger.log(TAG, 'Update asset item', assItem);
       //let saleOrderId = assItem['saleOrderId'];
       let tokenId = assItem['tokenId'];
@@ -292,22 +292,8 @@ export class ProfilePage implements OnInit {
           this.nftPersistenceHelper.setCollectiblesMap(createAddr, bList);
           break;
         case 'created':
-          let list = this.nftPersistenceHelper.getCollectiblesList(createAddr);
-          let cpItem = _.cloneDeep(assItem);
-          //cpItem['moreMenuType'] = 'created';
-          list = _.filter(list, item => {
-            return item.tokenId != tokenId;
-          });
-          list.push(cpItem);
-          Logger.log(TAG, 'Update list', list);
-          this.collectiblesList = list;
-          this.nftPersistenceHelper.setCollectiblesMap(createAddr, list);
-
-          let cpList = this.nftPersistenceHelper.getPasarList();
-          cpList.push(cpItem);
-
-          this.nftPersistenceHelper.setPasarList(cpList);
-          break;
+          this.handleCreate(tokenId,createAddr,assItem,sellQuantity);
+              break;
       }
     });
 
@@ -1766,6 +1752,11 @@ export class ProfilePage implements OnInit {
         let tokenInfo = await this.nftContractControllerService
           .getSticker()
           .tokenInfo(tokenId);
+
+        let curtokenNum = await this.nftContractControllerService
+        .getSticker()
+        .balanceOf(tokenId);
+
         let price = '';
         let tokenNum = tokenInfo[2];
         let tokenUri = tokenInfo[3];
@@ -1781,6 +1772,7 @@ export class ProfilePage implements OnInit {
           cIndex,
           accAddress,
           createTime,
+          curtokenNum
         );
       }
     }
@@ -1796,6 +1788,7 @@ export class ProfilePage implements OnInit {
     cIndex: any,
     createAddress: any,
     createTime: any,
+    curtokenNum: any
   ) {
     feedsUri = feedsUri.replace('feeds:json:', '');
     this.ipfsService
@@ -1819,6 +1812,7 @@ export class ProfilePage implements OnInit {
           type: type,
           royalties: royalties,
           quantity: quantity,
+          curQuantity: curtokenNum,
           thumbnail: thumbnail,
           createTime: createTime * 1000,
           moreMenuType: 'created',
@@ -1883,6 +1877,7 @@ export class ProfilePage implements OnInit {
         let tokenId = sellerOrder[3];
         let saleOrderId = sellerOrder[0];
         let price = sellerOrder[5];
+        let curtokenNum = sellerOrder[4];
         let tokenInfo = await this.nftContractControllerService
           .getSticker()
           .tokenInfo(tokenId);
@@ -1913,10 +1908,11 @@ export class ProfilePage implements OnInit {
               type: type,
               royalties: royalties,
               quantity: quantity,
+              curQuantity: curtokenNum,
               thumbnail: thumbnail,
               sellerAddr: sellerAddr,
               createTime: createTime * 1000,
-              moreMenuType: 'onSale',
+              moreMenuType: 'onSale'
             };
             //this.onSaleList.splice(index,1,item);
             let nftIndex = parseInt(nftCreatedCount) + index;
@@ -2040,5 +2036,52 @@ export class ProfilePage implements OnInit {
       imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
     }
     return imgUri;
+  }
+
+ async handleCreate(tokenId:any,createAddr:any,assItem:any,sellQuantity:any){
+    let quantity = await this.nftContractControllerService
+          .getSticker()
+          .balanceOf(tokenId);
+          let list = this.nftPersistenceHelper.getCollectiblesList(createAddr);
+          let cpList = this.nftPersistenceHelper.getPasarList();
+          let cpItem = _.cloneDeep(assItem);
+          if(parseInt(quantity)<=0){
+
+            list = _.filter(list, item => {
+              return item.tokenId != tokenId && item.moreMenuType != "created";
+            });
+
+            cpItem["curQuantity"] = sellQuantity;
+
+            list.push(cpItem);
+            Logger.log(TAG, 'Update list', list);
+            this.collectiblesList = list;
+            this.ownNftSum = this.collectiblesList.length;
+            this.nftPersistenceHelper.setCollectiblesMap(createAddr, list);
+
+            cpList.push(cpItem);
+            this.nftPersistenceHelper.setPasarList(cpList);
+          }else{
+
+            let index = _.findIndex(list, (item:any) => {
+              return item.tokenId === tokenId && item.moreMenuType === "created";
+            });
+            let createItem = _.cloneDeep(assItem);
+            createItem['moreMenuType'] = "created";
+            createItem["fixedAmount"] = null;
+            createItem["curQuantity"] = quantity;
+            list[index] = createItem;
+
+            cpItem["curQuantity"] = sellQuantity;
+            list.push(cpItem);
+
+            Logger.log(TAG, 'Update list', list);
+            this.collectiblesList = list;
+            this.ownNftSum = this.collectiblesList.length;
+            this.nftPersistenceHelper.setCollectiblesMap(createAddr, list);
+
+            cpList.push(cpItem);
+            this.nftPersistenceHelper.setPasarList(cpList);
+          }
   }
 }

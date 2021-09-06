@@ -637,8 +637,9 @@ export const zh = {
     nftExpirationDateDes: '选择截止日期',
     priceErrorMsg: '出售价格不能为负值',
     priceErrorMsg1: '新出售价格不能与已出售价格一样',
-    royaltiesErrorMsg: '版本税必须低于15%（大于0%）',
-    quantityErrorMsg: '数量值必须大于0'
+    royaltiesErrorMsg: '版本税必须低于15%（大于0%）(整数)',
+    quantityErrorMsg: '数量值必须大于0(整数)',
+    quantityErrorMsg1: '数量值不能超过最大数值(整数)'
   },
   AssetdetailsPage: {
     title: '收藏品明细',

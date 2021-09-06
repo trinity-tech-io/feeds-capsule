@@ -1967,6 +1967,7 @@ export class HomePage implements OnInit {
           type: type,
           royalties: royalties,
           quantity: quantity,
+          curQuantity:quantity,
           thumbnail: thumbnail,
           sellerAddr: sellerAddr,
           createTime: createTime * 1000,

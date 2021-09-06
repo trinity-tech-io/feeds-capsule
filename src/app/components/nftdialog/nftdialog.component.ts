@@ -65,8 +65,8 @@ export class NftdialogComponent implements OnInit {
     if (price != null) {
       this.amount = this.nftContractControllerService.transFromWei(price);
     }
-    this.quantity = this.assItem.quantity;
-    this.Maxquantity = this.assItem.quantity;
+    this.quantity = this.assItem['curQuantity'] || this.assItem.quantity;
+    this.Maxquantity = this.assItem['curQuantity'] || this.assItem.quantity;
     this.saleOrderId = this.assItem.saleOrderId || '';
     this.hanldeImg();
   }
@@ -131,17 +131,17 @@ export class NftdialogComponent implements OnInit {
     }
     this.quantity = this.quantity || '';
     if (this.quantity === '') {
-      this.native.toastWarn('input quantity');
+      this.native.toastWarn('MintnftPage.nftQuantityPlaceholder');
       return;
     }
     let regNumber = /^\+?[1-9][0-9]*$/;
     if (regNumber.test(this.quantity) == false) {
-      this.native.toast_trans('input quantity');
+      this.native.toast_trans('MintnftPage.quantityErrorMsg');
       return;
     }
 
     if (parseInt(this.quantity) > parseInt(this.Maxquantity)) {
-      this.native.toast_trans('input quantity');
+      this.native.toast_trans('MintnftPage.quantityErrorMsg1');
       return;
     }
     let tokenId = this.assItem.tokenId;
@@ -297,10 +297,10 @@ async handleSaleList() {
         sAssItem['saleOrderId'] = orderId;
         sAssItem['createTime'] = createTime * 1000;
         sAssItem['moreMenuType'] = 'onSale';
-        let obj = { type: type, assItem: sAssItem };
+        let obj = { type: type, assItem: sAssItem,sellQuantity:this.quantity};
         this.events.publish(FeedsEvent.PublishType.nftUpdateList, obj);
         await this.getSetChannel(tokenId);
-
+        this.native.toast("CreatenewpostPage.tipMsg1");
         resolve(obj);
       } catch (err) {
         Logger.error(err);

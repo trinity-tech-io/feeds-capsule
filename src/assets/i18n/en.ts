@@ -652,8 +652,9 @@ export const en = {
     nftExpirationDateDes: 'Choose expiration date',
     priceErrorMsg: 'The price to sell should be higher than 0',
     priceErrorMsg1: 'The new sale price should be different to the existing sale price',
-    royaltiesErrorMsg: 'Royalties value should be between 0 and 15%',
-    quantityErrorMsg1: 'Quantity number should not be a negative value'
+    royaltiesErrorMsg: 'Royalties value should be between 0 and 15%(integer)',
+    quantityErrorMsg: 'Quantity value must be greater than 0 (integer)',
+    quantityErrorMsg1: 'The quantity value cannot exceed the maximum value (integer)',
   },
   AssetdetailsPage: {
     title: 'Collectible Details',
