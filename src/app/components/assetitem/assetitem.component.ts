@@ -14,6 +14,7 @@ export class AssetitemComponent implements OnInit {
   @Output() clickAssetItem = new EventEmitter();
   @Output() clickMore = new EventEmitter();
   public styleObj: any = { width: '' };
+  public curQuantity:any = "";
   constructor(
     private nftContractControllerService: NFTContractControllerService,
     private viewHelper: ViewHelper,
@@ -23,6 +24,7 @@ export class AssetitemComponent implements OnInit {
 
   ngOnInit() {
     this.styleObj.width = (screen.width - 20 - 10) / 2 + 'px';
+    this.curQuantity = this.assetItem['curQuantity'] || this.assetItem['quantity'];
   }
 
   clickItem() {

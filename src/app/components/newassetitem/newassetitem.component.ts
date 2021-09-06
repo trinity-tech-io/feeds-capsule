@@ -16,6 +16,7 @@ export class NewassetitemComponent implements OnInit {
   @Output() clickAssetItem = new EventEmitter();
   @Output() clickMore = new EventEmitter();
   public styleObj: any = { width: '' };
+  public curQuantity:string = "";
   constructor(
     private translate: TranslateService,
     public theme: ThemeService,
@@ -25,6 +26,7 @@ export class NewassetitemComponent implements OnInit {
 
   ngOnInit() {
     this.styleObj.width = screen.width - 40 + 'px';
+    this.curQuantity = this.assetItem['curQuantity'] || this.assetItem['quantity'];
   }
 
   clickItem() {

@@ -811,6 +811,18 @@ export class MintnftPage implements OnInit {
   }
   }
 
+  handleQuantity(events:any){
+    let quantity = events.target.value || '';
+    if(quantity == ""){
+      return true;
+    }
+    let regNumber = /^\+?[1-9][0-9]*$/;
+    if (regNumber.test(quantity) == false) {
+      this.native.toastWarn('MintnftPage.quantityErrorMsg');
+      return false;
+    }
+  }
+
   async handleCace(type:string,tokenId:any,orderIndex?: number){
     let tokenInfo = await this.nftContractControllerService
     .getSticker()
