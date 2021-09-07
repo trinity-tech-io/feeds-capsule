@@ -53,6 +53,7 @@
     "angularx-qrcode": "11.0.0",
     "cordova-android": "9.0.0",
     "cordova-ios": "6.2.0",
+    "cordova-plugin-exit": "^1.0.3",
     "cordova-plugin-inappbrowser": "^5.0.0",
     "core-js": "^2.5.4",
     "hammerjs": "^2.0.8",
@@ -156,7 +157,8 @@
       "cordova-plugin-video-editor": {},
       "cordova-plugin-theme-detection": {},
       "cordova-plugin-add-swift-support": {},
-      "cordova-plugin-inappbrowser": {}
+      "cordova-plugin-inappbrowser": {},
+      "cordova-plugin-exit": {}
     },
     "platforms": [
       "android",
