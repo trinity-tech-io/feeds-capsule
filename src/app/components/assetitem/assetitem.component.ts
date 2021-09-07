@@ -14,7 +14,6 @@ export class AssetitemComponent implements OnInit {
   @Output() clickAssetItem = new EventEmitter();
   @Output() clickMore = new EventEmitter();
   public styleObj: any = { width: '' };
-  public curQuantity:any = "";
   constructor(
     private nftContractControllerService: NFTContractControllerService,
     private viewHelper: ViewHelper,
@@ -24,7 +23,6 @@ export class AssetitemComponent implements OnInit {
 
   ngOnInit() {
     this.styleObj.width = (screen.width - 20 - 10) / 2 + 'px';
-    this.curQuantity = this.assetItem['curQuantity'] || this.assetItem['quantity'];
   }
 
   clickItem() {
@@ -57,5 +55,11 @@ export class AssetitemComponent implements OnInit {
       'CollectionsPage.putOnSale',
       'created',
     );
+  }
+
+  handleCurQuantity(assetItem:any){
+    //if(assetItem != null){
+        return  assetItem['curQuantity'] || assetItem['quantity'];
+    //}
   }
 }

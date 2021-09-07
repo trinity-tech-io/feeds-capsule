@@ -16,7 +16,6 @@ export class NewassetitemComponent implements OnInit {
   @Output() clickAssetItem = new EventEmitter();
   @Output() clickMore = new EventEmitter();
   public styleObj: any = { width: '' };
-  public curQuantity:string = "";
   constructor(
     private translate: TranslateService,
     public theme: ThemeService,
@@ -26,7 +25,6 @@ export class NewassetitemComponent implements OnInit {
 
   ngOnInit() {
     this.styleObj.width = screen.width - 40 + 'px';
-    this.curQuantity = this.assetItem['curQuantity'] || this.assetItem['quantity'];
   }
 
   clickItem() {
@@ -47,7 +45,7 @@ export class NewassetitemComponent implements OnInit {
   }
 
   hanldePrice(price: string) {
-    if (price != '')
+    if (price != '' || price !=null)
       return this.nftContractControllerService.transFromWei(price);
 
     return price;
@@ -83,5 +81,11 @@ export class NewassetitemComponent implements OnInit {
       return obj.content + this.translate.instant('HomePage.daysAgo');
     }
     return obj.content;
+  }
+
+  handleCurQuantity(assetItem:any){
+    //if(assetItem != null){
+        return  assetItem['curQuantity'] || assetItem['quantity'];
+    //}
   }
 }

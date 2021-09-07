@@ -85,7 +85,7 @@ export class AssetdetailsPage implements OnInit {
       this.owner = queryParams.name || '';
       this.name = queryParams.name || '';
       this.description = queryParams.description || '';
-      this.quantity = queryParams.quantity || '1';
+      this.quantity = queryParams.curQuantity || queryParams.quantity;
       this.tokenID = queryParams.tokenId || '';
       this.stickerContractAddress = this.nftContractControllerService
         .getSticker()
@@ -156,33 +156,6 @@ export class AssetdetailsPage implements OnInit {
       this.price = nftPrice;
     });
 
-    this.events.subscribe(FeedsEvent.PublishType.nftCancelOrder, assetItem => {
-      let saleOrderId = assetItem.saleOrderId;
-      let sellerAddr = assetItem.sellerAddr;
-      //add OwnNftCollectiblesList
-      let createAddr = this.nftContractControllerService.getAccountAddress();
-      assetItem['fixedAmount'] = null;
-      assetItem['moreMenuType'] = 'created';
-      let clist = this.nftPersistenceHelper.getCollectiblesList(createAddr);
-      clist = _.filter(clist, item => {
-        return item.saleOrderId != saleOrderId;
-      });
-      clist.push(assetItem);
-
-      this.nftPersistenceHelper.setCollectiblesMap(createAddr, clist);
-
-      //remove pasr
-      let pList = this.nftPersistenceHelper.getPasarList();
-      pList = _.filter(pList, item => {
-        return !(
-          item.saleOrderId === saleOrderId && item.sellerAddr === sellerAddr
-        );
-      });
-
-      this.nftPersistenceHelper.setPasarList(pList);
-      this.native.pop();
-    });
-
     this.events.subscribe(FeedsEvent.PublishType.nftUpdateList, obj => {
       let type = obj['type'];
       let sellQuantity = obj["sellQuantity"] || "0";
@@ -205,7 +178,6 @@ export class AssetdetailsPage implements OnInit {
   removeEvent() {
     this.events.unsubscribe(FeedsEvent.PublishType.startLoading);
     this.events.unsubscribe(FeedsEvent.PublishType.endLoading);
-    this.events.unsubscribe(FeedsEvent.PublishType.nftCancelOrder);
     this.events.unsubscribe(FeedsEvent.PublishType.nftUpdateList);
     this.events.unsubscribe(FeedsEvent.PublishType.nftUpdatePrice);
     this.events.publish(FeedsEvent.PublishType.addProflieEvent);

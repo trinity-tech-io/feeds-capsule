@@ -354,17 +354,13 @@ export class HomePage implements OnInit {
    this.isLoading = false;
    });
 
-    this.events.subscribe(FeedsEvent.PublishType.nftCancelOrder, assetItem => {
+    this.events.subscribe(FeedsEvent.PublishType.nftCancelOrder,async assetItem => {
+
       let saleOrderId = assetItem.saleOrderId;
       let sellerAddr = assetItem.sellerAddr;
       let tokenId = assetItem.tokenId;
-      this.pasarList = _.filter(this.pasarList, item => {
-        return !(
-          item.saleOrderId === saleOrderId && item.sellerAddr === sellerAddr
-        );
-      });
-      this.nftPersistenceHelper.setPasarList(this.pasarList);
-
+      let curTokenNum = await this.nftContractControllerService
+                            .getSticker().balanceOf(tokenId);
       let createAddr = this.nftContractControllerService.getAccountAddress();
       if (sellerAddr === createAddr) {
         //add created
@@ -373,11 +369,7 @@ export class HomePage implements OnInit {
         //add OwnNftCollectiblesList
         let createAddr = this.nftContractControllerService.getAccountAddress();
         let clist = this.nftPersistenceHelper.getCollectiblesList(createAddr);
-        clist = _.filter(clist, item => {
-          return item.tokenId != tokenId;
-        });
-        clist.push(assetItem);
-        this.nftPersistenceHelper.setCollectiblesMap(createAddr, clist);
+        this.handleCancelOrder(tokenId,curTokenNum,assetItem,createAddr,saleOrderId,clist,sellerAddr);
       }
     });
     this.events.subscribe(FeedsEvent.PublishType.updateTitle, () => {
@@ -2058,4 +2050,40 @@ export class HomePage implements OnInit {
       this.refreshEvent = null
     }
   }
+
+  async handleCancelOrder(tokenId:any,curTokenNum:any,assetItem:any,createAddr:any,saleOrderId:any,clist:any,sellerAddr:any){
+    //add OwnNftCollectiblesList
+    if(parseInt(curTokenNum) === 0){
+
+      clist = _.filter(clist, item => {
+        return item.tokenId != tokenId;
+      });
+
+      clist.push(assetItem);
+      this.nftPersistenceHelper.setCollectiblesMap(createAddr, clist);
+
+    }else{
+
+      clist = _.filter(clist, item => {
+        return item.saleOrderId != saleOrderId;
+      });
+
+      let index = _.findIndex(clist, (item:any) => {
+        return item.tokenId === tokenId && item.moreMenuType === "created";
+      });
+
+      assetItem.curQuantity = (parseInt(curTokenNum) + parseInt(assetItem.curQuantity)).toString();
+      clist[index] = _.cloneDeep(assetItem);
+      this.nftPersistenceHelper.setCollectiblesMap(createAddr, clist);
+    }
+
+    let pList = this.nftPersistenceHelper.getPasarList();
+    pList = _.filter(pList, item => {
+      return !(
+        item.saleOrderId === saleOrderId && item.sellerAddr === sellerAddr
+      );
+    });
+    this.pasarList = pList;
+    this.nftPersistenceHelper.setPasarList(pList);
+ }
 }
