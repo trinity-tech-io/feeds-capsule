@@ -1,8 +1,8 @@
 {
   "name": "Feeds",
-  "version": "0.0.1",
-  "author": "Ionic Framework",
-  "homepage": "https://ionicframework.com/",
+  "version": "2.0.2",
+  "author": "trinity-feeds",
+  "homepage": "https://trinity-feeds.app",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
