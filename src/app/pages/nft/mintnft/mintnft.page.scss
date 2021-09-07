@@ -21,6 +21,11 @@
       font-style: normal;
     }
 
+    ion-item{
+      --background-activated: #fff;
+      --background-focused: #fff;
+    }
+
     ion-radio{
         --color-checked:#7624fe;
         display:inline-block;
