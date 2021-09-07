@@ -15,7 +15,7 @@
     </div>
     <div class="des" [class.black]="!theme.darkMode" [class.white]="theme.darkMode">{{assetItem['name']}}</div>
     <div class="des1" [class.black]="!theme.darkMode" [class.white]="theme.darkMode">{{assetItem['description']}}</div>
-    <div class="des2">{{"MintnftPage.nftQuantity"|translate}}: {{curQuantity}}/{{assetItem['quantity']}}</div>
+    <div class="des2">{{"MintnftPage.nftQuantity"|translate}}: {{handleCurQuantity(assetItem)}}/{{assetItem['quantity']}}</div>
     <div class="like" *ngIf="assetItem['fixedAmount'] != null">
       <span class="price">{{hanldePrice(assetItem['fixedAmount'])}} ELA/ETHSC</span>
     </div>

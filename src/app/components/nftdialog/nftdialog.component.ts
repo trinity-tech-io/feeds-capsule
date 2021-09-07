@@ -86,6 +86,22 @@ export class NftdialogComponent implements OnInit {
   }
 
   async handleBurnNfts(){
+
+    this.quantity = this.quantity || '';
+    if (this.quantity === '') {
+      this.native.toastWarn('MintnftPage.nftQuantityPlaceholder');
+      return;
+    }
+    let regNumber = /^\+?[1-9][0-9]*$/;
+    if (regNumber.test(this.quantity) == false) {
+      this.native.toast_trans('MintnftPage.quantityErrorMsg');
+      return;
+    }
+
+    if (parseInt(this.quantity) > parseInt(this.Maxquantity)) {
+      this.native.toast_trans('MintnftPage.quantityErrorMsg1');
+      return;
+    }
     await this.popover.dismiss();
     this.events.publish(FeedsEvent.PublishType.startLoading,{des:"common.burningNFTSDesc",title:"common.waitMoment",curNum:"1",maxNum:"1",type:"changePrice"});
     let sId =setTimeout(()=>{
@@ -96,14 +112,14 @@ export class NftdialogComponent implements OnInit {
     }, Config.WAIT_TIME_BURN_NFTS);
 
     let tokenId = this.assItem["tokenId"];
-    let tokenNum = this.assItem["quantity"];
+    let tokenNum = this.quantity.toString();
 
     this.nftContractControllerService.getSticker()
     .burnNfs(tokenId,tokenNum)
     .then(()=>{
       this.nftContractControllerService.getSticker().cancelBurnProcess();
       this.events.publish(FeedsEvent.PublishType.endLoading);
-      this.events.publish(FeedsEvent.PublishType.nftUpdateList,{type:"burn",assItem:this.assItem});
+      this.events.publish(FeedsEvent.PublishType.nftUpdateList,{type:"burn",assItem:this.assItem,burnNum:tokenNum});
       clearTimeout(sId);
       this.native.toast("common.burnNFTSSuccess");
     }).catch(()=>{
@@ -300,7 +316,7 @@ async handleSaleList() {
         let obj = { type: type, assItem: sAssItem,sellQuantity:this.quantity};
         this.events.publish(FeedsEvent.PublishType.nftUpdateList, obj);
         await this.getSetChannel(tokenId);
-        this.native.toast("CreatenewpostPage.tipMsg1");
+        //this.native.toast("CreatenewpostPage.tipMsg1");
         resolve(obj);
       } catch (err) {
         Logger.error(err);

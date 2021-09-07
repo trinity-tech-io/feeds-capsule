@@ -29,7 +29,7 @@
         </div>
       </div>
       <div class="des1">{{assetItem['name']}}</div>
-      <div class="des2">{{"MintnftPage.nftQuantity"|translate}} : {{curQuantity}}/{{curQuantity}}</div>
+      <div class="des2">{{"MintnftPage.nftQuantity"|translate}} : {{handleCurQuantity(assetItem)}}/{{handleCurQuantity(assetItem)}}</div>
       <div class="like" *ngIf="assetItem['fixedAmount']!=''">
         <span>{{hanldePrice(assetItem['fixedAmount'])}} ELA/ETHSC</span>
       </div>

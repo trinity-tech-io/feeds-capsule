@@ -80,7 +80,7 @@ export class BidPage implements OnInit {
       this.seller = queryParams.sellerAddr || '';
       this.name = queryParams.name || '';
       this.description = queryParams.description || '';
-      this.quantity = queryParams.quantity || '1';
+      this.quantity = queryParams.curQuantity || queryParams.quantity;
       this.tokenID = queryParams.tokenId || '';
       this.stickerContractAddress = this.nftContractControllerService
         .getSticker()
@@ -284,16 +284,30 @@ export class BidPage implements OnInit {
     let createAddress = this.nftContractControllerService.getAccountAddress();
 
     let olist = this.nftPersistenceHelper.getCollectiblesList(createAddress);
+
     olist = _.filter(olist, item => {
       return item.saleOrderId != this.saleOrderId;
     });
 
-    let cItem: any = _.cloneDeep(this.curAssetItem);
-    cItem.fixedAmount = null;
-    cItem['moreMenuType'] = 'created';
-    olist.push(cItem);
 
+
+    let index = _.findIndex(olist,(item:any)=>{
+          return item.tokenId === this.tokenID && item.moreMenuType === "created";
+    });
+
+    if(index === -1){
+      let cItem: any = _.cloneDeep(this.curAssetItem);
+      cItem.fixedAmount = null;
+      cItem['moreMenuType'] = 'created';
+      olist.push(cItem);
+      this.nftPersistenceHelper.setCollectiblesMap(createAddress, olist);
+      return;
+    }
+    let totalNum = (parseInt(olist[index].curQuantity) + parseInt(this.quantity)).toString();
+    olist[index].quantity = totalNum;
+    olist[index].curQuantity = totalNum;
     this.nftPersistenceHelper.setCollectiblesMap(createAddress, olist);
+
   }
 
   buyFail() {
