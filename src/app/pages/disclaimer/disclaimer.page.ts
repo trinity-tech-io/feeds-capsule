@@ -43,7 +43,10 @@ export class DisclaimerPage implements OnInit {
 
   // deny the disclaimer
   deny() {
-    navigator['app'].exitApp();
+    // navigator['app'].exitApp();
+    if (window.cordova && window.cordova.plugins) {
+      (window.cordova.plugins as any).exit();
+    }
   }
 
   // accept the disclaimer
