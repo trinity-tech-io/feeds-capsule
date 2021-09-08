@@ -12,6 +12,7 @@ import { Events } from 'src/app/services/events.service';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
+import { PopoverController} from '@ionic/angular';
 
 type ProfileDetail = {
   type: string;
@@ -67,6 +68,7 @@ export class ProfiledetailPage implements OnInit {
     private titleBarService: TitleBarService,
     private viewHelper: ViewHelper,
     private nftContractControllerService: NFTContractControllerService,
+    private popoverController:PopoverController
   ) {}
 
   ngOnInit() {}
@@ -144,6 +146,12 @@ export class ProfiledetailPage implements OnInit {
 
     this.initData();
 
+    this.events.subscribe(FeedsEvent.PublishType.clickDialog,(dialogData:any)=>{
+         let dialogName = dialogData.dialogName;
+         let dialogbutton = dialogData.clickButton;
+         this.handleDialog(dialogName,dialogbutton);
+    });
+
     this.events.subscribe(FeedsEvent.PublishType.connectionChanged, status => {
       this.zone.run(() => {
         this.connectionStatus = status;
@@ -182,6 +190,7 @@ export class ProfiledetailPage implements OnInit {
   ionViewWillUnload() {}
 
   ionViewWillLeave() {
+    this.events.unsubscribe(FeedsEvent.PublishType.clickDialog);
     this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
     this.events.unsubscribe(FeedsEvent.PublishType.serverConnectionChanged);
     this.events.unsubscribe(FeedsEvent.PublishType.removeFeedSourceFinish);
@@ -420,8 +429,47 @@ export class ProfiledetailPage implements OnInit {
   }
 
   upgradeToPublisherAccount(){
-    //this.viewHelper.showGuideDialog();
-    //this.viewHelper.showPublisherDialog()
-      this.native.navigateForward(['bindservice/learnpublisheraccount'], '');
+    this.viewHelper.showPublisherDialog()
+  }
+
+  handleDialog(dialogName: string,dialogbutton: string) {
+      switch(dialogName){
+        case "publisherAccount":
+            this.publisherAccount(dialogbutton)
+        break;
+        case "guide":
+          this.guide(dialogbutton);
+        break;
+      }
+  }
+
+  publisherAccount(dialogbutton: string) {
+    switch(dialogbutton){
+      case "createNewPublisherAccount":
+        this.feedService.setBindPublisherAccountType('new');
+        this.viewHelper.showGuideDialog();
+       break;
+      case "bindExistingPublisherAccount":
+        this.feedService.setBindPublisherAccountType('exit');
+        this.viewHelper.showGuideDialog();
+      break;
+    }
+  }
+
+ async guide(dialogbutton: string){
+    switch(dialogbutton){
+      case "guidemac":
+         await this.popoverController.dismiss();
+         this.native.navigateForward(["guidemac"],"");
+       break;
+      case "guideubuntu":
+         await this.popoverController.dismiss();
+         this.native.navigateForward(["guideubuntu"],"");
+      break;
+      case "skip":
+        await this.popoverController.dismiss();
+        this.native.navigateForward(['bindservice/scanqrcode'],"");
+      break;
+    }
   }
 }

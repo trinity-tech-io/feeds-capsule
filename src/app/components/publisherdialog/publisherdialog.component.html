@@ -34,18 +34,18 @@
         {{'PublisherdialogComponent.des8' | translate}}
     </div>
 
-    <div class="publisherDes2">
+    <div class="publisherDes2" (click)="learnMore()">
         {{'PublisherdialogComponent.des9' | translate}}
     </div>
 
-    <ion-row class="btns-row" style="width: 90%; margin: 0 auto;margin-top: 20px;">
+    <ion-row class="btns-row" style="width: 90%; margin: 0 auto;margin-top: 20px;" (click)="createNewPublisherAccount()">
         <ion-col class="btn confirm ion-activatable ripple" size="12">
             <ion-label>{{ "PublisherdialogComponent.createNewPublisherAccount" | translate }}</ion-label>
             <ion-ripple-effect></ion-ripple-effect>
         </ion-col>
     </ion-row>
 
-    <ion-row class="btns-row"  style="width: 90%; margin: 0 auto;margin-top: 20px;">
+    <ion-row class="btns-row"  style="width: 90%; margin: 0 auto;margin-top: 20px;" (click)="bindExistingPublisherAccount()">
         <ion-col class="btn confirm ion-activatable ripple" size="12">
             <ion-label>{{ "PublisherdialogComponent.bindExistingPublisherAccount" | translate }}</ion-label>
             <ion-ripple-effect></ion-ripple-effect>
