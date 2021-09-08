@@ -338,6 +338,13 @@ export class HomePage implements OnInit {
   }
 
   addCommonEvents() {
+
+    this.events.subscribe(FeedsEvent.PublishType.clickDialog,(dialogData:any)=>{
+      let dialogName = dialogData.dialogName;
+      let dialogbutton = dialogData.clickButton;
+      this.handleDialog(dialogName,dialogbutton);
+    });
+
     this.events.subscribe(FeedsEvent.PublishType.startLoading,(obj)=>{
       let title = obj["title"];
       let des = obj["des"];
@@ -594,6 +601,7 @@ export class HomePage implements OnInit {
       this.feedService.closeSession(this.curNodeId);
     }
     this.isLoading = false;
+    this.events.unsubscribe(FeedsEvent.PublishType.clickDialog);
     this.events.unsubscribe(FeedsEvent.PublishType.startLoading);
     this.events.unsubscribe(FeedsEvent.PublishType.endLoading);
     this.events.unsubscribe(FeedsEvent.PublishType.nftCancelOrder);
@@ -1788,7 +1796,8 @@ export class HomePage implements OnInit {
 
     let bindingServer = this.feedService.getBindingServer();
     if (bindingServer == null || bindingServer == undefined) {
-      this.native.navigateForward(['bindservice/learnpublisheraccount'], '');
+        //this.native.navigateForward(['bindservice/learnpublisheraccount'], '');
+        this.viewHelper.showPublisherDialog();
       return;
     }
 
@@ -2086,4 +2095,46 @@ export class HomePage implements OnInit {
     this.pasarList = pList;
     this.nftPersistenceHelper.setPasarList(pList);
  }
+
+ handleDialog(dialogName: string,dialogbutton: string) {
+  switch(dialogName){
+    case "publisherAccount":
+        this.publisherAccount(dialogbutton)
+    break;
+    case "guide":
+      this.guide(dialogbutton);
+    break;
+  }
+}
+
+publisherAccount(dialogbutton: string) {
+switch(dialogbutton){
+  case "createNewPublisherAccount":
+    this.feedService.setBindPublisherAccountType('new');
+    this.viewHelper.showGuideDialog();
+   break;
+  case "bindExistingPublisherAccount":
+    this.feedService.setBindPublisherAccountType('exit');
+    this.viewHelper.showGuideDialog();
+  break;
+}
+}
+
+async guide(dialogbutton: string){
+switch(dialogbutton){
+  case "guidemac":
+     await this.popoverController.dismiss();
+     this.native.navigateForward(["guidemac"],"");
+   break;
+  case "guideubuntu":
+     await this.popoverController.dismiss();
+     this.native.navigateForward(["guideubuntu"],"");
+  break;
+  case "skip":
+    await this.popoverController.dismiss();
+    this.native.navigateForward(['bindservice/scanqrcode'],"");
+  break;
+}
+}
+
 }

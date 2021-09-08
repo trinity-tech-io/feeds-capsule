@@ -1,5 +1,5 @@
 import { Component, NgZone, ViewChild } from '@angular/core';
-import { ActionSheetController } from '@ionic/angular';
+import { ActionSheetController, PopoverController } from '@ionic/angular';
 import { Events } from 'src/app/services/events.service';
 import { FeedService, Avatar } from 'src/app/services/FeedService';
 import { ThemeService } from 'src/app/services/theme.service';
@@ -43,12 +43,21 @@ export class NotificationPage {
     private titleBarService: TitleBarService,
     private actionSheetController: ActionSheetController,
     private storageService: StorageService,
+    public popoverController: PopoverController
+
   ) {
   }
 
   ngOnInit(): void {}
 
   addEvent() {
+
+    this.events.subscribe(FeedsEvent.PublishType.clickDialog,(dialogData:any)=>{
+      let dialogName = dialogData.dialogName;
+      let dialogbutton = dialogData.clickButton;
+      this.handleDialog(dialogName,dialogbutton);
+    });
+
     this.events.subscribe(FeedsEvent.PublishType.updateTitle, () => {
       this.initTitleBar();
       if (this.notificationMenu != null) {
@@ -65,6 +74,7 @@ export class NotificationPage {
 
   removeEvent() {
     this.isAddNotification = false;
+    this.events.unsubscribe(FeedsEvent.PublishType.clickDialog);
     this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
     this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
   }
@@ -317,7 +327,7 @@ export class NotificationPage {
 
     let bindingServer = this.feedService.getBindingServer();
     if (bindingServer == null || bindingServer == undefined) {
-      this.native.navigateForward(['bindservice/learnpublisheraccount'], '');
+      this.viewHelper.showPublisherDialog();
       return;
     }
 
@@ -357,5 +367,46 @@ export class NotificationPage {
 
   checkServerStatus(nodeId: string) {
     return this.feedService.getServerStatusFromId(nodeId);
+  }
+
+  handleDialog(dialogName: string,dialogbutton: string) {
+    switch(dialogName){
+      case "publisherAccount":
+          this.publisherAccount(dialogbutton)
+      break;
+      case "guide":
+        this.guide(dialogbutton);
+      break;
+    }
+  }
+
+  publisherAccount(dialogbutton: string) {
+  switch(dialogbutton){
+    case "createNewPublisherAccount":
+      this.feedService.setBindPublisherAccountType('new');
+      this.viewHelper.showGuideDialog();
+     break;
+    case "bindExistingPublisherAccount":
+      this.feedService.setBindPublisherAccountType('exit');
+      this.viewHelper.showGuideDialog();
+    break;
+  }
+  }
+
+  async guide(dialogbutton: string){
+  switch(dialogbutton){
+    case "guidemac":
+       await this.popoverController.dismiss();
+       this.native.navigateForward(["guidemac"],"");
+     break;
+    case "guideubuntu":
+       await this.popoverController.dismiss();
+       this.native.navigateForward(["guideubuntu"],"");
+    break;
+    case "skip":
+      await this.popoverController.dismiss();
+      this.native.navigateForward(['bindservice/scanqrcode'],"");
+    break;
+  }
   }
 }
