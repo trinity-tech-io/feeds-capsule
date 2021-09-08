@@ -20,6 +20,7 @@ import { Config } from './services/config';
 import { Logger, LogLevel } from './services/logger';
 import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
 import { async } from 'rxjs/internal/scheduler/async';
+import { IntentService } from './services/IntentService';
 // enum LogLevel {
 //   NONE,
 //   ERROR,
@@ -60,7 +61,9 @@ export class MyApp {
     private walletConnectControllerService: WalletConnectControllerService,
     private dataHelper: DataHelper,
     private globalService: GlobalService,
-    private nftContractControllerService: NFTContractControllerService
+    private nftContractControllerService: NFTContractControllerService,
+    private intentService: IntentService,
+
   ) {
     this.initializeApp();
     this.initProfileData();
@@ -123,6 +126,8 @@ export class MyApp {
         );
         this.initDisclaimer();
         this.initConnector();
+      }).then(async () => {
+        await this.intentService.listen();
     });
   }
 

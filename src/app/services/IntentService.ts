@@ -13,6 +13,13 @@ export class IntentService {
     return this.scanService.scanBarcode();
   }
 
+  listen() {
+    intentManager.addIntentListener((receivedIntent) => {
+      Logger.log("Intents", "Intent received, now dispatching to listeners", receivedIntent);
+      // this.intentListener.next(receivedIntent);
+    });
+  }
+
   share(title: string, content: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
       let params = {
