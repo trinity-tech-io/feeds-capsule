@@ -771,13 +771,15 @@ export const en = {
     upgradeto: "Upgrade to",
     publisherAccount: "Publisher Account",
     step1: "Step 1",
-    des: "DownLoad Feeds Service",
+    des: "Download Feeds Service",
     des1: "software/program from",
     step2: "Step 2",
     des2: "Choose your preferred platform",
     des3: "Windows, Mac, Raspberry Pi or Linux",
     installationGuide: "Installation Guide",
-    skip: "Skip"
+    skip: "Skip",
+    des4: "windows/Mac",
+    des5: "Raspberry Pi/Linux Ubuntu"
   },
   GuidemacPage: {
     title: "Installation Guide",

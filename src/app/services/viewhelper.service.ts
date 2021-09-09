@@ -172,13 +172,13 @@ export class ViewHelper {
     return await popover.present();
   }
 
-  async showGuideDialog(){
+  async showGuideDialog(pageName?:string){
     let popover = await this.popoverController.create({
       mode: 'ios',
       cssClass: 'PaypromptComponent',
       component: GuidedialogComponent,
       componentProps: {
-
+        pageName:pageName
       },
     });
     popover.onWillDismiss().then(() => {
@@ -188,14 +188,14 @@ export class ViewHelper {
     return await popover.present();
   }
 
-  async showPublisherDialog(){
+  async showPublisherDialog(pageName?:string){
 
     let popover = await this.popoverController.create({
       mode: 'ios',
       cssClass: 'genericPopup',
       component: PublisherdialogComponent,
       componentProps: {
-
+        pageName:pageName
       },
     });
     popover.onWillDismiss().then(() => {

@@ -147,9 +147,12 @@ export class ProfiledetailPage implements OnInit {
     this.initData();
 
     this.events.subscribe(FeedsEvent.PublishType.clickDialog,(dialogData:any)=>{
+         let pageName = dialogData.pageName;
          let dialogName = dialogData.dialogName;
          let dialogbutton = dialogData.clickButton;
-         this.handleDialog(dialogName,dialogbutton);
+         if(pageName === "profiledetail"){
+          this.handleDialog(dialogName,dialogbutton,pageName);
+         }
     });
 
     this.events.subscribe(FeedsEvent.PublishType.connectionChanged, status => {
@@ -429,13 +432,13 @@ export class ProfiledetailPage implements OnInit {
   }
 
   upgradeToPublisherAccount(){
-    this.viewHelper.showPublisherDialog()
+    this.viewHelper.showPublisherDialog("profiledetail")
   }
 
-  handleDialog(dialogName: string,dialogbutton: string) {
+  handleDialog(dialogName: string,dialogbutton: string,pageName:string) {
       switch(dialogName){
         case "publisherAccount":
-            this.publisherAccount(dialogbutton)
+            this.publisherAccount(dialogbutton,pageName)
         break;
         case "guide":
           this.guide(dialogbutton);
@@ -443,31 +446,32 @@ export class ProfiledetailPage implements OnInit {
       }
   }
 
-  publisherAccount(dialogbutton: string) {
+  publisherAccount(dialogbutton: string,pageName: string) {
     switch(dialogbutton){
       case "createNewPublisherAccount":
         this.feedService.setBindPublisherAccountType('new');
-        this.viewHelper.showGuideDialog();
+        this.viewHelper.showGuideDialog(pageName);
        break;
       case "bindExistingPublisherAccount":
         this.feedService.setBindPublisherAccountType('exit');
-        this.viewHelper.showGuideDialog();
+        //this.viewHelper.showGuideDialog(pageName);
+        this.native.navigateForward(['bindservice/scanqrcode'],"");
       break;
     }
   }
 
- async guide(dialogbutton: string){
+ guide(dialogbutton: string){
     switch(dialogbutton){
       case "guidemac":
-         await this.popoverController.dismiss();
+         this.popoverController.dismiss();
          this.native.navigateForward(["guidemac"],"");
        break;
       case "guideubuntu":
-         await this.popoverController.dismiss();
+         this.popoverController.dismiss();
          this.native.navigateForward(["guideubuntu"],"");
       break;
       case "skip":
-        await this.popoverController.dismiss();
+        this.popoverController.dismiss();
         this.native.navigateForward(['bindservice/scanqrcode'],"");
       break;
     }
