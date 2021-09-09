@@ -96,6 +96,7 @@
     "cordova-plugin-ionic-webview": "^5.0.0",
     "cordova-plugin-media-capture": "^3.0.3",
     "cordova-plugin-network-information": "^2.0.2",
+    "cordova-plugin-photo-library": "file:plugin_src/cordova-plugin-photo-library",
     "cordova-plugin-screen-orientation": "^3.0.2",
     "cordova-plugin-splashscreen": "6.0.0",
     "cordova-plugin-statusbar": "^2.4.3",
@@ -157,7 +158,10 @@
       "cordova-plugin-theme-detection": {},
       "cordova-plugin-add-swift-support": {},
       "cordova-plugin-inappbrowser": {},
-      "cordova-plugin-exit": {}
+      "cordova-plugin-exit": {},
+      "cordova-plugin-photo-library": {
+        "PHOTO_LIBRARY_USAGE_DESCRIPTION": " "
+      }
     },
     "platforms": [
       "android",
