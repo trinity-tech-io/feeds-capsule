@@ -234,7 +234,9 @@ export class MintnftPage implements OnInit {
           this.loadingText = "common.checkingCollectibleResult";
         }
         //Finish
-        this.handleCace('created',tokenId);
+        if(!this.curPublishtoPasar){
+          this.handleCace('created',tokenId);
+        }
         //this.native.hideLoading();
         this.isLoading = false;
         clearTimeout(sid);
@@ -865,7 +867,7 @@ export class MintnftPage implements OnInit {
           createTime: createTime * 1000,
           moreMenuType: 'onSale',
         };
-
+        slist.push(item);
         let list = this.nftPersistenceHelper.getPasarList();
         list.push(item);
         this.nftPersistenceHelper.setPasarList(list);
