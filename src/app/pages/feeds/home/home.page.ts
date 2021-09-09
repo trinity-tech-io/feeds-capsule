@@ -2110,16 +2110,15 @@ export class HomePage implements OnInit {
   }
 }
 
-publisherAccount(dialogbutton: string,pageName: string) {
+async publisherAccount(dialogbutton: string,pageName: string) {
 switch(dialogbutton){
   case "createNewPublisherAccount":
     this.feedService.setBindPublisherAccountType('new');
-    this.viewHelper.showGuideDialog(pageName);
    break;
   case "bindExistingPublisherAccount":
     this.feedService.setBindPublisherAccountType('exit');
-    this.native.navigateForward(['bindservice/scanqrcode'],"");
-    //this.viewHelper.showGuideDialog();
+    await this.native.navigateForward(['bindservice/scanqrcode'],"");
+    await this.popoverController.dismiss();
   break;
 }
 }
@@ -2127,16 +2126,16 @@ switch(dialogbutton){
 async guide(dialogbutton: string){
 switch(dialogbutton){
   case "guidemac":
+     await this.native.navigateForward(["guidemac"],"");
      await this.popoverController.dismiss();
-     this.native.navigateForward(["guidemac"],"");
    break;
   case "guideubuntu":
+     await this.native.navigateForward(["guideubuntu"],"");
      await this.popoverController.dismiss();
-     this.native.navigateForward(["guideubuntu"],"");
   break;
   case "skip":
+    await this.native.navigateForward(['bindservice/scanqrcode'],"");
     await this.popoverController.dismiss();
-    this.native.navigateForward(['bindservice/scanqrcode'],"");
   break;
 }
 }

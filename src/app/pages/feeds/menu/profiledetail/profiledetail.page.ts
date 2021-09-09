@@ -446,33 +446,32 @@ export class ProfiledetailPage implements OnInit {
       }
   }
 
-  publisherAccount(dialogbutton: string,pageName: string) {
+ async publisherAccount(dialogbutton: string,pageName: string) {
     switch(dialogbutton){
       case "createNewPublisherAccount":
         this.feedService.setBindPublisherAccountType('new');
-        this.viewHelper.showGuideDialog(pageName);
        break;
       case "bindExistingPublisherAccount":
         this.feedService.setBindPublisherAccountType('exit');
-        //this.viewHelper.showGuideDialog(pageName);
-        this.native.navigateForward(['bindservice/scanqrcode'],"");
+        await this.native.navigateForward(['bindservice/scanqrcode'],"");
+        await this.popoverController.dismiss();
       break;
     }
   }
 
- guide(dialogbutton: string){
+async guide(dialogbutton: string){
     switch(dialogbutton){
       case "guidemac":
-         this.popoverController.dismiss();
-         this.native.navigateForward(["guidemac"],"");
+        await this.native.navigateForward(["guidemac"],"");
+        await this.popoverController.dismiss();
        break;
       case "guideubuntu":
-         this.popoverController.dismiss();
-         this.native.navigateForward(["guideubuntu"],"");
+        await this.native.navigateForward(["guideubuntu"],"");
+        await this.popoverController.dismiss();
       break;
       case "skip":
-        this.popoverController.dismiss();
-        this.native.navigateForward(['bindservice/scanqrcode'],"");
+        await this.native.navigateForward(['bindservice/scanqrcode'],"");
+        await this.popoverController.dismiss();
       break;
     }
   }

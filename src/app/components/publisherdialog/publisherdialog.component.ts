@@ -12,7 +12,8 @@ import { NavParams } from '@ionic/angular';
   styleUrls: ['./publisherdialog.component.scss'],
 })
 export class PublisherdialogComponent implements OnInit {
-  public pageName:string = "";
+  public pageName: string = "";
+  public isShow: boolean = true;
   constructor(
     public theme: ThemeService,
     private popoverController: PopoverController,
@@ -31,18 +32,17 @@ export class PublisherdialogComponent implements OnInit {
   }
 
   async learnMore(){
-    await this.popoverController.dismiss();
     this.feedService.setBindPublisherAccountType('new');
-    this.native.navigateForward(['bindservice/introduce'], '');
+    await this.native.navigateForward(['bindservice/introduce'], '');
+    await this.popoverController.dismiss();
   }
 
  async createNewPublisherAccount(){
-  await this.popoverController.dismiss();
+  this.isShow = false;
   this.events.publish(FeedsEvent.PublishType.clickDialog,{dialogName:"publisherAccount",clickButton:"createNewPublisherAccount",pageName:this.pageName});
   }
 
  async bindExistingPublisherAccount(){
-  await this.popoverController.dismiss();
   this.events.publish(FeedsEvent.PublishType.clickDialog,{dialogName:"publisherAccount",clickButton:"bindExistingPublisherAccount",pageName:this.pageName});
  }
 
