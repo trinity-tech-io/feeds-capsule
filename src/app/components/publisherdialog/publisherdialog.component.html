@@ -1,4 +1,4 @@
-<div class="container"  [class.darkContainer]="theme.darkMode">
+<div *ngIf="isShow" class="container"  [class.darkContainer]="theme.darkMode">
     <div class="publisherTitle">
         {{'PublisherdialogComponent.publisheraccount' | translate}}
     </div>
@@ -53,4 +53,7 @@
     </ion-row>
     <p class="cancel" (click)="cancel()">{{ "PublisherdialogComponent.cancel" | translate }}</p>
 </div>
-
+<app-guidedialog
+*ngIf="!isShow"
+[pageName] = "pageName">
+</app-guidedialog>
