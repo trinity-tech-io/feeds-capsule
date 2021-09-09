@@ -36,7 +36,7 @@ export class WalletConnectControllerService {
       rpc: this.rpc,
       bridge: this.bridge,
       qrcodeModalOptions: {
-        mobileLinks: ['metamask', 'essential'],
+        mobileLinks: ['essential', 'metamask'],
       },
     });
 
