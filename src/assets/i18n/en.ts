@@ -778,7 +778,7 @@ export const en = {
     des3: "Windows, Mac, Raspberry Pi or Linux",
     installationGuide: "Installation Guide",
     skip: "Skip",
-    des4: "windows/Mac",
+    des4: "Windows/Mac",
     des5: "Raspberry Pi/Linux Ubuntu"
   },
   GuidemacPage: {
