@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { ThemeService } from 'src/app/services/theme.service';
 import { PopoverController} from '@ionic/angular';
 import { NativeService } from 'src/app/services/NativeService';
 import { Events } from 'src/app/services/events.service';
+import { NavParams } from '@ionic/angular';
 
 @Component({
   selector: 'app-guidedialog',
@@ -10,28 +11,31 @@ import { Events } from 'src/app/services/events.service';
   styleUrls: ['./guidedialog.component.scss'],
 })
 export class GuidedialogComponent implements OnInit {
-
+  public pageName:string = "";
   constructor(
     public theme: ThemeService,
     private popoverController: PopoverController,
     private native: NativeService,
-    private events: Events
-    ) { }
+    private events: Events,
+    private navParams: NavParams
+    ) {
+      this.pageName = this.navParams.get('pageName') || "";
+     }
 
   ngOnInit() {}
 
- async goMac(){
-   this.events.publish(FeedsEvent.PublishType.clickDialog,{dialogName:"guide",clickButton:"guidemac"});
+ goMac(){
+   this.events.publish(FeedsEvent.PublishType.clickDialog,{dialogName:"guide",clickButton:"guidemac",pageName:this.pageName});
   }
 
-  async goUbuntu(){
+  goUbuntu(){
     //await this.popoverController.dismiss();
-    this.events.publish(FeedsEvent.PublishType.clickDialog,{dialogName:"guide",clickButton:"guideubuntu"});
+    this.events.publish(FeedsEvent.PublishType.clickDialog,{dialogName:"guide",clickButton:"guideubuntu",pageName:this.pageName});
    }
 
-  async skip(){
+  skip(){
     //await this.popoverController.dismiss();
-    this.events.publish(FeedsEvent.PublishType.clickDialog,{dialogName:"guide",clickButton:"skip"});
+    this.events.publish(FeedsEvent.PublishType.clickDialog,{dialogName:"guide",clickButton:"skip",pageName:this.pageName});
   }
 
 }

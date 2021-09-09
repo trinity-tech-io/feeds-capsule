@@ -6,7 +6,7 @@
       {{'GuidedialogComponent.publisherAccount' | translate}}
     </div>
     <div class="guideStep" style="margin-top:9px;">
-      {{'GuidedialogComponent.step1' | translate}}
+      <span>{{'GuidedialogComponent.step1' | translate}}</span>
     </div>
 
     <div class="guideDes" style="margin-top:9px;">
@@ -22,7 +22,7 @@
     </div>
 
     <div class="guideStep" style="margin-top:7px;">
-      {{'GuidedialogComponent.step2' | translate}}
+      <span>{{'GuidedialogComponent.step2' | translate}}</span>
     </div>
 
     <div class="guideDes" style="margin-top:9px;">
@@ -38,12 +38,12 @@
     </div>
 
     <div class="guideGrid" style="margin-top: 19px;" (click)="goMac()">
-      <span class="left"><img src="assets/images/mac.svg"/></span>
+      <span class="left">{{ 'GuidedialogComponent.des4' | translate }}</span>
       <span class="right"><img src="assets/icons/right-arrow.svg"/></span>
     </div>
 
     <div class="guideGrid" style="margin-top: 12px;" (click)="goUbuntu()">
-      <span class="left" style="margin-top:8px;"><img src="assets/images/ubuntu.svg"/></span>
+      <span class="left" style="margin-top:8px;">{{ 'GuidedialogComponent.des5' | translate }}</span>
       <span class="right"><img src="assets/icons/right-arrow.svg"/></span>
     </div>
 

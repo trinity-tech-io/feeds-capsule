@@ -760,7 +760,9 @@ export const zh = {
     des2: "选择您喜欢的平台",
     des3: "Windows、Mac、Raspberry Pi或Linux",
     installationGuide: "安装指南",
-    skip: "跳过"
+    skip: "跳过",
+    des4: "windows/Mac",
+    des5: "Raspberry Pi/Linux Ubuntu"
   },
   GuidemacPage: {
     title: "安装指南",

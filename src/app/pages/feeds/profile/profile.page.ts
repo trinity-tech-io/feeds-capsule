@@ -251,9 +251,12 @@ export class ProfilePage implements OnInit {
     this.updateWalletAddress();
 
     this.events.subscribe(FeedsEvent.PublishType.clickDialog, (dialogData: any) => {
+      let pageName = dialogData.pageName;
       let dialogName = dialogData.dialogName;
       let dialogbutton = dialogData.clickButton;
-      this.handleDialog(dialogName, dialogbutton);
+      if (pageName === "profile") {
+        this.handleDialog(dialogName, dialogbutton, pageName);
+      }
     });
 
     this.events.subscribe(FeedsEvent.PublishType.savePicture, (obj) => {
@@ -1599,7 +1602,7 @@ export class ProfilePage implements OnInit {
 
     let bindingServer = this.feedService.getBindingServer();
     if (bindingServer == null || bindingServer == undefined) {
-      this.viewHelper.showPublisherDialog();
+      this.viewHelper.showPublisherDialog("profile");
       return;
     }
 
@@ -2157,10 +2160,10 @@ export class ProfilePage implements OnInit {
     }
   }
 
-  handleDialog(dialogName: string, dialogbutton: string) {
+  handleDialog(dialogName: string, dialogbutton: string, pageName: string) {
     switch (dialogName) {
       case "publisherAccount":
-        this.publisherAccount(dialogbutton)
+        this.publisherAccount(dialogbutton, pageName)
         break;
       case "guide":
         this.guide(dialogbutton);
@@ -2168,15 +2171,15 @@ export class ProfilePage implements OnInit {
     }
   }
 
-  publisherAccount(dialogbutton: string) {
+  publisherAccount(dialogbutton: string, pageName: string) {
     switch (dialogbutton) {
       case "createNewPublisherAccount":
         this.feedService.setBindPublisherAccountType('new');
-        this.viewHelper.showGuideDialog();
+        this.viewHelper.showGuideDialog(pageName);
         break;
       case "bindExistingPublisherAccount":
         this.feedService.setBindPublisherAccountType('exit');
-        this.viewHelper.showGuideDialog();
+        this.native.navigateForward(['bindservice/scanqrcode'], "");
         break;
     }
   }

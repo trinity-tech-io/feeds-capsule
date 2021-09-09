@@ -340,9 +340,12 @@ export class HomePage implements OnInit {
   addCommonEvents() {
 
     this.events.subscribe(FeedsEvent.PublishType.clickDialog,(dialogData:any)=>{
+      let pageName = dialogData.pageName;
       let dialogName = dialogData.dialogName;
       let dialogbutton = dialogData.clickButton;
-      this.handleDialog(dialogName,dialogbutton);
+      if(pageName === "home"){
+        this.handleDialog(dialogName,dialogbutton,pageName);
+      }
     });
 
     this.events.subscribe(FeedsEvent.PublishType.startLoading,(obj)=>{
@@ -1797,7 +1800,7 @@ export class HomePage implements OnInit {
     let bindingServer = this.feedService.getBindingServer();
     if (bindingServer == null || bindingServer == undefined) {
         //this.native.navigateForward(['bindservice/learnpublisheraccount'], '');
-        this.viewHelper.showPublisherDialog();
+        this.viewHelper.showPublisherDialog("home");
       return;
     }
 
@@ -2096,10 +2099,10 @@ export class HomePage implements OnInit {
     this.nftPersistenceHelper.setPasarList(pList);
  }
 
- handleDialog(dialogName: string,dialogbutton: string) {
+ handleDialog(dialogName: string,dialogbutton: string,pageName: string) {
   switch(dialogName){
     case "publisherAccount":
-        this.publisherAccount(dialogbutton)
+        this.publisherAccount(dialogbutton,pageName)
     break;
     case "guide":
       this.guide(dialogbutton);
@@ -2107,15 +2110,16 @@ export class HomePage implements OnInit {
   }
 }
 
-publisherAccount(dialogbutton: string) {
+publisherAccount(dialogbutton: string,pageName: string) {
 switch(dialogbutton){
   case "createNewPublisherAccount":
     this.feedService.setBindPublisherAccountType('new');
-    this.viewHelper.showGuideDialog();
+    this.viewHelper.showGuideDialog(pageName);
    break;
   case "bindExistingPublisherAccount":
     this.feedService.setBindPublisherAccountType('exit');
-    this.viewHelper.showGuideDialog();
+    this.native.navigateForward(['bindservice/scanqrcode'],"");
+    //this.viewHelper.showGuideDialog();
   break;
 }
 }

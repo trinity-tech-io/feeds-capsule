@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit} from '@angular/core';
 import { ThemeService } from 'src/app/services/theme.service';
 import { PopoverController} from '@ionic/angular';
 import { NativeService } from 'src/app/services/NativeService';
 import { FeedService } from 'src/app/services/FeedService';
 import { Events } from 'src/app/services/events.service';
+import { NavParams } from '@ionic/angular';
 
 @Component({
   selector: 'app-publisherdialog',
@@ -11,14 +12,17 @@ import { Events } from 'src/app/services/events.service';
   styleUrls: ['./publisherdialog.component.scss'],
 })
 export class PublisherdialogComponent implements OnInit {
-
+  public pageName:string = "";
   constructor(
     public theme: ThemeService,
     private popoverController: PopoverController,
     private native: NativeService,
     private feedService: FeedService,
-    private events: Events
-  ) { }
+    private events: Events,
+    private navParams: NavParams
+  ) {
+    this.pageName = this.navParams.get('pageName') || "";
+  }
 
   ngOnInit() {}
 
@@ -34,12 +38,12 @@ export class PublisherdialogComponent implements OnInit {
 
  async createNewPublisherAccount(){
   await this.popoverController.dismiss();
-  this.events.publish(FeedsEvent.PublishType.clickDialog,{dialogName:"publisherAccount",clickButton:"createNewPublisherAccount"});
+  this.events.publish(FeedsEvent.PublishType.clickDialog,{dialogName:"publisherAccount",clickButton:"createNewPublisherAccount",pageName:this.pageName});
   }
 
  async bindExistingPublisherAccount(){
   await this.popoverController.dismiss();
-  this.events.publish(FeedsEvent.PublishType.clickDialog,{dialogName:"publisherAccount",clickButton:"bindExistingPublisherAccount"});
+  this.events.publish(FeedsEvent.PublishType.clickDialog,{dialogName:"publisherAccount",clickButton:"bindExistingPublisherAccount",pageName:this.pageName});
  }
 
 }
