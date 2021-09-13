@@ -12,10 +12,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { LanguageService } from 'src/app/services/language.service';
 import { IPFSService } from 'src/app/services/ipfs.service';
 import { DataHelper } from 'src/app/services/DataHelper';
-
 import _ from 'lodash';
-
-
 
 @Component({
   selector: 'app-settings',
@@ -30,9 +27,9 @@ export class SettingsPage implements OnInit {
   public hideOfflineFeeds: boolean = true;
   public popover: any = null;
   public languageName: string = null;
-  private defaltProviderName = 'elastos.io';
   public curApiProviderName = 'elastos.io';
   public pasarListGrid: boolean = false;
+  public isHideDeveloperMode: boolean = false;
   constructor(
     private languageService: LanguageService,
     private feedService: FeedService,
