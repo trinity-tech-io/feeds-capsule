@@ -871,7 +871,14 @@ export class PostdetailPage implements OnInit {
   }
 
   getImage() {
-    let key =
+    let imageKey = this.feedService.getImageKey(
+      this.nodeId,
+      this.channelId,
+      this.postId,
+      0,
+      0,
+    );
+    let thumbkey =
       this.feedService.getImgThumbKeyStrFromId(
         this.nodeId,
         this.channelId,
@@ -879,11 +886,35 @@ export class PostdetailPage implements OnInit {
         0,
         0,
       ) || '';
-    if (key != '') {
+
+    let contentVersion = this.feedService.getContentVersion(
+      this.nodeId,
+      this.channelId,
+      this.postId,
+      0,
+    );
+
+    if (contentVersion == '0') {
+      imageKey = thumbkey;
+    }
+    if (imageKey != '') {
       this.feedService
-        .getData(key)
+        .getData(imageKey)
         .then(image => {
-          this.postImage = image || '';
+          let realImage = image || '';
+          if(realImage!=""){
+            this.postImage = realImage;
+          }else{
+            this.feedService.getData(thumbkey).then((thumbImagedata) =>{
+              let thumbImage = thumbImagedata || '';
+              this.postImage = thumbImage;
+            }).catch(reason=>{
+              Logger.log(TAG,
+                "Excute 'getImage' in post page is error , get image data error, error msg is ",
+                reason
+              );
+            })
+          }
         })
         .catch(reason => {
           Logger.log(TAG,
@@ -1214,6 +1245,7 @@ export class PostdetailPage implements OnInit {
       this.imgDownStatus = '';
       this.isImgPercentageLoading = false;
       this.isImgLoading = false;
+      this.postImage = value;
       this.viewHelper.openViewer(
         this.titleBar,
         value,
