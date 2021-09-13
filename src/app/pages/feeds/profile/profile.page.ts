@@ -936,28 +936,44 @@ export class ProfilePage implements OnInit {
           let nodeId = arr[0];
           let channelId: any = arr[1];
           let postId: any = arr[2];
-          let key = this.feedService.getImgThumbKeyStrFromId(
+          let imageKey = this.feedService.getImageKey(nodeId, channelId, postId, 0, 0);
+          let thumbkey = this.feedService.getImgThumbKeyStrFromId(
             nodeId,
             channelId,
             postId,
             0,
             0,
           );
-          this.feedService
-            .getData(key)
-            .then(imagedata => {
-              let image = imagedata || '';
-              if (image != '') {
-                this.isLoadimage[id] = '13';
-                this.zone.run(() => {
-                  postImage.setAttribute('src', image);
-                });
+          let contentVersion = this.feedService.getContentVersion(
+            nodeId,
+            channelId,
+            postId,
+            0,
+          );
 
+          if (contentVersion == '0') {
+            imageKey = thumbkey;
+          }
+          this.feedService
+            .getData(imageKey)
+            .then(imagedata => {
+              let realImage = imagedata || '';
+              if (realImage != '') {
+                this.isLoadimage[id] = '13';
+                postImage.setAttribute('src',realImage);
               } else {
-                this.zone.run(() => {
-                  this.isLoadimage[id] = '12';
+                this.feedService.getData(thumbkey).then((thumbImagedata) =>{
+                  let thumbImage = thumbImagedata || '';
+                  if(thumbImage!= ''){
+                    this.isLoadimage[id] = '13';
+                    postImage.setAttribute('src', thumbImagedata);
+                  }else{
+                    this.isLoadimage[id] = '12';
+                    rpostImage.style.display = 'none';
+                  }
+                }).catch(()=>{
                   rpostImage.style.display = 'none';
-                });
+                })
               }
             })
             .catch(reason => {
@@ -1389,6 +1405,15 @@ export class ProfilePage implements OnInit {
       this.imgPercent = 0;
       this.imgRotateNum['transform'] = 'rotate(0deg)';
       this.cacheGetBinaryRequestKey = '';
+      let arrKey = key.split('-');
+      let nodeId = arrKey[0];
+      let channelId = arrKey[1];
+      let postId = arrKey[2];
+      let id = nodeId+"-"+channelId+"-"+postId;
+      let postImage = document.getElementById(id + 'postimglike') || null;
+      if(postImage!=null){
+        postImage.setAttribute('src', value);
+      }
       this.viewHelper.openViewer(
         this.titleBar,
         value,
