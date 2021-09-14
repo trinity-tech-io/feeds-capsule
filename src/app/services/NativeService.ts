@@ -11,7 +11,6 @@ import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 import { TranslateService } from '@ngx-translate/core';
 import { ModalController } from '@ionic/angular';
 import { VideofullscreenComponent } from './../components/videofullscreen/videofullscreen.component';
-import { IntentService } from 'src/app/services/IntentService';
 import { Network } from '@ionic-native/network/ngx';
 import { Logger } from './logger';
 
@@ -29,7 +28,6 @@ export class NativeService {
     private navCtrl: NavController,
     private router: Router,
     private translate: TranslateService,
-    private intentService: IntentService,
     private network: Network,
   ) {}
 
@@ -298,10 +296,6 @@ export class NativeService {
   public clickUrl(url: string, event: any) {
     this.openUrl(url);
     event.stopPropagation();
-  }
-
-  getShare(qrCodeString: string) {
-    this.intentService.share('', qrCodeString);
   }
 
   changeLoadingDesc(message: string) {

@@ -1,23 +1,42 @@
 import { Injectable } from '@angular/core';
 import { ScanService } from 'src/app/services/scan.service';
 import { Logger } from './logger';
+import { NgZone } from '@angular/core';
+import { NativeService } from '../services/NativeService';
+import { LanguageService } from 'src/app/services/language.service';
+import { ThemeService } from './../services/theme.service';
+import { DataHelper } from './../services/DataHelper';
+import { CarrierService } from './CarrierService';
+import { Events } from 'src/app/services/events.service';
 
 let TAG: string = 'IntentService';
 declare let intentManager: IntentPlugin.IntentManager;
 
 @Injectable()
 export class IntentService {
-  constructor(private scanService: ScanService) { }
+  constructor(private scanService: ScanService,
+    private zone: NgZone,
+    private native: NativeService,
+    private languageService: LanguageService,
+    public theme: ThemeService,
+    private dataHelper: DataHelper,
+    private carrierService: CarrierService,
+    private events: Events) { }
 
   scanQRCode(): Promise<string> {
     return this.scanService.scanBarcode();
   }
 
-  listen() {
-    intentManager.addIntentListener((receivedIntent) => {
-      Logger.log("Intents", "Intent received, now dispatching to listeners", receivedIntent);
-      // this.intentListener.next(receivedIntent);
-    });
+  initCarrierCallback() {
+
+  }
+  listen(intentResult) {
+    // intentManager.addIntentListener((receivedIntent) => {
+    //   console.log("Intents", "Intent received, now dispatching to listeners", receivedIntent);
+    //   // this.intentListener.next(receivedIntent);
+    // });
+
+
   }
 
   share(title: string, content: string): Promise<string> {
@@ -252,7 +271,121 @@ export class IntentService {
     });
   }
 
-  addIntentListener(callback: (msg: IntentPlugin.ReceivedIntent) => void) {
+  addIntentListener(callback: (intentResult: IntentPlugin.ReceivedIntent) => void) {
     intentManager.addIntentListener(callback);
+  }
+
+  async dispatchIntent(receivedIntent: IntentPlugin.ReceivedIntent) {
+    console.log("Intents", "Intent received, now dispatching to listeners", receivedIntent);
+    const action = receivedIntent.action;
+    const params = receivedIntent.params
+    switch (action) {
+      case 'addsource':
+        this.zone.run(async () => {
+          this.native
+            .getNavCtrl()
+            .navigateForward([
+              '/menu/servers/server-info',
+              receivedIntent.params.source,
+              '0',
+              false,
+            ]);
+        });
+        break;
+
+      case 'https://feeds.trinity-feeds.app/feeds':
+        let isDisclaimer =
+          localStorage.getItem('org.elastos.dapp.feeds.disclaimer') || '';
+        if (!isDisclaimer) {
+          console.log("Not disclaimer");
+          this.native.setRootRouter('disclaimer');
+          return;
+        }
+
+        const signinData = await this.dataHelper.getSigninData();
+        if (!signinData) {
+          console.log("Not signin");
+          this.native.setRootRouter(['/signin']);
+          return;
+        }
+        console.log("Intent params", params);
+
+        const address = params.address;
+        const channelId = params.channelId;
+        const postId = params.postId || 0;
+
+        const serverNodeId = await this.carrierService.getIdFromAddress(address, () => { });
+        const serverList = await this.dataHelper.getServerList();
+        const isContain = serverList.some(server => server.nodeId == serverNodeId);
+
+        const nodeChannelId = this.dataHelper.getKey(serverNodeId, channelId, 0, 0,);
+        const channel = this.dataHelper.getChannel(nodeChannelId);
+
+        if (!isContain) {
+          //https://feeds.trinity-feeds.app/feeds/?address=Km3wsaD9zMGnYW7otewZhZKpgXVnYZGms2ihiGrpsUhASNMx1ZKj&channelId=1&postId=1&channelName=xb2&ownerName=Wangran&channelDesc=xb2 live&serverDid=did:elastos:iZ6NDBjZQG8XM8d1jENWQ8HW1ojfdHPqW8&ownerDid=did:elastos:iXB82Mii9LMEPn3U7cLECswLmex9KkZL8D
+          const ownerName = params.ownerName;
+          const channelName = params.channelName;
+          const channelDesc = params.channelDesc;
+          const ownerDid = params.ownerDid;
+          const serverDid = params.serverDid;
+          const feeds = {
+            description: channelDesc,
+            did: serverDid,
+            feedsAvatar: "assets/images/profile-2.svg",
+            feedsUrlHash: "",
+            followers: 0,
+            name: channelName,
+            nodeId: serverNodeId,
+            ownerDid: ownerDid,
+            ownerName: ownerName,
+            url: 'feeds://' + serverDid + "/" + address + "/" + channelId
+          }
+          this.native.go('discoverfeedinfo', {
+            params: feeds,
+          });
+          return;
+        }
+
+        const isSubscribed = channel.isSubscribed || false;
+
+        if (isSubscribed || postId != 0) {
+          this.native.getNavCtrl().navigateForward(['/postdetail', serverNodeId, channelId, postId]);
+          return;
+        }
+
+        this.native.getNavCtrl().navigateForward(['/channels', serverNodeId, channelId]);
+        break;
+    }
+  }
+
+  onMessageReceived(msg: IntentPlugin.ReceivedIntent) {
+    Logger.log(TAG, 'Received intent ', msg);
+    var params: any = msg.params;
+    if (typeof params == 'string') {
+      try {
+        params = JSON.parse(params);
+      } catch (e) {
+      }
+    }
+
+    if (msg.action === 'currentLocaleChanged') {
+      this.zone.run(() => {
+        this.setCurLang(params.data);
+      });
+    }
+
+    //TO be check
+    if (
+      msg.action === 'preferenceChanged' &&
+      params.data.key === 'ui.darkmode'
+    ) {
+      this.zone.run(() => {
+        this.theme.setTheme(params.data.value);
+      });
+    }
+  }
+
+  setCurLang(currentLang: string) {
+    this.languageService.setCurLang(currentLang);
   }
 }

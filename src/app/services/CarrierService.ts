@@ -385,8 +385,17 @@ export class CarrierService {
     address: string,
     onSuccess: (userId: string) => void,
     onError?: (err: string) => void,
-  ) {
-    carrierManager.getIdFromAddress(address, onSuccess, onError);
+  ): Promise<string> {
+    return new Promise((resolve, reject) => {
+      carrierManager.getIdFromAddress(address, (userId: string) => {
+        if (userId) {
+          onSuccess(userId);
+          resolve(userId);
+        } else {
+          reject();
+        }
+      }, onError);
+    });
   }
 
   newSession(

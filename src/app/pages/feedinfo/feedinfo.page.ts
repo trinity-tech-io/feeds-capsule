@@ -13,6 +13,7 @@ import { ViewHelper } from 'src/app/services/viewhelper.service';
 import { Events } from 'src/app/services/events.service';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { IntentService } from 'src/app/services/IntentService';
 
 import  _ from 'lodash';
 
@@ -62,6 +63,7 @@ export class FeedinfoPage implements OnInit {
     private platform: Platform,
     private titleBarService: TitleBarService,
     private viewHelper: ViewHelper,
+    private intentService: IntentService
   ) {}
 
   ngOnInit() {
@@ -289,7 +291,7 @@ export class FeedinfoPage implements OnInit {
     if (this.platform.is('ios')) {
       this.isPress = true;
     }
-    this.native.getShare(feedsUrl);
+    this.intentService.share('', feedsUrl);
   }
 
   handleTime(updatedTime: number) {

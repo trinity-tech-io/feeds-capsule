@@ -21,6 +21,9 @@ import { Logger, LogLevel } from './services/logger';
 import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
 import { async } from 'rxjs/internal/scheduler/async';
 import { IntentService } from './services/IntentService';
+
+let TAG: string = 'app-component';
+
 // enum LogLevel {
 //   NONE,
 //   ERROR,
@@ -127,7 +130,13 @@ export class MyApp {
         this.initDisclaimer();
         this.initConnector();
       }).then(async () => {
-        await this.intentService.listen();
+        this.intentService.addIntentListener(
+          (intent: IntentPlugin.ReceivedIntent) => {
+            console.log(TAG, 'Receive intent ', intent);
+            this.intentService.onMessageReceived(intent);
+            this.intentService.dispatchIntent(intent);
+          },
+        );
     });
   }
 

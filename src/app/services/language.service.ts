@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { FeedService } from 'src/app/services/FeedService';
 import { Events } from 'src/app/services/events.service';
 
 @Injectable()
@@ -23,8 +22,7 @@ export class LanguageService {
 
   constructor(
     private translate: TranslateService,
-    private events: Events,
-    private feedService: FeedService,
+    private events: Events
   ) {}
 
   initTranslateConfig() {
@@ -50,7 +48,6 @@ export class LanguageService {
     }
     localStorage.setItem('io.trinity.feeds.language', currentLang);
     this.curLang = currentLang;
-    this.feedService.setCurrentLang(currentLang);
     this.translate.setDefaultLang(currentLang);
     this.translate.use(currentLang);
   }

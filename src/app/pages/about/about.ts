@@ -6,6 +6,7 @@ import { FeedService } from 'src/app/services/FeedService';
 import { ThemeService } from 'src/app/services/theme.service';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { LanguageService } from 'src/app/services/language.service';
 
 @Component({
   selector: 'page-about',
@@ -26,6 +27,7 @@ export class AboutPage implements OnInit {
     private feedService: FeedService,
     public theme: ThemeService,
     private titleBarService: TitleBarService,
+    private languageService: LanguageService
   ) {}
 
   ngOnInit() {}
@@ -44,7 +46,7 @@ export class AboutPage implements OnInit {
   ionViewDidEnter() {}
 
   initTitle() {
-    this.currentLanguage = this.feedService.getCurrentLang();
+    this.currentLanguage = this.languageService.getCurLang();
     this.titleBarService.setTitle(
       this.titleBar,
       this.translate.instant('AboutPage.about'),
