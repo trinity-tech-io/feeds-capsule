@@ -387,6 +387,10 @@ async handleSaleList() {
 
   async hanldeImg() {
     let imgUri = this.assItem['thumbnail'];
+    let kind = this.assItem["kind"];
+    if(kind === "gif"){
+        imgUri = this.assItem['asset'];
+    }
     if (imgUri.indexOf('feeds:imgage:') > -1) {
       imgUri = imgUri.replace('feeds:imgage:', '');
       imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
@@ -396,13 +400,20 @@ async handleSaleList() {
 
   async getSetChannel(tokenId: any) {
     let setChannel = this.feedService.getCollectibleStatus();
+    let isTipToast:boolean = false;
     for (let key in setChannel) {
       let value = setChannel[key] || '';
       if (value) {
+        isTipToast = true;
         let nodeId = key.split('_')[0];
         let channelId = parseInt(key.split('_')[1]);
         await this.sendPost(tokenId, nodeId, channelId);
       }
+    }
+
+
+    if(isTipToast){
+      this.native.toast("CreatenewpostPage.tipMsg1");
     }
   }
 

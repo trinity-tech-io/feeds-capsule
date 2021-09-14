@@ -34,8 +34,13 @@ export class AssetitemComponent implements OnInit {
     this.clickMore.emit(obj);
   }
 
-  hanldeImg(imgUri: string) {
-    if (imgUri.indexOf('feeds:imgage:') > -1) {
+  hanldeImg(assetItem: any) {
+   let imgUri = assetItem['thumbnail'];
+   let kind = assetItem["kind"];
+   if(kind === "gif"){
+       imgUri = assetItem['asset'];
+   }
+   if (imgUri.indexOf('feeds:imgage:') > -1) {
       imgUri = imgUri.replace('feeds:imgage:', '');
       imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
     }

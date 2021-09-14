@@ -315,7 +315,16 @@ export class ProfilenftimagePage implements OnInit {
     this.feedService.setClipProfileIamge(imgUri);
   }
 
-  hanldeImg(imgUri: string) {
+  hanldeImg(item:any) {
+    let imgUri = item['thumbnail'];
+    let kind = item["kind"];
+    if(kind === "gif"){
+        imgUri = item['asset'];
+    }
+    if (imgUri.indexOf('feeds:imgage:') > -1) {
+      imgUri = imgUri.replace('feeds:imgage:', '');
+      imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
+    }
     if (imgUri.indexOf('feeds:imgage:') > -1) {
       imgUri = imgUri.replace('feeds:imgage:', '');
       imgUri = this.ipfsService.getNFTGetUrl() + imgUri;

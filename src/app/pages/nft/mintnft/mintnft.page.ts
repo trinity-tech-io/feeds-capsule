@@ -143,6 +143,9 @@ export class MintnftPage implements OnInit {
         let pathObj = this.handlePath(this.imagePath);
         let fileName = pathObj['fileName'];
         let filePath = pathObj['filepath'];
+        let index = fileName.lastIndexOf(".");
+        let imgFormat = fileName.substr(index+1);
+        this.imageObj['imgFormat'] = imgFormat;
         return this.getFlieObj(fileName, filePath);
       }).then((fileBase64) => {
         this.assetBase64 = fileBase64;
@@ -313,8 +316,6 @@ export class MintnftPage implements OnInit {
         .nftPost(formData)
         .then(result => {
           let hash = result['Hash'] || null;
-          let index = fileName.lastIndexOf(".");
-          let imgFormat = fileName.substr(index+1);
           if (!hash) {
             reject("Upload Image error, hash is null")
             return;
@@ -324,7 +325,6 @@ export class MintnftPage implements OnInit {
           this.imageObj['imgSize'] = result['Size'];
           let tokenId = '0x' + UtilService.SHA256(hash);
           this.imageObj['imgHash'] = 'feeds:imgage:' + hash;
-          this.imageObj['imgFormat'] = imgFormat;
 
           resolve(tokenId);
         })
@@ -661,13 +661,19 @@ export class MintnftPage implements OnInit {
     this.orderId = order[0];
 
     let setChannel = this.feedService.getCollectibleStatus();
+    let isTipToast:boolean = false;
     for (let key in setChannel) {
       let value = setChannel[key] || '';
       if (value) {
+        isTipToast = true;
         let nodeId = key.split('_')[0];
         let channelId = parseInt(key.split('_')[1]);
         await this.sendPost(tokenId, nodeId, channelId);
       }
+    }
+
+    if(isTipToast){
+      this.native.toast("CreatenewpostPage.tipMsg1");
     }
   }
 
@@ -718,7 +724,7 @@ export class MintnftPage implements OnInit {
       false,
       tempPostId,
       this.transDataChannel,
-      this.thumbnail,
+      this.assetBase64,
       '',
     );
   }
@@ -888,5 +894,14 @@ export class MintnftPage implements OnInit {
         break;
     }
     this.nftPersistenceHelper.setCollectiblesMap(accAddress, slist);
+  }
+
+  handleImg(){
+
+    let imgUri = this.thumbnail;
+    if(this.imageObj['imgFormat'] === "gif"){
+        imgUri = this.assetBase64;
+    }
+    return imgUri;
   }
 }

@@ -16,7 +16,7 @@
                     <img src="assets/images/loading.png" style="object-fit:cover;"/>
                </div>
               <div class="ion-activatable ripple"  *ngIf="item!=null"  [ngStyle]="styleObj" style="object-fit: contain;height: 200px;margin: 0 auto;">
-              <img src="{{hanldeImg(item['thumbnail'])}}" (click)="clickItem(item)"/>
+              <img src="{{hanldeImg(item)}}" (click)="clickItem(item)"/>
               <ion-ripple-effect></ion-ripple-effect>
               </div>
             </ion-col>
