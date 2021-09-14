@@ -4,6 +4,7 @@ import { StorageService } from 'src/app/services/StorageService';
 import * as _ from 'lodash';
 import { UtilService } from './utilService';
 import { Config } from './config';
+import { SignInData } from './FeedService';
 let TAG: string = 'DataHelper';
 
 @Injectable()
@@ -115,6 +116,15 @@ export class DataHelper {
       if (feed.isSubscribed) list.push(feed);
     }
     return list;
+  }
+
+  ////signin
+  setSigninData(signinData: SignInData) {
+    this.localSignInData = signinData;
+  }
+
+  getSigninData() {
+    return this.loadData(FeedsData.PersistenceKey.signInData);
   }
 
   ////channelsMap

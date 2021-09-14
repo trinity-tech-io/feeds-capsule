@@ -5378,14 +5378,6 @@ export class FeedService {
     }
   }
 
-  setCurrentLang(currentLang: string) {
-    this.currentLang = currentLang;
-  }
-
-  getCurrentLang() {
-    return this.currentLang;
-  }
-
   close() {
     //TODO
     // appManager.close();

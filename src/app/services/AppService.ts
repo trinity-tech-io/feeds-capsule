@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { ThemeService } from './../services/theme.service';
 import { NgZone, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { NativeService } from '../services/NativeService';
@@ -9,7 +8,6 @@ import { CarrierService } from '../services/CarrierService';
 import { MenuController, PopoverController } from '@ionic/angular';
 import { MenuService } from 'src/app/services/MenuService';
 import { PopupProvider } from 'src/app/services/popup';
-import { IntentService } from 'src/app/services/IntentService';
 import { LanguageService } from 'src/app/services/language.service';
 import { Logger } from './logger';
 
@@ -21,7 +19,7 @@ export class AppService {
   public popover: any = null;
   constructor(
     private router: Router,
-    public theme: ThemeService,
+
     private zone: NgZone,
     private translate: TranslateService,
     private native: NativeService,
@@ -31,29 +29,11 @@ export class AppService {
     public popupProvider: PopupProvider,
     private popoverController: PopoverController,
     private menuService: MenuService,
-    private intentService: IntentService,
     private languageService: LanguageService, // private titleBarService: TitleBarService
   ) {}
 
   init() {
   }
-
-  onReceiveIntent = (ret: IntentPlugin.ReceivedIntent) => {
-    switch (ret.action) {
-      case 'addsource':
-        this.zone.run(async () => {
-          this.native
-            .getNavCtrl()
-            .navigateForward([
-              '/menu/servers/server-info',
-              ret.params.source,
-              '0',
-              false,
-            ]);
-        });
-        break;
-    }
-  };
 
   handleBack() {
     let isFirstBindFeedService =
@@ -82,40 +62,13 @@ export class AppService {
     }
   }
 
-  onMessageReceived(msg: IntentPlugin.ReceivedIntent) {
-    Logger.log(TAG, 'Received intent ', msg);
-    var params: any = msg.params;
-    if (typeof params == 'string') {
-      try {
-        params = JSON.parse(params);
-      } catch (e) {
-      }
-    }
 
-    if (msg.action === 'currentLocaleChanged') {
-      this.zone.run(() => {
-        this.setCurLang(params.data);
-      });
-    }
-
-    //TO be check
-    if (
-      msg.action === 'preferenceChanged' &&
-      params.data.key === 'ui.darkmode'
-    ) {
-      this.zone.run(() => {
-        this.theme.setTheme(params.data.value);
-      });
-    }
-  }
 
   initTranslateConfig() {
     this.languageService.initTranslateConfig();
   }
 
-  setCurLang(currentLang: string) {
-    this.languageService.setCurLang(currentLang);
-  }
+
 
   initializeApp() {
     this.feedService.initSignInDataAsync(signInData => {
@@ -135,14 +88,6 @@ export class AppService {
       this.native.setRootRouter(['/signin']);
       return;
     }
-
-    this.intentService.addIntentListener(
-      (intent: IntentPlugin.ReceivedIntent) => {
-        Logger.log(TAG, 'Receive intent ', intent);
-        this.onMessageReceived(intent);
-        this.onReceiveIntent(intent);
-      },
-    );
 
     this.carrierService.init(signInData.did);
     this.native.setRootRouter(['/tabs/home']);

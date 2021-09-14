@@ -13,6 +13,8 @@ import { Events } from 'src/app/services/events.service';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { PopupProvider } from 'src/app/services/popup';
+import { LanguageService } from 'src/app/services/language.service';
+
 
 @Component({
   selector: 'app-createnewfeed',
@@ -47,13 +49,14 @@ export class CreatenewfeedPage implements OnInit {
     private httpService: HttpService,
     private titleBarService: TitleBarService,
     private popup: PopupProvider,
+    private languageService: LanguageService
   ) {}
 
   ngOnInit() {}
 
   ionViewWillEnter() {
     this.initTitle();
-    this.curLang = this.feedService.getCurrentLang();
+    this.curLang = this.languageService.getCurLang();
     this.developerMode = this.feedService.getDeveloperMode();
     this.selectedServer = this.feedService.getBindingServer();
     this.selectedChannelSource = this.selectedServer.did;

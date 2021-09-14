@@ -13,6 +13,7 @@ import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
 import { PopoverController} from '@ionic/angular';
+import { IntentService } from 'src/app/services/IntentService';
 
 type ProfileDetail = {
   type: string;
@@ -68,7 +69,8 @@ export class ProfiledetailPage implements OnInit {
     private titleBarService: TitleBarService,
     private viewHelper: ViewHelper,
     private nftContractControllerService: NFTContractControllerService,
-    private popoverController:PopoverController
+    private popoverController: PopoverController,
+    private intentService: IntentService
   ) {}
 
   ngOnInit() {}
@@ -341,7 +343,7 @@ export class ProfiledetailPage implements OnInit {
     if (this.platform.is('ios')) {
       this.isPress = true;
     }
-    this.native.getShare(feedsUrl);
+    this.intentService.share('', feedsUrl);
   }
 
   async deleteFeedSource() {
