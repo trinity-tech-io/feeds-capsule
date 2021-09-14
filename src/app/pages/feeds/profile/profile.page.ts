@@ -1911,6 +1911,7 @@ export class ProfilePage implements OnInit {
         this.ipfsService
           .nftGet(this.ipfsService.getNFTGetUrl() + feedsUri)
           .then(result => {
+            console.log("=====kind======"+result["kind"]);
             let type = result['type'] || 'single';
             let quantity = tokenNum;
             let fixedAmount = price || null;
@@ -1934,7 +1935,7 @@ export class ProfilePage implements OnInit {
               thumbnail: thumbnail,
               sellerAddr: sellerAddr,
               createTime: createTime * 1000,
-              moreMenuType: 'onSale'
+              moreMenuType: 'onSale',
             };
             //this.onSaleList.splice(index,1,item);
             let nftIndex = parseInt(nftCreatedCount) + index;

@@ -26,6 +26,7 @@ import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Logger } from 'src/app/services/logger';
 import { MenuService } from 'src/app/services/MenuService';
+import { File } from '@ionic-native/file/ngx';
 let TAG: string = 'Feeds-createpost';
 
 @Component({
@@ -85,6 +86,7 @@ export class CreatenewpostPage implements OnInit {
     private titleBarService: TitleBarService,
     private viewHelper: ViewHelper,
     private menuService: MenuService,
+    private file: File
   ) {}
 
   ngOnInit() {
@@ -817,24 +819,22 @@ export class CreatenewpostPage implements OnInit {
   }
 
   openGallery(that: any) {
-    that.camera.openCamera(
-      30,
-      0,
-      0,
-      (imageUrl: any) => {
-        that.zone.run(() => {
-          that.imgUrl = imageUrl;
-          that.feedService.setSelsectNftImage(imageUrl);
-        });
-      },
-      (err: any) => {
-        Logger.error(TAG, 'Add img err', err);
-        let imgUrl = that.imgUrl || '';
-        if (imgUrl==="") {
-          that.native.toast_trans('common.noImageSelected');
-        }
-      },
-    );
+
+    that.handleImgUri(0,that).then((imagePath:string) => {
+
+      let pathObj = that.handleImgUrlPath(imagePath);
+      let fileName = pathObj['fileName'];
+      let filePath = pathObj['filepath'];
+      return  that.getFlieObj(fileName, filePath, that);
+
+    }).then((fileBase64:any) => {
+
+      that.zone.run(() => {
+        that.imgUrl = fileBase64;
+        that.feedService.setSelsectNftImage(fileBase64);
+      });
+
+    });
   }
 
   openCamera(that: any) {
@@ -861,6 +861,79 @@ export class CreatenewpostPage implements OnInit {
   removeImg(){
     this.imgUrl = "";
     this.feedService.setSelsectNftImage("");
+  }
+
+  handleImgUri(type: number,that:any): Promise<any> {
+    return new Promise((resolve, reject) => {
+      that.camera.openCamera(
+        100,
+        1,
+        type,
+        (imgPath: any) => {
+          resolve(imgPath);
+        },
+        (err: any) => {
+          Logger.error(TAG, 'Add img err', err);
+          let imgUrl = that.imgUrl || '';
+          if (!imgUrl) {
+            this.native.toast_trans('common.noImageSelected');
+            reject(err);
+            return;
+          }
+        }
+      );
+    });
+  }
+
+  getFlieObj(fileName: string, filepath: string,that:any): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      that.file
+      .resolveLocalFilesystemUrl(filepath)
+      .then((dirEntry: DirectoryEntry) => {
+        dirEntry.getFile(
+          fileName,
+          { create: true, exclusive: false },
+          fileEntry => {
+            fileEntry.file(
+              file => {
+                let fileReader = new FileReader();
+                fileReader.onloadend = (event: any) => {
+                  this.zone.run(() => {
+                    let assetBase64 = fileReader.result.toString();
+                    resolve(assetBase64);
+                  });
+                };
+                fileReader.onprogress = (event: any) => {
+                  this.zone.run(() => {});
+                };
+                fileReader.readAsDataURL(file);
+              },
+              () => {},
+            );
+          },
+          () => {
+            reject('error');
+          },
+        );
+      })
+      .catch(dirEntryErr => {
+        reject(dirEntryErr);
+        Logger.error(TAG, 'Get File object error', dirEntryErr)
+      });
+    });
+  }
+
+  handleImgUrlPath(fileUri: string) {
+    let pathObj = {};
+    fileUri = fileUri.replace('/storage/emulated/0/', '/sdcard/');
+    let path = fileUri.split('?')[0];
+    let lastIndex = path.lastIndexOf('/');
+    pathObj['fileName'] = path.substring(lastIndex + 1, fileUri.length);
+    pathObj['filepath'] = path.substring(0, lastIndex);
+    pathObj['filepath'] = pathObj['filepath'].startsWith('file://')
+      ? pathObj['filepath']
+      : `file://${pathObj['filepath']}`;
+    return pathObj;
   }
 }
 
