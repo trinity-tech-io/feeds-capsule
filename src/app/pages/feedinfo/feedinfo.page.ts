@@ -48,6 +48,7 @@ export class FeedinfoPage implements OnInit {
   public isMine: boolean = null;
   public channelOwner: string = '';
   public type: string = '';
+  public serverDid: string = '';
   constructor(
     private popoverController: PopoverController,
     private feedService: FeedService,
@@ -82,10 +83,12 @@ export class FeedinfoPage implements OnInit {
     if(this.serverInfo != null){
       this.elaAddress =
       this.serverInfo['elaAddress'] || 'common.emptyElaAddressDes';
+      this.serverDid = this.serverInfo['did'];
       feedsUrl = this.serverInfo['feedsUrl'] || null;
       this.feedsUrl = feedsUrl + '/' + this.channelId;
       this.qrcodeString = this.feedsUrl + '#' + encodeURIComponent(this.name);
     }else{
+      this.serverDid = channelInfo["did"];
       this.elaAddress = "common.emptyElaAddressDes";
       this.feedsUrl = channelInfo["feedUrl"];
       this.qrcodeString = this.feedsUrl + '#' + encodeURIComponent(this.name);

@@ -122,6 +122,15 @@ export class DiscoverfeedinfoPage implements OnInit {
         });
       },
     );
+
+    this.events.subscribe(
+      FeedsEvent.PublishType.addFeedStatusChanged,
+      (addFeedStatusChangedData: FeedsEvent.AddFeedStatusChangedData) => {
+        this.zone.run(() => {
+          this.handleStatus();
+        });
+      },
+    );
   }
 
   ionViewWillLeave() {
@@ -131,6 +140,7 @@ export class DiscoverfeedinfoPage implements OnInit {
       this.popover = '';
     }
     this.native.hideLoading();
+    this.events.unsubscribe(FeedsEvent.PublishType.addFeedStatusChanged);
     this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
     this.events.unsubscribe(FeedsEvent.PublishType.unsubscribeFinish);
     this.events.unsubscribe(FeedsEvent.PublishType.subscribeFinish);
@@ -164,8 +174,9 @@ export class DiscoverfeedinfoPage implements OnInit {
       .addFeed(feedUrl, avatar, followers, feedName, ownerName, desc)
       .then(isSuccess => {
         if (isSuccess) {
-          this.native.pop();
-          return;
+          //this.native.pop();
+          //return;
+          this.status = '0';
         }
       })
       .catch(err => {
@@ -248,6 +259,7 @@ export class DiscoverfeedinfoPage implements OnInit {
     let feedUrl = this.feedInfo['url'];
     let channelId = feedUrl.split('/')[4];
     this.feedService.setChannelInfo({
+      did: this.feedInfo['did'],
       nodeId:nodeId,
       channelId:channelId,
       name: this.feedInfo['name'],

@@ -28,6 +28,7 @@
             <ion-col
               size="2.5"
               class="left-col"
+              (click)="clickAddingchannel(addingchannel)"
             >
               <div class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode">
                 <img src={{parseChannelAvatar(addingchannel.avatar)}}>
@@ -37,6 +38,7 @@
             <ion-col
               size="6.5"
               class="middle-col"
+              (click)="clickAddingchannel(addingchannel)"
             >
               <ion-label style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ addingchannel.feedName }}</ion-label>
               <ion-row>
