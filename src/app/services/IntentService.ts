@@ -348,7 +348,7 @@ export class IntentService {
 
         const isSubscribed = channel.isSubscribed || false;
 
-        if (isSubscribed || postId != 0) {
+        if (isSubscribed && parseInt(postId) != 0) {
           this.native.getNavCtrl().navigateForward(['/postdetail', serverNodeId, channelId, postId]);
           return;
         }
@@ -387,5 +387,35 @@ export class IntentService {
 
   setCurLang(currentLang: string) {
     this.languageService.setCurLang(currentLang);
+  }
+
+  createShareLink(nodeId: string, channelId: number, postId: number): string {
+    const server = this.dataHelper.getServer(nodeId);
+
+    const address = server.carrierAddress;
+    const serverDid = server.did;
+
+    const key = this.dataHelper.getKey(nodeId, channelId, 0, 0);
+    const channel = this.dataHelper.getChannel(key);
+
+    const ownerName = channel.owner_name;
+    const ownerDid = channel.owner_did;
+    const channelName = channel.name;
+    const channelDesc = channel.introduction;
+
+    // const channelName
+    // const ownerName
+    let url = "https://feeds.trinity-feeds.app/feeds/"
+      + "?address=" + address
+      + "&channelId=" + channelId
+      + "&channelDesc=" + channelDesc
+      + "&ownerName=" + ownerName
+      + "&serverDid=" + serverDid
+      + "&channelName=" + channelName
+      + "&ownerDid=" + ownerDid
+      + "&postId=" + postId
+
+    console.log("share link url = " + url);
+    return url;
   }
 }
