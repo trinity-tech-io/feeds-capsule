@@ -280,6 +280,7 @@ export class ServerInfoPage implements OnInit {
     if (this.platform.is('ios')) {
       this.isPress = true;
     }
+    //@Deprecated
     this.intentService.share('', feedsUrl);
   }
 

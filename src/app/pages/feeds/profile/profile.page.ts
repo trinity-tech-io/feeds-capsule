@@ -1504,7 +1504,13 @@ export class ProfilePage implements OnInit {
       case 'share':
         if (this.selectType === 'ProfilePage.myFeeds') {
           let content = this.getQrCodeString(this.curItem);
-          this.intentService.share('', content);
+
+          const myNodeId = this.curItem['nodeId'];
+          const myChannelId = this.curItem['channelId'];
+          const myPostId = this.curItem['postId'] || 0;
+
+
+          this.intentService.share('', this.intentService.createShareLink(myNodeId, myChannelId, myPostId));
           this.hideSharMenuComponent = false;
           return;
         }
@@ -1518,7 +1524,8 @@ export class ProfilePage implements OnInit {
           if (post != null) {
             postContent = this.feedService.parsePostContentText(post.content);
           }
-          this.intentService.share('', postContent);
+          //share post
+          this.intentService.share('', this.intentService.createShareLink(nodeId, feedId, postId));
           this.hideSharMenuComponent = false;
           return;
         }

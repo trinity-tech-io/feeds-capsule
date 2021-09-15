@@ -60,8 +60,9 @@ export class MenuService {
             if (post != null) {
               postContent = this.feedService.parsePostContentText(post.content);
             }
+
             this.intentService
-              .share('', postContent)
+              .share('', this.intentService.createShareLink(nodeId, channelId, postId))
               .then(() => this.postDetail.dismiss());
           },
         },
@@ -118,8 +119,9 @@ export class MenuService {
             if (post != null) {
               postContent = this.feedService.parsePostContentText(post.content);
             }
+            //Share post
             this.intentService
-              .share('', postContent)
+              .share('', this.intentService.createShareLink(nodeId, channelId, postId))
               .then(() => this.postDetail.dismiss());
           },
         },
@@ -459,8 +461,9 @@ export class MenuService {
           postContent = this.feedService.parsePostContentText(post.content);
         }
 
+        //home share post
         this.intentService
-          .share('', postContent)
+          .share('', this.intentService.createShareLink(nodeId, channelId, postId))
           .then(() => this.postDetail.dismiss());
         break;
       case 'removePost':
