@@ -33,6 +33,10 @@ export class ViewHelper {
     appService?: any,
     isOwer?: boolean,
   ) {
+    const isExitMode = await this.modalController.getTop();
+    if (isExitMode) {
+      return;
+    }
     this.titleBarService.setTitle(titleBar, this.translate.instant(newNameKey));
     this.titleBarService.setTitleBarBackKeyShown(titleBar, false);
     this.titleBarService.hideRight(titleBar);
