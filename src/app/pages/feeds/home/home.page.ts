@@ -238,7 +238,7 @@ export class HomePage implements OnInit {
     }
 
     let pasarListGrid = this.feedService.getPasarListGrid();
-    if(pasarListGrid){
+    if(!pasarListGrid){
        this.styleType = "grid";
     }else{
        this.styleType = "list";
@@ -315,7 +315,7 @@ export class HomePage implements OnInit {
 
     this.events.subscribe(FeedsEvent.PublishType.pasarListGrid,()=>{
        let pasarListGrid = this.feedService.getPasarListGrid();
-       if(pasarListGrid){
+       if(!pasarListGrid){
           this.styleType = "grid";
        }else{
           this.styleType = "list";
