@@ -41,28 +41,8 @@
         {{elaAddress}}
       </ion-col>
     </ion-row>
-    <!-- <ion-row *ngIf="!followStatus&&type===''">
-      <ion-col size="12">
-       <div class="bigCircle">
-           <div class="smallCircle">
-              <img src="./assets/images/lock.svg"/>
-           </div>
-       </div>
-      </ion-col>
-
-      <ion-col size="12" class="subscribeChannel">
-        {{"ChannelsPage.subscribeChannel"|translate}}
-      </ion-col>
-    </ion-row> -->
 
     <ion-ripple-effect></ion-ripple-effect>
-
-    <!-- <ion-row class="detail-row" *ngIf="followStatus">
-      <ion-col size="12" class="left-col">
-          <h1>{{'IssuecredentialPage.elaaddress'|translate}}</h1>
-          <h2>{{elaAddress|translate}}</h2>
-      </ion-col>
-    </ion-row> -->
 
     <ion-row class="detail-row" *ngIf="developerMode" (press)="copyText(nodeId)" [style.touch-action]="'pan-y'">
       <ion-col size="12" class="left-col">
@@ -71,7 +51,7 @@
       </ion-col>
     </ion-row>
 
-    <ion-row class="detail-row" *ngIf="developerMode">
+    <ion-row class="detail-row" *ngIf="developerMode&&type!='discover'">
       <ion-col size="12" class="left-col">
           <h1>{{'ServerInfoPage.version'|translate}}</h1>
           <h2>{{severVersion}}</h2>
@@ -81,7 +61,7 @@
     <ion-row class="detail-row" *ngIf="developerMode" (press)="copyText(serverInfo['did'])" [style.touch-action]="'pan-y'">
       <ion-col size="12" class="left-col">
           <h1>{{'ServerInfoPage.did'|translate}}</h1>
-          <h2>{{serverInfo['did']}}</h2>
+          <h2>{{serverDid}}</h2>
       </ion-col>
     </ion-row>
 

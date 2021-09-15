@@ -3,50 +3,6 @@
 <ion-content>
   <ion-grid class="container" [class.darkContainer]="theme.darkMode">
     <ion-row class="channel-header">
-      <!-- <ion-col size="12">
-        <ion-card class="ion-activatable ripple profileCardBg0">
-          <img class="profileFeeds"
-             src="./assets/images/profile-feeds-logo.svg"
-          />
-
-          <ion-row style="margin-top:20px;">
-            <ion-col size=1>
-
-            </ion-col>
-            <ion-col size="2.5">
-              <div class="feedAvatar">
-                <img [src]="feedInfo['feedsAvatar']">
-              </div>
-            </ion-col>
-            <ion-col size="8.5">
-              <ion-card-title>{{feedInfo['name']}}</ion-card-title>
-              <ion-card-subtitle>{{feedInfo['description']}}</ion-card-subtitle>
-            </ion-col>
-            <ion-col size=1></ion-col>
-            <ion-col size=11>
-              <ion-row class="sub-row">
-                <img  [src]="!theme.darkMode ? './assets/images/darkmode/bubble2.svg' : './assets/images/darkmode/bubble2.svg'"> <br>
-                <ion-label><span>{{ channelSubscribes }}</span> {{ 'common.followers' | translate }}</ion-label>
-              </ion-row>
-            </ion-col>
-          </ion-row>
-        </ion-card>
-        <ion-row class="channel-btns-row">
-          <ion-col size="12">
-            <ion-button *ngIf="status ==='0'" class="subscribed" fill="outline" [disabled]="true">
-              <ion-label>{{ handleStatus() | translate}}</ion-label>
-            </ion-button>
-            <ion-button *ngIf="status ==='1'" class="unsubscribed" fill="outline" (click)="checkDid('subscribe')">
-              <ion-label>{{'DiscoverfeedinfoPage.follow' | translate}}</ion-label>
-              <ion-ripple-effect></ion-ripple-effect>
-            </ion-button>
-            <ion-button *ngIf="status ==='2'" class="subscribed" (click)="unsubscribe()">
-              <ion-label>{{ 'DiscoverfeedinfoPage.unfollow' | translate }}</ion-label>
-              <ion-ripple-effect></ion-ripple-effect>
-            </ion-button>
-          </ion-col>
-        </ion-row>
-      </ion-col> -->
 
       <ion-col size="12" style="padding:0px;">
         <div class="feedAvatar">
@@ -68,6 +24,11 @@
         <span class="channelSubscribes">
           <img [src]="!theme.darkMode ? './assets/images/bubble2.svg' : './assets/images/darkmode/bubble2.svg'">
           {{ channelSubscribes }} {{ 'common.followers' | translate }} </span>
+
+        <ion-button *ngIf="status ==='0'" class="subscribed" fill="outline">
+            <ion-label>{{ handleStatus() | translate}}</ion-label>
+        </ion-button>
+
         <ion-button *ngIf="status ==='1'" class="unsubscribed" fill="outline" (click)="subscribe()">
           <ion-label>{{'SearchPage.follow' | translate}}</ion-label>
           <ion-ripple-effect></ion-ripple-effect>
@@ -100,23 +61,6 @@
         <p>{{ "ChannelsPage.subscribeChannel"|translate }}</p>
       </ion-col>
     </ion-row>
-
-
-
-      <!--- SERVER DETAILS --->
-        <!-- <ion-row class="detail-row">
-          <ion-col size="12" class="left-col">
-              <h1>{{'DiscoverfeedinfoPage.feeds'|translate}}</h1>
-              <h2>{{feedInfo['name']}}</h2>
-          </ion-col>
-        </ion-row> -->
-
-        <!-- <ion-row class="detail-row">
-          <ion-col size="12" class="left-col">
-              <h1>{{'ServerInfoPage.introduction'|translate}}</h1>
-              <h2>{{feedInfo['description']}}</h2>
-          </ion-col>
-        </ion-row> -->
 
         <ion-row class="detail-row" *ngIf="developerMode" (press)="copyText(feedInfo['nodeId'])" [style.touch-action]="'pan-y'">
           <ion-col size="12" class="left-col">

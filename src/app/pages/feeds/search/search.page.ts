@@ -140,16 +140,6 @@ export class SearchPage implements OnInit {
       },
     );
 
-    this.events.subscribe(
-      FeedsEvent.PublishType.addFeedStatusChanged,
-      (addFeedStatusChangedData: FeedsEvent.AddFeedStatusChangedData) => {
-        this.zone.run(() => {
-          this.discoverSquareList = this.filterdiscoverSquareList(
-            this.discoverSquareList,
-          );
-        });
-      },
-    );
   }
 
   removeSubscribe() {
@@ -713,5 +703,23 @@ export class SearchPage implements OnInit {
     }
     this.feedService.setSelsectNftImage("");
     this.native.navigateForward(['createnewpost'], '');
+  }
+
+  clickAddingchannel(addingchannel:any){
+
+    this.removeSubscribe();
+    let nodeId = addingchannel["nodeId"];
+    let srcFeedId = addingchannel["feedId"];
+    let feed = _.find(this.httpAllData,(item)=>{
+      let feedUrl = item['url'];
+      let feedId = feedUrl.split('/')[4];
+          return item.nodeId == nodeId && feedId == srcFeedId;
+    });
+
+    feed["carrierAddress"] = addingchannel["carrierAddress"];
+
+    this.native.go('discoverfeedinfo', {
+      params:feed
+    });
   }
 }
