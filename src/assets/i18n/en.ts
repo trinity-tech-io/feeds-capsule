@@ -46,6 +46,7 @@ export const en = {
     resolveDidDocumentError: 'Resolve DID Document error',
     cdeleted: '(comment deleted)',
     sharepost: 'Share Post',
+    shareChannel: 'Share Channel',
     error400: 'Absent required parameter error',
     error500: 'Server error',
     confirmdeletion: 'Are you sure you want to delete this post?',

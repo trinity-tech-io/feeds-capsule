@@ -62,7 +62,7 @@ export class MenuService {
             }
 
             this.intentService
-              .share('', this.intentService.createShareLink(nodeId, channelId, postId))
+              .share('common.sharepost', this.intentService.createShareLink(nodeId, channelId, postId))
               .then(() => this.postDetail.dismiss());
           },
         },
@@ -121,7 +121,7 @@ export class MenuService {
             }
             //Share post
             this.intentService
-              .share('', this.intentService.createShareLink(nodeId, channelId, postId))
+              .share('common.sharepost', this.intentService.createShareLink(nodeId, channelId, postId))
               .then(() => this.postDetail.dismiss());
           },
         },
@@ -463,7 +463,7 @@ export class MenuService {
 
         //home share post
         this.intentService
-          .share('', this.intentService.createShareLink(nodeId, channelId, postId))
+          .share('common.sharepost', this.intentService.createShareLink(nodeId, channelId, postId))
           .then(() => this.postDetail.dismiss());
         break;
       case 'removePost':

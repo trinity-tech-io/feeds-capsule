@@ -75,21 +75,13 @@
         <config-file parent="com.apple.developer.associated-domains" target="*-Debug.plist">
             <array>
                 <string>applinks:feeds.trinity-tech.io</string>
+                <string>applinks:feeds.trinity-feeds.app</string>
             </array>
         </config-file>
         <config-file parent="com.apple.developer.associated-domains" target="*-Release.plist">
             <array>
                 <string>applinks:feeds.trinity-tech.io</string>
-            </array>
-        </config-file>
-        <config-file parent="com.apple.developer.associated-domains" target="*-Debug.plist">
-            <array>
-                <string>applinks:feeds.trinity-tech.io</string>
-            </array>
-        </config-file>
-        <config-file parent="com.apple.developer.associated-domains" target="*-Release.plist">
-            <array>
-                <string>applinks:feeds.trinity-tech.io</string>
+                <string>applinks:feeds.trinity-feeds.app</string>
             </array>
         </config-file>
         <allow-intent href="itms:*" />
