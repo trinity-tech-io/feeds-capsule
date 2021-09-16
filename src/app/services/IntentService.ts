@@ -8,6 +8,7 @@ import { ThemeService } from './../services/theme.service';
 import { DataHelper } from './../services/DataHelper';
 import { CarrierService } from './CarrierService';
 import { Events } from 'src/app/services/events.service';
+import { TranslateService } from '@ngx-translate/core';
 
 let TAG: string = 'IntentService';
 declare let intentManager: IntentPlugin.IntentManager;
@@ -21,33 +22,21 @@ export class IntentService {
     public theme: ThemeService,
     private dataHelper: DataHelper,
     private carrierService: CarrierService,
-    private events: Events) { }
+    private events: Events,
+    private translate: TranslateService) { }
 
   scanQRCode(): Promise<string> {
     return this.scanService.scanBarcode();
   }
 
-  initCarrierCallback() {
-
-  }
-  listen(intentResult) {
-    // intentManager.addIntentListener((receivedIntent) => {
-    //   console.log("Intents", "Intent received, now dispatching to listeners", receivedIntent);
-    //   // this.intentListener.next(receivedIntent);
-    // });
-
-
-  }
-
   share(title: string, content: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
-      let params = {
-        title: title,
-        url: content,
-      };
-
+      console.log(TAG, "Shared title is ", title, " &url is", content);
       try {
-        let res = await intentManager.sendIntent('share', params);
+        let res = await intentManager.sendIntent('share', {
+          title: this.translate.instant(title),
+          url: content,
+        });
 
         if (res) {
           resolve(res);
@@ -276,7 +265,7 @@ export class IntentService {
   }
 
   async dispatchIntent(receivedIntent: IntentPlugin.ReceivedIntent) {
-    console.log("Intents", "Intent received, now dispatching to listeners", receivedIntent);
+    console.log(TAG, "Intent received, now dispatching to listeners", receivedIntent);
     const action = receivedIntent.action;
     const params = receivedIntent.params
     switch (action) {
@@ -297,18 +286,18 @@ export class IntentService {
         let isDisclaimer =
           localStorage.getItem('org.elastos.dapp.feeds.disclaimer') || '';
         if (!isDisclaimer) {
-          console.log("Not disclaimer");
+          console.log(TAG, "Not disclaimer");
           this.native.setRootRouter('disclaimer');
           return;
         }
 
         const signinData = await this.dataHelper.getSigninData();
         if (!signinData) {
-          console.log("Not signin");
+          console.log(TAG, "Not signin");
           this.native.setRootRouter(['/signin']);
           return;
         }
-        console.log("Intent params", params);
+        console.log(TAG, "Intent params", params);
 
         const address = params.address;
         const channelId = params.channelId;
@@ -323,11 +312,11 @@ export class IntentService {
 
         if (!isContain) {
           //https://feeds.trinity-feeds.app/feeds/?address=Km3wsaD9zMGnYW7otewZhZKpgXVnYZGms2ihiGrpsUhASNMx1ZKj&channelId=1&postId=1&channelName=xb2&ownerName=Wangran&channelDesc=xb2 live&serverDid=did:elastos:iZ6NDBjZQG8XM8d1jENWQ8HW1ojfdHPqW8&ownerDid=did:elastos:iXB82Mii9LMEPn3U7cLECswLmex9KkZL8D
-          const ownerName = params.ownerName;
-          const channelName = params.channelName;
-          const channelDesc = params.channelDesc;
-          const ownerDid = params.ownerDid;
-          const serverDid = params.serverDid;
+          const ownerName = decodeURIComponent(params.ownerName);
+          const channelName = decodeURIComponent(params.channelName);
+          const channelDesc = decodeURIComponent(params.channelDesc);
+          const ownerDid = decodeURIComponent(params.ownerDid);
+          const serverDid = decodeURIComponent(params.serverDid);
           const feeds = {
             description: channelDesc,
             did: serverDid,
@@ -353,7 +342,12 @@ export class IntentService {
           return;
         }
 
-        this.native.getNavCtrl().navigateForward(['/channels', serverNodeId, channelId]);
+        if (parseInt(channelId) != 0) {
+          this.native.getNavCtrl().navigateForward(['/channels', serverNodeId, channelId]);
+          return;
+        }
+
+        this.native.setRootRouter(['/tabs/home']);
         break;
     }
   }
@@ -403,19 +397,17 @@ export class IntentService {
     const channelName = channel.name;
     const channelDesc = channel.introduction;
 
-    // const channelName
-    // const ownerName
     let url = "https://feeds.trinity-feeds.app/feeds/"
       + "?address=" + address
       + "&channelId=" + channelId
-      + "&channelDesc=" + channelDesc
-      + "&ownerName=" + ownerName
-      + "&serverDid=" + serverDid
-      + "&channelName=" + channelName
-      + "&ownerDid=" + ownerDid
+      + "&channelDesc=" + encodeURIComponent(channelDesc)
+      + "&ownerName=" + encodeURIComponent(ownerName)
+      + "&serverDid=" + encodeURIComponent(serverDid)
+      + "&channelName=" + encodeURIComponent(channelName)
+      + "&ownerDid=" + encodeURIComponent(ownerDid)
       + "&postId=" + postId
 
-    console.log("share link url = " + url);
+    console.log(TAG, "Shared link url is " + url);
     return url;
   }
 }

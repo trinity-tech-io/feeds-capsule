@@ -45,6 +45,7 @@ export const zh = {
     resolveDidDocumentError: '解析DID文档出错',
     cdeleted: '(评论已删除)',
     sharepost: '分享微说',
+    shareChannel: '分享微频',
     error400: '参数错误',
     error500: '服务器错误',
     confirmdeletion: '确认删除这条微说?',

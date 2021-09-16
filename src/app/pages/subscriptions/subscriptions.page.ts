@@ -191,7 +191,7 @@ export class SubscriptionsPage implements OnInit {
       case 'share':
         let content = this.getQrCodeString(this.curItem);
         //share channel
-        this.intentService.share('', this.intentService.createShareLink(nodeId, feedId, 0));
+        this.intentService.share('common.shareChannel', this.intentService.createShareLink(nodeId, feedId, 0));
         this.hideSharMenuComponent = false;
         break;
       case 'info':
