@@ -1,12 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgZone, ViewChild } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
 import { NativeService } from '../services/NativeService';
 import { FeedService, SignInData } from '../services/FeedService';
 import { CarrierService } from '../services/CarrierService';
-import { MenuController, PopoverController } from '@ionic/angular';
-import { MenuService } from 'src/app/services/MenuService';
 import { PopupProvider } from 'src/app/services/popup';
 import { LanguageService } from 'src/app/services/language.service';
 import { Logger } from './logger';
@@ -17,18 +14,15 @@ const TAG: string = 'AppService';
 })
 export class AppService {
   public popover: any = null;
+  private backButtonPressed:boolean = false;
+  private conutIndex:number = 0;
   constructor(
     private router: Router,
-
     private zone: NgZone,
-    private translate: TranslateService,
     private native: NativeService,
     private feedService: FeedService,
     private carrierService: CarrierService,
-    private menu: MenuController,
     public popupProvider: PopupProvider,
-    private popoverController: PopoverController,
-    private menuService: MenuService,
     private languageService: LanguageService, // private titleBarService: TitleBarService
   ) {}
 
@@ -55,9 +49,29 @@ export class AppService {
       this.router.url.indexOf('/bindservice/issuecredential') > -1
     ) {
       this.createDialog();
-    } else if (this.router.url === '/menu/servers') {
-      this.initTab();
-    } else {
+    } else if (this.router.url === "/tabs/home" ||
+               this.router.url === "/tabs/profile" ||
+               this.router.url === "/tabs/notification" ||
+               this.router.url === "/tabs/notification" ||
+               this.router.url === "/signin" ||
+               this.router.url === "/disclaimer" ) {
+               this.conutIndex++;
+               if (this.backButtonPressed&&this.conutIndex===4) {
+                  this.conutIndex = 0;
+                  navigator['app'].exitApp();
+               }else{
+                this.backButtonPressed = true;
+                if(this.conutIndex === 1){
+                  this.native.toast("common.exitApp",2000);
+                  let sid = setTimeout(() =>{
+                    this.backButtonPressed = false;
+                    this.conutIndex = 0;
+                    clearTimeout(sid);
+                  } , 2000);
+                }
+               }
+
+    } else{
       this.native.pop();
     }
   }

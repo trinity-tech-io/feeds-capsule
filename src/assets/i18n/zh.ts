@@ -155,7 +155,8 @@ export const zh = {
     burningNFTSDesc:"正在销毁收藏品，请稍后",
     burningNFTSTimeoutDesc:"销毁收藏品超时，后面您可自行确认",
     burnNFTSFailed:"销毁收藏品失败",
-    burnNFTSSuccess:"销毁收藏品成功"
+    burnNFTSSuccess:"销毁收藏品成功",
+    exitApp:"再按一次退出应用！"
   },
   app: {
     profileDetails: '档案详情',
