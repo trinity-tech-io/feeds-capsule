@@ -176,14 +176,14 @@
           <h2 *ngIf="comment.status === 1" (click)="clickComment(comment)">
             <pre>{{'common.cdeleted' | translate}}</pre>
           </h2>
-          <h2 *ngIf="comment.status != 1&&getPostContentTextSize(comment.content)<=maxTextSize" (click)="clickComment(comment,$event)">
+          <h2 *ngIf="comment.status != 1&&getPostContentTextSize(comment.content)<=maxTextSize" (click)="clickComment(comment,$event)" (press)="pressContent(comment.content)" [style.touch-action]="'pan-y'">
             <pre [ngStyle]="dstyleObj"  [innerHTML]="comment.content | html"></pre>
           </h2>
-          <h2 *ngIf="comment.status != 1&&getPostContentTextSize(comment.content)>maxTextSize&&!isFullContent[comment.id]">
+          <h2 *ngIf="comment.status != 1&&getPostContentTextSize(comment.content)>maxTextSize&&!isFullContent[comment.id]" (press)="pressContent(comment.content)" [style.touch-action]="'pan-y'">
             <pre [ngStyle]="dstyleObj" (click)="clickComment(comment,$event)" [innerHTML]="handleCommentContent(comment.content) | html"></pre>
             <pre [ngStyle]="styleObj" style="color:#368bff;" (click)="showFullContent(comment.id)">{{"common.showmore" | translate }}</pre>
           </h2>
-          <h2 *ngIf="comment.status != 1&&getPostContentTextSize(comment.content)>maxTextSize&&isFullContent[comment.id]">
+          <h2 *ngIf="comment.status != 1&&getPostContentTextSize(comment.content)>maxTextSize&&isFullContent[comment.id]" (press)="pressContent(comment.content)" [style.touch-action]="'pan-y'">
             <pre [ngStyle]="dstyleObj" (click)="clickComment(comment,$event)" [innerHTML]="comment.content | html"></pre>
             <pre [ngStyle]="styleObj" style="color:#368bff;" (click)="hideFullContent(comment.id)">{{"common.showless" | translate }}</pre>
           </h2>
