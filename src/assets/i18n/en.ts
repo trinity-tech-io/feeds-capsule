@@ -159,7 +159,8 @@ export const en = {
     burningNFTSDesc:"Delete Collectibles, please wait",
     burningNFTSTimeoutDesc:"Delete Collectibles timeout, you can confirm later",
     burnNFTSFailed:"Delete Collectibles Failed",
-    burnNFTSSuccess:"Delete Collectibles successfully"
+    burnNFTSSuccess:"Delete Collectibles successfully",
+    exitApp:"Press again to exit the application!"
   },
   app: {
     profileDetails: 'Profile Details',

@@ -104,7 +104,8 @@ export class MyApp {
           this.statusBar.styleDefault();
         }
 
-        this.platform.backButton.subscribeWithPriority(9999,async() => {
+        this.platform.backButton.subscribeWithPriority(99999,async() => {
+          console.log("======test=======");
           const modal = await this.modalController.getTop();
           if (modal) {
             modal.dismiss();
