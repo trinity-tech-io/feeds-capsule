@@ -67,7 +67,7 @@
         <ion-label position="stacked">{{ 'MintnftPage.nftAmount' | translate }}</ion-label>
         <ion-input type="number" *ngIf="sellMethod==='fixedPrice'" placeholder="{{'MintnftPage.nftFixedAmount'|translate}}" [(ngModel)]="nftFixedAmount"></ion-input>
         <ion-input *ngIf="sellMethod==='highestBid'" type="text" placeholder="{{'MintnftPage.nftMinimumAmount'|translate}}" [(ngModel)]="nftMinimumAmount"></ion-input>
-        <span class="tipCoin">ELA/ETHSC</span>
+        <span class="tipCoin">ELA</span>
         <img class="tip" src="/assets/images/dashang.svg" *ngIf="!theme.darkMode">
         <img class="tip" src="/assets/images/darkmode/tip.svg" *ngIf="theme.darkMode">
       </ion-item>

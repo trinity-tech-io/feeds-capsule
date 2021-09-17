@@ -47,7 +47,7 @@ export class AssetdetailsPage implements OnInit {
   public creator: string = '';
   public datePurchased: string = '2020-05-06';
   public price: number = null;
-  public currency: string = 'ELA/ETHSC';
+  public currency: string = 'ELA';
   public type: string = 'Bid';
   public purchaseInfoQuantity: string = '1';
   public selectType: string = 'AssetdetailsPage.contract';
