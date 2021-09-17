@@ -2,7 +2,7 @@
     position:relative;
     margin: 0 auto;
     width: 160px;
-    height: 233px;
+    height: 252px;
     border-radius: 10px;
     text-align: center;
 }
@@ -82,14 +82,27 @@ img{
 
 .like{
     .price{
-        display:inline-block;
+        display:block;
         font-size: 13px;
         font-weight: bold;
         font-stretch: normal;
         font-style: normal;
         text-align: left;
         color: #7624fe;
-        margin-top: 12px;
+        margin-top: 16px;
+        margin-left: 13.1px;
+    }
+
+    .priceUsd{
+        display:block;
+        font-size: 8px;
+        font-weight: bold;
+        font-stretch: normal;
+        font-style: normal;
+        text-align: left;
+        margin-top: -5px;
+        margin-left: 13.1px;
+        color: #9ca0a4;
     }
     .onSale{
         display: inline-block;
@@ -98,7 +111,7 @@ img{
         font-style: normal;
         /* text-align: left; */
         color: #7624fe;
-        margin-top: 12px;
+        margin-top: 24px;
         border: solid 1px #7624fe;
         border-radius: 10px;
         width: 60px;

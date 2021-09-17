@@ -19,11 +19,11 @@
     top: 8px;
 }
 .assetsImg{
-    
+
     // width: auto;
     max-height: 200px;
     border-radius: 10px;
-    
+
 }
 
 .des{
@@ -50,15 +50,6 @@
     text-overflow: ellipsis;
 }
 
-.des2{
-    font-size: 16px;
-    font-weight: bold;
-    font-stretch: normal;
-    font-style: normal;
-    text-align: left;
-    color: #9ca0a4;
-    margin-top: 12px;
-}
 
 .des3{
     margin-left:38px;
@@ -71,6 +62,7 @@
 }
 
 .like{
+    margin-top: 15px;
     span{
         // display:inline-block;
         font-size: 16px;
@@ -82,6 +74,29 @@
         margin-top: 7px;
         margin-bottom:8px;
     }
+
+    .des2{
+        font-size: 16px;
+        font-weight: bold;
+        font-stretch: normal;
+        font-style: normal;
+        text-align: left;
+        color: #9ca0a4;
+        float: right;
+        margin-top: -1px;
+    }
+
+    .priceUsd{
+        display:block;
+        font-size: 8px;
+        font-weight: bold;
+        font-stretch: normal;
+        font-style: normal;
+        text-align: left;
+        margin-top:5px;
+        color: #9ca0a4;
+    }
+
     text-align: left;
     img{
         width:16px;
@@ -122,11 +137,19 @@
     .des1{
         color: #fff;
     }
-    .des2{
-        color: #9ca0a4;
-    }
+
 
     .createTime{
         color:#9ca0a4;
+    }
+
+    .like{
+        .priceUsd{
+          color: #9ca0a4;
+        }
+
+        .des2{
+            color: #9ca0a4;
+        }
     }
 }

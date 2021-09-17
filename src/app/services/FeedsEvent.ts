@@ -165,7 +165,8 @@ declare namespace FeedsEvent {
     channelInfoRightMenu = "feeds:channelInfoRightMenu",
 
     savePicture = "feeds:savePicture",
-    clickDialog = "feeds:clickDialog"
+    clickDialog = "feeds:clickDialog",
+    updateElaPrice = "feeds:updateElaPrice"
   }
 
   type TipDialogData = {

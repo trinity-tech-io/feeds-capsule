@@ -75,6 +75,7 @@
     <ion-row *ngIf="selectType === 'ProfilePage.collectibles'&&ownNftSum>0" class="leftrightrow">
       <ion-col size="6" *ngFor="let item of collectiblesList">
         <app-assetitem
+        [elaPrice] = "elaPrice"
         [assetItem] = "item"
         (clickAssetItem) = "clickAssetItem($event)"
         (clickMore) = "clickMore($event)"

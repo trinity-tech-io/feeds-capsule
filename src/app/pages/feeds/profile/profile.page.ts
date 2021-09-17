@@ -155,7 +155,7 @@ export class ProfilePage implements OnInit {
   public loadingText: string = "";
   public loadingCurNumber: string = "";
   public loadingMaxNumber: string = "";
-
+  public elaPrice:string = null;
   constructor(
     private feedService: FeedService,
     public theme: ThemeService,
@@ -249,6 +249,10 @@ export class ProfilePage implements OnInit {
 
   async addProflieEvent() {
     this.updateWalletAddress();
+
+    this.events.subscribe(FeedsEvent.PublishType.updateElaPrice,()=>{
+          this.getElaUsdPrice();
+    });
 
     this.events.subscribe(FeedsEvent.PublishType.clickDialog, (dialogData: any) => {
       let pageName = dialogData.pageName;
@@ -600,8 +604,17 @@ export class ProfilePage implements OnInit {
     });
   }
 
+  getElaUsdPrice(){
+    this.httpService.getElaPrice().then((elaPrice:any)=>{
+      if(elaPrice != null){
+         this.elaPrice = elaPrice;
+      }
+    });
+  }
+
   ionViewWillEnter() {
     this.initTitleBar();
+    this.getElaUsdPrice();
     this.events.subscribe(FeedsEvent.PublishType.addProflieEvent, () => {
       this.addProflieEvent();
       this.isAddProfile = true;
@@ -675,6 +688,7 @@ export class ProfilePage implements OnInit {
     this.events.unsubscribe(FeedsEvent.PublishType.nftUpdateList);
     this.events.unsubscribe(FeedsEvent.PublishType.clickDialog);
     this.events.unsubscribe(FeedsEvent.PublishType.savePicture);
+    this.events.unsubscribe(FeedsEvent.PublishType.updateElaPrice);
     this.clearDownStatus();
     this.native.hideLoading();
     this.hideFullScreen();
@@ -712,6 +726,7 @@ export class ProfilePage implements OnInit {
         this.initMyFeeds();
         break;
       case 'ProfilePage.collectibles':
+        this.getElaUsdPrice();
         this.getOwnNftSum();
         this.getCollectiblesList();
         break;
@@ -746,6 +761,7 @@ export class ProfilePage implements OnInit {
         }, 500);
         break;
       case 'ProfilePage.collectibles':
+        this.getElaUsdPrice();
         let collectiblesList = _.cloneDeep(this.collectiblesList);
         let arr = _.filter(collectiblesList, (item) => {
           return item === null;
@@ -1918,7 +1934,6 @@ export class ProfilePage implements OnInit {
         this.ipfsService
           .nftGet(this.ipfsService.getNFTGetUrl() + feedsUri)
           .then(result => {
-            console.log("=====kind======"+result["kind"]);
             let type = result['type'] || 'single';
             let quantity = tokenNum;
             let fixedAmount = price || null;

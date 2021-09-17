@@ -34,6 +34,7 @@ import { WalletConnectControllerService } from 'src/app/services/walletconnect_c
 import { NFTContractHelperService, SortType } from 'src/app/services/nftcontract_helper.service';
 import _ from 'lodash';
 import { Logger } from 'src/app/services/logger';
+import { HttpService } from '../../../services/HttpService';
 let TAG: string = 'Feeds-home';
 @Component({
   selector: 'app-home',
@@ -141,8 +142,9 @@ export class HomePage implements OnInit {
   /** grid  list*/
   public styleType: string = "grid";
 
-  private pasarListCount: number = 0
-  private pasarListPage: number = 0
+  private pasarListCount: number = 0;
+  private pasarListPage: number = 0;
+  public elaPrice:string = null;
   constructor(
     private platform: Platform,
     private elmRef: ElementRef,
@@ -167,6 +169,7 @@ export class HomePage implements OnInit {
     private nftPersistenceHelper: NFTPersistenceHelper,
     private walletConnectControllerService: WalletConnectControllerService,
     private nftContractHelperService: NFTContractHelperService,
+    private httpService: HttpService
   ) { }
 
   initPostListData(scrollToTop: boolean) {
@@ -231,8 +234,16 @@ export class HomePage implements OnInit {
     });
   }
 
-  ionViewWillEnter() {
+  getElaUsdPrice(){
+    this.httpService.getElaPrice().then((elaPrice:any)=>{
+      if(elaPrice != null){
+         this.elaPrice = elaPrice;
+      }
+    });
+  }
 
+  ionViewWillEnter() {
+    this.getElaUsdPrice();
     if (this.platform.is('ios')) {
       this.isAndroid = false;
     }
@@ -254,6 +265,8 @@ export class HomePage implements OnInit {
     this.initPostListData(true);
     this.refreshImage(0);
     this.initnodeStatus(this.postList);
+
+
 
     this.events.subscribe(FeedsEvent.PublishType.addConnectionChanged, () => {
       this.addConnectionChangedEvent();
@@ -338,6 +351,10 @@ export class HomePage implements OnInit {
   }
 
   addCommonEvents() {
+
+    this.events.subscribe(FeedsEvent.PublishType.updateElaPrice,()=>{
+          this.getElaUsdPrice();
+    });
 
     this.events.subscribe(FeedsEvent.PublishType.clickDialog,(dialogData:any)=>{
       let pageName = dialogData.pageName;
@@ -629,7 +646,7 @@ export class HomePage implements OnInit {
     this.events.unsubscribe(FeedsEvent.PublishType.rpcResponseError);
     this.events.unsubscribe(FeedsEvent.PublishType.rpcRequestSuccess);
     this.events.unsubscribe(FeedsEvent.PublishType.openRightMenu);
-
+    this.events.unsubscribe(FeedsEvent.PublishType.updateElaPrice);
     this.removeImages();
     this.removeAllVideo();
     this.isLoadimage = {};
@@ -884,6 +901,7 @@ export class HomePage implements OnInit {
         }, 500);
         break;
       case 'pasar':
+        this.getElaUsdPrice();
         this.loadMoreData().then((list) => {
           this.pasarList = _.concat(this.pasarList, list);
           this.pasarList = this.nftContractHelperService.sortData(this.pasarList, SortType.CREATE_TIME);
@@ -936,6 +954,7 @@ export class HomePage implements OnInit {
         }, 500);
         break;
       case 'pasar':
+        this.getElaUsdPrice();
         this.zone.run(async () => {
           try {
             this.pasarListPage = 0;
@@ -1795,6 +1814,7 @@ export class HomePage implements OnInit {
         this.refreshPostList();
         break;
       case 'pasar':
+        this.getElaUsdPrice();
         this.infiniteScroll.disabled = false;
         let value =
           this.popoverController.getTop()['__zone_symbol__value'] || '';

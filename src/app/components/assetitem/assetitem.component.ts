@@ -3,6 +3,7 @@ import { NFTContractControllerService } from 'src/app/services/nftcontract_contr
 import { ViewHelper } from 'src/app/services/viewhelper.service';
 import { ThemeService } from 'src/app/services/theme.service';
 import { IPFSService } from 'src/app/services/ipfs.service';
+import { UtilService } from 'src/app/services/utilService';
 
 @Component({
   selector: 'app-assetitem',
@@ -11,6 +12,7 @@ import { IPFSService } from 'src/app/services/ipfs.service';
 })
 export class AssetitemComponent implements OnInit {
   @Input() assetItem: any = null;
+  @Input() elaPrice:string = null;
   @Output() clickAssetItem = new EventEmitter();
   @Output() clickMore = new EventEmitter();
   public styleObj: any = { width: '' };
@@ -53,6 +55,16 @@ export class AssetitemComponent implements OnInit {
 
     return price;
   }
+
+  hanldeUsdPrice(ethPrice: string){
+    let usdPrice = null;
+    if(this.elaPrice != null){
+      let ethprice = this.nftContractControllerService.transFromWei(ethPrice);
+      usdPrice = UtilService.accMul(this.elaPrice,ethprice).toFixed(2);
+    }
+    return usdPrice;
+  }
+
 
   onSale(){
     this.viewHelper.showNftPrompt(
