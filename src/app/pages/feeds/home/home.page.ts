@@ -1203,7 +1203,7 @@ export class HomePage implements OnInit {
               priceDes =
                 this.nftContractControllerService.transFromWei(
                   price.toString(),
-                ) + ' ELA/ETHSC';
+                ) + ' ELA';
             }
           }
           let contentVersion = this.feedService.getContentVersion(
