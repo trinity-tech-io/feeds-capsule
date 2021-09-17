@@ -423,6 +423,6 @@ export class MyApp {
   updateElaPrice(){
     setInterval(()=>{
      this.events.publish(FeedsEvent.PublishType.updateElaPrice);
-    },60000*2);
+    },60000*10);
   }
 }
