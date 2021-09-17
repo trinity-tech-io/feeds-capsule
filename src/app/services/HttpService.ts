@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams, HttpResponse } from '@angular/common/http';
 import { NativeService } from 'src/app/services/NativeService';
 import { PopupProvider } from 'src/app/services/popup';
 import { PopoverController } from '@ionic/angular';
@@ -18,12 +18,36 @@ export type HttpOptions = {
   withCredentials?: boolean;
 }
 
+export type HttpTextOptions = {
+  headers?: HttpHeaders | {
+    [header: string]: string | string[];
+  };
+  observe: 'response';
+  params?: HttpParams | {
+    [param: string]: string | string[];
+  };
+  reportProgress?: boolean;
+  responseType: 'text';
+  withCredentials?: boolean;
+}
+
+
 @Injectable()
 export class HttpService {
   public httpOptions: HttpOptions = {
     headers: new HttpHeaders({
       'Content-Type': 'application/json;charset=utf-8',
     }),
+  };
+  private textHttpOption: HttpTextOptions = {
+    // headers?: new HttpHeaders({
+    //   'Content-Type': 'application/json;charset=utf-8',
+    // }),
+    // observe: 'response',
+    // params?: new HttpParams (),
+    // reportProgress?: false,
+    responseType: 'text',
+    observe: 'response'
   };
   public popover: any = null;
   constructor(
@@ -41,9 +65,28 @@ export class HttpService {
     return new Promise((resolve, reject) => {
       this.httpClient.get(url).subscribe(
         response => {
+          console.log("success", response);
           resolve(response);
+
         },
         error => {
+          console.log("error", error);
+          reject(error);
+        }
+      );
+    });
+  }
+
+  httpGetWithText(url: string): Promise<HttpResponse<Object>> {
+    return new Promise((resolve, reject) => {
+      this.httpClient.get(url, this.textHttpOption).subscribe(
+        response => {
+          console.log("success", response);
+          resolve(response);
+
+        },
+        error => {
+          console.log("error", error);
           reject(error);
         }
       );
@@ -58,6 +101,21 @@ export class HttpService {
     return new Promise((resolve, reject) => {
       this.httpClient
         .post(url, body, httpOptions)
+        .subscribe(
+          response => {
+            resolve(response);
+          },
+          error => {
+            reject(error);
+          },
+        );
+    });
+  }
+
+  httpPostWithText(url: string, body: any): Promise<HttpResponse<Object>> {
+    return new Promise((resolve, reject) => {
+      this.httpClient
+        .post(url, body, this.textHttpOption)
         .subscribe(
           response => {
             resolve(response);

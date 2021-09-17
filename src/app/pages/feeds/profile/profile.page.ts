@@ -1498,7 +1498,7 @@ export class ProfilePage implements OnInit {
     this.native.navigateForward('/menu/profiledetail', '');
   }
 
-  hideShareMenu(objParm: any) {
+  async hideShareMenu(objParm: any) {
     let buttonType = objParm['buttonType'];
     let nodeId = objParm['nodeId'];
     let feedId = objParm['feedId'];
@@ -1525,9 +1525,15 @@ export class ProfilePage implements OnInit {
           const myChannelId = this.curItem['channelId'];
           const myPostId = this.curItem['postId'] || 0;
 
-
-          this.intentService.share(this.intentService.createSharePostTitle(myNodeId, myChannelId, myPostId), this.intentService.createShareLink(myNodeId, myChannelId, myPostId));
           this.hideSharMenuComponent = false;
+          this.native.showLoading("common.generateSharingLink");
+          try {
+            const sharedLink = await this.intentService.createShareLink(myNodeId, myChannelId, myPostId);
+            this.intentService.share(this.intentService.createSharePostTitle(myNodeId, myChannelId, myPostId), sharedLink);
+          } catch (error) {
+          }
+
+          this.native.hideLoading();
           return;
         }
         if (this.selectType === 'ProfilePage.myLikes') {
@@ -1540,9 +1546,17 @@ export class ProfilePage implements OnInit {
           if (post != null) {
             postContent = this.feedService.parsePostContentText(post.content);
           }
-          //share post
-          this.intentService.share(this.intentService.createSharePostTitle(nodeId, feedId, postId), this.intentService.createShareLink(nodeId, feedId, postId));
+
           this.hideSharMenuComponent = false;
+          this.native.showLoading("common.generateSharingLink");
+          try {
+            //share post
+            const sharedLink = await this.intentService.createShareLink(nodeId, feedId, postId);
+            this.intentService.share(this.intentService.createSharePostTitle(nodeId, feedId, postId), sharedLink);
+          } catch (error) {
+          }
+          this.native.hideLoading();
+
           return;
         }
         this.native.toast('common.comingSoon');
