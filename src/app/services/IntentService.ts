@@ -10,6 +10,7 @@ import { CarrierService } from './CarrierService';
 import { Events } from 'src/app/services/events.service';
 import { TranslateService } from '@ngx-translate/core';
 import { UtilService } from 'src/app/services/utilService';
+import { HttpService } from './HttpService';
 
 let TAG: string = 'IntentService';
 declare let intentManager: IntentPlugin.IntentManager;
@@ -24,7 +25,8 @@ export class IntentService {
     private dataHelper: DataHelper,
     private carrierService: CarrierService,
     private events: Events,
-    private translate: TranslateService) { }
+    private translate: TranslateService,
+    private httpService: HttpService) { }
 
   scanQRCode(): Promise<string> {
     return this.scanService.scanBarcode();
@@ -384,32 +386,42 @@ export class IntentService {
     this.languageService.setCurLang(currentLang);
   }
 
-  createShareLink(nodeId: string, channelId: number, postId: number): string {
-    const server = this.dataHelper.getServer(nodeId);
+  async createShareLink(nodeId: string, channelId: number, postId: number): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const server = this.dataHelper.getServer(nodeId);
 
-    const address = server.carrierAddress;
-    const serverDid = server.did;
+        const address = server.carrierAddress;
+        const serverDid = server.did;
 
-    const key = this.dataHelper.getKey(nodeId, channelId, 0, 0);
-    const channel = this.dataHelper.getChannel(key);
+        const key = this.dataHelper.getKey(nodeId, channelId, 0, 0);
+        const channel = this.dataHelper.getChannel(key);
 
-    const ownerName = channel.owner_name;
-    const ownerDid = channel.owner_did;
-    const channelName = channel.name;
-    const channelDesc = channel.introduction;
+        const ownerName = channel.owner_name;
+        const ownerDid = channel.owner_did;
+        const channelName = channel.name;
+        const channelDesc = channel.introduction;
 
-    let url = "https://feeds.trinity-feeds.app/feeds/"
-      + "?address=" + address
-      + "&channelId=" + channelId
-      + "&channelDesc=" + encodeURIComponent(channelDesc)
-      + "&ownerName=" + encodeURIComponent(ownerName)
-      + "&serverDid=" + encodeURIComponent(serverDid)
-      + "&channelName=" + encodeURIComponent(channelName)
-      + "&ownerDid=" + encodeURIComponent(ownerDid)
-      + "&postId=" + postId
+        let url = "https://feeds.trinity-feeds.app/feeds/"
+          + "?address=" + address
+          + "&channelId=" + channelId
+          + "&channelDesc=" + encodeURIComponent(channelDesc)
+          + "&ownerName=" + encodeURIComponent(ownerName)
+          + "&serverDid=" + encodeURIComponent(serverDid)
+          + "&channelName=" + encodeURIComponent(channelName)
+          + "&ownerDid=" + encodeURIComponent(ownerDid)
+          + "&postId=" + postId
 
-    console.log(TAG, "Shared link url is " + url);
-    return url;
+        // let encodeURL = encodeURI(url);
+        console.log(TAG, "Shared link url is " + url);
+
+        const finalURL = await this.shortenURL(url);
+        resolve(finalURL);
+        return finalURL;
+      } catch (error) {
+        // reject(error);
+      }
+    });
   }
 
   createSharePostTitle(nodeId: string, channelId: number, postId: number): string {
@@ -438,5 +450,24 @@ export class IntentService {
       return this.translate.instant("common.shareSharingChannel1") + channelName + this.translate.instant("common.shareSharingChannel2");
 
     return this.translate.instant("common.shareSharingChannel");
+  }
+
+  async shortenURL(url: string): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const baseURL = "https://s.trinity-feeds.app/api/v2/action/shorten?key=26459d40a6cf0c5703e5d2ee5006d2"
+        let body = {
+          "url": url
+        }
+        let shortURLResponse = await this.httpService.httpPostWithText(baseURL, body);
+        console.log("shortURLResponse", shortURLResponse);
+        const shortURL = shortURLResponse.body as string || "";
+        resolve(shortURL);
+        return shortURL;
+      } catch (error) {
+        console.log("Shorten URL error", error);
+        reject(error);
+      }
+    });
   }
 }

@@ -169,7 +169,7 @@ export class SubscriptionsPage implements OnInit {
     return feedsUrl + '#' + encodeURIComponent(feedsName);
   }
 
-  hideShareMenu(objParm: any) {
+  async hideShareMenu(objParm: any) {
     let buttonType = objParm['buttonType'];
     let nodeId = objParm['nodeId'];
     let feedId = objParm['feedId'];
@@ -190,9 +190,15 @@ export class SubscriptionsPage implements OnInit {
         break;
       case 'share':
         let content = this.getQrCodeString(this.curItem);
-        //share channel
-        this.intentService.share(this.intentService.createShareChannelTitle(nodeId, feedId), this.intentService.createShareLink(nodeId, feedId, 0));
         this.hideSharMenuComponent = false;
+        //share channel
+        this.native.showLoading("common.generateSharingLink");
+        try {
+          const sharedLink = await this.intentService.createShareLink(nodeId, feedId, 0);
+          this.intentService.share(this.intentService.createShareChannelTitle(nodeId, feedId), sharedLink);
+        } catch (error) {
+        }
+        this.native.hideLoading();
         break;
       case 'info':
         this.clickAvatar(nodeId, feedId);

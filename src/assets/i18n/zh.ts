@@ -160,7 +160,8 @@ export const zh = {
     shareReadMore: "... 点击阅读更多内容",
     sharesharingPost: "这是我从Feeds 分享的微说",
     shareSharingChannel1: "这是我从Feeds 分享的微频 '",
-    shareSharingChannel2: "' 请订阅后继续阅读"
+    shareSharingChannel2: "' 请订阅后继续阅读",
+    generateSharingLink: "正在生成分享链接"
   },
   app: {
     profileDetails: '档案详情',
