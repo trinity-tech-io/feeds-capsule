@@ -10,10 +10,6 @@
       <img  class="profile-tab" [ngClass]="{'profile-tab-selected': currentTab == 'profile'}">
     </ion-tab-button>
 
-    <!-- <ion-tab-button>
-      <div class="add-tab" (click)="create()"></div>
-    </ion-tab-button> -->
-
     <ion-tab-button tab="notification" (click)="notification()">
       <img class="notification-tab" [ngClass]="{'notification-tab-selected': currentTab == 'notification'}">
       <ion-badge color="danger" class="totalunread" *ngIf="totalunread>0">{{totalunread}}</ion-badge>

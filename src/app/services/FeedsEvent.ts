@@ -166,7 +166,8 @@ declare namespace FeedsEvent {
 
     savePicture = "feeds:savePicture",
     clickDialog = "feeds:clickDialog",
-    updateElaPrice = "feeds:updateElaPrice"
+    updateElaPrice = "feeds:updateElaPrice",
+    clickHome = "feeds:clickHome"
   }
 
   type TipDialogData = {

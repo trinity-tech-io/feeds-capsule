@@ -306,9 +306,11 @@ export class ProfilenftimagePage implements OnInit {
     }
 
     if(this.type === "postImages"){
-      let imgBase64 = await this.compressImage(imgUri);
+     await this.native.showLoading('common.waitMoment', isDismiss => {}, 30000);
+     let imgBase64 = await this.compressImage(imgUri);
       this.feedService.setSelsectNftImage(imgBase64);
       this.native.pop();
+      this.native.hideLoading();
      return;
   }
     this.native.navigateForward(['editimage'], { replaceUrl: true });
@@ -350,6 +352,7 @@ export class ProfilenftimagePage implements OnInit {
         };
       } catch (err) {
         Logger.error(TAG, "Compress image error", err);
+        this.native.hideLoading();
         reject("Compress image error" + JSON.stringify(err));
       }
     });

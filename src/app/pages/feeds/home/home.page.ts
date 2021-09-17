@@ -352,6 +352,15 @@ export class HomePage implements OnInit {
 
   addCommonEvents() {
 
+    this.events.subscribe(FeedsEvent.PublishType.clickHome,()=>{
+
+      this.content.getScrollElement().then((ponit:any)=>{
+            if(ponit.scrollTop>110){
+              this.initPostListData(true);
+            }
+      })
+    });
+
     this.events.subscribe(FeedsEvent.PublishType.updateElaPrice,()=>{
           this.getElaUsdPrice();
     });
@@ -647,6 +656,7 @@ export class HomePage implements OnInit {
     this.events.unsubscribe(FeedsEvent.PublishType.rpcRequestSuccess);
     this.events.unsubscribe(FeedsEvent.PublishType.openRightMenu);
     this.events.unsubscribe(FeedsEvent.PublishType.updateElaPrice);
+    this.events.unsubscribe(FeedsEvent.PublishType.clickHome);
     this.removeImages();
     this.removeAllVideo();
     this.isLoadimage = {};

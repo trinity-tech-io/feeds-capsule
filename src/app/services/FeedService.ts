@@ -7705,5 +7705,4 @@ export class FeedService {
   getSelsectNftImage(){
     return this.selsectNftImage;
   }
-
 }
