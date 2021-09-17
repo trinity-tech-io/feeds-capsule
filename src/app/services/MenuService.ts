@@ -957,6 +957,16 @@ export class MenuService {
       cssClass: 'editPost',
       buttons: [
         {
+          text: this.translate.instant('CollectionsPage.details'),
+          icon: 'information-circle',
+          handler: () => {
+            assItem['showType'] = 'buy';
+            this.native.navigateForward(['bid'], {
+              queryParams: assItem,
+            });
+          },
+        },
+        {
           text: this.translate.instant('common.cancel'),
           role: 'cancel',
           icon: 'close-circle',

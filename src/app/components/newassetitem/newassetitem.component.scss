@@ -61,8 +61,21 @@
     color: #000000;
 }
 
+.des4{
+    font-size: 12px;
+    font-weight: normal;
+    font-stretch: normal;
+    font-style: normal;
+    text-align:left;
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color:#000;
+}
+
 .like{
-    margin-top: 15px;
+    margin-top: 5px;
     span{
         // display:inline-block;
         font-size: 16px;
@@ -135,6 +148,10 @@
     color: #fff;
     }
     .des1{
+        color: #fff;
+    }
+
+    .des4{
         color: #fff;
     }
 
