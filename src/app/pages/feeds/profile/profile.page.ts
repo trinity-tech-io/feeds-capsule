@@ -1526,7 +1526,7 @@ export class ProfilePage implements OnInit {
           const myPostId = this.curItem['postId'] || 0;
 
 
-          this.intentService.share('common.sharepost', this.intentService.createShareLink(myNodeId, myChannelId, myPostId));
+          this.intentService.share(this.intentService.createSharePostTitle(myNodeId, myChannelId, myPostId), this.intentService.createShareLink(myNodeId, myChannelId, myPostId));
           this.hideSharMenuComponent = false;
           return;
         }
@@ -1541,7 +1541,7 @@ export class ProfilePage implements OnInit {
             postContent = this.feedService.parsePostContentText(post.content);
           }
           //share post
-          this.intentService.share('common.sharepost', this.intentService.createShareLink(nodeId, feedId, postId));
+          this.intentService.share(this.intentService.createSharePostTitle(nodeId, feedId, postId), this.intentService.createShareLink(nodeId, feedId, postId));
           this.hideSharMenuComponent = false;
           return;
         }

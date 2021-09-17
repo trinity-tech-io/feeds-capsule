@@ -151,16 +151,21 @@ export const en = {
     changePriceTimeoutDesc: 'Update price timeout. You can confirm whether the Collectible price was successfully updated later',
     saleOrderTimeoutDesc: 'Sell order timeout. You can confirm whether the Collectible was successfully sold later',
     publishSameDataFailed: 'Publish to Pasar failed : The NFT has the same collectible data',
-    savePicture:"Save Collectible",
-    savedSuccessfully:"Saved successfully",
-    saveFailed:"Save failed",
-    savedDes:"Please wait. The picture is being saved",
-    burnNFTs:"Delete Collectible",
-    burningNFTSDesc:"Delete Collectibles, please wait",
-    burningNFTSTimeoutDesc:"Delete Collectibles timeout, you can confirm later",
-    burnNFTSFailed:"Delete Collectibles Failed",
-    burnNFTSSuccess:"Delete Collectibles successfully",
-    exitApp:"Press again to exit the application!"
+    savePicture: "Save Collectible",
+    savedSuccessfully: "Saved successfully",
+    saveFailed: "Save failed",
+    savedDes: "Please wait. The picture is being saved",
+    burnNFTs: "Delete Collectible",
+    burningNFTSDesc: "Delete Collectibles, please wait",
+    burningNFTSTimeoutDesc: "Delete Collectibles timeout, you can confirm later",
+    burnNFTSFailed: "Delete Collectibles Failed",
+    exitApp: "Press again to exit the application!",
+    burnNFTSSuccess: "Delete Collectibles successfully",
+    shareReadMore: "... read more at",
+    sharesharingPost: "I'm sharing a post from Feeds",
+    shareSharingChannel1: "Have a look at channel '",
+    shareSharingChannel2: "' from Feeds!",
+    shareSharingChannel: "Have a look at this channel from Feeds!"
   },
   app: {
     profileDetails: 'Profile Details',
@@ -214,9 +219,9 @@ export const en = {
     myLikes: 'Likes',
     moreinfo: 'More Info',
     collectibles: 'Collectibles',
-    createCollectible:"Create Collectibles",
-    allempty:"No collectibles yet",
-    emptyDes:"Create a collectible to get started"
+    createCollectible: "Create Collectibles",
+    allempty: "No collectibles yet",
+    emptyDes: "Create a collectible to get started"
   },
   MyfeedsComponent: {
     allempty: 'No Channels Yet',
@@ -266,7 +271,7 @@ export const en = {
     tip: 'Tip',
     allempty: 'No Posts Yet',
     emptyDes: "This channel hasn't published any posts",
-    noSubscription:"No subscription",
+    noSubscription: "No subscription",
     subscribeChannel: ' Subscribe to view posts from this channel',
     viewall: 'View all',
   },
@@ -318,7 +323,7 @@ export const en = {
     didinfo: 'DID Info',
     publisheraccount: 'Publisher Account',
     collections: 'Collectibles',
-    basicAccount:'Basic Account',
+    basicAccount: 'Basic Account',
     features: 'Features',
     features1: '● Buy and sell Collectible',
     features2: '● Read posts from subscribed channels',
@@ -597,7 +602,7 @@ export const en = {
     'advanced-setting': 'Advanced Settings',
     'configure-network': 'Active Network',
     'choose-network': 'Choose Network',
-    "setPasarListGrid":"List view - Pasar"
+    "setPasarListGrid": "List view - Pasar"
   },
   DiscoverfeedPage: {
     title: 'Discovery Square',
