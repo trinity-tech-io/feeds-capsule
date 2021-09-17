@@ -118,6 +118,16 @@ export class UtilService {
     }
   }
 
+  public static briefText(text: string, num: number = 15) {
+    let briefText = text || '';
+    if (briefText === '')
+      return briefText;
+    let sizeNum = this.getSize(briefText);
+    if (sizeNum > num)
+      return this.sb_substr(briefText, 0, num);
+    return briefText;
+  }
+
   public static timeFilter(seconds: number) {
     let ss = parseInt(seconds + ''); // 秒
     let mm = 0; // 分

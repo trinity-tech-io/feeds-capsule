@@ -9,6 +9,7 @@ import { DataHelper } from './../services/DataHelper';
 import { CarrierService } from './CarrierService';
 import { Events } from 'src/app/services/events.service';
 import { TranslateService } from '@ngx-translate/core';
+import { UtilService } from 'src/app/services/utilService';
 
 let TAG: string = 'IntentService';
 declare let intentManager: IntentPlugin.IntentManager;
@@ -409,5 +410,33 @@ export class IntentService {
 
     console.log(TAG, "Shared link url is " + url);
     return url;
+  }
+
+  createSharePostTitle(nodeId: string, channelId: number, postId: number): string {
+    const key = this.dataHelper.getKey(nodeId, channelId, postId, 0);
+    const post = this.dataHelper.getPost(key);
+
+    console.log("post.content", post.content);
+
+    const content = post.content || '';
+    let text: string = content.text || '';
+
+    if (text.replace(/(^[\s\n\t]+|[\s\n\t]+$)/g, "") == '')
+      return this.translate.instant("common.sharesharingPost");
+
+    let brief: string = UtilService.briefText(text, 15);
+    return brief + this.translate.instant("common.shareReadMore");
+  }
+
+  createShareChannelTitle(nodeId: string, channelId: number): string {
+    const key = this.dataHelper.getKey(nodeId, channelId, 0, 0);
+    const channel = this.dataHelper.getChannel(key);
+
+    const channelName = channel.name || '';
+
+    if (channelName != '')
+      return this.translate.instant("common.shareSharingChannel1") + channelName + this.translate.instant("common.shareSharingChannel2");
+
+    return this.translate.instant("common.shareSharingChannel");
   }
 }

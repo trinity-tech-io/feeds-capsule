@@ -147,16 +147,20 @@ export const zh = {
     changePriceTimeoutDesc: '修改收藏品价格超时，后面您可自行确认修改收藏品价格是否成功',
     saleOrderTimeoutDesc: '出售收藏品超时，后面您可自行确认出售收藏品是否成功',
     publishSameDataFailed: '失败 : NFT 中已经有相同的收藏品',
-    savePicture:"保存收藏品",
-    savedSuccessfully:"保存成功",
-    saveFailed:"保存失败",
-    savedDes:"请稍等,图片保存中",
-    burnNFTs:"销毁收藏品",
-    burningNFTSDesc:"正在销毁收藏品，请稍后",
-    burningNFTSTimeoutDesc:"销毁收藏品超时，后面您可自行确认",
-    burnNFTSFailed:"销毁收藏品失败",
-    burnNFTSSuccess:"销毁收藏品成功",
-    exitApp:"再按一次退出应用！"
+    savePicture: "保存收藏品",
+    savedSuccessfully: "保存成功",
+    saveFailed: "保存失败",
+    savedDes: "请稍等,图片保存中",
+    burnNFTs: "销毁收藏品",
+    burningNFTSDesc: "正在销毁收藏品，请稍后",
+    burningNFTSTimeoutDesc: "销毁收藏品超时，后面您可自行确认",
+    burnNFTSFailed: "销毁收藏品失败",
+    exitApp: "再按一次退出应用！",
+    burnNFTSSuccess: "销毁收藏品成功",
+    shareReadMore: "... 点击阅读更多内容",
+    sharesharingPost: "这是我从Feeds 分享的微说",
+    shareSharingChannel1: "这是我从Feeds 分享的微频 '",
+    shareSharingChannel2: "' 请订阅后继续阅读"
   },
   app: {
     profileDetails: '档案详情',
@@ -210,9 +214,9 @@ export const zh = {
     myLikes: '赞/收藏',
     moreinfo: '更多信息',
     collectibles: '收藏品',
-    createCollectible:"创建收藏品",
-    allempty:"还没有收藏品",
-    emptyDes:"开始创建一个收藏品"
+    createCollectible: "创建收藏品",
+    allempty: "还没有收藏品",
+    emptyDes: "开始创建一个收藏品"
   },
   MyfeedsComponent: {
     allempty: '空空如也',
@@ -262,7 +266,7 @@ export const zh = {
     tip: '打赏',
     allempty: '空空如也',
     emptyDes: '该频道尚未发布任何微说',
-    noSubscription:"没有订阅",
+    noSubscription: "没有订阅",
     subscribeChannel: '订阅此频道的查看帖子',
     viewall: '查看全部',
   },
@@ -582,7 +586,7 @@ export const zh = {
     'advanced-setting': '高级设置',
     'configure-network': '启用中网络',
     'choose-network': '选择网络',
-    "setPasarListGrid":"列表视图-Pasar"
+    "setPasarListGrid": "列表视图-Pasar"
   },
   DiscoverfeedPage: {
     title: '探索广场',
