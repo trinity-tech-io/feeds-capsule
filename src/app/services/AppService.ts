@@ -14,8 +14,6 @@ const TAG: string = 'AppService';
 })
 export class AppService {
   public popover: any = null;
-  private backButtonPressed:boolean = false;
-  private conutIndex:number = 0;
   constructor(
     private router: Router,
     private zone: NgZone,
@@ -55,22 +53,7 @@ export class AppService {
                this.router.url === "/tabs/notification" ||
                this.router.url === "/signin" ||
                this.router.url === "/disclaimer" ) {
-               this.conutIndex++;
-               if (this.backButtonPressed&&this.conutIndex===4) {
-                  this.conutIndex = 0;
-                  navigator['app'].exitApp();
-               }else{
-                this.backButtonPressed = true;
-                if(this.conutIndex === 1){
-                  this.native.toast("common.exitApp",2000);
-                  let sid = setTimeout(() =>{
-                    this.backButtonPressed = false;
-                    this.conutIndex = 0;
-                    clearTimeout(sid);
-                  } , 2000);
-                }
-               }
-
+               navigator['app'].exitApp();
     } else{
       this.native.pop();
     }

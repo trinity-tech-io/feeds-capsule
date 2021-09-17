@@ -3,7 +3,8 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { NativeService } from 'src/app/services/NativeService';
 import { PopupProvider } from 'src/app/services/popup';
 import { PopoverController } from '@ionic/angular';
-
+import _ from 'lodash';
+import { resolve } from 'url';
 export type HttpOptions = {
   headers?: HttpHeaders | {
     [header: string]: string | string[];
@@ -34,7 +35,7 @@ export class HttpService {
 
   /**
    * Base http get function
-   * @param url 
+   * @param url
    */
   httpGet(url: string): Promise<Object> {
     return new Promise((resolve, reject) => {
@@ -51,7 +52,7 @@ export class HttpService {
 
   /**
    * Base http post function
-   * @param url 
+   * @param url
    */
   httpPost(url: string, body: any, httpOptions: HttpOptions = this.httpOptions): Promise<Object> {
     return new Promise((resolve, reject) => {
@@ -170,5 +171,19 @@ export class HttpService {
       this.popover.dismiss();
       this.popover = null;
     }
+  }
+
+  getElaPrice(){
+    return new Promise((resove, reject) => {
+       this.httpClient.get('https://api-price.elaphant.app/api/1/cmc?limit=600')
+       .subscribe((result)=>{
+        let elaItem:any =  _.find(result,(item:any)=>{
+             return item.symbol === "ELA"
+         });
+        resove(elaItem["price_usd"])
+       },(err)=>{
+          reject(null);
+       });
+    });
   }
 }

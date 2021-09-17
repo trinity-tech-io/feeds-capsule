@@ -12,6 +12,7 @@ import { IPFSService } from 'src/app/services/ipfs.service';
 })
 export class NewassetitemComponent implements OnInit {
   @Input() type = '';
+  @Input() elaPrice:string = null;
   @Input() assetItem: any = null;
   @Output() clickAssetItem = new EventEmitter();
   @Output() clickMore = new EventEmitter();
@@ -54,6 +55,15 @@ export class NewassetitemComponent implements OnInit {
       return this.nftContractControllerService.transFromWei(price);
 
     return price;
+  }
+
+  hanldeUsdPrice(ethPrice: string){
+    let usdPrice = null;
+    if(this.elaPrice != null){
+      let ethprice = this.nftContractControllerService.transFromWei(ethPrice);
+      usdPrice = UtilService.accMul(this.elaPrice,ethprice).toFixed(2);
+    }
+    return usdPrice;
   }
 
   handleAddr(sellerAddr: string) {

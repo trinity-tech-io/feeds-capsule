@@ -204,6 +204,7 @@
   <ion-row>
     <ion-col size="12"  *ngFor="let item of pasarList let i=index" [class.darkBorderBottom]="theme.darkMode && item != pasarList[pasarList.length - 1]" [class.borderBottom]="!theme.darkMode  && item != pasarList[pasarList.length - 1]">
       <app-newassetitem
+      [elaPrice] = "elaPrice"
       [assetItem] = "item"
       (clickAssetItem) = "clickAssetItem($event)"
       (clickMore) = "clickMore($event)"
@@ -218,6 +219,7 @@
   <ion-row class="leftrightrow">
     <ion-col size="6" *ngFor="let item of pasarList">
       <app-assetitem
+      [elaPrice] = "elaPrice"
       [assetItem] = "item"
       (clickAssetItem) = "clickAssetItem($event)"
       (clickMore) = "clickMore($event)"

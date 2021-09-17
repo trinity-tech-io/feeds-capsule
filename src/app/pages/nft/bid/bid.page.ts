@@ -12,8 +12,8 @@ import { PopoverController } from '@ionic/angular';
 import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
 import { IPFSService } from 'src/app/services/ipfs.service';
 import { NFTPersistenceHelper } from 'src/app/services/nft_persistence_helper.service';
-
-import _, { reject } from 'lodash';
+import { HttpService } from '../../../services/HttpService';
+import _ from 'lodash';
 import { UtilService } from 'src/app/services/utilService';
 import { Config } from 'src/app/services/config';
 type detail = {
@@ -57,6 +57,7 @@ export class BidPage implements OnInit {
   public loadingText:string = "common.buyingOrderDesc";
   public loadingCurNumber:string = "1";
   public loadingMaxNumber:string = "1";
+  public usdPrice:string = null;
   constructor(
     private translate: TranslateService,
     private event: Events,
@@ -69,7 +70,8 @@ export class BidPage implements OnInit {
     public popupProvider: PopupProvider,
     private nftContractControllerService: NFTContractControllerService,
     private ipfsService: IPFSService,
-    private nftPersistenceHelper: NFTPersistenceHelper
+    private nftPersistenceHelper: NFTPersistenceHelper,
+    private httpService: HttpService
   ) {}
 
   ngOnInit() {
@@ -104,13 +106,20 @@ export class BidPage implements OnInit {
     });
   }
 
-  ionViewWillEnter() {
+ ionViewWillEnter() {
+
     this.accAddress =
       this.nftContractControllerService.getAccountAddress() || null;
     this.developerMode = this.feedService.getDeveloperMode();
     this.initTile();
     this.collectContractData();
     this.addEvent();
+    this.httpService.getElaPrice().then((elaPrice)=>{
+      if(elaPrice != null){
+        let ethprice = this.nftContractControllerService.transFromWei(this.fixedPrice);
+        this.usdPrice  = UtilService.accMul(elaPrice,ethprice).toFixed(2);
+       }
+    });
   }
 
   ionViewWillLeave() {
@@ -342,8 +351,9 @@ export class BidPage implements OnInit {
     return imgUri;
   }
 
-  hanldePrice(price: string) {
-    return this.nftContractControllerService.transFromWei(price);
+ hanldePrice(price: string) {
+    let ethprice = this.nftContractControllerService.transFromWei(price)
+    return ethprice;
   }
 
   copytext(text: any) {

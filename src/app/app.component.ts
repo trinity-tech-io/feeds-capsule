@@ -70,6 +70,7 @@ export class MyApp {
   ) {
     this.initializeApp();
     this.initProfileData();
+    this.updateElaPrice();
     this.events.subscribe(FeedsEvent.PublishType.signinSuccess, () => {
       this.initProfileData();
     });
@@ -105,7 +106,6 @@ export class MyApp {
         }
 
         this.platform.backButton.subscribeWithPriority(99999,async() => {
-          console.log("======test=======");
           const modal = await this.modalController.getTop();
           if (modal) {
             modal.dismiss();
@@ -418,5 +418,11 @@ export class MyApp {
       this.walletAddress = '';
       this.walletAddressStr = '';
     }
+  }
+
+  updateElaPrice(){
+    setInterval(()=>{
+     this.events.publish(FeedsEvent.PublishType.updateElaPrice);
+    },60000*2);
   }
 }
