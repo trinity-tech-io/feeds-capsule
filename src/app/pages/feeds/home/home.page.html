@@ -1,9 +1,12 @@
-<app-titlebar></app-titlebar>
+<app-titlebar id="homeTittleBar"></app-titlebar>
 <!-- <div *ngIf="connectionStatus == 1" class="offline-header"></div> -->
-
+<ion-row [class.darkExploreTabs]="theme.darkMode" [class.exploreTabs]="!theme.darkMode" id="homeTab">
+  <ion-col size="6" class="des" [ngClass]="{'select-bottom':tabType==='feeds','select-color':tabType==='feeds','no-select-color':tabType!='feeds'}"
+   (click)="clickTab('feeds')">{{'FeedsPage.tabTitle5'|translate}}</ion-col>
+  <ion-col size="6" class="des"  [ngClass]="{'select-bottom':tabType==='pasar','select-color':tabType==='pasar','no-select-color':tabType!='pasar'}" (click)="clickTab('pasar')">{{'ExplorefeedsPage.pasar'|translate}}</ion-col>
+</ion-row>
 <ion-content (ionScroll)="ionScroll()" [scrollEvents]="true">
-
-  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" pullFactor="0.5">
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" pullFactor="0.5" style="top: 45px;">
     <ion-refresher-content
       class="refresh"
       pullingText="{{'common.releaseToRefresh'|translate}}"
@@ -12,14 +15,8 @@
       refreshingText="{{'common.beingRefresh'|translate}}" >
     </ion-refresher-content>
   </ion-refresher>
-
-  <ion-row [class.darkExploreTabs]="theme.darkMode" [class.exploreTabs]="!theme.darkMode">
-    <ion-col size="6" class="des" [ngClass]="{'select-bottom':tabType==='feeds','select-color':tabType==='feeds','no-select-color':tabType!='feeds'}"
-     (click)="clickTab('feeds')">{{'FeedsPage.tabTitle5'|translate}}</ion-col>
-    <ion-col size="6" class="des"  [ngClass]="{'select-bottom':tabType==='pasar','select-color':tabType==='pasar','no-select-color':tabType!='pasar'}" (click)="clickTab('pasar')">{{'ExplorefeedsPage.pasar'|translate}}</ion-col>
-  </ion-row>
  <!-- feeds timeTime-->
- <div *ngIf="tabType==='feeds'" style="height:100%;">
+ <div *ngIf="tabType==='feeds'" style="height:100%;margin-top: 23px;" >
   <!-- NO POSTS -->
   <div *ngIf="postList.length === 0" class="empty-container">
     <img src="./assets/images/empty-feeds-icon.svg">
@@ -200,7 +197,7 @@
  </div>
 
  <!--Pasar list-->
- <div *ngIf="tabType==='pasar'&&styleType==='list'">
+ <div *ngIf="tabType==='pasar'&&styleType==='list'" style="margin-top: 26px;">
   <ion-row>
     <ion-col size="12"  *ngFor="let item of pasarList let i=index" [class.darkBorderBottom]="theme.darkMode && item != pasarList[pasarList.length - 1]" [class.borderBottom]="!theme.darkMode  && item != pasarList[pasarList.length - 1]">
       <app-newassetitem
@@ -215,7 +212,7 @@
  </div>
 
  <!--Pasar grid-->
- <div *ngIf="tabType==='pasar'&&styleType==='grid'">
+ <div *ngIf="tabType==='pasar'&&styleType==='grid'" style="margin-top:36px;">
   <ion-row class="leftrightrow">
     <ion-col size="6" *ngFor="let item of pasarList">
       <app-assetitem
