@@ -47,7 +47,7 @@ export type ChangedItem = {
 }
 @Injectable()
 export class NFTContractHelperService {
-  private refreshCount = 8;
+  private refreshCount = 7;
   constructor(
     private nftContractControllerService: NFTContractControllerService,
     private event: Events,
@@ -67,10 +67,10 @@ export class NFTContractHelperService {
       let start = count - 1 - (startPage * this.refreshCount);
       let end = count - 1 - ((startPage + 1) * this.refreshCount);
       if (end < 0)
-        end = 0;
+        end = -1;
       try {
         let list = [];
-        for (let index = start - 1; index >= end; index--) {
+        for (let index = start - 1; index > end; index--) {
           let openOrderResult = await this.getOpenOrderResultByIndex(index);
           let contractItem = await this.handleFeedsUrl(openOrderResult, saleStatus);
 

@@ -7,7 +7,7 @@
       class="refresh"
       pullingText="{{'common.releaseToRefresh'|translate}}"
       spinner="src/assets/images/arrow-dropdown.svg"
-      refreshingSpinner="crescent"
+      refreshingSpinner="circles"
       refreshingText="{{'common.beingRefresh'|translate}}" >
     </ion-refresher-content>
   </ion-refresher>
@@ -128,7 +128,7 @@
     <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event)">
       <ion-infinite-scroll-content
       class="ion-padding-top"
-      loadingSpinner="crescent">
+      loadingSpinner="circles">
       </ion-infinite-scroll-content>
     </ion-infinite-scroll>
   </div>
