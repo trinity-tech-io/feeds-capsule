@@ -1,5 +1,11 @@
 .exploreTabs{
-
+   position: fixed;
+   top: 36px;
+   left: 0px;
+   height: 34px;
+   width: 100%;
+   background-color: #ffffff;
+   z-index: 99;
     .select-bottom{
        border-bottom:1px solid #7624fe;
     }
@@ -23,7 +29,13 @@
 
 
   .darkExploreTabs{
-
+   position: fixed;
+   top: 36px;
+   left: 0px;
+   height: 34px;
+   width: 100%;
+   background-color: #191a2f;
+   z-index: 99;
    .select-bottom{
       border-bottom:1px solid #7624fe;
    }

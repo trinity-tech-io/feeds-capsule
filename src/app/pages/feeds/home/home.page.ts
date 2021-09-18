@@ -48,7 +48,8 @@ export class HomePage implements OnInit {
   infiniteScroll: IonInfiniteScroll;
 
   myScrollContainer!: HTMLElement;
-
+  private homeTittleBar: HTMLElement;
+  private homeTab: HTMLElement;
   public connectionStatus = 1;
   public postList: any = [];
   public nodeStatus: any = {};
@@ -243,6 +244,8 @@ export class HomePage implements OnInit {
   }
 
   ionViewWillEnter() {
+  this.homeTittleBar = this.elmRef.nativeElement.querySelector("#homeTittleBar");
+  this.homeTab = this.elmRef.nativeElement.querySelector("#homeTab");
     this.getElaUsdPrice();
     if (this.platform.is('ios')) {
       this.isAndroid = false;
@@ -358,7 +361,7 @@ export class HomePage implements OnInit {
             if(ponit.scrollTop>110){
               this.initPostListData(true);
             }
-      })
+      });
     });
 
     this.events.subscribe(FeedsEvent.PublishType.updateElaPrice,()=>{
@@ -1393,6 +1396,12 @@ export class HomePage implements OnInit {
   }
 
   ionScroll() {
+
+    this.native.throttle(this.handleScroll(),
+    200,
+    this,
+    true);
+
     this.native.throttle(
       this.setVisibleareaImage(this.postgridindex),
       200,
@@ -2217,6 +2226,18 @@ switch(dialogbutton){
     await this.popoverController.dismiss();
   break;
 }
+}
+
+handleScroll(){
+  this.content.getScrollElement().then((ponit:any)=>{
+    if(ponit.scrollTop>0){
+      this.homeTittleBar.style.display = "none";
+      this.homeTab.style.top = "0px";
+    }else{
+      this.homeTittleBar.style.display = "block";
+      this.homeTab.style.top = "36px";
+    }
+  });
 }
 
 }
