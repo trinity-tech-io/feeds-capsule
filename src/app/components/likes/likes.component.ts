@@ -1,11 +1,10 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { IonTabs, Platform } from '@ionic/angular';
+import { Platform } from '@ionic/angular';
 import { FeedService } from '../../services/FeedService';
 import { ThemeService } from '../../services/theme.service';
 import { UtilService } from '../../services/utilService';
 import { NativeService } from '../../services/NativeService';
 import { TranslateService } from '@ngx-translate/core';
-import { FeedsPage } from '../../pages/feeds/feeds.page';
 import { AppService } from '../../services/AppService';
 import { ViewHelper } from '../../services/viewhelper.service';
 
@@ -43,8 +42,6 @@ export class LikesComponent implements OnInit {
   public isAndroid: boolean = true;
   constructor(
     private platform: Platform,
-    private feedspage: FeedsPage,
-    private tabs: IonTabs,
     private feedService: FeedService,
     public theme: ThemeService,
     private translate: TranslateService,
@@ -167,11 +164,6 @@ export class LikesComponent implements OnInit {
     return this.feedService.parseChannelAvatar(
       this.getChannel(nodeId, channelId).avatar || '',
     );
-  }
-
-  exploreFeeds() {
-    this.tabs.select('search');
-    this.feedspage.search();
   }
 
   handleDisplayTime(createTime: number) {
