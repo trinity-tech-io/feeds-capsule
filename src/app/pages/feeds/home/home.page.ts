@@ -11,7 +11,6 @@ import {
   Platform,
   PopoverController,
 } from '@ionic/angular';
-import { IonTabs } from '@ionic/angular';
 import { Events } from 'src/app/services/events.service';
 import { FeedService } from 'src/app/services/FeedService';
 import { MenuService } from 'src/app/services/MenuService';
@@ -150,7 +149,6 @@ export class HomePage implements OnInit {
     private platform: Platform,
     private elmRef: ElementRef,
     private feedspage: FeedsPage,
-    private tabs: IonTabs,
     private events: Events,
     private zone: NgZone,
     private feedService: FeedService,
@@ -790,7 +788,7 @@ export class HomePage implements OnInit {
   }
 
   exploreFeeds() {
-    this.tabs.select('search');
+    this.native.setRootRouter(['/tabs/search']);
     this.feedspage.search();
   }
 
