@@ -427,9 +427,6 @@ export class IntentService {
   createSharePostTitle(nodeId: string, channelId: number, postId: number): string {
     const key = this.dataHelper.getKey(nodeId, channelId, postId, 0);
     const post = this.dataHelper.getPost(key);
-
-    console.log("post.content", post.content);
-
     const content = post.content || '';
     let text: string = content.text || '';
 
