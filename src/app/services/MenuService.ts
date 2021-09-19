@@ -776,13 +776,6 @@ export class MenuService {
           },
         },
         {
-          text: this.translate.instant('common.savePicture'),
-          icon: 'cloud-download',
-          handler: () => {
-            this.events.publish(FeedsEvent.PublishType.savePicture,assItem);
-          },
-        },
-        {
           text: this.translate.instant('CollectionsPage.details'),
           icon: 'information-circle',
           handler: () => {
@@ -921,13 +914,6 @@ export class MenuService {
               'CollectionsPage.putOnSale',
               'created',
             );
-          },
-        },
-        {
-          text: this.translate.instant('common.savePicture'),
-          icon: 'cloud-download',
-          handler: () => {
-            this.events.publish(FeedsEvent.PublishType.savePicture,assItem);
           },
         },
         {
