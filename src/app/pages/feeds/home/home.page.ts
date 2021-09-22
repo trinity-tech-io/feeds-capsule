@@ -1829,7 +1829,7 @@ export class HomePage implements OnInit {
     }
   }
 
-  clickTab(type: string) {
+async  clickTab(type: string) {
     this.tabType = type;
     this.doRefreshCancel();
     switch (type) {
@@ -1875,6 +1875,11 @@ export class HomePage implements OnInit {
         if (plist.length === 0) {
           this.getPaserList();
           return;
+        }else{
+          let openOrderCount = await this.nftContractControllerService
+          .getPasar()
+          .getOpenOrderCount();
+          this.pasarListCount = parseInt(openOrderCount);
         }
         this.pasarList = plist;
         this.pasarList = _.sortBy(this.pasarList, (item: any) => {
