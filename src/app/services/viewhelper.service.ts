@@ -11,7 +11,7 @@ import { PaypromptComponent } from './../components/payprompt/payprompt.componen
 import { NftdialogComponent } from './../components/nftdialog/nftdialog.component';
 import { GuidedialogComponent } from './../components/guidedialog/guidedialog.component';
 import { PublisherdialogComponent } from './../components/publisherdialog/publisherdialog.component';
-
+import { ThemeService } from 'src/app/services/theme.service';
 import { Logger } from './logger';
 
 const TAG: string = 'ViewHelper';
@@ -23,6 +23,7 @@ export class ViewHelper {
     private translate: TranslateService,
     private titleBarService: TitleBarService,
     private popoverController: PopoverController,
+    private theme:ThemeService
   ) {}
 
   async openViewer(
@@ -56,7 +57,7 @@ export class ViewHelper {
     });
 
     modal.onWillDismiss().then(() => {
-      document.removeEventListener('click', event => this.hide(modal), false);
+      document.removeEventListener('click', event => this.testClick(modal,event), false);
       this.titleBarService.setTitle(
         titleBar,
         this.translate.instant(oldNameKey),
@@ -76,12 +77,29 @@ export class ViewHelper {
 
     return await modal.present().then(() => {
       const el: any = document.querySelector('ion-modal') || '';
-      el.addEventListener('click', event => this.hide(modal), true);
+      const viewerModal: any = el.querySelector("ion-viewer-modal");
+      //removeChild
+      let sheet = document.createElement('img');
+      if(this.theme.darkMode){
+        sheet.setAttribute('src',"assets/images/darkmode/bigguanbi.svg");
+      }else{
+        sheet.setAttribute('src',"assets/images/bigguanbi.svg");
+      }
+      sheet.setAttribute('style', 'display:block;width:32px;height:32px;left:10px;top:10px;z-index:10000;position:fixed;');
+      sheet.addEventListener('click', event => this.testClick(modal,event),false);
+      viewerModal.appendChild(sheet);
+      el.addEventListener('click', event => this.hide(modal,event),false);
     });
   }
 
-  hide(modal: any) {
+  testClick(modal: any,e:any) {
     modal.dismiss();
+    e.stopPropagation();
+
+  }
+  hide(modal: any,e:any) {
+    modal.dismiss();
+    e.stopPropagation();
   }
 
   async showPreviewQrcode(

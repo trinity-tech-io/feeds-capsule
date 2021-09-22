@@ -358,8 +358,9 @@ export class HomePage implements OnInit {
 
   addCommonEvents() {
     this.events.subscribe(FeedsEvent.PublishType.clickHome, () => {
+      let newPostCount = this.dataHelper.getNewPostCount() || 0;
       this.content.getScrollElement().then((ponit:any)=>{
-            if(ponit.scrollTop>110){
+            if(ponit.scrollTop>110 || newPostCount>0){
               this.initPostListData(true);
             }
       });
@@ -1952,16 +1953,34 @@ export class HomePage implements OnInit {
       .getOpenOrderCount();
     if (openOrderCount === '0') {
     } else {
-      for (let index = 0; index < openOrderCount; index++) {
+      this.pasarListCount = parseInt(openOrderCount);
+      let maxNum = parseInt(openOrderCount);
+      for (let index = 0; index<8;index++) {
         this.pasarList.push(null);
       }
-      for (let pIndex = openOrderCount - 1; pIndex >= 0; pIndex--) {
-        this.getOpenOrderByIndex(pIndex);
-      }
+      // for (let pIndex = openOrderCount - 1; pIndex >= 0; pIndex--) {
+      //   this.getOpenOrderByIndex(pIndex);
+      // }
+      let pIndex = maxNum - 8;
+      let tindex = 0;
+      let sid = setInterval(()=>{
+         if(pIndex<maxNum){
+           try{
+            this.getOpenOrderByIndex(pIndex,tindex);
+            tindex++;
+            pIndex++;
+           }catch(err){
+            tindex++;
+            pIndex++;
+           }
+         }else{
+          clearInterval(sid);
+         }
+      },10);
     }
   }
 
-  async getOpenOrderByIndex(index: any) {
+  async getOpenOrderByIndex(index: any,tIndex:any) {
     let openOrder = await this.nftContractControllerService
       .getPasar()
       .getOpenOrderByIndex(index);
@@ -1985,7 +2004,8 @@ export class HomePage implements OnInit {
       sellerAddr,
       index,
       createTime,
-      royalties
+      royalties,
+      tIndex
     );
   }
 
@@ -2040,7 +2060,8 @@ export class HomePage implements OnInit {
     sellerAddr: any,
     pIndex: any,
     createTime: any,
-    royalties: any
+    royalties: any,
+    tIndex: any
   ) {
     feedsUri = feedsUri.replace('feeds:json:', '');
     this.ipfsService
@@ -2072,7 +2093,7 @@ export class HomePage implements OnInit {
         try {
           //this.pasarList.splice(pIndex, 1, item);
           this.isFinsh.push(pIndex);
-          this.pasarList[pIndex] = item;
+          this.pasarList[tIndex] = item;
           let pasarList = _.cloneDeep(this.pasarList);
           let arr = _.filter(pasarList, (item) => {
             return item === null;

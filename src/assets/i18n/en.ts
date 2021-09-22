@@ -698,7 +698,7 @@ export const en = {
     minimumBid: 'Minimum Bid',
     currentBid: 'Current Bid',
     changePrice: 'Update Price',
-    cancelOrder: 'Cancel Order',
+    cancelOrder: 'Cancel Sale',
   },
   CollectionsPage: {
     title: 'Collectibles',
