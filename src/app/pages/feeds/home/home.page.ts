@@ -2254,15 +2254,35 @@ switch(dialogbutton){
 }
 
 handleScroll(){
+
   this.content.getScrollElement().then((ponit:any)=>{
-    if(ponit.scrollTop>0){
-      this.homeTittleBar.style.display = "none";
-      this.homeTab.style.top = "0px";
+    if(this.isAndroid){
+       this.handelAndroidScroll(ponit);
     }else{
-      this.homeTittleBar.style.display = "block";
-      this.homeTab.style.top = "36px";
+       this.handelIosScroll(ponit);
     }
+
   });
+}
+
+handelAndroidScroll(ponit:any){
+  if(ponit.scrollTop>0){
+    this.homeTittleBar.style.display = "none";
+    this.homeTab.style.top = "0px";
+  }else{
+    this.homeTittleBar.style.display = "block";
+    this.homeTab.style.top = "36px";
+  }
+}
+
+handelIosScroll(ponit:any){
+  if(ponit.scrollTop>40){
+    this.homeTittleBar.style.display = "none";
+    this.homeTab.style.top = "40px";
+  }else{
+    this.homeTittleBar.style.display = "block";
+    this.homeTab.style.top = "76px";
+  }
 }
 
 }
