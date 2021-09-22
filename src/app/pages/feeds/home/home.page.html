@@ -6,7 +6,7 @@
   <ion-col size="6" class="des"  [ngClass]="{'select-bottom':tabType==='pasar','select-color':tabType==='pasar','no-select-color':tabType!='pasar'}" (click)="clickTab('pasar')">{{'ExplorefeedsPage.pasar'|translate}}</ion-col>
 </ion-row>
 <ion-content (ionScroll)="ionScroll()" [scrollEvents]="true">
-  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" pullFactor="0.5" style="top: 45px;">
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" pullFactor="0.5" style="top: 50px;">
     <ion-refresher-content
       class="refresh"
       pullingText="{{'common.releaseToRefresh'|translate}}"
@@ -16,9 +16,9 @@
     </ion-refresher-content>
   </ion-refresher>
  <!-- feeds timeTime-->
- <div *ngIf="tabType==='feeds'" style="height:100%;margin-top: 23px;" >
+ <div *ngIf="tabType==='feeds'" style="margin-top: 23px;">
   <!-- NO POSTS -->
-  <div *ngIf="postList.length === 0" class="empty-container">
+  <div *ngIf="postList.length === 0" class="empty-container" style="margin-top:159px;">
     <img src="./assets/images/empty-feeds-icon.svg">
     <h1>{{ 'HomePage.allempty' | translate }}</h1>
     <p>{{ "HomePage.emptyDes"| translate }}</p>
@@ -226,7 +226,7 @@
    </ion-row>
  </div>
 
-  <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event)">
+  <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event)"  style="bottom:50px;">
     <ion-infinite-scroll-content
       class="ion-padding-top"
       loadingSpinner="circles"

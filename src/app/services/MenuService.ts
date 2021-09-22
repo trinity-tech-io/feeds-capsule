@@ -763,7 +763,7 @@ export class MenuService {
         {
           text: this.translate.instant('BidPage.cancelOrder'),
           role: 'destructive',
-          icon: 'trash',
+          icon: 'arrow-redo-circle',
           handler: () => {
             this.popover = this.popupProvider.ionicConfirm(
               this,

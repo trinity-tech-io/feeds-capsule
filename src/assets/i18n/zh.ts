@@ -683,7 +683,7 @@ export const zh = {
     minimumBid: '最小出价',
     currentBid: '当前出价',
     changePrice: '更新价格',
-    cancelOrder: '取消订单',
+    cancelOrder: '取消出售',
   },
   CollectionsPage: {
     title: '收藏品',
