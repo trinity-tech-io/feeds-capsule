@@ -19,6 +19,7 @@ import { GlobalService } from 'src/app/services/global.service';
 import { Config } from './services/config';
 import { Logger, LogLevel } from './services/logger';
 import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
+
 import { IntentService } from './services/IntentService';
 import { HttpService } from 'src/app/services/HttpService';
 
@@ -102,12 +103,15 @@ export class MyApp {
         this.feedService.initDidManager();
         this.splashScreen.hide();
         //for ios
-        if (this.isIOSPlatform()) {
-          this.statusBar.backgroundColorByHexString('#f8f8ff');
-          this.statusBar.styleDefault();
-        }
+        // if (this.isIOSPlatform()) {
+        //   this.statusBar.backgroundColorByHexString('#f8f8ff');
+        //   this.statusBar.styleDefault();
+        // }
+        // Must do it in ios, otherwise the titlebar and status bar will overlap.
+        this.statusBar.overlaysWebView(false);
+        // this.statusBar.backgroundColorByHexString("#ff000000");
 
-        this.platform.backButton.subscribeWithPriority(99999,async() => {
+        this.platform.backButton.subscribeWithPriority(99999, async () => {
           const modal = await this.modalController.getTop();
           if (modal) {
             modal.dismiss();
@@ -140,7 +144,7 @@ export class MyApp {
             this.intentService.dispatchIntent(intent);
           },
         );
-    });
+      });
   }
 
   initConnector() {
@@ -160,7 +164,7 @@ export class MyApp {
         }
         this.feedService.setDiscoverfeeds(JSON.parse(discoverfeeds));
       })
-      .catch(err => {});
+      .catch(err => { });
   }
 
   initCurrentFeed() {
@@ -173,7 +177,7 @@ export class MyApp {
         }
         this.feedService.setCurrentFeed(JSON.parse(currentFeed));
       })
-      .catch(err => {});
+      .catch(err => { });
   }
 
   initFeedPublicStatus() {
@@ -186,18 +190,18 @@ export class MyApp {
         }
         this.feedService.setFeedPublicStatus(JSON.parse(feedPublicStatus));
       })
-      .catch(err => {});
+      .catch(err => { });
   }
 
   initSetting() {
 
-    this.feedService.getData("").then((elaPrice: any)=>{
+    this.feedService.getData("").then((elaPrice: any) => {
       if (elaPrice === null) {
-         this.setElaUsdPrice();
-      }else{
+        this.setElaUsdPrice();
+      } else {
         this.feedService.setElaUsdPrice(elaPrice);
       }
-    }).catch(err => {});
+    }).catch(err => { });
 
     this.dataHelper.loadDevelopLogMode().then((isOpenLog: boolean) => {
       if (isOpenLog)
@@ -218,7 +222,7 @@ export class MyApp {
         }
         this.feedService.setDeveloperMode(status);
       })
-      .catch(err => {});
+      .catch(err => { });
 
     this.feedService
       .getData('feeds.hideDeletedPosts')
@@ -229,7 +233,7 @@ export class MyApp {
         }
         this.feedService.setHideDeletedPosts(status);
       })
-      .catch(err => {});
+      .catch(err => { });
 
     this.feedService
       .getData('feeds.hideDeletedComments')
@@ -242,16 +246,16 @@ export class MyApp {
       })
       .catch(err => { });
 
-      this.feedService
-        .getData("feeds.pasarListGrid")
-        .then((pasarListGrid)=>{
-          if(pasarListGrid === null){
-            this.feedService.setPasarListGrid(false);
-            return;
-          }
-          this.feedService.setPasarListGrid(pasarListGrid);
-        })
-        .catch(err => {});
+    this.feedService
+      .getData("feeds.pasarListGrid")
+      .then((pasarListGrid) => {
+        if (pasarListGrid === null) {
+          this.feedService.setPasarListGrid(false);
+          return;
+        }
+        this.feedService.setPasarListGrid(pasarListGrid);
+      })
+      .catch(err => { });
   }
 
   initDisclaimer() {
@@ -331,7 +335,7 @@ export class MyApp {
         this.userDid = signInData.did || "";
         this.name = UtilService.moreNanme(this.wName, 15);
       },
-      error => {},
+      error => { },
     );
 
     this.events.subscribe(FeedsEvent.PublishType.openRightMenuForSWM, () => {
@@ -381,7 +385,7 @@ export class MyApp {
         }
         this.feedService.setCollectibleStatus(JSON.parse(collectibleSetting));
       })
-      .catch(() => {});
+      .catch(() => { });
   }
 
   async connectWallet() {
@@ -400,7 +404,7 @@ export class MyApp {
       .then(() => {
         this.native.toast_trans('common.textcopied');
       })
-      .catch(() => {});
+      .catch(() => { });
   }
 
   clickWalletAddr() {
@@ -430,18 +434,18 @@ export class MyApp {
     }
   }
 
-  updateElaPrice(){
+  updateElaPrice() {
     this.setElaUsdPrice();
-    setInterval(()=>{
-     this.setElaUsdPrice();
-    },60000*10);
+    setInterval(() => {
+      this.setElaUsdPrice();
+    }, 60000 * 10);
   }
 
-  setElaUsdPrice(){
-    this.httpService.getElaPrice().then((elaPrice:any)=>{
-      if(elaPrice != null){
+  setElaUsdPrice() {
+    this.httpService.getElaPrice().then((elaPrice: any) => {
+      if (elaPrice != null) {
         this.feedService.setElaUsdPrice(elaPrice);
-        this.feedService.setData("feeds:elaPrice",elaPrice);
+        this.feedService.setData("feeds:elaPrice", elaPrice);
       }
     });
   }
