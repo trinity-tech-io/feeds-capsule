@@ -247,12 +247,15 @@ export class HomePage implements OnInit {
   }
 
   ionViewWillEnter() {
+
   this.homeTittleBar = this.elmRef.nativeElement.querySelector("#homeTittleBar");
   this.homeTab = this.elmRef.nativeElement.querySelector("#homeTab");
   this.elaPrice = this.feedService.getElaUsdPrice();
     if (this.platform.is('ios')) {
       this.isAndroid = false;
     }
+
+    this.handleScroll();
 
     let pasarListGrid = this.feedService.getPasarListGrid();
     if(!pasarListGrid){
@@ -2277,7 +2280,7 @@ handelAndroidScroll(ponit:any){
 }
 
 handelIosScroll(ponit:any){
-  if(ponit.scrollTop>40){
+  if(ponit.scrollTop>50){
     this.homeTittleBar.style.display = "none";
     this.homeTab.setAttribute("style","top:40px;height:45px;line-height:37px;");
 
