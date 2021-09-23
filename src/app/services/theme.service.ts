@@ -1,5 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Platform } from '@ionic/angular';
+import { StatusBar } from '@ionic-native/status-bar/ngx';
+
+
 import {
   ThemeDetection,
   ThemeDetectionResponse,
@@ -9,7 +12,8 @@ import {
 })
 export class ThemeService {
   public darkMode = true;
-  constructor(private platform: Platform) {
+  constructor(private platform: Platform,
+    private statusBar: StatusBar) {
     this.platform.ready().then(() => {
       this.getTheme();
     });
@@ -59,8 +63,12 @@ export class ThemeService {
     if (this.darkMode) {
       // Set dark mode globally
       document.body.classList.add('dark');
+      this.statusBar.styleLightContent();
+      this.statusBar.backgroundColorByHexString("#ff191a2f");
     } else {
       // Remove dark mode globally
+      this.statusBar.backgroundColorByHexString("#ffffffff");
+      this.statusBar.styleDefault()
       document.body.classList.remove('dark');
     }
 
