@@ -154,8 +154,13 @@ export class BidPage implements OnInit {
     this.event.unsubscribe(FeedsEvent.PublishType.updateTitle);
   }
 
-  collectContractData() {
+ async collectContractData() {
     this.contractDetails = [];
+    let creatorAddress = await this.getCreatorAddress();
+    this.contractDetails.push({
+      type: 'AssetdetailsPage.creator',
+      details: creatorAddress,
+    });
     this.contractDetails.push({
       type: 'AssetdetailsPage.owner',
       details: this.seller,
@@ -171,6 +176,11 @@ export class BidPage implements OnInit {
       details: this.description,
     });
 
+    this.contractDetails.push({
+      type: 'AssetdetailsPage.tokenID',
+      details: this.tokenID,
+    });
+
     if(this.royalties!=null){
       let royalties = UtilService.accDiv(this.royalties,10000);
       this.contractDetails.push({
@@ -184,9 +194,22 @@ export class BidPage implements OnInit {
       details: this.quantity,
     });
 
+    // this.contractDetails.push({
+    //   type: 'common.state',
+    //   details: this.translate.instant('common.onsale'),
+    // });
+
+    let saleDes = "";
+
+    if(creatorAddress === this.seller){
+      saleDes = "AssetdetailsPage.firstSale";
+    }else{
+      saleDes = "AssetdetailsPage.secondarySale";
+    }
+
     this.contractDetails.push({
-      type: 'common.state',
-      details: this.translate.instant('common.onsale'),
+      type: 'AssetdetailsPage.saleType',
+      details: this.translate.instant(saleDes),
     });
 
     if (this.dateCreated != '') {
@@ -195,6 +218,11 @@ export class BidPage implements OnInit {
         details: this.dateCreated,
       });
     }
+    let marketDate = await this.getMarketDate();
+    this.contractDetails.push({
+      type: 'AssetdetailsPage.dateoNMarket',
+      details: marketDate,
+    });
 
     if (this.expirationDate != '') {
       this.contractDetails.push({
@@ -214,11 +242,6 @@ export class BidPage implements OnInit {
         details: this.parsarContractAddress,
       });
     }
-
-    this.contractDetails.push({
-      type: 'AssetdetailsPage.tokenID',
-      details: this.tokenID,
-    });
 
     this.contractDetails.push({
       type: 'BidPage.blockchain',
@@ -388,5 +411,23 @@ export class BidPage implements OnInit {
       this.popover.dismiss();
       this.popover = null;
     }
+  }
+
+ async getCreatorAddress(){
+  let tokenInfo = await this.nftContractControllerService.getSticker().tokenInfo(this.tokenID);
+  return tokenInfo[4];
+  }
+
+  async getMarketDate(){
+    let order = await this.nftContractControllerService
+    .getPasar()
+    .getOrderById(this.saleOrderId);
+
+   let createDate = new Date(parseInt(order[15])*1000);
+   let dateCreated = UtilService.dateFormat(
+     createDate,
+     'yyyy-MM-dd HH:mm:ss',
+   );
+    return dateCreated;
   }
 }

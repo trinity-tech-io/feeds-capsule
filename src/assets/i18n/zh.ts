@@ -661,7 +661,7 @@ export const zh = {
     pasarContractAddress: 'Pasar代理合约地址',
     tokenID: 'Token ID',
     purchaseInfo: '购买信息',
-    creator: '创建者',
+    creator: '原创者',
     datePurchased: '购买日期',
     price: '价格',
     currency: '货币',
@@ -671,7 +671,11 @@ export const zh = {
     contract: '合约',
     state: '状态',
     royalties: '版税',
-    priceErrorMsg: '出售价格不能为负值'
+    priceErrorMsg: '出售价格不能为负值',
+    saleType: '出售类型',
+    firstSale: '首次销售',
+    secondarySale: '二次转售',
+    dateoNMarket: '发行日期'
   },
   BidPage: {
     title: '收藏品明细',
