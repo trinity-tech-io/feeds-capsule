@@ -60,6 +60,7 @@ export class AssetdetailsPage implements OnInit {
   public loadingText:string = "";
   public loadingCurNumber:string = "";
   public loadingMaxNumber:string = "";
+  public saleOrderId: string = null;
   constructor(
     private translate: TranslateService,
     private events: Events,
@@ -85,6 +86,7 @@ export class AssetdetailsPage implements OnInit {
       this.owner = queryParams.name || '';
       this.name = queryParams.name || '';
       this.description = queryParams.description || '';
+      this.saleOrderId = queryParams.saleOrderId || '';
       this.quantity = queryParams.curQuantity || queryParams.quantity;
       this.tokenID = queryParams.tokenId || '';
       this.stickerContractAddress = this.nftContractControllerService
@@ -183,11 +185,19 @@ export class AssetdetailsPage implements OnInit {
     this.events.publish(FeedsEvent.PublishType.addProflieEvent);
   }
 
-  collectContractData() {
+ async collectContractData() {
+
     this.contractDetails = [];
+
+    let creatorAddress = await this.getCreatorAddress();
+    this.contractDetails.push({
+      type: 'AssetdetailsPage.creator',
+      details: creatorAddress,
+    });
+
     if (this.creator != '') {
       this.contractDetails.push({
-        type: 'AssetdetailsPage.creator',
+        type: 'AssetdetailsPage.owner',
         details: this.creator,
       });
     }
@@ -202,6 +212,11 @@ export class AssetdetailsPage implements OnInit {
       details: this.description,
     });
 
+    this.contractDetails.push({
+      type: 'AssetdetailsPage.tokenID',
+      details: this.tokenID,
+    });
+
     if(this.royalties!=null){
      let royalties = UtilService.accDiv(this.royalties,10000);
       this.contractDetails.push({
@@ -214,12 +229,25 @@ export class AssetdetailsPage implements OnInit {
       type: 'AssetdetailsPage.quantity',
       details: this.quantity,
     });
-    if (this.nftStatus != null) {
-      this.contractDetails.push({
-        type: 'common.state',
-        details: this.nftStatus,
-      });
+    // if (this.nftStatus != null) {
+    //   this.contractDetails.push({
+    //     type: 'common.state',
+    //     details: this.nftStatus,
+    //   });
+    // }
+
+    let saleDes = "";
+
+    if(creatorAddress === this.creator){
+      saleDes = "AssetdetailsPage.firstSale";
+    }else{
+      saleDes = "AssetdetailsPage.secondarySale";
     }
+
+    this.contractDetails.push({
+      type: 'AssetdetailsPage.saleType',
+      details: this.translate.instant(saleDes),
+    });
 
     if (this.price != null) {
       this.contractDetails.push({
@@ -238,6 +266,14 @@ export class AssetdetailsPage implements OnInit {
       });
     }
 
+    if(this.saleOrderId!=""){
+      let marketDate = await this.getMarketDate();
+      this.contractDetails.push({
+        type: 'AssetdetailsPage.dateoNMarket',
+        details: marketDate,
+      });
+    }
+
     this.contractDetails.push({
       type: 'AssetdetailsPage.stickerContractAddress',
       details: this.stickerContractAddress,
@@ -249,11 +285,6 @@ export class AssetdetailsPage implements OnInit {
         details: this.parsarContractAddress,
       });
     }
-
-    this.contractDetails.push({
-      type: 'AssetdetailsPage.tokenID',
-      details: this.tokenID,
-    });
 
     this.contractDetails.push({
       type: 'BidPage.blockchain',
@@ -446,6 +477,25 @@ export class AssetdetailsPage implements OnInit {
             cpList.push(cpItem);
             this.nftPersistenceHelper.setPasarList(cpList);
           }
+  }
+
+
+  async getCreatorAddress(){
+    let tokenInfo = await this.nftContractControllerService.getSticker().tokenInfo(this.tokenID);
+    return tokenInfo[4];
+  }
+
+  async getMarketDate(){
+    let order = await this.nftContractControllerService
+    .getPasar()
+    .getOrderById(this.saleOrderId);
+
+   let createDate = new Date(parseInt(order[15])*1000);
+   let dateCreated = UtilService.dateFormat(
+     createDate,
+     'yyyy-MM-dd HH:mm:ss',
+   );
+    return dateCreated;
   }
 
 }

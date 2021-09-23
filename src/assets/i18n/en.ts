@@ -686,7 +686,12 @@ export const en = {
     history: 'History',
     contract: 'Contract',
     state: 'State',
+    priceErrorMsg: 'The selling price cannot be negative',
     royalties: 'Royalties',
+    saleType: 'Sale Type',
+    firstSale: 'Primary Sale',
+    secondarySale: 'Secondary sale',
+    dateoNMarket: 'Date on Market'
   },
   BidPage: {
     title: 'Collectible Details',
