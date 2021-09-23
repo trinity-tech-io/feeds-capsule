@@ -67,6 +67,7 @@ let eventBus: Events = null;
 
 @Injectable()
 export class FeedService {
+  public  elaUsdPrice: string = "";
   public  selsectNftImage: string = "";
   private pasarListGrid: boolean = false;
   private collectibleStatus: any = {};
@@ -7707,5 +7708,13 @@ export class FeedService {
 
   getSelsectNftImage(){
     return this.selsectNftImage;
+  }
+
+  setElaUsdPrice(elaUsdPrice:string){
+    this.elaUsdPrice = elaUsdPrice;
+  }
+
+  getElaUsdPrice(){
+    return this.elaUsdPrice;
   }
 }
