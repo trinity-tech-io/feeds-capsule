@@ -249,7 +249,7 @@ export class HomePage implements OnInit {
   ionViewWillEnter() {
   this.homeTittleBar = this.elmRef.nativeElement.querySelector("#homeTittleBar");
   this.homeTab = this.elmRef.nativeElement.querySelector("#homeTab");
-    this.getElaUsdPrice();
+  this.elaPrice = this.feedService.getElaUsdPrice();
     if (this.platform.is('ios')) {
       this.isAndroid = false;
     }
@@ -366,9 +366,6 @@ export class HomePage implements OnInit {
       });
     });
 
-    this.events.subscribe(FeedsEvent.PublishType.updateElaPrice,()=>{
-          this.getElaUsdPrice();
-    });
 
     this.events.subscribe(FeedsEvent.PublishType.clickDialog,(dialogData:any)=>{
       let pageName = dialogData.pageName;
@@ -660,7 +657,6 @@ export class HomePage implements OnInit {
     this.events.unsubscribe(FeedsEvent.PublishType.rpcResponseError);
     this.events.unsubscribe(FeedsEvent.PublishType.rpcRequestSuccess);
     this.events.unsubscribe(FeedsEvent.PublishType.openRightMenu);
-    this.events.unsubscribe(FeedsEvent.PublishType.updateElaPrice);
     this.events.unsubscribe(FeedsEvent.PublishType.clickHome);
     this.removeImages();
     this.removeAllVideo();
@@ -916,7 +912,7 @@ export class HomePage implements OnInit {
         }, 500);
         break;
       case 'pasar':
-        this.getElaUsdPrice();
+        this.elaPrice = this.feedService.getElaUsdPrice();
         this.loadMoreData().then((list) => {
           this.pasarList = _.concat(this.pasarList, list);
           this.pasarList = this.nftContractHelperService.sortData(this.pasarList, SortType.CREATE_TIME);
@@ -972,7 +968,7 @@ export class HomePage implements OnInit {
         }, 500);
         break;
       case 'pasar':
-        this.getElaUsdPrice();
+        this.elaPrice = this.feedService.getElaUsdPrice();
         this.zone.run(async () => {
           try {
             this.pasarListPage = 0;
@@ -1838,7 +1834,7 @@ async  clickTab(type: string) {
         // this.refreshPostList();
         break;
       case 'pasar':
-        this.getElaUsdPrice();
+        this.elaPrice = this.feedService.getElaUsdPrice();
         this.infiniteScroll.disabled = false;
         let value =
           this.popoverController.getTop()['__zone_symbol__value'] || '';

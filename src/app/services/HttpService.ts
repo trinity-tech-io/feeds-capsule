@@ -233,15 +233,23 @@ export class HttpService {
 
   getElaPrice(){
     return new Promise((resove, reject) => {
+      try{
        this.httpClient.get('https://api-price.elaphant.app/api/1/cmc?limit=600')
        .subscribe((result)=>{
         let elaItem:any =  _.find(result,(item:any)=>{
              return item.symbol === "ELA"
-         });
-        resove(elaItem["price_usd"])
+         }) || "";
+         if(elaItem!=""){
+          resove(elaItem["price_usd"])
+         }else{
+          reject(null);
+         }
        },(err)=>{
           reject(null);
        });
+      }catch(err){
+        reject(null);
+      }
     });
   }
 }

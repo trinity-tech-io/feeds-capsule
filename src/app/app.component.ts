@@ -19,8 +19,8 @@ import { GlobalService } from 'src/app/services/global.service';
 import { Config } from './services/config';
 import { Logger, LogLevel } from './services/logger';
 import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
-import { async } from 'rxjs/internal/scheduler/async';
 import { IntentService } from './services/IntentService';
+import { HttpService } from 'src/app/services/HttpService';
 
 let TAG: string = 'app-component';
 
@@ -47,6 +47,7 @@ export class MyApp {
   private essentialsConnector = new EssentialsConnector();
   public walletAddress: string = '';
   public walletAddressStr: string = '';
+
   constructor(
     private modalController: ModalController,
     private events: Events,
@@ -66,6 +67,7 @@ export class MyApp {
     private globalService: GlobalService,
     private nftContractControllerService: NFTContractControllerService,
     private intentService: IntentService,
+    private httpService: HttpService
 
   ) {
     this.initializeApp();
@@ -188,6 +190,14 @@ export class MyApp {
   }
 
   initSetting() {
+
+    this.feedService.getData("").then((elaPrice: any)=>{
+      if (elaPrice === null) {
+         this.setElaUsdPrice();
+      }else{
+        this.feedService.setElaUsdPrice(elaPrice);
+      }
+    }).catch(err => {});
 
     this.dataHelper.loadDevelopLogMode().then((isOpenLog: boolean) => {
       if (isOpenLog)
@@ -421,8 +431,18 @@ export class MyApp {
   }
 
   updateElaPrice(){
+    this.setElaUsdPrice();
     setInterval(()=>{
-     this.events.publish(FeedsEvent.PublishType.updateElaPrice);
+     this.setElaUsdPrice();
     },60000*10);
+  }
+
+  setElaUsdPrice(){
+    this.httpService.getElaPrice().then((elaPrice:any)=>{
+      if(elaPrice != null){
+        this.feedService.setElaUsdPrice(elaPrice);
+        this.feedService.setData("feeds:elaPrice",elaPrice);
+      }
+    });
   }
 }
