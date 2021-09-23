@@ -2273,20 +2273,21 @@ handleScroll(){
 handelAndroidScroll(ponit:any){
   if(ponit.scrollTop>0){
     this.homeTittleBar.style.display = "none";
-    this.homeTab.style.top = "0px";
+    this.homeTab.setAttribute("style","top:0px;height:45px;line-height:37px;");
   }else{
     this.homeTittleBar.style.display = "block";
-    this.homeTab.style.top = "36px";
+    this.homeTab.setAttribute("style","top:36px;height:34px;");
   }
 }
 
 handelIosScroll(ponit:any){
   if(ponit.scrollTop>40){
     this.homeTittleBar.style.display = "none";
-    this.homeTab.style.top = "40px";
+    this.homeTab.setAttribute("style","top:40px;height:45px;line-height:37px;");
+
   }else{
     this.homeTittleBar.style.display = "block";
-    this.homeTab.style.top = "76px";
+    this.homeTab.setAttribute("style","top:76px;height:34px;");
   }
 }
 
