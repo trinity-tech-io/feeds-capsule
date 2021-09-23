@@ -163,7 +163,7 @@ export const en = {
     burnNFTSSuccess: "Delete Collectibles successfully",
     shareReadMore: "... read more at",
     sharesharingPost: "I'm sharing a post from Feeds",
-    shareSharingChannel1: "Have a look at channel '",
+    shareSharingChannel1: "Have a look at this channel '",
     shareSharingChannel2: "' from Feeds!",
     shareSharingChannel: "Have a look at this channel from Feeds!",
     generateSharingLink: "Sharing link being generated"
