@@ -58,6 +58,7 @@ export class MintnftPage implements OnInit {
   public loadingText:string = "";
   public loadingCurNumber:string = "";
   public loadingMaxNumber:string = "";
+  private realFile: any = null
   constructor(
     private translate: TranslateService,
     private event: Events,
@@ -136,24 +137,25 @@ export class MintnftPage implements OnInit {
     });
   }
 
-  addAsset() {
-    this.addImg(0)
-      .then((imagePath) => {
-        this.imagePath = imagePath;
-        let pathObj = this.handlePath(this.imagePath);
-        let fileName = pathObj['fileName'];
-        let filePath = pathObj['filepath'];
-        let index = fileName.lastIndexOf(".");
-        let imgFormat = fileName.substr(index+1);
-        this.imageObj['imgFormat'] = imgFormat;
-        return this.getFlieObj(fileName, filePath);
-      }).then((fileBase64) => {
-        this.assetBase64 = fileBase64;
-        return this.compressImage(fileBase64);
-      }).then((compressBase64) => {
-        this.thumbnail = compressBase64;
-      });
-  }
+  //@Deprecated
+  // addAsset() {
+  //   this.addImg(0)
+  //     .then((imagePath) => {
+  //       this.imagePath = imagePath;
+  //       let pathObj = this.handlePath(this.imagePath);
+  //       let fileName = pathObj['fileName'];
+  //       let filePath = pathObj['filepath'];
+  //       let index = fileName.lastIndexOf(".");
+  //       let imgFormat = fileName.substr(index+1);
+  //       this.imageObj['imgFormat'] = imgFormat;
+  //       return this.getFlieObj(fileName, filePath);
+  //     }).then((fileBase64) => {
+  //       this.assetBase64 = fileBase64;
+  //       return this.compressImage(fileBase64);
+  //     }).then((compressBase64) => {
+  //       this.thumbnail = compressBase64;
+  //     });
+  // }
 
   mint() {
     if (!this.checkParms()) {
@@ -268,49 +270,49 @@ export class MintnftPage implements OnInit {
       });
   }
 
-  getFlieObj(fileName: string, filepath: string): Promise<string> {
-    return new Promise(async (resolve, reject) => {
-      this.file
-      .resolveLocalFilesystemUrl(filepath)
-      .then((dirEntry: DirectoryEntry) => {
-        dirEntry.getFile(
-          fileName,
-          { create: true, exclusive: false },
-          fileEntry => {
-            fileEntry.file(
-              file => {
-                let fileReader = new FileReader();
-                fileReader.onloadend = (event: any) => {
-                  this.zone.run(() => {
-                    let assetBase64 = fileReader.result.toString();
-                    resolve(assetBase64);
-                  });
-                };
-                fileReader.onprogress = (event: any) => {
-                  this.zone.run(() => {});
-                };
-                fileReader.readAsDataURL(file);
-              },
-              () => {},
-            );
-          },
-          () => {
-            reject('error');
-          },
-        );
-      })
-      .catch(dirEntryErr => {
-        reject(dirEntryErr);
-        Logger.error(TAG, 'Get File object error', dirEntryErr)
-      });
-    });
-  }
+  // getFlieObj(fileName: string, filepath: string): Promise<string> {
+  //   return new Promise(async (resolve, reject) => {
+  //     this.file
+  //     .resolveLocalFilesystemUrl(filepath)
+  //     .then((dirEntry: DirectoryEntry) => {
+  //       dirEntry.getFile(
+  //         fileName,
+  //         { create: true, exclusive: false },
+  //         fileEntry => {
+  //           fileEntry.file(
+  //             file => {
+  //               let fileReader = new FileReader();
+  //               fileReader.onloadend = (event: any) => {
+  //                 this.zone.run(() => {
+  //                   let assetBase64 = fileReader.result.toString();
+  //                   resolve(assetBase64);
+  //                 });
+  //               };
+  //               fileReader.onprogress = (event: any) => {
+  //                 this.zone.run(() => {});
+  //               };
+  //               fileReader.readAsDataURL(file);
+  //             },
+  //             () => {},
+  //           );
+  //         },
+  //         () => {
+  //           reject('error');
+  //         },
+  //       );
+  //     })
+  //     .catch(dirEntryErr => {
+  //       reject(dirEntryErr);
+  //       Logger.error(TAG, 'Get File object error', dirEntryErr)
+  //     });
+  //   });
+  // }
 
-  sendIpfsImage(fileName: string, file: any):Promise<string>{
+  sendIpfsImage(file: any): Promise<string> {
     return new Promise(async (resolve, reject) => {
-      let blob = this.dataURLtoBlob(file);
+      // let blob = this.dataURLtoBlob(file);
       let formData = new FormData();
-      formData.append('', blob);
+      formData.append('', file);
       Logger.log(TAG, 'Send img, formdata length is', formData.getAll('').length);
       this.ipfsService
         .nftPost(formData)
@@ -321,7 +323,7 @@ export class MintnftPage implements OnInit {
             return;
           }
 
-          this.assetBase64 = file;
+          // this.assetBase64 = file;
           this.imageObj['imgSize'] = result['Size'];
           let tokenId = '0x' + UtilService.SHA256(hash);
           this.imageObj['imgHash'] = 'feeds:imgage:' + hash;
@@ -406,31 +408,33 @@ export class MintnftPage implements OnInit {
     return new Blob([u8arr], { type: mime });
   }
 
-  addImg(type: number): Promise<any> {
-    return new Promise((resolve, reject) => {
-      this.camera.openCamera(
-        100,
-        1,
-        type,
-        (imgPath: any) => {
-          resolve(imgPath);
-        },
-        (err: any) => {
-          Logger.error(TAG, 'Add img err', err);
-          let imgUrl = this.assetBase64 || '';
-          if (!imgUrl) {
-            this.native.toast_trans('common.noImageSelected');
-            reject(err);
-            return;
-          }
-        }
-      );
-    });
-  }
+  //@Deprecated
+  // addImg(type: number): Promise<any> {
+  //   return new Promise((resolve, reject) => {
+  //     this.camera.openCamera(
+  //       100,
+  //       1,
+  //       type,
+  //       (imgPath: any) => {
+  //         resolve(imgPath);
+  //       },
+  //       (err: any) => {
+  //         Logger.error(TAG, 'Add img err', err);
+  //         let imgUrl = this.assetBase64 || '';
+  //         if (!imgUrl) {
+  //           this.native.toast_trans('common.noImageSelected');
+  //           reject(err);
+  //           return;
+  //         }
+  //       }
+  //     );
+  //   });
+  // }
 
   removeImg() {
     this.thumbnail = '';
     this.assetBase64 = '';
+    this.realFile = null;
   }
 
   checkParms() {
@@ -736,15 +740,19 @@ export class MintnftPage implements OnInit {
 
   uploadData(): Promise<any> {
     return new Promise(async (resolve, reject) => {
-      let pathObj = this.handlePath(this.imagePath);
-      let fileName = pathObj['fileName'];
-      let filePath = pathObj['filepath']
-      let file = null;
+      // let pathObj = this.handlePath(this.imagePath);
+      // let fileName = pathObj['fileName'];
+      // let filePath = pathObj['filepath']
+      // let file = null;
       let tokenId = "";
-      this.getFlieObj(fileName, filePath).then((fileBase64) => {
-        file = fileBase64;
-        return this.sendIpfsImage(fileName, file);
-      }).then((cid) => {
+      // this.getFlieObj(fileName, filePath).then((fileBase64) => {
+      //   file = fileBase64;
+      //   return this.sendIpfsImage(file);
+      // })
+
+      if (this.realFile == null)
+        console.log("Not select image");
+      this.sendIpfsImage(this.realFile).then((cid) => {
         tokenId = cid;
         return this.sendIpfsThumbnail(this.thumbnail);
       }).then(() => {
@@ -896,12 +904,40 @@ export class MintnftPage implements OnInit {
     this.nftPersistenceHelper.setCollectiblesMap(accAddress, slist);
   }
 
-  handleImg(){
-
+  handleImg() {
     let imgUri = this.thumbnail;
     if(this.imageObj['imgFormat'] === "gif"){
         imgUri = this.assetBase64;
     }
     return imgUri;
+  }
+
+
+  async onChange(event) {
+    Logger.log(TAG, 'Image change', event);
+    this.realFile = event.target.lastChild.files[0];
+
+    Logger.log("Real File is", event.target.lastChild.files[0]);
+
+    let fileName = this.realFile.name;
+    let index = fileName.lastIndexOf(".");
+    let imgFormat = fileName.substr(index + 1);
+    this.imageObj['imgFormat'] = imgFormat;
+
+    this.createImagePreview(this.realFile);
+  }
+
+  createImagePreview(file) {
+    const reader = new FileReader();
+
+    reader.readAsDataURL(file);
+    reader.onload = async event => {
+      try {
+        this.assetBase64 = event.target.result.toString();
+        this.thumbnail = await this.compressImage(this.assetBase64);
+      } catch (error) {
+        Logger.error('Get image thumbnail error', error);
+      }
+    }
   }
 }
