@@ -394,6 +394,9 @@ async handleSaleList() {
     if (imgUri.indexOf('feeds:imgage:') > -1) {
       imgUri = imgUri.replace('feeds:imgage:', '');
       imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
+    }else if(imgUri.indexOf('feeds:image:') > -1){
+      imgUri = imgUri.replace('feeds:image:', '');
+      imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
     }
    this.imgUri = imgUri;
   }

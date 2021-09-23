@@ -303,6 +303,9 @@ export class ProfilenftimagePage implements OnInit {
     if (imgUri.indexOf('feeds:imgage:') > -1) {
       imgUri = imgUri.replace('feeds:imgage:', '');
       imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
+    }else if(imgUri.indexOf('feeds:image:') > -1){
+      imgUri = imgUri.replace('feeds:image:', '');
+      imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
     }
 
     if(this.type === "postImages"){
@@ -326,9 +329,8 @@ export class ProfilenftimagePage implements OnInit {
     if (imgUri.indexOf('feeds:imgage:') > -1) {
       imgUri = imgUri.replace('feeds:imgage:', '');
       imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
-    }
-    if (imgUri.indexOf('feeds:imgage:') > -1) {
-      imgUri = imgUri.replace('feeds:imgage:', '');
+    }else if (imgUri.indexOf('feeds:image:') > -1) {
+      imgUri = imgUri.replace('feeds:image:', '');
       imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
       // imgUri = ApiUrl.nftGet + imgUri;
     }
