@@ -5,8 +5,8 @@
    (click)="clickTab('feeds')">{{'FeedsPage.tabTitle5'|translate}}</ion-col>
   <ion-col size="6" class="des"  [ngClass]="{'select-bottom':tabType==='pasar','select-color':tabType==='pasar','no-select-color':tabType!='pasar'}" (click)="clickTab('pasar')">{{'ExplorefeedsPage.pasar'|translate}}</ion-col>
 </ion-row>
-<ion-content (ionScroll)="ionScroll()" [scrollEvents]="true">
-  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" pullFactor="0.5" style="top: 50px;z-index: 99;">
+<ion-content style="top: 36px;" (ionScroll)="ionScroll()" [scrollEvents]="true">
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" pullFactor="0.5">
     <ion-refresher-content
       class="refresh"
       pullingText="{{'common.releaseToRefresh'|translate}}"
@@ -16,7 +16,7 @@
     </ion-refresher-content>
   </ion-refresher>
  <!-- feeds timeTime-->
- <div *ngIf="tabType==='feeds'" style="margin-top: 23px;">
+<div *ngIf="tabType==='feeds'">
   <!-- NO POSTS -->
   <div *ngIf="postList.length === 0" class="empty-container" style="margin-top:159px;">
     <img src="./assets/images/empty-feeds-icon.svg">
@@ -197,7 +197,7 @@
  </div>
 
  <!--Pasar list-->
- <div *ngIf="tabType==='pasar'&&styleType==='list'" style="margin-top: 26px;">
+<div *ngIf="tabType==='pasar'&&styleType==='list'">
   <ion-row>
     <ion-col size="12"  *ngFor="let item of pasarList let i=index" [class.darkBorderBottom]="theme.darkMode && item != pasarList[pasarList.length - 1]" [class.borderBottom]="!theme.darkMode  && item != pasarList[pasarList.length - 1]">
       <app-newassetitem
@@ -212,7 +212,7 @@
  </div>
 
  <!--Pasar grid-->
- <div *ngIf="tabType==='pasar'&&styleType==='grid'" style="margin-top:36px;">
+<div *ngIf="tabType==='pasar'&&styleType==='grid'" style="margin-top:12px;">
   <ion-row class="leftrightrow">
     <ion-col size="6" *ngFor="let item of pasarList">
       <app-assetitem
@@ -235,7 +235,7 @@
     </ion-infinite-scroll-content>
 
   </ion-infinite-scroll>
-
+<div style="height: 36px;"></div>
 </ion-content>
 <div class="add-tab" *ngIf="tabType==='feeds'" (click)="create()">
   <img src="/assets/images/createPost.svg"/>
