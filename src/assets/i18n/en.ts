@@ -166,7 +166,7 @@ export const en = {
     shareSharingChannel1: "Have a look at this channel '",
     shareSharingChannel2: "' from Feeds!",
     shareSharingChannel: "Have a look at this channel from Feeds!",
-    generateSharingLink: "Sharing link being generated",
+    generateSharingLink: "The sharing link is being generated",
     loading: "Loading..."
   },
   app: {
