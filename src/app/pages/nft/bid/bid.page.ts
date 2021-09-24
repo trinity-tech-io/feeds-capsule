@@ -76,6 +76,7 @@ export class BidPage implements OnInit {
 
   ngOnInit() {
     this.activatedRoute.queryParams.subscribe(queryParams => {
+
       this.curAssetItem = _.cloneDeep(queryParams);
       let asset = queryParams.asset || {};
       this.showType = queryParams.showType;
@@ -95,14 +96,6 @@ export class BidPage implements OnInit {
       this.royalties = queryParams.royalties || null;
       this.saleOrderId = queryParams.saleOrderId || '';
       this.sellerAddress = queryParams.sellerAddr || '';
-      let createTime = queryParams.createTime || '';
-      if (createTime != '') {
-        let createDate = new Date(parseInt(createTime));
-        this.dateCreated = UtilService.dateFormat(
-          createDate,
-          'yyyy-MM-dd HH:mm:ss',
-        );
-      }
     });
   }
 
@@ -156,16 +149,6 @@ export class BidPage implements OnInit {
 
  async collectContractData() {
     this.contractDetails = [];
-    let creatorAddress = await this.getCreatorAddress();
-    this.contractDetails.push({
-      type: 'AssetdetailsPage.creator',
-      details: creatorAddress,
-    });
-    this.contractDetails.push({
-      type: 'AssetdetailsPage.owner',
-      details: this.seller,
-    });
-
     this.contractDetails.push({
       type: 'AssetdetailsPage.name',
       details: this.name,
@@ -174,6 +157,16 @@ export class BidPage implements OnInit {
     this.contractDetails.push({
       type: 'AssetdetailsPage.description',
       details: this.description,
+    });
+
+    let creatorAddress = await this.getCreatorAddress();
+    this.contractDetails.push({
+      type: 'AssetdetailsPage.creator',
+      details: creatorAddress,
+    });
+    this.contractDetails.push({
+      type: 'AssetdetailsPage.owner',
+      details: this.seller,
     });
 
     this.contractDetails.push({
@@ -212,12 +205,17 @@ export class BidPage implements OnInit {
       details: this.translate.instant(saleDes),
     });
 
-    if (this.dateCreated != '') {
-      this.contractDetails.push({
-        type: 'AssetdetailsPage.dateCreated',
-        details: this.dateCreated,
-      });
-    }
+    let tokenInfo = await this.nftContractControllerService.getSticker().tokenInfo(this.tokenID);
+    let createDate = new Date(parseInt(tokenInfo[6])*1000);
+    let dateCreated = UtilService.dateFormat(
+          createDate,
+          'yyyy-MM-dd HH:mm:ss',
+    );
+    this.contractDetails.push({
+      type: 'AssetdetailsPage.dateCreated',
+      details: dateCreated,
+    });
+
     let marketDate = await this.getMarketDate();
     this.contractDetails.push({
       type: 'AssetdetailsPage.dateoNMarket',
@@ -426,8 +424,7 @@ export class BidPage implements OnInit {
     let order = await this.nftContractControllerService
     .getPasar()
     .getOrderById(this.saleOrderId);
-
-   let createDate = new Date(parseInt(order[16])*1000);
+   let createDate = new Date(parseInt(order[15])*1000);
    let dateCreated = UtilService.dateFormat(
      createDate,
      'yyyy-MM-dd HH:mm:ss',
