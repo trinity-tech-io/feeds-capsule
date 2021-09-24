@@ -691,7 +691,7 @@ export const en = {
     royalties: 'Royalties',
     saleType: 'Sale Type',
     firstSale: 'Primary Sale',
-    secondarySale: 'Secondary sale',
+    secondarySale: 'Secondary Sale',
     dateoNMarket: 'Date on Market'
   },
   BidPage: {
