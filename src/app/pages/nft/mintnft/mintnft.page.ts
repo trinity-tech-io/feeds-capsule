@@ -326,7 +326,7 @@ export class MintnftPage implements OnInit {
           // this.assetBase64 = file;
           this.imageObj['imgSize'] = result['Size'];
           let tokenId = '0x' + UtilService.SHA256(hash);
-          this.imageObj['imgHash'] = 'feeds:imgage:' + hash;
+          this.imageObj['imgHash'] = 'feeds:image:' + hash;
 
           resolve(tokenId);
         })
@@ -353,7 +353,7 @@ export class MintnftPage implements OnInit {
           }
 
           this.thumbnail = thumbnailBase64;
-          this.imageObj['thumbnail'] = 'feeds:imgage:' + hash;
+          this.imageObj['thumbnail'] = 'feeds:image:' + hash;
           resolve('');
         })
         .catch(err => {
