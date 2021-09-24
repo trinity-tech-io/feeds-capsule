@@ -2280,13 +2280,12 @@ handelAndroidScroll(ponit:any){
 }
 
 handelIosScroll(ponit:any){
-  if(ponit.scrollTop>50){
+  if(ponit.scrollTop>0){
     this.homeTittleBar.style.display = "none";
-    this.homeTab.setAttribute("style","top:40px;height:45px;line-height:37px;");
-
+    this.homeTab.setAttribute("style","top:0px;height:45px;line-height:37px;");
   }else{
     this.homeTittleBar.style.display = "block";
-    this.homeTab.setAttribute("style","top:76px;height:34px;");
+    this.homeTab.setAttribute("style","top:36px;height:34px;");
   }
 }
 

@@ -17,7 +17,7 @@
     <div class="des1" [class.black]="!theme.darkMode" [class.white]="theme.darkMode">{{assetItem['description']}}</div>
     <div class="des2">{{"MintnftPage.nftQuantity"|translate}}: {{handleCurQuantity(assetItem)}}/{{assetItem['quantity']}}</div>
     <div class="like" *ngIf="assetItem['fixedAmount'] != null">
-      <span class="price">{{hanldePrice(assetItem['fixedAmount'])}} ELA  <img style="vertical-align:middle;margin-top: 4px;" src="assets/images/purpleblue.svg"/></span>
+      <span class="price">{{hanldePrice(assetItem['fixedAmount'])}} ELA  <img style="vertical-align:middle;margin-top: 7px;" src="assets/images/purpleblue.svg"/></span>
       <span class="priceUsd" *ngIf="elaPrice!=null">≈USD {{hanldeUsdPrice(assetItem['fixedAmount'])}}</span>
     </div>
     <div class="like" (click)="onSale()" *ngIf="assetItem['fixedAmount'] === null">

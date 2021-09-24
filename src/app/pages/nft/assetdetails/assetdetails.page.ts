@@ -493,7 +493,7 @@ export class AssetdetailsPage implements OnInit {
     .getPasar()
     .getOrderById(this.saleOrderId);
 
-   let createDate = new Date(parseInt(order[15])*1000);
+   let createDate = new Date(parseInt(order[16])*1000);
    let dateCreated = UtilService.dateFormat(
      createDate,
      'yyyy-MM-dd HH:mm:ss',
