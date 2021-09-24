@@ -1902,7 +1902,7 @@ export class ProfilePage implements OnInit {
       let nftCreatedCount = await this.nftContractControllerService
         .getSticker()
         .tokenCountOfOwner(accAddress);
-      await this.handleOrder(sellerAddr, orderCount, 'sale', accAddress, nftCreatedCount);
+      this.handleOrder(sellerAddr, orderCount, 'sale', accAddress, nftCreatedCount);
     }
   }
 
