@@ -65,12 +65,10 @@ export class HttpService {
     return new Promise((resolve, reject) => {
       this.httpClient.get(url).subscribe(
         response => {
-          console.log("success", response);
           resolve(response);
 
         },
         error => {
-          console.log("error", error);
           reject(error);
         }
       );
@@ -81,12 +79,10 @@ export class HttpService {
     return new Promise((resolve, reject) => {
       this.httpClient.get(url, this.textHttpOption).subscribe(
         response => {
-          console.log("success", response);
           resolve(response);
 
         },
         error => {
-          console.log("error", error);
           reject(error);
         }
       );
