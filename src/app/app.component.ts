@@ -103,13 +103,13 @@ export class MyApp {
         this.feedService.initDidManager();
         this.splashScreen.hide();
         //for ios
-        // if (this.isIOSPlatform()) {
-        //   this.statusBar.backgroundColorByHexString('#f8f8ff');
-        //   this.statusBar.styleDefault();
-        // }
+        if (this.isIOSPlatform()) {
+          this.statusBar.backgroundColorByHexString('#f8f8ff');
+          this.statusBar.overlaysWebView(false);
+        }
         // Must do it in ios, otherwise the titlebar and status bar will overlap.
-        this.statusBar.overlaysWebView(false);
-        // this.statusBar.backgroundColorByHexString("#ff000000");
+
+        this.statusBar.show();
 
         this.platform.backButton.subscribeWithPriority(99999, async () => {
           const modal = await this.modalController.getTop();
@@ -119,7 +119,7 @@ export class MyApp {
           }
           this.appService.handleBack();
         });
-        this.statusBar.show();
+
 
         this.initSetting();
         this.initFeedPublicStatus();
