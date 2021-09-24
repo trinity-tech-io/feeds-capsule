@@ -96,14 +96,6 @@ export class AssetdetailsPage implements OnInit {
         .getPasar()
         .getPasarAddress();
       this.assetUri = this.handleImg(asset);
-      let createTime = queryParams.createTime || '';
-      if (createTime != '') {
-        let createDate = new Date(parseInt(createTime));
-        this.dateCreated = UtilService.dateFormat(
-          createDate,
-          'yyyy-MM-dd HH:mm:ss',
-        );
-      }
       this.creator = queryParams.creator || '';
       this.royalties = queryParams.royalties || null;
     });
@@ -189,6 +181,16 @@ export class AssetdetailsPage implements OnInit {
 
     this.contractDetails = [];
 
+    this.contractDetails.push({
+      type: 'AssetdetailsPage.name',
+      details: this.name,
+    });
+
+    this.contractDetails.push({
+      type: 'AssetdetailsPage.description',
+      details: this.description,
+    });
+
     let creatorAddress = await this.getCreatorAddress();
     this.contractDetails.push({
       type: 'AssetdetailsPage.creator',
@@ -201,16 +203,6 @@ export class AssetdetailsPage implements OnInit {
         details: this.creator,
       });
     }
-
-    this.contractDetails.push({
-      type: 'AssetdetailsPage.name',
-      details: this.name,
-    });
-
-    this.contractDetails.push({
-      type: 'AssetdetailsPage.description',
-      details: this.description,
-    });
 
     this.contractDetails.push({
       type: 'AssetdetailsPage.tokenID',
@@ -259,12 +251,17 @@ export class AssetdetailsPage implements OnInit {
       });
     }
 
-    if (this.dateCreated != '') {
-      this.contractDetails.push({
-        type: 'AssetdetailsPage.dateCreated',
-        details: this.dateCreated,
-      });
-    }
+    let tokenInfo = await this.nftContractControllerService.getSticker().tokenInfo(this.tokenID);
+    let createDate = new Date(parseInt(tokenInfo[6])*1000);
+    let dateCreated = UtilService.dateFormat(
+          createDate,
+          'yyyy-MM-dd HH:mm:ss',
+    );
+
+    this.contractDetails.push({
+      type: 'AssetdetailsPage.dateCreated',
+      details: dateCreated,
+    });
 
     if(this.saleOrderId!=""){
       let marketDate = await this.getMarketDate();
@@ -493,7 +490,7 @@ export class AssetdetailsPage implements OnInit {
     .getPasar()
     .getOrderById(this.saleOrderId);
 
-   let createDate = new Date(parseInt(order[16])*1000);
+   let createDate = new Date(parseInt(order[15])*1000);
    let dateCreated = UtilService.dateFormat(
      createDate,
      'yyyy-MM-dd HH:mm:ss',
