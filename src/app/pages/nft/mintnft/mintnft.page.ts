@@ -80,6 +80,7 @@ export class MintnftPage implements OnInit {
   ngOnInit() {}
 
   ionViewWillEnter() {
+
     if (this.walletConnectControllerService.getAccountAddress() == '')
       this.walletConnectControllerService.connect();
 
@@ -914,10 +915,11 @@ export class MintnftPage implements OnInit {
 
 
   async onChange(event) {
-    Logger.log(TAG, 'Image change', event);
-    this.realFile = event.target.lastChild.files[0];
 
-    Logger.log("Real File is", event.target.lastChild.files[0]);
+    Logger.log(TAG, 'Image change', event);
+    this.realFile = event.target.files[0];
+
+    Logger.log("Real File is", event.target.files[0]);
 
     let fileName = this.realFile.name;
     let index = fileName.lastIndexOf(".");
@@ -939,5 +941,12 @@ export class MintnftPage implements OnInit {
         Logger.error('Get image thumbnail error', error);
       }
     }
+  }
+
+  handleMintEvent(event:any){
+    event.target.value = null;
+    document.getElementById("mintfile").onchange = (event)=>{
+      this.onChange(event);
+    };
   }
 }

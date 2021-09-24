@@ -161,7 +161,8 @@ export const zh = {
     sharesharingPost: "这是我从Feeds 分享的微说",
     shareSharingChannel1: "这是我从Feeds 分享的微频 '",
     shareSharingChannel2: "' 请订阅后继续阅读",
-    generateSharingLink: "正在生成分享链接"
+    generateSharingLink: "正在生成分享链接",
+    loading: "刷新中..."
   },
   app: {
     profileDetails: '档案详情',
