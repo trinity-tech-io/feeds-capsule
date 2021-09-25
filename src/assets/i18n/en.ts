@@ -163,8 +163,8 @@ export const en = {
     burnNFTSSuccess: "Delete Collectibles successfully",
     shareReadMore: "... read more at",
     sharesharingPost: "I'm sharing a post from Feeds",
-    shareSharingChannel1: "Have a look at this channel '",
-    shareSharingChannel2: "' from Feeds!",
+    shareSharingChannel1: "Check out this channel '",
+    shareSharingChannel2: "' on Feeds",
     shareSharingChannel: "Have a look at this channel from Feeds!",
     generateSharingLink: "The sharing link is being generated",
     loading: "Loading..."
@@ -664,6 +664,7 @@ export const en = {
     royaltiesErrorMsg: 'Royalties value should be between 0 and 15%(integer)',
     quantityErrorMsg: 'Quantity value must be greater than 0 (integer)',
     quantityErrorMsg1: 'The quantity value cannot exceed the maximum value (integer)',
+    fileTypeDes: 'File types supported: '
   },
   AssetdetailsPage: {
     title: 'Collectible Details',

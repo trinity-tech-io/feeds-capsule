@@ -647,7 +647,8 @@ export const zh = {
     priceErrorMsg1: '新出售价格不能与已出售价格一样',
     royaltiesErrorMsg: '版本税必须低于15%（大于0%）(整数)',
     quantityErrorMsg: '数量值必须大于0(整数)',
-    quantityErrorMsg1: '数量值不能超过最大数值(整数)'
+    quantityErrorMsg1: '数量值不能超过最大数值(整数)',
+    fileTypeDes: '支持图片格式 -  '
   },
   AssetdetailsPage: {
     title: '收藏品明细',

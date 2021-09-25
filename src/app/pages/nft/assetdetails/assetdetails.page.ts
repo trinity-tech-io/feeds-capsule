@@ -61,6 +61,8 @@ export class AssetdetailsPage implements OnInit {
   public loadingCurNumber:string = "";
   public loadingMaxNumber:string = "";
   public saleOrderId: string = null;
+  public usdPrice: string = null;
+
   constructor(
     private translate: TranslateService,
     private events: Events,
@@ -102,7 +104,12 @@ export class AssetdetailsPage implements OnInit {
   }
 
   ionViewWillEnter() {
+    let elaPrice = this.feedService.getElaUsdPrice();
     this.price = this.assItem.fixedAmount || null;
+    if(this.price!=null){
+      let ethprice = this.nftContractControllerService.transFromWei(this.price.toString());
+      this.usdPrice = UtilService.accMul(elaPrice,ethprice).toFixed(2);
+    }
     if (this.price != null) {
       this.nftStatus = this.translate.instant('common.onsale');
     }
