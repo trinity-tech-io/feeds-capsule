@@ -1834,7 +1834,7 @@ async  clickTab(type: string) {
     switch (type) {
       case 'feeds':
         this.infiniteScroll.disabled = false;
-        // this.refreshPostList();
+        this.refreshPostList();
         break;
       case 'pasar':
         this.elaPrice = this.feedService.getElaUsdPrice();

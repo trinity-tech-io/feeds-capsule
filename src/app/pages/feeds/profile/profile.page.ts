@@ -22,7 +22,8 @@ import { HttpService } from '../../../services/HttpService';
 import { IPFSService } from 'src/app/services/ipfs.service';
 import { NFTPersistenceHelper } from 'src/app/services/nft_persistence_helper.service';
 import { PhotoLibrary } from '@ionic-native/photo-library/ngx';
-
+import { DataHelper } from 'src/app/services/DataHelper';
+import { LanguageService } from 'src/app/services/language.service';
 import { Logger } from 'src/app/services/logger';
 
 let TAG: string = 'Feeds-profile';
@@ -177,7 +178,9 @@ export class ProfilePage implements OnInit {
     private httpService: HttpService,
     private ipfsService: IPFSService,
     private nftPersistenceHelper: NFTPersistenceHelper,
-    private photoLibrary: PhotoLibrary
+    private photoLibrary: PhotoLibrary,
+    private dataHelper :DataHelper,
+    private languageService: LanguageService,
   ) {
   }
 
@@ -1515,7 +1518,19 @@ export class ProfilePage implements OnInit {
           try {
             const sharedLink = await this.intentService.createShareLink(myNodeId, myChannelId, myPostId);
             const title = this.intentService.createShareChannelTitle(myNodeId, myChannelId) || "";
-            this.intentService.share(title, sharedLink);
+            const key = this.dataHelper.getKey(myNodeId,myChannelId, 0, 0);
+            const channel = this.dataHelper.getChannel(key);
+            const channelName = channel.name || '';
+            const ownername = channel.owner_name || '';
+            let code = this.languageService.getCurLang() || "en";
+            let des = "";
+             if(code === "zh"){
+               des = sharedLink +" 来访问Feeds 频道 '"+channelName+"'";
+             }else{
+               des = sharedLink +" via " +"@"+ownername;
+             }
+
+            this.intentService.share(title, des);
           } catch (error) {
           }
 

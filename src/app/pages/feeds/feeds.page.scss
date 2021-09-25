@@ -1,5 +1,16 @@
 .totalunread{
   font-size: 13px;
+  --background:#7624fe;
+}
+
+.totalunread1{
+  width:10px;
+  height:10px;
+  border-radius: 50%;
+  background-color:#7624fe;
+  left: calc(50% + 6px);
+  top: 11px;
+  position: absolute;
 }
 
 .home-tab{

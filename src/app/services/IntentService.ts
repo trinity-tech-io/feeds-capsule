@@ -26,7 +26,7 @@ export class IntentService {
     private carrierService: CarrierService,
     private events: Events,
     private translate: TranslateService,
-    private httpService: HttpService) { }
+    private httpService: HttpService,) { }
 
   scanQRCode(): Promise<string> {
     return this.scanService.scanBarcode();
@@ -442,10 +442,18 @@ export class IntentService {
     const channel = this.dataHelper.getChannel(key);
 
     const channelName = channel.name || '';
+    const ownername = channel.owner_name || '';
 
-    if (channelName != '')
-      return this.translate.instant("common.shareSharingChannel1") + channelName + this.translate.instant("common.shareSharingChannel2");
-
+    if (channelName != ''){
+     let code = this.languageService.getCurLang() || "en";
+     let des = ""
+      if(code === "zh"){
+        des = "请通过从" +"@"+ownername+  "的分享链接";
+      }else{
+        des =  "Check out this channel '" + channelName + "' on Feeds";
+      }
+      return des;
+    }
     return this.translate.instant("common.shareSharingChannel");
   }
 

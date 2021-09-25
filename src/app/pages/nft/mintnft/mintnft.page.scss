@@ -22,6 +22,14 @@
     }
 
     ion-item{
+      .fileTypeDes{
+        font-size: 10px;
+        font-weight: normal;
+        font-stretch: normal;
+        font-style: normal;
+        text-align: left;
+        color: #9ca0a4;
+      }
       --background-activated: #fff;
       --background-focused: #fff;
     }
