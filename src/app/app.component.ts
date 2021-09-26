@@ -19,7 +19,6 @@ import { GlobalService } from 'src/app/services/global.service';
 import { Config } from './services/config';
 import { Logger, LogLevel } from './services/logger';
 import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
-
 import { IntentService } from './services/IntentService';
 import { HttpService } from 'src/app/services/HttpService';
 
@@ -107,6 +106,8 @@ export class MyApp {
           this.statusBar.backgroundColorByHexString('#f8f8ff');
           this.statusBar.overlaysWebView(false);
         }
+
+        this.theme.getSystemMode();
         // Must do it in ios, otherwise the titlebar and status bar will overlap.
 
         this.statusBar.show();
