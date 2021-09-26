@@ -25,7 +25,7 @@
           <img [src]="!theme.darkMode ? './assets/images/bubble2.svg' : './assets/images/darkmode/bubble2.svg'">
           {{ channelSubscribes }} {{ 'common.followers' | translate }} </span>
 
-        <ion-button *ngIf="status ==='0'" class="subscribed" fill="outline">
+        <ion-button *ngIf="status ==='0'" class="subscribed" fill="outline" [ngClass]="{'requested': handleStatus() == 'SearchPage.status14' }">
             <ion-label>{{ handleStatus() | translate}}</ion-label>
         </ion-button>
 
