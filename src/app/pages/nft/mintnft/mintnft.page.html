@@ -5,7 +5,7 @@
 
       <ion-item lines="none" style="border:none;">
         <ion-label position="stacked">{{ 'MintnftPage.nftAsset' | translate }}</ion-label>
-        <div class="fileTypeDes">{{ 'MintnftPage.fileTypeDes' | translate }} PNG/JPEG/JPG/GIF</div>
+        <div class="fileTypeDes">{{ 'MintnftPage.fileTypeDes' | translate }} PNG,JPEG,JPG,GIF</div>
         <div class="rectangle1" *ngIf="thumbnail===''">
           <div class="rectangle2">
             <ion-input type="file" id="mintfile" (click)="handleMintEvent($event)"  accept="image/png, image/jpeg, image/jpg, image/gif"
