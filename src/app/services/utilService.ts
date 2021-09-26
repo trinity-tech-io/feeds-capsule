@@ -118,7 +118,7 @@ export class UtilService {
     }
   }
 
-  public static briefText(text: string, num: number = 15) {
+  public static briefText(text: string, num: number = 30) {
     let briefText = text || '';
     if (briefText === '')
       return briefText;

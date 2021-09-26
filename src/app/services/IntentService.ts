@@ -433,7 +433,7 @@ export class IntentService {
     if (text.replace(/(^[\s\n\t]+|[\s\n\t]+$)/g, "") == '')
       return this.translate.instant("common.sharesharingPost");
 
-    let brief: string = UtilService.briefText(text, 15);
+    let brief: string = UtilService.briefText(text, 30);
     return brief + this.translate.instant("common.shareReadMore");
   }
 
