@@ -442,15 +442,14 @@ export class IntentService {
     const channel = this.dataHelper.getChannel(key);
 
     const channelName = channel.name || '';
-    const ownername = channel.owner_name || '';
 
     if (channelName != ''){
      let code = this.languageService.getCurLang() || "en";
      let des = ""
       if(code === "zh"){
-        des = "请通过从" +"@ElastosFeeds的分享链接";
+        des = "这是我从Feeds(@ElastosFeeds) 分享的微频 '"+channelName+"', 请订阅后继续阅读 ";
       }else{
-        des =  "Check out this channel '" + channelName + "' on Feeds";
+        des =  "Check out this channel '" + channelName + "' on Feeds(@ElastosFeeds) ";
       }
       return des;
     }
