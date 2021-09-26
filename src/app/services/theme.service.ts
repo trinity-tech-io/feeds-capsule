@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Platform } from '@ionic/angular';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 
 
@@ -12,11 +11,8 @@ import {
 })
 export class ThemeService {
   public darkMode = true;
-  constructor(private platform: Platform,
+  constructor(
     private statusBar: StatusBar) {
-    this.platform.ready().then(() => {
-      this.getTheme();
-    });
   }
 
   getTheme() {
