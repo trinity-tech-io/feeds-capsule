@@ -1527,7 +1527,7 @@ export class ProfilePage implements OnInit {
              if(code === "zh"){
                des = sharedLink +" 来访问Feeds 频道 '"+channelName+"'";
              }else{
-               des = sharedLink +" via " +"@"+ownername;
+               des = sharedLink +" via " +"@ElastosFeeds";
              }
 
             this.intentService.share(title, des);

@@ -448,7 +448,7 @@ export class IntentService {
      let code = this.languageService.getCurLang() || "en";
      let des = ""
       if(code === "zh"){
-        des = "请通过从" +"@"+ownername+  "的分享链接";
+        des = "请通过从" +"@ElastosFeeds的分享链接";
       }else{
         des =  "Check out this channel '" + channelName + "' on Feeds";
       }
