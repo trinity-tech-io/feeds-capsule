@@ -11,6 +11,10 @@ import { Events } from 'src/app/services/events.service';
 import { TranslateService } from '@ngx-translate/core';
 import { UtilService } from 'src/app/services/utilService';
 import { HttpService } from './HttpService';
+import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
+import { NFTContractHelperService, SortType } from 'src/app/services/nftcontract_helper.service';
+import { IPFSService } from 'src/app/services/ipfs.service';
+
 
 let TAG: string = 'IntentService';
 declare let intentManager: IntentPlugin.IntentManager;
@@ -26,7 +30,10 @@ export class IntentService {
     private carrierService: CarrierService,
     private events: Events,
     private translate: TranslateService,
-    private httpService: HttpService,) { }
+    private httpService: HttpService,
+    private nftContractControllerService: NFTContractControllerService,
+    private nftContractHelperService: NFTContractHelperService,
+    private ipfsService: IPFSService) { }
 
   scanQRCode(): Promise<string> {
     return this.scanService.scanBarcode();
@@ -34,7 +41,7 @@ export class IntentService {
 
   share(title: string, content: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
-      console.log(TAG, "Shared title is ", title, " &url is", content);
+      Logger.log(TAG, "Shared title is ", title, " &url is", content);
       try {
         let res = await intentManager.sendIntent('share', {
           title: this.translate.instant(title),
@@ -268,7 +275,22 @@ export class IntentService {
   }
 
   async dispatchIntent(receivedIntent: IntentPlugin.ReceivedIntent) {
-    console.log(TAG, "Intent received, now dispatching to listeners", receivedIntent);
+    let isDisclaimer =
+      localStorage.getItem('org.elastos.dapp.feeds.disclaimer') || '';
+    if (!isDisclaimer) {
+      Logger.log(TAG, "Not disclaimer");
+      this.native.setRootRouter('disclaimer');
+      return;
+    }
+
+    const signinData = await this.dataHelper.getSigninData();
+    if (!signinData) {
+      Logger.log(TAG, "Not signin");
+      this.native.setRootRouter(['/signin']);
+      return;
+    }
+    Logger.log(TAG, "Intent received, now dispatching to listeners", receivedIntent);
+
     const action = receivedIntent.action;
     const params = receivedIntent.params
     switch (action) {
@@ -286,71 +308,13 @@ export class IntentService {
         break;
 
       case 'https://feeds.trinity-feeds.app/feeds':
-        let isDisclaimer =
-          localStorage.getItem('org.elastos.dapp.feeds.disclaimer') || '';
-        if (!isDisclaimer) {
-          console.log(TAG, "Not disclaimer");
-          this.native.setRootRouter('disclaimer');
-          return;
-        }
-
-        const signinData = await this.dataHelper.getSigninData();
-        if (!signinData) {
-          console.log(TAG, "Not signin");
-          this.native.setRootRouter(['/signin']);
-          return;
-        }
-        console.log(TAG, "Intent params", params);
-
-        const address = params.address;
-        const channelId = params.channelId;
-        const postId = params.postId || 0;
-
-        const serverNodeId = await this.carrierService.getIdFromAddress(address, () => { });
-        const serverList = await this.dataHelper.getServerList();
-        const isContain = serverList.some(server => server.nodeId == serverNodeId);
-
-        const nodeChannelId = this.dataHelper.getKey(serverNodeId, channelId, 0, 0,);
-        const channel = this.dataHelper.getChannel(nodeChannelId);
-
-        if (!isContain) {
-          //https://feeds.trinity-feeds.app/feeds/?address=Km3wsaD9zMGnYW7otewZhZKpgXVnYZGms2ihiGrpsUhASNMx1ZKj&channelId=1&postId=1&channelName=xb2&ownerName=Wangran&channelDesc=xb2 live&serverDid=did:elastos:iZ6NDBjZQG8XM8d1jENWQ8HW1ojfdHPqW8&ownerDid=did:elastos:iXB82Mii9LMEPn3U7cLECswLmex9KkZL8D
-          const ownerName = decodeURIComponent(params.ownerName);
-          const channelName = decodeURIComponent(params.channelName);
-          const channelDesc = decodeURIComponent(params.channelDesc);
-          const ownerDid = decodeURIComponent(params.ownerDid);
-          const serverDid = decodeURIComponent(params.serverDid);
-          const feeds = {
-            description: channelDesc,
-            did: serverDid,
-            feedsAvatar: "assets/images/profile-2.svg",
-            feedsUrlHash: "",
-            followers: 0,
-            name: channelName,
-            nodeId: serverNodeId,
-            ownerDid: ownerDid,
-            ownerName: ownerName,
-            url: 'feeds://' + serverDid + "/" + address + "/" + channelId
-          }
-          this.native.go('discoverfeedinfo', {
-            params: feeds,
-          });
-          return;
-        }
-
-        const isSubscribed = channel.isSubscribed || false;
-
-        if (isSubscribed && parseInt(postId) != 0) {
-          this.native.getNavCtrl().navigateForward(['/postdetail', serverNodeId, channelId, postId]);
-          return;
-        }
-
-        if (parseInt(channelId) != 0) {
-          this.native.getNavCtrl().navigateForward(['/channels', serverNodeId, channelId]);
-          return;
-        }
-
-        this.native.setRootRouter(['/tabs/home']);
+        this.handleFeedsIntent(params);
+        break;
+      case 'https://feeds.trinity-feeds.app/pasars':
+        this.handlePasarIntent(params);
+        break;
+      case 'https://feeds.trinity-feeds.app/nav':
+        // https://feeds.trinity-feeds.app/nav/?page=home
         break;
     }
   }
@@ -413,7 +377,7 @@ export class IntentService {
           + "&postId=" + postId
 
         // let encodeURL = encodeURI(url);
-        console.log(TAG, "Shared link url is " + url);
+        Logger.log(TAG, "Shared link url is " + url);
 
         const finalURL = await this.shortenURL(url);
         resolve(finalURL);
@@ -464,14 +428,127 @@ export class IntentService {
           "url": url
         }
         let shortURLResponse = await this.httpService.httpPostWithText(baseURL, body);
-        console.log("shortURLResponse", shortURLResponse);
+        Logger.log("ShortURLResponse is", shortURLResponse);
         const shortURL = shortURLResponse.body as string || "";
         resolve(shortURL);
         return shortURL;
       } catch (error) {
-        console.log("Shorten URL error", error);
+        Logger.error("Shorten URL error", error);
         reject(error);
       }
     });
+  }
+
+  async handleFeedsIntent(params: any) {
+    const address = params.address;
+    const channelId = params.channelId;
+    const postId = params.postId || 0;
+
+    const serverNodeId = await this.carrierService.getIdFromAddress(address, () => { });
+    const serverList = this.dataHelper.getServerList();
+    const isContain = serverList.some(server => server.nodeId == serverNodeId);
+
+    const nodeChannelId = this.dataHelper.getKey(serverNodeId, channelId, 0, 0,);
+    const channel = this.dataHelper.getChannel(nodeChannelId);
+
+    if (!isContain) {
+      //https://feeds.trinity-feeds.app/feeds/?address=Km3wsaD9zMGnYW7otewZhZKpgXVnYZGms2ihiGrpsUhASNMx1ZKj&channelId=1&postId=1&channelName=xb2&ownerName=Wangran&channelDesc=xb2 live&serverDid=did:elastos:iZ6NDBjZQG8XM8d1jENWQ8HW1ojfdHPqW8&ownerDid=did:elastos:iXB82Mii9LMEPn3U7cLECswLmex9KkZL8D
+      const ownerName = decodeURIComponent(params.ownerName);
+      const channelName = decodeURIComponent(params.channelName);
+      const channelDesc = decodeURIComponent(params.channelDesc);
+      const ownerDid = decodeURIComponent(params.ownerDid);
+      const serverDid = decodeURIComponent(params.serverDid);
+      const feeds = {
+        description: channelDesc,
+        did: serverDid,
+        feedsAvatar: "assets/images/profile-2.svg",
+        feedsUrlHash: "",
+        followers: 0,
+        name: channelName,
+        nodeId: serverNodeId,
+        ownerDid: ownerDid,
+        ownerName: ownerName,
+        url: 'feeds://' + serverDid + "/" + address + "/" + channelId
+      }
+      this.native.go('discoverfeedinfo', {
+        params: feeds,
+      });
+      return;
+    }
+
+    const isSubscribed = channel.isSubscribed || false;
+
+    if (isSubscribed && parseInt(postId) != 0) {
+      this.native.getNavCtrl().navigateForward(['/postdetail', serverNodeId, channelId, postId]);
+      return;
+    }
+
+    if (parseInt(channelId) != 0) {
+      this.native.getNavCtrl().navigateForward(['/channels', serverNodeId, channelId]);
+      return;
+    }
+
+    this.native.setRootRouter(['/tabs/home']);
+  }
+
+  async handlePasarIntent(params: any) {
+    Logger.log("https://feeds.trinity-feeds.app/pasars, params", params);
+    const orderId = params.orderId;
+    let nftOrderId = orderId || '';
+    if (nftOrderId == '') {
+      this.native.toast("无法找到该订单");
+      return;
+    }
+
+    this.native.showLoading("loading", () => { }, 3000);
+    try {
+      const orderInfo = await this.nftContractHelperService.getOrderInfo(orderId);
+
+      if (orderInfo.orderState == 2) {
+        this.native.toast('当前订单 已出售');
+        return;
+      }
+
+      if (orderInfo.orderState == 3) {
+        this.native.toast('当前订单 已下架 ');
+        return;
+      }
+
+      if (orderInfo.orderState != 1) {
+        this.native.toast('当前订单 状态异常 ');
+      }
+      const tokenInfo = await this.nftContractHelperService.getTokenInfo((orderInfo.tokenId).toString());
+      let tokenJson = await this.nftContractHelperService.getTokenJson(tokenInfo.tokenUri);
+      this.navToBidPage(orderInfo, tokenInfo, tokenJson);
+      this.native.hideLoading();
+    } catch (error) {
+      this.native.hideLoading();
+      this.native.toast('内部异常 ');
+    }
+  }
+
+  async navToBidPage(orderInfo: FeedsData.OrderInfo, tokenInfo: FeedsData.TokenInfo, tokenJson: FeedsData.TokenJson) {
+    try {
+      let item = {
+        saleOrderId: orderInfo.orderId,
+        tokenId: orderInfo.tokenId,
+        asset: tokenJson.image,
+        name: tokenJson.name,
+        description: tokenJson.description,
+        fixedAmount: orderInfo.price,
+        kind: tokenJson.kind,
+        type: tokenJson.type,
+        royalties: tokenInfo.royaltyFee,
+        quantity: orderInfo.amount,
+        thumbnail: tokenJson.thumbnail,
+        sellerAddr: orderInfo.sellerAddr,
+        createTime: orderInfo.createTime * 1000,
+      };
+      item['showType'] = 'buy';
+
+      this.native.navigateForward(['bid'], { queryParams: item });
+    } catch (error) {
+      Logger.error(TAG, 'Nav to bid page error', error);
+    }
   }
 }
