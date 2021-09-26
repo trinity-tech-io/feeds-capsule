@@ -6,8 +6,6 @@ import { Events } from 'src/app/services/events.service';
 import { FeedService } from 'src/app/services/FeedService';
 import { NativeService } from 'src/app/services/NativeService';
 import { IntentService } from 'src/app/services/IntentService';
-import { DataHelper } from 'src/app/services/DataHelper';
-import { LanguageService } from 'src/app/services/language.service';
 @Component({
   selector: 'app-subscriptions',
   templateUrl: './subscriptions.page.html',
@@ -36,8 +34,6 @@ export class SubscriptionsPage implements OnInit {
     private zone: NgZone,
     private native: NativeService,
     private intentService: IntentService,
-    private dataHelper :DataHelper,
-    private languageService: LanguageService,
   ) {}
 
   ngOnInit() {}
@@ -198,18 +194,7 @@ export class SubscriptionsPage implements OnInit {
         this.native.showLoading("common.generateSharingLink");
         try {
           const sharedLink = await this.intentService.createShareLink(nodeId, feedId, 0);
-          const key = this.dataHelper.getKey(nodeId,feedId, 0, 0);
-          const channel = this.dataHelper.getChannel(key);
-          const channelName = channel.name || '';
-          const ownername = channel.owner_name || '';
-          let code = this.languageService.getCurLang() || "en";
-          let des = "";
-           if(code === "zh"){
-             des = sharedLink +" 来访问Feeds 频道 '"+channelName+"'";
-           }else{
-             des = sharedLink +" via " +"@ElastosFeeds";
-           }
-          this.intentService.share(this.intentService.createShareChannelTitle(nodeId, feedId), des);
+          this.intentService.share(this.intentService.createShareChannelTitle(nodeId, feedId),sharedLink);
         } catch (error) {
         }
         this.native.hideLoading();

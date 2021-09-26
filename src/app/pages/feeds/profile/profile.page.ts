@@ -1518,19 +1518,7 @@ export class ProfilePage implements OnInit {
           try {
             const sharedLink = await this.intentService.createShareLink(myNodeId, myChannelId, myPostId);
             const title = this.intentService.createShareChannelTitle(myNodeId, myChannelId) || "";
-            const key = this.dataHelper.getKey(myNodeId,myChannelId, 0, 0);
-            const channel = this.dataHelper.getChannel(key);
-            const channelName = channel.name || '';
-            const ownername = channel.owner_name || '';
-            let code = this.languageService.getCurLang() || "en";
-            let des = "";
-             if(code === "zh"){
-               des = sharedLink +" 来访问Feeds 频道 '"+channelName+"'";
-             }else{
-               des = sharedLink +" via " +"@ElastosFeeds";
-             }
-
-            this.intentService.share(title, des);
+            this.intentService.share(title,sharedLink);
           } catch (error) {
           }
 
