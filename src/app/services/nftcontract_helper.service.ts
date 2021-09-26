@@ -190,4 +190,128 @@ export class NFTContractHelperService {
       }
     });
   }
+
+  getOrderInfo(orderId: string): Promise<FeedsData.OrderInfo> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let order = await this.nftContractControllerService
+          .getPasar()
+          .getOrderById(orderId);
+        let orderInfo = this.transOrderInfo(order);
+        Logger.log("Get order from contract", order);
+        resolve(orderInfo);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
+  getTokenInfo(tokenId: string): Promise<FeedsData.TokenInfo> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let token = await this.nftContractControllerService
+          .getSticker()
+          .tokenInfo(tokenId);
+        let tokenInfo = this.transTokenInfo(token);
+        console.log("transTokenInfo = ", tokenInfo);
+        resolve(tokenInfo);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
+  assembleOrderTokenJsonInfo(orderInfo: FeedsData.OrderInfo, tokenInfo: FeedsData.TokenInfo, tokenJson: FeedsData.TokenJson): Promise<FeedsData.OrderTokenJsonInfo> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const orderTokenJson: FeedsData.OrderTokenJsonInfo = {
+          orderInfo: orderInfo,
+          tokenInfo: tokenInfo,
+          tokenJson: tokenJson
+        }
+        resolve(orderTokenJson);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
+  transOrderInfo(order: any): FeedsData.OrderInfo {
+    const orderInfo: FeedsData.OrderInfo = {
+      orderId: order[0],
+      orderType: order[1],
+      orderState: order[2],
+      tokenId: order[3],
+      amount: order[4],
+      price: order[5],
+      endTime: order[6],
+      sellerAddr: order[7],
+      buyerAddr: order[8],
+      bids: order[9],
+      lastBidder: order[10],
+      lastBid: order[11],
+      filled: order[12],
+      royaltyOwner: order[13],
+      royaltyFee: order[14],
+      createTime: order[15],
+      updateTime: order[16]
+    }
+    return orderInfo;
+  }
+
+  transTokenInfo(token: any): FeedsData.TokenInfo {
+    const tokenInfo: FeedsData.TokenInfo = {
+      tokenId: token[0],
+      tokenIndex: token[1],
+      tokenSupply: token[2],
+      tokenUri: token[3],
+      royaltyOwner: token[4],
+      royaltyFee: token[5],
+      createTime: token[6],
+      updateTime: token[7]
+    }
+    return tokenInfo;
+  }
+
+  transTokenJson(httpResult: any): FeedsData.TokenJson {
+    const tokenJson: FeedsData.TokenJson = {
+      description: httpResult.description,
+      image: httpResult.image,
+      kind: httpResult.kind,
+      name: httpResult.name,
+      size: httpResult.size,
+      thumbnail: httpResult.thumbnail,
+      type: httpResult.type,
+      version: httpResult.version
+    }
+    return tokenJson;
+  }
+
+  parseTokenUri(tokenUri: string): string {
+    const uri = tokenUri.replace('feeds:json:', '');
+    return uri;
+  }
+
+  parseTokenImageUri(tokenImgUri: string) {
+    const uri = tokenImgUri.replace("feeds:imgage", "");
+    const finaluri = uri.replace("feeds:image", "");
+    return finaluri;
+  }
+
+  getTokenJson(tokenUri: string): Promise<FeedsData.TokenJson> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        //tokenUri: feeds:json:xxx
+        const uri = this.parseTokenUri(tokenUri);
+        const result = await this.ipfsService
+          .nftGet(this.ipfsService.getNFTGetUrl() + uri);
+        const tokenJson = this.transTokenJson(result);
+        Logger.log("Get token Json", tokenJson);
+        resolve(tokenJson);
+      } catch (error) {
+        Logger.log("Get Token Json error", error);
+        reject(error);
+      }
+    });
+  }
 }

@@ -541,4 +541,52 @@ declare namespace FeedsData {
     likedComment,
     follow,
   }
+
+  type OrderInfo = {
+    orderId: number;
+    orderType: number;
+    orderState: number;
+    tokenId: number;
+    amount: number;
+    price: number;
+    endTime: number;
+    sellerAddr: string;
+    buyerAddr: string;
+    bids: number;
+    lastBidder: string;
+    lastBid: number;
+    filled: number;
+    royaltyOwner: string;
+    royaltyFee: number;
+    createTime: number;
+    updateTime: number;
+  }
+
+  type TokenInfo = {
+    tokenId: number;
+    tokenIndex: number;
+    tokenSupply: number;
+    tokenUri: string;
+    royaltyOwner: string;
+    royaltyFee: number;
+    createTime: number;
+    updateTime: number;
+  }
+
+  type TokenJson = {
+    description: string;
+    image: string;
+    kind: string;
+    name: string;
+    size: string;
+    thumbnail: string;
+    type: string
+    version: string
+  }
+
+  type OrderTokenJsonInfo = {
+    orderInfo: OrderInfo;
+    tokenInfo: TokenInfo;
+    tokenJson: TokenJson;
+  }
 }

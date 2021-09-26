@@ -1786,7 +1786,6 @@ export class HomePage implements OnInit {
         .getOrderById(nftOrderId);
       let tokenId = order[3];
       let tokenNum = order[4];
-
       let tokenInfo = await this.nftContractControllerService
         .getSticker()
         .tokenInfo(tokenId);
