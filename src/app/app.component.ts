@@ -107,7 +107,7 @@ export class MyApp {
           this.statusBar.overlaysWebView(false);
         }
 
-        this.theme.getSystemMode();
+        this.theme.getTheme();
         // Must do it in ios, otherwise the titlebar and status bar will overlap.
 
         this.statusBar.show();
