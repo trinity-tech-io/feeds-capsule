@@ -460,7 +460,7 @@ export class IntentService {
   async shortenURL(url: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
-        const baseURL = "https://s.trinity-feeds.app/api/v2/action/shorten?key=26459d40a6cf0c5703e5d2ee5006d2&is_secret=true"
+        const baseURL = "https://s.trinity-feeds.app/api/v2/action/shorten?key=26459d40a6cf0c5703e5d2ee5006d2"
         let body = {
           "url": url
         }
