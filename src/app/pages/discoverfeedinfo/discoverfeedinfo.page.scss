@@ -1,4 +1,8 @@
 .container {
+    .requested{
+        --background:#f1e9ff;
+        --background-activated:#f1e9ff;
+      }
   padding: 20px;
 .subscribeChannel{
     text-align: center;
@@ -164,9 +168,7 @@
             height: 30px;
             --border-radius: 10px;
             --box-shadow: none;
-            --background:#7624fe;
-            --background-activated:#7624fe;
-
+            --border-color: #7624fe;
             ion-label {
               font-size: 14px;
               font-weight: bold;
@@ -196,7 +198,7 @@
 
         .subscribed{
             ion-label {
-            color:#fff !important;
+            color:#7624fe !important;
             }
         }
 
@@ -227,8 +229,7 @@ ion-button {
     height: 30px;
     --border-radius: 10px;
     --box-shadow: none;
-    --background:#7624fe;
-    --background-activated:#7624fe;
+    --border-color: #7624fe;
 
     ion-label {
       font-size: 14px;
@@ -259,7 +260,7 @@ ion-button {
 
 .subscribed{
     ion-label {
-    color:#fff !important;
+    color: #7624fe !important;
     }
 }
 
@@ -269,6 +270,11 @@ ion-button {
 }
 
 .darkContainer {
+
+    .requested{
+        --background:#313244;
+        --background-activated:#313244;
+    }
 
     h1{
         color: #fff;
