@@ -310,7 +310,7 @@ export class IntentService {
       case 'https://feeds.trinity-feeds.app/feeds':
         this.handleFeedsIntent(params);
         break;
-      case 'https://feeds.trinity-feeds.app/pasars':
+      case 'https://feeds.trinity-feeds.app/pasar':
         this.handlePasarIntent(params);
         break;
       case 'https://feeds.trinity-feeds.app/nav':
@@ -383,7 +383,25 @@ export class IntentService {
         resolve(finalURL);
         return finalURL;
       } catch (error) {
-        // reject(error);
+        reject(error);
+      }
+    });
+  }
+
+  async createSharePasarLink(orderId: string): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let url = "https://feeds.trinity-feeds.app/pasar/"
+          + "?orderId=" + orderId
+
+        // let encodeURL = encodeURI(url);
+        Logger.log(TAG, "Shared Pasar link url is " + url);
+
+        const finalURL = await this.shortenURL(url);
+        resolve(finalURL);
+        return finalURL;
+      } catch (error) {
+        reject(error);
       }
     });
   }
@@ -399,6 +417,10 @@ export class IntentService {
 
     let brief: string = UtilService.briefText(text, 30);
     return brief + this.translate.instant("common.shareReadMore");
+  }
+
+  createSharePasarTitle(): string {
+    return this.translate.instant("common.sharePasar");
   }
 
   createShareChannelTitle(nodeId: string, channelId: number): string {
@@ -492,30 +514,30 @@ export class IntentService {
   }
 
   async handlePasarIntent(params: any) {
-    Logger.log("https://feeds.trinity-feeds.app/pasars, params", params);
+    Logger.log("https://feeds.trinity-feeds.app/pasar, params", params);
     const orderId = params.orderId;
     let nftOrderId = orderId || '';
     if (nftOrderId == '') {
-      this.native.toast("无法找到该订单");
+      this.native.toast("common.orderCantFind");
       return;
     }
 
-    this.native.showLoading("loading", () => { }, 3000);
+    this.native.showLoading("common.parseing", () => { }, 30000);
     try {
       const orderInfo = await this.nftContractHelperService.getOrderInfo(orderId);
 
       if (orderInfo.orderState == 2) {
-        this.native.toast('当前订单 已出售');
+        this.native.toast('common.orderHasBeenSold');
         return;
       }
 
       if (orderInfo.orderState == 3) {
-        this.native.toast('当前订单 已下架 ');
+        this.native.toast('common.orderHasBeenSold');
         return;
       }
 
       if (orderInfo.orderState != 1) {
-        this.native.toast('当前订单 状态异常 ');
+        this.native.toast('common.orderInvalid');
       }
       const tokenInfo = await this.nftContractHelperService.getTokenInfo((orderInfo.tokenId).toString());
       let tokenJson = await this.nftContractHelperService.getTokenJson(tokenInfo.tokenUri);
@@ -523,7 +545,7 @@ export class IntentService {
       this.native.hideLoading();
     } catch (error) {
       this.native.hideLoading();
-      this.native.toast('内部异常 ');
+      this.native.toast('common.internalError');
     }
   }
 
