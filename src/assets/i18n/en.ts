@@ -167,7 +167,14 @@ export const en = {
     shareSharingChannel2: "' on Feeds",
     shareSharingChannel: "Have a look at this channel from Feeds!",
     generateSharingLink: "The sharing link is being generated",
-    loading: "Loading..."
+    loading: "Loading...",
+    sharePasar: "Sharing collectible ",
+    parsing: "Parsing...",
+    orderCantFind: "The order could not be found",
+    orderHasBeenSold: "The order has been sold",
+    orderHasBeenCancel: "The order has been cancelled",
+    orderInvalid: "Invalid order status",
+    internalError: "Internal error"
   },
   app: {
     profileDetails: 'Profile Details',

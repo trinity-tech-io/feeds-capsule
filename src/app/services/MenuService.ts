@@ -9,6 +9,7 @@ import { ViewHelper } from 'src/app/services/viewhelper.service';
 import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
 import { Events } from 'src/app/services/events.service';
 import { Config } from './config';
+import { Logger } from './logger';
 
 
 @Injectable()
@@ -750,6 +751,13 @@ export class MenuService {
       cssClass: 'editPost',
       buttons: [
         {
+          text: this.translate.instant('common.share'),
+          icon: 'share',
+          handler: async () => {
+            this.sharePasarLink(assItem);
+          },
+        },
+        {
           text: this.translate.instant('BidPage.changePrice'),
           icon: 'create',
           handler: () => {
@@ -963,6 +971,13 @@ export class MenuService {
       cssClass: 'editPost',
       buttons: [
         {
+          text: this.translate.instant('common.share'),
+          icon: 'share',
+          handler: async () => {
+            this.sharePasarLink(assItem);
+          },
+        },
+        {
           text: this.translate.instant('CollectionsPage.details'),
           icon: 'information-circle',
           handler: () => {
@@ -1028,5 +1043,19 @@ export class MenuService {
     await this.saveImageMenu.present();
 
     return this.saveImageMenu;
+  }
+
+  async sharePasarLink(assItem: any) {
+    console.log("assItem ", assItem);
+    this.native.showLoading("common.generateSharingLink");
+    try {
+      const saleOrderId = assItem.saleOrderId;
+      Logger.log('Share pasar orderId is', saleOrderId);
+      const sharedLink = await this.intentService.createSharePasarLink(saleOrderId);
+      this.intentService
+        .share(this.intentService.createSharePasarTitle(), sharedLink);
+    } catch (error) {
+    }
+    this.native.hideLoading();
   }
 }

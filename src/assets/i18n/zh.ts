@@ -162,7 +162,14 @@ export const zh = {
     shareSharingChannel1: "这是我从Feeds 分享的微频 '",
     shareSharingChannel2: "' 请订阅后继续阅读",
     generateSharingLink: "正在生成分享链接",
-    loading: "刷新中..."
+    loading: "刷新中...",
+    sharePasar: "Sharing collectible ",
+    parsing: "正在解析...",
+    orderCantFind: "无法找到订单",
+    hasBeenSold: "订单已出售",
+    orderHasBeenCancel: "订单已取消",
+    orderInvalid: "订单状态异常",
+    internalError: "内部异常"
   },
   app: {
     profileDetails: '档案详情',
