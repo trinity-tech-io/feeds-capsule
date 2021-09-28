@@ -13,6 +13,7 @@ import { LanguageService } from 'src/app/services/language.service';
 import { IPFSService } from 'src/app/services/ipfs.service';
 import { DataHelper } from 'src/app/services/DataHelper';
 import _ from 'lodash';
+import { ApiUrl } from 'src/app/services/ApiUrl';
 
 @Component({
   selector: 'app-settings',
@@ -30,6 +31,7 @@ export class SettingsPage implements OnInit {
   public curApiProviderName = 'elastos.io';
   public pasarListGrid: boolean = false;
   public isHideDeveloperMode: boolean = false;
+  public curIPFSApiProviderName = ApiUrl.IPFS_SERVER;
   constructor(
     private languageService: LanguageService,
     private feedService: FeedService,
@@ -57,7 +59,8 @@ export class SettingsPage implements OnInit {
     this.titleBarService.setTitleBarMoreMemu(this.titleBar);
   }
 
-  ionViewWillEnter() {
+  ionViewWillEnter() {    
+    this.curIPFSApiProviderName = localStorage.getItem("selectedIpfsNetwork");
     this.pasarListGrid = this.feedService.getPasarListGrid();
     this.curApiProviderName = this.dataHelper.getApiProvider();
     this.languageName = this.getCurlanguageName();
@@ -180,6 +183,10 @@ export class SettingsPage implements OnInit {
 
   navElastosApiProvider() {
     this.native.getNavCtrl().navigateForward(['/elastosapiprovider']);
+  }
+  
+  navIPFSProvider() {
+    this.native.getNavCtrl().navigateForward(['/select-ipfs-net']);
   }
 
   navDeveloper(){

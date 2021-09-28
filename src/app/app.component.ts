@@ -137,6 +137,7 @@ export class MyApp {
         );
         this.initDisclaimer();
         this.initConnector();
+        this.initIpfs();
       }).then(async () => {
         this.intentService.addIntentListener(
           (intent: IntentPlugin.ReceivedIntent) => {
@@ -278,6 +279,13 @@ export class MyApp {
     }
 
     this.appService.initializeApp();
+  }
+
+  initIpfs() {
+    let ipfs = localStorage.getItem("selectedIpfsNetwork") || ''
+    if (ipfs === '') {
+      localStorage.setItem("selectedIpfsNetwork", Config.IPFS_SERVER);
+        }
   }
 
   about() {
