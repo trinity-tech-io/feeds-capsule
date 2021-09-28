@@ -163,13 +163,20 @@ export const zh = {
     shareSharingChannel2: "' 请订阅后继续阅读",
     generateSharingLink: "正在生成分享链接",
     loading: "刷新中...",
-    sharePasar: "Sharing collectible ",
+    sharePasar: "正在分享收藏品 ",
     parsing: "正在解析...",
     orderCantFind: "无法找到订单",
     hasBeenSold: "订单已出售",
     orderHasBeenCancel: "订单已取消",
     orderInvalid: "订单状态异常",
-    internalError: "内部异常"
+    transferCollectible: "转让收藏品",
+    walletAddress: "钱包地址",
+    walletAddressDes: "输入收件人钱包地址",
+    tranferNFTSDesc: "正在转让收藏品，请稍后",
+    tranferNFTSTimeoutDesc: "转让收藏品超时，后面您可自行确认",
+    tranferNFTSFailed: "转让收藏品失败",
+    tranferNFTSSuccess: "转让收藏品成功",
+    walletAddressDes1: "收件人钱包地址与收藏品的钱包地址一致"
   },
   app: {
     profileDetails: '档案详情',

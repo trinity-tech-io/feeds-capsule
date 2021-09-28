@@ -925,6 +925,16 @@ export class MenuService {
           },
         },
         {
+          text: this.translate.instant('common.transferCollectible'),
+          icon: 'swap-horizontal',
+          handler: () => {
+            this.viewHelper.showTransferPrompt(
+              assItem,
+              'common.transferCollectible'
+            );
+          },
+        },
+        {
           text: this.translate.instant('CollectionsPage.details'),
           icon: 'information-circle',
           handler: () => {

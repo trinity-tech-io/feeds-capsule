@@ -1,0 +1,58 @@
+<ion-grid class="container" [class.darkContainer]="theme.darkMode">
+  <ion-row>
+    <ion-col size="12" class="paytitle">
+       <p class="paytitle">{{ title }}</p>
+    </ion-col>
+    <ion-col size="12" style="display:flex;justify-content: center;margin-bottom: 10px;">
+           <img src={{imgUri}} style="max-height:200px;border-radius:10px;object-fit:contain;width:auto;" id="nftThumbnail"/>
+    </ion-col>
+  </ion-row>
+  <ion-row style="padding:0px 15px;">
+    <ion-col size="12" style="padding: 0px">
+      <p class="key">{{ 'common.walletAddress' | translate }}</p>
+    </ion-col>
+    <ion-col size="10" style="padding-top: 0px;">
+      <ion-input type="text" clearInput [placeholder]="'common.walletAddressDes' | translate" [(ngModel)]="walletAddress" class="nameValue"></ion-input>
+    </ion-col>
+    <ion-col size="2" class="logo" style="padding: 0px;" (click)="scanWalletAddress()">
+          <img src="./assets/images/scan.svg">
+    </ion-col>
+    <ion-col size="12" class="borderbottom">
+
+    </ion-col>
+    <ion-col size="12" style="margin-top: 5px;padding: 0px">
+      <p class="key">{{ 'common.quantity' | translate }}</p>
+    </ion-col>
+    <ion-col size="12" style="padding-top: 0px;">
+      <ion-input type="number" clearInput [placeholder]="'MintnftPage.nftQuantityPlaceholder' | translate" [(ngModel)]="quantity" class="nameValue" [readonly]=true></ion-input>
+    </ion-col>
+    <ion-col size="12" class="borderbottom"></ion-col>
+  </ion-row>
+
+  <ion-row *ngIf="isAdvancedSetting" style="margin-top:5px;padding:0px 15px;">
+    <ion-col size="12" style="padding:0px;">
+      <p class="key">{{ 'DonationPage.memo' | translate }}</p>
+    </ion-col>
+    <ion-col size="12" style="padding:0px;" class="borderbottom">
+      <ion-input clearInput [placeholder]="'DonationPage.memo' | translate" [(ngModel)]="memo" [disabled]='disableMemo'></ion-input>
+    </ion-col>
+  </ion-row>
+
+  <ion-row (click)="advancedSettings()" style="padding:0px 15px;">
+    <ion-col size="12" style="text-align:center;">
+         <p class="Advancedsettings" *ngIf="!isAdvancedSetting">{{'common.advancedSettings'|translate}} <img src="./assets/images/bottom-arrow.svg" *ngIf="!isAdvancedSetting"/></p>
+         <p class="Advancedsettings" *ngIf="isAdvancedSetting">{{'common.normalSettings'|translate}} <img src="./assets/images/top-arrow.svg" *ngIf="isAdvancedSetting"/></p>
+    </ion-col>
+  </ion-row>
+
+  <ion-row class="btns-row" [class.dark-btns-row]="theme.darkMode" style="margin-top:20px;">
+    <ion-col class="btn cancel2 ion-activatable ripple" size="5.6" (click)="cancel()">
+      <ion-label>{{ 'common.cancel' | translate }}</ion-label>
+      <ion-ripple-effect></ion-ripple-effect>
+    </ion-col>
+    <ion-col class="btn confirm ion-activatable ripple" size="5.6" (click)="confirm()">
+      <ion-label>{{ 'common.confirm' | translate }}</ion-label>
+      <ion-ripple-effect></ion-ripple-effect>
+    </ion-col>
+  </ion-row>
+</ion-grid>
