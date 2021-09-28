@@ -174,7 +174,15 @@ export const en = {
     orderHasBeenSold: "The order has been sold",
     orderHasBeenCancel: "The order has been cancelled",
     orderInvalid: "Invalid order status",
-    internalError: "Internal error"
+    internalError: "Internal error",
+    transferCollectible: "Transfer Collectible",
+    walletAddress: "Wallet Address",
+    walletAddressDes: "Enter recipient wallet Address",
+    tranferNFTSDesc: "Tranfer Collectibles, please wait",
+    tranferNFTSTimeoutDesc: "Tranfer Collectibles timeout, you can confirm later",
+    tranferNFTSFailed: "Tranfer Collectibles Failed",
+    tranferNFTSSuccess: "Tranfer Collectibles successfully",
+    walletAddressDes1: "The recipient's wallet address is consistent with the wallet address of the collection"
   },
   app: {
     profileDetails: 'Profile Details',

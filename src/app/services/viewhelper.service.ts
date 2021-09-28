@@ -13,6 +13,7 @@ import { GuidedialogComponent } from './../components/guidedialog/guidedialog.co
 import { PublisherdialogComponent } from './../components/publisherdialog/publisherdialog.component';
 import { ThemeService } from 'src/app/services/theme.service';
 import { Logger } from './logger';
+import { NfttransferdialogComponent } from './../components/nfttransferdialog/nfttransferdialog.component';
 
 const TAG: string = 'ViewHelper';
 @Injectable()
@@ -219,6 +220,23 @@ export class ViewHelper {
       componentProps: {
         pageName:pageName
       },
+    });
+    popover.onWillDismiss().then(() => {
+      Logger.log(TAG, 'Promote dismiss');
+      popover = null;
+    });
+    return await popover.present();
+  }
+
+  async showTransferPrompt(assItem: any, title: any) {
+    let popover = await this.popoverController.create({
+      mode: 'ios',
+      cssClass: 'genericPopup',
+      component:NfttransferdialogComponent,
+      componentProps: {
+        title: this.translate.instant(title),
+        assItem: assItem
+        },
     });
     popover.onWillDismiss().then(() => {
       Logger.log(TAG, 'Promote dismiss');

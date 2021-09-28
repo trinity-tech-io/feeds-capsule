@@ -21,10 +21,12 @@ export class NFTContractStickerService {
   private checkTokenInterval: NodeJS.Timer;
   private checkApprovedInterval: NodeJS.Timer;
   private checkBurnInterval: NodeJS.Timer;
+  private checkTransferInterval: NodeJS.Timer;
 
   private checkTokenNum: number = 0;
   private checkApprovedNum: number = 0;
   private checkBurnNum: number = 0;
+  private checkTransferNum: number = 0;
   constructor(
     private walletConnectControllerService: WalletConnectControllerService,
   ) {
@@ -358,4 +360,78 @@ export class NFTContractStickerService {
   let accountAddress = this.walletConnectControllerService.getAccountAddress();
   return await this.stickerContract.methods.balanceOf(accountAddress, tokenId).call();
   }
+
+ async safeTransferFrom(
+    creatorAddress: string,
+    sellerAddress: string,
+    tokenId: string,
+    transferValue: string
+  ): Promise<any>{
+    return new Promise(async (resolve, reject) => {
+          try {
+            Logger.log(TAG, 'safeTransferFrom ',creatorAddress,sellerAddress,tokenId,transferValue);
+            const safeTransferFromdata = this.stickerContract.methods
+              .safeTransferFrom(creatorAddress,sellerAddress,tokenId,transferValue)
+              .encodeABI();
+            let beforeTransferBalance = parseInt(await this.balanceOf(tokenId));
+            let transactionParams = await this.createTxParams(safeTransferFromdata);
+            Logger.log(TAG,
+              'Calling smart contract through wallet connect',
+              safeTransferFromdata,
+              transactionParams,
+            );
+            this.stickerContract.methods
+              .safeTransferFrom(creatorAddress,sellerAddress,tokenId,transferValue)
+              .send(transactionParams)
+              .on('transactionHash', hash => {
+              Logger.log(TAG, 'Burn process, transactionHash is', hash);
+              })
+              .on('receipt', receipt => {
+                Logger.log(TAG, 'Burn process, receipt is', receipt);
+              })
+              .on('confirmation', (confirmationNumber, receipt) => {
+                Logger.log(TAG,
+                  'Burn process, confirmation is',
+                  confirmationNumber,
+                  receipt,
+                );
+              })
+              .on('error', (error, receipt) => {
+                Logger.error(TAG, 'Burn process, error is', error, receipt);
+              });
+              this.checkTransferState(beforeTransferBalance,parseInt(transferValue),tokenId,()=>{
+                 resolve(null);
+              });
+          } catch (error) {
+            Logger.error(TAG, 'burn error', error);
+            reject(error);
+          }
+    });
+  }
+
+  checkTransferState(beforeTransferBalance:number,transferValue:number,tokenId:string,callback: (tokenInfo: any) => void){
+    this.checkTransferInterval = setInterval(async () => {
+     this.checkTransferNum=0;
+     if (!this.checkTransferInterval) return;
+     let afterTransferBalance = parseInt(await this.balanceOf(tokenId));
+     if(beforeTransferBalance - afterTransferBalance === transferValue){
+       clearInterval(this.checkTransferInterval);
+       callback("sucess");
+       this.checkTransferInterval = null;
+       return;
+     }
+
+     this.checkTransferNum++;
+     if (this.checkTransferNum * Config.CHECK_STATUS_INTERVAL_TIME > Config.WAIT_TIME_MINT) {
+       clearInterval(this.checkBurnInterval);
+       this.checkTransferInterval = null;
+     }
+    },Config.CHECK_STATUS_INTERVAL_TIME);
+ }
+
+ cancelTransferProcess(){
+  if (!this.checkTransferInterval) return;
+  clearInterval(this.checkTransferInterval);
+ }
+
 }
