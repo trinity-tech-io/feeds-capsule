@@ -596,6 +596,7 @@ export const zh = {
       '亦来云基金会的亦来云联合子团队（也称为产品团队）部署和维护的 Elastos API 集。',
     'trinity-tech-cn-des':
       '亦来云基金会的 Trinity Tech 团队部署和维护的一组 Elastos API，负责亦来云 SDK 的开发。',
+    'ipfs-provider': 'IPFS API 提供商',
     /*********** Elastos API provider page ***********/
     elastosapiprovider: 'Elastos API',
     'developer-setting': '开发者选项',

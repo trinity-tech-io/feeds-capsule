@@ -612,7 +612,7 @@ export const en = {
       "Set of Elastos APIs deployed and maintained by the Elastos Foundation's Elastos Fusion sub-team, also known as the product team.",
     'trinity-tech-cn-des':
       "Set of Elastos APIs deployed and maintained by the Elastos Foundation's Trinity Tech team, responsible for Elastos SDKs development.",
-
+    'ipfs-provider': 'IPFS API Provider',
     /*********** Elastos API provider page ***********/
     elastosapiprovider: 'Elastos API',
     'developer-setting': 'Developer Options',

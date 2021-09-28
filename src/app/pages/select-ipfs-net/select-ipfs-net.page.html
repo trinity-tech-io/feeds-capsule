@@ -1,0 +1,15 @@
+<!-- <ion-header> -->
+  <app-titlebar></app-titlebar>
+<!-- </ion-header> -->
+<ion-content>
+  <ion-grid class="ios-container" [class.ios-dark-container]="theme.darkMode">
+    <ion-row *ngFor="let ipfs of availableIpfsNetworkTemplates" class="section" (click)="selectIpfs(ipfs)">
+        <ion-col size="9" class="title-col">
+            <h2>{{ ipfs }}</h2>
+        </ion-col>
+        <ion-col size="3" class="arrow-col">
+          <ion-icon *ngIf="selectedIpfsNetwork == ipfs" name="checkmark"></ion-icon>
+        </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>
