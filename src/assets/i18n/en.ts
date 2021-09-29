@@ -179,9 +179,9 @@ export const en = {
     walletAddress: "Wallet Address",
     walletAddressDes: "Enter recipient wallet Address",
     tranferNFTSDesc: "Tranfer Collectibles, please wait",
-    tranferNFTSTimeoutDesc: "Tranfer Collectibles timeout, you can confirm later",
-    tranferNFTSFailed: "Tranfer Collectibles Failed",
-    tranferNFTSSuccess: "Tranfer Collectibles successfully",
+    tranferNFTSTimeoutDesc: "Tranfer Collectible timeout, you can confirm later",
+    tranferNFTSFailed: "Tranfer Collectible Failed",
+    tranferNFTSSuccess: "Tranfer Collectible successfully",
     walletAddressDes1: "The recipient's wallet address is consistent with the wallet address of the collection"
   },
   app: {
@@ -860,5 +860,19 @@ export const en = {
     createNewPublisherAccount: 'Create New Publisher Account',
     bindExistingPublisherAccount: 'Bind Existing Publisher Account',
     cancel: 'Cancel'
+  },
+  NftdisclaimerComponent: {
+    title: 'Feeds Collectible Disclaimer',
+    des: 'The Feeds team is not liable for any losses resulting from using services provided by Feeds Pasar (and its suppliers), including but not limited to direct, indirect, incidental, punitive, and incurred losses:',
+    des1: '1. User errors, such as password loss, illegal transactions, personal information leakage, or incorrect address inputs, and more;',
+    des2: '2. Data loss, damage, or server failure;',
+    des3: '3. Loss caused by business interruption;',
+    des4: '4. Vulnerabilities or any type of program problems such as wallets and smart contracts, and any other functional problems related to the blockchain or encrypted assets such as forks and technical node problems;',
+    des5: '5. Any unauthorized third party activities, including but not limited to the use of viruses, phishing, brute force, or other attack methods on services or encrypted assets;',
+    des6: '6. Losses caused by the use of the services of this platform include, but are not limited to, legal issues, contract liability issues, economic issues, etc.;',
+    des7: '7. Any indirect, special, or incidental loss or damage caused by infringement (including negligence), breach of contract or any other reason, regardless of whether such losses or damages can be reasonably foreseen by the Feeds team, and regardless of whether the Feeds team has been notified of the possibilities of such losses or damages in advance.',
+    des8: '8. Any other losses related to the services provided by the Feeds Parser platform that are not caused by the Feeds team;',
+    des9: '9. The Feeds team does not make any explicit or implied guarantees for the use of the services of the Feeds Parser platform, including but not limited to: the applicability of the services provided by this platform, errors or omissions, continuity, accuracy, reliability, and applicability to a particular use. In addition, the Feeds team does not make any promises or guarantees regarding the validity, accuracy, correctness, reliability, quality, stability, completeness, or timeliness of the technology and information relating to the services provided by the Feeds Parser platform. Using the services provided by this platform is a personal choice taken by users at their own risk. The Feeds team does not make any explicit or implied guarantees regarding the market, value, or price of digital assets. Please be aware that the digital asset market is unstable, and the market can fluctuate or collapse at any time. Trading digital assets is a personal choice users take at their own risk, and users should be able to bear any potential losses independently.',
+    des10: 'The Feeds team does not provide any evaluation or comments as to whether the services provided by Feeds Pasar (and its suppliers) comply with the laws and regulations or relevant policy requirements of any particular jurisdiction. It is strongly recommended that users strictly abide by the laws of their respective jurisdictions.'
   }
 };

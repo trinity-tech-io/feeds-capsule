@@ -252,6 +252,16 @@ export class ProfilePage implements OnInit {
 
   async addProflieEvent() {
     this.updateWalletAddress();
+    this.events.subscribe(FeedsEvent.PublishType.nftdisclaimer,()=>{
+
+      let accAdress = this.nftContractControllerService.getAccountAddress() || "";
+      if (accAdress === "") {
+        this.connectWallet();
+        return;
+      }
+      this.native.navigateForward(['mintnft'], {});
+    });
+
     this.events.subscribe(FeedsEvent.PublishType.clickDialog, (dialogData: any) => {
       let pageName = dialogData.pageName;
       let dialogName = dialogData.dialogName;
@@ -682,6 +692,7 @@ export class ProfilePage implements OnInit {
     this.events.unsubscribe(FeedsEvent.PublishType.nftUpdateList);
     this.events.unsubscribe(FeedsEvent.PublishType.clickDialog);
     this.events.unsubscribe(FeedsEvent.PublishType.savePicture);
+    this.events.unsubscribe(FeedsEvent.PublishType.nftdisclaimer);
     this.clearDownStatus();
     this.native.hideLoading();
     this.hideFullScreen();
@@ -2025,6 +2036,11 @@ export class ProfilePage implements OnInit {
   }
 
   async createNft() {
+    let nftFirstdisclaimer = this.feedService.getNftFirstdisclaimer() || "";
+    if(nftFirstdisclaimer === ""){
+      this.viewHelper.showNftdisclaimerPrompt();
+      return;
+    }
     let accAdress = this.nftContractControllerService.getAccountAddress() || "";
     if (accAdress === "") {
       this.connectWallet();

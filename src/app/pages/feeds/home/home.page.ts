@@ -369,6 +369,14 @@ export class HomePage implements OnInit {
       });
     });
 
+    this.events.subscribe(FeedsEvent.PublishType.nftdisclaimer,()=>{
+      let accAdress = this.nftContractControllerService.getAccountAddress() || "";
+      if (accAdress === "") {
+        this.connectWallet();
+        return;
+      }
+      this.native.navigateForward(['mintnft'], {});
+    });
 
     this.events.subscribe(FeedsEvent.PublishType.clickDialog,(dialogData:any)=>{
       let pageName = dialogData.pageName;
@@ -635,6 +643,7 @@ export class HomePage implements OnInit {
       this.feedService.closeSession(this.curNodeId);
     }
     this.isLoading = false;
+    this.events.unsubscribe(FeedsEvent.PublishType.nftdisclaimer);
     this.events.unsubscribe(FeedsEvent.PublishType.clickDialog);
     this.events.unsubscribe(FeedsEvent.PublishType.startLoading);
     this.events.unsubscribe(FeedsEvent.PublishType.endLoading);
@@ -1936,6 +1945,11 @@ async  clickTab(type: string) {
   }
 
   createNft() {
+    let nftFirstdisclaimer = this.feedService.getNftFirstdisclaimer() || "";
+    if(nftFirstdisclaimer === ""){
+      this.viewHelper.showNftdisclaimerPrompt();
+      return;
+    }
     let accAdress = this.nftContractControllerService.getAccountAddress() || "";
     if (accAdress === "") {
       this.connectWallet();
