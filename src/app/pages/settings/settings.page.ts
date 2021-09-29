@@ -14,6 +14,8 @@ import { IPFSService } from 'src/app/services/ipfs.service';
 import { DataHelper } from 'src/app/services/DataHelper';
 import _ from 'lodash';
 import { ApiUrl } from 'src/app/services/ApiUrl';
+import { UtilService } from 'src/app/services/utilService';
+import { FileHelperService } from 'src/app/services/FileHelperService';
 
 @Component({
   selector: 'app-settings',
@@ -32,6 +34,7 @@ export class SettingsPage implements OnInit {
   public pasarListGrid: boolean = false;
   public isHideDeveloperMode: boolean = false;
   public curIPFSApiProviderName = ApiUrl.IPFS_SERVER;
+
   constructor(
     private languageService: LanguageService,
     private feedService: FeedService,
@@ -45,10 +48,11 @@ export class SettingsPage implements OnInit {
     private zone: NgZone,
     private titleBarService: TitleBarService,
     private ipfsService: IPFSService,
-    private dataHelper: DataHelper
-  ) {}
+    private dataHelper: DataHelper,
+    private fileHelperService: FileHelperService
+  ) { }
 
-  ngOnInit() {}
+  ngOnInit() { }
 
   initTitle() {
     this.titleBarService.setTitle(
@@ -59,7 +63,7 @@ export class SettingsPage implements OnInit {
     this.titleBarService.setTitleBarMoreMemu(this.titleBar);
   }
 
-  ionViewWillEnter() {    
+  ionViewWillEnter() {
     this.curIPFSApiProviderName = localStorage.getItem("selectedIpfsNetwork");
     this.pasarListGrid = this.feedService.getPasarListGrid();
     this.curApiProviderName = this.dataHelper.getApiProvider();
@@ -80,7 +84,7 @@ export class SettingsPage implements OnInit {
     return curlanguage['name'];
   }
 
-  ionViewDidEnter() {}
+  ionViewDidEnter() { }
 
   ionViewWillLeave() {
     if (this.popover != null) {
@@ -167,7 +171,7 @@ export class SettingsPage implements OnInit {
         this.native.setRootRouter('disclaimer');
         this.native.toast('SettingsPage.des1');
       })
-      .catch(err => {});
+      .catch(err => { });
   }
 
   navToSelectLanguage() {
@@ -184,12 +188,12 @@ export class SettingsPage implements OnInit {
   navElastosApiProvider() {
     this.native.getNavCtrl().navigateForward(['/elastosapiprovider']);
   }
-  
+
   navIPFSProvider() {
     this.native.getNavCtrl().navigateForward(['/select-ipfs-net']);
   }
 
-  navDeveloper(){
+  navDeveloper() {
     this.native.getNavCtrl().navigateForward(['/developer']);
   }
 

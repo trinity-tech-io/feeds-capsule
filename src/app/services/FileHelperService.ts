@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { FileService } from 'src/app/services/FileService';
+import { UtilService } from './utilService';
 
 const TAG: string = 'Feeds-FileHelperService';
 const carrierPath: string = '/carrier/';
@@ -59,7 +60,6 @@ export class FileHelperService {
           true
         );
 
-        console.log('orderDirEntry', orderDirEntry);
         let fileEntry = await this.fileService.getFile(orderDirEntry, fileName, true);
         resolve(fileEntry);
       } catch (error) {
@@ -72,8 +72,7 @@ export class FileHelperService {
     return new Promise(async (resolve, reject) => {
       try {
         let fileEntry = await this.getOrderFileEntry(fileName);
-        let blob = this.fileService.getFileData(fileEntry);
-
+        let blob = await this.fileService.getFileData(fileEntry);
         resolve(blob);
       } catch (error) {
         reject(error);
@@ -96,21 +95,32 @@ export class FileHelperService {
     });
   }
 
-  writeFileToCache() {
+  async getNFTData(fileUrl: string, fileName: string, type: string): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      const base64Type: string = this.transType(type);
+      const fileBlob = await this.getBlobFromCacheFile(fileName);
 
+      if (fileBlob.size > 0) {
+        const result = await this.transBlobToBase64(fileBlob);
+        let finalresult = result.replace("data:null;base64,", base64Type);
+        resolve(finalresult);
+        return;
+      }
+
+      let blob = await UtilService.downloadFileFromUrl(fileUrl);
+      const result2 = await this.transBlobToBase64(blob);
+      await this.writeNFTCacheFileData(fileName, blob);
+      resolve(result2);
+    });
   }
 
-  getNFTCacheFileData() {
-
-  }
-
-  writeNFTCacheFileData(fileName: string, blob: Blob) {
+  writeNFTCacheFileData(fileName: string, data: Blob | string): Promise<FileEntry> {
     return new Promise(async (resolve, reject) => {
       try {
         let fileEntry = await this.getOrderFileEntry(fileName);
         let newEntry = await this.fileService.writeData(
           fileEntry,
-          blob,
+          data,
           false
         );
 
@@ -119,5 +129,20 @@ export class FileHelperService {
         reject(error);
       }
     });
+  }
+
+  transType(type: string): string {
+    switch (type) {
+      case "jpg":
+        return "data:image/jpg;base64,";
+      case "jpeg":
+        return "data:image/jpeg;base64,";
+      case "png":
+        return "data:image/png;base64,";
+      case "gif":
+        return "data:image/gif;base64,";
+      default:
+        return "data:image/png;base64,";
+    }
   }
 }

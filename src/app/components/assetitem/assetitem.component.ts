@@ -1,9 +1,10 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, NgZone, Output, EventEmitter } from '@angular/core';
 import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
 import { ViewHelper } from 'src/app/services/viewhelper.service';
 import { ThemeService } from 'src/app/services/theme.service';
 import { IPFSService } from 'src/app/services/ipfs.service';
 import { UtilService } from 'src/app/services/utilService';
+import { FileHelperService } from 'src/app/services/FileHelperService';
 
 @Component({
   selector: 'app-assetitem',
@@ -16,15 +17,44 @@ export class AssetitemComponent implements OnInit {
   @Output() clickAssetItem = new EventEmitter();
   @Output() clickMore = new EventEmitter();
   public styleObj: any = { width: '' };
+  public imgUri = './assets/feeds.png';
   constructor(
     private nftContractControllerService: NFTContractControllerService,
     private viewHelper: ViewHelper,
     public theme: ThemeService,
-    private ipfsService: IPFSService
-  ) {}
+    private ipfsService: IPFSService,
+    private fileHelperService: FileHelperService,
+    private zone: NgZone,
+  ) {
+
+  }
 
   ngOnInit() {
     this.styleObj.width = (screen.width - 20 - 10) / 2 + 'px';
+    console.log("===== constructor assetItem =====", this.assetItem);
+    let fileName = "";
+    let fetchUrl = "";
+    let thumbnailUri = this.assetItem['thumbnail'];
+    let kind = this.assetItem["kind"];
+    if (kind === "gif") {
+      thumbnailUri = this.assetItem['asset'];
+    }
+
+    if (thumbnailUri.indexOf('feeds:imgage:') > -1) {
+      thumbnailUri = thumbnailUri.replace('feeds:imgage:', '');
+      fileName = thumbnailUri;
+      fetchUrl = this.ipfsService.getNFTGetUrl() + thumbnailUri;
+    } else if (thumbnailUri.indexOf('feeds:image:') > -1) {
+      thumbnailUri = thumbnailUri.replace('feeds:image:', '');
+      fileName = thumbnailUri;
+      fetchUrl = this.ipfsService.getNFTGetUrl() + thumbnailUri;
+    }
+
+    this.fileHelperService.getNFTData(fetchUrl, fileName, kind).then((data) => {
+      this.zone.run(() => {
+        this.imgUri = data;
+      });
+    });
   }
 
   clickItem() {
@@ -37,19 +67,7 @@ export class AssetitemComponent implements OnInit {
   }
 
   hanldeImg(assetItem: any) {
-   let imgUri = assetItem['thumbnail'];
-   let kind = assetItem["kind"];
-   if(kind === "gif"){
-       imgUri = assetItem['asset'];
-   }
-   if (imgUri.indexOf('feeds:imgage:') > -1) {
-      imgUri = imgUri.replace('feeds:imgage:', '');
-      imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
-    }else if(imgUri.indexOf('feeds:image:') > -1){
-      imgUri = imgUri.replace('feeds:image:', '');
-      imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
-    }
-    return imgUri;
+    return this.imgUri;
   }
 
   hanldePrice(price: string) {
