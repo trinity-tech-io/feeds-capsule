@@ -105,6 +105,8 @@ export class DataHelper {
 
   private newPostCount: number = 0;
 
+  private cachedNftMap: { [name: string]: string } = null;
+
   constructor(
     private storageService: StorageService,
     private events: Events
@@ -2416,5 +2418,16 @@ export class DataHelper {
     this.newPostCount = 0;
     // console.log("resetNewPost", this.newPostCount);
     this.events.publish(FeedsEvent.PublishType.receiveNewPost, this.newPostCount);
+  }
+
+
+  ////
+  getDataFromCache(name: string) {
+    if (!this.cachedNftMap)
+      this.cachedNftMap = {};
+    if (!this.cachedNftMap[name])
+      this.cachedNftMap[name] = "";
+    // return this.c
+    return;
   }
 }

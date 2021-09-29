@@ -2043,6 +2043,7 @@ async  clickTab(type: string) {
         let type = result['type'] || 'single';
         let quantity = tokenNum;
         let thumbnail = result['thumbnail'] || '';
+
         if (thumbnail === '') {
           thumbnail = result['image'];
         }

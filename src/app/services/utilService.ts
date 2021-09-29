@@ -575,7 +575,6 @@ public static  zoomImgSize(imgWidth:any, imgHeight:any, maxWidth:any, maxHeight:
       const downloadRes = async () => {
         let response = await fetch(url);
         let blob = await response.blob();
-
         resolve(blob);
       }
       downloadRes();
