@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { FileHelperService } from 'src/app/services/FileHelperService';
 
 @Injectable()
 export class UtilService {
@@ -568,4 +569,17 @@ public static  zoomImgSize(imgWidth:any, imgHeight:any, maxWidth:any, maxHeight:
             canvas.height);
     return canvas.toDataURL('image/*', quality);
   };
+
+  public static downloadFileFromUrl(url: string): Promise<Blob> {
+    return new Promise((resolve, reject) => {
+      const downloadRes = async () => {
+        let response = await fetch(url);
+        let blob = await response.blob();
+
+        resolve(blob);
+      }
+      downloadRes();
+    });
+  }
+
 }

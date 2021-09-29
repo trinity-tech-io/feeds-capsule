@@ -105,7 +105,7 @@ export class FileService {
     });
   }
 
-  writeData(entry: FileEntry, data: Blob | string, isAppend: boolean) {
+  writeData(entry: FileEntry, data: Blob | string, isAppend: boolean): Promise<FileEntry> {
     return new Promise(async (resolve, reject) => {
       let startPos = 0;
       if (isAppend) {
@@ -118,6 +118,7 @@ export class FileService {
           try {
             if (isAppend) writer.seek(startPos);
             writer.write(data);
+            resolve(entry);
           } catch (error) {
             reject(error);
           }
