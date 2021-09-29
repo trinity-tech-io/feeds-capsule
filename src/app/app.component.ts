@@ -123,6 +123,7 @@ export class MyApp {
 
 
         this.initSetting();
+        this.initNftFirstdisclaimer();
         this.initFeedPublicStatus();
         this.initCurrentFeed();
         this.initDiscoverfeeds();
@@ -458,4 +459,20 @@ export class MyApp {
       }
     });
   }
+
+  initNftFirstdisclaimer(){
+    this.feedService
+        .getData("feeds:nftFirstdisclaimer")
+        .then((nftFirstdisclaimer: any) => {
+          if(nftFirstdisclaimer === null){
+            this.feedService.setNftFirstdisclaimer("");
+          }else{
+            this.feedService.setNftFirstdisclaimer(nftFirstdisclaimer);
+          }
+        }).catch(()=>{
+
+        })
+  }
+
+
 }

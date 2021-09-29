@@ -1,0 +1,34 @@
+<ion-grid class="container" [class.darkContainer]="theme.darkMode">
+  <ion-row style="padding:0px 10px;">
+    <ion-col size="12" class="disclaimerTitle">
+       <p>{{'NftdisclaimerComponent.title' | translate}}</p>
+    </ion-col>
+  </ion-row>
+
+  <ion-row style="padding:0px 10px;">
+    <ion-col size="12" style="overflow:auto;height:350px">
+      <p class="des">{{'NftdisclaimerComponent.des' | translate}}</p>
+      <p class="des1">{{'NftdisclaimerComponent.des1' | translate}}</p>
+      <p class="des1">{{'NftdisclaimerComponent.des2' | translate}}</p>
+      <p class="des1">{{'NftdisclaimerComponent.des3' | translate}}</p>
+      <p class="des1">{{'NftdisclaimerComponent.des4' | translate}}</p>
+      <p class="des1">{{'NftdisclaimerComponent.des5' | translate}}</p>
+      <p class="des1">{{'NftdisclaimerComponent.des6' | translate}}</p>
+      <p class="des1">{{'NftdisclaimerComponent.des7' | translate}}</p>
+      <p class="des1">{{'NftdisclaimerComponent.des8' | translate}}</p>
+      <p class="des1">{{'NftdisclaimerComponent.des9' | translate}}</p>
+      <p class="des">{{'NftdisclaimerComponent.des10' | translate}}</p>
+   </ion-col>
+  </ion-row>
+
+  <ion-row class="btns-row" [class.dark-btns-row]="theme.darkMode" style="margin-top:20px;margin-bottom:13px;">
+    <ion-col class="btn cancel2 ion-activatable ripple" size="5.6" (click)="cancel()">
+      <ion-label>{{ 'DisclaimerPage.denyText' | translate }}</ion-label>
+      <ion-ripple-effect></ion-ripple-effect>
+    </ion-col>
+    <ion-col class="btn confirm ion-activatable ripple" size="5.6" (click)="confirm()">
+      <ion-label>{{ 'DisclaimerPage.acceptText' | translate }}</ion-label>
+      <ion-ripple-effect></ion-ripple-effect>
+    </ion-col>
+  </ion-row>
+</ion-grid>

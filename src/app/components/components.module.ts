@@ -15,6 +15,7 @@ import { ConfirmdialogComponent } from './confirmdialog/confirmdialog.component'
 import { AlertdialogComponent } from './alertdialog/alertdialog.component';
 import {  NftloadingComponent } from './nftloading/nftloading.component';
 import { NfttransferdialogComponent } from './nfttransferdialog/nfttransferdialog.component';
+import { NftdisclaimerComponent } from './nftdisclaimer/nftdisclaimer.component';
 
 import { MyfeedsComponent } from './myfeeds/myfeeds.component';
 import { FollowingComponent } from './following/following.component';
@@ -85,6 +86,7 @@ import { RoundProgressModule } from 'angular-svg-round-progressbar';
     ChannelcardComponent,
     NftloadingComponent,
     NfttransferdialogComponent,
+    NftdisclaimerComponent,
     GuidedialogComponent,
     PublisherdialogComponent
   ],
@@ -128,7 +130,8 @@ import { RoundProgressModule } from 'angular-svg-round-progressbar';
     NftdialogComponent,
     PreviewqrcodeComponent,
     NftloadingComponent,
-    NfttransferdialogComponent
+    NfttransferdialogComponent,
+    NftdisclaimerComponent
   ],
 })
 export class ComponentsModule {}

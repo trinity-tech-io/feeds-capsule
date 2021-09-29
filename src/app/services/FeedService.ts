@@ -67,6 +67,7 @@ let eventBus: Events = null;
 
 @Injectable()
 export class FeedService {
+  private nftFirstdisclaimer: string = "";
   public  elaUsdPrice: string = "";
   public  selsectNftImage: string = "";
   private pasarListGrid: boolean = false;
@@ -7716,5 +7717,13 @@ export class FeedService {
 
   getElaUsdPrice(){
     return this.elaUsdPrice;
+  }
+
+  setNftFirstdisclaimer(nftFirstdisclaimer:string){
+     this.nftFirstdisclaimer = nftFirstdisclaimer;
+  }
+
+  getNftFirstdisclaimer(){
+    return this.nftFirstdisclaimer;
   }
 }

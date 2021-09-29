@@ -14,6 +14,8 @@ import { PublisherdialogComponent } from './../components/publisherdialog/publis
 import { ThemeService } from 'src/app/services/theme.service';
 import { Logger } from './logger';
 import { NfttransferdialogComponent } from './../components/nfttransferdialog/nfttransferdialog.component';
+import { NftdisclaimerComponent } from './..//components/nftdisclaimer/nftdisclaimer.component';
+
 
 const TAG: string = 'ViewHelper';
 @Injectable()
@@ -237,6 +239,19 @@ export class ViewHelper {
         title: this.translate.instant(title),
         assItem: assItem
         },
+    });
+    popover.onWillDismiss().then(() => {
+      Logger.log(TAG, 'Promote dismiss');
+      popover = null;
+    });
+    return await popover.present();
+  }
+
+  async showNftdisclaimerPrompt() {
+    let popover = await this.popoverController.create({
+      mode: 'ios',
+      cssClass: 'genericPopup',
+      component: NftdisclaimerComponent
     });
     popover.onWillDismiss().then(() => {
       Logger.log(TAG, 'Promote dismiss');
