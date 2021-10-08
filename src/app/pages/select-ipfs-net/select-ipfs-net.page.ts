@@ -55,8 +55,6 @@ export class SelectIpfsNetPage implements OnInit {
   ionViewWillEnter() {
     this.selectedIpfsNetwork = localStorage.getItem("selectedIpfsNetwork");
     this.initTitle();
-
-    console.log("VVVVVVVVVVVVVVVVVVVVVVVVV");
     console.log(ApiUrl.getIpfs());
   }
 

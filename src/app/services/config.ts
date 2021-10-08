@@ -24,7 +24,7 @@ export class Config {
         20: Config.CONTRACT_URI
     }
     /** MainNet IPFS */
-    public static IPFS_SERVER: string = Config.defaultIPFSApi();
+    public static IPFS_SERVER: string = 'https://ipfs.trinity-feeds.app/';
 
 
     /** TestNet contract */
@@ -66,18 +66,12 @@ export class Config {
     }
 
     public static defaultIPFSApi(): string {
-        let availableIpfsNetworkTemplates: string[] = [
+        const availableIpfsNetworkTemplates: string[] = [
             "https://ipfs0.trinity-feeds.app/",
             "https://ipfs1.trinity-feeds.app/", 
             "https://ipfs2.trinity-feeds.app/", 
           ];
-        var IPFS_SERVER: string = availableIpfsNetworkTemplates[Math.floor(Math.random()*availableIpfsNetworkTemplates.length)];
-
-        return IPFS_SERVER
-    }
-
-    public static setIpfs(ipfs: string) {
-        Config.IPFS_SERVER = ipfs
+        return availableIpfsNetworkTemplates[Math.floor(Math.random() * availableIpfsNetworkTemplates.length)];
     }
 
     public static WAIT_TIME_CANCEL_ORDER = 2 * 60 * 1000;

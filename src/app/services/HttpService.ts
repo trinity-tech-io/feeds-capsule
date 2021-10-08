@@ -5,6 +5,7 @@ import { PopupProvider } from 'src/app/services/popup';
 import { PopoverController } from '@ionic/angular';
 import _ from 'lodash';
 import { resolve } from 'url';
+import { Logger } from './logger';
 export type HttpOptions = {
   headers?: HttpHeaders | {
     [header: string]: string | string[];
@@ -31,6 +32,7 @@ export type HttpTextOptions = {
   withCredentials?: boolean;
 }
 
+const TAG: string = "HttpService";
 
 @Injectable()
 export class HttpService {
@@ -63,6 +65,7 @@ export class HttpService {
    */
   httpGet(url: string): Promise<Object> {
     return new Promise((resolve, reject) => {
+      Logger.log(TAG, "Send http get method", url);
       this.httpClient.get(url).subscribe(
         response => {
           resolve(response);
@@ -95,6 +98,7 @@ export class HttpService {
    */
   httpPost(url: string, body: any, httpOptions: HttpOptions = this.httpOptions): Promise<Object> {
     return new Promise((resolve, reject) => {
+      Logger.log(TAG, "Send http post method", url, body, httpOptions);
       this.httpClient
         .post(url, body, httpOptions)
         .subscribe(
