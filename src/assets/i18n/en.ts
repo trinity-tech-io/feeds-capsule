@@ -683,7 +683,10 @@ export const en = {
     royaltiesErrorMsg: 'Royalties value should be between 0 and 15%(integer)',
     quantityErrorMsg: 'Quantity value must be greater than 0 (integer)',
     quantityErrorMsg1: 'The quantity value cannot exceed the maximum value (integer)',
-    fileTypeDes: 'File types supported: '
+    fileTypeDes: 'File types supported: ',
+    avatar: 'Avatar',
+    fileTypeDes1: 'The content size is less 2M;',
+    fileTypeDes2: 'The resolution size less 450 * 450;'
   },
   AssetdetailsPage: {
     title: 'Collectible Details',

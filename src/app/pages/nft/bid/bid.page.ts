@@ -59,6 +59,7 @@ export class BidPage implements OnInit {
   public loadingCurNumber:string = "1";
   public loadingMaxNumber:string = "1";
   public usdPrice:string = null;
+  public imageType:string = "";
   constructor(
     private translate: TranslateService,
     private event: Events,
@@ -79,9 +80,9 @@ export class BidPage implements OnInit {
 
   ngOnInit() {
     this.activatedRoute.queryParams.subscribe(queryParams => {
-
       this.curAssetItem = _.cloneDeep(queryParams);
       let asset = queryParams.asset || {};
+      this.imageType = queryParams.type || "";
       this.showType = queryParams.showType;
       this.seller = queryParams.sellerAddr || '';
       this.name = queryParams.name || '';

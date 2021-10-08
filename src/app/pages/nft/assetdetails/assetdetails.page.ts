@@ -63,7 +63,7 @@ export class AssetdetailsPage implements OnInit {
   public loadingMaxNumber:string = "";
   public saleOrderId: string = null;
   public usdPrice: string = null;
-
+  public imageType: string = "";
   constructor(
     private translate: TranslateService,
     private events: Events,
@@ -88,6 +88,7 @@ export class AssetdetailsPage implements OnInit {
     this.activatedRoute.queryParams.subscribe(queryParams => {
       this.assItem = _.cloneDeep(queryParams);
       let asset = queryParams.asset || {};
+      this.imageType = queryParams.type || "";
       this.owner = queryParams.name || '';
       this.name = queryParams.name || '';
       this.description = queryParams.description || '';

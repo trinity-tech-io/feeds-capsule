@@ -22,6 +22,24 @@
     }
 
     ion-item{
+
+      .avatar{
+        font-size: 13px;
+        margin-left: 8px;
+      }
+
+      .checkBoxAvatar{
+        --border-color: #7624fe;
+        --border-color-checked:#7624fe;
+        --color-checked:#7624fe;
+        --background-checked:#7624fe;
+        display: inline-block;
+        width: 19px;
+        height: 19px;
+        position: absolute;
+        left: 98px;
+      }
+
       .fileTypeDes{
         font-size: 10px;
         font-weight: normal;
@@ -29,6 +47,7 @@
         font-style: normal;
         text-align: left;
         color: #9ca0a4;
+        margin-top: 5px;
       }
       --background-activated: #fff;
       --background-focused: #fff;

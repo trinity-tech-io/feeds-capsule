@@ -10,6 +10,7 @@
     <ion-ripple-effect></ion-ripple-effect>
   </div>
   <div *ngIf="assetItem != null ">
+    <img src="assets/images/avatar.svg" *ngIf="assetItem['type']==='avatar'" style="position:absolute;left: 16px;top: -15px;width:24px;height:24px"/>
     <div style="height:132px;padding: 0px 5px;display:flex;justify-content:center;align-items: center;">
     <img src="{{imgUri}}" (click)="clickItem()" style="object-fit:contain;" />
     </div>
