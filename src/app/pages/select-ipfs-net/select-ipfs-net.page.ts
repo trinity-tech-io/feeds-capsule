@@ -21,12 +21,23 @@ import { Config } from 'src/app/services/config';
 export class SelectIpfsNetPage implements OnInit {
 
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
-  public availableIpfsNetworkTemplates: string[] = [
-    "https://ipfs0.trinity-feeds.app/",
-    "https://ipfs1.trinity-feeds.app/", 
-    "https://ipfs2.trinity-feeds.app/", 
+  public availableIpfsNetworkTemplates: any = [
+    {
+      key: 'https://ipfs0.trinity-feeds.app/',
+      name: 'ipfs0.trinity-feeds.app',
+      description: this.translate.instant('SettingsPage.ipfs0-provider-des'),
+    },
+    {
+      key: 'https://ipfs1.trinity-feeds.app/',
+      name: 'ipfs1.trinity-feeds.app', 
+      description: this.translate.instant('SettingsPage.ipfs1-provider-des'),
+    },
+    {
+      key: 'https://ipfs2.trinity-feeds.app/',
+      name: 'ipfs2.trinity-feeds.app', 
+      description: this.translate.instant('SettingsPage.ipfs2-provider-des'),
+    }
   ];
-
   public selectedIpfsNetwork: any = '';
 
   constructor(
@@ -64,10 +75,10 @@ export class SelectIpfsNetPage implements OnInit {
     this.events.publish(FeedsEvent.PublishType.addProflieEvent);
   }
 
-  selectIpfs(selectedIpfsNetwork: string) {
-    this.selectedIpfsNetwork = selectedIpfsNetwork;
-    localStorage.setItem("selectedIpfsNetwork", selectedIpfsNetwork);
-    ApiUrl.setIpfs(selectedIpfsNetwork)
+  selectIpfs(selectedIpfsNetwork: any) { 
+    this.selectedIpfsNetwork = selectedIpfsNetwork.key;
+    localStorage.setItem("selectedIpfsNetwork", selectedIpfsNetwork.key);
+    ApiUrl.setIpfs(selectedIpfsNetwork.key)
     this.globalService.refreshBaseNFTIPSFUrl();
     this.initTitle();
     this.events.publish(FeedsEvent.PublishType.updateTitle);

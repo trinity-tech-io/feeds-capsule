@@ -33,7 +33,7 @@ export class SettingsPage implements OnInit {
   public curApiProviderName = 'elastos.io';
   public pasarListGrid: boolean = false;
   public isHideDeveloperMode: boolean = false;
-  public curIPFSApiProviderName = ApiUrl.IPFS_SERVER;
+  public curIPFSApiProviderName = 'ipfs0.trinity-feeds.app';
 
   constructor(
     private languageService: LanguageService,
@@ -64,6 +64,7 @@ export class SettingsPage implements OnInit {
   }
 
   ionViewWillEnter() {
+    this.loadIpfsShowNmae();
     this.curIPFSApiProviderName = localStorage.getItem("selectedIpfsNetwork");
     this.pasarListGrid = this.feedService.getPasarListGrid();
     this.curApiProviderName = this.dataHelper.getApiProvider();
@@ -73,6 +74,19 @@ export class SettingsPage implements OnInit {
     this.hideOfflineFeeds = this.feedService.getHideOfflineFeeds();
     this.developerMode = this.feedService.getDeveloperMode();
     this.initTitle();
+  }
+  
+  loadIpfsShowNmae() {
+    let localIPFSApiProviderName = localStorage.getItem("selectedIpfsNetwork");
+    if (localIPFSApiProviderName === 'https://ipfs0.trinity-feeds.app/') {
+        this.curIPFSApiProviderName = 'ipfs0.trinity-feeds.app'
+    }
+    else if (localIPFSApiProviderName === 'https://ipfs1.trinity-feeds.app/') {
+      this.curIPFSApiProviderName = 'ipfs1.trinity-feeds.app'
+    }
+    else {
+      this.curIPFSApiProviderName = 'ipfs2.trinity-feeds.app'
+    }
   }
 
   getCurlanguageName() {
