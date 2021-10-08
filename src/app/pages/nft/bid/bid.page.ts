@@ -94,8 +94,9 @@ export class BidPage implements OnInit {
       this.parsarContractAddress = this.nftContractControllerService
         .getPasar()
         .getPasarAddress();
-      console.log("queryParams", queryParams);
-      this.assetUri = this.handleImg(asset, "png");
+
+      const kind = queryParams.kind || 'png';
+      this.assetUri = this.handleImg(asset, kind);
       this.fixedPrice = queryParams.fixedAmount || null;
       this.royalties = queryParams.royalties || null;
       this.saleOrderId = queryParams.saleOrderId || '';
