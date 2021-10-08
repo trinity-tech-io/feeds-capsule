@@ -613,6 +613,10 @@ export const en = {
     'trinity-tech-cn-des':
       "Set of Elastos APIs deployed and maintained by the Elastos Foundation's Trinity Tech team, responsible for Elastos SDKs development.",
     'ipfs-provider': 'IPFS API Provider',
+    'ipfs0-provider-des': 'The primary IPFS gateway node to store the collectibles data',
+    'ipfs1-provider-des': 'The secondary IPFS gateway node to store the collectibles data',
+    'ipfs2-provider-des': 'The secondary IPFS gateway node to store the collectibles data',
+
     /*********** Elastos API provider page ***********/
     elastosapiprovider: 'Elastos API',
     'developer-setting': 'Developer Options',
