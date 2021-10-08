@@ -58,7 +58,9 @@ export class MintnftPage implements OnInit {
   public loadingText:string = "";
   public loadingCurNumber:string = "";
   public loadingMaxNumber:string = "";
-  private realFile: any = null
+  private realFile: any = null;
+  public  avatar:boolean = false;
+  public  maxAvatarSize:number = 2 * 1024 * 1024;
   constructor(
     private translate: TranslateService,
     private event: Events,
@@ -365,9 +367,13 @@ export class MintnftPage implements OnInit {
 
   sendIpfsJSON(): Promise<string> {
     return new Promise(async (resolve, reject) => {
+      let type = "image";
+      if(this.avatar){
+         type = "avatar";
+      }
       let ipfsJSON = {
         version: '1',
-        type: 'image',
+        type: type,
         name: this.nftName,
         description: this.nftDescription,
         image: this.imageObj['imgHash'],
@@ -648,6 +654,10 @@ export class MintnftPage implements OnInit {
         img.onload = () =>{
           let maxWidth = img.width / 4;
           let maxHeight = img.height / 4;
+          if(this.avatar){
+            maxWidth = img.width;
+            maxHeight = img.height;
+          }
          let imgBase64 = UtilService.resizeImg(img,maxWidth,maxHeight,1);
          resolve(imgBase64);
         };
@@ -848,6 +858,10 @@ export class MintnftPage implements OnInit {
     this.nftContractControllerService.getAccountAddress() || '';
 
     let slist = this.nftPersistenceHelper.getCollectiblesList(accAddress);
+    let imageType = "image";
+    if(this.avatar){
+       imageType = "avatar";
+    }
     let item:any = {};
     switch (type) {
       case 'created':
@@ -859,7 +873,7 @@ export class MintnftPage implements OnInit {
           description: this.nftDescription,
           fixedAmount: null,
           kind: this.imageObj['imgFormat'],
-          type: this.issueRadionType,
+          type: imageType,
           royalties: royalties,
           quantity: this.nftQuantity,
           curQuantity: this.nftQuantity,
@@ -887,7 +901,7 @@ export class MintnftPage implements OnInit {
           description: this.nftDescription,
           fixedAmount: order[5],
           kind: this.imageObj['imgFormat'],
-          type: this.issueRadionType,
+          type: imageType,
           royalties: royalties,
           quantity: this.nftQuantity,
           curQuantity: this.nftQuantity,
@@ -921,22 +935,49 @@ export class MintnftPage implements OnInit {
 
     Logger.log("Real File is", event.target.files[0]);
 
+    //add avatar
+    if(this.avatar){
+      let fileSize = this.realFile.size;
+      if(fileSize > this.maxAvatarSize){
+        this.native.toastWarn("MintnftPage.fileTypeDes1");
+        event.target.value = null;
+        return false;
+      }
+    }
+
     let fileName = this.realFile.name;
     let index = fileName.lastIndexOf(".");
     let imgFormat = fileName.substr(index + 1);
     this.imageObj['imgFormat'] = imgFormat;
 
-    this.createImagePreview(this.realFile);
+    this.createImagePreview(this.realFile,event);
   }
 
-  createImagePreview(file) {
+  createImagePreview(file:any,inputEvent?:any) {
     const reader = new FileReader();
 
     reader.readAsDataURL(file);
     reader.onload = async event => {
       try {
-        this.assetBase64 = event.target.result.toString();
-        this.thumbnail = await this.compressImage(this.assetBase64);
+        //add avatar
+        if(this.avatar){
+          let image = new Image();
+          image.onload = async ()=>{
+          let width = image.width;
+          let height = image.height;
+          if(width!=450 && height!=450){
+            this.native.toastWarn("MintnftPage.fileTypeDes2");
+            inputEvent.target.value = null;
+            return false;
+          }
+          this.assetBase64 = event.target.result.toString();
+          this.thumbnail = await this.compressImage(this.assetBase64);
+         }
+         image.src = event.target.result.toString();
+        }else{
+          this.assetBase64 = event.target.result.toString();
+          this.thumbnail = await this.compressImage(this.assetBase64);
+        }
       } catch (error) {
         Logger.error('Get image thumbnail error', error);
       }
@@ -949,4 +990,5 @@ export class MintnftPage implements OnInit {
       this.onChange(event);
     };
   }
+
 }
