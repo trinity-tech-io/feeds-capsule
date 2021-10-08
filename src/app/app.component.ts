@@ -284,16 +284,14 @@ export class MyApp {
   }
 
   initIpfs() {
-    let ipfs = localStorage.getItem("selectedIpfsNetwork") || ''
-    if (ipfs === '') {
+    let ipfsBaseUrl = localStorage.getItem("selectedIpfsNetwork") || ''
+    if (ipfsBaseUrl === '') {
+      ipfsBaseUrl = Config.defaultIPFSApi();
       localStorage.setItem("selectedIpfsNetwork", Config.IPFS_SERVER);
-        }
+    }
 
-    ApiUrl.setIpfs(ipfs);
+    ApiUrl.setIpfs(ipfsBaseUrl);
     this.globalService.refreshBaseNFTIPSFUrl();
-
-    console.log("VVVVVVVVVVVVVVVVVVVVVVVVV");
-    console.log(ApiUrl.getIpfs());
   }
 
   about() {
