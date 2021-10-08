@@ -9,6 +9,7 @@ import { NFTContractControllerService } from 'src/app/services/nftcontract_contr
 import { WalletConnectControllerService } from 'src/app/services/walletconnect_controller.service';
 import { Logger } from './logger';
 import { Config } from './config';
+import { ApiUrl } from './ApiUrl';
 
 const TAG: string = 'GlobalService';
 @Injectable()
@@ -51,5 +52,9 @@ export class GlobalService {
   restartApp() {
     this.splashScreen.show();
     window.location.href = "/";
+  }
+
+  refreshBaseNFTIPSFUrl() {
+    this.ipfsService.setBaseNFTIPFSUrl(ApiUrl.IPFS_SERVER);
   }
 }

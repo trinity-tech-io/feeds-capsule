@@ -34,7 +34,8 @@ export class SelectIpfsNetPage implements OnInit {
     public theme: ThemeService,
     private titleBarService: TitleBarService,
     private events: Events,
-    private ipfsServe: IPFSService
+    private ipfsServe: IPFSService,
+    private globalService: GlobalService,
   ) { 
      this.selectedIpfsNetwork = localStorage.getItem("selectedIpfsNetwork");
   }
@@ -54,6 +55,9 @@ export class SelectIpfsNetPage implements OnInit {
   ionViewWillEnter() {
     this.selectedIpfsNetwork = localStorage.getItem("selectedIpfsNetwork");
     this.initTitle();
+
+    console.log("VVVVVVVVVVVVVVVVVVVVVVVVV");
+    console.log(ApiUrl.getIpfs());
   }
 
   ionViewWillLeave() {
@@ -66,6 +70,7 @@ export class SelectIpfsNetPage implements OnInit {
     this.selectedIpfsNetwork = selectedIpfsNetwork;
     localStorage.setItem("selectedIpfsNetwork", selectedIpfsNetwork);
     ApiUrl.setIpfs(selectedIpfsNetwork)
+    this.globalService.refreshBaseNFTIPSFUrl();
     this.initTitle();
     this.events.publish(FeedsEvent.PublishType.updateTitle);
   }
