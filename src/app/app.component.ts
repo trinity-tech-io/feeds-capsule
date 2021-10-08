@@ -21,6 +21,7 @@ import { Logger, LogLevel } from './services/logger';
 import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
 import { IntentService } from './services/IntentService';
 import { HttpService } from 'src/app/services/HttpService';
+import { ApiUrl } from './services/ApiUrl';
 
 let TAG: string = 'app-component';
 
@@ -287,6 +288,12 @@ export class MyApp {
     if (ipfs === '') {
       localStorage.setItem("selectedIpfsNetwork", Config.IPFS_SERVER);
         }
+
+    ApiUrl.setIpfs(ipfs);
+    this.globalService.refreshBaseNFTIPSFUrl();
+
+    console.log("VVVVVVVVVVVVVVVVVVVVVVVVV");
+    console.log(ApiUrl.getIpfs());
   }
 
   about() {
