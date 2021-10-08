@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { ActivatedRoute } from '@angular/router';
 import { ThemeService } from '../../../services/theme.service';
@@ -16,6 +16,7 @@ import { HttpService } from '../../../services/HttpService';
 import _ from 'lodash';
 import { UtilService } from 'src/app/services/utilService';
 import { Config } from 'src/app/services/config';
+import { FileHelperService } from 'src/app/services/FileHelperService';
 type detail = {
   type: string;
   details: string;
@@ -71,7 +72,9 @@ export class BidPage implements OnInit {
     private nftContractControllerService: NFTContractControllerService,
     private ipfsService: IPFSService,
     private nftPersistenceHelper: NFTPersistenceHelper,
-    private httpService: HttpService
+    private httpService: HttpService,
+    private fileHelperService: FileHelperService,
+    private zone: NgZone,
   ) {}
 
   ngOnInit() {
@@ -91,7 +94,8 @@ export class BidPage implements OnInit {
       this.parsarContractAddress = this.nftContractControllerService
         .getPasar()
         .getPasarAddress();
-      this.assetUri = this.handleImg(asset);
+      console.log("queryParams", queryParams);
+      this.assetUri = this.handleImg(asset, "png");
       this.fixedPrice = queryParams.fixedAmount || null;
       this.royalties = queryParams.royalties || null;
       this.saleOrderId = queryParams.saleOrderId || '';
@@ -364,16 +368,26 @@ export class BidPage implements OnInit {
     });
   }
 
-  handleImg(imgUri: string) {
-    if (imgUri.indexOf('feeds:imgage:') > -1) {
-      imgUri = imgUri.replace('feeds:imgage:', '');
-      imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
-    }else if (imgUri.indexOf('feeds:image:') > -1) {
-      imgUri = imgUri.replace('feeds:image:', '');
-      imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
+  handleImg(imgUri: string, kind: string): string {
+    let fileName = "";
+    let fetchUrl = "";
+    let imageUri = imgUri;
+    if (imageUri.indexOf('feeds:imgage:') > -1) {
+      imageUri = imageUri.replace('feeds:imgage:', '');
+      fileName = imageUri;
+      fetchUrl = this.ipfsService.getNFTGetUrl() + imageUri;
+    } else if (imageUri.indexOf('feeds:image:') > -1) {
+      imageUri = imageUri.replace('feeds:image:', '');
+      fileName = imageUri;
+      fetchUrl = this.ipfsService.getNFTGetUrl() + imageUri;
     }
 
-    return imgUri;
+    this.fileHelperService.getNFTData(fetchUrl, fileName, kind).then((data) => {
+      this.zone.run(() => {
+        this.assetUri = data;
+      });
+    });
+    return fetchUrl;
   }
 
  hanldePrice(price: string) {
