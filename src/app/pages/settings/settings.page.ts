@@ -65,7 +65,6 @@ export class SettingsPage implements OnInit {
 
   ionViewWillEnter() {
     this.loadIpfsShowNmae();
-    this.curIPFSApiProviderName = localStorage.getItem("selectedIpfsNetwork");
     this.pasarListGrid = this.feedService.getPasarListGrid();
     this.curApiProviderName = this.dataHelper.getApiProvider();
     this.languageName = this.getCurlanguageName();
