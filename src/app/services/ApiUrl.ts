@@ -29,8 +29,9 @@ export class ApiUrl {
 
   public static IPFS_NFT_ADD: string = 'api/v0/add';
   public static IPFS_NFT_GET: string = 'ipfs/';
-  public static setIpfs(ipfs: string) {
-    Config.setIpfs(ipfs)
+  public static setIpfs(ipfsBaseUrl: string) {
+    Config.IPFS_SERVER = ipfsBaseUrl;
+    ApiUrl.IPFS_SERVER = Config.IPFS_SERVER;
   }
   
   public static getIpfs() : string {
