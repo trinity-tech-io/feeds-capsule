@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { ActivatedRoute } from '@angular/router';
@@ -18,6 +18,7 @@ import { PhotoLibrary } from '@ionic-native/photo-library/ngx';
 import { MenuService } from 'src/app/services/MenuService';
 import _ from 'lodash';
 import { Logger } from 'src/app/services/logger';
+import { FileHelperService } from 'src/app/services/FileHelperService';
 type detail = {
   type: string;
   details: string;
@@ -79,6 +80,8 @@ export class AssetdetailsPage implements OnInit {
     private photoLibrary: PhotoLibrary,
     private menuService: MenuService,
     private platform: Platform,
+    private fileHelperService: FileHelperService,
+    private zone: NgZone,
   ) {}
 
   ngOnInit() {
@@ -97,7 +100,8 @@ export class AssetdetailsPage implements OnInit {
       this.parsarContractAddress = this.nftContractControllerService
         .getPasar()
         .getPasarAddress();
-      this.assetUri = this.handleImg(asset);
+      console.log("assetdetail queryParams", queryParams);
+      this.assetUri = this.handleImg(asset, "png");
       this.creator = queryParams.creator || '';
       this.royalties = queryParams.royalties || null;
     });
@@ -345,15 +349,26 @@ export class AssetdetailsPage implements OnInit {
     }
   }
 
-  handleImg(imgUri: string) {
-    if (imgUri.indexOf('feeds:imgage:') > -1) {
-      imgUri = imgUri.replace('feeds:imgage:', '');
-      imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
-    }else if (imgUri.indexOf('feeds:image:') > -1) {
-      imgUri = imgUri.replace('feeds:image:', '');
-      imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
+  handleImg(imgUri: string, kind: string): string {
+    let fileName = "";
+    let fetchUrl = "";
+    let imageUri = imgUri;
+    if (imageUri.indexOf('feeds:imgage:') > -1) {
+      imageUri = imageUri.replace('feeds:imgage:', '');
+      fileName = imageUri;
+      fetchUrl = this.ipfsService.getNFTGetUrl() + imageUri;
+    } else if (imageUri.indexOf('feeds:image:') > -1) {
+      imageUri = imageUri.replace('feeds:image:', '');
+      fileName = imageUri;
+      fetchUrl = this.ipfsService.getNFTGetUrl() + imageUri;
     }
-    return imgUri;
+
+    this.fileHelperService.getNFTData(fetchUrl, fileName, kind).then((data) => {
+      this.zone.run(() => {
+        this.assetUri = data;
+      });
+    });
+    return fetchUrl;
   }
 
   copytext(text: any) {
