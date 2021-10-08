@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { FileService } from 'src/app/services/FileService';
+import { Logger } from './logger';
 import { UtilService } from './utilService';
 
 const TAG: string = 'Feeds-FileHelperService';
@@ -103,6 +104,7 @@ export class FileHelperService {
       if (fileBlob.size > 0) {
         const result = await this.transBlobToBase64(fileBlob);
         let finalresult = result.replace("data:null;base64,", base64Type);
+        Logger.log(TAG, "Get data from local");
         resolve(finalresult);
         return;
       }
@@ -110,6 +112,7 @@ export class FileHelperService {
       let blob = await UtilService.downloadFileFromUrl(fileUrl);
       const result2 = await this.transBlobToBase64(blob);
       await this.writeNFTCacheFileData(fileName, blob);
+      Logger.log(TAG, "Get data from net");
       resolve(result2);
     });
   }

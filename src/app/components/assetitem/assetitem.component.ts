@@ -31,7 +31,6 @@ export class AssetitemComponent implements OnInit {
 
   ngOnInit() {
     this.styleObj.width = (screen.width - 20 - 10) / 2 + 'px';
-    console.log("===== constructor assetItem =====", this.assetItem);
     let fileName = "";
     let fetchUrl = "";
     let thumbnailUri = this.assetItem['thumbnail'];

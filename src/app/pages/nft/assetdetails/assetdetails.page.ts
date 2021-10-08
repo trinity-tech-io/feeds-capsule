@@ -100,8 +100,8 @@ export class AssetdetailsPage implements OnInit {
       this.parsarContractAddress = this.nftContractControllerService
         .getPasar()
         .getPasarAddress();
-      console.log("assetdetail queryParams", queryParams);
-      this.assetUri = this.handleImg(asset, "png");
+      const kind = queryParams.kind || 'png';
+      this.assetUri = this.handleImg(asset, kind);
       this.creator = queryParams.creator || '';
       this.royalties = queryParams.royalties || null;
     });
