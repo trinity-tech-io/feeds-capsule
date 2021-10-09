@@ -1056,7 +1056,6 @@ export class MenuService {
   }
 
   async sharePasarLink(assItem: any) {
-    console.log("assItem ", assItem);
     this.native.showLoading("common.generateSharingLink");
     try {
       const saleOrderId = assItem.saleOrderId;

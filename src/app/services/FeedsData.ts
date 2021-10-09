@@ -589,4 +589,23 @@ declare namespace FeedsData {
     tokenInfo: TokenInfo;
     tokenJson: TokenJson;
   }
+
+  type CollectibleItem = {
+    creator: string,
+    saleOrderId: number,
+    tokenId: number,
+    asset: string,
+    name: string,
+    description: string,
+    fixedAmount: number,
+    kind: string,
+    type: string,
+    royalties: number,
+    quantity: number,
+    curQuantity: number,
+    thumbnail: string,
+    sellerAddr: string,
+    createTime: number,
+    moreMenuType: string,
+  }
 }
