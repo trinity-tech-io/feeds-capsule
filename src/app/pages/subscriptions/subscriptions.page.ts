@@ -230,7 +230,8 @@ export class SubscriptionsPage implements OnInit {
     let feedDesc = feed.introduction;
     let feedSubscribes = feed.subscribers;
     let feedAvatar = this.feedService.parseChannelAvatar(feed.avatar);
-    if (feedAvatar.indexOf('data:image') > -1) {
+    if (feedAvatar.indexOf('data:image') > -1 ||
+        feedAvatar.startsWith("https:")) {
       this.feedService.setSelsectIndex(0);
       this.feedService.setProfileIamge(feedAvatar);
     } else if (feedAvatar.indexOf('assets/images') > -1) {

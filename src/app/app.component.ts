@@ -22,6 +22,7 @@ import { NFTContractControllerService } from 'src/app/services/nftcontract_contr
 import { IntentService } from './services/IntentService';
 import { HttpService } from 'src/app/services/HttpService';
 import { ApiUrl } from './services/ApiUrl';
+import { IPFSService } from 'src/app/services/ipfs.service';
 
 let TAG: string = 'app-component';
 
@@ -68,8 +69,8 @@ export class MyApp {
     private globalService: GlobalService,
     private nftContractControllerService: NFTContractControllerService,
     private intentService: IntentService,
-    private httpService: HttpService
-
+    private httpService: HttpService,
+    private ipfsService: IPFSService
   ) {
     this.initializeApp();
     this.initProfileData();
@@ -363,7 +364,17 @@ export class MyApp {
   }
 
   handleImages() {
-    return this.avatar;
+    let imgUri = "";
+    if (this.avatar.indexOf('feeds:imgage:') > -1) {
+      imgUri = this.avatar.replace('feeds:imgage:', '');
+      imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
+    } else if (this.avatar.indexOf('feeds:image:') > -1) {
+      imgUri = this.avatar.replace('feeds:image:', '');
+      imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
+    } else {
+      imgUri = this.avatar;
+    }
+    return imgUri;
   }
 
   settings() {
@@ -465,18 +476,18 @@ export class MyApp {
     });
   }
 
-  initNftFirstdisclaimer(){
+  initNftFirstdisclaimer() {
     this.feedService
-        .getData("feeds:nftFirstdisclaimer")
-        .then((nftFirstdisclaimer: any) => {
-          if(nftFirstdisclaimer === null){
-            this.feedService.setNftFirstdisclaimer("");
-          }else{
-            this.feedService.setNftFirstdisclaimer(nftFirstdisclaimer);
-          }
-        }).catch(()=>{
+      .getData("feeds:nftFirstdisclaimer")
+      .then((nftFirstdisclaimer: any) => {
+        if (nftFirstdisclaimer === null) {
+          this.feedService.setNftFirstdisclaimer("");
+        } else {
+          this.feedService.setNftFirstdisclaimer(nftFirstdisclaimer);
+        }
+      }).catch(() => {
 
-        })
+      })
   }
 
 

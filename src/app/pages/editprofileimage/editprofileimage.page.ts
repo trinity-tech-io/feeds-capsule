@@ -9,7 +9,7 @@ import { CameraService } from 'src/app/services/CameraService';
 import { NativeService } from 'src/app/services/NativeService';
 import { Events } from 'src/app/services/events.service';
 import { DataHelper } from 'src/app/services/DataHelper';
-
+import { IPFSService } from 'src/app/services/ipfs.service';
 @Component({
   selector: 'app-editprofileimage',
   templateUrl: './editprofileimage.page.html',
@@ -34,7 +34,8 @@ export class EditprofileimagePage implements OnInit {
     private camera: CameraService,
     private native: NativeService,
     private events: Events,
-    private dataHelper: DataHelper
+    private dataHelper: DataHelper,
+    private ipfsService: IPFSService
   ) {}
 
   async ngOnInit() {
@@ -91,7 +92,17 @@ export class EditprofileimagePage implements OnInit {
   }
 
   handleImages() {
-    return this.avatar;
+    let imgUri = "";
+    if (this.avatar.indexOf('feeds:imgage:') > -1) {
+      imgUri = this.avatar.replace('feeds:imgage:', '');
+      imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
+    }else if(this.avatar.indexOf('feeds:image:') > -1){
+      imgUri = this.avatar.replace('feeds:image:', '');
+      imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
+    }else{
+      imgUri = this.avatar;
+    }
+    return imgUri;
   }
 
   editImage() {
@@ -104,7 +115,7 @@ export class EditprofileimagePage implements OnInit {
   }
 
   openNft(that: any) {
-    that.native.navigateForward(['profilenftimage'], '');
+    that.native.navigateForward(['nftavatarlist'], '');
   }
 
   openGallery(that: any) {

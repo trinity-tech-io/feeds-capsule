@@ -14,7 +14,7 @@ import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { PopupProvider } from 'src/app/services/popup';
 import { LanguageService } from 'src/app/services/language.service';
-
+import { IPFSService } from 'src/app/services/ipfs.service';
 
 @Component({
   selector: 'app-createnewfeed',
@@ -49,7 +49,8 @@ export class CreatenewfeedPage implements OnInit {
     private httpService: HttpService,
     private titleBarService: TitleBarService,
     private popup: PopupProvider,
-    private languageService: LanguageService
+    private languageService: LanguageService,
+    private ipfsService: IPFSService
   ) {}
 
   ngOnInit() {}
@@ -334,5 +335,19 @@ export class CreatenewfeedPage implements OnInit {
         this.native.toast_trans('common.textcopied');
       })
       .catch(() => {});
+  }
+
+  handleAvatar(){
+    let imgUri = "";
+    if (this.avatar.indexOf('feeds:imgage:') > -1) {
+      imgUri = this.avatar.replace('feeds:imgage:', '');
+      imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
+    }else if(this.avatar.indexOf('feeds:image:') > -1){
+      imgUri = this.avatar.replace('feeds:image:', '');
+      imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
+    }else{
+      imgUri = this.avatar;
+    }
+    return imgUri;
   }
 }

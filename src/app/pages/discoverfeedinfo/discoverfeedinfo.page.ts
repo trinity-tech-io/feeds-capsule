@@ -13,7 +13,7 @@ import { Events } from 'src/app/services/events.service';
 import { ViewHelper } from 'src/app/services/viewhelper.service';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-
+import { IPFSService } from 'src/app/services/ipfs.service';
 import * as _ from 'lodash';
 
 @Component({
@@ -58,6 +58,7 @@ export class DiscoverfeedinfoPage implements OnInit {
     private appService: AppService,
     private titleBarService: TitleBarService,
     private viewHelper: ViewHelper,
+    private ipfsService: IPFSService,
   ) {}
 
   ngOnInit() {
@@ -244,7 +245,9 @@ export class DiscoverfeedinfoPage implements OnInit {
 
   clickAvatar() {
     let channelAvatar = this.feedInfo['feedsAvatar'];
-    if (channelAvatar.indexOf('data:image') > -1) {
+    if (channelAvatar.indexOf('data:image') > -1 ||
+        channelAvatar.indexOf('feeds:imgage:') > -1 ||
+        channelAvatar.indexOf('feeds:image:') > -1) {
       this.feedService.setSelsectIndex(0);
       this.feedService.setProfileIamge(channelAvatar);
     } else if (channelAvatar.indexOf('assets/images') > -1) {
@@ -272,5 +275,19 @@ export class DiscoverfeedinfoPage implements OnInit {
       type:"discover"
     });
     this.native.navigateForward(['/feedinfo'],"");
+  }
+
+  handleAvatar(avatar:any){
+    let imgUri = "";
+    if (avatar.indexOf('feeds:imgage:') > -1) {
+      imgUri = avatar.replace('feeds:imgage:', '');
+      imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
+    }else if( avatar.indexOf('feeds:image:') > -1){
+      imgUri = avatar.replace('feeds:image:', '');
+      imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
+    }else{
+      imgUri = avatar;
+    }
+    return imgUri;
   }
 }

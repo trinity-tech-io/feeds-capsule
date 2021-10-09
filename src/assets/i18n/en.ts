@@ -881,5 +881,8 @@ export const en = {
     des8: '8. Any other losses related to the services provided by the Feeds Parser platform that are not caused by the Feeds team;',
     des9: '9. The Feeds team does not make any explicit or implied guarantees for the use of the services of the Feeds Parser platform, including but not limited to: the applicability of the services provided by this platform, errors or omissions, continuity, accuracy, reliability, and applicability to a particular use. In addition, the Feeds team does not make any promises or guarantees regarding the validity, accuracy, correctness, reliability, quality, stability, completeness, or timeliness of the technology and information relating to the services provided by the Feeds Parser platform. Using the services provided by this platform is a personal choice taken by users at their own risk. The Feeds team does not make any explicit or implied guarantees regarding the market, value, or price of digital assets. Please be aware that the digital asset market is unstable, and the market can fluctuate or collapse at any time. Trading digital assets is a personal choice users take at their own risk, and users should be able to bear any potential losses independently.',
     des10: 'The Feeds team does not provide any evaluation or comments as to whether the services provided by Feeds Pasar (and its suppliers) comply with the laws and regulations or relevant policy requirements of any particular jurisdiction. It is strongly recommended that users strictly abide by the laws of their respective jurisdictions.'
+  },
+  NftavatarlistPage: {
+    title: 'Collectible Avatar'
   }
 };

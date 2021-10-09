@@ -1421,7 +1421,8 @@ export class ChannelsPage implements OnInit {
   }
 
   clickAvatar() {
-    if (this.channelAvatar.indexOf('data:image') > -1) {
+    if (this.channelAvatar.indexOf('data:image') > -1 ||
+       this.channelAvatar.startsWith('https:')) {
       this.feedService.setSelsectIndex(0);
       this.feedService.setProfileIamge(this.channelAvatar);
     } else if (this.channelAvatar.indexOf('assets/images') > -1) {
