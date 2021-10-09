@@ -685,8 +685,8 @@ export const en = {
     quantityErrorMsg1: 'The quantity value cannot exceed the maximum value (integer)',
     fileTypeDes: 'File types supported: ',
     avatar: 'Avatar',
-    fileTypeDes1: 'The content size is less 2M;',
-    fileTypeDes2: 'The resolution size less 450 * 450;'
+    fileTypeDes1: 'The content size is less 5M;',
+    fileTypeDes2: 'The resolution size less 600 * 600;'
   },
   AssetdetailsPage: {
     title: 'Collectible Details',
