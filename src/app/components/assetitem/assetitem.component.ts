@@ -30,6 +30,7 @@ export class AssetitemComponent implements OnInit {
   }
 
   ngOnInit() {
+    console.log("AssetitemComponent assetItem", this.assetItem);
     this.styleObj.width = (screen.width - 20 - 10) / 2 + 'px';
     let fileName = "";
     let fetchUrl = "";

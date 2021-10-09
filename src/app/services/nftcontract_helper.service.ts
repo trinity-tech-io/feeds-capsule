@@ -213,9 +213,23 @@ export class NFTContractHelperService {
           .getSticker()
           .tokenInfo(tokenId);
         let tokenInfo = this.transTokenInfo(token);
-        console.log("transTokenInfo = ", tokenInfo);
+        Logger.log("Get token info", tokenInfo);
         resolve(tokenInfo);
       } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
+  getTokenIdOfOwnerByIndex(address: string, index: number): Promise<number> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const tokenId: number = await this.nftContractControllerService
+          .getSticker()
+          .tokenIdOfOwnerByIndex(address, index);
+        resolve(tokenId);
+      } catch (error) {
+        Logger.error('Get tokenId of Owner by index error.', error);
         reject(error);
       }
     });
@@ -310,6 +324,55 @@ export class NFTContractHelperService {
         resolve(tokenJson);
       } catch (error) {
         Logger.log("Get Token Json error", error);
+        reject(error);
+      }
+    });
+  }
+
+  getSellerOpenByIndex(sellerAddr: string, index: number): Promise<FeedsData.OrderInfo> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let sellerOrder = await this.nftContractControllerService
+          .getPasar()
+          .getSellerOpenByIndex(sellerAddr, index);
+        let orderInfo = this.transOrderInfo(sellerOrder);
+        Logger.log(TAG, "Get seller open order", orderInfo);
+        resolve(orderInfo);
+      } catch (error) {
+        Logger.error("Get seller open order error", error);
+        reject(error);
+      }
+    });
+  }
+
+  getNotSaleTokenCount(accountAddress: string): Promise<number> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const notSaleOrderCount: string = await this.nftContractControllerService
+          .getSticker()
+          .tokenCountOfOwner(accountAddress);
+        const count = parseInt(notSaleOrderCount);
+        Logger.log(TAG, 'Get owner token count', count);
+        resolve(count);
+      } catch (error) {
+        Logger.error(TAG, 'Get owner token count error.', error);
+        reject(error);
+      }
+    });
+  }
+
+  getSaleOrderCount(accountAddress: string): Promise<number> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const sellerInfo = await this.nftContractControllerService
+          .getPasar()
+          .getSellerByAddr(accountAddress);
+        const orderCount = sellerInfo[3];
+        const count = parseInt(orderCount);
+        Logger.log(TAG, 'Get seller order count', count);
+        resolve(count);
+      } catch (error) {
+        Logger.error(TAG, 'Get seller order count error.', error);
         reject(error);
       }
     });

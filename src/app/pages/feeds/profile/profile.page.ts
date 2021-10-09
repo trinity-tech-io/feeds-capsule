@@ -25,7 +25,7 @@ import { PhotoLibrary } from '@ionic-native/photo-library/ngx';
 import { DataHelper } from 'src/app/services/DataHelper';
 import { LanguageService } from 'src/app/services/language.service';
 import { Logger } from 'src/app/services/logger';
-
+import { NFTContractHelperService } from 'src/app/services/nftcontract_helper.service';
 let TAG: string = 'Feeds-profile';
 
 @Component({
@@ -41,7 +41,7 @@ export class ProfilePage implements OnInit {
   public nodeStatus = {}; //friends status;
   public channels = []; //myFeeds page
 
-  public collectiblesList: any = []; //NFT列表
+  public collectiblesList = []; //NFT列表
   public totalLikeList = [];
   public startIndex: number = 0;
   public pageNumber: number = 5;
@@ -157,6 +157,14 @@ export class ProfilePage implements OnInit {
   public loadingCurNumber: string = "";
   public loadingMaxNumber: string = "";
   public elaPrice:string = null;
+
+  private notSaleOrderCount = 0;
+  private saleOrderCount = 0;
+
+  private refreshSaleOrderFinish = false;
+  private refreshNotSaleOrderFinish = false;
+
+  private isRefreshingCollectibles = false;
   constructor(
     private feedService: FeedService,
     public theme: ThemeService,
@@ -181,6 +189,7 @@ export class ProfilePage implements OnInit {
     private photoLibrary: PhotoLibrary,
     private dataHelper :DataHelper,
     private languageService: LanguageService,
+    private nftContractHelperService: NFTContractHelperService,
   ) {
   }
 
@@ -336,10 +345,10 @@ export class ProfilePage implements OnInit {
     this.events.subscribe(
       FeedsEvent.PublishType.walletConnectedRefreshPage,
       () => {
-        this.zone.run(() => {
+        this.zone.run(async () => {
           this.updateWalletAddress();
-          this.getCollectiblesList();
           this.getOwnNftSum();
+          await this.getCollectiblesList();
         });
       },
     );
@@ -721,7 +730,7 @@ export class ProfilePage implements OnInit {
     this.videoRotateNum = 'rotate(0deg)';
   }
 
-  changeType(type: string) {
+  async changeType(type: string) {
     this.pauseAllVideo();
     this.selectType = type;
     this.hideSharMenuComponent = false;
@@ -731,14 +740,16 @@ export class ProfilePage implements OnInit {
         break;
       case 'ProfilePage.collectibles':
         this.elaPrice = this.feedService.getElaUsdPrice();
-        this.getOwnNftSum();
-        this.getCollectiblesList();
+        await this.getOwnNftSum();
+        await this.getCollectiblesList();
         break;
       case 'ProfilePage.myLikes':
         this.startIndex = 0;
         this.initLike();
         break;
     }
+
+    this.isRefreshingCollectibles = false;
   }
 
   checkServerStatus(nodeId: string) {
@@ -754,7 +765,7 @@ export class ProfilePage implements OnInit {
     }
   }
 
-  doRefresh(event: any) {
+  async doRefresh(event: any) {
     this.updateWalletAddress();
     switch (this.selectType) {
       case 'ProfilePage.myFeeds':
@@ -765,31 +776,8 @@ export class ProfilePage implements OnInit {
         }, 500);
         break;
       case 'ProfilePage.collectibles':
-        this.elaPrice = this.feedService.getElaUsdPrice();
-        let collectiblesList = _.cloneDeep(this.collectiblesList);
-        let arr = _.filter(collectiblesList, (item) => {
-          return item === null;
-        });
-        if (arr.length > 0 && this.isFinsh.length < collectiblesList.length) {
-          event.target.complete();
-          return;
-        }
-        this.isFinsh = [];
-        let accAddress =
-          this.nftContractControllerService.getAccountAddress() || '';
-        this.collectiblesList = [];
-        let sId2 = setTimeout(() => {
-          if (accAddress === '') {
-            event.target.complete();
-            clearTimeout(sId2);
-            return;
-          }
-          this.getOwnNftSum();
-          this.notOnSale(accAddress);
-          this.OnSale(accAddress);
-          event.target.complete();
-          clearTimeout(sId2);
-        }, 500);
+        await this.refreshCollectibles();
+        event.target.complete();
         break;
       case 'ProfilePage.myLikes':
         let sId = setTimeout(() => {
@@ -1777,242 +1765,78 @@ export class ProfilePage implements OnInit {
       return;
     }
     try {
-      let nftCreatedCount = await this.nftContractControllerService
-        .getSticker()
-        .tokenCountOfOwner(accAddress);
-      let sellerInfo = await this.nftContractControllerService
-        .getPasar()
-        .getSellerByAddr(accAddress);
-      let orderCount = sellerInfo[3];
-      this.ownNftSum = parseInt(nftCreatedCount) + parseInt(orderCount);
+      this.notSaleOrderCount = await this.nftContractHelperService.getNotSaleTokenCount(accAddress);
+      this.saleOrderCount = await this.nftContractHelperService.getSaleOrderCount(accAddress);
+      this.ownNftSum = this.notSaleOrderCount + this.saleOrderCount;
     } catch (error) {
       this.ownNftSum = 0;
     }
   }
 
-  getCollectiblesList() {
+  async getCollectiblesList() {
     let accAddress =
       this.nftContractControllerService.getAccountAddress() || '';
     if (accAddress === '') {
       this.collectiblesList = [];
       return;
     }
-
     let list = this.nftPersistenceHelper.getCollectiblesList(accAddress);
     if (list.length === 0) {
-      this.notOnSale(accAddress);
-      this.OnSale(accAddress);
-    } else {
-      this.collectiblesList = list;
+      await this.refreshCollectibles();
+      return;
     }
+    this.collectiblesList = list;
   }
 
-  async notOnSale(accAddress: string) {
-    this.collectiblesList = [];
-    let nftCreatedCount = await this.nftContractControllerService
-      .getSticker()
-      .tokenCountOfOwner(accAddress);
-    if (nftCreatedCount === '0') {
-      this.collectiblesList = [];
-      this.hanleListCace(accAddress);
-    } else {
-      for (let index = 0; index < nftCreatedCount; index++) {
-        this.collectiblesList.push(null);
-      }
-      for (let cIndex = 0; cIndex < nftCreatedCount; cIndex++) {
-        let tokenId = await this.nftContractControllerService
-          .getSticker()
-          .tokenIdOfOwnerByIndex(accAddress, cIndex);
-        let tokenInfo = await this.nftContractControllerService
-          .getSticker()
-          .tokenInfo(tokenId);
-
-        let curtokenNum = await this.nftContractControllerService
-          .getSticker()
-          .balanceOf(tokenId);
-
-        let price = '';
-        let tokenNum = tokenInfo[2];
-        let tokenUri = tokenInfo[3];
-        let createTime = tokenInfo[7];
-        let royalties = tokenInfo[5] || "";
-        this.handleFeedsUrl(
-          tokenUri,
-          tokenId,
-          price,
-          tokenNum,
-          royalties,
-          'created',
-          cIndex,
-          accAddress,
-          createTime,
-          curtokenNum
-        );
-      }
-    }
-  }
-
-  handleFeedsUrl(
-    feedsUri: string,
-    tokenId: string,
-    price: any,
-    tokenNum: any,
-    royalties: any,
-    listType: any,
-    cIndex: any,
-    createAddress: any,
-    createTime: any,
-    curtokenNum: any
-  ) {
-    feedsUri = feedsUri.replace('feeds:json:', '');
-    this.ipfsService
-      .nftGet(this.ipfsService.getNFTGetUrl() + feedsUri)
-      .then(result => {
-        let type = result['type'] || 'single';
-        let quantity = tokenNum;
-        let fixedAmount = price || null;
-        let thumbnail = result['thumbnail'] || '';
-        if (thumbnail === '') {
-          thumbnail = result['image'];
-        }
-        let item = {
-          creator: createAddress,
-          tokenId: tokenId,
-          asset: result['image'],
-          name: result['name'],
-          description: result['description'],
-          fixedAmount: fixedAmount,
-          kind: result['kind'],
-          type: type,
-          royalties: royalties,
-          quantity: quantity,
-          curQuantity: curtokenNum,
-          thumbnail: thumbnail,
-          createTime: createTime * 1000,
-          moreMenuType: 'created',
-        };
-        try {
-          //this.collectiblesList.splice(cIndex, 1, item);
-          this.isFinsh.push(cIndex);
-          this.collectiblesList[cIndex] = item;
-          let collectiblesList = _.cloneDeep(this.collectiblesList);
-          let arr = _.filter(collectiblesList, (item) => {
-            return item === null;
-          });
-          if (arr.length === 0) {
-            this.hanleListCace(createAddress);
-          }
-        } catch (err) {
-          Logger.error(TAG, 'Handle data from ipfs error' + err);
-        }
-      })
-      .catch((err) => {
-        Logger.error(TAG, 'Get data from ipfs error' + err);
-        this.isFinsh.push(cIndex);
-      });
-  }
-
-  async OnSale(accAddress: string) {
-    //this.onSaleList = [];
-    let sellerInfo = await this.nftContractControllerService
-      .getPasar()
-      .getSellerByAddr(accAddress);
-    let sellerAddr = sellerInfo[1];
-    let orderCount = sellerInfo[3];
-    Logger.log(TAG, 'On Sale order count', orderCount);
-    if (orderCount === '0') {
-    } else {
-
-      for (let index = 0; index < orderCount; index++) {
-        this.collectiblesList.push(null);
-      }
-
-      Logger.log(TAG, 'On sale collectiblesList is', this.collectiblesList);
-      let nftCreatedCount = await this.nftContractControllerService
-        .getSticker()
-        .tokenCountOfOwner(accAddress);
-      this.handleOrder(sellerAddr, orderCount, 'sale', accAddress, nftCreatedCount);
-    }
-  }
-
-  async handleOrder(
-    sellerAddr: any,
-    orderCount: any,
-    listType: any,
-    createAddress: any,
-    nftCreatedCount: any
-  ) {
-
-    for (let index = 0; index < orderCount; index++) {
+  async processNotOnSaleOrder(accAddress: string): Promise<string> {
+    return new Promise(async (resolve, reject) => {
       try {
-        let sellerOrder = await this.nftContractControllerService
-          .getPasar()
-          .getSellerOpenByIndex(sellerAddr, index);
-        let tokenId = sellerOrder[3];
-        let saleOrderId = sellerOrder[0];
-        let price = sellerOrder[5];
-        let curtokenNum = sellerOrder[4];
-        let tokenInfo = await this.nftContractControllerService
-          .getSticker()
-          .tokenInfo(tokenId);
-        let feedsUri = tokenInfo[3];
-        let createTime = tokenInfo[7];
-        feedsUri = feedsUri.replace('feeds:json:', '');
-        let tokenNum = tokenInfo[2];
-        let royalties = tokenInfo[5] || null;
-        this.ipfsService
-          .nftGet(this.ipfsService.getNFTGetUrl() + feedsUri)
-          .then(result => {
-            let type = result['type'] || 'single';
-            let quantity = tokenNum;
-            let fixedAmount = price || null;
-            let thumbnail = result['thumbnail'] || '';
-            if (thumbnail === '') {
-              thumbnail = result['image'];
-            }
-            let item = {
-              creator: createAddress,
-              saleOrderId: saleOrderId,
-              tokenId: tokenId,
-              asset: result['image'],
-              name: result['name'],
-              description: result['description'],
-              fixedAmount: fixedAmount,
-              kind: result['kind'],
-              type: type,
-              royalties: royalties,
-              quantity: quantity,
-              curQuantity: curtokenNum,
-              thumbnail: thumbnail,
-              sellerAddr: sellerAddr,
-              createTime: createTime * 1000,
-              moreMenuType: 'onSale',
-            };
-            //this.onSaleList.splice(index,1,item);
-            let nftIndex = parseInt(nftCreatedCount) + index;
-            this.isFinsh.push(nftIndex);
-            this.collectiblesList[nftIndex] = item;
-            let collectiblesList = _.cloneDeep(this.collectiblesList);
-            let arr = _.filter(collectiblesList, (item) => {
-              return item === null;
-            });
-            if (arr.length === 0) {
-              this.hanleListCace(createAddress);
-            }
-          })
-          .catch(() => {
-            this.isFinsh.push("1");
-          });
-      } catch (error) { }
-    }
+        if (this.notSaleOrderCount == 0) {
+          this.refreshNotSaleOrderFinish = true;
+          resolve('SUCCESS');
+          return;
+        }
+
+        for (let index = 0; index < this.notSaleOrderCount; index++) {
+          try {
+            const item = await this.getNotSellerCollectiblesFromContract(accAddress, index);
+            this.collectiblesList.push(item);
+          } catch (error) {
+            Logger.error("Get not sale item error", error);
+          }
+        }
+
+        this.refreshNotSaleOrderFinish = true;
+        resolve('SUCCESS');
+      } catch (error) {
+        reject(error);
+      }
+    });
   }
 
-  hanleListCace(createAddress?: any) {
-    let ownNftCollectiblesList = this.nftPersistenceHelper.getCollectiblesList(createAddress);
-    ownNftCollectiblesList = this.collectiblesList;
-    //this.collectiblesList = _.unionWith(this.collectiblesList,this.onSaleList);
-    Logger.log(TAG, 'CollectiblesList union', ownNftCollectiblesList);
-    this.nftPersistenceHelper.setCollectiblesMap(createAddress, ownNftCollectiblesList);
+  async processOnSaleOrder(accAddress: string) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        if (this.saleOrderCount == 0) {
+          this.refreshSaleOrderFinish = true;
+          resolve('SUCCESS');
+          return;
+        }
+
+        for (let index = 0; index < this.saleOrderCount; index++) {
+          try {
+            const item = await this.getSellerCollectibleFromContract(accAddress, index);
+            this.collectiblesList.push(item);
+          } catch (error) {
+            Logger.error("Get Sale item error", error);
+          }
+        }
+        this.refreshSaleOrderFinish = true;
+        resolve('SUCCESS');
+      } catch (error) {
+        reject(error);
+      }
+    });
   }
 
   clickAssetItem(assetitem: any) {
@@ -2316,5 +2140,156 @@ export class ProfilePage implements OnInit {
       this.collectiblesList = bList;
       this.nftPersistenceHelper.setCollectiblesMap(createAddr, bList);
     }
+  }
+
+  async getSellerCollectibleFromContract(sellerAddr: string, index: number): Promise<FeedsData.CollectibleItem> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const orderInfo: FeedsData.OrderInfo = await this.nftContractHelperService.getSellerOpenByIndex(sellerAddr, index);
+        let tokenInfo = await this.nftContractHelperService.getTokenInfo(String(orderInfo.tokenId));
+        let tokenJson = await this.nftContractHelperService.getTokenJson(tokenInfo.tokenUri);
+        const item = this.createItemFromOrderInfo(orderInfo, tokenInfo, tokenJson, "onSale");
+        resolve(item);
+      } catch (error) {
+        Logger.error("Get seller collectibles error", error);
+        reject(error);
+      }
+    });
+  }
+
+  async getNotSellerCollectiblesFromContract(accAddress: string, index: number): Promise<FeedsData.CollectibleItem> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const tokenId = await this.nftContractHelperService.getTokenIdOfOwnerByIndex(accAddress, index);
+        const tokenInfo = await this.nftContractHelperService.getTokenInfo(String(tokenId));
+        const tokenJson = await this.nftContractHelperService.getTokenJson(tokenInfo.tokenUri);
+        const item = this.creteItemFormTokenId(tokenInfo, tokenJson, "created");
+        resolve(item);
+      } catch (error) {
+        Logger.error("Get seller collectibles error", error);
+        reject(error);
+      }
+    });
+  }
+
+  /**
+   * 
+   * @param orderInfo 
+   * @param tokenInfo 
+   * @param tokenJson 
+   * @param moreMenuType "onSale"/"created"
+   */
+  createItem(orderInfo: FeedsData.OrderInfo, tokenInfo: FeedsData.TokenInfo,
+    tokenJson: FeedsData.TokenJson, moreMenuType: string): FeedsData.CollectibleItem {
+
+    let createAddress: string = "";
+    let orderId: number = -1;
+    let tokenId: number = -1;
+    let image: string = "";
+    let name: string = "";
+    let description: string = "";
+    let price: number = 0;
+    let kind: string = "";
+    let type: string = "";
+    let royalties: number = 0;
+    let quantity: number = 0;
+    let curQuantity: number = 0;
+    let thumbnail: string = "";
+    let sellerAddr: string = "";
+    let createTime: number = 0;
+
+    if (orderInfo != null) {
+      sellerAddr = orderInfo.sellerAddr;
+      tokenId = orderInfo.tokenId;
+      orderId = orderInfo.orderId;
+      price = orderInfo.price;
+      curQuantity = orderInfo.amount;
+    } else {
+      tokenId = tokenInfo.tokenId;
+
+      sellerAddr = "";
+      curQuantity = 1;
+      price = null;
+      orderId = null;
+    }
+
+    createAddress = tokenInfo.royaltyOwner;
+    createTime = tokenInfo.createTime * 1000;
+    quantity = tokenInfo.tokenSupply;
+    royalties = tokenInfo.royaltyFee;
+
+    type = tokenJson.type || 'single';
+    thumbnail = tokenJson.thumbnail || '';
+    if (thumbnail === '')
+      thumbnail = tokenJson.image;
+    image = tokenJson.image;
+    name = tokenJson.name;
+    description = tokenJson.description;
+    kind = tokenJson.kind;
+
+    return {
+      creator: createAddress,
+      saleOrderId: orderId,
+      tokenId: tokenId,
+      asset: image,
+      name: name,
+      description: description,
+      fixedAmount: price,
+      kind: kind,
+      type: type,
+      royalties: royalties,
+      quantity: quantity,
+      curQuantity: curQuantity,
+      thumbnail: thumbnail,
+      sellerAddr: sellerAddr,
+      createTime: createTime,
+      moreMenuType: moreMenuType,
+    };
+  }
+
+  createItemFromOrderInfo(orderInfo: FeedsData.OrderInfo, tokenInfo: FeedsData.TokenInfo,
+    tokenJson: FeedsData.TokenJson, moreMenuType: string): FeedsData.CollectibleItem {
+    return this.createItem(orderInfo, tokenInfo, tokenJson, moreMenuType);
+  }
+
+  creteItemFormTokenId(tokenInfo: FeedsData.TokenInfo, tokenJson: FeedsData.TokenJson,
+    moreMenuType: string): FeedsData.CollectibleItem {
+    return this.createItem(null, tokenInfo, tokenJson, moreMenuType);
+  }
+
+  async refreshCollectibles() {
+    if (this.isRefreshingCollectibles) {
+      return;
+    }
+    this.isRefreshingCollectibles = true;
+    this.collectiblesList = [];
+    this.refreshNotSaleOrderFinish = false;
+    this.refreshSaleOrderFinish = false;
+    this.elaPrice = this.feedService.getElaUsdPrice();
+    await this.getOwnNftSum();
+    let accAddress = this.nftContractControllerService.getAccountAddress() || '';
+
+    if (accAddress === '') {
+      this.isRefreshingCollectibles = false;
+      return;
+    }
+
+    this.processNotOnSaleOrder(accAddress).then(() => {
+      return this.processOnSaleOrder(accAddress);
+    }).then(() => {
+      Logger.log(TAG, 'On sale collectiblesList is', this.collectiblesList);
+      this.isRefreshingCollectibles = false;
+      this.prepareSaveCollectiblesData(accAddress);
+    });
+  }
+
+  saveCollectiblesToCache(createAddress: string) {
+    this.nftPersistenceHelper.setCollectiblesMap(createAddress, this.collectiblesList);
+    Logger.log(TAG, 'Save CollectiblesList', this.collectiblesList);
+  }
+
+  prepareSaveCollectiblesData(address: string) {
+    if (this.refreshNotSaleOrderFinish && this.refreshSaleOrderFinish)
+      this.saveCollectiblesToCache(address);
   }
 }
