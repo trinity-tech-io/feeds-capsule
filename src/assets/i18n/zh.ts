@@ -668,8 +668,8 @@ export const zh = {
     quantityErrorMsg1: '数量值不能超过最大数值(整数)',
     fileTypeDes: '支持图片格式 -  ',
     avatar: '头像',
-    fileTypeDes1: '内容尺寸小于2M；',
-    fileTypeDes2: '分辨率小于450*450；'
+    fileTypeDes1: '内容尺寸小于5M；',
+    fileTypeDes2: '分辨率小于600*600；'
   },
   AssetdetailsPage: {
     title: '收藏品明细',

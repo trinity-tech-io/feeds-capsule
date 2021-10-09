@@ -60,7 +60,7 @@ export class MintnftPage implements OnInit {
   public loadingMaxNumber:string = "";
   private realFile: any = null;
   public  avatar:boolean = false;
-  public  maxAvatarSize:number = 2 * 1024 * 1024;
+  public  maxAvatarSize:number = 5 * 1024 * 1024;
   constructor(
     private translate: TranslateService,
     private event: Events,
@@ -965,7 +965,7 @@ export class MintnftPage implements OnInit {
           image.onload = async ()=>{
           let width = image.width;
           let height = image.height;
-          if(width!=450 && height!=450){
+          if(width!=600 && height!=600){
             this.native.toastWarn("MintnftPage.fileTypeDes2");
             inputEvent.target.value = null;
             return false;
