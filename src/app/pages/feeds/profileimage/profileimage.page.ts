@@ -9,7 +9,7 @@ import { MenuService } from 'src/app/services/MenuService';
 import { Events } from 'src/app/services/events.service';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-
+import { IPFSService } from 'src/app/services/ipfs.service';
 @Component({
   selector: 'app-profileimage',
   templateUrl: './profileimage.page.html',
@@ -74,6 +74,7 @@ export class ProfileimagePage implements OnInit {
     private camera: CameraService,
     private menuService: MenuService,
     private titleBarService: TitleBarService,
+    private ipfsService: IPFSService
   ) {}
 
   ngOnInit() {}
@@ -92,10 +93,23 @@ export class ProfileimagePage implements OnInit {
     }
 
     // Check if an uploaded avatar exists. If so, select it and have it displayed
-    if (this.selectedAvatar.indexOf('data:image') === -1) {
+    if (this.selectedAvatar.indexOf('data:image') === -1 &&
+        this.selectedAvatar.indexOf('feeds:imgage:') === -1 &&
+        this.selectedAvatar.indexOf('feeds:image:') === -1
+        ) {
       this.uploadedAvatar = null;
     } else {
-      this.uploadedAvatar = this.selectedAvatar;
+      let imgUri = "";
+      if (this.selectedAvatar.indexOf('feeds:imgage:') > -1) {
+        imgUri = this.selectedAvatar.replace('feeds:imgage:', '');
+        imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
+      }else if(this.selectedAvatar.indexOf('feeds:image:') > -1){
+        imgUri = this.selectedAvatar.replace('feeds:image:', '');
+        imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
+      }else{
+        imgUri = this.selectedAvatar;
+      }
+      this.uploadedAvatar = imgUri;
     }
 
     this.connectionStatus = this.feedService.getConnectionStatus();
@@ -160,7 +174,7 @@ export class ProfileimagePage implements OnInit {
   }
 
   openNft(that: any) {
-    that.native.navigateForward(['profilenftimage'], '');
+    that.native.navigateForward(['nftavatarlist'], '');
   }
 
   openGallery(that: any) {

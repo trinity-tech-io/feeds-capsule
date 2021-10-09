@@ -225,6 +225,10 @@ const routes: Routes = [
     path: 'select-ipfs-net',
     loadChildren: () => import('./pages/select-ipfs-net/select-ipfs-net.module').then( m => m.SelectIpfsNetPageModule)
   },
+  {
+    path: 'nftavatarlist',
+    loadChildren: () => import('./pages/nftavatarlist/nftavatarlist.module').then( m => m.NftavatarlistPageModule)
+  },
 ];
 
 @NgModule({

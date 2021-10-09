@@ -22,6 +22,7 @@ import { DataHelper } from './DataHelper';
 import { UtilService } from './utilService';
 import { Config } from './config';
 import { Logger } from './logger';
+import { IPFSService } from './ipfs.service';
 
 declare let didManager: DIDPlugin.DIDManager;
 
@@ -123,6 +124,7 @@ export class FeedService {
     private addFeedService: AddFeedService,
     private dataHelper: DataHelper,
     private intentService: IntentService, //public  theme:ThemeService
+    private ipfsService: IPFSService
   ) {
     eventBus = events;
     this.init();
@@ -4967,6 +4969,15 @@ export class FeedService {
     if (avatar == null || avatar == undefined) return '';
     if (avatar.startsWith('img://')) {
       let newAvatar = avatar.replace('img://', '');
+      return newAvatar;
+    }else if(avatar.startsWith('feeds:image:')){
+      let newAvatar = avatar.replace('feeds:image:', '');
+      newAvatar = this.ipfsService.getNFTGetUrl() + newAvatar;
+      return newAvatar;
+    }
+    else if(avatar.startsWith('feeds:imgage:')){
+      let newAvatar = avatar.replace('feeds:imgage:', '');
+      newAvatar = this.ipfsService.getNFTGetUrl() + newAvatar;
       return newAvatar;
     }
     return avatar;
