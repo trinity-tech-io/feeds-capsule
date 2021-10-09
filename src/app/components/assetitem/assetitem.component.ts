@@ -17,7 +17,7 @@ export class AssetitemComponent implements OnInit {
   @Output() clickAssetItem = new EventEmitter();
   @Output() clickMore = new EventEmitter();
   public styleObj: any = { width: '' };
-  public imgUri = './assets/feeds.png';
+  public imgUri = './assets/icon/reserve.svg';
   constructor(
     private nftContractControllerService: NFTContractControllerService,
     private viewHelper: ViewHelper,
