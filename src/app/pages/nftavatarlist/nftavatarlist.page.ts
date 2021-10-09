@@ -27,7 +27,7 @@ export class NftavatarlistPage implements OnInit {
   public isFinsh:any = [];
   public type:string = "";
   private maxCount:number = 0;
-  public isLoading:boolean = true;
+  public isLoading:boolean = false;
   constructor(
     private translate: TranslateService,
     private titleBarService: TitleBarService,
@@ -116,7 +116,19 @@ export class NftavatarlistPage implements OnInit {
     let nftCreatedCount = await this.nftContractControllerService
       .getSticker()
       .tokenCountOfOwner(accAddress);
+    let sellerInfo = await this.nftContractControllerService
+      .getPasar()
+      .getSellerByAddr(accAddress);
+    let orderCount = sellerInfo[3];
+    this.maxCount = parseInt(nftCreatedCount) + parseInt(orderCount);
+    if(this.maxCount === 0){
+      this.isLoading = false;
+      this.nftAvatarList = [];
+      this.hanleListCace(accAddress);
+      return;
+    }
     if (nftCreatedCount === '0') {
+      this.isLoading = false;
       this.nftAvatarList = [];
       this.hanleListCace(accAddress);
     } else {
@@ -212,6 +224,7 @@ export class NftavatarlistPage implements OnInit {
     let sellerAddr = sellerInfo[1];
     let orderCount = sellerInfo[3];
     if (orderCount === '0') {
+      this.isLoading = false;
     } else {
 
       let nftCreatedCount = await this.nftContractControllerService
