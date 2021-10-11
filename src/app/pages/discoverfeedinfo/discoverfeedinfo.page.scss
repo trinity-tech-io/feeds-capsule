@@ -169,6 +169,8 @@
             --border-radius: 10px;
             --box-shadow: none;
             --border-color: #7624fe;
+            --background:#7624fe;
+            --background-activated:#7624fe;
             ion-label {
               font-size: 14px;
               font-weight: bold;
@@ -198,7 +200,7 @@
 
         .subscribed{
             ion-label {
-            color:#7624fe !important;
+            color:#fff !important;
             }
         }
 
