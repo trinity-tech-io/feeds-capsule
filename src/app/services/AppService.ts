@@ -50,7 +50,7 @@ export class AppService {
     } else if (this.router.url === "/tabs/home" ||
                this.router.url === "/tabs/profile" ||
                this.router.url === "/tabs/notification" ||
-               this.router.url === "/tabs/notification" ||
+               this.router.url === "/tabs/search" ||
                this.router.url === "/signin" ||
                this.router.url === "/disclaimer" ) {
                navigator['app'].exitApp();

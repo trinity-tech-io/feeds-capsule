@@ -965,7 +965,8 @@ export class MintnftPage implements OnInit {
           image.onload = async ()=>{
           let width = image.width;
           let height = image.height;
-          if(width!=600 && height!=600){
+          if(width!=600 && height!=600 &&
+             width!=450 && height!=450){
             this.native.toastWarn("MintnftPage.fileTypeDes2");
             inputEvent.target.value = null;
             return false;
