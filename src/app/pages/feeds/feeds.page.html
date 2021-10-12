@@ -2,7 +2,7 @@
   <div class="tabs-line drak-line"> </div>
 
   <ion-tab-bar class="tabs-div" >
-    <ion-tab-button tab="home" (click)="home()">
+    <ion-tab-button tab="home" (click)="home('1')">
         <img class="home-tab" [ngClass]="{'home-tab-selected': currentTab == 'home'}">
         <div class="totalunread1" *ngIf="newPostCount>0"></div>
     </ion-tab-button>
