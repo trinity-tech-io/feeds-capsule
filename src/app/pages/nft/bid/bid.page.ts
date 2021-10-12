@@ -60,6 +60,7 @@ export class BidPage implements OnInit {
   public loadingMaxNumber:string = "1";
   public usdPrice:string = null;
   public imageType:string = "";
+  private creator: string = "";
   constructor(
     private translate: TranslateService,
     private event: Events,
@@ -89,6 +90,7 @@ export class BidPage implements OnInit {
       this.description = queryParams.description || '';
       this.quantity = queryParams.curQuantity || queryParams.quantity;
       this.tokenID = queryParams.tokenId || '';
+      this.creator = queryParams.creator || '';
       this.stickerContractAddress = this.nftContractControllerService
         .getSticker()
         .getStickerAddress();
@@ -432,8 +434,14 @@ export class BidPage implements OnInit {
   }
 
  async getCreatorAddress(){
+
+  if(this.creator!=""){
+  return  this.creator;
+  }
+
   let tokenInfo = await this.nftContractControllerService.getSticker().tokenInfo(this.tokenID);
   return tokenInfo[4];
+
   }
 
   async getMarketDate(){

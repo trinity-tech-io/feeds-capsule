@@ -29,6 +29,7 @@ export type ContractItem = {
   sellerAddr: string,
   createTime: number,
   saleStatus: string,
+  creator: string,
 }
 
 export type OpenOrderResult = {
@@ -40,7 +41,8 @@ export type OpenOrderResult = {
   sellerAddr: string,
   index: string,
   createTime: number,
-  royalties: string
+  royalties: string,
+  creator: string,
 }
 
 export type ChangedItem = {
@@ -133,6 +135,7 @@ export class NFTContractHelperService {
         let tokenInfo = await this.nftContractControllerService
           .getSticker()
           .tokenInfo(tokenId);
+        let creator = tokenInfo[4];//原创者
         let tokenUri = tokenInfo[3];
         let royalties = tokenInfo[5] || null;
         let createTime = Number.parseInt(tokenInfo[7]);
@@ -146,7 +149,8 @@ export class NFTContractHelperService {
           sellerAddr,
           index,
           createTime,
-          royalties
+          royalties,
+          creator,
         }
         resolve(result);
       } catch (err) {
@@ -182,7 +186,8 @@ export class NFTContractHelperService {
           thumbnail: thumbnail,
           sellerAddr: openOrderResult.sellerAddr,
           createTime: openOrderResult.createTime * 1000,
-          saleStatus: saleStatus
+          saleStatus: saleStatus,
+          creator: openOrderResult.creator
         }
         resolve(item);
       } catch (err) {

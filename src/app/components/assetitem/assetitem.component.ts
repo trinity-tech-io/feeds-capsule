@@ -32,8 +32,12 @@ export class AssetitemComponent implements OnInit {
   ngOnInit() {
     console.log("AssetitemComponent assetItem", this.assetItem);
     this.styleObj.width = (screen.width - 20 - 10) / 2 + 'px';
+    if(this.assetItem === null){
+        return;
+    }
     let fileName = "";
     let fetchUrl = "";
+
     let thumbnailUri = this.assetItem['thumbnail'];
     let kind = this.assetItem["kind"];
     if (kind === "gif") {

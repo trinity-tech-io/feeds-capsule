@@ -2173,10 +2173,10 @@ export class ProfilePage implements OnInit {
   }
 
   /**
-   * 
-   * @param orderInfo 
-   * @param tokenInfo 
-   * @param tokenJson 
+   *
+   * @param orderInfo
+   * @param tokenInfo
+   * @param tokenJson
    * @param moreMenuType "onSale"/"created"
    */
   createItem(orderInfo: FeedsData.OrderInfo, tokenInfo: FeedsData.TokenInfo,
@@ -2207,7 +2207,7 @@ export class ProfilePage implements OnInit {
     } else {
       tokenId = tokenInfo.tokenId;
 
-      sellerAddr = "";
+      sellerAddr = tokenInfo.royaltyOwner;
       curQuantity = 1;
       price = null;
       orderId = null;
@@ -2243,7 +2243,7 @@ export class ProfilePage implements OnInit {
       thumbnail: thumbnail,
       sellerAddr: sellerAddr,
       createTime: createTime,
-      moreMenuType: moreMenuType,
+      moreMenuType: moreMenuType
     };
   }
 

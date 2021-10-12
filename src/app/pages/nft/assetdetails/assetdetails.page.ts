@@ -64,6 +64,7 @@ export class AssetdetailsPage implements OnInit {
   public saleOrderId: string = null;
   public usdPrice: string = null;
   public imageType: string = "";
+  public ownerAddress: string = '';
   constructor(
     private translate: TranslateService,
     private events: Events,
@@ -103,7 +104,11 @@ export class AssetdetailsPage implements OnInit {
         .getPasarAddress();
       const kind = queryParams.kind || 'png';
       this.assetUri = this.handleImg(asset, kind);
-      this.creator = queryParams.creator || '';
+      this.creator = queryParams.creator || '';//原创者
+      this.ownerAddress = queryParams.sellerAddr || '';//所有者
+      if(this.ownerAddress === ""){
+        this.ownerAddress = this.nftContractControllerService.getAccountAddress();
+      }
       this.royalties = queryParams.royalties || null;
     });
   }
@@ -209,10 +214,10 @@ export class AssetdetailsPage implements OnInit {
       details: creatorAddress,
     });
 
-    if (this.creator != '') {
+    if (this.ownerAddress != '') {
       this.contractDetails.push({
         type: 'AssetdetailsPage.owner',
-        details: this.creator,
+        details: this.ownerAddress,
       });
     }
 
@@ -504,6 +509,9 @@ export class AssetdetailsPage implements OnInit {
 
 
   async getCreatorAddress(){
+    if(this.creator!=""){
+      return this.creator;
+    }
     let tokenInfo = await this.nftContractControllerService.getSticker().tokenInfo(this.tokenID);
     return tokenInfo[4];
   }

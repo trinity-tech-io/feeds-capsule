@@ -866,7 +866,7 @@ export class MintnftPage implements OnInit {
     switch (type) {
       case 'created':
         item = {
-          creator: accAddress,
+          creator: accAddress,//原创者
           tokenId: tokenId,
           asset: this.imageObj['imgHash'],
           name: this.nftName,
@@ -880,6 +880,7 @@ export class MintnftPage implements OnInit {
           thumbnail: this.imageObj['thumbnail'],
           createTime: createTime * 1000,
           moreMenuType: 'created',
+          sellerAddr: accAddress,//所有者
         };
         slist.push(item);
         break;
@@ -893,7 +894,7 @@ export class MintnftPage implements OnInit {
         let sellerAddr = order[7] || '';
         let saleOrderId = order[0];
         item = {
-          creator: accAddress,
+          creator: accAddress,//原创者
           saleOrderId: saleOrderId,
           tokenId: tokenId,
           asset: this.imageObj['imgHash'],
@@ -906,7 +907,7 @@ export class MintnftPage implements OnInit {
           quantity: this.nftQuantity,
           curQuantity: this.nftQuantity,
           thumbnail: this.imageObj['thumbnail'],
-          sellerAddr: sellerAddr,
+          sellerAddr: sellerAddr,//所有者
           createTime: createTime * 1000,
           moreMenuType: 'onSale',
         };

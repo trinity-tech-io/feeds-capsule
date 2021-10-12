@@ -300,6 +300,7 @@ async handleSaleList() {
           .getSticker()
           .tokenInfo(tokenId);
         let createTime = tokenInfo[7];
+        let creator =  tokenInfo[4];
         let sAssItem = _.cloneDeep(this.curAssItem);
 
         let order = await this.nftContractControllerService
@@ -308,7 +309,9 @@ async handleSaleList() {
         let orderId = order[0];
 
         this.orderId = orderId;
+
         sAssItem['sellerAddr'] = sellerAddress;
+        sAssItem['creator'] = creator;
         sAssItem['fixedAmount'] = salePrice;
         sAssItem['saleOrderId'] = orderId;
         sAssItem['createTime'] = createTime * 1000;

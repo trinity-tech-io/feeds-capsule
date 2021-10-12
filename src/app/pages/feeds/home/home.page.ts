@@ -1809,6 +1809,7 @@ export class HomePage implements OnInit {
       let tokenInfo = await this.nftContractControllerService
         .getSticker()
         .tokenInfo(tokenId);
+      let creator  = tokenInfo[4];//原创者
       let tokenUri = tokenInfo[3];
       let createTime = tokenInfo[7];
       let royalties = tokenInfo[5] || null;
@@ -1826,7 +1827,8 @@ export class HomePage implements OnInit {
           tokenNum,
           sellerAddr,
           createTime,
-          royalties
+          royalties,
+          creator
         );
         return;
       }
@@ -2029,6 +2031,8 @@ async  clickTab(type: string) {
     let tokenInfo = await this.nftContractControllerService
       .getSticker()
       .tokenInfo(tokenId);
+
+    let creator  = tokenInfo[4];//原创者
     let tokenUri = tokenInfo[3];
     let royalties = tokenInfo[5] || null;
     let createTime = tokenInfo[7];
@@ -2043,7 +2047,8 @@ async  clickTab(type: string) {
       index,
       createTime,
       royalties,
-      tIndex
+      tIndex,
+      creator
     );
   }
 
@@ -2055,7 +2060,8 @@ async  clickTab(type: string) {
     tokenNum: any,
     sellerAddr: any,
     createTime: any,
-    royalties: any
+    royalties: any,
+    creator: any
   ) {
     feedsUri = feedsUri.replace('feeds:json:', '');
     this.ipfsService
@@ -2082,6 +2088,7 @@ async  clickTab(type: string) {
           thumbnail: thumbnail,
           sellerAddr: sellerAddr,
           createTime: createTime * 1000,
+          creator:creator
         };
         item['showType'] = 'buy';
         Logger.log(TAG, 'Buy NFT ', item);
@@ -2100,7 +2107,8 @@ async  clickTab(type: string) {
     pIndex: any,
     createTime: any,
     royalties: any,
-    tIndex: any
+    tIndex: any,
+    creator:any
   ) {
     feedsUri = feedsUri.replace('feeds:json:', '');
     this.ipfsService
@@ -2128,6 +2136,7 @@ async  clickTab(type: string) {
           sellerAddr: sellerAddr,
           createTime: createTime * 1000,
           moreMenuType: 'onSale',
+          creator:creator
         };
         try {
           //this.pasarList.splice(pIndex, 1, item);
