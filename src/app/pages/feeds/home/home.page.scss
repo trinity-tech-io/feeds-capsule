@@ -77,3 +77,34 @@
   .contentTop{
    top:36px
   }
+
+  .pasarSpan{
+   display: inline-block;
+   width: 72px;
+   height: 30px;
+   line-height: 30px;
+   border-radius: 10px;
+   font-size: 13px;
+   font-weight: 700;
+   font-stretch: normal;
+   font-style: normal;
+   text-align: center;
+
+  }
+
+  .selectPasarSpan{
+   color:#7624fe;
+   border: 1px solid #7624fe;
+  }
+
+  .lightPasarSpan{
+   border: 1px solid #f5f4f8;
+   background-color: #fff;
+   color: #000;
+  }
+
+  .darkPasarSpan{
+   color: #cfd1f7;
+   border: 1px solid #2d2e4d;
+   background-color: #2d2e4d;
+  }
