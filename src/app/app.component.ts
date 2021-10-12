@@ -130,6 +130,7 @@ export class MyApp {
         this.initCurrentFeed();
         this.initDiscoverfeeds();
         this.initCollectibleSetting();
+        this.initCurSearchField();
         this.native.addNetworkListener(
           () => {
             this.events.publish(FeedsEvent.PublishType.networkStatusChanged, 1);
@@ -410,6 +411,19 @@ export class MyApp {
           return;
         }
         this.feedService.setCollectibleStatus(JSON.parse(collectibleSetting));
+      })
+      .catch(() => { });
+  }
+
+  initCurSearchField() {
+    this.feedService
+      .getData('feeds.pasar.curSearchField')
+      .then(curSearchField => {
+        if (curSearchField === null) {
+          this.feedService.setCurSearchField("name");
+          return;
+        }
+        this.feedService.setCurSearchField(curSearchField);
       })
       .catch(() => { });
   }
