@@ -78,11 +78,14 @@ export class FeedsPage implements OnInit {
     this.initTab();
   }
 
-  home() {
+  home(isClick?:string) {
     this.currentTab = 'home';
     this.title = 'FeedsPage.tabTitle1';
     this.feedService.setCurTab(this.currentTab);
-    this.event.publish(FeedsEvent.PublishType.clickHome);
+    isClick = isClick || "";
+    if(isClick!=""){
+      this.event.publish(FeedsEvent.PublishType.clickHome);
+    }
   }
 
   profile() {

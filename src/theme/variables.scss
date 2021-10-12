@@ -920,3 +920,37 @@ ion-header {
   height:100%;
   opacity: 0.2;
 }
+
+.search-home-container {
+  display: flex;
+  justify-content: center;
+  padding: 12px 0px 0px 0px;
+
+  ion-searchbar {
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    --icon-color:#7624fe;
+    .searchbar-input-container{
+      height: 36px;
+
+      .searchbar-input {
+        border-radius: 9px;
+        background-color: #f0f1ff;
+        font-size: 16px;
+        font-weight: 400;
+      }
+    }
+  }
+}
+
+.dark-search-home-container {
+  ion-searchbar {
+    .searchbar-input-container{
+      .searchbar-input {
+        color: #cfd1f7;
+        background-color: #2d2e4d;
+      }
+    }
+  }
+}

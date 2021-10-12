@@ -5,7 +5,20 @@
    (click)="clickTab('feeds')">{{'FeedsPage.tabTitle5'|translate}}</ion-col>
   <ion-col size="6" class="des"  [ngClass]="{'select-bottom':tabType==='pasar','select-color':tabType==='pasar','no-select-color':tabType!='pasar'}" (click)="clickTab('pasar')">{{'ExplorefeedsPage.pasar'|translate}}</ion-col>
 </ion-row>
-<ion-content style="top: 36px;" (ionScroll)="ionScroll()" [scrollEvents]="true">
+<ion-row *ngIf="tabType==='pasar'" style="margin-top:28px;">
+  <ion-col size="1">
+
+  </ion-col>
+  <ion-col size="10" class="search-home-container" [class.dark-search-home-container]="theme.darkMode">
+    <form action="javascript:return true;" style="display: flex;justify-content: center;width: 100%;">
+      <ion-searchbar #homePasarSearchBar  [(ngModel)]="searchText" inputmode=""  enterkeyhint="search" placeholder="{{ 'SearchPage.searchFeeds' | translate }}" (keyup)="getItems($event)" mode="ios" [ngModelOptions]="{standalone: true}" (ionClear)="ionClear()"></ion-searchbar>
+    </form>
+  </ion-col>
+  <ion-col size="1">
+
+  </ion-col>
+</ion-row>
+<ion-content [ngClass]="{'contentTop':tabType==='feeds'}" (ionScroll)="ionScroll()" [scrollEvents]="true">
   <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" pullFactor="0.5">
     <ion-refresher-content
       class="refresh"
@@ -212,7 +225,7 @@
  </div>
 
  <!--Pasar grid-->
-<div *ngIf="tabType==='pasar'&&styleType==='grid'" style="margin-top:12px;">
+<div *ngIf="tabType==='pasar'&&styleType==='grid'" style="margin-top:0px;">
   <ion-row class="leftrightrow">
     <ion-col size="6" *ngFor="let item of pasarList">
       <app-assetitem

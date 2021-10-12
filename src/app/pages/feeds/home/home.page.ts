@@ -10,6 +10,8 @@ import {
   ModalController,
   Platform,
   PopoverController,
+  IonInfiniteScroll,
+  IonRefresher
 } from '@ionic/angular';
 import { Events } from 'src/app/services/events.service';
 import { FeedService } from 'src/app/services/FeedService';
@@ -19,7 +21,6 @@ import { ThemeService } from 'src/app/services/theme.service';
 import { UtilService } from 'src/app/services/utilService';
 import { TranslateService } from '@ngx-translate/core';
 import { NativeService } from 'src/app/services/NativeService';
-import { IonInfiniteScroll } from '@ionic/angular';
 import { AppService } from 'src/app/services/AppService';
 import { ViewHelper } from 'src/app/services/viewhelper.service';
 import { PopupProvider } from 'src/app/services/popup';
@@ -47,7 +48,7 @@ export class HomePage implements OnInit {
   @ViewChild(IonContent, { static: true }) content: IonContent;
   @ViewChild(IonInfiniteScroll, { static: true })
   infiniteScroll: IonInfiniteScroll;
-
+  @ViewChild(IonRefresher,{static:false}) refresher: IonRefresher;
   myScrollContainer!: HTMLElement;
   private homeTittleBar: HTMLElement;
   private homeTab: HTMLElement;
@@ -147,6 +148,9 @@ export class HomePage implements OnInit {
   private pasarListCount: number = 0;
   private pasarListPage: number = 0;
   public elaPrice:string = null;
+
+  public searchText:string = "";
+  public searchPasar:any = [];
   constructor(
     private platform: Platform,
     private elmRef: ElementRef,
@@ -187,7 +191,7 @@ export class HomePage implements OnInit {
       this.infiniteScroll.disabled = true;
     }
     if (scrollToTop) {
-      this.scrollToTop(1);
+       this.scrollToTop(1);
     }
     this.isLoadimage = {};
     this.isLoadVideoiamge = {};
@@ -268,6 +272,8 @@ export class HomePage implements OnInit {
     this.pasarList = _.sortBy(this.pasarList, (item: any) => {
       return -Number(item.createTime);
     });
+    this.searchPasar = _.cloneDeep(this.pasarList);
+
     this.connectionStatus = this.feedService.getConnectionStatus();
     this.styleObj.width = screen.width - 105 + 'px';
     this.clientHeight = screen.availHeight;
@@ -316,11 +322,11 @@ export class HomePage implements OnInit {
     this.events.subscribe(FeedsEvent.PublishType.updateTab, isInit => {
       this.zone.run(() => {
         this.hideDeletedPosts = this.feedService.getHideDeletedPosts();
-        // if (isInit) {
-        //   this.initPostListData(true);
-        //   return;
-        // }
-        // this.refreshPostList();
+        if (isInit) {
+          this.initPostListData(true);
+          return;
+        }
+        this.refreshPostList();
       });
     });
 
@@ -348,12 +354,13 @@ export class HomePage implements OnInit {
 
     this.addBinaryEvevnt();
     this.events.subscribe(FeedsEvent.PublishType.addBinaryEvevnt, () => {
-      if (this.tabType === 'pasar') {
-        this.pasarList = this.nftPersistenceHelper.getPasarList();
-        this.pasarList = _.sortBy(this.pasarList, (item: any) => {
-          return -Number(item.createTime);
-        });
-      }
+      // if (this.tabType === 'pasar') {
+      //   this.pasarList = this.nftPersistenceHelper.getPasarList();
+      //   this.pasarList = _.sortBy(this.pasarList, (item: any) => {
+      //     return -Number(item.createTime);
+      //   });
+      //   this.searchPasar = _.cloneDeep(this.pasarList);
+      // }
       this.addCommonEvents();
       this.addBinaryEvevnt();
     });
@@ -928,6 +935,7 @@ export class HomePage implements OnInit {
         this.loadMoreData().then((list) => {
           this.pasarList = _.concat(this.pasarList, list);
           this.pasarList = this.nftContractHelperService.sortData(this.pasarList, SortType.CREATE_TIME);
+          this.searchPasar = _.cloneDeep(this.pasarList);
           this.nftPersistenceHelper.setPasarList(this.pasarList);
           event.target.complete();
         })
@@ -1841,10 +1849,13 @@ async  clickTab(type: string) {
     this.doRefreshCancel();
     switch (type) {
       case 'feeds':
-        this.infiniteScroll.disabled = false;
+        this.searchText = '';
+        this.pasarList = _.cloneDeep(this.searchPasar);
+        this.handleRefresherInfinite(false);
         this.refreshPostList();
         break;
       case 'pasar':
+        this.handleRefresherInfinite(false);
         this.elaPrice = this.feedService.getElaUsdPrice();
         this.infiniteScroll.disabled = false;
         let value =
@@ -1892,6 +1903,7 @@ async  clickTab(type: string) {
         this.pasarList = _.sortBy(this.pasarList, (item: any) => {
           return -Number(item.createTime);
         });
+        this.searchPasar = _.cloneDeep(this.pasarList);
         break;
     }
   }
@@ -2121,6 +2133,7 @@ async  clickTab(type: string) {
               return -Number(item.createTime);
             });
             this.nftPersistenceHelper.setPasarList(this.pasarList);
+            this.searchPasar = _.cloneDeep(this.pasarList);
           }
 
         } catch (err) {
@@ -2136,6 +2149,7 @@ async  clickTab(type: string) {
   clickAssetItem(assetitem: any) {
     assetitem['showType'] = 'buy';
     Logger.log(TAG, 'Click asset item', assetitem);
+    this.clearData();
     this.native.navigateForward(['bid'], { queryParams: assetitem });
   }
 
@@ -2227,6 +2241,7 @@ async  clickTab(type: string) {
       );
     });
     this.pasarList = pList;
+    this.searchPasar = _.cloneDeep(this.pasarList);
     this.nftPersistenceHelper.setPasarList(pList);
  }
 
@@ -2301,6 +2316,47 @@ handelIosScroll(ponit:any){
     this.homeTittleBar.style.display = "block";
     this.homeTab.setAttribute("style","top:36px;height:34px;");
   }
+}
+
+ionClear(){
+  this.searchText = '';
+  this.handleRefresherInfinite(false);
+  this.pasarList = _.cloneDeep(this.searchPasar);
+}
+
+getItems(events: any){
+  this.searchText = events.target.value || '';
+  if (
+    (events && events.keyCode === 13) ||
+    (events.keyCode === 8 && this.searchText === '')
+  ) {
+     if(this.searchText === ""){
+       this.handleRefresherInfinite(false);
+       this.pasarList = _.cloneDeep(this.searchPasar);
+       return;
+     }
+     this.handleRefresherInfinite(true);
+     this.handlePasarSearch();
+
+  }
+}
+
+handlePasarSearch(){
+
+  // this.pasarList = _.filter(this.searchPasar,(pasarItem)=>{
+  //         return this.searchText ===  pasarItem.tokenId;
+  // });
+
+  this.pasarList = _.filter(this.searchPasar,(pasarItem)=>{
+      return pasarItem.name.toLowerCase().indexOf(this.searchText.toLowerCase())>-1;
+  });
+
+
+}
+
+handleRefresherInfinite(isOpen:boolean){
+  this.refresher.disabled = isOpen;
+  this.infiniteScroll.disabled = isOpen;
 }
 
 }
