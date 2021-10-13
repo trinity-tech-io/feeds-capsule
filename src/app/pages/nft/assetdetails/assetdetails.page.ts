@@ -220,10 +220,10 @@ export class AssetdetailsPage implements OnInit {
         details: this.ownerAddress,
       });
     }
-
+    let tokenID = '0x'+UtilService.dec2hex(this.tokenID);
     this.contractDetails.push({
       type: 'AssetdetailsPage.tokenID',
-      details: this.tokenID,
+      details: tokenID,
     });
 
     if(this.royalties!=null){

@@ -277,10 +277,7 @@ export class EditPostPage implements OnInit {
   }
 
   post() {
-    if (this.feedService.getServerStatusFromId(this.nodeId) != 0) {
-      this.native.toast_trans('common.connectionError1');
-      return;
-    }
+  
 
     if (this.checkServerStatus(this.nodeId) != 0) {
       this.native.toastWarn('common.connectionError');
