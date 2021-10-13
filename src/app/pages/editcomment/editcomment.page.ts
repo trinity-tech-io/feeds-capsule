@@ -144,13 +144,14 @@ export class EditCommentPage implements OnInit {
   }
 
   publishComment() {
-    if (this.feedService.getServerStatusFromId(this.nodeId) != 0) {
-      this.native.toast_trans('common.connectionError');
+
+    if (this.feedService.getConnectionStatus() !== 0) {
+      this.native.toastWarn('common.connectionError');
       return;
     }
 
-    if (this.checkServerStatus(this.nodeId) != 0) {
-      this.native.toastWarn('common.connectionError1');
+    if (this.feedService.getServerStatusFromId(this.nodeId) != 0) {
+      this.native.toast_trans('common.connectionError1');
       return;
     }
 
