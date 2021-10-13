@@ -154,6 +154,7 @@ export class HomePage implements OnInit {
   public curSearchField: string = "name";
   public isShowSearchField: boolean = false;
   public pasarsearchPlaceholder: string = "";
+  private searchBeforePasar: any = [];
   constructor(
     private platform: Platform,
     private elmRef: ElementRef,
@@ -280,9 +281,11 @@ export class HomePage implements OnInit {
     this.connectionStatus = this.feedService.getConnectionStatus();
     this.styleObj.width = screen.width - 105 + 'px';
     this.clientHeight = screen.availHeight;
-    this.initPostListData(true);
-    this.refreshImage(0);
-    this.initnodeStatus(this.postList);
+    console.log("=======this.startIndex========="+this.startIndex);
+    //this.initPostListData(false);
+    this.refreshPostList();
+    // this.refreshImage(0);
+    // this.initnodeStatus(this.postList);
 
 
 
@@ -934,6 +937,7 @@ export class HomePage implements OnInit {
         }, 500);
         break;
       case 'pasar':
+        this.scrollToTop(1);
         this.elaPrice = this.feedService.getElaUsdPrice();
         this.loadMoreData().then((list) => {
           this.pasarList = _.concat(this.pasarList, list);
@@ -1854,16 +1858,18 @@ async  clickTab(type: string) {
     this.doRefreshCancel();
     switch (type) {
       case 'feeds':
+        this.content.scrollToTop(0);
         this.searchText = '';
-        if(this.searchPasar.length>0){
-          this.pasarList = _.cloneDeep(this.searchPasar);
-          this.searchPasar = [];
+        if(this.searchBeforePasar.length>0){
+          this.pasarList = _.cloneDeep(this.searchBeforePasar);
+          this.searchBeforePasar = [];
         }
         this.handleRefresherInfinite(false);
         this.isShowSearchField = false;
         this.refreshPostList();
         break;
       case 'pasar':
+        await this.content.scrollToTop(0);
         this.curSearchField = this.feedService.getCurSearchField();
         this.handlePlaceholder(this.curSearchField);
         this.handleRefresherInfinite(false);
@@ -2307,6 +2313,7 @@ switch(dialogbutton){
 handleScroll(){
 
   this.content.getScrollElement().then((ponit:any)=>{
+
     if(this.isAndroid){
        this.handelAndroidScroll(ponit);
     }else{
@@ -2317,6 +2324,7 @@ handleScroll(){
 }
 
 handelAndroidScroll(ponit:any){
+
   if(ponit.scrollTop>0){
     this.homeTittleBar.style.display = "none";
     this.homeTab.setAttribute("style","top:0px;height:45px;line-height:37px;");
@@ -2340,14 +2348,15 @@ ionClear(){
   this.searchText = '';
   this.isShowSearchField = true;
   this.handleRefresherInfinite(false);
-  if(this.searchPasar.length>0){
-    this.pasarList = _.cloneDeep(this.searchPasar);
-    this.searchPasar = [];
+  if(this.searchBeforePasar.length>0){
+    this.pasarList = _.cloneDeep(this.searchBeforePasar);
+    this.searchBeforePasar = [];
   }
 }
 
 getItems(events: any){
   this.searchText = events.target.value || '';
+  this.searchBeforePasar = _.cloneDeep(this.pasarList);
   let searchPasar = this.nftPersistenceHelper.getPasarList();
   this.searchPasar = _.cloneDeep(searchPasar);
 
@@ -2357,9 +2366,9 @@ getItems(events: any){
   ) {
      if(this.searchText === ""){
        this.handleRefresherInfinite(false);
-       if(this.searchPasar.length>0){
-        this.pasarList = _.cloneDeep(this.searchPasar);
-        this.searchPasar = [];
+       if(this.searchBeforePasar.length>0){
+        this.pasarList = _.cloneDeep(this.searchBeforePasar);
+        this.searchBeforePasar = [];
        }
        return;
      }
@@ -2394,7 +2403,8 @@ handlePasarSearch(){
 
   if(this.curSearchField === "tokenID"){
     this.pasarList = _.filter(this.searchPasar,(pasarItem)=>{
-      return this.searchText ===  pasarItem.tokenId;
+      let tokenID = '0x'+UtilService.dec2hex(pasarItem.tokenId);
+      return this.searchText ===  tokenID || this.searchText === pasarItem.tokenId;
   });
     return;
   }
@@ -2433,9 +2443,9 @@ handlePlaceholder(searchField:string){
 clickfilterCircle(){
   this.isShowSearchField = !this.isShowSearchField;
   this.searchText = "";
-  if(this.searchPasar.length>0){
-    this.pasarList = _.cloneDeep(this.searchPasar);
-    this.searchPasar = [];
+  if(this.searchBeforePasar.length>0){
+    this.pasarList = _.cloneDeep(this.searchBeforePasar);
+    this.searchBeforePasar = [];
   }
   this.handleRefresherInfinite(false);
 }
