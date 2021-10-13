@@ -110,7 +110,7 @@ export class EditserverinfoPage implements OnInit {
     }
 
     if (this.feedService.getServerStatusFromId(this.nodeId) != 0) {
-      this.native.toastWarn('common.connectionError');
+      this.native.toastWarn('common.connectionError1');
       return;
     }
 
