@@ -30,6 +30,11 @@ export class EidtchannelPage implements OnInit {
   public oldChannelInfo: any = {};
   public oldChannelAvatar: string = '';
   public isPublic: string = '';
+  private channelOwner: string = "";
+  private channelSubscribes: number = null;
+  private followStatus: boolean = false;
+  private isClickConfirm: boolean = false;
+
   constructor(
     private feedService: FeedService,
     public activatedRoute: ActivatedRoute,
@@ -51,6 +56,9 @@ export class EidtchannelPage implements OnInit {
     this.channelId = channelInfo['channelId'] || '';
     this.name = channelInfo['name'] || '';
     this.des = channelInfo['des'] || '';
+    this.channelOwner = channelInfo['channelOwner'] || '';
+    this.channelSubscribes = channelInfo['channelSubscribes'] || '';
+    this.followStatus = channelInfo['followStatus'] || false;
     this.oldChannelAvatar = this.feedService.getProfileIamge();
   }
 
@@ -100,6 +108,9 @@ export class EidtchannelPage implements OnInit {
     if (value != '') {
       this.popoverController.dismiss();
     }
+    if(!this.isClickConfirm){
+     this.feedService.setProfileIamge(this.oldChannelAvatar);
+    }
     this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
     this.events.unsubscribe(FeedsEvent.PublishType.editFeedInfoFinish);
     this.events.unsubscribe(FeedsEvent.PublishType.rpcRequestError);
@@ -113,11 +124,15 @@ export class EidtchannelPage implements OnInit {
       channelId: this.channelId,
       name: this.name,
       des: this.des,
+      channelOwner: this.channelOwner,
+      channelSubscribes: this.channelSubscribes,
+      followStatus: this.followStatus
     });
     this.native.navigateForward(['/profileimage'], '');
   }
 
   cancel() {
+    this.isClickConfirm = false;
     this.native.pop();
   }
 
@@ -128,9 +143,11 @@ export class EidtchannelPage implements OnInit {
     }
 
     if (this.feedService.getServerStatusFromId(this.nodeId) != 0) {
-      this.native.toastWarn('common.connectionError');
+      this.native.toastWarn('common.connectionError1');
       return;
     }
+
+    this.isClickConfirm = true;
 
     if (this.checkparms()) {
       this.native
