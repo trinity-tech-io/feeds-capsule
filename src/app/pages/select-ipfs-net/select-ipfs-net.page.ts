@@ -70,6 +70,7 @@ export class SelectIpfsNetPage implements OnInit {
 
   selectIpfs(selectedIpfsNetwork: any) {
     this.selectedIpfsNetwork = selectedIpfsNetwork.key;
+    localStorage.setItem("selectedIpfsNetwork",this.selectedIpfsNetwork);
     ApiUrl.setIpfs(selectedIpfsNetwork.key)
     this.globalService.refreshBaseNFTIPSFUrl();
     this.initTitle();
