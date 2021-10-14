@@ -46,6 +46,7 @@ declare namespace FeedsData {
     TextImageChange,
     TextVideoChange,
   }
+
   const enum SessionError {
     UnknownError = -101,
     UnimplementedError = -102,
@@ -93,10 +94,12 @@ declare namespace FeedsData {
     SESSION_REQUEST_ERROR = -313,
     SESSION_START_ERROR = -314,
   }
+
   const enum TransDataChannel {
     MESSAGE,
     SESSION,
   }
+
   const enum StreamState {
     NOTINIT = -1,
     /** Raw stream. */
@@ -118,6 +121,12 @@ declare namespace FeedsData {
     UNKNOW = 8,
   }
 
+  const enum OrderState {
+    NONE,
+    SALEING,
+    SOLD,
+    CANCELED
+  }
   type StandardAuthResult = {
     jwtToken: string;
     serverName: string;
@@ -591,7 +600,7 @@ declare namespace FeedsData {
     tokenJson: TokenJson;
   }
 
-  type CollectibleItem = {
+  type NFTItem = {
     creator: string,
     saleOrderId: number,
     tokenId: number,
@@ -608,5 +617,31 @@ declare namespace FeedsData {
     sellerAddr: string,
     createTime: number,
     moreMenuType: string,
+    showType: string;
+  }
+
+  // type NFTItem = {
+  //   creator: string;
+  //   saleOrderId: number;
+  //   tokenId: number;
+  //   asset: string;
+  //   name: string;
+  //   description: string;
+  //   fixedAmount: number;
+  //   kind: number;
+  //   type: string;
+  //   royalties: number;
+  //   quantity: number;
+  //   curQuantity: number,
+  //   thumbnail: string;
+  //   sellerAddr: string;
+  //   createTime: number;
+  //   moreMenuType: string;
+  //   showType: string;
+  // }
+
+  type TokenIdAndTokenJson = {
+    tokenId: number;
+    tokenJson: TokenJson;
   }
 }

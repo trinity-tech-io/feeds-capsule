@@ -49,7 +49,7 @@ export class HomePage implements OnInit {
   @ViewChild(IonContent, { static: true }) content: IonContent;
   @ViewChild(IonInfiniteScroll, { static: true })
   infiniteScroll: IonInfiniteScroll;
-  @ViewChild(IonRefresher,{static:false}) refresher: IonRefresher;
+  @ViewChild(IonRefresher, { static: false }) refresher: IonRefresher;
   myScrollContainer!: HTMLElement;
   private homeTittleBar: HTMLElement;
   private homeTab: HTMLElement;
@@ -132,17 +132,17 @@ export class HomePage implements OnInit {
 
   public tabType: string = 'feeds';
 
-  public pasarList: any = [];
+  public pasarList: FeedsData.NFTItem[] = [];
 
   public isFinsh: any = [];
 
   public refreshEvent: any = null;
 
-  public isLoading:boolean = false;
-  public loadingTitle:string = "";
-  public loadingText:string = "";
-  public loadingCurNumber:string = "";
-  public loadingMaxNumber:string = "";
+  public isLoading: boolean = false;
+  public loadingTitle: string = "";
+  public loadingText: string = "";
+  public loadingCurNumber: string = "";
+  public loadingMaxNumber: string = "";
   /** grid  list*/
   public styleType: string = "grid";
 
@@ -198,7 +198,7 @@ export class HomePage implements OnInit {
       this.infiniteScroll.disabled = true;
     }
     if (scrollToTop) {
-       this.scrollToTop(1);
+      this.scrollToTop(1);
     }
     this.isLoadimage = {};
     this.isLoadVideoiamge = {};
@@ -249,30 +249,30 @@ export class HomePage implements OnInit {
     });
   }
 
-  getElaUsdPrice(){
-    this.httpService.getElaPrice().then((elaPrice:any)=>{
-      if(elaPrice != null){
-         this.elaPrice = elaPrice;
+  getElaUsdPrice() {
+    this.httpService.getElaPrice().then((elaPrice: any) => {
+      if (elaPrice != null) {
+        this.elaPrice = elaPrice;
       }
     });
   }
 
-  getCurPasarListPage(){
-    let pasarListLen:any = this.pasarList.length;
-    let len1 = pasarListLen/8;
+  getCurPasarListPage() {
+    let pasarListLen: any = this.pasarList.length;
+    let len1 = pasarListLen / 8;
     let len2 = parseInt(len1.toString())
-     if(len1 > len2){
-       this.pasarListPage = len2+1;
-     }else{
-       this.pasarListPage = len2;
-     }
+    if (len1 > len2) {
+      this.pasarListPage = len2 + 1;
+    } else {
+      this.pasarListPage = len2;
+    }
   }
 
   ionViewWillEnter() {
 
-  this.homeTittleBar = this.elmRef.nativeElement.querySelector("#homeTittleBar");
-  this.homeTab = this.elmRef.nativeElement.querySelector("#homeTab");
-  this.elaPrice = this.feedService.getElaUsdPrice();
+    this.homeTittleBar = this.elmRef.nativeElement.querySelector("#homeTittleBar");
+    this.homeTab = this.elmRef.nativeElement.querySelector("#homeTab");
+    this.elaPrice = this.feedService.getElaUsdPrice();
     if (this.platform.is('ios')) {
       this.isAndroid = false;
     }
@@ -280,10 +280,10 @@ export class HomePage implements OnInit {
     this.handleScroll();
 
     let pasarListGrid = this.feedService.getPasarListGrid();
-    if(!pasarListGrid){
-       this.styleType = "grid";
-    }else{
-       this.styleType = "list";
+    if (!pasarListGrid) {
+      this.styleType = "grid";
+    } else {
+      this.styleType = "list";
     }
 
 
@@ -366,13 +366,13 @@ export class HomePage implements OnInit {
       });
     });
 
-    this.events.subscribe(FeedsEvent.PublishType.pasarListGrid,()=>{
-       let pasarListGrid = this.feedService.getPasarListGrid();
-       if(!pasarListGrid){
-          this.styleType = "grid";
-       }else{
-          this.styleType = "list";
-       }
+    this.events.subscribe(FeedsEvent.PublishType.pasarListGrid, () => {
+      let pasarListGrid = this.feedService.getPasarListGrid();
+      if (!pasarListGrid) {
+        this.styleType = "grid";
+      } else {
+        this.styleType = "list";
+      }
     });
 
     this.addCommonEvents();
@@ -394,14 +394,14 @@ export class HomePage implements OnInit {
   addCommonEvents() {
     this.events.subscribe(FeedsEvent.PublishType.clickHome, () => {
       let newPostCount = this.dataHelper.getNewPostCount() || 0;
-      this.content.getScrollElement().then((ponit:any)=>{
-            if(ponit.scrollTop>110 || newPostCount>0){
-              this.initPostListData(true);
-            }
+      this.content.getScrollElement().then((ponit: any) => {
+        if (ponit.scrollTop > 110 || newPostCount > 0) {
+          this.initPostListData(true);
+        }
       });
     });
 
-    this.events.subscribe(FeedsEvent.PublishType.nftdisclaimer,()=>{
+    this.events.subscribe(FeedsEvent.PublishType.nftdisclaimer, () => {
       let accAdress = this.nftContractControllerService.getAccountAddress() || "";
       if (accAdress === "") {
         this.connectWallet();
@@ -410,16 +410,16 @@ export class HomePage implements OnInit {
       this.native.navigateForward(['mintnft'], {});
     });
 
-    this.events.subscribe(FeedsEvent.PublishType.clickDialog,(dialogData:any)=>{
+    this.events.subscribe(FeedsEvent.PublishType.clickDialog, (dialogData: any) => {
       let pageName = dialogData.pageName;
       let dialogName = dialogData.dialogName;
       let dialogbutton = dialogData.clickButton;
-      if(pageName === "home"){
-        this.handleDialog(dialogName,dialogbutton,pageName);
+      if (pageName === "home") {
+        this.handleDialog(dialogName, dialogbutton, pageName);
       }
     });
 
-    this.events.subscribe(FeedsEvent.PublishType.startLoading,(obj)=>{
+    this.events.subscribe(FeedsEvent.PublishType.startLoading, (obj) => {
       let title = obj["title"];
       let des = obj["des"];
       let curNum = obj["curNum"];
@@ -431,17 +431,17 @@ export class HomePage implements OnInit {
       this.isLoading = true;
     });
 
-   this.events.subscribe(FeedsEvent.PublishType.endLoading,(obj)=>{
-   this.isLoading = false;
-   });
+    this.events.subscribe(FeedsEvent.PublishType.endLoading, (obj) => {
+      this.isLoading = false;
+    });
 
-    this.events.subscribe(FeedsEvent.PublishType.nftCancelOrder,async assetItem => {
+    this.events.subscribe(FeedsEvent.PublishType.nftCancelOrder, async assetItem => {
 
       let saleOrderId = assetItem.saleOrderId;
       let sellerAddr = assetItem.sellerAddr;
       let tokenId = assetItem.tokenId;
       let curTokenNum = await this.nftContractControllerService
-                            .getSticker().balanceOf(tokenId);
+        .getSticker().balanceOf(tokenId);
       let createAddr = this.nftContractControllerService.getAccountAddress();
       if (sellerAddr === createAddr) {
         //add created
@@ -450,7 +450,7 @@ export class HomePage implements OnInit {
         //add OwnNftCollectiblesList
         let createAddr = this.nftContractControllerService.getAccountAddress();
         let clist = this.nftPersistenceHelper.getCollectiblesList(createAddr);
-        this.handleCancelOrder(tokenId,curTokenNum,assetItem,createAddr,saleOrderId,clist,sellerAddr);
+        this.handleCancelOrder(tokenId, curTokenNum, assetItem, createAddr, saleOrderId, clist, sellerAddr);
       }
     });
     this.events.subscribe(FeedsEvent.PublishType.updateTitle, () => {
@@ -1265,11 +1265,12 @@ export class HomePage implements OnInit {
           let priceDes = '';
           let nftQuantity = '';
           if (nftOrdeId != '') {
-            let nftOrder = await this.handlePrice(nftOrdeId);
+            // let nftOrder = await this.handlePrice(nftOrdeId);
+            let nftOrder = await this.nftContractHelperService.getOrderInfo(nftOrdeId);
             let price = '';
             if (nftOrder != null) {
-              nftQuantity = nftOrder[4];
-              price = nftOrder[5];
+              nftQuantity = String(nftOrder.amount);
+              price = String(nftOrder.price);
             }
             if (price != '') {
               priceDes =
@@ -1328,36 +1329,36 @@ export class HomePage implements OnInit {
 
                 rpostimg.style.display = 'block';
               } else {
-                this.feedService.getData(thumbkey).then((thumbImagedata) =>{
-                    let thumbImage = thumbImagedata || "";
-                    if(thumbImage!= ''){
-                      this.isLoadimage[id] = '13';
-                      postImage.setAttribute('src', thumbImagedata);
-                      if (nftOrdeId != '' && priceDes != '') {
-                        let imagesWidth = postImage.clientWidth;
-                        let homebidfeedslogo = document.getElementById(
-                          id + 'homebidfeedslogo',
-                        );
-                        homebidfeedslogo.style.left = (imagesWidth - 90) / 2 + 'px';
-                        homebidfeedslogo.style.display = 'block';
+                this.feedService.getData(thumbkey).then((thumbImagedata) => {
+                  let thumbImage = thumbImagedata || "";
+                  if (thumbImage != '') {
+                    this.isLoadimage[id] = '13';
+                    postImage.setAttribute('src', thumbImagedata);
+                    if (nftOrdeId != '' && priceDes != '') {
+                      let imagesWidth = postImage.clientWidth;
+                      let homebidfeedslogo = document.getElementById(
+                        id + 'homebidfeedslogo',
+                      );
+                      homebidfeedslogo.style.left = (imagesWidth - 90) / 2 + 'px';
+                      homebidfeedslogo.style.display = 'block';
 
-                        let homebuy = document.getElementById(id + 'homebuy');
-                        let homeNftPrice = document.getElementById(
-                          id + 'homeNftPrice',
-                        );
-                        let homeNftQuantity = document.getElementById(
-                          id + 'homeNftQuantity',
-                        );
-                        homeNftPrice.innerText = priceDes;
-                        homeNftQuantity.innerText = nftQuantity;
-                        homebuy.style.display = 'block';
-                      }
-                      rpostimg.style.display = 'block';
-                    }else{
-                      this.isLoadimage[id] = '12';
-                      rpostimg.style.display = 'none';
+                      let homebuy = document.getElementById(id + 'homebuy');
+                      let homeNftPrice = document.getElementById(
+                        id + 'homeNftPrice',
+                      );
+                      let homeNftQuantity = document.getElementById(
+                        id + 'homeNftQuantity',
+                      );
+                      homeNftPrice.innerText = priceDes;
+                      homeNftQuantity.innerText = nftQuantity;
+                      homebuy.style.display = 'block';
                     }
-                }).catch(()=>{
+                    rpostimg.style.display = 'block';
+                  } else {
+                    this.isLoadimage[id] = '12';
+                    rpostimg.style.display = 'none';
+                  }
+                }).catch(() => {
                   rpostimg.style.display = 'none';
                 })
               }
@@ -1468,9 +1469,9 @@ export class HomePage implements OnInit {
   ionScroll() {
 
     this.native.throttle(this.handleScroll(),
-    200,
-    this,
-    true);
+      200,
+      this,
+      true);
 
     this.native.throttle(
       this.setVisibleareaImage(this.postgridindex),
@@ -1731,9 +1732,9 @@ export class HomePage implements OnInit {
       let nodeId = arrKey[0];
       let channelId = arrKey[1];
       let postId = arrKey[2];
-      let id = nodeId+"-"+channelId+"-"+postId;
+      let id = nodeId + "-" + channelId + "-" + postId;
       let postImage = document.getElementById(id + 'postimg') || null;
-      if(postImage!=null){
+      if (postImage != null) {
         postImage.setAttribute('src', value);
       }
       let post =
@@ -1849,72 +1850,53 @@ export class HomePage implements OnInit {
     this.native
       .showLoading('common.waitMoment')
       .then(() => {
-        this.handleBuy(post);
+        return this.handleBuy(post);
+      })
+      .then(() => {
+        this.native.hideLoading();
       })
       .catch(() => {
         this.native.hideLoading();
       });
   }
 
-  async handleBuy(post: any) {
-    let nftOrderId = post.content.nftOrderId || '';
-    if (nftOrderId != '') {
-      let order = await this.nftContractControllerService
-        .getPasar()
-        .getOrderById(nftOrderId);
-      let tokenId = order[3];
-      let tokenNum = order[4];
-      let tokenInfo = await this.nftContractControllerService
-        .getSticker()
-        .tokenInfo(tokenId);
-      let creator  = tokenInfo[4];//原创者
-      let tokenUri = tokenInfo[3];
-      let createTime = tokenInfo[7];
-      let royalties = tokenInfo[5] || null;
-      let price = order[5];
-      let saleOrderId = order[0];
-      let orderState = order[2];
-      let sellerAddr = order[7] || '';
-      if (orderState === '1') {
-        this.native.hideLoading();
-        this.handleBuyNft(
-          tokenUri,
-          tokenId,
-          saleOrderId,
-          price,
-          tokenNum,
-          sellerAddr,
-          createTime,
-          royalties,
-          creator
-        );
-        return;
+  async handleBuy(post: any): Promise<FeedsData.OrderState> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let nftOrderId = post.content.nftOrderId || '';
+        const orderInfo = await this.nftContractHelperService.getOrderInfo(nftOrderId);
+        const orderState = orderInfo.orderState;
+        switch (orderState) {
+          case FeedsData.OrderState.SALEING:
+            await this.handleBuyNft(orderInfo);
+            resolve(FeedsData.OrderState.SALEING);
+            break;
+          case FeedsData.OrderState.SOLD:
+            this.native.toast_trans('common.sold');
+            resolve(FeedsData.OrderState.SOLD);
+            break;
+          case FeedsData.OrderState.CANCELED:
+            this.native.toast_trans('common.offTheShelf');
+            resolve(FeedsData.OrderState.CANCELED);
+            break;
+          default:
+            break;
+        }
+      } catch (error) {
+        Logger.error('Handle buy error', error);
+        resolve(error);
       }
-
-      if (orderState === '2') {
-        this.native.hideLoading();
-        this.native.toast_trans('common.sold');
-        return;
-      }
-
-      if (orderState === '3') {
-        this.native.hideLoading();
-        this.native.toast_trans('common.offTheShelf');
-        return;
-      } else {
-        this.native.hideLoading();
-      }
-    }
+    });
   }
 
-async  clickTab(type: string) {
+  async clickTab(type: string) {
     this.tabType = type;
     this.doRefreshCancel();
     switch (type) {
       case 'feeds':
         this.content.scrollToTop(0);
         this.searchText = '';
-        if(this.searchBeforePasar.length>0){
+        if (this.searchBeforePasar.length > 0) {
           this.pasarList = _.cloneDeep(this.searchBeforePasar);
           this.searchBeforePasar = [];
         }
@@ -1964,10 +1946,10 @@ async  clickTab(type: string) {
         if (plist.length === 0) {
           this.getPaserList();
           return;
-        }else{
+        } else {
           let openOrderCount = await this.nftContractControllerService
-          .getPasar()
-          .getOpenOrderCount();
+            .getPasar()
+            .getOpenOrderCount();
           this.pasarListCount = parseInt(openOrderCount);
         }
         this.pasarList = plist;
@@ -1987,8 +1969,8 @@ async  clickTab(type: string) {
 
     let bindingServer = this.feedService.getBindingServer();
     if (bindingServer == null || bindingServer == undefined) {
-        //this.native.navigateForward(['bindservice/learnpublisheraccount'], '');
-        this.viewHelper.showPublisherDialog("home");
+      //this.native.navigateForward(['bindservice/learnpublisheraccount'], '');
+      this.viewHelper.showPublisherDialog("home");
       return;
     }
 
@@ -2029,7 +2011,7 @@ async  clickTab(type: string) {
 
   createNft() {
     let nftFirstdisclaimer = this.feedService.getNftFirstdisclaimer() || "";
-    if(nftFirstdisclaimer === ""){
+    if (nftFirstdisclaimer === "") {
       this.viewHelper.showNftdisclaimerPrompt();
       return;
     }
@@ -2051,177 +2033,72 @@ async  clickTab(type: string) {
     let openOrderCount = await this.nftContractControllerService
       .getPasar()
       .getOpenOrderCount();
-    if (openOrderCount === '0') {
-    } else {
-      this.pasarListCount = parseInt(openOrderCount);
-      let maxNum = parseInt(openOrderCount);
-      for (let index = 0; index<8;index++) {
-        this.pasarList.push(null);
-      }
-      // for (let pIndex = openOrderCount - 1; pIndex >= 0; pIndex--) {
-      //   this.getOpenOrderByIndex(pIndex);
-      // }
-      let pIndex = maxNum - 8;
-      let tindex = 0;
-      let sid = setInterval(()=>{
-         if(pIndex<maxNum){
-           try{
-            this.getOpenOrderByIndex(pIndex,tindex);
-            tindex++;
-            pIndex++;
-           }catch(err){
-            tindex++;
-            pIndex++;
-           }
-         }else{
-          clearInterval(sid);
-         }
-      },10);
+
+    if (openOrderCount === '0')
+      return
+
+    this.pasarListCount = parseInt(openOrderCount);
+    let maxNum = parseInt(openOrderCount);
+
+    for (let index = this.pasarListCount - 1; index > (this.pasarListCount - 8); index--) {
+      const item: FeedsData.NFTItem = await this.getOpenOrderByIndex(index);
+      this.pasarList.push(item);
+      this.pasarList = this.nftContractHelperService.sortData(this.pasarList, SortType.CREATE_TIME);
     }
+
+    this.nftPersistenceHelper.setPasarList(this.pasarList);
+    // for (let index = 0; index<8;index++) {
+    //   this.pasarList.push(null);
+    // }
+    // for (let pIndex = openOrderCount - 1; pIndex >= 0; pIndex--) {
+    //   this.getOpenOrderByIndex(pIndex);
+    // }
+    // let pIndex = maxNum - 8;
+    // let tindex = 0;
+    // let sid = setInterval(()=>{
+    //    if(pIndex<maxNum){
+    //      try{
+    //       this.getOpenOrderByIndex(pIndex,tindex);
+    //       tindex++;
+    //       pIndex++;
+    //      }catch(err){
+    //       tindex++;
+    //       pIndex++;
+    //      }
+    //    }else{
+    //     clearInterval(sid);
+    //    }
+    // }, 10);
   }
 
-  async getOpenOrderByIndex(index: any,tIndex:any) {
-    let openOrder = await this.nftContractControllerService
-      .getPasar()
-      .getOpenOrderByIndex(index);
-    let tokenId = openOrder[3];
-    let saleOrderId = openOrder[0];
-    let tokenNum = openOrder[4];
-    let price = openOrder[5];
-    let tokenInfo = await this.nftContractControllerService
-      .getSticker()
-      .tokenInfo(tokenId);
-
-    let creator  = tokenInfo[4];//原创者
-    let tokenUri = tokenInfo[3];
-    let royalties = tokenInfo[5] || null;
-    let createTime = tokenInfo[7];
-    let sellerAddr = openOrder[7];
-    this.handleFeedsUrl(
-      tokenUri,
-      tokenId,
-      saleOrderId,
-      price,
-      tokenNum,
-      sellerAddr,
-      index,
-      createTime,
-      royalties,
-      tIndex,
-      creator
-    );
+  async getOpenOrderByIndex(index: number): Promise<FeedsData.NFTItem> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const orderInfo = await this.nftContractHelperService.getOpenOrderByIndex(index);
+        const tokenInfo = await this.nftContractHelperService.getTokenInfo(String(orderInfo.tokenId));
+        const tokenJson = await this.nftContractHelperService.getTokenJson(tokenInfo.tokenUri);
+        const item: FeedsData.NFTItem = this.nftContractHelperService.createItemFromOrderInfo(orderInfo, tokenInfo, tokenJson, 'onSale');
+        resolve(item);
+      } catch (error) {
+        Logger.error(error);
+        reject(error);
+      }
+    });
   }
 
-  handleBuyNft(
-    feedsUri: string,
-    tokenId: any,
-    saleOrderId: string,
-    price: any,
-    tokenNum: any,
-    sellerAddr: any,
-    createTime: any,
-    royalties: any,
-    creator: any
-  ) {
-    feedsUri = feedsUri.replace('feeds:json:', '');
-    this.ipfsService
-      .nftGet(this.ipfsService.getNFTGetUrl() + feedsUri)
-      .then(result => {
-        let type = result['type'] || 'single';
-        let quantity = tokenNum;
-        let thumbnail = result['thumbnail'] || '';
-
-        if (thumbnail === '') {
-          thumbnail = result['image'];
-        }
-        let item = {
-          saleOrderId: saleOrderId,
-          tokenId: tokenId,
-          asset: result['image'],
-          name: result['name'],
-          description: result['description'],
-          fixedAmount: price,
-          kind: result['kind'],
-          type: type,
-          royalties: royalties,
-          quantity: quantity,
-          thumbnail: thumbnail,
-          sellerAddr: sellerAddr,
-          createTime: createTime * 1000,
-          creator:creator
-        };
-        item['showType'] = 'buy';
-        Logger.log(TAG, 'Buy NFT ', item);
+  async handleBuyNft(orderInfo: FeedsData.OrderInfo): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const tokenInfo = await this.nftContractHelperService.getTokenInfo(String(orderInfo.tokenId));
+        const tokenJson = await this.nftContractHelperService.getTokenJson(tokenInfo.tokenUri);
+        const item: FeedsData.NFTItem = this.nftContractHelperService.createItemFromOrderInfo(orderInfo, tokenInfo, tokenJson, 'onSale');
         this.native.navigateForward(['bid'], { queryParams: item });
-      })
-      .catch(() => { });
-  }
-
-  handleFeedsUrl(
-    feedsUri: string,
-    tokenId: any,
-    saleOrderId: string,
-    price: any,
-    tokenNum: any,
-    sellerAddr: any,
-    pIndex: any,
-    createTime: any,
-    royalties: any,
-    tIndex: any,
-    creator:any
-  ) {
-    feedsUri = feedsUri.replace('feeds:json:', '');
-    this.ipfsService
-      .nftGet(this.ipfsService.getNFTGetUrl() + feedsUri)
-      .then(result => {
-        let type = result['type'] || 'single';
-        let quantity = tokenNum;
-        let thumbnail = result['thumbnail'] || '';
-        if (thumbnail === '') {
-          thumbnail = result['image'];
-        }
-        let item = {
-          saleOrderId: saleOrderId,
-          tokenId: tokenId,
-          asset: result['image'],
-          name: result['name'],
-          description: result['description'],
-          fixedAmount: price,
-          kind: result['kind'],
-          type: type,
-          royalties: royalties,
-          quantity: quantity,
-          curQuantity:quantity,
-          thumbnail: thumbnail,
-          sellerAddr: sellerAddr,
-          createTime: createTime * 1000,
-          moreMenuType: 'onSale',
-          creator:creator
-        };
-        try {
-          //this.pasarList.splice(pIndex, 1, item);
-          this.isFinsh.push(pIndex);
-          this.pasarList[tIndex] = item;
-          let pasarList = _.cloneDeep(this.pasarList);
-          let arr = _.filter(pasarList, (item) => {
-            return item === null;
-          });
-          if (arr.length === 0) {
-            this.pasarList = _.sortBy(pasarList, (item: any) => {
-              return -Number(item.createTime);
-            });
-            this.nftPersistenceHelper.setPasarList(this.pasarList);
-            this.getCurPasarListPage();
-          }
-
-        } catch (err) {
-          Logger.error(TAG, 'Get data from ipfs error', err);
-        }
-      })
-      .catch((err) => {
-        Logger.error(TAG, 'Get data from ipfs error', err);
-        this.isFinsh.push(pIndex);
-      });
+        resolve("SUCCESS");
+      } catch (error) {
+        Logger.error(error);
+        reject(error);
+      }
+    });
   }
 
   clickAssetItem(assetitem: any) {
@@ -2249,19 +2126,6 @@ async  clickTab(type: string) {
     return '';
   }
 
-  async handlePrice(nftOrdeId: any) {
-    let nftOrder = null;
-    if (nftOrdeId != '') {
-      try {
-        let order = await this.nftContractControllerService
-          .getPasar()
-          .getOrderById(nftOrdeId);
-        nftOrder = order;
-      } catch (err) { }
-    }
-    return nftOrder;
-  }
-
   clickMore(parm: any) {
     let asstItem = parm['assetItem'];
     let accountAddress = this.nftContractControllerService.getAccountAddress();
@@ -2283,13 +2147,13 @@ async  clickTab(type: string) {
   doRefreshCancel() {
     if (this.refreshEvent) {
       this.refreshEvent.target.complete();
-      this.refreshEvent = null
+      this.refreshEvent = null;
     }
   }
 
-  async handleCancelOrder(tokenId:any,curTokenNum:any,assetItem:any,createAddr:any,saleOrderId:any,clist:any,sellerAddr:any){
+  async handleCancelOrder(tokenId: any, curTokenNum: any, assetItem: any, createAddr: any, saleOrderId: any, clist: any, sellerAddr: any) {
     //add OwnNftCollectiblesList
-    if(parseInt(curTokenNum) === 0){
+    if (parseInt(curTokenNum) === 0) {
 
       clist = _.filter(clist, item => {
         return item.tokenId != tokenId;
@@ -2298,13 +2162,13 @@ async  clickTab(type: string) {
       clist.push(assetItem);
       this.nftPersistenceHelper.setCollectiblesMap(createAddr, clist);
 
-    }else{
+    } else {
 
       clist = _.filter(clist, item => {
         return item.saleOrderId != saleOrderId;
       });
 
-      let index = _.findIndex(clist, (item:any) => {
+      let index = _.findIndex(clist, (item: any) => {
         return item.tokenId === tokenId && item.moreMenuType === "created";
       });
 
@@ -2322,188 +2186,186 @@ async  clickTab(type: string) {
     this.pasarList = pList;
     //this.searchPasar = _.cloneDeep(this.pasarList);
     this.nftPersistenceHelper.setPasarList(pList);
- }
-
- handleDialog(dialogName: string,dialogbutton: string,pageName: string) {
-  switch(dialogName){
-    case "publisherAccount":
-        this.publisherAccount(dialogbutton,pageName)
-    break;
-    case "guide":
-      this.guide(dialogbutton);
-    break;
   }
-}
 
-async publisherAccount(dialogbutton: string,pageName: string) {
-switch(dialogbutton){
-  case "createNewPublisherAccount":
-    this.feedService.setBindPublisherAccountType('new');
-   break;
-  case "bindExistingPublisherAccount":
-    this.feedService.setBindPublisherAccountType('exit');
-    await this.native.navigateForward(['bindservice/scanqrcode'],"");
-    await this.popoverController.dismiss();
-  break;
-}
-}
+  handleDialog(dialogName: string, dialogbutton: string, pageName: string) {
+    switch (dialogName) {
+      case "publisherAccount":
+        this.publisherAccount(dialogbutton, pageName)
+        break;
+      case "guide":
+        this.guide(dialogbutton);
+        break;
+    }
+  }
 
-async guide(dialogbutton: string){
-switch(dialogbutton){
-  case "guidemac":
-     await this.native.navigateForward(["guidemac"],"");
-     await this.popoverController.dismiss();
-   break;
-  case "guideubuntu":
-     await this.native.navigateForward(["guideubuntu"],"");
-     await this.popoverController.dismiss();
-  break;
-  case "skip":
-    await this.native.navigateForward(['bindservice/scanqrcode'],"");
-    await this.popoverController.dismiss();
-  break;
-}
-}
+  async publisherAccount(dialogbutton: string, pageName: string) {
+    switch (dialogbutton) {
+      case "createNewPublisherAccount":
+        this.feedService.setBindPublisherAccountType('new');
+        break;
+      case "bindExistingPublisherAccount":
+        this.feedService.setBindPublisherAccountType('exit');
+        await this.native.navigateForward(['bindservice/scanqrcode'], "");
+        await this.popoverController.dismiss();
+        break;
+    }
+  }
 
-handleScroll(){
+  async guide(dialogbutton: string) {
+    switch (dialogbutton) {
+      case "guidemac":
+        await this.native.navigateForward(["guidemac"], "");
+        await this.popoverController.dismiss();
+        break;
+      case "guideubuntu":
+        await this.native.navigateForward(["guideubuntu"], "");
+        await this.popoverController.dismiss();
+        break;
+      case "skip":
+        await this.native.navigateForward(['bindservice/scanqrcode'], "");
+        await this.popoverController.dismiss();
+        break;
+    }
+  }
 
-  this.content.getScrollElement().then((ponit:any)=>{
+  handleScroll() {
+    this.content.getScrollElement().then((ponit: any) => {
+      if (this.isAndroid) {
+        this.handelAndroidScroll(ponit);
+      } else {
+        this.handelIosScroll(ponit);
+      }
 
-    if(this.isAndroid){
-       this.handelAndroidScroll(ponit);
-    }else{
-       this.handelIosScroll(ponit);
+    });
+  }
+
+  handelAndroidScroll(ponit: any) {
+
+    if (ponit.scrollTop > 0) {
+      this.homeTittleBar.style.display = "none";
+      this.homeTab.setAttribute("style", "top:0px;height:45px;line-height:37px;");
+    } else {
+      this.homeTittleBar.style.display = "block";
+      this.homeTab.setAttribute("style", "top:36px;height:34px;");
+    }
+  }
+
+  handelIosScroll(ponit: any) {
+    if (ponit.scrollTop > 0) {
+      this.homeTittleBar.style.display = "none";
+      this.homeTab.setAttribute("style", "top:0px;height:45px;line-height:37px;");
+    } else {
+      this.homeTittleBar.style.display = "block";
+      this.homeTab.setAttribute("style", "top:36px;height:34px;");
+    }
+  }
+
+  ionClear() {
+    this.searchText = '';
+    this.isShowSearchField = true;
+    this.handleRefresherInfinite(false);
+    if (this.searchBeforePasar.length > 0) {
+      this.pasarList = _.cloneDeep(this.searchBeforePasar);
+      this.searchBeforePasar = [];
+    }
+  }
+
+  getItems(events: any) {
+    this.searchText = events.target.value || '';
+    this.searchBeforePasar = _.cloneDeep(this.pasarList);
+    let searchPasar = this.nftPersistenceHelper.getPasarList();
+    this.searchPasar = _.cloneDeep(searchPasar);
+
+    if (
+      (events && events.keyCode === 13) ||
+      (events.keyCode === 8 && this.searchText === '')
+    ) {
+      this.keyboard.hide();
+      if (this.searchText === "") {
+        this.handleRefresherInfinite(false);
+        if (this.searchBeforePasar.length > 0) {
+          this.pasarList = _.cloneDeep(this.searchBeforePasar);
+          this.searchBeforePasar = [];
+        }
+        return;
+      }
+      this.handleRefresherInfinite(true);
+      this.handlePasarSearch();
+
+    }
+  }
+
+  handlePasarSearch() {
+
+    if (this.curSearchField === "name") {
+      this.pasarList = _.filter(this.searchPasar, (pasarItem) => {
+        return pasarItem.name.toLowerCase().indexOf(this.searchText.toLowerCase()) > -1;
+      });
+      return;
     }
 
-  });
-}
+    if (this.curSearchField === "creator") {
+      this.pasarList = _.filter(this.searchPasar, (pasarItem) => {
+        return this.searchText === pasarItem.creator;
+      });
+      return;
+    }
 
-handelAndroidScroll(ponit:any){
+    if (this.curSearchField === "owner") {
+      this.pasarList = _.filter(this.searchPasar, (pasarItem) => {
+        return this.searchText === pasarItem.sellerAddr;
+      });
+      return;
+    }
 
-  if(ponit.scrollTop>0){
-    this.homeTittleBar.style.display = "none";
-    this.homeTab.setAttribute("style","top:0px;height:45px;line-height:37px;");
-  }else{
-    this.homeTittleBar.style.display = "block";
-    this.homeTab.setAttribute("style","top:36px;height:34px;");
-  }
-}
-
-handelIosScroll(ponit:any){
-  if(ponit.scrollTop>0){
-    this.homeTittleBar.style.display = "none";
-    this.homeTab.setAttribute("style","top:0px;height:45px;line-height:37px;");
-  }else{
-    this.homeTittleBar.style.display = "block";
-    this.homeTab.setAttribute("style","top:36px;height:34px;");
-  }
-}
-
-ionClear(){
-  this.searchText = '';
-  this.isShowSearchField = true;
-  this.handleRefresherInfinite(false);
-  if(this.searchBeforePasar.length>0){
-    this.pasarList = _.cloneDeep(this.searchBeforePasar);
-    this.searchBeforePasar = [];
-  }
-}
-
-getItems(events: any){
-  this.searchText = events.target.value || '';
-  this.searchBeforePasar = _.cloneDeep(this.pasarList);
-  let searchPasar = this.nftPersistenceHelper.getPasarList();
-  this.searchPasar = _.cloneDeep(searchPasar);
-
-  if (
-    (events && events.keyCode === 13) ||
-    (events.keyCode === 8 && this.searchText === '')
-  ) {
-     this.keyboard.hide();
-     if(this.searchText === ""){
-       this.handleRefresherInfinite(false);
-       if(this.searchBeforePasar.length>0){
-        this.pasarList = _.cloneDeep(this.searchBeforePasar);
-        this.searchBeforePasar = [];
-       }
-       return;
-     }
-     this.handleRefresherInfinite(true);
-     this.handlePasarSearch();
+    if (this.curSearchField === "tokenID") {
+      this.pasarList = _.filter(this.searchPasar, (pasarItem) => {
+        let tokenID = '0x' + UtilService.dec2hex(pasarItem.tokenId);
+        return this.searchText === tokenID || this.searchText === pasarItem.tokenId;
+      });
+      return;
+    }
 
   }
-}
 
-handlePasarSearch(){
-
-  if(this.curSearchField === "name"){
-    this.pasarList = _.filter(this.searchPasar,(pasarItem)=>{
-      return pasarItem.name.toLowerCase().indexOf(this.searchText.toLowerCase())>-1;
-    });
-    return;
+  handleRefresherInfinite(isOpen: boolean) {
+    this.refresher.disabled = isOpen;
+    this.infiniteScroll.disabled = isOpen;
   }
 
-  if(this.curSearchField === "creator"){
-    this.pasarList = _.filter(this.searchPasar,(pasarItem)=>{
-      return this.searchText ===  pasarItem.creator;
-  });
-    return;
+  clickPasarSpan(searchField: string) {
+    this.curSearchField = searchField;
+    this.handlePlaceholder(this.curSearchField);
+    this.feedService.setCurSearchField(this.curSearchField);
+    this.feedService.setData("feeds.pasar.curSearchField", this.curSearchField);
   }
 
-  if(this.curSearchField === "owner"){
-    this.pasarList = _.filter(this.searchPasar,(pasarItem)=>{
-      return this.searchText ===  pasarItem.sellerAddr;
-  });
-    return;
+  handlePlaceholder(searchField: string) {
+    switch (searchField) {
+      case 'name':
+        this.pasarsearchPlaceholder = "HomePage.namePlaceholder";
+        break;
+      case 'creator':
+        this.pasarsearchPlaceholder = "HomePage.creatorPlaceholder";
+        break;
+      case 'owner':
+        this.pasarsearchPlaceholder = "HomePage.ownerPlaceholder";
+        break;
+      case 'tokenID':
+        this.pasarsearchPlaceholder = "HomePage.tokenIDPlaceholder";
+        break;
+    }
   }
 
-  if(this.curSearchField === "tokenID"){
-    this.pasarList = _.filter(this.searchPasar,(pasarItem)=>{
-      let tokenID = '0x'+UtilService.dec2hex(pasarItem.tokenId);
-      return this.searchText ===  tokenID || this.searchText === pasarItem.tokenId;
-  });
-    return;
+  clickfilterCircle() {
+    this.isShowSearchField = !this.isShowSearchField;
+    this.searchText = "";
+    if (this.searchBeforePasar.length > 0) {
+      this.pasarList = _.cloneDeep(this.searchBeforePasar);
+      this.searchBeforePasar = [];
+    }
+    this.handleRefresherInfinite(false);
   }
-
-}
-
-handleRefresherInfinite(isOpen:boolean){
-  this.refresher.disabled = isOpen;
-  this.infiniteScroll.disabled = isOpen;
-}
-
-clickPasarSpan(searchField:string){
-  this.curSearchField = searchField;
-  this.handlePlaceholder(this.curSearchField);
-  this.feedService.setCurSearchField(this.curSearchField);
-  this.feedService.setData("feeds.pasar.curSearchField",this.curSearchField);
-}
-
-handlePlaceholder(searchField:string){
-  switch(searchField){
-    case 'name':
-      this.pasarsearchPlaceholder =  "HomePage.namePlaceholder";
-    break;
-    case 'creator':
-      this.pasarsearchPlaceholder =  "HomePage.creatorPlaceholder";
-    break;
-    case 'owner':
-      this.pasarsearchPlaceholder =  "HomePage.ownerPlaceholder";
-    break;
-    case 'tokenID':
-      this.pasarsearchPlaceholder =  "HomePage.tokenIDPlaceholder";
-    break;
-  }
-}
-
-clickfilterCircle(){
-  this.isShowSearchField = !this.isShowSearchField;
-  this.searchText = "";
-  if(this.searchBeforePasar.length>0){
-    this.pasarList = _.cloneDeep(this.searchBeforePasar);
-    this.searchBeforePasar = [];
-  }
-  this.handleRefresherInfinite(false);
-}
 
 }

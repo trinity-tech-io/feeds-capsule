@@ -779,6 +779,9 @@ export class ProfilePage implements OnInit {
         }, 500);
         break;
       case 'ProfilePage.collectibles':
+        // this.nftContractHelperService.syncTokenInfo();
+        // this.nftContractHelperService.syncOpenOrder();
+        this.nftContractHelperService.forTest();
         await this.refreshCollectibles();
         event.target.complete();
         break;
@@ -1802,7 +1805,7 @@ export class ProfilePage implements OnInit {
 
         for (let index = 0; index < this.notSaleOrderCount; index++) {
           try {
-            const item = await this.getNotSellerCollectiblesFromContract(accAddress, index);
+            const item = await this.nftContractHelperService.getNotSellerCollectiblesFromContract(accAddress, index);
             this.collectiblesList.push(item);
           } catch (error) {
             Logger.error("Get not sale item error", error);
@@ -1828,7 +1831,7 @@ export class ProfilePage implements OnInit {
 
         for (let index = 0; index < this.saleOrderCount; index++) {
           try {
-            const item = await this.getSellerCollectibleFromContract(accAddress, index);
+            const item = await this.nftContractHelperService.getSellerCollectibleFromContract(accAddress, index);
             this.collectiblesList.push(item);
           } catch (error) {
             Logger.error("Get Sale item error", error);
@@ -2144,120 +2147,8 @@ export class ProfilePage implements OnInit {
     }
   }
 
-  async getSellerCollectibleFromContract(sellerAddr: string, index: number): Promise<FeedsData.CollectibleItem> {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const orderInfo: FeedsData.OrderInfo = await this.nftContractHelperService.getSellerOpenByIndex(sellerAddr, index);
-        let tokenInfo = await this.nftContractHelperService.getTokenInfo(String(orderInfo.tokenId));
-        let tokenJson = await this.nftContractHelperService.getTokenJson(tokenInfo.tokenUri);
-        const item = this.createItemFromOrderInfo(orderInfo, tokenInfo, tokenJson, "onSale");
-        resolve(item);
-      } catch (error) {
-        Logger.error("Get seller collectibles error", error);
-        reject(error);
-      }
-    });
-  }
 
-  async getNotSellerCollectiblesFromContract(accAddress: string, index: number): Promise<FeedsData.CollectibleItem> {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const tokenId = await this.nftContractHelperService.getTokenIdOfOwnerByIndex(accAddress, index);
-        const tokenInfo = await this.nftContractHelperService.getTokenInfo(String(tokenId));
-        const tokenJson = await this.nftContractHelperService.getTokenJson(tokenInfo.tokenUri);
-        const item = this.creteItemFormTokenId(tokenInfo, tokenJson, "created");
-        resolve(item);
-      } catch (error) {
-        Logger.error("Get seller collectibles error", error);
-        reject(error);
-      }
-    });
-  }
 
-  /**
-   *
-   * @param orderInfo
-   * @param tokenInfo
-   * @param tokenJson
-   * @param moreMenuType "onSale"/"created"
-   */
-  createItem(orderInfo: FeedsData.OrderInfo, tokenInfo: FeedsData.TokenInfo,
-    tokenJson: FeedsData.TokenJson, moreMenuType: string): FeedsData.CollectibleItem {
-
-    let createAddress: string = "";
-    let orderId: number = -1;
-    let tokenId: number = -1;
-    let image: string = "";
-    let name: string = "";
-    let description: string = "";
-    let price: number = 0;
-    let kind: string = "";
-    let type: string = "";
-    let royalties: number = 0;
-    let quantity: number = 0;
-    let curQuantity: number = 0;
-    let thumbnail: string = "";
-    let sellerAddr: string = "";
-    let createTime: number = 0;
-
-    if (orderInfo != null) {
-      sellerAddr = orderInfo.sellerAddr;
-      tokenId = orderInfo.tokenId;
-      orderId = orderInfo.orderId;
-      price = orderInfo.price;
-      curQuantity = orderInfo.amount;
-    } else {
-      tokenId = tokenInfo.tokenId;
-
-      sellerAddr = "";
-      curQuantity = 1;
-      price = null;
-      orderId = null;
-    }
-
-    createAddress = tokenInfo.royaltyOwner;
-    createTime = tokenInfo.createTime * 1000;
-    quantity = tokenInfo.tokenSupply;
-    royalties = tokenInfo.royaltyFee;
-
-    type = tokenJson.type || 'single';
-    thumbnail = tokenJson.thumbnail || '';
-    if (thumbnail === '')
-      thumbnail = tokenJson.image;
-    image = tokenJson.image;
-    name = tokenJson.name;
-    description = tokenJson.description;
-    kind = tokenJson.kind;
-
-    return {
-      creator: createAddress,
-      saleOrderId: orderId,
-      tokenId: tokenId,
-      asset: image,
-      name: name,
-      description: description,
-      fixedAmount: price,
-      kind: kind,
-      type: type,
-      royalties: royalties,
-      quantity: quantity,
-      curQuantity: curQuantity,
-      thumbnail: thumbnail,
-      sellerAddr: sellerAddr,
-      createTime: createTime,
-      moreMenuType: moreMenuType
-    };
-  }
-
-  createItemFromOrderInfo(orderInfo: FeedsData.OrderInfo, tokenInfo: FeedsData.TokenInfo,
-    tokenJson: FeedsData.TokenJson, moreMenuType: string): FeedsData.CollectibleItem {
-    return this.createItem(orderInfo, tokenInfo, tokenJson, moreMenuType);
-  }
-
-  creteItemFormTokenId(tokenInfo: FeedsData.TokenInfo, tokenJson: FeedsData.TokenJson,
-    moreMenuType: string): FeedsData.CollectibleItem {
-    return this.createItem(null, tokenInfo, tokenJson, moreMenuType);
-  }
 
   async refreshCollectibles() {
     if (this.isRefreshingCollectibles) {
