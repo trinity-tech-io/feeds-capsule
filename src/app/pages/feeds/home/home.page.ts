@@ -254,6 +254,17 @@ export class HomePage implements OnInit {
     });
   }
 
+  getCurPasarListPage(){
+    let pasarListLen:any = this.pasarList.length;
+    let len1 = pasarListLen/8;
+    let len2 = parseInt(len1.toString())
+     if(len1 > len2){
+       this.pasarListPage = len2+1;
+     }else{
+       this.pasarListPage = len2;
+     }
+  }
+
   ionViewWillEnter() {
 
   this.homeTittleBar = this.elmRef.nativeElement.querySelector("#homeTittleBar");
@@ -272,22 +283,19 @@ export class HomePage implements OnInit {
        this.styleType = "list";
     }
 
+
     this.pasarList = this.nftPersistenceHelper.getPasarList();
     this.pasarList = _.sortBy(this.pasarList, (item: any) => {
       return -Number(item.createTime);
     });
-    //this.searchPasar = _.cloneDeep(this.pasarList);
+
+    //获取当前的PasarList页数
+    this.getCurPasarListPage();
 
     this.connectionStatus = this.feedService.getConnectionStatus();
     this.styleObj.width = screen.width - 105 + 'px';
     this.clientHeight = screen.availHeight;
-    console.log("=======this.startIndex========="+this.startIndex);
-    //this.initPostListData(false);
     this.refreshPostList();
-    // this.refreshImage(0);
-    // this.initnodeStatus(this.postList);
-
-
 
     this.events.subscribe(FeedsEvent.PublishType.addConnectionChanged, () => {
       this.addConnectionChangedEvent();
@@ -942,7 +950,6 @@ export class HomePage implements OnInit {
         this.loadMoreData().then((list) => {
           this.pasarList = _.concat(this.pasarList, list);
           this.pasarList = this.nftContractHelperService.sortData(this.pasarList, SortType.CREATE_TIME);
-          //this.searchPasar = _.cloneDeep(this.pasarList);
           this.nftPersistenceHelper.setPasarList(this.pasarList);
           event.target.complete();
         })
@@ -2157,7 +2164,7 @@ async  clickTab(type: string) {
               return -Number(item.createTime);
             });
             this.nftPersistenceHelper.setPasarList(this.pasarList);
-            //this.searchPasar = _.cloneDeep(this.pasarList);
+            this.getCurPasarListPage();
           }
 
         } catch (err) {
