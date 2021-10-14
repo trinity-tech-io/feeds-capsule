@@ -3,15 +3,10 @@ import { TranslateService } from '@ngx-translate/core';
 import { ThemeService } from 'src/app/services/theme.service';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { DataHelper } from 'src/app/services/DataHelper';
-import { PopupProvider } from 'src/app/services/popup';
-import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { GlobalService } from 'src/app/services/global.service';
-import { FeedService } from 'src/app/services/FeedService';
 import { Events } from 'src/app/services/events.service';
 import { ApiUrl } from 'src/app/services/ApiUrl';
-import { IPFSService } from 'src/app/services/ipfs.service';
-import { Config } from 'src/app/services/config';
+
 
 @Component({
   selector: 'app-select-ipfs-net',
@@ -45,10 +40,9 @@ export class SelectIpfsNetPage implements OnInit {
     public theme: ThemeService,
     private titleBarService: TitleBarService,
     private events: Events,
-    private ipfsServe: IPFSService,
     private globalService: GlobalService,
   ) {
-     this.selectedIpfsNetwork = localStorage.getItem("selectedIpfsNetwork");
+
   }
 
   ngOnInit() {
@@ -65,9 +59,7 @@ export class SelectIpfsNetPage implements OnInit {
 
   ionViewWillEnter() {
     this.selectedIpfsNetwork = localStorage.getItem("selectedIpfsNetwork");
-    console.log("this.selectedIpfsNetwork"+this.selectedIpfsNetwork);
     this.initTitle();
-    console.log(ApiUrl.getIpfs());
   }
 
   ionViewWillLeave() {
@@ -78,7 +70,6 @@ export class SelectIpfsNetPage implements OnInit {
 
   selectIpfs(selectedIpfsNetwork: any) {
     this.selectedIpfsNetwork = selectedIpfsNetwork.key;
-    localStorage.setItem("selectedIpfsNetwork", selectedIpfsNetwork.key);
     ApiUrl.setIpfs(selectedIpfsNetwork.key)
     this.globalService.refreshBaseNFTIPSFUrl();
     this.initTitle();

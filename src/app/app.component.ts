@@ -289,7 +289,7 @@ export class MyApp {
     let ipfsBaseUrl = localStorage.getItem("selectedIpfsNetwork") || ''
     if (ipfsBaseUrl === '') {
       ipfsBaseUrl = Config.defaultIPFSApi();
-      localStorage.setItem("selectedIpfsNetwork", Config.IPFS_SERVER);
+      localStorage.setItem("selectedIpfsNetwork",ipfsBaseUrl);
     }
 
     ApiUrl.setIpfs(ipfsBaseUrl);
