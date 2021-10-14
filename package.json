@@ -28,6 +28,7 @@
     "@ionic-native/core": "^5.0.0",
     "@ionic-native/file": "^5.33.0",
     "@ionic-native/in-app-browser": "^5.10.0",
+    "@ionic-native/keyboard": "^5.36.0",
     "@ionic-native/network": "^5.33.0",
     "@ionic-native/photo-library": "^5.36.0",
     "@ionic-native/qr-scanner": "^5.18.0",
