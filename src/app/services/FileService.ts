@@ -9,7 +9,7 @@ export class FileService {
   resolveLocalFileSystemURL(): Promise<DirectoryEntry> {
     return new Promise((resolve, reject) => {
       window.resolveLocalFileSystemURL(
-        cordova.file.dataDirectory,
+        cordova.file.externalCacheDirectory,
         (dirEntry: DirectoryEntry) => {
           resolve(dirEntry);
         },

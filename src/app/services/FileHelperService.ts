@@ -7,6 +7,7 @@ const TAG: string = 'Feeds-FileHelperService';
 const carrierPath: string = '/carrier/';
 const nftPath: string = 'nft'
 const orderPath: string = '/nft/order';
+const tokenJsonPath: string = '/nft/tokenJson';
 @Injectable()
 export class FileHelperService {
   constructor(private fileService: FileService) { }
@@ -69,12 +70,48 @@ export class FileHelperService {
     });
   }
 
+  getTokenJsonFileEntry(fileName: string): Promise<FileEntry> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let rootDirEntry = await this.fileService.resolveLocalFileSystemURL();
+        let nftDirEntry = await this.fileService.getDirectory(
+          rootDirEntry,
+          nftPath,
+          true
+        );
+        let orderDirEntry = await this.fileService.getDirectory(
+          nftDirEntry,
+          tokenJsonPath,
+          true
+        );
+
+        let fileEntry = await this.fileService.getFile(orderDirEntry, fileName, true);
+        console.log("getTokenJsonFileEntry", fileEntry);
+        resolve(fileEntry);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
   getBlobFromCacheFile(fileName: string): Promise<Blob> {
     return new Promise(async (resolve, reject) => {
       try {
         let fileEntry = await this.getOrderFileEntry(fileName);
         let blob = await this.fileService.getFileData(fileEntry);
         resolve(blob);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
+  getTokenJsonFromCacheFile(fileName: string): Promise<File> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let fileEntry = await this.getTokenJsonFileEntry(fileName);
+        let file = await this.fileService.getFileData(fileEntry);
+        resolve(file);
       } catch (error) {
         reject(error);
       }
@@ -98,22 +135,46 @@ export class FileHelperService {
 
   async getNFTData(fileUrl: string, fileName: string, type: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
-      const base64Type: string = this.transType(type);
-      const fileBlob = await this.getBlobFromCacheFile(fileName);
+      try {
+        const base64Type: string = this.transType(type);
+        const fileBlob = await this.getBlobFromCacheFile(fileName);
 
-      if (fileBlob.size > 0) {
-        const result = await this.transBlobToBase64(fileBlob);
-        let finalresult = result.replace("data:null;base64,", base64Type);
-        Logger.log(TAG, "Get data from local");
-        resolve(finalresult);
-        return;
+        if (fileBlob.size > 0) {
+          const result = await this.transBlobToBase64(fileBlob);
+          let finalresult = result.replace("data:null;base64,", base64Type);
+          Logger.log(TAG, "Get data from local");
+          resolve(finalresult);
+          return;
+        }
+
+        let blob = await UtilService.downloadFileFromUrl(fileUrl);
+        const result2 = await this.transBlobToBase64(blob);
+        await this.writeNFTCacheFileData(fileName, blob);
+        Logger.log(TAG, "Get data from net");
+        resolve(result2);
+      } catch (error) {
+        Logger.error("Get NFT data error");
+        reject(error);
       }
+    });
+  }
 
-      let blob = await UtilService.downloadFileFromUrl(fileUrl);
-      const result2 = await this.transBlobToBase64(blob);
-      await this.writeNFTCacheFileData(fileName, blob);
-      Logger.log(TAG, "Get data from net");
-      resolve(result2);
+  async getTokenJsonData(fileName: string): Promise<FeedsData.TokenJson> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const fileBlob = await this.getTokenJsonFromCacheFile(fileName);
+        if (fileBlob.size > 0) {
+          const result = await this.transBlobToText(fileBlob);
+          console.log('getTokenJsonData result', result);
+          const jsonObj: FeedsData.TokenJson = JSON.parse(result);
+          resolve(jsonObj);
+          return;
+        }
+        resolve(null);
+      } catch (error) {
+        Logger.error('Get Token Json Data error', error);
+        resolve(null);
+      }
     });
   }
 
@@ -121,6 +182,23 @@ export class FileHelperService {
     return new Promise(async (resolve, reject) => {
       try {
         let fileEntry = await this.getOrderFileEntry(fileName);
+        let newEntry = await this.fileService.writeData(
+          fileEntry,
+          data,
+          false
+        );
+
+        resolve(newEntry);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
+  writeTokenJsonFileData(fileName: string, data: Blob | string): Promise<FileEntry> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let fileEntry = await this.getTokenJsonFileEntry(fileName);
         let newEntry = await this.fileService.writeData(
           fileEntry,
           data,
@@ -147,5 +225,20 @@ export class FileHelperService {
       default:
         return "data:image/png;base64,";
     }
+  }
+
+  transBlobToText(blob: Blob): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsText(blob);
+      reader.onload = async event => {
+        try {
+          const result = event.target.result.toString();
+          resolve(result);
+        } catch (error) {
+          reject(error);
+        }
+      }
+    });
   }
 }

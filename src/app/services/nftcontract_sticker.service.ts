@@ -176,6 +176,18 @@ export class NFTContractStickerService {
       .call();
   }
 
+  async totalSupply() {
+    return await this.stickerContract.methods
+      .totalSupply()
+      .call();
+  }
+
+  async tokenIdByIndex(index: string) {
+    return await this.stickerContract.methods
+      .tokenIdByIndex(index)
+      .call();
+  }
+
   async tokenCountOfOwner(address) {
     return await this.stickerContract.methods.tokenCountOfOwner(address).call();
   }
