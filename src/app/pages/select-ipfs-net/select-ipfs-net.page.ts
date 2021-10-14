@@ -29,12 +29,12 @@ export class SelectIpfsNetPage implements OnInit {
     },
     {
       key: 'https://ipfs1.trinity-feeds.app/',
-      name: 'ipfs1.trinity-feeds.app', 
+      name: 'ipfs1.trinity-feeds.app',
       description: this.translate.instant('SettingsPage.ipfs1-provider-des'),
     },
     {
       key: 'https://ipfs2.trinity-feeds.app/',
-      name: 'ipfs2.trinity-feeds.app', 
+      name: 'ipfs2.trinity-feeds.app',
       description: this.translate.instant('SettingsPage.ipfs2-provider-des'),
     }
   ];
@@ -47,7 +47,7 @@ export class SelectIpfsNetPage implements OnInit {
     private events: Events,
     private ipfsServe: IPFSService,
     private globalService: GlobalService,
-  ) { 
+  ) {
      this.selectedIpfsNetwork = localStorage.getItem("selectedIpfsNetwork");
   }
 
@@ -65,6 +65,7 @@ export class SelectIpfsNetPage implements OnInit {
 
   ionViewWillEnter() {
     this.selectedIpfsNetwork = localStorage.getItem("selectedIpfsNetwork");
+    console.log("this.selectedIpfsNetwork"+this.selectedIpfsNetwork);
     this.initTitle();
     console.log(ApiUrl.getIpfs());
   }
@@ -75,7 +76,7 @@ export class SelectIpfsNetPage implements OnInit {
     this.events.publish(FeedsEvent.PublishType.addProflieEvent);
   }
 
-  selectIpfs(selectedIpfsNetwork: any) { 
+  selectIpfs(selectedIpfsNetwork: any) {
     this.selectedIpfsNetwork = selectedIpfsNetwork.key;
     localStorage.setItem("selectedIpfsNetwork", selectedIpfsNetwork.key);
     ApiUrl.setIpfs(selectedIpfsNetwork.key)

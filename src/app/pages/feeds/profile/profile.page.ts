@@ -628,7 +628,10 @@ export class ProfilePage implements OnInit {
   ionViewWillEnter() {
     this.initTitleBar();
     this.elaPrice = this.feedService.getElaUsdPrice();
-    this.events.subscribe(FeedsEvent.PublishType.addProflieEvent, () => {
+    this.events.subscribe(FeedsEvent.PublishType.addProflieEvent, async () => {
+      this.elaPrice = this.feedService.getElaUsdPrice();
+      await this.getOwnNftSum();
+      await this.getCollectiblesList();
       this.addProflieEvent();
       this.isAddProfile = true;
     });
@@ -1881,6 +1884,7 @@ export class ProfilePage implements OnInit {
       this.connectWallet();
       return;
     }
+    this.clearData();
     this.native.navigateForward(['mintnft'], {});
   }
 
@@ -1953,13 +1957,11 @@ export class ProfilePage implements OnInit {
     let cpItem = _.cloneDeep(assItem);
     if (parseInt(quantity) <= 0) {
 
-      list = _.filter(list, item => {
-        return item.tokenId != tokenId && item.moreMenuType != "created";
+      let index = _.findIndex(list, (item: any) => {
+        return item.tokenId === tokenId && item.moreMenuType === "created";
       });
-
       cpItem["curQuantity"] = sellQuantity;
-
-      list.push(cpItem);
+      list.splice(index,0,cpItem);
       Logger.log(TAG, 'Update list', list);
       this.collectiblesList = list;
       this.ownNftSum = this.collectiblesList.length;
