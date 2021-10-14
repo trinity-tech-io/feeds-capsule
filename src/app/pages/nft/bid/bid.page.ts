@@ -388,9 +388,11 @@ export class BidPage implements OnInit {
     }
 
     this.fileHelperService.getNFTData(fetchUrl, fileName, kind).then((data) => {
-      this.zone.run(() => {
-        this.assetUri = data;
-      });
+      setTimeout(() => {
+        this.zone.run(() => {
+          this.assetUri = data;
+        });
+      }, 300);
     });
     return fetchUrl;
   }
