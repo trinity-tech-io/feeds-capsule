@@ -15,6 +15,7 @@
     <allow-intent href="geo:*" />
     <allow-intent href="wc:*" />
     <preference name="orientation" value="portrait" />
+    <preference name="AndroidXEnabled" value="true" />
     <preference name="ScrollEnabled" value="false" />
     <preference name="BackupWebStorage" value="none" />
     <preference name="ShowSplashScreenSpinner" value="false" />

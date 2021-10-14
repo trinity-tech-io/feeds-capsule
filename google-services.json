@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "42835579962",
+    "project_id": "fsproject-e6e1d",
+    "storage_bucket": "fsproject-e6e1d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:42835579962:android:6ce4da23bad2169a105103",
+        "android_client_info": {
+          "package_name": "io.trinitytech.dapp.feeds"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "42835579962-77nvqe7nebhgmna2s3bcgift1u4je3eq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBw2Z5ruFY1maiuqQGCc2LWuEJOOkc99TY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "42835579962-77nvqe7nebhgmna2s3bcgift1u4je3eq.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "42835579962-7d0ir3bg0un5chth9j4qb7sqlpk0gtua.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "io.trinitytech.dapp.feeds"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
