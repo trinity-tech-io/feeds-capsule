@@ -11,6 +11,7 @@ import { File } from '@ionic-native/file/ngx';
 import { Animation, AnimationBuilder } from '@ionic/core';
 
 import { Clipboard } from '@ionic-native/clipboard/ngx';
+import { Keyboard } from '@ionic-native/keyboard/ngx';
 import { Network } from '@ionic-native/network/ngx';
 
 import { MyApp } from './app.component';
@@ -159,6 +160,7 @@ export function TranslateLoaderFactory() {
   bootstrap: [MyApp],
   entryComponents: [MyApp],
   providers: [
+    Keyboard,
     PhotoLibrary,
     File,
     VideoEditor,

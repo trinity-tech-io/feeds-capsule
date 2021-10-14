@@ -36,6 +36,7 @@ import _ from 'lodash';
 import { Logger } from 'src/app/services/logger';
 import { HttpService } from '../../../services/HttpService';
 import { DataHelper } from 'src/app/services/DataHelper';
+import { Keyboard } from '@ionic-native/keyboard/ngx';
 
 let TAG: string = 'Feeds-home';
 @Component({
@@ -179,7 +180,8 @@ export class HomePage implements OnInit {
     private walletConnectControllerService: WalletConnectControllerService,
     private nftContractHelperService: NFTContractHelperService,
     private httpService: HttpService,
-    private dataHelper: DataHelper
+    private dataHelper: DataHelper,
+    private keyboard: Keyboard
   ) { }
 
   initPostListData(scrollToTop: boolean) {
@@ -2371,6 +2373,7 @@ getItems(events: any){
     (events && events.keyCode === 13) ||
     (events.keyCode === 8 && this.searchText === '')
   ) {
+     this.keyboard.hide();
      if(this.searchText === ""){
        this.handleRefresherInfinite(false);
        if(this.searchBeforePasar.length>0){
