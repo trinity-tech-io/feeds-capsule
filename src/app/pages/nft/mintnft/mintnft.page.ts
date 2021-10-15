@@ -396,7 +396,6 @@ export class MintnftPage implements OnInit {
           let hash = result['Hash'] || null;
           if (hash != null) {
             let jsonHash = 'feeds:json:' + hash;
-            console.log("=========jsonHash========="+jsonHash);
             resolve(jsonHash);
           }
         })
