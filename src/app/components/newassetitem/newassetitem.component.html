@@ -26,7 +26,6 @@
       <div style=" margin-top: 17px; width: auto;height:200px; display: flex; align-items: center; ">
         <div style="margin: 0 auto;position: relative;">
           <img src="{{hanldeImg(assetItem)}}" style="object-fit:contain;" class="assetsImg" />
-          <img src="assets/images/avatar.svg" *ngIf="assetItem['type']==='avatar'" style="position:absolute;left:5px;top:5px;width:24px;height:24px"/>
         </div>
       </div>
       <div class="des1">{{assetItem['name']}}</div>
@@ -36,6 +35,7 @@
         <span>{{hanldePrice(assetItem['fixedAmount'])}} ELA <img style="vertical-align:middle;" src="assets/images/purpleblue.svg"/></span>
         <span class="des2" style="text-align:right;display:inline-block;">{{handleCurQuantity(assetItem)}}/{{handleCurQuantity(assetItem)}}</span>
         <span class="priceUsd" *ngIf="elaPrice!=null">≈USD {{hanldeUsdPrice(assetItem['fixedAmount'])}}</span>
+        <img src="assets/images/avatar.svg" *ngIf="assetItem['type']==='avatar'" style="position:absolute;right:47px;bottom: 35px;width:24px;height:24px"/>
       </div>
     </div>
 

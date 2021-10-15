@@ -1961,7 +1961,7 @@ export class ProfilePage implements OnInit {
         return item.tokenId === tokenId && item.moreMenuType === "created";
       });
       cpItem["curQuantity"] = sellQuantity;
-      list.splice(index,0,cpItem);
+      list.splice(index,1,cpItem);
       Logger.log(TAG, 'Update list', list);
       this.collectiblesList = list;
       this.ownNftSum = this.collectiblesList.length;
