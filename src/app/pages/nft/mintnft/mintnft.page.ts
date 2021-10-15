@@ -59,8 +59,8 @@ export class MintnftPage implements OnInit {
   public loadingCurNumber:string = "";
   public loadingMaxNumber:string = "";
   private realFile: any = null;
-  public  avatar:boolean = false;
   public  maxAvatarSize:number = 5 * 1024 * 1024;
+  public  assetType:string = "general";
   constructor(
     private translate: TranslateService,
     private event: Events,
@@ -369,8 +369,10 @@ export class MintnftPage implements OnInit {
   sendIpfsJSON(): Promise<string> {
     return new Promise(async (resolve, reject) => {
       let type = "image";
-      if(this.avatar){
+      let thumbnail = this.imageObj['thumbnail'];
+      if(this.assetType === "avatar"){
          type = "avatar";
+         thumbnail = this.imageObj['imgHash'];
       }
       let ipfsJSON = {
         version: '1',
@@ -380,7 +382,7 @@ export class MintnftPage implements OnInit {
         image: this.imageObj['imgHash'],
         kind: this.imageObj['imgFormat'],
         size: this.imageObj['imgSize'],
-        thumbnail: this.imageObj['thumbnail'],
+        thumbnail: thumbnail,
       };
 
       let formData = new FormData();
@@ -394,6 +396,7 @@ export class MintnftPage implements OnInit {
           let hash = result['Hash'] || null;
           if (hash != null) {
             let jsonHash = 'feeds:json:' + hash;
+            console.log("=========jsonHash========="+jsonHash);
             resolve(jsonHash);
           }
         })
@@ -655,7 +658,7 @@ export class MintnftPage implements OnInit {
         img.onload = () =>{
           let maxWidth = img.width / 4;
           let maxHeight = img.height / 4;
-          if(this.avatar){
+          if(this.assetType === "avatar"){
             maxWidth = img.width;
             maxHeight = img.height;
           }
@@ -860,7 +863,7 @@ export class MintnftPage implements OnInit {
 
     let slist = this.nftPersistenceHelper.getCollectiblesList(accAddress);
     let imageType = "image";
-    if(this.avatar){
+    if(this.assetType === "avatar"){
        imageType = "avatar";
     }
     let item:any = {};
@@ -938,10 +941,10 @@ export class MintnftPage implements OnInit {
     Logger.log("Real File is", event.target.files[0]);
 
     //add avatar
-    if(this.avatar){
+    if(this.assetType === "avatar"){
       let fileSize = this.realFile.size;
       if(fileSize > this.maxAvatarSize){
-        this.native.toastWarn("MintnftPage.fileTypeDes1");
+        this.native.toastWarn("MintnftPage.fileTypeDes2");
         event.target.value = null;
         return false;
       }
@@ -962,14 +965,13 @@ export class MintnftPage implements OnInit {
     reader.onload = async event => {
       try {
         //add avatar
-        if(this.avatar){
+        if(this.assetType === "avatar"){
           let image = new Image();
           image.onload = async ()=>{
           let width = image.width;
           let height = image.height;
-          if(width!=600 && height!=600 &&
-             width!=450 && height!=450){
-            this.native.toastWarn("MintnftPage.fileTypeDes2");
+          if(width!=600 && height!=600){
+            this.native.toastWarn("MintnftPage.fileTypeDes1");
             inputEvent.target.value = null;
             return false;
           }

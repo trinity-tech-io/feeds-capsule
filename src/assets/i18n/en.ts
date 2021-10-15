@@ -693,8 +693,11 @@ export const en = {
     quantityErrorMsg1: 'The quantity value cannot exceed the maximum value (integer)',
     fileTypeDes: 'File types supported: ',
     avatar: 'Avatar',
-    fileTypeDes1: 'The content size is less 5M;',
-    fileTypeDes2: 'The resolution size less 600 * 600;'
+    fileTypeDes1: 'Canvas size must be less than 600x600 pixels;',
+    fileTypeDes2: 'Maximum size: 5 MB;',
+    fileTypeDes3: 'Recommended GIF animation length: Less than 10 seconds',
+    general: 'General',
+    assetType: 'Asset Type'
   },
   AssetdetailsPage: {
     title: 'Collectible Details',

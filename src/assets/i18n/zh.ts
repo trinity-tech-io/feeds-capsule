@@ -676,8 +676,11 @@ export const zh = {
     quantityErrorMsg1: '数量值不能超过最大数值(整数)',
     fileTypeDes: '支持图片格式 -  ',
     avatar: '头像',
-    fileTypeDes1: '内容尺寸小于5M；',
-    fileTypeDes2: '分辨率小于600*600；'
+    fileTypeDes1: '600 * 600 唯一pixel 标准；',
+    fileTypeDes2: '内容尺寸小于等于5M；',
+    fileTypeDes3: '建议的GIF动画长度：小于10秒',
+    general: '通用',
+    assetType: '资产类型'
   },
   AssetdetailsPage: {
     title: '收藏品明细',
