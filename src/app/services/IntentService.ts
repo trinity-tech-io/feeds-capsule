@@ -539,7 +539,7 @@ export class IntentService {
       if (orderInfo.orderState != 1) {
         this.native.toast('common.orderInvalid');
       }
-      const tokenInfo = await this.nftContractHelperService.getTokenInfo((orderInfo.tokenId).toString());
+      const tokenInfo = await this.nftContractHelperService.getTokenInfo((orderInfo.tokenId).toString(), true);
       let tokenJson = await this.nftContractHelperService.getTokenJson(tokenInfo.tokenUri);
       this.navToBidPage(orderInfo, tokenInfo, tokenJson);
       this.native.hideLoading();

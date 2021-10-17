@@ -958,6 +958,7 @@ export class HomePage implements OnInit {
         }, 500);
         break;
       case 'pasar':
+        // this.scrollToTop(1);
         this.elaPrice = this.feedService.getElaUsdPrice();
         this.loadMoreData().then((list) => {
           this.pasarList = _.concat(this.pasarList, list);
@@ -2075,7 +2076,7 @@ export class HomePage implements OnInit {
     return new Promise(async (resolve, reject) => {
       try {
         const orderInfo = await this.nftContractHelperService.getOpenOrderByIndex(index);
-        const tokenInfo = await this.nftContractHelperService.getTokenInfo(String(orderInfo.tokenId));
+        const tokenInfo = await this.nftContractHelperService.getTokenInfo(String(orderInfo.tokenId), true);
         const tokenJson = await this.nftContractHelperService.getTokenJson(tokenInfo.tokenUri);
         const item: FeedsData.NFTItem = this.nftContractHelperService.createItemFromOrderInfo(orderInfo, tokenInfo, tokenJson, 'onSale');
         resolve(item);
@@ -2089,7 +2090,7 @@ export class HomePage implements OnInit {
   async handleBuyNft(orderInfo: FeedsData.OrderInfo): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
-        const tokenInfo = await this.nftContractHelperService.getTokenInfo(String(orderInfo.tokenId));
+        const tokenInfo = await this.nftContractHelperService.getTokenInfo(String(orderInfo.tokenId), true);
         const tokenJson = await this.nftContractHelperService.getTokenJson(tokenInfo.tokenUri);
         const item: FeedsData.NFTItem = this.nftContractHelperService.createItemFromOrderInfo(orderInfo, tokenInfo, tokenJson, 'onSale');
         this.native.navigateForward(['bid'], { queryParams: item });
@@ -2274,7 +2275,8 @@ export class HomePage implements OnInit {
   getItems(events: any) {
     this.searchText = events.target.value || '';
     this.searchBeforePasar = _.cloneDeep(this.pasarList);
-    let searchPasar = this.nftPersistenceHelper.getPasarList();
+    // let searchPasar = this.nftPersistenceHelper.getPasarList();
+    let searchPasar = this.dataHelper.getPasarItemList();
     this.searchPasar = _.cloneDeep(searchPasar);
 
     if (
