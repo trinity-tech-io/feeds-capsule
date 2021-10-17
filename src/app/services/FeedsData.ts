@@ -361,6 +361,8 @@ declare namespace FeedsData {
     tempDataMap = 'tempDataMap',
 
     walletAccountAddress = 'walletAccountAddress',
+
+    pasarItemMap = 'pasarItemMap'
   }
 
   type ServerVersion = {

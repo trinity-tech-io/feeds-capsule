@@ -51,6 +51,7 @@ export type ChangedItem = {
 @Injectable()
 export class NFTContractHelperService {
   private refreshCount = 7;
+  private syncOrderHelperMap: { [orderId: string]: FeedsData.NFTItem } = {};
   constructor(
     private nftContractControllerService: NFTContractControllerService,
     private event: Events,
@@ -76,7 +77,7 @@ export class NFTContractHelperService {
         let list: FeedsData.NFTItem[] = [];
         for (let index = start - 1; index > end; index--) {
           const orderInfo = await this.getOpenOrderByIndex(index);
-          const tokenInfo = await this.getTokenInfo(String(orderInfo.tokenId));
+          const tokenInfo = await this.getTokenInfo(String(orderInfo.tokenId), true);
           const tokenJson = await this.getTokenJson(tokenInfo.tokenUri);
 
           const item = await this.createItemFromOrderInfo(orderInfo, tokenInfo, tokenJson, saleStatus);
@@ -110,7 +111,7 @@ export class NFTContractHelperService {
           const orderInfo = await this.getOpenOrderByIndex(index);
 
           console.log("orderInfo", orderInfo);
-          const tokenInfo = await this.getTokenInfo(String(orderInfo.tokenId));
+          const tokenInfo = await this.getTokenInfo(String(orderInfo.tokenId), true);
           console.log("tokenInfo", tokenInfo);
           const tokenJson = await this.getTokenJson(tokenInfo.tokenUri);
           console.log("tokenJson", tokenJson);
@@ -224,7 +225,20 @@ export class NFTContractHelperService {
     });
   }
 
-  getTokenInfo(tokenId: string): Promise<FeedsData.TokenInfo> {
+  getTokenInfo(tokenId: string, forceRemote: boolean): Promise<FeedsData.TokenInfo> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        if (forceRemote) {
+          let tokenInfo = await this.getTokenInfoFromContract(tokenId);
+          resolve(tokenInfo);
+        }
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
+  getTokenInfoFromContract(tokenId: string): Promise<FeedsData.TokenInfo> {
     return new Promise(async (resolve, reject) => {
       try {
         let token = await this.nftContractControllerService
@@ -471,7 +485,7 @@ export class NFTContractHelperService {
   getTokenJsonFromTokenId(tokenId: string): Promise<FeedsData.TokenJson> {
     return new Promise(async (resolve, reject) => {
       try {
-        const tokenInfo = await this.getTokenInfo(tokenId);
+        const tokenInfo = await this.getTokenInfo(tokenId, true);
         console.log("token", tokenInfo);
         const tokenJson = await this.getTokenJson(tokenInfo.tokenUri);
         resolve(tokenJson);
@@ -485,13 +499,26 @@ export class NFTContractHelperService {
   syncOpenOrder() {
     return new Promise(async (resolve, reject) => {
       try {
+        let firstSync: boolean = false;
+        const pasarItemMap = this.dataHelper.getPasarItemMap();
+        this.syncOrderHelperMap = {};
+        if (pasarItemMap == null || pasarItemMap == undefined || JSON.stringify(pasarItemMap) == '{}')
+          firstSync = true;
+
         const openOrderCount = await this.nftContractControllerService.getPasar().getOpenOrderCount();
         console.log("openOrderCount", openOrderCount);
-        for (let index = 0; index < openOrderCount; index++) {
+        for (let index = openOrderCount - 1; index >= 0; index--) {
           const order = await this.getOpenOrderByIndex(index);
-          //TODO
-          console.log("openOrder", index, order.tokenId);
+          const tokenInfo = await this.getTokenInfo(String(order.tokenId), true);
+          const tokenJson = await this.getTokenJson(tokenInfo.tokenUri);
+
+          if (order.orderState == FeedsData.OrderState.SALEING) {
+            const item = this.creteItemFormTokenId(tokenInfo, tokenJson, "onSale");
+            this.savePasarItem(String(order.orderId), item, firstSync);
+          }
         }
+
+        this.setPasarItemMap();
       } catch (error) {
         Logger.error('Sync open order', error);
         reject(error);
@@ -554,7 +581,7 @@ export class NFTContractHelperService {
     description = tokenJson.description;
     kind = tokenJson.kind;
 
-    return {
+    const item: FeedsData.NFTItem = {
       creator: createAddress,
       saleOrderId: orderId,
       tokenId: tokenId,
@@ -572,7 +599,8 @@ export class NFTContractHelperService {
       createTime: createTime,
       moreMenuType: moreMenuType,
       showType: showType
-    };
+    }
+    return item;
   }
 
   createItemFromOrderInfo(orderInfo: FeedsData.OrderInfo, tokenInfo: FeedsData.TokenInfo,
@@ -585,12 +613,11 @@ export class NFTContractHelperService {
     return this.createItem(null, tokenInfo, tokenJson, moreMenuType);
   }
 
-
   async getSellerCollectibleFromContract(sellerAddr: string, index: number): Promise<FeedsData.NFTItem> {
     return new Promise(async (resolve, reject) => {
       try {
         const orderInfo: FeedsData.OrderInfo = await this.getSellerOpenByIndex(sellerAddr, index);
-        let tokenInfo = await this.getTokenInfo(String(orderInfo.tokenId));
+        let tokenInfo = await this.getTokenInfo(String(orderInfo.tokenId), true);
         let tokenJson = await this.getTokenJson(tokenInfo.tokenUri);
         const item = this.createItemFromOrderInfo(orderInfo, tokenInfo, tokenJson, "onSale");
         resolve(item);
@@ -605,7 +632,7 @@ export class NFTContractHelperService {
     return new Promise(async (resolve, reject) => {
       try {
         const tokenId = await this.getTokenIdOfOwnerByIndex(accAddress, index);
-        const tokenInfo = await this.getTokenInfo(String(tokenId));
+        const tokenInfo = await this.getTokenInfo(String(tokenId), true);
         const tokenJson = await this.getTokenJson(tokenInfo.tokenUri);
         const item = this.creteItemFormTokenId(tokenInfo, tokenJson, "created");
         resolve(item);
@@ -616,20 +643,13 @@ export class NFTContractHelperService {
     });
   }
 
-  forTest() {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const tokenIdAndJson = await this.getTokenJsonFromTokenIndex(1399);
+  savePasarItem(orderId: string, item: FeedsData.NFTItem, firstSync: boolean) {
+    if (firstSync)
+      this.dataHelper.updatePasarItem(orderId, item);
+    this.syncOrderHelperMap[orderId] = item;
+  }
 
-        const fileEntry = await this.fileHelperService.writeTokenJsonFileData(String(tokenIdAndJson.tokenId), JSON.stringify(tokenIdAndJson.tokenJson));
-        console.log("TEST", fileEntry.name);
-
-
-        await this.fileHelperService.getTokenJsonData(fileEntry.name);
-      } catch (error) {
-        Logger.error('TEST', error);
-        reject(error);
-      }
-    });
+  setPasarItemMap() {
+    this.dataHelper.setPasarItemMap(this.syncOrderHelperMap);
   }
 }

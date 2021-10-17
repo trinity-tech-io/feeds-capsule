@@ -15,6 +15,7 @@ import { PopupProvider } from 'src/app/services/popup';
 import { StandardAuthService } from 'src/app/services/StandardAuthService';
 import { AddFeedService } from 'src/app/services/AddFeedService';
 import { IntentService } from 'src/app/services/IntentService';
+import { NFTContractHelperService } from 'src/app/services/nftcontract_helper.service';
 import { connectivity } from '@elastosfoundation/elastos-connectivity-sdk-cordova';
 
 import _ from 'lodash';
@@ -125,7 +126,8 @@ export class FeedService {
     private addFeedService: AddFeedService,
     private dataHelper: DataHelper,
     private intentService: IntentService, //public  theme:ThemeService
-    private ipfsService: IPFSService
+    private ipfsService: IPFSService,
+    private nftContractHelperService: NFTContractHelperService
   ) {
     eventBus = events;
     this.init();
@@ -261,6 +263,10 @@ export class FeedService {
     return this.dataHelper.loadTempData();
   }
 
+  loadPasarItemMap() {
+    return this.dataHelper.loadPasarItemMap();
+  }
+
   async loadData() {
     await Promise.all([
       this.loadTempIdData(),
@@ -285,6 +291,7 @@ export class FeedService {
       this.loadSyncCommentStatusMap(),
       this.loadSyncPostStatusMap(),
       this.loadLastMultiLikesAndCommentsCountUpdateMap(),
+      this.loadPasarItemMap()
     ]);
   }
 
@@ -7748,5 +7755,9 @@ export class FeedService {
 
   getCurSearchField(){
      return this.curSearchField;
+  }
+
+  syncOpenOrder() {
+    this.nftContractHelperService.syncOpenOrder();
   }
 }

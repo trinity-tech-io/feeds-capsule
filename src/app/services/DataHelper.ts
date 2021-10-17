@@ -107,6 +107,8 @@ export class DataHelper {
 
   private cachedNftMap: { [name: string]: string } = null;
 
+  private pasarItemMap: { [orderId: string]: FeedsData.NFTItem };
+
   constructor(
     private storageService: StorageService,
     private events: Events
@@ -2429,5 +2431,86 @@ export class DataHelper {
       this.cachedNftMap[name] = "";
     // return this.c
     return;
+  }
+
+
+  ////PasarItemMap
+  setPasarItemMap(pasarItemMap: { [orderId: string]: FeedsData.NFTItem }) {
+    this.pasarItemMap = pasarItemMap;
+    this.saveData(FeedsData.PersistenceKey.pasarItemMap, this.pasarItemMap);
+  }
+
+  loadPasarItemMap(): Promise<{ [orderId: string]: FeedsData.NFTItem }> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        if (JSON.stringify(this.pasarItemMap) == '{}') {
+          this.pasarItemMap =
+            (await this.loadData(FeedsData.PersistenceKey.pasarItemMap)) || {};
+          resolve(this.pasarItemMap);
+          return;
+        }
+        resolve(this.pasarItemMap);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
+  deletePasarItem(orderId: string) {
+    this.checkPasarItemMap();
+    if (this.pasarItemMap == null || this.pasarItemMap == undefined)
+      return;
+    this.pasarItemMap[orderId] = null;
+    delete this.pasarItemMap[orderId];
+    this.saveData(FeedsData.PersistenceKey.pasarItemMap, this.pasarItemMap);
+  }
+
+  updatePasarItem(orderId: string, pasarItem: FeedsData.NFTItem) {
+    this.checkPasarItemMap();
+    this.updatePasarItemWithoutSave(orderId, pasarItem);
+    this.saveData(FeedsData.PersistenceKey.pasarItemMap, this.pasarItemMap);
+  }
+
+  updatePasarItemWithoutSave(orderId: string, pasarItem: FeedsData.NFTItem) {
+    this.checkPasarItemMap();
+    this.pasarItemMap[orderId] = pasarItem;
+  }
+
+  getPasarItem(orderId: string): FeedsData.NFTItem {
+    this.checkPasarItemMap();
+    if (!this.pasarItemMap) return null;
+    return this.pasarItemMap[orderId];
+  }
+
+  getPasarItemMap(): { [orderId: string]: FeedsData.NFTItem } {
+    this.checkPasarItemMap();
+    if (!this.pasarItemMap) return null;
+    return this.pasarItemMap;
+  }
+
+  isExistPasarItem(orderId: string): boolean {
+    this.checkPasarItemMap();
+    if (this.pasarItemMap[orderId] == null || this.pasarItemMap[orderId] == undefined)
+      return false;
+    return true;
+  }
+
+  getPasarItemList(): FeedsData.NFTItem[] {
+    let list: FeedsData.NFTItem[] = [];
+    this.pasarItemMap = this.pasarItemMap || {};
+    let keys: string[] = Object.keys(this.pasarItemMap) || [];
+    for (let index in keys) {
+      if (this.pasarItemMap[keys[index]] == null ||
+        this.pasarItemMap[keys[index]] == undefined
+      )
+        continue;
+      list.push(this.pasarItemMap[keys[index]]);
+    }
+    return list;
+  }
+
+  checkPasarItemMap() {
+    if (this.pasarItemMap == null || this.pasarItemMap == undefined)
+      this.pasarItemMap = {};
   }
 }
