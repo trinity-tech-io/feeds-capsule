@@ -779,9 +779,6 @@ export class ProfilePage implements OnInit {
         }, 500);
         break;
       case 'ProfilePage.collectibles':
-        // this.nftContractHelperService.syncTokenInfo();
-        // this.nftContractHelperService.syncOpenOrder();
-        // this.nftContractHelperService.forTest();
         await this.refreshCollectibles();
         event.target.complete();
         break;

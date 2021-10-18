@@ -107,7 +107,7 @@ export class DataHelper {
 
   private cachedNftMap: { [name: string]: string } = null;
 
-  private pasarItemMap: { [orderId: string]: FeedsData.NFTItem };
+  private pasarItemMap: { [orderId: string]: FeedsData.NFTItem } = {};
 
   constructor(
     private storageService: StorageService,
@@ -2444,11 +2444,14 @@ export class DataHelper {
     return new Promise(async (resolve, reject) => {
       try {
         if (JSON.stringify(this.pasarItemMap) == '{}') {
+          console.log('111111111', JSON.stringify(this.pasarItemMap));
           this.pasarItemMap =
             (await this.loadData(FeedsData.PersistenceKey.pasarItemMap)) || {};
+          console.log('22222222', this.pasarItemMap);
           resolve(this.pasarItemMap);
           return;
         }
+        console.log('3333333333', this.pasarItemMap);
         resolve(this.pasarItemMap);
       } catch (error) {
         reject(error);
