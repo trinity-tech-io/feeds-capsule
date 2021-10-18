@@ -133,6 +133,7 @@ declare namespace FeedsData {
     imgThumbKeys: ImageThumbKey[];
     nftTokenId: number;
     nftOrderId: number;
+    nftImageType: string,
   };
 
   type ImgThumb = {

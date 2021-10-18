@@ -5909,6 +5909,7 @@ export class FeedService {
     let mMediaType = FeedsData.MediaType.noMeida;
     let nftTokenId = contentObj.nftTokenId || '';
     let nftOrderId = contentObj.nftOrderId || '';
+    let nftImageType = contentObj.nftImageType || '';
 
     let videoThumbKeyObj: FeedsData.VideoThumbKey = undefined;
     if (videoThumb != '') {
@@ -5965,6 +5966,7 @@ export class FeedService {
       imgThumbKeys: imgThumbKeys,
       nftTokenId: nftTokenId,
       nftOrderId: nftOrderId,
+      nftImageType: nftImageType
     };
 
     return content;
@@ -6009,6 +6011,7 @@ export class FeedService {
       imgThumbKeys: imgThumbKeys,
       nftTokenId: null,
       nftOrderId: null,
+      nftImageType: null
     };
 
     return content;

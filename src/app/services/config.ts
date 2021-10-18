@@ -68,8 +68,8 @@ export class Config {
     public static defaultIPFSApi(): string {
         const availableIpfsNetworkTemplates: string[] = [
             "https://ipfs0.trinity-feeds.app/",
-            "https://ipfs1.trinity-feeds.app/", 
-            "https://ipfs2.trinity-feeds.app/", 
+            "https://ipfs1.trinity-feeds.app/",
+            "https://ipfs2.trinity-feeds.app/",
           ];
         return availableIpfsNetworkTemplates[Math.floor(Math.random() * availableIpfsNetworkTemplates.length)];
     }

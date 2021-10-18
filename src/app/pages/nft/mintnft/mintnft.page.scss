@@ -49,8 +49,8 @@
         color: #9ca0a4;
         margin-top: 5px;
       }
-      --background-activated: #fff;
-      --background-focused: #fff;
+      --background-activated: #fff !important;
+      --background-focused: #fff !important;
     }
 
     ion-radio{
@@ -263,6 +263,12 @@
 }
 
 .darkContainer {
+
+    ion-item{
+      --background-activated: #191a2f !important;
+      --background-focused: #191a2f !important;
+    }
+
     ion-list {
       ion-item {
             border-bottom: 1px solid #2e2f4e;

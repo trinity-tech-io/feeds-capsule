@@ -2209,7 +2209,7 @@ export class ProfilePage implements OnInit {
     } else {
       tokenId = tokenInfo.tokenId;
 
-      sellerAddr = tokenInfo.royaltyOwner;
+      sellerAddr = "";
       curQuantity = 1;
       price = null;
       orderId = null;

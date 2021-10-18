@@ -406,6 +406,7 @@ export class MyApp {
     this.feedService
       .getData('feeds.collectible.setting')
       .then(collectibleSetting => {
+        console.log("===collectibleSetting==="+collectibleSetting);
         if (collectibleSetting === null) {
           this.feedService.setCollectibleStatus({});
           return;

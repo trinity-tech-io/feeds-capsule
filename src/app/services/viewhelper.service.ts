@@ -36,6 +36,7 @@ export class ViewHelper {
     oldNameKey: string,
     appService?: any,
     isOwer?: boolean,
+    isNft?: string,
   ) {
     const isExitMode = await this.modalController.getTop();
     if (isExitMode) {
@@ -72,15 +73,31 @@ export class ViewHelper {
       ) {
         this.titleBarService.setTitleBarBackKeyShown(titleBar, true);
       }
+      isOwer  = isOwer || false;
       if (isOwer) {
-        this.titleBarService.setTitleBarEditChannel(titleBar);
+        if(!this.theme.darkMode){
+          this.titleBarService.setTitleBarMoreMemu(titleBar,"channelRightMenu","assets/icon/dot.ico");
+        }else{
+          this.titleBarService.setTitleBarMoreMemu(titleBar,"channelRightMenu","assets/icon/dark/dot.ico");
+        }
+      }else{
+        this.titleBarService.addRight(titleBar);
       }
-      this.titleBarService.addRight(titleBar);
     });
 
     return await modal.present().then(() => {
+
       const el: any = document.querySelector('ion-modal') || '';
       const viewerModal: any = el.querySelector("ion-viewer-modal");
+      //add nft log
+      isNft = isNft || "";
+      if(isNft != ""){
+        let sheet1 = document.createElement('img');
+        sheet1.setAttribute('src',"/assets/images/bidfeedslogo.svg");
+        sheet1.setAttribute('style', 'display:block;width:90px;height:90px;top:calc(50% - 45px);left: calc(50% - 45px);z-index:10000;position:fixed;');
+        viewerModal.appendChild(sheet1);
+      }
+
       //removeChild
       let sheet = document.createElement('img');
       if(this.theme.darkMode){
@@ -130,14 +147,19 @@ export class ViewHelper {
         titleBar,
         this.translate.instant(oldNameKey),
       );
-      this.titleBarService.setTitleBarBackKeyShown(titleBar, true);
-      if (page === 'serverinfo') {
-        this.titleBarService.setTitleBarEditServer(titleBar);
+      if(page === "discoverfeedinfo"){
+        return;
       }
+      this.titleBarService.setTitleBarBackKeyShown(titleBar, true);
       if (page === 'feedinfo') {
         if (isOwner) {
-          this.titleBarService.setTitleBarEditChannel(titleBar);
+          if(!this.theme.darkMode){
+            this.titleBarService.setTitleBarMoreMemu(titleBar,"channelRightMenu","assets/icon/dot.ico");
+          }else{
+            this.titleBarService.setTitleBarMoreMemu(titleBar,"channelRightMenu","assets/icon/dark/dot.ico");
+          }
         }
+        return;
       }
       this.titleBarService.addRight(titleBar);
     });

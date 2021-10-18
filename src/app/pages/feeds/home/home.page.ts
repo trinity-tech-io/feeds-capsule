@@ -156,6 +156,7 @@ export class HomePage implements OnInit {
   public isShowSearchField: boolean = false;
   public pasarsearchPlaceholder: string = "";
   private searchBeforePasar: any = [];
+  private nftImageType:string = "";
   constructor(
     private platform: Platform,
     private elmRef: ElementRef,
@@ -947,7 +948,6 @@ export class HomePage implements OnInit {
         }, 500);
         break;
       case 'pasar':
-        this.scrollToTop(1);
         this.elaPrice = this.feedService.getElaUsdPrice();
         this.loadMoreData().then((list) => {
           this.pasarList = _.concat(this.pasarList, list);
@@ -1140,6 +1140,16 @@ export class HomePage implements OnInit {
       this.feedService.getData(key).then(realImg => {
         let img = realImg || '';
         if (img != '') {
+          let post =
+          _.find(this.postList, item => {
+         return (
+          item.nodeId === nodeId &&
+          item.channel_id === channelId &&
+          item.id === postId
+        );
+        }) || {};
+
+       let isNft = post.content.nftOrderId || '';
           this.isImgLoading[this.imgCurKey] = false;
           this.viewHelper.openViewer(
             this.titleBar,
@@ -1147,6 +1157,8 @@ export class HomePage implements OnInit {
             'common.image',
             'FeedsPage.tabTitle1',
             this.appService,
+            false,
+            isNft
           );
         } else {
           let post = _.find(this.postList, post => {
@@ -1275,6 +1287,13 @@ export class HomePage implements OnInit {
                 postImage.setAttribute('src', realImage);
                 if (nftOrdeId != '' && priceDes != '') {
                   let imagesWidth = postImage.clientWidth;
+                  if(this.nftImageType === "avatar"){
+
+                    let homebidAvatar = document.getElementById(
+                      id + 'homebidAvatar',
+                    );
+                    homebidAvatar.style.display = 'block';
+                  }
                   let homebidfeedslogo = document.getElementById(
                     id + 'homebidfeedslogo',
                   );
@@ -1288,8 +1307,12 @@ export class HomePage implements OnInit {
                   let homeNftQuantity = document.getElementById(
                     id + 'homeNftQuantity',
                   );
+                  let homeMaxNftQuantity = document.getElementById(
+                    id + 'homeMaxNftQuantity',
+                  );
                   homeNftPrice.innerText = priceDes;
                   homeNftQuantity.innerText = nftQuantity;
+                  homeMaxNftQuantity.innerText = nftQuantity;
                   homebuy.style.display = 'block';
                 }
 
@@ -1703,12 +1726,24 @@ export class HomePage implements OnInit {
       if(postImage!=null){
         postImage.setAttribute('src', value);
       }
+      let post =
+      _.find(this.postList, item => {
+     return (
+      item.nodeId === nodeId &&
+      item.channel_id === channelId &&
+      item.id === postId
+    );
+    }) || {};
+
+    let isNft = post.content.nftOrderId || '';
       this.viewHelper.openViewer(
         this.titleBar,
         value,
         'common.image',
         'FeedsPage.tabTitle1',
         this.appService,
+        false,
+        isNft
       );
     } else if (key.indexOf('video') > -1) {
       this.videoDownStatus[this.videoDownStatusKey] = '';
@@ -2195,9 +2230,10 @@ async  clickTab(type: string) {
           item.id === postId
         );
       }) || {};
-
+      //homebidAvatar
     let nftOrderId = post.content.nftOrderId || '';
     if (nftOrderId != '') {
+      this.nftImageType = post.content.nftImageType || '';
       return nftOrderId;
     }
     return '';
