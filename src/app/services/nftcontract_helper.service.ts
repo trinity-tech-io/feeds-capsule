@@ -50,7 +50,8 @@ export type ChangedItem = {
 }
 @Injectable()
 export class NFTContractHelperService {
-  private refreshCount = 7;
+  private isSyncing = false;
+  private refreshCount = 8;
   private syncOrderHelperMap: { [orderId: string]: FeedsData.NFTItem } = {};
   constructor(
     private nftContractControllerService: NFTContractControllerService,
@@ -62,7 +63,32 @@ export class NFTContractHelperService {
   ) {
   }
 
-  loadMoreData(saleStatus: string, sortType: SortType, count: number, startPage: number): Promise<FeedsData.NFTItem[]> {
+  loadMoreData(saleStatus: string, sortType: SortType, startPage: number): Promise<FeedsData.NFTItem[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const list = await this.loadData(startPage, sortType);
+        resolve(list);
+      } catch (error) {
+        Logger.error('Load more data error', error);
+        reject(error);
+      }
+    });
+  }
+
+  refreshPasarList(sortType: SortType): Promise<FeedsData.NFTItem[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        this.syncOpenOrder();
+        const list = await this.loadData(0, sortType);
+        resolve(list);
+      } catch (error) {
+        Logger.error('Refresh PasarList error', error);
+        reject(error);
+      }
+    });
+  }
+
+  loadMoreDataFromContract(saleStatus: string, sortType: SortType, count: number, startPage: number): Promise<FeedsData.NFTItem[]> {
     return new Promise(async (resolve, reject) => {
       if (startPage * this.refreshCount >= count) {
         resolve([]);
@@ -79,11 +105,7 @@ export class NFTContractHelperService {
           const orderInfo = await this.getOpenOrderByIndex(index);
           const tokenInfo = await this.getTokenInfo(String(orderInfo.tokenId), true);
           const tokenJson = await this.getTokenJson(tokenInfo.tokenUri);
-
           const item = await this.createItemFromOrderInfo(orderInfo, tokenInfo, tokenJson, saleStatus);
-          // let openOrderResult = await this.getOpenOrderResultByIndex(index);
-          // let contractItem = await this.handleFeedsUrl(openOrderResult, saleStatus);
-
           list.push(item);
         }
         // this.nftPersistenceHelper.setPasarList(list);
@@ -94,7 +116,47 @@ export class NFTContractHelperService {
     });
   }
 
-  refreshPasarList(saleStatus: string, sortType: SortType, openOrderCountCallback: (openOrderCount: number) => void, callback: (changedItem: ChangedItem) => void): Promise<FeedsData.NFTItem[]> {
+  loadData(startPage: number, sortType: SortType): Promise<FeedsData.NFTItem[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let list: FeedsData.NFTItem[] = [];
+        let pasarItemList = this.dataHelper.getPasarItemList() || [];
+        pasarItemList = this.sortData(pasarItemList, sortType);
+        const count = pasarItemList.length || 0;
+
+        const start = startPage * this.refreshCount;
+        const end = (startPage + 1) * this.refreshCount
+
+        console.log('start', start);
+        console.log('end', end);
+
+        if (count <= start) {
+          console.log('count <= start');
+          resolve(list);
+          return;
+        }
+
+        if (count > end) {
+          list = pasarItemList.slice(start, end);
+
+          console.log('count > end');
+          console.log(list.length);
+          console.log(list);
+
+          resolve(list);
+          return;
+        }
+        console.log('------------------------');
+        list = pasarItemList.slice(start, count);
+        resolve(list);
+
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
+  refreshPasarListFromContract(saleStatus: string, sortType: SortType, openOrderCountCallback: (openOrderCount: number) => void, callback: (changedItem: ChangedItem) => void): Promise<FeedsData.NFTItem[]> {
     return new Promise(async (resolve, reject) => {
       try {
 
@@ -383,7 +445,7 @@ export class NFTContractHelperService {
         //tokenUri: feeds:json:xxx
         const uri = this.parseTokenUri(tokenUri);
         let tokenJson = await this.fileHelperService.getTokenJsonData(uri);
-        console.log("getTokenJson", tokenJson);
+        // console.log("getTokenJson", tokenJson);
         if (!tokenJson) {
 
           tokenJson = await this.getTokenJsonFromIpfs(uri);
@@ -457,8 +519,8 @@ export class NFTContractHelperService {
           const tokenId = tokenIdAndJson.tokenId;
           const tokenJson = tokenIdAndJson.tokenJson;
 
-          console.log("tokenId", tokenId);
-          console.log("tokenJson", tokenJson);
+          // console.log("tokenId", tokenId);
+          // console.log("tokenJson", tokenJson);
           //TODO
         }
       } catch (error) {
@@ -472,7 +534,7 @@ export class NFTContractHelperService {
     return new Promise(async (resolve, reject) => {
       try {
         const tokenId = await this.nftContractControllerService.getSticker().tokenIdByIndex(String(index));
-        console.log("tokenId", tokenId);
+        // console.log("tokenId", tokenId);
         const tokenJson = await this.getTokenJsonFromTokenId(tokenId);
         resolve({ tokenId: tokenId, tokenJson: tokenJson });
       } catch (error) {
@@ -486,7 +548,7 @@ export class NFTContractHelperService {
     return new Promise(async (resolve, reject) => {
       try {
         const tokenInfo = await this.getTokenInfo(tokenId, true);
-        console.log("token", tokenInfo);
+        // console.log("token", tokenInfo);
         const tokenJson = await this.getTokenJson(tokenInfo.tokenUri);
         resolve(tokenJson);
       } catch (error) {
@@ -496,9 +558,14 @@ export class NFTContractHelperService {
     });
   }
 
-  syncOpenOrder() {
+  syncOpenOrder(): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
+        if (this.isSyncing == true) {
+          resolve('FINISH');
+          return;
+        }
+        this.isSyncing = true;
         let firstSync: boolean = false;
         const pasarItemMap = this.dataHelper.getPasarItemMap();
         this.syncOrderHelperMap = {};
@@ -508,20 +575,24 @@ export class NFTContractHelperService {
         const openOrderCount = await this.nftContractControllerService.getPasar().getOpenOrderCount();
         console.log("openOrderCount", openOrderCount);
         for (let index = openOrderCount - 1; index >= 0; index--) {
-          const order = await this.getOpenOrderByIndex(index);
-          const tokenInfo = await this.getTokenInfo(String(order.tokenId), true);
+          console.log('firstSync', firstSync);
+          const orderInfo = await this.getOpenOrderByIndex(index);
+          const tokenInfo = await this.getTokenInfo(String(orderInfo.tokenId), true);
           const tokenJson = await this.getTokenJson(tokenInfo.tokenUri);
 
-          if (order.orderState == FeedsData.OrderState.SALEING) {
-            const item = this.creteItemFormTokenId(tokenInfo, tokenJson, "onSale");
-            this.savePasarItem(String(order.orderId), item, firstSync);
+          if (orderInfo.orderState == FeedsData.OrderState.SALEING) {
+            const item = this.createItemFromOrderInfo(orderInfo, tokenInfo, tokenJson, "onSale");
+            // console.log('syncOpenOrder item', item);
+            this.savePasarItem(String(orderInfo.orderId), item, firstSync);
           }
         }
-
         this.setPasarItemMap();
+        resolve('FINISH');
       } catch (error) {
         Logger.error('Sync open order', error);
         reject(error);
+      } finally {
+        this.isSyncing = false;
       }
     });
   }

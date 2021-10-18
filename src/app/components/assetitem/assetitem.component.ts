@@ -59,6 +59,9 @@ export class AssetitemComponent implements OnInit {
         this.imgUri = data;
       });
     });
+
+
+    console.log('AssetitemComponent', this.assetItem['saleOrderId']);
   }
 
   clickItem() {

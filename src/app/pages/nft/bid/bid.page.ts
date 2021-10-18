@@ -104,6 +104,8 @@ export class BidPage implements OnInit {
       this.royalties = queryParams.royalties || null;
       this.saleOrderId = queryParams.saleOrderId || '';
       this.sellerAddress = queryParams.sellerAddr || '';
+
+      console.log('OrderId', queryParams.saleOrderId);
     });
   }
 

@@ -146,7 +146,7 @@ export class HomePage implements OnInit {
   /** grid  list*/
   public styleType: string = "grid";
 
-  private pasarListCount: number = 0;
+  // private pasarListCount: number = 0;
   private pasarListPage: number = 0;
   public elaPrice: string = null;
 
@@ -257,17 +257,6 @@ export class HomePage implements OnInit {
     });
   }
 
-  getCurPasarListPage() {
-    let pasarListLen: any = this.pasarList.length;
-    let len1 = pasarListLen / 8;
-    let len2 = parseInt(len1.toString())
-    if (len1 > len2) {
-      this.pasarListPage = len2 + 1;
-    } else {
-      this.pasarListPage = len2;
-    }
-  }
-
   ionViewWillEnter() {
 
     this.homeTittleBar = this.elmRef.nativeElement.querySelector("#homeTittleBar");
@@ -287,13 +276,10 @@ export class HomePage implements OnInit {
     }
 
 
-    this.pasarList = this.nftPersistenceHelper.getPasarList();
-    this.pasarList = _.sortBy(this.pasarList, (item: any) => {
-      return -Number(item.createTime);
-    });
-
-    //获取当前的PasarList页数
-    this.getCurPasarListPage();
+    // this.pasarList = this.nftPersistenceHelper.getPasarList();
+    // this.pasarList = _.sortBy(this.pasarList, (item: any) => {
+    //   return -Number(item.createTime);
+    // });
 
     this.connectionStatus = this.feedService.getConnectionStatus();
     this.styleObj.width = screen.width - 105 + 'px';
@@ -960,19 +946,29 @@ export class HomePage implements OnInit {
       case 'pasar':
         // this.scrollToTop(1);
         this.elaPrice = this.feedService.getElaUsdPrice();
-        this.loadMoreData().then((list) => {
-          this.pasarList = _.concat(this.pasarList, list);
-          this.pasarList = this.nftContractHelperService.sortData(this.pasarList, SortType.CREATE_TIME);
-          this.nftPersistenceHelper.setPasarList(this.pasarList);
+        console.log('loadMoreData');
+        this.loadMoreData().then(() => {
           event.target.complete();
         })
         break;
     }
   }
 
-  loadMoreData() {
-    this.pasarListPage++;
-    return this.nftContractHelperService.loadMoreData('onSale', SortType.CREATE_TIME, this.pasarListCount, this.pasarListPage);
+  loadMoreData(): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const list = await this.nftContractHelperService.loadMoreData('onSale', SortType.CREATE_TIME, this.pasarListPage);
+        if (list && list.length > 0) {
+          this.pasarListPage++;
+          this.pasarList = _.concat(this.pasarList, list);
+          this.pasarList = this.nftContractHelperService.sortData(this.pasarList, SortType.CREATE_TIME);
+        }
+        console.log('loadMoreData', this.pasarList);
+        resolve('FINISH');
+      } catch (error) {
+        reject(error);
+      }
+    });
   }
 
   doRefresh(event) {
@@ -1019,10 +1015,7 @@ export class HomePage implements OnInit {
         this.zone.run(async () => {
           try {
             this.pasarListPage = 0;
-            this.pasarList = await this.nftContractHelperService.refreshPasarList('onSale', SortType.CREATE_TIME, (orderCount: number) => {
-              this.pasarListCount = orderCount;
-            }, () => { });
-            this.nftPersistenceHelper.setPasarList(this.pasarList);
+            this.pasarList = await this.nftContractHelperService.refreshPasarList(SortType.CREATE_TIME);
           } catch (err) {
             Logger.error(TAG, err);
           } finally {
@@ -1943,21 +1936,10 @@ export class HomePage implements OnInit {
         this.hideFullScreen();
         this.native.hideLoading();
 
-        let plist = this.nftPersistenceHelper.getPasarList();
-        if (plist.length === 0) {
-          this.getPaserList();
-          return;
-        } else {
-          let openOrderCount = await this.nftContractControllerService
-            .getPasar()
-            .getOpenOrderCount();
-          this.pasarListCount = parseInt(openOrderCount);
+        console.log('this.pasarList', this.pasarList);
+        if (!this.pasarList || this.pasarList.length == 0) {
+          this.pasarList = await this.nftContractHelperService.refreshPasarList(SortType.CREATE_TIME);
         }
-        this.pasarList = plist;
-        this.pasarList = _.sortBy(this.pasarList, (item: any) => {
-          return -Number(item.createTime);
-        });
-        //this.searchPasar = _.cloneDeep(this.pasarList);
         break;
     }
   }
@@ -2028,49 +2010,27 @@ export class HomePage implements OnInit {
     await this.walletConnectControllerService.connect();
   }
 
-  async getPaserList() {
-    this.pasarList = [];
-    this.nftPersistenceHelper.setPasarList(this.pasarList);
-    let openOrderCount = await this.nftContractControllerService
-      .getPasar()
-      .getOpenOrderCount();
+  // async getPaserList() {
+  //   this.pasarList = [];
+  //   this.nftPersistenceHelper.setPasarList(this.pasarList);
+  //   let openOrderCount = await this.nftContractControllerService
+  //     .getPasar()
+  //     .getOpenOrderCount();
 
-    if (openOrderCount === '0')
-      return
+  //   if (openOrderCount === '0')
+  //     return
 
-    this.pasarListCount = parseInt(openOrderCount);
-    let maxNum = parseInt(openOrderCount);
+  //   this.pasarListCount = parseInt(openOrderCount);
+  //   let maxNum = parseInt(openOrderCount);
 
-    for (let index = this.pasarListCount - 1; index > (this.pasarListCount - 8); index--) {
-      const item: FeedsData.NFTItem = await this.getOpenOrderByIndex(index);
-      this.pasarList.push(item);
-      this.pasarList = this.nftContractHelperService.sortData(this.pasarList, SortType.CREATE_TIME);
-    }
+  //   for (let index = this.pasarListCount - 1; index > (this.pasarListCount - 8); index--) {
+  //     const item: FeedsData.NFTItem = await this.getOpenOrderByIndex(index);
+  //     this.pasarList.push(item);
+  //     this.pasarList = this.nftContractHelperService.sortData(this.pasarList, SortType.CREATE_TIME);
+  //   }
 
-    this.nftPersistenceHelper.setPasarList(this.pasarList);
-    // for (let index = 0; index<8;index++) {
-    //   this.pasarList.push(null);
-    // }
-    // for (let pIndex = openOrderCount - 1; pIndex >= 0; pIndex--) {
-    //   this.getOpenOrderByIndex(pIndex);
-    // }
-    // let pIndex = maxNum - 8;
-    // let tindex = 0;
-    // let sid = setInterval(()=>{
-    //    if(pIndex<maxNum){
-    //      try{
-    //       this.getOpenOrderByIndex(pIndex,tindex);
-    //       tindex++;
-    //       pIndex++;
-    //      }catch(err){
-    //       tindex++;
-    //       pIndex++;
-    //      }
-    //    }else{
-    //     clearInterval(sid);
-    //    }
-    // }, 10);
-  }
+  //   this.nftPersistenceHelper.setPasarList(this.pasarList);
+  // }
 
   async getOpenOrderByIndex(index: number): Promise<FeedsData.NFTItem> {
     return new Promise(async (resolve, reject) => {
