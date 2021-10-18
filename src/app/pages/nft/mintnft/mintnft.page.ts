@@ -734,6 +734,7 @@ export class MintnftPage implements OnInit {
     nftContent['text'] = this.nftName+" - "+ this.nftDescription;
     nftContent['nftTokenId'] = tokenId;
     nftContent['nftOrderId'] = this.orderId;
+    nftContent['nftImageType'] = this.assetType;
 
     this.feedService.declarePost(
       nodeId,

@@ -70,9 +70,9 @@ export class FeedspreferencesPage implements OnInit {
   }
 
   ionViewWillEnter() {
-    let collectibleStatus = this.feedService.getCollectibleStatus();
+    this.collectibleStatus = this.feedService.getCollectibleStatus();
     let key = this.nodeId + '_' + this.feedId;
-    this.curCollectibleStatus = collectibleStatus[key] || false;
+    this.curCollectibleStatus = this.collectibleStatus[key] || false;
     this.connectionStatus = this.feedService.getConnectionStatus();
     this.feedPublicStatus = this.feedService.getFeedPublicStatus() || {};
     this.getPublicStatus();

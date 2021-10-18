@@ -337,6 +337,7 @@ export class BidPage implements OnInit {
     if(index === -1){
       let cItem: any = _.cloneDeep(this.curAssetItem);
       cItem.fixedAmount = null;
+      cItem.sellerAddr  = "";
       cItem['moreMenuType'] = 'created';
       olist.push(cItem);
       this.nftPersistenceHelper.setCollectiblesMap(createAddress, olist);

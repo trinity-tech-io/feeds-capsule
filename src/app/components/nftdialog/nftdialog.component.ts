@@ -36,6 +36,7 @@ export class NftdialogComponent implements OnInit {
   private orderId: any = '';
   public imgUri:string = "";
   private popoverDialog: any;
+  private assetType:string = "";
   constructor(
     private navParams: NavParams,
     private popover: PopoverController,
@@ -68,6 +69,7 @@ export class NftdialogComponent implements OnInit {
     this.quantity = this.assItem['curQuantity'] || this.assItem.quantity;
     this.Maxquantity = this.assItem['curQuantity'] || this.assItem.quantity;
     this.saleOrderId = this.assItem.saleOrderId || '';
+    this.assetType = this.assItem.type || "";
     this.hanldeImg();
   }
 
@@ -463,6 +465,7 @@ async handleSaleList() {
     nftContent['text'] = this.assItem.name+ " - "+ this.assItem.description;
     nftContent['nftTokenId'] = tokenId;
     nftContent['nftOrderId'] = this.orderId;
+    nftContent['nftImageType'] = this.assetType;
 
     this.feedService.declarePost(
       nodeId,

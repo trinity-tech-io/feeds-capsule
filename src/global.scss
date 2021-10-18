@@ -469,6 +469,14 @@ ion-input {
   display:none;
 }
 
+.avatarImg{
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  z-index: 999;
+  display:none;
+}
+
 .buyContainer{
   height: 52.5px;
   opacity:0.92;
@@ -496,7 +504,7 @@ ion-input {
     font-weight: 700;
     font-stretch: normal;
     font-style: normal;
-    color: #000;
+    color: #7624fe;
     display: inline-block;
   }
 

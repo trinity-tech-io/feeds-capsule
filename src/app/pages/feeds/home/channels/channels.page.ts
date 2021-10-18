@@ -1061,6 +1061,7 @@ export class ChannelsPage implements OnInit {
             'common.image',
             'ChannelsPage.feeds',
             this.appService,
+            true
           );
         } else {
           if (this.checkServerStatus(nodeId) != 0) {
@@ -1364,6 +1365,7 @@ export class ChannelsPage implements OnInit {
         'common.image',
         'ChannelsPage.feeds',
         this.appService,
+        true
       );
     } else if (key.indexOf('video') > -1) {
       this.videoDownStatus[this.videoDownStatusKey] = '';
