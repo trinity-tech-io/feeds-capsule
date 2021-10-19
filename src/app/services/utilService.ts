@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { FileHelperService } from 'src/app/services/FileHelperService';
+import BigNumber from 'bignumber.js';
 
 @Injectable()
 export class UtilService {
@@ -599,6 +599,12 @@ public static  zoomImgSize(imgWidth:any, imgHeight:any, maxWidth:any, maxHeight:
         hex.push(sum.pop().toString(16))
     }
     return hex.join('')
-}
+  }
+
+  public static hex2dec(str:string){
+    let dec = new BigNumber(str);
+    let decStr = dec.toFormat({prefix:""});
+    return decStr;
+  }
 
 }
