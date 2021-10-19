@@ -472,7 +472,7 @@ export class CreatenewpostPage implements OnInit {
                         document.getElementById('videocreatepost') || '';
                       video.setAttribute('poster', this.posterImg);
                       this.setOverPlay(this.flieUri);
-                      clearInterval(sid);
+                      clearTimeout(sid);
                     }, 0);
                   });
                 };

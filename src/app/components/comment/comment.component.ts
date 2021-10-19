@@ -41,8 +41,9 @@ export class CommentComponent implements OnInit {
   ngOnInit() {}
 
   ionViewDidEnter() {
-    setTimeout(() => {
+    const timer = setTimeout(() => {
       this.comment.setFocus();
+      clearTimeout(timer);
     }, 300);
   }
 
