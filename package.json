@@ -52,6 +52,7 @@
     "@ygoe/msgpack": "^1.0.2",
     "angular-svg-round-progressbar": "^7.0.0",
     "angularx-qrcode": "11.0.0",
+    "bignumber.js": "^9.0.1",
     "cordova-android": "9.0.0",
     "cordova-ios": "6.2.0",
     "cordova-plugin-exit": "^1.0.3",
