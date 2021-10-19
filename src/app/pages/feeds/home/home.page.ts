@@ -304,6 +304,14 @@ export class HomePage implements OnInit {
       this.addConnectionChangedEvent();
     });
 
+    this.events.subscribe(FeedsEvent.PublishType.mintNft,()=>{
+      this.pasarList = this.nftPersistenceHelper.getPasarList();
+    });
+
+    this.events.subscribe(FeedsEvent.PublishType.nftBuyOrder,()=>{
+          this.pasarList = this.nftPersistenceHelper.getPasarList();
+    });
+
     this.events.subscribe(FeedsEvent.PublishType.addRpcRequestError, () => {
       this.events.subscribe(FeedsEvent.PublishType.rpcRequestError, () => {
         this.native.hideLoading();
@@ -645,6 +653,8 @@ export class HomePage implements OnInit {
   }
 
   ionViewWillLeave() {
+    this.events.unsubscribe(FeedsEvent.PublishType.mintNft);
+    this.events.unsubscribe(FeedsEvent.PublishType.nftBuyOrder);
     this.events.unsubscribe(FeedsEvent.PublishType.addConnectionChanged);
     this.events.unsubscribe(FeedsEvent.PublishType.addRpcRequestError);
     this.events.unsubscribe(FeedsEvent.PublishType.addRpcResponseError);

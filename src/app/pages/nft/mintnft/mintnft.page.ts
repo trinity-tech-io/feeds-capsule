@@ -17,7 +17,7 @@ import { IPFSService } from 'src/app/services/ipfs.service';
 import { NFTPersistenceHelper } from 'src/app/services/nft_persistence_helper.service';
 import { Logger } from 'src/app/services/logger';
 import { Config } from 'src/app/services/config';
-
+import _ from 'lodash';
 const SUCCESS = 'success';
 const SKIP = 'SKIP';
 const TAG: string = 'MintPage';
@@ -918,7 +918,11 @@ export class MintnftPage implements OnInit {
         slist.push(item);
         let list = this.nftPersistenceHelper.getPasarList();
         list.push(item);
+        list = _.sortBy(list, (item: any) => {
+          return -Number(item.createTime);
+        });
         this.nftPersistenceHelper.setPasarList(list);
+        this.event.publish(FeedsEvent.PublishType.mintNft);
         break;
     }
     this.nftPersistenceHelper.setCollectiblesMap(accAddress, slist);
