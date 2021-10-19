@@ -1894,7 +1894,7 @@ export class HomePage implements OnInit {
     this.doRefreshCancel();
     switch (type) {
       case 'feeds':
-        this.content.scrollToTop(0);
+        // this.content.scrollToTop(0);
         this.searchText = '';
         if (this.searchBeforePasar.length > 0) {
           this.pasarList = _.cloneDeep(this.searchBeforePasar);
@@ -1905,7 +1905,7 @@ export class HomePage implements OnInit {
         this.refreshPostList();
         break;
       case 'pasar':
-        await this.content.scrollToTop(0);
+        // await this.content.scrollToTop(0);
         this.curSearchField = this.feedService.getCurSearchField();
         this.handlePlaceholder(this.curSearchField);
         this.handleRefresherInfinite(false);
