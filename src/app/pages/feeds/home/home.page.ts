@@ -146,7 +146,7 @@ export class HomePage implements OnInit {
   /** grid  list*/
   public styleType: string = "grid";
 
-  // private pasarListCount: number = 0;
+  private pasarListCount: number = 0;
   private pasarListPage: number = 0;
   public elaPrice: string = null;
 
@@ -947,8 +947,9 @@ export class HomePage implements OnInit {
         // this.scrollToTop(1);
         this.elaPrice = this.feedService.getElaUsdPrice();
         this.loadMoreData().then(() => {
-          setTimeout(() => {
+          let timer = setTimeout(() => {
             event.target.complete();
+            clearTimeout(timer);
           }, 500);
         })
         break;
@@ -958,6 +959,7 @@ export class HomePage implements OnInit {
   loadMoreData(): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
+        // const list = await this.nftContractHelperService.loadMoreDataFromContract('onSale', SortType.CREATE_TIME, this.pasarListCount, this.pasarListPage);
         const list = await this.nftContractHelperService.loadMoreData('onSale', SortType.CREATE_TIME, this.pasarListPage);
         if (list && list.length > 0) {
           this.pasarListPage++;
@@ -1013,10 +1015,15 @@ export class HomePage implements OnInit {
         break;
       case 'pasar':
         this.elaPrice = this.feedService.getElaUsdPrice();
+        this.handleRefresherInfinite(false);
         this.zone.run(async () => {
           try {
             this.pasarListPage = 0;
-            this.pasarList = await this.nftContractHelperService.refreshPasarListWaitRefreshCount(SortType.CREATE_TIME);
+            this.pasarList = await this.nftContractHelperService.refreshPasarListFromContract('onSale', SortType.CREATE_TIME, (openOrderCount: number) => {
+              this.pasarListCount = openOrderCount;
+            }, () => { });
+
+            this.pasarListPage++;
           } catch (err) {
             Logger.error(TAG, err);
           } finally {
@@ -1462,18 +1469,14 @@ export class HomePage implements OnInit {
   }
 
   ionScroll() {
-
-    this.native.throttle(this.handleScroll(),
-      200,
-      this,
-      true);
-
-    this.native.throttle(
-      this.setVisibleareaImage(this.postgridindex),
-      200,
-      this,
-      true,
-    );
+    this.native.throttle(this.handleScroll(), 200, this, true);
+    switch (this.tabType) {
+      case 'feeds':
+        this.native.throttle(this.setVisibleareaImage(this.postgridindex), 200, this, true);
+        break;
+      default:
+        break;
+    }
   }
 
   refreshImage(startPos: number) {
@@ -1939,6 +1942,7 @@ export class HomePage implements OnInit {
 
         if (!this.pasarList || this.pasarList.length == 0) {
           this.pasarList = await this.nftContractHelperService.loadData(0, SortType.CREATE_TIME);
+          this.pasarListPage = 1;
         }
         break;
     }
@@ -2254,7 +2258,6 @@ export class HomePage implements OnInit {
       }
       this.handleRefresherInfinite(true);
       this.handlePasarSearch();
-
     }
   }
 

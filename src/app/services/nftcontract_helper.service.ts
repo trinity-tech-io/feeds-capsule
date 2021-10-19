@@ -50,7 +50,7 @@ export type ChangedItem = {
 }
 @Injectable()
 export class NFTContractHelperService {
-  private refreshCount = 8;
+  private refreshCount = 7;
   // private displayedPasarItemMap: { [orderId: string]: FeedsData.PasarItem } = {};
   private isSyncingFlags: boolean[] = [false];
   private isSyncingIndex: number = 0;
@@ -126,7 +126,7 @@ export class NFTContractHelperService {
           const orderInfo = await this.getOpenOrderByIndex(index);
           const tokenInfo = await this.getTokenInfo(String(orderInfo.tokenId), true);
           const tokenJson = await this.getTokenJson(tokenInfo.tokenUri);
-          const item = await this.createItemFromOrderInfo(orderInfo, tokenInfo, tokenJson, saleStatus);
+          const item = this.createItemFromOrderInfo(orderInfo, tokenInfo, tokenJson, saleStatus);
           list.push(item);
         }
         // this.nftPersistenceHelper.setPasarList(list);
@@ -143,11 +143,13 @@ export class NFTContractHelperService {
         let list: FeedsData.NFTItem[] = [];
         let pasarItemList: FeedsData.NFTItem[] = [];
         if (this.refreshManually) {
-          pasarItemList = this.dataHelper.getDisplayedPasarItemList() || [];
-        } else {
-          pasarItemList = this.dataHelper.getPasarItemList() || [];
+          // pasarItemList = this.dataHelper.getDisplayedPasarItemList() || [];
+          const list: FeedsData.NFTItem[] = await this.loadMoreDataFromContract('onSale', SortType.CREATE_TIME, this.openOrderCount, startPage);
+          resolve(list);
+          return;
         }
 
+        pasarItemList = this.dataHelper.getPasarItemList() || [];
         pasarItemList = this.sortData(pasarItemList, sortType);
         const count = pasarItemList.length || 0;
 
@@ -177,8 +179,9 @@ export class NFTContractHelperService {
   refreshPasarListFromContract(saleStatus: string, sortType: SortType, openOrderCountCallback: (openOrderCount: number) => void, callback: (changedItem: ChangedItem) => void): Promise<FeedsData.NFTItem[]> {
     return new Promise(async (resolve, reject) => {
       try {
-
+        this.refreshManually = true;
         let count = await this.nftContractControllerService.getPasar().getOpenOrderCount() || 0;
+        this.openOrderCount = count;
         openOrderCountCallback(count);
 
         if (!count || count == 0) {
@@ -797,5 +800,13 @@ export class NFTContractHelperService {
     this.refreshManually = true;
     this.refreshedCount = 0;
     this.openOrderCount = Number.MAX_SAFE_INTEGER;
+  }
+
+  getOpenOrderCount() {
+    return this.openOrderCount;
+  }
+
+  getRefreshedCount() {
+    return this.refreshCount;
   }
 }

@@ -578,7 +578,7 @@ export class EditPostPage implements OnInit {
                     let sid = setTimeout(() => {
                       let id = this.nodeId + this.channelId + this.nodeId;
                       this.setFullScreen(id);
-                      clearInterval(sid);
+                      clearTimeout(sid);
                     }, 20);
                   });
                 };
