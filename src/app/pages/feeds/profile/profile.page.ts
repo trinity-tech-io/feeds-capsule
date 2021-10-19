@@ -2144,9 +2144,6 @@ export class ProfilePage implements OnInit {
     }
   }
 
-
-
-
   async refreshCollectibles() {
     if (this.isRefreshingCollectibles) {
       return;

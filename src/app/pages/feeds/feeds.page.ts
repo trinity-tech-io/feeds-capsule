@@ -59,7 +59,6 @@ export class FeedsPage implements OnInit {
     this.event.subscribe(FeedsEvent.PublishType.receiveNewPost, () => {
       this.zone.run(() => {
         this.newPostCount = this.dataHelper.getNewPostCount();
-        console.log("newPostCount is", this.newPostCount)
       });
     })
   }

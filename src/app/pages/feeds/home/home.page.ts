@@ -946,9 +946,10 @@ export class HomePage implements OnInit {
       case 'pasar':
         // this.scrollToTop(1);
         this.elaPrice = this.feedService.getElaUsdPrice();
-        console.log('loadMoreData');
         this.loadMoreData().then(() => {
-          event.target.complete();
+          setTimeout(() => {
+            event.target.complete();
+          }, 500);
         })
         break;
     }
@@ -960,10 +961,10 @@ export class HomePage implements OnInit {
         const list = await this.nftContractHelperService.loadMoreData('onSale', SortType.CREATE_TIME, this.pasarListPage);
         if (list && list.length > 0) {
           this.pasarListPage++;
-          this.pasarList = _.concat(this.pasarList, list);
+          // this.pasarList = _.concat(this.pasarList, list);
+          this.pasarList = _.unionWith(this.pasarList, list, _.isEqual);
           this.pasarList = this.nftContractHelperService.sortData(this.pasarList, SortType.CREATE_TIME);
         }
-        console.log('loadMoreData', this.pasarList);
         resolve('FINISH');
       } catch (error) {
         reject(error);
@@ -1015,7 +1016,7 @@ export class HomePage implements OnInit {
         this.zone.run(async () => {
           try {
             this.pasarListPage = 0;
-            this.pasarList = await this.nftContractHelperService.refreshPasarList(SortType.CREATE_TIME);
+            this.pasarList = await this.nftContractHelperService.refreshPasarListWaitRefreshCount(SortType.CREATE_TIME);
           } catch (err) {
             Logger.error(TAG, err);
           } finally {
@@ -1936,9 +1937,8 @@ export class HomePage implements OnInit {
         this.hideFullScreen();
         this.native.hideLoading();
 
-        console.log('this.pasarList', this.pasarList);
         if (!this.pasarList || this.pasarList.length == 0) {
-          this.pasarList = await this.nftContractHelperService.refreshPasarList(SortType.CREATE_TIME);
+          this.pasarList = await this.nftContractHelperService.loadData(0, SortType.CREATE_TIME);
         }
         break;
     }

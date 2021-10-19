@@ -7758,6 +7758,8 @@ export class FeedService {
   }
 
   syncOpenOrder() {
-    this.nftContractHelperService.syncOpenOrder();
+    setTimeout(() => {
+      this.nftContractHelperService.syncOpenOrder();
+    }, 200);
   }
 }

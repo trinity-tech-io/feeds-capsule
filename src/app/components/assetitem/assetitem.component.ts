@@ -30,7 +30,6 @@ export class AssetitemComponent implements OnInit {
   }
 
   ngOnInit() {
-    console.log("AssetitemComponent assetItem", this.assetItem);
     this.styleObj.width = (screen.width - 20 - 10) / 2 + 'px';
     if(this.assetItem === null){
         return;
@@ -59,9 +58,6 @@ export class AssetitemComponent implements OnInit {
         this.imgUri = data;
       });
     });
-
-
-    console.log('AssetitemComponent', this.assetItem['saleOrderId']);
   }
 
   clickItem() {
