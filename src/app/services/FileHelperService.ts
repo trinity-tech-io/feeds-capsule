@@ -86,7 +86,6 @@ export class FileHelperService {
         );
 
         let fileEntry = await this.fileService.getFile(orderDirEntry, fileName, true);
-        // console.log("getTokenJsonFileEntry", fileEntry);
         resolve(fileEntry);
       } catch (error) {
         reject(error);
@@ -165,7 +164,6 @@ export class FileHelperService {
         const fileBlob = await this.getTokenJsonFromCacheFile(fileName);
         if (fileBlob.size > 0) {
           const result = await this.transBlobToText(fileBlob);
-          // console.log('getTokenJsonData result', result);
           const jsonObj: FeedsData.TokenJson = JSON.parse(result);
           resolve(jsonObj);
           return;

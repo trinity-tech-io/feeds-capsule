@@ -646,4 +646,9 @@ declare namespace FeedsData {
     tokenId: number;
     tokenJson: TokenJson;
   }
+
+  type PasarItem = {
+    index: number,
+    item: NFTItem
+  }
 }

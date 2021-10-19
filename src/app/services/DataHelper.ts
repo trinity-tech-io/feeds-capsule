@@ -107,8 +107,8 @@ export class DataHelper {
 
   private cachedNftMap: { [name: string]: string } = null;
 
-  private pasarItemMap: { [orderId: string]: FeedsData.NFTItem } = {};
-
+  private pasarItemMap: { [orderId: string]: FeedsData.PasarItem } = {};
+  private displayedPasarItemMap: { [orderId: string]: FeedsData.PasarItem } = {};
   constructor(
     private storageService: StorageService,
     private events: Events
@@ -2408,7 +2408,6 @@ export class DataHelper {
   //newPostCount
   receiveNewPost() {
     this.newPostCount++;
-    // console.log("receiveNewPost", this.newPostCount);
     this.events.publish(FeedsEvent.PublishType.receiveNewPost, this.newPostCount);
   }
 
@@ -2418,7 +2417,6 @@ export class DataHelper {
 
   resetNewPost() {
     this.newPostCount = 0;
-    // console.log("resetNewPost", this.newPostCount);
     this.events.publish(FeedsEvent.PublishType.receiveNewPost, this.newPostCount);
   }
 
@@ -2435,23 +2433,20 @@ export class DataHelper {
 
 
   ////PasarItemMap
-  setPasarItemMap(pasarItemMap: { [orderId: string]: FeedsData.NFTItem }) {
+  setPasarItemMap(pasarItemMap: { [orderId: string]: FeedsData.PasarItem }) {
     this.pasarItemMap = pasarItemMap;
     this.saveData(FeedsData.PersistenceKey.pasarItemMap, this.pasarItemMap);
   }
 
-  loadPasarItemMap(): Promise<{ [orderId: string]: FeedsData.NFTItem }> {
+  loadPasarItemMap(): Promise<{ [orderId: string]: FeedsData.PasarItem }> {
     return new Promise(async (resolve, reject) => {
       try {
         if (JSON.stringify(this.pasarItemMap) == '{}') {
-          console.log('111111111', JSON.stringify(this.pasarItemMap));
           this.pasarItemMap =
             (await this.loadData(FeedsData.PersistenceKey.pasarItemMap)) || {};
-          console.log('22222222', this.pasarItemMap);
           resolve(this.pasarItemMap);
           return;
         }
-        console.log('3333333333', this.pasarItemMap);
         resolve(this.pasarItemMap);
       } catch (error) {
         reject(error);
@@ -2468,24 +2463,25 @@ export class DataHelper {
     this.saveData(FeedsData.PersistenceKey.pasarItemMap, this.pasarItemMap);
   }
 
-  updatePasarItem(orderId: string, pasarItem: FeedsData.NFTItem) {
+  updatePasarItem(orderId: string, pasarItem: FeedsData.NFTItem, index: number) {
     this.checkPasarItemMap();
-    this.updatePasarItemWithoutSave(orderId, pasarItem);
+    this.updatePasarItemWithoutSave(orderId, pasarItem, index);
     this.saveData(FeedsData.PersistenceKey.pasarItemMap, this.pasarItemMap);
   }
 
-  updatePasarItemWithoutSave(orderId: string, pasarItem: FeedsData.NFTItem) {
+  updatePasarItemWithoutSave(orderId: string, item: FeedsData.NFTItem, index: number) {
     this.checkPasarItemMap();
+    const pasarItem: FeedsData.PasarItem = { index: index, item: item };
     this.pasarItemMap[orderId] = pasarItem;
   }
 
-  getPasarItem(orderId: string): FeedsData.NFTItem {
+  getPasarItem(orderId: string): FeedsData.PasarItem {
     this.checkPasarItemMap();
     if (!this.pasarItemMap) return null;
     return this.pasarItemMap[orderId];
   }
 
-  getPasarItemMap(): { [orderId: string]: FeedsData.NFTItem } {
+  getPasarItemMap(): { [orderId: string]: FeedsData.PasarItem } {
     this.checkPasarItemMap();
     if (!this.pasarItemMap) return null;
     return this.pasarItemMap;
@@ -2507,7 +2503,7 @@ export class DataHelper {
         this.pasarItemMap[keys[index]] == undefined
       )
         continue;
-      list.push(this.pasarItemMap[keys[index]]);
+      list.push(this.pasarItemMap[keys[index]].item);
     }
     return list;
   }
@@ -2516,4 +2512,36 @@ export class DataHelper {
     if (this.pasarItemMap == null || this.pasarItemMap == undefined)
       this.pasarItemMap = {};
   }
+
+  ////
+  initDisplayedPasarItem() {
+    this.displayedPasarItemMap = {}
+  }
+
+  addDisplayedPasarItem(index: number, orderId: string, item: FeedsData.NFTItem) {
+    this.displayedPasarItemMap[orderId] = { index: index, item: item };
+  }
+
+  getDisplayedPasarItemList() {
+    let list: FeedsData.NFTItem[] = [];
+    this.displayedPasarItemMap = this.displayedPasarItemMap || {};
+    let keys: string[] = Object.keys(this.displayedPasarItemMap) || [];
+    for (let index in keys) {
+      if (this.displayedPasarItemMap[keys[index]] == null ||
+        this.displayedPasarItemMap[keys[index]] == undefined
+      )
+        continue;
+      list.push(this.displayedPasarItemMap[keys[index]].item);
+    }
+    return list;
+  }
+
+  getDisplayedPasarItemMap() {
+    return this.displayedPasarItemMap;
+  }
+
+  storeDisplayedPasarMapToPasarMap() {
+    this.setPasarItemMap(this.getDisplayedPasarItemMap());
+  }
+
 }
