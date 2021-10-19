@@ -2030,6 +2030,7 @@ export class ProfilePage implements OnInit {
       );
     });
     this.nftPersistenceHelper.setPasarList(pList);
+    this.dataHelper.deletePasarItem(saleOrderId);
   }
 
   async handleNftBurn(tokenId: any, createAddr: any, burnNum: any) {

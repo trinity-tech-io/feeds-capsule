@@ -17,6 +17,7 @@ import _ from 'lodash';
 import { UtilService } from 'src/app/services/utilService';
 import { Config } from 'src/app/services/config';
 import { FileHelperService } from 'src/app/services/FileHelperService';
+import { DataHelper } from 'src/app/services/DataHelper';
 type detail = {
   type: string;
   details: string;
@@ -61,6 +62,7 @@ export class BidPage implements OnInit {
   public usdPrice:string = null;
   public imageType:string = "";
   private creator: string = "";
+  private dataHelper: DataHelper
   constructor(
     private translate: TranslateService,
     private event: Events,
@@ -319,6 +321,7 @@ export class BidPage implements OnInit {
     });
 
     this.nftPersistenceHelper.setPasarList(plist);
+    this.dataHelper.deletePasarItem(this.saleOrderId);
     this.event.publish(FeedsEvent.PublishType.nftBuyOrder);
     let createAddress = this.nftContractControllerService.getAccountAddress();
 

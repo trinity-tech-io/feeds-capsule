@@ -12,6 +12,7 @@ import { NFTPersistenceHelper } from 'src/app/services/nft_persistence_helper.se
 import { Logger } from 'src/app/services/logger';
 import { Config } from 'src/app/services/config';
 import { PopupProvider } from 'src/app/services/popup';
+import { DataHelper } from 'src/app/services/DataHelper';
 
 let TAG: string = 'NFTDialog';
 @Component({
@@ -47,7 +48,8 @@ export class NftdialogComponent implements OnInit {
     private nftContractControllerService: NFTContractControllerService,
     private ipfsService: IPFSService,
     private nftPersistenceHelper: NFTPersistenceHelper,
-    private popupProvider: PopupProvider
+    private popupProvider: PopupProvider,
+    private dataHelper: DataHelper
   ) {}
 
   ngOnInit() {
@@ -318,8 +320,10 @@ async handleSaleList() {
         sAssItem['saleOrderId'] = orderId;
         sAssItem['createTime'] = createTime * 1000;
         sAssItem['moreMenuType'] = 'onSale';
+
         let obj = { type: type, assItem: sAssItem,sellQuantity:this.quantity};
         this.events.publish(FeedsEvent.PublishType.nftUpdateList, obj);
+        this.dataHelper.updatePasarItem(orderId, sAssItem, Number.MAX_SAFE_INTEGER);
         await this.getSetChannel(tokenId);
         //this.native.toast("CreatenewpostPage.tipMsg1");
         resolve(obj);

@@ -17,6 +17,7 @@ import { IPFSService } from 'src/app/services/ipfs.service';
 import { NFTPersistenceHelper } from 'src/app/services/nft_persistence_helper.service';
 import { Logger } from 'src/app/services/logger';
 import { Config } from 'src/app/services/config';
+import { DataHelper } from 'src/app/services/DataHelper';
 import _ from 'lodash';
 const SUCCESS = 'success';
 const SKIP = 'SKIP';
@@ -76,7 +77,8 @@ export class MintnftPage implements OnInit {
     private walletConnectControllerService: WalletConnectControllerService,
     private popupProvider: PopupProvider,
     private ipfsService: IPFSService,
-    private nftPersistenceHelper: NFTPersistenceHelper
+    private nftPersistenceHelper: NFTPersistenceHelper,
+    private dataHelper: DataHelper
   ) {}
 
   ngOnInit() {}
@@ -922,6 +924,7 @@ export class MintnftPage implements OnInit {
           return -Number(item.createTime);
         });
         this.nftPersistenceHelper.setPasarList(list);
+        this.dataHelper.updatePasarItem(saleOrderId, item, Number.MAX_SAFE_INTEGER);
         this.event.publish(FeedsEvent.PublishType.mintNft);
         break;
     }
