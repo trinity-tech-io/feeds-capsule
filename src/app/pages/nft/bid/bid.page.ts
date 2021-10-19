@@ -319,7 +319,7 @@ export class BidPage implements OnInit {
     });
 
     this.nftPersistenceHelper.setPasarList(plist);
-
+    this.event.publish(FeedsEvent.PublishType.nftBuyOrder);
     let createAddress = this.nftContractControllerService.getAccountAddress();
 
     let olist = this.nftPersistenceHelper.getCollectiblesList(createAddress);

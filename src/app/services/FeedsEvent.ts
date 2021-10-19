@@ -170,6 +170,8 @@ declare namespace FeedsEvent {
     clickHome = "feeds:clickHome",
     receiveNewPost = 'feeds:receiveNewPost',
     nftdisclaimer = "feeds:nftdisclaimer",
+    nftBuyOrder = "feeds:nftBuyOrder",
+    mintNft = "feeds:mintNft"
   }
 
   type TipDialogData = {
