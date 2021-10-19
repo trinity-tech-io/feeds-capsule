@@ -295,7 +295,7 @@ export class HomePage implements OnInit {
     });
 
     this.events.subscribe(FeedsEvent.PublishType.nftBuyOrder,()=>{
-          this.pasarList = this.nftPersistenceHelper.getPasarList();
+      this.pasarList = this.nftPersistenceHelper.getPasarList();
     });
 
     this.events.subscribe(FeedsEvent.PublishType.addRpcRequestError, () => {
@@ -966,6 +966,7 @@ export class HomePage implements OnInit {
           // this.pasarList = _.concat(this.pasarList, list);
           this.pasarList = _.unionWith(this.pasarList, list, _.isEqual);
           this.pasarList = this.nftContractHelperService.sortData(this.pasarList, SortType.CREATE_TIME);
+          this.nftPersistenceHelper.setPasarList(this.pasarList);
         }
         resolve('FINISH');
       } catch (error) {
@@ -1024,6 +1025,7 @@ export class HomePage implements OnInit {
             }, () => { });
 
             this.pasarListPage++;
+            this.nftPersistenceHelper.setPasarList(this.pasarList);
           } catch (err) {
             Logger.error(TAG, err);
           } finally {
@@ -2151,6 +2153,7 @@ export class HomePage implements OnInit {
     this.pasarList = pList;
     //this.searchPasar = _.cloneDeep(this.pasarList);
     this.nftPersistenceHelper.setPasarList(pList);
+    this.dataHelper.deletePasarItem(saleOrderId);
   }
 
   handleDialog(dialogName: string, dialogbutton: string, pageName: string) {
