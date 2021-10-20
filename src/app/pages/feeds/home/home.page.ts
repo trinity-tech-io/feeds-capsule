@@ -280,7 +280,8 @@ export class HomePage implements OnInit {
       return -Number(item.createTime);
     });
 
-    if (!this.pasarList || this.pasarList.length == 0) {
+
+    if (!this.pasarList || this.pasarList.length == 0 || this.pasarListPage === 0) {
       this.pasarList = await this.nftContractHelperService.loadData(0, SortType.CREATE_TIME);
       this.pasarListPage = 1;
     }
