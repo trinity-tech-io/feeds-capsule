@@ -143,9 +143,11 @@ export class FileHelperService {
           if (result.startsWith('data:null;base64,'))
             finalresult = result.replace("data:null;base64,", base64Type);
 
-          if (result.startsWith('unsafe:data:*/*'))
+          if (result.startsWith('unsafe:data:*/*;base64,'))
             finalresult = result.replace("unsafe:data:*/*", base64Type);
 
+          if (result.startsWith('data:*/*;base64,'))
+            finalresult = result.replace("data:*/*;base64,", base64Type);
           Logger.log(TAG, "Get data from local");
           resolve(finalresult);
           return;
