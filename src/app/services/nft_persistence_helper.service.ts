@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import _ from 'lodash';
 import { DataHelper } from 'src/app/services/DataHelper';
 
 @Injectable()
@@ -45,7 +46,8 @@ export class NFTPersistenceHelper {
     if (!this.collectiblesMap[key])
       this.collectiblesMap[key] = [];
 
-    this.collectiblesMap[key] = collectiblesList;
+    let list = _.uniqWith(collectiblesList, _.isEqual);
+    this.collectiblesMap[key] = list;
     this.dataHelper.saveNFTCollectibleList(this.activeCollecitblesKey, this.collectiblesMap);
   }
 
