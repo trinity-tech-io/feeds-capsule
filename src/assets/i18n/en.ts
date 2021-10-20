@@ -739,6 +739,7 @@ export const en = {
     currentBid: 'Current Bid',
     changePrice: 'Update Price',
     cancelOrder: 'Cancel Sale',
+    des:"Please confirm Creator Address before making a purchase"
   },
   CollectionsPage: {
     title: 'Collectibles',
