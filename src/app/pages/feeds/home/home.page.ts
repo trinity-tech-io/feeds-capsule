@@ -257,7 +257,7 @@ export class HomePage implements OnInit {
     });
   }
 
-  ionViewWillEnter() {
+  async ionViewWillEnter() {
 
     this.homeTittleBar = this.elmRef.nativeElement.querySelector("#homeTittleBar");
     this.homeTab = this.elmRef.nativeElement.querySelector("#homeTab");
@@ -275,11 +275,15 @@ export class HomePage implements OnInit {
       this.styleType = "list";
     }
 
-
     this.pasarList = this.nftPersistenceHelper.getPasarList();
     this.pasarList = _.sortBy(this.pasarList, (item: any) => {
       return -Number(item.createTime);
     });
+
+    if (!this.pasarList || this.pasarList.length == 0) {
+      this.pasarList = await this.nftContractHelperService.loadData(0, SortType.CREATE_TIME);
+      this.pasarListPage = 1;
+    }
 
     this.connectionStatus = this.feedService.getConnectionStatus();
     this.styleObj.width = screen.width - 105 + 'px';
