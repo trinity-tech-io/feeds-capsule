@@ -5,9 +5,9 @@ import { UtilService } from './utilService';
 
 const TAG: string = 'Feeds-FileHelperService';
 const carrierPath: string = '/carrier/';
-const nftPath: string = 'nft'
-const orderPath: string = '/nft/order';
-const tokenJsonPath: string = '/nft/tokenJson';
+// const nftPath: string = 'nft'
+const orderPath: string = '/data/';
+const tokenJsonPath: string = '/tokenJson/';
 @Injectable()
 export class FileHelperService {
   constructor(private fileService: FileService) { }
@@ -51,13 +51,13 @@ export class FileHelperService {
     return new Promise(async (resolve, reject) => {
       try {
         let rootDirEntry = await this.fileService.resolveLocalFileSystemURL();
-        let nftDirEntry = await this.fileService.getDirectory(
-          rootDirEntry,
-          nftPath,
-          true
-        );
+        // let nftDirEntry = await this.fileService.getDirectory(
+        //   rootDirEntry,
+        //   nftPath,
+        //   true
+        // );
         let orderDirEntry = await this.fileService.getDirectory(
-          nftDirEntry,
+          rootDirEntry,
           orderPath,
           true
         );
@@ -74,13 +74,13 @@ export class FileHelperService {
     return new Promise(async (resolve, reject) => {
       try {
         let rootDirEntry = await this.fileService.resolveLocalFileSystemURL();
-        let nftDirEntry = await this.fileService.getDirectory(
-          rootDirEntry,
-          nftPath,
-          true
-        );
+        // let nftDirEntry = await this.fileService.getDirectory(
+        //   rootDirEntry,
+        //   nftPath,
+        //   true
+        // );
         let orderDirEntry = await this.fileService.getDirectory(
-          nftDirEntry,
+          rootDirEntry,
           tokenJsonPath,
           true
         );
@@ -137,15 +137,19 @@ export class FileHelperService {
       try {
         const base64Type: string = this.transType(type);
         const fileBlob = await this.getBlobFromCacheFile(fileName);
-
         if (fileBlob.size > 0) {
           const result = await this.transBlobToBase64(fileBlob);
-          let finalresult = result.replace("data:null;base64,", base64Type);
+          let finalresult = result;
+          if (result.startsWith('data:null;base64,'))
+            finalresult = result.replace("data:null;base64,", base64Type);
+
+          if (result.startsWith('unsafe:data:*/*'))
+            finalresult = result.replace("unsafe:data:*/*", base64Type);
+
           Logger.log(TAG, "Get data from local");
           resolve(finalresult);
           return;
         }
-
         let blob = await UtilService.downloadFileFromUrl(fileUrl);
         const result2 = await this.transBlobToBase64(blob);
         await this.writeNFTCacheFileData(fileName, blob);
