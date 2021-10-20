@@ -2463,10 +2463,30 @@ export class DataHelper {
     this.saveData(FeedsData.PersistenceKey.pasarItemMap, this.pasarItemMap);
   }
 
+  deltePasarItems(deletItems: FeedsData.PasarItem[]) {
+    if (!deletItems || deletItems.length == 0)
+      return;
+    for (let index = 0; index < deletItems.length; index++) {
+      const deletItem = deletItems[index];
+      if (!deletItem || !deletItem.item)
+        continue;
+      this.deletePasarItem(String(deletItem.item.saleOrderId));
+    }
+  }
+
   updatePasarItem(orderId: string, pasarItem: FeedsData.NFTItem, index: number) {
     this.checkPasarItemMap();
+
+    const deleteItems: FeedsData.PasarItem[] = this.searchPasarItemFromIndex(index);
+    this.deltePasarItems(deleteItems);
+
     this.updatePasarItemWithoutSave(orderId, pasarItem, index);
     this.saveData(FeedsData.PersistenceKey.pasarItemMap, this.pasarItemMap);
+  }
+
+  searchPasarItemFromIndex(index: number) {
+    const filterResult: FeedsData.PasarItem[] = _.filter(this.pasarItemMap, (pasarItem) => { return pasarItem.index == index });
+    return filterResult;
   }
 
   updatePasarItemWithoutSave(orderId: string, item: FeedsData.NFTItem, index: number) {

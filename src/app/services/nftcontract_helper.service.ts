@@ -127,6 +127,7 @@ export class NFTContractHelperService {
           const tokenInfo = await this.getTokenInfo(String(orderInfo.tokenId), true);
           const tokenJson = await this.getTokenJson(tokenInfo.tokenUri);
           const item = this.createItemFromOrderInfo(orderInfo, tokenInfo, tokenJson, saleStatus);
+          this.dataHelper.updatePasarItem(String(orderInfo.orderId), item, index);
           list.push(item);
         }
         // this.nftPersistenceHelper.setPasarList(list);
@@ -195,6 +196,8 @@ export class NFTContractHelperService {
           const tokenInfo = await this.getTokenInfo(String(orderInfo.tokenId), true);
           const tokenJson = await this.getTokenJson(tokenInfo.tokenUri);
           const item: FeedsData.NFTItem = this.createItemFromOrderInfo(orderInfo, tokenInfo, tokenJson, saleStatus);
+
+          this.dataHelper.updatePasarItem(String(orderInfo.orderId), item, index);
           // let openOrderResult = await this.getOpenOrderResultByIndex(index);
           // let contractItem = await this.handleFeedsUrl(openOrderResult, saleStatus);
           list.push(item);
