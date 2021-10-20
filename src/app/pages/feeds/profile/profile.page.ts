@@ -165,6 +165,7 @@ export class ProfilePage implements OnInit {
   private refreshNotSaleOrderFinish = false;
 
   private isRefreshingCollectibles = false;
+  private refreshingCollectiblesHelper: FeedsData.NFTItem[] = [];
   constructor(
     private feedService: FeedService,
     public theme: ThemeService,
@@ -1803,7 +1804,10 @@ export class ProfilePage implements OnInit {
         for (let index = 0; index < this.notSaleOrderCount; index++) {
           try {
             const item = await this.nftContractHelperService.getNotSellerCollectiblesFromContract(accAddress, index);
-            this.collectiblesList.push(item);
+            this.refreshingCollectiblesHelper.push(item);
+            this.collectiblesList = this.refreshingCollectiblesHelper;
+            this.saveCollectiblesToCache(accAddress);
+            // this.collectiblesList.push(item);
           } catch (error) {
             Logger.error("Get not sale item error", error);
           }
@@ -1829,7 +1833,9 @@ export class ProfilePage implements OnInit {
         for (let index = 0; index < this.saleOrderCount; index++) {
           try {
             const item = await this.nftContractHelperService.getSellerCollectibleFromContract(accAddress, index);
-            this.collectiblesList.push(item);
+            this.refreshingCollectiblesHelper.push(item);
+            this.collectiblesList = this.refreshingCollectiblesHelper;
+            this.saveCollectiblesToCache(accAddress);
           } catch (error) {
             Logger.error("Get Sale item error", error);
           }
@@ -2162,6 +2168,7 @@ export class ProfilePage implements OnInit {
       return;
     }
 
+    this.refreshingCollectiblesHelper = [];
     this.processNotOnSaleOrder(accAddress).then(() => {
       return this.processOnSaleOrder(accAddress);
     }).then(() => {
