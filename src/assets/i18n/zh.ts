@@ -722,6 +722,7 @@ export const zh = {
     currentBid: '当前出价',
     changePrice: '更新价格',
     cancelOrder: '取消出售',
+    des:"购买前请确认创建者地址"
   },
   CollectionsPage: {
     title: '收藏品',

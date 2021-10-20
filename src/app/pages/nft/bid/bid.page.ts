@@ -281,7 +281,8 @@ export class BidPage implements OnInit {
         clearTimeout(sId)
         this.native.pop();
       })
-      .catch(() => {
+      .catch((error) => {
+        console.log("======error=======",error)
         this.buyFail();
         this.isLoading = false;
         clearTimeout(sId)
@@ -305,6 +306,7 @@ export class BidPage implements OnInit {
         this.handleBuyResult();
         resolve('Success');
       } catch (error) {
+        console.log("======error=======",error)
         reject(error);
       }
     });
@@ -321,7 +323,6 @@ export class BidPage implements OnInit {
     });
 
     this.nftPersistenceHelper.setPasarList(plist);
-    this.dataHelper.deletePasarItem(this.saleOrderId);
     this.event.publish(FeedsEvent.PublishType.nftBuyOrder);
     let createAddress = this.nftContractControllerService.getAccountAddress();
 

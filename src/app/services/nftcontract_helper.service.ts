@@ -684,7 +684,7 @@ export class NFTContractHelperService {
     } else {
       tokenId = tokenInfo.tokenId;
 
-      sellerAddr = tokenInfo.royaltyOwner;
+      sellerAddr = "";
       curQuantity = 1;
       price = null;
       orderId = null;

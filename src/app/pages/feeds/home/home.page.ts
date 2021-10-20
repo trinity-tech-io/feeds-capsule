@@ -276,10 +276,10 @@ export class HomePage implements OnInit {
     }
 
 
-    // this.pasarList = this.nftPersistenceHelper.getPasarList();
-    // this.pasarList = _.sortBy(this.pasarList, (item: any) => {
-    //   return -Number(item.createTime);
-    // });
+    this.pasarList = this.nftPersistenceHelper.getPasarList();
+    this.pasarList = _.sortBy(this.pasarList, (item: any) => {
+      return -Number(item.createTime);
+    });
 
     this.connectionStatus = this.feedService.getConnectionStatus();
     this.styleObj.width = screen.width - 105 + 'px';
@@ -1894,7 +1894,7 @@ export class HomePage implements OnInit {
     this.doRefreshCancel();
     switch (type) {
       case 'feeds':
-        // this.content.scrollToTop(0);
+        await this.content.scrollToTop(0);
         this.searchText = '';
         if (this.searchBeforePasar.length > 0) {
           this.pasarList = _.cloneDeep(this.searchBeforePasar);
@@ -1905,7 +1905,7 @@ export class HomePage implements OnInit {
         this.refreshPostList();
         break;
       case 'pasar':
-        // await this.content.scrollToTop(0);
+        await this.content.scrollToTop(0);
         this.curSearchField = this.feedService.getCurSearchField();
         this.handlePlaceholder(this.curSearchField);
         this.handleRefresherInfinite(false);
