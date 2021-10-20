@@ -1746,12 +1746,12 @@ export class HomePage implements OnInit {
       _.find(this.postList, item => {
      return (
       item.nodeId === nodeId &&
-      item.channel_id === channelId &&
-      item.id === postId
+      item.channel_id === parseInt(channelId) &&
+      item.id === parseInt(postId)
     );
     }) || {};
-
-    let isNft = post.content.nftOrderId || '';
+    let content = post.content || {};
+    let isNft = content.nftOrderId || '';
       this.viewHelper.openViewer(
         this.titleBar,
         value,
