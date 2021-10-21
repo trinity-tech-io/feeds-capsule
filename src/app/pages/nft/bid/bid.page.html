@@ -1,6 +1,9 @@
 <app-titlebar></app-titlebar>
-<ion-content>
-  <ion-grid class="container" [class.darkContainer]="theme.darkMode">
+<ion-content class="container" [class.darkContainer]="theme.darkMode">
+  <ion-grid
+  style="position: relative;
+  height: 100%;
+  overflow: auto;">
     <!--- contract Details -->
     <ion-row class="detail-row removeBorder">
       <ion-col size="12" class="left-col">
@@ -59,25 +62,24 @@
       </div>
 
      <!--- buy BUTTONS --->
-     <div *ngIf="showType==='buy'&&accAddress!=null&&accAddress!=sellerAddress" style="height:160px"></div>
-     <div class="footer" *ngIf="showType==='buy'&&accAddress!=null&&accAddress!=sellerAddress">
-      <ion-row class="detail-row removeBorder" *ngIf="showType==='buy'">
-        <ion-col size="12" class="left-col">
-          <h1 style="text-align: center;">{{ "MintnftPage.nftfixedPrice" | translate}}</h1>
-          <div style="text-align: center;color: #7624fe;font-size: 18px;font-weight: bold;margin-top: 13px;">{{ hanldePrice(fixedPrice) }} ELA <img style="vertical-align:middle;" src="assets/images/purpleblue.svg"/></div>
-          <h6 style="text-align: center;font-size:10px;" *ngIf="usdPrice!=null">≈USD {{usdPrice}}</h6>
-          <h6 style="text-align: center;font-size:10px;color:#ff0000;">{{ "BidPage.des" | translate}}</h6>
-      </ion-col>
-      </ion-row>
-     <div class="btns" style="margin-bottom:0px;">
-      <ion-row class="btn-row">
-        <ion-button (click)="clickBuy()" style="height:48px;">
-          <ion-label style="font-weight:bold;font-stretch:normal;font-style:normal;color:#ffffff;">{{'BidPage.buy' | translate}}</ion-label>
-        </ion-button>
-      </ion-row>
-    </div>
-  </div>
 </ion-grid>
+<div class="footer" *ngIf="showType==='buy'&&accAddress!=null&&accAddress!=sellerAddress">
+ <ion-row class="detail-row removeBorder" *ngIf="showType==='buy'">
+   <ion-col size="12" class="left-col">
+     <h1 style="text-align: center;">{{ "MintnftPage.nftfixedPrice" | translate}}</h1>
+     <div style="text-align: center;color: #7624fe;font-size: 18px;font-weight: bold;margin-top: 13px;">{{ hanldePrice(fixedPrice) }} ELA <img style="vertical-align:middle;" src="assets/images/purpleblue.svg"/></div>
+     <h6 style="text-align: center;font-size:10px;" *ngIf="usdPrice!=null">≈USD {{usdPrice}}</h6>
+     <h6 style="text-align: center;font-size:10px;color:#ff0000;">{{ "BidPage.des" | translate}}</h6>
+ </ion-col>
+ </ion-row>
+<div class="btns" style="margin-bottom:0px;">
+ <ion-row class="btn-row">
+   <ion-button (click)="clickBuy()" style="height:48px;">
+     <ion-label style="font-weight:bold;font-stretch:normal;font-style:normal;color:#ffffff;">{{'BidPage.buy' | translate}}</ion-label>
+   </ion-button>
+ </ion-row>
+</div>
+</div>
 </ion-content>
 <app-nftloading
  *ngIf="isLoading"
