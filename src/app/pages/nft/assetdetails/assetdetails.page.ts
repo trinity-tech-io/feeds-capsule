@@ -104,7 +104,9 @@ export class AssetdetailsPage implements OnInit {
         .getPasarAddress();
       const kind = queryParams.kind || 'png';
       this.assetUri = this.handleImg(asset, kind);
+
       this.creator = queryParams.creator || '';//原创者
+
       this.ownerAddress = queryParams.sellerAddr || '';//所有者
       if(this.ownerAddress === ""){
         this.ownerAddress = this.nftContractControllerService.getAccountAddress();
@@ -208,10 +210,11 @@ export class AssetdetailsPage implements OnInit {
       details: this.description,
     });
 
-    let creatorAddress = await this.getCreatorAddress();
+    this.creator = await this.getCreatorAddress();
+
     this.contractDetails.push({
       type: 'AssetdetailsPage.creator',
-      details: creatorAddress,
+      details:this.creator,
     });
 
     if (this.ownerAddress != '') {
@@ -247,7 +250,7 @@ export class AssetdetailsPage implements OnInit {
 
     let saleDes = "";
 
-    if(creatorAddress === this.creator){
+    if(this.creator === this.ownerAddress){
       saleDes = "AssetdetailsPage.firstSale";
     }else{
       saleDes = "AssetdetailsPage.secondarySale";
