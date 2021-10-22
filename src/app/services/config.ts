@@ -84,4 +84,8 @@ export class Config {
 
 
     public static CHECK_STATUS_INTERVAL_TIME = 5000;
+
+    /** whitelist testNet */
+    public static WHITELIST_TEST_SERVER: string = 'https://test.trinity-feeds.app/';
+
 }

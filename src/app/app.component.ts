@@ -131,6 +131,7 @@ export class MyApp {
         this.initDiscoverfeeds();
         this.initCollectibleSetting();
         this.initCurSearchField();
+        this.initWhiteList();
         this.native.addNetworkListener(
           () => {
             this.events.publish(FeedsEvent.PublishType.networkStatusChanged, 1);
@@ -426,6 +427,19 @@ export class MyApp {
         this.feedService.setCurSearchField(curSearchField);
       })
       .catch(() => { });
+  }
+
+  initWhiteList(){
+    this.feedService.getData("feeds.WhiteList")
+    .then((whiteListData :FeedsData.WhiteItem[])=>{
+      if(whiteListData === null){
+        this.feedService.setWhiteListData([]);
+        return;
+      }
+      console.log("======whiteListData=======",whiteListData);
+      this.feedService.setWhiteListData(whiteListData);
+    })
+    .catch()
   }
 
   async connectWallet() {

@@ -33,9 +33,13 @@ export class ApiUrl {
     Config.IPFS_SERVER = ipfsBaseUrl;
     ApiUrl.IPFS_SERVER = Config.IPFS_SERVER;
   }
-  
+
   public static getIpfs() : string {
     return Config.IPFS_SERVER;
   }
+
+  /** whitelist testNet */
+  public static getWhiteList =Config.WHITELIST_TEST_SERVER+'pasar/api/v1/whitelist';
+  public static getWhiteListByAddress =Config.WHITELIST_TEST_SERVER+'pasar/api/v1/?address=';
 
 }

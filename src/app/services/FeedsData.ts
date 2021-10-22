@@ -651,4 +651,18 @@ declare namespace FeedsData {
     index: number,
     item: NFTItem
   }
+
+  type WhiteItem = {
+    index: number,
+    name: string,
+    description: string,
+    address: string,
+    social: SocialItem[],
+    avatar: string
+  }
+
+  type SocialItem = {
+      website: string,
+      twitter: string
+  }
 }

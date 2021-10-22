@@ -13,8 +13,6 @@ import { LanguageService } from 'src/app/services/language.service';
 import { IPFSService } from 'src/app/services/ipfs.service';
 import { DataHelper } from 'src/app/services/DataHelper';
 import _ from 'lodash';
-import { ApiUrl } from 'src/app/services/ApiUrl';
-import { UtilService } from 'src/app/services/utilService';
 import { FileHelperService } from 'src/app/services/FileHelperService';
 
 @Component({
@@ -74,7 +72,7 @@ export class SettingsPage implements OnInit {
     this.developerMode = this.feedService.getDeveloperMode();
     this.initTitle();
   }
-  
+
   loadIpfsShowNmae() {
     let localIPFSApiProviderName = localStorage.getItem("selectedIpfsNetwork");
     if (localIPFSApiProviderName === 'https://ipfs0.trinity-feeds.app/') {
@@ -208,6 +206,10 @@ export class SettingsPage implements OnInit {
 
   navDeveloper() {
     this.native.getNavCtrl().navigateForward(['/developer']);
+  }
+
+  navWhiteList(){
+    this.native.getNavCtrl().navigateForward(['/whitelist']);
   }
 
   setPasarListGrid() {

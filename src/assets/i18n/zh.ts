@@ -876,5 +876,8 @@ export const zh = {
   },
   NftavatarlistPage: {
     title: '收藏品头像'
+  },
+  WhitelistPage: {
+    title: '白名单'
   }
 };

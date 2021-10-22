@@ -896,5 +896,8 @@ export const en = {
   },
   NftavatarlistPage: {
     title: 'Collectible Avatar'
+  },
+  WhitelistPage: {
+    title: 'White list'
   }
 };
