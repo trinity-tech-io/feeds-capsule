@@ -229,6 +229,10 @@ const routes: Routes = [
     path: 'nftavatarlist',
     loadChildren: () => import('./pages/nftavatarlist/nftavatarlist.module').then( m => m.NftavatarlistPageModule)
   },
+  {
+    path: 'whitelist',
+    loadChildren: () => import('./pages/whitelist/whitelist.module').then( m => m.WhitelistPageModule)
+  },
 ];
 
 @NgModule({

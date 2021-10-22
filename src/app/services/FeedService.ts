@@ -69,6 +69,7 @@ let eventBus: Events = null;
 
 @Injectable()
 export class FeedService {
+  private whiteListData:  FeedsData.WhiteItem[] = [];
   private curSearchField: string = "name";
   private nftFirstdisclaimer: string = "";
   public  elaUsdPrice: string = "";
@@ -7762,5 +7763,13 @@ export class FeedService {
       this.nftContractHelperService.syncOpenOrder();
       clearTimeout(timer);
     }, 20);
+  }
+
+  getWhiteListData(){
+    return this.whiteListData;
+  }
+
+  setWhiteListData(whiteListData: FeedsData.WhiteItem[]){
+     this.whiteListData = whiteListData;
   }
 }
