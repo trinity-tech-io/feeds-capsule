@@ -261,7 +261,7 @@ export class ProfilePage implements OnInit {
   }
 
   async addProflieEvent() {
-    this.updateWalletAddress();
+    this.updateWalletAddress(null);
     this.events.subscribe(FeedsEvent.PublishType.nftdisclaimer,()=>{
 
       let accAdress = this.nftContractControllerService.getAccountAddress() || "";
@@ -344,10 +344,23 @@ export class ProfilePage implements OnInit {
     });
 
     this.events.subscribe(
+      FeedsEvent.PublishType.walletAccountChanged,
+      (walletAccount) => {
+        this.zone.run(async () => {
+          this.updateWalletAddress(walletAccount);
+          this.getOwnNftSum();
+          if (walletAccount != '') {
+            await this.getCollectiblesList();
+          }
+        });
+      },
+    );
+
+    this.events.subscribe(
       FeedsEvent.PublishType.walletConnectedRefreshPage,
       () => {
         this.zone.run(async () => {
-          this.updateWalletAddress();
+          this.updateWalletAddress(null);
           this.getOwnNftSum();
           await this.getCollectiblesList();
         });
@@ -358,7 +371,7 @@ export class ProfilePage implements OnInit {
       FeedsEvent.PublishType.walletDisconnectedRefreshPage,
       () => {
         this.zone.run(() => {
-          this.updateWalletAddress();
+          this.updateWalletAddress(null);
           this.getOwnNftSum();
         });
       },
@@ -770,7 +783,7 @@ export class ProfilePage implements OnInit {
   }
 
   async doRefresh(event: any) {
-    this.updateWalletAddress();
+    this.updateWalletAddress(null);
     switch (this.selectType) {
       case 'ProfilePage.myFeeds':
         let sId1 = setTimeout(() => {
@@ -1711,7 +1724,7 @@ export class ProfilePage implements OnInit {
 
   async connectWallet() {
     await this.walletConnectControllerService.connect();
-    this.updateWalletAddress();
+    this.updateWalletAddress(null);
   }
 
   copyWalletAddr() {
@@ -1750,8 +1763,11 @@ export class ProfilePage implements OnInit {
     }
   }
 
-  updateWalletAddress() {
-    this.walletAddress = this.walletConnectControllerService.getAccountAddress();
+  updateWalletAddress(walletAccount: string) {
+    if (!walletAccount)
+      this.walletAddress = this.walletConnectControllerService.getAccountAddress();
+    else
+      this.walletAddress = walletAccount;
     Logger.log(TAG, 'Update WalletAddress', this.walletAddress);
     this.walletAddressStr = UtilService.resolveAddress(this.walletAddress);
   }

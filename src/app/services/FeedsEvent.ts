@@ -156,6 +156,7 @@ declare namespace FeedsEvent {
     walletDisconnected = 'feeds:walletDisconnected',
     walletDisconnectedRefreshSM = 'feeds:walletConnectedRefreshSandwichMenu',
     walletDisconnectedRefreshPage = 'feeds:walletConnectedRefreshPage',
+    walletAccountChanged = 'feeds:walletConnectAccountChanged',
 
     startLoading = "feeds:startLoading",
     endLoading = "feeds:endLoading",
