@@ -40,11 +40,23 @@ export class WalletConnectControllerService {
       },
     });
 
+    try {
+      if (this.walletConnectProvider.connector.session.handshakeTopic != '') {
+        await this.disconnect();
+      }
+    } catch (error) {
+      Logger.error('this.walletConnectProvider.disconnect()');
+    }
+
     this.updateRpcUrl(this.chainId, this.url);
     Logger.log(TAG, 'Connected?', this.walletConnectProvider.connected);
+
     // Subscribe to accounts change
     this.walletConnectProvider.on('accountsChanged', (accounts: string[]) => {
       Logger.log(TAG, 'accountsChanged', accounts);
+
+      this.accountAddress = accounts[0];
+      this.publishAccount(this.accountAddress);
     });
 
     // Subscribe to chainId change
@@ -62,7 +74,7 @@ export class WalletConnectControllerService {
 
     // Subscribe to session disconnection
     this.walletConnectProvider.on('error', (code: number, reason: string) => {
-      // Logger.error(TAG, 'error', code, reason);
+      Logger.error(TAG, "wallet connect error", code, reason);
     });
 
     Logger.log(TAG, 'Current account address is', this.accountAddress);
@@ -71,12 +83,12 @@ export class WalletConnectControllerService {
   }
 
   private async setupWalletConnectProvider() {
-    if (
-      this.walletConnectProvider == null ||
-      this.walletConnectProvider == undefined
-    ) {
+    // if (
+    //   this.walletConnectProvider == null ||
+    //   this.walletConnectProvider == undefined
+    // ) {
       await this.initWalletConnectProvider();
-    }
+    // }
 
     //  Enable session (triggers QR Code modal)
     Logger.log(TAG, 'Connecting to wallet connect');
@@ -90,17 +102,13 @@ export class WalletConnectControllerService {
     } catch (err) {
       //Work around
       this.destroyWalletConnect();
-      // Logger.log(TAG, 'CONNECT error to wallet connect', err);
+      Logger.error(TAG, 'CONNECT error to wallet connect', err);
     }
   }
 
   async initWeb3() {
     Logger.log(TAG, 'Init web3, walletConnet provider is', this.walletConnectProvider);
     this.walletConnectWeb3 = new Web3(this.walletConnectProvider as any);
-    this.accountAddress = await this.parseAccountAddress();
-    Logger.log(TAG, 'Account address', this.accountAddress);
-    // this.dataHelper.saveWalletAccountAddress(this.accountAddress);
-
     this.events.publish(FeedsEvent.PublishType.walletConnected);
     this.events.publish(FeedsEvent.PublishType.walletConnectedRefreshPage);
     this.events.publish(FeedsEvent.PublishType.walletConnectedRefreshSM);
@@ -110,11 +118,6 @@ export class WalletConnectControllerService {
 
   public getWeb3() {
     return this.walletConnectWeb3;
-  }
-
-  private async parseAccountAddress() {
-    const accounts = await this.walletConnectWeb3.eth.getAccounts();
-    return accounts[0];
   }
 
   public getAccountAddress() {
@@ -127,8 +130,8 @@ export class WalletConnectControllerService {
         Logger.log(TAG, 'Disconnecting from wallet connect');
         try {
           // await (await this.walletConnectProvider.getWalletConnector()).killSession();
-          await this.walletConnectProvider.disconnect();
-          // await this.walletConnectProvider.close()
+          // await this.walletConnectProvider.disconnect();
+          await this.walletConnectProvider.close()
           this.walletConnectProvider.onDisconnect().then(() => {
             resolve('');
           })
@@ -189,5 +192,9 @@ export class WalletConnectControllerService {
   updateRpcUrl(chainId: number, rpcUrl: string) {
     this.walletConnectProvider.updateRpcUrl(chainId, rpcUrl);
     Logger.log(TAG, "Update rpc, chainId is", chainId, 'url is', rpcUrl);
+  }
+
+  publishAccount(account: string) {
+    this.events.publish(FeedsEvent.PublishType.walletAccountChanged, account);
   }
 }

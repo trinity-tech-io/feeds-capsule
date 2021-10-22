@@ -79,17 +79,21 @@ export class MyApp {
       this.initProfileData();
     });
 
+    this.events.subscribe(FeedsEvent.PublishType.walletAccountChanged, (walletAccount) => {
+      this.updateWalletAddress(walletAccount);
+    });
+
     this.events.subscribe(
       FeedsEvent.PublishType.walletConnectedRefreshSM,
       () => {
-        this.updateWalletAddress();
+        this.updateWalletAddress(null);
       },
     );
 
     this.events.subscribe(
       FeedsEvent.PublishType.walletDisconnectedRefreshSM,
       () => {
-        this.updateWalletAddress();
+        this.updateWalletAddress(null);
       },
     );
   }
@@ -444,11 +448,14 @@ export class MyApp {
 
   async connectWallet() {
     await this.walletConnectControllerService.connect();
-    this.updateWalletAddress();
+    this.updateWalletAddress(null);
   }
 
-  updateWalletAddress() {
-    this.walletAddress = this.walletConnectControllerService.getAccountAddress();
+  updateWalletAddress(walletAccount: string) {
+    if (!walletAccount)
+      this.walletAddress = this.walletConnectControllerService.getAccountAddress();
+    else
+      this.walletAddress = walletAccount;
     this.walletAddressStr = UtilService.resolveAddress(this.walletAddress);
   }
 
