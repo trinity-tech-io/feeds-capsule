@@ -17,7 +17,7 @@
     <div *ngFor="let contractDetail of contractDetails">
       <ion-row *ngIf="contractDetail.details" class="detail-row removeBorder">
         <ion-col size="12" class="left-col">
-            <h1 *ngIf="contractDetail.type === 'BidPage.verifiedCreator'; else inputid1">{{ contractDetail.type | translate}} <span style="color:#7624fe;font-size:13px;vertical-align:middle;">{{'BidPage.verified'|translate}}</span></h1>
+            <h1 *ngIf="contractDetail.type === 'BidPage.verifiedCreator'; else inputid1">{{ contractDetail.type | translate}} <img style="vertical-align:top;" src="assets/images/verified-user.svg"/></h1>
             <ng-template #inputid1>
               <h1 >{{ contractDetail.type | translate}}</h1>
             </ng-template>
