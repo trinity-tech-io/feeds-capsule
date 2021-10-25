@@ -7,7 +7,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { HttpService } from 'src/app/services/HttpService';
 import { ApiUrl } from 'src/app/services/ApiUrl';
 import { FeedService } from 'src/app/services/FeedService';
-
+//https://ipfs.trinity-feeds.app/ipfs/Qmd4CXXv47x2aoo7TBbvusxHBYDtDEcWwcT4EzcMM1VmPh
 @Component({
   selector: 'app-whitelist',
   templateUrl: './whitelist.page.html',
@@ -16,11 +16,13 @@ import { FeedService } from 'src/app/services/FeedService';
 export class WhitelistPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   public whiteListData: FeedsData.WhiteItem[] = [];
+  public ipfsBaseUrl: string = "";
   constructor(
     private translate: TranslateService,
     private titleBarService: TitleBarService,
     private HttpService: HttpService,
     private feedService: FeedService,
+    private native: NativeService,
     public theme: ThemeService
   ) { }
 
@@ -30,6 +32,8 @@ export class WhitelistPage implements OnInit {
   ionViewWillEnter() {
     this.initTitle();
     this.getWhiteList();
+    this.ipfsBaseUrl = localStorage.getItem("selectedIpfsNetwork") || ''
+    console.log("this.ipfsBaseUrl=="+this.ipfsBaseUrl);
   }
 
   initTitle() {
@@ -47,21 +51,52 @@ export class WhitelistPage implements OnInit {
   getWhiteList(){
    let whiteListData = this.feedService.getWhiteListData();
    if(whiteListData.length === 0){
-     this.ajaxGetWhiteList(true);
+     this.ajaxGetWhiteList(true,"");
     return;
    }
    this.whiteListData = whiteListData;
   }
 
-  ajaxGetWhiteList(isLoading:boolean){
+  ajaxGetWhiteList(isLoading: boolean,event: any){
     this.HttpService.ajaxGet(ApiUrl.getWhiteList,isLoading).then((result:any)=>{
       if(result.code === 200){
         this.whiteListData = result.data || [];
         this.feedService.setWhiteListData(this.whiteListData);
         this.feedService.setData("feeds.WhiteList",this.whiteListData);
+        if(event!=""){
+          event.target.complete();
+        }
       }
     }).catch((err)=>{
-
+      if(event!=""){
+        event.target.complete();
+      }
     });
   }
+
+  doRefresh(event:any){
+    this.ajaxGetWhiteList(false,event);
+  }
+
+  handleavatar(avatar: string){
+   return this.ipfsBaseUrl+'/ipfs/'+avatar;
+  }
+
+  clickTwitter(whiteListItem: FeedsData.WhiteItem){
+    let social: any[] =  whiteListItem.social;
+    let twitter =  social[1].twitter || "";
+    if(twitter!=""){
+      this.native.openUrl(twitter);
+    }
+  }
+
+  pressAddress(address: string){
+    this.native
+      .copyClipboard(address)
+      .then(() => {
+        this.native.toast_trans('common.textcopied');
+      })
+      .catch(() => {});
+  }
+
 }

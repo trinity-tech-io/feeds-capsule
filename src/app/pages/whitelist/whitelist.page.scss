@@ -1,0 +1,58 @@
+.container{
+  padding:10px;
+  .defaultAvatar{
+    width:47px;
+    height:47px;
+    border-radius: 50%;
+    background-color:#757575;
+    position: absolute;
+    z-index: -1
+  }
+
+  .avatar{
+    img{
+      border-radius: 50%;
+    }
+  }
+
+  .name{
+    font-size: 14px;
+    font-weight: 700;
+    font-stretch: normal;
+    font-style: normal;
+    color:#a067ff;
+    img{
+      vertical-align: middle;
+      margin-left: 5px;
+    }
+  }
+
+.des{
+   p{
+    margin: 5px 0px;
+    font-size: 13px;
+    font-stretch: normal;
+    font-style: normal;
+    font-weight:normal;
+    color: #000;
+   }
+  }
+
+  .address{
+   span{
+    font-size: 12px;
+    font-stretch: normal;
+    font-style: normal;
+    font-weight:normal;
+    color:#757575;
+   }
+  }
+}
+
+.darkContainer{
+    .des{
+        p{
+         color: #fff;
+        }
+    }
+}

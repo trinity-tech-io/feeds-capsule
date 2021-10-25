@@ -739,7 +739,9 @@ export const en = {
     currentBid: 'Current Bid',
     changePrice: 'Update Price',
     cancelOrder: 'Cancel Sale',
-    des:"Please confirm Creator Address before making a purchase"
+    des: "Please confirm Creator Address before making a purchase",
+    verifiedCreator: 'Creator',
+    verified: '(Verified)'
   },
   CollectionsPage: {
     title: 'Collectibles',
@@ -898,6 +900,6 @@ export const en = {
     title: 'Collectible Avatar'
   },
   WhitelistPage: {
-    title: 'White list'
+    title: 'Verified Creators'
   }
 };

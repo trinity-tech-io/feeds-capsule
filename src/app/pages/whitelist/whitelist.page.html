@@ -1,10 +1,31 @@
 
 <app-titlebar></app-titlebar>
 <ion-content>
-  <ion-grid>
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" pullFactor="0.5">
+    <ion-refresher-content
+      class="refresh"
+      pullingText="{{'common.releaseToRefresh'|translate}}"
+      spinner="src/assets/images/arrow-dropdown.svg"
+      refreshingSpinner="circles"
+      refreshingText="{{'common.beingRefresh'|translate}}" >
+    </ion-refresher-content>
+  </ion-refresher>
+  <ion-grid class="container" [class.darkContainer]="theme.darkMode">
     <ion-row *ngFor="let whiteListItem of whiteListData">
-      <ion-col size="12">
-         {{whiteListItem.name}}
+      <ion-col size="2" class="avatar">
+         <div class="defaultAvatar"></div>
+         <img [src] = "handleavatar(whiteListItem.avatar)">
+      </ion-col>
+      <ion-col size="10">
+        <div class="name" (click)="clickTwitter(whiteListItem)">
+          <span>{{whiteListItem.name}}</span><img src="assets/images/twitter.svg">
+        </div>
+        <div class="des">
+          <p>{{whiteListItem.description}}</p>
+        </div>
+        <div class="address" (press)="pressAddress(whiteListItem.address)"   [style.touch-action]="'pan-y'">
+          <span>{{whiteListItem.address}}</span>
+        </div>
       </ion-col>
     </ion-row>
   </ion-grid>

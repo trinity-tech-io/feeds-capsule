@@ -13,11 +13,12 @@ import { NFTContractControllerService } from 'src/app/services/nftcontract_contr
 import { IPFSService } from 'src/app/services/ipfs.service';
 import { NFTPersistenceHelper } from 'src/app/services/nft_persistence_helper.service';
 import { HttpService } from '../../../services/HttpService';
-import _ from 'lodash';
+import _, { result } from 'lodash';
 import { UtilService } from 'src/app/services/utilService';
 import { Config } from 'src/app/services/config';
 import { FileHelperService } from 'src/app/services/FileHelperService';
 import { DataHelper } from 'src/app/services/DataHelper';
+import { ApiUrl } from 'src/app/services/ApiUrl';
 type detail = {
   type: string;
   details: string;
@@ -170,8 +171,9 @@ export class BidPage implements OnInit {
     });
 
     let creatorAddress = await this.getCreatorAddress();
+    let creatorAddressDes:any = await this.handleCreatorAddress(creatorAddress)
     this.contractDetails.push({
-      type: 'AssetdetailsPage.creator',
+      type: creatorAddressDes,
       details: creatorAddress,
     });
     this.contractDetails.push({
@@ -282,7 +284,6 @@ export class BidPage implements OnInit {
         this.native.pop();
       })
       .catch((error) => {
-        console.log("======error=======",error)
         this.buyFail();
         this.isLoading = false;
         clearTimeout(sId)
@@ -462,5 +463,30 @@ export class BidPage implements OnInit {
      'yyyy-MM-dd HH:mm:ss',
    );
     return dateCreated;
+  }
+
+ async handleCreatorAddress(creatorAddress: string){
+  return new Promise((resolve, reject) => {
+    let whiteListData :FeedsData.WhiteItem[] =  this.feedService.getWhiteListData();
+    let whiteListItem =  _.find(whiteListData,(item: FeedsData.WhiteItem)=>{
+           return item.address === creatorAddress;
+    }) || "";
+    if(whiteListItem != ""){
+      resolve('BidPage.verifiedCreator');
+    }
+
+    this.httpService.ajaxGet(ApiUrl.getWhiteListByAddress+creatorAddress,false).then((result:any)=>{
+      if(result.code === 200){
+        let data: [] = result.data;
+        if(data.length > 0){
+          resolve('BidPage.verifiedCreator');
+        }
+        resolve('AssetdetailsPage.creator');
+      }
+    }).catch((err)=>{
+      return 'AssetdetailsPage.creator';
+   });
+  });
+
   }
 }
