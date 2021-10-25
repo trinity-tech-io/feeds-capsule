@@ -13,7 +13,7 @@ import { NFTContractControllerService } from 'src/app/services/nftcontract_contr
 import { IPFSService } from 'src/app/services/ipfs.service';
 import { NFTPersistenceHelper } from 'src/app/services/nft_persistence_helper.service';
 import { HttpService } from '../../../services/HttpService';
-import _, { result } from 'lodash';
+import _ from 'lodash';
 import { UtilService } from 'src/app/services/utilService';
 import { Config } from 'src/app/services/config';
 import { FileHelperService } from 'src/app/services/FileHelperService';
@@ -484,7 +484,7 @@ export class BidPage implements OnInit {
         resolve('AssetdetailsPage.creator');
       }
     }).catch((err)=>{
-      return 'AssetdetailsPage.creator';
+      resolve('AssetdetailsPage.creator');
    });
   });
 

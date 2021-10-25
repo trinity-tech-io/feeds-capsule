@@ -4,6 +4,10 @@ import { ThemeService } from 'src/app/services/theme.service';
 import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
 import { UtilService } from 'src/app/services/utilService';
 import { IPFSService } from 'src/app/services/ipfs.service';
+import { HttpService } from 'src/app/services/HttpService';
+import _ from 'lodash';
+import { ApiUrl } from 'src/app/services/ApiUrl';
+import { FeedService } from 'src/app/services/FeedService';
 
 @Component({
   selector: 'app-newassetitem',
@@ -17,15 +21,24 @@ export class NewassetitemComponent implements OnInit {
   @Output() clickAssetItem = new EventEmitter();
   @Output() clickMore = new EventEmitter();
   public styleObj: any = { width: '' };
+  public verified: boolean = false;
   constructor(
     private translate: TranslateService,
     public theme: ThemeService,
     private nftContractControllerService: NFTContractControllerService,
-    private ipfsService: IPFSService
+    private ipfsService: IPFSService,
+    private httpService: HttpService,
+    private feedService: FeedService
   ) {}
 
-  ngOnInit() {
+ async ngOnInit() {
     this.styleObj.width = screen.width - 40 + 'px';
+    let creator = this.assetItem.creator || "";
+    if(creator != ""){
+      this.verified = await this.handleVerifiedAddress(creator);
+    }else{
+      this.verified = false;
+    }
   }
 
   clickItem() {
@@ -106,4 +119,29 @@ export class NewassetitemComponent implements OnInit {
         return  assetItem['curQuantity'] || assetItem['quantity'];
     //}
   }
+
+  async handleVerifiedAddress(creatorAddress: string): Promise<boolean>{
+    return new Promise((resolve, reject) => {
+      let whiteListData :FeedsData.WhiteItem[] =  this.feedService.getWhiteListData();
+      let whiteListItem =  _.find(whiteListData,(item: FeedsData.WhiteItem)=>{
+             return item.address === creatorAddress;
+      }) || "";
+      if(whiteListItem != ""){
+        resolve(true);
+      }
+
+      this.httpService.ajaxGet(ApiUrl.getWhiteListByAddress+creatorAddress,false).then((result:any)=>{
+        if(result.code === 200){
+          let data: [] = result.data;
+          if(data.length > 0){
+            resolve(true);
+          }
+          resolve(false);
+        }
+      }).catch((err)=>{
+        resolve(false);
+     });
+    });
+
+    }
 }
