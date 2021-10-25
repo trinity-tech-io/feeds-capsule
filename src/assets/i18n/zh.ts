@@ -722,7 +722,9 @@ export const zh = {
     currentBid: '当前出价',
     changePrice: '更新价格',
     cancelOrder: '取消出售',
-    des:"购买前请确认创建者地址"
+    des:"购买前请确认创建者地址",
+    verifiedCreator: '原创者',
+    verified: '(已验证)'
   },
   CollectionsPage: {
     title: '收藏品',
@@ -878,6 +880,6 @@ export const zh = {
     title: '收藏品头像'
   },
   WhitelistPage: {
-    title: '白名单'
+    title: '已验证原创者'
   }
 };

@@ -657,12 +657,7 @@ declare namespace FeedsData {
     name: string,
     description: string,
     address: string,
-    social: SocialItem[],
+    social: [],
     avatar: string
-  }
-
-  type SocialItem = {
-      website: string,
-      twitter: string
   }
 }

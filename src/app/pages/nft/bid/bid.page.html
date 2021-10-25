@@ -3,8 +3,7 @@
   <ion-grid
   style="position: relative;
   height: 100%;
-  overflow: auto;
-  padding-bottom: 206px;">
+  overflow: auto;" [ngClass]="{'paddingBottom':showType==='buy'&&accAddress!=null&&accAddress!=sellerAddress}">
     <!--- contract Details -->
     <ion-row class="detail-row removeBorder">
       <ion-col size="12" class="left-col">
@@ -18,7 +17,10 @@
     <div *ngFor="let contractDetail of contractDetails">
       <ion-row *ngIf="contractDetail.details" class="detail-row removeBorder">
         <ion-col size="12" class="left-col">
-            <h1>{{ contractDetail.type | translate}}</h1>
+            <h1 *ngIf="contractDetail.type === 'BidPage.verifiedCreator'; else inputid1">{{ contractDetail.type | translate}} <span style="color:#7624fe;font-size:13px;vertical-align:middle;">{{'BidPage.verified'|translate}}</span></h1>
+            <ng-template #inputid1>
+              <h1 >{{ contractDetail.type | translate}}</h1>
+            </ng-template>
             <h2 *ngIf="contractDetail.type === 'AssetdetailsPage.creator' || contractDetail.type === 'AssetdetailsPage.stickerContractAddress' || contractDetail.type === 'AssetdetailsPage.pasarContractAddress' || contractDetail.type === 'AssetdetailsPage.tokenID' || contractDetail.type === 'AssetdetailsPage.owner'; else inputid" (press)="copytext(contractDetail.details)" [style.touch-action]="'pan-y'">{{ contractDetail.details }}</h2>
             <ng-template #inputid>
               <h2>{{ contractDetail.details }}</h2>

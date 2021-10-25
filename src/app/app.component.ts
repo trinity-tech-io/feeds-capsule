@@ -206,7 +206,7 @@ export class MyApp {
 
   initSetting() {
 
-    this.feedService.getData("").then((elaPrice: any) => {
+    this.feedService.getData("feeds:elaPrice").then((elaPrice: any) => {
       if (elaPrice === null) {
         this.setElaUsdPrice();
       } else {
@@ -440,7 +440,6 @@ export class MyApp {
         this.feedService.setWhiteListData([]);
         return;
       }
-      console.log("======whiteListData=======",whiteListData);
       this.feedService.setWhiteListData(whiteListData);
     })
     .catch()
