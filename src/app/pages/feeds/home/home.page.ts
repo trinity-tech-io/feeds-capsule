@@ -983,7 +983,8 @@ export class HomePage implements OnInit {
     return new Promise(async (resolve, reject) => {
       try {
         // const list = await this.nftContractHelperService.loadMoreDataFromContract('onSale', SortType.CREATE_TIME, this.pasarListCount, this.pasarListPage);
-        const list = await this.nftContractHelperService.loadMoreData('onSale', SortType.CREATE_TIME, this.pasarListPage);
+        // const list = await this.nftContractHelperService.loadMoreData('onSale', SortType.CREATE_TIME, this.pasarListPage);
+        const list = await this.nftContractHelperService.loadMorePasarListFromAssist(SortType.CREATE_TIME, this.pasarListPage);
         if (list && list.length > 0) {
           this.pasarListPage++;
           // this.pasarList = _.concat(this.pasarList, list);
@@ -1016,9 +1017,10 @@ export class HomePage implements OnInit {
           try {
 
             this.pasarListPage = 0;
-            this.pasarList = await this.nftContractHelperService.refreshPasarListFromContract('onSale', SortType.CREATE_TIME, (openOrderCount: number) => {
-              this.pasarListCount = openOrderCount;
-            }, () => { });
+            this.pasarList = await this.nftContractHelperService.refreshPasarListFromAssist(SortType.CREATE_TIME);
+            // this.pasarList = await this.nftContractHelperService.refreshPasarListFromContract('onSale', SortType.CREATE_TIME, (openOrderCount: number) => {
+            //   this.pasarListCount = openOrderCount;
+            // }, () => { });
             this.refreshPasarGridVisibleareaImage();
             this.pasarListPage++;
             this.nftPersistenceHelper.setPasarList(this.pasarList);

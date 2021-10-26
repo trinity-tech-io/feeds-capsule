@@ -73,6 +73,7 @@ import { IPFSService } from 'src/app/services/ipfs.service';
 import { NFTPersistenceHelper } from 'src/app/services/nft_persistence_helper.service';
 import { GlobalService } from 'src/app/services/global.service';
 import { NFTContractHelperService } from 'src/app/services/nftcontract_helper.service';
+import { PasarAssistService } from 'src/app/services/pasar_assist.service';
 
 import * as Sentry from '@sentry/browser';
 
@@ -207,6 +208,7 @@ export function TranslateLoaderFactory() {
     NFTPersistenceHelper,
     GlobalService,
     NFTContractHelperService,
+    PasarAssistService,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     { provide: ErrorHandler, useClass: ErrorHandler },
   ],

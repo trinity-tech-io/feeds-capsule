@@ -127,6 +127,20 @@ declare namespace FeedsData {
     SOLD,
     CANCELED
   }
+
+  const enum OrderType {
+    SALE = 'OrderForSale',
+    CANCELED = 'OrderCanceled',
+    FILLED = 'OrderFilled'
+  }
+
+  const enum SyncMode {
+    NONE,
+    SYNC,
+    REFRESH,
+    APP,
+  }
+
   type StandardAuthResult = {
     jwtToken: string;
     serverName: string;
@@ -362,7 +376,8 @@ declare namespace FeedsData {
 
     walletAccountAddress = 'walletAccountAddress',
 
-    pasarItemMap = 'pasarItemMap'
+    pasarItemMap = 'pasarItemMap',
+    firstSyncOrderFinish = 'firstSyncOrderFinish'
   }
 
   type ServerVersion = {
@@ -622,26 +637,6 @@ declare namespace FeedsData {
     showType: string;
   }
 
-  // type NFTItem = {
-  //   creator: string;
-  //   saleOrderId: number;
-  //   tokenId: number;
-  //   asset: string;
-  //   name: string;
-  //   description: string;
-  //   fixedAmount: number;
-  //   kind: number;
-  //   type: string;
-  //   royalties: number;
-  //   quantity: number;
-  //   curQuantity: number,
-  //   thumbnail: string;
-  //   sellerAddr: string;
-  //   createTime: number;
-  //   moreMenuType: string;
-  //   showType: string;
-  // }
-
   type TokenIdAndTokenJson = {
     tokenId: number;
     tokenJson: TokenJson;
@@ -649,7 +644,9 @@ declare namespace FeedsData {
 
   type PasarItem = {
     index: number,
-    item: NFTItem
+    blockNumber: number,
+    item: NFTItem,
+    syncMode: SyncMode
   }
 
   type WhiteItem = {
