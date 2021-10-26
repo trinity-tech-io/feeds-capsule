@@ -6,6 +6,7 @@ import { IPFSService } from 'src/app/services/ipfs.service';
 import { NFTPersistenceHelper } from 'src/app/services/nft_persistence_helper.service';
 import { Logger } from './logger';
 import { FileHelperService } from 'src/app/services/FileHelperService';
+import { PasarAssistService } from 'src/app/services/pasar_assist.service';
 import _ from 'lodash';
 
 const TAG = 'NFTContractHelperService';
@@ -50,7 +51,7 @@ export type ChangedItem = {
 }
 @Injectable()
 export class NFTContractHelperService {
-  private refreshCount = 7;
+  private refreshCount = 8;
   // private displayedPasarItemMap: { [orderId: string]: FeedsData.PasarItem } = {};
   private isSyncingFlags: boolean[] = [false];
   private isSyncingIndex: number = 0;
@@ -65,7 +66,8 @@ export class NFTContractHelperService {
     private dataHelper: DataHelper,
     private ipfsService: IPFSService,
     private nftPersistenceHelper: NFTPersistenceHelper,
-    private fileHelperService: FileHelperService
+    private fileHelperService: FileHelperService,
+    private pasarAssistService: PasarAssistService
   ) {
   }
 
@@ -81,33 +83,33 @@ export class NFTContractHelperService {
     });
   }
 
-  refreshPasarList(sortType: SortType): Promise<FeedsData.NFTItem[]> {
-    return new Promise(async (resolve, reject) => {
-      try {
-        this.syncOpenOrder();
-        const list = await this.loadData(0, sortType);
-        resolve(list);
-      } catch (error) {
-        Logger.error('Refresh PasarList error', error);
-        reject(error);
-      }
-    });
-  }
+  // refreshPasarList(sortType: SortType): Promise<FeedsData.NFTItem[]> {
+  //   return new Promise(async (resolve, reject) => {
+  //     try {
+  //       this.syncOpenOrder();
+  //       const list = await this.loadData(0, sortType);
+  //       resolve(list);
+  //     } catch (error) {
+  //       Logger.error('Refresh PasarList error', error);
+  //       reject(error);
+  //     }
+  //   });
+  // }
 
-  refreshPasarListWaitRefreshCount(sortType: SortType): Promise<FeedsData.NFTItem[]> {
-    return new Promise(async (resolve, reject) => {
-      try {
-        this.syncOpenOrderForDisplay(async () => {
-          const list = await this.loadData(0, sortType);
-          resolve(list);
-          return;
-        });
-      } catch (error) {
-        Logger.error('Refresh PasarList error', error);
-        reject(error);
-      }
-    });
-  }
+  // refreshPasarListWaitRefreshCount(sortType: SortType): Promise<FeedsData.NFTItem[]> {
+  //   return new Promise(async (resolve, reject) => {
+  //     try {
+  //       this.syncOpenOrderForDisplay(async () => {
+  //         const list = await this.loadData(0, sortType);
+  //         resolve(list);
+  //         return;
+  //       });
+  //     } catch (error) {
+  //       Logger.error('Refresh PasarList error', error);
+  //       reject(error);
+  //     }
+  //   });
+  // }
 
   loadMoreDataFromContract(saleStatus: string, sortType: SortType, count: number, startPage: number): Promise<FeedsData.NFTItem[]> {
     return new Promise(async (resolve, reject) => {
@@ -127,7 +129,7 @@ export class NFTContractHelperService {
           const tokenInfo = await this.getTokenInfo(String(orderInfo.tokenId), true);
           const tokenJson = await this.getTokenJson(tokenInfo.tokenUri);
           const item = this.createItemFromOrderInfo(orderInfo, tokenInfo, tokenJson, saleStatus);
-          this.dataHelper.updatePasarItem(String(orderInfo.orderId), item, index);
+          this.dataHelper.updatePasarItem(String(orderInfo.orderId), item, index, 0, FeedsData.SyncMode.REFRESH);
           list.push(item);
         }
         // this.nftPersistenceHelper.setPasarList(list);
@@ -208,7 +210,7 @@ export class NFTContractHelperService {
           const tokenJson = await this.getTokenJson(tokenInfo.tokenUri);
           const item: FeedsData.NFTItem = this.createItemFromOrderInfo(orderInfo, tokenInfo, tokenJson, saleStatus);
 
-          this.dataHelper.updatePasarItem(String(orderInfo.orderId), item, index);
+          this.dataHelper.updatePasarItem(String(orderInfo.orderId), item, index, 0, FeedsData.SyncMode.APP);
           // let openOrderResult = await this.getOpenOrderResultByIndex(index);
           // let contractItem = await this.handleFeedsUrl(openOrderResult, saleStatus);
           list.push(item);
@@ -220,9 +222,74 @@ export class NFTContractHelperService {
     });
   }
 
+  refreshPasarListFromAssist(sortType: SortType): Promise<FeedsData.NFTItem[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        await this.refreshPasarOrderFromAssist(1);
+        const list = await this.loadData(0, sortType);
+
+        console.log('refreshPasarListFromAssist--------------------------', list);
+        resolve(this.sortData(list, sortType));
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
+  loadMorePasarListFromAssist(sortType: SortType, startPage: number): Promise<FeedsData.NFTItem[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        await this.loadMorePasarOrderFromAssist(startPage);
+        const list = await this.loadData(startPage, sortType);
+
+        console.log('loadMorePasarListFromAssist--------------------------', list, startPage);
+        resolve(this.sortData(list, sortType));
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
   sortData(list: FeedsData.NFTItem[], sortType: SortType): FeedsData.NFTItem[] {
     return _.sortBy(list, (item: any) => {
       return -Number(item.createTime);
+    });
+  }
+
+  refreshPasarOrderFromAssist(pageNumber: number): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const canceledResult = await this.pasarAssistService.refreshPasarOrder(pageNumber, 8, FeedsData.OrderType.CANCELED, null);
+        this.parseAssistResult(canceledResult, FeedsData.SyncMode.REFRESH);
+
+        const filledResult = await this.pasarAssistService.refreshPasarOrder(pageNumber, 8, FeedsData.OrderType.FILLED, null);
+        this.parseAssistResult(filledResult, FeedsData.SyncMode.REFRESH);
+
+        const result = await this.pasarAssistService.refreshPasarOrder(pageNumber, 8, FeedsData.OrderType.SALE, null);
+        let refreshBlockNum = this.parseAssistResult(result, FeedsData.SyncMode.REFRESH);
+
+        this.dataHelper.setRefreshLastBlockNumber(refreshBlockNum);
+        resolve('FINISH');
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
+  loadMorePasarOrderFromAssist(pageNumber: number): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const lastBlockNumber = this.dataHelper.getLastPasarBlockNum();
+        const refreshLastBlockNumber = this.dataHelper.getRefreshLastBlockNumber();
+        console.log("lastBlockNumber", lastBlockNumber);
+        console.log("refreshLastBlockNumber", refreshLastBlockNumber);
+        if (lastBlockNumber < refreshLastBlockNumber)
+          await this.refreshPasarOrderFromAssist(pageNumber);
+
+        resolve('FINISH');
+      } catch (error) {
+        reject(error);
+      }
     });
   }
 
@@ -584,6 +651,71 @@ export class NFTContractHelperService {
     this.isSyncingFlags[this.isSyncingIndex] = false;
   }
 
+  syncOpenOrderFromAssist() {
+    return new Promise(async (resolve, reject) => {
+      try {
+        if (this.isSyncing == true) {
+          resolve('FINISH');
+          return;
+        }
+        this.isSyncing = true;
+
+        const lastBlockNumber = this.dataHelper.getLastPasarBlockNum();
+        const newBlockNumber = await this.doSyncOpenOrderFromAssist(lastBlockNumber);
+
+        this.dataHelper.setFirstSyncOrderStatus(true);
+        this.dataHelper.setRefreshLastBlockNumber(newBlockNumber);
+        resolve('FINISH');
+      } catch (error) {
+        Logger.error('Sync open order', error);
+        reject(error);
+      } finally {
+        this.isSyncing = false;
+      }
+    });
+  }
+
+  doSyncOpenOrderFromAssist(lastBlockNumber: number): Promise<number> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let curBlockNum = lastBlockNumber;
+        console.log('lastBlockNumber', lastBlockNumber);
+        console.log('curBlockNum', curBlockNum);
+        let result = null;
+        if (this.dataHelper.getFirstSyncOrderStatus())
+          result = await this.pasarAssistService.syncOrder(curBlockNum);
+        else
+          result = await this.pasarAssistService.firstSync(curBlockNum);
+
+        if (!result) {
+          reject('Result is null');
+          return;
+        }
+
+        console.log('=====================lastBlockNumber============', lastBlockNumber);
+        console.log('syncOrder', result);
+        console.log('syncOrder result.data', result.data);
+        console.log('syncOrder result.data.total', result.data.total);
+        console.log('syncOrder result.data.result', result.data.result);
+        curBlockNum = this.parseAssistResult(result, FeedsData.SyncMode.SYNC);
+
+        if (curBlockNum == lastBlockNumber) {
+          resolve(curBlockNum);
+          return;
+        }
+
+        const newBlockNum = await this.doSyncOpenOrderFromAssist(curBlockNum);
+
+        if (newBlockNum == curBlockNum) {
+          resolve(newBlockNum);
+          return;
+        }
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
   syncOpenOrder(): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
@@ -595,8 +727,6 @@ export class NFTContractHelperService {
         const openOrderCount = await this.nftContractControllerService.getPasar().getOpenOrderCount();
         for (let index = openOrderCount - 1; index >= 0; index--) {
           const orderInfo = await this.getOpenOrderByIndex(index);
-          // if (!this.checkOpenOrderChange(orderInfo, index))
-          //   continue;
           this.assemblyPasarItem(orderInfo, index);
         }
         resolve('FINISH');
@@ -609,59 +739,98 @@ export class NFTContractHelperService {
     });
   }
 
+  parseAssistResult(result: any, syncMode: FeedsData.SyncMode): number {
+    let curBlockNum = 0;
+    let array = result.data.result;
+    for (let index = 0; index < array.length; index++) {
+      const item = array[index];
+      console.log('syncOrder element', array[index]);
+
+      if (item.event == 'OrderFilled' || item.event == 'OrderCanceled') {
+        this.dataHelper.deletePasarItem(item.orderId);
+      } else {
+        if (this.checkSyncMode(item.orderId))
+          return item.blockNumber;
+        const pasarItem = this.createItemFromPasarAssist(item, 'onSale', 'buy', syncMode);
+        this.savePasarItem(String(pasarItem.item.saleOrderId), pasarItem.item, 0, item.blockNumber, syncMode);
+        console.log('pasarItem', pasarItem);
+      }
+
+      if (curBlockNum < item.blockNumber)
+        curBlockNum = item.blockNumber;
+    }
+    return curBlockNum;
+  }
+
+  checkSyncMode(orderId: string): boolean {
+    const originPasarItem = this.dataHelper.getPasarItem(orderId);
+    if (!originPasarItem) {
+      return false;
+    }
+
+    if (originPasarItem.syncMode == FeedsData.SyncMode.SYNC) {
+      return true;
+    }
+
+    return false;
+  }
+
+  transPasarItemFromAssistPasar(result: Object) {
+  }
+
   async assemblyPasarItem(orderInfo: FeedsData.OrderInfo, index: number): Promise<string> {
     return new Promise(async (resolve, reject) => {
       const tokenInfo = await this.getTokenInfo(String(orderInfo.tokenId), true);
       const tokenJson = await this.getTokenJson(tokenInfo.tokenUri);
       if (orderInfo.orderState == FeedsData.OrderState.SALEING) {
         const item = this.createItemFromOrderInfo(orderInfo, tokenInfo, tokenJson, "onSale");
-        this.savePasarItem(String(orderInfo.orderId), item, index);
+        this.savePasarItem(String(orderInfo.orderId), item, index, 0, FeedsData.SyncMode.NONE);
       }
     });
   }
 
-  syncOpenOrderForDisplay(callback: (count: number, openOrderCount: number) => void): Promise<string> {
-    this.interruptSyncing();
-    this.isSyncingIndex = this.isSyncingIndex + 1;
-    const isSyncingIndex = this.isSyncingIndex;
-    // this.isSyncingIndex = this.isSyncingIndex + 1;
-    // const curSyncingIndex = this.isSyncingIndex;
-    this.isSyncingFlags[isSyncingIndex] = true;
-    return new Promise(async (resolve, reject) => {
-      try {
-        let syncCount = 0;
-        let isCallbacked = false;
-        this.prepareRefresh();
+  // syncOpenOrderForDisplay(callback: (count: number, openOrderCount: number) => void): Promise<string> {
+  //   this.interruptSyncing();
+  //   this.isSyncingIndex = this.isSyncingIndex + 1;
+  //   const isSyncingIndex = this.isSyncingIndex;
+  //   // this.isSyncingIndex = this.isSyncingIndex + 1;
+  //   // const curSyncingIndex = this.isSyncingIndex;
+  //   this.isSyncingFlags[isSyncingIndex] = true;
+  //   return new Promise(async (resolve, reject) => {
+  //     try {
+  //       let syncCount = 0;
+  //       let isCallbacked = false;
+  //       this.prepareRefresh();
 
-        const openOrderCount = await this.nftContractControllerService.getPasar().getOpenOrderCount();
-        for (let index = openOrderCount - 1; index >= 0; index--) {
-          const orderInfo = await this.getOpenOrderByIndex(index);
-          const tokenInfo = await this.getTokenInfo(String(orderInfo.tokenId), true);
-          const tokenJson = await this.getTokenJson(tokenInfo.tokenUri);
-          if (orderInfo.orderState == FeedsData.OrderState.SALEING) {
-            const item = this.createItemFromOrderInfo(orderInfo, tokenInfo, tokenJson, "onSale");
-            if (!this.isSyncingFlags[isSyncingIndex]) {
-              break;
-            }
-            syncCount = syncCount + 1;
-            this.refreshedCount = syncCount;
-            this.dataHelper.addDisplayedPasarItem(index, String(orderInfo.orderId), item);
-            if (!isCallbacked && syncCount > this.refreshCount) {
-              isCallbacked = true;
-              callback(syncCount, openOrderCount);
-            }
-          }
-        }
-        this.setPasarItemMap();
-        resolve('FINISH');
-      } catch (error) {
-        Logger.error('Sync open order', error);
-        reject(error);
-      } finally {
+  //       const openOrderCount = await this.nftContractControllerService.getPasar().getOpenOrderCount();
+  //       for (let index = openOrderCount - 1; index >= 0; index--) {
+  //         const orderInfo = await this.getOpenOrderByIndex(index);
+  //         const tokenInfo = await this.getTokenInfo(String(orderInfo.tokenId), true);
+  //         const tokenJson = await this.getTokenJson(tokenInfo.tokenUri);
+  //         if (orderInfo.orderState == FeedsData.OrderState.SALEING) {
+  //           const item = this.createItemFromOrderInfo(orderInfo, tokenInfo, tokenJson, "onSale");
+  //           if (!this.isSyncingFlags[isSyncingIndex]) {
+  //             break;
+  //           }
+  //           syncCount = syncCount + 1;
+  //           this.refreshedCount = syncCount;
+  //           this.dataHelper.addDisplayedPasarItem(index, String(orderInfo.orderId), item);
+  //           if (!isCallbacked && syncCount > this.refreshCount) {
+  //             isCallbacked = true;
+  //             callback(syncCount, openOrderCount);
+  //           }
+  //         }
+  //       }
+  //       this.setPasarItemMap();
+  //       resolve('FINISH');
+  //     } catch (error) {
+  //       Logger.error('Sync open order', error);
+  //       reject(error);
+  //     } finally {
 
-      }
-    });
-  }
+  //     }
+  //   });
+  // }
 
   /**
    *
@@ -780,8 +949,8 @@ export class NFTContractHelperService {
     });
   }
 
-  savePasarItem(orderId: string, item: FeedsData.NFTItem, index: number) {
-    this.dataHelper.updatePasarItem(orderId, item, index);
+  savePasarItem(orderId: string, item: FeedsData.NFTItem, index: number, blockNum: number, syncMode: FeedsData.SyncMode) {
+    this.dataHelper.updatePasarItem(orderId, item, index, blockNum, syncMode);
   }
 
   setPasarItemMap() {
@@ -810,7 +979,7 @@ export class NFTContractHelperService {
   }
 
   prepareRefresh() {
-    this.dataHelper.initDisplayedPasarItem();
+    // this.dataHelper.initDisplayedPasarItem();
     this.refreshManually = true;
     this.refreshedCount = 0;
     this.openOrderCount = Number.MAX_SAFE_INTEGER;
@@ -822,5 +991,54 @@ export class NFTContractHelperService {
 
   getRefreshedCount() {
     return this.refreshCount;
+  }
+
+  /*
+  asset: "feeds:imgage:QmPSGCsxbGQTkvRUZB1uJaSLxgCQ6zPAe4LnyWReEmuAht"
+  blockNumber: 7425993
+  createTime: "1627983840"
+  description: "sample nft"
+  event: "OrderFilled"
+  kind: "jpg"
+  name: "wide view"
+  orderId: "4"
+  price: "100000000000000000"
+  quantity: "1"
+  royalties: "10"
+  seller: "0x93b76C16e8A2c61a3149dF3AdCbE604be1F4137b"
+  thumbnail: "feeds:imgage:Qme9wrCcxBb7LdE51tb1gLvgJwHzUv1TXxJFVMaATi9iGJ"
+  tokenId: "64319248790340379337339904838288666036431059110727357413256114725063300641391"
+  type: "image"
+  updateTime: "1628138635"
+   */
+  createItemFromPasarAssist(assistPasarItem: any, moreMenuType: string, showType: string, syncMode: FeedsData.SyncMode) {
+
+    const nftItem: FeedsData.NFTItem = {
+      creator: assistPasarItem.royaltyOwner,
+      saleOrderId: assistPasarItem.orderId,
+      tokenId: assistPasarItem.tokenId,
+      asset: assistPasarItem.asset,
+      name: assistPasarItem.name,
+      description: assistPasarItem.description,
+      fixedAmount: assistPasarItem.price,
+      kind: assistPasarItem.kind,
+      type: assistPasarItem.type,
+      royalties: assistPasarItem.royalties,
+      quantity: assistPasarItem.quantity,
+      curQuantity: assistPasarItem.quantity,
+      thumbnail: assistPasarItem.thumbnail,
+      sellerAddr: assistPasarItem.seller,
+      createTime: assistPasarItem.createTime,
+      // updateTime: assistPasarItem.updateTime
+      moreMenuType: moreMenuType,
+      showType: showType
+    }
+    const item: FeedsData.PasarItem = {
+      index: 0,
+      blockNumber: assistPasarItem.blockNumber,
+      item: nftItem,
+      syncMode: syncMode
+    }
+    return item;
   }
 }

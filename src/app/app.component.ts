@@ -205,7 +205,6 @@ export class MyApp {
   }
 
   initSetting() {
-
     this.feedService.getData("feeds:elaPrice").then((elaPrice: any) => {
       if (elaPrice === null) {
         this.setElaUsdPrice();

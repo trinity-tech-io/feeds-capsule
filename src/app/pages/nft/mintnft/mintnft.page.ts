@@ -926,7 +926,7 @@ export class MintnftPage implements OnInit {
           return -Number(item.createTime);
         });
         this.nftPersistenceHelper.setPasarList(list);
-        this.dataHelper.updatePasarItem(saleOrderId, item, Number.MAX_SAFE_INTEGER);
+        this.dataHelper.updatePasarItem(saleOrderId, item, Number.MAX_SAFE_INTEGER, 0, FeedsData.SyncMode.APP);
         this.event.publish(FeedsEvent.PublishType.mintNft);
         break;
     }

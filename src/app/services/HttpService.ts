@@ -63,13 +63,12 @@ export class HttpService {
    * Base http get function
    * @param url
    */
-  httpGet(url: string): Promise<Object> {
+  httpGet(url: string): Promise<any> {
     return new Promise((resolve, reject) => {
       Logger.log(TAG, "Send http get method", url);
       this.httpClient.get(url).subscribe(
         response => {
           resolve(response);
-
         },
         error => {
           reject(error);

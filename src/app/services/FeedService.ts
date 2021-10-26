@@ -7760,7 +7760,9 @@ export class FeedService {
 
   syncOpenOrder() {
     const timer = setTimeout(() => {
-      this.nftContractHelperService.syncOpenOrder();
+      // this.nftContractHelperService.syncOpenOrder();
+      this.nftContractHelperService.syncOpenOrderFromAssist();
+
       clearTimeout(timer);
     }, 20);
   }

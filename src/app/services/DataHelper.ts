@@ -109,6 +109,10 @@ export class DataHelper {
 
   private pasarItemMap: { [orderId: string]: FeedsData.PasarItem } = {};
   private displayedPasarItemMap: { [orderId: string]: FeedsData.PasarItem } = {};
+  private lastSyncBlockNumber = 0;
+  private refreshLastBlockNumber = 0;
+  private firstSyncOrderFinish = false;
+
   constructor(
     private storageService: StorageService,
     private events: Events
@@ -2435,15 +2439,20 @@ export class DataHelper {
   ////PasarItemMap
   setPasarItemMap(pasarItemMap: { [orderId: string]: FeedsData.PasarItem }) {
     this.pasarItemMap = pasarItemMap;
-    this.saveData(FeedsData.PersistenceKey.pasarItemMap, this.pasarItemMap);
+    this.saveData(FeedsData.PersistenceKey.pasarItemMap + "-" + this.developNet, this.pasarItemMap);
   }
 
   loadPasarItemMap(): Promise<{ [orderId: string]: FeedsData.PasarItem }> {
     return new Promise(async (resolve, reject) => {
       try {
         if (JSON.stringify(this.pasarItemMap) == '{}') {
+
+          await this.loadDevelopLogMode();
+          console.log('this.developNet', this.developNet);
           this.pasarItemMap =
-            (await this.loadData(FeedsData.PersistenceKey.pasarItemMap)) || {};
+            (await this.loadData(FeedsData.PersistenceKey.pasarItemMap + "-" + this.developNet)) || {};
+
+          this.loadBlockNumFromStore();
           resolve(this.pasarItemMap);
           return;
         }
@@ -2460,7 +2469,7 @@ export class DataHelper {
       return;
     this.pasarItemMap[orderId] = null;
     delete this.pasarItemMap[orderId];
-    this.saveData(FeedsData.PersistenceKey.pasarItemMap, this.pasarItemMap);
+    this.saveData(FeedsData.PersistenceKey.pasarItemMap + "-" + this.developNet, this.pasarItemMap);
   }
 
   deltePasarItems(deletItems: FeedsData.PasarItem[]) {
@@ -2474,14 +2483,16 @@ export class DataHelper {
     }
   }
 
-  updatePasarItem(orderId: string, pasarItem: FeedsData.NFTItem, index: number) {
+  updatePasarItem(orderId: string, pasarItem: FeedsData.NFTItem, index: number, blockNumber: number, syncMode: FeedsData.SyncMode) {
     this.checkPasarItemMap();
 
-    const deleteItems: FeedsData.PasarItem[] = this.searchPasarItemFromIndex(index);
-    this.deltePasarItems(deleteItems);
+    // const deleteItems: FeedsData.PasarItem[] = this.searchPasarItemFromIndex(index);
+    // this.deltePasarItems(deleteItems);
 
-    this.updatePasarItemWithoutSave(orderId, pasarItem, index);
-    this.saveData(FeedsData.PersistenceKey.pasarItemMap, this.pasarItemMap);
+    this.updatePasarItemWithoutSave(orderId, pasarItem, index, blockNumber, syncMode);
+    console.log('updatePasarItem---------', this.pasarItemMap[orderId]);
+    this.updatePasarBlockNum(blockNumber);
+    this.saveData(FeedsData.PersistenceKey.pasarItemMap + "-" + this.developNet, this.pasarItemMap);
   }
 
   searchPasarItemFromIndex(index: number) {
@@ -2489,9 +2500,9 @@ export class DataHelper {
     return filterResult;
   }
 
-  updatePasarItemWithoutSave(orderId: string, item: FeedsData.NFTItem, index: number) {
+  updatePasarItemWithoutSave(orderId: string, item: FeedsData.NFTItem, index: number, blockNumber: number, syncMode: FeedsData.SyncMode) {
     this.checkPasarItemMap();
-    const pasarItem: FeedsData.PasarItem = { index: index, item: item };
+    const pasarItem: FeedsData.PasarItem = { index: index, blockNumber: blockNumber, item: item, syncMode: syncMode };
     this.pasarItemMap[orderId] = pasarItem;
   }
 
@@ -2525,6 +2536,7 @@ export class DataHelper {
         continue;
       list.push(this.pasarItemMap[keys[index]].item);
     }
+
     return list;
   }
 
@@ -2533,13 +2545,53 @@ export class DataHelper {
       this.pasarItemMap = {};
   }
 
+  getLastPasarBlockNum() {
+    return this.lastSyncBlockNumber;
+  }
+
+  loadBlockNumFromStore(): FeedsData.NFTItem[] {
+    console.log('loadBlockNumFromStore', this.pasarItemMap);
+    let list: FeedsData.NFTItem[] = [];
+    this.pasarItemMap = this.pasarItemMap || {};
+    let keys: string[] = Object.keys(this.pasarItemMap) || [];
+    for (let index in keys) {
+      const pasarItem = this.pasarItemMap[keys[index]];
+      if (!pasarItem)
+        continue;
+      const blockNumber = pasarItem.blockNumber;
+      if (pasarItem.syncMode == FeedsData.SyncMode.SYNC) {
+        this.updatePasarBlockNum(blockNumber);
+        this.setRefreshLastBlockNumber(blockNumber);
+      }
+
+      list.push(this.pasarItemMap[keys[index]].item);
+    }
+
+    return list;
+  }
+
+  updatePasarBlockNum(blockNumber: number) {
+    if (blockNumber && this.lastSyncBlockNumber < blockNumber)
+      this.lastSyncBlockNumber = blockNumber;
+  }
+
+  ////
+  getRefreshLastBlockNumber(): number {
+    return this.refreshLastBlockNumber;
+  }
+
+  setRefreshLastBlockNumber(blockNumber: number) {
+    // if (blockNumber && this.refreshLastBlockNumber < blockNumber)
+    this.refreshLastBlockNumber = blockNumber;
+  }
+
   ////
   initDisplayedPasarItem() {
     this.displayedPasarItemMap = {}
   }
 
   addDisplayedPasarItem(index: number, orderId: string, item: FeedsData.NFTItem) {
-    this.displayedPasarItemMap[orderId] = { index: index, item: item };
+    this.displayedPasarItemMap[orderId] = { index: index, blockNumber: 0, item: item, syncMode: null };
   }
 
   getDisplayedPasarItemList() {
@@ -2564,4 +2616,28 @@ export class DataHelper {
     this.setPasarItemMap(this.getDisplayedPasarItemMap());
   }
 
+  ////
+  loadFirstSyncOrderStatus(): Promise<boolean> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        this.firstSyncOrderFinish = await this.loadData(FeedsData.PersistenceKey.firstSyncOrderFinish) || false;
+        console.log('this.firstSyncOrderFinish', this.firstSyncOrderFinish);
+        resolve(this.firstSyncOrderFinish);
+        return;
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
+  setFirstSyncOrderStatus(isFinish: boolean) {
+    if (this.firstSyncOrderFinish != isFinish) {
+      this.firstSyncOrderFinish = true;
+      this.saveData(FeedsData.PersistenceKey.firstSyncOrderFinish, this.firstSyncOrderFinish);
+    }
+  }
+
+  getFirstSyncOrderStatus() {
+    return this.firstSyncOrderFinish;
+  }
 }

@@ -88,4 +88,6 @@ export class Config {
     /** whitelist testNet */
     public static WHITELIST_TEST_SERVER: string = 'https://test.trinity-feeds.app/';
 
+    public static PASAR_ASSIST_TEST_SERVER: string = 'https://test.trinity-feeds.app/pasar/api/v1/';
+    public static PASAR_ASSIST_SERVER: string = 'https://test.trinity-feeds.app/pasar/api/v1/';
 }

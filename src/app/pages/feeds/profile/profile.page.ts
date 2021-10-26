@@ -26,6 +26,7 @@ import { DataHelper } from 'src/app/services/DataHelper';
 import { LanguageService } from 'src/app/services/language.service';
 import { Logger } from 'src/app/services/logger';
 import { NFTContractHelperService } from 'src/app/services/nftcontract_helper.service';
+import { PasarAssistService } from 'src/app/services/pasar_assist.service';
 let TAG: string = 'Feeds-profile';
 
 @Component({
@@ -191,6 +192,7 @@ export class ProfilePage implements OnInit {
     private dataHelper :DataHelper,
     private languageService: LanguageService,
     private nftContractHelperService: NFTContractHelperService,
+    private pasarAssistService: PasarAssistService
   ) {
   }
 
@@ -793,7 +795,8 @@ export class ProfilePage implements OnInit {
         }, 500);
         break;
       case 'ProfilePage.collectibles':
-        await this.refreshCollectibles();
+        await this.nftContractHelperService.syncOpenOrderFromAssist();
+        // await this.refreshCollectibles();
         event.target.complete();
         break;
       case 'ProfilePage.myLikes':
