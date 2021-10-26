@@ -21,7 +21,7 @@
             <ng-template #inputid1>
               <h1 >{{ contractDetail.type | translate}}</h1>
             </ng-template>
-            <h2 *ngIf="contractDetail.type === 'AssetdetailsPage.creator' || contractDetail.type === 'AssetdetailsPage.stickerContractAddress' || contractDetail.type === 'AssetdetailsPage.pasarContractAddress' || contractDetail.type === 'AssetdetailsPage.tokenID' || contractDetail.type === 'AssetdetailsPage.owner'; else inputid" (press)="copytext(contractDetail.details)" [style.touch-action]="'pan-y'">{{ contractDetail.details }}</h2>
+            <h2 *ngIf="contractDetail.type === 'AssetdetailsPage.creator' || contractDetail.type === 'AssetdetailsPage.stickerContractAddress' || contractDetail.type === 'AssetdetailsPage.pasarContractAddress' || contractDetail.type === 'AssetdetailsPage.tokenID' || contractDetail.type === 'AssetdetailsPage.owner' || contractDetail.type === 'BidPage.verifiedCreator'; else inputid" (press)="copytext(contractDetail.details)" [style.touch-action]="'pan-y'">{{ contractDetail.details }}</h2>
             <ng-template #inputid>
               <h2>{{ contractDetail.details }}</h2>
             </ng-template>

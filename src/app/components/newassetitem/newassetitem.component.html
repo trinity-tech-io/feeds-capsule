@@ -1,7 +1,6 @@
 <div class="addAssets ion-activatable ripple" style="margin-top: 5px;" [class.darkAddAssets]="theme.darkMode"
   [ngStyle]="styleObj">
-  <div style="padding-left: 22px; padding-right: 22px;" *ngIf="assetItem === null">
-    <!-- <div class="des"><img src="./assets/images/nft-user-circle.svg" style="vertical-align: middle;margin-right: 2px;"/>{{handleAddr(assetItem['sellerAddr'])}} <span class="createTime">{{ handleDisplayTime(assetItem["createTime"]) }}</span></div> -->
+  <!-- <div style="padding-left: 22px; padding-right: 22px;" *ngIf="assetItem === null">
     <div style=" margin-top: 17px; width: auto;height:200px; ">
       <img src="assets/images/loading.png" style="object-fit:contain;" class="assetsImg" />
     </div>
@@ -11,7 +10,7 @@
       <span>&nbsp;</span>
     </div>
     <ion-ripple-effect></ion-ripple-effect>
-  </div>
+  </div> -->
   <div style="padding-left: 16px; padding-right: 16px;" *ngIf="assetItem != null">
     <img
     class="clickMore"
@@ -25,7 +24,7 @@
     <div (click)="clickItem()">
       <div style=" margin-top: 17px; width: auto;height:200px; display: flex; align-items: center; ">
         <div style="margin: 0 auto;position: relative;">
-          <img src="{{hanldeImg(assetItem)}}" style="object-fit:contain;" class="assetsImg" />
+          <img src="./assets/icon/reserve.svg" style="object-fit:contain;" class="assetsImg" id={{thumbImageId}}-thumbImage/>
         </div>
       </div>
       <div class="des1">{{assetItem['name']}}</div>

@@ -37,6 +37,7 @@ import { Logger } from 'src/app/services/logger';
 import { HttpService } from '../../../services/HttpService';
 import { DataHelper } from 'src/app/services/DataHelper';
 import { Keyboard } from '@ionic-native/keyboard/ngx';
+import { FileHelperService } from 'src/app/services/FileHelperService';
 
 let TAG: string = 'Feeds-home';
 @Component({
@@ -157,6 +158,9 @@ export class HomePage implements OnInit {
   public pasarsearchPlaceholder: string = "";
   private searchBeforePasar: any = [];
   private nftImageType:string = "";
+  private pasarGridisLoadimage: any = {};
+  private pasarListisLoadimage: any = {};
+  public isAutoGet: string = 'unAuto';
   constructor(
     private platform: Platform,
     private elmRef: ElementRef,
@@ -182,7 +186,8 @@ export class HomePage implements OnInit {
     private nftContractHelperService: NFTContractHelperService,
     private httpService: HttpService,
     private dataHelper: DataHelper,
-    private keyboard: Keyboard
+    private keyboard: Keyboard,
+    private fileHelperService: FileHelperService
   ) { }
 
   initPostListData(scrollToTop: boolean) {
@@ -265,9 +270,10 @@ export class HomePage implements OnInit {
     if (this.platform.is('ios')) {
       this.isAndroid = false;
     }
-
+    this.connectionStatus = this.feedService.getConnectionStatus();
+    this.styleObj.width = screen.width - 105 + 'px';
+    this.clientHeight = screen.availHeight;
     this.handleScroll();
-
     let pasarListGrid = this.feedService.getPasarListGrid();
     if (!pasarListGrid) {
       this.styleType = "grid";
@@ -275,21 +281,27 @@ export class HomePage implements OnInit {
       this.styleType = "list";
     }
 
-    this.pasarList = this.nftPersistenceHelper.getPasarList();
-    this.pasarList = _.sortBy(this.pasarList, (item: any) => {
-      return -Number(item.createTime);
-    });
+    switch(this.tabType){
+      case 'feeds':
+        this.refreshPostList();
+        break;
+      case 'pasar':
 
+        this.pasarList = this.nftPersistenceHelper.getPasarList();
+        this.pasarList = _.sortBy(this.pasarList, (item: any) => {
+          return -Number(item.createTime);
+        });
 
-    if (!this.pasarList || this.pasarList.length == 0 || this.pasarListPage === 0) {
-      this.pasarList = await this.nftContractHelperService.loadData(0, SortType.CREATE_TIME);
-      this.pasarListPage = 1;
+        if (!this.pasarList || this.pasarList.length == 0 || this.pasarListPage === 0) {
+          this.pasarList = await this.nftContractHelperService.loadData(0, SortType.CREATE_TIME);
+          this.pasarListPage = 1;
+          this.refreshPasarGridVisibleareaImage();
+        }else{
+          this.refreshPasarGridVisibleareaImage();
+        }
+
+        break;
     }
-
-    this.connectionStatus = this.feedService.getConnectionStatus();
-    this.styleObj.width = screen.width - 105 + 'px';
-    this.clientHeight = screen.availHeight;
-    this.refreshPostList();
 
     this.events.subscribe(FeedsEvent.PublishType.addConnectionChanged, () => {
       this.addConnectionChangedEvent();
@@ -297,10 +309,12 @@ export class HomePage implements OnInit {
 
     this.events.subscribe(FeedsEvent.PublishType.mintNft,()=>{
       this.pasarList = this.nftPersistenceHelper.getPasarList();
+      this.refreshPasarGridVisibleareaImage();
     });
 
     this.events.subscribe(FeedsEvent.PublishType.nftBuyOrder,()=>{
       this.pasarList = this.nftPersistenceHelper.getPasarList();
+      this.refreshPasarGridVisibleareaImage();
     });
 
     this.events.subscribe(FeedsEvent.PublishType.addRpcRequestError, () => {
@@ -364,6 +378,9 @@ export class HomePage implements OnInit {
       } else {
         this.styleType = "list";
       }
+      this.zone.run(() => {
+        this.refreshPasarGridVisibleareaImage();
+      });
     });
 
     this.addCommonEvents();
@@ -954,6 +971,7 @@ export class HomePage implements OnInit {
         this.loadMoreData().then(() => {
           let timer = setTimeout(() => {
             event.target.complete();
+            this.refreshPasarGridVisibleareaImage();
             clearTimeout(timer);
           }, 500);
         })
@@ -986,34 +1004,6 @@ export class HomePage implements OnInit {
       case 'feeds':
         let sId = setTimeout(() => {
           this.initPostListData(true);
-          // this.images = {};
-          // // this.infiniteScroll.disabled = false;
-          // this.startIndex = 0;
-          // this.totalData = this.sortPostList();
-          // if (this.totalData.length - this.pageNumber > 0) {
-          //   this.zone.run(() => {
-          //     this.postList = this.totalData.slice(0, this.pageNumber);
-          //     this.startIndex++;
-          //     // this.infiniteScroll.disabled = false;
-          //     this.isLoadimage = {};
-          //     this.isLoadVideoiamge = {};
-          //     this.refreshImage(0);
-          //     this.initnodeStatus(this.postList);
-          //     if (event != null) event.target.complete();
-          //     this.refreshEvent = null;
-          //   });
-          // } else {
-          //   this.zone.run(() => {
-          //     this.postList = this.totalData;
-          //     // this.infiniteScroll.disabled = true;
-          //     this.isLoadimage = {};
-          //     this.isLoadVideoiamge = {};
-          //     this.refreshImage(0);
-          //     this.initnodeStatus(this.postList);
-          //     if (event != null) event.target.complete();
-          //     this.refreshEvent = null;
-          //   });
-          // }
           if (event != null) event.target.complete();
           this.refreshEvent = null;
           clearTimeout(sId);
@@ -1024,13 +1014,15 @@ export class HomePage implements OnInit {
         this.handleRefresherInfinite(false);
         this.zone.run(async () => {
           try {
+
             this.pasarListPage = 0;
             this.pasarList = await this.nftContractHelperService.refreshPasarListFromContract('onSale', SortType.CREATE_TIME, (openOrderCount: number) => {
               this.pasarListCount = openOrderCount;
             }, () => { });
-
+            this.refreshPasarGridVisibleareaImage();
             this.pasarListPage++;
             this.nftPersistenceHelper.setPasarList(this.pasarList);
+
           } catch (err) {
             Logger.error(TAG, err);
           } finally {
@@ -1040,6 +1032,26 @@ export class HomePage implements OnInit {
         });
         break;
     }
+  }
+
+  refreshPasarGridVisibleareaImage(){
+     if(this.tabType === 'pasar' && this.styleType==='grid'){
+      let sid = setTimeout(()=>{
+        this.pasarGridisLoadimage = {};
+        this.setPasarGridVisibleareaImage();
+        clearTimeout(sid);
+       },100);
+       return;
+     }
+
+     if(this.tabType === 'pasar' && this.styleType==='list'){
+      let sid = setTimeout(()=>{
+        this.pasarListisLoadimage = {};
+        this.setPasarListVisibleareaImage();
+        clearTimeout(sid);
+       },100);
+       return;
+     }
   }
 
   scrollToTop(int) {
@@ -1480,6 +1492,13 @@ export class HomePage implements OnInit {
     switch (this.tabType) {
       case 'feeds':
         this.native.throttle(this.setVisibleareaImage(this.postgridindex), 200, this, true);
+        break;
+      case 'pasar':
+         if(this.styleType==='grid'){
+          this.native.throttle(this.setPasarGridVisibleareaImage(),200,this,true);
+         }else if(this.styleType==='list'){
+          this.native.throttle(this.setPasarListVisibleareaImage(),200,this,true);
+         }
         break;
       default:
         break;
@@ -1950,6 +1969,9 @@ export class HomePage implements OnInit {
         if (!this.pasarList || this.pasarList.length == 0) {
           this.pasarList = await this.nftContractHelperService.loadData(0, SortType.CREATE_TIME);
           this.pasarListPage = 1;
+          this.refreshPasarGridVisibleareaImage();
+        }else{
+          this.refreshPasarGridVisibleareaImage();
         }
         break;
     }
@@ -2241,6 +2263,7 @@ export class HomePage implements OnInit {
     if (this.searchBeforePasar.length > 0) {
       this.pasarList = _.cloneDeep(this.searchBeforePasar);
       this.searchBeforePasar = [];
+      this.refreshPasarGridVisibleareaImage();
     }
   }
 
@@ -2261,6 +2284,7 @@ export class HomePage implements OnInit {
         if (this.searchBeforePasar.length > 0) {
           this.pasarList = _.cloneDeep(this.searchBeforePasar);
           this.searchBeforePasar = [];
+          this.refreshPasarGridVisibleareaImage();
         }
         return;
       }
@@ -2275,6 +2299,7 @@ export class HomePage implements OnInit {
       this.pasarList = _.filter(this.searchPasar, (pasarItem) => {
         return pasarItem.name.toLowerCase().indexOf(this.searchText.toLowerCase()) > -1;
       });
+      this.refreshPasarGridVisibleareaImage();
       return;
     }
 
@@ -2282,6 +2307,7 @@ export class HomePage implements OnInit {
       this.pasarList = _.filter(this.searchPasar, (pasarItem) => {
         return this.searchText === pasarItem.creator;
       });
+      this.refreshPasarGridVisibleareaImage();
       return;
     }
 
@@ -2289,6 +2315,7 @@ export class HomePage implements OnInit {
       this.pasarList = _.filter(this.searchPasar, (pasarItem) => {
         return this.searchText === pasarItem.sellerAddr;
       });
+      this.refreshPasarGridVisibleareaImage();
       return;
     }
 
@@ -2297,6 +2324,7 @@ export class HomePage implements OnInit {
         let tokenID = '0x' + UtilService.dec2hex(pasarItem.tokenId);
         return this.searchText === tokenID || this.searchText === pasarItem.tokenId;
       });
+      this.refreshPasarGridVisibleareaImage();
       return;
     }
 
@@ -2337,8 +2365,128 @@ export class HomePage implements OnInit {
     if (this.searchBeforePasar.length > 0) {
       this.pasarList = _.cloneDeep(this.searchBeforePasar);
       this.searchBeforePasar = [];
+      this.refreshPasarGridVisibleareaImage();
     }
     this.handleRefresherInfinite(false);
+  }
+
+  setPasarGridVisibleareaImage(){
+   let homePasarGrid = document.getElementById("homePasarGrid")|| null;
+   if(homePasarGrid === null){
+     return;
+   }
+   let homePasarGridCols = homePasarGrid.getElementsByClassName("homePasarGridCol") || null;
+   let len = homePasarGridCols.length;
+   for(let itemIndex = 0;itemIndex<len;itemIndex++){
+     let item = homePasarGridCols[itemIndex];
+     let id = item.getAttribute("id");
+     let arr = id.split("-");
+     let fileName = arr[0];
+     let kind = arr[1];
+     let thumbImage =  document.getElementById(fileName+"-thumbImage");
+     let srcStr =  thumbImage.getAttribute("src") || "";
+     let isload = this.pasarGridisLoadimage[fileName] || '';
+     try {
+        if (
+          id != '' &&
+          thumbImage.getBoundingClientRect().top >= -100 &&
+          thumbImage.getBoundingClientRect().top <= this.clientHeight
+        ) {
+          if(isload === ""){
+            let fetchUrl = this.ipfsService.getNFTGetUrl() + fileName;
+            this.pasarGridisLoadimage[fileName] = '12';
+            this.fileHelperService.getNFTData(fetchUrl,fileName, kind).then((data) => {
+              this.zone.run(() => {
+                this.pasarGridisLoadimage[fileName] = '13';
+                thumbImage.setAttribute("src",data);
+              });
+            });
+          }
+        }else{
+          srcStr = thumbImage.getAttribute('src') || '';
+          if (
+            thumbImage.getBoundingClientRect().top < -100 &&
+            this.pasarGridisLoadimage[fileName] === '13' &&
+            srcStr != './assets/icon/reserve.svg'
+          ) {
+            this.pasarGridisLoadimage[fileName] = '';
+            thumbImage.setAttribute('src', './assets/icon/reserve.svg');
+          }
+        }
+     } catch (error) {
+      this.pasarGridisLoadimage[fileName] = '';
+      thumbImage.setAttribute('src', './assets/icon/reserve.svg');
+     }
+   }
+  }
+
+
+  setPasarListVisibleareaImage(){
+
+    let homePasarList = document.getElementById("homePasarList")|| null;
+    if(homePasarList === null){
+      return;
+    }
+    let homePasarListCol = homePasarList.getElementsByClassName("homePasarListCol") || null;
+    let len = homePasarListCol.length;
+
+    for(let itemIndex = 0;itemIndex<len;itemIndex++){
+      let item = homePasarListCol[itemIndex];
+      let id = item.getAttribute("id");
+      let arr = id.split("-");
+      let fileName = arr[0];
+      let kind = arr[1];
+      let thumbImage =  document.getElementById(fileName+"-thumbImage") || null;
+      let srcStr =  thumbImage.getAttribute("src") || "";
+      let isload = this.pasarListisLoadimage[fileName] || '';
+
+      try {
+         if (
+           id != '' &&
+           thumbImage.getBoundingClientRect().top >= -100 &&
+           thumbImage.getBoundingClientRect().top <= this.clientHeight
+         ) {
+           if(isload === ""){
+             let fetchUrl = this.ipfsService.getNFTGetUrl() + fileName;
+             this.pasarListisLoadimage[fileName] = '12';
+             this.fileHelperService.getNFTData(fetchUrl,fileName, kind).then((data) => {
+               this.zone.run(() => {
+                 this.pasarListisLoadimage[fileName] = '13';
+                 thumbImage.setAttribute("src",data);
+               });
+             });
+           }
+         }else{
+           srcStr = thumbImage.getAttribute('src') || '';
+           if (
+             thumbImage.getBoundingClientRect().top < -100 &&
+             this.pasarListisLoadimage[fileName] === '13' &&
+             srcStr != './assets/icon/reserve.svg'
+           ) {
+             this.pasarListisLoadimage[fileName] = '';
+             thumbImage.setAttribute('src', './assets/icon/reserve.svg');
+           }
+         }
+      } catch (error) {
+       this.pasarListisLoadimage[fileName] = '';
+       thumbImage.setAttribute('src', './assets/icon/reserve.svg');
+      }
+    }
+  }
+
+  handleId(item:any){
+    let thumbnailUri = item['thumbnail'];
+    let kind = item["kind"];
+    if (kind === "gif") {
+      thumbnailUri = item['asset'];
+    }
+
+    if (thumbnailUri.indexOf('feeds:imgage:') > -1) {
+      thumbnailUri = thumbnailUri.replace('feeds:imgage:', '');
+    } else if (thumbnailUri.indexOf('feeds:image:') > -1) {
+      thumbnailUri = thumbnailUri.replace('feeds:image:', '');
+    }
+    return thumbnailUri+"-"+kind;
   }
 
 }

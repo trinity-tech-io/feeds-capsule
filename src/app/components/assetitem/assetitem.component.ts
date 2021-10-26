@@ -13,11 +13,13 @@ import { FileHelperService } from 'src/app/services/FileHelperService';
 })
 export class AssetitemComponent implements OnInit {
   @Input() assetItem: any = null;
-  @Input() elaPrice:string = null;
+  @Input() elaPrice: string = null;
+  @Input() isAutoGet: string = null;
   @Output() clickAssetItem = new EventEmitter();
   @Output() clickMore = new EventEmitter();
   public styleObj: any = { width: '' };
   public imgUri = './assets/icon/reserve.svg';
+  public thumbImageId:string = "";
   constructor(
     private nftContractControllerService: NFTContractControllerService,
     private viewHelper: ViewHelper,
@@ -53,11 +55,16 @@ export class AssetitemComponent implements OnInit {
       fetchUrl = this.ipfsService.getNFTGetUrl() + thumbnailUri;
     }
 
-    this.fileHelperService.getNFTData(fetchUrl, fileName, kind).then((data) => {
-      this.zone.run(() => {
-        this.imgUri = data;
+    this.thumbImageId = thumbnailUri;
+    this.isAutoGet = this.isAutoGet || "";
+    if(this.isAutoGet === ""){
+      console.log("===this.isAutoGet====",this.isAutoGet);
+      this.fileHelperService.getNFTData(fetchUrl, fileName, kind).then((data) => {
+        this.zone.run(() => {
+          this.imgUri = data;
+        });
       });
-    });
+    }
   }
 
   clickItem() {

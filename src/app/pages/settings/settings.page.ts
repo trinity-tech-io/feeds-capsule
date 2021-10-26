@@ -32,7 +32,7 @@ export class SettingsPage implements OnInit {
   public pasarListGrid: boolean = false;
   public isHideDeveloperMode: boolean = false;
   public curIPFSApiProviderName = 'ipfs0.trinity-feeds.app';
-
+  private isListGrid: boolean = false;
   constructor(
     private languageService: LanguageService,
     private feedService: FeedService,
@@ -102,6 +102,9 @@ export class SettingsPage implements OnInit {
       this.popoverController.dismiss();
     }
     this.events.publish(FeedsEvent.PublishType.search);
+    if(this.isListGrid){
+      this.events.publish(FeedsEvent.PublishType.pasarListGrid);
+    }
   }
 
   toggleHideDeletedPosts() {
@@ -217,7 +220,7 @@ export class SettingsPage implements OnInit {
       this.pasarListGrid = !this.pasarListGrid;
     });
     this.feedService.setPasarListGrid(this.pasarListGrid);
-    this.events.publish(FeedsEvent.PublishType.pasarListGrid);
     this.feedService.setData('feeds.pasarListGrid', this.pasarListGrid);
+    this.isListGrid = true;
   }
 }
