@@ -28,10 +28,8 @@ export class WalletConnectControllerService {
     return this.setupWalletConnectProvider();
   }
 
-  public async initWalletConnectProvider() {
-    Logger.log(TAG, "Init WalletConnect provider, params", this.rpc, this.bridge);
-    //  Create WalletConnect Provider
-    this.walletConnectProvider = new WalletConnectProvider({
+  createWalletConnect() {
+    return new WalletConnectProvider({
       // infuraId: '0dd3ab5ca24946938c6d411a1637cc59',
       rpc: this.rpc,
       bridge: this.bridge,
@@ -39,10 +37,18 @@ export class WalletConnectControllerService {
         mobileLinks: ['essential', 'metamask'],
       },
     });
+  }
+
+  public async initWalletConnectProvider() {
+    Logger.log(TAG, "Init WalletConnect provider, params", this.rpc, this.bridge);
+    //  Create WalletConnect Provider
+    this.walletConnectProvider = this.createWalletConnect();
 
     try {
       if (this.walletConnectProvider.connector.session.handshakeTopic != '') {
         await this.disconnect();
+        await this.destroyWalletConnect();
+        this.walletConnectProvider = this.createWalletConnect();
       }
     } catch (error) {
       Logger.error('this.walletConnectProvider.disconnect()');
