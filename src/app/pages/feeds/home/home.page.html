@@ -233,8 +233,10 @@
 
  <!--Pasar list-->
 <div *ngIf="tabType==='pasar'&&styleType==='list'">
-  <ion-row>
-    <ion-col size="12"  *ngFor="let item of pasarList let i=index" [class.darkBorderBottom]="theme.darkMode && item != pasarList[pasarList.length - 1]" [class.borderBottom]="!theme.darkMode  && item != pasarList[pasarList.length - 1]">
+  <ion-row id="homePasarList">
+    <ion-col size="12"  *ngFor="let item of pasarList let i=index" [class.darkBorderBottom]="theme.darkMode && item != pasarList[pasarList.length - 1]" [class.borderBottom]="!theme.darkMode  && item != pasarList[pasarList.length - 1]"
+    class="homePasarListCol" id={{handleId(item)}}
+    >
       <app-newassetitem
       [elaPrice] = "elaPrice"
       [assetItem] = "item"
@@ -248,9 +250,10 @@
 
  <!--Pasar grid-->
 <div *ngIf="tabType==='pasar'&&styleType==='grid'" style="margin-top:0px;">
-  <ion-row class="leftrightrow">
-    <ion-col size="6" *ngFor="let item of pasarList">
+  <ion-row class="leftrightrow" id="homePasarGrid">
+    <ion-col size="6" *ngFor="let item of pasarList"  class="homePasarGridCol" id={{handleId(item)}}>
       <app-assetitem
+      [isAutoGet] = "isAutoGet"
       [elaPrice] = "elaPrice"
       [assetItem] = "item"
       (clickAssetItem) = "clickAssetItem($event)"

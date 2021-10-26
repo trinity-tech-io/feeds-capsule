@@ -22,6 +22,8 @@ export class NewassetitemComponent implements OnInit {
   @Output() clickMore = new EventEmitter();
   public styleObj: any = { width: '' };
   public verified: boolean = false;
+  public imgUri = './assets/icon/reserve.svg';
+  public thumbImageId:string = "";
   constructor(
     private translate: TranslateService,
     public theme: ThemeService,
@@ -33,6 +35,28 @@ export class NewassetitemComponent implements OnInit {
 
  async ngOnInit() {
     this.styleObj.width = screen.width - 40 + 'px';
+
+    let fileName = "";
+    let fetchUrl = "";
+
+    let thumbnailUri = this.assetItem['thumbnail'];
+    let kind = this.assetItem["kind"];
+    if (kind === "gif") {
+      thumbnailUri = this.assetItem['asset'];
+    }
+
+    if (thumbnailUri.indexOf('feeds:imgage:') > -1) {
+      thumbnailUri = thumbnailUri.replace('feeds:imgage:', '');
+      fileName = thumbnailUri;
+      fetchUrl = this.ipfsService.getNFTGetUrl() + thumbnailUri;
+    } else if (thumbnailUri.indexOf('feeds:image:') > -1) {
+      thumbnailUri = thumbnailUri.replace('feeds:image:', '');
+      fileName = thumbnailUri;
+      fetchUrl = this.ipfsService.getNFTGetUrl() + thumbnailUri;
+    }
+
+    this.thumbImageId = thumbnailUri;
+
     let creator = this.assetItem.creator || "";
     if(creator != ""){
       this.verified = await this.handleVerifiedAddress(creator);
@@ -51,19 +75,19 @@ export class NewassetitemComponent implements OnInit {
   }
 
   hanldeImg(assetItem: any) {
-    let imgUri = assetItem['thumbnail'];
-    let kind = assetItem["kind"];
-    if(kind === "gif"){
-        imgUri = assetItem['asset'];
-    }
-    if (imgUri.indexOf('feeds:imgage:') > -1) {
-      imgUri = imgUri.replace('feeds:imgage:', '');
-      imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
-    }else if(imgUri.indexOf('feeds:image:') > -1){
-      imgUri = imgUri.replace('feeds:image:', '');
-      imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
-    }
-    return imgUri;
+    // let imgUri = assetItem['thumbnail'];
+    // let kind = assetItem["kind"];
+    // if(kind === "gif"){
+    //     imgUri = assetItem['asset'];
+    // }
+    // if (imgUri.indexOf('feeds:imgage:') > -1) {
+    //   imgUri = imgUri.replace('feeds:imgage:', '');
+    //   imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
+    // }else if(imgUri.indexOf('feeds:image:') > -1){
+    //   imgUri = imgUri.replace('feeds:image:', '');
+    //   imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
+    // }
+    return this.imgUri;
   }
 
   hanldePrice(price: string) {
