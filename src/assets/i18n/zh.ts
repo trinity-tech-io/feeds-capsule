@@ -176,7 +176,8 @@ export const zh = {
     tranferNFTSTimeoutDesc: "转让收藏品超时，后面您可自行确认",
     tranferNFTSFailed: "转让收藏品失败",
     tranferNFTSSuccess: "转让收藏品成功",
-    walletAddressDes1: "收件人钱包地址与收藏品的钱包地址一致"
+    walletAddressDes1: "收件人钱包地址与收藏品的钱包地址一致",
+    didUriNull: "服务异常，请稍后再试"
   },
   app: {
     profileDetails: '档案详情',

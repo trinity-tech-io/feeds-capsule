@@ -64,6 +64,7 @@ export class MintnftPage implements OnInit {
   private realFile: any = null;
   public  maxAvatarSize:number = 5 * 1024 * 1024;
   public  assetType:string = "general";
+  private didUri:string = null;
   constructor(
     private translate: TranslateService,
     private event: Events,
@@ -204,7 +205,7 @@ export class MintnftPage implements OnInit {
     let jsonHash = '';
     //this.native.changeLoadingDesc("common.uploadingData");
     this.uploadData()
-      .then((result) => {
+      .then(async(result) => {
         Logger.log(TAG, 'Upload Result', result);
         //this.native.changeLoadingDesc("common.uploadDataSuccess");
         this.loadingCurNumber = "1";
@@ -215,9 +216,12 @@ export class MintnftPage implements OnInit {
         //this.native.changeLoadingDesc("common.mintingData");
         this.loadingCurNumber = "2";
         this.loadingText = "common.mintingData";
-
+        //let did = this.feedService.
         let nftRoyalties = UtilService.accMul(parseInt(this.nftRoyalties),10000);
-        return this.mintContract(tokenId, jsonHash, this.nftQuantity,nftRoyalties.toString());
+
+        let didUri = await this.getDidUri();
+        console.log("====didUri======"+didUri);
+        return this.mintContract(tokenId, jsonHash, this.nftQuantity,nftRoyalties.toString(),didUri);
       })
       .then(mintResult => {
         if (mintResult != '' && this.curPublishtoPasar) {
@@ -565,14 +569,20 @@ export class MintnftPage implements OnInit {
     uri: string,
     supply: string,
     royalty: string,
+    didUri: string
   ): Promise<string> {
     return new Promise(async (resolve, reject) => {
       const MINT_ERROR = 'Mint process error';
       let result = '';
+      if(didUri === null){
+        reject(MINT_ERROR);
+        return;
+      }
+      this.didUri = didUri;
       try {
         result = await this.nftContractControllerService
           .getSticker()
-          .mint(tokenId, supply, uri, royalty);
+          .mint(tokenId, supply, uri, royalty,didUri);
       } catch (error) {
         reject(error);
         return;
@@ -625,7 +635,7 @@ export class MintnftPage implements OnInit {
       try {
         orderIndex = await this.nftContractControllerService
           .getPasar()
-          .createOrderForSale(tokenId, this.nftQuantity, salePrice);
+          .createOrderForSale(tokenId, this.nftQuantity, salePrice,this.didUri);
       } catch (error) {
         reject(orderIndex);
       }
@@ -891,6 +901,7 @@ export class MintnftPage implements OnInit {
           createTime: createTime * 1000,
           moreMenuType: 'created',
           sellerAddr: accAddress,//所有者
+          didUri: this.didUri
         };
         slist.push(item);
         break;
@@ -973,6 +984,12 @@ export class MintnftPage implements OnInit {
     document.getElementById("mintfile").onchange = (event)=>{
       this.onChange(event);
     };
+  }
+
+ async getDidUri(){
+    let didUriJSON = this.feedService.getDidUriJson();
+    let didUri = await this.ipfsService.generateDidUri(didUriJSON);
+    return didUri;
   }
 
 }

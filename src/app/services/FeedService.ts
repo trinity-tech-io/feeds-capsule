@@ -7774,4 +7774,18 @@ export class FeedService {
   setWhiteListData(whiteListData: FeedsData.WhiteItem[]){
      this.whiteListData = whiteListData;
   }
+
+  getDidUriJson(){
+    let signInData = this.getSignInData() || {};
+    let did = signInData['did'] || "";
+    let name = signInData['name'] || "";
+    let email = signInData['email'] || "";
+    let didJson = {
+      "version": "1",
+      "did": did,
+      "name": name,
+      "email": email
+    }
+    return didJson;
+  }
 }

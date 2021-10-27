@@ -125,12 +125,13 @@ export class NFTContractStickerService {
     supply: string,
     uri: string,
     royalty: string,
+    didUri: string
   ): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
-        Logger.log(TAG, 'Mint params ', tokenId, supply, uri, royalty);
+        Logger.log(TAG, 'Mint params ', tokenId, supply, uri, royalty,didUri);
         const mintdata = this.stickerContract.methods
-          .mint(tokenId, supply, uri, royalty)
+          .mint(tokenId, supply, uri, royalty,didUri)
           .encodeABI();
         let transactionParams = await this.createTxParams(mintdata);
 
@@ -140,7 +141,7 @@ export class NFTContractStickerService {
           transactionParams,
         );
         this.stickerContract.methods
-          .mint(tokenId, supply, uri, royalty)
+          .mint(tokenId, supply, uri, royalty,didUri)
           .send(transactionParams)
           .on('transactionHash', hash => {
             Logger.log(TAG, 'Mint process, transactionHash is', hash);
