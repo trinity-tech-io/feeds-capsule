@@ -127,6 +127,43 @@
     "anonymous": false,
     "inputs": [
       {
+        "indexed": false,
+        "internalType": "string",
+        "name": "_sellerUri",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "_buyerUri",
+        "type": "string"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "_seller",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "_buyer",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "_orderId",
+        "type": "uint256"
+      }
+    ],
+    "name": "OrderDIDURI",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
         "indexed": true,
         "internalType": "address",
         "name": "_seller",
@@ -147,7 +184,7 @@
       {
         "indexed": false,
         "internalType": "address",
-        "name": "_copyrightOwner",
+        "name": "_royaltyOwner",
         "type": "address"
       },
       {
@@ -250,6 +287,43 @@
     "anonymous": false,
     "inputs": [
       {
+        "indexed": false,
+        "internalType": "address",
+        "name": "_platformAddress",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "_platformFee",
+        "type": "uint256"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "_seller",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "_buyer",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "_orderId",
+        "type": "uint256"
+      }
+    ],
+    "name": "OrderPlatformFee",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
         "indexed": true,
         "internalType": "address",
         "name": "_seller",
@@ -283,6 +357,11 @@
         "internalType": "uint256",
         "name": "_orderId",
         "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "_didUri",
+        "type": "string"
       }
     ],
     "name": "bidForOrder",
@@ -296,6 +375,11 @@
         "internalType": "uint256",
         "name": "_orderId",
         "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "_didUri",
+        "type": "string"
       }
     ],
     "name": "buyOrder",
@@ -355,6 +439,11 @@
         "internalType": "uint256",
         "name": "_endTime",
         "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "_didUri",
+        "type": "string"
       }
     ],
     "name": "createOrderForAuction",
@@ -378,6 +467,11 @@
         "internalType": "uint256",
         "name": "_price",
         "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "_didUri",
+        "type": "string"
       }
     ],
     "name": "createOrderForSale",
@@ -1048,7 +1142,7 @@
         "type": "string"
       }
     ],
-    "stateMutability": "view",
+    "stateMutability": "pure",
     "type": "function"
   },
   {
@@ -1495,6 +1589,106 @@
       {
         "internalType": "uint256",
         "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_orderId",
+        "type": "uint256"
+      }
+    ],
+    "name": "getOrderExtraById",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "string",
+            "name": "sellerUri",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "buyerUri",
+            "type": "string"
+          },
+          {
+            "internalType": "address",
+            "name": "platformAddr",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "platformFee",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct IPasarUpgraded.OrderExtraInfo",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256[]",
+        "name": "_orderIds",
+        "type": "uint256[]"
+      }
+    ],
+    "name": "getOrderExtraByIdBatch",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "string",
+            "name": "sellerUri",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "buyerUri",
+            "type": "string"
+          },
+          {
+            "internalType": "address",
+            "name": "platformAddr",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "platformFee",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct IPasarUpgraded.OrderExtraInfo[]",
+        "name": "",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getPlatformFee",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "_platformAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_platformFeeRate",
         "type": "uint256"
       }
     ],
@@ -2164,7 +2358,7 @@
         "type": "string"
       }
     ],
-    "stateMutability": "view",
+    "stateMutability": "pure",
     "type": "function"
   },
   {
@@ -2289,6 +2483,24 @@
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_platformAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_platformFeeRate",
+        "type": "uint256"
+      }
+    ],
+    "name": "setPlatformFee",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {

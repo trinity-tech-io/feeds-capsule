@@ -136,16 +136,16 @@ export class NFTContractParsarService {
       .call();
   }
 
-  createOrderForSale(tokenId, quantity, price): Promise<number> {
+  createOrderForSale(tokenId: string, quantity: string, price: string,didUri :string): Promise<number> {
     return new Promise(async (resolve, reject) => {
       try {
-        Logger.log(TAG, 'Create order for sale, params', tokenId, quantity, price);
+        Logger.log(TAG, 'Create order for sale, params', tokenId, quantity, price, didUri);
         let accountAddress = this.walletConnectControllerService.getAccountAddress();
         let seller = await this.getSellerByAddr(accountAddress);
         let lastOrderIndex = seller[2] - 1;
 
         const orderdata = this.pasarContract.methods
-          .createOrderForSale(tokenId, quantity, price)
+          .createOrderForSale(tokenId, quantity, price,didUri)
           .encodeABI();
         let transactionParams = await this.createTxParams(orderdata, 0);
 
@@ -156,7 +156,7 @@ export class NFTContractParsarService {
         );
 
         this.pasarContract.methods
-          .createOrderForSale(tokenId, quantity, price)
+          .createOrderForSale(tokenId, quantity, price,didUri)
           .send(transactionParams)
           .on('transactionHash', hash => {
             Logger.log(TAG, 'CreateOrderForSale, transactionHash is', hash);
@@ -306,15 +306,15 @@ export class NFTContractParsarService {
     clearInterval(this.checkPriceInterval);
   }
 
-  buyOrder(accountAddress, orderId, price): Promise<string> {
+  buyOrder(accountAddress: string, orderId: string, price: string,didUri :string): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
-        Logger.log(TAG, 'Buy Order params', accountAddress, orderId, price);
+        Logger.log(TAG, 'Buy Order params', accountAddress, orderId, price, didUri);
         let buyer = await this.getBuyerByAddr(accountAddress);
         let lastIndex = buyer[2] - 1;
 
         const orderdata = this.pasarContract.methods
-          .buyOrder(orderId)
+          .buyOrder(orderId,didUri)
           .encodeABI();
         let transactionParams = await this.createTxParams(orderdata, price);
 
@@ -325,7 +325,7 @@ export class NFTContractParsarService {
         );
 
         this.pasarContract.methods
-          .buyOrder(orderId)
+          .buyOrder(orderId,didUri)
           .send(transactionParams)
           .on('transactionHash', hash => {
             Logger.log(TAG, 'BuyOrder, transactionHash is', hash);

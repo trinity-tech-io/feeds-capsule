@@ -39,6 +39,7 @@ export class NftdialogComponent implements OnInit {
   public imgUri:string = "";
   private popoverDialog: any;
   private assetType:string = "";
+  private didUri:string = null;
   constructor(
     private navParams: NavParams,
     private popover: PopoverController,
@@ -167,10 +168,16 @@ export class NftdialogComponent implements OnInit {
       return;
     }
     let tokenId = this.assItem.tokenId;
+
     this.sellCollectibles(tokenId, 'created');
   }
 
  async sellCollectibles(tokenId: any, type: string) {
+    this.didUri = await this.getDidUri();
+    if(this.didUri === null){
+       this.native.toast("common.didUriNull");
+       return;
+    }
     await this.popover.dismiss();
     this.events.publish(FeedsEvent.PublishType.startLoading,{des:"common.sellingOrderDesc",title:"common.waitMoment",curNum:"1",maxNum:"1",type:"changePrice"});
     let sId =setTimeout(()=>{
@@ -285,7 +292,7 @@ export class NftdialogComponent implements OnInit {
 
         orderIndex = await this.nftContractControllerService
           .getPasar()
-          .createOrderForSale(tokenId, this.quantity, salePrice);
+          .createOrderForSale(tokenId, this.quantity, salePrice,this.didUri);
 
         if (!orderIndex || orderIndex == -1) {
           reject('Create Order error');
@@ -437,5 +444,10 @@ export class NftdialogComponent implements OnInit {
     });
   }
 
+  async getDidUri(){
+    let didUriJSON = this.feedService.getDidUriJson();
+    let didUri = await this.ipfsService.generateDidUri(didUriJSON);
+    return didUri;
+  }
 
 }

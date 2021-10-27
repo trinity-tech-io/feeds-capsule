@@ -67,6 +67,7 @@ export class BidPage implements OnInit {
   private isBuy: boolean = false;
   private orderCreateTime: number = null;
   private tokenCreateTime: number = null;
+  private didUri: string = null
   constructor(
     private translate: TranslateService,
     private event: Events,
@@ -283,13 +284,20 @@ export class BidPage implements OnInit {
     return dateCreated;
   }
 
- async clickBuy() {
+  async clickBuy() {
     let accountAddress =
       this.nftContractControllerService.getAccountAddress() || '';
     if (accountAddress === '') {
       this.native.toast_trans('common.connectWallet');
       return;
     }
+    
+    this.didUri = await this.getDidUri();
+    if(this.didUri === null){
+      this.native.toast("common.didUriNull");
+      return;
+    }
+
     let orderInfo = await this.nftContractControllerService.getPasar().getOrderById(this.saleOrderId);
     let orderState = parseInt(orderInfo[2]);
     if(orderState === FeedsData.OrderState.SOLD){
@@ -483,5 +491,11 @@ export class BidPage implements OnInit {
     }
   });
 
+  }
+
+  async getDidUri(){
+    let didUriJSON = this.feedService.getDidUriJson();
+    let didUri = await this.ipfsService.generateDidUri(didUriJSON);
+    return didUri;
   }
 }

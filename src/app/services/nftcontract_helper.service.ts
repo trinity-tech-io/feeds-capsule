@@ -195,7 +195,18 @@ export class NFTContractHelperService {
 
         const requestDevNet = this.dataHelper.getDevelopNet();
         let list: FeedsData.NFTItem[] = [];
-        for (let index = count - 1; index >= count - 1 - this.refreshCount; index--) {
+        let start = count - 1;
+        if (start < 0) {
+          start = 0;
+        }
+
+        let end = count - 1 - this.refreshCount;
+        if (end < 0) {
+          end = 0;
+        }
+
+        for (let index = start; index >= end; index--) {
+
           const orderInfo = await this.getOpenOrderByIndex(index);
           const tokenInfo = await this.getTokenInfo(String(orderInfo.tokenId), true);
           const tokenJson = await this.getTokenJson(tokenInfo.tokenUri);

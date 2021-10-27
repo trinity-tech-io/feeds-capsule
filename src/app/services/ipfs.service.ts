@@ -42,4 +42,23 @@ export class IPFSService {
     return this.getBaseNFTIPFSUrl() + ApiUrl.IPFS_NFT_ADD;
   }
 
+  generateDidUri(didJson:any):Promise<string>{
+
+    return new Promise((resolve, reject) => {
+      let formData = new FormData();
+      formData.append('', JSON.stringify(didJson));
+      this.nftPost(formData).then((result)=>{
+          let hash = result['Hash'] || null;
+          if (hash != null) {
+            let jsonHash = 'feeds:json:' + hash;
+            resolve(jsonHash);
+          }else{
+            resolve(null);
+          }
+        }).catch((err)=>{
+          resolve(null);
+        });
+    });
+  }
+
 }
