@@ -19,6 +19,9 @@ import { MenuService } from 'src/app/services/MenuService';
 import _ from 'lodash';
 import { Logger } from 'src/app/services/logger';
 import { FileHelperService } from 'src/app/services/FileHelperService';
+import { HttpService } from '../../../services/HttpService';
+import { ApiUrl } from 'src/app/services/ApiUrl';
+
 type detail = {
   type: string;
   details: string;
@@ -83,6 +86,7 @@ export class AssetdetailsPage implements OnInit {
     private platform: Platform,
     private fileHelperService: FileHelperService,
     private zone: NgZone,
+    private httpService: HttpService
   ) {}
 
   ngOnInit() {
@@ -211,9 +215,9 @@ export class AssetdetailsPage implements OnInit {
     });
 
     this.creator = await this.getCreatorAddress();
-
+    let creatorAddressDes:any = await this.handleCreatorAddress(this.creator);
     this.contractDetails.push({
-      type: 'AssetdetailsPage.creator',
+      type: creatorAddressDes,
       details:this.creator,
     });
 
@@ -309,10 +313,11 @@ export class AssetdetailsPage implements OnInit {
     });
   }
 
-  collectPurchaseInfos() {
+ async collectPurchaseInfos() {
     this.purchaseInfos = [];
+    let creatorAddressDes:any = await this.handleCreatorAddress(this.creator);
     this.purchaseInfos.push({
-      type: 'AssetdetailsPage.creator',
+      type: creatorAddressDes,
       details: this.creator,
     });
 
@@ -533,5 +538,30 @@ export class AssetdetailsPage implements OnInit {
    );
     return dateCreated;
   }
+
+  async handleCreatorAddress(creatorAddress: string){
+    return new Promise((resolve, reject) => {
+      let whiteListData :FeedsData.WhiteItem[] =  this.feedService.getWhiteListData();
+      let whiteListItem =  _.find(whiteListData,(item: FeedsData.WhiteItem)=>{
+             return item.address === creatorAddress;
+      }) || "";
+      if(whiteListItem != ""){
+        resolve('BidPage.verifiedCreator');
+      }
+
+      this.httpService.ajaxGet(ApiUrl.getWhiteListByAddress+creatorAddress,false).then((result:any)=>{
+        if(result.code === 200){
+          let data: [] = result.data;
+          if(data.length > 0){
+            resolve('BidPage.verifiedCreator');
+          }
+          resolve('AssetdetailsPage.creator');
+        }
+      }).catch((err)=>{
+        resolve('AssetdetailsPage.creator');
+     });
+    });
+
+    }
 
 }

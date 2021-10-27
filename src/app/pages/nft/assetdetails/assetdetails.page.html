@@ -22,7 +22,10 @@
     <div *ngFor="let contractDetail of contractDetails">
       <ion-row *ngIf="contractDetail.details" class="detail-row removeBorder">
         <ion-col size="12" class="left-col">
-            <h1>{{ contractDetail.type | translate}}</h1>
+            <h1 *ngIf="contractDetail.type === 'BidPage.verifiedCreator'; else inputid1">{{ contractDetail.type | translate}} <img style="vertical-align:top;" src="assets/images/verified-user.svg"/></h1>
+            <ng-template #inputid1>
+              <h1 >{{ contractDetail.type | translate}}</h1>
+            </ng-template>
             <h2 *ngIf="contractDetail.type === 'AssetdetailsPage.stickerContractAddress' || contractDetail.type === 'AssetdetailsPage.pasarContractAddress' || contractDetail.type === 'AssetdetailsPage.tokenID' || contractDetail.type === 'AssetdetailsPage.creator' || contractDetail.type === 'AssetdetailsPage.creator'; else inputid" (press)="copytext(contractDetail.details)">{{ contractDetail.details }}</h2>
             <ng-template #inputid>
               <h2>{{ contractDetail.details }}</h2>

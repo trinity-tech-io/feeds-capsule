@@ -58,7 +58,6 @@ export class AssetitemComponent implements OnInit {
     this.thumbImageId = thumbnailUri;
     this.isAutoGet = this.isAutoGet || "";
     if(this.isAutoGet === ""){
-      console.log("===this.isAutoGet====",this.isAutoGet);
       this.fileHelperService.getNFTData(fetchUrl, fileName, kind).then((data) => {
         this.zone.run(() => {
           this.imgUri = data;
