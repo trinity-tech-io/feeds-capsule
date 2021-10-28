@@ -414,6 +414,9 @@ export class NFTContractHelperService {
           .getSticker()
           .tokenInfo(tokenId);
         let tokenInfo = this.transTokenInfo(token);
+        //add didUri
+        let didUri = await this.getDidUri(String(tokenId));
+        tokenInfo.didUri = didUri;
         Logger.log("Get token info", tokenInfo);
         resolve(tokenInfo);
       } catch (error) {
@@ -498,7 +501,8 @@ export class NFTContractHelperService {
       royaltyOwner: token[4],
       royaltyFee: token[5],
       createTime: token[6],
-      updateTime: token[7]
+      updateTime: token[7],
+      didUri: ""
     }
     return tokenInfo;
   }
@@ -874,7 +878,6 @@ export class NFTContractHelperService {
    */
   createItem(orderInfo: FeedsData.OrderInfo, tokenInfo: FeedsData.TokenInfo,
     tokenJson: FeedsData.TokenJson, moreMenuType: string, showType: string = 'buy'): FeedsData.NFTItem {
-
     let createAddress: string = "";
     let orderId: string = "-1";
     let tokenId: string = "-1";
@@ -905,6 +908,7 @@ export class NFTContractHelperService {
     let tokenCreateTime = 0;
     let tokenUpdateTime = 0
 
+    let didUri: string = tokenInfo.didUri;
     if (orderInfo != null) {
       sellerAddr = orderInfo.sellerAddr;
       tokenId = orderInfo.tokenId;
@@ -982,8 +986,9 @@ export class NFTContractHelperService {
       tokenUpdateTime: tokenUpdateTime,
 
       moreMenuType: moreMenuType,
-      showType: showType
 
+      showType: showType,
+      didUri: didUri
     }
     return item;
   }
@@ -1159,6 +1164,8 @@ export class NFTContractHelperService {
       tokenCreateTime: assistPasarItem.tokenCreateTime,
       tokenUpdateTime: assistPasarItem.tokenUpdateTime,
 
+      //TODO
+      didUri: null,
       moreMenuType: moreMenuType,
       showType: showType
     }
@@ -1172,7 +1179,7 @@ export class NFTContractHelperService {
   }
 
   //API
-  changePrice(orderId: string, newPrice: string): Promise<string> {
+  changePrice(orderId: string, newPrice: string, didUri: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
       let accountAddress = this.nftContractControllerService.getAccountAddress();
 
@@ -1189,7 +1196,7 @@ export class NFTContractHelperService {
           reject('Error');
           return;
         }
-        this.handleChangePriceResult(orderId, price);
+        this.handleChangePriceResult(orderId, price, didUri);
         resolve('Success');
       } catch (error) {
         reject(error);
@@ -1199,7 +1206,7 @@ export class NFTContractHelperService {
   }
 
   //API
-  buyOrder(item: FeedsData.NFTItem, quantity: string) {
+  buyOrder(item: FeedsData.NFTItem, quantity: string, didUri: string) {
     return new Promise(async (resolve, reject) => {
       let accountAddress = this.nftContractControllerService.getAccountAddress();
       // let price = this.fixedPrice;
@@ -1213,7 +1220,7 @@ export class NFTContractHelperService {
           reject('Error');
           return;
         }
-        this.handleBuyResult(item, quantity);
+        this.handleBuyResult(item, quantity, didUri);
         resolve('Success');
       } catch (error) {
         reject(error);
@@ -1236,7 +1243,7 @@ export class NFTContractHelperService {
 
   }
 
-  handleChangePriceResult(orderId: string, price: string) {
+  handleChangePriceResult(orderId: string, price: string, didUri: string) {
     let createAddress = this.nftContractControllerService.getAccountAddress();
     let olist = this.nftPersistenceHelper.getCollectiblesList(createAddress);
 
@@ -1252,7 +1259,7 @@ export class NFTContractHelperService {
     this.event.publish(FeedsEvent.PublishType.nftUpdatePrice, price);
   }
 
-  handleBuyResult(curItem: FeedsData.NFTItem, quantity: string) {
+  handleBuyResult(curItem: FeedsData.NFTItem, quantity: string, didUri: string) {
     this.dataHelper.deletePasarItem(curItem.saleOrderId);
     let createAddress = this.nftContractControllerService.getAccountAddress();
 
@@ -1271,6 +1278,7 @@ export class NFTContractHelperService {
       cItem.fixedAmount = null;
       cItem.sellerAddr = "";
       cItem['moreMenuType'] = 'created';
+      cItem['didUri'] = didUri;
       olist.push(cItem);
       this.nftPersistenceHelper.setCollectiblesMap(createAddress, olist);
       return;
@@ -1322,4 +1330,18 @@ export class NFTContractHelperService {
       }
     });
   }
+
+  async getDidUri(tokenId: string): Promise<string> {
+    let didUri = null;
+    return new Promise(async (resolve, reject) => {
+      try {
+         didUri = await this.nftContractControllerService.getSticker().tokenExtraInfo(tokenId);
+         resolve(didUri[0]);
+      } catch (error) {
+        Logger.error(TAG, 'Sync tokenExtraInfo error.', error);
+        reject(null);
+      }
+    });
+  }
+  
 }

@@ -34,7 +34,6 @@ let TAG: string = "AssetDetails";
 })
 export class AssetdetailsPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
-  private popover: any = null;
   private assItem: any = {};
   public contractDetails: detail[] = [];
   public owner: string = '';
@@ -71,6 +70,7 @@ export class AssetdetailsPage implements OnInit {
   private orderCreateTime: number = null;
   private tokenCreateTime: number = null;
 
+  private didUri: string = '';
   constructor(
     private translate: TranslateService,
     private events: Events,
@@ -105,6 +105,7 @@ export class AssetdetailsPage implements OnInit {
       this.tokenID = queryParams.tokenId || '';
       this.orderCreateTime = queryParams.orderCreateTime || null;
       this.tokenCreateTime = queryParams.tokenCreateTime || null;
+      this.didUri = queryParams.didUri || '';
       this.stickerContractAddress = this.nftContractControllerService
         .getSticker()
         .getStickerAddress();
@@ -208,6 +209,11 @@ export class AssetdetailsPage implements OnInit {
  async collectContractData() {
 
     this.contractDetails = [];
+
+    this.contractDetails.push({
+      type: 'DID Uri',
+      details: this.didUri,
+    });
 
     this.contractDetails.push({
       type: 'AssetdetailsPage.name',
