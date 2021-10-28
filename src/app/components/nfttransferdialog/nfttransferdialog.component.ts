@@ -71,7 +71,12 @@ export class NfttransferdialogComponent implements OnInit {
 
   confirm() {
    if(this.checkParam()){
-     this.handleTransfer();
+    let memo = this.memo || "";
+     if(memo === ""){
+      this.handleTransfer();
+     }else{
+       this.handleTransferWithMemo();
+     }
    }
   }
 
@@ -117,6 +122,35 @@ export class NfttransferdialogComponent implements OnInit {
   let ownerAddress = this.nftContractControllerService.getAccountAddress() || "";
   this.nftContractControllerService.getSticker()
   .safeTransferFrom(ownerAddress,this.walletAddress,this.tokenId,tokenNum)
+  .then(()=>{
+    this.nftContractControllerService.getSticker().cancelTransferProcess();
+    this.events.publish(FeedsEvent.PublishType.endLoading);
+    this.events.publish(FeedsEvent.PublishType.nftUpdateList,{type:"transfer",assItem:this.curAssItem,transferNum:tokenNum});
+    clearTimeout(sId);
+    this.native.toast("common.tranferNFTSSuccess");
+  }).catch(()=>{
+    this.nftContractControllerService.getSticker().cancelTransferProcess();
+    this.events.publish(FeedsEvent.PublishType.endLoading);
+    clearTimeout(sId);
+    this.native.toastWarn("common.tranferNFTSFailed");
+  });
+ }
+
+ async handleTransferWithMemo(){
+  await this.popover.dismiss();
+  this.events.publish(FeedsEvent.PublishType.startLoading,{des:"common.tranferNFTSDesc",title:"common.waitMoment",curNum:"1",maxNum:"1",type:"changePrice"});
+  let sId =setTimeout(()=>{
+    this.nftContractControllerService.getSticker().cancelTransferProcess();
+    this.events.publish(FeedsEvent.PublishType.endLoading);
+    clearTimeout(sId);
+    this.popupProvider.showSelfCheckDialog('common.tranferNFTSTimeoutDesc');
+  }, Config.WAIT_TIME_BURN_NFTS);
+
+
+  let tokenNum = this.quantity.toString();
+  let ownerAddress = this.nftContractControllerService.getAccountAddress() || "";
+  this.nftContractControllerService.getSticker()
+  .safeTransferFromWithMemo(ownerAddress,this.walletAddress,this.tokenId,tokenNum,this.memo)
   .then(()=>{
     this.nftContractControllerService.getSticker().cancelTransferProcess();
     this.events.publish(FeedsEvent.PublishType.endLoading);

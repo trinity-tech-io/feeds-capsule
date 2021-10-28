@@ -68,6 +68,7 @@ export class BidPage implements OnInit {
   private orderCreateTime: number = null;
   private tokenCreateTime: number = null;
   private didUri: string = null
+  private sellerDidUri: string = null;
   constructor(
     private translate: TranslateService,
     private event: Events,
@@ -98,6 +99,7 @@ export class BidPage implements OnInit {
       this.description = queryParams.description || '';
       this.quantity = String(queryParams.curQuantity) || String(queryParams.quantity);
       this.tokenID = queryParams.tokenId || '';
+      this.sellerDidUri = queryParams.didUri || '';
       this.creator = queryParams.creator || '';
       this.orderCreateTime = queryParams.orderCreateTime || null;
       this.tokenCreateTime = queryParams.tokenCreateTime || null;
@@ -169,7 +171,14 @@ export class BidPage implements OnInit {
   }
 
  async collectContractData() {
+
     this.contractDetails = [];
+
+    this.contractDetails.push({
+      type: 'DID Uri',
+      details: this.sellerDidUri,
+    });
+
     this.contractDetails.push({
       type: 'AssetdetailsPage.name',
       details: this.name,
@@ -320,7 +329,7 @@ export class BidPage implements OnInit {
        clearTimeout(sId);
     },Config.WAIT_TIME_BUY_ORDER)
 
-    this.nftContractHelperService.buyOrder(this.curAssetItem, this.quantity).then(() => {
+    this.nftContractHelperService.buyOrder(this.curAssetItem, this.quantity, this.didUri).then(() => {
         //Finish buy order
         this.isLoading = false;
         clearTimeout(sId)

@@ -447,4 +447,59 @@ export class NFTContractStickerService {
   clearInterval(this.checkTransferInterval);
  }
 
+ async tokenExtraInfo(tokenId: string) {
+  return await this.stickerContract.methods
+    .tokenExtraInfo(tokenId)
+    .call();
+}
+
+async safeTransferFromWithMemo(
+  creatorAddress: string,
+  sellerAddress: string,
+  tokenId: string,
+  transferValue: string,
+  transferMemo: string
+): Promise<any>{
+  return new Promise(async (resolve, reject) => {
+        try {
+          Logger.log(TAG, 'safeTransferFromWithMemo ',creatorAddress,sellerAddress,tokenId,transferValue,transferMemo);
+          const safeTransferFromdata = this.stickerContract.methods
+            .safeTransferFromWithMemo(creatorAddress,sellerAddress,tokenId,transferValue,transferMemo)
+            .encodeABI();
+          let beforeTransferBalance = parseInt(await this.balanceOf(tokenId));
+          let transactionParams = await this.createTxParams(safeTransferFromdata);
+          Logger.log(TAG,
+            'Calling smart contract through wallet connect',
+            safeTransferFromdata,
+            transactionParams,
+          );
+          this.stickerContract.methods
+            .safeTransferFromWithMemo(creatorAddress,sellerAddress,tokenId,transferValue,transferMemo)
+            .send(transactionParams)
+            .on('transactionHash', hash => {
+            Logger.log(TAG, 'safeTransferFromWithMemo, transactionHash is', hash);
+            })
+            .on('receipt', receipt => {
+              Logger.log(TAG, 'safeTransferFromWithMemo, receipt is', receipt);
+            })
+            .on('confirmation', (confirmationNumber, receipt) => {
+              Logger.log(TAG,
+                'safeTransferFromWithMemo, confirmation is',
+                confirmationNumber,
+                receipt,
+              );
+            })
+            .on('error', (error, receipt) => {
+              Logger.error(TAG, 'safeBatchTransferFromWithMemo, error is', error, receipt);
+            });
+            this.checkTransferState(beforeTransferBalance,parseInt(transferValue),tokenId,()=>{
+               resolve(null);
+            });
+        } catch (error) {
+          Logger.error(TAG, 'safeTransferFromWithMemo', error);
+          reject(error);
+        }
+  });
+}
+
 }

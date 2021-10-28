@@ -601,6 +601,7 @@ declare namespace FeedsData {
     royaltyFee: string;
     createTime: number;
     updateTime: number;
+    didUri: string
   }
 
   type TokenJson = {
@@ -652,7 +653,8 @@ declare namespace FeedsData {
     tokenUpdateTime: number,
 
     moreMenuType: string,
-    showType: string;
+    showType: string,
+    didUri: string
   }
 
   type TokenIdAndTokenJson = {
