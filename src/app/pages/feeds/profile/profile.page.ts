@@ -795,8 +795,7 @@ export class ProfilePage implements OnInit {
         }, 500);
         break;
       case 'ProfilePage.collectibles':
-        await this.nftContractHelperService.syncOpenOrderFromAssist();
-        // await this.refreshCollectibles();
+        await this.refreshCollectibles();
         event.target.complete();
         break;
       case 'ProfilePage.myLikes':
@@ -1978,7 +1977,7 @@ export class ProfilePage implements OnInit {
       .getSticker()
       .balanceOf(tokenId);
     let list = this.nftPersistenceHelper.getCollectiblesList(createAddr);
-    let cpList = this.nftPersistenceHelper.getPasarList();
+    // let cpList = this.nftPersistenceHelper.getPasarList();
     let cpItem = _.cloneDeep(assItem);
     if (parseInt(quantity) <= 0) {
 
@@ -1992,8 +1991,8 @@ export class ProfilePage implements OnInit {
       this.ownNftSum = this.collectiblesList.length;
       this.nftPersistenceHelper.setCollectiblesMap(createAddr, list);
 
-      cpList.push(cpItem);
-      this.nftPersistenceHelper.setPasarList(cpList);
+      // cpList.push(cpItem);
+      // this.nftPersistenceHelper.setPasarList(cpList);
     } else {
 
       let index = _.findIndex(list, (item: any) => {
@@ -2013,8 +2012,8 @@ export class ProfilePage implements OnInit {
       this.ownNftSum = this.collectiblesList.length;
       this.nftPersistenceHelper.setCollectiblesMap(createAddr, list);
 
-      cpList.push(cpItem);
-      this.nftPersistenceHelper.setPasarList(cpList);
+      // cpList.push(cpItem);
+      // this.nftPersistenceHelper.setPasarList(cpList);
     }
   }
 
@@ -2048,13 +2047,13 @@ export class ProfilePage implements OnInit {
       this.nftPersistenceHelper.setCollectiblesMap(createAddr, clist);
     }
 
-    let pList = this.nftPersistenceHelper.getPasarList();
-    pList = _.filter(pList, item => {
-      return !(
-        item.saleOrderId === saleOrderId && item.sellerAddr === sellerAddr
-      );
-    });
-    this.nftPersistenceHelper.setPasarList(pList);
+    // let pList = this.nftPersistenceHelper.getPasarList();
+    // pList = _.filter(pList, item => {
+    //   return !(
+    //     item.saleOrderId === saleOrderId && item.sellerAddr === sellerAddr
+    //   );
+    // });
+    // this.nftPersistenceHelper.setPasarList(pList);
     this.dataHelper.deletePasarItem(saleOrderId);
   }
 

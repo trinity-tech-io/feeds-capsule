@@ -287,18 +287,18 @@ export class HomePage implements OnInit {
         break;
       case 'pasar':
 
-        this.pasarList = this.nftPersistenceHelper.getPasarList();
-        this.pasarList = _.sortBy(this.pasarList, (item: any) => {
-          return -Number(item.createTime);
-        });
+        // this.pasarList = this.nftPersistenceHelper.getPasarList();
+        // this.pasarList = _.sortBy(this.pasarList, (item: any) => {
+        //   return -Number(item.createTime);
+        // });
 
-        if (!this.pasarList || this.pasarList.length == 0 || this.pasarListPage === 0) {
+        // if (!this.pasarList || this.pasarList.length == 0 || this.pasarListPage === 0) {
           this.pasarList = await this.nftContractHelperService.loadData(0, SortType.CREATE_TIME);
           this.pasarListPage = 1;
           this.refreshPasarGridVisibleareaImage();
-        }else{
-          this.refreshPasarGridVisibleareaImage();
-        }
+        // }else{
+        //   this.refreshPasarGridVisibleareaImage();
+        // }
 
         break;
     }
@@ -308,12 +308,14 @@ export class HomePage implements OnInit {
     });
 
     this.events.subscribe(FeedsEvent.PublishType.mintNft,()=>{
-      this.pasarList = this.nftPersistenceHelper.getPasarList();
+      this.refreshPasarList();
+      // this.pasarList = this.nftPersistenceHelper.getPasarList();
       this.refreshPasarGridVisibleareaImage();
     });
 
     this.events.subscribe(FeedsEvent.PublishType.nftBuyOrder,()=>{
-      this.pasarList = this.nftPersistenceHelper.getPasarList();
+      // this.pasarList = this.nftPersistenceHelper.getPasarList();
+      this.refreshPasarList();
       this.refreshPasarGridVisibleareaImage();
     });
 
@@ -990,7 +992,7 @@ export class HomePage implements OnInit {
           // this.pasarList = _.concat(this.pasarList, list);
           this.pasarList = _.unionWith(this.pasarList, list, _.isEqual);
           this.pasarList = this.nftContractHelperService.sortData(this.pasarList, SortType.CREATE_TIME);
-          this.nftPersistenceHelper.setPasarList(this.pasarList);
+          // this.nftPersistenceHelper.setPasarList(this.pasarList);
         }
         resolve('FINISH');
       } catch (error) {
@@ -1014,25 +1016,23 @@ export class HomePage implements OnInit {
         this.elaPrice = this.feedService.getElaUsdPrice();
         this.handleRefresherInfinite(false);
         this.zone.run(async () => {
-          try {
+          await this.refreshPasarList();
+          event.target.complete();
+          this.refreshEvent = null;
 
-            this.pasarListPage = 0;
-            this.pasarList = await this.nftContractHelperService.refreshPasarListFromAssist(SortType.CREATE_TIME);
-            // this.pasarList = await this.nftContractHelperService.refreshPasarListFromContract('onSale', SortType.CREATE_TIME, (openOrderCount: number) => {
-            //   this.pasarListCount = openOrderCount;
-            // }, () => { });
-            this.refreshPasarGridVisibleareaImage();
-            this.pasarListPage++;
-            this.nftPersistenceHelper.setPasarList(this.pasarList);
-
-          } catch (err) {
-            Logger.error(TAG, err);
-          } finally {
-            event.target.complete();
-            this.refreshEvent = null;
-          }
         });
         break;
+    }
+  }
+
+  async refreshPasarList() {
+    try {
+      this.pasarListPage = 0;
+      this.pasarList = await this.nftContractHelperService.refreshPasarListFromAssist(SortType.CREATE_TIME);
+      this.refreshPasarGridVisibleareaImage();
+      this.pasarListPage++;
+    } catch (err) {
+      Logger.error(TAG, err);
     }
   }
 
@@ -2173,15 +2173,15 @@ export class HomePage implements OnInit {
       this.nftPersistenceHelper.setCollectiblesMap(createAddr, clist);
     }
 
-    let pList = this.nftPersistenceHelper.getPasarList();
-    pList = _.filter(pList, item => {
+    // let pList = this.nftPersistenceHelper.getPasarList();
+    let pList = _.filter(this.pasarList, item => {
       return !(
         item.saleOrderId === saleOrderId && item.sellerAddr === sellerAddr
       );
     });
     this.pasarList = pList;
     //this.searchPasar = _.cloneDeep(this.pasarList);
-    this.nftPersistenceHelper.setPasarList(pList);
+    // this.nftPersistenceHelper.setPasarList(pList);
     this.dataHelper.deletePasarItem(saleOrderId);
   }
 

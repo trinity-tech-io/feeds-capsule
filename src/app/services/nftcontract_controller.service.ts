@@ -30,6 +30,10 @@ export class NFTContractControllerService {
     this.event.subscribe(FeedsEvent.PublishType.walletDisconnected, () => {
       this.init();
     });
+
+    this.event.subscribe(FeedsEvent.PublishType.walletAccountChanged, () => {
+      this.init();
+    });
   }
 
   getSticker(): NFTContractStickerService {

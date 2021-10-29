@@ -476,45 +476,46 @@ export class AssetdetailsPage implements OnInit {
 
   async handleCreate(tokenId:any,createAddr:any,assItem:any,sellQuantity:any){
     let quantity = await this.nftContractControllerService
-          .getSticker()
-          .balanceOf(tokenId);
-          let list = this.nftPersistenceHelper.getCollectiblesList(createAddr);
-          let cpList = this.nftPersistenceHelper.getPasarList();
-          let cpItem = _.cloneDeep(assItem);
-          if(parseInt(quantity)<=0){
+      .getSticker()
+      .balanceOf(tokenId);
+    let list = this.nftPersistenceHelper.getCollectiblesList(createAddr);
+    // let cpList = this.nftPersistenceHelper.getPasarList();
+    let cpItem = _.cloneDeep(assItem);
+    if (parseInt(quantity) <= 0) {
 
-            list = _.filter(list, item => {
-              return item.tokenId != tokenId && item.moreMenuType != "created";
-            });
+      list = _.filter(list, item => {
+        return item.tokenId != tokenId && item.moreMenuType != "created";
+      });
 
-            cpItem["curQuantity"] = sellQuantity;
+      cpItem["curQuantity"] = sellQuantity;
 
-            list.push(cpItem);
-            Logger.log(TAG, 'Update list', list);
-            this.nftPersistenceHelper.setCollectiblesMap(createAddr, list);
+      list.push(cpItem);
+      Logger.log(TAG, 'Update list', list);
+      this.nftPersistenceHelper.setCollectiblesMap(createAddr, list);
 
-            cpList.push(cpItem);
-            this.nftPersistenceHelper.setPasarList(cpList);
-          }else{
+      // cpList.push(cpItem);
+      // this.nftPersistenceHelper.setPasarList(cpList);
+    } else {
 
-            let index = _.findIndex(list, (item:any) => {
-              return item.tokenId === tokenId && item.moreMenuType === "created";
-            });
-            let createItem = _.cloneDeep(assItem);
-            createItem['moreMenuType'] = "created";
-            createItem["fixedAmount"] = null;
-            createItem["curQuantity"] = quantity;
-            list[index] = createItem;
+      let index = _.findIndex(list, (item: any) => {
+        return item.tokenId === tokenId && item.moreMenuType === "created";
+      });
+      let createItem = _.cloneDeep(assItem);
+      createItem['moreMenuType'] = "created";
+      createItem["fixedAmount"] = null;
+      createItem["curQuantity"] = quantity;
+      list[index] = createItem;
 
-            cpItem["curQuantity"] = sellQuantity;
-            list.push(cpItem);
+      cpItem["curQuantity"] = sellQuantity;
+      list.push(cpItem);
 
-            Logger.log(TAG, 'Update list', list);
-            this.nftPersistenceHelper.setCollectiblesMap(createAddr, list);
+      Logger.log(TAG, 'Update list', list);
+      this.nftPersistenceHelper.setCollectiblesMap(createAddr, list);
 
-            cpList.push(cpItem);
-            this.nftPersistenceHelper.setPasarList(cpList);
-          }
+      // cpList.push(cpItem);
+      // this.nftPersistenceHelper.setPasarList(cpList);
+    }
+
   }
 
 

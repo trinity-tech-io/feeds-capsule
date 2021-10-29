@@ -128,11 +128,11 @@ declare namespace FeedsData {
     CANCELED
   }
 
-  const enum OrderType {
-    SALE = 'OrderForSale',
-    CANCELED = 'OrderCanceled',
-    FILLED = 'OrderFilled'
-  }
+  // const enum OrderType {
+  //   SALE = 'OrderForSale',
+  //   CANCELED = 'OrderCanceled',
+  //   FILLED = 'OrderFilled'
+  // }
 
   const enum SyncMode {
     NONE,
@@ -575,7 +575,7 @@ declare namespace FeedsData {
     orderState: number;
     tokenId: number;
     amount: number;
-    price: number;
+    price: string;
     endTime: number;
     sellerAddr: string;
     buyerAddr: string;
@@ -624,7 +624,7 @@ declare namespace FeedsData {
     asset: string,
     name: string,
     description: string,
-    fixedAmount: number,
+    fixedAmount: string,
     kind: string,
     type: string,
     royalties: number,
@@ -633,6 +633,8 @@ declare namespace FeedsData {
     thumbnail: string,
     sellerAddr: string,
     createTime: number,
+
+
     moreMenuType: string,
     showType: string;
   }

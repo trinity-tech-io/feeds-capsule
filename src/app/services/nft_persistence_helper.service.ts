@@ -13,27 +13,27 @@ export class NFTPersistenceHelper {
   private activePasarKey = this.devPasarListKey;
 
   private collectiblesMap: { [address: string]: any };
-  private pasarList: [];
+  // private pasarList: [];
 
   constructor(
     private dataHelper: DataHelper
   ) {
   }
 
-  async loadPasarList(key: string) {
-    this.pasarList = await this.dataHelper.loadNFTPasarList(key);
-  }
+  // async loadPasarList(key: string) {
+  //   this.pasarList = await this.dataHelper.loadNFTPasarList(key);
+  // }
 
-  setPasarList(pasarList: any) {
-    this.pasarList = pasarList;
-    this.dataHelper.saveNFTPasarList(this.activePasarKey, this.pasarList);
-  }
+  // setPasarList(pasarList: any) {
+  //   this.pasarList = pasarList;
+  //   this.dataHelper.saveNFTPasarList(this.activePasarKey, this.pasarList);
+  // }
 
-  getPasarList() {
-    if (!this.pasarList || this.pasarList.length == 0)
-      return [];
-    return this.pasarList;
-  }
+  // getPasarList() {
+  //   if (!this.pasarList || this.pasarList.length == 0)
+  //     return [];
+  //   return this.pasarList;
+  // }
 
   async loadCollectiblesMap(key: string) {
     this.collectiblesMap = await this.dataHelper.loadNFTCollectibleMap(key);
@@ -87,7 +87,7 @@ export class NFTPersistenceHelper {
       this.activePasarKey = this.pasarListKey;
     }
 
-    await this.loadPasarList(this.activePasarKey);
+    // await this.loadPasarList(this.activePasarKey);
     await this.loadCollectiblesMap(this.activeCollecitblesKey);
   }
 }
