@@ -858,7 +858,9 @@ export class MintnftPage implements OnInit {
     let tokenInfo = await this.nftContractControllerService
     .getSticker()
     .tokenInfo(tokenId);
+    tokenId = tokenInfo[0];
     let createTime = tokenInfo[7];
+    let creator = tokenInfo[4];//原作者
     let royalties = UtilService.accMul(this.nftRoyalties,10000);
     let accAddress =
     this.nftContractControllerService.getAccountAddress() || '';
@@ -872,7 +874,7 @@ export class MintnftPage implements OnInit {
     switch (type) {
       case 'created':
         item = {
-          creator: accAddress,//原创者
+          creator: creator,//原创者
           tokenId: tokenId,
           asset: this.imageObj['imgHash'],
           name: this.nftName,
@@ -900,7 +902,7 @@ export class MintnftPage implements OnInit {
         let sellerAddr = order[7] || '';
         let saleOrderId = order[0];
         item = {
-          creator: accAddress,//原创者
+          creator: creator,//原创者
           saleOrderId: saleOrderId,
           tokenId: tokenId,
           asset: this.imageObj['imgHash'],
