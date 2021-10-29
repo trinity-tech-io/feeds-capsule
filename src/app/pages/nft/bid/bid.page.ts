@@ -314,16 +314,17 @@ export class BidPage implements OnInit {
   }
 
   handleBuyResult() {
-    let plist = this.nftPersistenceHelper.getPasarList();
-    plist = _.filter(plist, item => {
-      return item.saleOrderId != this.saleOrderId;
-    });
+    // let plist = this.nftPersistenceHelper.getPasarList();
+    // plist = _.filter(plist, item => {
+    //   return item.saleOrderId != this.saleOrderId;
+    // });
 
-    plist = _.sortBy(plist, (item: any) => {
-      return -Number(item.createTime);
-    });
+    // plist = _.sortBy(plist, (item: any) => {
+    //   return -Number(item.createTime);
+    // });
 
-    this.nftPersistenceHelper.setPasarList(plist);
+    // this.nftPersistenceHelper.setPasarList(plist);
+    this.dataHelper.deletePasarItem(this.saleOrderId);
     this.event.publish(FeedsEvent.PublishType.nftBuyOrder);
     let createAddress = this.nftContractControllerService.getAccountAddress();
 

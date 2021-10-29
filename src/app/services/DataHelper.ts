@@ -2506,6 +2506,18 @@ export class DataHelper {
     this.pasarItemMap[orderId] = pasarItem;
   }
 
+  updatePasarItemPrice(orderId: string, price: string) {
+    let pasarItem = this.getPasarItem(orderId);
+    if (pasarItem && pasarItem.item && pasarItem.blockNumber && pasarItem.syncMode) {
+      // console.log('price', price);
+      // console.log('price type', typeof price);
+      pasarItem.item.fixedAmount = price;
+      // console.log('pasarItem.item.fixedAmount', pasarItem.item.fixedAmount);
+      // console.log('pasarItem.item.fixedAmount type', typeof pasarItem.item.fixedAmount);
+      this.updatePasarItem(orderId, pasarItem.item, pasarItem.index, pasarItem.blockNumber, pasarItem.syncMode);
+    }
+  }
+
   getPasarItem(orderId: string): FeedsData.PasarItem {
     this.checkPasarItemMap();
     if (!this.pasarItemMap) return null;
@@ -2586,35 +2598,35 @@ export class DataHelper {
   }
 
   ////
-  initDisplayedPasarItem() {
-    this.displayedPasarItemMap = {}
-  }
+  // initDisplayedPasarItem() {
+  //   this.displayedPasarItemMap = {}
+  // }
 
-  addDisplayedPasarItem(index: number, orderId: string, item: FeedsData.NFTItem) {
-    this.displayedPasarItemMap[orderId] = { index: index, blockNumber: 0, item: item, syncMode: null };
-  }
+  // addDisplayedPasarItem(index: number, orderId: string, item: FeedsData.NFTItem) {
+  //   this.displayedPasarItemMap[orderId] = { index: index, blockNumber: 0, item: item, syncMode: null };
+  // }
 
-  getDisplayedPasarItemList() {
-    let list: FeedsData.NFTItem[] = [];
-    this.displayedPasarItemMap = this.displayedPasarItemMap || {};
-    let keys: string[] = Object.keys(this.displayedPasarItemMap) || [];
-    for (let index in keys) {
-      if (this.displayedPasarItemMap[keys[index]] == null ||
-        this.displayedPasarItemMap[keys[index]] == undefined
-      )
-        continue;
-      list.push(this.displayedPasarItemMap[keys[index]].item);
-    }
-    return list;
-  }
+  // getDisplayedPasarItemList() {
+  //   let list: FeedsData.NFTItem[] = [];
+  //   this.displayedPasarItemMap = this.displayedPasarItemMap || {};
+  //   let keys: string[] = Object.keys(this.displayedPasarItemMap) || [];
+  //   for (let index in keys) {
+  //     if (this.displayedPasarItemMap[keys[index]] == null ||
+  //       this.displayedPasarItemMap[keys[index]] == undefined
+  //     )
+  //       continue;
+  //     list.push(this.displayedPasarItemMap[keys[index]].item);
+  //   }
+  //   return list;
+  // }
 
-  getDisplayedPasarItemMap() {
-    return this.displayedPasarItemMap;
-  }
+  // getDisplayedPasarItemMap() {
+  //   return this.displayedPasarItemMap;
+  // }
 
-  storeDisplayedPasarMapToPasarMap() {
-    this.setPasarItemMap(this.getDisplayedPasarItemMap());
-  }
+  // storeDisplayedPasarMapToPasarMap() {
+  //   this.setPasarItemMap(this.getDisplayedPasarItemMap());
+  // }
 
   ////
   loadFirstSyncOrderStatus(): Promise<boolean> {

@@ -920,12 +920,12 @@ export class MintnftPage implements OnInit {
           moreMenuType: 'onSale',
         };
         slist.push(item);
-        let list = this.nftPersistenceHelper.getPasarList();
-        list.push(item);
-        list = _.sortBy(list, (item: any) => {
-          return -Number(item.createTime);
-        });
-        this.nftPersistenceHelper.setPasarList(list);
+        // let list = this.nftPersistenceHelper.getPasarList();
+        // list.push(item);
+        // list = _.sortBy(list, (item: any) => {
+        //   return -Number(item.createTime);
+        // });
+        // this.nftPersistenceHelper.setPasarList(list);
         this.dataHelper.updatePasarItem(saleOrderId, item, Number.MAX_SAFE_INTEGER, 0, FeedsData.SyncMode.APP);
         this.event.publish(FeedsEvent.PublishType.mintNft);
         break;

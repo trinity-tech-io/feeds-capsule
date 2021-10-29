@@ -259,13 +259,13 @@ export class NFTContractHelperService {
   refreshPasarOrderFromAssist(pageNumber: number): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
-        const canceledResult = await this.pasarAssistService.refreshPasarOrder(pageNumber, 8, FeedsData.OrderType.CANCELED, null);
+        const canceledResult = await this.pasarAssistService.refreshPasarOrder(pageNumber, 8, FeedsData.OrderState.CANCELED, null);
         this.parseAssistResult(canceledResult, FeedsData.SyncMode.REFRESH);
 
-        const filledResult = await this.pasarAssistService.refreshPasarOrder(pageNumber, 8, FeedsData.OrderType.FILLED, null);
+        const filledResult = await this.pasarAssistService.refreshPasarOrder(pageNumber, 8, FeedsData.OrderState.SOLD, null);
         this.parseAssistResult(filledResult, FeedsData.SyncMode.REFRESH);
 
-        const result = await this.pasarAssistService.refreshPasarOrder(pageNumber, 8, FeedsData.OrderType.SALE, null);
+        const result = await this.pasarAssistService.refreshPasarOrder(pageNumber, 8, FeedsData.OrderState.SALEING, null);
         let refreshBlockNum = this.parseAssistResult(result, FeedsData.SyncMode.REFRESH);
 
         this.dataHelper.setRefreshLastBlockNumber(refreshBlockNum);
@@ -746,7 +746,7 @@ export class NFTContractHelperService {
       const item = array[index];
       console.log('syncOrder element', array[index]);
 
-      if (item.event == 'OrderFilled' || item.event == 'OrderCanceled') {
+      if (item.orderState == FeedsData.OrderState.CANCELED || item.orderState == FeedsData.OrderState.SOLD) {
         this.dataHelper.deletePasarItem(item.orderId);
       } else {
         if (this.checkSyncMode(item.orderId))
@@ -848,7 +848,7 @@ export class NFTContractHelperService {
     let image: string = "";
     let name: string = "";
     let description: string = "";
-    let price: number = 0;
+    let price: string = "0";
     let kind: string = "";
     let type: string = "";
     let royalties: number = 0;
@@ -953,9 +953,9 @@ export class NFTContractHelperService {
     this.dataHelper.updatePasarItem(orderId, item, index, blockNum, syncMode);
   }
 
-  setPasarItemMap() {
-    this.dataHelper.storeDisplayedPasarMapToPasarMap();
-  }
+  // setPasarItemMap() {
+  //   this.dataHelper.storeDisplayedPasarMapToPasarMap();
+  // }
 
   checkOpenOrderChange(orderInfo: FeedsData.OrderInfo, index: number): boolean {
     const realPasarItem = this.dataHelper.getPasarItem(String(orderInfo.orderId));

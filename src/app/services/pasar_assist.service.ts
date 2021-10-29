@@ -13,11 +13,11 @@ export class PasarAssistService {
    * 
    * @param pageNum 页码 从1开始 选填 默认1
    * @param pageSize 每页条目 大于0 选填 默认10
-   * @param orderType 订单类型： OrderForSale, OrderCanceled, OrderFilled
+   * @param orderState 订单类型： FeedsData.OrderState
    * @param blockNumber 返回本高度之后的数据 选填
    * @param isAsc sort排序方式: 默认按BlockNumber降序， 传 asc表示按BlockNumber升序
    */
-  listPasarOrderFromService(pageNum: number, pageSize: number, orderType: FeedsData.OrderType, blockNumber: number, isAsc: boolean): Promise<any> {
+  listPasarOrderFromService(pageNum: number, pageSize: number, orderState: FeedsData.OrderState, blockNumber: number, isAsc: boolean): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
         let url = Config.PASAR_ASSIST_TEST_SERVER + 'listPasarOrder'
@@ -29,8 +29,8 @@ export class PasarAssistService {
 
         if (pageSize)
           url = url + '&pageSize=' + pageSize;
-        if (orderType)
-          url = url + '&event=' + orderType;
+        if (orderState)
+          url = url + '&orderState=' + orderState;
         if (isAsc)
           url = url + '&sort=asc'
 
@@ -55,8 +55,8 @@ export class PasarAssistService {
     });
   }
 
-  refreshPasarOrder(pageNum: number, pageSize: number, orderType: FeedsData.OrderType, blockNumber: number): Promise<Object> {
-    return this.listPasarOrderFromService(pageNum, pageSize, orderType, blockNumber, false);
+  refreshPasarOrder(pageNum: number, pageSize: number, orderState: FeedsData.OrderState, blockNumber: number): Promise<Object> {
+    return this.listPasarOrderFromService(pageNum, pageSize, orderState, blockNumber, false);
   }
 
   syncPasarOrder(pageNum: number, pageSize: number, blockNumber: number): Promise<Object> {
@@ -69,7 +69,7 @@ export class PasarAssistService {
 
   firstSync(blockNumber: number): Promise<any> {
     console.log('firstSync');
-    return this.listPasarOrderFromService(1, 10, FeedsData.OrderType.SALE, blockNumber, true);
+    return this.listPasarOrderFromService(1, 10, FeedsData.OrderState.SALEING, blockNumber, true);
   }
 
 }

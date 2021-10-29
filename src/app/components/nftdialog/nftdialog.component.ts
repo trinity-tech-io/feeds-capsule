@@ -372,14 +372,15 @@ async handleSaleList() {
       this.nftPersistenceHelper.setCollectiblesMap(createAddress, olist);
     }
 
-    let plist = this.nftPersistenceHelper.getPasarList();
-    let pItem = _.find(plist, item => {
-      return item.saleOrderId === saleOrderId;
-    }) || null;
-    if (pItem != null) {
-      pItem.fixedAmount = price;
-      this.nftPersistenceHelper.setPasarList(plist);
-    }
+    this.dataHelper.updatePasarItemPrice(saleOrderId, price);
+    // let plist = this.nftPersistenceHelper.getPasarList();
+    // let pItem = _.find(plist, item => {
+    //   return item.saleOrderId === saleOrderId;
+    // }) || null;
+    // if (pItem != null) {
+    //   pItem.fixedAmount = price;
+    //   this.nftPersistenceHelper.setPasarList(plist);
+    // }
     this.events.publish(FeedsEvent.PublishType.nftUpdatePrice, price);
   }
 
