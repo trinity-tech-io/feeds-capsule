@@ -19,6 +19,8 @@ import { Config } from 'src/app/services/config';
 import { FileHelperService } from 'src/app/services/FileHelperService';
 import { DataHelper } from 'src/app/services/DataHelper';
 import { ApiUrl } from 'src/app/services/ApiUrl';
+import { NFTContractHelperService } from 'src/app/services/nftcontract_helper.service';
+
 type detail = {
   type: string;
   details: string;
@@ -50,7 +52,7 @@ export class BidPage implements OnInit {
   public royalties: string = null;
   public saleOrderId: string = null;
   public sellerAddress: string = null;
-  private curAssetItem = {};
+  private curAssetItem = null;
   public popover: any = null;
   public developerMode: boolean = false;
   public nftStatus: string = null;
@@ -80,18 +82,22 @@ export class BidPage implements OnInit {
     private httpService: HttpService,
     private fileHelperService: FileHelperService,
     private zone: NgZone,
+    private nftContractHelperService: NFTContractHelperService
   ) {}
 
   ngOnInit() {
-    this.activatedRoute.queryParams.subscribe(queryParams => {
+    this.activatedRoute.queryParams.subscribe((queryParams: FeedsData.NFTItem) => {
+
       this.curAssetItem = _.cloneDeep(queryParams);
-      let asset = queryParams.asset || {};
-      this.imageType = queryParams.type || "";
+
+      console.log("bid  ====  curAssetItem", this.curAssetItem);
+      let asset = queryParams.asset || '';
+      this.imageType = queryParams.type || '';
       this.showType = queryParams.showType;
       this.seller = queryParams.sellerAddr || '';
       this.name = queryParams.name || '';
       this.description = queryParams.description || '';
-      this.quantity = queryParams.curQuantity || queryParams.quantity;
+      this.quantity = String(queryParams.curQuantity) || String(queryParams.quantity);
       this.tokenID = queryParams.tokenId || '';
       this.creator = queryParams.creator || '';
       this.stickerContractAddress = this.nftContractControllerService
@@ -277,7 +283,7 @@ export class BidPage implements OnInit {
        clearTimeout(sId);
     },Config.WAIT_TIME_BUY_ORDER)
 
-      this.buy().then(() => {
+    this.nftContractHelperService.buyOrder(this.curAssetItem, this.quantity).then(() => {
         //Finish buy order
         this.isLoading = false;
         clearTimeout(sId)
@@ -290,71 +296,30 @@ export class BidPage implements OnInit {
       });
   }
 
-  buy(): Promise<string> {
-    return new Promise(async (resolve, reject) => {
-      let accountAddress = this.nftContractControllerService.getAccountAddress();
-      let price = this.fixedPrice;
-      let purchaseStatus = '';
-      try {
-        purchaseStatus = await this.nftContractControllerService
-          .getPasar()
-          .buyOrder(accountAddress, this.saleOrderId, price);
+  // buy(): Promise<string> {
+  //   return new Promise(async (resolve, reject) => {
+  //     let accountAddress = this.nftContractControllerService.getAccountAddress();
+  //     let price = this.fixedPrice;
+  //     let purchaseStatus = '';
+  //     try {
+  //       purchaseStatus = await this.nftContractControllerService
+  //         .getPasar()
+  //         .buyOrder(accountAddress, this.saleOrderId, price);
 
-        if (!purchaseStatus) {
-          reject('Error');
-          return;
-        }
-        this.handleBuyResult();
-        resolve('Success');
-      } catch (error) {
-        console.log("======error=======",error)
-        reject(error);
-      }
-    });
-  }
-
-  handleBuyResult() {
-    // let plist = this.nftPersistenceHelper.getPasarList();
-    // plist = _.filter(plist, item => {
-    //   return item.saleOrderId != this.saleOrderId;
-    // });
-
-    // plist = _.sortBy(plist, (item: any) => {
-    //   return -Number(item.createTime);
-    // });
-
-    // this.nftPersistenceHelper.setPasarList(plist);
-    this.dataHelper.deletePasarItem(this.saleOrderId);
-    this.event.publish(FeedsEvent.PublishType.nftBuyOrder);
-    let createAddress = this.nftContractControllerService.getAccountAddress();
-
-    let olist = this.nftPersistenceHelper.getCollectiblesList(createAddress);
-
-    olist = _.filter(olist, item => {
-      return item.saleOrderId != this.saleOrderId;
-    });
+  //       if (!purchaseStatus) {
+  //         reject('Error');
+  //         return;
+  //       }
+  //       this.handleBuyResult();
+  //       resolve('Success');
+  //     } catch (error) {
+  //       console.log("======error=======",error)
+  //       reject(error);
+  //     }
+  //   });
+  // }
 
 
-
-    let index = _.findIndex(olist,(item:any)=>{
-          return item.tokenId === this.tokenID && item.moreMenuType === "created";
-    });
-
-    if(index === -1){
-      let cItem: any = _.cloneDeep(this.curAssetItem);
-      cItem.fixedAmount = null;
-      cItem.sellerAddr  = "";
-      cItem['moreMenuType'] = 'created';
-      olist.push(cItem);
-      this.nftPersistenceHelper.setCollectiblesMap(createAddress, olist);
-      return;
-    }
-    let totalNum = (parseInt(olist[index].curQuantity) + parseInt(this.quantity)).toString();
-    olist[index].quantity = totalNum;
-    olist[index].curQuantity = totalNum;
-    this.nftPersistenceHelper.setCollectiblesMap(createAddress, olist);
-
-  }
 
   buyFail() {
     this.popover = this.popupProvider.ionicAlert(

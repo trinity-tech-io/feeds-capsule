@@ -200,18 +200,7 @@ export class NFTContractHelperService {
         }
 
         let list: FeedsData.NFTItem[] = [];
-        let start = count - 1;
-        if (start < 0) {
-          start = 0;
-        }
-
-        let end = count - 1 - this.refreshCount;
-        if (end < 0) {
-          end = 0;
-        }
-
-
-        for (let index = start; index >= end; index--) {
+        for (let index = count - 1; index >= count - 1 - this.refreshCount; index--) {
           const orderInfo = await this.getOpenOrderByIndex(index);
           const tokenInfo = await this.getTokenInfo(String(orderInfo.tokenId), true);
           const tokenJson = await this.getTokenJson(tokenInfo.tokenUri);
@@ -850,15 +839,15 @@ export class NFTContractHelperService {
     tokenJson: FeedsData.TokenJson, moreMenuType: string, showType: string = 'buy'): FeedsData.NFTItem {
 
     let createAddress: string = "";
-    let orderId: number = -1;
-    let tokenId: number = -1;
+    let orderId: string = "-1";
+    let tokenId: string = "-1";
     let image: string = "";
     let name: string = "";
     let description: string = "";
     let price: string = "0";
     let kind: string = "";
     let type: string = "";
-    let royalties: number = 0;
+    let royalties: string = "0";
     let quantity: number = 0;
     let curQuantity: number = 0;
     let thumbnail: string = "";
@@ -1080,7 +1069,7 @@ export class NFTContractHelperService {
       quantity: assistPasarItem.quantity,
       curQuantity: assistPasarItem.quantity,
       thumbnail: assistPasarItem.thumbnail,
-      sellerAddr: assistPasarItem.seller,
+      sellerAddr: assistPasarItem.sellerAddr,
       // createTime: assistPasarItem.createTime,
       // updateTime: assistPasarItem.updateTime
 
@@ -1110,22 +1099,155 @@ export class NFTContractHelperService {
     return item;
   }
 
-  changePrice() {
+  //API
+  changePrice(orderId: string, newPrice: string): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      let accountAddress = this.nftContractControllerService.getAccountAddress();
+      let price = this.nftContractControllerService
+        .transToWei(newPrice)
+        .toString();
+      let changeStatus = '';
+      try {
+        changeStatus = await this.nftContractControllerService
+          .getPasar()
+          .changeOrderPrice(accountAddress, orderId, price);
+        if (!changeStatus) {
+          reject('Error');
+          return;
+        }
+        this.handleChangePriceResult(orderId, price);
+        resolve('Success');
+      } catch (error) {
+        reject(error);
+      }
+    });
 
   }
 
-  buyOrder() {
+  //API
+  buyOrder(item: FeedsData.NFTItem, quantity: string) {
+    return new Promise(async (resolve, reject) => {
+      let accountAddress = this.nftContractControllerService.getAccountAddress();
+      // let price = this.fixedPrice;
+      let purchaseStatus = '';
+      try {
+        purchaseStatus = await this.nftContractControllerService
+          .getPasar()
+          .buyOrder(accountAddress, item.saleOrderId, item.fixedAmount);
+
+        if (!purchaseStatus) {
+          reject('Error');
+          return;
+        }
+        this.handleBuyResult(item, quantity);
+        resolve('Success');
+      } catch (error) {
+        console.log("======error=======", error)
+        reject(error);
+      }
+    });
   }
 
+  //API
   sellOrder() {
 
   }
 
+  //API
   createOrder() {
 
   }
 
+  //API
   cancelOrder() {
 
+  }
+
+  handleChangePriceResult(orderId: string, price: string) {
+    let createAddress = this.nftContractControllerService.getAccountAddress();
+    let olist = this.nftPersistenceHelper.getCollectiblesList(createAddress);
+    let curNftItem = _.find(olist, item => {
+      return item.saleOrderId === orderId;
+    }) || null;
+    if (curNftItem != null) {
+      curNftItem.fixedAmount = price;
+      this.nftPersistenceHelper.setCollectiblesMap(createAddress, olist);
+    }
+    this.dataHelper.updatePasarItemPrice(orderId, price);
+    this.event.publish(FeedsEvent.PublishType.nftUpdatePrice, price);
+  }
+
+  handleBuyResult(curItem: FeedsData.NFTItem, quantity: string) {
+    this.dataHelper.deletePasarItem(curItem.saleOrderId);
+    this.event.publish(FeedsEvent.PublishType.nftBuyOrder);
+    let createAddress = this.nftContractControllerService.getAccountAddress();
+
+    let olist = this.nftPersistenceHelper.getCollectiblesList(createAddress);
+
+    olist = _.filter(olist, item => {
+      return item.saleOrderId != curItem.saleOrderId;
+    });
+
+
+
+    let index = _.findIndex(olist, (item: any) => {
+      return item.tokenId === curItem.tokenId && item.moreMenuType === "created";
+    });
+
+    if (index === -1) {
+      let cItem: any = _.cloneDeep(curItem);
+      cItem.fixedAmount = null;
+      cItem.sellerAddr = "";
+      cItem['moreMenuType'] = 'created';
+      olist.push(cItem);
+      this.nftPersistenceHelper.setCollectiblesMap(createAddress, olist);
+      return;
+    }
+    let totalNum = (parseInt(olist[index].curQuantity) + parseInt(quantity)).toString();
+    olist[index].quantity = totalNum;
+    olist[index].curQuantity = totalNum;
+    this.nftPersistenceHelper.setCollectiblesMap(createAddress, olist);
+
+  }
+
+  async resolveBuySaleNFTFromPost(orderInfo: FeedsData.OrderInfo): Promise<FeedsData.NFTItem> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const tokenInfo = await this.getTokenInfo(String(orderInfo.tokenId), true);
+        const tokenJson = await this.getTokenJson(tokenInfo.tokenUri);
+        const item: FeedsData.NFTItem = this.createItemFromOrderInfo(orderInfo, tokenInfo, tokenJson, 'onSale');
+        resolve(item);
+      } catch (error) {
+        Logger.error(error);
+        reject(error);
+      }
+    });
+  }
+
+  async resolveBuyNFTFromPost(post: any): Promise<FeedsData.OrderStateAndNFTItem> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let nftOrderId = post.content.nftOrderId || '';
+        const orderInfo = await this.getOrderInfo(nftOrderId);
+        const orderState = orderInfo.orderState;
+        switch (orderState) {
+          case FeedsData.OrderState.SALEING:
+            const item = await this.resolveBuySaleNFTFromPost(orderInfo);
+            resolve({ state: FeedsData.OrderState.SALEING, item: item });
+            break;
+          case FeedsData.OrderState.SOLD:
+            resolve({ state: FeedsData.OrderState.SOLD, item: null });
+            break;
+          case FeedsData.OrderState.CANCELED:
+            resolve({ state: FeedsData.OrderState.CANCELED, item: null });
+            break;
+          default:
+            break;
+        }
+      } catch (error) {
+        Logger.error('Handle buy error', error);
+        resolve(error);
+      }
+    });
   }
 }

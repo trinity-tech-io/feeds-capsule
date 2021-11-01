@@ -10,7 +10,7 @@ import { NFTContractControllerService } from 'src/app/services/nftcontract_contr
 import { Events } from 'src/app/services/events.service';
 import { Config } from './config';
 import { Logger } from './logger';
-
+import { DataHelper } from 'src/app/services/DataHelper';
 
 @Injectable()
 export class MenuService {
@@ -39,7 +39,8 @@ export class MenuService {
     private intentService: IntentService,
     private viewHelper: ViewHelper,
     private nftContractControllerService: NFTContractControllerService,
-    private events: Events
+    private events: Events,
+    private dataHelper: DataHelper
   ) {}
 
   async showChannelMenu(
@@ -861,6 +862,7 @@ export class MenuService {
         return;
       }
       let cancelStatus = await that.cancelOrder(that, saleOrderId);
+      this.dataHelper.deletePasarItem(saleOrderId);
 
       if (!cancelStatus) {
         reject('error');

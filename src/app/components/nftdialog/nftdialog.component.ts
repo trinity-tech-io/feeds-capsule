@@ -13,6 +13,7 @@ import { Logger } from 'src/app/services/logger';
 import { Config } from 'src/app/services/config';
 import { PopupProvider } from 'src/app/services/popup';
 import { DataHelper } from 'src/app/services/DataHelper';
+import { NFTContractHelperService } from 'src/app/services/nftcontract_helper.service';
 
 let TAG: string = 'NFTDialog';
 @Component({
@@ -49,7 +50,8 @@ export class NftdialogComponent implements OnInit {
     private ipfsService: IPFSService,
     private nftPersistenceHelper: NFTPersistenceHelper,
     private popupProvider: PopupProvider,
-    private dataHelper: DataHelper
+    private dataHelper: DataHelper,
+    private nftContractHelperService: NFTContractHelperService
   ) {}
 
   ngOnInit() {
@@ -198,7 +200,7 @@ export class NftdialogComponent implements OnInit {
       });
   }
 
-async handleSaleList() {
+  async handleSaleList() {
     if (!this.number(this.amount)) {
       this.native.toastWarn('common.amountError');
       return;
@@ -214,18 +216,21 @@ async handleSaleList() {
       return;
     }
     await this.popover.dismiss();
-    this.events.publish(FeedsEvent.PublishType.startLoading,{des:"common.changingPriceDesc",title:"common.waitMoment",curNum:"1",maxNum:"1",type:"changePrice"});
-    let sId = setTimeout(async()=>{
+    this.events.publish(FeedsEvent.PublishType.startLoading, { des: "common.changingPriceDesc", title: "common.waitMoment", curNum: "1", maxNum: "1", type: "changePrice" });
+    let sId = setTimeout(async () => {
       this.events.publish(FeedsEvent.PublishType.endLoading);
       this.nftContractControllerService.getPasar().cancelChangePriceProcess();
       this.popupProvider.showSelfCheckDialog('common.changePriceTimeoutDesc');
       clearTimeout(sId);
-    },Config.WAIT_TIME_CHANGE_PRICE);
-    this.changePrice().then(() => {
-        this.nftContractControllerService.getPasar().cancelChangePriceProcess();
-        this.events.publish(FeedsEvent.PublishType.endLoading);
-        clearTimeout(sId);
-      })
+    }, Config.WAIT_TIME_CHANGE_PRICE);
+    const price = this.amount.toString();
+    this.nftContractHelperService.changePrice(this.saleOrderId, price).then(() => {
+      this.nftContractControllerService.getPasar().cancelChangePriceProcess();
+      this.events.publish(FeedsEvent.PublishType.endLoading);
+
+      this.curAssItem.fixedAmount = price;
+      clearTimeout(sId);
+    })
       .catch(() => {
         this.nftContractControllerService.getPasar().cancelChangePriceProcess();
         this.native.toast_trans('common.priceChangeFailed');
@@ -335,54 +340,9 @@ async handleSaleList() {
   }
 
 
-  async changePrice(): Promise<string> {
-    return new Promise(async (resolve, reject) => {
-      let accountAddress = this.nftContractControllerService.getAccountAddress();
-      let price = this.nftContractControllerService
-        .transToWei(this.amount.toString())
-        .toString();
-      let changeStatus = '';
-      try {
-        changeStatus = await this.nftContractControllerService
-          .getPasar()
-          .changeOrderPrice(accountAddress, this.saleOrderId, price);
-        if (!changeStatus) {
-          reject('Error');
-          return;
-        }
-        this.handleChangePriceResult(price);
-        resolve('Success');
-      } catch (error) {
-        reject(error);
-      }
-    });
-  }
 
-  handleChangePriceResult(price: string) {
-    this.curAssItem.fixedAmount = price;
-    let saleOrderId = this.curAssItem.saleOrderId;
 
-    let createAddress = this.nftContractControllerService.getAccountAddress();
-    let olist = this.nftPersistenceHelper.getCollectiblesList(createAddress);
-    let curNftItem = _.find(olist, item => {
-      return item.saleOrderId === saleOrderId;
-    }) || null;
-    if (curNftItem != null) {
-      curNftItem.fixedAmount = price;
-      this.nftPersistenceHelper.setCollectiblesMap(createAddress, olist);
-    }
 
-    this.dataHelper.updatePasarItemPrice(saleOrderId, price);
-    // let plist = this.nftPersistenceHelper.getPasarList();
-    // let pItem = _.find(plist, item => {
-    //   return item.saleOrderId === saleOrderId;
-    // }) || null;
-    // if (pItem != null) {
-    //   pItem.fixedAmount = price;
-    //   this.nftPersistenceHelper.setPasarList(plist);
-    // }
-    this.events.publish(FeedsEvent.PublishType.nftUpdatePrice, price);
-  }
 
   number(text: any) {
     var numPattern = /^(([1-9]\d*)|\d)(.\d{1,9})?$/;
