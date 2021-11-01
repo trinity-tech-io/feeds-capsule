@@ -2447,7 +2447,7 @@ export class DataHelper {
       try {
         if (JSON.stringify(this.pasarItemMap) == '{}') {
 
-          await this.loadDevelopLogMode();
+          await this.loadDevelopNet();
           console.log('this.developNet', this.developNet);
           this.pasarItemMap =
             (await this.loadData(FeedsData.PersistenceKey.pasarItemMap + "-" + this.developNet)) || {};

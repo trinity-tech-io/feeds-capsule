@@ -1109,4 +1109,23 @@ export class NFTContractHelperService {
     }
     return item;
   }
+
+  changePrice() {
+
+  }
+
+  buyOrder() {
+  }
+
+  sellOrder() {
+
+  }
+
+  createOrder() {
+
+  }
+
+  cancelOrder() {
+
+  }
 }
