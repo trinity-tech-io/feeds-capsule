@@ -264,6 +264,10 @@ export class ProfilePage implements OnInit {
 
   async addProflieEvent() {
     this.updateWalletAddress(null);
+    this.events.subscribe(FeedsEvent.PublishType.nftUpdatePrice, async (nftPrice) => {
+      // this.price = nftPrice;
+      await this.getCollectiblesList()
+    });
     this.events.subscribe(FeedsEvent.PublishType.nftdisclaimer,()=>{
 
       let accAdress = this.nftContractControllerService.getAccountAddress() || "";
@@ -721,6 +725,8 @@ export class ProfilePage implements OnInit {
     this.events.unsubscribe(FeedsEvent.PublishType.clickDialog);
     this.events.unsubscribe(FeedsEvent.PublishType.savePicture);
     this.events.unsubscribe(FeedsEvent.PublishType.nftdisclaimer);
+
+    this.events.unsubscribe(FeedsEvent.PublishType.nftUpdatePrice);
     this.clearDownStatus();
     this.native.hideLoading();
     this.hideFullScreen();
