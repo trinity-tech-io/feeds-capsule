@@ -152,13 +152,20 @@ export class NFTContractHelperService {
           return;
         }
 
+
+        console.log("loadData+++++++++++++++++++++++params", startPage, sortType);
+
         pasarItemList = this.dataHelper.getPasarItemList() || [];
         pasarItemList = this.sortData(pasarItemList, sortType);
+
+        console.log("loadData+++++++++++++++++++++++pasarItemList", pasarItemList);
         const count = pasarItemList.length || 0;
 
         const start = startPage * this.refreshCount;
         const end = (startPage + 1) * this.refreshCount;
-
+        console.log("loadData+++++++++++++++++++++++start", start);
+        console.log("loadData+++++++++++++++++++++++end", end);
+        console.log("loadData+++++++++++++++++++++++count", count);
         if (count <= start) {
           resolve(list);
           return;
@@ -749,8 +756,8 @@ export class NFTContractHelperService {
       if (item.orderState == FeedsData.OrderState.CANCELED || item.orderState == FeedsData.OrderState.SOLD) {
         this.dataHelper.deletePasarItem(item.orderId);
       } else {
-        if (this.checkSyncMode(item.orderId))
-          return item.blockNumber;
+        // if (this.checkSyncMode(item.orderId))
+        //   return item.blockNumber;
         const pasarItem = this.createItemFromPasarAssist(item, 'onSale', 'buy', syncMode);
         this.savePasarItem(String(pasarItem.item.saleOrderId), pasarItem.item, 0, item.blockNumber, syncMode);
         console.log('pasarItem', pasarItem);
@@ -858,12 +865,39 @@ export class NFTContractHelperService {
     let sellerAddr: string = "";
     let createTime: number = 0;
 
+    let amount = 0;
+    let bids = "0";
+    let buyerAddr = "0x0000000000000000000000000000000000000000";
+    let endTime = 0;
+    let filled = 0;
+    let lastBid = "0";
+    let lastBidder = "0x0000000000000000000000000000000000000000";
+    let orderState = 0;
+    let orderType = 0;
+    let orderCreateTime = 0;
+    let orderUpdateTime = 0;
+    let tokenCreateTime = 0;
+    let tokenUpdateTime = 0
+
     if (orderInfo != null) {
       sellerAddr = orderInfo.sellerAddr;
       tokenId = orderInfo.tokenId;
       orderId = orderInfo.orderId;
       price = orderInfo.price;
       curQuantity = orderInfo.amount;
+
+      amount = orderInfo.amount;
+      bids = orderInfo.bids;
+      buyerAddr = orderInfo.buyerAddr;
+      endTime = orderInfo.endTime;
+      filled = orderInfo.filled;
+      lastBid = orderInfo.lastBid;
+      lastBidder = orderInfo.lastBidder;
+      orderState = orderInfo.orderState;
+      orderType = orderInfo.orderType;
+      orderCreateTime = orderInfo.createTime;
+      orderUpdateTime = orderInfo.updateTime;
+
     } else {
       tokenId = tokenInfo.tokenId;
 
@@ -872,6 +906,9 @@ export class NFTContractHelperService {
       price = null;
       orderId = null;
     }
+
+    tokenCreateTime = tokenInfo.createTime;
+    tokenUpdateTime = tokenInfo.updateTime;
 
     createAddress = tokenInfo.royaltyOwner;
     createTime = tokenInfo.createTime * 1000;
@@ -902,9 +939,25 @@ export class NFTContractHelperService {
       curQuantity: curQuantity,
       thumbnail: thumbnail,
       sellerAddr: sellerAddr,
-      createTime: createTime,
+      // createTime: createTime,
+
+      amount: amount,
+      bids: bids,
+      buyerAddr: buyerAddr,
+      endTime: endTime,
+      filled: filled,
+      lastBid: lastBid,
+      lastBidder: lastBidder,
+      orderState: orderState,
+      orderType: orderType,
+      orderCreateTime: orderCreateTime,
+      orderUpdateTime: orderUpdateTime,
+      tokenCreateTime: tokenCreateTime,
+      tokenUpdateTime: tokenUpdateTime,
+
       moreMenuType: moreMenuType,
       showType: showType
+
     }
     return item;
   }
@@ -1028,8 +1081,23 @@ export class NFTContractHelperService {
       curQuantity: assistPasarItem.quantity,
       thumbnail: assistPasarItem.thumbnail,
       sellerAddr: assistPasarItem.seller,
-      createTime: assistPasarItem.createTime,
+      // createTime: assistPasarItem.createTime,
       // updateTime: assistPasarItem.updateTime
+
+      amount: assistPasarItem.amount,
+      bids: assistPasarItem.bids,
+      buyerAddr: assistPasarItem.buyerAddr,
+      endTime: assistPasarItem.endTime,
+      filled: assistPasarItem.filled,
+      lastBid: assistPasarItem.lastBid,
+      lastBidder: assistPasarItem.lastBidder,
+      orderState: assistPasarItem.orderState,
+      orderType: assistPasarItem.orderType,
+      orderCreateTime: assistPasarItem.createTime,
+      orderUpdateTime: assistPasarItem.updateTime,
+      tokenCreateTime: assistPasarItem.tokenCreateTime,
+      tokenUpdateTime: assistPasarItem.tokenUpdateTime,
+
       moreMenuType: moreMenuType,
       showType: showType
     }
