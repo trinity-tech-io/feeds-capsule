@@ -7759,12 +7759,12 @@ export class FeedService {
   }
 
   syncOpenOrder() {
-    const timer = setTimeout(() => {
+    // const timer = setTimeout(() => {
       // this.nftContractHelperService.syncOpenOrder();
       this.nftContractHelperService.syncOpenOrderFromAssist();
 
-      clearTimeout(timer);
-    }, 20);
+    //   clearTimeout(timer);
+    // }, 20);
   }
 
   getWhiteListData(){

@@ -227,8 +227,6 @@ export class NftdialogComponent implements OnInit {
     this.nftContractHelperService.changePrice(this.saleOrderId, price).then(() => {
       this.nftContractControllerService.getPasar().cancelChangePriceProcess();
       this.events.publish(FeedsEvent.PublishType.endLoading);
-
-      this.curAssItem.fixedAmount = price;
       clearTimeout(sId);
     })
       .catch(() => {

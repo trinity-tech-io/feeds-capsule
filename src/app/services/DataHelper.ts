@@ -2445,7 +2445,7 @@ export class DataHelper {
   loadPasarItemMap(): Promise<{ [orderId: string]: FeedsData.PasarItem }> {
     return new Promise(async (resolve, reject) => {
       try {
-        if (JSON.stringify(this.pasarItemMap) == '{}') {
+        // if (JSON.stringify(this.pasarItemMap) == '{}') {
 
           await this.loadDevelopNet();
           console.log('this.developNet', this.developNet);
@@ -2454,9 +2454,9 @@ export class DataHelper {
 
           this.loadBlockNumFromStore();
           resolve(this.pasarItemMap);
-          return;
-        }
-        resolve(this.pasarItemMap);
+          // return;
+        // }
+        // resolve(this.pasarItemMap);
       } catch (error) {
         reject(error);
       }

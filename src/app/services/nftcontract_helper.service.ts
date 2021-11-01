@@ -1103,10 +1103,16 @@ export class NFTContractHelperService {
   changePrice(orderId: string, newPrice: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
       let accountAddress = this.nftContractControllerService.getAccountAddress();
+
       let price = this.nftContractControllerService
         .transToWei(newPrice)
         .toString();
       let changeStatus = '';
+
+      console.log("newPrice", newPrice);
+      console.log("orderId", orderId);
+      console.log("price", price);
+
       try {
         changeStatus = await this.nftContractControllerService
           .getPasar()
@@ -1166,11 +1172,19 @@ export class NFTContractHelperService {
   handleChangePriceResult(orderId: string, price: string) {
     let createAddress = this.nftContractControllerService.getAccountAddress();
     let olist = this.nftPersistenceHelper.getCollectiblesList(createAddress);
-    let curNftItem = _.find(olist, item => {
+
+    console.log("olist,", olist);
+    // let curNftItem = _.findIndex(olist, item => {
+    //   return item.saleOrderId === orderId;
+    // });
+    let nftItemIndex = _.findIndex(olist, (item: FeedsData.NFTItem) => {
       return item.saleOrderId === orderId;
-    }) || null;
-    if (curNftItem != null) {
-      curNftItem.fixedAmount = price;
+    });
+
+    if (nftItemIndex != -1) {
+      olist[nftItemIndex].fixedAmount = price;
+      console.log('curNftItem', price);
+      console.log('curNftItem', olist[nftItemIndex]);
       this.nftPersistenceHelper.setCollectiblesMap(createAddress, olist);
     }
     this.dataHelper.updatePasarItemPrice(orderId, price);
