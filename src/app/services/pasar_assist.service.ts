@@ -2,11 +2,13 @@ import { Injectable } from '@angular/core';
 import { Logger } from './logger';
 import { Config } from './config';
 import { HttpService } from 'src/app/services/HttpService';
+import { DataHelper } from 'src/app/services/DataHelper';
 
 const TAG: string = 'PasarAssistService';
 @Injectable()
 export class PasarAssistService {
-  constructor(private httpService: HttpService) {
+  constructor(private httpService: HttpService,
+    private dataHelper: DataHelper) {
   }
 
   /**
@@ -20,8 +22,13 @@ export class PasarAssistService {
   listPasarOrderFromService(pageNum: number, pageSize: number, orderState: FeedsData.OrderState, blockNumber: number, isAsc: boolean): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
-        let url = Config.PASAR_ASSIST_TEST_SERVER + 'listPasarOrder'
-          + '?pageNum=' + pageNum;
+        let url = '';
+        if (this.dataHelper.getDevelopNet() == 'MainNet')
+          url = Config.PASAR_ASSIST_MAINNET_SERVER + 'listPasarOrder'
+        else
+          url = Config.PASAR_ASSIST_TESTNET_SERVER + 'listPasarOrder'
+
+        url = url + '?pageNum=' + pageNum;
         if (blockNumber != null && blockNumber != undefined) {
           console.log('blockNumber', blockNumber);
           url = url + '&blockNumber=' + blockNumber;
