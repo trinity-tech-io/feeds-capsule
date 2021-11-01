@@ -969,14 +969,16 @@ export class HomePage implements OnInit {
         break;
       case 'pasar':
         // this.scrollToTop(1);
-        this.elaPrice = this.feedService.getElaUsdPrice();
-        this.loadMoreData().then(() => {
-          let timer = setTimeout(() => {
+        this.zone.run(() => {
+          this.elaPrice = this.feedService.getElaUsdPrice();
+          this.loadMoreData().then(() => {
+            // let timer = setTimeout(() => {
             event.target.complete();
             this.refreshPasarGridVisibleareaImage();
-            clearTimeout(timer);
-          }, 500);
-        })
+            // clearTimeout(timer);
+            // }, 1000);
+          });
+        });
         break;
     }
   }
@@ -1876,43 +1878,27 @@ export class HomePage implements OnInit {
     this.native
       .showLoading('common.waitMoment')
       .then(() => {
-        return this.handleBuy(post);
+        return this.nftContractHelperService.resolveBuyNFTFromPost(post);
       })
-      .then(() => {
+      .then((stateAndItem: FeedsData.OrderStateAndNFTItem) => {
+        switch (stateAndItem.state) {
+          case FeedsData.OrderState.SALEING:
+            this.native.navigateForward(['bid'], { queryParams: stateAndItem.item });
+            break;
+          case FeedsData.OrderState.SOLD:
+            this.native.toast_trans('common.sold');
+            break;
+          case FeedsData.OrderState.CANCELED:
+            this.native.toast_trans('common.offTheShelf');
+            break;
+          default:
+            break;
+        }
         this.native.hideLoading();
       })
       .catch(() => {
         this.native.hideLoading();
       });
-  }
-
-  async handleBuy(post: any): Promise<FeedsData.OrderState> {
-    return new Promise(async (resolve, reject) => {
-      try {
-        let nftOrderId = post.content.nftOrderId || '';
-        const orderInfo = await this.nftContractHelperService.getOrderInfo(nftOrderId);
-        const orderState = orderInfo.orderState;
-        switch (orderState) {
-          case FeedsData.OrderState.SALEING:
-            await this.handleBuyNft(orderInfo);
-            resolve(FeedsData.OrderState.SALEING);
-            break;
-          case FeedsData.OrderState.SOLD:
-            this.native.toast_trans('common.sold');
-            resolve(FeedsData.OrderState.SOLD);
-            break;
-          case FeedsData.OrderState.CANCELED:
-            this.native.toast_trans('common.offTheShelf');
-            resolve(FeedsData.OrderState.CANCELED);
-            break;
-          default:
-            break;
-        }
-      } catch (error) {
-        Logger.error('Handle buy error', error);
-        resolve(error);
-      }
-    });
   }
 
   async clickTab(type: string) {
@@ -2082,20 +2068,7 @@ export class HomePage implements OnInit {
     });
   }
 
-  async handleBuyNft(orderInfo: FeedsData.OrderInfo): Promise<string> {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const tokenInfo = await this.nftContractHelperService.getTokenInfo(String(orderInfo.tokenId), true);
-        const tokenJson = await this.nftContractHelperService.getTokenJson(tokenInfo.tokenUri);
-        const item: FeedsData.NFTItem = this.nftContractHelperService.createItemFromOrderInfo(orderInfo, tokenInfo, tokenJson, 'onSale');
-        this.native.navigateForward(['bid'], { queryParams: item });
-        resolve("SUCCESS");
-      } catch (error) {
-        Logger.error(error);
-        reject(error);
-      }
-    });
-  }
+
 
   clickAssetItem(assetitem: any) {
     assetitem['showType'] = 'buy';

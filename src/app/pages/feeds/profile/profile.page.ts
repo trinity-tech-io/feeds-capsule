@@ -2187,8 +2187,8 @@ export class ProfilePage implements OnInit {
     }
 
     this.refreshingCollectiblesHelper = [];
-    this.processNotOnSaleOrder(accAddress).then(() => {
-      return this.processOnSaleOrder(accAddress);
+    this.processOnSaleOrder(accAddress).then(() => {
+      return this.processNotOnSaleOrder(accAddress);
     }).then(() => {
       Logger.log(TAG, 'On sale collectiblesList is', this.collectiblesList);
       this.isRefreshingCollectibles = false;

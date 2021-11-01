@@ -570,10 +570,10 @@ declare namespace FeedsData {
   }
 
   type OrderInfo = {
-    orderId: number;
+    orderId: string;
     orderType: number;
     orderState: number;
-    tokenId: number;
+    tokenId: string;
     amount: number;
     price: string;
     endTime: number;
@@ -590,12 +590,12 @@ declare namespace FeedsData {
   }
 
   type TokenInfo = {
-    tokenId: number;
+    tokenId: string;
     tokenIndex: number;
     tokenSupply: number;
     tokenUri: string;
     royaltyOwner: string;
-    royaltyFee: number;
+    royaltyFee: string;
     createTime: number;
     updateTime: number;
   }
@@ -619,15 +619,15 @@ declare namespace FeedsData {
 
   type NFTItem = {
     creator: string,
-    saleOrderId: number,
-    tokenId: number,
+    saleOrderId: string,
+    tokenId: string,
     asset: string,
     name: string,
     description: string,
     fixedAmount: string,
     kind: string,
     type: string,
-    royalties: number,
+    royalties: string,
     quantity: number,
     curQuantity: number,
     thumbnail: string,
@@ -671,5 +671,10 @@ declare namespace FeedsData {
     address: string,
     social: [],
     avatar: string
+  }
+
+  type OrderStateAndNFTItem = {
+    state: OrderState,
+    item: NFTItem
   }
 }
