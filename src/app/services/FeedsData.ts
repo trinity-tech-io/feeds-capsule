@@ -579,12 +579,12 @@ declare namespace FeedsData {
     endTime: number;
     sellerAddr: string;
     buyerAddr: string;
-    bids: number;
+    bids: string;
     lastBidder: string;
-    lastBid: number;
+    lastBid: string;
     filled: number;
     royaltyOwner: string;
-    royaltyFee: number;
+    royaltyFee: string;
     createTime: number;
     updateTime: number;
   }
@@ -632,8 +632,21 @@ declare namespace FeedsData {
     curQuantity: number,
     thumbnail: string,
     sellerAddr: string,
-    createTime: number,
+    // createTime: number,
 
+    amount: number,
+    bids: string,
+    buyerAddr: string,
+    endTime: number,
+    filled: number,
+    lastBid: string,
+    lastBidder: string,
+    orderState: number,
+    orderType: number,
+    orderCreateTime: number,
+    orderUpdateTime: number,
+    tokenCreateTime: number,
+    tokenUpdateTime: number,
 
     moreMenuType: string,
     showType: string;
