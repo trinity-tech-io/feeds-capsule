@@ -975,9 +975,11 @@ export class HomePage implements OnInit {
           this.elaPrice = this.feedService.getElaUsdPrice();
           this.loadMoreData().then((list) => {
             let timer = setTimeout(() => {
-              this.pasarList = list;
+              if(list.length>0){
+                this.pasarList = list;
+                this.refreshPasarGridVisibleareaImage();
+              }
               event.target.complete();
-              this.refreshPasarGridVisibleareaImage();
               clearTimeout(timer);
             }, 500);
           });
