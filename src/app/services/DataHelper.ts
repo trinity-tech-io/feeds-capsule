@@ -2446,9 +2446,11 @@ export class DataHelper {
     return new Promise(async (resolve, reject) => {
       try {
         // if (JSON.stringify(this.pasarItemMap) == '{}') {
+        this.pasarItemMap = {};
 
           await this.loadDevelopNet();
           console.log('this.developNet', this.developNet);
+        console.log('this.pasarItemMap', this.pasarItemMap);
           this.pasarItemMap =
             (await this.loadData(FeedsData.PersistenceKey.pasarItemMap + "-" + this.developNet)) || {};
 
@@ -2483,7 +2485,11 @@ export class DataHelper {
     }
   }
 
-  updatePasarItem(orderId: string, pasarItem: FeedsData.NFTItem, index: number, blockNumber: number, syncMode: FeedsData.SyncMode) {
+  updatePasarItem(orderId: string, pasarItem: FeedsData.NFTItem, index: number, blockNumber: number, syncMode: FeedsData.SyncMode, reqeustDevNet: string) {
+    console.log('reqeustDevNet', reqeustDevNet);
+    console.log('this.getDevelopNet()', this.getDevelopNet());
+    if (reqeustDevNet != this.getDevelopNet())
+      return;
     this.checkPasarItemMap();
 
     // const deleteItems: FeedsData.PasarItem[] = this.searchPasarItemFromIndex(index);
@@ -2492,6 +2498,8 @@ export class DataHelper {
     this.updatePasarItemWithoutSave(orderId, pasarItem, index, blockNumber, syncMode);
     console.log('updatePasarItem---------', this.pasarItemMap[orderId]);
     this.updatePasarBlockNum(blockNumber);
+
+
     this.saveData(FeedsData.PersistenceKey.pasarItemMap + "-" + this.developNet, this.pasarItemMap);
   }
 
@@ -2514,7 +2522,7 @@ export class DataHelper {
       pasarItem.item.fixedAmount = price;
       // console.log('pasarItem.item.fixedAmount', pasarItem.item.fixedAmount);
       // console.log('pasarItem.item.fixedAmount type', typeof pasarItem.item.fixedAmount);
-      this.updatePasarItem(orderId, pasarItem.item, pasarItem.index, pasarItem.blockNumber, pasarItem.syncMode);
+      this.updatePasarItem(orderId, pasarItem.item, pasarItem.index, pasarItem.blockNumber, pasarItem.syncMode, this.getDevelopNet());
     }
   }
 

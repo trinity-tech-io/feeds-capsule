@@ -118,6 +118,7 @@ export class NFTContractHelperService {
         return;
       }
 
+      const requestDevNet = this.dataHelper.getDevelopNet();
       let start = count - 1 - (startPage * this.refreshCount);
       let end = count - 1 - ((startPage + 1) * this.refreshCount);
       if (end < 0)
@@ -129,7 +130,7 @@ export class NFTContractHelperService {
           const tokenInfo = await this.getTokenInfo(String(orderInfo.tokenId), true);
           const tokenJson = await this.getTokenJson(tokenInfo.tokenUri);
           const item = this.createItemFromOrderInfo(orderInfo, tokenInfo, tokenJson, saleStatus);
-          this.dataHelper.updatePasarItem(String(orderInfo.orderId), item, index, 0, FeedsData.SyncMode.REFRESH);
+          this.dataHelper.updatePasarItem(String(orderInfo.orderId), item, index, 0, FeedsData.SyncMode.REFRESH, requestDevNet);
           list.push(item);
         }
         // this.nftPersistenceHelper.setPasarList(list);
@@ -199,6 +200,7 @@ export class NFTContractHelperService {
           return;
         }
 
+        const requestDevNet = this.dataHelper.getDevelopNet();
         let list: FeedsData.NFTItem[] = [];
         for (let index = count - 1; index >= count - 1 - this.refreshCount; index--) {
           const orderInfo = await this.getOpenOrderByIndex(index);
@@ -206,7 +208,7 @@ export class NFTContractHelperService {
           const tokenJson = await this.getTokenJson(tokenInfo.tokenUri);
           const item: FeedsData.NFTItem = this.createItemFromOrderInfo(orderInfo, tokenInfo, tokenJson, saleStatus);
 
-          this.dataHelper.updatePasarItem(String(orderInfo.orderId), item, index, 0, FeedsData.SyncMode.APP);
+          this.dataHelper.updatePasarItem(String(orderInfo.orderId), item, index, 0, FeedsData.SyncMode.APP, requestDevNet);
           // let openOrderResult = await this.getOpenOrderResultByIndex(index);
           // let contractItem = await this.handleFeedsUrl(openOrderResult, saleStatus);
           list.push(item);
@@ -255,14 +257,17 @@ export class NFTContractHelperService {
   refreshPasarOrderFromAssist(pageNumber: number): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
+        const requestCancelDevNet = this.dataHelper.getDevelopNet();
         const canceledResult = await this.pasarAssistService.refreshPasarOrder(pageNumber, 8, FeedsData.OrderState.CANCELED, null);
-        this.parseAssistResult(canceledResult, FeedsData.SyncMode.REFRESH);
+        this.parseAssistResult(canceledResult, FeedsData.SyncMode.REFRESH, requestCancelDevNet);
 
+        const requestFilledDevNet = this.dataHelper.getDevelopNet();
         const filledResult = await this.pasarAssistService.refreshPasarOrder(pageNumber, 8, FeedsData.OrderState.SOLD, null);
-        this.parseAssistResult(filledResult, FeedsData.SyncMode.REFRESH);
+        this.parseAssistResult(filledResult, FeedsData.SyncMode.REFRESH, requestFilledDevNet);
 
+        const requestDevNet = this.dataHelper.getDevelopNet();
         const result = await this.pasarAssistService.refreshPasarOrder(pageNumber, 8, FeedsData.OrderState.SALEING, null);
-        let refreshBlockNum = this.parseAssistResult(result, FeedsData.SyncMode.REFRESH);
+        let refreshBlockNum = this.parseAssistResult(result, FeedsData.SyncMode.REFRESH, requestDevNet);
 
         this.dataHelper.setRefreshLastBlockNumber(refreshBlockNum);
         resolve('FINISH');
@@ -678,6 +683,7 @@ export class NFTContractHelperService {
         console.log('lastBlockNumber', lastBlockNumber);
         console.log('curBlockNum', curBlockNum);
         let result = null;
+        const requestDevNet = this.dataHelper.getDevelopNet();
         if (this.dataHelper.getFirstSyncOrderStatus())
           result = await this.pasarAssistService.syncOrder(curBlockNum);
         else
@@ -693,7 +699,15 @@ export class NFTContractHelperService {
         console.log('syncOrder result.data', result.data);
         console.log('syncOrder result.data.total', result.data.total);
         console.log('syncOrder result.data.result', result.data.result);
-        curBlockNum = this.parseAssistResult(result, FeedsData.SyncMode.SYNC);
+        console.log('requestDevNet', requestDevNet);
+        console.log('this.dataHelper.getDevelopNet()', this.dataHelper.getDevelopNet());
+
+        if (requestDevNet != this.dataHelper.getDevelopNet()) {
+          reject('Net diffrent');
+          return;
+        }
+
+        curBlockNum = this.parseAssistResult(result, FeedsData.SyncMode.SYNC, requestDevNet);
 
         if (curBlockNum == lastBlockNumber) {
           resolve(curBlockNum);
@@ -722,8 +736,9 @@ export class NFTContractHelperService {
         this.isSyncing = true;
         const openOrderCount = await this.nftContractControllerService.getPasar().getOpenOrderCount();
         for (let index = openOrderCount - 1; index >= 0; index--) {
+          const requestDevNet = this.dataHelper.getDevelopNet();
           const orderInfo = await this.getOpenOrderByIndex(index);
-          this.assemblyPasarItem(orderInfo, index);
+          this.assemblyPasarItem(orderInfo, index, requestDevNet);
         }
         resolve('FINISH');
       } catch (error) {
@@ -735,7 +750,7 @@ export class NFTContractHelperService {
     });
   }
 
-  parseAssistResult(result: any, syncMode: FeedsData.SyncMode): number {
+  parseAssistResult(result: any, syncMode: FeedsData.SyncMode, requestDevNet: string): number {
     let curBlockNum = 0;
     let array = result.data.result;
     for (let index = 0; index < array.length; index++) {
@@ -748,7 +763,7 @@ export class NFTContractHelperService {
         // if (this.checkSyncMode(item.orderId))
         //   return item.blockNumber;
         const pasarItem = this.createItemFromPasarAssist(item, 'onSale', 'buy', syncMode);
-        this.savePasarItem(String(pasarItem.item.saleOrderId), pasarItem.item, 0, item.blockNumber, syncMode);
+        this.savePasarItem(String(pasarItem.item.saleOrderId), pasarItem.item, 0, item.blockNumber, syncMode, requestDevNet);
         console.log('pasarItem', pasarItem);
       }
 
@@ -774,13 +789,13 @@ export class NFTContractHelperService {
   transPasarItemFromAssistPasar(result: Object) {
   }
 
-  async assemblyPasarItem(orderInfo: FeedsData.OrderInfo, index: number): Promise<string> {
+  async assemblyPasarItem(orderInfo: FeedsData.OrderInfo, index: number, requestDevNet: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
       const tokenInfo = await this.getTokenInfo(String(orderInfo.tokenId), true);
       const tokenJson = await this.getTokenJson(tokenInfo.tokenUri);
       if (orderInfo.orderState == FeedsData.OrderState.SALEING) {
         const item = this.createItemFromOrderInfo(orderInfo, tokenInfo, tokenJson, "onSale");
-        this.savePasarItem(String(orderInfo.orderId), item, index, 0, FeedsData.SyncMode.NONE);
+        this.savePasarItem(String(orderInfo.orderId), item, index, 0, FeedsData.SyncMode.NONE, requestDevNet);
       }
     });
   }
@@ -991,8 +1006,8 @@ export class NFTContractHelperService {
     });
   }
 
-  savePasarItem(orderId: string, item: FeedsData.NFTItem, index: number, blockNum: number, syncMode: FeedsData.SyncMode) {
-    this.dataHelper.updatePasarItem(orderId, item, index, blockNum, syncMode);
+  savePasarItem(orderId: string, item: FeedsData.NFTItem, index: number, blockNum: number, syncMode: FeedsData.SyncMode, requestDevNet: string) {
+    this.dataHelper.updatePasarItem(orderId, item, index, blockNum, syncMode, requestDevNet);
   }
 
   // setPasarItemMap() {
@@ -1201,8 +1216,6 @@ export class NFTContractHelperService {
     olist = _.filter(olist, item => {
       return item.saleOrderId != curItem.saleOrderId;
     });
-
-
 
     let index = _.findIndex(olist, (item: any) => {
       return item.tokenId === curItem.tokenId && item.moreMenuType === "created";
