@@ -1330,25 +1330,25 @@ export class HomePage implements OnInit {
                   if(this.nftImageType === "avatar"){
 
                     let homebidAvatar = document.getElementById(
-                      id + 'homebidAvatar',
+                      id + 'homebidAvatar'
                     );
                     homebidAvatar.style.display = 'block';
                   }
                   let homebidfeedslogo = document.getElementById(
-                    id + 'homebidfeedslogo',
+                    id + 'homebidfeedslogo'
                   );
                   homebidfeedslogo.style.left = (imagesWidth - 90) / 2 + 'px';
                   homebidfeedslogo.style.display = 'block';
 
                   let homebuy = document.getElementById(id + 'homebuy');
                   let homeNftPrice = document.getElementById(
-                    id + 'homeNftPrice',
+                    id + 'homeNftPrice'
                   );
                   let homeNftQuantity = document.getElementById(
-                    id + 'homeNftQuantity',
+                    id + 'homeNftQuantity'
                   );
                   let homeMaxNftQuantity = document.getElementById(
-                    id + 'homeMaxNftQuantity',
+                    id + 'homeMaxNftQuantity'
                   );
                   homeNftPrice.innerText = priceDes;
                   homeNftQuantity.innerText = nftQuantity;
@@ -1366,20 +1366,24 @@ export class HomePage implements OnInit {
                     if (nftOrdeId != '' && priceDes != '') {
                       let imagesWidth = postImage.clientWidth;
                       let homebidfeedslogo = document.getElementById(
-                        id + 'homebidfeedslogo',
+                        id + 'homebidfeedslogo'
                       );
                       homebidfeedslogo.style.left = (imagesWidth - 90) / 2 + 'px';
                       homebidfeedslogo.style.display = 'block';
 
                       let homebuy = document.getElementById(id + 'homebuy');
                       let homeNftPrice = document.getElementById(
-                        id + 'homeNftPrice',
+                        id + 'homeNftPrice'
                       );
                       let homeNftQuantity = document.getElementById(
-                        id + 'homeNftQuantity',
+                        id + 'homeNftQuantity'
+                      );
+                      let homeMaxNftQuantity = document.getElementById(
+                        id + 'homeMaxNftQuantity'
                       );
                       homeNftPrice.innerText = priceDes;
                       homeNftQuantity.innerText = nftQuantity;
+                      homeMaxNftQuantity.innerText = nftQuantity;
                       homebuy.style.display = 'block';
                     }
                     rpostimg.style.display = 'block';
