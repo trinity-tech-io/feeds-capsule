@@ -87,10 +87,7 @@ export class BidPage implements OnInit {
 
   ngOnInit() {
     this.activatedRoute.queryParams.subscribe((queryParams: FeedsData.NFTItem) => {
-
       this.curAssetItem = _.cloneDeep(queryParams);
-
-      console.log("bid  ====  curAssetItem", this.curAssetItem);
       let asset = queryParams.asset || '';
       this.imageType = queryParams.type || '';
       this.showType = queryParams.showType;
@@ -313,7 +310,6 @@ export class BidPage implements OnInit {
   //       this.handleBuyResult();
   //       resolve('Success');
   //     } catch (error) {
-  //       console.log("======error=======",error)
   //       reject(error);
   //     }
   //   });

@@ -33,7 +33,6 @@ export class WhitelistPage implements OnInit {
     this.initTitle();
     this.getWhiteList();
     this.ipfsBaseUrl = localStorage.getItem("selectedIpfsNetwork") || ''
-    console.log("this.ipfsBaseUrl=="+this.ipfsBaseUrl);
   }
 
   initTitle() {
