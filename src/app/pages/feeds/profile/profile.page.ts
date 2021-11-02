@@ -407,7 +407,20 @@ export class ProfilePage implements OnInit {
     this.name = signInData['nickname'] || signInData['name'] || '';
     this.description = signInData['description'] || '';
     let userDid = signInData['did'] || '';
-    this.avatar = await this.feedService.getUserAvatar(userDid);
+    let avatar = await this.feedService.getUserAvatar(userDid);
+
+    let imgUri = "";
+    if (avatar.indexOf('feeds:imgage:') > -1) {
+      imgUri = avatar.replace('feeds:imgage:', '');
+      imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
+    } else if (avatar.indexOf('feeds:image:') > -1) {
+      imgUri = avatar.replace('feeds:image:', '');
+      imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
+    } else {
+      imgUri = avatar;
+    }
+
+    this.avatar = imgUri;
 
     this.events.subscribe(FeedsEvent.PublishType.updateLikeList, list => {
       this.zone.run(() => {
@@ -860,20 +873,6 @@ export class ProfilePage implements OnInit {
         }, 500);
         break;
     }
-  }
-
-  handleImages() {
-    let imgUri = "";
-    if (this.avatar.indexOf('feeds:imgage:') > -1) {
-      imgUri = this.avatar.replace('feeds:imgage:', '');
-      imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
-    }else if(this.avatar.indexOf('feeds:image:') > -1){
-      imgUri = this.avatar.replace('feeds:image:', '');
-      imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
-    }else{
-      imgUri = this.avatar;
-    }
-    return imgUri;
   }
 
   showMenuMore(item: any) {
