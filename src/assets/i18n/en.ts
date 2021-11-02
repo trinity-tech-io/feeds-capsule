@@ -106,7 +106,7 @@ export const en = {
     quantity: 'Quantity',
     connectWallet: 'Please connect to your wallet first.',
     disconnect: 'Disconnect',
-    buyNftError: 'NFT purchase failed',
+    buyNftError: 'Collectible purchase failed',
     sold: 'Sold',
     offTheShelf: 'Off the shelf',
     cancelSuccessfully: 'Cancel Successfully',
