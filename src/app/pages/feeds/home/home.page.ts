@@ -971,32 +971,34 @@ export class HomePage implements OnInit {
         // this.scrollToTop(1);
         this.zone.run(() => {
           this.elaPrice = this.feedService.getElaUsdPrice();
-          this.loadMoreData().then(() => {
-            // let timer = setTimeout(() => {
-            event.target.complete();
-            this.refreshPasarGridVisibleareaImage();
-            // clearTimeout(timer);
-            // }, 1000);
+          this.loadMoreData().then((list) => {
+            let timer = setTimeout(() => {
+              this.pasarList = list;
+              event.target.complete();
+              this.refreshPasarGridVisibleareaImage();
+              clearTimeout(timer);
+            }, 500);
           });
         });
         break;
     }
   }
 
-  loadMoreData(): Promise<string> {
+  loadMoreData(): Promise<FeedsData.NFTItem[]> {
     return new Promise(async (resolve, reject) => {
       try {
         // const list = await this.nftContractHelperService.loadMoreDataFromContract('onSale', SortType.CREATE_TIME, this.pasarListCount, this.pasarListPage);
         // const list = await this.nftContractHelperService.loadMoreData('onSale', SortType.CREATE_TIME, this.pasarListPage);
-        const list = await this.nftContractHelperService.loadMorePasarListFromAssist(SortType.CREATE_TIME, this.pasarListPage);
+        const list = await this.nftContractHelperService.loadMorePasarListFromAssist(SortType.CREATE_TIME, this.pasarListPage) || [];
+        let pasarList: FeedsData.NFTItem[] = [];
         if (list && list.length > 0) {
           this.pasarListPage++;
           // this.pasarList = _.concat(this.pasarList, list);
-          this.pasarList = _.unionWith(this.pasarList, list, _.isEqual);
-          this.pasarList = this.nftContractHelperService.sortData(this.pasarList, SortType.CREATE_TIME);
+          pasarList = _.unionWith(this.pasarList, list, _.isEqual);
+          pasarList = this.nftContractHelperService.sortData(pasarList, SortType.CREATE_TIME);
           // this.nftPersistenceHelper.setPasarList(this.pasarList);
         }
-        resolve('FINISH');
+        resolve(pasarList);
       } catch (error) {
         reject(error);
       }
