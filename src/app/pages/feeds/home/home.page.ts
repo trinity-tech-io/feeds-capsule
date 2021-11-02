@@ -31,7 +31,7 @@ import { NFTContractControllerService } from 'src/app/services/nftcontract_contr
 import { IPFSService } from 'src/app/services/ipfs.service';
 import { NFTPersistenceHelper } from 'src/app/services/nft_persistence_helper.service';
 import { WalletConnectControllerService } from 'src/app/services/walletconnect_controller.service';
-import { NFTContractHelperService, SortType } from 'src/app/services/nftcontract_helper.service';
+import { NFTContractHelperService } from 'src/app/services/nftcontract_helper.service';
 import _ from 'lodash';
 import { Logger } from 'src/app/services/logger';
 import { HttpService } from '../../../services/HttpService';
@@ -161,6 +161,8 @@ export class HomePage implements OnInit {
   private pasarGridisLoadimage: any = {};
   private pasarListisLoadimage: any = {};
   public isAutoGet: string = 'unAuto';
+  private sortType: FeedsData.SortType = FeedsData.SortType.TIME_ORDER_LATEST;
+
   constructor(
     private platform: Platform,
     private elmRef: ElementRef,
@@ -293,9 +295,9 @@ export class HomePage implements OnInit {
         // });
 
         // if (!this.pasarList || this.pasarList.length == 0 || this.pasarListPage === 0) {
-          this.pasarList = await this.nftContractHelperService.loadData(0, SortType.CREATE_TIME);
-          this.pasarListPage = 1;
-          this.refreshPasarGridVisibleareaImage();
+        this.pasarList = await this.nftContractHelperService.loadData(0, this.sortType);
+        this.pasarListPage = 1;
+        this.refreshPasarGridVisibleareaImage();
         // }else{
         //   this.refreshPasarGridVisibleareaImage();
         // }
@@ -989,13 +991,13 @@ export class HomePage implements OnInit {
       try {
         // const list = await this.nftContractHelperService.loadMoreDataFromContract('onSale', SortType.CREATE_TIME, this.pasarListCount, this.pasarListPage);
         // const list = await this.nftContractHelperService.loadMoreData('onSale', SortType.CREATE_TIME, this.pasarListPage);
-        const list = await this.nftContractHelperService.loadMorePasarListFromAssist(SortType.CREATE_TIME, this.pasarListPage) || [];
+        const list = await this.nftContractHelperService.loadMorePasarListFromAssist(this.sortType, this.pasarListPage) || [];
         let pasarList: FeedsData.NFTItem[] = [];
         if (list && list.length > 0) {
           this.pasarListPage++;
           // this.pasarList = _.concat(this.pasarList, list);
           pasarList = _.unionWith(this.pasarList, list, _.isEqual);
-          pasarList = this.nftContractHelperService.sortData(pasarList, SortType.CREATE_TIME);
+          pasarList = this.nftContractHelperService.sortData(pasarList, this.sortType);
           // this.nftPersistenceHelper.setPasarList(this.pasarList);
         }
         resolve(pasarList);
@@ -1032,7 +1034,7 @@ export class HomePage implements OnInit {
   async refreshPasarList() {
     try {
       this.pasarListPage = 0;
-      this.pasarList = await this.nftContractHelperService.refreshPasarListFromAssist(SortType.CREATE_TIME);
+      this.pasarList = await this.nftContractHelperService.refreshPasarListFromAssist(this.sortType);
       this.refreshPasarGridVisibleareaImage();
       this.pasarListPage++;
     } catch (err) {
@@ -1957,7 +1959,7 @@ export class HomePage implements OnInit {
         this.native.hideLoading();
 
         if (!this.pasarList || this.pasarList.length == 0) {
-          this.pasarList = await this.nftContractHelperService.loadData(0, SortType.CREATE_TIME);
+          this.pasarList = await this.nftContractHelperService.loadData(0, this.sortType);
           this.pasarListPage = 1;
           this.refreshPasarGridVisibleareaImage();
         }else{
@@ -2466,4 +2468,7 @@ export class HomePage implements OnInit {
     return thumbnailUri+"-"+kind;
   }
 
+  changeSortType() {
+    // this.sortType = this.dataHelper.
+  }
 }
