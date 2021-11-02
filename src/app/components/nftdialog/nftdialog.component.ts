@@ -326,7 +326,7 @@ export class NftdialogComponent implements OnInit {
 
         let obj = { type: type, assItem: sAssItem,sellQuantity:this.quantity};
         this.events.publish(FeedsEvent.PublishType.nftUpdateList, obj);
-        this.dataHelper.updatePasarItem(orderId, sAssItem, Number.MAX_SAFE_INTEGER, 0, FeedsData.SyncMode.APP);
+        this.dataHelper.updatePasarItem(orderId, sAssItem, Number.MAX_SAFE_INTEGER, 0, FeedsData.SyncMode.APP, this.dataHelper.getDevelopNet());
         await this.getSetChannel(tokenId);
         //this.native.toast("CreatenewpostPage.tipMsg1");
         resolve(obj);
