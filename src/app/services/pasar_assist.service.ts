@@ -30,7 +30,6 @@ export class PasarAssistService {
 
         url = url + '?pageNum=' + pageNum;
         if (blockNumber != null && blockNumber != undefined) {
-          console.log('blockNumber', blockNumber);
           url = url + '&blockNumber=' + blockNumber;
         }
 
@@ -41,19 +40,12 @@ export class PasarAssistService {
         if (isAsc)
           url = url + '&sort=asc'
 
-        console.log('Request url', url);
         const result = await this.httpService.httpGet(url);
-        console.log('Receive result', result);
 
         const resultCode = result.code;
         if (resultCode != 200)
           reject('Receive result response code is' + resultCode);
 
-        console.log('result', result);
-        console.log('result', result.code);
-        console.log('result', result.data);
-        console.log('result', result.data.total);
-        console.log('result', result.data.result);
         resolve(result);
       } catch (error) {
         Logger.error(TAG, 'List Pasar Order From Service error', error);
@@ -75,7 +67,6 @@ export class PasarAssistService {
   }
 
   firstSync(blockNumber: number): Promise<any> {
-    console.log('firstSync');
     return this.listPasarOrderFromService(1, 10, FeedsData.OrderState.SALEING, blockNumber, true);
   }
 
