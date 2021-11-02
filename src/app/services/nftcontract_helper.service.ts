@@ -8,6 +8,7 @@ import { Logger } from './logger';
 import { FileHelperService } from 'src/app/services/FileHelperService';
 import { PasarAssistService } from 'src/app/services/pasar_assist.service';
 import _ from 'lodash';
+import { type } from 'os';
 
 const TAG = 'NFTContractHelperService';
 // export const enum SortType {
@@ -1228,8 +1229,8 @@ export class NFTContractHelperService {
       try {
         let nftOrderId = post.content.nftOrderId || '';
         const orderInfo = await this.getOrderInfo(nftOrderId);
-        const orderState = orderInfo.orderState;
-        switch (orderState) {
+        const orderState:any = orderInfo.orderState;
+        switch (parseInt(orderState)) {
           case FeedsData.OrderState.SALEING:
             const item = await this.resolveBuySaleNFTFromPost(orderInfo);
             resolve({ state: FeedsData.OrderState.SALEING, item: item });
