@@ -10,10 +10,10 @@ import { PasarAssistService } from 'src/app/services/pasar_assist.service';
 import _ from 'lodash';
 
 const TAG = 'NFTContractHelperService';
-export const enum SortType {
-  CREATE_TIME,
-  UPDATE_TIME,
-}
+// export const enum SortType {
+//   CREATE_TIME,
+//   UPDATE_TIME,
+// }
 
 // export type ContractItem = {
 //   saleOrderId: string,
@@ -71,7 +71,7 @@ export class NFTContractHelperService {
   ) {
   }
 
-  loadMoreData(saleStatus: string, sortType: SortType, startPage: number): Promise<FeedsData.NFTItem[]> {
+  loadMoreData(saleStatus: string, sortType: FeedsData.SortType, startPage: number): Promise<FeedsData.NFTItem[]> {
     return new Promise(async (resolve, reject) => {
       try {
         const list = await this.loadData(startPage, sortType);
@@ -111,7 +111,7 @@ export class NFTContractHelperService {
   //   });
   // }
 
-  loadMoreDataFromContract(saleStatus: string, sortType: SortType, count: number, startPage: number): Promise<FeedsData.NFTItem[]> {
+  loadMoreDataFromContract(saleStatus: string, sortType: FeedsData.SortType, count: number, startPage: number): Promise<FeedsData.NFTItem[]> {
     return new Promise(async (resolve, reject) => {
       if (startPage * this.refreshCount >= count) {
         resolve([]);
@@ -141,14 +141,14 @@ export class NFTContractHelperService {
     });
   }
 
-  loadData(startPage: number, sortType: SortType): Promise<FeedsData.NFTItem[]> {
+  loadData(startPage: number, sortType: FeedsData.SortType): Promise<FeedsData.NFTItem[]> {
     return new Promise(async (resolve, reject) => {
       try {
         let list: FeedsData.NFTItem[] = [];
         let pasarItemList: FeedsData.NFTItem[] = [];
         if (this.refreshManually) {
           // pasarItemList = this.dataHelper.getDisplayedPasarItemList() || [];
-          const list: FeedsData.NFTItem[] = await this.loadMoreDataFromContract('onSale', SortType.CREATE_TIME, this.openOrderCount, startPage);
+          const list: FeedsData.NFTItem[] = await this.loadMoreDataFromContract('onSale', sortType, this.openOrderCount, startPage);
           resolve(list);
           return;
         }
@@ -179,7 +179,7 @@ export class NFTContractHelperService {
     });
   }
 
-  refreshPasarListFromContract(saleStatus: string, sortType: SortType, openOrderCountCallback: (openOrderCount: number) => void, callback: (changedItem: ChangedItem) => void): Promise<FeedsData.NFTItem[]> {
+  refreshPasarListFromContract(saleStatus: string, sortType: FeedsData.SortType, openOrderCountCallback: (openOrderCount: number) => void, callback: (changedItem: ChangedItem) => void): Promise<FeedsData.NFTItem[]> {
     return new Promise(async (resolve, reject) => {
       try {
         this.refreshManually = true;
@@ -212,7 +212,7 @@ export class NFTContractHelperService {
     });
   }
 
-  refreshPasarListFromAssist(sortType: SortType): Promise<FeedsData.NFTItem[]> {
+  refreshPasarListFromAssist(sortType: FeedsData.SortType): Promise<FeedsData.NFTItem[]> {
     return new Promise(async (resolve, reject) => {
       try {
         await this.refreshPasarOrderFromAssist(1);
@@ -224,7 +224,7 @@ export class NFTContractHelperService {
     });
   }
 
-  loadMorePasarListFromAssist(sortType: SortType, startPage: number): Promise<FeedsData.NFTItem[]> {
+  loadMorePasarListFromAssist(sortType: FeedsData.SortType, startPage: number): Promise<FeedsData.NFTItem[]> {
     return new Promise(async (resolve, reject) => {
       try {
         await this.loadMorePasarOrderFromAssist(startPage);
@@ -236,9 +236,20 @@ export class NFTContractHelperService {
     });
   }
 
-  sortData(list: FeedsData.NFTItem[], sortType: SortType): FeedsData.NFTItem[] {
-    return _.sortBy(list, (item: any) => {
-      return -Number(item.createTime);
+  sortData(list: FeedsData.NFTItem[], sortType: FeedsData.SortType): FeedsData.NFTItem[] {
+    return _.sortBy(list, (item: FeedsData.NFTItem) => {
+      switch (sortType) {
+        case FeedsData.SortType.TIME_ORDER_LATEST:
+          return -Number(item.orderCreateTime);
+        case FeedsData.SortType.TIME_ORDER_OLDEST:
+          return Number(item.orderCreateTime);
+        case FeedsData.SortType.PRICE_HIGHEST:
+          return -Number(item.fixedAmount);
+        case FeedsData.SortType.PRICE_CHEAPEST:
+          return Number(item.fixedAmount);
+        default:
+          break;
+      }
     });
   }
 

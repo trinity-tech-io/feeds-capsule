@@ -12,7 +12,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { UtilService } from 'src/app/services/utilService';
 import { HttpService } from './HttpService';
 import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
-import { NFTContractHelperService, SortType } from 'src/app/services/nftcontract_helper.service';
+import { NFTContractHelperService } from 'src/app/services/nftcontract_helper.service';
 import { IPFSService } from 'src/app/services/ipfs.service';
 
 

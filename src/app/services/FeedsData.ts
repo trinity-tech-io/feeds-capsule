@@ -18,7 +18,10 @@ declare namespace FeedsData {
   }
 
   const enum SortType {
-    lastUpdateRevert = 0,
+    TIME_ORDER_LATEST,
+    TIME_ORDER_OLDEST,
+    PRICE_HIGHEST,
+    PRICE_CHEAPEST
   }
 
   const enum MediaType {
