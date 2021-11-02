@@ -2,6 +2,15 @@
     --width:226px;
 }
 
+.defaultAvatar{
+    width:43px;
+    height:43px;
+    border-radius: 50%;
+    background-color:#757575;
+    position: absolute;
+    z-index: -1
+  }
+
 ion-menu {
     ion-content {
         .profile-card {

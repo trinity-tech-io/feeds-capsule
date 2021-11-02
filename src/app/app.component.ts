@@ -365,21 +365,22 @@ export class MyApp {
   }
 
   async getAvatar() {
-    this.avatar = await this.feedService.getUserAvatar(this.userDid);
+    let avatar = await this.feedService.getUserAvatar(this.userDid);
+    let imgUri = "";
+    if (avatar.indexOf('feeds:imgage:') > -1) {
+      imgUri = avatar.replace('feeds:imgage:', '');
+      imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
+    } else if (avatar.indexOf('feeds:image:') > -1) {
+      imgUri = avatar.replace('feeds:image:', '');
+      imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
+    } else {
+      imgUri = avatar;
+    }
+    this.avatar = imgUri;
   }
 
   handleImages() {
-    let imgUri = "";
-    if (this.avatar.indexOf('feeds:imgage:') > -1) {
-      imgUri = this.avatar.replace('feeds:imgage:', '');
-      imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
-    } else if (this.avatar.indexOf('feeds:image:') > -1) {
-      imgUri = this.avatar.replace('feeds:image:', '');
-      imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
-    } else {
-      imgUri = this.avatar;
-    }
-    return imgUri;
+
   }
 
   settings() {

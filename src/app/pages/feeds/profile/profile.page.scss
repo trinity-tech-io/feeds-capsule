@@ -1,5 +1,14 @@
 .container {
 
+    .defaultAvatar{
+        width:56px;
+        height:56px;
+        border-radius: 50%;
+        background-color:#757575;
+        position: absolute;
+        z-index: -1
+      }
+
     .leftrightrow{
         padding-left: 5px;
         padding-right: 5px;
