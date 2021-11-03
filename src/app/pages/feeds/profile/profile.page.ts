@@ -1815,6 +1815,7 @@ export class ProfilePage implements OnInit {
       return;
     }
     this.collectiblesList = list;
+    this.ownNftSum = this.collectiblesList.length;
   }
 
   async processNotOnSaleOrder(accAddress: string): Promise<string> {
