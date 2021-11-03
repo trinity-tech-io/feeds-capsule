@@ -1181,7 +1181,6 @@ export class NFTContractHelperService {
 
   handleBuyResult(curItem: FeedsData.NFTItem, quantity: string) {
     this.dataHelper.deletePasarItem(curItem.saleOrderId);
-    this.event.publish(FeedsEvent.PublishType.nftBuyOrder);
     let createAddress = this.nftContractControllerService.getAccountAddress();
 
     let olist = this.nftPersistenceHelper.getCollectiblesList(createAddress);

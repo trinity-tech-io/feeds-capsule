@@ -65,7 +65,8 @@ export class BidPage implements OnInit {
   public usdPrice:string = null;
   public imageType:string = "";
   private creator: string = "";
-  private dataHelper: DataHelper
+  private dataHelper: DataHelper;
+  private isBuy: boolean = false;
   constructor(
     private translate: TranslateService,
     private event: Events,
@@ -140,6 +141,9 @@ export class BidPage implements OnInit {
     this.event.publish(FeedsEvent.PublishType.notification);
     this.event.publish(FeedsEvent.PublishType.addProflieEvent);
     this.event.publish(FeedsEvent.PublishType.addBinaryEvevnt);
+    if(this.isBuy){
+      this.event.publish(FeedsEvent.PublishType.nftBuyOrder);
+    }
   }
 
   initTile() {
@@ -263,13 +267,27 @@ export class BidPage implements OnInit {
     });
   }
 
-  clickBuy() {
+ async clickBuy() {
     let accountAddress =
       this.nftContractControllerService.getAccountAddress() || '';
     if (accountAddress === '') {
       this.native.toast_trans('common.connectWallet');
       return;
     }
+    let orderInfo = await this.nftContractControllerService.getPasar().getOrderById(this.saleOrderId);
+    console.log("orderInfo",orderInfo);
+    let orderState = parseInt(orderInfo[2]);
+    console.log("orderState",orderState);
+    if(orderState === FeedsData.OrderState.SOLD){
+      this.native.toast_trans('common.sold');
+          return;
+    }
+    if(orderState === FeedsData.OrderState.CANCELED){
+      this.native.toast_trans('common.offTheShelf');
+          return;
+    }
+
+    if(orderState === FeedsData.OrderState.SALEING){
     //start loading
     this.isLoading = true;
     let sId = setTimeout(()=>{
@@ -284,13 +302,16 @@ export class BidPage implements OnInit {
         //Finish buy order
         this.isLoading = false;
         clearTimeout(sId)
+        this.isBuy = true;
         this.native.pop();
       })
       .catch((error) => {
         this.buyFail();
         this.isLoading = false;
+        this.isBuy = false;
         clearTimeout(sId)
       });
+    }
   }
 
   // buy(): Promise<string> {
