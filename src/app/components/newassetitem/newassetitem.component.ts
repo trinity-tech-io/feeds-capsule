@@ -34,7 +34,7 @@ export class NewassetitemComponent implements OnInit {
   ) {}
 
  async ngOnInit() {
-    console.log("========",this.assetItem);
+
     this.styleObj.width = screen.width - 40 + 'px';
 
     let fileName = "";

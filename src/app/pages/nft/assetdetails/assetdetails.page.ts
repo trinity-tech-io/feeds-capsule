@@ -68,6 +68,9 @@ export class AssetdetailsPage implements OnInit {
   public usdPrice: string = null;
   public imageType: string = "";
   public ownerAddress: string = '';
+  private orderCreateTime: number = null;
+  private tokenCreateTime: number = null;
+
   constructor(
     private translate: TranslateService,
     private events: Events,
@@ -100,6 +103,8 @@ export class AssetdetailsPage implements OnInit {
       this.saleOrderId = queryParams.saleOrderId || '';
       this.quantity = queryParams.curQuantity || queryParams.quantity;
       this.tokenID = queryParams.tokenId || '';
+      this.orderCreateTime = queryParams.orderCreateTime || null;
+      this.tokenCreateTime = queryParams.tokenCreateTime || null;
       this.stickerContractAddress = this.nftContractControllerService
         .getSticker()
         .getStickerAddress();
@@ -275,16 +280,10 @@ export class AssetdetailsPage implements OnInit {
       });
     }
 
-    let tokenInfo = await this.nftContractControllerService.getSticker().tokenInfo(this.tokenID);
-    let createDate = new Date(parseInt(tokenInfo[6])*1000);
-    let dateCreated = UtilService.dateFormat(
-          createDate,
-          'yyyy-MM-dd HH:mm:ss',
-    );
-
+    let tokenCreateTime = await this.getTokenCreateTime();
     this.contractDetails.push({
       type: 'AssetdetailsPage.dateCreated',
-      details: dateCreated,
+      details: tokenCreateTime,
     });
 
     if(this.saleOrderId!=""){
@@ -528,10 +527,17 @@ export class AssetdetailsPage implements OnInit {
   }
 
   async getMarketDate(){
+    if(this.orderCreateTime!=null){
+      let createDate = new Date(this.orderCreateTime*1000);
+      let dateCreated = UtilService.dateFormat(
+        createDate,
+        'yyyy-MM-dd HH:mm:ss',
+      );
+      return dateCreated;
+    }
     let order = await this.nftContractControllerService
     .getPasar()
     .getOrderById(this.saleOrderId);
-
    let createDate = new Date(parseInt(order[15])*1000);
    let dateCreated = UtilService.dateFormat(
      createDate,
@@ -563,6 +569,25 @@ export class AssetdetailsPage implements OnInit {
      });
     });
 
+    }
+
+    async getTokenCreateTime() {
+      if(this.tokenCreateTime != null){
+        let createDate = new Date(this.tokenCreateTime*1000);
+        let dateCreated = UtilService.dateFormat(
+              createDate,
+              'yyyy-MM-dd HH:mm:ss',
+        );
+        return dateCreated;
+      }
+
+      let tokenInfo = await this.nftContractControllerService.getSticker().tokenInfo(this.tokenID);
+      let createDate = new Date(parseInt(tokenInfo[6])*1000);
+      let dateCreated = UtilService.dateFormat(
+            createDate,
+            'yyyy-MM-dd HH:mm:ss',
+      );
+      return dateCreated;
     }
 
 }
