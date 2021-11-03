@@ -19,7 +19,7 @@
     <div style="display: flex; align-items: center;" (click)="clickItem()">
       <img src="./assets/images/nft-user-circle.svg" style="vertical-align: middle;margin-right: 5px;" />
       <span class="des">{{handleAddr(assetItem['sellerAddr'])}}  <img *ngIf="verified" style="vertical-align:middle;" src="assets/images/verified-user.svg"/></span>
-      <span class="createTime"> {{ handleDisplayTime(assetItem["createTime"]) }}</span>
+      <span class="createTime"> {{ handleDisplayTime(assetItem["orderCreateTime"]) }}</span>
     </div>
     <div (click)="clickItem()">
       <div style=" margin-top: 17px; width: auto;height:200px; display: flex; align-items: center; ">
