@@ -317,6 +317,8 @@ export class ProfilePage implements OnInit {
       let assItem = obj['assItem'];
       let createAddr = this.nftContractControllerService.getAccountAddress();
       Logger.log(TAG, 'Update asset item', assItem);
+      Logger.log(TAG, 'this.collectiblesList', this.collectiblesList);
+
       //let saleOrderId = assItem['saleOrderId'];
       let tokenId = assItem['tokenId'];
       switch (type) {
@@ -1992,9 +1994,9 @@ export class ProfilePage implements OnInit {
       cpItem["curQuantity"] = sellQuantity;
       list.splice(index,1,cpItem);
       Logger.log(TAG, 'Update list', list);
-      this.collectiblesList = list;
-      this.ownNftSum = this.collectiblesList.length;
-      this.nftPersistenceHelper.setCollectiblesMap(createAddr, list);
+
+      // this.ownNftSum = this.collectiblesList.length;
+      // this.nftPersistenceHelper.setCollectiblesMap(createAddr, list);
 
       // cpList.push(cpItem);
       // this.nftPersistenceHelper.setPasarList(cpList);
@@ -2013,13 +2015,23 @@ export class ProfilePage implements OnInit {
       list.push(cpItem);
 
       Logger.log(TAG, 'Update list', list);
-      this.collectiblesList = list;
-      this.ownNftSum = this.collectiblesList.length;
-      this.nftPersistenceHelper.setCollectiblesMap(createAddr, list);
+      // this.ownNftSum = this.collectiblesList.length;
+      // this.nftPersistenceHelper.setCollectiblesMap(createAddr, list);
 
       // cpList.push(cpItem);
       // this.nftPersistenceHelper.setPasarList(cpList);
     }
+
+    this.zone.run(() => {
+      this.collectiblesList = list;
+      this.ownNftSum = this.collectiblesList.length;
+      this.nftPersistenceHelper.setCollectiblesMap(createAddr, list);
+      Logger.log(TAG, 'handleCreate this.collectiblesList', this.collectiblesList);
+
+    });
+
+    // Logger.log(TAG, 'handleCreate this.collectiblesList', this.collectiblesList);
+
   }
 
   async handleCancelOrder(tokenId: any, curTokenNum: any, assetItem: any, createAddr: any, saleOrderId: any, clist: any, sellerAddr: any) {

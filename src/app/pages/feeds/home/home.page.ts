@@ -401,6 +401,15 @@ export class HomePage implements OnInit {
       this.addCommonEvents();
       this.addBinaryEvevnt();
     });
+
+    // this.events.subscribe(FeedsEvent.PublishType.nftUpdateList, obj => {
+
+    //   this.zone.run(async () => {
+    //     const list = this.dataHelper.getPasarItemList();
+    //     console.log('FeedsEvent.PublishType.nftUpdateList', list);
+    //     // await this.refreshPasarList();
+    //   });
+    // });
   }
 
   addCommonEvents() {
@@ -716,6 +725,7 @@ export class HomePage implements OnInit {
     this.events.unsubscribe(FeedsEvent.PublishType.rpcRequestSuccess);
     this.events.unsubscribe(FeedsEvent.PublishType.openRightMenu);
     this.events.unsubscribe(FeedsEvent.PublishType.clickHome);
+    // this.events.unsubscribe(FeedsEvent.PublishType.nftUpdateList);
     this.removeImages();
     this.removeAllVideo();
     this.isLoadimage = {};

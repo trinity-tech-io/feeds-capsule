@@ -724,9 +724,7 @@ export class NFTContractHelperService {
         this.isSyncing = true;
         const openOrderCount = await this.nftContractControllerService.getPasar().getOpenOrderCount();
         for (let index = openOrderCount - 1; index >= 0; index--) {
-          const requestDevNet = this.dataHelper.getDevelopNet();
-          const orderInfo = await this.getOpenOrderByIndex(index);
-          this.assemblyPasarItem(orderInfo, index, requestDevNet);
+          this.assemblyPasarItem(index);
         }
         resolve('FINISH');
       } catch (error) {
@@ -773,16 +771,45 @@ export class NFTContractHelperService {
   transPasarItemFromAssistPasar(result: Object) {
   }
 
-  async assemblyPasarItem(orderInfo: FeedsData.OrderInfo, index: number, requestDevNet: string): Promise<string> {
+  async assemblyPasarItem(index: number): Promise<FeedsData.NFTItem> {
     return new Promise(async (resolve, reject) => {
-      const tokenInfo = await this.getTokenInfo(String(orderInfo.tokenId), true);
-      const tokenJson = await this.getTokenJson(tokenInfo.tokenUri);
-      if (orderInfo.orderState == FeedsData.OrderState.SALEING) {
+      try {
+        const requestDevNet = this.dataHelper.getDevelopNet();
+        const orderInfo = await this.getOpenOrderByIndex(index);
+        const tokenInfo = await this.getTokenInfo(String(orderInfo.tokenId), true);
+        const tokenJson = await this.getTokenJson(tokenInfo.tokenUri);
         const item = this.createItemFromOrderInfo(orderInfo, tokenInfo, tokenJson, "onSale");
-        this.savePasarItem(String(orderInfo.orderId), item, index, 0, FeedsData.SyncMode.NONE, requestDevNet);
+        if (orderInfo.orderState == FeedsData.OrderState.SALEING) {
+          this.savePasarItem(String(orderInfo.orderId), item, index, Number.MAX_SAFE_INTEGER, FeedsData.SyncMode.NONE, requestDevNet);
+        }
+        resolve(item);
+      } catch (error) {
+        Logger.error(TAG, 'AssemblyPasarItem error', error);
+        reject(error);
       }
     });
   }
+
+  // async getNFTItemFromContract(tokenId: string): Promise<FeedsData.NFTItem> {
+  //   return new Promise(async (resolve, reject) => {
+  //     try {
+  //       const requestDevNet = this.dataHelper.getDevelopNet();
+
+  //       // const orderInfo = await this.getOpenOrderByIndex(index);
+  //       const tokenInfo = await this.getTokenInfo(tokenId, true);
+  //       const tokenJson = await this.getTokenJson(tokenInfo.tokenUri);
+  //       const orderInfo = await this.getOrderInfo();
+  //       const item = this.createItemFromOrderInfo(orderInfo, tokenInfo, tokenJson, "onSale");
+  //       if (orderInfo.orderState == FeedsData.OrderState.SALEING) {
+  //         this.savePasarItem(String(orderInfo.orderId), item, index, Number.MAX_SAFE_INTEGER, FeedsData.SyncMode.NONE, requestDevNet);
+  //       }
+  //       resolve(item);
+  //     } catch (error) {
+  //       Logger.error(TAG, 'AssemblyPasarItem error', error);
+  //       reject(error);
+  //     }
+  //   });
+  // }
 
   // syncOpenOrderForDisplay(callback: (count: number, openOrderCount: number) => void): Promise<string> {
   //   this.interruptSyncing();
@@ -960,7 +987,7 @@ export class NFTContractHelperService {
     return this.createItem(null, tokenInfo, tokenJson, moreMenuType);
   }
 
-  async getSellerCollectibleFromContract(sellerAddr: string, index: number): Promise<FeedsData.NFTItem> {
+  getSellerCollectibleFromContract(sellerAddr: string, index: number): Promise<FeedsData.NFTItem> {
     return new Promise(async (resolve, reject) => {
       try {
         const orderInfo: FeedsData.OrderInfo = await this.getSellerOpenByIndex(sellerAddr, index);
@@ -970,6 +997,41 @@ export class NFTContractHelperService {
         resolve(item);
       } catch (error) {
         Logger.error("Get seller collectibles error", error);
+        reject(error);
+      }
+    });
+  }
+
+  getSellerNFTItembyIndexFromContract(index: number): Promise<FeedsData.NFTItem> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const orderInfo: FeedsData.OrderInfo = await this.getSellerOrderByIndex(index);
+        let tokenInfo: FeedsData.TokenInfo = await this.getTokenInfo(String(orderInfo.tokenId), true);
+        let tokenJson: FeedsData.TokenJson = await this.getTokenJson(tokenInfo.tokenUri);
+        const item = this.createItemFromOrderInfo(orderInfo, tokenInfo, tokenJson, "onSale");
+        const requestDevNet = this.dataHelper.getDevelopNet();
+        if (orderInfo.orderState == FeedsData.OrderState.SALEING) {
+          this.savePasarItem(String(orderInfo.orderId), item, index, Number.MAX_SAFE_INTEGER, FeedsData.SyncMode.NONE, requestDevNet);
+        }
+        resolve(item);
+      } catch (error) {
+        Logger.error("Get seller collectibles error", error);
+        reject(error);
+      }
+    });
+  }
+
+  getSellerOrderByIndex(index: number): Promise<FeedsData.OrderInfo> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let sellerOrder = await this.nftContractControllerService
+          .getPasar()
+          .getSellerOrderByIndex(index);
+        let orderInfo = this.transOrderInfo(sellerOrder);
+        Logger.log(TAG, "Get seller open order", orderInfo);
+        resolve(orderInfo);
+      } catch (error) {
+        Logger.error("Get seller open order error", error);
         reject(error);
       }
     });
