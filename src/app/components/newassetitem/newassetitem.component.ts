@@ -34,6 +34,7 @@ export class NewassetitemComponent implements OnInit {
   ) {}
 
  async ngOnInit() {
+    console.log("========",this.assetItem);
     this.styleObj.width = screen.width - 40 + 'px';
 
     let fileName = "";
@@ -112,7 +113,7 @@ export class NewassetitemComponent implements OnInit {
   }
 
   handleDisplayTime(createTime: number) {
-    let obj = UtilService.handleDisplayTime(createTime);
+    let obj = UtilService.handleDisplayTime(createTime*1000);
     if (obj.type === 's') {
       return this.translate.instant('common.just');
     }
