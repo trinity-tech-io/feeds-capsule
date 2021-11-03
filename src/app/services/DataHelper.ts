@@ -2447,6 +2447,7 @@ export class DataHelper {
       try {
         this.pasarItemMap = {};
         await this.loadDevelopNet();
+        await this.loadFirstSyncOrderStatus();
         this.pasarItemMap =
           (await this.loadData(FeedsData.PersistenceKey.pasarItemMap + "-" + this.developNet)) || {};
 
