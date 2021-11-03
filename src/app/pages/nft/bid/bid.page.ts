@@ -88,7 +88,6 @@ export class BidPage implements OnInit {
 
   ngOnInit() {
     this.activatedRoute.queryParams.subscribe((queryParams: FeedsData.NFTItem) => {
-      console.log("=====queryParams====",queryParams);
       this.curAssetItem = _.cloneDeep(queryParams);
       let asset = queryParams.asset || '';
       this.imageType = queryParams.type || '';
@@ -292,9 +291,7 @@ export class BidPage implements OnInit {
       return;
     }
     let orderInfo = await this.nftContractControllerService.getPasar().getOrderById(this.saleOrderId);
-    console.log("orderInfo",orderInfo);
     let orderState = parseInt(orderInfo[2]);
-    console.log("orderState",orderState);
     if(orderState === FeedsData.OrderState.SOLD){
       this.native.toast_trans('common.sold');
           return;
