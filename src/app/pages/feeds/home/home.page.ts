@@ -288,20 +288,7 @@ export class HomePage implements OnInit {
         this.refreshPostList();
         break;
       case 'pasar':
-
-        // this.pasarList = this.nftPersistenceHelper.getPasarList();
-        // this.pasarList = _.sortBy(this.pasarList, (item: any) => {
-        //   return -Number(item.createTime);
-        // });
-
-        // if (!this.pasarList || this.pasarList.length == 0 || this.pasarListPage === 0) {
-        this.pasarList = await this.nftContractHelperService.loadData(0, this.sortType);
-        this.pasarListPage = 1;
-        this.refreshPasarGridVisibleareaImage();
-        // }else{
-        //   this.refreshPasarGridVisibleareaImage();
-        // }
-
+        await this.refreshLocalPasarData();
         break;
     }
 
@@ -315,10 +302,9 @@ export class HomePage implements OnInit {
       //this.refreshPasarGridVisibleareaImage();
     });
 
-    this.events.subscribe(FeedsEvent.PublishType.nftBuyOrder,()=>{
+    this.events.subscribe(FeedsEvent.PublishType.nftBuyOrder, async () => {
       // this.pasarList = this.nftPersistenceHelper.getPasarList();
-      this.refreshPasarList();
-      //this.refreshPasarGridVisibleareaImage();
+      await this.refreshLocalPasarData();
     });
 
     this.events.subscribe(FeedsEvent.PublishType.addRpcRequestError, () => {
@@ -1975,14 +1961,19 @@ export class HomePage implements OnInit {
         this.native.hideLoading();
 
         if (!this.pasarList || this.pasarList.length == 0) {
-          this.pasarList = await this.nftContractHelperService.loadData(0, this.sortType);
-          this.pasarListPage = 1;
+          await this.refreshLocalPasarData();
           this.refreshPasarGridVisibleareaImage();
         }else{
           this.refreshPasarGridVisibleareaImage();
         }
         break;
     }
+  }
+
+  async refreshLocalPasarData() {
+    this.pasarList = await this.nftContractHelperService.loadData(0, this.sortType);
+    this.pasarListPage = 1;
+    this.refreshPasarGridVisibleareaImage();
   }
 
   create() {
