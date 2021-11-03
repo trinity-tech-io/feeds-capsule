@@ -18,6 +18,8 @@ import { NFTPersistenceHelper } from 'src/app/services/nft_persistence_helper.se
 import { Logger } from 'src/app/services/logger';
 import { Config } from 'src/app/services/config';
 import { DataHelper } from 'src/app/services/DataHelper';
+import { NFTContractHelperService } from 'src/app/services/nftcontract_helper.service';
+
 import _ from 'lodash';
 const SUCCESS = 'success';
 const SKIP = 'SKIP';
@@ -78,7 +80,8 @@ export class MintnftPage implements OnInit {
     private popupProvider: PopupProvider,
     private ipfsService: IPFSService,
     private nftPersistenceHelper: NFTPersistenceHelper,
-    private dataHelper: DataHelper
+    private dataHelper: DataHelper,
+    private nftContractHelperService: NFTContractHelperService
   ) {}
 
   ngOnInit() {}
@@ -825,21 +828,20 @@ export class MintnftPage implements OnInit {
     }
   }
 
-  handleRoyalties(events:any) {
-
+  handleRoyalties(events: any) {
     let royalties = events.target.value || '';
-   let regNumber = /^\+?[1-9][0-9]*$/;
-   if(royalties == "" || royalties === "0"){
-     return true;
-   }
-   if (regNumber.test(royalties) == false) {
-    this.native.toastWarn('MintnftPage.royaltiesErrorMsg');
-    return false;
-  }
-  if(parseInt(royalties)<0 || parseInt(royalties)>15){
-    this.native.toastWarn('MintnftPage.royaltiesErrorMsg');
-    return false;
-  }
+    let regNumber = /^\+?[1-9][0-9]*$/;
+    if (royalties == "" || royalties === "0") {
+      return true;
+    }
+    if (regNumber.test(royalties) == false) {
+      this.native.toastWarn('MintnftPage.royaltiesErrorMsg');
+      return false;
+    }
+    if (parseInt(royalties) < 0 || parseInt(royalties) > 15) {
+      this.native.toastWarn('MintnftPage.royaltiesErrorMsg');
+      return false;
+    }
   }
 
   handleQuantity(events:any){
@@ -893,40 +895,8 @@ export class MintnftPage implements OnInit {
         slist.push(item);
         break;
       case 'onSale':
-        let order = await this.nftContractControllerService
-          .getPasar()
-          .getSellerOrderByIndex(orderIndex);
-
-        this.orderId = order[0];
-
-        let sellerAddr = order[7] || '';
-        let saleOrderId = order[0];
-        item = {
-          creator: creator,//原创者
-          saleOrderId: saleOrderId,
-          tokenId: tokenId,
-          asset: this.imageObj['imgHash'],
-          name: this.nftName,
-          description: this.nftDescription,
-          fixedAmount: order[5],
-          kind: this.imageObj['imgFormat'],
-          type: imageType,
-          royalties: royalties,
-          quantity: this.nftQuantity,
-          curQuantity: this.nftQuantity,
-          thumbnail: this.imageObj['thumbnail'],
-          sellerAddr: sellerAddr,//所有者
-          createTime: createTime * 1000,
-          moreMenuType: 'onSale',
-        };
+        item = await this.nftContractHelperService.getSellerNFTItembyIndexFromContract(orderIndex);
         slist.push(item);
-        // let list = this.nftPersistenceHelper.getPasarList();
-        // list.push(item);
-        // list = _.sortBy(list, (item: any) => {
-        //   return -Number(item.createTime);
-        // });
-        // this.nftPersistenceHelper.setPasarList(list);
-        this.dataHelper.updatePasarItem(saleOrderId, item, Number.MAX_SAFE_INTEGER, 0, FeedsData.SyncMode.APP, this.dataHelper.getDevelopNet());
         this.event.publish(FeedsEvent.PublishType.mintNft);
         break;
     }
