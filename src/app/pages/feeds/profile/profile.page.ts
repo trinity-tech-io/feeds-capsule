@@ -356,7 +356,7 @@ export class ProfilePage implements OnInit {
       (walletAccount) => {
         this.zone.run(async () => {
           this.updateWalletAddress(walletAccount);
-          this.getOwnNftSum();
+          await this.getOwnNftSum();
           if (walletAccount != '') {
             await this.getCollectiblesList();
           }
@@ -369,7 +369,7 @@ export class ProfilePage implements OnInit {
       () => {
         this.zone.run(async () => {
           this.updateWalletAddress(null);
-          this.getOwnNftSum();
+          await this.getOwnNftSum();
           await this.getCollectiblesList();
         });
       },
@@ -378,9 +378,9 @@ export class ProfilePage implements OnInit {
     this.events.subscribe(
       FeedsEvent.PublishType.walletDisconnectedRefreshPage,
       () => {
-        this.zone.run(() => {
+        this.zone.run(async() => {
           this.updateWalletAddress(null);
-          this.getOwnNftSum();
+          await this.getOwnNftSum();
         });
       },
     );
@@ -660,7 +660,7 @@ export class ProfilePage implements OnInit {
     });
   }
 
-  ionViewWillEnter() {
+ async ionViewWillEnter() {
     this.initTitleBar();
     this.elaPrice = this.feedService.getElaUsdPrice();
     this.events.subscribe(FeedsEvent.PublishType.addProflieEvent, async () => {
@@ -675,7 +675,7 @@ export class ProfilePage implements OnInit {
 
     this.channels = this.feedService.getMyChannelList() || [];
     this.myFeedsSum = this.channels.length;
-    this.getOwnNftSum();
+    await this.getOwnNftSum();
 
     this.totalLikeList = this.sortLikeList() || [];
     this.likeSum = this.totalLikeList.length;
@@ -1815,7 +1815,7 @@ export class ProfilePage implements OnInit {
       return;
     }
     this.collectiblesList = list;
-    this.ownNftSum = this.collectiblesList.length;
+    //this.ownNftSum = this.collectiblesList.length;
   }
 
   async processNotOnSaleOrder(accAddress: string): Promise<string> {
