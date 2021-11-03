@@ -17,7 +17,6 @@ import _ from 'lodash';
 import { UtilService } from 'src/app/services/utilService';
 import { Config } from 'src/app/services/config';
 import { FileHelperService } from 'src/app/services/FileHelperService';
-import { DataHelper } from 'src/app/services/DataHelper';
 import { ApiUrl } from 'src/app/services/ApiUrl';
 import { NFTContractHelperService } from 'src/app/services/nftcontract_helper.service';
 
@@ -65,8 +64,9 @@ export class BidPage implements OnInit {
   public usdPrice:string = null;
   public imageType:string = "";
   private creator: string = "";
-  private dataHelper: DataHelper;
   private isBuy: boolean = false;
+  private orderCreateTime: number = null;
+  private tokenCreateTime: number = null;
   constructor(
     private translate: TranslateService,
     private event: Events,
@@ -88,6 +88,7 @@ export class BidPage implements OnInit {
 
   ngOnInit() {
     this.activatedRoute.queryParams.subscribe((queryParams: FeedsData.NFTItem) => {
+      console.log("=====queryParams====",queryParams);
       this.curAssetItem = _.cloneDeep(queryParams);
       let asset = queryParams.asset || '';
       this.imageType = queryParams.type || '';
@@ -98,6 +99,8 @@ export class BidPage implements OnInit {
       this.quantity = String(queryParams.curQuantity) || String(queryParams.quantity);
       this.tokenID = queryParams.tokenId || '';
       this.creator = queryParams.creator || '';
+      this.orderCreateTime = queryParams.orderCreateTime || null;
+      this.tokenCreateTime = queryParams.tokenCreateTime || null;
       this.stickerContractAddress = this.nftContractControllerService
         .getSticker()
         .getStickerAddress();
@@ -225,15 +228,11 @@ export class BidPage implements OnInit {
       details: this.translate.instant(saleDes),
     });
 
-    let tokenInfo = await this.nftContractControllerService.getSticker().tokenInfo(this.tokenID);
-    let createDate = new Date(parseInt(tokenInfo[6])*1000);
-    let dateCreated = UtilService.dateFormat(
-          createDate,
-          'yyyy-MM-dd HH:mm:ss',
-    );
+
+    let tokenCreateTime = await this.getTokenCreateTime();
     this.contractDetails.push({
       type: 'AssetdetailsPage.dateCreated',
-      details: dateCreated,
+      details:tokenCreateTime,
     });
 
     let marketDate = await this.getMarketDate();
@@ -265,6 +264,24 @@ export class BidPage implements OnInit {
       type: 'BidPage.blockchain',
       details: this.blockchain,
     });
+  }
+ async getTokenCreateTime() {
+    if(this.tokenCreateTime != null){
+      let createDate = new Date(this.tokenCreateTime*1000);
+      let dateCreated = UtilService.dateFormat(
+            createDate,
+            'yyyy-MM-dd HH:mm:ss',
+      );
+      return dateCreated;
+    }
+
+    let tokenInfo = await this.nftContractControllerService.getSticker().tokenInfo(this.tokenID);
+    let createDate = new Date(parseInt(tokenInfo[6])*1000);
+    let dateCreated = UtilService.dateFormat(
+          createDate,
+          'yyyy-MM-dd HH:mm:ss',
+    );
+    return dateCreated;
   }
 
  async clickBuy() {
@@ -437,6 +454,14 @@ export class BidPage implements OnInit {
   }
 
   async getMarketDate(){
+    if(this.orderCreateTime!=null){
+      let createDate = new Date(this.orderCreateTime*1000);
+      let dateCreated = UtilService.dateFormat(
+        createDate,
+        'yyyy-MM-dd HH:mm:ss',
+      );
+      return dateCreated;
+    }
     let order = await this.nftContractControllerService
     .getPasar()
     .getOrderById(this.saleOrderId);
