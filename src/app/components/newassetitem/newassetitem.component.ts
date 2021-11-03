@@ -33,8 +33,7 @@ export class NewassetitemComponent implements OnInit {
     private feedService: FeedService
   ) {}
 
- async ngOnInit() {
-
+  async ngOnInit() {
     this.styleObj.width = screen.width - 40 + 'px';
 
     let fileName = "";

@@ -266,7 +266,7 @@ export class NftdialogComponent implements OnInit {
     });
   }
 
-  doCreateOrder(tokenId: any, type: any) {
+  doCreateOrder(tokenId: any, type: string) {
     return new Promise(async (resolve, reject) => {
       try {
         let sellerAddress = this.nftContractControllerService.getAccountAddress();
@@ -292,7 +292,7 @@ export class NftdialogComponent implements OnInit {
           return;
         }
 
-        await this.handleCreteOrderResult(tokenId, sellerAddress, salePrice, type, orderIndex);
+        await this.handleCreteOrderResult(tokenId, orderIndex, type);
         resolve('Success');
       } catch (error) {
         reject(error);
@@ -300,47 +300,20 @@ export class NftdialogComponent implements OnInit {
     })
   }
 
-  async handleCreteOrderResult(tokenId: string, sellerAddress: string, salePrice: string, type: any, index: number): Promise<any> {
+  async handleCreteOrderResult(tokenId: string, orderIndex: number, type: string): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
-        let tokenInfo = await this.nftContractControllerService
-          .getSticker()
-          .tokenInfo(tokenId);
-        let createTime = tokenInfo[7];
-        let creator =  tokenInfo[4];
-        let sAssItem = _.cloneDeep(this.curAssItem);
-
-        let order = await this.nftContractControllerService
-          .getPasar()
-          .getSellerOrderByIndex(index);
-        let orderId = order[0];
-
-        this.orderId = orderId;
-
-        sAssItem['sellerAddr'] = sellerAddress;
-        sAssItem['creator'] = creator;
-        sAssItem['fixedAmount'] = salePrice;
-        sAssItem['saleOrderId'] = orderId;
-        sAssItem['createTime'] = createTime * 1000;
-        sAssItem['moreMenuType'] = 'onSale';
-
-        let obj = { type: type, assItem: sAssItem,sellQuantity:this.quantity};
+        const item = await this.nftContractHelperService.getSellerNFTItembyIndexFromContract(orderIndex);
+        const obj = { type: type, assItem: item, sellQuantity: this.quantity };
         this.events.publish(FeedsEvent.PublishType.nftUpdateList, obj);
-        this.dataHelper.updatePasarItem(orderId, sAssItem, Number.MAX_SAFE_INTEGER, 0, FeedsData.SyncMode.APP, this.dataHelper.getDevelopNet());
         await this.getSetChannel(tokenId);
-        //this.native.toast("CreatenewpostPage.tipMsg1");
-        resolve(obj);
+        resolve(item);
       } catch (err) {
         Logger.error(err);
         reject(err);
       }
     });
   }
-
-
-
-
-
 
   number(text: any) {
     var numPattern = /^(([1-9]\d*)|\d)(.\d{1,9})?$/;
