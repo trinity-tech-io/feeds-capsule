@@ -312,13 +312,13 @@ export class HomePage implements OnInit {
     this.events.subscribe(FeedsEvent.PublishType.mintNft,()=>{
       this.refreshPasarList();
       // this.pasarList = this.nftPersistenceHelper.getPasarList();
-      this.refreshPasarGridVisibleareaImage();
+      //this.refreshPasarGridVisibleareaImage();
     });
 
     this.events.subscribe(FeedsEvent.PublishType.nftBuyOrder,()=>{
       // this.pasarList = this.nftPersistenceHelper.getPasarList();
       this.refreshPasarList();
-      this.refreshPasarGridVisibleareaImage();
+      //this.refreshPasarGridVisibleareaImage();
     });
 
     this.events.subscribe(FeedsEvent.PublishType.addRpcRequestError, () => {
