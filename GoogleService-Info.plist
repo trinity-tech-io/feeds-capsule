@@ -3,21 +3,21 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>42835579962-7d0ir3bg0un5chth9j4qb7sqlpk0gtua.apps.googleusercontent.com</string>
+	<string>28839232315-m61lrj3vlbbgej7rsif4m075h5p7l5m8.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.42835579962-7d0ir3bg0un5chth9j4qb7sqlpk0gtua</string>
+	<string>com.googleusercontent.apps.28839232315-m61lrj3vlbbgej7rsif4m075h5p7l5m8</string>
 	<key>API_KEY</key>
-	<string>AIzaSyAq133_qbm5OnNooaKR5Q9bnLsvzAlEPbA</string>
+	<string>AIzaSyCeUuycORkXufeoN78Zfz_LclXzqpejK_E</string>
 	<key>GCM_SENDER_ID</key>
-	<string>42835579962</string>
+	<string>28839232315</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
 	<string>io.trinitytech.dapp.feeds</string>
 	<key>PROJECT_ID</key>
-	<string>fsproject-e6e1d</string>
+	<string>trinityfeeds-59006</string>
 	<key>STORAGE_BUCKET</key>
-	<string>fsproject-e6e1d.appspot.com</string>
+	<string>trinityfeeds-59006.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -29,6 +29,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:42835579962:ios:41339d54dc986fc3105103</string>
+	<string>1:28839232315:ios:f9e8370dd93f5f13686d1e</string>
 </dict>
 </plist>
