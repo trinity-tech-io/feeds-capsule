@@ -306,6 +306,7 @@ export class NftdialogComponent implements OnInit {
         const item = await this.nftContractHelperService.getSellerNFTItembyIndexFromContract(orderIndex);
         const obj = { type: type, assItem: item, sellQuantity: this.quantity };
         this.events.publish(FeedsEvent.PublishType.nftUpdateList, obj);
+        this.orderId = item.saleOrderId;
         await this.getSetChannel(tokenId);
         resolve(item);
       } catch (err) {
