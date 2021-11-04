@@ -86,7 +86,7 @@ export class Config {
     public static CHECK_STATUS_INTERVAL_TIME = 5000;
 
     /** whitelist testNet */
-    public static WHITELIST_TEST_SERVER: string = 'https://test.trinity-feeds.app/';
+    public static WHITELIST_TEST_SERVER: string = 'https://assist.trinity-feeds.app/';
 
     public static PASAR_ASSIST_TESTNET_SERVER: string = 'https://test.trinity-feeds.app/pasar/api/v1/';
     public static PASAR_ASSIST_MAINNET_SERVER: string = 'https://assist.trinity-feeds.app/pasar/api/v1/';

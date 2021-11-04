@@ -152,20 +152,9 @@ export class NewassetitemComponent implements OnInit {
       }) || "";
       if(whiteListItem != ""){
         resolve(true);
-      }
-
-      this.httpService.ajaxGet(ApiUrl.getWhiteListByAddress+creatorAddress,false).then((result:any)=>{
-        if(result.code === 200){
-          let data: [] = result.data;
-          if(data.length > 0){
-            resolve(true);
-          }
-          resolve(false);
-        }
-      }).catch((err)=>{
+      }else{
         resolve(false);
-     });
+      }
     });
-
     }
 }
