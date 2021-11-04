@@ -438,9 +438,11 @@ export class MyApp {
     .then((whiteListData :FeedsData.WhiteItem[])=>{
       if(whiteListData === null){
         this.feedService.setWhiteListData([]);
+        this.ajaxGetWhiteList(false);
         return;
       }
       this.feedService.setWhiteListData(whiteListData);
+      this.ajaxGetWhiteList(false);
     })
     .catch()
   }
@@ -524,5 +526,15 @@ export class MyApp {
       })
   }
 
+  ajaxGetWhiteList(isLoading: boolean){
+    this.httpService.ajaxGet(ApiUrl.getWhiteList,isLoading).then((result:any)=>{
+      if(result.code === 200){
+        const whiteListData = result.data || [];
+        this.feedService.setWhiteListData(whiteListData);
+        this.feedService.setData("feeds.WhiteList",whiteListData);
+      }
+    }).catch((err)=>{
 
+    });
+  }
 }

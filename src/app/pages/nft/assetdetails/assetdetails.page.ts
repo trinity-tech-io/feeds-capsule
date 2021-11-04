@@ -554,19 +554,9 @@ export class AssetdetailsPage implements OnInit {
       }) || "";
       if(whiteListItem != ""){
         resolve('BidPage.verifiedCreator');
-      }
-
-      this.httpService.ajaxGet(ApiUrl.getWhiteListByAddress+creatorAddress,false).then((result:any)=>{
-        if(result.code === 200){
-          let data: [] = result.data;
-          if(data.length > 0){
-            resolve('BidPage.verifiedCreator');
-          }
-          resolve('AssetdetailsPage.creator');
-        }
-      }).catch((err)=>{
+      }else{
         resolve('AssetdetailsPage.creator');
-     });
+      }
     });
 
     }
