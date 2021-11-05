@@ -231,7 +231,7 @@ export class NftdialogComponent implements OnInit {
       clearTimeout(sId);
     }, Config.WAIT_TIME_CHANGE_PRICE);
     const price = this.amount.toString();
-    this.nftContractHelperService.changePrice(this.saleOrderId, price).then(() => {
+    this.nftContractHelperService.changePrice(this.saleOrderId, price, this.didUri).then(() => {
       this.nftContractControllerService.getPasar().cancelChangePriceProcess();
       this.events.publish(FeedsEvent.PublishType.endLoading);
       clearTimeout(sId);
