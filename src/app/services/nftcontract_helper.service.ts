@@ -1214,7 +1214,7 @@ export class NFTContractHelperService {
       try {
         purchaseStatus = await this.nftContractControllerService
           .getPasar()
-          .buyOrder(accountAddress, item.saleOrderId, item.fixedAmount);
+          .buyOrder(accountAddress, item.saleOrderId, item.fixedAmount, didUri);
 
         if (!purchaseStatus) {
           reject('Error');
