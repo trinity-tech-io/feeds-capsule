@@ -232,6 +232,11 @@ export const zh = {
     creatorPlaceholder: "搜索原创者",
     ownerPlaceholder: "搜索所有者",
     tokenIDPlaceholder: "搜索 Token ID",
+    sortBy: "排序",
+    recentlyAdded: "最近添加",
+    Oldest: "最早的",
+    priceLowToHigh: "价格：从低到高",
+    priceHightoLow: "价格：从高到低"
   },
   ProfilePage: {
     myFeeds: '频道',

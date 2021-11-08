@@ -136,6 +136,7 @@ export class MyApp {
         this.initCollectibleSetting();
         this.initCurSearchField();
         this.initWhiteList();
+        this.initFeedsSortType();
         this.native.addNetworkListener(
           () => {
             this.events.publish(FeedsEvent.PublishType.networkStatusChanged, 1);
@@ -443,6 +444,17 @@ export class MyApp {
       }
       this.feedService.setWhiteListData(whiteListData);
       this.ajaxGetWhiteList(false);
+    })
+    .catch()
+  }
+
+  initFeedsSortType(){
+    this.dataHelper.loadData("feeds:sortType").then((sortType:number)=>{
+        if(sortType === null){
+          this.dataHelper.setFeedsSortType(FeedsData.SortType.TIME_ORDER_LATEST);
+          return;
+        }
+       this.dataHelper.setFeedsSortType(sortType);
     })
     .catch()
   }

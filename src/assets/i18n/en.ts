@@ -238,6 +238,11 @@ export const en = {
     creatorPlaceholder: "Search by creator",
     ownerPlaceholder: "Search by owner",
     tokenIDPlaceholder: "Search by token ID",
+    sortBy: "Sort by",
+    recentlyAdded: "Recently Added",
+    Oldest: "Oldest",
+    priceLowToHigh: "Price: Low to High",
+    priceHightoLow: "Price: High to Low"
   },
   ProfilePage: {
     myFeeds: 'Channels',
