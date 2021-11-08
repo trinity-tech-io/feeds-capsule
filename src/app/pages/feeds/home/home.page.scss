@@ -108,3 +108,53 @@
    border: 1px solid #2d2e4d;
    background-color: #2d2e4d;
   }
+
+  .arrowBack{
+   width: 16px;
+   height:10px;
+   position: absolute;
+   top: 38px;
+   right: 10px;
+   z-index: 2;
+  }
+
+  .sort{
+   width: 180px;
+   height: 130px;
+   border-radius: 10px;
+   background-color: #fff;
+   z-index: 2px;
+   right: 16px;
+   top: 132px;
+   z-index: 2;
+   position:absolute;
+   p{
+     margin: 0px;
+     padding: 0px;
+   }
+   .titleName{
+      font-size: 14px;
+      font-weight: normal;
+      font-stretch: normal;
+      font-style: normal;
+      text-align: left;
+      color: #9ca0a4;
+      margin-left:13px;
+      margin-top: 9px;
+   }
+
+   .sortName{
+      font-size: 14px;
+      font-weight: bold;
+      font-stretch: normal;
+      font-style: normal;
+      text-align: left;
+      color: #000;
+      margin-top: 5px;
+      span{
+         display:inline-block;
+         width: 139px;
+         margin-left:13px;
+      }
+   }
+  }

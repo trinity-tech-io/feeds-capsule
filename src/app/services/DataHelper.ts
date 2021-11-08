@@ -11,6 +11,7 @@ let TAG: string = 'DataHelper';
 
 @Injectable()
 export class DataHelper {
+  private feedsSortType: number = null;
   private channelsMap: { [nodeChannelId: string]: FeedsData.Channels } = {};
   private postMap: { [ncpId: string]: FeedsData.Post } = {};
   private commentsMap: {
@@ -2638,5 +2639,13 @@ export class DataHelper {
 
   getFirstSyncOrderStatus() {
     return this.firstSyncOrderFinish;
+  }
+
+  setFeedsSortType(sortType: number){
+   this.feedsSortType = sortType;
+  }
+
+  getFeedsSortType(){
+    return this.feedsSortType;
   }
 }

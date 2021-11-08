@@ -51,7 +51,6 @@ export class HomePage implements OnInit {
   @ViewChild(IonInfiniteScroll, { static: true })
   infiniteScroll: IonInfiniteScroll;
   @ViewChild(IonRefresher, { static: false }) refresher: IonRefresher;
-  myScrollContainer!: HTMLElement;
   private homeTittleBar: HTMLElement;
   private homeTab: HTMLElement;
   public connectionStatus = 1;
@@ -162,7 +161,7 @@ export class HomePage implements OnInit {
   private pasarListisLoadimage: any = {};
   public isAutoGet: string = 'unAuto';
   private sortType: FeedsData.SortType = FeedsData.SortType.TIME_ORDER_LATEST;
-
+  public isClickSort: boolean = false;
   constructor(
     private platform: Platform,
     private elmRef: ElementRef,
@@ -265,7 +264,7 @@ export class HomePage implements OnInit {
   }
 
   async ionViewWillEnter() {
-
+    this.sortType = this.dataHelper.getFeedsSortType();
     this.homeTittleBar = this.elmRef.nativeElement.querySelector("#homeTittleBar");
     this.homeTab = this.elmRef.nativeElement.querySelector("#homeTab");
     this.elaPrice = this.feedService.getElaUsdPrice();
@@ -774,9 +773,6 @@ export class HomePage implements OnInit {
   }
 
   ngOnInit() {
-    this.myScrollContainer = this.elmRef.nativeElement.querySelector(
-      '#my-scroll-container',
-    );
   }
 
   like(nodeId: string, channelId: number, postId: number) {
@@ -2226,9 +2222,17 @@ export class HomePage implements OnInit {
     if (ponit.scrollTop > 0) {
       this.homeTittleBar.style.display = "none";
       this.homeTab.setAttribute("style", "top:0px;height:45px;line-height:37px;");
+      let sort = this.elmRef.nativeElement.querySelector("#sort") || null;
+      if(sort!=null){
+        sort.setAttribute("style", "top:93px;");
+      }
     } else {
       this.homeTittleBar.style.display = "block";
       this.homeTab.setAttribute("style", "top:36px;height:34px;");
+      let sort = this.elmRef.nativeElement.querySelector("#sort") || null;
+      if(sort!=null){
+        sort.setAttribute("style", "top:132px;");
+      }
     }
   }
 
@@ -2244,7 +2248,8 @@ export class HomePage implements OnInit {
 
   ionClear() {
     this.searchText = '';
-    this.isShowSearchField = true;
+    this.isShowSearchField = false;
+    this.isClickSort = false;
     this.handleRefresherInfinite(false);
     if (this.searchBeforePasar.length > 0) {
       this.pasarList = _.cloneDeep(this.searchBeforePasar);
@@ -2254,6 +2259,7 @@ export class HomePage implements OnInit {
   }
 
   getItems(events: any) {
+    this.isClickSort = false;
     this.searchText = events.target.value || '';
     this.searchBeforePasar = _.cloneDeep(this.pasarList);
     // let searchPasar = this.nftPersistenceHelper.getPasarList();
@@ -2347,6 +2353,7 @@ export class HomePage implements OnInit {
 
   clickfilterCircle() {
     this.isShowSearchField = !this.isShowSearchField;
+    this.isClickSort = false;
     this.searchText = "";
     if (this.searchBeforePasar.length > 0) {
       this.pasarList = _.cloneDeep(this.searchBeforePasar);
@@ -2475,7 +2482,15 @@ export class HomePage implements OnInit {
     return thumbnailUri+"-"+kind;
   }
 
-  changeSortType() {
-    // this.sortType = this.dataHelper.
+  changeSortType(sortType:number,event:any) {
+    this.sortType = sortType;
+    this.dataHelper.setFeedsSortType(sortType);
+    this.dataHelper.saveData("feeds:sortType",sortType);
+    this.isClickSort = false;
+    event.stopPropagation();
+  }
+
+  clickSortArrow(){
+    this.isClickSort = !this.isClickSort;
   }
 }

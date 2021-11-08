@@ -10,6 +10,8 @@
 
   </ion-col>
   <ion-col size="9.5" class="search-home-container" [class.dark-search-home-container]="theme.darkMode">
+    <img *ngIf="searchText===''&&!isClickSort" src="./assets/images/arrow-up.svg" class="arrowBack" [ngStyle]="arrowBackStyle" (click)="clickSortArrow()"/>
+    <img *ngIf="searchText===''&&isClickSort" src="./assets/images/arrow-back.svg" class="arrowBack" [ngStyle]="arrowBackStyle" (click)="clickSortArrow()"/>
     <form action="javascript:return true;" style="display: flex;justify-content: center;width: 100%;">
       <ion-searchbar #homePasarSearchBar  [(ngModel)]="searchText" inputmode=""  enterkeyhint="search" placeholder="{{ pasarsearchPlaceholder | translate }}" (keyup)="getItems($event)" mode="ios" [ngModelOptions]="{standalone: true}" (ionClear)="ionClear()"></ion-searchbar>
     </form>
@@ -18,6 +20,13 @@
    <img *ngIf="!theme.darkMode" src="assets/images/filter-circle.svg" style="margin-top:28px;"/>
    <img *ngIf="theme.darkMode" src="assets/images/darkmode/filter-circle.svg" style="margin-top:28px;"/>
   </ion-col>
+  <div class="sort" id="sort" *ngIf="isClickSort">
+    <p class="titleName">{{"HomePage.sortBy" | translate}}<p>
+    <p class="sortName" (click)="changeSortType(0,$event)"><span>{{"HomePage.recentlyAdded" | translate}}</span> <img src="assets/images/sort-check.svg" *ngIf="sortType===0"><p>
+    <p class="sortName" (click)="changeSortType(1,$event)"><span>{{"HomePage.Oldest" | translate}}</span> <img src="assets/images/sort-check.svg" *ngIf="sortType===1"><p>
+    <p class="sortName" (click)="changeSortType(3,$event)"><span>{{"HomePage.priceLowToHigh" | translate}}</span> <img src="assets/images/sort-check.svg" *ngIf="sortType===3"><p>
+    <p class="sortName" (click)="changeSortType(2,$event)"><span>{{"HomePage.priceHightoLow" | translate}}</span> <img src="assets/images/sort-check.svg" *ngIf="sortType===2"><p>
+  </div>
 </ion-row>
 <ion-row *ngIf="tabType==='pasar'&&isShowSearchField">
   <ion-col size="0.5">
