@@ -7778,13 +7778,9 @@ export class FeedService {
   getDidUriJson(){
     let signInData = this.getSignInData() || {};
     let did = signInData['did'] || "";
-    let name = signInData['name'] || "";
-    let email = signInData['email'] || "";
     let didJson = {
       "version": "1",
-      "did": did,
-      "name": name,
-      "email": email
+      "did": did
     }
     return didJson;
   }
