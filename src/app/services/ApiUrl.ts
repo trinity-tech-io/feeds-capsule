@@ -27,6 +27,8 @@ export class ApiUrl {
   /**update*/
   public static update: string = ApiUrl.SERVER + '/update';
 
+  public static getAvatar: string = ApiUrl.SERVER+ '/getAvatar';
+
   public static IPFS_NFT_ADD: string = 'api/v0/add';
   public static IPFS_NFT_GET: string = 'ipfs/';
   public static setIpfs(ipfsBaseUrl: string) {

@@ -137,6 +137,7 @@ export class MyApp {
         this.initCurSearchField();
         this.initWhiteList();
         this.initFeedsSortType();
+        this.initHttpsAvatarList();
         this.native.addNetworkListener(
           () => {
             this.events.publish(FeedsEvent.PublishType.networkStatusChanged, 1);
@@ -458,6 +459,19 @@ export class MyApp {
     })
     .catch()
   }
+
+  initHttpsAvatarList(){
+    this.dataHelper.loadData("feeds:httpsAvatarList").then((httpsAvatarList: any)=>{
+        if(httpsAvatarList === null){
+          this.dataHelper.setHttpsAvatarList({});
+          return;
+        }
+       this.dataHelper.setHttpsAvatarList(httpsAvatarList);
+    })
+    .catch()
+  }
+
+
 
   async connectWallet() {
     await this.walletConnectControllerService.connect();
