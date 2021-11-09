@@ -11,6 +11,7 @@ let TAG: string = 'DataHelper';
 
 @Injectable()
 export class DataHelper {
+  private httpsAvatarList: any = null;
   private feedsSortType: number = null;
   private channelsMap: { [nodeChannelId: string]: FeedsData.Channels } = {};
   private postMap: { [ncpId: string]: FeedsData.Post } = {};
@@ -2647,5 +2648,13 @@ export class DataHelper {
 
   getFeedsSortType(){
     return this.feedsSortType;
+  }
+
+  setHttpsAvatarList(httpsAvatarList:any){
+    this.httpsAvatarList = httpsAvatarList;
+  }
+
+  getHttpsAvatarList(){
+    return this.httpsAvatarList;
   }
 }

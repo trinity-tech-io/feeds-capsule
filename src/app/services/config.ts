@@ -13,7 +13,7 @@ export class Config {
     public static EID_RPC = 'https://api.' + Config.BASE_API + '/eid';
 
     /**后台服务*/
-    public static SERVER: string = 'https://www.trinity-tech.io/feeds/api/v2';
+    public static SERVER: string = 'https://www.trinity-tech.io/feeds/api/v3';
 
     /** MainNet contract */
     public static STICKER_ADDRESS: string = '0x020c7303664bc88ae92cE3D380BF361E03B78B81';

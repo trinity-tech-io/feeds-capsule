@@ -14,7 +14,7 @@ import { ViewHelper } from 'src/app/services/viewhelper.service';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarService } from 'src/app/services/TitleBarService';
-
+import { DataHelper } from 'src/app/services/DataHelper';
 import _ from 'lodash';
 @Component({
   selector: 'app-search',
@@ -36,7 +36,7 @@ export class SearchPage implements OnInit {
   public searchfeedsList = [];
   public discoverSquareList = [];
   public pageNum: number = 1;
-  public pageSize: number = 5;
+  public pageSize: number = 10;
   public totalNum: number = 0;
   public isLoading: boolean = true;
   public developerMode: boolean = false;
@@ -47,6 +47,7 @@ export class SearchPage implements OnInit {
   public searchUnfollowedFeed = [];
   public scanServiceStyle = { right: '' };
   public curtotalNum: number = 0;
+  public avatarList:any = {};
   // {
   //   "nodeId": "8Dsp9jkTg8TEfCkwMoXimwjLeaRidMczLZYNWbKGj1SF",
   //   "did": "did:elastos:ibfZa4jQ1QgDRP9rpfbUbZWpXgbd9z7oKF",
@@ -74,6 +75,7 @@ export class SearchPage implements OnInit {
     private translate: TranslateService,
     private viewHelper: ViewHelper,
     private titleBarService: TitleBarService,
+    private dataHelper: DataHelper,
   ) {}
 
   ngOnInit() {
@@ -178,6 +180,7 @@ export class SearchPage implements OnInit {
     } else {
       this.httpAllData = _.cloneDeep(discoverfeeds);
       this.discoverSquareList = _.cloneDeep(discoverfeeds);
+      this.avatarList = this.dataHelper.getHttpsAvatarList();
     }
     this.developerMode = this.feedService.getDeveloperMode();
     this.connectionStatus = this.feedService.getConnectionStatus();
@@ -211,15 +214,18 @@ export class SearchPage implements OnInit {
 
   getItems(events: any) {
     this.isSearch = events.target.value || '';
+    this.scanServiceStyle['z-index'] = -1;
     if (
       (events && events.keyCode === 13) ||
       (events.keyCode === 8 && this.isSearch === '')
     ) {
       if (this.checkFeedUrl(this.isSearch)) {
+        this.scanServiceStyle['z-index'] = 3;
         this.addFeedUrl(this.isSearch);
         return;
       }
       if (this.isSearch == '') {
+        this.scanServiceStyle['z-index'] = 3;
         this.ionRefresher.disabled = false;
         this.addingChanneList = this.feedService.getToBeAddedFeedsList() || [];
         this.unfollowedFeed = this.getUnfollowedFeed() || [];
@@ -238,6 +244,7 @@ export class SearchPage implements OnInit {
   }
 
   ionClear() {
+    this.scanServiceStyle['z-index'] = 3;
     this.isSearch = '';
     if (this.checkFeedUrl(this.isSearch)) {
       this.addFeedUrl(this.isSearch);
@@ -277,15 +284,15 @@ export class SearchPage implements OnInit {
   }
 
   doRefresh(event) {
-    let sid = setTimeout(() => {
+    //let sid = setTimeout(() => {
       this.feedService.updateSubscribedFeed();
       this.feedService.setDiscoverfeeds([]);
       this.curtotalNum = 0;
       this.pageNum = 1;
       this.initData(event, false);
-      event.target.complete();
-      clearTimeout(sid);
-    }, 2000);
+      //event.target.complete();
+      //clearTimeout(sid);
+    //}, 2000);
   }
 
   navTo(nodeId: string, channelId: number) {
@@ -430,8 +437,12 @@ export class SearchPage implements OnInit {
           this.totalNum = result['data']['total'];
           let arr = result['data']['result'] || [];
           if (arr.length === 0) {
+            if (events != '') {
+              events.target.complete();
+            }
             return;
           }
+          this.getAvatarList(arr);
           this.curtotalNum = this.curtotalNum + arr.length;
           this.handleCache(arr);
           let discoverSquareList = this.feedService.getDiscoverfeeds();
@@ -442,10 +453,13 @@ export class SearchPage implements OnInit {
         }
 
         if (this.curtotalNum >= this.totalNum) {
+          if (events != '') {
+            events.target.complete();
+          }
           return;
         }
         if (this.curtotalNum < this.totalNum) {
-          this.loadData(null);
+          this.loadData(events);
         }
       })
       .catch(err => {});
@@ -463,13 +477,11 @@ export class SearchPage implements OnInit {
         isLoading,
       )
       .then(result => {
-        if (events != '') {
-          events.target.complete();
-        }
         if (result['code'] === 200) {
           this.isLoading = false;
           this.totalNum = result['data']['total'];
           let discoverSquareList = result['data']['result'] || [];
+          this.getAvatarList(discoverSquareList);
           this.curtotalNum = discoverSquareList.length;
           this.handleCache(discoverSquareList);
           discoverSquareList = this.feedService.getDiscoverfeeds();
@@ -480,7 +492,7 @@ export class SearchPage implements OnInit {
           );
           this.searchSquareList = _.cloneDeep(this.discoverSquareList);
           if (this.curtotalNum <= this.totalNum) {
-            this.loadData(null);
+            this.loadData(events);
           }
         }
       })
@@ -494,6 +506,8 @@ export class SearchPage implements OnInit {
 
   clickItem(feed: any) {
     this.removeSubscribe();
+    let feedsUrlHash =  feed['feedsUrlHash'];
+    feed.feedsAvatar = this.avatarList[feedsUrlHash];
     this.native.go('discoverfeedinfo', {
       params: feed,
     });
@@ -560,7 +574,8 @@ export class SearchPage implements OnInit {
 
   discoverSubscribe(feedInfo: any) {
     let feedUrl = feedInfo['url'];
-    let avatar = feedInfo['feedsAvatar'];
+    let feedsUrlHash =  feedInfo['feedsUrlHash'];
+    let avatar = this.avatarList[feedsUrlHash];
     let followers = feedInfo['followers'];
     let feedName = feedInfo['name'];
     let desc = feedInfo['description'];
@@ -716,10 +731,40 @@ export class SearchPage implements OnInit {
           return item.nodeId == nodeId && feedId == srcFeedId;
     });
 
+
+    let feedsUrlHash =  feed['feedsUrlHash'];
+    feed.feedsAvatar = this.avatarList[feedsUrlHash];
     feed["carrierAddress"] = addingchannel["carrierAddress"];
 
     this.native.go('discoverfeedinfo', {
       params:feed
     });
   }
+
+  getHttpsAvatar(feeds:any){
+    let feedsUrlHash =  feeds['feedsUrlHash'];
+    let  avatarUrl =  ApiUrl.getAvatar+"?feedsUrlHash="+feedsUrlHash;
+    this.httpService.ajaxGet(avatarUrl,false).then((result:any)=>{
+            let code = result['code'];
+            if(code === 200){
+              let data = result['data'];
+              this.avatarList[feedsUrlHash] = data['feedsAvatar'];
+              this.dataHelper.setHttpsAvatarList(this.avatarList);
+              this.caceAvatarList();
+            }
+    }).catch((err)=>{
+
+    });
+}
+
+getAvatarList(discoverSquareList:any){
+  _.forEach(discoverSquareList,(item)=>{
+    this.getHttpsAvatar(item);
+  });
+}
+
+caceAvatarList(){
+  this.dataHelper.saveData("feeds:httpsAvatarList",this.avatarList);
+}
+
 }

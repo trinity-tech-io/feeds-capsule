@@ -108,7 +108,8 @@
             (click)="clickItem(feed)"
           >
             <div class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode">
-              <img src={{parseChannelAvatar(feed.feedsAvatar)}}>
+              <div *ngIf="!avatarList[feed.feedsUrlHash]" class="defaultAvatar"></div>
+              <img *ngIf="avatarList[feed.feedsUrlHash]" src={{avatarList[feed.feedsUrlHash]}}>
             </div>
           </ion-col>
           <ion-col
