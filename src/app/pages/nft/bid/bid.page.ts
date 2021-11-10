@@ -1,4 +1,4 @@
-import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { ActivatedRoute } from '@angular/router';
 import { ThemeService } from '../../../services/theme.service';
@@ -11,15 +11,12 @@ import { PopupProvider } from 'src/app/services/popup';
 import { PopoverController } from '@ionic/angular';
 import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
 import { IPFSService } from 'src/app/services/ipfs.service';
-import { NFTPersistenceHelper } from 'src/app/services/nft_persistence_helper.service';
 import { HttpService } from '../../../services/HttpService';
 import _ from 'lodash';
 import { UtilService } from 'src/app/services/utilService';
 import { Config } from 'src/app/services/config';
-import { FileHelperService } from 'src/app/services/FileHelperService';
-import { ApiUrl } from 'src/app/services/ApiUrl';
 import { NFTContractHelperService } from 'src/app/services/nftcontract_helper.service';
-
+import { DataHelper } from 'src/app/services/DataHelper';
 type detail = {
   type: string;
   details: string;
@@ -69,6 +66,11 @@ export class BidPage implements OnInit {
   private tokenCreateTime: number = null;
   private didUri: string = null
   private sellerDidUri: string = null;
+  public did: string = null;
+  public didDispaly: string = null;
+  public didName: string = null;
+  private NftDidList: any = null;
+  public isSwitch: boolean = false;
   constructor(
     private translate: TranslateService,
     private event: Events,
@@ -81,16 +83,16 @@ export class BidPage implements OnInit {
     public popupProvider: PopupProvider,
     private nftContractControllerService: NFTContractControllerService,
     private ipfsService: IPFSService,
-    private nftPersistenceHelper: NFTPersistenceHelper,
     private httpService: HttpService,
-    private fileHelperService: FileHelperService,
-    private zone: NgZone,
-    private nftContractHelperService: NFTContractHelperService
+    private nftContractHelperService: NFTContractHelperService,
+    private dataHelper: DataHelper
   ) {}
 
   ngOnInit() {
     this.activatedRoute.queryParams.subscribe((queryParams: FeedsData.NFTItem) => {
       this.curAssetItem = _.cloneDeep(queryParams);
+      //this.did = 'imZgAo9W38Vzo1pJQfHp6NJp9LZsrnRPRr'.replace("did:elastos:","");
+      this.didDispaly = UtilService.resolveDid(this.did);
       let asset = queryParams.asset || '';
       this.imageType = queryParams.type || '';
       this.showType = queryParams.showType;
@@ -120,7 +122,8 @@ export class BidPage implements OnInit {
   }
 
  ionViewWillEnter() {
-
+    this.NftDidList= this.dataHelper.getNftDidList() || {};
+    this.handleNftDid();
     this.accAddress =
       this.nftContractControllerService.getAccountAddress() || null;
     this.developerMode = this.feedService.getDeveloperMode();
@@ -300,7 +303,7 @@ export class BidPage implements OnInit {
       this.native.toast_trans('common.connectWallet');
       return;
     }
-    
+
     this.didUri = await this.getDidUri();
     if(this.didUri === null){
       this.native.toast("common.didUriNull");
@@ -406,14 +409,6 @@ export class BidPage implements OnInit {
       fileName = imageUri;
       fetchUrl = this.ipfsService.getNFTGetUrl() + imageUri;
     }
-
-    // this.fileHelperService.getNFTData(fetchUrl, fileName, kind).then((data) => {
-    //   setTimeout(() => {
-    //     this.zone.run(() => {
-    //       this.assetUri = data;
-    //     });
-    //   }, 300);
-    // });
     return fetchUrl;
   }
 
@@ -507,4 +502,49 @@ export class BidPage implements OnInit {
     let didUri = await this.ipfsService.generateDidUri(didUriJSON);
     return didUri;
   }
+
+  handleNftDid(){
+    if(this.did === null){
+      return;
+    }
+   let didname =  this.NftDidList[this.did] || null;
+   if(didname === null){
+     let did = "did:elastos:"+this.did;
+      this.feedService.resolveDidObject(did).then((result)=>{
+               this.didName = result["name"] || null;
+               if(this.didName!=null){
+                  this.isSwitch = true;
+               }
+               this.NftDidList[this.did] =  this.didName;
+               this.dataHelper.setNftDidList(this.NftDidList);
+      }).catch(()=>{
+      });
+   }else{
+      this.didName = this.NftDidList[this.did];
+      this.isSwitch = true;
+   }
+  }
+
+  switchDid(){
+   if(this.didName!=null){
+      this.didName = null;
+   }else{
+    this.didName = this.NftDidList[this.did];
+   }
+  }
+
+  copyDid(){
+    if(this.did === null){
+      return;
+    }
+   if(this.didName === null){
+    this.native
+    .copyClipboard(this.did)
+    .then(() => {
+      this.native.toast_trans('common.textcopied');
+    })
+    .catch(() => {});
+   }
+  }
+
 }

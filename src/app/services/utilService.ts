@@ -607,4 +607,10 @@ public static  zoomImgSize(imgWidth:any, imgHeight:any, maxWidth:any, maxHeight:
     return decStr;
   }
 
+  public static resolveDid(did: string){
+    if (!did) return '';
+    let len = did.length;
+    return did.substring(0, 18) + '...' + did.substring(len - 4, len);
+  }
+
 }

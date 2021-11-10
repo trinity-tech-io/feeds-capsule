@@ -1,5 +1,4 @@
-import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
-import { Platform } from '@ionic/angular';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { ActivatedRoute } from '@angular/router';
 import { NativeService } from '../../../services/NativeService';
@@ -14,13 +13,10 @@ import { ViewHelper } from 'src/app/services/viewhelper.service';
 import { PopupProvider } from 'src/app/services/popup';
 import { IPFSService } from 'src/app/services/ipfs.service';
 import { NFTPersistenceHelper } from 'src/app/services/nft_persistence_helper.service';
-import { PhotoLibrary } from '@ionic-native/photo-library/ngx';
 import { MenuService } from 'src/app/services/MenuService';
 import _ from 'lodash';
 import { Logger } from 'src/app/services/logger';
-import { FileHelperService } from 'src/app/services/FileHelperService';
-import { HttpService } from '../../../services/HttpService';
-import { ApiUrl } from 'src/app/services/ApiUrl';
+import { DataHelper } from 'src/app/services/DataHelper';
 
 type detail = {
   type: string;
@@ -71,6 +67,12 @@ export class AssetdetailsPage implements OnInit {
   private tokenCreateTime: number = null;
 
   private didUri: string = '';
+  public did: string = null;
+  public didDispaly: string = null;
+  public didName: string = null;
+  private NftDidList: any = null;
+  public isSwitch: boolean = false;
+
   constructor(
     private translate: TranslateService,
     private events: Events,
@@ -84,18 +86,16 @@ export class AssetdetailsPage implements OnInit {
     public popupProvider: PopupProvider,
     private ipfsService: IPFSService,
     private nftPersistenceHelper: NFTPersistenceHelper,
-    private photoLibrary: PhotoLibrary,
     private menuService: MenuService,
-    private platform: Platform,
-    private fileHelperService: FileHelperService,
-    private zone: NgZone,
-    private httpService: HttpService
+    private dataHelper: DataHelper
   ) {}
 
   ngOnInit() {
     this.activatedRoute.queryParams.subscribe(queryParams => {
       this.assItem = _.cloneDeep(queryParams);
       let asset = queryParams.asset || {};
+      //this.did = 'imZgAo9W38Vzo1pJQfHp6NJp9LZsrnRPRr'.replace("did:elastos:","");
+      this.didDispaly = UtilService.resolveDid(this.did);
       this.imageType = queryParams.type || "";
       this.owner = queryParams.name || '';
       this.name = queryParams.name || '';
@@ -126,6 +126,8 @@ export class AssetdetailsPage implements OnInit {
   }
 
   ionViewWillEnter() {
+    this.NftDidList= this.dataHelper.getNftDidList() || {};
+    this.handleNftDid();
     let elaPrice = this.feedService.getElaUsdPrice();
     this.price = this.assItem.fixedAmount || null;
     if(this.price!=null){
@@ -585,5 +587,49 @@ export class AssetdetailsPage implements OnInit {
       );
       return dateCreated;
     }
+
+    handleNftDid(){
+      if(this.did === null){
+        return;
+      }
+      let didname =  this.NftDidList[this.did] || null;
+      if(didname === null){
+        let did = "did:elastos:"+this.did;
+         this.feedService.resolveDidObject(did).then((result)=>{
+                  this.didName = result["name"] || null;
+                  if(this.didName!=null){
+                     this.isSwitch = true;
+                  }
+                  this.NftDidList[this.did] =  this.didName;
+                  this.dataHelper.setNftDidList(this.NftDidList);
+         }).catch(()=>{
+         });
+      }else{
+         this.didName = this.NftDidList[this.did];
+         this.isSwitch = true;
+      }
+     }
+
+     switchDid(){
+      if(this.didName!=null){
+         this.didName = null;
+      }else{
+       this.didName = this.NftDidList[this.did];
+      }
+     }
+
+     copyDid(){
+      if(this.did === null){
+        return;
+      }
+      if(this.didName === null){
+       this.native
+       .copyClipboard(this.did)
+       .then(() => {
+         this.native.toast_trans('common.textcopied');
+       })
+       .catch(() => {});
+      }
+     }
 
 }
