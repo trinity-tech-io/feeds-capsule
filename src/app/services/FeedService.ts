@@ -7784,4 +7784,29 @@ export class FeedService {
     }
     return didJson;
   }
+
+  resolveDidObject(did:string){
+    return new Promise((resolve, reject) => {
+      didManager.resolveDidDocument(
+        did,
+        true,
+        didDocument => {
+          let didObject = didDocument || null;
+          if(didObject != null){
+            let nameCredential = didDocument.getCredential("#name").getSubject() || null;
+            if(nameCredential === null){
+              resolve({"name":null});
+              return;
+            }
+            let resultObjcet = {"name":nameCredential.name};
+            resolve(resultObjcet)
+          }
+
+        },
+        err => {
+          reject(null);
+        },
+      );
+    });
+  }
 }

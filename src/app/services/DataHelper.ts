@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { StorageService } from 'src/app/services/StorageService';
 
-import * as _ from 'lodash';
+import _ from 'lodash';
 import { UtilService } from './utilService';
 import { Config } from './config';
 import { SignInData } from './FeedService';
@@ -11,6 +11,7 @@ let TAG: string = 'DataHelper';
 
 @Injectable()
 export class DataHelper {
+  private nftDidList: any = null;
   private httpsAvatarList: any = null;
   private feedsSortType: number = null;
   private channelsMap: { [nodeChannelId: string]: FeedsData.Channels } = {};
@@ -2656,5 +2657,13 @@ export class DataHelper {
 
   getHttpsAvatarList(){
     return this.httpsAvatarList;
+  }
+
+  setNftDidList(nftDidList: any){
+     this.nftDidList = nftDidList;
+  }
+
+  getNftDidList(){
+    return this.nftDidList;
   }
 }

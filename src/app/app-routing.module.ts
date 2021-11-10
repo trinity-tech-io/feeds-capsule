@@ -170,11 +170,6 @@ const routes: Routes = [
     loadChildren: './pages/feeds/search/search.module#SearchPageModule',
   },
   {
-    path: 'currencyviewall',
-    loadChildren:
-      './pages/nft/currencyviewall/currencyviewall.module#CurrencyviewallPageModule',
-  },
-  {
     path: 'learnmore',
     loadChildren: './pages/learnmore/learnmore.module#LearnmorePageModule',
   },
