@@ -18,15 +18,12 @@ import { ViewHelper } from 'src/app/services/viewhelper.service';
 import { WalletConnectControllerService } from 'src/app/services/walletconnect_controller.service';
 import { UtilService } from 'src/app/services/utilService';
 import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
-import { HttpService } from '../../../services/HttpService';
 import { IPFSService } from 'src/app/services/ipfs.service';
 import { NFTPersistenceHelper } from 'src/app/services/nft_persistence_helper.service';
 import { PhotoLibrary } from '@ionic-native/photo-library/ngx';
 import { DataHelper } from 'src/app/services/DataHelper';
-import { LanguageService } from 'src/app/services/language.service';
 import { Logger } from 'src/app/services/logger';
 import { NFTContractHelperService } from 'src/app/services/nftcontract_helper.service';
-import { PasarAssistService } from 'src/app/services/pasar_assist.service';
 let TAG: string = 'Feeds-profile';
 
 @Component({
@@ -185,14 +182,11 @@ export class ProfilePage implements OnInit {
     private storageService: StorageService,
     private walletConnectControllerService: WalletConnectControllerService,
     private nftContractControllerService: NFTContractControllerService,
-    private httpService: HttpService,
     private ipfsService: IPFSService,
     private nftPersistenceHelper: NFTPersistenceHelper,
     private photoLibrary: PhotoLibrary,
     private dataHelper :DataHelper,
-    private languageService: LanguageService,
     private nftContractHelperService: NFTContractHelperService,
-    private pasarAssistService: PasarAssistService
   ) {
   }
 
@@ -264,6 +258,11 @@ export class ProfilePage implements OnInit {
 
   async addProflieEvent() {
     this.updateWalletAddress(null);
+    this.events.subscribe(FeedsEvent.PublishType.clickDisconnectWallet,()=>{
+      this.walletAddress = '';
+      this.walletAddressStr = '';
+      this.ownNftSum = 0;
+    });
     this.events.subscribe(FeedsEvent.PublishType.nftUpdatePrice, async (nftPrice) => {
       // this.price = nftPrice;
       await this.getCollectiblesList()
@@ -354,9 +353,10 @@ export class ProfilePage implements OnInit {
     this.events.subscribe(
       FeedsEvent.PublishType.walletAccountChanged,
       (walletAccount) => {
+        console.log("FeedsEvent.PublishType.walletConnectedRefreshPage",walletAccount)
         this.zone.run(async () => {
           this.updateWalletAddress(walletAccount);
-          await this.getOwnNftSum();
+          //await this.getOwnNftSum();
           if (walletAccount != '') {
             await this.getCollectiblesList();
           }
@@ -364,26 +364,6 @@ export class ProfilePage implements OnInit {
       },
     );
 
-    this.events.subscribe(
-      FeedsEvent.PublishType.walletConnectedRefreshPage,
-      () => {
-        this.zone.run(async () => {
-          this.updateWalletAddress(null);
-          await this.getOwnNftSum();
-          await this.getCollectiblesList();
-        });
-      },
-    );
-
-    this.events.subscribe(
-      FeedsEvent.PublishType.walletDisconnectedRefreshPage,
-      () => {
-        this.zone.run(async() => {
-          this.updateWalletAddress(null);
-          await this.getOwnNftSum();
-        });
-      },
-    );
 
     this.hideDeletedPosts = this.feedService.getHideDeletedPosts();
     this.clientHeight = screen.availHeight;
@@ -731,17 +711,15 @@ export class ProfilePage implements OnInit {
     this.events.unsubscribe(FeedsEvent.PublishType.hideDeletedPosts);
     this.events.unsubscribe(FeedsEvent.PublishType.startLoading);
     this.events.unsubscribe(FeedsEvent.PublishType.endLoading);
-    this.events.unsubscribe(
-      FeedsEvent.PublishType.walletDisconnectedRefreshPage,
-    );
-    this.events.unsubscribe(FeedsEvent.PublishType.walletConnectedRefreshPage);
     this.events.unsubscribe(FeedsEvent.PublishType.nftCancelOrder);
+    this.events.unsubscribe(FeedsEvent.PublishType.walletAccountChanged);
     this.events.unsubscribe(FeedsEvent.PublishType.nftUpdateList);
     this.events.unsubscribe(FeedsEvent.PublishType.clickDialog);
     this.events.unsubscribe(FeedsEvent.PublishType.savePicture);
     this.events.unsubscribe(FeedsEvent.PublishType.nftdisclaimer);
 
     this.events.unsubscribe(FeedsEvent.PublishType.nftUpdatePrice);
+    this.events.unsubscribe(FeedsEvent.PublishType.clickDisconnectWallet);
     this.clearDownStatus();
     this.native.hideLoading();
     this.hideFullScreen();
@@ -1765,10 +1743,11 @@ export class ProfilePage implements OnInit {
     if (this.popover != null) {
       this.popover.dismiss();
       await that.walletConnectControllerService.disconnect();
-      that.walletConnectControllerService.destroyWalletConnect();
-      that.nftContractControllerService.init();
-      this.walletAddress = '';
-      this.walletAddressStr = '';
+      await that.walletConnectControllerService.destroyWalletConnect();
+      await that.nftContractControllerService.init();
+      that.walletAddress = '';
+      that.walletAddressStr = '';
+      that.ownNftSum = 0;
     }
   }
 
@@ -1815,7 +1794,7 @@ export class ProfilePage implements OnInit {
       return;
     }
     this.collectiblesList = list;
-    //this.ownNftSum = this.collectiblesList.length;
+    this.ownNftSum = this.collectiblesList.length;
   }
 
   async processNotOnSaleOrder(accAddress: string): Promise<string> {
