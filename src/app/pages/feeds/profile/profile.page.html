@@ -18,7 +18,7 @@
       <img class="moremenu" (click)="profiledetail()"
       [src]="!theme.darkMode ? './assets/images/dots-three-vertical-dark.svg' : './assets/images/dots-three-vertical-dark.svg'">
        <div *ngIf="avatar===''" class="defaultAvatar"></div>
-       <img *ngIf="avatar!=''" (click)="profiledetail()" [src]="avatar" style="border: 1px solid #f8f2ff;overflow:hidden;border-radius:50%;width:56px;height:56px;object-fit:cover;">
+       <img *ngIf="avatar!=''" (click)="profiledetail()" [src]="avatar" style="border: 1px solid #f8f2ff;overflow:hidden;border-radius:50%;width:56px;height:56px;object-fit:cover;"> -->
        <ion-card-title>{{name}}</ion-card-title>
        <ion-card-subtitle *ngIf="walletAddressStr!=''"><span (click)="clickWalletAddr()">{{walletAddressStr}}</span><ion-icon (click)="copyWalletAddr()" style="vertical-align:middle;margin-left:5px;" name="copy-outline"></ion-icon></ion-card-subtitle>
        <span class="connectWallet" (click)="connectWallet()" *ngIf="walletAddressStr===''">{{"WalletteachPage.connectWallet" | translate}}</span>
@@ -73,9 +73,10 @@
         </ion-button>
       </ion-row>
     </div>
-    <ion-row *ngIf="selectType === 'ProfilePage.collectibles'&&ownNftSum>0" class="leftrightrow">
-      <ion-col size="6" *ngFor="let item of collectiblesList">
+    <ion-row *ngIf="selectType === 'ProfilePage.collectibles'&&ownNftSum>0" class="leftrightrow" id="profileCollectibles">
+      <ion-col size="6" *ngFor="let item of collectiblesList" class="profileCollectiblesCol" id={{handleId(item)}}>
         <app-assetitem
+        [isAutoGet] = "isAutoGet"
         [elaPrice] = "elaPrice"
         [assetItem] = "item"
         (clickAssetItem) = "clickAssetItem($event)"

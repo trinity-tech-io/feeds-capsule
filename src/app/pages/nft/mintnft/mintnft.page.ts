@@ -220,7 +220,6 @@ export class MintnftPage implements OnInit {
         let nftRoyalties = UtilService.accMul(parseInt(this.nftRoyalties),10000);
 
         let didUri = await this.getDidUri();
-        console.log("====didUri======"+didUri);
         return this.mintContract(tokenId, jsonHash, this.nftQuantity,nftRoyalties.toString(),didUri);
       })
       .then(mintResult => {

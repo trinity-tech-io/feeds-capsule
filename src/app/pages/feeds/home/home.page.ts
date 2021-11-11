@@ -1042,7 +1042,7 @@ export class HomePage implements OnInit {
         this.pasarGridisLoadimage = {};
         this.setPasarGridVisibleareaImage();
         clearTimeout(sid);
-       },50);
+       },100);
        return;
      }
 
@@ -1051,7 +1051,7 @@ export class HomePage implements OnInit {
         this.pasarListisLoadimage = {};
         this.setPasarListVisibleareaImage();
         clearTimeout(sid);
-       },50);
+       },100);
        return;
      }
   }
