@@ -1,6 +1,13 @@
 <app-titlebar></app-titlebar>
-<!-- <div *ngIf="connectionStatus == 1" class="offline-header"></div> -->
-  <ion-content>
+ <ion-content style="max-height: 58px;">
+  <div class="search-container" [class.dark-search-container]="theme.darkMode" style="position:relative;width: 100%;padding:0px;">
+    <img *ngIf="isSearch===''" src="./assets/images/scan.svg" class="scanService" [ngStyle]="scanServiceStyle" (click)="scanService()"/>
+    <form action="javascript:return true;" style="display: flex;justify-content: center;width: 100%;">
+      <ion-searchbar #searchbar  [(ngModel)]="isSearch" inputmode=""  enterkeyhint="search" placeholder="{{ 'SearchPage.searchFeeds' | translate }}" (keyup)="getItems($event)" mode="ios" [ngModelOptions]="{standalone: true}" (ionClear)="ionClear()"></ion-searchbar>
+    </form>
+  </div>
+</ion-content>
+  <ion-content (ionScroll)="ionScroll()" [scrollEvents]="true">
     <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" pullFactor="0.5">
       <ion-refresher-content
         class="refresh"
@@ -10,16 +17,7 @@
         refreshingText="{{'common.beingRefresh'|translate}}">
       </ion-refresher-content>
     </ion-refresher>
-
     <ion-list  class="channel-list" [class.darkChannelList]="theme.darkMode">
-
-      <div class="search-container" [class.dark-search-container]="theme.darkMode">
-        <img *ngIf="isSearch===''" src="./assets/images/scan.svg" class="scanService" [ngStyle]="scanServiceStyle" (click)="scanService()"/>
-        <form action="javascript:return true;" style="display: flex;justify-content: center;width: 100%;">
-          <ion-searchbar #searchbar  [(ngModel)]="isSearch" inputmode=""  enterkeyhint="search" placeholder="{{ 'SearchPage.searchFeeds' | translate }}" (keyup)="getItems($event)" mode="ios" [ngModelOptions]="{standalone: true}" (ionClear)="ionClear()"></ion-searchbar>
-        </form>
-      </div>
-
       <!-- adding Feed-->
       <ion-item
           *ngFor="let addingchannel of addingChanneList"
@@ -98,6 +96,8 @@
 
       <!-- discoverSquare Feed-->
         <ion-item
+        class="discoverSquareFeed"
+        id = {{feed.feedsUrlHash}}
         lines="none"
         *ngFor="let feed of discoverSquareList"
       >
@@ -108,8 +108,8 @@
             (click)="clickItem(feed)"
           >
             <div class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode">
-              <div *ngIf="!avatarList[feed.feedsUrlHash]" class="defaultAvatar"></div>
-              <img *ngIf="avatarList[feed.feedsUrlHash]" src={{avatarList[feed.feedsUrlHash]}}>
+              <!-- <div *ngIf="!avatarList[feed.feedsUrlHash]" class="defaultAvatar"></div> -->
+              <img src="./assets/icon/reserve.svg"  id={{handleId(feed)}}>
             </div>
           </ion-col>
           <ion-col

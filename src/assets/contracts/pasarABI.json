@@ -530,6 +530,11 @@
             "internalType": "uint256",
             "name": "lastActionTime",
             "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "platformFee",
+            "type": "uint256"
           }
         ],
         "internalType": "struct IPasarInfo.BuyerInfo",
@@ -591,6 +596,11 @@
             "internalType": "uint256",
             "name": "lastActionTime",
             "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "platformFee",
+            "type": "uint256"
           }
         ],
         "internalType": "struct IPasarInfo.BuyerInfo",
@@ -651,6 +661,11 @@
           {
             "internalType": "uint256",
             "name": "lastActionTime",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "platformFee",
             "type": "uint256"
           }
         ],
@@ -1746,6 +1761,11 @@
             "internalType": "uint256",
             "name": "lastActionTime",
             "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "platformFee",
+            "type": "uint256"
           }
         ],
         "internalType": "struct IPasarInfo.SellerInfo",
@@ -1807,6 +1827,11 @@
             "internalType": "uint256",
             "name": "lastActionTime",
             "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "platformFee",
+            "type": "uint256"
           }
         ],
         "internalType": "struct IPasarInfo.SellerInfo",
@@ -1867,6 +1892,11 @@
           {
             "internalType": "uint256",
             "name": "lastActionTime",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "platformFee",
             "type": "uint256"
           }
         ],
