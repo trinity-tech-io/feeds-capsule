@@ -15,7 +15,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { DataHelper } from 'src/app/services/DataHelper';
-import _ from 'lodash';
+import _, { reject }  from 'lodash';
+import { resolve } from 'url';
 @Component({
   selector: 'app-search',
   templateUrl: './search.page.html',
@@ -47,7 +48,8 @@ export class SearchPage implements OnInit {
   public searchUnfollowedFeed = [];
   public scanServiceStyle = { right: '' };
   public curtotalNum: number = 0;
-  public avatarList:any = {};
+  private clientHeight: number = 0;
+  private pasarGridisLoadimage: any = {};
   // {
   //   "nodeId": "8Dsp9jkTg8TEfCkwMoXimwjLeaRidMczLZYNWbKGj1SF",
   //   "did": "did:elastos:ibfZa4jQ1QgDRP9rpfbUbZWpXgbd9z7oKF",
@@ -158,6 +160,7 @@ export class SearchPage implements OnInit {
   }
 
   ionViewWillEnter() {
+    this.clientHeight = screen.availHeight;
     this.events.subscribe(FeedsEvent.PublishType.search, () => {
       this.initTile();
       this.init();
@@ -180,7 +183,7 @@ export class SearchPage implements OnInit {
     } else {
       this.httpAllData = _.cloneDeep(discoverfeeds);
       this.discoverSquareList = _.cloneDeep(discoverfeeds);
-      this.avatarList = this.dataHelper.getHttpsAvatarList();
+      this.refreshDiscoverSquareFeedAvatar()
     }
     this.developerMode = this.feedService.getDeveloperMode();
     this.connectionStatus = this.feedService.getConnectionStatus();
@@ -442,7 +445,7 @@ export class SearchPage implements OnInit {
             }
             return;
           }
-          this.getAvatarList(arr);
+          this.refreshDiscoverSquareFeedAvatar()
           this.curtotalNum = this.curtotalNum + arr.length;
           this.handleCache(arr);
           let discoverSquareList = this.feedService.getDiscoverfeeds();
@@ -481,7 +484,7 @@ export class SearchPage implements OnInit {
           this.isLoading = false;
           this.totalNum = result['data']['total'];
           let discoverSquareList = result['data']['result'] || [];
-          this.getAvatarList(discoverSquareList);
+          this.refreshDiscoverSquareFeedAvatar();
           this.curtotalNum = discoverSquareList.length;
           this.handleCache(discoverSquareList);
           discoverSquareList = this.feedService.getDiscoverfeeds();
@@ -505,11 +508,23 @@ export class SearchPage implements OnInit {
   }
 
   clickItem(feed: any) {
-    this.removeSubscribe();
-    let feedsUrlHash =  feed['feedsUrlHash'];
-    feed.feedsAvatar = this.avatarList[feedsUrlHash];
-    this.native.go('discoverfeedinfo', {
-      params: feed,
+    let isClick = false;
+    if(isClick){
+        return;
+    }
+    isClick = true;
+    let feedsUrlHash = feed.feedsUrlHash
+    this.getAvatar(feedsUrlHash).then((result)=>{
+      isClick = false;
+      if(result!=null){
+        this.removeSubscribe();
+        feed.feedsAvatar = result;
+        this.native.go('discoverfeedinfo', {
+          params: feed,
+        });
+      }
+    }).catch((err)=>{
+      isClick = false;
     });
   }
 
@@ -575,21 +590,34 @@ export class SearchPage implements OnInit {
   discoverSubscribe(feedInfo: any) {
     let feedUrl = feedInfo['url'];
     let feedsUrlHash =  feedInfo['feedsUrlHash'];
-    let avatar = this.avatarList[feedsUrlHash];
     let followers = feedInfo['followers'];
     let feedName = feedInfo['name'];
     let desc = feedInfo['description'];
     let ownerName = feedInfo['ownerName'];
+    //let avatar = this.avatarList[feedsUrlHash];
+    let isClick = false;
+    if(isClick){
+      return;
+    }
+    isClick = true;
+    this.getAvatar(feedsUrlHash).then((result:any)=>{
+      isClick = false;
+      if(result!=null){
+        let avatar = result;
+        this.feedService
+        .addFeed(feedUrl, avatar, followers, feedName, ownerName, desc)
+        .then(isSuccess => {
+          if (isSuccess) {
+            this.zone.run(() => {
+            });
+          }
+        })
+        .catch(err => {});
+      }
+    }).catch((err)=>{
+      isClick = false;
+    });
 
-    this.feedService
-      .addFeed(feedUrl, avatar, followers, feedName, ownerName, desc)
-      .then(isSuccess => {
-        if (isSuccess) {
-          this.zone.run(() => {
-          });
-        }
-      })
-      .catch(err => {});
   }
 
   checkFeedUrl(feedUrl: string): boolean {
@@ -722,7 +750,10 @@ export class SearchPage implements OnInit {
 
   clickAddingchannel(addingchannel:any){
 
-    this.removeSubscribe();
+    let isClick = false;
+    if(isClick){
+        return;
+    }
     let nodeId = addingchannel["nodeId"];
     let srcFeedId = addingchannel["feedId"];
     let feed = _.find(this.httpAllData,(item)=>{
@@ -730,41 +761,128 @@ export class SearchPage implements OnInit {
       let feedId = feedUrl.split('/')[4];
           return item.nodeId == nodeId && feedId == srcFeedId;
     });
-
-
-    let feedsUrlHash =  feed['feedsUrlHash'];
-    feed.feedsAvatar = this.avatarList[feedsUrlHash];
-    feed["carrierAddress"] = addingchannel["carrierAddress"];
-
-    this.native.go('discoverfeedinfo', {
-      params:feed
+    let feedsUrlHash = feed['feedsUrlHash'];
+    isClick = true;
+    this.getAvatar(feedsUrlHash).then((result)=>{
+      isClick = false;
+      if(result!=null){
+        this.removeSubscribe();
+        feed["carrierAddress"] = addingchannel["carrierAddress"];
+        feed.feedsAvatar = result;
+        this.native.go('discoverfeedinfo', {
+          params: feed,
+        });
+      }
+    }).catch((err)=>{
+      isClick = false;
     });
   }
 
-  getHttpsAvatar(feeds:any){
-    let feedsUrlHash =  feeds['feedsUrlHash'];
-    let  avatarUrl =  ApiUrl.getAvatar+"?feedsUrlHash="+feedsUrlHash;
-    this.httpService.ajaxGet(avatarUrl,false).then((result:any)=>{
+
+ionScroll(){
+  this.native.throttle(this.setDiscoverSquareFeedAvatar(), 200, this, true);
+}
+
+setDiscoverSquareFeedAvatar(){
+  let discoverSquareFeed = document.getElementsByClassName("discoverSquareFeed") || [];
+  let len = discoverSquareFeed.length;
+  for(let itemIndex = 0;itemIndex<len;itemIndex++){
+    let item = discoverSquareFeed[itemIndex];
+    let feedsUrlHash = item.getAttribute("id");
+    let thumbImage =  document.getElementById(feedsUrlHash+'-avatar');
+    let srcStr =  thumbImage.getAttribute("src") || "";
+    let isload = this.pasarGridisLoadimage[feedsUrlHash] || '';
+    try {
+       if (
+        feedsUrlHash != '' &&
+         thumbImage.getBoundingClientRect().top >= -100 &&
+         thumbImage.getBoundingClientRect().top <= this.clientHeight
+       ) {
+         if(isload === ""){
+          this.pasarGridisLoadimage[feedsUrlHash] = '12';
+          let key = feedsUrlHash+"-Channel-avatar";
+          this.dataHelper.loadData(key).then((result)=>{
+               if(result!=null){
+                this.zone.run(() => {
+                 this.pasarGridisLoadimage[feedsUrlHash] = '13';
+                 thumbImage.setAttribute("src",result);
+                });
+          }else{
+            let  avatarUrl =  ApiUrl.getAvatar+"?feedsUrlHash="+feedsUrlHash;
+            this.httpService.ajaxGet(avatarUrl,false).then((result:any)=>{
+                    let code = result['code'];
+                    if(code === 200){
+                      let data = result['data'];
+                      this.zone.run(() => {
+                        this.pasarGridisLoadimage[feedsUrlHash] = '13';
+                        thumbImage.setAttribute("src",data['feedsAvatar']);
+                       });
+                      this.dataHelper.saveData(key,data['feedsAvatar']);
+                    }
+            }).catch((err)=>{
+
+            });
+          }
+          }).catch(err=>{
+
+          })
+
+         }
+       }else{
+         srcStr = thumbImage.getAttribute('src') || '';
+         if (
+           thumbImage.getBoundingClientRect().top < -100 &&
+           this.pasarGridisLoadimage[feedsUrlHash] === '13' &&
+           srcStr != './assets/icon/reserve.svg'
+         ) {
+           this.pasarGridisLoadimage[feedsUrlHash] = '';
+           thumbImage.setAttribute('src', './assets/icon/reserve.svg');
+         }
+       }
+    } catch (error) {
+     this.pasarGridisLoadimage[feedsUrlHash] = '';
+     thumbImage.setAttribute('src', './assets/icon/reserve.svg');
+    }
+  }
+}
+
+refreshDiscoverSquareFeedAvatar(){
+  let sid = setTimeout(()=>{
+    this.pasarGridisLoadimage = {};
+    this.setDiscoverSquareFeedAvatar();
+    clearTimeout(sid);
+  },100);
+}
+
+handleId(feed:any){
+  return feed.feedsUrlHash+"-avatar";
+}
+
+getAvatar(feedsUrlHash: string){
+ return new Promise((resolve,reject)=>{
+  let key = feedsUrlHash+"-Channel-avatar";
+  this.dataHelper.loadData(key).then((result)=>{
+       if(result!=null){
+         resolve(result);
+       }else{
+      let  avatarUrl =  ApiUrl.getAvatar+"?feedsUrlHash="+feedsUrlHash;
+      this.httpService.ajaxGet(avatarUrl,false).then((result:any)=>{
             let code = result['code'];
             if(code === 200){
               let data = result['data'];
-              this.avatarList[feedsUrlHash] = data['feedsAvatar'];
-              this.dataHelper.setHttpsAvatarList(this.avatarList);
-              this.caceAvatarList();
+              resolve(data['feedsAvatar']);
+              this.dataHelper.saveData(key,data['feedsAvatar']);
+            }else{
+              resolve(null);
             }
     }).catch((err)=>{
-
+      reject(null)
     });
-}
-
-getAvatarList(discoverSquareList:any){
-  _.forEach(discoverSquareList,(item)=>{
-    this.getHttpsAvatar(item);
-  });
-}
-
-caceAvatarList(){
-  this.dataHelper.saveData("feeds:httpsAvatarList",this.avatarList);
+  }
+  }).catch(err=>{
+    reject(null)
+  })
+ });
 }
 
 }
