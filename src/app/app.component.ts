@@ -79,23 +79,23 @@ export class MyApp {
       this.initProfileData();
     });
 
-    this.events.subscribe(FeedsEvent.PublishType.walletAccountChanged, (walletAccount) => {
+    this.events.subscribe(FeedsEvent.PublishType.walletConnectedRefreshPage, (walletAccount) => {
       this.updateWalletAddress(walletAccount);
     });
 
-    this.events.subscribe(
-      FeedsEvent.PublishType.walletConnectedRefreshSM,
-      () => {
-        this.updateWalletAddress(null);
-      },
-    );
+    // this.events.subscribe(
+    //   FeedsEvent.PublishType.walletConnectedRefreshSM,
+    //   () => {
+    //     this.updateWalletAddress(null);
+    //   },
+    // );
 
-    this.events.subscribe(
-      FeedsEvent.PublishType.walletDisconnectedRefreshSM,
-      () => {
-        this.updateWalletAddress(null);
-      },
-    );
+    // this.events.subscribe(
+    //   FeedsEvent.PublishType.walletDisconnectedRefreshSM,
+    //   () => {
+    //     this.updateWalletAddress(null);
+    //   },
+    // );
   }
 
   initializeApp() {
@@ -395,6 +395,8 @@ export class MyApp {
       this.popoverController.dismiss();
       this.popover = null;
     }
+
+    this.events.unsubscribe(FeedsEvent.PublishType.walletConnectedRefreshPage);
   }
 
   profiledetail() {
@@ -515,10 +517,11 @@ export class MyApp {
     if (this.popover != null) {
       this.popover.dismiss();
       await that.walletConnectControllerService.disconnect();
-      that.walletConnectControllerService.destroyWalletConnect();
-      that.nftContractControllerService.init();
-      this.walletAddress = '';
-      this.walletAddressStr = '';
+      await that.walletConnectControllerService.destroyWalletConnect();
+      await that.nftContractControllerService.init();
+      that.walletAddress = '';
+      that.walletAddressStr = '';
+      that.events.publish(FeedsEvent.PublishType.clickDisconnectWallet);
     }
   }
 

@@ -172,7 +172,8 @@ declare namespace FeedsEvent {
     receiveNewPost = 'feeds:receiveNewPost',
     nftdisclaimer = "feeds:nftdisclaimer",
     nftBuyOrder = "feeds:nftBuyOrder",
-    mintNft = "feeds:mintNft"
+    mintNft = "feeds:mintNft",
+    clickDisconnectWallet = "feeds:clickDisconnectWallet"
   }
 
   type TipDialogData = {
