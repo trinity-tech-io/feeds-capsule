@@ -24,6 +24,7 @@ import { PhotoLibrary } from '@ionic-native/photo-library/ngx';
 import { DataHelper } from 'src/app/services/DataHelper';
 import { Logger } from 'src/app/services/logger';
 import { NFTContractHelperService } from 'src/app/services/nftcontract_helper.service';
+import { FileHelperService } from 'src/app/services/FileHelperService';
 let TAG: string = 'Feeds-profile';
 
 @Component({
@@ -164,6 +165,8 @@ export class ProfilePage implements OnInit {
 
   private isRefreshingCollectibles = false;
   private refreshingCollectiblesHelper: FeedsData.NFTItem[] = [];
+  public isAutoGet: string = 'unAuto';
+  private profileCollectiblesisLoadimage: any = {};
   constructor(
     private feedService: FeedService,
     public theme: ThemeService,
@@ -187,6 +190,7 @@ export class ProfilePage implements OnInit {
     private photoLibrary: PhotoLibrary,
     private dataHelper :DataHelper,
     private nftContractHelperService: NFTContractHelperService,
+    private fileHelperService: FileHelperService
   ) {
   }
 
@@ -257,7 +261,7 @@ export class ProfilePage implements OnInit {
   }
 
   async addProflieEvent() {
-    this.updateWalletAddress(null);
+    this.updateWalletAddress("");
     this.events.subscribe(FeedsEvent.PublishType.clickDisconnectWallet,()=>{
       this.walletAddress = '';
       this.walletAddressStr = '';
@@ -645,7 +649,6 @@ export class ProfilePage implements OnInit {
     this.elaPrice = this.feedService.getElaUsdPrice();
     this.events.subscribe(FeedsEvent.PublishType.addProflieEvent, async () => {
       this.elaPrice = this.feedService.getElaUsdPrice();
-      await this.getOwnNftSum();
       await this.getCollectiblesList();
       this.addProflieEvent();
       this.isAddProfile = true;
@@ -655,7 +658,8 @@ export class ProfilePage implements OnInit {
 
     this.channels = this.feedService.getMyChannelList() || [];
     this.myFeedsSum = this.channels.length;
-    await this.getOwnNftSum();
+
+    await this.getCollectiblesList();
 
     this.totalLikeList = this.sortLikeList() || [];
     this.likeSum = this.totalLikeList.length;
@@ -758,7 +762,6 @@ export class ProfilePage implements OnInit {
         break;
       case 'ProfilePage.collectibles':
         this.elaPrice = this.feedService.getElaUsdPrice();
-        await this.getOwnNftSum();
         await this.getCollectiblesList();
         break;
       case 'ProfilePage.myLikes':
@@ -784,7 +787,7 @@ export class ProfilePage implements OnInit {
   }
 
   async doRefresh(event: any) {
-    this.updateWalletAddress(null);
+    //this.updateWalletAddress(null);
     switch (this.selectType) {
       case 'ProfilePage.myFeeds':
         let sId1 = setTimeout(() => {
@@ -914,7 +917,87 @@ export class ProfilePage implements OnInit {
   ionScroll() {
     if (this.selectType === 'ProfilePage.myLikes') {
       this.native.throttle(this.setVisibleareaImage(), 200, this, true);
+    }else if(this.selectType === 'ProfilePage.collectibles'){
+      this.native.throttle(this.setCollectiblesVisibleareaImage(),200,this,true);
     }
+  }
+
+  setCollectiblesVisibleareaImage(){
+    let profileCollectibles = document.getElementById("profileCollectibles")|| null;
+    if(profileCollectibles === null){
+      return;
+    }
+    let profileCollectiblesCol = profileCollectibles.getElementsByClassName("profileCollectiblesCol") || null;
+    let len = profileCollectiblesCol.length;
+    for(let itemIndex = 0;itemIndex<len;itemIndex++){
+      let item = profileCollectiblesCol[itemIndex];
+      let id = item.getAttribute("id");
+      let arr = id.split("-");
+      let fileName = arr[0];
+      let kind = arr[1];
+      let thumbImage =  document.getElementById(fileName+"-thumbImage");
+      let srcStr =  thumbImage.getAttribute("src") || "";
+      let isload = this.profileCollectiblesisLoadimage[fileName] || '';
+      try {
+         if (
+           id != '' &&
+           thumbImage.getBoundingClientRect().top >= -100 &&
+           thumbImage.getBoundingClientRect().top <= this.clientHeight
+         ) {
+           if(isload === ""){
+             let fetchUrl = this.ipfsService.getNFTGetUrl() + fileName;
+             this.profileCollectiblesisLoadimage[fileName] = '12';
+             this.fileHelperService.getNFTData(fetchUrl,fileName, kind).then((data) => {
+               this.zone.run(() => {
+                 this.profileCollectiblesisLoadimage[fileName] = '13';
+                 thumbImage.setAttribute("src",data);
+               });
+             });
+           }
+         }else{
+           srcStr = thumbImage.getAttribute('src') || '';
+           if (
+             thumbImage.getBoundingClientRect().top < -100 &&
+             this.profileCollectiblesisLoadimage[fileName] === '13' &&
+             srcStr != './assets/icon/reserve.svg'
+           ) {
+             this.profileCollectiblesisLoadimage[fileName] = '';
+             thumbImage.setAttribute('src', './assets/icon/reserve.svg');
+           }
+         }
+      } catch (error) {
+       this.profileCollectiblesisLoadimage[fileName] = '';
+       thumbImage.setAttribute('src', './assets/icon/reserve.svg');
+      }
+    }
+
+  }
+
+  refreshCollectiblesVisibleareaImage(){
+    if(this.selectType === "ProfilePage.collectibles"){
+     let sid = setTimeout(()=>{
+      this.profileCollectiblesisLoadimage = {};
+       this.setCollectiblesVisibleareaImage();
+       clearTimeout(sid);
+      },200);
+    }
+  }
+
+
+
+  handleId(item:any){
+    let thumbnailUri = item['thumbnail'];
+    let kind = item["kind"];
+    if (kind === "gif") {
+      thumbnailUri = item['asset'];
+    }
+
+    if (thumbnailUri.indexOf('feeds:imgage:') > -1) {
+      thumbnailUri = thumbnailUri.replace('feeds:imgage:', '');
+    } else if (thumbnailUri.indexOf('feeds:image:') > -1) {
+      thumbnailUri = thumbnailUri.replace('feeds:image:', '');
+    }
+    return thumbnailUri+"-"+kind;
   }
 
   setVisibleareaImage() {
@@ -1711,7 +1794,7 @@ export class ProfilePage implements OnInit {
 
   async connectWallet() {
     await this.walletConnectControllerService.connect();
-    this.updateWalletAddress(null);
+    //this.updateWalletAddress(null);
   }
 
   copyWalletAddr() {
@@ -1758,6 +1841,9 @@ export class ProfilePage implements OnInit {
       this.walletAddress = walletAccount;
     Logger.log(TAG, 'Update WalletAddress', this.walletAddress);
     this.walletAddressStr = UtilService.resolveAddress(this.walletAddress);
+    if(this.walletAddress===""){
+      this.ownNftSum = 0;
+    }
   }
 
   subsciptions() {
@@ -1791,10 +1877,12 @@ export class ProfilePage implements OnInit {
     let list = this.nftPersistenceHelper.getCollectiblesList(accAddress);
     if (list.length === 0) {
       await this.refreshCollectibles();
+      this.refreshCollectiblesVisibleareaImage();
       return;
     }
     this.collectiblesList = list;
     this.ownNftSum = this.collectiblesList.length;
+    this.refreshCollectiblesVisibleareaImage();
   }
 
   async processNotOnSaleOrder(accAddress: string): Promise<string> {
@@ -2188,6 +2276,7 @@ export class ProfilePage implements OnInit {
       return this.processNotOnSaleOrder(accAddress);
     }).then(() => {
       Logger.log(TAG, 'On sale collectiblesList is', this.collectiblesList);
+      this.refreshCollectiblesVisibleareaImage();
       this.isRefreshingCollectibles = false;
       this.prepareSaveCollectiblesData(accAddress);
     });
