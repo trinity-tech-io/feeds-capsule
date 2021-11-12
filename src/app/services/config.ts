@@ -28,11 +28,8 @@ export class Config {
 
 
     /** TestNet contract */
-    //public static STICKER_TEST_ADDRESS: string = '0xed1978c53731997f4DAfBA47C9b07957Ef6F3961';
-    //public static PASAR_TEST_ADDRESS: string = '0x2652d10A5e525959F7120b56f2D7a9cD0f6ee087';
-
-    public static STICKER_TEST_ADDRESS: string = '0xFB96c3eb49F36bcF4eA784894218062878531049';
-    public static PASAR_TEST_ADDRESS: string = '0x4B25De82E51aD122B3cD50ed84229b71744366a0';
+    public static STICKER_TEST_ADDRESS: string = '0xed1978c53731997f4DAfBA47C9b07957Ef6F3961';
+    public static PASAR_TEST_ADDRESS: string = '0x2652d10A5e525959F7120b56f2D7a9cD0f6ee087';
 
     public static CONTRACT_TEST_URI = 'https://api-testnet.' + Config.BASE_API + '/eth';
     public static CONTRACT_TEST_CHAINID: number = 21;
