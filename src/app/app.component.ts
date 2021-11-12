@@ -450,15 +450,11 @@ export class MyApp {
     .catch()
   }
 
-  initFeedsSortType(){
-    this.dataHelper.loadData("feeds:sortType").then((sortType:number)=>{
-        if(sortType === null){
-          this.dataHelper.setFeedsSortType(FeedsData.SortType.TIME_ORDER_LATEST);
-          return;
-        }
-       this.dataHelper.setFeedsSortType(sortType);
-    })
-    .catch()
+  async initFeedsSortType() {
+    try {
+      await this.dataHelper.loadFeedsSortType();
+    } catch (error) {
+    }
   }
 
   async connectWallet() {

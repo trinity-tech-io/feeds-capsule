@@ -12,7 +12,7 @@ let TAG: string = 'DataHelper';
 @Injectable()
 export class DataHelper {
   private nftDidList: any = null;
-  private feedsSortType: number = null;
+  private feedsSortType: FeedsData.SortType = FeedsData.SortType.TIME_ORDER_LATEST;
   private channelsMap: { [nodeChannelId: string]: FeedsData.Channels } = {};
   private postMap: { [ncpId: string]: FeedsData.Post } = {};
   private commentsMap: {
@@ -2642,11 +2642,24 @@ export class DataHelper {
     return this.firstSyncOrderFinish;
   }
 
-  setFeedsSortType(sortType: number){
-   this.feedsSortType = sortType;
+  loadFeedsSortType(): Promise<FeedsData.SortType> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        this.feedsSortType = await this.loadData(FeedsData.PersistenceKey.sortType) || FeedsData.SortType.TIME_ORDER_LATEST;
+        resolve(this.feedsSortType);
+        return;
+      } catch (error) {
+        reject(error);
+      }
+    });
   }
 
-  getFeedsSortType(){
+  setFeedsSortType(sortType: FeedsData.SortType) {
+    this.feedsSortType = sortType;
+    this.saveData(FeedsData.PersistenceKey.sortType, sortType);
+  }
+
+  getFeedsSortType(): FeedsData.SortType {
     return this.feedsSortType;
   }
 
