@@ -380,7 +380,9 @@ declare namespace FeedsData {
     walletAccountAddress = 'walletAccountAddress',
 
     pasarItemMap = 'pasarItemMap',
-    firstSyncOrderFinish = 'firstSyncOrderFinish'
+    firstSyncOrderFinish = 'firstSyncOrderFinish',
+
+    sortType = 'feeds:sortType'
   }
 
   type ServerVersion = {

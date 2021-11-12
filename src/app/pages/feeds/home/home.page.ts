@@ -2482,12 +2482,16 @@ export class HomePage implements OnInit {
     return thumbnailUri+"-"+kind;
   }
 
-  changeSortType(sortType:number,event:any) {
+  async changeSortType(sortType: number, event: any) {
     this.sortType = sortType;
     this.dataHelper.setFeedsSortType(sortType);
-    this.dataHelper.saveData("feeds:sortType",sortType);
+
     this.isClickSort = false;
     event.stopPropagation();
+
+    this.native.showLoading('Loading');
+    await this.refreshPasarList();
+    this.native.hideLoading();
   }
 
   clickSortArrow(){
