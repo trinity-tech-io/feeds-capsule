@@ -1,5 +1,4 @@
 <app-titlebar id="homeTittleBar"></app-titlebar>
-<!-- <div *ngIf="connectionStatus == 1" class="offline-header"></div> -->
 <ion-row [class.darkExploreTabs]="theme.darkMode" [class.exploreTabs]="!theme.darkMode" id="homeTab">
   <ion-col size="6" class="des" [ngClass]="{'select-bottom':tabType==='feeds','select-color':tabType==='feeds','no-select-color':tabType!='feeds'}"
    (click)="clickTab('feeds')">{{'FeedsPage.tabTitle5'|translate}}</ion-col>
@@ -20,7 +19,7 @@
    <img *ngIf="!theme.darkMode" src="assets/images/filter-circle.svg" style="margin-top:28px;"/>
    <img *ngIf="theme.darkMode" src="assets/images/darkmode/filter-circle.svg" style="margin-top:28px;"/>
   </ion-col>
-  <div class="sort" id="sort" *ngIf="isClickSort">
+  <div class="sort" id="sort" *ngIf="isShowSearchField">
     <p class="titleName">{{"HomePage.sortBy" | translate}}<p>
     <p class="sortName" (click)="changeSortType(0,$event)"><span>{{"HomePage.recentlyAdded" | translate}}</span> <img src="assets/images/sort-check.svg" *ngIf="sortType===0"><p>
     <p class="sortName" (click)="changeSortType(1,$event)"><span>{{"HomePage.Oldest" | translate}}</span> <img src="assets/images/sort-check.svg" *ngIf="sortType===1"><p>
@@ -28,7 +27,7 @@
     <p class="sortName" (click)="changeSortType(2,$event)"><span>{{"HomePage.priceHightoLow" | translate}}</span> <img src="assets/images/sort-check.svg" *ngIf="sortType===2"><p>
   </div>
 </ion-row>
-<ion-row *ngIf="tabType==='pasar'&&isShowSearchField">
+<ion-row *ngIf="tabType==='pasar'&&isClickSort">
   <ion-col size="0.5">
 
   </ion-col>
