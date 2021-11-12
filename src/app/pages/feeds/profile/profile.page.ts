@@ -357,7 +357,6 @@ export class ProfilePage implements OnInit {
     this.events.subscribe(
       FeedsEvent.PublishType.walletAccountChanged,
       (walletAccount) => {
-        console.log("FeedsEvent.PublishType.walletConnectedRefreshPage",walletAccount)
         this.zone.run(async () => {
           this.updateWalletAddress(walletAccount);
           //await this.getOwnNftSum();
