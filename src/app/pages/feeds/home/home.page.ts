@@ -2352,15 +2352,10 @@ export class HomePage implements OnInit {
   }
 
   clickfilterCircle() {
+
     this.isShowSearchField = !this.isShowSearchField;
     this.isClickSort = false;
-    this.searchText = "";
-    if (this.searchBeforePasar.length > 0) {
-      this.pasarList = _.cloneDeep(this.searchBeforePasar);
-      this.searchBeforePasar = [];
-      this.refreshPasarGridVisibleareaImage();
-    }
-    this.handleRefresherInfinite(false);
+
   }
 
   setPasarGridVisibleareaImage(){
@@ -2491,10 +2486,19 @@ export class HomePage implements OnInit {
 
     this.native.showLoading('Loading');
     await this.refreshPasarList();
+    this.isShowSearchField = false;
     this.native.hideLoading();
   }
 
   clickSortArrow(){
+    this.isShowSearchField = false;
     this.isClickSort = !this.isClickSort;
+    this.searchText = "";
+    if (this.searchBeforePasar.length > 0) {
+      this.pasarList = _.cloneDeep(this.searchBeforePasar);
+      this.searchBeforePasar = [];
+      this.refreshPasarGridVisibleareaImage();
+    }
+    this.handleRefresherInfinite(false);
   }
 }
