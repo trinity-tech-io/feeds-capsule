@@ -25,8 +25,8 @@ export class Config {
     }
     /** MainNet IPFS */
     public static IPFS_SERVER: string = 'https://ipfs.trinity-feeds.app/';
-
-
+     /** MainNet ASSIST */
+    public static ASSIST_SERVER: string = 'https://assist.trinity-feeds.app/';
     /** TestNet contract */
     public static STICKER_TEST_ADDRESS: string = '0xed1978c53731997f4DAfBA47C9b07957Ef6F3961';
     public static PASAR_TEST_ADDRESS: string = '0x2652d10A5e525959F7120b56f2D7a9cD0f6ee087';
@@ -73,6 +73,15 @@ export class Config {
             "https://ipfs2.trinity-feeds.app/",
           ];
         return availableIpfsNetworkTemplates[Math.floor(Math.random() * availableIpfsNetworkTemplates.length)];
+    }
+
+    public static defaultAssistApi(): string {
+        const availableAssistNetworkTemplates: string[] = [
+            "https://assist0.trinity-feeds.app/",
+            "https://assist1.trinity-feeds.app/",
+            "https://assist2.trinity-feeds.app/",
+          ];
+        return availableAssistNetworkTemplates[Math.floor(Math.random() * availableAssistNetworkTemplates.length)];
     }
 
     public static WAIT_TIME_CANCEL_ORDER = 2 * 60 * 1000;

@@ -148,6 +148,7 @@ export class MyApp {
         this.initDisclaimer();
         this.initConnector();
         this.initIpfs();
+        this.initAssist();
       }).then(async () => {
         this.intentService.addIntentListener(
           (intent: IntentPlugin.ReceivedIntent) => {
@@ -299,6 +300,16 @@ export class MyApp {
 
     ApiUrl.setIpfs(ipfsBaseUrl);
     this.globalService.refreshBaseNFTIPSFUrl();
+  }
+
+  initAssist(){
+    let assistBaseUrl = localStorage.getItem("selectedAssistPasarNetwork") || '';
+    if(assistBaseUrl === ""){
+      assistBaseUrl = Config.defaultAssistApi();
+      localStorage.setItem("selectedAssistPasarNetwork",assistBaseUrl);
+    }
+    ApiUrl.setAssist(assistBaseUrl);
+    this.globalService.refreshBaseAssistUrl();
   }
 
   about() {

@@ -630,7 +630,7 @@ export const en = {
     'ipfs0-provider-des': 'The primary IPFS gateway node to store the collectibles data',
     'ipfs1-provider-des': 'The secondary IPFS gateway node to store the collectibles data',
     'ipfs2-provider-des': 'The secondary IPFS gateway node to store the collectibles data',
-
+    'assistPasar-provider': 'Assist Pasar Provider',
     /*********** Elastos API provider page ***********/
     elastosapiprovider: 'Elastos API',
     'developer-setting': 'Developer Options',
@@ -907,5 +907,9 @@ export const en = {
   },
   WhitelistPage: {
     title: 'Verified Creators'
+  },
+  AssistpasarPage:{
+    title: "Assist Pasar Api",
+    assistProviderDes: "Secondary assist pasar service for reading data"
   }
 };

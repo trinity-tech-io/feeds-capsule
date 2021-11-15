@@ -3,16 +3,26 @@ import { Logger } from './logger';
 import { Config } from './config';
 import { HttpService } from 'src/app/services/HttpService';
 import { DataHelper } from 'src/app/services/DataHelper';
+import { ApiUrl } from './ApiUrl';
 
 const TAG: string = 'PasarAssistService';
 @Injectable()
 export class PasarAssistService {
+  private baseAssistUrl = ApiUrl.ASSIST_SERVER;
   constructor(private httpService: HttpService,
     private dataHelper: DataHelper) {
   }
 
+  setBaseAssistUrl(url: string) {
+    this.baseAssistUrl = url;
+  }
+
+  getBaseAssistUrl() {
+    return this.baseAssistUrl;
+  }
+
   /**
-   * 
+   *
    * @param pageNum 页码 从1开始 选填 默认1
    * @param pageSize 每页条目 大于0 选填 默认10
    * @param orderState 订单类型： FeedsData.OrderState
@@ -24,7 +34,7 @@ export class PasarAssistService {
       try {
         let url = '';
         if (this.dataHelper.getDevelopNet() == 'MainNet')
-          url = Config.PASAR_ASSIST_MAINNET_SERVER + 'listPasarOrder'
+          url = this.baseAssistUrl + 'pasar/api/v1/listPasarOrder'
         else
           url = Config.PASAR_ASSIST_TESTNET_SERVER + 'listPasarOrder'
 

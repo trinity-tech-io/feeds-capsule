@@ -7,43 +7,38 @@ import { GlobalService } from 'src/app/services/global.service';
 import { Events } from 'src/app/services/events.service';
 import { ApiUrl } from 'src/app/services/ApiUrl';
 
-
 @Component({
-  selector: 'app-select-ipfs-net',
-  templateUrl: './select-ipfs-net.page.html',
-  styleUrls: ['./select-ipfs-net.page.scss'],
+  selector: 'app-assistpasar',
+  templateUrl: './assistpasar.page.html',
+  styleUrls: ['./assistpasar.page.scss'],
 })
-export class SelectIpfsNetPage implements OnInit {
-
+export class AssistpasarPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
-  public availableIpfsNetworkTemplates: any = [
+  public availableAssistPasarNetworkTemplates: any = [
     {
-      key: 'https://ipfs0.trinity-feeds.app/',
-      name: 'ipfs0.trinity-feeds.app',
-      description:'SettingsPage.ipfs0-provider-des',
+      key: 'https://assist0.trinity-feeds.app/',
+      name: 'assist0.trinity-feeds.app',
+      description: 'AssistpasarPage.assistProviderDes',
     },
     {
-      key: 'https://ipfs1.trinity-feeds.app/',
-      name: 'ipfs1.trinity-feeds.app',
-      description:'SettingsPage.ipfs1-provider-des',
+      key: 'https://assist1.trinity-feeds.app/',
+      name: 'assist1.trinity-feeds.app',
+      description:'AssistpasarPage.assistProviderDes',
     },
     {
-      key: 'https://ipfs2.trinity-feeds.app/',
-      name: 'ipfs2.trinity-feeds.app',
-      description:'SettingsPage.ipfs2-provider-des',
+      key: 'https://assist2.trinity-feeds.app/',
+      name: 'assist2.trinity-feeds.app',
+      description:'AssistpasarPage.assistProviderDes',
     }
   ];
-  public selectedIpfsNetwork: any = '';
-
+  public selectedAssistPasarNetwork: string = 'https://assist0.trinity-feeds.app/';
   constructor(
     public translate: TranslateService,
     public theme: ThemeService,
     private titleBarService: TitleBarService,
     private events: Events,
     private globalService: GlobalService,
-  ) {
-
-  }
+  ) { }
 
   ngOnInit() {
   }
@@ -51,14 +46,14 @@ export class SelectIpfsNetPage implements OnInit {
   initTitle() {
     this.titleBarService.setTitle(
       this.titleBar,
-      this.translate.instant("IPFS API"),
+      this.translate.instant("AssistpasarPage.title"),
     );
     this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
     this.titleBarService.setTitleBarMoreMemu(this.titleBar);
   }
 
   ionViewWillEnter() {
-    this.selectedIpfsNetwork = localStorage.getItem("selectedIpfsNetwork");
+    this.selectedAssistPasarNetwork = localStorage.getItem("selectedAssistPasarNetwork");
     this.initTitle();
   }
 
@@ -68,10 +63,11 @@ export class SelectIpfsNetPage implements OnInit {
     this.events.publish(FeedsEvent.PublishType.addProflieEvent);
   }
 
-  selectIpfs(selectedIpfsNetwork: any) {
-    this.selectedIpfsNetwork = selectedIpfsNetwork.key;
-    localStorage.setItem("selectedIpfsNetwork",this.selectedIpfsNetwork);
-    ApiUrl.setIpfs(selectedIpfsNetwork.key)
-    this.globalService.refreshBaseNFTIPSFUrl();
+  selectAssistPasar(assistPasar:any){
+    this.selectedAssistPasarNetwork = assistPasar.key;
+    localStorage.setItem("selectedAssistPasarNetwork",this.selectedAssistPasarNetwork);
+    ApiUrl.setAssist(this.selectedAssistPasarNetwork);
+    this.globalService.refreshBaseAssistUrl();
   }
+
 }

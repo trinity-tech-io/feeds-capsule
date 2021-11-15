@@ -8,7 +8,8 @@ export class ApiUrl {
   public static IPFS_TEST_SERVER: string = Config.IPFS_TEST_SERVER;
   /** IPFS 正式网络 */
   public static IPFS_SERVER: string = Config.IPFS_SERVER;
-
+  /** Assist 正式网络 */
+  public static ASSIST_SERVER: string = Config.ASSIST_SERVER;
   /**register*/
   public static register: string = ApiUrl.SERVER + '/register';
 
@@ -38,6 +39,15 @@ export class ApiUrl {
 
   public static getIpfs() : string {
     return Config.IPFS_SERVER;
+  }
+
+  public static setAssist(assistBaseUrl: string){
+    Config.ASSIST_SERVER = assistBaseUrl;
+    ApiUrl.ASSIST_SERVER =  Config.ASSIST_SERVER;
+  }
+
+  public static getAssist(){
+     return Config.ASSIST_SERVER;
   }
 
   /** whitelist testNet */
