@@ -13,7 +13,6 @@ import { LanguageService } from 'src/app/services/language.service';
 import { IPFSService } from 'src/app/services/ipfs.service';
 import { DataHelper } from 'src/app/services/DataHelper';
 import _ from 'lodash';
-import { FileHelperService } from 'src/app/services/FileHelperService';
 
 @Component({
   selector: 'app-settings',
@@ -32,6 +31,7 @@ export class SettingsPage implements OnInit {
   public pasarListGrid: boolean = false;
   public isHideDeveloperMode: boolean = false;
   public curIPFSApiProviderName = 'ipfs0.trinity-feeds.app';
+  public curAssistApiProviderName = '';
   private isListGrid: boolean = false;
   constructor(
     private languageService: LanguageService,
@@ -46,8 +46,7 @@ export class SettingsPage implements OnInit {
     private zone: NgZone,
     private titleBarService: TitleBarService,
     private ipfsService: IPFSService,
-    private dataHelper: DataHelper,
-    private fileHelperService: FileHelperService
+    private dataHelper: DataHelper
   ) { }
 
   ngOnInit() { }
@@ -62,7 +61,8 @@ export class SettingsPage implements OnInit {
   }
 
   ionViewWillEnter() {
-    this.loadIpfsShowNmae();
+    this.loadIpfsShowName();
+    this.loadAssistShowName();
     this.pasarListGrid = this.feedService.getPasarListGrid();
     this.curApiProviderName = this.dataHelper.getApiProvider();
     this.languageName = this.getCurlanguageName();
@@ -73,7 +73,7 @@ export class SettingsPage implements OnInit {
     this.initTitle();
   }
 
-  loadIpfsShowNmae() {
+  loadIpfsShowName() {
     let localIPFSApiProviderName = localStorage.getItem("selectedIpfsNetwork");
     if (localIPFSApiProviderName === 'https://ipfs0.trinity-feeds.app/') {
         this.curIPFSApiProviderName = 'ipfs0.trinity-feeds.app'
@@ -84,6 +84,19 @@ export class SettingsPage implements OnInit {
     else {
       this.curIPFSApiProviderName = 'ipfs2.trinity-feeds.app'
     }
+  }
+
+  loadAssistShowName() {
+  let selectedAssistPasarNetwork  = localStorage.getItem("selectedAssistPasarNetwork");
+  if (selectedAssistPasarNetwork === 'https://assist0.trinity-feeds.app/') {
+      this.curAssistApiProviderName = 'assist0.trinity-feeds.app'
+  }
+  else if (selectedAssistPasarNetwork === 'https://assist1.trinity-feeds.app/') {
+    this.curAssistApiProviderName = 'assist1.trinity-feeds.app'
+  }
+  else {
+    this.curAssistApiProviderName = 'assist2.trinity-feeds.app'
+  }
   }
 
   getCurlanguageName() {
@@ -222,5 +235,9 @@ export class SettingsPage implements OnInit {
     this.feedService.setPasarListGrid(this.pasarListGrid);
     this.feedService.setData('feeds.pasarListGrid', this.pasarListGrid);
     this.isListGrid = true;
+  }
+
+  navAssistPasarProvider(){
+    this.native.getNavCtrl().navigateForward(['/assistpasar']);
   }
 }

@@ -614,6 +614,7 @@ export const zh = {
     'ipfs0-provider-des': '用于存储数据的主要 IPFS 节点',
     'ipfs1-provider-des': '用于存储数据的辅助 IPFS 节点',
     'ipfs2-provider-des': '用于存储数据的辅助 IPFS 节点',
+    'assistPasar-provider': 'Assist Pasar 提供商',
     /*********** Elastos API provider page ***********/
     elastosapiprovider: 'Elastos API',
     'developer-setting': '开发者选项',
@@ -887,5 +888,9 @@ export const zh = {
   },
   WhitelistPage: {
     title: '已验证原创者'
+  },
+  AssistpasarPage:{
+    title: "Assist Pasar Api",
+    assistProviderDes: "用于读取数据的辅助 Assist Pasar 服务",
   }
 };

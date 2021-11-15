@@ -10,6 +10,7 @@ import { WalletConnectControllerService } from 'src/app/services/walletconnect_c
 import { Logger } from './logger';
 import { Config } from './config';
 import { ApiUrl } from './ApiUrl';
+import { PasarAssistService } from 'src/app/services/pasar_assist.service';
 
 const TAG: string = 'GlobalService';
 @Injectable()
@@ -22,7 +23,8 @@ export class GlobalService {
     private nftPersistenceHelper: NFTPersistenceHelper,
     private dataHelper: DataHelper,
     private nftContractControllerService: NFTContractControllerService,
-    private walletConnectControllerService: WalletConnectControllerService
+    private walletConnectControllerService: WalletConnectControllerService,
+    private pasarAssistService: PasarAssistService
   ) {
   }
 
@@ -56,5 +58,9 @@ export class GlobalService {
 
   refreshBaseNFTIPSFUrl() {
     this.ipfsService.setBaseNFTIPFSUrl(ApiUrl.IPFS_SERVER);
+  }
+
+  refreshBaseAssistUrl() {
+   this.pasarAssistService.setBaseAssistUrl(ApiUrl.ASSIST_SERVER);
   }
 }

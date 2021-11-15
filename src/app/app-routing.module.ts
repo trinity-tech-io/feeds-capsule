@@ -228,6 +228,10 @@ const routes: Routes = [
     path: 'whitelist',
     loadChildren: () => import('./pages/whitelist/whitelist.module').then( m => m.WhitelistPageModule)
   },
+  {
+    path: 'assistpasar',
+    loadChildren: () => import('./pages/assistpasar/assistpasar.module').then( m => m.AssistpasarPageModule)
+  },
 ];
 
 @NgModule({

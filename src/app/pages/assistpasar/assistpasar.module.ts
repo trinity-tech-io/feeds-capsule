@@ -4,9 +4,9 @@ import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { IonicModule } from '@ionic/angular';
 
-import { SelectIpfsNetPageRoutingModule } from './select-ipfs-net-routing.module';
+import { AssistpasarPageRoutingModule } from './assistpasar-routing.module';
 
-import { SelectIpfsNetPage } from './select-ipfs-net.page';
+import { AssistpasarPage } from './assistpasar.page';
 import { ComponentsModule } from 'src/app/components/components.module';
 
 @NgModule({
@@ -15,10 +15,9 @@ import { ComponentsModule } from 'src/app/components/components.module';
     FormsModule,
     TranslateModule,
     IonicModule,
-    SelectIpfsNetPageRoutingModule,
-    ComponentsModule
+    ComponentsModule,
+    AssistpasarPageRoutingModule
   ],
-  declarations: [SelectIpfsNetPage]
+  declarations: [AssistpasarPage]
 })
-export class SelectIpfsNetPageModule {}
-
+export class AssistpasarPageModule {}
