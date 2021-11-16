@@ -261,6 +261,7 @@
   <ion-row class="leftrightrow" id="homePasarGrid">
     <ion-col size="6" *ngFor="let item of pasarList"  class="homePasarGridCol" id={{handleId(item)}}>
       <app-assetitem
+      [thumbImageName] = "thumbImageName"
       [isAutoGet] = "isAutoGet"
       [elaPrice] = "elaPrice"
       [assetItem] = "item"

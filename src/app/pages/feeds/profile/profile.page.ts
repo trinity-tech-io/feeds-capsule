@@ -166,6 +166,7 @@ export class ProfilePage implements OnInit {
   private isRefreshingCollectibles = false;
   private refreshingCollectiblesHelper: FeedsData.NFTItem[] = [];
   public isAutoGet: string = 'unAuto';
+  public thumbImageName: string = "profileImg";
   private profileCollectiblesisLoadimage: any = {};
   private sortType = FeedsData.SortType.TIME_ORDER_LATEST;
   private collectiblesPageNum: number = 0;
@@ -769,7 +770,7 @@ export class ProfilePage implements OnInit {
         break;
       case 'ProfilePage.collectibles':
         this.elaPrice = this.feedService.getElaUsdPrice();
-        if (!this.collectiblesList || this.collectiblesList.length == 0)
+        //if (!this.collectiblesList || this.collectiblesList.length == 0)
           await this.getCollectiblesList();
         break;
       case 'ProfilePage.myLikes':
@@ -954,7 +955,7 @@ export class ProfilePage implements OnInit {
       let arr = id.split("-");
       let fileName = arr[0];
       let kind = arr[1];
-      let thumbImage =  document.getElementById(fileName+"-thumbImage");
+      let thumbImage =  document.getElementById(fileName+"-profileImg");
       let srcStr =  thumbImage.getAttribute("src") || "";
       let isload = this.profileCollectiblesisLoadimage[fileName] || '';
       try {
@@ -968,6 +969,7 @@ export class ProfilePage implements OnInit {
              this.profileCollectiblesisLoadimage[fileName] = '12';
              this.fileHelperService.getNFTData(fetchUrl,fileName, kind).then((data) => {
                this.zone.run(() => {
+                 console.log("====finish====",itemIndex);
                  this.profileCollectiblesisLoadimage[fileName] = '13';
                  thumbImage.setAttribute("src",data);
                });
@@ -980,11 +982,13 @@ export class ProfilePage implements OnInit {
              this.profileCollectiblesisLoadimage[fileName] === '13' &&
              srcStr != './assets/icon/reserve.svg'
            ) {
+             console.log("====undone====",itemIndex);
              this.profileCollectiblesisLoadimage[fileName] = '';
              thumbImage.setAttribute('src', './assets/icon/reserve.svg');
            }
          }
       } catch (error) {
+        console.log("====error====",itemIndex);
        this.profileCollectiblesisLoadimage[fileName] = '';
        thumbImage.setAttribute('src', './assets/icon/reserve.svg');
       }
@@ -998,7 +1002,7 @@ export class ProfilePage implements OnInit {
       this.profileCollectiblesisLoadimage = {};
        this.setCollectiblesVisibleareaImage();
        clearTimeout(sid);
-      },200);
+      },100);
     }
   }
 
@@ -1016,7 +1020,7 @@ export class ProfilePage implements OnInit {
     } else if (thumbnailUri.indexOf('feeds:image:') > -1) {
       thumbnailUri = thumbnailUri.replace('feeds:image:', '');
     }
-    return thumbnailUri+"-"+kind;
+    return thumbnailUri+"-"+kind+"-profile";
   }
 
   setVisibleareaImage() {

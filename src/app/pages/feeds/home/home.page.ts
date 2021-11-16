@@ -160,6 +160,7 @@ export class HomePage implements OnInit {
   private pasarGridisLoadimage: any = {};
   private pasarListisLoadimage: any = {};
   public isAutoGet: string = 'unAuto';
+  public thumbImageName: string = "homeImg";
   private sortType: FeedsData.SortType = FeedsData.SortType.TIME_ORDER_LATEST;
   public isClickSort: boolean = false;
   constructor(
@@ -2371,7 +2372,7 @@ export class HomePage implements OnInit {
      let arr = id.split("-");
      let fileName = arr[0];
      let kind = arr[1];
-     let thumbImage =  document.getElementById(fileName+"-thumbImage");
+     let thumbImage =  document.getElementById(fileName+"-homeImg");
      let srcStr =  thumbImage.getAttribute("src") || "";
      let isload = this.pasarGridisLoadimage[fileName] || '';
      try {

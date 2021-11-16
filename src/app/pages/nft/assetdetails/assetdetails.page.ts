@@ -66,7 +66,6 @@ export class AssetdetailsPage implements OnInit {
   private orderCreateTime: number = null;
   private tokenCreateTime: number = null;
 
-  private didUri: string = '';
   public did: string = null;
   public didDispaly: string = null;
   public didName: string = null;
@@ -94,8 +93,12 @@ export class AssetdetailsPage implements OnInit {
     this.activatedRoute.queryParams.subscribe(queryParams => {
       this.assItem = _.cloneDeep(queryParams);
       let asset = queryParams.asset || {};
-      //this.did = 'imZgAo9W38Vzo1pJQfHp6NJp9LZsrnRPRr'.replace("did:elastos:","");
-      this.didDispaly = UtilService.resolveDid(this.did);
+      let signInData = this.feedService.getSignInData() || null;
+      let did = signInData['did'] || null;
+      if(did != null){
+        this.did = did.replace("did:elastos:","");
+        this.didDispaly = UtilService.resolveDid(this.did);
+      }
       this.imageType = queryParams.type || "";
       this.owner = queryParams.name || '';
       this.name = queryParams.name || '';
@@ -105,7 +108,6 @@ export class AssetdetailsPage implements OnInit {
       this.tokenID = queryParams.tokenId || '';
       this.orderCreateTime = queryParams.orderCreateTime || null;
       this.tokenCreateTime = queryParams.tokenCreateTime || null;
-      this.didUri = queryParams.didUri || '';
       this.stickerContractAddress = this.nftContractControllerService
         .getSticker()
         .getStickerAddress();
@@ -209,14 +211,7 @@ export class AssetdetailsPage implements OnInit {
   }
 
  async collectContractData() {
-
     this.contractDetails = [];
-
-    this.contractDetails.push({
-      type: 'DID Uri',
-      details: this.didUri,
-    });
-
     this.contractDetails.push({
       type: 'AssetdetailsPage.name',
       details: this.name,

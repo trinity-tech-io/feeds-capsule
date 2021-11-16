@@ -13,7 +13,7 @@
     <img src="assets/images/avatar.svg" *ngIf="assetItem['type']==='avatar' && assetItem['fixedAmount'] === null" style="position:absolute;bottom:7px;right:5px;width:17.5px;height:30px;"/>
     <img src="assets/images/avatar.svg" *ngIf="assetItem['type']==='avatar' && assetItem['fixedAmount'] != null" style="position:absolute;bottom:11px;right:5px;width:17.5px;height:30px;"/>
     <div style="height:132px;padding: 0px 5px;display:flex;justify-content:center;align-items: center;">
-    <img src="{{imgUri}}" (click)="clickItem()" style="object-fit:contain;" id={{thumbImageId}}-thumbImage/>
+    <img src="{{imgUri}}" (click)="clickItem()" style="object-fit:contain;" id={{thumbImageId}}-{{thumbImageName}}/>
     </div>
     <div class="des" [class.black]="!theme.darkMode" [class.white]="theme.darkMode">{{assetItem['name']}}</div>
     <div class="des1" [class.black]="!theme.darkMode" [class.white]="theme.darkMode">{{assetItem['description']}}</div>
