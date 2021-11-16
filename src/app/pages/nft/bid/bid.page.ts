@@ -17,6 +17,7 @@ import { UtilService } from 'src/app/services/utilService';
 import { Config } from 'src/app/services/config';
 import { NFTContractHelperService } from 'src/app/services/nftcontract_helper.service';
 import { DataHelper } from 'src/app/services/DataHelper';
+import { Logger } from 'src/app/services/logger';
 type detail = {
   type: string;
   details: string;
@@ -90,7 +91,15 @@ export class BidPage implements OnInit {
 
   ngOnInit() {
     this.activatedRoute.queryParams.subscribe((queryParams: FeedsData.NFTItem) => {
-      this.curAssetItem = _.cloneDeep(queryParams);
+      this.saleOrderId = queryParams.saleOrderId || '';
+      if (this.saleOrderId == '') {
+        Logger.log('Sale orderId is null');
+        return;
+      }
+      const pasarItem: FeedsData.PasarItem = this.dataHelper.getPasarItem(this.saleOrderId);
+
+      this.curAssetItem = _.cloneDeep(pasarItem.item);
+      console.log('this.curAssetItem', this.curAssetItem);
       //this.did = 'imZgAo9W38Vzo1pJQfHp6NJp9LZsrnRPRr'.replace("did:elastos:","");
       this.didDispaly = UtilService.resolveDid(this.did);
       let asset = queryParams.asset || '';
