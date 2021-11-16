@@ -40,7 +40,7 @@ export class ProfilePage implements OnInit {
   public nodeStatus = {}; //friends status;
   public channels = []; //myFeeds page
 
-  public collectiblesList = []; //NFT列表
+  public collectiblesList: FeedsData.NFTItem[] = []; //NFT列表
   public totalLikeList = [];
   public startIndex: number = 0;
   public pageNumber: number = 5;
@@ -167,6 +167,8 @@ export class ProfilePage implements OnInit {
   private refreshingCollectiblesHelper: FeedsData.NFTItem[] = [];
   public isAutoGet: string = 'unAuto';
   private profileCollectiblesisLoadimage: any = {};
+  private sortType = FeedsData.SortType.TIME_ORDER_LATEST;
+  private collectiblesPageNum: number = 0;
   constructor(
     private feedService: FeedService,
     public theme: ThemeService,
@@ -643,12 +645,15 @@ export class ProfilePage implements OnInit {
     });
   }
 
- async ionViewWillEnter() {
+  async ionViewWillEnter() {
     this.initTitleBar();
     this.elaPrice = this.feedService.getElaUsdPrice();
     this.events.subscribe(FeedsEvent.PublishType.addProflieEvent, async () => {
       this.elaPrice = this.feedService.getElaUsdPrice();
-      await this.getCollectiblesList();
+      if (!this.collectiblesList || this.collectiblesList.length == 0) {
+        await this.getCollectiblesList();
+      }
+
       this.addProflieEvent();
       this.isAddProfile = true;
     });
@@ -658,7 +663,10 @@ export class ProfilePage implements OnInit {
     this.channels = this.feedService.getMyChannelList() || [];
     this.myFeedsSum = this.channels.length;
 
-    await this.getCollectiblesList();
+    if (!this.collectiblesList || this.collectiblesList.length == 0) {
+      await this.getCollectiblesList();
+    }
+
 
     this.totalLikeList = this.sortLikeList() || [];
     this.likeSum = this.totalLikeList.length;
@@ -761,7 +769,8 @@ export class ProfilePage implements OnInit {
         break;
       case 'ProfilePage.collectibles':
         this.elaPrice = this.feedService.getElaUsdPrice();
-        await this.getCollectiblesList();
+        if (!this.collectiblesList || this.collectiblesList.length == 0)
+          await this.getCollectiblesList();
         break;
       case 'ProfilePage.myLikes':
         this.startIndex = 0;
@@ -796,7 +805,9 @@ export class ProfilePage implements OnInit {
         }, 500);
         break;
       case 'ProfilePage.collectibles':
+        // await this.getCollectiblesList();
         await this.refreshCollectibles();
+        this.refreshCollectiblesVisibleareaImage();
         event.target.complete();
         break;
       case 'ProfilePage.myLikes':
@@ -816,7 +827,16 @@ export class ProfilePage implements OnInit {
         event.target.complete();
         break;
       case 'ProfilePage.collectibles':
-        event.target.complete();
+        this.zone.run(async () => {
+          this.collectiblesPageNum++;
+          let list = await this.nftContractHelperService.loadCollectiblesData(null, this.collectiblesPageNum, this.sortType);
+
+          list = _.unionWith(this.collectiblesList, list, _.isEqual);
+          this.collectiblesList = this.nftContractHelperService.sortData(list, this.sortType);
+
+          this.refreshCollectiblesVisibleareaImage();
+          event.target.complete();
+        });
         break;
       case 'ProfilePage.myLikes':
         let sId = setTimeout(() => {
@@ -1879,10 +1899,13 @@ export class ProfilePage implements OnInit {
       this.refreshCollectiblesVisibleareaImage();
       return;
     }
-    this.collectiblesList = list;
+    this.collectiblesList = this.nftContractHelperService.sortData(list, this.sortType);
+
     this.ownNftSum = this.collectiblesList.length;
     this.refreshCollectiblesVisibleareaImage();
   }
+
+
 
   async processNotOnSaleOrder(accAddress: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
@@ -2254,11 +2277,13 @@ export class ProfilePage implements OnInit {
   }
 
   async refreshCollectibles() {
-    if (this.isRefreshingCollectibles) {
-      return;
-    }
-    this.isRefreshingCollectibles = true;
-    this.collectiblesList = [];
+    // if (this.isRefreshingCollectibles) {
+    //   return;
+    // }
+    // this.isRefreshingCollectibles = true;
+
+    this.collectiblesPageNum = 0;
+    // this.collectiblesList = [];
     this.refreshNotSaleOrderFinish = false;
     this.refreshSaleOrderFinish = false;
     this.elaPrice = this.feedService.getElaUsdPrice();
@@ -2270,15 +2295,16 @@ export class ProfilePage implements OnInit {
       return;
     }
 
-    this.refreshingCollectiblesHelper = [];
-    this.processOnSaleOrder(accAddress).then(() => {
-      return this.processNotOnSaleOrder(accAddress);
-    }).then(() => {
-      Logger.log(TAG, 'On sale collectiblesList is', this.collectiblesList);
-      this.refreshCollectiblesVisibleareaImage();
-      this.isRefreshingCollectibles = false;
-      this.prepareSaveCollectiblesData(accAddress);
-    });
+    this.collectiblesList = await this.nftContractHelperService.refreshCollectiblesData(this.sortType);
+    // this.refreshingCollectiblesHelper = [];
+    // this.processOnSaleOrder(accAddress).then(() => {
+    //   return this.processNotOnSaleOrder(accAddress);
+    // }).then(() => {
+    //   Logger.log(TAG, 'On sale collectiblesList is', this.collectiblesList);
+    //   this.refreshCollectiblesVisibleareaImage();
+    //   this.isRefreshingCollectibles = false;
+    //   this.prepareSaveCollectiblesData(accAddress);
+    // });
   }
 
   saveCollectiblesToCache(createAddress: string) {

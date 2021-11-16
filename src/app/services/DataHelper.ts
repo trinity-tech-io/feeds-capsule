@@ -115,6 +115,7 @@ export class DataHelper {
   private refreshLastBlockNumber = 0;
   private firstSyncOrderFinish = false;
 
+  private stickerItemMap: { [tokenId: string]: FeedsData.NFTItem } = {};
   constructor(
     private storageService: StorageService,
     private events: Events
@@ -2543,6 +2544,13 @@ export class DataHelper {
     return list;
   }
 
+  getOwnPasarItemList(address: string): FeedsData.NFTItem[] {
+    const list = this.getPasarItemList();
+    return _.filter(list, (item: FeedsData.NFTItem) => {
+      return item.sellerAddr == address;
+    })
+  }
+
   checkPasarItemMap() {
     if (this.pasarItemMap == null || this.pasarItemMap == undefined)
       this.pasarItemMap = {};
@@ -2670,4 +2678,6 @@ export class DataHelper {
   getNftDidList(){
     return this.nftDidList;
   }
+
+
 }

@@ -101,7 +101,7 @@ export class BidPage implements OnInit {
       this.description = queryParams.description || '';
       this.quantity = String(queryParams.curQuantity) || String(queryParams.quantity);
       this.tokenID = queryParams.tokenId || '';
-      this.sellerDidUri = queryParams.didUri || '';
+      this.sellerDidUri = queryParams.orderSellerDidObj.did || '';
       this.creator = queryParams.creator || '';
       this.orderCreateTime = queryParams.orderCreateTime || null;
       this.tokenCreateTime = queryParams.tokenCreateTime || null;

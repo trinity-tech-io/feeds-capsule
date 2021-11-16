@@ -100,4 +100,6 @@ export class Config {
 
     public static PASAR_ASSIST_TESTNET_SERVER: string = 'https://test.trinity-feeds.app/pasar/api/v1/';
     public static PASAR_ASSIST_MAINNET_SERVER: string = 'https://assist.trinity-feeds.app/pasar/api/v1/';
+
+    public static BASE_PASAR_ASSIST_TESTNET_SERVER: string = 'https://test.trinity-feeds.app/';
 }
