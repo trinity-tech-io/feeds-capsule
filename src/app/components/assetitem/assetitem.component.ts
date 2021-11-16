@@ -15,6 +15,7 @@ export class AssetitemComponent implements OnInit {
   @Input() assetItem: any = null;
   @Input() elaPrice: string = null;
   @Input() isAutoGet: string = null;
+  @Input() thumbImageName: string = "thumbImage";
   @Output() clickAssetItem = new EventEmitter();
   @Output() clickMore = new EventEmitter();
   public styleObj: any = { width: '' };

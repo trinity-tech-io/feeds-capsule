@@ -76,6 +76,7 @@
     <ion-row *ngIf="selectType === 'ProfilePage.collectibles'&&ownNftSum>0" class="leftrightrow" id="profileCollectibles">
       <ion-col size="6" *ngFor="let item of collectiblesList" class="profileCollectiblesCol" id={{handleId(item)}}>
         <app-assetitem
+        [thumbImageName] = "thumbImageName"
         [isAutoGet] = "isAutoGet"
         [elaPrice] = "elaPrice"
         [assetItem] = "item"
