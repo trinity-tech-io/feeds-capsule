@@ -1133,6 +1133,15 @@ export class NFTContractHelperService {
   updateTime: "1628138635"
    */
   createItemFromPasarAssist(assistPasarItem: any, moreMenuType: string, showType: string, syncMode: FeedsData.SyncMode) {
+    let orderSellerDidObj: FeedsData.DidObj = null;
+    const sellerDid = assistPasarItem.sellerDid
+
+    if (sellerDid) {
+      orderSellerDidObj = {
+        version: sellerDid.version,
+        did: sellerDid.did
+      }
+    }
 
     const nftItem: FeedsData.NFTItem = {
       creator: assistPasarItem.royaltyOwner,
@@ -1169,7 +1178,7 @@ export class NFTContractHelperService {
       moreMenuType: moreMenuType,
       showType: showType,
 
-      orderSellerDidObj: assistPasarItem.sellerDid,
+      orderSellerDidObj: orderSellerDidObj,
       orderBuyerDidObj: null,
       tokenCreatorDid: null
     }
