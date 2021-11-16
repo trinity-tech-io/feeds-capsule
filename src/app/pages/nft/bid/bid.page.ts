@@ -66,7 +66,6 @@ export class BidPage implements OnInit {
   private orderCreateTime: number = null;
   private tokenCreateTime: number = null;
   private didUri: string = null
-  private sellerDidUri: string = null;
   public did: string = null;
   public didDispaly: string = null;
   public didName: string = null;
@@ -97,11 +96,15 @@ export class BidPage implements OnInit {
         return;
       }
       const pasarItem: FeedsData.PasarItem = this.dataHelper.getPasarItem(this.saleOrderId);
-
       this.curAssetItem = _.cloneDeep(pasarItem.item);
-      console.log('this.curAssetItem', this.curAssetItem);
-      //this.did = 'imZgAo9W38Vzo1pJQfHp6NJp9LZsrnRPRr'.replace("did:elastos:","");
-      this.didDispaly = UtilService.resolveDid(this.did);
+      let orderSellerDidObj:FeedsData.DidObj = this.curAssetItem["orderSellerDidObj"] || null;
+      if(orderSellerDidObj != null){
+          let orderSellerDid = orderSellerDidObj.did || null;
+          if(orderSellerDid != null){
+            this.did = orderSellerDid.replace("did:elastos:","");
+            this.didDispaly = UtilService.resolveDid(this.did);
+          }
+      }
       let asset = queryParams.asset || '';
       this.imageType = queryParams.type || '';
       this.showType = queryParams.showType;
@@ -110,7 +113,6 @@ export class BidPage implements OnInit {
       this.description = queryParams.description || '';
       this.quantity = String(queryParams.curQuantity) || String(queryParams.quantity);
       this.tokenID = queryParams.tokenId || '';
-      this.sellerDidUri = queryParams.orderSellerDidObj.did || '';
       this.creator = queryParams.creator || '';
       this.orderCreateTime = queryParams.orderCreateTime || null;
       this.tokenCreateTime = queryParams.tokenCreateTime || null;
@@ -185,11 +187,6 @@ export class BidPage implements OnInit {
  async collectContractData() {
 
     this.contractDetails = [];
-
-    this.contractDetails.push({
-      type: 'DID Uri',
-      details: this.sellerDidUri,
-    });
 
     this.contractDetails.push({
       type: 'AssetdetailsPage.name',
