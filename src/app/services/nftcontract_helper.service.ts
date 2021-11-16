@@ -988,7 +988,9 @@ export class NFTContractHelperService {
       moreMenuType: moreMenuType,
 
       showType: showType,
-      didUri: didUri
+      orderSellerDidObj: null,
+      orderBuyerDidObj: null,
+      tokenCreatorDid: null
     }
     return item;
   }
@@ -1164,10 +1166,12 @@ export class NFTContractHelperService {
       tokenCreateTime: assistPasarItem.tokenCreateTime,
       tokenUpdateTime: assistPasarItem.tokenUpdateTime,
 
-      //TODO
-      didUri: null,
       moreMenuType: moreMenuType,
-      showType: showType
+      showType: showType,
+
+      orderSellerDidObj: assistPasarItem.sellerDid,
+      orderBuyerDidObj: null,
+      tokenCreatorDid: null
     }
     const item: FeedsData.PasarItem = {
       index: 0,
@@ -1343,5 +1347,115 @@ export class NFTContractHelperService {
       }
     });
   }
-  
+
+  async refreshStickerFromAssist() {
+    const result = await this.pasarAssistService.listOwnSticker();
+    return this.parseAssistStickerResult(result);
+  }
+
+  loadCollectiblesData(list: FeedsData.NFTItem[], startPage: number, sortType: FeedsData.SortType): Promise<FeedsData.NFTItem[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let collectibles = list;
+        const address = this.nftContractControllerService.getAccountAddress();
+        if (!collectibles) {
+          collectibles = this.nftPersistenceHelper.getCollectiblesList(address);
+        }
+
+        const finalList = this.sortData(collectibles, sortType);
+        const count = finalList.length || 0;
+        const start = startPage * this.refreshCount;
+        const end = (startPage + 1) * this.refreshCount;
+
+        if (count <= start) {
+          resolve(list);
+          return;
+        }
+
+        if (count > end) {
+          list = finalList.slice(start, end);
+          resolve(list);
+          return;
+        }
+
+        list = finalList.slice(start, count);
+        resolve(list);
+
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
+  async refreshCollectiblesData(sortType: FeedsData.SortType): Promise<FeedsData.NFTItem[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const address = this.nftContractControllerService.getAccountAddress();
+        const ownPasarList = this.dataHelper.getOwnPasarItemList(address);
+
+        const stickList = await this.refreshStickerFromAssist();
+        const unionList = _.unionWith(ownPasarList, stickList, _.isEqual);
+
+        this.nftPersistenceHelper.setCollectiblesMap(address, unionList);
+
+        const collectibles = await this.loadCollectiblesData(unionList, 0, sortType);
+
+        resolve(collectibles);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
+  parseAssistStickerResult(result: any): FeedsData.NFTItem[] {
+    let list: FeedsData.NFTItem[] = [];
+    let array = result.data.result;
+    const address = this.nftContractControllerService.getAccountAddress();
+    for (let index = 0; index < array.length; index++) {
+      const item = array[index];
+      list.push(this.transStickerItemToPasarItem(item, address));
+    }
+    return list;
+  }
+
+  transStickerItemToPasarItem(item: any, address: string): FeedsData.NFTItem {
+    return {
+      creator: item.royaltyOwner,
+      saleOrderId: null,
+      tokenId: item.tokenId,
+      asset: item.asset,
+      name: item.name,
+      description: item.description,
+      fixedAmount: null,
+      kind: item.kind,
+      type: item.type,
+      royalties: item.royalties,
+      quantity: item.quantity,
+      curQuantity: item.quantity,
+      thumbnail: item.thumbnail,
+      sellerAddr: address,
+      // createTime: number,
+
+      amount: null,
+      bids: null,
+      buyerAddr: null,
+      endTime: null,
+      filled: null,
+      lastBid: null,
+      lastBidder: null,
+      orderState: null,
+      orderType: null,
+      orderCreateTime: 0,
+      orderUpdateTime: 0,
+      tokenCreateTime: item.createTime,
+      tokenUpdateTime: 0,
+
+      moreMenuType: 'created',
+      showType: 'buy',
+      orderBuyerDidObj: null,
+      orderSellerDidObj: null,
+      tokenCreatorDid: null
+    }
+  }
+
 }

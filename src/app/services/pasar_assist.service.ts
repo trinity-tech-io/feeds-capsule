@@ -3,6 +3,7 @@ import { Logger } from './logger';
 import { Config } from './config';
 import { HttpService } from 'src/app/services/HttpService';
 import { DataHelper } from 'src/app/services/DataHelper';
+import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
 import { ApiUrl } from './ApiUrl';
 
 const TAG: string = 'PasarAssistService';
@@ -10,7 +11,8 @@ const TAG: string = 'PasarAssistService';
 export class PasarAssistService {
   private baseAssistUrl = ApiUrl.ASSIST_SERVER;
   constructor(private httpService: HttpService,
-    private dataHelper: DataHelper) {
+    private dataHelper: DataHelper,
+    private nftContractControllerService: NFTContractControllerService) {
   }
 
   setBaseAssistUrl(url: string) {
@@ -80,4 +82,36 @@ export class PasarAssistService {
     return this.listPasarOrderFromService(1, 10, FeedsData.OrderState.SALEING, blockNumber, true);
   }
 
+  listOwnSticker() {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let url = '';
+        if (this.dataHelper.getDevelopNet() == 'MainNet')
+          url = this.baseAssistUrl + 'sticker/api/v1/query'
+        else
+          url = Config.BASE_PASAR_ASSIST_TESTNET_SERVER + 'sticker/api/v1/query'
+
+        const accountAddress = this.nftContractControllerService.getAccountAddress();
+        if (accountAddress == '') {
+          const error = 'Account address is null';
+          Logger.warn(TAG, error);
+          reject(error);
+          return;
+        }
+
+        url = url + '?owner=' + accountAddress;
+
+        const result = await this.httpService.httpGet(url);
+
+        const resultCode = result.code;
+        if (resultCode != 200)
+          reject('Receive result response code is' + resultCode);
+
+        resolve(result);
+      } catch (error) {
+        Logger.error(TAG, 'List own sticker From Service error', error);
+        reject(error)
+      }
+    });
+  }
 }

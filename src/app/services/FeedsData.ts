@@ -656,7 +656,15 @@ declare namespace FeedsData {
 
     moreMenuType: string,
     showType: string,
-    didUri: string
+
+    orderSellerDidObj: DidObj,
+    orderBuyerDidObj: DidObj,
+    tokenCreatorDid: DidObj
+  }
+
+  type DidObj = {
+    version: string,
+    did: string
   }
 
   type TokenIdAndTokenJson = {
@@ -683,5 +691,26 @@ declare namespace FeedsData {
   type OrderStateAndNFTItem = {
     state: OrderState,
     item: NFTItem
+  }
+
+
+  type StikerItem = {
+    tokenId: string,
+    blockNumber: number,
+    timestamp: number,
+    value: string,
+    holder: string,
+    tokenIndex: string,
+    quantity: string,
+    royalties: string,
+    royaltyOwner: string,
+    createTime: number
+    tokenIdHex: string,
+    name: string,
+    description: string,
+    kind: string,
+    type: string,
+    thumbnail: string,
+    asset: string
   }
 }
