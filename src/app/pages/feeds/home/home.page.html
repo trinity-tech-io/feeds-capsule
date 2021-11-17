@@ -9,8 +9,8 @@
 
   </ion-col>
   <ion-col size="9.5" class="search-home-container" [class.dark-search-home-container]="theme.darkMode">
-    <img *ngIf="searchText===''&&!isClickSort" src="./assets/images/arrow-up.svg" class="arrowBack" [ngStyle]="arrowBackStyle" (click)="clickSortArrow()"/>
-    <img *ngIf="searchText===''&&isClickSort" src="./assets/images/arrow-back.svg" class="arrowBack" [ngStyle]="arrowBackStyle" (click)="clickSortArrow()"/>
+    <img *ngIf="searchText===''&&!isClickSort" src="./assets/images/arrow-back.svg" class="arrowBack" [ngStyle]="arrowBackStyle" (click)="clickSortArrow()"/>
+    <img *ngIf="searchText===''&&isClickSort" src="./assets/images/arrow-up.svg" class="arrowBack" [ngStyle]="arrowBackStyle" (click)="clickSortArrow()"/>
     <form action="javascript:return true;" style="display: flex;justify-content: center;width: 100%;">
       <ion-searchbar #homePasarSearchBar  [(ngModel)]="searchText" inputmode=""  enterkeyhint="search" placeholder="{{ pasarsearchPlaceholder | translate }}" (keyup)="getItems($event)" mode="ios" [ngModelOptions]="{standalone: true}" (ionClear)="ionClear()"></ion-searchbar>
     </form>
