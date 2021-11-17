@@ -908,7 +908,7 @@ export class NFTContractHelperService {
     let tokenCreateTime = 0;
     let tokenUpdateTime = 0
 
-    let didUri: string = tokenInfo.didUri;
+    // let didUri: string = tokenInfo.didUri;
     if (orderInfo != null) {
       sellerAddr = orderInfo.sellerAddr;
       tokenId = orderInfo.tokenId;
