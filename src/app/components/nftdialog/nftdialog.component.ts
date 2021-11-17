@@ -311,6 +311,8 @@ export class NftdialogComponent implements OnInit {
     return new Promise(async (resolve, reject) => {
       try {
         const item = await this.nftContractHelperService.getSellerNFTItembyIndexFromContract(orderIndex);
+        let orderSellerDidObj = this.feedService.getDidUriJson();
+        item.orderSellerDidObj = orderSellerDidObj;
         const obj = { type: type, assItem: item, sellQuantity: this.quantity };
         this.events.publish(FeedsEvent.PublishType.nftUpdateList, obj);
         this.orderId = item.saleOrderId;

@@ -900,12 +900,13 @@ export class MintnftPage implements OnInit {
           createTime: createTime * 1000,
           moreMenuType: 'created',
           sellerAddr: accAddress,//所有者
-          didUri: this.didUri
         };
         slist.push(item);
         break;
       case 'onSale':
         item = await this.nftContractHelperService.getSellerNFTItembyIndexFromContract(orderIndex);
+        let orderSellerDidObj = this.feedService.getDidUriJson();
+        item.orderSellerDidObj = orderSellerDidObj;
         slist.push(item);
         this.event.publish(FeedsEvent.PublishType.mintNft);
         break;

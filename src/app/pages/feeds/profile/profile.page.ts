@@ -969,7 +969,6 @@ export class ProfilePage implements OnInit {
              this.profileCollectiblesisLoadimage[fileName] = '12';
              this.fileHelperService.getNFTData(fetchUrl,fileName, kind).then((data) => {
                this.zone.run(() => {
-                 console.log("====finish====",itemIndex);
                  this.profileCollectiblesisLoadimage[fileName] = '13';
                  thumbImage.setAttribute("src",data);
                });
@@ -982,13 +981,11 @@ export class ProfilePage implements OnInit {
              this.profileCollectiblesisLoadimage[fileName] === '13' &&
              srcStr != './assets/icon/reserve.svg'
            ) {
-             console.log("====undone====",itemIndex);
              this.profileCollectiblesisLoadimage[fileName] = '';
              thumbImage.setAttribute('src', './assets/icon/reserve.svg');
            }
          }
       } catch (error) {
-        console.log("====error====",itemIndex);
        this.profileCollectiblesisLoadimage[fileName] = '';
        thumbImage.setAttribute('src', './assets/icon/reserve.svg');
       }
@@ -2089,11 +2086,6 @@ export class ProfilePage implements OnInit {
       list.splice(index,1,cpItem);
       Logger.log(TAG, 'Update list', list);
 
-      // this.ownNftSum = this.collectiblesList.length;
-      // this.nftPersistenceHelper.setCollectiblesMap(createAddr, list);
-
-      // cpList.push(cpItem);
-      // this.nftPersistenceHelper.setPasarList(cpList);
     } else {
 
       let index = _.findIndex(list, (item: any) => {
@@ -2109,23 +2101,16 @@ export class ProfilePage implements OnInit {
       list.push(cpItem);
 
       Logger.log(TAG, 'Update list', list);
-      // this.ownNftSum = this.collectiblesList.length;
-      // this.nftPersistenceHelper.setCollectiblesMap(createAddr, list);
-
-      // cpList.push(cpItem);
-      // this.nftPersistenceHelper.setPasarList(cpList);
     }
 
     this.zone.run(() => {
       this.collectiblesList = list;
       this.ownNftSum = this.collectiblesList.length;
       this.nftPersistenceHelper.setCollectiblesMap(createAddr, list);
+      this.refreshCollectiblesVisibleareaImage();
       Logger.log(TAG, 'handleCreate this.collectiblesList', this.collectiblesList);
 
     });
-
-    // Logger.log(TAG, 'handleCreate this.collectiblesList', this.collectiblesList);
-
   }
 
   async handleCancelOrder(tokenId: any, curTokenNum: any, assetItem: any, createAddr: any, saleOrderId: any, clist: any, sellerAddr: any) {

@@ -1291,7 +1291,6 @@ export class NFTContractHelperService {
       cItem.fixedAmount = null;
       cItem.sellerAddr = "";
       cItem['moreMenuType'] = 'created';
-      cItem['didUri'] = didUri;
       olist.push(cItem);
       this.nftPersistenceHelper.setCollectiblesMap(createAddress, olist);
       return;
