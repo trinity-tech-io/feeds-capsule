@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import BigNumber from 'bignumber.js';
+import { Logger } from './logger';
 
 @Injectable()
 export class UtilService {
@@ -571,13 +572,15 @@ public static  zoomImgSize(imgWidth:any, imgHeight:any, maxWidth:any, maxHeight:
   };
 
   public static downloadFileFromUrl(url: string): Promise<Blob> {
-    return new Promise((resolve, reject) => {
-      const downloadRes = async () => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        Logger.log('Start fetch file', url)
         let response = await fetch(url);
         let blob = await response.blob();
         resolve(blob);
+      } catch (error) {
+        Logger.error('DownloadFile', 'Download file error', url);
       }
-      downloadRes();
     });
   }
 
