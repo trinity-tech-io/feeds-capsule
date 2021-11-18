@@ -21,7 +21,7 @@ export class NfttransferdialogComponent implements OnInit {
   public walletAddress: string = "";
   public isAdvancedSetting: boolean = false;
   public quantity: string = "";
-  public memo: string = '';
+  public memo: string = 'Transfered via Feeds';
   public disableMemo: boolean = false;
   private tokenId: string = "";
   private curAssItem: any = null;
@@ -71,8 +71,8 @@ export class NfttransferdialogComponent implements OnInit {
 
   confirm() {
    if(this.checkParam()){
-    let memo = this.memo || "";
-     if(memo === ""){
+    let memo = this.memo || "Transfered via Feeds";
+    if(memo === ""){
       this.handleTransfer();
      }else{
        this.handleTransferWithMemo();
