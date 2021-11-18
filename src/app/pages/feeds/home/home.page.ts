@@ -2383,7 +2383,7 @@ export class HomePage implements OnInit {
           thumbImage.getBoundingClientRect().top <= this.clientHeight
         ) {
           if(isload === ""){
-            if (kind == 'gif' && parseInt(size, 10) > 10 * 1000 * 1000) {
+            if (kind == 'gif' && size && parseInt(size, 10) > 10 * 1000 * 1000) {
               Logger.log(TAG, 'Work around, Not show');
               return;
             }
@@ -2443,7 +2443,7 @@ export class HomePage implements OnInit {
            thumbImage.getBoundingClientRect().top <= this.clientHeight
          ) {
            if(isload === ""){
-             if (kind == 'gif' && parseInt(size, 10) > 10 * 1000 * 1000) {
+             if (kind == 'gif' && size && parseInt(size, 10) > 10 * 1000 * 1000) {
                Logger.log(TAG, 'Work around, Not show');
                return;
              }
