@@ -1,7 +1,6 @@
 import { NgModule, ErrorHandler, Injectable } from '@angular/core';
 import { BrowserModule, HammerModule } from '@angular/platform-browser';
 import { HttpClientModule } from '@angular/common/http';
-import { PhotoLibrary } from '@ionic-native/photo-library/ngx';
 import { CommonModule } from '@angular/common';
 import { RouteReuseStrategy } from '@angular/router';
 import { IonicModule, IonicRouteStrategy, Platform } from '@ionic/angular';
@@ -162,7 +161,6 @@ export function TranslateLoaderFactory() {
   entryComponents: [MyApp],
   providers: [
     Keyboard,
-    PhotoLibrary,
     File,
     VideoEditor,
     StatusBar,

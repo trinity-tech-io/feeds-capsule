@@ -20,7 +20,6 @@ import { UtilService } from 'src/app/services/utilService';
 import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
 import { IPFSService } from 'src/app/services/ipfs.service';
 import { NFTPersistenceHelper } from 'src/app/services/nft_persistence_helper.service';
-import { PhotoLibrary } from '@ionic-native/photo-library/ngx';
 import { DataHelper } from 'src/app/services/DataHelper';
 import { Logger } from 'src/app/services/logger';
 import { NFTContractHelperService } from 'src/app/services/nftcontract_helper.service';
@@ -190,7 +189,6 @@ export class ProfilePage implements OnInit {
     private nftContractControllerService: NFTContractControllerService,
     private ipfsService: IPFSService,
     private nftPersistenceHelper: NFTPersistenceHelper,
-    private photoLibrary: PhotoLibrary,
     private dataHelper :DataHelper,
     private nftContractHelperService: NFTContractHelperService,
     private fileHelperService: FileHelperService
@@ -291,13 +289,6 @@ export class ProfilePage implements OnInit {
       if (pageName === "profile") {
         this.handleDialog(dialogName, dialogbutton, pageName);
       }
-    });
-
-    this.events.subscribe(FeedsEvent.PublishType.savePicture, (obj) => {
-      let assetUri = this.handleImg(obj["asset"]);
-      this.native.showLoading('common.savedDes', isDismiss => { }, 2000).then(() => {
-        this.saveImage(assetUri);
-      });
     });
 
     this.events.subscribe(FeedsEvent.PublishType.startLoading, (obj) => {
@@ -727,7 +718,6 @@ export class ProfilePage implements OnInit {
     this.events.unsubscribe(FeedsEvent.PublishType.walletAccountChanged);
     this.events.unsubscribe(FeedsEvent.PublishType.nftUpdateList);
     this.events.unsubscribe(FeedsEvent.PublishType.clickDialog);
-    this.events.unsubscribe(FeedsEvent.PublishType.savePicture);
     this.events.unsubscribe(FeedsEvent.PublishType.nftdisclaimer);
 
     this.events.unsubscribe(FeedsEvent.PublishType.nftUpdatePrice);
@@ -2029,36 +2019,6 @@ export class ProfilePage implements OnInit {
     this.clearData();
     this.native.navigateForward(['mintnft'], {});
   }
-
-  async saveImage(assetUri: string) {
-    this.photoLibrary.requestAuthorization({
-      read: true,
-      write: true
-    }).then(() => {
-      this.photoLibrary.getLibrary().subscribe(
-        {
-          next: async library => {
-            let base64 = await this.getImageBase64(assetUri);
-            let album = "Feeds";
-            this.photoLibrary.saveImage(base64, album).then(() => {
-              this.native.hideLoading();
-              this.native.toast("common.savedSuccessfully");
-            })
-          },
-          error: err => {
-            this.native.hideLoading();
-            this.native.toastWarn("common.saveFailed");
-
-          },
-          complete: () => { console.log('done getting photos'); }
-        });
-    })
-      .catch(err => {
-        this.native.hideLoading();
-        this.native.toastWarn("common.saveFailed");
-      });
-  }
-
 
   getImageBase64(uri: string): Promise<string> {
     return new Promise((resolve, reject) => {

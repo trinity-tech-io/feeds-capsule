@@ -161,11 +161,6 @@ const routes: Routes = [
   },
   { path: 'bid', loadChildren: './pages/nft/bid/bid.module#BidPageModule' },
   {
-    path: 'confirmation',
-    loadChildren:
-      './pages/nft/confirmation/confirmation.module#ConfirmationPageModule',
-  },
-  {
     path: 'channelsviewall',
     loadChildren: './pages/feeds/search/search.module#SearchPageModule',
   },
