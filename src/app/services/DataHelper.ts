@@ -116,6 +116,7 @@ export class DataHelper {
   private firstSyncOrderFinish = false;
 
   private stickerItemMap: { [tokenId: string]: FeedsData.NFTItem } = {};
+  private downloadList = [];
   constructor(
     private storageService: StorageService,
     private events: Events
@@ -2679,5 +2680,19 @@ export class DataHelper {
     return this.nftDidList;
   }
 
+
+  getDownloadingUrl(url: string): string[] {
+    return _.filter(this.downloadList, (filterUrl: string) => {
+      return filterUrl == url;
+    })
+  }
+
+  addDownloadingUrl(url: string) {
+    this.downloadList.push(url);
+  }
+
+  deleteDownloadingUrl(url: string) {
+    _.remove(this.downloadList, url);
+  }
 
 }

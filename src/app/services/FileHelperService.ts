@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { FileService } from 'src/app/services/FileService';
 import { Logger } from './logger';
 import { UtilService } from './utilService';
+import { DataHelper } from './DataHelper';
 
 const TAG: string = 'Feeds-FileHelperService';
 const carrierPath: string = '/carrier/';
@@ -10,7 +11,7 @@ const orderPath: string = '/data/';
 const tokenJsonPath: string = '/tokenJson/';
 @Injectable()
 export class FileHelperService {
-  constructor(private fileService: FileService) { }
+  constructor(private fileService: FileService, private dataHelper: DataHelper) { }
 
   moveCarrierData(oldName: string, newName: string): Promise<Entry> {
     return new Promise(async (resolve, reject) => {
@@ -152,9 +153,17 @@ export class FileHelperService {
           resolve(finalresult);
           return;
         }
+        const result = this.dataHelper.getDownloadingUrl(fileUrl);
+
+        if (!result || result && result.length > 0) {
+          return;
+        }
+
+        this.dataHelper.addDownloadingUrl(fileUrl);
         let blob = await UtilService.downloadFileFromUrl(fileUrl);
         const result2 = await this.transBlobToBase64(blob);
         await this.writeNFTCacheFileData(fileName, blob);
+        this.dataHelper.deleteDownloadingUrl(fileUrl);
         Logger.log(TAG, "Get data from net");
         resolve(result2);
       } catch (error) {
