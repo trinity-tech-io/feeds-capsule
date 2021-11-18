@@ -772,7 +772,7 @@ export const en = {
   },
   ExplorefeedsPage: {
     pasar: 'Pasar',
-    explorefeeds: 'Explore feeds',
+    explorefeeds: 'Explore Feeds',
     hotBids: 'Hot Bids',
     latest: 'Latest',
     new: 'New',
@@ -909,7 +909,7 @@ export const en = {
     title: 'Verified Creators'
   },
   AssistpasarPage:{
-    title: "Assist Pasar Api",
+    title: "Assist Pasar API",
     assistProviderDes: "Secondary assist pasar service for reading data"
   }
 };

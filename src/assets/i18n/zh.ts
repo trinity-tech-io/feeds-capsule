@@ -138,10 +138,10 @@ export const zh = {
     restartAppDesc: '切换网络后需要重启应用',
     disconnectWallet: '断开钱包',
     restartAppDescForProvider: '切换提供商后需要重启应用',
-    cancelingOrderDesc: '正在取消收藏品订单,请稍候...',
-    changingPriceDesc: '正在更新收藏品价格,请稍候...',
-    sellingOrderDesc: '正在出售收藏品,请稍候...',
-    buyingOrderDesc: '正在购买收藏品,请稍候...',
+    cancelingOrderDesc: '正在取消收藏品订单，请稍候...',
+    changingPriceDesc: '正在更新收藏品价格，请稍候...',
+    sellingOrderDesc: '正在出售收藏品，请稍候...',
+    buyingOrderDesc: '正在购买收藏品，请稍候...',
     buyOrderTimeoutDesc: '购买收藏品超时，稍后您可自行确认购买收藏品是否成功',
     cancelOrderTimeoutDesc: '取消收藏品超时，稍后您可自行确认取消收藏品是否成功',
     changePriceTimeoutDesc: '修改收藏品价格超时，稍后您可自行确认修改收藏品价格是否成功',
@@ -150,7 +150,7 @@ export const zh = {
     savePicture: "保存收藏品",
     savedSuccessfully: "保存成功",
     saveFailed: "保存失败",
-    savedDes: "请稍等,图片保存中",
+    savedDes: "请稍等，图片保存中",
     burnNFTs: "销毁收藏品",
     burningNFTSDesc: "正在销毁收藏品，请稍后",
     burningNFTSTimeoutDesc: "销毁收藏品超时，稍后您可自行确认",
@@ -297,7 +297,7 @@ export const zh = {
     allempty: '空空如也',
     emptyDes: '该频道尚未发布任何微说',
     noSubscription: "没有订阅",
-    subscribeChannel: '订阅此频道的查看帖子',
+    subscribeChannel: '订阅此频道可查看帖子',
     viewall: '查看全部',
   },
   NotificationPage: {
@@ -461,7 +461,7 @@ export const zh = {
     title: '绑定服务',
     introduce: '5/5',
     introduce1: '颁发凭证',
-    introduce2: '您已将DID文档待交易内容成功发布到DID侧链,为了声明所有权，您必须颁发凭证',
+    introduce2: '您已将DID文档待交易内容成功发布到DID侧链，为了声明所有权，您必须颁发凭证',
     issueacredential: '颁发新凭证',
     serverInfo: '出版号信息',
     serverName: 'Feeds出版号名称',
@@ -683,7 +683,7 @@ export const zh = {
     quantityErrorMsg1: '数量值不能超过最大数值(整数)',
     fileTypeDes: '支持图片格式 -  ',
     avatar: '头像',
-    fileTypeDes1: '600 * 600 唯一pixel 标准；',
+    fileTypeDes1: '600 * 600 唯一 pixel 标准；',
     fileTypeDes2: '内容尺寸小于等于5M；',
     fileTypeDes3: '建议的GIF动画长度：小于10秒',
     general: '通用',
@@ -756,7 +756,7 @@ export const zh = {
   },
   ExplorefeedsPage: {
     pasar: 'Pasar',
-    explorefeeds: '探索 feeds',
+    explorefeeds: '探索 Feeds',
     hotBids: '热门竞标',
     latest: '最近',
     new: '最新',
@@ -801,7 +801,7 @@ export const zh = {
     wallet: '#钱包',
     connectWallet: '连接钱包',
     introduce1:
-      '连接钱包可在订阅源上充分享受Elastos智能合约链（ESC）功能。用户现在也可以在市场（也称为Pasar）上交易不可替代代币（nft）。',
+      '连接钱包可在Feeds上充分享受Elastos智能合约链（ESC）功能。用户现在也可以在市场（也称为Pasar）上交易不可替代代币（NFT）。',
     introduce2: '连接钱包',
     skip: '跳过',
   },
@@ -890,7 +890,7 @@ export const zh = {
     title: '已验证原创者'
   },
   AssistpasarPage:{
-    title: "Assist Pasar Api",
+    title: "Assist Pasar API",
     assistProviderDes: "用于读取数据的辅助 Assist Pasar 服务",
   }
 };
