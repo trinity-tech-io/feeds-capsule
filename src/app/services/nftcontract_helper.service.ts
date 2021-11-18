@@ -887,6 +887,7 @@ export class NFTContractHelperService {
     let price: string = "0";
     let kind: string = "";
     let type: string = "";
+    let size: string = "0";
     let royalties: string = "0";
     let quantity: number = 0;
     let curQuantity: number = 0;
@@ -953,7 +954,7 @@ export class NFTContractHelperService {
     name = tokenJson.name;
     description = tokenJson.description;
     kind = tokenJson.kind;
-
+    size = tokenJson.size;
     const item: FeedsData.NFTItem = {
       creator: createAddress,
       saleOrderId: orderId,
@@ -984,10 +985,11 @@ export class NFTContractHelperService {
       orderUpdateTime: orderUpdateTime,
       tokenCreateTime: tokenCreateTime,
       tokenUpdateTime: tokenUpdateTime,
+      originAssetSize: size,
 
       moreMenuType: moreMenuType,
-
       showType: showType,
+
       orderSellerDidObj: null,
       orderBuyerDidObj: null,
       tokenCreatorDid: null
@@ -1174,6 +1176,7 @@ export class NFTContractHelperService {
       orderUpdateTime: assistPasarItem.updateTime,
       tokenCreateTime: assistPasarItem.tokenCreateTime,
       tokenUpdateTime: assistPasarItem.tokenUpdateTime,
+      originAssetSize: assistPasarItem.size,
 
       moreMenuType: moreMenuType,
       showType: showType,
@@ -1457,6 +1460,7 @@ export class NFTContractHelperService {
       orderUpdateTime: 0,
       tokenCreateTime: item.createTime,
       tokenUpdateTime: 0,
+      originAssetSize: item.size,
 
       moreMenuType: 'created',
       showType: 'buy',

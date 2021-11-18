@@ -2372,6 +2372,7 @@ export class HomePage implements OnInit {
      let arr = id.split("-");
      let fileName = arr[0];
      let kind = arr[1];
+     let size = arr[2];
      let thumbImage =  document.getElementById(fileName+"-homeImg");
      let srcStr =  thumbImage.getAttribute("src") || "";
      let isload = this.pasarGridisLoadimage[fileName] || '';
@@ -2382,6 +2383,11 @@ export class HomePage implements OnInit {
           thumbImage.getBoundingClientRect().top <= this.clientHeight
         ) {
           if(isload === ""){
+            if (kind == 'gif' && parseInt(size, 10) > 10 * 1000 * 1000) {
+              Logger.log(TAG, 'Work around, Not show');
+              return;
+            }
+
             let fetchUrl = this.ipfsService.getNFTGetUrl() + fileName;
             this.pasarGridisLoadimage[fileName] = '12';
             this.fileHelperService.getNFTData(fetchUrl,fileName, kind).then((data) => {
@@ -2425,6 +2431,7 @@ export class HomePage implements OnInit {
       let arr = id.split("-");
       let fileName = arr[0];
       let kind = arr[1];
+      let size = arr[2];
       let thumbImage =  document.getElementById(fileName+"-thumbImage") || null;
       let srcStr =  thumbImage.getAttribute("src") || "";
       let isload = this.pasarListisLoadimage[fileName] || '';
@@ -2436,8 +2443,14 @@ export class HomePage implements OnInit {
            thumbImage.getBoundingClientRect().top <= this.clientHeight
          ) {
            if(isload === ""){
+             if (kind == 'gif' && parseInt(size, 10) > 10 * 1000 * 1000) {
+               Logger.log(TAG, 'Work around, Not show');
+               return;
+             }
+
              let fetchUrl = this.ipfsService.getNFTGetUrl() + fileName;
              this.pasarListisLoadimage[fileName] = '12';
+
              this.fileHelperService.getNFTData(fetchUrl,fileName, kind).then((data) => {
                this.zone.run(() => {
                  this.pasarListisLoadimage[fileName] = '13';
@@ -2470,12 +2483,16 @@ export class HomePage implements OnInit {
       thumbnailUri = item['asset'];
     }
 
+    let size = item["originAssetSize"]
+    if (!size)
+      size = '0';
+
     if (thumbnailUri.indexOf('feeds:imgage:') > -1) {
       thumbnailUri = thumbnailUri.replace('feeds:imgage:', '');
     } else if (thumbnailUri.indexOf('feeds:image:') > -1) {
       thumbnailUri = thumbnailUri.replace('feeds:image:', '');
     }
-    return thumbnailUri+"-"+kind;
+    return thumbnailUri + "-" + kind + "-" + size;
   }
 
   async changeSortType(sortType: number, event: any) {
