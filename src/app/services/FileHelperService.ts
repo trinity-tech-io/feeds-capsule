@@ -156,6 +156,7 @@ export class FileHelperService {
         const result = this.dataHelper.getDownloadingUrl(fileUrl);
 
         if (!result || result && result.length > 0) {
+          resolve('');
           return;
         }
 
