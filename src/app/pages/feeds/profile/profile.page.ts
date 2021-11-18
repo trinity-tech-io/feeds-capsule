@@ -968,7 +968,7 @@ export class ProfilePage implements OnInit {
            if(isload === ""){
              if (kind == 'gif' && size && parseInt(size, 10) > 10 * 1000 * 1000) {
                Logger.log(TAG, 'Work around, Not show');
-               return;
+               continue;
              }
 
              let fetchUrl = this.ipfsService.getNFTGetUrl() + fileName;
