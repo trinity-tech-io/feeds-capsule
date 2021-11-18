@@ -2393,8 +2393,16 @@ export class HomePage implements OnInit {
             this.fileHelperService.getNFTData(fetchUrl,fileName, kind).then((data) => {
               this.zone.run(() => {
                 this.pasarGridisLoadimage[fileName] = '13';
-                thumbImage.setAttribute("src",data);
+                let dataSrc = data || "";
+                if(dataSrc!=""){
+                  thumbImage.setAttribute("src",data);
+                }
               });
+            }).catch((err)=>{
+              if(this.pasarGridisLoadimage[fileName] === '13'){
+                this.pasarGridisLoadimage[fileName] = '';
+                thumbImage.setAttribute('src', './assets/icon/reserve.svg');
+               }
             });
           }
         }else{
@@ -2409,8 +2417,10 @@ export class HomePage implements OnInit {
           }
         }
      } catch (error) {
-      this.pasarGridisLoadimage[fileName] = '';
-      thumbImage.setAttribute('src', './assets/icon/reserve.svg');
+       if(this.pasarGridisLoadimage[fileName] === '13'){
+        this.pasarGridisLoadimage[fileName] = '';
+        thumbImage.setAttribute('src', './assets/icon/reserve.svg');
+       }
      }
    }
   }
@@ -2454,8 +2464,16 @@ export class HomePage implements OnInit {
              this.fileHelperService.getNFTData(fetchUrl,fileName, kind).then((data) => {
                this.zone.run(() => {
                  this.pasarListisLoadimage[fileName] = '13';
-                 thumbImage.setAttribute("src",data);
+                 let dataSrc = data || "";
+                 if(dataSrc!=""){
+                  thumbImage.setAttribute("src",data);
+                 }
                });
+             }).catch((err)=>{
+              if(this.pasarListisLoadimage[fileName] === '13'){
+                this.pasarListisLoadimage[fileName] = '';
+                thumbImage.setAttribute('src', './assets/icon/reserve.svg');
+               }
              });
            }
          }else{
@@ -2470,8 +2488,10 @@ export class HomePage implements OnInit {
            }
          }
       } catch (error) {
-       this.pasarListisLoadimage[fileName] = '';
-       thumbImage.setAttribute('src', './assets/icon/reserve.svg');
+       if(this.pasarListisLoadimage[fileName] === '13'){
+        this.pasarListisLoadimage[fileName] = '';
+        thumbImage.setAttribute('src', './assets/icon/reserve.svg');
+       }
       }
     }
   }
