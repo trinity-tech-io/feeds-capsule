@@ -955,6 +955,7 @@ export class ProfilePage implements OnInit {
       let arr = id.split("-");
       let fileName = arr[0];
       let kind = arr[1];
+      let size = arr[2];
       let thumbImage =  document.getElementById(fileName+"-profileImg");
       let srcStr =  thumbImage.getAttribute("src") || "";
       let isload = this.profileCollectiblesisLoadimage[fileName] || '';
@@ -965,6 +966,11 @@ export class ProfilePage implements OnInit {
            thumbImage.getBoundingClientRect().top <= this.clientHeight
          ) {
            if(isload === ""){
+             if (kind == 'gif' && parseInt(size, 10) > 10 * 1000 * 1000) {
+               Logger.log(TAG, 'Work around, Not show');
+               return;
+             }
+
              let fetchUrl = this.ipfsService.getNFTGetUrl() + fileName;
              this.profileCollectiblesisLoadimage[fileName] = '12';
              this.fileHelperService.getNFTData(fetchUrl,fileName, kind).then((data) => {
@@ -1012,12 +1018,16 @@ export class ProfilePage implements OnInit {
       thumbnailUri = item['asset'];
     }
 
+    let size = item["originAssetSize"]
+    if (!size)
+      size = '0';
+
     if (thumbnailUri.indexOf('feeds:imgage:') > -1) {
       thumbnailUri = thumbnailUri.replace('feeds:imgage:', '');
     } else if (thumbnailUri.indexOf('feeds:image:') > -1) {
       thumbnailUri = thumbnailUri.replace('feeds:image:', '');
     }
-    return thumbnailUri+"-"+kind+"-profile";
+    return thumbnailUri + "-" + kind + "-" + size + "-profile";
   }
 
   setVisibleareaImage() {

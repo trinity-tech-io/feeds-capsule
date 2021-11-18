@@ -653,6 +653,7 @@ declare namespace FeedsData {
     orderUpdateTime: number,
     tokenCreateTime: number,
     tokenUpdateTime: number,
+    originAssetSize: string,
 
     moreMenuType: string,
     showType: string,
