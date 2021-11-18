@@ -30,8 +30,7 @@ export const en = {
     des4: 'Your donation will be sent to this ELA address:',
     amountError: 'Incorrect amount',
     waitMoment: 'Please wait...',
-    issuecredentialError:
-      'There was an error issuing the certificate. Please check the QR code or try again',
+    issuecredentialError: 'There was an error issuing the certificate. Please check the QR code or try again',
     save: 'Save',
     channel: 'Channel',
     image: 'Image',
@@ -58,17 +57,14 @@ export const en = {
     successfully: 'Successfully',
     followed: 'Subscription added',
     unfollowed: 'Unsubscribed',
-    filevideodes:
-      'The playback length of this video exceeds the limit of 15 seconds',
+    filevideodes: 'The playback length of this video exceeds the limit of 15 seconds',
     videoloading: 'Uploading...',
     theFeedSource: 'Feeds Publisher Account',
     fulltext: 'Read more',
     uploading: 'Uploading',
     downloading: 'Downloading',
-    mustUpdate:
-      'Your Feeds service is out-dated. Please upgrade to the latest version.',
-    downDes:
-      'There is an instant file being downloaded, please wait for that download to complete and try again',
+    mustUpdate: 'Your Feeds service is out-dated. Please upgrade to the latest version.',
+    downDes: 'There is an instant file being downloaded, please wait for that download to complete and try again',
     loadingLastestComment: 'Loading latest comments',
     showless: 'show less',
     showmore: 'show more',
@@ -332,8 +328,7 @@ export const en = {
     inputFeedDesc: 'Add channel description',
     createfeedsuccess: 'Channel created successfully!',
     tipMsgLength1: 'The maximum length of the name message is 32 characters',
-    alreadyExist:
-      'Channel already exists. Please change the name and try again',
+    alreadyExist: 'Channel already exists. Please change the name and try again',
     nameContainInvalidChars:
       'Channel Name can not include characters except alphabet letters A-Z, a-z, digits 0-9, the hyphen “-”, and the underscore “_”.',
     feedMaxNumber: 'The maximum number of channels can be created is 5',
@@ -414,8 +409,7 @@ export const en = {
     containedfeeds: 'Contained Channels',
     version: 'version',
     beingPublic: 'Public',
-    des1:
-      'When developer mode is opened, you can choose public or public test Channel',
+    des1: 'When developer mode is opened, you can choose public or public test Channel',
     des2: 'Test Channel',
     des3: 'Public Channel',
     feedsSourceQRCodeDes:
@@ -436,15 +430,12 @@ export const en = {
   StartbindingPage: {
     title: 'Bind service',
     introduce1: 'Verify Binding Code',
-    introduce2:
-      'Please verify if the binding code from the QR code is the same as the one on the browser.',
+    introduce2: 'Please verify if the binding code from the QR code is the same as the one on the browser.',
     introduce3: 'Feeds Publisher Account url',
-    linkServer:
-      'You are linking a Feeds Publisher Account service. Please confirm whether the Feeds Publisher Account url is consistent with the previously bound Feeds Publisher Account service.',
+    linkServer: 'You are linking a Feeds Publisher Account service. Please confirm whether the Feeds Publisher Account url is consistent with the previously bound Feeds Publisher Account service.',
     confirm: 'Confirm',
     abort: 'Abort',
-    linkServerError:
-      'The Feeds Publisher Account has been bound by another DID. Please change and try again.',
+    linkServerError: 'The Feeds Publisher Account has been bound by another DID. Please change and try again.',
     introduce4: '2/5',
     introduce5: 'Binding Code',
     introduce6: 'Bind Publisher Account',
@@ -463,8 +454,7 @@ export const en = {
     title: 'Bind service',
     introduce: '4/5',
     introduce1: 'Publish to DID Sidechain',
-    introduce2:
-      'Publish the payload from the Publisher Account to DID sidechain.',
+    introduce2: 'Publish the payload from the Publisher Account to DID sidechain.',
     payload: 'DID Payload',
     publishonDIDsidechain: 'Publish',
   },
@@ -472,8 +462,7 @@ export const en = {
     title: 'Bind service',
     introduce: '5/5',
     introduce1: 'Issue Credentials',
-    introduce2:
-      'You have published the payload to the DID sidechain successfully.In order to claim the ownership, you have to issue your credentials.',
+    introduce2: 'You have published the payload to the DID sidechain successfully.In order to claim the ownership, you have to issue your credentials.',
     issueacredential: 'Issue credentials',
     serverInfo: 'Publisher Account Info',
     serverName: 'Name',
@@ -489,8 +478,7 @@ export const en = {
     introduce: 'Congratulations!',
     introduce1: 'Create Channel',
     introduce2: 'Return to main screen',
-    introduce3:
-      'Your have completed the binding of the Publisher Account! Create a channel to get started!',
+    introduce3: 'Your have completed the binding of the Publisher Account! Create a channel to get started!',
   },
   CreatenewpostPage: {
     post: 'Post',
@@ -512,8 +500,7 @@ export const en = {
   },
   DisclaimerPage: {
     title: 'Disclaimer',
-    declaration:
-      'By clicking “I agree”, you hereby accept and agree to our Terms below.',
+    declaration: 'By clicking “I agree”, you hereby accept and agree to our Terms below.',
     copyright:
       'Feeds is owned and operated by Trinity Tech Co., Ltd. and its affiliates (“Trinity”, “we”, or “us”), and you agree to abide by the specific terms for the Feeds application below (collectively our “Terms”).',
     bodyText:
@@ -524,7 +511,6 @@ export const en = {
   DonationPage: {
     donation: 'Donation',
     donate: 'Donate',
-    donationELAAddress: 'Donation ELA Address',
     description:
       'The Feeds Capsule is a non-profit project dedicated to improving user experience and integrating essential features into elastOS. All donations contributed to the Feeds project are greatly appreciated, and will better enable us to deliver on our mission as we develop new functions and features for our upcoming releases.',
     receiver: 'Receiver',
@@ -620,8 +606,7 @@ export const en = {
     drak: 'Dark',
     light: 'Light',
     'elastos-api-provider': 'Elastos API Provider',
-    'elastos-api-provider-des':
-      'Select your preferred provider for all Elastos related services',
+    'elastos-api-provider-des': 'Select your preferred provider for all Elastos related services',
     'elastos-io-des':
       "Set of Elastos APIs deployed and maintained by the Elastos Foundation's Elastos Fusion sub-team, also known as the product team.",
     'trinity-tech-cn-des':
@@ -791,18 +776,13 @@ export const en = {
     title: 'Bind service',
     des: '1/6',
     des1: 'What is Feeds Service?',
-    des2:
-      'A service node to store data in your local device. You can download the latest version from the Feeds',
+    des2: 'A service node to store data in your local device. You can download the latest version from the Feeds',
     des3: 'website',
-    des4:
-      '. You need to install and run Feeds Service to receive the QR code in order to bind the Publisher Account.',
-    des5:
-      'This is how Feeds works as users with a Publisher Account can publish posts, create collectibles etc.',
-    des6:
-      'Without a Publisher Account, users can only read posts but cannot publish or edit them.',
+    des4: '. You need to install and run Feeds Service to receive the QR code in order to bind the Publisher Account.',
+    des5: 'This is how Feeds works as users with a Publisher Account can publish posts, create collectibles etc.',
+    des6: 'Without a Publisher Account, users can only read posts but cannot publish or edit them.',
     des7: 'What is Publisher Account?',
-    des8:
-      'An account to bind data to Feeds Service. Imagine if you are a book publisher, you have the permission to write, edit and publish books to the market while normal readers can only read and browse books in the bookstore.',
+    des8: 'An account to bind data to Feeds Service. Imagine if you are a book publisher, you have the permission to write, edit and publish books to the market while normal readers can only read and browse books in the bookstore.',
     next: 'OK',
     info: '#info',
     back: 'Back',

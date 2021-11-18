@@ -433,7 +433,7 @@ export class IntentService {
      let code = this.languageService.getCurLang() || "en";
      let des = ""
       if(code === "zh"){
-        des = "这是我从Feeds(@ElastosFeeds) 分享的微频 '"+channelName+"', 请订阅后继续阅读 ";
+        des = "这是我从Feeds(@ElastosFeeds) 分享的微频 '"+channelName+"'，请订阅后继续阅读 ";
       }else{
         des =  "Check out this channel '" + channelName + "' on Feeds(@ElastosFeeds) ";
       }
