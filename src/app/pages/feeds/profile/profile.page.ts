@@ -976,12 +976,20 @@ export class ProfilePage implements OnInit {
              this.fileHelperService.getNFTData(fetchUrl,fileName, kind).then((data) => {
                this.zone.run(() => {
                  this.profileCollectiblesisLoadimage[fileName] = '13';
-                 thumbImage.setAttribute("src",data);
+                 let srcData = data || "";
+                 if(srcData != ""){
+                  thumbImage.setAttribute("src",data);
+                 }
                });
+             }).catch((err)=>{
+               if(this.profileCollectiblesisLoadimage[fileName] === '13'){
+                this.profileCollectiblesisLoadimage[fileName] = '';
+                thumbImage.setAttribute('src', './assets/icon/reserve.svg');
+               }
              });
            }
          }else{
-           srcStr = thumbImage.getAttribute('src') || '';
+           srcStr = thumbImage.getAttribute('src') || './assets/icon/reserve.svg';
            if (
              thumbImage.getBoundingClientRect().top < -100 &&
              this.profileCollectiblesisLoadimage[fileName] === '13' &&
@@ -992,8 +1000,10 @@ export class ProfilePage implements OnInit {
            }
          }
       } catch (error) {
-       this.profileCollectiblesisLoadimage[fileName] = '';
-       thumbImage.setAttribute('src', './assets/icon/reserve.svg');
+        if(this.profileCollectiblesisLoadimage[fileName] === '13'){
+          this.profileCollectiblesisLoadimage[fileName] = '';
+          thumbImage.setAttribute('src', './assets/icon/reserve.svg');
+        }
       }
     }
 
