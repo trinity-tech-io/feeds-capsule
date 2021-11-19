@@ -33,6 +33,7 @@ export class SettingsPage implements OnInit {
   public curIPFSApiProviderName = 'ipfs0.trinity-feeds.app';
   public curAssistApiProviderName = '';
   private isListGrid: boolean = false;
+  public hideAdult: boolean = false;
   constructor(
     private languageService: LanguageService,
     private feedService: FeedService,
@@ -239,5 +240,14 @@ export class SettingsPage implements OnInit {
 
   navAssistPasarProvider(){
     this.native.getNavCtrl().navigateForward(['/assistpasar']);
+  }
+
+  toggleHideAdult(){
+    this.zone.run(() => {
+      this.hideAdult = !this.hideAdult;
+    });
+    this.dataHelper.setHideAdult(this.hideAdult);
+    this.events.publish(FeedsEvent.PublishType.hideAdult);
+    this.dataHelper.saveData('feeds.hideAdult',this.hideAdult);
   }
 }

@@ -622,7 +622,8 @@ export const zh = {
     'advanced-setting': '高级设置',
     'configure-network': '启用中网络',
     'choose-network': '选择网络',
-    "setPasarListGrid": "列表视图-Pasar"
+    "setPasarListGrid": "列表视图-Pasar",
+    hideAdult: "显示成人"
   },
   DiscoverfeedPage: {
     title: '探索广场',
@@ -688,7 +689,8 @@ export const zh = {
     fileTypeDes2: '内容尺寸小于等于5M；',
     fileTypeDes3: '建议的GIF动画长度：小于10秒',
     general: '通用',
-    assetType: '资产类型'
+    assetType: '资产类型',
+    adult: '成人'
   },
   AssetdetailsPage: {
     title: '收藏品明细',

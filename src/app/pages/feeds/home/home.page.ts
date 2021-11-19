@@ -361,6 +361,13 @@ export class HomePage implements OnInit {
       });
     });
 
+    this.events.subscribe(FeedsEvent.PublishType.hideAdult,()=>{
+      this.zone.run(() => {
+        let hideAdult = this.dataHelper.getHideAdult();
+        console.log("hideAdult",hideAdult);
+      });
+    });
+
     this.events.subscribe(FeedsEvent.PublishType.pasarListGrid, () => {
       let pasarListGrid = this.feedService.getPasarListGrid();
       if (!pasarListGrid) {
@@ -666,6 +673,7 @@ export class HomePage implements OnInit {
     this.events.unsubscribe(FeedsEvent.PublishType.addRpcRequestError);
     this.events.unsubscribe(FeedsEvent.PublishType.addRpcResponseError);
     this.events.unsubscribe(FeedsEvent.PublishType.hideDeletedPosts);
+    this.events.unsubscribe(FeedsEvent.PublishType.hideAdult);
     this.events.unsubscribe(FeedsEvent.PublishType.pasarListGrid);
     this.events.unsubscribe(FeedsEvent.PublishType.createpost);
     this.events.unsubscribe(FeedsEvent.PublishType.unfollowFeedsFinish);
