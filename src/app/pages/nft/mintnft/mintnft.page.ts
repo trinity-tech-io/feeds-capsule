@@ -1,14 +1,11 @@
 import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { ThemeService } from '../../../services/theme.service';
-import { CameraService } from '../../../services/CameraService';
 import { NativeService } from '../../../services/NativeService';
 import { UtilService } from '../../../services/utilService';
 import { Events } from '../../../services/events.service';
 import { TitleBarService } from '../../../services/TitleBarService';
 import { TitleBarComponent } from '../../../components/titlebar/titlebar.component';
-import { File, DirectoryEntry } from '@ionic-native/file/ngx';
-import { HttpService } from '../../../services/HttpService';
 import { FeedService } from '../../../services/FeedService';
 import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
 import { WalletConnectControllerService } from 'src/app/services/walletconnect_controller.service';
@@ -17,7 +14,6 @@ import { IPFSService } from 'src/app/services/ipfs.service';
 import { NFTPersistenceHelper } from 'src/app/services/nft_persistence_helper.service';
 import { Logger } from 'src/app/services/logger';
 import { Config } from 'src/app/services/config';
-import { DataHelper } from 'src/app/services/DataHelper';
 import { NFTContractHelperService } from 'src/app/services/nftcontract_helper.service';
 
 import _ from 'lodash';
@@ -54,8 +50,6 @@ export class MintnftPage implements OnInit {
   private imageObj: any = {};
   private orderId: any = '';
   public popover: any;
-  private imagePath = "";
-  private tokenId:string = "";
   public isLoading:boolean = false;
   public loadingTitle:string = "common.waitMoment";
   public loadingText:string = "";
@@ -64,16 +58,14 @@ export class MintnftPage implements OnInit {
   private realFile: any = null;
   public  maxAvatarSize:number = 5 * 1024 * 1024;
   public  assetType:string = "general";
+  public  adult:boolean = false;
   private didUri:string = null;
   constructor(
     private translate: TranslateService,
     private event: Events,
     private zone: NgZone,
-    private camera: CameraService,
     private native: NativeService,
     private titleBarService: TitleBarService,
-    private httpService: HttpService,
-    private file: File,
     private feedService: FeedService,
     public theme: ThemeService,
     private nftContractControllerService: NFTContractControllerService,
@@ -81,7 +73,6 @@ export class MintnftPage implements OnInit {
     private popupProvider: PopupProvider,
     private ipfsService: IPFSService,
     private nftPersistenceHelper: NFTPersistenceHelper,
-    private dataHelper: DataHelper,
     private nftContractHelperService: NFTContractHelperService
   ) {}
 
@@ -391,6 +382,7 @@ export class MintnftPage implements OnInit {
         kind: this.imageObj['imgFormat'],
         size: this.imageObj['imgSize'],
         thumbnail: thumbnail,
+        adult: this.adult
       };
 
       let formData = new FormData();
@@ -990,6 +982,12 @@ export class MintnftPage implements OnInit {
     let didUriJSON = this.feedService.getDidUriJson();
     let didUri = await this.ipfsService.generateDidUri(didUriJSON);
     return didUri;
+  }
+
+  clickAdult(){
+    this.zone.run(() => {
+      this.adult = !this.adult;
+    });
   }
 
 }

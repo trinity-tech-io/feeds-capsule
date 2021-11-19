@@ -11,6 +11,7 @@ let TAG: string = 'DataHelper';
 
 @Injectable()
 export class DataHelper {
+  private hideAdult: boolean = false;
   private nftDidList: any = null;
   private feedsSortType: FeedsData.SortType = FeedsData.SortType.TIME_ORDER_LATEST;
   private channelsMap: { [nodeChannelId: string]: FeedsData.Channels } = {};
@@ -2693,6 +2694,14 @@ export class DataHelper {
 
   deleteDownloadingUrl(url: string) {
     _.remove(this.downloadList, url);
+  }
+
+  setHideAdult(hideAdult: boolean) {
+    this.hideAdult = hideAdult;
+  }
+
+  getHideAdult() {
+    return this.hideAdult;
   }
 
 }

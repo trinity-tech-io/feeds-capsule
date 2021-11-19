@@ -60,6 +60,20 @@
         <ion-input clearInput required type="text" placeholder="{{'MintnftPage.nftDescriptionPlaceholder'|translate}}" [(ngModel)]="nftDescription"></ion-input>
       </ion-item>
 
+
+      <ion-item lines="none" (click)="clickAdult()">
+        <ion-row class="section dev-mode">
+          <ion-col size="9" class="title-col" (swipe)="clickAdult()">
+              <h1>{{"MintnftPage.adult" | translate }}</h1>
+              <h2 *ngIf="adult">{{ 'SettingsPage.on' | translate }}</h2>
+               <h2 *ngIf="!adult">{{ 'SettingsPage.off' | translate }}</h2>
+          </ion-col>
+          <ion-col size="3" class="arrow-col" (swipe)="clickAdult()">
+            <ion-toggle [(ngModel)]="adult"  mode="ios" color="success" style="pointer-events:none;"></ion-toggle>
+          </ion-col>
+         </ion-row>
+      </ion-item>
+
       <ion-item lines="none" (click)="clickPublishtoPasar()">
         <ion-row class="section dev-mode">
           <ion-col size="9" class="title-col" (swipe)="clickPublishtoPasar()">

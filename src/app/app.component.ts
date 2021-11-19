@@ -137,6 +137,7 @@ export class MyApp {
         this.initCurSearchField();
         this.initWhiteList();
         this.initFeedsSortType();
+        this.initHideAdult();
         this.native.addNetworkListener(
           () => {
             this.events.publish(FeedsEvent.PublishType.networkStatusChanged, 1);
@@ -546,6 +547,20 @@ export class MyApp {
       }).catch(() => {
 
       })
+  }
+
+  initHideAdult(){
+    this.dataHelper.loadData('feeds.hideAdult').then((hideAdult)=>{
+        console.log("===hideAdult===",hideAdult);
+          if(hideAdult === null){
+            this.dataHelper.setHideAdult(false);
+              return;
+          }
+          this.dataHelper.setHideAdult(hideAdult);
+          console.log("===hideAdult===",typeof(hideAdult));
+    }).catch((err)=>{
+
+    });
   }
 
   ajaxGetWhiteList(isLoading: boolean){
