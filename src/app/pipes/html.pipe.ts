@@ -13,7 +13,7 @@ export class HtmlPipe implements PipeTransform {
   }
 
   replaceSrc(txt: string) {
-    let reg=/(http|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?/;
+    let reg=/(http|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?/g;
     let result = txt.replace(reg, function(item) {
       return "<span class='httpSpan'>" + item + '</span>';
     });
