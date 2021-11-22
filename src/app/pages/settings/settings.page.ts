@@ -33,7 +33,7 @@ export class SettingsPage implements OnInit {
   public curIPFSApiProviderName = 'ipfs0.trinity-feeds.app';
   public curAssistApiProviderName = '';
   private isListGrid: boolean = false;
-  public hideAdult: boolean = false;
+  public isShowAdult: boolean = false;
   constructor(
     private languageService: LanguageService,
     private feedService: FeedService,
@@ -71,7 +71,7 @@ export class SettingsPage implements OnInit {
     this.hideDeletedComments = this.feedService.getHideDeletedComments();
     this.hideOfflineFeeds = this.feedService.getHideOfflineFeeds();
     this.developerMode = this.feedService.getDeveloperMode();
-    this.hideAdult = this.dataHelper.getHideAdult();
+    this.isShowAdult = this.dataHelper.getHideAdult();
     this.initTitle();
   }
 
@@ -245,10 +245,10 @@ export class SettingsPage implements OnInit {
 
   toggleHideAdult(){
     this.zone.run(() => {
-      this.hideAdult = !this.hideAdult;
+      this.isShowAdult = !this.isShowAdult;
     });
-    this.dataHelper.setHideAdult(this.hideAdult);
+    this.dataHelper.setHideAdult(this.isShowAdult);
     this.events.publish(FeedsEvent.PublishType.hideAdult);
-    this.dataHelper.saveData('feeds.hideAdult',this.hideAdult);
+    this.dataHelper.saveData('feeds.hideAdult',this.isShowAdult);
   }
 }
