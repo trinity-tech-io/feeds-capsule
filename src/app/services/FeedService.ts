@@ -7827,7 +7827,8 @@ export class FeedService {
           return;
         }
         didObj = await this.pasarAssistService.getDidFromAddress(walletAddress);
-        this.dataHelper.addDidMapper(walletAddress, didObj);
+        if (didObj)
+          this.dataHelper.addDidMapper(walletAddress, didObj);
         resolve(didObj);
       } catch (error) {
         reject(error);

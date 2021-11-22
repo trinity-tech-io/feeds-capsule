@@ -141,7 +141,13 @@ export class PasarAssistService {
         if (resultCode != 200)
           reject('Receive result response code is' + resultCode);
 
-        const didObj = this.parseDidResult(result);
+        const data = result.data;
+        if (!data) {
+          resolve(null);
+          return;
+        }
+
+        const didObj = this.parseDidResult(data);
         if (!didObj) {
           const error = 'Did is null';
           Logger.error(TAG, 'Get did from assist error', error);
@@ -170,14 +176,14 @@ export class PasarAssistService {
   }
   
    */
-  parseDidResult(result: any): FeedsData.DidObj {
-    if (!result || !result.did) {
+  parseDidResult(data: any): FeedsData.DidObj {
+    if (!data || !data.did) {
       return null;
     }
 
     let didObj: FeedsData.DidObj = {
-      version: result.did.version,
-      did: result.did.did
+      version: data.did.version,
+      did: data.did.did
     }
 
     return didObj;
