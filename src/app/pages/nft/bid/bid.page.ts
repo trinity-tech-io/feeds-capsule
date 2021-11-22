@@ -97,14 +97,7 @@ export class BidPage implements OnInit {
       }
       const pasarItem: FeedsData.PasarItem = this.dataHelper.getPasarItem(this.saleOrderId);
       this.curAssetItem = _.cloneDeep(pasarItem.item);
-      let orderSellerDidObj:FeedsData.DidObj = this.curAssetItem["orderSellerDidObj"] || null;
-      if(orderSellerDidObj != null){
-          let orderSellerDid = orderSellerDidObj.did || null;
-          if(orderSellerDid != null){
-            this.did = orderSellerDid.replace("did:elastos:","");
-            this.didDispaly = UtilService.resolveDid(this.did);
-          }
-      }
+
       let asset = queryParams.asset || '';
       this.imageType = queryParams.type || '';
       this.showType = queryParams.showType;
@@ -116,6 +109,24 @@ export class BidPage implements OnInit {
       this.creator = queryParams.creator || '';
       this.orderCreateTime = queryParams.orderCreateTime || null;
       this.tokenCreateTime = queryParams.tokenCreateTime || null;
+
+      let orderSellerDidObj: FeedsData.DidObj = this.curAssetItem["orderSellerDidObj"] || null;
+      if (orderSellerDidObj != null) {
+        let orderSellerDid = orderSellerDidObj.did || null;
+        if (orderSellerDid != null) {
+          this.did = orderSellerDid.replace("did:elastos:", "");
+          this.didDispaly = UtilService.resolveDid(this.did);
+        }
+      } else {
+        this.feedService.getDidFromWalletAddress(this.seller).then((didObj: FeedsData.DidObj) => {
+          if (didObj && didObj.did) {
+            this.did = didObj.did.replace("did:elastos:", "");
+            this.didDispaly = UtilService.resolveDid(this.did);
+            this.handleNftDid();
+          }
+        });
+      }
+
       this.stickerContractAddress = this.nftContractControllerService
         .getSticker()
         .getStickerAddress();

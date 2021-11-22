@@ -382,7 +382,9 @@ declare namespace FeedsData {
     pasarItemMap = 'pasarItemMap',
     firstSyncOrderFinish = 'firstSyncOrderFinish',
 
-    sortType = 'feeds:sortType'
+    sortType = 'feeds:sortType',
+
+    didMapper = 'feeds: didMapper'
   }
 
   type ServerVersion = {

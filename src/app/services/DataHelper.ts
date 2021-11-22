@@ -118,6 +118,8 @@ export class DataHelper {
 
   private stickerItemMap: { [tokenId: string]: FeedsData.NFTItem } = {};
   private downloadList = [];
+
+  private didMapper: { [address: string]: FeedsData.DidObj } = {};
   constructor(
     private storageService: StorageService,
     private events: Events
@@ -2714,4 +2716,37 @@ export class DataHelper {
     return this.isShowAdult;
   }
 
+  //Mapper did data
+  getDidMapper(address: string): FeedsData.DidObj {
+    if (!this.didMapper || !this.didMapper[address])
+      return null;
+    let did = this.didMapper[address];
+    console.log('getDidMapper', address);
+    return did;
+  }
+
+  addDidMapper(address: string, didObj: FeedsData.DidObj) {
+    if (!this.didMapper)
+      this.didMapper = {};
+    this.didMapper[address] = didObj;
+    console.log('addDidMapper', address, didObj);
+    this.saveData(FeedsData.PersistenceKey.didMapper, this.didMapper);
+    console.log('addDidMapper this.didMapper', this.didMapper);
+  }
+
+  loadDidMapper() {
+    return new Promise(async (resolve, reject) => {
+      try {
+        if (JSON.stringify(this.didMapper) == '{}') {
+          this.didMapper =
+            (await this.loadData(FeedsData.PersistenceKey.didMapper)) || {};
+          resolve(this.didMapper);
+          return;
+        }
+        resolve(this.didMapper);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
 }

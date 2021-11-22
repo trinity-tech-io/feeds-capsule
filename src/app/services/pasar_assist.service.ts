@@ -114,4 +114,72 @@ export class PasarAssistService {
       }
     });
   }
+
+
+  getDidFromAddress(address: string): Promise<FeedsData.DidObj> {
+    // https://test.trinity-feeds.app/pasar/api/v1/getDidByAddress?address=0x6eCf29BB1A924396CbA252724a3F462753218B43
+    return new Promise(async (resolve, reject) => {
+      try {
+        let url = '';
+        if (this.dataHelper.getDevelopNet() == 'MainNet')
+          url = this.baseAssistUrl + 'pasar/api/v1/getDidByAddress'
+        else
+          url = Config.BASE_PASAR_ASSIST_TESTNET_SERVER + 'pasar/api/v1/getDidByAddress'
+
+        if (!address || address == '') {
+          const error = 'Address is null';
+          Logger.warn(TAG, error);
+          reject(error);
+          return;
+        }
+
+        url = url + '?address=' + address;
+
+        const result = await this.httpService.httpGet(url);
+
+        const resultCode = result.code;
+        if (resultCode != 200)
+          reject('Receive result response code is' + resultCode);
+
+        const didObj = this.parseDidResult(result);
+        if (!didObj) {
+          const error = 'Did is null';
+          Logger.error(TAG, 'Get did from assist error', error);
+          reject(error);
+        }
+        resolve(didObj);
+      } catch (error) {
+        Logger.error(TAG, 'Get did from assist error', error);
+        reject(error)
+      }
+    });
+  }
+
+  /*
+  {
+    "code": 200,
+    "message": "success",
+    "data": {
+      "_id": "619799e2ed34d379379c9ee7",
+      "address": "0x6eCf29BB1A924396CbA252724a3F462753218B43",
+      "did": {
+        "version": "1",
+        "did": "did:elastos:imZgAo9W38Vzo1pJQfHp6NJp9LZsrnRPRr"
+      }
+    }
+  }
+  
+   */
+  parseDidResult(result: any): FeedsData.DidObj {
+    if (!result || !result.did) {
+      return null;
+    }
+
+    let didObj: FeedsData.DidObj = {
+      version: result.did.version,
+      did: result.did.did
+    }
+
+    return didObj;
+  }
 }

@@ -95,10 +95,7 @@ export class AssetdetailsPage implements OnInit {
       let asset = queryParams.asset || {};
       let signInData = this.feedService.getSignInData() || null;
       let did = signInData['did'] || null;
-      if(did != null){
-        this.did = did.replace("did:elastos:","");
-        this.didDispaly = UtilService.resolveDid(this.did);
-      }
+
       this.imageType = queryParams.type || "";
       this.owner = queryParams.name || '';
       this.name = queryParams.name || '';
@@ -123,6 +120,20 @@ export class AssetdetailsPage implements OnInit {
       if(this.ownerAddress === ""){
         this.ownerAddress = this.nftContractControllerService.getAccountAddress();
       }
+
+      if (did != null) {
+        this.did = did.replace("did:elastos:", "");
+        this.didDispaly = UtilService.resolveDid(this.did);
+      } else {
+        this.feedService.getDidFromWalletAddress(this.ownerAddress).then((didObj: FeedsData.DidObj) => {
+          if (didObj && didObj.did) {
+            this.did = didObj.did.replace("did:elastos:", "");
+            this.didDispaly = UtilService.resolveDid(this.did);
+            this.handleNftDid();
+          }
+        });
+      }
+
       this.royalties = queryParams.royalties || null;
     });
   }
