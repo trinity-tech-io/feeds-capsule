@@ -550,14 +550,12 @@ export class MyApp {
   }
 
   initHideAdult(){
-    this.dataHelper.loadData('feeds.hideAdult').then((hideAdult)=>{
-        console.log("===hideAdult===",hideAdult);
-          if(hideAdult === null){
-            this.dataHelper.setHideAdult(false);
+    this.dataHelper.loadData('feeds.hideAdult').then((isShowAdult)=>{
+          if(isShowAdult === null){
+            this.dataHelper. changeAdultStatus(false);
               return;
           }
-          this.dataHelper.setHideAdult(hideAdult);
-          console.log("===hideAdult===",typeof(hideAdult));
+          this.dataHelper.changeAdultStatus(isShowAdult);
     }).catch((err)=>{
 
     });

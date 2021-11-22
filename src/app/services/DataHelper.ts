@@ -2706,11 +2706,11 @@ export class DataHelper {
     _.remove(this.downloadList, url);
   }
 
-  setHideAdult(hideAdult: boolean) {
-    this.isShowAdult = hideAdult;
+  changeAdultStatus(isShowAdult: boolean) {
+    this.isShowAdult = isShowAdult;
   }
 
-  getHideAdult() {
+  getAdultStatus() {
     return this.isShowAdult;
   }
 

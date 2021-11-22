@@ -154,7 +154,7 @@ export class NFTContractHelperService {
           return;
         }
 
-        const isShowAdult = this.dataHelper.getHideAdult();
+        const isShowAdult = this.dataHelper. getAdultStatus();
         pasarItemList = this.dataHelper.getPasarItemListWithAdultFlag(isShowAdult) || [];
         pasarItemList = this.sortData(pasarItemList, sortType);
         const count = pasarItemList.length || 0;

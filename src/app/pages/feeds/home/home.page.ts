@@ -362,10 +362,11 @@ export class HomePage implements OnInit {
     });
 
     this.events.subscribe(FeedsEvent.PublishType.hideAdult,()=>{
-      this.zone.run(() => {
-        const isShowAdult = this.dataHelper.getHideAdult();
-        this.pasarList = this.dataHelper.getPasarItemListWithAdultFlag(isShowAdult);
-        this.refreshPasarGridVisibleareaImage();
+      this.zone.run(async() => {
+        this.native.showLoading('Loading');
+        await this.refreshPasarList();
+        this.isShowSearchField = false;
+       this.native.hideLoading();
       });
     });
 
@@ -2275,7 +2276,7 @@ export class HomePage implements OnInit {
     // let searchPasar = this.nftPersistenceHelper.getPasarList();
 
 
-    const isShowAdult = this.dataHelper.getHideAdult();
+    const isShowAdult = this.dataHelper.getAdultStatus();
     let searchPasar = this.dataHelper.getPasarItemListWithAdultFlag(isShowAdult);
     this.searchPasar = _.cloneDeep(searchPasar);
 
@@ -2552,3 +2553,7 @@ export class HomePage implements OnInit {
     this.handleRefresherInfinite(false);
   }
 }
+function asysc(): (_: any) => void {
+  throw new Error('Function not implemented.');
+}
+
