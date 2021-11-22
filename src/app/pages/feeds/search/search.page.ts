@@ -262,6 +262,7 @@ export class SearchPage implements OnInit {
         this.discoverSquareList = this.filterdiscoverSquareList(discoverfeeds);
       }
       this.searchAddingChanneList = _.cloneDeep(this.addingChanneList);
+      this.refreshDiscoverSquareFeedAvatar();
       return;
     }
     this.ionRefresher.disabled = true;
@@ -284,6 +285,7 @@ export class SearchPage implements OnInit {
     this.discoverSquareList = this.searchSquareList.filter(
       feed => feed.name.toLowerCase().indexOf(this.isSearch.toLowerCase()) > -1,
     );
+    this.refreshDiscoverSquareFeedAvatar();
   }
 
   doRefresh(event) {
