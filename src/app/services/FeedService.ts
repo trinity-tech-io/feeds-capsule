@@ -17,6 +17,7 @@ import { AddFeedService } from 'src/app/services/AddFeedService';
 import { IntentService } from 'src/app/services/IntentService';
 import { NFTContractHelperService } from 'src/app/services/nftcontract_helper.service';
 import { connectivity } from '@elastosfoundation/elastos-connectivity-sdk-cordova';
+import { PasarAssistService } from 'src/app/services/pasar_assist.service';
 
 import _ from 'lodash';
 import { DataHelper } from './DataHelper';
@@ -128,7 +129,8 @@ export class FeedService {
     private dataHelper: DataHelper,
     private intentService: IntentService, //public  theme:ThemeService
     private ipfsService: IPFSService,
-    private nftContractHelperService: NFTContractHelperService
+    private nftContractHelperService: NFTContractHelperService,
+    private pasarAssistService: PasarAssistService
   ) {
     eventBus = events;
     this.init();
@@ -268,6 +270,10 @@ export class FeedService {
     return this.dataHelper.loadPasarItemMap();
   }
 
+  loadDidMapper() {
+    return this.dataHelper.loadDidMapper();
+  }
+
   async loadData() {
     await Promise.all([
       this.loadTempIdData(),
@@ -292,7 +298,8 @@ export class FeedService {
       this.loadSyncCommentStatusMap(),
       this.loadSyncPostStatusMap(),
       this.loadLastMultiLikesAndCommentsCountUpdateMap(),
-      this.loadPasarItemMap()
+      this.loadPasarItemMap(),
+      this.loadDidMapper()
     ]);
   }
 
@@ -7807,6 +7814,25 @@ export class FeedService {
           reject(null);
         },
       );
+    });
+  }
+
+  getDidFromWalletAddress(walletAddress: string): Promise<FeedsData.DidObj> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let didObj = this.dataHelper.getDidMapper(walletAddress)
+        console.log(didObj);
+        if (didObj) {
+          resolve(didObj);
+          return;
+        }
+        didObj = await this.pasarAssistService.getDidFromAddress(walletAddress);
+        this.dataHelper.addDidMapper(walletAddress, didObj);
+        resolve(didObj);
+      } catch (error) {
+        reject(error);
+        Logger.error(TAG, 'Get did from dddress error', error);
+      }
     });
   }
 }
