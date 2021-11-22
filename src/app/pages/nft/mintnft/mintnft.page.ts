@@ -892,6 +892,7 @@ export class MintnftPage implements OnInit {
           createTime: createTime * 1000,
           moreMenuType: 'created',
           sellerAddr: accAddress,//所有者
+          adult: this.adult
         };
         slist.push(item);
         break;
@@ -899,6 +900,7 @@ export class MintnftPage implements OnInit {
         item = await this.nftContractHelperService.getSellerNFTItembyIndexFromContract(orderIndex);
         let orderSellerDidObj = this.feedService.getDidUriJson();
         item.orderSellerDidObj = orderSellerDidObj;
+        item.adult = this.adult;
         slist.push(item);
         this.event.publish(FeedsEvent.PublishType.mintNft);
         break;
