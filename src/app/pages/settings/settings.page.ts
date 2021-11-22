@@ -72,7 +72,7 @@ export class SettingsPage implements OnInit {
     this.hideDeletedComments = this.feedService.getHideDeletedComments();
     this.hideOfflineFeeds = this.feedService.getHideOfflineFeeds();
     this.developerMode = this.feedService.getDeveloperMode();
-    this.isShowAdult = this.dataHelper.getHideAdult();
+    this.isShowAdult = this.dataHelper.getAdultStatus();
     this.initTitle();
   }
 
@@ -255,7 +255,7 @@ export class SettingsPage implements OnInit {
       this.isShowAdult = !this.isShowAdult;
     });
     this.isClickAdult = true;
-    this.dataHelper.setHideAdult(this.isShowAdult);
+    this.dataHelper.changeAdultStatus(this.isShowAdult);
     this.dataHelper.saveData('feeds.hideAdult',this.isShowAdult);
   }
 }
