@@ -179,7 +179,8 @@ export const en = {
     tranferNFTSFailed: "Tranfer Collectible Failed",
     tranferNFTSSuccess: "Tranfer Collectible successfully",
     walletAddressDes1: "The recipient's wallet address is consistent with the wallet address of the collection",
-    didUriNull: "Service exception, please try again later"
+    didUriNull: "Service exception, please try again later",
+    parseing: "Parseing"
   },
   app: {
     profileDetails: 'Profile Details',
