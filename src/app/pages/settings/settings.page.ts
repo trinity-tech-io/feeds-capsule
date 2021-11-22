@@ -71,6 +71,7 @@ export class SettingsPage implements OnInit {
     this.hideDeletedComments = this.feedService.getHideDeletedComments();
     this.hideOfflineFeeds = this.feedService.getHideOfflineFeeds();
     this.developerMode = this.feedService.getDeveloperMode();
+    this.hideAdult = this.dataHelper.getHideAdult();
     this.initTitle();
   }
 
