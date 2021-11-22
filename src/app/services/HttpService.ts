@@ -68,6 +68,7 @@ export class HttpService {
       Logger.log(TAG, "Send http get method", url);
       this.httpClient.get(url).subscribe(
         response => {
+          Logger.log(TAG, "Receive http get method response", response);
           resolve(response);
         },
         error => {
@@ -82,7 +83,6 @@ export class HttpService {
       this.httpClient.get(url, this.textHttpOption).subscribe(
         response => {
           resolve(response);
-
         },
         error => {
           reject(error);
