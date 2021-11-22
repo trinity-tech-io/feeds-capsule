@@ -363,8 +363,9 @@ export class HomePage implements OnInit {
 
     this.events.subscribe(FeedsEvent.PublishType.hideAdult,()=>{
       this.zone.run(() => {
-        let hideAdult = this.dataHelper.getHideAdult();
-        console.log("hideAdult",hideAdult);
+        const isShowAdult = this.dataHelper.getHideAdult();
+        this.pasarList = this.dataHelper.getPasarItemListWithAdultFlag(isShowAdult);
+        this.refreshPasarGridVisibleareaImage();
       });
     });
 
