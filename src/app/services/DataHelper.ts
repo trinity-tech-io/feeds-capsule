@@ -2546,11 +2546,11 @@ export class DataHelper {
     return list;
   }
 
-  getPasarItemListWithAdultFlag(adultFlag: boolean): FeedsData.NFTItem[] {
+  getPasarItemListWithAdultFlag(isShowAdult: boolean): FeedsData.NFTItem[] {
     const list = this.getPasarItemList();
-    if (adultFlag) {
+    if (!isShowAdult) {
       return _.filter(list, item => {
-        return item.adult == true;
+        return item.adult == null || item.adult == undefined || item.adult != true;
       })
     }
     return list;
