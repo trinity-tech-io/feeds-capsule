@@ -34,6 +34,7 @@ export class SettingsPage implements OnInit {
   public curAssistApiProviderName = '';
   private isListGrid: boolean = false;
   public isShowAdult: boolean = false;
+  private isClickAdult: boolean = false;
   constructor(
     private languageService: LanguageService,
     private feedService: FeedService,
@@ -119,6 +120,12 @@ export class SettingsPage implements OnInit {
     this.events.publish(FeedsEvent.PublishType.search);
     if(this.isListGrid){
       this.events.publish(FeedsEvent.PublishType.pasarListGrid);
+      this.isListGrid = false;
+    }
+
+    if(this.isClickAdult){
+      this.events.publish(FeedsEvent.PublishType.hideAdult);
+      this.isClickAdult = false;
     }
   }
 
@@ -247,8 +254,8 @@ export class SettingsPage implements OnInit {
     this.zone.run(() => {
       this.isShowAdult = !this.isShowAdult;
     });
+    this.isClickAdult = true;
     this.dataHelper.setHideAdult(this.isShowAdult);
-    this.events.publish(FeedsEvent.PublishType.hideAdult);
     this.dataHelper.saveData('feeds.hideAdult',this.isShowAdult);
   }
 }
