@@ -2546,6 +2546,16 @@ export class DataHelper {
     return list;
   }
 
+  getPasarItemListWithAdultFlag(adultFlag: boolean): FeedsData.NFTItem[] {
+    const list = this.getPasarItemList();
+    if (adultFlag) {
+      return _.filter(list, item => {
+        return item.adult == true;
+      })
+    }
+    return list;
+  }
+
   getOwnPasarItemList(address: string): FeedsData.NFTItem[] {
     const list = this.getPasarItemList();
     return _.filter(list, (item: FeedsData.NFTItem) => {

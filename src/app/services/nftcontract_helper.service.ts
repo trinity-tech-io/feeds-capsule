@@ -154,7 +154,8 @@ export class NFTContractHelperService {
           return;
         }
 
-        pasarItemList = this.dataHelper.getPasarItemList() || [];
+        const isShowAdult = this.dataHelper.getHideAdult();
+        pasarItemList = this.dataHelper.getPasarItemListWithAdultFlag(isShowAdult) || [];
         pasarItemList = this.sortData(pasarItemList, sortType);
         const count = pasarItemList.length || 0;
         const start = startPage * this.refreshCount;
@@ -516,7 +517,9 @@ export class NFTContractHelperService {
       size: httpResult.size,
       thumbnail: httpResult.thumbnail,
       type: httpResult.type,
-      version: httpResult.version
+      version: httpResult.version,
+
+      adult: httpResult.adult
     }
     return tokenJson;
   }
@@ -908,7 +911,7 @@ export class NFTContractHelperService {
     let orderUpdateTime = 0;
     let tokenCreateTime = 0;
     let tokenUpdateTime = 0
-
+    let adult = false;
     // let didUri: string = tokenInfo.didUri;
     if (orderInfo != null) {
       sellerAddr = orderInfo.sellerAddr;
@@ -955,6 +958,7 @@ export class NFTContractHelperService {
     description = tokenJson.description;
     kind = tokenJson.kind;
     size = tokenJson.size;
+    adult = tokenJson.adult;
     const item: FeedsData.NFTItem = {
       creator: createAddress,
       saleOrderId: orderId,
@@ -992,7 +996,9 @@ export class NFTContractHelperService {
 
       orderSellerDidObj: null,
       orderBuyerDidObj: null,
-      tokenCreatorDid: null
+      tokenCreatorDid: null,
+
+      adult: adult
     }
     return item;
   }
@@ -1183,7 +1189,9 @@ export class NFTContractHelperService {
 
       orderSellerDidObj: orderSellerDidObj,
       orderBuyerDidObj: null,
-      tokenCreatorDid: null
+      tokenCreatorDid: null,
+
+      adult: assistPasarItem.adult
     }
     const item: FeedsData.PasarItem = {
       index: 0,
@@ -1466,7 +1474,9 @@ export class NFTContractHelperService {
       showType: 'buy',
       orderBuyerDidObj: null,
       orderSellerDidObj: null,
-      tokenCreatorDid: null
+      tokenCreatorDid: null,
+
+      adult: item.adult
     }
   }
 

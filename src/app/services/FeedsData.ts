@@ -614,7 +614,8 @@ declare namespace FeedsData {
     size: string;
     thumbnail: string;
     type: string
-    version: string
+    version: string,
+    adult: boolean
   }
 
   type OrderTokenJsonInfo = {
@@ -661,6 +662,8 @@ declare namespace FeedsData {
     orderSellerDidObj: DidObj,
     orderBuyerDidObj: DidObj,
     tokenCreatorDid: DidObj
+
+    adult: boolean
   }
 
   type DidObj = {

@@ -2272,7 +2272,10 @@ export class HomePage implements OnInit {
     this.searchText = events.target.value || '';
     this.searchBeforePasar = _.cloneDeep(this.pasarList);
     // let searchPasar = this.nftPersistenceHelper.getPasarList();
-    let searchPasar = this.dataHelper.getPasarItemList();
+
+
+    const isShowAdult = this.dataHelper.getHideAdult();
+    let searchPasar = this.dataHelper.getPasarItemListWithAdultFlag(isShowAdult);
     this.searchPasar = _.cloneDeep(searchPasar);
 
     if (
