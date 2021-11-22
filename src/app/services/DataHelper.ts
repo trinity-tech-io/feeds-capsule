@@ -11,7 +11,7 @@ let TAG: string = 'DataHelper';
 
 @Injectable()
 export class DataHelper {
-  private hideAdult: boolean = false;
+  private isShowAdult: boolean = false;
   private nftDidList: any = null;
   private feedsSortType: FeedsData.SortType = FeedsData.SortType.TIME_ORDER_LATEST;
   private channelsMap: { [nodeChannelId: string]: FeedsData.Channels } = {};
@@ -2707,11 +2707,11 @@ export class DataHelper {
   }
 
   setHideAdult(hideAdult: boolean) {
-    this.hideAdult = hideAdult;
+    this.isShowAdult = hideAdult;
   }
 
   getHideAdult() {
-    return this.hideAdult;
+    return this.isShowAdult;
   }
 
 }
