@@ -23,6 +23,10 @@ import { IntentService } from './services/IntentService';
 import { HttpService } from 'src/app/services/HttpService';
 import { ApiUrl } from './services/ApiUrl';
 import { IPFSService } from 'src/app/services/ipfs.service';
+import { HiveService } from 'src/app/services/HiveService';
+import { StandardAuthService } from 'src/app/services/StandardAuthService';
+import { Claims, DIDDocument, JWTParserBuilder } from '@elastosfoundation/did-js-sdk';
+import { FilesService, VaultSubscriptionService } from "@elastosfoundation/elastos-hive-js-sdk";
 
 let TAG: string = 'app-component';
 
@@ -70,7 +74,9 @@ export class MyApp {
     private nftContractControllerService: NFTContractControllerService,
     private intentService: IntentService,
     private httpService: HttpService,
-    private ipfsService: IPFSService
+    private ipfsService: IPFSService,
+    private hiveService: HiveService,
+    private standardAuthService: StandardAuthService,
   ) {
     this.initializeApp();
     this.initProfileData();
@@ -103,9 +109,29 @@ export class MyApp {
       .then(() => {
         return this.dataHelper.loadApiProvider()
       })
-      .then((api) => {
+      .then(async (api) => {
         Config.changeApi(api);
         this.feedService.initDidManager();
+        // .then(async () => {
+
+          console.log("this.resolverUrl")
+          // console.log(this.resolverUrl)
+          const resolverUrl = "https://api.elastos.io/eid"
+          // const resolverUrl = "https://api-testnet.elastos.io/newid"
+          const provider = "https://hive-testnet1.trinity-tech.io"
+          console.log("getInstanceDIDDoc=============")
+          console.log(await this.standardAuthService.getInstanceDIDDoc())
+          console.log("=========================")
+          this.hiveService.init((await this.standardAuthService.getInstanceDID()).getDIDString(), this.standardAuthService.appIdCredential.getIssuer(), resolverUrl)
+          // let hiveService = new HiveService(this.standardAuthService).init((await this.standardAuthService.getInstanceDID()).getDIDString(), this.standardAuthService.appIdCredential.getIssuer(), this.resolverUrl);
+          console.log("WWWWWWWW")
+  
+          let vaultSubscriptionService : VaultSubscriptionService = new VaultSubscriptionService((this.hiveService).context, provider);
+          console.log("QQQQQQQQ")
+  
+          let vaultInfo = await vaultSubscriptionService.subscribe()      
+          console.log("TTTTTTT")
+        // });
         this.splashScreen.hide();
         //for ios
         if (this.isIOSPlatform()) {

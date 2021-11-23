@@ -17,6 +17,10 @@ import { AddFeedService } from 'src/app/services/AddFeedService';
 import { IntentService } from 'src/app/services/IntentService';
 import { NFTContractHelperService } from 'src/app/services/nftcontract_helper.service';
 import { connectivity } from '@elastosfoundation/elastos-connectivity-sdk-cordova';
+import { HiveException, VaultServices, AppContext, Utils, File } from "@elastosfoundation/elastos-hive-js-sdk";
+import { Claims, DIDDocument, JWTParserBuilder } from '@elastosfoundation/did-js-sdk';
+import { FilesService, VaultSubscriptionService } from "@elastosfoundation/elastos-hive-js-sdk";
+
 
 import _ from 'lodash';
 import { DataHelper } from './DataHelper';
@@ -24,6 +28,7 @@ import { UtilService } from './utilService';
 import { Config } from './config';
 import { Logger } from './logger';
 import { IPFSService } from './ipfs.service';
+import { HiveService } from './HiveService';
 
 declare let didManager: DIDPlugin.DIDManager;
 
@@ -69,6 +74,7 @@ let eventBus: Events = null;
 
 @Injectable()
 export class FeedService {
+  public static readonly USER_DIR = process.env["HIVE_USER_DIR"] ? process.env["HIVE_USER_DIR"] : "/home/diego/temp"
   private whiteListData:  FeedsData.WhiteItem[] = [];
   private curSearchField: string = "name";
   private nftFirstdisclaimer: string = "";
@@ -108,6 +114,7 @@ export class FeedService {
 
   private throwMsgTransDataLimit = 4 * 1000 * 1000;
   private alertPopover: HTMLIonPopoverElement = null;
+  private resolverUrl: string;
 
   public constructor(
     private serializeDataService: SerializeDataService,
@@ -4313,6 +4320,24 @@ export class FeedService {
         }
         this.dataHelper.updateServer(nodeId, server);
         this.standardDidAuth(nodeId, standAuthResult.jwtToken);
+        console.log("AAAAAAAA");
+
+      }).then(async () => {
+
+        console.log("this.resolverUrl")
+        console.log(this.resolverUrl)
+        
+        console.log("getInstanceDIDDoc:")
+        console.log(this.standardAuth.getInstanceDIDDoc())
+
+        let hiveService = new HiveService(this.standardAuth).init((await this.standardAuth.getInstanceDID()).getDIDString(), this.standardAuth.appIdCredential.getIssuer(), this.resolverUrl);
+        console.log("WWWWWWWW")
+
+        let vaultSubscriptionService : VaultSubscriptionService = new VaultSubscriptionService((await hiveService).context, "https://hive-testnet1.trinity-tech.io");
+        console.log("QQQQQQQQ")
+
+        let vaultInfo = await vaultSubscriptionService.subscribe()
+        console.log("TTTTTTT")
       });
   }
 
@@ -7686,6 +7711,7 @@ export class FeedService {
   }
 
   setEidURL(url: string) {
+    this.resolverUrl = url;
     didManager.setResolverUrl(
       url,
       () => {

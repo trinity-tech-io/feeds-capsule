@@ -76,6 +76,7 @@ import { NFTContractHelperService } from 'src/app/services/nftcontract_helper.se
 import { PasarAssistService } from 'src/app/services/pasar_assist.service';
 
 import * as Sentry from '@sentry/browser';
+import { HiveService } from './services/HiveService';
 
 Sentry.init({
   dsn:
@@ -209,6 +210,7 @@ export function TranslateLoaderFactory() {
     GlobalService,
     NFTContractHelperService,
     PasarAssistService,
+    HiveService,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     { provide: ErrorHandler, useClass: ErrorHandler },
   ],
