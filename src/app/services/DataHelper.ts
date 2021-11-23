@@ -11,7 +11,7 @@ let TAG: string = 'DataHelper';
 
 @Injectable()
 export class DataHelper {
-  private isShowAdult: boolean = false;
+  private isShowAdult: boolean = true;
   private nftDidList: any = null;
   private feedsSortType: FeedsData.SortType = FeedsData.SortType.TIME_ORDER_LATEST;
   private channelsMap: { [nodeChannelId: string]: FeedsData.Channels } = {};
@@ -2550,7 +2550,7 @@ export class DataHelper {
 
   getPasarItemListWithAdultFlag(isShowAdult: boolean): FeedsData.NFTItem[] {
     const list = this.getPasarItemList();
-    if (!isShowAdult) {
+    if (isShowAdult) {
       return _.filter(list, item => {
         return item.adult == null || item.adult == undefined || item.adult != true;
       })
