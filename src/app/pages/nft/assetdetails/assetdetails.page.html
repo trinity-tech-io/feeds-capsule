@@ -13,7 +13,7 @@
   overflow: auto;" [ngClass]="{'bootom1':price===null,'bootom2':price!=null}">
     <ion-row class="detail-row removeBorder" *ngIf="selectType === 'AssetdetailsPage.contract'">
       <ion-col size="12" class="left-col">
-        <h1 *ngIf="did===null">{{dispalyOwer}}</h1>
+        <h1 *ngIf="did===null" (press)="copytext(ownerAddress)" [style.touch-action]="'pan-y'">{{dispalyOwer}}</h1>
         <h1 (click)="switchDid()" *ngIf="did!=null" style="margin-bottom: 0px;" (press)="copyDid()" [style.touch-action]="'pan-y'"><img src="./assets/images/nft-user-circle.svg" class="nftusercircle"/><span *ngIf="didName===null">{{didDispaly}}</span><span *ngIf="didName!=null">{{didName}}</span><img src="./assets/images/switch.svg" class="switch" *ngIf="isSwitch"/></h1>
         <img src="{{assetUri}}" class="assetsImg" (press)="clickImages()" [style.touch-action]="'pan-y'"/>
         <img src="assets/images/avatar.svg" *ngIf="imageType==='avatar'" style="position:absolute;left:10px;top:36px;width:24px;height:24px"/>
@@ -27,7 +27,7 @@
             <ng-template #inputid1>
               <h1 >{{ contractDetail.type | translate}}</h1>
             </ng-template>
-            <h2 *ngIf="contractDetail.type === 'AssetdetailsPage.stickerContractAddress' || contractDetail.type === 'AssetdetailsPage.pasarContractAddress' || contractDetail.type === 'AssetdetailsPage.tokenID' || contractDetail.type === 'AssetdetailsPage.creator' || contractDetail.type === 'AssetdetailsPage.creator'; else inputid" (press)="copytext(contractDetail.details)">{{ contractDetail.details }}</h2>
+            <h2 *ngIf="contractDetail.type === 'AssetdetailsPage.stickerContractAddress' || contractDetail.type === 'AssetdetailsPage.pasarContractAddress' || contractDetail.type === 'AssetdetailsPage.tokenID' || contractDetail.type === 'AssetdetailsPage.creator' || contractDetail.type === 'AssetdetailsPage.creator'; else inputid" (press)="copytext(contractDetail.details)" [style.touch-action]="'pan-y'">{{ contractDetail.details }}</h2>
             <ng-template #inputid>
               <h2>{{ contractDetail.details }}</h2>
             </ng-template>
