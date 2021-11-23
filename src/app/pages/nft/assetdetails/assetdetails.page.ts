@@ -71,7 +71,7 @@ export class AssetdetailsPage implements OnInit {
   public didName: string = null;
   private NftDidList: any = null;
   public isSwitch: boolean = false;
-
+  public dispalyOwer: string = "";
   constructor(
     private translate: TranslateService,
     private events: Events,
@@ -130,7 +130,11 @@ export class AssetdetailsPage implements OnInit {
             this.did = didObj.did.replace("did:elastos:", "");
             this.didDispaly = UtilService.resolveDid(this.did);
             this.handleNftDid();
+          }else{
+            this.dispalyOwer = UtilService.resolveAddress(this.ownerAddress);
           }
+        }).catch(()=>{
+          this.dispalyOwer = UtilService.resolveAddress(this.ownerAddress);
         });
       }
 
