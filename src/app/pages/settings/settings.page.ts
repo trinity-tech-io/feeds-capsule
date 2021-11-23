@@ -14,6 +14,10 @@ import { IPFSService } from 'src/app/services/ipfs.service';
 import { DataHelper } from 'src/app/services/DataHelper';
 import _ from 'lodash';
 import { FileHelperService } from 'src/app/services/FileHelperService';
+import { HiveService } from 'src/app/services/HiveService';
+import { StandardAuthService } from 'src/app/services/StandardAuthService';
+import { Claims, DIDDocument, JWTParserBuilder } from '@elastosfoundation/did-js-sdk';
+import { FilesService, VaultSubscriptionService } from "@elastosfoundation/elastos-hive-js-sdk";
 
 @Component({
   selector: 'app-settings',
@@ -47,7 +51,9 @@ export class SettingsPage implements OnInit {
     private titleBarService: TitleBarService,
     private ipfsService: IPFSService,
     private dataHelper: DataHelper,
-    private fileHelperService: FileHelperService
+    private fileHelperService: FileHelperService,
+    private hiveService: HiveService,
+    private standardAuthService: StandardAuthService,
   ) { }
 
   ngOnInit() { }
@@ -203,8 +209,36 @@ export class SettingsPage implements OnInit {
     this.native.getNavCtrl().navigateForward(['/elastosapiprovider']);
   }
 
-  navIPFSProvider() {
-    this.native.getNavCtrl().navigateForward(['/select-ipfs-net']);
+  async navIPFSProvider() {
+    // .then(async () => {
+
+      console.log("this.resolverUrl")
+      // console.log(this.resolverUrl)
+      const resolverUrl = "https://api.elastos.io/eid"
+      // const resolverUrl = "https://api-testnet.elastos.io/newid"
+      const provider = "https://hive-testnet1.trinity-tech.io"
+      console.log("getInstanceDIDDoc=============")
+      console.log(await this.standardAuthService.getInstanceDIDDoc())
+      console.log("=========================")
+
+      console.log()
+      let didString = (await this.standardAuthService.getInstanceDID()).getDIDString()
+      console.log("didString ====== {}", didString)
+
+      let userId = this.standardAuthService.appIdCredential.getIssuer()
+      console.log("userId ====== {}", userId)
+
+      this.hiveService.init(didString, userId, resolverUrl)
+      // let hiveService = new HiveService(this.standardAuthService).init((await this.standardAuthService.getInstanceDID()).getDIDString(), this.standardAuth.appIdCredential.getIssuer(), this.resolverUrl);
+      console.log("WWWWWWWW")
+
+      let vaultSubscriptionService : VaultSubscriptionService = new VaultSubscriptionService((this.hiveService).context, provider);
+      console.log("QQQQQQQQ")
+
+      let vaultInfo = await vaultSubscriptionService.subscribe()
+      console.log("TTTTTTT")
+    // });
+    // this.native.getNavCtrl().navigateForward(['/select-ipfs-net']);
   }
 
   navDeveloper() {

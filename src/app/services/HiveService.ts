@@ -63,11 +63,12 @@ export class HiveService {
   }
 
   public async init(appInstanceDidString: string, userDidString: string, resolverUrl: string): Promise<HiveService> {
-
+    console.log("Hiveservice int========= ")
     let userDirFile = new File(this.userDir);
     userDirFile.delete();
-
+    console.log("hiven  userDirFile.delete();")
     AppContext.setupResolver(resolverUrl, HiveService.RESOLVE_CACHE);
+    console.log("AppContext.setupResolver")
 
     // TODO: appinstance did
     // TODO: user did
@@ -97,7 +98,7 @@ export class HiveService {
           HiveService.LOG.debug("HiveService.getAppInstanceDocument Error {}", e);
           HiveService.LOG.error(e.stack);
         }
-        
+
 
         return null;
       },

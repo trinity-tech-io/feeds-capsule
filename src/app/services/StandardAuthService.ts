@@ -84,8 +84,13 @@ private appInstanceDID: DIDPlugin.DID
 
   getInstanceDID(): Promise<DIDPlugin.DID> {
     return new Promise(async (resolve, reject) => {
+      console.log("getInstanceDID 0")
       let didAccess = new DID.DIDAccess();
+      console.log("getInstanceDID 1")
+
       let instanceDIDInfo = await didAccess.getOrCreateAppInstanceDID();
+      console.log("getInstanceDID 2")
+
       resolve(instanceDIDInfo.did);
     });
   }

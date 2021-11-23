@@ -109,29 +109,9 @@ export class MyApp {
       .then(() => {
         return this.dataHelper.loadApiProvider()
       })
-      .then(async (api) => {
+      .then((api) => {
         Config.changeApi(api);
         this.feedService.initDidManager();
-        // .then(async () => {
-
-          console.log("this.resolverUrl")
-          // console.log(this.resolverUrl)
-          const resolverUrl = "https://api.elastos.io/eid"
-          // const resolverUrl = "https://api-testnet.elastos.io/newid"
-          const provider = "https://hive-testnet1.trinity-tech.io"
-          console.log("getInstanceDIDDoc=============")
-          console.log(await this.standardAuthService.getInstanceDIDDoc())
-          console.log("=========================")
-          this.hiveService.init((await this.standardAuthService.getInstanceDID()).getDIDString(), this.standardAuthService.appIdCredential.getIssuer(), resolverUrl)
-          // let hiveService = new HiveService(this.standardAuthService).init((await this.standardAuthService.getInstanceDID()).getDIDString(), this.standardAuthService.appIdCredential.getIssuer(), this.resolverUrl);
-          console.log("WWWWWWWW")
-  
-          let vaultSubscriptionService : VaultSubscriptionService = new VaultSubscriptionService((this.hiveService).context, provider);
-          console.log("QQQQQQQQ")
-  
-          let vaultInfo = await vaultSubscriptionService.subscribe()      
-          console.log("TTTTTTT")
-        // });
         this.splashScreen.hide();
         //for ios
         if (this.isIOSPlatform()) {
