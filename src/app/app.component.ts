@@ -552,7 +552,7 @@ export class MyApp {
   initHideAdult(){
     this.dataHelper.loadData('feeds.hideAdult').then((isShowAdult)=>{
           if(isShowAdult === null){
-            this.dataHelper. changeAdultStatus(false);
+            this.dataHelper.changeAdultStatus(true);
               return;
           }
           this.dataHelper.changeAdultStatus(isShowAdult);

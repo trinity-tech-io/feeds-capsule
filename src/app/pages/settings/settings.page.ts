@@ -33,7 +33,7 @@ export class SettingsPage implements OnInit {
   public curIPFSApiProviderName = 'ipfs0.trinity-feeds.app';
   public curAssistApiProviderName = '';
   private isListGrid: boolean = false;
-  public isShowAdult: boolean = false;
+  public isShowAdult: boolean = true;
   private isClickAdult: boolean = false;
   constructor(
     private languageService: LanguageService,

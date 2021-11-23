@@ -624,7 +624,7 @@ export const en = {
     'configure-network': 'Active Network',
     'choose-network': 'Choose Network',
     "setPasarListGrid": "List view - Pasar",
-    hideAdult: "Display Adult"
+    hideAdult: "Safe Mode"
   },
   DiscoverfeedPage: {
     title: 'Discovery Square',
@@ -691,7 +691,7 @@ export const en = {
     fileTypeDes3: 'Recommended GIF animation length: Less than 10 seconds',
     general: 'General',
     assetType: 'Asset Type',
-    adult: 'Adult'
+    adult: 'Explicit & Sensitive Content'
   },
   AssetdetailsPage: {
     title: 'Collectible Details',
