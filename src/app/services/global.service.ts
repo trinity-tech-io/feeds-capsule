@@ -4,6 +4,7 @@ import { IPFSService } from 'src/app/services/ipfs.service';
 import { NFTContractParsarService } from 'src/app/services/nftcontract_parsar.service';
 import { NFTContractStickerService } from 'src/app/services/nftcontract_sticker.service';
 import { NFTContractDiamondService } from 'src/app/services/nftcontract_diamond.service';
+import { NFTContractGalleriaService } from 'src/app/services/nftcontract_galleria.service';
 import { NFTPersistenceHelper } from 'src/app/services/nft_persistence_helper.service';
 import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
 import { WalletConnectControllerService } from 'src/app/services/walletconnect_controller.service';
@@ -20,11 +21,12 @@ export class GlobalService {
     private ipfsService: IPFSService,
     private nftContractParsarService: NFTContractParsarService,
     private nftContractStickerService: NFTContractStickerService,
+    private nftContractGalleriaService: NFTContractGalleriaService,
     private nftPersistenceHelper: NFTPersistenceHelper,
     private nftContractDiamondService: NFTContractDiamondService,
     private nftContractControllerService: NFTContractControllerService,
     private walletConnectControllerService: WalletConnectControllerService,
-    private pasarAssistService: PasarAssistService
+    private pasarAssistService: PasarAssistService,
   ) {
   }
 
@@ -32,6 +34,7 @@ export class GlobalService {
     if (net == 'MainNet') {
       this.ipfsService.setTESTMode(false);
       this.nftContractParsarService.setTestMode(false);
+      this.nftContractGalleriaService.setTestMode(false);
       this.nftContractStickerService.setTestMode(false);
       this.nftContractDiamondService.setTestMode(false);
       this.nftPersistenceHelper.setDevelopMode(false);
@@ -40,6 +43,7 @@ export class GlobalService {
     } else {
       this.ipfsService.setTESTMode(true);
       this.nftContractParsarService.setTestMode(true);
+      this.nftContractGalleriaService.setTestMode(true);
       this.nftContractStickerService.setTestMode(true);
       this.nftContractDiamondService.setTestMode(true);
       this.nftPersistenceHelper.setDevelopMode(true);
