@@ -55,68 +55,68 @@
 
 
     <ion-row class="section" (click)="setDarkMode()">
-        <ion-col size="9" class="title-col" (swipe)="setDarkMode()">
+        <ion-col size="9" class="title-col" (swipe)="setDarkMode()" [style.touch-action]="'pan-y'">
             <h1>{{"SettingsPage.darkMode" | translate }}</h1>
             <h2 *ngIf="theme.darkMode">{{ 'SettingsPage.drak' | translate }}</h2>
             <h2 *ngIf="!theme.darkMode">{{ 'SettingsPage.light' | translate }}</h2>
         </ion-col>
-        <ion-col size="3" class="arrow-col" (swipe)="setDarkMode()">
+        <ion-col size="3" class="arrow-col" (swipe)="setDarkMode()" [style.touch-action]="'pan-y'">
             <ion-toggle mode="ios" color="success" [(ngModel)]="theme.darkMode" style="pointer-events:none;"></ion-toggle>
         </ion-col>
     </ion-row>
 
     <ion-row class="section" (click)="setPasarListGrid()">
-        <ion-col size="9" class="title-col" (swipe)="setPasarListGrid()">
+        <ion-col size="9" class="title-col" (swipe)="setPasarListGrid()" [style.touch-action]="'pan-y'">
             <h1>{{"SettingsPage.setPasarListGrid" | translate }}</h1>
             <h2 *ngIf="pasarListGrid">{{ 'SettingsPage.on' | translate }}</h2>
             <h2 *ngIf="!pasarListGrid">{{ 'SettingsPage.off' | translate }}</h2>
         </ion-col>
-        <ion-col size="3" class="arrow-col" (swipe)="setPasarListGrid()">
+        <ion-col size="3" class="arrow-col" (swipe)="setPasarListGrid()" [style.touch-action]="'pan-y'">
             <ion-toggle mode="ios" color="success" [(ngModel)]="pasarListGrid" style="pointer-events:none;"></ion-toggle>
         </ion-col>
     </ion-row>
 
     <ion-row class="section" (click)="toggleHideDeletedPosts()">
-        <ion-col size="9" class="title-col" (swipe)="toggleHideDeletedPosts()">
+        <ion-col size="9" class="title-col" (swipe)="toggleHideDeletedPosts()" [style.touch-action]="'pan-y'">
             <h1>{{"SettingsPage.hidedeletepost" | translate }}</h1>
             <h2 *ngIf="hideDeletedPosts">{{ 'SettingsPage.on' | translate }}</h2>
             <h2 *ngIf="!hideDeletedPosts">{{ 'SettingsPage.off' | translate }}</h2>
         </ion-col>
-        <ion-col size="3" class="arrow-col" (swipe)="toggleHideDeletedPosts()">
+        <ion-col size="3" class="arrow-col" (swipe)="toggleHideDeletedPosts()" [style.touch-action]="'pan-y'">
             <ion-toggle mode="ios" color="success" [(ngModel)]="hideDeletedPosts" style="pointer-events:none;"></ion-toggle>
         </ion-col>
     </ion-row>
 
     <ion-row class="section" (click)="toggleHideDeletedComments()">
-        <ion-col size="9" class="title-col" (swipe)="toggleHideDeletedComments()">
+        <ion-col size="9" class="title-col" (swipe)="toggleHideDeletedComments()" [style.touch-action]="'pan-y'">
             <h1>{{"SettingsPage.hidedeletecomment" | translate }}</h1>
             <h2 *ngIf="hideDeletedComments">{{ 'SettingsPage.on' | translate }}</h2>
             <h2 *ngIf="!hideDeletedComments">{{ 'SettingsPage.off' | translate }}</h2>
         </ion-col>
-        <ion-col size="3" class="arrow-col" (swipe)="toggleHideDeletedComments()">
+        <ion-col size="3" class="arrow-col" (swipe)="toggleHideDeletedComments()" [style.touch-action]="'pan-y'">
             <ion-toggle mode="ios" color="success" [(ngModel)]="hideDeletedComments" style="pointer-events:none;"></ion-toggle>
         </ion-col>
     </ion-row>
 
     <ion-row class="section" (click)="toggleHideAdult()">
-        <ion-col size="9" class="title-col" (swipe)="toggleHideAdult()">
+        <ion-col size="9" class="title-col" (swipe)="toggleHideAdult()" [style.touch-action]="'pan-y'">
             <h1>{{"SettingsPage.hideAdult" | translate }}</h1>
             <h2 *ngIf="isShowAdult">{{ 'SettingsPage.on' | translate }}</h2>
             <h2 *ngIf="!isShowAdult">{{ 'SettingsPage.off' | translate }}</h2>
         </ion-col>
-        <ion-col size="3" class="arrow-col" (swipe)="toggleHideAdult()">
+        <ion-col size="3" class="arrow-col" (swipe)="toggleHideAdult()" [style.touch-action]="'pan-y'">
             <ion-toggle mode="ios" color="success" [(ngModel)]="isShowAdult" style="pointer-events:none;"></ion-toggle>
         </ion-col>
     </ion-row>
 
 
    <ion-row class="section dev-mode" (click)="toggleDeveloperMode()" *ngIf="!isHideDeveloperMode">
-        <ion-col size="9" class="title-col" (swipe)="toggleDeveloperMode()">
+        <ion-col size="9" class="title-col" (swipe)="toggleDeveloperMode()" [style.touch-action]="'pan-y'">
             <h1>{{"SettingsPage.devmode" | translate }}</h1>
             <h2 *ngIf="developerMode">{{ 'SettingsPage.on' | translate }}</h2>
             <h2 *ngIf="!developerMode">{{ 'SettingsPage.off' | translate }}</h2>
         </ion-col>
-        <ion-col size="3" class="arrow-col" (swipe)="toggleDeveloperMode()">
+        <ion-col size="3" class="arrow-col" (swipe)="toggleDeveloperMode()" [style.touch-action]="'pan-y'">
             <ion-toggle  mode="ios" color="success" [(ngModel)]="developerMode" style="pointer-events:none;"></ion-toggle>
         </ion-col>
    </ion-row>
