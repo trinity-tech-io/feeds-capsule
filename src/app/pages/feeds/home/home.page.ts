@@ -363,7 +363,7 @@ export class HomePage implements OnInit {
 
     this.events.subscribe(FeedsEvent.PublishType.hideAdult,()=>{
       this.zone.run(async() => {
-        this.native.showLoading('Loading');
+        this.native.showLoading('common.waitMoment');
         await this.refreshPasarList();
         this.isShowSearchField = false;
        this.native.hideLoading();
@@ -2533,7 +2533,7 @@ export class HomePage implements OnInit {
     this.isClickSort = false;
     event.stopPropagation();
 
-    this.native.showLoading('Loading');
+    this.native.showLoading('common.waitMoment');
     await this.refreshPasarList();
     this.isShowSearchField = false;
     this.native.hideLoading();
