@@ -24,6 +24,7 @@ export class NewassetitemComponent implements OnInit {
   public verified: boolean = false;
   public imgUri = './assets/icon/reserve.svg';
   public thumbImageId:string = "";
+  public maxSize:number = 5 * 1024 * 1024;
   constructor(
     private translate: TranslateService,
     public theme: ThemeService,
@@ -41,7 +42,10 @@ export class NewassetitemComponent implements OnInit {
 
     let thumbnailUri = this.assetItem['thumbnail'];
     let kind = this.assetItem["kind"];
-    if (kind === "gif") {
+    let size = this.assetItem["originAssetSize"];
+    if (!size)
+      size = '0';
+    if (kind === "gif" && parseInt(size) <= this.maxSize) {
       thumbnailUri = this.assetItem['asset'];
     }
 
