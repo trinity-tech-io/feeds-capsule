@@ -2396,10 +2396,10 @@ export class HomePage implements OnInit {
           thumbImage.getBoundingClientRect().top <= this.clientHeight
         ) {
           if(isload === ""){
-            if (kind == 'gif' && size && parseInt(size, 10) > 10 * 1000 * 1000) {
-              Logger.log(TAG, 'Work around, Not show');
-              continue;
-            }
+            // if (kind == 'gif' && size && parseInt(size, 10) > 10 * 1000 * 1000) {
+            //   Logger.log(TAG, 'Work around, Not show');
+            //   continue;
+            // }
 
             let fetchUrl = this.ipfsService.getNFTGetUrl() + fileName;
             this.pasarGridisLoadimage[fileName] = '12';
@@ -2466,10 +2466,10 @@ export class HomePage implements OnInit {
            thumbImage.getBoundingClientRect().top <= this.clientHeight
          ) {
            if(isload === ""){
-             if (kind == 'gif' && size && parseInt(size, 10) > 10 * 1000 * 1000) {
-               Logger.log(TAG, 'Work around, Not show');
-               continue;
-             }
+            //  if (kind == 'gif' && size && parseInt(size, 10) > 10 * 1000 * 1000) {
+            //    Logger.log(TAG, 'Work around, Not show');
+            //    continue;
+            //  }
 
              let fetchUrl = this.ipfsService.getNFTGetUrl() + fileName;
              this.pasarListisLoadimage[fileName] = '12';
@@ -2512,14 +2512,12 @@ export class HomePage implements OnInit {
   handleId(item:any){
     let thumbnailUri = item['thumbnail'];
     let kind = item["kind"];
-    if (kind === "gif") {
-      thumbnailUri = item['asset'];
-    }
-
     let size = item["originAssetSize"]
     if (!size)
       size = '0';
-
+    if (kind === "gif" && parseInt(size) <= 5 * 1024 * 1024) {
+      thumbnailUri = item['asset'];
+    }
     if (thumbnailUri.indexOf('feeds:imgage:') > -1) {
       thumbnailUri = thumbnailUri.replace('feeds:imgage:', '');
     } else if (thumbnailUri.indexOf('feeds:image:') > -1) {
@@ -2552,8 +2550,5 @@ export class HomePage implements OnInit {
     }
     this.handleRefresherInfinite(false);
   }
-}
-function asysc(): (_: any) => void {
-  throw new Error('Function not implemented.');
 }
 
