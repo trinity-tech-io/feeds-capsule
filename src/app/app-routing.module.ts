@@ -231,6 +231,10 @@ const routes: Routes = [
     path: 'datastorage',
     loadChildren: () => import('./pages/settings/datastorage/datastorage.module').then(m => m.DatastoragePageModule)
   },
+  {
+    path: 'galleriachannel',
+    loadChildren: () => import('./pages/galleriachannel/galleriachannel.module').then( m => m.GalleriachannelPageModule)
+  },
 ];
 
 @NgModule({

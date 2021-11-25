@@ -96,4 +96,8 @@ export class AboutPage implements OnInit {
   showNftDisclaimer(){
     this.native.openUrl('https://trinity-feeds.app/disclaimer-nft');
   }
+
+  galleriaChannel(){
+     this.native.navigateForward(['/galleriachannel'],{});
+  }
 }
