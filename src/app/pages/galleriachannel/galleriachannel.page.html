@@ -1,17 +1,170 @@
 <app-titlebar></app-titlebar>
 <ion-content>
-<ion-grid>
-  <ion-row class="btn-row" style="justify-content:flex-start;">
-    <ion-button (click)="createPanel()">
-        <ion-label>Create Panel</ion-label>
-    </ion-button>
-  </ion-row>
+  <ion-grid class="container" [class.darkContainer]="theme.darkMode">
 
-  <ion-row class="btn-row" style="justify-content:flex-start;">
-    <ion-button (click)="removePanel()">
-        <ion-label> remove Panel</ion-label>
-    </ion-button>
-  </ion-row>
+    <ion-list>
+        <ion-item lines="none">
+        <ion-label position="stacked">{{ 'MintnftPage.assetType' | translate }}</ion-label>
+        <ion-radio-group [(ngModel)]="assetType" class="ionradiogroup" (ionChange)="removeImg()">
+          <ion-row style="padding:0px;">
+            <ion-col size="6" style="padding:0px;left:20px;">
+              <ion-item lines="none" style="border:none;margin:0px;">
+              <span class="leftionradiodes">{{ 'MintnftPage.general' | translate }}</span>
+              <ion-radio slot="end" value="general" mode="md"></ion-radio>
+             </ion-item>
+            </ion-col>
+            <ion-col size="6" style="padding:0px;position: absolute;right:-30px;">
+              <ion-item lines="none" style="border:none;margin:0px;">
+              <span class="rightionradiodes">{{ 'MintnftPage.avatar' | translate }}</span>
+              <ion-radio slot="end" value="avatar" mode="md"></ion-radio>
+             </ion-item>
+            </ion-col>
+          </ion-row>
+        </ion-radio-group>
+      </ion-item>
 
-</ion-grid>
+      <ion-item lines="none" style="border:none;">
+         <ion-label  position="stacked">{{ 'MintnftPage.nftAsset' | translate }}
+        </ion-label>
+        <!-- <ion-checkbox slot="end" class="checkBoxAvatar" [(ngModel)]="avatar" (ionChange)="removeImg()"></ion-checkbox> -->
+        <div class="fileTypeDes">{{ 'MintnftPage.fileTypeDes' | translate }} PNG,JPEG,JPG,GIF</div>
+        <div class="fileTypeDes" *ngIf="assetType==='avatar'">{{ 'MintnftPage.fileTypeDes1' | translate }}</div>
+        <div class="fileTypeDes" *ngIf="assetType==='avatar'">{{ 'MintnftPage.fileTypeDes2' | translate }}</div>
+        <div class="fileTypeDes" *ngIf="assetType==='avatar'">{{ 'MintnftPage.fileTypeDes3' | translate }}</div>
+        <div class="rectangle1" *ngIf="thumbnail===''">
+          <div class="rectangle2" style="position:relative;">
+            <ion-input type="file" id="mintfile" (click)="handleMintEvent($event)"  accept="image/png, image/jpeg, image/jpg, image/gif"
+              style="top: 0; height: 149px; font-size: 100px;opacity: 0;">
+            </ion-input>
+            <img *ngIf="assetType==='avatar'" style="position: absolute;left: 40px;top: 0px;" src="./assets/images/add.svg">
+            <img *ngIf="assetType!='avatar'" style="position: absolute;left: 40px;top: 0px;" src="./assets/images/add.svg">
+          </div>
+        </div>
+        <div  *ngIf="thumbnail!=''" style="border:none;position:relative;margin: 0 auto;">
+         <img class="remove" src="/assets/icons/remove.svg" (click)="removeImg()"/>
+         <img
+         style="width:auto;
+         max-height:200px;
+         border-radius:10px;
+         margin-top:10px;object-fit:contain;" [src]="handleImg()">
+        </div>
+      </ion-item>
+
+      <ion-item lines="none">
+          <ion-label position="stacked">{{ 'MintnftPage.nftName' | translate }}</ion-label>
+          <ion-input clearInput  required type="text" placeholder="{{'MintnftPage.nftNamePlaceholder'|translate}}" [(ngModel)]="nftName"></ion-input>
+      </ion-item>
+
+      <ion-item lines="none">
+        <ion-label position="stacked">{{ 'MintnftPage.nftDescription' | translate }}</ion-label>
+        <ion-input clearInput required type="text" placeholder="{{'MintnftPage.nftDescriptionPlaceholder'|translate}}" [(ngModel)]="nftDescription"></ion-input>
+      </ion-item>
+
+
+      <ion-item lines="none" (click)="clickAdult()">
+        <ion-row class="section dev-mode">
+          <ion-col size="9" class="title-col" (swipe)="clickAdult()">
+              <h1>{{"MintnftPage.adult" | translate }}</h1>
+              <h2 *ngIf="adult">{{ 'SettingsPage.on' | translate }}</h2>
+               <h2 *ngIf="!adult">{{ 'SettingsPage.off' | translate }}</h2>
+          </ion-col>
+          <ion-col size="3" class="arrow-col" (swipe)="clickAdult()">
+            <ion-toggle [(ngModel)]="adult"  mode="ios" color="success" style="pointer-events:none;"></ion-toggle>
+          </ion-col>
+         </ion-row>
+      </ion-item>
+
+      <ion-item lines="none" (click)="clickPublishtoPasar()">
+        <ion-row class="section dev-mode">
+          <ion-col size="9" class="title-col" (swipe)="clickPublishtoPasar()">
+              <h1>{{"MintnftPage.putOnSale" | translate }}</h1>
+              <h2 *ngIf="curPublishtoPasar">{{ 'SettingsPage.on' | translate }}</h2>
+               <h2 *ngIf="!curPublishtoPasar">{{ 'SettingsPage.off' | translate }}</h2>
+          </ion-col>
+          <ion-col size="3" class="arrow-col" (swipe)="clickPublishtoPasar()">
+            <ion-toggle [(ngModel)]="curPublishtoPasar"  mode="ios" color="success" style="pointer-events:none;"></ion-toggle>
+          </ion-col>
+         </ion-row>
+      </ion-item>
+
+      <!-- <ion-item lines="none" *ngIf="curPublishtoPasar">
+        <ion-label position="stacked">{{ 'MintnftPage.nftSellMethod' | translate }}</ion-label>
+        <ion-radio-group [(ngModel)]="sellMethod" class="ionradiogroup">
+          <ion-row style="padding:0px;">
+            <ion-col size="6" style="padding:0px;left:20px;">
+              <ion-item lines="none" style="border:none;margin:0px;">
+              <span class="leftionradiodes">{{ 'MintnftPage.nftfixedPrice' | translate }}</span>
+              <ion-radio slot="end" value="fixedPrice" mode="md"></ion-radio>
+             </ion-item>
+            </ion-col>
+            <ion-col size="6" style="padding:0px;position: absolute;right:-30px;">
+              <ion-item lines="none" style="border:none;margin:0px;">
+              <span class="rightionradiodes">{{ 'MintnftPage.nfthighestBid' | translate }}</span>
+              <ion-radio slot="end" value="highestBid" mode="md"></ion-radio>
+             </ion-item>
+            </ion-col>
+          </ion-row>
+        </ion-radio-group>
+      </ion-item> -->
+
+      <ion-item lines="none" *ngIf="curPublishtoPasar">
+        <ion-label position="stacked">{{ 'MintnftPage.nftAmount' | translate }}</ion-label>
+        <ion-input type="number" *ngIf="sellMethod==='fixedPrice'" placeholder="{{'MintnftPage.nftFixedAmount'|translate}}" [(ngModel)]="nftFixedAmount"></ion-input>
+        <ion-input *ngIf="sellMethod==='highestBid'" type="text" placeholder="{{'MintnftPage.nftMinimumAmount'|translate}}" [(ngModel)]="nftMinimumAmount"></ion-input>
+        <span class="tipCoin">ELA</span>
+        <img class="tip" src="/assets/images/dashang.svg" *ngIf="!theme.darkMode">
+        <img class="tip" src="/assets/images/darkmode/tip.svg" *ngIf="theme.darkMode">
+      </ion-item>
+
+      <ion-item lines="none" *ngIf="curPublishtoPasar&&sellMethod==='highestBid'">
+        <ion-label position="stacked">{{ 'MintnftPage.nftExpirationDate' | translate }}</ion-label>
+        <ion-datetime displayFormat="YYYY-MM-DD" [(ngModel)]="expirationDate" [min]="minExpirationDate" [max]="maxExpirationDate"></ion-datetime>
+        <img class="tip" src="./assets/images/calendarAlt.svg">
+    </ion-item>
+
+    <!-- <ion-item lines="none">
+        <ion-label position="stacked">{{ 'MintnftPage.nftType' | translate }}</ion-label>
+        <ion-radio-group [(ngModel)]="issueRadionType" class="ionradiogroup" (ionChange)="radioChange()">
+          <ion-row style="padding:0px;">
+            <ion-col size="6" style="padding:0px;left:20px;">
+              <ion-item lines="none" style="border:none;margin:0px;">
+              <span class="leftionradiodes">{{ 'MintnftPage.single' | translate }}</span>
+              <ion-radio slot="end" value="single" mode="md"></ion-radio>
+             </ion-item>
+            </ion-col>
+            <ion-col size="6" style="padding:0px;position: absolute;right:-30px;">
+              <ion-item lines="none" style="border:none;margin:0px;">
+              <span class="rightionradiodes">{{ 'MintnftPage.multiple' | translate }}</span>
+              <ion-radio slot="end" value="multiple" mode="md"></ion-radio>
+             </ion-item>
+            </ion-col>
+          </ion-row>
+        </ion-radio-group>
+      </ion-item> -->
+
+      <ion-item lines="none">
+        <ion-label position="stacked">{{ 'MintnftPage.nftRoyalties' | translate }}</ion-label>
+        <ion-input type="number" placeholder="{{'MintnftPage.nftRoyaltiesPlaceholder'|translate}}" [(ngModel)]="nftRoyalties"  (ionInput)="handleRoyalties($event)"></ion-input> <span style="position:absolute;right:14px;top:39px;">%</span>
+      </ion-item>
+
+      <ion-item lines="none">
+        <ion-label position="stacked">{{ 'MintnftPage.nftQuantity' | translate }}</ion-label>
+        <ion-input clearInput  required type="number" placeholder="{{'MintnftPage.nftQuantityPlaceholder'|translate}}" [(ngModel)]="nftQuantity" [readonly]="issueRadionType==='single'" (ionInput)="handleQuantity($event)"></ion-input>
+      </ion-item>
+      </ion-list>
+
+      <ion-row class="btn-row" style="justify-content:flex-start;">
+        <ion-button (click)="mint()" style="margin-top:-26px;;margin-bottom:20px;">
+            <ion-label> {{'MintnftPage.create'|translate}}</ion-label>
+        </ion-button>
+    </ion-row>
+  </ion-grid>
 </ion-content>
+<app-nftloading
+ *ngIf="isLoading"
+ [loadingTitle] = "loadingTitle"
+ [loadingText] = "loadingText"
+ [loadingCurNumber] = "loadingCurNumber"
+ [loadingMaxNumber] = "loadingMaxNumber"
+>
+</app-nftloading>
