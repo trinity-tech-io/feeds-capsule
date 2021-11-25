@@ -67,6 +67,7 @@
               "src/app/services/nftcontract_sticker.service",
               "src/app/services/nftcontract_parsar.service",
               "src/app/services/nftcontract_diamond.service",
+              "src/app/services/nftcontract_galleria.service",
               "@walletconnect/web3-provider"
             ]
           },
