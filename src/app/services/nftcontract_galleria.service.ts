@@ -21,16 +21,10 @@ export class NFTContractGalleriaService {
   private galleriaAddr: string = Config.GallERIA_ADDRESS;
   private galleriaContract: any;
   private web3: Web3;
-  private checkSellerOrderStateInterval: NodeJS.Timer;
-  private checkPriceInterval: NodeJS.Timer;
-  private checkBuyerOrderStateInterval: NodeJS.Timer;
-  private checkOrderStateInterval: NodeJS.Timer;
-
-  private checkSellOrderNum: number = 0;
-  private checkPriceNum: number = 0;
-  private checkBuyOrderStateNum: number = 0;
-  private checkOrderStateNum: number = 0;
-
+  private checkCreatePanelInterval: NodeJS.Timer;
+  private checkRemovePanelInterval:  NodeJS.Timer;
+  private checkCreatePanelNum: number = 0;
+  private checkRemovePanelNum: number = 0;
   constructor(
     private walletConnectControllerService: WalletConnectControllerService,
   ) {
@@ -63,9 +57,167 @@ export class NFTContractGalleriaService {
     return this.galleriaAddr;
   }
 
+  async createPanel(
+    tokenId: string,
+    showAmount: string,
+    didUriCreator: string
+    ): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+        try {
+        Logger.log(TAG, 'createPanel params ', tokenId, showAmount,didUriCreator);
+        const createPaneldata = this.galleriaContract.methods
+          .createPanel(tokenId,showAmount,didUriCreator)
+          .encodeABI();
+
+        let transactionParams = await this.createTxParams(createPaneldata,0);
+
+          Logger.log(TAG,
+            'Calling smart contract through wallet connect',
+            createPaneldata,
+            transactionParams,
+          );
+
+          this.galleriaContract.methods
+          .createPanel(tokenId,showAmount,didUriCreator)
+          .send(transactionParams)
+          .on('transactionHash', hash => {
+            Logger.log(TAG, 'createPanel process, transactionHash is', hash);
+          })
+          .on('receipt', receipt => {
+            Logger.log(TAG, 'createPanel process, receipt is', receipt);
+          })
+          .on('confirmation', (confirmationNumber, receipt) => {
+            Logger.log(TAG,
+              'createPanel process, confirmation is',
+              confirmationNumber,
+              receipt,
+            );
+          })
+          .on('error', (error, receipt) => {
+            Logger.error(TAG, 'createPanel process, error is', error, receipt);
+          });
+
+          this.checkCreatePanelState(tokenId, info => {
+            Logger.log(TAG, 'Mint success, token info is', info);
+            resolve(info);
+          });
+
+        }catch(error){
+          Logger.error(TAG, 'createPanel error', error);
+          reject(error);
+        }
+      });
+
+  }
+
+  checkCreatePanelState(tokenId:string, callback: (tokenInfo: any) => void) {
+    this.checkCreatePanelNum = 0;
+    let owerAddress: string = this.walletConnectControllerService.getAccountAddress();
+    this.checkCreatePanelInterval = setInterval(async () => {
+      if (!this.checkCreatePanelInterval) return;
+      let info = await this.getUserActivePanelByToken(owerAddress,tokenId);
+      console.log("=====info=====",info);
+      if (info[1] != '1') {
+        Logger.log(TAG, 'Check createPanel state finish', info);
+        clearInterval(this.checkCreatePanelInterval);
+        callback(info);
+        this.checkCreatePanelInterval = null;
+      }
+
+      this.checkCreatePanelNum++;
+      if (this.checkCreatePanelNum * Config.CHECK_STATUS_INTERVAL_TIME > Config.WAIT_TIME_MINT) {
+        clearInterval(this.checkCreatePanelInterval);
+        this.checkCreatePanelInterval = null;
+        Logger.log(TAG, 'Exit check token state by self');
+      }
+    }, Config.CHECK_STATUS_INTERVAL_TIME);
+  }
+
+  async getUserActivePanelByToken(address:string,tokenId:string) {
+      let userActivePane = await this.galleriaContract.methods.getActivePanelCount(address,tokenId).call();
+      return userActivePane;
+  }
 
 
-  createTxParams(data, price): Promise<TXData> {
+  async removePanel(
+    panelId: string
+    ): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+        try {
+        Logger.log(TAG, 'removePanel params ', panelId);
+        const removePaneldata = this.galleriaContract.methods
+          .removePanel(panelId)
+          .encodeABI();
+
+        let transactionParams = await this.createTxParams(removePaneldata,0);
+
+          Logger.log(TAG,
+            'Calling smart contract through wallet connect',
+            removePaneldata,
+            transactionParams,
+          );
+
+          this.galleriaContract.methods
+          .removePanel(panelId)
+          .send(transactionParams)
+          .on('transactionHash', hash => {
+            Logger.log(TAG, 'removePanel process, transactionHash is', hash);
+          })
+          .on('receipt', receipt => {
+            Logger.log(TAG, 'removePanel process, receipt is', receipt);
+          })
+          .on('confirmation', (confirmationNumber, receipt) => {
+            Logger.log(TAG,
+              'removePanel process, confirmation is',
+              confirmationNumber,
+              receipt,
+            );
+          })
+          .on('error', (error, receipt) => {
+            Logger.error(TAG, 'removePanel process, error is', error, receipt);
+          });
+
+          this.checkRemovePanelState(panelId, info => {
+            Logger.log(TAG, 'Mint success, token info is', info);
+            resolve(info);
+          });
+
+        }catch(error){
+          Logger.error(TAG, 'createPanel error', error);
+          reject(error);
+        }
+      });
+
+  }
+
+  checkRemovePanelState(panelId: string, callback: (tokenInfo: any) => void) {
+    this.checkRemovePanelNum = 0;
+    this.checkRemovePanelInterval = setInterval(async () => {
+      if (!this.checkRemovePanelInterval) return;
+      let info = await this.getPanelById(panelId);
+      console.log("=====info=====",info);
+      if (info[1] != '2') {
+        Logger.log(TAG, 'Check removePanel state finish', info);
+        clearInterval(this.checkRemovePanelInterval);
+        callback(info);
+        this.checkRemovePanelInterval = null;
+      }
+
+      this.checkRemovePanelNum++;
+      if (this.checkRemovePanelNum * Config.CHECK_STATUS_INTERVAL_TIME > Config.WAIT_TIME_MINT) {
+        clearInterval(this.checkRemovePanelInterval);
+        this.checkRemovePanelInterval = null;
+        Logger.log(TAG, 'Exit check token state by self');
+      }
+    }, Config.CHECK_STATUS_INTERVAL_TIME);
+  }
+
+  async getPanelById(panelId :string){
+     let paneInfo = await this.galleriaContract.methods.getPanelById(panelId).call();
+     return paneInfo;
+  }
+
+  createTxParams(data:any, price:any): Promise<TXData> {
     return new Promise(async (resolve, reject) => {
       try {
         let accountAddress = this.walletConnectControllerService.getAccountAddress();
