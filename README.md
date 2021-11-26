@@ -13,19 +13,19 @@ If you are looking for an update-to-date social style dApp with the following ch
 
 ## 2. Features
 
-An initial **technical preview version v1.0.0** has been released with the following basic features:
+An initial **technical preview version v2.0.7** has been released with the following basic features:
 
 - [x] Sign-in with DID
 
-- [x] Create/delete your own feeds source/node
+- [x] Create/delete your own publisher account
 
-- [x] Add/remove 3rd-parties' feeds source/node
+- [x] Create public channel
 
-- [x] Create new public feeds
+- [x] Create un-public channel
 
-- [x] Follow/unfollow feeds
+- [x] Subscribe/unsubscribe channel
 
-- [x] Publish post in your feed
+- [x] Publish post in your channel
 
 - [x] Publish comments on post
 
@@ -41,57 +41,69 @@ An initial **technical preview version v1.0.0** has been released with the follo
 
 - [x] Post instant video
 
-- [ ] Private/Payment feeds [ **IN PLAN** ]
+- [x] Connect wallet
 
-- [ ] Sharing of feeds/posts [ **IN PLAN** ]
+- [x] Create Collectibles
+
+- [x] Sell Collectibles
+
+- [x] Buy Collectibles
+
+- [x] Cancel the sale of collectibles
+
+- [x] Update the price of collectibles
+
+- [x] Transfer of collectibles
+
+- [x] Destroy collectibles
+
+- [ ] Private/Payment channels [ **IN PLAN** ]
+
+- [ ] Sharing of channels/posts [ **IN PLAN** ]
 
 - [ ] Pay to see valuable posts [ **IN PLAN** ]
 
-Based on that,  we will keep improving not only for experience of UI/UX, but the new added-value features described as **IN PLAN**.
+Based on that, we will keep improving not only for experience of UI/UX, but the new added-value features described as **IN PLAN**.
 
 Any advices about new features or improvements would be appreciated to put forward as **Issues** to this repository.
 
 ## 3. Run dApp in developer mode
 
-### trinity-cli
+### ElastOS Essentials
 
-Developers should have **trinity-cli** command tool installed on developing device at first.  Otherwise, you have to install **trinity-cli** with command below:
-
-```
-sudo npm install -g @elastosfoundation/trinity-cli --unsafe-perm
-```
-
-**notice:**  Please see details in [developer.elastos.org](https://developer.elastos.org/build/elastos/setup/environment_setup/)
-
-### elastOS
-
-Developers should have latest version of **elastOS** application installed on mobile device of **Android** or **iOS** platform. Please check the details in the repository of [**Elastos.Trinity**](https://github.com/elastos/Elastos.Trinity)
+Developers should have latest version of **ElastOS Essentials** application installed on mobile device of **Android** or **iOS** platform. Please check the details in the repository of [**Elastos.Essentials**](https://github.com/elastos/Elastos.Essentials)
 
 ### Run dApp
 
 Then **clone** the repository with the commands:
 
 ```
-git clone https://github.com/elastos-trinity/feeds-dapp
-cd feeds-dapp
+git clone https://github.com/elastos-trinity/feeds-capsule
+cd feeds-capsule
 ```
 
-With **trinity-cli**, input the command to launch **feeds** dApp on your **Android** device with the help of **elastOS** application when you have **Android** connected.
+Input the command to install the related dependencies.
 
 ```
-trinity-cli run -p android
+npm install --legacy-peer-deps
+```
+
+Input the command to launch **feeds** dApp on your **Android** device with the help of **ElastOS Essentials** application when you have **Android** connected.
+
+```
+ionic cordova run android
 ```
 
 Or to launch **feeds** dApp on **iOS** device
 
 ```
-triniyt-cli run -p iOS
+ionic cordova run ios
 ```
 
 ## 4. Acknowledgments
 
 A sincere thank to the all team and projects we are relying on, especially for the following projects:
-- [trinity elastOS](https://github.com/elastos/Elastos.Trinity)
+- [ElastOS Essentials](https://github.com/elastos/Elastos.Essentials)
 - [ionic-team](https://github.com/ionic-team/ionic-framework.git)
 - [apache cordova](https://github.com/apache/cordova.git)
 
