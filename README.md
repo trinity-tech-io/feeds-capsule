@@ -43,11 +43,11 @@ An initial **technical preview version v2.0.7** has been released with the follo
 
 - [x] Connect wallet
 
-- [x] Create Collectibles
+- [x] Create collectibles
 
-- [x] Sell Collectibles
+- [x] Sell collectibles
 
-- [x] Buy Collectibles
+- [x] Buy collectibles
 
 - [x] Cancel the sale of collectibles
 
