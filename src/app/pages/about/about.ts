@@ -100,4 +100,8 @@ export class AboutPage implements OnInit {
   galleriaChannel(){
      this.native.navigateForward(['/galleriachannel'],{});
   }
+
+  galleriaChannelList(){
+    this.native.navigateForward(['/gallerialist'],{});
+  }
 }
