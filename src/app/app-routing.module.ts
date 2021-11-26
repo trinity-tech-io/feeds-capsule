@@ -235,6 +235,10 @@ const routes: Routes = [
     path: 'galleriachannel',
     loadChildren: () => import('./pages/galleriachannel/galleriachannel.module').then( m => m.GalleriachannelPageModule)
   },
+  {
+    path: 'gallerialist',
+    loadChildren: () => import('./pages/gallerialist/gallerialist.module').then( m => m.GallerialistPageModule)
+  },
 ];
 
 @NgModule({

@@ -156,7 +156,7 @@ export class NFTContractGalleriaService {
     ): Promise<any> {
     return new Promise(async (resolve, reject) => {
         try {
-        Logger.log(TAG, 'removePanel params ', panelId);
+        Logger.log(TAG, 'removePanel params ', panelId,typeof(panelId));
         const removePaneldata = this.galleriaContract.methods
           .removePanel(panelId)
           .encodeABI();
@@ -190,7 +190,7 @@ export class NFTContractGalleriaService {
           });
 
           this.checkRemovePanelState(panelId, info => {
-            Logger.log(TAG, 'Mint success, token info is', info);
+            Logger.log(TAG, 'removePanel success, token info is', info);
             resolve(info);
           });
 
@@ -271,4 +271,15 @@ export class NFTContractGalleriaService {
       }
     });
   }
+
+ async getActivePanelCount() {
+    let activePanelCount = await this.galleriaContract.methods.getActivePanelCount().call();
+    activePanelCount = parseInt(activePanelCount);
+    return activePanelCount;
+  }
+
+ async getActivePanelByIndex(activePanelByIndex:number) {
+  let activePanelItem = await this.galleriaContract.methods.getActivePanelByIndex(activePanelByIndex).call();
+  return activePanelItem;
+ }
 }
