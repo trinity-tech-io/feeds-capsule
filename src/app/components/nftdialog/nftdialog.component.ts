@@ -173,13 +173,14 @@ export class NftdialogComponent implements OnInit {
   }
 
  async sellCollectibles(tokenId: any, type: string) {
+    await this.popover.dismiss();
+    this.events.publish(FeedsEvent.PublishType.startLoading,{des:"common.sellingOrderDesc",title:"common.waitMoment",curNum:"1",maxNum:"1",type:"changePrice"});
     this.didUri = await this.getDidUri();
     if(this.didUri === null){
        this.native.toast("common.didUriNull");
+       this.events.publish(FeedsEvent.PublishType.endLoading);
        return;
     }
-    await this.popover.dismiss();
-    this.events.publish(FeedsEvent.PublishType.startLoading,{des:"common.sellingOrderDesc",title:"common.waitMoment",curNum:"1",maxNum:"1",type:"changePrice"});
     let sId =setTimeout(()=>{
       this.nftContractControllerService.getPasar().cancelCreateOrderProcess();
       this.nftContractControllerService.getSticker().cancelSetApprovedProcess();
@@ -448,8 +449,14 @@ export class NftdialogComponent implements OnInit {
 
   async getDidUri(){
     let didUriJSON = this.feedService.getDidUriJson();
-    let didUri = await this.ipfsService.generateDidUri(didUriJSON);
-    return didUri;
+    let did = didUriJSON["did"];
+    let userDidUriList = this.dataHelper.getUserDidUriList();
+    let userDidUri = userDidUriList[did] || "";
+    if(userDidUri != ""){
+      return userDidUri;
+    }
+    userDidUri = await this.ipfsService.generateDidUri(didUriJSON);
+    return userDidUri;
   }
 
 }

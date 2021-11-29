@@ -326,12 +326,6 @@ export class BidPage implements OnInit {
       return;
     }
 
-    this.didUri = await this.getDidUri();
-    if(this.didUri === null){
-      this.native.toast("common.didUriNull");
-      return;
-    }
-
     let orderInfo = await this.nftContractControllerService.getPasar().getOrderById(this.saleOrderId);
     let orderState = parseInt(orderInfo[2]);
     if(orderState === FeedsData.OrderState.SOLD){
@@ -346,6 +340,15 @@ export class BidPage implements OnInit {
     if(orderState === FeedsData.OrderState.SALEING){
     //start loading
     this.isLoading = true;
+    this.didUri = await this.getDidUri();
+
+    // new didUri
+    if(this.didUri === null){
+      this.native.toast("common.didUriNull");
+      this.isLoading = false;
+      return;
+    }
+
     let sId = setTimeout(()=>{
        //Buy order Timeout
        this.nftContractControllerService.getPasar().cancelBuyOrderProcess();
@@ -521,8 +524,15 @@ export class BidPage implements OnInit {
 
   async getDidUri(){
     let didUriJSON = this.feedService.getDidUriJson();
-    let didUri = await this.ipfsService.generateDidUri(didUriJSON);
-    return didUri;
+    let did = didUriJSON["did"];
+    let userDidUriList = this.dataHelper.getUserDidUriList();
+    let userDidUri = userDidUriList[did] || "";
+
+    if(userDidUri != ""){
+      return userDidUri;
+    }
+    userDidUri = await this.ipfsService.generateDidUri(didUriJSON);
+    return userDidUri;
   }
 
   handleNftDid(){

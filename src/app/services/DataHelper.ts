@@ -11,6 +11,7 @@ let TAG: string = 'DataHelper';
 
 @Injectable()
 export class DataHelper {
+  private userDidUriList: any = {};
   private isShowAdult: boolean = true;
   private nftDidList: any = null;
   private feedsSortType: FeedsData.SortType = FeedsData.SortType.TIME_ORDER_LATEST;
@@ -2748,5 +2749,13 @@ export class DataHelper {
         reject(error);
       }
     });
+  }
+
+  getUserDidUriList(){
+    return this.userDidUriList;
+  }
+
+  setUserDidUriList(userDidUriList: any){
+    this.userDidUriList = userDidUriList;
   }
 }

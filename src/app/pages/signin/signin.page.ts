@@ -13,7 +13,8 @@ import {
 import { localization } from '@elastosfoundation/elastos-connectivity-sdk-cordova';
 import { LanguageService } from 'src/app/services/language.service';
 import { Logger } from 'src/app/services/logger';
-
+import { DataHelper } from 'src/app/services/DataHelper';
+import { IPFSService } from 'src/app/services/ipfs.service';
 const TAG: string = 'SigninPage';
 @Component({
   selector: 'app-signin',
@@ -36,6 +37,8 @@ export class SigninPage implements OnInit {
     public appService: AppService,
     private titleBarService: TitleBarService,
     private languageService: LanguageService,
+    private dataHelper: DataHelper,
+    private ipfsService: IPFSService
   ) {}
 
   ngOnInit() {}
@@ -79,6 +82,13 @@ export class SigninPage implements OnInit {
       if (isSuccess) {
         //add first bind FeedService logic
         this.native.hideLoading();
+        let didUriJSON = this.feedService.getDidUriJson();
+        let did = didUriJSON["did"];
+        let userDidUriList = this.dataHelper.getUserDidUriList();
+        let userDidUri = userDidUriList[did] || "";
+        if(userDidUri === ""){
+           this.ipfsService.generateDidUri(didUriJSON)
+        }
         let isFirstBindFeedService =
           localStorage.getItem(
             'org.elastos.dapp.feeds.isFirstBindFeedService',
