@@ -558,6 +558,9 @@ export class BidPage implements OnInit {
   }
 
   switchDid(){
+   if(!this.isSwitch){
+     return;
+   }
    if(this.didName!=null){
       this.didName = null;
    }else{
