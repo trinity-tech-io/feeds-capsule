@@ -82,20 +82,6 @@ export class MyApp {
     this.events.subscribe(FeedsEvent.PublishType.walletConnectedRefreshPage, (walletAccount) => {
       this.updateWalletAddress(walletAccount);
     });
-
-    // this.events.subscribe(
-    //   FeedsEvent.PublishType.walletConnectedRefreshSM,
-    //   () => {
-    //     this.updateWalletAddress(null);
-    //   },
-    // );
-
-    // this.events.subscribe(
-    //   FeedsEvent.PublishType.walletDisconnectedRefreshSM,
-    //   () => {
-    //     this.updateWalletAddress(null);
-    //   },
-    // );
   }
 
   initializeApp() {
@@ -150,6 +136,7 @@ export class MyApp {
         this.initConnector();
         this.initIpfs();
         this.initAssist();
+        this.initUserDidUri();
       }).then(async () => {
         this.intentService.addIntentListener(
           (intent: IntentPlugin.ReceivedIntent) => {
@@ -311,6 +298,18 @@ export class MyApp {
     }
     ApiUrl.setAssist(assistBaseUrl);
     this.globalService.refreshBaseAssistUrl();
+  }
+
+  initUserDidUri(){
+    this.dataHelper.loadData("feeds.userUriList").then((userUriList)=>{
+       if(userUriList === null){
+         this.dataHelper.setUserDidUriList({});
+         return;
+       }
+       this.dataHelper.setUserDidUriList(userUriList);
+    }).catch(()=>{
+
+    });
   }
 
   about() {

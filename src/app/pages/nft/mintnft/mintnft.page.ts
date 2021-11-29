@@ -15,6 +15,7 @@ import { NFTPersistenceHelper } from 'src/app/services/nft_persistence_helper.se
 import { Logger } from 'src/app/services/logger';
 import { Config } from 'src/app/services/config';
 import { NFTContractHelperService } from 'src/app/services/nftcontract_helper.service';
+import { DataHelper } from 'src/app/services/DataHelper';
 
 import _ from 'lodash';
 const SUCCESS = 'success';
@@ -73,7 +74,8 @@ export class MintnftPage implements OnInit {
     private popupProvider: PopupProvider,
     private ipfsService: IPFSService,
     private nftPersistenceHelper: NFTPersistenceHelper,
-    private nftContractHelperService: NFTContractHelperService
+    private nftContractHelperService: NFTContractHelperService,
+    private dataHelper: DataHelper
   ) {}
 
   ngOnInit() {}
@@ -980,10 +982,17 @@ export class MintnftPage implements OnInit {
     };
   }
 
- async getDidUri(){
+  async getDidUri(){
     let didUriJSON = this.feedService.getDidUriJson();
-    let didUri = await this.ipfsService.generateDidUri(didUriJSON);
-    return didUri;
+    let did = didUriJSON["did"];
+    let userDidUriList = this.dataHelper.getUserDidUriList();
+    let userDidUri = userDidUriList[did] || "";
+
+    if(userDidUri != ""){
+      return userDidUri;
+    }
+    userDidUri = await this.ipfsService.generateDidUri(didUriJSON);
+    return userDidUri;
   }
 
   clickAdult(){

@@ -7,7 +7,8 @@ import { CarrierService } from '../services/CarrierService';
 import { PopupProvider } from 'src/app/services/popup';
 import { LanguageService } from 'src/app/services/language.service';
 import { Logger } from './logger';
-
+import { DataHelper } from 'src/app/services/DataHelper';
+import { IPFSService } from 'src/app/services/ipfs.service';
 const TAG: string = 'AppService';
 @Injectable({
   providedIn: 'root',
@@ -22,6 +23,8 @@ export class AppService {
     private carrierService: CarrierService,
     public popupProvider: PopupProvider,
     private languageService: LanguageService, // private titleBarService: TitleBarService
+    private dataHelper: DataHelper,
+    private ipfsService: IPFSService
   ) {}
 
   init() {
@@ -86,7 +89,16 @@ export class AppService {
       this.native.setRootRouter(['/signin']);
       return;
     }
-
+    let did = signInData.did;
+    let userDidUriList = this.dataHelper.getUserDidUriList();
+    let userDidUri = userDidUriList[did] || "";
+    if(userDidUri === ""){
+      let didJson = {
+        "version": "1",
+        "did": did
+      }
+       this.ipfsService.generateDidUri(didJson);
+    }
     this.carrierService.init(signInData.did);
     this.native.setRootRouter(['/tabs/home']);
     this.feedService.updateSignInDataExpTime(signInData);

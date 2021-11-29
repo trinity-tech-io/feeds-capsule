@@ -1,11 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpService } from 'src/app/services/HttpService';
 import { ApiUrl } from './ApiUrl';
-
+import { DataHelper } from 'src/app/services/DataHelper';
 @Injectable()
 export class IPFSService {
   private baseNFTIPFSUrl = ApiUrl.IPFS_TEST_SERVER;
-  constructor(private httpService: HttpService
+  constructor(
+    private httpService: HttpService,
+    private dataHelper: DataHelper
   ) { }
 
   nftGet(url: string): Promise<Object> {
@@ -51,6 +53,11 @@ export class IPFSService {
           let hash = result['Hash'] || null;
           if (hash != null) {
             let jsonHash = 'feeds:json:' + hash;
+            let userDidUriList = this.dataHelper.getUserDidUriList();
+            let did = didJson["did"];
+                userDidUriList[did] = jsonHash;
+            this.dataHelper.setUserDidUriList(userDidUriList);
+            this.dataHelper.saveData("feeds.userUriList",userDidUriList);
             resolve(jsonHash);
           }else{
             resolve(null);
