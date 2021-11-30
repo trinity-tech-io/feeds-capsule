@@ -89,7 +89,7 @@ export class MyApp {
       .then(() => {
         return this.dataHelper.loadApiProvider()
       })
-      .then((api) => {
+      .then(async (api) => {
         Config.changeApi(api);
         this.feedService.initDidManager();
         this.splashScreen.hide();
@@ -136,7 +136,7 @@ export class MyApp {
         this.initConnector();
         this.initIpfs();
         this.initAssist();
-        this.initUserDidUri();
+        await this.initUserDidUri();
       }).then(async () => {
         this.intentService.addIntentListener(
           (intent: IntentPlugin.ReceivedIntent) => {
@@ -301,15 +301,7 @@ export class MyApp {
   }
 
   initUserDidUri(){
-    this.dataHelper.loadData("feeds.userUriList").then((userUriList)=>{
-       if(userUriList === null){
-         this.dataHelper.setUserDidUriList({});
-         return;
-       }
-       this.dataHelper.setUserDidUriList(userUriList);
-    }).catch(()=>{
-
-    });
+    return this.dataHelper.loadUserDidUriMap();
   }
 
   about() {

@@ -6,12 +6,13 @@ import { UtilService } from './utilService';
 import { Config } from './config';
 import { SignInData } from './FeedService';
 import { Events } from 'src/app/services/events.service';
+import { Logger } from './logger';
 
 let TAG: string = 'DataHelper';
 
 @Injectable()
 export class DataHelper {
-  private userDidUriList: any = {};
+  private userDidUriMap: { [did: string]: FeedsData.DIDUriObj } = {};
   private isShowAdult: boolean = true;
   private nftDidList: any = null;
   private feedsSortType: FeedsData.SortType = FeedsData.SortType.TIME_ORDER_LATEST;
@@ -2751,11 +2752,67 @@ export class DataHelper {
     });
   }
 
-  getUserDidUriList(){
-    return this.userDidUriList;
+  getUserDidUriMap(): { [did: string]: FeedsData.DIDUriObj } {
+    if (!this.checkUserDidValid(this.userDidUriMap))
+      return {};
+    return this.userDidUriMap;
   }
 
-  setUserDidUriList(userDidUriList: any){
-    this.userDidUriList = userDidUriList;
+  getUserDidUriObj(did: string): FeedsData.DIDUriObj {
+    const map = this.getUserDidUriMap();
+    return map[did];
+  }
+
+  getUserDidUri(did: string): string {
+    const didJson = this.getUserDidUriObj(did);
+    if (!didJson)
+      return null;
+    return didJson.didUri;
+  }
+
+  setUserDidUriMap(userDidUriMap: { [did: string]: FeedsData.DIDUriObj }) {
+    if (!this.checkUserDidValid(userDidUriMap))
+      return;
+    this.userDidUriMap = userDidUriMap;
+    this.saveData(FeedsData.PersistenceKey.userDidUriMap, this.userDidUriMap)
+  }
+
+  updateUserDidUriInfo(didObj: FeedsData.DidObj, didUri: string) {
+    let map = this.getUserDidUriMap();
+    if (!didObj) {
+      Logger.error('Set user did uri json error, didObj is null');
+      return;
+    }
+
+    map[didObj.did] = {
+      didUri: didUri,
+      didObj: didObj
+    }
+
+    this.setUserDidUriMap(map);
+  }
+
+  checkUserDidValid(userUriMap: { [did: string]: FeedsData.DIDUriObj }): boolean {
+    if (!userUriMap || JSON.stringify(userUriMap) == '{}')
+      return false;
+    return true;
+  }
+
+  loadUserDidUriMap(): Promise<{ [did: string]: FeedsData.DIDUriObj }> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let userUriMap = await this.loadData(FeedsData.PersistenceKey.userDidUriMap);
+        if (!this.checkUserDidValid(userUriMap)) {
+          userUriMap = {};
+          this.setUserDidUriMap(userUriMap);
+          resolve(userUriMap)
+          return;
+        }
+        this.setUserDidUriMap(userUriMap);
+        resolve(userUriMap);
+      } catch (error) {
+        reject(error);
+      }
+    });
   }
 }

@@ -82,13 +82,6 @@ export class SigninPage implements OnInit {
       if (isSuccess) {
         //add first bind FeedService logic
         this.native.hideLoading();
-        let didUriJSON = this.feedService.getDidUriJson();
-        let did = didUriJSON["did"];
-        let userDidUriList = this.dataHelper.getUserDidUriList();
-        let userDidUri = userDidUriList[did] || "";
-        if(userDidUri === ""){
-           this.ipfsService.generateDidUri(didUriJSON)
-        }
         let isFirstBindFeedService =
           localStorage.getItem(
             'org.elastos.dapp.feeds.isFirstBindFeedService',

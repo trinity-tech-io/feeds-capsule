@@ -52,7 +52,7 @@ export class NftdialogComponent implements OnInit {
     private nftPersistenceHelper: NFTPersistenceHelper,
     private popupProvider: PopupProvider,
     private dataHelper: DataHelper,
-    private nftContractHelperService: NFTContractHelperService
+    private nftContractHelperService: NFTContractHelperService,
   ) {}
 
   ngOnInit() {
@@ -312,7 +312,7 @@ export class NftdialogComponent implements OnInit {
     return new Promise(async (resolve, reject) => {
       try {
         const item = await this.nftContractHelperService.getSellerNFTItembyIndexFromContract(orderIndex);
-        let orderSellerDidObj = this.feedService.getDidUriJson();
+        const orderSellerDidObj = this.feedService.getSigninDidObj();
         item.orderSellerDidObj = orderSellerDidObj;
         const obj = { type: type, assItem: item, sellQuantity: this.quantity };
         this.events.publish(FeedsEvent.PublishType.nftUpdateList, obj);
@@ -448,15 +448,6 @@ export class NftdialogComponent implements OnInit {
   }
 
   async getDidUri(){
-    let didUriJSON = this.feedService.getDidUriJson();
-    let did = didUriJSON["did"];
-    let userDidUriList = this.dataHelper.getUserDidUriList();
-    let userDidUri = userDidUriList[did] || "";
-    if(userDidUri != ""){
-      return userDidUri;
-    }
-    userDidUri = await this.ipfsService.generateDidUri(didUriJSON);
-    return userDidUri;
+    return await this.feedService.getDidUri();
   }
-
 }

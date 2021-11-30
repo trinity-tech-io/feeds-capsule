@@ -18,6 +18,8 @@ import { Config } from 'src/app/services/config';
 import { NFTContractHelperService } from 'src/app/services/nftcontract_helper.service';
 import { DataHelper } from 'src/app/services/DataHelper';
 import { Logger } from 'src/app/services/logger';
+import { UserDIDService } from 'src/app/services/userdid.service';
+
 type detail = {
   type: string;
   details: string;
@@ -86,7 +88,8 @@ export class BidPage implements OnInit {
     private ipfsService: IPFSService,
     private httpService: HttpService,
     private nftContractHelperService: NFTContractHelperService,
-    private dataHelper: DataHelper
+    private dataHelper: DataHelper,
+    private userDIDService: UserDIDService
   ) {}
 
   ngOnInit() {
@@ -523,16 +526,7 @@ export class BidPage implements OnInit {
   }
 
   async getDidUri(){
-    let didUriJSON = this.feedService.getDidUriJson();
-    let did = didUriJSON["did"];
-    let userDidUriList = this.dataHelper.getUserDidUriList();
-    let userDidUri = userDidUriList[did] || "";
-
-    if(userDidUri != ""){
-      return userDidUri;
-    }
-    userDidUri = await this.ipfsService.generateDidUri(didUriJSON);
-    return userDidUri;
+    return await this.feedService.getDidUri();
   }
 
   handleNftDid(){
@@ -542,7 +536,7 @@ export class BidPage implements OnInit {
    let didname =  this.NftDidList[this.did] || null;
    if(didname === null){
      let did = "did:elastos:"+this.did;
-      this.feedService.resolveDidObject(did).then((result)=>{
+     this.feedService.resolveDidObjectForName(did).then((result) => {
                this.didName = result["name"] || null;
                if(this.didName!=null){
                   this.isSwitch = true;

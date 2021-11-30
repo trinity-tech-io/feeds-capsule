@@ -89,16 +89,7 @@ export class AppService {
       this.native.setRootRouter(['/signin']);
       return;
     }
-    let did = signInData.did;
-    let userDidUriList = this.dataHelper.getUserDidUriList();
-    let userDidUri = userDidUriList[did] || "";
-    if(userDidUri === ""){
-      let didJson = {
-        "version": "1",
-        "did": did
-      }
-       this.ipfsService.generateDidUri(didJson);
-    }
+
     this.carrierService.init(signInData.did);
     this.native.setRootRouter(['/tabs/home']);
     this.feedService.updateSignInDataExpTime(signInData);
