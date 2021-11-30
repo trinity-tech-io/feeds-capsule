@@ -384,7 +384,9 @@ declare namespace FeedsData {
 
     sortType = 'feeds:sortType',
 
-    didMapper = 'feeds: didMapper'
+    didMapper = 'feeds: didMapper',
+
+    userDidUriMap = 'feeds:userDidUriMap'
   }
 
   type ServerVersion = {
@@ -673,6 +675,11 @@ declare namespace FeedsData {
     did: string
   }
 
+  type DIDUriObj = {
+    didUri: string,
+    didObj: DidObj
+  }
+
   type TokenIdAndTokenJson = {
     tokenId: number;
     tokenJson: TokenJson;
@@ -719,4 +726,23 @@ declare namespace FeedsData {
     thumbnail: string,
     asset: string
   }
+
+  type SignInData = {
+    did: string,
+    name: string,
+    avatar: Avatar,
+    email: string,
+    telephone: string,
+    location: string,
+    nickname: string,
+    description: string,
+    expiresTS: number
+  }
+
+  type Avatar = {
+    contentType: string,
+    data: string,
+    type?: string
+  }
+
 }

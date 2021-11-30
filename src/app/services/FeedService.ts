@@ -16,8 +16,9 @@ import { StandardAuthService } from 'src/app/services/StandardAuthService';
 import { AddFeedService } from 'src/app/services/AddFeedService';
 import { IntentService } from 'src/app/services/IntentService';
 import { NFTContractHelperService } from 'src/app/services/nftcontract_helper.service';
-import { connectivity } from '@elastosfoundation/elastos-connectivity-sdk-cordova';
+import { connectivity, logger } from '@elastosfoundation/elastos-connectivity-sdk-cordova';
 import { PasarAssistService } from 'src/app/services/pasar_assist.service';
+import { UserDIDService } from 'src/app/services/userdid.service';
 
 import _ from 'lodash';
 import { DataHelper } from './DataHelper';
@@ -130,7 +131,8 @@ export class FeedService {
     private intentService: IntentService, //public  theme:ThemeService
     private ipfsService: IPFSService,
     private nftContractHelperService: NFTContractHelperService,
-    private pasarAssistService: PasarAssistService
+    private pasarAssistService: PasarAssistService,
+    private userDIDService: UserDIDService
   ) {
     eventBus = events;
     this.init();
@@ -7782,38 +7784,63 @@ export class FeedService {
      this.whiteListData = whiteListData;
   }
 
-  getDidUriJson(){
-    let signInData = this.getSignInData() || {};
-    let did = signInData['did'] || "";
-    let didJson = {
-      "version": "1",
-      "did": did
-    }
-    return didJson;
+  async getDidUri() {
+    const signinData = this.getSignInData();
+    const did = this.userDIDService.getSigninDid(signinData);
+    const userDidUri = await this.userDIDService.getDidUri(did);
+    return userDidUri;
   }
 
-  resolveDidObject(did:string){
+  getSigninDidObj() {
+    const signinData = this.getSignInData();
+    const signinDid = this.userDIDService.getSigninDid(signinData);
+    return this.userDIDService.getUserDidObj(signinDid);
+  }
+
+  resolveDidObjectForName(did: string) {
     return new Promise((resolve, reject) => {
-      didManager.resolveDidDocument(
-        did,
-        true,
-        didDocument => {
-          let didObject = didDocument || null;
-          if(didObject != null){
-            let nameCredential = didDocument.getCredential("#name").getSubject() || null;
-            if(nameCredential === null){
-              resolve({"name":null});
-              return;
-            }
-            let resultObjcet = {"name":nameCredential.name};
-            resolve(resultObjcet)
+      const emptyName = { "name": null };
+      if (!did) {
+        Logger.warn(TAG, 'Did empty');
+        resolve(emptyName);
+        return;
+      }
+      try {
+        didManager.resolveDidDocument(did, true, didDocument => {
+          if (!didDocument) {
+            Logger.warn(TAG, 'Get DIDDocument from did error');
+            resolve(emptyName);
+            return;
           }
 
+          const nameCredential = didDocument.getCredential("#name");
+          if (!nameCredential) {
+            Logger.warn(TAG, 'Get name credential from did error');
+            resolve(emptyName);
+            return;
+          }
+
+          const nameSubject = nameCredential.getSubject() || null;
+          if (!nameSubject) {
+            Logger.warn(TAG, 'Get name subject from did error');
+            resolve(emptyName);
+            return;
+          }
+
+          let resultObjcet = { "name": nameSubject.name };
+          resolve(resultObjcet);
         },
-        err => {
-          reject(null);
-        },
-      );
+          err => {
+            const errorMsg = 'DIDManager resolve DidDocument error';
+            Logger.error(TAG, errorMsg, err);
+            reject(err);
+          },
+        );
+      } catch (error) {
+        const errorMsg = 'DIDManager resolve DidDocument error';
+        Logger.error(TAG, errorMsg, error);
+        reject(error);
+      }
     });
   }
 

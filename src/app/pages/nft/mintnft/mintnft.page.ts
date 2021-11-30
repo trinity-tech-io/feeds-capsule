@@ -900,7 +900,7 @@ export class MintnftPage implements OnInit {
         break;
       case 'onSale':
         item = await this.nftContractHelperService.getSellerNFTItembyIndexFromContract(orderIndex);
-        let orderSellerDidObj = this.feedService.getDidUriJson();
+        const orderSellerDidObj = this.feedService.getSigninDidObj();
         item.orderSellerDidObj = orderSellerDidObj;
         item.adult = this.adult;
         slist.push(item);
@@ -983,16 +983,7 @@ export class MintnftPage implements OnInit {
   }
 
   async getDidUri(){
-    let didUriJSON = this.feedService.getDidUriJson();
-    let did = didUriJSON["did"];
-    let userDidUriList = this.dataHelper.getUserDidUriList();
-    let userDidUri = userDidUriList[did] || "";
-
-    if(userDidUri != ""){
-      return userDidUri;
-    }
-    userDidUri = await this.ipfsService.generateDidUri(didUriJSON);
-    return userDidUri;
+    return await this.feedService.getDidUri();
   }
 
   clickAdult(){

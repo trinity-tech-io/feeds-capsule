@@ -605,7 +605,7 @@ export class AssetdetailsPage implements OnInit {
       let didname =  this.NftDidList[this.did] || null;
       if(didname === null){
         let did = "did:elastos:"+this.did;
-         this.feedService.resolveDidObject(did).then((result)=>{
+        this.feedService.resolveDidObjectForName(did).then((result) => {
                   this.didName = result["name"] || null;
                   if(this.didName!=null){
                      this.isSwitch = true;
