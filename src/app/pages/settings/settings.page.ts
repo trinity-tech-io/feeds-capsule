@@ -237,6 +237,10 @@ export class SettingsPage implements OnInit {
     this.native.getNavCtrl().navigateForward(['/whitelist']);
   }
 
+  navDataStorage() {
+    this.native.getNavCtrl().navigateForward(['/datastorage']);
+  }
+
   setPasarListGrid() {
     this.zone.run(() => {
       this.pasarListGrid = !this.pasarListGrid;

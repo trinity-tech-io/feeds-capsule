@@ -180,7 +180,10 @@ export const en = {
     tranferNFTSSuccess: 'Tranfer Collectible successfully',
     walletAddressDes1: "The recipient's wallet address is consistent with the wallet address of the collection",
     didUriNull: 'Service exception, please try again later',
-    parseing: 'Parseing'
+    parseing: 'Parseing',
+    dataStorage: 'Data storage',
+    cleanPasarData: 'Clean Pasar data',
+    cleanPasarDataTip: 'Need to restart app after clean Pasar data'
   },
   app: {
     profileDetails: 'Profile Details',

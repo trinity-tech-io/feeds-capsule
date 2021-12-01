@@ -180,7 +180,10 @@ export const zh = {
     tranferNFTSSuccess: '转让收藏品成功',
     walletAddressDes1: '收件人钱包地址与收藏品的钱包地址一致',
     didUriNull: '服务异常，请稍后再试',
-    parseing: '解析中'
+    parseing: '解析中',
+    dataStorage: '数据缓存',
+    cleanPasarData: '清空Pasar缓存数据',
+    cleanPasarDataTip: '清空Pasar缓存数据后，需要重启应用'
   },
   app: {
     profileDetails: '档案详情',

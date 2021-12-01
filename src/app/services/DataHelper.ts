@@ -2488,6 +2488,10 @@ export class DataHelper {
     }
   }
 
+  cleanPasarItems() {
+    this.setPasarItemMap({});
+  }
+
   updatePasarItem(orderId: string, pasarItem: FeedsData.NFTItem, index: number, blockNumber: number, syncMode: FeedsData.SyncMode, reqeustDevNet: string) {
     if (reqeustDevNet != this.getDevelopNet())
       return;
@@ -2666,6 +2670,10 @@ export class DataHelper {
     return this.firstSyncOrderFinish;
   }
 
+  cleanFirstSyncOrderStatus() {
+    this.setFirstSyncOrderStatus(false);
+  }
+
   loadFeedsSortType(): Promise<FeedsData.SortType> {
     return new Promise(async (resolve, reject) => {
       try {
@@ -2814,5 +2822,10 @@ export class DataHelper {
         reject(error);
       }
     });
+  }
+
+  cleanPasarData() {
+    this.cleanPasarItems();
+    this.cleanFirstSyncOrderStatus();
   }
 }
