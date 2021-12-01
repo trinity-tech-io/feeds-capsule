@@ -182,8 +182,8 @@ export const zh = {
     didUriNull: '服务异常，请稍后再试',
     parseing: '解析中',
     dataStorage: '数据缓存',
-    cleanPasarData: '清空Pasar缓存数据',
-    cleanPasarDataTip: '清空Pasar缓存数据后，需要重启应用'
+    cleanPasarData: '清除Pasar缓存数据',
+    cleanPasarDataTip: '清除Pasar缓存数据后，需要重启应用'
   },
   app: {
     profileDetails: '档案详情',

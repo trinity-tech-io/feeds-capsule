@@ -182,8 +182,8 @@ export const en = {
     didUriNull: 'Service exception, please try again later',
     parseing: 'Parseing',
     dataStorage: 'Data storage',
-    cleanPasarData: 'Clean Pasar data',
-    cleanPasarDataTip: 'Need to restart app after clean Pasar data'
+    cleanPasarData: 'Clear Pasar data',
+    cleanPasarDataTip: 'Need to restart app after clearing Pasar data'
   },
   app: {
     profileDetails: 'Profile Details',
