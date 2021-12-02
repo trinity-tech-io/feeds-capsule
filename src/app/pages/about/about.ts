@@ -16,7 +16,7 @@ import { LanguageService } from 'src/app/services/language.service';
 export class AboutPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   public connectionStatus = 1;
-  public version = '2.0.7';
+  public version = '2.0.8';
   public currentLanguage = '';
 
   constructor(

@@ -13,7 +13,7 @@ If you are looking for an update-to-date social style dApp with the following ch
 
 ## 2. Features
 
-An initial **technical preview version v2.0.7** has been released with the following basic features:
+An initial **technical preview version v2.0.8** has been released with the following basic features:
 
 - [x] Sign-in with DID
 
