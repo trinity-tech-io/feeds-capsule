@@ -17,10 +17,9 @@ import { AddFeedService } from 'src/app/services/AddFeedService';
 import { IntentService } from 'src/app/services/IntentService';
 import { NFTContractHelperService } from 'src/app/services/nftcontract_helper.service';
 import { connectivity } from '@elastosfoundation/elastos-connectivity-sdk-cordova';
-import { HiveException, VaultServices, AppContext, Utils, File } from "@elastosfoundation/elastos-hive-js-sdk";
+// import { FilesService, VaultSubscriptionService, HiveException, VaultServices, AppContext, Utils, File } from "@elastosfoundation/elastos-hive-js-sdk";
+import { FilesService, VaultSubscriptionService, HiveException, VaultServices, AppContext, Utils, File } from "@dchagastelles/elastos-hive-js-sdk";
 import { Claims, DIDDocument, JWTParserBuilder } from '@elastosfoundation/did-js-sdk';
-import { FilesService, VaultSubscriptionService } from "@elastosfoundation/elastos-hive-js-sdk";
-
 
 import _ from 'lodash';
 import { DataHelper } from './DataHelper';
@@ -4320,24 +4319,6 @@ export class FeedService {
         }
         this.dataHelper.updateServer(nodeId, server);
         this.standardDidAuth(nodeId, standAuthResult.jwtToken);
-        console.log("AAAAAAAA");
-
-      }).then(async () => {
-
-        console.log("this.resolverUrl")
-        console.log(this.resolverUrl)
-        
-        console.log("getInstanceDIDDoc:")
-        console.log(this.standardAuth.getInstanceDIDDoc())
-
-        let hiveService = new HiveService(this.standardAuth).init((await this.standardAuth.getInstanceDID()).getDIDString(), this.standardAuth.appIdCredential.getIssuer(), this.resolverUrl);
-        console.log("WWWWWWWW")
-
-        let vaultSubscriptionService : VaultSubscriptionService = new VaultSubscriptionService((await hiveService).context, "https://hive-testnet1.trinity-tech.io");
-        console.log("QQQQQQQQ")
-
-        let vaultInfo = await vaultSubscriptionService.subscribe()
-        console.log("TTTTTTT")
       });
   }
 

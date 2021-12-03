@@ -1,9 +1,13 @@
 import { Injectable } from '@angular/core';
-import { HiveException, VaultServices, AppContext, Logger, Utils, File } from "@elastosfoundation/elastos-hive-js-sdk";
-import { Claims, DIDDocument, JWTParserBuilder, DID } from '@elastosfoundation/did-js-sdk';
+// import { HiveException, VaultServices, AppContext, Logger, Utils, File, AppContextParameters, DefaultAppContextProvider, VaultSubscriptionService} from "@elastosfoundation/elastos-hive-js-sdk";
+import { HiveException, VaultServices, AppContext, Logger, Utils, File, AppContextParameters, DefaultAppContextProvider, VaultSubscriptionService} from "@dchagastelles/elastos-hive-js-sdk";
+import { Claims, DIDDocument, JWTParserBuilder, DID, DIDBackend, DefaultDIDAdapter} from '@elastosfoundation/did-js-sdk';
 import { AppDID } from './appdid';
 import { UserDID } from './userdid';
 import { StandardAuthService } from 'src/app/services/StandardAuthService';
+import { Console } from 'console';
+import { resolve } from 'url';
+import { FileService } from 'src/app/services/FileService';
 
 @Injectable()
 export class HiveService {
@@ -24,6 +28,7 @@ export class HiveService {
 
   constructor(
     private standardAuth: StandardAuthService,
+    private fileService: FileService,
     ) {
   }
 
@@ -62,61 +67,107 @@ export class HiveService {
     return new VaultServices(this.context, this.getProviderAddress());
   }
 
-  public async init(appInstanceDidString: string, userDidString: string, resolverUrl: string): Promise<HiveService> {
-    console.log("Hiveservice int========= ")
-    let userDirFile = new File(this.userDir);
-    userDirFile.delete();
-    console.log("hiven  userDirFile.delete();")
-    AppContext.setupResolver(resolverUrl, HiveService.RESOLVE_CACHE);
-    console.log("AppContext.setupResolver")
+  public async create() {
+    DIDBackend.initialize(new DefaultDIDAdapter("testnet"))
+    AppContext.setupResolver("testnet", "data/didcache")
+    const rootDirEntry = await this.fileService.resolveLocalFileSystemURL()
+    const path = rootDirEntry.fullPath
+    let appContextParameters = {
+        storePath: "/data/store/app1",
+        appDID: "did:elastos:imMY7uHc5WCDUhWCVaH5MtFFCBMegCaEYH", 
+        appMnemonics: "wash busy tell relief street maximum dumb fat legend end panic warrior", 
+        appPhrasePass: "password",
+        appStorePass: "password",
+        userDID: "did:elastos:imedtHyjLS155Gedhv7vKP3FTWjpBUAUm4", 
+        userMnemonics: "firm dash language credit twist puzzle crouch order slim now issue trap",
+        userPhrasePass: "secret",
+        userStorePass: "password"
+    } as AppContextParameters
+// TEST
+  //   let appContextParameters = {
+  //     storePath: "/data/store/feedsapp",
+  //     appDID: "did:elastos:iYJ612Q4qyLRPnMTVgGZNAycDNWbdu4DE6", 
+  // did:elastos:iXQQAGGiwicpeEf4ADCXE3AztRhjMgK2KC
+  //     appMnemonics: "famous ship loop baby nature wine cannon wool swift misery injury eternal", 
+  //     appPhrasePass: "password",
+  //     appStorePass: "password",
+  //     userDID: "did:elastos:ijH8kd7RgbyCKBqcWpFmpTYdYiveTvZEXt", 
+  //     userMnemonics: "leopard net accuse weather arrow siege movie cheap true smoke love twist",
+  //     userPhrasePass: "secret",
+  //     userStorePass: "password"
+  // } as AppContextParameters
 
-    // TODO: appinstance did
-    // TODO: user did
+    try{
+        let appProvider = await DefaultAppContextProvider.create(appContextParameters)
+        console.log("create =========== 0")
+        let appContext = await AppContext.build(appProvider, appContextParameters.userDID as string)
+        console.log("create =========== 1")
 
-    //Application Context
-    let self = this;
-    this.context = await AppContext.build({
+        let vaultSubscriptionService = new VaultSubscriptionService(appContext, "https://hive-testnet1.trinity-tech.io:443")
+        console.log("create =========== 2")
+        let vaultInfo = await vaultSubscriptionService.subscribe()
+        console.log(vaultInfo)
+        console.log("create =========== 3")
+    } catch(e){
+        console.debug(e);
+    }
+  }
 
-      getLocalDataDir(): string {
-        console.log(self.getLocalStorePath())
-        return self.getLocalStorePath();
-      },
-
-
-      async getAppInstanceDocument(): Promise<DIDDocument> {
-        try {
-          HiveService.LOG.debug("appInstanceDidString ==== {}", appInstanceDidString)
-          let appinstanceDid = new DID(appInstanceDidString)
-          HiveService.LOG.debug("appinstanceDid === {}", appinstanceDid)
-
-          let appinstanceDidDocument = await appinstanceDid.resolve()
-          HiveService.LOG.debug("appinstanceDidDocument === {}", )
-
-          HiveService.LOG.debug("getAppInstanceDocument ======= {}", appinstanceDidDocument.toString())
-          return await appinstanceDid.resolve()
-        } catch (e) {
-          HiveService.LOG.debug("HiveService.getAppInstanceDocument Error {}", e);
-          HiveService.LOG.error(e.stack);
+  public async creat(appInstanceDocumentString: string, userDidString: string, resolverUrl: string): Promise<AppContext>{
+    return new Promise(async (resolve, reject) => {
+      try {
+        Logger.setDefaultLevel(Logger.TRACE);
+        console.log("appInstanceDocumentString ==== ")
+        console.log(appInstanceDocumentString)
+        console.log("userDidString ==== ")
+        console.log(userDidString)
+      let userDirFile = new File(this.userDir);
+      userDirFile.delete();
+      DIDBackend.initialize(new DefaultDIDAdapter("mainnet"))
+      AppContext.setupResolver("mainnet", HiveService.RESOLVE_CACHE);
+      console.log("AppContext.setupResolver")
+                               
+      // TODO: appinstance did
+      // TODO: user did
+      const rootDirEntry = await this.fileService.resolveLocalFileSystemURL();
+      const path = rootDirEntry.fullPath
+      //Application Context
+      let self = this ;    
+      this.context = await AppContext.build({
+        getLocalDataDir(): string {
+          console.log("path =============== ", path)
+          return  path
+        },
+        getAppInstanceDocument(): Promise<DIDDocument> {
+          return new Promise(async (resolve, reject) => {
+            try {
+              let appInstanceDidDocument = DIDDocument._parseOnly(appInstanceDocumentString)
+              console.log("appInstanceDidDocument ===== ", appInstanceDidDocument)
+              resolve(appInstanceDidDocument)
+               } catch (e) {
+                HiveService.LOG.debug("HiveService.getAppInstanceDocument Error {}", e);
+                HiveService.LOG.error(e.stack);
+                reject(e)
+                }
+          })
+        },
+        getAuthorization(jwtToken: string): Promise<string> {
+          return new Promise(async (resolve, reject) => {
+            try {
+              HiveService.LOG.debug("jwtToken ========== {}", jwtToken)
+              const authToken = await this.standardAuth.generateHiveAuthPresentationJWT(jwtToken) 
+              resolve(authToken)
+            } catch (error) {
+              reject(error)
+              }
+          })
         }
-
-
-        return null;
-      },
-
-      async getAuthorization(jwtToken: string): Promise<string> {
-        HiveService.LOG.debug("jwtToken ========== {}", jwtToken)
-        HiveService.LOG.debug("jwtToken ========== {}", jwtToken)
-
-        HiveService.LOG.debug("jwtToken ========== {}", jwtToken)
-        HiveService.LOG.debug("jwtToken ========== {}", jwtToken)
-        HiveService.LOG.debug("jwtToken ========== {}", jwtToken)
-        HiveService.LOG.debug("jwtToken ========== {}", jwtToken)
-
-        return await this.standardAuth.generateHiveAuthPresentationJWT(jwtToken)
+      }, userDidString);
+      resolve(this.context)
+      } catch (error) {
+      reject(error)
       }
-    }, userDidString);
-
-    return this;
+    })
   }
 
   public getAppDid(): string {

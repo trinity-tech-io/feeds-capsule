@@ -26,7 +26,8 @@ import { IPFSService } from 'src/app/services/ipfs.service';
 import { HiveService } from 'src/app/services/HiveService';
 import { StandardAuthService } from 'src/app/services/StandardAuthService';
 import { Claims, DIDDocument, JWTParserBuilder } from '@elastosfoundation/did-js-sdk';
-import { FilesService, VaultSubscriptionService } from "@elastosfoundation/elastos-hive-js-sdk";
+// import { FilesService, VaultSubscriptionService } from "@elastosfoundation/elastos-hive-js-sdk";
+import { FilesService, VaultSubscriptionService } from "@dchagastelles/elastos-hive-js-sdk";
 
 let TAG: string = 'app-component';
 

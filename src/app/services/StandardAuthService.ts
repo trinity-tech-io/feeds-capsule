@@ -2,9 +2,9 @@ import { Injectable } from '@angular/core';
 import { DID } from '@elastosfoundation/elastos-connectivity-sdk-cordova';
 import { StorageService } from 'src/app/services/StorageService';
 import { Logger } from './logger';
-import { HiveException, VaultServices, AppContext, Utils, File } from "@elastosfoundation/elastos-hive-js-sdk";
+// import { HiveException, VaultServices, AppContext, Utils, File } from "@elastosfoundation/elastos-hive-js-sdk";
+import { HiveException, VaultServices, AppContext, Utils, File } from "@dchagastelles/elastos-hive-js-sdk";
 import { Claims, DIDDocument, JWTParserBuilder, DID as HivDID } from '@elastosfoundation/did-js-sdk';
-// import { Claims, DIDDocument, JWTParserBuilder, DID } from '@elastosfoundation/did-js-sdk';
 
 declare let didManager: DIDPlugin.DIDManager;
 let TAG: string = 'StandardAuthService';
@@ -108,7 +108,18 @@ private appInstanceDID: DIDPlugin.DID
     });
   }
 
-  generateHiveAuthPresentationJWT(challeng: String): Promise<String> {
+  generateVC(): Promise<string>{
+    return new Promise(async (resolver, reject) => {
+      this.appIdCredential = await this.getAppIdCredentialFromStorage(
+        this.appIdCredential,
+      );
+      this.appIdCredential = await this.checkAppIdCredentialStatus(
+        this.appIdCredential,
+      );
+    })
+  }
+
+  generateHiveAuthPresentationJWT(challeng: String): Promise<string> {
     return new Promise(async (resolver, reject) => {
       Logger.log(TAG, 'Starting process to generate auth presentation JWT, authChallengeJwttoken is ', challeng)
       if (
